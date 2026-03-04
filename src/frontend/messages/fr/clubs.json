@@ -1,0 +1,42 @@
+{
+  "noTeams": "Aucune équipe disponible",
+  "mapView": "Vue Carte",
+  "france": "France",
+  "selectRegion": "Sélectionnez une région pour voir les départements",
+  "selectDepartment": "Sélectionnez un département pour voir les clubs",
+  "selectClub": "Sélectionnez un club pour voir les détails",
+  "club": "club",
+  "clubs": "clubs",
+  "clubNotFound": "Club non trouvé",
+  "detail": {
+    "infoTitle": "Informations",
+    "address": "Adresse",
+    "city": "Ville",
+    "zipCode": "Code Postal",
+    "phone": "Téléphone",
+    "email": "Email",
+    "website": "Site Web",
+    "visitWebsite": "Visiter",
+    "teamsTitle": "Équipes",
+    "page": "Détails de { clubName }"
+  },
+  "map": {
+    "gridLayout": "Vue grille",
+    "legend": "Légende",
+    "regions": "Régions (Ligues)",
+    "departments": "Départements (Comités)",
+    "clubs": "Clubs",
+    "legendRegionVeryHigh": "Vert foncé: > 100 clubs",
+    "legendRegionHigh": "Vert: 50-100 clubs",
+    "legendRegionMedium": "Vert clair: 20-50 clubs",
+    "legendRegionLow": "Très clair: < 20 clubs",
+    "legendDeptVeryHigh": "Bleu foncé: > 50 clubs",
+    "legendDeptHigh": "Bleu: 20-50 clubs",
+    "legendDeptMedium": "Bleu clair: 10-20 clubs",
+    "legendDeptLow": "Très clair: < 10 clubs",
+    "clickMarker": "Cliquez sur un marqueur pour voir les détails",
+    "clickZone": "Cliquez sur une zone pour zoomer",
+    "seeDetails": "Voir détails",
+    "listView": "Vue liste"
+  }
+}

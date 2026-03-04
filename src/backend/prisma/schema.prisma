@@ -1,0 +1,324 @@
+datasource db {
+  provider = "postgresql"
+  url      = "postgres://user:password@database:5432/mydb"
+}
+
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+model Presidents {
+  id         Int    @id @default(autoincrement())
+  name       String
+  phone      String?   @db.VarChar(50)
+  email      String?   @db.VarChar(100)
+  address    String?   @db.VarChar(255)
+  code       String?   @db.VarChar(50)
+  leagues Leagues[]
+  committees    Committees[]
+  clubs      Clubs[]
+
+  @@map("presidents")
+}
+
+model Regions {
+  id           Int      @id @default(autoincrement())
+  code         String   @unique @db.VarChar(10)
+  name         String   @db.VarChar(255)
+  leagues Leagues[]
+  regionGeometries RegionGeometries[]
+
+  @@map("regions")
+}
+
+model RegionGeometries {
+  id           Int      @id @default(autoincrement())
+  regionId     Int      @map("region_id")
+  geojsonCode  String   @db.VarChar(10) @map("geojson_code")
+  geometry     Bytes    @db.ByteA
+  region       Regions  @relation(fields: [regionId], references: [id])
+
+  @@map("region_geometries")
+}
+
+model Departments {
+  id                    Int                     @id @default(autoincrement())
+  code                  String                  @unique @db.VarChar(10)
+  name                  String                  @db.VarChar(255)
+  committees            Committees[]
+  departmentGeometries  DepartmentGeometries[]
+
+  @@map("departments")
+}
+
+model DepartmentGeometries {
+  id            Int         @id @default(autoincrement())
+  departmentId  Int         @map("department_id")
+  geojsonCode   String      @db.VarChar(10) @map("geojson_code")
+  geometry      Bytes       @db.ByteA
+  department    Departments @relation(fields: [departmentId], references: [id])
+
+  @@map("department_geometries")
+}
+
+model Leagues {
+  id            Int             @id @default(autoincrement())
+  name          String
+  phone         String?         @db.VarChar(50)
+  email         String?         @db.VarChar(100)
+  address       String?         @db.VarChar(255)
+  presidentId   Int?            @map("president_id")
+  president     Presidents?     @relation(fields: [presidentId], references: [id])
+  regionId      Int             @map("region_id")
+  region        Regions         @relation(fields: [regionId], references: [id])
+  committees    Committees[]
+  championships Championships[]
+
+  @@map("leagues")
+}
+
+model Committees {
+  id            Int             @id @default(autoincrement())
+  name          String
+  phone         String?         @db.VarChar(50)
+  email         String?         @db.VarChar(100)
+  address       String?         @db.VarChar(255)
+  presidentId   Int?            @map("president_id")
+  president     Presidents?     @relation(fields: [presidentId], references: [id])
+  departmentId  Int             @map("department_id")
+  department    Departments     @relation(fields: [departmentId], references: [id])
+  league        Leagues         @relation(fields: [leagueId], references: [id])
+  leagueId      Int             @map("league_id")
+  clubs         Clubs[]
+  championships Championships[]
+
+  @@map("committees")
+}
+
+model Clubs {
+  id          Int         @id @default(autoincrement())
+  code        String?     @db.VarChar(50)
+  name        String      @db.VarChar(255)
+  address     String?     @db.VarChar(255)
+  phone       String?     @db.VarChar(50)
+  email       String?     @db.VarChar(100)
+  website     String?     @db.VarChar(255)
+  presidentId Int?        @map("president_id")
+  president   Presidents? @relation(fields: [presidentId], references: [id])
+  gymId       Int?        @map("gym_id")
+  gym         Gyms?       @relation(fields: [gymId], references: [id])
+  committeeId Int         @map("committee_id")
+  committee   Committees  @relation(fields: [committeeId], references: [id])
+  zipCode     String?     @db.Char(5) @map("zip_code")
+  city        String?     @db.VarChar(255)
+  latitude    Decimal?    @db.Decimal(10, 8)
+  longitude   Decimal?    @db.Decimal(11, 8)
+  teams       Teams[]
+
+  @@map("clubs")
+}
+
+model Gyms {
+  id      Int     @id @default(autoincrement())
+  name    String  @db.VarChar(255)
+  address String? @db.VarChar(255)
+  code    String? @db.VarChar(50)
+  clubs   Clubs[]
+
+  @@map("gyms")
+}
+
+model Championships {
+  id                Int               @id @default(autoincrement())
+  name              String
+  category          String            @db.VarChar(100)
+  seasonYear        String            @db.Char(9) @map("season_year")
+  level             String            @db.VarChar(50)
+  division          Int
+  gender            String            @db.VarChar(10)
+  committee         Committees?       @relation(fields: [committeeId], references: [id])
+  committeeId       Int?              @map("committee_id")
+  league            Leagues?          @relation(fields: [leagueId], references: [id])
+  leagueId          Int?              @map("league_id")
+  pools             Pools[]
+
+  @@map("championships")
+  @@unique([seasonYear, category, gender, level, division, committeeId, leagueId])
+}
+
+model Pools {
+  id              Int             @id @default(autoincrement())
+  championship    Championships   @relation(fields: [championshipId], references: [id])
+  championshipId  Int             @map("championship_id")
+  letter          String          @db.VarChar(1)
+  name            String
+  matches         Matches[]
+  leaderboards    Leaderboards[]
+  teams           Teams[]         @relation("PoolsToTeams")
+
+  @@map("pools")
+  @@unique([championshipId, letter])
+}
+
+model Teams {
+  id            Int                @id @default(autoincrement())
+  number        Int
+  club          Clubs              @relation(fields: [clubId], references: [id])
+  clubId        Int                @map("club_id")
+  category      String             @db.VarChar(100)
+  gender        String             @db.VarChar(10)
+  color         String?            @db.VarChar(50)
+  pool          Pools?             @relation("PoolsToTeams", fields: [poolId], references: [id])
+  poolId        Int?               @map("pool_id")
+  homeMatches   Matches[]          @relation("HomeTeam")
+  awayMatches   Matches[]          @relation("AwayTeam")
+  leaderboards  Leaderboards[]
+  players       Players[]   
+
+  @@map("teams")
+}
+
+model Matches {
+  id                  Int                 @id @default(autoincrement())
+  pool                Pools               @relation(fields: [poolId], references: [id])
+  poolId              Int                 @map("pool_id")
+  matchday            Int
+  date                DateTime
+  homeTeam            Teams               @relation("HomeTeam", fields: [homeTeamId], references: [id])
+  homeTeamId          Int                 @map("home_team_id")
+  awayTeam            Teams               @relation("AwayTeam", fields: [awayTeamId], references: [id])
+  awayTeamId          Int                 @map("away_team_id")
+  homeTeamScore       Int                 @map("home_team_score")
+  awayTeamScore       Int                 @map("away_team_score")
+  forfeit             Boolean             @default(false)
+  playerMatchStats    PlayerMatchStats[]
+  matchEvents         MatchEvents[]
+  playtimeIntervals   PlayerPlaytimeIntervals[]
+  substitutions       Substitutions[]
+
+  @@map("matches")
+}
+
+model Leaderboards {
+  id              Int           @id @default(autoincrement())
+  pool            Pools         @relation(fields: [poolId], references: [id])
+  poolId          Int           @map("pool_id")
+  team            Teams         @relation(fields: [teamId], references: [id])
+  teamId          Int           @map("team_id")
+  points          Int           @default(0)
+  gamesPlayed     Int           @default(0) @map("games_played")
+  gamesWon        Int           @default(0) @map("games_won")
+  gamesLost       Int           @default(0) @map("games_lost")
+  gamesForfeited  Int           @default(0) @map("games_forfeited")
+  pointsFor       Int           @default(0) @map("points_for")
+  pointsAgainst   Int           @default(0) @map("points_against")
+  pointDifference Int           @default(0) @map("point_difference")
+
+  @@map("leaderboards")
+  @@unique([poolId, teamId])
+}
+
+model Players {
+  id                    Int                       @id @default(autoincrement())
+  name                  String
+  number                Int
+  team                  Teams                     @relation(fields: [teamId], references: [id])
+  teamId                Int                       @map("team_id")
+  stats                 PlayerMatchStats[]
+  eventParticipations   MatchEventPlayers[]
+  exitingSubstitutions  Substitutions[]           @relation("ExitingPlayer")
+  enteringSubstitutions Substitutions[]           @relation("EnteringPlayer")
+  playtimeIntervals     PlayerPlaytimeIntervals[]
+
+  @@map("players")
+  @@unique([teamId, number])
+}
+
+model PlayerMatchStats {
+  id                      Int       @id @default(autoincrement())
+  match                   Matches   @relation(fields: [matchId], references: [id])
+  matchId                 Int       @map("match_id")
+  player                  Players   @relation(fields: [playerId], references: [id])
+  playerId                Int       @map("player_id")
+  points                  Int       @default(0) @map("points")
+  fouls                   Int       @default(0) @map("fouls")
+  threePointsMade         Int       @default(0) @map("three_points_made")
+  threePointsAttempted    Int       @default(0) @map("three_points_attempted")
+  twoPointsIntMade        Int       @default(0) @map("two_points_int_made")
+  twoPointsIntAttempted   Int       @default(0) @map("two_points_int_attempted")
+  twoPointsExtMade        Int       @default(0) @map("two_points_ext_made")
+  twoPointsExtAttempted   Int       @default(0) @map("two_points_ext_attempted")
+  freeThrowsMade          Int       @default(0) @map("free_throws_made")
+  freeThrowsAttempted     Int       @default(0) @map("free_throws_attempted")
+  assists                 Int       @default(0) @map("assists")
+  turnovers               Int       @default(0) @map("turnovers")
+  reboundsOffensive       Int       @default(0) @map("rebounds_offensive")
+  reboundsDefensive       Int       @default(0) @map("rebounds_defensive")
+  steals                  Int       @default(0) @map("steals")
+  blocks                  Int       @default(0) @map("blocks")
+  playtimeIntervals       Json      @default("{}") @map("playtime_intervals")
+
+  @@map("player_match_stats")
+  @@unique([matchId, playerId])
+}
+
+model MatchEvents {
+  id              Int                 @id @default(autoincrement())
+  match           Matches             @relation(fields: [matchId], references: [id])
+  matchId         Int                 @map("match_id")
+  eventType       String              @db.VarChar(50) @map("event_type")
+  timestamp       DateTime
+  description     String?
+  shotLocationId  Int?                @map("shot_location_id")
+  shotLocation    ShotLocations?      @relation(fields: [shotLocationId], references: [id])
+  players         MatchEventPlayers[]
+
+  @@map("match_events")
+}
+
+model ShotLocations {
+  id      Int           @id @default(autoincrement())
+  x       Decimal       @db.Decimal(5, 2)
+  y       Decimal       @db.Decimal(5, 2)
+  events  MatchEvents[]
+
+  @@map("shot_locations")
+}
+
+model MatchEventPlayers {
+  id       Int         @id @default(autoincrement())
+  event    MatchEvents @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId  Int         @map("event_id")
+  player   Players     @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  playerId Int         @map("player_id")
+  role     String      @db.VarChar(50)
+
+  @@map("match_event_players")
+}
+
+model PlayerPlaytimeIntervals {
+  id        Int      @id @default(autoincrement())
+  match     Matches  @relation(fields: [matchId], references: [id])
+  matchId   Int      @map("match_id")
+  player    Players  @relation(fields: [playerId], references: [id])
+  playerId  Int      @map("player_id")
+  startTime Int      @map("start_time")
+  endTime   Int      @map("end_time")
+
+  @@map("player_playtime_intervals")
+}
+
+model Substitutions {
+  id               Int      @id @default(autoincrement())
+  match            Matches  @relation(fields: [matchId], references: [id])
+  matchId          Int      @map("match_id")
+  timestamp        Int      @map("timestamp")
+  exitingPlayer    Players  @relation("ExitingPlayer", fields: [exitingPlayerId], references: [id])
+  exitingPlayerId  Int      @map("exiting_player_id")
+  enteringPlayer   Players  @relation("EnteringPlayer", fields: [enteringPlayerId], references: [id])
+  enteringPlayerId Int      @map("entering_player_id")
+
+  @@map("substitutions")
+}

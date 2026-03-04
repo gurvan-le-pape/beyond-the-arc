@@ -1,0 +1,42 @@
+{
+  "noTeams": "No teams available",
+  "mapView": "Map View",
+  "france": "France",
+  "selectRegion": "Select a region to see departments",
+  "selectDepartment": "Select a department to see clubs",
+  "selectClub": "Select a club to see details",
+  "club": "club",
+  "clubs": "clubs",
+  "clubNotFound": "Club not found",
+  "detail": {
+    "infoTitle": "Information",
+    "address": "Address",
+    "city": "City",
+    "zipCode": "Zip Code",
+    "phone": "Phone",
+    "email": "Email",
+    "website": "Website",
+    "visitWebsite": "Visit",
+    "teamsTitle": "Teams",
+    "page": "Details of { clubName }"
+  },
+  "map": {
+    "gridLayout": "Grid Layout",
+    "legend": "Legend",
+    "regions": "Regions (Regional Leagues)",
+    "departments": "Departments (Committees)",
+    "clubs": "Clubs",
+    "legendRegionVeryHigh": "Dark green: > 100 clubs",
+    "legendRegionHigh": "Green: 50-100 clubs",
+    "legendRegionMedium": "Light green: 20-50 clubs",
+    "legendRegionLow": "Very light: < 20 clubs",
+    "legendDeptVeryHigh": "Dark blue: > 50 clubs",
+    "legendDeptHigh": "Blue: 20-50 clubs",
+    "legendDeptMedium": "Light blue: 10-20 clubs",
+    "legendDeptLow": "Very light: < 10 clubs",
+    "clickMarker": "Click a marker to see details",
+    "clickZone": "Click a zone to zoom",
+    "seeDetails": "See details",
+    "listView": "List View"
+  }
+}

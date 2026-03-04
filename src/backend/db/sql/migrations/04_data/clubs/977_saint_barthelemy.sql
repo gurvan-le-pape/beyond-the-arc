@@ -1,0 +1,3 @@
+INSERT INTO clubs (zip_code, code, name, city, committee_id)
+VALUES
+    ('97133', 'GUA0978018', 'PELICAN''S BASKET CLUB ST BARTH', 'SAINT-BARTHELEMY', (SELECT id FROM committees WHERE name = 'COMITE DE SAINT-BARTHELEMY DE BASKET-BALL'));

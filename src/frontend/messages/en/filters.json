@@ -1,0 +1,27 @@
+{
+  "filters": {
+    "global": "Global filters",
+    "reset": "Reset",
+    "level": "Level",
+    "committee": "Committee",
+    "league": "League",
+    "allCommittees": "All committees",
+    "allLeagues": "All leagues"
+  },
+  "levels": {
+    "all": "All levels",
+    "departmental": "Departmental",
+    "regional": "Regional",
+    "national": "National"
+  },
+  "pagination": {
+    "pageInfo": "Page {page} of {totalPages} ({total} {label})",
+    "resultsPerPage": "Results per page:",
+    "firstPage": "First page",
+    "previousPage": "Previous page",
+    "previous": "Previous",
+    "nextPage": "Next page",
+    "next": "Next",
+    "lastPage": "Last page"
+  }
+}

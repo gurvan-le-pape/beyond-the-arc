@@ -1,0 +1,47 @@
+{
+  "nav": {
+    "competitions": "Compétitions",
+    "players": "Joueurs",
+    "teams": "Équipes",
+    "clubs": "Clubs",
+    "matches": "Matchs",
+    "stats": "Statistiques"
+  },
+  "header": {
+    "mainNavAriaLabel": "Navigation principale",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu",
+    "lightMode": "Passer en mode clair",
+    "darkMode": "Passer en mode sombre"
+  },
+  "footer": {
+    "projectName": "Beyond The Arc",
+    "tagline": "Plateforme full-stack pour explorer le basketball à travers cartes interactives, statistiques et visualisations de données.",
+    "portfolioNote": "Démonstration de traitement de données, architecture web et développement d'interfaces modernes",
+    "navigationAriaLabel": "Navigation du pied de page",
+    "about": "À propos",
+    "features": "Fonctionnalités",
+    "architecture": "Architecture",
+    "documentation": "Documentation",
+    "contact": "Contact",
+    "copyright": "© {year} {name}. Tous droits réservés.",
+    "featuredWork": "En vedette",
+    "project": "Projet",
+    "resources": "Ressources",
+    "clubsMap": "Carte interactive des clubs",
+    "statistics": "Tableau de bord statistiques",
+    "teams": "Explorateur d'équipes",
+    "sourceCode": "Code source",
+    "officialSite": "Site officiel FFBB",
+    "madeWith": "Construit avec Next.js, NestJS & TypeScript",
+    "nonCommercial": "Projet de portfolio non-commercial",
+    "dataDisclaimer": "Données agrégées depuis la FFBB à des fins éducatives",
+    "github": "Visiter le profil GitHub",
+    "linkedin": "Visiter le profil LinkedIn",
+    "email": "Envoyer un email"
+  },
+  "logo": {
+    "alt": "Logo de basket",
+    "appName": "Beyond The Arc"
+  }
+}

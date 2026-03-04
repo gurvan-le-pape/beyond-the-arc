@@ -1,0 +1,118 @@
+{
+  "loading": "Chargement...",
+  "error": "Une erreur est survenue.",
+  "retry": "Réessayer",
+  "empty": "Aucun résultat trouvé.",
+  "seeLess": "Voir moins",
+  "expandCategory": "Déplier la catégorie",
+  "cancel": "Annuler",
+  "save": "Enregistrer",
+  "delete": "Supprimer",
+  "edit": "Modifier",
+  "all": "Tous",
+  "clear": "Effacer",
+  "homepage": {
+    "title": "Bienvenue à Beyond The Arc",
+    "subtitle": "Découvrez les compétitions, clubs, équipes et statistiques des joueurs. Plongez au cœur du basket avec des données en temps réel, des fonctionnalités interactives et une expérience moderne et intuitive.",
+    "cta": "Découvrir les fonctionnalités"
+  },
+  "stats": {
+    "points": "Points",
+    "rebounds": "Rebonds",
+    "assists": "Passes décisives",
+    "steals": "Interceptions",
+    "blocks": "Contres",
+    "fouls": "Fautes",
+    "turnovers": "Pertes de balle",
+    "pointsPerGame": "Points / match",
+    "reboundsPerGame": "Rebonds / match",
+    "assistsPerGame": "Passes / match",
+    "stealsPerGame": "Interceptions / match",
+    "blocksPerGame": "Contres / match",
+    "turnoversPerGame": "Pertes / match",
+    "foulsPerGame": "Fautes / match",
+    "gamesPlayed": "Matchs joués",
+    "threePoints": "3 Pts",
+    "twoPointsInt": "2 Pts (int)",
+    "twoPointsExt": "2 Pts (ext)",
+    "freeThrows": "Lancers francs",
+    "fieldGoals": "Tirs réussis",
+    "threePointers": "3 Points",
+    "reboundsTotal": "Rebonds totaux",
+    "reboundsOffensive": "Rebonds offensifs",
+    "reboundsDefensive": "Rebonds défensifs",
+    "pointsInPaint": "Points dans la raquette"
+  },
+  "table": {
+    "sortAsc": "▲",
+    "sortDesc": "▼",
+    "sortBy": "Trier par {{colId}}",
+    "filter": "Filtrer...",
+    "filterClub": "Filtrer club...",
+    "filterName": "Filtrer nom...",
+    "rank": "#",
+    "team": "Équipe",
+    "gamesWon": "Gagnés",
+    "gamesLost": "Perdus",
+    "pointDifference": "Différence de buts"
+  },
+  "matchHistory": {
+    "title": "Historique des Matchs",
+    "date": "Date",
+    "match": "Match",
+    "score": "Score",
+    "noMatches": "Aucun match joué cette saison",
+    "seeAllMatches": "Voir tous les matchs ({count})"
+  },
+  "statAbbreviations": {
+    "pts": "PTS",
+    "reb": "REB",
+    "ast": "AST",
+    "stl": "STL",
+    "blk": "BLK",
+    "to": "TO",
+    "fl": "FL",
+    "ft": "FT",
+    "ptsPerGame": "PTS/M",
+    "rebPerGame": "REB/M",
+    "astPerGame": "AST/M"
+  },
+  "sectionTitles": {
+    "regionalLeagues": "Ligues Régionales",
+    "departmentalCommittees": "Comités Départementaux",
+    "clubs": "Clubs"
+  },
+  "competition": {
+    "seeCompetition": "Voir la compétition {name}",
+    "seeCompetitionDefault": "Voir la compétition",
+    "levels": {
+      "national": "National",
+      "regional": "Régional",
+      "departmental": "Départemental"
+    }
+  },
+  "gender": {
+    "male": "Homme",
+    "female": "Femme"
+  },
+  "category": {
+    "U11": "U11",
+    "U13": "U13",
+    "U15": "U15",
+    "U18": "U18",
+    "U21": "U21",
+    "senior": "Senior"
+  },
+  "club": {
+    "seeClub": "Voir le club {name}",
+    "seeClubDefault": "Voir le club"
+  },
+  "player": {
+    "seePlayer": "Voir le joueur {name}",
+    "seePlayerDefault": "Voir le joueur"
+  },
+  "team": {
+    "seeTeam": "Voir l'équipe {number}",
+    "seeTeamDefault": "Voir l'équipe"
+  }
+}

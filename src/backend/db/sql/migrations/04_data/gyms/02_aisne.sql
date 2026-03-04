@@ -1,0 +1,20 @@
+INSERT INTO gyms (name, address, code)
+VALUES
+('GYMNASE GODART', 'Rue Pierre Brossolette, 02320 Anizy-le-Grand', 'hdf0002032'),
+('GYMNASE LESUR', 'Place Lesur, 02120 Guise', 'hdf0002011'),
+('GYMNASE GERMAIN THIBAUT', 'Rue Alfred Juneaux, 02600 Villers-Cotterêts', 'hdf0002022'),
+('SALLE F. QUEQUIGNON', 'Rue de Champagne, 02680 Grugies', 'hdf0002038'),
+('ROLAND LEROY', 'Rue de la Forge, 02100 Gricourt', 'hdf0002010'),
+('SALLE DU C.E.S.', 'Rue Léon Blum, 02200 Belleu', 'hdf0002003'),
+('SALLE POLYVALENTE', 'Avenue de la Gare, 02820 Saint-Erme-Outre-et-Ramecourt', 'hdf0002015'),
+('GYMNASE DELAUNE', 'Rue Auguste Delaune, 02430 Gauchy', 'hdf0002009'),
+('SALLE OMNISPORTS', 'Rue du Bourbonnais, 02510 Étreux', 'hdf0002048'),
+('YVAN ROJO', 'Route de Seboncourt, 02110 Bohain-en-Vermandois', 'hdf0002004'),
+('SALLE DES SPORTS', 'Rue de la Forgette, 02830 Saint-Michel', 'hdf0002017'),
+('HALLE DES SPORTS L.LAGRANGE', 'Rue Albert Camus, 02700 Tergnier', 'hdf0002021'),
+('SALLE COUBERTIN', 'Rue Jean-Pierre Timbaud, 02000 Laon', 'hdf0002026'),
+('SALLE PIERRE DE COUBERTIN', 'Boulevard de Bergheim, 02300 Chauny', 'hdf0002006'),
+('BERTRAND GAMESS', 'Rue d''Alembert, 02100 Saint-Quentin', 'hdf0002018'),
+('PARC DE LA MARQUETTE', 'Rue du Bosquet, 02240 Itancourt', 'hdf0002043'),
+('SALLE JEAN DAVESNE', 'Rue Bara, 02200 Soissons', 'hdf0002020'),
+('GYMNASE BROSSOLETTE', 'Quai Coutellier, 02400 Château-Thierry', 'hdf0002005');

@@ -1,0 +1,20 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@modules/*": ["modules/*"],
+      "@common/*": ["common/*"],
+      "@database/*": ["database/*"],
+      "@config/*": ["config/*"],
+      "prisma/*": ["prisma/*"]
+    },
+    "outDir": "dist",
+    "moduleResolution": "node",
+    "target": "ES2022",
+    "module": "commonjs",
+    "strict": true
+  },
+  "exclude": [],
+  "include": ["**/*.ts", "**/*.tsx"]
+}

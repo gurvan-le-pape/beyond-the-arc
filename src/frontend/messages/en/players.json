@@ -1,0 +1,28 @@
+{
+  "players": "players",
+  "label": "Players",
+  "playerDetail": {
+    "playerNotFound": "Player not found",
+    "club": "Club",
+    "seasonStatsTitle": "Season Statistics",
+    "shotchartTitle": "Shot Chart (Hotspots)",
+    "shotchartDescription": "This hot spot chart shows the shot distribution for the team this season.",
+    "matchHistoryTitle": "Match History",
+    "compareTitle": "Compare with another player",
+    "compareSearch": "Search for a player to compare...",
+    "compareNoResults": "No players found for your search."
+  },
+  "playersTable": {
+    "allTeams": "All",
+    "allCategories": "All",
+    "allGenders": "All",
+    "allNumbers": "All",
+    "number": "Number",
+    "name": "Name",
+    "team": "Team",
+    "club": "Club",
+    "category": "Category",
+    "gender": "Gender",
+    "playersList": "Players list"
+  }
+}

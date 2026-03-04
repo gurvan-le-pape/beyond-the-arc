@@ -1,0 +1,73 @@
+/* MapLibre GL CSS overrides */
+
+/* Custom popup styling */
+.maplibregl-popup {
+  max-width: 400px !important;
+}
+
+.maplibregl-popup-content {
+  padding: 0 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+.maplibregl-popup-close-button {
+  font-size: 20px !important;
+  padding: 8px 12px !important;
+  color: #374151 !important;
+  transition: all 0.2s !important;
+}
+
+.maplibregl-popup-close-button:hover {
+  background-color: #f3f4f6 !important;
+  color: #111827 !important;
+}
+
+.maplibregl-popup-anchor-bottom .maplibregl-popup-tip {
+  border-top-color: white !important;
+}
+
+.maplibregl-popup-anchor-top .maplibregl-popup-tip {
+  border-bottom-color: white !important;
+}
+
+.maplibregl-popup-anchor-left .maplibregl-popup-tip {
+  border-right-color: white !important;
+}
+
+.maplibregl-popup-anchor-right .maplibregl-popup-tip {
+  border-left-color: white !important;
+}
+
+/* Control styling */
+.maplibregl-ctrl-attrib {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  font-size: 11px !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+}
+
+/* Smooth transitions for map interactions */
+.maplibregl-canvas {
+  transition: filter 0.3s ease;
+}
+
+/* Loading state */
+.map-loading {
+  filter: grayscale(0.5) opacity(0.8);
+}
+
+/* Custom marker animations */
+@keyframes marker-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.marker-animated {
+  animation: marker-bounce 0.6s ease-in-out;
+}

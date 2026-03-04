@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Local scratch
+local/
+venv/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Build outputs
+.next/
+dist/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Database dumps
+src/backend/db/sql/db_dump.sql
+
+src/frontend/next-env.d.ts

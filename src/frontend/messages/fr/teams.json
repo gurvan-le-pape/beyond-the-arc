@@ -1,0 +1,49 @@
+{
+  "teams": "équipes",
+  "label": "Équipes",
+  "teamDetail": {
+    "pointsPerGame": "Points / match",
+    "reboundsPerGame": "Rebonds / match",
+    "assistsPerGame": "Passes / match",
+    "stealsPerGame": "Interceptions / match",
+    "blocksPerGame": "Contres / match",
+    "teamNotFound": "Équipe non trouvée",
+    "seeCompetition": "Voir la compétition {name}",
+    "seeCompetitionDefault": "Voir la compétition",
+    "teamStatsTitle": "Statistiques Équipe",
+    "players": "Joueurs",
+    "rosterTitle": "Effectif",
+    "numberShort": "N°",
+    "player": "Joueur",
+    "gamesPlayedShort": "Matchs",
+    "noPlayers": "Aucun joueur dans l'effectif",
+    "matchHistoryTitle": "Historique des Matchs",
+    "shotchartTitle": "Carte des tirs (Heatmap)",
+    "shotchartDescription": "Cette heatmap montre la distribution des tirs de l'équipe cette saison."
+  },
+  "teamStats": {
+    "positionSuffix": "ème",
+    "positionSuffixFirst": "er",
+    "gamesWonShort": "V",
+    "gamesLostShort": "D"
+  },
+  "teamsTable": {
+    "allNumbers": "Tous",
+    "allCategories": "Toutes",
+    "allGenders": "Tous",
+    "genderHeading": {
+      "masculine": "male",
+      "feminine": "female"
+    },
+    "allDivisions": "Toutes",
+    "allPools": "Toutes",
+    "number": "Numéro",
+    "club": "Club",
+    "category": "Catégorie",
+    "gender": "Genre",
+    "division": "Division",
+    "pool": "Pool",
+    "teamsList": "Liste des équipes",
+    "noChampionships": "Aucun championship disponible"
+  }
+}

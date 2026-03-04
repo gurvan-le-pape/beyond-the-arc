@@ -1,0 +1,221 @@
+{
+  "contact": {
+    "title": "Contactez-moi",
+    "intro": "Intéressé pour discuter de ce projet ou explorer des opportunités de collaboration ?",
+    "email": "Email",
+    "github": "GitHub",
+    "linkedin": "LinkedIn",
+    "aboutProject": "À propos du Projet",
+    "projectDescription": "Ceci est un projet portfolio présentant des compétences en développement full-stack avec des technologies web modernes. Conçu pour démontrer une architecture propre, un design évolutif et une attention aux détails."
+  },
+  "about": {
+    "title": "À propos du Projet",
+    "intro": "Une démonstration complète d'ingénierie full-stack moderne avec un accent sur la maintenabilité, la clarté et l'évolutivité.",
+    "modular": {
+      "title": "Architecture Modulaire",
+      "description": "Les fonctionnalités sont décomposées en petits composants et services ciblés, rendant le code facile à naviguer et à étendre."
+    },
+    "separation": {
+      "title": "Séparation des Préoccupations",
+      "description": "L'interface utilisateur, la logique métier, la configuration et l'accès aux données sont clairement séparés, suivant les meilleures pratiques."
+    },
+    "reusability": {
+      "title": "Réutilisabilité",
+      "description": "Les composants, hooks et fonctions utilitaires sont conçus pour être réutilisés dans toute l'application, réduisant la duplication."
+    },
+    "scalability": {
+      "title": "Évolutivité",
+      "description": "La structure permet d'ajouter de nouvelles fonctionnalités, modules ou endpoints avec un minimum de friction, adapté à la croissance à long terme."
+    },
+    "readability": {
+      "title": "Lisibilité & Intégration",
+      "description": "Des modèles cohérents et une organisation claire facilitent la compréhension et le travail avec le code pour les nouveaux contributeurs."
+    },
+    "i18n": {
+      "title": "Internationalisation",
+      "description": "Les chaînes de caractères sont externalisées pour faciliter la traduction et la localisation dans plusieurs langues."
+    },
+    "tooling": {
+      "title": "Outillage Moderne",
+      "description": "Utilise TypeScript, le formatage automatisé, le linting et un système de build robuste pour la fiabilité et la productivité."
+    },
+    "exploreTitle": "Explorez le Projet",
+    "explore": "Découvrez les fonctionnalités, l'architecture et la documentation pour en savoir plus sur ce projet et mon approche de l'ingénierie logicielle.",
+    "viewFeatures": "Voir les Fonctionnalités",
+    "viewArchitecture": "Voir l'Architecture"
+  },
+  "architecture": {
+    "title": "Architecture & Stack Technique",
+    "subtitle": "Une application full-stack moderne et évolutive construite avec des technologies de pointe",
+    "frontendTitle": "Frontend",
+    "backendTitle": "Backend",
+    "devopsTitle": "DevOps & Outillage",
+    "systemArchitecture": "Architecture Système",
+    "frontend": {
+      "nextjsDesc": "Framework React avec SSR/SSG",
+      "tsDesc": "Développement type-safe",
+      "tailwindDesc": "Styling utility-first",
+      "reactQueryDesc": "Gestion d'état serveur",
+      "i18nDesc": "Internationalisation"
+    },
+    "backend": {
+      "nestjsDesc": "Framework Node.js",
+      "prismaDesc": "ORM moderne",
+      "pgDesc": "Base de données relationnelle",
+      "tsDesc": "Type safety end-to-end",
+      "restDesc": "Architecture API"
+    },
+    "devops": {
+      "dockerDesc": "Conteneurisation",
+      "composeDesc": "Orchestration multi-conteneurs",
+      "jestDesc": "Framework de test",
+      "lintDesc": "Outils de qualité de code",
+      "cicdDesc": "Pipeline CI/CD"
+    },
+    "diagram": {
+      "client": "Client",
+      "server": "Serveur API",
+      "database": "Base de données"
+    },
+    "features": {
+      "modular": {
+        "title": "Architecture Modulaire",
+        "description": "Séparation claire des préoccupations avec composants réutilisables"
+      },
+      "typeSafety": {
+        "title": "Sécurité des Types",
+        "description": "TypeScript end-to-end pour la fiabilité et l'expérience développeur"
+      },
+      "scalable": {
+        "title": "Design Évolutif",
+        "description": "Conçu pour évoluer avec conteneurisation et DevOps moderne"
+      }
+    }
+  },
+  "features": {
+    "title": "Fonctionnalités",
+    "subtitle": "Découvrez les fonctionnalités puissantes qui rendent cette plateforme de basketball complète et conviviale",
+    "leaderboards": {
+      "title": "Classements de Championships",
+      "description": "Classements et standings en temps réel pour tous les niveaux de championships avec statistiques détaillées et métriques de performance d'équipe."
+    },
+    "matchSummary": {
+      "title": "Résumé de Match Détaillé",
+      "description": "Analyses complètes des matchs avec statistiques joueurs, comparaisons d'équipes, cartes de tirs et chronologie des événements."
+    },
+    "shotCharts": {
+      "title": "Cartes de Tirs Interactives",
+      "description": "Représentation visuelle des emplacements de tirs des joueurs avec cartes thermiques, taux de réussite et analyse détaillée des positions."
+    },
+    "playerComparison": {
+      "title": "Comparaison de Joueurs",
+      "description": "Comparaison côte à côte des statistiques de joueurs sur plusieurs métriques incluant les points, rebonds, passes et efficacité."
+    },
+    "clubsMap": {
+      "title": "Carte Interactive des Clubs",
+      "description": "Visualisation géographique des clubs à travers la France avec filtrage par région, département et level de compétition."
+    },
+    "teamRosters": {
+      "title": "Effectifs des Équipes",
+      "description": "Effectifs complets avec profils de joueurs, postes et statistiques détaillées pour chaque membre de l'équipe."
+    },
+    "matchSchedule": {
+      "title": "Calendriers des Matchs",
+      "description": "Calendriers complets des matchs avec dates, lieux et résultats pour toutes les compétitions et divisions."
+    },
+    "liveStats": {
+      "title": "Statistiques en Direct",
+      "description": "Statistiques de match en temps réel avec suivi de possession, analyse du momentum et mises à jour action par action."
+    },
+    "liveUpdates": {
+      "title": "Scores en Direct",
+      "description": "Mises à jour des scores en temps réel via WebSocket et événements de match au fur et à mesure qu'ils se produisent."
+    },
+    "userAccounts": {
+      "title": "Comptes Utilisateurs & Favoris",
+      "description": "Expérience personnalisée avec équipes sauvegardées, joueurs suivis et notifications personnalisées."
+    },
+    "status": {
+      "live": "En Ligne",
+      "coming-soon": "Bientôt",
+      "planned": "Planifié"
+    },
+    "highlightsTitle": "Points Forts Supplémentaires",
+    "highlights": {
+      "i18n": {
+        "title": "Support Multilingue",
+        "description": "Traductions complètes en français et anglais pour un public mondial"
+      },
+      "search": {
+        "title": "Recherche & Filtres Avancés",
+        "description": "Filtrage et recherche puissants sur les équipes, joueurs et compétitions"
+      },
+      "responsive": {
+        "title": "Entièrement Responsive",
+        "description": "Expérience optimisée sur ordinateur, tablette et mobile"
+      }
+    }
+  },
+  "docs": {
+    "title": "Documentation",
+    "intro": "Documentation complète couvrant l'installation, l'architecture, la référence API et les directives de contribution.",
+    "quickLinks": {
+      "github": "Dépôt GitHub",
+      "viewSource": "Voir le code source",
+      "dataModel": "Modèle de Données",
+      "apiDocs": "Documentation API",
+      "contact": "Obtenir de l'Aide",
+      "getHelp": "Questions ?"
+    },
+    "sections": {
+      "gettingStarted": {
+        "title": "Démarrage",
+        "content": "Apprenez à configurer et exécuter le projet localement pour le développement."
+      },
+      "database": {
+        "title": "Schéma de Base de Données",
+        "content": "Explorez le schéma complet de la base de données avec les relations entre entités, structures de tables et flux de données."
+      },
+      "structure": {
+        "title": "Structure du Projet",
+        "content": "Comprenez l'organisation du code avec une séparation claire entre les modules frontend et backend."
+      },
+      "bestPractices": {
+        "title": "Bonnes Pratiques",
+        "content": "Principes et modèles d'ingénierie clés mis en œuvre dans ce projet."
+      }
+    },
+    "database": {
+      "diagramTitle": "Diagramme de Relations entre Entités",
+      "diagramAlt": "Diagramme du schéma de base de données montrant toutes les entités et leurs relations",
+      "keyTables": "Tables Principales de la Base de Données",
+      "tables": {
+        "championships": "Championships et structures de tournois",
+        "teams": "Informations et effectifs des équipes",
+        "players": "Profils et détails des joueurs",
+        "matches": "Données et résultats des matchs",
+        "clubs": "Organisations et salles des clubs",
+        "stats": "Statistiques des joueurs et équipes"
+      }
+    },
+    "structure": {
+      "backend": "Structure Backend (NestJS)",
+      "frontend": "Structure Frontend (Next.js)",
+      "frontendCode": "app/            # Next.js App Router (routage, layouts, pages)\n  (public)/      # Routes publiques (clubs, competitions, matches, players, teams)\n  (auth)/        # Routes d'authentification (login, register)\n  api/           # Routes API\nfeatures/        # Modules de fonctionnalités (logique métier, UI, hooks, api)\n  └── clubs/     # Exemple de fonctionnalité\n      ├── components/\n      ├── hooks/\n      ├── api/\n      ├── utils/\n      ├── constants/\n      ├── types/\n      └── index.ts\nshared/          # Composants, hooks, utils, types partagés\nlib/             # Intégrations externes, providers, clients API\nstyles/          # Styles globaux et thèmes\npublic/          # Fichiers statiques\n",
+      "routingExplanation": "Tout le routage est géré dans app/ en utilisant les conventions Next.js App Router.",
+      "featurePrinciple": "Chaque fonctionnalité (ex : 'clubs') possède ses propres components, hooks, api, utils, constants, types et index.ts pour la modularité.",
+      "sharedExplanation": "Le code réutilisable (components, hooks, utils, types) se trouve dans shared/.",
+      "libExplanation": "Les bibliothèques externes, clients API et providers sont dans lib/.",
+      "stylesExplanation": "Les styles globaux et thèmes sont dans styles/.",
+      "publicExplanation": "Les fichiers statiques sont servis depuis public/."
+    },
+    "bestPractices": {
+      "modular": "Architecture modulaire avec principes de conception pilotée par le domaine",
+      "typeScript": "Développement type-safe avec TypeScript sur toute la pile",
+      "testing": "Tests unitaires et d'intégration complets avec Jest",
+      "documentation": "Documentation inline claire et spécifications API",
+      "gitWorkflow": "Workflow Git avec branches de fonctionnalités et pull requests",
+      "codeReview": "Processus de revue de code garantissant qualité et cohérence"
+    }
+  }
+}

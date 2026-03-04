@@ -1,0 +1,35 @@
+{
+  "notFound": "Competition not found.",
+  "categoryLabel": "Category:",
+  "divisionLabel": "Division:",
+  "divisionWithValue": "Division {value}",
+  "roundsLabel": "Rounds",
+  "matchesLabel": "Matches",
+  "selectLevel": "Select a level",
+  "national": {
+    "label": "National",
+    "description": "National competitions, clubs from all over France."
+  },
+  "regional": {
+    "label": "Regional",
+    "description": "Competitions by regional league."
+  },
+  "departmental": {
+    "label": "Departmental",
+    "description": "Local competitions by departmental committee."
+  },
+  "roundSelector": {
+    "dropdownLabel": "Round {round}",
+    "pillLabel": "R{round}",
+    "scrollLeft": "Scroll left",
+    "scrollRight": "Scroll right"
+  },
+  "switchGender": {
+    "toFeminine": "Feminine Championship",
+    "toMasculine": "Masculine Championship",
+    "ariaToFeminine": "See feminine championship",
+    "ariaToMasculine": "See masculine championship"
+  },
+  "leaderboardTitle": "Leaderboard",
+  "championshipsSectionTitle": "Championships"
+}

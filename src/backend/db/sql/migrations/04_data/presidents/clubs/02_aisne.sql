@@ -1,0 +1,21 @@
+INSERT INTO presidents (name, phone, email, address, code)
+VALUES
+('Thomas JUPIN', NULL, NULL, NULL, 'hdf0002001'),
+('Philippe POTIER', '0323235110', 'philippepotier@orange.fr', '2 CHEMIN DE LA MOTTE, 02320 ALLEMANT', 'hdf0002032'),
+('Yves CHATELAIN', '0617421812', 'yveschatelain59@orange.fr', '658 RUE DES DOCTEURS DEVILLERS, 02120 GUISE', 'hdf0002011'),
+('Maxime ANDIOLE', '0344406624', 'max60350@hotmail.com', '7 RUE DE LA COTE DES REVES, Berogne, 60350 CHELLES', 'hdf0002022'),
+('Lloyd DENS', '0625006579', 'dens.lloyd@hotmail.fr', '5 rue d''Alsace-Lorraine, 02680 GRUGIES', 'hdf0002038'),
+('Guy DRION', '0777721717', 'bridgitt@hotmail.fr', '10 RUE GUEGAIN BERLAN, 02100 GRICOURT', 'hdf0002010'),
+('Angelique CAPPOEN', NULL, 'angel.cappoen@gmail.com', NULL, 'hdf0002003'),
+('Geoffrey BOUAPHANH', '0778874273', 'Gbouaphanh@hotmail.fr', '19 grande rue, 02820 SAINT-ERME-OUTRE-ET-RAMECOURT', 'hdf0002015'),
+('Cyril DELIGNY', NULL, 'asggbasketball@gmail.com', NULL, 'hdf0002009'),
+('Elise POITTE', NULL, 'basketclubetreux@gmail.com', NULL, 'hdf0002048'),
+('Manuel OGET', '0664370257', 'manueloget@orange.fr', '22 rue Jacquard, 02110 BOHAIN-EN-VERMANDOIS', 'hdf0002004'),
+('Laurence NOUVION', '0780602249', 'l.nouvion@orange.fr', '12 rue Jules Guesde, 02830 SAINT-MICHEL', 'hdf0002017'),
+('Stephane COUTANT', NULL, NULL, NULL, 'hdf0002021'),
+('Fabien DUPIN', NULL, 'laon.basketball@laposte.net', NULL, 'hdf0002026'),
+('Damien KACZMAREK', NULL, 'Chaunybasketball@gmail.com', NULL, 'hdf0002006'),
+('Nicolas GIBBE', '0698426376', 'nicolas.gibbe@gmail.com', '20 rue Guillermin, 02100 SAINT-QUENTIN', 'hdf0002018'),
+('Daniel MEURICE', '0629174962', 'jeremy.leleuch@sfr.fr', '66 RUE DE GUISE, 02100 Saint Quentin, 02100 SAINT-QUENTIN', 'hdf0002043'),
+('Victor ANGLADE', NULL, 'abracq9@gmail.com', NULL, 'hdf0002020'),
+('Rachid KHALDI', NULL, 'president.ctbb@gmail.com', NULL, 'hdf0002005');

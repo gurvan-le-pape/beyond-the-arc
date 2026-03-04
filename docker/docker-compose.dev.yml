@@ -1,0 +1,31 @@
+services:
+  frontend:
+    build:
+      target: dev
+    environment:
+      - HOST=0.0.0.0
+    volumes:
+      - ../src/frontend:/app
+      - /app/node_modules
+
+  backend:
+    build:
+      target: dev
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ../src/backend:/app
+      - /app/node_modules
+      - /app/dist
+
+  database:
+    volumes:
+      - postgres_data:/var/lib/postgresql
+      - ../src/backend/db/migrations:/migrations
+      - ../src/backend/db/sql/db_dump.sql:/app/db/sql/db_dump.sql:ro
+
+  python-script:
+    environment: {}
+
+volumes:
+  postgres_data:

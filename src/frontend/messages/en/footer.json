@@ -1,0 +1,221 @@
+{
+  "contact": {
+    "title": "Get in Touch",
+    "intro": "Interested in discussing this project or exploring collaboration opportunities?",
+    "email": "Email",
+    "github": "GitHub",
+    "linkedin": "LinkedIn",
+    "aboutProject": "About This Project",
+    "projectDescription": "This is a portfolio project showcasing full-stack development skills with modern web technologies. Built to demonstrate clean architecture, scalable design, and attention to detail."
+  },
+  "about": {
+    "title": "About This Project",
+    "intro": "A comprehensive showcase of modern full-stack engineering with emphasis on maintainability, clarity, and scalability.",
+    "modular": {
+      "title": "Modular Architecture",
+      "description": "Features are broken down into small, focused components and services, making the codebase easy to navigate and extend."
+    },
+    "separation": {
+      "title": "Separation of Concerns",
+      "description": "UI, business logic, configuration, and data access are clearly separated, following best practices for both React and backend frameworks."
+    },
+    "reusability": {
+      "title": "Reusability",
+      "description": "Components, hooks, and utility functions are designed to be reused throughout the application, reducing duplication."
+    },
+    "scalability": {
+      "title": "Scalability",
+      "description": "The structure supports adding new features, modules, or endpoints with minimal friction, suitable for long-term growth."
+    },
+    "readability": {
+      "title": "Readability & Onboarding",
+      "description": "Consistent patterns and clear organization make it easy for new contributors to understand and work with the code."
+    },
+    "i18n": {
+      "title": "Internationalization",
+      "description": "User-facing strings are externalized for easy translation and localization across multiple languages."
+    },
+    "tooling": {
+      "title": "Modern Tooling",
+      "description": "Leverages TypeScript, automated formatting, linting, and a robust build system for reliability and productivity."
+    },
+    "exploreTitle": "Explore the Project",
+    "explore": "Discover the features, architecture, and documentation to learn more about this project and my approach to software engineering.",
+    "viewFeatures": "View Features",
+    "viewArchitecture": "View Architecture"
+  },
+  "architecture": {
+    "title": "Architecture & Tech Stack",
+    "subtitle": "A modern, scalable full-stack application built with industry-leading technologies",
+    "frontendTitle": "Frontend",
+    "backendTitle": "Backend",
+    "devopsTitle": "DevOps & Tooling",
+    "systemArchitecture": "System Architecture",
+    "frontend": {
+      "nextjsDesc": "React framework with SSR/SSG",
+      "tsDesc": "Type-safe development",
+      "tailwindDesc": "Utility-first styling",
+      "reactQueryDesc": "Server state management",
+      "i18nDesc": "Internationalization"
+    },
+    "backend": {
+      "nestjsDesc": "Node.js framework",
+      "prismaDesc": "Modern ORM",
+      "pgDesc": "Relational database",
+      "tsDesc": "End-to-end type safety",
+      "restDesc": "API architecture"
+    },
+    "devops": {
+      "dockerDesc": "Containerization",
+      "composeDesc": "Multi-container orchestration",
+      "jestDesc": "Testing framework",
+      "lintDesc": "Code quality tools",
+      "cicdDesc": "CI/CD pipeline"
+    },
+    "diagram": {
+      "client": "Client",
+      "server": "API Server",
+      "database": "Database"
+    },
+    "features": {
+      "modular": {
+        "title": "Modular Architecture",
+        "description": "Clean separation of concerns with reusable components"
+      },
+      "typeSafety": {
+        "title": "Type Safety",
+        "description": "End-to-end TypeScript for reliability and developer experience"
+      },
+      "scalable": {
+        "title": "Scalable Design",
+        "description": "Built to grow with containerization and modern DevOps"
+      }
+    }
+  },
+  "features": {
+    "title": "Features",
+    "subtitle": "Explore the powerful features that make this basketball platform comprehensive and user-friendly",
+    "leaderboards": {
+      "title": "Championship Leaderboards",
+      "description": "Real-time standings and rankings for all championship levels with detailed statistics and team performance metrics."
+    },
+    "matchSummary": {
+      "title": "Detailed Match Summary",
+      "description": "Comprehensive match breakdowns with player statistics, team comparisons, shot charts, and chronological event timeline."
+    },
+    "shotCharts": {
+      "title": "Interactive Shot Charts",
+      "description": "Visual representation of player shot locations with heatmaps, success rates, and detailed position analysis."
+    },
+    "playerComparison": {
+      "title": "Player Comparison",
+      "description": "Side-by-side player statistics comparison across multiple metrics including points, rebounds, assists, and efficiency."
+    },
+    "clubsMap": {
+      "title": "Interactive Clubs Map",
+      "description": "Geographic visualization of clubs across France with filtering by region, department, and competition level."
+    },
+    "teamRosters": {
+      "title": "Team Rosters",
+      "description": "Complete team rosters with player profiles, positions, and detailed statistics for each team member."
+    },
+    "matchSchedule": {
+      "title": "Match Schedules",
+      "description": "Comprehensive match calendars with dates, venues, and results for all competitions and divisions."
+    },
+    "liveStats": {
+      "title": "Live Match Statistics",
+      "description": "Real-time match statistics with possession tracking, momentum analysis, and live play-by-play updates."
+    },
+    "liveUpdates": {
+      "title": "Live Score Updates",
+      "description": "WebSocket-powered real-time score updates and match events as they happen on the court."
+    },
+    "userAccounts": {
+      "title": "User Accounts & Favorites",
+      "description": "Personalized experience with saved teams, followed players, and customized notifications."
+    },
+    "status": {
+      "live": "Live",
+      "coming-soon": "Coming Soon",
+      "planned": "Planned"
+    },
+    "highlightsTitle": "Additional Highlights",
+    "highlights": {
+      "i18n": {
+        "title": "Multi-language Support",
+        "description": "Full French and English translations for a global audience"
+      },
+      "search": {
+        "title": "Advanced Search & Filters",
+        "description": "Powerful filtering and search across teams, players, and competitions"
+      },
+      "responsive": {
+        "title": "Fully Responsive",
+        "description": "Optimized experience across desktop, tablet, and mobile devices"
+      }
+    }
+  },
+  "docs": {
+    "title": "Documentation",
+    "intro": "Comprehensive documentation covering setup, architecture, API reference, and contribution guidelines.",
+    "quickLinks": {
+      "github": "GitHub Repository",
+      "viewSource": "View source code",
+      "dataModel": "Data Model",
+      "apiDocs": "API Documentation",
+      "contact": "Get Help",
+      "getHelp": "Questions?"
+    },
+    "sections": {
+      "gettingStarted": {
+        "title": "Getting Started",
+        "content": "Learn how to set up and run the project locally for development."
+      },
+      "database": {
+        "title": "Database Schema",
+        "content": "Explore the complete database schema with entity relationships, table structures, and data flow."
+      },
+      "structure": {
+        "title": "Project Structure",
+        "content": "Understand the organization of the codebase with clear separation between frontend and backend modules."
+      },
+      "bestPractices": {
+        "title": "Best Practices",
+        "content": "Key engineering principles and patterns implemented throughout this project."
+      }
+    },
+    "database": {
+      "diagramTitle": "Entity Relationship Diagram",
+      "diagramAlt": "Database schema diagram showing all entities and their relationships",
+      "keyTables": "Key Database Tables",
+      "tables": {
+        "championships": "Championships and tournament structures",
+        "teams": "Team information and rosters",
+        "players": "Player profiles and details",
+        "matches": "Match data and results",
+        "clubs": "Club organizations and venues",
+        "stats": "Player and team statistics"
+      }
+    },
+    "structure": {
+      "backend": "Backend Structure (NestJS)",
+      "frontend": "Frontend Structure (Next.js)",
+      "frontendCode": "app/            # Next.js App Router (routing, layouts, pages)\n  (public)/      # Public routes (clubs, competitions, matches, players, teams)\n  (auth)/        # Auth routes (login, register)\n  api/           # API routes\nfeatures/        # Feature modules (domain logic, UI, hooks, api)\n  └── clubs/     # Example feature\n      ├── components/\n      ├── hooks/\n      ├── api/\n      ├── utils/\n      ├── constants/\n      ├── types/\n      └── index.ts\nshared/          # Shared components, hooks, utils, types\nlib/             # External integrations, providers, API clients\nstyles/          # Global styles and themes\npublic/          # Static assets\n",
+      "routingExplanation": "All routing is handled in app/ using Next.js App Router conventions.",
+      "featurePrinciple": "Each feature (e.g. 'clubs') contains its own components, hooks, api, utils, constants, types, and index.ts for modularity.",
+      "sharedExplanation": "Reusable code (components, hooks, utils, types) lives in shared/.",
+      "libExplanation": "External libraries, API clients, and providers are in lib/.",
+      "stylesExplanation": "Global styles and themes are in styles/.",
+      "publicExplanation": "Static files are served from public/."
+    },
+    "bestPractices": {
+      "modular": "Modular architecture with domain-driven design principles",
+      "typeScript": "Type-safe development with TypeScript across the entire stack",
+      "testing": "Comprehensive unit and integration testing with Jest",
+      "documentation": "Clear inline documentation and API specifications",
+      "gitWorkflow": "Git workflow with feature branches and pull requests",
+      "codeReview": "Code review process ensuring quality and consistency"
+    }
+  }
+}

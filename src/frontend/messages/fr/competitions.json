@@ -1,0 +1,35 @@
+{
+  "notFound": "Championship non trouvé.",
+  "categoryLabel": "Catégorie :",
+  "divisionLabel": "Division :",
+  "divisionWithValue": "Division {value}",
+  "roundsLabel": "Journées",
+  "matchesLabel": "Matchs",
+  "selectLevel": "Sélectionner un level",
+  "national": {
+    "label": "National",
+    "description": "Compétitions nationales, clubs de toute la France."
+  },
+  "regional": {
+    "label": "Régional",
+    "description": "Compétitions par league."
+  },
+  "departmental": {
+    "label": "Departmental",
+    "description": "Compétitions locales par comité départemental."
+  },
+  "roundSelector": {
+    "dropdownLabel": "Journée {round}",
+    "pillLabel": "J{round}",
+    "scrollLeft": "Défiler à gauche",
+    "scrollRight": "Défiler à droite"
+  },
+  "switchGender": {
+    "toFeminine": "Championship female",
+    "toMasculine": "Championship male",
+    "ariaToFeminine": "Voir championship féminin",
+    "ariaToMasculine": "Voir championship masculin"
+  },
+  "leaderboardTitle": "Classement",
+  "championshipsSectionTitle": "Championships"
+}

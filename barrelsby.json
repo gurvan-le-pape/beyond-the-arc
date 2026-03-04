@@ -1,0 +1,104 @@
+{
+  "directory": [
+    "./src/frontend/features/competitions/components",
+    "./src/frontend/features/competitions/constants",
+    "./src/frontend/features/competitions/hooks",
+    "./src/frontend/features/competitions/utils",
+
+    "./src/frontend/features/competitions/championships/api",
+    "./src/frontend/features/competitions/championships/components",
+    "./src/frontend/features/competitions/championships/constants",
+    "./src/frontend/features/competitions/championships/hooks",
+    "./src/frontend/features/competitions/championships/types",
+    "./src/frontend/features/competitions/championships/utils",
+
+    "./src/frontend/features/competitions/leaderboards/api",
+    "./src/frontend/features/competitions/leaderboards/types",
+
+    "./src/frontend/features/competitions/pools/api",
+    "./src/frontend/features/competitions/pools/types",
+
+    "./src/frontend/features/geography/api",
+
+    "./src/frontend/features/geography/departments/types",
+
+    "./src/frontend/features/matches/api",
+    "./src/frontend/features/matches/components",
+    "./src/frontend/features/matches/constants",
+    "./src/frontend/features/matches/hooks",
+    "./src/frontend/features/matches/types",
+    "./src/frontend/features/matches/utils",
+
+    "./src/frontend/features/organizations/clubs/components",
+    "./src/frontend/features/organizations/clubs/hooks",
+    "./src/frontend/features/organizations/clubs/api",
+    "./src/frontend/features/organizations/clubs/utils",
+    "./src/frontend/features/organizations/clubs/constants",
+
+    "./src/frontend/features/organizations/committees/api",
+    "./src/frontend/features/organizations/committees/types",
+
+    "./src/frontend/features/organizations/leagues/api",
+    "./src/frontend/features/organizations/leagues/types",
+
+    "./src/frontend/features/players/api",
+    "./src/frontend/features/players/components",
+    "./src/frontend/features/players/constants",
+    "./src/frontend/features/players/hooks",
+    "./src/frontend/features/players/types",
+    "./src/frontend/features/players/utils",
+
+    "./src/frontend/features/teams/api",
+    "./src/frontend/features/teams/components",
+    "./src/frontend/features/teams/constants",
+    "./src/frontend/features/teams/hooks",
+    "./src/frontend/features/teams/types",
+    "./src/frontend/features/teams/utils",
+
+    "./src/frontend/shared/components/charts",
+    "./src/frontend/shared/components/entity",
+    "./src/frontend/shared/components/layouts",
+    "./src/frontend/shared/components/ui/composite",
+    "./src/frontend/shared/components/ui/feedback",
+    "./src/frontend/shared/components/ui/forms",
+    "./src/frontend/shared/components/ui/primitives",
+    "./src/frontend/shared/constants",
+    "./src/frontend/shared/hooks",
+    "./src/frontend/shared/types",
+    "./src/frontend/shared/utils",
+
+    "./src/frontend/lib/providers",
+
+    "src/backend/common/constants",
+    "src/backend/common/decorators",
+    "src/backend/common/dto",
+    "src/backend/common/filters",
+    "src/backend/common/interceptors",
+    "src/backend/common/middleware",
+    "src/backend/common/pipes",
+    "src/backend/common/types",
+
+    "src/backend/modules/competitions/championships/dto",
+    "src/backend/modules/competitions/leaderboards/dto",
+    "src/backend/modules/competitions/pools/dto",
+
+    "src/backend/modules/geography/dto",
+    "src/backend/modules/geography/departments/dto",
+    "src/backend/modules/geography/regions/dto",
+
+    "src/backend/modules/matches/dto",
+
+    "src/backend/modules/organizations/clubs/dto",
+    "src/backend/modules/organizations/committees/dto",
+    "src/backend/modules/organizations/leagues/dto",
+
+    "src/backend/modules/players/dto",
+    "src/backend/modules/teams/dto"
+  ],
+  "delete": true,
+  "watch": true,
+  "location": "top",
+  "structure": "flat",
+  "barrelName": "index.ts",
+  "exclude": [".*\\.spec\\.ts$", ".*\\.test\\.ts$", "server-api-client\\.ts$"]
+}

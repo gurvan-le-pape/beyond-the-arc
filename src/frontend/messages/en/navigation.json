@@ -1,0 +1,47 @@
+{
+  "nav": {
+    "competitions": "Competitions",
+    "players": "Players",
+    "teams": "Teams",
+    "clubs": "Clubs",
+    "matches": "Matches",
+    "stats": "Statistics"
+  },
+  "header": {
+    "mainNavAriaLabel": "Main navigation",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "lightMode": "Switch to light mode",
+    "darkMode": "Switch to dark mode"
+  },
+  "footer": {
+    "projectName": "Beyond The Arc",
+    "tagline": "Full-stack platform exploring basketball through interactive maps, statistics, and comprehensive data visualizations.",
+    "portfolioNote": "Demonstrating data processing, web architecture, and modern UI development",
+    "navigationAriaLabel": "Footer navigation",
+    "about": "About",
+    "features": "Features",
+    "architecture": "Architecture",
+    "documentation": "Documentation",
+    "contact": "Contact",
+    "copyright": "© {year} {name}. All rights reserved.",
+    "featuredWork": "Featured",
+    "project": "Project",
+    "resources": "Resources",
+    "clubsMap": "Interactive Club Map",
+    "statistics": "Statistics Dashboard",
+    "teams": "Teams Explorer",
+    "sourceCode": "Source Code",
+    "officialSite": "Official FFBB",
+    "madeWith": "Built with Next.js, NestJS & TypeScript",
+    "nonCommercial": "Non-commercial portfolio project",
+    "dataDisclaimer": "Data aggregated from FFBB for educational purposes",
+    "github": "Visit GitHub profile",
+    "linkedin": "Visit LinkedIn profile",
+    "email": "Send email"
+  },
+  "logo": {
+    "alt": "Basketball Logo",
+    "appName": "Beyond The Arc"
+  }
+}

@@ -1,0 +1,64 @@
+// src/frontend/shared/components/charts/overlays/hotspots/PaintZones.tsx
+import React from "react";
+
+import { RectZone } from "@/shared/components/charts";
+import { binShotsByZones } from "@/shared/utils/charts/overlays/hotspots/binShotsByZones";
+import { getPaintZones } from "@/shared/utils/charts/overlays/hotspots/zones/shotZonesPaint";
+
+interface PaintZonesProps {
+  shots: any[];
+  xScale: (x: number) => number;
+  yScale: (y: number) => number;
+  colorScale: (t: number) => string;
+  maxTotal: number;
+  onZoneHover: (zoneKey: string, stats: any, e: React.MouseEvent) => void;
+  onZoneLeave: () => void;
+}
+
+const PaintZones: React.FC<PaintZonesProps> = ({
+  shots,
+  xScale,
+  yScale,
+  colorScale,
+  maxTotal,
+  onZoneHover,
+  onZoneLeave,
+}) => {
+  // Retrieve paint zones geometry
+  const zones = React.useMemo(() => getPaintZones(), []);
+
+  // Bin shots into zones
+  const zoneStats = React.useMemo(
+    () => binShotsByZones(shots, zones),
+    [shots, zones],
+  );
+
+  return (
+    <g>
+      {zones.map((zone) => {
+        const stats = zoneStats[zone.key];
+        const fill = colorScale(stats.total);
+        const fillOpacity = stats.total > 0 ? 0.7 : 0.18;
+        const stroke = "#222";
+        const strokeWidth = 1;
+        return (
+          <RectZone
+            key={zone.key}
+            zone={zone}
+            stats={stats}
+            xScale={xScale}
+            yScale={yScale}
+            fill={fill}
+            fillOpacity={fillOpacity}
+            stroke={stroke}
+            strokeWidth={strokeWidth}
+            onMouseMove={(e) => onZoneHover(zone.key, stats, e)}
+            onMouseLeave={onZoneLeave}
+          />
+        );
+      })}
+    </g>
+  );
+};
+
+export default PaintZones;
