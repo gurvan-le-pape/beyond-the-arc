@@ -12,7 +12,7 @@ import {
 } from "@nestjs/common";
 import { Cache } from "cache-manager";
 import { Observable, of } from "rxjs";
-import { tap } from "rxjs/operators";
+import { mergeMap } from "rxjs/operators";
 
 interface CacheInterceptorOptions {
   ttl?: number;
@@ -36,7 +36,6 @@ export function CacheInterceptor(
 ): Type<NestInterceptor> {
   @Injectable()
   class MixinCacheInterceptor implements NestInterceptor {
-    // ✅ Fixed: Use MixinCacheInterceptor.name instead of CacheInterceptor.name
     private readonly logger = new Logger(MixinCacheInterceptor.name);
     private readonly ttl: number = options.ttl ?? 300000;
 
@@ -68,9 +67,10 @@ export function CacheInterceptor(
 
       // If not in cache, execute the handler and cache the result
       return next.handle().pipe(
-        tap(async (response) => {
+        mergeMap(async (response) => {
           await this.cacheManager.set(cacheKey, response, this.ttl);
           this.logger.debug(`Cached response for ${url} (TTL: ${this.ttl}ms)`);
+          return response;
         }),
       );
     }
