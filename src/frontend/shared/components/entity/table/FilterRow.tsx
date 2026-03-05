@@ -1,7 +1,7 @@
 // src/frontend/shared/components/entity/table/FilterRow.tsx
 import React from "react";
-import type { FilterKey } from "types";
 
+import type { FilterKey } from "@/shared/types";
 import type { FilterRenderer } from "@/shared/utils/tableFilters";
 
 interface FilterRowProps<RowType> {
