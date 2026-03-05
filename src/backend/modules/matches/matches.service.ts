@@ -543,53 +543,80 @@ export class MatchesService {
     return limit > 0 ? Math.min(limit, 100) : 50;
   }
 
+  private buildPoolFilter(
+    filters?: MatchFilters,
+  ): Prisma.PoolsWhereInput | undefined {
+    if (filters?.poolId) return undefined;
+    if (
+      !filters?.level &&
+      !filters?.division &&
+      !filters?.category &&
+      !filters?.gender
+    )
+      return undefined;
+
+    const championship: Prisma.ChampionshipsWhereInput = {};
+    if (filters?.level) championship.level = filters.level;
+    if (filters?.division) championship.division = filters.division;
+    if (filters?.category) championship.category = filters.category;
+    if (filters?.gender) championship.gender = filters.gender;
+
+    return { championship };
+  }
+
+  private buildOrganizationFilter(
+    filters?: MatchFilters,
+  ): Prisma.MatchesWhereInput[] | undefined {
+    if (!filters?.committeeId && !filters?.leagueId) return undefined;
+
+    const buildClubFilter = (): Prisma.ClubsWhereInput => {
+      const club: Prisma.ClubsWhereInput = {};
+      if (filters?.committeeId) club.committeeId = filters.committeeId;
+      if (filters?.leagueId) club.committee = { leagueId: filters.leagueId };
+      return club;
+    };
+
+    const club = buildClubFilter();
+    return [{ homeTeam: { club } }, { awayTeam: { club } }];
+  }
+
+  private buildSearchFilter(search: string): Prisma.MatchesWhereInput[] {
+    return [
+      {
+        homeTeam: { club: { name: { contains: search, mode: "insensitive" } } },
+      },
+      {
+        awayTeam: { club: { name: { contains: search, mode: "insensitive" } } },
+      },
+    ];
+  }
+
+  /**
+   * Builds the Prisma where clause from filters.
+   *
+   * @param filters - Match filters
+   * @returns Prisma where clause
+   */
   private buildWhereClause(filters?: MatchFilters): Prisma.MatchesWhereInput {
     const where: Prisma.MatchesWhereInput = {};
 
-    if (filters?.poolId) {
-      where.poolId = filters.poolId;
-    }
-
-    if (filters?.championshipId) {
+    if (filters?.poolId) where.poolId = filters.poolId;
+    if (filters?.championshipId)
       where.pool = { championshipId: filters.championshipId };
+
+    const poolFilter = this.buildPoolFilter(filters);
+    if (filters?.championshipId && poolFilter) {
+      where.pool = { championshipId: filters.championshipId, ...poolFilter };
+    } else if (filters?.championshipId) {
+      where.pool = { championshipId: filters.championshipId };
+    } else if (poolFilter) {
+      where.pool = poolFilter;
     }
 
-    if (
-      filters?.level ||
-      filters?.division ||
-      filters?.category ||
-      filters?.gender
-    ) {
-      if (!where.pool) where.pool = {};
-      const championship: Prisma.ChampionshipsWhereInput = {};
-      if (filters?.level) championship.level = filters.level;
-      if (filters?.division) championship.division = filters.division;
-      if (filters?.category) championship.category = filters.category;
-      if (filters?.gender) championship.gender = filters.gender;
-      (where.pool as Prisma.PoolsWhereInput).championship = championship;
-    }
+    const orgFilter = this.buildOrganizationFilter(filters);
+    if (orgFilter) where.OR = orgFilter;
 
-    if (filters?.committeeId || filters?.leagueId) {
-      const orClauses: Prisma.MatchesWhereInput[] = [];
-
-      const homeTeamClub: Prisma.ClubsWhereInput = {};
-      if (filters?.committeeId) homeTeamClub.committeeId = filters.committeeId;
-      if (filters?.leagueId)
-        homeTeamClub.committee = { leagueId: filters.leagueId };
-      orClauses.push({ homeTeam: { club: homeTeamClub } });
-
-      const awayTeamClub: Prisma.ClubsWhereInput = {};
-      if (filters?.committeeId) awayTeamClub.committeeId = filters.committeeId;
-      if (filters?.leagueId)
-        awayTeamClub.committee = { leagueId: filters.leagueId };
-      orClauses.push({ awayTeam: { club: awayTeamClub } });
-
-      where.OR = orClauses;
-    }
-
-    if (filters?.matchday) {
-      where.matchday = filters.matchday;
-    }
+    if (filters?.matchday) where.matchday = filters.matchday;
 
     if (filters?.date) {
       where.date = {
@@ -598,20 +625,7 @@ export class MatchesService {
       };
     }
 
-    if (filters?.search) {
-      where.OR = [
-        {
-          homeTeam: {
-            club: { name: { contains: filters.search, mode: "insensitive" } },
-          },
-        },
-        {
-          awayTeam: {
-            club: { name: { contains: filters.search, mode: "insensitive" } },
-          },
-        },
-      ];
-    }
+    if (filters?.search) where.OR = this.buildSearchFilter(filters.search);
 
     return where;
   }

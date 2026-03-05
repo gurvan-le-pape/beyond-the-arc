@@ -7,7 +7,8 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import React from "react";
-import type { Pagination as PaginationType } from "types";
+
+import type { Pagination as PaginationType } from "@/shared/types";
 
 interface PaginationProps {
   pagination: PaginationType | null;
