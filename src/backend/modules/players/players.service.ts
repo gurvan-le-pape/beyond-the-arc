@@ -408,6 +408,45 @@ export class PlayersService {
     return limit > 0 ? Math.min(limit, 100) : 50;
   }
 
+  private buildTeamOrganizationFilter(
+    filters?: PlayerFilters,
+  ): Prisma.TeamsWhereInput {
+    const teamWhere: Prisma.TeamsWhereInput = {};
+    if (filters?.clubId || filters?.teamId) return teamWhere;
+
+    if (filters?.level) {
+      teamWhere.pool = { championship: { level: filters.level } };
+    }
+
+    if (
+      filters?.level === CompetitionLevel.DEPARTMENTAL &&
+      filters?.committeeId
+    ) {
+      teamWhere.club = { committeeId: filters.committeeId };
+    } else if (
+      filters?.level === CompetitionLevel.REGIONAL &&
+      filters?.leagueId
+    ) {
+      teamWhere.club = { committee: { leagueId: filters.leagueId } };
+    }
+
+    return teamWhere;
+  }
+
+  private buildTeamFilter(filters?: PlayerFilters): Prisma.TeamsWhereInput {
+    const teamWhere: Prisma.TeamsWhereInput = {
+      ...this.buildTeamOrganizationFilter(filters),
+    };
+
+    if (filters?.teamId) teamWhere.id = filters.teamId;
+    if (filters?.teamNumber) teamWhere.number = filters.teamNumber;
+    if (filters?.clubId) teamWhere.clubId = filters.clubId;
+    if (filters?.category) teamWhere.category = filters.category;
+    if (filters?.gender) teamWhere.gender = filters.gender;
+
+    return teamWhere;
+  }
+
   /**
    * Builds the Prisma where clause from filters.
    *
@@ -417,57 +456,12 @@ export class PlayersService {
   private buildWhereClause(filters?: PlayerFilters): Prisma.PlayersWhereInput {
     const where: Prisma.PlayersWhereInput = {};
 
-    if (filters?.name) {
+    if (filters?.name)
       where.name = { contains: filters.name, mode: "insensitive" };
-    }
+    if (filters?.number) where.number = filters.number;
 
-    if (filters?.number) {
-      where.number = filters.number;
-    }
-
-    const teamWhere: Prisma.TeamsWhereInput = {};
-
-    if (filters?.teamId) {
-      teamWhere.id = filters.teamId;
-    }
-
-    if (filters?.teamNumber) {
-      teamWhere.number = filters.teamNumber;
-    }
-
-    if (filters?.clubId) {
-      teamWhere.clubId = filters.clubId;
-    }
-
-    if (!filters?.clubId && !filters?.teamId) {
-      if (filters?.level) {
-        teamWhere.pool = { championship: { level: filters.level } };
-      }
-
-      if (
-        filters?.level === CompetitionLevel.DEPARTMENTAL &&
-        filters?.committeeId
-      ) {
-        teamWhere.club = { committeeId: filters.committeeId };
-      } else if (
-        filters?.level === CompetitionLevel.REGIONAL &&
-        filters?.leagueId
-      ) {
-        teamWhere.club = { committee: { leagueId: filters.leagueId } };
-      }
-    }
-
-    if (filters?.category) {
-      teamWhere.category = filters.category;
-    }
-
-    if (filters?.gender) {
-      teamWhere.gender = filters.gender;
-    }
-
-    if (Object.keys(teamWhere).length > 0) {
-      where.team = teamWhere;
-    }
+    const teamWhere = this.buildTeamFilter(filters);
+    if (Object.keys(teamWhere).length > 0) where.team = teamWhere;
 
     return where;
   }

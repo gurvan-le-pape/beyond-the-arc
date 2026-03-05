@@ -600,64 +600,74 @@ export class TeamsService {
     return limit > 0 ? Math.min(limit, 100) : 50;
   }
 
+  private buildPoolFilter(
+    filters?: TeamFilters,
+  ): Prisma.PoolsWhereInput | undefined {
+    if (!filters?.level && !filters?.division && !filters?.poolLetter)
+      return undefined;
+
+    const championship: Prisma.ChampionshipsWhereInput = {};
+    if (filters?.level) championship.level = filters.level;
+    if (filters?.division) championship.division = filters.division;
+
+    return {
+      championship,
+      ...(filters?.poolLetter ? { letter: filters.poolLetter } : {}),
+    };
+  }
+
+  private buildClubFilter(
+    filters?: TeamFilters,
+  ): Prisma.ClubsWhereInput | undefined {
+    if (
+      !filters?.clubId &&
+      !filters?.committeeId &&
+      !filters?.leagueId &&
+      !filters?.clubName
+    )
+      return undefined;
+
+    const clubWhere: Prisma.ClubsWhereInput = {};
+
+    if (filters?.clubId) clubWhere.id = filters.clubId;
+
+    if (
+      filters?.level === CompetitionLevel.DEPARTMENTAL &&
+      filters?.committeeId
+    ) {
+      clubWhere.committeeId = filters.committeeId;
+    } else if (
+      filters?.level === CompetitionLevel.REGIONAL &&
+      filters?.leagueId
+    ) {
+      clubWhere.committee = { leagueId: filters.leagueId };
+    }
+
+    if (filters?.clubName) {
+      clubWhere.name = { contains: filters.clubName, mode: "insensitive" };
+    }
+
+    return clubWhere;
+  }
+
   /**
    * Builds the Prisma where clause from filters.
+   *
+   * @param filters - Team filters
+   * @returns Prisma where clause
    */
   private buildWhereClause(filters?: TeamFilters): Prisma.TeamsWhereInput {
     const where: Prisma.TeamsWhereInput = {};
 
-    if (filters?.level || filters?.division || filters?.poolLetter) {
-      const championship: Prisma.ChampionshipsWhereInput = {};
-      if (filters?.level) championship.level = filters.level;
-      if (filters?.division) championship.division = filters.division;
+    const poolFilter = this.buildPoolFilter(filters);
+    if (poolFilter) where.pool = poolFilter;
 
-      where.pool = {
-        championship,
-        ...(filters?.poolLetter ? { letter: filters.poolLetter } : {}),
-      };
-    }
+    const clubFilter = this.buildClubFilter(filters);
+    if (clubFilter) where.club = clubFilter;
 
-    if (filters?.clubId || filters?.committeeId || filters?.leagueId) {
-      const clubWhere: Prisma.ClubsWhereInput = {};
-
-      if (filters.clubId) {
-        clubWhere.id = filters.clubId;
-      }
-
-      if (
-        filters.level === CompetitionLevel.DEPARTMENTAL &&
-        filters.committeeId
-      ) {
-        clubWhere.committeeId = filters.committeeId;
-      } else if (
-        filters.level === CompetitionLevel.REGIONAL &&
-        filters.leagueId
-      ) {
-        clubWhere.committee = { leagueId: filters.leagueId };
-      }
-
-      where.club = clubWhere;
-    }
-
-    if (filters?.number !== undefined) {
-      where.number = filters.number;
-    }
-
-    if (filters?.category) {
-      where.category = filters.category;
-    }
-
-    if (filters?.gender) {
-      where.gender = filters.gender;
-    }
-
-    if (filters?.clubName) {
-      if (!where.club) where.club = {};
-      (where.club as Prisma.ClubsWhereInput).name = {
-        contains: filters.clubName,
-        mode: "insensitive",
-      };
-    }
+    if (filters?.number !== undefined) where.number = filters.number;
+    if (filters?.category) where.category = filters.category;
+    if (filters?.gender) where.gender = filters.gender;
 
     return where;
   }
