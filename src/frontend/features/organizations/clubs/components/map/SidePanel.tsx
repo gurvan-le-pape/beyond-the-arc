@@ -251,9 +251,11 @@ export const SidePanel = memo(function SidePanel({
 
       {/* Overlay (mobile only, when open) */}
       {isOpen && (
-        <div
-          className="fixed inset-0 top-16 bg-black/50 z-10 lg:hidden"
+        <button
+          type="button"
+          className="fixed inset-0 top-16 bg-black/50 z-10 lg:hidden w-full cursor-default"
           onClick={handleToggleOpen}
+          aria-label="Close menu"
         />
       )}
     </>
