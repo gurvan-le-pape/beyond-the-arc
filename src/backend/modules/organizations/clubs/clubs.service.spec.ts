@@ -629,4 +629,79 @@ describe("ClubsService", () => {
       expect(result[0].committeeId).toBeNull();
     });
   });
+
+  describe("getAllDepartments", () => {
+    it("should return all departments with region info", async () => {
+      prisma.committees.findMany.mockResolvedValue([
+        {
+          id: 1,
+          name: "Comité de l'Ain",
+          department: { id: 1, name: "Ain", code: "01" },
+          leagueId: 10,
+          league: { id: 10, regionId: 5 },
+          _count: { clubs: 15 },
+        },
+        {
+          id: 2,
+          name: "Comité du Rhône",
+          department: { id: 2, name: "Rhône", code: "69" },
+          leagueId: 10,
+          league: { id: 10, regionId: 5 },
+          _count: { clubs: 25 },
+        },
+      ]);
+
+      const result = await service.getAllDepartments();
+
+      expect(result).toHaveLength(2);
+      expect(result[0]).toEqual({
+        id: 1,
+        name: "Comité de l'Ain",
+        department: { id: 1, name: "Ain", code: "01" },
+        leagueId: 10,
+        region: { id: 5 },
+        clubCount: 15,
+      });
+      expect(result[1].clubCount).toBe(25);
+      expect(prisma.committees.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ orderBy: { name: "asc" } }),
+      );
+    });
+
+    it("should return empty array when no departments found", async () => {
+      prisma.committees.findMany.mockResolvedValue([]);
+
+      const result = await service.getAllDepartments();
+
+      expect(result).toEqual([]);
+    });
+
+    it("should throw InternalServerErrorException on database error", async () => {
+      prisma.committees.findMany.mockRejectedValue(new Error("Database error"));
+
+      await expect(service.getAllDepartments()).rejects.toThrow(
+        InternalServerErrorException,
+      );
+      await expect(service.getAllDepartments()).rejects.toThrow(
+        "Failed to fetch all departments",
+      );
+    });
+  });
+
+  describe("getClubCountsByRegion (edge cases)", () => {
+    it("should skip entries where committeeId is null", async () => {
+      prisma.clubs.groupBy.mockResolvedValue([
+        { committeeId: null, _count: { id: 3 } },
+        { committeeId: 1, _count: { id: 5 } },
+      ]);
+      prisma.committees.findMany.mockResolvedValue([{ id: 1, leagueId: 10 }]);
+      prisma.leagues.findMany.mockResolvedValue([
+        { id: 10, name: "League X", region: { code: "01" } },
+      ]);
+
+      const result = await service.getClubCountsByRegion();
+
+      expect(result[0].clubCount).toBe(5);
+    });
+  });
 });

@@ -295,4 +295,220 @@ describe("PlayersService", () => {
       );
     });
   });
+
+  describe("validatePage", () => {
+    it("should return 1 when page is 0", async () => {
+      mockPrismaService.players.findMany.mockResolvedValue([]);
+      mockPrismaService.players.count.mockResolvedValue(0);
+
+      const result = await service.findAllPlayers({ page: 0 });
+      expect(result.page).toBe(1);
+    });
+
+    it("should return 1 when page is negative", async () => {
+      mockPrismaService.players.findMany.mockResolvedValue([]);
+      mockPrismaService.players.count.mockResolvedValue(0);
+
+      const result = await service.findAllPlayers({ page: -5 });
+      expect(result.page).toBe(1);
+    });
+  });
+
+  describe("validateLimit", () => {
+    it("should return 50 when limit is 0", async () => {
+      mockPrismaService.players.findMany.mockResolvedValue([]);
+      mockPrismaService.players.count.mockResolvedValue(0);
+
+      const result = await service.findAllPlayers({ limit: 0 });
+      expect(result.limit).toBe(50);
+    });
+
+    it("should return 50 when limit is negative", async () => {
+      mockPrismaService.players.findMany.mockResolvedValue([]);
+      mockPrismaService.players.count.mockResolvedValue(0);
+
+      const result = await service.findAllPlayers({ limit: -1 });
+      expect(result.limit).toBe(50);
+    });
+  });
+
+  describe("buildWhereClause", () => {
+    beforeEach(() => {
+      mockPrismaService.players.findMany.mockResolvedValue([]);
+      mockPrismaService.players.count.mockResolvedValue(0);
+    });
+
+    it("should apply name filter", async () => {
+      await service.findAllPlayers({ name: "John" });
+
+      expect(mockPrismaService.players.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            name: { contains: "John", mode: "insensitive" },
+          }),
+        }),
+      );
+    });
+
+    it("should apply number filter", async () => {
+      await service.findAllPlayers({ number: 10 });
+
+      expect(mockPrismaService.players.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({ number: 10 }),
+        }),
+      );
+    });
+
+    it("should apply teamId filter", async () => {
+      await service.findAllPlayers({ teamId: 3 });
+
+      expect(mockPrismaService.players.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            team: expect.objectContaining({ id: 3 }),
+          }),
+        }),
+      );
+    });
+
+    it("should apply teamNumber filter", async () => {
+      await service.findAllPlayers({ teamNumber: 2 });
+
+      expect(mockPrismaService.players.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            team: expect.objectContaining({ number: 2 }),
+          }),
+        }),
+      );
+    });
+
+    it("should apply clubId filter", async () => {
+      await service.findAllPlayers({ clubId: 5 });
+
+      expect(mockPrismaService.players.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            team: expect.objectContaining({ clubId: 5 }),
+          }),
+        }),
+      );
+    });
+
+    it("should apply category filter", async () => {
+      await service.findAllPlayers({ category: "U18" });
+
+      expect(mockPrismaService.players.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            team: expect.objectContaining({ category: "U18" }),
+          }),
+        }),
+      );
+    });
+
+    it("should apply gender filter", async () => {
+      await service.findAllPlayers({ gender: "male" });
+
+      expect(mockPrismaService.players.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            team: expect.objectContaining({ gender: "male" }),
+          }),
+        }),
+      );
+    });
+
+    it("should apply level filter", async () => {
+      await service.findAllPlayers({ level: "regional" });
+
+      expect(mockPrismaService.players.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            team: expect.objectContaining({
+              pool: { championship: { level: "regional" } },
+            }),
+          }),
+        }),
+      );
+    });
+
+    it("should apply departmental level with committeeId", async () => {
+      await service.findAllPlayers({
+        level: "departmental",
+        committeeId: 3,
+      });
+
+      expect(mockPrismaService.players.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            team: expect.objectContaining({
+              club: { committeeId: 3 },
+            }),
+          }),
+        }),
+      );
+    });
+
+    it("should apply regional level with leagueId", async () => {
+      await service.findAllPlayers({ level: "regional", leagueId: 4 });
+
+      expect(mockPrismaService.players.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            team: expect.objectContaining({
+              club: { committee: { leagueId: 4 } },
+            }),
+          }),
+        }),
+      );
+    });
+  });
+
+  describe("mapToDto", () => {
+    it("should map pool when present", async () => {
+      mockPrismaService.players.findMany.mockResolvedValue([
+        {
+          id: 1,
+          name: "Player 1",
+          number: 10,
+          teamId: 1,
+          team: {
+            id: 1,
+            number: 1,
+            clubId: 1,
+            category: "U18",
+            gender: "male",
+            club: {
+              id: 1,
+              name: "Club A",
+              committee: {
+                id: 1,
+                name: "Committee A",
+                league: { id: 1, name: "League A" },
+              },
+            },
+            pool: {
+              id: 1,
+              name: "Pool A",
+              championship: {
+                id: 1,
+                name: "Champ A",
+                level: "regional",
+                division: 1,
+              },
+            },
+          },
+        },
+      ]);
+      mockPrismaService.players.count.mockResolvedValue(1);
+
+      const result = await service.findAllPlayers({});
+
+      expect(result.items[0].team.pool).not.toBeNull();
+      expect(result.items[0].team.pool?.name).toBe("Pool A");
+      expect(result.items[0].team.pool?.championship.level).toBe("regional");
+    });
+  });
 });
