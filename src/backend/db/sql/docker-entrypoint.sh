@@ -7,11 +7,11 @@ DUMP_FILE="/app/db/sql/db_dump.sql"
 # Function to recursively apply SQL files in a directory
 apply_migrations() {
     local dir="$1"
-    if [ -d "$dir" ]; then
+    if [[ -d "$dir" ]]; then
         echo "Applying migrations in $dir..."
         # Find all .sql files in the directory and subdirectories, sorted by path
         for file in $(find "$dir" -name "*.sql" | sort); do
-            if [ -s "$file" ]; then  # Check if the file is not empty
+            if [[ -s "$file" ]]; then  # Check if the file is not empty
                 echo "Applying $file..."
                 psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f "$file"
             else
@@ -23,7 +23,7 @@ apply_migrations() {
     fi
 }
 
-if [ -f "$DUMP_FILE" ]; then
+if [[ -f "$DUMP_FILE" ]]; then
     echo "Found database dump at $DUMP_FILE. Restoring..."
     psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f "$DUMP_FILE"
     echo "Database restored from dump."
