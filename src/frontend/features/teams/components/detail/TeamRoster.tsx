@@ -78,16 +78,16 @@ export const TeamRoster: React.FC<TeamRosterProps> = ({ players }) => {
           bValue = bStats.gp;
           break;
         case "ppg":
-          aValue = parseFloat(aStats.ppg);
-          bValue = parseFloat(bStats.ppg);
+          aValue = Number.parseFloat(aStats.ppg);
+          bValue = Number.parseFloat(bStats.ppg);
           break;
         case "rpg":
-          aValue = parseFloat(aStats.rpg);
-          bValue = parseFloat(bStats.rpg);
+          aValue = Number.parseFloat(aStats.rpg);
+          bValue = Number.parseFloat(bStats.rpg);
           break;
         case "apg":
-          aValue = parseFloat(aStats.apg);
-          bValue = parseFloat(bStats.apg);
+          aValue = Number.parseFloat(aStats.apg);
+          bValue = Number.parseFloat(bStats.apg);
           break;
       }
 

@@ -38,7 +38,7 @@ export default async function PlayerDetailPage({
   const tPlayers = await getTranslations({ locale, namespace: "players" });
 
   const playerId = Number.parseInt(playerIdStr, 10);
-  if (isNaN(playerId) || playerId <= 0) {
+  if (Number.isNaN(playerId) || playerId <= 0) {
     notFound();
   }
 

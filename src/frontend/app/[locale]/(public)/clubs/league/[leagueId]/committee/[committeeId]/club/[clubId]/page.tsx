@@ -55,11 +55,11 @@ export default async function ClubPage({ params }: ClubPageProps) {
   const clubId = Number.parseInt(clubIdStr, 10);
 
   if (
-    isNaN(leagueId) ||
+    Number.isNaN(leagueId) ||
     leagueId <= 0 ||
-    isNaN(committeeId) ||
+    Number.isNaN(committeeId) ||
     committeeId <= 0 ||
-    isNaN(clubId) ||
+    Number.isNaN(clubId) ||
     clubId <= 0
   ) {
     notFound();

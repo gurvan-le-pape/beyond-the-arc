@@ -73,9 +73,9 @@ export default async function DepartmentalChampionshipsDetailPage({
   const championshipId = Number.parseInt(championshiptIdStr, 10);
 
   if (
-    isNaN(committeeId) ||
+    Number.isNaN(committeeId) ||
     committeeId <= 0 ||
-    isNaN(championshipId) ||
+    Number.isNaN(championshipId) ||
     championshipId <= 0
   ) {
     // handle invalid params - import notFound if needed
