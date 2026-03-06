@@ -7,6 +7,6 @@
 export const normalizeString = (input: string): string => {
   return input
     .toLowerCase()
-    .normalize("NFD") // Normalize to decomposed form
-    .replace(/[\u0300-\u036f]/g, ""); // Remove diacritical marks (accents)
+    .normalize("NFD")
+    .replaceAll(/[\u0300-\u036f]/g, "");
 };

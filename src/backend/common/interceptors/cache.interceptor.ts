@@ -84,7 +84,7 @@ export function CacheInterceptor(
      */
     private generateCacheKey(url: string): string {
       // Sanitize URL to prevent cache key collisions
-      const sanitized = url.replace(/[^a-zA-Z0-9:/?=&_-]/g, "_");
+      const sanitized = url.replaceAll(/[^a-zA-Z0-9:/?=&_-]/g, "_");
       return `cache:${sanitized}`;
     }
   }

@@ -95,8 +95,8 @@ export const ShotModal: React.FC<ShotModalProps> = ({
                   const pngUrl = canvas.toDataURL("image/png");
                   const a = document.createElement("a");
                   a.href = pngUrl;
-                  a.download = `shotchart-${player.name.replace(
-                    / /g,
+                  a.download = `shotchart-${player.name.replaceAll(
+                    " ",
                     "_",
                   )}.png`;
                   document.body.appendChild(a);
