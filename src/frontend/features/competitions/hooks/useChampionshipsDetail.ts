@@ -3,7 +3,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import { useMatchesByPool } from "@/features/matches/api";
+import { useMatchesByPools } from "@/features/matches/api";
 import type { Match } from "@/features/matches/types/Match";
 import { useCommittee } from "@/features/organizations/committees/api/use-committees";
 import { useLeague } from "@/features/organizations/leagues/api/use-leagues";
@@ -13,7 +13,7 @@ import {
 } from "@/shared/constants";
 
 import { useChampionship } from "../championships/api";
-import { useLeaderboard } from "../leaderboards/api/use-leaderboards";
+import { useLeaderboards } from "../leaderboards/api/use-leaderboards";
 import { usePools } from "../pools/api/use-pools";
 
 /**
@@ -127,8 +127,8 @@ export function useChampionshipsDetail(
   // ============================================================================
   // Fetch leaderboards for all pools
   // ============================================================================
-  const leaderboardQueries = pools.map((pool) =>
-    useLeaderboard({ poolId: pool.id }, { enabled: !!pool.id }),
+  const leaderboardQueries = useLeaderboards(
+    pools.map((pool) => ({ poolId: pool.id })),
   );
 
   const leaderboards = useMemo(() => {
@@ -145,9 +145,7 @@ export function useChampionshipsDetail(
   // ============================================================================
   // Fetch matches for all pools
   // ============================================================================
-  const matchQueries = pools.map((pool) =>
-    useMatchesByPool(pool.id, { enabled: !!pool.id }),
-  );
+  const matchQueries = useMatchesByPools(pools.map((pool) => pool.id));
 
   const matches = useMemo(() => {
     const map: Record<number, Match[]> = {};

@@ -1,5 +1,5 @@
 // src/frontend/features/matches/api/use-matches.ts
-import { useQuery } from "@tanstack/react-query";
+import { useQueries, useQuery } from "@tanstack/react-query";
 
 import type { MatchFilters } from "../types/MatchFilters";
 import { matchesService } from "./matches.service";
@@ -69,6 +69,32 @@ export function useMatchesByPool(
     queryFn: () => matchesService.getByPoolId(poolId),
     enabled: options?.enabled ?? !!poolId,
     staleTime: 2 * 60 * 1000,
+  });
+}
+
+/**
+ * Hook to fetch matches for multiple pools simultaneously.
+ *
+ * Features:
+ * - Runs parallel queries for each pool
+ * - Automatic caching (2 minutes)
+ * - Background refetching
+ *
+ * @param poolIds - Array of pool IDs to fetch matches for
+ * @returns Array of React Query results, one per pool ID
+ *
+ * @example
+ * const matchQueries = useMatchesByPools(pools.map((pool) => pool.id));
+ * const data = matchQueries[0]?.data;
+ */
+export function useMatchesByPools(poolIds: number[]) {
+  return useQueries({
+    queries: poolIds.map((poolId) => ({
+      queryKey: matchesKeys.byPool(poolId),
+      queryFn: () => matchesService.getByPoolId(poolId),
+      enabled: !!poolId,
+      staleTime: 2 * 60 * 1000,
+    })),
   });
 }
 

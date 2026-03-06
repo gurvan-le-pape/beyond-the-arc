@@ -1,5 +1,5 @@
 // src/frontend/features/competitions/leaderboards/api/use-leaderboards.ts
-import { useQuery } from "@tanstack/react-query";
+import { useQueries, useQuery } from "@tanstack/react-query";
 
 import { leaderboardsKeys } from "@/features/competitions/leaderboards/api/leaderboardsKeys";
 
@@ -14,7 +14,7 @@ import { leaderboardsService } from "./leaderboards.service";
  * - Background refetching
  * - Conditional enabling
  *
- * @param filters - Filter criteria (poolId, championshipId, etc.)
+ * @param filters - Filter criteria (poolId)
  * @param options - Additional query options
  * @returns React Query result with leaderboard data
  *
@@ -37,5 +37,31 @@ export function useLeaderboard(
     queryFn: () => leaderboardsService.getAll(filters),
     enabled: options?.enabled ?? true,
     staleTime: 2 * 60 * 1000, // 2 minutes (leaderboards change frequently)
+  });
+}
+
+/**
+ * Hook to fetch leaderboard data for multiple pools simultaneously.
+ *
+ * Features:
+ * - Runs parallel queries for each pool
+ * - Automatic caching (2 minutes - leaderboards change frequently)
+ * - Background refetching
+ *
+ * @param filters - Array of filter criteria, one per pool
+ * @returns Array of React Query results, one per filter
+ *
+ * @example
+ * const leaderboardQueries = useLeaderboards(pools.map((pool) => ({ poolId: pool.id })));
+ * const data = leaderboardQueries[0]?.data;
+ */
+export function useLeaderboards(filters: LeaderboardFilters[]) {
+  return useQueries({
+    queries: filters.map((filter) => ({
+      queryKey: leaderboardsKeys.list(filter),
+      queryFn: () => leaderboardsService.getAll(filter),
+      enabled: !!filter.poolId,
+      staleTime: 2 * 60 * 1000, // 2 minutes (leaderboards change frequently)
+    })),
   });
 }
