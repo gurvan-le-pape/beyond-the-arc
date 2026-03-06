@@ -439,4 +439,249 @@ describe("MatchesService", () => {
       expect(result[0].shotLocation?.x).toBe(5.5);
     });
   });
+
+  describe("validatePage", () => {
+    it("should return 1 when page is 0", async () => {
+      mockPrismaService.matches.findMany.mockResolvedValue([]);
+      mockPrismaService.matches.count.mockResolvedValue(0);
+
+      const result = await service.findAllMatches({ page: 0 });
+      expect(result.page).toBe(1);
+    });
+
+    it("should return 1 when page is negative", async () => {
+      mockPrismaService.matches.findMany.mockResolvedValue([]);
+      mockPrismaService.matches.count.mockResolvedValue(0);
+
+      const result = await service.findAllMatches({ page: -1 });
+      expect(result.page).toBe(1);
+    });
+  });
+
+  describe("validateLimit", () => {
+    it("should return 50 when limit is 0", async () => {
+      mockPrismaService.matches.findMany.mockResolvedValue([]);
+      mockPrismaService.matches.count.mockResolvedValue(0);
+
+      const result = await service.findAllMatches({ limit: 0 });
+      expect(result.limit).toBe(50);
+    });
+
+    it("should return 50 when limit is negative", async () => {
+      mockPrismaService.matches.findMany.mockResolvedValue([]);
+      mockPrismaService.matches.count.mockResolvedValue(0);
+
+      const result = await service.findAllMatches({ limit: -1 });
+      expect(result.limit).toBe(50);
+    });
+  });
+
+  describe("calculatePlaytime", () => {
+    it("should return 0 when playtimeIntervals is null", async () => {
+      mockPrismaService.matches.findUnique.mockResolvedValue({
+        homeTeamId: 1,
+        awayTeamId: 2,
+      });
+      mockPrismaService.playerMatchStats.findMany.mockResolvedValue([
+        {
+          player: {
+            id: 1,
+            name: "Player One",
+            number: 10,
+            teamId: 1,
+            team: { id: 1, number: 1, club: { id: 1, name: "Club A" } },
+          },
+          points: 0,
+          fouls: 0,
+          threePointsMade: 0,
+          threePointsAttempted: 0,
+          twoPointsIntMade: 0,
+          twoPointsIntAttempted: 0,
+          twoPointsExtMade: 0,
+          twoPointsExtAttempted: 0,
+          freeThrowsMade: 0,
+          freeThrowsAttempted: 0,
+          assists: 0,
+          turnovers: 0,
+          reboundsOffensive: 0,
+          reboundsDefensive: 0,
+          steals: 0,
+          blocks: 0,
+          playtimeIntervals: null,
+        },
+      ]);
+
+      const result = await service.findPlayerMatchStatsByMatchId(1);
+      expect(result.stats[0].stats.playtime).toBe(0);
+      expect(result.stats[0].stats.playtimeIntervals).toBeNull();
+    });
+
+    it("should return 0 when playtimeIntervals is empty array", async () => {
+      mockPrismaService.matches.findUnique.mockResolvedValue({
+        homeTeamId: 1,
+        awayTeamId: 2,
+      });
+      mockPrismaService.playerMatchStats.findMany.mockResolvedValue([
+        {
+          player: {
+            id: 1,
+            name: "Player One",
+            number: 10,
+            teamId: 1,
+            team: { id: 1, number: 1, club: { id: 1, name: "Club A" } },
+          },
+          points: 0,
+          fouls: 0,
+          threePointsMade: 0,
+          threePointsAttempted: 0,
+          twoPointsIntMade: 0,
+          twoPointsIntAttempted: 0,
+          twoPointsExtMade: 0,
+          twoPointsExtAttempted: 0,
+          freeThrowsMade: 0,
+          freeThrowsAttempted: 0,
+          assists: 0,
+          turnovers: 0,
+          reboundsOffensive: 0,
+          reboundsDefensive: 0,
+          steals: 0,
+          blocks: 0,
+          playtimeIntervals: [],
+        },
+      ]);
+
+      const result = await service.findPlayerMatchStatsByMatchId(1);
+      expect(result.stats[0].stats.playtime).toBe(0);
+    });
+  });
+
+  describe("buildWhereClause", () => {
+    beforeEach(() => {
+      mockPrismaService.matches.findMany.mockResolvedValue([]);
+      mockPrismaService.matches.count.mockResolvedValue(0);
+    });
+
+    it("should apply poolId filter", async () => {
+      await service.findAllMatches({ poolId: 5 });
+
+      expect(mockPrismaService.matches.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({ poolId: 5 }),
+        }),
+      );
+    });
+
+    it("should apply championshipId filter", async () => {
+      await service.findAllMatches({ championshipId: 3 });
+
+      expect(mockPrismaService.matches.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            pool: expect.objectContaining({ championshipId: 3 }),
+          }),
+        }),
+      );
+    });
+
+    it("should apply championshipId and pool filters together", async () => {
+      await service.findAllMatches({
+        championshipId: 3,
+        level: "regional",
+        division: 1,
+      });
+
+      expect(mockPrismaService.matches.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            pool: expect.objectContaining({
+              championshipId: 3,
+              championship: expect.objectContaining({ level: "regional" }),
+            }),
+          }),
+        }),
+      );
+    });
+
+    it("should apply pool filter without championshipId", async () => {
+      await service.findAllMatches({ level: "regional", division: 1 });
+
+      expect(mockPrismaService.matches.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            pool: expect.objectContaining({
+              championship: expect.objectContaining({ level: "regional" }),
+            }),
+          }),
+        }),
+      );
+    });
+
+    it("should apply committeeId organization filter", async () => {
+      await service.findAllMatches({ committeeId: 2 });
+
+      expect(mockPrismaService.matches.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            OR: expect.arrayContaining([
+              expect.objectContaining({ homeTeam: expect.any(Object) }),
+            ]),
+          }),
+        }),
+      );
+    });
+
+    it("should apply leagueId organization filter", async () => {
+      await service.findAllMatches({ leagueId: 4 });
+
+      expect(mockPrismaService.matches.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            OR: expect.arrayContaining([
+              expect.objectContaining({ homeTeam: expect.any(Object) }),
+            ]),
+          }),
+        }),
+      );
+    });
+
+    it("should apply matchday filter", async () => {
+      await service.findAllMatches({ matchday: 3 });
+
+      expect(mockPrismaService.matches.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({ matchday: 3 }),
+        }),
+      );
+    });
+
+    it("should apply date filter as range", async () => {
+      await service.findAllMatches({ date: "2024-02-05" });
+
+      expect(mockPrismaService.matches.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            date: {
+              gte: new Date("2024-02-05T00:00:00.000Z"),
+              lt: new Date("2024-02-05T23:59:59.999Z"),
+            },
+          }),
+        }),
+      );
+    });
+
+    it("should apply search filter as OR across home and away team", async () => {
+      await service.findAllMatches({ search: "Paris" });
+
+      expect(mockPrismaService.matches.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            OR: expect.arrayContaining([
+              expect.objectContaining({ homeTeam: expect.any(Object) }),
+              expect.objectContaining({ awayTeam: expect.any(Object) }),
+            ]),
+          }),
+        }),
+      );
+    });
+  });
 });
