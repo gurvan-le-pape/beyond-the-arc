@@ -43,10 +43,6 @@ BEGIN
             WHEN OLD.away_team_score < OLD.home_team_score THEN 1 -- Regular loss
             ELSE 0 -- Win
         END),
-        games_forfeited = games_forfeited - (CASE 
-            WHEN OLD.forfeit THEN 0 -- Forfeit: home team forfeits, away team does not forfeit
-            ELSE 0 -- Not a forfeit
-        END),
         points_for = points_for - OLD.away_team_score,
         points_against = points_against - OLD.home_team_score,
         point_difference = point_difference - (OLD.away_team_score - OLD.home_team_score),
