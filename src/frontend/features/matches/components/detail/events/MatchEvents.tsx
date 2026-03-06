@@ -50,15 +50,6 @@ export const MatchEvents: React.FC<MatchEventsProps> = ({
   );
   const [showPlayerDropdown, setShowPlayerDropdown] = useState(false);
 
-  // ---- early return for empty data -----------------------------------------
-  if (!events || events.length === 0) {
-    return (
-      <Section title={t("matchEvents.title")}>
-        <EmptyState message={t("matchEvents.noEvents")} />
-      </Section>
-    );
-  }
-
   // ---- stable callbacks ----------------------------------------------------
   const togglePlayer = useCallback((playerId: number) => {
     setSelectedPlayerIds((prev) => {
@@ -71,7 +62,7 @@ export const MatchEvents: React.FC<MatchEventsProps> = ({
   // ---- derived data --------------------------------------------------------
 
   // First event timestamp is the match start anchor.
-  const matchStartTime = events[0].timestamp;
+  const matchStartTime = events[0]?.timestamp;
 
   /**
    * Single-pass O(n) scoring.
@@ -129,6 +120,15 @@ export const MatchEvents: React.FC<MatchEventsProps> = ({
     selectedPlayerIds,
     latestFirst,
   ]);
+
+  // ---- early return for empty data -----------------------------------------
+  if (!events || events.length === 0) {
+    return (
+      <Section title={t("matchEvents.title")}>
+        <EmptyState message={t("matchEvents.noEvents")} />
+      </Section>
+    );
+  }
 
   // ---- render --------------------------------------------------------------
   return (
