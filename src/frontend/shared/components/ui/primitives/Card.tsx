@@ -119,7 +119,9 @@ export const CardTitle = forwardRef<
         className,
       )}
       {...props}
-    />
+    >
+      {props.children}
+    </h3>
   );
 });
 
