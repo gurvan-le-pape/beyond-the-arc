@@ -102,7 +102,7 @@ export function HorizontalCarousel({
         return text.charAt(0).toUpperCase();
       }),
     ),
-  ).sort();
+  ).sort((a, b) => a.localeCompare(b));
 
   // Auto-scroll to active item
   useEffect(() => {

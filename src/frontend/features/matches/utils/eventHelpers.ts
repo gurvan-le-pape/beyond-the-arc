@@ -104,7 +104,7 @@ export function makeDescriptionClickable(
 
   let result = description;
   eventPlayers.forEach(({ player }) => {
-    result = result.replace(
+    result = result.replaceAll(
       new RegExp(player.name, "g"),
       `<span class="text-primary-600 dark:text-primary-400 hover:underline cursor-pointer match-player-link" data-player-id="${player.id}" tabIndex="0" role="button">${player.name}</span>`,
     );

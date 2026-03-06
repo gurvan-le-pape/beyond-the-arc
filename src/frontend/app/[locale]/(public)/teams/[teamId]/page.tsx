@@ -28,7 +28,7 @@ export default async function TeamDetailPage({ params }: TeamDetailPageProps) {
   const t = await getTranslations({ locale, namespace: "teams" });
 
   const teamId = Number.parseInt(teamIdStr, 10);
-  if (isNaN(teamId) || teamId <= 0) {
+  if (Number.isNaN(teamId) || teamId <= 0) {
     notFound();
   }
 

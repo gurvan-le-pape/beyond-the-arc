@@ -42,7 +42,7 @@ export default async function MatchSummaryPage({
   const tCommon = await getTranslations({ locale, namespace: "common" });
 
   const matchId = Number.parseInt(matchIdStr, 10);
-  if (isNaN(matchId) || matchId <= 0) {
+  if (Number.isNaN(matchId) || matchId <= 0) {
     notFound();
   }
 

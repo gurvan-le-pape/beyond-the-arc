@@ -35,7 +35,7 @@ export function formatPhone(phone: string | null | undefined): string {
   if (!phone) return "N/A";
 
   // Remove all non-numeric characters
-  const cleaned = phone.replace(/\D/g, "");
+  const cleaned = phone.replaceAll(/\D/g, "");
 
   // Format based on length (assuming French numbers)
   if (cleaned.length === 10) {

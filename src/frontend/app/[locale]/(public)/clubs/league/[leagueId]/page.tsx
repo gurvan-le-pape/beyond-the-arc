@@ -45,7 +45,7 @@ export default async function ClubsCommitteesPage({
 
   const leagueId = Number.parseInt(leagueIdStr, 10);
 
-  if (isNaN(leagueId) || leagueId <= 0) {
+  if (Number.isNaN(leagueId) || leagueId <= 0) {
     notFound();
   }
 

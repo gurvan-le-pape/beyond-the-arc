@@ -74,7 +74,7 @@ CREATE TABLE clubs (
     president_id INT REFERENCES presidents(id) ON DELETE SET NULL,
     gym_id INT REFERENCES gyms(id) ON DELETE SET NULL,
     committee_id INT REFERENCES committees(id) ON DELETE SET NULL,
-    zip_code CHAR(5),
+    zip_code VARCHAR(5),
     city VARCHAR(255),
     latitude DECIMAL(10, 8),
     longitude DECIMAL(11, 8)
@@ -84,7 +84,7 @@ CREATE TABLE championships (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     category VARCHAR(100) NOT NULL,
-    season_year CHAR(9) NOT NULL,
+    season_year VARCHAR(9) NOT NULL,
     level VARCHAR(50) NOT NULL CHECK (level IN ('departmental', 'regional', 'national')),
     division INT NOT NULL,
     gender VARCHAR(10) NOT NULL CHECK (gender IN ('male', 'female')),

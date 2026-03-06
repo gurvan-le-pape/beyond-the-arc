@@ -8,6 +8,6 @@ import { normalizeString } from "./normalizeString";
  */
 export const formatNameToFileName = (name: string): string => {
   return normalizeString(name)
-    .replace(/\s+/g, "-") // Replace all spaces (and multiple spaces) with hyphens
-    .replace(/[^a-z0-9-]/g, ""); // Remove non-alphanumeric/hyphen characters
+    .replaceAll(/\s+/g, "-")
+    .replaceAll(/[^a-z0-9-]/g, "");
 };

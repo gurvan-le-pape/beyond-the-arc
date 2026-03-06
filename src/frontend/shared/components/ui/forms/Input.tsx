@@ -29,7 +29,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     },
     ref,
   ) => {
-    const inputId = id || `input-${label?.toLowerCase().replace(/\s+/g, "-")}`;
+    const inputId =
+      id || `input-${label?.toLowerCase().replaceAll(/\s+/g, "-")}`;
 
     return (
       <div className="w-full">

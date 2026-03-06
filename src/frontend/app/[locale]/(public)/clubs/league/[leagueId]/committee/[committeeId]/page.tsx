@@ -50,9 +50,9 @@ export default async function ClubsPage({ params }: ClubsPageProps) {
   const committeeId = Number.parseInt(committeeIdStr, 10);
 
   if (
-    isNaN(leagueId) ||
+    Number.isNaN(leagueId) ||
     leagueId <= 0 ||
-    isNaN(committeeId) ||
+    Number.isNaN(committeeId) ||
     committeeId <= 0
   ) {
     notFound();

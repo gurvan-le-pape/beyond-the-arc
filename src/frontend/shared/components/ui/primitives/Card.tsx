@@ -36,7 +36,7 @@ const cardVariants = cva("rounded-card border transition-all duration-200", {
 });
 
 export interface CardProps
-  extends HTMLAttributes<HTMLDivElement>,
+  extends HTMLAttributes<HTMLElement>,
     VariantProps<typeof cardVariants> {}
 
 /**
@@ -58,26 +58,27 @@ export interface CardProps
  *   Custom background card
  * </Card>
  */
-export const Card = forwardRef<HTMLDivElement, CardProps>(
+export const Card = forwardRef<HTMLElement, CardProps>(
   ({ className, variant, padding, clickable, onClick, ...props }, ref) => {
+    if (clickable) {
+      return (
+        <button
+          ref={ref as React.Ref<HTMLButtonElement>}
+          type="button"
+          className={cn(
+            cardVariants({ variant, padding, clickable, className }),
+          )}
+          onClick={onClick as React.MouseEventHandler<HTMLButtonElement>}
+          {...(props as HTMLAttributes<HTMLButtonElement>)}
+        />
+      );
+    }
+
     return (
       <div
-        ref={ref}
+        ref={ref as React.Ref<HTMLDivElement>}
         className={cn(cardVariants({ variant, padding, clickable, className }))}
-        onClick={onClick}
-        role={clickable ? "button" : undefined}
-        tabIndex={clickable ? 0 : undefined}
-        onKeyDown={
-          clickable
-            ? (e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  onClick?.(e as any);
-                }
-              }
-            : undefined
-        }
-        {...props}
+        {...(props as HTMLAttributes<HTMLDivElement>)}
       />
     );
   },
@@ -118,7 +119,9 @@ export const CardTitle = forwardRef<
         className,
       )}
       {...props}
-    />
+    >
+      {props.children}
+    </h3>
   );
 });
 

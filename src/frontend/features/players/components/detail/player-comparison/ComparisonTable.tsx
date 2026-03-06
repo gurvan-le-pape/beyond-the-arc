@@ -43,7 +43,7 @@ function getWinner(
   numB: number,
   lowerIsBetter?: boolean,
 ): "A" | "B" | "tie" {
-  if (isNaN(numA) || isNaN(numB) || numA === numB) return "tie";
+  if (Number.isNaN(numA) || Number.isNaN(numB) || numA === numB) return "tie";
   const higherWins = !lowerIsBetter;
   return (higherWins ? numA > numB : numA < numB) ? "A" : "B";
 }
