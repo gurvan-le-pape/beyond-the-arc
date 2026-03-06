@@ -67,14 +67,25 @@ export function TimelineEventBlock({
 
         {/* Description (may contain clickable player links via dangerouslySetInnerHTML) */}
         {event.description && (
-          <p
-            className={cn(
-              "text-caption text-gray-600 dark:text-gray-400 mt-0.5",
-              isRight ? "text-right" : "text-left",
-            )}
-            dangerouslySetInnerHTML={{ __html: descriptionHtml }}
+          <div
+            role="none"
             onClick={onDescriptionClick}
-          />
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                onDescriptionClick(
+                  e as unknown as React.MouseEvent<HTMLParagraphElement>,
+                );
+              }
+            }}
+          >
+            <p
+              className={cn(
+                "text-caption text-gray-600 dark:text-gray-400 mt-0.5",
+                isRight ? "text-right" : "text-left",
+              )}
+              dangerouslySetInnerHTML={{ __html: descriptionHtml }}
+            />
+          </div>
         )}
 
         {/* Timestamp */}
