@@ -7,8 +7,7 @@ import React, { useState } from "react";
 import { usePlayerMatches } from "@/features/players/api/usePlayers";
 import type { Player } from "@/features/players/types/Player";
 import { aggregateStats } from "@/features/players/utils/statsAggregation";
-import { Section } from "@/shared/components/ui";
-import { Button } from "@/shared/components/ui";
+import { Button, Section } from "@/shared/components/ui";
 
 import { PlayerSearchDropdown } from "../PlayerSearchDropdown";
 import { type ComparisonStatConfig, ComparisonTable } from "./ComparisonTable";
@@ -65,15 +64,13 @@ const comparisonConfig: ComparisonStatConfig[] = [
   },
 ];
 
-function PlayerCard({
-  player,
-  side,
-  placeholder,
-}: {
-  player: Player | null;
-  side: "left" | "right";
-  placeholder: React.ReactNode;
-}) {
+interface PlayerCardProps {
+  readonly player: Player | null;
+  readonly side: "left" | "right";
+  readonly placeholder: React.ReactNode;
+}
+
+function PlayerCard({ player, side, placeholder }: PlayerCardProps) {
   const isRight = side === "right";
 
   return (
@@ -170,7 +167,7 @@ function KeyframeInjector() {
 }
 
 interface PlayerComparisonProps {
-  player: Player;
+  readonly player: Player;
 }
 
 export function PlayerComparison({ player }: PlayerComparisonProps) {
@@ -194,7 +191,6 @@ export function PlayerComparison({ player }: PlayerComparisonProps) {
     <Section
       title={tPlayers("playerDetail.compareTitle")}
       variant="highlighted"
-      className="mb-8"
     >
       <KeyframeInjector />
 
@@ -226,7 +222,9 @@ export function PlayerComparison({ player }: PlayerComparisonProps) {
           <PlayerCard player={player} side="left" placeholder={null} />
           <VsBadge />
 
-          {!opponent ? (
+          {opponent ? (
+            <PlayerCard player={opponent} side="right" placeholder={null} />
+          ) : (
             <div className="flex-1 flex justify-end">
               <div className="w-full max-w-[260px]">
                 <PlayerSearchDropdown
@@ -235,8 +233,6 @@ export function PlayerComparison({ player }: PlayerComparisonProps) {
                 />
               </div>
             </div>
-          ) : (
-            <PlayerCard player={opponent} side="right" placeholder={null} />
           )}
         </div>
       </div>

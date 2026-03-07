@@ -17,8 +17,8 @@ import type { ClubDetailed, ClubTeamInfo } from "../../types/ClubDetailed";
 
 // ClubTeams component
 interface ClubTeamsProps {
-  club: ClubDetailed;
-  teamsByGender: Record<Gender, ClubTeamInfo[]>;
+  readonly club: ClubDetailed;
+  readonly teamsByGender: Record<Gender, ClubTeamInfo[]>;
 }
 
 export function ClubTeams({ club, teamsByGender }: ClubTeamsProps) {
@@ -38,7 +38,7 @@ export function ClubTeams({ club, teamsByGender }: ClubTeamsProps) {
   }
 
   return (
-    <Section title={tClubs("detail.teamsTitle")}>
+    <Section title={tClubs("detail.teamsTitle")} variant="highlighted">
       <GenderCategorizedList
         genderLabel={tCommon("gender.female")}
         genderKey={Gender.FEMALE}
@@ -50,7 +50,7 @@ export function ClubTeams({ club, teamsByGender }: ClubTeamsProps) {
           <TeamListItem
             team={team}
             clubName={club.name}
-            onClick={() => void router.push(`/teams/${team.id}`)}
+            onClick={() => router.push(`/teams/${team.id}`)}
           />
         )}
       />
@@ -66,7 +66,7 @@ export function ClubTeams({ club, teamsByGender }: ClubTeamsProps) {
           <TeamListItem
             team={team}
             clubName={club.name}
-            onClick={() => void router.push(`/teams/${team.id}`)}
+            onClick={() => router.push(`/teams/${team.id}`)}
           />
         )}
       />

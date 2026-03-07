@@ -4,8 +4,10 @@
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 
-import { HorizontalCarousel } from "@/features/competitions/components";
-import { CompetitionsPageSkeleton } from "@/features/competitions/components";
+import {
+  CompetitionsPageSkeleton,
+  HorizontalCarousel,
+} from "@/features/competitions/components";
 import ChampionshipList from "@/features/competitions/components/championships/ChampionshipList";
 import { useDepartmentalChampionshipsData } from "@/features/competitions/hooks";
 import { useRouter } from "@/navigation";
@@ -41,7 +43,7 @@ export default function DepartmentalChampionshipsPage() {
     body = <CompetitionsPageSkeleton />;
   } else {
     body = (
-      <div className="max-w-7xl mx-auto flex flex-col gap-6">
+      <div className="max-w-7xl mx-auto space-y-6">
         {/* Committee header strip */}
         {committee && (
           <div className="flex items-center border-l-4 border-l-primary-600 dark:border-l-primary-400 bg-white dark:bg-gray-800 rounded-card border border-gray-200 dark:border-gray-700 shadow-card dark:shadow-card-dark px-6 py-4">

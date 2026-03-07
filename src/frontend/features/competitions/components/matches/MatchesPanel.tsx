@@ -10,11 +10,11 @@ import { Badge, Card } from "@/shared/components/ui";
 import MatchCard from "./MatchCard";
 
 interface MatchesPanelProps {
-  groupedMatches: Record<number, any[]>;
-  selectedRound: number | null;
-  onSelectRound: (round: number) => void;
-  expandedMatchIds: number[];
-  onToggleExpand: (matchId: number) => void;
+  readonly groupedMatches: Record<number, any[]>;
+  readonly selectedRound: number | null;
+  readonly onSelectRound: (round: number) => void;
+  readonly expandedMatchIds: number[];
+  readonly onToggleExpand: (matchId: number) => void;
 }
 
 export function MatchesPanel({
@@ -29,7 +29,11 @@ export function MatchesPanel({
   const currentMatches = selectedRound ? groupedMatches[selectedRound] : [];
 
   return (
-    <Card padding="sm" className="sticky top-20 lg:top-24">
+    <Card
+      variant="highlighted"
+      padding="sm"
+      className="sticky top-20 lg:top-24"
+    >
       <div className="space-y-4">
         {/* Rounds Section */}
         <div>

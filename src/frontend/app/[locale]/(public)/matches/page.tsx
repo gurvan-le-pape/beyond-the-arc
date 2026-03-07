@@ -88,9 +88,9 @@ export default function MatchesPage() {
         limit: matchesPerPage,
         level: level || undefined,
         division: division || undefined,
-        committeeId: committeeId !== undefined ? committeeId : undefined,
-        leagueId: leagueId !== undefined ? leagueId : undefined,
-        poolId: poolId !== undefined ? poolId : undefined,
+        committeeId: committeeId,
+        leagueId: leagueId,
+        poolId: poolId,
         matchday: matchday || undefined,
         category: category || undefined,
         gender: gender || undefined,
@@ -271,7 +271,7 @@ export default function MatchesPage() {
 
           {/* Error State */}
           {(matchesError || error) && !matchesLoading && (
-            <Card variant="default" padding="lg">
+            <Card padding="lg">
               <p className="text-center text-error-DEFAULT dark:text-error-light">
                 {matchesError?.message || error}
               </p>
@@ -283,7 +283,7 @@ export default function MatchesPage() {
             <>
               {/* Empty State */}
               {matches.length === 0 ? (
-                <Card variant="default" padding="lg">
+                <Card padding="lg">
                   <EmptyState
                     icon={<MagnifyingGlassIcon className="w-16 h-16" />}
                     title={tMatches("noResults")}

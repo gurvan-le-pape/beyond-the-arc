@@ -15,7 +15,7 @@ import { Footer, Header } from "@/shared/components/layouts";
 import { ViewLevel } from "@/shared/constants";
 
 interface ClubsCommitteesPageProps {
-  params: Promise<{
+  readonly params: Promise<{
     locale: string;
     leagueId: string;
   }>;
@@ -75,7 +75,7 @@ export default async function ClubsCommitteesPage({
       <Header />
 
       <main className="flex-grow py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto space-y-6">
           <MapViewButton label={t("mapView")} />
 
           <Breadcrumb items={breadcrumbItems} />

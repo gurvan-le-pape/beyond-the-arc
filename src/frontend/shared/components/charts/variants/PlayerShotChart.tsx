@@ -38,7 +38,7 @@ export const PlayerShotChart: React.FC<PlayerShotChartProps> = ({
   };
 
   return (
-    <Section title={title} variant="highlighted" className="mb-6">
+    <Section title={title} variant="highlighted">
       <div className="w-full max-w-3xl mx-auto">
         {renderChart()}
         {description && (

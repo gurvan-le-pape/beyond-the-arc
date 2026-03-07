@@ -183,7 +183,7 @@ export function ChampionshipsDetailPageGeneric({
             />
 
             {/* Navigation Card */}
-            <Card padding="md">
+            <Card variant="highlighted" padding="md">
               <div className="space-y-4">
                 <CategoryNavigation
                   availableCategories={availableCategories}

@@ -8,9 +8,9 @@ import { Card } from "@/shared/components/ui";
 import { ViewLevel } from "@/shared/constants";
 
 interface TitleSectionProps {
-  viewLevel: ViewLevel;
-  selectedLeague: any;
-  selectedCommittee: any;
+  readonly viewLevel: ViewLevel;
+  readonly selectedLeague: any;
+  readonly selectedCommittee: any;
 }
 
 interface ViewConfig {
@@ -92,26 +92,24 @@ export function TitleSection({
   }
 
   return (
-    <section className="mb-8">
-      <Card variant="custom" padding="lg" className={config.cardClassName}>
-        <div className="flex items-start gap-4 mb-4">
-          <div className={config.iconClassName}>{config.icon}</div>
-          <div className="flex-1 min-w-0">
-            <h2 className={`text-xl font-bold ${config.titleColor}`}>
-              {config.title}
-            </h2>
-            {config.subtitle && (
-              <p className={`text-lg font-semibold ${config.titleColor} mt-2`}>
-                {config.subtitle}
-              </p>
-            )}
-          </div>
+    <Card variant="custom" padding="lg" className={config.cardClassName}>
+      <div className="flex items-start gap-4 mb-4">
+        <div className={config.iconClassName}>{config.icon}</div>
+        <div className="flex-1 min-w-0">
+          <h2 className={`text-xl font-bold ${config.titleColor}`}>
+            {config.title}
+          </h2>
+          {config.subtitle && (
+            <p className={`text-lg font-semibold ${config.titleColor} mt-2`}>
+              {config.subtitle}
+            </p>
+          )}
         </div>
-        <p className="text-body text-gray-600 dark:text-gray-400">
-          {config.description}
-        </p>
-      </Card>
-    </section>
+      </div>
+      <p className="text-body text-gray-600 dark:text-gray-400">
+        {config.description}
+      </p>
+    </Card>
   );
 }
 

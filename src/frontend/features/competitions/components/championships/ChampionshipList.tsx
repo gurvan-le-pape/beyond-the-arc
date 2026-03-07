@@ -9,9 +9,11 @@ import { useToggleCategory } from "../../hooks";
 import { ChampionshipListItem } from "./ChampionshipListItem";
 
 interface ChampionshipListProps {
-  championshipsByGender: Record<Gender, any[]>;
-  groupChampionshipsByCategory: (championships: any[]) => Record<string, any[]>;
-  onItemClick: (championship: any) => void;
+  readonly championshipsByGender: Record<Gender, any[]>;
+  readonly groupChampionshipsByCategory: (
+    championships: any[],
+  ) => Record<string, any[]>;
+  readonly onItemClick: (championship: any) => void;
 }
 
 function ChampionshipList({
@@ -24,7 +26,10 @@ function ChampionshipList({
   const tTeams = useTranslations("teams");
 
   return (
-    <Section title={tCompetitions("championshipsSectionTitle")}>
+    <Section
+      title={tCompetitions("championshipsSectionTitle")}
+      variant="highlighted"
+    >
       <div className="flex flex-col gap-2">
         <GenderCategorizedList
           genderLabel={tTeams("teamsTable.genderHeading.feminine")}

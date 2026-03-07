@@ -4,11 +4,13 @@ import { useTranslations } from "next-intl";
 import React from "react";
 
 import type { Championship } from "@/features/competitions/championships/types/Championship";
-import { SearchInput } from "@/shared/components/ui";
-import { Section } from "@/shared/components/ui";
-import { Select } from "@/shared/components/ui";
-import { Button } from "@/shared/components/ui";
-import { Input } from "@/shared/components/ui";
+import {
+  Button,
+  Card,
+  Input,
+  SearchInput,
+  Select,
+} from "@/shared/components/ui";
 import { Category, CompetitionLevel, Gender } from "@/shared/constants";
 
 interface MatchesFiltersProps {
@@ -96,7 +98,7 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
   };
 
   return (
-    <Section>
+    <Card variant="highlighted" padding="lg">
       <div className="space-y-6">
         {/* Row 1: Search and Date */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -280,7 +282,7 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
           </Button>
         </div>
       </div>
-    </Section>
+    </Card>
   );
 };
 

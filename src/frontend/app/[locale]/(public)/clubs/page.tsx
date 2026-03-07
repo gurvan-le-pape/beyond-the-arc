@@ -11,6 +11,10 @@ import {
 import { Footer, Header } from "@/shared/components/layouts";
 import { ViewLevel } from "@/shared/constants/view-levels";
 
+interface ClubsRegionsPageProps {
+  readonly params: Promise<{ readonly locale: string }>;
+}
+
 /**
  * Clubs Regions Page (League List)
  * Shows ~25 regional leagues
@@ -18,9 +22,7 @@ import { ViewLevel } from "@/shared/constants/view-levels";
  */
 export default async function ClubsRegionsPage({
   params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
+}: ClubsRegionsPageProps) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "clubs" });
 
@@ -41,7 +43,7 @@ export default async function ClubsRegionsPage({
       <Header />
 
       <main className="flex-grow py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto space-y-6">
           <MapViewButton label={t("mapView")} />
 
           <Breadcrumb items={breadcrumbItems} />

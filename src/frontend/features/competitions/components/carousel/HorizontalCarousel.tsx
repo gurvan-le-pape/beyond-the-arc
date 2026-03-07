@@ -39,13 +39,13 @@ import { LetterFilter } from "./LetterFilter";
  */
 
 interface HorizontalCarouselProps {
-  items: any[];
-  title: string;
-  imageFolder: string;
-  basePath: string;
-  currentId?: number;
-  enableSearch?: boolean;
-  enableLetterFilter?: boolean;
+  readonly items: any[];
+  readonly title: string;
+  readonly imageFolder: string;
+  readonly basePath: string;
+  readonly currentId?: number;
+  readonly enableSearch?: boolean;
+  readonly enableLetterFilter?: boolean;
 }
 
 export function HorizontalCarousel({
@@ -164,11 +164,11 @@ export function HorizontalCarousel({
   };
 
   const handleItemClick = (itemId: number) => {
-    void router.push(`${basePath}/${itemId}`);
+    router.push(`${basePath}/${itemId}`);
   };
 
   return (
-    <Section title={title} className="w-full">
+    <Section title={title} variant="highlighted">
       {/* Header */}
       <div className="flex items-center justify-between gap-4 mb-4">
         {enableSearch && (

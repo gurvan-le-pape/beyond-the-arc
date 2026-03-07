@@ -2,8 +2,7 @@
 import { useTranslations } from "next-intl";
 import React from "react";
 
-import { Section } from "@/shared/components/ui";
-import { InfoBox } from "@/shared/components/ui";
+import { InfoBox, Section } from "@/shared/components/ui";
 
 interface StatConfig {
   key: string;
@@ -98,7 +97,6 @@ export const PlayerCareerStats: React.FC<PlayerCareerStatsProps> = ({
     <Section
       title={title || tPlayers("playerDetail.seasonStatsTitle")}
       variant="highlighted"
-      className="mb-8"
     >
       <div className={`grid ${gridClass} gap-4`}>
         {config.map((stat) => (

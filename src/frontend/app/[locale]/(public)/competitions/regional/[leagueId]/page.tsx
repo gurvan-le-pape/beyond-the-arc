@@ -4,13 +4,15 @@
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 
-import { HorizontalCarousel } from "@/features/competitions/components";
-import { CompetitionsPageSkeleton } from "@/features/competitions/components";
+import {
+  CompetitionsPageSkeleton,
+  HorizontalCarousel,
+} from "@/features/competitions/components";
 import ChampionshipList from "@/features/competitions/components/championships/ChampionshipList";
 import { useRegionalChampionshipsData } from "@/features/competitions/hooks/useRegionalChampionships";
 import { useRouter } from "@/navigation";
 import { Footer, Header } from "@/shared/components/layouts";
-import { ErrorMessage } from "@/shared/components/ui";
+import { Card, ErrorMessage } from "@/shared/components/ui";
 import { CompetitionLevel } from "@/shared/constants/competition-levels";
 import {
   groupChampionshipsByCategory,
@@ -37,14 +39,14 @@ export default function RegionalChampionshipsPage() {
     body = <CompetitionsPageSkeleton />;
   } else {
     body = (
-      <div className="max-w-7xl mx-auto flex flex-col gap-6">
+      <div className="max-w-7xl mx-auto space-y-6">
         {/* League header strip */}
         {league && (
-          <div className="flex items-center border-l-4 border-l-primary-600 dark:border-l-primary-400 bg-white dark:bg-gray-800 rounded-card border border-gray-200 dark:border-gray-700 shadow-card dark:shadow-card-dark px-6 py-4">
+          <Card variant="highlighted" padding="lg">
             <h1 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100">
               {league.name}
             </h1>
-          </div>
+          </Card>
         )}
 
         {/* Leagues carousel */}

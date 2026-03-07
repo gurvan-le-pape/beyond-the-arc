@@ -9,7 +9,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { useTranslations } from "next-intl";
 
-import { InfoBox } from "@/shared/components/ui/composite";
+import { InfoBox, Section } from "@/shared/components/ui/composite";
 import { formatPhone } from "@/shared/utils/helpers/string-helpers";
 
 import type { ClubDetailed } from "../../types/ClubDetailed";
@@ -24,19 +24,14 @@ import type { ClubDetailed } from "../../types/ClubDetailed";
  * - Dark mode support
  */
 interface ClubInfoProps {
-  club: ClubDetailed;
+  readonly club: ClubDetailed;
 }
 
 export function ClubInfo({ club }: ClubInfoProps) {
   const t = useTranslations("clubs");
 
   return (
-    <section className="mb-8">
-      {/* Section Title */}
-      <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6">
-        {t("detail.infoTitle")}
-      </h2>
-
+    <Section title={t("detail.infoTitle")} variant="highlighted">
       {/* Info Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Address */}
@@ -83,7 +78,7 @@ export function ClubInfo({ club }: ClubInfoProps) {
           icon={<GlobeAltIcon className="w-4 h-4" />}
         />
       </div>
-    </section>
+    </Section>
   );
 }
 
