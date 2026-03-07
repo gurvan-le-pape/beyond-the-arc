@@ -69,8 +69,9 @@ export const ShotModal: React.FC<ShotModalProps> = ({
 
   const handleDownload = () => {
     if (!chartRef.current || !player) return;
+    const el = chartRef.current;
     (async () => {
-      const dataUrl = await toPng(chartRef.current!, { cacheBust: true });
+      const dataUrl = await toPng(el, { cacheBust: true });
       const a = document.createElement("a");
       a.href = dataUrl;
       a.download = `shotchart-${player.name.replaceAll(" ", "_")}.png`;
