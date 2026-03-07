@@ -11,6 +11,21 @@ interface HeatmapLegendProps {
   colorScaleOptions?: string[];
 }
 
+const GRADIENT_STEPS = 32;
+
+function buildGradient(scaleName: string): string {
+  const interpKey = `interpolate${
+    scaleName.charAt(0).toUpperCase() + scaleName.slice(1)
+  }`;
+  const fn = (d3 as Record<string, unknown>)[interpKey] as
+    | ((t: number) => string)
+    | undefined;
+  const interp = fn ?? d3.interpolateYlOrRd;
+  return Array.from({ length: GRADIENT_STEPS }, (_, i) =>
+    interp(i / (GRADIENT_STEPS - 1)),
+  ).join(",");
+}
+
 export const HeatmapLegend: React.FC<HeatmapLegendProps> = ({
   maxValue,
   colorScale,
@@ -19,126 +34,79 @@ export const HeatmapLegend: React.FC<HeatmapLegendProps> = ({
   setColorScale,
   colorScaleOptions,
 }) => {
-  // D3 color scale
-  const color = d3
-    .scaleSequential(colorScale || d3.interpolateYlOrRd)
-    .domain([0, maxValue]);
-  // Render a horizontal SVG gradient legend
-  const legendWidth = 200;
-  const legendHeight = 22;
-  const steps = 40;
   const midValue = Math.round(maxValue / 2);
+
+  const activeGradient = React.useMemo(() => {
+    if (colorScaleName) return buildGradient(colorScaleName);
+    if (colorScale) {
+      return Array.from({ length: GRADIENT_STEPS }, (_, i) =>
+        colorScale(i / (GRADIENT_STEPS - 1)),
+      ).join(",");
+    }
+    return buildGradient("YlOrRd");
+  }, [colorScaleName, colorScale]);
+
   return (
-    <div
-      className={
-        (compact ? "heatmap-legend-compact " : "") +
-        "flex flex-col items-center gap-2 w-auto max-w-[340px] min-w-0"
-      }
-    >
-      <div className="flex flex-row items-center gap-2 sm:gap-3 w-full justify-end">
-        <span className="text-[13px] text-gray-700 min-w-[24px] text-right">
+    <div className={`flex flex-col gap-3 w-full ${compact ? "" : "max-w-sm"}`}>
+      {/* Gradient bar */}
+      <div className="flex items-center gap-3 w-full">
+        <span className="text-xs font-medium text-gray-500 dark:text-gray-400 shrink-0">
           Low
         </span>
-        <div className="relative inline-block" style={{ width: legendWidth }}>
-          <svg
-            width={legendWidth}
-            height={legendHeight}
-            className="block rounded-lg border border-gray-300 bg-white shadow-sm"
-          >
-            {Array.from({ length: steps }).map((_, i) => {
-              const t = i / (steps - 1);
-              const val = t * maxValue;
-              const key = `legend-${i}`;
-              return (
-                <rect
-                  key={key}
-                  x={(i * legendWidth) / steps}
-                  y={0}
-                  width={legendWidth / steps + 0.5}
-                  height={legendHeight}
-                  fill={color(val)}
-                  stroke="none"
-                />
-              );
-            })}
-            {/* Tick marks */}
-            {/* Min */}
-            <rect x={0} y={legendHeight - 7} width={2} height={7} fill="#444" />
-            {/* Mid */}
-            <rect
-              x={legendWidth / 2 - 1}
-              y={legendHeight - 7}
-              width={2}
-              height={7}
-              fill="#444"
-            />
-            {/* Max */}
-            <rect
-              x={legendWidth - 2}
-              y={legendHeight - 7}
-              width={2}
-              height={7}
-              fill="#444"
-            />
-          </svg>
-          {/* Tick labels */}
+        <div className="flex flex-col flex-1 min-w-0 gap-0.5">
           <div
-            className="absolute left-0 w-full flex flex-row justify-between text-[12px] text-gray-700 pointer-events-none px-1"
-            style={{ top: legendHeight + 1 }}
-          >
+            className="w-full h-4 rounded shadow-sm"
+            style={{
+              background: `linear-gradient(to right, ${activeGradient})`,
+            }}
+          />
+          <div className="flex justify-between text-[11px] text-gray-400 dark:text-gray-500 px-0.5">
             <span>0</span>
             <span>{midValue}</span>
             <span>{maxValue}</span>
           </div>
         </div>
-        <span className="text-[13px] text-gray-700 min-w-[28px] text-left">
+        <span className="text-xs font-medium text-gray-500 dark:text-gray-400 shrink-0">
           High
         </span>
       </div>
+
+      {/* Color scale picker */}
       {colorScaleOptions && setColorScale && colorScaleName && (
-        <div className="flex flex-row items-center mt-2 w-full justify-center">
-          <span className="text-[14px] mr-2">Color:</span>
-          <div className="flex flex-row gap-2 overflow-x-auto py-1">
-            {colorScaleOptions.map((scale) => (
-              <button
-                key={scale}
-                onClick={() => setColorScale(scale)}
-                className={
-                  "flex flex-col items-center border rounded-md px-1 py-0.5 min-w-[44px] " +
-                  (colorScaleName === scale
-                    ? "border-blue-600 ring-2 ring-blue-200"
-                    : "border-gray-300 hover:border-blue-400")
-                }
-                style={{ background: "#fff" }}
-                title={scale}
-              >
-                {/* Mini gradient preview */}
-                <span
-                  className="block w-8 h-3 rounded mb-0.5"
-                  style={{
-                    background: `linear-gradient(to right, ${new Array(8)
-                      .fill(0)
-                      .map((_, i) => {
-                        // Use d3 to get the color for this scale
-                        try {
-                          const interpKey = `interpolate${
-                            scale.charAt(0).toUpperCase() + scale.slice(1)
-                          }`;
-                          const d3Interp = (d3 as Record<string, unknown>)[
-                            interpKey
-                          ] as ((t: number) => string) | undefined;
-                          const colorScaleFn = d3Interp ?? d3.interpolateYlOrRd;
-                          return colorScaleFn(i / 7);
-                        } catch {
-                          return "#ccc";
-                        }
-                      })
-                      .join(",")})`,
-                  }}
-                />
-                <span className="text-[12px] text-gray-700">{scale}</span>
-              </button>
-            ))}
+        <div className="flex items-center gap-2 w-full">
+          <span className="text-xs text-gray-500 dark:text-gray-400 shrink-0">
+            Color
+          </span>
+          <div className="flex flex-row gap-1.5 flex-wrap">
+            {colorScaleOptions.map((scale) => {
+              const gradient = buildGradient(scale);
+              const isActive = colorScaleName === scale;
+              return (
+                <button
+                  key={scale}
+                  onClick={() => setColorScale(scale)}
+                  title={scale}
+                  className={`
+                    flex flex-col items-center gap-0.5 px-1.5 py-1 rounded-lg border transition-all
+                    ${
+                      isActive
+                        ? "border-blue-500 dark:border-blue-400 ring-2 ring-blue-100 dark:ring-blue-900 bg-blue-50 dark:bg-blue-950"
+                        : "border-gray-200 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-400 bg-white dark:bg-gray-800"
+                    }
+                  `}
+                >
+                  <span
+                    className="block w-8 h-2.5 rounded-sm"
+                    style={{
+                      background: `linear-gradient(to right, ${gradient})`,
+                    }}
+                  />
+                  <span className="text-[11px] text-gray-600 dark:text-gray-300 leading-none">
+                    {scale}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
       )}

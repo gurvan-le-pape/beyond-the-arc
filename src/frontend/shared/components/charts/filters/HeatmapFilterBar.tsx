@@ -1,47 +1,40 @@
 // src/frontend/shared/components/charts/filters/HeatmapFilterBar.tsx
 import React from "react";
 
+import { ShotFilter } from "@/shared/constants";
+
 interface HeatmapFilterBarProps {
-  shotFilter: "all" | "made" | "missed";
-  setShotFilter: (f: "all" | "made" | "missed") => void;
+  shotFilter: ShotFilter;
+  setShotFilter: (f: ShotFilter) => void;
 }
+
+const FILTERS: { key: ShotFilter; label: string }[] = [
+  { key: ShotFilter.ALL, label: "All" },
+  { key: ShotFilter.MADE, label: "Made" },
+  { key: ShotFilter.MISSED, label: "Missed" },
+];
 
 export const HeatmapFilterBar: React.FC<HeatmapFilterBarProps> = ({
   shotFilter,
   setShotFilter,
 }) => (
-  <div className="w-full flex flex-row items-center gap-2 justify-center mb-2">
-    <span className="font-bold text-[15px] mr-2">Shots:</span>
-    <button
-      onClick={() => setShotFilter("all")}
-      className={`px-3 py-1 rounded-md border text-[14px] transition ${
-        shotFilter === "all"
-          ? "font-bold border-blue-600 bg-blue-50 text-blue-800 shadow-sm"
-          : "border-gray-300 bg-white hover:border-blue-400"
-      }`}
-    >
-      All
-    </button>
-    <button
-      onClick={() => setShotFilter("made")}
-      className={`px-3 py-1 rounded-md border text-[14px] transition ${
-        shotFilter === "made"
-          ? "font-bold border-blue-600 bg-blue-50 text-blue-800 shadow-sm"
-          : "border-gray-300 bg-white hover:border-blue-400"
-      }`}
-    >
-      Made
-    </button>
-    <button
-      onClick={() => setShotFilter("missed")}
-      className={`px-3 py-1 rounded-md border text-[14px] transition ${
-        shotFilter === "missed"
-          ? "font-bold border-blue-600 bg-blue-50 text-blue-800 shadow-sm"
-          : "border-gray-300 bg-white hover:border-blue-400"
-      }`}
-    >
-      Missed
-    </button>
+  <div className="w-full flex flex-row items-center gap-2 justify-center">
+    <span className="font-semibold text-sm text-gray-600 dark:text-gray-300 mr-1">
+      Shots:
+    </span>
+    {FILTERS.map(({ key, label }) => (
+      <button
+        key={key}
+        onClick={() => setShotFilter(key)}
+        className={`px-3 py-1 rounded-md border text-sm transition-all ${
+          shotFilter === key
+            ? "font-semibold border-blue-500 bg-blue-50 text-blue-700 shadow-sm dark:border-blue-400 dark:bg-blue-950 dark:text-blue-300"
+            : "border-gray-200 bg-white text-gray-600 hover:border-gray-400 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-gray-400"
+        }`}
+      >
+        {label}
+      </button>
+    ))}
   </div>
 );
 

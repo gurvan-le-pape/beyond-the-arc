@@ -21,7 +21,6 @@ export * from "./filters/HeatmapFilterBar";
 export * from "./headers/HeatmapHeader";
 export * from "./headers/HotspotsHeader";
 export * from "./headers/ScatterHeader";
-export * from "./hooks/useBinnedShots";
 export * from "./legends/HeatmapLegend";
 export * from "./overlays/HeatmapCell";
 export * from "./overlays/HeatmapOverlay";

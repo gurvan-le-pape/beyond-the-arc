@@ -18,7 +18,7 @@ export const HotspotsHeader: React.FC<HotspotsHeaderProps> = ({
   maxValue,
   colorScaleFn,
 }) => (
-  <div className="w-full max-w-xl mx-auto bg-gray-50 rounded-xl shadow-sm p-4 flex flex-col gap-3 items-center">
+  <div className="w-full mb-2 rounded-xl px-4 py-3 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-700 shadow-sm">
     <HeatmapLegend
       maxValue={maxValue}
       colorScale={colorScaleFn}

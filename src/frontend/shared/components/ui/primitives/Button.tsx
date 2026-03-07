@@ -27,6 +27,8 @@ const buttonVariants = cva(
           "bg-error text-white hover:bg-error-dark focus-visible:ring-error",
         success:
           "bg-success text-white hover:bg-success-dark focus-visible:ring-success",
+        download:
+          "bg-gradient-to-r from-blue-700 to-green-600 text-white hover:from-blue-800 hover:to-green-700 shadow focus-visible:ring-blue-500",
 
         // Gender-specific variants
         male: "bg-team-male text-white hover:bg-team-male-dark dark:bg-team-male-light dark:hover:bg-team-male focus-visible:ring-team-male shadow-sm",

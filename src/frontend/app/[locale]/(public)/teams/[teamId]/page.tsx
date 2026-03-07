@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
 import { serverMatchesService } from "@/features/matches/api";
+import type { MatchEvent } from "@/features/matches/types";
 import type { PlayerMatchHistoryEntry } from "@/features/players/types/PlayerMatchHistory";
 import { serverTeamsService } from "@/features/teams/api";
 import { TeamHeader, TeamInfo, TeamRoster } from "@/features/teams/components";
@@ -32,7 +33,7 @@ export default async function TeamDetailPage({ params }: TeamDetailPageProps) {
     notFound();
   }
 
-  let team: TeamDetail, matches: TeamMatchHistory[], shotEvents: any[];
+  let team: TeamDetail, matches: TeamMatchHistory[], matchEvents: MatchEvent[];
 
   try {
     team = await serverTeamsService.getById(teamId);
@@ -40,7 +41,7 @@ export default async function TeamDetailPage({ params }: TeamDetailPageProps) {
       notFound();
     }
 
-    [matches, shotEvents] = await Promise.all([
+    [matches, matchEvents] = await Promise.all([
       serverTeamsService.getMatches(teamId),
       serverMatchesService.getEventsByTeamId(teamId),
     ]);
@@ -142,7 +143,7 @@ export default async function TeamDetailPage({ params }: TeamDetailPageProps) {
 
           {/* Team Shot Chart Heatmap */}
           <TeamShotChart
-            shots={shotEvents}
+            matchEvents={matchEvents}
             title={t("teamDetail.shotchartTitle")}
             description={t("teamDetail.shotchartDescription")}
             isLoading={false}

@@ -1,7 +1,9 @@
-// src/frontend/shared/components/charts/hooks/useBinnedShots.ts
+// src/frontend/shared/hooks/charts/useBinnedShots.ts
 import { useMemo } from "react";
 
 import type { MatchEvent } from "@/features/matches/types/MatchEvent";
+import { transformToShotEvents } from "@/features/players/utils";
+import type { ZoneStats } from "@/shared/types/charts/ZoneStats";
 import type { ShotEvent } from "@/shared/types/ShotEvent";
 
 export function useBinnedShots(
@@ -11,36 +13,22 @@ export function useBinnedShots(
   cellWidth: number,
   cellHeight: number,
 ): {
-  bins: { made: number; missed: number; total: number }[][];
+  bins: ZoneStats[][];
   shotEvents: ShotEvent[];
 } {
   return useMemo(() => {
     const bins = Array.from({ length: rows }, () =>
       Array.from({ length: cols }, () => ({ made: 0, missed: 0, total: 0 })),
     );
-    const shotEvents: ShotEvent[] = [];
+    const shotEvents = transformToShotEvents(matchEvents ?? []);
 
-    matchEvents.forEach((matchEvent) => {
-      const { shotLocation, eventType } = matchEvent;
-      if (!shotLocation) return;
-
-      const et = eventType.toLowerCase();
-      const made = et.includes("made")
-        ? true
-        : et.includes("missed")
-        ? false
-        : null;
-
-      if (made === null) return;
-
-      shotEvents.push({ x: shotLocation.x, y: shotLocation.y, made });
-
-      const col = Math.min(Math.floor(shotLocation.x / cellWidth), cols - 1);
-      const row = Math.min(Math.floor(shotLocation.y / cellHeight), rows - 1);
+    shotEvents.forEach((shotEvent) => {
+      const col = Math.min(Math.floor(shotEvent.x / cellWidth), cols - 1);
+      const row = Math.min(Math.floor(shotEvent.y / cellHeight), rows - 1);
 
       if (row < 0 || row >= rows || col < 0 || col >= cols) return;
 
-      if (made) {
+      if (shotEvent.made) {
         bins[row][col].made += 1;
         bins[row][col].total += 1;
       } else {
@@ -52,5 +40,3 @@ export function useBinnedShots(
     return { bins, shotEvents };
   }, [matchEvents, rows, cols, cellWidth, cellHeight]);
 }
-
-export default useBinnedShots;

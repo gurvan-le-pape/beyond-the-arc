@@ -3,11 +3,11 @@ import React from "react";
 
 import type { MatchEvent } from "@/features/matches/types/MatchEvent";
 import { ShotChart } from "@/shared/components/charts";
-import { Card } from "@/shared/components/ui";
+import { ErrorMessage, LoadingSpinner, Section } from "@/shared/components/ui";
 import { ChartType } from "@/shared/constants/chart-types";
 
 interface TeamShotChartProps {
-  shots: MatchEvent[];
+  matchEvents: MatchEvent[];
   title?: string;
   description?: string;
   isLoading?: boolean;
@@ -15,39 +15,40 @@ interface TeamShotChartProps {
 }
 
 export const TeamShotChart: React.FC<TeamShotChartProps> = ({
-  shots,
+  matchEvents,
   title,
   description,
   isLoading,
   error,
-}) => (
-  <Card variant="highlighted" padding="lg">
-    {title && (
-      <h2 className="text-subtitle font-bold text-gray-900 dark:text-gray-100 mb-4">
-        {title}
-      </h2>
-    )}
-
-    <div className="flex flex-col items-center min-h-[300px] w-full">
-      {isLoading ? (
-        <div className="py-12 text-body text-gray-600 dark:text-gray-400">
-          Loading...
+}) => {
+  const renderChart = () => {
+    if (isLoading) {
+      return (
+        <div className="py-8 flex justify-center">
+          <LoadingSpinner />
         </div>
-      ) : error ? (
-        <div className="py-12 text-body text-error-DEFAULT dark:text-error-light">
-          {error}
-        </div>
-      ) : (
-        <ShotChart chartType={ChartType.HEATMAP} shots={shots} />
-      )}
-    </div>
+      );
+    }
+    if (error) {
+      return <ErrorMessage message={error} />;
+    }
+    return (
+      <ShotChart chartType={ChartType.HEATMAP} matchEvents={matchEvents} />
+    );
+  };
 
-    {description && (
-      <p className="text-body-sm text-gray-500 dark:text-gray-400 mt-4 text-center">
-        {description}
-      </p>
-    )}
-  </Card>
-);
+  return (
+    <Section title={title} variant="highlighted" className="mb-6">
+      <div className="w-full max-w-3xl mx-auto">
+        {renderChart()}
+        {description && (
+          <p className="text-body-sm text-gray-500 dark:text-gray-400 mt-4 text-center">
+            {description}
+          </p>
+        )}
+      </div>
+    </Section>
+  );
+};
 
 export default TeamShotChart;

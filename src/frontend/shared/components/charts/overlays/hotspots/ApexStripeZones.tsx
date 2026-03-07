@@ -2,16 +2,18 @@
 import React from "react";
 
 import { PolygonZone } from "@/shared/components/charts";
+import type { ShotEvent } from "@/shared/types";
+import type { ZoneStats } from "@/shared/types/charts/ZoneStats";
 import { binShotsByZones } from "@/shared/utils/charts/overlays/hotspots/binShotsByZones";
 import { getApexStripeZone } from "@/shared/utils/charts/overlays/hotspots/zones/shotZonesApexStripe";
 
 interface ApexStripeZonesProps {
-  shots: any[];
+  shots: ShotEvent[];
   xScale: (x: number) => number;
   yScale: (y: number) => number;
   colorScale: (t: number) => string;
-  maxTotal: number;
-  onZoneHover: (zoneKey: string, stats: any, e: React.MouseEvent) => void;
+  svgWidth: number;
+  onZoneHover: (zoneKey: string, stats: ZoneStats, e: React.MouseEvent) => void;
   onZoneLeave: () => void;
 }
 
@@ -20,7 +22,7 @@ const ApexStripeZones: React.FC<ApexStripeZonesProps> = ({
   xScale,
   yScale,
   colorScale,
-  maxTotal,
+  svgWidth,
   onZoneHover,
   onZoneLeave,
 }) => {
@@ -39,8 +41,6 @@ const ApexStripeZones: React.FC<ApexStripeZonesProps> = ({
         const stats = zoneStats[zone.key];
         const fill = colorScale(stats.total);
         const fillOpacity = stats.total > 0 ? 0.7 : 0.18;
-        const stroke = "#222";
-        const strokeWidth = 1;
         return (
           <PolygonZone
             key={zone.key}
@@ -50,8 +50,9 @@ const ApexStripeZones: React.FC<ApexStripeZonesProps> = ({
             yScale={yScale}
             fill={fill}
             fillOpacity={fillOpacity}
-            stroke={stroke}
-            strokeWidth={strokeWidth}
+            stroke="#222"
+            strokeWidth={1}
+            svgWidth={svgWidth}
             onMouseMove={(e) => onZoneHover(zone.key, stats, e)}
             onMouseLeave={onZoneLeave}
           />
