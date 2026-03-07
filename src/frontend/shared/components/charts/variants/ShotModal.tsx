@@ -67,13 +67,14 @@ export const ShotModal: React.FC<ShotModalProps> = ({
     return () => dialog.removeEventListener("click", handleClick);
   }, [onClose]);
 
-  const handleDownload = async () => {
+  const handleDownload = () => {
     if (!chartRef.current || !player) return;
-    const dataUrl = await toPng(chartRef.current, { cacheBust: true });
-    const a = document.createElement("a");
-    a.href = dataUrl;
-    a.download = `shotchart-${player.name.replaceAll(" ", "_")}.png`;
-    a.click();
+    void toPng(chartRef.current, { cacheBust: true }).then((dataUrl) => {
+      const a = document.createElement("a");
+      a.href = dataUrl;
+      a.download = `shotchart-${player.name.replaceAll(" ", "_")}.png`;
+      a.click();
+    });
   };
 
   return (
@@ -140,7 +141,7 @@ export const ShotModal: React.FC<ShotModalProps> = ({
                 variant="download"
                 size="lg"
                 className="rounded-full gap-2"
-                onClick={void handleDownload}
+                onClick={handleDownload}
               >
                 <svg
                   width="20"
