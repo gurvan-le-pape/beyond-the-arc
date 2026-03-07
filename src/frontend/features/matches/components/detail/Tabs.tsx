@@ -75,7 +75,7 @@ export function TabsTrigger({
       aria-selected={isSelected}
       onClick={() => onValueChange(value)}
       className={`
-        px-4 py-2 rounded-button text-body-sm font-medium whitespace-nowrap
+        px-4 py-2 rounded-button text-sm font-medium whitespace-nowrap
         transition-all duration-200
         focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:ring-offset-2 dark:focus:ring-offset-gray-900
         ${

@@ -49,11 +49,11 @@ export function ClubsGrid({ clubs, leagueId, committeeId }: ClubsGridProps) {
           }
           className="border-l-4 border-l-clubs-dark dark:border-l-clubs-light hover:border-l-gray-300 dark:hover:!border-l-gray-600"
         >
-          <h3 className="text-body-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
             {club.name}
           </h3>
           {(club.city || club.zipCode) && (
-            <p className="text-body-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               {club.city && club.zipCode && `${club.city} • ${club.zipCode}`}
               {club.city && !club.zipCode && club.city}
               {!club.city && club.zipCode && club.zipCode}

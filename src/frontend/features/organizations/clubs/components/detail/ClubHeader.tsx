@@ -43,7 +43,7 @@ export function ClubHeader({ club }: ClubHeaderProps) {
 
         {/* Club Info */}
         <div className="flex-1">
-          <h1 className="text-title font-bold text-gray-900 dark:text-gray-100 mb-2">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
             {club.name}
           </h1>
           {club.city && (

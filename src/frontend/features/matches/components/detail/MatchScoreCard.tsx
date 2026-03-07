@@ -89,7 +89,7 @@ export const MatchScoreCard: React.FC<MatchScoreCardProps> = ({
           onClick={() => void router.push(`/teams/${team.id}`)}
           aria-label={tCommon("team.seeTeam", { number: team.name })}
           className={cn(
-            "text-body-sm font-semibold",
+            "text-sm font-semibold",
             isWinning
               ? "text-gray-900 dark:text-gray-100"
               : "text-gray-600 dark:text-gray-400",
@@ -111,7 +111,7 @@ export const MatchScoreCard: React.FC<MatchScoreCardProps> = ({
         <div className="flex items-center gap-3">
           <span
             className={cn(
-              "text-title md:text-display font-bold tabular-nums transition-colors duration-200",
+              "text-2xl md:text-4xl font-bold tabular-nums transition-colors duration-200",
               isHomeWinning
                 ? "text-gray-900 dark:text-gray-100"
                 : "text-gray-500 dark:text-gray-500",
@@ -119,12 +119,12 @@ export const MatchScoreCard: React.FC<MatchScoreCardProps> = ({
           >
             {homeTeam.score}
           </span>
-          <span className="text-subtitle md:text-title font-bold text-gray-400 dark:text-gray-600">
+          <span className="text-xl md:text-2xl font-bold text-gray-400 dark:text-gray-600">
             -
           </span>
           <span
             className={cn(
-              "text-title md:text-display font-bold tabular-nums transition-colors duration-200",
+              "text-2xl md:text-4xl font-bold tabular-nums transition-colors duration-200",
               isAwayWinning
                 ? "text-gray-900 dark:text-gray-100"
                 : "text-gray-500 dark:text-gray-500",

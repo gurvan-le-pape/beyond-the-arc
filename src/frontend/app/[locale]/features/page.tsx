@@ -128,10 +128,10 @@ export default async function FeaturesPage({
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-button bg-gradient-to-br from-blue-500 to-purple-500 text-white mb-4 shadow-card">
               <Sparkles className="w-8 h-8" />
             </div>
-            <h1 className="text-title md:text-display font-bold text-gray-900 dark:text-gray-100 mb-4">
+            <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
               {t("features.title")}
             </h1>
-            <p className="text-body-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
               {t("features.subtitle")}
             </p>
           </div>
@@ -160,7 +160,7 @@ export default async function FeaturesPage({
                       <Icon className="w-6 h-6" />
                     </div>
                     <span
-                      className={`px-2 py-1 rounded-button text-caption font-medium ${
+                      className={`px-2 py-1 rounded-button text-xs font-medium ${
                         statusColors[
                           feature.status as keyof typeof statusColors
                         ]
@@ -169,10 +169,10 @@ export default async function FeaturesPage({
                       {t(`features.status.${feature.status}`)}
                     </span>
                   </div>
-                  <h3 className="text-body-lg font-bold text-gray-900 dark:text-gray-100 mb-2">
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">
                     {feature.title}
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-400 text-body-sm">
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">
                     {feature.description}
                   </p>
                 </div>
@@ -182,7 +182,7 @@ export default async function FeaturesPage({
 
           {/* Highlights Section */}
           <div className="bg-white dark:bg-gray-800 rounded-card border border-gray-200 dark:border-gray-700 shadow-card dark:shadow-card-dark p-8">
-            <h2 className="text-subtitle font-bold text-gray-900 dark:text-gray-100 mb-6 text-center">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6 text-center">
               {t("features.highlightsTitle")}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -196,7 +196,7 @@ export default async function FeaturesPage({
                     <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
                       {highlight.title}
                     </h3>
-                    <p className="text-body-sm text-gray-600 dark:text-gray-400">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
                       {highlight.description}
                     </p>
                   </div>

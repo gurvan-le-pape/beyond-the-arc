@@ -37,7 +37,7 @@ const CompetitionLevelCard: React.FC<{ level: any }> = ({ level }) => {
       {/* Icon for the level */}
       {React.cloneElement(icon, { "aria-hidden": true, focusable: false })}
 
-      <div className="text-subtitle font-semibold mb-2 group-hover:text-primary-700 dark:group-hover:text-primary-300 transition-colors duration-200 dark:text-gray-100">
+      <div className="text-xl font-semibold mb-2 group-hover:text-primary-700 dark:group-hover:text-primary-300 transition-colors duration-200 dark:text-gray-100">
         {label}
       </div>
 
@@ -88,7 +88,7 @@ export default function CompetitionsPage() {
       <Header />
       <main className="flex-grow flex flex-col items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto w-full">
-          <h1 className="text-title md:text-display font-bold mb-12 text-gray-900 dark:text-gray-100 text-center">
+          <h1 className="text-2xl md:text-4xl font-bold mb-12 text-gray-900 dark:text-gray-100 text-center">
             {t("selectLevel")}
           </h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 lg:gap-8">

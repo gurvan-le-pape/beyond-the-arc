@@ -70,10 +70,10 @@ export default async function ContactPage({
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-button bg-gradient-to-br from-blue-500 to-cyan-500 text-white mb-4 shadow-card">
               <Send className="w-8 h-8" />
             </div>
-            <h1 className="text-title md:text-display font-bold text-gray-900 dark:text-gray-100 mb-4">
+            <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
               {t("contact.title")}
             </h1>
-            <p className="text-body-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               {t("contact.intro")}
             </p>
           </div>
@@ -102,7 +102,7 @@ export default async function ContactPage({
                   <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
                     {method.label}
                   </h3>
-                  <p className="text-body-sm text-gray-600 dark:text-gray-400 break-all">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 break-all">
                     {method.value}
                   </p>
                 </a>
@@ -112,7 +112,7 @@ export default async function ContactPage({
 
           {/* Additional Info */}
           <div className="bg-white dark:bg-gray-800 rounded-card border border-gray-200 dark:border-gray-700 shadow-card dark:shadow-card-dark p-8">
-            <h2 className="text-subtitle font-bold text-gray-900 dark:text-gray-100 mb-4">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">
               {t("contact.aboutProject")}
             </h2>
             <p className="text-body text-gray-600 dark:text-gray-400 mb-4">
@@ -122,7 +122,7 @@ export default async function ContactPage({
               {techStack.map((tech, idx) => (
                 <span
                   key={idx}
-                  className={`px-3 py-1 rounded-button text-body-sm font-medium border ${tech.color} border-current/30`}
+                  className={`px-3 py-1 rounded-button text-sm font-medium border ${tech.color} border-current/30`}
                 >
                   {tech.name}
                 </span>

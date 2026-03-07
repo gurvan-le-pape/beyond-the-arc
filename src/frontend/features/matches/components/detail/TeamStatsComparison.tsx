@@ -51,7 +51,7 @@ export const TeamStatsComparison: React.FC<TeamStatsComparisonProps> = ({
   return (
     <Card variant="default" padding="lg" className={className}>
       {title && (
-        <h3 className="text-body-lg font-bold text-gray-900 dark:text-gray-100 mb-6 text-center">
+        <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-6 text-center">
           {title}
         </h3>
       )}
@@ -78,7 +78,7 @@ export const TeamStatsComparison: React.FC<TeamStatsComparisonProps> = ({
           return (
             <div key={key}>
               {/* Label */}
-              <p className="text-center text-caption font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2">
+              <p className="text-center text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2">
                 {label}
               </p>
 
@@ -88,7 +88,7 @@ export const TeamStatsComparison: React.FC<TeamStatsComparisonProps> = ({
                 <div className="text-right">
                   <span
                     className={cn(
-                      "text-body-sm font-semibold tabular-nums text-gray-800 dark:text-gray-200",
+                      "text-sm font-semibold tabular-nums text-gray-800 dark:text-gray-200",
                       leader === "home" &&
                         "border-b-2 border-primary-500 dark:border-primary-400 pb-0.5",
                     )}
@@ -123,7 +123,7 @@ export const TeamStatsComparison: React.FC<TeamStatsComparisonProps> = ({
                 <div className="text-left">
                   <span
                     className={cn(
-                      "text-body-sm font-semibold tabular-nums text-gray-800 dark:text-gray-200",
+                      "text-sm font-semibold tabular-nums text-gray-800 dark:text-gray-200",
                       leader === "away" &&
                         "border-b-2 border-secondary-600 dark:border-secondary-400 pb-0.5",
                     )}

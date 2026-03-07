@@ -141,17 +141,6 @@ module.exports = {
           "0 1px 3px 0 rgba(0, 0, 0, 0.5), 0 1px 2px 0 rgba(0, 0, 0, 0.3)",
       },
 
-      // Typography
-      fontSize: {
-        display: ["3.5rem", { lineHeight: "1.2", fontWeight: "700" }],
-        title: ["2.5rem", { lineHeight: "1.3", fontWeight: "700" }],
-        subtitle: ["1.75rem", { lineHeight: "1.4", fontWeight: "600" }],
-        "body-lg": ["1.125rem", { lineHeight: "1.75" }],
-        body: ["1rem", { lineHeight: "1.75" }],
-        "body-sm": ["0.875rem", { lineHeight: "1.5" }],
-        caption: ["0.75rem", { lineHeight: "1.5" }],
-      },
-
       // Animation
       animation: {
         "fade-in": "fadeIn 0.3s ease-in-out",

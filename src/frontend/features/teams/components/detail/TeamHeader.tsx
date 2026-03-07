@@ -78,7 +78,7 @@ export function TeamHeader({ team }: TeamHeaderProps) {
 
         {/* Team Info */}
         <div className="flex-1 space-y-2">
-          <h1 className="text-title md:text-display font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-gray-100">
             <button
               type="button"
               className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 focus:outline-none focus:underline"
@@ -100,7 +100,7 @@ export function TeamHeader({ team }: TeamHeaderProps) {
             <span className="ml-1">{`- ${team.number}`}</span>
           </h1>
 
-          <p className="text-body-lg text-gray-600 dark:text-gray-400">
+          <p className="text-lg text-gray-600 dark:text-gray-400">
             {team.category || NA} • {team.gender || NA}
           </p>
 

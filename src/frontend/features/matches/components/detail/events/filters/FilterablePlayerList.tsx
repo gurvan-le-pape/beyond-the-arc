@@ -21,7 +21,7 @@ export function FilterablePlayerList({
 }: FilterablePlayerListProps) {
   return (
     <div className="min-w-0">
-      <h4 className="font-bold text-body-sm text-gray-700 dark:text-gray-300 mb-2 truncate">
+      <h4 className="font-bold text-sm text-gray-700 dark:text-gray-300 mb-2 truncate">
         {team.name}
       </h4>
 
@@ -30,7 +30,7 @@ export function FilterablePlayerList({
           <label
             key={player.player.id}
             className={cn(
-              "flex items-center gap-2 text-body-sm p-1 rounded transition-colors duration-200 cursor-pointer",
+              "flex items-center gap-2 text-sm p-1 rounded transition-colors duration-200 cursor-pointer",
               "hover:bg-gray-50 dark:hover:bg-gray-700",
             )}
           >

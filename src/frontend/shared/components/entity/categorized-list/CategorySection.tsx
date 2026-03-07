@@ -80,7 +80,7 @@ export function CategorySection<T>({
             isExpanded && "rotate-90",
           )}
         />
-        <span className="text-base font-semibold text-gray-800 dark:text-gray-200">
+        <span className="text-lg font-semibold text-gray-800 dark:text-gray-200">
           {category}
         </span>
         <span className="text-xs font-medium text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-700 rounded-full px-2 py-0.5">

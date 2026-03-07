@@ -57,7 +57,7 @@ export function Breadcrumb({
 
   return (
     <nav
-      className={`mb-6 flex items-center gap-2 text-body-sm ${className}`}
+      className={`mb-6 flex items-center gap-2 text-sm ${className}`}
       aria-label="Breadcrumb"
     >
       <ol className="flex items-center gap-2">

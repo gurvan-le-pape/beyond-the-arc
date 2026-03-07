@@ -66,7 +66,7 @@ export function PlayerDropdownFilter({
         ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "px-3 py-2 text-body-sm font-medium rounded-button transition-colors duration-200 flex items-center gap-2",
+          "px-3 py-2 text-sm font-medium rounded-button transition-colors duration-200 flex items-center gap-2",
           "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300",
           "hover:bg-gray-200 dark:hover:bg-gray-700",
           "focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400",
@@ -76,7 +76,7 @@ export function PlayerDropdownFilter({
 
         {/* Selection-count badge */}
         {selectedPlayerIds.size > 0 && (
-          <span className="bg-primary-600 dark:bg-primary-500 text-white text-caption rounded-button px-2 py-0.5">
+          <span className="bg-primary-600 dark:bg-primary-500 text-white text-xs rounded-button px-2 py-0.5">
             {selectedPlayerIds.size}
           </span>
         )}
@@ -84,7 +84,7 @@ export function PlayerDropdownFilter({
         {/* Animated chevron */}
         <span
           className={cn(
-            "transform transition-transform duration-200 text-caption",
+            "transform transition-transform duration-200 text-xs",
             isOpen && "rotate-180",
           )}
         >
@@ -120,7 +120,7 @@ export function PlayerDropdownFilter({
           {selectedPlayerIds.size > 0 && (
             <button
               onClick={() => setSelectedPlayerIds(new Set())}
-              className="mt-3 w-full px-3 py-1.5 text-body-sm rounded-button transition-colors duration-200 text-error-DEFAULT dark:text-error-light hover:bg-error-light/10 dark:hover:bg-error-dark/20 focus:outline-none focus:ring-2 focus:ring-error-DEFAULT dark:focus:ring-error-light"
+              className="mt-3 w-full px-3 py-1.5 text-sm rounded-button transition-colors duration-200 text-error-DEFAULT dark:text-error-light hover:bg-error-light/10 dark:hover:bg-error-dark/20 focus:outline-none focus:ring-2 focus:ring-error-DEFAULT dark:focus:ring-error-light"
             >
               {t("matchEvents.clearSelection")}
             </button>

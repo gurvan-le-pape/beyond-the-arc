@@ -229,7 +229,7 @@ export default function MatchesPage() {
       <main className="flex-grow py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto space-y-6">
           {/* Page Title */}
-          <h1 className="text-title md:text-display font-bold text-primary-600 dark:text-primary-400">
+          <h1 className="text-2xl md:text-4xl font-bold text-primary-600 dark:text-primary-400">
             {tMatches("searchTitle")}
           </h1>
 

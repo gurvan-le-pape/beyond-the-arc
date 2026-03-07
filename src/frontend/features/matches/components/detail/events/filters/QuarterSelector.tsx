@@ -24,7 +24,7 @@ export function QuarterSelector({ selected, onChange }: QuarterSelectorProps) {
           key={quarter}
           onClick={() => onChange(quarter)}
           className={cn(
-            "px-3 py-1.5 text-body-sm font-medium rounded-button transition-colors duration-200",
+            "px-3 py-1.5 text-sm font-medium rounded-button transition-colors duration-200",
             "focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:ring-offset-1",
             selected === quarter
               ? "bg-primary-600 dark:bg-primary-500 text-white"

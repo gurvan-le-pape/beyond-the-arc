@@ -66,13 +66,13 @@ export const Footer: React.FC = () => {
           {/* Brand section */}
           <div className="space-y-2">
             <div>
-              <h3 className="text-subtitle font-bold text-gray-900 dark:text-gray-100 mb-2">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
                 {t("footer.projectName")}
               </h3>
-              <p className="text-body-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
                 {t("footer.tagline")}
               </p>
-              <p className="text-caption text-gray-500 dark:text-gray-500">
+              <p className="text-xs text-gray-500 dark:text-gray-500">
                 {t("footer.portfolioNote")}
               </p>
             </div>
@@ -112,7 +112,7 @@ export const Footer: React.FC = () => {
 
           {/* Featured sections */}
           <div>
-            <h4 className="text-body-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wider mb-4">
+            <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wider mb-4">
               {t("footer.featuredWork")}
             </h4>
             <ul className="space-y-2">
@@ -122,7 +122,7 @@ export const Footer: React.FC = () => {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-body-sm transition-colors duration-200 inline-flex items-center gap-2 group text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"
+                      className="text-sm transition-colors duration-200 inline-flex items-center gap-2 group text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"
                     >
                       <Icon className="w-4 h-4 transition-transform duration-200 group-hover:scale-110" />
                       {link.label}
@@ -135,7 +135,7 @@ export const Footer: React.FC = () => {
 
           {/* Project links */}
           <div>
-            <h4 className="text-body-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wider mb-4">
+            <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wider mb-4">
               {t("footer.project")}
             </h4>
             <ul className="space-y-2">
@@ -143,7 +143,7 @@ export const Footer: React.FC = () => {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-body-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 inline-block"
+                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 inline-block"
                   >
                     {link.label}
                   </Link>
@@ -154,7 +154,7 @@ export const Footer: React.FC = () => {
 
           {/* Resources */}
           <div>
-            <h4 className="text-body-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wider mb-4">
+            <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wider mb-4">
               {t("footer.resources")}
             </h4>
             <ul className="space-y-2">
@@ -165,7 +165,7 @@ export const Footer: React.FC = () => {
                       href={link.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-body-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 inline-flex items-center gap-1 group"
+                      className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 inline-flex items-center gap-1 group"
                     >
                       {link.label}
                       <ExternalLink className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -173,7 +173,7 @@ export const Footer: React.FC = () => {
                   ) : (
                     <Link
                       href={link.href}
-                      className="text-body-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 inline-block"
+                      className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 inline-block"
                     >
                       {link.label}
                     </Link>
@@ -189,19 +189,19 @@ export const Footer: React.FC = () => {
           <div className="flex flex-col gap-2">
             {/* Copyright and tech stack */}
             <div className="flex flex-col sm:flex-row justify-between items-center gap-1">
-              <p className="text-body-sm text-gray-600 dark:text-gray-400 text-center sm:text-left">
+              <p className="text-sm text-gray-600 dark:text-gray-400 text-center sm:text-left">
                 {t("footer.copyright", {
                   year: currentYear,
                   name: "Gurvan LE PAPE",
                 })}
               </p>
-              <p className="text-caption text-gray-500 dark:text-gray-500">
+              <p className="text-xs text-gray-500 dark:text-gray-500">
                 {t("footer.madeWith")}
               </p>
             </div>
 
             {/* Disclaimer */}
-            <div className="flex flex-col sm:flex-row justify-center items-center gap-1 text-caption text-gray-500 dark:text-gray-500">
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-1 text-xs text-gray-500 dark:text-gray-500">
               <span>{t("footer.nonCommercial")}</span>
               <span className="hidden sm:inline">•</span>
               <span>{t("footer.dataDisclaimer")}</span>
