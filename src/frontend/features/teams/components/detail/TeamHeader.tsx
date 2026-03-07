@@ -14,7 +14,7 @@ import { normalizeString } from "@/shared/utils/normalizeString";
 import type { Team } from "../../types/Team";
 
 interface TeamHeaderProps {
-  team: Team;
+  readonly team: Team;
 }
 
 export function TeamHeader({ team }: TeamHeaderProps) {
@@ -64,7 +64,7 @@ export function TeamHeader({ team }: TeamHeaderProps) {
             size="icon"
             className="w-full h-full p-0 border-0 bg-transparent focus:outline-none"
             aria-label={tCommon("club.seeClub", { name: clubName })}
-            onClick={() => void router.push(clubUrl)}
+            onClick={() => router.push(clubUrl)}
           >
             <Image
               src={logoSrc}
@@ -97,7 +97,7 @@ export function TeamHeader({ team }: TeamHeaderProps) {
               aria-label={tCommon("competition.seeCompetition", {
                 name: competitionName,
               })}
-              onClick={() => void router.push(competitionUrl)}
+              onClick={() => router.push(competitionUrl)}
             >
               {competitionName}
             </Button>

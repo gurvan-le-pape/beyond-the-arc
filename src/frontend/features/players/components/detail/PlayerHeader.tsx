@@ -14,7 +14,7 @@ import { normalizeString } from "@/shared/utils/normalizeString";
 import type { Player } from "../../types/Player";
 
 interface PlayerHeaderProps {
-  player: Player;
+  readonly player: Player;
 }
 
 export function PlayerHeader({ player }: PlayerHeaderProps) {
@@ -67,7 +67,7 @@ export function PlayerHeader({ player }: PlayerHeaderProps) {
             size="icon"
             className="w-full h-full p-0 border-0 bg-transparent focus:outline-none"
             aria-label={tCommon("club.seeClub", { name: clubName })}
-            onClick={() => void router.push(clubUrl)}
+            onClick={() => router.push(clubUrl)}
           >
             <Image
               src={logoSrc}
@@ -98,7 +98,7 @@ export function PlayerHeader({ player }: PlayerHeaderProps) {
               variant="ghost"
               className="p-0 m-0 border-0 bg-transparent text-xl font-bold text-gray-900 dark:text-gray-100 align-baseline focus:outline-none hover:underline"
               aria-label={tCommon("club.seeClub", { name: clubName })}
-              onClick={() => void router.push(clubUrl)}
+              onClick={() => router.push(clubUrl)}
               type="button"
               style={{
                 fontSize: "inherit",
@@ -117,7 +117,7 @@ export function PlayerHeader({ player }: PlayerHeaderProps) {
                 aria-label={tCommon("competition.seeCompetition", {
                   name: competitionName,
                 })}
-                onClick={() => void router.push(competitionUrl)}
+                onClick={() => router.push(competitionUrl)}
               >
                 {competitionName}
               </Button>
