@@ -12,6 +12,7 @@ interface ArcZoneProps {
   fillOpacity: number;
   stroke: string;
   strokeWidth: number;
+  svgWidth: number;
   onMouseMove: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
   onMouseLeave: () => void;
   arcParams: {
@@ -32,6 +33,7 @@ export const ArcZone: React.FC<ArcZoneProps> = ({
   fillOpacity,
   stroke,
   strokeWidth,
+  svgWidth,
   onMouseMove,
   onMouseLeave,
   arcParams,
@@ -94,7 +96,14 @@ export const ArcZone: React.FC<ArcZoneProps> = ({
         onMouseLeave={onMouseLeave}
         style={{ cursor: "pointer" }}
       />
-      <ZoneStatLabel x={cx} y={cy} label={label} fg={fg} total={stats.total} />
+      <ZoneStatLabel
+        x={cx}
+        y={cy}
+        label={label}
+        fg={fg}
+        total={stats.total}
+        svgWidth={svgWidth}
+      />
     </g>
   );
 };

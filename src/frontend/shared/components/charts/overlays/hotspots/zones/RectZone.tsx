@@ -12,6 +12,7 @@ interface RectZoneProps {
   fillOpacity: number;
   stroke: string;
   strokeWidth: number;
+  svgWidth: number;
   onMouseMove: (e: React.MouseEvent<SVGRectElement, MouseEvent>) => void;
   onMouseLeave: () => void;
 }
@@ -25,6 +26,7 @@ export const RectZone: React.FC<RectZoneProps> = ({
   fillOpacity,
   stroke,
   strokeWidth,
+  svgWidth,
   onMouseMove,
   onMouseLeave,
 }) => {
@@ -36,6 +38,7 @@ export const RectZone: React.FC<RectZoneProps> = ({
   const cy = yScale((zone.y0 + zone.y1) / 2);
   const fg =
     stats.total > 0 ? Math.round((stats.made / stats.total) * 100) : null;
+
   return (
     <g>
       <rect
@@ -57,6 +60,7 @@ export const RectZone: React.FC<RectZoneProps> = ({
         label={zone.label}
         fg={fg}
         total={stats.total}
+        svgWidth={svgWidth}
       />
     </g>
   );

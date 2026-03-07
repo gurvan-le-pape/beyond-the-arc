@@ -2,9 +2,22 @@
 "use client";
 
 import * as d3 from "d3";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 
+import { ShotFilter } from "@/shared/constants";
 import type { ShotEvent } from "@/shared/types/ShotEvent";
+import {
+  binShotsByZones,
+  type Zone,
+} from "@/shared/utils/charts/overlays/hotspots/binShotsByZones";
+import { getAboveWingZones } from "@/shared/utils/charts/overlays/hotspots/zones/shotZonesAboveWing";
+import { getApexStripeZone } from "@/shared/utils/charts/overlays/hotspots/zones/shotZonesApexStripe";
+import { getArcZones } from "@/shared/utils/charts/overlays/hotspots/zones/shotZonesArc";
+import { getArcApexSidelineZones } from "@/shared/utils/charts/overlays/hotspots/zones/shotZonesArcApexSideline";
+import { getCorner3Zones } from "@/shared/utils/charts/overlays/hotspots/zones/shotZonesCorner3";
+import { getPaintZones } from "@/shared/utils/charts/overlays/hotspots/zones/shotZonesPaint";
+import { getTopKeyZone } from "@/shared/utils/charts/overlays/hotspots/zones/shotZonesTopKey";
+import { getWingZones } from "@/shared/utils/charts/overlays/hotspots/zones/shotZonesWing";
 
 import AboveWingZones from "./hotspots/AboveWingZones";
 import ApexStripeZones from "./hotspots/ApexStripeZones";
@@ -21,21 +34,48 @@ interface HotspotsOverlayProps {
   xScale: (x: number) => number;
   yScale: (y: number) => number;
   colorScale?: (t: number) => string;
+  svgWidth: number;
+  onMaxTotalChange?: (maxTotal: number) => void;
 }
+
+// All zone getter functions collected for computing maxTotal across all zones
+const ALL_ZONE_GETTERS: (() => Zone[])[] = [
+  getPaintZones,
+  getArcZones,
+  getArcApexSidelineZones,
+  getAboveWingZones,
+  getCorner3Zones,
+  getWingZones,
+  getApexStripeZone,
+  getTopKeyZone,
+];
 
 export const HotspotsOverlay: React.FC<HotspotsOverlayProps> = ({
   shots,
   xScale,
   yScale,
   colorScale,
+  svgWidth,
+  onMaxTotalChange,
 }) => {
-  // Compute max shot volume for color scale (for all zones)
-  // For now, just use shots.length as a fallback for maxTotal
-  const maxTotal = shots.length > 0 ? shots.length : 1;
   const colorFn = colorScale || d3.interpolateYlOrRd;
-  const zoneColorScale = d3.scaleSequential(colorFn).domain([0, maxTotal]);
 
-  // Tooltip state (for non-paint zones)
+  const maxTotal = useMemo(() => {
+    const allZones = ALL_ZONE_GETTERS.flatMap((getter) => getter());
+    const stats = binShotsByZones(shots, allZones);
+    return Math.max(1, ...Object.values(stats).map((s) => s.total));
+  }, [shots]);
+
+  // Bubble up the correct maxTotal so the header legend stays in sync
+  React.useEffect(() => {
+    onMaxTotalChange?.(maxTotal);
+  }, [maxTotal, onMaxTotalChange]);
+
+  const zoneColorScale = useMemo(
+    () => d3.scaleSequential(colorFn).domain([0, maxTotal]),
+    [colorFn, maxTotal],
+  );
+
   const [tooltip, setTooltip] = useState<any>(null);
 
   const handleZoneHover = (
@@ -54,98 +94,34 @@ export const HotspotsOverlay: React.FC<HotspotsOverlayProps> = ({
     });
   };
 
+  const sharedProps = {
+    shots,
+    xScale,
+    yScale,
+    colorScale: zoneColorScale,
+    maxTotal,
+    svgWidth,
+    onZoneHover: handleZoneHover,
+    onZoneLeave: () => setTooltip(null),
+  };
+
   return (
     <g>
-      {/* Paint zones rendered as a self-contained component */}
-      <PaintZones
-        shots={shots}
-        xScale={xScale}
-        yScale={yScale}
-        colorScale={zoneColorScale}
-        maxTotal={maxTotal}
-        onZoneHover={handleZoneHover}
-        onZoneLeave={() => setTooltip(null)}
-      />
-      {/* Arc zones rendered as a self-contained component */}
-      <ArcZones
-        shots={shots}
-        xScale={xScale}
-        yScale={yScale}
-        colorScale={zoneColorScale}
-        maxTotal={maxTotal}
-        onZoneHover={handleZoneHover}
-        onZoneLeave={() => setTooltip(null)}
-      />
-      {/* Arc Apex Sideline zones (left and right) rendered as a self-contained component */}
-      <ArcApexSidelineZones
-        shots={shots}
-        xScale={xScale}
-        yScale={yScale}
-        colorScale={zoneColorScale}
-        maxTotal={maxTotal}
-        onZoneHover={handleZoneHover}
-        onZoneLeave={() => setTooltip(null)}
-      />
-      {/* Above Wing zones rendered as a self-contained component */}
-      <AboveWingZones
-        shots={shots}
-        xScale={xScale}
-        yScale={yScale}
-        colorScale={zoneColorScale}
-        maxTotal={maxTotal}
-        onZoneHover={handleZoneHover}
-        onZoneLeave={() => setTooltip(null)}
-      />
+      <PaintZones {...sharedProps} />
+      <ArcZones {...sharedProps} />
+      <ArcApexSidelineZones {...sharedProps} />
+      <AboveWingZones {...sharedProps} />
+      <Corner3Zones {...sharedProps} />
+      <WingZones {...sharedProps} />
+      <ApexStripeZones {...sharedProps} />
+      <TopKeyZones {...sharedProps} />
 
-      {/* Corner 3 zones rendered as a self-contained component */}
-      <Corner3Zones
-        shots={shots}
-        xScale={xScale}
-        yScale={yScale}
-        colorScale={zoneColorScale}
-        maxTotal={maxTotal}
-        onZoneHover={handleZoneHover}
-        onZoneLeave={() => setTooltip(null)}
-      />
-      {/* Wing zones rendered as a self-contained component */}
-      <WingZones
-        shots={shots}
-        xScale={xScale}
-        yScale={yScale}
-        colorScale={zoneColorScale}
-        maxTotal={maxTotal}
-        onZoneHover={handleZoneHover}
-        onZoneLeave={() => setTooltip(null)}
-      />
-      {/* Apex stripe zone rendered as a self-contained component */}
-      <ApexStripeZones
-        shots={shots}
-        xScale={xScale}
-        yScale={yScale}
-        colorScale={zoneColorScale}
-        maxTotal={maxTotal}
-        onZoneHover={handleZoneHover}
-        onZoneLeave={() => setTooltip(null)}
-      />
-
-      {/* Top key zone rendered as a self-contained component */}
-      <TopKeyZones
-        shots={shots}
-        xScale={xScale}
-        yScale={yScale}
-        colorScale={zoneColorScale}
-        maxTotal={maxTotal}
-        onZoneHover={handleZoneHover}
-        onZoneLeave={() => setTooltip(null)}
-      />
-
-      {/* Tooltip */}
       {tooltip &&
         typeof globalThis.window === "object" &&
         globalThis.window &&
         typeof globalThis.document === "object" &&
         globalThis.document && (
-          <TooltipContent tooltip={tooltip} shotFilter="all" />
+          <TooltipContent tooltip={tooltip} shotFilter={ShotFilter.ALL} />
         )}
     </g>
   );

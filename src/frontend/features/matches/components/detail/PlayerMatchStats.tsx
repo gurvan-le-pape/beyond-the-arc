@@ -13,6 +13,7 @@ import type {
 import { useRouter } from "@/navigation";
 import { ShotModal } from "@/shared/components/charts";
 import {
+  Section,
   Table,
   TableBody,
   TableCell,
@@ -20,7 +21,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/shared/components/ui";
-import { Section } from "@/shared/components/ui";
 
 import type { MatchEvent } from "../../types/MatchEvent";
 
@@ -166,7 +166,7 @@ export const PlayerMatchStats: React.FC<PlayerMatchStatsProps> = ({
           <button
             className="p-1 bg-transparent border-none cursor-pointer hover:opacity-80 transition-opacity duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 rounded"
             title={tMatches("playerMatchStats.shotChart")}
-            onClick={() => setModalPlayer(p)}
+            onClick={() => setModalPlayer(p.player)}
             aria-label={tMatches("playerMatchStats.shotChart")}
           >
             <img

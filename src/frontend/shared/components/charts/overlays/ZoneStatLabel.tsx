@@ -7,10 +7,13 @@ interface ZoneStatLabelProps {
   label: string;
   fg: number | null;
   total: number;
+  svgWidth: number;
 }
 
 /**
- * ZoneStatLabel renders the zone label and stats (FG% • total shots) for a zone.
+ * ZoneStatLabel renders zone stats (FG%) for a zone.
+ * Font size scales proportionally with svgWidth so labels stay correctly
+ * sized at any container width.
  */
 export const ZoneStatLabel: React.FC<ZoneStatLabelProps> = ({
   x,
@@ -18,33 +21,42 @@ export const ZoneStatLabel: React.FC<ZoneStatLabelProps> = ({
   label,
   fg,
   total,
-}) => (
-  <>
-    <text
-      x={x}
-      y={y}
-      textAnchor="middle"
-      alignmentBaseline="middle"
-      fontSize={18}
-      fill="#222"
-      opacity={0.7}
-      pointerEvents="none"
-    >
-      {label}
-    </text>
-    <text
-      x={x}
-      y={y + 20}
-      textAnchor="middle"
-      alignmentBaseline="hanging"
-      fontSize={13}
-      fill="#222"
-      opacity={0.85}
-      pointerEvents="none"
-    >
-      {total > 0 ? `${fg ?? 0}% • ${total}` : ""}
-    </text>
-  </>
-);
+  svgWidth,
+}) => {
+  // Scale font size with container — tuned so labels fit at all widths
+  const statFontSize = Math.max(9, svgWidth / 55);
+  const statLineHeight = statFontSize * 1.4;
+
+  return (
+    <>
+      {label && (
+        <text
+          x={x}
+          y={y - statLineHeight / 2}
+          textAnchor="middle"
+          dominantBaseline="middle"
+          style={{ fontSize: `${statFontSize}px` }}
+          fill="#222"
+          opacity={0.7}
+          pointerEvents="none"
+        >
+          {label}
+        </text>
+      )}
+      <text
+        x={x}
+        y={y + statLineHeight / 2}
+        textAnchor="middle"
+        dominantBaseline="middle"
+        style={{ fontSize: `${statFontSize}px` }}
+        fill="#222"
+        opacity={0.85}
+        pointerEvents="none"
+      >
+        {total > 0 ? `${fg ?? 0}%` : ""}
+      </text>
+    </>
+  );
+};
 
 export default ZoneStatLabel;

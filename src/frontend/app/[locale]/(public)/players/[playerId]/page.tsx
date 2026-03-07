@@ -13,7 +13,6 @@ import {
 import type { Player } from "@/features/players/types/Player";
 import type { PlayerMatchHistory } from "@/features/players/types/PlayerMatchHistory";
 import { aggregateStats } from "@/features/players/utils/statsAggregation";
-import { transformToShotEvents } from "@/features/players/utils/transformShotEvents";
 import { PlayerShotChart } from "@/shared/components/charts";
 import { Footer, Header } from "@/shared/components/layouts";
 
@@ -49,13 +48,13 @@ export default async function PlayerDetailPage({
     player = await serverPlayersService.getById(playerId);
     if (!player) notFound();
 
-    const [matchesData, rawEvents] = await Promise.all([
+    const [matchesData, matchEvents] = await Promise.all([
       serverPlayersService.getMatches(playerId),
       serverMatchesService.getEventsByPlayerId(playerId),
     ]);
 
     matches = matchesData;
-    const shotEvents = transformToShotEvents(rawEvents);
+
     const playerCareerStats = aggregateStats(
       matches.map((m) => m.player.stats),
     );
@@ -74,7 +73,7 @@ export default async function PlayerDetailPage({
             />
             <PlayerComparison player={player} />
             <PlayerShotChart
-              shots={shotEvents}
+              matchEvents={matchEvents}
               title={tPlayers("playerDetail.shotchartTitle")}
               description={tPlayers("playerDetail.shotchartDescription")}
               isLoading={false}

@@ -3,6 +3,7 @@ import React from "react";
 import { createPortal } from "react-dom";
 
 import { getTooltipPosition } from "@/shared/components/charts";
+import { ShotFilter } from "@/shared/constants";
 
 export type TooltipState = {
   x: number;
@@ -11,13 +12,13 @@ export type TooltipState = {
   missed: number;
   total: number;
   fg: number | null;
-  cellRow: number;
-  cellCol: number;
+  cellRow?: number;
+  cellCol?: number;
 };
 
 interface TooltipContentProps {
   tooltip: NonNullable<TooltipState>;
-  shotFilter: "all" | "made" | "missed";
+  shotFilter: ShotFilter;
 }
 
 const TooltipContent: React.FC<TooltipContentProps> = ({
@@ -26,7 +27,7 @@ const TooltipContent: React.FC<TooltipContentProps> = ({
 }) => {
   const { left, top } = getTooltipPosition(tooltip.x, tooltip.y);
   let filterContent = null;
-  if (shotFilter === "made") {
+  if (shotFilter === ShotFilter.MADE) {
     const pct =
       tooltip.total > 0
         ? Math.round((tooltip.made / tooltip.total) * 100)
@@ -36,7 +37,7 @@ const TooltipContent: React.FC<TooltipContentProps> = ({
         <b>Made:</b> {tooltip.made} ({pct === null ? "-" : pct + "%"})
       </div>
     );
-  } else if (shotFilter === "missed") {
+  } else if (shotFilter === ShotFilter.MISSED) {
     const pct =
       tooltip.total > 0
         ? Math.round((tooltip.missed / tooltip.total) * 100)
@@ -66,15 +67,17 @@ const TooltipContent: React.FC<TooltipContentProps> = ({
         whiteSpace: "nowrap",
       }}
     >
-      {/* Cell coordinates for debugging/analysis */}
-      <div>
-        <b>Cell:</b> ({tooltip.cellRow}, {tooltip.cellCol})
-      </div>
+      {/* Only show cell coordinates when available (grid/heatmap charts) */}
+      {tooltip.cellRow !== undefined && tooltip.cellCol !== undefined && (
+        <div>
+          <b>Cell:</b> ({tooltip.cellRow}, {tooltip.cellCol})
+        </div>
+      )}
       <div>
         <b>Total:</b> {tooltip.total}
       </div>
       {/* Show all stats if filter is 'all' */}
-      {shotFilter === "all" && (
+      {shotFilter === ShotFilter.ALL && (
         <>
           <div>
             <b>Made:</b> {tooltip.made}

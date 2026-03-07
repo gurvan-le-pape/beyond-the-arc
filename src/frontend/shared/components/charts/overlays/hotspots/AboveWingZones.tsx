@@ -2,16 +2,18 @@
 import React from "react";
 
 import { PolygonZone } from "@/shared/components/charts";
+import type { ShotEvent } from "@/shared/types";
+import type { ZoneStats } from "@/shared/types/charts/ZoneStats";
 import { binShotsByZones } from "@/shared/utils/charts/overlays/hotspots/binShotsByZones";
 import { getAboveWingZones } from "@/shared/utils/charts/overlays/hotspots/zones/shotZonesAboveWing";
 
 interface AboveWingZonesProps {
-  shots: any[];
+  shots: ShotEvent[];
   xScale: (x: number) => number;
   yScale: (y: number) => number;
   colorScale: (t: number) => string;
-  maxTotal: number;
-  onZoneHover: (zoneKey: string, stats: any, e: React.MouseEvent) => void;
+  svgWidth: number;
+  onZoneHover: (zoneKey: string, stats: ZoneStats, e: React.MouseEvent) => void;
   onZoneLeave: () => void;
 }
 
@@ -20,7 +22,7 @@ const AboveWingZones: React.FC<AboveWingZonesProps> = ({
   xScale,
   yScale,
   colorScale,
-  maxTotal,
+  svgWidth,
   onZoneHover,
   onZoneLeave,
 }) => {
@@ -52,6 +54,7 @@ const AboveWingZones: React.FC<AboveWingZonesProps> = ({
             fillOpacity={fillOpacity}
             stroke={stroke}
             strokeWidth={strokeWidth}
+            svgWidth={svgWidth}
             onMouseMove={(e) => onZoneHover(zone.key, stats, e)}
             onMouseLeave={onZoneLeave}
           />

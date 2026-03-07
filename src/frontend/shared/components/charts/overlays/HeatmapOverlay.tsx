@@ -6,6 +6,8 @@
 import * as d3 from "d3";
 import React, { useMemo, useState } from "react";
 
+import { ShotFilter } from "@/shared/constants";
+
 import HeatmapCell from "./HeatmapCell";
 import type { TooltipState } from "./TooltipContent";
 import TooltipContent from "./TooltipContent";
@@ -15,7 +17,7 @@ interface HeatmapOverlayProps {
   // 2D array of binned shot data per cell
   heatmapData: { made: number; missed: number; total: number }[][];
   // Which shot type to visualize (affects color intensity and tooltip)
-  shotFilter: "all" | "made" | "missed";
+  shotFilter: ShotFilter;
   // Scales to convert court coordinates to SVG coordinates
   xScale: (x: number) => number;
   yScale: (y: number) => number;
@@ -40,8 +42,8 @@ export const HeatmapOverlay: React.FC<HeatmapOverlayProps> = ({
 }) => {
   // Helper: Selects the value to visualize for a cell based on the current filter
   function getCellValue(cell: { made: number; missed: number; total: number }) {
-    if (shotFilter === "made") return cell.made;
-    if (shotFilter === "missed") return cell.missed;
+    if (shotFilter === ShotFilter.MADE) return cell.made;
+    if (shotFilter === ShotFilter.MISSED) return cell.missed;
     return cell.total;
   }
 

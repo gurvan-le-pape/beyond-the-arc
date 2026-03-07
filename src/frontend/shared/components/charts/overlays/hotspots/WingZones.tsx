@@ -2,16 +2,18 @@
 import React from "react";
 
 import { RectZone } from "@/shared/components/charts";
+import type { ShotEvent } from "@/shared/types";
+import type { ZoneStats } from "@/shared/types/charts/ZoneStats";
 import { binShotsByZones } from "@/shared/utils/charts/overlays/hotspots/binShotsByZones";
 import { getWingZones } from "@/shared/utils/charts/overlays/hotspots/zones/shotZonesWing";
 
 interface WingZonesProps {
-  shots: any[];
+  shots: ShotEvent[];
   xScale: (x: number) => number;
   yScale: (y: number) => number;
   colorScale: (t: number) => string;
-  maxTotal: number;
-  onZoneHover: (zoneKey: string, stats: any, e: React.MouseEvent) => void;
+  svgWidth: number;
+  onZoneHover: (zoneKey: string, stats: ZoneStats, e: React.MouseEvent) => void;
   onZoneLeave: () => void;
 }
 
@@ -20,7 +22,7 @@ const WingZones: React.FC<WingZonesProps> = ({
   xScale,
   yScale,
   colorScale,
-  maxTotal,
+  svgWidth,
   onZoneHover,
   onZoneLeave,
 }) => {
@@ -39,8 +41,6 @@ const WingZones: React.FC<WingZonesProps> = ({
         const stats = zoneStats[zone.key];
         const fill = colorScale(stats.total);
         const fillOpacity = stats.total > 0 ? 0.7 : 0.18;
-        const stroke = "#222";
-        const strokeWidth = 1;
         return (
           <RectZone
             key={zone.key}
@@ -50,8 +50,9 @@ const WingZones: React.FC<WingZonesProps> = ({
             yScale={yScale}
             fill={fill}
             fillOpacity={fillOpacity}
-            stroke={stroke}
-            strokeWidth={strokeWidth}
+            stroke="#222"
+            strokeWidth={1}
+            svgWidth={svgWidth}
             onMouseMove={(e) => onZoneHover(zone.key, stats, e)}
             onMouseLeave={onZoneLeave}
           />
