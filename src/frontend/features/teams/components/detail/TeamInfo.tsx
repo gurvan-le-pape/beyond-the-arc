@@ -2,7 +2,7 @@
 import { useTranslations } from "next-intl";
 import React from "react";
 
-import { Card, InfoBox } from "@/shared/components/ui";
+import { InfoBox, Section } from "@/shared/components/ui";
 
 interface StatConfig {
   key: string;
@@ -78,12 +78,10 @@ export const TeamInfo: React.FC<TeamInfoProps> = ({
   const gridClass = gridCols || "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
 
   return (
-    <Card variant="highlighted" padding="lg">
-      {title && (
-        <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-          {title || t("teamDetail.teamStatsTitle")}
-        </h2>
-      )}
+    <Section
+      title={title || t("teamDetail.teamStatsTitle")}
+      variant="highlighted"
+    >
       <div className={`grid ${gridClass} gap-4`}>
         {config.map((stat) => (
           <InfoBox
@@ -93,7 +91,7 @@ export const TeamInfo: React.FC<TeamInfoProps> = ({
           />
         ))}
       </div>
-    </Card>
+    </Section>
   );
 };
 

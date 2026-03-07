@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from "react";
 
 import type { TeamStats } from "@/features/teams/types/TeamInfo";
-import { Card } from "@/shared/components/ui";
+import { Section } from "@/shared/components/ui";
 import { NA } from "@/shared/constants";
 import { cn } from "@/shared/utils/cn";
 
@@ -18,7 +18,6 @@ interface TeamStatsComparisonProps {
   awayStats: TeamStats;
   categories: StatCategory[];
   title?: string;
-  className?: string;
 }
 
 const PERCENTAGE_MAP: Record<string, string> = {
@@ -40,7 +39,6 @@ export const TeamStatsComparison: React.FC<TeamStatsComparisonProps> = ({
   awayStats,
   categories,
   title,
-  className,
 }) => {
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
@@ -49,13 +47,7 @@ export const TeamStatsComparison: React.FC<TeamStatsComparisonProps> = ({
   }, []);
 
   return (
-    <Card variant="default" padding="lg" className={className}>
-      {title && (
-        <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-6 text-center">
-          {title}
-        </h3>
-      )}
-
+    <Section variant="highlighted" title={title}>
       <div className="space-y-6">
         {categories.map(({ key, label }, index) => {
           const homeNum = Number(homeStats[key]) || 0;
@@ -65,8 +57,14 @@ export const TeamStatsComparison: React.FC<TeamStatsComparisonProps> = ({
           const homePct = total > 0 ? (homeNum / total) * 100 : 50;
           const awayPct = total > 0 ? (awayNum / total) * 100 : 50;
 
-          const leader: "home" | "away" | "tie" =
-            homeNum > awayNum ? "home" : awayNum > homeNum ? "away" : "tie";
+          let leader: "home" | "away" | "tie";
+          if (homeNum > awayNum) {
+            leader = "home";
+          } else if (awayNum > homeNum) {
+            leader = "away";
+          } else {
+            leader = "tie";
+          }
 
           const homeDisplay =
             key in homeStats ? getStatDisplay(homeStats, key) : NA;
@@ -136,7 +134,7 @@ export const TeamStatsComparison: React.FC<TeamStatsComparisonProps> = ({
           );
         })}
       </div>
-    </Card>
+    </Section>
   );
 };
 

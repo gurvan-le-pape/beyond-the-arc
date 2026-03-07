@@ -4,11 +4,11 @@ import { getTranslations } from "next-intl/server";
 
 import { serverClubsService } from "@/features/organizations/clubs/api";
 import {
+  Breadcrumb,
   ClubHeader,
   ClubInfo,
   ClubTeams,
 } from "@/features/organizations/clubs/components";
-import { Breadcrumb } from "@/features/organizations/clubs/components";
 import type { ClubTeamInfo } from "@/features/organizations/clubs/types/ClubDetailed";
 import { getBreadcrumbItems } from "@/features/organizations/clubs/utils";
 import { serverCommitteesService } from "@/features/organizations/committees/api/committees.server";
@@ -18,7 +18,7 @@ import type { Gender } from "@/shared/constants";
 import { groupTeamsByGender } from "@/shared/utils/helpers/team-helpers";
 
 interface ClubPageProps {
-  params: Promise<{
+  readonly params: Promise<{
     locale: string;
     leagueId: string;
     committeeId: string;
@@ -98,7 +98,7 @@ export default async function ClubPage({ params }: ClubPageProps) {
         role="main"
         aria-label={t("detail.page", { clubName: club.name })}
       >
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-6xl mx-auto space-y-6">
           <Breadcrumb items={breadcrumbItems} />
           <ClubHeader club={club} />
           <ClubInfo club={club} />

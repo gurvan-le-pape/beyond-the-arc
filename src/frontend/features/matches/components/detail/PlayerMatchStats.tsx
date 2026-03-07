@@ -36,10 +36,56 @@ interface PlayerMatchStatsProps {
  */
 interface StatColumn {
   id: string;
-  label: string;
-  align: "left" | "center" | "right";
+  label?: string;
+  align?: "left" | "center" | "right";
   getValue: (player: any) => string | number | React.ReactNode;
   className?: string;
+}
+
+interface PlayerNameCellProps {
+  readonly playerId: number;
+  readonly playerName: string;
+  readonly onNavigate: (id: number) => void;
+}
+
+function PlayerNameCell({
+  playerId,
+  playerName,
+  onNavigate,
+}: PlayerNameCellProps) {
+  return (
+    <button
+      type="button"
+      className="cursor-pointer hover:text-primary-600 dark:hover:text-primary-400 bg-transparent border-none p-0 m-0 font-inherit text-left transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 rounded"
+      onClick={() => onNavigate(playerId)}
+    >
+      {playerName}
+    </button>
+  );
+}
+
+interface ShotChartCellProps {
+  readonly player: any;
+  readonly onSelect: (player: any) => void;
+  readonly label: string;
+}
+
+function ShotChartCell({ player, onSelect, label }: ShotChartCellProps) {
+  return (
+    <button
+      className="p-1 bg-transparent border-none cursor-pointer hover:opacity-80 transition-opacity duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 rounded"
+      title={label}
+      onClick={() => onSelect(player)}
+      aria-label={label}
+    >
+      <img
+        src="/images/icons/chart-bar.svg"
+        alt={label}
+        className="h-5 w-5 text-primary-600 dark:text-primary-400"
+        draggable="false"
+      />
+    </button>
+  );
 }
 
 export const PlayerMatchStats: React.FC<PlayerMatchStatsProps> = ({
@@ -54,9 +100,7 @@ export const PlayerMatchStats: React.FC<PlayerMatchStatsProps> = ({
   const tMatches = useTranslations("matches");
 
   // Use shot data from playerShots prop
-  const getPlayerShots = (playerId: number): MatchEvent[] => {
-    return playerShots[playerId] || [];
-  };
+  const getPlayerShots = (playerId: number) => playerShots[playerId] ?? [];
 
   // Define columns configuration
   const columns: StatColumn[] = useMemo(
@@ -69,16 +113,12 @@ export const PlayerMatchStats: React.FC<PlayerMatchStatsProps> = ({
       },
       {
         id: "name",
-        label: tMatches("playerMatchStats.name"),
-        align: "left",
         getValue: (p) => (
-          <button
-            type="button"
-            className="cursor-pointer hover:text-primary-600 dark:hover:text-primary-400 bg-transparent border-none p-0 m-0 font-inherit text-left transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 rounded"
-            onClick={() => void router.push(`/players/${p.player.id}`)}
-          >
-            {p.player.name}
-          </button>
+          <PlayerNameCell
+            playerId={p.player.id}
+            playerName={p.player.name}
+            onNavigate={(id) => router.push(`/players/${id}`)}
+          />
         ),
       },
       {
@@ -160,22 +200,12 @@ export const PlayerMatchStats: React.FC<PlayerMatchStatsProps> = ({
       },
       {
         id: "shots",
-        label: tMatches("playerMatchStats.shots"),
-        align: "center",
         getValue: (p) => (
-          <button
-            className="p-1 bg-transparent border-none cursor-pointer hover:opacity-80 transition-opacity duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 rounded"
-            title={tMatches("playerMatchStats.shotChart")}
-            onClick={() => setModalPlayer(p.player)}
-            aria-label={tMatches("playerMatchStats.shotChart")}
-          >
-            <img
-              src="/images/icons/chart-bar.svg"
-              alt={tMatches("playerMatchStats.shotChart")}
-              className="h-5 w-5 text-primary-600 dark:text-primary-400"
-              draggable="false"
-            />
-          </button>
+          <ShotChartCell
+            player={p.player}
+            onSelect={setModalPlayer}
+            label={tMatches("playerMatchStats.shotChart")}
+          />
         ),
       },
     ],
@@ -189,7 +219,7 @@ export const PlayerMatchStats: React.FC<PlayerMatchStatsProps> = ({
           <button
             type="button"
             className="text-gray-800 dark:text-gray-200 cursor-pointer hover:text-primary-600 dark:hover:text-primary-400 bg-transparent border-none p-0 m-0 font-inherit transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 rounded"
-            onClick={() => void router.push(`/teams/${team.id}`)}
+            onClick={() => router.push(`/teams/${team.id}`)}
             aria-label={`${tMatches("playerMatchStats.viewTeam")} ${team.name}`}
           >
             {team.name}
@@ -203,7 +233,7 @@ export const PlayerMatchStats: React.FC<PlayerMatchStatsProps> = ({
           </span>
         </span>
       }
-      className="mb-8"
+      variant="highlighted"
     >
       <div className="overflow-x-auto">
         <Table className="match-summary-table">

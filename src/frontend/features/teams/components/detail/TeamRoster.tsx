@@ -6,8 +6,8 @@ import React, { useState } from "react";
 
 import type { PlayerMatchHistoryEntry } from "@/features/players/types/PlayerMatchHistory";
 import { useRouter } from "@/navigation";
-import { Card } from "@/shared/components/ui";
 import {
+  Section,
   Table,
   TableBody,
   TableCell,
@@ -110,13 +110,7 @@ export const TeamRoster: React.FC<TeamRosterProps> = ({ players }) => {
   };
 
   return (
-    <Card variant="highlighted" padding="none">
-      <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">
-          {tTeams("teamDetail.rosterTitle")}
-        </h2>
-      </div>
-
+    <Section title={tTeams("teamDetail.rosterTitle")} variant="highlighted">
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>
@@ -197,7 +191,7 @@ export const TeamRoster: React.FC<TeamRosterProps> = ({ players }) => {
                     key={player[0]?.player.id}
                     clickable
                     onClick={() =>
-                      void router.push(`/players/${player[0]?.player.id}`)
+                      router.push(`/players/${player[0]?.player.id}`)
                     }
                   >
                     <TableCell highlight>#{player[0]?.player.number}</TableCell>
@@ -215,7 +209,7 @@ export const TeamRoster: React.FC<TeamRosterProps> = ({ players }) => {
           </TableBody>
         </Table>
       </div>
-    </Card>
+    </Section>
   );
 };
 

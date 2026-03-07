@@ -2,8 +2,9 @@
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 import React from "react";
 
-import { Button, Card } from "@/shared/components/ui";
 import {
+  Button,
+  Section,
   Table,
   TableBody,
   TableCell,
@@ -28,16 +29,16 @@ export interface MatchHistoryColumn<T> {
  * Props for MatchHistoryTable component (generic)
  */
 interface MatchHistoryTableProps<T> {
-  matches: T[];
-  columns: MatchHistoryColumn<T>[];
-  emptyMessage: string;
-  onRowClick?: (match: T) => void;
-  showAll: boolean;
-  setShowAll: (show: boolean) => void;
-  showAllLabel: string;
-  showLessLabel: string;
-  maxRows?: number;
-  title?: string;
+  readonly matches: T[];
+  readonly columns: MatchHistoryColumn<T>[];
+  readonly emptyMessage: string;
+  readonly onRowClick?: (match: T) => void;
+  readonly showAll: boolean;
+  readonly setShowAll: (show: boolean) => void;
+  readonly showAllLabel: string;
+  readonly showLessLabel: string;
+  readonly maxRows?: number;
+  readonly title?: string;
 }
 
 /**
@@ -86,15 +87,7 @@ export function MatchHistoryTable<T extends { id: number }>({
   const hasMoreMatches = matches.length > maxRows;
 
   return (
-    <Card variant="highlighted" padding="none">
-      {title && (
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-subtitle font-bold text-gray-900 dark:text-gray-100">
-            {title}
-          </h2>
-        </div>
-      )}
-
+    <Section title={title} variant="highlighted">
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>
@@ -154,7 +147,7 @@ export function MatchHistoryTable<T extends { id: number }>({
           </Button>
         </div>
       )}
-    </Card>
+    </Section>
   );
 }
 

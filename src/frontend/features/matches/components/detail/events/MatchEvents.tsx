@@ -15,8 +15,7 @@ import {
   pointsForEvent,
 } from "@/features/matches/utils/eventHelpers";
 import type { TeamInfoExtended } from "@/features/teams/types/TeamInfo";
-import { EmptyState } from "@/shared/components/ui";
-import { Section } from "@/shared/components/ui";
+import { EmptyState, Section } from "@/shared/components/ui";
 import { EventCategory } from "@/shared/constants/event-categories";
 
 import { MatchEventsFilters } from "./filters/MatchEventsFilters";
@@ -124,7 +123,7 @@ export const MatchEvents: React.FC<MatchEventsProps> = ({
   // ---- early return for empty data -----------------------------------------
   if (!events || events.length === 0) {
     return (
-      <Section title={t("matchEvents.title")}>
+      <Section title={t("matchEvents.title")} variant="highlighted">
         <EmptyState message={t("matchEvents.noEvents")} />
       </Section>
     );
@@ -132,14 +131,7 @@ export const MatchEvents: React.FC<MatchEventsProps> = ({
 
   // ---- render --------------------------------------------------------------
   return (
-    <Section
-      title={
-        <span className="text-primary-600 dark:text-primary-400">
-          {t("matchEvents.title")}
-        </span>
-      }
-      className="mt-6"
-    >
+    <Section title={t("matchEvents.title")} variant="highlighted">
       <div className="mb-6">
         <MatchEventsFilters
           homeTeam={homeTeam}

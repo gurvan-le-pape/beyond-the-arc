@@ -37,7 +37,7 @@ export const CompetitionLevelFilters: React.FC<
   const t = useTranslations("filters");
 
   return (
-    <Card variant="default" padding="lg">
+    <Card variant="highlighted" padding="lg">
       <div className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Level Filter */}

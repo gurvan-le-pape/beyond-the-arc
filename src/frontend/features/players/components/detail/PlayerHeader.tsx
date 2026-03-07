@@ -58,7 +58,7 @@ export function PlayerHeader({ player }: PlayerHeaderProps) {
   const clubUrl = `/clubs/league/${leagueId}/committee/${committeeId}/club/${clubId}`;
 
   return (
-    <Card variant="highlighted" padding="lg" className="mb-8">
+    <Card variant="highlighted" padding="lg">
       <div className="flex items-center gap-6">
         {/* Club Logo */}
         <div className="relative w-20 h-20 md:w-24 md:h-24 flex-shrink-0">

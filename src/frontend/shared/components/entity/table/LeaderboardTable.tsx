@@ -2,6 +2,7 @@
 import { useTranslations } from "next-intl";
 
 import {
+  Section,
   Table,
   TableBody,
   TableCell,
@@ -10,23 +11,22 @@ import {
   TableRow,
 } from "@/shared/components/ui";
 
+interface LeaderboardTableProps {
+  readonly leaderboards: any[];
+  readonly dropdown?: React.ReactNode;
+}
+
 export function LeaderboardTable({
   leaderboards,
   dropdown,
-}: {
-  leaderboards: any[];
-  dropdown?: React.ReactNode;
-}) {
+}: LeaderboardTableProps) {
   const tCommon = useTranslations("common");
   const tCompetitions = useTranslations("competitions");
 
   return (
-    <div className="bg-white dark:bg-gray-800 shadow-card dark:shadow-card-dark rounded-card border border-gray-200 dark:border-gray-700 mt-6 p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold text-primary-600 dark:text-primary-400">
-          {tCompetitions("leaderboardTitle")}
-        </h2>
-        {dropdown && <div className="min-w-[200px]">{dropdown}</div>}
+    <Section variant="highlighted" title={tCompetitions("leaderboardTitle")}>
+      <div className="flex justify-end mb-2">
+        <div className="min-w-[200px]">{dropdown}</div>
       </div>
       <Table className="border border-primary-500 dark:border-primary-600 rounded-card box-border">
         <TableHeader className="bg-primary-100 dark:bg-primary-900/30 border-b border-primary-500 dark:border-primary-600">
@@ -120,7 +120,7 @@ export function LeaderboardTable({
           ))}
         </TableBody>
       </Table>
-    </div>
+    </Section>
   );
 }
 
