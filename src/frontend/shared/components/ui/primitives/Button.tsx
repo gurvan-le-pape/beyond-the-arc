@@ -61,11 +61,11 @@ const buttonVariants = cva(
       },
       size: {
         sm: "h-9 px-3 text-sm",
-        md: "h-10 px-4 text-base",
+        md: "h-10 px-4 text-lg",
         lg: "h-12 px-6 text-lg",
         icon: "h-10 w-10",
         // Custom size for pills
-        pill: "px-4 py-2 text-base",
+        pill: "px-4 py-2 text-lg",
         // Auto height for list items and category headers
         auto: "h-auto",
       },

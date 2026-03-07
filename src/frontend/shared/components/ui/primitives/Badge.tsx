@@ -8,7 +8,7 @@ import { cn } from "@/shared/utils/cn";
  * Badge variants for team categories, statuses, etc.
  */
 const badgeVariants = cva(
-  "inline-flex items-center rounded-button border text-caption font-semibold transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2",
+  "inline-flex items-center rounded-button border text-xs font-semibold transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2",
   {
     variants: {
       variant: {

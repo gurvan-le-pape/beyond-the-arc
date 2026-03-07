@@ -130,10 +130,10 @@ export default async function ArchitecturePage({
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12">
-            <h1 className="text-title md:text-display font-bold text-gray-900 dark:text-gray-100 mb-4">
+            <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
               {t("architecture.title")}
             </h1>
-            <p className="text-body-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               {t("architecture.subtitle")}
             </p>
           </div>
@@ -153,7 +153,7 @@ export default async function ArchitecturePage({
                   >
                     <div className="flex items-center gap-3">
                       <Icon className="w-8 h-8" />
-                      <h2 className="text-subtitle font-bold">{stack.title}</h2>
+                      <h2 className="text-xl font-bold">{stack.title}</h2>
                     </div>
                   </div>
 
@@ -171,7 +171,7 @@ export default async function ArchitecturePage({
                             <h3 className="font-semibold text-gray-900 dark:text-gray-100">
                               {item.name}
                             </h3>
-                            <p className="text-body-sm text-gray-600 dark:text-gray-400">
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
                               {item.description}
                             </p>
                           </div>
@@ -186,7 +186,7 @@ export default async function ArchitecturePage({
 
           {/* Architecture Diagram */}
           <div className="bg-white dark:bg-gray-800 rounded-card border border-gray-200 dark:border-gray-700 shadow-card dark:shadow-card-dark p-8">
-            <h2 className="text-subtitle font-bold text-gray-900 dark:text-gray-100 mb-6 text-center">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6 text-center">
               {t("architecture.systemArchitecture")}
             </h2>
             <div className="flex flex-col md:flex-row items-center justify-center gap-8">
@@ -194,10 +194,10 @@ export default async function ArchitecturePage({
               <div className="flex flex-col items-center">
                 <div className="bg-gradient-to-br from-blue-500 to-cyan-500 text-white rounded-button p-6 w-48 text-center shadow-card">
                   <Globe className="w-12 h-12 mx-auto mb-3" />
-                  <h3 className="font-bold text-body-lg">
+                  <h3 className="font-bold text-lg">
                     {t("architecture.diagram.client")}
                   </h3>
-                  <p className="text-body-sm mt-2">Next.js + React</p>
+                  <p className="text-sm mt-2">Next.js + React</p>
                 </div>
               </div>
 
@@ -220,10 +220,10 @@ export default async function ArchitecturePage({
               <div className="flex flex-col items-center">
                 <div className="bg-gradient-to-br from-green-500 to-emerald-500 text-white rounded-button p-6 w-48 text-center shadow-card">
                   <Server className="w-12 h-12 mx-auto mb-3" />
-                  <h3 className="font-bold text-body-lg">
+                  <h3 className="font-bold text-lg">
                     {t("architecture.diagram.server")}
                   </h3>
-                  <p className="text-body-sm mt-2">NestJS + REST</p>
+                  <p className="text-sm mt-2">NestJS + REST</p>
                 </div>
               </div>
 
@@ -246,10 +246,10 @@ export default async function ArchitecturePage({
               <div className="flex flex-col items-center">
                 <div className="bg-gradient-to-br from-purple-500 to-pink-500 text-white rounded-button p-6 w-48 text-center shadow-card">
                   <Database className="w-12 h-12 mx-auto mb-3" />
-                  <h3 className="font-bold text-body-lg">
+                  <h3 className="font-bold text-lg">
                     {t("architecture.diagram.database")}
                   </h3>
-                  <p className="text-body-sm mt-2">PostgreSQL</p>
+                  <p className="text-sm mt-2">PostgreSQL</p>
                 </div>
               </div>
             </div>
@@ -263,7 +263,7 @@ export default async function ArchitecturePage({
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
                   {t("architecture.features.modular.title")}
                 </h3>
-                <p className="text-body-sm text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   {t("architecture.features.modular.description")}
                 </p>
               </div>
@@ -274,7 +274,7 @@ export default async function ArchitecturePage({
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
                   {t("architecture.features.typeSafety.title")}
                 </h3>
-                <p className="text-body-sm text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   {t("architecture.features.typeSafety.description")}
                 </p>
               </div>
@@ -285,7 +285,7 @@ export default async function ArchitecturePage({
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
                   {t("architecture.features.scalable.title")}
                 </h3>
-                <p className="text-body-sm text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   {t("architecture.features.scalable.description")}
                 </p>
               </div>

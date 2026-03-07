@@ -15,9 +15,7 @@ export const TimelineOrderToggle: React.FC<TimelineOrderToggleProps> = ({
   label,
 }) => (
   <div className="flex items-center gap-2 ml-auto">
-    <span className="text-body-sm text-gray-600 dark:text-gray-400">
-      {label}
-    </span>
+    <span className="text-sm text-gray-600 dark:text-gray-400">{label}</span>
     <Switch checked={checked} onCheckedChange={onChange} size="sm" />
   </div>
 );

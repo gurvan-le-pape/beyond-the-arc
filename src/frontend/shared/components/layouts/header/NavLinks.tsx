@@ -32,7 +32,7 @@ export const NavLinks: React.FC<NavLinksProps> = ({
         (item.href !== "/" && pathname.startsWith(item.href));
 
       const mobileStyles = classNames(
-        "block w-full text-left px-4 py-3 text-base rounded-button transition-all duration-200",
+        "block w-full text-left px-4 py-3 text-lg rounded-button transition-all duration-200",
         {
           "bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 font-semibold border-l-4 border-primary-600 dark:border-primary-400":
             isActive,

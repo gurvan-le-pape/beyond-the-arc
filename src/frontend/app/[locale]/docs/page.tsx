@@ -58,10 +58,10 @@ export default function DocsPage() {
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-button bg-gradient-to-br from-blue-500 to-purple-500 text-white mb-4 shadow-card">
               <BookOpen className="w-8 h-8" />
             </div>
-            <h1 className="text-title md:text-display font-bold text-gray-900 dark:text-gray-100 mb-4">
+            <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
               {t("docs.title")}
             </h1>
-            <p className="text-body-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               {t("docs.intro")}
             </p>
           </div>
@@ -79,7 +79,7 @@ export default function DocsPage() {
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100">
                   {t("docs.quickLinks.github")}
                 </h3>
-                <p className="text-caption text-gray-500 dark:text-gray-400">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   {t("docs.quickLinks.viewSource")}
                 </p>
               </div>
@@ -96,9 +96,7 @@ export default function DocsPage() {
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100">
                   {t("docs.quickLinks.dataModel")}
                 </h3>
-                <p className="text-caption text-gray-500 dark:text-gray-400">
-                  PDF
-                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">PDF</p>
               </div>
             </a>
 
@@ -113,7 +111,7 @@ export default function DocsPage() {
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100">
                   {t("docs.quickLinks.apiDocs")}
                 </h3>
-                <p className="text-caption text-gray-500 dark:text-gray-400">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   Swagger
                 </p>
               </div>
@@ -129,7 +127,7 @@ export default function DocsPage() {
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100">
                   {t("docs.quickLinks.contact")}
                 </h3>
-                <p className="text-caption text-gray-500 dark:text-gray-400">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   {t("docs.quickLinks.getHelp")}
                 </p>
               </div>
@@ -156,7 +154,7 @@ export default function DocsPage() {
                     <div className="flex-shrink-0 w-10 h-10 rounded-button bg-primary-100 dark:bg-primary-900/40 flex items-center justify-center">
                       <Icon className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                     </div>
-                    <h2 className="flex-grow text-body-lg md:text-subtitle font-bold text-gray-900 dark:text-gray-100">
+                    <h2 className="flex-grow text-lg md:text-xl font-bold text-gray-900 dark:text-gray-100">
                       {section.title}
                     </h2>
                     {isActive ? (
@@ -178,14 +176,14 @@ export default function DocsPage() {
                             {/* Database Diagram */}
                             <div className="bg-gray-100 dark:bg-gray-900 rounded-button p-6 border border-gray-200 dark:border-gray-700">
                               <div className="flex justify-between items-center mb-4">
-                                <h3 className="text-body-lg font-semibold text-gray-900 dark:text-gray-100">
+                                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                                   {t("docs.database.diagramTitle")}
                                 </h3>
                                 <div className="flex gap-2">
                                   <a
                                     href="/docs/data-model.pdf"
                                     download
-                                    className="px-3 py-1 bg-primary-600 text-white rounded-button text-body-sm hover:bg-primary-700 transition-colors duration-200 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                                    className="px-3 py-1 bg-primary-600 text-white rounded-button text-sm hover:bg-primary-700 transition-colors duration-200 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
                                   >
                                     <Download className="w-4 h-4" />
                                     PDF
@@ -193,7 +191,7 @@ export default function DocsPage() {
                                   <a
                                     href="/docs/data-model.svg"
                                     download
-                                    className="px-3 py-1 bg-success-DEFAULT text-white rounded-button text-body-sm hover:bg-success-dark transition-colors duration-200 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-success-DEFAULT"
+                                    className="px-3 py-1 bg-success-DEFAULT text-white rounded-button text-sm hover:bg-success-dark transition-colors duration-200 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-success-DEFAULT"
                                   >
                                     <Download className="w-4 h-4" />
                                     SVG
@@ -211,7 +209,7 @@ export default function DocsPage() {
 
                             {/* Key Tables */}
                             <div>
-                              <h3 className="text-body-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
+                              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
                                 {t("docs.database.keyTables")}
                               </h3>
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -247,10 +245,10 @@ export default function DocsPage() {
                                     key={idx}
                                     className="p-3 bg-gray-50 dark:bg-gray-800 rounded-button border border-gray-200 dark:border-gray-700"
                                   >
-                                    <code className="text-body-sm font-mono text-primary-600 dark:text-primary-400">
+                                    <code className="text-sm font-mono text-primary-600 dark:text-primary-400">
                                       {table.name}
                                     </code>
-                                    <p className="text-caption text-gray-600 dark:text-gray-400 mt-1">
+                                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                                       {table.desc}
                                     </p>
                                   </div>
@@ -268,10 +266,10 @@ export default function DocsPage() {
 
                             {/* Backend Structure */}
                             <div>
-                              <h3 className="text-body-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
+                              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
                                 {t("docs.structure.backend")}
                               </h3>
-                              <pre className="bg-gray-900 dark:bg-gray-950 text-gray-100 p-6 rounded-button overflow-x-auto text-body-sm">
+                              <pre className="bg-gray-900 dark:bg-gray-950 text-gray-100 p-6 rounded-button overflow-x-auto text-sm">
                                 {`backend/
 ├── modules/
 │   ├── competitions/    # Championships & tournaments
@@ -288,13 +286,13 @@ export default function DocsPage() {
 
                             {/* Frontend Structure */}
                             <div>
-                              <h3 className="text-body-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
+                              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
                                 {t("docs.structure.frontend")}
                               </h3>
-                              <pre className="bg-gray-900 dark:bg-gray-950 text-gray-100 p-6 rounded-button overflow-x-auto text-body-sm">
+                              <pre className="bg-gray-900 dark:bg-gray-950 text-gray-100 p-6 rounded-button overflow-x-auto text-sm">
                                 {t("docs.structure.frontendCode")}
                               </pre>
-                              <ul className="list-disc pl-6 text-body-sm text-gray-400 dark:text-gray-500 mt-2 space-y-1">
+                              <ul className="list-disc pl-6 text-sm text-gray-400 dark:text-gray-500 mt-2 space-y-1">
                                 <li>
                                   {t("docs.structure.routingExplanation")}
                                 </li>
@@ -327,7 +325,7 @@ export default function DocsPage() {
                                   className="flex items-start gap-3"
                                 >
                                   <div className="flex-shrink-0 w-6 h-6 rounded-button bg-success-light/20 dark:bg-success-dark/20 flex items-center justify-center mt-0.5">
-                                    <span className="text-success-dark dark:text-success-light text-body-sm">
+                                    <span className="text-success-dark dark:text-success-light text-sm">
                                       ✓
                                     </span>
                                   </div>
@@ -346,7 +344,7 @@ export default function DocsPage() {
                               {section.content}
                             </p>
                             <div className="bg-gray-900 dark:bg-gray-950 text-gray-100 p-6 rounded-button">
-                              <pre className="text-body-sm overflow-x-auto">
+                              <pre className="text-sm overflow-x-auto">
                                 {`# Clone the repository
 git clone https://github.com/gurvan-le-pape/beyond-the-arc.git
 

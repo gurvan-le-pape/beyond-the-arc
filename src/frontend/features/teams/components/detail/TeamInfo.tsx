@@ -80,7 +80,7 @@ export const TeamInfo: React.FC<TeamInfoProps> = ({
   return (
     <Card variant="highlighted" padding="lg">
       {title && (
-        <h2 className="text-subtitle font-bold text-gray-900 dark:text-gray-100 mb-4">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">
           {title || t("teamDetail.teamStatsTitle")}
         </h2>
       )}

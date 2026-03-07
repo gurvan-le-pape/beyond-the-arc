@@ -33,7 +33,7 @@ export function ClubInfo({ club }: ClubInfoProps) {
   return (
     <section className="mb-8">
       {/* Section Title */}
-      <h2 className="text-subtitle font-bold text-gray-900 dark:text-gray-100 mb-6">
+      <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6">
         {t("detail.infoTitle")}
       </h2>
 

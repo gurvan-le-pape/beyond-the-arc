@@ -110,7 +110,7 @@ export const MatchesCard: React.FC<MatchesCardProps> = ({ match, onClick }) => {
         <div className="flex justify-between items-center flex-wrap gap-2">
           {/* Competition Details */}
           <div className="flex items-center gap-2 flex-wrap">
-            <p className="text-body-sm font-semibold text-gray-800 dark:text-gray-200">
+            <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">
               {match.pool?.championship?.category} -{" "}
               {match.pool?.championship?.gender}
               {match.pool?.championship?.division &&
@@ -125,7 +125,7 @@ export const MatchesCard: React.FC<MatchesCardProps> = ({ match, onClick }) => {
 
           {/* Date, Time, Matchday, Level Badge */}
           <div className="flex items-center gap-3">
-            <span className="text-body-sm text-gray-600 dark:text-gray-400">
+            <span className="text-sm text-gray-600 dark:text-gray-400">
               {date} • {time}
             </span>
             <Badge variant="default" size="sm">
@@ -162,7 +162,7 @@ export const MatchesCard: React.FC<MatchesCardProps> = ({ match, onClick }) => {
             <div className="text-center">
               <p
                 className={cn(
-                  "text-body-lg",
+                  "text-lg",
                   hasScore && match.homeTeamScore > match.awayTeamScore
                     ? "font-bold text-gray-900 dark:text-gray-100"
                     : "font-normal text-gray-700 dark:text-gray-300",
@@ -180,7 +180,7 @@ export const MatchesCard: React.FC<MatchesCardProps> = ({ match, onClick }) => {
               <div className="flex items-center gap-3">
                 <span
                   className={cn(
-                    "text-title",
+                    "text-2xl",
                     match.homeTeamScore > match.awayTeamScore
                       ? "font-bold text-gray-900 dark:text-gray-100"
                       : "font-normal text-gray-600 dark:text-gray-400",
@@ -188,12 +188,12 @@ export const MatchesCard: React.FC<MatchesCardProps> = ({ match, onClick }) => {
                 >
                   {match.homeTeamScore}
                 </span>
-                <span className="text-subtitle text-gray-400 dark:text-gray-500">
+                <span className="text-xl text-gray-400 dark:text-gray-500">
                   -
                 </span>
                 <span
                   className={cn(
-                    "text-title",
+                    "text-2xl",
                     match.awayTeamScore > match.homeTeamScore
                       ? "font-bold text-gray-900 dark:text-gray-100"
                       : "font-normal text-gray-600 dark:text-gray-400",
@@ -230,7 +230,7 @@ export const MatchesCard: React.FC<MatchesCardProps> = ({ match, onClick }) => {
             <div className="text-center">
               <p
                 className={cn(
-                  "text-body-lg",
+                  "text-lg",
                   hasScore && match.awayTeamScore > match.homeTeamScore
                     ? "font-bold text-gray-900 dark:text-gray-100"
                     : "font-normal text-gray-700 dark:text-gray-300",

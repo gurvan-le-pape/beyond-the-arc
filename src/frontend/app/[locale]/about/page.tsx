@@ -77,10 +77,10 @@ export default async function AboutPage({
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-button bg-gradient-to-br from-blue-500 to-purple-500 text-white mb-4 shadow-card">
               <Target className="w-8 h-8" />
             </div>
-            <h1 className="text-title md:text-display font-bold text-gray-900 dark:text-gray-100 mb-4">
+            <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
               {t("about.title")}
             </h1>
-            <p className="text-body-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
               {t("about.intro")}
             </p>
           </div>
@@ -99,10 +99,10 @@ export default async function AboutPage({
                   >
                     <Icon className="w-6 h-6" />
                   </div>
-                  <h3 className="text-body-lg font-bold text-gray-900 dark:text-gray-100 mb-2">
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">
                     {principle.title}
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-400 text-body-sm">
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">
                     {principle.description}
                   </p>
                 </div>
@@ -112,7 +112,7 @@ export default async function AboutPage({
 
           {/* Call to Action */}
           <div className="bg-gradient-to-r from-blue-500 to-purple-500 rounded-card shadow-card dark:shadow-card-dark p-8 text-center text-white">
-            <h2 className="text-subtitle font-bold mb-4">
+            <h2 className="text-xl font-bold mb-4">
               {t("about.exploreTitle")}
             </h2>
             <p className="text-body mb-6 max-w-2xl mx-auto">

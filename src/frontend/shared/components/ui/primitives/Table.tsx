@@ -145,7 +145,7 @@ export const TableHead = forwardRef<HTMLTableCellElement, TableHeadProps>(
       <th
         ref={ref}
         className={cn(
-          "px-6 py-4 text-body-sm font-semibold text-gray-900 dark:text-gray-100",
+          "px-6 py-4 text-sm font-semibold text-gray-900 dark:text-gray-100",
           alignmentClasses[align],
           sortable &&
             "cursor-pointer select-none hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors duration-200",
@@ -209,7 +209,7 @@ export const TableCell = forwardRef<HTMLTableCellElement, TableCellProps>(
       <td
         ref={ref}
         className={cn(
-          "px-6 py-4 text-body-sm text-gray-700 dark:text-gray-300",
+          "px-6 py-4 text-sm text-gray-700 dark:text-gray-300",
           alignmentClasses[align],
           highlight && "font-bold text-gray-900 dark:text-gray-100",
           className,
@@ -232,10 +232,7 @@ export const TableCaption = forwardRef<
   return (
     <caption
       ref={ref}
-      className={cn(
-        "mt-4 text-body-sm text-gray-500 dark:text-gray-400",
-        className,
-      )}
+      className={cn("mt-4 text-sm text-gray-500 dark:text-gray-400", className)}
       {...props}
     />
   );

@@ -23,7 +23,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         {label && (
           <label
             htmlFor={selectId}
-            className="block text-body-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
+            className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
           >
             {label}
           </label>
@@ -62,7 +62,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         {error && (
           <p
             id={`${selectId}-error`}
-            className="mt-2 text-body-sm text-error-DEFAULT dark:text-error-light"
+            className="mt-2 text-sm text-error-DEFAULT dark:text-error-light"
             role="alert"
           >
             {error}
@@ -73,7 +73,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         {helperText && !error && (
           <p
             id={`${selectId}-helper`}
-            className="mt-2 text-body-sm text-gray-600 dark:text-gray-400"
+            className="mt-2 text-sm text-gray-600 dark:text-gray-400"
           >
             {helperText}
           </p>

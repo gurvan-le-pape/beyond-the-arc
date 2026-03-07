@@ -22,7 +22,7 @@ export function EventScorePill({
   return (
     <div
       className={cn(
-        "px-3 py-1 rounded-button text-body-sm font-bold",
+        "px-3 py-1 rounded-button text-sm font-bold",
         isHomeTeam
           ? "bg-primary-100 dark:bg-primary-900/40 text-primary-800 dark:text-primary-300"
           : "bg-error-light/20 dark:bg-error-dark/40 text-error-dark dark:text-error-light",

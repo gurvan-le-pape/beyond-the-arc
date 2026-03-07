@@ -226,10 +226,10 @@ export function Panel({
     <div className="w-full flex flex-col gap-4">
       {/* ── Header row: title + count ── */}
       <div className="flex items-baseline justify-between">
-        <h2 className="text-subtitle font-semibold text-gray-900 dark:text-gray-100">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
           {title}
         </h2>
-        <span className="text-caption text-gray-400 dark:text-gray-500">
+        <span className="text-xs text-gray-400 dark:text-gray-500">
           {filteredItems.length}{" "}
           {filteredItems.length === 1 ? "résultat" : "résultats"}
         </span>

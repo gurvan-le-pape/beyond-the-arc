@@ -97,13 +97,11 @@ export function TitleSection({
         <div className="flex items-start gap-4 mb-4">
           <div className={config.iconClassName}>{config.icon}</div>
           <div className="flex-1 min-w-0">
-            <h2 className={`text-subtitle font-bold ${config.titleColor}`}>
+            <h2 className={`text-xl font-bold ${config.titleColor}`}>
               {config.title}
             </h2>
             {config.subtitle && (
-              <p
-                className={`text-body-lg font-semibold ${config.titleColor} mt-2`}
-              >
+              <p className={`text-lg font-semibold ${config.titleColor} mt-2`}>
                 {config.subtitle}
               </p>
             )}

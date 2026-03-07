@@ -23,7 +23,7 @@ export function LeaderboardTable({
   return (
     <div className="bg-white dark:bg-gray-800 shadow-card dark:shadow-card-dark rounded-card border border-gray-200 dark:border-gray-700 mt-6 p-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-subtitle font-bold text-primary-600 dark:text-primary-400">
+        <h2 className="text-xl font-bold text-primary-600 dark:text-primary-400">
           {tCompetitions("leaderboardTitle")}
         </h2>
         {dropdown && <div className="min-w-[200px]">{dropdown}</div>}

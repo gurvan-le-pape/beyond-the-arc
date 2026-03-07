@@ -21,14 +21,14 @@ export function ChampionshipHeader({
       <div className="space-y-4">
         {/* Region/Department Title */}
         <div className="border-b-2 border-primary-500 dark:border-primary-400 pb-3">
-          <h2 className="text-subtitle text-primary-600 dark:text-primary-400 font-semibold">
+          <h2 className="text-xl text-primary-600 dark:text-primary-400 font-semibold">
             {regionName || ""}
           </h2>
         </div>
 
         {/* Championship Name & Gender Switch */}
         <div className="flex justify-between items-center flex-wrap gap-4">
-          <h1 className="text-body-lg md:text-subtitle font-semibold text-gray-900 dark:text-gray-100">
+          <h1 className="text-lg md:text-xl font-semibold text-gray-900 dark:text-gray-100">
             {championshipName}
           </h1>
           {gender !== undefined && (

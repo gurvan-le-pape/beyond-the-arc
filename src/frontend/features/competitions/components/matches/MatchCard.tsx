@@ -32,7 +32,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
     <Card padding="sm" className="overflow-hidden">
       {/* Top Row - Date and Status */}
       <div className="flex justify-between items-center mb-2">
-        <time className="text-body-sm text-gray-600 dark:text-gray-400">
+        <time className="text-sm text-gray-600 dark:text-gray-400">
           {new Date(match.date).toLocaleDateString("fr-FR", {
             weekday: "long",
             year: "numeric",
@@ -65,7 +65,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
             }}
           />
           <div
-            className={`text-body-sm text-center w-full ${
+            className={`text-sm text-center w-full ${
               isHomeWinner
                 ? "font-bold text-gray-900 dark:text-gray-100"
                 : "font-normal text-gray-600 dark:text-gray-400"
@@ -73,7 +73,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
             title={`${match.homeTeam.club.name} - ${match.homeTeam.number}`}
           >
             <div className="truncate">{match.homeTeam.club.name}</div>
-            <div className="text-caption text-gray-500 dark:text-gray-500">
+            <div className="text-xs text-gray-500 dark:text-gray-500">
               {match.homeTeam.number}
             </div>
           </div>
@@ -81,7 +81,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
 
         {/* Score */}
         <div className="flex flex-col items-center flex-shrink-0 px-2">
-          <div className="text-subtitle font-bold text-gray-900 dark:text-gray-100 mb-1">
+          <div className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-1">
             <span
               className={
                 isHomeWinner
@@ -105,7 +105,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
           {/* Match Summary Link */}
           <a
             href={`/${locale}/matches/${match.id}`}
-            className="text-body-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 hover:underline transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:ring-offset-2 dark:focus:ring-offset-gray-900 rounded-button"
+            className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 hover:underline transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:ring-offset-2 dark:focus:ring-offset-gray-900 rounded-button"
           >
             Résumé
           </a>
@@ -127,7 +127,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
             }}
           />
           <div
-            className={`text-body-sm text-center w-full ${
+            className={`text-sm text-center w-full ${
               isAwayWinner
                 ? "font-bold text-gray-900 dark:text-gray-100"
                 : "font-normal text-gray-600 dark:text-gray-400"
@@ -135,7 +135,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
             title={`${match.awayTeam.club.name} - ${match.awayTeam.number}`}
           >
             <div className="truncate">{match.awayTeam.club.name}</div>
-            <div className="text-caption text-gray-500 dark:text-gray-500">
+            <div className="text-xs text-gray-500 dark:text-gray-500">
               {match.awayTeam.number}
             </div>
           </div>
