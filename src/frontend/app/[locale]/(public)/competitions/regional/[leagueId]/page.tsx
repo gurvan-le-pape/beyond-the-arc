@@ -12,6 +12,7 @@ import ChampionshipList from "@/features/competitions/components/championships/C
 import { useRegionalChampionshipsData } from "@/features/competitions/hooks/useRegionalChampionships";
 import { useRouter } from "@/navigation";
 import { Footer, Header } from "@/shared/components/layouts";
+import { Breadcrumb } from "@/shared/components/navigation";
 import { Card, ErrorMessage } from "@/shared/components/ui";
 import { CompetitionLevel } from "@/shared/constants/competition-levels";
 import {
@@ -21,6 +22,7 @@ import {
 
 export default function RegionalChampionshipsPage() {
   const tCommon = useTranslations("common");
+  const tCompetitions = useTranslations("competitions");
   const router = useRouter();
   const params = useParams();
   const idStr = params?.leagueId as string;
@@ -30,6 +32,15 @@ export default function RegionalChampionshipsPage() {
     useRegionalChampionshipsData(id);
 
   const championshipsByGender = groupChampionshipsByGender(championships);
+
+  const breadcrumbItems = [
+    { label: tCompetitions("breadcrumb"), href: "/competitions" },
+    {
+      label: tCompetitions("regional.label"),
+      href: `/competitions/${CompetitionLevel.REGIONAL}`,
+    },
+    { label: league?.name ?? "…", current: true },
+  ];
 
   let body: React.ReactNode;
 
@@ -84,14 +95,15 @@ export default function RegionalChampionshipsPage() {
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // Layout shell
-  // ---------------------------------------------------------------------------
-
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950">
       <Header />
-      <main className="flex-grow py-12 px-4 sm:px-6 lg:px-8">{body}</main>
+      <main className="flex-grow py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <Breadcrumb items={breadcrumbItems} />
+        </div>
+        {body}
+      </main>
       <Footer />
     </div>
   );
