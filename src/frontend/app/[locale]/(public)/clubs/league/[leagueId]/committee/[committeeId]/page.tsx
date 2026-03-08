@@ -4,7 +4,6 @@ import { getTranslations } from "next-intl/server";
 
 import { serverClubsService } from "@/features/organizations/clubs/api";
 import {
-  Breadcrumb,
   ClubsGrid,
   MapViewButton,
   TitleSection,
@@ -13,6 +12,7 @@ import { getBreadcrumbItems } from "@/features/organizations/clubs/utils";
 import { serverCommitteesService } from "@/features/organizations/committees/api/committees.server";
 import { serverLeaguesService } from "@/features/organizations/leagues/api/leagues.server";
 import { Footer, Header } from "@/shared/components/layouts";
+import { Breadcrumb } from "@/shared/components/navigation";
 import { ViewLevel } from "@/shared/constants";
 
 interface ClubsPageProps {
