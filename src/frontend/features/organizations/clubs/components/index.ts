@@ -15,7 +15,6 @@ export * from "./map/layers/RegionsLayer";
 export * from "./map/ListViewButton";
 export * from "./map/SearchBar";
 export * from "./map/SidePanel";
-export * from "./navigation/Breadcrumb";
 export * from "./navigation/ClubsGrid";
 export * from "./navigation/DepartementsGrid";
 export * from "./navigation/MapViewButton";

@@ -58,6 +58,7 @@
     "./src/frontend/shared/components/charts",
     "./src/frontend/shared/components/entity",
     "./src/frontend/shared/components/layouts",
+    "./src/frontend/shared/components/navigation",
     "./src/frontend/shared/components/ui/composite",
     "./src/frontend/shared/components/ui/feedback",
     "./src/frontend/shared/components/ui/forms",
