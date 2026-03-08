@@ -6,6 +6,8 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { useCallback, useMemo, useState, useTransition } from "react";
 import { Map as MapGL, Popup } from "react-map-gl/maplibre";
 
+import { normalizeDepartmentCode } from "@/shared/utils";
+
 import {
   GEOJSON_TO_DB_REGION_CODE,
   INITIAL_VIEW,
@@ -16,11 +18,7 @@ import { useFilters } from "../../hooks/useFilters";
 import { useSearch } from "../../hooks/useSearch";
 import type { ClubBasic } from "../../types/ClubBasic";
 import type { ClubStatsByRegion } from "../../types/ClubStatsByRegion";
-import {
-  clubsToGeoJSON,
-  generateLabelFeatures,
-  normalizeDepartmentCode,
-} from "../../utils";
+import { clubsToGeoJSON, generateLabelFeatures } from "../../utils";
 import { ClubPopupContent } from "./ClubPopupContent";
 import { ClubsLayer } from "./layers/ClubsLayer";
 import { DepartmentsLayer } from "./layers/DepartmentsLayer";
@@ -28,7 +26,7 @@ import { RegionsLayer } from "./layers/RegionsLayer";
 import { SidePanel } from "./SidePanel";
 
 interface ClubsMapProps {
-  initialRegions: ClubStatsByRegion[];
+  readonly initialRegions: ClubStatsByRegion[];
 }
 
 /**
@@ -191,7 +189,7 @@ export function ClubsMap({ initialRegions }: ClubsMapProps) {
         <div className="text-center">
           <p className="text-red-600 font-semibold">{error}</p>
           <button
-            onClick={() => window.location.reload()}
+            onClick={() => globalThis.location.reload()}
             className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
             Retry

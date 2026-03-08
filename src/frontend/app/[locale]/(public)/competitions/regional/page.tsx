@@ -1,50 +1,48 @@
 // src/frontend/app/[locale]/(public)/competitions/regional/page.tsx
-"use client";
+import { getTranslations } from "next-intl/server";
 
-import { useTranslations } from "next-intl";
-
-import { Panel } from "@/features/competitions/components";
-import { useLeagues } from "@/features/organizations/leagues/api/use-leagues";
+import { LeaguesGrid } from "@/features/competitions/components";
+import { serverLeaguesService } from "@/features/organizations/leagues/api/leagues.server";
 import { Footer, Header } from "@/shared/components/layouts";
-import { ErrorMessage, LoadingSpinner } from "@/shared/components/ui";
-import { CompetitionLevel } from "@/shared/constants/competition-levels";
 
-export default function RegionalListPage() {
-  const t = useTranslations("common");
-  const { data: leagues, isLoading, error } = useLeagues();
+interface RegionalListPageProps {
+  readonly params: Promise<{ readonly locale: string }>;
+}
 
-  // Determine what to render based on loading/error/data state
-  let content: React.ReactNode;
+/**
+ * Regional Competitions List Page
+ * Shows all regional leagues
+ * Strategy: SSG with daily revalidation
+ */
+export default async function RegionalListPage({
+  params,
+}: RegionalListPageProps) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "common" });
 
-  if (error) {
-    content = (
-      <ErrorMessage message="Une erreur est survenue lors du chargement des données." />
-    );
-  } else if (isLoading) {
-    content = <LoadingSpinner />;
-  } else if (leagues) {
-    content = (
-      <Panel
-        items={leagues}
-        title={t("sectionTitles.regionalLeagues")}
-        imageFolder="leagues"
-        basePath={`/competitions/${CompetitionLevel.REGIONAL}`}
-        currentId={undefined}
-        currentItemName={null}
-        columns={2}
-        enableSearch={true}
-        list={false}
-      />
-    );
-  }
+  const leagues = await serverLeaguesService.getAll().catch((error) => {
+    console.error("Error fetching leagues:", error);
+    return [];
+  });
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950">
       <Header />
+
       <main className="flex-grow py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-3xl mx-auto">{content}</div>
+        <div className="max-w-7xl mx-auto space-y-6">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            {t("sectionTitles.regionalLeagues")}
+          </h1>
+
+          <LeaguesGrid leagues={leagues} />
+        </div>
       </main>
+
       <Footer />
     </div>
   );
 }
+
+// Revalidate once per day (leagues rarely change)
+export const revalidate = 86400;
