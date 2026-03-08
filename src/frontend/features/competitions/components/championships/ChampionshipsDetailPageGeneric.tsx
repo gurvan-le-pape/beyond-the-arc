@@ -25,19 +25,18 @@ import ChampionshipHeader from "./ChampionshipHeader";
 
 interface ChampionshipsDetailPageProps {
   readonly level: LocalCompetitionLevel;
+  readonly organizationId: number;
 }
 
 export function ChampionshipsDetailPageGeneric({
   level,
+  organizationId,
 }: ChampionshipsDetailPageProps) {
   const params = useParams();
   const tCompetitions = useTranslations("competitions");
   const tCommon = useTranslations("common");
 
-  const idStr = params?.id as string;
   const championshipIdStr = params?.championshipId as string;
-
-  const id = Number.parseInt(idStr, 10);
   const championshipId = Number.parseInt(championshipIdStr, 10);
 
   // Data hook - using React Query under the hood
@@ -54,16 +53,16 @@ export function ChampionshipsDetailPageGeneric({
     matches,
     isLoading,
     error,
-  } = useChampionshipsDetail(id, championshipId, level);
+  } = useChampionshipsDetail(organizationId, championshipId, level);
 
   // Navigation hooks
   const { availableCategories, currentCategory, navigateToCategory } =
-    useCategoryNavigation(id, championshipId, level, gender);
+    useCategoryNavigation(organizationId, championshipId, level, gender);
 
   const { availableDivisions, currentDivision, navigateToDivision } =
-    useDivisionNavigation(id, level, category, gender, division);
+    useDivisionNavigation(organizationId, level, category, gender, division);
 
-  const { switchGender } = useGenderNavigation(id, level, gender);
+  const { switchGender } = useGenderNavigation(organizationId, level, gender);
 
   // Local state
   const [selectedRound, setSelectedRound] = useState<number | null>(null);

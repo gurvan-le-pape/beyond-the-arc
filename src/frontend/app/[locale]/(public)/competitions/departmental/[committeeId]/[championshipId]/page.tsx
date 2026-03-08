@@ -1,9 +1,10 @@
-// src/frontend/app/[locale]/(public)/competitions/departmental/[id]/[championshipId]/page.tsx
+// src/frontend/app/[locale]/(public)/competitions/departmental/[committeeId]/[championshipId]/page.tsx
 import {
   dehydrate,
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
+import { notFound } from "next/navigation";
 
 import { serverChampionshipsService } from "@/features/competitions/championships/api";
 import { championshipsKeys } from "@/features/competitions/championships/api/championshipsKeys";
@@ -15,9 +16,9 @@ import { committeesKeys } from "@/features/organizations/committees/api/committe
 import { CompetitionLevel } from "@/shared/constants";
 
 interface DepartmentalChampionshipsDetailPageProps {
-  params: Promise<{
+  readonly params: Promise<{
     locale: string;
-    id: string;
+    committeeId: string;
     championshipId: string;
   }>;
 }
@@ -67,10 +68,11 @@ async function prefetchData(committeeId: number, championshipId: number) {
 export default async function DepartmentalChampionshipsDetailPage({
   params,
 }: DepartmentalChampionshipsDetailPageProps) {
-  const { id: idStr, championshipId: championshiptIdStr } = await params;
+  const { committeeId: committeeIdStr, championshipId: championshipIdStr } =
+    await params;
 
-  const committeeId = Number.parseInt(idStr, 10);
-  const championshipId = Number.parseInt(championshiptIdStr, 10);
+  const committeeId = Number.parseInt(committeeIdStr, 10);
+  const championshipId = Number.parseInt(championshipIdStr, 10);
 
   if (
     Number.isNaN(committeeId) ||
@@ -78,14 +80,17 @@ export default async function DepartmentalChampionshipsDetailPage({
     Number.isNaN(championshipId) ||
     championshipId <= 0
   ) {
-    // handle invalid params - import notFound if needed
+    notFound();
   }
 
   const dehydratedState = await prefetchData(committeeId, championshipId);
 
   return (
     <HydrationBoundary state={dehydratedState}>
-      <ChampionshipsDetailPageGeneric level={CompetitionLevel.DEPARTMENTAL} />
+      <ChampionshipsDetailPageGeneric
+        level={CompetitionLevel.DEPARTMENTAL}
+        organizationId={committeeId}
+      />
     </HydrationBoundary>
   );
 }
