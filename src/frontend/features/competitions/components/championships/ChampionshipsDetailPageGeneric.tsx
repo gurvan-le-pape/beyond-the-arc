@@ -147,7 +147,7 @@ export function ChampionshipsDetailPageGeneric({
   // ============================================================================
   // Not Found State
   // ============================================================================
-  if (!championship) {
+  if (!championship || pools.length === 0) {
     return (
       <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950">
         <Header />
@@ -199,7 +199,7 @@ export function ChampionshipsDetailPageGeneric({
             </Card>
 
             {/* Leaderboard Table */}
-            {selectedPoolId && leaderboards[selectedPoolId] && (
+            {!!selectedPoolId && leaderboards[selectedPoolId] && (
               <LeaderboardTable
                 leaderboards={leaderboards[selectedPoolId] || []}
                 dropdown={

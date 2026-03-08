@@ -54,15 +54,13 @@ export function useChampionshipsDetail(
 ) {
   // Parse IDs
   const orgId = useMemo(() => {
-    return id ? Number.parseInt(Array.isArray(id) ? id[0] : id) : null;
+    if (!id) return null;
+    return Number.parseInt(Array.isArray(id) ? id[0] : id);
   }, [id]);
 
   const champId = useMemo(() => {
-    return championshipId
-      ? Array.isArray(championshipId)
-        ? championshipId[0]
-        : championshipId
-      : null;
+    if (!championshipId) return null;
+    return Array.isArray(championshipId) ? championshipId[0] : championshipId;
   }, [championshipId]);
 
   // Local state
@@ -113,9 +111,14 @@ export function useChampionshipsDetail(
     data: pools = [],
     isLoading: isLoadingPools,
     error: poolsError,
-  } = usePools(champId!, {
+  } = usePools(champId, {
     enabled: !!champId,
   });
+
+  // Reset selected pool when championship changes
+  useEffect(() => {
+    setSelectedPoolId(null);
+  }, [championshipId]);
 
   // Auto-select first pool
   useEffect(() => {
@@ -185,7 +188,7 @@ export function useChampionshipsDetail(
     pools,
     leaderboards,
     matches,
-    selectedPoolId,
+    selectedPoolId: selectedPoolId as number,
     setSelectedPoolId,
     isLoading,
     error,

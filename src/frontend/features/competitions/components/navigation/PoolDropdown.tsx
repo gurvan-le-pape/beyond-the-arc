@@ -6,9 +6,9 @@ import { Select } from "@/shared/components/ui";
 import type { Pool } from "../../pools/types/Pool";
 
 interface PoolDropdownProps {
-  pools: Pool[];
-  selectedPoolId: number | null;
-  onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  readonly pools: Pool[];
+  readonly selectedPoolId: number;
+  readonly onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
 export function PoolDropdown({
@@ -24,23 +24,11 @@ export function PoolDropdown({
       onChange={onChange}
       aria-label={t("label")}
     >
-      {/* Placeholder option */}
-      <option value="" disabled>
-        {t("noPools")}
-      </option>
-
-      {/* Pool options */}
-      {pools.length > 0 ? (
-        pools.map((pool) => (
-          <option key={pool.id} value={pool.id}>
-            {t("label")} {pool.letter}
-          </option>
-        ))
-      ) : (
-        <option value="" disabled>
-          {t("noAvailable")}
+      {pools.map((pool) => (
+        <option key={pool.id} value={pool.id}>
+          {t("label")} {pool.letter}
         </option>
-      )}
+      ))}
     </Select>
   );
 }
