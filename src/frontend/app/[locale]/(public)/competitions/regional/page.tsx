@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { LeaguesGrid } from "@/features/competitions/components";
 import { serverLeaguesService } from "@/features/organizations/leagues/api/leagues.server";
 import { Footer, Header } from "@/shared/components/layouts";
+import { Breadcrumb } from "@/shared/components/navigation";
 
 interface RegionalListPageProps {
   readonly params: Promise<{ readonly locale: string }>;
@@ -18,12 +19,21 @@ export default async function RegionalListPage({
   params,
 }: RegionalListPageProps) {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "common" });
+  const tCommon = await getTranslations({ locale, namespace: "common" });
+  const tCompetitions = await getTranslations({
+    locale,
+    namespace: "competitions",
+  });
 
   const leagues = await serverLeaguesService.getAll().catch((error) => {
     console.error("Error fetching leagues:", error);
     return [];
   });
+
+  const breadcrumbItems = [
+    { label: tCompetitions("breadcrumb"), href: "/competitions" },
+    { label: tCompetitions("regional.label"), current: true },
+  ];
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950">
@@ -31,8 +41,10 @@ export default async function RegionalListPage({
 
       <main className="flex-grow py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto space-y-6">
+          <Breadcrumb items={breadcrumbItems} />
+
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            {t("sectionTitles.regionalLeagues")}
+            {tCommon("sectionTitles.regionalLeagues")}
           </h1>
 
           <LeaguesGrid leagues={leagues} />
@@ -44,5 +56,4 @@ export default async function RegionalListPage({
   );
 }
 
-// Revalidate once per day (leagues rarely change)
 export const revalidate = 86400;
