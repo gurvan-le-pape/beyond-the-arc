@@ -8,8 +8,10 @@ import { useEffect, useMemo, useState } from "react";
 import type { Match } from "@/features/matches/types/Match";
 import { LeaderboardTable } from "@/shared/components/entity";
 import { Footer, Header } from "@/shared/components/layouts";
+import { Breadcrumb } from "@/shared/components/navigation";
 import { Card, ErrorMessage } from "@/shared/components/ui";
 import type { LocalCompetitionLevel } from "@/shared/constants";
+import { CompetitionLevel } from "@/shared/constants";
 
 import {
   useCategoryNavigation,
@@ -67,6 +69,23 @@ export function ChampionshipsDetailPageGeneric({
   // Local state
   const [selectedRound, setSelectedRound] = useState<number | null>(null);
   const [expandedMatchIds, setExpandedMatchIds] = useState<number[]>([]);
+
+  // Breadcrumb
+  const isRegional = level === CompetitionLevel.REGIONAL;
+  const levelLabel = isRegional
+    ? tCompetitions("regional.label")
+    : tCompetitions("departmental.label");
+  const levelPath = isRegional
+    ? `/competitions/${CompetitionLevel.REGIONAL}`
+    : `/competitions/${CompetitionLevel.DEPARTMENTAL}`;
+  const orgPath = `${levelPath}/${organizationId}`;
+
+  const breadcrumbItems = [
+    { label: tCompetitions("breadcrumb"), href: "/competitions" },
+    { label: levelLabel, href: levelPath },
+    { label: name ?? "…", href: orgPath },
+    { label: championship?.name ?? "…", current: true },
+  ];
 
   // Group matches by round (memoized)
   const groupedMatches = useMemo(() => {
@@ -173,6 +192,8 @@ export function ChampionshipsDetailPageGeneric({
         <div className="max-w-[1800px] mx-auto flex flex-col xl:flex-row gap-6">
           {/* Left Section - Championship Details & Leaderboard */}
           <div className="w-full xl:flex-1 space-y-6">
+            <Breadcrumb items={breadcrumbItems} />
+
             {/* Championship Header */}
             <ChampionshipHeader
               regionName={name}
