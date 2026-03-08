@@ -16,7 +16,10 @@
   },
   "departmental": {
     "label": "Departmental",
-    "description": "Local competitions by departmental committee."
+    "description": "Local competitions by departmental committee.",
+    "searchPlaceholder": "Search for a committee…",
+    "noResults": "No results for « {search} »",
+    "clearSearch": "Clear search"
   },
   "roundSelector": {
     "dropdownLabel": "Round {round}",

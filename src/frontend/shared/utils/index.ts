@@ -24,5 +24,6 @@ export * from "./grouping";
 export * from "./helpers/date-helpers";
 export * from "./helpers/string-helpers";
 export * from "./helpers/team-helpers";
+export * from "./normalizeDepartmentCode";
 export * from "./normalizeString";
 export * from "./tableFilters";

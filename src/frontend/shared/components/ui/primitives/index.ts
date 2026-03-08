@@ -6,5 +6,6 @@
 export * from "./Badge";
 export * from "./Button";
 export * from "./Card";
+export * from "./ImageWithFallback";
 export * from "./Switch";
 export * from "./Table";

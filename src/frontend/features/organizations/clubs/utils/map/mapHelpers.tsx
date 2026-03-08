@@ -4,14 +4,6 @@ import centroid from "@turf/centroid";
 import type { ClubBasic } from "../../types/ClubBasic";
 
 /**
- * Normalize department code by removing leading zeros
- * Example: "01" -> "1", "2A" -> "2A"
- */
-export function normalizeDepartmentCode(code: string): string {
-  return code.replace(/^0+/, "");
-}
-
-/**
  * Generate label features with club counts from GeoJSON features
  * Only includes features with non-zero club counts
  */

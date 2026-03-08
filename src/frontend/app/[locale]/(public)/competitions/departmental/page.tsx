@@ -1,63 +1,48 @@
 // src/frontend/app/[locale]/(public)/competitions/departmental/page.tsx
-"use client";
+import { getTranslations } from "next-intl/server";
 
-import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
-
-import { Panel } from "@/features/competitions/components";
-import { committeesService } from "@/features/organizations/committees/api/committees.service";
+import { CommitteesGrid } from "@/features/competitions/components";
+import { serverCommitteesService } from "@/features/organizations/committees/api/committees.server";
 import { Footer, Header } from "@/shared/components/layouts";
-import { ErrorMessage, LoadingSpinner } from "@/shared/components/ui";
-import { CompetitionLevel } from "@/shared/constants/competition-levels";
 
-export default function DepartmentalListPage() {
-  const t = useTranslations("common");
+interface DepartmentalListPageProps {
+  readonly params: Promise<{ readonly locale: string }>;
+}
 
-  const [committees, setCommittees] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+/**
+ * Departmental Competitions List Page
+ * Shows all departmental committees
+ * Strategy: SSG with daily revalidation
+ */
+export default async function DepartmentalListPage({
+  params,
+}: DepartmentalListPageProps) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "common" });
 
-  useEffect(() => {
-    setIsLoading(true);
-    committeesService
-      .getAll()
-      .then(setCommittees)
-      .catch(() => {
-        setError("Une erreur est survenue lors du chargement des données.");
-      })
-      .finally(() => setIsLoading(false));
-  }, []);
-
-  // Determine what to render based on loading/error/data state
-  let content: React.ReactNode;
-
-  if (error) {
-    content = <ErrorMessage message={error} />;
-  } else if (isLoading) {
-    content = <LoadingSpinner />;
-  } else {
-    content = (
-      <Panel
-        items={committees}
-        title={t("sectionTitles.departmentalCommittees")}
-        imageFolder="committees"
-        basePath={`/competitions/${CompetitionLevel.DEPARTMENTAL}`}
-        currentId={undefined}
-        currentItemName={null}
-        columns={4}
-        enableSearch={true}
-        list={false}
-      />
-    );
-  }
+  const committees = await serverCommitteesService.getAll().catch((error) => {
+    console.error("Error fetching committees:", error);
+    return [];
+  });
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950">
       <Header />
+
       <main className="flex-grow py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">{content}</div>
+        <div className="max-w-7xl mx-auto space-y-6">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            {t("sectionTitles.departmentalCommittees")}
+          </h1>
+
+          <CommitteesGrid committees={committees} />
+        </div>
       </main>
+
       <Footer />
     </div>
   );
 }
+
+// Revalidate once per day (committees rarely change)
+export const revalidate = 86400;

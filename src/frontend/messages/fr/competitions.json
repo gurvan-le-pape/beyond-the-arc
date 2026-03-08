@@ -16,7 +16,10 @@
   },
   "departmental": {
     "label": "Departmental",
-    "description": "Compétitions locales par comité départemental."
+    "description": "Compétitions locales par comité départemental.",
+    "searchPlaceholder": "Rechercher un comité…",
+    "noResults": "Aucun résultat pour « {search} »",
+    "clearSearch": "Effacer la recherche"
   },
   "roundSelector": {
     "dropdownLabel": "Journée {round}",
