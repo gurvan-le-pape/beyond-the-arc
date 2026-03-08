@@ -12,6 +12,7 @@ import ChampionshipList from "@/features/competitions/components/championships/C
 import { useDepartmentalChampionshipsData } from "@/features/competitions/hooks";
 import { useRouter } from "@/navigation";
 import { Footer, Header } from "@/shared/components/layouts";
+import { Breadcrumb } from "@/shared/components/navigation";
 import { ErrorMessage } from "@/shared/components/ui";
 import { CompetitionLevel } from "@/shared/constants/competition-levels";
 import {
@@ -21,6 +22,7 @@ import {
 
 export default function DepartmentalChampionshipsPage() {
   const tCommon = useTranslations("common");
+  const tCompetitions = useTranslations("competitions");
   const router = useRouter();
   const params = useParams();
   const idStr = params?.committeeId as string;
@@ -31,9 +33,14 @@ export default function DepartmentalChampionshipsPage() {
 
   const championshipsByGender = groupChampionshipsByGender(championships);
 
-  // ---------------------------------------------------------------------------
-  // Body
-  // ---------------------------------------------------------------------------
+  const breadcrumbItems = [
+    { label: tCompetitions("breadcrumb"), href: "/competitions" },
+    {
+      label: tCompetitions("departmental.label"),
+      href: `/competitions/${CompetitionLevel.DEPARTMENTAL}`,
+    },
+    { label: committee?.name ?? "…", current: true },
+  ];
 
   let body: React.ReactNode;
 
@@ -53,7 +60,7 @@ export default function DepartmentalChampionshipsPage() {
           </div>
         )}
 
-        {/* Committees carousel – wrapped in a card band */}
+        {/* Committees carousel */}
         <HorizontalCarousel
           items={committees}
           title={tCommon("sectionTitles.departmentalCommittees")}
@@ -64,7 +71,7 @@ export default function DepartmentalChampionshipsPage() {
           enableLetterFilter={true}
         />
 
-        {/* Clubs carousel – same card band */}
+        {/* Clubs carousel */}
         <HorizontalCarousel
           items={clubs}
           title={tCommon("sectionTitles.clubs")}
@@ -88,14 +95,15 @@ export default function DepartmentalChampionshipsPage() {
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // Layout shell
-  // ---------------------------------------------------------------------------
-
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950">
       <Header />
-      <main className="flex-grow py-12 px-4 sm:px-6 lg:px-8">{body}</main>
+      <main className="flex-grow py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <Breadcrumb items={breadcrumbItems} />
+        </div>
+        {body}
+      </main>
       <Footer />
     </div>
   );

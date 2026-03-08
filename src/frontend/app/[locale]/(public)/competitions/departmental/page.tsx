@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { CommitteesGrid } from "@/features/competitions/components";
 import { serverCommitteesService } from "@/features/organizations/committees/api/committees.server";
 import { Footer, Header } from "@/shared/components/layouts";
+import { Breadcrumb } from "@/shared/components/navigation";
 
 interface DepartmentalListPageProps {
   readonly params: Promise<{ readonly locale: string }>;
@@ -18,12 +19,21 @@ export default async function DepartmentalListPage({
   params,
 }: DepartmentalListPageProps) {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "common" });
+  const tCommon = await getTranslations({ locale, namespace: "common" });
+  const tCompetitions = await getTranslations({
+    locale,
+    namespace: "competitions",
+  });
 
   const committees = await serverCommitteesService.getAll().catch((error) => {
     console.error("Error fetching committees:", error);
     return [];
   });
+
+  const breadcrumbItems = [
+    { label: tCompetitions("breadcrumb"), href: "/competitions" },
+    { label: tCompetitions("departmental.label"), current: true },
+  ];
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950">
@@ -31,8 +41,10 @@ export default async function DepartmentalListPage({
 
       <main className="flex-grow py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto space-y-6">
+          <Breadcrumb items={breadcrumbItems} />
+
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            {t("sectionTitles.departmentalCommittees")}
+            {tCommon("sectionTitles.departmentalCommittees")}
           </h1>
 
           <CommitteesGrid committees={committees} />
@@ -44,5 +56,4 @@ export default async function DepartmentalListPage({
   );
 }
 
-// Revalidate once per day (committees rarely change)
 export const revalidate = 86400;
