@@ -4,7 +4,6 @@ import { getTranslations } from "next-intl/server";
 
 import { serverClubsService } from "@/features/organizations/clubs/api";
 import {
-  Breadcrumb,
   ClubHeader,
   ClubInfo,
   ClubTeams,
@@ -14,6 +13,7 @@ import { getBreadcrumbItems } from "@/features/organizations/clubs/utils";
 import { serverCommitteesService } from "@/features/organizations/committees/api/committees.server";
 import { serverLeaguesService } from "@/features/organizations/leagues/api/leagues.server";
 import { Footer, Header } from "@/shared/components/layouts";
+import { Breadcrumb } from "@/shared/components/navigation";
 import type { Gender } from "@/shared/constants";
 import { groupTeamsByGender } from "@/shared/utils/helpers/team-helpers";
 

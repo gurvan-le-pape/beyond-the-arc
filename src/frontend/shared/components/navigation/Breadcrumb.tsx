@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/clubs/components/navigation/Breadcrumb.tsx
+// src/frontend/shared/components/navigation/Breadcrumb.tsx
 "use client";
 
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
@@ -13,9 +13,9 @@ export interface BreadcrumbItem {
 }
 
 interface BreadcrumbProps {
-  items: BreadcrumbItem[];
-  separator?: React.ReactNode;
-  className?: string;
+  readonly items: BreadcrumbItem[];
+  readonly separator?: React.ReactNode;
+  readonly className?: string;
 }
 
 /**
@@ -51,7 +51,7 @@ export function Breadcrumb({
     if (item.onClick) {
       item.onClick();
     } else if (item.href) {
-      void router.push(item.href);
+      router.push(item.href);
     }
   };
 
@@ -67,7 +67,7 @@ export function Breadcrumb({
           const isClickable = !isCurrent && (item.href || item.onClick);
 
           return (
-            <li key={index} className="flex items-center gap-2">
+            <li key={item.label} className="flex items-center gap-2">
               {/* Breadcrumb Item */}
               {isClickable ? (
                 <button

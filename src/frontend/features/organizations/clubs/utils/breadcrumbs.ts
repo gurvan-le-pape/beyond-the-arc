@@ -1,5 +1,6 @@
 // src/frontend/features/organizations/clubs/utils/breadcrumbs.ts
-import type { BreadcrumbItem } from "../components";
+
+import type { BreadcrumbItem } from "@/shared/components/navigation";
 
 interface ClubsBreadcrumbParams {
   league?: { id: number; name: string };

@@ -1,7 +1,7 @@
 // src/frontend/features/organizations/clubs/hooks/useBreadcrumbs.tsx
 import { useTranslations } from "next-intl";
 
-import type { BreadcrumbItem } from "../components";
+import type { BreadcrumbItem } from "@/shared/components/navigation";
 
 interface ClubsBreadcrumbParams {
   league?: { id: number; name: string };

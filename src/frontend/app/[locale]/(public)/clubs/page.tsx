@@ -3,12 +3,12 @@ import { getTranslations } from "next-intl/server";
 
 import { serverClubsService } from "@/features/organizations/clubs/api";
 import {
-  Breadcrumb,
   MapViewButton,
   RegionsGrid,
   TitleSection,
 } from "@/features/organizations/clubs/components";
 import { Footer, Header } from "@/shared/components/layouts";
+import { Breadcrumb } from "@/shared/components/navigation";
 import { ViewLevel } from "@/shared/constants/view-levels";
 
 interface ClubsRegionsPageProps {
