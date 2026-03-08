@@ -1,4 +1,4 @@
-// src/frontend/app/[locale]/(public)/competitions/departmental/[id]/page.tsx
+// src/frontend/app/[locale]/(public)/competitions/departmental/[committeeId]/page.tsx
 "use client";
 
 import { useParams } from "next/navigation";
@@ -23,7 +23,7 @@ export default function DepartmentalChampionshipsPage() {
   const tCommon = useTranslations("common");
   const router = useRouter();
   const params = useParams();
-  const idStr = params?.id as string;
+  const idStr = params?.committeeId as string;
   const id = Number.parseInt(idStr, 10);
 
   const { championships, committee, committees, clubs, isLoading, error } =

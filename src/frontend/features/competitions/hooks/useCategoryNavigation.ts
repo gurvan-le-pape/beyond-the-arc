@@ -77,9 +77,7 @@ export function useCategoryNavigation(
     (targetCategory: Category) => {
       const targetChampionshiptId = categoryMap[targetCategory];
       if (targetChampionshiptId) {
-        void router.replace(
-          `/competitions/${level}/${id}/${targetChampionshiptId}`,
-        );
+        router.replace(`/competitions/${level}/${id}/${targetChampionshiptId}`);
       }
     },
     [categoryMap, router, level, id],

@@ -1,9 +1,10 @@
-// src/frontend/app/[locale]/(public)/competitions/regional/[id]/[championshipId]/page.tsx
+// src/frontend/app/[locale]/(public)/competitions/regional/[leagueId]/[championshipId]/page.tsx
 import {
   dehydrate,
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
+import { notFound } from "next/navigation";
 
 import { serverChampionshipsService } from "@/features/competitions/championships/api";
 import { championshipsKeys } from "@/features/competitions/championships/api/championshipsKeys";
@@ -15,7 +16,7 @@ import { leaguesKeys } from "@/features/organizations/leagues/api/leaguesKeys";
 import { CompetitionLevel } from "@/shared/constants";
 
 interface RegionalChampionshipsDetailPageProps {
-  params: Promise<{
+  readonly params: Promise<{
     locale: string;
     leagueId: string;
     championshipId: string;
@@ -77,17 +78,29 @@ async function prefetchData(leagueId: number, championshipId: number) {
 export default async function RegionalChampionshipsDetailPage({
   params,
 }: RegionalChampionshipsDetailPageProps) {
-  const { leagueId: leagueIdStr, championshipId: championshiptIdStr } =
+  const { leagueId: leagueIdStr, championshipId: championshipIdStr } =
     await params;
 
   const leagueId = Number.parseInt(leagueIdStr, 10);
-  const championshipId = Number.parseInt(championshiptIdStr, 10);
+  const championshipId = Number.parseInt(championshipIdStr, 10);
+
+  if (
+    Number.isNaN(leagueId) ||
+    leagueId <= 0 ||
+    Number.isNaN(championshipId) ||
+    championshipId <= 0
+  ) {
+    notFound();
+  }
 
   const dehydratedState = await prefetchData(leagueId, championshipId);
 
   return (
     <HydrationBoundary state={dehydratedState}>
-      <ChampionshipsDetailPageGeneric level={CompetitionLevel.REGIONAL} />
+      <ChampionshipsDetailPageGeneric
+        level={CompetitionLevel.REGIONAL}
+        organizationId={leagueId}
+      />
     </HydrationBoundary>
   );
 }
