@@ -4,6 +4,7 @@ import React from "react";
 
 import { Badge } from "@/shared/components/ui";
 import { CompetitionLevel } from "@/shared/constants";
+import { formatMatchDate, formatMatchTime } from "@/shared/utils";
 import { cn } from "@/shared/utils/cn";
 import { formatNameToFileName } from "@/shared/utils/formatNameToFileName";
 
@@ -68,26 +69,8 @@ export const MatchesCard: React.FC<MatchesCardProps> = ({ match, onClick }) => {
     return MATCH_LEVEL_CONFIG.default;
   };
 
-  /**
-   * Format match date for display
-   */
-  const formatMatchDate = (date: string) => {
-    const matchDate = new Date(date);
-    return {
-      date: matchDate.toLocaleDateString("fr-FR", {
-        day: "numeric",
-        month: "short",
-      }),
-      time: matchDate.toLocaleTimeString("fr-FR", {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-    };
-  };
-
   const config = getMatchConfig();
 
-  const { date, time } = formatMatchDate(match.date);
   const hasScore = match.homeTeamScore !== null && match.awayTeamScore !== null;
 
   return (
@@ -126,7 +109,7 @@ export const MatchesCard: React.FC<MatchesCardProps> = ({ match, onClick }) => {
           {/* Date, Time, Matchday, Level Badge */}
           <div className="flex items-center gap-3">
             <span className="text-sm text-gray-600 dark:text-gray-400">
-              {date} • {time}
+              {formatMatchDate(match.date)} • {formatMatchTime(match.date)}
             </span>
             <Badge variant="default" size="sm">
               J{match.matchday}

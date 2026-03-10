@@ -120,7 +120,7 @@ CREATE TABLE matches (
     id SERIAL PRIMARY KEY,
     pool_id INT REFERENCES pools(id) ON DELETE CASCADE,
     matchday INT,
-    date TIMESTAMP,
+    date TIMESTAMPTZ,
     home_team_id INT REFERENCES teams(id),
     away_team_id INT REFERENCES teams(id),
     home_team_score INT,
@@ -212,7 +212,7 @@ CREATE TABLE match_events (
         -- Substitution Events
         'substitution'
     )),
-    timestamp TIMESTAMP NOT NULL,
+    timestamp TIMESTAMPTZ NOT NULL,
     description TEXT,
     shot_location_id INT REFERENCES shot_locations(id) ON DELETE SET NULL
 );

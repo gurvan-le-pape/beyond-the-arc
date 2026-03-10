@@ -185,7 +185,7 @@ model Matches {
   pool                Pools               @relation(fields: [poolId], references: [id])
   poolId              Int                 @map("pool_id")
   matchday            Int
-  date                DateTime
+  date                DateTime            @db.Timestamptz
   homeTeam            Teams               @relation("HomeTeam", fields: [homeTeamId], references: [id])
   homeTeamId          Int                 @map("home_team_id")
   awayTeam            Teams               @relation("AwayTeam", fields: [awayTeamId], references: [id])
@@ -269,7 +269,7 @@ model MatchEvents {
   match           Matches             @relation(fields: [matchId], references: [id])
   matchId         Int                 @map("match_id")
   eventType       String              @db.VarChar(50) @map("event_type")
-  timestamp       DateTime
+  timestamp       DateTime            @db.Timestamptz
   description     String?
   shotLocationId  Int?                @map("shot_location_id")
   shotLocation    ShotLocations?      @relation(fields: [shotLocationId], references: [id])

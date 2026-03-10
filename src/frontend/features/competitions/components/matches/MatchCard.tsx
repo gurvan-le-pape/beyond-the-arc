@@ -7,6 +7,7 @@ import React from "react";
 
 import { MatchDetailsTable } from "@/features/competitions/components";
 import { Badge, Card } from "@/shared/components/ui";
+import { formatMatchDateTime } from "@/shared/utils";
 import { formatNameToFileName } from "@/shared/utils/formatNameToFileName";
 
 interface MatchCardProps {
@@ -33,14 +34,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
       {/* Top Row - Date and Status */}
       <div className="flex justify-between items-center mb-2">
         <time className="text-sm text-gray-600 dark:text-gray-400">
-          {new Date(match.date).toLocaleDateString("fr-FR", {
-            weekday: "long",
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
+          {formatMatchDateTime(match.date)}
         </time>
         <Badge variant={match.overtime ? "warning" : "default"} size="sm">
           {match.overtime ? "Final/OT" : "Final"}
