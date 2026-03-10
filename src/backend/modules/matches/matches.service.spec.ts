@@ -3,6 +3,7 @@ import { NotFoundException } from "@nestjs/common";
 import type { TestingModule } from "@nestjs/testing";
 import { Test } from "@nestjs/testing";
 import { Decimal } from "@prisma/client/runtime/library";
+import { fromZonedTime } from "date-fns-tz";
 import { PrismaService } from "prisma/prisma.service";
 
 import { MatchesService } from "./matches.service";
@@ -654,15 +655,21 @@ describe("MatchesService", () => {
       );
     });
 
-    it("should apply date filter as range", async () => {
+    it("should apply date filter as range in Paris timezone", async () => {
       await service.findAllMatches({ date: "2024-02-05" });
 
       expect(mockPrismaService.matches.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
             date: {
-              gte: new Date("2024-02-05T00:00:00.000Z"),
-              lt: new Date("2024-02-05T23:59:59.999Z"),
+              gte: fromZonedTime(
+                new Date("2024-02-05T00:00:00"),
+                "Europe/Paris",
+              ),
+              lt: fromZonedTime(
+                new Date("2024-02-05T23:59:59.999"),
+                "Europe/Paris",
+              ),
             },
           }),
         }),
