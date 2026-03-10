@@ -3,6 +3,7 @@ import os
 import json
 import random
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 
 from utils.db_utils import get_connection, release_connection
 from match_simulator import MatchSimulator
@@ -122,8 +123,9 @@ def process_pool_matches(pool_id, pool_name, match_date):
                 match_time = random.choice(["14:00", "16:00", "18:00", "20:00"])  # noqa: S2245
                 match_datetime = datetime.combine(
                     current_match_date,
-                    datetime.strptime(match_time, "%H:%M").time()
-                )
+                    datetime.strptime(match_time, "%H:%M").time(),
+                    tzinfo=ZoneInfo("Europe/Paris")
+                ).astimezone(ZoneInfo("UTC"))
 
                 home_playtimes, home_names, home_subs = generate_player_playtimes(cursor, home_team_id)
                 away_playtimes, away_names, away_subs = generate_player_playtimes(cursor, away_team_id)
@@ -217,7 +219,7 @@ def process_pool_matches(pool_id, pool_name, match_date):
                     events_insert_data.append((
                         match_id,
                         event["event_type"],
-                        event["timestamp"].strftime("%Y-%m-%d %H:%M:%S.%f"),
+                        event["timestamp"],
                         event.get("description"),
                         shot_location_id,
                     ))

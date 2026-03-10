@@ -4,6 +4,7 @@ import { PaginatedResponseDto } from "@common/dto/paginated-response.dto";
 import { Category, CompetitionLevel, Gender } from "@common/index";
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
+import { fromZonedTime } from "date-fns-tz";
 import { PrismaService } from "prisma/prisma.service";
 
 import type {
@@ -620,8 +621,14 @@ export class MatchesService {
 
     if (filters?.date) {
       where.date = {
-        gte: new Date(filters.date + "T00:00:00.000Z"),
-        lt: new Date(filters.date + "T23:59:59.999Z"),
+        gte: fromZonedTime(
+          new Date(filters.date + "T00:00:00"),
+          "Europe/Paris",
+        ),
+        lt: fromZonedTime(
+          new Date(filters.date + "T23:59:59.999"),
+          "Europe/Paris",
+        ),
       };
     }
 
