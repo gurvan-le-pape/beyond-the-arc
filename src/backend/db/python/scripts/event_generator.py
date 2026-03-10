@@ -17,34 +17,47 @@ class EventGenerator:
     def _generate_shot_location(self, event_type):
         """Generate a (x, y) shot location in meters on a FIBA half-court (15m x 14m)."""
         COURT_WIDTH = 15.0
-        HALF_COURT_HEIGHT = 14.0
         BASELINE_TO_RIM = 1.575
+        RIM_X = COURT_WIDTH / 2  # 7.5
         PAINT_WIDTH = 4.9
+        PAINT_LEFT = (COURT_WIDTH - PAINT_WIDTH) / 2   # 5.05
+        PAINT_RIGHT = (COURT_WIDTH + PAINT_WIDTH) / 2  # 9.95
         PAINT_HEIGHT = 5.8
         THREE_PT_RADIUS = 6.75
+        THREE_PT_MAX_Y = BASELINE_TO_RIM + THREE_PT_RADIUS  # ~8.325
 
         if any(z in event_type for z in ["layup", "dunk", "int"]):
-            x = random.uniform((COURT_WIDTH - PAINT_WIDTH) / 2, (COURT_WIDTH + PAINT_WIDTH) / 2)  # noqa: S2245
+            x = random.uniform(PAINT_LEFT, PAINT_RIGHT)  # noqa: S2245
             y = random.uniform(BASELINE_TO_RIM, PAINT_HEIGHT)  # noqa: S2245
+
         elif any(z in event_type for z in ["fadeaway", "pull_up_jump_shot", "ext"]):
-            # Midrange: outside paint, inside 3pt arc
-            for _ in range(50):  # bounded retry to avoid infinite loop
+            # Midrange: outside paint but inside three-point arc
+            for _ in range(100):
+                # Sample within the bounding box of the three-point arc
                 x = random.uniform(0, COURT_WIDTH)  # noqa: S2245
-                y = random.uniform(PAINT_HEIGHT, HALF_COURT_HEIGHT)  # noqa: S2245
-                dist = math.hypot(x - COURT_WIDTH / 2, y - BASELINE_TO_RIM)
-                if dist < THREE_PT_RADIUS:
+                y = random.uniform(BASELINE_TO_RIM, THREE_PT_MAX_Y)  # noqa: S2245
+                dist = math.hypot(x - RIM_X, y - BASELINE_TO_RIM)
+                in_three_pt_arc = dist < THREE_PT_RADIUS
+                in_paint = PAINT_LEFT <= x <= PAINT_RIGHT and y <= PAINT_HEIGHT
+                if in_three_pt_arc and not in_paint:
                     break
+
         elif "three" in event_type or "3_point" in event_type:
-            angle = random.uniform(-math.pi / 2, math.pi / 2)  # noqa: S2245
-            r = random.uniform(THREE_PT_RADIUS - 0.2, THREE_PT_RADIUS + 0.5)  # noqa: S2245
-            x = max(0, min(COURT_WIDTH, (COURT_WIDTH / 2) + r * math.cos(angle)))
-            y = max(0, min(HALF_COURT_HEIGHT, BASELINE_TO_RIM + r * math.sin(angle)))
+            # Sample angle from 0 to π (left to right, facing the basket from above)
+            angle = random.uniform(0, math.pi)  # noqa: S2245
+            r = random.uniform(THREE_PT_RADIUS, THREE_PT_RADIUS + 0.8)  # noqa: S2245
+            # angle=0 → right sideline, angle=π/2 → top of arc, angle=π → left sideline
+            x = RIM_X + r * math.cos(math.pi - angle)
+            y = BASELINE_TO_RIM + r * math.sin(angle)
+            x = max(0.0, min(COURT_WIDTH, x))
+            y = max(0.0, y)
+
         else:
             x = random.uniform(0, COURT_WIDTH)  # noqa: S2245
-            y = random.uniform(0, HALF_COURT_HEIGHT)  # noqa: S2245
+            y = random.uniform(0, THREE_PT_MAX_Y)  # noqa: S2245
 
         return {"x": round(x, 2), "y": round(y, 2)}
-
+    
     def _generate_event_details(self, event, active_home_players, active_away_players, current_time, current_possession, player_names):
         """Generate the full event dict for a given event type."""
         event_type = event["type"]
