@@ -1,8 +1,9 @@
 // src/frontend/features/teams/components/TeamListItem.tsx
+import { useTranslations } from "next-intl";
+
 import type { ClubTeamInfo } from "@/features/organizations/clubs/types/ClubDetailed";
 import { Button } from "@/shared/components/ui";
 
-// components/features/teams/TeamListItem.tsx
 interface TeamListItemProps {
   team: ClubTeamInfo;
   clubName: string;
@@ -10,6 +11,8 @@ interface TeamListItemProps {
 }
 
 export function TeamListItem({ team, clubName, onClick }: TeamListItemProps) {
+  const t = useTranslations("teams");
+
   return (
     <Button
       variant="ghost"
@@ -28,11 +31,11 @@ export function TeamListItem({ team, clubName, onClick }: TeamListItemProps) {
       {team.leaderboards?.[0] && (
         <div className="flex items-center gap-4 text-sm">
           <div className="text-center">
-            <p className="text-gray-500">Points</p>
+            <p className="text-gray-500">{t("teamDetail.points")}</p>
             <p className="font-semibold">{team.leaderboards[0].points}</p>
           </div>
           <div className="text-center">
-            <p className="text-gray-500">Played</p>
+            <p className="text-gray-500">{t("teamDetail.gamesPlayed")}</p>
             <p className="font-semibold">{team.leaderboards[0].gamesPlayed}</p>
           </div>
         </div>

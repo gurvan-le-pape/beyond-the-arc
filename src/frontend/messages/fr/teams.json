@@ -19,7 +19,9 @@
     "noPlayers": "Aucun joueur dans l'effectif",
     "matchHistoryTitle": "Historique des Matchs",
     "shotchartTitle": "Carte des tirs (Heatmap)",
-    "shotchartDescription": "Cette heatmap montre la distribution des tirs de l'équipe cette saison."
+    "shotchartDescription": "Cette heatmap montre la distribution des tirs de l'équipe cette saison.",
+    "points": "Points",
+    "gamesPlayed": "Joués"
   },
   "teamStats": {
     "positionSuffix": "ème",
@@ -32,8 +34,8 @@
     "allCategories": "Toutes",
     "allGenders": "Tous",
     "genderHeading": {
-      "masculine": "male",
-      "feminine": "female"
+      "masculine": "Masculin",
+      "feminine": "Féminin"
     },
     "allDivisions": "Toutes",
     "allPools": "Toutes",

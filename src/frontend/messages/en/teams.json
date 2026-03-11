@@ -19,7 +19,9 @@
     "noPlayers": "No players in roster",
     "matchHistoryTitle": "Match History",
     "shotchartTitle": "Shot Chart (Heatmap)",
-    "shotchartDescription": "This heatmap shows the shot distribution for the team this season."
+    "shotchartDescription": "This heatmap shows the shot distribution for the team this season.",
+    "points": "Points",
+    "gamesPlayed": "Joués"
   },
   "teamStats": {
     "positionSuffix": "th",
