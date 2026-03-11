@@ -1,4 +1,5 @@
 {
+  "errorLoadingChampionships": "Erreur lors du chargement des championnats",
   "searchTitle": "Recherche de Matchs",
   "searchClub": "Rechercher un club",
   "searchClubPlaceholder": "Nom du club...",
@@ -15,12 +16,12 @@
   "selectLeague": "Sélectionner une ligue",
   "division": "Division",
   "selectDivision": "Sélectionner une division",
-  "divisionLabel": "Division {{div}}",
+  "divisionLabel": "Division {div}",
   "pool": "Poule",
   "allPools": "Toutes les poules",
   "matchday": "Journée",
   "allMatchdays": "Toutes les journées",
-  "matchdayLabel": "J{{j}}",
+  "matchdayLabel": "J{matchday}",
   "noResults": "Aucun match trouvé",
   "paginationLabel": "Page",
   "itemLabelSingular": "match",
@@ -101,5 +102,10 @@
     "shots": "Tirs",
     "shotChart": "Voir le shot chart",
     "viewTeam": "Voir l'équipe"
+  },
+  "levels": {
+    "departmental": "Dép.",
+    "regional": "Rég.",
+    "national": "Nat."
   }
 }
