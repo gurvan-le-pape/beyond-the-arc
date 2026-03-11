@@ -2,7 +2,6 @@
 import * as d3 from "d3";
 import { useTranslations } from "next-intl";
 import React from "react";
-import { useTranslation } from "react-i18next";
 
 interface HeatmapLegendProps {
   maxValue: number;

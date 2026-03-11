@@ -52,7 +52,6 @@ export function ClubsMap({ initialRegions }: ClubsMapProps) {
     departmentsGeoJson,
     getRegionClubCount,
     getDepartmentClubCount,
-    isLoading,
     error,
   } = useMapData(initialRegions);
 
