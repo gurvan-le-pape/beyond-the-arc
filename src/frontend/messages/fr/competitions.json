@@ -1,22 +1,22 @@
 {
   "breadcrumb": "Compétitions",
-  "notFound": "Championship non trouvé.",
+  "notFound": "Compétition non trouvée.",
   "categoryLabel": "Catégorie :",
   "divisionLabel": "Division :",
   "divisionWithValue": "Division {value}",
   "roundsLabel": "Journées",
   "matchesLabel": "Matchs",
-  "selectLevel": "Sélectionner un level",
+  "selectLevel": "Sélectionner un niveau",
   "national": {
     "label": "National",
     "description": "Compétitions nationales, clubs de toute la France."
   },
   "regional": {
     "label": "Régional",
-    "description": "Compétitions par league."
+    "description": "Compétitions par ligue."
   },
   "departmental": {
-    "label": "Departmental",
+    "label": "Départemental",
     "description": "Compétitions locales par comité départemental.",
     "searchPlaceholder": "Rechercher un comité…",
     "noResults": "Aucun résultat pour « {search} »",
@@ -29,11 +29,19 @@
     "scrollRight": "Défiler à droite"
   },
   "switchGender": {
-    "toFeminine": "Championship female",
-    "toMasculine": "Championship male",
-    "ariaToFeminine": "Voir championship féminin",
-    "ariaToMasculine": "Voir championship masculin"
+    "toFeminine": "Championnat féminin",
+    "toMasculine": "Championnat masculin",
+    "ariaToFeminine": "Voir le championnat féminin",
+    "ariaToMasculine": "Voir le championnat masculin"
   },
   "leaderboardTitle": "Classement",
-  "championshipsSectionTitle": "Championships"
+  "championshipsSectionTitle": "Championnats",
+  "letterFilter": {
+    "all": "Tous"
+  },
+  "matchDetails": {
+    "teamHeader": "Équipe",
+    "overtimeHeader": "Prol.",
+    "totalHeader": "T"
+  }
 }

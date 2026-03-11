@@ -1,4 +1,6 @@
 // src/frontend/features/competitions/components/carousel/LetterFilter.tsx
+import { useTranslations } from "next-intl";
+
 import { cn } from "@/shared/utils/cn";
 
 interface LetterFilterProps {
@@ -18,6 +20,7 @@ export function LetterFilter({
   selectedLetter,
   onSelectLetter,
 }: LetterFilterProps) {
+  const t = useTranslations("competitions");
   return (
     <div className="flex items-center gap-2 mb-4 flex-wrap">
       {/* "All" pill */}
@@ -38,7 +41,7 @@ export function LetterFilter({
               ],
         )}
       >
-        Tous
+        {t("letterFilter.all")}
       </button>
 
       {/* Letter pills */}

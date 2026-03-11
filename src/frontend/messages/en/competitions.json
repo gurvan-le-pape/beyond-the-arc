@@ -35,5 +35,13 @@
     "ariaToMasculine": "See masculine championship"
   },
   "leaderboardTitle": "Leaderboard",
-  "championshipsSectionTitle": "Championships"
+  "championshipsSectionTitle": "Championships",
+  "letterFilter": {
+    "all": "All"
+  },
+  "matchDetails": {
+    "teamHeader": "Team",
+    "overtimeHeader": "OT",
+    "totalHeader": "T"
+  }
 }
