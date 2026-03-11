@@ -1,4 +1,5 @@
 // src/frontend/shared/components/charts/overlays/TooltipContent.tsx
+import { useTranslations } from "next-intl";
 import React from "react";
 import { createPortal } from "react-dom";
 
@@ -25,7 +26,9 @@ const TooltipContent: React.FC<TooltipContentProps> = ({
   tooltip,
   shotFilter,
 }) => {
+  const t = useTranslations("common");
   const { left, top } = getTooltipPosition(tooltip.x, tooltip.y);
+
   let filterContent = null;
   if (shotFilter === ShotFilter.MADE) {
     const pct =
@@ -34,7 +37,8 @@ const TooltipContent: React.FC<TooltipContentProps> = ({
         : null;
     filterContent = (
       <div>
-        <b>Made:</b> {tooltip.made} ({pct === null ? "-" : pct + "%"})
+        <b>{t("shotChart.madeLabel")}:</b> {tooltip.made} (
+        {pct === null ? "-" : pct + "%"})
       </div>
     );
   } else if (shotFilter === ShotFilter.MISSED) {
@@ -44,10 +48,12 @@ const TooltipContent: React.FC<TooltipContentProps> = ({
         : null;
     filterContent = (
       <div>
-        <b>Missed:</b> {tooltip.missed} ({pct === null ? "-" : pct + "%"})
+        <b>{t("shotChart.missedLabel")}:</b> {tooltip.missed} (
+        {pct === null ? "-" : pct + "%"})
       </div>
     );
   }
+
   return createPortal(
     <div
       className="shotchart-tooltip"
@@ -70,23 +76,24 @@ const TooltipContent: React.FC<TooltipContentProps> = ({
       {/* Only show cell coordinates when available (grid/heatmap charts) */}
       {tooltip.cellRow !== undefined && tooltip.cellCol !== undefined && (
         <div>
-          <b>Cell:</b> ({tooltip.cellRow}, {tooltip.cellCol})
+          <b>{t("shotChart.cell")}:</b> ({tooltip.cellRow}, {tooltip.cellCol})
         </div>
       )}
       <div>
-        <b>Total:</b> {tooltip.total}
+        <b>{t("shotChart.total")}:</b> {tooltip.total}
       </div>
       {/* Show all stats if filter is 'all' */}
       {shotFilter === ShotFilter.ALL && (
         <>
           <div>
-            <b>Made:</b> {tooltip.made}
+            <b>{t("shotChart.madeLabel")}:</b> {tooltip.made}
           </div>
           <div>
-            <b>Missed:</b> {tooltip.missed}
+            <b>{t("shotChart.missedLabel")}:</b> {tooltip.missed}
           </div>
           <div>
-            <b>FG%:</b> {tooltip.fg === null ? "-" : tooltip.fg + "%"}
+            <b>{t("shotChart.fgPercent")}:</b>{" "}
+            {tooltip.fg === null ? "-" : tooltip.fg + "%"}
           </div>
         </>
       )}

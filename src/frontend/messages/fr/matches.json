@@ -1,4 +1,6 @@
 {
+  "errorLoadingChampionships": "Erreur lors du chargement des championnats",
+  "errorFetchingFilters": "Erreur lors du chargement des filtres",
   "searchTitle": "Recherche de Matchs",
   "searchClub": "Rechercher un club",
   "searchClubPlaceholder": "Nom du club...",
@@ -15,18 +17,22 @@
   "selectLeague": "Sélectionner une ligue",
   "division": "Division",
   "selectDivision": "Sélectionner une division",
-  "divisionLabel": "Division {{div}}",
+  "divisionLabel": "Division {div}",
   "pool": "Poule",
   "allPools": "Toutes les poules",
   "matchday": "Journée",
   "allMatchdays": "Toutes les journées",
-  "matchdayLabel": "J{{j}}",
+  "matchdayLabel": "J{matchday}",
   "noResults": "Aucun match trouvé",
   "paginationLabel": "Page",
   "itemLabelSingular": "match",
   "itemLabelPlural": "matchs",
   "upcoming": "À venir",
   "tryAdjustingFilters": "Essayez d'ajuster vos filtres pour trouver plus de matchs.",
+  "final": "Terminé",
+  "finalOT": "Terminé/Prol.",
+  "viewMatchDetails": "Afficher les détails du match",
+  "hideMatchDetails": "Réduire les détails du match",
   "matchEvents": {
     "eventLabels": {
       "made_layup": "Layup réussi",
@@ -101,5 +107,13 @@
     "shots": "Tirs",
     "shotChart": "Voir le shot chart",
     "viewTeam": "Voir l'équipe"
+  },
+  "levels": {
+    "departmental": "Dép.",
+    "regional": "Rég.",
+    "national": "Nat."
+  },
+  "matchesTable": {
+    "club": "Club"
   }
 }

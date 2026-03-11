@@ -15,7 +15,6 @@ interface UseMapDataReturn {
   clubs: ClubBasic[];
   regionsGeoJson: GeoJsonData | null;
   departmentsGeoJson: GeoJsonData | null;
-  isLoading: boolean;
   error: string | null;
   getRegionClubCount: (regionId: number) => number;
   getDepartmentClubCount: (departmentId: string | number) => number;
@@ -30,35 +29,31 @@ export function useMapData(
   initialRegions: ClubStatsByRegion[],
 ): UseMapDataReturn {
   // Fetch regions
-  const {
-    data: regions = initialRegions,
-    error: regionsError,
-    isLoading: regionsLoading,
-  } = useSWR<ClubStatsByRegion[]>("/api/clubs/regions", fetcher, {
+  const { data: regions = initialRegions, error: regionsError } = useSWR<
+    ClubStatsByRegion[]
+  >("/api/clubs/regions", fetcher, {
     fallbackData: initialRegions,
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
   });
 
   // Fetch all departments
-  const {
-    data: allDepartments = [],
-    error: departmentsError,
-    isLoading: departmentsLoading,
-  } = useSWR<ClubStatsByDepartment[]>("/api/clubs/departments", fetcher, {
+  const { data: allDepartments = [], error: departmentsError } = useSWR<
+    ClubStatsByDepartment[]
+  >("/api/clubs/departments", fetcher, {
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
   });
 
   // Fetch all clubs
-  const {
-    data: allClubs = [],
-    error: clubsError,
-    isLoading: clubsLoading,
-  } = useSWR<ClubBasic[]>("/api/clubs/all", fetcher, {
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false,
-  });
+  const { data: allClubs = [], error: clubsError } = useSWR<ClubBasic[]>(
+    "/api/clubs/all",
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    },
+  );
 
   // Fetch GeoJSON data
   const { data: regionsGeoJson = null } = useSWR<GeoJsonData>(
@@ -81,14 +76,11 @@ export function useMapData(
     },
   );
 
-  // Compute loading state
-  const isLoading = regionsLoading || departmentsLoading || clubsLoading;
-
-  // Compute error state
+  // Compute error state — returns a translation key, resolved by the call site
   const error = useMemo(() => {
-    if (regionsError) return "Failed to load regions";
-    if (departmentsError) return "Failed to load departments";
-    if (clubsError) return "Failed to load clubs";
+    if (regionsError) return "errorLoadingRegions";
+    if (departmentsError) return "errorLoadingDepartments";
+    if (clubsError) return "errorLoadingClubs";
     return null;
   }, [regionsError, departmentsError, clubsError]);
 
@@ -147,7 +139,6 @@ export function useMapData(
     clubs: allClubs,
     regionsGeoJson,
     departmentsGeoJson,
-    isLoading,
     error,
     getRegionClubCount,
     getDepartmentClubCount,

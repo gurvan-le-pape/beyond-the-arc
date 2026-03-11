@@ -1,6 +1,7 @@
 // src/frontend/features/competitions/components/carousel/HorizontalCarousel.tsx
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 
 import { useRouter } from "@/navigation";
@@ -58,6 +59,8 @@ export function HorizontalCarousel({
   enableLetterFilter = false,
 }: HorizontalCarouselProps) {
   const router = useRouter();
+  const tCompetitions = useTranslations("competitions");
+  const tCommon = useTranslations("competitions");
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
@@ -174,9 +177,10 @@ export function HorizontalCarousel({
         {enableSearch && (
           <div className="w-64">
             <SearchInput
-              placeholder="Rechercher…"
               value={searchTerm}
+              placeholder={tCompetitions("carousel.searchPlaceholder")}
               onChange={(e) => setSearchTerm(e.target.value)}
+              clearAriaLabel={tCommon("clearSearch")}
             />
           </div>
         )}
@@ -203,7 +207,7 @@ export function HorizontalCarousel({
               variant="carouselArrow"
               size="icon"
               onClick={scrollLeft}
-              aria-label="Scroll left"
+              aria-label={tCompetitions("carousel.scrollLeft")}
               className="shadow-lg"
             >
               <svg viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
@@ -249,7 +253,7 @@ export function HorizontalCarousel({
               variant="carouselArrow"
               size="icon"
               onClick={scrollRight}
-              aria-label="Scroll right"
+              aria-label={tCompetitions("carousel.scrollRight")}
               className="shadow-lg"
             >
               <svg viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
@@ -286,12 +290,12 @@ export function HorizontalCarousel({
             <path d="m21 21-4.35-4.35" strokeLinecap="round" />
           </svg>
           <p className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-1">
-            Aucun résultat
+            {tCompetitions("noResults")}
           </p>
           <p className="text-sm text-gray-500 dark:text-gray-400">
             {searchTerm
-              ? `Aucun résultat pour « ${searchTerm} »`
-              : "Aucun élément disponible"}
+              ? tCompetitions("noSearchResults", { search: searchTerm })
+              : tCompetitions("noItemsAvailable")}
           </p>
           {searchTerm && (
             <Button
@@ -300,7 +304,7 @@ export function HorizontalCarousel({
               onClick={() => setSearchTerm("")}
               className="mt-3"
             >
-              Effacer la recherche
+              {tCompetitions("clearSearch")}
             </Button>
           )}
         </div>

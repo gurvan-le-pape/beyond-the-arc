@@ -2,6 +2,7 @@
 "use client";
 
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
+import { useTranslations } from "next-intl";
 
 import { useRouter } from "@/navigation";
 
@@ -39,6 +40,7 @@ export function Breadcrumb({
   className = "",
 }: BreadcrumbProps) {
   const router = useRouter();
+  const tCommon = useTranslations("common");
 
   const defaultSeparator = (
     <ChevronRightIcon
@@ -58,7 +60,7 @@ export function Breadcrumb({
   return (
     <nav
       className={`mb-6 flex items-center gap-2 text-sm ${className}`}
-      aria-label="Breadcrumb"
+      aria-label={tCommon("breadcrumbAriaLabel")}
     >
       <ol className="flex items-center gap-2">
         {items.map((item, index) => {

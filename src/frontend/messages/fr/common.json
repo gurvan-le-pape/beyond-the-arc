@@ -11,6 +11,10 @@
   "edit": "Modifier",
   "all": "Tous",
   "clear": "Effacer",
+  "breadcrumbAriaLabel": "Fil d'Ariane",
+  "noData": "Aucune donnée disponible",
+  "clearSearch": "Effacer la recherche",
+  "noItemsAvailable": "Aucun élément disponible",
   "homepage": {
     "title": "Bienvenue à Beyond The Arc",
     "subtitle": "Découvrez les compétitions, clubs, équipes et statistiques des joueurs. Plongez au cœur du basket avec des données en temps réel, des fonctionnalités interactives et une expérience moderne et intuitive.",
@@ -114,5 +118,22 @@
   "team": {
     "seeTeam": "Voir l'équipe {number}",
     "seeTeamDefault": "Voir l'équipe"
+  },
+  "shotChart": {
+    "shots": "Tirs",
+    "all": "Tous",
+    "made": "Réussis",
+    "missed": "Manqués",
+    "madeLabel": "Panier marqué",
+    "missedLabel": "Tir manqué",
+    "low": "Bas",
+    "high": "Haut",
+    "color": "Couleur",
+    "cell": "Cellule",
+    "total": "Total",
+    "fgPercent": "FG%",
+    "title": "Carte des tirs — {{name}}",
+    "download": "Télécharger le graphique",
+    "close": "Fermer"
   }
 }

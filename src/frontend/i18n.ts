@@ -14,7 +14,7 @@ const namespaces = [
   "matches",
   "clubs",
   "filters",
-  "footer",
+  "landing",
   "pool",
 ];
 

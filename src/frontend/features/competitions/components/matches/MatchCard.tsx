@@ -3,6 +3,7 @@
 
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import React from "react";
 
 import { MatchDetailsTable } from "@/features/competitions/components";
@@ -23,6 +24,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
 }) => {
   const params = useParams();
   const locale = params?.locale as string;
+  const t = useTranslations("matches");
 
   const isHomeWinner = match.homeTeamScore > match.awayTeamScore;
   const isAwayWinner = match.awayTeamScore > match.homeTeamScore;
@@ -37,7 +39,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
           {formatMatchDateTime(match.date)}
         </time>
         <Badge variant={match.overtime ? "warning" : "default"} size="sm">
-          {match.overtime ? "Final/OT" : "Final"}
+          {match.overtime ? t("finalOT") : t("final")}
         </Badge>
       </div>
 
@@ -142,8 +144,8 @@ export const MatchCard: React.FC<MatchCardProps> = ({
           aria-expanded={expanded}
           aria-label={
             expanded
-              ? "Réduire les détails du match"
-              : "Afficher les détails du match"
+              ? t("matches.hideMatchDetails")
+              : t("matches.viewMatchDetails")
           }
           className="flex-shrink-0 p-1 rounded-button hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
         >

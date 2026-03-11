@@ -38,7 +38,7 @@ export function TitleSection({
           icon: (
             <FaMapMarkedAlt
               className="w-8 h-8 flex-shrink-0 text-black dark:text-white"
-              aria-label="Region"
+              aria-label={tCommon("sectionTitles.regionalLeagues")}
             />
           ),
           cardClassName:
@@ -53,7 +53,7 @@ export function TitleSection({
           icon: (
             <FaMapSigns
               className="w-8 h-8 flex-shrink-0 text-black dark:text-white"
-              aria-label="Department"
+              aria-label={tCommon("sectionTitles.departmentalCommittees")}
             />
           ),
           cardClassName:
@@ -69,7 +69,7 @@ export function TitleSection({
           icon: (
             <FaUsers
               className="w-8 h-8 flex-shrink-0 text-black dark:text-white"
-              aria-label="Clubs"
+              aria-label={tCommon("sectionTitles.clubs")}
             />
           ),
           cardClassName:

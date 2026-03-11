@@ -58,7 +58,7 @@ export default function MatchesPage() {
     Promise.all([
       committeesService.getAll().then(setCommittees),
       leaguesService.getAll().then(setLeagues),
-    ]).catch(() => setError("Error fetching filter options"));
+    ]).catch(() => setError(tMatches("errorFetchingFilters")));
   }, []);
 
   // SWR for matches data
@@ -131,9 +131,7 @@ export default function MatchesPage() {
             setChampionships(data);
           }
         } catch (err: any) {
-          setError(
-            err?.message || "Erreur lors du chargement des championships",
-          );
+          setError(err?.message ?? tMatches("errorLoadingChampionships"));
           setChampionships([]);
         }
         return;

@@ -3,6 +3,7 @@
 
 import "maplibre-gl/dist/maplibre-gl.css";
 
+import { useTranslations } from "next-intl";
 import { useCallback, useMemo, useState, useTransition } from "react";
 import { Map as MapGL, Popup } from "react-map-gl/maplibre";
 
@@ -38,6 +39,7 @@ interface ClubsMapProps {
  * - Interactive popups with club details
  */
 export function ClubsMap({ initialRegions }: ClubsMapProps) {
+  const t = useTranslations("clubs");
   const [selectedClub, setSelectedClub] = useState<ClubBasic | null>(null);
   const [viewState, setViewState] = useState(INITIAL_VIEW);
   const [isPending, startTransition] = useTransition();
@@ -50,7 +52,6 @@ export function ClubsMap({ initialRegions }: ClubsMapProps) {
     departmentsGeoJson,
     getRegionClubCount,
     getDepartmentClubCount,
-    isLoading,
     error,
   } = useMapData(initialRegions);
 
@@ -187,12 +188,12 @@ export function ClubsMap({ initialRegions }: ClubsMapProps) {
     return (
       <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
         <div className="text-center">
-          <p className="text-red-600 font-semibold">{error}</p>
+          <p className="text-red-600 font-semibold">{t(error)}</p>
           <button
             onClick={() => globalThis.location.reload()}
             className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
-            Retry
+            {t("map.retry")}
           </button>
         </div>
       </div>
@@ -249,13 +250,6 @@ export function ClubsMap({ initialRegions }: ClubsMapProps) {
         resultCount={displayClubs.length}
         isPending={isPending}
       />
-
-      {/* Loading Overlay */}
-      {isLoading && (
-        <div className="absolute top-20 left-1/2 -translate-x-1/2 bg-white px-4 py-2 rounded-lg shadow-lg z-50">
-          <p className="text-sm text-gray-600">Loading map data...</p>
-        </div>
-      )}
     </div>
   );
 }

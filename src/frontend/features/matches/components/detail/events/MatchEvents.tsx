@@ -37,7 +37,8 @@ export const MatchEvents: React.FC<MatchEventsProps> = ({
   homeTeam,
   awayTeam,
 }) => {
-  const t = useTranslations("matches");
+  const tMatches = useTranslations("matches");
+  const tCommon = useTranslations("common");
 
   // ---- filter / sort state ------------------------------------------------
   const [selectedQuarter, setSelectedQuarter] = useState<Quarter>(Quarter.ALL);
@@ -123,15 +124,18 @@ export const MatchEvents: React.FC<MatchEventsProps> = ({
   // ---- early return for empty data -----------------------------------------
   if (!events || events.length === 0) {
     return (
-      <Section title={t("matchEvents.title")} variant="highlighted">
-        <EmptyState message={t("matchEvents.noEvents")} />
+      <Section title={tMatches("matchEvents.title")} variant="highlighted">
+        <EmptyState
+          title={tCommon("noData")}
+          message={tMatches("matchEvents.noEvents")}
+        />
       </Section>
     );
   }
 
   // ---- render --------------------------------------------------------------
   return (
-    <Section title={t("matchEvents.title")} variant="highlighted">
+    <Section title={tMatches("matchEvents.title")} variant="highlighted">
       <div className="mb-6">
         <MatchEventsFilters
           homeTeam={homeTeam}

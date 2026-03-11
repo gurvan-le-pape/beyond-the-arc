@@ -18,7 +18,7 @@ import React, { useState } from "react";
 import { Footer, Header } from "@/shared/components/layouts";
 
 export default function DocsPage() {
-  const t = useTranslations("footer");
+  const t = useTranslations("landing");
   const [activeSection, setActiveSection] = useState<string | null>("database");
 
   const sections = [

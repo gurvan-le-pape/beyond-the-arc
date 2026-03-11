@@ -7,6 +7,10 @@
   "roundsLabel": "Rounds",
   "matchesLabel": "Matches",
   "selectLevel": "Select a level",
+  "noSearchResults": "No results for « {search} »",
+  "noItemsAvailable": "No items available",
+  "noResults": "No results",
+  "clearSearch": "Clear search",
   "national": {
     "label": "National",
     "description": "National competitions, clubs from all over France."
@@ -22,6 +26,11 @@
     "noResults": "No results for « {search} »",
     "clearSearch": "Clear search"
   },
+  "carousel": {
+    "scrollLeft": "Scroll left",
+    "scrollRight": "Scroll right",
+    "searchPlaceholder": "Search…"
+  },
   "roundSelector": {
     "dropdownLabel": "Round {round}",
     "pillLabel": "R{round}",
@@ -35,5 +44,13 @@
     "ariaToMasculine": "See masculine championship"
   },
   "leaderboardTitle": "Leaderboard",
-  "championshipsSectionTitle": "Championships"
+  "championshipsSectionTitle": "Championships",
+  "letterFilter": {
+    "all": "All"
+  },
+  "matchDetails": {
+    "teamHeader": "Team",
+    "overtimeHeader": "OT",
+    "totalHeader": "T"
+  }
 }

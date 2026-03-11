@@ -8,6 +8,9 @@
   "club": "club",
   "clubs": "clubs",
   "clubNotFound": "Club non trouvé",
+  "errorLoadingRegions": "Impossible de charger les régions",
+  "errorLoadingDepartments": "Impossible de charger les départements",
+  "errorLoadingClubs": "Impossible de charger les clubs",
   "detail": {
     "infoTitle": "Informations",
     "address": "Adresse",
@@ -37,6 +40,22 @@
     "clickMarker": "Cliquez sur un marqueur pour voir les détails",
     "clickZone": "Cliquez sur une zone pour zoomer",
     "seeDetails": "Voir détails",
-    "listView": "Vue liste"
+    "listView": "Vue liste",
+    "retry": "Réessayer",
+    "openPanel": "Ouvrir le panneau",
+    "closePanel": "Réduire le panneau",
+    "title": "Clubs",
+    "filters": "Filtres",
+    "filterWebsite": "Avec site web",
+    "filterEmail": "Avec email",
+    "filterPhone": "Avec téléphone",
+    "noResults": "Aucun résultat",
+    "noClubsFound": "Aucun club trouvé",
+    "tryAnotherSearch": "Essayez une autre recherche",
+    "zoomToSeeClubs": "Zoomez sur la carte pour voir les clubs",
+    "loadingMapClient": "Chargement de la carte...",
+    "clearSearch": "Effacer la recherche",
+    "searchPlaceholder": "Rechercher un club, une ville...",
+    "closeMenu": "Fermer le menu"
   }
 }

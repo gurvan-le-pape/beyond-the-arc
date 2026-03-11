@@ -1,5 +1,6 @@
 // src/frontend/shared/components/charts/legends/HeatmapLegend.tsx
 import * as d3 from "d3";
+import { useTranslations } from "next-intl";
 import React from "react";
 
 interface HeatmapLegendProps {
@@ -34,6 +35,7 @@ export const HeatmapLegend: React.FC<HeatmapLegendProps> = ({
   setColorScale,
   colorScaleOptions,
 }) => {
+  const t = useTranslations("common");
   const midValue = Math.round(maxValue / 2);
 
   const activeGradient = React.useMemo(() => {
@@ -51,7 +53,7 @@ export const HeatmapLegend: React.FC<HeatmapLegendProps> = ({
       {/* Gradient bar */}
       <div className="flex items-center gap-3 w-full">
         <span className="text-xs font-medium text-gray-500 dark:text-gray-400 shrink-0">
-          Low
+          {t("shotChart.low")}
         </span>
         <div className="flex flex-col flex-1 min-w-0 gap-0.5">
           <div
@@ -67,7 +69,7 @@ export const HeatmapLegend: React.FC<HeatmapLegendProps> = ({
           </div>
         </div>
         <span className="text-xs font-medium text-gray-500 dark:text-gray-400 shrink-0">
-          High
+          {t("shotChart.high")}
         </span>
       </div>
 
@@ -75,7 +77,7 @@ export const HeatmapLegend: React.FC<HeatmapLegendProps> = ({
       {colorScaleOptions && setColorScale && colorScaleName && (
         <div className="flex items-center gap-2 w-full">
           <span className="text-xs text-gray-500 dark:text-gray-400 shrink-0">
-            Color
+            {t("shotChart.color")}
           </span>
           <div className="flex flex-row gap-1.5 flex-wrap">
             {colorScaleOptions.map((scale) => {
