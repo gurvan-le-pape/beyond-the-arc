@@ -11,7 +11,7 @@ import { Button } from "../primitives/Button";
  */
 interface EmptyStateProps extends HTMLAttributes<HTMLDivElement> {
   icon?: ReactNode;
-  title?: string;
+  title: string;
   message?: string; // Alias for description for backward compatibility
   description?: string;
   action?: {
@@ -24,7 +24,6 @@ export const EmptyState = forwardRef<HTMLDivElement, EmptyStateProps>(
   ({ icon, title, message, description, action, className, ...props }, ref) => {
     // Use description or message (for backward compatibility)
     const descriptionText = description || message;
-    const titleText = title || "No data available";
 
     return (
       <div
@@ -43,7 +42,7 @@ export const EmptyState = forwardRef<HTMLDivElement, EmptyStateProps>(
 
         {/* Title */}
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
-          {titleText}
+          {title}
         </h3>
 
         {/* Description */}

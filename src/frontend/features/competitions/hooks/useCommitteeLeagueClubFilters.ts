@@ -1,6 +1,7 @@
 // src/frontend/features/competitions/hooks/useCommitteeLeagueClubFilters.ts
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useCallback, useMemo, useState } from "react";
 
 import { useClubs } from "@/features/organizations/clubs/api";
@@ -8,6 +9,7 @@ import { useCommittees } from "@/features/organizations/committees/api/use-commi
 import { useLeagues } from "@/features/organizations/leagues/api/use-leagues";
 
 export function useCommitteeLeagueClubFilters() {
+  const t = useTranslations("matches");
   // Filter state
   const [committeeId, setCommitteeId] = useState<number | undefined>(undefined);
   const [leagueId, setLeagueId] = useState<number | undefined>(undefined);
@@ -26,10 +28,10 @@ export function useCommitteeLeagueClubFilters() {
   // Combine errors
   const error = useMemo(() => {
     if (committeesError || leaguesError || clubsError) {
-      return "Error fetching filter options";
+      return t("errorFetchingFilters");
     }
     return null;
-  }, [committeesError, leaguesError, clubsError]);
+  }, [committeesError, leaguesError, clubsError, t]);
 
   // Reset filters - no need to manually refetch, React Query handles it
   const resetFilters = useCallback(() => {

@@ -104,11 +104,12 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Club Search */}
           <SearchInput
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder={tMatches("searchClubPlaceholder")}
             label={tMatches("searchClub")}
+            value={search}
+            placeholder={tMatches("searchClubPlaceholder")}
+            onChange={(e) => setSearch(e.target.value)}
             onClear={() => setSearch("")}
+            clearAriaLabel={tCommon("clearSearch")}
           />
 
           {/* Date Filter */}

@@ -84,11 +84,11 @@ export function useMapData(
   // Compute loading state
   const isLoading = regionsLoading || departmentsLoading || clubsLoading;
 
-  // Compute error state
+  // Compute error state — returns a translation key, resolved by the call site
   const error = useMemo(() => {
-    if (regionsError) return "Failed to load regions";
-    if (departmentsError) return "Failed to load departments";
-    if (clubsError) return "Failed to load clubs";
+    if (regionsError) return "errorLoadingRegions";
+    if (departmentsError) return "errorLoadingDepartments";
+    if (clubsError) return "errorLoadingClubs";
     return null;
   }, [regionsError, departmentsError, clubsError]);
 

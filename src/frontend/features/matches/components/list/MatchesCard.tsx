@@ -131,7 +131,7 @@ export const MatchesCard: React.FC<MatchesCardProps> = ({ match, onClick }) => {
                 src={`/images/clubs/${formatNameToFileName(
                   match.homeTeam?.club?.name || "",
                 )}.webp`}
-                alt={match.homeTeam?.club?.name || "Club"}
+                alt={match.homeTeam?.club?.name || t("matchesTable.club")}
                 className="w-14 h-14 object-contain"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src =
@@ -199,7 +199,7 @@ export const MatchesCard: React.FC<MatchesCardProps> = ({ match, onClick }) => {
                 src={`/images/clubs/${formatNameToFileName(
                   match.awayTeam?.club?.name || "",
                 )}.webp`}
-                alt={match.awayTeam?.club?.name || "Club"}
+                alt={match.awayTeam?.club?.name || t("matchesTable.club")}
                 className="w-14 h-14 object-contain"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src =

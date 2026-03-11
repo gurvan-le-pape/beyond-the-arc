@@ -84,7 +84,7 @@ export const NavLinks: React.FC<NavLinksProps> = ({
   );
 
   return (
-    <nav aria-label="Main navigation">
+    <nav aria-label={t("header.mainNavAriaLabel")}>
       {asList ? (
         <ul
           className={classNames(className, "space-y-1")}

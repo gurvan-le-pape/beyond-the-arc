@@ -26,7 +26,8 @@ interface CommitteesGridProps {
 export function CommitteesGrid({ committees }: CommitteesGridProps) {
   const router = useRouter();
   const [search, setSearch] = useState("");
-  const t = useTranslations("competitions");
+  const tCompetitions = useTranslations("competitions");
+  const tCommon = useTranslations("common");
 
   const filtered = committees.filter((c) =>
     c.name.toLowerCase().includes(search.toLowerCase()),
@@ -35,10 +36,11 @@ export function CommitteesGrid({ committees }: CommitteesGridProps) {
   return (
     <div className="space-y-4">
       <SearchInput
-        placeholder={t("departmental.searchPlaceholder")}
         value={search}
+        placeholder={tCompetitions("departmental.searchPlaceholder")}
         onChange={(e) => setSearch(e.target.value)}
         onClear={() => setSearch("")}
+        clearAriaLabel={tCommon("clearSearch")}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -80,14 +82,14 @@ export function CommitteesGrid({ committees }: CommitteesGridProps) {
       {filtered.length === 0 && (
         <div className="flex flex-col items-center justify-center py-12 text-center">
           <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-            {t("departmental.noResults", { search })}
+            {tCompetitions("departmental.noResults", { search })}
           </p>
           <button
             type="button"
             onClick={() => setSearch("")}
             className="mt-2 text-xs text-primary-600 dark:text-primary-400 hover:underline"
           >
-            {t("departmental.clearSearch")}
+            {tCompetitions("departmental.clearSearch")}
           </button>
         </div>
       )}

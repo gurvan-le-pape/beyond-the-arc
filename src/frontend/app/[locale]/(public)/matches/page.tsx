@@ -58,7 +58,7 @@ export default function MatchesPage() {
     Promise.all([
       committeesService.getAll().then(setCommittees),
       leaguesService.getAll().then(setLeagues),
-    ]).catch(() => setError("Error fetching filter options"));
+    ]).catch(() => setError(tMatches("errorFetchingFilters")));
   }, []);
 
   // SWR for matches data

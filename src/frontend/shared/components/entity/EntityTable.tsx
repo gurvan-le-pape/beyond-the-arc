@@ -116,7 +116,7 @@ export function EntityTable<RowType extends { id: string | number }>(
             className="py-12"
             data-testid={emptyRowTestId ?? "empty-row"}
           >
-            <EmptyState message={emptyMessage} />
+            <EmptyState title={t("noData")} message={emptyMessage} />
           </TableCell>
         </TableRow>
       </TableBody>

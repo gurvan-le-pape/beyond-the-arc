@@ -8,6 +8,9 @@
   "club": "club",
   "clubs": "clubs",
   "clubNotFound": "Club not found",
+  "errorLoadingRegions": "Failed to load regions",
+  "errorLoadingDepartments": "Failed to load departments",
+  "errorLoadingClubs": "Failed to load clubs",
   "detail": {
     "infoTitle": "Information",
     "address": "Address",
@@ -52,6 +55,7 @@
     "zoomToSeeClubs": "Zoom in on the map to see clubs",
     "loadingMapClient": "Loading map...",
     "clearSearch": "Clear search",
-    "searchPlaceholder": "Search for a club, a city..."
+    "searchPlaceholder": "Search for a club, a city...",
+    "closeMenu": "Close menu"
   }
 }

@@ -7,6 +7,10 @@
   "roundsLabel": "Journées",
   "matchesLabel": "Matchs",
   "selectLevel": "Sélectionner un niveau",
+  "noSearchResults": "Aucun résultat pour « {search} »",
+  "noItemsAvailable": "Aucun élément disponible",
+  "noResults": "Aucun résultat",
+  "clearSearch": "Effacer la recherche",
   "national": {
     "label": "National",
     "description": "Compétitions nationales, clubs de toute la France."
@@ -21,6 +25,11 @@
     "searchPlaceholder": "Rechercher un comité…",
     "noResults": "Aucun résultat pour « {search} »",
     "clearSearch": "Effacer la recherche"
+  },
+  "carousel": {
+    "scrollLeft": "Défiler à gauche",
+    "scrollRight": "Défiler à droite",
+    "searchPlaceholder": "Rechercher…"
   },
   "roundSelector": {
     "dropdownLabel": "Journée {round}",

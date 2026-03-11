@@ -1,4 +1,6 @@
 // src/frontend/shared/components/entity/categorized-list/GenderCategorizedList.tsx
+import { useTranslations } from "next-intl";
+
 import type { Category } from "@/shared/constants";
 import { Gender } from "@/shared/constants";
 import { cn } from "@/shared/utils/cn";
@@ -83,6 +85,7 @@ export function GenderCategorizedList<T>({
   renderItem,
   className,
 }: GenderCategorizedListProps<T>) {
+  const t = useTranslations("common");
   const grouped = groupByCategory(items);
   const colours = GENDER_COLOURS[genderKey] || GENDER_COLOURS[Gender.MALE];
 
@@ -124,6 +127,7 @@ export function GenderCategorizedList<T>({
                 isExpanded={isExpanded}
                 toggleCategory={toggleCategory}
                 renderItem={renderItem}
+                emptyMessage={t("noItemsAvailable")}
               />
             );
           })}

@@ -11,6 +11,10 @@
   "edit": "Edit",
   "all": "All",
   "clear": "Clear",
+  "breadcrumbAriaLabel": "Breadcrumb",
+  "noData": "No data available",
+  "clearSearch": "Clear search",
+  "noItemsAvailable": "No items available",
   "homepage": {
     "title": "Welcome to Beyond The Arc",
     "subtitle": "Explore competitions, clubs, teams, and player stats. Dive into the heart of basketball with real-time data, interactive features, and a modern, user-friendly experience.",

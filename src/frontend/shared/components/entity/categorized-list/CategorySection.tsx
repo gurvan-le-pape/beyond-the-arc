@@ -26,7 +26,7 @@ interface CategorySectionProps<T> {
   isExpanded: boolean;
   toggleCategory: (key: string) => void;
   renderItem: (item: T, index: number) => React.ReactNode;
-  emptyMessage?: string;
+  emptyMessage: string;
 }
 
 /**
@@ -64,7 +64,7 @@ export function CategorySection<T>({
   isExpanded,
   toggleCategory,
   renderItem,
-  emptyMessage = "No items available",
+  emptyMessage,
 }: CategorySectionProps<T>) {
   return (
     <div>

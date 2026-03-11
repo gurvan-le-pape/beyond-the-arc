@@ -61,9 +61,10 @@ export function PlayerSearchDropdown({
     <div ref={containerRef} className="relative w-full max-w-sm">
       <SearchInput
         value={query}
+        placeholder={tPlayers("playerDetail.compareSearch")}
         onChange={(e) => setQuery(e.target.value)}
         onClear={() => setQuery("")}
-        placeholder={tPlayers("playerDetail.compareSearch")}
+        clearAriaLabel={tCommon("clearSearch")}
       />
 
       {/* Dropdown */}

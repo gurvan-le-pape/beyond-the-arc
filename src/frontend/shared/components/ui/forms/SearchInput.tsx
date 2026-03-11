@@ -10,10 +10,11 @@ import { Input, type InputProps } from "./Input";
 export interface SearchInputProps
   extends Omit<InputProps, "leftIcon" | "type"> {
   onClear?: () => void;
+  clearAriaLabel: string;
 }
 
 export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
-  ({ onClear, value, ...props }, ref) => {
+  ({ onClear, clearAriaLabel, value, ...props }, ref) => {
     return (
       <Input
         ref={ref}
@@ -40,7 +41,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
               type="button"
               onClick={onClear}
               className="cursor-pointer hover:text-gray-600 dark:hover:text-gray-300"
-              aria-label="Clear search"
+              aria-label={clearAriaLabel}
             >
               <svg
                 className="w-5 h-5"

@@ -1,5 +1,6 @@
 {
   "errorLoadingChampionships": "Error loading championships",
+  "errorFetchingFilters": "Error fetching filter options",
   "searchTitle": "Match Search",
   "searchClub": "Search club",
   "searchClubPlaceholder": "Club name...",
@@ -28,6 +29,10 @@
   "itemLabelPlural": "matches",
   "upcoming": "Upcoming",
   "tryAdjustingFilters": "Try adjusting your filters to find more matches.",
+  "final": "Final",
+  "finalOT": "Final/OT",
+  "viewMatchDetails": "View match details",
+  "hideMatchDetails": "Hide match details",
   "matchEvents": {
     "eventLabels": {
       "made_layup": "Made layup",
@@ -107,5 +112,8 @@
     "departmental": "Dep.",
     "regional": "Reg.",
     "national": "Nat."
+  },
+  "matchesTable": {
+    "club": "Club"
   }
 }
