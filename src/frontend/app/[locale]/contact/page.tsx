@@ -11,7 +11,7 @@ export default async function ContactPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "footer" });
+  const t = await getTranslations({ locale, namespace: "landing" });
 
   const contactMethods = [
     {
