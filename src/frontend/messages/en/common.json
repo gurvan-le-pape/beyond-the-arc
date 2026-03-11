@@ -114,5 +114,22 @@
   "team": {
     "seeTeam": "See team {number}",
     "seeTeamDefault": "See team"
+  },
+  "shotChart": {
+    "shots": "Shots",
+    "all": "All",
+    "made": "Made",
+    "missed": "Missed",
+    "madeLabel": "Made",
+    "missedLabel": "Missed",
+    "low": "Low",
+    "high": "High",
+    "color": "Color",
+    "cell": "Cell",
+    "total": "Total",
+    "fgPercent": "FG%",
+    "title": "Shot Chart — {name}",
+    "download": "Download chart",
+    "close": "Close"
   }
 }

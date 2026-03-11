@@ -114,5 +114,22 @@
   "team": {
     "seeTeam": "Voir l'équipe {number}",
     "seeTeamDefault": "Voir l'équipe"
+  },
+  "shotChart": {
+    "shots": "Tirs",
+    "all": "Tous",
+    "made": "Réussis",
+    "missed": "Manqués",
+    "madeLabel": "Panier marqué",
+    "missedLabel": "Tir manqué",
+    "low": "Bas",
+    "high": "Haut",
+    "color": "Couleur",
+    "cell": "Cellule",
+    "total": "Total",
+    "fgPercent": "FG%",
+    "title": "Carte des tirs — {{name}}",
+    "download": "Télécharger le graphique",
+    "close": "Fermer"
   }
 }

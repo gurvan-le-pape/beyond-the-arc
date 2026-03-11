@@ -3,6 +3,7 @@
 
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { toPng } from "html-to-image";
+import { useTranslations } from "next-intl";
 import React, { useEffect, useRef } from "react";
 
 import type { MatchEvent } from "@/features/matches/types/MatchEvent";
@@ -32,6 +33,7 @@ export const ShotModal: React.FC<ShotModalProps> = ({
   opponentScore,
   getPlayerShots,
 }) => {
+  const t = useTranslations("common");
   const dialogRef = useRef<HTMLDialogElement>(null);
   const chartRef = useRef<HTMLDivElement>(null);
 
@@ -102,7 +104,9 @@ export const ShotModal: React.FC<ShotModalProps> = ({
                   <span className="font-normal text-white/70">-</span>{" "}
                   {opponentScore}
                 </div>
-                <div className="text-xs text-white/70 font-normal">Score</div>
+                <div className="text-xs text-white/70 font-normal">
+                  {t("matchHistory.score")}
+                </div>
               </div>
               {/* Team 2 */}
               <div className="flex-1 flex items-center justify-start font-bold text-lg pl-4 text-left whitespace-normal break-words">
@@ -116,7 +120,7 @@ export const ShotModal: React.FC<ShotModalProps> = ({
                 size="icon"
                 className="absolute top-2 right-2 text-white hover:text-red-300 bg-black/20 hover:bg-black/40 rounded-full"
                 onClick={onClose}
-                aria-label="Fermer"
+                aria-label={t("shotChart.close")}
               >
                 <XMarkIcon className="w-5 h-5" />
               </Button>
@@ -128,7 +132,7 @@ export const ShotModal: React.FC<ShotModalProps> = ({
               className="px-6 pt-6 pb-6 bg-gray-50 dark:bg-gray-800 rounded-b-2xl"
             >
               <h3 className="text-lg font-bold mb-4 text-center text-blue-700 dark:text-blue-400 tracking-wide">
-                Shot Chart — {player.name}
+                {t("shotChart.title", { name: player.name })}
               </h3>
 
               <ShotChart
@@ -160,7 +164,7 @@ export const ShotModal: React.FC<ShotModalProps> = ({
                   <polyline points="7 10 12 15 17 10" />
                   <line x1="12" y1="15" x2="12" y2="3" />
                 </svg>
-                Télécharger le graphique
+                {t("shotChart.download")}
               </Button>
             </div>
           </div>
