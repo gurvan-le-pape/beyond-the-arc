@@ -1,6 +1,7 @@
 // src/frontend/features/organizations/clubs/components/map/SearchBar.tsx
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
 
 interface SearchBarProps {
@@ -15,9 +16,10 @@ export function SearchBar({
   query,
   onQueryChange,
   onClear,
-  placeholder = "Rechercher un club, une ville...",
+  placeholder,
   resultCount,
 }: SearchBarProps) {
+  const t = useTranslations("clubs");
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Focus on "/" key
@@ -75,7 +77,7 @@ export function SearchBar({
             <button
               onClick={onClear}
               className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
-              aria-label="Clear search"
+              aria-label={t("map.clearSearch")}
             >
               <svg
                 className="w-4 h-4 text-gray-500 dark:text-gray-400"

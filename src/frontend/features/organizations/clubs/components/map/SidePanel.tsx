@@ -53,8 +53,8 @@ export const SidePanel = memo(function SidePanel({
         <button
           onClick={handleToggleOpen}
           className="fixed top-20 right-4 z-20 p-3 bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border border-gray-200 dark:border-gray-700"
-          aria-label="Ouvrir le panneau"
-          title="Ouvrir le panneau"
+          aria-label={t("map.openPanel")}
+          title={t("map.openPanel")}
         >
           <svg
             className="w-6 h-6 text-gray-600 dark:text-gray-300"
@@ -89,10 +89,10 @@ export const SidePanel = memo(function SidePanel({
           <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex-shrink-0">
             <div>
               <h2 className="font-semibold text-lg text-gray-900 dark:text-gray-100">
-                Clubs
+                {t("map.title")}
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                {clubs.length} club{clubs.length !== 1 ? "s" : ""}
+                {clubs.length} {clubs.length !== 1 ? t("clubs") : t("club")}
               </p>
             </div>
             <div className="flex items-center gap-1">
@@ -102,8 +102,8 @@ export const SidePanel = memo(function SidePanel({
               <button
                 onClick={handleToggleOpen}
                 className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
-                aria-label="Réduire le panneau"
-                title="Réduire le panneau"
+                aria-label={t("map.closePanel")}
+                title={t("map.closePanel")}
               >
                 <svg
                   className="w-5 h-5 text-gray-600 dark:text-gray-300"
@@ -131,6 +131,7 @@ export const SidePanel = memo(function SidePanel({
                 onQueryChange={onQueryChange}
                 onClear={onClearSearch}
                 resultCount={resultCount}
+                placeholder={t("map.searchPlaceholder")}
               />
             </div>
 
@@ -155,7 +156,7 @@ export const SidePanel = memo(function SidePanel({
                     />
                   </svg>
                   <span className="font-medium text-gray-900 dark:text-gray-100">
-                    Filtres
+                    {t("map.filters")}
                   </span>
                   {activeFilterCount > 0 && (
                     <span className="bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs font-medium px-2 py-0.5 rounded-full">
@@ -183,17 +184,17 @@ export const SidePanel = memo(function SidePanel({
               {filtersExpanded && (
                 <div className="px-4 pb-4 space-y-2">
                   <FilterCheckbox
-                    label="Avec site web"
+                    label={t("map.filterWebsite")}
                     checked={filters.hasWebsite}
                     onChange={() => onToggleFilter("hasWebsite")}
                   />
                   <FilterCheckbox
-                    label="Avec email"
+                    label={t("map.filterEmail")}
                     checked={filters.hasEmail}
                     onChange={() => onToggleFilter("hasEmail")}
                   />
                   <FilterCheckbox
-                    label="Avec téléphone"
+                    label={t("map.filterPhone")}
                     checked={filters.hasPhone}
                     onChange={() => onToggleFilter("hasPhone")}
                   />
@@ -225,12 +226,12 @@ export const SidePanel = memo(function SidePanel({
                     />
                   </svg>
                   <p className="text-gray-600 dark:text-gray-400 font-medium">
-                    {query ? "Aucun résultat" : "Aucun club trouvé"}
+                    {query ? t("map.noResults") : t("map.noClubsFound")}
                   </p>
                   <p className="text-sm text-gray-500 dark:text-gray-500 mt-1">
                     {query
-                      ? "Essayez une autre recherche"
-                      : "Zoomez sur la carte pour voir les clubs"}
+                      ? t("map.tryAnotherSearch")
+                      : t("map.zoomToSeeClubs")}
                   </p>
                 </div>
               ) : (

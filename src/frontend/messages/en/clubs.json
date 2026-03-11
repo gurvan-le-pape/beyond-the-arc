@@ -37,6 +37,21 @@
     "clickMarker": "Click a marker to see details",
     "clickZone": "Click a zone to zoom",
     "seeDetails": "See details",
-    "listView": "List View"
+    "listView": "List View",
+    "retry": "Retry",
+    "openPanel": "Open panel",
+    "closePanel": "Close panel",
+    "title": "Clubs",
+    "filters": "Filters",
+    "filterWebsite": "Has website",
+    "filterEmail": "Has email",
+    "filterPhone": "Has phone",
+    "noResults": "No results",
+    "noClubsFound": "No clubs found",
+    "tryAnotherSearch": "Try another search",
+    "zoomToSeeClubs": "Zoom in on the map to see clubs",
+    "loadingMapClient": "Loading map...",
+    "clearSearch": "Clear search",
+    "searchPlaceholder": "Search for a club, a city..."
   }
 }
