@@ -38,11 +38,15 @@ export const MatchCard: React.FC<MatchCardProps> = ({
   );
 
   const handlePrefetch = () => {
-    void queryClient.prefetchQuery({
-      queryKey: matchesKeys.events(match.id),
-      queryFn: () => matchesService.getEventsByMatchId(match.id),
-      staleTime: 2 * 60 * 1000,
-    });
+    queryClient
+      .prefetchQuery({
+        queryKey: matchesKeys.events(match.id),
+        queryFn: () => matchesService.getEventsByMatchId(match.id),
+        staleTime: 2 * 60 * 1000,
+      })
+      .catch(() => {
+        // prefetch is best-effort, ignore failures
+      });
   };
 
   const isHomeWinner = match.homeTeamScore > match.awayTeamScore;
