@@ -45,6 +45,7 @@ export default [
       "promise/prefer-top-level-await": "off",
       eqeqeq: ["error", "always"],
       "no-console": "warn",
+      "no-void": ["error", { allowAsStatement: false }],
 
       // SonarJS rules
       "sonarjs/cognitive-complexity": ["error", 15],

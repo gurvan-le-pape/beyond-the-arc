@@ -66,9 +66,7 @@ export function useDivisionNavigation(
     (targetDivision: number) => {
       const targetChampionshiptId = divisionMap[targetDivision];
       if (targetChampionshiptId) {
-        void router.replace(
-          `/competitions/${level}/${id}/${targetChampionshiptId}`,
-        );
+        router.replace(`/competitions/${level}/${id}/${targetChampionshiptId}`);
       }
     },
     [divisionMap, router, level, id],

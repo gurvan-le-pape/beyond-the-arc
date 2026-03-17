@@ -139,7 +139,9 @@ export default function MatchesPage() {
       setChampionships([]);
       setDivision(undefined);
     };
-    void loadChampionships();
+    loadChampionships().catch(() => {
+      // loadChampionships handles its own errors internally, ignore failures
+    });
   }, [level, committeeId, leagueId]);
 
   // Fetch pools when division is selected
@@ -168,7 +170,9 @@ export default function MatchesPage() {
         setPoolId(undefined);
       }
     };
-    void loadPools();
+    loadPools().catch(() => {
+      // loadPools handles its own errors internally, ignore failures
+    });
   }, [division, championships]);
 
   // Reset to first page when filters change

@@ -49,19 +49,23 @@ export function useClubsNavigation() {
 
   // Navigation actions
   const navigateToRegions = useCallback(() => {
-    void loadData(() => clubsService.getStatsByRegion(), {
+    loadData(() => clubsService.getStatsByRegion(), {
       viewLevel: ViewLevel.REGION,
       selectedLeague: null,
       selectedCommittee: null,
+    }).catch(() => {
+      // loadData handles its own errors internally, ignore failures
     });
   }, [loadData]);
 
   const navigateToDepartments = useCallback(
     (league: any) => {
-      void loadData(() => clubsService.getStatsByDepartment(league.id), {
+      loadData(() => clubsService.getStatsByDepartment(league.id), {
         viewLevel: ViewLevel.DEPARTMENT,
         selectedLeague: league,
         selectedCommittee: null,
+      }).catch(() => {
+        // loadData handles its own errors internally, ignore failures
       });
     },
     [loadData],
@@ -69,9 +73,11 @@ export function useClubsNavigation() {
 
   const navigateToClubs = useCallback(
     (committee: any) => {
-      void loadData(() => clubsService.getAll({ committeeId: committee.id }), {
+      loadData(() => clubsService.getAll({ committeeId: committee.id }), {
         viewLevel: ViewLevel.CLUBS,
         selectedCommittee: committee,
+      }).catch(() => {
+        // loadData handles its own errors internally, ignore failures
       });
     },
     [loadData],
