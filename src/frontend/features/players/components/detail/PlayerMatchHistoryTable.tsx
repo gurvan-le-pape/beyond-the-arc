@@ -35,7 +35,7 @@ export function PlayerMatchHistoryTable({
       matches={matches}
       columns={columns}
       emptyMessage={tCommon("matchHistory.noMatches")}
-      onRowClick={(match) => void router.push(`/matches/${match.id}`)}
+      onRowClick={(match) => router.push(`/matches/${match.id}`)}
       showAll={showAll}
       setShowAll={setShowAll}
       showAllLabel={tCommon("matchHistory.seeAllMatches", {

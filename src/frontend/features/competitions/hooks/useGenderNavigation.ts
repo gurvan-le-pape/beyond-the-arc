@@ -67,9 +67,7 @@ export function useGenderNavigation(
   // Memoize the switch function
   const switchGender = useCallback(() => {
     if (targetChampionshiptId) {
-      void router.replace(
-        `/competitions/${level}/${id}/${targetChampionshiptId}`,
-      );
+      router.replace(`/competitions/${level}/${id}/${targetChampionshiptId}`);
     }
   }, [targetChampionshiptId, router, level, id]);
 

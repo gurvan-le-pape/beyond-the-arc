@@ -68,7 +68,9 @@ export function useRegionalChampionshipsData(
       }
     };
 
-    void fetchData();
+    fetchData().catch(() => {
+      // fetchData handles its own errors internally, ignore failures
+    });
   }, [leagueId]);
 
   return {
