@@ -126,6 +126,7 @@ CREATE TABLE matches (
     home_team_score INT,
     away_team_score INT,
     forfeit BOOLEAN DEFAULT FALSE,
+    overtime BOOLEAN DEFAULT FALSE,
     CONSTRAINT no_draws_allowed CHECK (home_team_score != away_team_score)
 );
 

@@ -23,6 +23,7 @@ interface MatchEventsTimelineProps {
     description: string,
     eventPlayers?: MatchEvent["players"],
   ) => string;
+  matchDate: Date;
 }
 
 /**
@@ -37,6 +38,7 @@ export const MatchEventsTimeline: React.FC<MatchEventsTimelineProps> = ({
   awayTeam,
   getEventStyle,
   makeDescriptionClickable,
+  matchDate,
 }) => {
   const router = useRouter();
 
@@ -47,7 +49,7 @@ export const MatchEventsTimeline: React.FC<MatchEventsTimelineProps> = ({
     const target = e.target as HTMLElement;
     if (target.classList.contains("match-player-link")) {
       const playerId = target.dataset.playerId;
-      if (playerId) void router.push(`/players/${playerId}`);
+      if (playerId) router.push(`/players/${playerId}`);
     }
   };
 
@@ -86,6 +88,7 @@ export const MatchEventsTimeline: React.FC<MatchEventsTimelineProps> = ({
                     event={event}
                     descriptionHtml={descriptionHtml}
                     onDescriptionClick={handleDescriptionClick}
+                    matchDate={matchDate}
                   />
                 ) : (
                   <div />
@@ -112,6 +115,7 @@ export const MatchEventsTimeline: React.FC<MatchEventsTimelineProps> = ({
                     event={event}
                     descriptionHtml={descriptionHtml}
                     onDescriptionClick={handleDescriptionClick}
+                    matchDate={matchDate}
                   />
                 ) : (
                   <div />

@@ -76,6 +76,7 @@ const MATCH_LIST_SELECT = {
   homeTeamScore: true,
   awayTeamScore: true,
   forfeit: true,
+  overtime: true,
 } as const;
 
 /**
@@ -412,6 +413,7 @@ export class MatchesService {
       homeTeamScore: match.homeTeamScore,
       awayTeamScore: match.awayTeamScore,
       forfeit: match.forfeit,
+      overtime: match.overtime,
       pool: match.pool
         ? {
             id: match.pool.id,

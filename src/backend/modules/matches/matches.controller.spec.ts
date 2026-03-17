@@ -75,6 +75,7 @@ describe("MatchesController", () => {
             homeTeamScore: 3,
             awayTeamScore: 2,
             forfeit: false,
+            overtime: false,
             pool: null,
             homeTeam: {} as any,
             awayTeam: {} as any,
@@ -115,6 +116,7 @@ describe("MatchesController", () => {
         homeTeamScore: 3,
         awayTeamScore: 2,
         forfeit: false,
+        overtime: false,
         matchEvents: [],
       };
 

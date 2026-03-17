@@ -2,17 +2,22 @@
 "use client";
 
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
+import { useQueryClient } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import React from "react";
 
 import { MatchDetailsTable } from "@/features/competitions/components";
+import { useMatchEvents } from "@/features/matches/api";
+import { matchesService } from "@/features/matches/api/matches.service";
+import { matchesKeys } from "@/features/matches/api/matchesKeys";
+import type { Match } from "@/features/matches/types/Match";
 import { Badge, Card } from "@/shared/components/ui";
 import { formatMatchDateTime } from "@/shared/utils";
 import { formatNameToFileName } from "@/shared/utils/formatNameToFileName";
 
 interface MatchCardProps {
-  match: any;
+  match: Match;
   expanded: boolean;
   onToggleExpand: (matchId: number) => void;
 }
@@ -25,6 +30,24 @@ export const MatchCard: React.FC<MatchCardProps> = ({
   const params = useParams();
   const locale = params?.locale as string;
   const t = useTranslations("matches");
+  const queryClient = useQueryClient();
+
+  const { data: matchEvents, isLoading: isLoadingEvents } = useMatchEvents(
+    match.id,
+    { enabled: expanded },
+  );
+
+  const handlePrefetch = () => {
+    queryClient
+      .prefetchQuery({
+        queryKey: matchesKeys.events(match.id),
+        queryFn: () => matchesService.getEventsByMatchId(match.id),
+        staleTime: 2 * 60 * 1000,
+      })
+      .catch(() => {
+        // prefetch is best-effort, ignore failures
+      });
+  };
 
   const isHomeWinner = match.homeTeamScore > match.awayTeamScore;
   const isAwayWinner = match.awayTeamScore > match.homeTeamScore;
@@ -49,7 +72,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
         <div className="flex flex-col items-center flex-1 min-w-0">
           <img
             src={`/images/clubs/${formatNameToFileName(
-              match.homeTeam.club.name,
+              match.homeTeam.club.name ?? "",
             )}.webp`}
             alt={`${match.homeTeam.club.name} logo`}
             className="w-8 h-8 object-contain mb-1"
@@ -111,7 +134,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
         <div className="flex flex-col items-center flex-1 min-w-0">
           <img
             src={`/images/clubs/${formatNameToFileName(
-              match.awayTeam.club.name,
+              match.awayTeam.club.name ?? "",
             )}.webp`}
             alt={`${match.awayTeam.club.name} logo`}
             className="w-8 h-8 object-contain mb-1"
@@ -141,6 +164,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
         <button
           type="button"
           onClick={() => onToggleExpand(match.id)}
+          onMouseEnter={handlePrefetch}
           aria-expanded={expanded}
           aria-label={
             expanded
@@ -160,7 +184,11 @@ export const MatchCard: React.FC<MatchCardProps> = ({
       {/* Expandable Section */}
       {expanded && (
         <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 animate-slide-down">
-          <MatchDetailsTable match={match} />
+          <MatchDetailsTable
+            match={match}
+            matchEvents={matchEvents ?? []}
+            isLoadingEvents={isLoadingEvents}
+          />
         </div>
       )}
     </Card>

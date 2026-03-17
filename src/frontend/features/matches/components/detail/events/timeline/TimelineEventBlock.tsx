@@ -8,15 +8,33 @@ import { cn } from "@/shared/utils/cn";
 
 interface TimelineEventBlockProps {
   /** Which side of the timeline this block sits on. */
-  align: "left" | "right";
+  readonly align: "left" | "right";
   /** Resolved display config for this event's type. */
-  style: EventStyle;
+  readonly style: EventStyle;
   /** The enriched event (includes description, timestamp, etc.). */
-  event: EventWithScore;
+  readonly event: EventWithScore;
   /** Pre-rendered HTML string – player names already wrapped in clickable spans. */
-  descriptionHtml: string;
+  readonly descriptionHtml: string;
   /** Bubbled click handler; the parent uses it to navigate on player-link clicks. */
-  onDescriptionClick: (e: React.MouseEvent<HTMLParagraphElement>) => void;
+  readonly onDescriptionClick: (
+    e: React.MouseEvent<HTMLParagraphElement>,
+  ) => void;
+  /** Match kick-off time, used to derive the game-clock display. */
+  readonly matchDate: Date;
+}
+
+function formatGameClock(
+  eventTimestamp: Date | string,
+  matchDate: Date | string,
+): string {
+  const elapsedSeconds = Math.floor(
+    (new Date(eventTimestamp).getTime() - new Date(matchDate).getTime()) / 1000,
+  );
+  const minutes = Math.floor(elapsedSeconds / 60)
+    .toString()
+    .padStart(2, "0");
+  const seconds = (elapsedSeconds % 60).toString().padStart(2, "0");
+  return `${minutes}:${seconds}`;
 }
 
 /**
@@ -32,6 +50,7 @@ export function TimelineEventBlock({
   event,
   descriptionHtml,
   onDescriptionClick,
+  matchDate,
 }: TimelineEventBlockProps) {
   const tMatches = useTranslations("matches");
   const isRight = align === "right";
@@ -88,12 +107,9 @@ export function TimelineEventBlock({
           </div>
         )}
 
-        {/* Timestamp */}
+        {/* Game clock display */}
         <span className="text-caption text-gray-400 dark:text-gray-500 font-mono">
-          {new Date(event.timestamp).toLocaleTimeString("fr-FR", {
-            minute: "2-digit",
-            second: "2-digit",
-          })}
+          {formatGameClock(event.timestamp, matchDate)}
         </span>
       </div>
     </div>

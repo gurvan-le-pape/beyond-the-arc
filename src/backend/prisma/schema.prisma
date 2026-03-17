@@ -193,6 +193,7 @@ model Matches {
   homeTeamScore       Int                 @map("home_team_score")
   awayTeamScore       Int                 @map("away_team_score")
   forfeit             Boolean             @default(false)
+  overtime            Boolean             @default(false)
   playerMatchStats    PlayerMatchStats[]
   matchEvents         MatchEvents[]
   playtimeIntervals   PlayerPlaytimeIntervals[]
