@@ -91,6 +91,13 @@ export class MatchResponseDto {
     type: Boolean,
   })
   forfeit!: boolean;
+
+  @ApiProperty({
+    description: "Whether the match went to overtime",
+    example: false,
+    type: Boolean,
+  })
+  overtime!: boolean;
 }
 
 /**

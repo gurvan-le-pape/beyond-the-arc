@@ -12,4 +12,5 @@ export interface Match {
   homeTeamScore: number;
   awayTeamScore: number;
   forfeit: boolean;
+  overtime: boolean;
 }

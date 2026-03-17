@@ -56,19 +56,22 @@ export function getTeamIdFromEvent(event: MatchEvent): number | undefined {
 // Quarter derivation
 // ---------------------------------------------------------------------------
 
-/** Derives the 1-based quarter number from a timestamp relative to match start (10-min quarters). */
+/**
+ * Derives the 1-based quarter number (1–4, 5 = OT) from an event timestamp
+ * relative to the match start date (10-min quarters, 600s each).
+ */
 export function getQuarterFromTimestamp(
-  timestamp: string,
-  matchStartTime: string,
+  eventTimestamp: Date | string,
+  matchDate: Date | string,
 ): number {
-  const elapsedMinutes =
-    (new Date(timestamp).getTime() - new Date(matchStartTime).getTime()) /
-    (1000 * 60);
+  const elapsedSeconds =
+    (new Date(eventTimestamp).getTime() - new Date(matchDate).getTime()) / 1000;
 
-  if (elapsedMinutes <= 10) return 1;
-  if (elapsedMinutes <= 20) return 2;
-  if (elapsedMinutes <= 30) return 3;
-  return 4;
+  if (elapsedSeconds <= 600) return 1;
+  if (elapsedSeconds <= 1200) return 2;
+  if (elapsedSeconds <= 1800) return 3;
+  if (elapsedSeconds <= 2400) return 4;
+  return 5; // OT
 }
 
 // ---------------------------------------------------------------------------
@@ -82,6 +85,47 @@ export function pointsForEvent(eventType: string, style: EventStyle): number {
   if (eventType.includes("free_throw")) return 1;
   if (style.eventCategory === EventCategory.SCORING) return 2;
   return 0;
+}
+
+// ---------------------------------------------------------------------------
+// Quarter scores
+// ---------------------------------------------------------------------------
+
+export interface QuarterScores {
+  home: [number, number, number, number, number]; // Q1–Q4 + OT
+  away: [number, number, number, number, number];
+}
+
+/**
+ * Computes per-quarter scores for both teams by bucketing scoring events
+ * relative to the match start time.
+ * Index 0–3 = Q1–Q4, index 4 = OT.
+ */
+export function computeQuarterScores(
+  events: MatchEvent[],
+  homeTeamId: number,
+  awayTeamId: number,
+  matchDate: Date,
+): QuarterScores {
+  const home: [number, number, number, number, number] = [0, 0, 0, 0, 0];
+  const away: [number, number, number, number, number] = [0, 0, 0, 0, 0];
+
+  for (const event of events) {
+    const style = getEventStyle(event.eventType);
+    if (style.eventCategory !== EventCategory.SCORING) continue;
+
+    const points = pointsForEvent(event.eventType, style);
+    if (points === 0) continue;
+
+    const quarter = getQuarterFromTimestamp(event.timestamp, matchDate);
+    const idx = Math.min(quarter - 1, 4); // clamp OT+ to index 4
+
+    const teamId = getTeamIdFromEvent(event);
+    if (teamId === homeTeamId) home[idx] += points;
+    else if (teamId === awayTeamId) away[idx] += points;
+  }
+
+  return { home, away };
 }
 
 // ---------------------------------------------------------------------------

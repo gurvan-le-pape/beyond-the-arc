@@ -25,6 +25,7 @@ interface MatchEventsProps {
   events: MatchEvent[];
   homeTeam: TeamInfoExtended;
   awayTeam: TeamInfoExtended;
+  matchDate: Date;
 }
 
 /**
@@ -36,6 +37,7 @@ export const MatchEvents: React.FC<MatchEventsProps> = ({
   events,
   homeTeam,
   awayTeam,
+  matchDate,
 }) => {
   const tMatches = useTranslations("matches");
   const tCommon = useTranslations("common");
@@ -61,9 +63,6 @@ export const MatchEvents: React.FC<MatchEventsProps> = ({
 
   // ---- derived data --------------------------------------------------------
 
-  // First event timestamp is the match start anchor.
-  const matchStartTime = events[0]?.timestamp;
-
   /**
    * Single-pass O(n) scoring.
    * Each element carries the cumulative home/away score *after* that event,
@@ -76,10 +75,7 @@ export const MatchEvents: React.FC<MatchEventsProps> = ({
     return events.map((event) => {
       const style = getEventStyle(event.eventType);
       const teamId = getTeamIdFromEvent(event);
-      const quarter = getQuarterFromTimestamp(
-        event.timestamp.toString(),
-        matchStartTime.toString(),
-      );
+      const quarter = getQuarterFromTimestamp(event.timestamp, matchDate);
 
       if (style.eventCategory === EventCategory.SCORING) {
         const points = pointsForEvent(event.eventType, style);
@@ -89,7 +85,7 @@ export const MatchEvents: React.FC<MatchEventsProps> = ({
 
       return { ...event, homeScore, awayScore, teamId, quarter };
     });
-  }, [events, homeTeam.id, awayTeam.id, matchStartTime]);
+  }, [events, homeTeam.id, awayTeam.id, matchDate]);
 
   /** Apply quarter → category → player filters, then optional sort. */
   const filteredEvents = useMemo(() => {
@@ -160,6 +156,7 @@ export const MatchEvents: React.FC<MatchEventsProps> = ({
         awayTeam={awayTeam}
         getEventStyle={getEventStyle}
         makeDescriptionClickable={makeDescriptionClickable}
+        matchDate={matchDate}
       />
     </Section>
   );

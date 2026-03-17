@@ -147,14 +147,20 @@ def process_pool_matches(pool_id, pool_name, match_date):
                         "description": "Deciding basket.",
                     })
 
+                # Compute overtime — any event beyond 2400s (end of Q4)
+                overtime = any(
+                    e["timestamp"] > match_datetime + timedelta(seconds=2400)
+                    for e in match_events
+                )
+
                 # Insert match
                 cursor.execute(
                     """
-                    INSERT INTO matches (pool_id, matchday, date, home_team_id, away_team_id, home_team_score, away_team_score)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    INSERT INTO matches (pool_id, matchday, date, home_team_id, away_team_id, home_team_score, away_team_score, overtime)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                     RETURNING id;
                     """,
-                    (pool_id, matchday, match_datetime, home_team_id, away_team_id, home_score, away_score),
+                    (pool_id, matchday, match_datetime, home_team_id, away_team_id, home_score, away_score, overtime),
                 )
                 match_id = cursor.fetchone()[0]
 

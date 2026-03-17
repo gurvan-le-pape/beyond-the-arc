@@ -24,7 +24,7 @@ import { Footer, Header } from "@/shared/components/layouts";
 import { Role } from "@/shared/constants";
 
 interface MatchSummaryPageProps {
-  params: Promise<{
+  readonly params: Promise<{
     locale: string;
     matchId: string;
   }>;
@@ -158,6 +158,7 @@ export default async function MatchSummaryPage({
                 events={match.matchEvents}
                 homeTeam={homeTeam}
                 awayTeam={awayTeam}
+                matchDate={match.date}
               />
             </TabsContent>
           </Tabs>
