@@ -12,8 +12,8 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "sonarlint.connectedMode.project": {
-    "connectionId": "http-localhost-9000",
-    "projectKey": "B"
+    "connectionId": "beyond-the-arc",
+    "projectKey": "gurvan-le-pape_beyond-the-arc"
   },
   "typescript.tsdk": "node_modules/typescript/lib"
 }
