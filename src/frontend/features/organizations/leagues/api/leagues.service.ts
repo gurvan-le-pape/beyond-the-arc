@@ -1,6 +1,6 @@
 // src/frontend/features/organizations/leagues/api/leagues.service.ts
 import apiClient from "../../../../lib/services/client/api-client";
-import type { League } from "../types/Ligue";
+import type { League } from "../types/League";
 
 /**
  * Service for interacting with the leagues (regional leagues) API.

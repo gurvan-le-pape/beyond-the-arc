@@ -12,7 +12,20 @@ import { CommitteeResponseDto } from "./dto/committees.response.dto";
 const COMMITTEE_SELECT = {
   id: true,
   name: true,
+  phone: true,
+  email: true,
+  address: true,
   leagueId: true,
+  president: {
+    select: {
+      id: true,
+      name: true,
+      phone: true,
+      email: true,
+      address: true,
+      code: true,
+    },
+  },
   department: {
     select: {
       id: true,
@@ -107,7 +120,6 @@ export class CommitteesService {
 
       return committees.map((c) => this.mapToDto(c));
     } catch (error) {
-      // Re-throw if it's already a NestJS exception
       if (error instanceof NotFoundException) {
         throw error;
       }
@@ -158,6 +170,10 @@ export class CommitteesService {
     return {
       id: committee.id,
       name: committee.name,
+      phone: committee.phone,
+      email: committee.email,
+      address: committee.address,
+      president: committee.president,
       leagueId: committee.leagueId,
       department: {
         id: committee.department.id,

@@ -1,6 +1,6 @@
 // src/frontend/features/organizations/leagues/api/leagues.server.ts
 import { fetchApi } from "../../../../lib/services/server/server-api-client";
-import type { League } from "../types/Ligue";
+import type { League } from "../types/League";
 
 /**
  * Service for interacting with the leagues (regional leagues) API.

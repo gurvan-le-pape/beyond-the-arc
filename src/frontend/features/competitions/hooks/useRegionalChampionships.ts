@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { committeesService } from "@/features/organizations/committees/api/committees.service";
 import type { Committee } from "@/features/organizations/committees/types/Committees";
 import { leaguesService } from "@/features/organizations/leagues/api/leagues.service";
-import type { League } from "@/features/organizations/leagues/types/Ligue";
+import type { League } from "@/features/organizations/leagues/types/League";
 import { CompetitionLevel } from "@/shared/constants";
 import type { ApiError } from "@/shared/types";
 

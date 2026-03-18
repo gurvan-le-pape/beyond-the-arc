@@ -17,7 +17,8 @@
   },
   "regional": {
     "label": "Régional",
-    "description": "Compétitions par ligue."
+    "description": "Compétitions par ligue.",
+    "committeesInLeague": "Comités dans cette ligue"
   },
   "departmental": {
     "label": "Départemental",
@@ -29,7 +30,15 @@
   "carousel": {
     "scrollLeft": "Défiler à gauche",
     "scrollRight": "Défiler à droite",
-    "searchPlaceholder": "Rechercher…"
+    "searchPlaceholder": "Rechercher…",
+    "titles": {
+      "regionalLeagues": "Ligues par Région",
+      "departmentalCommittees": "Comités par Département"
+    }
+  },
+  "sidePanel": {
+    "expand": "Déplier le volet",
+    "collapse": "Réduire le volet"
   },
   "roundSelector": {
     "dropdownLabel": "Journée {round}",
@@ -52,5 +61,15 @@
     "teamHeader": "Équipe",
     "overtimeHeader": "Prol.",
     "totalHeader": "T"
+  },
+  "info": {
+    "title": "Informations",
+    "president": "Président",
+    "presidentName": "Nom",
+    "presidentEmail": "Email du président",
+    "presidentPhone": "Téléphone du président",
+    "address": "Adresse",
+    "email": "Email",
+    "phone": "Téléphone"
   }
 }

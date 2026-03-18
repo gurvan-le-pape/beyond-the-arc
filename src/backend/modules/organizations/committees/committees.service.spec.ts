@@ -34,21 +34,51 @@ describe("CommitteesService", () => {
     jest.clearAllMocks();
   });
 
+  const EXPECTED_SELECT = {
+    id: true,
+    name: true,
+    phone: true,
+    email: true,
+    address: true,
+    leagueId: true,
+    president: {
+      select: {
+        id: true,
+        name: true,
+        phone: true,
+        email: true,
+        address: true,
+        code: true,
+      },
+    },
+    department: {
+      select: { id: true, name: true, code: true },
+    },
+  };
+
+  const mockCommitteeData = (overrides = {}) => ({
+    phone: null,
+    email: null,
+    address: null,
+    president: null,
+    ...overrides,
+  });
+
   describe("findAllCommittees", () => {
     it("should return all committees with department information", async () => {
       const mockCommittees = [
-        {
+        mockCommitteeData({
           id: 1,
           name: "Comité Departmental de l'Ain",
           leagueId: 1,
           department: { id: 1, name: "Ain", code: "01" },
-        },
-        {
+        }),
+        mockCommitteeData({
           id: 2,
           name: "Comité Departmental de l'Aisne",
           leagueId: 1,
           department: { id: 2, name: "Aisne", code: "02" },
-        },
+        }),
       ];
 
       mockPrismaService.committees.findMany.mockResolvedValue(mockCommittees);
@@ -60,14 +90,7 @@ describe("CommitteesService", () => {
       expect(result[0].department).toEqual({ id: 1, name: "Ain", code: "01" });
 
       expect(mockPrismaService.committees.findMany).toHaveBeenCalledWith({
-        select: {
-          id: true,
-          name: true,
-          leagueId: true,
-          department: {
-            select: { id: true, name: true, code: true },
-          },
-        },
+        select: EXPECTED_SELECT,
         orderBy: [{ name: "asc" }],
       });
     });
@@ -93,18 +116,18 @@ describe("CommitteesService", () => {
   describe("findCommitteesByLeague", () => {
     it("should return committees for given league", async () => {
       const mockCommittees = [
-        {
+        mockCommitteeData({
           id: 1,
           name: "Comité Departmental de l'Ain",
           leagueId: 1,
           department: { id: 1, name: "Ain", code: "01" },
-        },
-        {
+        }),
+        mockCommitteeData({
           id: 2,
           name: "Comité Departmental de l'Aisne",
           leagueId: 1,
           department: { id: 2, name: "Aisne", code: "02" },
-        },
+        }),
       ];
 
       mockPrismaService.committees.findMany.mockResolvedValue(mockCommittees);
@@ -116,14 +139,7 @@ describe("CommitteesService", () => {
 
       expect(mockPrismaService.committees.findMany).toHaveBeenCalledWith({
         where: { leagueId: 1 },
-        select: {
-          id: true,
-          name: true,
-          leagueId: true,
-          department: {
-            select: { id: true, name: true, code: true },
-          },
-        },
+        select: EXPECTED_SELECT,
         orderBy: [{ name: "asc" }],
       });
     });
@@ -142,34 +158,22 @@ describe("CommitteesService", () => {
 
   describe("findCommitteeById", () => {
     it("should return committee when found", async () => {
-      const mockCommittee = {
-        id: 1,
-        name: "Comité Departmental de l'Ain",
-        leagueId: 1,
-        department: { id: 1, name: "Ain", code: "01" },
-      };
-
-      mockPrismaService.committees.findUnique.mockResolvedValue(mockCommittee);
-
-      const result = await service.findCommitteeById(1);
-
-      expect(result).toEqual({
+      const mockCommittee = mockCommitteeData({
         id: 1,
         name: "Comité Departmental de l'Ain",
         leagueId: 1,
         department: { id: 1, name: "Ain", code: "01" },
       });
 
+      mockPrismaService.committees.findUnique.mockResolvedValue(mockCommittee);
+
+      const result = await service.findCommitteeById(1);
+
+      expect(result).toEqual(mockCommittee);
+
       expect(mockPrismaService.committees.findUnique).toHaveBeenCalledWith({
         where: { id: 1 },
-        select: {
-          id: true,
-          name: true,
-          leagueId: true,
-          department: {
-            select: { id: true, name: true, code: true },
-          },
-        },
+        select: EXPECTED_SELECT,
       });
     });
 

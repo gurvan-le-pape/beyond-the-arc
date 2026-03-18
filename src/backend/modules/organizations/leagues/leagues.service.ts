@@ -12,6 +12,26 @@ import { LeagueResponseDto } from "./dto/leagues.response.dto";
 const LEAGUE_SELECT = {
   id: true,
   name: true,
+  phone: true,
+  email: true,
+  address: true,
+  president: {
+    select: {
+      id: true,
+      name: true,
+      phone: true,
+      email: true,
+      address: true,
+      code: true,
+    },
+  },
+  region: {
+    select: {
+      id: true,
+      name: true,
+      code: true,
+    },
+  },
 } as const;
 
 /**
@@ -96,6 +116,11 @@ export class LeaguesService {
     return {
       id: league.id,
       name: league.name,
+      phone: league.phone,
+      email: league.email,
+      address: league.address,
+      president: league.president,
+      region: league.region,
     } satisfies LeagueResponseDto; // TypeScript validates this matches
   }
 }

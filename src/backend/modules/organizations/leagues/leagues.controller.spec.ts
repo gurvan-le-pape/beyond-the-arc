@@ -56,13 +56,37 @@ describe("LeaguesController", () => {
     jest.clearAllMocks();
   });
 
+  const mockLeagueDto = (
+    overrides: Partial<LeagueResponseDto> = {},
+  ): LeagueResponseDto =>
+    ({
+      phone: null,
+      email: null,
+      address: null,
+      president: null,
+      region: { id: 1, name: "Region", code: "REG" },
+      ...overrides,
+    } as LeagueResponseDto);
+
   describe("getAllLeagues", () => {
-    it("should return array of leagues", async () => {
+    it("should return array of leagues with regions", async () => {
       // Arrange
       const mockLeagues: LeagueResponseDto[] = [
-        { id: 1, name: "League Auvergne-Rhône-Alpes" },
-        { id: 2, name: "League Bourgogne-Franche-Comté" },
-        { id: 3, name: "League Bretagne" },
+        mockLeagueDto({
+          id: 1,
+          name: "LIGUE REGIONALE AUVERGNE-RHONE-ALPES DE BASKET-BALL",
+          region: { id: 1, name: "Auvergne-Rhône-Alpes", code: "ARA" },
+        }),
+        mockLeagueDto({
+          id: 2,
+          name: "LIGUE REGIONALE BOURGOGNE-FRANCHE-COMTE DE BASKET-BALL",
+          region: { id: 2, name: "Bourgogne-Franche-Comté", code: "BFC" },
+        }),
+        mockLeagueDto({
+          id: 3,
+          name: "LIGUE REGIONALE BRETAGNE DE BASKET-BALL",
+          region: { id: 3, name: "Bretagne", code: "BRE" },
+        }),
       ];
 
       mockLeaguesService.findAllLeagues.mockResolvedValue(mockLeagues);
@@ -99,12 +123,13 @@ describe("LeaguesController", () => {
   });
 
   describe("getLeagueById", () => {
-    it("should return league for valid ID", async () => {
+    it("should return league with region for valid ID", async () => {
       // Arrange
-      const mockLeague: LeagueResponseDto = {
+      const mockLeague = mockLeagueDto({
         id: 1,
-        name: "League Auvergne-Rhône-Alpes",
-      };
+        name: "LIGUE REGIONALE BRETAGNE DE BASKET-BALL",
+        region: { id: 3, name: "Bretagne", code: "BRE" },
+      });
 
       mockLeaguesService.findLeagueById.mockResolvedValue(mockLeague);
 
@@ -130,10 +155,11 @@ describe("LeaguesController", () => {
 
     it("should accept ID as number parameter", async () => {
       // Arrange
-      const mockLeague: LeagueResponseDto = {
+      const mockLeague = mockLeagueDto({
         id: 42,
-        name: "Test League",
-      };
+        name: "LIGUE REGIONALE TEST DE BASKET-BALL",
+        region: { id: 9, name: "Test Region", code: "TST" },
+      });
 
       mockLeaguesService.findLeagueById.mockResolvedValue(mockLeague);
 

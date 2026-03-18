@@ -57,30 +57,33 @@ describe("CommitteesController", () => {
     jest.clearAllMocks();
   });
 
+  const mockCommitteeDto = (
+    overrides: Partial<CommitteeResponseDto> = {},
+  ): CommitteeResponseDto =>
+    ({
+      phone: null,
+      email: null,
+      address: null,
+      president: null,
+      department: { id: 1, name: "Ain", code: "01" },
+      leagueId: 1,
+      ...overrides,
+    } as CommitteeResponseDto);
+
   describe("getCommittees", () => {
     it("should return all committees when no leagueId provided", async () => {
       // Arrange
       const mockCommittees: CommitteeResponseDto[] = [
-        {
+        mockCommitteeDto({
           id: 1,
           name: "Comité Departmental de l'Ain",
-          leagueId: 1,
-          department: {
-            id: 1,
-            name: "Ain",
-            code: "01",
-          },
-        },
-        {
+          department: { id: 1, name: "Ain", code: "01" },
+        }),
+        mockCommitteeDto({
           id: 2,
           name: "Comité Departmental de l'Aisne",
-          leagueId: 1,
-          department: {
-            id: 2,
-            name: "Aisne",
-            code: "02",
-          },
-        },
+          department: { id: 2, name: "Aisne", code: "02" },
+        }),
       ];
 
       mockCommitteesService.findAllCommittees.mockResolvedValue(mockCommittees);
@@ -98,16 +101,7 @@ describe("CommitteesController", () => {
     it("should return filtered committees when leagueId provided", async () => {
       // Arrange
       const mockCommittees: CommitteeResponseDto[] = [
-        {
-          id: 1,
-          name: "Comité Departmental de l'Ain",
-          leagueId: 1,
-          department: {
-            id: 1,
-            name: "Ain",
-            code: "01",
-          },
-        },
+        mockCommitteeDto({ id: 1, name: "Comité Departmental de l'Ain" }),
       ];
 
       mockCommitteesService.findCommitteesByLeague.mockResolvedValue(
@@ -168,16 +162,10 @@ describe("CommitteesController", () => {
   describe("getCommitteeById", () => {
     it("should return committee for valid ID", async () => {
       // Arrange
-      const mockCommittee: CommitteeResponseDto = {
+      const mockCommittee = mockCommitteeDto({
         id: 1,
         name: "Comité Departmental de l'Ain",
-        leagueId: 1,
-        department: {
-          id: 1,
-          name: "Ain",
-          code: "01",
-        },
-      };
+      });
 
       mockCommitteesService.findCommitteeById.mockResolvedValue(mockCommittee);
 
@@ -203,13 +191,10 @@ describe("CommitteesController", () => {
 
     it("should accept ID as number parameter", async () => {
       // Arrange
-      const mockCommittee: CommitteeResponseDto = {
+      const mockCommittee = mockCommitteeDto({
         id: 42,
         name: "Test Committee",
-        leagueId: 1,
-        department: { id: 1, name: "Ain", code: "01" },
-      };
-
+      });
       mockCommitteesService.findCommitteeById.mockResolvedValue(mockCommittee);
 
       // Act

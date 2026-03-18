@@ -7,7 +7,7 @@ import { ImageWithFallback } from "@/shared/components/ui/primitives";
 import { CompetitionLevel } from "@/shared/constants/competition-levels";
 import { formatNameToFileName } from "@/shared/utils/formatNameToFileName";
 
-import type { League } from "../../../organizations/leagues/types/Ligue";
+import type { League } from "../../../organizations/leagues/types/League";
 
 interface LeaguesGridProps {
   readonly leagues: League[];
