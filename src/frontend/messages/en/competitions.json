@@ -17,7 +17,8 @@
   },
   "regional": {
     "label": "Regional",
-    "description": "Competitions by regional league."
+    "description": "Competitions by regional league.",
+    "committeesInLeague": "Committees in this league"
   },
   "departmental": {
     "label": "Departmental",
@@ -29,7 +30,15 @@
   "carousel": {
     "scrollLeft": "Scroll left",
     "scrollRight": "Scroll right",
-    "searchPlaceholder": "Search…"
+    "searchPlaceholder": "Search…",
+    "titles": {
+      "regionalLeagues": "Leagues by Region",
+      "departmentalCommittees": "Committees by Department"
+    }
+  },
+  "sidePanel": {
+    "expand": "Expand panel",
+    "collapse": "Collapse panel"
   },
   "roundSelector": {
     "dropdownLabel": "Round {round}",
@@ -52,5 +61,15 @@
     "teamHeader": "Team",
     "overtimeHeader": "OT",
     "totalHeader": "T"
+  },
+  "info": {
+    "title": "Information",
+    "president": "President",
+    "presidentName": "Name",
+    "presidentEmail": "Email",
+    "presidentPhone": "Phone",
+    "address": "Address",
+    "email": "Email",
+    "phone": "Phone"
   }
 }
