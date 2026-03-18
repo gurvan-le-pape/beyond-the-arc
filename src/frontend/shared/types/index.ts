@@ -11,5 +11,6 @@ export * from "./filters/TeamsTableFiltersConfig";
 export * from "./NavItem";
 export * from "./Pagination";
 export * from "./PlayerMatchStats";
+export * from "./President";
 export * from "./SelectOption";
 export * from "./ShotEvent";
