@@ -45,13 +45,59 @@ describe("LeaguesService", () => {
     jest.clearAllMocks();
   });
 
+  // Shared select shape — mirrors LEAGUE_SELECT in the service
+  const EXPECTED_SELECT = {
+    id: true,
+    name: true,
+    phone: true,
+    email: true,
+    address: true,
+    president: {
+      select: {
+        id: true,
+        name: true,
+        phone: true,
+        email: true,
+        address: true,
+        code: true,
+      },
+    },
+    region: {
+      select: {
+        id: true,
+        name: true,
+        code: true,
+      },
+    },
+  };
+
+  const mockLeagueData = (overrides = {}) => ({
+    phone: null,
+    email: null,
+    address: null,
+    president: null,
+    ...overrides,
+  });
+
   describe("findAllLeagues", () => {
-    it("should return all leagues", async () => {
+    it("should return all leagues with their region", async () => {
       // Arrange
       const mockLeagues = [
-        { id: 1, name: "League Auvergne-Rhône-Alpes" },
-        { id: 2, name: "League Bourgogne-Franche-Comté" },
-        { id: 3, name: "League Bretagne" },
+        mockLeagueData({
+          id: 1,
+          name: "LIGUE REGIONALE AUVERGNE-RHONE-ALPES DE BASKET-BALL",
+          region: { id: 1, name: "Auvergne-Rhône-Alpes", code: "ARA" },
+        }),
+        mockLeagueData({
+          id: 2,
+          name: "LIGUE REGIONALE BOURGOGNE-FRANCHE-COMTE DE BASKET-BALL",
+          region: { id: 2, name: "Bourgogne-Franche-Comté", code: "BFC" },
+        }),
+        mockLeagueData({
+          id: 3,
+          name: "LIGUE REGIONALE BRETAGNE DE BASKET-BALL",
+          region: { id: 3, name: "Bretagne", code: "BRE" },
+        }),
       ];
 
       mockPrismaService.leagues.findMany.mockResolvedValue(mockLeagues);
@@ -60,17 +106,9 @@ describe("LeaguesService", () => {
       const result = await service.findAllLeagues();
 
       // Assert
-      expect(result).toEqual([
-        { id: 1, name: "League Auvergne-Rhône-Alpes" },
-        { id: 2, name: "League Bourgogne-Franche-Comté" },
-        { id: 3, name: "League Bretagne" },
-      ]);
-
+      expect(result).toEqual(mockLeagues);
       expect(mockPrismaService.leagues.findMany).toHaveBeenCalledWith({
-        select: {
-          id: true,
-          name: true,
-        },
+        select: EXPECTED_SELECT,
         orderBy: { name: "asc" },
       });
     });
@@ -99,12 +137,13 @@ describe("LeaguesService", () => {
   });
 
   describe("findLeagueById", () => {
-    it("should return league when found", async () => {
+    it("should return league with region when found", async () => {
       // Arrange
-      const mockLeague = {
+      const mockLeague = mockLeagueData({
         id: 1,
-        name: "League Auvergne-Rhône-Alpes",
-      };
+        name: "LIGUE REGIONALE BRETAGNE DE BASKET-BALL",
+        region: { id: 3, name: "Bretagne", code: "BRE" },
+      });
 
       mockPrismaService.leagues.findUnique.mockResolvedValue(mockLeague);
 
@@ -115,10 +154,7 @@ describe("LeaguesService", () => {
       expect(result).toEqual(mockLeague);
       expect(mockPrismaService.leagues.findUnique).toHaveBeenCalledWith({
         where: { id: 1 },
-        select: {
-          id: true,
-          name: true,
-        },
+        select: EXPECTED_SELECT,
       });
     });
 
