@@ -5,8 +5,10 @@ import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 
 import {
+  CompetitionHeader,
+  CompetitionInfo,
   CompetitionsPageSkeleton,
-  HorizontalCarousel,
+  SearchableChipList,
 } from "@/features/competitions/components";
 import ChampionshipList from "@/features/competitions/components/championships/ChampionshipList";
 import { useDepartmentalChampionshipsData } from "@/features/competitions/hooks";
@@ -28,7 +30,7 @@ export default function DepartmentalChampionshipsPage() {
   const idStr = params?.committeeId as string;
   const id = Number.parseInt(idStr, 10);
 
-  const { championships, committee, committees, clubs, isLoading, error } =
+  const { championships, committee, clubs, isLoading, error } =
     useDepartmentalChampionshipsData(id);
 
   const championshipsByGender = groupChampionshipsByGender(championships);
@@ -42,67 +44,53 @@ export default function DepartmentalChampionshipsPage() {
     { label: committee?.name ?? "…", current: true },
   ];
 
-  let body: React.ReactNode;
-
-  if (error) {
-    body = <ErrorMessage message={error.message} />;
-  } else if (isLoading) {
-    body = <CompetitionsPageSkeleton />;
-  } else {
-    body = (
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Committee header strip */}
-        {committee && (
-          <div className="flex items-center border-l-4 border-l-primary-600 dark:border-l-primary-400 bg-white dark:bg-gray-800 rounded-card border border-gray-200 dark:border-gray-700 shadow-card dark:shadow-card-dark px-6 py-4">
-            <h1 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100">
-              {committee.name}
-            </h1>
-          </div>
-        )}
-
-        {/* Committees carousel */}
-        <HorizontalCarousel
-          items={committees}
-          title={tCommon("sectionTitles.departmentalCommittees")}
-          imageFolder="committees"
-          basePath={`/competitions/${CompetitionLevel.DEPARTMENTAL}`}
-          currentId={id}
-          enableSearch={true}
-          enableLetterFilter={true}
-        />
-
-        {/* Clubs carousel */}
-        <HorizontalCarousel
-          items={clubs}
-          title={tCommon("sectionTitles.clubs")}
-          imageFolder="clubs"
-          basePath="/club"
-          enableSearch={true}
-          enableLetterFilter={true}
-        />
-
-        {/* Championships */}
-        <ChampionshipList
-          championshipsByGender={championshipsByGender}
-          groupChampionshipsByCategory={groupChampionshipsByCategory}
-          onItemClick={(championship) =>
-            router.push(
-              `/competitions/${CompetitionLevel.DEPARTMENTAL}/${id}/${championship.id}`,
-            )
-          }
-        />
-      </div>
-    );
-  }
-
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950">
       <Header />
       <main className="flex-grow py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto space-y-6">
           <Breadcrumb items={breadcrumbItems} />
+
+          {error && <ErrorMessage message={error.message} />}
+          {isLoading && <CompetitionsPageSkeleton />}
+
+          {!error && !isLoading && (
+            <div className="space-y-6">
+              {/* Competition Header */}
+              <CompetitionHeader
+                name={committee?.name ?? ""}
+                imageFolder="committees"
+              />
+
+              {/* Competition info */}
+              <CompetitionInfo
+                president={committee?.president}
+                address={committee?.address}
+                email={committee?.email}
+                phone={committee?.phone}
+              />
+
+              {/* Clubs */}
+              <SearchableChipList
+                items={clubs}
+                title={tCommon("sectionTitles.clubs")}
+                searchPlaceholder={tCompetitions("carousel.searchPlaceholder")}
+                onItemClick={(club) => router.push(`/club/${club.id}`)}
+              />
+
+              {/* Championships */}
+              <ChampionshipList
+                championshipsByGender={championshipsByGender}
+                groupChampionshipsByCategory={groupChampionshipsByCategory}
+                onItemClick={(championship) =>
+                  router.push(
+                    `/competitions/${CompetitionLevel.DEPARTMENTAL}/${id}/${championship.id}`,
+                  )
+                }
+              />
+            </div>
+          )}
         </div>
-        {body}
       </main>
       <Footer />
     </div>
