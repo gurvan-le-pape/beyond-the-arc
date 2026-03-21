@@ -33,11 +33,11 @@ const badgeVariants = cva(
           "border-transparent bg-team-female-light/10 text-team-female-dark dark:bg-team-female-light/20 dark:text-team-female-light",
         // Competition level-specific
         national:
-          "border-transparent bg-national-DEFAULT text-white dark:bg-national-light",
+          "border-transparent bg-national-light/10 text-national-dark dark:bg-national-light/20 dark:text-national-light",
         regional:
-          "border-transparent bg-regional-DEFAULT text-white dark:bg-regional-light",
+          "border-transparent bg-regional-light/10 text-regional-dark dark:bg-regional-light/20 dark:text-regional-light",
         departmental:
-          "border-transparent bg-departmental-DEFAULT text-gray-900 dark:bg-departmental-light dark:text-gray-900",
+          "border-transparent bg-departmental-light/10 text-departmental-dark dark:bg-departmental-light/20 dark:text-departmental-light",
       },
       size: {
         sm: "px-2 py-0.5",
