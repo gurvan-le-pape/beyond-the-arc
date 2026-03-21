@@ -21,6 +21,13 @@ export class LeaderboardResponseDto {
   teamId!: number;
 
   @ApiProperty({
+    description: "Position in the pool standings",
+    example: 1,
+    type: Number,
+  })
+  rank!: number;
+
+  @ApiProperty({
     description: "Team number within the club",
     example: 1,
     type: Number,
