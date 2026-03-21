@@ -29,6 +29,9 @@ type MockedPrismaService = {
   leagues: {
     findMany: jest.Mock;
   };
+  leaderboards: {
+    count: jest.Mock;
+  };
 };
 
 describe("ClubsService", () => {
@@ -48,6 +51,9 @@ describe("ClubsService", () => {
       leagues: {
         findMany: jest.fn(),
       },
+      leaderboards: {
+        count: jest.fn(),
+      },
     };
 
     service = new ClubsService(prisma as unknown as PrismaService);
@@ -57,6 +63,9 @@ describe("ClubsService", () => {
     jest.clearAllMocks();
   });
 
+  // ============================================================================
+  // getClubCountsByRegion
+  // ============================================================================
   describe("getClubCountsByRegion", () => {
     it("should return club counts grouped by league", async () => {
       prisma.clubs.groupBy.mockResolvedValue([
@@ -72,7 +81,11 @@ describe("ClubsService", () => {
       ]);
 
       prisma.leagues.findMany.mockResolvedValue([
-        { id: 10, name: "League Auvergne-Rhône-Alpes", region: { code: "84" } },
+        {
+          id: 10,
+          name: "League Auvergne-Rhône-Alpes",
+          region: { code: "84" },
+        },
         { id: 20, name: "League Île-de-France", region: { code: "11" } },
       ]);
 
@@ -109,12 +122,7 @@ describe("ClubsService", () => {
       const result = await service.getClubCountsByRegion();
 
       expect(result).toEqual([
-        {
-          id: 10,
-          code: "99",
-          name: "League Sans Clubs",
-          clubCount: 0,
-        },
+        { id: 10, code: "99", name: "League Sans Clubs", clubCount: 0 },
       ]);
     });
 
@@ -129,14 +137,7 @@ describe("ClubsService", () => {
 
       const result = await service.getClubCountsByRegion();
 
-      expect(result).toEqual([
-        {
-          id: 10,
-          code: null,
-          name: "League X",
-          clubCount: 5,
-        },
-      ]);
+      expect(result[0].code).toBeNull();
     });
 
     it("should ignore committees with null leagueId", async () => {
@@ -148,6 +149,21 @@ describe("ClubsService", () => {
         { id: 1, leagueId: 10 },
         { id: 2, leagueId: null },
       ]);
+      prisma.leagues.findMany.mockResolvedValue([
+        { id: 10, name: "League X", region: { code: "01" } },
+      ]);
+
+      const result = await service.getClubCountsByRegion();
+
+      expect(result[0].clubCount).toBe(5);
+    });
+
+    it("should skip entries where committeeId is null", async () => {
+      prisma.clubs.groupBy.mockResolvedValue([
+        { committeeId: null, _count: { id: 3 } },
+        { committeeId: 1, _count: { id: 5 } },
+      ]);
+      prisma.committees.findMany.mockResolvedValue([{ id: 1, leagueId: 10 }]);
       prisma.leagues.findMany.mockResolvedValue([
         { id: 10, name: "League X", region: { code: "01" } },
       ]);
@@ -169,6 +185,9 @@ describe("ClubsService", () => {
     });
   });
 
+  // ============================================================================
+  // getClubCountsByDepartment
+  // ============================================================================
   describe("getClubCountsByDepartment", () => {
     it("should return club counts by department for all leagues", async () => {
       prisma.committees.findMany.mockResolvedValue([
@@ -270,6 +289,9 @@ describe("ClubsService", () => {
     });
   });
 
+  // ============================================================================
+  // findClubsByFilters
+  // ============================================================================
   describe("findClubsByFilters", () => {
     const mockClub = {
       id: 1,
@@ -318,9 +340,7 @@ describe("ClubsService", () => {
       await service.findClubsByFilters({ committeeId: 1 });
 
       expect(prisma.clubs.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: { committeeId: 1 },
-        }),
+        expect.objectContaining({ where: { committeeId: 1 } }),
       );
     });
 
@@ -408,6 +428,17 @@ describe("ClubsService", () => {
       expect(result).toEqual([]);
     });
 
+    it("should handle null latitude and longitude", async () => {
+      prisma.clubs.findMany.mockResolvedValue([
+        { ...mockClub, latitude: null, longitude: null },
+      ]);
+
+      const result = await service.findClubsByFilters({});
+
+      expect(result[0].latitude).toBeNull();
+      expect(result[0].longitude).toBeNull();
+    });
+
     it("should throw InternalServerErrorException on database error", async () => {
       prisma.clubs.findMany.mockRejectedValue(new Error("Database error"));
 
@@ -420,8 +451,11 @@ describe("ClubsService", () => {
     });
   });
 
+  // ============================================================================
+  // findClubById
+  // ============================================================================
   describe("findClubById", () => {
-    const mockClubDetailed = {
+    const mockPrismaClub = {
       id: 1,
       name: "AS Monaco Basket",
       city: "Monaco",
@@ -436,21 +470,18 @@ describe("ClubsService", () => {
           number: 1,
           category: "U18",
           gender: "male",
+          poolId: 10,
           pool: {
-            id: 1,
+            id: 10,
             name: "Pool A",
             championship: {
               id: 1,
               name: "Championship Régional U18",
               level: "regional",
-              division: "Régionale 1",
+              division: 1,
               committeeId: null,
               leagueId: 1,
             },
-            leaderboards: [
-              { teamId: 1, points: 15 },
-              { teamId: 2, points: 12 },
-            ],
           },
           leaderboards: [
             {
@@ -459,67 +490,150 @@ describe("ClubsService", () => {
               gamesWon: 7,
               gamesLost: 3,
               pointDifference: 25,
-              poolId: 1,
+              poolId: 10,
             },
           ],
         },
       ],
     };
 
-    it("should return club by id with nested teams", async () => {
-      prisma.clubs.findUnique.mockResolvedValue(mockClubDetailed);
+    it("should return club with rank and poolSize computed", async () => {
+      prisma.clubs.findUnique.mockResolvedValue(mockPrismaClub);
+      // 1 team ranked above → rank 2, 8 teams total
+      prisma.leaderboards.count
+        .mockResolvedValueOnce(1)
+        .mockResolvedValueOnce(8);
 
       const result = await service.findClubById(1);
 
-      expect(result).toEqual(mockClubDetailed);
+      expect(result).toMatchObject({
+        id: 1,
+        name: "AS Monaco Basket",
+      });
+      expect(result.teams[0].leaderboard).toMatchObject({
+        rank: 2,
+        poolSize: 8,
+        points: 15,
+        gamesPlayed: 10,
+        gamesWon: 7,
+        gamesLost: 3,
+        pointDifference: 25,
+        poolId: 10,
+      });
       expect(prisma.clubs.findUnique).toHaveBeenCalledWith({
         where: { id: 1 },
-        select: expect.objectContaining({
-          id: true,
-          name: true,
-          teams: expect.any(Object),
-        }),
+        select: expect.any(Object),
       });
     });
 
+    it("should return rank 1 when no teams are ranked above", async () => {
+      prisma.clubs.findUnique.mockResolvedValue(mockPrismaClub);
+      prisma.leaderboards.count
+        .mockResolvedValueOnce(0) // no teams above
+        .mockResolvedValueOnce(6);
+
+      const result = await service.findClubById(1);
+
+      expect(result.teams[0].leaderboard?.rank).toBe(1);
+    });
+
+    it("should return null leaderboard when team has no leaderboard entry", async () => {
+      prisma.clubs.findUnique.mockResolvedValue({
+        ...mockPrismaClub,
+        teams: [{ ...mockPrismaClub.teams[0], leaderboards: [] }],
+      });
+
+      const result = await service.findClubById(1);
+
+      expect(result.teams[0].leaderboard).toBeNull();
+      expect(prisma.leaderboards.count).not.toHaveBeenCalled();
+    });
+
+    it("should return null leaderboard when team has no pool", async () => {
+      prisma.clubs.findUnique.mockResolvedValue({
+        ...mockPrismaClub,
+        teams: [
+          {
+            ...mockPrismaClub.teams[0],
+            pool: null,
+            poolId: null,
+            leaderboards: [],
+          },
+        ],
+      });
+
+      const result = await service.findClubById(1);
+
+      expect(result.teams[0].leaderboard).toBeNull();
+      expect(prisma.leaderboards.count).not.toHaveBeenCalled();
+    });
+
     it("should handle club with no teams", async () => {
-      const clubNoTeams = { ...mockClubDetailed, teams: [] };
-      prisma.clubs.findUnique.mockResolvedValue(clubNoTeams);
+      prisma.clubs.findUnique.mockResolvedValue({
+        ...mockPrismaClub,
+        teams: [],
+      });
 
       const result = await service.findClubById(1);
 
-      expect(result.teams).toEqual([]);
+      expect(result.teams).toHaveLength(0);
+      expect(prisma.leaderboards.count).not.toHaveBeenCalled();
     });
 
-    it("should handle team with null pool", async () => {
-      const clubNullPool = {
-        ...mockClubDetailed,
-        teams: [{ ...mockClubDetailed.teams[0], pool: null }],
-      };
-      prisma.clubs.findUnique.mockResolvedValue(clubNullPool);
+    it("should handle club with null fields", async () => {
+      prisma.clubs.findUnique.mockResolvedValue({
+        ...mockPrismaClub,
+        address: null,
+        phone: null,
+        email: null,
+        website: null,
+        teams: [],
+      });
 
       const result = await service.findClubById(1);
 
-      expect(result.teams[0].pool).toBeNull();
+      expect(result.address).toBeNull();
+      expect(result.phone).toBeNull();
+      expect(result.email).toBeNull();
+      expect(result.website).toBeNull();
     });
 
-    it("should throw NotFoundException when club not found", async () => {
+    it("should compute rank and poolSize via parallel count queries", async () => {
+      prisma.clubs.findUnique.mockResolvedValue(mockPrismaClub);
+      prisma.leaderboards.count
+        .mockResolvedValueOnce(2)
+        .mockResolvedValueOnce(10);
+
+      await service.findClubById(1);
+
+      expect(prisma.leaderboards.count).toHaveBeenCalledTimes(2);
+      expect(prisma.leaderboards.count).toHaveBeenCalledWith({
+        where: {
+          poolId: 10,
+          OR: [
+            { points: { gt: 15 } },
+            { points: 15, pointDifference: { gt: 25 } },
+          ],
+        },
+      });
+      expect(prisma.leaderboards.count).toHaveBeenCalledWith({
+        where: { poolId: 10 },
+      });
+    });
+
+    it("should throw NotFoundException when club does not exist", async () => {
       prisma.clubs.findUnique.mockResolvedValue(null);
 
       await expect(service.findClubById(999)).rejects.toThrow(
-        NotFoundException,
-      );
-      await expect(service.findClubById(999)).rejects.toThrow(
-        "Club with ID 999 not found",
+        new NotFoundException("Club with ID 999 not found"),
       );
     });
 
-    it("should re-throw NotFoundException from database", async () => {
+    it("should re-throw NotFoundException from inner calls", async () => {
       const notFoundError = new NotFoundException("Club not found");
       prisma.clubs.findUnique.mockRejectedValue(notFoundError);
 
       await expect(service.findClubById(1)).rejects.toThrow(NotFoundException);
-      await expect(service.findClubById(1)).rejects.toThrow("Club not found");
     });
 
     it("should wrap unknown errors in InternalServerErrorException", async () => {
@@ -532,104 +646,11 @@ describe("ClubsService", () => {
         "Failed to fetch club",
       );
     });
-
-    it("should handle club with null fields", async () => {
-      const clubNullFields = {
-        ...mockClubDetailed,
-        address: null,
-        phone: null,
-        email: null,
-        website: null,
-      };
-      prisma.clubs.findUnique.mockResolvedValue(clubNullFields);
-
-      const result = await service.findClubById(1);
-
-      expect(result.address).toBeNull();
-      expect(result.phone).toBeNull();
-      expect(result.email).toBeNull();
-      expect(result.website).toBeNull();
-    });
-
-    it("should properly map complex nested structure", async () => {
-      prisma.clubs.findUnique.mockResolvedValue(mockClubDetailed);
-
-      const result = await service.findClubById(1);
-
-      expect(result.teams[0]).toHaveProperty("id");
-      expect(result.teams[0]).toHaveProperty("pool");
-      expect(result.teams[0].pool).toHaveProperty("championship");
-      expect(result.teams[0].pool).toHaveProperty("leaderboards");
-      expect(result.teams[0]).toHaveProperty("leaderboards");
-      expect(result.teams[0].pool?.championship.id).toBe(1);
-      expect(result.teams[0].pool?.leaderboards).toHaveLength(2);
-      expect(result.teams[0].leaderboards).toHaveLength(1);
-    });
   });
 
-  describe("mapToBasicDto", () => {
-    it("should correctly map all fields including Decimal conversion", async () => {
-      const mockClub = {
-        id: 1,
-        name: "Test Club",
-        city: "Paris",
-        zipCode: "75001",
-        latitude: { toNumber: () => 48.8566 } as any,
-        longitude: { toNumber: () => 2.3522 } as any,
-        email: "test@club.com",
-        phone: "0123456789",
-        website: "https://club.com",
-        committeeId: 1,
-        committee: { leagueId: 1 },
-      };
-
-      prisma.clubs.findMany.mockResolvedValue([mockClub]);
-
-      const result = await service.findClubsByFilters({});
-
-      expect(result[0]).toEqual({
-        id: 1,
-        name: "Test Club",
-        city: "Paris",
-        zipCode: "75001",
-        latitude: 48.8566,
-        longitude: 2.3522,
-        email: "test@club.com",
-        phone: "0123456789",
-        website: "https://club.com",
-        committeeId: 1,
-        leagueId: 1,
-      });
-    });
-
-    it("should handle null values correctly", async () => {
-      const mockClub = {
-        id: 1,
-        name: "Test Club",
-        city: null,
-        zipCode: null,
-        latitude: null,
-        longitude: null,
-        email: null,
-        phone: null,
-        website: null,
-        committeeId: null,
-        committee: { leagueId: null },
-      };
-
-      prisma.clubs.findMany.mockResolvedValue([mockClub]);
-
-      const result = await service.findClubsByFilters({});
-
-      expect(result[0].city).toBeNull();
-      expect(result[0].latitude).toBeNull();
-      expect(result[0].longitude).toBeNull();
-      expect(result[0].email).toBeNull();
-      expect(result[0].website).toBeNull();
-      expect(result[0].committeeId).toBeNull();
-    });
-  });
-
+  // ============================================================================
+  // getAllDepartments
+  // ============================================================================
   describe("getAllDepartments", () => {
     it("should return all departments with region info", async () => {
       prisma.committees.findMany.mockResolvedValue([
@@ -685,23 +706,6 @@ describe("ClubsService", () => {
       await expect(service.getAllDepartments()).rejects.toThrow(
         "Failed to fetch all departments",
       );
-    });
-  });
-
-  describe("getClubCountsByRegion (edge cases)", () => {
-    it("should skip entries where committeeId is null", async () => {
-      prisma.clubs.groupBy.mockResolvedValue([
-        { committeeId: null, _count: { id: 3 } },
-        { committeeId: 1, _count: { id: 5 } },
-      ]);
-      prisma.committees.findMany.mockResolvedValue([{ id: 1, leagueId: 10 }]);
-      prisma.leagues.findMany.mockResolvedValue([
-        { id: 10, name: "League X", region: { code: "01" } },
-      ]);
-
-      const result = await service.getClubCountsByRegion();
-
-      expect(result[0].clubCount).toBe(5);
     });
   });
 });

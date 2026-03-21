@@ -16,6 +16,7 @@ describe("LeaderboardsController", () => {
   const mockLeaderboard: LeaderboardResponseDto = {
     id: 1,
     teamId: 5,
+    rank: 1,
     teamNumber: 1,
     clubName: "AS Monaco Basket",
     points: 12,

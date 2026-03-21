@@ -1,5 +1,4 @@
 // src/backend/modules/competitions/leaderboards/leaderboards.service.spec.ts
-// leaderboards.service.spec.ts
 import { NotFoundException } from "@nestjs/common";
 import type { TestingModule } from "@nestjs/testing";
 import { Test } from "@nestjs/testing";
@@ -14,6 +13,7 @@ describe("LeaderboardsService", () => {
   const mockPrismaLeaderboard = {
     id: 1,
     teamId: 5,
+    poolId: 10,
     points: 12,
     gamesPlayed: 8,
     gamesWon: 6,
@@ -34,6 +34,7 @@ describe("LeaderboardsService", () => {
     leaderboards: {
       findMany: jest.fn(),
       findUnique: jest.fn(),
+      count: jest.fn(),
     },
   };
 
@@ -57,21 +58,29 @@ describe("LeaderboardsService", () => {
   });
 
   describe("findLeaderboardsByPoolId", () => {
-    it("should return leaderboards for a valid pool ID", async () => {
+    it("should return leaderboards with correct rank for a valid pool ID", async () => {
       const poolId = 1;
       mockPrismaService.leaderboards.findMany.mockResolvedValue([
         mockPrismaLeaderboard,
+        { ...mockPrismaLeaderboard, id: 2, teamId: 6, points: 8 },
       ]);
 
       const result = await service.findLeaderboardsByPoolId(poolId);
 
-      expect(result).toHaveLength(1);
+      expect(result).toHaveLength(2);
       expect(result[0]).toMatchObject({
         id: 1,
         teamId: 5,
+        rank: 1,
         teamNumber: 1,
         clubName: "AS Monaco Basket",
         points: 12,
+      });
+      expect(result[1]).toMatchObject({
+        id: 2,
+        teamId: 6,
+        rank: 2,
+        points: 8,
       });
       expect(prisma.leaderboards.findMany).toHaveBeenCalledWith({
         where: { poolId },
@@ -101,17 +110,20 @@ describe("LeaderboardsService", () => {
   });
 
   describe("findLeaderboardById", () => {
-    it("should return a leaderboard entry for a valid ID", async () => {
+    it("should return a leaderboard entry with correct rank for a valid ID", async () => {
       const id = 1;
+      // 2 teams ranked above this one → rank 3
       mockPrismaService.leaderboards.findUnique.mockResolvedValue(
         mockPrismaLeaderboard,
       );
+      mockPrismaService.leaderboards.count.mockResolvedValue(2);
 
       const result = await service.findLeaderboardById(id);
 
       expect(result).toMatchObject({
         id: 1,
         teamId: 5,
+        rank: 3,
         teamNumber: 1,
         clubName: "AS Monaco Basket",
       });
@@ -119,6 +131,30 @@ describe("LeaderboardsService", () => {
         where: { id },
         select: expect.any(Object),
       });
+      expect(prisma.leaderboards.count).toHaveBeenCalledWith({
+        where: {
+          poolId: mockPrismaLeaderboard.poolId,
+          OR: [
+            { points: { gt: mockPrismaLeaderboard.points } },
+            {
+              points: mockPrismaLeaderboard.points,
+              pointDifference: { gt: mockPrismaLeaderboard.pointDifference },
+            },
+          ],
+        },
+      });
+    });
+
+    it("should return rank 1 when no entries are ranked higher", async () => {
+      const id = 1;
+      mockPrismaService.leaderboards.findUnique.mockResolvedValue(
+        mockPrismaLeaderboard,
+      );
+      mockPrismaService.leaderboards.count.mockResolvedValue(0);
+
+      const result = await service.findLeaderboardById(id);
+
+      expect(result.rank).toBe(1);
     });
 
     it("should throw NotFoundException for non-existent ID", async () => {
@@ -128,6 +164,15 @@ describe("LeaderboardsService", () => {
       await expect(service.findLeaderboardById(id)).rejects.toThrow(
         new NotFoundException("Leaderboard entry with ID 999 not found"),
       );
+      expect(prisma.leaderboards.count).not.toHaveBeenCalled();
+    });
+
+    it("should handle database errors", async () => {
+      const id = 1;
+      const dbError = new Error("Database connection failed");
+      mockPrismaService.leaderboards.findUnique.mockRejectedValue(dbError);
+
+      await expect(service.findLeaderboardById(id)).rejects.toThrow(dbError);
     });
   });
 });
