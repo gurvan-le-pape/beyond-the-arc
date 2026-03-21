@@ -20,8 +20,8 @@
     "matchHistoryTitle": "Historique des Matchs",
     "shotchartTitle": "Carte des tirs (Heatmap)",
     "shotchartDescription": "Cette heatmap montre la distribution des tirs de l'équipe cette saison.",
-    "points": "Points",
-    "gamesPlayed": "Joués"
+    "won": "V",
+    "lost": "D"
   },
   "teamStats": {
     "positionSuffix": "ème",

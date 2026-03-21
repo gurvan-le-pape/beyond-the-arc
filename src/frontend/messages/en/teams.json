@@ -20,8 +20,8 @@
     "matchHistoryTitle": "Match History",
     "shotchartTitle": "Shot Chart (Heatmap)",
     "shotchartDescription": "This heatmap shows the shot distribution for the team this season.",
-    "points": "Points",
-    "gamesPlayed": "Joués"
+    "won": "W",
+    "lost": "L"
   },
   "teamStats": {
     "positionSuffix": "th",

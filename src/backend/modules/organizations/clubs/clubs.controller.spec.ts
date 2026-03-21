@@ -298,21 +298,17 @@ describe("ClubsController", () => {
                 committeeId: null,
                 leagueId: 1,
               },
-              leaderboards: [
-                { teamId: 1, points: 15 },
-                { teamId: 2, points: 12 },
-              ],
             },
-            leaderboards: [
-              {
-                points: 15,
-                gamesPlayed: 10,
-                gamesWon: 7,
-                gamesLost: 3,
-                pointDifference: 25,
-                poolId: 1,
-              },
-            ],
+            leaderboard: {
+              rank: 2,
+              poolSize: 8,
+              points: 15,
+              gamesPlayed: 10,
+              gamesWon: 7,
+              gamesLost: 3,
+              pointDifference: 25,
+              poolId: 1,
+            },
           },
         ],
       };
@@ -324,6 +320,47 @@ describe("ClubsController", () => {
       expect(result).toEqual(mockClub);
       expect(mockClubsService.findClubById).toHaveBeenCalledTimes(1);
       expect(mockClubsService.findClubById).toHaveBeenCalledWith(1);
+    });
+
+    it("should return club with null leaderboard when team has no games", async () => {
+      const mockClub: ClubDetailedResponseDto = {
+        id: 1,
+        name: "AS Monaco Basket",
+        city: "Monaco",
+        zipCode: "98000",
+        address: null,
+        phone: null,
+        email: null,
+        website: null,
+        teams: [
+          {
+            id: 2,
+            number: 1,
+            category: "U11",
+            gender: "male",
+            pool: {
+              id: 2,
+              name: "Pool B",
+              championship: {
+                id: 2,
+                name: "Championship Départemental U11",
+                level: "departmental",
+                division: 1,
+                committeeId: 1,
+                leagueId: null,
+              },
+            },
+            leaderboard: null, // no games played yet
+          },
+        ],
+      };
+
+      mockClubsService.findClubById.mockResolvedValue(mockClub);
+
+      const result = await controller.getClubById(1);
+
+      expect(result).toEqual(mockClub);
+      expect(result.teams[0].leaderboard).toBeNull();
     });
 
     it("should handle club with no teams", async () => {

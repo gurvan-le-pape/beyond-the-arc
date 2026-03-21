@@ -79,6 +79,22 @@ export class ClubBasicResponseDto {
  * Leaderboard information for a team.
  */
 export class TeamLeaderboardDto {
+  @ApiProperty({
+    description: "Position in pool standings",
+    example: 1,
+    type: Number,
+    nullable: true,
+  })
+  rank!: number | null;
+
+  @ApiProperty({
+    description: "Total number of teams in the pool",
+    example: 8,
+    type: Number,
+    nullable: true,
+  })
+  poolSize!: number | null;
+
   @ApiProperty({ description: "Points earned", example: 12, type: Number })
   points!: number;
 
@@ -163,13 +179,6 @@ export class PoolInfoDto {
     type: ChampionshipInfoDto,
   })
   championship!: ChampionshipInfoDto;
-
-  @ApiProperty({
-    description: "Top teams in pool (leaderboard)",
-    type: [Object],
-    example: [{ teamId: 1, points: 15 }],
-  })
-  leaderboards!: Array<{ teamId: number; points: number }>;
 }
 
 /**
@@ -210,9 +219,9 @@ export class TeamInfoDto {
 
   @ApiProperty({
     description: "Team leaderboard stats",
-    type: [TeamLeaderboardDto],
+    type: TeamLeaderboardDto,
   })
-  leaderboards!: TeamLeaderboardDto[];
+  leaderboard!: TeamLeaderboardDto | null;
 }
 
 /**

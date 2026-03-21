@@ -14,3 +14,4 @@ export * from "./table/LeaderboardTable";
 export * from "./table/Pagination";
 export * from "./table/SearchableDropdown";
 export * from "./table/TableSkeleton";
+export * from "./TeamListItem";

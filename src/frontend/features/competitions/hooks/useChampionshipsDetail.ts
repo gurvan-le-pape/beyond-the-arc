@@ -51,6 +51,7 @@ export function useChampionshipsDetail(
   id: number,
   championshipId: number,
   level: LocalCompetitionLevel,
+  initialPoolId?: number | null,
 ) {
   // Parse IDs
   const orgId = useMemo(() => {
@@ -64,7 +65,9 @@ export function useChampionshipsDetail(
   }, [championshipId]);
 
   // Local state
-  const [selectedPoolId, setSelectedPoolId] = useState<number | null>(null);
+  const [selectedPoolId, setSelectedPoolId] = useState<number | null>(
+    initialPoolId ?? null,
+  );
 
   // ============================================================================
   // Fetch organization (league or committee)
@@ -117,15 +120,19 @@ export function useChampionshipsDetail(
 
   // Reset selected pool when championship changes
   useEffect(() => {
-    setSelectedPoolId(null);
-  }, [championshipId]);
+    setSelectedPoolId(initialPoolId ?? null);
+  }, [championshipId, initialPoolId]);
 
   // Auto-select first pool
   useEffect(() => {
     if (pools.length > 0 && !selectedPoolId) {
-      setSelectedPoolId(pools[0].id);
+      // If initialPoolId was given, verify it exists in pools, otherwise fall back to first
+      const target = initialPoolId
+        ? pools.find((p) => p.id === initialPoolId)?.id ?? pools[0].id
+        : pools[0].id;
+      setSelectedPoolId(target);
     }
-  }, [pools, selectedPoolId]);
+  }, [pools, selectedPoolId, initialPoolId]);
 
   // ============================================================================
   // Fetch leaderboards for all pools

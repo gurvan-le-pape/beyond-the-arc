@@ -12,6 +12,7 @@ import { LeaderboardResponseDto } from "./dto/leaderboards.response.dto";
 const LEADERBOARD_SELECT = {
   id: true,
   teamId: true,
+  poolId: true,
   points: true,
   gamesPlayed: true,
   gamesWon: true,
@@ -85,7 +86,10 @@ export class LeaderboardsService {
         `[findLeaderboardsByPoolId] Found ${leaderboards.length} leaderboard entries for pool ID: ${poolId}`,
       );
 
-      return leaderboards.map((entry) => this.mapToDto(entry));
+      // Rank derived from sort order
+      return leaderboards.map((entry, index) =>
+        this.mapToDto(entry, index + 1),
+      );
     } catch (error) {
       // Re-throw if it's already a NestJS exception
       if (error instanceof NotFoundException) {
@@ -127,7 +131,22 @@ export class LeaderboardsService {
       );
     }
 
-    return this.mapToDto(leaderboard);
+    // Compute rank via count query
+    const rank =
+      (await this.prisma.leaderboards.count({
+        where: {
+          poolId: leaderboard.poolId,
+          OR: [
+            { points: { gt: leaderboard.points } },
+            {
+              points: leaderboard.points,
+              pointDifference: { gt: leaderboard.pointDifference },
+            },
+          ],
+        },
+      })) + 1;
+
+    return this.mapToDto(leaderboard, rank);
   }
 
   /**
@@ -140,10 +159,12 @@ export class LeaderboardsService {
    */
   private mapToDto(
     leaderboard: LeaderboardSelectResult,
+    rank: number,
   ): LeaderboardResponseDto {
     return {
       id: leaderboard.id,
       teamId: leaderboard.teamId,
+      rank,
       teamNumber: leaderboard.team.number,
       clubName: leaderboard.team.club.name,
       points: leaderboard.points,

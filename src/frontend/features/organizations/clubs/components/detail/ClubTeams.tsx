@@ -5,9 +5,10 @@ import { UserGroupIcon } from "@heroicons/react/24/outline";
 import { useTranslations } from "next-intl";
 
 import { useToggleCategory } from "@/features/competitions/hooks";
-import { TeamListItem } from "@/features/teams/components";
-import { useRouter } from "@/navigation";
-import { GenderCategorizedList } from "@/shared/components/entity";
+import {
+  GenderCategorizedList,
+  TeamListItem,
+} from "@/shared/components/entity";
 import { Section } from "@/shared/components/ui/composite";
 import { EmptyState } from "@/shared/components/ui/feedback";
 import { Gender } from "@/shared/constants";
@@ -24,7 +25,6 @@ interface ClubTeamsProps {
 export function ClubTeams({ club, teamsByGender }: ClubTeamsProps) {
   const tCommon = useTranslations("common");
   const tClubs = useTranslations("clubs");
-  const router = useRouter();
   const { expandedCategories, toggleCategory } = useToggleCategory();
   const hasTeams = club.teams && club.teams.length > 0;
 
@@ -46,13 +46,7 @@ export function ClubTeams({ club, teamsByGender }: ClubTeamsProps) {
         groupByCategory={(teams) => groupTeamsByCategory(teams)}
         expandedCategories={expandedCategories}
         toggleCategory={toggleCategory}
-        renderItem={(team) => (
-          <TeamListItem
-            team={team}
-            clubName={club.name}
-            onClick={() => router.push(`/teams/${team.id}`)}
-          />
-        )}
+        renderItem={(team) => <TeamListItem team={team} clubName={club.name} />}
       />
 
       <GenderCategorizedList
@@ -62,13 +56,7 @@ export function ClubTeams({ club, teamsByGender }: ClubTeamsProps) {
         groupByCategory={(teams) => groupTeamsByCategory(teams)}
         expandedCategories={expandedCategories}
         toggleCategory={toggleCategory}
-        renderItem={(team) => (
-          <TeamListItem
-            team={team}
-            clubName={club.name}
-            onClick={() => router.push(`/teams/${team.id}`)}
-          />
-        )}
+        renderItem={(team) => <TeamListItem team={team} clubName={club.name} />}
       />
     </Section>
   );
