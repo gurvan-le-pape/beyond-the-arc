@@ -37,7 +37,9 @@ type ClubBasicSelectResult = {
 };
 
 /**
- * Type representing a detailed club select result with teams.
+ * Fields to select from the clubs table for detailed view.
+ * Includes teams with their current pool, championship, and leaderboard.
+ * Leaderboard is limited to 1 entry (current season) per team.
  */
 const CLUB_DETAILED_SELECT = {
   id: true,
@@ -54,6 +56,7 @@ const CLUB_DETAILED_SELECT = {
       number: true,
       category: true,
       gender: true,
+      poolId: true,
       pool: {
         select: {
           id: true,
@@ -68,10 +71,6 @@ const CLUB_DETAILED_SELECT = {
               leagueId: true,
             },
           },
-          leaderboards: {
-            select: { teamId: true, points: true },
-            orderBy: { points: "desc" },
-          },
         },
       },
       leaderboards: {
@@ -83,24 +82,21 @@ const CLUB_DETAILED_SELECT = {
           pointDifference: true,
           poolId: true,
         },
+        orderBy: { poolId: "desc" },
+        take: 1, // current season only — one entry per pool per team
       },
     },
     orderBy: { number: "asc" },
   },
-} as const;
+} satisfies Prisma.ClubsDefaultArgs["select"];
 
 type ClubDetailedSelectResult = Prisma.ClubsGetPayload<{
   select: typeof CLUB_DETAILED_SELECT;
 }>;
 
-/**
- * Type representing grouped club counts by committee.
- */
-type ClubCountsByCommittee = {
-  committeeId: number | null;
-  _count: {
-    id: number;
-  };
+type TeamWithRankAndPoolSize = ClubDetailedSelectResult["teams"][number] & {
+  rank: number | null;
+  poolSize: number | null;
 };
 
 /**
@@ -124,7 +120,7 @@ export class ClubsService {
 
     try {
       // Get club counts grouped by committee
-      const ClubCountsByCommittee = await this.prisma.clubs.groupBy({
+      const clubCountsByCommittee = await this.prisma.clubs.groupBy({
         by: ["committeeId"],
         _count: {
           id: true,
@@ -145,7 +141,7 @@ export class ClubsService {
 
       // Aggregate counts by league
       const leaguesCounts = new Map<number, number>();
-      for (const item of ClubCountsByCommittee) {
+      for (const item of clubCountsByCommittee) {
         if (typeof item.committeeId !== "number") continue;
         const leagueId = committeeToLeague.get(item.committeeId);
         if (typeof leagueId === "number") {
@@ -327,6 +323,7 @@ export class ClubsService {
 
   /**
    * Finds a club by its ID with detailed information including teams.
+   * Computes rank and pool size for each team via parallel count queries.
    *
    * @param clubId - The club ID
    * @returns Detailed club information
@@ -338,62 +335,7 @@ export class ClubsService {
     try {
       const club = await this.prisma.clubs.findUnique({
         where: { id: clubId },
-        select: {
-          id: true,
-          name: true,
-          city: true,
-          zipCode: true,
-          address: true,
-          phone: true,
-          email: true,
-          website: true,
-          teams: {
-            select: {
-              id: true,
-              number: true,
-              category: true,
-              gender: true,
-              pool: {
-                select: {
-                  id: true,
-                  name: true,
-                  championship: {
-                    select: {
-                      id: true,
-                      name: true,
-                      level: true,
-                      division: true,
-                      committeeId: true,
-                      leagueId: true,
-                    },
-                  },
-                  leaderboards: {
-                    select: {
-                      teamId: true,
-                      points: true,
-                    },
-                    orderBy: {
-                      points: "desc",
-                    },
-                  },
-                },
-              },
-              leaderboards: {
-                select: {
-                  points: true,
-                  gamesPlayed: true,
-                  gamesWon: true,
-                  gamesLost: true,
-                  pointDifference: true,
-                  poolId: true,
-                },
-              },
-            },
-            orderBy: {
-              number: "asc",
-            },
-          },
-        },
+        select: CLUB_DETAILED_SELECT,
       });
 
       if (!club) {
@@ -401,7 +343,38 @@ export class ClubsService {
         throw new NotFoundException(`Club with ID ${clubId} not found`);
       }
 
-      return this.mapToDetailedDto(club);
+      // Compute rank and pool size for each team via parallel count queries
+      const teamsWithRanks: TeamWithRankAndPoolSize[] = await Promise.all(
+        club.teams.map(async (team) => {
+          const lb = team.leaderboards[0];
+
+          if (!lb || !team.pool) {
+            return { ...team, rank: null, poolSize: null };
+          }
+
+          const [rank, poolSize] = await Promise.all([
+            this.prisma.leaderboards.count({
+              where: {
+                poolId: lb.poolId,
+                OR: [
+                  { points: { gt: lb.points } },
+                  {
+                    points: lb.points,
+                    pointDifference: { gt: lb.pointDifference },
+                  },
+                ],
+              },
+            }),
+            this.prisma.leaderboards.count({
+              where: { poolId: lb.poolId },
+            }),
+          ]);
+
+          return { ...team, rank: rank + 1, poolSize };
+        }),
+      );
+
+      return this.mapToDetailedDto({ ...club, teams: teamsWithRanks });
     } catch (error) {
       this.logger.error(`Failed to fetch club with ID ${clubId}`, error);
 
@@ -502,13 +475,16 @@ export class ClubsService {
 
   /**
    * Maps a detailed club entity to a response DTO.
-   * Handles complex nested relations.
+   * Handles nested relations and maps computed rank/poolSize
+   * from TeamWithRankAndPoolSize into the singular leaderboard entry.
    *
-   * @param club - Prisma club select result with teams
+   * @param club - Prisma club select result with teams enriched with rank and poolSize
    * @returns ClubDetailedResponseDto
    */
   private mapToDetailedDto(
-    club: ClubDetailedSelectResult,
+    club: Omit<ClubDetailedSelectResult, "teams"> & {
+      teams: TeamWithRankAndPoolSize[];
+    },
   ): ClubDetailedResponseDto {
     return {
       id: club.id,
@@ -536,20 +512,21 @@ export class ClubsService {
                 committeeId: team.pool.championship.committeeId,
                 leagueId: team.pool.championship.leagueId,
               },
-              leaderboards: team.pool.leaderboards.map((lb) => ({
-                teamId: lb.teamId,
-                points: lb.points,
-              })),
             }
           : null,
-        leaderboards: team.leaderboards.map((lb) => ({
-          points: lb.points,
-          gamesPlayed: lb.gamesPlayed,
-          gamesWon: lb.gamesWon,
-          gamesLost: lb.gamesLost,
-          pointDifference: lb.pointDifference,
-          poolId: lb.poolId,
-        })),
+        // singular leaderboard — one entry per team per pool
+        leaderboard: team.leaderboards[0]
+          ? {
+              rank: team.rank,
+              poolSize: team.poolSize,
+              points: team.leaderboards[0].points,
+              gamesPlayed: team.leaderboards[0].gamesPlayed,
+              gamesWon: team.leaderboards[0].gamesWon,
+              gamesLost: team.leaderboards[0].gamesLost,
+              pointDifference: team.leaderboards[0].pointDifference,
+              poolId: team.leaderboards[0].poolId,
+            }
+          : null,
       })),
     };
   }
