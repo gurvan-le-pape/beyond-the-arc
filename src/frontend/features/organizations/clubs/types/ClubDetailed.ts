@@ -3,6 +3,8 @@ import type { Category } from "@/shared/constants";
 import type { Gender } from "@/shared/constants/genders";
 
 export interface ClubTeamLeaderboard {
+  rank: number | null;
+  poolSize: number | null;
   points: number;
   gamesPlayed: number;
   gamesWon: number;
@@ -24,7 +26,6 @@ export interface ClubPoolInfo {
   id: number;
   name: string;
   championship: ClubChampionshipInfo;
-  leaderboards: Array<{ teamId: number; points: number }>;
 }
 
 export interface ClubTeamInfo {
@@ -33,7 +34,7 @@ export interface ClubTeamInfo {
   category: Category;
   gender: Gender;
   pool: ClubPoolInfo | null;
-  leaderboards: ClubTeamLeaderboard[];
+  leaderboard: ClubTeamLeaderboard | null;
 }
 
 export interface ClubDetailed {
