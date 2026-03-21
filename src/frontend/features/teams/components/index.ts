@@ -8,4 +8,3 @@ export * from "./detail/TeamInfo";
 export * from "./detail/TeamMatchHistoryTable";
 export * from "./detail/TeamRoster";
 export * from "./list/teamsTableColumns";
-export * from "./TeamListItem";
