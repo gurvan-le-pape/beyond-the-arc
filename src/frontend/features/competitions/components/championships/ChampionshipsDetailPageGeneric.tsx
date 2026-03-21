@@ -1,11 +1,12 @@
 // src/frontend/features/competitions/components/championships/ChampionshipsDetailPageGeneric.tsx
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 
 import type { Match } from "@/features/matches/types/Match";
+import { usePathname, useRouter } from "@/navigation";
 import { LeaderboardTable } from "@/shared/components/entity";
 import { Footer, Header } from "@/shared/components/layouts";
 import { Breadcrumb } from "@/shared/components/navigation";
@@ -34,12 +35,18 @@ export function ChampionshipsDetailPageGeneric({
   level,
   organizationId,
 }: ChampionshipsDetailPageProps) {
+  const router = useRouter();
+  const pathname = usePathname();
   const params = useParams();
+  const searchParams = useSearchParams();
   const tCompetitions = useTranslations("competitions");
   const tCommon = useTranslations("common");
 
   const championshipIdStr = params?.championshipId as string;
   const championshipId = Number.parseInt(championshipIdStr, 10);
+
+  const poolFromQuery = searchParams.get("pool");
+  const initialPoolId = poolFromQuery ? Number(poolFromQuery) : null;
 
   // Data hook - using React Query under the hood
   const {
@@ -55,7 +62,12 @@ export function ChampionshipsDetailPageGeneric({
     matches,
     isLoading,
     error,
-  } = useChampionshipsDetail(organizationId, championshipId, level);
+  } = useChampionshipsDetail(
+    organizationId,
+    championshipId,
+    level,
+    initialPoolId,
+  );
 
   // Navigation hooks
   const { availableCategories, currentCategory, navigateToCategory } =
@@ -121,6 +133,11 @@ export function ChampionshipsDetailPageGeneric({
   const handlePoolChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const poolId = Number.parseInt(event.target.value);
     setSelectedPoolId(poolId);
+
+    // keep URL in sync so sharing/refreshing preserves selection
+    const next = new URLSearchParams(searchParams.toString());
+    next.set("pool", String(poolId));
+    router.replace(`${pathname}?${next.toString()}`, { scroll: false });
   };
 
   const toggleExpand = (matchId: number) => {
