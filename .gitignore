@@ -27,3 +27,7 @@ npm-debug.log*
 src/backend/db/sql/db_dump.sql
 
 src/frontend/next-env.d.ts
+
+# Python cache
+**/__pycache__/
+*.pyc
