@@ -12,7 +12,7 @@ async function bootstrap() {
 
   // Enable CORS for the frontend
   app.enableCors({
-    origin: ["http://localhost:3000"],
+    origin: ["http://localhost:3000", process.env.FRONTEND_URL || ""],
     methods: "GET,POST,PUT,PATCH,DELETE",
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -45,7 +45,7 @@ async function bootstrap() {
   // Global filters
   app.useGlobalFilters(new AllExceptionsFilter());
 
-  await app.listen(4000); // Backend on port 4000
+  await app.listen(process.env.PORT || 4000);
 }
 
 bootstrap().catch(() => {
