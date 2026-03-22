@@ -8,7 +8,7 @@ SCRIPTS_DIR="$(dirname "$0")/scripts"
 
 echo "Checking if teams already exist..."
 python3 "$SCRIPTS_DIR/check_database.py" teams
-if [ $? -eq 0 ]; then
+if [[ $? -eq 0 ]]; then
     echo "Teams already exist. Skipping."
 else
     echo "Generating teams..."
@@ -17,7 +17,7 @@ fi
 
 echo "Checking if matches already exist..."
 python3 "$SCRIPTS_DIR/check_database.py" matches
-if [ $? -eq 0 ]; then
+if [[ $? -eq 0 ]]; then
     echo "Matches already exist. Skipping."
 else
     echo "Generating matches..."
