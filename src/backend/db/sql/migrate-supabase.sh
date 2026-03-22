@@ -19,6 +19,7 @@ apply_migrations() {
             fi
         done
     fi
+    return 0
 }
 
 apply_migrations "$MIGRATIONS_DIR/01_schema"
