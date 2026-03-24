@@ -69,9 +69,8 @@ async function prefetchData(leagueId: number, championshipId: number) {
     });
 
     return dehydrate(queryClient);
-  } catch (error) {
-    console.error("Error prefetching regional championship data:", error);
-    return dehydrate(queryClient);
+  } catch {
+    // prefetch failed — client will fetch on mount
   }
 }
 

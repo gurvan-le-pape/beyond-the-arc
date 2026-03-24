@@ -32,10 +32,24 @@ export interface ApiResponse<T> {
  * Simplified error object after interceptor processing.
  * Array messages are joined into a single string.
  */
-export interface ApiError {
+export class ApiError extends Error {
   statusCode: number;
-  message: string; // Always a string (arrays are joined)
   error: string;
   path?: string;
   timestamp?: string;
+
+  constructor(params: {
+    statusCode: number;
+    message: string;
+    error: string;
+    path?: string;
+    timestamp?: string;
+  }) {
+    super(params.message);
+    this.name = "ApiError";
+    this.statusCode = params.statusCode;
+    this.error = params.error;
+    this.path = params.path;
+    this.timestamp = params.timestamp;
+  }
 }

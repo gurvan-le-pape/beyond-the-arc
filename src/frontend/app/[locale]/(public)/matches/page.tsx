@@ -17,15 +17,27 @@ import { leaguesService } from "@/features/organizations/leagues/api/leagues.ser
 import { useRouter } from "@/navigation";
 import { Pagination } from "@/shared/components/entity";
 import { Footer, Header } from "@/shared/components/layouts";
-import { EmptyState, LoadingSpinner } from "@/shared/components/ui";
+import {
+  EmptyState,
+  ErrorMessage,
+  LoadingSpinner,
+} from "@/shared/components/ui";
 import { Card } from "@/shared/components/ui/primitives/Card";
 import type { Gender } from "@/shared/constants";
 import { Category, CompetitionLevel } from "@/shared/constants";
 import type { Pagination as PaginationType } from "@/shared/types";
 
+type ErrorKey =
+  | "fetchCommittees"
+  | "fetchLeagues"
+  | "fetchChampionships"
+  | "fetchPools"
+  | "fetchMatches";
+
 export default function MatchesPage() {
   const router = useRouter();
   const tMatches = useTranslations("matches");
+  const tCommon = useTranslations("common");
 
   // State
   // SWR will manage matches and pagination
@@ -51,14 +63,19 @@ export default function MatchesPage() {
   const [matchesPerPage, setMatchesPerPage] = useState(50);
 
   // Error for auxiliary fetches
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<ErrorKey | null>(null);
 
   // Fetch committees and leagues
   useEffect(() => {
-    Promise.all([
-      committeesService.getAll().then(setCommittees),
-      leaguesService.getAll().then(setLeagues),
-    ]).catch(() => setError(tMatches("errorFetchingFilters")));
+    committeesService
+      .getAll()
+      .then(setCommittees)
+      .catch(() => setError("fetchCommittees"));
+
+    leaguesService
+      .getAll()
+      .then(setLeagues)
+      .catch(() => setError("fetchLeagues"));
   }, []);
 
   // SWR for matches data
@@ -130,8 +147,8 @@ export default function MatchesPage() {
             });
             setChampionships(data);
           }
-        } catch (err: any) {
-          setError(err?.message ?? tMatches("errorLoadingChampionships"));
+        } catch {
+          setError("fetchChampionships");
           setChampionships([]);
         }
         return;
@@ -161,8 +178,8 @@ export default function MatchesPage() {
           const poolsArrays = await Promise.all(poolsPromises);
           const allPools = poolsArrays.flat();
           setPools(allPools);
-        } catch (err: any) {
-          setError(err.message);
+        } catch {
+          setError("fetchPools");
           setPools([]);
         }
       } else {
@@ -224,6 +241,14 @@ export default function MatchesPage() {
     setCurrentPage(1);
   };
 
+  let errorMessage: string | null = null;
+
+  if (matchesError) {
+    errorMessage = tCommon("errors.fetchMatches");
+  } else if (error) {
+    errorMessage = tCommon(`errors.${error}`);
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950">
       <Header />
@@ -272,16 +297,12 @@ export default function MatchesPage() {
           )}
 
           {/* Error State */}
-          {(matchesError || error) && !matchesLoading && (
-            <Card padding="lg">
-              <p className="text-center text-error-DEFAULT dark:text-error-light">
-                {matchesError?.message || error}
-              </p>
-            </Card>
+          {errorMessage && !matchesLoading && (
+            <ErrorMessage message={errorMessage} />
           )}
 
           {/* Results */}
-          {!matchesLoading && !matchesError && !error && (
+          {!matchesLoading && !errorMessage && (
             <>
               {/* Empty State */}
               {matches.length === 0 ? (

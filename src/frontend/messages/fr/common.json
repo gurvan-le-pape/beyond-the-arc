@@ -135,5 +135,26 @@
     "title": "Carte des tirs — {{name}}",
     "download": "Télécharger le graphique",
     "close": "Fermer"
+  },
+  "errors": {
+    "fetchCommittees": "Impossible de récupérer les comités. Veuillez réessayer plus tard.",
+    "fetchClubs": "Impossible de récupérer les clubs. Veuillez réessayer plus tard.",
+    "fetchChampionships": "Impossible de récupérer les championnats. Veuillez réessayer plus tard.",
+    "fetchLeagueOrCommittee": "Impossible de récupérer les ligues ou comités. Veuillez réessayer plus tard.",
+    "fetchLeagues": "Impossible de récupérer les ligues. Veuillez réessayer plus tard.",
+    "fetchMatchEvents": "Impossible de récupérer les événements du match. Veuillez réessayer plus tard.",
+    "fetchMatches": "Impossible de récupérer les matchs. Veuillez réessayer plus tard.",
+    "fetchPools": "Impossible de récupérer les poules. Veuillez réessayer plus tard.",
+    "fetchPlayers": "Impossible de récupérer les joueurs. Veuillez réessayer plus tard.",
+    "fetchTeams": "Impossible de récupérer les équipes. Veuillez réessayer plus tard.",
+    "unexpected": "Une erreur est survenue. Veuillez réessayer plus tard.",
+    "unexpectedDescription": "Une erreur inattendue s'est produite. Veuillez réessayer ou contacter le support si le problème persiste."
+  },
+  "emptyState": {
+    "players": "Aucun joueur trouvé",
+    "teams": "Aucune équipe trouvée",
+    "clubs": "Aucun club trouvé",
+    "matches": "Aucun match trouvé",
+    "championships": "Aucun championnat trouvé"
   }
 }

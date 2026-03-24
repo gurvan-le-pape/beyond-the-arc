@@ -26,10 +26,7 @@ export default async function ClubsRegionsPage({
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "clubs" });
 
-  const regions = await serverClubsService.getStatsByRegion().catch((error) => {
-    console.error("Error fetching regions:", error);
-    return [];
-  });
+  const regions = await serverClubsService.getStatsByRegion();
 
   const breadcrumbItems = [
     {

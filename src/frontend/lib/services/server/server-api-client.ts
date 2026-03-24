@@ -1,4 +1,7 @@
 // src/frontend/lib/services/server/server-api-client.ts
+import { logger } from "@/shared/utils/logger";
+import { parseApiError } from "@/shared/utils/parseApiError";
+
 /**
  * Server-side API client for use in getStaticProps/getStaticPaths/getServerSideProps.
  *
@@ -38,23 +41,20 @@ export async function fetchApi<T>(endpoint: string): Promise<T> {
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(
-        `API error: ${response.status} ${response.statusText} - ${errorText}`,
+      // Parse the backend error body so we get a proper ApiError
+      const body = await response.json().catch(() => null);
+      throw parseApiError(
+        body ?? new Error(`${response.status} ${response.statusText}`),
       );
     }
 
     const data = await response.json();
 
     // Unwrap the standard API response format
-    if (data && "data" in data) {
-      return data.data as T;
-    }
-
-    return data as T;
+    return (data && "data" in data ? data.data : data) as T;
   } catch (error) {
-    console.error(`[Server API] Failed to fetch ${url}:`, error);
-    throw error;
+    logger.error(error, `Server API: ${url}`);
+    throw error; // already an ApiError from parseApiError, or rethrown as-is
   }
 }
 

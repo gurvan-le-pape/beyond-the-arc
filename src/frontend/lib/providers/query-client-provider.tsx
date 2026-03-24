@@ -10,29 +10,45 @@ import {
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useState } from "react";
 
+import type { ApiError } from "@/shared/types/Api";
+import { logger } from "@/shared/utils/logger";
+
 interface Props {
-  children: React.ReactNode;
-  dehydratedState?: DehydratedState | null; // for page-level hydration
+  readonly children: React.ReactNode;
+  readonly dehydratedState?: DehydratedState | null;
 }
 
 export function QueryProvider({ children, dehydratedState }: Props) {
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            staleTime: 60 * 1000, // 1 minute
-            gcTime: 5 * 60 * 1000, // 5 minutes
-            retry: 1,
-            refetchOnWindowFocus: false,
-            refetchOnMount: true,
+  const [queryClient] = useState(() => {
+    const client = new QueryClient({
+      defaultOptions: {
+        queries: {
+          staleTime: 60 * 1000,
+          gcTime: 5 * 60 * 1000,
+          retry: (failureCount, error) => {
+            const apiError = error as unknown as ApiError;
+            if (apiError.statusCode >= 400 && apiError.statusCode < 500)
+              return false;
+            return failureCount < 2;
           },
-          mutations: {
-            retry: 0,
-          },
+          refetchOnWindowFocus: false,
+          refetchOnMount: true,
         },
-      }),
-  );
+        mutations: {
+          retry: 0,
+        },
+      },
+    });
+
+    // Single place where all query errors get logged — no manual logging in hooks
+    client.getQueryCache().subscribe((event) => {
+      if (event.type === "updated" && event.action.type === "error") {
+        logger.error(event.action.error);
+      }
+    });
+
+    return client;
+  });
 
   return (
     <QueryClientProvider client={queryClient}>

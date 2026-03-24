@@ -19,10 +19,14 @@ import { committeesKeys } from "./committeesKeys";
  * @example
  * const { data: committees, isLoading } = useCommittees({ leagueId: 1 });
  */
-export function useCommittees(filters?: CommitteeFilters) {
+export function useCommittees(
+  filters?: CommitteeFilters,
+  options?: { enabled?: boolean },
+) {
   return useQuery({
     queryKey: committeesKeys.list(filters),
     queryFn: () => committeesService.getAll(filters),
+    enabled: options?.enabled ?? true,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }

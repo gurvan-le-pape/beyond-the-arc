@@ -10,14 +10,13 @@ import {
   PlayerHeader,
   PlayerMatchHistoryTable,
 } from "@/features/players/components";
-import type { Player } from "@/features/players/types/Player";
-import type { PlayerMatchHistory } from "@/features/players/types/PlayerMatchHistory";
 import { aggregateStats } from "@/features/players/utils/statsAggregation";
 import { PlayerShotChart } from "@/shared/components/charts";
 import { Footer, Header } from "@/shared/components/layouts";
+import { handleServerError } from "@/shared/utils/handleServerError";
 
 interface PlayerDetailPageProps {
-  params: Promise<{
+  readonly params: Promise<{
     locale: string;
     playerId: string;
   }>;
@@ -41,51 +40,37 @@ export default async function PlayerDetailPage({
     notFound();
   }
 
-  let player: Player;
-  let matches: PlayerMatchHistory[];
+  const [player, matches, matchEvents] = await Promise.all([
+    serverPlayersService.getById(playerId),
+    serverPlayersService.getMatches(playerId),
+    serverMatchesService.getEventsByPlayerId(playerId),
+  ]).catch(handleServerError);
 
-  try {
-    player = await serverPlayersService.getById(playerId);
-    if (!player) notFound();
+  const playerCareerStats = aggregateStats(matches.map((m) => m.player.stats));
 
-    const [matchesData, matchEvents] = await Promise.all([
-      serverPlayersService.getMatches(playerId),
-      serverMatchesService.getEventsByPlayerId(playerId),
-    ]);
-
-    matches = matchesData;
-
-    const playerCareerStats = aggregateStats(
-      matches.map((m) => m.player.stats),
-    );
-
-    return (
-      <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950">
-        <Header />
-        <main className="flex-grow py-12 px-4 sm:px-6 lg:px-8" role="main">
-          <div className="max-w-7xl mx-auto space-y-6">
-            <PlayerHeader player={player} />
-            <PlayerCareerStats stats={playerCareerStats} />
-            <PlayerMatchHistoryTable
-              player={player}
-              matches={matches}
-              maxRows={5}
-            />
-            <PlayerComparison player={player} />
-            <PlayerShotChart
-              matchEvents={matchEvents}
-              title={tPlayers("playerDetail.shotchartTitle")}
-              description={tPlayers("playerDetail.shotchartDescription")}
-              isLoading={false}
-              error={null}
-            />
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  } catch (error) {
-    console.error(`Error fetching player ${playerId}:`, error);
-    notFound();
-  }
+  return (
+    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950">
+      <Header />
+      <main className="flex-grow py-12 px-4 sm:px-6 lg:px-8" role="main">
+        <div className="max-w-7xl mx-auto space-y-6">
+          <PlayerHeader player={player} />
+          <PlayerCareerStats stats={playerCareerStats} />
+          <PlayerMatchHistoryTable
+            player={player}
+            matches={matches}
+            maxRows={5}
+          />
+          <PlayerComparison player={player} />
+          <PlayerShotChart
+            matchEvents={matchEvents}
+            title={tPlayers("playerDetail.shotchartTitle")}
+            description={tPlayers("playerDetail.shotchartDescription")}
+            isLoading={false}
+            error={null}
+          />
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
 }

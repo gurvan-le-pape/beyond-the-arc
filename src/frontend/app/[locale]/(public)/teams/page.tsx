@@ -24,7 +24,6 @@ import {
   NA,
   TEAM_TEST_IDS as TEST_IDS,
 } from "@/shared/constants";
-import { EMPTY_STATE_MESSAGES } from "@/shared/constants/errors";
 import { useEntityFilters, useEntityTable } from "@/shared/hooks";
 
 export default function TeamsPage() {
@@ -184,6 +183,13 @@ export default function TeamsPage() {
     poolProps: getDropdownFilterProps("pool"),
   });
 
+  const errorMessage = (() => {
+    if (committeeLeagueClubFiltersError)
+      return tCommon("errors.fetchLeagueOrCommittee");
+    if (teamsError) return tCommon("errors.fetchTeams");
+    return null;
+  })();
+
   return (
     <EntityListPage
       title={tTeams("label")}
@@ -215,9 +221,9 @@ export default function TeamsPage() {
           columns={columns}
           table={table}
           isLoading={teamsLoading}
-          error={committeeLeagueClubFiltersError || teamsError?.message || null}
+          error={errorMessage}
           onRowClick={handleTeamClick}
-          emptyMessage={EMPTY_STATE_MESSAGES.TEAMS}
+          emptyMessage={tCommon("emptyState.teams")}
           skeletonRowCount={10}
           testID={TEST_IDS.table}
           ariaLabel={tTeams("teamsTable.teamsList")}

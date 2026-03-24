@@ -25,7 +25,6 @@ import {
   NA,
   PLAYER_TEST_IDS as TEST_IDS,
 } from "@/shared/constants";
-import { EMPTY_STATE_MESSAGES } from "@/shared/constants/errors";
 import { useEntityFilters, useEntityTable } from "@/shared/hooks";
 import type { Pagination as PaginationType } from "@/shared/types";
 
@@ -185,6 +184,13 @@ export default function PlayersPage() {
     genderProps: getDropdownFilterProps("gender"),
   });
 
+  const errorMessage = (() => {
+    if (committeeLeagueClubFiltersError)
+      return tCommon("errors.fetchLeagueOrCommittee");
+    if (playersError) return tCommon("errors.fetchPlayers");
+    return null;
+  })();
+
   return (
     <EntityListPage
       title={tPlayers("label")}
@@ -216,11 +222,9 @@ export default function PlayersPage() {
           columns={columns}
           table={table}
           isLoading={playersLoading}
-          error={
-            committeeLeagueClubFiltersError || playersError?.message || null
-          }
+          error={errorMessage}
           onRowClick={handlePlayerClick}
-          emptyMessage={EMPTY_STATE_MESSAGES.PLAYERS}
+          emptyMessage={tCommon("emptyState.players")}
           skeletonRowCount={10}
           testID={TEST_IDS.table}
           ariaLabel={tPlayers("playersTable.playersList")}

@@ -1,6 +1,4 @@
 // src/frontend/features/competitions/hooks/useDepartmentalChampionships.ts
-"use client";
-
 import { useQueries } from "@tanstack/react-query";
 
 import { clubsService } from "@/features/organizations/clubs/api/clubs.service";
@@ -15,19 +13,34 @@ import { championshipService } from "../championships/api/championships.service"
 import { championshipsKeys } from "../championships/api/championshipsKeys";
 import type { Championship } from "../championships/types/Championship";
 
+type DepartmentalErrorKey =
+  | "errors.fetchChampionships"
+  | "errors.fetchCommittees"
+  | "errors.fetchClubs";
+
 interface UseDepartmentalChampionshipsDataResult {
   championships: Championship[];
   committee: Committee | null;
-  committees: Committee[];
   clubs: ClubBasic[];
   isLoading: boolean;
-  error: Error | null;
+  fetchError: DepartmentalErrorKey | null;
+}
+
+function getDepartmentalErrorKey(
+  championshipsError: unknown,
+  committeesError: unknown,
+  clubsError: unknown,
+): DepartmentalErrorKey | null {
+  if (championshipsError) return "errors.fetchChampionships";
+  if (committeesError) return "errors.fetchCommittees";
+  if (clubsError) return "errors.fetchClubs";
+  return null;
 }
 
 export function useDepartmentalChampionshipsData(
   committeeId: number,
 ): UseDepartmentalChampionshipsDataResult {
-  const results = useQueries({
+  const [championshipsQuery, committeesQuery, clubsQuery] = useQueries({
     queries: [
       {
         queryKey: championshipsKeys.list({
@@ -58,21 +71,24 @@ export function useDepartmentalChampionshipsData(
     ],
   });
 
-  const [championshipsQuery, committeesQuery, clubsQuery] = results;
+  const isLoading = [championshipsQuery, committeesQuery, clubsQuery].some(
+    (r) => r.isLoading,
+  );
 
-  const isLoading = results.some((r) => r.isLoading);
-  const error = results.find((r) => r.error)?.error ?? null;
+  const fetchError = getDepartmentalErrorKey(
+    championshipsQuery.error,
+    committeesQuery.error,
+    clubsQuery.error,
+  );
 
   const committees = committeesQuery.data ?? [];
-  const committee =
-    committees.find((c: Committee) => c.id === committeeId) ?? null;
+  const committee = committees.find((c) => c.id === committeeId) ?? null;
 
   return {
     championships: championshipsQuery.data ?? [],
     committee,
-    committees,
     clubs: clubsQuery.data ?? [],
     isLoading,
-    error,
+    fetchError,
   };
 }
