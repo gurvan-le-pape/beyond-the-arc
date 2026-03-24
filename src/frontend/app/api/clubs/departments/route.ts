@@ -2,6 +2,7 @@
 import { NextResponse } from "next/server";
 
 import { serverClubsService } from "@/features/organizations/clubs/api";
+import { logger } from "@/shared/utils/logger";
 
 export async function GET() {
   try {
@@ -9,7 +10,7 @@ export async function GET() {
     const departments = await serverClubsService.getAllDepartments();
     return NextResponse.json(departments);
   } catch (error) {
-    console.error("Error fetching all departments:", error);
+    logger.error(error, "GET /api/clubs/departments");
     return NextResponse.json(
       { error: "Failed to fetch departments" },
       { status: 500 },
