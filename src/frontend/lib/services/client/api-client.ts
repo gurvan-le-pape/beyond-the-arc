@@ -1,6 +1,8 @@
 // src/frontend/lib/services/client/api-client.ts
 import axios from "axios";
 
+import { parseApiError } from "@/shared/utils/parseApiError";
+
 /**
  * Axios instance for client-side API requests.
  *
@@ -44,32 +46,10 @@ apiClient.interceptors.response.use(
     }
     return response;
   },
-  (error) => {
-    // Enhanced error logging for better debugging
-    if (error.response) {
-      // Server responded with error
-      const status = error.response.status;
-      const message = error.response.data?.message || error.message;
-      const path = error.config?.url;
-      console.error("API Error:", {
-        status,
-        message,
-        path,
-        data: error.response.data,
-      });
-    } else if (error.request) {
-      // Request made but no response
-      console.error(
-        "Network Error (no response):",
-        error.message,
-        error.request,
-      );
-    } else {
-      // Something else happened
-      console.error("Request Setup Error:", error.message, error);
-    }
-
-    return Promise.reject(error);
+  // Normalise every error to ApiError — nothing downstream needs to handle raw axios errors
+  (error): Promise<never> => {
+    const apiError = parseApiError(error);
+    return Promise.reject(apiError);
   },
 );
 
