@@ -7,7 +7,6 @@ export * from "./categories";
 export * from "./chart-types";
 export * from "./competition-levels";
 export * from "./courtConstants";
-export * from "./errors";
 export * from "./event-categories";
 export * from "./event-types";
 export * from "./genders";
