@@ -135,5 +135,26 @@
     "title": "Shot Chart — {name}",
     "download": "Download chart",
     "close": "Close"
+  },
+  "errors": {
+    "fetchCommittees": "Failed to fetch committees. Please try again later.",
+    "fetchClubs": "Failed to fetch clubs. Please try again later.",
+    "fetchChampionships": "Failed to fetch championships. Please try again later.",
+    "fetchLeagueOrCommittee": "Failed to fetch leagues or committees. Please try again later.",
+    "fetchLeagues": "Failed to fetch leagues. Please try again later.",
+    "fetchMatchEvents": "Failed to fetch match events. Please try again later.",
+    "fetchMatches": "Failed to fetch matches. Please try again later.",
+    "fetchPools": "Failed to fetch pools. Please try again later.",
+    "fetchPlayers": "Failed to fetch players. Please try again later.",
+    "fetchTeams": "Failed to fetch teams. Please try again later.",
+    "unexpected": "Something went wrong. Please try again later.",
+    "unexpectedDescription": "An unexpected error occurred. Please try again or contact support if the problem persists."
+  },
+  "emptyState": {
+    "players": "No players found",
+    "teams": "No teams found",
+    "clubs": "No clubs found",
+    "matches": "No matches found",
+    "championships": "No championships found"
   }
 }
