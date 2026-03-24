@@ -23,13 +23,14 @@ import {
 } from "@/shared/utils/grouping";
 
 export default function RegionalChampionshipsPage() {
+  const tCommon = useTranslations("common");
   const tCompetitions = useTranslations("competitions");
   const router = useRouter();
   const params = useParams();
   const idStr = params?.leagueId as string;
   const id = Number.parseInt(idStr, 10);
 
-  const { championships, league, committees, isLoading, error } =
+  const { championships, league, committees, isLoading, fetchError } =
     useRegionalChampionshipsData(id);
 
   const championshipsByGender = groupChampionshipsByGender(championships);
@@ -50,10 +51,10 @@ export default function RegionalChampionshipsPage() {
         <div className="max-w-7xl mx-auto space-y-6">
           <Breadcrumb items={breadcrumbItems} />
 
-          {error && <ErrorMessage message={error.message} />}
+          {fetchError && <ErrorMessage message={tCommon(fetchError)} />}
           {isLoading && <CompetitionsPageSkeleton />}
 
-          {!error && !isLoading && (
+          {!fetchError && !isLoading && (
             <div className="space-y-6">
               {/* Competition Header */}
               <CompetitionHeader

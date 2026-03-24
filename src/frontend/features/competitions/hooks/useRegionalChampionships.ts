@@ -1,84 +1,66 @@
 // src/frontend/features/competitions/hooks/useRegionalChampionships.ts
-"use client";
 
-import { useEffect, useState } from "react";
-
-import { committeesService } from "@/features/organizations/committees/api/committees.service";
+import { useCommittees } from "@/features/organizations/committees/api/use-committees";
 import type { Committee } from "@/features/organizations/committees/types/Committees";
-import { leaguesService } from "@/features/organizations/leagues/api/leagues.service";
+import { useLeagues } from "@/features/organizations/leagues/api/use-leagues";
 import type { League } from "@/features/organizations/leagues/types/League";
 import { CompetitionLevel } from "@/shared/constants";
-import type { ApiError } from "@/shared/types";
 
-import { championshipService } from "../championships/api";
+import { useChampionships } from "../championships/api/use-championships";
 import type { Championship } from "../championships/types/Championship";
+
+type RegionalErrorKey =
+  | "errors.fetchChampionships"
+  | "errors.fetchLeagues"
+  | "errors.fetchCommittees";
 
 interface UseRegionalChampionshipsDataResult {
   championships: Championship[];
   league: League | null;
-  leagues: League[];
   committees: Committee[];
   isLoading: boolean;
-  error: ApiError | null;
+  fetchError: RegionalErrorKey | null;
+}
+
+function getRegionalErrorKey(
+  championshipsError: unknown,
+  leaguesError: unknown,
+  committeesError: unknown,
+): RegionalErrorKey | null {
+  if (championshipsError) return "errors.fetchChampionships";
+  if (leaguesError) return "errors.fetchLeagues";
+  if (committeesError) return "errors.fetchCommittees";
+  return null;
 }
 
 export function useRegionalChampionshipsData(
   leagueId: number,
 ): UseRegionalChampionshipsDataResult {
-  const [championships, setChampionships] = useState<Championship[]>([]);
-  const [league, setLeague] = useState<League | null>(null);
-  const [leagues, setLeagues] = useState<League[]>([]);
-  const [committees, setCommittees] = useState<Committee[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<ApiError | null>(null);
+  const championshipsQuery = useChampionships(
+    { level: CompetitionLevel.REGIONAL, id: leagueId },
+    { enabled: !!leagueId },
+  );
+  const leaguesQuery = useLeagues();
+  const committeesQuery = useCommittees({ leagueId }, { enabled: !!leagueId });
 
-  useEffect(() => {
-    if (!leagueId) {
-      setIsLoading(false);
-      return;
-    }
+  const isLoading = [championshipsQuery, leaguesQuery, committeesQuery].some(
+    (r) => r.isLoading,
+  );
 
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
+  const fetchError = getRegionalErrorKey(
+    championshipsQuery.error,
+    leaguesQuery.error,
+    committeesQuery.error,
+  );
 
-        const [championshipsData, leaguesData, committeesData] =
-          await Promise.all([
-            championshipService.getAll({
-              level: CompetitionLevel.REGIONAL,
-              id: leagueId,
-            }),
-            leaguesService.getAll(),
-            committeesService.getAll({ leagueId: leagueId }),
-          ]);
-
-        setChampionships(championshipsData);
-        setLeagues(leaguesData);
-        setCommittees(committeesData);
-
-        // Find the league by ID from the leagues array
-        const leagueFound =
-          leaguesData.find((l: League) => l.id === leagueId) || null;
-        setLeague(leagueFound);
-      } catch (err) {
-        setError(err as ApiError);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData().catch(() => {
-      // fetchData handles its own errors internally, ignore failures
-    });
-  }, [leagueId]);
+  const leagues = leaguesQuery.data ?? [];
+  const league = leagues.find((l) => l.id === leagueId) ?? null;
 
   return {
-    championships,
+    championships: championshipsQuery.data ?? [],
     league,
-    leagues,
-    committees,
+    committees: committeesQuery.data ?? [],
     isLoading,
-    error,
+    fetchError,
   };
 }

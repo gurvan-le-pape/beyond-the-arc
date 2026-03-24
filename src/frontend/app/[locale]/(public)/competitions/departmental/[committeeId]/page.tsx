@@ -30,7 +30,7 @@ export default function DepartmentalChampionshipsPage() {
   const idStr = params?.committeeId as string;
   const id = Number.parseInt(idStr, 10);
 
-  const { championships, committee, clubs, isLoading, error } =
+  const { championships, committee, clubs, isLoading, fetchError } =
     useDepartmentalChampionshipsData(id);
 
   const championshipsByGender = groupChampionshipsByGender(championships);
@@ -51,10 +51,10 @@ export default function DepartmentalChampionshipsPage() {
         <div className="max-w-7xl mx-auto space-y-6">
           <Breadcrumb items={breadcrumbItems} />
 
-          {error && <ErrorMessage message={error.message} />}
+          {fetchError && <ErrorMessage message={tCommon(fetchError)} />}
           {isLoading && <CompetitionsPageSkeleton />}
 
-          {!error && !isLoading && (
+          {!fetchError && !isLoading && (
             <div className="space-y-6">
               {/* Competition Header */}
               <CompetitionHeader

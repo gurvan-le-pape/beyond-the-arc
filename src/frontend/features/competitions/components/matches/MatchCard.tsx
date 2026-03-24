@@ -12,7 +12,7 @@ import { useMatchEvents } from "@/features/matches/api";
 import { matchesService } from "@/features/matches/api/matches.service";
 import { matchesKeys } from "@/features/matches/api/matchesKeys";
 import type { Match } from "@/features/matches/types/Match";
-import { Badge, Card } from "@/shared/components/ui";
+import { Badge, Card, ErrorMessage } from "@/shared/components/ui";
 import { formatMatchDateTime } from "@/shared/utils";
 import { formatNameToFileName } from "@/shared/utils/formatNameToFileName";
 
@@ -29,13 +29,15 @@ export const MatchCard: React.FC<MatchCardProps> = ({
 }) => {
   const params = useParams();
   const locale = params?.locale as string;
-  const t = useTranslations("matches");
+  const tMatches = useTranslations("matches");
+  const tCommon = useTranslations("common");
   const queryClient = useQueryClient();
 
-  const { data: matchEvents, isLoading: isLoadingEvents } = useMatchEvents(
-    match.id,
-    { enabled: expanded },
-  );
+  const {
+    data: matchEvents,
+    isLoading: isLoadingEvents,
+    error: matchEventsError,
+  } = useMatchEvents(match.id, { enabled: expanded });
 
   const handlePrefetch = () => {
     queryClient
@@ -62,7 +64,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
           {formatMatchDateTime(match.date)}
         </time>
         <Badge variant={match.overtime ? "warning" : "default"} size="sm">
-          {match.overtime ? t("finalOT") : t("final")}
+          {match.overtime ? tMatches("finalOT") : tMatches("final")}
         </Badge>
       </div>
 
@@ -168,8 +170,8 @@ export const MatchCard: React.FC<MatchCardProps> = ({
           aria-expanded={expanded}
           aria-label={
             expanded
-              ? t("matches.hideMatchDetails")
-              : t("matches.viewMatchDetails")
+              ? tMatches("hideMatchDetails")
+              : tMatches("viewMatchDetails")
           }
           className="flex-shrink-0 p-1 rounded-button hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
         >
@@ -184,11 +186,15 @@ export const MatchCard: React.FC<MatchCardProps> = ({
       {/* Expandable Section */}
       {expanded && (
         <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 animate-slide-down">
-          <MatchDetailsTable
-            match={match}
-            matchEvents={matchEvents ?? []}
-            isLoadingEvents={isLoadingEvents}
-          />
+          {matchEventsError ? (
+            <ErrorMessage message={tCommon("errors.fetchMatchEvents")} />
+          ) : (
+            <MatchDetailsTable
+              match={match}
+              matchEvents={matchEvents ?? []}
+              isLoadingEvents={isLoadingEvents}
+            />
+          )}
         </div>
       )}
     </Card>
