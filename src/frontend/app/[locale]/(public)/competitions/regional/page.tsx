@@ -25,10 +25,7 @@ export default async function RegionalListPage({
     namespace: "competitions",
   });
 
-  const leagues = await serverLeaguesService.getAll().catch((error) => {
-    console.error("Error fetching leagues:", error);
-    return [];
-  });
+  const leagues = await serverLeaguesService.getAll();
 
   const breadcrumbItems = [
     { label: tCompetitions("breadcrumb"), href: "/competitions" },

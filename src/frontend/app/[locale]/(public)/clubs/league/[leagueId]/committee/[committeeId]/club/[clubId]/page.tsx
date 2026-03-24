@@ -15,6 +15,7 @@ import { serverLeaguesService } from "@/features/organizations/leagues/api/leagu
 import { Footer, Header } from "@/shared/components/layouts";
 import { Breadcrumb } from "@/shared/components/navigation";
 import type { Gender } from "@/shared/constants";
+import { handleServerError } from "@/shared/utils/handleServerError";
 import { groupTeamsByGender } from "@/shared/utils/helpers/team-helpers";
 
 interface ClubPageProps {
@@ -65,20 +66,11 @@ export default async function ClubPage({ params }: ClubPageProps) {
     notFound();
   }
 
-  let club, committee, league;
-
-  try {
-    [club, committee, league] = await Promise.all([
-      serverClubsService.getById(clubId),
-      serverCommitteesService.getById(committeeId),
-      serverLeaguesService.getById(leagueId),
-    ]);
-
-    if (!club) notFound();
-  } catch (error) {
-    console.error(`Error fetching club ${clubId}:`, error);
-    notFound();
-  }
+  const [club, committee, league] = await Promise.all([
+    serverClubsService.getById(clubId),
+    serverCommitteesService.getById(committeeId),
+    serverLeaguesService.getById(leagueId),
+  ]).catch(handleServerError);
 
   const teamsByGender: Record<Gender, ClubTeamInfo[]> =
     club.teams && club.teams.length > 0

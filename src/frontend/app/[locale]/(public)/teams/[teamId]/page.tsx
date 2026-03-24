@@ -3,18 +3,16 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
 import { serverMatchesService } from "@/features/matches/api";
-import type { MatchEvent } from "@/features/matches/types";
 import type { PlayerMatchHistoryEntry } from "@/features/players/types/PlayerMatchHistory";
 import { serverTeamsService } from "@/features/teams/api";
 import { TeamHeader, TeamInfo, TeamRoster } from "@/features/teams/components";
 import { TeamMatchHistoryTable } from "@/features/teams/components/detail/TeamMatchHistoryTable";
-import type { TeamDetail } from "@/features/teams/types/TeamDetail";
-import type { TeamMatchHistory } from "@/features/teams/types/TeamMatchHistory";
 import { TeamShotChart } from "@/shared/components/charts";
 import { Footer, Header } from "@/shared/components/layouts";
+import { handleServerError } from "@/shared/utils/handleServerError";
 
 interface TeamDetailPageProps {
-  params: Promise<{
+  readonly params: Promise<{
     locale: string;
     teamId: string;
   }>;
@@ -33,22 +31,11 @@ export default async function TeamDetailPage({ params }: TeamDetailPageProps) {
     notFound();
   }
 
-  let team: TeamDetail, matches: TeamMatchHistory[], matchEvents: MatchEvent[];
-
-  try {
-    team = await serverTeamsService.getById(teamId);
-    if (!team) {
-      notFound();
-    }
-
-    [matches, matchEvents] = await Promise.all([
-      serverTeamsService.getMatches(teamId),
-      serverMatchesService.getEventsByTeamId(teamId),
-    ]);
-  } catch (error) {
-    console.error(`Error fetching team ${teamId}:`, error);
-    notFound();
-  }
+  const [team, matches, matchEvents] = await Promise.all([
+    serverTeamsService.getById(teamId),
+    serverTeamsService.getMatches(teamId),
+    serverMatchesService.getEventsByTeamId(teamId),
+  ]).catch(handleServerError);
 
   // Calculate team season stats from all players
   const teamStats = team.players?.reduce(

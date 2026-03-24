@@ -25,10 +25,7 @@ export default async function DepartmentalListPage({
     namespace: "competitions",
   });
 
-  const committees = await serverCommitteesService.getAll().catch((error) => {
-    console.error("Error fetching committees:", error);
-    return [];
-  });
+  const committees = await serverCommitteesService.getAll();
 
   const breadcrumbItems = [
     { label: tCompetitions("breadcrumb"), href: "/competitions" },

@@ -13,6 +13,7 @@ import { serverLeaguesService } from "@/features/organizations/leagues/api/leagu
 import { Footer, Header } from "@/shared/components/layouts";
 import { Breadcrumb } from "@/shared/components/navigation";
 import { ViewLevel } from "@/shared/constants";
+import { handleServerError } from "@/shared/utils/handleServerError";
 
 interface ClubsCommitteesPageProps {
   readonly params: Promise<{
@@ -49,21 +50,10 @@ export default async function ClubsCommitteesPage({
     notFound();
   }
 
-  let league, departments;
-
-  try {
-    [league, departments] = await Promise.all([
-      serverLeaguesService.getById(leagueId),
-      serverClubsService.getStatsByDepartment(leagueId),
-    ]);
-
-    if (!league) {
-      notFound();
-    }
-  } catch (error) {
-    console.error(`Error fetching committees for league ${leagueId}:`, error);
-    notFound();
-  }
+  const [league, departments] = await Promise.all([
+    serverLeaguesService.getById(leagueId),
+    serverClubsService.getStatsByDepartment(leagueId),
+  ]).catch(handleServerError);
 
   const breadcrumbItems = getBreadcrumbItems(
     { league },

@@ -14,6 +14,7 @@ import { serverLeaguesService } from "@/features/organizations/leagues/api/leagu
 import { Footer, Header } from "@/shared/components/layouts";
 import { Breadcrumb } from "@/shared/components/navigation";
 import { ViewLevel } from "@/shared/constants";
+import { handleServerError } from "@/shared/utils/handleServerError";
 
 interface ClubsPageProps {
   readonly params: Promise<{
@@ -58,25 +59,11 @@ export default async function ClubsPage({ params }: ClubsPageProps) {
     notFound();
   }
 
-  let clubs, committee, league;
-
-  try {
-    [clubs, committee, league] = await Promise.all([
-      serverClubsService.getAll({ committeeId: committeeId }),
-      serverCommitteesService.getById(committeeId),
-      serverLeaguesService.getById(leagueId),
-    ]);
-
-    if (!clubs || clubs.length === 0) {
-      notFound();
-    }
-  } catch (error) {
-    console.error(
-      `Error fetching clubs for league ${leagueId}, committee ${committeeId}:`,
-      error,
-    );
-    notFound();
-  }
+  const [clubs, committee, league] = await Promise.all([
+    serverClubsService.getAll({ committeeId }),
+    serverCommitteesService.getById(committeeId),
+    serverLeaguesService.getById(leagueId),
+  ]).catch(handleServerError);
 
   const breadcrumbItems = getBreadcrumbItems(
     { league, committee },

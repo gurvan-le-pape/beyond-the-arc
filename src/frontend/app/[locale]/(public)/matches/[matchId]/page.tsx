@@ -22,6 +22,7 @@ import type {
 import { buildTeam } from "@/features/matches/utils/buildTeam";
 import { Footer, Header } from "@/shared/components/layouts";
 import { Role } from "@/shared/constants";
+import { handleServerError } from "@/shared/utils/handleServerError";
 
 interface MatchSummaryPageProps {
   readonly params: Promise<{
@@ -46,21 +47,10 @@ export default async function MatchSummaryPage({
     notFound();
   }
 
-  let match, playerMatchStats;
-
-  try {
-    match = await serverMatchesService.getById(matchId);
-    if (!match) {
-      notFound();
-    }
-
-    playerMatchStats = await serverMatchesService.getPlayerStatsByMatchId(
-      matchId,
-    );
-  } catch (error) {
-    console.error(`Error fetching match ${matchId}:`, error);
-    notFound();
-  }
+  const [match, playerMatchStats] = await Promise.all([
+    serverMatchesService.getById(matchId),
+    serverMatchesService.getPlayerStatsByMatchId(matchId),
+  ]).catch(handleServerError);
 
   const { homeTeamId, awayTeamId, stats } = playerMatchStats;
   const homeTeam = buildTeam(stats, homeTeamId);
