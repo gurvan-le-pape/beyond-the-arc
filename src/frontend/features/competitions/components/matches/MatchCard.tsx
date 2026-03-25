@@ -2,15 +2,12 @@
 "use client";
 
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
-import { useQueryClient } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import React from "react";
 
 import { MatchDetailsTable } from "@/features/competitions/components";
-import { useMatchEvents } from "@/features/matches/api";
-import { matchesService } from "@/features/matches/api/matches.service";
-import { matchesKeys } from "@/features/matches/api/matchesKeys";
+import { useMatchEvents, usePrefetchMatchEvents } from "@/features/matches/api";
 import type { Match } from "@/features/matches/types/Match";
 import { Badge, Card, ErrorMessage } from "@/shared/components/ui";
 import { formatMatchDateTime } from "@/shared/utils";
@@ -31,7 +28,6 @@ export const MatchCard: React.FC<MatchCardProps> = ({
   const locale = params?.locale as string;
   const tMatches = useTranslations("matches");
   const tCommon = useTranslations("common");
-  const queryClient = useQueryClient();
 
   const {
     data: matchEvents,
@@ -39,17 +35,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
     error: matchEventsError,
   } = useMatchEvents(match.id, { enabled: expanded });
 
-  const handlePrefetch = () => {
-    queryClient
-      .prefetchQuery({
-        queryKey: matchesKeys.events(match.id),
-        queryFn: () => matchesService.getEventsByMatchId(match.id),
-        staleTime: 2 * 60 * 1000,
-      })
-      .catch(() => {
-        // prefetch is best-effort, ignore failures
-      });
-  };
+  const prefetchMatchEvents = usePrefetchMatchEvents();
 
   const isHomeWinner = match.homeTeamScore > match.awayTeamScore;
   const isAwayWinner = match.awayTeamScore > match.homeTeamScore;
@@ -166,7 +152,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
         <button
           type="button"
           onClick={() => onToggleExpand(match.id)}
-          onMouseEnter={handlePrefetch}
+          onMouseEnter={() => prefetchMatchEvents(match.id)}
           aria-expanded={expanded}
           aria-label={
             expanded
