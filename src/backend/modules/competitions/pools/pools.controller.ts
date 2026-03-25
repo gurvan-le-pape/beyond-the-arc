@@ -89,7 +89,7 @@ export class PoolsController {
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: "List of pools successfully retrieved",
+    description: "List of pools successfully retrieved (may be empty)",
     type: [PoolResponseDto],
     schema: {
       example: {
@@ -123,19 +123,6 @@ export class PoolsController {
         message: ["championshipId must be a valid number string"],
         error: "BadRequestException",
         path: "/pools?championshipId=abc",
-        timestamp: "2024-02-05T10:00:00Z",
-      },
-    },
-  })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: "No pools found for given championship",
-    schema: {
-      example: {
-        statusCode: 404,
-        message: "No pools found for championship ID 999",
-        error: "NotFoundException",
-        path: "/pools?championshipId=999",
         timestamp: "2024-02-05T10:00:00Z",
       },
     },
