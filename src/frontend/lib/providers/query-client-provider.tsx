@@ -10,7 +10,7 @@ import {
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useState } from "react";
 
-import type { ApiError } from "@/shared/types/Api";
+import { ApiError } from "@/shared/types/Api";
 import { logger } from "@/shared/utils/logger";
 
 interface Props {
@@ -26,8 +26,11 @@ export function QueryProvider({ children, dehydratedState }: Props) {
           staleTime: 60 * 1000,
           gcTime: 5 * 60 * 1000,
           retry: (failureCount, error) => {
-            const apiError = error as unknown as ApiError;
-            if (apiError.statusCode >= 400 && apiError.statusCode < 500)
+            if (
+              error instanceof ApiError &&
+              error.statusCode >= 400 &&
+              error.statusCode < 500
+            )
               return false;
             return failureCount < 2;
           },
@@ -43,7 +46,7 @@ export function QueryProvider({ children, dehydratedState }: Props) {
     // Single place where all query errors get logged — no manual logging in hooks
     client.getQueryCache().subscribe((event) => {
       if (event.type === "updated" && event.action.type === "error") {
-        logger.error(event.action.error);
+        logger.error(event.action.error, "QueryCache: query error");
       }
     });
 
