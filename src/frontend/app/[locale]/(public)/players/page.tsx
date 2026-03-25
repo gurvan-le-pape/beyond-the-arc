@@ -3,15 +3,14 @@
 
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
-import useSWR from "swr";
 
 import { CompetitionLevelFilters } from "@/features/competitions/components";
 import { useCommitteeLeagueClubFilters } from "@/features/competitions/hooks";
-import { playersService } from "@/features/players/api";
+import { usePlayers } from "@/features/players/api/use-players";
 import { getPlayersTableColumns } from "@/features/players/components";
 import { usePlayersTableFilters } from "@/features/players/hooks";
 import type { Player } from "@/features/players/types/Player";
-import { teamsService } from "@/features/teams/api/teams.service";
+import { useTeamFilterValues } from "@/features/teams/api/use-teams";
 import { useRouter } from "@/navigation";
 import {
   EntityListPage,
@@ -47,17 +46,6 @@ export default function PlayersPage() {
 
   // Table column filters state for TanStack Table
   const [columnFilters, setColumnFilters] = useState<any[]>([]);
-
-  const [numbers, setNumbers] = useState<number[]>([]);
-  const [teamNumbers, setTeamNumbers] = useState<number[]>([]);
-
-  // Fetch team filter values (numbers, poolLetters, divisions)
-  const { data: teamFilterValues } = useSWR(
-    ["teams/filter-values", committeeId, leagueId],
-    () => teamsService.getFilterValues({ committeeId, leagueId }),
-    { revalidateOnFocus: false, dedupingInterval: 30000 },
-  );
-
   // Global filters
   const [level, setLevel] = useState<CompetitionLevel>(CompetitionLevel.ALL);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -79,34 +67,32 @@ export default function PlayersPage() {
     gender: { type: "dropdown", initial: "" },
   });
 
+  // Fetch team filter values (numbers, poolLetters, divisions)
+  const { data: teamFilterValues } = useTeamFilterValues({
+    committeeId,
+    leagueId,
+  });
+
   // SWR for players data
   const {
     data: playersData,
     error: playersError,
     isLoading: playersLoading,
-  } = useSWR(
-    ["players", level, committeeId, leagueId, filters, currentPage, pageSize],
-    () =>
-      playersService.getAll({
-        level: level === CompetitionLevel.ALL ? undefined : level,
-        committeeId: committeeId || undefined,
-        leagueId: leagueId || undefined,
-        number: filters.number ? Number(filters.number) : undefined,
-        name: filters.name || undefined,
-        teamNumber: filters.team ? Number(filters.team) : undefined,
-        clubId: filters.club ? Number(filters.club) : undefined,
-        category: filters.category || undefined,
-        gender: filters.gender || undefined,
-        page: currentPage,
-        limit: pageSize,
-      }),
-    {
-      revalidateOnFocus: false,
-      dedupingInterval: 30000,
-    },
-  );
+  } = usePlayers({
+    level: level === CompetitionLevel.ALL ? undefined : level,
+    committeeId: committeeId || undefined,
+    leagueId: leagueId || undefined,
+    number: filters.number ? Number(filters.number) : undefined,
+    name: filters.name || undefined,
+    teamNumber: filters.team ? Number(filters.team) : undefined,
+    clubId: filters.club ? Number(filters.club) : undefined,
+    category: filters.category || undefined,
+    gender: filters.gender || undefined,
+    page: currentPage,
+    limit: pageSize,
+  });
 
-  const players = playersData?.items || [];
+  const players = playersData?.items ?? [];
   const pagination: PaginationType | null = playersData
     ? {
         total: playersData.total,
@@ -115,17 +101,6 @@ export default function PlayersPage() {
         totalPages: playersData.totalPages,
       }
     : null;
-
-  // Use team filter values from the dedicated endpoint
-  useEffect(() => {
-    if (teamFilterValues) {
-      setNumbers(teamFilterValues.numbers ?? []);
-      setTeamNumbers(teamFilterValues.numbers ?? []);
-    } else {
-      setNumbers([]);
-      setTeamNumbers([]);
-    }
-  }, [teamFilterValues]);
 
   useEffect(() => {
     resetEntityFilters();
@@ -166,16 +141,13 @@ export default function PlayersPage() {
     setColumnFilters,
   });
 
-  const categories = CATEGORY_LIST;
-  const genders = GENDER_LIST;
-
-  // Use the shared filter config/hook for players table
+  // Use the shared filter config/hook for teams table
   const { filterableDropdownKeys, filterRenderers } = usePlayersTableFilters({
-    numbers,
-    teamNumbers,
+    numbers: teamFilterValues?.numbers ?? [],
+    teamNumbers: teamFilterValues?.numbers ?? [],
     clubs,
-    categories,
-    genders,
+    categories: CATEGORY_LIST,
+    genders: GENDER_LIST,
     clubProps: getSearchableDropdownFilterProps("club"),
     nameProps: getInputFilterProps("name"),
     numberProps: getDropdownFilterProps("number"),

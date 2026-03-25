@@ -4,16 +4,14 @@
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import useSWR from "swr";
 
-import { championshipService } from "@/features/competitions/championships/api";
-import type { Championship } from "@/features/competitions/championships/types/Championship";
-import { poolsService } from "@/features/competitions/pools/api/pools.service";
-import { matchesService } from "@/features/matches/api";
+import { useChampionships } from "@/features/competitions/championships/api";
+import { usePoolsByChampionshipIds } from "@/features/competitions/pools/api/use-pools";
+import { useMatches } from "@/features/matches/api/use-matches";
 import { MatchesCard, MatchesFilters } from "@/features/matches/components";
 import type { Match } from "@/features/matches/types/Match";
-import { committeesService } from "@/features/organizations/committees/api/committees.service";
-import { leaguesService } from "@/features/organizations/leagues/api/leagues.service";
+import { useCommittees } from "@/features/organizations/committees/api/use-committees";
+import { useLeagues } from "@/features/organizations/leagues/api/use-leagues";
 import { useRouter } from "@/navigation";
 import { Pagination } from "@/shared/components/entity";
 import { Footer, Header } from "@/shared/components/layouts";
@@ -27,25 +25,11 @@ import type { Gender } from "@/shared/constants";
 import { Category, CompetitionLevel } from "@/shared/constants";
 import type { Pagination as PaginationType } from "@/shared/types";
 
-type ErrorKey =
-  | "fetchCommittees"
-  | "fetchLeagues"
-  | "fetchChampionships"
-  | "fetchPools"
-  | "fetchMatches";
-
 export default function MatchesPage() {
   const router = useRouter();
   const tMatches = useTranslations("matches");
   const tCommon = useTranslations("common");
-
   // State
-  // SWR will manage matches and pagination
-  const [committees, setCommittees] = useState<any[]>([]);
-  const [leagues, setLeagues] = useState<any[]>([]);
-  const [championships, setChampionships] = useState<Championship[]>([]);
-  const [pools, setPools] = useState<any[]>([]);
-
   // Filters
   const [level, setLevel] = useState<CompetitionLevel | undefined>(undefined);
   const [division, setDivision] = useState<number | undefined>(undefined);
@@ -62,64 +46,57 @@ export default function MatchesPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [matchesPerPage, setMatchesPerPage] = useState(50);
 
-  // Error for auxiliary fetches
-  const [error, setError] = useState<ErrorKey | null>(null);
-
   // Fetch committees and leagues
-  useEffect(() => {
-    committeesService
-      .getAll()
-      .then(setCommittees)
-      .catch(() => setError("fetchCommittees"));
+  const { data: committees = [] } = useCommittees();
+  const { data: leagues = [] } = useLeagues();
 
-    leaguesService
-      .getAll()
-      .then(setLeagues)
-      .catch(() => setError("fetchLeagues"));
-  }, []);
+  const isDepartmental =
+    level === CompetitionLevel.DEPARTMENTAL && committeeId !== undefined;
+  const isRegional =
+    level === CompetitionLevel.REGIONAL && leagueId !== undefined;
 
-  // SWR for matches data
+  let championshipsFilter: { level: CompetitionLevel; id: number } | undefined;
+  if (isDepartmental) {
+    championshipsFilter = {
+      level: CompetitionLevel.DEPARTMENTAL,
+      id: committeeId,
+    };
+  } else if (isRegional) {
+    championshipsFilter = { level: CompetitionLevel.REGIONAL, id: leagueId };
+  }
+
+  const { data: championships = [] } = useChampionships(championshipsFilter, {
+    enabled: isDepartmental || isRegional,
+  });
+
+  const championshipIdsForDivision = championships
+    .filter((c) => String(c.division) === String(division))
+    .map((c) => c.id);
+
+  const { data: pools = [] } = usePoolsByChampionshipIds(
+    division ? championshipIdsForDivision : [],
+  );
+
   const {
     data: matchesData,
     error: matchesError,
     isLoading: matchesLoading,
-  } = useSWR(
-    [
-      "matches",
-      level,
-      division,
-      committeeId,
-      leagueId,
-      category,
-      gender,
-      search,
-      poolId,
-      matchday,
-      dateFilter,
-      currentPage,
-      matchesPerPage,
-    ],
-    () =>
-      matchesService.getAll({
-        page: currentPage,
-        limit: matchesPerPage,
-        level: level || undefined,
-        division: division || undefined,
-        committeeId: committeeId,
-        leagueId: leagueId,
-        poolId: poolId,
-        matchday: matchday || undefined,
-        category: category || undefined,
-        gender: gender || undefined,
-        date: dateFilter || undefined,
-        search: search || undefined,
-      }),
-    {
-      revalidateOnFocus: false,
-      dedupingInterval: 30000,
-    },
-  );
-  const matches = matchesData?.items || [];
+  } = useMatches({
+    page: currentPage,
+    limit: matchesPerPage,
+    level: level ?? undefined,
+    division: division ?? undefined,
+    committeeId,
+    leagueId,
+    poolId,
+    matchday: matchday ?? undefined,
+    category: category ?? undefined,
+    gender: gender ?? undefined,
+    date: dateFilter || undefined,
+    search: search || undefined,
+  });
+
+  const matches = matchesData?.items ?? [];
   const pagination: PaginationType | null = matchesData
     ? {
         total: matchesData.total,
@@ -129,70 +106,6 @@ export default function MatchesPage() {
       }
     : null;
 
-  // Fetch championships when level and location are selected
-  useEffect(() => {
-    const loadChampionships = async () => {
-      if (
-        (level === CompetitionLevel.DEPARTMENTAL &&
-          committeeId !== undefined) ||
-        (level === CompetitionLevel.REGIONAL && leagueId !== undefined)
-      ) {
-        const id =
-          level === CompetitionLevel.DEPARTMENTAL ? committeeId : leagueId;
-        try {
-          if (id !== undefined) {
-            const data = await championshipService.getAll({
-              level: level,
-              id: id,
-            });
-            setChampionships(data);
-          }
-        } catch {
-          setError("fetchChampionships");
-          setChampionships([]);
-        }
-        return;
-      }
-      setChampionships([]);
-      setDivision(undefined);
-    };
-    loadChampionships().catch(() => {
-      // loadChampionships handles its own errors internally, ignore failures
-    });
-  }, [level, committeeId, leagueId]);
-
-  // Fetch pools when division is selected
-  useEffect(() => {
-    const loadPools = async () => {
-      if (division && championships.length > 0) {
-        try {
-          const divisionChampionships = championships.filter(
-            (championship: Championship) =>
-              String(championship.division) === String(division),
-          );
-
-          const poolsPromises = divisionChampionships.map(
-            (championship: Championship) =>
-              poolsService.getByChampionshipId(championship.id),
-          );
-          const poolsArrays = await Promise.all(poolsPromises);
-          const allPools = poolsArrays.flat();
-          setPools(allPools);
-        } catch {
-          setError("fetchPools");
-          setPools([]);
-        }
-      } else {
-        setPools([]);
-        setPoolId(undefined);
-      }
-    };
-    loadPools().catch(() => {
-      // loadPools handles its own errors internally, ignore failures
-    });
-  }, [division, championships]);
-
-  // Reset to first page when filters change
   useEffect(() => {
     setCurrentPage(1);
   }, [
@@ -241,13 +154,7 @@ export default function MatchesPage() {
     setCurrentPage(1);
   };
 
-  let errorMessage: string | null = null;
-
-  if (matchesError) {
-    errorMessage = tCommon("errors.fetchMatches");
-  } else if (error) {
-    errorMessage = tCommon(`errors.${error}`);
-  }
+  const errorMessage = matchesError ? tCommon("errors.fetchMatches") : null;
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950">
