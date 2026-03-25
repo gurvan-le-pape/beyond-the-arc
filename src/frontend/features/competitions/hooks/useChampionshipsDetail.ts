@@ -179,11 +179,11 @@ export function useChampionshipsDetail(
     matchQueries.some((q) => q.isLoading);
 
   const error =
-    organizationError?.message ||
-    championshipError?.message ||
-    poolsError?.message ||
-    leaderboardQueries.find((q) => q.error)?.error?.message ||
-    matchQueries.find((q) => q.error)?.error?.message ||
+    organizationError ??
+    championshipError ??
+    poolsError ??
+    leaderboardQueries.find((q) => q.error)?.error ??
+    matchQueries.find((q) => q.error)?.error ??
     null;
 
   return {

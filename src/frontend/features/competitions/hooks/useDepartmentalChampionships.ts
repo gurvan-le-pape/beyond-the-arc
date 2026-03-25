@@ -1,16 +1,12 @@
 // src/frontend/features/competitions/hooks/useDepartmentalChampionships.ts
-import { useQueries } from "@tanstack/react-query";
 
-import { clubsService } from "@/features/organizations/clubs/api/clubs.service";
-import { clubsKeys } from "@/features/organizations/clubs/api/clubsKeys";
+import { useClubs } from "@/features/organizations/clubs/api";
 import type { ClubBasic } from "@/features/organizations/clubs/types/ClubBasic";
-import { committeesService } from "@/features/organizations/committees/api/committees.service";
-import { committeesKeys } from "@/features/organizations/committees/api/committeesKeys";
+import { useCommittees } from "@/features/organizations/committees/api";
 import type { Committee } from "@/features/organizations/committees/types/Committees";
 import { CompetitionLevel } from "@/shared/constants";
 
-import { championshipService } from "../championships/api/championships.service";
-import { championshipsKeys } from "../championships/api/championshipsKeys";
+import { useChampionships } from "../championships/api";
 import type { Championship } from "../championships/types/Championship";
 
 type DepartmentalErrorKey =
@@ -40,36 +36,21 @@ function getDepartmentalErrorKey(
 export function useDepartmentalChampionshipsData(
   committeeId: number,
 ): UseDepartmentalChampionshipsDataResult {
-  const [championshipsQuery, committeesQuery, clubsQuery] = useQueries({
-    queries: [
-      {
-        queryKey: championshipsKeys.list({
-          level: CompetitionLevel.DEPARTMENTAL,
-          id: committeeId,
-        }),
-        queryFn: () =>
-          championshipService.getAll({
-            level: CompetitionLevel.DEPARTMENTAL,
-            id: committeeId,
-          }),
-      },
-      {
-        queryKey: committeesKeys.lists(),
-        queryFn: () => committeesService.getAll(),
-      },
-      {
-        queryKey: clubsKeys.list({
-          level: CompetitionLevel.DEPARTMENTAL,
-          committeeId,
-        }),
-        queryFn: () =>
-          clubsService.getAll({
-            level: CompetitionLevel.DEPARTMENTAL,
-            committeeId,
-          }),
-      },
-    ],
-  });
+  // Fetch championships
+  const championshipsQuery = useChampionships(
+    { level: CompetitionLevel.DEPARTMENTAL, id: committeeId },
+    { enabled: !!committeeId },
+  );
+  // Fetch committees
+  const committeesQuery = useCommittees();
+  // Fetch clubs
+  const clubsQuery = useClubs(
+    {
+      level: CompetitionLevel.DEPARTMENTAL,
+      committeeId,
+    },
+    { enabled: !!committeeId },
+  );
 
   const isLoading = [championshipsQuery, committeesQuery, clubsQuery].some(
     (r) => r.isLoading,

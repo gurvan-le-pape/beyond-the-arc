@@ -55,25 +55,12 @@ export class PoolsService {
         orderBy: { letter: "asc" },
       });
 
-      if (pools.length === 0) {
-        this.logger.warn(
-          `[findPoolsByChampionshipId] No pools found for championship ID: ${championshipId}`,
-        );
-        throw new NotFoundException(
-          `No pools found for championship ID ${championshipId}`,
-        );
-      }
-
       this.logger.log(
         `[findPoolsByChampionshipId] Found ${pools.length} pools for championship ID: ${championshipId}`,
       );
 
       return pools.map((pool) => this.mapToDto(pool));
     } catch (error) {
-      // Re-throw if it's already a NestJS exception
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
       this.logger.error(
         `[findPoolsByChampionshipId] Failed to fetch pools for championship ID ${championshipId}`,
         error,

@@ -81,19 +81,16 @@ describe("PoolsService", () => {
       });
     });
 
-    it("should throw NotFoundException when no pools found", async () => {
+    it("should return empty array when no pools found", async () => {
       // Arrange
       const championshipId = 999;
       mockPrismaService.pools.findMany.mockResolvedValue([]);
 
-      // Act & Assert
-      await expect(
-        service.findPoolsByChampionshipId(championshipId),
-      ).rejects.toThrow(NotFoundException);
+      // Act
+      const result = await service.findPoolsByChampionshipId(championshipId);
 
-      await expect(
-        service.findPoolsByChampionshipId(championshipId),
-      ).rejects.toThrow("No pools found for championship ID 999");
+      // Assert
+      expect(result).toEqual([]);
     });
 
     it("should propagate database errors", async () => {

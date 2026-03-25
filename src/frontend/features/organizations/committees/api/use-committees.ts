@@ -1,6 +1,9 @@
 // src/frontend/features/organizations/committees/api/use-committees.ts
 import { useQuery } from "@tanstack/react-query";
 
+import type { ApiError } from "@/shared/types/Api";
+
+import type { Committee } from "../types/Committees";
 import type { CommitteeFilters } from "../types/CommitteesFilters";
 import { committeesService } from "./committees.service";
 import { committeesKeys } from "./committeesKeys";
@@ -14,6 +17,7 @@ import { committeesKeys } from "./committeesKeys";
  * - Loading and error states
  *
  * @param filters - Optional filter criteria
+ * @param options - Additional query options
  * @returns React Query result with committees data
  *
  * @example
@@ -23,11 +27,11 @@ export function useCommittees(
   filters?: CommitteeFilters,
   options?: { enabled?: boolean },
 ) {
-  return useQuery({
+  return useQuery<Committee[], ApiError>({
     queryKey: committeesKeys.list(filters),
     queryFn: () => committeesService.getAll(filters),
     enabled: options?.enabled ?? true,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000,
   });
 }
 
@@ -42,7 +46,7 @@ export function useCommittees(
  * const { data: committee, isLoading } = useCommittee(1);
  */
 export function useCommittee(id: number, options?: { enabled?: boolean }) {
-  return useQuery({
+  return useQuery<Committee, ApiError>({
     queryKey: committeesKeys.detail(id),
     queryFn: () => committeesService.getById(id),
     enabled: options?.enabled ?? !!id,
@@ -64,8 +68,8 @@ export function useCommitteesByIds(
   ids: number[],
   options?: { enabled?: boolean },
 ) {
-  return useQuery({
-    queryKey: [...committeesKeys.lists(), { ids }],
+  return useQuery<Committee[], ApiError>({
+    queryKey: committeesKeys.byIds(ids),
     queryFn: () => committeesService.getByIds(ids),
     enabled: options?.enabled ?? ids.length > 0,
     staleTime: 5 * 60 * 1000,

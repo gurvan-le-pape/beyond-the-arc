@@ -1,6 +1,9 @@
 // src/frontend/features/organizations/leagues/api/use-leagues.ts
 import { useQuery } from "@tanstack/react-query";
 
+import type { ApiError } from "@/shared/types/Api";
+
+import type { League } from "../types/League";
 import { leaguesService } from "./leagues.service";
 import { leaguesKeys } from "./leaguesKeys";
 
@@ -18,10 +21,10 @@ import { leaguesKeys } from "./leaguesKeys";
  * const { data: leagues, isLoading } = useLeagues();
  */
 export function useLeagues() {
-  return useQuery({
+  return useQuery<League[], ApiError>({
     queryKey: leaguesKeys.all,
     queryFn: () => leaguesService.getAll(),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000,
   });
 }
 
@@ -36,7 +39,7 @@ export function useLeagues() {
  * const { data: league, isLoading } = useLeague(1);
  */
 export function useLeague(id: number, options?: { enabled?: boolean }) {
-  return useQuery({
+  return useQuery<League, ApiError>({
     queryKey: leaguesKeys.detail(id),
     queryFn: () => leaguesService.getById(id),
     enabled: options?.enabled ?? !!id,
@@ -58,8 +61,8 @@ export function useLeaguesByIds(
   ids: number[],
   options?: { enabled?: boolean },
 ) {
-  return useQuery({
-    queryKey: [...leaguesKeys.lists(), { ids }],
+  return useQuery<League[], ApiError>({
+    queryKey: leaguesKeys.byIds(ids),
     queryFn: () => leaguesService.getByIds(ids),
     enabled: options?.enabled ?? ids.length > 0,
     staleTime: 5 * 60 * 1000,

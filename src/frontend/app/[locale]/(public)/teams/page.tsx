@@ -3,11 +3,10 @@
 
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
-import useSWR from "swr";
 
 import CompetitionLevelFilters from "@/features/competitions/components/filters/CompetitionLevelFilters";
 import { useCommitteeLeagueClubFilters } from "@/features/competitions/hooks";
-import { teamsService } from "@/features/teams/api";
+import { useTeamFilterValues, useTeams } from "@/features/teams/api/use-teams";
 import { getTeamsTableColumns } from "@/features/teams/components";
 import { useTeamsTableFilters } from "@/features/teams/hooks";
 import type { Team } from "@/features/teams/types/Team";
@@ -45,23 +44,12 @@ export default function TeamsPage() {
 
   // Table column filters state for TanStack Table
   const [columnFilters, setColumnFilters] = useState<any[]>([]);
-  const [numbers, setNumbers] = useState<number[]>([]);
-  const [divisions, setDivisions] = useState<number[]>([]);
-  const [poolLetters, setPoolLetters] = useState<string[]>([]);
-
-  // Fetch team filter values (numbers, poolLetters, divisions)
-  const { data: teamFilterValues } = useSWR(
-    ["teams/filter-values", committeeId, leagueId],
-    () => teamsService.getFilterValues({ committeeId, leagueId }),
-    { revalidateOnFocus: false, dedupingInterval: 30000 },
-  );
-
   // Global filters
   const [level, setLevel] = useState<CompetitionLevel>(CompetitionLevel.ALL);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(50);
 
-  // Use the new generic filter abstraction
+  // Use the generic filter abstraction
   const {
     filters,
     getDropdownFilterProps,
@@ -76,33 +64,32 @@ export default function TeamsPage() {
     pool: { type: "dropdown", initial: "" },
   });
 
+  // Fetch team filter values (numbers, poolLetters, divisions)
+  const { data: teamFilterValues } = useTeamFilterValues({
+    committeeId,
+    leagueId,
+  });
+
   // SWR for teams data
   const {
     data: teamsData,
     error: teamsError,
     isLoading: teamsLoading,
-  } = useSWR(
-    ["teams", level, committeeId, leagueId, filters, currentPage, pageSize],
-    () =>
-      teamsService.getAll({
-        level: level === CompetitionLevel.ALL ? undefined : level,
-        committeeId: committeeId || undefined,
-        leagueId: leagueId || undefined,
-        number: filters.number ? Number(filters.number) : undefined,
-        clubId: filters.club ? Number(filters.club) : undefined,
-        category: filters.category || undefined,
-        gender: filters.gender || undefined,
-        division: filters.division || undefined,
-        poolLetter: filters.pool || undefined,
-        page: currentPage,
-        limit: pageSize,
-      }),
-    {
-      revalidateOnFocus: false,
-      dedupingInterval: 30000,
-    },
-  );
-  const teams = teamsData?.items || [];
+  } = useTeams({
+    level: level === CompetitionLevel.ALL ? undefined : level,
+    committeeId: committeeId || undefined,
+    leagueId: leagueId || undefined,
+    number: filters.number ? Number(filters.number) : undefined,
+    clubId: filters.club ? Number(filters.club) : undefined,
+    category: filters.category || undefined,
+    gender: filters.gender || undefined,
+    division: filters.division || undefined,
+    poolLetter: filters.pool || undefined,
+    page: currentPage,
+    limit: pageSize,
+  });
+
+  const teams = teamsData?.items ?? [];
   const pagination = teamsData
     ? {
         total: teamsData.total,
@@ -111,19 +98,6 @@ export default function TeamsPage() {
         totalPages: teamsData.totalPages,
       }
     : null;
-
-  // Use team filter values from the dedicated endpoint
-  useEffect(() => {
-    if (teamFilterValues) {
-      setNumbers(teamFilterValues.numbers ?? []);
-      setDivisions(teamFilterValues.divisions ?? []);
-      setPoolLetters(teamFilterValues.poolLetters ?? []);
-    } else {
-      setNumbers([]);
-      setDivisions([]);
-      setPoolLetters([]);
-    }
-  }, [teamFilterValues]);
 
   useEffect(() => {
     resetEntityFilters();
@@ -164,17 +138,14 @@ export default function TeamsPage() {
     setColumnFilters,
   });
 
-  const categories = CATEGORY_LIST;
-  const genders = GENDER_LIST;
-
   // Use the shared filter config/hook for teams table
   const { filterableDropdownKeys, filterRenderers } = useTeamsTableFilters({
-    numbers,
+    numbers: teamFilterValues?.numbers ?? [],
     clubs,
-    categories,
-    genders,
-    divisions,
-    poolLetters,
+    categories: CATEGORY_LIST,
+    genders: GENDER_LIST,
+    divisions: teamFilterValues?.divisions ?? [],
+    poolLetters: teamFilterValues?.poolLetters ?? [],
     numberProps: getDropdownFilterProps("number"),
     clubProps: getSearchableDropdownFilterProps("club"),
     categoryProps: getDropdownFilterProps("category"),

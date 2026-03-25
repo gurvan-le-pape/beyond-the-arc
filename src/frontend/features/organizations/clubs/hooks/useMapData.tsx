@@ -1,13 +1,20 @@
 // src/frontend/features/organizations/clubs/hooks/useMapData.tsx
 import { useMemo } from "react";
-import useSWR from "swr";
 
+import {
+  useDepartmentsGeoJson,
+  useRegionsGeoJson,
+} from "@/features/geography/api/use-geometries";
+
+import {
+  useAllClubs,
+  useClubStatsByDepartment,
+  useClubStatsByRegion,
+} from "../api/use-clubs";
 import type { ClubBasic } from "../types/ClubBasic";
 import type { ClubStatsByDepartment } from "../types/ClubStatsByDepartement";
 import type { ClubStatsByRegion } from "../types/ClubStatsByRegion";
 import type { GeoJsonData } from "../types/Map";
-
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 interface UseMapDataReturn {
   regions: ClubStatsByRegion[];
@@ -21,62 +28,28 @@ interface UseMapDataReturn {
 }
 
 /**
- * Custom hook to fetch and manage all map-related data
- * Fetches: regions, departments, clubs, and GeoJSON boundaries
- * Provides: club counting helpers for regions and departments
+ * Custom hook to fetch and manage all map-related data.
+ * Fetches: regions, departments, clubs, and GeoJSON boundaries.
+ * Provides: club counting helpers for regions and departments.
  */
 export function useMapData(
   initialRegions: ClubStatsByRegion[],
 ): UseMapDataReturn {
   // Fetch regions
-  const { data: regions = initialRegions, error: regionsError } = useSWR<
-    ClubStatsByRegion[]
-  >("/api/clubs/regions", fetcher, {
-    fallbackData: initialRegions,
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false,
-  });
+  const { data: regions = initialRegions, error: regionsError } =
+    useClubStatsByRegion({ initialData: initialRegions });
 
   // Fetch all departments
-  const { data: allDepartments = [], error: departmentsError } = useSWR<
-    ClubStatsByDepartment[]
-  >("/api/clubs/departments", fetcher, {
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false,
-  });
+  const { data: allDepartments = [], error: departmentsError } =
+    useClubStatsByDepartment();
 
   // Fetch all clubs
-  const { data: allClubs = [], error: clubsError } = useSWR<ClubBasic[]>(
-    "/api/clubs/all",
-    fetcher,
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-    },
-  );
+  const { data: allClubs = [], error: clubsError } = useAllClubs();
 
   // Fetch GeoJSON data
-  const { data: regionsGeoJson = null } = useSWR<GeoJsonData>(
-    "/geojson/regions.json",
-    fetcher,
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-      revalidateIfStale: false,
-    },
-  );
+  const { data: regionsGeoJson = null } = useRegionsGeoJson();
+  const { data: departmentsGeoJson = null } = useDepartmentsGeoJson();
 
-  const { data: departmentsGeoJson = null } = useSWR<GeoJsonData>(
-    "/geojson/departments.json",
-    fetcher,
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-      revalidateIfStale: false,
-    },
-  );
-
-  // Compute error state — returns a translation key, resolved by the call site
   const error = useMemo(() => {
     if (regionsError) return "errorLoadingRegions";
     if (departmentsError) return "errorLoadingDepartments";
@@ -105,11 +78,11 @@ export function useMapData(
 
       countsByRegion.set(
         leagueId,
-        (countsByRegion.get(leagueId) || 0) + clubsInDept.length,
+        (countsByRegion.get(leagueId) ?? 0) + clubsInDept.length,
       );
     });
 
-    return (regionId: number) => countsByRegion.get(regionId) || 0;
+    return (regionId: number) => countsByRegion.get(regionId) ?? 0;
   }, [allDepartments, allClubs]);
 
   /**
@@ -125,12 +98,11 @@ export function useMapData(
     allClubs.forEach((club) => {
       const deptId = club.committeeId;
       if (!deptId) return;
-
-      countsByDept.set(deptId, (countsByDept.get(deptId) || 0) + 1);
+      countsByDept.set(deptId, (countsByDept.get(deptId) ?? 0) + 1);
     });
 
     return (departmentId: string | number) =>
-      countsByDept.get(departmentId) || 0;
+      countsByDept.get(departmentId) ?? 0;
   }, [allClubs]);
 
   return {

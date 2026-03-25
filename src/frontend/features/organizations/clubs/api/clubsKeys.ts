@@ -7,4 +7,8 @@ export const clubsKeys = {
   list: (filters?: ClubFilters) => [...clubsKeys.lists(), filters] as const,
   details: () => [...clubsKeys.all, "detail"] as const,
   detail: (id: number) => [...clubsKeys.details(), id] as const,
+  statsByRegion: () => [...clubsKeys.all, "stats", "by-region"] as const,
+  statsByDepartment: () =>
+    [...clubsKeys.all, "stats", "by-department"] as const,
+  allClubs: () => [...clubsKeys.all, "all"] as const,
 };

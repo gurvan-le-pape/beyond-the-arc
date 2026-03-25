@@ -4,7 +4,6 @@
  */
 
 export * from "./useBreadcrumbs";
-export * from "./useClubsNavigation";
 export * from "./useFilters";
 export * from "./useMapData";
 export * from "./useSearch";

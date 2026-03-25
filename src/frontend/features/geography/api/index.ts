@@ -4,3 +4,5 @@
  */
 
 export * from "./geometries.service";
+export * from "./geometriesKeys";
+export * from "./use-geometries";
