@@ -6,4 +6,4 @@
 export * from "./players.server";
 export * from "./players.service";
 export * from "./playersKeys";
-export * from "./usePlayers";
+export * from "./use-players";

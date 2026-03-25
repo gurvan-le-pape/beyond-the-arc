@@ -4,7 +4,7 @@
 import { useTranslations } from "next-intl";
 import React, { useState } from "react";
 
-import { usePlayerMatches } from "@/features/players/api/usePlayers";
+import { usePlayerMatches } from "@/features/players/api/use-players";
 import type { Player } from "@/features/players/types/Player";
 import { aggregateStats } from "@/features/players/utils/statsAggregation";
 import { Button, Section } from "@/shared/components/ui";

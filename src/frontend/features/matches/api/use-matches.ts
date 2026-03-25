@@ -1,7 +1,15 @@
 // src/frontend/features/matches/api/use-matches.ts
-import { useQueries, useQuery } from "@tanstack/react-query";
+import type { UseQueryResult } from "@tanstack/react-query";
+import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 
+import type { ApiError } from "@/shared/types/Api";
+
+import type { Match } from "../types/Match";
+import type { MatchDetail } from "../types/MatchDetail";
+import type { MatchesPaginatedResponse } from "../types/MatchesPaginatedResponse";
+import type { MatchEvent } from "../types/MatchEvent";
 import type { MatchFilters } from "../types/MatchFilters";
+import type { MatchPlayerStatsResponse } from "../types/MatchPlayerStats";
 import { matchesService } from "./matches.service";
 import { matchesKeys } from "./matchesKeys";
 
@@ -24,10 +32,10 @@ import { matchesKeys } from "./matchesKeys";
  * });
  */
 export function useMatches(filters?: MatchFilters) {
-  return useQuery({
+  return useQuery<MatchesPaginatedResponse, ApiError>({
     queryKey: matchesKeys.list(filters),
     queryFn: () => matchesService.getAll(filters),
-    staleTime: 2 * 60 * 1000, // 2 minutes (matches update frequently)
+    staleTime: 2 * 60 * 1000,
   });
 }
 
@@ -42,7 +50,7 @@ export function useMatches(filters?: MatchFilters) {
  * const { data: match, isLoading } = useMatch(12345);
  */
 export function useMatch(id: number, options?: { enabled?: boolean }) {
-  return useQuery({
+  return useQuery<MatchDetail, ApiError>({
     queryKey: matchesKeys.detail(id),
     queryFn: () => matchesService.getById(id),
     enabled: options?.enabled ?? !!id,
@@ -64,7 +72,7 @@ export function useMatchesByPool(
   poolId: number,
   options?: { enabled?: boolean },
 ) {
-  return useQuery({
+  return useQuery<Match[], ApiError>({
     queryKey: matchesKeys.byPool(poolId),
     queryFn: () => matchesService.getByPoolId(poolId),
     enabled: options?.enabled ?? !!poolId,
@@ -88,10 +96,10 @@ export function useMatchesByPool(
  * const data = matchQueries[0]?.data;
  */
 export function useMatchesByPools(poolIds: number[]) {
-  return useQueries({
+  return useQueries<UseQueryResult<Match[], ApiError>[]>({
     queries: poolIds.map((poolId) => ({
       queryKey: matchesKeys.byPool(poolId),
-      queryFn: () => matchesService.getByPoolId(poolId),
+      queryFn: (): Promise<Match[]> => matchesService.getByPoolId(poolId),
       enabled: !!poolId,
       staleTime: 2 * 60 * 1000,
     })),
@@ -112,7 +120,7 @@ export function useMatchesByChampionship(
   championshipId: number,
   options?: { enabled?: boolean },
 ) {
-  return useQuery({
+  return useQuery<Match[], ApiError>({
     queryKey: matchesKeys.byChampionship(championshipId),
     queryFn: () => matchesService.getByChampionshipId(championshipId),
     enabled: options?.enabled ?? !!championshipId,
@@ -134,7 +142,7 @@ export function useMatchEvents(
   matchId: number,
   options?: { enabled?: boolean },
 ) {
-  return useQuery({
+  return useQuery<MatchEvent[], ApiError>({
     queryKey: matchesKeys.events(matchId),
     queryFn: () => matchesService.getEventsByMatchId(matchId),
     enabled: options?.enabled ?? !!matchId,
@@ -156,10 +164,33 @@ export function useMatchPlayerStats(
   matchId: number,
   options?: { enabled?: boolean },
 ) {
-  return useQuery({
+  return useQuery<MatchPlayerStatsResponse, ApiError>({
     queryKey: matchesKeys.playerStats(matchId),
     queryFn: () => matchesService.getPlayerStatsByMatchId(matchId),
     enabled: options?.enabled ?? !!matchId,
     staleTime: 2 * 60 * 1000,
   });
+}
+
+/**
+ * Hook returning a prefetch function for match events.
+ * Call the returned function on hover to warm the cache before expansion.
+ *
+ * @returns Prefetch function that accepts a match ID
+ *
+ * @example
+ * const prefetchMatchEvents = usePrefetchMatchEvents();
+ * <button onMouseEnter={() => prefetchMatchEvents(match.id)} />
+ */
+export function usePrefetchMatchEvents() {
+  const queryClient = useQueryClient();
+  return (matchId: number) => {
+    queryClient
+      .prefetchQuery({
+        queryKey: matchesKeys.events(matchId),
+        queryFn: () => matchesService.getEventsByMatchId(matchId),
+        staleTime: 2 * 60 * 1000,
+      })
+      .catch(() => {});
+  };
 }

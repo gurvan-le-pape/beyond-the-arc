@@ -2,8 +2,11 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { championshipsKeys } from "@/features/competitions/championships/api/championshipsKeys";
+import type { ApiError } from "@/shared/types/Api";
 
+import type { Championship } from "../types/Championship";
 import type { ChampionshipFilters } from "../types/ChampionshipFilters";
+import type { Division } from "../types/Division";
 import { championshipService } from "./championships.service";
 
 /**
@@ -22,15 +25,14 @@ import { championshipService } from "./championships.service";
  * const { data: championships, isLoading } = useChampionships({ level: 'national' });
  */
 export function useChampionships(
-  filters?: ChampionshipFilters,
+  filters: ChampionshipFilters | undefined,
   options?: { enabled?: boolean },
 ) {
-  return useQuery({
+  return useQuery<Championship[], ApiError>({
     queryKey: championshipsKeys.list(filters),
-    queryFn: () =>
-      championshipService.getAll(filters ?? { level: "regional", id: 0 }),
-    enabled: options?.enabled ?? true,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    queryFn: () => championshipService.getAll(filters!),
+    enabled: options?.enabled ?? !!filters,
+    staleTime: 5 * 60 * 1000,
   });
 }
 
@@ -47,20 +49,18 @@ export function useChampionships(
  * @returns React Query result with championship data
  *
  * @example
- * const { data: championship, isLoading } = useChampionship('123');
+ * const { data: championship, isLoading } = useChampionship(123);
  *
  * @example
  * // Conditionally enabled
- * const { data } = useChampionship(id, {
- *   enabled: !!id && id !== '0',
- * });
+ * const { data } = useChampionship(id, { enabled: !!id });
  */
 export function useChampionship(id: number, options?: { enabled?: boolean }) {
-  return useQuery({
+  return useQuery<Championship, ApiError>({
     queryKey: championshipsKeys.detail(id),
     queryFn: () => championshipService.getById(id),
     enabled: options?.enabled ?? !!id,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000,
   });
 }
 
@@ -86,9 +86,9 @@ export function useChampionship(id: number, options?: { enabled?: boolean }) {
  * );
  */
 export function useDivisions() {
-  return useQuery({
+  return useQuery<Division[], ApiError>({
     queryKey: championshipsKeys.divisions(),
     queryFn: () => championshipService.getDivisions(),
-    staleTime: 10 * 60 * 1000, // 10 minutes (divisions rarely change)
+    staleTime: 10 * 60 * 1000,
   });
 }

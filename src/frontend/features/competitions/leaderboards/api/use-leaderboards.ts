@@ -1,8 +1,11 @@
 // src/frontend/features/competitions/leaderboards/api/use-leaderboards.ts
+import type { UseQueryResult } from "@tanstack/react-query";
 import { useQueries, useQuery } from "@tanstack/react-query";
 
 import { leaderboardsKeys } from "@/features/competitions/leaderboards/api/leaderboardsKeys";
+import type { ApiError } from "@/shared/types/Api";
 
+import type { Leaderboard } from "../types/Leaderboard";
 import type { LeaderboardFilters } from "../types/LeaderboardFilters";
 import { leaderboardsService } from "./leaderboards.service";
 
@@ -32,11 +35,11 @@ export function useLeaderboard(
   filters?: LeaderboardFilters,
   options?: { enabled?: boolean },
 ) {
-  return useQuery({
+  return useQuery<Leaderboard[], ApiError>({
     queryKey: leaderboardsKeys.list(filters),
     queryFn: () => leaderboardsService.getAll(filters),
     enabled: options?.enabled ?? true,
-    staleTime: 2 * 60 * 1000, // 2 minutes (leaderboards change frequently)
+    staleTime: 2 * 60 * 1000,
   });
 }
 
@@ -56,12 +59,12 @@ export function useLeaderboard(
  * const data = leaderboardQueries[0]?.data;
  */
 export function useLeaderboards(filters: LeaderboardFilters[]) {
-  return useQueries({
+  return useQueries<UseQueryResult<Leaderboard[], ApiError>[]>({
     queries: filters.map((filter) => ({
       queryKey: leaderboardsKeys.list(filter),
-      queryFn: () => leaderboardsService.getAll(filter),
+      queryFn: (): Promise<Leaderboard[]> => leaderboardsService.getAll(filter),
       enabled: !!filter.poolId,
-      staleTime: 2 * 60 * 1000, // 2 minutes (leaderboards change frequently)
+      staleTime: 2 * 60 * 1000,
     })),
   });
 }
