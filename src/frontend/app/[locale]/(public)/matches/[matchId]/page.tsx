@@ -53,8 +53,8 @@ export default async function MatchSummaryPage({
   ]).catch(handleServerError);
 
   const { homeTeamId, awayTeamId, stats } = playerMatchStats;
-  const homeTeam = buildTeam(stats, homeTeamId);
-  const awayTeam = buildTeam(stats, awayTeamId);
+  const homeTeam = buildTeam(stats, homeTeamId, match.homeTeam.club);
+  const awayTeam = buildTeam(stats, awayTeamId, match.awayTeam.club);
 
   if (!homeTeam || !awayTeam) {
     notFound();

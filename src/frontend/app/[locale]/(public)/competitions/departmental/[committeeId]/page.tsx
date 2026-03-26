@@ -75,7 +75,11 @@ export default function DepartmentalChampionshipsPage() {
                 items={clubs}
                 title={tCommon("sectionTitles.clubs")}
                 searchPlaceholder={tCompetitions("carousel.searchPlaceholder")}
-                onItemClick={(club) => router.push(`/club/${club.id}`)}
+                onItemClick={(club) =>
+                  router.push(
+                    `/clubs/league/${club.leagueId}/committee/${club.committeeId}/club/${club.id}`,
+                  )
+                }
               />
 
               {/* Championships */}
