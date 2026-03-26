@@ -57,6 +57,10 @@ const MATCH_LIST_SELECT = {
         select: {
           id: true,
           name: true,
+          committeeId: true,
+          committee: {
+            select: { leagueId: true },
+          },
         },
       },
     },
@@ -69,6 +73,10 @@ const MATCH_LIST_SELECT = {
         select: {
           id: true,
           name: true,
+          committeeId: true,
+          committee: {
+            select: { leagueId: true },
+          },
         },
       },
     },
@@ -433,6 +441,8 @@ export class MatchesService {
         club: {
           id: match.homeTeam.club.id,
           name: match.homeTeam.club.name,
+          committeeId: match.homeTeam.club.committeeId,
+          leagueId: match.homeTeam.club.committee.leagueId,
         },
       },
       awayTeam: {
@@ -441,6 +451,8 @@ export class MatchesService {
         club: {
           id: match.awayTeam.club.id,
           name: match.awayTeam.club.name,
+          committeeId: match.awayTeam.club.committeeId,
+          leagueId: match.awayTeam.club.committee.leagueId,
         },
       },
       matchEvents: [],
