@@ -6,6 +6,8 @@ export interface TeamInfo {
   name: string;
   clubId: number | null;
   clubName: string | null;
+  committeeId: number | null;
+  leagueId: number | null;
   score: number;
 }
 

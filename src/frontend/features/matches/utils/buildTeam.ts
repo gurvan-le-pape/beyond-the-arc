@@ -3,6 +3,7 @@ import type { MatchPlayerWithStats } from "@/features/matches/types/MatchPlayerS
 import type { TeamInfoExtended } from "@/features/teams/types/TeamInfo";
 import { NA } from "@/shared/constants";
 
+import type { MatchClubRef } from "../types";
 import { getTeamScore } from "./getTeamScore";
 
 function calculateTeamMatchStats(players: MatchPlayerWithStats[]) {
@@ -98,16 +99,19 @@ function calculateTeamMatchStats(players: MatchPlayerWithStats[]) {
 export function buildTeam(
   allPlayers: MatchPlayerWithStats[],
   teamId: number,
+  club: MatchClubRef,
 ): TeamInfoExtended | null {
   const teamPlayers = allPlayers.filter((p) => p.player.team?.id === teamId);
   if (teamPlayers.length === 0) return null;
 
-  const team = teamPlayers[0].player.team!;
+  const team = teamPlayers[0].player.team;
   return {
     id: team.id,
-    name: `${team.club?.name ?? ""} - ${team.number ?? ""}`,
-    clubId: team.club?.id ?? null,
-    clubName: team.club?.name ?? null,
+    name: `${club.name ?? ""} - ${team.number ?? ""}`,
+    clubId: club.id,
+    clubName: club.name,
+    committeeId: club.committeeId,
+    leagueId: club.leagueId,
     players: teamPlayers,
     score: getTeamScore(teamPlayers),
     stats: calculateTeamMatchStats(teamPlayers),
