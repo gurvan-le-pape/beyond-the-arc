@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/components/carousel/SearchableChipsList.tsx
+// src/frontend/features/competitions/components/detail/SearchableChipsList.tsx
 "use client";
 
 import { useTranslations } from "next-intl";
@@ -12,21 +12,21 @@ interface SearchableChipListItem {
   name: string;
 }
 
-interface SearchableChipListProps {
-  readonly items: SearchableChipListItem[];
+interface SearchableChipListProps<T extends SearchableChipListItem> {
+  readonly items: T[];
   readonly title: string;
   readonly searchPlaceholder: string;
-  readonly onItemClick: (item: SearchableChipListItem) => void;
+  readonly onItemClick: (item: T) => void;
   readonly showSearch?: boolean;
 }
 
-export function SearchableChipList({
+export function SearchableChipList<T extends SearchableChipListItem>({
   items,
   title,
   searchPlaceholder,
   onItemClick,
   showSearch = true,
-}: SearchableChipListProps) {
+}: SearchableChipListProps<T>) {
   const tCompetitions = useTranslations("competitions");
   const tCommon = useTranslations("common");
 

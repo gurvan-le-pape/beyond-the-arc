@@ -58,12 +58,22 @@ describe("MatchesService", () => {
     homeTeam: {
       id: 1,
       number: 1,
-      club: { name: "Club Home" },
+      club: {
+        id: 1,
+        name: "Club Home",
+        committeeId: 1,
+        committee: { leagueId: 1 },
+      },
     },
     awayTeam: {
       id: 2,
       number: 1,
-      club: { name: "Club Away" },
+      club: {
+        id: 2,
+        name: "Club Away",
+        committeeId: 2,
+        committee: { leagueId: 1 },
+      },
     },
   };
 
@@ -105,12 +115,22 @@ describe("MatchesService", () => {
     homeTeam: {
       id: 1,
       number: 1,
-      club: { name: "Club Home" },
+      club: {
+        id: 1,
+        name: "Club Home",
+        committeeId: 1,
+        committee: { leagueId: 1 },
+      },
     },
     awayTeam: {
       id: 2,
       number: 1,
-      club: { name: "Club Away" },
+      club: {
+        id: 2,
+        name: "Club Away",
+        committeeId: 2,
+        committee: { leagueId: 1 },
+      },
     },
     pool: {
       id: 1,
@@ -689,6 +709,33 @@ describe("MatchesService", () => {
           }),
         }),
       );
+    });
+
+    it("should include committeeId and leagueId on club", async () => {
+      mockPrismaService.matches.findUnique.mockResolvedValue(
+        mockMatchDetailResult,
+      );
+
+      const result = await service.findMatchById(1);
+
+      expect(result.homeTeam.club.committeeId).toBe(1);
+      expect(result.homeTeam.club.leagueId).toBe(1);
+      expect(result.awayTeam.club.committeeId).toBe(2);
+      expect(result.awayTeam.club.leagueId).toBe(1);
+    });
+
+    it("should include committeeId and leagueId on club", async () => {
+      mockPrismaService.matches.findMany.mockResolvedValue([
+        mockMatchListResult,
+      ]);
+      mockPrismaService.matches.count.mockResolvedValue(1);
+
+      const result = await service.findAllMatches({ page: 1, limit: 1 });
+
+      expect(result.items[0].homeTeam.club.committeeId).toBe(1);
+      expect(result.items[0].homeTeam.club.leagueId).toBe(1);
+      expect(result.items[0].awayTeam.club.committeeId).toBe(2);
+      expect(result.items[0].awayTeam.club.leagueId).toBe(1);
     });
   });
 });

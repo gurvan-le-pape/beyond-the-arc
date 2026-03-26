@@ -2,6 +2,8 @@
 export interface MatchClubRef {
   id: number;
   name: string | null;
+  committeeId: number;
+  leagueId: number;
 }
 
 export interface MatchTeamRef {

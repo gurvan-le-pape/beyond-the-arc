@@ -55,6 +55,8 @@ export class MatchResponseDto {
     club: {
       id: number;
       name: string | null;
+      committeeId: number;
+      leagueId: number;
     };
   };
 
@@ -68,6 +70,8 @@ export class MatchResponseDto {
     club: {
       id: number;
       name: string | null;
+      committeeId: number;
+      leagueId: number;
     };
   };
 
