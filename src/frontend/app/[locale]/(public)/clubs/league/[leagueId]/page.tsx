@@ -11,6 +11,7 @@ import {
 import { getBreadcrumbItems } from "@/features/organizations/clubs/utils";
 import { serverLeaguesService } from "@/features/organizations/leagues/api/leagues.server";
 import { Footer, Header } from "@/shared/components/layouts";
+import { PageLayout } from "@/shared/components/layouts/PageLayout";
 import { Breadcrumb } from "@/shared/components/navigation";
 import { ViewLevel } from "@/shared/constants";
 import { handleServerError } from "@/shared/utils/handleServerError";
@@ -61,26 +62,18 @@ export default async function ClubsCommitteesPage({
   );
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950">
-      <Header />
+    <PageLayout>
+      <MapViewButton label={t("mapView")} />
 
-      <main className="flex-grow py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto space-y-6">
-          <MapViewButton label={t("mapView")} />
+      <Breadcrumb items={breadcrumbItems} />
 
-          <Breadcrumb items={breadcrumbItems} />
+      <TitleSection
+        viewLevel={ViewLevel.DEPARTMENT}
+        selectedLeague={league}
+        selectedCommittee={null}
+      />
 
-          <TitleSection
-            viewLevel={ViewLevel.DEPARTMENT}
-            selectedLeague={league}
-            selectedCommittee={null}
-          />
-
-          <DepartmentsGrid departments={departments} leagueId={league.id} />
-        </div>
-      </main>
-
-      <Footer />
-    </div>
+      <DepartmentsGrid departments={departments} leagueId={league.id} />
+    </PageLayout>
   );
 }

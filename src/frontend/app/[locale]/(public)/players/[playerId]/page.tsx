@@ -12,7 +12,7 @@ import {
 } from "@/features/players/components";
 import { aggregateStats } from "@/features/players/utils/statsAggregation";
 import { PlayerShotChart } from "@/shared/components/charts";
-import { Footer, Header } from "@/shared/components/layouts";
+import { PageLayout } from "@/shared/components/layouts/PageLayout";
 import { handleServerError } from "@/shared/utils/handleServerError";
 
 interface PlayerDetailPageProps {
@@ -49,28 +49,27 @@ export default async function PlayerDetailPage({
   const playerCareerStats = aggregateStats(matches.map((m) => m.player.stats));
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950">
-      <Header />
-      <main className="flex-grow py-12 px-4 sm:px-6 lg:px-8" role="main">
-        <div className="max-w-7xl mx-auto space-y-6">
-          <PlayerHeader player={player} />
-          <PlayerCareerStats stats={playerCareerStats} />
-          <PlayerMatchHistoryTable
-            player={player}
-            matches={matches}
-            maxRows={5}
-          />
-          <PlayerComparison player={player} />
-          <PlayerShotChart
-            matchEvents={matchEvents}
-            title={tPlayers("playerDetail.shotchartTitle")}
-            description={tPlayers("playerDetail.shotchartDescription")}
-            isLoading={false}
-            error={null}
-          />
-        </div>
-      </main>
-      <Footer />
-    </div>
+    <PageLayout>
+      {/* Player Header */}
+      <PlayerHeader player={player} />
+
+      {/* Career Stats */}
+      <PlayerCareerStats stats={playerCareerStats} />
+
+      {/* Match History */}
+      <PlayerMatchHistoryTable player={player} matches={matches} maxRows={5} />
+
+      {/* Player Comparison */}
+      <PlayerComparison player={player} />
+
+      {/* Player Shot Chart Hotspots */}
+      <PlayerShotChart
+        matchEvents={matchEvents}
+        title={tPlayers("playerDetail.shotchartTitle")}
+        description={tPlayers("playerDetail.shotchartDescription")}
+        isLoading={false}
+        error={null}
+      />
+    </PageLayout>
   );
 }

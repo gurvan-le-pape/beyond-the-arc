@@ -17,6 +17,7 @@ import {
   EntityTable,
   Pagination,
 } from "@/shared/components/entity";
+import { PageLayout } from "@/shared/components/layouts/PageLayout";
 import {
   CATEGORY_LIST,
   CompetitionLevel,
@@ -164,67 +165,69 @@ export default function PlayersPage() {
   })();
 
   return (
-    <EntityListPage
-      title={tPlayers("label")}
-      filters={
-        <CompetitionLevelFilters
-          level={level}
-          setLevel={(value) => {
-            setLevel(value);
-            setCommitteeId(undefined);
-            setLeagueId(undefined);
-            setCurrentPage(1);
-          }}
-          committeeId={committeeId}
-          setCommitteeId={setCommitteeId}
-          leagueId={leagueId}
-          setLeagueId={setLeagueId}
-          committees={committees}
-          leagues={leagues}
-          onReset={() => {
-            setLevel(CompetitionLevel.ALL);
-            resetEntityFilters();
-            resetCommitteeLeagueClubFilters();
-            setCurrentPage(1);
-          }}
-        />
-      }
-      table={
-        <EntityTable
-          columns={columns}
-          table={table}
-          isLoading={playersLoading}
-          error={errorMessage}
-          onRowClick={handlePlayerClick}
-          emptyMessage={tCommon("emptyState.players")}
-          skeletonRowCount={10}
-          testID={TEST_IDS.table}
-          ariaLabel={tPlayers("playersTable.playersList")}
-          rowAriaLabel={(row: any) =>
-            tCommon("player.seePlayer", { name: row.name })
-          }
-          rowTestId={TEST_IDS.playerRow}
-          cellTestId={TEST_IDS.cell}
-          filterableDropdownKeys={filterableDropdownKeys}
-          filterRenderers={filterRenderers}
-          headerTestId={TEST_IDS.header}
-          errorRowTestId={TEST_IDS.errorRow}
-          retryButtonTestId={TEST_IDS.retryButton}
-          emptyRowTestId={TEST_IDS.emptyRow}
-        />
-      }
-      pagination={
-        <Pagination
-          pagination={pagination}
-          pageSize={pageSize}
-          setPageSize={(size: number) => {
-            setPageSize(size);
-            setCurrentPage(1);
-          }}
-          setPageIndex={(index) => table.setPageIndex(index)}
-          label={tPlayers("players")}
-        />
-      }
-    />
+    <PageLayout>
+      <EntityListPage
+        title={tPlayers("label")}
+        filters={
+          <CompetitionLevelFilters
+            level={level}
+            setLevel={(value) => {
+              setLevel(value);
+              setCommitteeId(undefined);
+              setLeagueId(undefined);
+              setCurrentPage(1);
+            }}
+            committeeId={committeeId}
+            setCommitteeId={setCommitteeId}
+            leagueId={leagueId}
+            setLeagueId={setLeagueId}
+            committees={committees}
+            leagues={leagues}
+            onReset={() => {
+              setLevel(CompetitionLevel.ALL);
+              resetEntityFilters();
+              resetCommitteeLeagueClubFilters();
+              setCurrentPage(1);
+            }}
+          />
+        }
+        table={
+          <EntityTable
+            columns={columns}
+            table={table}
+            isLoading={playersLoading}
+            error={errorMessage}
+            onRowClick={handlePlayerClick}
+            emptyMessage={tCommon("emptyState.players")}
+            skeletonRowCount={10}
+            testID={TEST_IDS.table}
+            ariaLabel={tPlayers("playersTable.playersList")}
+            rowAriaLabel={(row: any) =>
+              tCommon("player.seePlayer", { name: row.name })
+            }
+            rowTestId={TEST_IDS.playerRow}
+            cellTestId={TEST_IDS.cell}
+            filterableDropdownKeys={filterableDropdownKeys}
+            filterRenderers={filterRenderers}
+            headerTestId={TEST_IDS.header}
+            errorRowTestId={TEST_IDS.errorRow}
+            retryButtonTestId={TEST_IDS.retryButton}
+            emptyRowTestId={TEST_IDS.emptyRow}
+          />
+        }
+        pagination={
+          <Pagination
+            pagination={pagination}
+            pageSize={pageSize}
+            setPageSize={(size: number) => {
+              setPageSize(size);
+              setCurrentPage(1);
+            }}
+            setPageIndex={(index) => table.setPageIndex(index)}
+            label={tPlayers("players")}
+          />
+        }
+      />
+    </PageLayout>
   );
 }

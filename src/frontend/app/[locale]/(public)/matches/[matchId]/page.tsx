@@ -20,7 +20,7 @@ import type {
   MatchEventPlayer,
 } from "@/features/matches/types/MatchEvent";
 import { buildTeam } from "@/features/matches/utils/buildTeam";
-import { Footer, Header } from "@/shared/components/layouts";
+import { PageLayout } from "@/shared/components/layouts/PageLayout";
 import { Role } from "@/shared/constants";
 import { handleServerError } from "@/shared/utils/handleServerError";
 
@@ -93,70 +93,58 @@ export default async function MatchSummaryPage({
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950">
-      <Header />
+    <PageLayout>
+      <MatchScoreCard homeTeam={homeTeam} awayTeam={awayTeam} />
 
-      <main className="flex-grow py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto space-y-6">
-          <h1 className="text-2xl md:text-4xl font-bold text-primary-600 dark:text-primary-400">
-            {tMatches("matchSummary.title")}
-          </h1>
+      <Tabs defaultValue="stats">
+        <TabsList>
+          <TabsTrigger value="stats">
+            {tMatches("matchSummary.tabs.teamStats")}
+          </TabsTrigger>
+          <TabsTrigger value="home">{homeTeam.name}</TabsTrigger>
+          <TabsTrigger value="away">{awayTeam.name}</TabsTrigger>
+          <TabsTrigger value="events">
+            {tMatches("matchSummary.tabs.matchEvents")}
+          </TabsTrigger>
+        </TabsList>
 
-          <MatchScoreCard homeTeam={homeTeam} awayTeam={awayTeam} />
+        <TabsContent value="stats">
+          <TeamStatsComparison
+            homeStats={homeTeam.stats}
+            awayStats={awayTeam.stats}
+            categories={statCategories}
+            title={tMatches("matchSummary.teamMatchStatsTitle")}
+          />
+        </TabsContent>
 
-          <Tabs defaultValue="stats">
-            <TabsList>
-              <TabsTrigger value="stats">
-                {tMatches("matchSummary.tabs.teamStats")}
-              </TabsTrigger>
-              <TabsTrigger value="home">{homeTeam.name}</TabsTrigger>
-              <TabsTrigger value="away">{awayTeam.name}</TabsTrigger>
-              <TabsTrigger value="events">
-                {tMatches("matchSummary.tabs.matchEvents")}
-              </TabsTrigger>
-            </TabsList>
+        <TabsContent value="home">
+          <PlayerMatchStats
+            team={homeTeam}
+            isHomeTeam={true}
+            opponent={awayTeam}
+            playerShots={shotEventsByPlayer}
+          />
+        </TabsContent>
 
-            <TabsContent value="stats">
-              <TeamStatsComparison
-                homeStats={homeTeam.stats}
-                awayStats={awayTeam.stats}
-                categories={statCategories}
-                title={tMatches("matchSummary.teamMatchStatsTitle")}
-              />
-            </TabsContent>
+        <TabsContent value="away">
+          <PlayerMatchStats
+            team={awayTeam}
+            isHomeTeam={false}
+            opponent={homeTeam}
+            playerShots={shotEventsByPlayer}
+          />
+        </TabsContent>
 
-            <TabsContent value="home">
-              <PlayerMatchStats
-                team={homeTeam}
-                isHomeTeam={true}
-                opponent={awayTeam}
-                playerShots={shotEventsByPlayer}
-              />
-            </TabsContent>
-
-            <TabsContent value="away">
-              <PlayerMatchStats
-                team={awayTeam}
-                isHomeTeam={false}
-                opponent={homeTeam}
-                playerShots={shotEventsByPlayer}
-              />
-            </TabsContent>
-
-            <TabsContent value="events">
-              <MatchEvents
-                events={match.matchEvents}
-                homeTeam={homeTeam}
-                awayTeam={awayTeam}
-                matchDate={match.date}
-              />
-            </TabsContent>
-          </Tabs>
-        </div>
-      </main>
-
-      <Footer />
-    </div>
+        <TabsContent value="events">
+          <MatchEvents
+            events={match.matchEvents}
+            homeTeam={homeTeam}
+            awayTeam={awayTeam}
+            matchDate={match.date}
+          />
+        </TabsContent>
+      </Tabs>
+    </PageLayout>
   );
 }
 

@@ -7,7 +7,7 @@ import {
   RegionsGrid,
   TitleSection,
 } from "@/features/organizations/clubs/components";
-import { Footer, Header } from "@/shared/components/layouts";
+import { PageLayout } from "@/shared/components/layouts/PageLayout";
 import { Breadcrumb } from "@/shared/components/navigation";
 import { ViewLevel } from "@/shared/constants/view-levels";
 
@@ -36,27 +36,19 @@ export default async function ClubsRegionsPage({
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950">
-      <Header />
+    <PageLayout>
+      <MapViewButton label={t("mapView")} />
 
-      <main className="flex-grow py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto space-y-6">
-          <MapViewButton label={t("mapView")} />
+      <Breadcrumb items={breadcrumbItems} />
 
-          <Breadcrumb items={breadcrumbItems} />
+      <TitleSection
+        viewLevel={ViewLevel.REGION}
+        selectedLeague={null}
+        selectedCommittee={null}
+      />
 
-          <TitleSection
-            viewLevel={ViewLevel.REGION}
-            selectedLeague={null}
-            selectedCommittee={null}
-          />
-
-          <RegionsGrid regions={regions} />
-        </div>
-      </main>
-
-      <Footer />
-    </div>
+      <RegionsGrid regions={regions} />
+    </PageLayout>
   );
 }
 

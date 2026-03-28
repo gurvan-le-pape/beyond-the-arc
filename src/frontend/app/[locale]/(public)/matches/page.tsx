@@ -14,7 +14,7 @@ import { useCommittees } from "@/features/organizations/committees/api/use-commi
 import { useLeagues } from "@/features/organizations/leagues/api/use-leagues";
 import { useRouter } from "@/navigation";
 import { Pagination } from "@/shared/components/entity";
-import { Footer, Header } from "@/shared/components/layouts";
+import { PageLayout } from "@/shared/components/layouts/PageLayout";
 import {
   EmptyState,
   ErrorMessage,
@@ -157,107 +157,95 @@ export default function MatchesPage() {
   const errorMessage = matchesError ? tCommon("errors.fetchMatches") : null;
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950">
-      <Header />
+    <PageLayout>
+      {/* Page Title */}
+      <h1 className="text-2xl md:text-4xl font-bold text-primary-600 dark:text-primary-400">
+        {tMatches("searchTitle")}
+      </h1>
 
-      <main className="flex-grow py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto space-y-6">
-          {/* Page Title */}
-          <h1 className="text-2xl md:text-4xl font-bold text-primary-600 dark:text-primary-400">
-            {tMatches("searchTitle")}
-          </h1>
+      {/* Filters Section */}
+      <MatchesFilters
+        search={search}
+        setSearch={setSearch}
+        dateFilter={dateFilter}
+        setDateFilter={setDateFilter}
+        category={category}
+        setCategory={setCategory}
+        gender={gender}
+        setGender={setGender}
+        level={level}
+        setLevel={setLevel}
+        committeeId={committeeId}
+        setCommitteeId={setCommitteeId}
+        leagueId={leagueId}
+        setLeagueId={setLeagueId}
+        committees={committees}
+        leagues={leagues}
+        division={division}
+        setDivision={setDivision}
+        poolId={poolId}
+        setPoolId={setPoolId}
+        matchday={matchday}
+        setMatchday={setMatchday}
+        championships={championships}
+        pools={pools}
+        onReset={handleReset}
+      />
 
-          {/* Filters Section */}
-          <MatchesFilters
-            search={search}
-            setSearch={setSearch}
-            dateFilter={dateFilter}
-            setDateFilter={setDateFilter}
-            category={category}
-            setCategory={setCategory}
-            gender={gender}
-            setGender={setGender}
-            level={level}
-            setLevel={setLevel}
-            committeeId={committeeId}
-            setCommitteeId={setCommitteeId}
-            leagueId={leagueId}
-            setLeagueId={setLeagueId}
-            committees={committees}
-            leagues={leagues}
-            division={division}
-            setDivision={setDivision}
-            poolId={poolId}
-            setPoolId={setPoolId}
-            matchday={matchday}
-            setMatchday={setMatchday}
-            championships={championships}
-            pools={pools}
-            onReset={handleReset}
-          />
+      {/* Loading State */}
+      {matchesLoading && (
+        <div className="flex justify-center items-center py-20">
+          <LoadingSpinner size="lg" />
+        </div>
+      )}
 
-          {/* Loading State */}
-          {matchesLoading && (
-            <div className="flex justify-center items-center py-20">
-              <LoadingSpinner size="lg" />
-            </div>
-          )}
+      {/* Error State */}
+      {errorMessage && !matchesLoading && (
+        <ErrorMessage message={errorMessage} />
+      )}
 
-          {/* Error State */}
-          {errorMessage && !matchesLoading && (
-            <ErrorMessage message={errorMessage} />
-          )}
-
-          {/* Results */}
-          {!matchesLoading && !errorMessage && (
+      {/* Results */}
+      {!matchesLoading && !errorMessage && (
+        <>
+          {/* Empty State */}
+          {matches.length === 0 ? (
+            <Card padding="lg">
+              <EmptyState
+                icon={<MagnifyingGlassIcon className="w-16 h-16" />}
+                title={tMatches("noResults")}
+                description={tMatches("tryAdjustingFilters")}
+              />
+            </Card>
+          ) : (
             <>
-              {/* Empty State */}
-              {matches.length === 0 ? (
-                <Card padding="lg">
-                  <EmptyState
-                    icon={<MagnifyingGlassIcon className="w-16 h-16" />}
-                    title={tMatches("noResults")}
-                    description={tMatches("tryAdjustingFilters")}
+              {/* Matches List */}
+              <div className="space-y-4 mb-6">
+                {matches.map((match: Match) => (
+                  <MatchesCard
+                    key={match.id}
+                    match={match}
+                    onClick={(matchId) => router.push(`/matches/${matchId}`)}
                   />
-                </Card>
-              ) : (
-                <>
-                  {/* Matches List */}
-                  <div className="space-y-4 mb-6">
-                    {matches.map((match: Match) => (
-                      <MatchesCard
-                        key={match.id}
-                        match={match}
-                        onClick={(matchId) =>
-                          router.push(`/matches/${matchId}`)
-                        }
-                      />
-                    ))}
-                  </div>
+                ))}
+              </div>
 
-                  {/* Pagination */}
-                  {pagination && pagination.totalPages > 1 && (
-                    <Pagination
-                      pagination={pagination}
-                      pageSize={matchesPerPage}
-                      setPageSize={(size: number) => {
-                        setMatchesPerPage(size);
-                        setCurrentPage(1);
-                      }}
-                      setPageIndex={(index: number) =>
-                        setCurrentPage(index + 1)
-                      }
-                      label={tMatches("itemLabelPlural")}
-                    />
-                  )}
-                </>
+              {/* Pagination */}
+              {pagination && pagination.totalPages > 1 && (
+                <Pagination
+                  pagination={pagination}
+                  pageSize={matchesPerPage}
+                  setPageSize={(size: number) => {
+                    setMatchesPerPage(size);
+                    setCurrentPage(1);
+                  }}
+                  setPageIndex={(index: number) => setCurrentPage(index + 1)}
+                  label={tMatches("itemLabelPlural")}
+                />
               )}
             </>
           )}
-        </div>
-      </main>
-
-      <Footer />
-    </div>
+        </>
+      )}
+    </PageLayout>
   );
 }

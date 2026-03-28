@@ -4,7 +4,7 @@ import React from "react";
 import { FaGlobeEurope, FaMapMarkedAlt, FaMapSigns } from "react-icons/fa";
 
 import { Link } from "@/navigation";
-import { Footer, Header } from "@/shared/components/layouts";
+import { PageLayout } from "@/shared/components/layouts/PageLayout";
 import { CompetitionLevel } from "@/shared/constants";
 
 // Card for each competition level
@@ -84,21 +84,15 @@ export default function CompetitionsPage() {
 
   // Main page layout
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950">
-      <Header />
-      <main className="flex-grow flex flex-col items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto w-full">
-          <h1 className="text-2xl md:text-4xl font-bold mb-12 text-gray-900 dark:text-gray-100 text-center">
-            {t("selectLevel")}
-          </h1>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 lg:gap-8">
-            {levels.map((level) => (
-              <CompetitionLevelCard key={level.id} level={level} />
-            ))}
-          </div>
-        </div>
-      </main>
-      <Footer />
-    </div>
+    <PageLayout centered>
+      <h1 className="text-2xl md:text-4xl font-bold mb-12 text-gray-900 dark:text-gray-100 text-center">
+        {t("selectLevel")}
+      </h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 lg:gap-8">
+        {levels.map((level) => (
+          <CompetitionLevelCard key={level.id} level={level} />
+        ))}
+      </div>
+    </PageLayout>
   );
 }

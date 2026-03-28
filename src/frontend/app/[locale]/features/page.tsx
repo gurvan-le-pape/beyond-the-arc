@@ -17,7 +17,7 @@ import {
 import { getTranslations } from "next-intl/server";
 import React from "react";
 
-import { Footer, Header } from "@/shared/components/layouts";
+import { PageLayout } from "@/shared/components/layouts/PageLayout";
 
 export default async function FeaturesPage({
   params,
@@ -119,94 +119,86 @@ export default async function FeaturesPage({
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950">
-      <Header />
-      <main className="flex-grow py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-button bg-gradient-to-br from-blue-500 to-purple-500 text-white mb-4 shadow-card">
-              <Sparkles className="w-8 h-8" />
-            </div>
-            <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-              {t("features.title")}
-            </h1>
-            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-              {t("features.subtitle")}
-            </p>
-          </div>
-
-          {/* Features Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            {features.map((feature, idx) => {
-              const Icon = feature.icon;
-              const statusColors = {
-                live: "bg-success-light/20 dark:bg-success-dark/20 text-success-dark dark:text-success-light border border-success-DEFAULT/30",
-                "coming-soon":
-                  "bg-info-light/20 dark:bg-info-dark/20 text-info-dark dark:text-info-light border border-info-DEFAULT/30",
-                planned:
-                  "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600",
-              };
-
-              return (
-                <div
-                  key={idx}
-                  className="bg-white dark:bg-gray-800 rounded-card border border-gray-200 dark:border-gray-700 shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 p-6"
-                >
-                  <div className="flex items-start justify-between mb-4">
-                    <div
-                      className={`inline-flex items-center justify-center w-12 h-12 rounded-button bg-gradient-to-br ${feature.color} text-white shadow-sm`}
-                    >
-                      <Icon className="w-6 h-6" />
-                    </div>
-                    <span
-                      className={`px-2 py-1 rounded-button text-xs font-medium ${
-                        statusColors[
-                          feature.status as keyof typeof statusColors
-                        ]
-                      }`}
-                    >
-                      {t(`features.status.${feature.status}`)}
-                    </span>
-                  </div>
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">
-                    {feature.title}
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">
-                    {feature.description}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Highlights Section */}
-          <div className="bg-white dark:bg-gray-800 rounded-card border border-gray-200 dark:border-gray-700 shadow-card dark:shadow-card-dark p-8">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6 text-center">
-              {t("features.highlightsTitle")}
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {highlights.map((highlight, idx) => {
-                const Icon = highlight.icon;
-                return (
-                  <div key={idx} className="text-center">
-                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-button bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400 mb-3">
-                      <Icon className="w-6 h-6" />
-                    </div>
-                    <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
-                      {highlight.title}
-                    </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {highlight.description}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+    <PageLayout>
+      {/* Header */}
+      <div className="text-center mb-12">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-button bg-gradient-to-br from-blue-500 to-purple-500 text-white mb-4 shadow-card">
+          <Sparkles className="w-8 h-8" />
         </div>
-      </main>
-      <Footer />
-    </div>
+        <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+          {t("features.title")}
+        </h1>
+        <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+          {t("features.subtitle")}
+        </p>
+      </div>
+
+      {/* Features Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        {features.map((feature, idx) => {
+          const Icon = feature.icon;
+          const statusColors = {
+            live: "bg-success-light/20 dark:bg-success-dark/20 text-success-dark dark:text-success-light border border-success-DEFAULT/30",
+            "coming-soon":
+              "bg-info-light/20 dark:bg-info-dark/20 text-info-dark dark:text-info-light border border-info-DEFAULT/30",
+            planned:
+              "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600",
+          };
+
+          return (
+            <div
+              key={idx}
+              className="bg-white dark:bg-gray-800 rounded-card border border-gray-200 dark:border-gray-700 shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 p-6"
+            >
+              <div className="flex items-start justify-between mb-4">
+                <div
+                  className={`inline-flex items-center justify-center w-12 h-12 rounded-button bg-gradient-to-br ${feature.color} text-white shadow-sm`}
+                >
+                  <Icon className="w-6 h-6" />
+                </div>
+                <span
+                  className={`px-2 py-1 rounded-button text-xs font-medium ${
+                    statusColors[feature.status as keyof typeof statusColors]
+                  }`}
+                >
+                  {t(`features.status.${feature.status}`)}
+                </span>
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">
+                {feature.title}
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
+                {feature.description}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Highlights Section */}
+      <div className="bg-white dark:bg-gray-800 rounded-card border border-gray-200 dark:border-gray-700 shadow-card dark:shadow-card-dark p-8">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6 text-center">
+          {t("features.highlightsTitle")}
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {highlights.map((highlight, idx) => {
+            const Icon = highlight.icon;
+            return (
+              <div key={idx} className="text-center">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-button bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400 mb-3">
+                  <Icon className="w-6 h-6" />
+                </div>
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                  {highlight.title}
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {highlight.description}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </PageLayout>
   );
 }
