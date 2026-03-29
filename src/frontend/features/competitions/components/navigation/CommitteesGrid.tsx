@@ -55,9 +55,10 @@ export function CommitteesGrid({ committees }: CommitteesGridProps) {
                 `/competitions/${CompetitionLevel.DEPARTMENTAL}/${committee.id}`,
               )
             }
-            className="border-l-4 border-l-departmental-dark dark:border-l-departmental-light hover:border-l-gray-300 dark:hover:!border-l-gray-600 flex flex-col items-center text-center"
+            className="border-l-4 border-l-departmental-dark dark:border-l-departmental-light hover:border-l-divide-light dark:hover:!border-l-divide-dark flex flex-col items-center text-center"
           >
-            <div className="mb-3 w-16 h-16 flex items-center justify-center rounded-xl bg-gray-50 dark:bg-gray-700/50">
+            {/* Logo placeholder */}
+            <div className="mb-3 w-16 h-16 flex items-center justify-center rounded-xl bg-surface-raised dark:bg-surface-raised-dark">
               <ImageWithFallback
                 src={`/images/committees/${formatNameToFileName(
                   committee.name,
@@ -67,11 +68,13 @@ export function CommitteesGrid({ committees }: CommitteesGridProps) {
                 className="w-12 h-12 object-contain"
               />
             </div>
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 leading-snug mb-1">
+
+            <h3 className="text-sm font-semibold text-text-heading dark:text-text-heading-dark leading-snug mb-1">
               {committee.name}
             </h3>
+
             {committee.department && (
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-xs text-text-secondary dark:text-text-secondary-dark">
                 {normalizeDepartmentCode(committee.department.code)}
               </p>
             )}
@@ -81,7 +84,7 @@ export function CommitteesGrid({ committees }: CommitteesGridProps) {
 
       {filtered.length === 0 && (
         <div className="flex flex-col items-center justify-center py-12 text-center">
-          <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+          <p className="text-sm font-medium text-text-secondary dark:text-text-secondary-dark">
             {tCompetitions("departmental.noResults", { search })}
           </p>
           <button

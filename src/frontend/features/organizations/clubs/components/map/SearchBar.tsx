@@ -41,7 +41,7 @@ export function SearchBar({
         {/* Search Icon */}
         <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
           <svg
-            className="w-5 h-5 text-gray-400 dark:text-gray-500"
+            className="w-5 h-5 text-text-muted dark:text-text-muted-dark"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -62,13 +62,13 @@ export function SearchBar({
           value={query}
           onChange={(e) => onQueryChange(e.target.value)}
           placeholder={placeholder}
-          className="w-full pl-10 pr-20 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-all"
+          className="w-full pl-10 pr-20 py-2.5 bg-surface-raised dark:bg-surface-raised-dark border border-divide-light dark:border-divide-dark rounded-lg text-text-heading dark:text-text-heading-dark placeholder:text-text-muted dark:placeholder:text-text-muted-dark focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent transition-all"
         />
 
         {/* Result Count & Clear Button */}
         <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2">
           {query && resultCount !== undefined && (
-            <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
+            <span className="text-xs text-text-secondary dark:text-text-secondary-dark bg-surface-subtle dark:bg-surface-subtle-dark px-2 py-1 rounded">
               {resultCount}
             </span>
           )}
@@ -76,11 +76,11 @@ export function SearchBar({
           {query && (
             <button
               onClick={onClear}
-              className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+              className="p-1.5 hover:bg-surface-subtle dark:hover:bg-surface-subtle-dark rounded-full transition-colors"
               aria-label={t("map.clearSearch")}
             >
               <svg
-                className="w-4 h-4 text-gray-500 dark:text-gray-400"
+                className="w-4 h-4 text-text-secondary dark:text-text-secondary-dark"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -100,7 +100,7 @@ export function SearchBar({
       {/* Keyboard hint */}
       {!query && (
         <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-          <kbd className="hidden sm:inline-block px-2 py-1 text-xs text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded">
+          <kbd className="hidden sm:inline-block px-2 py-1 text-xs text-text-muted dark:text-text-muted-dark bg-surface-subtle dark:bg-surface-subtle-dark border border-divide-light dark:border-divide-dark rounded">
             /
           </kbd>
         </div>

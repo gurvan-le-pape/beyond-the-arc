@@ -55,10 +55,10 @@ export default function DocsPage() {
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-button bg-gradient-to-br from-blue-500 to-purple-500 text-white mb-4 shadow-card">
           <BookOpen className="w-8 h-8" />
         </div>
-        <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+        <h1 className="text-2xl md:text-4xl font-bold text-text-heading dark:text-text-heading-dark mb-4">
           {t("docs.title")}
         </h1>
-        <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+        <p className="text-lg text-text-body dark:text-text-body-dark max-w-2xl mx-auto">
           {t("docs.intro")}
         </p>
       </div>
@@ -69,31 +69,33 @@ export default function DocsPage() {
           href="https://github.com/gurvan-le-pape/beyond-the-arc"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-card border border-gray-200 dark:border-gray-700 shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+          className="flex items-center gap-3 p-4 bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
         >
-          <Github className="w-6 h-6 text-gray-600 dark:text-gray-400" />
+          <Github className="w-6 h-6 text-text-body dark:text-text-body-dark" />
           <div>
-            <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+            <h3 className="font-semibold text-text-heading dark:text-text-heading-dark">
               {t("docs.quickLinks.github")}
             </h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
+            <p className="text-xs text-text-secondary dark:text-text-secondary-dark">
               {t("docs.quickLinks.viewSource")}
             </p>
           </div>
-          <ExternalLink className="w-4 h-4 ml-auto text-gray-400" />
+          <ExternalLink className="w-4 h-4 ml-auto text-text-muted dark:text-text-muted-dark" />
         </a>
 
         <a
           href="/docs/data-model.pdf"
           download
-          className="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-card border border-gray-200 dark:border-gray-700 shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+          className="flex items-center gap-3 p-4 bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
         >
-          <Download className="w-6 h-6 text-gray-600 dark:text-gray-400" />
+          <Download className="w-6 h-6 text-text-body dark:text-text-body-dark" />
           <div>
-            <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+            <h3 className="font-semibold text-text-heading dark:text-text-heading-dark">
               {t("docs.quickLinks.dataModel")}
             </h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400">PDF</p>
+            <p className="text-xs text-text-secondary dark:text-text-secondary-dark">
+              PDF
+            </p>
           </div>
         </a>
 
@@ -101,28 +103,32 @@ export default function DocsPage() {
           href="http://localhost:4000/api"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-card border border-gray-200 dark:border-gray-700 shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+          className="flex items-center gap-3 p-4 bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
         >
-          <BookOpen className="w-6 h-6 text-gray-600 dark:text-gray-400" />
+          <BookOpen className="w-6 h-6 text-text-body dark:text-text-body-dark" />
           <div>
-            <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+            <h3 className="font-semibold text-text-heading dark:text-text-heading-dark">
               {t("docs.quickLinks.apiDocs")}
             </h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Swagger</p>
+            <p className="text-xs text-text-secondary dark:text-text-secondary-dark">
+              Swagger
+            </p>
           </div>
-          <ExternalLink className="w-4 h-4 ml-auto text-gray-400" />
+          <ExternalLink className="w-4 h-4 ml-auto text-text-muted dark:text-text-muted-dark" />
         </a>
 
         <a
           href="mailto:gurvan.lepape@hotmail.fr"
-          className="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 rounded-card border border-gray-200 dark:border-gray-700 shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+          className="flex items-center gap-3 p-4 bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
         >
-          <div className="w-6 h-6 text-gray-600 dark:text-gray-400">📧</div>
+          <div className="w-6 h-6 text-text-body dark:text-text-body-dark">
+            📧
+          </div>
           <div>
-            <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+            <h3 className="font-semibold text-text-heading dark:text-text-heading-dark">
               {t("docs.quickLinks.contact")}
             </h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
+            <p className="text-xs text-text-secondary dark:text-text-secondary-dark">
               {t("docs.quickLinks.getHelp")}
             </p>
           </div>
@@ -138,38 +144,38 @@ export default function DocsPage() {
           return (
             <div
               key={section.id}
-              className="bg-white dark:bg-gray-800 rounded-card border border-gray-200 dark:border-gray-700 shadow-card dark:shadow-card-dark overflow-hidden"
+              className="bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card dark:shadow-card-dark overflow-hidden"
             >
               <button
                 onClick={() => setActiveSection(isActive ? null : section.id)}
-                className="w-full flex items-center gap-4 p-6 text-left hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 dark:focus:ring-primary-400"
+                className="w-full flex items-center gap-4 p-6 text-left hover:bg-surface-subtle dark:hover:bg-surface-raised-dark transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 dark:focus:ring-primary-400"
               >
                 <div className="flex-shrink-0 w-10 h-10 rounded-button bg-primary-100 dark:bg-primary-900/40 flex items-center justify-center">
                   <Icon className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                 </div>
-                <h2 className="flex-grow text-lg md:text-xl font-bold text-gray-900 dark:text-gray-100">
+                <h2 className="flex-grow text-lg md:text-xl font-bold text-text-heading dark:text-text-heading-dark">
                   {section.title}
                 </h2>
                 {isActive ? (
-                  <ChevronDown className="w-5 h-5 text-gray-400 transition-transform duration-200" />
+                  <ChevronDown className="w-5 h-5 text-text-muted dark:text-text-muted-dark transition-transform duration-200" />
                 ) : (
-                  <ChevronRight className="w-5 h-5 text-gray-400 transition-transform duration-200" />
+                  <ChevronRight className="w-5 h-5 text-text-muted dark:text-text-muted-dark transition-transform duration-200" />
                 )}
               </button>
 
               {isActive && (
-                <div className="px-6 pb-6 border-t border-gray-200 dark:border-gray-700 pt-6">
+                <div className="px-6 pb-6 border-t border-divide-light dark:border-divide-dark pt-6">
                   <div className="prose prose-gray dark:prose-invert max-w-none">
                     {section.id === "database" && (
                       <div className="space-y-6">
-                        <p className="text-body text-gray-600 dark:text-gray-400">
+                        <p className="text-body text-text-body dark:text-text-body-dark">
                           {section.content}
                         </p>
 
                         {/* Database Diagram */}
-                        <div className="bg-gray-100 dark:bg-gray-900 rounded-button p-6 border border-gray-200 dark:border-gray-700">
+                        <div className="bg-surface-subtle dark:bg-surface-raised-dark rounded-button p-6 border border-divide-light dark:border-divide-dark">
                           <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                            <h3 className="text-lg font-semibold text-text-heading dark:text-text-heading-dark">
                               {t("docs.database.diagramTitle")}
                             </h3>
                             <div className="flex gap-2">
@@ -191,7 +197,7 @@ export default function DocsPage() {
                               </a>
                             </div>
                           </div>
-                          <div className="bg-white dark:bg-gray-800 rounded-button overflow-hidden">
+                          <div className="bg-surface-subtle dark:bg-surface-subtle-dark rounded-button overflow-hidden">
                             <img
                               src="/docs/data-model.svg"
                               alt={t("docs.database.diagramAlt")}
@@ -202,7 +208,7 @@ export default function DocsPage() {
 
                         {/* Key Tables */}
                         <div>
-                          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
+                          <h3 className="text-lg font-semibold text-text-heading dark:text-text-heading-dark mb-3">
                             {t("docs.database.keyTables")}
                           </h3>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -234,12 +240,12 @@ export default function DocsPage() {
                             ].map((table, idx) => (
                               <div
                                 key={idx}
-                                className="p-3 bg-gray-50 dark:bg-gray-800 rounded-button border border-gray-200 dark:border-gray-700"
+                                className="p-3 bg-surface-subtle dark:bg-surface-raised-dark rounded-button border border-divide-light dark:border-divide-dark"
                               >
                                 <code className="text-sm font-mono text-primary-600 dark:text-primary-400">
                                   {table.name}
                                 </code>
-                                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                                <p className="text-xs text-text-body dark:text-text-body-dark mt-1">
                                   {table.desc}
                                 </p>
                               </div>
@@ -251,13 +257,13 @@ export default function DocsPage() {
 
                     {section.id === "structure" && (
                       <div className="space-y-6">
-                        <p className="text-body text-gray-600 dark:text-gray-400">
+                        <p className="text-body text-text-body dark:text-text-body-dark">
                           {section.content}
                         </p>
 
                         {/* Backend Structure */}
                         <div>
-                          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
+                          <h3 className="text-lg font-semibold text-text-heading dark:text-text-heading-dark mb-3">
                             {t("docs.structure.backend")}
                           </h3>
                           <pre className="bg-gray-900 dark:bg-gray-950 text-gray-100 p-6 rounded-button overflow-x-auto text-sm">
@@ -277,13 +283,13 @@ export default function DocsPage() {
 
                         {/* Frontend Structure */}
                         <div>
-                          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
+                          <h3 className="text-lg font-semibold text-text-heading dark:text-text-heading-dark mb-3">
                             {t("docs.structure.frontend")}
                           </h3>
                           <pre className="bg-gray-900 dark:bg-gray-950 text-gray-100 p-6 rounded-button overflow-x-auto text-sm">
                             {t("docs.structure.frontendCode")}
                           </pre>
-                          <ul className="list-disc pl-6 text-sm text-gray-400 dark:text-gray-500 mt-2 space-y-1">
+                          <ul className="list-disc pl-6 text-sm text-text-secondary dark:text-text-secondary-dark mt-2 space-y-1">
                             <li>{t("docs.structure.routingExplanation")}</li>
                             <li>{t("docs.structure.featurePrinciple")}</li>
                             <li>{t("docs.structure.sharedExplanation")}</li>
@@ -297,7 +303,7 @@ export default function DocsPage() {
 
                     {section.id === "best-practices" && (
                       <div className="space-y-4">
-                        <p className="text-body text-gray-600 dark:text-gray-400">
+                        <p className="text-body text-text-body dark:text-text-body-dark">
                           {section.content}
                         </p>
                         <ul className="space-y-3">
@@ -315,7 +321,7 @@ export default function DocsPage() {
                                   ✓
                                 </span>
                               </div>
-                              <span className="text-body text-gray-600 dark:text-gray-400">
+                              <span className="text-body text-text-body dark:text-text-body-dark">
                                 {practice}
                               </span>
                             </li>
@@ -326,7 +332,7 @@ export default function DocsPage() {
 
                     {section.id === "getting-started" && (
                       <div className="space-y-4">
-                        <p className="text-body text-gray-600 dark:text-gray-400">
+                        <p className="text-body text-text-body dark:text-text-body-dark">
                           {section.content}
                         </p>
                         <div className="bg-gray-900 dark:bg-gray-950 text-gray-100 p-6 rounded-button">

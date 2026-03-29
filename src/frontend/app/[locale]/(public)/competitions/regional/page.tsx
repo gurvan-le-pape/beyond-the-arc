@@ -36,7 +36,7 @@ export default async function RegionalListPage({
     <PageLayout>
       <Breadcrumb items={breadcrumbItems} />
 
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+      <h1 className="text-2xl font-bold text-text-heading dark:text-text-heading-dark">
         {tCommon("sectionTitles.regionalLeagues")}
       </h1>
 

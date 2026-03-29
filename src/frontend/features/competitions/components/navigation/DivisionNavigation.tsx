@@ -21,7 +21,7 @@ export function DivisionNavigation({
   return (
     <div className="flex items-start gap-4 flex-wrap">
       <div className="min-w-[8rem] pt-2">
-        <p className="text-body font-semibold text-gray-700 dark:text-gray-300">
+        <p className="text-sm font-semibold text-text-emphasis dark:text-text-emphasis-dark">
           {t("divisionLabel")}
         </p>
       </div>

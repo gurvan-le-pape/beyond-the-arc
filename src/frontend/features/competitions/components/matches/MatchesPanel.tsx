@@ -37,7 +37,7 @@ export function MatchesPanel({
       <div className="space-y-4">
         {/* Rounds Section */}
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
+          <h3 className="text-lg font-semibold text-text-heading dark:text-text-heading-dark mb-3">
             {tCompetitions("roundsLabel")}
           </h3>
           <RoundSelector
@@ -51,7 +51,7 @@ export function MatchesPanel({
         {/* Matches Section */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            <h3 className="text-lg font-semibold text-text-heading dark:text-text-heading-dark">
               {tCompetitions("matchesLabel")}
             </h3>
             {currentMatches && currentMatches.length > 0 && (
@@ -60,7 +60,7 @@ export function MatchesPanel({
               </Badge>
             )}
           </div>
-          <div className="space-y-3 max-h-[calc(100vh-22rem)] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent hover:scrollbar-thumb-gray-400 dark:hover:scrollbar-thumb-gray-500">
+          <div className="space-y-3 max-h-[calc(100vh-22rem)] overflow-y-auto pr-1 scrollbar-thin scrollbar-track-transparent">
             {currentMatches && currentMatches.length > 0 ? (
               currentMatches.map((match) => (
                 <MatchCard
@@ -71,7 +71,7 @@ export function MatchesPanel({
                 />
               ))
             ) : (
-              <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-8">
+              <p className="text-sm text-text-secondary dark:text-text-secondary-dark text-center py-8">
                 {tCommon("matchHistory.noMatches")}
               </p>
             )}

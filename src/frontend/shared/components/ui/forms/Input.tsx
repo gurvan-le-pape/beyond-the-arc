@@ -38,7 +38,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
+            className="block text-sm font-semibold text-text-emphasis dark:text-text-emphasis-dark mb-2"
           >
             {label}
           </label>
@@ -48,7 +48,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         <div className="relative">
           {/* Left icon */}
           {leftIcon && (
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-text-muted dark:text-text-muted-dark">
               {leftIcon}
             </div>
           )}
@@ -60,10 +60,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             type={type}
             className={cn(
               "w-full px-4 py-2.5 rounded-input",
-              "border border-gray-300 dark:border-gray-600",
-              "bg-white dark:bg-gray-800",
-              "text-gray-900 dark:text-gray-100",
-              "placeholder:text-gray-400 dark:placeholder:text-gray-500",
+              "border border-divide-light dark:border-divide-dark",
+              "bg-surface-raised dark:bg-surface-raised-dark",
+              "text-text-heading dark:text-text-heading-dark",
+              "placeholder:text-text-muted dark:placeholder:text-text-muted-dark",
               "focus:ring-2 focus:ring-primary-500 focus:border-primary-500",
               "disabled:opacity-50 disabled:cursor-not-allowed",
               "transition-colors duration-200",
@@ -85,7 +85,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
           {/* Right icon */}
           {rightIcon && (
-            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
+            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-text-muted dark:text-text-muted-dark">
               {rightIcon}
             </div>
           )}
@@ -106,7 +106,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {helperText && !error && (
           <p
             id={`${inputId}-helper`}
-            className="mt-1.5 text-sm text-gray-600 dark:text-gray-400"
+            className="mt-1.5 text-sm text-text-body dark:text-text-body-dark"
           >
             {helperText}
           </p>

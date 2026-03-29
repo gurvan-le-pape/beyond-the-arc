@@ -28,8 +28,8 @@ const MATCH_LEVEL_CONFIG = {
     badgeVariant: "national" as const,
   },
   default: {
-    border: "border-l-gray-400 dark:border-l-gray-500",
-    bg: "bg-gray-50 dark:bg-gray-800/50",
+    border: "border-l-divide-light dark:border-l-divide-dark",
+    bg: "bg-surface-subtle dark:bg-surface-subtle-dark/50",
     badgeVariant: "default" as const,
   },
 } as const;
@@ -78,8 +78,8 @@ export const MatchesCard: React.FC<MatchesCardProps> = ({ match, onClick }) => {
       onClick={() => onClick(match.id)}
       className={cn(
         "w-full text-left border-l-8 rounded-card shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 cursor-pointer overflow-hidden",
-        "focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:ring-offset-2 dark:focus:ring-offset-gray-950",
-        "bg-white dark:bg-gray-800",
+        "focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-surface-raised dark:focus:ring-offset-surface-raised-dark",
+        "bg-surface-raised dark:bg-surface-raised-dark",
         config.border,
       )}
       aria-label={t("ariaLabelMatch", {
@@ -92,7 +92,7 @@ export const MatchesCard: React.FC<MatchesCardProps> = ({ match, onClick }) => {
         <div className="flex justify-between items-center flex-wrap gap-2">
           {/* Competition Details */}
           <div className="flex items-center gap-2 flex-wrap">
-            <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">
+            <p className="text-sm font-semibold text-text-emphasis dark:text-text-emphasis-dark">
               {match.pool?.championship?.category} -{" "}
               {match.pool?.championship?.gender}
               {match.pool?.championship?.division &&
@@ -107,7 +107,7 @@ export const MatchesCard: React.FC<MatchesCardProps> = ({ match, onClick }) => {
 
           {/* Date, Time, Matchday, Level Badge */}
           <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-600 dark:text-gray-400">
+            <span className="text-sm text-text-body dark:text-text-body-dark">
               {formatMatchDate(match.date)} • {formatMatchTime(match.date)}
             </span>
             <Badge variant="default" size="sm">
@@ -121,12 +121,12 @@ export const MatchesCard: React.FC<MatchesCardProps> = ({ match, onClick }) => {
       </div>
 
       {/* Match Content */}
-      <div className="px-8 py-8 bg-white dark:bg-gray-800">
+      <div className="px-8 py-8 bg-surface-raised dark:bg-surface-raised-dark">
         <div className="flex items-center justify-between gap-6">
           {/* Home Team */}
           <div className="flex-1 flex flex-col items-center gap-3">
             {/* Team Logo */}
-            <div className="flex-shrink-0 w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-button flex items-center justify-center overflow-hidden">
+            <div className="flex-shrink-0 w-16 h-16 bg-surface-subtle dark:bg-surface-subtle-dark rounded-button flex items-center justify-center overflow-hidden">
               <img
                 src={`/images/clubs/${formatNameToFileName(
                   match.homeTeam?.club?.name || "",
@@ -146,8 +146,8 @@ export const MatchesCard: React.FC<MatchesCardProps> = ({ match, onClick }) => {
                 className={cn(
                   "text-lg",
                   hasScore && match.homeTeamScore > match.awayTeamScore
-                    ? "font-bold text-gray-900 dark:text-gray-100"
-                    : "font-normal text-gray-700 dark:text-gray-300",
+                    ? "font-bold text-text-heading dark:text-text-heading-dark"
+                    : "font-normal text-text-emphasis dark:text-text-emphasis-dark",
                 )}
               >
                 {match.homeTeam?.club?.name}
@@ -164,21 +164,21 @@ export const MatchesCard: React.FC<MatchesCardProps> = ({ match, onClick }) => {
                   className={cn(
                     "text-2xl",
                     match.homeTeamScore > match.awayTeamScore
-                      ? "font-bold text-gray-900 dark:text-gray-100"
-                      : "font-normal text-gray-600 dark:text-gray-400",
+                      ? "font-bold text-text-heading dark:text-text-heading-dark"
+                      : "font-normal text-text-body dark:text-text-body-dark",
                   )}
                 >
                   {match.homeTeamScore}
                 </span>
-                <span className="text-xl text-gray-400 dark:text-gray-500">
+                <span className="text-xl text-text-muted dark:text-text-muted-dark">
                   -
                 </span>
                 <span
                   className={cn(
                     "text-2xl",
                     match.awayTeamScore > match.homeTeamScore
-                      ? "font-bold text-gray-900 dark:text-gray-100"
-                      : "font-normal text-gray-600 dark:text-gray-400",
+                      ? "font-bold text-text-heading dark:text-text-heading-dark"
+                      : "font-normal text-text-body dark:text-text-body-dark",
                   )}
                 >
                   {match.awayTeamScore}
@@ -194,7 +194,7 @@ export const MatchesCard: React.FC<MatchesCardProps> = ({ match, onClick }) => {
           {/* Away Team */}
           <div className="flex-1 flex flex-col items-center gap-3">
             {/* Team Logo */}
-            <div className="flex-shrink-0 w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-button flex items-center justify-center overflow-hidden">
+            <div className="flex-shrink-0 w-16 h-16 bg-surface-subtle dark:bg-surface-subtle-dark rounded-button flex items-center justify-center overflow-hidden">
               <img
                 src={`/images/clubs/${formatNameToFileName(
                   match.awayTeam?.club?.name || "",
@@ -214,8 +214,8 @@ export const MatchesCard: React.FC<MatchesCardProps> = ({ match, onClick }) => {
                 className={cn(
                   "text-lg",
                   hasScore && match.awayTeamScore > match.homeTeamScore
-                    ? "font-bold text-gray-900 dark:text-gray-100"
-                    : "font-normal text-gray-700 dark:text-gray-300",
+                    ? "font-bold text-text-heading dark:text-text-heading-dark"
+                    : "font-normal text-text-emphasis dark:text-text-emphasis-dark",
                 )}
               >
                 {match.awayTeam?.club?.name}

@@ -8,10 +8,10 @@ import { LoadingSpinner } from "@/shared/components/ui/feedback/LoadingSpinner";
 export function LoadingMap() {
   const t = useTranslations("clubs");
   return (
-    <div className="absolute inset-0 flex items-center justify-center bg-gray-50">
+    <div className="absolute inset-0 flex items-center justify-center bg-surface-base dark:bg-surface-base-dark">
       <div className="flex flex-col items-center gap-3">
         <LoadingSpinner size="lg" />
-        <p className="text-sm font-medium text-gray-700">
+        <p className="text-sm font-medium text-text-emphasis dark:text-text-emphasis-dark">
           {t("map.loadingMapClient")}
         </p>
       </div>

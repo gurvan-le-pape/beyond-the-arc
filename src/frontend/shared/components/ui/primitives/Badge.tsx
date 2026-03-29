@@ -13,7 +13,7 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default:
-          "border-transparent bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200",
+          "border-transparent bg-surface-subtle text-text-heading dark:bg-surface-subtle-dark dark:text-text-emphasis-dark",
         primary:
           "border-transparent bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-400",
         secondary:
@@ -26,7 +26,7 @@ const badgeVariants = cva(
           "border-transparent bg-warning-light/20 text-warning-dark dark:bg-warning-dark/20 dark:text-warning-light",
         info: "border-transparent bg-info-light/20 text-info-dark dark:bg-info-dark/20 dark:text-info-light",
         outline:
-          "border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300",
+          "border-divide-light text-text-emphasis dark:border-divide-dark dark:text-text-emphasis-dark",
         // Team-specific
         male: "border-transparent bg-team-male-light/10 text-team-male-dark dark:bg-team-male-light/20 dark:text-team-male-light",
         female:

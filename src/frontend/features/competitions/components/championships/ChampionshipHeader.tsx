@@ -28,7 +28,7 @@ export function ChampionshipHeader({
 
         {/* Championship Name & Gender Switch */}
         <div className="flex justify-between items-center flex-wrap gap-4">
-          <h1 className="text-lg md:text-xl font-semibold text-gray-900 dark:text-gray-100">
+          <h1 className="text-lg md:text-xl font-semibold text-text-heading dark:text-text-heading-dark">
             {championshipName}
           </h1>
           {gender !== undefined && (

@@ -59,20 +59,20 @@ export const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 mt-auto">
+    <footer className="bg-white dark:bg-surface-raised-dark border-t border-divide-light dark:border-divide-dark mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Main footer content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-4">
           {/* Brand section */}
           <div className="space-y-2">
             <div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+              <h3 className="text-xl font-bold text-text-heading dark:text-text-heading-dark mb-2">
                 {t("footer.projectName")}
               </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+              <p className="text-sm text-text-body dark:text-text-body-dark leading-relaxed mb-3">
                 {t("footer.tagline")}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-500">
+              <p className="text-xs text-text-secondary dark:text-text-secondary-dark">
                 {t("footer.portfolioNote")}
               </p>
             </div>
@@ -83,7 +83,7 @@ export const Footer: React.FC = () => {
                 href="https://github.com/gurvan-le-pape"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2 rounded-button hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-200 group focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                className="p-2 rounded-button hover:bg-surface-subtle dark:hover:bg-surface-subtle-dark text-text-body dark:text-text-body-dark hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-200 group focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
                 aria-label={t("footer.github")}
                 title={t("footer.github")}
               >
@@ -93,7 +93,7 @@ export const Footer: React.FC = () => {
                 href="https://linkedin.com/in/glepape"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2 rounded-button hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-200 group focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                className="p-2 rounded-button hover:bg-surface-subtle dark:hover:bg-surface-subtle-dark text-text-body dark:text-text-body-dark hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-200 group focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
                 aria-label={t("footer.linkedin")}
                 title={t("footer.linkedin")}
               >
@@ -101,7 +101,7 @@ export const Footer: React.FC = () => {
               </a>
               <a
                 href="mailto:gurvan.lepape@hotmail.fr"
-                className="p-2 rounded-button hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-200 group focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                className="p-2 rounded-button hover:bg-surface-subtle dark:hover:bg-surface-subtle-dark text-text-body dark:text-text-body-dark hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-200 group focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
                 aria-label={t("footer.email")}
                 title={t("footer.email")}
               >
@@ -112,7 +112,7 @@ export const Footer: React.FC = () => {
 
           {/* Featured sections */}
           <div>
-            <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wider mb-4">
+            <h4 className="text-sm font-semibold text-text-heading dark:text-text-heading-dark uppercase tracking-wider mb-4">
               {t("footer.featuredWork")}
             </h4>
             <ul className="space-y-2">
@@ -122,7 +122,7 @@ export const Footer: React.FC = () => {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-sm transition-colors duration-200 inline-flex items-center gap-2 group text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"
+                      className="text-sm transition-colors duration-200 inline-flex items-center gap-2 group text-text-body dark:text-text-body-dark hover:text-primary-600 dark:hover:text-primary-400"
                     >
                       <Icon className="w-4 h-4 transition-transform duration-200 group-hover:scale-110" />
                       {link.label}
@@ -135,7 +135,7 @@ export const Footer: React.FC = () => {
 
           {/* Project links */}
           <div>
-            <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wider mb-4">
+            <h4 className="text-sm font-semibold text-text-heading dark:text-text-heading-dark uppercase tracking-wider mb-4">
               {t("footer.project")}
             </h4>
             <ul className="space-y-2">
@@ -143,7 +143,7 @@ export const Footer: React.FC = () => {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 inline-block"
+                    className="text-sm text-text-body dark:text-text-body-dark hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 inline-block"
                   >
                     {link.label}
                   </Link>
@@ -154,7 +154,7 @@ export const Footer: React.FC = () => {
 
           {/* Resources */}
           <div>
-            <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wider mb-4">
+            <h4 className="text-sm font-semibold text-text-heading dark:text-text-heading-dark uppercase tracking-wider mb-4">
               {t("footer.resources")}
             </h4>
             <ul className="space-y-2">
@@ -165,7 +165,7 @@ export const Footer: React.FC = () => {
                       href={link.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 inline-flex items-center gap-1 group"
+                      className="text-sm text-text-body dark:text-text-body-dark hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 inline-flex items-center gap-1 group"
                     >
                       {link.label}
                       <ExternalLink className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -173,7 +173,7 @@ export const Footer: React.FC = () => {
                   ) : (
                     <Link
                       href={link.href}
-                      className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 inline-block"
+                      className="text-sm text-text-body dark:text-text-body-dark hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200 inline-block"
                     >
                       {link.label}
                     </Link>
@@ -185,23 +185,23 @@ export const Footer: React.FC = () => {
         </div>
 
         {/* Bottom bar with copyright and disclaimer */}
-        <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="pt-4 border-t border-divide-light dark:border-divide-dark">
           <div className="flex flex-col gap-2">
             {/* Copyright and tech stack */}
             <div className="flex flex-col sm:flex-row justify-between items-center gap-1">
-              <p className="text-sm text-gray-600 dark:text-gray-400 text-center sm:text-left">
+              <p className="text-sm text-text-body dark:text-text-body-dark text-center sm:text-left">
                 {t("footer.copyright", {
                   year: currentYear,
                   name: "Gurvan LE PAPE",
                 })}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-500">
+              <p className="text-xs text-text-secondary dark:text-text-secondary-dark">
                 {t("footer.madeWith")}
               </p>
             </div>
 
             {/* Disclaimer */}
-            <div className="flex flex-col sm:flex-row justify-center items-center gap-1 text-xs text-gray-500 dark:text-gray-500">
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-1 text-xs text-text-secondary dark:text-text-secondary-dark">
               <span>{t("footer.nonCommercial")}</span>
               <span className="hidden sm:inline">•</span>
               <span>{t("footer.dataDisclaimer")}</span>

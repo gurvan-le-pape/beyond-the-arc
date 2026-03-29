@@ -42,20 +42,20 @@ export function DepartmentsGrid({
           onClick={() =>
             router.push(`/clubs/league/${leagueId}/committee/${dept.id}`)
           }
-          className="border-l-4 border-l-departmental-dark dark:border-l-departmental-light hover:border-l-gray-300 dark:hover:!border-l-gray-600"
+          className="border-l-4 border-l-departmental-dark dark:border-l-departmental-light hover:border-l-divide-light dark:hover:!border-l-divide-dark"
         >
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
+          <h3 className="text-lg font-semibold text-text-heading dark:text-text-heading-dark mb-1">
             {dept.name}
           </h3>
           {dept.department && (
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+            <p className="text-sm text-text-body dark:text-text-body-dark mb-2">
               {dept.department.code}
             </p>
           )}
           <p className="text-xl font-bold text-departmental-dark dark:text-departmental-light">
             {dept.clubCount}
           </p>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-sm text-text-body dark:text-text-body-dark">
             {dept.clubCount === 1 ? t("club") : t("clubs")}
           </p>
         </Card>

@@ -40,7 +40,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
             <button
               type="button"
               onClick={onClear}
-              className="cursor-pointer hover:text-gray-600 dark:hover:text-gray-300"
+              className="cursor-pointer hover:text-text-body dark:hover:text-text-body-dark"
               aria-label={clearAriaLabel}
             >
               <svg

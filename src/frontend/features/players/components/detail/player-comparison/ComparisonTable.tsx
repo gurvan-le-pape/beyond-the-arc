@@ -126,7 +126,7 @@ export function ComparisonTable({
           return (
             <div key={stat.key}>
               {/* Stat label – centred above the row */}
-              <p className="text-center text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2">
+              <p className="text-center text-xs font-semibold text-text-muted dark:text-text-muted-dark uppercase tracking-widest mb-2">
                 {t(`${stat.labelKey}`)}
               </p>
 
@@ -139,7 +139,7 @@ export function ComparisonTable({
                       "inline-block text-sm font-bold tabular-nums transition-colors duration-300",
                       winner === "A"
                         ? "text-primary-700 dark:text-primary-300"
-                        : "text-gray-600 dark:text-gray-400",
+                        : "text-text-body dark:text-text-body-dark",
                     )}
                   >
                     {rawA}
@@ -160,7 +160,7 @@ export function ComparisonTable({
                 </div>
 
                 {/* ── Bar A – grows rightward (toward centre) ── */}
-                <div className="h-2.5 bg-gray-100 dark:bg-gray-700 rounded-l-full overflow-hidden flex justify-end">
+                <div className="h-2.5 bg-surface-subtle dark:bg-surface-subtle-dark rounded-l-full overflow-hidden flex justify-end">
                   <div
                     className="h-full bg-primary-500 dark:bg-primary-400 rounded-l-full transition-all ease-out"
                     style={{
@@ -173,11 +173,11 @@ export function ComparisonTable({
 
                 {/* ── Centre dot ── */}
                 <div className="flex flex-col items-center justify-center gap-0.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-600" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-text-muted dark:bg-text-muted-dark" />
                 </div>
 
                 {/* ── Bar B – grows leftward (toward centre) ── */}
-                <div className="h-2.5 bg-gray-100 dark:bg-gray-700 rounded-r-full overflow-hidden flex justify-start">
+                <div className="h-2.5 bg-surface-subtle dark:bg-surface-subtle-dark rounded-r-full overflow-hidden flex justify-start">
                   <div
                     className="h-full bg-secondary-500 dark:bg-secondary-400 rounded-r-full transition-all ease-out"
                     style={{
@@ -195,7 +195,7 @@ export function ComparisonTable({
                       "inline-block text-sm font-bold tabular-nums transition-colors duration-300",
                       winner === "B"
                         ? "text-secondary-700 dark:text-secondary-300"
-                        : "text-gray-600 dark:text-gray-400",
+                        : "text-text-body dark:text-text-body-dark",
                     )}
                   >
                     {rawB}

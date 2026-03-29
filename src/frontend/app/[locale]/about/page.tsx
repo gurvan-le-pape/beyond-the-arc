@@ -71,13 +71,14 @@ export default async function AboutPage({
     <PageLayout>
       {/* Header */}
       <div className="text-center mb-12">
+        {/* Decorative icon — gradient is intentional, not a surface */}
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-button bg-gradient-to-br from-blue-500 to-purple-500 text-white mb-4 shadow-card">
           <Target className="w-8 h-8" />
         </div>
-        <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+        <h1 className="text-2xl md:text-4xl font-bold text-text-heading dark:text-text-heading-dark mb-4">
           {t("about.title")}
         </h1>
-        <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+        <p className="text-lg text-text-body dark:text-text-body-dark max-w-3xl mx-auto">
           {t("about.intro")}
         </p>
       </div>
@@ -89,17 +90,18 @@ export default async function AboutPage({
           return (
             <div
               key={idx}
-              className="bg-white dark:bg-gray-800 rounded-card border border-gray-200 dark:border-gray-700 shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 p-6"
+              className="bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 p-6"
             >
+              {/* Decorative gradient icon — intentional, stays as raw Tailwind */}
               <div
                 className={`inline-flex items-center justify-center w-12 h-12 rounded-button bg-gradient-to-br ${principle.color} text-white mb-4 shadow-sm`}
               >
                 <Icon className="w-6 h-6" />
               </div>
-              <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">
+              <h3 className="text-lg font-bold text-text-heading dark:text-text-heading-dark mb-2">
                 {principle.title}
               </h3>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">
+              <p className="text-sm text-text-body dark:text-text-body-dark">
                 {principle.description}
               </p>
             </div>
@@ -110,11 +112,11 @@ export default async function AboutPage({
       {/* Call to Action */}
       <div className="bg-gradient-to-r from-blue-500 to-purple-500 rounded-card shadow-card dark:shadow-card-dark p-8 text-center text-white">
         <h2 className="text-xl font-bold mb-4">{t("about.exploreTitle")}</h2>
-        <p className="text-body mb-6 max-w-2xl mx-auto">{t("about.explore")}</p>
+        <p className="text-sm mb-6 max-w-2xl mx-auto">{t("about.explore")}</p>
         <div className="flex flex-wrap justify-center gap-4">
           <a
             href={`/${locale}/features`}
-            className="px-6 py-3 bg-white text-primary-600 rounded-button font-semibold hover:bg-gray-100 transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600"
+            className="px-6 py-3 bg-white text-primary-600 rounded-button font-semibold hover:bg-surface-subtle transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600"
           >
             {t("about.viewFeatures")}
           </a>

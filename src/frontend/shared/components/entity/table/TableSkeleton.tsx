@@ -19,7 +19,7 @@ export const TableSkeleton: React.FC<TableSkeletonProps> = ({
             const cellKey = `skeleton-cell-${i}-${j}-${columns}`;
             return (
               <td key={cellKey} className="px-6 py-4">
-                <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto" />
+                <div className="h-4 bg-surface-raised dark:bg-surface-raised-dark rounded w-3/4 mx-auto animate-pulse" />
               </td>
             );
           })}

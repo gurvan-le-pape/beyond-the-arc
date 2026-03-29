@@ -18,7 +18,7 @@ function SectionTitle({ title, className }: SectionTitleProps) {
   return (
     <h2
       className={cn(
-        "text-xl font-bold text-gray-900 dark:text-gray-100 mb-6",
+        "text-xl font-bold text-text-heading dark:text-text-heading-dark mb-6",
         className,
       )}
     >

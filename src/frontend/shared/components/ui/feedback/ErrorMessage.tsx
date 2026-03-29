@@ -6,7 +6,10 @@ interface ErrorMessageProps {
 export function ErrorMessage({ message }: ErrorMessageProps) {
   return (
     <div className="flex flex-col items-center justify-center w-full">
-      <p role="alert" className="text-red-500 text-lg font-semibold">
+      <p
+        role="alert"
+        className="text-error dark:text-error-light text-lg font-semibold"
+      >
         {message}
       </p>
     </div>

@@ -11,7 +11,7 @@ export function CompetitionsPageSkeleton() {
       {[0, 1].map((i) => (
         <div
           key={i}
-          className="rounded-card border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 flex flex-col gap-3"
+          className="rounded-card border border-divide-light dark:border-divide-dark bg-surface-subtle dark:bg-surface-subtle-dark p-5 flex flex-col gap-3"
         >
           <div className="flex items-center justify-between">
             <Skeleton className="h-5 w-40" />

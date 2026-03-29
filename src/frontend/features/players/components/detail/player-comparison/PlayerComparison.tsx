@@ -103,12 +103,12 @@ function PlayerCard({ player, side, placeholder }: PlayerCardProps) {
             #{player.number}
           </span>
 
-          <span className="text-lg font-bold text-gray-900 dark:text-gray-100 -mt-2 relative z-10">
+          <span className="text-lg font-bold text-text-heading dark:text-text-heading-dark -mt-2 relative z-10">
             {player.name}
           </span>
 
           {player.team?.club?.name && (
-            <span className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+            <span className="text-xs text-text-muted dark:text-text-muted-dark mt-0.5">
               {player.team.club.name}
             </span>
           )}
@@ -243,7 +243,7 @@ export function PlayerComparison({ player }: PlayerComparisonProps) {
             variant="ghost"
             size="sm"
             onClick={() => setOpponent(null)}
-            className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 text-xs"
+            className="text-text-muted hover:text-text-body dark:text-text-muted-dark dark:hover:text-text-body-dark text-xs"
           >
             {tCommon("clear")}
           </Button>

@@ -20,6 +20,12 @@ interface PaginationProps {
 
 const PAGE_SIZES = [25, 50, 100, 200];
 
+const navButtonBase = "p-2 rounded-button transition-colors";
+const navButtonEnabled =
+  "bg-white dark:bg-surface-raised-dark text-text-emphasis dark:text-text-emphasis-dark hover:bg-surface-subtle dark:hover:bg-surface-subtle-dark border border-divide-light dark:border-divide-dark";
+const navButtonDisabled =
+  "bg-surface-subtle dark:bg-surface-raised-dark text-text-muted dark:text-text-muted-dark cursor-not-allowed";
+
 export const Pagination: React.FC<PaginationProps> = ({
   pagination,
   pageSize,
@@ -48,8 +54,8 @@ export const Pagination: React.FC<PaginationProps> = ({
       // Always show first page
       pages.push(1);
 
-      let start = Math.max(2, currentPage - 1);
-      let end = Math.min(totalPages - 1, currentPage + 1);
+      const start = Math.max(2, currentPage - 1);
+      const end = Math.min(totalPages - 1, currentPage + 1);
 
       // Add ellipsis after first page if needed
       if (start > 2) {
@@ -74,9 +80,9 @@ export const Pagination: React.FC<PaginationProps> = ({
   };
 
   return (
-    <div className="flex flex-col md:flex-row md:justify-between md:items-center px-4 sm:px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 gap-4">
+    <div className="flex flex-col md:flex-row md:justify-between md:items-center px-4 sm:px-6 py-4 border-t border-divide-light dark:border-divide-dark bg-surface-base dark:bg-surface-subtle-dark gap-4">
       {/* Info text */}
-      <div className="text-sm text-gray-600 dark:text-gray-400">
+      <div className="text-sm text-text-body dark:text-text-body-dark">
         {t("pagination.pageInfo", {
           page: currentPage,
           totalPages: totalPages,
@@ -89,7 +95,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
         {/* Page size selector */}
         <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">
+          <label className="text-sm text-text-emphasis dark:text-text-emphasis-dark whitespace-nowrap">
             {t("pagination.resultsPerPage")}
           </label>
           <select
@@ -98,7 +104,7 @@ export const Pagination: React.FC<PaginationProps> = ({
               setPageSize(Number(e.target.value));
               setPageIndex(0);
             }}
-            className="px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 transition-colors"
+            className="px-3 py-1.5 border border-divide-light dark:border-divide-dark rounded-input bg-white dark:bg-surface-raised-dark text-text-heading dark:text-text-heading-dark focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 transition-colors"
             aria-label={t("pagination.resultsPerPage")}
           >
             {PAGE_SIZES.map((size) => (
@@ -115,10 +121,8 @@ export const Pagination: React.FC<PaginationProps> = ({
           <button
             onClick={() => setPageIndex(0)}
             disabled={currentPage <= 1}
-            className={`p-2 rounded-lg transition-colors ${
-              currentPage <= 1
-                ? "bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-600 cursor-not-allowed"
-                : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-600"
+            className={`${navButtonBase} ${
+              currentPage <= 1 ? navButtonDisabled : navButtonEnabled
             }`}
             aria-label={t("pagination.firstPage")}
           >
@@ -129,10 +133,8 @@ export const Pagination: React.FC<PaginationProps> = ({
           <button
             onClick={() => setPageIndex(Math.max(0, currentPage - 2))}
             disabled={currentPage <= 1}
-            className={`p-2 rounded-lg transition-colors ${
-              currentPage <= 1
-                ? "bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-600 cursor-not-allowed"
-                : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-600"
+            className={`${navButtonBase} ${
+              currentPage <= 1 ? navButtonDisabled : navButtonEnabled
             }`}
             aria-label={t("pagination.previousPage")}
           >
@@ -147,7 +149,7 @@ export const Pagination: React.FC<PaginationProps> = ({
                 return (
                   <span
                     key={`ellipsis-${idx}`}
-                    className="px-3 py-1.5 text-gray-500 dark:text-gray-400"
+                    className="px-3 py-1.5 text-text-secondary dark:text-text-secondary-dark"
                   >
                     ...
                   </span>
@@ -158,10 +160,10 @@ export const Pagination: React.FC<PaginationProps> = ({
                 <button
                   key={pageNum}
                   onClick={() => setPageIndex(pageNum - 1)}
-                  className={`px-3 py-1.5 rounded-lg transition-colors font-medium ${
+                  className={`px-3 py-1.5 rounded-button transition-colors font-medium ${
                     pageNum === currentPage
                       ? "bg-primary-600 text-white"
-                      : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-600"
+                      : navButtonEnabled
                   }`}
                   aria-current={pageNum === currentPage ? "page" : undefined}
                 >
@@ -172,7 +174,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           </div>
 
           {/* Mobile: Current page indicator */}
-          <div className="sm:hidden px-3 py-1.5 bg-primary-600 text-white rounded-lg font-medium">
+          <div className="sm:hidden px-3 py-1.5 bg-primary-600 text-white rounded-button font-medium">
             {currentPage}
           </div>
 
@@ -180,10 +182,8 @@ export const Pagination: React.FC<PaginationProps> = ({
           <button
             onClick={() => setPageIndex(Math.min(totalPages - 1, currentPage))}
             disabled={currentPage >= totalPages}
-            className={`p-2 rounded-lg transition-colors ${
-              currentPage >= totalPages
-                ? "bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-600 cursor-not-allowed"
-                : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-600"
+            className={`${navButtonBase} ${
+              currentPage >= totalPages ? navButtonDisabled : navButtonEnabled
             }`}
             aria-label={t("pagination.nextPage")}
           >
@@ -194,10 +194,8 @@ export const Pagination: React.FC<PaginationProps> = ({
           <button
             onClick={() => setPageIndex(totalPages - 1)}
             disabled={currentPage >= totalPages}
-            className={`p-2 rounded-lg transition-colors ${
-              currentPage >= totalPages
-                ? "bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-600 cursor-not-allowed"
-                : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-600"
+            className={`${navButtonBase} ${
+              currentPage >= totalPages ? navButtonDisabled : navButtonEnabled
             }`}
             aria-label={t("pagination.lastPage")}
           >

@@ -106,7 +106,7 @@ export function TitleSection({
           )}
         </div>
       </div>
-      <p className="text-body text-gray-600 dark:text-gray-400">
+      <p className="text-text-body dark:text-text-body-dark">
         {config.description}
       </p>
     </Card>

@@ -25,7 +25,7 @@ export const SwitchGenderButton: React.FC<SwitchGenderButtonProps> = ({
 
   return (
     <Button
-      variant={isMasculin ? "male" : "female"}
+      variant={isMasculin ? "female" : "male"}
       size="md"
       onClick={onClick}
       className={className}

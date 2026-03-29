@@ -4,6 +4,7 @@
 import { useTranslations } from "next-intl";
 
 import { PageLayout } from "@/shared/components/layouts/PageLayout";
+import { Button } from "@/shared/components/ui";
 
 export default function GlobalError({
   unstable_retry,
@@ -14,10 +15,11 @@ export default function GlobalError({
 
   return (
     <PageLayout centered>
-      <div className="bg-white dark:bg-gray-800 rounded-card border border-gray-200 dark:border-gray-700 shadow-card dark:shadow-card-dark p-10 max-w-md w-full text-center space-y-6">
+      {/* Card sits on surface-base (page), so it uses surface-subtle */}
+      <div className="bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card dark:shadow-card-dark p-10 max-w-md w-full text-center space-y-6 mx-auto">
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-error-light/20 dark:bg-error-dark/20 mx-auto">
           <svg
-            className="w-8 h-8 text-error-DEFAULT"
+            className="w-8 h-8 text-error"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -32,20 +34,15 @@ export default function GlobalError({
         </div>
 
         <div className="space-y-2">
-          <h1 className="text-subtitle font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-xl font-bold text-text-heading dark:text-text-heading-dark">
             {tCommon("errors.unexpected")}
           </h1>
-          <p className="text-body-sm text-gray-600 dark:text-gray-400">
+          <p className="text-sm text-text-body dark:text-text-body-dark">
             {tCommon("errors.unexpectedDescription")}
           </p>
         </div>
 
-        <button
-          onClick={() => unstable_retry()}
-          className="inline-flex items-center justify-center bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 text-white font-semibold py-3 px-8 rounded-button shadow-card hover:shadow-card-hover transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
-        >
-          {tCommon("retry")}
-        </button>
+        <Button onClick={unstable_retry}>{tCommon("retry")}</Button>
       </div>
     </PageLayout>
   );

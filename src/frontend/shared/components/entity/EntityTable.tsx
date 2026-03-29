@@ -124,7 +124,7 @@ export function EntityTable<RowType extends { id: string | number }>(
   } else {
     tableBody = (
       <TableBody>
-        {rows.map((row: any) => (
+        {rows.map((row: any, index: number) => (
           <TableRow
             key={row.id}
             clickable
@@ -139,6 +139,11 @@ export function EntityTable<RowType extends { id: string | number }>(
               }
             }}
             data-testid={rowTestId(row.original.id)}
+            className={
+              index % 2 === 0
+                ? "bg-primary-50 dark:bg-primary-900/20"
+                : "bg-surface-raised dark:bg-surface-raised-dark"
+            }
           >
             {row.getVisibleCells().map((cell: any) => (
               <TableCell
@@ -164,8 +169,8 @@ export function EntityTable<RowType extends { id: string | number }>(
       aria-label={ariaLabel}
     >
       <div className="overflow-x-auto">
-        <Table>
-          <TableHeader>
+        <Table className="border border-primary-500 dark:border-primary-600 rounded-card box-border">
+          <TableHeader className="bg-primary-100 dark:bg-primary-900/30 border-b border-primary-500 dark:border-primary-600">
             {table.getHeaderGroups().map((headerGroup: any, i: number) => (
               <React.Fragment key={headerGroup.id}>
                 {/* Column Headers */}

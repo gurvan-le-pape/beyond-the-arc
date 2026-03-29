@@ -72,16 +72,16 @@ export function PlayerSearchDropdown({
         <div
           className={cn(
             "absolute top-full left-0 right-0 mt-1 z-20 max-h-64 overflow-y-auto",
-            "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700",
+            "bg-white dark:bg-surface-subtle-dark border border-divide-light dark:border-divide-dark",
             "rounded-lg shadow-lg dark:shadow-2xl",
           )}
         >
           {isLoading ? (
-            <p className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
+            <p className="px-4 py-3 text-sm text-text-secondary dark:text-text-secondary-dark">
               {tCommon("loading")}
             </p>
           ) : results.length === 0 ? (
-            <p className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
+            <p className="px-4 py-3 text-sm text-text-secondary dark:text-text-secondary-dark">
               {tPlayers("playerDetail.compareNoResults")}
             </p>
           ) : (
@@ -92,7 +92,7 @@ export function PlayerSearchDropdown({
                 onClick={() => handleSelect(player)}
                 className={cn(
                   "w-full flex items-center gap-3 px-4 py-2.5 text-left",
-                  "hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors",
+                  "hover:bg-surface-subtle dark:hover:bg-surface-raised-dark transition-colors",
                 )}
               >
                 {/* Tiny club logo */}
@@ -110,10 +110,10 @@ export function PlayerSearchDropdown({
 
                 {/* Name + meta */}
                 <div className="min-w-0">
-                  <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                  <span className="text-sm font-semibold text-text-heading dark:text-text-heading-dark">
                     #{player.number} {player.name}
                   </span>
-                  <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">
+                  <span className="text-xs text-text-secondary dark:text-text-secondary-dark ml-2">
                     {player.team?.club?.name || ""}
                     {player.team?.category ? ` · ${player.team.category}` : ""}
                   </span>

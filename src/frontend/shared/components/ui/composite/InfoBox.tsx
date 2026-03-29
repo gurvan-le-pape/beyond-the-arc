@@ -21,7 +21,7 @@ export const InfoBox = forwardRef<HTMLDivElement, InfoBoxProps>(
       <div
         ref={ref}
         className={cn(
-          "bg-white dark:bg-gray-800 p-4 rounded-card shadow-card dark:shadow-card-dark border border-gray-200 dark:border-gray-700",
+          "bg-surface-raised dark:bg-surface-raised-dark p-4 rounded-card shadow-card dark:shadow-card-dark border border-divide-light dark:border-divide-dark",
           className,
         )}
         {...props}
@@ -29,9 +29,11 @@ export const InfoBox = forwardRef<HTMLDivElement, InfoBoxProps>(
         {/* Label */}
         <div className="flex items-center gap-2 mb-2">
           {icon && (
-            <span className="text-gray-500 dark:text-gray-400">{icon}</span>
+            <span className="text-text-secondary dark:text-text-secondary-dark">
+              {icon}
+            </span>
           )}
-          <p className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">
+          <p className="text-sm font-medium text-text-secondary dark:text-text-secondary-dark uppercase tracking-wide">
             {label}
           </p>
         </div>
@@ -47,7 +49,7 @@ export const InfoBox = forwardRef<HTMLDivElement, InfoBoxProps>(
             {value || "N/A"}
           </a>
         ) : (
-          <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+          <p className="text-lg font-semibold text-text-heading dark:text-text-heading-dark">
             {value || "N/A"}
           </p>
         )}

@@ -52,7 +52,7 @@ export const HeatmapLegend: React.FC<HeatmapLegendProps> = ({
     <div className={`flex flex-col gap-3 w-full ${compact ? "" : "max-w-sm"}`}>
       {/* Gradient bar */}
       <div className="flex items-center gap-3 w-full">
-        <span className="text-xs font-medium text-gray-500 dark:text-gray-400 shrink-0">
+        <span className="text-xs font-medium text-text-secondary dark:text-text-secondary-dark shrink-0">
           {t("shotChart.low")}
         </span>
         <div className="flex flex-col flex-1 min-w-0 gap-0.5">
@@ -62,13 +62,13 @@ export const HeatmapLegend: React.FC<HeatmapLegendProps> = ({
               background: `linear-gradient(to right, ${activeGradient})`,
             }}
           />
-          <div className="flex justify-between text-[11px] text-gray-400 dark:text-gray-500 px-0.5">
+          <div className="flex justify-between text-[11px] text-text-muted dark:text-text-muted-dark px-0.5">
             <span>0</span>
             <span>{midValue}</span>
             <span>{maxValue}</span>
           </div>
         </div>
-        <span className="text-xs font-medium text-gray-500 dark:text-gray-400 shrink-0">
+        <span className="text-xs font-medium text-text-secondary dark:text-text-secondary-dark shrink-0">
           {t("shotChart.high")}
         </span>
       </div>
@@ -76,7 +76,7 @@ export const HeatmapLegend: React.FC<HeatmapLegendProps> = ({
       {/* Color scale picker */}
       {colorScaleOptions && setColorScale && colorScaleName && (
         <div className="flex items-center gap-2 w-full">
-          <span className="text-xs text-gray-500 dark:text-gray-400 shrink-0">
+          <span className="text-xs text-text-secondary dark:text-text-secondary-dark shrink-0">
             {t("shotChart.color")}
           </span>
           <div className="flex flex-row gap-1.5 flex-wrap">
@@ -92,8 +92,8 @@ export const HeatmapLegend: React.FC<HeatmapLegendProps> = ({
                     flex flex-col items-center gap-0.5 px-1.5 py-1 rounded-lg border transition-all
                     ${
                       isActive
-                        ? "border-blue-500 dark:border-blue-400 ring-2 ring-blue-100 dark:ring-blue-900 bg-blue-50 dark:bg-blue-950"
-                        : "border-gray-200 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-400 bg-white dark:bg-gray-800"
+                        ? "border-primary-500 dark:border-primary-400 ring-2 ring-primary-100 dark:ring-primary-900 bg-primary-50 dark:bg-primary-950"
+                        : "border-divide-light dark:border-divide-dark hover:border-divide-dark dark:hover:border-text-muted-dark bg-white dark:bg-surface-subtle-dark"
                     }
                   `}
                 >
@@ -103,7 +103,7 @@ export const HeatmapLegend: React.FC<HeatmapLegendProps> = ({
                       background: `linear-gradient(to right, ${gradient})`,
                     }}
                   />
-                  <span className="text-[11px] text-gray-600 dark:text-gray-300 leading-none">
+                  <span className="text-[11px] text-text-body dark:text-text-body-dark leading-none">
                     {scale}
                   </span>
                 </button>

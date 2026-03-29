@@ -23,7 +23,7 @@ export function ThemeToggle() {
   if (!mounted) {
     return (
       <button
-        className="p-2 rounded-button hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+        className="p-2 rounded-button hover:bg-surface-subtle dark:hover:bg-surface-subtle-dark transition-colors"
         aria-label={t("header.toggleTheme")}
         disabled
       >
@@ -35,14 +35,14 @@ export function ThemeToggle() {
   return (
     <button
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className="p-2 rounded-button hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:ring-offset-2 dark:focus:ring-offset-gray-900 group"
+      className="p-2 rounded-button hover:bg-surface-subtle dark:hover:bg-surface-subtle-dark transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-surface-raised dark:focus:ring-offset-surface-raised-dark group"
       aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
       title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
     >
       {theme === "dark" ? (
         <SunIcon className="w-5 h-5 text-warning-DEFAULT transition-transform duration-200 group-hover:rotate-45 group-hover:scale-110" />
       ) : (
-        <MoonIcon className="w-5 h-5 text-gray-700 dark:text-gray-300 transition-transform duration-200 group-hover:-rotate-12 group-hover:scale-110" />
+        <MoonIcon className="w-5 h-5 text-text-emphasis dark:text-text-emphasis-dark transition-transform duration-200 group-hover:-rotate-12 group-hover:scale-110" />
       )}
     </button>
   );

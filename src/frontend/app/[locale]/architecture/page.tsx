@@ -127,22 +127,22 @@ export default async function ArchitecturePage({
     <PageLayout>
       {/* Header */}
       <div className="text-center mb-12">
-        <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+        <h1 className="text-2xl md:text-4xl font-bold text-text-heading dark:text-text-heading-dark mb-4">
           {t("architecture.title")}
         </h1>
-        <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+        <p className="text-lg text-text-body dark:text-text-body-dark max-w-2xl mx-auto">
           {t("architecture.subtitle")}
         </p>
       </div>
 
-      {/* Tech Stack Cards */}
+      {/* Tech Stack Cards — sit on surface-base, so use surface-subtle */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
         {techStacks.map((stack, idx) => {
           const Icon = stack.icon;
           return (
             <div
               key={idx}
-              className="bg-white dark:bg-gray-800 rounded-card border border-gray-200 dark:border-gray-700 shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 overflow-hidden"
+              className="bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 overflow-hidden"
             >
               {/* Card Header */}
               <div className={`bg-gradient-to-r ${stack.color} p-6 text-white`}>
@@ -159,14 +159,14 @@ export default async function ArchitecturePage({
                   return (
                     <div
                       key={itemIdx}
-                      className="flex items-start gap-3 p-3 rounded-button bg-gray-50 dark:bg-gray-700/50 border border-transparent hover:border-gray-200 dark:hover:border-gray-600 transition-colors duration-200"
+                      className="flex items-start gap-3 p-3 rounded-button bg-surface-raised dark:bg-surface-raised-dark border border-transparent hover:border-divide-light dark:hover:border-divide-dark transition-colors duration-200"
                     >
-                      <ItemIcon className="w-5 h-5 text-gray-500 dark:text-gray-400 flex-shrink-0 mt-0.5" />
+                      <ItemIcon className="w-5 h-5 text-text-secondary dark:text-text-secondary-dark flex-shrink-0 mt-0.5" />
                       <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+                        <h3 className="font-semibold text-text-heading dark:text-text-heading-dark">
                           {item.name}
                         </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <p className="text-sm text-text-body dark:text-text-body-dark">
                           {item.description}
                         </p>
                       </div>
@@ -180,12 +180,12 @@ export default async function ArchitecturePage({
       </div>
 
       {/* Architecture Diagram */}
-      <div className="bg-white dark:bg-gray-800 rounded-card border border-gray-200 dark:border-gray-700 shadow-card dark:shadow-card-dark p-8">
-        <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6 text-center">
+      <div className="bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card dark:shadow-card-dark p-8">
+        <h2 className="text-xl font-bold text-text-heading dark:text-text-heading-dark mb-6 text-center">
           {t("architecture.systemArchitecture")}
         </h2>
         <div className="flex flex-col md:flex-row items-center justify-center gap-8">
-          {/* Client */}
+          {/* Client — decorative gradient, intentional */}
           <div className="flex flex-col items-center">
             <div className="bg-gradient-to-br from-blue-500 to-cyan-500 text-white rounded-button p-6 w-48 text-center shadow-card">
               <Globe className="w-12 h-12 mx-auto mb-3" />
@@ -197,7 +197,7 @@ export default async function ArchitecturePage({
           </div>
 
           {/* Arrow */}
-          <div className="hidden md:block text-gray-400 dark:text-gray-600">
+          <div className="hidden md:block text-text-muted dark:text-text-muted-dark">
             <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
               <path
                 fillRule="evenodd"
@@ -219,7 +219,7 @@ export default async function ArchitecturePage({
           </div>
 
           {/* Arrow */}
-          <div className="hidden md:block text-gray-400 dark:text-gray-600">
+          <div className="hidden md:block text-text-muted dark:text-text-muted-dark">
             <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
               <path
                 fillRule="evenodd"
@@ -247,10 +247,10 @@ export default async function ArchitecturePage({
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-button bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 mb-3">
               <Package className="w-6 h-6" />
             </div>
-            <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
+            <h3 className="font-semibold text-text-heading dark:text-text-heading-dark mb-2">
               {t("architecture.features.modular.title")}
             </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-text-body dark:text-text-body-dark">
               {t("architecture.features.modular.description")}
             </p>
           </div>
@@ -258,10 +258,10 @@ export default async function ArchitecturePage({
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-button bg-green-100 dark:bg-green-900/40 text-green-600 dark:text-green-400 mb-3">
               <Code2 className="w-6 h-6" />
             </div>
-            <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
+            <h3 className="font-semibold text-text-heading dark:text-text-heading-dark mb-2">
               {t("architecture.features.typeSafety.title")}
             </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-text-body dark:text-text-body-dark">
               {t("architecture.features.typeSafety.description")}
             </p>
           </div>
@@ -269,10 +269,10 @@ export default async function ArchitecturePage({
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-button bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 mb-3">
               <Layers className="w-6 h-6" />
             </div>
-            <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
+            <h3 className="font-semibold text-text-heading dark:text-text-heading-dark mb-2">
               {t("architecture.features.scalable.title")}
             </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-text-body dark:text-text-body-dark">
               {t("architecture.features.scalable.description")}
             </p>
           </div>

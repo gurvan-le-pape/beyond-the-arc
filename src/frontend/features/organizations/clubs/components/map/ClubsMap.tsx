@@ -186,12 +186,12 @@ export function ClubsMap({ initialRegions }: ClubsMapProps) {
   // Error state
   if (error) {
     return (
-      <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+      <div className="absolute inset-0 flex items-center justify-center bg-surface-subtle dark:bg-surface-subtle-dark">
         <div className="text-center">
-          <p className="text-red-600 font-semibold">{t(error)}</p>
+          <p className="text-error font-semibold">{t(error)}</p>
           <button
             onClick={() => globalThis.location.reload()}
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="mt-4 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
           >
             {t("map.retry")}
           </button>

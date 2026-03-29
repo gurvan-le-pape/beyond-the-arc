@@ -42,7 +42,7 @@ export const PlayerShotChart: React.FC<PlayerShotChartProps> = ({
       <div className="w-full max-w-3xl mx-auto">
         {renderChart()}
         {description && (
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-4 text-center">
+          <p className="text-sm text-text-secondary dark:text-text-secondary-dark mt-4 text-center">
             {description}
           </p>
         )}

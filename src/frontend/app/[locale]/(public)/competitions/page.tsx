@@ -27,7 +27,7 @@ const CompetitionLevelCard: React.FC<{ level: any }> = ({ level }) => {
   return (
     <Link
       href={href}
-      className={`cursor-pointer bg-gradient-to-br border-2 rounded-card flex flex-col items-center justify-center p-8 transition-all duration-200 hover:scale-105 shadow-card hover:shadow-card-hover dark:shadow-card-dark group ${colorClasses} focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:ring-offset-2 dark:focus:ring-offset-gray-950`}
+      className={`cursor-pointer bg-gradient-to-br border-2 rounded-card flex flex-col items-center justify-center p-8 transition-all duration-200 hover:scale-105 shadow-card hover:shadow-card-hover dark:shadow-card-dark group ${colorClasses} focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:ring-offset-2 dark:focus:ring-offset-surface-base-dark`}
       aria-label={label}
       role="link"
     >
@@ -37,11 +37,11 @@ const CompetitionLevelCard: React.FC<{ level: any }> = ({ level }) => {
       {/* Icon for the level */}
       {React.cloneElement(icon, { "aria-hidden": true, focusable: false })}
 
-      <div className="text-xl font-semibold mb-2 group-hover:text-primary-700 dark:group-hover:text-primary-300 transition-colors duration-200 dark:text-gray-100">
+      <div className="text-xl font-semibold mb-2 group-hover:text-primary-700 dark:group-hover:text-primary-300 transition-colors duration-200 dark:text-text-heading-dark">
         {label}
       </div>
 
-      <div className="text-gray-600 dark:text-gray-300 text-body text-center">
+      <div className="text-sm text-text-body dark:text-text-body-dark text-center">
         {description}
       </div>
     </Link>
@@ -85,7 +85,7 @@ export default function CompetitionsPage() {
   // Main page layout
   return (
     <PageLayout centered>
-      <h1 className="text-2xl md:text-4xl font-bold mb-12 text-gray-900 dark:text-gray-100 text-center">
+      <h1 className="text-2xl md:text-4xl font-bold mb-12 text-text-heading dark:text-text-heading-dark text-center">
         {t("selectLevel")}
       </h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 lg:gap-8">

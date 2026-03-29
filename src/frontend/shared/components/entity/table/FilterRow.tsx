@@ -20,7 +20,7 @@ export function FilterRow<RowType>({
   filterRenderers,
 }: FilterRowProps<RowType>) {
   return (
-    <tr className="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+    <tr className="bg-surface-subtle dark:bg-surface-subtle-dark border-b border-divide-light dark:border-divide-dark">
       {headerGroup.headers.map((header: any) => {
         const columnId = header.column.id as FilterKey;
         const isFilterable = filterableDropdownKeys.includes(columnId);

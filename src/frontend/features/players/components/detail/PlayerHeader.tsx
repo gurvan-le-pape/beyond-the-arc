@@ -85,25 +85,24 @@ export function PlayerHeader({ player }: PlayerHeaderProps) {
         {/* Player Info */}
         <div className="flex-1">
           {/* Number & Name */}
-          <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+          <h1 className="text-2xl md:text-4xl font-bold text-text-heading dark:text-text-heading-dark mb-2">
             #{playerNumber} {playerName}
           </h1>
           {/* Category & Gender */}
-          <p className="text-xl text-gray-600 dark:text-gray-400">
+          <p className="text-xl text-text-body dark:text-text-body-dark">
             {category} • {gender}
           </p>
           <div className="flex flex-col items-start mt-1">
             {/* Team */}
             <Button
               variant="ghost"
-              className="p-0 m-0 border-0 bg-transparent text-xl font-bold text-gray-900 dark:text-gray-100 align-baseline focus:outline-none hover:underline"
+              className="p-0 m-0 border-0 bg-transparent text-xl font-bold text-text-heading dark:text-text-heading-dark align-baseline focus:outline-none hover:underline"
               aria-label={tCommon("club.seeClub", { name: clubName })}
               onClick={() => router.push(clubUrl)}
               type="button"
               style={{
                 fontSize: "inherit",
                 fontWeight: "inherit",
-                color: "inherit",
                 lineHeight: "inherit",
               }}
             >
@@ -113,7 +112,7 @@ export function PlayerHeader({ player }: PlayerHeaderProps) {
             {competitionUrl && competitionName && (
               <Button
                 variant="ghost"
-                className="text-md cursor-pointer hover:underline bg-transparent border-0 p-0 m-0 text-inherit font-inherit"
+                className="text-md cursor-pointer hover:underline bg-transparent border-0 p-0 m-0 font-inherit text-text-body dark:text-text-body-dark"
                 aria-label={tCommon("competition.seeCompetition", {
                   name: competitionName,
                 })}

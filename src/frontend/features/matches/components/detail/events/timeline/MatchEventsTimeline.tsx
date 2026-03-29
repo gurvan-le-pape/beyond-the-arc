@@ -59,7 +59,7 @@ export const MatchEventsTimeline: React.FC<MatchEventsTimelineProps> = ({
 
       <div className="relative">
         {/* Centre vertical rule */}
-        <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-gray-300 dark:bg-gray-600 transform -translate-x-1/2" />
+        <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-divide-light dark:bg-divide-dark transform -translate-x-1/2" />
 
         <div className="space-y-3">
           {events.map((event) => {
@@ -103,7 +103,7 @@ export const MatchEventsTimeline: React.FC<MatchEventsTimelineProps> = ({
                       isHomeTeam={isHomeTeam}
                     />
                   ) : (
-                    <div className="w-2 h-2 rounded-button bg-gray-300 dark:bg-gray-600" />
+                    <div className="w-2 h-2 rounded-button bg-divide-light dark:bg-divide-dark" />
                   )}
                 </div>
 

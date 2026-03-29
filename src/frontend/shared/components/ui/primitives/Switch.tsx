@@ -58,7 +58,7 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
           "disabled:opacity-50 disabled:cursor-not-allowed",
           checked
             ? "bg-primary-600 dark:bg-primary-500"
-            : "bg-gray-300 dark:bg-gray-600",
+            : "bg-surface-subtle dark:bg-surface-subtle-dark",
           s.track,
           className,
         )}
@@ -67,13 +67,13 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
       >
         <span
           className={cn(
-            "inline-block rounded-full bg-white shadow-sm transition-transform",
+            "inline-block rounded-full bg-surface-raised shadow-sm transition-transform",
             s.thumb,
             checked ? s.translate : "translate-x-1",
           )}
         />
         {label && (
-          <span className="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300">
+          <span className="ml-3 text-sm font-medium text-text-emphasis dark:text-text-emphasis-dark">
             {label}
           </span>
         )}

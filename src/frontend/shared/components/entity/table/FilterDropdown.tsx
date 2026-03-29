@@ -26,8 +26,8 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
   <div className="relative w-full min-w-[90px]" ref={dropdownRef}>
     <Button
       type="button"
-      variant="outline"
-      className="inline-flex items-center justify-center w-full box-border border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-100 font-medium leading-5 rounded-xl text-sm px-4 py-2.5 focus:outline-none focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-800 transition text-center"
+      variant="control"
+      className="inline-flex items-center justify-center w-full text-sm px-4 py-2.5 rounded-xl"
       onClick={() => setOpen(!isOpen)}
       aria-haspopup="listbox"
       aria-expanded={isOpen}
@@ -54,20 +54,20 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
       </svg>
     </Button>
     <div
-      className={`z-10 absolute left-0 mt-2 w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg ${
+      className={`z-10 absolute left-0 mt-2 w-full bg-white dark:bg-surface-raised-dark border border-divide-light dark:border-divide-dark rounded-xl shadow-lg ${
         isOpen ? "block" : "hidden"
       }`}
     >
-      <ul className="p-2 text-sm text-gray-900 dark:text-gray-100 font-medium max-h-60 overflow-y-auto text-center">
+      <ul className="p-2 text-sm text-text-heading dark:text-text-heading-dark font-medium max-h-60 overflow-y-auto text-center">
         {options.map((opt) => (
           <li key={opt.value}>
             <Button
               type="button"
               variant="ghost"
-              className={`inline-flex items-center justify-center w-full p-2 rounded hover:bg-blue-50 dark:hover:bg-gray-800 hover:text-blue-700 dark:hover:text-blue-400 transition${
+              className={`inline-flex items-center justify-center w-full p-2 rounded transition ${
                 selectedValue === opt.value
-                  ? " font-bold text-blue-700 dark:text-blue-400"
-                  : ""
+                  ? "font-bold text-primary-700 dark:text-primary-400"
+                  : "hover:bg-surface-subtle dark:hover:bg-surface-subtle-dark hover:text-primary-700 dark:hover:text-primary-400"
               }`}
               onClick={() => {
                 onSelect(opt.value);

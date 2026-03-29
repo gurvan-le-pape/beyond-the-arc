@@ -45,6 +45,34 @@ module.exports = {
           900: "#14532d",
         },
 
+        surface: {
+          base: "#f9fafb", // gray-50
+          subtle: "#f3f4f6", // gray-100
+          raised: "#e5e7eb", // gray-200
+          "base-dark": "#030712", // gray-950
+          "subtle-dark": "#111827", // gray-900
+          "raised-dark": "#1f2937", // gray-800
+        },
+
+        divide: {
+          light: "#d1d5db", // gray-300 — borders, dividers
+          dark: "#374151", // gray-700 — dark borders, dividers
+        },
+
+        // TEXT TOKENS
+        text: {
+          muted: "#9ca3af", // gray-400 — placeholders, disabled, icons
+          secondary: "#6b7280", // gray-500 — secondary labels, captions
+          body: "#4b5563", // gray-600 — default body text
+          emphasis: "#374151", // gray-700 — stronger labels
+          heading: "#1f2937", // gray-800 — headings
+          "muted-dark": "#6b7280", // gray-500
+          "secondary-dark": "#9ca3af", // gray-400
+          "body-dark": "#d1d5db", // gray-300
+          "emphasis-dark": "#e5e7eb", // gray-200
+          "heading-dark": "#f3f4f6", // gray-100
+        },
+
         // GENDER COLORS
         team: {
           male: {
@@ -116,13 +144,29 @@ module.exports = {
         },
       },
 
+      fontSize: {
+        xs: ["0.75rem", { lineHeight: "1rem" }],
+        sm: ["0.875rem", { lineHeight: "1.25rem" }],
+        base: ["1rem", { lineHeight: "1.5rem" }],
+        lg: ["1.125rem", { lineHeight: "1.75rem" }],
+        xl: ["1.25rem", { lineHeight: "1.75rem" }],
+        "2xl": ["1.5rem", { lineHeight: "2rem" }],
+        "3xl": ["1.875rem", { lineHeight: "2.25rem" }],
+      },
+
+      fontWeight: {
+        normal: "400",
+        medium: "500",
+        semibold: "600",
+        bold: "700",
+      },
+
       // Custom spacing
       spacing: {
-        18: "4.5rem",
-        88: "22rem",
-        100: "25rem",
-        112: "28rem",
-        128: "32rem",
+        sidebar: "22rem",
+        panel: "25rem",
+        "panel-lg": "28rem",
+        "panel-xl": "32rem",
       },
 
       // Custom border radius

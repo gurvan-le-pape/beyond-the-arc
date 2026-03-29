@@ -82,11 +82,11 @@ export function TeamHeader({ team }: TeamHeaderProps) {
         {/* Team Info */}
         <div className="flex-1">
           {/* Name & Number */}
-          <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+          <h1 className="text-2xl md:text-4xl font-bold text-text-heading dark:text-text-heading-dark mb-2">
             {clubName} - {teamNumber}
           </h1>
           {/* Category & Gender */}
-          <p className="text-xl text-gray-600 dark:text-gray-400">
+          <p className="text-xl text-text-body dark:text-text-body-dark">
             {category} • {gender}
           </p>
           {/* Competition */}

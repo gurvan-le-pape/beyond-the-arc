@@ -20,15 +20,15 @@ const buttonVariants = cva(
         secondary:
           "bg-secondary-600 text-white hover:bg-secondary-700 dark:bg-secondary-500 dark:hover:bg-secondary-600 focus-visible:ring-secondary-500",
         outline:
-          "border-2 border-primary-600 text-primary-600 bg-white hover:bg-primary-50 dark:border-primary-400 dark:text-primary-400 dark:bg-gray-800 dark:hover:bg-gray-700 focus-visible:ring-primary-500",
+          "border-2 border-primary-600 text-primary-600 bg-surface-raised hover:bg-primary-50 dark:border-primary-400 dark:text-primary-400 dark:bg-surface-subtle-dark dark:hover:bg-surface-subtle-dark focus-visible:ring-primary-500",
         ghost:
-          "text-primary-600 hover:bg-primary-50 dark:text-primary-400 dark:hover:bg-gray-800 focus-visible:ring-primary-500",
+          "text-primary-600 hover:bg-primary-50 dark:text-primary-400 dark:hover:bg-surface-subtle-dark focus-visible:ring-primary-500",
         danger:
           "bg-error text-white hover:bg-error-dark focus-visible:ring-error",
         success:
           "bg-success text-white hover:bg-success-dark focus-visible:ring-success",
         download:
-          "bg-gradient-to-r from-blue-700 to-green-600 text-white hover:from-blue-800 hover:to-green-700 shadow focus-visible:ring-blue-500",
+          "bg-gradient-to-r from-primary-700 to-secondary-600 text-white hover:from-primary-800 hover:to-secondary-700 shadow focus-visible:ring-primary-500",
 
         // Gender-specific variants
         male: "bg-team-male text-white hover:bg-team-male-dark dark:bg-team-male-light dark:hover:bg-team-male focus-visible:ring-team-male shadow-sm",
@@ -39,17 +39,17 @@ const buttonVariants = cva(
         navActive:
           "bg-primary-600 text-white border-2 border-primary-600 shadow-md hover:bg-primary-700 dark:bg-primary-500 dark:border-primary-500 dark:hover:bg-primary-600 focus-visible:ring-primary-500",
         navInactive:
-          "bg-white text-primary-700 border-2 border-primary-300 hover:bg-primary-50 hover:border-primary-500 dark:bg-gray-800 dark:text-primary-400 dark:border-primary-600 dark:hover:bg-primary-900/20 dark:hover:border-primary-500 focus-visible:ring-primary-500 shadow-sm",
+          "bg-surface-raised text-primary-700 border-2 border-primary-300 hover:bg-primary-50 hover:border-primary-500 dark:bg-surface-subtle-dark dark:text-primary-400 dark:border-primary-600 dark:hover:bg-primary-900/20 dark:hover:border-primary-500 focus-visible:ring-primary-500 shadow-sm",
 
         // Round pill variants (for RoundSelector)
         pillActive:
           "bg-primary-600 text-white font-bold shadow-md ring-2 ring-primary-400 border border-primary-600 z-10 dark:bg-primary-500 dark:ring-primary-300 dark:border-primary-500 focus-visible:ring-primary-500",
         pillInactive:
-          "bg-white text-gray-700 border border-gray-200 hover:bg-primary-50 hover:text-primary-700 hover:border-primary-300 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-primary-900/20 dark:hover:text-primary-400 dark:hover:border-primary-600 focus-visible:ring-primary-500",
+          "bg-surface-raised text-text-emphasis border border-divide-light hover:bg-primary-50 hover:text-primary-700 hover:border-primary-300 dark:bg-surface-subtle-dark dark:text-text-emphasis-dark dark:border-divide-dark dark:hover:bg-primary-900/20 dark:hover:text-primary-400 dark:hover:border-primary-600 focus-visible:ring-primary-500",
 
         // Carousel navigation arrows
         carouselArrow:
-          "p-2 rounded-full border border-gray-300 bg-white text-gray-500 hover:bg-primary-50 hover:text-primary-600 disabled:opacity-30 disabled:cursor-not-allowed dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-primary-900/20 dark:hover:text-primary-400 focus-visible:ring-primary-500",
+          "p-2 rounded-full border border-divide-light bg-surface-raised text-text-muted hover:bg-primary-50 hover:text-primary-600 disabled:opacity-30 disabled:cursor-not-allowed dark:border-divide-dark dark:bg-surface-raised-dark dark:text-text-muted-dark dark:hover:bg-primary-900/20 dark:hover:text-primary-400 focus-visible:ring-primary-500",
 
         // List item variants (for categorized lists)
         listItem:
@@ -58,10 +58,16 @@ const buttonVariants = cva(
         // Category header variant (for expandable sections)
         categoryHeader:
           "w-full justify-start gap-2 text-left rounded hover:bg-transparent dark:hover:bg-transparent focus-visible:ring-primary-500 active:scale-100",
+
+        control:
+          "border border-divide-light bg-surface-raised text-text-emphasis font-medium " +
+          "hover:bg-surface-subtle dark:border-divide-dark dark:bg-surface-raised-dark " +
+          "dark:text-text-heading-dark dark:hover:bg-surface-subtle-dark " +
+          "focus-visible:ring-2 focus-visible:ring-primary-200 dark:focus-visible:ring-primary-800",
       },
       size: {
         sm: "h-9 px-3 text-sm",
-        md: "h-10 px-4 text-lg",
+        md: "h-10 px-4 text-base",
         lg: "h-12 px-6 text-lg",
         icon: "h-10 w-10",
         // Custom size for pills

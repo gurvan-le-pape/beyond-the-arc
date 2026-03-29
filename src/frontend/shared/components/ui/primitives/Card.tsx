@@ -11,9 +11,9 @@ const cardVariants = cva("rounded-card border transition-all duration-200", {
   variants: {
     variant: {
       default:
-        "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-card dark:shadow-card-dark",
+        "bg-surface-subtle dark:bg-surface-subtle-dark border-divide-light dark:border-divide-dark shadow-card dark:shadow-card-dark",
       highlighted:
-        "bg-white dark:bg-gray-800 border-primary-500 dark:border-primary-400 border-2 shadow-card-hover dark:shadow-card-dark",
+        "bg-surface-subtle dark:bg-surface-subtle-dark border-primary-500 dark:border-primary-400 border-2 shadow-card-hover dark:shadow-card-dark",
       ghost: "bg-transparent border-transparent",
       custom: "", // Empty - allows full custom styling via className
     },
@@ -115,7 +115,7 @@ export const CardTitle = forwardRef<
     <h3
       ref={ref}
       className={cn(
-        "text-lg font-bold text-gray-900 dark:text-gray-100",
+        "text-lg font-bold text-text-heading dark:text-text-heading-dark",
         className,
       )}
       {...props}
@@ -137,7 +137,10 @@ export const CardDescription = forwardRef<
   return (
     <p
       ref={ref}
-      className={cn("text-sm text-gray-600 dark:text-gray-400", className)}
+      className={cn(
+        "text-sm text-text-body dark:text-text-body-dark",
+        className,
+      )}
       {...props}
     />
   );
@@ -168,7 +171,7 @@ export const CardFooter = forwardRef<
     <div
       ref={ref}
       className={cn(
-        "flex items-center pt-4 border-t border-gray-200 dark:border-gray-700",
+        "flex items-center pt-4 border-t border-divide-light dark:border-divide-dark",
         className,
       )}
       {...props}

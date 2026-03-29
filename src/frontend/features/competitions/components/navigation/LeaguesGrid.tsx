@@ -35,9 +35,10 @@ export function LeaguesGrid({ leagues }: LeaguesGridProps) {
               `/competitions/${CompetitionLevel.REGIONAL}/${league.id}`,
             )
           }
-          className="border-l-4 border-l-regional-dark dark:border-l-regional-light hover:border-l-gray-300 dark:hover:!border-l-gray-600 flex flex-col items-center text-center"
+          className="border-l-4 border-l-regional-dark dark:border-l-regional-light hover:border-l-divide-light dark:hover:!border-l-divide-dark flex flex-col items-center text-center"
         >
-          <div className="mb-3 w-16 h-16 flex items-center justify-center rounded-xl bg-gray-50 dark:bg-gray-700/50">
+          {/* Logo placeholder */}
+          <div className="mb-3 w-16 h-16 flex items-center justify-center rounded-xl bg-surface-raised dark:bg-surface-raised-dark">
             <ImageWithFallback
               src={`/images/leagues/${formatNameToFileName(league.name)}.webp`}
               alt={league.name}
@@ -45,7 +46,7 @@ export function LeaguesGrid({ leagues }: LeaguesGridProps) {
               className="w-12 h-12 object-contain"
             />
           </div>
-          <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 leading-snug">
+          <h3 className="text-sm font-semibold text-text-heading dark:text-text-heading-dark leading-snug">
             {league.name}
           </h3>
         </Card>

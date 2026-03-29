@@ -82,12 +82,12 @@ export function TeamListItem({ team, clubName }: TeamListItemProps) {
   }
 
   return (
-    <div className="w-full px-6 py-3.5 flex items-center justify-between border-b border-gray-100 dark:border-gray-800 hover:bg-primary-50/40 dark:hover:bg-primary-950/40 transition-colors group">
+    <div className="w-full px-6 py-3.5 flex items-center justify-between hover:bg-surface-subtle dark:hover:bg-surface-subtle-dark transition-colors group">
       {/* Left */}
       <div className="flex flex-col gap-1">
         <Link
           href={`/${locale}/teams/${team.id}`}
-          className="text-[15px] font-medium text-gray-900 dark:text-gray-100 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors hover:underline"
+          className="text-[15px] font-medium text-text-heading dark:text-text-heading-dark group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors hover:underline"
         >
           {clubName} {team.number || ""}
         </Link>
@@ -95,7 +95,7 @@ export function TeamListItem({ team, clubName }: TeamListItemProps) {
         {championship && levelLabel && (
           <div className="flex items-center gap-1.5 flex-wrap">
             <LevelBadge level={championship.level} label={levelLabel} />
-            <span className="text-sm text-gray-500 dark:text-gray-400">
+            <span className="text-sm text-text-secondary dark:text-text-secondary-dark">
               {championship.name}
             </span>
           </div>
@@ -133,7 +133,7 @@ export function TeamListItem({ team, clubName }: TeamListItemProps) {
               {leaderboard.gamesWon}
               {t("teamDetail.won")}
             </span>
-            <span className="w-px h-3 bg-gray-300 dark:bg-gray-700" />
+            <span className="w-px h-3 bg-text-muted dark:bg-text-muted-dark" />
             <span className="text-xs font-medium text-error-dark dark:text-error-light">
               {leaderboard.gamesLost}
               {t("teamDetail.lost")}

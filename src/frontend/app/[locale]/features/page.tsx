@@ -125,10 +125,10 @@ export default async function FeaturesPage({
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-button bg-gradient-to-br from-blue-500 to-purple-500 text-white mb-4 shadow-card">
           <Sparkles className="w-8 h-8" />
         </div>
-        <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+        <h1 className="text-2xl md:text-4xl font-bold text-text-heading dark:text-text-heading-dark mb-4">
           {t("features.title")}
         </h1>
-        <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+        <p className="text-lg text-text-body dark:text-text-body-dark max-w-3xl mx-auto">
           {t("features.subtitle")}
         </p>
       </div>
@@ -142,13 +142,13 @@ export default async function FeaturesPage({
             "coming-soon":
               "bg-info-light/20 dark:bg-info-dark/20 text-info-dark dark:text-info-light border border-info-DEFAULT/30",
             planned:
-              "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600",
+              "bg-surface-subtle dark:bg-surface-raised-dark text-text-emphasis dark:text-text-body-dark border border-divide-light dark:border-divide-dark",
           };
 
           return (
             <div
               key={idx}
-              className="bg-white dark:bg-gray-800 rounded-card border border-gray-200 dark:border-gray-700 shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 p-6"
+              className="bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 p-6"
             >
               <div className="flex items-start justify-between mb-4">
                 <div
@@ -164,10 +164,10 @@ export default async function FeaturesPage({
                   {t(`features.status.${feature.status}`)}
                 </span>
               </div>
-              <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">
+              <h3 className="text-lg font-bold text-text-heading dark:text-text-heading-dark mb-2">
                 {feature.title}
               </h3>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">
+              <p className="text-text-body dark:text-text-body-dark text-sm">
                 {feature.description}
               </p>
             </div>
@@ -176,8 +176,8 @@ export default async function FeaturesPage({
       </div>
 
       {/* Highlights Section */}
-      <div className="bg-white dark:bg-gray-800 rounded-card border border-gray-200 dark:border-gray-700 shadow-card dark:shadow-card-dark p-8">
-        <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6 text-center">
+      <div className="bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card dark:shadow-card-dark p-8">
+        <h2 className="text-xl font-bold text-text-heading dark:text-text-heading-dark mb-6 text-center">
           {t("features.highlightsTitle")}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -188,10 +188,10 @@ export default async function FeaturesPage({
                 <div className="inline-flex items-center justify-center w-12 h-12 rounded-button bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400 mb-3">
                   <Icon className="w-6 h-6" />
                 </div>
-                <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                <h3 className="font-semibold text-text-heading dark:text-text-heading-dark mb-2">
                   {highlight.title}
                 </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-text-body dark:text-text-body-dark">
                   {highlight.description}
                 </p>
               </div>

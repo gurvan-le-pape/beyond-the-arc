@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/components/carousel/CompetitionHeader.tsx
+// src/frontend/features/competitions/components/detail/CompetitionHeader.tsx
 "use client";
 
 import { Card } from "@/shared/components/ui";
@@ -24,7 +24,7 @@ export function CompetitionHeader({
             (e.target as HTMLImageElement).style.display = "none";
           }}
         />
-        <h1 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100">
+        <h1 className="text-xl md:text-2xl font-bold text-text-heading dark:text-text-heading-dark">
           {name}
         </h1>
       </div>

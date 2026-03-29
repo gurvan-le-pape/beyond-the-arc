@@ -99,7 +99,7 @@ export function TimelineEventBlock({
           >
             <p
               className={cn(
-                "text-caption text-gray-600 dark:text-gray-400 mt-0.5",
+                "text-text-body dark:text-text-body-dark mt-0.5",
                 isRight ? "text-right" : "text-left",
               )}
               dangerouslySetInnerHTML={{ __html: descriptionHtml }}
@@ -108,7 +108,7 @@ export function TimelineEventBlock({
         )}
 
         {/* Game clock display */}
-        <span className="text-caption text-gray-400 dark:text-gray-500 font-mono">
+        <span className="text-text-muted dark:text-text-muted-dark font-mono">
           {formatGameClock(event.timestamp, matchDate)}
         </span>
       </div>

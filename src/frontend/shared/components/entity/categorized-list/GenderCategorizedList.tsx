@@ -21,23 +21,23 @@ interface GenderCategorizedListProps<T> {
 const GENDER_COLOURS: Record<
   string,
   {
-    bg: string; // badge background
-    text: string; // badge text
+    bg: string;
+    text: string;
     bgDark: string;
     textDark: string;
   }
 > = {
   [Gender.FEMALE]: {
-    bg: "bg-pink-100",
-    text: "text-pink-700", // team.female palette
-    bgDark: "dark:bg-pink-900/40",
-    textDark: "dark:text-pink-300",
+    bg: "bg-team-female-light/20",
+    text: "text-team-female-dark",
+    bgDark: "dark:bg-team-female-dark/20",
+    textDark: "dark:text-team-female-light",
   },
   [Gender.MALE]: {
-    bg: "bg-primary-100",
-    text: "text-primary-700", // team.male palette  (primary ≈ blue)
-    bgDark: "dark:bg-primary-900/40",
-    textDark: "dark:text-primary-300",
+    bg: "bg-team-male-light/20",
+    text: "text-team-male-dark",
+    bgDark: "dark:bg-team-male-dark/20",
+    textDark: "dark:text-team-male-light",
   },
 };
 
@@ -104,7 +104,7 @@ export function GenderCategorizedList<T>({
         >
           {genderLabel}
         </span>
-        <span className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
+        <span className="flex-1 h-px bg-surface-raised dark:bg-divide-dark" />
       </div>
 
       {/* Category sections */}

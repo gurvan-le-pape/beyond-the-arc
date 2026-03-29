@@ -43,11 +43,11 @@ export function ClubHeader({ club }: ClubHeaderProps) {
 
         {/* Club Info */}
         <div className="flex-1">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+          <h1 className="text-2xl font-bold text-text-heading dark:text-text-heading-dark mb-2">
             {club.name}
           </h1>
           {club.city && (
-            <p className="text-body text-gray-600 dark:text-gray-400">
+            <p className="text-text-body dark:text-text-body-dark">
               {club.city}
               {club.zipCode && ` • ${club.zipCode}`}
             </p>

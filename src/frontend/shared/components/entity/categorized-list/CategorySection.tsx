@@ -76,14 +76,14 @@ export function CategorySection<T>({
       >
         <ChevronRight
           className={cn(
-            "text-gray-400 dark:text-gray-500 transition-transform duration-200",
+            "text-text-muted dark:text-text-muted-dark transition-transform duration-200",
             isExpanded && "rotate-90",
           )}
         />
-        <span className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+        <span className="text-lg font-semibold text-text-heading dark:text-text-heading-dark">
           {category}
         </span>
-        <span className="text-xs font-medium text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-700 rounded-full px-2 py-0.5">
+        <span className="text-xs font-medium text-text-secondary dark:text-text-secondary-dark bg-surface-raised dark:bg-surface-raised-dark rounded-full px-2 py-0.5">
           {items.length}
         </span>
       </Button>
@@ -92,21 +92,21 @@ export function CategorySection<T>({
       {isExpanded && (
         <div
           id={`items-list-${categoryKey}`}
-          className="mt-2 ml-7 rounded-card border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-card overflow-hidden"
+          className="mt-2 ml-7 rounded-card border border-divide-light dark:border-divide-dark bg-surface-raised dark:bg-surface-raised-dark shadow-card overflow-hidden"
         >
           {items.length > 0 ? (
             <ul>
               {items.map((item, i) => (
                 <li
                   key={i}
-                  className="border-b border-gray-100 dark:border-gray-700 last:border-b-0"
+                  className="border-b border-divide-light dark:border-divide-dark last:border-b-0"
                 >
                   {renderItem(item, i)}
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="py-5 px-4 text-sm text-gray-400 dark:text-gray-500 text-center">
+            <p className="py-5 px-4 text-sm text-text-muted dark:text-text-muted-dark text-center">
               {emptyMessage}
             </p>
           )}

@@ -77,14 +77,14 @@ export const FilterInput: React.FC<FilterInputProps> = ({
         value={localValue || ""}
         onChange={handleChange}
         placeholder={placeholder || t("table.filter")}
-        className="w-full px-4 py-2 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 transition text-center min-w-[120px]"
+        className="w-full px-4 py-2 border border-divide-light dark:border-divide-dark bg-white dark:bg-surface-raised-dark text-text-heading dark:text-text-heading-dark rounded-input focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 transition text-center min-w-[120px]"
       />
 
       {/* Optional pending indicator */}
       {showPendingIndicator && isPending && (
         <div className="absolute right-2 top-1/2 -translate-y-1/2">
           <svg
-            className="animate-spin h-4 w-4 text-gray-400"
+            className="animate-spin h-4 w-4 text-text-muted dark:text-text-muted-dark"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"

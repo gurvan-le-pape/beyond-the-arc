@@ -43,7 +43,7 @@ export function SearchableChipList<T extends SearchableChipListItem>({
       title={
         <>
           {title}
-          <span className="ml-2 text-sm font-normal text-gray-400">
+          <span className="ml-2 text-sm font-normal text-text-muted dark:text-text-muted-dark">
             ({items.length})
           </span>
         </>
@@ -62,7 +62,7 @@ export function SearchableChipList<T extends SearchableChipListItem>({
       )}
       <div className="flex flex-wrap gap-2">
         {filteredItems.length === 0 ? (
-          <span className="text-sm text-gray-400 dark:text-gray-500">
+          <span className="text-sm text-text-muted dark:text-text-muted-dark">
             {tCompetitions("noSearchResults", { search })}
           </span>
         ) : (
@@ -71,7 +71,7 @@ export function SearchableChipList<T extends SearchableChipListItem>({
               key={item.id}
               type="button"
               onClick={() => onItemClick(item)}
-              className="px-3 py-2 rounded-lg text-sm font-medium border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:border-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors duration-150"
+              className="px-3 py-2 rounded-lg text-sm font-medium border border-divide-light dark:border-divide-dark bg-surface-raised dark:bg-surface-raised-dark text-text-emphasis dark:text-text-emphasis-dark hover:border-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors duration-150"
             >
               {item.name}
             </button>

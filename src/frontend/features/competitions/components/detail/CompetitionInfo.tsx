@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/components/carousel/CompetitionInfo.tsx
+// src/frontend/features/competitions/components/detail/CompetitionInfo.tsx
 "use client";
 
 import {
@@ -53,10 +53,10 @@ export function CompetitionInfo({
 
       {/* President */}
       <div className="flex items-center gap-3 mt-6 mb-4">
-        <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+        <span className="text-xs font-semibold text-text-secondary dark:text-text-secondary-dark uppercase tracking-wide">
           {tCompetitions("info.president")}
         </span>
-        <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
+        <div className="flex-1 h-px bg-divide-light dark:bg-divide-dark" />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <InfoBox

@@ -23,7 +23,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         {label && (
           <label
             htmlFor={selectId}
-            className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
+            className="block text-sm font-semibold text-text-emphasis dark:text-text-emphasis-dark mb-2"
           >
             {label}
           </label>
@@ -35,9 +35,9 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           id={selectId}
           className={cn(
             "w-full px-4 py-2.5 rounded-input",
-            "border border-gray-300 dark:border-gray-600",
-            "bg-white dark:bg-gray-800",
-            "text-body text-gray-900 dark:text-gray-100",
+            "border border-divide-light dark:border-divide-dark",
+            "bg-surface-raised dark:bg-surface-raised-dark",
+            "text-body text-text-heading dark:text-text-heading-dark",
             "focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-primary-500",
             "disabled:opacity-50 disabled:cursor-not-allowed",
             "transition-colors duration-200",
@@ -73,7 +73,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         {helperText && !error && (
           <p
             id={`${selectId}-helper`}
-            className="mt-2 text-sm text-gray-600 dark:text-gray-400"
+            className="mt-2 text-sm text-text-body dark:text-text-body-dark"
           >
             {helperText}
           </p>

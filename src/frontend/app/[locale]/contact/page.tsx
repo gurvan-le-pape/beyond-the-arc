@@ -67,10 +67,10 @@ export default async function ContactPage({
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-button bg-gradient-to-br from-blue-500 to-cyan-500 text-white mb-4 shadow-card">
           <Send className="w-8 h-8" />
         </div>
-        <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+        <h1 className="text-2xl md:text-4xl font-bold text-text-heading dark:text-text-heading-dark mb-4">
           {t("contact.title")}
         </h1>
-        <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+        <p className="text-lg text-text-body dark:text-text-body-dark max-w-2xl mx-auto">
           {t("contact.intro")}
         </p>
       </div>
@@ -89,17 +89,17 @@ export default async function ContactPage({
                   ? "noopener noreferrer"
                   : undefined
               }
-              className="bg-white dark:bg-gray-800 rounded-card border border-gray-200 dark:border-gray-700 shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 p-6 group focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+              className="bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 p-6 group focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
             >
               <div
                 className={`inline-flex items-center justify-center w-12 h-12 rounded-button bg-gradient-to-br ${method.color} text-white mb-4 shadow-sm group-hover:scale-110 transition-transform duration-200`}
               >
                 <Icon className="w-6 h-6" />
               </div>
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
+              <h3 className="font-semibold text-text-heading dark:text-text-heading-dark mb-2">
                 {method.label}
               </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 break-all">
+              <p className="text-sm text-text-body dark:text-text-body-dark break-all">
                 {method.value}
               </p>
             </a>
@@ -108,11 +108,11 @@ export default async function ContactPage({
       </div>
 
       {/* Additional Info */}
-      <div className="bg-white dark:bg-gray-800 rounded-card border border-gray-200 dark:border-gray-700 shadow-card dark:shadow-card-dark p-8">
-        <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+      <div className="bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card dark:shadow-card-dark p-8">
+        <h2 className="text-xl font-bold text-text-heading dark:text-text-heading-dark mb-4">
           {t("contact.aboutProject")}
         </h2>
-        <p className="text-body text-gray-600 dark:text-gray-400 mb-4">
+        <p className="text-body text-text-body dark:text-text-body-dark mb-4">
           {t("contact.projectDescription")}
         </p>
         <div className="flex flex-wrap gap-2">

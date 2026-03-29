@@ -37,17 +37,19 @@ export const EmptyState = forwardRef<HTMLDivElement, EmptyStateProps>(
       >
         {/* Icon */}
         {icon && (
-          <div className="mb-4 text-gray-400 dark:text-gray-600">{icon}</div>
+          <div className="mb-4 text-text-muted dark:text-text-muted-dark">
+            {icon}
+          </div>
         )}
 
         {/* Title */}
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+        <h3 className="text-lg font-semibold text-text-heading dark:text-text-heading-dark mb-2">
           {title}
         </h3>
 
         {/* Description */}
         {descriptionText && (
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 max-w-md">
+          <p className="text-sm text-text-body dark:text-text-body-dark mb-6 max-w-md">
             {descriptionText}
           </p>
         )}
@@ -75,7 +77,7 @@ interface SimpleEmptyStateProps {
 export function SimpleEmptyState({ message }: SimpleEmptyStateProps) {
   return (
     <div className="py-8 text-center">
-      <p className="text-gray-600 dark:text-gray-400">{message}</p>
+      <p className="text-text-body dark:text-text-body-dark">{message}</p>
     </div>
   );
 }

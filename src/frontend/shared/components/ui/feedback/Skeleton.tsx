@@ -14,7 +14,7 @@ export function Skeleton({
   return (
     <div
       className={cn(
-        "animate-pulse rounded-md bg-gray-200 dark:bg-gray-700",
+        "animate-pulse rounded-md bg-surface-raised dark:bg-surface-raised-dark",
         className,
       )}
       {...props}
@@ -27,7 +27,7 @@ export function Skeleton({
  */
 export function SkeletonCard() {
   return (
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-card border border-gray-200 dark:border-gray-700">
+    <div className="bg-surface-raised dark:bg-surface-raised-dark p-6 rounded-card border border-divide-light dark:border-divide-dark">
       <Skeleton className="h-4 w-3/4 mb-4" />
       <Skeleton className="h-4 w-1/2 mb-2" />
       <Skeleton className="h-20 w-full" />
@@ -37,7 +37,7 @@ export function SkeletonCard() {
 
 export function SkeletonInfoBox() {
   return (
-    <div className="bg-white dark:bg-gray-800 p-4 rounded-card border border-gray-200 dark:border-gray-700">
+    <div className="bg-surface-raised dark:bg-surface-raised-dark p-4 rounded-card border border-divide-light dark:border-divide-dark">
       <Skeleton className="h-3 w-20 mb-2" />
       <Skeleton className="h-5 w-32" />
     </div>
