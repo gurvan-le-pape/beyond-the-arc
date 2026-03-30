@@ -11,12 +11,9 @@ import { getTeamsTableColumns } from "@/features/teams/components";
 import { useTeamsTableFilters } from "@/features/teams/hooks";
 import type { Team } from "@/features/teams/types/Team";
 import { useRouter } from "@/navigation";
-import {
-  EntityListPage,
-  EntityTable,
-  Pagination,
-} from "@/shared/components/entity";
-import { PageLayout } from "@/shared/components/layouts/PageLayout";
+import { EntityTable } from "@/shared/components/domain";
+import { EntityListPage, PageLayout } from "@/shared/components/layout";
+import { Pagination } from "@/shared/components/table";
 import {
   CATEGORY_LIST,
   CompetitionLevel,

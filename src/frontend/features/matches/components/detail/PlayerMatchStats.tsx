@@ -11,16 +11,16 @@ import type {
   TeamInfoExtended,
 } from "@/features/teams/types/TeamInfo";
 import { useRouter } from "@/navigation";
+import { Section } from "@/shared/components/blocks";
 import { ShotModal } from "@/shared/components/charts";
 import {
-  Section,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from "@/shared/components/ui";
+} from "@/shared/components/table";
 
 import type { MatchEvent } from "../../types/MatchEvent";
 

@@ -4,8 +4,8 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
-import { Section } from "@/shared/components/ui/composite/Section";
-import { SearchInput } from "@/shared/components/ui/forms";
+import { Section } from "@/shared/components/blocks";
+import { Input } from "@/shared/components/forms";
 
 interface SearchableChipListItem {
   id: number;
@@ -52,10 +52,12 @@ export function SearchableChipList<T extends SearchableChipListItem>({
     >
       {showSearch && (
         <div className="mb-4 max-w-xs">
-          <SearchInput
+          <Input
+            variant="search"
             value={search}
             placeholder={searchPlaceholder}
             onChange={(e) => setSearch(e.target.value)}
+            onClear={() => setSearch("")}
             clearAriaLabel={tCommon("clearSearch")}
           />
         </div>

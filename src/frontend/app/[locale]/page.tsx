@@ -1,7 +1,7 @@
 // src/frontend/app/[locale]/page.tsx
 import { getTranslations } from "next-intl/server";
 
-import { Footer, Header } from "@/shared/components/layouts";
+import { Footer, Header } from "@/shared/components/layout";
 
 export default async function Home({
   params,

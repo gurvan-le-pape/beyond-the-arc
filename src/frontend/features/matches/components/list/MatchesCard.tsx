@@ -2,7 +2,7 @@
 import { useTranslations } from "next-intl";
 import React from "react";
 
-import { Badge } from "@/shared/components/ui";
+import { Badge } from "@/shared/components/primitives";
 import { CompetitionLevel } from "@/shared/constants";
 import { formatMatchDate, formatMatchTime } from "@/shared/utils";
 import { cn } from "@/shared/utils/cn";

@@ -3,8 +3,10 @@ import React from "react";
 
 import type { MatchEvent } from "@/features/matches/types/MatchEvent";
 import { ShotChart } from "@/shared/components/charts";
-import { ErrorMessage, LoadingSpinner, Section } from "@/shared/components/ui";
 import { ChartType } from "@/shared/constants/chart-types";
+
+import { Section } from "../../blocks";
+import { ErrorMessage, LoadingSpinner } from "../../feedback";
 
 interface TeamShotChartProps {
   matchEvents: MatchEvent[];

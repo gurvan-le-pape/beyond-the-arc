@@ -2,9 +2,9 @@
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 import React from "react";
 
+import { Section } from "@/shared/components/blocks";
+import { Button } from "@/shared/components/primitives";
 import {
-  Button,
-  Section,
   Table,
   TableBody,
   TableCell,
@@ -12,7 +12,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/shared/components/ui";
+} from "@/shared/components/table";
 
 /**
  * Column configuration for the match history table (generic)

@@ -9,7 +9,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { useTranslations } from "next-intl";
 
-import { InfoBox, Section } from "@/shared/components/ui/composite";
+import { InfoBox, Section } from "@/shared/components/blocks";
 import { NA } from "@/shared/constants";
 import type { President } from "@/shared/types";
 

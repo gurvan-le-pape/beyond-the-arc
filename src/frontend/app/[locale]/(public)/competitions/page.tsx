@@ -4,7 +4,7 @@ import React from "react";
 import { FaGlobeEurope, FaMapMarkedAlt, FaMapSigns } from "react-icons/fa";
 
 import { Link } from "@/navigation";
-import { PageLayout } from "@/shared/components/layouts/PageLayout";
+import { PageLayout } from "@/shared/components/layout";
 import { CompetitionLevel } from "@/shared/constants";
 
 // Card for each competition level

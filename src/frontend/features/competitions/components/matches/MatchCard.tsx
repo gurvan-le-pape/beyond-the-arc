@@ -9,7 +9,8 @@ import React from "react";
 import { MatchDetailsTable } from "@/features/competitions/components";
 import { useMatchEvents, usePrefetchMatchEvents } from "@/features/matches/api";
 import type { Match } from "@/features/matches/types/Match";
-import { Badge, Card, ErrorMessage } from "@/shared/components/ui";
+import { ErrorMessage } from "@/shared/components/feedback";
+import { Badge, Card } from "@/shared/components/primitives";
 import { formatMatchDateTime } from "@/shared/utils";
 import { formatNameToFileName } from "@/shared/utils/formatNameToFileName";
 
@@ -49,7 +50,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
         <time className="text-sm text-text-body dark:text-text-body-dark">
           {formatMatchDateTime(match.date)}
         </time>
-        <Badge variant={match.overtime ? "warning" : "default"} size="sm">
+        <Badge variant={match.overtime ? "warning" : "outline"} size="sm">
           {match.overtime ? tMatches("finalOT") : tMatches("final")}
         </Badge>
       </div>

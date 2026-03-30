@@ -4,7 +4,7 @@
 import { useTranslations } from "next-intl";
 
 import { useRouter } from "@/navigation";
-import { Card } from "@/shared/components/ui";
+import { Card } from "@/shared/components/primitives";
 
 import type { ClubStatsByRegion } from "../../types/ClubStatsByRegion";
 

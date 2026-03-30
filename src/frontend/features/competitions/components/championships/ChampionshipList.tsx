@@ -1,8 +1,8 @@
 // src/frontend/features/competitions/components/championships/ChampionshipList.tsx
 import { useTranslations } from "next-intl";
 
-import { GenderCategorizedList } from "@/shared/components/entity";
-import { Section } from "@/shared/components/ui";
+import { Section } from "@/shared/components/blocks";
+import { GenderCategorizedList } from "@/shared/components/domain";
 import { Gender } from "@/shared/constants";
 
 import { useToggleCategory } from "../../hooks";

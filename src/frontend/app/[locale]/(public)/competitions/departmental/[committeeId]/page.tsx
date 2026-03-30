@@ -13,10 +13,9 @@ import {
 import ChampionshipList from "@/features/competitions/components/championships/ChampionshipList";
 import { useDepartmentalChampionshipsData } from "@/features/competitions/hooks";
 import { useRouter } from "@/navigation";
-import { Footer, Header } from "@/shared/components/layouts";
-import { PageLayout } from "@/shared/components/layouts/PageLayout";
+import { ErrorMessage } from "@/shared/components/feedback";
+import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
-import { ErrorMessage } from "@/shared/components/ui";
 import { CompetitionLevel } from "@/shared/constants/competition-levels";
 import {
   groupChampionshipsByCategory,

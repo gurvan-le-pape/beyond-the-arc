@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 
 import { CommitteesGrid } from "@/features/competitions/components";
 import { serverCommitteesService } from "@/features/organizations/committees/api/committees.server";
-import { PageLayout } from "@/shared/components/layouts/PageLayout";
+import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
 
 interface DepartmentalListPageProps {

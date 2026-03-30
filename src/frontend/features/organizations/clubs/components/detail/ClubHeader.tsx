@@ -4,7 +4,7 @@
 import Image from "next/image";
 import { useState } from "react";
 
-import { Card } from "@/shared/components/ui/primitives";
+import { Card } from "@/shared/components/primitives";
 import { formatNameToFileName } from "@/shared/utils/formatNameToFileName";
 
 import type { ClubDetailed } from "../../types/ClubDetailed";

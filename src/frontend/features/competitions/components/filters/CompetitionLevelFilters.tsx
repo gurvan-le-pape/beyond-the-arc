@@ -2,7 +2,8 @@
 import { useTranslations } from "next-intl";
 import React from "react";
 
-import { Button, Card, Select } from "@/shared/components/ui";
+import { Select } from "@/shared/components/forms";
+import { Button, Card } from "@/shared/components/primitives";
 import { CompetitionLevel } from "@/shared/constants";
 
 interface CompetitionLevelFiltersProps {

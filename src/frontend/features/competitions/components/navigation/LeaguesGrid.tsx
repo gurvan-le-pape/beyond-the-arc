@@ -2,8 +2,7 @@
 "use client";
 
 import { useRouter } from "@/navigation";
-import { Card } from "@/shared/components/ui";
-import { ImageWithFallback } from "@/shared/components/ui/primitives";
+import { Card, ImageWithFallback } from "@/shared/components/primitives";
 import { CompetitionLevel } from "@/shared/constants/competition-levels";
 import { formatNameToFileName } from "@/shared/utils/formatNameToFileName";
 

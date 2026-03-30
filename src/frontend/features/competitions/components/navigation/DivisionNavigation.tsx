@@ -1,7 +1,7 @@
 // src/frontend/features/competitions/components/navigation/DivisionNavigation.tsx
 import { useTranslations } from "next-intl";
 
-import { NavButton } from "@/features/competitions/components";
+import { NavButton } from "@/shared/components/primitives";
 
 interface DivisionNavigationProps {
   availableDivisions: number[];
@@ -29,7 +29,8 @@ export function DivisionNavigation({
         {availableDivisions.map((div) => (
           <NavButton
             key={div}
-            active={div === currentDivision}
+            variant={div === currentDivision ? "navActive" : "navInactive"}
+            aria-pressed={div === currentDivision}
             onClick={() => onNavigate(div)}
           >
             {t("divisionWithValue", {

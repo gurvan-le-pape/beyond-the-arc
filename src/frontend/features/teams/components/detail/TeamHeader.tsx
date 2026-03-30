@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import React, { useState } from "react";
 
 import { useRouter } from "@/navigation";
-import { Button, Card } from "@/shared/components/ui";
+import { Button, Card } from "@/shared/components/primitives";
 import { CompetitionLevel } from "@/shared/constants";
 import { formatNameToFileName } from "@/shared/utils/formatNameToFileName";
 import { normalizeString } from "@/shared/utils/normalizeString";

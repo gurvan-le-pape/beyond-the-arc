@@ -2,7 +2,7 @@
 import { useTranslations } from "next-intl";
 import React from "react";
 
-import { Button } from "@/shared/components/ui";
+import { Button } from "@/shared/components/primitives";
 import { Gender } from "@/shared/constants";
 
 interface SwitchGenderButtonProps {

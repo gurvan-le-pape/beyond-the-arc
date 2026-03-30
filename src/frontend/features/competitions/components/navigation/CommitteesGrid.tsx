@@ -5,8 +5,8 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { useRouter } from "@/navigation";
-import { Card, SearchInput } from "@/shared/components/ui";
-import { ImageWithFallback } from "@/shared/components/ui/primitives";
+import { Input } from "@/shared/components/forms";
+import { Card, ImageWithFallback } from "@/shared/components/primitives";
 import { CompetitionLevel } from "@/shared/constants/competition-levels";
 import { normalizeDepartmentCode } from "@/shared/utils";
 import { formatNameToFileName } from "@/shared/utils/formatNameToFileName";
@@ -35,7 +35,8 @@ export function CommitteesGrid({ committees }: CommitteesGridProps) {
 
   return (
     <div className="space-y-4">
-      <SearchInput
+      <Input
+        variant="search"
         value={search}
         placeholder={tCompetitions("departmental.searchPlaceholder")}
         onChange={(e) => setSearch(e.target.value)}

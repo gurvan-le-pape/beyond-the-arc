@@ -1,7 +1,7 @@
 // src/frontend/features/competitions/components/detail/CompetitionHeader.tsx
 "use client";
 
-import { Card } from "@/shared/components/ui";
+import { Card } from "@/shared/components/primitives";
 import { formatNameToFileName } from "@/shared/utils/formatNameToFileName";
 
 interface CompetitionHeaderProps {

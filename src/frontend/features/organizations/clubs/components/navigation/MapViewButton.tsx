@@ -4,7 +4,7 @@
 import { FaMap } from "react-icons/fa";
 
 import { useRouter } from "@/navigation";
-import { Button } from "@/shared/components/ui";
+import { Button } from "@/shared/components/primitives";
 
 export function MapViewButton({ label }: { label: string }) {
   const router = useRouter();

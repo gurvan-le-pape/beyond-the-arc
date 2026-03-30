@@ -13,9 +13,9 @@ import {
 import ChampionshipList from "@/features/competitions/components/championships/ChampionshipList";
 import { useRegionalChampionshipsData } from "@/features/competitions/hooks/useRegionalChampionships";
 import { useRouter } from "@/navigation";
-import { PageLayout } from "@/shared/components/layouts/PageLayout";
+import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
-import { ErrorMessage } from "@/shared/components/ui";
+import { ErrorMessage } from "@/shared/components/feedback";
 import { CompetitionLevel } from "@/shared/constants/competition-levels";
 import {
   groupChampionshipsByCategory,

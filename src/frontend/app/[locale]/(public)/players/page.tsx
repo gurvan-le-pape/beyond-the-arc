@@ -12,12 +12,9 @@ import { usePlayersTableFilters } from "@/features/players/hooks";
 import type { Player } from "@/features/players/types/Player";
 import { useTeamFilterValues } from "@/features/teams/api/use-teams";
 import { useRouter } from "@/navigation";
-import {
-  EntityListPage,
-  EntityTable,
-  Pagination,
-} from "@/shared/components/entity";
-import { PageLayout } from "@/shared/components/layouts/PageLayout";
+import { EntityTable } from "@/shared/components/domain";
+import { EntityListPage, PageLayout } from "@/shared/components/layout";
+import { Pagination } from "@/shared/components/table";
 import {
   CATEGORY_LIST,
   CompetitionLevel,

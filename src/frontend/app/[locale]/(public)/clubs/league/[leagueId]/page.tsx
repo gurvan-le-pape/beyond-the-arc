@@ -10,8 +10,7 @@ import {
 } from "@/features/organizations/clubs/components";
 import { getBreadcrumbItems } from "@/features/organizations/clubs/utils";
 import { serverLeaguesService } from "@/features/organizations/leagues/api/leagues.server";
-import { Footer, Header } from "@/shared/components/layouts";
-import { PageLayout } from "@/shared/components/layouts/PageLayout";
+import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
 import { ViewLevel } from "@/shared/constants";
 import { handleServerError } from "@/shared/utils/handleServerError";

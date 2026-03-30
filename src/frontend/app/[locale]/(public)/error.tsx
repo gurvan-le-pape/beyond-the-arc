@@ -3,8 +3,8 @@
 
 import { useTranslations } from "next-intl";
 
-import { PageLayout } from "@/shared/components/layouts/PageLayout";
-import { Button } from "@/shared/components/ui";
+import { PageLayout } from "@/shared/components/layout";
+import { Button } from "@/shared/components/primitives";
 
 export default function GlobalError({
   unstable_retry,

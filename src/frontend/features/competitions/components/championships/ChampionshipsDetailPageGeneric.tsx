@@ -7,9 +7,10 @@ import { useEffect, useMemo, useState } from "react";
 
 import type { Match } from "@/features/matches/types/Match";
 import { usePathname, useRouter } from "@/navigation";
-import { LeaderboardTable } from "@/shared/components/entity";
+import { LeaderboardTable } from "@/shared/components/domain";
+import { ErrorMessage } from "@/shared/components/feedback";
 import { Breadcrumb } from "@/shared/components/navigation";
-import { Card, ErrorMessage } from "@/shared/components/ui";
+import { Card } from "@/shared/components/primitives";
 import type { LocalCompetitionLevel } from "@/shared/constants";
 import { CompetitionLevel } from "@/shared/constants";
 

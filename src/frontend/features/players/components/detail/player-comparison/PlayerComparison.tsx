@@ -7,7 +7,8 @@ import React, { useState } from "react";
 import { usePlayerMatches } from "@/features/players/api/use-players";
 import type { Player } from "@/features/players/types/Player";
 import { aggregateStats } from "@/features/players/utils/statsAggregation";
-import { Button, Section } from "@/shared/components/ui";
+import { Section } from "@/shared/components/blocks";
+import { Button } from "@/shared/components/primitives";
 
 import { PlayerSearchDropdown } from "../PlayerSearchDropdown";
 import { type ComparisonStatConfig, ComparisonTable } from "./ComparisonTable";

@@ -3,7 +3,7 @@
 
 import { useTranslations } from "next-intl";
 
-import { LoadingSpinner } from "@/shared/components/ui/feedback/LoadingSpinner";
+import { LoadingSpinner } from "@/shared/components/feedback";
 
 export function LoadingMap() {
   const t = useTranslations("clubs");

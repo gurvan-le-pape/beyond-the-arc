@@ -4,7 +4,7 @@
 import { useTranslations } from "next-intl";
 import React, { useEffect, useRef } from "react";
 
-import { SearchInput } from "@/shared/components/ui";
+import { Input } from "@/shared/components/forms";
 import { cn } from "@/shared/utils/cn";
 import { formatNameToFileName } from "@/shared/utils/formatNameToFileName";
 
@@ -59,7 +59,8 @@ export function PlayerSearchDropdown({
 
   return (
     <div ref={containerRef} className="relative w-full max-w-sm">
-      <SearchInput
+      <Input
+        variant="search"
         value={query}
         placeholder={tPlayers("playerDetail.compareSearch")}
         onChange={(e) => setQuery(e.target.value)}

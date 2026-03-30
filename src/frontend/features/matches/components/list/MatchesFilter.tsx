@@ -4,13 +4,8 @@ import { useTranslations } from "next-intl";
 import React from "react";
 
 import type { Championship } from "@/features/competitions/championships/types/Championship";
-import {
-  Button,
-  Card,
-  Input,
-  SearchInput,
-  Select,
-} from "@/shared/components/ui";
+import { Input, Select } from "@/shared/components/forms";
+import { Button, Card } from "@/shared/components/primitives";
 import { Category, CompetitionLevel, Gender } from "@/shared/constants";
 
 interface MatchesFiltersProps {
@@ -103,7 +98,8 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
         {/* Row 1: Search and Date */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Club Search */}
-          <SearchInput
+          <Input
+            variant="search"
             label={tMatches("searchClub")}
             value={search}
             placeholder={tMatches("searchClubPlaceholder")}

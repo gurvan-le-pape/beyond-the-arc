@@ -8,7 +8,7 @@ import { serverTeamsService } from "@/features/teams/api";
 import { TeamHeader, TeamInfo, TeamRoster } from "@/features/teams/components";
 import { TeamMatchHistoryTable } from "@/features/teams/components/detail/TeamMatchHistoryTable";
 import { TeamShotChart } from "@/shared/components/charts";
-import { PageLayout } from "@/shared/components/layouts/PageLayout";
+import { PageLayout } from "@/shared/components/layout";
 import { handleServerError } from "@/shared/utils/handleServerError";
 
 interface TeamDetailPageProps {

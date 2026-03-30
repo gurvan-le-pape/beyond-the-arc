@@ -12,7 +12,7 @@ import type { ClubTeamInfo } from "@/features/organizations/clubs/types/ClubDeta
 import { getBreadcrumbItems } from "@/features/organizations/clubs/utils";
 import { serverCommitteesService } from "@/features/organizations/committees/api/committees.server";
 import { serverLeaguesService } from "@/features/organizations/leagues/api/leagues.server";
-import { PageLayout } from "@/shared/components/layouts/PageLayout";
+import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
 import type { Gender } from "@/shared/constants";
 import { handleServerError } from "@/shared/utils/handleServerError";

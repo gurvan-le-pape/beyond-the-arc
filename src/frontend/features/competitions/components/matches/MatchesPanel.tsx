@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 
 import { RoundSelector } from "@/features/competitions/components";
 import { getSortedRounds } from "@/features/matches/utils/getSortedRounds";
-import { Badge, Card } from "@/shared/components/ui";
+import { Badge, Card } from "@/shared/components/primitives";
 
 import MatchCard from "./MatchCard";
 

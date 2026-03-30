@@ -13,14 +13,14 @@ import type { Match } from "@/features/matches/types/Match";
 import { useCommittees } from "@/features/organizations/committees/api/use-committees";
 import { useLeagues } from "@/features/organizations/leagues/api/use-leagues";
 import { useRouter } from "@/navigation";
-import { Pagination } from "@/shared/components/entity";
-import { PageLayout } from "@/shared/components/layouts/PageLayout";
 import {
   EmptyState,
   ErrorMessage,
   LoadingSpinner,
-} from "@/shared/components/ui";
-import { Card } from "@/shared/components/ui/primitives/Card";
+} from "@/shared/components/feedback";
+import { PageLayout } from "@/shared/components/layout";
+import { Card } from "@/shared/components/primitives";
+import { Pagination } from "@/shared/components/table";
 import type { Gender } from "@/shared/constants";
 import { Category, CompetitionLevel } from "@/shared/constants";
 import type { Pagination as PaginationType } from "@/shared/types";

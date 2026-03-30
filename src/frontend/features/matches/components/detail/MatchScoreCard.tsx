@@ -6,7 +6,7 @@ import React from "react";
 
 import type { TeamInfo } from "@/features/teams/types/TeamInfo";
 import { useRouter } from "@/navigation";
-import { Button, Card } from "@/shared/components/ui";
+import { Button, Card } from "@/shared/components/primitives";
 import { cn } from "@/shared/utils/cn";
 import { formatNameToFileName } from "@/shared/utils/formatNameToFileName";
 

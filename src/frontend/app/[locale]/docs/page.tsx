@@ -15,7 +15,7 @@ import {
 import { useTranslations } from "next-intl";
 import React, { useState } from "react";
 
-import { PageLayout } from "@/shared/components/layouts/PageLayout";
+import { PageLayout } from "@/shared/components/layout";
 
 export default function DocsPage() {
   const t = useTranslations("landing");

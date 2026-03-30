@@ -20,7 +20,7 @@ import type {
   MatchEventPlayer,
 } from "@/features/matches/types/MatchEvent";
 import { buildTeam } from "@/features/matches/utils/buildTeam";
-import { PageLayout } from "@/shared/components/layouts/PageLayout";
+import { PageLayout } from "@/shared/components/layout";
 import { Role } from "@/shared/constants";
 import { handleServerError } from "@/shared/utils/handleServerError";
 

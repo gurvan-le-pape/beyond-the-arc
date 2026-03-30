@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from "react";
 
 import type { TeamStats } from "@/features/teams/types/TeamInfo";
-import { Section } from "@/shared/components/ui";
+import { Section } from "@/shared/components/blocks";
 import { NA } from "@/shared/constants";
 import { cn } from "@/shared/utils/cn";
 

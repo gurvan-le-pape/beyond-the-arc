@@ -5,12 +5,12 @@ import { UserGroupIcon } from "@heroicons/react/24/outline";
 import { useTranslations } from "next-intl";
 
 import { useToggleCategory } from "@/features/competitions/hooks";
+import { Section } from "@/shared/components/blocks";
 import {
   GenderCategorizedList,
   TeamListItem,
-} from "@/shared/components/entity";
-import { Section } from "@/shared/components/ui/composite";
-import { EmptyState } from "@/shared/components/ui/feedback";
+} from "@/shared/components/domain";
+import { EmptyState } from "@/shared/components/feedback";
 import { Gender } from "@/shared/constants";
 import { groupTeamsByCategory } from "@/shared/utils/grouping";
 

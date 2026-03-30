@@ -1,7 +1,7 @@
 // src/frontend/app/[locale]/(public)/clubs/map/page.tsx
 import { serverClubsService } from "@/features/organizations/clubs/api";
 import { ClubsMapClient } from "@/features/organizations/clubs/components/map/ClubsMapClient";
-import { Header } from "@/shared/components/layouts";
+import { Header } from "@/shared/components/layout";
 
 export default async function MapPage() {
   // Pre-fetch initial regions data server-side

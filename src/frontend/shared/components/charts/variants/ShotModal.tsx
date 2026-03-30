@@ -8,9 +8,10 @@ import React, { useEffect, useRef } from "react";
 
 import type { MatchEvent } from "@/features/matches/types/MatchEvent";
 import { ShotChart } from "@/shared/components/charts";
-import { Button } from "@/shared/components/ui";
 import { ChartType } from "@/shared/constants/chart-types";
 import type { NamedEntity } from "@/shared/types/SelectOption";
+
+import { Button } from "../../primitives";
 
 interface ShotModalProps {
   open: boolean;

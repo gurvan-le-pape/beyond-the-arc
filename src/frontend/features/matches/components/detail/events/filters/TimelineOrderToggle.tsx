@@ -1,7 +1,7 @@
 // src/frontend/features/matches/components/detail/events/filters/TimelineOrderToggle.tsx
 import React from "react";
 
-import { Switch } from "@/shared/components/ui";
+import { Switch } from "@/shared/components/primitives";
 
 interface TimelineOrderToggleProps {
   checked: boolean;

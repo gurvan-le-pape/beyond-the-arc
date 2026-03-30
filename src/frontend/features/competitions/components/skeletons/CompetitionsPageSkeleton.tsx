@@ -1,5 +1,6 @@
 // src/frontend/features/competitions/components/skeletons/CompetitionsPageSkeleton.tsx
-import { Skeleton } from "@/shared/components/ui";
+
+import { Skeleton } from "@/shared/components/feedback";
 
 export function CompetitionsPageSkeleton() {
   return (

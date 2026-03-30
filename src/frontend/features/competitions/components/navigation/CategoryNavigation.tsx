@@ -1,7 +1,7 @@
 // src/frontend/features/competitions/components/navigation/CategoryNavigation.tsx
 import { useTranslations } from "next-intl";
 
-import { NavButton } from "@/features/competitions/components";
+import { NavButton } from "@/shared/components/primitives";
 import type { Category } from "@/shared/constants";
 
 interface CategoryNavigationProps {
@@ -30,7 +30,8 @@ export function CategoryNavigation({
         {availableCategories.map((cat) => (
           <NavButton
             key={cat}
-            active={cat === currentCategory}
+            variant={cat === currentCategory ? "navActive" : "navInactive"}
+            aria-pressed={cat === currentCategory}
             onClick={() => onNavigate(cat)}
           >
             {cat}

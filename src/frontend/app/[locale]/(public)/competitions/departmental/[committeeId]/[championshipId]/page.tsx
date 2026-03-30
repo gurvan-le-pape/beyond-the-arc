@@ -13,7 +13,7 @@ import { serverPoolsService } from "@/features/competitions/pools/api/pools.serv
 import { poolsKeys } from "@/features/competitions/pools/api/poolsKeys";
 import { serverCommitteesService } from "@/features/organizations/committees/api/committees.server";
 import { committeesKeys } from "@/features/organizations/committees/api/committeesKeys";
-import { PageLayout } from "@/shared/components/layouts/PageLayout";
+import { PageLayout } from "@/shared/components/layout";
 import { CompetitionLevel } from "@/shared/constants";
 
 interface DepartmentalChampionshipsDetailPageProps {

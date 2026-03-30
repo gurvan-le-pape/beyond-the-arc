@@ -4,7 +4,7 @@
 import { useTranslations } from "next-intl";
 import { FaMapMarkedAlt, FaMapSigns, FaUsers } from "react-icons/fa";
 
-import { Card } from "@/shared/components/ui";
+import { Card } from "@/shared/components/primitives";
 import { ViewLevel } from "@/shared/constants";
 
 interface TitleSectionProps {

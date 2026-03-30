@@ -7,7 +7,7 @@ import {
   RegionsGrid,
   TitleSection,
 } from "@/features/organizations/clubs/components";
-import { PageLayout } from "@/shared/components/layouts/PageLayout";
+import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
 import { ViewLevel } from "@/shared/constants/view-levels";
 

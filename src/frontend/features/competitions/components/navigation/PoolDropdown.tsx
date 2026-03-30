@@ -1,7 +1,7 @@
 // src/frontend/features/competitions/components/navigation/PoolDropdown.tsx
 import { useTranslations } from "next-intl";
 
-import { Select } from "@/shared/components/ui";
+import { Select } from "@/shared/components/forms";
 
 import type { Pool } from "../../pools/types/Pool";
 

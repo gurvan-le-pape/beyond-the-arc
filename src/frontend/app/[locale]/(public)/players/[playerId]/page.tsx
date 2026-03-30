@@ -12,7 +12,7 @@ import {
 } from "@/features/players/components";
 import { aggregateStats } from "@/features/players/utils/statsAggregation";
 import { PlayerShotChart } from "@/shared/components/charts";
-import { PageLayout } from "@/shared/components/layouts/PageLayout";
+import { PageLayout } from "@/shared/components/layout";
 import { handleServerError } from "@/shared/utils/handleServerError";
 
 interface PlayerDetailPageProps {

@@ -17,7 +17,7 @@ import {
 import { getTranslations } from "next-intl/server";
 import React from "react";
 
-import { PageLayout } from "@/shared/components/layouts/PageLayout";
+import { PageLayout } from "@/shared/components/layout";
 
 export default async function FeaturesPage({
   params,

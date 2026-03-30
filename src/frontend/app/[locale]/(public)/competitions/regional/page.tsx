@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 
 import { LeaguesGrid } from "@/features/competitions/components";
 import { serverLeaguesService } from "@/features/organizations/leagues/api/leagues.server";
-import { PageLayout } from "@/shared/components/layouts/PageLayout";
+import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
 
 interface RegionalListPageProps {

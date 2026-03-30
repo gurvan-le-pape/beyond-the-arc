@@ -13,7 +13,7 @@ import { serverPoolsService } from "@/features/competitions/pools/api/pools.serv
 import { poolsKeys } from "@/features/competitions/pools/api/poolsKeys";
 import { serverLeaguesService } from "@/features/organizations/leagues/api/leagues.server";
 import { leaguesKeys } from "@/features/organizations/leagues/api/leaguesKeys";
-import { PageLayout } from "@/shared/components/layouts/PageLayout";
+import { PageLayout } from "@/shared/components/layout";
 import { CompetitionLevel } from "@/shared/constants";
 
 interface RegionalChampionshipsDetailPageProps {

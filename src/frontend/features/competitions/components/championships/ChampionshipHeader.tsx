@@ -1,6 +1,6 @@
 // src/frontend/features/competitions/components/championships/ChampionshipHeader.tsx
 import { SwitchGenderButton } from "@/features/competitions/components";
-import { Card } from "@/shared/components/ui";
+import { Card } from "@/shared/components/primitives";
 import type { Gender } from "@/shared/constants";
 
 interface ChampionshipHeaderProps {

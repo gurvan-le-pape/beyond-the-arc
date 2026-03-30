@@ -6,8 +6,8 @@ import React, { useState } from "react";
 
 import type { PlayerMatchHistoryEntry } from "@/features/players/types/PlayerMatchHistory";
 import { useRouter } from "@/navigation";
+import { Section } from "@/shared/components/blocks";
 import {
-  Section,
   Table,
   TableBody,
   TableCell,
@@ -15,7 +15,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/shared/components/ui";
+} from "@/shared/components/table";
 
 interface TeamRosterProps {
   players?: PlayerMatchHistoryEntry[][];
