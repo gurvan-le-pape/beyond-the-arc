@@ -7,6 +7,7 @@ import React, { useState } from "react";
 
 import { useRouter } from "@/navigation";
 import { Button, Card } from "@/shared/components/primitives";
+import { Text } from "@/shared/components/typography";
 import { CompetitionLevel } from "@/shared/constants";
 import { formatNameToFileName } from "@/shared/utils/formatNameToFileName";
 import { normalizeString } from "@/shared/utils/normalizeString";
@@ -85,9 +86,9 @@ export function PlayerHeader({ player }: PlayerHeaderProps) {
         {/* Player Info */}
         <div className="flex-1">
           {/* Number & Name */}
-          <h1 className="text-2xl md:text-4xl font-bold text-text-heading dark:text-text-heading-dark mb-2">
+          <Text variant="h1" className="mb-2">
             #{playerNumber} {playerName}
-          </h1>
+          </Text>
           {/* Category & Gender */}
           <p className="text-xl text-text-body dark:text-text-body-dark">
             {category} • {gender}

@@ -16,6 +16,7 @@ import { useTranslations } from "next-intl";
 import React, { useState } from "react";
 
 import { PageLayout } from "@/shared/components/layout";
+import { Text } from "@/shared/components/typography";
 
 export default function DocsPage() {
   const t = useTranslations("landing");
@@ -55,9 +56,9 @@ export default function DocsPage() {
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-button bg-gradient-to-br from-blue-500 to-purple-500 text-white mb-4 shadow-card">
           <BookOpen className="w-8 h-8" />
         </div>
-        <h1 className="text-2xl md:text-4xl font-bold text-text-heading dark:text-text-heading-dark mb-4">
+        <Text variant="h1" className="mb-4">
           {t("docs.title")}
-        </h1>
+        </Text>
         <p className="text-lg text-text-body dark:text-text-body-dark max-w-2xl mx-auto">
           {t("docs.intro")}
         </p>
@@ -73,9 +74,7 @@ export default function DocsPage() {
         >
           <Github className="w-6 h-6 text-text-body dark:text-text-body-dark" />
           <div>
-            <h3 className="font-semibold text-text-heading dark:text-text-heading-dark">
-              {t("docs.quickLinks.github")}
-            </h3>
+            <Text variant="label">{t("docs.quickLinks.github")}</Text>
             <p className="text-xs text-text-secondary dark:text-text-secondary-dark">
               {t("docs.quickLinks.viewSource")}
             </p>
@@ -90,9 +89,7 @@ export default function DocsPage() {
         >
           <Download className="w-6 h-6 text-text-body dark:text-text-body-dark" />
           <div>
-            <h3 className="font-semibold text-text-heading dark:text-text-heading-dark">
-              {t("docs.quickLinks.dataModel")}
-            </h3>
+            <Text variant="label">{t("docs.quickLinks.dataModel")}</Text>
             <p className="text-xs text-text-secondary dark:text-text-secondary-dark">
               PDF
             </p>
@@ -107,9 +104,7 @@ export default function DocsPage() {
         >
           <BookOpen className="w-6 h-6 text-text-body dark:text-text-body-dark" />
           <div>
-            <h3 className="font-semibold text-text-heading dark:text-text-heading-dark">
-              {t("docs.quickLinks.apiDocs")}
-            </h3>
+            <Text variant="label">{t("docs.quickLinks.apiDocs")}</Text>
             <p className="text-xs text-text-secondary dark:text-text-secondary-dark">
               Swagger
             </p>
@@ -125,9 +120,7 @@ export default function DocsPage() {
             📧
           </div>
           <div>
-            <h3 className="font-semibold text-text-heading dark:text-text-heading-dark">
-              {t("docs.quickLinks.contact")}
-            </h3>
+            <Text variant="label">{t("docs.quickLinks.contact")}</Text>
             <p className="text-xs text-text-secondary dark:text-text-secondary-dark">
               {t("docs.quickLinks.getHelp")}
             </p>
@@ -153,9 +146,13 @@ export default function DocsPage() {
                 <div className="flex-shrink-0 w-10 h-10 rounded-button bg-primary-100 dark:bg-primary-900/40 flex items-center justify-center">
                   <Icon className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                 </div>
-                <h2 className="flex-grow text-lg md:text-xl font-bold text-text-heading dark:text-text-heading-dark">
+                <Text
+                  variant="label"
+                  as="span"
+                  className="flex-grow text-lg md:text-xl"
+                >
                   {section.title}
-                </h2>
+                </Text>
                 {isActive ? (
                   <ChevronDown className="w-5 h-5 text-text-muted dark:text-text-muted-dark transition-transform duration-200" />
                 ) : (
@@ -175,9 +172,9 @@ export default function DocsPage() {
                         {/* Database Diagram */}
                         <div className="bg-surface-subtle dark:bg-surface-raised-dark rounded-button p-6 border border-divide-light dark:border-divide-dark">
                           <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-lg font-semibold text-text-heading dark:text-text-heading-dark">
+                            <Text variant="h3">
                               {t("docs.database.diagramTitle")}
-                            </h3>
+                            </Text>
                             <div className="flex gap-2">
                               <a
                                 href="/docs/data-model.pdf"
@@ -208,9 +205,9 @@ export default function DocsPage() {
 
                         {/* Key Tables */}
                         <div>
-                          <h3 className="text-lg font-semibold text-text-heading dark:text-text-heading-dark mb-3">
+                          <Text variant="h3" className="mb-3">
                             {t("docs.database.keyTables")}
-                          </h3>
+                          </Text>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             {[
                               {
@@ -263,9 +260,9 @@ export default function DocsPage() {
 
                         {/* Backend Structure */}
                         <div>
-                          <h3 className="text-lg font-semibold text-text-heading dark:text-text-heading-dark mb-3">
+                          <Text variant="h3" className="mb-3">
                             {t("docs.structure.backend")}
-                          </h3>
+                          </Text>
                           <pre className="bg-gray-900 dark:bg-gray-950 text-gray-100 p-6 rounded-button overflow-x-auto text-sm">
                             {`backend/
 ├── modules/
@@ -283,9 +280,9 @@ export default function DocsPage() {
 
                         {/* Frontend Structure */}
                         <div>
-                          <h3 className="text-lg font-semibold text-text-heading dark:text-text-heading-dark mb-3">
+                          <Text variant="h3" className="mb-3">
                             {t("docs.structure.frontend")}
-                          </h3>
+                          </Text>
                           <pre className="bg-gray-900 dark:bg-gray-950 text-gray-100 p-6 rounded-button overflow-x-auto text-sm">
                             {t("docs.structure.frontendCode")}
                           </pre>

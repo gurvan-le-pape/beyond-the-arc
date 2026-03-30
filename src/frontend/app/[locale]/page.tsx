@@ -2,6 +2,7 @@
 import { getTranslations } from "next-intl/server";
 
 import { Footer, Header } from "@/shared/components/layout";
+import { Text } from "@/shared/components/typography";
 
 export default async function Home({
   params,
@@ -16,9 +17,12 @@ export default async function Home({
       <Header />
       <main className="flex-grow bg-gradient-to-br from-primary-50 via-white to-secondary-50 dark:from-surface-raised-dark dark:via-surface-subtle-dark dark:to-surface-raised-dark flex flex-col items-center justify-center px-6 py-20">
         <div className="max-w-4xl mx-auto text-center space-y-8">
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-primary-700 dark:text-primary-300 leading-tight">
+          <Text
+            variant="h1"
+            className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-primary-700 dark:text-primary-300 leading-tight"
+          >
             {t("homepage.title")}
-          </h1>
+          </Text>
           <p className="text-xl md:text-2xl text-text-emphasis dark:text-text-body-dark leading-relaxed max-w-3xl mx-auto">
             {t("homepage.subtitle")}
           </p>

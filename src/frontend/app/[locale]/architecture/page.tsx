@@ -15,6 +15,7 @@ import { getTranslations } from "next-intl/server";
 import React from "react";
 
 import { PageLayout } from "@/shared/components/layout";
+import { Text } from "@/shared/components/typography";
 
 export default async function ArchitecturePage({
   params,
@@ -127,9 +128,9 @@ export default async function ArchitecturePage({
     <PageLayout>
       {/* Header */}
       <div className="text-center mb-12">
-        <h1 className="text-2xl md:text-4xl font-bold text-text-heading dark:text-text-heading-dark mb-4">
+        <Text variant="h1" className="mb-4">
           {t("architecture.title")}
-        </h1>
+        </Text>
         <p className="text-lg text-text-body dark:text-text-body-dark max-w-2xl mx-auto">
           {t("architecture.subtitle")}
         </p>
@@ -148,7 +149,9 @@ export default async function ArchitecturePage({
               <div className={`bg-gradient-to-r ${stack.color} p-6 text-white`}>
                 <div className="flex items-center gap-3">
                   <Icon className="w-8 h-8" />
-                  <h2 className="text-xl font-bold">{stack.title}</h2>
+                  <Text variant="h2" className="text-white text-xl">
+                    {stack.title}
+                  </Text>
                 </div>
               </div>
 
@@ -163,9 +166,9 @@ export default async function ArchitecturePage({
                     >
                       <ItemIcon className="w-5 h-5 text-text-secondary dark:text-text-secondary-dark flex-shrink-0 mt-0.5" />
                       <div>
-                        <h3 className="font-semibold text-text-heading dark:text-text-heading-dark">
+                        <Text variant="h3" className="text-base">
                           {item.name}
-                        </h3>
+                        </Text>
                         <p className="text-sm text-text-body dark:text-text-body-dark">
                           {item.description}
                         </p>
@@ -181,17 +184,17 @@ export default async function ArchitecturePage({
 
       {/* Architecture Diagram */}
       <div className="bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card dark:shadow-card-dark p-8">
-        <h2 className="text-xl font-bold text-text-heading dark:text-text-heading-dark mb-6 text-center">
+        <Text variant="h2" className="mb-6 text-center text-xl">
           {t("architecture.systemArchitecture")}
-        </h2>
+        </Text>
         <div className="flex flex-col md:flex-row items-center justify-center gap-8">
           {/* Client — decorative gradient, intentional */}
           <div className="flex flex-col items-center">
             <div className="bg-gradient-to-br from-blue-500 to-cyan-500 text-white rounded-button p-6 w-48 text-center shadow-card">
               <Globe className="w-12 h-12 mx-auto mb-3" />
-              <h3 className="font-bold text-lg">
+              <Text variant="h3" className="text-white">
                 {t("architecture.diagram.client")}
-              </h3>
+              </Text>
               <p className="text-sm mt-2">Next.js + React</p>
             </div>
           </div>
@@ -211,9 +214,9 @@ export default async function ArchitecturePage({
           <div className="flex flex-col items-center">
             <div className="bg-gradient-to-br from-green-500 to-emerald-500 text-white rounded-button p-6 w-48 text-center shadow-card">
               <Server className="w-12 h-12 mx-auto mb-3" />
-              <h3 className="font-bold text-lg">
+              <Text variant="h3" className="text-white">
                 {t("architecture.diagram.server")}
-              </h3>
+              </Text>
               <p className="text-sm mt-2">NestJS + REST</p>
             </div>
           </div>
@@ -233,9 +236,9 @@ export default async function ArchitecturePage({
           <div className="flex flex-col items-center">
             <div className="bg-gradient-to-br from-purple-500 to-pink-500 text-white rounded-button p-6 w-48 text-center shadow-card">
               <Database className="w-12 h-12 mx-auto mb-3" />
-              <h3 className="font-bold text-lg">
+              <Text variant="h3" className="text-white">
                 {t("architecture.diagram.database")}
-              </h3>
+              </Text>
               <p className="text-sm mt-2">PostgreSQL</p>
             </div>
           </div>
@@ -247,9 +250,9 @@ export default async function ArchitecturePage({
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-button bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 mb-3">
               <Package className="w-6 h-6" />
             </div>
-            <h3 className="font-semibold text-text-heading dark:text-text-heading-dark mb-2">
+            <Text variant="h3" className="mb-2 text-base">
               {t("architecture.features.modular.title")}
-            </h3>
+            </Text>
             <p className="text-sm text-text-body dark:text-text-body-dark">
               {t("architecture.features.modular.description")}
             </p>
@@ -258,9 +261,9 @@ export default async function ArchitecturePage({
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-button bg-green-100 dark:bg-green-900/40 text-green-600 dark:text-green-400 mb-3">
               <Code2 className="w-6 h-6" />
             </div>
-            <h3 className="font-semibold text-text-heading dark:text-text-heading-dark mb-2">
+            <Text variant="h3" className="mb-2 text-base">
               {t("architecture.features.typeSafety.title")}
-            </h3>
+            </Text>
             <p className="text-sm text-text-body dark:text-text-body-dark">
               {t("architecture.features.typeSafety.description")}
             </p>
@@ -269,9 +272,9 @@ export default async function ArchitecturePage({
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-button bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 mb-3">
               <Layers className="w-6 h-6" />
             </div>
-            <h3 className="font-semibold text-text-heading dark:text-text-heading-dark mb-2">
+            <Text variant="h3" className="mb-2 text-base">
               {t("architecture.features.scalable.title")}
-            </h3>
+            </Text>
             <p className="text-sm text-text-body dark:text-text-body-dark">
               {t("architecture.features.scalable.description")}
             </p>

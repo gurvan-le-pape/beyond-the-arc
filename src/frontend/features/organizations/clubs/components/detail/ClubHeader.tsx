@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useState } from "react";
 
 import { Card } from "@/shared/components/primitives";
+import { Text } from "@/shared/components/typography";
 import { formatNameToFileName } from "@/shared/utils/formatNameToFileName";
 
 import type { ClubDetailed } from "../../types/ClubDetailed";
@@ -43,9 +44,9 @@ export function ClubHeader({ club }: ClubHeaderProps) {
 
         {/* Club Info */}
         <div className="flex-1">
-          <h1 className="text-2xl font-bold text-text-heading dark:text-text-heading-dark mb-2">
+          <Text variant="h1" className="text-2xl mb-2">
             {club.name}
-          </h1>
+          </Text>
           {club.city && (
             <p className="text-text-body dark:text-text-body-dark">
               {club.city}

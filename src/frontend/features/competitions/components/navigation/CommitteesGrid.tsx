@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useRouter } from "@/navigation";
 import { Input } from "@/shared/components/forms";
 import { Card, ImageWithFallback } from "@/shared/components/primitives";
+import { Text } from "@/shared/components/typography";
 import { CompetitionLevel } from "@/shared/constants/competition-levels";
 import { normalizeDepartmentCode } from "@/shared/utils";
 import { formatNameToFileName } from "@/shared/utils/formatNameToFileName";
@@ -70,9 +71,9 @@ export function CommitteesGrid({ committees }: CommitteesGridProps) {
               />
             </div>
 
-            <h3 className="text-sm font-semibold text-text-heading dark:text-text-heading-dark leading-snug mb-1">
+            <Text variant="h3" className="text-sm leading-snug mb-1">
               {committee.name}
-            </h3>
+            </Text>
 
             {committee.department && (
               <p className="text-xs text-text-secondary dark:text-text-secondary-dark">

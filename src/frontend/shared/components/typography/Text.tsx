@@ -13,6 +13,10 @@ const textVariants = cva("", {
       h3: "text-xl font-semibold text-text-heading dark:text-text-heading-dark",
       h4: "text-lg font-medium text-text-heading dark:text-text-heading-dark",
 
+      // Page title
+      pageTitle:
+        "text-2xl font-bold text-text-heading dark:text-text-heading-dark",
+
       // Body
       body: "text-base font-normal text-text-body dark:text-text-body-dark",
       bodyLg: "text-lg font-normal text-text-body dark:text-text-body-dark",
@@ -47,6 +51,7 @@ const variantTagMap: Record<string, ElementType> = {
   h2: "h2",
   h3: "h3",
   h4: "h4",
+  pageTitle: "h1",
   body: "p",
   bodyLg: "p",
   caption: "span",

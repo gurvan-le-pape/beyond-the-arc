@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { RoundSelector } from "@/features/competitions/components";
 import { getSortedRounds } from "@/features/matches/utils/getSortedRounds";
 import { Badge, Card } from "@/shared/components/primitives";
+import { Text } from "@/shared/components/typography";
 
 import MatchCard from "./MatchCard";
 
@@ -37,9 +38,9 @@ export function MatchesPanel({
       <div className="space-y-4">
         {/* Rounds Section */}
         <div>
-          <h3 className="text-lg font-semibold text-text-heading dark:text-text-heading-dark mb-3">
+          <Text variant="h3" className="mb-3">
             {tCompetitions("roundsLabel")}
-          </h3>
+          </Text>
           <RoundSelector
             rounds={getSortedRounds(groupedMatches)}
             selectedRound={selectedRound}
@@ -51,9 +52,7 @@ export function MatchesPanel({
         {/* Matches Section */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-lg font-semibold text-text-heading dark:text-text-heading-dark">
-              {tCompetitions("matchesLabel")}
-            </h3>
+            <Text variant="h3">{tCompetitions("matchesLabel")}</Text>
             {currentMatches && currentMatches.length > 0 && (
               <Badge variant="primary" size="sm">
                 {currentMatches.length}

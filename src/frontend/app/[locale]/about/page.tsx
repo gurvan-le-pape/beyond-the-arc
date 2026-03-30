@@ -13,6 +13,7 @@ import { getTranslations } from "next-intl/server";
 import React from "react";
 
 import { PageLayout } from "@/shared/components/layout";
+import { Text } from "@/shared/components/typography";
 
 export default async function AboutPage({
   params,
@@ -75,9 +76,9 @@ export default async function AboutPage({
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-button bg-gradient-to-br from-blue-500 to-purple-500 text-white mb-4 shadow-card">
           <Target className="w-8 h-8" />
         </div>
-        <h1 className="text-2xl md:text-4xl font-bold text-text-heading dark:text-text-heading-dark mb-4">
+        <Text variant="h1" className="mb-4">
           {t("about.title")}
-        </h1>
+        </Text>
         <p className="text-lg text-text-body dark:text-text-body-dark max-w-3xl mx-auto">
           {t("about.intro")}
         </p>
@@ -98,9 +99,9 @@ export default async function AboutPage({
               >
                 <Icon className="w-6 h-6" />
               </div>
-              <h3 className="text-lg font-bold text-text-heading dark:text-text-heading-dark mb-2">
+              <Text variant="h3" className="mb-2">
                 {principle.title}
-              </h3>
+              </Text>
               <p className="text-sm text-text-body dark:text-text-body-dark">
                 {principle.description}
               </p>

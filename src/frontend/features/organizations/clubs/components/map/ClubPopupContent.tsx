@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/navigation";
 
 import type { ClubBasic } from "../../types/ClubBasic";
+import { Text } from "@/shared/components/typography";
 
 interface ClubPopupContentProps {
   club: ClubBasic;
@@ -17,9 +18,9 @@ export function ClubPopupContent({ club }: ClubPopupContentProps) {
   return (
     <div className="min-w-[240px] max-w-[320px] p-4">
       {/* Club Name */}
-      <h3 className="font-bold text-lg mb-1 text-text-heading leading-tight">
+      <Text variant="h3" className="mb-1 leading-tight">
         {club.name}
-      </h3>
+      </Text>
 
       {/* City and Zip */}
       {(club.city || club.zipCode) && (

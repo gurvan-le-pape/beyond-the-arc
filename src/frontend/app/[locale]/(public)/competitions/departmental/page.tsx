@@ -5,6 +5,7 @@ import { CommitteesGrid } from "@/features/competitions/components";
 import { serverCommitteesService } from "@/features/organizations/committees/api/committees.server";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
+import { Text } from "@/shared/components/typography";
 
 interface DepartmentalListPageProps {
   readonly params: Promise<{ readonly locale: string }>;
@@ -36,9 +37,9 @@ export default async function DepartmentalListPage({
     <PageLayout>
       <Breadcrumb items={breadcrumbItems} />
 
-      <h1 className="text-2xl font-bold text-text-heading dark:text-text-heading-dark">
+      <Text variant="pageTitle">
         {tCommon("sectionTitles.departmentalCommittees")}
-      </h1>
+      </Text>
 
       <CommitteesGrid committees={committees} />
     </PageLayout>

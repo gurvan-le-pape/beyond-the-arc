@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 
 import { useRouter } from "@/navigation";
 import { Card } from "@/shared/components/primitives";
+import { Text } from "@/shared/components/typography";
 
 type Department = {
   id: number;
@@ -44,9 +45,9 @@ export function DepartmentsGrid({
           }
           className="border-l-4 border-l-departmental-dark dark:border-l-departmental-light hover:border-l-divide-light dark:hover:!border-l-divide-dark"
         >
-          <h3 className="text-lg font-semibold text-text-heading dark:text-text-heading-dark mb-1">
+          <Text variant="h3" className="mb-1">
             {dept.name}
-          </h3>
+          </Text>
           {dept.department && (
             <p className="text-sm text-text-body dark:text-text-body-dark mb-2">
               {dept.department.code}

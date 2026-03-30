@@ -5,6 +5,7 @@ import { FaGlobeEurope, FaMapMarkedAlt, FaMapSigns } from "react-icons/fa";
 
 import { Link } from "@/navigation";
 import { PageLayout } from "@/shared/components/layout";
+import { Text } from "@/shared/components/typography";
 import { CompetitionLevel } from "@/shared/constants";
 
 // Card for each competition level
@@ -85,9 +86,9 @@ export default function CompetitionsPage() {
   // Main page layout
   return (
     <PageLayout centered>
-      <h1 className="text-2xl md:text-4xl font-bold mb-12 text-text-heading dark:text-text-heading-dark text-center">
+      <Text variant="h1" className="mb-12 text-center">
         {t("selectLevel")}
-      </h1>
+      </Text>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 lg:gap-8">
         {levels.map((level) => (
           <CompetitionLevelCard key={level.id} level={level} />

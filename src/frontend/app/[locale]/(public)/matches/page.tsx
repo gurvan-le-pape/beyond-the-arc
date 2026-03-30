@@ -21,6 +21,7 @@ import {
 import { PageLayout } from "@/shared/components/layout";
 import { Card } from "@/shared/components/primitives";
 import { Pagination } from "@/shared/components/table";
+import { Text } from "@/shared/components/typography";
 import type { Gender } from "@/shared/constants";
 import { Category, CompetitionLevel } from "@/shared/constants";
 import type { Pagination as PaginationType } from "@/shared/types";
@@ -159,9 +160,9 @@ export default function MatchesPage() {
   return (
     <PageLayout>
       {/* Page Title */}
-      <h1 className="text-2xl md:text-4xl font-bold text-primary-600 dark:text-primary-400">
+      <Text variant="h1" className="text-primary-600 dark:text-primary-400">
         {tMatches("searchTitle")}
-      </h1>
+      </Text>
 
       {/* Filters Section */}
       <MatchesFilters

@@ -2,6 +2,7 @@
 "use client";
 
 import { Card } from "@/shared/components/primitives";
+import { Text } from "@/shared/components/typography";
 import { formatNameToFileName } from "@/shared/utils/formatNameToFileName";
 
 interface CompetitionHeaderProps {
@@ -24,9 +25,9 @@ export function CompetitionHeader({
             (e.target as HTMLImageElement).style.display = "none";
           }}
         />
-        <h1 className="text-xl md:text-2xl font-bold text-text-heading dark:text-text-heading-dark">
+        <Text variant="h1" className="text-xl md:text-2xl">
           {name}
-        </h1>
+        </Text>
       </div>
     </Card>
   );

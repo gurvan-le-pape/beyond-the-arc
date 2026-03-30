@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { FaMapMarkedAlt, FaMapSigns, FaUsers } from "react-icons/fa";
 
 import { Card } from "@/shared/components/primitives";
+import { Text } from "@/shared/components/typography";
 import { ViewLevel } from "@/shared/constants";
 
 interface TitleSectionProps {
@@ -96,9 +97,9 @@ export function TitleSection({
       <div className="flex items-start gap-4 mb-4">
         <div className={config.iconClassName}>{config.icon}</div>
         <div className="flex-1 min-w-0">
-          <h2 className={`text-xl font-bold ${config.titleColor}`}>
+          <Text variant="h2" className={config.titleColor}>
             {config.title}
-          </h2>
+          </Text>
           {config.subtitle && (
             <p className={`text-lg font-semibold ${config.titleColor} mt-2`}>
               {config.subtitle}

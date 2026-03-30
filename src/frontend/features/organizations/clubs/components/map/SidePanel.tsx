@@ -4,6 +4,8 @@
 import { useTranslations } from "next-intl";
 import { memo, useCallback, useState } from "react";
 
+import { Text } from "@/shared/components/typography";
+
 import type { ClubFilters } from "../../hooks/useFilters";
 import type { ClubBasic } from "../../types/ClubBasic";
 import ListViewButton from "./ListViewButton";
@@ -88,9 +90,9 @@ export const SidePanel = memo(function SidePanel({
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-divide-light dark:border-divide-dark bg-surface-subtle dark:bg-surface-subtle-dark flex-shrink-0">
             <div>
-              <h2 className="font-semibold text-lg text-text-heading dark:text-text-heading-dark">
+              <Text variant="h2" className="text-lg">
                 {t("map.title")}
-              </h2>
+              </Text>
               <p className="text-sm text-text-body dark:text-text-body-dark">
                 {clubs.length} {clubs.length !== 1 ? t("clubs") : t("club")}
               </p>
@@ -304,9 +306,12 @@ const ClubListItem = memo(function ClubListItem({
       className="w-full text-left p-4 hover:bg-surface-subtle dark:hover:bg-surface-subtle-dark transition-colors group"
       style={{ contain: "layout style paint" }}
     >
-      <h3 className="font-medium text-text-heading dark:text-text-heading-dark group-hover:text-primary-600 dark:group-hover:text-primary-400 mb-1 truncate">
+      <Text
+        variant="h3"
+        className="mb-1 truncate group-hover:text-primary-600 dark:group-hover:text-primary-400"
+      >
         {club.name}
-      </h3>
+      </Text>
       {(club.city || club.zipCode) && (
         <p className="text-sm text-text-body dark:text-text-body-dark truncate">
           {club.city}

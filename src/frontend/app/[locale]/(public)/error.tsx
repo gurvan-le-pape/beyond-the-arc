@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 
 import { PageLayout } from "@/shared/components/layout";
 import { Button } from "@/shared/components/primitives";
+import { Text } from "@/shared/components/typography";
 
 export default function GlobalError({
   unstable_retry,
@@ -34,9 +35,9 @@ export default function GlobalError({
         </div>
 
         <div className="space-y-2">
-          <h1 className="text-xl font-bold text-text-heading dark:text-text-heading-dark">
+          <Text variant="h1" className="text-xl">
             {tCommon("errors.unexpected")}
-          </h1>
+          </Text>
           <p className="text-sm text-text-body dark:text-text-body-dark">
             {tCommon("errors.unexpectedDescription")}
           </p>

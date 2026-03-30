@@ -18,6 +18,7 @@ import { getTranslations } from "next-intl/server";
 import React from "react";
 
 import { PageLayout } from "@/shared/components/layout";
+import { Text } from "@/shared/components/typography";
 
 export default async function FeaturesPage({
   params,
@@ -125,9 +126,9 @@ export default async function FeaturesPage({
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-button bg-gradient-to-br from-blue-500 to-purple-500 text-white mb-4 shadow-card">
           <Sparkles className="w-8 h-8" />
         </div>
-        <h1 className="text-2xl md:text-4xl font-bold text-text-heading dark:text-text-heading-dark mb-4">
+        <Text variant="h1" className="mb-4">
           {t("features.title")}
-        </h1>
+        </Text>
         <p className="text-lg text-text-body dark:text-text-body-dark max-w-3xl mx-auto">
           {t("features.subtitle")}
         </p>
@@ -164,9 +165,9 @@ export default async function FeaturesPage({
                   {t(`features.status.${feature.status}`)}
                 </span>
               </div>
-              <h3 className="text-lg font-bold text-text-heading dark:text-text-heading-dark mb-2">
+              <Text variant="h3" className="mb-2">
                 {feature.title}
-              </h3>
+              </Text>
               <p className="text-text-body dark:text-text-body-dark text-sm">
                 {feature.description}
               </p>
@@ -177,9 +178,9 @@ export default async function FeaturesPage({
 
       {/* Highlights Section */}
       <div className="bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card dark:shadow-card-dark p-8">
-        <h2 className="text-xl font-bold text-text-heading dark:text-text-heading-dark mb-6 text-center">
+        <Text variant="h2" className="mb-6 text-center text-xl">
           {t("features.highlightsTitle")}
-        </h2>
+        </Text>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {highlights.map((highlight, idx) => {
             const Icon = highlight.icon;
@@ -188,9 +189,9 @@ export default async function FeaturesPage({
                 <div className="inline-flex items-center justify-center w-12 h-12 rounded-button bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400 mb-3">
                   <Icon className="w-6 h-6" />
                 </div>
-                <h3 className="font-semibold text-text-heading dark:text-text-heading-dark mb-2">
+                <Text variant="h3" className="mb-2 text-base">
                   {highlight.title}
-                </h3>
+                </Text>
                 <p className="text-sm text-text-body dark:text-text-body-dark">
                   {highlight.description}
                 </p>

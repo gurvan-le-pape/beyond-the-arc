@@ -2,6 +2,7 @@
 import React from "react";
 
 import type { TeamInfoExtended } from "@/features/teams/types/TeamInfo";
+import { Text } from "@/shared/components/typography";
 import { cn } from "@/shared/utils/cn";
 
 interface FilterablePlayerListProps {
@@ -21,9 +22,9 @@ export function FilterablePlayerList({
 }: FilterablePlayerListProps) {
   return (
     <div className="min-w-0">
-      <h4 className="font-bold text-sm text-text-emphasis dark:text-text-emphasis-dark mb-2 truncate">
+      <Text variant="h4" className="text-sm mb-2 truncate">
         {team.name}
-      </h4>
+      </Text>
 
       <div className="space-y-1 max-h-64 overflow-y-auto scrollbar-hide">
         {team.players.map((player) => (

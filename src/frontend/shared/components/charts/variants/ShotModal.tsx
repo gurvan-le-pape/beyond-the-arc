@@ -12,6 +12,7 @@ import { ChartType } from "@/shared/constants/chart-types";
 import type { NamedEntity } from "@/shared/types/SelectOption";
 
 import { Button } from "../../primitives";
+import { Text } from "../../typography";
 
 interface ShotModalProps {
   open: boolean;
@@ -132,9 +133,12 @@ export const ShotModal: React.FC<ShotModalProps> = ({
               ref={chartRef}
               className="px-6 pt-6 pb-6 bg-surface-base dark:bg-surface-subtle-dark rounded-b-2xl"
             >
-              <h3 className="text-lg font-bold mb-4 text-center text-primary-700 dark:text-primary-400 tracking-wide">
+              <Text
+                variant="h3"
+                className="mb-4 text-center text-primary-700 dark:text-primary-400 tracking-wide"
+              >
                 {t("shotChart.title", { name: player.name })}
-              </h3>
+              </Text>
 
               <ShotChart
                 matchEvents={getPlayerShots(player.id)}

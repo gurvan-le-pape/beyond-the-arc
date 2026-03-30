@@ -5,6 +5,7 @@ import { LeaguesGrid } from "@/features/competitions/components";
 import { serverLeaguesService } from "@/features/organizations/leagues/api/leagues.server";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
+import { Text } from "@/shared/components/typography";
 
 interface RegionalListPageProps {
   readonly params: Promise<{ readonly locale: string }>;
@@ -36,9 +37,9 @@ export default async function RegionalListPage({
     <PageLayout>
       <Breadcrumb items={breadcrumbItems} />
 
-      <h1 className="text-2xl font-bold text-text-heading dark:text-text-heading-dark">
+      <Text variant="pageTitle">
         {tCommon("sectionTitles.regionalLeagues")}
-      </h1>
+      </Text>
 
       <LeaguesGrid leagues={leagues} />
     </PageLayout>

@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 
 import { useRouter } from "@/navigation";
 import { Card } from "@/shared/components/primitives";
+import { Text } from "@/shared/components/typography";
 
 import type { ClubBasic } from "../../types/ClubBasic";
 
@@ -49,9 +50,9 @@ export function ClubsGrid({ clubs, leagueId, committeeId }: ClubsGridProps) {
           }
           className="border-l-4 border-l-clubs-dark dark:border-l-clubs-light hover:border-l-divide-light dark:hover:!border-l-divide-dark"
         >
-          <h3 className="text-lg font-semibold text-text-heading dark:text-text-heading-dark mb-1">
+          <Text variant="h3" className="mb-1">
             {club.name}
-          </h3>
+          </Text>
           {(club.city || club.zipCode) && (
             <p className="text-sm text-text-body dark:text-text-body-dark">
               {club.city && club.zipCode && `${club.city} • ${club.zipCode}`}

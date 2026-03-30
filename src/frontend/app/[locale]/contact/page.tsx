@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import React from "react";
 
 import { PageLayout } from "@/shared/components/layout";
+import { Text } from "@/shared/components/typography";
 
 export default async function ContactPage({
   params,
@@ -67,9 +68,9 @@ export default async function ContactPage({
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-button bg-gradient-to-br from-blue-500 to-cyan-500 text-white mb-4 shadow-card">
           <Send className="w-8 h-8" />
         </div>
-        <h1 className="text-2xl md:text-4xl font-bold text-text-heading dark:text-text-heading-dark mb-4">
+        <Text variant="h1" className="mb-4">
           {t("contact.title")}
-        </h1>
+        </Text>
         <p className="text-lg text-text-body dark:text-text-body-dark max-w-2xl mx-auto">
           {t("contact.intro")}
         </p>
@@ -96,9 +97,9 @@ export default async function ContactPage({
               >
                 <Icon className="w-6 h-6" />
               </div>
-              <h3 className="font-semibold text-text-heading dark:text-text-heading-dark mb-2">
+              <Text variant="h3" className="mb-2 text-base">
                 {method.label}
-              </h3>
+              </Text>
               <p className="text-sm text-text-body dark:text-text-body-dark break-all">
                 {method.value}
               </p>
@@ -109,9 +110,9 @@ export default async function ContactPage({
 
       {/* Additional Info */}
       <div className="bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card dark:shadow-card-dark p-8">
-        <h2 className="text-xl font-bold text-text-heading dark:text-text-heading-dark mb-4">
+        <Text variant="h2" className="mb-4 text-xl">
           {t("contact.aboutProject")}
-        </h2>
+        </Text>
         <p className="text-body text-text-body dark:text-text-body-dark mb-4">
           {t("contact.projectDescription")}
         </p>
