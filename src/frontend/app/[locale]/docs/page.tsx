@@ -73,7 +73,7 @@ export default function DocsPage() {
           className="flex items-center gap-3 p-4 bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
         >
           <Github className="w-6 h-6 text-text-body dark:text-text-body-dark" />
-          <div>
+          <div className="flex flex-col">
             <Text variant="label">{t("docs.quickLinks.github")}</Text>
             <Text variant="muted">{t("docs.quickLinks.viewSource")}</Text>
           </div>
@@ -86,7 +86,7 @@ export default function DocsPage() {
           className="flex items-center gap-3 p-4 bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
         >
           <Download className="w-6 h-6 text-text-body dark:text-text-body-dark" />
-          <div>
+          <div className="flex flex-col">
             <Text variant="label">{t("docs.quickLinks.dataModel")}</Text>
             <Text variant="muted">PDF</Text>
           </div>
@@ -99,7 +99,7 @@ export default function DocsPage() {
           className="flex items-center gap-3 p-4 bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
         >
           <BookOpen className="w-6 h-6 text-text-body dark:text-text-body-dark" />
-          <div>
+          <div className="flex flex-col">
             <Text variant="label">{t("docs.quickLinks.apiDocs")}</Text>
             <Text variant="muted">Swagger</Text>
           </div>
@@ -113,7 +113,7 @@ export default function DocsPage() {
           <div className="w-6 h-6 text-text-body dark:text-text-body-dark">
             📧
           </div>
-          <div>
+          <div className="flex flex-col">
             <Text variant="label">{t("docs.quickLinks.contact")}</Text>
             <Text variant="muted">{t("docs.quickLinks.getHelp")}</Text>
           </div>
@@ -229,10 +229,10 @@ export default function DocsPage() {
                                 key={idx}
                                 className="p-3 bg-surface-subtle dark:bg-surface-raised-dark rounded-button border border-divide-light dark:border-divide-dark"
                               >
-                                <code className="text-sm font-mono text-primary-600 dark:text-primary-400">
+                                <code className="text-sm font-mono text-primary-600 dark:text-primary-400 block">
                                   {table.name}
                                 </code>
-                                <Text variant="muted" className="mt-1">
+                                <Text variant="muted" className="mt-1 block">
                                   {table.desc}
                                 </Text>
                               </div>

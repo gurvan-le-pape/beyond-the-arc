@@ -18,12 +18,7 @@ export function EntityListPage({
 }: EntityListPageProps) {
   return (
     <>
-      <Text
-        variant="h1"
-        className="text-primary-600 dark:text-primary-400 md:text-4xl"
-      >
-        {title}
-      </Text>
+      <Text variant="pageTitle">{title}</Text>
       {filters}
       {table}
       {pagination}

@@ -77,7 +77,7 @@ export const TeamStatsComparison: React.FC<TeamStatsComparisonProps> = ({
           return (
             <div key={key}>
               {/* Label */}
-              <Text variant="overline" className="mb-2">
+              <Text variant="overline" className="mb-2 block text-center">
                 {label}
               </Text>
 
