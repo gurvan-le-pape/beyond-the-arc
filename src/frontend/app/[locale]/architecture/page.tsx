@@ -20,7 +20,7 @@ import { Text } from "@/shared/components/typography";
 export default async function ArchitecturePage({
   params,
 }: {
-  params: Promise<{ locale: string }>;
+  readonly params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "landing" });
@@ -138,11 +138,11 @@ export default async function ArchitecturePage({
 
       {/* Tech Stack Cards — sit on surface-base, so use surface-subtle */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-        {techStacks.map((stack, idx) => {
+        {techStacks.map((stack) => {
           const Icon = stack.icon;
           return (
             <div
-              key={idx}
+              key={stack.title}
               className="bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 overflow-hidden"
             >
               {/* Card Header */}
@@ -157,11 +157,11 @@ export default async function ArchitecturePage({
 
               {/* Card Body */}
               <div className="p-6 space-y-4">
-                {stack.items.map((item, itemIdx) => {
+                {stack.items.map((item) => {
                   const ItemIcon = item.icon;
                   return (
                     <div
-                      key={itemIdx}
+                      key={item.name}
                       className="flex items-start gap-3 p-3 rounded-button bg-surface-raised dark:bg-surface-raised-dark border border-transparent hover:border-divide-light dark:hover:border-divide-dark transition-colors duration-200"
                     >
                       <ItemIcon className="w-5 h-5 text-text-secondary dark:text-text-secondary-dark flex-shrink-0 mt-0.5" />

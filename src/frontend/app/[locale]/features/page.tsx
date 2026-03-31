@@ -23,7 +23,7 @@ import { Text } from "@/shared/components/typography";
 export default async function FeaturesPage({
   params,
 }: {
-  params: Promise<{ locale: string }>;
+  readonly params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "landing" });
@@ -136,7 +136,7 @@ export default async function FeaturesPage({
 
       {/* Features Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-        {features.map((feature, idx) => {
+        {features.map((feature) => {
           const Icon = feature.icon;
           const statusColors = {
             live: "bg-success-light/20 dark:bg-success-dark/20 text-success-dark dark:text-success-light border border-success-DEFAULT/30",
@@ -148,7 +148,7 @@ export default async function FeaturesPage({
 
           return (
             <div
-              key={idx}
+              key={feature.title}
               className="bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 p-6"
             >
               <div className="flex items-start justify-between mb-4">
@@ -180,10 +180,10 @@ export default async function FeaturesPage({
           {t("features.highlightsTitle")}
         </Text>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {highlights.map((highlight, idx) => {
+          {highlights.map((highlight) => {
             const Icon = highlight.icon;
             return (
-              <div key={idx} className="text-center">
+              <div key={highlight.title} className="text-center">
                 <div className="inline-flex items-center justify-center w-12 h-12 rounded-button bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400 mb-3">
                   <Icon className="w-6 h-6" />
                 </div>

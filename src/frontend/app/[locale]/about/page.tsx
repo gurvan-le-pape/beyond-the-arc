@@ -18,7 +18,7 @@ import { Text } from "@/shared/components/typography";
 export default async function AboutPage({
   params,
 }: {
-  params: Promise<{ locale: string }>;
+  readonly params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "landing" });
@@ -86,11 +86,11 @@ export default async function AboutPage({
 
       {/* Engineering Principles Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-        {principles.map((principle, idx) => {
+        {principles.map((principle) => {
           const Icon = principle.icon;
           return (
             <div
-              key={idx}
+              key={principle.title}
               className="bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 p-6"
             >
               {/* Decorative gradient icon — intentional, stays as raw Tailwind */}
