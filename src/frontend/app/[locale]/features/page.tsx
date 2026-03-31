@@ -129,7 +129,7 @@ export default async function FeaturesPage({
         <Text variant="h1" className="mb-4">
           {t("features.title")}
         </Text>
-        <Text variant="bodyLg" className="max-w-3xl mx-auto">
+        <Text variant="lead" className="max-w-3xl mx-auto">
           {t("features.subtitle")}
         </Text>
       </div>

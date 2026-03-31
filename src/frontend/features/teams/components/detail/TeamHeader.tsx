@@ -87,7 +87,7 @@ export function TeamHeader({ team }: TeamHeaderProps) {
             {clubName} - {teamNumber}
           </Text>
           {/* Category & Gender */}
-          <Text variant="bodyLg">
+          <Text variant="lead">
             {category} • {gender}
           </Text>
           {/* Competition */}

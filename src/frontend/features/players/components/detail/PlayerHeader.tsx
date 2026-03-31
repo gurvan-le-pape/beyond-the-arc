@@ -90,7 +90,7 @@ export function PlayerHeader({ player }: PlayerHeaderProps) {
             #{playerNumber} {playerName}
           </Text>
           {/* Category & Gender */}
-          <Text variant="bodyLg">
+          <Text variant="lead">
             {category} • {gender}
           </Text>
           <div className="flex flex-col items-start mt-1">

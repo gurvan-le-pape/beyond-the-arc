@@ -79,7 +79,7 @@ export default async function AboutPage({
         <Text variant="h1" className="mb-4">
           {t("about.title")}
         </Text>
-        <Text variant="bodyLg" className="max-w-3xl mx-auto">
+        <Text variant="lead" className="max-w-3xl mx-auto">
           {t("about.intro")}
         </Text>
       </div>

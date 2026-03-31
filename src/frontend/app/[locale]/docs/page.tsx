@@ -59,7 +59,7 @@ export default function DocsPage() {
         <Text variant="h1" className="mb-4">
           {t("docs.title")}
         </Text>
-        <Text variant="bodyLg" className="max-w-2xl mx-auto">
+        <Text variant="lead" className="max-w-2xl mx-auto">
           {t("docs.intro")}
         </Text>
       </div>

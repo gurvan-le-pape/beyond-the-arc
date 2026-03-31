@@ -131,7 +131,7 @@ export default async function ArchitecturePage({
         <Text variant="h1" className="mb-4">
           {t("architecture.title")}
         </Text>
-        <Text variant="bodyLg" className="max-w-2xl mx-auto">
+        <Text variant="lead" className="max-w-2xl mx-auto">
           {t("architecture.subtitle")}
         </Text>
       </div>
