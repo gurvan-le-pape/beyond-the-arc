@@ -6,7 +6,7 @@ import { cn } from "@/shared/utils/cn";
 import { NavButton } from "../primitives";
 import { Text } from "../typography";
 
-function ChevronRight({ className }: { className?: string }) {
+function ChevronRight({ className }: { readonly className?: string }) {
   return (
     <svg
       viewBox="0 0 20 20"
@@ -23,14 +23,14 @@ function ChevronRight({ className }: { className?: string }) {
   );
 }
 
-interface CategorySectionProps<T> {
-  category: Category;
-  items: T[];
-  categoryKey: string;
-  isExpanded: boolean;
-  toggleCategory: (key: string) => void;
-  renderItem: (item: T, index: number) => React.ReactNode;
-  emptyMessage: string;
+interface CategorySectionProps<T extends { id: number | string }> {
+  readonly category: Category;
+  readonly items: T[];
+  readonly categoryKey: string;
+  readonly isExpanded: boolean;
+  readonly toggleCategory: (key: string) => void;
+  readonly renderItem: (item: T, index: number) => React.ReactNode;
+  readonly emptyMessage: string;
 }
 
 /**
@@ -61,7 +61,7 @@ interface CategorySectionProps<T> {
  * - Fully accessible (ARIA attributes)
  * - Dark mode support
  */
-export function CategorySection<T>({
+export function CategorySection<T extends { id: number | string }>({
   category,
   items,
   categoryKey,
@@ -110,7 +110,7 @@ export function CategorySection<T>({
             <ul>
               {items.map((item, i) => (
                 <li
-                  key={i}
+                  key={item.id}
                   className="border-b border-divide-light dark:border-divide-dark last:border-b-0"
                 >
                   {renderItem(item, i)}

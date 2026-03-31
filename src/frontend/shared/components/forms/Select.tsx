@@ -16,6 +16,13 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     const selectId =
       id || `select-${label?.toLowerCase().replaceAll(/\s+/g, "-")}`;
 
+    let ariaDescribedBy: string | undefined;
+    if (error) {
+      ariaDescribedBy = `${selectId}-error`;
+    } else if (helperText) {
+      ariaDescribedBy = `${selectId}-helper`;
+    }
+
     return (
       <div className="w-full">
         {label && (
@@ -49,13 +56,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             className,
           )}
           aria-invalid={error ? "true" : "false"}
-          aria-describedby={
-            error
-              ? `${selectId}-error`
-              : helperText
-              ? `${selectId}-helper`
-              : undefined
-          }
+          aria-describedby={ariaDescribedBy}
           {...props}
         >
           {children}

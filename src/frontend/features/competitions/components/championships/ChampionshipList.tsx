@@ -5,13 +5,14 @@ import { Section } from "@/shared/components/blocks";
 import { GenderCategorizedList } from "@/shared/components/domain";
 import { Gender } from "@/shared/constants";
 
+import type { Championship } from "../../championships/types";
 import { useToggleCategory } from "../../hooks";
 import { ChampionshipListItem } from "./ChampionshipListItem";
 
 interface ChampionshipListProps {
   readonly championshipsByGender: Record<Gender, any[]>;
   readonly groupChampionshipsByCategory: (
-    championships: any[],
+    championships: Championship[],
   ) => Record<string, any[]>;
   readonly onItemClick: (championship: any) => void;
 }

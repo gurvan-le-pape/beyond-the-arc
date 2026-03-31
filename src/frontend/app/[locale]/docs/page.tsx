@@ -224,9 +224,9 @@ export default function DocsPage() {
                                 name: "Stats",
                                 desc: t("docs.database.tables.stats"),
                               },
-                            ].map((table, idx) => (
+                            ].map((table) => (
                               <div
-                                key={idx}
+                                key={table.name}
                                 className="p-3 bg-surface-subtle dark:bg-surface-raised-dark rounded-button border border-divide-light dark:border-divide-dark"
                               >
                                 <code className="text-sm font-mono text-primary-600 dark:text-primary-400 block">
@@ -297,8 +297,11 @@ export default function DocsPage() {
                             t("docs.bestPractices.documentation"),
                             t("docs.bestPractices.gitWorkflow"),
                             t("docs.bestPractices.codeReview"),
-                          ].map((practice, idx) => (
-                            <li key={idx} className="flex items-start gap-3">
+                          ].map((practice) => (
+                            <li
+                              key={practice}
+                              className="flex items-start gap-3"
+                            >
                               <div className="flex-shrink-0 w-6 h-6 rounded-button bg-success-light/20 dark:bg-success-dark/20 flex items-center justify-center mt-0.5">
                                 <span className="text-success-dark dark:text-success-light text-sm">
                                   ✓

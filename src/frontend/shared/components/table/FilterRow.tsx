@@ -5,9 +5,9 @@ import type { FilterKey } from "@/shared/types";
 import type { FilterRenderer } from "@/shared/utils/tableFilters";
 
 interface FilterRowProps<RowType> {
-  headerGroup: any;
-  filterableDropdownKeys: FilterKey[];
-  filterRenderers: Record<FilterKey, FilterRenderer<RowType>>;
+  readonly headerGroup: any;
+  readonly filterableDropdownKeys: FilterKey[];
+  readonly filterRenderers: Record<FilterKey, FilterRenderer<RowType>>;
 }
 
 /**

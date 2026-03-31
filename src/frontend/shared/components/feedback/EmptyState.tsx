@@ -32,7 +32,7 @@ export const EmptyState = forwardRef<HTMLDivElement, EmptyStateProps>(
           "flex flex-col items-center justify-center py-12 px-4 text-center",
           className,
         )}
-        role="status"
+        aria-live="polite"
         {...props}
       >
         {/* Icon */}
@@ -71,7 +71,7 @@ EmptyState.displayName = "EmptyState";
  * Simple text-only empty state (for backward compatibility)
  */
 interface SimpleEmptyStateProps {
-  message: string;
+  readonly message: string;
 }
 
 export function SimpleEmptyState({ message }: SimpleEmptyStateProps) {

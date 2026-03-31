@@ -4,10 +4,10 @@ import React from "react";
 import { Text } from "../typography";
 
 interface EntityListPageProps {
-  title: React.ReactNode;
-  filters: React.ReactNode;
-  table: React.ReactNode;
-  pagination: React.ReactNode;
+  readonly title: React.ReactNode;
+  readonly filters: React.ReactNode;
+  readonly table: React.ReactNode;
+  readonly pagination: React.ReactNode;
 }
 
 export function EntityListPage({

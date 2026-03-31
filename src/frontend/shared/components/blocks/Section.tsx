@@ -7,8 +7,8 @@ import { Card } from "../primitives/Card";
 import { Text } from "../typography";
 
 interface SectionTitleProps {
-  title: ReactNode;
-  className?: string;
+  readonly title: ReactNode;
+  readonly className?: string;
 }
 
 function SectionTitle({ title, className }: SectionTitleProps) {
@@ -21,10 +21,10 @@ function SectionTitle({ title, className }: SectionTitleProps) {
 }
 
 interface SectionProps {
-  title?: ReactNode;
-  children: ReactNode;
-  variant?: "default" | "highlighted";
-  className?: string;
+  readonly title?: ReactNode;
+  readonly children: ReactNode;
+  readonly variant?: "default" | "highlighted";
+  readonly className?: string;
 }
 
 /**

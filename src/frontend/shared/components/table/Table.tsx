@@ -244,8 +244,8 @@ TableCaption.displayName = "TableCaption";
 // ---------------------------------------------------------------------------
 
 interface TableEmptyProps {
-  colSpan: number;
-  message: string;
+  readonly colSpan: number;
+  readonly message: string;
 }
 
 export function TableEmpty({ colSpan, message }: TableEmptyProps) {

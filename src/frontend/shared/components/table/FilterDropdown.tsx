@@ -54,19 +54,13 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
     </Button>
 
     {isOpen && (
-      <ul
-        role="listbox"
-        className="absolute left-0 z-10 mt-2 w-full overflow-y-auto max-h-60 rounded-xl border border-divide-light dark:border-divide-dark bg-surface-raised dark:bg-surface-raised-dark shadow-card-hover py-2 text-sm text-center"
-      >
+      <ul className="absolute left-0 z-10 mt-2 w-full overflow-y-auto max-h-60 rounded-xl border border-divide-light dark:border-divide-dark bg-surface-raised dark:bg-surface-raised-dark shadow-card-hover py-2 text-sm text-center">
         {options.map((opt) => (
-          <li
-            key={opt.value}
-            role="option"
-            aria-selected={selectedValue === opt.value}
-          >
+          <li key={opt.value}>
             <Button
               type="button"
               variant="ghost"
+              aria-pressed={selectedValue === opt.value}
               className={cn(
                 "w-full justify-center p-2 rounded",
                 selectedValue === opt.value

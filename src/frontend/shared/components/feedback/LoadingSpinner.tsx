@@ -6,8 +6,8 @@ import { cn } from "@/shared/utils/cn";
  * Now with dark mode support
  */
 interface LoadingSpinnerProps {
-  size?: "sm" | "md" | "lg";
-  className?: string;
+  readonly size?: "sm" | "md" | "lg";
+  readonly className?: string;
 }
 
 export function LoadingSpinner({
@@ -23,7 +23,7 @@ export function LoadingSpinner({
   return (
     <div
       className={cn("flex items-center justify-center", className)}
-      role="status"
+      aria-live="polite"
     >
       <svg
         className={cn(

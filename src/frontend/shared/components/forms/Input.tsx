@@ -36,8 +36,8 @@ function ClearButton({
   onClick,
   ariaLabel,
 }: {
-  onClick: () => void;
-  ariaLabel: string;
+  readonly onClick: () => void;
+  readonly ariaLabel: string;
 }) {
   return (
     <button
@@ -119,6 +119,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         <ClearButton onClick={onClear} ariaLabel={clearAriaLabel} />
       ) : undefined);
 
+    let ariaDescribedBy: string | undefined;
+    if (error) {
+      ariaDescribedBy = `${inputId}-error`;
+    } else if (helperText) {
+      ariaDescribedBy = `${inputId}-helper`;
+    }
+
     return (
       <div className="w-full">
         {label && (
@@ -159,13 +166,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               error && "border-error focus:ring-error focus:border-error",
               className,
             )}
-            aria-describedby={
-              error
-                ? `${inputId}-error`
-                : helperText
-                ? `${inputId}-helper`
-                : undefined
-            }
+            aria-describedby={ariaDescribedBy}
             aria-invalid={error ? "true" : undefined}
             {...props}
           />

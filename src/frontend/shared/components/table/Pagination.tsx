@@ -150,7 +150,7 @@ export const Pagination: React.FC<PaginationProps> = ({
                 // Ellipsis
                 return (
                   <span
-                    key={`ellipsis-${idx}`}
+                    key={`ellipsis-${idx === 0 ? "start" : "end"}`}
                     className="px-3 py-1.5 text-text-secondary dark:text-text-secondary-dark"
                   >
                     ...

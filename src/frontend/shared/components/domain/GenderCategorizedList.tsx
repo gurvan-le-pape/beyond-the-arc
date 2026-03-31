@@ -8,15 +8,15 @@ import { cn } from "@/shared/utils/cn";
 import { Text } from "../typography";
 import { CategorySection } from "./CategorySection";
 
-interface GenderCategorizedListProps<T> {
-  genderLabel: string;
-  genderKey: Gender;
-  items: T[];
-  groupByCategory: (items: T[]) => Partial<Record<Category, T[]>>;
-  expandedCategories: Record<string, boolean>;
-  toggleCategory: (key: string) => void;
-  renderItem: (item: T, index: number) => React.ReactNode;
-  className?: string;
+interface GenderCategorizedListProps<T extends { id: number | string }> {
+  readonly genderLabel: string;
+  readonly genderKey: Gender;
+  readonly items: T[];
+  readonly groupByCategory: (items: T[]) => Partial<Record<Category, T[]>>;
+  readonly expandedCategories: Record<string, boolean>;
+  readonly toggleCategory: (key: string) => void;
+  readonly renderItem: (item: T, index: number) => React.ReactNode;
+  readonly className?: string;
 }
 
 const GENDER_COLOURS: Record<
@@ -37,7 +37,7 @@ const GENDER_COLOURS: Record<
   },
 };
 
-export function GenderCategorizedList<T>({
+export function GenderCategorizedList<T extends { id: number | string }>({
   genderLabel,
   genderKey,
   items,

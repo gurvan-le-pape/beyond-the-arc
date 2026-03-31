@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import React, { useEffect, useRef, useState } from "react";
 
 import { Select } from "@/shared/components/forms";
-import { Button, PillButton } from "@/shared/components/primitives";
+import { PillButton } from "@/shared/components/primitives";
 import { cn } from "@/shared/utils/cn";
 
 interface RoundSelectorProps {
