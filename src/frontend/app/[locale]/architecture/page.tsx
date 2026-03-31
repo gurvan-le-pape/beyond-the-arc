@@ -131,9 +131,9 @@ export default async function ArchitecturePage({
         <Text variant="h1" className="mb-4">
           {t("architecture.title")}
         </Text>
-        <p className="text-lg text-text-body dark:text-text-body-dark max-w-2xl mx-auto">
+        <Text variant="bodyLg" className="max-w-2xl mx-auto">
           {t("architecture.subtitle")}
-        </p>
+        </Text>
       </div>
 
       {/* Tech Stack Cards — sit on surface-base, so use surface-subtle */}
@@ -169,9 +169,7 @@ export default async function ArchitecturePage({
                         <Text variant="h3" className="text-base">
                           {item.name}
                         </Text>
-                        <p className="text-sm text-text-body dark:text-text-body-dark">
-                          {item.description}
-                        </p>
+                        <Text variant="caption">{item.description}</Text>
                       </div>
                     </div>
                   );
@@ -253,9 +251,9 @@ export default async function ArchitecturePage({
             <Text variant="h3" className="mb-2 text-base">
               {t("architecture.features.modular.title")}
             </Text>
-            <p className="text-sm text-text-body dark:text-text-body-dark">
+            <Text variant="caption">
               {t("architecture.features.modular.description")}
-            </p>
+            </Text>
           </div>
           <div className="text-center">
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-button bg-green-100 dark:bg-green-900/40 text-green-600 dark:text-green-400 mb-3">
@@ -264,9 +262,9 @@ export default async function ArchitecturePage({
             <Text variant="h3" className="mb-2 text-base">
               {t("architecture.features.typeSafety.title")}
             </Text>
-            <p className="text-sm text-text-body dark:text-text-body-dark">
+            <Text variant="caption">
               {t("architecture.features.typeSafety.description")}
-            </p>
+            </Text>
           </div>
           <div className="text-center">
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-button bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 mb-3">
@@ -275,9 +273,9 @@ export default async function ArchitecturePage({
             <Text variant="h3" className="mb-2 text-base">
               {t("architecture.features.scalable.title")}
             </Text>
-            <p className="text-sm text-text-body dark:text-text-body-dark">
+            <Text variant="caption">
               {t("architecture.features.scalable.description")}
-            </p>
+            </Text>
           </div>
         </div>
       </div>

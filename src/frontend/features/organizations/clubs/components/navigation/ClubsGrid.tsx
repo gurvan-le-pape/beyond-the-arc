@@ -28,9 +28,9 @@ export function ClubsGrid({ clubs, leagueId, committeeId }: ClubsGridProps) {
   if (clubs.length === 0) {
     return (
       <div className="bg-surface-subtle dark:bg-surface-subtle-dark rounded-card shadow-card dark:shadow-card-dark border border-divide-light dark:border-divide-dark p-8">
-        <p className="text-center text-body text-text-body dark:text-text-body-dark">
+        <Text variant="body" className="text-center">
           {t("noTeams")}
-        </p>
+        </Text>
       </div>
     );
   }
@@ -54,11 +54,11 @@ export function ClubsGrid({ clubs, leagueId, committeeId }: ClubsGridProps) {
             {club.name}
           </Text>
           {(club.city || club.zipCode) && (
-            <p className="text-sm text-text-body dark:text-text-body-dark">
+            <Text variant="caption">
               {club.city && club.zipCode && `${club.city} • ${club.zipCode}`}
               {club.city && !club.zipCode && club.city}
               {!club.city && club.zipCode && club.zipCode}
-            </p>
+            </Text>
           )}
         </Card>
       ))}

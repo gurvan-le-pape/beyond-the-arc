@@ -129,9 +129,9 @@ export default async function FeaturesPage({
         <Text variant="h1" className="mb-4">
           {t("features.title")}
         </Text>
-        <p className="text-lg text-text-body dark:text-text-body-dark max-w-3xl mx-auto">
+        <Text variant="bodyLg" className="max-w-3xl mx-auto">
           {t("features.subtitle")}
-        </p>
+        </Text>
       </div>
 
       {/* Features Grid */}
@@ -168,9 +168,7 @@ export default async function FeaturesPage({
               <Text variant="h3" className="mb-2">
                 {feature.title}
               </Text>
-              <p className="text-text-body dark:text-text-body-dark text-sm">
-                {feature.description}
-              </p>
+              <Text variant="caption">{feature.description}</Text>
             </div>
           );
         })}
@@ -192,9 +190,7 @@ export default async function FeaturesPage({
                 <Text variant="h3" className="mb-2 text-base">
                   {highlight.title}
                 </Text>
-                <p className="text-sm text-text-body dark:text-text-body-dark">
-                  {highlight.description}
-                </p>
+                <Text variant="caption">{highlight.description}</Text>
               </div>
             );
           })}

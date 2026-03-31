@@ -71,9 +71,9 @@ export default async function ContactPage({
         <Text variant="h1" className="mb-4">
           {t("contact.title")}
         </Text>
-        <p className="text-lg text-text-body dark:text-text-body-dark max-w-2xl mx-auto">
+        <Text variant="bodyLg" className="max-w-2xl mx-auto">
           {t("contact.intro")}
-        </p>
+        </Text>
       </div>
 
       {/* Contact Cards */}
@@ -100,9 +100,9 @@ export default async function ContactPage({
               <Text variant="h3" className="mb-2 text-base">
                 {method.label}
               </Text>
-              <p className="text-sm text-text-body dark:text-text-body-dark break-all">
+              <Text variant="caption" className="break-all">
                 {method.value}
-              </p>
+              </Text>
             </a>
           );
         })}
@@ -113,9 +113,9 @@ export default async function ContactPage({
         <Text variant="h2" className="mb-4 text-xl">
           {t("contact.aboutProject")}
         </Text>
-        <p className="text-body text-text-body dark:text-text-body-dark mb-4">
+        <Text variant="body" className="mb-4">
           {t("contact.projectDescription")}
-        </p>
+        </Text>
         <div className="flex flex-wrap gap-2">
           {techStack.map((tech, idx) => (
             <span

@@ -2,6 +2,7 @@
 import { useTranslations } from "next-intl";
 
 import { NavButton } from "@/shared/components/primitives";
+import { Text } from "@/shared/components/typography";
 import type { Category } from "@/shared/constants";
 
 interface CategoryNavigationProps {
@@ -22,9 +23,12 @@ export function CategoryNavigation({
   return (
     <div className="flex items-start gap-4 flex-wrap">
       <div className="min-w-[8rem] pt-2">
-        <p className="text-body font-semibold text-text-heading dark:text-text-heading-dark">
+        <Text
+          variant="label"
+          className="text-text-heading dark:text-text-heading-dark"
+        >
           {t("categoryLabel")}
-        </p>
+        </Text>
       </div>
       <div className="flex flex-wrap gap-2">
         {availableCategories.map((cat) => (

@@ -11,6 +11,7 @@ import { LeaderboardTable } from "@/shared/components/domain";
 import { ErrorMessage } from "@/shared/components/feedback";
 import { Breadcrumb } from "@/shared/components/navigation";
 import { Card } from "@/shared/components/primitives";
+import { Text } from "@/shared/components/typography";
 import type { LocalCompetitionLevel } from "@/shared/constants";
 import { CompetitionLevel } from "@/shared/constants";
 
@@ -154,7 +155,7 @@ export function ChampionshipsDetailPageGeneric({
   if (isLoading) {
     return (
       <div className="flex-grow flex items-center justify-center">
-        <p className="text-secondary">{tCommon("loading")}</p>
+        <Text variant="caption">{tCommon("loading")}</Text>
       </div>
     );
   }
@@ -176,7 +177,7 @@ export function ChampionshipsDetailPageGeneric({
   if (!championship || pools.length === 0) {
     return (
       <div className="flex-grow flex items-center justify-center">
-        <p className="text-secondary">{tCompetitions("notFound")}</p>
+        <Text variant="caption">{tCompetitions("notFound")}</Text>
       </div>
     );
   }

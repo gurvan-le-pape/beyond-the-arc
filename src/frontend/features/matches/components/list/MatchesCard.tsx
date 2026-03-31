@@ -3,6 +3,7 @@ import { useTranslations } from "next-intl";
 import React from "react";
 
 import { Badge } from "@/shared/components/primitives";
+import { Text } from "@/shared/components/typography";
 import { CompetitionLevel } from "@/shared/constants";
 import { formatMatchDate, formatMatchTime } from "@/shared/utils";
 import { cn } from "@/shared/utils/cn";
@@ -92,12 +93,12 @@ export const MatchesCard: React.FC<MatchesCardProps> = ({ match, onClick }) => {
         <div className="flex justify-between items-center flex-wrap gap-2">
           {/* Competition Details */}
           <div className="flex items-center gap-2 flex-wrap">
-            <p className="text-sm font-semibold text-text-emphasis dark:text-text-emphasis-dark">
+            <Text variant="label">
               {match.pool?.championship?.category} -{" "}
               {match.pool?.championship?.gender}
               {match.pool?.championship?.division &&
                 ` • Div ${match.pool?.championship?.division}`}
-            </p>
+            </Text>
             {match.pool?.name && (
               <Badge variant="outline" size="sm">
                 {match.pool.name}

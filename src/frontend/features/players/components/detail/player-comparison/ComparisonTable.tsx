@@ -4,6 +4,7 @@
 import { useTranslations } from "next-intl";
 import React, { useEffect, useState } from "react";
 
+import { Text } from "@/shared/components/typography";
 import { cn } from "@/shared/utils/cn";
 
 // ---------------------------------------------------------------------------
@@ -126,9 +127,9 @@ export function ComparisonTable({
           return (
             <div key={stat.key}>
               {/* Stat label – centred above the row */}
-              <p className="text-center text-xs font-semibold text-text-muted dark:text-text-muted-dark uppercase tracking-widest mb-2">
+              <Text variant="overline" className="mb-2">
                 {t(`${stat.labelKey}`)}
-              </p>
+              </Text>
 
               {/* VALUE | ←barA  ·  barB→ | VALUE */}
               <div className="grid grid-cols-[auto_1fr_auto_1fr_auto] gap-2 items-center">

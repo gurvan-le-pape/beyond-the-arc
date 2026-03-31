@@ -70,9 +70,9 @@ export function MatchesPanel({
                 />
               ))
             ) : (
-              <p className="text-sm text-text-secondary dark:text-text-secondary-dark text-center py-8">
+              <Text variant="caption" className="text-center py-8">
                 {tCommon("matchHistory.noMatches")}
-              </p>
+              </Text>
             )}
           </div>
         </div>

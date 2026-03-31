@@ -4,6 +4,7 @@
 import { useTranslations } from "next-intl";
 
 import { LoadingSpinner } from "@/shared/components/feedback";
+import { Text } from "@/shared/components/typography";
 
 export function LoadingMap() {
   const t = useTranslations("clubs");
@@ -11,9 +12,7 @@ export function LoadingMap() {
     <div className="absolute inset-0 flex items-center justify-center bg-surface-base dark:bg-surface-base-dark">
       <div className="flex flex-col items-center gap-3">
         <LoadingSpinner size="lg" />
-        <p className="text-sm font-medium text-text-emphasis dark:text-text-emphasis-dark">
-          {t("map.loadingMapClient")}
-        </p>
+        <Text variant="label">{t("map.loadingMapClient")}</Text>
       </div>
     </div>
   );

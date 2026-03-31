@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 
 import type { TeamStats } from "@/features/teams/types/TeamInfo";
 import { Section } from "@/shared/components/blocks";
+import { Text } from "@/shared/components/typography";
 import { NA } from "@/shared/constants";
 import { cn } from "@/shared/utils/cn";
 
@@ -76,9 +77,9 @@ export const TeamStatsComparison: React.FC<TeamStatsComparisonProps> = ({
           return (
             <div key={key}>
               {/* Label */}
-              <p className="text-center text-xs font-semibold text-text-secondary dark:text-text-secondary-dark uppercase tracking-widest mb-2">
+              <Text variant="overline" className="mb-2">
                 {label}
-              </p>
+              </Text>
 
               {/* Value | Bar | Value */}
               <div className="grid grid-cols-[auto_1fr_auto] gap-3 items-center">

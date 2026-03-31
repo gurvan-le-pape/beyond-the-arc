@@ -7,6 +7,7 @@ import { ChartType } from "@/shared/constants/chart-types";
 
 import { Section } from "../../blocks";
 import { ErrorMessage, LoadingSpinner } from "../../feedback";
+import { Text } from "../../typography";
 
 interface PlayerShotChartProps {
   matchEvents: MatchEvent[];
@@ -44,9 +45,9 @@ export const PlayerShotChart: React.FC<PlayerShotChartProps> = ({
       <div className="w-full max-w-3xl mx-auto">
         {renderChart()}
         {description && (
-          <p className="text-sm text-text-secondary dark:text-text-secondary-dark mt-4 text-center">
+          <Text variant="caption" className="mt-4 text-center">
             {description}
-          </p>
+          </Text>
         )}
       </div>
     </Section>

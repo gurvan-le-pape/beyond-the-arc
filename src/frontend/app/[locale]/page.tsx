@@ -23,9 +23,12 @@ export default async function Home({
           >
             {t("homepage.title")}
           </Text>
-          <p className="text-xl md:text-2xl text-text-emphasis dark:text-text-body-dark leading-relaxed max-w-3xl mx-auto">
+          <Text
+            variant="body"
+            className="text-xl md:text-2xl text-text-emphasis dark:text-text-body-dark leading-relaxed max-w-3xl mx-auto"
+          >
             {t("homepage.subtitle")}
-          </p>
+          </Text>
           <div className="pt-4">
             <a
               href={`/${locale}/features`}

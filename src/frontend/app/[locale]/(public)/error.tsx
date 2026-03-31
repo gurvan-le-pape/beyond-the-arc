@@ -38,9 +38,9 @@ export default function GlobalError({
           <Text variant="h1" className="text-xl">
             {tCommon("errors.unexpected")}
           </Text>
-          <p className="text-sm text-text-body dark:text-text-body-dark">
+          <Text variant="caption">
             {tCommon("errors.unexpectedDescription")}
-          </p>
+          </Text>
         </div>
 
         <Button onClick={unstable_retry}>{tCommon("retry")}</Button>

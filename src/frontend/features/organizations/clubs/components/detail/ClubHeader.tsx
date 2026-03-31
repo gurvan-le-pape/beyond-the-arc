@@ -48,10 +48,10 @@ export function ClubHeader({ club }: ClubHeaderProps) {
             {club.name}
           </Text>
           {club.city && (
-            <p className="text-text-body dark:text-text-body-dark">
+            <Text variant="body">
               {club.city}
               {club.zipCode && ` • ${club.zipCode}`}
-            </p>
+            </Text>
           )}
         </div>
       </div>

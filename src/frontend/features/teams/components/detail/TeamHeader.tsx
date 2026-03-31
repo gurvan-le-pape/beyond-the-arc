@@ -87,9 +87,9 @@ export function TeamHeader({ team }: TeamHeaderProps) {
             {clubName} - {teamNumber}
           </Text>
           {/* Category & Gender */}
-          <p className="text-xl text-text-body dark:text-text-body-dark">
+          <Text variant="bodyLg">
             {category} • {gender}
-          </p>
+          </Text>
           {/* Competition */}
           {competitionUrl && competitionName && (
             <Button

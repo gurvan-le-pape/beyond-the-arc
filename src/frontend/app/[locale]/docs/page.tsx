@@ -59,9 +59,9 @@ export default function DocsPage() {
         <Text variant="h1" className="mb-4">
           {t("docs.title")}
         </Text>
-        <p className="text-lg text-text-body dark:text-text-body-dark max-w-2xl mx-auto">
+        <Text variant="bodyLg" className="max-w-2xl mx-auto">
           {t("docs.intro")}
-        </p>
+        </Text>
       </div>
 
       {/* Quick Links */}
@@ -75,9 +75,7 @@ export default function DocsPage() {
           <Github className="w-6 h-6 text-text-body dark:text-text-body-dark" />
           <div>
             <Text variant="label">{t("docs.quickLinks.github")}</Text>
-            <p className="text-xs text-text-secondary dark:text-text-secondary-dark">
-              {t("docs.quickLinks.viewSource")}
-            </p>
+            <Text variant="muted">{t("docs.quickLinks.viewSource")}</Text>
           </div>
           <ExternalLink className="w-4 h-4 ml-auto text-text-muted dark:text-text-muted-dark" />
         </a>
@@ -90,9 +88,7 @@ export default function DocsPage() {
           <Download className="w-6 h-6 text-text-body dark:text-text-body-dark" />
           <div>
             <Text variant="label">{t("docs.quickLinks.dataModel")}</Text>
-            <p className="text-xs text-text-secondary dark:text-text-secondary-dark">
-              PDF
-            </p>
+            <Text variant="muted">PDF</Text>
           </div>
         </a>
 
@@ -105,9 +101,7 @@ export default function DocsPage() {
           <BookOpen className="w-6 h-6 text-text-body dark:text-text-body-dark" />
           <div>
             <Text variant="label">{t("docs.quickLinks.apiDocs")}</Text>
-            <p className="text-xs text-text-secondary dark:text-text-secondary-dark">
-              Swagger
-            </p>
+            <Text variant="muted">Swagger</Text>
           </div>
           <ExternalLink className="w-4 h-4 ml-auto text-text-muted dark:text-text-muted-dark" />
         </a>
@@ -121,9 +115,7 @@ export default function DocsPage() {
           </div>
           <div>
             <Text variant="label">{t("docs.quickLinks.contact")}</Text>
-            <p className="text-xs text-text-secondary dark:text-text-secondary-dark">
-              {t("docs.quickLinks.getHelp")}
-            </p>
+            <Text variant="muted">{t("docs.quickLinks.getHelp")}</Text>
           </div>
         </a>
       </div>
@@ -165,9 +157,7 @@ export default function DocsPage() {
                   <div className="prose prose-gray dark:prose-invert max-w-none">
                     {section.id === "database" && (
                       <div className="space-y-6">
-                        <p className="text-body text-text-body dark:text-text-body-dark">
-                          {section.content}
-                        </p>
+                        <Text variant="body">{section.content}</Text>
 
                         {/* Database Diagram */}
                         <div className="bg-surface-subtle dark:bg-surface-raised-dark rounded-button p-6 border border-divide-light dark:border-divide-dark">
@@ -242,9 +232,9 @@ export default function DocsPage() {
                                 <code className="text-sm font-mono text-primary-600 dark:text-primary-400">
                                   {table.name}
                                 </code>
-                                <p className="text-xs text-text-body dark:text-text-body-dark mt-1">
+                                <Text variant="muted" className="mt-1">
                                   {table.desc}
-                                </p>
+                                </Text>
                               </div>
                             ))}
                           </div>
@@ -254,9 +244,7 @@ export default function DocsPage() {
 
                     {section.id === "structure" && (
                       <div className="space-y-6">
-                        <p className="text-body text-text-body dark:text-text-body-dark">
-                          {section.content}
-                        </p>
+                        <Text variant="body">{section.content}</Text>
 
                         {/* Backend Structure */}
                         <div>
@@ -300,9 +288,7 @@ export default function DocsPage() {
 
                     {section.id === "best-practices" && (
                       <div className="space-y-4">
-                        <p className="text-body text-text-body dark:text-text-body-dark">
-                          {section.content}
-                        </p>
+                        <Text variant="body">{section.content}</Text>
                         <ul className="space-y-3">
                           {[
                             t("docs.bestPractices.modular"),
@@ -329,9 +315,7 @@ export default function DocsPage() {
 
                     {section.id === "getting-started" && (
                       <div className="space-y-4">
-                        <p className="text-body text-text-body dark:text-text-body-dark">
-                          {section.content}
-                        </p>
+                        <Text variant="body">{section.content}</Text>
                         <div className="bg-gray-900 dark:bg-gray-950 text-gray-100 p-6 rounded-button">
                           <pre className="text-sm overflow-x-auto">
                             {`# Clone the repository

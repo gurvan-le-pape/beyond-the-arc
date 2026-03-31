@@ -79,9 +79,9 @@ export default async function AboutPage({
         <Text variant="h1" className="mb-4">
           {t("about.title")}
         </Text>
-        <p className="text-lg text-text-body dark:text-text-body-dark max-w-3xl mx-auto">
+        <Text variant="bodyLg" className="max-w-3xl mx-auto">
           {t("about.intro")}
-        </p>
+        </Text>
       </div>
 
       {/* Engineering Principles Grid */}
@@ -102,9 +102,7 @@ export default async function AboutPage({
               <Text variant="h3" className="mb-2">
                 {principle.title}
               </Text>
-              <p className="text-sm text-text-body dark:text-text-body-dark">
-                {principle.description}
-              </p>
+              <Text variant="caption">{principle.description}</Text>
             </div>
           );
         })}

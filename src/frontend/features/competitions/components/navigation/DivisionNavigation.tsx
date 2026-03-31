@@ -2,6 +2,7 @@
 import { useTranslations } from "next-intl";
 
 import { NavButton } from "@/shared/components/primitives";
+import { Text } from "@/shared/components/typography";
 
 interface DivisionNavigationProps {
   availableDivisions: number[];
@@ -21,9 +22,7 @@ export function DivisionNavigation({
   return (
     <div className="flex items-start gap-4 flex-wrap">
       <div className="min-w-[8rem] pt-2">
-        <p className="text-sm font-semibold text-text-emphasis dark:text-text-emphasis-dark">
-          {t("divisionLabel")}
-        </p>
+        <Text variant="label">{t("divisionLabel")}</Text>
       </div>
       <div className="flex flex-wrap gap-2">
         {availableDivisions.map((div) => (

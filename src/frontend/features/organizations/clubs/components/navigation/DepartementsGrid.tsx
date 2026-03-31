@@ -49,16 +49,16 @@ export function DepartmentsGrid({
             {dept.name}
           </Text>
           {dept.department && (
-            <p className="text-sm text-text-body dark:text-text-body-dark mb-2">
+            <Text variant="caption" className="mb-2">
               {dept.department.code}
-            </p>
+            </Text>
           )}
           <p className="text-xl font-bold text-departmental-dark dark:text-departmental-light">
             {dept.clubCount}
           </p>
-          <p className="text-sm text-text-body dark:text-text-body-dark">
+          <Text variant="caption">
             {dept.clubCount === 1 ? t("club") : t("clubs")}
-          </p>
+          </Text>
         </Card>
       ))}
     </div>

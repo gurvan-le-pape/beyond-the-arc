@@ -93,9 +93,9 @@ export const SidePanel = memo(function SidePanel({
               <Text variant="h2" className="text-lg">
                 {t("map.title")}
               </Text>
-              <p className="text-sm text-text-body dark:text-text-body-dark">
+              <Text variant="caption">
                 {clubs.length} {clubs.length !== 1 ? t("clubs") : t("club")}
-              </p>
+              </Text>
             </div>
             <div className="flex items-center gap-1">
               {/* List view button */}
@@ -227,14 +227,14 @@ export const SidePanel = memo(function SidePanel({
                       d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                     />
                   </svg>
-                  <p className="text-text-body dark:text-text-body-dark font-medium">
+                  <Text variant="body" className="font-medium">
                     {query ? t("map.noResults") : t("map.noClubsFound")}
-                  </p>
-                  <p className="text-sm text-text-secondary dark:text-text-secondary-dark mt-1">
+                  </Text>
+                  <Text variant="caption" className="mt-1">
                     {query
                       ? t("map.tryAnotherSearch")
                       : t("map.zoomToSeeClubs")}
-                  </p>
+                  </Text>
                 </div>
               ) : (
                 <div className="divide-y divide-divide-light dark:divide-divide-dark">
@@ -313,11 +313,11 @@ const ClubListItem = memo(function ClubListItem({
         {club.name}
       </Text>
       {(club.city || club.zipCode) && (
-        <p className="text-sm text-text-body dark:text-text-body-dark truncate">
+        <Text variant="caption" className="truncate">
           {club.city}
           {club.city && club.zipCode && " • "}
           {club.zipCode}
-        </p>
+        </Text>
       )}
       <div className="flex items-center gap-3 mt-2">
         {club.website && (

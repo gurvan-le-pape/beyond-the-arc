@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import React, { useEffect, useRef } from "react";
 
 import { Input } from "@/shared/components/forms";
+import { Text } from "@/shared/components/typography";
 import { cn } from "@/shared/utils/cn";
 import { formatNameToFileName } from "@/shared/utils/formatNameToFileName";
 
@@ -78,13 +79,13 @@ export function PlayerSearchDropdown({
           )}
         >
           {isLoading ? (
-            <p className="px-4 py-3 text-sm text-text-secondary dark:text-text-secondary-dark">
+            <Text variant="caption" className="px-4 py-3">
               {tCommon("loading")}
-            </p>
+            </Text>
           ) : results.length === 0 ? (
-            <p className="px-4 py-3 text-sm text-text-secondary dark:text-text-secondary-dark">
+            <Text variant="caption" className="px-4 py-3">
               {tPlayers("playerDetail.compareNoResults")}
-            </p>
+            </Text>
           ) : (
             results.map((player) => (
               <button

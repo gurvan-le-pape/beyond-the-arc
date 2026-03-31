@@ -76,9 +76,9 @@ export function CommitteesGrid({ committees }: CommitteesGridProps) {
             </Text>
 
             {committee.department && (
-              <p className="text-xs text-text-secondary dark:text-text-secondary-dark">
+              <Text variant="muted">
                 {normalizeDepartmentCode(committee.department.code)}
-              </p>
+              </Text>
             )}
           </Card>
         ))}
@@ -86,9 +86,9 @@ export function CommitteesGrid({ committees }: CommitteesGridProps) {
 
       {filtered.length === 0 && (
         <div className="flex flex-col items-center justify-center py-12 text-center">
-          <p className="text-sm font-medium text-text-secondary dark:text-text-secondary-dark">
+          <Text variant="caption" className="font-medium">
             {tCompetitions("departmental.noResults", { search })}
-          </p>
+          </Text>
           <button
             type="button"
             onClick={() => setSearch("")}

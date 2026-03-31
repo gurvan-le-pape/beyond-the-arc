@@ -90,9 +90,9 @@ export function PlayerHeader({ player }: PlayerHeaderProps) {
             #{playerNumber} {playerName}
           </Text>
           {/* Category & Gender */}
-          <p className="text-xl text-text-body dark:text-text-body-dark">
+          <Text variant="bodyLg">
             {category} • {gender}
-          </p>
+          </Text>
           <div className="flex flex-col items-start mt-1">
             {/* Team */}
             <Button

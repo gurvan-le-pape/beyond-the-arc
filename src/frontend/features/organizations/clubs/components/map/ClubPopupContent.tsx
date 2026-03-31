@@ -2,9 +2,9 @@
 import { useTranslations } from "next-intl";
 
 import { useRouter } from "@/navigation";
+import { Text } from "@/shared/components/typography";
 
 import type { ClubBasic } from "../../types/ClubBasic";
-import { Text } from "@/shared/components/typography";
 
 interface ClubPopupContentProps {
   club: ClubBasic;
@@ -24,11 +24,11 @@ export function ClubPopupContent({ club }: ClubPopupContentProps) {
 
       {/* City and Zip */}
       {(club.city || club.zipCode) && (
-        <p className="text-sm text-text-body mb-3 font-medium">
+        <Text variant="caption" className="mb-3 font-medium">
           {club.city}
           {club.city && club.zipCode && " • "}
           {club.zipCode}
-        </p>
+        </Text>
       )}
 
       {/* Contact Information */}

@@ -39,9 +39,9 @@ export function RegionsGrid({ regions }: RegionsGridProps) {
           <p className="text-xl font-bold text-regional-dark dark:text-regional-light">
             {region.clubCount}
           </p>
-          <p className="text-sm text-text-body dark:text-text-body-dark">
+          <Text variant="caption">
             {region.clubCount === 1 ? t("club") : t("clubs")}
-          </p>
+          </Text>
         </Card>
       ))}
     </div>
