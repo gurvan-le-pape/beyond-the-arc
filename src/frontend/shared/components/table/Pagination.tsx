@@ -10,6 +10,8 @@ import React from "react";
 
 import type { Pagination as PaginationType } from "@/shared/types";
 
+import { Text } from "../typography";
+
 interface PaginationProps {
   pagination: PaginationType | null;
   pageSize: number;
@@ -95,9 +97,9 @@ export const Pagination: React.FC<PaginationProps> = ({
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
         {/* Page size selector */}
         <div className="flex items-center gap-2">
-          <label className="text-sm text-text-emphasis dark:text-text-emphasis-dark whitespace-nowrap">
+          <Text variant="label" as="span" className="whitespace-nowrap">
             {t("pagination.resultsPerPage")}
-          </label>
+          </Text>
           <select
             value={pageSize}
             onChange={(e) => {
