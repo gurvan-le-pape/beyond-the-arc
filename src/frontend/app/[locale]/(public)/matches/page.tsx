@@ -160,9 +160,7 @@ export default function MatchesPage() {
   return (
     <PageLayout>
       {/* Page Title */}
-      <Text variant="h1" className="text-primary-600 dark:text-primary-400">
-        {tMatches("searchTitle")}
-      </Text>
+      <Text variant="pageTitle">{tMatches("searchTitle")}</Text>
 
       {/* Filters Section */}
       <MatchesFilters
