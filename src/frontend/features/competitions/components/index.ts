@@ -18,7 +18,6 @@ export * from "./navigation/CategoryNavigation";
 export * from "./navigation/CommitteesGrid";
 export * from "./navigation/DivisionNavigation";
 export * from "./navigation/LeaguesGrid";
-export * from "./navigation/NavButton";
 export * from "./navigation/PoolDropdown";
 export * from "./navigation/RoundSelector";
 export * from "./navigation/SwitchGenderButton";

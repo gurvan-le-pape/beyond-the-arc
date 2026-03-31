@@ -5,7 +5,8 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useTranslations } from "next-intl";
 import React, { useEffect, useRef, useState } from "react";
 
-import { Button, Select } from "@/shared/components/ui";
+import { Select } from "@/shared/components/forms";
+import { PillButton } from "@/shared/components/primitives";
 import { cn } from "@/shared/utils/cn";
 
 interface RoundSelectorProps {
@@ -98,7 +99,7 @@ export const RoundSelector: React.FC<RoundSelectorProps> = ({
         ref={containerRef}
       >
         {/* Left Arrow Button */}
-        <Button
+        <PillButton
           variant="carouselArrow"
           size="icon"
           onClick={handleLeft}
@@ -106,14 +107,14 @@ export const RoundSelector: React.FC<RoundSelectorProps> = ({
           aria-label={t("roundSelector.scrollLeft")}
         >
           <ChevronLeftIcon className="w-5 h-5" />
-        </Button>
+        </PillButton>
 
         {/* Pills Row */}
         <div className="flex space-x-2">
           {rounds.slice(startIdx, endIdx).map((round) => {
             const isActive = selectedRound === round;
             return (
-              <Button
+              <PillButton
                 key={round}
                 variant={isActive ? "pillActive" : "pillInactive"}
                 size="pill"
@@ -123,13 +124,13 @@ export const RoundSelector: React.FC<RoundSelectorProps> = ({
                 aria-label={t("roundSelector.pillLabel", { round })}
               >
                 {t("roundSelector.pillLabel", { round })}
-              </Button>
+              </PillButton>
             );
           })}
         </div>
 
         {/* Right Arrow Button */}
-        <Button
+        <PillButton
           variant="carouselArrow"
           size="icon"
           onClick={handleRight}
@@ -137,7 +138,7 @@ export const RoundSelector: React.FC<RoundSelectorProps> = ({
           aria-label={t("roundSelector.scrollRight")}
         >
           <ChevronRightIcon className="w-5 h-5" />
-        </Button>
+        </PillButton>
       </div>
     </div>
   );

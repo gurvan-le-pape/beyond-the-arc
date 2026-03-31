@@ -44,7 +44,7 @@ export function Breadcrumb({
 
   const defaultSeparator = (
     <ChevronRightIcon
-      className="w-4 h-4 text-gray-400 dark:text-gray-500"
+      className="w-4 h-4 text-text-muted dark:text-text-muted-dark"
       aria-hidden="true"
     />
   );
@@ -74,7 +74,7 @@ export function Breadcrumb({
               {isClickable ? (
                 <button
                   onClick={() => handleClick(item)}
-                  className="text-primary-600 hover:text-primary-700 hover:underline dark:text-primary-400 dark:hover:text-primary-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:ring-offset-2 dark:focus:ring-offset-gray-900 rounded-button"
+                  className="text-primary-600 hover:text-primary-700 hover:underline dark:text-primary-400 dark:hover:text-primary-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-surface-raised dark:focus:ring-offset-surface-raised-dark rounded-button"
                   aria-current={isCurrent ? "page" : undefined}
                 >
                   {item.label}
@@ -83,8 +83,8 @@ export function Breadcrumb({
                 <span
                   className={
                     isCurrent
-                      ? "text-gray-900 dark:text-gray-100 font-semibold"
-                      : "text-gray-600 dark:text-gray-400"
+                      ? "text-text-heading dark:text-text-heading-dark font-semibold"
+                      : "text-text-body dark:text-text-body-dark"
                   }
                   aria-current={isCurrent ? "page" : undefined}
                 >

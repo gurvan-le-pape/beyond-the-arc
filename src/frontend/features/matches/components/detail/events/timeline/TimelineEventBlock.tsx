@@ -4,6 +4,7 @@ import React from "react";
 
 import type { EventStyle } from "@/features/matches/types/EventStyle";
 import type { EventWithScore } from "@/features/matches/types/EventWithScore";
+import { Text } from "@/shared/components/typography";
 import { cn } from "@/shared/utils/cn";
 
 interface TimelineEventBlockProps {
@@ -99,7 +100,7 @@ export function TimelineEventBlock({
           >
             <p
               className={cn(
-                "text-caption text-gray-600 dark:text-gray-400 mt-0.5",
+                "text-text-body dark:text-text-body-dark mt-0.5",
                 isRight ? "text-right" : "text-left",
               )}
               dangerouslySetInnerHTML={{ __html: descriptionHtml }}
@@ -108,9 +109,9 @@ export function TimelineEventBlock({
         )}
 
         {/* Game clock display */}
-        <span className="text-caption text-gray-400 dark:text-gray-500 font-mono">
+        <Text variant="muted" as="span" className="font-mono">
           {formatGameClock(event.timestamp, matchDate)}
-        </span>
+        </Text>
       </div>
     </div>
   );

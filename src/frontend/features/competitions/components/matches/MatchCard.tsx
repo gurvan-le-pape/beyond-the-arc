@@ -9,7 +9,8 @@ import React from "react";
 import { MatchDetailsTable } from "@/features/competitions/components";
 import { useMatchEvents, usePrefetchMatchEvents } from "@/features/matches/api";
 import type { Match } from "@/features/matches/types/Match";
-import { Badge, Card, ErrorMessage } from "@/shared/components/ui";
+import { ErrorMessage } from "@/shared/components/feedback";
+import { Badge, Card } from "@/shared/components/primitives";
 import { formatMatchDateTime } from "@/shared/utils";
 import { formatNameToFileName } from "@/shared/utils/formatNameToFileName";
 
@@ -46,10 +47,10 @@ export const MatchCard: React.FC<MatchCardProps> = ({
     <Card padding="sm" className="overflow-hidden">
       {/* Top Row - Date and Status */}
       <div className="flex justify-between items-center mb-2">
-        <time className="text-sm text-gray-600 dark:text-gray-400">
+        <time className="text-sm text-text-body dark:text-text-body-dark">
           {formatMatchDateTime(match.date)}
         </time>
-        <Badge variant={match.overtime ? "warning" : "default"} size="sm">
+        <Badge variant={match.overtime ? "warning" : "outline"} size="sm">
           {match.overtime ? tMatches("finalOT") : tMatches("final")}
         </Badge>
       </div>
@@ -74,13 +75,13 @@ export const MatchCard: React.FC<MatchCardProps> = ({
           <div
             className={`text-sm text-center w-full ${
               isHomeWinner
-                ? "font-bold text-gray-900 dark:text-gray-100"
-                : "font-normal text-gray-600 dark:text-gray-400"
+                ? "font-bold text-text-heading dark:text-text-heading-dark"
+                : "font-normal text-text-body dark:text-text-body-dark"
             }`}
             title={`${match.homeTeam.club.name} - ${match.homeTeam.number}`}
           >
             <div className="truncate">{match.homeTeam.club.name}</div>
-            <div className="text-xs text-gray-500 dark:text-gray-500">
+            <div className="text-xs text-text-secondary dark:text-text-secondary-dark">
               {match.homeTeam.number}
             </div>
           </div>
@@ -88,22 +89,24 @@ export const MatchCard: React.FC<MatchCardProps> = ({
 
         {/* Score */}
         <div className="flex flex-col items-center flex-shrink-0 px-2">
-          <div className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-1">
+          <div className="text-xl font-bold text-text-heading dark:text-text-heading-dark mb-1">
             <span
               className={
                 isHomeWinner
                   ? "text-primary-600 dark:text-primary-400"
-                  : "text-gray-700 dark:text-gray-300"
+                  : "text-text-emphasis dark:text-text-emphasis-dark"
               }
             >
               {hasScores ? match.homeTeamScore : "-"}
             </span>
-            <span className="mx-1.5 text-gray-400 dark:text-gray-500">-</span>
+            <span className="mx-1.5 text-text-muted dark:text-text-muted-dark">
+              -
+            </span>
             <span
               className={
                 isAwayWinner
                   ? "text-primary-600 dark:text-primary-400"
-                  : "text-gray-700 dark:text-gray-300"
+                  : "text-text-emphasis dark:text-text-emphasis-dark"
               }
             >
               {hasScores ? match.awayTeamScore : "-"}
@@ -112,7 +115,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
           {/* Match Summary Link */}
           <a
             href={`/${locale}/matches/${match.id}`}
-            className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 hover:underline transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:ring-offset-2 dark:focus:ring-offset-gray-900 rounded-button"
+            className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 hover:underline transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:ring-offset-2 dark:focus:ring-offset-surface-raised-dark rounded-button"
           >
             Résumé
           </a>
@@ -136,13 +139,13 @@ export const MatchCard: React.FC<MatchCardProps> = ({
           <div
             className={`text-sm text-center w-full ${
               isAwayWinner
-                ? "font-bold text-gray-900 dark:text-gray-100"
-                : "font-normal text-gray-600 dark:text-gray-400"
+                ? "font-bold text-text-heading dark:text-text-heading-dark"
+                : "font-normal text-text-body dark:text-text-body-dark"
             }`}
             title={`${match.awayTeam.club.name} - ${match.awayTeam.number}`}
           >
             <div className="truncate">{match.awayTeam.club.name}</div>
-            <div className="text-xs text-gray-500 dark:text-gray-500">
+            <div className="text-xs text-text-secondary dark:text-text-secondary-dark">
               {match.awayTeam.number}
             </div>
           </div>
@@ -159,19 +162,19 @@ export const MatchCard: React.FC<MatchCardProps> = ({
               ? tMatches("hideMatchDetails")
               : tMatches("viewMatchDetails")
           }
-          className="flex-shrink-0 p-1 rounded-button hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+          className="flex-shrink-0 p-1 rounded-button hover:bg-surface-subtle dark:hover:bg-surface-subtle-dark transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
         >
           {expanded ? (
-            <ChevronUpIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+            <ChevronUpIcon className="h-5 w-5 text-text-body dark:text-text-body-dark" />
           ) : (
-            <ChevronDownIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+            <ChevronDownIcon className="h-5 w-5 text-text-body dark:text-text-body-dark" />
           )}
         </button>
       </div>
 
       {/* Expandable Section */}
       {expanded && (
-        <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 animate-slide-down">
+        <div className="mt-3 pt-3 border-t border-divide-light dark:border-divide-dark animate-slide-down">
           {matchEventsError ? (
             <ErrorMessage message={tCommon("errors.fetchMatchEvents")} />
           ) : (

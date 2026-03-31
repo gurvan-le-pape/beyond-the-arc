@@ -5,7 +5,8 @@ import { useTranslations } from "next-intl";
 
 import { RoundSelector } from "@/features/competitions/components";
 import { getSortedRounds } from "@/features/matches/utils/getSortedRounds";
-import { Badge, Card } from "@/shared/components/ui";
+import { Badge, Card } from "@/shared/components/primitives";
+import { Text } from "@/shared/components/typography";
 
 import MatchCard from "./MatchCard";
 
@@ -37,9 +38,9 @@ export function MatchesPanel({
       <div className="space-y-4">
         {/* Rounds Section */}
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
+          <Text variant="h3" className="mb-3">
             {tCompetitions("roundsLabel")}
-          </h3>
+          </Text>
           <RoundSelector
             rounds={getSortedRounds(groupedMatches)}
             selectedRound={selectedRound}
@@ -51,16 +52,14 @@ export function MatchesPanel({
         {/* Matches Section */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-              {tCompetitions("matchesLabel")}
-            </h3>
+            <Text variant="h3">{tCompetitions("matchesLabel")}</Text>
             {currentMatches && currentMatches.length > 0 && (
               <Badge variant="primary" size="sm">
                 {currentMatches.length}
               </Badge>
             )}
           </div>
-          <div className="space-y-3 max-h-[calc(100vh-22rem)] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent hover:scrollbar-thumb-gray-400 dark:hover:scrollbar-thumb-gray-500">
+          <div className="space-y-3 max-h-[calc(100vh-22rem)] overflow-y-auto pr-1 scrollbar-thin scrollbar-track-transparent">
             {currentMatches && currentMatches.length > 0 ? (
               currentMatches.map((match) => (
                 <MatchCard
@@ -71,9 +70,9 @@ export function MatchesPanel({
                 />
               ))
             ) : (
-              <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-8">
+              <Text variant="caption" className="text-center py-8">
                 {tCommon("matchHistory.noMatches")}
-              </p>
+              </Text>
             )}
           </div>
         </div>

@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/components/carousel/CompetitionInfo.tsx
+// src/frontend/features/competitions/components/detail/CompetitionInfo.tsx
 "use client";
 
 import {
@@ -9,7 +9,8 @@ import {
 } from "@heroicons/react/24/outline";
 import { useTranslations } from "next-intl";
 
-import { InfoBox, Section } from "@/shared/components/ui/composite";
+import { InfoBox, Section } from "@/shared/components/blocks";
+import { Text } from "@/shared/components/typography";
 import { NA } from "@/shared/constants";
 import type { President } from "@/shared/types";
 
@@ -53,10 +54,10 @@ export function CompetitionInfo({
 
       {/* President */}
       <div className="flex items-center gap-3 mt-6 mb-4">
-        <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+        <Text variant="overline" as="span">
           {tCompetitions("info.president")}
-        </span>
-        <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
+        </Text>
+        <div className="flex-1 h-px bg-divide-light dark:bg-divide-dark" />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <InfoBox

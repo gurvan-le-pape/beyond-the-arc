@@ -23,7 +23,7 @@ export const HeatmapFilterBar: React.FC<HeatmapFilterBarProps> = ({
 
   return (
     <div className="w-full flex flex-row items-center gap-2 justify-center">
-      <span className="font-semibold text-sm text-gray-600 dark:text-gray-300 mr-1">
+      <span className="font-semibold text-sm text-text-body dark:text-text-body-dark mr-1">
         {t("shotChart.shots")}:
       </span>
       {FILTERS.map(({ key, label }) => (
@@ -32,8 +32,8 @@ export const HeatmapFilterBar: React.FC<HeatmapFilterBarProps> = ({
           onClick={() => setShotFilter(key)}
           className={`px-3 py-1 rounded-md border text-sm transition-all ${
             shotFilter === key
-              ? "font-semibold border-blue-500 bg-blue-50 text-blue-700 shadow-sm dark:border-blue-400 dark:bg-blue-950 dark:text-blue-300"
-              : "border-gray-200 bg-white text-gray-600 hover:border-gray-400 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-gray-400"
+              ? "font-semibold border-primary-500 bg-primary-50 text-primary-700 shadow-sm dark:border-primary-400 dark:bg-primary-950 dark:text-primary-300"
+              : "border-divide-light bg-white text-text-body hover:border-divide-dark dark:border-divide-dark dark:bg-surface-subtle-dark dark:text-text-body-dark dark:hover:border-text-muted-dark"
           }`}
         >
           {label}

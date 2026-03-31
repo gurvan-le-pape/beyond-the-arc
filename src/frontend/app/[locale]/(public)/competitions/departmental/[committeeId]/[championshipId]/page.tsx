@@ -13,6 +13,7 @@ import { serverPoolsService } from "@/features/competitions/pools/api/pools.serv
 import { poolsKeys } from "@/features/competitions/pools/api/poolsKeys";
 import { serverCommitteesService } from "@/features/organizations/committees/api/committees.server";
 import { committeesKeys } from "@/features/organizations/committees/api/committeesKeys";
+import { PageLayout } from "@/shared/components/layout";
 import { CompetitionLevel } from "@/shared/constants";
 
 interface DepartmentalChampionshipsDetailPageProps {
@@ -85,12 +86,14 @@ export default async function DepartmentalChampionshipsDetailPage({
   const dehydratedState = await prefetchData(committeeId, championshipId);
 
   return (
-    <HydrationBoundary state={dehydratedState}>
-      <ChampionshipsDetailPageGeneric
-        level={CompetitionLevel.DEPARTMENTAL}
-        organizationId={committeeId}
-      />
-    </HydrationBoundary>
+    <PageLayout contentClassName="max-w-[1800px]">
+      <HydrationBoundary state={dehydratedState}>
+        <ChampionshipsDetailPageGeneric
+          level={CompetitionLevel.DEPARTMENTAL}
+          organizationId={committeeId}
+        />
+      </HydrationBoundary>
+    </PageLayout>
   );
 }
 

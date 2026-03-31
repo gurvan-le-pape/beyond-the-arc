@@ -67,8 +67,8 @@ export function PlayerDropdownFilter({
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
           "px-3 py-2 text-sm font-medium rounded-button transition-colors duration-200 flex items-center gap-2",
-          "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300",
-          "hover:bg-gray-200 dark:hover:bg-gray-700",
+          "bg-surface-subtle dark:bg-surface-subtle-dark text-text-emphasis dark:text-text-emphasis-dark",
+          "hover:bg-surface-raised dark:hover:bg-surface-raised-dark",
           "focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400",
         )}
       >
@@ -98,7 +98,7 @@ export function PlayerDropdownFilter({
           ref={dropdownRef}
           className={cn(
             "absolute top-full left-0 mt-2 z-10 p-4 min-w-[500px]",
-            "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700",
+            "bg-surface-subtle dark:bg-surface-subtle-dark border border-divide-light dark:border-divide-dark",
             "rounded-card shadow-card-hover dark:shadow-card-dark",
           )}
         >
@@ -116,7 +116,7 @@ export function PlayerDropdownFilter({
             />
           </div>
 
-          {/* "Clear all" row – only visible when something is selected */}
+          {/* "Clear all" row */}
           {selectedPlayerIds.size > 0 && (
             <button
               onClick={() => setSelectedPlayerIds(new Set())}

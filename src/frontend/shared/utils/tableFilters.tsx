@@ -3,12 +3,11 @@ import type { Header } from "@tanstack/react-table";
 import type { RefObject } from "react";
 import React from "react";
 
-import {
-  FilterDropdown,
-  FilterInput,
-  SearchableDropdown,
-} from "@/shared/components/entity";
 import type { FilterKey } from "@/shared/types/filters/FilterKey";
+
+import { DebouncedInput } from "../components/forms";
+import { SearchableDropdown } from "../components/primitives";
+import { FilterDropdown } from "../components/table";
 
 // Generic filter renderer type
 export type FilterRenderer<T> = (
@@ -64,11 +63,10 @@ export function renderInputFilter<T>({
   onChange?: (val: string) => void;
 }): FilterRenderer<T> {
   return () => (
-    <FilterInput
+    <DebouncedInput
       value={value ?? ""}
       onChange={onChange ?? (() => {})}
       placeholder={placeholder}
-      showPendingIndicator={true}
     />
   );
 }

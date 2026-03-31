@@ -7,7 +7,9 @@ import React, { useState } from "react";
 import { usePlayerMatches } from "@/features/players/api/use-players";
 import type { Player } from "@/features/players/types/Player";
 import { aggregateStats } from "@/features/players/utils/statsAggregation";
-import { Button, Section } from "@/shared/components/ui";
+import { Section } from "@/shared/components/blocks";
+import { Button } from "@/shared/components/primitives";
+import { Text } from "@/shared/components/typography";
 
 import { PlayerSearchDropdown } from "../PlayerSearchDropdown";
 import { type ComparisonStatConfig, ComparisonTable } from "./ComparisonTable";
@@ -103,14 +105,14 @@ function PlayerCard({ player, side, placeholder }: PlayerCardProps) {
             #{player.number}
           </span>
 
-          <span className="text-lg font-bold text-gray-900 dark:text-gray-100 -mt-2 relative z-10">
+          <Text variant="h4" as="span" className="-mt-2 relative z-10">
             {player.name}
-          </span>
+          </Text>
 
           {player.team?.club?.name && (
-            <span className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+            <Text variant="muted" as="span" className="mt-0.5">
               {player.team.club.name}
-            </span>
+            </Text>
           )}
         </>
       ) : (
@@ -243,7 +245,7 @@ export function PlayerComparison({ player }: PlayerComparisonProps) {
             variant="ghost"
             size="sm"
             onClick={() => setOpponent(null)}
-            className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 text-xs"
+            className="text-text-muted hover:text-text-body dark:text-text-muted-dark dark:hover:text-text-body-dark text-xs"
           >
             {tCommon("clear")}
           </Button>

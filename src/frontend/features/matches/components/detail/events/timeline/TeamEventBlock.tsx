@@ -3,6 +3,7 @@ import { useTranslations } from "next-intl";
 
 import type { EventStyle } from "@/features/matches/types/EventStyle";
 import type { MatchEvent } from "@/features/matches/types/MatchEvent";
+import { Text } from "@/shared/components/typography";
 
 interface TeamEventBlockProps {
   align: "left" | "right";
@@ -62,7 +63,7 @@ export const TeamEventBlock: React.FC<TeamEventBlockProps> = ({
         {event.description && (
           <button
             type="button"
-            className="text-xs text-gray-600 mt-0.5 text-left w-full"
+            className="text-xs text-text-body dark:text-text-body-dark mt-0.5 text-left w-full"
             dangerouslySetInnerHTML={{
               __html: makeDescriptionClickable(
                 event.description,
@@ -89,12 +90,12 @@ export const TeamEventBlock: React.FC<TeamEventBlockProps> = ({
             tabIndex={0}
           />
         )}
-        <span className="text-xs text-gray-400 font-mono">
+        <Text variant="muted" as="span" className="font-mono">
           {new Date(event.timestamp).toLocaleTimeString("fr-FR", {
             minute: "2-digit",
             second: "2-digit",
           })}
-        </span>
+        </Text>
       </div>
     </div>
   );

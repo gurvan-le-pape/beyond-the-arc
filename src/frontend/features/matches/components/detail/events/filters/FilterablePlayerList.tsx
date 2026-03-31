@@ -2,6 +2,7 @@
 import React from "react";
 
 import type { TeamInfoExtended } from "@/features/teams/types/TeamInfo";
+import { Text } from "@/shared/components/typography";
 import { cn } from "@/shared/utils/cn";
 
 interface FilterablePlayerListProps {
@@ -21,9 +22,9 @@ export function FilterablePlayerList({
 }: FilterablePlayerListProps) {
   return (
     <div className="min-w-0">
-      <h4 className="font-bold text-sm text-gray-700 dark:text-gray-300 mb-2 truncate">
+      <Text variant="h4" className="text-sm mb-2 truncate">
         {team.name}
-      </h4>
+      </Text>
 
       <div className="space-y-1 max-h-64 overflow-y-auto scrollbar-hide">
         {team.players.map((player) => (
@@ -31,7 +32,7 @@ export function FilterablePlayerList({
             key={player.player.id}
             className={cn(
               "flex items-center gap-2 text-sm p-1 rounded transition-colors duration-200 cursor-pointer",
-              "hover:bg-gray-50 dark:hover:bg-gray-700",
+              "hover:bg-surface-raised dark:hover:bg-surface-raised-dark",
             )}
           >
             <input
@@ -40,9 +41,9 @@ export function FilterablePlayerList({
               onChange={() => onToggle(player.player.id)}
               className="w-4 h-4 text-primary-600 dark:text-primary-500 rounded focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
             />
-            <span className="text-gray-700 dark:text-gray-300">
+            <Text variant="label" as="span">
               #{player.player.number} {player.player.name}
-            </span>
+            </Text>
           </label>
         ))}
       </div>

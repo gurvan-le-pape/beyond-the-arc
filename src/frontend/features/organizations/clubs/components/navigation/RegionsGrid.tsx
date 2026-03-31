@@ -4,7 +4,8 @@
 import { useTranslations } from "next-intl";
 
 import { useRouter } from "@/navigation";
-import { Card } from "@/shared/components/ui";
+import { Card } from "@/shared/components/primitives";
+import { Text } from "@/shared/components/typography";
 
 import type { ClubStatsByRegion } from "../../types/ClubStatsByRegion";
 
@@ -30,17 +31,17 @@ export function RegionsGrid({ regions }: RegionsGridProps) {
           padding="md"
           clickable
           onClick={() => router.push(`/clubs/league/${region.id}`)}
-          className="border-l-4 border-l-regional-dark dark:border-l-regional-light hover:border-l-gray-300 dark:hover:!border-l-gray-600"
+          className="border-l-4 border-l-regional-dark dark:border-l-regional-light hover:border-l-divide-light dark:hover:!border-l-divide-dark"
         >
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+          <Text variant="h3" className="mb-2">
             {region.name}
-          </h3>
+          </Text>
           <p className="text-xl font-bold text-regional-dark dark:text-regional-light">
             {region.clubCount}
           </p>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <Text variant="caption">
             {region.clubCount === 1 ? t("club") : t("clubs")}
-          </p>
+          </Text>
         </Card>
       ))}
     </div>

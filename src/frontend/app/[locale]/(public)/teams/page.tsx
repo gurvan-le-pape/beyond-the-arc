@@ -11,11 +11,9 @@ import { getTeamsTableColumns } from "@/features/teams/components";
 import { useTeamsTableFilters } from "@/features/teams/hooks";
 import type { Team } from "@/features/teams/types/Team";
 import { useRouter } from "@/navigation";
-import {
-  EntityListPage,
-  EntityTable,
-  Pagination,
-} from "@/shared/components/entity";
+import { EntityTable } from "@/shared/components/domain";
+import { EntityListPage, PageLayout } from "@/shared/components/layout";
+import { Pagination } from "@/shared/components/table";
 import {
   CATEGORY_LIST,
   CompetitionLevel,
@@ -162,67 +160,69 @@ export default function TeamsPage() {
   })();
 
   return (
-    <EntityListPage
-      title={tTeams("label")}
-      filters={
-        <CompetitionLevelFilters
-          level={level}
-          setLevel={(value) => {
-            setLevel(value);
-            setCommitteeId(undefined);
-            setLeagueId(undefined);
-            setCurrentPage(1);
-          }}
-          committeeId={committeeId}
-          setCommitteeId={setCommitteeId}
-          leagueId={leagueId}
-          setLeagueId={setLeagueId}
-          committees={committees}
-          leagues={leagues}
-          onReset={() => {
-            setLevel(CompetitionLevel.ALL);
-            resetEntityFilters();
-            resetCommitteeLeagueClubFilters();
-            setCurrentPage(1);
-          }}
-        />
-      }
-      table={
-        <EntityTable
-          columns={columns}
-          table={table}
-          isLoading={teamsLoading}
-          error={errorMessage}
-          onRowClick={handleTeamClick}
-          emptyMessage={tCommon("emptyState.teams")}
-          skeletonRowCount={10}
-          testID={TEST_IDS.table}
-          ariaLabel={tTeams("teamsTable.teamsList")}
-          rowAriaLabel={(row: any) =>
-            tCommon("team.seeTeam", { number: row.number })
-          }
-          rowTestId={TEST_IDS.teamRow}
-          cellTestId={TEST_IDS.cell}
-          filterableDropdownKeys={filterableDropdownKeys}
-          filterRenderers={filterRenderers}
-          headerTestId={TEST_IDS.header}
-          errorRowTestId={TEST_IDS.errorRow}
-          retryButtonTestId={TEST_IDS.retryButton}
-          emptyRowTestId={TEST_IDS.emptyRow}
-        />
-      }
-      pagination={
-        <Pagination
-          pagination={pagination}
-          pageSize={pageSize}
-          setPageSize={(size) => {
-            setPageSize(size);
-            setCurrentPage(1);
-          }}
-          setPageIndex={(index) => table.setPageIndex(index)}
-          label={tTeams("teams")}
-        />
-      }
-    />
+    <PageLayout>
+      <EntityListPage
+        title={tTeams("label")}
+        filters={
+          <CompetitionLevelFilters
+            level={level}
+            setLevel={(value) => {
+              setLevel(value);
+              setCommitteeId(undefined);
+              setLeagueId(undefined);
+              setCurrentPage(1);
+            }}
+            committeeId={committeeId}
+            setCommitteeId={setCommitteeId}
+            leagueId={leagueId}
+            setLeagueId={setLeagueId}
+            committees={committees}
+            leagues={leagues}
+            onReset={() => {
+              setLevel(CompetitionLevel.ALL);
+              resetEntityFilters();
+              resetCommitteeLeagueClubFilters();
+              setCurrentPage(1);
+            }}
+          />
+        }
+        table={
+          <EntityTable
+            columns={columns}
+            table={table}
+            isLoading={teamsLoading}
+            error={errorMessage}
+            onRowClick={handleTeamClick}
+            emptyMessage={tCommon("emptyState.teams")}
+            skeletonRowCount={10}
+            testID={TEST_IDS.table}
+            ariaLabel={tTeams("teamsTable.teamsList")}
+            rowAriaLabel={(row: any) =>
+              tCommon("team.seeTeam", { number: row.number })
+            }
+            rowTestId={TEST_IDS.teamRow}
+            cellTestId={TEST_IDS.cell}
+            filterableDropdownKeys={filterableDropdownKeys}
+            filterRenderers={filterRenderers}
+            headerTestId={TEST_IDS.header}
+            errorRowTestId={TEST_IDS.errorRow}
+            retryButtonTestId={TEST_IDS.retryButton}
+            emptyRowTestId={TEST_IDS.emptyRow}
+          />
+        }
+        pagination={
+          <Pagination
+            pagination={pagination}
+            pageSize={pageSize}
+            setPageSize={(size) => {
+              setPageSize(size);
+              setCurrentPage(1);
+            }}
+            setPageIndex={(index) => table.setPageIndex(index)}
+            label={tTeams("teams")}
+          />
+        }
+      />
+    </PageLayout>
   );
 }

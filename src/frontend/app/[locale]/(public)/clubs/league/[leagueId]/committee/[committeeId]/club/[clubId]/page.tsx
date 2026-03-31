@@ -12,7 +12,7 @@ import type { ClubTeamInfo } from "@/features/organizations/clubs/types/ClubDeta
 import { getBreadcrumbItems } from "@/features/organizations/clubs/utils";
 import { serverCommitteesService } from "@/features/organizations/committees/api/committees.server";
 import { serverLeaguesService } from "@/features/organizations/leagues/api/leagues.server";
-import { Footer, Header } from "@/shared/components/layouts";
+import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
 import type { Gender } from "@/shared/constants";
 import { handleServerError } from "@/shared/utils/handleServerError";
@@ -83,21 +83,11 @@ export default async function ClubPage({ params }: ClubPageProps) {
   );
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-100 dark:bg-gray-900">
-      <Header />
-      <main
-        className="flex-grow bg-gray-100 dark:bg-gray-900 py-8 px-6"
-        role="main"
-        aria-label={t("detail.page", { clubName: club.name })}
-      >
-        <div className="max-w-6xl mx-auto space-y-6">
-          <Breadcrumb items={breadcrumbItems} />
-          <ClubHeader club={club} />
-          <ClubInfo club={club} />
-          <ClubTeams club={club} teamsByGender={teamsByGender} />
-        </div>
-      </main>
-      <Footer />
-    </div>
+    <PageLayout ariaLabel={t("detail.page", { clubName: club.name })}>
+      <Breadcrumb items={breadcrumbItems} />
+      <ClubHeader club={club} />
+      <ClubInfo club={club} />
+      <ClubTeams club={club} teamsByGender={teamsByGender} />
+    </PageLayout>
   );
 }

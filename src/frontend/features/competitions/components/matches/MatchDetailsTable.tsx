@@ -12,7 +12,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/shared/components/ui";
+} from "@/shared/components/table";
 
 interface MatchDetailsTableProps {
   match: Match;
@@ -40,7 +40,7 @@ export const MatchDetailsTable: React.FC<MatchDetailsTableProps> = ({
   };
 
   return (
-    <Table className="border border-gray-300 dark:border-gray-600 rounded-button">
+    <Table className="border border-divide-light dark:border-divide-dark rounded-button">
       <TableHeader>
         <TableRow hoverable={false}>
           <TableHead align="left">{t("matchDetails.teamHeader")}</TableHead>
@@ -75,7 +75,10 @@ export const MatchDetailsTable: React.FC<MatchDetailsTableProps> = ({
         </TableRow>
 
         {/* Away Team Row */}
-        <TableRow hoverable={false} className="bg-gray-50 dark:bg-gray-700/30">
+        <TableRow
+          hoverable={false}
+          className="bg-surface-subtle dark:bg-surface-subtle-dark"
+        >
           <TableCell>{match.awayTeam.club.name}</TableCell>
           <TableCell align="center">{display(quarterScores.away[0])}</TableCell>
           <TableCell align="center">{display(quarterScores.away[1])}</TableCell>

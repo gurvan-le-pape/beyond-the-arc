@@ -1,7 +1,8 @@
-// src/frontend/features/competitions/components/carousel/CompetitionHeader.tsx
+// src/frontend/features/competitions/components/detail/CompetitionHeader.tsx
 "use client";
 
-import { Card } from "@/shared/components/ui";
+import { Card } from "@/shared/components/primitives";
+import { Text } from "@/shared/components/typography";
 import { formatNameToFileName } from "@/shared/utils/formatNameToFileName";
 
 interface CompetitionHeaderProps {
@@ -24,9 +25,9 @@ export function CompetitionHeader({
             (e.target as HTMLImageElement).style.display = "none";
           }}
         />
-        <h1 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100">
+        <Text variant="h1" className="text-xl md:text-2xl">
           {name}
-        </h1>
+        </Text>
       </div>
     </Card>
   );

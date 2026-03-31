@@ -2,6 +2,7 @@
 import { useTranslations } from "next-intl";
 
 import { useRouter } from "@/navigation";
+import { Text } from "@/shared/components/typography";
 
 import type { ClubBasic } from "../../types/ClubBasic";
 
@@ -17,17 +18,17 @@ export function ClubPopupContent({ club }: ClubPopupContentProps) {
   return (
     <div className="min-w-[240px] max-w-[320px] p-4">
       {/* Club Name */}
-      <h3 className="font-bold text-lg mb-1 text-gray-900 leading-tight">
+      <Text variant="h3" className="mb-1 leading-tight">
         {club.name}
-      </h3>
+      </Text>
 
       {/* City and Zip */}
       {(club.city || club.zipCode) && (
-        <p className="text-sm text-gray-600 mb-3 font-medium">
+        <Text variant="caption" className="mb-3 font-medium">
           {club.city}
           {club.city && club.zipCode && " • "}
           {club.zipCode}
-        </p>
+        </Text>
       )}
 
       {/* Contact Information */}
@@ -37,12 +38,12 @@ export function ClubPopupContent({ club }: ClubPopupContentProps) {
           {club.email && (
             <a
               href={`mailto:${club.email}`}
-              className="flex items-center gap-3 p-2.5 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group"
+              className="flex items-center gap-3 p-2.5 bg-surface-subtle rounded-lg hover:bg-surface-raised transition-colors group"
               title={club.email}
             >
-              <div className="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-sm">
+              <div className="w-8 h-8 flex items-center justify-center bg-surface-raised rounded-full shadow-sm">
                 <svg
-                  className="w-4 h-4 text-blue-600"
+                  className="w-4 h-4 text-primary-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -55,7 +56,7 @@ export function ClubPopupContent({ club }: ClubPopupContentProps) {
                   />
                 </svg>
               </div>
-              <span className="text-sm text-blue-600 font-medium truncate group-hover:text-blue-700">
+              <span className="text-sm text-primary-600 font-medium truncate group-hover:text-primary-700">
                 {club.email}
               </span>
             </a>
@@ -63,10 +64,10 @@ export function ClubPopupContent({ club }: ClubPopupContentProps) {
 
           {/* Phone */}
           {club.phone && (
-            <div className="flex items-center gap-3 p-2.5 bg-gray-50 rounded-lg">
-              <div className="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-sm">
+            <div className="flex items-center gap-3 p-2.5 bg-surface-subtle rounded-lg">
+              <div className="w-8 h-8 flex items-center justify-center bg-surface-raised rounded-full shadow-sm">
                 <svg
-                  className="w-4 h-4 text-blue-600"
+                  className="w-4 h-4 text-primary-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -79,7 +80,7 @@ export function ClubPopupContent({ club }: ClubPopupContentProps) {
                   />
                 </svg>
               </div>
-              <span className="text-sm text-gray-700 font-medium">
+              <span className="text-sm text-text-emphasis font-medium">
                 {club.phone}
               </span>
             </div>
@@ -91,11 +92,11 @@ export function ClubPopupContent({ club }: ClubPopupContentProps) {
               href={club.website}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-3 p-2.5 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group"
+              className="flex items-center gap-3 p-2.5 bg-surface-subtle rounded-lg hover:bg-surface-raised transition-colors group"
             >
-              <div className="w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-sm">
+              <div className="w-8 h-8 flex items-center justify-center bg-surface-raised rounded-full shadow-sm">
                 <svg
-                  className="w-4 h-4 text-blue-600"
+                  className="w-4 h-4 text-primary-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -108,7 +109,7 @@ export function ClubPopupContent({ club }: ClubPopupContentProps) {
                   />
                 </svg>
               </div>
-              <span className="text-sm text-blue-600 font-medium truncate group-hover:text-blue-700">
+              <span className="text-sm text-primary-600 font-medium truncate group-hover:text-primary-700">
                 {t("map.visitWebsite")}
               </span>
             </a>
@@ -123,7 +124,7 @@ export function ClubPopupContent({ club }: ClubPopupContentProps) {
             `/clubs/league/${club.leagueId}/committee/${club.committeeId}/club/${club.id}`,
           );
         }}
-        className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors shadow-md hover:shadow-lg"
+        className="w-full py-2.5 px-4 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition-colors shadow-md hover:shadow-lg"
       >
         {t("map.seeDetails")}
       </button>

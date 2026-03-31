@@ -23,7 +23,7 @@ export const HeatmapHeader: React.FC<HeatmapHeaderProps> = ({
   maxValue,
   colorScaleFn,
 }) => (
-  <div className="w-full mb-2 rounded-xl px-4 py-3 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col gap-3">
+  <div className="w-full mb-2 rounded-xl px-4 py-3 bg-surface-raised dark:bg-surface-raised-dark border border-divide-light dark:border-divide-dark shadow-sm flex flex-col gap-3">
     <HeatmapFilterBar shotFilter={shotFilter} setShotFilter={setShotFilter} />
     <HeatmapLegend
       maxValue={maxValue}

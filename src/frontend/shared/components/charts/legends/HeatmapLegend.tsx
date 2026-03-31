@@ -3,6 +3,8 @@ import * as d3 from "d3";
 import { useTranslations } from "next-intl";
 import React from "react";
 
+import { Text } from "../../typography";
+
 interface HeatmapLegendProps {
   maxValue: number;
   colorScale?: (t: number) => string;
@@ -52,9 +54,9 @@ export const HeatmapLegend: React.FC<HeatmapLegendProps> = ({
     <div className={`flex flex-col gap-3 w-full ${compact ? "" : "max-w-sm"}`}>
       {/* Gradient bar */}
       <div className="flex items-center gap-3 w-full">
-        <span className="text-xs font-medium text-gray-500 dark:text-gray-400 shrink-0">
+        <Text variant="caption" as="span" className="font-medium shrink-0">
           {t("shotChart.low")}
-        </span>
+        </Text>
         <div className="flex flex-col flex-1 min-w-0 gap-0.5">
           <div
             className="w-full h-4 rounded shadow-sm"
@@ -62,23 +64,23 @@ export const HeatmapLegend: React.FC<HeatmapLegendProps> = ({
               background: `linear-gradient(to right, ${activeGradient})`,
             }}
           />
-          <div className="flex justify-between text-[11px] text-gray-400 dark:text-gray-500 px-0.5">
+          <div className="flex justify-between text-[11px] text-text-muted dark:text-text-muted-dark px-0.5">
             <span>0</span>
             <span>{midValue}</span>
             <span>{maxValue}</span>
           </div>
         </div>
-        <span className="text-xs font-medium text-gray-500 dark:text-gray-400 shrink-0">
+        <Text variant="caption" as="span" className="font-medium shrink-0">
           {t("shotChart.high")}
-        </span>
+        </Text>
       </div>
 
       {/* Color scale picker */}
       {colorScaleOptions && setColorScale && colorScaleName && (
         <div className="flex items-center gap-2 w-full">
-          <span className="text-xs text-gray-500 dark:text-gray-400 shrink-0">
+          <Text variant="caption" as="span" className="shrink-0">
             {t("shotChart.color")}
-          </span>
+          </Text>
           <div className="flex flex-row gap-1.5 flex-wrap">
             {colorScaleOptions.map((scale) => {
               const gradient = buildGradient(scale);
@@ -92,8 +94,8 @@ export const HeatmapLegend: React.FC<HeatmapLegendProps> = ({
                     flex flex-col items-center gap-0.5 px-1.5 py-1 rounded-lg border transition-all
                     ${
                       isActive
-                        ? "border-blue-500 dark:border-blue-400 ring-2 ring-blue-100 dark:ring-blue-900 bg-blue-50 dark:bg-blue-950"
-                        : "border-gray-200 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-400 bg-white dark:bg-gray-800"
+                        ? "border-primary-500 dark:border-primary-400 ring-2 ring-primary-100 dark:ring-primary-900 bg-primary-50 dark:bg-primary-950"
+                        : "border-divide-light dark:border-divide-dark hover:border-divide-dark dark:hover:border-text-muted-dark bg-white dark:bg-surface-subtle-dark"
                     }
                   `}
                 >
@@ -103,9 +105,9 @@ export const HeatmapLegend: React.FC<HeatmapLegendProps> = ({
                       background: `linear-gradient(to right, ${gradient})`,
                     }}
                   />
-                  <span className="text-[11px] text-gray-600 dark:text-gray-300 leading-none">
+                  <Text variant="muted" as="span" className="leading-none">
                     {scale}
-                  </span>
+                  </Text>
                 </button>
               );
             })}

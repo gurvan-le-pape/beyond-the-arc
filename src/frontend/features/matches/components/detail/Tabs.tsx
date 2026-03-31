@@ -45,7 +45,7 @@ interface TabsListProps {
 export function TabsList({ children, className = "" }: TabsListProps) {
   return (
     <div
-      className={`inline-flex items-center justify-start gap-1 bg-white dark:bg-gray-800 rounded-button p-1 border border-gray-200 dark:border-gray-700 shadow-card dark:shadow-card-dark mb-6 overflow-x-auto ${className}`}
+      className={`inline-flex items-center justify-start gap-1 bg-surface-raised dark:bg-surface-raised-dark rounded-button p-1 border border-divide-light dark:border-divide-dark shadow-card dark:shadow-card-dark mb-6 overflow-x-auto ${className}`}
       role="tablist"
     >
       {children}
@@ -77,11 +77,11 @@ export function TabsTrigger({
       className={`
         px-4 py-2 rounded-button text-sm font-medium whitespace-nowrap
         transition-all duration-200
-        focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:ring-offset-2 dark:focus:ring-offset-gray-900
+        focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-surface-raised dark:focus:ring-offset-surface-raised-dark
         ${
           isSelected
             ? "bg-primary-600 text-white shadow-card hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600"
-            : "bg-transparent text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100"
+            : "bg-transparent text-text-body dark:text-text-body-dark hover:bg-surface-subtle dark:hover:bg-surface-subtle-dark hover:text-text-heading dark:hover:text-text-heading-dark"
         }
         ${className}
       `}

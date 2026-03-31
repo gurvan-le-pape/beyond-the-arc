@@ -7,10 +7,11 @@ import { useEffect, useMemo, useState } from "react";
 
 import type { Match } from "@/features/matches/types/Match";
 import { usePathname, useRouter } from "@/navigation";
-import { LeaderboardTable } from "@/shared/components/entity";
-import { Footer, Header } from "@/shared/components/layouts";
+import { LeaderboardTable } from "@/shared/components/domain";
+import { ErrorMessage } from "@/shared/components/feedback";
 import { Breadcrumb } from "@/shared/components/navigation";
-import { Card, ErrorMessage } from "@/shared/components/ui";
+import { Card } from "@/shared/components/primitives";
+import { Text } from "@/shared/components/typography";
 import type { LocalCompetitionLevel } from "@/shared/constants";
 import { CompetitionLevel } from "@/shared/constants";
 
@@ -153,14 +154,8 @@ export function ChampionshipsDetailPageGeneric({
   // ============================================================================
   if (isLoading) {
     return (
-      <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950">
-        <Header />
-        <main className="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-          <p className="text-body text-gray-600 dark:text-gray-400">
-            {tCommon("loading")}
-          </p>
-        </main>
-        <Footer />
+      <div className="flex-grow flex items-center justify-center">
+        <Text variant="caption">{tCommon("loading")}</Text>
       </div>
     );
   }
@@ -170,12 +165,8 @@ export function ChampionshipsDetailPageGeneric({
   // ============================================================================
   if (error) {
     return (
-      <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950">
-        <Header />
-        <main className="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-          <ErrorMessage message={tCommon("errors.fetchChampionships")} />
-        </main>
-        <Footer />
+      <div className="flex-grow flex items-center justify-center">
+        <ErrorMessage message={tCommon("errors.fetchChampionships")} />
       </div>
     );
   }
@@ -185,14 +176,8 @@ export function ChampionshipsDetailPageGeneric({
   // ============================================================================
   if (!championship || pools.length === 0) {
     return (
-      <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950">
-        <Header />
-        <main className="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-          <p className="text-body text-gray-600 dark:text-gray-400">
-            {tCompetitions("notFound")}
-          </p>
-        </main>
-        <Footer />
+      <div className="flex-grow flex items-center justify-center">
+        <Text variant="caption">{tCompetitions("notFound")}</Text>
       </div>
     );
   }
@@ -201,71 +186,65 @@ export function ChampionshipsDetailPageGeneric({
   // Main Render
   // ============================================================================
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950">
-      <Header />
+    <>
+      {/* Wider container for this page - adapts to large screens */}
+      <div className="max-w-[1800px] mx-auto flex flex-col xl:flex-row gap-6">
+        {/* Left Section - Championship Details & Leaderboard */}
+        <div className="w-full xl:flex-1 space-y-6">
+          <Breadcrumb items={breadcrumbItems} />
 
-      <main className="flex-grow py-12 px-4 sm:px-6 lg:px-8">
-        {/* Wider container for this page - adapts to large screens */}
-        <div className="max-w-[1800px] mx-auto flex flex-col xl:flex-row gap-6">
-          {/* Left Section - Championship Details & Leaderboard */}
-          <div className="w-full xl:flex-1 space-y-6">
-            <Breadcrumb items={breadcrumbItems} />
+          {/* Championship Header */}
+          <ChampionshipHeader
+            regionName={name}
+            championshipName={championship.name}
+            gender={gender}
+            onSwitchGender={switchGender}
+          />
 
-            {/* Championship Header */}
-            <ChampionshipHeader
-              regionName={name}
-              championshipName={championship.name}
-              gender={gender}
-              onSwitchGender={switchGender}
-            />
-
-            {/* Navigation Card */}
-            <Card variant="highlighted" padding="md">
-              <div className="space-y-4">
-                <CategoryNavigation
-                  availableCategories={availableCategories}
-                  currentCategory={currentCategory}
-                  onNavigate={navigateToCategory}
-                />
-
-                <DivisionNavigation
-                  availableDivisions={availableDivisions}
-                  currentDivision={currentDivision}
-                  onNavigate={navigateToDivision}
-                />
-              </div>
-            </Card>
-
-            {/* Leaderboard Table */}
-            {!!selectedPoolId && leaderboards[selectedPoolId] && (
-              <LeaderboardTable
-                leaderboards={leaderboards[selectedPoolId] || []}
-                dropdown={
-                  <PoolDropdown
-                    pools={pools}
-                    selectedPoolId={selectedPoolId}
-                    onChange={handlePoolChange}
-                  />
-                }
+          {/* Navigation Card */}
+          <Card variant="highlighted" padding="md">
+            <div className="space-y-4">
+              <CategoryNavigation
+                availableCategories={availableCategories}
+                currentCategory={currentCategory}
+                onNavigate={navigateToCategory}
               />
-            )}
-          </div>
 
-          {/* Right Section - Rounds & Matches */}
-          <div className="w-full xl:w-[500px] 2xl:w-[600px]">
-            <MatchesPanel
-              groupedMatches={groupedMatches}
-              selectedRound={selectedRound}
-              onSelectRound={setSelectedRound}
-              expandedMatchIds={expandedMatchIds}
-              onToggleExpand={toggleExpand}
+              <DivisionNavigation
+                availableDivisions={availableDivisions}
+                currentDivision={currentDivision}
+                onNavigate={navigateToDivision}
+              />
+            </div>
+          </Card>
+
+          {/* Leaderboard Table */}
+          {!!selectedPoolId && leaderboards[selectedPoolId] && (
+            <LeaderboardTable
+              leaderboards={leaderboards[selectedPoolId] || []}
+              dropdown={
+                <PoolDropdown
+                  pools={pools}
+                  selectedPoolId={selectedPoolId}
+                  onChange={handlePoolChange}
+                />
+              }
             />
-          </div>
+          )}
         </div>
-      </main>
 
-      <Footer />
-    </div>
+        {/* Right Section - Rounds & Matches */}
+        <div className="w-full xl:w-[500px] 2xl:w-[600px]">
+          <MatchesPanel
+            groupedMatches={groupedMatches}
+            selectedRound={selectedRound}
+            onSelectRound={setSelectedRound}
+            expandedMatchIds={expandedMatchIds}
+            onToggleExpand={toggleExpand}
+          />
+        </div>
+      </div>
+    </>
   );
 }
 

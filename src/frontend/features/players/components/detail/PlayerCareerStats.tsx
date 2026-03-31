@@ -2,7 +2,7 @@
 import { useTranslations } from "next-intl";
 import React from "react";
 
-import { InfoBox, Section } from "@/shared/components/ui";
+import { InfoBox, Section } from "@/shared/components/blocks";
 
 interface StatConfig {
   key: string;

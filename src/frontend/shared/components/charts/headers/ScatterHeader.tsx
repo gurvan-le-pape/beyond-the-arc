@@ -2,6 +2,8 @@
 import { useTranslations } from "next-intl";
 import React from "react";
 
+import { Text } from "../../typography";
+
 export const ScatterHeader: React.FC = () => {
   const t = useTranslations("common");
 
@@ -19,9 +21,13 @@ export const ScatterHeader: React.FC = () => {
             className="text-success"
           />
         </svg>
-        <span className="text-sm text-gray-800 dark:text-gray-200">
+        <Text
+          variant="caption"
+          as="span"
+          className="text-text-heading dark:text-text-heading-dark"
+        >
           {t("shotChart.madeLabel")}
-        </span>
+        </Text>
       </span>
 
       <span className="flex items-center gap-1.5">
@@ -45,9 +51,13 @@ export const ScatterHeader: React.FC = () => {
             className="text-error"
           />
         </svg>
-        <span className="text-sm text-gray-800 dark:text-gray-200">
+        <Text
+          variant="caption"
+          as="span"
+          className="text-text-heading dark:text-text-heading-dark"
+        >
           {t("shotChart.missedLabel")}
-        </span>
+        </Text>
       </span>
     </div>
   );

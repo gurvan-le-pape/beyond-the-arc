@@ -4,7 +4,8 @@
 import React, { useEffect, useState } from "react";
 
 import type { TeamStats } from "@/features/teams/types/TeamInfo";
-import { Section } from "@/shared/components/ui";
+import { Section } from "@/shared/components/blocks";
+import { Text } from "@/shared/components/typography";
 import { NA } from "@/shared/constants";
 import { cn } from "@/shared/utils/cn";
 
@@ -76,9 +77,9 @@ export const TeamStatsComparison: React.FC<TeamStatsComparisonProps> = ({
           return (
             <div key={key}>
               {/* Label */}
-              <p className="text-center text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-2">
+              <Text variant="overline" className="mb-2 block text-center">
                 {label}
-              </p>
+              </Text>
 
               {/* Value | Bar | Value */}
               <div className="grid grid-cols-[auto_1fr_auto] gap-3 items-center">
@@ -86,7 +87,7 @@ export const TeamStatsComparison: React.FC<TeamStatsComparisonProps> = ({
                 <div className="text-right">
                   <span
                     className={cn(
-                      "text-sm font-semibold tabular-nums text-gray-800 dark:text-gray-200",
+                      "text-sm font-semibold tabular-nums text-text-heading dark:text-text-heading-dark",
                       leader === "home" &&
                         "border-b-2 border-primary-500 dark:border-primary-400 pb-0.5",
                     )}
@@ -96,7 +97,7 @@ export const TeamStatsComparison: React.FC<TeamStatsComparisonProps> = ({
                 </div>
 
                 {/* Dual-segment bar */}
-                <div className="h-2.5 w-full bg-gray-100 dark:bg-gray-700 rounded-button overflow-hidden flex">
+                <div className="h-2.5 w-full bg-surface-subtle dark:bg-surface-subtle-dark rounded-button overflow-hidden flex">
                   {/* Home segment */}
                   <div
                     className="h-full bg-primary-500 dark:bg-primary-400 rounded-l-button transition-all ease-out"
@@ -121,7 +122,7 @@ export const TeamStatsComparison: React.FC<TeamStatsComparisonProps> = ({
                 <div className="text-left">
                   <span
                     className={cn(
-                      "text-sm font-semibold tabular-nums text-gray-800 dark:text-gray-200",
+                      "text-sm font-semibold tabular-nums text-text-heading dark:text-text-heading-dark",
                       leader === "away" &&
                         "border-b-2 border-secondary-600 dark:border-secondary-400 pb-0.5",
                     )}

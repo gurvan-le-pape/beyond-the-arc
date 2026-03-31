@@ -6,7 +6,7 @@ import React from "react";
 
 import type { TeamInfo } from "@/features/teams/types/TeamInfo";
 import { useRouter } from "@/navigation";
-import { Button, Card } from "@/shared/components/ui";
+import { Button, Card } from "@/shared/components/primitives";
 import { cn } from "@/shared/utils/cn";
 import { formatNameToFileName } from "@/shared/utils/formatNameToFileName";
 
@@ -38,12 +38,12 @@ function TeamSection({ team, isWinning, align }: TeamSectionProps) {
         type="button"
         className={cn(
           "group relative w-20 h-20 rounded-button overflow-hidden",
-          "bg-gray-100 dark:bg-gray-700 flex items-center justify-center",
+          "bg-surface-raised dark:bg-surface-raised-dark flex items-center justify-center",
           "border-4 transition-all duration-200",
-          "focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:ring-offset-2 dark:focus:ring-offset-gray-950",
+          "focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:ring-offset-2 dark:focus:ring-offset-surface-base-dark",
           isWinning
             ? "border-primary-500 dark:border-primary-400 shadow-card-hover"
-            : "border-gray-300 dark:border-gray-600 hover:border-primary-400 dark:hover:border-primary-500 shadow-card dark:shadow-card-dark",
+            : "border-divide-light dark:border-divide-dark hover:border-primary-400 dark:hover:border-primary-500 shadow-card dark:shadow-card-dark",
         )}
         onClick={() =>
           router.push(
@@ -76,8 +76,8 @@ function TeamSection({ team, isWinning, align }: TeamSectionProps) {
         className={cn(
           "text-sm font-semibold",
           isWinning
-            ? "text-gray-900 dark:text-gray-100"
-            : "text-gray-600 dark:text-gray-400",
+            ? "text-text-heading dark:text-text-heading-dark"
+            : "text-text-body dark:text-text-secondary-dark",
         )}
       >
         {team.name}
@@ -110,21 +110,21 @@ export const MatchScoreCard: React.FC<MatchScoreCardProps> = ({
             className={cn(
               "text-2xl md:text-4xl font-bold tabular-nums transition-colors duration-200",
               isHomeWinning
-                ? "text-gray-900 dark:text-gray-100"
-                : "text-gray-500 dark:text-gray-500",
+                ? "text-text-heading dark:text-text-heading-dark"
+                : "text-text-secondary dark:text-text-secondary-dark",
             )}
           >
             {homeTeam.score}
           </span>
-          <span className="text-xl md:text-2xl font-bold text-gray-400 dark:text-gray-600">
+          <span className="text-xl md:text-2xl font-bold text-text-muted dark:text-text-muted-dark">
             -
           </span>
           <span
             className={cn(
               "text-2xl md:text-4xl font-bold tabular-nums transition-colors duration-200",
               isAwayWinning
-                ? "text-gray-900 dark:text-gray-100"
-                : "text-gray-500 dark:text-gray-500",
+                ? "text-text-heading dark:text-text-heading-dark"
+                : "text-text-secondary dark:text-text-secondary-dark",
             )}
           >
             {awayTeam.score}

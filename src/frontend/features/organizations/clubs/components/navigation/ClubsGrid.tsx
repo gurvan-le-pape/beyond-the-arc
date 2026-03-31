@@ -4,7 +4,8 @@
 import { useTranslations } from "next-intl";
 
 import { useRouter } from "@/navigation";
-import { Card } from "@/shared/components/ui";
+import { Card } from "@/shared/components/primitives";
+import { Text } from "@/shared/components/typography";
 
 import type { ClubBasic } from "../../types/ClubBasic";
 
@@ -26,10 +27,10 @@ export function ClubsGrid({ clubs, leagueId, committeeId }: ClubsGridProps) {
 
   if (clubs.length === 0) {
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-card shadow-card dark:shadow-card-dark border border-gray-200 dark:border-gray-700 p-8">
-        <p className="text-center text-body text-gray-600 dark:text-gray-400">
+      <div className="bg-surface-subtle dark:bg-surface-subtle-dark rounded-card shadow-card dark:shadow-card-dark border border-divide-light dark:border-divide-dark p-8">
+        <Text variant="body" className="text-center">
           {t("noTeams")}
-        </p>
+        </Text>
       </div>
     );
   }
@@ -47,17 +48,17 @@ export function ClubsGrid({ clubs, leagueId, committeeId }: ClubsGridProps) {
               `/clubs/league/${leagueId}/committee/${committeeId}/club/${club.id}`,
             )
           }
-          className="border-l-4 border-l-clubs-dark dark:border-l-clubs-light hover:border-l-gray-300 dark:hover:!border-l-gray-600"
+          className="border-l-4 border-l-clubs-dark dark:border-l-clubs-light hover:border-l-divide-light dark:hover:!border-l-divide-dark"
         >
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
+          <Text variant="h3" className="mb-1">
             {club.name}
-          </h3>
+          </Text>
           {(club.city || club.zipCode) && (
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <Text variant="caption">
               {club.city && club.zipCode && `${club.city} • ${club.zipCode}`}
               {club.city && !club.zipCode && club.city}
               {!club.city && club.zipCode && club.zipCode}
-            </p>
+            </Text>
           )}
         </Card>
       ))}

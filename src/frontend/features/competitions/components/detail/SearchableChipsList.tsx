@@ -4,8 +4,9 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
-import { Section } from "@/shared/components/ui/composite/Section";
-import { SearchInput } from "@/shared/components/ui/forms";
+import { Section } from "@/shared/components/blocks";
+import { Input } from "@/shared/components/forms";
+import { Text } from "@/shared/components/typography";
 
 interface SearchableChipListItem {
   id: number;
@@ -43,7 +44,7 @@ export function SearchableChipList<T extends SearchableChipListItem>({
       title={
         <>
           {title}
-          <span className="ml-2 text-sm font-normal text-gray-400">
+          <span className="ml-2 text-sm font-normal text-text-muted dark:text-text-muted-dark">
             ({items.length})
           </span>
         </>
@@ -52,26 +53,28 @@ export function SearchableChipList<T extends SearchableChipListItem>({
     >
       {showSearch && (
         <div className="mb-4 max-w-xs">
-          <SearchInput
+          <Input
+            variant="search"
             value={search}
             placeholder={searchPlaceholder}
             onChange={(e) => setSearch(e.target.value)}
+            onClear={() => setSearch("")}
             clearAriaLabel={tCommon("clearSearch")}
           />
         </div>
       )}
       <div className="flex flex-wrap gap-2">
         {filteredItems.length === 0 ? (
-          <span className="text-sm text-gray-400 dark:text-gray-500">
+          <Text variant="muted" as="span">
             {tCompetitions("noSearchResults", { search })}
-          </span>
+          </Text>
         ) : (
           filteredItems.map((item) => (
             <button
               key={item.id}
               type="button"
               onClick={() => onItemClick(item)}
-              className="px-3 py-2 rounded-lg text-sm font-medium border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:border-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors duration-150"
+              className="px-3 py-2 rounded-lg text-sm font-medium border border-divide-light dark:border-divide-dark bg-surface-raised dark:bg-surface-raised-dark text-text-emphasis dark:text-text-emphasis-dark hover:border-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors duration-150"
             >
               {item.name}
             </button>

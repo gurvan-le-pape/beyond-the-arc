@@ -11,16 +11,17 @@ import type {
   TeamInfoExtended,
 } from "@/features/teams/types/TeamInfo";
 import { useRouter } from "@/navigation";
+import { Section } from "@/shared/components/blocks";
 import { ShotModal } from "@/shared/components/charts";
 import {
-  Section,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from "@/shared/components/ui";
+} from "@/shared/components/table";
+import { Text } from "@/shared/components/typography";
 
 import type { MatchEvent } from "../../types/MatchEvent";
 
@@ -218,19 +219,19 @@ export const PlayerMatchStats: React.FC<PlayerMatchStatsProps> = ({
         <span>
           <button
             type="button"
-            className="text-gray-800 dark:text-gray-200 cursor-pointer hover:text-primary-600 dark:hover:text-primary-400 bg-transparent border-none p-0 m-0 font-inherit transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 rounded"
+            className="text-text-heading dark:text-text-emphasis-dark cursor-pointer hover:text-primary-600 dark:hover:text-primary-400 bg-transparent border-none p-0 m-0 font-inherit transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 rounded"
             onClick={() => router.push(`/teams/${team.id}`)}
             aria-label={`${tMatches("playerMatchStats.viewTeam")} ${team.name}`}
           >
             {team.name}
           </button>{" "}
-          <span className="text-gray-600 dark:text-gray-400">
+          <Text variant="body" as="span">
             (
             {isHomeTeam
               ? tMatches("playerMatchStats.home")
               : tMatches("playerMatchStats.away")}
             )
-          </span>
+          </Text>
         </span>
       }
       variant="highlighted"
@@ -247,11 +248,16 @@ export const PlayerMatchStats: React.FC<PlayerMatchStatsProps> = ({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {team.players.map((playerWithStats) => (
+            {team.players.map((playerWithStats, index) => (
               <TableRow
                 key={playerWithStats.player.number}
                 hoverable
                 clickable={false}
+                className={
+                  index % 2 === 0
+                    ? "bg-primary-50 dark:bg-primary-900/20"
+                    : "bg-surface-raised dark:bg-surface-raised-dark"
+                }
               >
                 {columns.map((column) => (
                   <TableCell

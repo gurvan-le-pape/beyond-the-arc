@@ -8,7 +8,7 @@ import { serverTeamsService } from "@/features/teams/api";
 import { TeamHeader, TeamInfo, TeamRoster } from "@/features/teams/components";
 import { TeamMatchHistoryTable } from "@/features/teams/components/detail/TeamMatchHistoryTable";
 import { TeamShotChart } from "@/shared/components/charts";
-import { Footer, Header } from "@/shared/components/layouts";
+import { PageLayout } from "@/shared/components/layout";
 import { handleServerError } from "@/shared/utils/handleServerError";
 
 interface TeamDetailPageProps {
@@ -112,34 +112,28 @@ export default async function TeamDetailPage({ params }: TeamDetailPageProps) {
   );
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950">
-      <Header />
-      <main className="flex-grow py-12 px-4 sm:px-6 lg:px-8" role="main">
-        <div className="max-w-7xl mx-auto space-y-6">
-          {/* Team Header */}
-          <TeamHeader team={team} />
+    <PageLayout>
+      {/* Team Header */}
+      <TeamHeader team={team} />
 
-          {/* Team Stats */}
-          <TeamInfo stats={teamStats} />
+      {/* Team Stats */}
+      <TeamInfo stats={teamStats} />
 
-          {/* Roster */}
-          <TeamRoster players={rosterPlayers} />
+      {/* Roster */}
+      <TeamRoster players={rosterPlayers} />
 
-          {/* Match History */}
-          <TeamMatchHistoryTable team={team} matches={matches} maxRows={5} />
+      {/* Match History */}
+      <TeamMatchHistoryTable team={team} matches={matches} maxRows={5} />
 
-          {/* Team Shot Chart Heatmap */}
-          <TeamShotChart
-            matchEvents={matchEvents}
-            title={t("teamDetail.shotchartTitle")}
-            description={t("teamDetail.shotchartDescription")}
-            isLoading={false}
-            error={null}
-          />
-        </div>
-      </main>
-      <Footer />
-    </div>
+      {/* Team Shot Chart Heatmap */}
+      <TeamShotChart
+        matchEvents={matchEvents}
+        title={t("teamDetail.shotchartTitle")}
+        description={t("teamDetail.shotchartDescription")}
+        isLoading={false}
+        error={null}
+      />
+    </PageLayout>
   );
 }
 

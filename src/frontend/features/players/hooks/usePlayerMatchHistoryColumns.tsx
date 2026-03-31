@@ -25,8 +25,8 @@ export function usePlayerMatchHistoryColumns(player: Player) {
         key: "date",
         header: t("matchHistory.date"),
         render: (match: PlayerMatchHistory) => formatMatchDateTime(match.date),
-        align: "left" as const,
-        className: "px-6 py-3 text-left text-sm font-semibold",
+        align: "center" as const,
+        className: "px-6 py-3 text-center text-sm font-semibold",
       },
       {
         key: "match",
@@ -38,8 +38,8 @@ export function usePlayerMatchHistoryColumns(player: Player) {
             {renderTeam(match.awayTeam.club.name ?? "", match.awayTeam.id)}
           </>
         ),
-        align: "left" as const,
-        className: "px-6 py-3 text-left text-sm font-semibold",
+        align: "center" as const,
+        className: "px-6 py-3 text-center text-sm font-semibold",
       },
       {
         key: "pts",

@@ -20,11 +20,11 @@ export function TimelineTeamHeader({
   awayTeam,
 }: TimelineTeamHeaderProps) {
   return (
-    <div className="grid grid-cols-[1fr_80px_1fr] gap-4 mb-4 pb-3 border-b-2 border-gray-200 dark:border-gray-700">
+    <div className="grid grid-cols-[1fr_80px_1fr] gap-4 mb-4 pb-3 border-b-2 border-divide-light dark:border-divide-dark">
       {/* Home (left) */}
       <div className="flex items-center gap-2">
         <TimelineTeamLogo teamName={homeTeam.name} />
-        <span className="font-bold text-body text-gray-800 dark:text-gray-200">
+        <span className="font-bold text-text-heading dark:text-text-heading-dark">
           {homeTeam.name}
         </span>
       </div>
@@ -34,7 +34,7 @@ export function TimelineTeamHeader({
 
       {/* Away (right) */}
       <div className="flex items-center gap-2 justify-end">
-        <span className="font-bold text-body text-gray-800 dark:text-gray-200">
+        <span className="font-bold text-text-heading dark:text-text-heading-dark">
           {awayTeam.name}
         </span>
         <TimelineTeamLogo teamName={awayTeam.name} />

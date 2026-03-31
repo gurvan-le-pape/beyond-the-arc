@@ -6,8 +6,8 @@ import React, { useState } from "react";
 
 import type { PlayerMatchHistoryEntry } from "@/features/players/types/PlayerMatchHistory";
 import { useRouter } from "@/navigation";
+import { Section } from "@/shared/components/blocks";
 import {
-  Section,
   Table,
   TableBody,
   TableCell,
@@ -15,7 +15,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/shared/components/ui";
+} from "@/shared/components/table";
 
 interface TeamRosterProps {
   players?: PlayerMatchHistoryEntry[][];
@@ -112,10 +112,11 @@ export const TeamRoster: React.FC<TeamRosterProps> = ({ players }) => {
   return (
     <Section title={tTeams("teamDetail.rosterTitle")} variant="highlighted">
       <div className="overflow-x-auto">
-        <Table>
-          <TableHeader>
+        <Table className="border border-primary-500 dark:border-primary-600 rounded-card box-border">
+          <TableHeader className="bg-primary-100 dark:bg-primary-900/30 border-b border-primary-500 dark:border-primary-600">
             <TableRow hoverable={false}>
               <TableHead
+                align="left"
                 sortable
                 sortDirection={
                   sortConfig?.key === "number" ? sortConfig.direction : null
@@ -125,6 +126,7 @@ export const TeamRoster: React.FC<TeamRosterProps> = ({ players }) => {
                 {tTeams("teamDetail.numberShort")}
               </TableHead>
               <TableHead
+                align="left"
                 sortable
                 sortDirection={
                   sortConfig?.key === "name" ? sortConfig.direction : null
@@ -183,7 +185,7 @@ export const TeamRoster: React.FC<TeamRosterProps> = ({ players }) => {
                 message={tTeams("teamDetail.noPlayers")}
               />
             ) : (
-              sortedPlayers.map((player: PlayerMatchHistoryEntry[]) => {
+              sortedPlayers.map((player: PlayerMatchHistoryEntry[], index) => {
                 const stats = calculatePlayerStats(player);
 
                 return (
@@ -193,15 +195,25 @@ export const TeamRoster: React.FC<TeamRosterProps> = ({ players }) => {
                     onClick={() =>
                       router.push(`/players/${player[0]?.player.id}`)
                     }
+                    className={
+                      index % 2 === 0
+                        ? "bg-primary-50 dark:bg-primary-900/20"
+                        : "bg-surface-raised dark:bg-surface-raised-dark"
+                    }
                   >
-                    <TableCell highlight>#{player[0]?.player.number}</TableCell>
-                    <TableCell className="font-medium hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200">
+                    <TableCell align="center" highlight>
+                      #{player[0]?.player.number}
+                    </TableCell>
+                    <TableCell
+                      align="center"
+                      className="font-medium hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200"
+                    >
                       {player[0]?.player.name}
                     </TableCell>
-                    <TableCell>{stats.gp}</TableCell>
-                    <TableCell>{stats.ppg}</TableCell>
-                    <TableCell>{stats.rpg}</TableCell>
-                    <TableCell>{stats.apg}</TableCell>
+                    <TableCell align="center">{stats.gp}</TableCell>
+                    <TableCell align="center">{stats.ppg}</TableCell>
+                    <TableCell align="center">{stats.rpg}</TableCell>
+                    <TableCell align="center">{stats.apg}</TableCell>
                   </TableRow>
                 );
               })

@@ -4,7 +4,8 @@
 import Image from "next/image";
 import { useState } from "react";
 
-import { Card } from "@/shared/components/ui/primitives";
+import { Card } from "@/shared/components/primitives";
+import { Text } from "@/shared/components/typography";
 import { formatNameToFileName } from "@/shared/utils/formatNameToFileName";
 
 import type { ClubDetailed } from "../../types/ClubDetailed";
@@ -43,14 +44,14 @@ export function ClubHeader({ club }: ClubHeaderProps) {
 
         {/* Club Info */}
         <div className="flex-1">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+          <Text variant="h1" className="text-2xl mb-2">
             {club.name}
-          </h1>
+          </Text>
           {club.city && (
-            <p className="text-body text-gray-600 dark:text-gray-400">
+            <Text variant="body">
               {club.city}
               {club.zipCode && ` • ${club.zipCode}`}
-            </p>
+            </Text>
           )}
         </div>
       </div>

@@ -3,8 +3,9 @@ import { getTranslations } from "next-intl/server";
 
 import { CommitteesGrid } from "@/features/competitions/components";
 import { serverCommitteesService } from "@/features/organizations/committees/api/committees.server";
-import { Footer, Header } from "@/shared/components/layouts";
+import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
+import { Text } from "@/shared/components/typography";
 
 interface DepartmentalListPageProps {
   readonly params: Promise<{ readonly locale: string }>;
@@ -33,23 +34,15 @@ export default async function DepartmentalListPage({
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950">
-      <Header />
+    <PageLayout>
+      <Breadcrumb items={breadcrumbItems} />
 
-      <main className="flex-grow py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto space-y-6">
-          <Breadcrumb items={breadcrumbItems} />
+      <Text variant="pageTitle">
+        {tCommon("sectionTitles.departmentalCommittees")}
+      </Text>
 
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            {tCommon("sectionTitles.departmentalCommittees")}
-          </h1>
-
-          <CommitteesGrid committees={committees} />
-        </div>
-      </main>
-
-      <Footer />
-    </div>
+      <CommitteesGrid committees={committees} />
+    </PageLayout>
   );
 }
 

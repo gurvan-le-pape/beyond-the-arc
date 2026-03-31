@@ -3,8 +3,11 @@ import React from "react";
 
 import type { MatchEvent } from "@/features/matches/types/MatchEvent";
 import { ShotChart } from "@/shared/components/charts";
-import { ErrorMessage, LoadingSpinner, Section } from "@/shared/components/ui";
 import { ChartType } from "@/shared/constants/chart-types";
+
+import { Section } from "../../blocks";
+import { ErrorMessage, LoadingSpinner } from "../../feedback";
+import { Text } from "../../typography";
 
 interface TeamShotChartProps {
   matchEvents: MatchEvent[];
@@ -42,9 +45,9 @@ export const TeamShotChart: React.FC<TeamShotChartProps> = ({
       <div className="w-full max-w-3xl mx-auto">
         {renderChart()}
         {description && (
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-4 text-center">
+          <Text variant="caption" className="mt-4 text-center">
             {description}
-          </p>
+          </Text>
         )}
       </div>
     </Section>

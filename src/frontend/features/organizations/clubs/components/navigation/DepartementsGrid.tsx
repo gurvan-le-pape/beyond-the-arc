@@ -4,7 +4,8 @@
 import { useTranslations } from "next-intl";
 
 import { useRouter } from "@/navigation";
-import { Card } from "@/shared/components/ui";
+import { Card } from "@/shared/components/primitives";
+import { Text } from "@/shared/components/typography";
 
 type Department = {
   id: number;
@@ -42,22 +43,22 @@ export function DepartmentsGrid({
           onClick={() =>
             router.push(`/clubs/league/${leagueId}/committee/${dept.id}`)
           }
-          className="border-l-4 border-l-departmental-dark dark:border-l-departmental-light hover:border-l-gray-300 dark:hover:!border-l-gray-600"
+          className="border-l-4 border-l-departmental-dark dark:border-l-departmental-light hover:border-l-divide-light dark:hover:!border-l-divide-dark"
         >
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
+          <Text variant="h3" className="mb-1">
             {dept.name}
-          </h3>
+          </Text>
           {dept.department && (
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+            <Text variant="caption" className="mb-2">
               {dept.department.code}
-            </p>
+            </Text>
           )}
           <p className="text-xl font-bold text-departmental-dark dark:text-departmental-light">
             {dept.clubCount}
           </p>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <Text variant="caption">
             {dept.clubCount === 1 ? t("club") : t("clubs")}
-          </p>
+          </Text>
         </Card>
       ))}
     </div>

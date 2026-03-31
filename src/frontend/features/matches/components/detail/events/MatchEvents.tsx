@@ -15,7 +15,8 @@ import {
   pointsForEvent,
 } from "@/features/matches/utils/eventHelpers";
 import type { TeamInfoExtended } from "@/features/teams/types/TeamInfo";
-import { EmptyState, Section } from "@/shared/components/ui";
+import { Section } from "@/shared/components/blocks";
+import { EmptyState } from "@/shared/components/feedback";
 import { EventCategory } from "@/shared/constants/event-categories";
 
 import { MatchEventsFilters } from "./filters/MatchEventsFilters";

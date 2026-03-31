@@ -13,9 +13,9 @@ import {
 import ChampionshipList from "@/features/competitions/components/championships/ChampionshipList";
 import { useDepartmentalChampionshipsData } from "@/features/competitions/hooks";
 import { useRouter } from "@/navigation";
-import { Footer, Header } from "@/shared/components/layouts";
+import { ErrorMessage } from "@/shared/components/feedback";
+import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
-import { ErrorMessage } from "@/shared/components/ui";
 import { CompetitionLevel } from "@/shared/constants/competition-levels";
 import {
   groupChampionshipsByCategory,
@@ -45,58 +45,52 @@ export default function DepartmentalChampionshipsPage() {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-950">
-      <Header />
-      <main className="flex-grow py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto space-y-6">
-          <Breadcrumb items={breadcrumbItems} />
+    <PageLayout>
+      <Breadcrumb items={breadcrumbItems} />
 
-          {fetchError && <ErrorMessage message={tCommon(fetchError)} />}
-          {isLoading && <CompetitionsPageSkeleton />}
+      {fetchError && <ErrorMessage message={tCommon(fetchError)} />}
+      {isLoading && <CompetitionsPageSkeleton />}
 
-          {!fetchError && !isLoading && (
-            <div className="space-y-6">
-              {/* Competition Header */}
-              <CompetitionHeader
-                name={committee?.name ?? ""}
-                imageFolder="committees"
-              />
+      {!fetchError && !isLoading && (
+        <div className="space-y-6">
+          {/* Competition Header */}
+          <CompetitionHeader
+            name={committee?.name ?? ""}
+            imageFolder="committees"
+          />
 
-              {/* Competition info */}
-              <CompetitionInfo
-                president={committee?.president}
-                address={committee?.address}
-                email={committee?.email}
-                phone={committee?.phone}
-              />
+          {/* Competition info */}
+          <CompetitionInfo
+            president={committee?.president}
+            address={committee?.address}
+            email={committee?.email}
+            phone={committee?.phone}
+          />
 
-              {/* Clubs */}
-              <SearchableChipList
-                items={clubs}
-                title={tCommon("sectionTitles.clubs")}
-                searchPlaceholder={tCompetitions("carousel.searchPlaceholder")}
-                onItemClick={(club) =>
-                  router.push(
-                    `/clubs/league/${club.leagueId}/committee/${club.committeeId}/club/${club.id}`,
-                  )
-                }
-              />
+          {/* Clubs */}
+          <SearchableChipList
+            items={clubs}
+            title={tCommon("sectionTitles.clubs")}
+            searchPlaceholder={tCompetitions("carousel.searchPlaceholder")}
+            onItemClick={(club) =>
+              router.push(
+                `/clubs/league/${club.leagueId}/committee/${club.committeeId}/club/${club.id}`,
+              )
+            }
+          />
 
-              {/* Championships */}
-              <ChampionshipList
-                championshipsByGender={championshipsByGender}
-                groupChampionshipsByCategory={groupChampionshipsByCategory}
-                onItemClick={(championship) =>
-                  router.push(
-                    `/competitions/${CompetitionLevel.DEPARTMENTAL}/${id}/${championship.id}`,
-                  )
-                }
-              />
-            </div>
-          )}
+          {/* Championships */}
+          <ChampionshipList
+            championshipsByGender={championshipsByGender}
+            groupChampionshipsByCategory={groupChampionshipsByCategory}
+            onItemClick={(championship) =>
+              router.push(
+                `/competitions/${CompetitionLevel.DEPARTMENTAL}/${id}/${championship.id}`,
+              )
+            }
+          />
         </div>
-      </main>
-      <Footer />
-    </div>
+      )}
+    </PageLayout>
   );
 }

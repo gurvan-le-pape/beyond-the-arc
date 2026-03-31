@@ -1,7 +1,8 @@
 // src/frontend/features/matches/components/detail/events/filters/TimelineOrderToggle.tsx
 import React from "react";
 
-import { Switch } from "@/shared/components/ui";
+import { Switch } from "@/shared/components/primitives";
+import { Text } from "@/shared/components/typography";
 
 interface TimelineOrderToggleProps {
   checked: boolean;
@@ -15,7 +16,9 @@ export const TimelineOrderToggle: React.FC<TimelineOrderToggleProps> = ({
   label,
 }) => (
   <div className="flex items-center gap-2 ml-auto">
-    <span className="text-sm text-gray-600 dark:text-gray-400">{label}</span>
+    <Text variant="caption" as="span">
+      {label}
+    </Text>
     <Switch checked={checked} onCheckedChange={onChange} size="sm" />
   </div>
 );

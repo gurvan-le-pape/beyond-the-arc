@@ -6,7 +6,8 @@ import { useTranslations } from "next-intl";
 import React, { useState } from "react";
 
 import { useRouter } from "@/navigation";
-import { Button, Card } from "@/shared/components/ui";
+import { Button, Card } from "@/shared/components/primitives";
+import { Text } from "@/shared/components/typography";
 import { CompetitionLevel } from "@/shared/constants";
 import { formatNameToFileName } from "@/shared/utils/formatNameToFileName";
 import { normalizeString } from "@/shared/utils/normalizeString";
@@ -82,13 +83,13 @@ export function TeamHeader({ team }: TeamHeaderProps) {
         {/* Team Info */}
         <div className="flex-1">
           {/* Name & Number */}
-          <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+          <Text variant="h1" className="mb-2">
             {clubName} - {teamNumber}
-          </h1>
+          </Text>
           {/* Category & Gender */}
-          <p className="text-xl text-gray-600 dark:text-gray-400">
+          <Text variant="bodyLg">
             {category} • {gender}
-          </p>
+          </Text>
           {/* Competition */}
           {competitionUrl && competitionName && (
             <Button

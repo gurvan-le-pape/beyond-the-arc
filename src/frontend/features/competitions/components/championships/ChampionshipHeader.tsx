@@ -1,6 +1,7 @@
 // src/frontend/features/competitions/components/championships/ChampionshipHeader.tsx
 import { SwitchGenderButton } from "@/features/competitions/components";
-import { Card } from "@/shared/components/ui";
+import { Card } from "@/shared/components/primitives";
+import { Text } from "@/shared/components/typography";
 import type { Gender } from "@/shared/constants";
 
 interface ChampionshipHeaderProps {
@@ -19,18 +20,19 @@ export function ChampionshipHeader({
   return (
     <Card variant="highlighted" padding="lg">
       <div className="space-y-4">
-        {/* Region/Department Title */}
-        <div className="border-b-2 border-primary-500 dark:border-primary-400 pb-3">
-          <h2 className="text-xl text-primary-600 dark:text-primary-400 font-semibold">
-            {regionName || ""}
-          </h2>
-        </div>
+        {/* Championship Name */}
+        <Text variant="h1" className="text-lg md:text-xl">
+          {championshipName}
+        </Text>
 
-        {/* Championship Name & Gender Switch */}
-        <div className="flex justify-between items-center flex-wrap gap-4">
-          <h1 className="text-lg md:text-xl font-semibold text-gray-900 dark:text-gray-100">
-            {championshipName}
-          </h1>
+        {/* Region/Department */}
+        <div className="border-b-2 border-primary-500 dark:border-primary-400 pb-3 flex justify-between items-center flex-wrap gap-4">
+          <Text
+            variant="h2"
+            className="text-primary-600 dark:text-primary-400 text-base"
+          >
+            {regionName || ""}
+          </Text>
           {gender !== undefined && (
             <SwitchGenderButton gender={gender} onClick={onSwitchGender} />
           )}
