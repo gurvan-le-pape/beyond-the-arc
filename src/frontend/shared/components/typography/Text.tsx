@@ -8,18 +8,23 @@ const textVariants = cva("", {
   variants: {
     variant: {
       // Headings — use these in DOM order (h1 → h2 → h3 → h4), never skip levels
-      h1: "text-3xl font-bold tracking-tight text-text-heading dark:text-text-heading-dark",
-      h2: "text-2xl font-semibold text-text-heading dark:text-text-heading-dark",
-      h3: "text-xl font-semibold text-text-heading dark:text-text-heading-dark",
-      h4: "text-lg font-medium text-text-heading dark:text-text-heading-dark",
+      h1: "text-2xl md:text-3xl font-bold tracking-tight text-text-heading dark:text-text-heading-dark",
+      h2: "text-xl md:text-2xl font-semibold text-text-heading dark:text-text-heading-dark",
+      h3: "text-lg md:text-xl font-semibold text-text-heading dark:text-text-heading-dark",
+      h4: "text-base md:text-lg font-medium text-text-heading dark:text-text-heading-dark",
 
-      // Page title
+      // Page title — use for route-level list pages (appears after a Breadcrumb,
+      // before a grid or table). One step smaller than h1 — intentional.
+      // For hero headings with a lead subtitle, use h1 instead.
       pageTitle:
-        "text-2xl font-bold text-text-heading dark:text-text-heading-dark",
+        "text-xl md:text-2xl font-bold text-text-heading dark:text-text-heading-dark",
 
       // Body
       body: "text-base font-normal text-text-body dark:text-text-body-dark",
-      bodyLg: "text-lg font-normal text-text-body dark:text-text-body-dark",
+
+      // Lead text — used for page subtitles and entity descriptors.
+      // Always appears subordinate to an h1, never standalone.
+      lead: "text-lg font-normal text-text-body dark:text-text-body-dark",
 
       // Supporting text
       caption: "text-sm text-text-secondary dark:text-text-secondary-dark",
@@ -53,7 +58,7 @@ const variantTagMap: Record<string, ElementType> = {
   h4: "h4",
   pageTitle: "h1",
   body: "p",
-  bodyLg: "p",
+  lead: "p",
   caption: "span",
   muted: "span",
   label: "span",

@@ -9,7 +9,7 @@ import { Text } from "@/shared/components/typography";
 export default async function ContactPage({
   params,
 }: {
-  params: Promise<{ locale: string }>;
+  readonly params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "landing" });
@@ -71,18 +71,18 @@ export default async function ContactPage({
         <Text variant="h1" className="mb-4">
           {t("contact.title")}
         </Text>
-        <Text variant="bodyLg" className="max-w-2xl mx-auto">
+        <Text variant="lead" className="max-w-2xl mx-auto">
           {t("contact.intro")}
         </Text>
       </div>
 
       {/* Contact Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        {contactMethods.map((method, idx) => {
+        {contactMethods.map((method) => {
           const Icon = method.icon;
           return (
             <a
-              key={idx}
+              key={method.label}
               href={method.href}
               target={method.href.startsWith("http") ? "_blank" : undefined}
               rel={
@@ -117,9 +117,9 @@ export default async function ContactPage({
           {t("contact.projectDescription")}
         </Text>
         <div className="flex flex-wrap gap-2">
-          {techStack.map((tech, idx) => (
+          {techStack.map((tech) => (
             <span
-              key={idx}
+              key={tech.name}
               className={`px-3 py-1 rounded-button text-sm font-medium border ${tech.color} border-current/30`}
             >
               {tech.name}
