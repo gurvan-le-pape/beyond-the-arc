@@ -2,6 +2,7 @@
 import React from "react";
 
 import { Switch } from "@/shared/components/primitives";
+import { Text } from "@/shared/components/typography";
 
 interface TimelineOrderToggleProps {
   checked: boolean;
@@ -15,9 +16,9 @@ export const TimelineOrderToggle: React.FC<TimelineOrderToggleProps> = ({
   label,
 }) => (
   <div className="flex items-center gap-2 ml-auto">
-    <span className="text-sm text-text-body dark:text-text-body-dark">
+    <Text variant="caption" as="span">
       {label}
-    </span>
+    </Text>
     <Switch checked={checked} onCheckedChange={onChange} size="sm" />
   </div>
 );

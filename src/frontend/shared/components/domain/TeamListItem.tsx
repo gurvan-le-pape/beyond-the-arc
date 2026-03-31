@@ -10,6 +10,7 @@ import { CompetitionLevel } from "@/shared/constants";
 import { normalizeString } from "@/shared/utils";
 
 import { Badge } from "../primitives";
+import { Text } from "../typography";
 
 interface TeamListItemProps {
   readonly team: ClubTeamInfo;
@@ -96,9 +97,9 @@ export function TeamListItem({ team, clubName }: TeamListItemProps) {
         {championship && levelLabel && (
           <div className="flex items-center gap-1.5 flex-wrap">
             <LevelBadge level={championship.level} label={levelLabel} />
-            <span className="text-sm text-text-secondary dark:text-text-secondary-dark">
+            <Text variant="caption" as="span">
               {championship.name}
-            </span>
+            </Text>
           </div>
         )}
 

@@ -4,6 +4,8 @@
 import { useTranslations } from "next-intl";
 import React, { useEffect, useRef, useState } from "react";
 
+import { Text } from "../typography";
+
 interface Option {
   value: string | number;
   label: string;
@@ -78,9 +80,9 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
           {selectedOption ? (
             selectedOption.label
           ) : (
-            <span className="text-text-muted dark:text-text-muted-dark">
+            <Text variant="muted" as="span">
               {placeholder || t("table.filterName")}
-            </span>
+            </Text>
           )}
         </span>
         <svg

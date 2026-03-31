@@ -304,9 +304,9 @@ export default function DocsPage() {
                                   ✓
                                 </span>
                               </div>
-                              <span className="text-body text-text-body dark:text-text-body-dark">
+                              <Text variant="body" as="span">
                                 {practice}
-                              </span>
+                              </Text>
                             </li>
                           ))}
                         </ul>

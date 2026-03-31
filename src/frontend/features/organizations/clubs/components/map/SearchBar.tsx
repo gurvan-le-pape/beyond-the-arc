@@ -4,6 +4,8 @@
 import { useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
 
+import { Text } from "@/shared/components/typography";
+
 interface SearchBarProps {
   query: string;
   onQueryChange: (query: string) => void;
@@ -68,9 +70,13 @@ export function SearchBar({
         {/* Result Count & Clear Button */}
         <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2">
           {query && resultCount !== undefined && (
-            <span className="text-xs text-text-secondary dark:text-text-secondary-dark bg-surface-subtle dark:bg-surface-subtle-dark px-2 py-1 rounded">
+            <Text
+              variant="muted"
+              as="span"
+              className="bg-surface-subtle dark:bg-surface-subtle-dark px-2 py-1 rounded"
+            >
               {resultCount}
-            </span>
+            </Text>
           )}
 
           {query && (

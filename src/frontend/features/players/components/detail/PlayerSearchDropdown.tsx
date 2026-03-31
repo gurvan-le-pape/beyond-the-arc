@@ -112,13 +112,17 @@ export function PlayerSearchDropdown({
 
                 {/* Name + meta */}
                 <div className="min-w-0">
-                  <span className="text-sm font-semibold text-text-heading dark:text-text-heading-dark">
+                  <Text
+                    variant="label"
+                    as="span"
+                    className="text-text-heading dark:text-text-heading-dark"
+                  >
                     #{player.number} {player.name}
-                  </span>
-                  <span className="text-xs text-text-secondary dark:text-text-secondary-dark ml-2">
+                  </Text>
+                  <Text variant="muted" as="span" className="ml-2">
                     {player.team?.club?.name || ""}
                     {player.team?.category ? ` · ${player.team.category}` : ""}
-                  </span>
+                  </Text>
                 </div>
               </button>
             ))

@@ -108,9 +108,9 @@ export const MatchesCard: React.FC<MatchesCardProps> = ({ match, onClick }) => {
 
           {/* Date, Time, Matchday, Level Badge */}
           <div className="flex items-center gap-3">
-            <span className="text-sm text-text-body dark:text-text-body-dark">
+            <Text variant="caption" as="span">
               {formatMatchDate(match.date)} • {formatMatchTime(match.date)}
-            </span>
+            </Text>
             <Badge variant="default" size="sm">
               {t("matchdayLabel", { matchday: match.matchday })}
             </Badge>

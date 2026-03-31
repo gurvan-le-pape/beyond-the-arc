@@ -4,6 +4,7 @@ import React from "react";
 
 import type { EventStyle } from "@/features/matches/types/EventStyle";
 import type { EventWithScore } from "@/features/matches/types/EventWithScore";
+import { Text } from "@/shared/components/typography";
 import { cn } from "@/shared/utils/cn";
 
 interface TimelineEventBlockProps {
@@ -108,9 +109,9 @@ export function TimelineEventBlock({
         )}
 
         {/* Game clock display */}
-        <span className="text-text-muted dark:text-text-muted-dark font-mono">
+        <Text variant="muted" as="span" className="font-mono">
           {formatGameClock(event.timestamp, matchDate)}
-        </span>
+        </Text>
       </div>
     </div>
   );

@@ -6,6 +6,7 @@ import { useState } from "react";
 
 import { Section } from "@/shared/components/blocks";
 import { Input } from "@/shared/components/forms";
+import { Text } from "@/shared/components/typography";
 
 interface SearchableChipListItem {
   id: number;
@@ -64,9 +65,9 @@ export function SearchableChipList<T extends SearchableChipListItem>({
       )}
       <div className="flex flex-wrap gap-2">
         {filteredItems.length === 0 ? (
-          <span className="text-sm text-text-muted dark:text-text-muted-dark">
+          <Text variant="muted" as="span">
             {tCompetitions("noSearchResults", { search })}
-          </span>
+          </Text>
         ) : (
           filteredItems.map((item) => (
             <button

@@ -21,6 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/shared/components/table";
+import { Text } from "@/shared/components/typography";
 
 import type { MatchEvent } from "../../types/MatchEvent";
 
@@ -224,13 +225,13 @@ export const PlayerMatchStats: React.FC<PlayerMatchStatsProps> = ({
           >
             {team.name}
           </button>{" "}
-          <span className="text-text-body dark:text-text-body-dark">
+          <Text variant="body" as="span">
             (
             {isHomeTeam
               ? tMatches("playerMatchStats.home")
               : tMatches("playerMatchStats.away")}
             )
-          </span>
+          </Text>
         </span>
       }
       variant="highlighted"

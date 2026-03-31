@@ -3,6 +3,8 @@ import * as d3 from "d3";
 import { useTranslations } from "next-intl";
 import React from "react";
 
+import { Text } from "../../typography";
+
 interface HeatmapLegendProps {
   maxValue: number;
   colorScale?: (t: number) => string;
@@ -52,9 +54,9 @@ export const HeatmapLegend: React.FC<HeatmapLegendProps> = ({
     <div className={`flex flex-col gap-3 w-full ${compact ? "" : "max-w-sm"}`}>
       {/* Gradient bar */}
       <div className="flex items-center gap-3 w-full">
-        <span className="text-xs font-medium text-text-secondary dark:text-text-secondary-dark shrink-0">
+        <Text variant="caption" as="span" className="font-medium shrink-0">
           {t("shotChart.low")}
-        </span>
+        </Text>
         <div className="flex flex-col flex-1 min-w-0 gap-0.5">
           <div
             className="w-full h-4 rounded shadow-sm"
@@ -68,17 +70,17 @@ export const HeatmapLegend: React.FC<HeatmapLegendProps> = ({
             <span>{maxValue}</span>
           </div>
         </div>
-        <span className="text-xs font-medium text-text-secondary dark:text-text-secondary-dark shrink-0">
+        <Text variant="caption" as="span" className="font-medium shrink-0">
           {t("shotChart.high")}
-        </span>
+        </Text>
       </div>
 
       {/* Color scale picker */}
       {colorScaleOptions && setColorScale && colorScaleName && (
         <div className="flex items-center gap-2 w-full">
-          <span className="text-xs text-text-secondary dark:text-text-secondary-dark shrink-0">
+          <Text variant="caption" as="span" className="shrink-0">
             {t("shotChart.color")}
-          </span>
+          </Text>
           <div className="flex flex-row gap-1.5 flex-wrap">
             {colorScaleOptions.map((scale) => {
               const gradient = buildGradient(scale);
@@ -103,9 +105,9 @@ export const HeatmapLegend: React.FC<HeatmapLegendProps> = ({
                       background: `linear-gradient(to right, ${gradient})`,
                     }}
                   />
-                  <span className="text-[11px] text-text-body dark:text-text-body-dark leading-none">
+                  <Text variant="muted" as="span" className="leading-none">
                     {scale}
-                  </span>
+                  </Text>
                 </button>
               );
             })}

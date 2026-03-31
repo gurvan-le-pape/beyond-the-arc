@@ -41,9 +41,9 @@ export function FilterablePlayerList({
               onChange={() => onToggle(player.player.id)}
               className="w-4 h-4 text-primary-600 dark:text-primary-500 rounded focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
             />
-            <span className="text-text-emphasis dark:text-text-emphasis-dark">
+            <Text variant="label" as="span">
               #{player.player.number} {player.player.name}
-            </span>
+            </Text>
           </label>
         ))}
       </div>
