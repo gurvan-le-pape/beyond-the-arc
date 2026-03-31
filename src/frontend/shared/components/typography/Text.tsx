@@ -82,7 +82,7 @@ interface TextProps
 
 export const Text = forwardRef<HTMLElement, TextProps>(
   ({ className, variant = "body", as, ...props }, ref) => {
-    const Tag = as ?? variantTagMap[variant!] ?? "p";
+    const Tag = as ?? variantTagMap[variant ?? "body"] ?? "p";
 
     return (
       <Tag
