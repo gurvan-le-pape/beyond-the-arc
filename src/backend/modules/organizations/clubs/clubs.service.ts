@@ -2,6 +2,7 @@
 import { Category } from "@common/constants/categories";
 import { CompetitionLevel } from "@common/constants/competition-levels";
 import { Gender } from "@common/constants/genders";
+import { PaginatedResponseDto } from "@common/index";
 import {
   Injectable,
   InternalServerErrorException,
@@ -19,22 +20,27 @@ import {
 } from "./dto/clubs.response.dto";
 
 /**
- * Type representing a basic club select result.
- * Note: latitude and longitude are Decimal types from Prisma (Prisma.Decimal)
+ * Fields to select from the clubs table for basic view.
+ * Used for map initialization and paginated list endpoints.
+ * Note: latitude and longitude are inferred as Prisma.Decimal by Prisma.
  */
-type ClubBasicSelectResult = {
-  id: number;
-  name: string;
-  city: string | null;
-  zipCode: string | null;
-  latitude: Prisma.Decimal | null;
-  longitude: Prisma.Decimal | null;
-  email: string | null;
-  phone: string | null;
-  website: string | null;
-  committeeId: number;
-  committee: { leagueId: number };
-};
+const CLUB_BASIC_SELECT = {
+  id: true,
+  name: true,
+  city: true,
+  zipCode: true,
+  latitude: true,
+  longitude: true,
+  email: true,
+  phone: true,
+  website: true,
+  committeeId: true,
+  committee: { select: { leagueId: true } },
+} satisfies Prisma.ClubsDefaultArgs["select"];
+
+type ClubBasicSelectResult = Prisma.ClubsGetPayload<{
+  select: typeof CLUB_BASIC_SELECT;
+}>;
 
 /**
  * Fields to select from the clubs table for detailed view.
@@ -248,6 +254,29 @@ export class ClubsService {
   }
 
   /**
+   * Retrieves all clubs without filtering.
+   * Used for map initialization where all club coordinates are needed at once.
+   *
+   * @returns Flat array of all clubs
+   */
+  async findAllClubs(): Promise<ClubBasicResponseDto[]> {
+    this.logger.log("Fetching all clubs for map");
+
+    try {
+      const clubs = await this.prisma.clubs.findMany({
+        select: CLUB_BASIC_SELECT,
+        orderBy: { name: "asc" },
+      });
+
+      this.logger.log(`Found ${clubs.length} clubs`);
+      return clubs.map((club) => this.mapToBasicDto(club));
+    } catch (error) {
+      this.logger.error("Failed to fetch all clubs", error);
+      throw new InternalServerErrorException("Failed to fetch all clubs");
+    }
+  }
+
+  /**
    * Finds clubs based on various filters.
    * Supports filtering by competition level, committee, league, category, and gender.
    *
@@ -260,8 +289,15 @@ export class ClubsService {
     leagueId?: number;
     category?: Category;
     gender?: Gender;
-  }): Promise<ClubBasicResponseDto[]> {
+    search?: string;
+    page?: number;
+    limit?: number;
+  }): Promise<PaginatedResponseDto<ClubBasicResponseDto>> {
     this.logger.log(`Fetching clubs with filters: ${JSON.stringify(filters)}`);
+
+    const page = filters.page ?? 1;
+    const limit = filters.limit ?? 50;
+    const skip = (page - 1) * limit;
 
     try {
       // Build where clause for clubs
@@ -277,44 +313,41 @@ export class ClubsService {
         where.committee = { leagueId: filters.leagueId };
       }
 
-      // Build teams filter if category or gender specified
+      if (filters.search) {
+        where.name = { contains: filters.search, mode: "insensitive" };
+      }
+
+      // Build teams filter if category, gender, or level specified
       const teamsWhere: Prisma.TeamsWhereInput = {};
       if (filters.category) teamsWhere.category = filters.category;
       if (filters.gender) teamsWhere.gender = filters.gender;
+      if (filters.level)
+        teamsWhere.pool = { championship: { level: filters.level } };
 
-      const hasTeamsFilter = Object.keys(teamsWhere).length > 0;
+      if (Object.keys(teamsWhere).length > 0) {
+        where.teams = { some: teamsWhere };
+      }
 
-      const clubs = await this.prisma.clubs.findMany({
-        where,
-        select: {
-          id: true,
-          name: true,
-          city: true,
-          zipCode: true,
-          latitude: true,
-          longitude: true,
-          email: true,
-          phone: true,
-          website: true,
-          committeeId: true,
-          committee: {
-            select: { leagueId: true },
-          },
-          ...(hasTeamsFilter && {
-            teams: {
-              where: teamsWhere,
-              select: { id: true },
-            },
-          }),
-        },
-        orderBy: {
-          name: "asc",
-        },
-      });
+      const [clubs, total] = await Promise.all([
+        this.prisma.clubs.findMany({
+          where,
+          select: CLUB_BASIC_SELECT,
+          orderBy: { name: "asc" },
+          skip,
+          take: limit,
+        }),
+        this.prisma.clubs.count({ where }),
+      ]);
 
-      this.logger.log(`Found ${clubs.length} clubs matching filters`);
+      this.logger.log(`Found ${total} clubs matching filters`);
 
-      return clubs.map((club) => this.mapToBasicDto(club));
+      return {
+        items: clubs.map((club) => this.mapToBasicDto(club)),
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      };
     } catch (error) {
       this.logger.error("Failed to fetch clubs by filters", error);
       throw new InternalServerErrorException("Failed to fetch clubs");

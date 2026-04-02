@@ -1,4 +1,5 @@
 // src/backend/modules/organizations/clubs/clubs.controller.ts
+import { Category, PaginatedResponseDto } from "@common/index";
 import { CacheInterceptor } from "@common/interceptors/cache.interceptor";
 import {
   Controller,
@@ -286,105 +287,26 @@ export class ClubsController {
 
   /**
    * Retrieve all clubs without any filtering.
+   * Used for map initialization where all club coordinates are needed at once.
+   *
+   * Cached for 5 minutes as club data changes occasionally.
+   *
+   * @returns Flat array of all clubs
+   *
+   * @example
+   * GET /clubs/all
    */
   @Get("all")
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(CacheInterceptor({ ttl: 300000 })) // Cache for 5 minutes
+  @UseInterceptors(CacheInterceptor({ ttl: 300000 }))
   @ApiOperation({
-    summary: "Get all clubs",
+    summary: "Get all clubs without filtering",
     description:
-      "Retrieves all clubs without any filtering. Used for map initialization. Results are cached for 5 minutes.",
+      "Retrieves all clubs without any filtering or pagination. Intended for map initialization where all club coordinates are needed at once. Results are cached for 5 minutes.",
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: "List of all clubs",
-    type: [ClubBasicResponseDto],
-  })
-  @ApiResponse({
-    status: HttpStatus.INTERNAL_SERVER_ERROR,
-    description: "Internal server error",
-  })
-  async getAllClubs(): Promise<ClubBasicResponseDto[]> {
-    return this.clubsService.findClubsByFilters({});
-  }
-
-  /**
-   * Retrieve clubs with optional filtering.
-   *
-   * Supports filtering by competition level, committee, league, category, and gender.
-   * Cached for 3 minutes as club lists change occasionally.
-   *
-   * @param query - Query parameters for filtering
-   * @returns Array of clubs matching the filters
-   *
-   * @example
-   * GET /clubs?level=regional&committeeId=1&category=U18&gender=male
-   * Response (after TransformInterceptor):
-   * {
-   *   "data": [
-   *     {
-   *       "id": 1,
-   *       "name": "AS Monaco Basket",
-   *       "city": "Monaco",
-   *       "zipCode": "98000",
-   *       "latitude": 43.7384,
-   *       "longitude": 7.4246,
-   *       "email": "contact@club.com",
-   *       "phone": "0123456789",
-   *       "website": "https://club.com"
-   *     }
-   *   ],
-   *   "meta": { "count": 1 },
-   *   "timestamp": "2024-02-05T10:00:00Z",
-   *   "path": "/clubs",
-   *   "statusCode": 200
-   * }
-   */
-  @Get()
-  @HttpCode(HttpStatus.OK)
-  @UseInterceptors(CacheInterceptor({ ttl: 180000 })) // Cache for 3 minutes
-  @ApiOperation({
-    summary: "Get clubs with filters",
-    description:
-      "Retrieves clubs filtered by competition level, committee, league, category, and gender. Results are cached for 3 minutes.",
-  })
-  @ApiQuery({
-    name: "level",
-    required: false,
-    enum: ["regional", "departmental"],
-    description: "Competition level",
-    example: "regional",
-  })
-  @ApiQuery({
-    name: "committeeId",
-    required: false,
-    type: Number,
-    description: "Committee ID",
-    example: 1,
-  })
-  @ApiQuery({
-    name: "leagueId",
-    required: false,
-    type: Number,
-    description: "League regionale ID",
-    example: 1,
-  })
-  @ApiQuery({
-    name: "category",
-    required: false,
-    description: "Category",
-    example: "U18",
-  })
-  @ApiQuery({
-    name: "gender",
-    required: false,
-    enum: ["male", "female"],
-    description: "Gender",
-    example: "male",
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "List of clubs matching the filters",
+    description: "Flat list of all clubs",
     type: [ClubBasicResponseDto],
     schema: {
       example: {
@@ -399,9 +321,129 @@ export class ClubsController {
             email: "contact@club.com",
             phone: "0123456789",
             website: "https://club.com",
+            committeeId: 1,
+            leagueId: 1,
           },
         ],
         meta: { count: 1 },
+        timestamp: "2024-02-05T10:00:00Z",
+        path: "/clubs/all",
+        statusCode: 200,
+      },
+    },
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: "Internal server error",
+  })
+  async getAllClubs(): Promise<ClubBasicResponseDto[]> {
+    return this.clubsService.findAllClubs();
+  }
+
+  /**
+   * Retrieve clubs with optional filtering and pagination.
+   *
+   * Supports filtering by competition level, committee, league, category, gender,
+   * and name search. Results are paginated (default: page 1, limit 50).
+   * Cached for 3 minutes as club lists change occasionally.
+   *
+   * @param query - Query parameters for filtering and pagination
+   * @returns Paginated list of clubs matching the filters
+   *
+   * @example
+   * GET /clubs?level=regional&leagueId=1&category=U18&gender=male&page=1&limit=50
+   * GET /clubs?search=monaco&committeeId=1
+   */
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  @UseInterceptors(CacheInterceptor({ ttl: 180000 }))
+  @ApiOperation({
+    summary: "Get clubs with filters and pagination",
+    description:
+      "Retrieves clubs filtered by competition level, committee, league, category, gender, and name search. Supports pagination via page and limit parameters. Results are cached for 3 minutes.",
+  })
+  @ApiQuery({
+    name: "level",
+    required: false,
+    enum: ["regional", "departmental"],
+    description: "Competition level",
+    example: "regional",
+  })
+  @ApiQuery({
+    name: "committeeId",
+    required: false,
+    type: Number,
+    description: "Filter by committee ID",
+    example: 1,
+  })
+  @ApiQuery({
+    name: "leagueId",
+    required: false,
+    type: Number,
+    description: "Filter by league ID",
+    example: 1,
+  })
+  @ApiQuery({
+    name: "category",
+    required: false,
+    enum: Category,
+    description: "Filter by category",
+    example: "U18",
+  })
+  @ApiQuery({
+    name: "gender",
+    required: false,
+    enum: ["male", "female"],
+    description: "Filter by gender",
+    example: "male",
+  })
+  @ApiQuery({
+    name: "search",
+    required: false,
+    type: String,
+    description: "Search by club name (case-insensitive)",
+    example: "Monaco",
+  })
+  @ApiQuery({
+    name: "page",
+    required: false,
+    type: Number,
+    description: "Page number (default: 1)",
+    example: 1,
+  })
+  @ApiQuery({
+    name: "limit",
+    required: false,
+    type: Number,
+    description: "Items per page (default: 50)",
+    example: 50,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Paginated list of clubs matching the filters",
+    schema: {
+      example: {
+        data: {
+          items: [
+            {
+              id: 1,
+              name: "AS Monaco Basket",
+              city: "Monaco",
+              zipCode: "98000",
+              latitude: 43.7384,
+              longitude: 7.4246,
+              email: "contact@club.com",
+              phone: "0123456789",
+              website: "https://club.com",
+              committeeId: 1,
+              leagueId: 1,
+            },
+          ],
+          total: 1,
+          page: 1,
+          limit: 50,
+          totalPages: 1,
+        },
         timestamp: "2024-02-05T10:00:00Z",
         path: "/clubs",
         statusCode: 200,
@@ -416,7 +458,8 @@ export class ClubsController {
         statusCode: 400,
         message: [
           "Level must be one of: regional, departmental",
-          "Committee ID must be a valid number string",
+          "committeeId must be a number",
+          "page must not be less than 1",
         ],
         error: "BadRequestException",
         path: "/clubs?level=invalid&committeeId=abc",
@@ -430,13 +473,16 @@ export class ClubsController {
   })
   async getClubs(
     @Query() query: GetClubsQueryDto,
-  ): Promise<ClubBasicResponseDto[]> {
+  ): Promise<PaginatedResponseDto<ClubBasicResponseDto>> {
     return this.clubsService.findClubsByFilters({
       level: query.level,
       committeeId: query.committeeId,
       leagueId: query.leagueId,
       category: query.category,
       gender: query.gender,
+      search: query.search,
+      page: query.page,
+      limit: query.limit,
     });
   }
 

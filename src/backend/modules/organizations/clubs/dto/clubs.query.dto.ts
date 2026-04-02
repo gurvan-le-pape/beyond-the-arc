@@ -4,7 +4,7 @@ import { CompetitionLevel } from "@common/constants/competition-levels";
 import { Gender } from "@common/constants/genders";
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsEnum, IsNumber, IsOptional } from "class-validator";
+import { IsEnum, IsNumber, IsOptional, IsString, Min } from "class-validator";
 
 /**
  * Query parameters for filtering clubs.
@@ -64,6 +64,36 @@ export class GetClubsQueryDto {
     message: `Gender must be one of: ${Object.values(Gender).join(", ")}`,
   })
   gender?: Gender;
+
+  @ApiPropertyOptional({
+    description: "Search by club name",
+    type: String,
+  })
+  @IsOptional()
+  @IsString()
+  search?: string;
+
+  @ApiPropertyOptional({
+    description: "Page number",
+    default: 1,
+    type: Number,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(1)
+  page?: number = 1;
+
+  @ApiPropertyOptional({
+    description: "Items per page",
+    default: 50,
+    type: Number,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(1)
+  limit?: number = 50;
 }
 
 /**
