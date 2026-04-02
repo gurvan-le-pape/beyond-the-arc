@@ -1,7 +1,8 @@
-// src/frontend/app/[locale]/(public)/matches/page.tsx
+// src/frontend/features/search/components/MatchesTab.tsx
 "use client";
 
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
@@ -12,26 +13,22 @@ import { MatchesCard, MatchesFilters } from "@/features/matches/components";
 import type { Match } from "@/features/matches/types/Match";
 import { useCommittees } from "@/features/organizations/committees/api/use-committees";
 import { useLeagues } from "@/features/organizations/leagues/api/use-leagues";
-import { useRouter } from "@/navigation";
 import {
   EmptyState,
   ErrorMessage,
   LoadingSpinner,
 } from "@/shared/components/feedback";
-import { PageLayout } from "@/shared/components/layout";
 import { Card } from "@/shared/components/primitives";
 import { Pagination } from "@/shared/components/table";
-import { Text } from "@/shared/components/typography";
 import type { Gender } from "@/shared/constants";
 import { Category, CompetitionLevel } from "@/shared/constants";
 import type { Pagination as PaginationType } from "@/shared/types";
 
-export default function MatchesPage() {
-  const router = useRouter();
+export function MatchesTab() {
   const tMatches = useTranslations("matches");
   const tCommon = useTranslations("common");
-  // State
-  // Filters
+  const router = useRouter();
+
   const [level, setLevel] = useState<CompetitionLevel | undefined>(undefined);
   const [division, setDivision] = useState<number | undefined>(undefined);
   const [committeeId, setCommitteeId] = useState<number | undefined>(undefined);
@@ -42,12 +39,9 @@ export default function MatchesPage() {
   const [gender, setGender] = useState<Gender | undefined>(undefined);
   const [search, setSearch] = useState("");
   const [dateFilter, setDateFilter] = useState("");
-
-  // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [matchesPerPage, setMatchesPerPage] = useState(50);
 
-  // Fetch committees and leagues
   const { data: committees = [] } = useCommittees();
   const { data: leagues = [] } = useLeagues();
 
@@ -57,14 +51,13 @@ export default function MatchesPage() {
     level === CompetitionLevel.REGIONAL && leagueId !== undefined;
 
   let championshipsFilter: { level: CompetitionLevel; id: number } | undefined;
-  if (isDepartmental) {
+  if (isDepartmental)
     championshipsFilter = {
       level: CompetitionLevel.DEPARTMENTAL,
       id: committeeId,
     };
-  } else if (isRegional) {
+  else if (isRegional)
     championshipsFilter = { level: CompetitionLevel.REGIONAL, id: leagueId };
-  }
 
   const { data: championships = [] } = useChampionships(championshipsFilter, {
     enabled: isDepartmental || isRegional,
@@ -122,7 +115,6 @@ export default function MatchesPage() {
     dateFilter,
   ]);
 
-  // Reset dependent filters when parent changes
   useEffect(() => {
     setCommitteeId(undefined);
     setLeagueId(undefined);
@@ -140,7 +132,6 @@ export default function MatchesPage() {
     setMatchday(undefined);
   }, [division]);
 
-  // Handle reset filters
   const handleReset = () => {
     setLevel(CompetitionLevel.ALL);
     setDivision(undefined);
@@ -155,14 +146,8 @@ export default function MatchesPage() {
     setCurrentPage(1);
   };
 
-  const errorMessage = matchesError ? tCommon("errors.fetchMatches") : null;
-
   return (
-    <PageLayout>
-      {/* Page Title */}
-      <Text variant="pageTitle">{tMatches("searchTitle")}</Text>
-
-      {/* Filters Section */}
+    <div className="space-y-6">
       <MatchesFilters
         search={search}
         setSearch={setSearch}
@@ -191,60 +176,51 @@ export default function MatchesPage() {
         onReset={handleReset}
       />
 
-      {/* Loading State */}
       {matchesLoading && (
         <div className="flex justify-center items-center py-20">
           <LoadingSpinner size="lg" />
         </div>
       )}
 
-      {/* Error State */}
-      {errorMessage && !matchesLoading && (
-        <ErrorMessage message={errorMessage} />
+      {matchesError && !matchesLoading && (
+        <ErrorMessage message={tCommon("errors.fetchMatches")} />
       )}
 
-      {/* Results */}
-      {!matchesLoading && !errorMessage && (
-        <>
-          {/* Empty State */}
-          {matches.length === 0 ? (
-            <Card padding="lg">
-              <EmptyState
-                icon={<MagnifyingGlassIcon className="w-16 h-16" />}
-                title={tMatches("noResults")}
-                description={tMatches("tryAdjustingFilters")}
-              />
-            </Card>
-          ) : (
-            <>
-              {/* Matches List */}
-              <div className="space-y-4 mb-6">
-                {matches.map((match: Match) => (
-                  <MatchesCard
-                    key={match.id}
-                    match={match}
-                    onClick={(matchId) => router.push(`/matches/${matchId}`)}
-                  />
-                ))}
-              </div>
-
-              {/* Pagination */}
-              {pagination && pagination.totalPages > 1 && (
-                <Pagination
-                  pagination={pagination}
-                  pageSize={matchesPerPage}
-                  setPageSize={(size: number) => {
-                    setMatchesPerPage(size);
-                    setCurrentPage(1);
-                  }}
-                  setPageIndex={(index: number) => setCurrentPage(index + 1)}
-                  label={tMatches("itemLabelPlural")}
+      {!matchesLoading &&
+        !matchesError &&
+        (matches.length === 0 ? (
+          <Card padding="lg">
+            <EmptyState
+              icon={<MagnifyingGlassIcon className="w-16 h-16" />}
+              title={tMatches("noResults")}
+              description={tMatches("tryAdjustingFilters")}
+            />
+          </Card>
+        ) : (
+          <>
+            <div className="space-y-4">
+              {matches.map((match: Match) => (
+                <MatchesCard
+                  key={match.id}
+                  match={match}
+                  onClick={(id) => router.push(`/matches/${id}`)}
                 />
-              )}
-            </>
-          )}
-        </>
-      )}
-    </PageLayout>
+              ))}
+            </div>
+            {pagination && pagination.totalPages > 1 && (
+              <Pagination
+                pagination={pagination}
+                pageSize={matchesPerPage}
+                setPageSize={(size) => {
+                  setMatchesPerPage(size);
+                  setCurrentPage(1);
+                }}
+                setPageIndex={(index) => setCurrentPage(index + 1)}
+                label={tMatches("itemLabelPlural")}
+              />
+            )}
+          </>
+        ))}
+    </div>
   );
 }

@@ -12,6 +12,7 @@ export * from "./event-types";
 export * from "./genders";
 export * from "./icons";
 export * from "./navConfig";
+export * from "./organization-types";
 export * from "./roles";
 export * from "./strings";
 export * from "./testIds";

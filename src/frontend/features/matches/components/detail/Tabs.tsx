@@ -24,13 +24,24 @@ interface TabsProps {
   defaultValue: string;
   children: React.ReactNode;
   className?: string;
+  onValueChange?: (value: string) => void; // optional external handler
 }
 
-export function Tabs({ defaultValue, children, className = "" }: TabsProps) {
+export function Tabs({
+  defaultValue,
+  children,
+  className = "",
+  onValueChange,
+}: TabsProps) {
   const [value, setValue] = useState(defaultValue);
 
+  const handleChange = (newValue: string) => {
+    setValue(newValue);
+    onValueChange?.(newValue);
+  };
+
   return (
-    <TabsContext.Provider value={{ value, onValueChange: setValue }}>
+    <TabsContext.Provider value={{ value, onValueChange: handleChange }}>
       <div className={className}>{children}</div>
     </TabsContext.Provider>
   );

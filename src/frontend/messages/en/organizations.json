@@ -1,0 +1,43 @@
+{
+  "breadcrumb": "Organizations",
+  "selectType": "Select a type",
+  "leagues": {
+    "label": "Leagues",
+    "description": "Regional leagues overseeing departmental committees.",
+    "searchPlaceholder": "Search for a league…",
+    "noResults": "No results for « {search} »",
+    "clearSearch": "Clear search"
+  },
+  "committees": {
+    "label": "Committees",
+    "description": "Departmental committees managing local clubs.",
+    "searchPlaceholder": "Search for a committee…",
+    "filterByLeague": "Filter by league",
+    "allLeagues": "All leagues",
+    "noResults": "No results for « {search} »",
+    "clearSearch": "Clear search"
+  },
+  "clubs": {
+    "label": "Clubs",
+    "description": "All clubs registered across France.",
+    "searchPlaceholder": "Search for a club…",
+    "noResults": "No results for « {search} »",
+    "clearSearch": "Clear search"
+  },
+  "info": {
+    "title": "Information",
+    "president": "President",
+    "presidentName": "Name",
+    "presidentEmail": "Email",
+    "presidentPhone": "Phone",
+    "address": "Address",
+    "email": "Email",
+    "phone": "Phone",
+    "website": "Website",
+    "region": "Region",
+    "department": "Department",
+    "league": "League",
+    "committee": "Committee"
+  },
+  "notFound": "Organization not found."
+}
