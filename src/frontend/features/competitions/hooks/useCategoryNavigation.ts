@@ -14,17 +14,13 @@ export function useCategoryNavigation(
   championshipId: number,
   level: CompetitionLevel,
   gender: Gender | undefined,
+  buildRoute?: (championshipId: number) => string,
 ) {
   const router = useRouter();
 
   const { data: championships } = useChampionships(
-    {
-      level: level,
-      id: id,
-    },
-    {
-      enabled: !!id && !!gender, // Only fetch when we have required params
-    },
+    { level, id },
+    { enabled: !!id && !!gender },
   );
 
   // Compute derived state using useMemo
@@ -47,18 +43,11 @@ export function useCategoryNavigation(
 
     filteredChampionships.forEach((champ: Championship) => {
       if (!champ.category) return;
-
-      if (!categories.includes(champ.category)) {
-        categories.push(champ.category);
-      }
-
-      if (!map[champ.category] && champ.division) {
+      if (!categories.includes(champ.category)) categories.push(champ.category);
+      if (!map[champ.category] && champ.division)
         map[champ.category] = champ.id;
-      }
-
-      if (championshipId && champ.id === championshipId) {
+      if (championshipId && champ.id === championshipId)
         initialCategory = champ.category;
-      }
     });
 
     const sortedCategories = categories
@@ -75,12 +64,15 @@ export function useCategoryNavigation(
   // Memoize the navigation function
   const navigateToCategory = useCallback(
     (targetCategory: Category) => {
-      const targetChampionshiptId = categoryMap[targetCategory];
-      if (targetChampionshiptId) {
-        router.replace(`/competitions/${level}/${id}/${targetChampionshiptId}`);
+      const targetChampionshipId = categoryMap[targetCategory];
+      if (targetChampionshipId) {
+        const route = buildRoute
+          ? buildRoute(targetChampionshipId)
+          : `/competitions/${level}/${id}/${targetChampionshipId}`;
+        router.replace(route);
       }
     },
-    [categoryMap, router, level, id],
+    [categoryMap, router, level, id, buildRoute],
   );
 
   return {

@@ -15,6 +15,7 @@ export function useDivisionNavigation(
   category: Category | undefined,
   gender: Gender | undefined,
   division: number | undefined,
+  buildRoute?: (championshipId: number) => string,
 ) {
   const router = useRouter();
 
@@ -57,19 +58,22 @@ export function useDivisionNavigation(
     return {
       divisionMap: map,
       availableDivisions: divisions,
-      currentDivision: division ?? undefined,
+      currentDivision: division,
     };
   }, [championships, category, gender, division]);
 
   // Memoize the navigation function
   const navigateToDivision = useCallback(
     (targetDivision: number) => {
-      const targetChampionshiptId = divisionMap[targetDivision];
-      if (targetChampionshiptId) {
-        router.replace(`/competitions/${level}/${id}/${targetChampionshiptId}`);
+      const targetChampionshipId = divisionMap[targetDivision];
+      if (targetChampionshipId) {
+        const route = buildRoute
+          ? buildRoute(targetChampionshipId)
+          : `/competitions/${level}/${id}/${targetChampionshipId}`;
+        router.replace(route);
       }
     },
-    [divisionMap, router, level, id],
+    [divisionMap, router, level, id, buildRoute],
   );
 
   return {

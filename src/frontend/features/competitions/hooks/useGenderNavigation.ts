@@ -15,6 +15,7 @@ export function useGenderNavigation(
   id: number,
   level: CompetitionLevel,
   gender: Gender | undefined,
+  buildRoute?: (championshipId: number) => string,
 ) {
   const router = useRouter();
 
@@ -30,7 +31,7 @@ export function useGenderNavigation(
   );
 
   // Compute target championship ID using useMemo
-  const targetChampionshiptId = useMemo(() => {
+  const targetChampionshipId = useMemo(() => {
     if (!championships || !gender) {
       return null;
     }
@@ -66,13 +67,16 @@ export function useGenderNavigation(
 
   // Memoize the switch function
   const switchGender = useCallback(() => {
-    if (targetChampionshiptId) {
-      router.replace(`/competitions/${level}/${id}/${targetChampionshiptId}`);
+    if (targetChampionshipId) {
+      const route = buildRoute
+        ? buildRoute(targetChampionshipId)
+        : `/competitions/${level}/${id}/${targetChampionshipId}`;
+      router.replace(route);
     }
-  }, [targetChampionshiptId, router, level, id]);
+  }, [targetChampionshipId, router, level, id, buildRoute]);
 
   return {
-    targetChampionshiptId,
+    targetChampionshipId,
     switchGender,
   };
 }
