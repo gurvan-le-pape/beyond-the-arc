@@ -16,10 +16,12 @@ import { Pagination } from "@/shared/components/table";
 import { Text } from "@/shared/components/typography";
 import { useDebounce } from "@/shared/hooks/useDebounce";
 
+const SKELETON_KEYS = Array.from({ length: 12 }, () => crypto.randomUUID());
+
 // ---------------------------------------------------------------------------
 // Club Card
 // ---------------------------------------------------------------------------
-function ClubCard({ club }: { club: ClubBasic }) {
+function ClubCard({ club }: { readonly club: ClubBasic }) {
   return (
     <Link
       href={`/organizations/clubs/${club.id}`}
@@ -99,6 +101,34 @@ export default function OrganizationsClubsPage() {
     { label: t("clubs.label"), current: true },
   ];
 
+  let gridContent: React.ReactNode;
+  if (isLoading) {
+    gridContent = (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {SKELETON_KEYS.map((key) => (
+          <div
+            key={key}
+            className="h-20 rounded-card bg-surface-subtle dark:bg-surface-raised-dark animate-pulse"
+          />
+        ))}
+      </div>
+    );
+  } else if (clubs.length === 0) {
+    gridContent = (
+      <div className="text-center py-16 text-text-secondary dark:text-text-secondary-dark">
+        {t("clubs.noResults", { search })}
+      </div>
+    );
+  } else {
+    gridContent = (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {clubs.map((club: ClubBasic) => (
+          <ClubCard key={club.id} club={club} />
+        ))}
+      </div>
+    );
+  }
+
   return (
     <PageLayout>
       <Breadcrumb items={breadcrumbItems} />
@@ -170,26 +200,7 @@ export default function OrganizationsClubsPage() {
       )}
 
       {/* Grid */}
-      {isLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {Array.from({ length: 12 }).map((_, i) => (
-            <div
-              key={i}
-              className="h-20 rounded-card bg-surface-subtle dark:bg-surface-raised-dark animate-pulse"
-            />
-          ))}
-        </div>
-      ) : clubs.length === 0 ? (
-        <div className="text-center py-16 text-text-secondary dark:text-text-secondary-dark">
-          {t("clubs.noResults", { search })}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {clubs.map((club: ClubBasic) => (
-            <ClubCard key={club.id} club={club} />
-          ))}
-        </div>
-      )}
+      {gridContent}
 
       {/* Pagination */}
       {pagination && pagination.totalPages > 1 && (

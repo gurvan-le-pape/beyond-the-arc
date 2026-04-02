@@ -141,11 +141,12 @@ export function PlayersTab() {
     genderProps: getDropdownFilterProps("gender"),
   });
 
-  const errorMessage = committeeLeagueClubFiltersError
-    ? tCommon("errors.fetchLeagueOrCommittee")
-    : playersError
-    ? tCommon("errors.fetchPlayers")
-    : null;
+  let errorMessage: string | null = null;
+  if (committeeLeagueClubFiltersError) {
+    errorMessage = tCommon("errors.fetchLeagueOrCommittee");
+  } else if (playersError) {
+    errorMessage = tCommon("errors.fetchPlayers");
+  }
 
   return (
     <EntityListPage

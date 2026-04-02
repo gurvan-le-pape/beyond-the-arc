@@ -12,9 +12,9 @@ import {
 import { usePathname, useRouter } from "@/navigation";
 
 interface SearchTabsProps {
-  activeTab: string;
-  tabs: { value: string; label: string }[];
-  children: React.ReactNode;
+  readonly activeTab: string;
+  readonly tabs: { value: string; label: string }[];
+  readonly children: React.ReactNode;
 }
 
 /**

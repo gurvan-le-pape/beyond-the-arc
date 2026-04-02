@@ -140,11 +140,12 @@ export function TeamsTab() {
     poolProps: getDropdownFilterProps("pool"),
   });
 
-  const errorMessage = committeeLeagueClubFiltersError
-    ? tCommon("errors.fetchLeagueOrCommittee")
-    : teamsError
-    ? tCommon("errors.fetchTeams")
-    : null;
+  let errorMessage: string | null = null;
+  if (committeeLeagueClubFiltersError) {
+    errorMessage = tCommon("errors.fetchLeagueOrCommittee");
+  } else if (teamsError) {
+    errorMessage = tCommon("errors.fetchTeams");
+  }
 
   return (
     <EntityListPage

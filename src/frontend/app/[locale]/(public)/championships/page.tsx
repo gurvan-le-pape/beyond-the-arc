@@ -18,6 +18,8 @@ import {
   GENDER_LIST,
 } from "@/shared/constants";
 
+const SKELETON_KEYS = Array.from({ length: 12 }, () => crypto.randomUUID());
+
 // ---------------------------------------------------------------------------
 // Championship Card
 // ---------------------------------------------------------------------------
@@ -39,7 +41,11 @@ const levelBorderMap: Record<string, string> = {
     "border-l-national-DEFAULT dark:border-l-national-light",
 };
 
-function ChampionshipCard({ championship }: { championship: Championship }) {
+function ChampionshipCard({
+  championship,
+}: {
+  readonly championship: Championship;
+}) {
   const tCompetitions = useTranslations("competitions");
   const levelColor =
     levelColorMap[championship.level] ??
@@ -92,10 +98,10 @@ function FilterSelect({
   options,
   placeholder,
 }: {
-  value: string;
-  onChange: (v: string) => void;
-  options: { value: string; label: string }[];
-  placeholder: string;
+  readonly value: string;
+  readonly onChange: (v: string) => void;
+  readonly options: { value: string; label: string }[];
+  readonly placeholder: string;
 }) {
   return (
     <select
@@ -142,9 +148,9 @@ export default function ChampionshipsPage() {
   );
 
   const seasonYears = useMemo(() => {
-    const years = [...new Set(championships.map((c) => c.seasonYear))]
-      .sort()
-      .reverse();
+    const years = [...new Set(championships.map((c) => c.seasonYear))].sort(
+      (a, b) => b.localeCompare(a),
+    );
     return years.map((y) => ({ value: y, label: y }));
   }, [championships]);
 
@@ -190,11 +196,15 @@ export default function ChampionshipsPage() {
     },
   ];
 
-  const orgOptions = isRegional
-    ? leagues.map((l) => ({ value: String(l.id), label: l.name }))
-    : isDepartmental
-    ? committees.map((c) => ({ value: String(c.id), label: c.name }))
-    : [];
+  let orgOptions: { value: string; label: string }[] = [];
+  if (isRegional) {
+    orgOptions = leagues.map((l) => ({ value: String(l.id), label: l.name }));
+  } else if (isDepartmental) {
+    orgOptions = committees.map((c) => ({
+      value: String(c.id),
+      label: c.name,
+    }));
+  }
 
   const orgPlaceholder = isRegional
     ? tCompetitions("carousel.titles.regionalLeagues")
@@ -202,6 +212,34 @@ export default function ChampionshipsPage() {
 
   const categoryOptions = CATEGORY_LIST.map((c) => ({ value: c, label: c }));
   const genderOptions = GENDER_LIST.map((g) => ({ value: g, label: g }));
+
+  let gridContent: React.ReactNode;
+  if (isLoading) {
+    gridContent = (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {SKELETON_KEYS.map((key) => (
+          <div
+            key={key}
+            className="h-32 rounded-card bg-surface-subtle dark:bg-surface-raised-dark animate-pulse"
+          />
+        ))}
+      </div>
+    );
+  } else if (filtered.length === 0) {
+    gridContent = (
+      <div className="text-center py-16 text-text-secondary dark:text-text-secondary-dark">
+        {tCompetitions("noResults")}
+      </div>
+    );
+  } else {
+    gridContent = (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {filtered.map((championship) => (
+          <ChampionshipCard key={championship.id} championship={championship} />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <PageLayout>
@@ -267,29 +305,7 @@ export default function ChampionshipsPage() {
       )}
 
       {/* Cards grid */}
-      {isLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {Array.from({ length: 12 }).map((_, i) => (
-            <div
-              key={i}
-              className="h-32 rounded-card bg-surface-subtle dark:bg-surface-raised-dark animate-pulse"
-            />
-          ))}
-        </div>
-      ) : filtered.length === 0 ? (
-        <div className="text-center py-16 text-text-secondary dark:text-text-secondary-dark">
-          {tCompetitions("noResults")}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {filtered.map((championship) => (
-            <ChampionshipCard
-              key={championship.id}
-              championship={championship}
-            />
-          ))}
-        </div>
-      )}
+      {gridContent}
     </PageLayout>
   );
 }
