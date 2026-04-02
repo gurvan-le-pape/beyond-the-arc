@@ -1,11 +1,9 @@
 {
   "nav": {
-    "competitions": "Compétitions",
-    "players": "Joueurs",
-    "teams": "Équipes",
-    "clubs": "Clubs",
-    "matches": "Matchs",
-    "stats": "Statistiques"
+    "championships": "Championnats",
+    "organizations": "Organisations",
+    "search": "Recherche",
+    "map": "Carte"
   },
   "header": {
     "mainNavAriaLabel": "Navigation principale",

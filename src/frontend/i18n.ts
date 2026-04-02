@@ -16,6 +16,8 @@ const namespaces = [
   "filters",
   "landing",
   "pool",
+  "organizations",
+  "search",
 ];
 
 export default getRequestConfig(async ({ requestLocale }) => {
