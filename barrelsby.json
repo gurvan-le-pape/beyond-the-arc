@@ -48,6 +48,8 @@
     "./src/frontend/features/players/types",
     "./src/frontend/features/players/utils",
 
+    "./src/frontend/features/search/components",
+
     "./src/frontend/features/teams/api",
     "./src/frontend/features/teams/components",
     "./src/frontend/features/teams/constants",

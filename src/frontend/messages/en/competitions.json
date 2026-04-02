@@ -1,5 +1,6 @@
 {
-  "breadcrumb": "Competitions",
+  "breadcrumb": "Championships",
+  "championshipsCount": "championships",
   "notFound": "Competition not found.",
   "categoryLabel": "Category:",
   "divisionLabel": "Division:",
