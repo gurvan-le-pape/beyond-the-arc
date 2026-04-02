@@ -40,9 +40,7 @@ export function DepartmentsGrid({
           variant="default"
           padding="md"
           clickable
-          onClick={() =>
-            router.push(`/clubs/league/${leagueId}/committee/${dept.id}`)
-          }
+          onClick={() => router.push(`/organizations/committees/${dept.id}`)}
           className="border-l-4 border-l-departmental-dark dark:border-l-departmental-light hover:border-l-divide-light dark:hover:!border-l-divide-dark"
         >
           <Text variant="h3" className="mb-1">

@@ -120,9 +120,7 @@ export function ClubPopupContent({ club }: ClubPopupContentProps) {
       {/* See Details Button */}
       <button
         onClick={() => {
-          router.push(
-            `/clubs/league/${club.leagueId}/committee/${club.committeeId}/club/${club.id}`,
-          );
+          router.push(`/organizations/clubs/${club.id}`);
         }}
         className="w-full py-2.5 px-4 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition-colors shadow-md hover:shadow-lg"
       >
