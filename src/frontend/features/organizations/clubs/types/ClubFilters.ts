@@ -7,4 +7,7 @@ export interface ClubFilters {
   leagueId?: number;
   category?: Category;
   gender?: Gender;
+  search?: string;
+  page?: number;
+  limit?: number;
 }

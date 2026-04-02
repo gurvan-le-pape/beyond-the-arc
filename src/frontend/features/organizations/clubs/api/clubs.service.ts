@@ -2,7 +2,7 @@
 import type { ClubStatsByRegion } from "@/features/organizations/clubs/types/ClubStatsByRegion";
 import apiClient from "@/lib/services/client/api-client";
 
-import type { ClubBasic } from "../types/ClubBasic";
+import type { ClubsPaginatedResponse } from "../../committees/types/ClubsPaginatedResponse";
 import type { ClubDetailed } from "../types/ClubDetailed";
 import type { ClubFilters } from "../types/ClubFilters";
 import type { ClubStatsByDepartment } from "../types/ClubStatsByDepartement";
@@ -35,8 +35,8 @@ export const clubsService = {
    * @example
    * const clubs = await clubsService.getAll({ leagueId: 1 });
    */
-  async getAll(filters?: ClubFilters): Promise<ClubBasic[]> {
-    const { data } = await apiClient.get<ClubBasic[]>("/clubs", {
+  async getAll(filters?: ClubFilters): Promise<ClubsPaginatedResponse> {
+    const { data } = await apiClient.get<ClubsPaginatedResponse>("/clubs", {
       params: filters,
     });
     return data;

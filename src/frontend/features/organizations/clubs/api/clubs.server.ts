@@ -7,6 +7,7 @@ import {
   fetchApi,
 } from "@/lib/services/server/server-api-client";
 
+import type { ClubsPaginatedResponse } from "../../committees/types/ClubsPaginatedResponse";
 import type { ClubFilters } from "../types/ClubFilters";
 import type { ClubStatsByDepartment } from "../types/ClubStatsByDepartement";
 
@@ -38,9 +39,9 @@ export const serverClubsService = {
    * @example
    * const clubs = await serverClubsService.getAll({ leagueId: 1 });
    */
-  async getAll(filters?: ClubFilters): Promise<ClubBasic[]> {
+  async getAll(filters?: ClubFilters): Promise<ClubsPaginatedResponse> {
     const queryString = buildQueryString(filters);
-    return fetchApi<ClubBasic[]>(`/clubs${queryString}`);
+    return fetchApi<ClubsPaginatedResponse>(`/clubs${queryString}`);
   },
 
   /**
