@@ -39,6 +39,20 @@ export class ChampionshipsService {
   constructor(private readonly prisma: PrismaService) {}
 
   /**
+   * Finds all championships without any filter.
+   * Used by the /championships list page.
+   *
+   * @returns Array of all championship DTOs
+   */
+  async findAllChampionships(): Promise<ChampionshipResponseDto[]> {
+    this.logger.log(`[findAllChampionships] Fetching all championships`);
+
+    const championships = await this.queryChampionshipsByCondition({});
+
+    return championships.map((c) => this.mapToDto(c));
+  }
+
+  /**
    * Retrieves all distinct divisions from championships.
    *
    * @returns Array of division numbers
