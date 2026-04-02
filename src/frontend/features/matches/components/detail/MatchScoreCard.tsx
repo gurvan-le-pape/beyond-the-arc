@@ -45,11 +45,7 @@ function TeamSection({ team, isWinning, align }: TeamSectionProps) {
             ? "border-primary-500 dark:border-primary-400 shadow-card-hover"
             : "border-divide-light dark:border-divide-dark hover:border-primary-400 dark:hover:border-primary-500 shadow-card dark:shadow-card-dark",
         )}
-        onClick={() =>
-          router.push(
-            `/clubs/league/${team.leagueId}/committee/${team.committeeId}/club/${team.clubId}`,
-          )
-        }
+        onClick={() => router.push(`/organizations/clubs/${team.clubId}`)}
         aria-label={tCommon("club.seeClub", { name: team.clubName ?? "" })}
       >
         <img

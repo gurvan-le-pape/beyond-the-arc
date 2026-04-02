@@ -51,12 +51,12 @@ export function PlayerHeader({ player }: PlayerHeaderProps) {
       parentId = leagueId;
     }
     if (parentId) {
-      competitionUrl = `/competitions/${level}/${parentId}/${championship.id}`;
+      competitionUrl = `/championships/${championship.id}`;
       competitionName = championship.name;
     }
   }
 
-  const clubUrl = `/clubs/league/${leagueId}/committee/${committeeId}/club/${clubId}`;
+  const clubUrl = `/organizations/clubs/${clubId}`;
 
   return (
     <Card variant="highlighted" padding="lg">

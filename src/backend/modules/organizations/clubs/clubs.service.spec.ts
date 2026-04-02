@@ -22,6 +22,7 @@ type MockedPrismaService = {
     findMany: jest.Mock;
     findUnique: jest.Mock;
     groupBy: jest.Mock;
+    count: jest.Mock;
   };
   committees: {
     findMany: jest.Mock;
@@ -44,6 +45,7 @@ describe("ClubsService", () => {
         findMany: jest.fn(),
         findUnique: jest.fn(),
         groupBy: jest.fn(),
+        count: jest.fn(),
       },
       committees: {
         findMany: jest.fn(),
@@ -307,46 +309,59 @@ describe("ClubsService", () => {
       committee: { leagueId: 5 },
     };
 
-    it("should return all clubs when no filters provided", async () => {
+    beforeEach(() => {
+      // findClubsByFilters now runs Promise.all([findMany, count])
       prisma.clubs.findMany.mockResolvedValue([mockClub]);
+      prisma.clubs.count.mockResolvedValue(1);
+    });
 
+    it("should return paginated response when no filters provided", async () => {
       const result = await service.findClubsByFilters({});
 
-      expect(result).toEqual([
-        {
-          id: 1,
-          name: "AS Monaco Basket",
-          city: "Monaco",
-          zipCode: "98000",
-          latitude: 43.7384,
-          longitude: 7.4246,
-          email: "contact@monaco.com",
-          phone: "0123456789",
-          website: "https://monaco.com",
-          committeeId: 1,
-          leagueId: 5,
-        },
-      ]);
+      expect(result).toEqual({
+        items: [
+          {
+            id: 1,
+            name: "AS Monaco Basket",
+            city: "Monaco",
+            zipCode: "98000",
+            latitude: 43.7384,
+            longitude: 7.4246,
+            email: "contact@monaco.com",
+            phone: "0123456789",
+            website: "https://monaco.com",
+            committeeId: 1,
+            leagueId: 5,
+          },
+        ],
+        total: 1,
+        page: 1,
+        limit: 50,
+        totalPages: 1,
+      });
+
       expect(prisma.clubs.findMany).toHaveBeenCalledWith({
         where: {},
         select: expect.any(Object),
         orderBy: { name: "asc" },
+        skip: 0,
+        take: 50,
       });
+      expect(prisma.clubs.count).toHaveBeenCalledWith({ where: {} });
     });
 
     it("should filter by committeeId", async () => {
-      prisma.clubs.findMany.mockResolvedValue([mockClub]);
-
       await service.findClubsByFilters({ committeeId: 1 });
 
       expect(prisma.clubs.findMany).toHaveBeenCalledWith(
         expect.objectContaining({ where: { committeeId: 1 } }),
       );
+      expect(prisma.clubs.count).toHaveBeenCalledWith({
+        where: { committeeId: 1 },
+      });
     });
 
     it("should filter by leagueId via committee relation", async () => {
-      prisma.clubs.findMany.mockResolvedValue([mockClub]);
-
       await service.findClubsByFilters({ leagueId: 2 });
 
       expect(prisma.clubs.findMany).toHaveBeenCalledWith(
@@ -357,44 +372,26 @@ describe("ClubsService", () => {
     });
 
     it("should filter by category via teams", async () => {
-      const clubWithTeams = { ...mockClub, teams: [{ id: 1 }] };
-      prisma.clubs.findMany.mockResolvedValue([clubWithTeams]);
-
       await service.findClubsByFilters({ category: Category.U18 });
 
       expect(prisma.clubs.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
-          select: expect.objectContaining({
-            teams: {
-              where: { category: Category.U18 },
-              select: { id: true },
-            },
-          }),
+          where: { teams: { some: { category: Category.U18 } } },
         }),
       );
     });
 
     it("should filter by gender via teams", async () => {
-      const clubWithTeams = { ...mockClub, teams: [{ id: 1 }] };
-      prisma.clubs.findMany.mockResolvedValue([clubWithTeams]);
-
       await service.findClubsByFilters({ gender: Gender.FEMALE });
 
       expect(prisma.clubs.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
-          select: expect.objectContaining({
-            teams: {
-              where: { gender: Gender.FEMALE },
-              select: { id: true },
-            },
-          }),
+          where: { teams: { some: { gender: Gender.FEMALE } } },
         }),
       );
     });
 
     it("should combine multiple filters", async () => {
-      prisma.clubs.findMany.mockResolvedValue([]);
-
       await service.findClubsByFilters({
         committeeId: 1,
         leagueId: 2,
@@ -407,25 +404,41 @@ describe("ClubsService", () => {
           where: {
             committeeId: 1,
             committee: { leagueId: 2 },
+            teams: { some: { category: Category.U18, gender: Gender.MALE } },
           },
-          select: expect.objectContaining({
-            teams: {
-              where: { category: Category.U18, gender: Gender.MALE },
-              select: { id: true },
-            },
-          }),
         }),
       );
     });
 
-    it("should return empty array when no clubs match", async () => {
+    it("should respect custom page and limit", async () => {
+      prisma.clubs.count.mockResolvedValue(200);
+
+      await service.findClubsByFilters({ page: 3, limit: 20 });
+
+      expect(prisma.clubs.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ skip: 40, take: 20 }),
+      );
+    });
+
+    it("should compute totalPages correctly", async () => {
+      prisma.clubs.count.mockResolvedValue(105);
+
+      const result = await service.findClubsByFilters({ limit: 50 });
+
+      expect(result.totalPages).toBe(3); // ceil(105 / 50)
+    });
+
+    it("should return empty items when no clubs match", async () => {
       prisma.clubs.findMany.mockResolvedValue([]);
+      prisma.clubs.count.mockResolvedValue(0);
 
       const result = await service.findClubsByFilters({
         category: Category.U18,
       });
 
-      expect(result).toEqual([]);
+      expect(result.items).toEqual([]);
+      expect(result.total).toBe(0);
+      expect(result.totalPages).toBe(0);
     });
 
     it("should handle null latitude and longitude", async () => {
@@ -435,8 +448,8 @@ describe("ClubsService", () => {
 
       const result = await service.findClubsByFilters({});
 
-      expect(result[0].latitude).toBeNull();
-      expect(result[0].longitude).toBeNull();
+      expect(result.items[0].latitude).toBeNull();
+      expect(result.items[0].longitude).toBeNull();
     });
 
     it("should throw InternalServerErrorException on database error", async () => {

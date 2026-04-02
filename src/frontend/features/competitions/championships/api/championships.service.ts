@@ -36,11 +36,11 @@ export const championshipService = {
    *   id: '1',
    * });
    */
-  async getAll(filters: ChampionshipFilters): Promise<Championship[]> {
+  async getAll(filters?: ChampionshipFilters): Promise<Championship[]> {
     const { data } = await apiClient.get<Championship[]>("/championships", {
       params: {
-        level: filters.level,
-        id: filters.id,
+        level: filters?.level,
+        id: filters?.id,
       },
     });
     return data;

@@ -156,5 +156,11 @@
     "clubs": "No clubs found",
     "matches": "No matches found",
     "championships": "No championships found"
+  },
+  "filters": {
+    "category": "All categories",
+    "gender": "All genders",
+    "seasonYear": "All seasons",
+    "reset": "Reset filters"
   }
 }

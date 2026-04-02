@@ -10,7 +10,7 @@ import { Text } from "@/shared/components/typography";
 import type { ClubStatsByRegion } from "../../types/ClubStatsByRegion";
 
 interface RegionsGridProps {
-  regions: ClubStatsByRegion[];
+  readonly regions: ClubStatsByRegion[];
 }
 
 /**
@@ -30,7 +30,7 @@ export function RegionsGrid({ regions }: RegionsGridProps) {
           variant="default"
           padding="md"
           clickable
-          onClick={() => router.push(`/clubs/league/${region.id}`)}
+          onClick={() => router.push(`/organizations/leagues/${region.id}`)}
           className="border-l-4 border-l-regional-dark dark:border-l-regional-light hover:border-l-divide-light dark:hover:!border-l-divide-dark"
         >
           <Text variant="h3" className="mb-2">

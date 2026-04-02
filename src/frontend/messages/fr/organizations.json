@@ -1,0 +1,43 @@
+{
+  "breadcrumb": "Organisations",
+  "selectType": "Sélectionnez un type",
+  "leagues": {
+    "label": "Ligues",
+    "description": "Ligues régionales supervisant les comités départementaux.",
+    "searchPlaceholder": "Rechercher une ligue…",
+    "noResults": "Aucun résultat pour « {search} »",
+    "clearSearch": "Effacer la recherche"
+  },
+  "committees": {
+    "label": "Comités",
+    "description": "Comités départementaux gérant les clubs locaux.",
+    "searchPlaceholder": "Rechercher un comité…",
+    "filterByLeague": "Filtrer par ligue",
+    "allLeagues": "Toutes les ligues",
+    "noResults": "Aucun résultat pour « {search} »",
+    "clearSearch": "Effacer la recherche"
+  },
+  "clubs": {
+    "label": "Clubs",
+    "description": "Tous les clubs enregistrés en France.",
+    "searchPlaceholder": "Rechercher un club…",
+    "noResults": "Aucun résultat pour « {search} »",
+    "clearSearch": "Effacer la recherche"
+  },
+  "info": {
+    "title": "Informations",
+    "president": "Président",
+    "presidentName": "Nom",
+    "presidentEmail": "Email",
+    "presidentPhone": "Téléphone",
+    "address": "Adresse",
+    "email": "Email",
+    "phone": "Téléphone",
+    "website": "Site web",
+    "region": "Région",
+    "department": "Département",
+    "league": "Ligue",
+    "committee": "Comité"
+  },
+  "notFound": "Organisation introuvable."
+}

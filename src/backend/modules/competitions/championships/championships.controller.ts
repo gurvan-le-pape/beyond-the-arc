@@ -187,63 +187,43 @@ export class ChampionshipsController {
 
   /**
    * Retrieve championships by competition level and associated ID.
+   * Omitting both parameters returns all championships.
    *
    * Moderate caching (5 minutes) because championships lists change
    * occasionally but not frequently.
    *
-   * @param query - Query parameters containing level and id
-   * @returns Array of championships matching the criteria
+   * @param query - Query parameters containing optional level and id
+   * @returns Array of championships matching the criteria, or all championships if no filters provided
    *
    * @example
+   * // Filtered — returns championships for a specific league
    * GET /championships?level=regional&id=1
-   * Response (after TransformInterceptor):
-   * {
-   *   "data": [
-   *     {
-   *       "id": 1,
-   *       "name": "Championship Régional U18",
-   *       "category": "U18",
-   *       "gender": "male",
-   *       "seasonYear": "2024-2025",
-   *       "level": "regional",
-   *       "division": "Régionale 1"
-   *     },
-   *     {
-   *       "id": 2,
-   *       "name": "Championship Régional Senior",
-   *       "category": "Senior",
-   *       "gender": "female",
-   *       "seasonYear": "2024-2025",
-   *       "level": "regional",
-   *       "division": "Régionale 2"
-   *     }
-   *   ],
-   *   "meta": { "count": 2 },
-   *   "timestamp": "2024-02-05T10:00:00Z",
-   *   "path": "/championships?level=regional&id=1",
-   *   "statusCode": 200
-   * }
+   *
+   * @example
+   * // Unfiltered — returns all championships
+   * GET /championships
    */
   @Get()
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(CacheInterceptor({ ttl: CACHE_TTL.MODERATE_DATA })) // Cache for 5 minutes
+  @UseInterceptors(CacheInterceptor({ ttl: CACHE_TTL.MODERATE_DATA }))
   @ApiOperation({
-    summary: "Get championships by level and ID",
+    summary: "Get championships",
     description:
-      "Retrieves championships filtered by competition level (regional or departmental) and associated league/committee ID. Results are cached for 5 minutes.",
+      "Retrieves championships filtered by competition level and associated league/committee ID. Omitting both parameters returns all championships. Results are cached for 5 minutes.",
   })
   @ApiQuery({
     name: "level",
-    required: true,
+    required: false,
     enum: [CompetitionLevel.REGIONAL, CompetitionLevel.DEPARTMENTAL],
-    description: "Competition level",
+    description: "Competition level. Omit to return all championships.",
     example: CompetitionLevel.REGIONAL,
   })
   @ApiQuery({
     name: "id",
-    required: true,
+    required: false,
     type: Number,
-    description: "League ID (for regional) or Committee ID (for departmental)",
+    description:
+      "League ID (for regional) or Committee ID (for departmental). Omit to return all championships.",
     example: 1,
   })
   @ApiResponse({
@@ -260,7 +240,7 @@ export class ChampionshipsController {
             gender: "male",
             seasonYear: "2024-2025",
             level: "regional",
-            division: "Régionale 1",
+            division: 1,
           },
           {
             id: 2,
@@ -269,19 +249,20 @@ export class ChampionshipsController {
             gender: "female",
             seasonYear: "2024-2025",
             level: "regional",
-            division: "Régionale 2",
+            division: 2,
           },
         ],
         meta: { count: 2 },
         timestamp: "2024-02-05T10:00:00Z",
-        path: "/championships?level=regional&id=1",
+        path: "/championships",
         statusCode: 200,
       },
     },
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: "Invalid query parameters",
+    description:
+      "Invalid query parameters — only thrown when parameters are provided but invalid",
     schema: {
       example: {
         statusCode: 400,
@@ -297,7 +278,7 @@ export class ChampionshipsController {
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
-    description: "No championships found for given criteria",
+    description: "No championships found for the given level and ID",
     schema: {
       oneOf: [
         {
@@ -335,9 +316,12 @@ export class ChampionshipsController {
     },
   })
   async getChampionships(@Query() query: GetChampionshipsQueryDto) {
+    if (!query.level && !query.id) {
+      return this.championshipService.findAllChampionships();
+    }
     return this.championshipService.findChampionshipsByLevel(
-      query.level,
-      query.id,
+      query.level!,
+      query.id!,
     );
   }
 }

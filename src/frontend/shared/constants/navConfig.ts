@@ -2,9 +2,8 @@
 import type { NavItem } from "../types/NavItem";
 
 export const navItems: NavItem[] = [
-  { href: "/competitions", labelKey: "nav.competitions" },
-  { href: "/players", labelKey: "nav.players" },
-  { href: "/teams", labelKey: "nav.teams" },
-  { href: "/clubs/map", labelKey: "nav.clubs" },
-  { href: "/matches", labelKey: "nav.matches" },
+  { href: "/championships", labelKey: "nav.championships" },
+  { href: "/organizations", labelKey: "nav.organizations" },
+  { href: "/search", labelKey: "nav.search" },
+  { href: "/map", labelKey: "nav.map" },
 ];

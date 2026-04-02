@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import type { ApiError } from "@/shared/types/Api";
 import { safeFetch } from "@/shared/utils/safeFetch";
 
+import type { ClubsPaginatedResponse } from "../../committees/types/ClubsPaginatedResponse";
 import type { ClubBasic } from "../types/ClubBasic";
 import type { ClubDetailed } from "../types/ClubDetailed";
 import type { ClubFilters } from "../types/ClubFilters";
@@ -26,7 +27,7 @@ export function useClubs(
   filters?: ClubFilters,
   options?: { enabled?: boolean },
 ) {
-  return useQuery<ClubBasic[], ApiError>({
+  return useQuery<ClubsPaginatedResponse, ApiError>({
     queryKey: clubsKeys.list(filters),
     queryFn: () => clubsService.getAll(filters),
     enabled: options?.enabled ?? true,

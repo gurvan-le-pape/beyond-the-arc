@@ -68,7 +68,7 @@ export function useDepartmentalChampionshipsData(
   return {
     championships: championshipsQuery.data ?? [],
     committee,
-    clubs: clubsQuery.data ?? [],
+    clubs: clubsQuery.data?.items ?? [],
     isLoading,
     fetchError,
   };

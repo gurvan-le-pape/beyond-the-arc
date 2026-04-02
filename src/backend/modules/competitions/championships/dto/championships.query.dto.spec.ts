@@ -36,10 +36,10 @@ describe("GetChampionshipsQueryDto", () => {
       expect(errors.some((e) => e.property === "level")).toBe(true);
     });
 
-    it("should fail validation when level is missing", async () => {
+    it("should pass validation when level is omitted", async () => {
       const dto = plainToInstance(GetChampionshipsQueryDto, { id: 1 });
       const errors = await validate(dto);
-      expect(errors.some((e) => e.property === "level")).toBe(true);
+      expect(errors).toHaveLength(0);
     });
   });
 
@@ -58,12 +58,12 @@ describe("GetChampionshipsQueryDto", () => {
       expect(dto.id).toBe(42);
     });
 
-    it("should fail validation when id is missing", async () => {
+    it("should pass validation when id is omitted", async () => {
       const dto = plainToInstance(GetChampionshipsQueryDto, {
         level: CompetitionLevel.REGIONAL,
       });
       const errors = await validate(dto);
-      expect(errors.some((e) => e.property === "id")).toBe(true);
+      expect(errors).toHaveLength(0);
     });
 
     it("should fail validation when id is not a number", async () => {
@@ -73,6 +73,14 @@ describe("GetChampionshipsQueryDto", () => {
       });
       const errors = await validate(dto);
       expect(errors.some((e) => e.property === "id")).toBe(true);
+    });
+  });
+
+  describe("empty query", () => {
+    it("should pass validation with no parameters", async () => {
+      const dto = plainToInstance(GetChampionshipsQueryDto, {});
+      const errors = await validate(dto);
+      expect(errors).toHaveLength(0);
     });
   });
 });

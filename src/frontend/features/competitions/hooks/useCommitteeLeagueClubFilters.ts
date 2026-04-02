@@ -18,10 +18,11 @@ export function useCommitteeLeagueClubFilters() {
   const { data: leagues = [], error: leaguesError } = useLeagues();
 
   // Fetch clubs
-  const { data: clubs = [], error: clubsError } = useClubs({
+  const { data: clubsData, error: clubsError } = useClubs({
     committeeId: committeeId || undefined,
     leagueId: leagueId || undefined,
   });
+  const clubs = clubsData?.items ?? [];
 
   // Combine errors
   const error = committeesError ?? leaguesError ?? clubsError ?? null;

@@ -1,7 +1,13 @@
 // src/frontend/features/matches/components/detail/Tabs.tsx
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
 
 // Context for managing tab state
 interface TabsContextType {
@@ -21,16 +27,35 @@ const useTabsContext = () => {
 
 // Main Tabs Container
 interface TabsProps {
-  defaultValue: string;
-  children: React.ReactNode;
-  className?: string;
+  readonly defaultValue: string;
+  readonly children: React.ReactNode;
+  readonly className?: string;
+  readonly onValueChange?: (value: string) => void; // optional external handler
 }
 
-export function Tabs({ defaultValue, children, className = "" }: TabsProps) {
+export function Tabs({
+  defaultValue,
+  children,
+  className = "",
+  onValueChange,
+}: TabsProps) {
   const [value, setValue] = useState(defaultValue);
 
+  const handleChange = useCallback(
+    (newValue: string) => {
+      setValue(newValue);
+      onValueChange?.(newValue);
+    },
+    [onValueChange],
+  );
+
+  const contextValue = useMemo(
+    () => ({ value, onValueChange: handleChange }),
+    [value, handleChange],
+  );
+
   return (
-    <TabsContext.Provider value={{ value, onValueChange: setValue }}>
+    <TabsContext.Provider value={contextValue}>
       <div className={className}>{children}</div>
     </TabsContext.Provider>
   );
@@ -38,8 +63,8 @@ export function Tabs({ defaultValue, children, className = "" }: TabsProps) {
 
 // Tabs List (navigation buttons)
 interface TabsListProps {
-  children: React.ReactNode;
-  className?: string;
+  readonly children: React.ReactNode;
+  readonly className?: string;
 }
 
 export function TabsList({ children, className = "" }: TabsListProps) {
@@ -55,9 +80,9 @@ export function TabsList({ children, className = "" }: TabsListProps) {
 
 // Individual Tab Trigger (button)
 interface TabsTriggerProps {
-  value: string;
-  children: React.ReactNode;
-  className?: string;
+  readonly value: string;
+  readonly children: React.ReactNode;
+  readonly className?: string;
 }
 
 export function TabsTrigger({
@@ -93,9 +118,9 @@ export function TabsTrigger({
 
 // Tab Content Panel
 interface TabsContentProps {
-  value: string;
-  children: React.ReactNode;
-  className?: string;
+  readonly value: string;
+  readonly children: React.ReactNode;
+  readonly className?: string;
 }
 
 export function TabsContent({

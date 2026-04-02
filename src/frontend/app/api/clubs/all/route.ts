@@ -7,7 +7,7 @@ import { logger } from "@/shared/utils/logger";
 export async function GET() {
   try {
     // Fetch all clubs without filtering
-    const clubs = await serverClubsService.getAll();
+    const clubs = await serverClubsService.getAllClubs();
     return NextResponse.json(clubs);
   } catch (error) {
     logger.error(error, "GET /api/clubs/all");

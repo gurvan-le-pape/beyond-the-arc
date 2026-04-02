@@ -1,11 +1,9 @@
 {
   "nav": {
-    "competitions": "Competitions",
-    "players": "Players",
-    "teams": "Teams",
-    "clubs": "Clubs",
-    "matches": "Matches",
-    "stats": "Statistics"
+    "championships": "Championships",
+    "organizations": "Organizations",
+    "search": "Search",
+    "map": "Map"
   },
   "header": {
     "mainNavAriaLabel": "Main navigation",

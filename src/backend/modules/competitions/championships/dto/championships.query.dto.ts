@@ -1,34 +1,35 @@
 // src/backend/modules/competitions/championships/dto/championships.query.dto.ts
 import { CompetitionLevel } from "@common/constants/competition-levels";
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsEnum, IsNotEmpty, IsNumber } from "class-validator";
+import { IsEnum, IsNumber, IsOptional } from "class-validator";
 
 /**
- * Query parameters for filtering championships by level and ID.
+ * Query parameters for filtering championships.
+ * All fields are optional — omitting them returns all championships.
  */
 export class GetChampionshipsQueryDto {
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: "Competition level (regional or departmental)",
     enum: [CompetitionLevel.REGIONAL, CompetitionLevel.DEPARTMENTAL],
     example: CompetitionLevel.REGIONAL,
   })
-  @IsNotEmpty({ message: "level is required" })
+  @IsOptional()
   @IsEnum(CompetitionLevel, {
     message: `level must be either "${CompetitionLevel.REGIONAL}" or "${CompetitionLevel.DEPARTMENTAL}"`,
   })
-  level!:
+  level?:
     | typeof CompetitionLevel.REGIONAL
     | typeof CompetitionLevel.DEPARTMENTAL;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description:
       "League ID (for regional level) or Committee ID (for departmental level)",
     example: 1,
     type: Number,
   })
-  @IsNotEmpty({ message: "id is required" })
+  @IsOptional()
   @Type(() => Number)
   @IsNumber()
-  id!: number;
+  id?: number;
 }

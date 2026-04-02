@@ -25,13 +25,13 @@ import { championshipService } from "./championships.service";
  * const { data: championships, isLoading } = useChampionships({ level: 'national' });
  */
 export function useChampionships(
-  filters: ChampionshipFilters | undefined,
+  filters?: ChampionshipFilters,
   options?: { enabled?: boolean },
 ) {
   return useQuery<Championship[], ApiError>({
     queryKey: championshipsKeys.list(filters),
-    queryFn: () => championshipService.getAll(filters!),
-    enabled: options?.enabled ?? !!filters,
+    queryFn: () => championshipService.getAll(filters),
+    enabled: options?.enabled ?? true, // enabled by default, filters are optional
     staleTime: 5 * 60 * 1000,
   });
 }
