@@ -1,19 +1,17 @@
 // src/frontend/features/organizations/leagues/api/use-leagues.ts
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import type { ApiError } from "@/shared/types/Api";
 
 import type { League } from "../types/League";
-import { leaguesService } from "./leagues.service";
-import { leaguesKeys } from "./leaguesKeys";
+import { leaguesPrefetch, leaguesQueries } from "./leaguesQueries";
 
 /**
  * Hook to fetch all leagues (regional leagues).
  *
  * Features:
- * - Automatic caching (5 minutes)
- * - Background refetching
- * - Loading and error states
+ * - Automatic caching (5 minutes stale, 15 minutes GC)
+ * - Background refetching on window focus
  *
  * @returns React Query result with leagues data
  *
@@ -21,11 +19,7 @@ import { leaguesKeys } from "./leaguesKeys";
  * const { data: leagues, isLoading } = useLeagues();
  */
 export function useLeagues() {
-  return useQuery<League[], ApiError>({
-    queryKey: leaguesKeys.all,
-    queryFn: () => leaguesService.getAll(),
-    staleTime: 5 * 60 * 1000,
-  });
+  return useQuery<League[], ApiError>(leaguesQueries.list());
 }
 
 /**
@@ -40,10 +34,8 @@ export function useLeagues() {
  */
 export function useLeague(id: number, options?: { enabled?: boolean }) {
   return useQuery<League, ApiError>({
-    queryKey: leaguesKeys.detail(id),
-    queryFn: () => leaguesService.getById(id),
+    ...leaguesQueries.detail(id),
     enabled: options?.enabled ?? !!id,
-    staleTime: 5 * 60 * 1000,
   });
 }
 
@@ -62,9 +54,29 @@ export function useLeaguesByIds(
   options?: { enabled?: boolean },
 ) {
   return useQuery<League[], ApiError>({
-    queryKey: leaguesKeys.byIds(ids),
-    queryFn: () => leaguesService.getByIds(ids),
+    ...leaguesQueries.byIds(ids),
     enabled: options?.enabled ?? ids.length > 0,
-    staleTime: 5 * 60 * 1000,
   });
+}
+
+/**
+ * Hook returning prefetch utilities for optimistic loading.
+ *
+ * Returns an object with prefetch functions for different data types.
+ * Call these on hover, route changes, or predicted navigation to warm
+ * the cache before the user lands on the target view.
+ *
+ * @returns Object with prefetch functions
+ *
+ * @example
+ * const prefetch = useLeaguesPrefetch();
+ * <tr onMouseEnter={() => prefetch.detail(league.id)} />
+ */
+export function useLeaguesPrefetch() {
+  const queryClient = useQueryClient();
+
+  return {
+    list: leaguesPrefetch.list(queryClient),
+    detail: leaguesPrefetch.detail(queryClient),
+  };
 }

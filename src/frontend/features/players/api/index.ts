@@ -6,4 +6,5 @@
 export * from "./players.server";
 export * from "./players.service";
 export * from "./playersKeys";
+export * from "./playersQueries";
 export * from "./use-players";

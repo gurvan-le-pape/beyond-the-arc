@@ -7,7 +7,7 @@ import { useTranslations } from "next-intl";
 import React from "react";
 
 import { MatchDetailsTable } from "@/features/competitions/components";
-import { useMatchEvents, usePrefetchMatchEvents } from "@/features/matches/api";
+import { useMatchesPrefetch, useMatchEvents } from "@/features/matches/api";
 import type { Match } from "@/features/matches/types/Match";
 import { ErrorMessage } from "@/shared/components/feedback";
 import { Badge, Card } from "@/shared/components/primitives";
@@ -36,7 +36,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
     error: matchEventsError,
   } = useMatchEvents(match.id, { enabled: expanded });
 
-  const prefetchMatchEvents = usePrefetchMatchEvents();
+  const prefetch = useMatchesPrefetch();
 
   const isHomeWinner = match.homeTeamScore > match.awayTeamScore;
   const isAwayWinner = match.awayTeamScore > match.homeTeamScore;
@@ -155,7 +155,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
         <button
           type="button"
           onClick={() => onToggleExpand(match.id)}
-          onMouseEnter={() => prefetchMatchEvents(match.id)}
+          onMouseEnter={() => prefetch.events(match.id)}
           aria-expanded={expanded}
           aria-label={
             expanded

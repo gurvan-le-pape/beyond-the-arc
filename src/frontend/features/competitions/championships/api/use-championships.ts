@@ -1,21 +1,22 @@
 // src/frontend/features/competitions/championships/api/use-championships.ts
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { championshipsKeys } from "@/features/competitions/championships/api/championshipsKeys";
 import type { ApiError } from "@/shared/types/Api";
 
 import type { Championship } from "../types/Championship";
 import type { ChampionshipFilters } from "../types/ChampionshipFilters";
 import type { Division } from "../types/Division";
-import { championshipService } from "./championships.service";
+import {
+  championshipsPrefetch,
+  championshipsQueries,
+} from "./championshipsQueries";
 
 /**
  * Hook to fetch all championships with optional filters.
  *
  * Features:
- * - Automatic caching
- * - Background refetching
- * - Loading and error states
+ * - Automatic caching (5 minutes stale, 10 minutes GC)
+ * - Background refetching on window focus
  *
  * @param filters - Optional filter criteria
  * @param options - Additional query options
@@ -29,20 +30,13 @@ export function useChampionships(
   options?: { enabled?: boolean },
 ) {
   return useQuery<Championship[], ApiError>({
-    queryKey: championshipsKeys.list(filters),
-    queryFn: () => championshipService.getAll(filters),
-    enabled: options?.enabled ?? true, // enabled by default, filters are optional
-    staleTime: 5 * 60 * 1000,
+    ...championshipsQueries.list(filters),
+    enabled: options?.enabled ?? true,
   });
 }
 
 /**
  * Hook to fetch a single championship by ID.
- *
- * Features:
- * - Automatic caching (5 minutes)
- * - Can be disabled with options.enabled
- * - Background refetching
  *
  * @param id - The championship ID
  * @param options - Additional query options
@@ -57,20 +51,15 @@ export function useChampionships(
  */
 export function useChampionship(id: number, options?: { enabled?: boolean }) {
   return useQuery<Championship, ApiError>({
-    queryKey: championshipsKeys.detail(id),
-    queryFn: () => championshipService.getById(id),
+    ...championshipsQueries.detail(id),
     enabled: options?.enabled ?? !!id,
-    staleTime: 5 * 60 * 1000,
   });
 }
 
 /**
  * Hook to fetch all available championship divisions.
- *
- * Features:
- * - Automatic caching (10 minutes - divisions rarely change)
- * - Background refetching
- * - Server-side caching for 10 minutes
+ * Divisions are reference data — cached for 10 minutes as they
+ * change far less often than championships themselves.
  *
  * @returns React Query result with divisions data
  *
@@ -86,9 +75,28 @@ export function useChampionship(id: number, options?: { enabled?: boolean }) {
  * );
  */
 export function useDivisions() {
-  return useQuery<Division[], ApiError>({
-    queryKey: championshipsKeys.divisions(),
-    queryFn: () => championshipService.getDivisions(),
-    staleTime: 10 * 60 * 1000,
-  });
+  return useQuery<Division[], ApiError>(championshipsQueries.divisions());
+}
+
+/**
+ * Hook returning prefetch utilities for optimistic loading.
+ *
+ * Returns an object with prefetch functions for different data types.
+ * Call these on hover, route changes, or predicted navigation to warm
+ * the cache before the user lands on the target view.
+ *
+ * @returns Object with prefetch functions
+ *
+ * @example
+ * const prefetch = useChampionshipsPrefetch();
+ * <tr onMouseEnter={() => prefetch.detail(championship.id)} />
+ */
+export function useChampionshipsPrefetch() {
+  const queryClient = useQueryClient();
+
+  return {
+    detail: championshipsPrefetch.detail(queryClient),
+    list: championshipsPrefetch.list(queryClient),
+    divisions: championshipsPrefetch.divisions(queryClient),
+  };
 }

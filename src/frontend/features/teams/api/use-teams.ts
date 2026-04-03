@@ -1,5 +1,5 @@
 // src/frontend/features/teams/api/use-teams.ts
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import type { ApiError } from "@/shared/types/Api";
 
@@ -10,11 +10,15 @@ import type {
   TeamsPaginatedResponse,
 } from "../types";
 import type { TeamFilters } from "../types/TeamFilters";
-import { teamsService } from "./teams.service";
-import { teamsKeys } from "./teamsKeys";
+import { teamsPrefetch, teamsQueries } from "./teamsQueries";
 
 /**
  * Hook to fetch all teams with optional filters and pagination.
+ *
+ * Features:
+ * - Automatic caching (5 minutes stale, 10 minutes GC)
+ * - Background refetching on window focus
+ * - Pagination support
  *
  * @param filters - Optional filter criteria (clubId, level, category, etc.)
  * @param options - Additional query options
@@ -28,10 +32,8 @@ export function useTeams(
   options?: { enabled?: boolean },
 ) {
   return useQuery<TeamsPaginatedResponse, ApiError>({
-    queryKey: teamsKeys.list(filters),
-    queryFn: () => teamsService.getAll(filters),
+    ...teamsQueries.list(filters),
     enabled: options?.enabled ?? true,
-    staleTime: 5 * 60 * 1000,
   });
 }
 
@@ -47,15 +49,15 @@ export function useTeams(
  */
 export function useTeam(id: number, options?: { enabled?: boolean }) {
   return useQuery<Team, ApiError>({
-    queryKey: teamsKeys.detail(id),
-    queryFn: () => teamsService.getById(id),
+    ...teamsQueries.detail(id),
     enabled: options?.enabled ?? !!id,
-    staleTime: 5 * 60 * 1000,
   });
 }
 
 /**
  * Hook to fetch match history for a specific team.
+ * Refreshes more aggressively (2 minutes) than other team data
+ * since results update throughout the week as fixtures are played.
  *
  * @param id - The team ID
  * @param options - Additional query options
@@ -66,16 +68,16 @@ export function useTeam(id: number, options?: { enabled?: boolean }) {
  */
 export function useTeamMatches(id: number, options?: { enabled?: boolean }) {
   return useQuery<TeamMatchHistory[], ApiError>({
-    queryKey: teamsKeys.matches(id),
-    queryFn: () => teamsService.getMatches(id),
+    ...teamsQueries.matches(id),
     enabled: options?.enabled ?? !!id,
-    staleTime: 2 * 60 * 1000,
   });
 }
 
 /**
  * Hook to fetch available filter values for teams.
- * Returns numbers, pool letters, and divisions scoped to optional committee or league.
+ * Returns pool numbers, letters, and divisions scoped to an optional
+ * committee or league. Stays very fresh (30 seconds) to reflect live
+ * admin changes in filter UIs.
  *
  * @param params - Optional scoping parameters (committeeId, leagueId)
  * @returns React Query result with filter values
@@ -87,9 +89,30 @@ export function useTeamFilterValues(params?: {
   committeeId?: number;
   leagueId?: number;
 }) {
-  return useQuery<TeamFilterValues, ApiError>({
-    queryKey: teamsKeys.filterValues(params),
-    queryFn: () => teamsService.getFilterValues(params),
-    staleTime: 30 * 1000,
-  });
+  return useQuery<TeamFilterValues, ApiError>(
+    teamsQueries.filterValues(params),
+  );
+}
+
+/**
+ * Hook returning prefetch utilities for optimistic loading.
+ *
+ * Returns an object with prefetch functions for different data types.
+ * Call these on hover, route changes, or predicted navigation to warm
+ * the cache before the user lands on the target view.
+ *
+ * @returns Object with prefetch functions
+ *
+ * @example
+ * const prefetch = useTeamsPrefetch();
+ * <tr onMouseEnter={() => prefetch.detail(team.id)} />
+ */
+export function useTeamsPrefetch() {
+  const queryClient = useQueryClient();
+
+  return {
+    detail: teamsPrefetch.detail(queryClient),
+    matches: teamsPrefetch.matches(queryClient),
+    list: teamsPrefetch.list(queryClient),
+  };
 }
