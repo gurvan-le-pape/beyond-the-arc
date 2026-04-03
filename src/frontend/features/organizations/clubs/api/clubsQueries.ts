@@ -3,7 +3,9 @@ import type { QueryClient } from "@tanstack/react-query";
 
 import { safeFetch } from "@/shared/utils/safeFetch";
 
+import type { ClubBasic } from "../types/ClubBasic";
 import type { ClubFilters } from "../types/ClubFilters";
+import type { ClubStatsByDepartment } from "../types/ClubStatsByDepartement";
 import type { ClubStatsByRegion } from "../types/ClubStatsByRegion";
 import { clubsService } from "./clubs.service";
 import { clubsKeys } from "./clubsKeys";
@@ -102,10 +104,7 @@ export const clubsQueries = {
    */
   statsByDepartment: () => ({
     queryKey: clubsKeys.statsByDepartment(),
-    queryFn: () =>
-      safeFetch<
-        import("../types/ClubStatsByDepartement").ClubStatsByDepartment[]
-      >("/api/clubs/departments"),
+    queryFn: () => safeFetch<ClubStatsByDepartment[]>("/api/clubs/departments"),
     ...CLUBS_STATIC_CONFIG,
     // Server caches for 1h — align client staleTime accordingly
     staleTime: 60 * 60 * 1000,
@@ -121,8 +120,7 @@ export const clubsQueries = {
    */
   allClubs: () => ({
     queryKey: clubsKeys.allClubs(),
-    queryFn: () =>
-      safeFetch<import("../types/ClubBasic").ClubBasic[]>("/api/clubs/all"),
+    queryFn: () => safeFetch<ClubBasic[]>("/api/clubs/all"),
     ...CLUBS_STATIC_CONFIG,
     // Server caches for 1h — align client staleTime accordingly
     staleTime: 60 * 60 * 1000,

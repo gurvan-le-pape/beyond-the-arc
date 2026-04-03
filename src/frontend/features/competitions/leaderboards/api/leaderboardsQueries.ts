@@ -1,6 +1,7 @@
 // src/frontend/features/competitions/leaderboards/api/leaderboardsQueries.ts
 import type { QueryClient } from "@tanstack/react-query";
 
+import type { Leaderboard } from "../types";
 import type { LeaderboardFilters } from "../types/LeaderboardFilters";
 import { leaderboardsService } from "./leaderboards.service";
 import { leaderboardsKeys } from "./leaderboardsKeys";
@@ -49,8 +50,7 @@ export const leaderboardsQueries = {
    */
   list: (filters?: LeaderboardFilters) => ({
     queryKey: leaderboardsKeys.list(filters),
-    queryFn: (): Promise<import("../types/Leaderboard").Leaderboard[]> =>
-      leaderboardsService.getAll(filters),
+    queryFn: (): Promise<Leaderboard[]> => leaderboardsService.getAll(filters),
     ...LEADERBOARDS_CONFIG,
   }),
 } as const;

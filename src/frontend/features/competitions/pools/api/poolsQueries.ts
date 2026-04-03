@@ -1,6 +1,7 @@
 // src/frontend/features/competitions/pools/api/poolsQueries.ts
 import type { QueryClient } from "@tanstack/react-query";
 
+import type { Pool } from "../types";
 import { poolsService } from "./pools.service";
 import { poolsKeys } from "./poolsKeys";
 
@@ -47,7 +48,7 @@ export const poolsQueries = {
    */
   byChampionship: (championshipId: number) => ({
     queryKey: poolsKeys.byChampionship(championshipId),
-    queryFn: (): Promise<import("../types/Pool").Pool[]> =>
+    queryFn: (): Promise<Pool[]> =>
       poolsService.getByChampionshipId(championshipId),
     ...POOLS_CONFIG,
   }),
