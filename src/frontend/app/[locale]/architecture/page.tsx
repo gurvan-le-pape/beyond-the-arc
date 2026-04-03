@@ -14,7 +14,7 @@ import {
 import { getTranslations } from "next-intl/server";
 import React from "react";
 
-import { PageLayout } from "@/shared/components/layout";
+import { PageHero, PageLayout } from "@/shared/components/layout";
 import { Text } from "@/shared/components/typography";
 
 export default async function ArchitecturePage({
@@ -126,15 +126,12 @@ export default async function ArchitecturePage({
 
   return (
     <PageLayout>
-      {/* Header */}
-      <div className="text-center mb-12">
-        <Text variant="h1" className="mb-4">
-          {t("architecture.title")}
-        </Text>
-        <Text variant="lead" className="max-w-2xl mx-auto">
-          {t("architecture.subtitle")}
-        </Text>
-      </div>
+      <PageHero
+        title={t("architecture.title")}
+        lead={t("architecture.subtitle")}
+        icon={Layers}
+        iconGradient="secondary"
+      />
 
       {/* Tech Stack Cards — sit on surface-base, so use surface-subtle */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">

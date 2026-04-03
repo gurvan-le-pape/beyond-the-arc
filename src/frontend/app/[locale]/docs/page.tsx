@@ -15,7 +15,7 @@ import {
 import { useTranslations } from "next-intl";
 import React, { useState } from "react";
 
-import { PageLayout } from "@/shared/components/layout";
+import { PageHero, PageLayout } from "@/shared/components/layout";
 import { Text } from "@/shared/components/typography";
 
 export default function DocsPage() {
@@ -51,18 +51,11 @@ export default function DocsPage() {
 
   return (
     <PageLayout>
-      {/* Header */}
-      <div className="text-center mb-12">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-button bg-gradient-to-br from-blue-500 to-purple-500 text-white mb-4 shadow-card">
-          <BookOpen className="w-8 h-8" />
-        </div>
-        <Text variant="h1" className="mb-4">
-          {t("docs.title")}
-        </Text>
-        <Text variant="lead" className="max-w-2xl mx-auto">
-          {t("docs.intro")}
-        </Text>
-      </div>
+      <PageHero
+        title={t("docs.title")}
+        lead={t("docs.intro")}
+        icon={BookOpen}
+      />
 
       {/* Quick Links */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
