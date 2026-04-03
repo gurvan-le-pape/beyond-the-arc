@@ -6,6 +6,7 @@
 export * from "./championships.server";
 export * from "./championships.service";
 export * from "./championshipsKeys";
+export * from "./championshipsQueries";
 export * from "./divisions.server";
 export * from "./divisions.service";
 export * from "./geometries.server";

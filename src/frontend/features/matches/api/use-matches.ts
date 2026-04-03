@@ -10,15 +10,14 @@ import type { MatchesPaginatedResponse } from "../types/MatchesPaginatedResponse
 import type { MatchEvent } from "../types/MatchEvent";
 import type { MatchFilters } from "../types/MatchFilters";
 import type { MatchPlayerStatsResponse } from "../types/MatchPlayerStats";
-import { matchesService } from "./matches.service";
-import { matchesKeys } from "./matchesKeys";
+import { matchesPrefetch, matchesQueries } from "./matchesQueries";
 
 /**
  * Hook to fetch all matches with optional filters and pagination.
  *
  * Features:
- * - Automatic caching (2 minutes)
- * - Background refetching
+ * - Automatic caching (2 minutes stale, 5 minutes GC)
+ * - Background refetching on window focus
  * - Pagination support
  *
  * @param filters - Optional filter criteria
@@ -32,11 +31,9 @@ import { matchesKeys } from "./matchesKeys";
  * });
  */
 export function useMatches(filters?: MatchFilters) {
-  return useQuery<MatchesPaginatedResponse, ApiError>({
-    queryKey: matchesKeys.list(filters),
-    queryFn: () => matchesService.getAll(filters),
-    staleTime: 2 * 60 * 1000,
-  });
+  return useQuery<MatchesPaginatedResponse, ApiError>(
+    matchesQueries.list(filters),
+  );
 }
 
 /**
@@ -51,10 +48,8 @@ export function useMatches(filters?: MatchFilters) {
  */
 export function useMatch(id: number, options?: { enabled?: boolean }) {
   return useQuery<MatchDetail, ApiError>({
-    queryKey: matchesKeys.detail(id),
-    queryFn: () => matchesService.getById(id),
+    ...matchesQueries.detail(id),
     enabled: options?.enabled ?? !!id,
-    staleTime: 2 * 60 * 1000,
   });
 }
 
@@ -73,10 +68,8 @@ export function useMatchesByPool(
   options?: { enabled?: boolean },
 ) {
   return useQuery<Match[], ApiError>({
-    queryKey: matchesKeys.byPool(poolId),
-    queryFn: () => matchesService.getByPoolId(poolId),
+    ...matchesQueries.byPool(poolId),
     enabled: options?.enabled ?? !!poolId,
-    staleTime: 2 * 60 * 1000,
   });
 }
 
@@ -85,23 +78,21 @@ export function useMatchesByPool(
  *
  * Features:
  * - Runs parallel queries for each pool
- * - Automatic caching (2 minutes)
+ * - Automatic caching (2 minutes stale, 5 minutes GC)
  * - Background refetching
  *
  * @param poolIds - Array of pool IDs to fetch matches for
  * @returns Array of React Query results, one per pool ID
  *
  * @example
- * const matchQueries = useMatchesByPools(pools.map((pool) => pool.id));
- * const data = matchQueries[0]?.data;
+ * const matchQueries = useMatchesByPools([1, 2, 3]);
+ * const allLoaded = matchQueries.every(q => q.isSuccess);
  */
 export function useMatchesByPools(poolIds: number[]) {
   return useQueries<UseQueryResult<Match[], ApiError>[]>({
     queries: poolIds.map((poolId) => ({
-      queryKey: matchesKeys.byPool(poolId),
-      queryFn: (): Promise<Match[]> => matchesService.getByPoolId(poolId),
+      ...matchesQueries.byPool(poolId),
       enabled: !!poolId,
-      staleTime: 2 * 60 * 1000,
     })),
   });
 }
@@ -121,10 +112,8 @@ export function useMatchesByChampionship(
   options?: { enabled?: boolean },
 ) {
   return useQuery<Match[], ApiError>({
-    queryKey: matchesKeys.byChampionship(championshipId),
-    queryFn: () => matchesService.getByChampionshipId(championshipId),
+    ...matchesQueries.byChampionship(championshipId),
     enabled: options?.enabled ?? !!championshipId,
-    staleTime: 2 * 60 * 1000,
   });
 }
 
@@ -143,10 +132,8 @@ export function useMatchEvents(
   options?: { enabled?: boolean },
 ) {
   return useQuery<MatchEvent[], ApiError>({
-    queryKey: matchesKeys.events(matchId),
-    queryFn: () => matchesService.getEventsByMatchId(matchId),
+    ...matchesQueries.events(matchId),
     enabled: options?.enabled ?? !!matchId,
-    staleTime: 2 * 60 * 1000,
   });
 }
 
@@ -165,32 +152,29 @@ export function useMatchPlayerStats(
   options?: { enabled?: boolean },
 ) {
   return useQuery<MatchPlayerStatsResponse, ApiError>({
-    queryKey: matchesKeys.playerStats(matchId),
-    queryFn: () => matchesService.getPlayerStatsByMatchId(matchId),
+    ...matchesQueries.playerStats(matchId),
     enabled: options?.enabled ?? !!matchId,
-    staleTime: 2 * 60 * 1000,
   });
 }
 
 /**
- * Hook returning a prefetch function for match events.
- * Call the returned function on hover to warm the cache before expansion.
+ * Hook returning prefetch utilities for optimistic loading.
  *
- * @returns Prefetch function that accepts a match ID
+ * Returns an object with prefetch functions for different data types.
+ * Call these on hover, route changes, or predicted navigation.
+ *
+ * @returns Object with prefetch functions
  *
  * @example
- * const prefetchMatchEvents = usePrefetchMatchEvents();
- * <button onMouseEnter={() => prefetchMatchEvents(match.id)} />
+ * const prefetch = useMatchesPrefetch();
+ * <button onMouseEnter={() => prefetch.events(match.id)} />
  */
-export function usePrefetchMatchEvents() {
+export function useMatchesPrefetch() {
   const queryClient = useQueryClient();
-  return (matchId: number) => {
-    queryClient
-      .prefetchQuery({
-        queryKey: matchesKeys.events(matchId),
-        queryFn: () => matchesService.getEventsByMatchId(matchId),
-        staleTime: 2 * 60 * 1000,
-      })
-      .catch(() => {});
+
+  return {
+    events: matchesPrefetch.events(queryClient),
+    detail: matchesPrefetch.detail(queryClient),
+    playerStats: matchesPrefetch.playerStats(queryClient),
   };
 }

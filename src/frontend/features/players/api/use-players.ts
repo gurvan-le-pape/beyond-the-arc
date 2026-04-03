@@ -1,5 +1,5 @@
 // src/frontend/features/players/api/use-players.ts
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import type { ApiError } from "@/shared/types/Api";
 
@@ -7,11 +7,15 @@ import type { Player } from "../types/Player";
 import type { PlayerFilters } from "../types/PlayerFilters";
 import type { PlayerMatchHistory } from "../types/PlayerMatchHistory";
 import type { PlayersPaginatedResponse } from "../types/PlayersPaginatedResponse";
-import { playersService } from "./players.service";
-import { playersKeys } from "./playersKeys";
+import { playersPrefetch, playersQueries } from "./playersQueries";
 
 /**
  * Hook to fetch all players with optional filters and pagination.
+ *
+ * Features:
+ * - Automatic caching (5 minutes stale, 10 minutes GC)
+ * - Background refetching on window focus
+ * - Pagination support
  *
  * @param filters - Optional filter criteria (name, category, gender, etc.)
  * @param options - Additional query options
@@ -25,10 +29,8 @@ export function usePlayers(
   options?: { enabled?: boolean },
 ) {
   return useQuery<PlayersPaginatedResponse, ApiError>({
-    queryKey: playersKeys.list(filters),
-    queryFn: () => playersService.getAll(filters),
+    ...playersQueries.list(filters),
     enabled: options?.enabled ?? true,
-    staleTime: 5 * 60 * 1000,
   });
 }
 
@@ -44,15 +46,15 @@ export function usePlayers(
  */
 export function usePlayer(id: number, options?: { enabled?: boolean }) {
   return useQuery<Player, ApiError>({
-    queryKey: playersKeys.detail(id),
-    queryFn: () => playersService.getById(id),
+    ...playersQueries.detail(id),
     enabled: options?.enabled ?? !!id,
-    staleTime: 5 * 60 * 1000,
   });
 }
 
 /**
  * Hook to fetch match history for a specific player.
+ * Refreshes more aggressively (2 minutes) than other player data
+ * since results update throughout the week as fixtures are played.
  *
  * @param id - The player ID
  * @param options - Additional query options
@@ -63,9 +65,29 @@ export function usePlayer(id: number, options?: { enabled?: boolean }) {
  */
 export function usePlayerMatches(id: number, options?: { enabled?: boolean }) {
   return useQuery<PlayerMatchHistory[], ApiError>({
-    queryKey: playersKeys.matches(id),
-    queryFn: () => playersService.getMatches(id),
+    ...playersQueries.matches(id),
     enabled: options?.enabled ?? !!id,
-    staleTime: 2 * 60 * 1000,
   });
+}
+
+/**
+ * Hook returning prefetch utilities for optimistic loading.
+ *
+ * Returns an object with prefetch functions for different data types.
+ * Call these on hover, route changes, or predicted navigation to warm
+ * the cache before the user lands on the target view.
+ *
+ * @returns Object with prefetch functions
+ *
+ * @example
+ * const prefetch = usePlayersPrefetch();
+ * <tr onMouseEnter={() => prefetch.detail(player.id)} />
+ */
+export function usePlayersPrefetch() {
+  const queryClient = useQueryClient();
+
+  return {
+    detail: playersPrefetch.detail(queryClient),
+    matches: playersPrefetch.matches(queryClient),
+  };
 }

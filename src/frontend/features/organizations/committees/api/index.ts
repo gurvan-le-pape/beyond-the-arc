@@ -6,4 +6,5 @@
 export * from "./committees.server";
 export * from "./committees.service";
 export * from "./committeesKeys";
+export * from "./committeesQueries";
 export * from "./use-committees";

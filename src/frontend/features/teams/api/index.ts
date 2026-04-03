@@ -6,4 +6,5 @@
 export * from "./teams.server";
 export * from "./teams.service";
 export * from "./teamsKeys";
+export * from "./teamsQueries";
 export * from "./use-teams";

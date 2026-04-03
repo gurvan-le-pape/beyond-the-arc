@@ -1,0 +1,109 @@
+// src/frontend/features/players/api/playersQueries.ts
+import type { QueryClient } from "@tanstack/react-query";
+
+import type { PlayerFilters } from "../types/PlayerFilters";
+import { playersService } from "./players.service";
+import { playersKeys } from "./playersKeys";
+
+/**
+ * Global query configuration for players feature.
+ * Centralizes cache timing and behavior policies.
+ */
+const PLAYERS_CONFIG = {
+  /**
+   * Data remains fresh for 5 minutes.
+   * Player profiles and metadata change infrequently within a session.
+   */
+  staleTime: 5 * 60 * 1000,
+
+  /**
+   * Cached data garbage collected after 10 minutes of no usage.
+   * Players are browsed heavily within a session (search → profile → matches),
+   * so a generous gcTime avoids redundant fetches during navigation.
+   */
+  gcTime: 10 * 60 * 1000,
+} as const;
+
+/**
+ * Query options factory for players.
+ *
+ * Implements the Query Options pattern for:
+ * - Single source of truth (queryKey + queryFn + config)
+ * - Type-safe options spreading
+ * - Consistency between useQuery, prefetchQuery, and mutations
+ * - Easy testing (export options, test queryFn directly)
+ *
+ * @see https://tkdodo.eu/blog/effective-react-query-keys#use-query-key-factories
+ * @see https://tkdodo.eu/blog/leveraging-the-query-function-context
+ */
+export const playersQueries = {
+  /**
+   * Query options for fetching players with optional filters and pagination.
+   *
+   * @example
+   * useQuery(playersQueries.list({ leagueId: 1, page: 1 }))
+   */
+  list: (filters?: PlayerFilters) => ({
+    queryKey: playersKeys.list(filters),
+    queryFn: () => playersService.getAll(filters),
+    ...PLAYERS_CONFIG,
+  }),
+
+  /**
+   * Query options for fetching a single player by ID.
+   *
+   * @example
+   * useQuery(playersQueries.detail(123))
+   */
+  detail: (id: number) => ({
+    queryKey: playersKeys.detail(id),
+    queryFn: () => playersService.getById(id),
+    ...PLAYERS_CONFIG,
+  }),
+
+  /**
+   * Query options for fetching match history for a specific player.
+   * Uses a shorter staleTime than base config — match results update
+   * throughout the week as fixtures are played, mirroring the teams feature.
+   *
+   * @example
+   * useQuery(playersQueries.matches(123))
+   */
+  matches: (id: number) => ({
+    queryKey: playersKeys.matches(id),
+    queryFn: () => playersService.getMatches(id),
+    ...PLAYERS_CONFIG,
+    // Match results update regularly — refresh more aggressively than player metadata
+    staleTime: 2 * 60 * 1000,
+  }),
+} as const;
+
+/**
+ * Prefetch utilities for optimistic data loading.
+ * Call these on hover/route changes to warm the cache.
+ */
+export const playersPrefetch = {
+  /**
+   * Prefetch player detail (e.g., on search-result hover).
+   *
+   * @example
+   * const prefetch = playersPrefetch.detail(queryClient);
+   * <tr onMouseEnter={() => prefetch(player.id)} />
+   */
+  detail: (queryClient: QueryClient) => (playerId: number) => {
+    queryClient.prefetchQuery(playersQueries.detail(playerId)).catch(() => {
+      // Silently fail - prefetch is opportunistic
+    });
+  },
+
+  /**
+   * Prefetch player match history (e.g., on profile hover or tab navigation).
+   *
+   * @example
+   * const prefetch = playersPrefetch.matches(queryClient);
+   * <PlayerCard onMouseEnter={() => prefetch(player.id)} />
+   */
+  matches: (queryClient: QueryClient) => (playerId: number) => {
+    queryClient.prefetchQuery(playersQueries.matches(playerId)).catch(() => {});
+  },
+} as const;
