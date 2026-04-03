@@ -12,7 +12,7 @@ import {
 import { getTranslations } from "next-intl/server";
 import React from "react";
 
-import { PageLayout } from "@/shared/components/layout";
+import { PageHero, PageLayout } from "@/shared/components/layout";
 import { Text } from "@/shared/components/typography";
 
 export default async function AboutPage({
@@ -70,19 +70,11 @@ export default async function AboutPage({
 
   return (
     <PageLayout>
-      {/* Header */}
-      <div className="text-center mb-12">
-        {/* Decorative icon — gradient is intentional, not a surface */}
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-button bg-gradient-to-br from-blue-500 to-purple-500 text-white mb-4 shadow-card">
-          <Target className="w-8 h-8" />
-        </div>
-        <Text variant="h1" className="mb-4">
-          {t("about.title")}
-        </Text>
-        <Text variant="lead" className="max-w-3xl mx-auto">
-          {t("about.intro")}
-        </Text>
-      </div>
+      <PageHero
+        title={t("about.title")}
+        lead={t("about.intro")}
+        icon={Target}
+      />
 
       {/* Engineering Principles Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">

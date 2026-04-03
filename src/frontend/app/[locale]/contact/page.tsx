@@ -3,7 +3,7 @@ import { Github, Linkedin, Mail, Send } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import React from "react";
 
-import { PageLayout } from "@/shared/components/layout";
+import { PageHero, PageLayout } from "@/shared/components/layout";
 import { Text } from "@/shared/components/typography";
 
 export default async function ContactPage({
@@ -63,18 +63,12 @@ export default async function ContactPage({
 
   return (
     <PageLayout contentClassName="max-w-4xl">
-      {/* Header */}
-      <div className="text-center mb-12">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-button bg-gradient-to-br from-blue-500 to-cyan-500 text-white mb-4 shadow-card">
-          <Send className="w-8 h-8" />
-        </div>
-        <Text variant="h1" className="mb-4">
-          {t("contact.title")}
-        </Text>
-        <Text variant="lead" className="max-w-2xl mx-auto">
-          {t("contact.intro")}
-        </Text>
-      </div>
+      <PageHero
+        title={t("contact.title")}
+        lead={t("contact.intro")}
+        icon={Send}
+        iconGradient="accent"
+      />
 
       {/* Contact Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
