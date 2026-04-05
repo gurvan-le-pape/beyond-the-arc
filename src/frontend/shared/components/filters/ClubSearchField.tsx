@@ -1,4 +1,6 @@
 // src/frontend/shared/components/filters/ClubSearchField.tsx
+"use client";
+
 import React, { useState } from "react";
 
 import { useClubSearch } from "@/features/organizations/clubs/api";
