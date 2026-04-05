@@ -69,11 +69,13 @@ interface TabsListProps {
 
 export function TabsList({ children, className = "" }: TabsListProps) {
   return (
-    <div
-      className={`inline-flex items-center justify-start gap-1 bg-surface-raised dark:bg-surface-raised-dark rounded-button p-1 border border-divide-light dark:border-divide-dark shadow-card dark:shadow-card-dark mb-6 overflow-x-auto ${className}`}
-      role="tablist"
-    >
-      {children}
+    <div className={`flex justify-center mb-6 ${className}`}>
+      <div
+        className="flex w-full max-w-sm border-b-2 border-divide-light dark:border-divide-dark"
+        role="tablist"
+      >
+        {children}
+      </div>
     </div>
   );
 }
@@ -100,13 +102,13 @@ export function TabsTrigger({
       aria-selected={isSelected}
       onClick={() => onValueChange(value)}
       className={`
-        px-4 py-2 rounded-button text-sm font-medium whitespace-nowrap
-        transition-all duration-200
-        focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-surface-raised dark:focus:ring-offset-surface-raised-dark
+        flex-1 py-3 text-sm whitespace-nowrap text-center
+        border-b-2 -mb-px transition-all duration-200
+        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2
         ${
           isSelected
-            ? "bg-primary-600 text-white shadow-card hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600"
-            : "bg-transparent text-text-body dark:text-text-body-dark hover:bg-surface-subtle dark:hover:bg-surface-subtle-dark hover:text-text-heading dark:hover:text-text-heading-dark"
+            ? "border-primary-500 text-white font-semibold dark:border-primary-400 dark:text-white"
+            : "border-transparent text-text-muted dark:text-text-muted-dark hover:text-white dark:hover:text-white hover:border-divide-light dark:hover:border-divide-dark font-normal"
         }
         ${className}
       `}
