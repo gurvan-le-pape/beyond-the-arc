@@ -1,6 +1,5 @@
 // src/backend/modules/teams/teams.controller.spec.ts
 import type { PaginatedResponseDto } from "@common/dto/paginated-response.dto";
-import { Gender } from "@common/index";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { NotFoundException } from "@nestjs/common";
 import type { TestingModule } from "@nestjs/testing";
@@ -20,6 +19,7 @@ describe("TeamsController", () => {
   let service: TeamsService;
 
   const mockTeamsService = {
+    findAllIds: jest.fn(),
     findAllTeams: jest.fn(),
     findTeamFilterValues: jest.fn(),
     findTeamById: jest.fn(),
@@ -52,6 +52,34 @@ describe("TeamsController", () => {
     service = module.get<TeamsService>(TeamsService);
 
     jest.clearAllMocks();
+  });
+
+  describe("getAllIds", () => {
+    it("should return all team IDs", async () => {
+      const mockIds = [{ id: 1 }, { id: 2 }, { id: 3 }];
+      mockTeamsService.findAllIds.mockResolvedValue(mockIds);
+
+      const result = await controller.getAllIds();
+
+      expect(result).toEqual(mockIds);
+      expect(service.findAllIds).toHaveBeenCalledTimes(1);
+    });
+
+    it("should return empty array when no teams exist", async () => {
+      mockTeamsService.findAllIds.mockResolvedValue([]);
+
+      const result = await controller.getAllIds();
+
+      expect(result).toEqual([]);
+    });
+
+    it("should propagate service errors", async () => {
+      mockTeamsService.findAllIds.mockRejectedValue(
+        new Error("Database error"),
+      );
+
+      await expect(controller.getAllIds()).rejects.toThrow("Database error");
+    });
   });
 
   describe("getTeams", () => {
