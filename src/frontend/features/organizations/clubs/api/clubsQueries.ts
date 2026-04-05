@@ -125,6 +125,18 @@ export const clubsQueries = {
     // Server caches for 1h — align client staleTime accordingly
     staleTime: 60 * 60 * 1000,
   }),
+
+  search: (
+    search: string,
+    filters?: Pick<ClubFilters, "committeeId" | "leagueId">,
+  ) => ({
+    queryKey: clubsKeys.search(search, filters),
+    queryFn: () =>
+      clubsService.getAll({ search, ...filters, limit: 20, page: 1 }),
+    staleTime: 60 * 1000, // 1 min — search results change more than static lists
+    gcTime: 2 * 60 * 1000,
+    enabled: true,
+  }),
 } as const;
 
 /**

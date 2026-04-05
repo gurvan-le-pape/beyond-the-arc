@@ -134,3 +134,35 @@ export function useClubsPrefetch() {
     allClubs: clubsPrefetch.allClubs(queryClient),
   };
 }
+
+/**
+ * Hook to search clubs by name with optional location scoping.
+ *
+ * Designed for use with SearchableDropdown — fetches a limited set of
+ * results on demand as the user types, rather than loading all clubs upfront.
+ * Results are scoped to committeeId or leagueId when provided, so the list
+ * stays relevant to any active location filter.
+ *
+ * Cache behaviour:
+ * - staleTime: 1 minute (search results change more frequently than static lists)
+ * - gcTime: 2 minutes
+ *
+ * @param search - The search string to filter club names by (case-insensitive)
+ * @param filters - Optional committeeId or leagueId to scope results to a location
+ * @returns React Query result with paginated clubs matching the search
+ *
+ * @example
+ * const { data, isLoading } = useClubSearch("monaco", { leagueId: 3 });
+ *
+ * @example
+ * // Unscoped search across all clubs
+ * const { data, isLoading } = useClubSearch(debouncedSearch);
+ */
+export function useClubSearch(
+  search: string,
+  filters?: Pick<ClubFilters, "committeeId" | "leagueId">,
+) {
+  return useQuery<ClubsPaginatedResponse, ApiError>({
+    ...clubsQueries.search(search, filters),
+  });
+}

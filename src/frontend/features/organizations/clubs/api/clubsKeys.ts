@@ -11,4 +11,8 @@ export const clubsKeys = {
   statsByDepartment: () =>
     [...clubsKeys.all, "stats", "by-department"] as const,
   allClubs: () => [...clubsKeys.all, "all"] as const,
+  search: (
+    search: string,
+    filters?: Pick<ClubFilters, "committeeId" | "leagueId">,
+  ) => [...clubsKeys.all, "search", search, filters] as const,
 };
