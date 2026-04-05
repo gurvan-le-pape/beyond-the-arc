@@ -168,6 +168,22 @@ export class PlayersService {
   constructor(private readonly prisma: PrismaService) {}
 
   /**
+   * Retrieves all player IDs without filtering.
+   * Intended for sitemap generation — selects only the ID field
+   * to keep the query as lightweight as possible.
+   *
+   * @returns Flat array of objects with player IDs
+   */
+  async findAllIds(): Promise<{ id: number }[]> {
+    this.logger.log("[findAllIds] Fetching all player IDs");
+
+    return this.prisma.players.findMany({
+      select: { id: true },
+      orderBy: { id: "asc" },
+    });
+  }
+
+  /**
    * Retrieves all players with optional filters and pagination.
    *
    * @param filters - Optional filters and pagination params
@@ -287,18 +303,18 @@ export class PlayersService {
   private mapToDto(entity: PlayerSelectResult): PlayerResponseDto {
     return {
       id: entity.id,
-      name: entity.name, // Players.name is String (non-nullable), no fallback needed
-      number: entity.number, // Players.number is Int (non-nullable)
+      name: entity.name,
+      number: entity.number,
       teamId: entity.teamId,
       team: {
         id: entity.team.id,
-        number: entity.team.number, // Teams.number is Int (non-nullable)
+        number: entity.team.number,
         clubId: entity.team.clubId,
         category: entity.team.category as Category,
         gender: entity.team.gender as Gender,
         club: {
           id: entity.team.club.id,
-          name: entity.team.club.name, // Clubs.name is String (non-nullable)
+          name: entity.team.club.name,
           committee: {
             id: entity.team.club.committee.id,
             name: entity.team.club.committee.name,
@@ -311,10 +327,10 @@ export class PlayersService {
         pool: entity.team.pool
           ? {
               id: entity.team.pool.id,
-              name: entity.team.pool.name, // Pools.name is String (non-nullable)
+              name: entity.team.pool.name,
               championship: {
                 id: entity.team.pool.championship.id,
-                name: entity.team.pool.championship.name, // Championships.name is String (non-nullable)
+                name: entity.team.pool.championship.name,
                 level: entity.team.pool.championship.level as CompetitionLevel,
                 division: entity.team.pool.championship.division,
               },
@@ -338,31 +354,30 @@ export class PlayersService {
       date: stat.match.date,
       homeTeam: {
         id: stat.match.homeTeam.id,
-        number: stat.match.homeTeam.number, // Teams.number is Int (non-nullable)
+        number: stat.match.homeTeam.number,
         club: {
           id: stat.match.homeTeam.club.id,
-          name: stat.match.homeTeam.club.name, // Clubs.name is String (non-nullable)
+          name: stat.match.homeTeam.club.name,
         },
       },
       awayTeam: {
         id: stat.match.awayTeam.id,
-        number: stat.match.awayTeam.number, // Teams.number is Int (non-nullable)
+        number: stat.match.awayTeam.number,
         club: {
           id: stat.match.awayTeam.club.id,
-          name: stat.match.awayTeam.club.name, // Clubs.name is String (non-nullable)
+          name: stat.match.awayTeam.club.name,
         },
       },
-      homeTeamScore: stat.match.homeTeamScore, // Matches.homeTeamScore is Int (non-nullable)
-      awayTeamScore: stat.match.awayTeamScore, // Matches.awayTeamScore is Int (non-nullable)
+      homeTeamScore: stat.match.homeTeamScore,
+      awayTeamScore: stat.match.awayTeamScore,
       player: {
         player: {
           id: stat.player.id,
-          name: stat.player.name, // Players.name is String (non-nullable)
-          number: stat.player.number, // Players.number is Int (non-nullable)
+          name: stat.player.name,
+          number: stat.player.number,
           teamId: stat.player.teamId,
         },
         stats: {
-          // All PlayerMatchStats fields are Int @default(0) — non-nullable
           points: stat.points,
           fouls: stat.fouls,
           threePointsMade: stat.threePointsMade,
