@@ -6,5 +6,9 @@ import { routing } from "./navigation";
 export default createMiddleware(routing);
 
 export const config = {
-  matcher: ["/", "/(fr|en)/:path*"],
+  matcher: [
+    "/",
+    "/(fr|en)/:path*",
+    "/((?!robots.txt|sitemap.xml|_next|_vercel|.*\\..*).*)",
+  ],
 };
