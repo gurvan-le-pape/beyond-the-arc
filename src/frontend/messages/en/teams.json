@@ -1,6 +1,10 @@
 {
   "teams": "teams",
   "label": "Teams",
+  "tryAdjustingFilters": "Try adjusting your filters to find more teams.",
+  "teamNumber": "Team #{number}",
+  "pool": "Pool",
+  "poolLabel": "Pool {letter}",
   "teamDetail": {
     "pointsPerGame": "Points / game",
     "reboundsPerGame": "Rebounds / game",
@@ -49,5 +53,11 @@
     "pool": "Pool",
     "teamsList": "Teams list",
     "noChampionships": "No championships available"
+  },
+  "filters": {
+    "club": "Club",
+    "allClubs": "All clubs",
+    "teamNumber": "Team number",
+    "allTeams": "All teams"
   }
 }

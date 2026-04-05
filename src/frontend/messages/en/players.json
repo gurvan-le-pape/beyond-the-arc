@@ -1,6 +1,9 @@
 {
   "players": "players",
   "label": "Players",
+  "tryAdjustingFilters": "Try adjusting your filters to find more players.",
+  "playerNumber": "#{number}",
+  "teamNumber": "Team #{number}",
   "playerDetail": {
     "playerNotFound": "Player not found",
     "club": "Club",
@@ -24,5 +27,15 @@
     "category": "Category",
     "gender": "Gender",
     "playersList": "Players list"
+  },
+  "filters": {
+    "searchName": "Search player",
+    "searchNamePlaceholder": "Player name...",
+    "club": "Club",
+    "allClubs": "All clubs",
+    "playerNumber": "Player number",
+    "allNumbers": "All numbers",
+    "teamNumber": "Team number",
+    "allTeams": "All teams"
   }
 }
