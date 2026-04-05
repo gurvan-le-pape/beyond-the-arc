@@ -29,7 +29,6 @@ export function TeamsTab() {
   const {
     committees,
     leagues,
-    clubs,
     committeeId,
     setCommitteeId,
     leagueId,
@@ -41,6 +40,7 @@ export function TeamsTab() {
   const [level, setLevel] = useState<CompetitionLevel | undefined>(undefined);
   const [number, setNumber] = useState("");
   const [clubId, setClubId] = useState("");
+  const [selectedClubName, setSelectedClubName] = useState("");
   const [category, setCategory] = useState<Category | undefined>(undefined);
   const [gender, setGender] = useState<Gender | undefined>(undefined);
   const [division, setDivision] = useState("");
@@ -110,6 +110,7 @@ export function TeamsTab() {
     setLeagueId(undefined);
     setNumber("");
     setClubId("");
+    setSelectedClubName("");
     setCategory(undefined);
     setGender(undefined);
     setDivision("");
@@ -144,9 +145,10 @@ export function TeamsTab() {
         setLeagueId={setLeagueId}
         committees={committees}
         leagues={leagues}
-        clubs={clubs}
         clubId={clubId}
         setClubId={setClubId}
+        selectedClubName={selectedClubName}
+        setSelectedClubName={setSelectedClubName}
         number={number}
         setNumber={setNumber}
         teamNumbers={teamFilterValues?.numbers ?? []}
