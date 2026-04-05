@@ -1,28 +1,25 @@
 // src/frontend/features/search/components/PlayersTab.tsx
 "use client";
 
-import { useRouter } from "next/navigation";
+import { UserIcon } from "@heroicons/react/24/outline";
 import { useTranslations } from "next-intl";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
-import { CompetitionLevelFilters } from "@/features/competitions/components";
 import { useCommitteeLeagueClubFilters } from "@/features/competitions/hooks";
 import { usePlayers } from "@/features/players/api/use-players";
-import { getPlayersTableColumns } from "@/features/players/components";
-import { usePlayersTableFilters } from "@/features/players/hooks";
+import PlayerCard from "@/features/players/components/list/PlayersCard";
+import { PlayersFilters } from "@/features/players/components/list/PlayersFilters";
 import type { Player } from "@/features/players/types/Player";
 import { useTeamFilterValues } from "@/features/teams/api/use-teams";
-import { EntityTable } from "@/shared/components/domain";
-import { EntityListPage } from "@/shared/components/layout";
-import { Pagination } from "@/shared/components/table";
+import { useRouter } from "@/navigation";
 import {
-  CATEGORY_LIST,
-  CompetitionLevel,
-  GENDER_LIST,
-  NA,
-  PLAYER_TEST_IDS,
-} from "@/shared/constants";
-import { useEntityFilters, useEntityTable } from "@/shared/hooks";
+  EmptyState,
+  ErrorMessage,
+  LoadingSpinner,
+} from "@/shared/components/feedback";
+import { Card } from "@/shared/components/primitives";
+import { Pagination } from "@/shared/components/table";
+import type { Category, CompetitionLevel, Gender } from "@/shared/constants";
 import type { Pagination as PaginationType } from "@/shared/types";
 
 export function PlayersTab() {
@@ -42,25 +39,15 @@ export function PlayersTab() {
     resetFilters: resetCommitteeLeagueClubFilters,
   } = useCommitteeLeagueClubFilters();
 
-  const [columnFilters, setColumnFilters] = useState<any[]>([]);
-  const [level, setLevel] = useState<CompetitionLevel>(CompetitionLevel.ALL);
+  const [level, setLevel] = useState<CompetitionLevel | undefined>(undefined);
+  const [name, setName] = useState("");
+  const [number, setNumber] = useState("");
+  const [teamNumber, setTeamNumber] = useState("");
+  const [clubId, setClubId] = useState("");
+  const [category, setCategory] = useState<Category | undefined>(undefined);
+  const [gender, setGender] = useState<Gender | undefined>(undefined);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(50);
-
-  const {
-    filters,
-    getInputFilterProps,
-    getDropdownFilterProps,
-    getSearchableDropdownFilterProps,
-    resetFilters: resetEntityFilters,
-  } = useEntityFilters({
-    number: { type: "dropdown", initial: "" },
-    name: { type: "input", debounceMs: 400, initial: "" },
-    team: { type: "dropdown", initial: "" },
-    club: { type: "searchableDropdown", initial: "" },
-    category: { type: "dropdown", initial: "" },
-    gender: { type: "dropdown", initial: "" },
-  });
 
   const { data: teamFilterValues } = useTeamFilterValues({
     committeeId,
@@ -72,20 +59,20 @@ export function PlayersTab() {
     error: playersError,
     isLoading: playersLoading,
   } = usePlayers({
-    level: level === CompetitionLevel.ALL ? undefined : level,
+    level: level || undefined,
     committeeId: committeeId || undefined,
     leagueId: leagueId || undefined,
-    number: filters.number ? Number(filters.number) : undefined,
-    name: filters.name || undefined,
-    teamNumber: filters.team ? Number(filters.team) : undefined,
-    clubId: filters.club ? Number(filters.club) : undefined,
-    category: filters.category || undefined,
-    gender: filters.gender || undefined,
+    number: number ? Number(number) : undefined,
+    name: name || undefined,
+    teamNumber: teamNumber ? Number(teamNumber) : undefined,
+    clubId: clubId ? Number(clubId) : undefined,
+    category: category || undefined,
+    gender: gender || undefined,
     page: currentPage,
     limit: pageSize,
   });
 
-  const players = playersData?.items ?? [];
+  const players: Player[] = playersData?.items ?? [];
   const pagination: PaginationType | null = playersData
     ? {
         total: playersData.total,
@@ -95,51 +82,41 @@ export function PlayersTab() {
       }
     : null;
 
+  // Reset to page 1 on any filter change
   useEffect(() => {
-    resetEntityFilters();
+    setCurrentPage(1);
+  }, [
+    level,
+    committeeId,
+    leagueId,
+    name,
+    number,
+    teamNumber,
+    clubId,
+    category,
+    gender,
+  ]);
+
+  // Reset dependent filters when location changes
+  useEffect(() => {
+    setNumber("");
+    setTeamNumber("");
     setCurrentPage(1);
   }, [committeeId, leagueId]);
 
-  const columns = useMemo(() => getPlayersTableColumns(tPlayers), [tPlayers]);
-  const tableData = useMemo(
-    () =>
-      players.map((player: Player) => ({
-        id: player.id,
-        number: player.number ? String(player.number) : "",
-        name: player.name,
-        team: player.team?.number ? String(player.team.number) : "",
-        club: player.team?.club?.name || NA,
-        category: player.team?.category || NA,
-        gender: player.team?.gender || NA,
-      })),
-    [players],
-  );
-
-  const table = useEntityTable({
-    data: tableData,
-    columns,
-    pagination,
-    pageSize,
-    setPageSize,
-    currentPage,
-    setCurrentPage,
-    columnFilters,
-    setColumnFilters,
-  });
-
-  const { filterableDropdownKeys, filterRenderers } = usePlayersTableFilters({
-    numbers: teamFilterValues?.numbers ?? [],
-    teamNumbers: teamFilterValues?.numbers ?? [],
-    clubs,
-    categories: CATEGORY_LIST,
-    genders: GENDER_LIST,
-    clubProps: getSearchableDropdownFilterProps("club"),
-    nameProps: getInputFilterProps("name"),
-    numberProps: getDropdownFilterProps("number"),
-    teamProps: getDropdownFilterProps("team"),
-    categoryProps: getDropdownFilterProps("category"),
-    genderProps: getDropdownFilterProps("gender"),
-  });
+  const handleReset = () => {
+    setLevel(undefined);
+    setCommitteeId(undefined);
+    setLeagueId(undefined);
+    setName("");
+    setNumber("");
+    setTeamNumber("");
+    setClubId("");
+    setCategory(undefined);
+    setGender(undefined);
+    setCurrentPage(1);
+    resetCommitteeLeagueClubFilters();
+  };
 
   let errorMessage: string | null = null;
   if (committeeLeagueClubFiltersError) {
@@ -149,67 +126,84 @@ export function PlayersTab() {
   }
 
   return (
-    <EntityListPage
-      title={tPlayers("label")}
-      filters={
-        <CompetitionLevelFilters
-          level={level}
-          setLevel={(value) => {
-            setLevel(value);
-            setCommitteeId(undefined);
-            setLeagueId(undefined);
-            setCurrentPage(1);
-          }}
-          committeeId={committeeId}
-          setCommitteeId={setCommitteeId}
-          leagueId={leagueId}
-          setLeagueId={setLeagueId}
-          committees={committees}
-          leagues={leagues}
-          onReset={() => {
-            setLevel(CompetitionLevel.ALL);
-            resetEntityFilters();
-            resetCommitteeLeagueClubFilters();
-            setCurrentPage(1);
-          }}
-        />
-      }
-      table={
-        <EntityTable
-          columns={columns}
-          table={table}
-          isLoading={playersLoading}
-          error={errorMessage}
-          onRowClick={(id) => router.push(`/players/${id}`)}
-          emptyMessage={tCommon("emptyState.players")}
-          skeletonRowCount={10}
-          testID={PLAYER_TEST_IDS.table}
-          ariaLabel={tPlayers("playersTable.playersList")}
-          rowAriaLabel={(row: any) =>
-            tCommon("player.seePlayer", { name: row.name })
-          }
-          rowTestId={PLAYER_TEST_IDS.playerRow}
-          cellTestId={PLAYER_TEST_IDS.cell}
-          filterableDropdownKeys={filterableDropdownKeys}
-          filterRenderers={filterRenderers}
-          headerTestId={PLAYER_TEST_IDS.header}
-          errorRowTestId={PLAYER_TEST_IDS.errorRow}
-          retryButtonTestId={PLAYER_TEST_IDS.retryButton}
-          emptyRowTestId={PLAYER_TEST_IDS.emptyRow}
-        />
-      }
-      pagination={
-        <Pagination
-          pagination={pagination}
-          pageSize={pageSize}
-          setPageSize={(size) => {
-            setPageSize(size);
-            setCurrentPage(1);
-          }}
-          setPageIndex={(index) => table.setPageIndex(index)}
-          label={tPlayers("players")}
-        />
-      }
-    />
+    <div className="space-y-6">
+      <PlayersFilters
+        name={name}
+        setName={setName}
+        category={category}
+        setCategory={setCategory}
+        gender={gender}
+        setGender={setGender}
+        level={level}
+        setLevel={(value) => {
+          setLevel(value);
+          setCommitteeId(undefined);
+          setLeagueId(undefined);
+        }}
+        committeeId={committeeId}
+        setCommitteeId={setCommitteeId}
+        leagueId={leagueId}
+        setLeagueId={setLeagueId}
+        committees={committees}
+        leagues={leagues}
+        clubs={clubs}
+        clubId={clubId}
+        setClubId={setClubId}
+        number={number}
+        setNumber={setNumber}
+        playerNumbers={teamFilterValues?.numbers ?? []}
+        teamNumber={teamNumber}
+        setTeamNumber={setTeamNumber}
+        teamNumbers={teamFilterValues?.numbers ?? []}
+        onReset={handleReset}
+      />
+
+      {playersLoading && (
+        <div className="flex justify-center items-center py-20">
+          <LoadingSpinner size="lg" />
+        </div>
+      )}
+
+      {errorMessage && !playersLoading && (
+        <ErrorMessage message={errorMessage} />
+      )}
+
+      {!playersLoading &&
+        !errorMessage &&
+        (players.length === 0 ? (
+          <Card padding="lg">
+            <EmptyState
+              icon={<UserIcon className="w-16 h-16" />}
+              title={tCommon("emptyState.players")}
+              description={tPlayers("tryAdjustingFilters")}
+            />
+          </Card>
+        ) : (
+          <>
+            <div className="space-y-4">
+              {players.map((player: Player) => (
+                <PlayerCard
+                  key={player.id}
+                  player={player}
+                  onClick={(id) => router.push(`/players/${id}`)}
+                />
+              ))}
+            </div>
+
+            {pagination && pagination.totalPages > 1 && (
+              <Pagination
+                pagination={pagination}
+                pageSize={pageSize}
+                setPageSize={(size) => {
+                  setPageSize(size);
+                  setCurrentPage(1);
+                }}
+                setPageIndex={(index) => setCurrentPage(index + 1)}
+                label={tPlayers("players")}
+              />
+            )}
+          </>
+        ))}
+    </div>
   );
 }

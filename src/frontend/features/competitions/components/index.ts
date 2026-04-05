@@ -10,7 +10,6 @@ export * from "./championships/ChampionshipListItem";
 export * from "./detail/CompetitionHeader";
 export * from "./detail/CompetitionInfo";
 export * from "./detail/SearchableChipsList";
-export * from "./filters/CompetitionLevelFilters";
 export * from "./matches/MatchCard";
 export * from "./matches/MatchDetailsTable";
 export * from "./matches/MatchesPanel";

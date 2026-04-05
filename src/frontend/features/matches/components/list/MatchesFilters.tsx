@@ -1,4 +1,4 @@
-// src/frontend/features/matches/components/list/MatchesFilter.tsx
+// src/frontend/features/matches/components/list/MatchesFilters.tsx
 import { CalendarIcon } from "@heroicons/react/24/outline";
 import { useTranslations } from "next-intl";
 import React from "react";
@@ -6,7 +6,12 @@ import React from "react";
 import type { Championship } from "@/features/competitions/championships/types/Championship";
 import { Input, Select } from "@/shared/components/forms";
 import { Button, Card } from "@/shared/components/primitives";
-import { Category, CompetitionLevel, Gender } from "@/shared/constants";
+import type { Category, Gender } from "@/shared/constants";
+import {
+  CATEGORY_LIST,
+  CompetitionLevel,
+  GENDER_LIST,
+} from "@/shared/constants";
 
 interface MatchesFiltersProps {
   // Search & Date
@@ -37,14 +42,10 @@ interface MatchesFiltersProps {
   setMatchday: (value: number | undefined) => void;
   championships: Championship[];
   pools: any[];
-  // Reset handler
+  // Reset
   onReset: () => void;
 }
 
-/**
- * Filters component for matches page
- * Handles search, date, category, gender, level, location, and competition hierarchy
- */
 export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
   search,
   setSearch,
@@ -76,7 +77,6 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
   const tCommon = useTranslations("common");
   const tFilters = useTranslations("filters");
 
-  // Get unique divisions from championships
   const divisions = Array.from(
     new Set(
       championships
@@ -85,7 +85,6 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
     ),
   ).sort((a: any, b: any) => a - b);
 
-  // Get number of matchdays for selected pool
   const getMatchdaysCount = () => {
     if (!poolId) return 30;
     const pool = pools.find((p: any) => String(p.id) === String(poolId));
@@ -95,9 +94,8 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
   return (
     <Card variant="highlighted" padding="lg">
       <div className="space-y-6">
-        {/* Row 1: Search and Date */}
+        {/* Row 1: Search + Date */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Club Search */}
           <Input
             variant="search"
             label={tMatches("searchClub")}
@@ -108,7 +106,6 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
             clearAriaLabel={tCommon("clearSearch")}
           />
 
-          {/* Date Filter */}
           <Input
             id="date-filter"
             type="date"
@@ -119,42 +116,41 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
           />
         </div>
 
-        {/* Row 2: Category and Gender */}
+        {/* Row 2: Category + Gender */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Category */}
           <Select
             id="category-filter"
             label={tMatches("category")}
             value={category}
-            onChange={(e) => setCategory(e.target.value as Category)}
+            onChange={(e) =>
+              setCategory((e.target.value as Category) || undefined)
+            }
           >
             <option value="">{tMatches("allCategories")}</option>
-            <option value={Category.U11}>{tCommon("category.U11")}</option>
-            <option value={Category.U13}>{tCommon("category.U13")}</option>
-            <option value={Category.U15}>{tCommon("category.U15")}</option>
-            <option value={Category.U18}>{tCommon("category.U18")}</option>
-            <option value={Category.U21}>{tCommon("category.U21")}</option>
-            <option value={Category.SENIOR}>
-              {tCommon("category.senior")}
-            </option>
+            {CATEGORY_LIST.map((cat) => (
+              <option key={cat} value={cat}>
+                {tCommon(`category.${cat}`)}
+              </option>
+            ))}
           </Select>
 
-          {/* Gender */}
           <Select
             id="gender-filter"
             label={tMatches("gender")}
             value={gender}
-            onChange={(e) => setGender(e.target.value as Gender)}
+            onChange={(e) => setGender((e.target.value as Gender) || undefined)}
           >
             <option value="">{tMatches("allGenders")}</option>
-            <option value={Gender.MALE}>{tCommon("gender.male")}</option>
-            <option value={Gender.FEMALE}>{tCommon("gender.female")}</option>
+            {GENDER_LIST.map((g) => (
+              <option key={g} value={g}>
+                {tCommon(`gender.${g}`)}
+              </option>
+            ))}
           </Select>
         </div>
 
-        {/* Row 3: Level and Location */}
+        {/* Row 3: Level + Location */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Level */}
           <Select
             id="level-filter"
             label={tMatches("level")}
@@ -173,7 +169,6 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
             </option>
           </Select>
 
-          {/* Committee (if departmental) */}
           {level === CompetitionLevel.DEPARTMENTAL && (
             <Select
               id="committee-filter"
@@ -184,15 +179,14 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
               }
             >
               <option value="">{tMatches("selectCommittee")}</option>
-              {committees.map((committee) => (
-                <option key={committee.id} value={committee.id}>
-                  {committee.name}
+              {committees.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
                 </option>
               ))}
             </Select>
           )}
 
-          {/* League (if regional) */}
           {level === CompetitionLevel.REGIONAL && (
             <Select
               id="league-filter"
@@ -201,20 +195,19 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
               onChange={(e) => setLeagueId(Number(e.target.value) || undefined)}
             >
               <option value="">{tMatches("selectLeague")}</option>
-              {leagues.map((league) => (
-                <option key={league.id} value={league.id}>
-                  {league.name}
+              {leagues.map((l) => (
+                <option key={l.id} value={l.id}>
+                  {l.name}
                 </option>
               ))}
             </Select>
           )}
         </div>
 
-        {/* Row 4: Division, Pool, Matchday (conditional) */}
+        {/* Row 4: Division / Pool / Matchday (conditional) */}
         {((level === CompetitionLevel.DEPARTMENTAL && committeeId) ||
           (level === CompetitionLevel.REGIONAL && leagueId)) && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Division */}
             <Select
               id="division-filter"
               label={tMatches("division")}
@@ -229,7 +222,6 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
               ))}
             </Select>
 
-            {/* Pool (if division selected) */}
             {division && pools.length > 0 && (
               <Select
                 id="pool-filter"
@@ -246,7 +238,6 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
               </Select>
             )}
 
-            {/* Matchday (if pool selected) */}
             {poolId && (
               <Select
                 id="matchday-filter"
@@ -267,8 +258,8 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
           </div>
         )}
 
-        {/* Reset Button */}
-        <div className="flex justify-end items-center">
+        {/* Reset */}
+        <div className="flex justify-end">
           <Button
             variant="outline"
             size="md"
