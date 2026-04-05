@@ -1,4 +1,6 @@
 // src/frontend/shared/components/primitives/SearchableDropdown.tsx
+"use client";
+
 import { useTranslations } from "next-intl";
 import React, { useEffect, useRef, useState } from "react";
 
