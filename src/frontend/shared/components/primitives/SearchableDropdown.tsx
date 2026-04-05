@@ -1,6 +1,4 @@
 // src/frontend/shared/components/primitives/SearchableDropdown.tsx
-"use client";
-
 import { useTranslations } from "next-intl";
 import React, { useEffect, useRef, useState } from "react";
 
@@ -50,6 +48,19 @@ export const SelectChevron = ({
   </svg>
 );
 
+function getFilteredOptions(
+  options: Option[],
+  search: string,
+  onSearchChange: ((value: string) => void) | undefined,
+) {
+  if (onSearchChange) return options;
+  if (search)
+    return options.filter((opt) =>
+      opt.label.toLowerCase().includes(search.toLowerCase()),
+    );
+  return options;
+}
+
 export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
   options,
   value,
@@ -67,13 +78,7 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const filteredOptions = onSearchChange
-    ? options
-    : search
-    ? options.filter((opt) =>
-        opt.label.toLowerCase().includes(search.toLowerCase()),
-      )
-    : options;
+  const filteredOptions = getFilteredOptions(options, search, onSearchChange);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -96,6 +101,41 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
   }, [open]);
 
   const selectedOption = options.find((opt) => opt.value === value);
+
+  const renderOptions = () => {
+    if (isLoading) {
+      return (
+        <li className="px-4 py-2 text-sm text-text-muted dark:text-text-muted-dark">
+          {t("loading")}
+        </li>
+      );
+    }
+    if (filteredOptions.length === 0) {
+      return (
+        <li className="px-4 py-2 text-sm text-text-muted dark:text-text-muted-dark">
+          {t("empty")}
+        </li>
+      );
+    }
+    return filteredOptions.map((opt) => (
+      <li key={opt.value}>
+        <button
+          type="button"
+          className={`w-full text-left px-4 py-2 text-sm transition-colors duration-150 ${
+            value === opt.value
+              ? "bg-primary-50 dark:bg-primary-900/30 font-semibold text-primary-700 dark:text-primary-300"
+              : "text-text-heading dark:text-text-heading-dark hover:bg-surface-subtle dark:hover:bg-surface-subtle-dark hover:text-primary-700 dark:hover:text-primary-400"
+          }`}
+          onClick={() => {
+            onChange(opt.value);
+            setOpen(false);
+          }}
+        >
+          {opt.label}
+        </button>
+      </li>
+    ));
+  };
 
   return (
     <div
@@ -146,39 +186,10 @@ export const SearchableDropdown: React.FC<SearchableDropdownProps> = ({
           />
 
           <ul className="max-h-60 overflow-y-auto scrollbar-hide py-1">
-            {isLoading ? (
-              <li className="px-4 py-2 text-sm text-text-muted dark:text-text-muted-dark">
-                {t("loading")}
-              </li>
-            ) : filteredOptions.length === 0 ? (
-              <li className="px-4 py-2 text-sm text-text-muted dark:text-text-muted-dark">
-                {t("empty")}
-              </li>
-            ) : (
-              filteredOptions.map((opt) => (
-                <li key={opt.value}>
-                  <button
-                    type="button"
-                    className={`w-full text-left px-4 py-2 text-sm transition-colors duration-150 ${
-                      value === opt.value
-                        ? "bg-primary-50 dark:bg-primary-900/30 font-semibold text-primary-700 dark:text-primary-300"
-                        : "text-text-heading dark:text-text-heading-dark hover:bg-surface-subtle dark:hover:bg-surface-subtle-dark hover:text-primary-700 dark:hover:text-primary-400"
-                    }`}
-                    onClick={() => {
-                      onChange(opt.value);
-                      setOpen(false);
-                    }}
-                  >
-                    {opt.label}
-                  </button>
-                </li>
-              ))
-            )}
+            {renderOptions()}
           </ul>
         </div>
       )}
     </div>
   );
 };
-
-export default SearchableDropdown;
