@@ -21,27 +21,14 @@ export function BottomSheet({
   children,
   footer,
 }: BottomSheetProps) {
-  const sheetRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
 
-  // Close on backdrop click
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) onClose();
-  };
-
-  // Close on Escape
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    if (isOpen) document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
-
-  // Prevent body scroll when open
   useEffect(() => {
     if (isOpen) {
+      dialogRef.current?.showModal();
       document.body.style.overflow = "hidden";
     } else {
+      dialogRef.current?.close();
       document.body.style.overflow = "";
     }
     return () => {
@@ -49,27 +36,24 @@ export function BottomSheet({
     };
   }, [isOpen]);
 
-  if (!isOpen) return null;
-
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-end md:hidden"
-      onClick={handleBackdropClick}
-      aria-modal="true"
-      role="dialog"
+    <dialog
+      ref={dialogRef}
+      className="fixed inset-0 z-50 flex items-end md:hidden bg-transparent p-0 m-0 max-w-full max-h-full w-full h-full"
       aria-label={title}
+      onCancel={onClose}
     >
-      {/* Backdrop */}
-      <div
-        className={cn(
-          "absolute inset-0 bg-black/50 backdrop-blur-sm",
-          "animate-in fade-in duration-200",
-        )}
+      {/* Backdrop as button for accessibility */}
+      <button
+        type="button"
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200 w-full cursor-default"
+        onClick={onClose}
+        aria-label="Close"
+        tabIndex={-1}
       />
 
       {/* Sheet */}
       <div
-        ref={sheetRef}
         className={cn(
           "relative w-full bg-surface-raised dark:bg-surface-raised-dark",
           "rounded-t-2xl shadow-2xl",
@@ -107,7 +91,7 @@ export function BottomSheet({
           </div>
         )}
       </div>
-    </div>
+    </dialog>
   );
 }
 
