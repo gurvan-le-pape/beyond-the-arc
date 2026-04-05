@@ -1,6 +1,7 @@
 // src/frontend/app/layout.tsx
-import "../styles/globals.css";
-import "../styles/shotchart.css";
+import "@/styles/globals.css";
+import "@/styles/shotchart.css";
+import "@/styles/map.css";
 
 import type { Metadata } from "next";
 

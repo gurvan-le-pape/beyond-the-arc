@@ -1,26 +1,41 @@
 // src/frontend/features/organizations/clubs/components/map/ClubPopupContent.tsx
+import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useTranslations } from "next-intl";
 
 import { useRouter } from "@/navigation";
+import { Button } from "@/shared/components/primitives/Button";
 import { Text } from "@/shared/components/typography";
 
 import type { ClubBasic } from "../../types/ClubBasic";
 
 interface ClubPopupContentProps {
-  club: ClubBasic;
+  readonly club: ClubBasic;
+  readonly onClose: () => void;
 }
 
-export function ClubPopupContent({ club }: ClubPopupContentProps) {
+export function ClubPopupContent({ club, onClose }: ClubPopupContentProps) {
   const router = useRouter();
 
   const t = useTranslations("clubs");
 
   return (
-    <div className="min-w-[240px] max-w-[320px] p-4">
-      {/* Club Name */}
-      <Text variant="h3" className="mb-1 leading-tight">
-        {club.name}
-      </Text>
+    <div className="min-w-[240px] max-w-[320px] p-4 bg-surface-subtle dark:bg-surface-subtle-dark rounded-xl overflow-hidden">
+      {/* Header */}
+      <div className="flex items-start justify-between gap-2 mb-1">
+        {/* Club Name */}
+        <Text variant="h3" className="leading-tight">
+          {club.name}
+        </Text>
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Close"
+          onClick={onClose}
+          className="shrink-0 -mt-1 -mr-1 h-8 w-8"
+        >
+          <XMarkIcon className="w-4 h-4" />
+        </Button>
+      </div>
 
       {/* City and Zip */}
       {(club.city || club.zipCode) && (
@@ -38,12 +53,12 @@ export function ClubPopupContent({ club }: ClubPopupContentProps) {
           {club.email && (
             <a
               href={`mailto:${club.email}`}
-              className="flex items-center gap-3 p-2.5 bg-surface-subtle rounded-lg hover:bg-surface-raised transition-colors group"
+              className="flex items-center gap-3 p-2.5 bg-surface-raised dark:bg-surface-raised-dark rounded-lg hover:brightness-95 transition-colors group"
               title={club.email}
             >
-              <div className="w-8 h-8 flex items-center justify-center bg-surface-raised rounded-full shadow-sm">
+              <div className="w-8 h-8 flex items-center justify-center border border-divide-light dark:border-divide-dark rounded-full">
                 <svg
-                  className="w-4 h-4 text-primary-600"
+                  className="w-4 h-4 text-primary-600 dark:text-primary-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -56,18 +71,21 @@ export function ClubPopupContent({ club }: ClubPopupContentProps) {
                   />
                 </svg>
               </div>
-              <span className="text-sm text-primary-600 font-medium truncate group-hover:text-primary-700">
+              <Text
+                variant="caption"
+                className="font-medium truncate text-primary-600 dark:text-primary-400"
+              >
                 {club.email}
-              </span>
+              </Text>
             </a>
           )}
 
           {/* Phone */}
           {club.phone && (
-            <div className="flex items-center gap-3 p-2.5 bg-surface-subtle rounded-lg">
-              <div className="w-8 h-8 flex items-center justify-center bg-surface-raised rounded-full shadow-sm">
+            <div className="flex items-center gap-3 p-2.5 bg-surface-raised dark:bg-surface-raised-dark rounded-lg">
+              <div className="w-8 h-8 flex items-center justify-center border border-divide-light dark:border-divide-dark rounded-full">
                 <svg
-                  className="w-4 h-4 text-primary-600"
+                  className="w-4 h-4 text-primary-600 dark:text-primary-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -80,9 +98,9 @@ export function ClubPopupContent({ club }: ClubPopupContentProps) {
                   />
                 </svg>
               </div>
-              <span className="text-sm text-text-emphasis font-medium">
+              <Text variant="caption" className="font-medium">
                 {club.phone}
-              </span>
+              </Text>
             </div>
           )}
 
@@ -92,11 +110,11 @@ export function ClubPopupContent({ club }: ClubPopupContentProps) {
               href={club.website}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-3 p-2.5 bg-surface-subtle rounded-lg hover:bg-surface-raised transition-colors group"
+              className="flex items-center gap-3 p-2.5 bg-surface-raised dark:bg-surface-raised-dark rounded-lg hover:brightness-95 transition-colors group"
             >
-              <div className="w-8 h-8 flex items-center justify-center bg-surface-raised rounded-full shadow-sm">
+              <div className="w-8 h-8 flex items-center justify-center border border-divide-light dark:border-divide-dark rounded-full">
                 <svg
-                  className="w-4 h-4 text-primary-600"
+                  className="w-4 h-4 text-primary-600 dark:text-primary-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -109,23 +127,26 @@ export function ClubPopupContent({ club }: ClubPopupContentProps) {
                   />
                 </svg>
               </div>
-              <span className="text-sm text-primary-600 font-medium truncate group-hover:text-primary-700">
+              <Text
+                variant="caption"
+                className="font-medium text-primary-600 dark:text-primary-400"
+              >
                 {t("map.visitWebsite")}
-              </span>
+              </Text>
             </a>
           )}
         </div>
       )}
 
       {/* See Details Button */}
-      <button
-        onClick={() => {
-          router.push(`/organizations/clubs/${club.id}`);
-        }}
-        className="w-full py-2.5 px-4 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition-colors shadow-md hover:shadow-lg"
+      <Button
+        variant="primary"
+        size="md"
+        className="w-full"
+        onClick={() => router.push(`/organizations/clubs/${club.id}`)}
       >
         {t("map.seeDetails")}
-      </button>
+      </Button>
     </div>
   );
 }

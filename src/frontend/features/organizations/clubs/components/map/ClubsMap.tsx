@@ -233,7 +233,10 @@ export function ClubsMap({ initialRegions }: ClubsMapProps) {
             latitude={selectedClub.latitude!}
             onClose={() => setSelectedClub(null)}
           >
-            <ClubPopupContent club={selectedClub} />
+            <ClubPopupContent
+              club={selectedClub}
+              onClose={() => setSelectedClub(null)}
+            />
           </Popup>
         )}
       </MapGL>

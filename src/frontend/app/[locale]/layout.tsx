@@ -1,6 +1,7 @@
 // src/frontend/app/[locale]/layout.tsx
-import "../../styles/globals.css";
-import "../../styles/shotchart.css";
+import "@/styles/globals.css";
+import "@/styles/shotchart.css";
+import "@/styles/map.css";
 
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
@@ -18,8 +19,8 @@ export default async function LocaleLayout({
   children,
   params,
 }: {
-  children: React.ReactNode;
-  params: Promise<{ locale: string }>;
+  readonly children: React.ReactNode;
+  readonly params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
 
