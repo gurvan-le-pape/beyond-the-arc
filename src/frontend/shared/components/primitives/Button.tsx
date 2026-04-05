@@ -86,6 +86,15 @@ const buttonVariants = cva(BASE, {
         "dark:text-primary-400 dark:hover:bg-surface-subtle-dark " +
         "focus-visible:ring-primary-500",
 
+      // Inline text action — underlined, no background or border.
+      // Use for low-emphasis actions like "Reset all" that sit next to other UI.
+      link:
+        "rounded text-text-muted underline underline-offset-2 " +
+        "hover:text-text-body " +
+        "dark:text-text-muted-dark dark:hover:text-text-body-dark " +
+        "focus-visible:ring-primary-500 " +
+        "active:scale-100",
+
       danger:
         "rounded-button bg-error text-white " +
         "hover:bg-error-dark " +
@@ -154,6 +163,8 @@ export interface ButtonProps
  * <Button variant="primary" size="lg">Save</Button>
  * <Button variant="danger" isLoading={isDeleting}>Delete</Button>
  * <Button variant="icon" aria-label="Close"><XIcon /></Button>
+ * <Button variant="link" size="sm">Reset all</Button>
+ * <Button variant="control">Filters</Button>
  */
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
