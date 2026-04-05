@@ -1,4 +1,5 @@
 {
+  "label": "Matches",
   "errorLoadingChampionships": "Error loading championships",
   "errorFetchingFilters": "Error fetching filter options",
   "searchTitle": "Match Search",

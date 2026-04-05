@@ -1,4 +1,5 @@
 {
+  "label": "Matchs",
   "errorLoadingChampionships": "Erreur lors du chargement des championnats",
   "errorFetchingFilters": "Erreur lors du chargement des filtres",
   "searchTitle": "Recherche de Matchs",

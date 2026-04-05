@@ -4,8 +4,11 @@ import { useTranslations } from "next-intl";
 import React from "react";
 
 import type { Championship } from "@/features/competitions/championships/types/Championship";
+import type { CascadeStep } from "@/shared/components/filters/CascadeSelects";
+import { CascadeSelects } from "@/shared/components/filters/CascadeSelects";
+import { FiltersShell } from "@/shared/components/filters/FiltersShell";
+import { LevelLocationFilters } from "@/shared/components/filters/LevelLocationFilters";
 import { Input, Select } from "@/shared/components/forms";
-import { Button, Card } from "@/shared/components/primitives";
 import type { Category, Gender } from "@/shared/constants";
 import {
   CATEGORY_LIST,
@@ -85,192 +88,232 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
     ),
   ).sort((a: any, b: any) => a - b);
 
-  const getMatchdaysCount = () => {
-    if (!poolId) return 30;
-    const pool = pools.find((p: any) => String(p.id) === String(poolId));
-    return pool?.nbMatchdays || 30;
-  };
+  const matchdaysCount = poolId
+    ? pools.find((p: any) => String(p.id) === String(poolId))?.nbMatchdays ?? 30
+    : 30;
+
+  const locationLabel =
+    level === CompetitionLevel.DEPARTMENTAL
+      ? committees.find((c) => c.id === committeeId)?.name
+      : leagues.find((l) => l.id === leagueId)?.name;
+
+  const locationSelected =
+    (level === CompetitionLevel.DEPARTMENTAL && committeeId) ||
+    (level === CompetitionLevel.REGIONAL && leagueId);
+
+  const selectedPool = pools.find((p) => p.id === poolId);
+
+  const chips = [
+    search && {
+      key: "search",
+      label: `"${search}"`,
+      onRemove: () => setSearch(""),
+    },
+    dateFilter && {
+      key: "date",
+      label: dateFilter,
+      onRemove: () => setDateFilter(""),
+    },
+    category && {
+      key: "category",
+      label: tCommon(`category.${category}`),
+      onRemove: () => setCategory(undefined),
+    },
+    gender && {
+      key: "gender",
+      label: tCommon(`gender.${gender}`),
+      onRemove: () => setGender(undefined),
+    },
+    level && {
+      key: "level",
+      label: tCommon(`competition.levels.${level.toLowerCase()}`),
+      onRemove: () => {
+        setLevel(undefined);
+        setCommitteeId(undefined);
+        setLeagueId(undefined);
+        setDivision(undefined);
+        setPoolId(undefined);
+        setMatchday(undefined);
+      },
+    },
+    locationLabel && {
+      key: "location",
+      label: locationLabel,
+      onRemove: () => {
+        setCommitteeId(undefined);
+        setLeagueId(undefined);
+        setDivision(undefined);
+        setPoolId(undefined);
+        setMatchday(undefined);
+      },
+    },
+    division && {
+      key: "division",
+      label: tMatches("divisionLabel", { div: division }),
+      onRemove: () => {
+        setDivision(undefined);
+        setPoolId(undefined);
+        setMatchday(undefined);
+      },
+    },
+    poolId && {
+      key: "pool",
+      label: selectedPool?.name ?? String(poolId),
+      onRemove: () => {
+        setPoolId(undefined);
+        setMatchday(undefined);
+      },
+    },
+    matchday && {
+      key: "matchday",
+      label: tMatches("matchdayLabel", { matchday }),
+      onRemove: () => setMatchday(undefined),
+    },
+  ].filter(Boolean) as { key: string; label: string; onRemove: () => void }[];
+
+  const cascadeSteps: CascadeStep[] = [
+    {
+      id: "division-filter",
+      label: tMatches("division"),
+      value: division ?? "",
+      onChange: (val) => {
+        setDivision(Number(val) || undefined);
+        setPoolId(undefined);
+        setMatchday(undefined);
+      },
+      enabled: !!locationSelected,
+      options: divisions.map((div) => ({
+        value: div,
+        label: tMatches("divisionLabel", { div }),
+      })),
+      allLabel: tMatches("selectDivision"),
+      waitLabel: tFilters("filters.selectLevelFirst"),
+    },
+    {
+      id: "pool-filter",
+      label: tMatches("pool"),
+      value: poolId ?? "",
+      onChange: (val) => {
+        setPoolId(Number(val) || undefined);
+        setMatchday(undefined);
+      },
+      enabled: !!division,
+      options: pools.map((p) => ({ value: p.id, label: p.name })),
+      allLabel: tMatches("allPools"),
+      waitLabel: tFilters("filters.selectDivisionFirst"),
+    },
+    {
+      id: "matchday-filter",
+      label: tMatches("matchday"),
+      value: matchday ?? "",
+      onChange: (val) => setMatchday(Number(val) || undefined),
+      enabled: !!poolId,
+      options: Array.from({ length: matchdaysCount }, (_, i) => ({
+        value: i + 1,
+        label: tMatches("matchdayLabel", { matchday: i + 1 }),
+      })),
+      allLabel: tMatches("allMatchdays"),
+      waitLabel: tFilters("filters.selectPoolFirst"),
+    },
+  ];
 
   return (
-    <Card variant="highlighted" padding="lg">
-      <div className="space-y-6">
-        {/* Row 1: Search + Date */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Input
-            variant="search"
-            label={tMatches("searchClub")}
-            value={search}
-            placeholder={tMatches("searchClubPlaceholder")}
-            onChange={(e) => setSearch(e.target.value)}
-            onClear={() => setSearch("")}
-            clearAriaLabel={tCommon("clearSearch")}
-          />
+    <FiltersShell
+      activeFilterCount={chips.length}
+      chips={chips}
+      onReset={onReset}
+      title={tMatches("label")}
+    >
+      {/* Row 1: Search + Date */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Input
+          variant="search"
+          label={tMatches("searchClub")}
+          value={search}
+          placeholder={tMatches("searchClubPlaceholder")}
+          onChange={(e) => setSearch(e.target.value)}
+          onClear={() => setSearch("")}
+          clearAriaLabel={tCommon("clearSearch")}
+        />
 
-          <Input
-            id="date-filter"
-            type="date"
-            label={tMatches("date")}
-            value={dateFilter}
-            onChange={(e) => setDateFilter(e.target.value)}
-            leftIcon={<CalendarIcon className="w-5 h-5" />}
-          />
-        </div>
-
-        {/* Row 2: Category + Gender */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Select
-            id="category-filter"
-            label={tMatches("category")}
-            value={category}
-            onChange={(e) =>
-              setCategory((e.target.value as Category) || undefined)
-            }
-          >
-            <option value="">{tMatches("allCategories")}</option>
-            {CATEGORY_LIST.map((cat) => (
-              <option key={cat} value={cat}>
-                {tCommon(`category.${cat}`)}
-              </option>
-            ))}
-          </Select>
-
-          <Select
-            id="gender-filter"
-            label={tMatches("gender")}
-            value={gender}
-            onChange={(e) => setGender((e.target.value as Gender) || undefined)}
-          >
-            <option value="">{tMatches("allGenders")}</option>
-            {GENDER_LIST.map((g) => (
-              <option key={g} value={g}>
-                {tCommon(`gender.${g}`)}
-              </option>
-            ))}
-          </Select>
-        </div>
-
-        {/* Row 3: Level + Location */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Select
-            id="level-filter"
-            label={tMatches("level")}
-            value={level}
-            onChange={(e) => setLevel(e.target.value as CompetitionLevel)}
-          >
-            <option value="">{tMatches("selectLevel")}</option>
-            <option value={CompetitionLevel.DEPARTMENTAL}>
-              {tCommon(`competition.levels.${CompetitionLevel.DEPARTMENTAL}`)}
-            </option>
-            <option value={CompetitionLevel.REGIONAL}>
-              {tCommon(`competition.levels.${CompetitionLevel.REGIONAL}`)}
-            </option>
-            <option value={CompetitionLevel.NATIONAL}>
-              {tCommon(`competition.levels.${CompetitionLevel.NATIONAL}`)}
-            </option>
-          </Select>
-
-          {level === CompetitionLevel.DEPARTMENTAL && (
-            <Select
-              id="committee-filter"
-              label={tMatches("committee")}
-              value={committeeId}
-              onChange={(e) =>
-                setCommitteeId(Number(e.target.value) || undefined)
-              }
-            >
-              <option value="">{tMatches("selectCommittee")}</option>
-              {committees.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </Select>
-          )}
-
-          {level === CompetitionLevel.REGIONAL && (
-            <Select
-              id="league-filter"
-              label={tMatches("league")}
-              value={leagueId}
-              onChange={(e) => setLeagueId(Number(e.target.value) || undefined)}
-            >
-              <option value="">{tMatches("selectLeague")}</option>
-              {leagues.map((l) => (
-                <option key={l.id} value={l.id}>
-                  {l.name}
-                </option>
-              ))}
-            </Select>
-          )}
-        </div>
-
-        {/* Row 4: Division / Pool / Matchday (conditional) */}
-        {((level === CompetitionLevel.DEPARTMENTAL && committeeId) ||
-          (level === CompetitionLevel.REGIONAL && leagueId)) && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Select
-              id="division-filter"
-              label={tMatches("division")}
-              value={division}
-              onChange={(e) => setDivision(Number(e.target.value) || undefined)}
-            >
-              <option value="">{tMatches("selectDivision")}</option>
-              {divisions.map((div: any) => (
-                <option key={div} value={div}>
-                  {tMatches("divisionLabel", { div })}
-                </option>
-              ))}
-            </Select>
-
-            {division && pools.length > 0 && (
-              <Select
-                id="pool-filter"
-                label={tMatches("pool")}
-                value={poolId}
-                onChange={(e) => setPoolId(Number(e.target.value) || undefined)}
-              >
-                <option value="">{tMatches("allPools")}</option>
-                {pools.map((pool) => (
-                  <option key={pool.id} value={pool.id}>
-                    {pool.name}
-                  </option>
-                ))}
-              </Select>
-            )}
-
-            {poolId && (
-              <Select
-                id="matchday-filter"
-                label={tMatches("matchday")}
-                value={matchday}
-                onChange={(e) =>
-                  setMatchday(Number(e.target.value) || undefined)
-                }
-              >
-                <option value="">{tMatches("allMatchdays")}</option>
-                {Array.from({ length: getMatchdaysCount() }, (_, i) => (
-                  <option key={i + 1} value={i + 1}>
-                    {tMatches("matchdayLabel", { j: i + 1 })}
-                  </option>
-                ))}
-              </Select>
-            )}
-          </div>
-        )}
-
-        {/* Reset */}
-        <div className="flex justify-end">
-          <Button
-            variant="outline"
-            size="md"
-            onClick={onReset}
-            aria-label={tFilters("filters.reset")}
-          >
-            {tFilters("filters.reset")}
-          </Button>
-        </div>
+        <Input
+          id="date-filter"
+          type="date"
+          label={tMatches("date")}
+          value={dateFilter}
+          onChange={(e) => setDateFilter(e.target.value)}
+          leftIcon={<CalendarIcon className="w-5 h-5" />}
+        />
       </div>
-    </Card>
+
+      {/* Row 2: Category + Gender */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Select
+          id="category-filter"
+          label={tMatches("category")}
+          value={category ?? ""}
+          onChange={(e) =>
+            setCategory((e.target.value as Category) || undefined)
+          }
+        >
+          <option value="">{tMatches("allCategories")}</option>
+          {CATEGORY_LIST.map((cat) => (
+            <option key={cat} value={cat}>
+              {tCommon(`category.${cat}`)}
+            </option>
+          ))}
+        </Select>
+
+        <Select
+          id="gender-filter"
+          label={tMatches("gender")}
+          value={gender ?? ""}
+          onChange={(e) => setGender((e.target.value as Gender) || undefined)}
+        >
+          <option value="">{tMatches("allGenders")}</option>
+          {GENDER_LIST.map((g) => (
+            <option key={g} value={g}>
+              {tCommon(`gender.${g}`)}
+            </option>
+          ))}
+        </Select>
+      </div>
+
+      {/* Divider */}
+      <div className="border-t border-divide-light dark:border-divide-dark" />
+
+      {/* Row 3: Level → Committee/League cascade */}
+      <LevelLocationFilters
+        level={level}
+        setLevel={(val) => {
+          setLevel(val);
+          setCommitteeId(undefined);
+          setLeagueId(undefined);
+          setDivision(undefined);
+          setPoolId(undefined);
+          setMatchday(undefined);
+        }}
+        committeeId={committeeId}
+        setCommitteeId={(val) => {
+          setCommitteeId(val);
+          setDivision(undefined);
+          setPoolId(undefined);
+          setMatchday(undefined);
+        }}
+        leagueId={leagueId}
+        setLeagueId={(val) => {
+          setLeagueId(val);
+          setDivision(undefined);
+          setPoolId(undefined);
+          setMatchday(undefined);
+        }}
+        committees={committees}
+        leagues={leagues}
+      />
+
+      {/* Row 4: Division → Pool → Matchday cascade */}
+      <CascadeSelects steps={cascadeSteps} cols={3} />
+    </FiltersShell>
   );
 };
 

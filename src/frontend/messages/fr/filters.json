@@ -6,7 +6,17 @@
     "committee": "Comité",
     "league": "Ligue",
     "allCommittees": "Tous les comités",
-    "allLeagues": "Toutes les ligues"
+    "allLeagues": "Toutes les ligues",
+    "label": "Filtres",
+    "apply": "Appliquer",
+    "resetAll": "Tout réinitialiser",
+    "noActiveFilters": "Aucun filtre actif",
+    "activeCount": "{count} filtre(s) actif(s)",
+    "allLevels": "Tous les niveaux",
+    "committeeOrLeague": "Comité / Ligue",
+    "selectLevelFirst": "Sélectionnez un niveau d'abord",
+    "selectDivisionFirst": "Sélectionnez une division d'abord",
+    "selectPoolFirst": "Sélectionnez une poule d'abord"
   },
   "levels": {
     "all": "Tous les niveaux",

@@ -6,7 +6,17 @@
     "committee": "Committee",
     "league": "League",
     "allCommittees": "All committees",
-    "allLeagues": "All leagues"
+    "allLeagues": "All leagues",
+    "label": "Filters",
+    "apply": "Apply",
+    "resetAll": "Reset all",
+    "noActiveFilters": "No active filters",
+    "activeCount": "{count} active filter(s)",
+    "allLevels": "All levels",
+    "committeeOrLeague": "Committee / League",
+    "selectLevelFirst": "Select a level first",
+    "selectDivisionFirst": "Select a division first",
+    "selectPoolFirst": "Select a pool first"
   },
   "levels": {
     "all": "All levels",
