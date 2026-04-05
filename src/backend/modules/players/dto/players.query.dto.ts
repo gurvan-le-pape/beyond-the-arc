@@ -83,19 +83,19 @@ export class GetPlayersQueryDto {
   @ApiPropertyOptional({
     description: "Age category filter",
     example: "U18",
-    type: String,
+    enum: Category,
   })
   @IsOptional()
-  @IsString()
+  @IsEnum(Category)
   category?: Category;
 
   @ApiPropertyOptional({
     description: "Gender filter",
     example: "M",
-    type: String,
+    enum: Gender,
   })
   @IsOptional()
-  @IsString()
+  @IsEnum(Gender)
   gender?: Gender;
 
   @ApiPropertyOptional({

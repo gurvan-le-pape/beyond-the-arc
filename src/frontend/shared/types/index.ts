@@ -6,8 +6,6 @@
 export * from "./Api";
 // export * from "./axios";
 export * from "./filters/FilterKey";
-export * from "./filters/PlayersTableFiltersConfig";
-export * from "./filters/TeamsTableFiltersConfig";
 export * from "./NavItem";
 export * from "./Pagination";
 export * from "./PlayerMatchStats";

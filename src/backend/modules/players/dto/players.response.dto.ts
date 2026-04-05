@@ -1,5 +1,5 @@
 // src/backend/modules/players/dto/players.response.dto.ts
-import { Category, Gender } from "@common/index";
+import { Category, CompetitionLevel, Gender } from "@common/index";
 import { ApiProperty } from "@nestjs/swagger";
 
 /**
@@ -62,7 +62,7 @@ export class PlayerResponseDto {
       championship: {
         id: number;
         name: string;
-        level: string;
+        level: CompetitionLevel;
         division: number;
       };
     } | null;

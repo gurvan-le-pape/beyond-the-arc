@@ -3,7 +3,6 @@ export const CompetitionLevel = {
   DEPARTMENTAL: "departmental",
   REGIONAL: "regional",
   NATIONAL: "national",
-  ALL: "all",
 } as const;
 
 export const LocalCompetitionLevel = {

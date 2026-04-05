@@ -4,7 +4,6 @@
  */
 
 export * from "./CategorySection";
-export * from "./EntityTable";
 export * from "./GenderCategorizedList";
 export * from "./LeaderboardTable";
 export * from "./TeamListItem";

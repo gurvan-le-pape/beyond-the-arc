@@ -6,7 +6,6 @@ export const Category = {
   U18: "U18",
   U21: "U21",
   SENIOR: "Senior",
-  ALL: "All",
 } as const;
 
 export const CATEGORY_LIST = Object.values(Category);

@@ -9,4 +9,3 @@ export * from "./detail/PlayerCareerStats";
 export * from "./detail/PlayerHeader";
 export * from "./detail/PlayerMatchHistoryTable";
 export * from "./detail/PlayerSearchDropdown";
-export * from "./list/playersTableColumns";

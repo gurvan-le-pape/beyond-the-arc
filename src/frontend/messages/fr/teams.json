@@ -1,6 +1,10 @@
 {
   "teams": "équipes",
   "label": "Équipes",
+  "tryAdjustingFilters": "Essayez d'ajuster vos filtres pour trouver plus d'équipes.",
+  "teamNumber": "Équipe #{number}",
+  "pool": "Poule",
+  "poolLabel": "Poule {letter}",
   "teamDetail": {
     "pointsPerGame": "Points / match",
     "reboundsPerGame": "Rebonds / match",
@@ -47,5 +51,11 @@
     "pool": "Pool",
     "teamsList": "Liste des équipes",
     "noChampionships": "Aucun championship disponible"
+  },
+  "filters": {
+    "club": "Club",
+    "allClubs": "Tous les clubs",
+    "teamNumber": "Numéro d'équipe",
+    "allTeams": "Toutes les équipes"
   }
 }

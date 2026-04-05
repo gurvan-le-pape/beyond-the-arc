@@ -1,6 +1,9 @@
 {
   "players": "joueurs",
   "label": "Joueurs",
+  "tryAdjustingFilters": "Essayez d'ajuster vos filtres pour trouver plus de joueurs.",
+  "playerNumber": "#{number}",
+  "teamNumber": "Équipe #{number}",
   "playerDetail": {
     "playerNotFound": "Joueur non trouvé",
     "club": "Club",
@@ -24,5 +27,15 @@
     "category": "Catégorie",
     "gender": "Genre",
     "playersList": "Liste des joueurs"
+  },
+  "filters": {
+    "searchName": "Rechercher un joueur",
+    "searchNamePlaceholder": "Nom du joueur...",
+    "club": "Club",
+    "allClubs": "Tous les clubs",
+    "playerNumber": "Numéro de joueur",
+    "allNumbers": "Tous les numéros",
+    "teamNumber": "Numéro d'équipe",
+    "allTeams": "Toutes les équipes"
   }
 }

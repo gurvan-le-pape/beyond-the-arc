@@ -2,7 +2,6 @@
 "use client";
 
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
@@ -13,6 +12,7 @@ import { MatchesCard, MatchesFilters } from "@/features/matches/components";
 import type { Match } from "@/features/matches/types/Match";
 import { useCommittees } from "@/features/organizations/committees/api/use-committees";
 import { useLeagues } from "@/features/organizations/leagues/api/use-leagues";
+import { useRouter } from "@/navigation";
 import {
   EmptyState,
   ErrorMessage,
@@ -20,8 +20,8 @@ import {
 } from "@/shared/components/feedback";
 import { Card } from "@/shared/components/primitives";
 import { Pagination } from "@/shared/components/table";
-import type { Gender } from "@/shared/constants";
-import { Category, CompetitionLevel } from "@/shared/constants";
+import type { Category, Gender } from "@/shared/constants";
+import { CompetitionLevel } from "@/shared/constants";
 import type { Pagination as PaginationType } from "@/shared/types";
 
 export function MatchesTab() {
@@ -133,13 +133,13 @@ export function MatchesTab() {
   }, [division]);
 
   const handleReset = () => {
-    setLevel(CompetitionLevel.ALL);
+    setLevel(undefined);
     setDivision(undefined);
     setCommitteeId(undefined);
     setLeagueId(undefined);
     setPoolId(undefined);
     setMatchday(undefined);
-    setCategory(Category.ALL);
+    setCategory(undefined);
     setGender(undefined);
     setSearch("");
     setDateFilter("");

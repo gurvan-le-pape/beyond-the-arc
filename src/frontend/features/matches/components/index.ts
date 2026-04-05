@@ -22,5 +22,5 @@ export * from "./detail/PlayerMatchStats";
 export * from "./detail/Tabs";
 export * from "./detail/TeamStatsComparison";
 export * from "./list/MatchesCard";
-export * from "./list/MatchesFilter";
+export * from "./list/MatchesFilters";
 export * from "./MatchHistoryTable";

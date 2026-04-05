@@ -1,15 +1,15 @@
 // src/frontend/shared/utils/grouping.ts
 import type { Championship } from "@/features/competitions/championships/types/Championship";
-import { Category } from "@/shared/constants";
+import type { Category } from "@/shared/constants";
 
 export function groupByCategory<T extends { category?: Category }>(
   items: T[],
-  defaultCategory: Category = Category.ALL,
 ): Partial<Record<Category, T[]>> {
   if (!items) return {};
   return items.reduce((acc: Partial<Record<Category, T[]>>, item: T) => {
-    const category = item.category || defaultCategory;
-    if (!acc[category]) acc[category] = [];
+    const category = item.category;
+    if (!category) return acc;
+    acc[category] ??= [];
     acc[category].push(item);
     return acc;
   }, {});
