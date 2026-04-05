@@ -42,6 +42,54 @@ export class PlayersController {
   constructor(private readonly playersService: PlayersService) {}
 
   /**
+   * Retrieve all player IDs without filtering.
+   * Intended for sitemap generation — returns only IDs, nothing else.
+   *
+   * Cached for 5 minutes as player roster changes occasionally.
+   *
+   * @returns Flat array of objects with player IDs
+   *
+   * @example
+   * GET /players/all
+   * Response (after TransformInterceptor):
+   * {
+   *   "data": [{ "id": 1 }, { "id": 2 }],
+   *   "meta": { "count": 2 },
+   *   "timestamp": "2024-02-05T10:00:00Z",
+   *   "path": "/players/all",
+   *   "statusCode": 200
+   * }
+   */
+  @Get("all")
+  @HttpCode(HttpStatus.OK)
+  @UseInterceptors(CacheInterceptor({ ttl: CACHE_TTL.MODERATE_DATA }))
+  @ApiOperation({
+    summary: "Get all player IDs",
+    description:
+      "Retrieves all player IDs without filtering or pagination. Intended for sitemap generation. Results are cached for 5 minutes.",
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Flat list of all player IDs",
+    schema: {
+      example: {
+        data: [{ id: 1 }, { id: 2 }, { id: 3 }],
+        meta: { count: 3 },
+        timestamp: "2024-02-05T10:00:00Z",
+        path: "/players/all",
+        statusCode: 200,
+      },
+    },
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: "Internal server error",
+  })
+  async getAllIds(): Promise<{ id: number }[]> {
+    return this.playersService.findAllIds();
+  }
+
+  /**
    * Retrieve all players with optional filters and pagination.
    *
    * Moderate caching (5 minutes) because player rosters change occasionally.

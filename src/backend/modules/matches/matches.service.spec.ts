@@ -189,6 +189,37 @@ describe("MatchesService", () => {
     jest.clearAllMocks();
   });
 
+  describe("findAllIds", () => {
+    it("should return all match IDs", async () => {
+      const mockIds = [{ id: 1 }, { id: 2 }, { id: 3 }];
+      mockPrismaService.matches.findMany.mockResolvedValue(mockIds);
+
+      const result = await service.findAllIds();
+
+      expect(result).toEqual(mockIds);
+      expect(mockPrismaService.matches.findMany).toHaveBeenCalledWith({
+        select: { id: true },
+        orderBy: { id: "asc" },
+      });
+    });
+
+    it("should return empty array when no matches exist", async () => {
+      mockPrismaService.matches.findMany.mockResolvedValue([]);
+
+      const result = await service.findAllIds();
+
+      expect(result).toEqual([]);
+    });
+
+    it("should propagate database errors", async () => {
+      mockPrismaService.matches.findMany.mockRejectedValue(
+        new Error("Database error"),
+      );
+
+      await expect(service.findAllIds()).rejects.toThrow("Database error");
+    });
+  });
+
   describe("findAllMatches", () => {
     it("should return paginated matches and pagination info", async () => {
       mockPrismaService.matches.findMany.mockResolvedValue([

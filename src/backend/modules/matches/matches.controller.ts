@@ -45,6 +45,54 @@ export class MatchesController {
   constructor(private readonly matchesService: MatchesService) {}
 
   /**
+   * Retrieve all match IDs without filtering.
+   * Intended for sitemap generation — returns only IDs, nothing else.
+   *
+   * Cached for 5 minutes as match data changes occasionally.
+   *
+   * @returns Flat array of objects with match IDs
+   *
+   * @example
+   * GET /matches/all
+   * Response (after TransformInterceptor):
+   * {
+   *   "data": [{ "id": 1 }, { "id": 2 }],
+   *   "meta": { "count": 2 },
+   *   "timestamp": "2024-02-05T10:00:00Z",
+   *   "path": "/matches/all",
+   *   "statusCode": 200
+   * }
+   */
+  @Get("all")
+  @HttpCode(HttpStatus.OK)
+  @UseInterceptors(CacheInterceptor({ ttl: CACHE_TTL.MODERATE_DATA }))
+  @ApiOperation({
+    summary: "Get all match IDs",
+    description:
+      "Retrieves all match IDs without filtering or pagination. Intended for sitemap generation. Results are cached for 5 minutes.",
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Flat list of all match IDs",
+    schema: {
+      example: {
+        data: [{ id: 1 }, { id: 2 }, { id: 3 }],
+        meta: { count: 3 },
+        timestamp: "2024-02-05T10:00:00Z",
+        path: "/matches/all",
+        statusCode: 200,
+      },
+    },
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: "Internal server error",
+  })
+  async getAllIds(): Promise<{ id: number }[]> {
+    return this.matchesService.findAllIds();
+  }
+
+  /**
    * Retrieve all matches with optional filters and pagination.
    *
    * This endpoint supports extensive filtering by level, division, category,

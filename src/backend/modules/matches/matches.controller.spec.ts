@@ -28,6 +28,7 @@ describe("MatchesController", () => {
   let service: MatchesService;
 
   const mockMatchesService = {
+    findAllIds: jest.fn(),
     findAllMatches: jest.fn(),
     findMatchById: jest.fn(),
     findPlayerMatchStatsByMatchId: jest.fn(),
@@ -62,6 +63,34 @@ describe("MatchesController", () => {
     service = module.get<MatchesService>(MatchesService);
 
     jest.clearAllMocks();
+  });
+
+  describe("getAllIds", () => {
+    it("should return all match IDs", async () => {
+      const mockIds = [{ id: 1 }, { id: 2 }, { id: 3 }];
+      mockMatchesService.findAllIds.mockResolvedValue(mockIds);
+
+      const result = await controller.getAllIds();
+
+      expect(result).toEqual(mockIds);
+      expect(service.findAllIds).toHaveBeenCalledTimes(1);
+    });
+
+    it("should return empty array when no matches exist", async () => {
+      mockMatchesService.findAllIds.mockResolvedValue([]);
+
+      const result = await controller.getAllIds();
+
+      expect(result).toEqual([]);
+    });
+
+    it("should propagate service errors", async () => {
+      mockMatchesService.findAllIds.mockRejectedValue(
+        new Error("Database error"),
+      );
+
+      await expect(controller.getAllIds()).rejects.toThrow("Database error");
+    });
   });
 
   describe("getMatches", () => {
