@@ -1,6 +1,7 @@
 // src/backend/modules/players/players.controller.ts
 import { CACHE_TTL } from "@common/constants/cache-ttls";
 import { PaginatedResponseDto } from "@common/dto/paginated-response.dto";
+import { Category, CompetitionLevel, Gender } from "@common/index";
 import { CacheInterceptor } from "@common/interceptors/cache.interceptor";
 import {
   Controller,
@@ -75,7 +76,7 @@ export class PlayersController {
   @ApiQuery({
     name: "level",
     required: false,
-    enum: ["regional", "departmental"],
+    enum: CompetitionLevel,
     description: "Competition level",
     example: "regional",
   })
@@ -124,14 +125,14 @@ export class PlayersController {
   @ApiQuery({
     name: "category",
     required: false,
-    type: String,
+    enum: Category,
     description: "Filter by age category",
     example: "U18",
   })
   @ApiQuery({
     name: "gender",
     required: false,
-    type: String,
+    enum: Gender,
     description: "Filter by gender",
     example: "M",
   })
