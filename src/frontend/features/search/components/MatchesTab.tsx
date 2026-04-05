@@ -40,7 +40,7 @@ export function MatchesTab() {
   const [search, setSearch] = useState("");
   const [dateFilter, setDateFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [matchesPerPage, setMatchesPerPage] = useState(50);
+  const [pageSize, setPageSize] = useState(50);
 
   const { data: committees = [] } = useCommittees();
   const { data: leagues = [] } = useLeagues();
@@ -77,7 +77,7 @@ export function MatchesTab() {
     isLoading: matchesLoading,
   } = useMatches({
     page: currentPage,
-    limit: matchesPerPage,
+    limit: pageSize,
     level: level ?? undefined,
     division: division ?? undefined,
     committeeId,
@@ -210,9 +210,9 @@ export function MatchesTab() {
             {pagination && pagination.totalPages > 1 && (
               <Pagination
                 pagination={pagination}
-                pageSize={matchesPerPage}
+                pageSize={pageSize}
                 setPageSize={(size) => {
-                  setMatchesPerPage(size);
+                  setPageSize(size);
                   setCurrentPage(1);
                 }}
                 setPageIndex={(index) => setCurrentPage(index + 1)}
