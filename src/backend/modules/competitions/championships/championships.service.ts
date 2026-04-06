@@ -45,8 +45,6 @@ export class ChampionshipsService {
    * @returns Array of all championship DTOs
    */
   async findAllChampionships(): Promise<ChampionshipResponseDto[]> {
-    this.logger.log(`[findAllChampionships] Fetching all championships`);
-
     const championships = await this.queryChampionshipsByCondition({});
 
     return championships.map((c) => this.mapToDto(c));
@@ -80,19 +78,12 @@ export class ChampionshipsService {
   async findChampionshipById(
     championshipId: number,
   ): Promise<ChampionshipResponseDto> {
-    this.logger.log(
-      `[findChampionshipById] Fetching championship ID: ${championshipId}`,
-    );
-
     const championship = await this.prisma.championships.findUnique({
       where: { id: championshipId },
       select: CHAMPIONSHIP_SELECT,
     });
 
     if (!championship) {
-      this.logger.warn(
-        `[findChampionshipById] Championship with ID ${championshipId} not found`,
-      );
       throw new NotFoundException(
         `Championship with ID ${championshipId} not found`,
       );
@@ -114,10 +105,6 @@ export class ChampionshipsService {
     level: CompetitionLevel,
     id: number,
   ): Promise<ChampionshipResponseDto[]> {
-    this.logger.log(
-      `[findChampionshipsByLevel] Fetching championships: level=${level}, id=${id}`,
-    );
-
     if (level === CompetitionLevel.REGIONAL) {
       return this.findRegionalChampionships(id);
     }
@@ -135,27 +122,16 @@ export class ChampionshipsService {
   private async findRegionalChampionships(
     leagueId: number,
   ): Promise<ChampionshipResponseDto[]> {
-    this.logger.log(
-      `[findRegionalChampionships] Fetching regional championships for league ID: ${leagueId}`,
-    );
-
     const championships = await this.queryChampionshipsByCondition({
       leagueId: leagueId,
       level: CompetitionLevel.REGIONAL,
     });
 
     if (championships.length === 0) {
-      this.logger.warn(
-        `[findRegionalChampionships] No regional championships found for league ID: ${leagueId}`,
-      );
       throw new NotFoundException(
         `No regional championships found for league ID ${leagueId}`,
       );
     }
-
-    this.logger.log(
-      `[findRegionalChampionships] Found ${championships.length} regional championships for league ID: ${leagueId}`,
-    );
 
     return championships.map((c) => this.mapToDto(c));
   }
@@ -171,27 +147,16 @@ export class ChampionshipsService {
   private async findDepartmentalChampionships(
     committeeId: number,
   ): Promise<ChampionshipResponseDto[]> {
-    this.logger.log(
-      `[findDepartmentalChampionships] Fetching departmental championships for committee ID: ${committeeId}`,
-    );
-
     const championships = await this.queryChampionshipsByCondition({
       committeeId: committeeId,
       level: CompetitionLevel.DEPARTMENTAL,
     });
 
     if (championships.length === 0) {
-      this.logger.warn(
-        `[findDepartmentalChampionships] No departmental championships found for committee ID: ${committeeId}`,
-      );
       throw new NotFoundException(
         `No departmental championships found for committee ID ${committeeId}`,
       );
     }
-
-    this.logger.log(
-      `[findDepartmentalChampionships] Found ${championships.length} departmental championships for committee ID: ${committeeId}`,
-    );
 
     return championships.map((c) => this.mapToDto(c));
   }
@@ -206,19 +171,11 @@ export class ChampionshipsService {
   private async queryChampionshipsByCondition(
     condition: Prisma.ChampionshipsWhereInput,
   ): Promise<ChampionshipSelectResult[]> {
-    try {
-      return await this.prisma.championships.findMany({
-        where: condition,
-        select: CHAMPIONSHIP_SELECT,
-        orderBy: [{ division: "asc" }, { category: "asc" }],
-      });
-    } catch (error) {
-      this.logger.error(
-        `[queryChampionshipsByCondition] Failed to fetch championships`,
-        error,
-      );
-      throw error;
-    }
+    return await this.prisma.championships.findMany({
+      where: condition,
+      select: CHAMPIONSHIP_SELECT,
+      orderBy: [{ division: "asc" }, { category: "asc" }],
+    });
   }
 
   /**

@@ -57,50 +57,24 @@ export class LeaderboardsService {
    *
    * @param poolId - The pool ID
    * @returns Array of leaderboard entry DTOs
-   * @throws NotFoundException if no leaderboard entries found
    */
   async findLeaderboardsByPoolId(
     poolId: number,
   ): Promise<LeaderboardResponseDto[]> {
-    this.logger.log(
-      `[findLeaderboardsByPoolId] Fetching leaderboards for pool ID: ${poolId}`,
-    );
+    const leaderboards = await this.prisma.leaderboards.findMany({
+      where: { poolId },
+      select: LEADERBOARD_SELECT,
+      orderBy: [{ points: "desc" }, { pointDifference: "desc" }],
+    });
 
-    try {
-      const leaderboards = await this.prisma.leaderboards.findMany({
-        where: { poolId },
-        select: LEADERBOARD_SELECT,
-        orderBy: [{ points: "desc" }, { pointDifference: "desc" }],
-      });
-
-      if (leaderboards.length === 0) {
-        this.logger.warn(
-          `[findLeaderboardsByPoolId] No leaderboard entries found for pool ID: ${poolId}`,
-        );
-        throw new NotFoundException(
-          `No leaderboard entries found for pool ID ${poolId}`,
-        );
-      }
-
-      this.logger.log(
-        `[findLeaderboardsByPoolId] Found ${leaderboards.length} leaderboard entries for pool ID: ${poolId}`,
+    if (leaderboards.length === 0) {
+      throw new NotFoundException(
+        `No leaderboard entries found for pool ID ${poolId}`,
       );
-
-      // Rank derived from sort order
-      return leaderboards.map((entry, index) =>
-        this.mapToDto(entry, index + 1),
-      );
-    } catch (error) {
-      // Re-throw if it's already a NestJS exception
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-      this.logger.error(
-        `[findLeaderboardsByPoolId] Failed to fetch leaderboards for pool ID ${poolId}`,
-        error,
-      );
-      throw error;
     }
+
+    // Rank derived from sort order
+    return leaderboards.map((entry, index) => this.mapToDto(entry, index + 1));
   }
 
   /**
@@ -113,19 +87,12 @@ export class LeaderboardsService {
   async findLeaderboardById(
     leaderboardId: number,
   ): Promise<LeaderboardResponseDto> {
-    this.logger.log(
-      `[findLeaderboardById] Fetching leaderboard entry with ID: ${leaderboardId}`,
-    );
-
     const leaderboard = await this.prisma.leaderboards.findUnique({
       where: { id: leaderboardId },
       select: LEADERBOARD_SELECT,
     });
 
     if (!leaderboard) {
-      this.logger.warn(
-        `[findLeaderboardById] Leaderboard entry with ID ${leaderboardId} not found`,
-      );
       throw new NotFoundException(
         `Leaderboard entry with ID ${leaderboardId} not found`,
       );

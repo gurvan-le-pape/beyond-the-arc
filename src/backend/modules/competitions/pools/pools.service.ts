@@ -39,34 +39,17 @@ export class PoolsService {
    *
    * @param championshipId - The championship ID
    * @returns Array of pool DTOs
-   * @throws NotFoundException if no pools found
    */
   async findPoolsByChampionshipId(
     championshipId: number,
   ): Promise<PoolResponseDto[]> {
-    this.logger.log(
-      `[findPoolsByChampionshipId] Fetching pools for championship ID: ${championshipId}`,
-    );
+    const pools = await this.prisma.pools.findMany({
+      where: { championshipId },
+      select: POOL_SELECT,
+      orderBy: { letter: "asc" },
+    });
 
-    try {
-      const pools = await this.prisma.pools.findMany({
-        where: { championshipId },
-        select: POOL_SELECT,
-        orderBy: { letter: "asc" },
-      });
-
-      this.logger.log(
-        `[findPoolsByChampionshipId] Found ${pools.length} pools for championship ID: ${championshipId}`,
-      );
-
-      return pools.map((pool) => this.mapToDto(pool));
-    } catch (error) {
-      this.logger.error(
-        `[findPoolsByChampionshipId] Failed to fetch pools for championship ID ${championshipId}`,
-        error,
-      );
-      throw error;
-    }
+    return pools.map((pool) => this.mapToDto(pool));
   }
 
   /**
@@ -77,15 +60,12 @@ export class PoolsService {
    * @throws NotFoundException if pool doesn't exist
    */
   async findPoolById(poolId: number): Promise<PoolResponseDto> {
-    this.logger.log(`[findPoolById] Fetching pool with ID: ${poolId}`);
-
     const pool = await this.prisma.pools.findUnique({
       where: { id: poolId },
       select: POOL_SELECT,
     });
 
     if (!pool) {
-      this.logger.warn(`[findPoolById] Pool with ID ${poolId} not found`);
       throw new NotFoundException(`Pool with ID ${poolId} not found`);
     }
 

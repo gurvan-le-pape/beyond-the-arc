@@ -1,6 +1,5 @@
 // src/backend/modules/geography/geo.service.spec.ts
 import { CacheDedupService } from "@common/services/cache-dedup.service";
-import { InternalServerErrorException } from "@nestjs/common";
 import type { TestingModule } from "@nestjs/testing";
 import { Test } from "@nestjs/testing";
 import { LoggerModule } from "nestjs-pino";
@@ -114,19 +113,11 @@ describe("GeoService", () => {
       });
     });
 
-    it("should throw InternalServerErrorException on database error", async () => {
-      // Arrange
+    it("should propagate database errors", async () => {
       const dbError = new Error("Database connection failed");
       mockPrismaService.$queryRaw.mockRejectedValue(dbError);
 
-      // Act & Assert
-      await expect(service.getRegionsGeoJson()).rejects.toThrow(
-        InternalServerErrorException,
-      );
-
-      await expect(service.getRegionsGeoJson()).rejects.toThrow(
-        "Failed to fetch regions GeoJSON",
-      );
+      await expect(service.getRegionsGeoJson()).rejects.toThrow(dbError);
     });
 
     it("should handle empty results", async () => {
@@ -252,19 +243,11 @@ describe("GeoService", () => {
       });
     });
 
-    it("should throw InternalServerErrorException on database error", async () => {
-      // Arrange
+    it("should propagate database errors", async () => {
       const dbError = new Error("Database connection failed");
       mockPrismaService.$queryRaw.mockRejectedValue(dbError);
 
-      // Act & Assert
-      await expect(service.getDepartmentsGeoJson()).rejects.toThrow(
-        InternalServerErrorException,
-      );
-
-      await expect(service.getDepartmentsGeoJson()).rejects.toThrow(
-        "Failed to fetch departments GeoJSON",
-      );
+      await expect(service.getDepartmentsGeoJson()).rejects.toThrow(dbError);
     });
 
     it("should handle empty results", async () => {

@@ -175,8 +175,6 @@ export class PlayersService {
    * @returns Flat array of objects with player IDs
    */
   async findAllIds(): Promise<{ id: number }[]> {
-    this.logger.log("[findAllIds] Fetching all player IDs");
-
     return this.prisma.players.findMany({
       select: { id: true },
       orderBy: { id: "asc" },
@@ -192,45 +190,30 @@ export class PlayersService {
   async findAllPlayers(
     filters?: PlayerFilters,
   ): Promise<PaginatedResponseDto<PlayerResponseDto>> {
-    this.logger.log(
-      `[findAllPlayers] Fetching players with filters: ${JSON.stringify(
-        filters,
-      )}`,
-    );
-
     const page = this.validatePage(filters?.page ?? 1);
     const limit = this.validateLimit(filters?.limit ?? 50);
     const skip = (page - 1) * limit;
 
     const where = this.buildWhereClause(filters);
 
-    try {
-      const [players, total] = await Promise.all([
-        this.prisma.players.findMany({
-          where,
-          select: PLAYER_SELECT,
-          orderBy: { name: "asc" },
-          skip,
-          take: limit,
-        }),
-        this.prisma.players.count({ where }),
-      ]);
+    const [players, total] = await Promise.all([
+      this.prisma.players.findMany({
+        where,
+        select: PLAYER_SELECT,
+        orderBy: { name: "asc" },
+        skip,
+        take: limit,
+      }),
+      this.prisma.players.count({ where }),
+    ]);
 
-      this.logger.log(
-        `[findAllPlayers] Found ${players.length} players (total: ${total})`,
-      );
-
-      return {
-        items: players.map((p) => this.mapToDto(p)),
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      };
-    } catch (error) {
-      this.logger.error("[findAllPlayers] Failed to fetch players", error);
-      throw error;
-    }
+    return {
+      items: players.map((p) => this.mapToDto(p)),
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   /**
@@ -241,15 +224,12 @@ export class PlayersService {
    * @throws NotFoundException if player doesn't exist
    */
   async findPlayerById(id: number): Promise<PlayerResponseDto> {
-    this.logger.log(`[findPlayerById] Fetching player with ID: ${id}`);
-
     const player = await this.prisma.players.findUnique({
       where: { id },
       select: PLAYER_SELECT,
     });
 
     if (!player) {
-      this.logger.warn(`[findPlayerById] Player with ID ${id} not found`);
       throw new NotFoundException(`Player with ID ${id} not found`);
     }
 
@@ -265,19 +245,12 @@ export class PlayersService {
    * @throws NotFoundException if player doesn't exist
    */
   async findPlayerMatchHistory(playerId: number): Promise<MatchHistoryDto[]> {
-    this.logger.log(
-      `[findPlayerMatchHistory] Fetching match history for player ID: ${playerId}`,
-    );
-
     const playerExists = await this.prisma.players.findUnique({
       where: { id: playerId },
       select: { id: true },
     });
 
     if (!playerExists) {
-      this.logger.warn(
-        `[findPlayerMatchHistory] Player with ID ${playerId} not found`,
-      );
       throw new NotFoundException(`Player with ID ${playerId} not found`);
     }
 
@@ -286,10 +259,6 @@ export class PlayersService {
       select: PLAYER_MATCH_HISTORY_SELECT,
       orderBy: { match: { date: "desc" } },
     });
-
-    this.logger.log(
-      `[findPlayerMatchHistory] Found ${stats.length} matches for player ID: ${playerId}`,
-    );
 
     return stats.map((stat) => this.mapToMatchHistoryDto(stat));
   }

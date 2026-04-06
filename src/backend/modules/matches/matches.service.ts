@@ -238,8 +238,6 @@ export class MatchesService {
    * @returns Flat array of objects with match IDs
    */
   async findAllIds(): Promise<{ id: number }[]> {
-    this.logger.log("[findAllIds] Fetching all match IDs");
-
     return this.prisma.matches.findMany({
       select: { id: true },
       orderBy: { id: "asc" },
@@ -249,54 +247,38 @@ export class MatchesService {
   async findAllMatches(
     filters?: MatchFilters,
   ): Promise<PaginatedResponseDto<MatchDetailResponseDto>> {
-    this.logger.log(
-      `Fetching matches with filters: ${JSON.stringify(filters)}`,
-    );
-
     const page = this.validatePage(filters?.page ?? 1);
     const limit = this.validateLimit(filters?.limit ?? 50);
     const skip = (page - 1) * limit;
     const where = this.buildWhereClause(filters);
 
-    this.logger.log(`Where clause: ${JSON.stringify(where)}`);
+    const [matches, total] = await Promise.all([
+      this.prisma.matches.findMany({
+        where,
+        select: MATCH_LIST_SELECT,
+        orderBy: { date: "desc" },
+        skip,
+        take: limit,
+      }),
+      this.prisma.matches.count({ where }),
+    ]);
 
-    try {
-      const [matches, total] = await Promise.all([
-        this.prisma.matches.findMany({
-          where,
-          select: MATCH_LIST_SELECT,
-          orderBy: { date: "desc" },
-          skip,
-          take: limit,
-        }),
-        this.prisma.matches.count({ where }),
-      ]);
-
-      this.logger.log(`Found ${matches.length} matches (total: ${total})`);
-
-      return {
-        items: matches.map((m) => this.mapMatchToDto(m)),
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      };
-    } catch (error) {
-      this.logger.error("Failed to fetch matches", error);
-      throw error;
-    }
+    return {
+      items: matches.map((m) => this.mapMatchToDto(m)),
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   async findMatchById(matchId: number): Promise<MatchDetailResponseDto> {
-    this.logger.log(`Fetching match with ID: ${matchId}`);
-
     const match = await this.prisma.matches.findUnique({
       where: { id: matchId },
       select: MATCH_DETAIL_SELECT,
     });
 
     if (!match) {
-      this.logger.warn(`Match with ID ${matchId} not found`);
       throw new NotFoundException(`Match with ID ${matchId} not found`);
     }
 
@@ -304,47 +286,36 @@ export class MatchesService {
   }
 
   async findMatchesByPoolId(poolId: number): Promise<MatchDetailResponseDto[]> {
-    this.logger.log(`Fetching matches for pool ID: ${poolId}`);
-
     const matches = await this.prisma.matches.findMany({
       where: { poolId },
       select: MATCH_LIST_SELECT,
       orderBy: { date: "asc" },
     });
 
-    this.logger.log(`Found ${matches.length} matches for pool ID: ${poolId}`);
     return matches.map((m) => this.mapMatchToDto(m));
   }
 
   async findMatchesByChampionshipId(
     championshipId: number,
   ): Promise<MatchDetailResponseDto[]> {
-    this.logger.log(`Fetching matches for championship ID: ${championshipId}`);
-
     const matches = await this.prisma.matches.findMany({
       where: { pool: { championshipId } },
       select: MATCH_LIST_SELECT,
       orderBy: { date: "asc" },
     });
 
-    this.logger.log(
-      `Found ${matches.length} matches for championship ID: ${championshipId}`,
-    );
     return matches.map((m) => this.mapMatchToDto(m));
   }
 
   async findPlayerMatchStatsByMatchId(
     matchId: number,
   ): Promise<MatchPlayerStatsResponseDto> {
-    this.logger.log(`Fetching player stats for match ID: ${matchId}`);
-
     const match = await this.prisma.matches.findUnique({
       where: { id: matchId },
       select: { homeTeamId: true, awayTeamId: true },
     });
 
     if (!match) {
-      this.logger.warn(`Match with ID ${matchId} not found`);
       throw new NotFoundException(`Match with ID ${matchId} not found`);
     }
 
@@ -352,10 +323,6 @@ export class MatchesService {
       where: { matchId },
       select: PLAYER_MATCH_STATS_SELECT,
     });
-
-    this.logger.log(
-      `Found stats for ${stats.length} players in match ID: ${matchId}`,
-    );
 
     return {
       homeTeamId: match.homeTeamId,
@@ -365,21 +332,16 @@ export class MatchesService {
   }
 
   async findMatchEventsByMatchId(matchId: number): Promise<MatchEventDto[]> {
-    this.logger.log(`Fetching match events for match ID: ${matchId}`);
-
     const events = await this.prisma.matchEvents.findMany({
       where: { matchId },
       select: MATCH_EVENT_SELECT,
       orderBy: { timestamp: "asc" },
     });
 
-    this.logger.log(`Found ${events.length} events for match ID: ${matchId}`);
     return events.map((e) => this.mapEventToDto(e));
   }
 
   async findMatchEventsByTeamId(teamId: number): Promise<MatchEventDto[]> {
-    this.logger.log(`Fetching shot events for team ID: ${teamId}`);
-
     const matches = await this.prisma.matches.findMany({
       where: { OR: [{ homeTeamId: teamId }, { awayTeamId: teamId }] },
       select: { id: true },
@@ -388,7 +350,6 @@ export class MatchesService {
     const matchIds = matches.map((m) => m.id);
 
     if (matchIds.length === 0) {
-      this.logger.log(`No matches found for team ID: ${teamId}`);
       return [];
     }
 
@@ -402,15 +363,10 @@ export class MatchesService {
       orderBy: { timestamp: "asc" },
     });
 
-    this.logger.log(
-      `Found ${events.length} shot events for team ID: ${teamId}`,
-    );
     return events.map((e) => this.mapEventToDto(e));
   }
 
   async findMatchEventsByPlayerId(playerId: number): Promise<MatchEventDto[]> {
-    this.logger.log(`Fetching shot events for player ID: ${playerId}`);
-
     const events = await this.prisma.matchEvents.findMany({
       where: {
         shotLocation: { isNot: null },
@@ -420,9 +376,6 @@ export class MatchesService {
       orderBy: { timestamp: "asc" },
     });
 
-    this.logger.log(
-      `Found ${events.length} shot events for player ID: ${playerId}`,
-    );
     return events.map((e) => this.mapEventToDto(e));
   }
 

@@ -3,12 +3,7 @@ import { Category } from "@common/constants/categories";
 import { CompetitionLevel } from "@common/constants/competition-levels";
 import { Gender } from "@common/constants/genders";
 import { PaginatedResponseDto } from "@common/index";
-import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-  NotFoundException,
-} from "@nestjs/common";
+import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 import { PrismaService } from "prisma/prisma.service";
 
@@ -122,72 +117,61 @@ export class ClubsService {
    * @returns Array of club statistics by region
    */
   async getClubCountsByRegion(): Promise<ClubStatsByRegionDto[]> {
-    this.logger.log("Fetching club counts by region");
+    // Get club counts grouped by committee
+    const clubCountsByCommittee = await this.prisma.clubs.groupBy({
+      by: ["committeeId"],
+      _count: {
+        id: true,
+      },
+    });
 
-    try {
-      // Get club counts grouped by committee
-      const clubCountsByCommittee = await this.prisma.clubs.groupBy({
-        by: ["committeeId"],
-        _count: {
-          id: true,
-        },
-      });
+    // Get committee to league mapping
+    const committees = await this.prisma.committees.findMany({
+      select: {
+        id: true,
+        leagueId: true,
+      },
+    });
 
-      // Get committee to league mapping
-      const committees = await this.prisma.committees.findMany({
-        select: {
-          id: true,
-          leagueId: true,
-        },
-      });
+    const committeeToLeague = new Map<number, number | null>(
+      committees.map((c) => [c.id, c.leagueId]),
+    );
 
-      const committeeToLeague = new Map<number, number | null>(
-        committees.map((c) => [c.id, c.leagueId]),
-      );
-
-      // Aggregate counts by league
-      const leaguesCounts = new Map<number, number>();
-      for (const item of clubCountsByCommittee) {
-        if (typeof item.committeeId !== "number") continue;
-        const leagueId = committeeToLeague.get(item.committeeId);
-        if (typeof leagueId === "number") {
-          leaguesCounts.set(
-            leagueId,
-            (leaguesCounts.get(leagueId) || 0) + item._count.id,
-          );
-        }
+    // Aggregate counts by league
+    const leaguesCounts = new Map<number, number>();
+    for (const item of clubCountsByCommittee) {
+      if (typeof item.committeeId !== "number") continue;
+      const leagueId = committeeToLeague.get(item.committeeId);
+      if (typeof leagueId === "number") {
+        leaguesCounts.set(
+          leagueId,
+          (leaguesCounts.get(leagueId) || 0) + item._count.id,
+        );
       }
+    }
 
-      // Get league details with region codes
-      const leagues = await this.prisma.leagues.findMany({
-        select: {
-          id: true,
-          name: true,
-          region: {
-            select: {
-              code: true,
-            },
+    // Get league details with region codes
+    const leagues = await this.prisma.leagues.findMany({
+      select: {
+        id: true,
+        name: true,
+        region: {
+          select: {
+            code: true,
           },
         },
-        orderBy: {
-          name: "asc",
-        },
-      });
+      },
+      orderBy: {
+        name: "asc",
+      },
+    });
 
-      this.logger.log(`Found ${leagues.length} regions with club counts`);
-
-      return leagues.map((league) => ({
-        id: league.id,
-        code: league.region?.code ?? null,
-        name: league.name,
-        clubCount: leaguesCounts.get(league.id) || 0,
-      }));
-    } catch (error) {
-      this.logger.error("Failed to fetch club counts by region", error);
-      throw new InternalServerErrorException(
-        "Failed to fetch club statistics by region",
-      );
-    }
+    return leagues.map((league) => ({
+      id: league.id,
+      code: league.region?.code ?? null,
+      name: league.name,
+      clubCount: leaguesCounts.get(league.id) || 0,
+    }));
   }
 
   /**
@@ -200,57 +184,43 @@ export class ClubsService {
   async getClubCountsByDepartment(
     leagueId?: number,
   ): Promise<ClubStatsByDepartmentDto[]> {
-    const logMsg = leagueId
-      ? `Fetching club counts by department for league ID: ${leagueId}`
-      : "Fetching club counts by department for all leagues";
-    this.logger.log(logMsg);
+    const where: Prisma.CommitteesWhereInput = leagueId ? { leagueId } : {};
 
-    try {
-      const where: Prisma.CommitteesWhereInput = leagueId ? { leagueId } : {};
-
-      const committees = await this.prisma.committees.findMany({
-        where,
-        select: {
-          id: true,
-          name: true,
-          department: {
-            select: {
-              id: true,
-              name: true,
-              code: true,
-            },
-          },
-          leagueId: true,
-          _count: {
-            select: {
-              clubs: true,
-            },
-          },
-        },
-        orderBy: {
-          name: "asc",
-        },
-      });
-
-      this.logger.log(`Found ${committees.length} committees with club counts`);
-
-      return committees.map((committee) => ({
-        id: committee.id,
-        name: committee.name,
+    const committees = await this.prisma.committees.findMany({
+      where,
+      select: {
+        id: true,
+        name: true,
         department: {
-          id: committee.department.id,
-          name: committee.department.name,
-          code: committee.department.code,
+          select: {
+            id: true,
+            name: true,
+            code: true,
+          },
         },
-        leagueId: committee.leagueId,
-        clubCount: committee._count.clubs,
-      }));
-    } catch (error) {
-      this.logger.error("Failed to fetch club counts by department", error);
-      throw new InternalServerErrorException(
-        "Failed to fetch club statistics by department",
-      );
-    }
+        leagueId: true,
+        _count: {
+          select: {
+            clubs: true,
+          },
+        },
+      },
+      orderBy: {
+        name: "asc",
+      },
+    });
+
+    return committees.map((committee) => ({
+      id: committee.id,
+      name: committee.name,
+      department: {
+        id: committee.department.id,
+        name: committee.department.name,
+        code: committee.department.code,
+      },
+      leagueId: committee.leagueId,
+      clubCount: committee._count.clubs,
+    }));
   }
 
   /**
@@ -260,20 +230,12 @@ export class ClubsService {
    * @returns Flat array of all clubs
    */
   async findAllClubs(): Promise<ClubBasicResponseDto[]> {
-    this.logger.log("Fetching all clubs for map");
+    const clubs = await this.prisma.clubs.findMany({
+      select: CLUB_BASIC_SELECT,
+      orderBy: { name: "asc" },
+    });
 
-    try {
-      const clubs = await this.prisma.clubs.findMany({
-        select: CLUB_BASIC_SELECT,
-        orderBy: { name: "asc" },
-      });
-
-      this.logger.log(`Found ${clubs.length} clubs`);
-      return clubs.map((club) => this.mapToBasicDto(club));
-    } catch (error) {
-      this.logger.error("Failed to fetch all clubs", error);
-      throw new InternalServerErrorException("Failed to fetch all clubs");
-    }
+    return clubs.map((club) => this.mapToBasicDto(club));
   }
 
   /**
@@ -293,65 +255,56 @@ export class ClubsService {
     page?: number;
     limit?: number;
   }): Promise<PaginatedResponseDto<ClubBasicResponseDto>> {
-    this.logger.log(`Fetching clubs with filters: ${JSON.stringify(filters)}`);
-
     const page = filters.page ?? 1;
     const limit = filters.limit ?? 50;
     const skip = (page - 1) * limit;
 
-    try {
-      // Build where clause for clubs
-      const where: Prisma.ClubsWhereInput = {};
+    // Build where clause for clubs
+    const where: Prisma.ClubsWhereInput = {};
 
-      // Filter by committee ID
-      if (filters.committeeId) {
-        where.committeeId = filters.committeeId;
-      }
-
-      // Filter by league ID (via committee relation)
-      if (filters.leagueId) {
-        where.committee = { leagueId: filters.leagueId };
-      }
-
-      if (filters.search) {
-        where.name = { contains: filters.search, mode: "insensitive" };
-      }
-
-      // Build teams filter if category, gender, or level specified
-      const teamsWhere: Prisma.TeamsWhereInput = {};
-      if (filters.category) teamsWhere.category = filters.category;
-      if (filters.gender) teamsWhere.gender = filters.gender;
-      if (filters.level)
-        teamsWhere.pool = { championship: { level: filters.level } };
-
-      if (Object.keys(teamsWhere).length > 0) {
-        where.teams = { some: teamsWhere };
-      }
-
-      const [clubs, total] = await Promise.all([
-        this.prisma.clubs.findMany({
-          where,
-          select: CLUB_BASIC_SELECT,
-          orderBy: { name: "asc" },
-          skip,
-          take: limit,
-        }),
-        this.prisma.clubs.count({ where }),
-      ]);
-
-      this.logger.log(`Found ${total} clubs matching filters`);
-
-      return {
-        items: clubs.map((club) => this.mapToBasicDto(club)),
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      };
-    } catch (error) {
-      this.logger.error("Failed to fetch clubs by filters", error);
-      throw new InternalServerErrorException("Failed to fetch clubs");
+    // Filter by committee ID
+    if (filters.committeeId) {
+      where.committeeId = filters.committeeId;
     }
+
+    // Filter by league ID (via committee relation)
+    if (filters.leagueId) {
+      where.committee = { leagueId: filters.leagueId };
+    }
+
+    if (filters.search) {
+      where.name = { contains: filters.search, mode: "insensitive" };
+    }
+
+    // Build teams filter if category, gender, or level specified
+    const teamsWhere: Prisma.TeamsWhereInput = {};
+    if (filters.category) teamsWhere.category = filters.category;
+    if (filters.gender) teamsWhere.gender = filters.gender;
+    if (filters.level)
+      teamsWhere.pool = { championship: { level: filters.level } };
+
+    if (Object.keys(teamsWhere).length > 0) {
+      where.teams = { some: teamsWhere };
+    }
+
+    const [clubs, total] = await Promise.all([
+      this.prisma.clubs.findMany({
+        where,
+        select: CLUB_BASIC_SELECT,
+        orderBy: { name: "asc" },
+        skip,
+        take: limit,
+      }),
+      this.prisma.clubs.count({ where }),
+    ]);
+
+    return {
+      items: clubs.map((club) => this.mapToBasicDto(club)),
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   /**
@@ -360,68 +313,49 @@ export class ClubsService {
    *
    * @param clubId - The club ID
    * @returns Detailed club information
-   * @throws NotFoundException if club doesn't exist
    */
   async findClubById(clubId: number): Promise<ClubDetailedResponseDto> {
-    this.logger.log(`Fetching club with ID: ${clubId}`);
+    const club = await this.prisma.clubs.findUnique({
+      where: { id: clubId },
+      select: CLUB_DETAILED_SELECT,
+    });
 
-    try {
-      const club = await this.prisma.clubs.findUnique({
-        where: { id: clubId },
-        select: CLUB_DETAILED_SELECT,
-      });
-
-      if (!club) {
-        this.logger.warn(`Club with ID ${clubId} not found`);
-        throw new NotFoundException(`Club with ID ${clubId} not found`);
-      }
-
-      // Compute rank and pool size for each team via parallel count queries
-      const teamsWithRanks: TeamWithRankAndPoolSize[] = await Promise.all(
-        club.teams.map(async (team) => {
-          const lb = team.leaderboards[0];
-
-          if (!lb || !team.pool) {
-            return { ...team, rank: null, poolSize: null };
-          }
-
-          const [rank, poolSize] = await Promise.all([
-            this.prisma.leaderboards.count({
-              where: {
-                poolId: lb.poolId,
-                OR: [
-                  { points: { gt: lb.points } },
-                  {
-                    points: lb.points,
-                    pointDifference: { gt: lb.pointDifference },
-                  },
-                ],
-              },
-            }),
-            this.prisma.leaderboards.count({
-              where: { poolId: lb.poolId },
-            }),
-          ]);
-
-          return { ...team, rank: rank + 1, poolSize };
-        }),
-      );
-
-      return this.mapToDetailedDto({ ...club, teams: teamsWithRanks });
-    } catch (error) {
-      this.logger.error(`Failed to fetch club with ID ${clubId}`, error);
-
-      // Re-throw if it's already a NestJS exception
-      if (
-        error instanceof NotFoundException ||
-        error instanceof InternalServerErrorException
-      ) {
-        throw error;
-      }
-
-      // Wrap unknown errors
-      throw new InternalServerErrorException("Failed to fetch club");
+    if (!club) {
+      throw new NotFoundException(`Club with ID ${clubId} not found`);
     }
+
+    // Compute rank and pool size for each team via parallel count queries
+    const teamsWithRanks: TeamWithRankAndPoolSize[] = await Promise.all(
+      club.teams.map(async (team) => {
+        const lb = team.leaderboards[0];
+
+        if (!lb || !team.pool) {
+          return { ...team, rank: null, poolSize: null };
+        }
+
+        const [rank, poolSize] = await Promise.all([
+          this.prisma.leaderboards.count({
+            where: {
+              poolId: lb.poolId,
+              OR: [
+                { points: { gt: lb.points } },
+                {
+                  points: lb.points,
+                  pointDifference: { gt: lb.pointDifference },
+                },
+              ],
+            },
+          }),
+          this.prisma.leaderboards.count({
+            where: { poolId: lb.poolId },
+          }),
+        ]);
+
+        return { ...team, rank: rank + 1, poolSize };
+      }),
+    );
+
+    return this.mapToDetailedDto({ ...club, teams: teamsWithRanks });
   }
 
   /**
@@ -431,56 +365,47 @@ export class ClubsService {
    * @returns Array of all departments with region information
    */
   async getAllDepartments(): Promise<ClubStatsByDepartmentDto[]> {
-    this.logger.log("Fetching all departments");
-
-    try {
-      const committees = await this.prisma.committees.findMany({
-        select: {
-          id: true,
-          name: true,
-          department: {
-            select: {
-              id: true,
-              name: true,
-              code: true,
-            },
-          },
-          leagueId: true,
-          league: {
-            select: {
-              id: true,
-              regionId: true,
-            },
-          },
-          _count: {
-            select: {
-              clubs: true,
-            },
-          },
-        },
-        orderBy: {
-          name: "asc",
-        },
-      });
-
-      this.logger.log(`Found ${committees.length} departments`);
-
-      return committees.map((committee) => ({
-        id: committee.id,
-        name: committee.name,
+    const committees = await this.prisma.committees.findMany({
+      select: {
+        id: true,
+        name: true,
         department: {
-          id: committee.department.id,
-          name: committee.department.name,
-          code: committee.department.code,
+          select: {
+            id: true,
+            name: true,
+            code: true,
+          },
         },
-        leagueId: committee.leagueId,
-        region: { id: committee.league.regionId },
-        clubCount: committee._count.clubs,
-      }));
-    } catch (error) {
-      this.logger.error("Failed to fetch all departments", error);
-      throw new InternalServerErrorException("Failed to fetch all departments");
-    }
+        leagueId: true,
+        league: {
+          select: {
+            id: true,
+            regionId: true,
+          },
+        },
+        _count: {
+          select: {
+            clubs: true,
+          },
+        },
+      },
+      orderBy: {
+        name: "asc",
+      },
+    });
+
+    return committees.map((committee) => ({
+      id: committee.id,
+      name: committee.name,
+      department: {
+        id: committee.department.id,
+        name: committee.department.name,
+        code: committee.department.code,
+      },
+      leagueId: committee.leagueId,
+      region: { id: committee.league.regionId },
+      clubCount: committee._count.clubs,
+    }));
   }
 
   /**

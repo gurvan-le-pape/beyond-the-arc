@@ -1,9 +1,5 @@
 // src/backend/modules/geography/geo.service.ts
-import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-} from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 
 import {
@@ -36,13 +32,9 @@ export class GeoService {
    * Results include geometry data from PostGIS.
    *
    * @returns GeoJSON FeatureCollection of regions
-   * @throws InternalServerErrorException if database query fails
    */
   async getRegionsGeoJson(): Promise<GeoJsonFeatureCollectionDto> {
-    this.logger.log("[getRegionsGeoJson] Fetching regions GeoJSON");
-
-    try {
-      const regions = await this.prisma.$queryRaw<GeoEntityQueryResult[]>`
+    const regions = await this.prisma.$queryRaw<GeoEntityQueryResult[]>`
         SELECT 
           r.code, 
           r.name, 
@@ -53,16 +45,7 @@ export class GeoService {
         ORDER BY r.code ASC
       `;
 
-      this.logger.log(`[getRegionsGeoJson] Found ${regions.length} regions`);
-
-      return this.mapToFeatureCollection(regions);
-    } catch (error) {
-      this.logger.error(
-        "[getRegionsGeoJson] Failed to fetch regions GeoJSON",
-        error,
-      );
-      throw new InternalServerErrorException("Failed to fetch regions GeoJSON");
-    }
+    return this.mapToFeatureCollection(regions);
   }
 
   /**
@@ -70,13 +53,9 @@ export class GeoService {
    * Results include geometry data from PostGIS.
    *
    * @returns GeoJSON FeatureCollection of departments
-   * @throws InternalServerErrorException if database query fails
    */
   async getDepartmentsGeoJson(): Promise<GeoJsonFeatureCollectionDto> {
-    this.logger.log("[getDepartmentsGeoJson] Fetching departments GeoJSON");
-
-    try {
-      const departments = await this.prisma.$queryRaw<GeoEntityQueryResult[]>`
+    const departments = await this.prisma.$queryRaw<GeoEntityQueryResult[]>`
         SELECT 
           d.code, 
           d.name, 
@@ -87,20 +66,7 @@ export class GeoService {
         ORDER BY d.code ASC
       `;
 
-      this.logger.log(
-        `[getDepartmentsGeoJson] Found ${departments.length} departments`,
-      );
-
-      return this.mapToFeatureCollection(departments);
-    } catch (error) {
-      this.logger.error(
-        "[getDepartmentsGeoJson] Failed to fetch departments GeoJSON",
-        error,
-      );
-      throw new InternalServerErrorException(
-        "Failed to fetch departments GeoJSON",
-      );
-    }
+    return this.mapToFeatureCollection(departments);
   }
 
   /**

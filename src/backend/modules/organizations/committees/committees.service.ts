@@ -60,26 +60,12 @@ export class CommitteesService {
    * @returns Array of committee DTOs
    */
   async findAllCommittees(): Promise<CommitteeResponseDto[]> {
-    this.logger.log("[findAllCommittees] Fetching all departmental committees");
+    const committees = await this.prisma.committees.findMany({
+      select: COMMITTEE_SELECT,
+      orderBy: [{ name: "asc" }],
+    });
 
-    try {
-      const committees = await this.prisma.committees.findMany({
-        select: COMMITTEE_SELECT,
-        orderBy: [{ name: "asc" }],
-      });
-
-      this.logger.log(
-        `[findAllCommittees] Found ${committees.length} committees`,
-      );
-
-      return committees.map((c) => this.mapToDto(c));
-    } catch (error) {
-      this.logger.error(
-        "[findAllCommittees] Failed to fetch committees",
-        error,
-      );
-      throw error;
-    }
+    return committees.map((c) => this.mapToDto(c));
   }
 
   /**
@@ -87,48 +73,25 @@ export class CommitteesService {
    *
    * @param leagueId - The league ID
    * @returns Array of committee DTOs
-   * @throws NotFoundException if no committees found
    */
   async findCommitteesByLeague(
     leagueId: number,
   ): Promise<CommitteeResponseDto[]> {
-    this.logger.log(
-      `[findCommitteesByLeague] Fetching committees for league ID: ${leagueId}`,
-    );
+    const committees = await this.prisma.committees.findMany({
+      where: {
+        leagueId,
+      },
+      select: COMMITTEE_SELECT,
+      orderBy: [{ name: "asc" }],
+    });
 
-    try {
-      const committees = await this.prisma.committees.findMany({
-        where: {
-          leagueId,
-        },
-        select: COMMITTEE_SELECT,
-        orderBy: [{ name: "asc" }],
-      });
-
-      if (committees.length === 0) {
-        this.logger.warn(
-          `[findCommitteesByLeague] No committees found for league ID: ${leagueId}`,
-        );
-        throw new NotFoundException(
-          `No committees found for league ID ${leagueId}`,
-        );
-      }
-
-      this.logger.log(
-        `[findCommitteesByLeague] Found ${committees.length} committees for league ID: ${leagueId}`,
+    if (committees.length === 0) {
+      throw new NotFoundException(
+        `No committees found for league ID ${leagueId}`,
       );
-
-      return committees.map((c) => this.mapToDto(c));
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-      this.logger.error(
-        `[findCommitteesByLeague] Failed to fetch committees for league ID ${leagueId}`,
-        error,
-      );
-      throw error;
     }
+
+    return committees.map((c) => this.mapToDto(c));
   }
 
   /**
@@ -139,19 +102,12 @@ export class CommitteesService {
    * @throws NotFoundException if committee doesn't exist
    */
   async findCommitteeById(committeeId: number): Promise<CommitteeResponseDto> {
-    this.logger.log(
-      `[findCommitteeById] Fetching committee with ID: ${committeeId}`,
-    );
-
     const committee = await this.prisma.committees.findUnique({
       where: { id: committeeId },
       select: COMMITTEE_SELECT,
     });
 
     if (!committee) {
-      this.logger.warn(
-        `[findCommitteeById] Committee with ID ${committeeId} not found`,
-      );
       throw new NotFoundException(`Committee with ID ${committeeId} not found`);
     }
 

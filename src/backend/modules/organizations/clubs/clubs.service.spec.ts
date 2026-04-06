@@ -9,10 +9,7 @@
 
 import { Category } from "@common/constants/categories";
 import { Gender } from "@common/constants/genders";
-import {
-  InternalServerErrorException,
-  NotFoundException,
-} from "@nestjs/common";
+import { NotFoundException } from "@nestjs/common";
 import type { PrismaService } from "prisma/prisma.service";
 
 import { ClubsService } from "./clubs.service";
@@ -175,15 +172,11 @@ describe("ClubsService", () => {
       expect(result[0].clubCount).toBe(5);
     });
 
-    it("should throw InternalServerErrorException on database error", async () => {
-      prisma.clubs.groupBy.mockRejectedValue(new Error("Database error"));
+    it("should propagate database errors", async () => {
+      const dbError = new Error("Database error");
+      prisma.clubs.groupBy.mockRejectedValue(dbError);
 
-      await expect(service.getClubCountsByRegion()).rejects.toThrow(
-        InternalServerErrorException,
-      );
-      await expect(service.getClubCountsByRegion()).rejects.toThrow(
-        "Failed to fetch club statistics by region",
-      );
+      await expect(service.getClubCountsByRegion()).rejects.toThrow(dbError);
     });
   });
 
@@ -279,14 +272,12 @@ describe("ClubsService", () => {
       expect(result[0].clubCount).toBe(0);
     });
 
-    it("should throw InternalServerErrorException on database error", async () => {
-      prisma.committees.findMany.mockRejectedValue(new Error("Database error"));
+    it("should propagate database errors", async () => {
+      const dbError = new Error("Database error");
+      prisma.committees.findMany.mockRejectedValue(dbError);
 
       await expect(service.getClubCountsByDepartment()).rejects.toThrow(
-        InternalServerErrorException,
-      );
-      await expect(service.getClubCountsByDepartment()).rejects.toThrow(
-        "Failed to fetch club statistics by department",
+        dbError,
       );
     });
   });
@@ -452,15 +443,13 @@ describe("ClubsService", () => {
       expect(result.items[0].longitude).toBeNull();
     });
 
-    it("should throw InternalServerErrorException on database error", async () => {
-      prisma.clubs.findMany.mockRejectedValue(new Error("Database error"));
+    it("should propagate database errors", async () => {
+      const dbError = new Error("Database error");
+      prisma.clubs.findMany.mockRejectedValue(dbError);
 
       await expect(
         service.findClubsByFilters({ committeeId: 1 }),
-      ).rejects.toThrow(InternalServerErrorException);
-      await expect(
-        service.findClubsByFilters({ committeeId: 1 }),
-      ).rejects.toThrow("Failed to fetch clubs");
+      ).rejects.toThrow(dbError);
     });
   });
 
@@ -649,15 +638,11 @@ describe("ClubsService", () => {
       await expect(service.findClubById(1)).rejects.toThrow(NotFoundException);
     });
 
-    it("should wrap unknown errors in InternalServerErrorException", async () => {
-      prisma.clubs.findUnique.mockRejectedValue(new Error("Database error"));
+    it("should propagate database errors", async () => {
+      const dbError = new Error("Database error");
+      prisma.clubs.findUnique.mockRejectedValue(dbError);
 
-      await expect(service.findClubById(1)).rejects.toThrow(
-        InternalServerErrorException,
-      );
-      await expect(service.findClubById(1)).rejects.toThrow(
-        "Failed to fetch club",
-      );
+      await expect(service.findClubById(1)).rejects.toThrow(dbError);
     });
   });
 
@@ -710,15 +695,11 @@ describe("ClubsService", () => {
       expect(result).toEqual([]);
     });
 
-    it("should throw InternalServerErrorException on database error", async () => {
-      prisma.committees.findMany.mockRejectedValue(new Error("Database error"));
+    it("should propagate database errors", async () => {
+      const dbError = new Error("Database error");
+      prisma.committees.findMany.mockRejectedValue(dbError);
 
-      await expect(service.getAllDepartments()).rejects.toThrow(
-        InternalServerErrorException,
-      );
-      await expect(service.getAllDepartments()).rejects.toThrow(
-        "Failed to fetch all departments",
-      );
+      await expect(service.getAllDepartments()).rejects.toThrow(dbError);
     });
   });
 });
