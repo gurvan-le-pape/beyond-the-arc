@@ -44,20 +44,12 @@ export class PoolsService {
   async findPoolsByChampionshipId(
     championshipId: number,
   ): Promise<PoolResponseDto[]> {
-    this.logger.log(
-      `[findPoolsByChampionshipId] Fetching pools for championship ID: ${championshipId}`,
-    );
-
     try {
       const pools = await this.prisma.pools.findMany({
         where: { championshipId },
         select: POOL_SELECT,
         orderBy: { letter: "asc" },
       });
-
-      this.logger.log(
-        `[findPoolsByChampionshipId] Found ${pools.length} pools for championship ID: ${championshipId}`,
-      );
 
       return pools.map((pool) => this.mapToDto(pool));
     } catch (error) {
@@ -77,8 +69,6 @@ export class PoolsService {
    * @throws NotFoundException if pool doesn't exist
    */
   async findPoolById(poolId: number): Promise<PoolResponseDto> {
-    this.logger.log(`[findPoolById] Fetching pool with ID: ${poolId}`);
-
     const pool = await this.prisma.pools.findUnique({
       where: { id: poolId },
       select: POOL_SELECT,

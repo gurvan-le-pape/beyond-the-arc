@@ -45,8 +45,6 @@ export class ChampionshipsService {
    * @returns Array of all championship DTOs
    */
   async findAllChampionships(): Promise<ChampionshipResponseDto[]> {
-    this.logger.log(`[findAllChampionships] Fetching all championships`);
-
     const championships = await this.queryChampionshipsByCondition({});
 
     return championships.map((c) => this.mapToDto(c));
@@ -80,10 +78,6 @@ export class ChampionshipsService {
   async findChampionshipById(
     championshipId: number,
   ): Promise<ChampionshipResponseDto> {
-    this.logger.log(
-      `[findChampionshipById] Fetching championship ID: ${championshipId}`,
-    );
-
     const championship = await this.prisma.championships.findUnique({
       where: { id: championshipId },
       select: CHAMPIONSHIP_SELECT,
@@ -114,10 +108,6 @@ export class ChampionshipsService {
     level: CompetitionLevel,
     id: number,
   ): Promise<ChampionshipResponseDto[]> {
-    this.logger.log(
-      `[findChampionshipsByLevel] Fetching championships: level=${level}, id=${id}`,
-    );
-
     if (level === CompetitionLevel.REGIONAL) {
       return this.findRegionalChampionships(id);
     }
@@ -135,10 +125,6 @@ export class ChampionshipsService {
   private async findRegionalChampionships(
     leagueId: number,
   ): Promise<ChampionshipResponseDto[]> {
-    this.logger.log(
-      `[findRegionalChampionships] Fetching regional championships for league ID: ${leagueId}`,
-    );
-
     const championships = await this.queryChampionshipsByCondition({
       leagueId: leagueId,
       level: CompetitionLevel.REGIONAL,
@@ -152,10 +138,6 @@ export class ChampionshipsService {
         `No regional championships found for league ID ${leagueId}`,
       );
     }
-
-    this.logger.log(
-      `[findRegionalChampionships] Found ${championships.length} regional championships for league ID: ${leagueId}`,
-    );
 
     return championships.map((c) => this.mapToDto(c));
   }
@@ -171,10 +153,6 @@ export class ChampionshipsService {
   private async findDepartmentalChampionships(
     committeeId: number,
   ): Promise<ChampionshipResponseDto[]> {
-    this.logger.log(
-      `[findDepartmentalChampionships] Fetching departmental championships for committee ID: ${committeeId}`,
-    );
-
     const championships = await this.queryChampionshipsByCondition({
       committeeId: committeeId,
       level: CompetitionLevel.DEPARTMENTAL,
@@ -188,10 +166,6 @@ export class ChampionshipsService {
         `No departmental championships found for committee ID ${committeeId}`,
       );
     }
-
-    this.logger.log(
-      `[findDepartmentalChampionships] Found ${championships.length} departmental championships for committee ID: ${committeeId}`,
-    );
 
     return championships.map((c) => this.mapToDto(c));
   }

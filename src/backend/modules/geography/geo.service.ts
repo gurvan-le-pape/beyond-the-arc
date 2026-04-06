@@ -39,8 +39,6 @@ export class GeoService {
    * @throws InternalServerErrorException if database query fails
    */
   async getRegionsGeoJson(): Promise<GeoJsonFeatureCollectionDto> {
-    this.logger.log("[getRegionsGeoJson] Fetching regions GeoJSON");
-
     try {
       const regions = await this.prisma.$queryRaw<GeoEntityQueryResult[]>`
         SELECT 
@@ -52,8 +50,6 @@ export class GeoService {
         JOIN regions r ON rg.region_id = r.id
         ORDER BY r.code ASC
       `;
-
-      this.logger.log(`[getRegionsGeoJson] Found ${regions.length} regions`);
 
       return this.mapToFeatureCollection(regions);
     } catch (error) {
@@ -73,8 +69,6 @@ export class GeoService {
    * @throws InternalServerErrorException if database query fails
    */
   async getDepartmentsGeoJson(): Promise<GeoJsonFeatureCollectionDto> {
-    this.logger.log("[getDepartmentsGeoJson] Fetching departments GeoJSON");
-
     try {
       const departments = await this.prisma.$queryRaw<GeoEntityQueryResult[]>`
         SELECT 
@@ -86,10 +80,6 @@ export class GeoService {
         JOIN departments d ON dg.department_id = d.id
         ORDER BY d.code ASC
       `;
-
-      this.logger.log(
-        `[getDepartmentsGeoJson] Found ${departments.length} departments`,
-      );
 
       return this.mapToFeatureCollection(departments);
     } catch (error) {

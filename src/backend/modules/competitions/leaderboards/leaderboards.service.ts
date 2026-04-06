@@ -62,10 +62,6 @@ export class LeaderboardsService {
   async findLeaderboardsByPoolId(
     poolId: number,
   ): Promise<LeaderboardResponseDto[]> {
-    this.logger.log(
-      `[findLeaderboardsByPoolId] Fetching leaderboards for pool ID: ${poolId}`,
-    );
-
     try {
       const leaderboards = await this.prisma.leaderboards.findMany({
         where: { poolId },
@@ -81,10 +77,6 @@ export class LeaderboardsService {
           `No leaderboard entries found for pool ID ${poolId}`,
         );
       }
-
-      this.logger.log(
-        `[findLeaderboardsByPoolId] Found ${leaderboards.length} leaderboard entries for pool ID: ${poolId}`,
-      );
 
       // Rank derived from sort order
       return leaderboards.map((entry, index) =>
@@ -113,10 +105,6 @@ export class LeaderboardsService {
   async findLeaderboardById(
     leaderboardId: number,
   ): Promise<LeaderboardResponseDto> {
-    this.logger.log(
-      `[findLeaderboardById] Fetching leaderboard entry with ID: ${leaderboardId}`,
-    );
-
     const leaderboard = await this.prisma.leaderboards.findUnique({
       where: { id: leaderboardId },
       select: LEADERBOARD_SELECT,

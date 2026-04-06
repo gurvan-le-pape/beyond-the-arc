@@ -59,17 +59,11 @@ export class LeaguesService {
    * @returns Array of league DTOs
    */
   async findAllLeagues(): Promise<LeagueResponseDto[]> {
-    this.logger.log("[findAllLeagues] Fetching all regional leagues");
-
     try {
       const leagues = await this.prisma.leagues.findMany({
         select: LEAGUE_SELECT,
         orderBy: { name: "asc" },
       });
-
-      this.logger.log(
-        `[findAllLeagues] Found ${leagues.length} regional leagues`,
-      );
 
       return leagues.map((l) => this.mapToDto(l));
     } catch (error) {
@@ -89,8 +83,6 @@ export class LeaguesService {
    * @throws NotFoundException if league doesn't exist
    */
   async findLeagueById(leagueId: number): Promise<LeagueResponseDto> {
-    this.logger.log(`[findLeagueById] Fetching league with ID: ${leagueId}`);
-
     const league = await this.prisma.leagues.findUnique({
       where: { id: leagueId },
       select: LEAGUE_SELECT,

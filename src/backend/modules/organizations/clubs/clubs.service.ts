@@ -122,8 +122,6 @@ export class ClubsService {
    * @returns Array of club statistics by region
    */
   async getClubCountsByRegion(): Promise<ClubStatsByRegionDto[]> {
-    this.logger.log("Fetching club counts by region");
-
     try {
       // Get club counts grouped by committee
       const clubCountsByCommittee = await this.prisma.clubs.groupBy({
@@ -174,8 +172,6 @@ export class ClubsService {
         },
       });
 
-      this.logger.log(`Found ${leagues.length} regions with club counts`);
-
       return leagues.map((league) => ({
         id: league.id,
         code: league.region?.code ?? null,
@@ -200,11 +196,6 @@ export class ClubsService {
   async getClubCountsByDepartment(
     leagueId?: number,
   ): Promise<ClubStatsByDepartmentDto[]> {
-    const logMsg = leagueId
-      ? `Fetching club counts by department for league ID: ${leagueId}`
-      : "Fetching club counts by department for all leagues";
-    this.logger.log(logMsg);
-
     try {
       const where: Prisma.CommitteesWhereInput = leagueId ? { leagueId } : {};
 
@@ -232,8 +223,6 @@ export class ClubsService {
         },
       });
 
-      this.logger.log(`Found ${committees.length} committees with club counts`);
-
       return committees.map((committee) => ({
         id: committee.id,
         name: committee.name,
@@ -260,15 +249,12 @@ export class ClubsService {
    * @returns Flat array of all clubs
    */
   async findAllClubs(): Promise<ClubBasicResponseDto[]> {
-    this.logger.log("Fetching all clubs for map");
-
     try {
       const clubs = await this.prisma.clubs.findMany({
         select: CLUB_BASIC_SELECT,
         orderBy: { name: "asc" },
       });
 
-      this.logger.log(`Found ${clubs.length} clubs`);
       return clubs.map((club) => this.mapToBasicDto(club));
     } catch (error) {
       this.logger.error("Failed to fetch all clubs", error);
@@ -293,8 +279,6 @@ export class ClubsService {
     page?: number;
     limit?: number;
   }): Promise<PaginatedResponseDto<ClubBasicResponseDto>> {
-    this.logger.log(`Fetching clubs with filters: ${JSON.stringify(filters)}`);
-
     const page = filters.page ?? 1;
     const limit = filters.limit ?? 50;
     const skip = (page - 1) * limit;
@@ -339,8 +323,6 @@ export class ClubsService {
         this.prisma.clubs.count({ where }),
       ]);
 
-      this.logger.log(`Found ${total} clubs matching filters`);
-
       return {
         items: clubs.map((club) => this.mapToBasicDto(club)),
         total,
@@ -363,8 +345,6 @@ export class ClubsService {
    * @throws NotFoundException if club doesn't exist
    */
   async findClubById(clubId: number): Promise<ClubDetailedResponseDto> {
-    this.logger.log(`Fetching club with ID: ${clubId}`);
-
     try {
       const club = await this.prisma.clubs.findUnique({
         where: { id: clubId },
@@ -431,8 +411,6 @@ export class ClubsService {
    * @returns Array of all departments with region information
    */
   async getAllDepartments(): Promise<ClubStatsByDepartmentDto[]> {
-    this.logger.log("Fetching all departments");
-
     try {
       const committees = await this.prisma.committees.findMany({
         select: {
@@ -462,8 +440,6 @@ export class ClubsService {
           name: "asc",
         },
       });
-
-      this.logger.log(`Found ${committees.length} departments`);
 
       return committees.map((committee) => ({
         id: committee.id,
