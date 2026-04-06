@@ -12,7 +12,6 @@ export * from "./decorators/current-user.decorator";
 export * from "./dto/paginated-response.dto";
 export * from "./filters/all-exceptions.filter";
 export * from "./interceptors/cache.interceptor";
-export * from "./interceptors/logging.interceptor";
 export * from "./interceptors/transform.interceptor";
 export * from "./middleware/request-id.middleware";
 export * from "./pipes/parse-optional-int.pipe";

@@ -5,9 +5,10 @@ import {
   ExceptionFilter,
   HttpException,
   HttpStatus,
-  Logger,
+  Inject,
 } from "@nestjs/common";
 import { Request, Response } from "express";
+import { PinoLogger } from "nestjs-pino";
 
 /**
  * Standard error response structure.
@@ -59,7 +60,7 @@ interface ErrorResponse {
  */
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
-  private readonly logger = new Logger(AllExceptionsFilter.name);
+  constructor(@Inject(PinoLogger) private readonly logger: PinoLogger) {}
 
   catch(exception: unknown, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
@@ -149,13 +150,12 @@ export class AllExceptionsFilter implements ExceptionFilter {
     errorResponse: ErrorResponse,
   ): void {
     const { method, url, ip, headers } = request;
-    const userAgent = headers["user-agent"] || "unknown";
 
     const logContext = {
       method,
       url,
       ip,
-      userAgent,
+      userAgent: headers["user-agent"] || "unknown",
       statusCode: errorResponse.statusCode,
     };
 
@@ -163,15 +163,14 @@ export class AllExceptionsFilter implements ExceptionFilter {
     if (errorResponse.statusCode >= 500) {
       // Server errors - log as error with full stack
       this.logger.error(
+        { err: exception, ...logContext },
         `${method} ${url} - ${errorResponse.statusCode} - ${errorResponse.message}`,
-        exception instanceof Error ? exception.stack : String(exception),
-        JSON.stringify(logContext),
       );
     } else if (errorResponse.statusCode >= 400) {
       // Client errors - log as warning
       this.logger.warn(
+        logContext,
         `${method} ${url} - ${errorResponse.statusCode} - ${errorResponse.message}`,
-        JSON.stringify(logContext),
       );
     }
   }
