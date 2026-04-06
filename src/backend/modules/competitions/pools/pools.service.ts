@@ -66,7 +66,6 @@ export class PoolsService {
     });
 
     if (!pool) {
-      this.logger.warn(`[findPoolById] Pool with ID ${poolId} not found`);
       throw new NotFoundException(`Pool with ID ${poolId} not found`);
     }
 

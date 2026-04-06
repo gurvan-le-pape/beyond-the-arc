@@ -68,9 +68,6 @@ export class LeaderboardsService {
     });
 
     if (leaderboards.length === 0) {
-      this.logger.warn(
-        `[findLeaderboardsByPoolId] No leaderboard entries found for pool ID: ${poolId}`,
-      );
       throw new NotFoundException(
         `No leaderboard entries found for pool ID ${poolId}`,
       );
@@ -96,9 +93,6 @@ export class LeaderboardsService {
     });
 
     if (!leaderboard) {
-      this.logger.warn(
-        `[findLeaderboardById] Leaderboard entry with ID ${leaderboardId} not found`,
-      );
       throw new NotFoundException(
         `Leaderboard entry with ID ${leaderboardId} not found`,
       );

@@ -326,7 +326,6 @@ export class ClubsService {
     });
 
     if (!club) {
-      this.logger.warn(`Club with ID ${clubId} not found`);
       throw new NotFoundException(`Club with ID ${clubId} not found`);
     }
 

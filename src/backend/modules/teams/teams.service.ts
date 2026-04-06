@@ -422,7 +422,6 @@ export class TeamsService {
     });
 
     if (!team) {
-      this.logger.warn(`[findTeamById] Team with ID ${id} not found`);
       throw new NotFoundException(`Team with ID ${id} not found`);
     }
 
@@ -443,9 +442,6 @@ export class TeamsService {
     });
 
     if (!teamExists) {
-      this.logger.warn(
-        `[findTeamMatchHistory] Team with ID ${teamId} not found`,
-      );
       throw new NotFoundException(`Team with ID ${teamId} not found`);
     }
 

@@ -81,7 +81,6 @@ export class LeaguesService {
     });
 
     if (!league) {
-      this.logger.warn(`[findLeagueById] League with ID ${leagueId} not found`);
       throw new NotFoundException(`League with ID ${leagueId} not found`);
     }
 

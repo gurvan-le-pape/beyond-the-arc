@@ -86,9 +86,6 @@ export class CommitteesService {
     });
 
     if (committees.length === 0) {
-      this.logger.warn(
-        `[findCommitteesByLeague] No committees found for league ID: ${leagueId}`,
-      );
       throw new NotFoundException(
         `No committees found for league ID ${leagueId}`,
       );
@@ -111,9 +108,6 @@ export class CommitteesService {
     });
 
     if (!committee) {
-      this.logger.warn(
-        `[findCommitteeById] Committee with ID ${committeeId} not found`,
-      );
       throw new NotFoundException(`Committee with ID ${committeeId} not found`);
     }
 

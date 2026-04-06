@@ -230,7 +230,6 @@ export class PlayersService {
     });
 
     if (!player) {
-      this.logger.warn(`[findPlayerById] Player with ID ${id} not found`);
       throw new NotFoundException(`Player with ID ${id} not found`);
     }
 
@@ -252,9 +251,6 @@ export class PlayersService {
     });
 
     if (!playerExists) {
-      this.logger.warn(
-        `[findPlayerMatchHistory] Player with ID ${playerId} not found`,
-      );
       throw new NotFoundException(`Player with ID ${playerId} not found`);
     }
 

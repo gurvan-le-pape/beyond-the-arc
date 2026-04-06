@@ -279,7 +279,6 @@ export class MatchesService {
     });
 
     if (!match) {
-      this.logger.warn(`Match with ID ${matchId} not found`);
       throw new NotFoundException(`Match with ID ${matchId} not found`);
     }
 
@@ -317,7 +316,6 @@ export class MatchesService {
     });
 
     if (!match) {
-      this.logger.warn(`Match with ID ${matchId} not found`);
       throw new NotFoundException(`Match with ID ${matchId} not found`);
     }
 

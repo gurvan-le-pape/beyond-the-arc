@@ -84,9 +84,6 @@ export class ChampionshipsService {
     });
 
     if (!championship) {
-      this.logger.warn(
-        `[findChampionshipById] Championship with ID ${championshipId} not found`,
-      );
       throw new NotFoundException(
         `Championship with ID ${championshipId} not found`,
       );
@@ -131,9 +128,6 @@ export class ChampionshipsService {
     });
 
     if (championships.length === 0) {
-      this.logger.warn(
-        `[findRegionalChampionships] No regional championships found for league ID: ${leagueId}`,
-      );
       throw new NotFoundException(
         `No regional championships found for league ID ${leagueId}`,
       );
@@ -159,9 +153,6 @@ export class ChampionshipsService {
     });
 
     if (championships.length === 0) {
-      this.logger.warn(
-        `[findDepartmentalChampionships] No departmental championships found for committee ID: ${committeeId}`,
-      );
       throw new NotFoundException(
         `No departmental championships found for committee ID ${committeeId}`,
       );
