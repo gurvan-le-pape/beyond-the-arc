@@ -5,13 +5,13 @@ import { useParams, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 
-import type { Match } from "@/features/matches/types/Match";
 import { usePathname, useRouter } from "@/navigation";
 import { LeaderboardTable } from "@/shared/components/domain";
 import { ErrorMessage } from "@/shared/components/feedback";
 import { Breadcrumb } from "@/shared/components/navigation";
 import { Card } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
+import { groupBy } from "@/shared/utils";
 
 import {
   useCategoryNavigation,
@@ -51,7 +51,6 @@ export function ChampionshipDetailPage() {
     error,
   } = useChampionshipDetailById(championshipId, initialPoolId);
 
-  // Navigation hooks — no organizationId needed, pass championshipId as anchor
   const buildRoute = (id: number) => `/championships/${id}`;
 
   const { availableCategories, currentCategory, navigateToCategory } =
@@ -90,15 +89,7 @@ export function ChampionshipDetailPage() {
 
   const groupedMatches = useMemo(() => {
     if (!selectedPoolId || !matches[selectedPoolId]) return {};
-    const matchArr = Array.isArray(matches[selectedPoolId])
-      ? matches[selectedPoolId]
-      : [];
-    return matchArr.reduce((acc, match: Match) => {
-      const round = match.matchday || 0;
-      if (!acc[round]) acc[round] = [];
-      acc[round].push(match);
-      return acc;
-    }, {} as Record<number, Match[]>);
+    return groupBy(matches[selectedPoolId], (match) => match.matchday);
   }, [selectedPoolId, matches]);
 
   useEffect(() => {

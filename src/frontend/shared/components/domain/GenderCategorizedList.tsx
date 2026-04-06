@@ -3,16 +3,18 @@ import { useTranslations } from "next-intl";
 
 import type { Category } from "@/shared/constants";
 import { Gender } from "@/shared/constants";
+import { groupBy } from "@/shared/utils";
 import { cn } from "@/shared/utils/cn";
 
 import { Text } from "../typography";
 import { CategorySection } from "./CategorySection";
 
-interface GenderCategorizedListProps<T extends { id: number | string }> {
+interface GenderCategorizedListProps<
+  T extends { id: number | string; category: Category },
+> {
   readonly genderLabel: string;
   readonly genderKey: Gender;
   readonly items: T[];
-  readonly groupByCategory: (items: T[]) => Partial<Record<Category, T[]>>;
   readonly expandedCategories: Record<string, boolean>;
   readonly toggleCategory: (key: string) => void;
   readonly renderItem: (item: T, index: number) => React.ReactNode;
@@ -37,18 +39,19 @@ const GENDER_COLOURS: Record<
   },
 };
 
-export function GenderCategorizedList<T extends { id: number | string }>({
+export function GenderCategorizedList<
+  T extends { id: number | string; category: Category },
+>({
   genderLabel,
   genderKey,
   items,
-  groupByCategory,
   expandedCategories,
   toggleCategory,
   renderItem,
   className,
 }: GenderCategorizedListProps<T>) {
   const t = useTranslations("common");
-  const grouped = groupByCategory(items);
+  const grouped = groupBy(items, (item) => item.category);
   const colours = GENDER_COLOURS[genderKey] ?? GENDER_COLOURS[Gender.MALE];
 
   return (

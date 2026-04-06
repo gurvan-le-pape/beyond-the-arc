@@ -10,16 +10,12 @@ import { useToggleCategory } from "../../hooks";
 import { ChampionshipListItem } from "./ChampionshipListItem";
 
 interface ChampionshipListProps {
-  readonly championshipsByGender: Record<Gender, any[]>;
-  readonly groupChampionshipsByCategory: (
-    championships: Championship[],
-  ) => Record<string, any[]>;
-  readonly onItemClick: (championship: any) => void;
+  readonly championshipsByGender: Record<Gender, Championship[]>;
+  readonly onItemClick: (championship: Championship) => void;
 }
 
 function ChampionshipList({
   championshipsByGender,
-  groupChampionshipsByCategory,
   onItemClick,
 }: ChampionshipListProps) {
   const { expandedCategories, toggleCategory } = useToggleCategory();
@@ -36,7 +32,6 @@ function ChampionshipList({
           genderLabel={tTeams("teamsTable.genderHeading.feminine")}
           genderKey={Gender.FEMALE}
           items={championshipsByGender[Gender.FEMALE] || []}
-          groupByCategory={groupChampionshipsByCategory}
           expandedCategories={expandedCategories}
           toggleCategory={toggleCategory}
           renderItem={(championship) => (
@@ -50,7 +45,6 @@ function ChampionshipList({
           genderLabel={tTeams("teamsTable.genderHeading.masculine")}
           genderKey={Gender.MALE}
           items={championshipsByGender[Gender.MALE] || []}
-          groupByCategory={groupChampionshipsByCategory}
           expandedCategories={expandedCategories}
           toggleCategory={toggleCategory}
           renderItem={(championship) => (
