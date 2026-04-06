@@ -1,4 +1,5 @@
 // src/backend/modules/matches/matches.module.ts
+import { CommonModule } from "@common/common.module";
 import { Module } from "@nestjs/common";
 import { PrismaModule } from "prisma/prisma.module";
 
@@ -24,7 +25,7 @@ import { MatchesService } from "./matches.service";
  * - CacheInterceptor: Per-route caching (applied in controller with @UseInterceptors)
  */
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, CommonModule],
   controllers: [MatchesController],
   providers: [MatchesService],
   exports: [MatchesService], // Export service for use in other modules

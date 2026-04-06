@@ -1,5 +1,5 @@
 // src/backend/modules/organizations/clubs/clubs.controller.ts
-import { Category, PaginatedResponseDto } from "@common/index";
+import { CACHE_TTL, Category, PaginatedResponseDto } from "@common/index";
 import { CacheInterceptor } from "@common/interceptors/cache.interceptor";
 import {
   Controller,
@@ -75,7 +75,7 @@ export class ClubsController {
    */
   @Get("stats/by-region")
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(CacheInterceptor({ ttl: 600000 })) // Cache for 10 minutes
+  @UseInterceptors(CacheInterceptor({ ttl: CACHE_TTL.STATIC_DATA })) // Cache for 10 minutes
   @ApiOperation({
     summary: "Get club statistics by region",
     description:
@@ -144,7 +144,7 @@ export class ClubsController {
    */
   @Get("stats/by-department")
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(CacheInterceptor({ ttl: 300000 })) // Cache for 5 minutes
+  @UseInterceptors(CacheInterceptor({ ttl: CACHE_TTL.MODERATE_DATA })) // Cache for 5 minutes
   @ApiOperation({
     summary: "Get club statistics by department",
     description:
@@ -242,7 +242,7 @@ export class ClubsController {
    */
   @Get("departments")
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(CacheInterceptor({ ttl: 300000 })) // Cache for 5 minutes
+  @UseInterceptors(CacheInterceptor({ ttl: CACHE_TTL.MODERATE_DATA })) // Cache for 5 minutes
   @ApiOperation({
     summary: "Get all departments",
     description:
@@ -298,7 +298,7 @@ export class ClubsController {
    */
   @Get("all")
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(CacheInterceptor({ ttl: 300000 }))
+  @UseInterceptors(CacheInterceptor({ ttl: CACHE_TTL.MODERATE_DATA }))
   @ApiOperation({
     summary: "Get all clubs without filtering",
     description:
@@ -356,7 +356,7 @@ export class ClubsController {
    */
   @Get()
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(CacheInterceptor({ ttl: 180000 }))
+  @UseInterceptors(CacheInterceptor({ ttl: CACHE_TTL.MODERATE_DATA })) // Cache for 5 minutes
   @ApiOperation({
     summary: "Get clubs with filters and pagination",
     description:

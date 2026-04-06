@@ -1,214 +1,331 @@
 // src/backend/common/filters/all-exceptions.filter.spec.ts
-import type { ArgumentsHost } from "@nestjs/common";
-import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  NotFoundException,
-} from "@nestjs/common";
-import type { PinoLogger } from "nestjs-pino";
+import { HttpException, HttpStatus } from "@nestjs/common";
 
 import { AllExceptionsFilter } from "./all-exceptions.filter";
 
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+function makeLogger() {
+  return {
+    error: jest.fn(),
+    warn: jest.fn(),
+    debug: jest.fn(),
+    info: jest.fn(),
+  };
+}
+
+function makeHost(url = "/test", method = "GET") {
+  const mockResponse = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn(),
+  };
+  const mockRequest = {
+    url,
+    method,
+    ip: "127.0.0.1",
+    id: "test-trace-id",
+    headers: { "user-agent": "jest" },
+  };
+  return {
+    switchToHttp: () => ({
+      getResponse: () => mockResponse,
+      getRequest: () => mockRequest,
+    }),
+    response: mockResponse,
+    request: mockRequest,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Suite
+// ---------------------------------------------------------------------------
+
 describe("AllExceptionsFilter", () => {
   let filter: AllExceptionsFilter;
-  let mockLogger: jest.Mocked<Pick<PinoLogger, "error" | "warn">>;
-  let mockResponse: { status: jest.Mock; json: jest.Mock };
-  let mockRequest: Partial<{
-    url: string;
-    method: string;
-    ip: string;
-    headers: Record<string, string>;
-  }>;
-  let mockHost: Partial<ArgumentsHost>;
+  let logger: ReturnType<typeof makeLogger>;
+  const originalEnv = process.env.NODE_ENV;
 
   beforeEach(() => {
-    mockLogger = {
-      error: jest.fn(),
-      warn: jest.fn(),
-    };
+    logger = makeLogger();
 
-    filter = new AllExceptionsFilter(mockLogger as unknown as PinoLogger);
-
-    mockResponse = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-    };
-
-    mockRequest = {
-      url: "/api/test",
-      method: "GET",
-      ip: "127.0.0.1",
-      headers: { "user-agent": "jest" },
-    };
-
-    mockHost = {
-      switchToHttp: jest.fn().mockReturnValue({
-        getResponse: jest.fn().mockReturnValue(mockResponse),
-        getRequest: jest.fn().mockReturnValue(mockRequest),
-      }),
-    };
+    filter = new AllExceptionsFilter(logger as any);
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
-    delete process.env.NODE_ENV;
+    process.env.NODE_ENV = originalEnv;
   });
 
-  describe("HttpException handling", () => {
-    it("should handle NotFoundException with correct status and message", () => {
+  // -------------------------------------------------------------------------
+  // HttpException handling
+  // -------------------------------------------------------------------------
+
+  describe("HttpException", () => {
+    it("uses the exception status code", () => {
+      const host = makeHost();
       filter.catch(
-        new NotFoundException("Resource not found"),
-        mockHost as ArgumentsHost,
+        new HttpException("Not found", HttpStatus.NOT_FOUND),
+        host as never,
       );
-
-      expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.NOT_FOUND);
-      expect(mockResponse.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          statusCode: HttpStatus.NOT_FOUND,
-          message: "Resource not found",
-        }),
-      );
+      expect(host.response.status).toHaveBeenCalledWith(404);
     });
 
-    it("should handle BadRequestException with validation errors array", () => {
-      const exception = new BadRequestException({
-        message: ["field is required", "field must be a string"],
-        error: "Bad Request",
-      });
-
-      filter.catch(exception, mockHost as ArgumentsHost);
-
-      expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST);
-      expect(mockResponse.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          statusCode: HttpStatus.BAD_REQUEST,
-          message: ["field is required", "field must be a string"],
-        }),
-      );
+    it("derives PascalCase error name from status when response has no error field", () => {
+      const host = makeHost();
+      filter.catch(new HttpException("gone", HttpStatus.GONE), host as never);
+      const body = host.response.json.mock.calls[0][0];
+      expect(body.error).toBe("Gone");
     });
 
-    it("should handle HttpException with string response", () => {
-      const exception = new HttpException("Custom error", HttpStatus.CONFLICT);
-
-      filter.catch(exception, mockHost as ArgumentsHost);
-
-      expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.CONFLICT);
-      expect(mockResponse.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          statusCode: HttpStatus.CONFLICT,
-          message: "Custom error",
-        }),
+    it("uses the explicit error field from the response object when present", () => {
+      const host = makeHost();
+      filter.catch(
+        new HttpException(
+          { message: "oops", error: "CustomError" },
+          HttpStatus.BAD_REQUEST,
+        ),
+        host as never,
       );
-    });
-  });
-
-  describe("Error handling", () => {
-    it("should handle standard Error with 500 status", () => {
-      filter.catch(new Error("Unexpected error"), mockHost as ArgumentsHost);
-
-      expect(mockResponse.status).toHaveBeenCalledWith(
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-      expect(mockResponse.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: "Unexpected error",
-          error: "Error",
-        }),
-      );
+      const body = host.response.json.mock.calls[0][0];
+      expect(body.error).toBe("CustomError");
     });
 
-    it("should handle string exception", () => {
-      filter.catch("Something went wrong", mockHost as ArgumentsHost);
-
-      expect(mockResponse.status).toHaveBeenCalledWith(
-        HttpStatus.INTERNAL_SERVER_ERROR,
+    it("handles array messages from ValidationPipe", () => {
+      const host = makeHost();
+      filter.catch(
+        new HttpException(
+          {
+            message: ["name must not be empty", "email must be an email"],
+            error: "Bad Request",
+          },
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        ),
+        host as never,
       );
-      expect(mockResponse.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          message: "Something went wrong",
-        }),
-      );
+      const body = host.response.json.mock.calls[0][0];
+      expect(body.message).toEqual([
+        "name must not be empty",
+        "email must be an email",
+      ]);
     });
 
-    it("should handle unknown exception type", () => {
-      filter.catch({ unexpected: true }, mockHost as ArgumentsHost);
+    it("warns (not errors) for 4xx responses", () => {
+      const host = makeHost();
+      filter.catch(
+        new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED),
+        host as never,
+      );
+      expect(logger.warn).toHaveBeenCalledTimes(1);
+      expect(logger.error).not.toHaveBeenCalled();
+    });
 
-      expect(mockResponse.status).toHaveBeenCalledWith(
-        HttpStatus.INTERNAL_SERVER_ERROR,
+    it("errors for 5xx HttpException", () => {
+      const host = makeHost();
+      filter.catch(
+        new HttpException("Gateway timeout", HttpStatus.GATEWAY_TIMEOUT),
+        host as never,
       );
-      expect(mockResponse.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: "Internal server error",
-        }),
-      );
+      expect(logger.error).toHaveBeenCalledTimes(1);
+      expect(logger.warn).not.toHaveBeenCalled();
     });
   });
 
-  describe("response structure", () => {
-    it("should always include path, timestamp and statusCode", () => {
-      filter.catch(new Error("test"), mockHost as ArgumentsHost);
+  // -------------------------------------------------------------------------
+  // Generic Error handling
+  // -------------------------------------------------------------------------
 
-      expect(mockResponse.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          path: "/api/test",
-          timestamp: expect.any(String),
-          statusCode: expect.any(Number),
-        }),
-      );
+  describe("generic Error", () => {
+    it("returns 500 for an unhandled Error", () => {
+      const host = makeHost();
+      filter.catch(new Error("boom"), host as never);
+      expect(host.response.status).toHaveBeenCalledWith(500);
     });
 
-    it("should include stack details in development mode", () => {
-      process.env.NODE_ENV = "development";
+    it("uses error.message as the response message", () => {
+      const host = makeHost();
+      filter.catch(new Error("something broke"), host as never);
+      const body = host.response.json.mock.calls[0][0];
+      expect(body.message).toBe("something broke");
+    });
+  });
 
-      filter.catch(new Error("Dev error"), mockHost as ArgumentsHost);
+  // -------------------------------------------------------------------------
+  // String exception handling
+  // -------------------------------------------------------------------------
 
-      expect(mockResponse.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          details: expect.objectContaining({
-            stack: expect.any(String),
-          }),
-        }),
-      );
+  describe("string exception", () => {
+    it("returns 500 and uses the string as the message", () => {
+      const host = makeHost();
+      filter.catch("raw string error", host as never);
+      const body = host.response.json.mock.calls[0][0];
+      expect(body.statusCode).toBe(500);
+      expect(body.message).toBe("raw string error");
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // Programmer error distinction
+  // -------------------------------------------------------------------------
+
+  describe("programmer errors", () => {
+    const programmerErrors = [
+      ["TypeError", new TypeError("Cannot read property 'x' of undefined")],
+      ["RangeError", new RangeError("Index out of range")],
+      ["ReferenceError", new ReferenceError("foo is not defined")],
+    ] as const;
+
+    it.each(programmerErrors)(
+      "%s is logged with programmerError: true",
+      (_, exception) => {
+        const host = makeHost();
+        filter.catch(exception, host as never);
+        expect(logger.error).toHaveBeenCalledTimes(1);
+        const loggedContext = logger.error.mock.calls[0][0];
+        expect(loggedContext.programmerError).toBe(true);
+      },
+    );
+
+    it.each(programmerErrors)(
+      "%s log message includes [PROGRAMMER ERROR] prefix",
+      (_, exception) => {
+        const host = makeHost();
+        filter.catch(exception, host as never);
+        const loggedMessage = logger.error.mock.calls[0][1] as string;
+        expect(loggedMessage).toMatch(/^\[PROGRAMMER ERROR\]/);
+      },
+    );
+
+    it("does NOT mark a plain Error as a programmer error", () => {
+      const host = makeHost();
+      filter.catch(new Error("db timeout"), host as never);
+      expect(logger.error).toHaveBeenCalledTimes(1);
+      const loggedContext = logger.error.mock.calls[0][0];
+      expect(loggedContext.programmerError).toBeUndefined();
     });
 
-    it("should not include details outside development mode", () => {
+    it("does NOT mark a 5xx HttpException as a programmer error", () => {
+      const host = makeHost();
+      filter.catch(
+        new HttpException(
+          "service unavailable",
+          HttpStatus.SERVICE_UNAVAILABLE,
+        ),
+        host as never,
+      );
+      const loggedContext = logger.error.mock.calls[0][0];
+      expect(loggedContext.programmerError).toBeUndefined();
+    });
+
+    it("does NOT mark SyntaxError as a programmer error (may originate from user input via JSON.parse)", () => {
+      const host = makeHost();
+      filter.catch(
+        new SyntaxError("Unexpected token u in JSON"),
+        host as never,
+      );
+      expect(logger.error).toHaveBeenCalledTimes(1);
+      const loggedContext = logger.error.mock.calls[0][0];
+      expect(loggedContext.programmerError).toBeUndefined();
+    });
+
+    it("includes traceId in the log context", () => {
+      const host = makeHost();
+      filter.catch(new Error("boom"), host as never);
+      const loggedContext = logger.error.mock.calls[0][0];
+      expect(loggedContext.traceId).toBe("test-trace-id");
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // Dev-only details (cause leakage guard)
+  // -------------------------------------------------------------------------
+
+  describe("dev details", () => {
+    it("omits details in production", () => {
       process.env.NODE_ENV = "production";
+      const host = makeHost();
+      filter.catch(new Error("prod error"), host as never);
+      const body = host.response.json.mock.calls[0][0];
+      expect(body.details).toBeUndefined();
+    });
 
-      filter.catch(new Error("Prod error"), mockHost as ArgumentsHost);
+    it("includes stack in development", () => {
+      process.env.NODE_ENV = "development";
+      const host = makeHost();
+      filter.catch(new Error("dev error"), host as never);
+      const body = host.response.json.mock.calls[0][0];
+      expect(body.details?.stack).toBeDefined();
+    });
 
-      const jsonCall = mockResponse.json.mock.calls[0][0];
-      expect(jsonCall.details).toBeUndefined();
+    it("exposes only the cause message, not the raw cause object", () => {
+      process.env.NODE_ENV = "development";
+      const cause = new Error(
+        "db query: SELECT * FROM users WHERE token='abc'",
+      );
+      const err = new Error("wrapped", { cause });
+      const host = makeHost();
+      filter.catch(err, host as never);
+      const body = host.response.json.mock.calls[0][0];
+      // Should be just the message string — not the full Error object
+      expect(typeof body.details?.cause).toBe("string");
+      expect(body.details?.cause).toBe(cause.message);
+    });
+
+    it("sets cause to undefined when exception.cause is not an Error", () => {
+      process.env.NODE_ENV = "development";
+      // Simulate a non-Error cause (e.g. a plain object or string)
+      const err = new Error("oops");
+      (err as Error & { cause: unknown }).cause = { raw: "object" };
+      const host = makeHost();
+      filter.catch(err, host as never);
+      const body = host.response.json.mock.calls[0][0];
+      expect(body.details?.cause).toBeUndefined();
     });
   });
 
-  describe("logging", () => {
-    it("should log 5xx errors with logger.error", () => {
-      filter.catch(new Error("Server error"), mockHost as ArgumentsHost);
+  // -------------------------------------------------------------------------
+  // httpStatusToErrorName (via public surface: response body)
+  // -------------------------------------------------------------------------
 
-      expect(mockLogger.error).toHaveBeenCalled();
+  describe("httpStatusToErrorName", () => {
+    const cases: [number, string][] = [
+      [200, "Ok"],
+      [400, "BadRequest"],
+      [401, "Unauthorized"],
+      [403, "Forbidden"],
+      [404, "NotFound"],
+      [409, "Conflict"],
+      [422, "UnprocessableEntity"],
+      [500, "InternalServerError"],
+      [502, "BadGateway"],
+      [503, "ServiceUnavailable"],
+      [504, "GatewayTimeout"],
+    ];
+
+    it.each(cases)("status %i → error name %s", (statusCode, expectedError) => {
+      const host = makeHost();
+      filter.catch(new HttpException("x", statusCode), host as never);
+      const body = host.response.json.mock.calls[0][0];
+      expect(body.error).toBe(expectedError);
     });
+  });
 
-    it("should log 4xx errors with logger.warn", () => {
-      filter.catch(
-        new NotFoundException("Not found"),
-        mockHost as ArgumentsHost,
-      );
+  // -------------------------------------------------------------------------
+  // Response shape
+  // -------------------------------------------------------------------------
 
-      expect(mockLogger.warn).toHaveBeenCalled();
-    });
-
-    it("should use unknown when user-agent header is missing", () => {
-      mockRequest.headers = {};
-
-      filter.catch(
-        new NotFoundException("Not found"),
-        mockHost as ArgumentsHost,
-      );
-
-      expect(mockLogger.warn).toHaveBeenCalled();
+  describe("response shape", () => {
+    it("always includes statusCode, message, error, path, and timestamp", () => {
+      const host = makeHost("/api/items");
+      filter.catch(new HttpException("Not Found", 404), host as never);
+      const body = host.response.json.mock.calls[0][0];
+      expect(body).toMatchObject({
+        statusCode: 404,
+        message: "Not Found",
+        error: "NotFound",
+        path: "/api/items",
+        timestamp: expect.stringMatching(/^\d{4}-\d{2}-\d{2}T/),
+      });
     });
   });
 });

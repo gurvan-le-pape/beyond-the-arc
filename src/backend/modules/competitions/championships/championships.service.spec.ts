@@ -1,8 +1,10 @@
 // src/backend/modules/competitions/championships/championships.service.spec.ts
 import { CompetitionLevel } from "@common/constants/competition-levels";
+import { CacheDedupService } from "@common/services/cache-dedup.service";
 import { NotFoundException } from "@nestjs/common";
 import type { TestingModule } from "@nestjs/testing";
 import { Test } from "@nestjs/testing";
+import { LoggerModule } from "nestjs-pino";
 import { PrismaService } from "prisma/prisma.service";
 
 import { ChampionshipsService } from "./championships.service";
@@ -30,12 +32,14 @@ describe("ChampionshipsService", () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule.forRoot()],
       providers: [
         ChampionshipsService,
         {
           provide: PrismaService,
           useValue: mockPrismaService,
         },
+        CacheDedupService,
       ],
     }).compile();
 

@@ -1,4 +1,5 @@
 // src/backend/modules/teams/teams.module.ts
+import { CommonModule } from "@common/common.module";
 import { Module } from "@nestjs/common";
 import { PrismaModule } from "prisma/prisma.module";
 
@@ -20,7 +21,7 @@ import { TeamsService } from "./teams.service";
  * - CacheInterceptor: Per-route caching (applied in controller with @UseInterceptors)
  */
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, CommonModule],
   controllers: [TeamsController],
   providers: [TeamsService],
   exports: [TeamsService], // Export service for use in other modules

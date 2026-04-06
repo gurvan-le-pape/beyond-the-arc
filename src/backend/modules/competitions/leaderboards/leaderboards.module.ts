@@ -1,4 +1,5 @@
 // src/backend/modules/competitions/leaderboards/leaderboards.module.ts
+import { CommonModule } from "@common/common.module";
 import { Module } from "@nestjs/common";
 import { PrismaModule } from "prisma/prisma.module";
 
@@ -18,7 +19,7 @@ import { LeaderboardsService } from "./leaderboards.service";
  * - CacheInterceptor: Per-route caching (applied in controller with @UseInterceptors)
  */
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, CommonModule],
   controllers: [LeaderboardsController],
   providers: [LeaderboardsService],
   exports: [LeaderboardsService], // Export service for use in other modules

@@ -1,4 +1,5 @@
 // src/backend/modules/organizations/clubs/clubs.module.ts
+import { CommonModule } from "@common/common.module";
 import { Module } from "@nestjs/common";
 import { PrismaModule } from "prisma/prisma.module";
 
@@ -20,7 +21,7 @@ import { ClubsService } from "./clubs.service";
  * - CacheInterceptor: Per-route caching (applied in controller with @UseInterceptors)
  */
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, CommonModule],
   controllers: [ClubsController],
   providers: [ClubsService],
   exports: [ClubsService], // Export if needed by other modules

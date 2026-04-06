@@ -5,62 +5,62 @@ import {
   ExceptionFilter,
   HttpException,
   HttpStatus,
-  Inject,
 } from "@nestjs/common";
 import { Request, Response } from "express";
-import { PinoLogger } from "nestjs-pino";
+import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 
-/**
- * Standard error response structure.
- */
+interface DevErrorDetails {
+  stack: string | undefined;
+  // Narrowed to a safe string rather than the raw `cause`, which may contain
+  // DB queries, tokens, or internal objects that must not be exposed.
+  cause: string | undefined;
+}
+
 interface ErrorResponse {
-  /**
-   * HTTP status code
-   */
   statusCode: number;
-
-  /**
-   * Error message (user-friendly)
-   */
   message: string | string[];
-
-  /**
-   * Error type/name
-   */
   error: string;
-
-  /**
-   * Request path
-   */
   path: string;
-
-  /**
-   * Timestamp of the error
-   */
   timestamp: string;
-
-  /**
-   * Additional error details (only in development)
-   */
-  details?: unknown;
+  details?: DevErrorDetails;
 }
 
 /**
- * Global exception filter that catches all exceptions and formats them consistently.
+ * Programmer errors: exceptions that indicate a bug in application code, not
+ * an expected operational failure. These are logged at `error` level even when
+ * they surface as 5xx responses, and should ideally trigger a separate alert
+ * path (e.g. PagerDuty, Sentry) rather than being treated as ordinary runtime
+ * errors.
  *
- * Features:
- * - Consistent error response format
- * - Proper logging with stack traces
- * - Development vs production error details
- * - Handles both HTTP and unexpected exceptions
+ * This set is intentionally conservative. Add to it only when you are certain
+ * that the exception type unambiguously indicates a programming mistake:
+ *   - TypeError: property access on undefined/null, wrong argument type
+ *   - RangeError: out-of-bounds array index, invalid numeric argument
+ *   - ReferenceError: access to an undeclared variable (transpiled code)
  *
- * @example
- * // Apply globally in main.ts
- * app.useGlobalFilters(new AllExceptionsFilter());
+ * Do NOT add application-level error classes here — those are operational.
  */
+const PROGRAMMER_ERROR_TYPES = new Set<Function>([
+  TypeError,
+  RangeError,
+  ReferenceError,
+]);
+
+function isProgrammerError(exception: unknown): boolean {
+  return (
+    exception instanceof Error &&
+    PROGRAMMER_ERROR_TYPES.has(exception.constructor)
+  );
+}
+
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
-  constructor(@Inject(PinoLogger) private readonly logger: PinoLogger) {}
+  constructor(
+    // Named logger so filter logs are scoped to this class in Loki/Datadog,
+    // rather than sharing the root logger context with every other component.
+    @InjectPinoLogger(AllExceptionsFilter.name)
+    private readonly logger: PinoLogger,
+  ) {}
 
   catch(exception: unknown, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
@@ -68,32 +68,27 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
 
     const errorResponse = this.buildErrorResponse(exception, request);
-
-    // Log the error with appropriate level
     this.logError(exception, request, errorResponse);
 
-    // Send the response
     response.status(errorResponse.statusCode).json(errorResponse);
   }
 
-  /**
-   * Builds a standardized error response from any exception.
-   *
-   * @param exception - The caught exception
-   * @param request - The Express request object
-   * @returns Formatted error response
-   */
   private buildErrorResponse(
     exception: unknown,
     request: Request,
   ): ErrorResponse {
     let statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
     let message: string | string[] = "Internal server error";
-    let error = "InternalServerError";
+    // Default covers the `string` exception case and any unknown throw type.
+    // HttpException and Error branches overwrite this with a more specific value.
+    let error = this.httpStatusToErrorName(HttpStatus.INTERNAL_SERVER_ERROR);
 
-    // Handle NestJS HTTP exceptions
     if (exception instanceof HttpException) {
       statusCode = exception.getStatus();
+      // Fall back to the status-derived name; may be overridden below if the
+      // response object carries an explicit `error` field.
+      error = this.httpStatusToErrorName(statusCode);
+
       const exceptionResponse = exception.getResponse();
 
       if (typeof exceptionResponse === "string") {
@@ -103,18 +98,14 @@ export class AllExceptionsFilter implements ExceptionFilter {
         exceptionResponse !== null
       ) {
         message =
-          (exceptionResponse as { message?: string | string[] }).message ||
+          (exceptionResponse as { message?: string | string[] }).message ??
           message;
-        error = (exceptionResponse as { error?: string }).error || error;
+        error = (exceptionResponse as { error?: string }).error ?? error;
       }
-    }
-    // Handle standard Error objects
-    else if (exception instanceof Error) {
-      message = exception.message;
+    } else if (exception instanceof Error) {
       error = exception.name;
-    }
-    // Handle unknown exceptions
-    else if (typeof exception === "string") {
+      message = exception.message;
+    } else if (typeof exception === "string") {
       message = exception;
     }
 
@@ -126,11 +117,15 @@ export class AllExceptionsFilter implements ExceptionFilter {
       timestamp: new Date().toISOString(),
     };
 
-    // Include additional details in development mode
     if (process.env.NODE_ENV === "development" && exception instanceof Error) {
       errorResponse.details = {
         stack: exception.stack,
-        cause: exception.cause,
+        // Only expose the cause message, never the raw object — it may contain
+        // DB queries, tokens, or internal state.
+        cause:
+          exception.cause instanceof Error
+            ? exception.cause.message
+            : undefined,
       };
     }
 
@@ -138,12 +133,27 @@ export class AllExceptionsFilter implements ExceptionFilter {
   }
 
   /**
-   * Logs the error with appropriate context and level.
+   * Converts an HTTP status code to a PascalCase error name string.
+   * e.g. 404 → "NotFound", 422 → "UnprocessableEntity"
    *
-   * @param exception - The caught exception
-   * @param request - The Express request object
-   * @param errorResponse - The formatted error response
+   * Implementation note: TypeScript numeric enums are bidirectionally mapped
+   * at runtime, so `HttpStatus[404]` yields `"NOT_FOUND"`. This is a
+   * well-specified TypeScript behaviour (§8.4), not an implementation detail
+   * we stumbled into — but it does mean this breaks if NestJS ever migrates
+   * HttpStatus away from a numeric enum. A runtime guard (`typeof key ===
+   * "string"`) is already present via the `key` narrowing below.
    */
+  private httpStatusToErrorName(statusCode: number): string {
+    const key = HttpStatus[statusCode] as string | undefined;
+    if (!key) return "UnknownError";
+
+    // HttpStatus enum keys are UPPER_SNAKE_CASE; convert to PascalCase.
+    return key
+      .toLowerCase()
+      .replaceAll(/_([a-z])/g, (_, char: string) => char.toUpperCase())
+      .replace(/^[a-z]/, (char) => char.toUpperCase());
+  }
+
   private logError(
     exception: unknown,
     request: Request,
@@ -151,27 +161,52 @@ export class AllExceptionsFilter implements ExceptionFilter {
   ): void {
     const { method, url, ip, headers } = request;
 
+    // Normalise message to a string for clean log output — logging an array
+    // directly produces "[object Array]" in some Pino transports.
+    const message = Array.isArray(errorResponse.message)
+      ? errorResponse.message.join(", ")
+      : errorResponse.message;
+
+    // traceId is set by pinoHttp's genReqId and attached via customProps.
+    // It correlates this error log with all other logs in the same request
+    // chain, which is essential for reconstructing request history in Loki.
     const logContext = {
       method,
       url,
       ip,
-      userAgent: headers["user-agent"] || "unknown",
+      traceId: request.id ?? null,
+      userAgent: headers["user-agent"] ?? "unknown",
       statusCode: errorResponse.statusCode,
     };
 
-    // Log at different levels based on status code
     if (errorResponse.statusCode >= 500) {
-      // Server errors - log as error with full stack
-      this.logger.error(
-        { err: exception, ...logContext },
-        `${method} ${url} - ${errorResponse.statusCode} - ${errorResponse.message}`,
-      );
+      if (isProgrammerError(exception)) {
+        // Programmer errors (TypeError, RangeError, etc.) indicate a bug in
+        // application code. Log them with a distinct `programmerError: true`
+        // field so alert rules and dashboards can route them separately from
+        // expected operational failures (e.g. DB timeouts, third-party 5xx).
+        //
+        // NOTE: this flag is only valuable if your alerting layer (Pino
+        // transport, log shipper, or APM) explicitly routes on it. Document
+        // the routing rule in docs/ops/runbook.md so it isn't stripped as
+        // dead metadata in a future cleanup.
+        this.logger.error(
+          { err: exception, ...logContext, programmerError: true },
+          `[PROGRAMMER ERROR] ${method} ${url} - ${errorResponse.statusCode} - ${message}`,
+        );
+      } else {
+        this.logger.error(
+          { err: exception, ...logContext },
+          `${method} ${url} - ${errorResponse.statusCode} - ${message}`,
+        );
+      }
     } else if (errorResponse.statusCode >= 400) {
-      // Client errors - log as warning
       this.logger.warn(
         logContext,
-        `${method} ${url} - ${errorResponse.statusCode} - ${errorResponse.message}`,
+        `${method} ${url} - ${errorResponse.statusCode} - ${message}`,
       );
     }
+    // Intentionally not logging 1xx/2xx/3xx — those are success/redirect
+    // paths and should never reach this filter under normal circumstances.
   }
 }

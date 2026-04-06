@@ -1,4 +1,5 @@
 // src/backend/modules/geography/geo.module.ts
+import { CommonModule } from "@common/common.module";
 import { Module } from "@nestjs/common";
 import { PrismaModule } from "prisma/prisma.module";
 
@@ -19,7 +20,7 @@ import { GeoService } from "./geo.service";
  * - CacheInterceptor: Per-route caching with 10-minute TTL (applied in controller with @UseInterceptors)
  */
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, CommonModule],
   controllers: [GeoController],
   providers: [GeoService],
   exports: [GeoService], // Export service for use in other modules

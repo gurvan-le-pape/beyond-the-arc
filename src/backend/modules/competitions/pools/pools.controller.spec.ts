@@ -1,8 +1,10 @@
 // src/backend/modules/competitions/pools/pools.controller.spec.ts
+import { CacheDedupService } from "@common/services/cache-dedup.service";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { NotFoundException } from "@nestjs/common";
 import type { TestingModule } from "@nestjs/testing";
 import { Test } from "@nestjs/testing";
+import { LoggerModule } from "nestjs-pino";
 
 import type { PoolResponseDto } from "./dto/pools.response.dto";
 import { PoolsController } from "./pools.controller";
@@ -37,6 +39,7 @@ describe("PoolsController", () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule.forRoot()],
       controllers: [PoolsController],
       providers: [
         {
@@ -47,6 +50,7 @@ describe("PoolsController", () => {
           provide: CACHE_MANAGER,
           useValue: mockCacheManager,
         },
+        CacheDedupService,
       ],
     }).compile();
 
