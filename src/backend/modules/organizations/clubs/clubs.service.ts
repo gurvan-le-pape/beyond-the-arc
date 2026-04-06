@@ -3,12 +3,7 @@ import { Category } from "@common/constants/categories";
 import { CompetitionLevel } from "@common/constants/competition-levels";
 import { Gender } from "@common/constants/genders";
 import { PaginatedResponseDto } from "@common/index";
-import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-  NotFoundException,
-} from "@nestjs/common";
+import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 import { PrismaService } from "prisma/prisma.service";
 
