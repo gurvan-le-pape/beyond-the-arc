@@ -6,98 +6,50 @@ import {
   HealthCheck,
   HealthCheckService,
   MemoryHealthIndicator,
+  PrismaHealthIndicator,
 } from "@nestjs/terminus";
-
-import { PrismaHealthIndicator } from "./indicators/prisma.indicator";
+import { PrismaService } from "prisma/prisma.service";
 
 /**
  * Health check endpoints for monitoring application status.
- * Used by monitoring systems, load balancers, and Kubernetes.
+ * Used by load balancers, Kubernetes probes, and Grafana alerting.
  */
 @ApiTags("health")
 @Controller("health")
 export class HealthController {
   constructor(
-    private health: HealthCheckService,
-    private prismaHealth: PrismaHealthIndicator,
-    private memory: MemoryHealthIndicator,
-    private disk: DiskHealthIndicator,
+    private readonly health: HealthCheckService,
+    private readonly prismaHealth: PrismaHealthIndicator,
+    private readonly prisma: PrismaService,
+    private readonly memory: MemoryHealthIndicator,
+    private readonly disk: DiskHealthIndicator,
   ) {}
 
   /**
-   * Comprehensive health check covering all critical services.
-   *
-   * Checks:
-   * - Database connectivity (Prisma)
-   * - Memory usage (heap)
-   * - Disk space
-   *
-   * @returns Health check results
-   *
-   * @example
-   * GET /health
-   * Response:
-   * {
-   *   "status": "ok",
-   *   "info": {
-   *     "database": { "status": "up" },
-   *     "memory_heap": { "status": "up" },
-   *     "storage": { "status": "up" }
-   *   },
-   *   "error": {},
-   *   "details": { ... }
-   * }
+   * Full health check — database, memory heap, and disk space.
+   * Returns 503 if any check fails.
    */
   @Get()
   @HealthCheck()
-  @ApiOperation({
-    summary: "Check application health",
-    description: "Comprehensive health check for monitoring",
-  })
-  @ApiResponse({
-    status: 200,
-    description: "Application is healthy",
-  })
-  @ApiResponse({
-    status: 503,
-    description: "Application is unhealthy",
-  })
+  @ApiOperation({ summary: "Check application health" })
+  @ApiResponse({ status: 200, description: "Application is healthy" })
+  @ApiResponse({ status: 503, description: "Application is unhealthy" })
   check() {
     return this.health.check([
-      // Database connectivity - CRITICAL
-      () => this.prismaHealth.isHealthy("database"),
-
-      // Memory usage - warn if heap > 300MB
+      () => this.prismaHealth.pingCheck("database", this.prisma),
       () => this.memory.checkHeap("memory_heap", 300 * 1024 * 1024),
-
-      // Disk space - warn if > 90% full
       () =>
-        this.disk.checkStorage("storage", {
-          path: "/",
-          thresholdPercent: 0.9,
-        }),
+        this.disk.checkStorage("storage", { path: "/", thresholdPercent: 0.9 }),
     ]);
   }
 
   /**
-   * Liveness probe - is the application running?
-   * Returns 200 if the app is alive (even if dependencies are down).
-   *
-   * Use for: Kubernetes liveness probes
-   *
-   * @example
-   * GET /health/live
-   * Response: { "status": "ok", "timestamp": "2024-02-05T10:00:00Z" }
+   * Liveness probe — confirms the process is running.
+   * Always returns 200. Use for Kubernetes liveness probes.
    */
   @Get("live")
-  @ApiOperation({
-    summary: "Liveness probe",
-    description: "Simple check to verify the application is running",
-  })
-  @ApiResponse({
-    status: 200,
-    description: "Application is alive",
-  })
+  @ApiOperation({ summary: "Liveness probe" })
+  @ApiResponse({ status: 200, description: "Application is alive" })
   getLiveness() {
     return {
       status: "ok",
@@ -106,37 +58,18 @@ export class HealthController {
   }
 
   /**
-   * Readiness probe - is the application ready to serve traffic?
-   * Returns 200 only if database is accessible.
-   *
-   * Use for: Kubernetes readiness probes, load balancer health checks
-   *
-   * @example
-   * GET /health/ready
-   * Response:
-   * {
-   *   "status": "ok",
-   *   "info": { "database": { "status": "up" } }
-   * }
+   * Readiness probe — confirms the app can serve traffic.
+   * Returns 503 if the database is unreachable.
+   * Use for Kubernetes readiness probes and load balancer health checks.
    */
   @Get("ready")
   @HealthCheck()
-  @ApiOperation({
-    summary: "Readiness probe",
-    description: "Checks if the application is ready to serve traffic",
-  })
-  @ApiResponse({
-    status: 200,
-    description: "Application is ready",
-  })
-  @ApiResponse({
-    status: 503,
-    description: "Application is not ready (dependencies down)",
-  })
+  @ApiOperation({ summary: "Readiness probe" })
+  @ApiResponse({ status: 200, description: "Application is ready" })
+  @ApiResponse({ status: 503, description: "Application is not ready" })
   getReadiness() {
     return this.health.check([
-      // Only check critical dependencies
-      () => this.prismaHealth.isHealthy("database"),
+      () => this.prismaHealth.pingCheck("database", this.prisma),
     ]);
   }
 }
