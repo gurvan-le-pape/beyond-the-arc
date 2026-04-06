@@ -1,9 +1,5 @@
 // src/backend/modules/matches/matches.module.ts
-import { AllExceptionsFilter } from "@common/filters/all-exceptions.filter";
-import { LoggingInterceptor } from "@common/interceptors/logging.interceptor";
-import { TransformInterceptor } from "@common/interceptors/transform.interceptor";
 import { Module } from "@nestjs/common";
-import { APP_FILTER, APP_INTERCEPTOR } from "@nestjs/core";
 import { PrismaModule } from "prisma/prisma.module";
 
 import { MatchesController } from "./matches.controller";

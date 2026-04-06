@@ -1,14 +1,17 @@
 // src/backend/main.ts
-import { AllExceptionsFilter } from "@common/filters/all-exceptions.filter";
 import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { Logger } from "nestjs-pino";
 
 import { AppModule } from "./app.module";
-import { LoggingInterceptor, TransformInterceptor } from "./common";
+import { TransformInterceptor } from "./common";
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { bufferLogs: true });
+
+  // Use Pino as the application logger
+  app.useLogger(app.get(Logger));
 
   // Enable CORS for the frontend
   app.enableCors({
@@ -38,12 +41,8 @@ async function bootstrap() {
     }),
   );
 
-  // Global interceptors - REGISTER ONCE HERE
+  // Global interceptors
   app.useGlobalInterceptors(new TransformInterceptor());
-  app.useGlobalInterceptors(new LoggingInterceptor());
-
-  // Global filters
-  app.useGlobalFilters(new AllExceptionsFilter());
 
   await app.listen(process.env.PORT || 4000);
 }
