@@ -4,14 +4,15 @@ import {
   BadRequestException,
   HttpException,
   HttpStatus,
-  Logger,
   NotFoundException,
 } from "@nestjs/common";
+import type { PinoLogger } from "nestjs-pino";
 
 import { AllExceptionsFilter } from "./all-exceptions.filter";
 
 describe("AllExceptionsFilter", () => {
   let filter: AllExceptionsFilter;
+  let mockLogger: jest.Mocked<Pick<PinoLogger, "error" | "warn">>;
   let mockResponse: { status: jest.Mock; json: jest.Mock };
   let mockRequest: Partial<{
     url: string;
@@ -22,9 +23,12 @@ describe("AllExceptionsFilter", () => {
   let mockHost: Partial<ArgumentsHost>;
 
   beforeEach(() => {
-    filter = new AllExceptionsFilter();
-    jest.spyOn(Logger.prototype, "error").mockImplementation(() => undefined);
-    jest.spyOn(Logger.prototype, "warn").mockImplementation(() => undefined);
+    mockLogger = {
+      error: jest.fn(),
+      warn: jest.fn(),
+    };
+
+    filter = new AllExceptionsFilter(mockLogger as unknown as PinoLogger);
 
     mockResponse = {
       status: jest.fn().mockReturnThis(),
@@ -184,7 +188,7 @@ describe("AllExceptionsFilter", () => {
     it("should log 5xx errors with logger.error", () => {
       filter.catch(new Error("Server error"), mockHost as ArgumentsHost);
 
-      expect(Logger.prototype.error).toHaveBeenCalled();
+      expect(mockLogger.error).toHaveBeenCalled();
     });
 
     it("should log 4xx errors with logger.warn", () => {
@@ -193,7 +197,7 @@ describe("AllExceptionsFilter", () => {
         mockHost as ArgumentsHost,
       );
 
-      expect(Logger.prototype.warn).toHaveBeenCalled();
+      expect(mockLogger.warn).toHaveBeenCalled();
     });
 
     it("should use unknown when user-agent header is missing", () => {
@@ -204,7 +208,7 @@ describe("AllExceptionsFilter", () => {
         mockHost as ArgumentsHost,
       );
 
-      expect(Logger.prototype.warn).toHaveBeenCalled();
+      expect(mockLogger.warn).toHaveBeenCalled();
     });
   });
 });
