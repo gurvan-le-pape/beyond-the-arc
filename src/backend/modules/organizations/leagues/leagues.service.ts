@@ -59,20 +59,12 @@ export class LeaguesService {
    * @returns Array of league DTOs
    */
   async findAllLeagues(): Promise<LeagueResponseDto[]> {
-    try {
-      const leagues = await this.prisma.leagues.findMany({
-        select: LEAGUE_SELECT,
-        orderBy: { name: "asc" },
-      });
+    const leagues = await this.prisma.leagues.findMany({
+      select: LEAGUE_SELECT,
+      orderBy: { name: "asc" },
+    });
 
-      return leagues.map((l) => this.mapToDto(l));
-    } catch (error) {
-      this.logger.error(
-        "[findAllLeagues] Failed to fetch regional leagues",
-        error,
-      );
-      throw error;
-    }
+    return leagues.map((l) => this.mapToDto(l));
   }
 
   /**

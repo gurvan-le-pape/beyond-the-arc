@@ -180,19 +180,11 @@ export class ChampionshipsService {
   private async queryChampionshipsByCondition(
     condition: Prisma.ChampionshipsWhereInput,
   ): Promise<ChampionshipSelectResult[]> {
-    try {
-      return await this.prisma.championships.findMany({
-        where: condition,
-        select: CHAMPIONSHIP_SELECT,
-        orderBy: [{ division: "asc" }, { category: "asc" }],
-      });
-    } catch (error) {
-      this.logger.error(
-        `[queryChampionshipsByCondition] Failed to fetch championships`,
-        error,
-      );
-      throw error;
-    }
+    return await this.prisma.championships.findMany({
+      where: condition,
+      select: CHAMPIONSHIP_SELECT,
+      orderBy: [{ division: "asc" }, { category: "asc" }],
+    });
   }
 
   /**

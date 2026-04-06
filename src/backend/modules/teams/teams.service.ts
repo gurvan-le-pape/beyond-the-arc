@@ -334,29 +334,24 @@ export class TeamsService {
     const skip = (page - 1) * limit;
     const where = this.buildWhereClause(filters);
 
-    try {
-      const [teams, total] = await Promise.all([
-        this.prisma.teams.findMany({
-          where,
-          select: TEAM_SELECT,
-          orderBy: { club: { name: "asc" } },
-          skip,
-          take: limit,
-        }),
-        this.prisma.teams.count({ where }),
-      ]);
+    const [teams, total] = await Promise.all([
+      this.prisma.teams.findMany({
+        where,
+        select: TEAM_SELECT,
+        orderBy: { club: { name: "asc" } },
+        skip,
+        take: limit,
+      }),
+      this.prisma.teams.count({ where }),
+    ]);
 
-      return {
-        items: teams.map((t) => this.mapToDto(t)),
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      };
-    } catch (error) {
-      this.logger.error("[findAllTeams] Failed to fetch teams", error);
-      throw error;
-    }
+    return {
+      items: teams.map((t) => this.mapToDto(t)),
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   /**

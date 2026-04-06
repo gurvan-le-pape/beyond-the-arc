@@ -60,20 +60,12 @@ export class CommitteesService {
    * @returns Array of committee DTOs
    */
   async findAllCommittees(): Promise<CommitteeResponseDto[]> {
-    try {
-      const committees = await this.prisma.committees.findMany({
-        select: COMMITTEE_SELECT,
-        orderBy: [{ name: "asc" }],
-      });
+    const committees = await this.prisma.committees.findMany({
+      select: COMMITTEE_SELECT,
+      orderBy: [{ name: "asc" }],
+    });
 
-      return committees.map((c) => this.mapToDto(c));
-    } catch (error) {
-      this.logger.error(
-        "[findAllCommittees] Failed to fetch committees",
-        error,
-      );
-      throw error;
-    }
+    return committees.map((c) => this.mapToDto(c));
   }
 
   /**
@@ -81,40 +73,28 @@ export class CommitteesService {
    *
    * @param leagueId - The league ID
    * @returns Array of committee DTOs
-   * @throws NotFoundException if no committees found
    */
   async findCommitteesByLeague(
     leagueId: number,
   ): Promise<CommitteeResponseDto[]> {
-    try {
-      const committees = await this.prisma.committees.findMany({
-        where: {
-          leagueId,
-        },
-        select: COMMITTEE_SELECT,
-        orderBy: [{ name: "asc" }],
-      });
+    const committees = await this.prisma.committees.findMany({
+      where: {
+        leagueId,
+      },
+      select: COMMITTEE_SELECT,
+      orderBy: [{ name: "asc" }],
+    });
 
-      if (committees.length === 0) {
-        this.logger.warn(
-          `[findCommitteesByLeague] No committees found for league ID: ${leagueId}`,
-        );
-        throw new NotFoundException(
-          `No committees found for league ID ${leagueId}`,
-        );
-      }
-
-      return committees.map((c) => this.mapToDto(c));
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-      this.logger.error(
-        `[findCommitteesByLeague] Failed to fetch committees for league ID ${leagueId}`,
-        error,
+    if (committees.length === 0) {
+      this.logger.warn(
+        `[findCommitteesByLeague] No committees found for league ID: ${leagueId}`,
       );
-      throw error;
+      throw new NotFoundException(
+        `No committees found for league ID ${leagueId}`,
+      );
     }
+
+    return committees.map((c) => this.mapToDto(c));
   }
 
   /**

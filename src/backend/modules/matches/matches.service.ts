@@ -252,29 +252,24 @@ export class MatchesService {
     const skip = (page - 1) * limit;
     const where = this.buildWhereClause(filters);
 
-    try {
-      const [matches, total] = await Promise.all([
-        this.prisma.matches.findMany({
-          where,
-          select: MATCH_LIST_SELECT,
-          orderBy: { date: "desc" },
-          skip,
-          take: limit,
-        }),
-        this.prisma.matches.count({ where }),
-      ]);
+    const [matches, total] = await Promise.all([
+      this.prisma.matches.findMany({
+        where,
+        select: MATCH_LIST_SELECT,
+        orderBy: { date: "desc" },
+        skip,
+        take: limit,
+      }),
+      this.prisma.matches.count({ where }),
+    ]);
 
-      return {
-        items: matches.map((m) => this.mapMatchToDto(m)),
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      };
-    } catch (error) {
-      this.logger.error("Failed to fetch matches", error);
-      throw error;
-    }
+    return {
+      items: matches.map((m) => this.mapMatchToDto(m)),
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   async findMatchById(matchId: number): Promise<MatchDetailResponseDto> {

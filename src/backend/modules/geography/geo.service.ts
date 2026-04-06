@@ -36,11 +36,9 @@ export class GeoService {
    * Results include geometry data from PostGIS.
    *
    * @returns GeoJSON FeatureCollection of regions
-   * @throws InternalServerErrorException if database query fails
    */
   async getRegionsGeoJson(): Promise<GeoJsonFeatureCollectionDto> {
-    try {
-      const regions = await this.prisma.$queryRaw<GeoEntityQueryResult[]>`
+    const regions = await this.prisma.$queryRaw<GeoEntityQueryResult[]>`
         SELECT 
           r.code, 
           r.name, 
@@ -51,14 +49,7 @@ export class GeoService {
         ORDER BY r.code ASC
       `;
 
-      return this.mapToFeatureCollection(regions);
-    } catch (error) {
-      this.logger.error(
-        "[getRegionsGeoJson] Failed to fetch regions GeoJSON",
-        error,
-      );
-      throw new InternalServerErrorException("Failed to fetch regions GeoJSON");
-    }
+    return this.mapToFeatureCollection(regions);
   }
 
   /**
@@ -66,11 +57,9 @@ export class GeoService {
    * Results include geometry data from PostGIS.
    *
    * @returns GeoJSON FeatureCollection of departments
-   * @throws InternalServerErrorException if database query fails
    */
   async getDepartmentsGeoJson(): Promise<GeoJsonFeatureCollectionDto> {
-    try {
-      const departments = await this.prisma.$queryRaw<GeoEntityQueryResult[]>`
+    const departments = await this.prisma.$queryRaw<GeoEntityQueryResult[]>`
         SELECT 
           d.code, 
           d.name, 
@@ -81,16 +70,7 @@ export class GeoService {
         ORDER BY d.code ASC
       `;
 
-      return this.mapToFeatureCollection(departments);
-    } catch (error) {
-      this.logger.error(
-        "[getDepartmentsGeoJson] Failed to fetch departments GeoJSON",
-        error,
-      );
-      throw new InternalServerErrorException(
-        "Failed to fetch departments GeoJSON",
-      );
-    }
+    return this.mapToFeatureCollection(departments);
   }
 
   /**

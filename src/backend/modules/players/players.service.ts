@@ -196,29 +196,24 @@ export class PlayersService {
 
     const where = this.buildWhereClause(filters);
 
-    try {
-      const [players, total] = await Promise.all([
-        this.prisma.players.findMany({
-          where,
-          select: PLAYER_SELECT,
-          orderBy: { name: "asc" },
-          skip,
-          take: limit,
-        }),
-        this.prisma.players.count({ where }),
-      ]);
+    const [players, total] = await Promise.all([
+      this.prisma.players.findMany({
+        where,
+        select: PLAYER_SELECT,
+        orderBy: { name: "asc" },
+        skip,
+        take: limit,
+      }),
+      this.prisma.players.count({ where }),
+    ]);
 
-      return {
-        items: players.map((p) => this.mapToDto(p)),
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      };
-    } catch (error) {
-      this.logger.error("[findAllPlayers] Failed to fetch players", error);
-      throw error;
-    }
+    return {
+      items: players.map((p) => this.mapToDto(p)),
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   /**

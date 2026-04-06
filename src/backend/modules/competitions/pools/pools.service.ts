@@ -39,26 +39,17 @@ export class PoolsService {
    *
    * @param championshipId - The championship ID
    * @returns Array of pool DTOs
-   * @throws NotFoundException if no pools found
    */
   async findPoolsByChampionshipId(
     championshipId: number,
   ): Promise<PoolResponseDto[]> {
-    try {
-      const pools = await this.prisma.pools.findMany({
-        where: { championshipId },
-        select: POOL_SELECT,
-        orderBy: { letter: "asc" },
-      });
+    const pools = await this.prisma.pools.findMany({
+      where: { championshipId },
+      select: POOL_SELECT,
+      orderBy: { letter: "asc" },
+    });
 
-      return pools.map((pool) => this.mapToDto(pool));
-    } catch (error) {
-      this.logger.error(
-        `[findPoolsByChampionshipId] Failed to fetch pools for championship ID ${championshipId}`,
-        error,
-      );
-      throw error;
-    }
+    return pools.map((pool) => this.mapToDto(pool));
   }
 
   /**
