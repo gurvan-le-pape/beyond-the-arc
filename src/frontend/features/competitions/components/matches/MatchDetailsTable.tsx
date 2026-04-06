@@ -36,7 +36,7 @@ export const MatchDetailsTable: React.FC<MatchDetailsTableProps> = ({
 
   const display = (value: number) => {
     if (isLoadingEvents) return "-";
-    return value > 0 ? value : "-";
+    return value;
   };
 
   return (
@@ -59,7 +59,7 @@ export const MatchDetailsTable: React.FC<MatchDetailsTableProps> = ({
       <TableBody>
         {/* Home Team Row */}
         <TableRow hoverable={false}>
-          <TableCell>{match.homeTeam.club.name}</TableCell>
+          <TableCell>{`${match.homeTeam.club.name} - ${match.homeTeam.number}`}</TableCell>
           <TableCell align="center">{display(quarterScores.home[0])}</TableCell>
           <TableCell align="center">{display(quarterScores.home[1])}</TableCell>
           <TableCell align="center">{display(quarterScores.home[2])}</TableCell>
@@ -79,7 +79,7 @@ export const MatchDetailsTable: React.FC<MatchDetailsTableProps> = ({
           hoverable={false}
           className="bg-surface-subtle dark:bg-surface-subtle-dark"
         >
-          <TableCell>{match.awayTeam.club.name}</TableCell>
+          <TableCell>{`${match.awayTeam.club.name} - ${match.awayTeam.number}`}</TableCell>
           <TableCell align="center">{display(quarterScores.away[0])}</TableCell>
           <TableCell align="center">{display(quarterScores.away[1])}</TableCell>
           <TableCell align="center">{display(quarterScores.away[2])}</TableCell>
