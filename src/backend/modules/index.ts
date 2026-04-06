@@ -24,7 +24,6 @@ export * from "./geography/geo.module";
 export * from "./geography/geo.service";
 export * from "./health/health.controller";
 export * from "./health/health.module";
-export * from "./health/indicators/prisma.indicator";
 export * from "./matches/dto/matches.query.dto";
 export * from "./matches/dto/matches.response.dto";
 export * from "./matches/matches.controller";
