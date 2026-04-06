@@ -1,7 +1,9 @@
 // src/backend/modules/geography/geo.service.spec.ts
+import { CacheDedupService } from "@common/services/cache-dedup.service";
 import { InternalServerErrorException } from "@nestjs/common";
 import type { TestingModule } from "@nestjs/testing";
 import { Test } from "@nestjs/testing";
+import { LoggerModule } from "nestjs-pino";
 import { PrismaService } from "prisma/prisma.service";
 
 import { GeoService } from "./geo.service";
@@ -25,12 +27,14 @@ describe("GeoService", () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule.forRoot()],
       providers: [
         GeoService,
         {
           provide: PrismaService,
           useValue: mockPrismaService,
         },
+        CacheDedupService,
       ],
     }).compile();
 

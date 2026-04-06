@@ -1,7 +1,9 @@
 // src/backend/modules/organizations/leagues/leagues.service.spec.ts
+import { CacheDedupService } from "@common/services/cache-dedup.service";
 import { NotFoundException } from "@nestjs/common";
 import type { TestingModule } from "@nestjs/testing";
 import { Test } from "@nestjs/testing";
+import { LoggerModule } from "nestjs-pino";
 import { PrismaService } from "prisma/prisma.service";
 
 import { LeaguesService } from "./leagues.service";
@@ -29,12 +31,14 @@ describe("LeaguesService", () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule.forRoot()],
       providers: [
         LeaguesService,
         {
           provide: PrismaService,
           useValue: mockPrismaService,
         },
+        CacheDedupService,
       ],
     }).compile();
 

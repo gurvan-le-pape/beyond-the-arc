@@ -1,9 +1,11 @@
 // src/backend/modules/players/players.controller.spec.ts
 import type { PaginatedResponseDto } from "@common/dto/paginated-response.dto";
+import { CacheDedupService } from "@common/services/cache-dedup.service";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { NotFoundException } from "@nestjs/common";
 import type { TestingModule } from "@nestjs/testing";
 import { Test } from "@nestjs/testing";
+import { LoggerModule } from "nestjs-pino";
 
 import type {
   MatchHistoryDto,
@@ -43,6 +45,7 @@ describe("PlayersController", () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule.forRoot()],
       controllers: [PlayersController],
       providers: [
         {
@@ -53,6 +56,7 @@ describe("PlayersController", () => {
           provide: CACHE_MANAGER,
           useValue: mockCacheManager,
         },
+        CacheDedupService,
       ],
     }).compile();
 

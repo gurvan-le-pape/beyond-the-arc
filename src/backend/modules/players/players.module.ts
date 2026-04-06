@@ -1,4 +1,5 @@
 // src/backend/modules/players/players.module.ts
+import { CommonModule } from "@common/common.module";
 import { Module } from "@nestjs/common";
 import { PrismaModule } from "prisma/prisma.module";
 
@@ -20,7 +21,7 @@ import { PlayersService } from "./players.service";
  * - CacheInterceptor: Per-route caching (applied in controller with @UseInterceptors)
  */
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, CommonModule],
   controllers: [PlayersController],
   providers: [PlayersService],
   exports: [PlayersService], // Export service for use in other modules

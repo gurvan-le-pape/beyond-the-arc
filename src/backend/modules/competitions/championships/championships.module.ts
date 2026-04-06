@@ -1,4 +1,5 @@
 // src/backend/modules/competitions/championships/championships.module.ts
+import { CommonModule } from "@common/common.module";
 import { Module } from "@nestjs/common";
 import { PrismaModule } from "prisma/prisma.module";
 
@@ -19,7 +20,7 @@ import { ChampionshipsService } from "./championships.service";
  * - Per-route caching is applied in the controller using CacheInterceptor.
  */
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, CommonModule],
   controllers: [ChampionshipsController],
   providers: [ChampionshipsService],
   exports: [ChampionshipsService], // Export service for use in other modules

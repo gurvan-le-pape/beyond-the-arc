@@ -1,8 +1,10 @@
 // src/backend/modules/organizations/committees/committees.controller.spec.ts
+import { CacheDedupService } from "@common/services/cache-dedup.service";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { NotFoundException } from "@nestjs/common";
 import type { TestingModule } from "@nestjs/testing";
 import { Test } from "@nestjs/testing";
+import { LoggerModule } from "nestjs-pino";
 
 import { CommitteesController } from "./committees.controller";
 import { CommitteesService } from "./committees.service";
@@ -38,6 +40,7 @@ describe("CommitteesController", () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule.forRoot()],
       controllers: [CommitteesController],
       providers: [
         {
@@ -48,6 +51,7 @@ describe("CommitteesController", () => {
           provide: CACHE_MANAGER,
           useValue: mockCacheManager,
         },
+        CacheDedupService,
       ],
     }).compile();
 

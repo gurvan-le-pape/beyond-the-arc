@@ -1,9 +1,11 @@
 // src/backend/modules/competitions/championships/championships.controller.spec.ts
 import { CompetitionLevel } from "@common/constants/competition-levels";
+import { CacheDedupService } from "@common/services/cache-dedup.service";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { NotFoundException } from "@nestjs/common";
 import type { TestingModule } from "@nestjs/testing";
 import { Test } from "@nestjs/testing";
+import { LoggerModule } from "nestjs-pino";
 
 import { ChampionshipsController } from "./championships.controller";
 import { ChampionshipsService } from "./championships.service";
@@ -39,6 +41,7 @@ describe("ChampionshipsController", () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule.forRoot()],
       controllers: [ChampionshipsController],
       providers: [
         {
@@ -49,6 +52,7 @@ describe("ChampionshipsController", () => {
           provide: CACHE_MANAGER,
           useValue: mockCacheManager,
         },
+        CacheDedupService,
       ],
     }).compile();
 

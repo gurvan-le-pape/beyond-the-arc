@@ -1,9 +1,11 @@
 // src/backend/modules/matches/matches.service.spec.ts
+import { CacheDedupService } from "@common/services/cache-dedup.service";
 import { NotFoundException } from "@nestjs/common";
 import type { TestingModule } from "@nestjs/testing";
 import { Test } from "@nestjs/testing";
 import { Decimal } from "@prisma/client/runtime/library";
 import { fromZonedTime } from "date-fns-tz";
+import { LoggerModule } from "nestjs-pino";
 import { PrismaService } from "prisma/prisma.service";
 
 import { MatchesService } from "./matches.service";
@@ -174,12 +176,14 @@ describe("MatchesService", () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule.forRoot()],
       providers: [
         MatchesService,
         {
           provide: PrismaService,
           useValue: mockPrismaService,
         },
+        CacheDedupService,
       ],
     }).compile();
 

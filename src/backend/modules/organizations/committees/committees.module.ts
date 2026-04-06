@@ -1,4 +1,5 @@
 // src/backend/modules/organizations/committees/committees.module.ts
+import { CommonModule } from "@common/common.module";
 import { Module } from "@nestjs/common";
 import { PrismaModule } from "prisma/prisma.module";
 
@@ -19,7 +20,7 @@ import { CommitteesService } from "./committees.service";
  * - CacheInterceptor: Per-route caching (applied in controller with @UseInterceptors)
  */
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, CommonModule],
   controllers: [CommitteesController],
   providers: [CommitteesService],
   exports: [CommitteesService], // Export service for use in other modules

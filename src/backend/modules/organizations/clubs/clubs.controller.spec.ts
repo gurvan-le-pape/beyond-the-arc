@@ -10,11 +10,13 @@
 import { Category } from "@common/constants/categories";
 import { CompetitionLevel } from "@common/constants/competition-levels";
 import { Gender } from "@common/constants/genders";
+import { CacheDedupService } from "@common/services/cache-dedup.service";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import type { TestingModule } from "@nestjs/testing";
 import { Test } from "@nestjs/testing";
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
+import { LoggerModule } from "nestjs-pino";
 
 import { ClubsController } from "./clubs.controller";
 import { ClubsService } from "./clubs.service";
@@ -50,6 +52,7 @@ describe("ClubsController", () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule.forRoot()],
       controllers: [ClubsController],
       providers: [
         {
@@ -60,6 +63,7 @@ describe("ClubsController", () => {
           provide: CACHE_MANAGER,
           useValue: mockCacheManager,
         },
+        CacheDedupService,
       ],
     }).compile();
 

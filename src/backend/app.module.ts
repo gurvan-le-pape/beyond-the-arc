@@ -1,7 +1,10 @@
 // src/backend/app.module.ts
+import { randomUUID } from "node:crypto";
+
+import { CommonModule } from "@common/common.module";
 import { CACHE_TTL } from "@common/constants/cache-ttls";
 import { CacheModule } from "@nestjs/cache-manager";
-import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 import { APP_FILTER } from "@nestjs/core";
 import {
   ChampionshipsModule,
@@ -18,10 +21,8 @@ import {
 } from "modules";
 import { LoggerModule } from "nestjs-pino";
 import { PrismaModule } from "prisma/prisma.module";
-import { v4 as uuidv4 } from "uuid";
 
 import { AllExceptionsFilter } from "./common";
-import { RequestIdMiddleware } from "./common/middleware/request-id.middleware";
 
 @Module({
   imports: [
@@ -34,7 +35,8 @@ import { RequestIdMiddleware } from "./common/middleware/request-id.middleware";
             : { target: "pino-pretty", options: { colorize: true } },
         redact: ["req.headers.authorization", "req.headers.cookie"],
         autoLogging: true,
-        genReqId: (req) => req.headers["x-request-id"] ?? uuidv4(),
+        genReqId: (req) =>
+          (req.headers["x-request-id"] as string) ?? randomUUID(),
       },
     }),
     CacheModule.register({
@@ -43,6 +45,7 @@ import { RequestIdMiddleware } from "./common/middleware/request-id.middleware";
       max: 100, // Maximum number of items in cache
     }),
     ClubsModule,
+    CommonModule,
     CommitteesModule,
     LeaguesModule,
     ChampionshipsModule,
@@ -58,8 +61,4 @@ import { RequestIdMiddleware } from "./common/middleware/request-id.middleware";
   controllers: [],
   providers: [{ provide: APP_FILTER, useClass: AllExceptionsFilter }],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(RequestIdMiddleware).forRoutes("*");
-  }
-}
+export class AppModule {}
