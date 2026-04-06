@@ -17,10 +17,7 @@ import { ErrorMessage } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
 import { CompetitionLevel } from "@/shared/constants/competition-levels";
-import {
-  groupChampionshipsByCategory,
-  groupChampionshipsByGender,
-} from "@/shared/utils/grouping";
+import { groupBy } from "@/shared/utils";
 
 export default function DepartmentalChampionshipsPage() {
   const tCommon = useTranslations("common");
@@ -34,7 +31,7 @@ export default function DepartmentalChampionshipsPage() {
   const { championships, committee, clubs, isLoading, fetchError } =
     useDepartmentalChampionshipsData(id);
 
-  const championshipsByGender = groupChampionshipsByGender(championships);
+  const championshipsByGender = groupBy(championships, (c) => c.gender);
 
   const breadcrumbItems = [
     { label: tOrganizations("breadcrumb"), href: "/organizations" },
@@ -44,8 +41,6 @@ export default function DepartmentalChampionshipsPage() {
     },
     { label: committee?.name ?? "…", current: true },
   ];
-
-  console.log(clubs);
 
   return (
     <PageLayout>
@@ -83,7 +78,6 @@ export default function DepartmentalChampionshipsPage() {
           {/* Championships */}
           <ChampionshipList
             championshipsByGender={championshipsByGender}
-            groupChampionshipsByCategory={groupChampionshipsByCategory}
             onItemClick={(championship) =>
               router.push(
                 `/competitions/${CompetitionLevel.DEPARTMENTAL}/${id}/${championship.id}`,

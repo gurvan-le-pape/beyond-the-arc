@@ -17,10 +17,7 @@ import { ErrorMessage } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
 import { CompetitionLevel } from "@/shared/constants/competition-levels";
-import {
-  groupChampionshipsByCategory,
-  groupChampionshipsByGender,
-} from "@/shared/utils/grouping";
+import { groupBy } from "@/shared/utils";
 
 export default function RegionalChampionshipsPage() {
   const tCommon = useTranslations("common");
@@ -34,7 +31,7 @@ export default function RegionalChampionshipsPage() {
   const { championships, league, committees, isLoading, fetchError } =
     useRegionalChampionshipsData(id);
 
-  const championshipsByGender = groupChampionshipsByGender(championships);
+  const championshipsByGender = groupBy(championships, (c) => c.gender);
 
   const breadcrumbItems = [
     { label: tOrganizations("breadcrumb"), href: "/organizations" },
@@ -81,7 +78,6 @@ export default function RegionalChampionshipsPage() {
           {/* Championships */}
           <ChampionshipList
             championshipsByGender={championshipsByGender}
-            groupChampionshipsByCategory={groupChampionshipsByCategory}
             onItemClick={(championship) =>
               router.push(
                 `/competitions/${CompetitionLevel.REGIONAL}/${id}/${championship.id}`,
