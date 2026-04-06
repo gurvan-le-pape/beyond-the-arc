@@ -9,10 +9,7 @@
 
 import { Category } from "@common/constants/categories";
 import { Gender } from "@common/constants/genders";
-import {
-  InternalServerErrorException,
-  NotFoundException,
-} from "@nestjs/common";
+import { NotFoundException } from "@nestjs/common";
 import type { PrismaService } from "prisma/prisma.service";
 
 import { ClubsService } from "./clubs.service";

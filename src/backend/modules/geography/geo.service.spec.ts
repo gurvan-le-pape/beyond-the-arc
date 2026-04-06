@@ -1,6 +1,5 @@
 // src/backend/modules/geography/geo.service.spec.ts
 import { CacheDedupService } from "@common/services/cache-dedup.service";
-import { InternalServerErrorException } from "@nestjs/common";
 import type { TestingModule } from "@nestjs/testing";
 import { Test } from "@nestjs/testing";
 import { LoggerModule } from "nestjs-pino";
