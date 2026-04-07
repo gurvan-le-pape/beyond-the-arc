@@ -1,18 +1,26 @@
 // src/frontend/app/[locale]/(public)/error.tsx
 "use client";
 
+import * as Sentry from "@sentry/nextjs";
 import { useTranslations } from "next-intl";
+import { useEffect } from "react";
 
 import { PageLayout } from "@/shared/components/layout";
 import { Button } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 
 export default function GlobalError({
+  error,
   unstable_retry,
 }: Readonly<{
+  error: Error & { digest?: string };
   unstable_retry: () => void;
 }>) {
   const tCommon = useTranslations("common");
+
+  useEffect(() => {
+    Sentry.captureException(error);
+  }, [error]);
 
   return (
     <PageLayout centered>
