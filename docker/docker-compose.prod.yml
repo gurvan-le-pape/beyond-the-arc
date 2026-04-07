@@ -3,7 +3,6 @@ services:
     build:
       target: prod
     environment:
-      - NEXT_PUBLIC_API_URL=https://api.yourdomain.com
       - NODE_ENV=production
 
   backend:
@@ -11,7 +10,6 @@ services:
       target: prod
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=${DATABASE_URL}
 
 volumes:
   postgres_data:

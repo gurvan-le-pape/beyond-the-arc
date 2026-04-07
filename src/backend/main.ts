@@ -23,6 +23,8 @@ async function bootstrap() {
     allowedHeaders: ["Content-Type", "Authorization"],
   });
 
+  app.setGlobalPrefix("api");
+
   // Swagger/OpenAPI setup
   const config = new DocumentBuilder()
     .setTitle("Beyond the Arc API")
@@ -32,7 +34,7 @@ async function bootstrap() {
     .setVersion("1.0")
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup("api", app, document);
+  SwaggerModule.setup("docs", app, document);
 
   // Global pipes
   app.useGlobalPipes(

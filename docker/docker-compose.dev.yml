@@ -3,6 +3,7 @@ services:
     build:
       target: dev
     environment:
+      - NODE_ENV=development
       - HOST=0.0.0.0
     volumes:
       - ../src/frontend:/app
@@ -20,7 +21,6 @@ services:
 
   database:
     volumes:
-      - postgres_data:/var/lib/postgresql
       - ../src/backend/db/migrations:/migrations
       - ../src/backend/db/sql/db_dump.sql:/app/db/sql/db_dump.sql:ro
 
