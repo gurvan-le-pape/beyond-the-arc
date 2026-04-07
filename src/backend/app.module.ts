@@ -6,6 +6,7 @@ import { CACHE_TTL } from "@common/constants/cache-ttls";
 import { CacheModule } from "@nestjs/cache-manager";
 import { Module } from "@nestjs/common";
 import { APP_FILTER } from "@nestjs/core";
+import { SentryModule } from "@sentry/nestjs/setup";
 import {
   ChampionshipsModule,
   ClubsModule,
@@ -26,6 +27,7 @@ import { AllExceptionsFilter } from "./common";
 
 @Module({
   imports: [
+    SentryModule.forRoot(),
     LoggerModule.forRoot({
       pinoHttp: {
         level: process.env.NODE_ENV === "production" ? "info" : "debug",
