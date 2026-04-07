@@ -6,6 +6,7 @@ import {
   HttpException,
   HttpStatus,
 } from "@nestjs/common";
+import { SentryExceptionCaptured } from "@sentry/nestjs";
 import { Request, Response } from "express";
 import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 
@@ -62,6 +63,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     private readonly logger: PinoLogger,
   ) {}
 
+  @SentryExceptionCaptured()
   catch(exception: unknown, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
