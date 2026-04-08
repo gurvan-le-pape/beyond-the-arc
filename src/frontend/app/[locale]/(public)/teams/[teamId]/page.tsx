@@ -22,6 +22,9 @@ export async function generateStaticParams() {
   return [];
 }
 
+export const dynamicParams = true;
+export const dynamic = "force-dynamic";
+
 export default async function TeamDetailPage({ params }: TeamDetailPageProps) {
   const { teamId: teamIdStr, locale } = await params;
   const t = await getTranslations({ locale, namespace: "teams" });
@@ -136,6 +139,3 @@ export default async function TeamDetailPage({ params }: TeamDetailPageProps) {
     </PageLayout>
   );
 }
-
-// Revalidate every hour (team stats may update)
-export const revalidate = 3600;

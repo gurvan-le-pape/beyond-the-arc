@@ -24,6 +24,9 @@ export async function generateStaticParams() {
   return [];
 }
 
+export const dynamicParams = true;
+export const dynamic = "force-dynamic";
+
 async function prefetchData(championshipId: number) {
   const queryClient = new QueryClient();
 
@@ -64,5 +67,3 @@ export default async function ChampionshipsDetailPage({
     </PageLayout>
   );
 }
-
-export const revalidate = 300;
