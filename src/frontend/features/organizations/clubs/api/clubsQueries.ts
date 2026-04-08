@@ -1,12 +1,7 @@
 // src/frontend/features/organizations/clubs/api/clubsQueries.ts
 import type { QueryClient } from "@tanstack/react-query";
 
-import { safeFetch } from "@/shared/utils/safeFetch";
-
-import type { ClubBasic } from "../types/ClubBasic";
 import type { ClubFilters } from "../types/ClubFilters";
-import type { ClubStatsByDepartment } from "../types/ClubStatsByDepartement";
-import type { ClubStatsByRegion } from "../types/ClubStatsByRegion";
 import { clubsService } from "./clubs.service";
 import { clubsKeys } from "./clubsKeys";
 
@@ -81,48 +76,46 @@ export const clubsQueries = {
 
   /**
    * Query options for fetching club statistics aggregated by region.
-   * Hits the Next.js API route which caches at the server for 24 hours.
-   * Client staleTime mirrors server TTL — no point revalidating sooner.
+   * Initial data is server-fetched and passed via initialData.
+   * Client revalidates after 24 hours.
    *
    * @example
    * useQuery(clubsQueries.statsByRegion())
    */
   statsByRegion: () => ({
     queryKey: clubsKeys.statsByRegion(),
-    queryFn: () => safeFetch<ClubStatsByRegion[]>("/api/clubs/regions"),
+    queryFn: () => clubsService.getStatsByRegion(),
     ...CLUBS_STATIC_CONFIG,
-    // Server caches for 24h — align client to avoid redundant network hits
     staleTime: 24 * 60 * 60 * 1000,
   }),
 
   /**
    * Query options for fetching club statistics aggregated by département.
-   * Hits the Next.js API route which caches at the server for 1 hour.
+   * Initial data is server-fetched and passed via initialData.
+   * Client revalidates after 1 hour.
    *
    * @example
    * useQuery(clubsQueries.statsByDepartment())
    */
   statsByDepartment: () => ({
     queryKey: clubsKeys.statsByDepartment(),
-    queryFn: () => safeFetch<ClubStatsByDepartment[]>("/api/clubs/departments"),
+    queryFn: () => clubsService.getStatsByDepartment(),
     ...CLUBS_STATIC_CONFIG,
-    // Server caches for 1h — align client staleTime accordingly
     staleTime: 60 * 60 * 1000,
   }),
 
   /**
    * Query options for fetching all clubs without filtering.
-   * Hits the Next.js API route which caches at the server for 1 hour.
-   * Used for typeaheads, selects, and autocomplete where a full list is needed.
+   * Initial data is server-fetched and passed via initialData.
+   * Client revalidates after 1 hour.
    *
    * @example
    * useQuery(clubsQueries.allClubs())
    */
   allClubs: () => ({
     queryKey: clubsKeys.allClubs(),
-    queryFn: () => safeFetch<ClubBasic[]>("/api/clubs/all"),
+    queryFn: () => clubsService.getAllClubs(),
     ...CLUBS_STATIC_CONFIG,
-    // Server caches for 1h — align client staleTime accordingly
     staleTime: 60 * 60 * 1000,
   }),
 

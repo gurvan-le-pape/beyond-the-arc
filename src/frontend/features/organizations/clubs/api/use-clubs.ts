@@ -86,10 +86,13 @@ export function useClubStatsByRegion(options?: {
  * @example
  * const { data: departments = [] } = useClubStatsByDepartment();
  */
-export function useClubStatsByDepartment() {
-  return useQuery<ClubStatsByDepartment[], ApiError>(
-    clubsQueries.statsByDepartment(),
-  );
+export function useClubStatsByDepartment(options?: {
+  initialData?: ClubStatsByDepartment[];
+}) {
+  return useQuery<ClubStatsByDepartment[], ApiError>({
+    ...clubsQueries.statsByDepartment(),
+    initialData: options?.initialData,
+  });
 }
 
 /**
@@ -102,8 +105,11 @@ export function useClubStatsByDepartment() {
  * @example
  * const { data: clubs = [] } = useAllClubs();
  */
-export function useAllClubs() {
-  return useQuery<ClubBasic[], ApiError>(clubsQueries.allClubs());
+export function useAllClubs(options?: { initialData?: ClubBasic[] }) {
+  return useQuery<ClubBasic[], ApiError>({
+    ...clubsQueries.allClubs(),
+    initialData: options?.initialData,
+  });
 }
 
 /**
