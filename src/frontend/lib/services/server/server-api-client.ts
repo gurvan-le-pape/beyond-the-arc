@@ -20,7 +20,7 @@ import { parseApiError } from "@/shared/utils/parseApiError";
  * Base URL for internal API communication.
  * Uses Docker service name in production, localhost in development.
  */
-const BASE_URL = process.env.INTERNAL_API_URL || "http://backend:4000";
+const BASE_URL = process.env.INTERNAL_API_URL || "http://backend:4000/api";
 
 /**
  * Fetches data from the API server-side.
