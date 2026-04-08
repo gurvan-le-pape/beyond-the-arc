@@ -29,7 +29,7 @@ export async function generateStaticParams() {
 }
 
 export const dynamicParams = true;
-export const revalidate = 3600; // 1 hour
+export const dynamic = "force-dynamic";
 
 export default async function ClubsCommitteesPage({
   params,

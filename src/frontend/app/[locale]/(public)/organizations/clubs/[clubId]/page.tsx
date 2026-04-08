@@ -36,7 +36,7 @@ export async function generateStaticParams() {
 }
 
 export const dynamicParams = true;
-export const revalidate = 3600; // 1 hour
+export const revalidate = 3600;
 
 export default async function ClubPage({ params }: ClubPageProps) {
   const { clubId: clubIdStr, locale } = await params;

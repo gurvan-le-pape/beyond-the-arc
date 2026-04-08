@@ -35,6 +35,9 @@ export async function generateStaticParams() {
   return [];
 }
 
+export const dynamicParams = true;
+export const dynamic = "force-dynamic";
+
 export default async function MatchSummaryPage({
   params,
 }: MatchSummaryPageProps) {
@@ -147,5 +150,3 @@ export default async function MatchSummaryPage({
     </PageLayout>
   );
 }
-
-export const revalidate = false;
