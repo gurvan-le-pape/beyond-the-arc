@@ -16,7 +16,6 @@ import { useRouter } from "@/navigation";
 import { ErrorMessage } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
-import { CompetitionLevel } from "@/shared/constants/competition-levels";
 import { groupBy } from "@/shared/utils";
 
 export default function DepartmentalChampionshipsPage() {
@@ -79,9 +78,7 @@ export default function DepartmentalChampionshipsPage() {
           <ChampionshipList
             championshipsByGender={championshipsByGender}
             onItemClick={(championship) =>
-              router.push(
-                `/competitions/${CompetitionLevel.DEPARTMENTAL}/${id}/${championship.id}`,
-              )
+              router.push(`/championships/${championship.id}`)
             }
           />
         </div>

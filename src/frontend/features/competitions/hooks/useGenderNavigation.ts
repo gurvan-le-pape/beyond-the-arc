@@ -70,7 +70,7 @@ export function useGenderNavigation(
     if (targetChampionshipId) {
       const route = buildRoute
         ? buildRoute(targetChampionshipId)
-        : `/competitions/${level}/${id}/${targetChampionshipId}`;
+        : `/championships/${targetChampionshipId}`;
       router.replace(route);
     }
   }, [targetChampionshipId, router, level, id, buildRoute]);

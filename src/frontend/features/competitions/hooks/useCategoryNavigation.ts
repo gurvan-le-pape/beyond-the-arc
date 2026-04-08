@@ -68,7 +68,7 @@ export function useCategoryNavigation(
       if (targetChampionshipId) {
         const route = buildRoute
           ? buildRoute(targetChampionshipId)
-          : `/competitions/${level}/${id}/${targetChampionshipId}`;
+          : `/championships/${targetChampionshipId}`;
         router.replace(route);
       }
     },
