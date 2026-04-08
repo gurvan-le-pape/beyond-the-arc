@@ -16,7 +16,6 @@ import { useRouter } from "@/navigation";
 import { ErrorMessage } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
-import { CompetitionLevel } from "@/shared/constants/competition-levels";
 import { groupBy } from "@/shared/utils";
 
 export default function RegionalChampionshipsPage() {
@@ -68,9 +67,7 @@ export default function RegionalChampionshipsPage() {
             title={tCompetitions("regional.committeesInLeague")}
             searchPlaceholder={tCompetitions("carousel.searchPlaceholder")}
             onItemClick={(committee) =>
-              router.push(
-                `/competitions/${CompetitionLevel.DEPARTMENTAL}/${committee.id}`,
-              )
+              router.push(`/organizations/committees/${committee.id}`)
             }
             showSearch={false}
           />
@@ -79,9 +76,7 @@ export default function RegionalChampionshipsPage() {
           <ChampionshipList
             championshipsByGender={championshipsByGender}
             onItemClick={(championship) =>
-              router.push(
-                `/competitions/${CompetitionLevel.REGIONAL}/${id}/${championship.id}`,
-              )
+              router.push(`/championships/${championship.id}`)
             }
           />
         </div>

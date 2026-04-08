@@ -8,7 +8,6 @@ import { useRouter } from "@/navigation";
 import { Input } from "@/shared/components/forms";
 import { Card, ImageWithFallback } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
-import { CompetitionLevel } from "@/shared/constants/competition-levels";
 import { normalizeDepartmentCode } from "@/shared/utils";
 import { formatNameToFileName } from "@/shared/utils/formatNameToFileName";
 
@@ -53,9 +52,7 @@ export function CommitteesGrid({ committees }: CommitteesGridProps) {
             padding="md"
             clickable
             onClick={() =>
-              router.push(
-                `/competitions/${CompetitionLevel.DEPARTMENTAL}/${committee.id}`,
-              )
+              router.push(`/organizations/committees/${committee.id}`)
             }
             className="border-l-4 border-l-departmental-dark dark:border-l-departmental-light hover:border-l-divide-light dark:hover:!border-l-divide-dark flex flex-col items-center text-center"
           >

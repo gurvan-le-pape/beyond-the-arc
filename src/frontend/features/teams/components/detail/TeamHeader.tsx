@@ -48,7 +48,7 @@ export function TeamHeader({ team }: TeamHeaderProps) {
       parentId = leagueId;
     }
     if (parentId) {
-      competitionUrl = `/competitions/${level}/${parentId}/${championship.id}`;
+      competitionUrl = `/championships/${championship.id}`;
       competitionName = championship.name;
     }
   }

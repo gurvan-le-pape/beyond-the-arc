@@ -39,7 +39,7 @@ function buildCompetitionUrl(
   }
 
   if (!parentId) return null;
-  return `/${locale}/competitions/${level}/${parentId}/${championship.id}?pool=${team.pool.id}`;
+  return `/${locale}/championships/${championship.id}?pool=${team.pool.id}`;
 }
 
 function LevelBadge({ level, label }: LevelBadgeProps) {

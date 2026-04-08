@@ -4,7 +4,6 @@
 import { useRouter } from "@/navigation";
 import { Card, ImageWithFallback } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
-import { CompetitionLevel } from "@/shared/constants/competition-levels";
 import { formatNameToFileName } from "@/shared/utils/formatNameToFileName";
 
 import type { League } from "../../../organizations/leagues/types/League";
@@ -30,11 +29,7 @@ export function LeaguesGrid({ leagues }: LeaguesGridProps) {
           variant="default"
           padding="md"
           clickable
-          onClick={() =>
-            router.push(
-              `/competitions/${CompetitionLevel.REGIONAL}/${league.id}`,
-            )
-          }
+          onClick={() => router.push(`/organizations/leagues/${league.id}`)}
           className="border-l-4 border-l-regional-dark dark:border-l-regional-light hover:border-l-divide-light dark:hover:!border-l-divide-dark flex flex-col items-center text-center"
         >
           {/* Logo placeholder */}
