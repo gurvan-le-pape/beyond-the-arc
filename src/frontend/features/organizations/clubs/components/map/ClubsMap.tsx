@@ -18,6 +18,7 @@ import { useMapData } from "../../hooks";
 import { useFilters } from "../../hooks/useFilters";
 import { useSearch } from "../../hooks/useSearch";
 import type { ClubBasic } from "../../types/ClubBasic";
+import type { ClubStatsByDepartment } from "../../types/ClubStatsByDepartement";
 import type { ClubStatsByRegion } from "../../types/ClubStatsByRegion";
 import { clubsToGeoJSON, generateLabelFeatures } from "../../utils";
 import { ClubPopupContent } from "./ClubPopupContent";
@@ -28,6 +29,8 @@ import { SidePanel } from "./SidePanel";
 
 interface ClubsMapProps {
   readonly initialRegions: ClubStatsByRegion[];
+  readonly initialDepartments: ClubStatsByDepartment[];
+  readonly initialClubs: ClubBasic[];
 }
 
 /**
@@ -38,7 +41,11 @@ interface ClubsMapProps {
  * - Search and filter functionality via side panel
  * - Interactive popups with club details
  */
-export function ClubsMap({ initialRegions }: ClubsMapProps) {
+export function ClubsMap({
+  initialRegions,
+  initialDepartments,
+  initialClubs,
+}: ClubsMapProps) {
   const t = useTranslations("clubs");
   const [selectedClub, setSelectedClub] = useState<ClubBasic | null>(null);
   const [viewState, setViewState] = useState(INITIAL_VIEW);
@@ -53,7 +60,7 @@ export function ClubsMap({ initialRegions }: ClubsMapProps) {
     getRegionClubCount,
     getDepartmentClubCount,
     error,
-  } = useMapData(initialRegions);
+  } = useMapData(initialRegions, initialDepartments, initialClubs);
 
   // Determine which layers to show based on zoom level
   const zoom = viewState.zoom;

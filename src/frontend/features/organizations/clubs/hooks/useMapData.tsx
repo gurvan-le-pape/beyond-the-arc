@@ -34,6 +34,8 @@ interface UseMapDataReturn {
  */
 export function useMapData(
   initialRegions: ClubStatsByRegion[],
+  initialDepartments: ClubStatsByDepartment[],
+  initialClubs: ClubBasic[],
 ): UseMapDataReturn {
   // Fetch regions
   const { data: regions = initialRegions, error: regionsError } =
@@ -41,10 +43,12 @@ export function useMapData(
 
   // Fetch all departments
   const { data: allDepartments = [], error: departmentsError } =
-    useClubStatsByDepartment();
+    useClubStatsByDepartment({ initialData: initialDepartments });
 
   // Fetch all clubs
-  const { data: allClubs = [], error: clubsError } = useAllClubs();
+  const { data: allClubs = [], error: clubsError } = useAllClubs({
+    initialData: initialClubs,
+  });
 
   // Fetch GeoJSON data
   const { data: regionsGeoJson = null } = useRegionsGeoJson();

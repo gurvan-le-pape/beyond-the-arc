@@ -3,11 +3,15 @@
 
 import dynamic from "next/dynamic";
 
+import type { ClubBasic } from "../../types/ClubBasic";
+import type { ClubStatsByDepartment } from "../../types/ClubStatsByDepartement";
 import type { ClubStatsByRegion } from "../../types/ClubStatsByRegion";
 import { LoadingMap } from "./LoadingMap";
 
 interface ClubsMapClientProps {
-  initialRegions: ClubStatsByRegion[];
+  readonly initialRegions: ClubStatsByRegion[];
+  readonly initialDepartments: ClubStatsByDepartment[];
+  readonly initialClubs: ClubBasic[];
 }
 
 // Dynamic import with ssr: false
