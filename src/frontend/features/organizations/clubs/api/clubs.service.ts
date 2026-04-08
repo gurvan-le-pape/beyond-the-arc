@@ -3,6 +3,7 @@ import type { ClubStatsByRegion } from "@/features/organizations/clubs/types/Clu
 import apiClient from "@/lib/services/client/api-client";
 
 import type { ClubsPaginatedResponse } from "../../committees/types/ClubsPaginatedResponse";
+import type { ClubBasic } from "../types/ClubBasic";
 import type { ClubDetailed } from "../types/ClubDetailed";
 import type { ClubFilters } from "../types/ClubFilters";
 import type { ClubStatsByDepartment } from "../types/ClubStatsByDepartement";
@@ -99,6 +100,21 @@ export const clubsService = {
         params: leagueId ? { leagueId } : undefined,
       },
     );
+    return data;
+  },
+
+  /**
+   * Get all clubs without any filtering.
+   * Used for map initial load, typeaheads, and autocomplete widgets.
+   *
+   * @returns Array of all clubs
+   * @throws {AxiosError} 500 if server error
+   *
+   * @example
+   * const clubs = await clubsService.getAllClubs();
+   */
+  async getAllClubs(): Promise<ClubBasic[]> {
+    const { data } = await apiClient.get<ClubBasic[]>("/clubs/all");
     return data;
   },
 };
