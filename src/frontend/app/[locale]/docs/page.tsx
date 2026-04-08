@@ -86,7 +86,7 @@ export default function DocsPage() {
         </a>
 
         <a
-          href="http://localhost:4000/api"
+          href={`${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "")}/docs`}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center gap-3 p-4 bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
