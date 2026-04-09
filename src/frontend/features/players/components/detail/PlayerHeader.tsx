@@ -25,6 +25,7 @@ export function PlayerHeader({ player }: PlayerHeaderProps) {
   const playerName = player.name;
   const playerNumber = player.number;
   const team = player.team;
+  const teamId = player.teamId;
   const club = team.club;
   const clubId = club.id;
   const clubName = club.name;
@@ -99,7 +100,7 @@ export function PlayerHeader({ player }: PlayerHeaderProps) {
               variant="ghost"
               className="p-0 m-0 border-0 bg-transparent text-xl font-bold text-text-heading dark:text-text-heading-dark align-baseline focus:outline-none hover:underline"
               aria-label={tCommon("club.seeClub", { name: clubName })}
-              onClick={() => router.push(clubUrl)}
+              onClick={() => router.push(`/teams/${teamId}`)}
               type="button"
               style={{
                 fontSize: "inherit",
