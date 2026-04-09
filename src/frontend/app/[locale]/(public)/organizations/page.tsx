@@ -56,6 +56,8 @@ interface OrganizationsPageProps {
 }
 
 export const revalidate = 86400;
+// Prevent build-time rendering, but allow ISR at runtime
+export const dynamic = "force-dynamic";
 
 export default async function OrganizationsPage({
   params,

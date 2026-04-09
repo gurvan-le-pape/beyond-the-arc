@@ -1,5 +1,5 @@
 // src/frontend/app/[locale]/(public)/organizations/leagues/page.tsx
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { serverClubsService } from "@/features/organizations/clubs/api";
 import {
@@ -14,15 +14,19 @@ interface ClubsRegionsPageProps {
   readonly params: Promise<{ readonly locale: string }>;
 }
 
-/**
- * Clubs Regions Page (League List)
+export const revalidate = 86400;
+// Prevent build-time rendering, but allow ISR at runtime
+export const dynamic = "force-dynamic";
+
+/** Clubs Leagues Page
  * Shows ~25 regional leagues
- * Strategy: SSG with daily revalidation
+ * Strategy: ISR with 24-hour revalidation
  */
 export default async function ClubsRegionsPage({
   params,
 }: ClubsRegionsPageProps) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "organizations" });
 
   const regions = await serverClubsService.getStatsByRegion();
@@ -46,6 +50,3 @@ export default async function ClubsRegionsPage({
     </PageLayout>
   );
 }
-
-// Revalidate once per day (leagues rarely change)
-export const revalidate = 86400;

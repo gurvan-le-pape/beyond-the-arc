@@ -1,6 +1,6 @@
 // src/frontend/app/[locale]/(public)/organizations/clubs/[clubId]/page.tsx
 import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { serverClubsService } from "@/features/organizations/clubs/api";
 import {
@@ -40,6 +40,7 @@ export const revalidate = 3600;
 
 export default async function ClubPage({ params }: ClubPageProps) {
   const { clubId: clubIdStr, locale } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "clubs" });
   const tOrganizations = await getTranslations({
     locale,

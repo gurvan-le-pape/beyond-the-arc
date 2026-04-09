@@ -15,7 +15,6 @@ import { PageLayout } from "@/shared/components/layout";
 
 interface ChampionshipDetailPageProps {
   readonly params: Promise<{
-    locale: string;
     championshipId: string;
   }>;
 }
@@ -25,7 +24,7 @@ export async function generateStaticParams() {
 }
 
 export const dynamicParams = true;
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 async function prefetchData(championshipId: number) {
   const queryClient = new QueryClient();
