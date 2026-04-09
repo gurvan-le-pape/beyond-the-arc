@@ -1,6 +1,6 @@
 // src/frontend/app/[locale]/(public)/matches/[matchId]/page.tsx
 import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { serverMatchesService } from "@/features/matches/api";
 import {
@@ -36,12 +36,13 @@ export async function generateStaticParams() {
 }
 
 export const dynamicParams = true;
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 export default async function MatchSummaryPage({
   params,
 }: MatchSummaryPageProps) {
   const { matchId: matchIdStr, locale } = await params;
+  setRequestLocale(locale);
   const tMatches = await getTranslations({ locale, namespace: "matches" });
   const tCommon = await getTranslations({ locale, namespace: "common" });
 

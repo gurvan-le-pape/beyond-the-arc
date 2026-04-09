@@ -1,6 +1,6 @@
 // src/frontend/app/[locale]/(public)/teams/[teamId]/page.tsx
 import { notFound } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { serverMatchesService } from "@/features/matches/api";
 import type { PlayerMatchHistoryEntry } from "@/features/players/types/PlayerMatchHistory";
@@ -23,10 +23,11 @@ export async function generateStaticParams() {
 }
 
 export const dynamicParams = true;
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 export default async function TeamDetailPage({ params }: TeamDetailPageProps) {
   const { teamId: teamIdStr, locale } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "teams" });
 
   const teamId = Number.parseInt(teamIdStr, 10);

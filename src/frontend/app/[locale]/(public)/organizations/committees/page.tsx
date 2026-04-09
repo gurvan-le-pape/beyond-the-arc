@@ -1,5 +1,5 @@
 // src/frontend/app/[locale]/(public)/organizations/committees/page.tsx
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { serverClubsService } from "@/features/organizations/clubs/api";
 import {
@@ -16,26 +16,20 @@ interface ClubsCommitteesPageProps {
   }>;
 }
 
-/**
- * Clubs Committees Page (Departments List)
- * Shows ~10 committees per league
- * Path: /clubs/league/[leagueId]
- * Strategy: ISR with hourly revalidation
- */
-
-// Don't pre-build - generate on first visit
-export async function generateStaticParams() {
-  return [];
-}
-
-export const dynamicParams = true;
+export const revalidate = 86400;
+// Prevent build-time rendering, but allow ISR at runtime
 export const dynamic = "force-dynamic";
 
+/**
+ * Clubs Committees Page
+ * Shows all departmental committees
+ * Strategy: ISR with 24-hour revalidation
+ */
 export default async function ClubsCommitteesPage({
   params,
 }: ClubsCommitteesPageProps) {
   const { locale } = await params;
-
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "organizations" });
 
   const departments = await serverClubsService.getStatsByDepartment();

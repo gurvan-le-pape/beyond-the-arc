@@ -1,7 +1,5 @@
 // src/frontend/app/[locale]/(public)/organizations/page.tsx
-"use client";
-
-import { useTranslations } from "next-intl";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import React from "react";
 import { FaBuilding, FaMapMarkedAlt, FaUsers } from "react-icons/fa";
 
@@ -53,8 +51,20 @@ const OrganizationTypeCard: React.FC<{ org: OrgType }> = ({ org }) => {
   );
 };
 
-export default function OrganizationsPage() {
-  const t = useTranslations("organizations");
+interface OrganizationsPageProps {
+  readonly params: Promise<{ locale: string }>;
+}
+
+export const revalidate = 86400;
+// Prevent build-time rendering, but allow ISR at runtime
+export const dynamic = "force-dynamic";
+
+export default async function OrganizationsPage({
+  params,
+}: OrganizationsPageProps) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: "organizations" });
 
   const types: OrgType[] = [
     {

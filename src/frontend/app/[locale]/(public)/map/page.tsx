@@ -29,3 +29,5 @@ export default async function MapPage() {
 
 // Cache the page with 24-hour revalidation
 export const revalidate = 86400;
+// Prevent build-time rendering, but allow ISR at runtime
+export const dynamic = "force-dynamic";
