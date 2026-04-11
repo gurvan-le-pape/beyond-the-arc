@@ -1,44 +1,250 @@
 // src/frontend/app/[locale]/page.tsx
 import { getTranslations } from "next-intl/server";
 
+import { serverStatsService } from "@/features/stats/api/stats.server";
 import { Footer, Header } from "@/shared/components/layout";
 import { Text } from "@/shared/components/typography";
 
 export default async function Home({
   params,
 }: {
-  params: Promise<{ locale: string }>;
+  readonly params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "common" });
+  const t = await getTranslations({ locale, namespace: "home" });
+
+  const stats = await serverStatsService.getStats();
+
+  const formatCount = (n: number): string => n.toLocaleString("fr-FR");
+
+  const statsBand = [
+    { value: formatCount(stats.clubs), label: t("stats.clubs") },
+    { value: formatCount(stats.teams), label: t("stats.teams") },
+    { value: formatCount(stats.players), label: t("stats.players") },
+    { value: formatCount(stats.matches), label: t("stats.matches") },
+    { value: formatCount(stats.leagues), label: t("stats.leagues") },
+    { value: formatCount(stats.committees), label: t("stats.committees") },
+  ] as const;
+
+  const exploreCards = [
+    {
+      href: `/${locale}/search?tab=players`,
+      badgeClass:
+        "bg-secondary-100 dark:bg-secondary-900 text-secondary-700 dark:text-secondary-300",
+      badge: t("explore.players.badge"),
+      title: t("explore.players.title"),
+      desc: t("explore.players.desc"),
+      count: formatCount(stats.players),
+      countLabel: t("explore.players.count"),
+    },
+    {
+      href: `/${locale}/search?tab=teams`,
+      badgeClass:
+        "bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300",
+      badge: t("explore.teams.badge"),
+      title: t("explore.teams.title"),
+      desc: t("explore.teams.desc"),
+      count: formatCount(stats.teams),
+      countLabel: t("explore.teams.count"),
+    },
+    {
+      href: `/${locale}/search?tab=matches`,
+      badgeClass:
+        "bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300",
+      badge: t("explore.matches.badge"),
+      title: t("explore.matches.title"),
+      desc: t("explore.matches.desc"),
+      count: formatCount(stats.matches),
+      countLabel: t("explore.matches.count"),
+    },
+  ] as const;
+
+  const championshipsLabel = t("levels.championships");
+
+  const levelCards = [
+    {
+      dot: "bg-national",
+      name: t("levels.national.name"),
+      detail: t("levels.national.detail"),
+      count: `${stats.championshipsByLevel.national} ${championshipsLabel}`,
+      href: `/${locale}/championships?tab=national`,
+    },
+    {
+      dot: "bg-regional",
+      name: t("levels.regional.name"),
+      detail: `${stats.leagues} ${t("stats.leagues")}`,
+      count: `${stats.championshipsByLevel.regional} ${championshipsLabel}`,
+      href: `/${locale}/championships?tab=regional`,
+    },
+    {
+      dot: "bg-departmental",
+      name: t("levels.departmental.name"),
+      detail: `${stats.committees} ${t("stats.committees")}`,
+      count: `${stats.championshipsByLevel.departmental} ${championshipsLabel}`,
+      href: `/${locale}/championships?tab=departmental`,
+    },
+  ] as const;
+
+  const mapStats = [
+    { value: formatCount(stats.clubs), label: t("stats.clubs") },
+    { value: formatCount(stats.committees), label: t("stats.departments") },
+    { value: formatCount(stats.leagues), label: t("stats.regions") },
+  ] as const;
 
   return (
     <div className="flex flex-col min-h-screen bg-surface-base dark:bg-surface-base-dark">
       <Header />
-      <main className="flex-grow bg-gradient-to-br from-primary-50 via-white to-secondary-50 dark:from-surface-raised-dark dark:via-surface-subtle-dark dark:to-surface-raised-dark flex flex-col items-center justify-center px-6 py-20">
-        <div className="max-w-4xl mx-auto text-center space-y-8">
-          <Text
-            variant="h1"
-            className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-primary-700 dark:text-primary-300 leading-tight"
-          >
-            {t("homepage.title")}
-          </Text>
-          <Text
-            variant="body"
-            className="text-xl md:text-2xl text-text-emphasis dark:text-text-body-dark leading-relaxed max-w-3xl mx-auto"
-          >
-            {t("homepage.subtitle")}
-          </Text>
-          <div className="pt-4">
-            <a
-              href={`/${locale}/features`}
-              className="inline-flex items-center justify-center bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 text-white font-semibold py-4 px-10 rounded-button shadow-card hover:shadow-card-hover transition-all duration-200 text-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:ring-offset-2 dark:focus:ring-offset-surface-subtle-dark transform hover:scale-105"
+
+      <main className="flex-grow">
+        <div className="max-w-7xl mx-auto w-full">
+          {/* ── Hero ─────────────────────────────────────────────── */}
+          <section className="flex flex-col items-center text-center px-6 py-16 border-b border-divide-light dark:border-divide-dark">
+            <Text
+              variant="overline"
+              className="inline-flex items-center gap-1.5 text-primary-500 bg-primary-50 dark:bg-primary-950 dark:text-primary-300 px-3 py-1 rounded mb-6"
             >
-              {t("homepage.cta")}
+              <span className="w-1.5 h-1.5 rounded-full bg-primary-500 dark:bg-primary-300" />
+              {t("hero.eyebrow")}
+            </Text>
+
+            <h1
+              className="font-extrabold leading-none tracking-tight mb-5"
+              style={{ fontSize: "clamp(2.5rem, 6vw, 3.75rem)" }}
+            >
+              {t("hero.titleStart")}{" "}
+              <em className="not-italic text-primary-500 dark:text-primary-400">
+                {t("hero.titleEmphasis")}
+              </em>
+            </h1>
+
+            <Text variant="lead" className="max-w-lg">
+              {t("hero.subtitle")}
+            </Text>
+          </section>
+
+          {/* ── Stats band ───────────────────────────────────────── */}
+          <div className="grid grid-cols-3 md:grid-cols-6 border-b border-divide-light dark:border-divide-dark">
+            {statsBand.map((s, i) => (
+              <div
+                key={s.label}
+                className={`flex flex-col items-center justify-center py-5 px-3 text-center ${
+                  i < 5
+                    ? "border-r border-divide-light dark:border-divide-dark"
+                    : ""
+                }`}
+              >
+                <span className="text-2xl font-extrabold leading-none text-text-heading dark:text-text-heading-dark tabular-nums">
+                  {s.value}
+                </span>
+                <Text variant="overline" className="mt-1">
+                  {s.label}
+                </Text>
+              </div>
+            ))}
+          </div>
+
+          {/* ── Search & explore ─────────────────────────────────── */}
+          <div className="px-6 pt-7 pb-2 border-b border-divide-light dark:border-divide-dark">
+            <Text variant="overline">{t("explore.sectionTitle")}</Text>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 border-b border-divide-light dark:border-divide-dark divide-y md:divide-y-0 md:divide-x divide-divide-light dark:divide-divide-dark">
+            {exploreCards.map((card) => (
+              <a
+                key={card.href}
+                href={card.href}
+                className="group flex flex-col gap-3 p-7 hover:bg-surface-subtle dark:hover:bg-surface-raised-dark transition-colors duration-150"
+              >
+                <div className="flex items-center justify-between">
+                  <span
+                    className={`text-[10px] font-bold tracking-widest uppercase px-2 py-0.5 rounded ${card.badgeClass}`}
+                  >
+                    {card.badge}
+                  </span>
+                  <span className="text-text-secondary group-hover:translate-x-0.5 transition-transform duration-150">
+                    →
+                  </span>
+                </div>
+                <Text variant="h3">{card.title}</Text>
+                <Text variant="caption">{card.desc}</Text>
+                <p className="text-[12px] font-bold text-text-secondary dark:text-text-secondary-dark pt-3 border-t border-divide-light dark:border-divide-dark mt-auto">
+                  <span className="text-text-heading dark:text-text-heading-dark">
+                    {card.count}
+                  </span>{" "}
+                  {card.countLabel}
+                </p>
+              </a>
+            ))}
+          </div>
+
+          {/* ── Clubs & map ──────────────────────────────────────── */}
+          <div className="border-b border-divide-light dark:border-divide-dark px-8 py-16 flex flex-col items-center text-center">
+            <Text
+              variant="overline"
+              className="text-clubs dark:text-clubs-light"
+            >
+              {t("map.eyebrow")}
+            </Text>
+            <Text variant="h2" className="mt-3 max-w-sm">
+              {t("map.title")}
+            </Text>
+            <Text variant="caption" className="max-w-sm mt-2">
+              {t("map.desc")}
+            </Text>
+            <div className="flex gap-8 pt-4 mt-4 border-t border-divide-light dark:border-divide-dark">
+              {mapStats.map((s) => (
+                <div
+                  key={s.label}
+                  className="flex flex-col gap-0.5 items-center"
+                >
+                  <span className="text-lg font-extrabold leading-none text-text-heading dark:text-text-heading-dark">
+                    {s.value}
+                  </span>
+                  <Text variant="overline">{s.label}</Text>
+                </div>
+              ))}
+            </div>
+            <a
+              href={`/${locale}/map`}
+              className="mt-5 text-sm font-semibold bg-clubs hover:bg-clubs-dark text-white px-5 py-2.5 rounded-button transition-colors duration-150"
+            >
+              {t("map.cta")}
             </a>
+          </div>
+
+          {/* ── Competition levels ───────────────────────────────── */}
+          <div className="px-6 pt-7 pb-2">
+            <Text variant="overline">{t("levels.sectionTitle")}</Text>
+          </div>
+
+          <div className="flex flex-col gap-2 px-6 pb-10">
+            {levelCards.map((level) => (
+              <a
+                key={level.name}
+                href={level.href}
+                className="flex items-center gap-4 px-4 py-3 border border-divide-light dark:border-divide-dark rounded-card hover:bg-surface-subtle dark:hover:bg-surface-raised-dark transition-colors duration-150"
+              >
+                <div
+                  className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${level.dot}`}
+                />
+                <span className="text-sm font-bold flex-1 text-text-heading dark:text-text-heading-dark">
+                  {level.name}
+                </span>
+                <Text variant="muted" className="hidden sm:block">
+                  {level.detail}
+                </Text>
+                <Text variant="caption" className="hidden md:block font-bold">
+                  {level.count}
+                </Text>
+                <span className="text-xs font-semibold text-primary-500 dark:text-primary-400">
+                  →
+                </span>
+              </a>
+            ))}
           </div>
         </div>
       </main>
+
       <Footer />
     </div>
   );

@@ -1,0 +1,60 @@
+{
+  "hero": {
+    "eyebrow": "French Basketball — All levels",
+    "titleStart": "The complete reference for",
+    "titleEmphasis": "French basketball",
+    "subtitle": "Stats, standings, player profiles and club data — from national championships down to local departmental competitions."
+  },
+  "stats": {
+    "clubs": "Clubs",
+    "teams": "Teams",
+    "players": "Players",
+    "matches": "Matches",
+    "leagues": "Leagues",
+    "committees": "Committees",
+    "departments": "Departments",
+    "regions": "Regions"
+  },
+  "explore": {
+    "sectionTitle": "Search & explore",
+    "players": {
+      "badge": "Players",
+      "title": "Player profiles",
+      "desc": "Career stats, match history, shot charts and head-to-head comparisons.",
+      "count": "players tracked"
+    },
+    "teams": {
+      "badge": "Teams",
+      "title": "Teams",
+      "desc": "Rosters, season stats, match history and shot charts for every team.",
+      "count": "teams"
+    },
+    "matches": {
+      "badge": "Matches",
+      "title": "Match history",
+      "desc": "Full event timelines, box scores and team stats for every game played.",
+      "count": "matches logged"
+    }
+  },
+  "map": {
+    "eyebrow": "Clubs & map",
+    "title": "Find clubs near you",
+    "desc": "Browse all clubs across France on an interactive map. Filter by region, department or competition level.",
+    "cta": "Open map",
+    "placeholder": "Interactive map"
+  },
+  "levels": {
+    "championships": "championships",
+    "sectionTitle": "Competition levels",
+    "seeAll": "See all competitions",
+    "national": {
+      "name": "National",
+      "detail": "Pro leagues & national championships"
+    },
+    "regional": { "name": "Regional", "detail": "Regional leagues" },
+    "departmental": {
+      "name": "Departmental",
+      "detail": "Departmental committees"
+    }
+  }
+}

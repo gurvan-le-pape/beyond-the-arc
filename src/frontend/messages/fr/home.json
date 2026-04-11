@@ -1,0 +1,59 @@
+{
+  "hero": {
+    "eyebrow": "Basketball français — Tous niveaux",
+    "titleStart": "La référence complète du",
+    "titleEmphasis": "basketball français",
+    "subtitle": "Stats, classements, profils de joueurs et données de clubs — des championnats nationaux jusqu'aux compétitions départementales."
+  },
+  "stats": {
+    "clubs": "Clubs",
+    "teams": "Équipes",
+    "players": "Joueurs",
+    "matches": "Matchs",
+    "leagues": "Ligues",
+    "committees": "Comités",
+    "departments": "Départements",
+    "regions": "Régions"
+  },
+  "explore": {
+    "sectionTitle": "Rechercher & explorer",
+    "players": {
+      "badge": "Joueurs",
+      "title": "Profils joueurs",
+      "desc": "Stats de carrière, historique de matchs, cartes de tirs et comparaisons.",
+      "count": "joueurs suivis"
+    },
+    "teams": {
+      "badge": "Équipes",
+      "title": "Équipes",
+      "desc": "Effectifs, stats de saison, historique de matchs et cartes de tirs.",
+      "count": "équipes"
+    },
+    "matches": {
+      "badge": "Matchs",
+      "title": "Historique des matchs",
+      "desc": "Timelines d'événements, feuilles de match et stats d'équipe pour chaque rencontre.",
+      "count": "matchs enregistrés"
+    }
+  },
+  "map": {
+    "eyebrow": "Clubs & carte",
+    "title": "Trouvez des clubs près de chez vous",
+    "desc": "Parcourez tous les clubs de France sur une carte interactive. Filtrez par région, département ou niveau de compétition.",
+    "cta": "Ouvrir la carte",
+    "placeholder": "Carte interactive"
+  },
+  "levels": {
+    "championships": "championnats",
+    "sectionTitle": "Niveaux de compétition",
+    "national": {
+      "name": "National",
+      "detail": "Ligues pro & championnats nationaux"
+    },
+    "regional": { "name": "Régional", "detail": "Ligues régionales" },
+    "departmental": {
+      "name": "Départemental",
+      "detail": "Comités départementaux"
+    }
+  }
+}

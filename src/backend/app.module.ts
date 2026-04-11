@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 
 import { CommonModule } from "@common/common.module";
 import { CACHE_TTL } from "@common/constants/cache-ttls";
+import { StatsModule } from "@modules/stats/stats.module";
 import { CacheModule } from "@nestjs/cache-manager";
 import { Module } from "@nestjs/common";
 import { APP_FILTER } from "@nestjs/core";
@@ -57,6 +58,7 @@ import { AllExceptionsFilter } from "./common";
     PlayersModule,
     TeamsModule,
     GeoModule,
+    StatsModule,
     PrismaModule,
     HealthModule,
   ],
