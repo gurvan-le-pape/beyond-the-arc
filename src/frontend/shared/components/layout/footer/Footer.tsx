@@ -1,15 +1,7 @@
 // src/frontend/shared/components/layout/footer/Footer.tsx
 "use client";
 
-import {
-  ExternalLink,
-  Github,
-  Linkedin,
-  Mail,
-  MapPin,
-  TrendingUp,
-  Users,
-} from "lucide-react";
+import { ExternalLink, Github, Linkedin, Mail, MapPin } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Link } from "@/navigation";
@@ -21,11 +13,7 @@ export const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
 
   const footerLinks = {
-    features: [
-      { href: "/clubs/map", label: t("footer.clubsMap"), icon: MapPin },
-      { href: "/stats", label: t("footer.statistics"), icon: TrendingUp },
-      { href: "/teams", label: t("footer.teams"), icon: Users },
-    ],
+    features: [{ href: "/map", label: t("footer.clubsMap"), icon: MapPin }],
     project: [
       { href: "/about", label: t("footer.about") },
       { href: "/features", label: t("footer.features") },
