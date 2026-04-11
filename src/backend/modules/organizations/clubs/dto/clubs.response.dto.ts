@@ -1,4 +1,5 @@
 // src/backend/modules/organizations/clubs/dto/clubs.response.dto.ts
+import { PresidentResponseDto } from "@common/dto/president.response.dto";
 import { Category, CompetitionLevel, Gender } from "@common/index";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
@@ -295,6 +296,13 @@ export class ClubDetailedResponseDto {
     type: [TeamInfoDto],
   })
   teams!: TeamInfoDto[];
+
+  @ApiPropertyOptional({
+    description: "Club president",
+    type: PresidentResponseDto,
+    nullable: true,
+  })
+  president!: PresidentResponseDto | null;
 }
 
 /**
