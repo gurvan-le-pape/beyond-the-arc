@@ -315,6 +315,7 @@ describe("ClubsController", () => {
             },
           },
         ],
+        president: null,
       };
 
       mockClubsService.findClubById.mockResolvedValue(mockClub);
@@ -357,6 +358,7 @@ describe("ClubsController", () => {
             leaderboard: null, // no games played yet
           },
         ],
+        president: null,
       };
 
       mockClubsService.findClubById.mockResolvedValue(mockClub);
@@ -378,6 +380,7 @@ describe("ClubsController", () => {
         email: null,
         website: null,
         teams: [],
+        president: null,
       };
 
       mockClubsService.findClubById.mockResolvedValue(mockClub);
