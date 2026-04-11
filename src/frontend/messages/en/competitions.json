@@ -1,4 +1,7 @@
 {
+  "allSeasons": "All seasons",
+  "allLeagues": "All leagues",
+  "allCommittees": "All committees",
   "breadcrumb": "Championships",
   "championshipsCount": "championships",
   "notFound": "Competition not found.",
