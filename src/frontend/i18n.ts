@@ -18,6 +18,7 @@ const namespaces = [
   "pool",
   "organizations",
   "search",
+  "home",
 ];
 
 export default getRequestConfig(async ({ requestLocale }) => {

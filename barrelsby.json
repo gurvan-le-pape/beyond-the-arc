@@ -98,7 +98,9 @@
     "src/backend/modules/organizations/leagues/dto",
 
     "src/backend/modules/players/dto",
-    "src/backend/modules/teams/dto"
+    "src/backend/modules/teams/dto",
+
+    "src/backend/modules/stats/dto"
   ],
   "delete": true,
   "watch": true,
