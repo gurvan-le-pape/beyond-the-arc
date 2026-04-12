@@ -3,12 +3,10 @@ import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { serverClubsService } from "@/features/organizations/clubs/api";
-import {
-  ClubHeader,
-  ClubInfo,
-  ClubTeams,
-} from "@/features/organizations/clubs/components";
+import { ClubTeams } from "@/features/organizations/clubs/components";
 import type { ClubTeamInfo } from "@/features/organizations/clubs/types/ClubDetailed";
+import { OrganizationHeader } from "@/shared/components/domain/organizations/detail/OrganizationHeader";
+import { OrganizationInfo } from "@/shared/components/domain/organizations/detail/OrganizationInfo";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
 import type { Gender } from "@/shared/constants";
@@ -71,9 +69,28 @@ export default async function ClubPage({ params }: ClubPageProps) {
 
   return (
     <PageLayout ariaLabel={t("detail.page", { clubName: club.name })}>
+      {/* Breadcrumb */}
       <Breadcrumb items={breadcrumbItems} />
-      <ClubHeader club={club} />
-      <ClubInfo club={club} />
+
+      {/* Organization Header */}
+      <OrganizationHeader
+        name={club.name}
+        imageFolder="clubs"
+        subtitle={[club.city, club.zipCode].filter(Boolean).join(" • ")}
+      />
+
+      {/* Organization info */}
+      <OrganizationInfo
+        president={club?.president}
+        address={club?.address}
+        email={club?.email}
+        phone={club?.phone}
+        city={club?.city}
+        zipCode={club?.zipCode}
+        website={club?.website}
+      />
+
+      {/* Club teams */}
       <ClubTeams club={club} teamsByGender={teamsByGender} />
     </PageLayout>
   );

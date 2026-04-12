@@ -4,15 +4,13 @@
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 
-import {
-  CompetitionHeader,
-  CompetitionInfo,
-  CompetitionsPageSkeleton,
-  SearchableChipList,
-} from "@/features/competitions/components";
-import ChampionshipList from "@/features/competitions/components/championships/ChampionshipList";
-import { useRegionalChampionshipsData } from "@/features/competitions/hooks/useRegionalChampionships";
+import ChampionshipList from "@/features/competitions/championships/components/detail/ChampionshipList";
+import { useRegionalChampionshipsData } from "@/features/competitions/championships/hooks";
 import { useRouter } from "@/navigation";
+import { OrganizationHeader } from "@/shared/components/domain/organizations/detail/OrganizationHeader";
+import { OrganizationInfo } from "@/shared/components/domain/organizations/detail/OrganizationInfo";
+import { OrganizationPageSkeleton } from "@/shared/components/domain/organizations/detail/OrganizationPageSkeleton";
+import { SearchableChipList } from "@/shared/components/domain/organizations/detail/SearchableChipsList";
 import { ErrorMessage } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
@@ -46,15 +44,15 @@ export default function RegionalChampionshipsPage() {
       <Breadcrumb items={breadcrumbItems} />
 
       {fetchError && <ErrorMessage message={tCommon(fetchError)} />}
-      {isLoading && <CompetitionsPageSkeleton />}
+      {isLoading && <OrganizationPageSkeleton />}
 
       {!fetchError && !isLoading && (
         <div className="space-y-6">
-          {/* Competition Header */}
-          <CompetitionHeader name={league?.name ?? ""} imageFolder="leagues" />
+          {/* Organization Header */}
+          <OrganizationHeader name={league?.name ?? ""} imageFolder="leagues" />
 
-          {/* Competition info */}
-          <CompetitionInfo
+          {/* Organization info */}
+          <OrganizationInfo
             president={league?.president}
             address={league?.address}
             email={league?.email}

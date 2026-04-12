@@ -4,10 +4,10 @@
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 
-import { ChampionshipTabs } from "@/features/competitions/championships/components/ChampionshipTabs";
-import { DepartmentalTab } from "@/features/competitions/championships/components/DepartmentalTab";
-import { NationalTab } from "@/features/competitions/championships/components/NationalTab";
-import { RegionalTab } from "@/features/competitions/championships/components/RegionalTab";
+import { ChampionshipTabs } from "@/features/competitions/championships/components/list/tabs/ChampionshipTabs";
+import { DepartmentalTab } from "@/features/competitions/championships/components/list/tabs/DepartmentalTab";
+import { NationalTab } from "@/features/competitions/championships/components/list/tabs/NationalTab";
+import { RegionalTab } from "@/features/competitions/championships/components/list/tabs/RegionalTab";
 import { TabsContent } from "@/features/matches/components/detail/Tabs";
 import { PageLayout } from "@/shared/components/layout";
 import { CompetitionLevel } from "@/shared/constants";
