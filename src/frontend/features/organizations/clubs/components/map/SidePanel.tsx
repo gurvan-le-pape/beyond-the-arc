@@ -8,7 +8,6 @@ import { Text } from "@/shared/components/typography";
 
 import type { ClubFilters } from "../../hooks/useFilters";
 import type { ClubBasic } from "../../types/ClubBasic";
-import ListViewButton from "./ListViewButton";
 import { SearchBar } from "./SearchBar";
 
 interface SidePanelProps {
@@ -94,12 +93,10 @@ export const SidePanel = memo(function SidePanel({
                 {t("map.title")}
               </Text>
               <Text variant="caption">
-                {clubs.length} {clubs.length !== 1 ? t("clubs") : t("club")}
+                {clubs.length} {clubs.length === 1 ? t("club") : t("clubs")}
               </Text>
             </div>
             <div className="flex items-center gap-1">
-              {/* List view button */}
-              <ListViewButton label={t("map.listView")} />
               {/* Close button */}
               <button
                 onClick={handleToggleOpen}
