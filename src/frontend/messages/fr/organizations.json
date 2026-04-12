@@ -37,7 +37,10 @@
     "region": "Région",
     "department": "Département",
     "league": "Ligue",
-    "committee": "Comité"
+    "committee": "Comité",
+    "city": "Ville",
+    "zipCode": "Code postal",
+    "visitWebsite": "Visiter le site"
   },
   "notFound": "Organisation introuvable."
 }

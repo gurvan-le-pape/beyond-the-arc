@@ -37,7 +37,10 @@
     "region": "Region",
     "department": "Department",
     "league": "League",
-    "committee": "Committee"
+    "committee": "Committee",
+    "city": "City",
+    "zipCode": "Postal code",
+    "visitWebsite": "Visit website"
   },
   "notFound": "Organization not found."
 }
