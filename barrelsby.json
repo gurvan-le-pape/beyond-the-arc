@@ -1,10 +1,5 @@
 {
   "directory": [
-    "./src/frontend/features/competitions/components",
-    "./src/frontend/features/competitions/constants",
-    "./src/frontend/features/competitions/hooks",
-    "./src/frontend/features/competitions/utils",
-
     "./src/frontend/features/competitions/championships/api",
     "./src/frontend/features/competitions/championships/components",
     "./src/frontend/features/competitions/championships/constants",
@@ -19,8 +14,7 @@
     "./src/frontend/features/competitions/pools/types",
 
     "./src/frontend/features/geography/api",
-
-    "./src/frontend/features/geography/departments/types",
+    "./src/frontend/features/geography/types",
 
     "./src/frontend/features/matches/api",
     "./src/frontend/features/matches/components",
@@ -49,6 +43,9 @@
     "./src/frontend/features/players/utils",
 
     "./src/frontend/features/search/components",
+
+    "./src/frontend/features/stats/api",
+    "./src/frontend/features/stats/types",
 
     "./src/frontend/features/teams/api",
     "./src/frontend/features/teams/components",

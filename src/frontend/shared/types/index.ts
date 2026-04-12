@@ -5,6 +5,7 @@
 
 export * from "./Api";
 // export * from "./axios";
+export * from "./charts/ZoneStats";
 export * from "./filters/FilterKey";
 export * from "./NavItem";
 export * from "./Pagination";

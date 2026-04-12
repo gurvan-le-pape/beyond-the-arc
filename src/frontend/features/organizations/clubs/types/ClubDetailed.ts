@@ -1,6 +1,7 @@
 // src/frontend/features/organizations/clubs/types/ClubDetailed.ts
 import type { Category } from "@/shared/constants";
 import type { Gender } from "@/shared/constants/genders";
+import type { President } from "@/shared/types";
 
 export interface ClubTeamLeaderboard {
   rank: number | null;
@@ -47,4 +48,5 @@ export interface ClubDetailed {
   email: string | null;
   website: string | null;
   teams: ClubTeamInfo[];
+  president: President;
 }

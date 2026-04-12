@@ -497,6 +497,7 @@ describe("ClubsService", () => {
           ],
         },
       ],
+      president: null,
     };
 
     it("should return club with rank and poolSize computed", async () => {
@@ -590,6 +591,7 @@ describe("ClubsService", () => {
         email: null,
         website: null,
         teams: [],
+        president: null,
       });
 
       const result = await service.findClubById(1);
@@ -598,6 +600,33 @@ describe("ClubsService", () => {
       expect(result.phone).toBeNull();
       expect(result.email).toBeNull();
       expect(result.website).toBeNull();
+      expect(result.president).toBeNull();
+    });
+
+    it("should return club with president data", async () => {
+      prisma.clubs.findUnique.mockResolvedValue({
+        ...mockPrismaClub,
+        president: {
+          id: 1,
+          name: "Jean Dupont",
+          phone: "0123456789",
+          email: "jean@club.com",
+          address: null,
+          code: null,
+        },
+        teams: [],
+      });
+
+      const result = await service.findClubById(1);
+
+      expect(result.president).toEqual({
+        id: 1,
+        name: "Jean Dupont",
+        phone: "0123456789",
+        email: "jean@club.com",
+        address: null,
+        code: null,
+      });
     });
 
     it("should compute rank and poolSize via parallel count queries", async () => {

@@ -15,8 +15,7 @@ type Department = {
 };
 
 interface DepartmentsGridProps {
-  departments: Department[];
-  leagueId: number;
+  readonly departments: Department[];
 }
 
 /**
@@ -25,10 +24,7 @@ interface DepartmentsGridProps {
  * Displays a grid of department cards with club counts.
  * Each card is clickable and navigates to the clubs list for that department.
  */
-export function DepartmentsGrid({
-  departments,
-  leagueId,
-}: DepartmentsGridProps) {
+export function DepartmentsGrid({ departments }: DepartmentsGridProps) {
   const t = useTranslations("clubs");
   const router = useRouter();
 

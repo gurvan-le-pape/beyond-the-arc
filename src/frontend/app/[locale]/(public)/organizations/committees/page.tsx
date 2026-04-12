@@ -49,7 +49,7 @@ export default async function ClubsCommitteesPage({
         selectedCommittee={null}
       />
 
-      <DepartmentsGrid departments={departments} leagueId={0} />
+      <DepartmentsGrid departments={departments} />
     </PageLayout>
   );
 }

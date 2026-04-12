@@ -89,6 +89,16 @@ const CLUB_DETAILED_SELECT = {
     },
     orderBy: { number: "asc" },
   },
+  president: {
+    select: {
+      id: true,
+      name: true,
+      phone: true,
+      email: true,
+      address: true,
+      code: true,
+    },
+  },
 } satisfies Prisma.ClubsDefaultArgs["select"];
 
 type ClubDetailedSelectResult = Prisma.ClubsGetPayload<{
@@ -486,6 +496,7 @@ export class ClubsService {
             }
           : null,
       })),
+      president: club.president,
     };
   }
 }
