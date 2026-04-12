@@ -1,4 +1,4 @@
-// src/frontend/features/geography/regions/types/Regions.ts
+// src/frontend/features/geography/types/Region.ts
 export interface Region {
   id: number;
   name: string;

@@ -13,6 +13,7 @@ export * from "./map/layers/ClubsLayer";
 export * from "./map/layers/DepartmentsLayer";
 export * from "./map/layers/RegionsLayer";
 export * from "./map/ListViewButton";
+export * from "./map/LoadingMap";
 export * from "./map/SearchBar";
 export * from "./map/SidePanel";
 export * from "./navigation/DepartementsGrid";
