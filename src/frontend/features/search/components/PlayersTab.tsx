@@ -5,7 +5,7 @@ import { UserIcon } from "@heroicons/react/24/outline";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
-import { useCommitteeLeagueClubFilters } from "@/features/competitions/hooks";
+import { useCommitteeLeagueClubFilters } from "@/features/competitions/championships/hooks";
 import { usePlayers } from "@/features/players/api/use-players";
 import PlayerCard from "@/features/players/components/list/PlayersCard";
 import { PlayersFilters } from "@/features/players/components/list/PlayersFilters";

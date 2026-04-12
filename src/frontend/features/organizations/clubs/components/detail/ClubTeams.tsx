@@ -4,7 +4,6 @@
 import { UserGroupIcon } from "@heroicons/react/24/outline";
 import { useTranslations } from "next-intl";
 
-import { useToggleCategory } from "@/features/competitions/hooks";
 import { Section } from "@/shared/components/blocks";
 import {
   GenderCategorizedList,
@@ -12,6 +11,7 @@ import {
 } from "@/shared/components/domain";
 import { EmptyState } from "@/shared/components/feedback";
 import { Gender } from "@/shared/constants";
+import { useToggleCategory } from "@/shared/hooks";
 
 import type { ClubDetailed, ClubTeamInfo } from "../../types/ClubDetailed";
 

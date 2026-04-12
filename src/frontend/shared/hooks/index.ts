@@ -6,3 +6,4 @@
 export * from "./charts/useBinnedShots";
 export * from "./useDebounce";
 export * from "./useDropdown";
+export * from "./useToggleCategory";
