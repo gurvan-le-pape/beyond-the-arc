@@ -78,7 +78,7 @@ export const Footer: React.FC = () => {
                 <Github className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" />
               </a>
               <a
-                href="https://linkedin.com/in/gurvan-le-pape/"
+                href="https://linkedin.com/in/gurvan-le-pape"
                 target="_blank"
                 rel="noopener noreferrer"
                 className={iconLinkClass}

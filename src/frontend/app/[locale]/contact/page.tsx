@@ -32,8 +32,8 @@ export default async function ContactPage({
     {
       icon: Linkedin,
       label: t("contact.linkedin"),
-      value: "linkedin.com/in/glepape",
-      href: "https://linkedin.com/in/glepape",
+      value: "linkedin.com/in/gurvan-le-pape",
+      href: "https://linkedin.com/in/gurvan-le-pape",
       color: "from-blue-600 to-blue-800",
     },
   ];
