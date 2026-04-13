@@ -237,11 +237,11 @@ export const PlayerMatchStats: React.FC<PlayerMatchStatsProps> = ({
       variant="highlighted"
     >
       <div className="overflow-x-auto">
-        <Table className="match-summary-table">
+        <Table>
           <TableHeader>
             <TableRow hoverable={false}>
               {columns.map((column) => (
-                <TableHead key={column.id} align={column.align}>
+                <TableHead key={column.id} align={column.align} size="compact">
                   {column.label}
                 </TableHead>
               ))}
@@ -264,6 +264,7 @@ export const PlayerMatchStats: React.FC<PlayerMatchStatsProps> = ({
                     key={column.id}
                     align={column.align}
                     className={column.className}
+                    size="compact"
                   >
                     {column.getValue(playerWithStats)}
                   </TableCell>

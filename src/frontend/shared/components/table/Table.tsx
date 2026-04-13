@@ -115,6 +115,7 @@ interface TableHeadProps extends HTMLAttributes<HTMLTableCellElement> {
   sortable?: boolean;
   sortDirection?: "asc" | "desc" | null;
   onSort?: () => void;
+  size?: "default" | "compact";
 }
 
 export const TableHead = forwardRef<HTMLTableCellElement, TableHeadProps>(
@@ -125,6 +126,7 @@ export const TableHead = forwardRef<HTMLTableCellElement, TableHeadProps>(
       sortable = false,
       sortDirection = null,
       onSort,
+      size = "default",
       children,
       ...props
     },
@@ -140,7 +142,9 @@ export const TableHead = forwardRef<HTMLTableCellElement, TableHeadProps>(
       <th
         ref={ref}
         className={cn(
-          "px-6 py-4",
+          size === "compact"
+            ? "px-1 py-1 overflow-hidden whitespace-nowrap"
+            : "px-6 py-4",
           alignmentClasses[align],
           sortable &&
             "cursor-pointer select-none hover:bg-surface-subtle dark:hover:bg-surface-subtle-dark transition-colors duration-200",
@@ -192,10 +196,20 @@ interface TableCellProps extends HTMLAttributes<HTMLTableCellElement> {
   align?: "left" | "center" | "right";
   highlight?: boolean;
   colSpan?: number;
+  size?: "default" | "compact";
 }
 
 export const TableCell = forwardRef<HTMLTableCellElement, TableCellProps>(
-  ({ className, align = "left", highlight = false, ...props }, ref) => {
+  (
+    {
+      className,
+      align = "left",
+      highlight = false,
+      size = "default",
+      ...props
+    },
+    ref,
+  ) => {
     const alignmentClasses = {
       left: "text-left",
       center: "text-center",
@@ -206,7 +220,9 @@ export const TableCell = forwardRef<HTMLTableCellElement, TableCellProps>(
       <td
         ref={ref}
         className={cn(
-          "px-6 py-4",
+          size === "compact"
+            ? "px-1 py-1 overflow-hidden whitespace-nowrap"
+            : "px-6 py-4",
           alignmentClasses[align],
           "text-sm text-text-emphasis dark:text-text-emphasis-dark",
           highlight &&
