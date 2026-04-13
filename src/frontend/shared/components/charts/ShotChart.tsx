@@ -153,14 +153,8 @@ export const ShotChart: React.FC<ShotChartProps> = ({
 
   return (
     <div
-      className="shotchart-container"
       ref={containerRef}
-      style={{
-        position: "relative",
-        zIndex: 0,
-        width: "100%",
-        margin: "0 auto",
-      }}
+      className="w-full mx-auto flex flex-col justify-start items-center relative z-0"
     >
       {containerSize && (
         <>
@@ -192,13 +186,8 @@ export const ShotChart: React.FC<ShotChartProps> = ({
             width={svgWidth}
             height={svgHeight}
             viewBox={`0 0 ${svgWidth} ${svgHeight}`}
-            style={{
-              background: "#f8f5f2",
-              borderRadius: 12,
-              width: "100%",
-              height: "auto",
-              display: "block",
-            }}
+            style={{ background: "#f8f5f2" }}
+            className="w-full h-auto block rounded-xl"
             preserveAspectRatio="xMidYMid meet"
           >
             {/* --- Overlays (between background and lines) --- */}
