@@ -1,6 +1,5 @@
 // src/frontend/app/[locale]/layout.tsx
 import "@/styles/globals.css";
-import "@/styles/shotchart.css";
 import "@/styles/map.css";
 
 import { notFound } from "next/navigation";
