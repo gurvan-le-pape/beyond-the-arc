@@ -111,3 +111,7 @@
 path.leaflet-interactive:focus {
   outline: none;
 }
+
+html {
+  scrollbar-gutter: stable;
+}
