@@ -100,38 +100,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }),
   ];
 
-  // --- Fetch all dynamic IDs in parallel -----------------------------------
-  //
-  // All endpoints return a flat array of IDs via dedicated /all routes,
-  // wrapped by TransformInterceptor as { data: [{ id, ... }] }.
-  //
-  // Endpoint notes (all confirmed from controllers):
-  // - GET /clubs/all          → flat array of all club IDs
-  // - GET /leagues            → flat array of all league IDs
-  // - GET /committees         → flat array of all committee IDs
-  // - GET /championships      → flat array of all championship IDs
-  // - GET /teams/all          → flat array of all team IDs
-  // - GET /players/all        → flat array of all player IDs
-  // - GET /matches/all        → flat array of all match IDs
-  //
-  const [
-    clubIds,
-    leagueIds,
-    committeeIds,
-    championshipIds,
-    teamIds,
-    playerIds,
-    matchIds,
-  ] = isBuild
-    ? [[], [], [], [], [], [], []]
+  // --- Dynamic routes ------------------------------------------------------
+  const [clubIds, leagueIds, committeeIds] = isBuild
+    ? [[], [], []]
     : await Promise.all([
         fetchIds("/clubs/all"),
         fetchIds("/leagues"),
         fetchIds("/committees"),
-        fetchIds("/championships"),
-        fetchIds("/teams/all"),
-        fetchIds("/players/all"),
-        fetchIds("/matches/all"),
       ]);
 
   // --- Dynamic routes ------------------------------------------------------
@@ -152,31 +127,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       localizedUrls(`/organizations/committees/${id}`, {
         changeFrequency: "monthly",
         priority: 0.5,
-      }),
-    ),
-    ...championshipIds.flatMap((id) =>
-      localizedUrls(`/championships/${id}`, {
-        changeFrequency: "daily",
-        priority: 0.7,
-      }),
-    ),
-    ...teamIds.flatMap((id) =>
-      localizedUrls(`/teams/${id}`, {
-        changeFrequency: "weekly",
-        priority: 0.6,
-      }),
-    ),
-    ...playerIds.flatMap((id) =>
-      localizedUrls(`/players/${id}`, {
-        changeFrequency: "weekly",
-        priority: 0.6,
-      }),
-    ),
-    // Matches: high volume, lower SEO value — deprioritized intentionally
-    ...matchIds.flatMap((id) =>
-      localizedUrls(`/matches/${id}`, {
-        changeFrequency: "daily",
-        priority: 0.4,
       }),
     ),
   ];
