@@ -5,6 +5,8 @@ const BASE_URL = process.env.FRONTEND_URL;
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const LOCALES = ["en", "fr"] as const;
 
+const isBuild = process.env.CI === "true";
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -120,15 +122,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     teamIds,
     playerIds,
     matchIds,
-  ] = await Promise.all([
-    fetchIds("/clubs/all"),
-    fetchIds("/leagues"),
-    fetchIds("/committees"),
-    fetchIds("/championships"),
-    fetchIds("/teams/all"),
-    fetchIds("/players/all"),
-    fetchIds("/matches/all"),
-  ]);
+  ] = isBuild
+    ? [[], [], [], [], [], [], []]
+    : await Promise.all([
+        fetchIds("/clubs/all"),
+        fetchIds("/leagues"),
+        fetchIds("/committees"),
+        fetchIds("/championships"),
+        fetchIds("/teams/all"),
+        fetchIds("/players/all"),
+        fetchIds("/matches/all"),
+      ]);
 
   // --- Dynamic routes ------------------------------------------------------
   const dynamicRoutes: MetadataRoute.Sitemap = [
