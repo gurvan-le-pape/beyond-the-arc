@@ -2,11 +2,12 @@
 import type { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
+  const baseUrl = process.env.FRONTEND_URL;
   return {
     rules: {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: "https://beyond-the-arc.vercel.app/sitemap.xml",
+    sitemap: `${baseUrl}/sitemap.xml`,
   };
 }
