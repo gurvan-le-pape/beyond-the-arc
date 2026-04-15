@@ -11,6 +11,10 @@ services:
     environment:
       - NODE_ENV=production
 
+  grafana:
+    environment:
+      - GF_SERVER_ROOT_URL=${GRAFANA_ROOT_URL}
+
 volumes:
   postgres_data:
     external: true
