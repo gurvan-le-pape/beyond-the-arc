@@ -1,5 +1,6 @@
 // src/backend/common/interceptors/transform.interceptor.spec.ts
 import type { CallHandler, ExecutionContext } from "@nestjs/common";
+import { Reflector } from "@nestjs/core";
 import { of } from "rxjs";
 
 import { TransformInterceptor } from "./transform.interceptor";
@@ -10,9 +11,12 @@ describe("TransformInterceptor", () => {
   let mockCallHandler: Partial<CallHandler>;
 
   beforeEach(() => {
-    interceptor = new TransformInterceptor();
+    const reflector = new Reflector();
+    interceptor = new TransformInterceptor(reflector);
 
     mockExecutionContext = {
+      getHandler: jest.fn().mockReturnValue({}),
+      getClass: jest.fn().mockReturnValue({}),
       switchToHttp: jest.fn().mockReturnValue({
         getRequest: jest.fn().mockReturnValue({ url: "/api/test" }),
         getResponse: jest.fn().mockReturnValue({ statusCode: 200 }),
