@@ -3,11 +3,13 @@ import { randomUUID } from "node:crypto";
 
 import { CommonModule } from "@common/common.module";
 import { CACHE_TTL } from "@common/constants/cache-ttls";
+import { MetricsController } from "@common/controllers/metrics.controller";
 import { StatsModule } from "@modules/stats/stats.module";
 import { CacheModule } from "@nestjs/cache-manager";
 import { Module } from "@nestjs/common";
-import { APP_FILTER } from "@nestjs/core";
+import { APP_FILTER, APP_INTERCEPTOR } from "@nestjs/core";
 import { SentryModule } from "@sentry/nestjs/setup";
+import { PrometheusModule } from "@willsoto/nestjs-prometheus";
 import {
   ChampionshipsModule,
   ClubsModule,
@@ -24,7 +26,7 @@ import {
 import { LoggerModule } from "nestjs-pino";
 import { PrismaModule } from "prisma/prisma.module";
 
-import { AllExceptionsFilter } from "./common";
+import { AllExceptionsFilter, TransformInterceptor } from "./common";
 
 @Module({
   imports: [
@@ -41,6 +43,11 @@ import { AllExceptionsFilter } from "./common";
         genReqId: (req) =>
           (req.headers["x-request-id"] as string) ?? randomUUID(),
       },
+    }),
+    PrometheusModule.register({
+      defaultMetrics: { enabled: true },
+      path: "/metrics",
+      controller: MetricsController,
     }),
     CacheModule.register({
       isGlobal: true, // Makes it available everywhere
@@ -63,6 +70,12 @@ import { AllExceptionsFilter } from "./common";
     HealthModule,
   ],
   controllers: [],
-  providers: [{ provide: APP_FILTER, useClass: AllExceptionsFilter }],
+  providers: [
+    { provide: APP_FILTER, useClass: AllExceptionsFilter },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TransformInterceptor,
+    },
+  ],
 })
 export class AppModule {}
