@@ -23,7 +23,7 @@ async function bootstrap() {
     allowedHeaders: ["Content-Type", "Authorization"],
   });
 
-  app.setGlobalPrefix("api");
+  app.setGlobalPrefix("api", { exclude: ["/metrics"] });
 
   // Swagger/OpenAPI setup
   const config = new DocumentBuilder()
@@ -44,9 +44,6 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
-
-  // Global interceptors
-  app.useGlobalInterceptors(new TransformInterceptor());
 
   await app.listen(process.env.PORT || 4000);
 }

@@ -4,4 +4,5 @@
  */
 
 export * from "./cache.interceptor";
+export * from "./skip-transform.interceptor";
 export * from "./transform.interceptor";
