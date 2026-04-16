@@ -12,9 +12,10 @@ import { Observable, tap } from "rxjs";
 @Injectable()
 export class HttpMetricsInterceptor implements NestInterceptor {
   constructor(
-    @InjectMetric("http_requests_total") private counter: Counter<string>,
+    @InjectMetric("http_requests_total")
+    private readonly counter: Counter<string>,
     @InjectMetric("http_request_duration_seconds")
-    private histogram: Histogram<string>,
+    private readonly histogram: Histogram<string>,
   ) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
