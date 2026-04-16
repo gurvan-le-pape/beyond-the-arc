@@ -4,5 +4,6 @@
  */
 
 export * from "./cache.interceptor";
+export * from "./http-metrics.interceptor";
 export * from "./skip-transform.interceptor";
 export * from "./transform.interceptor";
