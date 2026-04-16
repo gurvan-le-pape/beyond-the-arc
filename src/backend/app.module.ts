@@ -4,12 +4,17 @@ import { randomUUID } from "node:crypto";
 import { CommonModule } from "@common/common.module";
 import { CACHE_TTL } from "@common/constants/cache-ttls";
 import { MetricsController } from "@common/controllers/metrics.controller";
+import { HttpMetricsInterceptor } from "@common/interceptors";
 import { StatsModule } from "@modules/stats/stats.module";
 import { CacheModule } from "@nestjs/cache-manager";
 import { Module } from "@nestjs/common";
 import { APP_FILTER, APP_INTERCEPTOR } from "@nestjs/core";
 import { SentryModule } from "@sentry/nestjs/setup";
-import { PrometheusModule } from "@willsoto/nestjs-prometheus";
+import {
+  makeCounterProvider,
+  makeHistogramProvider,
+  PrometheusModule,
+} from "@willsoto/nestjs-prometheus";
 import {
   ChampionshipsModule,
   ClubsModule,
@@ -76,6 +81,18 @@ import { AllExceptionsFilter, TransformInterceptor } from "./common";
       provide: APP_INTERCEPTOR,
       useClass: TransformInterceptor,
     },
+    { provide: APP_INTERCEPTOR, useClass: HttpMetricsInterceptor },
+    makeCounterProvider({
+      name: "http_requests_total",
+      help: "Total HTTP requests",
+      labelNames: ["method", "route", "status_code"],
+    }),
+    makeHistogramProvider({
+      name: "http_request_duration_seconds",
+      help: "HTTP request duration in seconds",
+      labelNames: ["method", "route", "status_code"],
+      buckets: [0.01, 0.05, 0.1, 0.3, 0.5, 1, 2, 5],
+    }),
   ],
 })
 export class AppModule {}
