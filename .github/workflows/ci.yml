@@ -187,3 +187,33 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  # ============================================================================
+  # DEPLOY
+  # ============================================================================
+  deploy:
+    name: Deploy to VPS
+    runs-on: ubuntu-latest
+    needs:
+      - backend-lint
+      - backend-test
+      - backend-build
+      - frontend-lint
+      - frontend-typecheck
+      - frontend-build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            rm -rf /opt/beyondthearc
+            git clone https://github.com/gurvan-le-pape/beyond-the-arc.git /opt/beyondthearc
+            cp /tmp/.env /opt/beyondthearc/
+            cd /opt/beyondthearc/docker
+            docker compose --env-file ../.env -f docker-compose.yml -f docker-compose.prod.yml up --build -d
+            docker system prune -f
