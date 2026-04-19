@@ -4,12 +4,12 @@
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 
-import { ChampionshipTabs } from "@/features/competitions/championships/components/list/tabs/ChampionshipTabs";
 import { DepartmentalTab } from "@/features/competitions/championships/components/list/tabs/DepartmentalTab";
 import { NationalTab } from "@/features/competitions/championships/components/list/tabs/NationalTab";
 import { RegionalTab } from "@/features/competitions/championships/components/list/tabs/RegionalTab";
-import { TabsContent } from "@/features/matches/components/detail/Tabs";
 import { PageLayout } from "@/shared/components/layout";
+import { QueryTabs } from "@/shared/components/navigation/QueryTabs";
+import { TabsContent } from "@/shared/components/primitives/Tabs";
 import { CompetitionLevel } from "@/shared/constants";
 
 const TABS = {
@@ -39,7 +39,7 @@ export default function ChampionshipsPage() {
 
   return (
     <PageLayout>
-      <ChampionshipTabs activeTab={activeTab} tabs={tabs}>
+      <QueryTabs activeTab={activeTab} tabs={tabs}>
         <TabsContent value={TABS.NATIONAL}>
           <NationalTab />
         </TabsContent>
@@ -49,7 +49,7 @@ export default function ChampionshipsPage() {
         <TabsContent value={TABS.DEPARTMENTAL}>
           <DepartmentalTab />
         </TabsContent>
-      </ChampionshipTabs>
+      </QueryTabs>
     </PageLayout>
   );
 }

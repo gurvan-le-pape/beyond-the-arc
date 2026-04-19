@@ -9,18 +9,18 @@ import {
   PlayerMatchStats,
   TeamStatsComparison,
 } from "@/features/matches/components";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/features/matches/components/detail/Tabs";
 import type {
   MatchEvent,
   MatchEventPlayer,
 } from "@/features/matches/types/MatchEvent";
 import { buildTeam } from "@/features/matches/utils/buildTeam";
 import { PageLayout } from "@/shared/components/layout";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/shared/components/primitives/Tabs";
 import { Role } from "@/shared/constants";
 import { handleServerError } from "@/shared/utils/handleServerError";
 

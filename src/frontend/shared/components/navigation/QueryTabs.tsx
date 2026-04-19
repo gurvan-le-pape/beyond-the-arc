@@ -1,27 +1,26 @@
-// src/frontend/features/competitions/championships/components/ChampionshipTabs.tsx
+// src/frontend/shared/components/navigation/QueryTabs.tsx
 "use client";
 
 import { useSearchParams } from "next/navigation";
 import { useCallback } from "react";
 
+import { usePathname, useRouter } from "@/navigation";
 import {
   Tabs,
   TabsList,
   TabsTrigger,
-} from "@/features/matches/components/detail/Tabs";
-import { usePathname, useRouter } from "@/navigation";
+} from "@/shared/components/primitives/Tabs";
 
-interface ChampionshipTabsProps {
+interface QueryTabsProps {
   readonly activeTab: string;
   readonly tabs: { value: string; label: string }[];
   readonly children: React.ReactNode;
 }
 
-export function ChampionshipTabs({
-  activeTab,
-  tabs,
-  children,
-}: ChampionshipTabsProps) {
+/**
+ * Generic tab container that syncs the active tab with the URL ?tab= param.
+ */
+export function QueryTabs({ activeTab, tabs, children }: QueryTabsProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
