@@ -14,7 +14,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/features/matches/components/detail/Tabs";
+} from "@/shared/components/primitives/Tabs";
 import type {
   MatchEvent,
   MatchEventPlayer,

@@ -4,10 +4,10 @@
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 
-import { TabsContent } from "@/features/matches/components/detail/Tabs";
 import { MatchesTab, PlayersTab, TeamsTab } from "@/features/search/components";
-import { SearchTabs } from "@/features/search/components/SearchTabs";
 import { PageLayout } from "@/shared/components/layout";
+import { QueryTabs } from "@/shared/components/navigation/QueryTabs";
+import { TabsContent } from "@/shared/components/primitives/Tabs";
 
 const TABS = {
   PLAYERS: "players",
@@ -35,7 +35,7 @@ export default function SearchPage() {
 
   return (
     <PageLayout>
-      <SearchTabs activeTab={activeTab} tabs={tabs}>
+      <QueryTabs activeTab={activeTab} tabs={tabs}>
         <TabsContent value={TABS.PLAYERS}>
           <PlayersTab />
         </TabsContent>
@@ -45,7 +45,7 @@ export default function SearchPage() {
         <TabsContent value={TABS.MATCHES}>
           <MatchesTab />
         </TabsContent>
-      </SearchTabs>
+      </QueryTabs>
     </PageLayout>
   );
 }
