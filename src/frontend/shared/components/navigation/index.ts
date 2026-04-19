@@ -4,3 +4,4 @@
  */
 
 export * from "./Breadcrumb";
+export * from "./QueryTabs";

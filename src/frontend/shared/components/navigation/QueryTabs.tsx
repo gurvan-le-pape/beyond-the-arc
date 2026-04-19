@@ -1,27 +1,26 @@
-// src/frontend/features/search/components/SearchTabs.tsx
+// src/frontend/shared/components/navigation/QueryTabs.tsx
 "use client";
 
 import { useSearchParams } from "next/navigation";
 import { useCallback } from "react";
 
+import { usePathname, useRouter } from "@/navigation";
 import {
   Tabs,
   TabsList,
   TabsTrigger,
-} from "@/features/matches/components/detail/Tabs";
-import { usePathname, useRouter } from "@/navigation";
+} from "@/shared/components/primitives/Tabs";
 
-interface SearchTabsProps {
+interface QueryTabsProps {
   readonly activeTab: string;
   readonly tabs: { value: string; label: string }[];
   readonly children: React.ReactNode;
 }
 
 /**
- * Wraps the existing Tabs component to sync active tab with the URL ?tab= param.
- * Uses Tabs' defaultValue + onValueChange pattern to stay compatible with context.
+ * Generic tab container that syncs the active tab with the URL ?tab= param.
  */
-export function SearchTabs({ activeTab, tabs, children }: SearchTabsProps) {
+export function QueryTabs({ activeTab, tabs, children }: QueryTabsProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
