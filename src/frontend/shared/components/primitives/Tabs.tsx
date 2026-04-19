@@ -1,4 +1,4 @@
-// src/frontend/features/matches/components/detail/Tabs.tsx
+// src/frontend/shared/components/primitives/Tabs.tsx
 "use client";
 
 import {
@@ -71,7 +71,7 @@ export function TabsList({ children, className = "" }: TabsListProps) {
   return (
     <div className={`flex justify-center mb-6 ${className}`}>
       <div
-        className="flex w-full max-w-sm border-b-2 border-divide-light dark:border-divide-dark"
+        className="flex w-full border-b-2 border-divide-light dark:border-divide-dark"
         role="tablist"
       >
         {children}

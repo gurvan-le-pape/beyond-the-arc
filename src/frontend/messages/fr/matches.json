@@ -95,7 +95,9 @@
     "teamMatchStatsTitle": "Statistiques d'équipe",
     "tabs": {
       "teamStats": "Stats d'équipe",
-      "matchEvents": "Événements"
+      "matchEvents": "Événements",
+      "homeTeam": "Locaux",
+      "awayTeam": "Visiteurs"
     }
   },
   "ariaLabelMatch": "Voir le match {home} - {away}",
