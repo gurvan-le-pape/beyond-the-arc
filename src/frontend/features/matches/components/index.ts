@@ -19,7 +19,6 @@ export * from "./detail/events/timeline/TimelineTeamHeader";
 export * from "./detail/events/timeline/TimelineTeamLogo";
 export * from "./detail/MatchScoreCard";
 export * from "./detail/PlayerMatchStats";
-export * from "./detail/Tabs";
 export * from "./detail/TeamStatsComparison";
 export * from "./list/MatchesCard";
 export * from "./list/MatchesFilters";

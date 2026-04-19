@@ -10,3 +10,4 @@ export * from "./Card";
 export * from "./ImageWithFallback";
 export * from "./SearchableDropdown";
 export * from "./Switch";
+export * from "./Tabs";
