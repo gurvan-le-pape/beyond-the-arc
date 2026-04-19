@@ -20,7 +20,6 @@ export * from "./list/ChampionshipGrid";
 export * from "./list/filters/DepartmentalFilters";
 export * from "./list/filters/NationalFilters";
 export * from "./list/filters/RegionalFilters";
-export * from "./list/tabs/ChampionshipTabs";
 export * from "./list/tabs/DepartmentalTab";
 export * from "./list/tabs/NationalTab";
 export * from "./list/tabs/RegionalTab";

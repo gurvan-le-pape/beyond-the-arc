@@ -5,5 +5,4 @@
 
 export * from "./MatchesTab";
 export * from "./PlayersTab";
-export * from "./SearchTabs";
 export * from "./TeamsTab";
