@@ -95,7 +95,9 @@
     "teamMatchStatsTitle": "Team Statistics",
     "tabs": {
       "teamStats": "Team Stats",
-      "matchEvents": "Match Events"
+      "matchEvents": "Match Events",
+      "homeTeam": "Home Team",
+      "awayTeam": "Away Team"
     }
   },
   "ariaLabelMatch": "View match {home} - {away}",

@@ -105,8 +105,12 @@ export default async function MatchSummaryPage({
           <TabsTrigger value="stats">
             {tMatches("matchSummary.tabs.teamStats")}
           </TabsTrigger>
-          <TabsTrigger value="home">{homeTeam.name}</TabsTrigger>
-          <TabsTrigger value="away">{awayTeam.name}</TabsTrigger>
+          <TabsTrigger value="home">
+            {tMatches("matchSummary.tabs.homeTeam")}
+          </TabsTrigger>
+          <TabsTrigger value="away">
+            {tMatches("matchSummary.tabs.awayTeam")}
+          </TabsTrigger>
           <TabsTrigger value="events">
             {tMatches("matchSummary.tabs.matchEvents")}
           </TabsTrigger>
