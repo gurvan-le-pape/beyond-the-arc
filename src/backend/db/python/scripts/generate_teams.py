@@ -4,6 +4,7 @@ import random
 from utils.db_utils import get_connection, release_connection
 from utils.championship_utils import insert_championship
 from utils.pool_utils import insert_pool
+from utils.name_utils import generate_player_name
 from utils.division_utils import compute_divisions_and_pools
 from config import SEASON_YEAR, CATEGORIES, GENDERS
 
@@ -40,23 +41,23 @@ def generate_teams_for_committee(cursor, committee_id, club_ids):
     # Retrieve all newly inserted team IDs for this committee's clubs
     cursor.execute(
         """
-        SELECT id FROM teams WHERE club_id = ANY(%s);
+        SELECT id, gender FROM teams WHERE club_id = ANY(%s);
         """,
         (club_ids,),
     )
-    team_ids = [row[0] for row in cursor.fetchall()]
+    team_ids_and_genders = cursor.fetchall()
 
     # Batch generate players for all teams at once
-    generate_players_for_teams(cursor, team_ids)
+    generate_players_for_teams(cursor, team_ids_and_genders)
 
     print(f"Committee {committee_id}: Inserted teams and players for {len(club_ids)} clubs.")
 
 
-def generate_players_for_teams(cursor, team_ids, num_players=12):
+def generate_players_for_teams(cursor, team_ids_and_genders, num_players=12):
     """Batch insert players for a list of team IDs."""
     insert_data = [
-        (f"Player {number}", number, team_id)
-        for team_id in team_ids
+        (generate_player_name(gender), number, team_id)
+        for team_id, gender in team_ids_and_genders
         for number in range(1, num_players + 1)
     ]
     cursor.executemany(
