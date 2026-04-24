@@ -204,16 +204,49 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push backend
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/backend/Dockerfile
+          target: prod
+          push: true
+          tags: ghcr.io/${{ github.repository }}/backend:latest
+
+      - name: Build and push frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/frontend/Dockerfile
+          target: prod
+          push: true
+          tags: ghcr.io/${{ github.repository }}/frontend:latest
+          build-args: |
+            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+            NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
+            FRONTEND_URL=${{ secrets.FRONTEND_URL }}
+
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
+          command_timeout: 10m
           script: |
-            rm -rf /opt/beyondthearc
-            git clone https://github.com/gurvan-le-pape/beyond-the-arc.git /opt/beyondthearc
-            cp /tmp/.env /opt/beyondthearc/
-            cd /opt/beyondthearc/docker
-            docker compose --env-file ../.env -f docker-compose.yml -f docker-compose.prod.yml up --build -d
+            cd /opt/beyondthearc
+            git pull
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml pull frontend backend
+            docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml up -d
             docker system prune -f
