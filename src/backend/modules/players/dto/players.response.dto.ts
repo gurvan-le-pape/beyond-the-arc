@@ -245,14 +245,14 @@ export class MatchHistoryDto {
     example: 85,
     type: Number,
   })
-  homeTeamScore!: number;
+  homeTeamScore!: number | null;
 
   @ApiProperty({
     description: "Away team score",
     example: 72,
     type: Number,
   })
-  awayTeamScore!: number;
+  awayTeamScore!: number | null;
 
   @ApiProperty({
     description: "Player and their statistics for this match",
