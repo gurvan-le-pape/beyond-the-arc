@@ -1,0 +1,162 @@
+{
+  "game_states": {
+    "possession": {
+      "shot_attempt": 0.85,
+      "dead_ball": 0.15
+    },
+    "shot_attempt": {
+      "rebound": 0.4,
+      "possession": 0.4,
+      "dead_ball": 0.2
+    },
+    "rebound": {
+      "possession": 1.0
+    },
+    "dead_ball": {
+      "possession": 1.0
+    }
+  },
+  "transition_events": {
+    "possession": {
+      "dead_ball": [
+        { "type": "traveling", "odds": 0.15 },
+        { "type": "carrying", "odds": 0.08 },
+        { "type": "double_dribble", "odds": 0.08 },
+        { "type": "bad_pass", "odds": 0.25 },
+        { "type": "steal", "odds": 0.15 },
+        { "type": "shot_clock_violation", "odds": 0.05 },
+        { "type": "offensive_foul", "odds": 0.04 },
+        { "type": "quarter_end", "odds": 0.02 },
+        { "type": "blocking_foul", "odds": 0.06 },
+        { "type": "pushing_foul", "odds": 0.06 },
+        { "type": "reaching_foul", "odds": 0.03 },
+        { "type": "charging_foul", "odds": 0.02 },
+        { "type": "illegal_screen", "odds": 0.005 },
+        { "type": "technical_foul", "odds": 0.005 }
+      ]
+    },
+    "shot_attempt": {
+      "rebound": [
+        {
+          "type": "2_point",
+          "odds": 0.6,
+          "sub_events": [
+            {
+              "type": "2_point_int",
+              "odds": 0.5,
+              "sub_events": [
+                {
+                  "type": "missed_layup",
+                  "odds": 0.4
+                },
+                {
+                  "type": "missed_dunk",
+                  "odds": 0.3
+                }
+              ]
+            },
+            {
+              "type": "2_point_ext",
+              "odds": 0.5,
+              "sub_events": [
+                {
+                  "type": "missed_fadeaway",
+                  "odds": 0.3
+                },
+                {
+                  "type": "missed_pull_up_jump_shot",
+                  "odds": 0.3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "3_point",
+          "odds": 0.4,
+          "sub_events": [
+            {
+              "type": "missed_catch_and_shoot_three",
+              "odds": 0.4
+            },
+            {
+              "type": "missed_step_back_three",
+              "odds": 0.3
+            }
+          ]
+        }
+      ],
+      "possession": [
+        {
+          "type": "2_point",
+          "odds": 0.6,
+          "sub_events": [
+            {
+              "type": "2_point_int",
+              "odds": 0.5,
+              "sub_events": [
+                {
+                  "type": "made_layup",
+                  "odds": 0.4
+                },
+                {
+                  "type": "made_dunk",
+                  "odds": 0.3
+                },
+                {
+                  "type": "blocked_shot",
+                  "odds": 0.1
+                }
+              ]
+            },
+            {
+              "type": "2_point_ext",
+              "odds": 0.5,
+              "sub_events": [
+                {
+                  "type": "made_fadeaway",
+                  "odds": 0.3
+                },
+                {
+                  "type": "made_pull_up_jump_shot",
+                  "odds": 0.3
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "3_point",
+          "odds": 0.4,
+          "sub_events": [
+            {
+              "type": "made_catch_and_shoot_three",
+              "odds": 0.4
+            },
+            {
+              "type": "made_step_back_three",
+              "odds": 0.3
+            }
+          ]
+        }
+      ],
+      "dead_ball": [
+        { "type": "3_point_shooting_foul", "odds": 0.143 },
+        { "type": "2_point_ext_shooting_foul", "odds": 0.286 },
+        { "type": "2_point_int_shooting_foul", "odds": 0.286 },
+        { "type": "3_point_and_1", "odds": 0.071 },
+        { "type": "2_point_ext_and_1", "odds": 0.143 },
+        { "type": "2_point_int_and_1", "odds": 0.071 }
+      ]
+    },
+    "rebound": {
+      "possession": [
+        { "type": "offensive_rebound", "odds": 0.4 },
+        { "type": "defensive_rebound", "odds": 0.6 }
+      ]
+    },
+    "dead_ball": {
+      "possession": [{ "type": "inbound", "odds": 1.0 }]
+    }
+  }
+}
