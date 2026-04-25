@@ -127,7 +127,12 @@ CREATE TABLE matches (
     away_team_score INT,
     forfeit BOOLEAN DEFAULT FALSE,
     overtime BOOLEAN DEFAULT FALSE,
-    CONSTRAINT no_draws_allowed CHECK (home_team_score != away_team_score)
+    status VARCHAR(20) NOT NULL DEFAULT 'scheduled',
+    CONSTRAINT no_draws_allowed CHECK (
+        home_team_score IS NULL OR 
+        away_team_score IS NULL OR 
+        home_team_score != away_team_score
+    )
 );
 
 CREATE TABLE leaderboards (
@@ -244,4 +249,12 @@ CREATE TABLE substitutions (
     timestamp INT NOT NULL, -- Time in seconds from the start of the match
     exiting_player_id INT REFERENCES players(id) ON DELETE CASCADE,
     entering_player_id INT REFERENCES players(id) ON DELETE CASCADE
+);
+
+CREATE TABLE seeding_checkpoints (
+    entity_type VARCHAR(50) NOT NULL,
+    entity_id INT NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'completed',
+    completed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (entity_type, entity_id)
 );
