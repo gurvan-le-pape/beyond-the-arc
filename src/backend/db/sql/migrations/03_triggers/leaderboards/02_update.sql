@@ -1,115 +1,119 @@
 CREATE OR REPLACE FUNCTION update_leaderboards_on_match_update()
 RETURNS TRIGGER AS $$
 BEGIN
-    -- Revert old match results for the home team
-    UPDATE leaderboards
-    SET
-        games_played = games_played - 1,
-        games_won = games_won - (CASE 
-            WHEN OLD.forfeit THEN 0 -- Forfeit: no win
-            WHEN OLD.home_team_score > OLD.away_team_score THEN 1 -- Regular win
-            ELSE 0 -- Loss
-        END),
-        games_lost = games_lost - (CASE 
-            WHEN OLD.forfeit THEN 0 -- Forfeit: no regular loss
-            WHEN OLD.home_team_score < OLD.away_team_score THEN 1 -- Regular loss
-            ELSE 0 -- Win
-        END),
-        games_forfeited = games_forfeited - (CASE 
-            WHEN OLD.forfeit THEN 1 -- Forfeit: decrement games_forfeited
-            ELSE 0 -- Not a forfeit
-        END),
-        points_for = points_for - OLD.home_team_score,
-        points_against = points_against - OLD.away_team_score,
-        point_difference = point_difference - (OLD.home_team_score - OLD.away_team_score),
-        points = points - (CASE 
-            WHEN OLD.forfeit THEN 0 -- Forfeit: 0 points
-            WHEN OLD.home_team_score > OLD.away_team_score THEN 2 -- Win: 2 points
-            ELSE 1 -- Loss: 1 point
-        END)
-    WHERE pool_id = OLD.pool_id AND team_id = OLD.home_team_id;
+    -- Only fire when transitioning to completed
+    IF NEW.status != 'completed' THEN
+        RETURN NEW;
+    END IF;
 
-    -- Revert old match results for the away team
-    UPDATE leaderboards
-    SET
-        games_played = games_played - 1,
-        games_won = games_won - (CASE 
-            WHEN OLD.forfeit THEN 1 -- Forfeit: away team wins
-            WHEN OLD.away_team_score > OLD.home_team_score THEN 1 -- Regular win
-            ELSE 0 -- Loss
-        END),
-        games_lost = games_lost - (CASE 
-            WHEN OLD.forfeit THEN 0 -- Forfeit: no regular loss
-            WHEN OLD.away_team_score < OLD.home_team_score THEN 1 -- Regular loss
-            ELSE 0 -- Win
-        END),
-        points_for = points_for - OLD.away_team_score,
-        points_against = points_against - OLD.home_team_score,
-        point_difference = point_difference - (OLD.away_team_score - OLD.home_team_score),
-        points = points - (CASE 
-            WHEN OLD.forfeit THEN 2 -- Forfeit: away team gets 2 points
-            WHEN OLD.away_team_score > OLD.home_team_score THEN 2 -- Win: 2 points
-            ELSE 1 -- Loss: 1 point
-        END)
-    WHERE pool_id = OLD.pool_id AND team_id = OLD.away_team_id;
+    -- Prevent double-counting if somehow called again on a completed match
+    IF OLD.status = 'completed' THEN
+        RETURN NEW;
+    END IF;
 
-    -- Apply new match results for the home team
-    UPDATE leaderboards
-    SET
-        games_played = games_played + 1,
-        games_won = games_won + (CASE 
-            WHEN NEW.forfeit THEN 0 -- Forfeit: no win
-            WHEN NEW.home_team_score > NEW.away_team_score THEN 1 -- Regular win
-            ELSE 0 -- Loss
+    -- Update home team
+    INSERT INTO leaderboards (pool_id, team_id, games_played, games_won, games_lost, games_forfeited, points_for, points_against, point_difference, points)
+    VALUES (
+        NEW.pool_id,
+        NEW.home_team_id,
+        1,
+        CASE 
+            WHEN NEW.forfeit THEN 0
+            WHEN NEW.home_team_score > NEW.away_team_score THEN 1
+            ELSE 0
+        END,
+        CASE 
+            WHEN NEW.forfeit THEN 0
+            WHEN NEW.home_team_score < NEW.away_team_score THEN 1
+            ELSE 0
+        END,
+        CASE WHEN NEW.forfeit THEN 1 ELSE 0 END,
+        NEW.home_team_score,
+        NEW.away_team_score,
+        NEW.home_team_score - NEW.away_team_score,
+        CASE 
+            WHEN NEW.forfeit THEN 0
+            WHEN NEW.home_team_score > NEW.away_team_score THEN 2
+            ELSE 1
+        END
+    )
+    ON CONFLICT (pool_id, team_id) DO UPDATE SET
+        games_played = leaderboards.games_played + 1,
+        games_won = leaderboards.games_won + (CASE 
+            WHEN NEW.forfeit THEN 0
+            WHEN NEW.home_team_score > NEW.away_team_score THEN 1
+            ELSE 0
         END),
-        games_lost = games_lost + (CASE 
-            WHEN NEW.forfeit THEN 0 -- Forfeit: no regular loss
-            WHEN NEW.home_team_score < NEW.away_team_score THEN 1 -- Regular loss
-            ELSE 0 -- Win
+        games_lost = leaderboards.games_lost + (CASE 
+            WHEN NEW.forfeit THEN 0
+            WHEN NEW.home_team_score < NEW.away_team_score THEN 1
+            ELSE 0
         END),
-        games_forfeited = games_forfeited + (CASE 
-            WHEN NEW.forfeit THEN 1 -- Forfeit: increment games_forfeited
-            ELSE 0 -- Not a forfeit
-        END),
-        points_for = points_for + NEW.home_team_score,
-        points_against = points_against + NEW.away_team_score,
-        point_difference = point_difference + (NEW.home_team_score - NEW.away_team_score),
-        points = points + (CASE 
-            WHEN NEW.forfeit THEN 0 -- Forfeit: 0 points
-            WHEN NEW.home_team_score > NEW.away_team_score THEN 2 -- Win: 2 points
-            ELSE 1 -- Loss: 1 point
-        END)
-    WHERE pool_id = NEW.pool_id AND team_id = NEW.home_team_id;
+        games_forfeited = leaderboards.games_forfeited + (CASE WHEN NEW.forfeit THEN 1 ELSE 0 END),
+        points_for = leaderboards.points_for + NEW.home_team_score,
+        points_against = leaderboards.points_against + NEW.away_team_score,
+        point_difference = leaderboards.point_difference + (NEW.home_team_score - NEW.away_team_score),
+        points = leaderboards.points + (CASE 
+            WHEN NEW.forfeit THEN 0
+            WHEN NEW.home_team_score > NEW.away_team_score THEN 2
+            ELSE 1
+        END);
 
-    -- Apply new match results for the away team
-    UPDATE leaderboards
-    SET
-        games_played = games_played + 1,
-        games_won = games_won + (CASE 
-            WHEN NEW.forfeit THEN 1 -- Forfeit: away team wins
-            WHEN NEW.away_team_score > NEW.home_team_score THEN 1 -- Regular win
-            ELSE 0 -- Loss
+    -- Update away team
+    INSERT INTO leaderboards (pool_id, team_id, games_played, games_won, games_lost, games_forfeited, points_for, points_against, point_difference, points)
+    VALUES (
+        NEW.pool_id,
+        NEW.away_team_id,
+        1,
+        CASE 
+            WHEN NEW.forfeit THEN 1
+            WHEN NEW.away_team_score > NEW.home_team_score THEN 1
+            ELSE 0
+        END,
+        CASE 
+            WHEN NEW.forfeit THEN 0
+            WHEN NEW.away_team_score < NEW.home_team_score THEN 1
+            ELSE 0
+        END,
+        0,
+        NEW.away_team_score,
+        NEW.home_team_score,
+        NEW.away_team_score - NEW.home_team_score,
+        CASE 
+            WHEN NEW.forfeit THEN 2
+            WHEN NEW.away_team_score > NEW.home_team_score THEN 2
+            ELSE 1
+        END
+    )
+    ON CONFLICT (pool_id, team_id) DO UPDATE SET
+        games_played = leaderboards.games_played + 1,
+        games_won = leaderboards.games_won + (CASE 
+            WHEN NEW.forfeit THEN 1
+            WHEN NEW.away_team_score > NEW.home_team_score THEN 1
+            ELSE 0
         END),
-        games_lost = games_lost + (CASE 
-            WHEN NEW.forfeit THEN 0 -- Forfeit: no regular loss
-            WHEN NEW.away_team_score < NEW.home_team_score THEN 1 -- Regular loss
-            ELSE 0 -- Win
+        games_lost = leaderboards.games_lost + (CASE 
+            WHEN NEW.forfeit THEN 0
+            WHEN NEW.away_team_score < NEW.home_team_score THEN 1
+            ELSE 0
         END),
-        points_for = points_for + NEW.away_team_score,
-        points_against = points_against + NEW.home_team_score,
-        point_difference = point_difference + (NEW.away_team_score - NEW.home_team_score),
-        points = points + (CASE 
-            WHEN NEW.forfeit THEN 2 -- Forfeit: away team gets 2 points
-            WHEN NEW.away_team_score > NEW.home_team_score THEN 2 -- Win: 2 points
-            ELSE 1 -- Loss: 1 point
-        END)
-    WHERE pool_id = NEW.pool_id AND team_id = NEW.away_team_id;
+        games_forfeited = leaderboards.games_forfeited + 0,
+        points_for = leaderboards.points_for + NEW.away_team_score,
+        points_against = leaderboards.points_against + NEW.home_team_score,
+        point_difference = leaderboards.point_difference + (NEW.away_team_score - NEW.home_team_score),
+        points = leaderboards.points + (CASE 
+            WHEN NEW.forfeit THEN 2
+            WHEN NEW.away_team_score > NEW.home_team_score THEN 2
+            ELSE 1
+        END);
 
-    RETURN NEW; -- Return the new match row
+    RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
--- Create the trigger
+-- Drop and recreate trigger
+DROP TRIGGER IF EXISTS match_update_trigger ON matches;
+
 CREATE TRIGGER match_update_trigger
 AFTER UPDATE ON matches
 FOR EACH ROW

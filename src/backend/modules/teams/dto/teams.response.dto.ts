@@ -200,15 +200,17 @@ export class TeamMatchHistoryDto {
     description: "Home team score",
     example: 85,
     type: Number,
+    nullable: true,
   })
-  homeTeamScore!: number;
+  homeTeamScore!: number | null;
 
   @ApiProperty({
     description: "Away team score",
     example: 72,
     type: Number,
+    nullable: true,
   })
-  awayTeamScore!: number;
+  awayTeamScore!: number | null;
 
   @ApiProperty({
     description: "Players and their statistics for this match",
@@ -233,8 +235,8 @@ export class TeamDetailResponseDto extends TeamResponseDto {
   homeMatches!: Array<{
     id: number;
     date: Date;
-    homeTeamScore: number;
-    awayTeamScore: number;
+    homeTeamScore: number | null;
+    awayTeamScore: number | null;
     awayTeam: {
       id: number;
       number: number;
@@ -251,8 +253,8 @@ export class TeamDetailResponseDto extends TeamResponseDto {
   awayMatches!: Array<{
     id: number;
     date: Date;
-    homeTeamScore: number;
-    awayTeamScore: number;
+    homeTeamScore: number | null;
+    awayTeamScore: number | null;
     homeTeam: {
       id: number;
       number: number;

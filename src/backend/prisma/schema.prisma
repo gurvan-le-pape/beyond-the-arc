@@ -190,10 +190,11 @@ model Matches {
   homeTeamId          Int                 @map("home_team_id")
   awayTeam            Teams               @relation("AwayTeam", fields: [awayTeamId], references: [id])
   awayTeamId          Int                 @map("away_team_id")
-  homeTeamScore       Int                 @map("home_team_score")
-  awayTeamScore       Int                 @map("away_team_score")
+  homeTeamScore       Int?                @map("home_team_score")
+  awayTeamScore       Int?                @map("away_team_score")
   forfeit             Boolean             @default(false)
   overtime            Boolean             @default(false)
+  status              String              @default("scheduled") @db.VarChar(20)
   playerMatchStats    PlayerMatchStats[]
   matchEvents         MatchEvents[]
   playtimeIntervals   PlayerPlaytimeIntervals[]
@@ -322,4 +323,14 @@ model Substitutions {
   enteringPlayerId Int      @map("entering_player_id")
 
   @@map("substitutions")
+}
+
+model SeedingCheckpoints {
+  entityType   String   @map("entity_type") @db.VarChar(50)
+  entityId     Int      @map("entity_id")
+  status       String   @default("completed") @db.VarChar(20)
+  completedAt  DateTime @default(now()) @map("completed_at") @db.Timestamptz
+
+  @@id([entityType, entityId])
+  @@map("seeding_checkpoints")
 }

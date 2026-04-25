@@ -1,6 +1,9 @@
 CREATE OR REPLACE FUNCTION update_leaderboards_on_match_insert()
 RETURNS TRIGGER AS $$
 BEGIN
+    IF NEW.home_team_score IS NULL OR NEW.away_team_score IS NULL THEN
+        RETURN NEW;
+    END IF;
     -- Update home team stats
     INSERT INTO leaderboards (pool_id, team_id, games_played, games_won, games_lost, games_forfeited, points_for, points_against, point_difference, points)
     VALUES (

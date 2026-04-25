@@ -1,8 +1,8 @@
 import random
 from datetime import timedelta
 
-from game_state_manager import GameStateManager
-from event_generator import EventGenerator
+from simulation.game_state_manager import GameStateManager
+from simulation.event_generator import EventGenerator
 
 
 class MatchSimulator:

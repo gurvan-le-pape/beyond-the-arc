@@ -79,15 +79,17 @@ export class MatchResponseDto {
     description: "Home team score",
     example: 85,
     type: Number,
+    nullable: true,
   })
-  homeTeamScore!: number;
+  homeTeamScore!: number | null;
 
   @ApiProperty({
     description: "Away team score",
     example: 72,
     type: Number,
+    nullable: true,
   })
-  awayTeamScore!: number;
+  awayTeamScore!: number | null;
 
   @ApiProperty({
     description: "Whether the match was forfeited",

@@ -24,8 +24,5 @@ services:
       - ../src/backend/db/migrations:/migrations
       - ../src/backend/db/sql/db_dump.sql:/app/db/sql/db_dump.sql:ro
 
-  python-script:
-    environment: {}
-
 volumes:
   postgres_data:
