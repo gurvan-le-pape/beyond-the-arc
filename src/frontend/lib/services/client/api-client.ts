@@ -13,7 +13,7 @@ import { parseApiError } from "@/shared/utils/parseApiError";
  * - Interceptors: Response unwrapping and error handling
  */
 const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000",
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api",
   timeout: 30000,
   headers: {
     "Content-Type": "application/json",
