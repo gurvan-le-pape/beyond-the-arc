@@ -1,6 +1,9 @@
 CREATE OR REPLACE FUNCTION update_leaderboards_on_match_delete()
 RETURNS TRIGGER AS $$
 BEGIN
+    IF OLD.home_team_score IS NULL OR OLD.away_team_score IS NULL THEN
+        RETURN OLD;
+    END IF;
     -- Revert match results for the home team
     UPDATE leaderboards
     SET
