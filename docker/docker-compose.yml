@@ -48,7 +48,7 @@ services:
     networks:
       - my_network
 
-  python-script:
+  scheduler:
     build:
       context: ../
       dockerfile: docker/python-script/Dockerfile
@@ -56,6 +56,7 @@ services:
       - DATABASE_URL=${DATABASE_URL}
     depends_on:
       - database
+    restart: unless-stopped
     networks:
       - my_network
 

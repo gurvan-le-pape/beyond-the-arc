@@ -84,3 +84,22 @@ sonar-logs:
 # Generate barrel files (index.ts) for frontend and backend
 barrels:
 	npm run barrels:watch
+
+# View scheduler logs
+logs-scheduler:
+	docker-compose -f $(DOCKER_COMPOSE) $(ENV_FILE) logs -f scheduler
+
+# Reset failed matches back to scheduled
+reset-failed-matches:
+	docker exec -it docker-database psql -U $(DATABASE_USER) -d $(DATABASE_NAME) \
+		-c "UPDATE matches SET status = 'scheduled' WHERE status = 'failed';"
+
+# Show seeding progress
+season-progress:
+	docker-compose -f $(DOCKER_COMPOSE) $(ENV_FILE) exec database psql -U $(DATABASE_USER) -d $(DATABASE_NAME) -c \
+		"SELECT entity_type, COUNT(*) as completed FROM seeding_checkpoints GROUP BY entity_type;"
+
+# Show match generation progress
+match-progress:
+	docker-compose -f $(DOCKER_COMPOSE) $(ENV_FILE) exec database psql -U $(DATABASE_USER) -d $(DATABASE_NAME) -c \
+		"SELECT status, COUNT(*) as count FROM matches GROUP BY status ORDER BY status;"

@@ -1,5 +1,5 @@
-# Use the official Python 3.9 image
-FROM python:3.9
+# Use the official Python 3.12 image
+FROM python:3.12
 
 # Create a non-root user and group
 RUN groupadd -r appuser && useradd -r -g appuser appuser
@@ -13,11 +13,8 @@ COPY ./src/backend/db/python /app/db/python
 # Install Python dependencies
 RUN pip install --no-cache-dir -r /app/db/python/requirements.txt
 
-# Make the run-scripts.sh script executable
-RUN chmod +x /app/db/python/run-scripts.sh
+# Set PYTHONPATH so all package imports resolve from the python root
+ENV PYTHONPATH=/app/db/python
 
-# Switch to non-root user
-# USER appuser
-
-# Command to run the script
-CMD ["sh", "/app/db/python/run-scripts.sh"]
+# Start the long-running scheduler (handles season setup + match generation)
+CMD ["python", "/app/db/python/run_scheduler.py"]
