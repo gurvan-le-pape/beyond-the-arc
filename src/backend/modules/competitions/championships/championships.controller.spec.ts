@@ -73,6 +73,9 @@ describe("ChampionshipsController", () => {
         seasonYear: "2024-2025",
         level: CompetitionLevel.REGIONAL,
         division: 1,
+        leagueId: 1,
+        committeeId: null,
+        organizationName: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
       };
 
       mockChampionshipsService.findChampionshipById.mockResolvedValue(
@@ -109,6 +112,9 @@ describe("ChampionshipsController", () => {
         seasonYear: "2024-2025",
         level: "regional",
         division: 1,
+        leagueId: 1,
+        committeeId: null,
+        organizationName: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
       };
 
       mockChampionshipsService.findChampionshipById.mockResolvedValue(
@@ -136,6 +142,9 @@ describe("ChampionshipsController", () => {
             seasonYear: "2024-2025",
             level: CompetitionLevel.REGIONAL,
             division: 1,
+            leagueId: 1,
+            committeeId: null,
+            organizationName: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
           },
           {
             id: 2,
@@ -145,6 +154,9 @@ describe("ChampionshipsController", () => {
             seasonYear: "2024-2025",
             level: CompetitionLevel.REGIONAL,
             division: 2,
+            leagueId: 1,
+            committeeId: null,
+            organizationName: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
           },
         ];
 
@@ -200,6 +212,9 @@ describe("ChampionshipsController", () => {
             seasonYear: "2024-2025",
             level: CompetitionLevel.DEPARTMENTAL,
             division: 1,
+            leagueId: null,
+            committeeId: 5,
+            organizationName: "COMITE D''ILLE-ET-VILAINE DE BASKET-BALL",
           },
         ];
 
