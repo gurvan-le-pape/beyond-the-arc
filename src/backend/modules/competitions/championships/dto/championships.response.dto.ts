@@ -54,4 +54,28 @@ export class ChampionshipResponseDto {
     type: Number,
   })
   division!: number;
+
+  @ApiProperty({
+    description: "Regional league ID",
+    example: 1,
+    type: Number,
+    nullable: true,
+  })
+  leagueId!: number | null;
+
+  @ApiProperty({
+    description: "Departmental committee ID",
+    example: 3,
+    type: Number,
+    nullable: true,
+  })
+  committeeId!: number | null;
+
+  @ApiProperty({
+    description: "Name of the parent organization (league or committee)",
+    example: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
+    type: String,
+    nullable: true,
+  })
+  organizationName!: string | null;
 }

@@ -18,6 +18,10 @@ const CHAMPIONSHIP_SELECT = {
   seasonYear: true,
   level: true,
   division: true,
+  leagueId: true,
+  committeeId: true,
+  league: { select: { name: true } },
+  committee: { select: { name: true } },
 } as const;
 
 /**
@@ -195,6 +199,9 @@ export class ChampionshipsService {
       seasonYear: entity.seasonYear,
       level: entity.level,
       division: entity.division,
+      leagueId: entity.leagueId ?? null,
+      committeeId: entity.committeeId ?? null,
+      organizationName: entity.league?.name ?? entity.committee?.name ?? null,
     } satisfies ChampionshipResponseDto; // TypeScript validates this matches
   }
 }
