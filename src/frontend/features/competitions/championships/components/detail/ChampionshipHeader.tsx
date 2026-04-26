@@ -20,20 +20,16 @@ export function ChampionshipHeader({
 }: ChampionshipHeaderProps) {
   return (
     <Card variant="highlighted" padding="lg">
-      <div className="space-y-4">
-        {/* Championship Name */}
-        <Text variant="h1" className="text-lg md:text-xl">
-          {championshipName}
-        </Text>
-
+      <div className="space-y-3">
         {/* Region/Department */}
-        <div className="border-b-2 border-primary-500 dark:border-primary-400 pb-3 flex justify-between items-center flex-wrap gap-4">
-          <Text
-            variant="h2"
-            className="text-primary-600 dark:text-primary-400 text-base"
-          >
-            {regionName || ""}
+        <Text variant="overline">{regionName || ""}</Text>
+
+        <div className="flex justify-between items-start flex-wrap gap-4">
+          {/* Championship Name */}
+          <Text variant="h1" className="text-xl md:text-2xl">
+            {championshipName}
           </Text>
+          {/* Switch gender button */}
           {gender !== undefined && (
             <SwitchGenderButton gender={gender} onClick={onSwitchGender} />
           )}
