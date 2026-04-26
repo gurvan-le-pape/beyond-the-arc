@@ -113,8 +113,8 @@ describe("ChampionshipsService", () => {
 
   describe("findChampionshipById", () => {
     it("should return championship when found", async () => {
-      // Arrange
-      const mockChampionship = {
+      // Arrange — Prisma relation shape (input to mapToDto)
+      const mockPrismaChampionship = {
         id: 1,
         name: "Championship Régional U18",
         category: "U18",
@@ -122,17 +122,33 @@ describe("ChampionshipsService", () => {
         seasonYear: "2024-2025",
         level: CompetitionLevel.REGIONAL,
         division: 1,
+        leagueId: 1,
+        committeeId: null,
+        league: { name: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL" },
+        committee: null,
       };
 
       mockPrismaService.championships.findUnique.mockResolvedValue(
-        mockChampionship,
+        mockPrismaChampionship,
       );
 
       // Act
       const result = await service.findChampionshipById(1);
 
-      // Assert
-      expect(result).toEqual(mockChampionship);
+      // Assert — DTO shape (output of mapToDto)
+      expect(result).toEqual({
+        id: 1,
+        name: "Championship Régional U18",
+        category: "U18",
+        gender: "male",
+        seasonYear: "2024-2025",
+        level: CompetitionLevel.REGIONAL,
+        division: 1,
+        leagueId: 1,
+        committeeId: null,
+        organizationName: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
+      });
+
       expect(mockPrismaService.championships.findUnique).toHaveBeenCalledWith({
         where: { id: 1 },
         select: {
@@ -143,6 +159,10 @@ describe("ChampionshipsService", () => {
           seasonYear: true,
           level: true,
           division: true,
+          leagueId: true,
+          committeeId: true,
+          league: { select: { name: true } },
+          committee: { select: { name: true } },
         },
       });
     });
@@ -165,7 +185,7 @@ describe("ChampionshipsService", () => {
   describe("findChampionshipsByLevel", () => {
     describe("Regional level", () => {
       it("should return regional championships for given league", async () => {
-        // Arrange
+        // Arrange — Prisma relation shape (input to mapToDto)
         const mockChampionships = [
           {
             id: 1,
@@ -175,6 +195,10 @@ describe("ChampionshipsService", () => {
             seasonYear: "2024-2025",
             level: CompetitionLevel.REGIONAL,
             division: 1,
+            leagueId: 1,
+            committeeId: null,
+            league: { name: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL" },
+            committee: null,
           },
           {
             id: 2,
@@ -184,6 +208,10 @@ describe("ChampionshipsService", () => {
             seasonYear: "2024-2025",
             level: CompetitionLevel.REGIONAL,
             division: 2,
+            leagueId: 1,
+            committeeId: null,
+            league: { name: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL" },
+            committee: null,
           },
         ];
 
@@ -214,6 +242,10 @@ describe("ChampionshipsService", () => {
             seasonYear: true,
             level: true,
             division: true,
+            leagueId: true,
+            committeeId: true,
+            league: { select: { name: true } },
+            committee: { select: { name: true } },
           },
           orderBy: [{ division: "asc" }, { category: "asc" }],
         });
@@ -236,7 +268,7 @@ describe("ChampionshipsService", () => {
 
     describe("Departmental level", () => {
       it("should return departmental championships for given committee", async () => {
-        // Arrange
+        // Arrange — Prisma relation shape (input to mapToDto)
         const mockChampionships = [
           {
             id: 1,
@@ -246,6 +278,10 @@ describe("ChampionshipsService", () => {
             seasonYear: "2024-2025",
             level: CompetitionLevel.DEPARTMENTAL,
             division: 1,
+            leagueId: null,
+            committeeId: 5,
+            league: null,
+            committee: { name: "COMITE D''ILLE-ET-VILAINE DE BASKET-BALL" },
           },
         ];
 
@@ -276,6 +312,10 @@ describe("ChampionshipsService", () => {
             seasonYear: true,
             level: true,
             division: true,
+            leagueId: true,
+            committeeId: true,
+            league: { select: { name: true } },
+            committee: { select: { name: true } },
           },
           orderBy: [{ division: "asc" }, { category: "asc" }],
         });
@@ -310,6 +350,10 @@ describe("ChampionshipsService", () => {
             seasonYear: "2024-2025",
             level: CompetitionLevel.REGIONAL,
             division: 1,
+            leagueId: 1,
+            committeeId: null,
+            league: { name: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL" },
+            committee: null,
           },
         ]);
 
@@ -338,6 +382,10 @@ describe("ChampionshipsService", () => {
             seasonYear: "2024-2025",
             level: CompetitionLevel.DEPARTMENTAL,
             division: 1,
+            leagueId: null,
+            committeeId: 5,
+            league: null,
+            committee: { name: "COMITE D''ILLE-ET-VILAINE DE BASKET-BALL" },
           },
         ]);
 
