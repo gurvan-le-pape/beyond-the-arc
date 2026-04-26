@@ -11,6 +11,7 @@ import { ErrorMessage } from "@/shared/components/feedback";
 import { Breadcrumb } from "@/shared/components/navigation";
 import { Card } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
+import { CompetitionLevel } from "@/shared/constants";
 import { groupBy } from "@/shared/utils";
 
 import {
@@ -53,9 +54,14 @@ export function ChampionshipDetailPage() {
 
   const buildRoute = (id: number) => `/championships/${id}`;
 
+  const organizationId =
+    championship?.level === CompetitionLevel.DEPARTMENTAL
+      ? championship?.committeeId
+      : championship?.leagueId;
+
   const { availableCategories, currentCategory, navigateToCategory } =
     useCategoryNavigation(
-      championshipId,
+      organizationId ?? 0,
       championshipId,
       championship?.level!,
       gender,
@@ -64,7 +70,7 @@ export function ChampionshipDetailPage() {
 
   const { availableDivisions, currentDivision, navigateToDivision } =
     useDivisionNavigation(
-      championshipId,
+      organizationId ?? 0,
       championship?.level!,
       category,
       gender,
@@ -73,7 +79,7 @@ export function ChampionshipDetailPage() {
     );
 
   const { switchGender } = useGenderNavigation(
-    championshipId,
+    organizationId ?? 0,
     championship?.level!,
     gender,
     buildRoute,
@@ -147,7 +153,7 @@ export function ChampionshipDetailPage() {
         <Breadcrumb items={breadcrumbItems} />
 
         <ChampionshipHeader
-          regionName={championship.name}
+          regionName={championship.organizationName ?? undefined}
           championshipName={championship.name}
           gender={gender}
           onSwitchGender={switchGender}

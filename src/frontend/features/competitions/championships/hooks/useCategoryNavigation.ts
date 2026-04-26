@@ -8,6 +8,7 @@ import type { Category, CompetitionLevel, Gender } from "@/shared/constants";
 
 import { useChampionships } from "../api";
 import type { Championship } from "../types";
+import { sortCategories } from "../utils";
 
 export function useCategoryNavigation(
   id: number,
@@ -50,9 +51,7 @@ export function useCategoryNavigation(
         initialCategory = champ.category;
     });
 
-    const sortedCategories = categories
-      .slice()
-      .sort((a, b) => a.localeCompare(b));
+    const sortedCategories = sortCategories(categories.slice());
 
     return {
       categoryMap: map,
