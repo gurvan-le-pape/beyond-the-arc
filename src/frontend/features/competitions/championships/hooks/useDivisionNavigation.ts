@@ -42,7 +42,9 @@ export function useDivisionNavigation(
 
     const filteredChampionships = championships.filter(
       (champ: Championship) =>
-        champ.category === category && champ.gender === gender,
+        champ.category === category &&
+        champ.gender === gender &&
+        champ.level === level,
     );
 
     // Create a map of division to championshipId
