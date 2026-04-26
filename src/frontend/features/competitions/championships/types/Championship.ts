@@ -9,4 +9,7 @@ export interface Championship {
   seasonYear: string;
   level: CompetitionLevel;
   division: number;
+  leagueId: number | null;
+  committeeId: number | null;
+  organizationName: string | null;
 }
