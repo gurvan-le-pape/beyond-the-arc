@@ -159,6 +159,7 @@
   "docs": {
     "title": "Documentation",
     "intro": "Comprehensive documentation covering setup, architecture, API reference, and contribution guidelines.",
+    "reset": "Reset",
     "quickLinks": {
       "github": "GitHub Repository",
       "viewSource": "View source code",

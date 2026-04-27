@@ -159,6 +159,7 @@
   "docs": {
     "title": "Documentation",
     "intro": "Documentation complète couvrant l'installation, l'architecture, la référence API et les directives de contribution.",
+    "reset": "Réinitialiser",
     "quickLinks": {
       "github": "Dépôt GitHub",
       "viewSource": "Voir le code source",
