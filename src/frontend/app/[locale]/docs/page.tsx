@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import React, { useState } from "react";
+import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
 
 import { PageHero, PageLayout } from "@/shared/components/layout";
 import { Text } from "@/shared/components/typography";
@@ -178,11 +179,48 @@ export default function DocsPage() {
                             </div>
                           </div>
                           <div className="bg-surface-subtle dark:bg-surface-subtle-dark rounded-button overflow-hidden">
-                            <img
-                              src="/docs/data-model.svg"
-                              alt={t("docs.database.diagramAlt")}
-                              className="w-full h-auto"
-                            />
+                            <TransformWrapper
+                              initialScale={0.5}
+                              minScale={0.2}
+                              maxScale={3}
+                            >
+                              {({ zoomIn, zoomOut, resetTransform }) => (
+                                <>
+                                  <div className="flex gap-2 mb-2">
+                                    <button
+                                      onClick={() => zoomIn()}
+                                      className="px-3 py-1 bg-primary-600 text-white rounded-button text-sm"
+                                    >
+                                      +
+                                    </button>
+                                    <button
+                                      onClick={() => zoomOut()}
+                                      className="px-3 py-1 bg-primary-600 text-white rounded-button text-sm"
+                                    >
+                                      -
+                                    </button>
+                                    <button
+                                      onClick={() => resetTransform()}
+                                      className="px-3 py-1 bg-primary-600 text-white rounded-button text-sm"
+                                    >
+                                      {t("docs.reset")}
+                                    </button>
+                                  </div>
+                                  <TransformComponent
+                                    wrapperStyle={{
+                                      width: "100%",
+                                      height: "500px",
+                                      overflow: "hidden",
+                                    }}
+                                  >
+                                    <img
+                                      src="/docs/data-model.svg"
+                                      alt={t("docs.database.diagramAlt")}
+                                    />
+                                  </TransformComponent>
+                                </>
+                              )}
+                            </TransformWrapper>
                           </div>
                         </div>
 
