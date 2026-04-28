@@ -104,5 +104,5 @@
   "location": "top",
   "structure": "flat",
   "barrelName": "index.ts",
-  "exclude": [".*\\.spec\\.ts$", ".*\\.test\\.ts$", "server-api-client\\.ts$"]
+  "exclude": [".*\\.spec\\.ts$", ".*\\.test\\.ts$"]
 }
