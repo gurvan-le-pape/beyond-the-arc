@@ -174,7 +174,7 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
   const cascadeSteps: CascadeStep[] = [
     {
       id: "division-filter",
-      label: tMatches("division"),
+      label: tCommon("filters.divisions"),
       value: division ?? "",
       onChange: (val) => {
         setDivision(Number(val) || undefined);
@@ -191,7 +191,7 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
     },
     {
       id: "pool-filter",
-      label: tMatches("pool"),
+      label: tCommon("filters.pools"),
       value: poolId ?? "",
       onChange: (val) => {
         setPoolId(Number(val) || undefined);
@@ -199,7 +199,7 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
       },
       enabled: !!division,
       options: pools.map((p) => ({ value: p.id, label: p.name })),
-      allLabel: tMatches("allPools"),
+      allLabel: tCommon("filters.allPools"),
       waitLabel: tFilters("filters.selectDivisionFirst"),
     },
     {
@@ -250,13 +250,13 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Select
           id="category-filter"
-          label={tMatches("category")}
+          label={tCommon("filters.categories")}
           value={category ?? ""}
           onChange={(e) =>
             setCategory((e.target.value as Category) || undefined)
           }
         >
-          <option value="">{tMatches("allCategories")}</option>
+          <option value="">{tCommon("filters.allCategories")}</option>
           {CATEGORY_LIST.map((cat) => (
             <option key={cat} value={cat}>
               {tCommon(`category.${cat}`)}
@@ -266,11 +266,11 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
 
         <Select
           id="gender-filter"
-          label={tMatches("gender")}
+          label={tCommon("filters.genders")}
           value={gender ?? ""}
           onChange={(e) => setGender((e.target.value as Gender) || undefined)}
         >
-          <option value="">{tMatches("allGenders")}</option>
+          <option value="">{tCommon("filters.allGenders")}</option>
           {GENDER_LIST.map((g) => (
             <option key={g} value={g}>
               {tCommon(`gender.${g}`)}

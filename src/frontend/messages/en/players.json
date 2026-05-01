@@ -15,27 +15,8 @@
     "compareSearch": "Search for a player to compare...",
     "compareNoResults": "No players found for your search."
   },
-  "playersTable": {
-    "allTeams": "All",
-    "allCategories": "All",
-    "allGenders": "All",
-    "allNumbers": "All",
-    "number": "Number",
-    "name": "Name",
-    "team": "Team",
-    "club": "Club",
-    "category": "Category",
-    "gender": "Gender",
-    "playersList": "Players list"
-  },
   "filters": {
     "searchName": "Search player",
-    "searchNamePlaceholder": "Player name...",
-    "club": "Club",
-    "allClubs": "All clubs",
-    "playerNumber": "Player number",
-    "allNumbers": "All numbers",
-    "teamNumber": "Team number",
-    "allTeams": "All teams"
+    "searchNamePlaceholder": "Player name..."
   }
 }

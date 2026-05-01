@@ -77,7 +77,6 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
 }) => {
   const tPlayers = useTranslations("players");
   const tCommon = useTranslations("common");
-  const tMatches = useTranslations("matches");
 
   const locationLabel =
     level === CompetitionLevel.DEPARTMENTAL
@@ -115,7 +114,7 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
     },
     teamNumber && {
       key: "teamNumber",
-      label: `${tPlayers("filters.teamNumber")} ${teamNumber}`,
+      label: `${tCommon("filters.teamNumbers")} ${teamNumber}`,
       onRemove: () => setTeamNumber(""),
     },
     level && {
@@ -162,8 +161,8 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
           clubId={clubId}
           setClubId={setClubId}
           setSelectedClubName={setSelectedClubName}
-          label={tPlayers("filters.club")}
-          placeholder={tPlayers("filters.allClubs")}
+          label={tCommon("filters.clubs")}
+          placeholder={tCommon("filters.allClubs")}
         />
       </div>
 
@@ -171,13 +170,13 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Select
           id="category-filter"
-          label={tMatches("category")}
+          label={tCommon("filters.categories")}
           value={category ?? ""}
           onChange={(e) =>
             setCategory((e.target.value as Category) || undefined)
           }
         >
-          <option value="">{tMatches("allCategories")}</option>
+          <option value="">{tCommon("filters.allCategories")}</option>
           {CATEGORY_LIST.map((cat) => (
             <option key={cat} value={cat}>
               {tCommon(`category.${cat}`)}
@@ -187,11 +186,11 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
 
         <Select
           id="gender-filter"
-          label={tMatches("gender")}
+          label={tCommon("filters.genders")}
           value={gender ?? ""}
           onChange={(e) => setGender((e.target.value as Gender) || undefined)}
         >
-          <option value="">{tMatches("allGenders")}</option>
+          <option value="">{tCommon("filters.allGenders")}</option>
           {GENDER_LIST.map((g) => (
             <option key={g} value={g}>
               {tCommon(`gender.${g}`)}
@@ -204,11 +203,11 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Select
           id="number-filter"
-          label={tPlayers("filters.playerNumber")}
+          label={tCommon("filters.playerNumbers")}
           value={number}
           onChange={(e) => setNumber(e.target.value)}
         >
-          <option value="">{tPlayers("filters.allNumbers")}</option>
+          <option value="">{tCommon("filters.allPlayerNumbers")}</option>
           {playerNumbers.map((n) => (
             <option key={n} value={n}>
               {n}
@@ -218,11 +217,11 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
 
         <Select
           id="team-filter"
-          label={tPlayers("filters.teamNumber")}
+          label={tCommon("filters.teamNumbers")}
           value={teamNumber}
           onChange={(e) => setTeamNumber(e.target.value)}
         >
-          <option value="">{tPlayers("filters.allTeams")}</option>
+          <option value="">{tCommon("filters.allTeamNumbers")}</option>
           {teamNumbers.map((n) => (
             <option key={n} value={n}>
               {n}

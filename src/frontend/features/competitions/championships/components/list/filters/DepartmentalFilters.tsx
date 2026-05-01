@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/components/DepartmentalFilters.tsx
+// src/frontend/features/competitions/championships/components/list/filters/DepartmentalFilters.tsx
 import { useTranslations } from "next-intl";
 import React from "react";
 
@@ -40,8 +40,6 @@ export const DepartmentalFilters: React.FC<DepartmentalFiltersProps> = ({
   onReset,
 }) => {
   const tCommon = useTranslations("common");
-  const tMatches = useTranslations("matches");
-  const tCompetitions = useTranslations("competitions");
 
   const committeeName = committees.find(
     (c) => String(c.id) === committeeId,
@@ -78,19 +76,19 @@ export const DepartmentalFilters: React.FC<DepartmentalFiltersProps> = ({
       activeFilterCount={chips.length}
       chips={chips}
       onReset={onReset}
-      title={tCompetitions("departmental.label")}
+      title={tCommon("competition.levels.departmental")}
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Select
           id="committee-filter"
-          label={tCompetitions("carousel.titles.departmentalCommittees")}
+          label={tCommon("filters.committees")}
           value={committeeId}
           onChange={(e) => {
             setCommitteeId(e.target.value);
             setSeasonYear("");
           }}
         >
-          <option value="">{tCompetitions("allCommittees")}</option>
+          <option value="">{tCommon("filters.allCommittees")}</option>
           {committees.map((c) => (
             <option key={c.id} value={String(c.id)}>
               {c.name}
@@ -100,11 +98,11 @@ export const DepartmentalFilters: React.FC<DepartmentalFiltersProps> = ({
 
         <Select
           id="season-year-filter"
-          label={tCommon("filters.seasonYear")}
+          label={tCommon("filters.seasons")}
           value={seasonYear}
           onChange={(e) => setSeasonYear(e.target.value)}
         >
-          <option value="">{tCompetitions("allSeasons")}</option>
+          <option value="">{tCommon("filters.allSeasons")}</option>
           {seasonYears.map((y) => (
             <option key={y.value} value={y.value}>
               {y.label}
@@ -116,13 +114,13 @@ export const DepartmentalFilters: React.FC<DepartmentalFiltersProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Select
           id="category-filter"
-          label={tMatches("category")}
+          label={tCommon("filters.categories")}
           value={category ?? ""}
           onChange={(e) =>
             setCategory((e.target.value as Category) || undefined)
           }
         >
-          <option value="">{tMatches("allCategories")}</option>
+          <option value="">{tCommon("filters.allCategories")}</option>
           {CATEGORY_LIST.map((cat) => (
             <option key={cat} value={cat}>
               {tCommon(`category.${cat}`)}
@@ -132,11 +130,11 @@ export const DepartmentalFilters: React.FC<DepartmentalFiltersProps> = ({
 
         <Select
           id="gender-filter"
-          label={tMatches("gender")}
+          label={tCommon("filters.genders")}
           value={gender ?? ""}
           onChange={(e) => setGender((e.target.value as Gender) || undefined)}
         >
-          <option value="">{tMatches("allGenders")}</option>
+          <option value="">{tCommon("filters.allGenders")}</option>
           {GENDER_LIST.map((g) => (
             <option key={g} value={g}>
               {tCommon(`gender.${g}`)}

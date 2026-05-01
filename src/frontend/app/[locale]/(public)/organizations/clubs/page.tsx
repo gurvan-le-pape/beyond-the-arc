@@ -44,7 +44,7 @@ function ClubCard({ club }: { readonly club: ClubBasic }) {
 // ---------------------------------------------------------------------------
 export default function OrganizationsClubsPage() {
   const tCommon = useTranslations("common");
-  const t = useTranslations("organizations");
+  const tOrganizations = useTranslations("organizations");
 
   const [search, setSearch] = useState("");
   const [leagueId, setLeagueId] = useState<string>("");
@@ -97,8 +97,8 @@ export default function OrganizationsClubsPage() {
   };
 
   const breadcrumbItems = [
-    { label: t("breadcrumb"), href: "/organizations" },
-    { label: t("clubs.label"), current: true },
+    { label: tOrganizations("breadcrumb"), href: "/organizations" },
+    { label: tOrganizations("clubs.label"), current: true },
   ];
 
   let gridContent: React.ReactNode;
@@ -116,7 +116,7 @@ export default function OrganizationsClubsPage() {
   } else if (clubs.length === 0) {
     gridContent = (
       <div className="text-center py-16 text-text-secondary dark:text-text-secondary-dark">
-        {t("clubs.noResults", { search })}
+        {tOrganizations("clubs.noResults", { search })}
       </div>
     );
   } else {
@@ -134,7 +134,7 @@ export default function OrganizationsClubsPage() {
       <Breadcrumb items={breadcrumbItems} />
 
       <Text variant="h1" className="mb-6">
-        {t("clubs.label")}
+        {tOrganizations("clubs.label")}
       </Text>
 
       {/* Filters */}
@@ -146,7 +146,7 @@ export default function OrganizationsClubsPage() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder={t("clubs.searchPlaceholder")}
+            placeholder={tOrganizations("clubs.searchPlaceholder")}
             className="pl-9 pr-4 py-2 text-sm rounded-input border border-divide-light dark:border-divide-dark bg-surface-base dark:bg-surface-subtle-dark text-text-body dark:text-text-body-dark placeholder:text-text-muted dark:placeholder:text-text-muted-dark focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 w-64"
           />
         </div>
@@ -157,7 +157,7 @@ export default function OrganizationsClubsPage() {
           onChange={(e) => setLeagueId(e.target.value)}
           className="text-sm rounded-input border border-divide-light dark:border-divide-dark bg-surface-base dark:bg-surface-subtle-dark text-text-body dark:text-text-body-dark px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
         >
-          <option value="">{t("info.league")}</option>
+          <option value="">{tCommon("filters.allLeagues")}</option>
           {leagues.map((l) => (
             <option key={l.id} value={l.id}>
               {l.name}
@@ -172,7 +172,7 @@ export default function OrganizationsClubsPage() {
             onChange={(e) => setCommitteeId(e.target.value)}
             className="text-sm rounded-input border border-divide-light dark:border-divide-dark bg-surface-base dark:bg-surface-subtle-dark text-text-body dark:text-text-body-dark px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
           >
-            <option value="">{t("info.committee")}</option>
+            <option value="">{tCommon("filters.allCommittees")}</option>
             {committees.map((c) => (
               <option key={c.id} value={c.id}>
                 {c.name}
@@ -195,7 +195,7 @@ export default function OrganizationsClubsPage() {
       {/* Results count */}
       {!isLoading && pagination && (
         <div className="text-sm text-text-secondary dark:text-text-secondary-dark mb-4">
-          {pagination.total} {t("clubs.label").toLowerCase()}
+          {pagination.total} {tOrganizations("clubs.label").toLowerCase()}
         </div>
       )}
 
@@ -210,7 +210,7 @@ export default function OrganizationsClubsPage() {
             pageSize={limit}
             setPageSize={() => {}}
             setPageIndex={(index) => setPage(index + 1)}
-            label={t("clubs.label").toLowerCase()}
+            label={tOrganizations("clubs.label").toLowerCase()}
           />
         </div>
       )}

@@ -11,6 +11,7 @@
   "edit": "Edit",
   "all": "All",
   "clear": "Clear",
+  "searchPlaceholder": "Search...",
   "breadcrumbAriaLabel": "Breadcrumb",
   "noData": "No data available",
   "clearSearch": "Clear search",
@@ -48,20 +49,15 @@
     "pointsInPaint": "Points in Paint"
   },
   "table": {
-    "sortAsc": "▲",
-    "sortDesc": "▼",
-    "sortBy": "Sort by {{colId}}",
     "filter": "Filter...",
-    "filterClub": "Filter club...",
     "filterName": "Filter name...",
     "rank": "#",
     "team": "Team",
     "gamesWon": "Games won",
     "gamesLost": "Games lost",
-    "pointDifference": "Goal difference"
+    "pointDifference": "Point difference"
   },
   "matchHistory": {
-    "title": "Match History",
     "date": "Date",
     "match": "Match",
     "score": "Score",
@@ -76,10 +72,7 @@
     "blk": "BLK",
     "to": "TO",
     "fl": "FL",
-    "ft": "FT",
-    "ptsPerGame": "PTS/G",
-    "rebPerGame": "REB/G",
-    "astPerGame": "AST/G"
+    "ft": "FT"
   },
   "sectionTitles": {
     "regionalLeagues": "Regional Leagues",
@@ -88,11 +81,13 @@
   },
   "competition": {
     "seeCompetition": "See competition {name}",
-    "seeCompetitionDefault": "See competition",
     "levels": {
       "national": "National",
+      "nationalShort": "Nat.",
       "regional": "Regional",
-      "departmental": "Departmental"
+      "regionalShort": "Reg.",
+      "departmental": "Departmental",
+      "departmentalShort": "Dep."
     }
   },
   "gender": {
@@ -108,16 +103,13 @@
     "Senior": "Senior"
   },
   "club": {
-    "seeClub": "See club {name}",
-    "seeClubDefault": "See club"
+    "seeClub": "See club {name}"
   },
   "player": {
-    "seePlayer": "See player {name}",
-    "seePlayerDefault": "See player"
+    "seePlayer": "See player {name}"
   },
   "team": {
-    "seeTeam": "See team {number}",
-    "seeTeamDefault": "See team"
+    "seeTeam": "See team {number}"
   },
   "shotChart": {
     "shots": "Shots",
@@ -158,9 +150,28 @@
     "championships": "No championships found"
   },
   "filters": {
-    "category": "All categories",
-    "gender": "All genders",
-    "seasonYear": "All seasons",
+    "categories": "Categories",
+    "allCategories": "All categories",
+    "levels": "Levels",
+    "allLevels": "All levels",
+    "genders": "Genders",
+    "allGenders": "All genders",
+    "committees": "Committees",
+    "allCommittees": "All committees",
+    "leagues": "Leagues",
+    "allLeagues": "All leagues",
+    "seasons": "Seasons",
+    "allSeasons": "All seasons",
+    "divisions": "Divisions",
+    "allDivisions": "All divisions",
+    "pools": "Pools",
+    "allPools": "All pools",
+    "clubs": "Clubs",
+    "allClubs": "All clubs",
+    "playerNumbers": "Player numbers",
+    "allPlayerNumbers": "All player numbers",
+    "teamNumbers": "Team numbers",
+    "allTeamNumbers": "All team numbers",
     "reset": "Reset filters"
   }
 }

@@ -37,7 +37,7 @@ export function LevelLocationFilters({
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <Select
         id="level-filter"
-        label={tFilters("filters.level")}
+        label={tCommon("filters.levels")}
         value={level ?? ""}
         onChange={(e) => {
           setLevel((e.target.value as CompetitionLevel) || undefined);
@@ -45,7 +45,7 @@ export function LevelLocationFilters({
           setLeagueId(undefined);
         }}
       >
-        <option value="">{tFilters("filters.allLevels")}</option>
+        <option value="">{tCommon("filters.allLevels")}</option>
         <option value={CompetitionLevel.DEPARTMENTAL}>
           {tCommon("competition.levels.departmental")}
         </option>
@@ -60,11 +60,11 @@ export function LevelLocationFilters({
       {showCommittee && (
         <Select
           id="committee-filter"
-          label={tFilters("filters.committee")}
+          label={tCommon("filters.committees")}
           value={committeeId ?? ""}
           onChange={(e) => setCommitteeId(Number(e.target.value) || undefined)}
         >
-          <option value="">{tFilters("filters.allCommittees")}</option>
+          <option value="">{tCommon("filters.allCommittees")}</option>
           {committees.map((c) => (
             <option key={c.id} value={c.id}>
               {c.name}
@@ -76,11 +76,11 @@ export function LevelLocationFilters({
       {showLeague && (
         <Select
           id="league-filter"
-          label={tFilters("filters.league")}
+          label={tCommon("filters.leagues")}
           value={leagueId ?? ""}
           onChange={(e) => setLeagueId(Number(e.target.value) || undefined)}
         >
-          <option value="">{tFilters("filters.allLeagues")}</option>
+          <option value="">{tCommon("filters.allLeagues")}</option>
           {leagues.map((l) => (
             <option key={l.id} value={l.id}>
               {l.name}

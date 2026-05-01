@@ -3,33 +3,26 @@
   "selectType": "Select a type",
   "leagues": {
     "label": "Leagues",
-    "description": "Regional leagues overseeing departmental committees.",
-    "searchPlaceholder": "Search for a league…",
-    "noResults": "No results for « {search} »",
-    "clearSearch": "Clear search"
+    "description": "Regional leagues overseeing departmental committees."
   },
   "committees": {
     "label": "Committees",
-    "description": "Departmental committees managing local clubs.",
-    "searchPlaceholder": "Search for a committee…",
-    "filterByLeague": "Filter by league",
-    "allLeagues": "All leagues",
-    "noResults": "No results for « {search} »",
-    "clearSearch": "Clear search"
+    "description": "Departmental committees managing local clubs."
   },
   "clubs": {
     "label": "Clubs",
     "description": "All clubs registered across France.",
-    "searchPlaceholder": "Search for a club…",
-    "noResults": "No results for « {search} »",
-    "clearSearch": "Clear search"
+    "searchPlaceholder": "Search for a club ...",
+    "noResults": "No results for « {search} »"
   },
   "info": {
     "title": "Information",
-    "president": "President",
-    "presidentName": "Name",
-    "presidentEmail": "Email",
-    "presidentPhone": "Phone",
+    "president": {
+      "label": "President",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone"
+    },
     "address": "Address",
     "email": "Email",
     "phone": "Phone",

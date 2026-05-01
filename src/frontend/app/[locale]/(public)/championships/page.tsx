@@ -23,7 +23,7 @@ type Tab = (typeof TABS)[keyof typeof TABS];
 const VALID_TABS = new Set<string>(Object.values(TABS));
 
 export default function ChampionshipsPage() {
-  const tCompetitions = useTranslations("competitions");
+  const tCommon = useTranslations("common");
   const searchParams = useSearchParams();
 
   const tabParam = searchParams.get("tab") ?? "";
@@ -32,9 +32,12 @@ export default function ChampionshipsPage() {
     : TABS.NATIONAL;
 
   const tabs = [
-    { value: TABS.NATIONAL, label: tCompetitions("national.label") },
-    { value: TABS.REGIONAL, label: tCompetitions("regional.label") },
-    { value: TABS.DEPARTMENTAL, label: tCompetitions("departmental.label") },
+    { value: TABS.NATIONAL, label: tCommon("competition.levels.national") },
+    { value: TABS.REGIONAL, label: tCommon("competition.levels.regional") },
+    {
+      value: TABS.DEPARTMENTAL,
+      label: tCommon("competition.levels.departmental"),
+    },
   ];
 
   return (
