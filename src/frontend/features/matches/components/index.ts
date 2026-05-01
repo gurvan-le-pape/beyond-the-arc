@@ -4,7 +4,6 @@
  */
 
 export * from "./detail/events/filters/EventCategorySelect";
-export * from "./detail/events/filters/FilterablePlayerList";
 export * from "./detail/events/filters/MatchEventsFilters";
 export * from "./detail/events/filters/PlayerDropdownFilter";
 export * from "./detail/events/filters/QuarterSelector";
