@@ -81,16 +81,14 @@ export const RoundSelector: React.FC<RoundSelectorProps> = ({
       {/* Mobile: Dropdown */}
       <div className="block md:hidden w-full">
         <Select
-          value={selectedRound?.toString() ?? ""}
-          onChange={(e) => onSelect(Number(e.target.value))}
+          value={selectedRound ?? ""}
+          onChange={(val) => onSelect(Number(val))}
           className="w-full"
-        >
-          {rounds.map((round) => (
-            <option key={round} value={round}>
-              {t("roundSelector.dropdownLabel", { round })}
-            </option>
-          ))}
-        </Select>
+          options={rounds.map((round) => ({
+            value: round,
+            label: t("roundSelector.dropdownLabel", { round }),
+          }))}
+        />
       </div>
 
       {/* Desktop: Carousel */}

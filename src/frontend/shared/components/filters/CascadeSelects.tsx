@@ -44,19 +44,15 @@ export const CascadeSelects: React.FC<CascadeSelectsProps> = ({
           className={enabled ? undefined : "opacity-40 pointer-events-none"}
         >
           <Select
-            id={id}
             label={label}
             value={value}
-            onChange={(e) => onChange(e.target.value)}
+            onChange={(val) => onChange(String(val ?? ""))}
             disabled={!enabled}
-          >
-            <option value="">{enabled ? allLabel : waitLabel}</option>
-            {options.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </Select>
+            options={[
+              { value: "", label: enabled ? allLabel : waitLabel },
+              ...options,
+            ]}
+          />
         </div>
       ),
     )}
