@@ -33,6 +33,7 @@ export const EventCategorySelect: React.FC<EventCategorySelectProps> = ({
       value={value}
       onChange={(val) => onChange(val as EventCategory)}
       options={options}
+      className="w-fit"
     />
   );
 };
