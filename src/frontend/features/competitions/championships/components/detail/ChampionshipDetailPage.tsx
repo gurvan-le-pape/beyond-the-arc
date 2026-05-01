@@ -8,6 +8,7 @@ import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter } from "@/navigation";
 import { LeaderboardTable } from "@/shared/components/domain";
 import { ErrorMessage } from "@/shared/components/feedback";
+import { Select } from "@/shared/components/forms";
 import { Breadcrumb } from "@/shared/components/navigation";
 import { Card } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
@@ -24,7 +25,6 @@ import ChampionshipHeader from "./ChampionshipHeader";
 import MatchesPanel from "./matches/MatchesPanel";
 import CategoryNavigation from "./navigation/CategoryNavigation";
 import DivisionNavigation from "./navigation/DivisionNavigation";
-import PoolDropdown from "./navigation/PoolDropdown";
 
 export function ChampionshipDetailPage() {
   const router = useRouter();
@@ -33,6 +33,7 @@ export function ChampionshipDetailPage() {
   const searchParams = useSearchParams();
   const tCompetitions = useTranslations("competitions");
   const tCommon = useTranslations("common");
+  const tPool = useTranslations("pool");
 
   const championshipId = Number.parseInt(params?.championshipId as string, 10);
   const poolFromQuery = searchParams.get("pool");
@@ -107,8 +108,8 @@ export function ChampionshipDetailPage() {
     }
   }, [groupedMatches, selectedRound]);
 
-  const handlePoolChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const poolId = Number.parseInt(event.target.value);
+  const handlePoolChange = (val: string | number | undefined) => {
+    const poolId = Number(val);
     setSelectedPoolId(poolId);
     const next = new URLSearchParams(searchParams.toString());
     next.set("pool", String(poolId));
@@ -178,10 +179,13 @@ export function ChampionshipDetailPage() {
           <LeaderboardTable
             leaderboards={leaderboards[selectedPoolId] || []}
             dropdown={
-              <PoolDropdown
-                pools={pools}
-                selectedPoolId={selectedPoolId}
+              <Select
+                value={selectedPoolId}
                 onChange={handlePoolChange}
+                options={pools.map((pool) => ({
+                  value: pool.id,
+                  label: `${tPool("label")} ${pool.letter}`,
+                }))}
               />
             }
           />

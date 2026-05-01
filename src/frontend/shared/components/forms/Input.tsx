@@ -153,7 +153,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             type={type}
             value={value}
             className={cn(
-              "w-full rounded-input px-4 py-2.5",
+              "h-9 w-full rounded-input px-4 border text-sm",
               "border border-divide-light dark:border-divide-dark",
               "bg-surface-raised dark:bg-surface-raised-dark",
               "text-text-heading dark:text-text-heading-dark",

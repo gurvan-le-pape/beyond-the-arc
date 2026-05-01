@@ -2,7 +2,7 @@
 import { useTranslations } from "next-intl";
 import React from "react";
 
-import { Select } from "@/shared/components/forms";
+import { Select } from "@/shared/components/forms/Select";
 import { CompetitionLevel } from "@/shared/constants";
 
 interface LevelLocationFiltersProps {
@@ -33,72 +33,74 @@ export function LevelLocationFilters({
   const showLeague = level === CompetitionLevel.REGIONAL;
   const showLocation = showCommittee || showLeague;
 
+  const levelOptions = [
+    { value: "", label: tCommon("filters.allLevels") },
+    {
+      value: CompetitionLevel.DEPARTMENTAL,
+      label: tCommon("competition.levels.departmental"),
+    },
+    {
+      value: CompetitionLevel.REGIONAL,
+      label: tCommon("competition.levels.regional"),
+    },
+    {
+      value: CompetitionLevel.NATIONAL,
+      label: tCommon("competition.levels.national"),
+    },
+  ];
+
+  const committeeOptions = [
+    { value: "", label: tCommon("filters.allCommittees") },
+    ...committees.map((c) => ({ value: String(c.id), label: c.name })),
+  ];
+
+  const leagueOptions = [
+    { value: "", label: tCommon("filters.allLeagues") },
+    ...leagues.map((l) => ({ value: String(l.id), label: l.name })),
+  ];
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <Select
-        id="level-filter"
         label={tCommon("filters.levels")}
+        options={levelOptions}
         value={level ?? ""}
-        onChange={(e) => {
-          setLevel((e.target.value as CompetitionLevel) || undefined);
+        onChange={(val) => {
+          setLevel((val as CompetitionLevel) || undefined);
           setCommitteeId(undefined);
           setLeagueId(undefined);
         }}
-      >
-        <option value="">{tCommon("filters.allLevels")}</option>
-        <option value={CompetitionLevel.DEPARTMENTAL}>
-          {tCommon("competition.levels.departmental")}
-        </option>
-        <option value={CompetitionLevel.REGIONAL}>
-          {tCommon("competition.levels.regional")}
-        </option>
-        <option value={CompetitionLevel.NATIONAL}>
-          {tCommon("competition.levels.national")}
-        </option>
-      </Select>
+      />
 
       {showCommittee && (
         <Select
-          id="committee-filter"
           label={tCommon("filters.committees")}
-          value={committeeId ?? ""}
-          onChange={(e) => setCommitteeId(Number(e.target.value) || undefined)}
-        >
-          <option value="">{tCommon("filters.allCommittees")}</option>
-          {committees.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </Select>
+          options={committeeOptions}
+          value={committeeId ? String(committeeId) : ""}
+          onChange={(val) => setCommitteeId(val ? Number(val) : undefined)}
+        />
       )}
 
       {showLeague && (
         <Select
-          id="league-filter"
           label={tCommon("filters.leagues")}
-          value={leagueId ?? ""}
-          onChange={(e) => setLeagueId(Number(e.target.value) || undefined)}
-        >
-          <option value="">{tCommon("filters.allLeagues")}</option>
-          {leagues.map((l) => (
-            <option key={l.id} value={l.id}>
-              {l.name}
-            </option>
-          ))}
-        </Select>
+          options={leagueOptions}
+          value={leagueId ? String(leagueId) : ""}
+          onChange={(val) => setLeagueId(val ? Number(val) : undefined)}
+        />
       )}
 
       {!showLocation && (
         <div className="opacity-40 pointer-events-none">
           <Select
-            id="location-filter-disabled"
             label={tFilters("filters.committeeOrLeague")}
+            options={[
+              { value: "", label: tFilters("filters.selectLevelFirst") },
+            ]}
             value=""
             onChange={() => {}}
-          >
-            <option value="">{tFilters("filters.selectLevelFirst")}</option>
-          </Select>
+            disabled
+          />
         </div>
       )}
     </div>

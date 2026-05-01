@@ -1,100 +1,46 @@
 // src/frontend/shared/components/forms/Select.tsx
-import { forwardRef, type SelectHTMLAttributes } from "react";
+//
+// Select — non-searchable single-value picker.
+//
+// A thin wrapper around ComboBox with searchable=false.
+// Uses an `options` array instead of <option> children — this gives us
+// a fully custom popover that looks identical to ComboBox.
+//
+// Use for short, static option lists (≤ ~8 items).
+// For long/searchable lists use ComboBox directly.
+// For multi-select use MultiSelectDropdown.
+//
+// @example
+// <Select
+//   label="Category"
+//   value={category}
+//   onChange={setCategory}
+//   options={CATEGORY_LIST.map(c => ({ value: c, label: t(`category.${c}`) }))}
+//   placeholder="All categories"
+// />
 
-import { SelectChevron } from "@/shared/components/primitives/SearchableDropdown";
-import { cn } from "@/shared/utils/cn";
+import type { ComboBoxOption } from "@/shared/components/primitives/ComboBox";
+import { ComboBox } from "@/shared/components/primitives/ComboBox";
 
-import { Text } from "../typography";
-
-export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
-  label?: string;
-  error?: string;
-  helperText?: string;
+export interface SelectProps {
+  readonly options: ComboBoxOption[];
+  readonly value: string | number | undefined;
+  readonly onChange: (value: string | number | undefined) => void;
+  readonly label?: string;
+  readonly placeholder?: string;
+  readonly disabled?: boolean;
+  readonly className?: string;
+  readonly error?: string;
+  readonly helperText?: string;
+  readonly testId?: string;
 }
 
-export const Select = forwardRef<HTMLSelectElement, SelectProps>(
-  ({ className, label, error, helperText, id, children, ...props }, ref) => {
-    const selectId =
-      id || `select-${label?.toLowerCase().replaceAll(/\s+/g, "-")}`;
-
-    let ariaDescribedBy: string | undefined;
-    if (error) {
-      ariaDescribedBy = `${selectId}-error`;
-    } else if (helperText) {
-      ariaDescribedBy = `${selectId}-helper`;
-    }
-
-    return (
-      <div className="w-full">
-        {label && (
-          <Text
-            variant="label"
-            as="label"
-            htmlFor={selectId}
-            className="mb-2 block"
-          >
-            {label}
-          </Text>
-        )}
-
-        <div className="relative">
-          <select
-            ref={ref}
-            id={selectId}
-            className={cn(
-              "w-full px-4 py-2.5 rounded-input pr-9",
-              "appearance-none",
-              "border border-divide-light dark:border-divide-dark",
-              "bg-surface-raised dark:bg-surface-raised-dark",
-              // text-body was not a valid Tailwind class — removed.
-              // text-text-heading already sets the color correctly.
-              "text-text-heading dark:text-text-heading-dark",
-              "focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-primary-500",
-              "disabled:opacity-50 disabled:cursor-not-allowed",
-              "transition-colors duration-200",
-              // error-DEFAULT is a Tailwind internal suffix, never use it in
-              // class strings. The config defines `error` as the default stop,
-              // so `border-error` and `text-error` are the correct classes.
-              error && "border-error focus:ring-error focus:border-error",
-              className,
-            )}
-            aria-invalid={error ? "true" : "false"}
-            aria-describedby={ariaDescribedBy}
-            {...props}
-          >
-            {children}
-          </select>
-
-          <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-            <SelectChevron />
-          </span>
-        </div>
-
-        {error && (
-          <Text
-            variant="caption"
-            as="p"
-            id={`${selectId}-error`}
-            className="mt-2 text-error dark:text-error-light"
-            role="alert"
-          >
-            {error}
-          </Text>
-        )}
-
-        {helperText && !error && (
-          <Text
-            variant="caption"
-            as="p"
-            id={`${selectId}-helper`}
-            className="mt-2"
-          >
-            {helperText}
-          </Text>
-        )}
-      </div>
-    );
-  },
-);
-
-Select.displayName = "Select";
+/**
+ * Select — non-searchable single-value picker.
+ *
+ * Identical visually to ComboBox but without the search input.
+ * Both open with the same custom popover — fully consistent UI.
+ */
+export function Select(props: SelectProps) {
+  return <ComboBox {...props} searchable={false} />;
+}

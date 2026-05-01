@@ -80,67 +80,55 @@ export const DepartmentalFilters: React.FC<DepartmentalFiltersProps> = ({
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Select
-          id="committee-filter"
           label={tCommon("filters.committees")}
           value={committeeId}
-          onChange={(e) => {
-            setCommitteeId(e.target.value);
+          onChange={(val) => {
+            setCommitteeId(String(val ?? ""));
             setSeasonYear("");
           }}
-        >
-          <option value="">{tCommon("filters.allCommittees")}</option>
-          {committees.map((c) => (
-            <option key={c.id} value={String(c.id)}>
-              {c.name}
-            </option>
-          ))}
-        </Select>
+          options={[
+            { value: "", label: tCommon("filters.allCommittees") },
+            ...committees.map((c) => ({ value: String(c.id), label: c.name })),
+          ]}
+        />
 
         <Select
-          id="season-year-filter"
           label={tCommon("filters.seasons")}
           value={seasonYear}
-          onChange={(e) => setSeasonYear(e.target.value)}
-        >
-          <option value="">{tCommon("filters.allSeasons")}</option>
-          {seasonYears.map((y) => (
-            <option key={y.value} value={y.value}>
-              {y.label}
-            </option>
-          ))}
-        </Select>
+          onChange={(val) => setSeasonYear(String(val ?? ""))}
+          options={[
+            { value: "", label: tCommon("filters.allSeasons") },
+            ...seasonYears,
+          ]}
+        />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Select
-          id="category-filter"
           label={tCommon("filters.categories")}
           value={category ?? ""}
-          onChange={(e) =>
-            setCategory((e.target.value as Category) || undefined)
-          }
-        >
-          <option value="">{tCommon("filters.allCategories")}</option>
-          {CATEGORY_LIST.map((cat) => (
-            <option key={cat} value={cat}>
-              {tCommon(`category.${cat}`)}
-            </option>
-          ))}
-        </Select>
+          onChange={(val) => setCategory((val as Category) || undefined)}
+          options={[
+            { value: "", label: tCommon("filters.allCategories") },
+            ...CATEGORY_LIST.map((cat) => ({
+              value: cat,
+              label: tCommon(`category.${cat}`),
+            })),
+          ]}
+        />
 
         <Select
-          id="gender-filter"
           label={tCommon("filters.genders")}
           value={gender ?? ""}
-          onChange={(e) => setGender((e.target.value as Gender) || undefined)}
-        >
-          <option value="">{tCommon("filters.allGenders")}</option>
-          {GENDER_LIST.map((g) => (
-            <option key={g} value={g}>
-              {tCommon(`gender.${g}`)}
-            </option>
-          ))}
-        </Select>
+          onChange={(val) => setGender((val as Gender) || undefined)}
+          options={[
+            { value: "", label: tCommon("filters.allGenders") },
+            ...GENDER_LIST.map((g) => ({
+              value: g,
+              label: tCommon(`gender.${g}`),
+            })),
+          ]}
+        />
       </div>
     </FiltersShell>
   );

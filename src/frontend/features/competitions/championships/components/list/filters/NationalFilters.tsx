@@ -57,48 +57,40 @@ export const NationalFilters: React.FC<NationalFiltersProps> = ({
     >
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Select
-          id="category-filter"
           label={tCommon("filters.categories")}
           value={category ?? ""}
-          onChange={(e) =>
-            setCategory((e.target.value as Category) || undefined)
-          }
-        >
-          <option value="">{tCommon("filters.allCategories")}</option>
-          {CATEGORY_LIST.map((cat) => (
-            <option key={cat} value={cat}>
-              {tCommon(`category.${cat}`)}
-            </option>
-          ))}
-        </Select>
+          onChange={(val) => setCategory((val as Category) || undefined)}
+          options={[
+            { value: "", label: tCommon("filters.allCategories") },
+            ...CATEGORY_LIST.map((cat) => ({
+              value: cat,
+              label: tCommon(`category.${cat}`),
+            })),
+          ]}
+        />
 
         <Select
-          id="gender-filter"
           label={tCommon("filters.genders")}
           value={gender ?? ""}
-          onChange={(e) => setGender((e.target.value as Gender) || undefined)}
-        >
-          <option value="">{tCommon("filters.allGenders")}</option>
-          {GENDER_LIST.map((g) => (
-            <option key={g} value={g}>
-              {tCommon(`gender.${g}`)}
-            </option>
-          ))}
-        </Select>
+          onChange={(val) => setGender((val as Gender) || undefined)}
+          options={[
+            { value: "", label: tCommon("filters.allGenders") },
+            ...GENDER_LIST.map((g) => ({
+              value: g,
+              label: tCommon(`gender.${g}`),
+            })),
+          ]}
+        />
 
         <Select
-          id="season-year-filter"
           label={tCommon("filters.seasons")}
           value={seasonYear}
-          onChange={(e) => setSeasonYear(e.target.value)}
-        >
-          <option value="">{tCommon("filters.allSeasons")}</option>
-          {seasonYears.map((y) => (
-            <option key={y.value} value={y.value}>
-              {y.label}
-            </option>
-          ))}
-        </Select>
+          onChange={(val) => setSeasonYear(String(val ?? ""))}
+          options={[
+            { value: "", label: tCommon("filters.allSeasons") },
+            ...seasonYears,
+          ]}
+        />
       </div>
     </FiltersShell>
   );

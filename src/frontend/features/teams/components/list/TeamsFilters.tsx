@@ -1,19 +1,23 @@
 // src/frontend/features/teams/components/list/TeamsFilters.tsx
-import { useTranslations } from "next-intl";
-import React from "react";
+"use client";
 
+import { useTranslations } from "next-intl";
+import React, { useState } from "react";
+
+import { useClubSearch } from "@/features/organizations/clubs/api";
 import type { CascadeStep } from "@/shared/components/filters/CascadeSelects";
 import { CascadeSelects } from "@/shared/components/filters/CascadeSelects";
-import { ClubSearchField } from "@/shared/components/filters/ClubSearchField";
 import { FiltersShell } from "@/shared/components/filters/FiltersShell";
 import { LevelLocationFilters } from "@/shared/components/filters/LevelLocationFilters";
 import { Select } from "@/shared/components/forms";
+import { ComboBox } from "@/shared/components/primitives";
 import type { Category, Gender } from "@/shared/constants";
 import {
   CATEGORY_LIST,
   CompetitionLevel,
   GENDER_LIST,
 } from "@/shared/constants";
+import { useDebounce } from "@/shared/hooks";
 
 interface TeamsFiltersProps {
   // Category & Gender
@@ -82,6 +86,17 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
   const tCommon = useTranslations("common");
   const tMatches = useTranslations("matches");
   const tFilters = useTranslations("filters");
+
+  const [clubSearch, setClubSearch] = useState("");
+  const debouncedClubSearch = useDebounce(clubSearch, 300);
+  const { data: clubData, isLoading: clubsLoading } = useClubSearch(
+    debouncedClubSearch,
+    { committeeId, leagueId },
+  );
+  const clubOptions = (clubData?.items ?? []).map((c) => ({
+    value: String(c.id),
+    label: c.name,
+  }));
 
   const locationLabel =
     level === CompetitionLevel.DEPARTMENTAL
@@ -152,6 +167,27 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
     },
   ].filter(Boolean) as { key: string; label: string; onRemove: () => void }[];
 
+  const teamNumberOptions = [
+    { value: "", label: tCommon("filters.allTeamNumbers") },
+    ...teamNumbers.map((n) => ({ value: String(n), label: String(n) })),
+  ];
+
+  const categoryOptions = [
+    { value: "", label: tCommon("filters.allCategories") },
+    ...CATEGORY_LIST.map((cat) => ({
+      value: cat,
+      label: tCommon(`category.${cat}`),
+    })),
+  ];
+
+  const genderOptions = [
+    { value: "", label: tCommon("filters.allGenders") },
+    ...GENDER_LIST.map((g) => ({
+      value: g,
+      label: tCommon(`gender.${g}`),
+    })),
+  ];
+
   const cascadeSteps: CascadeStep[] = [
     {
       id: "division-filter",
@@ -193,62 +229,45 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
     >
       {/* Row 1: Club + Team number */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <ClubSearchField
-          committeeId={committeeId}
-          leagueId={leagueId}
-          clubId={clubId}
-          setClubId={setClubId}
-          setSelectedClubName={setSelectedClubName}
+        <ComboBox
           label={tCommon("filters.clubs")}
           placeholder={tCommon("filters.allClubs")}
+          options={clubOptions}
+          value={clubId || undefined}
+          onChange={(val) => {
+            setClubId(String(val ?? ""));
+            setSelectedClubName(
+              clubOptions.find((c) => c.value === String(val ?? ""))?.label ??
+                "",
+            );
+          }}
+          onSearchChange={setClubSearch}
+          isLoading={clubsLoading}
         />
 
         <Select
-          id="number-filter"
           label={tCommon("filters.teamNumbers")}
+          options={teamNumberOptions}
           value={number}
-          onChange={(e) => setNumber(e.target.value)}
-        >
-          <option value="">{tCommon("filters.allTeamNumbers")}</option>
-          {teamNumbers.map((n) => (
-            <option key={n} value={n}>
-              {n}
-            </option>
-          ))}
-        </Select>
+          onChange={(val) => setNumber(String(val ?? ""))}
+        />
       </div>
 
       {/* Row 2: Category + Gender */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Select
-          id="category-filter"
           label={tCommon("filters.categories")}
+          options={categoryOptions}
           value={category ?? ""}
-          onChange={(e) =>
-            setCategory((e.target.value as Category) || undefined)
-          }
-        >
-          <option value="">{tCommon("filters.allCategories")}</option>
-          {CATEGORY_LIST.map((cat) => (
-            <option key={cat} value={cat}>
-              {tCommon(`category.${cat}`)}
-            </option>
-          ))}
-        </Select>
+          onChange={(val) => setCategory((val as Category) || undefined)}
+        />
 
         <Select
-          id="gender-filter"
           label={tCommon("filters.genders")}
+          options={genderOptions}
           value={gender ?? ""}
-          onChange={(e) => setGender((e.target.value as Gender) || undefined)}
-        >
-          <option value="">{tCommon("filters.allGenders")}</option>
-          {GENDER_LIST.map((g) => (
-            <option key={g} value={g}>
-              {tCommon(`gender.${g}`)}
-            </option>
-          ))}
-        </Select>
+          onChange={(val) => setGender((val as Gender) || undefined)}
+        />
       </div>
 
       {/* Divider */}
