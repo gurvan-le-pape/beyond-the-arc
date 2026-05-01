@@ -171,6 +171,22 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
     },
   ].filter(Boolean) as { key: string; label: string; onRemove: () => void }[];
 
+  const categoryOptions = [
+    { value: "", label: tCommon("filters.allCategories") },
+    ...CATEGORY_LIST.map((cat) => ({
+      value: cat,
+      label: tCommon(`category.${cat}`),
+    })),
+  ];
+
+  const genderOptions = [
+    { value: "", label: tCommon("filters.allGenders") },
+    ...GENDER_LIST.map((g) => ({
+      value: g,
+      label: tCommon(`gender.${g}`),
+    })),
+  ];
+
   const cascadeSteps: CascadeStep[] = [
     {
       id: "division-filter",
@@ -249,34 +265,18 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
       {/* Row 2: Category + Gender */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Select
-          id="category-filter"
           label={tCommon("filters.categories")}
+          options={categoryOptions}
           value={category ?? ""}
-          onChange={(e) =>
-            setCategory((e.target.value as Category) || undefined)
-          }
-        >
-          <option value="">{tCommon("filters.allCategories")}</option>
-          {CATEGORY_LIST.map((cat) => (
-            <option key={cat} value={cat}>
-              {tCommon(`category.${cat}`)}
-            </option>
-          ))}
-        </Select>
+          onChange={(val) => setCategory((val as Category) || undefined)}
+        />
 
         <Select
-          id="gender-filter"
           label={tCommon("filters.genders")}
+          options={genderOptions}
           value={gender ?? ""}
-          onChange={(e) => setGender((e.target.value as Gender) || undefined)}
-        >
-          <option value="">{tCommon("filters.allGenders")}</option>
-          {GENDER_LIST.map((g) => (
-            <option key={g} value={g}>
-              {tCommon(`gender.${g}`)}
-            </option>
-          ))}
-        </Select>
+          onChange={(val) => setGender((val as Gender) || undefined)}
+        />
       </div>
 
       {/* Divider */}

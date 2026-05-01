@@ -2,29 +2,27 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import React, { useEffect, useRef } from "react";
+import React from "react";
 
 import type { TeamInfoExtended } from "@/features/teams/types/TeamInfo";
-import { cn } from "@/shared/utils/cn";
-
-import { FilterablePlayerList } from "./FilterablePlayerList";
+import { MultiSelectDropdown } from "@/shared/components/primitives/MultiSelectDropdown";
 
 interface PlayerDropdownFilterProps {
-  homeTeam: TeamInfoExtended;
-  awayTeam: TeamInfoExtended;
-  selectedPlayerIds: Set<number>;
-  setSelectedPlayerIds: (ids: Set<number>) => void;
-  togglePlayer: (id: number) => void;
-  isOpen: boolean;
-  setIsOpen: (open: boolean) => void;
+  readonly homeTeam: TeamInfoExtended;
+  readonly awayTeam: TeamInfoExtended;
+  readonly selectedPlayerIds: Set<number>;
+  readonly setSelectedPlayerIds: (ids: Set<number>) => void;
+  readonly togglePlayer: (id: number) => void;
+  readonly isOpen: boolean;
+  readonly setIsOpen: (open: boolean) => void;
 }
 
 /**
  * Player multi-select filter.
  *
- * Renders a trigger button that shows how many players are currently selected,
- * and a popover containing a two-column grid of PlayerLists (home / away).
- * Clicking outside the popover or its trigger closes it.
+ * Thin wrapper around MultiSelectDropdown — maps team players into the
+ * generic column/item shape. All popover, animation, and clear logic
+ * lives in MultiSelectDropdown.
  */
 export function PlayerDropdownFilter({
   homeTeam,
@@ -36,98 +34,28 @@ export function PlayerDropdownFilter({
   setIsOpen,
 }: PlayerDropdownFilterProps) {
   const t = useTranslations("matches");
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
 
-  // Close when the user clicks outside the popover or its trigger.
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Node;
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(target) &&
-        buttonRef.current &&
-        !buttonRef.current.contains(target)
-      ) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isOpen, setIsOpen]);
+  const toColumn = (team: TeamInfoExtended) => ({
+    title: team.name,
+    items: [...team.players]
+      .sort((a, b) => a.player.number - b.player.number)
+      .map((p) => ({
+        id: p.player.id,
+        label: `#${p.player.number} ${p.player.name}`,
+        checked: selectedPlayerIds.has(p.player.id),
+        onToggle: () => togglePlayer(p.player.id),
+      })),
+  });
 
   return (
-    <div className="relative">
-      {/* Trigger button */}
-      <button
-        ref={buttonRef}
-        onClick={() => setIsOpen(!isOpen)}
-        className={cn(
-          "px-3 py-2 text-sm font-medium rounded-button transition-colors duration-200 flex items-center gap-2",
-          "bg-surface-subtle dark:bg-surface-subtle-dark text-text-emphasis dark:text-text-emphasis-dark",
-          "hover:bg-surface-raised dark:hover:bg-surface-raised-dark",
-          "focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400",
-        )}
-      >
-        {t("matchEvents.players")}
-
-        {/* Selection-count badge */}
-        {selectedPlayerIds.size > 0 && (
-          <span className="bg-primary-600 dark:bg-primary-500 text-white text-xs rounded-button px-2 py-0.5">
-            {selectedPlayerIds.size}
-          </span>
-        )}
-
-        {/* Animated chevron */}
-        <span
-          className={cn(
-            "transform transition-transform duration-200 text-xs",
-            isOpen && "rotate-180",
-          )}
-        >
-          ▼
-        </span>
-      </button>
-
-      {/* Popover */}
-      {isOpen && (
-        <div
-          ref={dropdownRef}
-          className={cn(
-            "absolute top-full left-0 mt-2 z-10 p-4 min-w-[500px]",
-            "bg-surface-subtle dark:bg-surface-subtle-dark border border-divide-light dark:border-divide-dark",
-            "rounded-card shadow-card-hover dark:shadow-card-dark",
-          )}
-        >
-          {/* Two-column player grid */}
-          <div className="grid grid-cols-2 gap-4">
-            <FilterablePlayerList
-              team={homeTeam}
-              selectedIds={selectedPlayerIds}
-              onToggle={togglePlayer}
-            />
-            <FilterablePlayerList
-              team={awayTeam}
-              selectedIds={selectedPlayerIds}
-              onToggle={togglePlayer}
-            />
-          </div>
-
-          {/* "Clear all" row */}
-          {selectedPlayerIds.size > 0 && (
-            <button
-              onClick={() => setSelectedPlayerIds(new Set())}
-              className="mt-3 w-full px-3 py-1.5 text-sm rounded-button transition-colors duration-200 text-error-DEFAULT dark:text-error-light hover:bg-error-light/10 dark:hover:bg-error-dark/20 focus:outline-none focus:ring-2 focus:ring-error-DEFAULT dark:focus:ring-error-light"
-            >
-              {t("matchEvents.clearSelection")}
-            </button>
-          )}
-        </div>
-      )}
-    </div>
+    <MultiSelectDropdown
+      label={t("matchEvents.players")}
+      selectedCount={selectedPlayerIds.size}
+      onClear={() => setSelectedPlayerIds(new Set())}
+      isOpen={isOpen}
+      setIsOpen={setIsOpen}
+      columns={[toColumn(homeTeam), toColumn(awayTeam)]}
+    />
   );
 }
 

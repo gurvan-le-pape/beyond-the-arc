@@ -6,9 +6,9 @@ import { Text } from "@/shared/components/typography";
 import { cn } from "@/shared/utils/cn";
 
 interface FilterablePlayerListProps {
-  team: TeamInfoExtended;
-  selectedIds: Set<number>;
-  onToggle: (id: number) => void;
+  readonly team: TeamInfoExtended;
+  readonly selectedIds: Set<number>;
+  readonly onToggle: (id: number) => void;
 }
 
 /**
@@ -22,7 +22,7 @@ export function FilterablePlayerList({
 }: FilterablePlayerListProps) {
   return (
     <div className="min-w-0">
-      <Text variant="h4" className="text-sm mb-2 truncate">
+      <Text variant="h4" className="text-sm mb-2">
         {team.name}
       </Text>
 

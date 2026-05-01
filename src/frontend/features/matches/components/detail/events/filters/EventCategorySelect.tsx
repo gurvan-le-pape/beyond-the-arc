@@ -8,35 +8,32 @@ import { EventCategory } from "@/shared/constants/event-categories";
 interface EventCategorySelectProps {
   value: EventCategory;
   onChange: (value: EventCategory) => void;
-  className?: string;
 }
 
 export const EventCategorySelect: React.FC<EventCategorySelectProps> = ({
   value,
   onChange,
-  className,
 }) => {
   const t = useTranslations("matches");
+
+  const options = [
+    { value: EventCategory.ALL, label: t("matchEvents.allEvents") },
+    { value: EventCategory.SCORING, label: t("matchEvents.scoring") },
+    { value: EventCategory.DEFENSIVE, label: t("matchEvents.defensive") },
+    { value: EventCategory.FOUL, label: t("matchEvents.fouls") },
+    { value: EventCategory.TURNOVER, label: t("matchEvents.turnovers") },
+    {
+      value: EventCategory.SUBSTITUTION,
+      label: t("matchEvents.substitutions"),
+    },
+  ];
+
   return (
     <Select
-      id="category-filter"
       value={value}
-      onChange={(e) => onChange(e.target.value as EventCategory)}
-      className={className || "w-auto min-w-[160px]"}
-    >
-      <option value={EventCategory.ALL}>{t("matchEvents.allEvents")}</option>
-      <option value={EventCategory.SCORING}>{t("matchEvents.scoring")}</option>
-      <option value={EventCategory.DEFENSIVE}>
-        {t("matchEvents.defensive")}
-      </option>
-      <option value={EventCategory.FOUL}>{t("matchEvents.fouls")}</option>
-      <option value={EventCategory.TURNOVER}>
-        {t("matchEvents.turnovers")}
-      </option>
-      <option value={EventCategory.SUBSTITUTION}>
-        {t("matchEvents.substitutions")}
-      </option>
-    </Select>
+      onChange={(val) => onChange(val as EventCategory)}
+      options={options}
+    />
   );
 };
 

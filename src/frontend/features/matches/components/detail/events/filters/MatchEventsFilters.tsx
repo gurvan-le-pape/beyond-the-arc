@@ -63,7 +63,6 @@ export const MatchEventsFilters: React.FC<MatchEventsFiltersProps> = ({
       <EventCategorySelect
         value={selectedEventCategory}
         onChange={setSelectedEventCategory}
-        className="w-auto min-w-[160px]"
       />
 
       {/* Player multi-select */}
