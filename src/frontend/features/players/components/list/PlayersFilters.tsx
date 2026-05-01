@@ -1,17 +1,20 @@
 // src/frontend/features/players/components/list/PlayersFilters.tsx
 import { useTranslations } from "next-intl";
-import React from "react";
+import React, { useState } from "react";
 
-import { ClubSearchField } from "@/shared/components/filters/ClubSearchField";
+import { useClubSearch } from "@/features/organizations/clubs/api";
 import { FiltersShell } from "@/shared/components/filters/FiltersShell";
 import { LevelLocationFilters } from "@/shared/components/filters/LevelLocationFilters";
-import { Input, Select } from "@/shared/components/forms";
+import { Input } from "@/shared/components/forms";
+import { Select } from "@/shared/components/forms/Select";
+import { ComboBox } from "@/shared/components/primitives/ComboBox";
 import type { Category, Gender } from "@/shared/constants";
 import {
   CATEGORY_LIST,
   CompetitionLevel,
   GENDER_LIST,
 } from "@/shared/constants";
+import { useDebounce } from "@/shared/hooks";
 
 interface PlayersFiltersProps {
   // Name search
@@ -78,17 +81,24 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
   const tPlayers = useTranslations("players");
   const tCommon = useTranslations("common");
 
+  const [clubSearch, setClubSearch] = useState("");
+  const debouncedClubSearch = useDebounce(clubSearch, 300);
+  const { data: clubData, isLoading: clubsLoading } = useClubSearch(
+    debouncedClubSearch,
+    { committeeId, leagueId },
+  );
+  const clubOptions = (clubData?.items ?? []).map((c) => ({
+    value: String(c.id),
+    label: c.name,
+  }));
+
   const locationLabel =
     level === CompetitionLevel.DEPARTMENTAL
       ? committees.find((c) => c.id === committeeId)?.name
       : leagues.find((l) => l.id === leagueId)?.name;
 
   const chips = [
-    name && {
-      key: "name",
-      label: `"${name}"`,
-      onRemove: () => setName(""),
-    },
+    name && { key: "name", label: `"${name}"`, onRemove: () => setName("") },
     clubId && {
       key: "club",
       label: selectedClubName || clubId,
@@ -136,6 +146,32 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
     },
   ].filter(Boolean) as { key: string; label: string; onRemove: () => void }[];
 
+  const categoryOptions = [
+    { value: "", label: tCommon("filters.allCategories") },
+    ...CATEGORY_LIST.map((cat) => ({
+      value: cat,
+      label: tCommon(`category.${cat}`),
+    })),
+  ];
+
+  const genderOptions = [
+    { value: "", label: tCommon("filters.allGenders") },
+    ...GENDER_LIST.map((g) => ({
+      value: g,
+      label: tCommon(`gender.${g}`),
+    })),
+  ];
+
+  const playerNumberOptions = [
+    { value: "", label: tCommon("filters.allPlayerNumbers") },
+    ...playerNumbers.map((n) => ({ value: String(n), label: String(n) })),
+  ];
+
+  const teamNumberOptions = [
+    { value: "", label: tCommon("filters.allTeamNumbers") },
+    ...teamNumbers.map((n) => ({ value: String(n), label: String(n) })),
+  ];
+
   return (
     <FiltersShell
       activeFilterCount={chips.length}
@@ -155,79 +191,59 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
           clearAriaLabel={tCommon("clearSearch")}
         />
 
-        <ClubSearchField
-          committeeId={committeeId}
-          leagueId={leagueId}
-          clubId={clubId}
-          setClubId={setClubId}
-          setSelectedClubName={setSelectedClubName}
+        <ComboBox
           label={tCommon("filters.clubs")}
           placeholder={tCommon("filters.allClubs")}
+          options={clubOptions}
+          value={clubId || undefined}
+          onChange={(val) => {
+            setClubId(String(val ?? ""));
+            setSelectedClubName(
+              clubOptions.find((c) => c.value === String(val ?? ""))?.label ??
+                "",
+            );
+          }}
+          onSearchChange={setClubSearch}
+          isLoading={clubsLoading}
         />
       </div>
 
       {/* Row 2: Category + Gender */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Select
-          id="category-filter"
           label={tCommon("filters.categories")}
+          options={categoryOptions}
           value={category ?? ""}
-          onChange={(e) =>
-            setCategory((e.target.value as Category) || undefined)
-          }
-        >
-          <option value="">{tCommon("filters.allCategories")}</option>
-          {CATEGORY_LIST.map((cat) => (
-            <option key={cat} value={cat}>
-              {tCommon(`category.${cat}`)}
-            </option>
-          ))}
-        </Select>
+          onChange={(val) => setCategory((val as Category) || undefined)}
+          placeholder={tCommon("filters.allCategories")}
+        />
 
         <Select
-          id="gender-filter"
           label={tCommon("filters.genders")}
+          options={genderOptions}
           value={gender ?? ""}
-          onChange={(e) => setGender((e.target.value as Gender) || undefined)}
-        >
-          <option value="">{tCommon("filters.allGenders")}</option>
-          {GENDER_LIST.map((g) => (
-            <option key={g} value={g}>
-              {tCommon(`gender.${g}`)}
-            </option>
-          ))}
-        </Select>
+          onChange={(val) => setGender((val as Gender) || undefined)}
+          placeholder={tCommon("filters.allGenders")}
+        />
       </div>
 
       {/* Row 3: Player number + Team number */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Select
-          id="number-filter"
           label={tCommon("filters.playerNumbers")}
+          options={playerNumberOptions}
           value={number}
-          onChange={(e) => setNumber(e.target.value)}
-        >
-          <option value="">{tCommon("filters.allPlayerNumbers")}</option>
-          {playerNumbers.map((n) => (
-            <option key={n} value={n}>
-              {n}
-            </option>
-          ))}
-        </Select>
+          onChange={(val) => setNumber(String(val ?? ""))}
+          placeholder={tCommon("filters.allPlayerNumbers")}
+        />
 
         <Select
-          id="team-filter"
           label={tCommon("filters.teamNumbers")}
+          options={teamNumberOptions}
           value={teamNumber}
-          onChange={(e) => setTeamNumber(e.target.value)}
-        >
-          <option value="">{tCommon("filters.allTeamNumbers")}</option>
-          {teamNumbers.map((n) => (
-            <option key={n} value={n}>
-              {n}
-            </option>
-          ))}
-        </Select>
+          onChange={(val) => setTeamNumber(String(val ?? ""))}
+          placeholder={tCommon("filters.allTeamNumbers")}
+        />
       </div>
 
       {/* Divider */}
