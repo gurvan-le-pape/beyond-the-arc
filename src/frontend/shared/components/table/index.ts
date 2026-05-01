@@ -4,6 +4,5 @@
  */
 
 export * from "./FilterDropdown";
-export * from "./FilterRow";
 export * from "./Pagination";
 export * from "./Table";
