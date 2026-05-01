@@ -18,7 +18,6 @@ import { groupBy } from "@/shared/utils";
 
 export default function DepartmentalChampionshipsPage() {
   const tCommon = useTranslations("common");
-  const tCompetitions = useTranslations("competitions");
   const tOrganizations = useTranslations("organizations");
   const router = useRouter();
   const params = useParams();
@@ -66,7 +65,7 @@ export default function DepartmentalChampionshipsPage() {
           <SearchableChipList
             items={clubs}
             title={tCommon("sectionTitles.clubs")}
-            searchPlaceholder={tCompetitions("carousel.searchPlaceholder")}
+            searchPlaceholder={tCommon("searchPlaceholder")}
             onItemClick={(club) =>
               router.push(`/organizations/clubs/${club.id}`)
             }

@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/components/NationalFilters.tsx
+// src/frontend/features/competitions/championships/components/list/filters/NationalFilters.tsx
 import { useTranslations } from "next-intl";
 import React from "react";
 
@@ -29,8 +29,6 @@ export const NationalFilters: React.FC<NationalFiltersProps> = ({
   onReset,
 }) => {
   const tCommon = useTranslations("common");
-  const tMatches = useTranslations("matches");
-  const tCompetitions = useTranslations("competitions");
 
   const chips = [
     category && {
@@ -55,18 +53,18 @@ export const NationalFilters: React.FC<NationalFiltersProps> = ({
       activeFilterCount={chips.length}
       chips={chips}
       onReset={onReset}
-      title={tCompetitions("national.label")}
+      title={tCommon("competition.levels.national")}
     >
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Select
           id="category-filter"
-          label={tMatches("category")}
+          label={tCommon("filters.categories")}
           value={category ?? ""}
           onChange={(e) =>
             setCategory((e.target.value as Category) || undefined)
           }
         >
-          <option value="">{tMatches("allCategories")}</option>
+          <option value="">{tCommon("filters.allCategories")}</option>
           {CATEGORY_LIST.map((cat) => (
             <option key={cat} value={cat}>
               {tCommon(`category.${cat}`)}
@@ -76,11 +74,11 @@ export const NationalFilters: React.FC<NationalFiltersProps> = ({
 
         <Select
           id="gender-filter"
-          label={tMatches("gender")}
+          label={tCommon("filters.genders")}
           value={gender ?? ""}
           onChange={(e) => setGender((e.target.value as Gender) || undefined)}
         >
-          <option value="">{tMatches("allGenders")}</option>
+          <option value="">{tCommon("filters.allGenders")}</option>
           {GENDER_LIST.map((g) => (
             <option key={g} value={g}>
               {tCommon(`gender.${g}`)}
@@ -90,11 +88,11 @@ export const NationalFilters: React.FC<NationalFiltersProps> = ({
 
         <Select
           id="season-year-filter"
-          label={tCommon("filters.seasonYear")}
+          label={tCommon("filters.seasons")}
           value={seasonYear}
           onChange={(e) => setSeasonYear(e.target.value)}
         >
-          <option value="">{tCompetitions("allSeasons")}</option>
+          <option value="">{tCommon("filters.allSeasons")}</option>
           {seasonYears.map((y) => (
             <option key={y.value} value={y.value}>
               {y.label}

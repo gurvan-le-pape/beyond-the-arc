@@ -66,7 +66,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, onClick }) => {
           )}
           {level && (
             <Badge variant={config.badgeVariant} size="sm">
-              {tCommon(`competition.levels.${level}`)}
+              {tCommon(`competition.levels.${level}Short`)}
             </Badge>
           )}
         </div>

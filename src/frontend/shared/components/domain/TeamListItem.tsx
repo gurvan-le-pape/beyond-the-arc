@@ -64,7 +64,7 @@ function LevelBadge({ level, label }: LevelBadgeProps) {
 
 export function TeamListItem({ team, clubName }: TeamListItemProps) {
   const t = useTranslations("teams");
-  const tCompetitions = useTranslations("competitions");
+  const tCommon = useTranslations("common");
   const { locale } = useParams<{ locale: string }>();
 
   const leaderboard = team.leaderboard;
@@ -77,9 +77,9 @@ export function TeamListItem({ team, clubName }: TeamListItemProps) {
   if (championship) {
     const level = normalizeString(championship.level);
     if (level === CompetitionLevel.REGIONAL) {
-      levelLabel = tCompetitions("regional.label");
+      levelLabel = tCommon("competition.levels.regional");
     } else if (level === CompetitionLevel.DEPARTMENTAL) {
-      levelLabel = tCompetitions("departmental.label");
+      levelLabel = tCommon("competition.levels.departmental");
     }
   }
 

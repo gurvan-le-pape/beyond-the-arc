@@ -13,7 +13,6 @@
     "blocksPerGame": "Contres / match",
     "teamNotFound": "Équipe non trouvée",
     "seeCompetition": "Voir la compétition {name}",
-    "seeCompetitionDefault": "Voir la compétition",
     "teamStatsTitle": "Statistiques Équipe",
     "players": "Joueurs",
     "rosterTitle": "Effectif",
@@ -34,28 +33,9 @@
     "gamesLostShort": "D"
   },
   "teamsTable": {
-    "allNumbers": "Tous",
-    "allCategories": "Toutes",
-    "allGenders": "Tous",
     "genderHeading": {
       "masculine": "Masculin",
       "feminine": "Féminin"
-    },
-    "allDivisions": "Toutes",
-    "allPools": "Toutes",
-    "number": "Numéro",
-    "club": "Club",
-    "category": "Catégorie",
-    "gender": "Genre",
-    "division": "Division",
-    "pool": "Pool",
-    "teamsList": "Liste des équipes",
-    "noChampionships": "Aucun championship disponible"
-  },
-  "filters": {
-    "club": "Club",
-    "allClubs": "Tous les clubs",
-    "teamNumber": "Numéro d'équipe",
-    "allTeams": "Toutes les équipes"
+    }
   }
 }

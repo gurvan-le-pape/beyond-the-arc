@@ -103,7 +103,7 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
     },
     number && {
       key: "number",
-      label: `${tTeams("filters.teamNumber")} ${number}`,
+      label: `${tCommon("filters.teamNumbers")} ${number}`,
       onRemove: () => setNumber(""),
     },
     category && {
@@ -155,7 +155,7 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
   const cascadeSteps: CascadeStep[] = [
     {
       id: "division-filter",
-      label: tMatches("division"),
+      label: tCommon("filters.divisions"),
       value: division,
       onChange: (val) => {
         setDivision(val);
@@ -171,7 +171,7 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
     },
     {
       id: "pool-filter",
-      label: tMatches("pool"),
+      label: tCommon("filters.pools"),
       value: pool,
       onChange: setPool,
       enabled: !!division,
@@ -179,7 +179,7 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
         value: letter,
         label: tTeams("poolLabel", { letter }),
       })),
-      allLabel: tMatches("allPools"),
+      allLabel: tCommon("filters.allPools"),
       waitLabel: tFilters("filters.selectDivisionFirst"),
     },
   ];
@@ -199,17 +199,17 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
           clubId={clubId}
           setClubId={setClubId}
           setSelectedClubName={setSelectedClubName}
-          label={tTeams("filters.club")}
-          placeholder={tTeams("filters.allClubs")}
+          label={tCommon("filters.clubs")}
+          placeholder={tCommon("filters.allClubs")}
         />
 
         <Select
           id="number-filter"
-          label={tTeams("filters.teamNumber")}
+          label={tCommon("filters.teamNumbers")}
           value={number}
           onChange={(e) => setNumber(e.target.value)}
         >
-          <option value="">{tTeams("filters.allTeams")}</option>
+          <option value="">{tCommon("filters.allTeamNumbers")}</option>
           {teamNumbers.map((n) => (
             <option key={n} value={n}>
               {n}
@@ -222,13 +222,13 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Select
           id="category-filter"
-          label={tMatches("category")}
+          label={tCommon("filters.categories")}
           value={category ?? ""}
           onChange={(e) =>
             setCategory((e.target.value as Category) || undefined)
           }
         >
-          <option value="">{tMatches("allCategories")}</option>
+          <option value="">{tCommon("filters.allCategories")}</option>
           {CATEGORY_LIST.map((cat) => (
             <option key={cat} value={cat}>
               {tCommon(`category.${cat}`)}
@@ -238,11 +238,11 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
 
         <Select
           id="gender-filter"
-          label={tMatches("gender")}
+          label={tCommon("filters.genders")}
           value={gender ?? ""}
           onChange={(e) => setGender((e.target.value as Gender) || undefined)}
         >
-          <option value="">{tMatches("allGenders")}</option>
+          <option value="">{tCommon("filters.allGenders")}</option>
           {GENDER_LIST.map((g) => (
             <option key={g} value={g}>
               {tCommon(`gender.${g}`)}

@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/components/ChampionshipCard.tsx
+// src/frontend/features/competitions/championships/components/list/ChampionshipCard.tsx
 import { useTranslations } from "next-intl";
 
 import type { Championship } from "@/features/competitions/championships/types/Championship";
@@ -28,6 +28,7 @@ export function ChampionshipCard({
 }: {
   readonly championship: Championship;
 }) {
+  const tCommon = useTranslations("common");
   const tCompetitions = useTranslations("competitions");
   const levelColor =
     levelColorMap[championship.level] ??
@@ -45,7 +46,7 @@ export function ChampionshipCard({
         <span
           className={`text-xs font-medium px-2 py-0.5 rounded-full border ${levelColor}`}
         >
-          {tCompetitions(`${championship.level}.label`)}
+          {tCommon(`competition.levels.${championship.level}`)}
         </span>
         <span className="text-xs text-text-muted dark:text-text-muted-dark">
           {championship.seasonYear}

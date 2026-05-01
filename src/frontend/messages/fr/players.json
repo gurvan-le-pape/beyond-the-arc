@@ -12,30 +12,11 @@
     "shotchartDescription": "Cette charte hot spots montre la distribution des tirs de l'équipe cette saison.",
     "matchHistoryTitle": "Historique des Matchs",
     "compareTitle": "Comparer avec un autre joueur",
-    "compareSearch": "Rechercher un joueur à comparer...",
+    "compareSearch": "Rechercher un joueur à comparer ...",
     "compareNoResults": "Aucun joueur trouvé pour votre recherche."
-  },
-  "playersTable": {
-    "allTeams": "Toutes",
-    "allCategories": "Toutes",
-    "allGenders": "Tous",
-    "allNumbers": "Tous",
-    "number": "Numéro",
-    "name": "Nom",
-    "team": "Équipe",
-    "club": "Club",
-    "category": "Catégorie",
-    "gender": "Genre",
-    "playersList": "Liste des joueurs"
   },
   "filters": {
     "searchName": "Rechercher un joueur",
-    "searchNamePlaceholder": "Nom du joueur...",
-    "club": "Club",
-    "allClubs": "Tous les clubs",
-    "playerNumber": "Numéro de joueur",
-    "allNumbers": "Tous les numéros",
-    "teamNumber": "Numéro d'équipe",
-    "allTeams": "Toutes les équipes"
+    "searchNamePlaceholder": "Nom du joueur ..."
   }
 }

@@ -1,5 +1,5 @@
 {
-  "loading": "Chargement...",
+  "loading": "Chargement ...",
   "error": "Une erreur est survenue.",
   "retry": "Réessayer",
   "empty": "Aucun résultat trouvé.",
@@ -11,6 +11,7 @@
   "edit": "Modifier",
   "all": "Tous",
   "clear": "Effacer",
+  "searchPlaceholder": "Rechercher ...",
   "breadcrumbAriaLabel": "Fil d'Ariane",
   "noData": "Aucune donnée disponible",
   "clearSearch": "Effacer la recherche",
@@ -48,20 +49,15 @@
     "pointsInPaint": "Points dans la raquette"
   },
   "table": {
-    "sortAsc": "▲",
-    "sortDesc": "▼",
-    "sortBy": "Trier par {{colId}}",
-    "filter": "Filtrer...",
-    "filterClub": "Filtrer club...",
-    "filterName": "Filtrer nom...",
+    "filter": "Filtrer ...",
+    "filterName": "Filtrer nom ...",
     "rank": "#",
     "team": "Équipe",
     "gamesWon": "Gagnés",
     "gamesLost": "Perdus",
-    "pointDifference": "Différence de buts"
+    "pointDifference": "Différence de points"
   },
   "matchHistory": {
-    "title": "Historique des Matchs",
     "date": "Date",
     "match": "Match",
     "score": "Score",
@@ -76,10 +72,7 @@
     "blk": "BLK",
     "to": "TO",
     "fl": "FL",
-    "ft": "FT",
-    "ptsPerGame": "PTS/M",
-    "rebPerGame": "REB/M",
-    "astPerGame": "AST/M"
+    "ft": "FT"
   },
   "sectionTitles": {
     "regionalLeagues": "Ligues Régionales",
@@ -88,11 +81,13 @@
   },
   "competition": {
     "seeCompetition": "Voir la compétition {name}",
-    "seeCompetitionDefault": "Voir la compétition",
     "levels": {
       "national": "National",
+      "nationalShort": "Nat.",
       "regional": "Régional",
-      "departmental": "Départemental"
+      "regionalShort": "Rég.",
+      "departmental": "Départemental",
+      "departmentalShort": "Dép."
     }
   },
   "gender": {
@@ -108,16 +103,13 @@
     "Senior": "Senior"
   },
   "club": {
-    "seeClub": "Voir le club {name}",
-    "seeClubDefault": "Voir le club"
+    "seeClub": "Voir le club {name}"
   },
   "player": {
-    "seePlayer": "Voir le joueur {name}",
-    "seePlayerDefault": "Voir le joueur"
+    "seePlayer": "Voir le joueur {name}"
   },
   "team": {
-    "seeTeam": "Voir l'équipe {number}",
-    "seeTeamDefault": "Voir l'équipe"
+    "seeTeam": "Voir l'équipe {number}"
   },
   "shotChart": {
     "shots": "Tirs",
@@ -158,9 +150,28 @@
     "championships": "Aucun championnat trouvé"
   },
   "filters": {
-    "category": "Toutes les catégories",
-    "gender": "Tous les genres",
-    "seasonYear": "Toutes les saisons",
+    "categories": "Catégories",
+    "allCategories": "Toutes les catégories",
+    "levels": "Niveaux",
+    "allLevels": "Tous les niveaux",
+    "genders": "Genres",
+    "allGenders": "Tous les genres",
+    "committees": "Comités",
+    "allCommittees": "Tous les comités",
+    "leagues": "Ligues",
+    "allLeagues": "Toutes les ligues",
+    "seasons": "Saisons",
+    "allSeasons": "Toutes les saisons",
+    "divisions": "Divisions",
+    "allDivisions": "Toutes les divisions",
+    "pools": "Poules",
+    "allPools": "Toutes les poules",
+    "clubs": "Clubs",
+    "allClubs": "Tous les clubs",
+    "playerNumber": "Numéros de joueur",
+    "allPlayerNumber": "Tous les numéros de joueur",
+    "teamNumbers": "Numéros d'équipe",
+    "allTeamNumbers": "Tous les numéros d'équipe",
     "reset": "Réinitialiser les filtres"
   }
 }

@@ -13,7 +13,6 @@
     "blocksPerGame": "Blocks / game",
     "teamNotFound": "Team not found",
     "seeCompetition": "See competition {name}",
-    "seeCompetitionDefault": "See competition",
     "teamStatsTitle": "Team Statistics",
     "players": "Players",
     "rosterTitle": "Roster",
@@ -36,28 +35,9 @@
     "gamesLostShort": "L"
   },
   "teamsTable": {
-    "allNumbers": "All",
-    "allCategories": "All",
-    "allGenders": "All",
     "genderHeading": {
       "masculine": "Masculine",
       "feminine": "Feminine"
-    },
-    "allDivisions": "All",
-    "allPools": "All",
-    "number": "Number",
-    "club": "Club",
-    "category": "Category",
-    "gender": "Gender",
-    "division": "Division",
-    "pool": "Pool",
-    "teamsList": "Teams list",
-    "noChampionships": "No championships available"
-  },
-  "filters": {
-    "club": "Club",
-    "allClubs": "All clubs",
-    "teamNumber": "Team number",
-    "allTeams": "All teams"
+    }
   }
 }

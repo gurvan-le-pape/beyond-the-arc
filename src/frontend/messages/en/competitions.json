@@ -1,7 +1,4 @@
 {
-  "allSeasons": "All seasons",
-  "allLeagues": "All leagues",
-  "allCommittees": "All committees",
   "breadcrumb": "Championships",
   "championshipsCount": "championships",
   "notFound": "Competition not found.",
@@ -10,40 +7,9 @@
   "divisionWithValue": "Division {value}",
   "roundsLabel": "Rounds",
   "matchesLabel": "Matches",
-  "selectLevel": "Select a level",
   "noSearchResults": "No results for « {search} »",
   "noItemsAvailable": "No items available",
   "noResults": "No results",
-  "clearSearch": "Clear search",
-  "national": {
-    "label": "National",
-    "description": "National competitions, clubs from all over France."
-  },
-  "regional": {
-    "label": "Regional",
-    "description": "Competitions by regional league.",
-    "committeesInLeague": "Committees in this league"
-  },
-  "departmental": {
-    "label": "Departmental",
-    "description": "Local competitions by departmental committee.",
-    "searchPlaceholder": "Search for a committee…",
-    "noResults": "No results for « {search} »",
-    "clearSearch": "Clear search"
-  },
-  "carousel": {
-    "scrollLeft": "Scroll left",
-    "scrollRight": "Scroll right",
-    "searchPlaceholder": "Search…",
-    "titles": {
-      "regionalLeagues": "Leagues by Region",
-      "departmentalCommittees": "Committees by Department"
-    }
-  },
-  "sidePanel": {
-    "expand": "Expand panel",
-    "collapse": "Collapse panel"
-  },
   "roundSelector": {
     "dropdownLabel": "Round {round}",
     "pillLabel": "R{round}",

@@ -85,24 +85,24 @@ export function OrganizationInfo({
         <>
           <div className="flex items-center gap-3 mt-6 mb-4">
             <Text variant="overline" as="span">
-              {t("info.president")}
+              {t("info.president.label")}
             </Text>
             <div className="flex-1 h-px bg-divide-light dark:bg-divide-dark" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <InfoBox
-              label={t("info.presidentName")}
+              label={t("info.president.name")}
               value={president?.name ?? NA}
               icon={<UserIcon className="w-4 h-4" />}
             />
             <InfoBox
-              label={t("info.presidentEmail")}
+              label={t("info.president.email")}
               value={president?.email}
               href={president?.email ? `mailto:${president.email}` : undefined}
               icon={<EnvelopeIcon className="w-4 h-4" />}
             />
             <InfoBox
-              label={t("info.presidentPhone")}
+              label={t("info.president.phone")}
               value={formatPhone(president?.phone)}
               href={president?.phone ? `tel:${president.phone}` : undefined}
               icon={<PhoneIcon className="w-4 h-4" />}
