@@ -12,7 +12,6 @@ export * from "./detail/matches/MatchDetailsTable";
 export * from "./detail/matches/MatchesPanel";
 export * from "./detail/navigation/CategoryNavigation";
 export * from "./detail/navigation/DivisionNavigation";
-export * from "./detail/navigation/PoolDropdown";
 export * from "./detail/navigation/RoundSelector";
 export * from "./detail/navigation/SwitchGenderButton";
 export * from "./list/ChampionshipCard";
