@@ -1,4 +1,6 @@
 // src/frontend/features/players/components/list/PlayersFilters.tsx
+"use client";
+
 import { useTranslations } from "next-intl";
 import React, { useState } from "react";
 

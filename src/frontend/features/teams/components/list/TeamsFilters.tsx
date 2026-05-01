@@ -1,4 +1,6 @@
 // src/frontend/features/teams/components/list/TeamsFilters.tsx
+"use client";
+
 import { useTranslations } from "next-intl";
 import React, { useState } from "react";
 
