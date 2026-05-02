@@ -107,8 +107,8 @@ export function TabsTrigger({
         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2
         ${
           isSelected
-            ? "border-primary-500 text-white font-semibold dark:border-primary-400 dark:text-white"
-            : "border-transparent text-text-muted dark:text-text-muted-dark hover:text-white dark:hover:text-white hover:border-divide-light dark:hover:border-divide-dark font-normal"
+            ? "border-primary-500 text-primary-500 font-semibold dark:border-primary-400 dark:text-primary-400"
+            : "border-transparent text-text-muted dark:text-text-muted-dark hover:text-text-emphasis dark:hover:text-text-emphasis-dark hover:border-divide-light dark:hover:border-divide-dark font-normal"
         }
         ${className}
       `}
