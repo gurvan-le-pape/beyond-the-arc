@@ -214,10 +214,6 @@ export function MultiSelectDropdown({
 // ---------------------------------------------------------------------------
 
 function ColumnList({ column }: { readonly column: MultiSelectColumn }) {
-  const sortedItems = [...column.items].sort((a, b) =>
-    a.label.localeCompare(b.label),
-  );
-
   return (
     <div className="min-w-0">
       <Text variant="h4" className="text-sm mb-2">
@@ -225,7 +221,7 @@ function ColumnList({ column }: { readonly column: MultiSelectColumn }) {
       </Text>
 
       <div className="space-y-1 max-h-64 overflow-y-auto scrollbar-hide">
-        {sortedItems.map((item) => (
+        {column.items.map((item) => (
           <label
             key={item.id}
             className={cn(
