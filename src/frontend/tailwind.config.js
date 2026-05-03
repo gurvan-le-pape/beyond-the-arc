@@ -28,7 +28,11 @@ module.exports = {
       //   <name>-strong  = high-emphasis     (border, text on surface)
       // -----------------------------------------------------------------------
       colors: {
-        // Surface — elevation order: base → subtle → raised (never skip/reverse)
+        // Surface — use the structural class (surface-base / surface-subtle /
+        // surface-raised) in components instead of bg-surface-*.
+        // bg-surface-* utilities are kept for rare cases where you need a
+        // background without establishing a new surface context (e.g. a
+        // decorative swatch or a non-interactive background overlay).
         surface: {
           base: "var(--color-surface-base)",
           subtle: "var(--color-surface-subtle)",
@@ -236,6 +240,7 @@ module.exports = {
   plugins: [
     function ({ addUtilities }) {
       addUtilities({
+        // ── Scrollbar utilities ──────────────────────────────────────────────
         ".scrollbar-hide": {
           "-ms-overflow-style": "none",
           "scrollbar-width": "none",
@@ -244,6 +249,41 @@ module.exports = {
         ".scrollbar-thin": {
           "scrollbar-width": "thin",
           "&::-webkit-scrollbar": { width: "8px", height: "8px" },
+        },
+
+        // ── Surface context consumers ────────────────────────────────────────
+        //
+        // These utilities read from CSS variables set by the nearest
+        // .surface-base / .surface-subtle / .surface-raised ancestor.
+        // Components that use them are automatically correct regardless of
+        // where in the elevation hierarchy they are placed.
+        //
+        // .bg-surface-inset      — background one step above the current surface
+        //                          use for: inputs, infoboxes, skeleton fills,
+        //                          modals, hover states
+        //
+        // .bg-surface-own        — this element's own background value
+        //                          use for: scrollable containers that need to
+        //                          read their own bg (e.g. sticky headers)
+        //
+        // .ring-offset-surface   — focus ring offset matching the current surface
+        //                          always pair with focus:ring-2 focus:ring-*
+        //
+        // .hover\:bg-surface-inset — convenience hover variant
+        //                          use instead of hover:bg-surface-raised on
+        //                          interactive elements inside any surface
+        // --------------------------------------------------------------------
+        ".bg-surface-inset": {
+          "background-color": "var(--surface-inset)",
+        },
+        ".bg-surface-own": {
+          "background-color": "var(--surface-bg)",
+        },
+        ".ring-offset-surface": {
+          "--tw-ring-offset-color": "var(--surface-ring-offset)",
+        },
+        ".hover\\:bg-surface-inset:hover": {
+          "background-color": "var(--surface-inset)",
         },
       });
     },

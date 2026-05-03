@@ -151,9 +151,9 @@ html {
   --color-clubs-strong: #4c1d95;
 
   /* Domain entities
-     players  = emerald (human/personal feel)
-     teams    = violet  (collective/structural feel)
-     matches  = amber   (action/event feel)                            */
+     players = emerald (human/personal feel)
+     teams   = violet  (collective/structural feel)
+     matches = amber   (action/event feel)                            */
   --color-players-subtle: #d1fae5;
   --color-players: #059669;
   --color-players-strong: #064e3b;
@@ -370,4 +370,64 @@ html {
   --color-matches-subtle: #431407;
   --color-matches: #ffaa00;
   --color-matches-strong: #ffaa00;
+}
+
+/* =============================================================================
+   SURFACE CONTEXT SYSTEM
+   =============================================================================
+
+   Use surface-base / surface-subtle / surface-raised as the className on any
+   element that establishes a new elevation level. These classes replace
+   bg-surface-* in components — they set the background AND publish three CSS
+   variables that all descendants can consume without knowing where they live:
+
+     --surface-bg          the element's own background color
+                           used by: scrollable containers, sticky headers
+                           consumed by: .bg-surface-own
+
+     --surface-inset       the correct background for the next elevation step up
+                           used by: inputs, infoboxes, skeleton fills,
+                                    modals, hover fills on interactive elements
+                           consumed by: .bg-surface-inset, .hover:bg-surface-inset
+
+     --surface-ring-offset the ring-offset color matching this surface
+                           used by: focus rings on any interactive child
+                           consumed by: .ring-offset-surface
+
+   Because --color-surface-* variables already flip per theme (in :root, .dark,
+   .high-contrast above), these structural classes need no duplication — they
+   inherit the correct values automatically in every theme.
+
+   ELEVATION RULES
+   ─────────────────────────────────────────────────────────────────────────────
+   Page root   → .surface-base
+   Cards       → .surface-subtle
+   Inputs etc. → .bg-surface-inset  (context-aware, preferred)
+              or .surface-raised    (explicit, only when the element is itself
+                                    a surface boundary, e.g. a modal)
+
+   Never skip or reverse the order. Never place .surface-raised directly on
+   the page without an intervening .surface-subtle ancestor.
+   ============================================================================= */
+
+.surface-base {
+  background-color: var(--color-surface-base);
+  --surface-bg: var(--color-surface-base);
+  --surface-inset: var(--color-surface-subtle);
+  --surface-ring-offset: var(--color-surface-base);
+}
+
+.surface-subtle {
+  background-color: var(--color-surface-subtle);
+  --surface-bg: var(--color-surface-subtle);
+  --surface-inset: var(--color-surface-raised);
+  --surface-ring-offset: var(--color-surface-subtle);
+}
+
+.surface-raised {
+  background-color: var(--color-surface-raised);
+  --surface-bg: var(--color-surface-raised);
+  /* ceiling — nothing above raised, inset stays at the same level   */
+  --surface-inset: var(--color-surface-raised);
+  --surface-ring-offset: var(--color-surface-raised);
 }
