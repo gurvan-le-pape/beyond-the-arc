@@ -140,9 +140,9 @@ export default async function ArchitecturePage({
           return (
             <div
               key={stack.title}
-              className="bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 overflow-hidden"
+              className="bg-surface-subtle rounded-card border border-divide shadow-card hover:shadow-card-hover transition-all duration-200 overflow-hidden"
             >
-              {/* Card Header */}
+              {/* Card Header — decorative gradient, intentional */}
               <div className={`bg-gradient-to-r ${stack.color} p-6 text-white`}>
                 <div className="flex items-center gap-3">
                   <Icon className="w-8 h-8" />
@@ -159,9 +159,9 @@ export default async function ArchitecturePage({
                   return (
                     <div
                       key={item.name}
-                      className="flex items-start gap-3 p-3 rounded-button bg-surface-raised dark:bg-surface-raised-dark border border-transparent hover:border-divide-light dark:hover:border-divide-dark transition-colors duration-200"
+                      className="flex items-start gap-3 p-3 rounded-button bg-surface-raised border border-transparent hover:border-divide transition-colors duration-200"
                     >
-                      <ItemIcon className="w-5 h-5 text-text-secondary dark:text-text-secondary-dark flex-shrink-0 mt-0.5" />
+                      <ItemIcon className="w-5 h-5 text-text-secondary flex-shrink-0 mt-0.5" />
                       <div>
                         <Text variant="h3" className="text-base">
                           {item.name}
@@ -178,7 +178,7 @@ export default async function ArchitecturePage({
       </div>
 
       {/* Architecture Diagram */}
-      <div className="bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card dark:shadow-card-dark p-8">
+      <div className="bg-surface-subtle rounded-card border border-divide shadow-card p-8">
         <Text variant="h2" className="mb-6 text-center text-xl">
           {t("architecture.systemArchitecture")}
         </Text>
@@ -195,7 +195,7 @@ export default async function ArchitecturePage({
           </div>
 
           {/* Arrow */}
-          <div className="hidden md:block text-text-muted dark:text-text-muted-dark">
+          <div className="hidden md:block text-text-muted">
             <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
               <path
                 fillRule="evenodd"
@@ -205,7 +205,7 @@ export default async function ArchitecturePage({
             </svg>
           </div>
 
-          {/* Server */}
+          {/* Server — decorative gradient, intentional */}
           <div className="flex flex-col items-center">
             <div className="bg-gradient-to-br from-green-500 to-emerald-500 text-white rounded-button p-6 w-48 text-center shadow-card">
               <Server className="w-12 h-12 mx-auto mb-3" />
@@ -217,7 +217,7 @@ export default async function ArchitecturePage({
           </div>
 
           {/* Arrow */}
-          <div className="hidden md:block text-text-muted dark:text-text-muted-dark">
+          <div className="hidden md:block text-text-muted">
             <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
               <path
                 fillRule="evenodd"
@@ -227,7 +227,7 @@ export default async function ArchitecturePage({
             </svg>
           </div>
 
-          {/* Database */}
+          {/* Database — decorative gradient, intentional */}
           <div className="flex flex-col items-center">
             <div className="bg-gradient-to-br from-purple-500 to-pink-500 text-white rounded-button p-6 w-48 text-center shadow-card">
               <Database className="w-12 h-12 mx-auto mb-3" />
@@ -242,7 +242,7 @@ export default async function ArchitecturePage({
         {/* Key Features */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="text-center">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-button bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 mb-3">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-button bg-primary-subtle text-primary-600 mb-3">
               <Package className="w-6 h-6" />
             </div>
             <Text variant="h3" className="mb-2 text-base">
@@ -253,7 +253,7 @@ export default async function ArchitecturePage({
             </Text>
           </div>
           <div className="text-center">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-button bg-green-100 dark:bg-green-900/40 text-green-600 dark:text-green-400 mb-3">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-button bg-success-subtle text-success mb-3">
               <Code2 className="w-6 h-6" />
             </div>
             <Text variant="h3" className="mb-2 text-base">
@@ -264,7 +264,7 @@ export default async function ArchitecturePage({
             </Text>
           </div>
           <div className="text-center">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-button bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 mb-3">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-button bg-clubs-subtle text-clubs mb-3">
               <Layers className="w-6 h-6" />
             </div>
             <Text variant="h3" className="mb-2 text-base">

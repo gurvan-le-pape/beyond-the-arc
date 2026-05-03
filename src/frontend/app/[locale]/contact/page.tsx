@@ -41,23 +41,19 @@ export default async function ContactPage({
   const techStack = [
     {
       name: "Next.js",
-      color:
-        "bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300",
+      color: "bg-primary-subtle text-primary-600",
     },
     {
       name: "NestJS",
-      color:
-        "bg-success-light/20 dark:bg-success-dark/20 text-success-dark dark:text-success-light",
+      color: "bg-success-subtle text-success-strong",
     },
     {
       name: "TypeScript",
-      color:
-        "bg-info-light/20 dark:bg-info-dark/20 text-info-dark dark:text-info-light",
+      color: "bg-info-subtle text-info-strong",
     },
     {
       name: "PostgreSQL",
-      color:
-        "bg-secondary-100 dark:bg-secondary-900/40 text-secondary-700 dark:text-secondary-300",
+      color: "bg-secondary-100 text-secondary-700",
     },
   ];
 
@@ -84,8 +80,9 @@ export default async function ContactPage({
                   ? "noopener noreferrer"
                   : undefined
               }
-              className="bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 p-6 group focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+              className="bg-surface-subtle rounded-card border border-divide shadow-card hover:shadow-card-hover transition-all duration-200 p-6 group focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
+              {/* Contact icon — decorative gradient, intentional */}
               <div
                 className={`inline-flex items-center justify-center w-12 h-12 rounded-button bg-gradient-to-br ${method.color} text-white mb-4 shadow-sm group-hover:scale-110 transition-transform duration-200`}
               >
@@ -103,7 +100,7 @@ export default async function ContactPage({
       </div>
 
       {/* Additional Info */}
-      <div className="bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card dark:shadow-card-dark p-8">
+      <div className="bg-surface-subtle rounded-card border border-divide shadow-card p-8">
         <Text variant="h2" className="mb-4 text-xl">
           {t("contact.aboutProject")}
         </Text>
@@ -114,7 +111,7 @@ export default async function ContactPage({
           {techStack.map((tech) => (
             <span
               key={tech.name}
-              className={`px-3 py-1 rounded-button text-sm font-medium border ${tech.color} border-current/30`}
+              className={`px-3 py-1 rounded-button text-sm font-medium border border-divide ${tech.color}`}
             >
               {tech.name}
             </span>

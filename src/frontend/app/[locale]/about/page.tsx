@@ -83,7 +83,7 @@ export default async function AboutPage({
           return (
             <div
               key={principle.title}
-              className="bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 p-6"
+              className="bg-surface-subtle rounded-card border border-divide shadow-card hover:shadow-card-hover transition-all duration-200 p-6"
             >
               {/* Decorative gradient icon — intentional, stays as raw Tailwind */}
               <div
@@ -100,8 +100,8 @@ export default async function AboutPage({
         })}
       </div>
 
-      {/* Call to Action */}
-      <div className="bg-gradient-to-r from-blue-500 to-purple-500 rounded-card shadow-card dark:shadow-card-dark p-8 text-center text-white">
+      {/* Call to Action — decorative gradient, intentionally stays as raw Tailwind */}
+      <div className="bg-gradient-to-r from-blue-500 to-purple-500 rounded-card shadow-card p-8 text-center text-white">
         <h2 className="text-xl font-bold mb-4">{t("about.exploreTitle")}</h2>
         <p className="text-sm mb-6 max-w-2xl mx-auto">{t("about.explore")}</p>
         <div className="flex flex-wrap justify-center gap-4">

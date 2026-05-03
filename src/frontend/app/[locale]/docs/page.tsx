@@ -60,58 +60,56 @@ export default function DocsPage() {
 
       {/* Quick Links */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
-        <a
-          href="https://github.com/gurvan-le-pape/beyond-the-arc"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-3 p-4 bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
-        >
-          <Github className="w-6 h-6 text-text-body dark:text-text-body-dark" />
-          <div className="flex flex-col">
-            <Text variant="label">{t("docs.quickLinks.github")}</Text>
-            <Text variant="muted">{t("docs.quickLinks.viewSource")}</Text>
-          </div>
-          <ExternalLink className="w-4 h-4 ml-auto text-text-muted dark:text-text-muted-dark" />
-        </a>
-
-        <a
-          href="/docs/data-model.pdf"
-          download
-          className="flex items-center gap-3 p-4 bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
-        >
-          <Download className="w-6 h-6 text-text-body dark:text-text-body-dark" />
-          <div className="flex flex-col">
-            <Text variant="label">{t("docs.quickLinks.dataModel")}</Text>
-            <Text variant="muted">PDF</Text>
-          </div>
-        </a>
-
-        <a
-          href={`${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "")}/docs`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-3 p-4 bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
-        >
-          <BookOpen className="w-6 h-6 text-text-body dark:text-text-body-dark" />
-          <div className="flex flex-col">
-            <Text variant="label">{t("docs.quickLinks.apiDocs")}</Text>
-            <Text variant="muted">Swagger</Text>
-          </div>
-          <ExternalLink className="w-4 h-4 ml-auto text-text-muted dark:text-text-muted-dark" />
-        </a>
-
-        <a
-          href="mailto:gurvan.lepape@hotmail.fr"
-          className="flex items-center gap-3 p-4 bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
-        >
-          <div className="w-6 h-6 text-text-body dark:text-text-body-dark">
-            📧
-          </div>
-          <div className="flex flex-col">
-            <Text variant="label">{t("docs.quickLinks.contact")}</Text>
-            <Text variant="muted">{t("docs.quickLinks.getHelp")}</Text>
-          </div>
-        </a>
+        {[
+          {
+            href: "https://github.com/gurvan-le-pape/beyond-the-arc",
+            external: true,
+            icon: <Github className="w-6 h-6 text-text-body" />,
+            label: t("docs.quickLinks.github"),
+            sub: t("docs.quickLinks.viewSource"),
+            trail: <ExternalLink className="w-4 h-4 ml-auto text-text-muted" />,
+          },
+          {
+            href: "/docs/data-model.pdf",
+            download: true,
+            icon: <Download className="w-6 h-6 text-text-body" />,
+            label: t("docs.quickLinks.dataModel"),
+            sub: "PDF",
+          },
+          {
+            href: `${process.env.NEXT_PUBLIC_API_URL?.replace(
+              "/api",
+              "",
+            )}/docs`,
+            external: true,
+            icon: <BookOpen className="w-6 h-6 text-text-body" />,
+            label: t("docs.quickLinks.apiDocs"),
+            sub: "Swagger",
+            trail: <ExternalLink className="w-4 h-4 ml-auto text-text-muted" />,
+          },
+          {
+            href: "mailto:gurvan.lepape@hotmail.fr",
+            icon: <span className="w-6 h-6">📧</span>,
+            label: t("docs.quickLinks.contact"),
+            sub: t("docs.quickLinks.getHelp"),
+          },
+        ].map((link) => (
+          <a
+            key={link.label}
+            href={link.href}
+            target={link.external ? "_blank" : undefined}
+            rel={link.external ? "noopener noreferrer" : undefined}
+            {...(link.download ? { download: true } : {})}
+            className="flex items-center gap-3 p-4 bg-surface-subtle rounded-card border border-divide shadow-card hover:shadow-card-hover transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
+          >
+            {link.icon}
+            <div className="flex flex-col">
+              <Text variant="label">{link.label}</Text>
+              <Text variant="muted">{link.sub}</Text>
+            </div>
+            {link.trail}
+          </a>
+        ))}
       </div>
 
       {/* Documentation Sections */}
@@ -123,14 +121,14 @@ export default function DocsPage() {
           return (
             <div
               key={section.id}
-              className="bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card dark:shadow-card-dark overflow-hidden"
+              className="bg-surface-subtle rounded-card border border-divide shadow-card overflow-hidden"
             >
               <button
                 onClick={() => setActiveSection(isActive ? null : section.id)}
-                className="w-full flex items-center gap-4 p-6 text-left hover:bg-surface-subtle dark:hover:bg-surface-raised-dark transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 dark:focus:ring-primary-400"
+                className="w-full flex items-center gap-4 p-6 text-left hover:bg-surface-raised transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
               >
-                <div className="flex-shrink-0 w-10 h-10 rounded-button bg-primary-100 dark:bg-primary-900/40 flex items-center justify-center">
-                  <Icon className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+                <div className="flex-shrink-0 w-10 h-10 rounded-button bg-primary-subtle flex items-center justify-center">
+                  <Icon className="w-5 h-5 text-primary-600" />
                 </div>
                 <Text
                   variant="label"
@@ -140,21 +138,21 @@ export default function DocsPage() {
                   {section.title}
                 </Text>
                 {isActive ? (
-                  <ChevronDown className="w-5 h-5 text-text-muted dark:text-text-muted-dark transition-transform duration-200" />
+                  <ChevronDown className="w-5 h-5 text-text-muted transition-transform duration-200" />
                 ) : (
-                  <ChevronRight className="w-5 h-5 text-text-muted dark:text-text-muted-dark transition-transform duration-200" />
+                  <ChevronRight className="w-5 h-5 text-text-muted transition-transform duration-200" />
                 )}
               </button>
 
               {isActive && (
-                <div className="px-6 pb-6 border-t border-divide-light dark:border-divide-dark pt-6">
+                <div className="px-6 pb-6 border-t border-divide pt-6">
                   <div className="prose prose-gray dark:prose-invert max-w-none">
                     {section.id === "database" && (
                       <div className="space-y-6">
                         <Text variant="body">{section.content}</Text>
 
                         {/* Database Diagram */}
-                        <div className="bg-surface-subtle dark:bg-surface-raised-dark rounded-button p-6 border border-divide-light dark:border-divide-dark">
+                        <div className="bg-surface-raised rounded-button p-6 border border-divide">
                           <div className="flex justify-between items-center mb-4">
                             <Text variant="h3">
                               {t("docs.database.diagramTitle")}
@@ -163,7 +161,7 @@ export default function DocsPage() {
                               <a
                                 href="/docs/data-model.pdf"
                                 download
-                                className="px-3 py-1 bg-primary-600 text-white rounded-button text-sm hover:bg-primary-700 transition-colors duration-200 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+                                className="px-3 py-1 bg-primary-600 text-white rounded-button text-sm hover:bg-primary-700 transition-colors duration-200 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-primary-500"
                               >
                                 <Download className="w-4 h-4" />
                                 PDF
@@ -171,14 +169,14 @@ export default function DocsPage() {
                               <a
                                 href="/docs/data-model.svg"
                                 download
-                                className="px-3 py-1 bg-success-DEFAULT text-white rounded-button text-sm hover:bg-success-dark transition-colors duration-200 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-success-DEFAULT"
+                                className="px-3 py-1 bg-success text-white rounded-button text-sm hover:bg-success-strong transition-colors duration-200 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-success"
                               >
                                 <Download className="w-4 h-4" />
                                 SVG
                               </a>
                             </div>
                           </div>
-                          <div className="bg-surface-subtle dark:bg-surface-subtle-dark rounded-button overflow-hidden">
+                          <div className="bg-surface-subtle rounded-button overflow-hidden">
                             <TransformWrapper
                               initialScale={0.5}
                               minScale={0.2}
@@ -258,9 +256,9 @@ export default function DocsPage() {
                             ].map((table) => (
                               <div
                                 key={table.name}
-                                className="p-3 bg-surface-subtle dark:bg-surface-raised-dark rounded-button border border-divide-light dark:border-divide-dark"
+                                className="p-3 bg-surface-raised rounded-button border border-divide"
                               >
-                                <code className="text-sm font-mono text-primary-600 dark:text-primary-400 block">
+                                <code className="text-sm font-mono text-primary-600 block">
                                   {table.name}
                                 </code>
                                 <Text variant="muted" className="mt-1 block">
@@ -282,7 +280,8 @@ export default function DocsPage() {
                           <Text variant="h3" className="mb-3">
                             {t("docs.structure.backend")}
                           </Text>
-                          <pre className="bg-gray-900 dark:bg-gray-950 text-gray-100 p-6 rounded-button overflow-x-auto text-sm">
+                          {/* Code block — intentional dark bg for readability */}
+                          <pre className="bg-gray-900 text-gray-100 p-6 rounded-button overflow-x-auto text-sm">
                             {`backend/
 ├── modules/
 │   ├── competitions/    # Championships & tournaments
@@ -302,10 +301,11 @@ export default function DocsPage() {
                           <Text variant="h3" className="mb-3">
                             {t("docs.structure.frontend")}
                           </Text>
-                          <pre className="bg-gray-900 dark:bg-gray-950 text-gray-100 p-6 rounded-button overflow-x-auto text-sm">
+                          {/* Code block — intentional dark bg for readability */}
+                          <pre className="bg-gray-900 text-gray-100 p-6 rounded-button overflow-x-auto text-sm">
                             {t("docs.structure.frontendCode")}
                           </pre>
-                          <ul className="list-disc pl-6 text-sm text-text-secondary dark:text-text-secondary-dark mt-2 space-y-1">
+                          <ul className="list-disc pl-6 text-sm text-text-secondary mt-2 space-y-1">
                             <li>{t("docs.structure.routingExplanation")}</li>
                             <li>{t("docs.structure.featurePrinciple")}</li>
                             <li>{t("docs.structure.sharedExplanation")}</li>
@@ -333,8 +333,8 @@ export default function DocsPage() {
                               key={practice}
                               className="flex items-start gap-3"
                             >
-                              <div className="flex-shrink-0 w-6 h-6 rounded-button bg-success-light/20 dark:bg-success-dark/20 flex items-center justify-center mt-0.5">
-                                <span className="text-success-dark dark:text-success-light text-sm">
+                              <div className="flex-shrink-0 w-6 h-6 rounded-button bg-success-subtle flex items-center justify-center mt-0.5">
+                                <span className="text-success-strong text-sm">
                                   ✓
                                 </span>
                               </div>
@@ -350,7 +350,8 @@ export default function DocsPage() {
                     {section.id === "getting-started" && (
                       <div className="space-y-4">
                         <Text variant="body">{section.content}</Text>
-                        <div className="bg-gray-900 dark:bg-gray-950 text-gray-100 p-6 rounded-button">
+                        {/* Code block — intentional dark bg for readability */}
+                        <div className="bg-gray-900 text-gray-100 p-6 rounded-button">
                           <pre className="text-sm overflow-x-auto">
                             {`# Clone the repository
 git clone https://github.com/gurvan-le-pape/beyond-the-arc.git
