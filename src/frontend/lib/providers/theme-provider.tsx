@@ -5,15 +5,20 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 import type { ReactNode } from "react";
 
 /**
- * Theme provider for dark mode support
- * Wraps the entire app to enable theme switching
+ * Theme provider — registers all supported themes.
+ *
+ * Adding a new theme:
+ *  1. Define a CSS class block in globals.css (e.g. .sepia { ... })
+ *  2. Add the name to the themes array below
+ *  That's it — no component changes needed.
  */
-export function ThemeProvider({ children }: { children: ReactNode }) {
+export function ThemeProvider({ children }: { readonly children: ReactNode }) {
   return (
     <NextThemesProvider
       attribute="class"
       defaultTheme="light"
-      enableSystem={true} // Respects user's OS preference
+      themes={["light", "dark", "high-contrast"]}
+      enableSystem={true}
       disableTransitionOnChange={false}
     >
       {children}
