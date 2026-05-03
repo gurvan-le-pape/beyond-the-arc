@@ -119,10 +119,12 @@ export default async function FeaturesPage({
     },
   ];
 
+  // planned uses bg-surface-inset so it resolves correctly regardless of
+  // which surface the card sits on — no hardcoded elevation level needed
   const statusColors = {
     live: "bg-success-subtle text-success-strong border border-success/30",
     "coming-soon": "bg-info-subtle text-info-strong border border-info/30",
-    planned: "bg-surface-raised text-text-emphasis border border-divide",
+    planned: "bg-surface-inset text-text-emphasis border border-divide",
   };
 
   return (
@@ -133,14 +135,14 @@ export default async function FeaturesPage({
         icon={Sparkles}
       />
 
-      {/* Features Grid */}
+      {/* Features Grid — cards sit on surface-base, establish surface-subtle context */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
         {features.map((feature) => {
           const Icon = feature.icon;
           return (
             <div
               key={feature.title}
-              className="bg-surface-subtle rounded-card border border-divide shadow-card hover:shadow-card-hover transition-all duration-200 p-6"
+              className="surface-subtle rounded-card border border-divide shadow-card hover:shadow-card-hover transition-all duration-200 p-6"
             >
               <div className="flex items-start justify-between mb-4">
                 {/* Feature icon — decorative gradient, intentional */}
@@ -166,8 +168,8 @@ export default async function FeaturesPage({
         })}
       </div>
 
-      {/* Highlights Section */}
-      <div className="bg-surface-subtle rounded-card border border-divide shadow-card p-8">
+      {/* Highlights Section — sits on surface-base, establishes surface-subtle context */}
+      <div className="surface-subtle rounded-card border border-divide shadow-card p-8">
         <Text variant="h2" className="mb-6 text-center text-xl">
           {t("features.highlightsTitle")}
         </Text>

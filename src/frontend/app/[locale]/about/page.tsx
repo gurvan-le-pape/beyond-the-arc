@@ -83,7 +83,7 @@ export default async function AboutPage({
           return (
             <div
               key={principle.title}
-              className="bg-surface-subtle rounded-card border border-divide shadow-card hover:shadow-card-hover transition-all duration-200 p-6"
+              className="surface-subtle rounded-card border border-divide shadow-card hover:shadow-card-hover transition-all duration-200 p-6"
             >
               {/* Decorative gradient icon — intentional, stays as raw Tailwind */}
               <div
@@ -107,7 +107,7 @@ export default async function AboutPage({
         <div className="flex flex-wrap justify-center gap-4">
           <a
             href={`/${locale}/features`}
-            className="px-6 py-3 bg-white text-primary-600 rounded-button font-semibold hover:bg-surface-subtle transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600"
+            className="px-6 py-3 bg-white text-primary-600 rounded-button font-semibold hover:bg-gray-100 transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600"
           >
             {t("about.viewFeatures")}
           </a>

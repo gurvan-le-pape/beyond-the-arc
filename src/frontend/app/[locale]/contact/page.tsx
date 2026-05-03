@@ -80,7 +80,7 @@ export default async function ContactPage({
                   ? "noopener noreferrer"
                   : undefined
               }
-              className="bg-surface-subtle rounded-card border border-divide shadow-card hover:shadow-card-hover transition-all duration-200 p-6 group focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="surface-subtle rounded-card border border-divide shadow-card hover:shadow-card-hover transition-all duration-200 p-6 group focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ring-offset-surface"
             >
               {/* Contact icon — decorative gradient, intentional */}
               <div
@@ -100,7 +100,7 @@ export default async function ContactPage({
       </div>
 
       {/* Additional Info */}
-      <div className="bg-surface-subtle rounded-card border border-divide shadow-card p-8">
+      <div className="surface-subtle rounded-card border border-divide shadow-card p-8">
         <Text variant="h2" className="mb-4 text-xl">
           {t("contact.aboutProject")}
         </Text>

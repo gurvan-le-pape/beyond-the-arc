@@ -89,7 +89,7 @@ export default async function Home({
   ] as const;
 
   return (
-    <div className="flex flex-col min-h-screen bg-surface-base">
+    <div className="flex flex-col min-h-screen surface-base">
       <Header />
 
       <main className="flex-grow">
@@ -148,7 +148,7 @@ export default async function Home({
               <a
                 key={card.href}
                 href={card.href}
-                className="group flex flex-col gap-3 p-7 hover:bg-surface-subtle transition-colors duration-150"
+                className="group flex flex-col gap-3 p-7 hover:bg-surface-inset transition-colors duration-150"
               >
                 <div className="flex items-center justify-between">
                   <span
@@ -212,7 +212,7 @@ export default async function Home({
               <a
                 key={level.name}
                 href={level.href}
-                className="flex items-center gap-4 px-4 py-3 border border-divide rounded-card hover:bg-surface-subtle transition-colors duration-150"
+                className="flex items-center gap-4 px-4 py-3 border border-divide rounded-card hover:bg-surface-inset transition-colors duration-150"
               >
                 <div
                   className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${level.dot}`}

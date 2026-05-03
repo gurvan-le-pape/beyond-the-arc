@@ -15,6 +15,7 @@ interface OrgType {
   icon: React.ReactElement<React.SVGProps<SVGSVGElement>>;
   href: string;
 }
+
 const OrganizationTypeCard: React.FC<{ org: OrgType }> = ({ org }) => {
   const { label, description, icon, href, id } = org;
 
@@ -33,7 +34,7 @@ const OrganizationTypeCard: React.FC<{ org: OrgType }> = ({ org }) => {
   return (
     <Link
       href={href}
-      className={`cursor-pointer bg-gradient-to-br border-2 rounded-card flex flex-col items-center justify-center p-8 transition-all duration-200 hover:scale-105 shadow-card hover:shadow-card-hover group ${colorClasses} focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-surface-base`}
+      className={`cursor-pointer bg-gradient-to-br border-2 rounded-card flex flex-col items-center justify-center p-8 transition-all duration-200 hover:scale-105 shadow-card hover:shadow-card-hover group ${colorClasses} focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ring-offset-surface`}
       aria-label={label}
     >
       <span className="sr-only">{label}</span>
@@ -54,7 +55,6 @@ interface OrganizationsPageProps {
 }
 
 export const revalidate = 86400;
-// Prevent build-time rendering, but allow ISR at runtime
 export const dynamic = "force-dynamic";
 
 export default async function OrganizationsPage({

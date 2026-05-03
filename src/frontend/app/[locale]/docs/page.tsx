@@ -58,7 +58,7 @@ export default function DocsPage() {
         icon={BookOpen}
       />
 
-      {/* Quick Links */}
+      {/* Quick Links — sit on surface-base, establish surface-subtle context */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
         {[
           {
@@ -100,7 +100,7 @@ export default function DocsPage() {
             target={link.external ? "_blank" : undefined}
             rel={link.external ? "noopener noreferrer" : undefined}
             {...(link.download ? { download: true } : {})}
-            className="flex items-center gap-3 p-4 bg-surface-subtle rounded-card border border-divide shadow-card hover:shadow-card-hover transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="surface-subtle flex items-center gap-3 p-4 rounded-card border border-divide shadow-card hover:shadow-card-hover transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ring-offset-surface"
           >
             {link.icon}
             <div className="flex flex-col">
@@ -121,11 +121,12 @@ export default function DocsPage() {
           return (
             <div
               key={section.id}
-              className="bg-surface-subtle rounded-card border border-divide shadow-card overflow-hidden"
+              className="surface-subtle rounded-card border border-divide shadow-card overflow-hidden"
             >
+              {/* Accordion button — hover steps up to surface-raised via inset */}
               <button
                 onClick={() => setActiveSection(isActive ? null : section.id)}
-                className="w-full flex items-center gap-4 p-6 text-left hover:bg-surface-raised transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
+                className="w-full flex items-center gap-4 p-6 text-left hover:bg-surface-inset transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
               >
                 <div className="flex-shrink-0 w-10 h-10 rounded-button bg-primary-subtle flex items-center justify-center">
                   <Icon className="w-5 h-5 text-primary-600" />
@@ -151,8 +152,8 @@ export default function DocsPage() {
                       <div className="space-y-6">
                         <Text variant="body">{section.content}</Text>
 
-                        {/* Database Diagram */}
-                        <div className="bg-surface-raised rounded-button p-6 border border-divide">
+                        {/* Database Diagram — establishes surface-raised context */}
+                        <div className="surface-raised rounded-button p-6 border border-divide">
                           <div className="flex justify-between items-center mb-4">
                             <Text variant="h3">
                               {t("docs.database.diagramTitle")}
@@ -161,7 +162,7 @@ export default function DocsPage() {
                               <a
                                 href="/docs/data-model.pdf"
                                 download
-                                className="px-3 py-1 bg-primary-600 text-white rounded-button text-sm hover:bg-primary-700 transition-colors duration-200 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                                className="px-3 py-1 bg-primary-600 text-white rounded-button text-sm hover:bg-primary-700 transition-colors duration-200 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ring-offset-surface"
                               >
                                 <Download className="w-4 h-4" />
                                 PDF
@@ -169,14 +170,15 @@ export default function DocsPage() {
                               <a
                                 href="/docs/data-model.svg"
                                 download
-                                className="px-3 py-1 bg-success text-white rounded-button text-sm hover:bg-success-strong transition-colors duration-200 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-success"
+                                className="px-3 py-1 bg-success text-white rounded-button text-sm hover:bg-success-strong transition-colors duration-200 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-success focus:ring-offset-2 ring-offset-surface"
                               >
                                 <Download className="w-4 h-4" />
                                 SVG
                               </a>
                             </div>
                           </div>
-                          <div className="bg-surface-subtle rounded-button overflow-hidden">
+                          {/* Image wrapper — sits inside surface-raised, inset stays at raised (ceiling) */}
+                          <div className="bg-surface-inset rounded-button overflow-hidden">
                             <TransformWrapper
                               initialScale={0.5}
                               minScale={0.2}
@@ -222,7 +224,7 @@ export default function DocsPage() {
                           </div>
                         </div>
 
-                        {/* Key Tables */}
+                        {/* Key Tables — sit inside surface-subtle, inset resolves to surface-raised */}
                         <div>
                           <Text variant="h3" className="mb-3">
                             {t("docs.database.keyTables")}
@@ -256,7 +258,7 @@ export default function DocsPage() {
                             ].map((table) => (
                               <div
                                 key={table.name}
-                                className="p-3 bg-surface-raised rounded-button border border-divide"
+                                className="p-3 bg-surface-inset rounded-button border border-divide"
                               >
                                 <code className="text-sm font-mono text-primary-600 block">
                                   {table.name}
@@ -275,7 +277,6 @@ export default function DocsPage() {
                       <div className="space-y-6">
                         <Text variant="body">{section.content}</Text>
 
-                        {/* Backend Structure */}
                         <div>
                           <Text variant="h3" className="mb-3">
                             {t("docs.structure.backend")}
@@ -296,7 +297,6 @@ export default function DocsPage() {
                           </pre>
                         </div>
 
-                        {/* Frontend Structure */}
                         <div>
                           <Text variant="h3" className="mb-3">
                             {t("docs.structure.frontend")}

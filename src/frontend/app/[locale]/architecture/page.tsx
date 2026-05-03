@@ -133,14 +133,14 @@ export default async function ArchitecturePage({
         iconGradient="secondary"
       />
 
-      {/* Tech Stack Cards — sit on surface-base, so use surface-subtle */}
+      {/* Tech Stack Cards — sit on surface-base, establish surface-subtle context */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
         {techStacks.map((stack) => {
           const Icon = stack.icon;
           return (
             <div
               key={stack.title}
-              className="bg-surface-subtle rounded-card border border-divide shadow-card hover:shadow-card-hover transition-all duration-200 overflow-hidden"
+              className="surface-subtle rounded-card border border-divide shadow-card hover:shadow-card-hover transition-all duration-200 overflow-hidden"
             >
               {/* Card Header — decorative gradient, intentional */}
               <div className={`bg-gradient-to-r ${stack.color} p-6 text-white`}>
@@ -152,14 +152,14 @@ export default async function ArchitecturePage({
                 </div>
               </div>
 
-              {/* Card Body */}
+              {/* Card Body — items use bg-surface-inset, resolves to surface-raised */}
               <div className="p-6 space-y-4">
                 {stack.items.map((item) => {
                   const ItemIcon = item.icon;
                   return (
                     <div
                       key={item.name}
-                      className="flex items-start gap-3 p-3 rounded-button bg-surface-raised border border-transparent hover:border-divide transition-colors duration-200"
+                      className="flex items-start gap-3 p-3 rounded-button bg-surface-inset border border-transparent hover:border-divide transition-colors duration-200"
                     >
                       <ItemIcon className="w-5 h-5 text-text-secondary flex-shrink-0 mt-0.5" />
                       <div>
@@ -177,8 +177,8 @@ export default async function ArchitecturePage({
         })}
       </div>
 
-      {/* Architecture Diagram */}
-      <div className="bg-surface-subtle rounded-card border border-divide shadow-card p-8">
+      {/* Architecture Diagram — sits on surface-base, establishes surface-subtle context */}
+      <div className="surface-subtle rounded-card border border-divide shadow-card p-8">
         <Text variant="h2" className="mb-6 text-center text-xl">
           {t("architecture.systemArchitecture")}
         </Text>
@@ -239,7 +239,7 @@ export default async function ArchitecturePage({
           </div>
         </div>
 
-        {/* Key Features */}
+        {/* Key Features — icon badges use bg-surface-inset, resolves to surface-raised */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="text-center">
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-button bg-primary-subtle text-primary-600 mb-3">

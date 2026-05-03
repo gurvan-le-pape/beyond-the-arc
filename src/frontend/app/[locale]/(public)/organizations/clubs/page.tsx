@@ -25,7 +25,7 @@ function ClubCard({ club }: { readonly club: ClubBasic }) {
   return (
     <Link
       href={`/organizations/clubs/${club.id}`}
-      className="group flex flex-col gap-2 p-4 rounded-card border border-divide border-l-4 border-l-clubs bg-surface-subtle hover:shadow-card-hover hover:scale-[1.01] transition-all duration-200 shadow-card"
+      className="group flex flex-col gap-2 p-4 rounded-card border border-divide border-l-4 border-l-clubs surface-subtle hover:shadow-card-hover hover:scale-[1.01] transition-all duration-200 shadow-card"
     >
       <div className="font-semibold text-text-heading group-hover:text-primary-600 transition-colors duration-200 leading-snug">
         {club.name}
@@ -98,8 +98,10 @@ export default function OrganizationsClubsPage() {
     { label: tOrganizations("clubs.label"), current: true },
   ];
 
+  // Inputs sit inside PageLayout (surface-base), so bg-surface-inset resolves
+  // to surface-subtle — one step above the page, correct for form controls.
   const inputClass =
-    "text-sm rounded-input border border-divide bg-surface-raised text-text-body placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary-500";
+    "text-sm rounded-input border border-divide bg-surface-inset text-text-body placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary-500 ring-offset-surface";
 
   let gridContent: React.ReactNode;
   if (isLoading) {
@@ -108,7 +110,7 @@ export default function OrganizationsClubsPage() {
         {SKELETON_KEYS.map((key) => (
           <div
             key={key}
-            className="h-20 rounded-card bg-surface-raised animate-pulse"
+            className="h-20 rounded-card bg-surface-inset animate-pulse"
           />
         ))}
       </div>
