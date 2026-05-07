@@ -108,7 +108,7 @@ export const TeamStatsComparison: React.FC<TeamStatsComparisonProps> = ({
                   />
                   {/* Away segment */}
                   <div
-                    className="h-full bg-secondary-500 rounded-r-button transition-all ease-out"
+                    className="h-full bg-secondary rounded-r-button transition-all ease-out"
                     style={{
                       width: mounted ? `${awayPct}%` : "0%",
                       transitionDuration: "600ms",
@@ -122,8 +122,7 @@ export const TeamStatsComparison: React.FC<TeamStatsComparisonProps> = ({
                   <span
                     className={cn(
                       "text-sm font-semibold tabular-nums text-text-heading",
-                      leader === "away" &&
-                        "border-b-2 border-secondary-500 pb-0.5",
+                      leader === "away" && "border-b-2 border-secondary pb-0.5",
                     )}
                   >
                     {awayDisplay}

@@ -95,7 +95,7 @@ function PlayerCard({ player, side, placeholder }: PlayerCardProps) {
               color: "transparent",
               WebkitTextStroke: `2px ${
                 isRight
-                  ? "var(--color-secondary-400)"
+                  ? "var(--color-secondary-soft)"
                   : "var(--color-primary-soft)"
               }`,
               opacity: 0.35,
@@ -138,7 +138,7 @@ function VsBadge() {
         className="relative z-10 w-12 h-12 rounded-full flex items-center justify-center shadow-lg"
         style={{
           background:
-            "linear-gradient(135deg, var(--color-primary, #6366f1), var(--color-secondary-500, #14b8a6))",
+            "linear-gradient(135deg, var(--color-primary, #6366f1), var(--color-secondary, #14b8a6))",
         }}
       >
         <span className="text-white text-xs font-black tracking-widest">

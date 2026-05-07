@@ -66,9 +66,9 @@ const buttonVariants = cva(BASE, {
         "focus-visible:ring-primary",
 
       secondary:
-        "rounded-button bg-secondary-500 text-white " +
-        "hover:bg-secondary-600 " +
-        "focus-visible:ring-secondary-500",
+        "rounded-button bg-secondary text-white " +
+        "hover:bg-secondary-strong " +
+        "focus-visible:ring-secondary",
 
       outline:
         "rounded-button border-2 border-primary text-primary bg-surface-inset " +
@@ -99,8 +99,8 @@ const buttonVariants = cva(BASE, {
         "focus-visible:ring-success",
 
       download:
-        "rounded-button bg-gradient-to-r from-primary-bold to-secondary-600 text-white shadow " +
-        "hover:from-primary-deep hover:to-secondary-700 " +
+        "rounded-button bg-gradient-to-r from-primary-bold to-secondary-strong text-white shadow " +
+        "hover:from-primary-deep hover:to-secondary-bold " +
         "focus-visible:ring-primary",
 
       // ── Semantic / branded ────────────────────────────────────────────────

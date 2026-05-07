@@ -102,7 +102,7 @@ export function ComparisonTable({
         <span className="w-1.5" />
 
         {/* Label B – left-aligned */}
-        <span className="text-start text-xs font-semibold text-secondary-500 uppercase tracking-wider">
+        <span className="text-start text-xs font-semibold text-secondary uppercase tracking-wider">
           {labelB}
         </span>
       </div>
@@ -176,7 +176,7 @@ export function ComparisonTable({
                 {/* ── Bar B – grows leftward (toward centre) ── */}
                 <div className="h-2.5 bg-surface-inset rounded-r-full overflow-hidden flex justify-start">
                   <div
-                    className="h-full bg-secondary-500 rounded-r-full transition-all ease-out"
+                    className="h-full bg-secondary rounded-r-full transition-all ease-out"
                     style={{
                       width: mounted ? `${fillB}%` : "0%",
                       transitionDuration: "600ms",
@@ -190,7 +190,7 @@ export function ComparisonTable({
                   <span
                     className={cn(
                       "inline-block text-sm font-bold tabular-nums transition-colors duration-300",
-                      winner === "B" ? "text-secondary-500" : "text-text-body",
+                      winner === "B" ? "text-secondary" : "text-text-body",
                     )}
                   >
                     {rawB}
@@ -199,7 +199,7 @@ export function ComparisonTable({
                   <div
                     className={cn(
                       "h-1.5 rounded-full mt-1 transition-all duration-500",
-                      winner === "B" ? "bg-secondary-500" : "bg-transparent",
+                      winner === "B" ? "bg-secondary" : "bg-transparent",
                     )}
                     style={{
                       width: winner === "B" ? "100%" : "0%",

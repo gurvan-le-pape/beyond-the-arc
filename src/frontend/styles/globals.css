@@ -93,17 +93,29 @@ html {
   --color-primary-darker: #021b50;
   --color-primary-ink: #010f30;
 
-  /* Secondary — brand green                                          */
-  --color-secondary-50: #f0fdf4;
-  --color-secondary-100: #dcfce7;
-  --color-secondary-200: #bbf7d0;
-  --color-secondary-300: #86efac;
-  --color-secondary-400: #4ade80;
-  --color-secondary-500: #22c55e;
-  --color-secondary-600: #16a34a;
-  --color-secondary-700: #15803d;
-  --color-secondary-800: #166534;
-  --color-secondary-900: #14532d;
+  /* Secondary — brand green
+     ghost   = faintest tint  (hover backgrounds, subtle fills)
+     faint   = very low emphasis (disabled states, decorative)
+     muted   = low emphasis
+     subtle  = below-default emphasis
+     soft    = slightly below default
+     DEFAULT = canonical active color (icon, ring, active state)
+     strong  = high emphasis (borders, text on light surface)
+     bold    = stronger emphasis
+     deep    = near-darkest
+     darker  = very dark
+     ink     = darkest, near-black                                   */
+  --color-secondary-ghost: #f0fdf4;
+  --color-secondary-faint: #dcfce7;
+  --color-secondary-muted: #bbf7d0;
+  --color-secondary-subtle: #86efac;
+  --color-secondary-soft: #4ade80;
+  --color-secondary: #22c55e;
+  --color-secondary-strong: #16a34a;
+  --color-secondary-bold: #15803d;
+  --color-secondary-deep: #166534;
+  --color-secondary-darker: #14532d;
+  --color-secondary-ink: #0a2e18;
 
   /* Shadows                                                          */
   --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
@@ -212,17 +224,18 @@ html {
   --color-primary-darker: #e6eaf4;
   --color-primary-ink: #f0f3fa;
 
-  /* Secondary — scale inverted                                       */
-  --color-secondary-50: #14532d;
-  --color-secondary-100: #166534;
-  --color-secondary-200: #15803d;
-  --color-secondary-300: #16a34a;
-  --color-secondary-400: #22c55e;
-  --color-secondary-500: #4ade80;
-  --color-secondary-600: #86efac;
-  --color-secondary-700: #bbf7d0;
-  --color-secondary-800: #dcfce7;
-  --color-secondary-900: #f0fdf4;
+  /* Secondary — scale inverted, lighter shades become active on dark */
+  --color-secondary-ghost: #0a2e18;
+  --color-secondary-faint: #14532d;
+  --color-secondary-muted: #166534;
+  --color-secondary-subtle: #15803d;
+  --color-secondary-soft: #16a34a;
+  --color-secondary: #22c55e;
+  --color-secondary-strong: #4ade80;
+  --color-secondary-bold: #86efac;
+  --color-secondary-deep: #bbf7d0;
+  --color-secondary-darker: #dcfce7;
+  --color-secondary-ink: #f0fdf4;
 
   /* Shadows */
   --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.5), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
@@ -310,16 +323,17 @@ html {
   --color-primary-ink: #fffae6;
 
   /* Secondary — vivid cyan                                           */
-  --color-secondary-50: #001a1a;
-  --color-secondary-100: #003d3d;
-  --color-secondary-200: #006b6b;
-  --color-secondary-300: #009999;
-  --color-secondary-400: #00cccc;
-  --color-secondary-500: #00ffff;
-  --color-secondary-600: #33ffff;
-  --color-secondary-700: #66ffff;
-  --color-secondary-800: #99ffff;
-  --color-secondary-900: #ccffff;
+  --color-secondary-ghost: #001a1a;
+  --color-secondary-faint: #003d3d;
+  --color-secondary-muted: #006b6b;
+  --color-secondary-subtle: #009999;
+  --color-secondary-soft: #00cccc;
+  --color-secondary: #00ffff;
+  --color-secondary-strong: #33ffff;
+  --color-secondary-bold: #66ffff;
+  --color-secondary-deep: #99ffff;
+  --color-secondary-darker: #ccffff;
+  --color-secondary-ink: #e6ffff;
 
   /* Shadows — hard borders, no blur                                  */
   --shadow-card: 0 0 0 1px #ffffff;

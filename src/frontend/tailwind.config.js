@@ -78,17 +78,29 @@ module.exports = {
         },
 
         // Secondary — brand green (scale shifts per theme)
+        // ghost   = faintest tint  (hover backgrounds, subtle fills)
+        // faint   = very low emphasis (disabled states, decorative)
+        // muted   = low emphasis
+        // subtle  = below-default emphasis
+        // soft    = slightly below default
+        // DEFAULT = canonical active color (icon, ring, active state)
+        // strong  = high emphasis (borders, text on light surface)
+        // bold    = stronger emphasis
+        // deep    = near-darkest
+        // darker  = very dark
+        // ink     = darkest, near-black
         secondary: {
-          50: "var(--color-secondary-50)",
-          100: "var(--color-secondary-100)",
-          200: "var(--color-secondary-200)",
-          300: "var(--color-secondary-300)",
-          400: "var(--color-secondary-400)",
-          500: "var(--color-secondary-500)",
-          600: "var(--color-secondary-600)",
-          700: "var(--color-secondary-700)",
-          800: "var(--color-secondary-800)",
-          900: "var(--color-secondary-900)",
+          ghost: "var(--color-secondary-ghost)",
+          faint: "var(--color-secondary-faint)",
+          muted: "var(--color-secondary-muted)",
+          subtle: "var(--color-secondary-subtle)",
+          soft: "var(--color-secondary-soft)",
+          DEFAULT: "var(--color-secondary)",
+          strong: "var(--color-secondary-strong)",
+          bold: "var(--color-secondary-bold)",
+          deep: "var(--color-secondary-deep)",
+          darker: "var(--color-secondary-darker)",
+          ink: "var(--color-secondary-ink)",
         },
 
         // Status — subtle/strong flip per theme; DEFAULT stays vivid

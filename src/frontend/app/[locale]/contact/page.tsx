@@ -53,7 +53,7 @@ export default async function ContactPage({
     },
     {
       name: "PostgreSQL",
-      color: "bg-secondary-100 text-secondary-700",
+      color: "bg-secondary-faint text-secondary-bold",
     },
   ];
 
