@@ -38,14 +38,14 @@ export function TitleSection({
         return {
           icon: (
             <FaMapMarkedAlt
-              className="w-8 h-8 flex-shrink-0 text-black dark:text-white"
+              className="w-8 h-8 flex-shrink-0 text-regional-strong"
               aria-label={tCommon("sectionTitles.regionalLeagues")}
             />
           ),
           cardClassName:
-            "bg-gradient-to-br from-regional-light/20 to-regional-light/10 border-regional-DEFAULT dark:from-regional-dark/20 dark:to-regional-dark/10 dark:border-regional-light shadow-card dark:shadow-card-dark",
-          iconClassName: "", // color handled in icon
-          titleColor: "text-black dark:text-white",
+            "bg-gradient-to-br from-regional-subtle to-regional-subtle/40 border-regional shadow-card",
+          iconClassName: "",
+          titleColor: "text-text-heading",
           title: tCommon("sectionTitles.regionalLeagues"),
           description: tClubs("selectRegion"),
         };
@@ -53,14 +53,14 @@ export function TitleSection({
         return {
           icon: (
             <FaMapSigns
-              className="w-8 h-8 flex-shrink-0 text-black dark:text-white"
+              className="w-8 h-8 flex-shrink-0 text-departmental-strong"
               aria-label={tCommon("sectionTitles.departmentalCommittees")}
             />
           ),
           cardClassName:
-            "bg-gradient-to-br from-departmental-light/20 to-departmental-light/10 border-departmental-DEFAULT dark:from-departmental-dark/20 dark:to-departmental-dark/10 dark:border-departmental-light shadow-card dark:shadow-card-dark",
+            "bg-gradient-to-br from-departmental-subtle to-departmental-subtle/40 border-departmental shadow-card",
           iconClassName: "", // color handled in icon
-          titleColor: "text-black dark:text-white",
+          titleColor: "text-text-heading",
           title: tCommon("sectionTitles.departmentalCommittees"),
           subtitle: selectedLeague?.name,
           description: tClubs("selectDepartment"),
@@ -69,14 +69,14 @@ export function TitleSection({
         return {
           icon: (
             <FaUsers
-              className="w-8 h-8 flex-shrink-0 text-black dark:text-white"
+              className="w-8 h-8 flex-shrink-0 text-clubs-strong"
               aria-label={tCommon("sectionTitles.clubs")}
             />
           ),
           cardClassName:
-            "bg-gradient-to-br from-clubs-light/20 to-clubs-light/10 border-clubs-DEFAULT dark:from-clubs-dark/20 dark:to-clubs-dark/10 dark:border-clubs-light shadow-card dark:shadow-card-dark",
-          iconClassName: "", // color handled in icon
-          titleColor: "text-black dark:text-white",
+            "bg-gradient-to-br from-clubs-subtle to-clubs-subtle/40 border-clubs shadow-card",
+          iconClassName: "",
+          titleColor: "text-text-heading",
           title: tCommon("sectionTitles.clubs"),
           subtitle: selectedCommittee?.name,
           description: tClubs("selectClub"),

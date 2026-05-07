@@ -61,14 +61,14 @@ export const TimelineEventRow: React.FC<TimelineEventRowProps> = ({
             <div
               className={`px-3 py-1 rounded-full text-sm font-bold ${
                 isHomeTeam
-                  ? "bg-primary-100 text-primary-800"
-                  : "bg-error-light/20 text-error-dark"
+                  ? "bg-primary-300 text-primary-600"
+                  : "bg-error-subtle text-error-strong"
               }`}
             >
               {event.homeScore} - {event.awayScore}
             </div>
           ) : (
-            <div className="w-2 h-2 rounded-full bg-divide-light dark:bg-divide-dark"></div>
+            <div className="w-2 h-2 rounded-full bg-divide"></div>
           )}
         </div>
 

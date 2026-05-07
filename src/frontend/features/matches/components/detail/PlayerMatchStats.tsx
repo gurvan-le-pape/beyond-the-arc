@@ -57,7 +57,7 @@ function PlayerNameCell({
   return (
     <button
       type="button"
-      className="cursor-pointer hover:text-primary-600 dark:hover:text-primary-400 bg-transparent border-none p-0 m-0 font-inherit text-left transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 rounded"
+      className="cursor-pointer hover:text-primary bg-transparent border-none p-0 m-0 font-inherit text-left transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 ring-offset-surface rounded"
       onClick={() => onNavigate(playerId)}
     >
       {playerName}
@@ -74,7 +74,7 @@ interface ShotChartCellProps {
 function ShotChartCell({ player, onSelect, label }: ShotChartCellProps) {
   return (
     <button
-      className="p-1 bg-transparent border-none cursor-pointer hover:opacity-80 transition-opacity duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 rounded"
+      className="p-1 bg-transparent border-none cursor-pointer hover:opacity-80 transition-opacity duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 ring-offset-surface rounded"
       title={label}
       onClick={() => onSelect(player)}
       aria-label={label}
@@ -82,7 +82,7 @@ function ShotChartCell({ player, onSelect, label }: ShotChartCellProps) {
       <img
         src="/images/icons/chart-bar.svg"
         alt={label}
-        className="h-5 w-5 text-primary-600 dark:text-primary-400"
+        className="h-5 w-5 text-primary"
         draggable="false"
       />
     </button>
@@ -219,7 +219,7 @@ export const PlayerMatchStats: React.FC<PlayerMatchStatsProps> = ({
         <span>
           <button
             type="button"
-            className="text-text-heading dark:text-text-emphasis-dark cursor-pointer hover:text-primary-600 dark:hover:text-primary-400 bg-transparent border-none p-0 m-0 font-inherit transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 rounded"
+            className="text-text-heading cursor-pointer hover:text-primary bg-transparent border-none p-0 m-0 font-inherit transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 ring-offset-surface rounded"
             onClick={() => router.push(`/teams/${team.id}`)}
             aria-label={`${tMatches("playerMatchStats.viewTeam")} ${team.name}`}
           >
@@ -254,9 +254,7 @@ export const PlayerMatchStats: React.FC<PlayerMatchStatsProps> = ({
                 hoverable
                 clickable={false}
                 className={
-                  index % 2 === 0
-                    ? "bg-primary-50 dark:bg-primary-900/20"
-                    : "bg-surface-raised dark:bg-surface-raised-dark"
+                  index % 2 === 0 ? "bg-primary-50" : "bg-surface-inset"
                 }
               >
                 {columns.map((column) => (

@@ -23,10 +23,7 @@ export function CategoryNavigation({
   return (
     <div className="flex items-start gap-4 flex-wrap">
       <div className="min-w-[8rem] pt-2">
-        <Text
-          variant="label"
-          className="text-text-heading dark:text-text-heading-dark"
-        >
+        <Text variant="label" className="text-text-heading">
           {t("categoryLabel")}
         </Text>
       </div>

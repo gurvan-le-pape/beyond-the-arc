@@ -100,7 +100,7 @@ export function TimelineEventBlock({
           >
             <p
               className={cn(
-                "text-text-body dark:text-text-body-dark mt-0.5",
+                "text-text-body mt-0.5",
                 isRight ? "text-right" : "text-left",
               )}
               dangerouslySetInnerHTML={{ __html: descriptionHtml }}

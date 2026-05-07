@@ -43,7 +43,7 @@ function ClearButton({
     <button
       type="button"
       onClick={onClick}
-      className="cursor-pointer hover:text-text-body dark:hover:text-text-body-dark transition-colors"
+      className="cursor-pointer hover:text-text-body transition-colors"
       aria-label={ariaLabel}
     >
       <svg
@@ -142,7 +142,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         <div className="relative">
           {/* Left icon — always decorative, never interactive */}
           {resolvedLeftIcon && (
-            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-text-muted dark:text-text-muted-dark">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-text-muted">
               {resolvedLeftIcon}
             </div>
           )}
@@ -154,10 +154,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             value={value}
             className={cn(
               "h-9 w-full rounded-input px-4 border text-sm",
-              "border border-divide-light dark:border-divide-dark",
-              "bg-surface-raised dark:bg-surface-raised-dark",
-              "text-text-heading dark:text-text-heading-dark",
-              "placeholder:text-text-muted dark:placeholder:text-text-muted-dark",
+              "border border-divide",
+              "bg-surface-inset",
+              "text-text-heading",
+              "placeholder:text-text-muted",
               "focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500",
               "disabled:cursor-not-allowed disabled:opacity-50",
               "transition-colors duration-200",
@@ -173,7 +173,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
           {/* Right icon — may be interactive. No pointer-events-none here. */}
           {resolvedRightIcon && (
-            <div className="absolute inset-y-0 right-0 flex items-center pr-3 text-text-muted dark:text-text-muted-dark">
+            <div className="absolute inset-y-0 right-0 flex items-center pr-3 text-text-muted">
               {resolvedRightIcon}
             </div>
           )}

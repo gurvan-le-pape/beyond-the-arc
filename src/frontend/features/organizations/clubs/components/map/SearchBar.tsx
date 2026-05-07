@@ -43,7 +43,7 @@ export function SearchBar({
         {/* Search Icon */}
         <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
           <svg
-            className="w-5 h-5 text-text-muted dark:text-text-muted-dark"
+            className="w-5 h-5 text-text-muted"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -64,7 +64,7 @@ export function SearchBar({
           value={query}
           onChange={(e) => onQueryChange(e.target.value)}
           placeholder={placeholder}
-          className="w-full pl-10 pr-20 py-2.5 bg-surface-raised dark:bg-surface-raised-dark border border-divide-light dark:border-divide-dark rounded-lg text-text-heading dark:text-text-heading-dark placeholder:text-text-muted dark:placeholder:text-text-muted-dark focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent transition-all"
+          className="w-full pl-10 pr-20 py-2.5 bg-surface-inset border border-divide rounded-lg text-text-heading placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary-500 ring-offset-surface focus:border-transparent transition-all"
         />
 
         {/* Result Count & Clear Button */}
@@ -73,7 +73,7 @@ export function SearchBar({
             <Text
               variant="muted"
               as="span"
-              className="bg-surface-subtle dark:bg-surface-subtle-dark px-2 py-1 rounded"
+              className="bg-surface-inset px-2 py-1 rounded"
             >
               {resultCount}
             </Text>
@@ -82,11 +82,11 @@ export function SearchBar({
           {query && (
             <button
               onClick={onClear}
-              className="p-1.5 hover:bg-surface-subtle dark:hover:bg-surface-subtle-dark rounded-full transition-colors"
+              className="p-1.5 hover:bg-surface-inset rounded-full transition-colors"
               aria-label={t("map.clearSearch")}
             >
               <svg
-                className="w-4 h-4 text-text-secondary dark:text-text-secondary-dark"
+                className="w-4 h-4 text-text-secondary"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -106,7 +106,7 @@ export function SearchBar({
       {/* Keyboard hint */}
       {!query && (
         <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-          <kbd className="hidden sm:inline-block px-2 py-1 text-xs text-text-muted dark:text-text-muted-dark bg-surface-subtle dark:bg-surface-subtle-dark border border-divide-light dark:border-divide-dark rounded">
+          <kbd className="hidden sm:inline-block px-2 py-1 text-xs text-text-muted bg-surface-inset border border-divide rounded">
             /
           </kbd>
         </div>

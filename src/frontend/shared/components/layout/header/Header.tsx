@@ -28,7 +28,7 @@ export const Header: React.FC = () => {
   }, [pathname, setMenuOpen]);
 
   return (
-    <header className="backdrop-blur-md bg-header-light dark:bg-header-dark border-b border-divide-light dark:border-divide-dark shadow-card dark:shadow-card-dark sticky top-0 z-30 transition-colors">
+    <header className="backdrop-blur-md bg-header border-b border-divide shadow-card sticky top-0 z-30 transition-colors">
       <nav
         className="flex justify-between items-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16"
         role="navigation"
@@ -56,7 +56,7 @@ export const Header: React.FC = () => {
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
             onClick={() => setMenuOpen((v) => !v)}
-            className="flex items-center justify-center w-10 h-10 rounded-button focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-surface-raised dark:focus:ring-offset-surface-raised-dark hover:bg-surface-subtle dark:hover:bg-surface-subtle-dark transition-all duration-200"
+            className="flex items-center justify-center w-10 h-10 rounded-button focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ring-offset-surface hover:bg-surface-inset transition-all duration-200"
           >
             <HamburgerButton open={menuOpen} />
           </button>
@@ -66,7 +66,7 @@ export const Header: React.FC = () => {
         <div
           id="mobile-menu"
           ref={mobileMenuRef}
-          className={`md:hidden absolute top-full left-0 right-0 bg-header-light dark:bg-header-dark backdrop-blur-lg border-b border-divide-light dark:border-divide-dark shadow-card-hover dark:shadow-card-dark transition-all duration-300 ${
+          className={`md:hidden absolute top-full left-0 right-0 bg-header backdrop-blur-lg border-b border-divide shadow-card-hover transition-all duration-300 ${
             menuOpen
               ? "opacity-100 translate-y-0 pointer-events-auto"
               : "opacity-0 -translate-y-2 pointer-events-none"

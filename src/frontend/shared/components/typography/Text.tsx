@@ -7,37 +7,34 @@ import { cn } from "@/shared/utils/cn";
 const textVariants = cva("", {
   variants: {
     variant: {
-      // Headings — use these in DOM order (h1 → h2 → h3 → h4), never skip levels
-      h1: "text-2xl md:text-3xl font-bold tracking-tight text-text-heading dark:text-text-heading-dark",
-      h2: "text-xl md:text-2xl font-semibold text-text-heading dark:text-text-heading-dark",
-      h3: "text-lg md:text-xl font-semibold text-text-heading dark:text-text-heading-dark",
-      h4: "text-base md:text-lg font-medium text-text-heading dark:text-text-heading-dark",
+      h1: "text-2xl md:text-3xl font-bold tracking-tight text-text-heading",
+      h2: "text-xl md:text-2xl font-semibold text-text-heading",
+      h3: "text-lg md:text-xl font-semibold text-text-heading",
+      h4: "text-base md:text-lg font-medium text-text-heading",
 
       // Page title — use for route-level list pages (appears after a Breadcrumb,
       // before a grid or table). One step smaller than h1 — intentional.
       // For hero headings with a lead subtitle, use h1 instead.
-      pageTitle:
-        "text-xl md:text-2xl font-bold text-text-heading dark:text-text-heading-dark",
+      pageTitle: "text-xl md:text-2xl font-bold text-text-heading",
 
       // Body
-      body: "text-base font-normal text-text-body dark:text-text-body-dark",
+      body: "text-base font-normal text-text-body",
 
       // Lead text — used for page subtitles and entity descriptors.
       // Always appears subordinate to an h1, never standalone.
-      lead: "text-lg font-normal text-text-body dark:text-text-body-dark",
+      lead: "text-lg font-normal text-text-body",
 
       // Supporting text
-      caption: "text-sm text-text-secondary dark:text-text-secondary-dark",
-      muted: "text-sm text-text-muted dark:text-text-muted-dark",
+      caption: "text-sm text-text-secondary",
+      muted: "text-sm text-text-muted",
 
       // UI labels — defaults to <span> intentionally.
       // If you need a real <label>, pass as="label" htmlFor="input-id".
       // Never render a bare <label> without htmlFor — it's an a11y violation.
-      label:
-        "text-sm font-medium text-text-emphasis dark:text-text-emphasis-dark",
+      label: "text-sm font-medium text-text-emphasis",
 
       overline:
-        "text-xs font-semibold uppercase tracking-widest text-text-secondary dark:text-text-secondary-dark",
+        "text-xs font-semibold uppercase tracking-widest text-text-secondary",
     },
   },
   defaultVariants: { variant: "body" },

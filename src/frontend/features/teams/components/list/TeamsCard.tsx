@@ -34,9 +34,9 @@ export const TeamCard: React.FC<TeamCardProps> = ({ team, onClick }) => {
       type="button"
       onClick={() => onClick(team.id)}
       className={cn(
-        "w-full text-left border-l-8 rounded-card shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 cursor-pointer overflow-hidden",
-        "focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-surface-raised dark:focus:ring-offset-surface-raised-dark",
-        "bg-surface-raised dark:bg-surface-raised-dark",
+        "w-full text-left border-l-8 rounded-card shadow-card hover:shadow-card-hover transition-all duration-200 cursor-pointer overflow-hidden",
+        "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ring-offset-surface",
+        "surface-raised",
         config.border,
       )}
       aria-label={tCommon("team.seeTeam", { number: team.number })}
@@ -81,7 +81,7 @@ export const TeamCard: React.FC<TeamCardProps> = ({ team, onClick }) => {
       {/* Body */}
       <div className="px-8 py-6 flex items-center gap-6">
         {/* Club logo */}
-        <div className="flex-shrink-0 w-14 h-14 bg-surface-subtle dark:bg-surface-subtle-dark rounded-button flex items-center justify-center overflow-hidden">
+        <div className="flex-shrink-0 w-14 h-14 bg-surface-inset rounded-button flex items-center justify-center overflow-hidden">
           <img
             src={
               clubName
@@ -99,7 +99,7 @@ export const TeamCard: React.FC<TeamCardProps> = ({ team, onClick }) => {
 
         {/* Team info */}
         <div className="flex-1 min-w-0">
-          <p className="text-lg font-semibold text-text-heading dark:text-text-heading-dark truncate">
+          <p className="text-lg font-semibold text-text-heading truncate">
             {clubName ?? NA}
           </p>
           {!!team.number && (
@@ -131,7 +131,7 @@ export const TeamCard: React.FC<TeamCardProps> = ({ team, onClick }) => {
               config.bg,
             )}
           >
-            <span className="text-lg font-bold text-text-emphasis dark:text-text-emphasis-dark">
+            <span className="text-lg font-bold text-text-emphasis">
               {team.number}
             </span>
           </div>

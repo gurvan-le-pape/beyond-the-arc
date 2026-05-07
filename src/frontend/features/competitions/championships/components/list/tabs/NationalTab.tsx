@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/components/NationalTab.tsx
+// src/frontend/features/competitions/championships/components/list/tabs/NationalTab.tsx
 "use client";
 
 import { useTranslations } from "next-intl";
@@ -62,7 +62,7 @@ export function NationalTab() {
       />
 
       {!isLoading && (
-        <div className="text-sm text-text-secondary dark:text-text-secondary-dark">
+        <div className="text-sm text-text-secondary">
           {filtered.length} {tCompetitions("championshipsCount")}
         </div>
       )}

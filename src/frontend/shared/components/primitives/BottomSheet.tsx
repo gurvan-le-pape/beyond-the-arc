@@ -79,7 +79,7 @@ export function BottomSheet({
       }}
       className={cn(
         "fixed bottom-0 inset-x-0 z-50 md:hidden",
-        "bg-surface-raised dark:bg-surface-raised-dark",
+        "surface-raised",
         "rounded-t-2xl shadow-2xl",
         "max-h-[90vh] w-full max-w-full flex flex-col",
         "p-0 m-0",
@@ -99,18 +99,18 @@ export function BottomSheet({
         onMouseDown={(e) => handleDragStart(e.clientY)}
         onKeyDown={(e) => e.key === "Enter" && onClose()}
       >
-        <div className="w-10 h-1 rounded-full bg-divide-light dark:bg-divide-dark" />
+        <div className="w-10 h-1 rounded-full bg-divide" />
       </button>
 
       {/* Header */}
-      <div className="flex items-center justify-between px-5 py-3 border-b border-divide-light dark:border-divide-dark">
-        <span className="text-base font-semibold text-text-heading dark:text-text-heading-dark">
+      <div className="flex items-center justify-between px-5 py-3 border-b border-divide">
+        <span className="text-base font-semibold text-text-heading">
           {title}
         </span>
         <button
           type="button"
           onClick={onClose}
-          className="p-1.5 rounded-button text-text-muted dark:text-text-muted-dark hover:bg-surface-subtle dark:hover:bg-surface-subtle-dark transition-colors"
+          className="p-1.5 rounded-button text-text-muted hover:bg-surface-inset transition-colors"
           aria-label="Close filters"
         >
           <XMarkIcon className="w-5 h-5" />
@@ -122,9 +122,7 @@ export function BottomSheet({
 
       {/* Footer */}
       {footer && (
-        <div className="px-5 py-4 border-t border-divide-light dark:border-divide-dark">
-          {footer}
-        </div>
+        <div className="px-5 py-4 border-t border-divide">{footer}</div>
       )}
     </dialog>
   );

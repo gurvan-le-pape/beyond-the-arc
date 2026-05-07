@@ -74,8 +74,8 @@ export function PlayerSearchDropdown({
         <div
           className={cn(
             "absolute top-full left-0 right-0 mt-1 z-20 max-h-64 overflow-y-auto",
-            "bg-white dark:bg-surface-subtle-dark border border-divide-light dark:border-divide-dark",
-            "rounded-lg shadow-lg dark:shadow-2xl",
+            "surface-subtle border border-divide",
+            "rounded-lg shadow-card-hover",
           )}
         >
           {isLoading ? (
@@ -94,7 +94,7 @@ export function PlayerSearchDropdown({
                 onClick={() => handleSelect(player)}
                 className={cn(
                   "w-full flex items-center gap-3 px-4 py-2.5 text-left",
-                  "hover:bg-surface-subtle dark:hover:bg-surface-raised-dark transition-colors",
+                  "hover:bg-surface-inset transition-colors",
                 )}
               >
                 {/* Tiny club logo */}
@@ -112,11 +112,7 @@ export function PlayerSearchDropdown({
 
                 {/* Name + meta */}
                 <div className="min-w-0">
-                  <Text
-                    variant="label"
-                    as="span"
-                    className="text-text-heading dark:text-text-heading-dark"
-                  >
+                  <Text variant="label" as="span" className="text-text-heading">
                     #{player.number} {player.name}
                   </Text>
                   <Text variant="muted" as="span" className="ml-2">

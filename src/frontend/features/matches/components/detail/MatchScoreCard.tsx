@@ -38,12 +38,12 @@ function TeamSection({ team, isWinning, align }: TeamSectionProps) {
         type="button"
         className={cn(
           "group relative w-20 h-20 rounded-button overflow-hidden",
-          "bg-surface-raised dark:bg-surface-raised-dark flex items-center justify-center",
+          "bg-surface-inset flex items-center justify-center",
           "border-4 transition-all duration-200",
-          "focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:ring-offset-2 dark:focus:ring-offset-surface-base-dark",
+          "focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ring-offset-surface",
           isWinning
-            ? "border-primary-500 dark:border-primary-400 shadow-card-hover"
-            : "border-divide-light dark:border-divide-dark hover:border-primary-400 dark:hover:border-primary-500 shadow-card dark:shadow-card-dark",
+            ? "border-primary-500 shadow-card-hover"
+            : "border-divide hover:border-primary-500 shadow-card",
         )}
         onClick={() => router.push(`/organizations/clubs/${team.clubId}`)}
         aria-label={tCommon("club.seeClub", { name: team.clubName ?? "" })}
@@ -71,9 +71,7 @@ function TeamSection({ team, isWinning, align }: TeamSectionProps) {
         aria-label={tCommon("team.seeTeam", { number: team.name })}
         className={cn(
           "text-sm font-semibold",
-          isWinning
-            ? "text-text-heading dark:text-text-heading-dark"
-            : "text-text-body dark:text-text-secondary-dark",
+          isWinning ? "text-text-heading" : "text-text-body",
         )}
       >
         {team.name}
@@ -105,22 +103,18 @@ export const MatchScoreCard: React.FC<MatchScoreCardProps> = ({
           <span
             className={cn(
               "text-2xl md:text-4xl font-bold tabular-nums transition-colors duration-200",
-              isHomeWinning
-                ? "text-text-heading dark:text-text-heading-dark"
-                : "text-text-secondary dark:text-text-secondary-dark",
+              isHomeWinning ? "text-text-heading" : "text-text-secondary",
             )}
           >
             {homeTeam.score}
           </span>
-          <span className="text-xl md:text-2xl font-bold text-text-muted dark:text-text-muted-dark">
+          <span className="text-xl md:text-2xl font-bold text-text-muted">
             -
           </span>
           <span
             className={cn(
               "text-2xl md:text-4xl font-bold tabular-nums transition-colors duration-200",
-              isAwayWinning
-                ? "text-text-heading dark:text-text-heading-dark"
-                : "text-text-secondary dark:text-text-secondary-dark",
+              isAwayWinning ? "text-text-heading" : "text-text-secondary",
             )}
           >
             {awayTeam.score}

@@ -249,7 +249,7 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
       </div>
 
       {/* Divider */}
-      <div className="border-t border-divide-light dark:border-divide-dark" />
+      <div className="border-t border-divide" />
 
       {/* Row 4: Level → Committee/League cascade */}
       <LevelLocationFilters

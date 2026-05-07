@@ -84,7 +84,7 @@ export function CategorySection<T extends { id: number | string }>({
       >
         <ChevronRight
           className={cn(
-            "text-text-muted dark:text-text-muted-dark transition-transform duration-200",
+            "text-text-muted transition-transform duration-200",
             isExpanded && "rotate-90",
           )}
         />
@@ -94,7 +94,7 @@ export function CategorySection<T extends { id: number | string }>({
         <Text
           variant="caption"
           as="span"
-          className="font-medium bg-surface-raised dark:bg-surface-raised-dark rounded-full px-2 py-0.5"
+          className="font-medium bg-surface-inset rounded-full px-2 py-0.5"
         >
           {items.length}
         </Text>
@@ -104,14 +104,14 @@ export function CategorySection<T extends { id: number | string }>({
       {isExpanded && (
         <div
           id={contentId}
-          className="mt-2 ml-7 rounded-card border border-divide-light dark:border-divide-dark bg-surface-raised dark:bg-surface-raised-dark shadow-card overflow-hidden"
+          className="mt-2 ml-7 rounded-card border border-divide surface-raised shadow-card overflow-hidden"
         >
           {items.length > 0 ? (
             <ul>
               {items.map((item, i) => (
                 <li
                   key={item.id}
-                  className="border-b border-divide-light dark:border-divide-dark last:border-b-0"
+                  className="border-b border-divide last:border-b-0"
                 >
                   {renderItem(item, i)}
                 </li>

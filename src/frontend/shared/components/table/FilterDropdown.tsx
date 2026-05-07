@@ -54,7 +54,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
     </Button>
 
     {isOpen && (
-      <ul className="absolute left-0 z-10 mt-2 w-full overflow-y-auto max-h-60 rounded-xl border border-divide-light dark:border-divide-dark bg-surface-raised dark:bg-surface-raised-dark shadow-card-hover py-2 text-sm text-center">
+      <ul className="absolute left-0 z-10 mt-2 w-full overflow-y-auto max-h-60 rounded-xl border border-divide surface-raised shadow-card-hover py-2 text-sm text-center">
         {options.map((opt) => (
           <li key={opt.value}>
             <Button
@@ -64,8 +64,8 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
               className={cn(
                 "w-full justify-center p-2 rounded",
                 selectedValue === opt.value
-                  ? "font-bold text-primary-700 dark:text-primary-400"
-                  : "hover:bg-surface-subtle dark:hover:bg-surface-subtle-dark",
+                  ? "font-bold text-primary-600"
+                  : "hover:bg-surface-inset",
               )}
               onClick={() => {
                 onSelect(opt.value);

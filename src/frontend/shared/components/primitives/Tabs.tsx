@@ -70,10 +70,7 @@ interface TabsListProps {
 export function TabsList({ children, className = "" }: TabsListProps) {
   return (
     <div className={`flex justify-center mb-6 ${className}`}>
-      <div
-        className="flex w-full border-b-2 border-divide-light dark:border-divide-dark"
-        role="tablist"
-      >
+      <div className="flex w-full border-b-2 border-divide" role="tablist">
         {children}
       </div>
     </div>
@@ -107,8 +104,8 @@ export function TabsTrigger({
         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2
         ${
           isSelected
-            ? "border-primary-500 text-primary-500 font-semibold dark:border-primary-400 dark:text-primary-400"
-            : "border-transparent text-text-muted dark:text-text-muted-dark hover:text-text-emphasis dark:hover:text-text-emphasis-dark hover:border-divide-light dark:hover:border-divide-dark font-normal"
+            ? "border-primary-500 text-primary-500 font-semibold"
+            : "border-transparent text-text-muted hover:text-text-emphasis hover:border-divide font-normal"
         }
         ${className}
       `}

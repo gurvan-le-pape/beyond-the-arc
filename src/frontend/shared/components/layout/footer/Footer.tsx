@@ -38,17 +38,16 @@ export const Footer: React.FC = () => {
   // Shared classes for social/icon link buttons — not a Button variant because
   // these are <a> elements and the icon scaling group effect is specific here.
   const iconLinkClass =
-    "p-2 rounded-button hover:bg-surface-subtle dark:hover:bg-surface-subtle-dark " +
-    "text-text-body dark:text-text-body-dark hover:text-primary-600 dark:hover:text-primary-400 " +
+    "p-2 rounded-button hover:bg-surface-inset " +
+    "text-text-body hover:text-primary " +
     "transition-all duration-200 group focus:outline-none focus:ring-2 " +
-    "focus:ring-primary-500 dark:focus:ring-primary-400";
+    "focus:ring-primary-500";
 
   const navLinkClass =
-    "text-text-body dark:text-text-body-dark hover:text-primary-600 " +
-    "dark:hover:text-primary-400 transition-colors duration-200";
+    "text-text-body hover:text-primary transition-colors duration-200";
 
   return (
-    <footer className="bg-surface-base dark:bg-surface-base-dark border-t border-divide-light dark:border-divide-dark mt-auto">
+    <footer className="surface-base border-t border-divide mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-4">
           {/* Brand */}
@@ -173,7 +172,7 @@ export const Footer: React.FC = () => {
         </div>
 
         {/* Bottom bar */}
-        <div className="pt-4 border-t border-divide-light dark:border-divide-dark">
+        <div className="pt-4 border-t border-divide">
           <div className="flex flex-col gap-2">
             {/* Copyright and tech stack */}
             <div className="flex flex-col sm:flex-row justify-between items-center gap-1">

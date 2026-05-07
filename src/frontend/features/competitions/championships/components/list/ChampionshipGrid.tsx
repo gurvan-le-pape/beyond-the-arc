@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/components/ChampionshipGrid.tsx
+// src/frontend/features/competitions/championships/components/list/ChampionshipGrid.tsx
 import { useTranslations } from "next-intl";
 
 import type { Championship } from "@/features/competitions/championships/types/Championship";
@@ -22,7 +22,7 @@ export function ChampionshipGrid({
         {SKELETON_KEYS.map((key) => (
           <div
             key={key}
-            className="h-32 rounded-card bg-surface-subtle dark:bg-surface-raised-dark animate-pulse"
+            className="h-32 rounded-card bg-surface-inset animate-pulse"
           />
         ))}
       </div>
@@ -31,7 +31,7 @@ export function ChampionshipGrid({
 
   if (championships.length === 0) {
     return (
-      <div className="text-center py-16 text-text-secondary dark:text-text-secondary-dark">
+      <div className="text-center py-16 text-text-secondary">
         {tCompetitions("noResults")}
       </div>
     );

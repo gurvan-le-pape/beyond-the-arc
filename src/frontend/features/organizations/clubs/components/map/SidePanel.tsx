@@ -53,12 +53,12 @@ export const SidePanel = memo(function SidePanel({
       {!isOpen && (
         <button
           onClick={handleToggleOpen}
-          className="fixed top-20 right-4 z-20 p-3 bg-surface-raised dark:bg-surface-raised-dark rounded-lg shadow-lg hover:bg-surface-subtle dark:hover:bg-surface-subtle-dark transition-colors border border-divide-light dark:border-divide-dark"
+          className="fixed top-20 right-4 z-20 p-3 surface-raised rounded-lg shadow-lg hover:bg-surface-inset transition-colors border border-divide"
           aria-label={t("map.openPanel")}
           title={t("map.openPanel")}
         >
           <svg
-            className="w-6 h-6 text-text-body dark:text-text-body-dark"
+            className="w-6 h-6 text-text-body"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -75,7 +75,7 @@ export const SidePanel = memo(function SidePanel({
 
       {/* Panel */}
       <div
-        className="fixed top-16 right-0 h-[calc(100vh-4rem)] bg-surface-raised dark:bg-surface-raised-dark shadow-2xl z-20 w-full sm:w-96 transition-transform duration-300 ease-in-out"
+        className="fixed top-16 right-0 h-[calc(100vh-4rem)] surface-raised shadow-2xl z-20 w-full sm:w-96 transition-transform duration-300 ease-in-out"
         style={{
           transform: isOpen ? "translateX(0)" : "translateX(100%)",
         }}
@@ -87,7 +87,7 @@ export const SidePanel = memo(function SidePanel({
 
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-divide-light dark:border-divide-dark bg-surface-subtle dark:bg-surface-subtle-dark flex-shrink-0">
+          <div className="flex items-center justify-between p-4 border-b border-divide bg-surface-inset flex-shrink-0">
             <div>
               <Text variant="h2" className="text-lg">
                 {t("map.title")}
@@ -100,12 +100,12 @@ export const SidePanel = memo(function SidePanel({
               {/* Close button */}
               <button
                 onClick={handleToggleOpen}
-                className="p-2 hover:bg-surface-subtle dark:hover:bg-surface-subtle-dark rounded-lg transition-colors"
+                className="p-2 hover:bg-surface-inset rounded-lg transition-colors"
                 aria-label={t("map.closePanel")}
                 title={t("map.closePanel")}
               >
                 <svg
-                  className="w-5 h-5 text-text-body dark:text-text-body-dark"
+                  className="w-5 h-5 text-text-body"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -124,7 +124,7 @@ export const SidePanel = memo(function SidePanel({
           {/* Content */}
           <div className="flex-1 flex flex-col overflow-hidden">
             {/* Search Bar */}
-            <div className="p-4 border-b border-divide-light dark:border-divide-dark flex-shrink-0">
+            <div className="p-4 border-b border-divide flex-shrink-0">
               <SearchBar
                 query={query}
                 onQueryChange={onQueryChange}
@@ -135,14 +135,14 @@ export const SidePanel = memo(function SidePanel({
             </div>
 
             {/* Filters Section */}
-            <div className="border-b border-divide-light dark:border-divide-dark flex-shrink-0">
+            <div className="border-b border-divide flex-shrink-0">
               <button
                 onClick={handleToggleFilters}
-                className="w-full flex items-center justify-between p-4 hover:bg-surface-subtle dark:hover:bg-surface-subtle-dark transition-colors"
+                className="w-full flex items-center justify-between p-4 hover:bg-surface-inset transition-colors"
               >
                 <div className="flex items-center gap-2">
                   <svg
-                    className="w-5 h-5 text-text-body dark:text-text-body-dark"
+                    className="w-5 h-5 text-text-body"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -154,17 +154,17 @@ export const SidePanel = memo(function SidePanel({
                       d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
                     />
                   </svg>
-                  <span className="font-medium text-text-heading dark:text-text-heading-dark">
+                  <span className="font-medium text-text-heading">
                     {t("map.filters")}
                   </span>
                   {activeFilterCount > 0 && (
-                    <span className="bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 text-xs font-medium px-2 py-0.5 rounded-full">
+                    <span className="bg-primary-300 text-primary-600 text-xs font-medium px-2 py-0.5 rounded-full">
                       {activeFilterCount}
                     </span>
                   )}
                 </div>
                 <svg
-                  className={`w-5 h-5 text-text-muted dark:text-text-muted-dark transition-transform ${
+                  className={`w-5 h-5 text-text-muted transition-transform ${
                     filtersExpanded ? "rotate-180" : ""
                   }`}
                   fill="none"
@@ -212,7 +212,7 @@ export const SidePanel = memo(function SidePanel({
               {clubs.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full p-8 text-center">
                   <svg
-                    className="w-12 h-12 text-text-muted dark:text-text-muted-dark mb-3"
+                    className="w-12 h-12 text-text-muted mb-3"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -234,7 +234,7 @@ export const SidePanel = memo(function SidePanel({
                   </Text>
                 </div>
               ) : (
-                <div className="divide-y divide-divide-light dark:divide-divide-dark">
+                <div className="divide-y divide-divide">
                   {clubs.map((club) => (
                     <ClubListItem
                       key={club.id}
@@ -277,9 +277,9 @@ const FilterCheckbox = memo(function FilterCheckbox({
         type="checkbox"
         checked={checked}
         onChange={onChange}
-        className="w-4 h-4 text-primary-600 dark:text-primary-400 border-divide-light dark:border-divide-dark rounded focus:ring-primary-500 dark:focus:ring-primary-400 bg-surface-raised dark:bg-surface-raised-dark"
+        className="w-4 h-4 text-primary border-divide rounded focus:ring-primary-500 bg-surface-inset"
       />
-      <span className="text-sm text-text-emphasis dark:text-text-emphasis-dark group-hover:text-text-heading dark:group-hover:text-text-heading-dark">
+      <span className="text-sm text-text-emphasis group-hover:text-text-heading">
         {label}
       </span>
     </label>
@@ -300,13 +300,10 @@ const ClubListItem = memo(function ClubListItem({
   return (
     <button
       onClick={handleClick}
-      className="w-full text-left p-4 hover:bg-surface-subtle dark:hover:bg-surface-subtle-dark transition-colors group"
+      className="w-full text-left p-4 hover:bg-surface-inset transition-colors group"
       style={{ contain: "layout style paint" }}
     >
-      <Text
-        variant="h3"
-        className="mb-1 truncate group-hover:text-primary-600 dark:group-hover:text-primary-400"
-      >
+      <Text variant="h3" className="mb-1 truncate group-hover:text-primary">
         {club.name}
       </Text>
       {(club.city || club.zipCode) && (
@@ -319,7 +316,7 @@ const ClubListItem = memo(function ClubListItem({
       <div className="flex items-center gap-3 mt-2">
         {club.website && (
           <svg
-            className="w-4 h-4 text-text-muted dark:text-text-muted-dark"
+            className="w-4 h-4 text-text-muted"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -334,7 +331,7 @@ const ClubListItem = memo(function ClubListItem({
         )}
         {club.email && (
           <svg
-            className="w-4 h-4 text-text-muted dark:text-text-muted-dark"
+            className="w-4 h-4 text-text-muted"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -349,7 +346,7 @@ const ClubListItem = memo(function ClubListItem({
         )}
         {club.phone && (
           <svg
-            className="w-4 h-4 text-text-muted dark:text-text-muted-dark"
+            className="w-4 h-4 text-text-muted"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

@@ -57,12 +57,10 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
         tabIndex={0}
         className={cn(
           "relative inline-flex shrink-0 items-center rounded-full transition-colors",
-          "focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400",
-          "focus:ring-offset-2 focus:ring-offset-surface-subtle dark:focus:ring-offset-surface-subtle-dark",
+          "focus:outline-none focus:ring-2 focus:ring-primary-500",
+          "focus:ring-offset-2 ring-offset-surface",
           "disabled:cursor-not-allowed disabled:opacity-50",
-          checked
-            ? "bg-primary-600 dark:bg-primary-500"
-            : "bg-divide-light dark:bg-divide-dark",
+          checked ? "bg-primary-500" : "bg-divide",
           s.track,
           className,
         )}
@@ -77,7 +75,7 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
           )}
         />
         {label && (
-          <span className="ml-3 text-sm font-medium text-text-emphasis dark:text-text-emphasis-dark">
+          <span className="ml-3 text-sm font-medium text-text-emphasis">
             {label}
           </span>
         )}

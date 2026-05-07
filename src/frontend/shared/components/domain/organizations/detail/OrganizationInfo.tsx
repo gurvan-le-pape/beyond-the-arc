@@ -87,7 +87,7 @@ export function OrganizationInfo({
             <Text variant="overline" as="span">
               {t("info.president.label")}
             </Text>
-            <div className="flex-1 h-px bg-divide-light dark:bg-divide-dark" />
+            <div className="flex-1 h-px bg-divide" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <InfoBox

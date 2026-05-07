@@ -193,7 +193,7 @@ export function ClubsMap({
   // Error state
   if (error) {
     return (
-      <div className="absolute inset-0 flex items-center justify-center bg-surface-subtle dark:bg-surface-subtle-dark">
+      <div className="absolute inset-0 flex items-center justify-center surface-subtle">
         <div className="text-center">
           <p className="text-error font-semibold">{t(error)}</p>
           <button

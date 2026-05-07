@@ -49,9 +49,7 @@ function Spinner() {
 const BASE =
   "inline-flex items-center justify-center font-medium transition-all duration-200 " +
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 " +
-  // ring-offset must match the surface the button sits on.
-  // Default: surface-subtle (inside cards). Override per variant when different.
-  "focus-visible:ring-offset-surface-subtle dark:focus-visible:ring-offset-surface-subtle-dark " +
+  "focus-visible:ring-offset-surface " +
   "disabled:pointer-events-none disabled:opacity-50 active:scale-95";
 
 // ---------------------------------------------------------------------------
@@ -63,27 +61,23 @@ const buttonVariants = cva(BASE, {
     variant: {
       // ── Core intent variants ──────────────────────────────────────────────
       primary:
-        "rounded-button bg-primary-600 text-white " +
-        "hover:bg-primary-700 " +
-        "dark:bg-primary-500 dark:hover:bg-primary-600 " +
+        "rounded-button bg-primary-500 text-white " +
+        "hover:bg-primary-600 " +
         "focus-visible:ring-primary-500",
 
       secondary:
-        "rounded-button bg-secondary-600 text-white " +
-        "hover:bg-secondary-700 " +
-        "dark:bg-secondary-500 dark:hover:bg-secondary-600 " +
+        "rounded-button bg-secondary-500 text-white " +
+        "hover:bg-secondary-600 " +
         "focus-visible:ring-secondary-500",
 
       outline:
-        "rounded-button border-2 border-primary-600 text-primary-600 bg-surface-raised " +
-        "hover:bg-primary-50 " +
-        "dark:border-primary-400 dark:text-primary-400 dark:bg-surface-subtle-dark dark:hover:bg-surface-subtle-dark " +
+        "rounded-button border-2 border-primary-500 text-primary-500 bg-surface-inset " +
+        "hover:bg-primary-300 " +
         "focus-visible:ring-primary-500",
 
       ghost:
-        "rounded-button text-primary-600 " +
-        "hover:bg-primary-50 " +
-        "dark:text-primary-400 dark:hover:bg-surface-subtle-dark " +
+        "rounded-button text-primary-500 " +
+        "hover:bg-primary-300 " +
         "focus-visible:ring-primary-500",
 
       // Inline text action — underlined, no background or border.
@@ -91,18 +85,17 @@ const buttonVariants = cva(BASE, {
       link:
         "rounded text-text-muted underline underline-offset-2 " +
         "hover:text-text-body " +
-        "dark:text-text-muted-dark dark:hover:text-text-body-dark " +
         "focus-visible:ring-primary-500 " +
         "active:scale-100",
 
       danger:
         "rounded-button bg-error text-white " +
-        "hover:bg-error-dark " +
+        "hover:bg-error-strong " +
         "focus-visible:ring-error",
 
       success:
         "rounded-button bg-success text-white " +
-        "hover:bg-success-dark " +
+        "hover:bg-success-strong " +
         "focus-visible:ring-success",
 
       download:
@@ -114,22 +107,19 @@ const buttonVariants = cva(BASE, {
       // Gender-specific: kept here because they encode meaning, not layout.
       male:
         "rounded-button bg-team-male text-white shadow-sm " +
-        "hover:bg-team-male-dark " +
-        "dark:bg-team-male-light dark:hover:bg-team-male " +
+        "hover:bg-team-male-strong " +
         "focus-visible:ring-team-male",
 
       female:
         "rounded-button bg-team-female text-white shadow-sm " +
-        "hover:bg-team-female-dark " +
-        "dark:bg-team-female-light dark:hover:bg-team-female " +
+        "hover:bg-team-female-strong " +
         "focus-visible:ring-team-female",
 
       // Control buttons (filter dropdowns, sort toggles, toolbar actions)
       control:
-        "rounded-button border border-divide-light bg-surface-raised text-text-emphasis font-medium " +
-        "hover:bg-surface-subtle " +
-        "dark:border-divide-dark dark:bg-surface-raised-dark dark:text-text-heading-dark dark:hover:bg-surface-subtle-dark " +
-        "focus-visible:ring-2 focus-visible:ring-primary-200 dark:focus-visible:ring-primary-800",
+        "rounded-button border border-divide surface-raised text-text-emphasis font-medium " +
+        "hover:bg-surface-inset " +
+        "focus-visible:ring-2 focus-visible:ring-primary-500",
     },
 
     size: {
@@ -204,30 +194,26 @@ const navButtonVariants = cva(BASE, {
     variant: {
       // Segmented nav / tab bar
       navActive:
-        "rounded-button bg-primary-600 text-white border-2 border-primary-600 shadow-md " +
-        "hover:bg-primary-700 " +
-        "dark:bg-primary-500 dark:border-primary-500 dark:hover:bg-primary-600 " +
+        "rounded-button bg-primary-500 text-white border-2 border-primary shadow-md " +
+        "hover:bg-primary-600 " +
         "focus-visible:ring-primary-500",
 
       navInactive:
-        "rounded-button bg-surface-raised text-primary-700 border-2 border-primary-300 shadow-sm " +
-        "hover:bg-primary-50 hover:border-primary-500 " +
-        "dark:bg-surface-subtle-dark dark:text-primary-400 dark:border-primary-600 " +
-        "dark:hover:bg-primary-900/20 dark:hover:border-primary-500 " +
+        "rounded-button surface-raised text-primary-500 border-2 border-primary-300 shadow-sm " +
+        "hover:bg-primary-300 hover:border-primary-500 " +
         "focus-visible:ring-primary-500",
 
       // List item variants
       listItem:
         "w-full justify-start text-left rounded-none border-l-4 border-l-transparent " +
-        "hover:bg-primary-50 hover:border-l-primary-600 " +
-        "dark:hover:bg-primary-900/20 dark:hover:border-l-primary-600 " +
+        "hover:bg-primary-300 hover:border-l-primary-500 " +
         "focus-visible:ring-inset focus-visible:ring-primary-500 " +
         "active:scale-100",
 
       // Expandable section headers
       categoryHeader:
         "w-full justify-start gap-2 text-left rounded " +
-        "hover:bg-transparent dark:hover:bg-transparent " +
+        "hover:bg-transparent " +
         "focus-visible:ring-primary-500 " +
         "active:scale-100",
     },
@@ -305,28 +291,23 @@ const pillButtonVariants = cva(BASE, {
     variant: {
       // RoundSelector active pill
       pillActive:
-        "rounded-full bg-primary-600 text-white font-bold shadow-md " +
-        "ring-2 ring-primary-400 border border-primary-600 z-10 " +
-        "dark:bg-primary-500 dark:ring-primary-300 dark:border-primary-500 " +
+        "rounded-full bg-primary text-white font-bold shadow-md " +
+        "ring-2 ring-primary-300 border border-primary z-10 " +
         "focus-visible:ring-primary-500",
 
       // RoundSelector inactive pill
       pillInactive:
-        "rounded-full bg-surface-raised text-text-emphasis border border-divide-light " +
-        "hover:bg-primary-50 hover:text-primary-700 hover:border-primary-300 " +
-        "dark:bg-surface-subtle-dark dark:text-text-emphasis-dark dark:border-divide-dark " +
-        "dark:hover:bg-primary-900/20 dark:hover:text-primary-400 dark:hover:border-primary-600 " +
+        "rounded-full surface-raised text-text-emphasis border border-divide " +
+        "hover:bg-primary-300 hover:text-primary-600 hover:border-primary-300 " +
         "focus-visible:ring-primary-500",
 
       // Carousel prev/next arrows
       carouselArrow:
-        "rounded-full p-2 border border-divide-light bg-surface-raised text-text-muted " +
-        "hover:bg-primary-50 hover:text-primary-600 " +
+        "rounded-full p-2 border border-divide surface-raised text-text-muted " +
+        "hover:bg-primary-300 hover:text-primary-500 " +
         "disabled:opacity-30 disabled:cursor-not-allowed " +
-        "dark:border-divide-dark dark:bg-surface-raised-dark dark:text-text-muted-dark " +
-        "dark:hover:bg-primary-900/20 dark:hover:text-primary-400 " +
         "focus-visible:ring-primary-500 " +
-        "focus-visible:ring-offset-surface-raised dark:focus-visible:ring-offset-surface-raised-dark",
+        "focus-visible:ring-offset-surface",
     },
 
     size: {

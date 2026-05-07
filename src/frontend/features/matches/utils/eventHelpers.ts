@@ -15,7 +15,7 @@ export function getEventStyle(eventType: string): EventStyle {
   return (
     eventConfig[eventType] || {
       icon: "⚪",
-      color: "text-gray-600 dark:text-gray-400",
+      color: "text-text-muted",
       labelKey: "",
       eventCategory: EventCategory.OTHER,
     }
@@ -150,7 +150,7 @@ export function makeDescriptionClickable(
   eventPlayers.forEach(({ player }) => {
     result = result.replaceAll(
       new RegExp(player.name, "g"),
-      `<span class="text-primary-600 dark:text-primary-400 hover:underline cursor-pointer match-player-link" data-player-id="${player.id}" tabIndex="0" role="button">${player.name}</span>`,
+      `<span class="text-primary hover:underline cursor-pointer match-player-link" data-player-id="${player.id}" tabIndex="0" role="button">${player.name}</span>`,
     );
   });
   return result;

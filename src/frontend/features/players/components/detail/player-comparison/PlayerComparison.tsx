@@ -245,7 +245,7 @@ export function PlayerComparison({ player }: PlayerComparisonProps) {
             variant="ghost"
             size="sm"
             onClick={() => setOpponent(null)}
-            className="text-text-muted hover:text-text-body dark:text-text-muted-dark dark:hover:text-text-body-dark text-xs"
+            className="text-text-muted hover:text-text-body text-xs"
           >
             {tCommon("clear")}
           </Button>
@@ -258,7 +258,7 @@ export function PlayerComparison({ player }: PlayerComparisonProps) {
             {[0, 1, 2].map((i) => (
               <span
                 key={i}
-                className="inline-block w-2 h-2 rounded-full bg-primary-400 dark:bg-primary-500"
+                className="inline-block w-2 h-2 rounded-full bg-primary-500"
                 style={{
                   animation: "vsPulse 1.2s ease-in-out infinite",
                   animationDelay: `${i * 200}ms`,

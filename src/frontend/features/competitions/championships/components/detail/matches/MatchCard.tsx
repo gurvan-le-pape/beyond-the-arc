@@ -48,7 +48,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
     <Card padding="sm" className="overflow-hidden">
       {/* Top Row - Date and Status */}
       <div className="flex justify-between items-center mb-2">
-        <time className="text-sm text-text-body dark:text-text-body-dark">
+        <time className="text-sm text-text-body">
           {formatMatchDateTime(match.date)}
         </time>
         <Badge variant={match.overtime ? "warning" : "outline"} size="sm">
@@ -76,13 +76,13 @@ export const MatchCard: React.FC<MatchCardProps> = ({
           <div
             className={`text-sm text-center w-full ${
               isHomeWinner
-                ? "font-bold text-text-heading dark:text-text-heading-dark"
-                : "font-normal text-text-body dark:text-text-body-dark"
+                ? "font-bold text-text-heading"
+                : "font-normal text-text-body"
             }`}
             title={`${match.homeTeam.club.name} - ${match.homeTeam.number}`}
           >
             <div className="truncate">{match.homeTeam.club.name}</div>
-            <div className="text-xs text-text-secondary dark:text-text-secondary-dark">
+            <div className="text-xs text-text-secondary">
               {match.homeTeam.number}
             </div>
           </div>
@@ -90,25 +90,15 @@ export const MatchCard: React.FC<MatchCardProps> = ({
 
         {/* Score */}
         <div className="flex flex-col items-center flex-shrink-0 px-2">
-          <div className="text-xl font-bold text-text-heading dark:text-text-heading-dark mb-1">
+          <div className="text-xl font-bold text-text-heading mb-1">
             <span
-              className={
-                isHomeWinner
-                  ? "text-primary-600 dark:text-primary-400"
-                  : "text-text-emphasis dark:text-text-emphasis-dark"
-              }
+              className={isHomeWinner ? "text-primary" : "text-text-emphasis"}
             >
               {hasScores ? match.homeTeamScore : "-"}
             </span>
-            <span className="mx-1.5 text-text-muted dark:text-text-muted-dark">
-              -
-            </span>
+            <span className="mx-1.5 text-text-muted">-</span>
             <span
-              className={
-                isAwayWinner
-                  ? "text-primary-600 dark:text-primary-400"
-                  : "text-text-emphasis dark:text-text-emphasis-dark"
-              }
+              className={isAwayWinner ? "text-primary" : "text-text-emphasis"}
             >
               {hasScores ? match.awayTeamScore : "-"}
             </span>
@@ -116,7 +106,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
           {/* Match Summary Link */}
           <a
             href={`/${locale}/matches/${match.id}`}
-            className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 hover:underline transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:ring-offset-2 dark:focus:ring-offset-surface-raised-dark rounded-button"
+            className="text-sm text-primary-500 hover:text-primary-600 hover:underline transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ring-offset-surface rounded-button"
           >
             Résumé
           </a>
@@ -140,13 +130,13 @@ export const MatchCard: React.FC<MatchCardProps> = ({
           <div
             className={`text-sm text-center w-full ${
               isAwayWinner
-                ? "font-bold text-text-heading dark:text-text-heading-dark"
-                : "font-normal text-text-body dark:text-text-body-dark"
+                ? "font-bold text-text-heading"
+                : "font-normal text-text-body"
             }`}
             title={`${match.awayTeam.club.name} - ${match.awayTeam.number}`}
           >
             <div className="truncate">{match.awayTeam.club.name}</div>
-            <div className="text-xs text-text-secondary dark:text-text-secondary-dark">
+            <div className="text-xs text-text-secondary">
               {match.awayTeam.number}
             </div>
           </div>
@@ -163,19 +153,19 @@ export const MatchCard: React.FC<MatchCardProps> = ({
               ? tMatches("hideMatchDetails")
               : tMatches("viewMatchDetails")
           }
-          className="flex-shrink-0 p-1 rounded-button hover:bg-surface-subtle dark:hover:bg-surface-subtle-dark transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+          className="flex-shrink-0 p-1 rounded-button hover:bg-surface-inset transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 ring-offset-surface"
         >
           {expanded ? (
-            <ChevronUpIcon className="h-5 w-5 text-text-body dark:text-text-body-dark" />
+            <ChevronUpIcon className="h-5 w-5 text-text-body" />
           ) : (
-            <ChevronDownIcon className="h-5 w-5 text-text-body dark:text-text-body-dark" />
+            <ChevronDownIcon className="h-5 w-5 text-text-body" />
           )}
         </button>
       </div>
 
       {/* Expandable Section */}
       {expanded && (
-        <div className="mt-3 pt-3 border-t border-divide-light dark:border-divide-dark animate-slide-down">
+        <div className="mt-3 pt-3 border-t border-divide animate-slide-down">
           {matchEventsError ? (
             <ErrorMessage message={tCommon("errors.fetchMatchEvents")} />
           ) : (

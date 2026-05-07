@@ -18,17 +18,17 @@ export function QuarterSelector({ selected, onChange }: QuarterSelectorProps) {
   const t = useTranslations("matches");
 
   return (
-    <div className="flex bg-surface-subtle dark:bg-surface-subtle-dark rounded-button p-1">
+    <div className="flex surface-subtle rounded-button p-1">
       {QUARTER_LIST.map((quarter) => (
         <button
           key={quarter}
           onClick={() => onChange(quarter)}
           className={cn(
             "px-3 py-1.5 text-sm font-medium rounded-button transition-colors duration-200",
-            "focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:ring-offset-1",
+            "focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 ring-offset-surface",
             selected === quarter
-              ? "bg-primary-600 dark:bg-primary-500 text-white"
-              : "text-text-body dark:text-text-body-dark hover:text-text-heading dark:hover:text-text-heading-dark",
+              ? "bg-primary-500 text-white"
+              : "text-text-body hover:text-text-heading",
           )}
         >
           {quarter === Quarter.ALL ? t("matchEvents.allQuarters") : quarter}

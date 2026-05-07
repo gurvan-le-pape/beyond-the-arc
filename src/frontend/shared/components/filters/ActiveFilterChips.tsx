@@ -22,18 +22,18 @@ export function ActiveFilterChips({ chips, onReset }: ActiveFilterChipsProps) {
   if (chips.length === 0) return null;
 
   return (
-    <div className="flex items-center justify-between gap-3 pt-1 border-t border-divide-light dark:border-divide-dark">
+    <div className="flex items-center justify-between gap-3 pt-1 border-t border-divide">
       <div className="flex flex-wrap gap-2">
         {chips.map((chip) => (
           <span
             key={chip.key}
-            className="inline-flex items-center gap-1.5 text-xs bg-surface-subtle dark:bg-surface-subtle-dark border border-divide-light dark:border-divide-dark rounded-full px-3 py-1 text-text-body dark:text-text-body-dark"
+            className="inline-flex items-center gap-1.5 text-xs bg-surface-inset border border-divide rounded-full px-3 py-1 text-text-body"
           >
             {chip.label}
             <button
               type="button"
               onClick={chip.onRemove}
-              className="text-text-muted dark:text-text-muted-dark hover:text-text-body dark:hover:text-text-body-dark transition-colors"
+              className="text-text-muted hover:text-text-body transition-colors"
               aria-label={`Remove ${chip.label} filter`}
             >
               <XMarkIcon className="w-3 h-3" />
