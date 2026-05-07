@@ -112,8 +112,8 @@ export const TeamRoster: React.FC<TeamRosterProps> = ({ players }) => {
   return (
     <Section title={tTeams("teamDetail.rosterTitle")} variant="highlighted">
       <div className="overflow-x-auto">
-        <Table className="border border-primary-500 rounded-card box-border">
-          <TableHeader className="bg-primary-300 border-b border-primary-500">
+        <Table className="border border-primary rounded-card box-border">
+          <TableHeader className="bg-primary-subtle border-b border-primary">
             <TableRow hoverable={false}>
               <TableHead
                 align="left"
@@ -196,7 +196,7 @@ export const TeamRoster: React.FC<TeamRosterProps> = ({ players }) => {
                       router.push(`/players/${player[0]?.player.id}`)
                     }
                     className={
-                      index % 2 === 0 ? "bg-primary-50" : "bg-surface-inset"
+                      index % 2 === 0 ? "bg-primary-ghost" : "bg-surface-inset"
                     }
                   >
                     <TableCell align="center" highlight>

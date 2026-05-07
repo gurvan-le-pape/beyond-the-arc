@@ -106,7 +106,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
           {/* Match Summary Link */}
           <a
             href={`/${locale}/matches/${match.id}`}
-            className="text-sm text-primary-500 hover:text-primary-600 hover:underline transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ring-offset-surface rounded-button"
+            className="text-sm text-primary hover:text-primary-strong hover:underline transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ring-offset-surface rounded-button"
           >
             Résumé
           </a>
@@ -153,7 +153,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
               ? tMatches("hideMatchDetails")
               : tMatches("viewMatchDetails")
           }
-          className="flex-shrink-0 p-1 rounded-button hover:bg-surface-inset transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 ring-offset-surface"
+          className="flex-shrink-0 p-1 rounded-button hover:bg-surface-inset transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary ring-offset-surface"
         >
           {expanded ? (
             <ChevronUpIcon className="h-5 w-5 text-text-body" />

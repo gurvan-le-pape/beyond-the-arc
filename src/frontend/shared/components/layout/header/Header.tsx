@@ -56,7 +56,7 @@ export const Header: React.FC = () => {
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
             onClick={() => setMenuOpen((v) => !v)}
-            className="flex items-center justify-center w-10 h-10 rounded-button focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ring-offset-surface hover:bg-surface-inset transition-all duration-200"
+            className="flex items-center justify-center w-10 h-10 rounded-button focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ring-offset-surface hover:bg-surface-inset transition-all duration-200"
           >
             <HamburgerButton open={menuOpen} />
           </button>

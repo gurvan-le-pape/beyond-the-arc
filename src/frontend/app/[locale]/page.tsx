@@ -98,9 +98,9 @@ export default async function Home({
           <section className="flex flex-col items-center text-center px-6 py-16 border-b border-divide">
             <Text
               variant="overline"
-              className="inline-flex items-center gap-1.5 text-primary-500 bg-primary-50 px-3 py-1 rounded mb-6"
+              className="inline-flex items-center gap-1.5 text-primary bg-primary-ghost px-3 py-1 rounded mb-6"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-primary-500" />
+              <span className="w-1.5 h-1.5 rounded-full bg-primary" />
               {t("hero.eyebrow")}
             </Text>
 
@@ -109,7 +109,7 @@ export default async function Home({
               style={{ fontSize: "clamp(2.5rem, 6vw, 3.75rem)" }}
             >
               {t("hero.titleStart")}{" "}
-              <em className="not-italic text-primary-500">
+              <em className="not-italic text-primary">
                 {t("hero.titleEmphasis")}
               </em>
             </h1>
@@ -226,9 +226,7 @@ export default async function Home({
                 <Text variant="caption" className="hidden md:block font-bold">
                   {level.count}
                 </Text>
-                <span className="text-xs font-semibold text-primary-500">
-                  →
-                </span>
+                <span className="text-xs font-semibold text-primary">→</span>
               </a>
             ))}
           </div>

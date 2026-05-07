@@ -32,16 +32,16 @@ export const NavLinks: React.FC<NavLinksProps> = ({
       const mobileStyles = cn(
         "block w-full text-left px-4 py-3 text-lg rounded-button transition-all duration-200",
         isActive
-          ? "bg-primary-300 text-primary-600 font-semibold border-l-4 border-primary"
+          ? "bg-primary-subtle text-primary-strong font-semibold border-l-4 border-primary"
           : "text-text-emphasis hover:bg-surface-inset hover:text-text-heading",
       );
 
       const desktopStyles = cn(
         "px-4 py-2 rounded-button font-medium transition-all duration-200",
-        "focus:outline-none focus:ring-2 focus:ring-primary-500",
+        "focus:outline-none focus:ring-2 focus:ring-primary",
         "focus:ring-offset-2 ring-offset-surface",
         isActive
-          ? "bg-primary-300 text-primary-600 font-semibold shadow-sm"
+          ? "bg-primary-subtle text-primary-strong font-semibold shadow-sm"
           : "text-text-emphasis hover:bg-surface-inset hover:text-text-heading",
       );
 

@@ -88,8 +88,7 @@ export const TeamStatsComparison: React.FC<TeamStatsComparisonProps> = ({
                   <span
                     className={cn(
                       "text-sm font-semibold tabular-nums text-text-heading",
-                      leader === "home" &&
-                        "border-b-2 border-primary-500 pb-0.5",
+                      leader === "home" && "border-b-2 border-primary pb-0.5",
                     )}
                   >
                     {homeDisplay}
@@ -100,7 +99,7 @@ export const TeamStatsComparison: React.FC<TeamStatsComparisonProps> = ({
                 <div className="h-2.5 w-full bg-surface-inset rounded-button overflow-hidden flex">
                   {/* Home segment */}
                   <div
-                    className="h-full bg-primary-500 rounded-l-button transition-all ease-out"
+                    className="h-full bg-primary rounded-l-button transition-all ease-out"
                     style={{
                       width: mounted ? `${homePct}%` : "0%",
                       transitionDuration: "600ms",

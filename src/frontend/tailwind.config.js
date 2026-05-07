@@ -52,18 +52,29 @@ module.exports = {
         },
 
         // Primary — brand blue (scale shifts per theme)
+        // ghost   = faintest tint  (hover backgrounds, subtle fills)
+        // faint   = very low emphasis (disabled states, decorative)
+        // muted   = low emphasis
+        // subtle  = below-default emphasis
+        // soft    = slightly below default
+        // DEFAULT = canonical active color (icon, ring, active state)
+        // strong  = high emphasis (borders, text on light surface)
+        // bold    = stronger emphasis
+        // deep    = near-darkest
+        // darker  = very dark
+        // ink     = darkest, near-black
         primary: {
-          50: "var(--color-primary-50)",
-          100: "var(--color-primary-100)",
-          200: "var(--color-primary-200)",
-          300: "var(--color-primary-300)",
-          400: "var(--color-primary-400)",
-          500: "var(--color-primary-500)",
-          600: "var(--color-primary-600)",
-          700: "var(--color-primary-700)",
-          800: "var(--color-primary-800)",
-          900: "var(--color-primary-900)",
-          950: "var(--color-primary-950)",
+          ghost: "var(--color-primary-ghost)",
+          faint: "var(--color-primary-faint)",
+          muted: "var(--color-primary-muted)",
+          subtle: "var(--color-primary-subtle)",
+          soft: "var(--color-primary-soft)",
+          DEFAULT: "var(--color-primary)",
+          strong: "var(--color-primary-strong)",
+          bold: "var(--color-primary-bold)",
+          deep: "var(--color-primary-deep)",
+          darker: "var(--color-primary-darker)",
+          ink: "var(--color-primary-ink)",
         },
 
         // Secondary — brand green (scale shifts per theme)

@@ -142,8 +142,8 @@ export const ComboBox: React.FC<ComboBoxProps> = ({
           className={cn(
             "w-full text-left px-4 py-2 text-sm transition-colors duration-150",
             value === opt.value
-              ? "bg-primary-300 font-semibold text-primary-600 border-l-2 border-primary-500"
-              : "text-text-heading hover:bg-primary-300 hover:text-primary-600",
+              ? "bg-primary-subtle font-semibold text-primary-strong border-l-2 border-primary"
+              : "text-text-heading hover:bg-primary-subtle hover:text-primary-strong",
           )}
           onClick={() => {
             onChange(opt.value);
@@ -181,7 +181,7 @@ export const ComboBox: React.FC<ComboBoxProps> = ({
           className={cn(
             DROPDOWN_TRIGGER_BASE,
             "text-left",
-            selectedOption && value !== "" && "border-primary-500",
+            selectedOption && value !== "" && "border-primary",
             error && "border-error focus:ring-error focus:border-error",
           )}
           onClick={() => setOpen((o) => !o)}

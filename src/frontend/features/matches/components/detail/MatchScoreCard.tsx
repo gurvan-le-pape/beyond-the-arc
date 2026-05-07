@@ -40,10 +40,10 @@ function TeamSection({ team, isWinning, align }: TeamSectionProps) {
           "group relative w-20 h-20 rounded-button overflow-hidden",
           "bg-surface-inset flex items-center justify-center",
           "border-4 transition-all duration-200",
-          "focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ring-offset-surface",
+          "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ring-offset-surface",
           isWinning
-            ? "border-primary-500 shadow-card-hover"
-            : "border-divide hover:border-primary-500 shadow-card",
+            ? "border-primary shadow-card-hover"
+            : "border-divide hover:border-primary shadow-card",
         )}
         onClick={() => router.push(`/organizations/clubs/${team.clubId}`)}
         aria-label={tCommon("club.seeClub", { name: team.clubName ?? "" })}

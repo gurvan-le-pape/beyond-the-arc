@@ -242,7 +242,7 @@ export default async function ArchitecturePage({
         {/* Key Features — icon badges use bg-surface-inset, resolves to surface-raised */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="text-center">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-button bg-primary-subtle text-primary-600 mb-3">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-button bg-primary-subtle text-primary-strong mb-3">
               <Package className="w-6 h-6" />
             </div>
             <Text variant="h3" className="mb-2 text-base">

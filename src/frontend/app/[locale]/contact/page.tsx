@@ -41,7 +41,7 @@ export default async function ContactPage({
   const techStack = [
     {
       name: "Next.js",
-      color: "bg-primary-subtle text-primary-600",
+      color: "bg-primary-subtle text-primary-strong",
     },
     {
       name: "NestJS",
@@ -80,7 +80,7 @@ export default async function ContactPage({
                   ? "noopener noreferrer"
                   : undefined
               }
-              className="surface-subtle rounded-card border border-divide shadow-card hover:shadow-card-hover transition-all duration-200 p-6 group focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ring-offset-surface"
+              className="surface-subtle rounded-card border border-divide shadow-card hover:shadow-card-hover transition-all duration-200 p-6 group focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ring-offset-surface"
             >
               {/* Contact icon — decorative gradient, intentional */}
               <div

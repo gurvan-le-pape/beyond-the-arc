@@ -64,7 +64,7 @@ export function ThemeToggle() {
         className={cn(
           "p-2 rounded-button transition-all duration-200",
           "hover:bg-surface-subtle",
-          "focus:outline-none focus:ring-2 focus:ring-primary-500",
+          "focus:outline-none focus:ring-2 focus:ring-primary",
           "focus:ring-offset-2 focus:ring-offset-surface-raised",
           isOpen && "bg-surface-subtle",
         )}
@@ -103,7 +103,7 @@ export function ThemeToggle() {
                 "w-full flex items-center gap-3 px-3 py-2 text-sm transition-colors duration-150",
                 "first:rounded-t-input last:rounded-b-input",
                 isActive
-                  ? "bg-primary-500 text-white"
+                  ? "bg-primary text-white"
                   : "text-text-body hover:bg-surface-subtle hover:text-text-heading",
               )}
             >

@@ -101,10 +101,10 @@ export function TabsTrigger({
       className={`
         flex-1 py-3 text-sm whitespace-nowrap text-center
         border-b-2 -mb-px transition-all duration-200
-        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2
+        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
         ${
           isSelected
-            ? "border-primary-500 text-primary-500 font-semibold"
+            ? "border-primary text-primary font-semibold"
             : "border-transparent text-text-muted hover:text-text-emphasis hover:border-divide font-normal"
         }
         ${className}

@@ -198,7 +198,7 @@ export function ClubsMap({
           <p className="text-error font-semibold">{t(error)}</p>
           <button
             onClick={() => globalThis.location.reload()}
-            className="mt-4 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+            className="mt-4 px-4 py-2 bg-primary-strong text-white rounded-lg hover:bg-primary-bold"
           >
             {t("map.retry")}
           </button>

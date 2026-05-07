@@ -82,7 +82,7 @@ export const SidePanel = memo(function SidePanel({
       >
         {/* Loading indicator */}
         {isPending && (
-          <div className="absolute top-0 left-0 right-0 h-1 bg-primary-500 animate-pulse z-10" />
+          <div className="absolute top-0 left-0 right-0 h-1 bg-primary animate-pulse z-10" />
         )}
 
         <div className="flex flex-col h-full">
@@ -158,7 +158,7 @@ export const SidePanel = memo(function SidePanel({
                     {t("map.filters")}
                   </span>
                   {activeFilterCount > 0 && (
-                    <span className="bg-primary-300 text-primary-600 text-xs font-medium px-2 py-0.5 rounded-full">
+                    <span className="bg-primary-subtle text-primary-strong text-xs font-medium px-2 py-0.5 rounded-full">
                       {activeFilterCount}
                     </span>
                   )}
@@ -277,7 +277,7 @@ const FilterCheckbox = memo(function FilterCheckbox({
         type="checkbox"
         checked={checked}
         onChange={onChange}
-        className="w-4 h-4 text-primary border-divide rounded focus:ring-primary-500 bg-surface-inset"
+        className="w-4 h-4 text-primary border-divide rounded focus:ring-primary bg-surface-inset"
       />
       <span className="text-sm text-text-emphasis group-hover:text-text-heading">
         {label}

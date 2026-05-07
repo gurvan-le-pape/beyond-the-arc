@@ -119,13 +119,13 @@ export function MultiSelectDropdown({
           className={cn(
             DROPDOWN_TRIGGER_BASE,
             "text-left flex items-center gap-2",
-            isOpen && "ring-2 ring-primary-500 border-transparent",
+            isOpen && "ring-2 ring-primary border-transparent",
           )}
         >
           <span>{label}</span>
 
           {selectedCount > 0 && (
-            <span className="bg-primary-500 text-white text-xs rounded-button px-2 py-0.5 leading-none">
+            <span className="bg-primary text-white text-xs rounded-button px-2 py-0.5 leading-none">
               {selectedCount}
             </span>
           )}
@@ -232,7 +232,7 @@ function ColumnList({ column }: { readonly column: MultiSelectColumn }) {
               type="checkbox"
               checked={item.checked}
               onChange={item.onToggle}
-              className="w-4 h-4 text-primary-500 rounded focus:ring-2 focus:ring-primary-500"
+              className="w-4 h-4 text-primary rounded focus:ring-2 focus:ring-primary"
             />
             <Text variant="label" as="span">
               {item.label}

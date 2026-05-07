@@ -64,7 +64,7 @@ export function SearchBar({
           value={query}
           onChange={(e) => onQueryChange(e.target.value)}
           placeholder={placeholder}
-          className="w-full pl-10 pr-20 py-2.5 bg-surface-inset border border-divide rounded-lg text-text-heading placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary-500 ring-offset-surface focus:border-transparent transition-all"
+          className="w-full pl-10 pr-20 py-2.5 bg-surface-inset border border-divide rounded-lg text-text-heading placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary ring-offset-surface focus:border-transparent transition-all"
         />
 
         {/* Result Count & Clear Button */}

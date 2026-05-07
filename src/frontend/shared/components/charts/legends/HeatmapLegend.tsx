@@ -94,7 +94,7 @@ export const HeatmapLegend: React.FC<HeatmapLegendProps> = ({
                     flex flex-col items-center gap-0.5 px-1.5 py-1 rounded-lg border transition-all
                     ${
                       isActive
-                        ? "border-primary-500 ring-2 ring-primary-300 bg-primary-300"
+                        ? "border-primary ring-2 ring-primary-subtle bg-primary-subtle"
                         : "border-divide bg-surface-inset hover:border-text-muted"
                     }
                   `}

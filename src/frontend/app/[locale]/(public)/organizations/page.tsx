@@ -34,14 +34,14 @@ const OrganizationTypeCard: React.FC<{ org: OrgType }> = ({ org }) => {
   return (
     <Link
       href={href}
-      className={`cursor-pointer bg-gradient-to-br border-2 rounded-card flex flex-col items-center justify-center p-8 transition-all duration-200 hover:scale-105 shadow-card hover:shadow-card-hover group ${colorClasses} focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ring-offset-surface`}
+      className={`cursor-pointer bg-gradient-to-br border-2 rounded-card flex flex-col items-center justify-center p-8 transition-all duration-200 hover:scale-105 shadow-card hover:shadow-card-hover group ${colorClasses} focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ring-offset-surface`}
       aria-label={label}
     >
       <span className="sr-only">{label}</span>
 
       {React.cloneElement(icon, { "aria-hidden": true, focusable: false })}
 
-      <div className="text-xl font-semibold mb-2 group-hover:text-primary-700 transition-colors duration-200 text-text-heading">
+      <div className="text-xl font-semibold mb-2 group-hover:text-primary-bold transition-colors duration-200 text-text-heading">
         {label}
       </div>
 

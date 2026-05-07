@@ -41,7 +41,7 @@ export const Footer: React.FC = () => {
     "p-2 rounded-button hover:bg-surface-inset " +
     "text-text-body hover:text-primary " +
     "transition-all duration-200 group focus:outline-none focus:ring-2 " +
-    "focus:ring-primary-500";
+    "focus:ring-primary";
 
   const navLinkClass =
     "text-text-body hover:text-primary transition-colors duration-200";

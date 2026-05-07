@@ -24,7 +24,7 @@ export function EventScorePill({
       className={cn(
         "px-3 py-1 rounded-button text-sm font-bold",
         isHomeTeam
-          ? "bg-primary-300 text-primary-600"
+          ? "bg-primary-subtle text-primary-strong"
           : "bg-error-subtle text-error-strong",
       )}
     >

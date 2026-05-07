@@ -39,7 +39,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, onClick }) => {
       onClick={() => onClick(player.id)}
       className={cn(
         "w-full text-left border-l-8 rounded-card shadow-card hover:shadow-card-hover transition-all duration-200 cursor-pointer overflow-hidden",
-        "focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ring-offset-surface",
+        "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ring-offset-surface",
         "surface-raised",
         config.border,
       )}

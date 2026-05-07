@@ -69,18 +69,29 @@ html {
   --color-text-emphasis: #374151;
   --color-text-heading: #1f2937;
 
-  /* Primary — brand blue                                             */
-  --color-primary-50: #e6eaf4;
-  --color-primary-100: #c0cae4;
-  --color-primary-200: #97a8d2;
-  --color-primary-300: #6d86c0;
-  --color-primary-400: #4d6bb3;
-  --color-primary-500: #2e51a6;
-  --color-primary-600: #1e3d8f;
-  --color-primary-700: #152d75;
-  --color-primary-800: #0d1f5c;
-  --color-primary-900: #021b50;
-  --color-primary-950: #010f30;
+  /* Primary — brand blue
+     ghost   = faintest tint  (hover backgrounds, subtle fills)
+     faint   = very low emphasis (disabled states, decorative)
+     muted   = low emphasis
+     subtle  = below-default emphasis
+     soft    = slightly below default
+     DEFAULT = canonical active color (icon, ring, active state)
+     strong  = high emphasis (borders, text on light surface)
+     bold    = stronger emphasis
+     deep    = near-darkest
+     darker  = very dark
+     ink     = darkest, near-black                                   */
+  --color-primary-ghost: #e6eaf4;
+  --color-primary-faint: #c0cae4;
+  --color-primary-muted: #97a8d2;
+  --color-primary-subtle: #6d86c0;
+  --color-primary-soft: #4d6bb3;
+  --color-primary: #2e51a6;
+  --color-primary-strong: #1e3d8f;
+  --color-primary-bold: #152d75;
+  --color-primary-deep: #0d1f5c;
+  --color-primary-darker: #021b50;
+  --color-primary-ink: #010f30;
 
   /* Secondary — brand green                                          */
   --color-secondary-50: #f0fdf4;
@@ -189,17 +200,17 @@ html {
   --color-text-heading: #f3f4f6;
 
   /* Primary — scale inverted, lighter shades become active on dark   */
-  --color-primary-50: #010f30;
-  --color-primary-100: #021b50;
-  --color-primary-200: #0d1f5c;
-  --color-primary-300: #152d75;
-  --color-primary-400: #1e3d8f;
-  --color-primary-500: #4d6bb3;
-  --color-primary-600: #6d86c0;
-  --color-primary-700: #97a8d2;
-  --color-primary-800: #c0cae4;
-  --color-primary-900: #e6eaf4;
-  --color-primary-950: #f0f3fa;
+  --color-primary-ghost: #010f30;
+  --color-primary-faint: #021b50;
+  --color-primary-muted: #0d1f5c;
+  --color-primary-subtle: #152d75;
+  --color-primary-soft: #1e3d8f;
+  --color-primary: #4d6bb3;
+  --color-primary-strong: #6d86c0;
+  --color-primary-bold: #97a8d2;
+  --color-primary-deep: #c0cae4;
+  --color-primary-darker: #e6eaf4;
+  --color-primary-ink: #f0f3fa;
 
   /* Secondary — scale inverted                                       */
   --color-secondary-50: #14532d;
@@ -286,17 +297,17 @@ html {
   --color-text-heading: #ffffff;
 
   /* Primary — vivid yellow, maximum contrast on black                */
-  --color-primary-50: #1a1200;
-  --color-primary-100: #3d2c00;
-  --color-primary-200: #6b4c00;
-  --color-primary-300: #996d00;
-  --color-primary-400: #cc9100;
-  --color-primary-500: #ffb800;
-  --color-primary-600: #ffc933;
-  --color-primary-700: #ffd966;
-  --color-primary-800: #ffe999;
-  --color-primary-900: #fff4cc;
-  --color-primary-950: #fffae6;
+  --color-primary-ghost: #1a1200;
+  --color-primary-faint: #3d2c00;
+  --color-primary-muted: #6b4c00;
+  --color-primary-subtle: #996d00;
+  --color-primary-soft: #cc9100;
+  --color-primary: #ffb800;
+  --color-primary-strong: #ffc933;
+  --color-primary-bold: #ffd966;
+  --color-primary-deep: #ffe999;
+  --color-primary-darker: #fff4cc;
+  --color-primary-ink: #fffae6;
 
   /* Secondary — vivid cyan                                           */
   --color-secondary-50: #001a1a;

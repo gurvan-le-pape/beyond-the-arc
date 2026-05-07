@@ -100,7 +100,7 @@ export default function DocsPage() {
             target={link.external ? "_blank" : undefined}
             rel={link.external ? "noopener noreferrer" : undefined}
             {...(link.download ? { download: true } : {})}
-            className="surface-subtle flex items-center gap-3 p-4 rounded-card border border-divide shadow-card hover:shadow-card-hover transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ring-offset-surface"
+            className="surface-subtle flex items-center gap-3 p-4 rounded-card border border-divide shadow-card hover:shadow-card-hover transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ring-offset-surface"
           >
             {link.icon}
             <div className="flex flex-col">
@@ -126,10 +126,10 @@ export default function DocsPage() {
               {/* Accordion button — hover steps up to surface-raised via inset */}
               <button
                 onClick={() => setActiveSection(isActive ? null : section.id)}
-                className="w-full flex items-center gap-4 p-6 text-left hover:bg-surface-inset transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
+                className="w-full flex items-center gap-4 p-6 text-left hover:bg-surface-inset transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
               >
                 <div className="flex-shrink-0 w-10 h-10 rounded-button bg-primary-subtle flex items-center justify-center">
-                  <Icon className="w-5 h-5 text-primary-600" />
+                  <Icon className="w-5 h-5 text-primary-strong" />
                 </div>
                 <Text
                   variant="label"
@@ -162,7 +162,7 @@ export default function DocsPage() {
                               <a
                                 href="/docs/data-model.pdf"
                                 download
-                                className="px-3 py-1 bg-primary-600 text-white rounded-button text-sm hover:bg-primary-700 transition-colors duration-200 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ring-offset-surface"
+                                className="px-3 py-1 bg-primary-strong text-white rounded-button text-sm hover:bg-primary-bold transition-colors duration-200 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ring-offset-surface"
                               >
                                 <Download className="w-4 h-4" />
                                 PDF
@@ -189,19 +189,19 @@ export default function DocsPage() {
                                   <div className="flex gap-2 mb-2">
                                     <button
                                       onClick={() => zoomIn()}
-                                      className="px-3 py-1 bg-primary-600 text-white rounded-button text-sm"
+                                      className="px-3 py-1 bg-primary-strong text-white rounded-button text-sm"
                                     >
                                       +
                                     </button>
                                     <button
                                       onClick={() => zoomOut()}
-                                      className="px-3 py-1 bg-primary-600 text-white rounded-button text-sm"
+                                      className="px-3 py-1 bg-primary-strong text-white rounded-button text-sm"
                                     >
                                       -
                                     </button>
                                     <button
                                       onClick={() => resetTransform()}
-                                      className="px-3 py-1 bg-primary-600 text-white rounded-button text-sm"
+                                      className="px-3 py-1 bg-primary-strong text-white rounded-button text-sm"
                                     >
                                       {t("docs.reset")}
                                     </button>
@@ -260,7 +260,7 @@ export default function DocsPage() {
                                 key={table.name}
                                 className="p-3 bg-surface-inset rounded-button border border-divide"
                               >
-                                <code className="text-sm font-mono text-primary-600 block">
+                                <code className="text-sm font-mono text-primary-strong block">
                                   {table.name}
                                 </code>
                                 <Text variant="muted" className="mt-1 block">

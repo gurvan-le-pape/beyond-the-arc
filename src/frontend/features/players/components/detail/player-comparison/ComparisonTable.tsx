@@ -147,7 +147,7 @@ export function ComparisonTable({
                   <div
                     className={cn(
                       "h-1.5 rounded-full mt-1 transition-all duration-500",
-                      winner === "A" ? "bg-primary-500" : "bg-transparent",
+                      winner === "A" ? "bg-primary" : "bg-transparent",
                     )}
                     style={{
                       width: winner === "A" ? "100%" : "0%",
@@ -159,7 +159,7 @@ export function ComparisonTable({
                 {/* ── Bar A – grows rightward (toward centre) ── */}
                 <div className="h-2.5 bg-surface-inset rounded-l-full overflow-hidden flex justify-end">
                   <div
-                    className="h-full bg-primary-500 rounded-l-full transition-all ease-out"
+                    className="h-full bg-primary rounded-l-full transition-all ease-out"
                     style={{
                       width: mounted ? `${fillA}%` : "0%",
                       transitionDuration: "600ms",

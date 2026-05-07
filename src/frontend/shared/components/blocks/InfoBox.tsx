@@ -48,7 +48,7 @@ export const InfoBox = forwardRef<HTMLDivElement, InfoBoxProps>(
             href={href}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-primary hover:text-primary-600 hover:underline transition-colors"
+            className="text-primary hover:text-primary-strong hover:underline transition-colors"
           >
             {/* h4 = text-lg font-medium text-heading — link overrides color */}
             <Text variant="h4" as="span">

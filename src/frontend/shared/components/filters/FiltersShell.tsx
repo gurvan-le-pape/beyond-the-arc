@@ -45,7 +45,7 @@ export function FiltersShell({
           onClick={() => setIsOpen(true)}
           className={cn(
             "w-full justify-between",
-            hasActiveFilters && "border-primary-500 bg-primary-300",
+            hasActiveFilters && "border-primary bg-primary-subtle",
           )}
         >
           <div className="flex items-center gap-2">
@@ -58,7 +58,7 @@ export function FiltersShell({
             <span
               className={cn(
                 "text-sm font-medium",
-                hasActiveFilters ? "text-primary-600" : "text-text-body",
+                hasActiveFilters ? "text-primary-strong" : "text-text-body",
               )}
             >
               {tFilters("filters.label")}

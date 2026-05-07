@@ -28,8 +28,8 @@ export function LeaderboardTable({
       <div className="flex justify-end mb-2">
         <div className="min-w-[200px]">{dropdown}</div>
       </div>
-      <Table className="border border-primary-500 rounded-card box-border">
-        <TableHeader className="bg-primary-300 border-b border-primary-500">
+      <Table className="border border-primary rounded-card box-border">
+        <TableHeader className="bg-primary-subtle border-b border-primary">
           <TableRow>
             <TableHead className="text-center text-text-heading">
               {tCommon("table.rank")}
@@ -58,7 +58,9 @@ export function LeaderboardTable({
           {leaderboards.map((leaderboard, index) => (
             <TableRow
               key={leaderboard.id}
-              className={index % 2 === 0 ? "bg-primary-50" : "bg-surface-inset"}
+              className={
+                index % 2 === 0 ? "bg-primary-ghost" : "bg-surface-inset"
+              }
             >
               {/* Rank Column */}
               <TableCell highlight className="text-center text-text-heading">

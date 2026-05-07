@@ -64,7 +64,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
               className={cn(
                 "w-full justify-center p-2 rounded",
                 selectedValue === opt.value
-                  ? "font-bold text-primary-600"
+                  ? "font-bold text-primary-strong"
                   : "hover:bg-surface-inset",
               )}
               onClick={() => {

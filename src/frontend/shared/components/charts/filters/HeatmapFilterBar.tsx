@@ -32,7 +32,7 @@ export const HeatmapFilterBar: React.FC<HeatmapFilterBarProps> = ({
           onClick={() => setShotFilter(key)}
           className={`px-3 py-1 rounded-md border text-sm transition-all ${
             shotFilter === key
-              ? "font-semibold border-primary-500 bg-primary-300 text-primary-600 shadow-sm"
+              ? "font-semibold border-primary bg-primary-subtle text-primary-strong shadow-sm"
               : "border-divide bg-surface-inset text-text-body hover:border-text-muted"
           }`}
         >

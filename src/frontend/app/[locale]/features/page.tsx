@@ -178,7 +178,7 @@ export default async function FeaturesPage({
             const Icon = highlight.icon;
             return (
               <div key={highlight.title} className="text-center">
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-button bg-primary-subtle text-primary-600 mb-3">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-button bg-primary-subtle text-primary-strong mb-3">
                   <Icon className="w-6 h-6" />
                 </div>
                 <Text variant="h3" className="mb-2 text-base">

@@ -57,10 +57,10 @@ export const Switch = forwardRef<HTMLButtonElement, SwitchProps>(
         tabIndex={0}
         className={cn(
           "relative inline-flex shrink-0 items-center rounded-full transition-colors",
-          "focus:outline-none focus:ring-2 focus:ring-primary-500",
+          "focus:outline-none focus:ring-2 focus:ring-primary",
           "focus:ring-offset-2 ring-offset-surface",
           "disabled:cursor-not-allowed disabled:opacity-50",
-          checked ? "bg-primary-500" : "bg-divide",
+          checked ? "bg-primary" : "bg-divide",
           s.track,
           className,
         )}

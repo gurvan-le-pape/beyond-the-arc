@@ -158,7 +158,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               "bg-surface-inset",
               "text-text-heading",
               "placeholder:text-text-muted",
-              "focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500",
+              "focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary",
               "disabled:cursor-not-allowed disabled:opacity-50",
               "transition-colors duration-200",
               resolvedLeftIcon && "pl-10",

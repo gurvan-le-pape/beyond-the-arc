@@ -57,7 +57,7 @@ function PlayerNameCell({
   return (
     <button
       type="button"
-      className="cursor-pointer hover:text-primary bg-transparent border-none p-0 m-0 font-inherit text-left transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 ring-offset-surface rounded"
+      className="cursor-pointer hover:text-primary bg-transparent border-none p-0 m-0 font-inherit text-left transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary ring-offset-surface rounded"
       onClick={() => onNavigate(playerId)}
     >
       {playerName}
@@ -74,7 +74,7 @@ interface ShotChartCellProps {
 function ShotChartCell({ player, onSelect, label }: ShotChartCellProps) {
   return (
     <button
-      className="p-1 bg-transparent border-none cursor-pointer hover:opacity-80 transition-opacity duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 ring-offset-surface rounded"
+      className="p-1 bg-transparent border-none cursor-pointer hover:opacity-80 transition-opacity duration-200 focus:outline-none focus:ring-2 focus:ring-primary ring-offset-surface rounded"
       title={label}
       onClick={() => onSelect(player)}
       aria-label={label}
@@ -219,7 +219,7 @@ export const PlayerMatchStats: React.FC<PlayerMatchStatsProps> = ({
         <span>
           <button
             type="button"
-            className="text-text-heading cursor-pointer hover:text-primary bg-transparent border-none p-0 m-0 font-inherit transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 ring-offset-surface rounded"
+            className="text-text-heading cursor-pointer hover:text-primary bg-transparent border-none p-0 m-0 font-inherit transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary ring-offset-surface rounded"
             onClick={() => router.push(`/teams/${team.id}`)}
             aria-label={`${tMatches("playerMatchStats.viewTeam")} ${team.name}`}
           >
@@ -254,7 +254,7 @@ export const PlayerMatchStats: React.FC<PlayerMatchStatsProps> = ({
                 hoverable
                 clickable={false}
                 className={
-                  index % 2 === 0 ? "bg-primary-50" : "bg-surface-inset"
+                  index % 2 === 0 ? "bg-primary-ghost" : "bg-surface-inset"
                 }
               >
                 {columns.map((column) => (

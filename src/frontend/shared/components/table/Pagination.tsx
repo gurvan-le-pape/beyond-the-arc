@@ -106,7 +106,7 @@ export const Pagination: React.FC<PaginationProps> = ({
               setPageSize(Number(e.target.value));
               setPageIndex(0);
             }}
-            className="px-3 py-1.5 border border-divide rounded-input bg-surface-inset text-text-heading focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors"
+            className="px-3 py-1.5 border border-divide rounded-input bg-surface-inset text-text-heading focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
             aria-label={t("pagination.resultsPerPage")}
           >
             {PAGE_SIZES.map((size) => (
@@ -176,7 +176,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           </div>
 
           {/* Mobile: Current page indicator */}
-          <div className="sm:hidden px-3 py-1.5 bg-primary-600 text-white rounded-button font-medium">
+          <div className="sm:hidden px-3 py-1.5 bg-primary-strong text-white rounded-button font-medium">
             {currentPage}
           </div>
 

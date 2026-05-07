@@ -13,8 +13,7 @@ const cardVariants = cva("rounded-card border transition-all duration-200", {
   variants: {
     variant: {
       default: "surface-subtle border-divide shadow-card",
-      highlighted:
-        "surface-subtle border-primary-500 border-2 shadow-card-hover",
+      highlighted: "surface-subtle border-primary border-2 shadow-card-hover",
       ghost: "bg-transparent border-transparent",
       // Empty — allows full custom styling via className
       custom: "",

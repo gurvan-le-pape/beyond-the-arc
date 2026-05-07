@@ -107,13 +107,13 @@ export default async function AboutPage({
         <div className="flex flex-wrap justify-center gap-4">
           <a
             href={`/${locale}/features`}
-            className="px-6 py-3 bg-white text-primary-600 rounded-button font-semibold hover:bg-gray-100 transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600"
+            className="px-6 py-3 bg-white text-primary-strong rounded-button font-semibold hover:bg-gray-100 transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-strong"
           >
             {t("about.viewFeatures")}
           </a>
           <a
             href={`/${locale}/architecture`}
-            className="px-6 py-3 bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-button font-semibold hover:bg-white/30 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600"
+            className="px-6 py-3 bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-button font-semibold hover:bg-white/30 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-strong"
           >
             {t("about.viewArchitecture")}
           </a>

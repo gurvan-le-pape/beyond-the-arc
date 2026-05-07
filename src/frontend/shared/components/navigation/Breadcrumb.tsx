@@ -71,7 +71,7 @@ export function Breadcrumb({
               {isClickable ? (
                 <button
                   onClick={() => handleClick(item)}
-                  className="text-primary hover:text-primary-600 hover:underline transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ring-offset-surface rounded-button"
+                  className="text-primary hover:text-primary-strong hover:underline transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ring-offset-surface rounded-button"
                   aria-current={isCurrent ? "page" : undefined}
                 >
                   {item.label}
