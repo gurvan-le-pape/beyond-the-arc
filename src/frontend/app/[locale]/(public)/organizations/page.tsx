@@ -1,54 +1,53 @@
 // src/frontend/app/[locale]/(public)/organizations/page.tsx
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import React from "react";
 import { FaBuilding, FaMapMarkedAlt, FaUsers } from "react-icons/fa";
 
-import { Link } from "@/navigation";
+import { OrganizationTypeCard, type OrgType } from "@/shared/components/domain";
 import { PageLayout } from "@/shared/components/layout";
 import { Text } from "@/shared/components/typography";
 import { OrganizationType } from "@/shared/constants";
 
-interface OrgType {
-  id: OrganizationType;
-  label: string;
-  description: string;
-  icon: React.ReactElement<React.SVGProps<SVGSVGElement>>;
-  href: string;
-}
-
-const OrganizationTypeCard: React.FC<{ org: OrgType }> = ({ org }) => {
-  const { label, description, icon, href, id } = org;
-
-  let colorClasses = "";
-  if (id === OrganizationType.LEAGUES) {
-    colorClasses =
-      "from-regional-subtle to-regional-subtle/40 border-regional hover:border-regional-strong";
-  } else if (id === OrganizationType.COMMITTEES) {
-    colorClasses =
-      "from-departmental-subtle to-departmental-subtle/40 border-departmental hover:border-departmental-strong";
-  } else if (id === OrganizationType.CLUBS) {
-    colorClasses =
-      "from-clubs-subtle to-clubs-subtle/40 border-clubs hover:border-clubs-strong";
-  }
-
-  return (
-    <Link
-      href={href}
-      className={`cursor-pointer bg-gradient-to-br border-2 rounded-card flex flex-col items-center justify-center p-8 transition-all duration-200 hover:scale-105 shadow-card hover:shadow-card-hover group ${colorClasses} focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ring-offset-surface`}
-      aria-label={label}
-    >
-      <span className="sr-only">{label}</span>
-
-      {React.cloneElement(icon, { "aria-hidden": true, focusable: false })}
-
-      <div className="text-xl font-semibold mb-2 group-hover:text-primary-bold transition-colors duration-200 text-text-heading">
-        {label}
-      </div>
-
-      <div className="text-sm text-text-body text-center">{description}</div>
-    </Link>
-  );
-};
+const ORG_TYPE_CONFIG = [
+  {
+    id: OrganizationType.LEAGUES,
+    labelKey: "leagues.label",
+    descriptionKey: "leagues.description",
+    icon: (
+      <FaMapMarkedAlt
+        className="text-5xl text-regional-strong mb-4"
+        aria-hidden
+        focusable={false}
+      />
+    ),
+    href: `/organizations/${OrganizationType.LEAGUES}`,
+  },
+  {
+    id: OrganizationType.COMMITTEES,
+    labelKey: "committees.label",
+    descriptionKey: "committees.description",
+    icon: (
+      <FaBuilding
+        className="text-5xl text-departmental-strong mb-4"
+        aria-hidden
+        focusable={false}
+      />
+    ),
+    href: `/organizations/${OrganizationType.COMMITTEES}`,
+  },
+  {
+    id: OrganizationType.CLUBS,
+    labelKey: "clubs.label",
+    descriptionKey: "clubs.description",
+    icon: (
+      <FaUsers
+        className="text-5xl text-clubs-strong mb-4"
+        aria-hidden
+        focusable={false}
+      />
+    ),
+    href: `/organizations/${OrganizationType.CLUBS}`,
+  },
+] as const;
 
 interface OrganizationsPageProps {
   readonly params: Promise<{ locale: string }>;
@@ -64,29 +63,13 @@ export default async function OrganizationsPage({
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "organizations" });
 
-  const types: OrgType[] = [
-    {
-      id: OrganizationType.LEAGUES,
-      label: t(`${OrganizationType.LEAGUES}.label`),
-      description: t(`${OrganizationType.LEAGUES}.description`),
-      icon: <FaMapMarkedAlt className="text-5xl text-regional-strong mb-4" />,
-      href: `/organizations/${OrganizationType.LEAGUES}`,
-    },
-    {
-      id: OrganizationType.COMMITTEES,
-      label: t(`${OrganizationType.COMMITTEES}.label`),
-      description: t(`${OrganizationType.COMMITTEES}.description`),
-      icon: <FaBuilding className="text-5xl text-departmental-strong mb-4" />,
-      href: `/organizations/${OrganizationType.COMMITTEES}`,
-    },
-    {
-      id: OrganizationType.CLUBS,
-      label: t(`${OrganizationType.CLUBS}.label`),
-      description: t(`${OrganizationType.CLUBS}.description`),
-      icon: <FaUsers className="text-5xl text-clubs-strong mb-4" />,
-      href: `/organizations/${OrganizationType.CLUBS}`,
-    },
-  ];
+  const types: OrgType[] = ORG_TYPE_CONFIG.map((org) => ({
+    id: org.id,
+    icon: org.icon,
+    href: org.href,
+    label: t(org.labelKey),
+    description: t(org.descriptionKey),
+  }));
 
   return (
     <PageLayout centered>
