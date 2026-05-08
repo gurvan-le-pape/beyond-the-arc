@@ -15,6 +15,3 @@ export * from "./map/layers/RegionsLayer";
 export * from "./map/LoadingMap";
 export * from "./map/SearchBar";
 export * from "./map/SidePanel";
-export * from "./navigation/DepartementsGrid";
-export * from "./navigation/RegionsGrid";
-export * from "./navigation/TitleSection";
