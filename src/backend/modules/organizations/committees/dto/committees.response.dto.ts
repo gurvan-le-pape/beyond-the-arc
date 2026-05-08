@@ -85,4 +85,11 @@ export class CommitteeResponseDto {
     type: DepartmentResponseDto,
   })
   department!: DepartmentResponseDto;
+
+  @ApiProperty({
+    description: "Number of clubs in this committee",
+    example: 15,
+    type: Number,
+  })
+  clubCount!: number;
 }

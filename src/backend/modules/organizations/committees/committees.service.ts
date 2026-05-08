@@ -33,6 +33,7 @@ const COMMITTEE_SELECT = {
       code: true,
     },
   },
+  _count: { select: { clubs: true } },
 } as const;
 
 /**
@@ -136,6 +137,7 @@ export class CommitteesService {
         name: committee.department.name,
         code: committee.department.code,
       },
+      clubCount: committee._count.clubs,
     } satisfies CommitteeResponseDto;
   }
 }
