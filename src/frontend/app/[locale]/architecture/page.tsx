@@ -12,10 +12,23 @@ import {
   Wrench,
 } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import React from "react";
 
+import type { TechStackItemConfig } from "@/features/site/architecture/components";
+import {
+  ArchitectureArrow,
+  ArchitectureDiagramNode,
+  FeatureBadge,
+  TechStackCard,
+} from "@/features/site/architecture/components";
 import { PageHero, PageLayout } from "@/shared/components/layout";
 import { Text } from "@/shared/components/typography";
+
+interface TechStackConfig {
+  title: string;
+  icon: typeof Globe;
+  color: string;
+  items: TechStackItemConfig[];
+}
 
 export default async function ArchitecturePage({
   params,
@@ -25,7 +38,7 @@ export default async function ArchitecturePage({
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "landing" });
 
-  const techStacks = [
+  const techStacks: TechStackConfig[] = [
     {
       title: t("architecture.frontendTitle"),
       icon: Globe,
@@ -135,46 +148,15 @@ export default async function ArchitecturePage({
 
       {/* Tech Stack Cards — sit on surface-base, establish surface-subtle context */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-        {techStacks.map((stack) => {
-          const Icon = stack.icon;
-          return (
-            <div
-              key={stack.title}
-              className="surface-subtle rounded-card border border-divide shadow-card hover:shadow-card-hover transition-all duration-200 overflow-hidden"
-            >
-              {/* Card Header — decorative gradient, intentional */}
-              <div className={`bg-gradient-to-r ${stack.color} p-6 text-white`}>
-                <div className="flex items-center gap-3">
-                  <Icon className="w-8 h-8" />
-                  <Text variant="h2" className="text-white text-xl">
-                    {stack.title}
-                  </Text>
-                </div>
-              </div>
-
-              {/* Card Body — items use bg-surface-inset, resolves to surface-raised */}
-              <div className="p-6 space-y-4">
-                {stack.items.map((item) => {
-                  const ItemIcon = item.icon;
-                  return (
-                    <div
-                      key={item.name}
-                      className="flex items-start gap-3 p-3 rounded-button bg-surface-inset border border-transparent hover:border-divide transition-colors duration-200"
-                    >
-                      <ItemIcon className="w-5 h-5 text-text-secondary flex-shrink-0 mt-0.5" />
-                      <div>
-                        <Text variant="h3" className="text-base">
-                          {item.name}
-                        </Text>
-                        <Text variant="caption">{item.description}</Text>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })}
+        {techStacks.map((stack) => (
+          <TechStackCard
+            key={stack.title}
+            title={stack.title}
+            icon={stack.icon}
+            color={stack.color}
+            items={stack.items}
+          />
+        ))}
       </div>
 
       {/* Architecture Diagram — sits on surface-base, establishes surface-subtle context */}
@@ -184,96 +166,59 @@ export default async function ArchitecturePage({
         </Text>
         <div className="flex flex-col md:flex-row items-center justify-center gap-8">
           {/* Client — decorative gradient, intentional */}
-          <div className="flex flex-col items-center">
-            <div className="bg-gradient-to-br from-blue-500 to-cyan-500 text-white rounded-button p-6 w-48 text-center shadow-card">
-              <Globe className="w-12 h-12 mx-auto mb-3" />
-              <Text variant="h3" className="text-white">
-                {t("architecture.diagram.client")}
-              </Text>
-              <p className="text-sm mt-2">Next.js + React</p>
-            </div>
-          </div>
+          <ArchitectureDiagramNode
+            icon={Globe}
+            title={t("architecture.diagram.client")}
+            subtitle="Next.js + React"
+            color="from-blue-500 to-cyan-500"
+          />
 
           {/* Arrow */}
-          <div className="hidden md:block text-text-muted">
-            <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fillRule="evenodd"
-                d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </div>
+          <ArchitectureArrow />
 
           {/* Server — decorative gradient, intentional */}
-          <div className="flex flex-col items-center">
-            <div className="bg-gradient-to-br from-green-500 to-emerald-500 text-white rounded-button p-6 w-48 text-center shadow-card">
-              <Server className="w-12 h-12 mx-auto mb-3" />
-              <Text variant="h3" className="text-white">
-                {t("architecture.diagram.server")}
-              </Text>
-              <p className="text-sm mt-2">NestJS + REST</p>
-            </div>
-          </div>
+          <ArchitectureDiagramNode
+            icon={Server}
+            title={t("architecture.diagram.server")}
+            subtitle="NestJS + REST"
+            color="from-green-500 to-emerald-500"
+          />
 
           {/* Arrow */}
-          <div className="hidden md:block text-text-muted">
-            <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fillRule="evenodd"
-                d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </div>
+          <ArchitectureArrow />
 
           {/* Database — decorative gradient, intentional */}
-          <div className="flex flex-col items-center">
-            <div className="bg-gradient-to-br from-purple-500 to-pink-500 text-white rounded-button p-6 w-48 text-center shadow-card">
-              <Database className="w-12 h-12 mx-auto mb-3" />
-              <Text variant="h3" className="text-white">
-                {t("architecture.diagram.database")}
-              </Text>
-              <p className="text-sm mt-2">PostgreSQL</p>
-            </div>
-          </div>
+          <ArchitectureDiagramNode
+            icon={Database}
+            title={t("architecture.diagram.database")}
+            subtitle="PostgreSQL"
+            color="from-purple-500 to-pink-500"
+          />
         </div>
 
         {/* Key Features — icon badges use bg-surface-inset, resolves to surface-raised */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="text-center">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-button bg-primary-subtle text-primary-strong mb-3">
-              <Package className="w-6 h-6" />
-            </div>
-            <Text variant="h3" className="mb-2 text-base">
-              {t("architecture.features.modular.title")}
-            </Text>
-            <Text variant="caption">
-              {t("architecture.features.modular.description")}
-            </Text>
-          </div>
-          <div className="text-center">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-button bg-success-subtle text-success mb-3">
-              <Code2 className="w-6 h-6" />
-            </div>
-            <Text variant="h3" className="mb-2 text-base">
-              {t("architecture.features.typeSafety.title")}
-            </Text>
-            <Text variant="caption">
-              {t("architecture.features.typeSafety.description")}
-            </Text>
-          </div>
-          <div className="text-center">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-button bg-clubs-subtle text-clubs mb-3">
-              <Layers className="w-6 h-6" />
-            </div>
-            <Text variant="h3" className="mb-2 text-base">
-              {t("architecture.features.scalable.title")}
-            </Text>
-            <Text variant="caption">
-              {t("architecture.features.scalable.description")}
-            </Text>
-          </div>
+          {/* Modular architecture — feature badge */}
+          <FeatureBadge
+            icon={Package}
+            iconClassName="bg-primary-subtle text-primary-strong"
+            title={t("architecture.features.modular.title")}
+            description={t("architecture.features.modular.description")}
+          />
+          {/* Type safety — feature badge */}
+          <FeatureBadge
+            icon={Code2}
+            iconClassName="bg-success-subtle text-success"
+            title={t("architecture.features.typeSafety.title")}
+            description={t("architecture.features.typeSafety.description")}
+          />
+          {/* Scalable design — feature badge */}
+          <FeatureBadge
+            icon={Layers}
+            iconClassName="bg-clubs-subtle text-clubs"
+            title={t("architecture.features.scalable.title")}
+            description={t("architecture.features.scalable.description")}
+          />
         </div>
       </div>
     </PageLayout>
