@@ -58,6 +58,7 @@ describe("CommitteesService", () => {
     department: {
       select: { id: true, name: true, code: true },
     },
+    _count: { select: { clubs: true } },
   };
 
   const mockCommitteeData = (overrides = {}) => ({
@@ -65,6 +66,7 @@ describe("CommitteesService", () => {
     email: null,
     address: null,
     president: null,
+    _count: { clubs: 0 },
     ...overrides,
   });
 
@@ -167,13 +169,17 @@ describe("CommitteesService", () => {
         name: "Comité Departmental de l'Ain",
         leagueId: 1,
         department: { id: 1, name: "Ain", code: "01" },
+        _count: { clubs: 5 },
       });
 
       mockPrismaService.committees.findUnique.mockResolvedValue(mockCommittee);
 
       const result = await service.findCommitteeById(1);
 
-      expect(result).toEqual(mockCommittee);
+      expect(result.id).toBe(1);
+      expect(result.name).toBe("Comité Departmental de l'Ain");
+      expect(result.clubCount).toBe(5);
+      expect(result.department).toEqual({ id: 1, name: "Ain", code: "01" });
 
       expect(mockPrismaService.committees.findUnique).toHaveBeenCalledWith({
         where: { id: 1 },
