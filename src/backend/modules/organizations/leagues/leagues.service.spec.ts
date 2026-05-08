@@ -73,6 +73,11 @@ describe("LeaguesService", () => {
         code: true,
       },
     },
+    committees: {
+      select: {
+        _count: { select: { clubs: true } },
+      },
+    },
   };
 
   const mockLeagueData = (overrides = {}) => ({
@@ -80,6 +85,7 @@ describe("LeaguesService", () => {
     email: null,
     address: null,
     president: null,
+    committees: [],
     ...overrides,
   });
 
@@ -110,7 +116,18 @@ describe("LeaguesService", () => {
       const result = await service.findAllLeagues();
 
       // Assert
-      expect(result).toEqual(mockLeagues);
+      expect(result[0].id).toBe(1);
+      expect(result[0].name).toBe(
+        "LIGUE REGIONALE AUVERGNE-RHONE-ALPES DE BASKET-BALL",
+      );
+      expect(result[0].clubCount).toBe(0);
+      expect(result[0].region).toEqual({
+        id: 1,
+        name: "Auvergne-Rhône-Alpes",
+        code: "ARA",
+      });
+      expect(result).toHaveLength(3);
+
       expect(mockPrismaService.leagues.findMany).toHaveBeenCalledWith({
         select: EXPECTED_SELECT,
         orderBy: { name: "asc" },
@@ -147,6 +164,7 @@ describe("LeaguesService", () => {
         id: 1,
         name: "LIGUE REGIONALE BRETAGNE DE BASKET-BALL",
         region: { id: 3, name: "Bretagne", code: "BRE" },
+        committees: [{ _count: { clubs: 10 } }, { _count: { clubs: 5 } }],
       });
 
       mockPrismaService.leagues.findUnique.mockResolvedValue(mockLeague);
@@ -155,7 +173,11 @@ describe("LeaguesService", () => {
       const result = await service.findLeagueById(1);
 
       // Assert
-      expect(result).toEqual(mockLeague);
+      expect(result.id).toBe(1);
+      expect(result.name).toBe("LIGUE REGIONALE BRETAGNE DE BASKET-BALL");
+      expect(result.clubCount).toBe(15);
+      expect(result.region).toEqual({ id: 3, name: "Bretagne", code: "BRE" });
+
       expect(mockPrismaService.leagues.findUnique).toHaveBeenCalledWith({
         where: { id: 1 },
         select: EXPECTED_SELECT,

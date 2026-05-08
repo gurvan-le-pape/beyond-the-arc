@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/clubs/components/navigation/TitleSection.tsx
+// src/frontend/shared/components/domain/organizations/TitleSection.tsx
 "use client";
 
 import { useTranslations } from "next-intl";
