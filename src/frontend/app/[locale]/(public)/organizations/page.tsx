@@ -73,9 +73,6 @@ export default async function OrganizationsPage({
 
   return (
     <PageLayout centered>
-      <Text variant="h1" className="mb-12 text-center">
-        {t("selectType")}
-      </Text>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 lg:gap-8">
         {types.map((org) => (
           <OrganizationTypeCard key={org.id} org={org} />
