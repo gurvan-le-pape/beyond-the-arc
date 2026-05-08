@@ -4,7 +4,6 @@ import { FaBuilding, FaMapMarkedAlt, FaUsers } from "react-icons/fa";
 
 import { OrganizationTypeCard, type OrgType } from "@/shared/components/domain";
 import { PageLayout } from "@/shared/components/layout";
-import { Text } from "@/shared/components/typography";
 import { OrganizationType } from "@/shared/constants";
 
 const ORG_TYPE_CONFIG = [
