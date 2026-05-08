@@ -10,4 +10,5 @@ export * from "./organizations/detail/OrganizationHeader";
 export * from "./organizations/detail/OrganizationInfo";
 export * from "./organizations/detail/OrganizationPageSkeleton";
 export * from "./organizations/detail/SearchableChipsList";
+export * from "./organizations/TitleSection";
 export * from "./TeamListItem";
