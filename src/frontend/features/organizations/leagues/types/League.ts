@@ -11,4 +11,5 @@ export interface League {
   address: string | null;
   president: President | null;
   region: Region;
+  clubCount: number;
 }

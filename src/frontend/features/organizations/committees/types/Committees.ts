@@ -11,4 +11,5 @@ export interface Committee {
   president: President | null;
   leagueId: number;
   department: Department;
+  clubCount: number;
 }
