@@ -44,7 +44,7 @@ export function SearchableChipList<T extends SearchableChipListItem>({
       title={
         <>
           {title}
-          <span className="ml-2 text-sm font-normal text-text-muted dark:text-text-muted-dark">
+          <span className="ml-2 text-sm font-normal text-text-muted">
             ({items.length})
           </span>
         </>
@@ -74,7 +74,7 @@ export function SearchableChipList<T extends SearchableChipListItem>({
               key={item.id}
               type="button"
               onClick={() => onItemClick(item)}
-              className="px-3 py-2 rounded-lg text-sm font-medium border border-divide-light dark:border-divide-dark bg-surface-raised dark:bg-surface-raised-dark text-text-emphasis dark:text-text-emphasis-dark hover:border-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors duration-150"
+              className="px-3 py-2 rounded-lg text-sm font-medium border border-divide bg-surface-inset text-text-emphasis hover:border-primary hover:text-primary transition-colors duration-150"
             >
               {item.name}
             </button>

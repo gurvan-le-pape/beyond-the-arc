@@ -45,25 +45,20 @@ export function FiltersShell({
           onClick={() => setIsOpen(true)}
           className={cn(
             "w-full justify-between",
-            hasActiveFilters &&
-              "border-primary-500 bg-primary-50 dark:bg-primary-900/20 dark:border-primary-400",
+            hasActiveFilters && "border-primary bg-primary-subtle",
           )}
         >
           <div className="flex items-center gap-2">
             <AdjustmentsHorizontalIcon
               className={cn(
                 "w-5 h-5",
-                hasActiveFilters
-                  ? "text-primary-600 dark:text-primary-400"
-                  : "text-text-muted dark:text-text-muted-dark",
+                hasActiveFilters ? "text-primary" : "text-text-muted",
               )}
             />
             <span
               className={cn(
                 "text-sm font-medium",
-                hasActiveFilters
-                  ? "text-primary-700 dark:text-primary-300"
-                  : "text-text-body dark:text-text-body-dark",
+                hasActiveFilters ? "text-primary-strong" : "text-text-body",
               )}
             >
               {tFilters("filters.label")}
@@ -119,8 +114,8 @@ export function FiltersShell({
               <ActiveFilterChips chips={chips} onReset={onReset} />
             )}
             {!hasActiveFilters && (
-              <div className="pt-1 border-t border-divide-light dark:border-divide-dark">
-                <span className="text-xs text-text-muted dark:text-text-muted-dark">
+              <div className="pt-1 border-t border-divide">
+                <span className="text-xs text-text-muted">
                   {tFilters("filters.noActiveFilters")}
                 </span>
               </div>

@@ -94,7 +94,7 @@ export function ComparisonTable({
       {/* ── Column headers ──────────────────────────────────────────── */}
       <div className="grid grid-cols-[1fr_auto_1fr] gap-3 items-center mb-5 px-1">
         {/* Label A – right-aligned */}
-        <span className="text-end text-xs font-semibold text-primary-600 dark:text-primary-400 uppercase tracking-wider">
+        <span className="text-end text-xs font-semibold text-primary uppercase tracking-wider">
           {labelA}
         </span>
 
@@ -102,7 +102,7 @@ export function ComparisonTable({
         <span className="w-1.5" />
 
         {/* Label B – left-aligned */}
-        <span className="text-start text-xs font-semibold text-secondary-600 dark:text-secondary-400 uppercase tracking-wider">
+        <span className="text-start text-xs font-semibold text-secondary uppercase tracking-wider">
           {labelB}
         </span>
       </div>
@@ -138,9 +138,7 @@ export function ComparisonTable({
                   <span
                     className={cn(
                       "inline-block text-sm font-bold tabular-nums transition-colors duration-300",
-                      winner === "A"
-                        ? "text-primary-700 dark:text-primary-300"
-                        : "text-text-body dark:text-text-body-dark",
+                      winner === "A" ? "text-primary" : "text-text-body",
                     )}
                   >
                     {rawA}
@@ -149,9 +147,7 @@ export function ComparisonTable({
                   <div
                     className={cn(
                       "h-1.5 rounded-full mt-1 transition-all duration-500",
-                      winner === "A"
-                        ? "bg-primary-500 dark:bg-primary-400"
-                        : "bg-transparent",
+                      winner === "A" ? "bg-primary" : "bg-transparent",
                     )}
                     style={{
                       width: winner === "A" ? "100%" : "0%",
@@ -161,9 +157,9 @@ export function ComparisonTable({
                 </div>
 
                 {/* ── Bar A – grows rightward (toward centre) ── */}
-                <div className="h-2.5 bg-surface-subtle dark:bg-surface-subtle-dark rounded-l-full overflow-hidden flex justify-end">
+                <div className="h-2.5 bg-surface-inset rounded-l-full overflow-hidden flex justify-end">
                   <div
-                    className="h-full bg-primary-500 dark:bg-primary-400 rounded-l-full transition-all ease-out"
+                    className="h-full bg-primary rounded-l-full transition-all ease-out"
                     style={{
                       width: mounted ? `${fillA}%` : "0%",
                       transitionDuration: "600ms",
@@ -174,13 +170,13 @@ export function ComparisonTable({
 
                 {/* ── Centre dot ── */}
                 <div className="flex flex-col items-center justify-center gap-0.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-text-muted dark:bg-text-muted-dark" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-text-muted" />
                 </div>
 
                 {/* ── Bar B – grows leftward (toward centre) ── */}
-                <div className="h-2.5 bg-surface-subtle dark:bg-surface-subtle-dark rounded-r-full overflow-hidden flex justify-start">
+                <div className="h-2.5 bg-surface-inset rounded-r-full overflow-hidden flex justify-start">
                   <div
-                    className="h-full bg-secondary-500 dark:bg-secondary-400 rounded-r-full transition-all ease-out"
+                    className="h-full bg-secondary rounded-r-full transition-all ease-out"
                     style={{
                       width: mounted ? `${fillB}%` : "0%",
                       transitionDuration: "600ms",
@@ -194,9 +190,7 @@ export function ComparisonTable({
                   <span
                     className={cn(
                       "inline-block text-sm font-bold tabular-nums transition-colors duration-300",
-                      winner === "B"
-                        ? "text-secondary-700 dark:text-secondary-300"
-                        : "text-text-body dark:text-text-body-dark",
+                      winner === "B" ? "text-secondary" : "text-text-body",
                     )}
                   >
                     {rawB}
@@ -205,9 +199,7 @@ export function ComparisonTable({
                   <div
                     className={cn(
                       "h-1.5 rounded-full mt-1 transition-all duration-500",
-                      winner === "B"
-                        ? "bg-secondary-500 dark:bg-secondary-400"
-                        : "bg-transparent",
+                      winner === "B" ? "bg-secondary" : "bg-transparent",
                     )}
                     style={{
                       width: winner === "B" ? "100%" : "0%",

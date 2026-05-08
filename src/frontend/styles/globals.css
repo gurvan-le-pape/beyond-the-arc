@@ -5,3 +5,454 @@
 html {
   scrollbar-gutter: stable;
 }
+
+/* =============================================================================
+   DESIGN TOKENS
+   =============================================================================
+
+   Single source of truth for all theme values.
+   Three themes: light (default), dark, high-contrast.
+
+   HOW IT WORKS
+   ─────────────────────────────────────────────────────────────────────────────
+   next-themes applies a class on <html>: "dark" or "high-contrast".
+   CSS variables are redefined per theme class.
+   Components never need dark: or high-contrast: variants for these tokens —
+   the variable resolves to the correct value automatically.
+
+   VARIABLE NAMING CONVENTION
+   ─────────────────────────────────────────────────────────────────────────────
+   Surface, divide, text → theme-sensitive, redefined per theme.
+
+   Semantic colors use subtle / DEFAULT / strong to describe role:
+     subtle  = low-emphasis tint  (badge background, gradient fill)
+     DEFAULT = the canonical color (icon, ring, active state)
+     strong  = high-emphasis shade (border, text on current surface)
+   These three flip between themes so components stay static —
+   "text-regional-strong border-regional" just works in every theme.
+
+   Primary, secondary → redefined per theme (brand accent shifts).
+   Status, team, level → subtle/strong flip; DEFAULT stays vivid.
+
+   ADDING A NEW THEME
+   ─────────────────────────────────────────────────────────────────────────────
+   1. Add a CSS class block below (e.g. .sepia { ... })
+   2. Only redefine variables that differ from :root
+   3. Register the name in theme-provider.tsx → themes prop
+   ============================================================================= */
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   LIGHT THEME (default)
+───────────────────────────────────────────────────────────────────────────── */
+:root {
+  /* Surface
+     Elevation order (never skip or reverse): base → subtle → raised
+     base   = outermost page background (PageLayout only)
+     subtle = cards, panels, section containers
+     raised = inputs, modals, infoboxes, skeleton fills              */
+  --color-surface-base: #f9fafb;
+  --color-surface-subtle: #f3f4f6;
+  --color-surface-raised: #e5e7eb;
+
+  /* Divide — borders and dividers only, never as background          */
+  --color-divide: #d1d5db;
+
+  /* Text — choose by role, not by shade
+     muted     = placeholders, disabled, decorative icons
+     secondary = captions, timestamps, helper text
+     body      = default paragraph text
+     emphasis  = labels, form labels, stronger secondary text
+     heading   = headings, primary values, winner names              */
+  --color-text-muted: #9ca3af;
+  --color-text-secondary: #6b7280;
+  --color-text-body: #4b5563;
+  --color-text-emphasis: #374151;
+  --color-text-heading: #1f2937;
+
+  /* Primary — brand blue
+     ghost   = faintest tint  (hover backgrounds, subtle fills)
+     faint   = very low emphasis (disabled states, decorative)
+     muted   = low emphasis
+     subtle  = below-default emphasis
+     soft    = slightly below default
+     DEFAULT = canonical active color (icon, ring, active state)
+     strong  = high emphasis (borders, text on light surface)
+     bold    = stronger emphasis
+     deep    = near-darkest
+     darker  = very dark
+     ink     = darkest, near-black                                   */
+  --color-primary-ghost: #e6eaf4;
+  --color-primary-faint: #c0cae4;
+  --color-primary-muted: #97a8d2;
+  --color-primary-subtle: #6d86c0;
+  --color-primary-soft: #4d6bb3;
+  --color-primary: #2e51a6;
+  --color-primary-strong: #1e3d8f;
+  --color-primary-bold: #152d75;
+  --color-primary-deep: #0d1f5c;
+  --color-primary-darker: #021b50;
+  --color-primary-ink: #010f30;
+
+  /* Secondary — brand green
+     ghost   = faintest tint  (hover backgrounds, subtle fills)
+     faint   = very low emphasis (disabled states, decorative)
+     muted   = low emphasis
+     subtle  = below-default emphasis
+     soft    = slightly below default
+     DEFAULT = canonical active color (icon, ring, active state)
+     strong  = high emphasis (borders, text on light surface)
+     bold    = stronger emphasis
+     deep    = near-darkest
+     darker  = very dark
+     ink     = darkest, near-black                                   */
+  --color-secondary-ghost: #f0fdf4;
+  --color-secondary-faint: #dcfce7;
+  --color-secondary-muted: #bbf7d0;
+  --color-secondary-subtle: #86efac;
+  --color-secondary-soft: #4ade80;
+  --color-secondary: #22c55e;
+  --color-secondary-strong: #16a34a;
+  --color-secondary-bold: #15803d;
+  --color-secondary-deep: #166534;
+  --color-secondary-darker: #14532d;
+  --color-secondary-ink: #0a2e18;
+
+  /* Shadows                                                          */
+  --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+  /* Header backdrop                                                  */
+  --color-header-bg: rgba(255, 255, 255, 0.9);
+
+  /* ── Semantic colors ────────────────────────────────────────────────
+     subtle  = low-emphasis tint  (badge bg, gradient fill)
+     DEFAULT = canonical color    (icon, ring, active state)
+     strong  = high-emphasis shade (border, text on light surface)   */
+
+  /* Status */
+  --color-success-subtle: #d1fae5;
+  --color-success: #10b981;
+  --color-success-strong: #065f46;
+
+  --color-error-subtle: #fee2e2;
+  --color-error: #ef4444;
+  --color-error-strong: #991b1b;
+
+  --color-warning-subtle: #fef3c7;
+  --color-warning: #f59e0b;
+  --color-warning-strong: #92400e;
+
+  --color-info-subtle: #cffafe;
+  --color-info: #06b6d4;
+  --color-info-strong: #164e63;
+
+  /* Team (gender) */
+  --color-team-male-subtle: #e0f2fe;
+  --color-team-male: #0ea5e9;
+  --color-team-male-strong: #0c4a6e;
+
+  --color-team-female-subtle: #fce7f3;
+  --color-team-female: #ec4899;
+  --color-team-female-strong: #831843;
+
+  /* Competition levels */
+  --color-national-subtle: #e0e7ff;
+  --color-national: #6366f1;
+  --color-national-strong: #312e81;
+
+  --color-regional-subtle: #ccfbf1;
+  --color-regional: #14b8a6;
+  --color-regional-strong: #134e4a;
+
+  --color-departmental-subtle: #fefce8;
+  --color-departmental: #eab308;
+  --color-departmental-strong: #713f12;
+
+  --color-clubs-subtle: #ede9fe;
+  --color-clubs: #a78bfa;
+  --color-clubs-strong: #4c1d95;
+
+  /* Domain entities
+     players = emerald (human/personal feel)
+     teams   = violet  (collective/structural feel)
+     matches = amber   (action/event feel)                            */
+  --color-players-subtle: #d1fae5;
+  --color-players: #059669;
+  --color-players-strong: #064e3b;
+
+  --color-teams-subtle: #e9d5ff;
+  --color-teams: #7c3aed;
+  --color-teams-strong: #5b21b6;
+
+  --color-matches-subtle: #fde68a;
+  --color-matches: #d97706;
+  --color-matches-strong: #78350f;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   DARK THEME
+   Only theme-sensitive tokens are redefined.
+   subtle/strong flip so components need no dark: variants.
+───────────────────────────────────────────────────────────────────────────── */
+.dark {
+  /* Surface */
+  --color-surface-base: #030712;
+  --color-surface-subtle: #111827;
+  --color-surface-raised: #1f2937;
+
+  /* Divide */
+  --color-divide: #374151;
+
+  /* Text */
+  --color-text-muted: #6b7280;
+  --color-text-secondary: #9ca3af;
+  --color-text-body: #d1d5db;
+  --color-text-emphasis: #e5e7eb;
+  --color-text-heading: #f3f4f6;
+
+  /* Primary — scale inverted, lighter shades become active on dark   */
+  --color-primary-ghost: #010f30;
+  --color-primary-faint: #021b50;
+  --color-primary-muted: #0d1f5c;
+  --color-primary-subtle: #152d75;
+  --color-primary-soft: #1e3d8f;
+  --color-primary: #4d6bb3;
+  --color-primary-strong: #6d86c0;
+  --color-primary-bold: #97a8d2;
+  --color-primary-deep: #c0cae4;
+  --color-primary-darker: #e6eaf4;
+  --color-primary-ink: #f0f3fa;
+
+  /* Secondary — scale inverted, lighter shades become active on dark */
+  --color-secondary-ghost: #0a2e18;
+  --color-secondary-faint: #14532d;
+  --color-secondary-muted: #166534;
+  --color-secondary-subtle: #15803d;
+  --color-secondary-soft: #16a34a;
+  --color-secondary: #22c55e;
+  --color-secondary-strong: #4ade80;
+  --color-secondary-bold: #86efac;
+  --color-secondary-deep: #bbf7d0;
+  --color-secondary-darker: #dcfce7;
+  --color-secondary-ink: #f0fdf4;
+
+  /* Shadows */
+  --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.5), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-card-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.4),
+    0 4px 6px -2px rgba(0, 0, 0, 0.25);
+
+  /* Header backdrop */
+  --color-header-bg: rgba(17, 24, 39, 0.9);
+
+  /* Semantic subtle/strong — flipped for dark surfaces               */
+  --color-success-subtle: #064e3b;
+  --color-success-strong: #6ee7b7;
+
+  --color-error-subtle: #7f1d1d;
+  --color-error-strong: #fca5a5;
+
+  --color-warning-subtle: #78350f;
+  --color-warning-strong: #fcd34d;
+
+  --color-info-subtle: #164e63;
+  --color-info-strong: #67e8f9;
+
+  --color-team-male-subtle: #0c4a6e;
+  --color-team-male-strong: #bae6fd;
+
+  --color-team-female-subtle: #831843;
+  --color-team-female-strong: #fbcfe8;
+
+  --color-national-subtle: #312e81;
+  --color-national-strong: #c7d2fe;
+
+  --color-regional-subtle: #134e4a;
+  --color-regional-strong: #99f6e4;
+
+  --color-departmental-subtle: #713f12;
+  --color-departmental-strong: #fef08a;
+
+  --color-clubs-subtle: #4c1d95;
+  --color-clubs-strong: #ddd6fe;
+
+  /* Domain entities — subtle/strong flipped for dark surfaces        */
+  --color-players-subtle: #065f46;
+  --color-players-strong: #a7f3d0;
+
+  --color-teams-subtle: #3b0764;
+  --color-teams-strong: #ddd6fe;
+
+  --color-matches-subtle: #78350f;
+  --color-matches-strong: #fde68a;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   HIGH-CONTRAST THEME
+   Pure black surfaces, white dividers, vivid accents.
+   Optimised for accessibility and readability.
+   Register in theme-provider.tsx → themes={["light","dark","high-contrast"]}
+───────────────────────────────────────────────────────────────────────────── */
+.high-contrast {
+  /* Surface */
+  --color-surface-base: #000000;
+  --color-surface-subtle: #0d0d0d;
+  --color-surface-raised: #1a1a1a;
+
+  /* Divide — white for maximum visibility                            */
+  --color-divide: #ffffff;
+
+  /* Text — near-white scale                                          */
+  --color-text-muted: #a3a3a3;
+  --color-text-secondary: #d4d4d4;
+  --color-text-body: #e5e5e5;
+  --color-text-emphasis: #f5f5f5;
+  --color-text-heading: #ffffff;
+
+  /* Primary — vivid yellow, maximum contrast on black                */
+  --color-primary-ghost: #1a1200;
+  --color-primary-faint: #3d2c00;
+  --color-primary-muted: #6b4c00;
+  --color-primary-subtle: #996d00;
+  --color-primary-soft: #cc9100;
+  --color-primary: #ffb800;
+  --color-primary-strong: #ffc933;
+  --color-primary-bold: #ffd966;
+  --color-primary-deep: #ffe999;
+  --color-primary-darker: #fff4cc;
+  --color-primary-ink: #fffae6;
+
+  /* Secondary — vivid cyan                                           */
+  --color-secondary-ghost: #001a1a;
+  --color-secondary-faint: #003d3d;
+  --color-secondary-muted: #006b6b;
+  --color-secondary-subtle: #009999;
+  --color-secondary-soft: #00cccc;
+  --color-secondary: #00ffff;
+  --color-secondary-strong: #33ffff;
+  --color-secondary-bold: #66ffff;
+  --color-secondary-deep: #99ffff;
+  --color-secondary-darker: #ccffff;
+  --color-secondary-ink: #e6ffff;
+
+  /* Shadows — hard borders, no blur                                  */
+  --shadow-card: 0 0 0 1px #ffffff;
+  --shadow-card-hover: 0 0 0 2px #ffb800;
+
+  /* Header backdrop */
+  --color-header-bg: rgba(0, 0, 0, 0.97);
+
+  /* Semantic — max vivid, subtle is just a very dark tint            */
+  --color-success-subtle: #052e16;
+  --color-success: #00ff88;
+  --color-success-strong: #00ff88;
+
+  --color-error-subtle: #450a0a;
+  --color-error: #ff4444;
+  --color-error-strong: #ff4444;
+
+  --color-warning-subtle: #431407;
+  --color-warning: #ffaa00;
+  --color-warning-strong: #ffaa00;
+
+  --color-info-subtle: #082f49;
+  --color-info: #00ccff;
+  --color-info-strong: #00ccff;
+
+  --color-team-male-subtle: #082f49;
+  --color-team-male: #00aaff;
+  --color-team-male-strong: #00aaff;
+
+  --color-team-female-subtle: #500724;
+  --color-team-female: #ff44aa;
+  --color-team-female-strong: #ff44aa;
+
+  --color-national-subtle: #1e1b4b;
+  --color-national: #8888ff;
+  --color-national-strong: #8888ff;
+
+  --color-regional-subtle: #042f2e;
+  --color-regional: #00ffcc;
+  --color-regional-strong: #00ffcc;
+
+  --color-departmental-subtle: #422006;
+  --color-departmental: #ffcc00;
+  --color-departmental-strong: #ffcc00;
+
+  --color-clubs-subtle: #2e1065;
+  --color-clubs: #cc88ff;
+  --color-clubs-strong: #cc88ff;
+
+  /* Domain entities */
+  --color-players-subtle: #052e16;
+  --color-players: #00ff88;
+  --color-players-strong: #00ff88;
+
+  --color-teams-subtle: #2e1065;
+  --color-teams: #bb88ff;
+  --color-teams-strong: #bb88ff;
+
+  --color-matches-subtle: #431407;
+  --color-matches: #ffaa00;
+  --color-matches-strong: #ffaa00;
+}
+
+/* =============================================================================
+   SURFACE CONTEXT SYSTEM
+   =============================================================================
+
+   Use surface-base / surface-subtle / surface-raised as the className on any
+   element that establishes a new elevation level. These classes replace
+   bg-surface-* in components — they set the background AND publish three CSS
+   variables that all descendants can consume without knowing where they live:
+
+     --surface-bg          the element's own background color
+                           used by: scrollable containers, sticky headers
+                           consumed by: .bg-surface-own
+
+     --surface-inset       the correct background for the next elevation step up
+                           used by: inputs, infoboxes, skeleton fills,
+                                    modals, hover fills on interactive elements
+                           consumed by: .bg-surface-inset, .hover:bg-surface-inset
+
+     --surface-ring-offset the ring-offset color matching this surface
+                           used by: focus rings on any interactive child
+                           consumed by: .ring-offset-surface
+
+   Because --color-surface-* variables already flip per theme (in :root, .dark,
+   .high-contrast above), these structural classes need no duplication — they
+   inherit the correct values automatically in every theme.
+
+   ELEVATION RULES
+   ─────────────────────────────────────────────────────────────────────────────
+   Page root   → .surface-base
+   Cards       → .surface-subtle
+   Inputs etc. → .bg-surface-inset  (context-aware, preferred)
+              or .surface-raised    (explicit, only when the element is itself
+                                    a surface boundary, e.g. a modal)
+
+   Never skip or reverse the order. Never place .surface-raised directly on
+   the page without an intervening .surface-subtle ancestor.
+   ============================================================================= */
+
+.surface-base {
+  background-color: var(--color-surface-base);
+  --surface-bg: var(--color-surface-base);
+  --surface-inset: var(--color-surface-subtle);
+  --surface-ring-offset: var(--color-surface-base);
+}
+
+.surface-subtle {
+  background-color: var(--color-surface-subtle);
+  --surface-bg: var(--color-surface-subtle);
+  --surface-inset: var(--color-surface-raised);
+  --surface-ring-offset: var(--color-surface-subtle);
+}
+
+.surface-raised {
+  background-color: var(--color-surface-raised);
+  --surface-bg: var(--color-surface-raised);
+  /* ceiling — nothing above raised, inset stays at the same level   */
+  --surface-inset: var(--color-surface-raised);
+  --surface-ring-offset: var(--color-surface-raised);
+}

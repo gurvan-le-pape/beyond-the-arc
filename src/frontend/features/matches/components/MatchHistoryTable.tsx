@@ -89,8 +89,8 @@ export function MatchHistoryTable<T extends { id: number }>({
   return (
     <Section title={title} variant="highlighted">
       <div className="overflow-x-auto">
-        <Table className="border border-primary-500 dark:border-primary-600 rounded-card box-border">
-          <TableHeader className="bg-primary-100 dark:bg-primary-900/30 border-b border-primary-500 dark:border-primary-600">
+        <Table className="border border-primary rounded-card box-border">
+          <TableHeader className="bg-primary-subtle border-b border-primary">
             <TableRow hoverable={false}>
               {columns.map((col) => (
                 <TableHead
@@ -114,9 +114,7 @@ export function MatchHistoryTable<T extends { id: number }>({
                   clickable={!!onRowClick}
                   onClick={onRowClick ? () => onRowClick(match) : undefined}
                   className={
-                    index % 2 === 0
-                      ? "bg-primary-50 dark:bg-primary-900/20"
-                      : "bg-surface-raised dark:bg-surface-raised-dark"
+                    index % 2 === 0 ? "bg-primary-ghost" : "bg-surface-inset"
                   }
                 >
                   {columns.map((col) => (
@@ -137,7 +135,7 @@ export function MatchHistoryTable<T extends { id: number }>({
 
       {/* Show More/Less Footer */}
       {hasMoreMatches && (
-        <div className="flex justify-center py-4 border-t border-divide-light dark:border-divide-dark">
+        <div className="flex justify-center py-4 border-t border-divide">
           <Button
             variant="ghost"
             size="sm"

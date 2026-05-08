@@ -87,9 +87,8 @@ export const TeamStatsComparison: React.FC<TeamStatsComparisonProps> = ({
                 <div className="text-right">
                   <span
                     className={cn(
-                      "text-sm font-semibold tabular-nums text-text-heading dark:text-text-heading-dark",
-                      leader === "home" &&
-                        "border-b-2 border-primary-500 dark:border-primary-400 pb-0.5",
+                      "text-sm font-semibold tabular-nums text-text-heading",
+                      leader === "home" && "border-b-2 border-primary pb-0.5",
                     )}
                   >
                     {homeDisplay}
@@ -97,10 +96,10 @@ export const TeamStatsComparison: React.FC<TeamStatsComparisonProps> = ({
                 </div>
 
                 {/* Dual-segment bar */}
-                <div className="h-2.5 w-full bg-surface-subtle dark:bg-surface-subtle-dark rounded-button overflow-hidden flex">
+                <div className="h-2.5 w-full bg-surface-inset rounded-button overflow-hidden flex">
                   {/* Home segment */}
                   <div
-                    className="h-full bg-primary-500 dark:bg-primary-400 rounded-l-button transition-all ease-out"
+                    className="h-full bg-primary rounded-l-button transition-all ease-out"
                     style={{
                       width: mounted ? `${homePct}%` : "0%",
                       transitionDuration: "600ms",
@@ -109,7 +108,7 @@ export const TeamStatsComparison: React.FC<TeamStatsComparisonProps> = ({
                   />
                   {/* Away segment */}
                   <div
-                    className="h-full bg-secondary-600 dark:bg-secondary-400 rounded-r-button transition-all ease-out"
+                    className="h-full bg-secondary rounded-r-button transition-all ease-out"
                     style={{
                       width: mounted ? `${awayPct}%` : "0%",
                       transitionDuration: "600ms",
@@ -122,9 +121,8 @@ export const TeamStatsComparison: React.FC<TeamStatsComparisonProps> = ({
                 <div className="text-left">
                   <span
                     className={cn(
-                      "text-sm font-semibold tabular-nums text-text-heading dark:text-text-heading-dark",
-                      leader === "away" &&
-                        "border-b-2 border-secondary-600 dark:border-secondary-400 pb-0.5",
+                      "text-sm font-semibold tabular-nums text-text-heading",
+                      leader === "away" && "border-b-2 border-secondary pb-0.5",
                     )}
                   >
                     {awayDisplay}

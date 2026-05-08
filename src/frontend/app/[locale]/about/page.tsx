@@ -83,7 +83,7 @@ export default async function AboutPage({
           return (
             <div
               key={principle.title}
-              className="bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 p-6"
+              className="surface-subtle rounded-card border border-divide shadow-card hover:shadow-card-hover transition-all duration-200 p-6"
             >
               {/* Decorative gradient icon — intentional, stays as raw Tailwind */}
               <div
@@ -100,20 +100,20 @@ export default async function AboutPage({
         })}
       </div>
 
-      {/* Call to Action */}
-      <div className="bg-gradient-to-r from-blue-500 to-purple-500 rounded-card shadow-card dark:shadow-card-dark p-8 text-center text-white">
+      {/* Call to Action — decorative gradient, intentionally stays as raw Tailwind */}
+      <div className="bg-gradient-to-r from-blue-500 to-purple-500 rounded-card shadow-card p-8 text-center text-white">
         <h2 className="text-xl font-bold mb-4">{t("about.exploreTitle")}</h2>
         <p className="text-sm mb-6 max-w-2xl mx-auto">{t("about.explore")}</p>
         <div className="flex flex-wrap justify-center gap-4">
           <a
             href={`/${locale}/features`}
-            className="px-6 py-3 bg-white text-primary-600 rounded-button font-semibold hover:bg-surface-subtle transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600"
+            className="px-6 py-3 bg-white text-primary-strong rounded-button font-semibold hover:bg-gray-100 transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-strong"
           >
             {t("about.viewFeatures")}
           </a>
           <a
             href={`/${locale}/architecture`}
-            className="px-6 py-3 bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-button font-semibold hover:bg-white/30 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600"
+            className="px-6 py-3 bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-button font-semibold hover:bg-white/30 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-strong"
           >
             {t("about.viewArchitecture")}
           </a>

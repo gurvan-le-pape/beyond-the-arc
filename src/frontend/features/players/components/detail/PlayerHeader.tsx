@@ -98,7 +98,7 @@ export function PlayerHeader({ player }: PlayerHeaderProps) {
             {/* Team */}
             <Button
               variant="ghost"
-              className="p-0 m-0 border-0 bg-transparent text-xl font-bold text-text-heading dark:text-text-heading-dark align-baseline focus:outline-none hover:underline"
+              className="p-0 m-0 border-0 bg-transparent text-xl font-bold text-text-heading align-baseline focus:outline-none hover:underline"
               aria-label={tCommon("club.seeClub", { name: clubName })}
               onClick={() => router.push(`/teams/${teamId}`)}
               type="button"
@@ -114,7 +114,7 @@ export function PlayerHeader({ player }: PlayerHeaderProps) {
             {competitionUrl && competitionName && (
               <Button
                 variant="ghost"
-                className="text-md cursor-pointer hover:underline bg-transparent border-0 p-0 m-0 font-inherit text-text-body dark:text-text-body-dark"
+                className="text-md cursor-pointer hover:underline bg-transparent border-0 p-0 m-0 font-inherit text-text-body"
                 aria-label={tCommon("competition.seeCompetition", {
                   name: competitionName,
                 })}

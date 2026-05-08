@@ -223,9 +223,9 @@ const buttonVariants = cva(BASE, {
   variants: {
     variant: {
       primary:
-        "rounded-button bg-primary-600 text-white hover:bg-primary-700 ...",
-      outline: "rounded-button border-2 border-primary-600 ...",
-      ghost: "rounded-button text-primary-600 hover:bg-primary-50 ...",
+        "rounded-button bg-primary-strong text-white hover:bg-primary-bold ...",
+      outline: "rounded-button border-2 border-primary-strong ...",
+      ghost: "rounded-button text-primary-strong hover:bg-primary-ghost ...",
       control:
         "rounded-button border border-divide-light bg-surface-raised ...",
       // ...

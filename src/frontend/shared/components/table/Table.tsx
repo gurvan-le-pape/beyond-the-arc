@@ -32,11 +32,7 @@ export const TableHeader = forwardRef<
   HTMLTableSectionElement,
   HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
-  <thead
-    ref={ref}
-    className={cn("bg-surface-subtle dark:bg-surface-subtle-dark", className)}
-    {...props}
-  />
+  <thead ref={ref} className={cn("bg-surface-subtle", className)} {...props} />
 ));
 TableHeader.displayName = "TableHeader";
 
@@ -50,11 +46,7 @@ export const TableBody = forwardRef<
 >(({ className, ...props }, ref) => (
   <tbody
     ref={ref}
-    className={cn(
-      "divide-y divide-divide-light dark:divide-divide-dark",
-      "bg-surface-raised dark:bg-surface-raised-dark",
-      className,
-    )}
+    className={cn("divide-y divide-divide", "surface-raised", className)}
     {...props}
   />
 ));
@@ -71,8 +63,8 @@ export const TableFooter = forwardRef<
   <tfoot
     ref={ref}
     className={cn(
-      "bg-surface-subtle dark:bg-surface-subtle-dark",
-      "font-medium text-text-heading dark:text-text-heading-dark",
+      "bg-surface-subtle",
+      "font-medium text-text-heading",
       className,
     )}
     {...props}
@@ -94,9 +86,8 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
     <tr
       ref={ref}
       className={cn(
-        "border-b border-divide-light dark:border-divide-dark transition-colors duration-200",
-        hoverable &&
-          "hover:bg-surface-subtle dark:hover:bg-surface-subtle-dark",
+        "border-b border-divide transition-colors duration-200",
+        hoverable && "hover:bg-surface-inset",
         clickable && "cursor-pointer",
         className,
       )}
@@ -147,7 +138,7 @@ export const TableHead = forwardRef<HTMLTableCellElement, TableHeadProps>(
             : "px-6 py-4",
           alignmentClasses[align],
           sortable &&
-            "cursor-pointer select-none hover:bg-surface-subtle dark:hover:bg-surface-subtle-dark transition-colors duration-200",
+            "cursor-pointer select-none hover:bg-surface-inset transition-colors duration-200",
           className,
         )}
         onClick={sortable ? onSort : undefined}
@@ -224,9 +215,8 @@ export const TableCell = forwardRef<HTMLTableCellElement, TableCellProps>(
             ? "px-1 py-1 overflow-hidden whitespace-nowrap"
             : "px-6 py-4",
           alignmentClasses[align],
-          "text-sm text-text-emphasis dark:text-text-emphasis-dark",
-          highlight &&
-            "font-bold text-text-heading dark:text-text-heading-dark",
+          "text-sm text-text-emphasis",
+          highlight && "font-bold text-text-heading",
           className,
         )}
         {...props}
@@ -246,10 +236,7 @@ export const TableCaption = forwardRef<
 >(({ className, ...props }, ref) => (
   <caption
     ref={ref}
-    className={cn(
-      "mt-4 text-sm text-text-secondary dark:text-text-secondary-dark",
-      className,
-    )}
+    className={cn("mt-4 text-sm text-text-secondary", className)}
     {...props}
   />
 ));
@@ -270,7 +257,7 @@ export function TableEmpty({ colSpan, message }: TableEmptyProps) {
       <TableCell
         colSpan={colSpan}
         align="center"
-        className="py-12 text-text-secondary dark:text-text-secondary-dark"
+        className="py-12 text-text-secondary"
       >
         {message}
       </TableCell>

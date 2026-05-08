@@ -64,7 +64,7 @@ export const HeatmapLegend: React.FC<HeatmapLegendProps> = ({
               background: `linear-gradient(to right, ${activeGradient})`,
             }}
           />
-          <div className="flex justify-between text-[11px] text-text-muted dark:text-text-muted-dark px-0.5">
+          <div className="flex justify-between text-[11px] text-text-muted px-0.5">
             <span>0</span>
             <span>{midValue}</span>
             <span>{maxValue}</span>
@@ -94,8 +94,8 @@ export const HeatmapLegend: React.FC<HeatmapLegendProps> = ({
                     flex flex-col items-center gap-0.5 px-1.5 py-1 rounded-lg border transition-all
                     ${
                       isActive
-                        ? "border-primary-500 dark:border-primary-400 ring-2 ring-primary-100 dark:ring-primary-900 bg-primary-50 dark:bg-primary-950"
-                        : "border-divide-light dark:border-divide-dark hover:border-divide-dark dark:hover:border-text-muted-dark bg-white dark:bg-surface-subtle-dark"
+                        ? "border-primary ring-2 ring-primary-subtle bg-primary-subtle"
+                        : "border-divide bg-surface-inset hover:border-text-muted"
                     }
                   `}
                 >

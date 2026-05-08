@@ -40,7 +40,7 @@ export const MatchDetailsTable: React.FC<MatchDetailsTableProps> = ({
   };
 
   return (
-    <Table className="border border-divide-light dark:border-divide-dark rounded-button">
+    <Table className="border border-divide rounded-button">
       <TableHeader>
         <TableRow hoverable={false}>
           <TableHead align="left">{t("matchDetails.teamHeader")}</TableHead>
@@ -75,10 +75,7 @@ export const MatchDetailsTable: React.FC<MatchDetailsTableProps> = ({
         </TableRow>
 
         {/* Away Team Row */}
-        <TableRow
-          hoverable={false}
-          className="bg-surface-subtle dark:bg-surface-subtle-dark"
-        >
+        <TableRow hoverable={false} className="bg-surface-inset">
           <TableCell>{`${match.awayTeam.club.name} - ${match.awayTeam.number}`}</TableCell>
           <TableCell align="center">{display(quarterScores.away[0])}</TableCell>
           <TableCell align="center">{display(quarterScores.away[1])}</TableCell>

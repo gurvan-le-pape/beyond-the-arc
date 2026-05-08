@@ -43,10 +43,7 @@ export function Breadcrumb({
   const tCommon = useTranslations("common");
 
   const defaultSeparator = (
-    <ChevronRightIcon
-      className="w-4 h-4 text-text-muted dark:text-text-muted-dark"
-      aria-hidden="true"
-    />
+    <ChevronRightIcon className="w-4 h-4 text-text-muted" aria-hidden="true" />
   );
 
   const handleClick = (item: BreadcrumbItem) => {
@@ -74,7 +71,7 @@ export function Breadcrumb({
               {isClickable ? (
                 <button
                   onClick={() => handleClick(item)}
-                  className="text-primary-600 hover:text-primary-700 hover:underline dark:text-primary-400 dark:hover:text-primary-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-surface-raised dark:focus:ring-offset-surface-raised-dark rounded-button"
+                  className="text-primary hover:text-primary-strong hover:underline transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ring-offset-surface rounded-button"
                   aria-current={isCurrent ? "page" : undefined}
                 >
                   {item.label}
@@ -83,8 +80,8 @@ export function Breadcrumb({
                 <span
                   className={
                     isCurrent
-                      ? "text-text-heading dark:text-text-heading-dark font-semibold"
-                      : "text-text-body dark:text-text-body-dark"
+                      ? "text-text-heading font-semibold"
+                      : "text-text-body"
                   }
                   aria-current={isCurrent ? "page" : undefined}
                 >

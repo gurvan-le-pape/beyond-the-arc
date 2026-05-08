@@ -98,10 +98,10 @@ export function getTeamColor(gender: Gender): string {
 export function getTeamBgColor(gender: Gender): string {
   switch (gender) {
     case Gender.MALE:
-      return "bg-team-male/10 dark:bg-team-male/20";
+      return "bg-team-male-subtle";
     case Gender.FEMALE:
-      return "bg-team-female/10 dark:bg-team-female/20";
+      return "bg-team-female-subtle";
     default:
-      return "bg-error/10 dark:bg-error/20";
+      return "bg-error-subtle";
   }
 }

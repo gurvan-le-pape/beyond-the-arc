@@ -25,13 +25,13 @@ function ClubCard({ club }: { readonly club: ClubBasic }) {
   return (
     <Link
       href={`/organizations/clubs/${club.id}`}
-      className="group flex flex-col gap-2 p-4 rounded-card border border-divide-light dark:border-divide-dark border-l-4 border-l-clubs-DEFAULT dark:border-l-clubs-light bg-surface-base dark:bg-surface-subtle-dark hover:shadow-card-hover hover:scale-[1.01] transition-all duration-200 shadow-card"
+      className="group flex flex-col gap-2 p-4 rounded-card border border-divide border-l-4 border-l-clubs surface-subtle hover:shadow-card-hover hover:scale-[1.01] transition-all duration-200 shadow-card"
     >
-      <div className="font-semibold text-text-heading dark:text-text-heading-dark group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-200 leading-snug">
+      <div className="font-semibold text-text-heading group-hover:text-primary-strong transition-colors duration-200 leading-snug">
         {club.name}
       </div>
       {(club.city || club.zipCode) && (
-        <div className="text-sm text-text-secondary dark:text-text-secondary-dark">
+        <div className="text-sm text-text-secondary">
           {[club.zipCode, club.city].filter(Boolean).join(" · ")}
         </div>
       )}
@@ -54,12 +54,9 @@ export default function OrganizationsClubsPage() {
 
   const debouncedSearch = useDebounce(search, 400);
 
-  // Reset page when filters change
   useEffect(() => {
     setPage(1);
   }, [debouncedSearch, leagueId, committeeId]);
-
-  // Reset committee when league changes
   useEffect(() => {
     setCommitteeId("");
   }, [leagueId]);
@@ -101,6 +98,11 @@ export default function OrganizationsClubsPage() {
     { label: tOrganizations("clubs.label"), current: true },
   ];
 
+  // Inputs sit inside PageLayout (surface-base), so bg-surface-inset resolves
+  // to surface-subtle — one step above the page, correct for form controls.
+  const inputClass =
+    "text-sm rounded-input border border-divide bg-surface-inset text-text-body placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary ring-offset-surface";
+
   let gridContent: React.ReactNode;
   if (isLoading) {
     gridContent = (
@@ -108,14 +110,14 @@ export default function OrganizationsClubsPage() {
         {SKELETON_KEYS.map((key) => (
           <div
             key={key}
-            className="h-20 rounded-card bg-surface-subtle dark:bg-surface-raised-dark animate-pulse"
+            className="h-20 rounded-card bg-surface-inset animate-pulse"
           />
         ))}
       </div>
     );
   } else if (clubs.length === 0) {
     gridContent = (
-      <div className="text-center py-16 text-text-secondary dark:text-text-secondary-dark">
+      <div className="text-center py-16 text-text-secondary">
         {tOrganizations("clubs.noResults", { search })}
       </div>
     );
@@ -141,13 +143,13 @@ export default function OrganizationsClubsPage() {
       <div className="flex flex-wrap items-center gap-3 mb-6">
         {/* Search */}
         <div className="relative">
-          <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted dark:text-text-muted-dark text-sm" />
+          <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-sm" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={tOrganizations("clubs.searchPlaceholder")}
-            className="pl-9 pr-4 py-2 text-sm rounded-input border border-divide-light dark:border-divide-dark bg-surface-base dark:bg-surface-subtle-dark text-text-body dark:text-text-body-dark placeholder:text-text-muted dark:placeholder:text-text-muted-dark focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 w-64"
+            className={`${inputClass} pl-9 pr-4 py-2 w-64`}
           />
         </div>
 
@@ -155,7 +157,7 @@ export default function OrganizationsClubsPage() {
         <select
           value={leagueId}
           onChange={(e) => setLeagueId(e.target.value)}
-          className="text-sm rounded-input border border-divide-light dark:border-divide-dark bg-surface-base dark:bg-surface-subtle-dark text-text-body dark:text-text-body-dark px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+          className={`${inputClass} px-3 py-2`}
         >
           <option value="">{tCommon("filters.allLeagues")}</option>
           {leagues.map((l) => (
@@ -170,7 +172,7 @@ export default function OrganizationsClubsPage() {
           <select
             value={committeeId}
             onChange={(e) => setCommitteeId(e.target.value)}
-            className="text-sm rounded-input border border-divide-light dark:border-divide-dark bg-surface-base dark:bg-surface-subtle-dark text-text-body dark:text-text-body-dark px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+            className={`${inputClass} px-3 py-2`}
           >
             <option value="">{tCommon("filters.allCommittees")}</option>
             {committees.map((c) => (
@@ -184,7 +186,7 @@ export default function OrganizationsClubsPage() {
         {hasActiveFilters && (
           <button
             onClick={resetFilters}
-            className="flex items-center gap-1.5 text-sm text-text-secondary dark:text-text-secondary-dark hover:text-text-heading dark:hover:text-text-heading-dark transition-colors"
+            className="flex items-center gap-1.5 text-sm text-text-secondary hover:text-text-heading transition-colors"
           >
             <FaTimes className="text-xs" />
             {tCommon("clearSearch")}
@@ -194,7 +196,7 @@ export default function OrganizationsClubsPage() {
 
       {/* Results count */}
       {!isLoading && pagination && (
-        <div className="text-sm text-text-secondary dark:text-text-secondary-dark mb-4">
+        <div className="text-sm text-text-secondary mb-4">
           {pagination.total} {tOrganizations("clubs.label").toLowerCase()}
         </div>
       )}

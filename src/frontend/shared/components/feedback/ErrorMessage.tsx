@@ -17,7 +17,7 @@ export const ErrorMessage = forwardRef<HTMLDivElement, ErrorMessageProps>(
           variant="body"
           as="p"
           role="alert"
-          className="text-error dark:text-error-light font-semibold"
+          className="text-error-strong font-semibold"
         >
           {message}
         </Text>

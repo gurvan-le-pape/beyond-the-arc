@@ -37,7 +37,7 @@ export function DepartmentsGrid({ departments }: DepartmentsGridProps) {
           padding="md"
           clickable
           onClick={() => router.push(`/organizations/committees/${dept.id}`)}
-          className="border-l-4 border-l-departmental-dark dark:border-l-departmental-light hover:border-l-divide-light dark:hover:!border-l-divide-dark"
+          className="border-l-4 border-l-departmental hover:border-l-departmental-strong"
         >
           <Text variant="h3" className="mb-1">
             {dept.name}
@@ -47,7 +47,7 @@ export function DepartmentsGrid({ departments }: DepartmentsGridProps) {
               {dept.department.code}
             </Text>
           )}
-          <p className="text-xl font-bold text-departmental-dark dark:text-departmental-light">
+          <p className="text-xl font-bold text-departmental-strong">
             {dept.clubCount}
           </p>
           <Text variant="caption">

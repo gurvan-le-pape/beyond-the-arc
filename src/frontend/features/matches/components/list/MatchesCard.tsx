@@ -28,9 +28,9 @@ export const MatchesCard: React.FC<MatchesCardProps> = ({ match, onClick }) => {
       type="button"
       onClick={() => onClick(match.id)}
       className={cn(
-        "w-full text-left border-l-8 rounded-card shadow-card hover:shadow-card-hover dark:shadow-card-dark transition-all duration-200 cursor-pointer overflow-hidden",
-        "focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-surface-raised dark:focus:ring-offset-surface-raised-dark",
-        "bg-surface-raised dark:bg-surface-raised-dark",
+        "w-full text-left border-l-8 rounded-card shadow-card hover:shadow-card-hover transition-all duration-200 cursor-pointer overflow-hidden",
+        "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ring-offset-surface",
+        "surface-raised",
         config.border,
       )}
       aria-label={tMatches("ariaLabelMatch", {
@@ -85,11 +85,11 @@ export const MatchesCard: React.FC<MatchesCardProps> = ({ match, onClick }) => {
       </div>
 
       {/* Match Content */}
-      <div className="px-8 py-8 bg-surface-raised dark:bg-surface-raised-dark">
+      <div className="px-8 py-8">
         <div className="flex items-center justify-between gap-6">
           {/* Home Team */}
           <div className="flex-1 flex flex-col items-center gap-3">
-            <div className="flex-shrink-0 w-16 h-16 bg-surface-subtle dark:bg-surface-subtle-dark rounded-button flex items-center justify-center overflow-hidden">
+            <div className="flex-shrink-0 w-16 h-16 bg-surface-inset rounded-button flex items-center justify-center overflow-hidden">
               <img
                 src={`/images/clubs/${formatNameToFileName(
                   match.homeTeam?.club?.name || "",
@@ -109,8 +109,8 @@ export const MatchesCard: React.FC<MatchesCardProps> = ({ match, onClick }) => {
                 className={cn(
                   "text-lg",
                   hasScore && match.homeTeamScore > match.awayTeamScore
-                    ? "font-bold text-text-heading dark:text-text-heading-dark"
-                    : "font-normal text-text-emphasis dark:text-text-emphasis-dark",
+                    ? "font-bold text-text-heading"
+                    : "font-normal text-text-emphasis",
                 )}
               >
                 {match.homeTeam?.club?.name}
@@ -127,21 +127,19 @@ export const MatchesCard: React.FC<MatchesCardProps> = ({ match, onClick }) => {
                   className={cn(
                     "text-2xl",
                     match.homeTeamScore > match.awayTeamScore
-                      ? "font-bold text-text-heading dark:text-text-heading-dark"
-                      : "font-normal text-text-body dark:text-text-body-dark",
+                      ? "font-bold text-text-heading"
+                      : "font-normal text-text-body",
                   )}
                 >
                   {match.homeTeamScore}
                 </span>
-                <span className="text-xl text-text-muted dark:text-text-muted-dark">
-                  -
-                </span>
+                <span className="text-xl text-text-muted">-</span>
                 <span
                   className={cn(
                     "text-2xl",
                     match.awayTeamScore > match.homeTeamScore
-                      ? "font-bold text-text-heading dark:text-text-heading-dark"
-                      : "font-normal text-text-body dark:text-text-body-dark",
+                      ? "font-bold text-text-heading"
+                      : "font-normal text-text-body",
                   )}
                 >
                   {match.awayTeamScore}
@@ -156,7 +154,7 @@ export const MatchesCard: React.FC<MatchesCardProps> = ({ match, onClick }) => {
 
           {/* Away Team */}
           <div className="flex-1 flex flex-col items-center gap-3">
-            <div className="flex-shrink-0 w-16 h-16 bg-surface-subtle dark:bg-surface-subtle-dark rounded-button flex items-center justify-center overflow-hidden">
+            <div className="flex-shrink-0 w-16 h-16 bg-surface-inset rounded-button flex items-center justify-center overflow-hidden">
               <img
                 src={`/images/clubs/${formatNameToFileName(
                   match.awayTeam?.club?.name || "",
@@ -176,8 +174,8 @@ export const MatchesCard: React.FC<MatchesCardProps> = ({ match, onClick }) => {
                 className={cn(
                   "text-lg",
                   hasScore && match.awayTeamScore > match.homeTeamScore
-                    ? "font-bold text-text-heading dark:text-text-heading-dark"
-                    : "font-normal text-text-emphasis dark:text-text-emphasis-dark",
+                    ? "font-bold text-text-heading"
+                    : "font-normal text-text-emphasis",
                 )}
               >
                 {match.awayTeam?.club?.name}

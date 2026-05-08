@@ -280,7 +280,7 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
       </div>
 
       {/* Divider */}
-      <div className="border-t border-divide-light dark:border-divide-dark" />
+      <div className="border-t border-divide" />
 
       {/* Row 3: Level → Committee/League cascade */}
       <LevelLocationFilters

@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/components/RegionalTab.tsx
+// src/frontend/features/competitions/championships/components/list/tabs/RegionalTab.tsx
 "use client";
 
 import { useTranslations } from "next-intl";
@@ -79,7 +79,7 @@ export function RegionalTab() {
       />
 
       {!isLoading && (
-        <div className="text-sm text-text-secondary dark:text-text-secondary-dark">
+        <div className="text-sm text-text-secondary">
           {filtered.length} {tCompetitions("championshipsCount")}
         </div>
       )}

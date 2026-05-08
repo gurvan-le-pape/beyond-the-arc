@@ -63,7 +63,7 @@ export const TeamEventBlock: React.FC<TeamEventBlockProps> = ({
         {event.description && (
           <button
             type="button"
-            className="text-xs text-text-body dark:text-text-body-dark mt-0.5 text-left w-full"
+            className="text-xs text-text-body mt-0.5 text-left w-full"
             dangerouslySetInnerHTML={{
               __html: makeDescriptionClickable(
                 event.description,

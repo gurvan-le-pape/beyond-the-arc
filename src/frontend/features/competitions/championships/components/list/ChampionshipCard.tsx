@@ -7,20 +7,17 @@ import { CompetitionLevel } from "@/shared/constants";
 
 const levelColorMap: Record<string, string> = {
   [CompetitionLevel.REGIONAL]:
-    "bg-regional-light/20 text-regional-dark border-regional-DEFAULT dark:bg-regional-dark/20 dark:text-regional-light dark:border-regional-light",
+    "bg-regional-subtle text-regional-strong border-regional",
   [CompetitionLevel.DEPARTMENTAL]:
-    "bg-departmental-light/20 text-departmental-dark border-departmental-DEFAULT dark:bg-departmental-dark/20 dark:text-departmental-light dark:border-departmental-light",
+    "bg-departmental-subtle text-departmental-strong border-departmental",
   [CompetitionLevel.NATIONAL]:
-    "bg-national-light/20 text-national-dark border-national-DEFAULT dark:bg-national-dark/20 dark:text-national-light dark:border-national-light",
+    "bg-national-subtle text-national-strong border-national",
 };
 
 const levelBorderMap: Record<string, string> = {
-  [CompetitionLevel.REGIONAL]:
-    "border-l-regional-DEFAULT dark:border-l-regional-light",
-  [CompetitionLevel.DEPARTMENTAL]:
-    "border-l-departmental-DEFAULT dark:border-l-departmental-light",
-  [CompetitionLevel.NATIONAL]:
-    "border-l-national-DEFAULT dark:border-l-national-light",
+  [CompetitionLevel.REGIONAL]: "border-l-regional",
+  [CompetitionLevel.DEPARTMENTAL]: "border-l-departmental",
+  [CompetitionLevel.NATIONAL]: "border-l-national",
 };
 
 export function ChampionshipCard({
@@ -40,7 +37,7 @@ export function ChampionshipCard({
   return (
     <Link
       href={`/championships/${championship.id}`}
-      className={`group flex flex-col gap-3 p-4 rounded-card border border-divide-light dark:border-divide-dark border-l-4 ${borderColor} bg-surface-base dark:bg-surface-subtle-dark hover:shadow-card-hover dark:hover:shadow-card-dark hover:scale-[1.01] transition-all duration-200 shadow-card`}
+      className={`group flex flex-col gap-3 p-4 rounded-card border border-divide border-l-4 ${borderColor} surface-subtle hover:shadow-card-hover hover:scale-[1.01] transition-all duration-200 shadow-card`}
     >
       <div className="flex items-center justify-between gap-2">
         <span
@@ -48,23 +45,23 @@ export function ChampionshipCard({
         >
           {tCommon(`competition.levels.${championship.level}`)}
         </span>
-        <span className="text-xs text-text-muted dark:text-text-muted-dark">
+        <span className="text-xs text-text-muted">
           {championship.seasonYear}
         </span>
       </div>
-      <div className="font-semibold text-text-heading dark:text-text-heading-dark group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors duration-200 leading-snug">
+      <div className="font-semibold text-text-heading group-hover:text-primary transition-colors duration-200 leading-snug">
         {championship.name}
       </div>
       <div className="flex flex-wrap gap-2">
         {championship.category && (
-          <span className="text-xs px-2 py-0.5 rounded-button bg-surface-raised dark:bg-surface-raised-dark text-text-secondary dark:text-text-secondary-dark">
+          <span className="text-xs px-2 py-0.5 rounded-button bg-surface-inset text-text-secondary">
             {championship.category}
           </span>
         )}
-        <span className="text-xs px-2 py-0.5 rounded-button bg-surface-raised dark:bg-surface-raised-dark text-text-secondary dark:text-text-secondary-dark capitalize">
+        <span className="text-xs px-2 py-0.5 rounded-button bg-surface-inset text-text-secondary capitalize">
           {championship.gender}
         </span>
-        <span className="text-xs px-2 py-0.5 rounded-button bg-surface-raised dark:bg-surface-raised-dark text-text-secondary dark:text-text-secondary-dark">
+        <span className="text-xs px-2 py-0.5 rounded-button bg-surface-inset text-text-secondary">
           {tCompetitions("divisionWithValue", { value: championship.division })}
         </span>
       </div>

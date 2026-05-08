@@ -84,12 +84,12 @@ export function TeamListItem({ team, clubName }: TeamListItemProps) {
   }
 
   return (
-    <div className="w-full px-6 py-3.5 flex items-center justify-between hover:bg-surface-subtle dark:hover:bg-surface-subtle-dark transition-colors group">
+    <div className="w-full px-6 py-3.5 flex items-center justify-between hover:bg-surface-inset transition-colors group">
       {/* Left */}
       <div className="flex flex-col gap-1">
         <Link
           href={`/${locale}/teams/${team.id}`}
-          className="text-[15px] font-medium text-text-heading dark:text-text-heading-dark group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors hover:underline"
+          className="text-[15px] font-medium text-text-heading group-hover:text-primary transition-colors hover:underline"
         >
           {clubName} {team.number || ""}
         </Link>
@@ -106,9 +106,9 @@ export function TeamListItem({ team, clubName }: TeamListItemProps) {
         {competitionUrl && pool?.name && (
           <Link
             href={competitionUrl}
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-clubs-dark dark:text-clubs-light hover:underline transition-colors w-fit"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-clubs-strong hover:underline transition-colors w-fit"
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-clubs-DEFAULT" />
+            <span className="w-1.5 h-1.5 rounded-full bg-clubs" />
             {pool.name}
           </Link>
         )}
@@ -118,12 +118,12 @@ export function TeamListItem({ team, clubName }: TeamListItemProps) {
       {leaderboard && (
         <div className="flex flex-col items-end gap-1.5 ml-4 shrink-0">
           {/* Rank */}
-          <div className="flex items-baseline gap-1 px-2.5 py-1.5 rounded-lg bg-warning-light/20 border border-warning-DEFAULT dark:bg-warning-dark/20 dark:border-warning-light/30">
-            <span className="text-base font-medium text-warning-dark dark:text-warning-light leading-none">
+          <div className="flex items-baseline gap-1 px-2.5 py-1.5 rounded-lg bg-warning-subtle border border-warning">
+            <span className="text-base font-medium text-warning-strong leading-none">
               {leaderboard.rank ?? "—"}
             </span>
             {leaderboard.poolSize && (
-              <span className="text-xs text-warning-dark/60 dark:text-warning-light/50 leading-none">
+              <span className="text-xs text-warning-strong/60 leading-none">
                 /{leaderboard.poolSize}
               </span>
             )}
@@ -131,12 +131,12 @@ export function TeamListItem({ team, clubName }: TeamListItemProps) {
 
           {/* W / L */}
           <div className="flex items-center gap-1.5">
-            <span className="text-xs font-medium text-success-dark dark:text-success-light">
+            <span className="text-xs font-medium text-success-strong">
               {leaderboard.gamesWon}
               {t("teamDetail.won")}
             </span>
-            <span className="w-px h-3 bg-text-muted dark:bg-text-muted-dark" />
-            <span className="text-xs font-medium text-error-dark dark:text-error-light">
+            <span className="w-px h-3 bg-text-muted" />
+            <span className="text-xs font-medium text-error-strong">
               {leaderboard.gamesLost}
               {t("teamDetail.lost")}
             </span>

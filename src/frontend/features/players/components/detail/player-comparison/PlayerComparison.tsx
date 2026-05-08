@@ -95,8 +95,8 @@ function PlayerCard({ player, side, placeholder }: PlayerCardProps) {
               color: "transparent",
               WebkitTextStroke: `2px ${
                 isRight
-                  ? "var(--color-secondary-400)"
-                  : "var(--color-primary-400)"
+                  ? "var(--color-secondary-soft)"
+                  : "var(--color-primary-soft)"
               }`,
               opacity: 0.35,
               lineHeight: 1,
@@ -138,7 +138,7 @@ function VsBadge() {
         className="relative z-10 w-12 h-12 rounded-full flex items-center justify-center shadow-lg"
         style={{
           background:
-            "linear-gradient(135deg, var(--color-primary-500, #6366f1), var(--color-secondary-500, #14b8a6))",
+            "linear-gradient(135deg, var(--color-primary, #6366f1), var(--color-secondary, #14b8a6))",
         }}
       >
         <span className="text-white text-xs font-black tracking-widest">
@@ -245,7 +245,7 @@ export function PlayerComparison({ player }: PlayerComparisonProps) {
             variant="ghost"
             size="sm"
             onClick={() => setOpponent(null)}
-            className="text-text-muted hover:text-text-body dark:text-text-muted-dark dark:hover:text-text-body-dark text-xs"
+            className="text-text-muted hover:text-text-body text-xs"
           >
             {tCommon("clear")}
           </Button>
@@ -258,7 +258,7 @@ export function PlayerComparison({ player }: PlayerComparisonProps) {
             {[0, 1, 2].map((i) => (
               <span
                 key={i}
-                className="inline-block w-2 h-2 rounded-full bg-primary-400 dark:bg-primary-500"
+                className="inline-block w-2 h-2 rounded-full bg-primary"
                 style={{
                   animation: "vsPulse 1.2s ease-in-out infinite",
                   animationDelay: `${i * 200}ms`,

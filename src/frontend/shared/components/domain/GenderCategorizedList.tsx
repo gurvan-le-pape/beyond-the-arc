@@ -21,21 +21,14 @@ interface GenderCategorizedListProps<
   readonly className?: string;
 }
 
-const GENDER_COLOURS: Record<
-  string,
-  { bg: string; text: string; bgDark: string; textDark: string }
-> = {
+const GENDER_COLOURS: Record<string, { bg: string; text: string }> = {
   [Gender.FEMALE]: {
-    bg: "bg-team-female-light/20",
-    text: "text-team-female-dark",
-    bgDark: "dark:bg-team-female-dark/20",
-    textDark: "dark:text-team-female-light",
+    bg: "bg-team-female-subtle",
+    text: "text-team-female-strong",
   },
   [Gender.MALE]: {
-    bg: "bg-team-male-light/20",
-    text: "text-team-male-dark",
-    bgDark: "dark:bg-team-male-dark/20",
-    textDark: "dark:text-team-male-light",
+    bg: "bg-team-male-subtle",
+    text: "text-team-male-strong",
   },
 };
 
@@ -63,15 +56,13 @@ export function GenderCategorizedList<
             "inline-flex items-center px-3 py-1 rounded-full",
             colours.bg,
             colours.text,
-            colours.bgDark,
-            colours.textDark,
           )}
         >
           <Text variant="caption" as="span" className="font-semibold">
             {genderLabel}
           </Text>
         </span>
-        <span className="flex-1 h-px bg-divide-light dark:bg-divide-dark" />
+        <span className="flex-1 h-px bg-divide" />
       </div>
 
       {/* Category sections */}

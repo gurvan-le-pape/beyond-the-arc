@@ -32,17 +32,17 @@ export const NavLinks: React.FC<NavLinksProps> = ({
       const mobileStyles = cn(
         "block w-full text-left px-4 py-3 text-lg rounded-button transition-all duration-200",
         isActive
-          ? "bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 font-semibold border-l-4 border-primary-600 dark:border-primary-400"
-          : "text-text-emphasis dark:text-text-emphasis-dark hover:bg-surface-subtle dark:hover:bg-surface-subtle-dark hover:text-text-heading dark:hover:text-text-heading-dark",
+          ? "bg-primary-subtle text-primary-strong font-semibold border-l-4 border-primary"
+          : "text-text-emphasis hover:bg-surface-inset hover:text-text-heading",
       );
 
       const desktopStyles = cn(
         "px-4 py-2 rounded-button font-medium transition-all duration-200",
-        "focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400",
-        "focus:ring-offset-2 focus:ring-offset-surface-raised dark:focus:ring-offset-surface-raised-dark",
+        "focus:outline-none focus:ring-2 focus:ring-primary",
+        "focus:ring-offset-2 ring-offset-surface",
         isActive
-          ? "bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 font-semibold shadow-sm"
-          : "text-text-emphasis dark:text-text-emphasis-dark hover:bg-surface-subtle dark:hover:bg-surface-subtle-dark hover:text-text-heading dark:hover:text-text-heading-dark",
+          ? "bg-primary-subtle text-primary-strong font-semibold shadow-sm"
+          : "text-text-emphasis hover:bg-surface-inset hover:text-text-heading",
       );
 
       const linkProps: React.ComponentProps<typeof Link> & {

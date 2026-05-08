@@ -81,7 +81,7 @@ export function DepartmentalTab() {
       />
 
       {!isLoading && (
-        <div className="text-sm text-text-secondary dark:text-text-secondary-dark">
+        <div className="text-sm text-text-secondary">
           {filtered.length} {tCompetitions("championshipsCount")}
         </div>
       )}

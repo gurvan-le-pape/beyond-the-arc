@@ -90,8 +90,8 @@ export const ShotModal: React.FC<ShotModalProps> = ({
     >
       {player && (
         <div className="flex min-h-full items-start justify-center p-4 sm:items-center sm:p-6">
-          <div className="relative w-full max-w-2xl bg-white dark:bg-surface-raised-dark rounded-2xl shadow-2xl">
-            {/* Header */}
+          <div className="relative w-full max-w-2xl surface-subtle rounded-2xl shadow-2xl">
+            {/* Header — intentional decorative gradient, stays as raw Tailwind */}
             <div className="bg-gradient-to-r from-[#1976d2] to-[#43a047] text-white rounded-t-2xl px-6 pt-5 pb-4 flex items-center justify-center relative min-h-[64px]">
               {/* Team 1 */}
               <div className="flex-1 flex items-center justify-end font-bold text-lg pr-4 text-right whitespace-normal break-words">
@@ -131,11 +131,11 @@ export const ShotModal: React.FC<ShotModalProps> = ({
             {/* Chart content — ref used for png capture */}
             <div
               ref={chartRef}
-              className="px-6 pt-6 pb-6 bg-surface-base dark:bg-surface-subtle-dark rounded-b-2xl"
+              className="px-6 pt-6 pb-6 bg-surface-inset rounded-b-2xl"
             >
               <Text
                 variant="h3"
-                className="mb-4 text-center text-primary-700 dark:text-primary-400 tracking-wide"
+                className="mb-4 text-center text-primary tracking-wide"
               >
                 {t("shotChart.title", { name: player.name })}
               </Text>
@@ -146,8 +146,8 @@ export const ShotModal: React.FC<ShotModalProps> = ({
               />
             </div>
 
-            {/* Download button outside chartRef so it's not in the screenshot */}
-            <div className="flex justify-center py-4 bg-surface-base dark:bg-surface-subtle-dark rounded-b-2xl border-t border-divide-light dark:border-divide-dark">
+            {/* Download button outside chartRef */}
+            <div className="flex justify-center py-4 bg-surface-inset rounded-b-2xl border-t border-divide">
               <Button
                 variant="download"
                 size="lg"

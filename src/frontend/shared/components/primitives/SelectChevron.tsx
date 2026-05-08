@@ -9,7 +9,7 @@ export function SelectChevron({
 }) {
   return (
     <svg
-      className={`w-3.5 h-3.5 flex-shrink-0 text-text-muted dark:text-text-muted-dark transition-transform duration-200 ${
+      className={`w-3.5 h-3.5 flex-shrink-0 text-text-muted transition-transform duration-200 ${
         open ? "rotate-180" : ""
       } ${className}`}
       aria-hidden="true"

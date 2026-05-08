@@ -27,21 +27,17 @@ export const InfoBox = forwardRef<HTMLDivElement, InfoBoxProps>(
       <div
         ref={ref}
         className={cn(
-          "bg-surface-raised dark:bg-surface-raised-dark",
+          "bg-surface-inset",
           "p-4 rounded-card",
-          "shadow-card dark:shadow-card-dark",
-          "border border-divide-light dark:border-divide-dark",
+          "shadow-card",
+          "border border-divide",
           className,
         )}
         {...props}
       >
         {/* Label row */}
         <div className="flex items-center gap-2 mb-2">
-          {icon && (
-            <span className="text-text-secondary dark:text-text-secondary-dark">
-              {icon}
-            </span>
-          )}
+          {icon && <span className="text-text-secondary">{icon}</span>}
           {/* overline = text-xs uppercase tracking-widest text-secondary — matches exactly */}
           <Text variant="overline">{label}</Text>
         </div>
@@ -52,7 +48,7 @@ export const InfoBox = forwardRef<HTMLDivElement, InfoBoxProps>(
             href={href}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 hover:underline transition-colors"
+            className="text-primary hover:text-primary-strong hover:underline transition-colors"
           >
             {/* h4 = text-lg font-medium text-heading — link overrides color */}
             <Text variant="h4" as="span">

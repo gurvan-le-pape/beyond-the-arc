@@ -28,28 +28,28 @@ export function LeaderboardTable({
       <div className="flex justify-end mb-2">
         <div className="min-w-[200px]">{dropdown}</div>
       </div>
-      <Table className="border border-primary-500 dark:border-primary-600 rounded-card box-border">
-        <TableHeader className="bg-primary-100 dark:bg-primary-900/30 border-b border-primary-500 dark:border-primary-600">
+      <Table className="border border-primary rounded-card box-border">
+        <TableHeader className="bg-primary-subtle border-b border-primary">
           <TableRow>
-            <TableHead className="text-center text-text-heading dark:text-text-heading-dark">
+            <TableHead className="text-center text-text-heading">
               {tCommon("table.rank")}
             </TableHead>
-            <TableHead className="text-left text-text-heading dark:text-text-heading-dark">
+            <TableHead className="text-left text-text-heading">
               {tCommon("table.team")}
             </TableHead>
-            <TableHead className="text-center text-text-heading dark:text-text-heading-dark">
+            <TableHead className="text-center text-text-heading">
               {tCommon("stats.points")}
             </TableHead>
-            <TableHead className="text-center text-text-heading dark:text-text-heading-dark">
+            <TableHead className="text-center text-text-heading">
               {tCommon("stats.gamesPlayed")}
             </TableHead>
-            <TableHead className="text-center text-text-heading dark:text-text-heading-dark">
+            <TableHead className="text-center text-text-heading">
               {tCommon("table.gamesWon")}
             </TableHead>
-            <TableHead className="text-center text-text-heading dark:text-text-heading-dark">
+            <TableHead className="text-center text-text-heading">
               {tCommon("table.gamesLost")}
             </TableHead>
-            <TableHead className="text-center text-text-heading dark:text-text-heading-dark">
+            <TableHead className="text-center text-text-heading">
               {tCommon("table.pointDifference")}
             </TableHead>
           </TableRow>
@@ -59,21 +59,16 @@ export function LeaderboardTable({
             <TableRow
               key={leaderboard.id}
               className={
-                index % 2 === 0
-                  ? "bg-primary-50 dark:bg-primary-900/20"
-                  : "bg-surface-raised dark:bg-surface-raised-dark"
+                index % 2 === 0 ? "bg-primary-ghost" : "bg-surface-inset"
               }
             >
               {/* Rank Column */}
-              <TableCell
-                highlight
-                className="text-center text-text-heading dark:text-text-heading-dark"
-              >
+              <TableCell highlight className="text-center text-text-heading">
                 {index + 1}
               </TableCell>
 
               {/* Team Column with Logo */}
-              <TableCell className="text-left text-text-heading dark:text-text-heading-dark">
+              <TableCell className="text-left text-text-heading">
                 <div className="flex items-center gap-2">
                   <img
                     src={`/images/clubs/${leaderboard.clubName}.webp`}
@@ -93,27 +88,27 @@ export function LeaderboardTable({
               </TableCell>
 
               {/* Points Column */}
-              <TableCell className="text-center text-text-heading dark:text-text-heading-dark">
+              <TableCell className="text-center text-text-heading">
                 {leaderboard.points}
               </TableCell>
 
               {/* Games Played Column */}
-              <TableCell className="text-center text-text-heading dark:text-text-heading-dark">
+              <TableCell className="text-center text-text-heading">
                 {leaderboard.gamesPlayed}
               </TableCell>
 
               {/* Games Won Column */}
-              <TableCell className="text-center text-text-heading dark:text-text-heading-dark">
+              <TableCell className="text-center text-text-heading">
                 {leaderboard.gamesWon}
               </TableCell>
 
               {/* Games Lost Column */}
-              <TableCell className="text-center text-text-heading dark:text-text-heading-dark">
+              <TableCell className="text-center text-text-heading">
                 {leaderboard.gamesLost}
               </TableCell>
 
               {/* Goal Difference Column */}
-              <TableCell className="text-center text-text-heading dark:text-text-heading-dark">
+              <TableCell className="text-center text-text-heading">
                 {leaderboard.pointDifference}
               </TableCell>
             </TableRow>

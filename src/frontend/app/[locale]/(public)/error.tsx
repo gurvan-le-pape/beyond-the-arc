@@ -25,8 +25,8 @@ export default function GlobalError({
   return (
     <PageLayout centered>
       {/* Card sits on surface-base (page), so it uses surface-subtle */}
-      <div className="bg-surface-subtle dark:bg-surface-subtle-dark rounded-card border border-divide-light dark:border-divide-dark shadow-card dark:shadow-card-dark p-10 max-w-md w-full text-center space-y-6 mx-auto">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-error-light/20 dark:bg-error-dark/20 mx-auto">
+      <div className="bg-surface-subtle rounded-card border border-divide shadow-card p-10 max-w-md w-full text-center space-y-6 mx-auto">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-error-subtle mx-auto">
           <svg
             className="w-8 h-8 text-error"
             fill="none"

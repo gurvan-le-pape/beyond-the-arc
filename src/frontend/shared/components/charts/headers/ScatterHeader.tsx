@@ -21,11 +21,7 @@ export const ScatterHeader: React.FC = () => {
             className="text-success"
           />
         </svg>
-        <Text
-          variant="caption"
-          as="span"
-          className="text-text-heading dark:text-text-heading-dark"
-        >
+        <Text variant="caption" as="span" className="text-text-heading">
           {t("shotChart.madeLabel")}
         </Text>
       </span>
@@ -51,11 +47,7 @@ export const ScatterHeader: React.FC = () => {
             className="text-error"
           />
         </svg>
-        <Text
-          variant="caption"
-          as="span"
-          className="text-text-heading dark:text-text-heading-dark"
-        >
+        <Text variant="caption" as="span" className="text-text-heading">
           {t("shotChart.missedLabel")}
         </Text>
       </span>

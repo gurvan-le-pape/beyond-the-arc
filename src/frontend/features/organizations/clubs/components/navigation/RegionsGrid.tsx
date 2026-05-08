@@ -31,12 +31,12 @@ export function RegionsGrid({ regions }: RegionsGridProps) {
           padding="md"
           clickable
           onClick={() => router.push(`/organizations/leagues/${region.id}`)}
-          className="border-l-4 border-l-regional-dark dark:border-l-regional-light hover:border-l-divide-light dark:hover:!border-l-divide-dark"
+          className="border-l-4 border-l-regional hover:border-l-regional-strong"
         >
           <Text variant="h3" className="mb-2">
             {region.name}
           </Text>
-          <p className="text-xl font-bold text-regional-dark dark:text-regional-light">
+          <p className="text-xl font-bold text-regional-strong">
             {region.clubCount}
           </p>
           <Text variant="caption">

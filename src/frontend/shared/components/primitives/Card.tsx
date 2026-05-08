@@ -12,10 +12,8 @@ import { Text } from "../typography";
 const cardVariants = cva("rounded-card border transition-all duration-200", {
   variants: {
     variant: {
-      default:
-        "bg-surface-subtle dark:bg-surface-subtle-dark border-divide-light dark:border-divide-dark shadow-card dark:shadow-card-dark",
-      highlighted:
-        "bg-surface-subtle dark:bg-surface-subtle-dark border-primary-500 dark:border-primary-400 border-2 shadow-card-hover dark:shadow-card-dark",
+      default: "surface-subtle border-divide shadow-card",
+      highlighted: "surface-subtle border-primary border-2 shadow-card-hover",
       ghost: "bg-transparent border-transparent",
       // Empty — allows full custom styling via className
       custom: "",
@@ -154,10 +152,7 @@ export const CardFooter = forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn(
-      "flex items-center pt-4 border-t border-divide-light dark:border-divide-dark",
-      className,
-    )}
+    className={cn("flex items-center pt-4 border-t border-divide", className)}
     {...props}
   />
 ));

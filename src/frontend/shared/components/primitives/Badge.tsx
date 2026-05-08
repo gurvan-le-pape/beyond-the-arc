@@ -12,32 +12,23 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default:
-          "border-transparent bg-surface-subtle text-text-heading dark:bg-surface-subtle-dark dark:text-text-emphasis-dark",
-        primary:
-          "border-transparent bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-400",
-        secondary:
-          "border-transparent bg-secondary-100 text-secondary-800 dark:bg-secondary-900/30 dark:text-secondary-400",
-        success:
-          "border-transparent bg-success-light/20 text-success-dark dark:bg-success-dark/20 dark:text-success-light",
-        error:
-          "border-transparent bg-error-light/20 text-error-dark dark:bg-error-dark/20 dark:text-error-light",
-        warning:
-          "border-transparent bg-warning-light/20 text-warning-dark dark:bg-warning-dark/20 dark:text-warning-light",
-        info: "border-transparent bg-info-light/20 text-info-dark dark:bg-info-dark/20 dark:text-info-light",
-        outline:
-          "border-divide-light text-text-emphasis dark:border-divide-dark dark:text-text-emphasis-dark",
+        default: "border-transparent bg-surface-subtle text-text-heading",
+        primary: "border-transparent bg-primary-subtle text-primary-strong",
+        secondary: "border-transparent bg-secondary-faint text-secondary-deep",
+        success: "border-transparent bg-success-subtle text-success-strong",
+        error: "border-transparent bg-error-subtle text-error-strong",
+        warning: "border-transparent bg-warning-subtle text-warning-strong",
+        info: "border-transparent bg-info-subtle text-info-strong",
+        outline: "border-divide text-text-emphasis",
         // Team-specific
-        male: "border-transparent bg-team-male-light/10 text-team-male-dark dark:bg-team-male-light/20 dark:text-team-male-light",
+        male: "border-transparent bg-team-male-subtle text-team-male-strong",
         female:
-          "border-transparent bg-team-female-light/10 text-team-female-dark dark:bg-team-female-light/20 dark:text-team-female-light",
+          "border-transparent bg-team-female-subtle text-team-female-strong",
         // Competition level-specific
-        national:
-          "border-transparent bg-national-light/10 text-national-dark dark:bg-national-light/20 dark:text-national-light",
-        regional:
-          "border-transparent bg-regional-light/10 text-regional-dark dark:bg-regional-light/20 dark:text-regional-light",
+        national: "border-transparent bg-national-subtle text-national-strong",
+        regional: "border-transparent bg-regional-subtle text-regional-strong",
         departmental:
-          "border-transparent bg-departmental-light/10 text-departmental-dark dark:bg-departmental-light/20 dark:text-departmental-light",
+          "border-transparent bg-departmental-subtle text-departmental-strong",
       },
       size: {
         sm: "px-2 py-0.5",

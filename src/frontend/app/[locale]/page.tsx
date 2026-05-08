@@ -29,8 +29,7 @@ export default async function Home({
   const exploreCards = [
     {
       href: `/${locale}/search?tab=players`,
-      badgeClass:
-        "bg-secondary-100 dark:bg-secondary-900 text-secondary-700 dark:text-secondary-300",
+      badgeClass: "bg-players-subtle text-players-strong",
       badge: t("explore.players.badge"),
       title: t("explore.players.title"),
       desc: t("explore.players.desc"),
@@ -39,8 +38,7 @@ export default async function Home({
     },
     {
       href: `/${locale}/search?tab=teams`,
-      badgeClass:
-        "bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300",
+      badgeClass: "bg-teams-subtle text-teams-strong",
       badge: t("explore.teams.badge"),
       title: t("explore.teams.title"),
       desc: t("explore.teams.desc"),
@@ -49,8 +47,7 @@ export default async function Home({
     },
     {
       href: `/${locale}/search?tab=matches`,
-      badgeClass:
-        "bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300",
+      badgeClass: "bg-matches-subtle text-matches-strong",
       badge: t("explore.matches.badge"),
       title: t("explore.matches.title"),
       desc: t("explore.matches.desc"),
@@ -92,27 +89,27 @@ export default async function Home({
   ] as const;
 
   return (
-    <div className="flex flex-col min-h-screen bg-surface-base dark:bg-surface-base-dark">
+    <div className="flex flex-col min-h-screen surface-base">
       <Header />
 
       <main className="flex-grow">
         <div className="max-w-7xl mx-auto w-full">
           {/* ── Hero ─────────────────────────────────────────────── */}
-          <section className="flex flex-col items-center text-center px-6 py-16 border-b border-divide-light dark:border-divide-dark">
+          <section className="flex flex-col items-center text-center px-6 py-16 border-b border-divide">
             <Text
               variant="overline"
-              className="inline-flex items-center gap-1.5 text-primary-500 bg-primary-50 dark:bg-primary-950 dark:text-primary-300 px-3 py-1 rounded mb-6"
+              className="inline-flex items-center gap-1.5 text-primary bg-primary-ghost px-3 py-1 rounded mb-6"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-primary-500 dark:bg-primary-300" />
+              <span className="w-1.5 h-1.5 rounded-full bg-primary" />
               {t("hero.eyebrow")}
             </Text>
 
             <h1
-              className="font-extrabold leading-none tracking-tight mb-5"
+              className="font-extrabold leading-none tracking-tight mb-5 text-text-heading"
               style={{ fontSize: "clamp(2.5rem, 6vw, 3.75rem)" }}
             >
               {t("hero.titleStart")}{" "}
-              <em className="not-italic text-primary-500 dark:text-primary-400">
+              <em className="not-italic text-primary">
                 {t("hero.titleEmphasis")}
               </em>
             </h1>
@@ -123,17 +120,15 @@ export default async function Home({
           </section>
 
           {/* ── Stats band ───────────────────────────────────────── */}
-          <div className="grid grid-cols-3 md:grid-cols-6 border-b border-divide-light dark:border-divide-dark">
+          <div className="grid grid-cols-3 md:grid-cols-6 border-b border-divide">
             {statsBand.map((s, i) => (
               <div
                 key={s.label}
                 className={`flex flex-col items-center justify-center py-5 px-3 text-center ${
-                  i < 5
-                    ? "border-r border-divide-light dark:border-divide-dark"
-                    : ""
+                  i < 5 ? "border-r border-divide" : ""
                 }`}
               >
-                <span className="text-2xl font-extrabold leading-none text-text-heading dark:text-text-heading-dark tabular-nums">
+                <span className="text-2xl font-extrabold leading-none text-text-heading tabular-nums">
                   {s.value}
                 </span>
                 <Text variant="overline" className="mt-1">
@@ -144,16 +139,16 @@ export default async function Home({
           </div>
 
           {/* ── Search & explore ─────────────────────────────────── */}
-          <div className="px-6 pt-7 pb-2 border-b border-divide-light dark:border-divide-dark">
+          <div className="px-6 pt-7 pb-2 border-b border-divide">
             <Text variant="overline">{t("explore.sectionTitle")}</Text>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 border-b border-divide-light dark:border-divide-dark divide-y md:divide-y-0 md:divide-x divide-divide-light dark:divide-divide-dark">
+          <div className="grid grid-cols-1 md:grid-cols-3 border-b border-divide divide-y md:divide-y-0 md:divide-x divide-divide">
             {exploreCards.map((card) => (
               <a
                 key={card.href}
                 href={card.href}
-                className="group flex flex-col gap-3 p-7 hover:bg-surface-subtle dark:hover:bg-surface-raised-dark transition-colors duration-150"
+                className="group flex flex-col gap-3 p-7 hover:bg-surface-inset transition-colors duration-150"
               >
                 <div className="flex items-center justify-between">
                   <span
@@ -167,10 +162,8 @@ export default async function Home({
                 </div>
                 <Text variant="h3">{card.title}</Text>
                 <Text variant="caption">{card.desc}</Text>
-                <p className="text-[12px] font-bold text-text-secondary dark:text-text-secondary-dark pt-3 border-t border-divide-light dark:border-divide-dark mt-auto">
-                  <span className="text-text-heading dark:text-text-heading-dark">
-                    {card.count}
-                  </span>{" "}
+                <p className="text-[12px] font-bold text-text-secondary pt-3 border-t border-divide mt-auto">
+                  <span className="text-text-heading">{card.count}</span>{" "}
                   {card.countLabel}
                 </p>
               </a>
@@ -178,11 +171,8 @@ export default async function Home({
           </div>
 
           {/* ── Clubs & map ──────────────────────────────────────── */}
-          <div className="border-b border-divide-light dark:border-divide-dark px-8 py-16 flex flex-col items-center text-center">
-            <Text
-              variant="overline"
-              className="text-clubs dark:text-clubs-light"
-            >
+          <div className="border-b border-divide px-8 py-16 flex flex-col items-center text-center">
+            <Text variant="overline" className="text-clubs">
               {t("map.eyebrow")}
             </Text>
             <Text variant="h2" className="mt-3 max-w-sm">
@@ -191,13 +181,13 @@ export default async function Home({
             <Text variant="caption" className="max-w-sm mt-2">
               {t("map.desc")}
             </Text>
-            <div className="flex gap-8 pt-4 mt-4 border-t border-divide-light dark:border-divide-dark">
+            <div className="flex gap-8 pt-4 mt-4 border-t border-divide">
               {mapStats.map((s) => (
                 <div
                   key={s.label}
                   className="flex flex-col gap-0.5 items-center"
                 >
-                  <span className="text-lg font-extrabold leading-none text-text-heading dark:text-text-heading-dark">
+                  <span className="text-lg font-extrabold leading-none text-text-heading">
                     {s.value}
                   </span>
                   <Text variant="overline">{s.label}</Text>
@@ -206,7 +196,7 @@ export default async function Home({
             </div>
             <a
               href={`/${locale}/map`}
-              className="mt-5 text-sm font-semibold bg-clubs hover:bg-clubs-dark text-white px-5 py-2.5 rounded-button transition-colors duration-150"
+              className="mt-5 text-sm font-semibold bg-clubs hover:bg-clubs-strong text-white px-5 py-2.5 rounded-button transition-colors duration-150"
             >
               {t("map.cta")}
             </a>
@@ -222,12 +212,12 @@ export default async function Home({
               <a
                 key={level.name}
                 href={level.href}
-                className="flex items-center gap-4 px-4 py-3 border border-divide-light dark:border-divide-dark rounded-card hover:bg-surface-subtle dark:hover:bg-surface-raised-dark transition-colors duration-150"
+                className="flex items-center gap-4 px-4 py-3 border border-divide rounded-card hover:bg-surface-inset transition-colors duration-150"
               >
                 <div
                   className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${level.dot}`}
                 />
-                <span className="text-sm font-bold flex-1 text-text-heading dark:text-text-heading-dark">
+                <span className="text-sm font-bold flex-1 text-text-heading">
                   {level.name}
                 </span>
                 <Text variant="muted" className="hidden sm:block">
@@ -236,9 +226,7 @@ export default async function Home({
                 <Text variant="caption" className="hidden md:block font-bold">
                   {level.count}
                 </Text>
-                <span className="text-xs font-semibold text-primary-500 dark:text-primary-400">
-                  →
-                </span>
+                <span className="text-xs font-semibold text-primary">→</span>
               </a>
             ))}
           </div>

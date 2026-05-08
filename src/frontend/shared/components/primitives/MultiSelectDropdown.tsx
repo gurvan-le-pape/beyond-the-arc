@@ -119,14 +119,13 @@ export function MultiSelectDropdown({
           className={cn(
             DROPDOWN_TRIGGER_BASE,
             "text-left flex items-center gap-2",
-            isOpen &&
-              "ring-2 ring-primary-500 dark:ring-primary-400 border-transparent",
+            isOpen && "ring-2 ring-primary border-transparent",
           )}
         >
           <span>{label}</span>
 
           {selectedCount > 0 && (
-            <span className="bg-primary-600 dark:bg-primary-500 text-white text-xs rounded-button px-2 py-0.5 leading-none">
+            <span className="bg-primary text-white text-xs rounded-button px-2 py-0.5 leading-none">
               {selectedCount}
             </span>
           )}
@@ -142,9 +141,9 @@ export function MultiSelectDropdown({
         ref={dropdownRef}
         className={cn(
           "absolute top-full left-0 mt-1 z-10 p-4 w-max max-w-[90vw]",
-          "bg-surface-raised dark:bg-surface-raised-dark",
-          "border border-divide-light dark:border-divide-dark",
-          "rounded-input shadow-card-hover dark:shadow-card-dark",
+          "surface-raised",
+          "border border-divide",
+          "rounded-input shadow-card-hover",
           "transition-all duration-200 origin-top-left",
           isOpen
             ? "opacity-100 scale-100 pointer-events-auto"
@@ -160,9 +159,9 @@ export function MultiSelectDropdown({
             aria-label={t("close")}
             className={cn(
               "h-6 w-6 flex items-center justify-center rounded",
-              "text-text-muted dark:text-text-muted-dark",
-              "hover:text-text-heading dark:hover:text-text-heading-dark",
-              "hover:bg-surface-subtle dark:hover:bg-surface-subtle-dark",
+              "text-text-muted",
+              "hover:text-text-heading",
+              "hover:bg-surface-inset",
               "transition-colors duration-150",
             )}
           >
@@ -178,7 +177,7 @@ export function MultiSelectDropdown({
           {columns.map((column, index) => (
             <React.Fragment key={column.title}>
               {index > 0 && (
-                <div className="self-stretch border-l border-divide-light dark:border-divide-dark mx-4" />
+                <div className="self-stretch border-l border-divide mx-4" />
               )}
               <ColumnList column={column} />
             </React.Fragment>
@@ -188,15 +187,15 @@ export function MultiSelectDropdown({
         {/* Clear all — only shown when something is selected */}
         {selectedCount > 0 && (
           <>
-            <div className="border-t border-divide-light dark:border-divide-dark mt-3" />
+            <div className="border-t border-divide mt-3" />
             <button
               type="button"
               onClick={onClear}
               className={cn(
                 "mt-3 w-full px-3 py-1.5 text-sm rounded-input",
-                "text-error dark:text-error-light",
-                "hover:bg-error/10 dark:hover:bg-error/20",
-                "focus:outline-none focus:ring-2 focus:ring-error dark:focus:ring-error-light",
+                "text-error-strong",
+                "hover:bg-error-subtle",
+                "focus:outline-none focus:ring-2 focus:ring-error",
                 "transition-colors duration-150",
               )}
             >
@@ -226,14 +225,14 @@ function ColumnList({ column }: { readonly column: MultiSelectColumn }) {
             key={item.id}
             className={cn(
               "flex items-center gap-2 text-sm p-1 rounded transition-colors duration-150 cursor-pointer",
-              "hover:bg-surface-subtle dark:hover:bg-surface-subtle-dark",
+              "hover:bg-surface-inset",
             )}
           >
             <input
               type="checkbox"
               checked={item.checked}
               onChange={item.onToggle}
-              className="w-4 h-4 text-primary-600 dark:text-primary-500 rounded focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400"
+              className="w-4 h-4 text-primary rounded focus:ring-2 focus:ring-primary"
             />
             <Text variant="label" as="span">
               {item.label}

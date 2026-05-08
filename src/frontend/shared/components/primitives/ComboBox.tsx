@@ -125,17 +125,13 @@ export const ComboBox: React.FC<ComboBoxProps> = ({
   const renderOptions = () => {
     if (isLoading) {
       return (
-        <li className="px-4 py-2 text-sm text-text-muted dark:text-text-muted-dark">
-          {t("loading")}
-        </li>
+        <li className="px-4 py-2 text-sm text-text-muted">{t("loading")}</li>
       );
     }
 
     if (filteredOptions.length === 0) {
       return (
-        <li className="px-4 py-2 text-sm text-text-muted dark:text-text-muted-dark">
-          {t("empty")}
-        </li>
+        <li className="px-4 py-2 text-sm text-text-muted">{t("empty")}</li>
       );
     }
 
@@ -146,8 +142,8 @@ export const ComboBox: React.FC<ComboBoxProps> = ({
           className={cn(
             "w-full text-left px-4 py-2 text-sm transition-colors duration-150",
             value === opt.value
-              ? "bg-primary-50 dark:bg-primary-900/40 font-semibold text-primary-700 dark:text-primary-300 border-l-2 border-primary-500 dark:border-primary-400"
-              : "text-text-heading dark:text-text-heading-dark hover:bg-primary-50 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300",
+              ? "bg-primary-subtle font-semibold text-primary-strong border-l-2 border-primary"
+              : "text-text-heading hover:bg-primary-subtle hover:text-primary-strong",
           )}
           onClick={() => {
             onChange(opt.value);
@@ -185,9 +181,7 @@ export const ComboBox: React.FC<ComboBoxProps> = ({
           className={cn(
             DROPDOWN_TRIGGER_BASE,
             "text-left",
-            selectedOption &&
-              value !== "" &&
-              "border-primary-400 dark:border-primary-500",
+            selectedOption && value !== "" && "border-primary",
             error && "border-error focus:ring-error focus:border-error",
           )}
           onClick={() => setOpen((o) => !o)}
@@ -201,7 +195,7 @@ export const ComboBox: React.FC<ComboBoxProps> = ({
             {selectedOption ? (
               selectedOption.label
             ) : (
-              <span className="text-text-muted dark:text-text-muted-dark">
+              <span className="text-text-muted">
                 {placeholder || t("table.filterName")}
               </span>
             )}
@@ -218,8 +212,8 @@ export const ComboBox: React.FC<ComboBoxProps> = ({
         id={`${inputId}-listbox`}
         className={cn(
           "absolute z-10 mt-1 w-full",
-          "bg-surface-raised dark:bg-surface-raised-dark",
-          "border border-divide-light dark:border-divide-dark",
+          "surface-raised",
+          "border border-divide",
           "rounded-input shadow-card-hover overflow-hidden",
           "transition-all duration-150 origin-top",
           open
@@ -231,7 +225,7 @@ export const ComboBox: React.FC<ComboBoxProps> = ({
           <input
             ref={searchRef}
             type="text"
-            className="w-full px-3 py-2 border-b border-divide-light dark:border-divide-dark bg-surface-raised dark:bg-surface-raised-dark text-text-heading dark:text-text-heading-dark placeholder:text-text-muted dark:placeholder:text-text-muted-dark focus:outline-none text-sm"
+            className="w-full px-3 py-2 border-b border-divide bg-surface-inset text-text-heading placeholder:text-text-muted focus:outline-none text-sm"
             placeholder={t("table.filter")}
             value={search}
             onChange={(e) => {
@@ -251,7 +245,7 @@ export const ComboBox: React.FC<ComboBoxProps> = ({
           variant="caption"
           as="p"
           id={`${inputId}-error`}
-          className="mt-2 text-error dark:text-error-light"
+          className="mt-2 text-error"
           role="alert"
         >
           {error}

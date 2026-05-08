@@ -33,7 +33,7 @@ export const PageLayout = ({
   ariaLabel,
   centered,
 }: PageLayoutProps) => (
-  <div className="flex flex-col min-h-screen bg-surface-base dark:bg-surface-base-dark">
+  <div className="flex flex-col min-h-screen surface-base">
     <Header />
     <main
       aria-label={ariaLabel}
