@@ -32,6 +32,11 @@ const LEAGUE_SELECT = {
       code: true,
     },
   },
+  committees: {
+    select: {
+      _count: { select: { clubs: true } },
+    },
+  },
 } as const;
 
 /**
@@ -96,6 +101,10 @@ export class LeaguesService {
    * @returns LeagueResponseDto
    */
   private mapToDto(league: LeagueSelectResult): LeagueResponseDto {
+    const clubCount = league.committees.reduce(
+      (sum, c) => sum + c._count.clubs,
+      0,
+    );
     return {
       id: league.id,
       name: league.name,
@@ -104,6 +113,7 @@ export class LeaguesService {
       address: league.address,
       president: league.president,
       region: league.region,
+      clubCount,
     } satisfies LeagueResponseDto; // TypeScript validates this matches
   }
 }

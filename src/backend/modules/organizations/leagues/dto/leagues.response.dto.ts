@@ -78,4 +78,11 @@ export class LeagueResponseDto {
     type: RegionDto,
   })
   region!: RegionDto;
+
+  @ApiProperty({
+    description: "Number of clubs in this league",
+    example: 42,
+    type: Number,
+  })
+  clubCount!: number;
 }
