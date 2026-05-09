@@ -4,4 +4,5 @@ export interface Pool {
   letter: string;
   name: string;
   championshipId: number;
+  nbMatchdays: number;
 }

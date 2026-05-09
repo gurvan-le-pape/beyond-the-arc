@@ -4,6 +4,20 @@ import { ApiProperty } from "@nestjs/swagger";
 /**
  * Response DTO for a championship entity.
  */
+export class ChampionshipPoolDto {
+  @ApiProperty({ example: 1, type: Number })
+  id!: number;
+
+  @ApiProperty({ example: "A", type: String })
+  letter!: string;
+
+  @ApiProperty({ example: "Pool A", type: String })
+  name!: string;
+
+  @ApiProperty({ example: 10, type: Number })
+  nbMatchdays!: number;
+}
+
 export class ChampionshipResponseDto {
   @ApiProperty({
     description: "Unique championship identifier",
@@ -48,11 +62,7 @@ export class ChampionshipResponseDto {
   })
   level!: string;
 
-  @ApiProperty({
-    description: "Division number (e.g., 1, 2)",
-    example: 1,
-    type: Number,
-  })
+  @ApiProperty({ description: "Division number", example: 1, type: Number })
   division!: number;
 
   @ApiProperty({
@@ -78,4 +88,10 @@ export class ChampionshipResponseDto {
     nullable: true,
   })
   organizationName!: string | null;
+
+  @ApiProperty({
+    description: "Pools in this championship",
+    type: [ChampionshipPoolDto],
+  })
+  pools!: ChampionshipPoolDto[];
 }

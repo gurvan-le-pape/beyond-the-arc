@@ -14,6 +14,10 @@ const POOL_SELECT = {
   letter: true,
   name: true,
   championshipId: true,
+  matches: {
+    select: { matchday: true },
+    distinct: ["matchday"] as ["matchday"],
+  },
 } as const;
 
 /**
@@ -86,6 +90,7 @@ export class PoolsService {
       letter: pool.letter,
       name: pool.name,
       championshipId: pool.championshipId,
+      nbMatchdays: pool.matches.length,
     } satisfies PoolResponseDto; // TypeScript validates this matches
   }
 }

@@ -69,12 +69,14 @@ describe("PoolsController", () => {
           letter: "A",
           name: "Pool A - Seniors",
           championshipId: 1,
+          nbMatchdays: 10,
         },
         {
           id: 2,
           letter: "B",
           name: "Pool B - Seniors",
           championshipId: 1,
+          nbMatchdays: 8,
         },
       ];
 
@@ -139,6 +141,7 @@ describe("PoolsController", () => {
         letter: "A",
         name: "Pool A - Seniors",
         championshipId: 1,
+        nbMatchdays: 10,
       };
 
       mockPoolsService.findPoolById.mockResolvedValue(mockPool);
@@ -175,6 +178,7 @@ describe("PoolsController", () => {
         letter: "C",
         name: "Pool C",
         championshipId: 5,
+        nbMatchdays: 6,
       };
 
       mockPoolsService.findPoolById.mockResolvedValue(mockPool);

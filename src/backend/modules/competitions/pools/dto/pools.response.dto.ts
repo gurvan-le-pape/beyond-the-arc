@@ -32,4 +32,11 @@ export class PoolResponseDto {
     type: Number,
   })
   championshipId!: number;
+
+  @ApiProperty({
+    description: "Number of matchdays in this pool",
+    example: 10,
+    type: Number,
+  })
+  nbMatchdays!: number;
 }

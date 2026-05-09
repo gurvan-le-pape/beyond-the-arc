@@ -126,6 +126,14 @@ describe("ChampionshipsService", () => {
         committeeId: null,
         league: { name: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL" },
         committee: null,
+        pools: [
+          {
+            id: 1,
+            letter: "A",
+            name: "Pool A",
+            matches: [{ matchday: 1 }, { matchday: 2 }],
+          },
+        ],
       };
 
       mockPrismaService.championships.findUnique.mockResolvedValue(
@@ -147,6 +155,7 @@ describe("ChampionshipsService", () => {
         leagueId: 1,
         committeeId: null,
         organizationName: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
+        pools: [{ id: 1, letter: "A", name: "Pool A", nbMatchdays: 2 }],
       });
 
       expect(mockPrismaService.championships.findUnique).toHaveBeenCalledWith({
@@ -163,6 +172,17 @@ describe("ChampionshipsService", () => {
           committeeId: true,
           league: { select: { name: true } },
           committee: { select: { name: true } },
+          pools: {
+            select: {
+              id: true,
+              letter: true,
+              name: true,
+              matches: {
+                select: { matchday: true },
+                distinct: ["matchday"],
+              },
+            },
+          },
         },
       });
     });
@@ -199,6 +219,7 @@ describe("ChampionshipsService", () => {
             committeeId: null,
             league: { name: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL" },
             committee: null,
+            pools: [],
           },
           {
             id: 2,
@@ -212,6 +233,7 @@ describe("ChampionshipsService", () => {
             committeeId: null,
             league: { name: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL" },
             committee: null,
+            pools: [],
           },
         ];
 
@@ -246,6 +268,17 @@ describe("ChampionshipsService", () => {
             committeeId: true,
             league: { select: { name: true } },
             committee: { select: { name: true } },
+            pools: {
+              select: {
+                id: true,
+                letter: true,
+                name: true,
+                matches: {
+                  select: { matchday: true },
+                  distinct: ["matchday"],
+                },
+              },
+            },
           },
           orderBy: [{ division: "asc" }, { category: "asc" }],
         });
@@ -282,6 +315,7 @@ describe("ChampionshipsService", () => {
             committeeId: 5,
             league: null,
             committee: { name: "COMITE D''ILLE-ET-VILAINE DE BASKET-BALL" },
+            pools: [],
           },
         ];
 
@@ -316,6 +350,17 @@ describe("ChampionshipsService", () => {
             committeeId: true,
             league: { select: { name: true } },
             committee: { select: { name: true } },
+            pools: {
+              select: {
+                id: true,
+                letter: true,
+                name: true,
+                matches: {
+                  select: { matchday: true },
+                  distinct: ["matchday"],
+                },
+              },
+            },
           },
           orderBy: [{ division: "asc" }, { category: "asc" }],
         });
@@ -354,6 +399,7 @@ describe("ChampionshipsService", () => {
             committeeId: null,
             league: { name: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL" },
             committee: null,
+            pools: [],
           },
         ]);
 
@@ -386,6 +432,7 @@ describe("ChampionshipsService", () => {
             committeeId: 5,
             league: null,
             committee: { name: "COMITE D''ILLE-ET-VILAINE DE BASKET-BALL" },
+            pools: [],
           },
         ]);
 

@@ -54,8 +54,20 @@ describe("PoolsService", () => {
       // Arrange
       const championshipId = 1;
       const mockPools = [
-        { id: 1, letter: "A", name: "Pool A - Seniors", championshipId: 1 },
-        { id: 2, letter: "B", name: "Pool B - Seniors", championshipId: 1 },
+        {
+          id: 1,
+          letter: "A",
+          name: "Pool A - Seniors",
+          championshipId: 1,
+          matches: [{ matchday: 1 }, { matchday: 2 }],
+        },
+        {
+          id: 2,
+          letter: "B",
+          name: "Pool B - Seniors",
+          championshipId: 1,
+          matches: [],
+        },
       ];
 
       mockPrismaService.pools.findMany.mockResolvedValue(mockPools);
@@ -70,6 +82,7 @@ describe("PoolsService", () => {
         letter: "A",
         name: "Pool A - Seniors",
         championshipId: 1,
+        nbMatchdays: 2,
       });
       expect(result[1].letter).toBe("B");
 
@@ -80,6 +93,10 @@ describe("PoolsService", () => {
           letter: true,
           name: true,
           championshipId: true,
+          matches: {
+            select: { matchday: true },
+            distinct: ["matchday"],
+          },
         },
         orderBy: { letter: "asc" },
       });
@@ -113,7 +130,13 @@ describe("PoolsService", () => {
       // Arrange
       const championshipId = 1;
       mockPrismaService.pools.findMany.mockResolvedValue([
-        { id: 1, letter: "A", name: "Pool A", championshipId: 1 },
+        {
+          id: 1,
+          letter: "A",
+          name: "Pool A",
+          championshipId: 1,
+          matches: [],
+        },
       ]);
 
       // Act
@@ -137,6 +160,7 @@ describe("PoolsService", () => {
         letter: "A",
         name: "Pool A - Seniors",
         championshipId: 1,
+        matches: [{ matchday: 1 }, { matchday: 2 }],
       };
 
       mockPrismaService.pools.findUnique.mockResolvedValue(mockPool);
@@ -150,6 +174,7 @@ describe("PoolsService", () => {
         letter: "A",
         name: "Pool A - Seniors",
         championshipId: 1,
+        nbMatchdays: 2,
       });
 
       expect(mockPrismaService.pools.findUnique).toHaveBeenCalledWith({
@@ -159,6 +184,10 @@ describe("PoolsService", () => {
           letter: true,
           name: true,
           championshipId: true,
+          matches: {
+            select: { matchday: true },
+            distinct: ["matchday"],
+          },
         },
       });
     });
@@ -184,6 +213,7 @@ describe("PoolsService", () => {
         letter: "A",
         name: "Test",
         championshipId: 1,
+        matches: [],
       });
 
       // Act
@@ -197,6 +227,10 @@ describe("PoolsService", () => {
           letter: true,
           name: true,
           championshipId: true,
+          matches: {
+            select: { matchday: true },
+            distinct: ["matchday"],
+          },
         },
       });
     });

@@ -1,9 +1,13 @@
 // src/frontend/features/matches/components/list/MatchesFilters.tsx
+"use client";
+
 import { CalendarIcon } from "@heroicons/react/24/outline";
 import { useTranslations } from "next-intl";
 import React from "react";
 
-import type { Championship } from "@/features/competitions/championships/types/Championship";
+import { useCommitteeLeagueClubFilters } from "@/features/competitions/championships/hooks";
+import { useMatchesCascadeOptions } from "@/features/matches/hooks/useMatchesCascadeOptions";
+import { ErrorMessage } from "@/shared/components/feedback";
 import type { CascadeStep } from "@/shared/components/filters/CascadeSelects";
 import { CascadeSelects } from "@/shared/components/filters/CascadeSelects";
 import { FiltersShell } from "@/shared/components/filters/FiltersShell";
@@ -16,80 +20,60 @@ import {
   GENDER_LIST,
 } from "@/shared/constants";
 
+import type {
+  MatchesFilterSetters,
+  MatchesFilterState,
+} from "../../hooks/useMatchesFilterState";
+
 interface MatchesFiltersProps {
-  // Search & Date
-  search: string;
-  setSearch: (value: string) => void;
-  dateFilter: string;
-  setDateFilter: (value: string) => void;
-  // Category & Gender
-  category: Category | undefined;
-  setCategory: (value: Category | undefined) => void;
-  gender: Gender | undefined;
-  setGender: (value: Gender | undefined) => void;
-  // Level & Location
-  level: CompetitionLevel | undefined;
-  setLevel: (value: CompetitionLevel | undefined) => void;
-  committeeId: number | undefined;
-  setCommitteeId: (value: number | undefined) => void;
-  leagueId: number | undefined;
-  setLeagueId: (value: number | undefined) => void;
-  committees: any[];
-  leagues: any[];
-  // Competition Hierarchy
-  division: number | undefined;
-  setDivision: (value: number | undefined) => void;
-  poolId: number | undefined;
-  setPoolId: (value: number | undefined) => void;
-  matchday: number | undefined;
-  setMatchday: (value: number | undefined) => void;
-  championships: Championship[];
-  pools: any[];
-  // Reset
+  filters: MatchesFilterState;
+  setters: MatchesFilterSetters;
   onReset: () => void;
 }
 
 export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
-  search,
-  setSearch,
-  dateFilter,
-  setDateFilter,
-  category,
-  setCategory,
-  gender,
-  setGender,
-  level,
-  setLevel,
-  committeeId,
-  setCommitteeId,
-  leagueId,
-  setLeagueId,
-  committees,
-  leagues,
-  division,
-  setDivision,
-  poolId,
-  setPoolId,
-  matchday,
-  setMatchday,
-  championships,
-  pools,
+  filters,
+  setters,
   onReset,
 }) => {
   const tMatches = useTranslations("matches");
   const tCommon = useTranslations("common");
   const tFilters = useTranslations("filters");
 
-  const divisions = Array.from(
-    new Set(
-      championships
-        .map((c: any) => c.division)
-        .filter((d: any) => d !== null && d !== undefined),
-    ),
-  ).sort((a: any, b: any) => a - b);
+  const {
+    committees,
+    leagues,
+    error: locationError,
+  } = useCommitteeLeagueClubFilters();
+  const { divisions, pools } = useMatchesCascadeOptions(filters);
+
+  const {
+    search,
+    dateFilter,
+    category,
+    gender,
+    level,
+    committeeId,
+    leagueId,
+    division,
+    poolId,
+    matchday,
+  } = filters;
+  const {
+    setSearch,
+    setDateFilter,
+    setCategory,
+    setGender,
+    setLevel,
+    setCommitteeId,
+    setLeagueId,
+    setDivision,
+    setPoolId,
+    setMatchday,
+  } = setters;
 
   const matchdaysCount = poolId
-    ? pools.find((p: any) => String(p.id) === String(poolId))?.nbMatchdays ?? 30
+    ? pools.find((p) => String(p.id) === String(poolId))?.nbMatchdays ?? 30
     : 30;
 
   const locationLabel =
@@ -127,14 +111,7 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
     level && {
       key: "level",
       label: tCommon(`competition.levels.${level.toLowerCase()}`),
-      onRemove: () => {
-        setLevel(undefined);
-        setCommitteeId(undefined);
-        setLeagueId(undefined);
-        setDivision(undefined);
-        setPoolId(undefined);
-        setMatchday(undefined);
-      },
+      onRemove: () => setLevel(undefined),
     },
     locationLabel && {
       key: "location",
@@ -142,27 +119,17 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
       onRemove: () => {
         setCommitteeId(undefined);
         setLeagueId(undefined);
-        setDivision(undefined);
-        setPoolId(undefined);
-        setMatchday(undefined);
       },
     },
     division && {
       key: "division",
       label: tMatches("divisionLabel", { div: division }),
-      onRemove: () => {
-        setDivision(undefined);
-        setPoolId(undefined);
-        setMatchday(undefined);
-      },
+      onRemove: () => setDivision(undefined),
     },
     poolId && {
       key: "pool",
       label: selectedPool?.name ?? String(poolId),
-      onRemove: () => {
-        setPoolId(undefined);
-        setMatchday(undefined);
-      },
+      onRemove: () => setPoolId(undefined),
     },
     matchday && {
       key: "matchday",
@@ -181,10 +148,7 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
 
   const genderOptions = [
     { value: "", label: tCommon("filters.allGenders") },
-    ...GENDER_LIST.map((g) => ({
-      value: g,
-      label: tCommon(`gender.${g}`),
-    })),
+    ...GENDER_LIST.map((g) => ({ value: g, label: tCommon(`gender.${g}`) })),
   ];
 
   const cascadeSteps: CascadeStep[] = [
@@ -192,11 +156,7 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
       id: "division-filter",
       label: tCommon("filters.divisions"),
       value: division ?? "",
-      onChange: (val) => {
-        setDivision(Number(val) || undefined);
-        setPoolId(undefined);
-        setMatchday(undefined);
-      },
+      onChange: (val) => setDivision(Number(val) || undefined),
       enabled: !!locationSelected,
       options: divisions.map((div) => ({
         value: div,
@@ -209,10 +169,7 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
       id: "pool-filter",
       label: tCommon("filters.pools"),
       value: poolId ?? "",
-      onChange: (val) => {
-        setPoolId(Number(val) || undefined);
-        setMatchday(undefined);
-      },
+      onChange: (val) => setPoolId(Number(val) || undefined),
       enabled: !!division,
       options: pools.map((p) => ({ value: p.id, label: p.name })),
       allLabel: tCommon("filters.allPools"),
@@ -240,6 +197,10 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
       onReset={onReset}
       title={tMatches("label")}
     >
+      {locationError && (
+        <ErrorMessage message={tCommon("errors.fetchLeagueOrCommittee")} />
+      )}
+
       {/* Row 1: Search + Date */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Input
@@ -285,28 +246,11 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
       {/* Row 3: Level → Committee/League cascade */}
       <LevelLocationFilters
         level={level}
-        setLevel={(val) => {
-          setLevel(val);
-          setCommitteeId(undefined);
-          setLeagueId(undefined);
-          setDivision(undefined);
-          setPoolId(undefined);
-          setMatchday(undefined);
-        }}
+        setLevel={setLevel}
         committeeId={committeeId}
-        setCommitteeId={(val) => {
-          setCommitteeId(val);
-          setDivision(undefined);
-          setPoolId(undefined);
-          setMatchday(undefined);
-        }}
+        setCommitteeId={setCommitteeId}
         leagueId={leagueId}
-        setLeagueId={(val) => {
-          setLeagueId(val);
-          setDivision(undefined);
-          setPoolId(undefined);
-          setMatchday(undefined);
-        }}
+        setLeagueId={setLeagueId}
         committees={committees}
         leagues={leagues}
       />
