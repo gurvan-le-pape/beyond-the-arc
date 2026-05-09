@@ -190,6 +190,8 @@
       "diagramTitle": "Entity Relationship Diagram",
       "diagramAlt": "Database schema diagram showing all entities and their relationships",
       "keyTables": "Key Database Tables",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
       "tables": {
         "championships": "Championships and tournament structures",
         "teams": "Team information and rosters",
@@ -201,8 +203,13 @@
     },
     "structure": {
       "backend": "Backend Structure (NestJS)",
+      "backendCode": "modules/\n  competitions/\n    championships/\n    leaderboards/\n    pools/\n  geography/\n  health/\n  matches/\n  organizations/\n    clubs/\n    committees/\n    leagues/\n  players/\n  stats/\n  teams/\ncommon/              # Shared utilities, interceptors, decorators\nconfig/              # Configuration\nprisma/              # Prisma service\n",
+      "backendModulesExplanation": "Feature modules (competitions, geography, matches, organizations, players, stats, teams) each with their own controller, service, and DTOs.",
+      "backendCommonExplanation": "Shared utilities including constants, decorators, filters, interceptors, pipes, and DTOs used across all modules.",
+      "backendConfigExplanation": "Application configuration and environment setup.",
+      "backendPrismaExplanation": "Prisma service, schema, and database migrations.",
       "frontend": "Frontend Structure (Next.js)",
-      "frontendCode": "app/            # Next.js App Router (routing, layouts, pages)\n  (public)/      # Public routes (clubs, competitions, matches, players, teams)\n  (auth)/        # Auth routes (login, register)\n  api/           # API routes\nfeatures/        # Feature modules (domain logic, UI, hooks, api)\n  └── clubs/     # Example feature\n      ├── components/\n      ├── hooks/\n      ├── api/\n      ├── utils/\n      ├── constants/\n      ├── types/\n      └── index.ts\nshared/          # Shared components, hooks, utils, types\nlib/             # External integrations, providers, API clients\nstyles/          # Global styles and themes\npublic/          # Static assets\n",
+      "frontendCode": "app/                    # Next.js App Router (routing, layouts, pages)\n  [locale]/\n    (public)/           # Public routes\n      championships/\n      map/\n      matches/\n      organizations/\n        clubs/\n        committees/\n        leagues/\n      players/\n      search/\n      teams/\n    architecture/\n    about/\n    contact/\n    docs/\n    features/\nfeatures/               # Feature modules\n  competitions/\n    championships/\n    leaderboards/\n    pools/\n  geography/\n  matches/\n  organizations/\n    clubs/\n    committees/\n    leagues/\n  players/\n  search/\n  site/\n    architecture/\n    contact/\n    docs/\n  stats/\n  teams/\nshared/                 # Shared components, hooks, utils, types\nlib/                    # External integrations, providers, API clients\nstyles/                 # Global styles and themes\npublic/                 # Static assets\n",
       "routingExplanation": "All routing is handled in app/ using Next.js App Router conventions.",
       "featurePrinciple": "Each feature (e.g. 'clubs') contains its own components, hooks, api, utils, constants, types, and index.ts for modularity.",
       "sharedExplanation": "Reusable code (components, hooks, utils, types) lives in shared/.",
