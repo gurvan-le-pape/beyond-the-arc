@@ -3,17 +3,17 @@
 import type { Category, CompetitionLevel, Gender } from "@/shared/constants";
 
 export interface MatchFilters {
+  search?: string;
+  date?: string;
+  category?: Category;
+  gender?: Gender;
   level?: CompetitionLevel;
   division?: number;
   committeeId?: number;
   leagueId?: number;
-  category?: Category;
-  gender?: Gender;
   poolId?: number;
   championshipId?: number;
   matchday?: number;
-  date?: string;
-  search?: string;
   page?: number;
   limit?: number;
 }
