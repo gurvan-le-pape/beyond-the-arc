@@ -76,6 +76,7 @@ describe("ChampionshipsController", () => {
         leagueId: 1,
         committeeId: null,
         organizationName: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
+        pools: [],
       };
 
       mockChampionshipsService.findChampionshipById.mockResolvedValue(
@@ -115,6 +116,7 @@ describe("ChampionshipsController", () => {
         leagueId: 1,
         committeeId: null,
         organizationName: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
+        pools: [],
       };
 
       mockChampionshipsService.findChampionshipById.mockResolvedValue(
@@ -145,6 +147,7 @@ describe("ChampionshipsController", () => {
             leagueId: 1,
             committeeId: null,
             organizationName: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
+            pools: [],
           },
           {
             id: 2,
@@ -157,6 +160,7 @@ describe("ChampionshipsController", () => {
             leagueId: 1,
             committeeId: null,
             organizationName: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
+            pools: [],
           },
         ];
 
@@ -215,6 +219,7 @@ describe("ChampionshipsController", () => {
             leagueId: null,
             committeeId: 5,
             organizationName: "COMITE D''ILLE-ET-VILAINE DE BASKET-BALL",
+            pools: [],
           },
         ];
 
