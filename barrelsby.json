@@ -49,6 +49,8 @@
 
     "src/frontend/features/site/architecture/components",
     "src/frontend/features/site/contact/components",
+    "src/frontend/features/site/docs/components",
+    "src/frontend/features/site/docs/hooks",
 
     "src/frontend/features/teams/api",
     "src/frontend/features/teams/components",
