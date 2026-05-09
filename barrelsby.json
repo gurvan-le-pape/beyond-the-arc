@@ -47,6 +47,7 @@
     "src/frontend/features/stats/api",
     "src/frontend/features/stats/types",
 
+    "src/frontend/features/site/about/components",
     "src/frontend/features/site/architecture/components",
     "src/frontend/features/site/contact/components",
     "src/frontend/features/site/docs/components",
