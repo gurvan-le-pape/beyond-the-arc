@@ -22,6 +22,17 @@ const CHAMPIONSHIP_SELECT = {
   committeeId: true,
   league: { select: { name: true } },
   committee: { select: { name: true } },
+  pools: {
+    select: {
+      id: true,
+      letter: true,
+      name: true,
+      matches: {
+        select: { matchday: true },
+        distinct: ["matchday"] as ["matchday"],
+      },
+    },
+  },
 } as const;
 
 /**
@@ -127,7 +138,7 @@ export class ChampionshipsService {
     leagueId: number,
   ): Promise<ChampionshipResponseDto[]> {
     const championships = await this.queryChampionshipsByCondition({
-      leagueId: leagueId,
+      leagueId,
       level: CompetitionLevel.REGIONAL,
     });
 
@@ -175,7 +186,7 @@ export class ChampionshipsService {
   private async queryChampionshipsByCondition(
     condition: Prisma.ChampionshipsWhereInput,
   ): Promise<ChampionshipSelectResult[]> {
-    return await this.prisma.championships.findMany({
+    return this.prisma.championships.findMany({
       where: condition,
       select: CHAMPIONSHIP_SELECT,
       orderBy: [{ division: "asc" }, { category: "asc" }],
@@ -202,6 +213,12 @@ export class ChampionshipsService {
       leagueId: entity.leagueId ?? null,
       committeeId: entity.committeeId ?? null,
       organizationName: entity.league?.name ?? entity.committee?.name ?? null,
+      pools: entity.pools.map((p) => ({
+        id: p.id,
+        letter: p.letter,
+        name: p.name,
+        nbMatchdays: p.matches.length,
+      })),
     } satisfies ChampionshipResponseDto; // TypeScript validates this matches
   }
 }
