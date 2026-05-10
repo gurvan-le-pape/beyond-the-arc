@@ -4,7 +4,10 @@
 import { useTranslations } from "next-intl";
 import React, { useState } from "react";
 
+import { useCommitteeLeagueClubFilters } from "@/features/competitions/championships/hooks";
 import { useClubSearch } from "@/features/organizations/clubs/api";
+import { useTeamFilterValues } from "@/features/teams/api/use-teams";
+import { ErrorMessage } from "@/shared/components/feedback";
 import { FiltersShell } from "@/shared/components/filters/FiltersShell";
 import { LevelLocationFilters } from "@/shared/components/filters/LevelLocationFilters";
 import { Input } from "@/shared/components/forms";
@@ -18,70 +21,56 @@ import {
 } from "@/shared/constants";
 import { useDebounce } from "@/shared/hooks";
 
+import type {
+  PlayersFilterSetters,
+  PlayersFilterState,
+} from "../../hooks/usePlayersFilterState";
+
 interface PlayersFiltersProps {
-  // Name search
-  name: string;
-  setName: (value: string) => void;
-  // Category & Gender
-  category: Category | undefined;
-  setCategory: (value: Category | undefined) => void;
-  gender: Gender | undefined;
-  setGender: (value: Gender | undefined) => void;
-  // Level & Location
-  level: CompetitionLevel | undefined;
-  setLevel: (value: CompetitionLevel | undefined) => void;
-  committeeId: number | undefined;
-  setCommitteeId: (value: number | undefined) => void;
-  leagueId: number | undefined;
-  setLeagueId: (value: number | undefined) => void;
-  committees: any[];
-  leagues: any[];
-  // Club
-  clubId: string;
-  setClubId: (value: string) => void;
-  selectedClubName: string;
-  setSelectedClubName: (value: string) => void;
-  // Player number
-  number: string;
-  setNumber: (value: string) => void;
-  playerNumbers: number[];
-  // Team number
-  teamNumber: string;
-  setTeamNumber: (value: string) => void;
-  teamNumbers: number[];
-  // Reset
+  filters: PlayersFilterState;
+  setters: PlayersFilterSetters;
   onReset: () => void;
 }
 
 export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
-  name,
-  setName,
-  category,
-  setCategory,
-  gender,
-  setGender,
-  level,
-  setLevel,
-  committeeId,
-  setCommitteeId,
-  leagueId,
-  setLeagueId,
-  committees,
-  leagues,
-  clubId,
-  setClubId,
-  selectedClubName,
-  setSelectedClubName,
-  number,
-  setNumber,
-  playerNumbers,
-  teamNumber,
-  setTeamNumber,
-  teamNumbers,
+  filters,
+  setters,
   onReset,
 }) => {
   const tPlayers = useTranslations("players");
   const tCommon = useTranslations("common");
+
+  const {
+    committees,
+    leagues,
+    error: locationError,
+  } = useCommitteeLeagueClubFilters();
+
+  const {
+    name,
+    clubId,
+    selectedClubName,
+    category,
+    gender,
+    number,
+    teamNumber,
+    level,
+    committeeId,
+    leagueId,
+  } = filters;
+
+  const {
+    setName,
+    setClubId,
+    setSelectedClubName,
+    setCategory,
+    setGender,
+    setNumber,
+    setTeamNumber,
+    setLevel,
+    setCommitteeId,
+    setLeagueId,
+  } = setters;
 
   const [clubSearch, setClubSearch] = useState("");
   const debouncedClubSearch = useDebounce(clubSearch, 300);
@@ -94,6 +83,13 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
     label: c.name,
   }));
 
+  const { data: teamFilterValues } = useTeamFilterValues({
+    committeeId,
+    leagueId,
+  });
+  const playerNumbers = teamFilterValues?.numbers ?? [];
+  const teamNumbers = teamFilterValues?.numbers ?? [];
+
   const locationLabel =
     level === CompetitionLevel.DEPARTMENTAL
       ? committees.find((c) => c.id === committeeId)?.name
@@ -103,9 +99,9 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
     name && { key: "name", label: `"${name}"`, onRemove: () => setName("") },
     clubId && {
       key: "club",
-      label: selectedClubName || clubId,
+      label: selectedClubName || String(clubId),
       onRemove: () => {
-        setClubId("");
+        setClubId(undefined);
         setSelectedClubName("");
       },
     },
@@ -122,21 +118,17 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
     number && {
       key: "number",
       label: `#${number}`,
-      onRemove: () => setNumber(""),
+      onRemove: () => setNumber(undefined),
     },
     teamNumber && {
       key: "teamNumber",
       label: `${tCommon("filters.teamNumbers")} ${teamNumber}`,
-      onRemove: () => setTeamNumber(""),
+      onRemove: () => setTeamNumber(undefined),
     },
     level && {
       key: "level",
       label: tCommon(`competition.levels.${level.toLowerCase()}`),
-      onRemove: () => {
-        setLevel(undefined);
-        setCommitteeId(undefined);
-        setLeagueId(undefined);
-      },
+      onRemove: () => setLevel(undefined),
     },
     locationLabel && {
       key: "location",
@@ -181,6 +173,10 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
       onReset={onReset}
       title={tPlayers("label")}
     >
+      {locationError && (
+        <ErrorMessage message={tCommon("errors.fetchLeagueOrCommittee")} />
+      )}
+
       {/* Row 1: Name search + Club */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Input
@@ -192,14 +188,14 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
           onClear={() => setName("")}
           clearAriaLabel={tCommon("clearSearch")}
         />
-
         <ComboBox
           label={tCommon("filters.clubs")}
           placeholder={tCommon("filters.allClubs")}
           options={clubOptions}
-          value={clubId || undefined}
+          value={clubId ? String(clubId) : undefined}
           onChange={(val) => {
-            setClubId(String(val ?? ""));
+            const parsed = Number(val) || undefined;
+            setClubId(parsed);
             setSelectedClubName(
               clubOptions.find((c) => c.value === String(val ?? ""))?.label ??
                 "",
@@ -234,16 +230,15 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
         <Select
           label={tCommon("filters.playerNumbers")}
           options={playerNumberOptions}
-          value={number}
-          onChange={(val) => setNumber(String(val ?? ""))}
+          value={number ?? ""}
+          onChange={(val) => setNumber(Number(val) || undefined)}
           placeholder={tCommon("filters.allPlayerNumbers")}
         />
-
         <Select
           label={tCommon("filters.teamNumbers")}
           options={teamNumberOptions}
-          value={teamNumber}
-          onChange={(val) => setTeamNumber(String(val ?? ""))}
+          value={teamNumber ?? ""}
+          onChange={(val) => setTeamNumber(Number(val) || undefined)}
           placeholder={tCommon("filters.allTeamNumbers")}
         />
       </div>
@@ -251,14 +246,10 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
       {/* Divider */}
       <div className="border-t border-divide" />
 
-      {/* Row 4: Level → Committee/League cascade */}
+      {/* Row 4: Level → Committee/League */}
       <LevelLocationFilters
         level={level}
-        setLevel={(val) => {
-          setLevel(val);
-          setCommitteeId(undefined);
-          setLeagueId(undefined);
-        }}
+        setLevel={setLevel}
         committeeId={committeeId}
         setCommitteeId={setCommitteeId}
         leagueId={leagueId}
