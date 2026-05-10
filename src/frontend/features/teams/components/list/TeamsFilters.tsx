@@ -4,7 +4,10 @@
 import { useTranslations } from "next-intl";
 import React, { useState } from "react";
 
+import { useCommitteeLeagueClubFilters } from "@/features/competitions/championships/hooks";
 import { useClubSearch } from "@/features/organizations/clubs/api";
+import { useTeamFilterValues } from "@/features/teams/api/use-teams";
+import { ErrorMessage } from "@/shared/components/feedback";
 import type { CascadeStep } from "@/shared/components/filters/CascadeSelects";
 import { CascadeSelects } from "@/shared/components/filters/CascadeSelects";
 import { FiltersShell } from "@/shared/components/filters/FiltersShell";
@@ -19,73 +22,55 @@ import {
 } from "@/shared/constants";
 import { useDebounce } from "@/shared/hooks";
 
+import type { TeamsFilterSetters, TeamsFilterState } from "../../hooks";
+
 interface TeamsFiltersProps {
-  // Category & Gender
-  category: Category | undefined;
-  setCategory: (value: Category | undefined) => void;
-  gender: Gender | undefined;
-  setGender: (value: Gender | undefined) => void;
-  // Level & Location
-  level: CompetitionLevel | undefined;
-  setLevel: (value: CompetitionLevel | undefined) => void;
-  committeeId: number | undefined;
-  setCommitteeId: (value: number | undefined) => void;
-  leagueId: number | undefined;
-  setLeagueId: (value: number | undefined) => void;
-  committees: any[];
-  leagues: any[];
-  // Club
-  clubId: string;
-  setClubId: (value: string) => void;
-  selectedClubName: string;
-  setSelectedClubName: (value: string) => void;
-  // Team number
-  number: string;
-  setNumber: (value: string) => void;
-  teamNumbers: number[];
-  // Division + Pool
-  division: string;
-  setDivision: (value: string) => void;
-  divisions: (string | number)[];
-  pool: string;
-  setPool: (value: string) => void;
-  poolLetters: string[];
-  // Reset
+  filters: TeamsFilterState;
+  setters: TeamsFilterSetters;
   onReset: () => void;
 }
 
 export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
-  category,
-  setCategory,
-  gender,
-  setGender,
-  level,
-  setLevel,
-  committeeId,
-  setCommitteeId,
-  leagueId,
-  setLeagueId,
-  committees,
-  leagues,
-  clubId,
-  setClubId,
-  selectedClubName,
-  setSelectedClubName,
-  number,
-  setNumber,
-  teamNumbers,
-  division,
-  setDivision,
-  divisions,
-  pool,
-  setPool,
-  poolLetters,
+  filters,
+  setters,
   onReset,
 }) => {
   const tTeams = useTranslations("teams");
   const tCommon = useTranslations("common");
   const tMatches = useTranslations("matches");
   const tFilters = useTranslations("filters");
+
+  const {
+    committees,
+    leagues,
+    error: locationError,
+  } = useCommitteeLeagueClubFilters();
+
+  const {
+    clubId,
+    selectedClubName,
+    number,
+    category,
+    gender,
+    level,
+    committeeId,
+    leagueId,
+    division,
+    pool,
+  } = filters;
+
+  const {
+    setClubId,
+    setSelectedClubName,
+    setNumber,
+    setCategory,
+    setGender,
+    setLevel,
+    setCommitteeId,
+    setLeagueId,
+    setDivision,
+    setPool,
+  } = setters;
 
   const [clubSearch, setClubSearch] = useState("");
   const debouncedClubSearch = useDebounce(clubSearch, 300);
@@ -97,6 +82,14 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
     value: String(c.id),
     label: c.name,
   }));
+
+  const { data: teamFilterValues } = useTeamFilterValues({
+    committeeId,
+    leagueId,
+  });
+  const teamNumbers = teamFilterValues?.numbers ?? [];
+  const divisions = teamFilterValues?.divisions ?? [];
+  const poolLetters = teamFilterValues?.poolLetters ?? [];
 
   const locationLabel =
     level === CompetitionLevel.DEPARTMENTAL
@@ -110,16 +103,16 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
   const chips = [
     clubId && {
       key: "club",
-      label: selectedClubName || clubId,
+      label: selectedClubName || String(clubId),
       onRemove: () => {
-        setClubId("");
+        setClubId(undefined);
         setSelectedClubName("");
       },
     },
     number && {
       key: "number",
       label: `${tCommon("filters.teamNumbers")} ${number}`,
-      onRemove: () => setNumber(""),
+      onRemove: () => setNumber(undefined),
     },
     category && {
       key: "category",
@@ -134,13 +127,7 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
     level && {
       key: "level",
       label: tCommon(`competition.levels.${level.toLowerCase()}`),
-      onRemove: () => {
-        setLevel(undefined);
-        setCommitteeId(undefined);
-        setLeagueId(undefined);
-        setDivision("");
-        setPool("");
-      },
+      onRemove: () => setLevel(undefined),
     },
     locationLabel && {
       key: "location",
@@ -148,22 +135,17 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
       onRemove: () => {
         setCommitteeId(undefined);
         setLeagueId(undefined);
-        setDivision("");
-        setPool("");
       },
     },
     division && {
       key: "division",
       label: tMatches("divisionLabel", { div: division }),
-      onRemove: () => {
-        setDivision("");
-        setPool("");
-      },
+      onRemove: () => setDivision(undefined),
     },
     pool && {
       key: "pool",
       label: tTeams("poolLabel", { letter: pool }),
-      onRemove: () => setPool(""),
+      onRemove: () => setPool(undefined),
     },
   ].filter(Boolean) as { key: string; label: string; onRemove: () => void }[];
 
@@ -192,11 +174,8 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
     {
       id: "division-filter",
       label: tCommon("filters.divisions"),
-      value: division,
-      onChange: (val) => {
-        setDivision(val);
-        setPool("");
-      },
+      value: division ?? "",
+      onChange: (val) => setDivision(Number(val) || undefined),
       enabled: !!locationSelected,
       options: divisions.map((div) => ({
         value: div,
@@ -208,8 +187,8 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
     {
       id: "pool-filter",
       label: tCommon("filters.pools"),
-      value: pool,
-      onChange: setPool,
+      value: pool ?? "",
+      onChange: (val) => setPool(String(val) || undefined),
       enabled: !!division,
       options: poolLetters.map((letter) => ({
         value: letter,
@@ -227,15 +206,20 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
       onReset={onReset}
       title={tTeams("label")}
     >
+      {locationError && (
+        <ErrorMessage message={tCommon("errors.fetchLeagueOrCommittee")} />
+      )}
+
       {/* Row 1: Club + Team number */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <ComboBox
           label={tCommon("filters.clubs")}
           placeholder={tCommon("filters.allClubs")}
           options={clubOptions}
-          value={clubId || undefined}
+          value={clubId ? String(clubId) : undefined}
           onChange={(val) => {
-            setClubId(String(val ?? ""));
+            const parsed = Number(val) || undefined;
+            setClubId(parsed);
             setSelectedClubName(
               clubOptions.find((c) => c.value === String(val ?? ""))?.label ??
                 "",
@@ -248,8 +232,8 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
         <Select
           label={tCommon("filters.teamNumbers")}
           options={teamNumberOptions}
-          value={number}
-          onChange={(val) => setNumber(String(val ?? ""))}
+          value={number ?? ""}
+          onChange={(val) => setNumber(Number(val) || undefined)}
         />
       </div>
 
@@ -276,25 +260,11 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
       {/* Row 3: Level → Committee/League cascade */}
       <LevelLocationFilters
         level={level}
-        setLevel={(val) => {
-          setLevel(val);
-          setCommitteeId(undefined);
-          setLeagueId(undefined);
-          setDivision("");
-          setPool("");
-        }}
+        setLevel={setLevel}
         committeeId={committeeId}
-        setCommitteeId={(val) => {
-          setCommitteeId(val);
-          setDivision("");
-          setPool("");
-        }}
+        setCommitteeId={setCommitteeId}
         leagueId={leagueId}
-        setLeagueId={(val) => {
-          setLeagueId(val);
-          setDivision("");
-          setPool("");
-        }}
+        setLeagueId={setLeagueId}
         committees={committees}
         leagues={leagues}
       />

@@ -4,3 +4,4 @@
  */
 
 export * from "./useTeamMatchHistoryColumns";
+export * from "./useTeamsFilterState";
