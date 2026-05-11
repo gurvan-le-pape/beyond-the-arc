@@ -2,10 +2,10 @@
 import type { ClubStatsByRegion } from "@/features/organizations/clubs/types/ClubStatsByRegion";
 import apiClient from "@/lib/services/client/api-client";
 
-import type { ClubsPaginatedResponse } from "../../committees/types/ClubsPaginatedResponse";
 import type { ClubBasic } from "../types/ClubBasic";
 import type { ClubDetailed } from "../types/ClubDetailed";
 import type { ClubFilters } from "../types/ClubFilters";
+import type { ClubsPaginatedResponse } from "../types/ClubsPaginatedResponse";
 import type { ClubStatsByDepartment } from "../types/ClubStatsByDepartement";
 
 /**
