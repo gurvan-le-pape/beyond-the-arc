@@ -1,7 +1,6 @@
 // src/frontend/features/competitions/championships/api/championships.service.ts
 import type { Championship } from "@/features/competitions/championships/types/Championship";
 import type { ChampionshipFilters } from "@/features/competitions/championships/types/ChampionshipFilters";
-import type { Division } from "@/features/competitions/championships/types/Division";
 
 import apiClient from "../../../../lib/services/client/api-client";
 
@@ -58,24 +57,6 @@ export const championshipService = {
    */
   async getById(id: number): Promise<Championship> {
     const { data } = await apiClient.get<Championship>(`/championships/${id}`);
-    return data;
-  },
-
-  /**
-   * Get all available championship divisions.
-   * Results are cached on the server for 10 minutes.
-   *
-   * @returns Array of all distinct divisions
-   * @throws {AxiosError} 500 if server error
-   *
-   * @example
-   * const divisions = await championshipService.getDivisions();
-   * // [{ id: 1, name: 'Nationale 1' }, { id: 2, name: 'Régionale 1' }]
-   */
-  async getDivisions(): Promise<Division[]> {
-    const { data } = await apiClient.get<Division[]>(
-      "/championships/divisions",
-    );
     return data;
   },
 };

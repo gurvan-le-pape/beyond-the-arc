@@ -5,7 +5,6 @@ import type { ApiError } from "@/shared/types/Api";
 
 import type { Championship } from "../types/Championship";
 import type { ChampionshipFilters } from "../types/ChampionshipFilters";
-import type { Division } from "../types/Division";
 import {
   championshipsPrefetch,
   championshipsQueries,
@@ -57,28 +56,6 @@ export function useChampionship(id: number, options?: { enabled?: boolean }) {
 }
 
 /**
- * Hook to fetch all available championship divisions.
- * Divisions are reference data — cached for 10 minutes as they
- * change far less often than championships themselves.
- *
- * @returns React Query result with divisions data
- *
- * @example
- * const { data: divisions, isLoading } = useDivisions();
- *
- * return (
- *   <select>
- *     {divisions?.map(d => (
- *       <option key={d.id} value={d.id}>{d.name}</option>
- *     ))}
- *   </select>
- * );
- */
-export function useDivisions() {
-  return useQuery<Division[], ApiError>(championshipsQueries.divisions());
-}
-
-/**
  * Hook returning prefetch utilities for optimistic loading.
  *
  * Returns an object with prefetch functions for different data types.
@@ -97,6 +74,5 @@ export function useChampionshipsPrefetch() {
   return {
     detail: championshipsPrefetch.detail(queryClient),
     list: championshipsPrefetch.list(queryClient),
-    divisions: championshipsPrefetch.divisions(queryClient),
   };
 }
