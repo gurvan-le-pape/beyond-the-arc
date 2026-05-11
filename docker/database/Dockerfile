@@ -1,5 +1,5 @@
 # Use the official Postrgres image
-FROM postgis/postgis:18-3.6
+FROM postgres:18
 
 # Set the working directory inside the container
 WORKDIR /app
