@@ -75,7 +75,8 @@ The backend depends on `database` and receives `DATABASE_URL`, `FRONTEND_URL` (u
 
 ### database
 
-A custom image built on top of `postgis/postgis:18-3.6`. The PostGIS extension is required for storing region and department geometries (see [`data-model.md`](./data-model.md)).
+A custom image built on top of `postgres:18`.
+(see [`data-model.md`](./data-model.md)).
 
 The Dockerfile copies migration SQL files and an entrypoint shell script into the image. The entrypoint script runs at container startup and applies migrations in order, seeding the full schema and static reference data. This means the database image is self-initialising — standing up the stack for the first time produces a fully seeded database with no additional steps.
 
@@ -146,7 +147,7 @@ The backend Dockerfile additionally runs `npx prisma generate` in the base stage
 
 ### database — init script pattern
 
-The database image extends the official PostGIS image. PostgreSQL's official Docker image automatically runs any `.sh` or `.sql` files placed in `/docker-entrypoint-initdb.d/` on first startup. The Dockerfile copies a shell script to that location, which applies migration files in the correct order.
+The database image extends the official PostgreSQL image. PostgreSQL's official Docker image automatically runs any `.sh` or `.sql` files placed in `/docker-entrypoint-initdb.d/` on first startup. The Dockerfile copies a shell script to that location, which applies migration files in the correct order.
 
 Migrations live under `src/backend/db/migrations/` and are structured as numbered directories (`01_schema/`, `02_seed/`, etc.) applied in sequence.
 

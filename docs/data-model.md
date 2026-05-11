@@ -6,27 +6,13 @@
 
 ## Overview
 
-The schema models the French basketball competition hierarchy from top to bottom — national leagues down to individual match events. It is split into four broad areas:
+The schema models the French basketball competition hierarchy from top to bottom — national leagues down to individual match events. It is split into three broad areas:
 
-- **Geography** — regions, departments, and their GeoJSON boundaries
 - **Organisations** — leagues, committees, clubs, gyms, presidents
 - **Competition** — championships, pools, teams, players, leaderboards, matches
 - **Match detail** — events, event players, shot locations, player stats, playtime intervals, substitutions
 
 The schema is defined in `migrations/01_schema/01_create_schema.sql` and mirrored in the Prisma schema used by the NestJS backend.
-
----
-
-## Geography
-
-```
-regions ──< region_geometries
-departments ──< department_geometries
-```
-
-Regions and departments are stored as simple lookup tables with a `code` and `name`. Their boundaries are stored separately in `region_geometries` and `department_geometries` as PostGIS `MultiPolygon` geometries (SRID 4326), with a `geojson_code` field mapping back to the source GeoJSON file.
-
-The geometry is split into a dedicated table rather than inlined on the parent row because the boundary data is large and only needed by the map feature — keeping it separate means it is never fetched incidentally when querying organisational data.
 
 ---
 
