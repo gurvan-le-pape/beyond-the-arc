@@ -66,24 +66,6 @@ export class ChampionshipsService {
   }
 
   /**
-   * Retrieves all distinct divisions from championships.
-   *
-   * @returns Array of division numbers
-   *
-   * Note: Results are cached at the controller level.
-   */
-  async findAllDivisions(): Promise<number[]> {
-    const divisions = await this.prisma.championships.findMany({
-      select: { division: true },
-      distinct: ["division"],
-      orderBy: { division: "asc" },
-    });
-    return divisions
-      .map((d) => d.division)
-      .filter((division): division is number => typeof division === "number");
-  }
-
-  /**
    * Finds a championship by its ID.
    *
    * @param championshipId - The championship ID

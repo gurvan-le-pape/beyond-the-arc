@@ -41,59 +41,6 @@ export class ChampionshipsController {
   constructor(private readonly championshipService: ChampionshipsService) {}
 
   /**
-   * Retrieve all available divisions for championships.
-   *
-   * This endpoint is CACHED because divisions rarely change.
-   * Cache TTL: 10 minutes (600 seconds)
-   *
-   * @returns Array of division objects with id and name
-   *
-   * @example
-   * GET /championships/divisions
-   * Response (after TransformInterceptor):
-   * {
-   *   "data": [
-   *     { "id": 1, "name": "Nationale 1" },
-   *     { "id": 2, "name": "Nationale 2" }
-   *   ],
-   *   "meta": { "count": 2 },
-   *   "timestamp": "2024-02-05T10:00:00Z",
-   *   "path": "/championships/divisions",
-   *   "statusCode": 200
-   * }
-   */
-  @Get("divisions")
-  @HttpCode(HttpStatus.OK)
-  @UseInterceptors(CacheInterceptor({ ttl: CACHE_TTL.STATIC_DATA })) // Cache for 10 minutes
-  @ApiOperation({
-    summary: "Get all divisions",
-    description:
-      "Retrieves a distinct list of all available championship divisions as numbers. Results are cached for 10 minutes.",
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "List of division numbers successfully retrieved",
-    schema: {
-      example: {
-        data: [1, 2, 3],
-        meta: { count: 3 },
-        timestamp: "2024-02-05T10:00:00Z",
-        path: "/championships/divisions",
-        statusCode: 200,
-      },
-      type: "array",
-      items: { type: "number" },
-    },
-  })
-  @ApiResponse({
-    status: HttpStatus.INTERNAL_SERVER_ERROR,
-    description: "Internal server error",
-  })
-  async getDivisions(): Promise<number[]> {
-    return this.championshipService.findAllDivisions();
-  }
-
-  /**
    * Retrieve a single championship by its ID.
    *
    * No caching on this endpoint because championship details may change
