@@ -18,7 +18,7 @@ import { useMapData } from "../../hooks";
 import { useFilters } from "../../hooks/useFilters";
 import { useSearch } from "../../hooks/useSearch";
 import type { ClubBasic } from "../../types/ClubBasic";
-import type { ClubStatsByDepartment } from "../../types/ClubStatsByDepartement";
+import type { ClubStatsByDepartment } from "../../types/ClubStatsByDepartment";
 import type { ClubStatsByRegion } from "../../types/ClubStatsByRegion";
 import { clubsToGeoJSON, generateLabelFeatures } from "../../utils";
 import { ClubPopupContent } from "./ClubPopupContent";

@@ -6,7 +6,7 @@ import type { ClubBasic } from "../types/ClubBasic";
 import type { ClubDetailed } from "../types/ClubDetailed";
 import type { ClubFilters } from "../types/ClubFilters";
 import type { ClubsPaginatedResponse } from "../types/ClubsPaginatedResponse";
-import type { ClubStatsByDepartment } from "../types/ClubStatsByDepartement";
+import type { ClubStatsByDepartment } from "../types/ClubStatsByDepartment";
 
 /**
  * Service for interacting with the clubs API.
