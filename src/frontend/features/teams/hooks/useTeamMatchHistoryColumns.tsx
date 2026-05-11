@@ -2,70 +2,82 @@
 import { useTranslations } from "next-intl";
 import { useMemo } from "react";
 
+import { MatchTeamLabel } from "@/shared/components/domain";
+import { Badge } from "@/shared/components/primitives";
 import { formatMatchDateTime } from "@/shared/utils/helpers/date-helpers";
 
 import type { Team } from "../types/Team";
 import type { TeamMatchHistory } from "../types/TeamMatchHistory";
 
 export function useTeamMatchHistoryColumns(team: Team) {
-  const t = useTranslations("common");
+  const tCommon = useTranslations("common");
+  const tMatches = useTranslations("matches");
 
-  return useMemo(() => {
-    const renderTeam = (teamName: string | null) =>
-      teamName === team.club?.name ? (
-        <span className="font-bold">{teamName ?? ""}</span>
-      ) : (
-        <span>{teamName ?? ""}</span>
-      );
-
-    return [
+  return useMemo(
+    () => [
       {
         key: "date",
-        header: t("matchHistory.date"),
+        header: tCommon("matchHistory.date"),
         render: (match: TeamMatchHistory) => formatMatchDateTime(match.date),
         align: "center" as const,
-        className: "px-6 py-3 text-center text-sm font-semibold",
       },
       {
         key: "match",
-        header: t("matchHistory.match"),
+        header: tCommon("matchHistory.match"),
         render: (match: TeamMatchHistory) => (
           <>
-            {renderTeam(match.homeTeam.club.name)}
+            <MatchTeamLabel
+              name={match.homeTeam.club.name}
+              teamId={match.homeTeam.id}
+              currentTeamId={team.id}
+            />
             {" vs "}
-            {renderTeam(match.awayTeam.club.name)}
+            <MatchTeamLabel
+              name={match.awayTeam.club.name}
+              teamId={match.awayTeam.id}
+              currentTeamId={team.id}
+            />
           </>
         ),
         align: "center" as const,
-        className: "px-6 py-3 text-center text-sm font-semibold",
       },
       {
         key: "score",
-        header: t("matchHistory.score"),
+        header: tCommon("matchHistory.score"),
         render: (match: TeamMatchHistory) => {
           const homeScore = match.homeTeamScore;
           const awayScore = match.awayTeamScore;
-          const isHomeHigher =
-            homeScore !== null && awayScore !== null && homeScore > awayScore;
-          const isAwayHigher =
-            homeScore !== null && awayScore !== null && awayScore > homeScore;
+          const hasScore = homeScore !== null && awayScore !== null;
+
+          if (!hasScore) {
+            return (
+              <Badge variant="outline" size="md">
+                {tMatches("upcoming")}
+              </Badge>
+            );
+          }
+
           return (
             <span>
-              <span className={isHomeHigher ? "font-bold" : "font-normal"}>
-                {homeScore ?? "-"}
+              <span
+                className={homeScore > awayScore ? "font-bold" : "font-normal"}
+              >
+                {homeScore}
               </span>
               {" - "}
-              <span className={isAwayHigher ? "font-bold" : "font-normal"}>
-                {awayScore ?? "-"}
+              <span
+                className={awayScore > homeScore ? "font-bold" : "font-normal"}
+              >
+                {awayScore}
               </span>
             </span>
           );
         },
         align: "center" as const,
-        className: "px-6 py-3 text-center text-sm font-semibold",
       },
-    ];
-  }, [t, team.club?.name]);
+    ],
+    [tCommon, tMatches, team.id],
+  );
 }
 
 export default useTeamMatchHistoryColumns;
