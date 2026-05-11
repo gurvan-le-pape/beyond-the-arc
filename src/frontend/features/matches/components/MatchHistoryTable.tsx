@@ -1,6 +1,8 @@
 // src/frontend/features/matches/components/MatchHistoryTable.tsx
+"use client";
+
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
-import React from "react";
+import React, { useState } from "react";
 
 import { Section } from "@/shared/components/blocks";
 import { Button } from "@/shared/components/primitives";
@@ -15,26 +17,26 @@ import {
 } from "@/shared/components/table";
 
 /**
- * Column configuration for the match history table (generic)
+ * Column configuration for the match history table.
+ * Describes how to render a single column — header label, cell content, and alignment.
+ * The className prop has been intentionally removed; spacing is handled by the Table primitives.
  */
 export interface MatchHistoryColumn<T> {
   key: string;
   header: React.ReactNode;
   render: (match: T) => React.ReactNode;
   align?: "left" | "center" | "right";
-  className?: string;
 }
 
 /**
- * Props for MatchHistoryTable component (generic)
+ * Props for MatchHistoryTable.
+ * Show/hide state is managed internally — consumers only need to provide labels.
  */
 interface MatchHistoryTableProps<T> {
   readonly matches: T[];
   readonly columns: MatchHistoryColumn<T>[];
   readonly emptyMessage: string;
   readonly onRowClick?: (match: T) => void;
-  readonly showAll: boolean;
-  readonly setShowAll: (show: boolean) => void;
   readonly showAllLabel: string;
   readonly showLessLabel: string;
   readonly maxRows?: number;
@@ -42,30 +44,22 @@ interface MatchHistoryTableProps<T> {
 }
 
 /**
- * Match History Table Component (generic)
+ * Generic match history table with built-in expand/collapse.
  *
- * Displays match history with expandable rows and consistent styling.
- * Now using the reusable Table component for consistency.
- *
- * Features:
- * - Dark mode support
- * - Responsive design
- * - Show more/less functionality
- * - Clickable rows
- * - Empty state handling
+ * Accepts any match shape via the T generic — column rendering is fully
+ * delegated to the caller via the columns prop, typically built with a
+ * domain-specific hook (e.g. usePlayerMatchHistoryColumns, useTeamMatchHistoryColumns).
  *
  * @example
- * <MatchHistoryTable<Match>
+ * <MatchHistoryTable<TeamMatchHistory>
  *   matches={matches}
- *   columns={matchColumns}
+ *   columns={columns}
  *   emptyMessage="No matches found"
  *   onRowClick={(match) => router.push(`/matches/${match.id}`)}
- *   showAll={showAll}
- *   setShowAll={setShowAll}
- *   showAllLabel="Show all matches"
- *   showLessLabel="Show less"
+ *   showAllLabel="See all 12 matches"
+ *   showLessLabel="See less"
  *   maxRows={5}
- *   title="Recent Matches"
+ *   title="Match history"
  * />
  */
 export function MatchHistoryTable<T extends { id: number }>({
@@ -73,67 +67,53 @@ export function MatchHistoryTable<T extends { id: number }>({
   columns,
   emptyMessage,
   onRowClick,
-  showAll,
-  setShowAll,
   showAllLabel,
   showLessLabel,
   maxRows = 5,
   title,
 }: MatchHistoryTableProps<T>) {
-  // Determine which matches to display based on showAll state
-  const displayedMatches = showAll ? matches : matches.slice(0, maxRows);
+  const [showAll, setShowAll] = useState(false);
 
-  // Check if we should show the expand/collapse button
+  const displayedMatches = showAll ? matches : matches.slice(0, maxRows);
   const hasMoreMatches = matches.length > maxRows;
 
   return (
     <Section title={title} variant="highlighted">
-      <div className="overflow-x-auto">
-        <Table className="border border-primary rounded-card box-border">
-          <TableHeader className="bg-primary-subtle border-b border-primary">
-            <TableRow hoverable={false}>
-              {columns.map((col) => (
-                <TableHead
-                  key={col.key}
-                  align={col.align}
-                  className={col.className}
-                >
-                  {col.header}
-                </TableHead>
-              ))}
-            </TableRow>
-          </TableHeader>
+      <Table className="border border-primary rounded-card box-border">
+        <TableHeader className="bg-primary-subtle border-b border-primary">
+          <TableRow hoverable={false}>
+            {columns.map((col) => (
+              <TableHead key={col.key} align={col.align}>
+                {col.header}
+              </TableHead>
+            ))}
+          </TableRow>
+        </TableHeader>
 
-          <TableBody>
-            {matches.length === 0 ? (
-              <TableEmpty colSpan={columns.length} message={emptyMessage} />
-            ) : (
-              displayedMatches.map((match, index) => (
-                <TableRow
-                  key={match.id}
-                  clickable={!!onRowClick}
-                  onClick={onRowClick ? () => onRowClick(match) : undefined}
-                  className={
-                    index % 2 === 0 ? "bg-primary-ghost" : "bg-surface-inset"
-                  }
-                >
-                  {columns.map((col) => (
-                    <TableCell
-                      key={col.key}
-                      align={col.align}
-                      className={col.className}
-                    >
-                      {col.render(match)}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+        <TableBody>
+          {matches.length === 0 ? (
+            <TableEmpty colSpan={columns.length} message={emptyMessage} />
+          ) : (
+            displayedMatches.map((match, index) => (
+              <TableRow
+                key={match.id}
+                clickable={!!onRowClick}
+                onClick={onRowClick ? () => onRowClick(match) : undefined}
+                className={
+                  index % 2 === 0 ? "bg-primary-ghost" : "bg-surface-inset"
+                }
+              >
+                {columns.map((col) => (
+                  <TableCell key={col.key} align={col.align}>
+                    {col.render(match)}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          )}
+        </TableBody>
+      </Table>
 
-      {/* Show More/Less Footer */}
       {hasMoreMatches && (
         <div className="flex justify-center py-4 border-t border-divide">
           <Button
