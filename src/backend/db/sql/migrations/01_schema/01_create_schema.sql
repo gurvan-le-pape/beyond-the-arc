@@ -1,29 +1,13 @@
-CREATE EXTENSION IF NOT EXISTS postgis;
-
 CREATE TABLE regions (
     id SERIAL PRIMARY KEY,
     code VARCHAR(10) UNIQUE NOT NULL,
     name VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE region_geometries (
-    id SERIAL PRIMARY KEY,
-    region_id INT NOT NULL REFERENCES regions(id) ON DELETE CASCADE,
-    geojson_code VARCHAR(10) NOT NULL,
-    geometry GEOMETRY(MultiPolygon, 4326) NOT NULL
-);
-
 CREATE TABLE departments (
     id SERIAL PRIMARY KEY,
     code VARCHAR(10) UNIQUE NOT NULL,
     name VARCHAR(255) NOT NULL
-);
-
-CREATE TABLE department_geometries (
-    id SERIAL PRIMARY KEY,
-    department_id INT NOT NULL REFERENCES departments(id) ON DELETE CASCADE,
-    geojson_code VARCHAR(10) NOT NULL,
-    geometry GEOMETRY(MultiPolygon, 4326) NOT NULL
 );
 
 CREATE TABLE presidents (

@@ -260,17 +260,6 @@ Returns aggregate counts for clubs, teams, players, matches, leagues, and commit
 
 ---
 
-### Geography — `/api/geo`
-
-| Method | Path               | Description                                                  | Cached |
-| ------ | ------------------ | ------------------------------------------------------------ | ------ |
-| GET    | `/geo/regions`     | GeoJSON FeatureCollection of all regions with boundaries     | 10 min |
-| GET    | `/geo/departments` | GeoJSON FeatureCollection of all departments with boundaries | 10 min |
-
-Both endpoints return a GeoJSON `FeatureCollection` where each feature carries a `code`, `apiCode`, and `nom` in its properties alongside the full `MultiPolygon` geometry. The boundaries are stored as PostGIS geometries and serialised to GeoJSON by the service layer. Both are cached at 10 minutes — the data is static once seeded and the PostGIS serialisation is the most expensive query in the API.
-
----
-
 ### Health — `/api/health`
 
 Documented in → [`observability.md`](./observability.md)

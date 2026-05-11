@@ -8,7 +8,8 @@
 
 Beyond The Arc's data comes from two distinct sources handled in two different ways:
 
-**Static data** — the real-world competition structure (leagues, committees, clubs, geographic boundaries) is seeded via SQL files. This data changes rarely and benefits from being human-readable and directly inspectable.
+**Static data** — the real-world competition structure (leagues, committees, clubs) is seeded via SQL files.
+This data changes rarely and benefits from being human-readable and directly inspectable.
 
 **Dynamic data** — teams, players, championships, match schedules, match results, statistics, and shot charts are all produced by a Python pipeline. This runs as a dedicated Docker Compose service (`scheduler`) that boots with the application and keeps running indefinitely.
 
@@ -47,15 +48,11 @@ The pipeline is entirely self-contained: it connects directly to PostgreSQL via 
 
 ## Static data — SQL seeding
 
-The organisational hierarchy (leagues, committees, clubs) and French geographic data (region and department boundaries) are loaded via SQL files at database initialisation time, baked into the database Docker image.
+The organisational hierarchy (leagues, committees, clubs) is loaded via SQL files at database initialisation time, baked into the database Docker image.
 
 **Organisational data**
 
 Each organisation type (leagues, committees, clubs) has its own SQL file or set of files under `04_data/`. Records are inserted with their key attributes and committee or league membership resolved by name via subqueries. This data reflects the real French basketball organisational hierarchy.
-
-**Geographic boundaries**
-
-Region and department geometries are stored as PostGIS `MultiPolygon` shapes (SRID 4326) in `region_geometries` and `department_geometries`. The GeoJSON source data comes from [gregoiredavid/france-geojson](https://github.com/gregoiredavid/france-geojson) and was converted to SQL via `ST_GeomFromGeoJSON()` at seeding time. Baking it into the migration files removes the runtime dependency on that external source — the map works entirely from the database, with no outbound requests at startup or during normal operation. The extractor scripts that produced these SQL files live in `geojson/extractors/` in the Python pipeline.
 
 The split between SQL and Python is a deliberate choice: static reference data that a developer might want to inspect or patch directly belongs in SQL, while anything that involves logic (randomness, scheduling, simulation) belongs in Python.
 

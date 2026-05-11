@@ -261,7 +261,7 @@ The interactive France map is built with **react-map-gl** (v8), which wraps **Ma
 
 All map data — region stats, department stats, and the full club list — is fetched server-side in the map page's `Promise.all` call and passed as props to `ClubsMapClient`. There is no lazy loading by zoom level or viewport; the full dataset arrives with the initial server render. The map page uses a 24-hour ISR revalidation window, reflecting that club geography changes rarely.
 
-GeoJSON boundary data for regions and departments is not bundled with the frontend. It is stored in PostGIS and served by the backend, keeping multi-megabyte geometry files out of the client bundle.
+GeoJSON boundary data for regions and departments is served as static assets bundled with the frontend, keeping the backend and database free from geometry concerns.
 
 ### SSR exclusion
 

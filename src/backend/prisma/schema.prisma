@@ -24,43 +24,21 @@ model Presidents {
 }
 
 model Regions {
-  id           Int      @id @default(autoincrement())
-  code         String   @unique @db.VarChar(10)
-  name         String   @db.VarChar(255)
-  leagues Leagues[]
-  regionGeometries RegionGeometries[]
+  id        Int       @id @default(autoincrement())
+  code      String    @unique @db.VarChar(10)
+  name      String    @db.VarChar(255)
+  leagues   Leagues[]
 
   @@map("regions")
 }
 
-model RegionGeometries {
-  id           Int      @id @default(autoincrement())
-  regionId     Int      @map("region_id")
-  geojsonCode  String   @db.VarChar(10) @map("geojson_code")
-  geometry     Bytes    @db.ByteA
-  region       Regions  @relation(fields: [regionId], references: [id])
-
-  @@map("region_geometries")
-}
-
 model Departments {
-  id                    Int                     @id @default(autoincrement())
-  code                  String                  @unique @db.VarChar(10)
-  name                  String                  @db.VarChar(255)
-  committees            Committees[]
-  departmentGeometries  DepartmentGeometries[]
+  id          Int           @id @default(autoincrement())
+  code        String        @unique @db.VarChar(10)
+  name        String        @db.VarChar(255)
+  committees  Committees[]
 
   @@map("departments")
-}
-
-model DepartmentGeometries {
-  id            Int         @id @default(autoincrement())
-  departmentId  Int         @map("department_id")
-  geojsonCode   String      @db.VarChar(10) @map("geojson_code")
-  geometry      Bytes       @db.ByteA
-  department    Departments @relation(fields: [departmentId], references: [id])
-
-  @@map("department_geometries")
 }
 
 model Leagues {
