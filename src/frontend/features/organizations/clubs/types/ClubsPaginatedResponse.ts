@@ -1,5 +1,5 @@
 // src/frontend/features/organizations/committees/types/ClubsPaginatedResponse.ts
-import type { ClubBasic } from "../../clubs/types/ClubBasic";
+import type { ClubBasic } from "./ClubBasic";
 
 export interface ClubsPaginatedResponse {
   items: ClubBasic[];
