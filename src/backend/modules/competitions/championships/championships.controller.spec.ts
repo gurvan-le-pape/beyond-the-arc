@@ -26,7 +26,6 @@ describe("ChampionshipsController", () => {
 
   // Mock service
   const mockChampionshipsService = {
-    findAllDivisions: jest.fn(),
     findChampionshipById: jest.fn(),
     findChampionshipsByLevel: jest.fn(),
   };

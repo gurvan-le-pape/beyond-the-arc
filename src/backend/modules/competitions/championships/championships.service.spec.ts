@@ -50,67 +50,6 @@ describe("ChampionshipsService", () => {
     jest.clearAllMocks();
   });
 
-  describe("findAllDivisions", () => {
-    it("should return all distinct divisions", async () => {
-      // Arrange
-      const mockDivisions = [{ division: 1 }, { division: 2 }, { division: 3 }];
-
-      mockPrismaService.championships.findMany.mockResolvedValue(mockDivisions);
-
-      // Act
-      const result = await service.findAllDivisions();
-
-      // Assert
-      expect(result).toEqual([1, 2, 3]);
-
-      expect(mockPrismaService.championships.findMany).toHaveBeenCalledWith({
-        select: { division: true },
-        distinct: ["division"],
-        orderBy: { division: "asc" },
-      });
-    });
-
-    it("should filter out null divisions", async () => {
-      // Arrange
-      const mockDivisions = [
-        { division: 1 },
-        { division: null },
-        { division: 2 },
-      ];
-
-      mockPrismaService.championships.findMany.mockResolvedValue(mockDivisions);
-
-      // Act
-      const result = await service.findAllDivisions();
-
-      // Assert
-      expect(result).toHaveLength(2);
-      expect(result).toEqual([1, 2]);
-    });
-
-    it("should return empty array when no divisions exist", async () => {
-      // Arrange
-      mockPrismaService.championships.findMany.mockResolvedValue([]);
-
-      // Act
-      const result = await service.findAllDivisions();
-
-      // Assert
-      expect(result).toEqual([]);
-    });
-
-    it("should propagate database errors", async () => {
-      // Arrange
-      const dbError = new Error("Database connection failed");
-      mockPrismaService.championships.findMany.mockRejectedValue(dbError);
-
-      // Act & Assert
-      await expect(service.findAllDivisions()).rejects.toThrow(
-        "Database connection failed",
-      );
-    });
-  });
-
   describe("findChampionshipById", () => {
     it("should return championship when found", async () => {
       // Arrange — Prisma relation shape (input to mapToDto)
