@@ -9,7 +9,7 @@ import {
 
 import type { ClubFilters } from "../types/ClubFilters";
 import type { ClubsPaginatedResponse } from "../types/ClubsPaginatedResponse";
-import type { ClubStatsByDepartment } from "../types/ClubStatsByDepartement";
+import type { ClubStatsByDepartment } from "../types/ClubStatsByDepartment";
 
 /**
  * Service for interacting with the clubs API.

@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/clubs/types/ClubStatsByDepartement.ts
+// src/frontend/features/organizations/clubs/types/ClubStatsByDepartment.ts
 export interface DepartmentInfo {
   id: number;
   name: string;

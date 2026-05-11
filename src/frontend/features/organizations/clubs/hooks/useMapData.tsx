@@ -12,7 +12,7 @@ import {
   useClubStatsByRegion,
 } from "../api/use-clubs";
 import type { ClubBasic } from "../types/ClubBasic";
-import type { ClubStatsByDepartment } from "../types/ClubStatsByDepartement";
+import type { ClubStatsByDepartment } from "../types/ClubStatsByDepartment";
 import type { ClubStatsByRegion } from "../types/ClubStatsByRegion";
 import type { GeoJsonData } from "../types/Map";
 

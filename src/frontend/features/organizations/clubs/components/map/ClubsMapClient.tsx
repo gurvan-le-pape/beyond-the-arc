@@ -4,7 +4,7 @@
 import dynamic from "next/dynamic";
 
 import type { ClubBasic } from "../../types/ClubBasic";
-import type { ClubStatsByDepartment } from "../../types/ClubStatsByDepartement";
+import type { ClubStatsByDepartment } from "../../types/ClubStatsByDepartment";
 import type { ClubStatsByRegion } from "../../types/ClubStatsByRegion";
 import { LoadingMap } from "./LoadingMap";
 
