@@ -7,8 +7,8 @@ import {
   fetchApi,
 } from "@/lib/services/server/server-api-client";
 
-import type { ClubsPaginatedResponse } from "../../committees/types/ClubsPaginatedResponse";
 import type { ClubFilters } from "../types/ClubFilters";
+import type { ClubsPaginatedResponse } from "../types/ClubsPaginatedResponse";
 import type { ClubStatsByDepartment } from "../types/ClubStatsByDepartement";
 
 /**
