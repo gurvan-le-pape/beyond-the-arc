@@ -7,7 +7,6 @@ import {
 } from "../../../../lib/services/server/server-api-client";
 import type { Championship } from "../types/Championship";
 import type { ChampionshipFilters } from "../types/ChampionshipFilters";
-import type { Division } from "../types/Division";
 
 /**
  * Server-side championships service.
@@ -64,19 +63,6 @@ export const serverChampionshipsService = {
    */
   async getById(id: number): Promise<Championship> {
     return fetchApi<Championship>(`/championships/${id}`);
-  },
-
-  /**
-   * Get all available championship divisions.
-   * Server-side only.
-   *
-   * @returns Array of all distinct divisions
-   *
-   * @example
-   * const divisions = await serverChampionshipsService.getDivisions();
-   */
-  async getDivisions(): Promise<Division[]> {
-    return fetchApi<Division[]>("/championships/divisions");
   },
 
   /**
