@@ -61,22 +61,6 @@ export const championshipsQueries = {
     queryFn: () => championshipService.getById(id),
     ...CHAMPIONSHIPS_CONFIG,
   }),
-
-  /**
-   * Query options for fetching all available championship divisions.
-   * Divisions are structural reference data — they change far less often
-   * than championships themselves, so staleTime is extended to 10 minutes.
-   *
-   * @example
-   * useQuery(championshipsQueries.divisions())
-   */
-  divisions: () => ({
-    queryKey: championshipsKeys.divisions(),
-    queryFn: () => championshipService.getDivisions(),
-    ...CHAMPIONSHIPS_CONFIG,
-    // Divisions are reference data — update less frequently than championships
-    staleTime: 10 * 60 * 1000,
-  }),
 } as const;
 
 /**
@@ -110,16 +94,5 @@ export const championshipsPrefetch = {
     queryClient
       .prefetchQuery(championshipsQueries.list(filters))
       .catch(() => {});
-  },
-
-  /**
-   * Prefetch divisions (e.g., before a division-selector mounts).
-   *
-   * @example
-   * const prefetch = championshipsPrefetch.divisions(queryClient);
-   * <DivisionFilter onOpen={() => prefetch()} />
-   */
-  divisions: (queryClient: QueryClient) => () => {
-    queryClient.prefetchQuery(championshipsQueries.divisions()).catch(() => {});
   },
 } as const;
