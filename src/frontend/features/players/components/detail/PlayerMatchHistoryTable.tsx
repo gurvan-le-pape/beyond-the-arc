@@ -1,8 +1,8 @@
 // src/frontend/features/players/components/detail/PlayerMatchHistoryTable.tsx
+// PlayerMatchHistoryTable.tsx
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useState } from "react";
 
 import { MatchHistoryTable } from "@/features/matches/components";
 import { useRouter } from "@/navigation";
@@ -12,9 +12,9 @@ import type { Player } from "../../types/Player";
 import type { PlayerMatchHistory } from "../../types/PlayerMatchHistory";
 
 interface PlayerMatchHistoryTableProps {
-  player: Player;
-  matches: PlayerMatchHistory[];
-  maxRows?: number;
+  readonly player: Player;
+  readonly matches: PlayerMatchHistory[];
+  readonly maxRows?: number;
 }
 
 export function PlayerMatchHistoryTable({
@@ -25,7 +25,6 @@ export function PlayerMatchHistoryTable({
   const tCommon = useTranslations("common");
   const tPlayers = useTranslations("players");
   const router = useRouter();
-  const [showAll, setShowAll] = useState(false);
 
   const columns = usePlayerMatchHistoryColumns(player);
 
@@ -36,8 +35,6 @@ export function PlayerMatchHistoryTable({
       columns={columns}
       emptyMessage={tCommon("matchHistory.noMatches")}
       onRowClick={(match) => router.push(`/matches/${match.id}`)}
-      showAll={showAll}
-      setShowAll={setShowAll}
       showAllLabel={tCommon("matchHistory.seeAllMatches", {
         count: matches.length,
       })}

@@ -7,6 +7,7 @@ import type { PlayerMatchHistoryEntry } from "@/features/players/types/PlayerMat
 import { serverTeamsService } from "@/features/teams/api";
 import { TeamHeader, TeamInfo, TeamRoster } from "@/features/teams/components";
 import { TeamMatchHistoryTable } from "@/features/teams/components/detail/TeamMatchHistoryTable";
+import { aggregateTeamStats } from "@/features/teams/utils/statsAggregation";
 import { TeamShotChart } from "@/shared/components/charts";
 import { PageLayout } from "@/shared/components/layout";
 import { handleServerError } from "@/shared/utils/handleServerError";
@@ -42,66 +43,7 @@ export default async function TeamDetailPage({ params }: TeamDetailPageProps) {
   ]).catch(handleServerError);
 
   // Calculate team season stats from all players
-  const teamStats = team.players?.reduce(
-    (
-      acc: {
-        totalGames: number;
-        players: number;
-        points: number;
-        rebounds: number;
-        assists: number;
-        steals: number;
-        blocks: number;
-      },
-      player: any,
-    ) => {
-      const playerTotals = player.stats?.reduce(
-        (pAcc: any, stat: any) => ({
-          gamesPlayed: pAcc.gamesPlayed + 1,
-          points: pAcc.points + stat.points,
-          rebounds:
-            pAcc.rebounds + (stat.reboundsOffensive + stat.reboundsDefensive),
-          assists: pAcc.assists + stat.assists,
-          steals: pAcc.steals + stat.steals,
-          blocks: pAcc.blocks + stat.blocks,
-        }),
-        {
-          gamesPlayed: 0,
-          points: 0,
-          rebounds: 0,
-          assists: 0,
-          steals: 0,
-          blocks: 0,
-        },
-      );
-      return {
-        totalGames: Math.max(acc.totalGames, playerTotals?.gamesPlayed || 0),
-        players: acc.players + 1,
-        points: acc.points + (playerTotals?.points || 0),
-        rebounds: acc.rebounds + (playerTotals?.rebounds || 0),
-        assists: acc.assists + (playerTotals?.assists || 0),
-        steals: acc.steals + (playerTotals?.steals || 0),
-        blocks: acc.blocks + (playerTotals?.blocks || 0),
-      };
-    },
-    {
-      totalGames: 0,
-      players: 0,
-      points: 0,
-      rebounds: 0,
-      assists: 0,
-      steals: 0,
-      blocks: 0,
-    },
-  ) ?? {
-    totalGames: 0,
-    players: 0,
-    points: 0,
-    rebounds: 0,
-    assists: 0,
-    steals: 0,
-    blocks: 0,
-  };
+  const teamStats = aggregateTeamStats(teamId, matches);
 
   const rosterPlayers: PlayerMatchHistoryEntry[][] = Object.values(
     matches.reduce<Record<number, PlayerMatchHistoryEntry[]>>((acc, match) => {

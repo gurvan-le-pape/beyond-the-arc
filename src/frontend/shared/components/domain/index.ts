@@ -6,6 +6,7 @@
 export * from "./CategorySection";
 export * from "./GenderCategorizedList";
 export * from "./LeaderboardTable";
+export * from "./matches/MatchTeamLabel";
 export * from "./organizations/detail/OrganizationHeader";
 export * from "./organizations/detail/OrganizationInfo";
 export * from "./organizations/detail/OrganizationPageSkeleton";
