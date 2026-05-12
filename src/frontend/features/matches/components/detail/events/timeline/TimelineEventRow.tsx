@@ -34,7 +34,7 @@ export const TimelineEventRow: React.FC<TimelineEventRowProps> = ({
   const teamId = event.teamId;
   const isHomeTeam = teamId === homeTeam.id;
   const isAwayTeam = teamId === awayTeam.id;
-  const isScoring = style.eventCategory === EventCategory.SCORING;
+  const isScoring = style.eventCategory === EventCategory.MADE;
   const eventKey = `${event.id}`;
 
   return (

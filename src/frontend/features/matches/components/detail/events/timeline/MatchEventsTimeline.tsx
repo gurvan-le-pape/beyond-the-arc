@@ -66,7 +66,7 @@ export const MatchEventsTimeline: React.FC<MatchEventsTimelineProps> = ({
             const style = getEventStyle(event.eventType);
             const isHomeTeam = event.teamId === homeTeam.id;
             const isAwayTeam = event.teamId === awayTeam.id;
-            const isScoring = style.eventCategory === EventCategory.SCORING;
+            const isScoring = style.eventCategory === EventCategory.MADE;
 
             const eventKey = `${event.id}`;
 
