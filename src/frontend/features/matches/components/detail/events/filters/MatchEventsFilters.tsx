@@ -18,8 +18,8 @@ interface MatchEventsFiltersProps {
   awayTeam: TeamInfoExtended;
   selectedQuarter: Quarter;
   setSelectedQuarter: (q: Quarter) => void;
-  selectedEventCategory: EventCategory;
-  setSelectedEventCategory: (ec: EventCategory) => void;
+  selectedEventCategory: EventCategory | undefined;
+  setSelectedEventCategory: (ec: EventCategory | undefined) => void;
   selectedPlayerIds: Set<number>;
   setSelectedPlayerIds: (ids: Set<number>) => void;
   togglePlayer: (id: number) => void;

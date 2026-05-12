@@ -1,6 +1,5 @@
 // src/frontend/shared/constants/event-categories.ts
 export const EventCategory = {
-  ALL: "all",
   OTHER: "other",
   SCORING: "scoring",
   MISS: "miss",
