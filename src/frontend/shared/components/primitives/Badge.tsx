@@ -29,6 +29,8 @@ const badgeVariants = cva(
         regional: "border-transparent bg-regional-subtle text-regional-strong",
         departmental:
           "border-transparent bg-departmental-subtle text-departmental-strong",
+        // Player comparison
+        vs: "border-2 border-primary text-primary font-black tracking-widest",
       },
       size: {
         sm: "px-2 py-0.5",
