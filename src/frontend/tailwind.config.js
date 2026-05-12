@@ -308,6 +308,17 @@ module.exports = {
         ".hover\\:bg-surface-inset:hover": {
           "background-color": "var(--surface-inset)",
         },
+
+        // ── Ghost number stroke — no Tailwind utility exists for -webkit-text-stroke;
+        // color: transparent is co-located here to avoid class-order conflicts
+        ".text-stroke-primary": {
+          color: "transparent",
+          "-webkit-text-stroke": "2px var(--color-primary-soft)",
+        },
+        ".text-stroke-secondary": {
+          color: "transparent",
+          "-webkit-text-stroke": "2px var(--color-secondary-soft)",
+        },
       });
     },
   ],

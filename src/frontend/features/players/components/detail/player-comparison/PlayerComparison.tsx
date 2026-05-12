@@ -8,9 +8,9 @@ import { usePlayerMatches } from "@/features/players/api/use-players";
 import type { Player } from "@/features/players/types/Player";
 import { aggregateStats } from "@/features/players/utils/statsAggregation";
 import { Section } from "@/shared/components/blocks";
-import { Button } from "@/shared/components/primitives";
-import { Text } from "@/shared/components/typography";
+import { Badge } from "@/shared/components/primitives";
 
+import { PlayerIdentity } from "../PlayerIdentity";
 import { PlayerSearchDropdown } from "../PlayerSearchDropdown";
 import { type ComparisonStatConfig, ComparisonTable } from "./ComparisonTable";
 
@@ -66,115 +66,12 @@ const comparisonConfig: ComparisonStatConfig[] = [
   },
 ];
 
-interface PlayerCardProps {
-  readonly player: Player | null;
-  readonly side: "left" | "right";
-  readonly placeholder: React.ReactNode;
-}
-
-function PlayerCard({ player, side, placeholder }: PlayerCardProps) {
-  const isRight = side === "right";
-
-  return (
-    <div
-      className={`flex-1 flex flex-col ${
-        isRight ? "items-end text-right" : "items-start text-left"
-      }`}
-      style={{
-        animation: player
-          ? "playerCardSlideIn 0.4s cubic-bezier(.22,1,.36,1) both"
-          : "none",
-        animationDelay: isRight ? "60ms" : "0ms",
-      }}
-    >
-      {player ? (
-        <>
-          <span
-            className="text-7xl font-black leading-none select-none pointer-events-none"
-            style={{
-              color: "transparent",
-              WebkitTextStroke: `2px ${
-                isRight
-                  ? "var(--color-secondary-soft)"
-                  : "var(--color-primary-soft)"
-              }`,
-              opacity: 0.35,
-              lineHeight: 1,
-            }}
-          >
-            #{player.number}
-          </span>
-
-          <Text variant="h4" as="span" className="-mt-2 relative z-10">
-            {player.name}
-          </Text>
-
-          {player.team?.club?.name && (
-            <Text variant="muted" as="span" className="mt-0.5">
-              {player.team.club.name}
-            </Text>
-          )}
-        </>
-      ) : (
-        placeholder
-      )}
-    </div>
-  );
-}
-
-function VsBadge() {
-  return (
-    <div className="relative flex items-center justify-center flex-shrink-0 mx-2">
-      <div
-        className="absolute inset-0 rounded-full"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(var(--color-primary-rgb, 99,102,241), 0.25) 0%, transparent 70%)",
-          filter: "blur(8px)",
-          animation: "vsPulse 2.4s ease-in-out infinite",
-        }}
-      />
-      <div
-        className="relative z-10 w-12 h-12 rounded-full flex items-center justify-center shadow-lg"
-        style={{
-          background:
-            "linear-gradient(135deg, var(--color-primary, #6366f1), var(--color-secondary, #14b8a6))",
-        }}
-      >
-        <span className="text-white text-xs font-black tracking-widest">
-          VS
-        </span>
-      </div>
-    </div>
-  );
-}
-
-const KEYFRAMES = `
-  @keyframes playerCardSlideIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes vsPulse {
-    0%, 100% { transform: scale(1);   opacity: 0.7; }
-    50%      { transform: scale(1.15); opacity: 1;   }
-  }
-  @keyframes tableReveal {
-    from { opacity: 0; transform: translateY(18px); }
-    to   { opacity: 1; transform: translateY(0);    }
-  }
-`;
-
-function KeyframeInjector() {
-  return <style dangerouslySetInnerHTML={{ __html: KEYFRAMES }} />;
-}
-
 interface PlayerComparisonProps {
   readonly player: Player;
 }
 
 export function PlayerComparison({ player }: PlayerComparisonProps) {
   const tPlayers = useTranslations("players");
-  const tCommon = useTranslations("common");
 
   const [opponent, setOpponent] = useState<Player | null>(null);
 
@@ -194,63 +91,40 @@ export function PlayerComparison({ player }: PlayerComparisonProps) {
       title={tPlayers("playerDetail.compareTitle")}
       variant="highlighted"
     >
-      <KeyframeInjector />
-
-      <div
-        className="relative rounded-2xl overflow-hidden"
-        style={{ minHeight: 140 }}
-      >
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              "linear-gradient(to right, " +
-              "rgba(var(--color-primary-rgb, 99,102,241), 0.08) 0%, " +
-              "transparent 45%, " +
-              "transparent 55%, " +
-              "rgba(var(--color-secondary-rgb, 20,184,166), 0.08) 100%)",
-          }}
-        />
-
-        <div
-          className="absolute left-1/2 top-4 bottom-4 w-px -translate-x-1/2"
-          style={{
-            background:
-              "linear-gradient(to bottom, transparent, rgba(150,150,150,0.25), transparent)",
-          }}
-        />
+      <div className="relative rounded-2xl min-h-[140px]">
+        {/* Decorations */}
+        <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary-ghost via-transparent to-secondary-ghost opacity-50" />
+          <div className="absolute left-1/2 top-4 bottom-4 w-px -translate-x-1/2 bg-divide opacity-25" />
+        </div>
 
         <div className="relative z-10 flex items-center justify-between px-6 py-6 gap-4">
-          <PlayerCard player={player} side="left" placeholder={null} />
-          <VsBadge />
+          <PlayerIdentity
+            player={player}
+            side="left"
+            className="flex-1 animate-slide-up"
+          />
 
-          {opponent ? (
-            <PlayerCard player={opponent} side="right" placeholder={null} />
-          ) : (
-            <div className="flex-1 flex justify-end">
-              <div className="w-full max-w-[260px]">
-                <PlayerSearchDropdown
-                  excludeId={player.id}
-                  onSelect={setOpponent}
-                />
-              </div>
-            </div>
-          )}
+          <Badge
+            variant="vs"
+            size="lg"
+            className="w-12 h-12 rounded-full justify-center shadow-lg mx-2"
+          >
+            VS
+          </Badge>
+
+          <div className="flex-1 flex justify-end">
+            <PlayerSearchDropdown
+              excludeId={player.id}
+              gender={player.team.gender}
+              category={player.team.category}
+              selectedPlayer={opponent}
+              onSelect={setOpponent}
+              onClear={() => setOpponent(null)}
+            />
+          </div>
         </div>
       </div>
-
-      {opponent && (
-        <div className="flex justify-center mt-3">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setOpponent(null)}
-            className="text-text-muted hover:text-text-body text-xs"
-          >
-            {tCommon("clear")}
-          </Button>
-        </div>
-      )}
 
       <div className="mt-5">
         {isLoadingOpponent && (
@@ -258,22 +132,20 @@ export function PlayerComparison({ player }: PlayerComparisonProps) {
             {[0, 1, 2].map((i) => (
               <span
                 key={i}
-                className="inline-block w-2 h-2 rounded-full bg-primary"
-                style={{
-                  animation: "vsPulse 1.2s ease-in-out infinite",
-                  animationDelay: `${i * 200}ms`,
-                }}
+                className={[
+                  "inline-block w-2 h-2 rounded-full bg-primary animate-pulse",
+                  i === 1 && "[animation-delay:200ms]",
+                  i === 2 && "[animation-delay:400ms]",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
               />
             ))}
           </div>
         )}
 
         {statsB && !isLoadingOpponent && (
-          <div
-            style={{
-              animation: "tableReveal 0.45s cubic-bezier(.22,1,.36,1) both",
-            }}
-          >
+          <div className="animate-slide-up">
             <ComparisonTable
               statsA={statsA}
               statsB={statsB}

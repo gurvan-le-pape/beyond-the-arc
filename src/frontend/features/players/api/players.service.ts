@@ -87,11 +87,23 @@ export const playersService = {
    * const players = await playersService.search('Dupont');
    * // Use in autocomplete: <Autocomplete options={players} />
    */
-  async search(name: string): Promise<Player[]> {
+  async search(
+    query: string,
+    filters?: { excludeId?: number; gender?: string; category?: string },
+  ): Promise<Player[]> {
     const { data } = await apiClient.get<any>("/players", {
-      params: { name, limit: 20 },
+      params: {
+        name: query,
+        limit: 20,
+        ...(filters?.gender && { gender: filters.gender }),
+        ...(filters?.category && { category: filters.category }),
+        // excludeId intentionally omitted — filtered client-side to avoid cache pollution
+      },
     });
-    // The backend returns { players, pagination, ... }, so extract players array
-    return data.players || [];
+
+    const items: Player[] = data.items || [];
+    return filters?.excludeId
+      ? items.filter((p) => p.id !== filters.excludeId)
+      : items;
   },
 };

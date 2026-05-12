@@ -90,6 +90,6 @@ export const serverPlayersService = {
     const queryString = buildQueryString({ name, limit: 20 });
     const data = await fetchApi<any>(`/players${queryString}`);
     // The backend returns { players, pagination, ... }, so extract players array
-    return data.players || [];
+    return data.items || [];
   },
 };
