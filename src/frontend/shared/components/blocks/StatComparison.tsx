@@ -22,7 +22,11 @@ import { cn } from "@/shared/utils/cn";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type Stats = Record<string, unknown>;
+type StatValue = string | number | null | undefined;
+
+interface Stats {
+  [key: string]: StatValue;
+}
 
 export interface StatConfig {
   key: string;
@@ -64,24 +68,50 @@ function getWinner(
   return aWins ? "A" : "B";
 }
 
-function resolveValue(
+function toNumber(value: StatValue): number {
+  if (typeof value === "number") return value;
+  if (typeof value === "string") {
+    const n = Number(value);
+    return Number.isFinite(n) ? n : Number.NaN;
+  }
+  return Number.NaN;
+}
+
+export function resolveValue(
   stats: Stats,
   key: string,
   valueFn?: (s: Stats) => string | number,
-  /** Only applied when isDual is true. */
   percentageMap?: Record<string, string>,
 ): { display: string | number; numeric: number } {
+  // Custom resolver path
   if (valueFn) {
     const display = valueFn(stats);
-    // Let NaN propagate so getWinner can treat missing data as a tie.
-    return { display, numeric: Number(display) };
+    return {
+      display,
+      numeric: toNumber(display),
+    };
   }
-  const pctKey = percentageMap?.[key];
+
   const raw = stats[key];
-  const display =
-    pctKey && stats[pctKey] !== null ? `${raw} (${stats[pctKey]})` : raw ?? NA;
-  // Let NaN propagate — don't collapse missing values to 0.
-  return { display: display as string | number, numeric: Number(raw) };
+  const pctKey = percentageMap?.[key];
+  const pct = pctKey ? stats[pctKey] : undefined;
+
+  const hasValidPct = typeof pct === "string" || typeof pct === "number";
+
+  let display: string | number;
+
+  if (raw === null || raw === undefined) {
+    display = NA;
+  } else if (hasValidPct) {
+    display = `${raw} (${pct})`;
+  } else {
+    display = raw;
+  }
+
+  return {
+    display,
+    numeric: toNumber(raw),
+  };
 }
 
 // ─── Lookup tables for Tailwind classes (avoids dynamic class construction) ──
