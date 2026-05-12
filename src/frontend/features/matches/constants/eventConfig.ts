@@ -16,43 +16,43 @@ export const eventConfig: Record<
     icon: "🏀",
     color: "text-green-600",
     labelKey: "matchEvents.eventLabels.made_layup",
-    eventCategory: EventCategory.SCORING,
+    eventCategory: EventCategory.MADE,
   },
   made_dunk: {
     icon: "💥",
     color: "text-green-600",
     labelKey: "matchEvents.eventLabels.made_dunk",
-    eventCategory: EventCategory.SCORING,
+    eventCategory: EventCategory.MADE,
   },
   made_fadeaway: {
     icon: "🎯",
     color: "text-green-600",
     labelKey: "matchEvents.eventLabels.made_fadeaway",
-    eventCategory: EventCategory.SCORING,
+    eventCategory: EventCategory.MADE,
   },
   made_pull_up_jump_shot: {
     icon: "🎯",
     color: "text-green-600",
     labelKey: "matchEvents.eventLabels.made_pull_up_jump_shot",
-    eventCategory: EventCategory.SCORING,
+    eventCategory: EventCategory.MADE,
   },
   made_catch_and_shoot_three: {
     icon: "🎯",
     color: "text-green-600",
     labelKey: "matchEvents.eventLabels.made_catch_and_shoot_three",
-    eventCategory: EventCategory.SCORING,
+    eventCategory: EventCategory.MADE,
   },
   made_step_back_three: {
     icon: "🎯",
     color: "text-green-600",
     labelKey: "matchEvents.eventLabels.made_step_back_three",
-    eventCategory: EventCategory.SCORING,
+    eventCategory: EventCategory.MADE,
   },
   free_throw_made: {
     icon: "✓",
     color: "text-green-600",
     labelKey: "matchEvents.eventLabels.free_throw_made",
-    eventCategory: EventCategory.SCORING,
+    eventCategory: EventCategory.MADE,
   },
 
   // Missed Shots
@@ -172,19 +172,19 @@ export const eventConfig: Record<
     icon: "🎊",
     color: "text-green-600",
     labelKey: "matchEvents.eventLabels.three_point_and_one",
-    eventCategory: EventCategory.SCORING,
+    eventCategory: EventCategory.MADE,
   },
   "2_point_ext_and_1": {
     icon: "🎊",
     color: "text-green-600",
     labelKey: "matchEvents.eventLabels.two_point_ext_and_one",
-    eventCategory: EventCategory.SCORING,
+    eventCategory: EventCategory.MADE,
   },
   "2_point_int_and_1": {
     icon: "🎊",
     color: "text-green-600",
     labelKey: "matchEvents.eventLabels.two_point_int_and_one",
-    eventCategory: EventCategory.SCORING,
+    eventCategory: EventCategory.MADE,
   },
 
   // Turnovers
