@@ -1,128 +1,164 @@
 // src/frontend/features/players/components/detail/PlayerSearchDropdown.tsx
 "use client";
 
+import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import React, { useEffect, useRef } from "react";
 
-import { Input } from "@/shared/components/forms";
+import { DebouncedInput } from "@/shared/components/forms";
+import { Button } from "@/shared/components/primitives";
+import { ImageWithFallback } from "@/shared/components/primitives/ImageWithFallback";
 import { Text } from "@/shared/components/typography";
 import { cn } from "@/shared/utils/cn";
 import { formatNameToFileName } from "@/shared/utils/formatNameToFileName";
 
 import { usePlayerSearch } from "../../hooks";
 import type { Player } from "../../types/Player";
+import { PlayerIdentity } from "./PlayerIdentity";
 
-interface PlayerSearchDropdownProps {
-  /** Id of the player already on the page – excluded from results. */
-  excludeId: number;
-  /** Callback fired when the user taps a result. */
-  onSelect: (player: Player) => void;
+// ─── Dropdown content ─────────────────────────────────────────────────────────
+
+interface DropdownContentProps {
+  readonly isLoading: boolean;
+  readonly results: Player[];
+  readonly onSelect: (player: Player) => void;
 }
 
-/**
- * A search box that resolves to a list of players.
- * Typing is debounced; selecting an item clears the query and calls onSelect.
- * Clicking outside the dropdown closes it without selecting.
- */
-export function PlayerSearchDropdown({
-  excludeId,
+function DropdownContent({
+  isLoading,
+  results,
   onSelect,
-}: PlayerSearchDropdownProps) {
+}: DropdownContentProps) {
   const tPlayers = useTranslations("players");
   const tCommon = useTranslations("common");
+
+  if (isLoading) {
+    return (
+      <Text variant="caption" className="px-3 py-2.5">
+        {tCommon("loading")}
+      </Text>
+    );
+  }
+
+  if (results.length === 0) {
+    return (
+      <Text variant="caption" className="px-3 py-2.5">
+        {tPlayers("playerDetail.compareNoResults")}
+      </Text>
+    );
+  }
+
+  return results.map((player, i) => {
+    const clubName = player.team?.club?.name ?? "";
+
+    return (
+      <button
+        key={player.id}
+        type="button"
+        onClick={() => onSelect(player)}
+        className={cn(
+          "w-full flex items-center gap-2.5 px-3 py-2 text-left",
+          "hover:bg-surface-inset transition-colors",
+          i !== 0 && "border-t border-divide",
+        )}
+      >
+        <ImageWithFallback
+          src={`/images/clubs/${formatNameToFileName(clubName)}.webp`}
+          alt={clubName}
+          fallback="/images/clubs/defaultLogo.30cc7520.svg"
+          className="w-6 h-6 object-contain shrink-0"
+        />
+        <div className="min-w-0 flex flex-col">
+          <Text variant="label" as="span" className="text-text-heading">
+            #{player.number} {player.name}
+          </Text>
+          <Text variant="muted" as="span">
+            {clubName}
+          </Text>
+        </div>
+      </button>
+    );
+  });
+}
+
+// ─── Main component ───────────────────────────────────────────────────────────
+
+interface PlayerSearchDropdownProps {
+  readonly excludeId: number;
+  readonly gender: string;
+  readonly category: string;
+  readonly selectedPlayer: Player | null;
+  readonly onSelect: (player: Player) => void;
+  readonly onClear: () => void;
+}
+
+export function PlayerSearchDropdown({
+  excludeId,
+  gender,
+  category,
+  selectedPlayer,
+  onSelect,
+  onClear,
+}: PlayerSearchDropdownProps) {
+  const tCommon = useTranslations("common");
+  const tPlayers = useTranslations("players");
+
   const { query, setQuery, results, isLoading } = usePlayerSearch({
     excludeId,
+    gender,
+    category,
   });
 
-  const containerRef = useRef<HTMLDivElement>(null);
   const showDropdown = query.trim().length >= 2;
 
-  // Close dropdown when clicking outside.
-  useEffect(() => {
-    if (!showDropdown) return;
+  // ─── Selected state ───────────────────────────────────────────────────
+  if (selectedPlayer) {
+    return (
+      <div className="relative flex flex-col items-end text-right">
+        <Button
+          variant="ghost"
+          size="icon"
+          type="button"
+          onClick={onClear}
+          aria-label={tCommon("clear")}
+          className="absolute -top-3 -right-3 w-6 h-6 rounded-full border border-divide bg-surface-inset"
+        >
+          <X className="w-3 h-3" aria-hidden="true" />
+        </Button>
 
-    const handleClick = (e: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(e.target as Node)
-      ) {
-        setQuery("");
-      }
-    };
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, [showDropdown, setQuery]);
+        <PlayerIdentity player={selectedPlayer} side="right" />
+      </div>
+    );
+  }
 
-  const handleSelect = (player: Player) => {
-    onSelect(player);
-    setQuery(""); // close + reset
-  };
-
+  // ─── Empty / searching state ──────────────────────────────────────────
   return (
-    <div ref={containerRef} className="relative w-full max-w-sm">
-      <Input
+    <div className="relative w-full">
+      <DebouncedInput
         variant="search"
         value={query}
-        placeholder={tPlayers("playerDetail.compareSearch")}
-        onChange={(e) => setQuery(e.target.value)}
+        onChange={setQuery}
         onClear={() => setQuery("")}
+        placeholder={tPlayers("playerDetail.compareSearch")}
         clearAriaLabel={tCommon("clearSearch")}
       />
 
-      {/* Dropdown */}
       {showDropdown && (
         <div
           className={cn(
-            "absolute top-full left-0 right-0 mt-1 z-20 max-h-64 overflow-y-auto",
-            "surface-subtle border border-divide",
-            "rounded-lg shadow-card-hover",
+            "absolute top-full left-0 right-0 mt-1 z-20",
+            "max-h-64 overflow-y-auto scrollbar-hide",
+            "rounded-lg border border-divide",
+            "surface-subtle shadow-card-hover",
           )}
         >
-          {isLoading ? (
-            <Text variant="caption" className="px-4 py-3">
-              {tCommon("loading")}
-            </Text>
-          ) : results.length === 0 ? (
-            <Text variant="caption" className="px-4 py-3">
-              {tPlayers("playerDetail.compareNoResults")}
-            </Text>
-          ) : (
-            results.map((player) => (
-              <button
-                key={player.id}
-                type="button"
-                onClick={() => handleSelect(player)}
-                className={cn(
-                  "w-full flex items-center gap-3 px-4 py-2.5 text-left",
-                  "hover:bg-surface-inset transition-colors",
-                )}
-              >
-                {/* Tiny club logo */}
-                <img
-                  src={`/images/clubs/${formatNameToFileName(
-                    player.team?.club?.name || "",
-                  )}.webp`}
-                  alt={player.team?.club?.name || ""}
-                  className="w-7 h-7 object-contain"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src =
-                      "/images/clubs/defaultLogo.30cc7520.svg";
-                  }}
-                />
-
-                {/* Name + meta */}
-                <div className="min-w-0">
-                  <Text variant="label" as="span" className="text-text-heading">
-                    #{player.number} {player.name}
-                  </Text>
-                  <Text variant="muted" as="span" className="ml-2">
-                    {player.team?.club?.name || ""}
-                    {player.team?.category ? ` · ${player.team.category}` : ""}
-                  </Text>
-                </div>
-              </button>
-            ))
-          )}
+          <DropdownContent
+            isLoading={isLoading}
+            results={results}
+            onSelect={(player) => {
+              onSelect(player);
+              setQuery("");
+            }}
+          />
         </div>
       )}
     </div>

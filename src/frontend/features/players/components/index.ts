@@ -7,6 +7,7 @@ export * from "./detail/player-comparison/ComparisonTable";
 export * from "./detail/player-comparison/PlayerComparison";
 export * from "./detail/PlayerCareerStats";
 export * from "./detail/PlayerHeader";
+export * from "./detail/PlayerIdentity";
 export * from "./detail/PlayerMatchHistoryTable";
 export * from "./detail/PlayerSearchDropdown";
 export * from "./list/PlayersCard";
