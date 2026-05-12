@@ -2,69 +2,45 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import React, { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { usePlayerMatches } from "@/features/players/api/use-players";
 import type { Player } from "@/features/players/types/Player";
 import { aggregateStats } from "@/features/players/utils/statsAggregation";
 import { Section } from "@/shared/components/blocks";
+import { StatComparison } from "@/shared/components/blocks/StatComparison";
 import { Badge } from "@/shared/components/primitives";
+import { cn } from "@/shared/utils/cn";
 
 import { PlayerIdentity } from "../PlayerIdentity";
 import { PlayerSearchDropdown } from "../PlayerSearchDropdown";
-import { type ComparisonStatConfig, ComparisonTable } from "./ComparisonTable";
 
-const comparisonConfig: ComparisonStatConfig[] = [
-  {
-    key: "gamesPlayed",
-    labelKey: "stats.gamesPlayed",
-    value: (s) => s.gamesPlayed,
-  },
-  {
-    key: "pointsPerGame",
-    labelKey: "stats.pointsPerGame",
-    value: (s) =>
-      s.gamesPlayed > 0 ? (s.points / s.gamesPlayed).toFixed(1) : "0.0",
-  },
-  {
-    key: "reboundsPerGame",
-    labelKey: "stats.reboundsPerGame",
-    value: (s) =>
-      s.gamesPlayed > 0 ? (s.rebounds / s.gamesPlayed).toFixed(1) : "0.0",
-  },
-  {
-    key: "assistsPerGame",
-    labelKey: "stats.assistsPerGame",
-    value: (s) =>
-      s.gamesPlayed > 0 ? (s.assists / s.gamesPlayed).toFixed(1) : "0.0",
-  },
-  {
-    key: "stealsPerGame",
-    labelKey: "stats.stealsPerGame",
-    value: (s) =>
-      s.gamesPlayed > 0 ? (s.steals / s.gamesPlayed).toFixed(1) : "0.0",
-  },
-  {
-    key: "blocksPerGame",
-    labelKey: "stats.blocksPerGame",
-    value: (s) =>
-      s.gamesPlayed > 0 ? (s.blocks / s.gamesPlayed).toFixed(1) : "0.0",
-  },
-  {
-    key: "turnoversPerGame",
-    labelKey: "stats.turnoversPerGame",
-    value: (s) =>
-      s.gamesPlayed > 0 ? (s.turnovers / s.gamesPlayed).toFixed(1) : "0.0",
-    lowerIsBetter: true,
-  },
-  {
-    key: "foulsPerGame",
-    labelKey: "stats.foulsPerGame",
-    value: (s) =>
-      s.gamesPlayed > 0 ? (s.fouls / s.gamesPlayed).toFixed(1) : "0.0",
-    lowerIsBetter: true,
-  },
-];
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function labelForPlayer(p: Player) {
+  return `#${p.number} ${p.name}`;
+}
+
+// ─── Loading indicator ────────────────────────────────────────────────────────
+
+function LoadingDots() {
+  return (
+    <div className="flex items-center justify-center gap-2 py-6">
+      {[0, 1, 2].map((i) => (
+        <span
+          key={i}
+          className={cn(
+            "inline-block w-2 h-2 rounded-full bg-primary animate-pulse",
+            i === 1 && "[animation-delay:200ms]",
+            i === 2 && "[animation-delay:400ms]",
+          )}
+        />
+      ))}
+    </div>
+  );
+}
+
+// ─── Main component ───────────────────────────────────────────────────────────
 
 interface PlayerComparisonProps {
   readonly player: Player;
@@ -72,6 +48,7 @@ interface PlayerComparisonProps {
 
 export function PlayerComparison({ player }: PlayerComparisonProps) {
   const tPlayers = useTranslations("players");
+  const tCommon = useTranslations("common");
 
   const [opponent, setOpponent] = useState<Player | null>(null);
 
@@ -84,7 +61,27 @@ export function PlayerComparison({ player }: PlayerComparisonProps) {
     ? aggregateStats(opponentMatches.map((m) => m.player.stats))
     : null;
 
-  const labelForPlayer = (p: Player) => `#${p.number} ${p.name}`;
+  const statCategories = useMemo(
+    () => [
+      { key: "gamesPlayed", label: tCommon("stats.gamesPlayed") },
+      { key: "pointsPerGame", label: tCommon("stats.pointsPerGame") },
+      { key: "reboundsPerGame", label: tCommon("stats.reboundsPerGame") },
+      { key: "assistsPerGame", label: tCommon("stats.assistsPerGame") },
+      { key: "stealsPerGame", label: tCommon("stats.stealsPerGame") },
+      { key: "blocksPerGame", label: tCommon("stats.blocksPerGame") },
+      {
+        key: "turnoversPerGame",
+        label: tCommon("stats.turnoversPerGame"),
+        lowerIsBetter: true,
+      },
+      {
+        key: "foulsPerGame",
+        label: tCommon("stats.foulsPerGame"),
+        lowerIsBetter: true,
+      },
+    ],
+    [tCommon],
+  );
 
   return (
     <Section
@@ -127,31 +124,17 @@ export function PlayerComparison({ player }: PlayerComparisonProps) {
       </div>
 
       <div className="mt-5">
-        {isLoadingOpponent && (
-          <div className="flex items-center justify-center gap-2 py-6">
-            {[0, 1, 2].map((i) => (
-              <span
-                key={i}
-                className={[
-                  "inline-block w-2 h-2 rounded-full bg-primary animate-pulse",
-                  i === 1 && "[animation-delay:200ms]",
-                  i === 2 && "[animation-delay:400ms]",
-                ]
-                  .filter(Boolean)
-                  .join(" ")}
-              />
-            ))}
-          </div>
-        )}
+        {isLoadingOpponent && <LoadingDots />}
 
         {statsB && !isLoadingOpponent && (
           <div className="animate-slide-up">
-            <ComparisonTable
-              statsA={statsA}
-              statsB={statsB}
+            <StatComparison
+              variant="mirrored"
+              sideA={statsA}
+              sideB={statsB}
               labelA={labelForPlayer(player)}
               labelB={labelForPlayer(opponent!)}
-              config={comparisonConfig}
+              config={statCategories}
             />
           </div>
         )}
