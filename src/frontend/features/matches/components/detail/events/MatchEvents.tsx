@@ -79,7 +79,7 @@ export const MatchEvents: React.FC<MatchEventsProps> = ({
       const teamId = getTeamIdFromEvent(event);
       const quarter = getQuarterFromTimestamp(event.timestamp, matchDate);
 
-      if (style.eventCategory === EventCategory.SCORING) {
+      if (style.eventCategory === EventCategory.MADE) {
         const points = pointsForEvent(event.eventType, style);
         if (teamId === homeTeam.id) homeScore += points;
         else if (teamId === awayTeam.id) awayScore += points;
