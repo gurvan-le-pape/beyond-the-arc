@@ -1,7 +1,7 @@
 // src/frontend/shared/constants/event-categories.ts
 export const EventCategory = {
   OTHER: "other",
-  SCORING: "scoring",
+  MADE: "made",
   MISS: "miss",
   DEFENSIVE: "defensive",
   FOUL: "foul",
