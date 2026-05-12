@@ -6,7 +6,7 @@ import type { PlayerMatchStats } from "@/shared/types/PlayerMatchStats";
  * This utility can be used in both server and client components.
  */
 export function aggregateStats(stats: PlayerMatchStats[]) {
-  return stats.reduce(
+  const totals = stats.reduce(
     (acc, stat) => ({
       gamesPlayed: acc.gamesPlayed + 1,
       points: acc.points + stat.points,
@@ -29,4 +29,18 @@ export function aggregateStats(stats: PlayerMatchStats[]) {
       fouls: 0,
     },
   );
+
+  const gp = totals.gamesPlayed || 1;
+  const perGame = (n: number) => Number((n / gp).toFixed(1));
+
+  return {
+    ...totals,
+    pointsPerGame: perGame(totals.points),
+    reboundsPerGame: perGame(totals.rebounds),
+    assistsPerGame: perGame(totals.assists),
+    stealsPerGame: perGame(totals.steals),
+    blocksPerGame: perGame(totals.blocks),
+    turnoversPerGame: perGame(totals.turnovers),
+    foulsPerGame: perGame(totals.fouls),
+  };
 }
