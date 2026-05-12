@@ -6,8 +6,8 @@ import { Select } from "@/shared/components/forms";
 import { EventCategory } from "@/shared/constants/event-categories";
 
 interface EventCategorySelectProps {
-  value: EventCategory;
-  onChange: (value: EventCategory) => void;
+  value: EventCategory | undefined;
+  onChange: (value: EventCategory | undefined) => void;
 }
 
 export const EventCategorySelect: React.FC<EventCategorySelectProps> = ({
@@ -17,7 +17,7 @@ export const EventCategorySelect: React.FC<EventCategorySelectProps> = ({
   const t = useTranslations("matches");
 
   const options = [
-    { value: EventCategory.ALL, label: t("matchEvents.allEvents") },
+    { value: "", label: t("matchEvents.allEvents") },
     { value: EventCategory.SCORING, label: t("matchEvents.scoring") },
     { value: EventCategory.DEFENSIVE, label: t("matchEvents.defensive") },
     { value: EventCategory.FOUL, label: t("matchEvents.fouls") },
@@ -30,8 +30,8 @@ export const EventCategorySelect: React.FC<EventCategorySelectProps> = ({
 
   return (
     <Select
-      value={value}
-      onChange={(val) => onChange(val as EventCategory)}
+      value={value ?? ""}
+      onChange={(val) => onChange((val as EventCategory) || undefined)}
       options={options}
       className="w-fit"
     />

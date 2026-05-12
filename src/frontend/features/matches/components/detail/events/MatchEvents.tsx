@@ -46,8 +46,9 @@ export const MatchEvents: React.FC<MatchEventsProps> = ({
   // ---- filter / sort state ------------------------------------------------
   const [selectedQuarter, setSelectedQuarter] = useState<Quarter>(Quarter.ALL);
   const [latestFirst, setLatestFirst] = useState(false);
-  const [selectedEventCategory, setSelectedEventCategory] =
-    useState<EventCategory>(EventCategory.ALL);
+  const [selectedEventCategory, setSelectedEventCategory] = useState<
+    EventCategory | undefined
+  >(undefined);
   const [selectedPlayerIds, setSelectedPlayerIds] = useState<Set<number>>(
     new Set(),
   );
@@ -97,7 +98,7 @@ export const MatchEvents: React.FC<MatchEventsProps> = ({
       result = result.filter((e) => e.quarter === quarterNum);
     }
 
-    if (selectedEventCategory !== EventCategory.ALL) {
+    if (selectedEventCategory !== undefined) {
       const allowed = eventCategories[selectedEventCategory] || [];
       result = result.filter((e) => allowed.includes(e.eventType));
     }
