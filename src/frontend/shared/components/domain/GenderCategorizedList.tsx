@@ -3,8 +3,7 @@ import { useTranslations } from "next-intl";
 
 import type { Category } from "@/shared/constants";
 import { Gender } from "@/shared/constants";
-import { groupBy } from "@/shared/utils";
-import { cn } from "@/shared/utils";
+import { cn, groupBy } from "@/shared/utils";
 
 import { Text } from "../typography";
 import { CategorySection } from "./CategorySection";

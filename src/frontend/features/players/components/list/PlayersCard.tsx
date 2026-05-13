@@ -5,10 +5,8 @@ import React from "react";
 import type { Player } from "@/features/players/types";
 import { Badge } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
-import { NA } from "@/shared/constants";
-import { LEVEL_CONFIG } from "@/shared/constants";
-import { cn } from "@/shared/utils";
-import { formatNameToFileName } from "@/shared/utils";
+import { LEVEL_CONFIG, NA } from "@/shared/constants";
+import { cn, formatNameToFileName } from "@/shared/utils";
 
 interface PlayerCardProps {
   player: Player;

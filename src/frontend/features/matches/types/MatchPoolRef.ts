@@ -1,7 +1,5 @@
 // src/frontend/features/matches/types/MatchPoolRef.ts
-import type { Category } from "@/shared/constants";
-import type { CompetitionLevel } from "@/shared/constants";
-import type { Gender } from "@/shared/constants";
+import type { Category, CompetitionLevel, Gender } from "@/shared/constants";
 
 export interface MatchChampionshipRef {
   id: number;

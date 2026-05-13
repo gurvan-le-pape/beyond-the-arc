@@ -5,9 +5,7 @@ import React from "react";
 import { Badge } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { LEVEL_CONFIG } from "@/shared/constants";
-import { formatMatchDate, formatMatchTime } from "@/shared/utils";
-import { cn } from "@/shared/utils";
-import { formatNameToFileName } from "@/shared/utils";
+import { cn, formatMatchDate, formatMatchTime, formatNameToFileName } from "@/shared/utils";
 
 interface MatchesCardProps {
   match: any;

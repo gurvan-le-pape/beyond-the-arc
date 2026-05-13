@@ -10,8 +10,7 @@ import { useMatchesPrefetch, useMatchEvents } from "@/features/matches/api";
 import type { Match } from "@/features/matches/types";
 import { ErrorMessage } from "@/shared/components/feedback";
 import { Badge, Card } from "@/shared/components/primitives";
-import { formatMatchDateTime } from "@/shared/utils";
-import { formatNameToFileName } from "@/shared/utils";
+import { formatMatchDateTime, formatNameToFileName } from "@/shared/utils";
 
 import MatchDetailsTable from "./MatchDetailsTable";
 

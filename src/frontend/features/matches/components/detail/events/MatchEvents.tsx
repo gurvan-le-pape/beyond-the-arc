@@ -4,8 +4,7 @@
 import { useTranslations } from "next-intl";
 import React, { useCallback, useMemo, useState } from "react";
 
-import { Quarter } from "@/features/matches/constants";
-import { eventCategories } from "@/features/matches/constants";
+import { eventCategories, Quarter } from "@/features/matches/constants";
 import type { MatchEvent } from "@/features/matches/types";
 import {
   getEventStyle,

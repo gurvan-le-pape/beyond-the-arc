@@ -2,8 +2,7 @@
 import { useTranslations } from "next-intl";
 import React from "react";
 
-import type { Match } from "@/features/matches/types";
-import type { MatchEvent } from "@/features/matches/types";
+import type { Match, MatchEvent } from "@/features/matches/types";
 import { computeQuarterScores } from "@/features/matches/utils";
 import {
   Table,

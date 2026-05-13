@@ -1,6 +1,5 @@
 // src/frontend/features/matches/components/detail/events/filters/QuarterSelector.tsx
 import { useTranslations } from "next-intl";
-import React from "react";
 
 import { Quarter, QUARTER_LIST } from "@/features/matches/constants";
 import { cn } from "@/shared/utils";

@@ -1,7 +1,6 @@
 // src/frontend/shared/components/filters/ActiveFilterChips.tsx
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useTranslations } from "next-intl";
-import React from "react";
 
 import { Button } from "@/shared/components/primitives";
 

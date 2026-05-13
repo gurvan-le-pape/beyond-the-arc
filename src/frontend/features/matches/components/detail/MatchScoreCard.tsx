@@ -7,8 +7,7 @@ import React from "react";
 import type { TeamInfo } from "@/features/teams/types";
 import { useRouter } from "@/navigation";
 import { Button, Card } from "@/shared/components/primitives";
-import { cn } from "@/shared/utils";
-import { formatNameToFileName } from "@/shared/utils";
+import { cn, formatNameToFileName } from "@/shared/utils";
 
 interface MatchScoreCardProps {
   homeTeam: TeamInfo;

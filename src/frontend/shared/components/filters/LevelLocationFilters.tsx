@@ -1,6 +1,5 @@
 // src/frontend/shared/components/filters/LevelLocationFilters.tsx
 import { useTranslations } from "next-intl";
-import React from "react";
 
 import { Select } from "@/shared/components/forms";
 import { CompetitionLevel } from "@/shared/constants";

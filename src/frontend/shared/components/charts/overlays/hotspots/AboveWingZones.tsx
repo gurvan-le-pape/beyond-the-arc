@@ -2,10 +2,8 @@
 import React from "react";
 
 import { PolygonZone } from "@/shared/components/charts";
-import type { ShotEvent } from "@/shared/types";
-import type { ZoneStats } from "@/shared/types";
-import { binShotsByZones } from "@/shared/utils";
-import { getAboveWingZones } from "@/shared/utils";
+import type { ShotEvent, ZoneStats } from "@/shared/types";
+import { binShotsByZones, getAboveWingZones } from "@/shared/utils";
 
 interface AboveWingZonesProps {
   shots: ShotEvent[];
