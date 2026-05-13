@@ -1,6 +1,6 @@
 // src/backend/modules/matches/matches.service.ts
-import { Role } from "@common/constants/roles";
-import { PaginatedResponseDto } from "@common/dto/paginated-response.dto";
+import { Role } from "@common/constants";
+import { PaginatedResponseDto } from "@common/dto";
 import { Category, CompetitionLevel, Gender } from "@common/index";
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { Prisma } from "@prisma/client";

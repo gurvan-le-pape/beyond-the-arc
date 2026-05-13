@@ -1,7 +1,7 @@
 // src/backend/modules/organizations/clubs/clubs.service.ts
-import { Category } from "@common/constants/categories";
-import { CompetitionLevel } from "@common/constants/competition-levels";
-import { Gender } from "@common/constants/genders";
+import { Category } from "@common/constants";
+import { CompetitionLevel } from "@common/constants";
+import { Gender } from "@common/constants";
 import { PaginatedResponseDto } from "@common/index";
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { Prisma } from "@prisma/client";

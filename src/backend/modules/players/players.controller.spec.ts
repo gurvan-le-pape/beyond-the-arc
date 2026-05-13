@@ -1,5 +1,5 @@
 // src/backend/modules/players/players.controller.spec.ts
-import type { PaginatedResponseDto } from "@common/dto/paginated-response.dto";
+import type { PaginatedResponseDto } from "@common/dto";
 import { CacheDedupService } from "@common/services/cache-dedup.service";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { NotFoundException } from "@nestjs/common";

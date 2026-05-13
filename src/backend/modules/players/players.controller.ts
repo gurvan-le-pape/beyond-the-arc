@@ -1,8 +1,8 @@
 // src/backend/modules/players/players.controller.ts
-import { CACHE_TTL } from "@common/constants/cache-ttls";
-import { PaginatedResponseDto } from "@common/dto/paginated-response.dto";
+import { CACHE_TTL } from "@common/constants";
+import { PaginatedResponseDto } from "@common/dto";
 import { Category, CompetitionLevel, Gender } from "@common/index";
-import { CacheInterceptor } from "@common/interceptors/cache.interceptor";
+import { CacheInterceptor } from "@common/interceptors";
 import {
   Controller,
   Get,

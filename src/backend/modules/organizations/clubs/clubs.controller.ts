@@ -1,6 +1,6 @@
 // src/backend/modules/organizations/clubs/clubs.controller.ts
 import { CACHE_TTL, Category, PaginatedResponseDto } from "@common/index";
-import { CacheInterceptor } from "@common/interceptors/cache.interceptor";
+import { CacheInterceptor } from "@common/interceptors";
 import {
   Controller,
   Get,

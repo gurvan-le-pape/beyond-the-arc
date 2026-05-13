@@ -1,5 +1,5 @@
 // src/backend/modules/competitions/championships/dto/championships.query.dto.ts
-import { CompetitionLevel } from "@common/constants/competition-levels";
+import { CompetitionLevel } from "@common/constants";
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsEnum, IsNumber, IsOptional } from "class-validator";
