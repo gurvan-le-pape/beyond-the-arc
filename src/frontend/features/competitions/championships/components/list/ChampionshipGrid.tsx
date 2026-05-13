@@ -1,7 +1,7 @@
 // src/frontend/features/competitions/championships/components/list/ChampionshipGrid.tsx
 import { useTranslations } from "next-intl";
 
-import type { Championship } from "@/features/competitions/championships/types/Championship";
+import type { Championship } from "@/features/competitions/championships/types";
 
 import { ChampionshipCard } from "./ChampionshipCard";
 

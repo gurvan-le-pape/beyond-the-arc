@@ -1,7 +1,7 @@
 // src/frontend/lib/services/client/api-client.ts
 import axios from "axios";
 
-import { parseApiError } from "@/shared/utils/parseApiError";
+import { parseApiError } from "@/shared/utils";
 
 /**
  * Axios instance for client-side API requests.

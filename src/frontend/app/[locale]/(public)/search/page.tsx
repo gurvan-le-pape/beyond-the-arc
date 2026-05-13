@@ -6,8 +6,8 @@ import { useTranslations } from "next-intl";
 
 import { MatchesTab, PlayersTab, TeamsTab } from "@/features/search/components";
 import { PageLayout } from "@/shared/components/layout";
-import { QueryTabs } from "@/shared/components/navigation/QueryTabs";
-import { TabsContent } from "@/shared/components/primitives/Tabs";
+import { QueryTabs } from "@/shared/components/navigation";
+import { TabsContent } from "@/shared/components/primitives";
 
 const TABS = {
   PLAYERS: "players",

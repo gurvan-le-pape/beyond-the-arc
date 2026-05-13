@@ -1,7 +1,7 @@
 // src/frontend/shared/components/table/Table.tsx
 import { forwardRef, type HTMLAttributes, type ReactNode } from "react";
 
-import { cn } from "@/shared/utils/cn";
+import { cn } from "@/shared/utils";
 
 import { Text } from "../typography";
 

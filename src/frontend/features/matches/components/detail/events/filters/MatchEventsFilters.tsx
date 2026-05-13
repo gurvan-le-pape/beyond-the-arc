@@ -7,8 +7,8 @@ import {
   TimelineOrderToggle,
 } from "@/features/matches/components";
 import type { Quarter } from "@/features/matches/constants";
-import type { TeamInfoExtended } from "@/features/teams/types/TeamInfo";
-import type { EventCategory } from "@/shared/constants/event-categories";
+import type { TeamInfoExtended } from "@/features/teams/types";
+import type { EventCategory } from "@/shared/constants";
 
 import { PlayerDropdownFilter } from "./PlayerDropdownFilter";
 import { QuarterSelector } from "./QuarterSelector";

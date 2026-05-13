@@ -14,7 +14,7 @@ import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import React, { useEffect, useRef } from "react";
 
-import { cn } from "@/shared/utils/cn";
+import { cn } from "@/shared/utils";
 
 import { Text } from "../typography";
 import { DROPDOWN_TRIGGER_BASE } from "./DropdownTriggerBase";

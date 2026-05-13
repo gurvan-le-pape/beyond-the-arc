@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import {
   useDepartmentsGeoJson,
   useRegionsGeoJson,
-} from "@/features/geography/api/use-geometries";
+} from "@/features/geography/api";
 
 import {
   useAllClubs,

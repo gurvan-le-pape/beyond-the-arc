@@ -4,7 +4,7 @@
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useEffect, useRef, useState } from "react";
 
-import { cn } from "@/shared/utils/cn";
+import { cn } from "@/shared/utils";
 
 interface BottomSheetProps {
   readonly isOpen: boolean;

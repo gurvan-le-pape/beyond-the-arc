@@ -1,9 +1,9 @@
 // src/frontend/shared/components/charts/variants/TeamShotChart.tsx
 import React from "react";
 
-import type { MatchEvent } from "@/features/matches/types/MatchEvent";
+import type { MatchEvent } from "@/features/matches/types";
 import { ShotChart } from "@/shared/components/charts";
-import { ChartType } from "@/shared/constants/chart-types";
+import { ChartType } from "@/shared/constants";
 
 import { Section } from "../../blocks";
 import { ErrorMessage, LoadingSpinner } from "../../feedback";

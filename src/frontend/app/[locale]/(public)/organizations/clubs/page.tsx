@@ -1,7 +1,7 @@
 // src/frontend/app/[locale]/(public)/organizations/clubs/page.tsx
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { ClubsView } from "@/features/organizations/clubs/components/list/ClubsView";
+import { ClubsView } from "@/features/organizations/clubs/components";
 import { TitleSection } from "@/shared/components/domain";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";

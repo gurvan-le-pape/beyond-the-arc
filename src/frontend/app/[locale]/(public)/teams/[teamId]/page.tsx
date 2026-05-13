@@ -3,14 +3,14 @@ import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { serverMatchesService } from "@/features/matches/api";
-import type { PlayerMatchHistoryEntry } from "@/features/players/types/PlayerMatchHistory";
+import type { PlayerMatchHistoryEntry } from "@/features/players/types";
 import { serverTeamsService } from "@/features/teams/api";
 import { TeamHeader, TeamInfo, TeamRoster } from "@/features/teams/components";
-import { TeamMatchHistoryTable } from "@/features/teams/components/detail/TeamMatchHistoryTable";
-import { aggregateTeamStats } from "@/features/teams/utils/statsAggregation";
+import { TeamMatchHistoryTable } from "@/features/teams/components";
+import { aggregateTeamStats } from "@/features/teams/utils";
 import { TeamShotChart } from "@/shared/components/charts";
 import { PageLayout } from "@/shared/components/layout";
-import { handleServerError } from "@/shared/utils/handleServerError";
+import { handleServerError } from "@/shared/utils";
 
 interface TeamDetailPageProps {
   readonly params: Promise<{

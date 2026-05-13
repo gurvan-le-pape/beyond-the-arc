@@ -4,12 +4,12 @@
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 
-import { DepartmentalTab } from "@/features/competitions/championships/components/list/tabs/DepartmentalTab";
-import { NationalTab } from "@/features/competitions/championships/components/list/tabs/NationalTab";
-import { RegionalTab } from "@/features/competitions/championships/components/list/tabs/RegionalTab";
+import { DepartmentalTab } from "@/features/competitions/championships/components";
+import { NationalTab } from "@/features/competitions/championships/components";
+import { RegionalTab } from "@/features/competitions/championships/components";
 import { PageLayout } from "@/shared/components/layout";
-import { QueryTabs } from "@/shared/components/navigation/QueryTabs";
-import { TabsContent } from "@/shared/components/primitives/Tabs";
+import { QueryTabs } from "@/shared/components/navigation";
+import { TabsContent } from "@/shared/components/primitives";
 import { CompetitionLevel } from "@/shared/constants";
 
 const TABS = {

@@ -1,7 +1,7 @@
 // src/frontend/features/organizations/leagues/api/use-leagues.ts
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import type { ApiError } from "@/shared/types/Api";
+import type { ApiError } from "@/shared/types";
 
 import type { League } from "../types/League";
 import { leaguesPrefetch, leaguesQueries } from "./leaguesQueries";

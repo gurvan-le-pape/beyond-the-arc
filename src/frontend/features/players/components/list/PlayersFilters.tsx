@@ -6,13 +6,13 @@ import React, { useState } from "react";
 
 import { useCommitteeLeagueClubFilters } from "@/features/competitions/championships/hooks";
 import { useClubSearch } from "@/features/organizations/clubs/api";
-import { useTeamFilterValues } from "@/features/teams/api/use-teams";
+import { useTeamFilterValues } from "@/features/teams/api";
 import { ErrorMessage } from "@/shared/components/feedback";
 import { FiltersShell } from "@/shared/components/filters/FiltersShell";
 import { LevelLocationFilters } from "@/shared/components/filters/LevelLocationFilters";
 import { Input } from "@/shared/components/forms";
-import { Select } from "@/shared/components/forms/Select";
-import { ComboBox } from "@/shared/components/primitives/ComboBox";
+import { Select } from "@/shared/components/forms";
+import { ComboBox } from "@/shared/components/primitives";
 import type { Category, Gender } from "@/shared/constants";
 import {
   CATEGORY_LIST,

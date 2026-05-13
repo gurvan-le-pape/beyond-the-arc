@@ -4,8 +4,8 @@
 import { useCallback, useState } from "react";
 
 import { useClubs } from "@/features/organizations/clubs/api";
-import { useCommittees } from "@/features/organizations/committees/api/use-committees";
-import { useLeagues } from "@/features/organizations/leagues/api/use-leagues";
+import { useCommittees } from "@/features/organizations/committees/api";
+import { useLeagues } from "@/features/organizations/leagues/api";
 
 export function useCommitteeLeagueClubFilters() {
   // Filter state

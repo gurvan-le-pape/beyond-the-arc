@@ -11,7 +11,7 @@
 import { useTranslations } from "next-intl";
 import React, { useEffect, useId, useRef, useState } from "react";
 
-import { cn } from "@/shared/utils/cn";
+import { cn } from "@/shared/utils";
 
 import { Text } from "../typography";
 import { DROPDOWN_TRIGGER_BASE } from "./DropdownTriggerBase";

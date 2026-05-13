@@ -5,8 +5,8 @@ import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 
 import { useChampionships } from "@/features/competitions/championships/api";
-import type { Championship } from "@/features/competitions/championships/types/Championship";
-import { useLeagues } from "@/features/organizations/leagues/api/use-leagues";
+import type { Championship } from "@/features/competitions/championships/types";
+import { useLeagues } from "@/features/organizations/leagues/api";
 import type { Category, Gender } from "@/shared/constants";
 import { CompetitionLevel } from "@/shared/constants";
 

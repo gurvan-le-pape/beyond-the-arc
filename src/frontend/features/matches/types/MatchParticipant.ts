@@ -1,5 +1,5 @@
 // src/frontend/features/matches/types/MatchParticipant.ts
-import type { PlayerMatchStats } from "@/shared/types/PlayerMatchStats";
+import type { PlayerMatchStats } from "@/shared/types";
 
 // A player reference as it appears inside a match (no circular team/stats references)
 export interface MatchParticipantPlayer {

@@ -3,7 +3,7 @@
 
 import { useTranslations } from "next-intl";
 
-import { getSortedRounds } from "@/features/matches/utils/getSortedRounds";
+import { getSortedRounds } from "@/features/matches/utils";
 import { Badge, Card } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 

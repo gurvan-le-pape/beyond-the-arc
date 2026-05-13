@@ -9,8 +9,8 @@ import { useRouter } from "@/navigation";
 import { Button, Card } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { CompetitionLevel } from "@/shared/constants";
-import { formatNameToFileName } from "@/shared/utils/formatNameToFileName";
-import { normalizeString } from "@/shared/utils/normalizeString";
+import { formatNameToFileName } from "@/shared/utils";
+import { normalizeString } from "@/shared/utils";
 
 import type { Team } from "../../types/Team";
 

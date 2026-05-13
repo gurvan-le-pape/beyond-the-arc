@@ -1,7 +1,7 @@
 // src/frontend/shared/components/feedback/Skeleton.tsx
 import { type HTMLAttributes } from "react";
 
-import { cn } from "@/shared/utils/cn";
+import { cn } from "@/shared/utils";
 
 /**
  * Skeleton component for loading states

@@ -1,7 +1,7 @@
 // src/frontend/shared/components/primitives/Switch.tsx
 import React, { forwardRef } from "react";
 
-import { cn } from "@/shared/utils/cn";
+import { cn } from "@/shared/utils";
 
 export interface SwitchProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {

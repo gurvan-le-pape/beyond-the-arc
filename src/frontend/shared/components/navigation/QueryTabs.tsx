@@ -9,7 +9,7 @@ import {
   Tabs,
   TabsList,
   TabsTrigger,
-} from "@/shared/components/primitives/Tabs";
+} from "@/shared/components/primitives";
 
 interface QueryTabsProps {
   readonly activeTab: string;

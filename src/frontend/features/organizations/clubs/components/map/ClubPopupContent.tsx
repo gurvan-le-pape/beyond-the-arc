@@ -3,7 +3,7 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useTranslations } from "next-intl";
 
 import { useRouter } from "@/navigation";
-import { Button } from "@/shared/components/primitives/Button";
+import { Button } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 
 import type { ClubBasic } from "../../types/ClubBasic";

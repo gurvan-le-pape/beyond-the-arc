@@ -6,10 +6,10 @@ import { toPng } from "html-to-image";
 import { useTranslations } from "next-intl";
 import React, { useEffect, useRef } from "react";
 
-import type { MatchEvent } from "@/features/matches/types/MatchEvent";
+import type { MatchEvent } from "@/features/matches/types";
 import { ShotChart } from "@/shared/components/charts";
-import { ChartType } from "@/shared/constants/chart-types";
-import type { NamedEntity } from "@/shared/types/SelectOption";
+import { ChartType } from "@/shared/constants";
+import type { NamedEntity } from "@/shared/types";
 
 import { Button } from "../../primitives";
 import { Text } from "../../typography";

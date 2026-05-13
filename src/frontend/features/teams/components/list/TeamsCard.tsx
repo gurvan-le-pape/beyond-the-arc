@@ -2,13 +2,13 @@
 import { useTranslations } from "next-intl";
 import React from "react";
 
-import type { Team } from "@/features/teams/types/Team";
+import type { Team } from "@/features/teams/types";
 import { Badge } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { NA } from "@/shared/constants";
-import { LEVEL_CONFIG } from "@/shared/constants/levelConfig";
-import { cn } from "@/shared/utils/cn";
-import { formatNameToFileName } from "@/shared/utils/formatNameToFileName";
+import { LEVEL_CONFIG } from "@/shared/constants";
+import { cn } from "@/shared/utils";
+import { formatNameToFileName } from "@/shared/utils";
 
 interface TeamCardProps {
   team: Team;

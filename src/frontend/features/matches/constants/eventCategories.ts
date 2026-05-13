@@ -1,6 +1,6 @@
 // src/frontend/features/matches/constants/eventCategories.ts
-import { EventCategory } from "@/shared/constants/event-categories";
-import { EventType } from "@/shared/constants/event-types";
+import { EventCategory } from "@/shared/constants";
+import { EventType } from "@/shared/constants";
 
 export const eventCategories: Partial<Record<EventCategory, EventType[]>> = {
   [EventCategory.MADE]: [

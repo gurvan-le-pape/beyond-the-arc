@@ -14,7 +14,7 @@ import { InfoBox, Section } from "@/shared/components/blocks";
 import { Text } from "@/shared/components/typography";
 import { NA } from "@/shared/constants";
 import type { President } from "@/shared/types";
-import { formatPhone } from "@/shared/utils/helpers/string-helpers";
+import { formatPhone } from "@/shared/utils";
 
 interface OrganizationInfoProps {
   readonly address?: string | null;

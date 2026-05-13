@@ -1,7 +1,7 @@
 // src/frontend/features/competitions/championships/components/list/ChampionshipCard.tsx
 import { useTranslations } from "next-intl";
 
-import type { Championship } from "@/features/competitions/championships/types/Championship";
+import type { Championship } from "@/features/competitions/championships/types";
 import { Link } from "@/navigation";
 import { CompetitionLevel } from "@/shared/constants";
 

@@ -5,19 +5,19 @@ import { useTranslations } from "next-intl";
 import React, { useCallback, useMemo, useState } from "react";
 
 import { Quarter } from "@/features/matches/constants";
-import { eventCategories } from "@/features/matches/constants/eventCategories";
-import type { MatchEvent } from "@/features/matches/types/MatchEvent";
+import { eventCategories } from "@/features/matches/constants";
+import type { MatchEvent } from "@/features/matches/types";
 import {
   getEventStyle,
   getQuarterFromTimestamp,
   getTeamIdFromEvent,
   makeDescriptionClickable,
   pointsForEvent,
-} from "@/features/matches/utils/eventHelpers";
-import type { TeamInfoExtended } from "@/features/teams/types/TeamInfo";
+} from "@/features/matches/utils";
+import type { TeamInfoExtended } from "@/features/teams/types";
 import { Section } from "@/shared/components/blocks";
 import { EmptyState } from "@/shared/components/feedback";
-import { EventCategory } from "@/shared/constants/event-categories";
+import { EventCategory } from "@/shared/constants";
 
 import { MatchEventsFilters } from "./filters/MatchEventsFilters";
 import { MatchEventsTimeline } from "./timeline/MatchEventsTimeline";

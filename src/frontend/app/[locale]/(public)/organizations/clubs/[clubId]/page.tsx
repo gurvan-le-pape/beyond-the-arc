@@ -4,13 +4,13 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { serverClubsService } from "@/features/organizations/clubs/api";
 import { ClubTeams } from "@/features/organizations/clubs/components";
-import type { ClubTeamInfo } from "@/features/organizations/clubs/types/ClubDetailed";
-import { OrganizationHeader } from "@/shared/components/domain/organizations/detail/OrganizationHeader";
-import { OrganizationInfo } from "@/shared/components/domain/organizations/detail/OrganizationInfo";
+import type { ClubTeamInfo } from "@/features/organizations/clubs/types";
+import { OrganizationHeader } from "@/shared/components/domain";
+import { OrganizationInfo } from "@/shared/components/domain";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
 import type { Gender } from "@/shared/constants";
-import { groupTeamsByGender } from "@/shared/utils/helpers/team-helpers";
+import { groupTeamsByGender } from "@/shared/utils";
 
 interface ClubPageProps {
   readonly params: Promise<{

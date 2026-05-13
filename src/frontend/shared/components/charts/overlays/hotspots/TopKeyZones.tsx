@@ -3,9 +3,9 @@ import React from "react";
 
 import { PolygonZone } from "@/shared/components/charts";
 import type { ShotEvent } from "@/shared/types";
-import type { ZoneStats } from "@/shared/types/charts/ZoneStats";
-import { binShotsByZones } from "@/shared/utils/charts/overlays/hotspots/binShotsByZones";
-import { getTopKeyZone } from "@/shared/utils/charts/overlays/hotspots/zones/shotZonesTopKey";
+import type { ZoneStats } from "@/shared/types";
+import { binShotsByZones } from "@/shared/utils";
+import { getTopKeyZone } from "@/shared/utils";
 
 interface TopKeyZonesProps {
   shots: ShotEvent[];

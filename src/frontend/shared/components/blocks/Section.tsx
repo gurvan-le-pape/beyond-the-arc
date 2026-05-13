@@ -1,7 +1,7 @@
 // src/frontend/shared/components/blocks/Section.tsx
 import type { ReactNode } from "react";
 
-import { cn } from "@/shared/utils/cn";
+import { cn } from "@/shared/utils";
 
 import { Card } from "../primitives/Card";
 import { Text } from "../typography";

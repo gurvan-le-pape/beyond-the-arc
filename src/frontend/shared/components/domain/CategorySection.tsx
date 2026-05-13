@@ -1,7 +1,7 @@
 // src/frontend/shared/components/domain/CategorySection.tsx
 
 import type { Category } from "@/shared/constants";
-import { cn } from "@/shared/utils/cn";
+import { cn } from "@/shared/utils";
 
 import { NavButton } from "../primitives";
 import { Text } from "../typography";

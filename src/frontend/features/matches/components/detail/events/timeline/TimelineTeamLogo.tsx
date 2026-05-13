@@ -1,7 +1,7 @@
 // src/frontend/features/matches/components/detail/events/timeline/TimelineTeamLogo.tsx
 import React from "react";
 
-import { formatNameToFileName } from "@/shared/utils/formatNameToFileName";
+import { formatNameToFileName } from "@/shared/utils";
 
 interface TimelineTeamLogoProps {
   teamName: string;

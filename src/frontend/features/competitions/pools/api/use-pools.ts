@@ -2,7 +2,7 @@
 import type { UseQueryResult } from "@tanstack/react-query";
 import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import type { ApiError } from "@/shared/types/Api";
+import type { ApiError } from "@/shared/types";
 
 import type { Pool } from "../types/Pool";
 import { poolsPrefetch, poolsQueries } from "./poolsQueries";

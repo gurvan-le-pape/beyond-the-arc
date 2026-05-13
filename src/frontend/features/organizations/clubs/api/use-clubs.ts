@@ -1,7 +1,7 @@
 // src/frontend/features/organizations/clubs/api/use-clubs.ts
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import type { ApiError } from "@/shared/types/Api";
+import type { ApiError } from "@/shared/types";
 
 import type { ClubBasic } from "../types/ClubBasic";
 import type { ClubDetailed } from "../types/ClubDetailed";

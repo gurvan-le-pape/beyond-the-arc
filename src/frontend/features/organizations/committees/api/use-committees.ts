@@ -1,7 +1,7 @@
 // src/frontend/features/organizations/committees/api/use-committees.ts
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import type { ApiError } from "@/shared/types/Api";
+import type { ApiError } from "@/shared/types";
 
 import type { Committee } from "../types/Committees";
 import type { CommitteeFilters } from "../types/CommitteesFilters";

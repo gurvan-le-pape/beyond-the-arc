@@ -10,10 +10,10 @@ import {
   PlayerHeader,
   PlayerMatchHistoryTable,
 } from "@/features/players/components";
-import { aggregateStats } from "@/features/players/utils/statsAggregation";
+import { aggregateStats } from "@/features/players/utils";
 import { PlayerShotChart } from "@/shared/components/charts";
 import { PageLayout } from "@/shared/components/layout";
-import { handleServerError } from "@/shared/utils/handleServerError";
+import { handleServerError } from "@/shared/utils";
 
 interface PlayerDetailPageProps {
   readonly params: Promise<{

@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import React from "react";
 
 import { useCommitteeLeagueClubFilters } from "@/features/competitions/championships/hooks";
-import { useMatchesCascadeOptions } from "@/features/matches/hooks/useMatchesCascadeOptions";
+import { useMatchesCascadeOptions } from "@/features/matches/hooks";
 import { ErrorMessage } from "@/shared/components/feedback";
 import type { CascadeStep } from "@/shared/components/filters/CascadeSelects";
 import { CascadeSelects } from "@/shared/components/filters/CascadeSelects";

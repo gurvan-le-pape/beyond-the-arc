@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 
-import type { ClubTeamInfo } from "@/features/organizations/clubs/types/ClubDetailed";
+import type { ClubTeamInfo } from "@/features/organizations/clubs/types";
 import { CompetitionLevel } from "@/shared/constants";
 import { normalizeString } from "@/shared/utils";
 

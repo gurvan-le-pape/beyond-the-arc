@@ -20,7 +20,7 @@ import {
   DocsSectionAccordion,
   DocsStructureSection,
 } from "@/features/site/docs/components";
-import { useAccordion } from "@/features/site/docs/hooks/useAccordion";
+import { useAccordion } from "@/features/site/docs/hooks";
 import { PageHero, PageLayout } from "@/shared/components/layout";
 
 const QUICK_LINKS_CONFIG = [

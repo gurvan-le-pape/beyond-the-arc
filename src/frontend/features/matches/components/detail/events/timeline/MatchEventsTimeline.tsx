@@ -3,12 +3,12 @@
 
 import React from "react";
 
-import type { EventStyle } from "@/features/matches/types/EventStyle";
-import type { EventWithScore } from "@/features/matches/types/EventWithScore";
-import type { MatchEvent } from "@/features/matches/types/MatchEvent";
-import type { TeamInfo } from "@/features/teams/types/TeamInfo";
+import type { EventStyle } from "@/features/matches/types";
+import type { EventWithScore } from "@/features/matches/types";
+import type { MatchEvent } from "@/features/matches/types";
+import type { TeamInfo } from "@/features/teams/types";
 import { useRouter } from "@/navigation";
-import { EventCategory } from "@/shared/constants/event-categories";
+import { EventCategory } from "@/shared/constants";
 
 import { EventScorePill } from "./EventScorePill";
 import { TimelineEventBlock } from "./TimelineEventBlock";

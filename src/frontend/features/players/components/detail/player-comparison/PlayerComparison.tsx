@@ -4,13 +4,13 @@
 import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 
-import { usePlayerMatches } from "@/features/players/api/use-players";
-import type { Player } from "@/features/players/types/Player";
-import { aggregateStats } from "@/features/players/utils/statsAggregation";
+import { usePlayerMatches } from "@/features/players/api";
+import type { Player } from "@/features/players/types";
+import { aggregateStats } from "@/features/players/utils";
 import { Section } from "@/shared/components/blocks";
-import { StatComparison } from "@/shared/components/blocks/StatComparison";
+import { StatComparison } from "@/shared/components/blocks";
 import { Badge } from "@/shared/components/primitives";
-import { cn } from "@/shared/utils/cn";
+import { cn } from "@/shared/utils";
 
 import { PlayerIdentity } from "../PlayerIdentity";
 import { PlayerSearchDropdown } from "../PlayerSearchDropdown";

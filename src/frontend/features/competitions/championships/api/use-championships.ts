@@ -1,7 +1,7 @@
 // src/frontend/features/competitions/championships/api/use-championships.ts
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import type { ApiError } from "@/shared/types/Api";
+import type { ApiError } from "@/shared/types";
 
 import type { Championship } from "../types/Championship";
 import type { ChampionshipFilters } from "../types/ChampionshipFilters";

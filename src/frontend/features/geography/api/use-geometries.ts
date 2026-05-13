@@ -1,8 +1,8 @@
 // src/frontend/features/geography/api/use-geometries.ts
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import type { GeoJsonData } from "@/features/organizations/clubs/types/Map";
-import type { ApiError } from "@/shared/types/Api";
+import type { GeoJsonData } from "@/features/organizations/clubs/types";
+import type { ApiError } from "@/shared/types";
 
 import { geometriesPrefetch, geometriesQueries } from "./geometriesQueries";
 

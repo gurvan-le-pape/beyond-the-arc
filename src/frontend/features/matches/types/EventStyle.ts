@@ -1,5 +1,5 @@
 // src/frontend/features/matches/types/EventStyle.ts
-import type { EventCategory } from "@/shared/constants/event-categories";
+import type { EventCategory } from "@/shared/constants";
 
 /**
  * Display configuration returned by getEventStyle for a single event type.

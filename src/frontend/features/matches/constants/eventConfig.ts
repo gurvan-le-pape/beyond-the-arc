@@ -1,5 +1,5 @@
 // src/frontend/features/matches/constants/eventConfig.ts
-import { EventCategory } from "@/shared/constants/event-categories";
+import { EventCategory } from "@/shared/constants";
 
 // Event type configurations with icons, colors, and i18n label keys
 export const eventConfig: Record<

@@ -6,7 +6,7 @@ import React, { useState } from "react";
 
 import { useCommitteeLeagueClubFilters } from "@/features/competitions/championships/hooks";
 import { useClubSearch } from "@/features/organizations/clubs/api";
-import { useTeamFilterValues } from "@/features/teams/api/use-teams";
+import { useTeamFilterValues } from "@/features/teams/api";
 import { ErrorMessage } from "@/shared/components/feedback";
 import type { CascadeStep } from "@/shared/components/filters/CascadeSelects";
 import { CascadeSelects } from "@/shared/components/filters/CascadeSelects";

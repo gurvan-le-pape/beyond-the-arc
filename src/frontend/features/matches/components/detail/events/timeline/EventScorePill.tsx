@@ -1,7 +1,7 @@
 // src/frontend/features/matches/components/detail/events/timeline/EventScorePill.tsx
 import React from "react";
 
-import { cn } from "@/shared/utils/cn";
+import { cn } from "@/shared/utils";
 
 interface EventScorePillProps {
   homeScore: number;

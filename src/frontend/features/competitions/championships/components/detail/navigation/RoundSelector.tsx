@@ -7,7 +7,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 import { Select } from "@/shared/components/forms";
 import { PillButton } from "@/shared/components/primitives";
-import { cn } from "@/shared/utils/cn";
+import { cn } from "@/shared/utils";
 
 interface RoundSelectorProps {
   rounds: number[];

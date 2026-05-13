@@ -4,7 +4,7 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { useMatchesByPools } from "@/features/matches/api";
-import type { Match } from "@/features/matches/types/Match";
+import type { Match } from "@/features/matches/types";
 
 import { useLeaderboards } from "../../leaderboards/api";
 import { usePools } from "../../pools/api";

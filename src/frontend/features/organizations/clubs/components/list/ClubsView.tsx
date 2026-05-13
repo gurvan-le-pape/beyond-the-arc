@@ -4,10 +4,10 @@
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
-import { useCommittees } from "@/features/organizations/committees/api/use-committees";
-import { useLeagues } from "@/features/organizations/leagues/api/use-leagues";
+import { useCommittees } from "@/features/organizations/committees/api";
+import { useLeagues } from "@/features/organizations/leagues/api";
 import { Pagination } from "@/shared/components/table";
-import { useDebounce } from "@/shared/hooks/useDebounce";
+import { useDebounce } from "@/shared/hooks";
 
 import { useClubs } from "../../api/use-clubs";
 import type { ClubBasic } from "../../types/ClubBasic";

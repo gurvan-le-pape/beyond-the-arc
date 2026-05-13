@@ -1,6 +1,6 @@
 // src/frontend/features/competitions/championships/api/championships.service.ts
-import type { Championship } from "@/features/competitions/championships/types/Championship";
-import type { ChampionshipFilters } from "@/features/competitions/championships/types/ChampionshipFilters";
+import type { Championship } from "@/features/competitions/championships/types";
+import type { ChampionshipFilters } from "@/features/competitions/championships/types";
 
 import apiClient from "../../../../lib/services/client/api-client";
 

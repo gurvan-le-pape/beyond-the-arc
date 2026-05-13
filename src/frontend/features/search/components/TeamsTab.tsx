@@ -4,13 +4,13 @@
 import { UserGroupIcon } from "@heroicons/react/24/outline";
 import { useTranslations } from "next-intl";
 
-import { useTeams } from "@/features/teams/api/use-teams";
-import TeamCard from "@/features/teams/components/list/TeamsCard";
-import TeamsFilters from "@/features/teams/components/list/TeamsFilters";
-import { useTeamsFilterState } from "@/features/teams/hooks/useTeamsFilterState";
-import type { Team } from "@/features/teams/types/Team";
+import { useTeams } from "@/features/teams/api";
+import TeamCard from "@/features/teams/components";
+import TeamsFilters from "@/features/teams/components";
+import { useTeamsFilterState } from "@/features/teams/hooks";
+import type { Team } from "@/features/teams/types";
 import { useRouter } from "@/navigation";
-import { SearchTabShell } from "@/shared/components/domain/search/SearchTabShell";
+import { SearchTabShell } from "@/shared/components/domain";
 import { EmptyState } from "@/shared/components/feedback";
 
 export function TeamsTab() {

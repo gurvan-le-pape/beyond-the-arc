@@ -19,8 +19,8 @@
 //   placeholder="All categories"
 // />
 
-import type { ComboBoxOption } from "@/shared/components/primitives/ComboBox";
-import { ComboBox } from "@/shared/components/primitives/ComboBox";
+import type { ComboBoxOption } from "@/shared/components/primitives";
+import { ComboBox } from "@/shared/components/primitives";
 
 export interface SelectProps {
   readonly options: ComboBoxOption[];

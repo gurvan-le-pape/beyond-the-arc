@@ -5,9 +5,9 @@ import { useTranslations } from "next-intl";
 import React from "react";
 
 import { Link, usePathname } from "@/navigation";
-import { navItems } from "@/shared/constants/navConfig";
+import { navItems } from "@/shared/constants";
 import type { NavItem } from "@/shared/types";
-import { cn } from "@/shared/utils/cn";
+import { cn } from "@/shared/utils";
 
 interface NavLinksProps {
   onClick?: () => void;
