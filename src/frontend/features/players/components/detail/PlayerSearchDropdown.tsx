@@ -6,10 +6,10 @@ import { useTranslations } from "next-intl";
 
 import { DebouncedInput } from "@/shared/components/forms";
 import { Button } from "@/shared/components/primitives";
-import { ImageWithFallback } from "@/shared/components/primitives/ImageWithFallback";
+import { ImageWithFallback } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
-import { cn } from "@/shared/utils/cn";
-import { formatNameToFileName } from "@/shared/utils/formatNameToFileName";
+import { cn } from "@/shared/utils";
+import { formatNameToFileName } from "@/shared/utils";
 
 import { usePlayerSearch } from "../../hooks";
 import type { Player } from "../../types/Player";

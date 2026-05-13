@@ -10,8 +10,8 @@ import {
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useState } from "react";
 
-import { ApiError } from "@/shared/types/Api";
-import { logger } from "@/shared/utils/logger";
+import { ApiError } from "@/shared/types";
+import { logger } from "@/shared/utils";
 
 interface Props {
   readonly children: React.ReactNode;

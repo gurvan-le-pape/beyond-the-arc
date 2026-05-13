@@ -1,5 +1,5 @@
 // src/frontend/features/organizations/clubs/api/clubs.service.ts
-import type { ClubStatsByRegion } from "@/features/organizations/clubs/types/ClubStatsByRegion";
+import type { ClubStatsByRegion } from "@/features/organizations/clubs/types";
 import apiClient from "@/lib/services/client/api-client";
 
 import type { ClubBasic } from "../types/ClubBasic";

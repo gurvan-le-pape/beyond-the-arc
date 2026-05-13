@@ -1,5 +1,5 @@
 // src/frontend/features/matches/types/MatchPlayerStats.ts
-import type { PlayerMatchStats } from "@/shared/types/PlayerMatchStats";
+import type { PlayerMatchStats } from "@/shared/types";
 
 export interface MatchPlayerWithTeamRef {
   id: number;

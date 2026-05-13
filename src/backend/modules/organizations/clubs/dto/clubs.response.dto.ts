@@ -1,5 +1,5 @@
 // src/backend/modules/organizations/clubs/dto/clubs.response.dto.ts
-import { PresidentResponseDto } from "@common/dto/president.response.dto";
+import { PresidentResponseDto } from "@common/dto";
 import { Category, CompetitionLevel, Gender } from "@common/index";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 

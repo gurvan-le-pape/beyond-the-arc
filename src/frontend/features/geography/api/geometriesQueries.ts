@@ -1,8 +1,8 @@
 // src/frontend/features/geography/api/geometriesQueries.ts
 import type { QueryClient } from "@tanstack/react-query";
 
-import type { GeoJsonData } from "@/features/organizations/clubs/types/Map";
-import { safeFetch } from "@/shared/utils/safeFetch";
+import type { GeoJsonData } from "@/features/organizations/clubs/types";
+import { safeFetch } from "@/shared/utils";
 
 import { geometriesKeys } from "./geometriesKeys";
 

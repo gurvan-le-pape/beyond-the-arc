@@ -1,5 +1,5 @@
 // src/backend/modules/competitions/championships/championships.controller.spec.ts
-import { CompetitionLevel } from "@common/constants/competition-levels";
+import { CompetitionLevel } from "@common/constants";
 import { CacheDedupService } from "@common/services/cache-dedup.service";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { NotFoundException } from "@nestjs/common";

@@ -1,5 +1,5 @@
 // src/backend/modules/matches/dto/matches.response.dto.ts
-import { Role } from "@common/constants/roles";
+import { Role } from "@common/constants";
 import { Category, CompetitionLevel, Gender } from "@common/index";
 import { ApiProperty } from "@nestjs/swagger";
 

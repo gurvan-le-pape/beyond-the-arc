@@ -1,6 +1,6 @@
 // src/frontend/features/competitions/championships/components/detail/ChampionshipListItem.tsx
 
-import { NavButton } from "@/shared/components/primitives/Button";
+import { NavButton } from "@/shared/components/primitives";
 
 import type { Championship } from "../../types/Championship";
 

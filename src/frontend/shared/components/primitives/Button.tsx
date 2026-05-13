@@ -10,7 +10,7 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { type ButtonHTMLAttributes, forwardRef } from "react";
 
-import { cn } from "@/shared/utils/cn";
+import { cn } from "@/shared/utils";
 
 // ---------------------------------------------------------------------------
 // Shared loading spinner — used by all three components

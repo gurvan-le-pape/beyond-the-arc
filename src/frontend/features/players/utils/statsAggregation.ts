@@ -1,5 +1,5 @@
 // src/frontend/features/players/utils/statsAggregation.ts
-import type { PlayerMatchStats } from "@/shared/types/PlayerMatchStats";
+import type { PlayerMatchStats } from "@/shared/types";
 
 /**
  * Aggregates player statistics from an array of individual game stats.

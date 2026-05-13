@@ -1,5 +1,5 @@
 // src/backend/modules/competitions/championships/championships.service.ts
-import { CompetitionLevel } from "@common/constants/competition-levels";
+import { CompetitionLevel } from "@common/constants";
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 import { PrismaService } from "prisma/prisma.service";

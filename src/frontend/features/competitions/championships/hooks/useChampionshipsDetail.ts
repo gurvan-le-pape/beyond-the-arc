@@ -4,9 +4,9 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { useMatchesByPools } from "@/features/matches/api";
-import type { Match } from "@/features/matches/types/Match";
-import { useCommittee } from "@/features/organizations/committees/api/use-committees";
-import { useLeague } from "@/features/organizations/leagues/api/use-leagues";
+import type { Match } from "@/features/matches/types";
+import { useCommittee } from "@/features/organizations/committees/api";
+import { useLeague } from "@/features/organizations/leagues/api";
 import {
   CompetitionLevel,
   type LocalCompetitionLevel,

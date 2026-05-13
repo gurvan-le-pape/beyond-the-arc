@@ -4,12 +4,12 @@
 import { UserIcon } from "@heroicons/react/24/outline";
 import { useTranslations } from "next-intl";
 
-import { usePlayers } from "@/features/players/api/use-players";
+import { usePlayers } from "@/features/players/api";
 import { PlayerCard, PlayersFilters } from "@/features/players/components";
-import { usePlayersFilterState } from "@/features/players/hooks/usePlayersFilterState";
-import type { Player } from "@/features/players/types/Player";
+import { usePlayersFilterState } from "@/features/players/hooks";
+import type { Player } from "@/features/players/types";
 import { useRouter } from "@/navigation";
-import { SearchTabShell } from "@/shared/components/domain/search/SearchTabShell";
+import { SearchTabShell } from "@/shared/components/domain";
 import { EmptyState } from "@/shared/components/feedback";
 
 export function PlayersTab() {

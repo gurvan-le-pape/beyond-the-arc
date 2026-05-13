@@ -18,7 +18,7 @@ import { useEffect, useState } from "react";
 
 import { Text } from "@/shared/components/typography";
 import { NA } from "@/shared/constants";
-import { cn } from "@/shared/utils/cn";
+import { cn } from "@/shared/utils";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

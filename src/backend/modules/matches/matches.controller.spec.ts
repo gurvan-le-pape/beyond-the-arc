@@ -1,5 +1,5 @@
 // src/backend/modules/matches/matches.controller.spec.ts
-import type { PaginatedResponseDto } from "@common/dto/paginated-response.dto";
+import type { PaginatedResponseDto } from "@common/dto";
 import type { CompetitionLevel } from "@common/index";
 import { CacheDedupService } from "@common/services/cache-dedup.service";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";

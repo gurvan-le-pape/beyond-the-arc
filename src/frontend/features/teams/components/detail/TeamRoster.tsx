@@ -4,7 +4,7 @@
 import { useTranslations } from "next-intl";
 import React, { useState } from "react";
 
-import type { PlayerMatchHistoryEntry } from "@/features/players/types/PlayerMatchHistory";
+import type { PlayerMatchHistoryEntry } from "@/features/players/types";
 import { useRouter } from "@/navigation";
 import { Section } from "@/shared/components/blocks";
 import {

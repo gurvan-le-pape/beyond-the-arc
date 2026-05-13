@@ -4,13 +4,13 @@
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 
-import ChampionshipList from "@/features/competitions/championships/components/detail/ChampionshipList";
+import { ChampionshipList } from "@/features/competitions/championships/components";
 import { useRegionalChampionshipsData } from "@/features/competitions/championships/hooks";
 import { useRouter } from "@/navigation";
-import { OrganizationHeader } from "@/shared/components/domain/organizations/detail/OrganizationHeader";
-import { OrganizationInfo } from "@/shared/components/domain/organizations/detail/OrganizationInfo";
-import { OrganizationPageSkeleton } from "@/shared/components/domain/organizations/detail/OrganizationPageSkeleton";
-import { SearchableChipList } from "@/shared/components/domain/organizations/detail/SearchableChipsList";
+import { OrganizationHeader } from "@/shared/components/domain";
+import { OrganizationInfo } from "@/shared/components/domain";
+import { OrganizationPageSkeleton } from "@/shared/components/domain";
+import { SearchableChipList } from "@/shared/components/domain";
 import { ErrorMessage } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";

@@ -1,6 +1,6 @@
 // src/frontend/lib/services/server/server-api-client.ts
-import { logger } from "@/shared/utils/logger";
-import { parseApiError } from "@/shared/utils/parseApiError";
+import { logger } from "@/shared/utils";
+import { parseApiError } from "@/shared/utils";
 
 /**
  * Server-side API client for use in getStaticProps/getStaticPaths/getServerSideProps.

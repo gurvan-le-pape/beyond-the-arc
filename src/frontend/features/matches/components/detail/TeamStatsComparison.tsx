@@ -1,9 +1,9 @@
 // src/frontend/features/matches/components/detail/TeamStatsComparison.tsx
 "use client";
 
-import type { TeamStats } from "@/features/teams/types/TeamInfo";
+import type { TeamStats } from "@/features/teams/types";
 import { Section } from "@/shared/components/blocks";
-import { StatComparison } from "@/shared/components/blocks/StatComparison";
+import { StatComparison } from "@/shared/components/blocks";
 
 interface StatCategory {
   key: string;

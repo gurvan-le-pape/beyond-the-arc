@@ -1,10 +1,10 @@
 // src/frontend/features/matches/utils/eventHelpers.ts
-import { eventConfig } from "@/features/matches/constants/eventConfig";
-import type { EventStyle } from "@/features/matches/types/EventStyle";
-import type { MatchEvent } from "@/features/matches/types/MatchEvent";
-import { EventCategory } from "@/shared/constants/event-categories";
-import { EventType } from "@/shared/constants/event-types";
-import { Role } from "@/shared/constants/roles";
+import { eventConfig } from "@/features/matches/constants";
+import type { EventStyle } from "@/features/matches/types";
+import type { MatchEvent } from "@/features/matches/types";
+import { EventCategory } from "@/shared/constants";
+import { EventType } from "@/shared/constants";
+import { Role } from "@/shared/constants";
 
 // ---------------------------------------------------------------------------
 // Event-style lookup

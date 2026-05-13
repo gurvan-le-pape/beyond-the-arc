@@ -1,6 +1,6 @@
 // src/frontend/features/players/utils/transformShotEvents.ts
-import type { MatchEvent } from "@/features/matches/types/MatchEvent";
-import type { ShotEvent } from "@/shared/types/ShotEvent";
+import type { MatchEvent } from "@/features/matches/types";
+import type { ShotEvent } from "@/shared/types";
 
 export function transformToShotEvents(events: MatchEvent[]): ShotEvent[] {
   return events

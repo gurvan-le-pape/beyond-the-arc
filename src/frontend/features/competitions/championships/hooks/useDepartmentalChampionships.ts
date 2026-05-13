@@ -1,9 +1,9 @@
 // src/frontend/features/competitions/championships/hooks/useDepartmentalChampionships.ts
 
 import { useClubs } from "@/features/organizations/clubs/api";
-import type { ClubBasic } from "@/features/organizations/clubs/types/ClubBasic";
+import type { ClubBasic } from "@/features/organizations/clubs/types";
 import { useCommittees } from "@/features/organizations/committees/api";
-import type { Committee } from "@/features/organizations/committees/types/Committees";
+import type { Committee } from "@/features/organizations/committees/types";
 import { CompetitionLevel } from "@/shared/constants";
 
 import { useChampionships } from "../api";

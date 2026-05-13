@@ -10,7 +10,7 @@ import {
 import { useTranslations } from "next-intl";
 
 import { InfoBox, Section } from "@/shared/components/blocks";
-import { formatPhone } from "@/shared/utils/helpers/string-helpers";
+import { formatPhone } from "@/shared/utils";
 
 import type { ClubDetailed } from "../../types/ClubDetailed";
 

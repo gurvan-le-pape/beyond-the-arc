@@ -2,7 +2,7 @@
 import { useTranslations } from "next-intl";
 import React from "react";
 
-import { Select } from "@/shared/components/forms/Select";
+import { Select } from "@/shared/components/forms";
 import { CompetitionLevel } from "@/shared/constants";
 
 interface LevelLocationFiltersProps {

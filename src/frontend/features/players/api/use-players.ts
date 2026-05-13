@@ -1,7 +1,7 @@
 // src/frontend/features/players/api/use-players.ts
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import type { ApiError } from "@/shared/types/Api";
+import type { ApiError } from "@/shared/types";
 
 import type { Player } from "../types/Player";
 import type { PlayerFilters } from "../types/PlayerFilters";

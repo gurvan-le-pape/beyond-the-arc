@@ -1,7 +1,7 @@
 // src/frontend/shared/components/feedback/ErrorMessage.tsx
 import { forwardRef, type HTMLAttributes } from "react";
 
-import { cn } from "@/shared/utils/cn";
+import { cn } from "@/shared/utils";
 
 import { Text } from "../typography";
 

@@ -4,7 +4,7 @@ import { useMemo } from "react";
 
 import { MatchTeamLabel } from "@/shared/components/domain";
 import { Badge } from "@/shared/components/primitives";
-import { formatMatchDateTime } from "@/shared/utils/helpers/date-helpers";
+import { formatMatchDateTime } from "@/shared/utils";
 
 import type { Team } from "../types/Team";
 import type { TeamMatchHistory } from "../types/TeamMatchHistory";

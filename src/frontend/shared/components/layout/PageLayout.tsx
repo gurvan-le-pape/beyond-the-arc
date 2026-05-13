@@ -1,5 +1,5 @@
 // src/frontend/shared/components/layout/PageLayout.tsx
-import { cn } from "@/shared/utils/cn";
+import { cn } from "@/shared/utils";
 
 import { Footer } from "./footer/Footer";
 import { Header } from "./header/Header";

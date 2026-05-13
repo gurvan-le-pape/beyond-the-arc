@@ -1,7 +1,7 @@
 // src/frontend/shared/utils/charts/overlays/hotspots/binShotsByZones.ts
 // Utility to bin shots into zones and compute stats for each zone
 
-import type { ZoneStats } from "@/shared/types/charts/ZoneStats";
+import type { ZoneStats } from "@/shared/types";
 
 // Usage: const stats = binShotsByZones(shots, zones)
 export interface Zone {

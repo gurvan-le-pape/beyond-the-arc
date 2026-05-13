@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { useMemo } from "react";
 
 import { MatchTeamLabel } from "@/shared/components/domain";
-import { formatMatchDateTime } from "@/shared/utils/helpers/date-helpers";
+import { formatMatchDateTime } from "@/shared/utils";
 
 import type { Player } from "../types/Player";
 import type { PlayerMatchHistory } from "../types/PlayerMatchHistory";

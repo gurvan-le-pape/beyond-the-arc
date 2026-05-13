@@ -1,7 +1,7 @@
 // src/backend/modules/competitions/championships/championships.controller.ts
-import { CACHE_TTL } from "@common/constants/cache-ttls";
-import { CompetitionLevel } from "@common/constants/competition-levels";
-import { CacheInterceptor } from "@common/interceptors/cache.interceptor";
+import { CACHE_TTL } from "@common/constants";
+import { CompetitionLevel } from "@common/constants";
+import { CacheInterceptor } from "@common/interceptors";
 import {
   Controller,
   Get,

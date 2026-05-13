@@ -1,7 +1,7 @@
 // src/backend/modules/organizations/clubs/dto/clubs.query.dto.spec.ts
-import { Category } from "@common/constants/categories";
-import { CompetitionLevel } from "@common/constants/competition-levels";
-import { Gender } from "@common/constants/genders";
+import { Category } from "@common/constants";
+import { CompetitionLevel } from "@common/constants";
+import { Gender } from "@common/constants";
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
 

@@ -4,7 +4,7 @@
 import * as d3 from "d3";
 import React, { useMemo, useState } from "react";
 
-import type { MatchEvent } from "@/features/matches/types/MatchEvent";
+import type { MatchEvent } from "@/features/matches/types";
 import {
   Basket,
   CentreCircle,
@@ -32,7 +32,7 @@ import {
   THREE_PT_LINE_DIST,
   THREE_PT_RADIUS,
 } from "@/shared/constants";
-import { ChartType, ShotFilter } from "@/shared/constants/chart-types";
+import { ChartType, ShotFilter } from "@/shared/constants";
 import { useBinnedShots } from "@/shared/hooks";
 
 import HotspotsHeader from "./headers/HotspotsHeader";

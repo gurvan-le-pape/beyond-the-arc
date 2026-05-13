@@ -2,10 +2,10 @@
 import { useTranslations } from "next-intl";
 import React from "react";
 
-import type { EventStyle } from "@/features/matches/types/EventStyle";
-import type { EventWithScore } from "@/features/matches/types/EventWithScore";
+import type { EventStyle } from "@/features/matches/types";
+import type { EventWithScore } from "@/features/matches/types";
 import { Text } from "@/shared/components/typography";
-import { cn } from "@/shared/utils/cn";
+import { cn } from "@/shared/utils";
 
 interface TimelineEventBlockProps {
   /** Which side of the timeline this block sits on. */

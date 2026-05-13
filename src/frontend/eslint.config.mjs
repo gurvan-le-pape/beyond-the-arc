@@ -3,6 +3,7 @@ import tsParser from "@typescript-eslint/parser";
 import importSort from "eslint-plugin-simple-import-sort";
 import sonarjs from "eslint-plugin-sonarjs";
 import pathComment from "./eslint-rules/enforce-file-path-comment.js";
+import barrelImport from "./eslint-rules/enforce-barrel-import.js";
 
 export default [
   // Config for all TS files
@@ -19,7 +20,12 @@ export default [
       "@typescript-eslint": tsPlugin,
       "simple-import-sort": importSort,
       sonarjs: sonarjs,
-      "local-rules": { rules: { "enforce-file-path-comment": pathComment } },
+      "local-rules": {
+        rules: {
+          "enforce-file-path-comment": pathComment,
+          "enforce-barrel-import": barrelImport,
+        },
+      },
     },
     rules: {
       // Import sorting
@@ -54,8 +60,9 @@ export default [
       "sonarjs/no-small-switch": "warn",
       "sonarjs/prefer-immediate-return": "warn",
 
-      // Custom rule to enforce file path comments
+      // Custom rules
       "local-rules/enforce-file-path-comment": "warn",
+      "local-rules/enforce-barrel-import": "warn",
     },
   },
   // Override for test files

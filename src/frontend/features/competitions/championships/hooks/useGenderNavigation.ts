@@ -3,8 +3,8 @@
 
 import { useCallback, useMemo } from "react";
 
-import { useChampionships } from "@/features/competitions/championships/api/use-championships";
-import { sortCategories } from "@/features/competitions/championships/utils/sortCategories";
+import { useChampionships } from "@/features/competitions/championships/api";
+import { sortCategories } from "@/features/competitions/championships/utils";
 import { useRouter } from "@/navigation";
 import type { Category, CompetitionLevel } from "@/shared/constants";
 import { Gender } from "@/shared/constants";

@@ -1,6 +1,6 @@
 // src/frontend/features/matches/utils/buildTeam.ts
-import type { MatchPlayerWithStats } from "@/features/matches/types/MatchPlayerStats";
-import type { TeamInfoExtended } from "@/features/teams/types/TeamInfo";
+import type { MatchPlayerWithStats } from "@/features/matches/types";
+import type { TeamInfoExtended } from "@/features/teams/types";
 import { NA } from "@/shared/constants";
 
 import type { MatchClubRef } from "../types";

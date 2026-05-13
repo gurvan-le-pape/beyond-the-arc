@@ -1,5 +1,5 @@
 // src/frontend/shared/components/feedback/LoadingSpinner.tsx
-import { cn } from "@/shared/utils/cn";
+import { cn } from "@/shared/utils";
 
 /**
  * Loading spinner component

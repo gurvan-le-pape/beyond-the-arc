@@ -1,6 +1,6 @@
 // src/frontend/features/organizations/clubs/types/ClubDetailed.ts
 import type { Category } from "@/shared/constants";
-import type { Gender } from "@/shared/constants/genders";
+import type { Gender } from "@/shared/constants";
 import type { President } from "@/shared/types";
 
 export interface ClubTeamLeaderboard {

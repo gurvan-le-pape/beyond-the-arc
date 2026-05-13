@@ -1,6 +1,6 @@
 // src/backend/modules/teams/teams.service.ts
-import { CompetitionLevel } from "@common/constants/competition-levels";
-import { PaginatedResponseDto } from "@common/dto/paginated-response.dto";
+import { CompetitionLevel } from "@common/constants";
+import { PaginatedResponseDto } from "@common/dto";
 import { Category, Gender } from "@common/index";
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { Prisma } from "@prisma/client";

@@ -6,7 +6,7 @@ import { useState } from "react";
 
 import { Card } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
-import { formatNameToFileName } from "@/shared/utils/formatNameToFileName";
+import { formatNameToFileName } from "@/shared/utils";
 
 import type { ClubDetailed } from "../../types/ClubDetailed";
 

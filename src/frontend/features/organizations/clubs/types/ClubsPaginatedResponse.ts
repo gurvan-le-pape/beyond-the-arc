@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/committees/types/ClubsPaginatedResponse.ts
+// src/frontend/features/organizations/clubs/types/ClubsPaginatedResponse.ts
 import type { ClubBasic } from "./ClubBasic";
 
 export interface ClubsPaginatedResponse {

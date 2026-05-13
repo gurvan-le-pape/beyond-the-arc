@@ -3,9 +3,9 @@ import React from "react";
 
 import { PolygonZone } from "@/shared/components/charts";
 import type { ShotEvent } from "@/shared/types";
-import type { ZoneStats } from "@/shared/types/charts/ZoneStats";
-import { binShotsByZones } from "@/shared/utils/charts/overlays/hotspots/binShotsByZones";
-import { getApexStripeZone } from "@/shared/utils/charts/overlays/hotspots/zones/shotZonesApexStripe";
+import type { ZoneStats } from "@/shared/types";
+import { binShotsByZones } from "@/shared/utils";
+import { getApexStripeZone } from "@/shared/utils";
 
 interface ApexStripeZonesProps {
   shots: ShotEvent[];

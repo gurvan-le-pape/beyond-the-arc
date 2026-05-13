@@ -1,5 +1,5 @@
 // src/backend/modules/matches/dto/matches.query.dto.ts
-import { CompetitionLevel } from "@common/constants/competition-levels";
+import { CompetitionLevel } from "@common/constants";
 import { Category, Gender } from "@common/index";
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";

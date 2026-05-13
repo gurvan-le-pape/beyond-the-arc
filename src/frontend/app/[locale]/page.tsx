@@ -1,7 +1,7 @@
 // src/frontend/app/[locale]/page.tsx
 import { getTranslations } from "next-intl/server";
 
-import { serverStatsService } from "@/features/stats/api/stats.server";
+import { serverStatsService } from "@/features/stats/api";
 import { Footer, Header } from "@/shared/components/layout";
 import { Text } from "@/shared/components/typography";
 

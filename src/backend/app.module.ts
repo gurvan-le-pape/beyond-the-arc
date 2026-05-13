@@ -2,7 +2,7 @@
 import { randomUUID } from "node:crypto";
 
 import { CommonModule } from "@common/common.module";
-import { CACHE_TTL } from "@common/constants/cache-ttls";
+import { CACHE_TTL } from "@common/constants";
 import { MetricsController } from "@common/controllers/metrics.controller";
 import { HttpMetricsInterceptor } from "@common/interceptors";
 import { StatsModule } from "@modules/stats/stats.module";

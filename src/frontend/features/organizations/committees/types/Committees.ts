@@ -1,5 +1,5 @@
 // src/frontend/features/organizations/committees/types/Committees.ts
-import type { Department } from "@/features/geography/types/Department";
+import type { Department } from "@/features/geography/types";
 import type { President } from "@/shared/types";
 
 export interface Committee {

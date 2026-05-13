@@ -3,7 +3,7 @@ import { useTranslations } from "next-intl";
 import React from "react";
 
 import { Select } from "@/shared/components/forms";
-import { EventCategory } from "@/shared/constants/event-categories";
+import { EventCategory } from "@/shared/constants";
 
 interface EventCategorySelectProps {
   value: EventCategory | undefined;

@@ -1,9 +1,9 @@
 // src/frontend/features/competitions/championships/hooks/useRegionalChampionships.ts
 
-import { useCommittees } from "@/features/organizations/committees/api/use-committees";
-import type { Committee } from "@/features/organizations/committees/types/Committees";
-import { useLeagues } from "@/features/organizations/leagues/api/use-leagues";
-import type { League } from "@/features/organizations/leagues/types/League";
+import { useCommittees } from "@/features/organizations/committees/api";
+import type { Committee } from "@/features/organizations/committees/types";
+import { useLeagues } from "@/features/organizations/leagues/api";
+import type { League } from "@/features/organizations/leagues/types";
 import { CompetitionLevel } from "@/shared/constants";
 
 import { useChampionships } from "../api";

@@ -4,12 +4,12 @@
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { useTranslations } from "next-intl";
 
-import { useMatches } from "@/features/matches/api/use-matches";
+import { useMatches } from "@/features/matches/api";
 import { MatchesCard, MatchesFilters } from "@/features/matches/components";
-import { useMatchesFilterState } from "@/features/matches/hooks/useMatchesFilterState";
-import type { Match } from "@/features/matches/types/Match";
+import { useMatchesFilterState } from "@/features/matches/hooks";
+import type { Match } from "@/features/matches/types";
 import { useRouter } from "@/navigation";
-import { SearchTabShell } from "@/shared/components/domain/search/SearchTabShell";
+import { SearchTabShell } from "@/shared/components/domain";
 import { EmptyState } from "@/shared/components/feedback";
 
 export function MatchesTab() {

@@ -1,5 +1,5 @@
 // src/frontend/shared/components/charts/overlays/ScatterOverlay.tsx
-import type { ShotEvent } from "@/shared/types/ShotEvent";
+import type { ShotEvent } from "@/shared/types";
 
 export const ScatterOverlay: React.FC<{
   shots: ShotEvent[];

@@ -5,19 +5,19 @@ import * as d3 from "d3";
 import React, { useMemo, useState } from "react";
 
 import { ShotFilter } from "@/shared/constants";
-import type { ShotEvent } from "@/shared/types/ShotEvent";
+import type { ShotEvent } from "@/shared/types";
 import {
   binShotsByZones,
   type Zone,
-} from "@/shared/utils/charts/overlays/hotspots/binShotsByZones";
-import { getAboveWingZones } from "@/shared/utils/charts/overlays/hotspots/zones/shotZonesAboveWing";
-import { getApexStripeZone } from "@/shared/utils/charts/overlays/hotspots/zones/shotZonesApexStripe";
-import { getArcZones } from "@/shared/utils/charts/overlays/hotspots/zones/shotZonesArc";
-import { getArcApexSidelineZones } from "@/shared/utils/charts/overlays/hotspots/zones/shotZonesArcApexSideline";
-import { getCorner3Zones } from "@/shared/utils/charts/overlays/hotspots/zones/shotZonesCorner3";
-import { getPaintZones } from "@/shared/utils/charts/overlays/hotspots/zones/shotZonesPaint";
-import { getTopKeyZone } from "@/shared/utils/charts/overlays/hotspots/zones/shotZonesTopKey";
-import { getWingZones } from "@/shared/utils/charts/overlays/hotspots/zones/shotZonesWing";
+} from "@/shared/utils";
+import { getAboveWingZones } from "@/shared/utils";
+import { getApexStripeZone } from "@/shared/utils";
+import { getArcZones } from "@/shared/utils";
+import { getArcApexSidelineZones } from "@/shared/utils";
+import { getCorner3Zones } from "@/shared/utils";
+import { getPaintZones } from "@/shared/utils";
+import { getTopKeyZone } from "@/shared/utils";
+import { getWingZones } from "@/shared/utils";
 
 import AboveWingZones from "./hotspots/AboveWingZones";
 import ApexStripeZones from "./hotspots/ApexStripeZones";

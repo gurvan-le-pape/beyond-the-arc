@@ -1,4 +1,6 @@
 // src/frontend/features/competitions/championships/components/detail/ChampionshipList.tsx
+"use client";
+
 import { useTranslations } from "next-intl";
 
 import { Section } from "@/shared/components/blocks";
@@ -14,7 +16,7 @@ interface ChampionshipListProps {
   readonly onItemClick: (championship: Championship) => void;
 }
 
-function ChampionshipList({
+export function ChampionshipList({
   championshipsByGender,
   onItemClick,
 }: ChampionshipListProps) {

@@ -2,7 +2,7 @@
 import type { RefObject } from "react";
 import React from "react";
 
-import type { FilterKey } from "@/shared/types/filters/FilterKey";
+import type { FilterKey } from "@/shared/types";
 
 /**
  * Create refs for dropdowns by filter key

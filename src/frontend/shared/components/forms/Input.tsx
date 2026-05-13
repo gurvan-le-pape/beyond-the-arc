@@ -1,7 +1,7 @@
 // src/frontend/shared/components/forms/Input.tsx
 import { forwardRef, type InputHTMLAttributes, useId } from "react";
 
-import { cn } from "@/shared/utils/cn";
+import { cn } from "@/shared/utils";
 
 import { Text } from "../typography";
 

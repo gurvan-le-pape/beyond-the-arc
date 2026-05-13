@@ -3,9 +3,9 @@ import React from "react";
 
 import { PolygonZone } from "@/shared/components/charts";
 import type { ShotEvent } from "@/shared/types";
-import type { ZoneStats } from "@/shared/types/charts/ZoneStats";
-import { binShotsByZones } from "@/shared/utils/charts/overlays/hotspots/binShotsByZones";
-import { getArcApexSidelineZones } from "@/shared/utils/charts/overlays/hotspots/zones/shotZonesArcApexSideline";
+import type { ZoneStats } from "@/shared/types";
+import { binShotsByZones } from "@/shared/utils";
+import { getArcApexSidelineZones } from "@/shared/utils";
 
 interface ArcApexSidelineZonesProps {
   shots: ShotEvent[];

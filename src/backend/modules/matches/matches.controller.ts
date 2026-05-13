@@ -1,7 +1,7 @@
 // src/backend/modules/matches/matches.controller.ts
-import { CACHE_TTL } from "@common/constants/cache-ttls";
-import { PaginatedResponseDto } from "@common/dto/paginated-response.dto";
-import { CacheInterceptor } from "@common/interceptors/cache.interceptor";
+import { CACHE_TTL } from "@common/constants";
+import { PaginatedResponseDto } from "@common/dto";
+import { CacheInterceptor } from "@common/interceptors";
 import {
   Controller,
   Get,

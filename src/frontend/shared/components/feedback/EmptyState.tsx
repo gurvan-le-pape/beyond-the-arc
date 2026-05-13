@@ -1,7 +1,7 @@
 // src/frontend/shared/components/feedback/EmptyState.tsx
 import { forwardRef, type HTMLAttributes, type ReactNode } from "react";
 
-import { cn } from "@/shared/utils/cn";
+import { cn } from "@/shared/utils";
 
 import { Button } from "../primitives/Button";
 import { Text } from "../typography";

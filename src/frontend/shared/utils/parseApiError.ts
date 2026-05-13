@@ -1,6 +1,6 @@
 // src/frontend/shared/utils/parseApiError.ts
-import type { ApiErrorResponse } from "@/shared/types/Api";
-import { ApiError } from "@/shared/types/Api";
+import type { ApiErrorResponse } from "@/shared/types";
+import { ApiError } from "@/shared/types";
 
 export function parseApiError(err: unknown): ApiError {
   if (isAxiosError(err)) {

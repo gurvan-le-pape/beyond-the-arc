@@ -1,7 +1,7 @@
 // src/frontend/features/teams/api/use-teams.ts
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import type { ApiError } from "@/shared/types/Api";
+import type { ApiError } from "@/shared/types";
 
 import type {
   Team,

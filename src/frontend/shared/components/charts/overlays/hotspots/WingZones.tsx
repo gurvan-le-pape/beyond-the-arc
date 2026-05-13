@@ -3,9 +3,9 @@ import React from "react";
 
 import { RectZone } from "@/shared/components/charts";
 import type { ShotEvent } from "@/shared/types";
-import type { ZoneStats } from "@/shared/types/charts/ZoneStats";
-import { binShotsByZones } from "@/shared/utils/charts/overlays/hotspots/binShotsByZones";
-import { getWingZones } from "@/shared/utils/charts/overlays/hotspots/zones/shotZonesWing";
+import type { ZoneStats } from "@/shared/types";
+import { binShotsByZones } from "@/shared/utils";
+import { getWingZones } from "@/shared/utils";
 
 interface WingZonesProps {
   shots: ShotEvent[];

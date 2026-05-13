@@ -1,5 +1,5 @@
 // src/frontend/features/teams/utils/statsAggregation.ts
-import { aggregateStats } from "@/features/players/utils/statsAggregation";
+import { aggregateStats } from "@/features/players/utils";
 
 import type { TeamMatchHistory } from "../types/TeamMatchHistory";
 

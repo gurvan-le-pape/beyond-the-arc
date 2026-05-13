@@ -12,17 +12,17 @@ import {
 import type {
   MatchEvent,
   MatchEventPlayer,
-} from "@/features/matches/types/MatchEvent";
-import { buildTeam } from "@/features/matches/utils/buildTeam";
+} from "@/features/matches/types";
+import { buildTeam } from "@/features/matches/utils";
 import { PageLayout } from "@/shared/components/layout";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/shared/components/primitives/Tabs";
+} from "@/shared/components/primitives";
 import { Role } from "@/shared/constants";
-import { handleServerError } from "@/shared/utils/handleServerError";
+import { handleServerError } from "@/shared/utils";
 
 interface MatchSummaryPageProps {
   readonly params: Promise<{

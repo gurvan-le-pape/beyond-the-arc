@@ -7,11 +7,11 @@ import { useTranslations } from "next-intl";
 import React from "react";
 
 import { useMatchesPrefetch, useMatchEvents } from "@/features/matches/api";
-import type { Match } from "@/features/matches/types/Match";
+import type { Match } from "@/features/matches/types";
 import { ErrorMessage } from "@/shared/components/feedback";
 import { Badge, Card } from "@/shared/components/primitives";
 import { formatMatchDateTime } from "@/shared/utils";
-import { formatNameToFileName } from "@/shared/utils/formatNameToFileName";
+import { formatNameToFileName } from "@/shared/utils";
 
 import MatchDetailsTable from "./MatchDetailsTable";
 

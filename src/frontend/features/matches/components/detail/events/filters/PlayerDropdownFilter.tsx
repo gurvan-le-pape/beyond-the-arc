@@ -4,8 +4,8 @@
 import { useTranslations } from "next-intl";
 import React from "react";
 
-import type { TeamInfoExtended } from "@/features/teams/types/TeamInfo";
-import { MultiSelectDropdown } from "@/shared/components/primitives/MultiSelectDropdown";
+import type { TeamInfoExtended } from "@/features/teams/types";
+import { MultiSelectDropdown } from "@/shared/components/primitives";
 
 interface PlayerDropdownFilterProps {
   readonly homeTeam: TeamInfoExtended;

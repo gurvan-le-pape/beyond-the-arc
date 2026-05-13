@@ -1,5 +1,5 @@
 // src/backend/modules/players/dto/players.query.dto.spec.ts
-import { CompetitionLevel } from "@common/constants/competition-levels";
+import { CompetitionLevel } from "@common/constants";
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
 

@@ -1,5 +1,5 @@
 // src/frontend/features/competitions/championships/api/championshipsKeys.ts
-import type { ChampionshipFilters } from "@/features/competitions/championships/types/ChampionshipFilters";
+import type { ChampionshipFilters } from "@/features/competitions/championships/types";
 
 export const championshipsKeys = {
   all: ["championships"] as const,
