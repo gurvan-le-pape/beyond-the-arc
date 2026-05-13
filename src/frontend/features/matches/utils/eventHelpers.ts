@@ -83,7 +83,7 @@ export function pointsForEvent(eventType: string, style: EventStyle): number {
   if (eventType.includes("three") || eventType === EventType.THREE_POINT_AND_1)
     return 3;
   if (eventType.includes("free_throw")) return 1;
-  if (style.eventCategory === EventCategory.SCORING) return 2;
+  if (style.eventCategory === EventCategory.MADE) return 2;
   return 0;
 }
 
@@ -112,7 +112,7 @@ export function computeQuarterScores(
 
   for (const event of events) {
     const style = getEventStyle(event.eventType);
-    if (style.eventCategory !== EventCategory.SCORING) continue;
+    if (style.eventCategory !== EventCategory.MADE) continue;
 
     const points = pointsForEvent(event.eventType, style);
     if (points === 0) continue;
