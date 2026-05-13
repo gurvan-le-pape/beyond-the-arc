@@ -4,7 +4,7 @@
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 
-import ChampionshipList from "@/features/competitions/championships/components";
+import { ChampionshipList } from "@/features/competitions/championships/components";
 import { useRegionalChampionshipsData } from "@/features/competitions/championships/hooks";
 import { useRouter } from "@/navigation";
 import { OrganizationHeader } from "@/shared/components/domain";

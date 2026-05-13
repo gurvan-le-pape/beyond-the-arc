@@ -14,7 +14,7 @@ interface ChampionshipListProps {
   readonly onItemClick: (championship: Championship) => void;
 }
 
-function ChampionshipList({
+export function ChampionshipList({
   championshipsByGender,
   onItemClick,
 }: ChampionshipListProps) {

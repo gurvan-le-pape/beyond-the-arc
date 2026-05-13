@@ -8,7 +8,7 @@ import { notFound } from "next/navigation";
 
 import { serverChampionshipsService } from "@/features/competitions/championships/api";
 import { championshipsKeys } from "@/features/competitions/championships/api";
-import ChampionshipDetailPage from "@/features/competitions/championships/components";
+import { ChampionshipDetailPage } from "@/features/competitions/championships/components";
 import { serverPoolsService } from "@/features/competitions/pools/api";
 import { poolsKeys } from "@/features/competitions/pools/api";
 import { PageLayout } from "@/shared/components/layout";
