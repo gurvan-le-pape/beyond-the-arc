@@ -1,5 +1,11 @@
 {
   "directory": [
+    "src/frontend/features/charts/components",
+    "src/frontend/features/charts/constants",
+    "src/frontend/features/charts/hooks",
+    "src/frontend/features/charts/types",
+    "src/frontend/features/charts/utils",
+
     "src/frontend/features/competitions/championships/api",
     "src/frontend/features/competitions/championships/components",
     "src/frontend/features/competitions/championships/constants",
@@ -62,7 +68,6 @@
     "src/frontend/features/teams/types",
     "src/frontend/features/teams/utils",
 
-    "src/frontend/shared/components/charts",
     "src/frontend/shared/components/domain",
     "src/frontend/shared/components/layout",
     "src/frontend/shared/components/blocks",
@@ -91,10 +96,6 @@
     "src/backend/modules/competitions/championships/dto",
     "src/backend/modules/competitions/leaderboards/dto",
     "src/backend/modules/competitions/pools/dto",
-
-    "src/backend/modules/geography/dto",
-    "src/backend/modules/geography/departments/dto",
-    "src/backend/modules/geography/regions/dto",
 
     "src/backend/modules/matches/dto",
 

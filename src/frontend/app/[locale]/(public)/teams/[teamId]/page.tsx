@@ -2,12 +2,17 @@
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { TeamShotChart } from "@/features/charts/components";
 import { serverMatchesService } from "@/features/matches/api";
 import type { PlayerMatchHistoryEntry } from "@/features/players/types";
 import { serverTeamsService } from "@/features/teams/api";
-import { TeamHeader, TeamInfo, TeamMatchHistoryTable, TeamRoster } from "@/features/teams/components";
+import {
+  TeamHeader,
+  TeamInfo,
+  TeamMatchHistoryTable,
+  TeamRoster,
+} from "@/features/teams/components";
 import { aggregateTeamStats } from "@/features/teams/utils";
-import { TeamShotChart } from "@/shared/components/charts";
 import { PageLayout } from "@/shared/components/layout";
 import { handleServerError } from "@/shared/utils";
 

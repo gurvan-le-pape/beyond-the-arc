@@ -4,15 +4,12 @@
 import { useTranslations } from "next-intl";
 import React, { useMemo, useState } from "react";
 
+import { ShotModal } from "@/features/charts/components";
 import { formatPlaytime } from "@/features/matches/utils";
 import type { Player } from "@/features/players/types";
-import type {
-  TeamInfo,
-  TeamInfoExtended,
-} from "@/features/teams/types";
+import type { TeamInfo, TeamInfoExtended } from "@/features/teams/types";
 import { useRouter } from "@/navigation";
 import { Section } from "@/shared/components/blocks";
-import { ShotModal } from "@/shared/components/charts";
 import {
   Table,
   TableBody,
