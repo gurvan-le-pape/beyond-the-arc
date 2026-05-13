@@ -4,9 +4,7 @@
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 
-import { DepartmentalTab } from "@/features/competitions/championships/components";
-import { NationalTab } from "@/features/competitions/championships/components";
-import { RegionalTab } from "@/features/competitions/championships/components";
+import { DepartmentalTab, NationalTab, RegionalTab } from "@/features/competitions/championships/components";
 import { PageLayout } from "@/shared/components/layout";
 import { QueryTabs } from "@/shared/components/navigation";
 import { TabsContent } from "@/shared/components/primitives";

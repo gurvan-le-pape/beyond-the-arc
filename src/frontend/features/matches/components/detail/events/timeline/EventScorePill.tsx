@@ -1,5 +1,4 @@
 // src/frontend/features/matches/components/detail/events/timeline/EventScorePill.tsx
-import React from "react";
 
 import { cn } from "@/shared/utils";
 

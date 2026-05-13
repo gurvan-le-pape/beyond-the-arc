@@ -8,16 +8,16 @@ import { ShotFilter } from "@/shared/constants";
 import type { ShotEvent } from "@/shared/types";
 import {
   binShotsByZones,
+  getAboveWingZones,
+  getApexStripeZone,
+  getArcApexSidelineZones,
+  getArcZones,
+  getCorner3Zones,
+  getPaintZones,
+  getTopKeyZone,
+  getWingZones,
   type Zone,
 } from "@/shared/utils";
-import { getAboveWingZones } from "@/shared/utils";
-import { getApexStripeZone } from "@/shared/utils";
-import { getArcZones } from "@/shared/utils";
-import { getArcApexSidelineZones } from "@/shared/utils";
-import { getCorner3Zones } from "@/shared/utils";
-import { getPaintZones } from "@/shared/utils";
-import { getTopKeyZone } from "@/shared/utils";
-import { getWingZones } from "@/shared/utils";
 
 import AboveWingZones from "./hotspots/AboveWingZones";
 import ApexStripeZones from "./hotspots/ApexStripeZones";

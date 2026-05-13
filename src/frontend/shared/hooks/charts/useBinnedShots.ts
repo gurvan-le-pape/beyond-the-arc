@@ -3,8 +3,7 @@ import { useMemo } from "react";
 
 import type { MatchEvent } from "@/features/matches/types";
 import { transformToShotEvents } from "@/features/players/utils";
-import type { ZoneStats } from "@/shared/types";
-import type { ShotEvent } from "@/shared/types";
+import type { ShotEvent, ZoneStats } from "@/shared/types";
 
 export function useBinnedShots(
   matchEvents: MatchEvent[],

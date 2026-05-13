@@ -1,5 +1,4 @@
 // src/frontend/features/matches/components/detail/events/timeline/TimelineTeamHeader.tsx
-import React from "react";
 
 import type { TeamInfo } from "@/features/teams/types";
 

@@ -1,6 +1,5 @@
 // src/frontend/shared/components/layout/PageHero.tsx
 import type { LucideIcon } from "lucide-react";
-import React from "react";
 
 import { Text } from "@/shared/components/typography";
 

@@ -1,8 +1,7 @@
 // src/frontend/features/matches/components/detail/events/timeline/TimelineEventRow.tsx
 import React from "react";
 
-import type { EventStyle } from "@/features/matches/types";
-import type { MatchEvent } from "@/features/matches/types";
+import type { EventStyle, MatchEvent } from "@/features/matches/types";
 import type { ClubTeamInfo } from "@/features/organizations/clubs/types";
 import { EventCategory } from "@/shared/constants";
 

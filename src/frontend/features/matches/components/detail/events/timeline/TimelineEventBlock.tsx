@@ -2,8 +2,7 @@
 import { useTranslations } from "next-intl";
 import React from "react";
 
-import type { EventStyle } from "@/features/matches/types";
-import type { EventWithScore } from "@/features/matches/types";
+import type { EventStyle, EventWithScore } from "@/features/matches/types";
 import { Text } from "@/shared/components/typography";
 import { cn } from "@/shared/utils";
 

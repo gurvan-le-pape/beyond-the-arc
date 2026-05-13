@@ -2,10 +2,8 @@
 import React from "react";
 
 import { RectZone } from "@/shared/components/charts";
-import type { ShotEvent } from "@/shared/types";
-import type { ZoneStats } from "@/shared/types";
-import { binShotsByZones } from "@/shared/utils";
-import { getCorner3Zones } from "@/shared/utils";
+import type { ShotEvent, ZoneStats } from "@/shared/types";
+import { binShotsByZones, getCorner3Zones } from "@/shared/utils";
 
 interface Corner3ZonesProps {
   shots: ShotEvent[];

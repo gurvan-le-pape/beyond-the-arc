@@ -1,7 +1,5 @@
 // src/backend/modules/organizations/clubs/dto/clubs.query.dto.ts
-import { Category } from "@common/constants";
-import { CompetitionLevel } from "@common/constants";
-import { Gender } from "@common/constants";
+import { Category, CompetitionLevel, Gender } from "@common/constants";
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsEnum, IsNumber, IsOptional, IsString, Min } from "class-validator";

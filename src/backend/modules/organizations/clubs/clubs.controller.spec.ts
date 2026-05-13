@@ -7,9 +7,7 @@
  * Uses NestJS TestingModule and mocks ClubsService.
  */
 
-import { Category } from "@common/constants";
-import { CompetitionLevel } from "@common/constants";
-import { Gender } from "@common/constants";
+import { Category, CompetitionLevel, Gender } from "@common/constants";
 import { CacheDedupService } from "@common/services/cache-dedup.service";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import type { TestingModule } from "@nestjs/testing";

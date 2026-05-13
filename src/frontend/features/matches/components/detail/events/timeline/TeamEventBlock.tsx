@@ -1,8 +1,7 @@
 // src/frontend/features/matches/components/detail/events/timeline/TeamEventBlock.tsx
 import { useTranslations } from "next-intl";
 
-import type { EventStyle } from "@/features/matches/types";
-import type { MatchEvent } from "@/features/matches/types";
+import type { EventStyle, MatchEvent } from "@/features/matches/types";
 import { Text } from "@/shared/components/typography";
 
 interface TeamEventBlockProps {

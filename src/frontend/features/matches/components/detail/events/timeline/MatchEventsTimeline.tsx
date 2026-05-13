@@ -3,9 +3,7 @@
 
 import React from "react";
 
-import type { EventStyle } from "@/features/matches/types";
-import type { EventWithScore } from "@/features/matches/types";
-import type { MatchEvent } from "@/features/matches/types";
+import type { EventStyle, EventWithScore, MatchEvent } from "@/features/matches/types";
 import type { TeamInfo } from "@/features/teams/types";
 import { useRouter } from "@/navigation";
 import { EventCategory } from "@/shared/constants";

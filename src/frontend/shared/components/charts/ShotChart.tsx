@@ -22,6 +22,7 @@ import {
 } from "@/shared/components/charts";
 import {
   BASELINE_TO_RIM,
+  ChartType,
   COURT_WIDTH,
   FREE_THROW_LINE_DIST,
   HALF_COURT_HEIGHT,
@@ -29,10 +30,10 @@ import {
   NO_CHARGE_LINE_LENGTH,
   PAINT_HEIGHT,
   PAINT_WIDTH,
+  ShotFilter,
   THREE_PT_LINE_DIST,
   THREE_PT_RADIUS,
 } from "@/shared/constants";
-import { ChartType, ShotFilter } from "@/shared/constants";
 import { useBinnedShots } from "@/shared/hooks";
 
 import HotspotsHeader from "./headers/HotspotsHeader";

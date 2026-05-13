@@ -2,8 +2,7 @@
 "use client";
 
 import type { TeamStats } from "@/features/teams/types";
-import { Section } from "@/shared/components/blocks";
-import { StatComparison } from "@/shared/components/blocks";
+import { Section, StatComparison } from "@/shared/components/blocks";
 
 interface StatCategory {
   key: string;

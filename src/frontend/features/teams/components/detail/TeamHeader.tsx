@@ -3,14 +3,13 @@
 
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import React, { useState } from "react";
+import { useState } from "react";
 
 import { useRouter } from "@/navigation";
 import { Button, Card } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { CompetitionLevel } from "@/shared/constants";
-import { formatNameToFileName } from "@/shared/utils";
-import { normalizeString } from "@/shared/utils";
+import { formatNameToFileName, normalizeString } from "@/shared/utils";
 
 import type { Team } from "../../types/Team";
 

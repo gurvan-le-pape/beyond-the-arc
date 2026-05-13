@@ -2,7 +2,6 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import React from "react";
 
 import type { TeamInfoExtended } from "@/features/teams/types";
 import { MultiSelectDropdown } from "@/shared/components/primitives";

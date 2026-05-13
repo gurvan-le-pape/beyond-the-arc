@@ -1,7 +1,5 @@
 // src/frontend/features/organizations/clubs/api/clubs.server.ts
-import type { ClubBasic } from "@/features/organizations/clubs/types";
-import type { ClubDetailed } from "@/features/organizations/clubs/types";
-import type { ClubStatsByRegion } from "@/features/organizations/clubs/types";
+import type { ClubBasic, ClubDetailed, ClubStatsByRegion } from "@/features/organizations/clubs/types";
 import {
   buildQueryString,
   fetchApi,

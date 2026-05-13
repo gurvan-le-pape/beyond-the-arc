@@ -5,10 +5,7 @@ import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
-import { Badge } from "@/shared/components/primitives";
-import { BottomSheet } from "@/shared/components/primitives";
-import { Button } from "@/shared/components/primitives";
-import { Card } from "@/shared/components/primitives";
+import { Badge, BottomSheet, Button, Card } from "@/shared/components/primitives";
 import { cn } from "@/shared/utils";
 
 import type { ActiveFilterChip } from "./ActiveFilterChips";
