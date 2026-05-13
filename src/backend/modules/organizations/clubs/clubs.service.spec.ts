@@ -7,8 +7,7 @@
  * Mocks PrismaService to isolate service logic.
  */
 
-import { Category } from "@common/constants";
-import { Gender } from "@common/constants";
+import { Category, Gender } from "@common/constants";
 import { NotFoundException } from "@nestjs/common";
 import type { PrismaService } from "prisma/prisma.service";
 
