@@ -50,7 +50,7 @@ export default async function ArchitecturePage({
           description: t("architecture.frontend.nextjsDesc"),
         },
         {
-          name: "TypeScript 5.7",
+          name: "TypeScript 5",
           icon: Code2,
           description: t("architecture.frontend.tsDesc"),
         },
@@ -65,7 +65,7 @@ export default async function ArchitecturePage({
           description: t("architecture.frontend.reactQueryDesc"),
         },
         {
-          name: "i18next",
+          name: "next-intl",
           icon: Globe,
           description: t("architecture.frontend.i18nDesc"),
         },
