@@ -1,7 +1,7 @@
 // src/frontend/features/organizations/clubs/components/detail/ClubTeams.tsx
 "use client";
 
-import { UserGroupIcon } from "@heroicons/react/24/outline";
+import { Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Section } from "@/shared/components/blocks";
@@ -28,7 +28,7 @@ export function ClubTeams({ club, teamsByGender }: ClubTeamsProps) {
   if (!club.teams?.length) {
     return (
       <EmptyState
-        icon={<UserGroupIcon className="w-16 h-16" />}
+        icon={<Users className="w-16 h-16" />}
         title={tClubs("noTeams")}
       />
     );

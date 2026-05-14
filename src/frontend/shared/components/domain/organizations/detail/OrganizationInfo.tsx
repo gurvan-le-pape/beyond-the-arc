@@ -1,13 +1,7 @@
 // src/frontend/shared/components/domain/organizations/detail/OrganizationInfo.tsx
 "use client";
 
-import {
-  EnvelopeIcon,
-  GlobeAltIcon,
-  MapPinIcon,
-  PhoneIcon,
-  UserIcon,
-} from "@heroicons/react/24/outline";
+import { Globe, Mail, MapPin, Phone, User } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { InfoBox, Section } from "@/shared/components/blocks";
@@ -43,40 +37,40 @@ export function OrganizationInfo({
         <InfoBox
           label={t("info.address")}
           value={address}
-          icon={<MapPinIcon className="w-4 h-4" />}
+          icon={<MapPin className="w-4 h-4" />}
         />
         {city !== undefined && (
           <InfoBox
             label={t("info.city")}
             value={city}
-            icon={<MapPinIcon className="w-4 h-4" />}
+            icon={<MapPin className="w-4 h-4" />}
           />
         )}
         {zipCode !== undefined && (
           <InfoBox
             label={t("info.zipCode")}
             value={zipCode}
-            icon={<MapPinIcon className="w-4 h-4" />}
+            icon={<MapPin className="w-4 h-4" />}
           />
         )}
         <InfoBox
           label={t("info.phone")}
           value={formatPhone(phone)}
           href={phone ? `tel:${phone}` : undefined}
-          icon={<PhoneIcon className="w-4 h-4" />}
+          icon={<Phone className="w-4 h-4" />}
         />
         <InfoBox
           label={t("info.email")}
           value={email}
           href={email ? `mailto:${email}` : undefined}
-          icon={<EnvelopeIcon className="w-4 h-4" />}
+          icon={<Mail className="w-4 h-4" />}
         />
         {website !== undefined && (
           <InfoBox
             label={t("info.website")}
             value={website ? t("info.visitWebsite") : null}
             href={website ?? undefined}
-            icon={<GlobeAltIcon className="w-4 h-4" />}
+            icon={<Globe className="w-4 h-4" />}
           />
         )}
       </div>
@@ -93,19 +87,19 @@ export function OrganizationInfo({
             <InfoBox
               label={t("info.president.name")}
               value={president?.name ?? NA}
-              icon={<UserIcon className="w-4 h-4" />}
+              icon={<User className="w-4 h-4" />}
             />
             <InfoBox
               label={t("info.president.email")}
               value={president?.email}
               href={president?.email ? `mailto:${president.email}` : undefined}
-              icon={<EnvelopeIcon className="w-4 h-4" />}
+              icon={<Mail className="w-4 h-4" />}
             />
             <InfoBox
               label={t("info.president.phone")}
               value={formatPhone(president?.phone)}
               href={president?.phone ? `tel:${president.phone}` : undefined}
-              icon={<PhoneIcon className="w-4 h-4" />}
+              icon={<Phone className="w-4 h-4" />}
             />
           </div>
         </>

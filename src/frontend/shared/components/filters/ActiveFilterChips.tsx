@@ -1,5 +1,5 @@
 // src/frontend/shared/components/filters/ActiveFilterChips.tsx
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Button } from "@/shared/components/primitives";
@@ -35,7 +35,7 @@ export function ActiveFilterChips({ chips, onReset }: ActiveFilterChipsProps) {
               className="text-text-muted hover:text-text-body transition-colors"
               aria-label={`Remove ${chip.label} filter`}
             >
-              <XMarkIcon className="w-3 h-3" />
+              <X className="w-3 h-3" />
             </button>
           </span>
         ))}

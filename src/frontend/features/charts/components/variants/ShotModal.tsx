@@ -1,8 +1,8 @@
 // src/frontend/features/charts/components/variants/ShotModal.tsx
 "use client";
 
-import { XMarkIcon } from "@heroicons/react/24/outline";
 import { toPng } from "html-to-image";
+import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import React, { useEffect, useRef } from "react";
 
@@ -124,7 +124,7 @@ export const ShotModal: React.FC<ShotModalProps> = ({
                 onClick={onClose}
                 aria-label={t("shotChart.close")}
               >
-                <XMarkIcon className="w-5 h-5" />
+                <X className="w-5 h-5" />
               </Button>
             </div>
 

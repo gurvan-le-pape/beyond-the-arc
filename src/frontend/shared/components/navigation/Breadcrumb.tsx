@@ -1,7 +1,7 @@
 // src/frontend/shared/components/navigation/Breadcrumb.tsx
 "use client";
 
-import { ChevronRightIcon } from "@heroicons/react/24/outline";
+import { ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { useRouter } from "@/navigation";
@@ -43,7 +43,7 @@ export function Breadcrumb({
   const tCommon = useTranslations("common");
 
   const defaultSeparator = (
-    <ChevronRightIcon className="w-4 h-4 text-text-muted" aria-hidden="true" />
+    <ChevronRight className="w-4 h-4 text-text-muted" aria-hidden="true" />
   );
 
   const handleClick = (item: BreadcrumbItem) => {

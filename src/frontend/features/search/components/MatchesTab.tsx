@@ -1,7 +1,7 @@
 // src/frontend/features/search/components/MatchesTab.tsx
 "use client";
 
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { Search } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { useMatches } from "@/features/matches/api";
@@ -64,7 +64,7 @@ export function MatchesTab() {
         isEmpty={matches.length === 0}
         emptyState={
           <EmptyState
-            icon={<MagnifyingGlassIcon className="w-16 h-16" />}
+            icon={<Search className="w-16 h-16" />}
             title={tMatches("noResults")}
             description={tMatches("tryAdjustingFilters")}
           />

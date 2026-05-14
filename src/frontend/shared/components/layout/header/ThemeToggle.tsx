@@ -1,7 +1,7 @@
 // src/frontend/shared/components/layout/header/ThemeToggle.tsx
 "use client";
 
-import { EyeIcon, MoonIcon, SunIcon } from "@heroicons/react/24/outline";
+import { Eye, Moon, Sun } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
@@ -9,9 +9,9 @@ import { useEffect, useRef, useState } from "react";
 import { cn } from "@/shared/utils";
 
 const THEMES = [
-  { id: "light", label: "Light", Icon: SunIcon },
-  { id: "dark", label: "Dark", Icon: MoonIcon },
-  { id: "high-contrast", label: "High contrast", Icon: EyeIcon },
+  { id: "light", label: "Light", Icon: Sun },
+  { id: "dark", label: "Dark", Icon: Moon },
+  { id: "high-contrast", label: "High contrast", Icon: Eye },
 ] as const;
 
 /**

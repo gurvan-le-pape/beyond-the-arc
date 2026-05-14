@@ -1,7 +1,7 @@
 // src/frontend/features/search/components/PlayersTab.tsx
 "use client";
 
-import { UserIcon } from "@heroicons/react/24/outline";
+import { User } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { usePlayers } from "@/features/players/api";
@@ -63,7 +63,7 @@ export function PlayersTab() {
         isEmpty={players.length === 0}
         emptyState={
           <EmptyState
-            icon={<UserIcon className="w-16 h-16" />}
+            icon={<User className="w-16 h-16" />}
             title={tCommon("emptyState.players")}
             description={tPlayers("tryAdjustingFilters")}
           />

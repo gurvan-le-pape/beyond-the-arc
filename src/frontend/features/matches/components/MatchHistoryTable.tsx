@@ -1,7 +1,7 @@
 // src/frontend/features/matches/components/MatchHistoryTable.tsx
 "use client";
 
-import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import React, { useState } from "react";
 
 import { Section } from "@/shared/components/blocks";
@@ -123,9 +123,9 @@ export function MatchHistoryTable<T extends { id: number }>({
           >
             {showAll ? showLessLabel : showAllLabel}
             {showAll ? (
-              <ChevronUpIcon className="ml-2 w-4 h-4" />
+              <ChevronUp className="ml-2 w-4 h-4" />
             ) : (
-              <ChevronDownIcon className="ml-2 w-4 h-4" />
+              <ChevronDown className="ml-2 w-4 h-4" />
             )}
           </Button>
         </div>

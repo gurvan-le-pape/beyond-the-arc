@@ -1,7 +1,7 @@
 // src/frontend/features/competitions/championships/components/detail/matches/MatchCard.tsx
 "use client";
 
-import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import React from "react";
@@ -155,9 +155,9 @@ export const MatchCard: React.FC<MatchCardProps> = ({
           className="flex-shrink-0 p-1 rounded-button hover:bg-surface-inset transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary ring-offset-surface"
         >
           {expanded ? (
-            <ChevronUpIcon className="h-5 w-5 text-text-body" />
+            <ChevronUp className="h-5 w-5 text-text-body" />
           ) : (
-            <ChevronDownIcon className="h-5 w-5 text-text-body" />
+            <ChevronDown className="h-5 w-5 text-text-body" />
           )}
         </button>
       </div>

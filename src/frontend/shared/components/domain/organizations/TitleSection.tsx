@@ -1,8 +1,8 @@
 // src/frontend/shared/components/domain/organizations/TitleSection.tsx
 "use client";
 
+import { MapPin, SignpostBig, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { FaMapMarkedAlt, FaMapSigns, FaUsers } from "react-icons/fa";
 
 import { Card } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
@@ -37,7 +37,7 @@ export function TitleSection({
       case ViewLevel.REGION:
         return {
           icon: (
-            <FaMapMarkedAlt
+            <MapPin
               className="w-8 h-8 flex-shrink-0 text-regional-strong"
               aria-label={tCommon("sectionTitles.regionalLeagues")}
             />
@@ -52,7 +52,7 @@ export function TitleSection({
       case ViewLevel.DEPARTMENT:
         return {
           icon: (
-            <FaMapSigns
+            <SignpostBig
               className="w-8 h-8 flex-shrink-0 text-departmental-strong"
               aria-label={tCommon("sectionTitles.departmentalCommittees")}
             />
@@ -68,7 +68,7 @@ export function TitleSection({
       case ViewLevel.CLUBS:
         return {
           icon: (
-            <FaUsers
+            <Users
               className="w-8 h-8 flex-shrink-0 text-clubs-strong"
               aria-label={tCommon("sectionTitles.clubs")}
             />

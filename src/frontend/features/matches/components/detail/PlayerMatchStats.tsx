@@ -1,6 +1,7 @@
 // src/frontend/features/matches/components/detail/PlayerMatchStats.tsx
 "use client";
 
+import { BarChart2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import React, { useMemo, useState } from "react";
 
@@ -76,12 +77,7 @@ function ShotChartCell({ player, onSelect, label }: ShotChartCellProps) {
       onClick={() => onSelect(player)}
       aria-label={label}
     >
-      <img
-        src="/images/icons/chart-bar.svg"
-        alt={label}
-        className="h-5 w-5 text-primary"
-        draggable="false"
-      />
+      <BarChart2 className="h-5 w-5 text-primary" aria-hidden />
     </button>
   );
 }

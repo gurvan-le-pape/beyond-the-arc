@@ -1,5 +1,5 @@
 // src/frontend/features/organizations/clubs/components/map/ClubPopupContent.tsx
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { useRouter } from "@/navigation";
@@ -33,7 +33,7 @@ export function ClubPopupContent({ club, onClose }: ClubPopupContentProps) {
           onClick={onClose}
           className="shrink-0 -mt-1 -mr-1 h-8 w-8"
         >
-          <XMarkIcon className="w-4 h-4" />
+          <X className="w-4 h-4" />
         </Button>
       </div>
 

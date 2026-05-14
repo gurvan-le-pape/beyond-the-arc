@@ -1,7 +1,7 @@
 // src/frontend/features/competitions/championships/components/detail/navigation/RoundSelector.tsx
 "use client";
 
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import React, { useEffect, useRef, useState } from "react";
 
@@ -104,7 +104,7 @@ export const RoundSelector: React.FC<RoundSelectorProps> = ({
           disabled={!canScrollLeft}
           aria-label={t("roundSelector.scrollLeft")}
         >
-          <ChevronLeftIcon className="w-5 h-5" />
+          <ChevronLeft className="w-5 h-5" />
         </PillButton>
 
         {/* Pills Row */}
@@ -135,7 +135,7 @@ export const RoundSelector: React.FC<RoundSelectorProps> = ({
           disabled={!canScrollRight}
           aria-label={t("roundSelector.scrollRight")}
         >
-          <ChevronRightIcon className="w-5 h-5" />
+          <ChevronRight className="w-5 h-5" />
         </PillButton>
       </div>
     </div>
