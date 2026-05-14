@@ -50,7 +50,7 @@ export default async function ArchitecturePage({
           description: t("architecture.frontend.nextjsDesc"),
         },
         {
-          name: "TypeScript 5",
+          name: "TypeScript 6",
           icon: Code2,
           description: t("architecture.frontend.tsDesc"),
         },
@@ -92,7 +92,7 @@ export default async function ArchitecturePage({
           description: t("architecture.backend.pgDesc"),
         },
         {
-          name: "TypeScript 5.7",
+          name: "TypeScript 6",
           icon: Code2,
           description: t("architecture.backend.tsDesc"),
         },

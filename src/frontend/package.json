@@ -37,8 +37,8 @@
     "@types/d3": "^7.4.3",
     "@types/react": "^19.1.12",
     "@types/react-dom": "^19.1.9",
-    "@typescript-eslint/eslint-plugin": "^8.53.1",
-    "@typescript-eslint/parser": "^8.53.1",
+    "@typescript-eslint/eslint-plugin": "^8.59.3",
+    "@typescript-eslint/parser": "^8.59.3",
     "autoprefixer": "^10.4.0",
     "barrelsby": "^2.8.1",
     "eslint": "^9.39.2",
@@ -48,7 +48,7 @@
     "postcss": "^8.4.0",
     "prettier": "^2.5.0",
     "tailwindcss": "^3.4.19",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.3"
   },
   "engines": {
     "node": ">=24.0.0"
