@@ -1,5 +1,5 @@
-# Use the official Python 3.12 image
-FROM python:3.12
+# Use the official Python 3.14 slim image
+FROM python:3.14-slim
 
 # Create a non-root user and group
 RUN groupadd -r appuser && useradd -r -g appuser appuser

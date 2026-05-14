@@ -86,7 +86,7 @@ Data is persisted in a `postgres_data` named volume. In production this volume i
 
 ### scheduler
 
-A Python 3.12 container running the long-running data pipeline. It connects directly to PostgreSQL via psycopg2 and handles season generation and match simulation. It has no exposed port — it is an internal worker only.
+A Python 3.14 container running the long-running data pipeline. It connects directly to PostgreSQL via psycopg2 and handles season generation and match simulation. It has no exposed port — it is an internal worker only.
 
 `restart: unless-stopped` ensures the scheduler comes back after crashes or VPS reboots. The pipeline is designed to be restart-safe: on startup it resets any matches left in `generating` state from a previous crash, then resumes polling. See [`data-pipeline.md`](./data-pipeline.md) for the full pipeline architecture.
 
