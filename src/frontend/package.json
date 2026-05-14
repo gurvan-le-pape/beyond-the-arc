@@ -8,7 +8,6 @@
     "lint": "eslint '**/*.{ts,tsx}'",
     "lint:fix": "organize-imports-cli './**/*.ts' './**/*.tsx' && eslint '**/*.{ts,tsx}' --fix",
     "format": "prettier --write .",
-    "test": "jest",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -45,7 +44,6 @@
     "eslint": "^9.39.2",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "eslint-plugin-sonarjs": "^3.0.5",
-    "jest": "^29.7.0",
     "organize-imports-cli": "^1.0.2",
     "postcss": "^8.4.0",
     "prettier": "^2.5.0",
