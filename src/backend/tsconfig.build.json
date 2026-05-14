@@ -9,7 +9,7 @@
       "@database/*": ["./database/*"],
       "@config/*": ["./config/*"],
       "prisma/*": ["./prisma/*"],
-      "modules": ["./modules/index.ts"]
+      "modules": ["./modules/index.js"]
     },
     "outDir": "dist"
   }
