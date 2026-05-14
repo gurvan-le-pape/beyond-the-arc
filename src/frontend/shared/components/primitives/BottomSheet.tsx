@@ -1,7 +1,7 @@
 // src/frontend/shared/components/primitives/BottomSheet.tsx
 "use client";
 
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { cn } from "@/shared/utils";
@@ -113,7 +113,7 @@ export function BottomSheet({
           className="p-1.5 rounded-button text-text-muted hover:bg-surface-inset transition-colors"
           aria-label="Close filters"
         >
-          <XMarkIcon className="w-5 h-5" />
+          <X className="w-5 h-5" />
         </button>
       </div>
 

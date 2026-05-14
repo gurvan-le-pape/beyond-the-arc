@@ -1,7 +1,7 @@
 // src/frontend/shared/components/filters/FiltersShell.tsx
 "use client";
 
-import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
+import { SlidersHorizontal } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
@@ -46,7 +46,7 @@ export function FiltersShell({
           )}
         >
           <div className="flex items-center gap-2">
-            <AdjustmentsHorizontalIcon
+            <SlidersHorizontal
               className={cn(
                 "w-5 h-5",
                 hasActiveFilters ? "text-primary" : "text-text-muted",

@@ -1,7 +1,7 @@
 // src/frontend/features/matches/components/list/MatchesFilters.tsx
 "use client";
 
-import { CalendarIcon } from "@heroicons/react/24/outline";
+import { Calendar } from "lucide-react";
 import { useTranslations } from "next-intl";
 import React from "react";
 
@@ -219,7 +219,7 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
           label={tMatches("date")}
           value={dateFilter}
           onChange={(e) => setDateFilter(e.target.value)}
-          leftIcon={<CalendarIcon className="w-5 h-5" />}
+          leftIcon={<Calendar className="w-5 h-5" />}
         />
       </div>
 

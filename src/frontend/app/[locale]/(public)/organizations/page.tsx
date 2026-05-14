@@ -1,6 +1,6 @@
 // src/frontend/app/[locale]/(public)/organizations/page.tsx
+import { Building2, MapPin, Users } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { FaBuilding, FaMapMarkedAlt, FaUsers } from "react-icons/fa";
 
 import { OrganizationTypeCard, type OrgType } from "@/shared/components/domain";
 import { PageLayout } from "@/shared/components/layout";
@@ -12,7 +12,7 @@ const ORG_TYPE_CONFIG = [
     labelKey: "leagues.label",
     descriptionKey: "leagues.description",
     icon: (
-      <FaMapMarkedAlt
+      <MapPin
         className="text-5xl text-regional-strong mb-4"
         aria-hidden
         focusable={false}
@@ -25,7 +25,7 @@ const ORG_TYPE_CONFIG = [
     labelKey: "committees.label",
     descriptionKey: "committees.description",
     icon: (
-      <FaBuilding
+      <Building2
         className="text-5xl text-departmental-strong mb-4"
         aria-hidden
         focusable={false}
@@ -38,7 +38,7 @@ const ORG_TYPE_CONFIG = [
     labelKey: "clubs.label",
     descriptionKey: "clubs.description",
     icon: (
-      <FaUsers
+      <Users
         className="text-5xl text-clubs-strong mb-4"
         aria-hidden
         focusable={false}

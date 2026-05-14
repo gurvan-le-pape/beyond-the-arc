@@ -1,7 +1,7 @@
 // src/frontend/features/search/components/TeamsTab.tsx
 "use client";
 
-import { UserGroupIcon } from "@heroicons/react/24/outline";
+import { Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { useTeams } from "@/features/teams/api";
@@ -63,7 +63,7 @@ export function TeamsTab() {
         isEmpty={teams.length === 0}
         emptyState={
           <EmptyState
-            icon={<UserGroupIcon className="w-16 h-16" />}
+            icon={<Users className="w-16 h-16" />}
             title={tCommon("emptyState.teams")}
             description={tTeams("tryAdjustingFilters")}
           />

@@ -8,7 +8,6 @@ export * from "./competition-levels";
 export * from "./event-categories";
 export * from "./event-types";
 export * from "./genders";
-export * from "./icons";
 export * from "./levelConfig";
 export * from "./navConfig";
 export * from "./organization-types";

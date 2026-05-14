@@ -1,8 +1,8 @@
 // src/frontend/features/organizations/clubs/components/list/ClubsFilters.tsx
 "use client";
 
+import { Search, X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { FaSearch, FaTimes } from "react-icons/fa";
 
 interface League {
   id: string | number;
@@ -47,7 +47,7 @@ export function ClubsFilters({
   return (
     <div className="flex flex-wrap items-center gap-3 mb-6">
       <div className="relative">
-        <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-sm" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-sm" />
         <input
           type="text"
           value={search}
@@ -90,7 +90,7 @@ export function ClubsFilters({
           onClick={onReset}
           className="flex items-center gap-1.5 text-sm text-text-secondary hover:text-text-heading transition-colors"
         >
-          <FaTimes className="text-xs" />
+          <X className="text-xs" />
           {tCommon("clearSearch")}
         </button>
       )}
