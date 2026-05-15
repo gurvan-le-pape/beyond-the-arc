@@ -86,7 +86,7 @@ describe("LeaderboardsService", () => {
         rank: 2,
         points: 8,
       });
-      expect(prisma.leaderboards.findMany).toHaveBeenCalledWith({
+      expect(prisma.client.leaderboards.findMany).toHaveBeenCalledWith({
         where: { poolId },
         orderBy: [{ points: "desc" }, { pointDifference: "desc" }],
         select: expect.any(Object),
@@ -131,11 +131,11 @@ describe("LeaderboardsService", () => {
         teamNumber: 1,
         clubName: "AS Monaco Basket",
       });
-      expect(prisma.leaderboards.findUnique).toHaveBeenCalledWith({
+      expect(prisma.client.leaderboards.findUnique).toHaveBeenCalledWith({
         where: { id },
         select: expect.any(Object),
       });
-      expect(prisma.leaderboards.count).toHaveBeenCalledWith({
+      expect(prisma.client.leaderboards.count).toHaveBeenCalledWith({
         where: {
           poolId: mockPrismaLeaderboard.poolId,
           OR: [
@@ -168,7 +168,7 @@ describe("LeaderboardsService", () => {
       await expect(service.findLeaderboardById(id)).rejects.toThrow(
         new NotFoundException("Leaderboard entry with ID 999 not found"),
       );
-      expect(prisma.leaderboards.count).not.toHaveBeenCalled();
+      expect(prisma.client.leaderboards.count).not.toHaveBeenCalled();
     });
 
     it("should handle database errors", async () => {

@@ -1,8 +1,8 @@
 // src/backend/modules/organizations/leagues/leagues.service.ts
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
 import { PrismaService } from "prisma/prisma.service";
 
+import { Prisma } from "../../../prisma/generated/prisma/client";
 import { LeagueResponseDto } from "./dto/leagues.response.dto";
 
 /**
@@ -64,7 +64,7 @@ export class LeaguesService {
    * @returns Array of league DTOs
    */
   async findAllLeagues(): Promise<LeagueResponseDto[]> {
-    const leagues = await this.prisma.leagues.findMany({
+    const leagues = await this.prisma.client.leagues.findMany({
       select: LEAGUE_SELECT,
       orderBy: { name: "asc" },
     });
@@ -80,7 +80,7 @@ export class LeaguesService {
    * @throws NotFoundException if league doesn't exist
    */
   async findLeagueById(leagueId: number): Promise<LeagueResponseDto> {
-    const league = await this.prisma.leagues.findUnique({
+    const league = await this.prisma.client.leagues.findUnique({
       where: { id: leagueId },
       select: LEAGUE_SELECT,
     });

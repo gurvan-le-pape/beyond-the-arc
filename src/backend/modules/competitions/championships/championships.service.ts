@@ -1,9 +1,9 @@
 // src/backend/modules/competitions/championships/championships.service.ts
 import { CompetitionLevel } from "@common/constants";
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
 import { PrismaService } from "prisma/prisma.service";
 
+import { Prisma } from "../../../prisma/generated/prisma/client";
 import { ChampionshipResponseDto } from "./dto/championships.response.dto";
 
 /**
@@ -75,7 +75,7 @@ export class ChampionshipsService {
   async findChampionshipById(
     championshipId: number,
   ): Promise<ChampionshipResponseDto> {
-    const championship = await this.prisma.championships.findUnique({
+    const championship = await this.prisma.client.championships.findUnique({
       where: { id: championshipId },
       select: CHAMPIONSHIP_SELECT,
     });
@@ -168,7 +168,7 @@ export class ChampionshipsService {
   private async queryChampionshipsByCondition(
     condition: Prisma.ChampionshipsWhereInput,
   ): Promise<ChampionshipSelectResult[]> {
-    return this.prisma.championships.findMany({
+    return this.prisma.client.championships.findMany({
       where: condition,
       select: CHAMPIONSHIP_SELECT,
       orderBy: [{ division: "asc" }, { category: "asc" }],

@@ -36,7 +36,7 @@ export class HealthController {
   @ApiResponse({ status: 503, description: "Application is unhealthy" })
   check() {
     return this.health.check([
-      () => this.prismaHealth.pingCheck("database", this.prisma),
+      () => this.prismaHealth.pingCheck("database", this.prisma.client),
       () => this.memory.checkHeap("memory_heap", 300 * 1024 * 1024),
       () =>
         this.disk.checkStorage("storage", { path: "/", thresholdPercent: 0.9 }),
@@ -69,7 +69,7 @@ export class HealthController {
   @ApiResponse({ status: 503, description: "Application is not ready" })
   getReadiness() {
     return this.health.check([
-      () => this.prismaHealth.pingCheck("database", this.prisma),
+      () => this.prismaHealth.pingCheck("database", this.prisma.client),
     ]);
   }
 }

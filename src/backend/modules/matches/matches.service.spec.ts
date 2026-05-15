@@ -3,11 +3,11 @@ import { CacheDedupService } from "@common/services/cache-dedup.service";
 import { NotFoundException } from "@nestjs/common";
 import type { TestingModule } from "@nestjs/testing";
 import { Test } from "@nestjs/testing";
-import { Decimal } from "@prisma/client/runtime/library";
 import { fromZonedTime } from "date-fns-tz";
 import { LoggerModule } from "nestjs-pino";
 import { PrismaService } from "prisma/prisma.service";
 
+import { Prisma } from "../../prisma/generated/prisma/client";
 import { MatchesService } from "./matches.service";
 
 /**
@@ -101,8 +101,8 @@ describe("MatchesService", () => {
     ],
     shotLocation: {
       id: 1,
-      x: new Decimal("5.50"),
-      y: new Decimal("3.20"),
+      x: new Prisma.Decimal("5.50"),
+      y: new Prisma.Decimal("3.20"),
     },
   };
 
@@ -167,8 +167,8 @@ describe("MatchesService", () => {
         ],
         shotLocation: {
           id: 1,
-          x: new Decimal("5.50"),
-          y: new Decimal("3.20"),
+          x: new Prisma.Decimal("5.50"),
+          y: new Prisma.Decimal("3.20"),
         },
       },
     ],
