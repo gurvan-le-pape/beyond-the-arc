@@ -3,9 +3,9 @@ import { CompetitionLevel } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
 import { Category, Gender } from "@common/index";
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
 import { PrismaService } from "prisma/prisma.service";
 
+import { Prisma } from "../../prisma/generated/prisma/client";
 import type {
   MatchHistoryDto,
   PlayerResponseDto,
@@ -175,7 +175,7 @@ export class PlayersService {
    * @returns Flat array of objects with player IDs
    */
   async findAllIds(): Promise<{ id: number }[]> {
-    return this.prisma.players.findMany({
+    return this.prisma.client.players.findMany({
       select: { id: true },
       orderBy: { id: "asc" },
     });
@@ -197,14 +197,14 @@ export class PlayersService {
     const where = this.buildWhereClause(filters);
 
     const [players, total] = await Promise.all([
-      this.prisma.players.findMany({
+      this.prisma.client.players.findMany({
         where,
         select: PLAYER_SELECT,
         orderBy: { name: "asc" },
         skip,
         take: limit,
       }),
-      this.prisma.players.count({ where }),
+      this.prisma.client.players.count({ where }),
     ]);
 
     return {
@@ -224,7 +224,7 @@ export class PlayersService {
    * @throws NotFoundException if player doesn't exist
    */
   async findPlayerById(id: number): Promise<PlayerResponseDto> {
-    const player = await this.prisma.players.findUnique({
+    const player = await this.prisma.client.players.findUnique({
       where: { id },
       select: PLAYER_SELECT,
     });
@@ -245,7 +245,7 @@ export class PlayersService {
    * @throws NotFoundException if player doesn't exist
    */
   async findPlayerMatchHistory(playerId: number): Promise<MatchHistoryDto[]> {
-    const playerExists = await this.prisma.players.findUnique({
+    const playerExists = await this.prisma.client.players.findUnique({
       where: { id: playerId },
       select: { id: true },
     });
@@ -254,7 +254,7 @@ export class PlayersService {
       throw new NotFoundException(`Player with ID ${playerId} not found`);
     }
 
-    const stats = await this.prisma.playerMatchStats.findMany({
+    const stats = await this.prisma.client.playerMatchStats.findMany({
       where: { playerId },
       select: PLAYER_MATCH_HISTORY_SELECT,
       orderBy: { match: { date: "desc" } },

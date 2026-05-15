@@ -3,11 +3,11 @@ import { CacheDedupService } from "@common/services/cache-dedup.service";
 import { NotFoundException } from "@nestjs/common";
 import type { TestingModule } from "@nestjs/testing";
 import { Test } from "@nestjs/testing";
-import { Decimal } from "@prisma/client/runtime/library";
 import { fromZonedTime } from "date-fns-tz";
 import { LoggerModule } from "nestjs-pino";
 import { PrismaService } from "prisma/prisma.service";
 
+import { Prisma } from "../../prisma/generated/prisma/client";
 import { MatchesService } from "./matches.service";
 
 /**
@@ -25,16 +25,18 @@ describe("MatchesService", () => {
 
   // Mock Prisma service
   const mockPrismaService = {
-    matches: {
-      findMany: jest.fn(),
-      findUnique: jest.fn(),
-      count: jest.fn(),
-    },
-    playerMatchStats: {
-      findMany: jest.fn(),
-    },
-    matchEvents: {
-      findMany: jest.fn(),
+    client: {
+      matches: {
+        findMany: jest.fn(),
+        findUnique: jest.fn(),
+        count: jest.fn(),
+      },
+      playerMatchStats: {
+        findMany: jest.fn(),
+      },
+      matchEvents: {
+        findMany: jest.fn(),
+      },
     },
   };
 
@@ -101,8 +103,8 @@ describe("MatchesService", () => {
     ],
     shotLocation: {
       id: 1,
-      x: new Decimal("5.50"),
-      y: new Decimal("3.20"),
+      x: new Prisma.Decimal("5.50"),
+      y: new Prisma.Decimal("3.20"),
     },
   };
 
@@ -167,8 +169,8 @@ describe("MatchesService", () => {
         ],
         shotLocation: {
           id: 1,
-          x: new Decimal("5.50"),
-          y: new Decimal("3.20"),
+          x: new Prisma.Decimal("5.50"),
+          y: new Prisma.Decimal("3.20"),
         },
       },
     ],
@@ -196,19 +198,19 @@ describe("MatchesService", () => {
   describe("findAllIds", () => {
     it("should return all match IDs", async () => {
       const mockIds = [{ id: 1 }, { id: 2 }, { id: 3 }];
-      mockPrismaService.matches.findMany.mockResolvedValue(mockIds);
+      mockPrismaService.client.matches.findMany.mockResolvedValue(mockIds);
 
       const result = await service.findAllIds();
 
       expect(result).toEqual(mockIds);
-      expect(mockPrismaService.matches.findMany).toHaveBeenCalledWith({
+      expect(mockPrismaService.client.matches.findMany).toHaveBeenCalledWith({
         select: { id: true },
         orderBy: { id: "asc" },
       });
     });
 
     it("should return empty array when no matches exist", async () => {
-      mockPrismaService.matches.findMany.mockResolvedValue([]);
+      mockPrismaService.client.matches.findMany.mockResolvedValue([]);
 
       const result = await service.findAllIds();
 
@@ -216,7 +218,7 @@ describe("MatchesService", () => {
     });
 
     it("should propagate database errors", async () => {
-      mockPrismaService.matches.findMany.mockRejectedValue(
+      mockPrismaService.client.matches.findMany.mockRejectedValue(
         new Error("Database error"),
       );
 
@@ -226,10 +228,10 @@ describe("MatchesService", () => {
 
   describe("findAllMatches", () => {
     it("should return paginated matches and pagination info", async () => {
-      mockPrismaService.matches.findMany.mockResolvedValue([
+      mockPrismaService.client.matches.findMany.mockResolvedValue([
         mockMatchListResult,
       ]);
-      mockPrismaService.matches.count.mockResolvedValue(1);
+      mockPrismaService.client.matches.count.mockResolvedValue(1);
 
       const result = await service.findAllMatches({ page: 1, limit: 1 });
 
@@ -243,8 +245,8 @@ describe("MatchesService", () => {
     });
 
     it("should handle pagination correctly", async () => {
-      mockPrismaService.matches.findMany.mockResolvedValue([]);
-      mockPrismaService.matches.count.mockResolvedValue(150);
+      mockPrismaService.client.matches.findMany.mockResolvedValue([]);
+      mockPrismaService.client.matches.count.mockResolvedValue(150);
 
       const result = await service.findAllMatches({ page: 2, limit: 20 });
 
@@ -253,7 +255,7 @@ describe("MatchesService", () => {
       expect(result.limit).toBe(20);
       expect(result.totalPages).toBe(8);
 
-      expect(mockPrismaService.matches.findMany).toHaveBeenCalledWith(
+      expect(mockPrismaService.client.matches.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           skip: 20,
           take: 20,
@@ -262,8 +264,8 @@ describe("MatchesService", () => {
     });
 
     it("should use default page and limit when not provided", async () => {
-      mockPrismaService.matches.findMany.mockResolvedValue([]);
-      mockPrismaService.matches.count.mockResolvedValue(0);
+      mockPrismaService.client.matches.findMany.mockResolvedValue([]);
+      mockPrismaService.client.matches.count.mockResolvedValue(0);
 
       const result = await service.findAllMatches({});
 
@@ -272,19 +274,19 @@ describe("MatchesService", () => {
     });
 
     it("should cap limit at 100", async () => {
-      mockPrismaService.matches.findMany.mockResolvedValue([]);
-      mockPrismaService.matches.count.mockResolvedValue(0);
+      mockPrismaService.client.matches.findMany.mockResolvedValue([]);
+      mockPrismaService.client.matches.count.mockResolvedValue(0);
 
       await service.findAllMatches({ limit: 999 });
 
-      expect(mockPrismaService.matches.findMany).toHaveBeenCalledWith(
+      expect(mockPrismaService.client.matches.findMany).toHaveBeenCalledWith(
         expect.objectContaining({ take: 100 }),
       );
     });
 
     it("should propagate database errors", async () => {
       const dbError = new Error("DB error");
-      mockPrismaService.matches.findMany.mockRejectedValue(dbError);
+      mockPrismaService.client.matches.findMany.mockRejectedValue(dbError);
 
       await expect(service.findAllMatches({})).rejects.toThrow("DB error");
     });
@@ -292,7 +294,7 @@ describe("MatchesService", () => {
 
   describe("findMatchById", () => {
     it("should return mapped match with events and Decimal coordinates converted", async () => {
-      mockPrismaService.matches.findUnique.mockResolvedValue(
+      mockPrismaService.client.matches.findUnique.mockResolvedValue(
         mockMatchDetailResult,
       );
 
@@ -306,7 +308,7 @@ describe("MatchesService", () => {
     });
 
     it("should return null pool when pool is null", async () => {
-      mockPrismaService.matches.findUnique.mockResolvedValue({
+      mockPrismaService.client.matches.findUnique.mockResolvedValue({
         ...mockMatchDetailResult,
         pool: null,
         matchEvents: [],
@@ -318,7 +320,7 @@ describe("MatchesService", () => {
     });
 
     it("should throw NotFoundException when match not found", async () => {
-      mockPrismaService.matches.findUnique.mockResolvedValue(null);
+      mockPrismaService.client.matches.findUnique.mockResolvedValue(null);
 
       await expect(service.findMatchById(999)).rejects.toThrow(
         NotFoundException,
@@ -331,7 +333,7 @@ describe("MatchesService", () => {
 
   describe("findMatchesByPoolId", () => {
     it("should return matches for a given pool", async () => {
-      mockPrismaService.matches.findMany.mockResolvedValue([
+      mockPrismaService.client.matches.findMany.mockResolvedValue([
         mockMatchListResult,
       ]);
 
@@ -339,7 +341,7 @@ describe("MatchesService", () => {
 
       expect(result).toHaveLength(1);
       expect(result[0].id).toBe(1);
-      expect(mockPrismaService.matches.findMany).toHaveBeenCalledWith(
+      expect(mockPrismaService.client.matches.findMany).toHaveBeenCalledWith(
         expect.objectContaining({ where: { poolId: 1 } }),
       );
     });
@@ -347,7 +349,7 @@ describe("MatchesService", () => {
 
   describe("findMatchesByChampionshipId", () => {
     it("should return matches for a given championship", async () => {
-      mockPrismaService.matches.findMany.mockResolvedValue([
+      mockPrismaService.client.matches.findMany.mockResolvedValue([
         mockMatchListResult,
       ]);
 
@@ -355,7 +357,7 @@ describe("MatchesService", () => {
 
       expect(result).toHaveLength(1);
       expect(result[0].id).toBe(1);
-      expect(mockPrismaService.matches.findMany).toHaveBeenCalledWith(
+      expect(mockPrismaService.client.matches.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { pool: { championshipId: 1 } },
         }),
@@ -365,11 +367,11 @@ describe("MatchesService", () => {
 
   describe("findPlayerMatchStatsByMatchId", () => {
     it("should return player stats with home and away team ids", async () => {
-      mockPrismaService.matches.findUnique.mockResolvedValue({
+      mockPrismaService.client.matches.findUnique.mockResolvedValue({
         homeTeamId: 1,
         awayTeamId: 2,
       });
-      mockPrismaService.playerMatchStats.findMany.mockResolvedValue([
+      mockPrismaService.client.playerMatchStats.findMany.mockResolvedValue([
         {
           player: {
             id: 1,
@@ -418,7 +420,7 @@ describe("MatchesService", () => {
     });
 
     it("should throw NotFoundException if match not found", async () => {
-      mockPrismaService.matches.findUnique.mockResolvedValue(null);
+      mockPrismaService.client.matches.findUnique.mockResolvedValue(null);
 
       await expect(service.findPlayerMatchStatsByMatchId(999)).rejects.toThrow(
         NotFoundException,
@@ -431,7 +433,7 @@ describe("MatchesService", () => {
 
   describe("findMatchEventsByMatchId", () => {
     it("should return mapped match events with Decimal coordinates converted", async () => {
-      mockPrismaService.matchEvents.findMany.mockResolvedValue([
+      mockPrismaService.client.matchEvents.findMany.mockResolvedValue([
         mockMatchEventResult,
       ]);
 
@@ -446,7 +448,7 @@ describe("MatchesService", () => {
     });
 
     it("should handle events with no shot location", async () => {
-      mockPrismaService.matchEvents.findMany.mockResolvedValue([
+      mockPrismaService.client.matchEvents.findMany.mockResolvedValue([
         { ...mockMatchEventResult, shotLocation: null },
       ]);
 
@@ -458,8 +460,8 @@ describe("MatchesService", () => {
 
   describe("findMatchEventsByTeamId", () => {
     it("should return mapped match events for a team", async () => {
-      mockPrismaService.matches.findMany.mockResolvedValue([{ id: 1 }]);
-      mockPrismaService.matchEvents.findMany.mockResolvedValue([
+      mockPrismaService.client.matches.findMany.mockResolvedValue([{ id: 1 }]);
+      mockPrismaService.client.matchEvents.findMany.mockResolvedValue([
         { ...mockMatchEventResult, matchId: 1 },
       ]);
 
@@ -472,18 +474,20 @@ describe("MatchesService", () => {
     });
 
     it("should return empty array if no matches found for team", async () => {
-      mockPrismaService.matches.findMany.mockResolvedValue([]);
+      mockPrismaService.client.matches.findMany.mockResolvedValue([]);
 
       const result = await service.findMatchEventsByTeamId(999);
 
       expect(result).toEqual([]);
-      expect(mockPrismaService.matchEvents.findMany).not.toHaveBeenCalled();
+      expect(
+        mockPrismaService.client.matchEvents.findMany,
+      ).not.toHaveBeenCalled();
     });
   });
 
   describe("findMatchEventsByPlayerId", () => {
     it("should return mapped match events for a player", async () => {
-      mockPrismaService.matchEvents.findMany.mockResolvedValue([
+      mockPrismaService.client.matchEvents.findMany.mockResolvedValue([
         { ...mockMatchEventResult, matchId: 1 },
       ]);
 
@@ -498,16 +502,16 @@ describe("MatchesService", () => {
 
   describe("validatePage", () => {
     it("should return 1 when page is 0", async () => {
-      mockPrismaService.matches.findMany.mockResolvedValue([]);
-      mockPrismaService.matches.count.mockResolvedValue(0);
+      mockPrismaService.client.matches.findMany.mockResolvedValue([]);
+      mockPrismaService.client.matches.count.mockResolvedValue(0);
 
       const result = await service.findAllMatches({ page: 0 });
       expect(result.page).toBe(1);
     });
 
     it("should return 1 when page is negative", async () => {
-      mockPrismaService.matches.findMany.mockResolvedValue([]);
-      mockPrismaService.matches.count.mockResolvedValue(0);
+      mockPrismaService.client.matches.findMany.mockResolvedValue([]);
+      mockPrismaService.client.matches.count.mockResolvedValue(0);
 
       const result = await service.findAllMatches({ page: -1 });
       expect(result.page).toBe(1);
@@ -516,16 +520,16 @@ describe("MatchesService", () => {
 
   describe("validateLimit", () => {
     it("should return 50 when limit is 0", async () => {
-      mockPrismaService.matches.findMany.mockResolvedValue([]);
-      mockPrismaService.matches.count.mockResolvedValue(0);
+      mockPrismaService.client.matches.findMany.mockResolvedValue([]);
+      mockPrismaService.client.matches.count.mockResolvedValue(0);
 
       const result = await service.findAllMatches({ limit: 0 });
       expect(result.limit).toBe(50);
     });
 
     it("should return 50 when limit is negative", async () => {
-      mockPrismaService.matches.findMany.mockResolvedValue([]);
-      mockPrismaService.matches.count.mockResolvedValue(0);
+      mockPrismaService.client.matches.findMany.mockResolvedValue([]);
+      mockPrismaService.client.matches.count.mockResolvedValue(0);
 
       const result = await service.findAllMatches({ limit: -1 });
       expect(result.limit).toBe(50);
@@ -534,11 +538,11 @@ describe("MatchesService", () => {
 
   describe("calculatePlaytime", () => {
     it("should return 0 when playtimeIntervals is null", async () => {
-      mockPrismaService.matches.findUnique.mockResolvedValue({
+      mockPrismaService.client.matches.findUnique.mockResolvedValue({
         homeTeamId: 1,
         awayTeamId: 2,
       });
-      mockPrismaService.playerMatchStats.findMany.mockResolvedValue([
+      mockPrismaService.client.playerMatchStats.findMany.mockResolvedValue([
         {
           player: {
             id: 1,
@@ -573,11 +577,11 @@ describe("MatchesService", () => {
     });
 
     it("should return 0 when playtimeIntervals is empty array", async () => {
-      mockPrismaService.matches.findUnique.mockResolvedValue({
+      mockPrismaService.client.matches.findUnique.mockResolvedValue({
         homeTeamId: 1,
         awayTeamId: 2,
       });
-      mockPrismaService.playerMatchStats.findMany.mockResolvedValue([
+      mockPrismaService.client.playerMatchStats.findMany.mockResolvedValue([
         {
           player: {
             id: 1,
@@ -613,14 +617,14 @@ describe("MatchesService", () => {
 
   describe("buildWhereClause", () => {
     beforeEach(() => {
-      mockPrismaService.matches.findMany.mockResolvedValue([]);
-      mockPrismaService.matches.count.mockResolvedValue(0);
+      mockPrismaService.client.matches.findMany.mockResolvedValue([]);
+      mockPrismaService.client.matches.count.mockResolvedValue(0);
     });
 
     it("should apply poolId filter", async () => {
       await service.findAllMatches({ poolId: 5 });
 
-      expect(mockPrismaService.matches.findMany).toHaveBeenCalledWith(
+      expect(mockPrismaService.client.matches.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({ poolId: 5 }),
         }),
@@ -630,7 +634,7 @@ describe("MatchesService", () => {
     it("should apply championshipId filter", async () => {
       await service.findAllMatches({ championshipId: 3 });
 
-      expect(mockPrismaService.matches.findMany).toHaveBeenCalledWith(
+      expect(mockPrismaService.client.matches.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
             pool: expect.objectContaining({ championshipId: 3 }),
@@ -646,7 +650,7 @@ describe("MatchesService", () => {
         division: 1,
       });
 
-      expect(mockPrismaService.matches.findMany).toHaveBeenCalledWith(
+      expect(mockPrismaService.client.matches.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
             pool: expect.objectContaining({
@@ -661,7 +665,7 @@ describe("MatchesService", () => {
     it("should apply pool filter without championshipId", async () => {
       await service.findAllMatches({ level: "regional", division: 1 });
 
-      expect(mockPrismaService.matches.findMany).toHaveBeenCalledWith(
+      expect(mockPrismaService.client.matches.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
             pool: expect.objectContaining({
@@ -675,7 +679,7 @@ describe("MatchesService", () => {
     it("should apply committeeId organization filter", async () => {
       await service.findAllMatches({ committeeId: 2 });
 
-      expect(mockPrismaService.matches.findMany).toHaveBeenCalledWith(
+      expect(mockPrismaService.client.matches.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
             OR: expect.arrayContaining([
@@ -689,7 +693,7 @@ describe("MatchesService", () => {
     it("should apply leagueId organization filter", async () => {
       await service.findAllMatches({ leagueId: 4 });
 
-      expect(mockPrismaService.matches.findMany).toHaveBeenCalledWith(
+      expect(mockPrismaService.client.matches.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
             OR: expect.arrayContaining([
@@ -703,7 +707,7 @@ describe("MatchesService", () => {
     it("should apply matchday filter", async () => {
       await service.findAllMatches({ matchday: 3 });
 
-      expect(mockPrismaService.matches.findMany).toHaveBeenCalledWith(
+      expect(mockPrismaService.client.matches.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({ matchday: 3 }),
         }),
@@ -713,7 +717,7 @@ describe("MatchesService", () => {
     it("should apply date filter as range in Paris timezone", async () => {
       await service.findAllMatches({ date: "2024-02-05" });
 
-      expect(mockPrismaService.matches.findMany).toHaveBeenCalledWith(
+      expect(mockPrismaService.client.matches.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
             date: {
@@ -734,7 +738,7 @@ describe("MatchesService", () => {
     it("should apply search filter as OR across home and away team", async () => {
       await service.findAllMatches({ search: "Paris" });
 
-      expect(mockPrismaService.matches.findMany).toHaveBeenCalledWith(
+      expect(mockPrismaService.client.matches.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
             OR: expect.arrayContaining([
@@ -747,7 +751,7 @@ describe("MatchesService", () => {
     });
 
     it("should include committeeId and leagueId on club", async () => {
-      mockPrismaService.matches.findUnique.mockResolvedValue(
+      mockPrismaService.client.matches.findUnique.mockResolvedValue(
         mockMatchDetailResult,
       );
 
@@ -760,10 +764,10 @@ describe("MatchesService", () => {
     });
 
     it("should include committeeId and leagueId on club", async () => {
-      mockPrismaService.matches.findMany.mockResolvedValue([
+      mockPrismaService.client.matches.findMany.mockResolvedValue([
         mockMatchListResult,
       ]);
-      mockPrismaService.matches.count.mockResolvedValue(1);
+      mockPrismaService.client.matches.count.mockResolvedValue(1);
 
       const result = await service.findAllMatches({ page: 1, limit: 1 });
 

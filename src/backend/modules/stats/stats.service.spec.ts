@@ -18,12 +18,14 @@ describe("StatsService", () => {
   let service: StatsService;
 
   const mockPrismaService = {
-    clubs: { count: jest.fn() },
-    teams: { count: jest.fn() },
-    players: { count: jest.fn() },
-    matches: { count: jest.fn() },
-    leagues: { count: jest.fn() },
-    committees: { count: jest.fn() },
+    client: {
+      clubs: { count: jest.fn() },
+      teams: { count: jest.fn() },
+      players: { count: jest.fn() },
+      matches: { count: jest.fn() },
+      leagues: { count: jest.fn() },
+      committees: { count: jest.fn() },
+    },
   };
 
   beforeEach(async () => {
@@ -46,12 +48,12 @@ describe("StatsService", () => {
   describe("getStats", () => {
     it("should return all entity counts", async () => {
       // Arrange
-      mockPrismaService.clubs.count.mockResolvedValue(840);
-      mockPrismaService.teams.count.mockResolvedValue(3200);
-      mockPrismaService.players.count.mockResolvedValue(12400);
-      mockPrismaService.matches.count.mockResolvedValue(48000);
-      mockPrismaService.leagues.count.mockResolvedValue(26);
-      mockPrismaService.committees.count.mockResolvedValue(95);
+      mockPrismaService.client.clubs.count.mockResolvedValue(840);
+      mockPrismaService.client.teams.count.mockResolvedValue(3200);
+      mockPrismaService.client.players.count.mockResolvedValue(12400);
+      mockPrismaService.client.matches.count.mockResolvedValue(48000);
+      mockPrismaService.client.leagues.count.mockResolvedValue(26);
+      mockPrismaService.client.committees.count.mockResolvedValue(95);
 
       // Act
       const result = await service.getStats();
@@ -69,33 +71,35 @@ describe("StatsService", () => {
 
     it("should call all six count queries", async () => {
       // Arrange
-      mockPrismaService.clubs.count.mockResolvedValue(0);
-      mockPrismaService.teams.count.mockResolvedValue(0);
-      mockPrismaService.players.count.mockResolvedValue(0);
-      mockPrismaService.matches.count.mockResolvedValue(0);
-      mockPrismaService.leagues.count.mockResolvedValue(0);
-      mockPrismaService.committees.count.mockResolvedValue(0);
+      mockPrismaService.client.clubs.count.mockResolvedValue(0);
+      mockPrismaService.client.teams.count.mockResolvedValue(0);
+      mockPrismaService.client.players.count.mockResolvedValue(0);
+      mockPrismaService.client.matches.count.mockResolvedValue(0);
+      mockPrismaService.client.leagues.count.mockResolvedValue(0);
+      mockPrismaService.client.committees.count.mockResolvedValue(0);
 
       // Act
       await service.getStats();
 
       // Assert
-      expect(mockPrismaService.clubs.count).toHaveBeenCalledTimes(1);
-      expect(mockPrismaService.teams.count).toHaveBeenCalledTimes(1);
-      expect(mockPrismaService.players.count).toHaveBeenCalledTimes(1);
-      expect(mockPrismaService.matches.count).toHaveBeenCalledTimes(1);
-      expect(mockPrismaService.leagues.count).toHaveBeenCalledTimes(1);
-      expect(mockPrismaService.committees.count).toHaveBeenCalledTimes(1);
+      expect(mockPrismaService.client.clubs.count).toHaveBeenCalledTimes(1);
+      expect(mockPrismaService.client.teams.count).toHaveBeenCalledTimes(1);
+      expect(mockPrismaService.client.players.count).toHaveBeenCalledTimes(1);
+      expect(mockPrismaService.client.matches.count).toHaveBeenCalledTimes(1);
+      expect(mockPrismaService.client.leagues.count).toHaveBeenCalledTimes(1);
+      expect(mockPrismaService.client.committees.count).toHaveBeenCalledTimes(
+        1,
+      );
     });
 
     it("should return zeroed counts when platform has no data", async () => {
       // Arrange
-      mockPrismaService.clubs.count.mockResolvedValue(0);
-      mockPrismaService.teams.count.mockResolvedValue(0);
-      mockPrismaService.players.count.mockResolvedValue(0);
-      mockPrismaService.matches.count.mockResolvedValue(0);
-      mockPrismaService.leagues.count.mockResolvedValue(0);
-      mockPrismaService.committees.count.mockResolvedValue(0);
+      mockPrismaService.client.clubs.count.mockResolvedValue(0);
+      mockPrismaService.client.teams.count.mockResolvedValue(0);
+      mockPrismaService.client.players.count.mockResolvedValue(0);
+      mockPrismaService.client.matches.count.mockResolvedValue(0);
+      mockPrismaService.client.leagues.count.mockResolvedValue(0);
+      mockPrismaService.client.committees.count.mockResolvedValue(0);
 
       // Act
       const result = await service.getStats();
@@ -113,14 +117,14 @@ describe("StatsService", () => {
 
     it("should propagate database errors", async () => {
       // Arrange
-      mockPrismaService.clubs.count.mockRejectedValue(
+      mockPrismaService.client.clubs.count.mockRejectedValue(
         new Error("Database connection failed"),
       );
-      mockPrismaService.teams.count.mockResolvedValue(0);
-      mockPrismaService.players.count.mockResolvedValue(0);
-      mockPrismaService.matches.count.mockResolvedValue(0);
-      mockPrismaService.leagues.count.mockResolvedValue(0);
-      mockPrismaService.committees.count.mockResolvedValue(0);
+      mockPrismaService.client.teams.count.mockResolvedValue(0);
+      mockPrismaService.client.players.count.mockResolvedValue(0);
+      mockPrismaService.client.matches.count.mockResolvedValue(0);
+      mockPrismaService.client.leagues.count.mockResolvedValue(0);
+      mockPrismaService.client.committees.count.mockResolvedValue(0);
 
       // Act & Assert
       await expect(service.getStats()).rejects.toThrow(
@@ -132,27 +136,27 @@ describe("StatsService", () => {
       // Arrange — track resolution order
       const order: string[] = [];
 
-      mockPrismaService.clubs.count.mockImplementation(async () => {
+      mockPrismaService.client.clubs.count.mockImplementation(async () => {
         order.push("clubs");
         return 1;
       });
-      mockPrismaService.teams.count.mockImplementation(async () => {
+      mockPrismaService.client.teams.count.mockImplementation(async () => {
         order.push("teams");
         return 2;
       });
-      mockPrismaService.players.count.mockImplementation(async () => {
+      mockPrismaService.client.players.count.mockImplementation(async () => {
         order.push("players");
         return 3;
       });
-      mockPrismaService.matches.count.mockImplementation(async () => {
+      mockPrismaService.client.matches.count.mockImplementation(async () => {
         order.push("matches");
         return 4;
       });
-      mockPrismaService.leagues.count.mockImplementation(async () => {
+      mockPrismaService.client.leagues.count.mockImplementation(async () => {
         order.push("leagues");
         return 5;
       });
-      mockPrismaService.committees.count.mockImplementation(async () => {
+      mockPrismaService.client.committees.count.mockImplementation(async () => {
         order.push("committees");
         return 6;
       });

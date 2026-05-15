@@ -26,6 +26,9 @@ npm-debug.log*
 # Database dumps
 src/backend/db/sql/db_dump.sql
 
+# Prisma generated client
+src/backend/prisma/generated/
+
 src/frontend/next-env.d.ts
 
 # Python cache

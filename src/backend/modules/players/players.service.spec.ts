@@ -23,13 +23,15 @@ describe("PlayersService", () => {
 
   // Mock Prisma service
   const mockPrismaService = {
-    players: {
-      findMany: jest.fn(),
-      findUnique: jest.fn(),
-      count: jest.fn(),
-    },
-    playerMatchStats: {
-      findMany: jest.fn(),
+    client: {
+      players: {
+        findMany: jest.fn(),
+        findUnique: jest.fn(),
+        count: jest.fn(),
+      },
+      playerMatchStats: {
+        findMany: jest.fn(),
+      },
     },
   };
 
@@ -42,7 +44,7 @@ describe("PlayersService", () => {
           provide: PrismaService,
           useValue: mockPrismaService,
         },
-                CacheDedupService,
+        CacheDedupService,
       ],
     }).compile();
 
@@ -57,14 +59,14 @@ describe("PlayersService", () => {
     it("should return all player IDs", async () => {
       // Arrange
       const mockIds = [{ id: 1 }, { id: 2 }, { id: 3 }];
-      mockPrismaService.players.findMany.mockResolvedValue(mockIds);
+      mockPrismaService.client.players.findMany.mockResolvedValue(mockIds);
 
       // Act
       const result = await service.findAllIds();
 
       // Assert
       expect(result).toEqual(mockIds);
-      expect(mockPrismaService.players.findMany).toHaveBeenCalledWith({
+      expect(mockPrismaService.client.players.findMany).toHaveBeenCalledWith({
         select: { id: true },
         orderBy: { id: "asc" },
       });
@@ -72,7 +74,7 @@ describe("PlayersService", () => {
 
     it("should return empty array when no players exist", async () => {
       // Arrange
-      mockPrismaService.players.findMany.mockResolvedValue([]);
+      mockPrismaService.client.players.findMany.mockResolvedValue([]);
 
       // Act
       const result = await service.findAllIds();
@@ -83,7 +85,7 @@ describe("PlayersService", () => {
 
     it("should propagate database errors", async () => {
       // Arrange
-      mockPrismaService.players.findMany.mockRejectedValue(
+      mockPrismaService.client.players.findMany.mockRejectedValue(
         new Error("Database error"),
       );
 
@@ -124,8 +126,10 @@ describe("PlayersService", () => {
         },
       ];
 
-      mockPrismaService.players.findMany.mockResolvedValueOnce(mockPlayers);
-      mockPrismaService.players.count.mockResolvedValue(1);
+      mockPrismaService.client.players.findMany.mockResolvedValueOnce(
+        mockPlayers,
+      );
+      mockPrismaService.client.players.count.mockResolvedValue(1);
 
       // Act
       const result = await service.findAllPlayers({ page: 1, limit: 50 });
@@ -140,8 +144,8 @@ describe("PlayersService", () => {
 
     it("should handle pagination correctly", async () => {
       // Arrange
-      mockPrismaService.players.findMany.mockResolvedValueOnce([]);
-      mockPrismaService.players.count.mockResolvedValue(150);
+      mockPrismaService.client.players.findMany.mockResolvedValueOnce([]);
+      mockPrismaService.client.players.count.mockResolvedValue(150);
 
       // Act
       const result = await service.findAllPlayers({ page: 2, limit: 20 });
@@ -152,7 +156,7 @@ describe("PlayersService", () => {
       expect(result.limit).toBe(20);
       expect(result.totalPages).toBe(8);
 
-      expect(mockPrismaService.players.findMany).toHaveBeenCalledWith(
+      expect(mockPrismaService.client.players.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           skip: 20, // (page 2 - 1) * 20
           take: 20,
@@ -162,14 +166,14 @@ describe("PlayersService", () => {
 
     it("should validate and cap limit at 100", async () => {
       // Arrange
-      mockPrismaService.players.findMany.mockResolvedValueOnce([]);
-      mockPrismaService.players.count.mockResolvedValue(0);
+      mockPrismaService.client.players.findMany.mockResolvedValueOnce([]);
+      mockPrismaService.client.players.count.mockResolvedValue(0);
 
       // Act
       await service.findAllPlayers({ limit: 200 });
 
       // Assert
-      expect(mockPrismaService.players.findMany).toHaveBeenCalledWith(
+      expect(mockPrismaService.client.players.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           take: 100, // Capped at 100
         }),
@@ -178,14 +182,14 @@ describe("PlayersService", () => {
 
     it("should default to page 1 if invalid page provided", async () => {
       // Arrange
-      mockPrismaService.players.findMany.mockResolvedValueOnce([]);
-      mockPrismaService.players.count.mockResolvedValue(0);
+      mockPrismaService.client.players.findMany.mockResolvedValueOnce([]);
+      mockPrismaService.client.players.count.mockResolvedValue(0);
 
       // Act
       await service.findAllPlayers({ page: -1 });
 
       // Assert
-      expect(mockPrismaService.players.findMany).toHaveBeenCalledWith(
+      expect(mockPrismaService.client.players.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           skip: 0, // Page 1
         }),
@@ -195,7 +199,7 @@ describe("PlayersService", () => {
     it("should propagate database errors", async () => {
       // Arrange
       const dbError = new Error("Database connection failed");
-      mockPrismaService.players.findMany.mockRejectedValue(dbError);
+      mockPrismaService.client.players.findMany.mockRejectedValue(dbError);
 
       // Act & Assert
       await expect(service.findAllPlayers()).rejects.toThrow(
@@ -234,14 +238,14 @@ describe("PlayersService", () => {
         },
       };
 
-      mockPrismaService.players.findUnique.mockResolvedValue(mockPlayer);
+      mockPrismaService.client.players.findUnique.mockResolvedValue(mockPlayer);
 
       // Act
       const result = await service.findPlayerById(1);
 
       // Assert
       expect(result).toEqual(mockPlayer);
-      expect(mockPrismaService.players.findUnique).toHaveBeenCalledWith({
+      expect(mockPrismaService.client.players.findUnique).toHaveBeenCalledWith({
         where: { id: 1 },
         select: expect.any(Object),
       });
@@ -249,7 +253,7 @@ describe("PlayersService", () => {
 
     it("should throw NotFoundException when player not found", async () => {
       // Arrange
-      mockPrismaService.players.findUnique.mockResolvedValue(null);
+      mockPrismaService.client.players.findUnique.mockResolvedValue(null);
 
       // Act & Assert
       await expect(service.findPlayerById(999)).rejects.toThrow(
@@ -296,8 +300,10 @@ describe("PlayersService", () => {
         },
       ];
 
-      mockPrismaService.players.findUnique.mockResolvedValue({ id: 1 });
-      mockPrismaService.playerMatchStats.findMany.mockResolvedValue(mockStats);
+      mockPrismaService.client.players.findUnique.mockResolvedValue({ id: 1 });
+      mockPrismaService.client.playerMatchStats.findMany.mockResolvedValue(
+        mockStats,
+      );
 
       // Act
       const result = await service.findPlayerMatchHistory(1);
@@ -314,8 +320,8 @@ describe("PlayersService", () => {
 
     it("should return empty array when no matches found", async () => {
       // Arrange
-      mockPrismaService.players.findUnique.mockResolvedValue({ id: 1 });
-      mockPrismaService.playerMatchStats.findMany.mockResolvedValue([]);
+      mockPrismaService.client.players.findUnique.mockResolvedValue({ id: 1 });
+      mockPrismaService.client.playerMatchStats.findMany.mockResolvedValue([]);
 
       // Act
       const result = await service.findPlayerMatchHistory(1);
@@ -326,7 +332,7 @@ describe("PlayersService", () => {
 
     it("should throw NotFoundException when player not found", async () => {
       // Arrange
-      mockPrismaService.players.findUnique.mockResolvedValue(null);
+      mockPrismaService.client.players.findUnique.mockResolvedValue(null);
 
       // Act & Assert
       await expect(service.findPlayerMatchHistory(999)).rejects.toThrow(
@@ -341,16 +347,16 @@ describe("PlayersService", () => {
 
   describe("validatePage", () => {
     it("should return 1 when page is 0", async () => {
-      mockPrismaService.players.findMany.mockResolvedValue([]);
-      mockPrismaService.players.count.mockResolvedValue(0);
+      mockPrismaService.client.players.findMany.mockResolvedValue([]);
+      mockPrismaService.client.players.count.mockResolvedValue(0);
 
       const result = await service.findAllPlayers({ page: 0 });
       expect(result.page).toBe(1);
     });
 
     it("should return 1 when page is negative", async () => {
-      mockPrismaService.players.findMany.mockResolvedValue([]);
-      mockPrismaService.players.count.mockResolvedValue(0);
+      mockPrismaService.client.players.findMany.mockResolvedValue([]);
+      mockPrismaService.client.players.count.mockResolvedValue(0);
 
       const result = await service.findAllPlayers({ page: -5 });
       expect(result.page).toBe(1);
@@ -359,16 +365,16 @@ describe("PlayersService", () => {
 
   describe("validateLimit", () => {
     it("should return 50 when limit is 0", async () => {
-      mockPrismaService.players.findMany.mockResolvedValue([]);
-      mockPrismaService.players.count.mockResolvedValue(0);
+      mockPrismaService.client.players.findMany.mockResolvedValue([]);
+      mockPrismaService.client.players.count.mockResolvedValue(0);
 
       const result = await service.findAllPlayers({ limit: 0 });
       expect(result.limit).toBe(50);
     });
 
     it("should return 50 when limit is negative", async () => {
-      mockPrismaService.players.findMany.mockResolvedValue([]);
-      mockPrismaService.players.count.mockResolvedValue(0);
+      mockPrismaService.client.players.findMany.mockResolvedValue([]);
+      mockPrismaService.client.players.count.mockResolvedValue(0);
 
       const result = await service.findAllPlayers({ limit: -1 });
       expect(result.limit).toBe(50);
@@ -377,14 +383,14 @@ describe("PlayersService", () => {
 
   describe("buildWhereClause", () => {
     beforeEach(() => {
-      mockPrismaService.players.findMany.mockResolvedValue([]);
-      mockPrismaService.players.count.mockResolvedValue(0);
+      mockPrismaService.client.players.findMany.mockResolvedValue([]);
+      mockPrismaService.client.players.count.mockResolvedValue(0);
     });
 
     it("should apply name filter", async () => {
       await service.findAllPlayers({ name: "John" });
 
-      expect(mockPrismaService.players.findMany).toHaveBeenCalledWith(
+      expect(mockPrismaService.client.players.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
             name: { contains: "John", mode: "insensitive" },
@@ -396,7 +402,7 @@ describe("PlayersService", () => {
     it("should apply number filter", async () => {
       await service.findAllPlayers({ number: 10 });
 
-      expect(mockPrismaService.players.findMany).toHaveBeenCalledWith(
+      expect(mockPrismaService.client.players.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({ number: 10 }),
         }),
@@ -406,7 +412,7 @@ describe("PlayersService", () => {
     it("should apply teamId filter", async () => {
       await service.findAllPlayers({ teamId: 3 });
 
-      expect(mockPrismaService.players.findMany).toHaveBeenCalledWith(
+      expect(mockPrismaService.client.players.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
             team: expect.objectContaining({ id: 3 }),
@@ -418,7 +424,7 @@ describe("PlayersService", () => {
     it("should apply teamNumber filter", async () => {
       await service.findAllPlayers({ teamNumber: 2 });
 
-      expect(mockPrismaService.players.findMany).toHaveBeenCalledWith(
+      expect(mockPrismaService.client.players.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
             team: expect.objectContaining({ number: 2 }),
@@ -430,7 +436,7 @@ describe("PlayersService", () => {
     it("should apply clubId filter", async () => {
       await service.findAllPlayers({ clubId: 5 });
 
-      expect(mockPrismaService.players.findMany).toHaveBeenCalledWith(
+      expect(mockPrismaService.client.players.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
             team: expect.objectContaining({ clubId: 5 }),
@@ -442,7 +448,7 @@ describe("PlayersService", () => {
     it("should apply category filter", async () => {
       await service.findAllPlayers({ category: "U18" });
 
-      expect(mockPrismaService.players.findMany).toHaveBeenCalledWith(
+      expect(mockPrismaService.client.players.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
             team: expect.objectContaining({ category: "U18" }),
@@ -454,7 +460,7 @@ describe("PlayersService", () => {
     it("should apply gender filter", async () => {
       await service.findAllPlayers({ gender: "male" });
 
-      expect(mockPrismaService.players.findMany).toHaveBeenCalledWith(
+      expect(mockPrismaService.client.players.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
             team: expect.objectContaining({ gender: "male" }),
@@ -466,7 +472,7 @@ describe("PlayersService", () => {
     it("should apply level filter", async () => {
       await service.findAllPlayers({ level: "regional" });
 
-      expect(mockPrismaService.players.findMany).toHaveBeenCalledWith(
+      expect(mockPrismaService.client.players.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
             team: expect.objectContaining({
@@ -483,7 +489,7 @@ describe("PlayersService", () => {
         committeeId: 3,
       });
 
-      expect(mockPrismaService.players.findMany).toHaveBeenCalledWith(
+      expect(mockPrismaService.client.players.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
             team: expect.objectContaining({
@@ -497,7 +503,7 @@ describe("PlayersService", () => {
     it("should apply regional level with leagueId", async () => {
       await service.findAllPlayers({ level: "regional", leagueId: 4 });
 
-      expect(mockPrismaService.players.findMany).toHaveBeenCalledWith(
+      expect(mockPrismaService.client.players.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
             team: expect.objectContaining({
@@ -511,7 +517,7 @@ describe("PlayersService", () => {
 
   describe("mapToDto", () => {
     it("should map pool when present", async () => {
-      mockPrismaService.players.findMany.mockResolvedValue([
+      mockPrismaService.client.players.findMany.mockResolvedValue([
         {
           id: 1,
           name: "Player 1",
@@ -545,7 +551,7 @@ describe("PlayersService", () => {
           },
         },
       ]);
-      mockPrismaService.players.count.mockResolvedValue(1);
+      mockPrismaService.client.players.count.mockResolvedValue(1);
 
       const result = await service.findAllPlayers({});
 

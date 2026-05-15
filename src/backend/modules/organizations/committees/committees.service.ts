@@ -1,8 +1,8 @@
 // src/backend/modules/organizations/committees/committees.service.ts
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
 import { PrismaService } from "prisma/prisma.service";
 
+import { Prisma } from "../../../prisma/generated/prisma/client";
 import { CommitteeResponseDto } from "./dto/committees.response.dto";
 
 /**
@@ -61,7 +61,7 @@ export class CommitteesService {
    * @returns Array of committee DTOs
    */
   async findAllCommittees(): Promise<CommitteeResponseDto[]> {
-    const committees = await this.prisma.committees.findMany({
+    const committees = await this.prisma.client.committees.findMany({
       select: COMMITTEE_SELECT,
       orderBy: [{ name: "asc" }],
     });
@@ -78,7 +78,7 @@ export class CommitteesService {
   async findCommitteesByLeague(
     leagueId: number,
   ): Promise<CommitteeResponseDto[]> {
-    const committees = await this.prisma.committees.findMany({
+    const committees = await this.prisma.client.committees.findMany({
       where: {
         leagueId,
       },
@@ -103,7 +103,7 @@ export class CommitteesService {
    * @throws NotFoundException if committee doesn't exist
    */
   async findCommitteeById(committeeId: number): Promise<CommitteeResponseDto> {
-    const committee = await this.prisma.committees.findUnique({
+    const committee = await this.prisma.client.committees.findUnique({
       where: { id: committeeId },
       select: COMMITTEE_SELECT,
     });

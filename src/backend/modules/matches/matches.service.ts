@@ -3,10 +3,10 @@ import { Role } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
 import { Category, CompetitionLevel, Gender } from "@common/index";
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
 import { fromZonedTime } from "date-fns-tz";
 import { PrismaService } from "prisma/prisma.service";
 
+import { Prisma } from "../../prisma/generated/prisma/client";
 import type {
   MatchDetailResponseDto,
   MatchEventDto,
@@ -238,7 +238,7 @@ export class MatchesService {
    * @returns Flat array of objects with match IDs
    */
   async findAllIds(): Promise<{ id: number }[]> {
-    return this.prisma.matches.findMany({
+    return this.prisma.client.matches.findMany({
       select: { id: true },
       orderBy: { id: "asc" },
     });
@@ -253,14 +253,14 @@ export class MatchesService {
     const where = this.buildWhereClause(filters);
 
     const [matches, total] = await Promise.all([
-      this.prisma.matches.findMany({
+      this.prisma.client.matches.findMany({
         where,
         select: MATCH_LIST_SELECT,
         orderBy: { date: "desc" },
         skip,
         take: limit,
       }),
-      this.prisma.matches.count({ where }),
+      this.prisma.client.matches.count({ where }),
     ]);
 
     return {
@@ -273,7 +273,7 @@ export class MatchesService {
   }
 
   async findMatchById(matchId: number): Promise<MatchDetailResponseDto> {
-    const match = await this.prisma.matches.findUnique({
+    const match = await this.prisma.client.matches.findUnique({
       where: { id: matchId },
       select: MATCH_DETAIL_SELECT,
     });
@@ -286,7 +286,7 @@ export class MatchesService {
   }
 
   async findMatchesByPoolId(poolId: number): Promise<MatchDetailResponseDto[]> {
-    const matches = await this.prisma.matches.findMany({
+    const matches = await this.prisma.client.matches.findMany({
       where: { poolId },
       select: MATCH_LIST_SELECT,
       orderBy: { date: "asc" },
@@ -298,7 +298,7 @@ export class MatchesService {
   async findMatchesByChampionshipId(
     championshipId: number,
   ): Promise<MatchDetailResponseDto[]> {
-    const matches = await this.prisma.matches.findMany({
+    const matches = await this.prisma.client.matches.findMany({
       where: { pool: { championshipId } },
       select: MATCH_LIST_SELECT,
       orderBy: { date: "asc" },
@@ -310,7 +310,7 @@ export class MatchesService {
   async findPlayerMatchStatsByMatchId(
     matchId: number,
   ): Promise<MatchPlayerStatsResponseDto> {
-    const match = await this.prisma.matches.findUnique({
+    const match = await this.prisma.client.matches.findUnique({
       where: { id: matchId },
       select: { homeTeamId: true, awayTeamId: true },
     });
@@ -319,7 +319,7 @@ export class MatchesService {
       throw new NotFoundException(`Match with ID ${matchId} not found`);
     }
 
-    const stats = await this.prisma.playerMatchStats.findMany({
+    const stats = await this.prisma.client.playerMatchStats.findMany({
       where: { matchId },
       select: PLAYER_MATCH_STATS_SELECT,
     });
@@ -332,7 +332,7 @@ export class MatchesService {
   }
 
   async findMatchEventsByMatchId(matchId: number): Promise<MatchEventDto[]> {
-    const events = await this.prisma.matchEvents.findMany({
+    const events = await this.prisma.client.matchEvents.findMany({
       where: { matchId },
       select: MATCH_EVENT_SELECT,
       orderBy: { timestamp: "asc" },
@@ -342,7 +342,7 @@ export class MatchesService {
   }
 
   async findMatchEventsByTeamId(teamId: number): Promise<MatchEventDto[]> {
-    const matches = await this.prisma.matches.findMany({
+    const matches = await this.prisma.client.matches.findMany({
       where: { OR: [{ homeTeamId: teamId }, { awayTeamId: teamId }] },
       select: { id: true },
     });
@@ -353,7 +353,7 @@ export class MatchesService {
       return [];
     }
 
-    const events = await this.prisma.matchEvents.findMany({
+    const events = await this.prisma.client.matchEvents.findMany({
       where: {
         matchId: { in: matchIds },
         shotLocation: { isNot: null },
@@ -367,7 +367,7 @@ export class MatchesService {
   }
 
   async findMatchEventsByPlayerId(playerId: number): Promise<MatchEventDto[]> {
-    const events = await this.prisma.matchEvents.findMany({
+    const events = await this.prisma.client.matchEvents.findMany({
       where: {
         shotLocation: { isNot: null },
         players: { some: { playerId } },

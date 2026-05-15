@@ -33,13 +33,14 @@ describe("LeaderboardsService", () => {
   };
 
   const mockPrismaService = {
-    leaderboards: {
-      findMany: jest.fn(),
-      findUnique: jest.fn(),
-      count: jest.fn(),
+    client: {
+      leaderboards: {
+        findMany: jest.fn(),
+        findUnique: jest.fn(),
+        count: jest.fn(),
+      },
     },
   };
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [LoggerModule.forRoot()],
@@ -64,7 +65,7 @@ describe("LeaderboardsService", () => {
   describe("findLeaderboardsByPoolId", () => {
     it("should return leaderboards with correct rank for a valid pool ID", async () => {
       const poolId = 1;
-      mockPrismaService.leaderboards.findMany.mockResolvedValue([
+      mockPrismaService.client.leaderboards.findMany.mockResolvedValue([
         mockPrismaLeaderboard,
         { ...mockPrismaLeaderboard, id: 2, teamId: 6, points: 8 },
       ]);
@@ -86,7 +87,7 @@ describe("LeaderboardsService", () => {
         rank: 2,
         points: 8,
       });
-      expect(prisma.leaderboards.findMany).toHaveBeenCalledWith({
+      expect(prisma.client.leaderboards.findMany).toHaveBeenCalledWith({
         where: { poolId },
         orderBy: [{ points: "desc" }, { pointDifference: "desc" }],
         select: expect.any(Object),
@@ -95,7 +96,7 @@ describe("LeaderboardsService", () => {
 
     it("should throw NotFoundException when no leaderboards found", async () => {
       const poolId = 999;
-      mockPrismaService.leaderboards.findMany.mockResolvedValue([]);
+      mockPrismaService.client.leaderboards.findMany.mockResolvedValue([]);
 
       await expect(service.findLeaderboardsByPoolId(poolId)).rejects.toThrow(
         new NotFoundException("No leaderboard entries found for pool ID 999"),
@@ -105,7 +106,7 @@ describe("LeaderboardsService", () => {
     it("should handle database errors", async () => {
       const poolId = 1;
       const dbError = new Error("Database connection failed");
-      mockPrismaService.leaderboards.findMany.mockRejectedValue(dbError);
+      mockPrismaService.client.leaderboards.findMany.mockRejectedValue(dbError);
 
       await expect(service.findLeaderboardsByPoolId(poolId)).rejects.toThrow(
         dbError,
@@ -117,10 +118,10 @@ describe("LeaderboardsService", () => {
     it("should return a leaderboard entry with correct rank for a valid ID", async () => {
       const id = 1;
       // 2 teams ranked above this one → rank 3
-      mockPrismaService.leaderboards.findUnique.mockResolvedValue(
+      mockPrismaService.client.leaderboards.findUnique.mockResolvedValue(
         mockPrismaLeaderboard,
       );
-      mockPrismaService.leaderboards.count.mockResolvedValue(2);
+      mockPrismaService.client.leaderboards.count.mockResolvedValue(2);
 
       const result = await service.findLeaderboardById(id);
 
@@ -131,11 +132,11 @@ describe("LeaderboardsService", () => {
         teamNumber: 1,
         clubName: "AS Monaco Basket",
       });
-      expect(prisma.leaderboards.findUnique).toHaveBeenCalledWith({
+      expect(prisma.client.leaderboards.findUnique).toHaveBeenCalledWith({
         where: { id },
         select: expect.any(Object),
       });
-      expect(prisma.leaderboards.count).toHaveBeenCalledWith({
+      expect(prisma.client.leaderboards.count).toHaveBeenCalledWith({
         where: {
           poolId: mockPrismaLeaderboard.poolId,
           OR: [
@@ -151,10 +152,10 @@ describe("LeaderboardsService", () => {
 
     it("should return rank 1 when no entries are ranked higher", async () => {
       const id = 1;
-      mockPrismaService.leaderboards.findUnique.mockResolvedValue(
+      mockPrismaService.client.leaderboards.findUnique.mockResolvedValue(
         mockPrismaLeaderboard,
       );
-      mockPrismaService.leaderboards.count.mockResolvedValue(0);
+      mockPrismaService.client.leaderboards.count.mockResolvedValue(0);
 
       const result = await service.findLeaderboardById(id);
 
@@ -163,18 +164,20 @@ describe("LeaderboardsService", () => {
 
     it("should throw NotFoundException for non-existent ID", async () => {
       const id = 999;
-      mockPrismaService.leaderboards.findUnique.mockResolvedValue(null);
+      mockPrismaService.client.leaderboards.findUnique.mockResolvedValue(null);
 
       await expect(service.findLeaderboardById(id)).rejects.toThrow(
         new NotFoundException("Leaderboard entry with ID 999 not found"),
       );
-      expect(prisma.leaderboards.count).not.toHaveBeenCalled();
+      expect(prisma.client.leaderboards.count).not.toHaveBeenCalled();
     });
 
     it("should handle database errors", async () => {
       const id = 1;
       const dbError = new Error("Database connection failed");
-      mockPrismaService.leaderboards.findUnique.mockRejectedValue(dbError);
+      mockPrismaService.client.leaderboards.findUnique.mockRejectedValue(
+        dbError,
+      );
 
       await expect(service.findLeaderboardById(id)).rejects.toThrow(dbError);
     });

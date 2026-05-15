@@ -13,9 +13,11 @@ describe("CommitteesService", () => {
   let prismaService: PrismaService;
 
   const mockPrismaService = {
-    committees: {
-      findMany: jest.fn(),
-      findUnique: jest.fn(),
+    client: {
+      committees: {
+        findMany: jest.fn(),
+        findUnique: jest.fn(),
+      },
     },
   };
 
@@ -87,7 +89,9 @@ describe("CommitteesService", () => {
         }),
       ];
 
-      mockPrismaService.committees.findMany.mockResolvedValue(mockCommittees);
+      mockPrismaService.client.committees.findMany.mockResolvedValue(
+        mockCommittees,
+      );
 
       const result = await service.findAllCommittees();
 
@@ -95,14 +99,16 @@ describe("CommitteesService", () => {
       expect(result[0].name).toBe("Comité Departmental de l'Ain");
       expect(result[0].department).toEqual({ id: 1, name: "Ain", code: "01" });
 
-      expect(mockPrismaService.committees.findMany).toHaveBeenCalledWith({
-        select: EXPECTED_SELECT,
-        orderBy: [{ name: "asc" }],
-      });
+      expect(mockPrismaService.client.committees.findMany).toHaveBeenCalledWith(
+        {
+          select: EXPECTED_SELECT,
+          orderBy: [{ name: "asc" }],
+        },
+      );
     });
 
     it("should return empty array when no committees exist", async () => {
-      mockPrismaService.committees.findMany.mockResolvedValue([]);
+      mockPrismaService.client.committees.findMany.mockResolvedValue([]);
 
       const result = await service.findAllCommittees();
 
@@ -111,7 +117,7 @@ describe("CommitteesService", () => {
 
     it("should propagate database errors", async () => {
       const dbError = new Error("Database connection failed");
-      mockPrismaService.committees.findMany.mockRejectedValue(dbError);
+      mockPrismaService.client.committees.findMany.mockRejectedValue(dbError);
 
       await expect(service.findAllCommittees()).rejects.toThrow(
         "Database connection failed",
@@ -136,22 +142,26 @@ describe("CommitteesService", () => {
         }),
       ];
 
-      mockPrismaService.committees.findMany.mockResolvedValue(mockCommittees);
+      mockPrismaService.client.committees.findMany.mockResolvedValue(
+        mockCommittees,
+      );
 
       const result = await service.findCommitteesByLeague(1);
 
       expect(result).toHaveLength(2);
       expect(result[0].leagueId).toBe(1);
 
-      expect(mockPrismaService.committees.findMany).toHaveBeenCalledWith({
-        where: { leagueId: 1 },
-        select: EXPECTED_SELECT,
-        orderBy: [{ name: "asc" }],
-      });
+      expect(mockPrismaService.client.committees.findMany).toHaveBeenCalledWith(
+        {
+          where: { leagueId: 1 },
+          select: EXPECTED_SELECT,
+          orderBy: [{ name: "asc" }],
+        },
+      );
     });
 
     it("should throw NotFoundException when no committees found", async () => {
-      mockPrismaService.committees.findMany.mockResolvedValue([]);
+      mockPrismaService.client.committees.findMany.mockResolvedValue([]);
 
       await expect(service.findCommitteesByLeague(999)).rejects.toThrow(
         NotFoundException,
@@ -172,7 +182,9 @@ describe("CommitteesService", () => {
         _count: { clubs: 5 },
       });
 
-      mockPrismaService.committees.findUnique.mockResolvedValue(mockCommittee);
+      mockPrismaService.client.committees.findUnique.mockResolvedValue(
+        mockCommittee,
+      );
 
       const result = await service.findCommitteeById(1);
 
@@ -181,14 +193,16 @@ describe("CommitteesService", () => {
       expect(result.clubCount).toBe(5);
       expect(result.department).toEqual({ id: 1, name: "Ain", code: "01" });
 
-      expect(mockPrismaService.committees.findUnique).toHaveBeenCalledWith({
+      expect(
+        mockPrismaService.client.committees.findUnique,
+      ).toHaveBeenCalledWith({
         where: { id: 1 },
         select: EXPECTED_SELECT,
       });
     });
 
     it("should throw NotFoundException when committee not found", async () => {
-      mockPrismaService.committees.findUnique.mockResolvedValue(null);
+      mockPrismaService.client.committees.findUnique.mockResolvedValue(null);
 
       await expect(service.findCommitteeById(999)).rejects.toThrow(
         NotFoundException,

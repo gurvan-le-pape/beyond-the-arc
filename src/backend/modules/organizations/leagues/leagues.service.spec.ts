@@ -23,9 +23,11 @@ describe("LeaguesService", () => {
 
   // Mock Prisma service
   const mockPrismaService = {
-    leagues: {
-      findMany: jest.fn(),
-      findUnique: jest.fn(),
+    client: {
+      leagues: {
+        findMany: jest.fn(),
+        findUnique: jest.fn(),
+      },
     },
   };
 
@@ -110,7 +112,7 @@ describe("LeaguesService", () => {
         }),
       ];
 
-      mockPrismaService.leagues.findMany.mockResolvedValue(mockLeagues);
+      mockPrismaService.client.leagues.findMany.mockResolvedValue(mockLeagues);
 
       // Act
       const result = await service.findAllLeagues();
@@ -128,7 +130,7 @@ describe("LeaguesService", () => {
       });
       expect(result).toHaveLength(3);
 
-      expect(mockPrismaService.leagues.findMany).toHaveBeenCalledWith({
+      expect(mockPrismaService.client.leagues.findMany).toHaveBeenCalledWith({
         select: EXPECTED_SELECT,
         orderBy: { name: "asc" },
       });
@@ -136,7 +138,7 @@ describe("LeaguesService", () => {
 
     it("should return empty array when no leagues exist", async () => {
       // Arrange
-      mockPrismaService.leagues.findMany.mockResolvedValue([]);
+      mockPrismaService.client.leagues.findMany.mockResolvedValue([]);
 
       // Act
       const result = await service.findAllLeagues();
@@ -148,7 +150,7 @@ describe("LeaguesService", () => {
     it("should propagate database errors", async () => {
       // Arrange
       const dbError = new Error("Database connection failed");
-      mockPrismaService.leagues.findMany.mockRejectedValue(dbError);
+      mockPrismaService.client.leagues.findMany.mockRejectedValue(dbError);
 
       // Act & Assert
       await expect(service.findAllLeagues()).rejects.toThrow(
@@ -167,7 +169,7 @@ describe("LeaguesService", () => {
         committees: [{ _count: { clubs: 10 } }, { _count: { clubs: 5 } }],
       });
 
-      mockPrismaService.leagues.findUnique.mockResolvedValue(mockLeague);
+      mockPrismaService.client.leagues.findUnique.mockResolvedValue(mockLeague);
 
       // Act
       const result = await service.findLeagueById(1);
@@ -178,7 +180,7 @@ describe("LeaguesService", () => {
       expect(result.clubCount).toBe(15);
       expect(result.region).toEqual({ id: 3, name: "Bretagne", code: "BRE" });
 
-      expect(mockPrismaService.leagues.findUnique).toHaveBeenCalledWith({
+      expect(mockPrismaService.client.leagues.findUnique).toHaveBeenCalledWith({
         where: { id: 1 },
         select: EXPECTED_SELECT,
       });
@@ -186,7 +188,7 @@ describe("LeaguesService", () => {
 
     it("should throw NotFoundException when league not found", async () => {
       // Arrange
-      mockPrismaService.leagues.findUnique.mockResolvedValue(null);
+      mockPrismaService.client.leagues.findUnique.mockResolvedValue(null);
 
       // Act & Assert
       await expect(service.findLeagueById(999)).rejects.toThrow(

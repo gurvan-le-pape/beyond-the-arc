@@ -3,9 +3,9 @@ import { CompetitionLevel } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
 import { Category, Gender } from "@common/index";
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
 import { PrismaService } from "prisma/prisma.service";
 
+import { Prisma } from "../../prisma/generated/prisma/client";
 import type {
   FilterValuesTeamsResponseDto,
   TeamDetailResponseDto,
@@ -314,7 +314,7 @@ export class TeamsService {
    * @returns Flat array of objects with team IDs
    */
   async findAllIds(): Promise<{ id: number }[]> {
-    return this.prisma.teams.findMany({
+    return this.prisma.client.teams.findMany({
       select: { id: true },
       orderBy: { id: "asc" },
     });
@@ -335,14 +335,14 @@ export class TeamsService {
     const where = this.buildWhereClause(filters);
 
     const [teams, total] = await Promise.all([
-      this.prisma.teams.findMany({
+      this.prisma.client.teams.findMany({
         where,
         select: TEAM_SELECT,
         orderBy: { club: { name: "asc" } },
         skip,
         take: limit,
       }),
-      this.prisma.teams.count({ where }),
+      this.prisma.client.teams.count({ where }),
     ]);
 
     return {
@@ -377,19 +377,19 @@ export class TeamsService {
       : {};
 
     const [numbers, pools, championships] = await Promise.all([
-      this.prisma.teams.findMany({
+      this.prisma.client.teams.findMany({
         where: teamWhere,
         select: { number: true },
         distinct: ["number"],
         orderBy: { number: "asc" },
       }),
-      this.prisma.pools.findMany({
+      this.prisma.client.pools.findMany({
         where: hasClubFilter ? { teams: { some: teamWhere } } : {},
         select: { letter: true },
         distinct: ["letter"],
         orderBy: { letter: "asc" },
       }),
-      this.prisma.championships.findMany({
+      this.prisma.client.championships.findMany({
         where: hasClubFilter
           ? { pools: { some: { teams: { some: teamWhere } } } }
           : {},
@@ -416,7 +416,7 @@ export class TeamsService {
    * @throws NotFoundException if team doesn't exist
    */
   async findTeamById(id: number): Promise<TeamDetailResponseDto> {
-    const team = await this.prisma.teams.findUnique({
+    const team = await this.prisma.client.teams.findUnique({
       where: { id },
       select: TEAM_DETAIL_SELECT,
     });
@@ -436,7 +436,7 @@ export class TeamsService {
    * @throws NotFoundException if team doesn't exist
    */
   async findTeamMatchHistory(teamId: number): Promise<TeamMatchHistoryDto[]> {
-    const teamExists = await this.prisma.teams.findUnique({
+    const teamExists = await this.prisma.client.teams.findUnique({
       where: { id: teamId },
       select: { id: true },
     });
@@ -445,7 +445,7 @@ export class TeamsService {
       throw new NotFoundException(`Team with ID ${teamId} not found`);
     }
 
-    const matches = await this.prisma.matches.findMany({
+    const matches = await this.prisma.client.matches.findMany({
       where: {
         OR: [{ homeTeamId: teamId }, { awayTeamId: teamId }],
       },

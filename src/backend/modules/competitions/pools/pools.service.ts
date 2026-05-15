@@ -1,8 +1,8 @@
 // src/backend/modules/competitions/pools/pools.service.ts
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
 import { PrismaService } from "prisma/prisma.service";
 
+import { Prisma } from "../../../prisma/generated/prisma/client";
 import { PoolResponseDto } from "./dto/pools.response.dto";
 
 /**
@@ -47,7 +47,7 @@ export class PoolsService {
   async findPoolsByChampionshipId(
     championshipId: number,
   ): Promise<PoolResponseDto[]> {
-    const pools = await this.prisma.pools.findMany({
+    const pools = await this.prisma.client.pools.findMany({
       where: { championshipId },
       select: POOL_SELECT,
       orderBy: { letter: "asc" },
@@ -64,7 +64,7 @@ export class PoolsService {
    * @throws NotFoundException if pool doesn't exist
    */
   async findPoolById(poolId: number): Promise<PoolResponseDto> {
-    const pool = await this.prisma.pools.findUnique({
+    const pool = await this.prisma.client.pools.findUnique({
       where: { id: poolId },
       select: POOL_SELECT,
     });

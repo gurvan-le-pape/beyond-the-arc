@@ -24,9 +24,11 @@ describe("ChampionshipsService", () => {
 
   // Mock Prisma service
   const mockPrismaService = {
-    championships: {
-      findMany: jest.fn(),
-      findUnique: jest.fn(),
+    client: {
+      championships: {
+        findMany: jest.fn(),
+        findUnique: jest.fn(),
+      },
     },
   };
 
@@ -75,7 +77,7 @@ describe("ChampionshipsService", () => {
         ],
       };
 
-      mockPrismaService.championships.findUnique.mockResolvedValue(
+      mockPrismaService.client.championships.findUnique.mockResolvedValue(
         mockPrismaChampionship,
       );
 
@@ -97,7 +99,9 @@ describe("ChampionshipsService", () => {
         pools: [{ id: 1, letter: "A", name: "Pool A", nbMatchdays: 2 }],
       });
 
-      expect(mockPrismaService.championships.findUnique).toHaveBeenCalledWith({
+      expect(
+        mockPrismaService.client.championships.findUnique,
+      ).toHaveBeenCalledWith({
         where: { id: 1 },
         select: {
           id: true,
@@ -128,7 +132,7 @@ describe("ChampionshipsService", () => {
 
     it("should throw NotFoundException when championship not found", async () => {
       // Arrange
-      mockPrismaService.championships.findUnique.mockResolvedValue(null);
+      mockPrismaService.client.championships.findUnique.mockResolvedValue(null);
 
       // Act & Assert
       await expect(service.findChampionshipById(999)).rejects.toThrow(
@@ -176,7 +180,7 @@ describe("ChampionshipsService", () => {
           },
         ];
 
-        mockPrismaService.championships.findMany.mockResolvedValue(
+        mockPrismaService.client.championships.findMany.mockResolvedValue(
           mockChampionships,
         );
 
@@ -190,7 +194,9 @@ describe("ChampionshipsService", () => {
         expect(result).toHaveLength(2);
         expect(result[0].name).toBe("Championship Régional U18");
 
-        expect(mockPrismaService.championships.findMany).toHaveBeenCalledWith({
+        expect(
+          mockPrismaService.client.championships.findMany,
+        ).toHaveBeenCalledWith({
           where: {
             leagueId: 1,
             level: CompetitionLevel.REGIONAL,
@@ -225,7 +231,7 @@ describe("ChampionshipsService", () => {
 
       it("should throw NotFoundException when no regional championships found", async () => {
         // Arrange
-        mockPrismaService.championships.findMany.mockResolvedValue([]);
+        mockPrismaService.client.championships.findMany.mockResolvedValue([]);
 
         // Act & Assert
         await expect(
@@ -258,7 +264,7 @@ describe("ChampionshipsService", () => {
           },
         ];
 
-        mockPrismaService.championships.findMany.mockResolvedValue(
+        mockPrismaService.client.championships.findMany.mockResolvedValue(
           mockChampionships,
         );
 
@@ -272,7 +278,9 @@ describe("ChampionshipsService", () => {
         expect(result).toHaveLength(1);
         expect(result[0].level).toBe(CompetitionLevel.DEPARTMENTAL);
 
-        expect(mockPrismaService.championships.findMany).toHaveBeenCalledWith({
+        expect(
+          mockPrismaService.client.championships.findMany,
+        ).toHaveBeenCalledWith({
           where: {
             committeeId: 5,
             level: CompetitionLevel.DEPARTMENTAL,
@@ -307,7 +315,7 @@ describe("ChampionshipsService", () => {
 
       it("should throw NotFoundException when no departmental championships found", async () => {
         // Arrange
-        mockPrismaService.championships.findMany.mockResolvedValue([]);
+        mockPrismaService.client.championships.findMany.mockResolvedValue([]);
 
         // Act & Assert
         await expect(
@@ -325,7 +333,7 @@ describe("ChampionshipsService", () => {
     describe("Business routing logic", () => {
       it("should route to regional championships when level is regional", async () => {
         // Arrange
-        mockPrismaService.championships.findMany.mockResolvedValue([
+        mockPrismaService.client.championships.findMany.mockResolvedValue([
           {
             id: 1,
             name: "Test Regional",
@@ -346,7 +354,9 @@ describe("ChampionshipsService", () => {
         await service.findChampionshipsByLevel(CompetitionLevel.REGIONAL, 1);
 
         // Assert
-        expect(mockPrismaService.championships.findMany).toHaveBeenCalledWith(
+        expect(
+          mockPrismaService.client.championships.findMany,
+        ).toHaveBeenCalledWith(
           expect.objectContaining({
             where: expect.objectContaining({
               leagueId: 1,
@@ -358,7 +368,7 @@ describe("ChampionshipsService", () => {
 
       it("should route to departmental championships when level is departmental", async () => {
         // Arrange
-        mockPrismaService.championships.findMany.mockResolvedValue([
+        mockPrismaService.client.championships.findMany.mockResolvedValue([
           {
             id: 1,
             name: "Test Departmental",
@@ -382,7 +392,9 @@ describe("ChampionshipsService", () => {
         );
 
         // Assert
-        expect(mockPrismaService.championships.findMany).toHaveBeenCalledWith(
+        expect(
+          mockPrismaService.client.championships.findMany,
+        ).toHaveBeenCalledWith(
           expect.objectContaining({
             where: expect.objectContaining({
               committeeId: 5,

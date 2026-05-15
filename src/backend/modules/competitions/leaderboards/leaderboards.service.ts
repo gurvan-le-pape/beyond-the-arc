@@ -1,8 +1,8 @@
 // src/backend/modules/competitions/leaderboards/leaderboards.service.ts
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
 import { PrismaService } from "prisma/prisma.service";
 
+import { Prisma } from "../../../prisma/generated/prisma/client";
 import { LeaderboardResponseDto } from "./dto/leaderboards.response.dto";
 
 /**
@@ -61,7 +61,7 @@ export class LeaderboardsService {
   async findLeaderboardsByPoolId(
     poolId: number,
   ): Promise<LeaderboardResponseDto[]> {
-    const leaderboards = await this.prisma.leaderboards.findMany({
+    const leaderboards = await this.prisma.client.leaderboards.findMany({
       where: { poolId },
       select: LEADERBOARD_SELECT,
       orderBy: [{ points: "desc" }, { pointDifference: "desc" }],
@@ -87,7 +87,7 @@ export class LeaderboardsService {
   async findLeaderboardById(
     leaderboardId: number,
   ): Promise<LeaderboardResponseDto> {
-    const leaderboard = await this.prisma.leaderboards.findUnique({
+    const leaderboard = await this.prisma.client.leaderboards.findUnique({
       where: { id: leaderboardId },
       select: LEADERBOARD_SELECT,
     });
@@ -100,7 +100,7 @@ export class LeaderboardsService {
 
     // Compute rank via count query
     const rank =
-      (await this.prisma.leaderboards.count({
+      (await this.prisma.client.leaderboards.count({
         where: {
           poolId: leaderboard.poolId,
           OR: [

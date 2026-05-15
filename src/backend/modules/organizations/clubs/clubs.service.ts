@@ -2,9 +2,9 @@
 import { Category, CompetitionLevel, Gender } from "@common/constants";
 import { PaginatedResponseDto } from "@common/index";
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
 import { PrismaService } from "prisma/prisma.service";
 
+import { Prisma } from "../../../prisma/generated/prisma/client";
 import {
   ClubBasicResponseDto,
   ClubDetailedResponseDto,
@@ -126,7 +126,7 @@ export class ClubsService {
    */
   async getClubCountsByRegion(): Promise<ClubStatsByRegionDto[]> {
     // Get club counts grouped by committee
-    const clubCountsByCommittee = await this.prisma.clubs.groupBy({
+    const clubCountsByCommittee = await this.prisma.client.clubs.groupBy({
       by: ["committeeId"],
       _count: {
         id: true,
@@ -134,7 +134,7 @@ export class ClubsService {
     });
 
     // Get committee to league mapping
-    const committees = await this.prisma.committees.findMany({
+    const committees = await this.prisma.client.committees.findMany({
       select: {
         id: true,
         leagueId: true,
@@ -159,7 +159,7 @@ export class ClubsService {
     }
 
     // Get league details with region codes
-    const leagues = await this.prisma.leagues.findMany({
+    const leagues = await this.prisma.client.leagues.findMany({
       select: {
         id: true,
         name: true,
@@ -194,7 +194,7 @@ export class ClubsService {
   ): Promise<ClubStatsByDepartmentDto[]> {
     const where: Prisma.CommitteesWhereInput = leagueId ? { leagueId } : {};
 
-    const committees = await this.prisma.committees.findMany({
+    const committees = await this.prisma.client.committees.findMany({
       where,
       select: {
         id: true,
@@ -238,7 +238,7 @@ export class ClubsService {
    * @returns Flat array of all clubs
    */
   async findAllClubs(): Promise<ClubBasicResponseDto[]> {
-    const clubs = await this.prisma.clubs.findMany({
+    const clubs = await this.prisma.client.clubs.findMany({
       select: CLUB_BASIC_SELECT,
       orderBy: { name: "asc" },
     });
@@ -296,14 +296,14 @@ export class ClubsService {
     }
 
     const [clubs, total] = await Promise.all([
-      this.prisma.clubs.findMany({
+      this.prisma.client.clubs.findMany({
         where,
         select: CLUB_BASIC_SELECT,
         orderBy: { name: "asc" },
         skip,
         take: limit,
       }),
-      this.prisma.clubs.count({ where }),
+      this.prisma.client.clubs.count({ where }),
     ]);
 
     return {
@@ -323,7 +323,7 @@ export class ClubsService {
    * @returns Detailed club information
    */
   async findClubById(clubId: number): Promise<ClubDetailedResponseDto> {
-    const club = await this.prisma.clubs.findUnique({
+    const club = await this.prisma.client.clubs.findUnique({
       where: { id: clubId },
       select: CLUB_DETAILED_SELECT,
     });
@@ -342,7 +342,7 @@ export class ClubsService {
         }
 
         const [rank, poolSize] = await Promise.all([
-          this.prisma.leaderboards.count({
+          this.prisma.client.leaderboards.count({
             where: {
               poolId: lb.poolId,
               OR: [
@@ -354,7 +354,7 @@ export class ClubsService {
               ],
             },
           }),
-          this.prisma.leaderboards.count({
+          this.prisma.client.leaderboards.count({
             where: { poolId: lb.poolId },
           }),
         ]);
@@ -373,7 +373,7 @@ export class ClubsService {
    * @returns Array of all departments with region information
    */
   async getAllDepartments(): Promise<ClubStatsByDepartmentDto[]> {
-    const committees = await this.prisma.committees.findMany({
+    const committees = await this.prisma.client.committees.findMany({
       select: {
         id: true,
         name: true,
