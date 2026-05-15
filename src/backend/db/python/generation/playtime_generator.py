@@ -44,15 +44,15 @@ def generate(
     current_time = min(intervals[-1][1] for intervals in playtimes.values() if intervals)
 
     while current_time < GAME_DURATION:
-        # Find who just finished their stint
-        exiting = next(
-            (pid for pid in active if playtimes[pid][-1][1] == current_time),
-            None,
-        )
-        if exiting is None:
-            break
+        # Collect ALL players whose current stint ends at this exact time.
+        exiting_now = [
+            pid for pid in active if playtimes[pid][-1][1] == current_time
+        ]
 
-        if bench:
+        for exiting in exiting_now:
+            if not bench:
+                continue
+
             entering = bench.pop(0)
             bench.append(exiting)
 

@@ -6,7 +6,7 @@ No business logic — pure SQL in, data out.
 from dataclasses import dataclass
 from datetime import datetime
 
-import psycopg2.extensions
+import psycopg
 
 
 @dataclass
@@ -19,14 +19,36 @@ class ScheduledMatch:
     scheduled_at: datetime
 
 
+# ---------------------------------------------------------------------------
+# Matches
+# ---------------------------------------------------------------------------
+
+def insert_scheduled_matches_bulk(
+    cursor: psycopg.Cursor,
+    rows: list[tuple],
+) -> None:
+    """
+    Bulk insert scheduled matches.
+    Each row: (pool_id, matchday, scheduled_at, home_team_id, away_team_id)
+    """
+    cursor.executemany(
+        """
+        INSERT INTO matches (pool_id, matchday, date, home_team_id, away_team_id, status)
+        VALUES (%s, %s, %s, %s, %s, 'scheduled')
+        """,
+        rows,
+    )
+
+
 def insert_scheduled_match(
-    cursor: psycopg2.extensions.cursor,
+    cursor: psycopg.Cursor,
     pool_id: int,
     matchday: int,
     scheduled_at: datetime,
     home_team_id: int,
     away_team_id: int,
 ) -> int:
+    """Single-row insert kept for compatibility. Prefer insert_scheduled_matches_bulk."""
     cursor.execute(
         """
         INSERT INTO matches (pool_id, matchday, date, home_team_id, away_team_id, status)
@@ -38,7 +60,7 @@ def insert_scheduled_match(
     return cursor.fetchone()[0]
 
 
-def fetch_due_matches(cursor: psycopg2.extensions.cursor) -> list[ScheduledMatch]:
+def fetch_due_matches(cursor: psycopg.Cursor) -> list[ScheduledMatch]:
     """Fetch all matches that are due but not yet generated."""
     cursor.execute(
         """
@@ -61,18 +83,14 @@ def fetch_due_matches(cursor: psycopg2.extensions.cursor) -> list[ScheduledMatch
     ]
 
 
-def set_match_status(
-    cursor: psycopg2.extensions.cursor,
-    match_id: int,
-    status: str,
-) -> None:
+def set_match_status(cursor: psycopg.Cursor, match_id: int, status: str) -> None:
     cursor.execute(
         "UPDATE matches SET status = %s WHERE id = %s;",
         (status, match_id),
     )
 
 
-def reset_stuck_matches(cursor: psycopg2.extensions.cursor) -> int:
+def reset_stuck_matches(cursor: psycopg.Cursor) -> int:
     """
     On scheduler startup, reset any matches stuck in 'generating' state
     back to 'scheduled' so they get retried.
@@ -89,7 +107,7 @@ def reset_stuck_matches(cursor: psycopg2.extensions.cursor) -> int:
 
 
 def update_match_result(
-    cursor: psycopg2.extensions.cursor,
+    cursor: psycopg.Cursor,
     match_id: int,
     home_score: int,
     away_score: int,
@@ -110,45 +128,54 @@ def update_match_result(
     )
 
 
+# ---------------------------------------------------------------------------
+# Shot locations
+# ---------------------------------------------------------------------------
+
 def insert_shot_locations_bulk(
-    cursor: psycopg2.extensions.cursor,
+    cursor: psycopg.Cursor,
     coords: list[tuple[float, float]],
 ) -> dict[tuple[float, float], int]:
     """
-    Upsert shot locations and return a map of (x, y) → id.
+    Insert one shot_location row per coordinate and return a map of (x, y) → id.
+
+    No deduplication: two events at the same spot get two rows, which is fine —
+    there's no business rule requiring shared location rows, and the saving is
+    negligible for two-decimal coordinates.
     """
     if not coords:
         return {}
 
-    cursor.execute(
-        "SELECT id, x, y FROM shot_locations WHERE (x, y) = ANY(%s);",
-        (coords,),
+    cursor.executemany(
+        "INSERT INTO shot_locations (x, y) VALUES (%s, %s) RETURNING id, x, y;",
+        coords,
+        returning=True,
     )
-    cache = {(float(row[1]), float(row[2])): row[0] for row in cursor.fetchall()}
 
-    missing = [c for c in coords if c not in cache]
-    if missing:
-        cursor.executemany(
-            "INSERT INTO shot_locations (x, y) VALUES (%s, %s) ON CONFLICT DO NOTHING;",
-            missing,
-        )
-        cursor.execute(
-            "SELECT id, x, y FROM shot_locations WHERE (x, y) = ANY(%s);",
-            (missing,),
-        )
-        for row in cursor.fetchall():
+    cache: dict[tuple[float, float], int] = {}
+    while True:
+        row = cursor.fetchone()
+        if row is not None:
             cache[(float(row[1]), float(row[2]))] = row[0]
+        if not cursor.nextset():
+            break
 
     return cache
 
 
+# ---------------------------------------------------------------------------
+# Match events
+# ---------------------------------------------------------------------------
+
 def insert_match_events_bulk(
-    cursor: psycopg2.extensions.cursor,
+    cursor: psycopg.Cursor,
     match_id: int,
     events: list[dict],
     shot_location_cache: dict[tuple[float, float], int],
 ) -> list[int]:
-    """Insert all match events and return their IDs in order."""
+    """
+    Insert all match events and return their IDs in insertion order.
+    """
     rows = []
     for event in events:
         shot_location_id = None
@@ -163,23 +190,36 @@ def insert_match_events_bulk(
             shot_location_id,
         ))
 
+    if not rows:
+        return []
+
     cursor.executemany(
         """
         INSERT INTO match_events (match_id, event_type, timestamp, description, shot_location_id)
-        VALUES (%s, %s, %s, %s, %s);
+        VALUES (%s, %s, %s, %s, %s)
+        RETURNING id;
         """,
         rows,
+        returning=True,
     )
 
-    cursor.execute(
-        "SELECT id FROM match_events WHERE match_id = %s ORDER BY id;",
-        (match_id,),
-    )
-    return [row[0] for row in cursor.fetchall()]
+    event_ids: list[int] = []
+    while True:
+        row = cursor.fetchone()
+        if row is not None:
+            event_ids.append(row[0])
+        if not cursor.nextset():
+            break
 
+    return event_ids
+
+
+# ---------------------------------------------------------------------------
+# Match event players
+# ---------------------------------------------------------------------------
 
 def insert_match_event_players_bulk(
-    cursor: psycopg2.extensions.cursor,
+    cursor: psycopg.Cursor,
     event_ids: list[int],
     events: list[dict],
 ) -> None:
@@ -196,8 +236,12 @@ def insert_match_event_players_bulk(
         )
 
 
+# ---------------------------------------------------------------------------
+# Player stats
+# ---------------------------------------------------------------------------
+
 def insert_player_stats_bulk(
-    cursor: psycopg2.extensions.cursor,
+    cursor: psycopg.Cursor,
     match_id: int,
     rows: list[tuple],
 ) -> None:
@@ -243,8 +287,12 @@ def insert_player_stats_bulk(
     )
 
 
+# ---------------------------------------------------------------------------
+# Playtime intervals
+# ---------------------------------------------------------------------------
+
 def insert_playtime_intervals_bulk(
-    cursor: psycopg2.extensions.cursor,
+    cursor: psycopg.Cursor,
     match_id: int,
     intervals: list[tuple[int, int, int]],
 ) -> None:
@@ -260,8 +308,12 @@ def insert_playtime_intervals_bulk(
     )
 
 
+# ---------------------------------------------------------------------------
+# Substitutions
+# ---------------------------------------------------------------------------
+
 def insert_substitutions_bulk(
-    cursor: psycopg2.extensions.cursor,
+    cursor: psycopg.Cursor,
     match_id: int,
     substitutions: list[dict],
 ) -> None:

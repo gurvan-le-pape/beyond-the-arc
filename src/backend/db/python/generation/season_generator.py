@@ -29,12 +29,9 @@ logger = logging.getLogger(__name__)
 class SeasonGenerator:
     def run(self) -> None:
         logger.info("Starting season setup.")
-        conn = connection.get()
-        try:
+        with connection.get_pool().connection() as conn:
             with conn.cursor() as cursor:
                 league_ids = team_repository.fetch_league_ids(cursor)
-        finally:
-            connection.release(conn)
 
         for league_id in league_ids:
             if checkpoints.is_done("league_setup", league_id):
@@ -49,58 +46,50 @@ class SeasonGenerator:
     # ------------------------------------------------------------------
 
     def _setup_league(self, league_id: int) -> None:
-        conn = connection.get()
-        try:
-            with conn.cursor() as cursor:
-                committee_ids = team_repository.fetch_committee_ids_for_league(cursor, league_id)
+        # get_pool().connection() is a context manager that:
+        #   - commits automatically on clean exit (if autocommit=False, the default)
+        #   - rolls back on exception
+        #   - returns the connection cleanly with no open transaction
+        # We manage commits manually here so we get two discrete checkpoints.
+        with connection.get_pool().connection() as conn:
+            conn.autocommit = False
+            try:
+                # Step 1: teams + players
+                with conn.cursor() as cursor:
+                    committee_ids = team_repository.fetch_committee_ids_for_league(cursor, league_id)
+                    for committee_id in committee_ids:
+                        self._generate_teams_and_players(cursor, committee_id)
+                conn.commit()
+                logger.info(f"League {league_id}: teams and players committed.")
 
-                # Step 1: generate teams + players for every committee
-                for committee_id in committee_ids:
-                    self._generate_teams_and_players(cursor, committee_id)
-
-            conn.commit()
-            logger.info(f"League {league_id}: teams and players committed.")
-
-            # Step 2: assign teams to championships and pools, then build schedule
-            with conn.cursor() as cursor:
-                for gender in GENDERS:
-                    for category in CATEGORIES:
-                        all_league_level_teams: list[int] = []
-
-                        for committee_id in committee_ids:
-                            league_level = self._setup_committee_championships(
-                                cursor, committee_id, gender, category, league_id
+                # Step 2: championships, pools, schedule
+                with conn.cursor() as cursor:
+                    for gender in GENDERS:
+                        for category in CATEGORIES:
+                            all_league_level_teams: list[int] = []
+                            for committee_id in committee_ids:
+                                league_level = self._setup_committee_championships(
+                                    cursor, committee_id, gender, category, league_id
+                                )
+                                all_league_level_teams.extend(league_level)
+                            self._setup_league_championships(
+                                cursor, all_league_level_teams, gender, category, league_id
                             )
-                            all_league_level_teams.extend(league_level)
+                    self._build_match_schedule(cursor, league_id)
+                    checkpoints.mark_done(cursor, "league_setup", league_id)
+                conn.commit()
+                logger.info(f"League {league_id}: championships, pools, and schedule committed.")
 
-                        self._setup_league_championships(
-                            cursor, all_league_level_teams, gender, category, league_id
-                        )
-
-                # Step 3: build match schedule for all pools in this league
-                self._build_match_schedule(cursor, league_id)
-
-                checkpoints.mark_done(cursor, "league_setup", league_id)
-
-            conn.commit()
-            logger.info(f"League {league_id}: championships, pools, and schedule committed.")
-
-        except Exception:
-            conn.rollback()
-            logger.exception(f"League {league_id}: setup failed, rolled back.")
-            raise
-        finally:
-            connection.release(conn)
+            except Exception:
+                conn.rollback()
+                logger.exception(f"League {league_id}: setup failed, rolled back.")
+                raise
 
     # ------------------------------------------------------------------
     # Teams and players
     # ------------------------------------------------------------------
 
-    def _generate_teams_and_players(
-        self,
-        cursor,
-        committee_id: int,
-    ) -> None:
+    def _generate_teams_and_players(self, cursor, committee_id: int) -> None:
         club_ids = team_repository.fetch_club_ids_for_committee(cursor, committee_id)
         if not club_ids:
             logger.warning(f"Committee {committee_id}: no clubs found, skipping.")
@@ -111,7 +100,7 @@ class SeasonGenerator:
 
         for gender in GENDERS:
             for category in CATEGORIES:
-                club_team_count: dict[int, int] = dict.fromkeys(club_ids, 0)  # reset per gender/category
+                club_team_count: dict[int, int] = dict.fromkeys(club_ids, 0)
                 for _ in range(num_teams_per_gender_category):
                     club_id = random.choice(club_ids)  # noqa: S2245
                     club_team_count[club_id] += 1
@@ -223,7 +212,10 @@ class SeasonGenerator:
                 league_id=league_id,
             )
 
+            # pool_cursor tracks position within team_ids for this division
             pool_cursor = team_cursor
+            all_assignments: list[tuple[int, int]] = []
+
             for i in range(num_pools):
                 pool_id = championship_repository.insert_pool(
                     cursor, championship_id, chr(65 + i), f"Pool {chr(65 + i)}"
@@ -234,9 +226,13 @@ class SeasonGenerator:
                     for j in range(count)
                     if pool_cursor + j < len(team_ids)
                 ]
-                team_repository.assign_teams_to_pool(cursor, assignments)
+                all_assignments.extend(assignments)
                 pool_cursor += count
 
+            # One bulk UPDATE for all pools in this division
+            team_repository.assign_teams_to_pool(cursor, all_assignments)
+
+            # Advance the outer cursor past all teams consumed by this division
             team_cursor = pool_cursor
 
     # ------------------------------------------------------------------
@@ -246,9 +242,8 @@ class SeasonGenerator:
     def _build_match_schedule(self, cursor, league_id: int) -> None:
         """
         For every pool in this league, generate the full round-robin schedule
-        and insert empty match shells with their scheduled_at datetimes.
+        and bulk-insert all match shells in a single call per pool.
         """
-        # Fetch all pools belonging to this league's championships
         cursor.execute(
             """
             SELECT pools.id, pools.name
@@ -271,14 +266,16 @@ class SeasonGenerator:
 
             schedule = build_round_robin_schedule(team_ids)
 
+            match_rows: list[tuple] = []
             for matchday, pairs in enumerate(schedule, start=1):
                 scheduled_at = compute_matchday_datetime(
                     SEASON_START_WEEK, SEASON_START_YEAR, matchday
                 )
                 for home_id, away_id in pairs:
-                    match_repository.insert_scheduled_match(
-                        cursor, pool_id, matchday, scheduled_at, home_id, away_id
-                    )
+                    match_rows.append((pool_id, matchday, scheduled_at, home_id, away_id))
+
+            if match_rows:
+                match_repository.insert_scheduled_matches_bulk(cursor, match_rows)
 
     # ------------------------------------------------------------------
     # Helpers

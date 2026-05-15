@@ -3,11 +3,11 @@ All database operations for championships and pools.
 No business logic — pure SQL in, data out.
 """
 
-import psycopg2.extensions
+import psycopg
 
 
 def insert_championship(
-    cursor: psycopg2.extensions.cursor,
+    cursor: psycopg.Cursor,
     name: str,
     category: str,
     gender: str,
@@ -29,7 +29,7 @@ def insert_championship(
 
 
 def insert_pool(
-    cursor: psycopg2.extensions.cursor,
+    cursor: psycopg.Cursor,
     championship_id: int,
     letter: str,
     name: str,
@@ -45,7 +45,7 @@ def insert_pool(
     return cursor.fetchone()[0]
 
 
-def fetch_all_pools(cursor: psycopg2.extensions.cursor) -> list[tuple[int, str]]:
+def fetch_all_pools(cursor: psycopg.Cursor) -> list[tuple[int, str]]:
     """Returns list of (pool_id, pool_name)."""
     cursor.execute(
         """
