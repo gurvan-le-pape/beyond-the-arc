@@ -14,20 +14,22 @@ import type { PrismaService } from "prisma/prisma.service";
 import { ClubsService } from "./clubs.service";
 
 type MockedPrismaService = {
-  clubs: {
-    findMany: jest.Mock;
-    findUnique: jest.Mock;
-    groupBy: jest.Mock;
-    count: jest.Mock;
-  };
-  committees: {
-    findMany: jest.Mock;
-  };
-  leagues: {
-    findMany: jest.Mock;
-  };
-  leaderboards: {
-    count: jest.Mock;
+  client: {
+    clubs: {
+      findMany: jest.Mock;
+      findUnique: jest.Mock;
+      groupBy: jest.Mock;
+      count: jest.Mock;
+    };
+    committees: {
+      findMany: jest.Mock;
+    };
+    leagues: {
+      findMany: jest.Mock;
+    };
+    leaderboards: {
+      count: jest.Mock;
+    };
   };
 };
 
@@ -37,20 +39,22 @@ describe("ClubsService", () => {
 
   beforeEach(() => {
     prisma = {
-      clubs: {
-        findMany: jest.fn(),
-        findUnique: jest.fn(),
-        groupBy: jest.fn(),
-        count: jest.fn(),
-      },
-      committees: {
-        findMany: jest.fn(),
-      },
-      leagues: {
-        findMany: jest.fn(),
-      },
-      leaderboards: {
-        count: jest.fn(),
+      client: {
+        clubs: {
+          findMany: jest.fn(),
+          findUnique: jest.fn(),
+          groupBy: jest.fn(),
+          count: jest.fn(),
+        },
+        committees: {
+          findMany: jest.fn(),
+        },
+        leagues: {
+          findMany: jest.fn(),
+        },
+        leaderboards: {
+          count: jest.fn(),
+        },
       },
     };
 
@@ -66,19 +70,19 @@ describe("ClubsService", () => {
   // ============================================================================
   describe("getClubCountsByRegion", () => {
     it("should return club counts grouped by league", async () => {
-      prisma.clubs.groupBy.mockResolvedValue([
+      prisma.client.clubs.groupBy.mockResolvedValue([
         { committeeId: 1, _count: { id: 5 } },
         { committeeId: 2, _count: { id: 3 } },
         { committeeId: 3, _count: { id: 4 } },
       ]);
 
-      prisma.committees.findMany.mockResolvedValue([
+      prisma.client.committees.findMany.mockResolvedValue([
         { id: 1, leagueId: 10 },
         { id: 2, leagueId: 10 },
         { id: 3, leagueId: 20 },
       ]);
 
-      prisma.leagues.findMany.mockResolvedValue([
+      prisma.client.leagues.findMany.mockResolvedValue([
         {
           id: 10,
           name: "League Auvergne-Rhône-Alpes",
@@ -104,16 +108,16 @@ describe("ClubsService", () => {
         },
       ]);
 
-      expect(prisma.clubs.groupBy).toHaveBeenCalledWith({
+      expect(prisma.client.clubs.groupBy).toHaveBeenCalledWith({
         by: ["committeeId"],
         _count: { id: true },
       });
     });
 
     it("should return zero count for leagues with no clubs", async () => {
-      prisma.clubs.groupBy.mockResolvedValue([]);
-      prisma.committees.findMany.mockResolvedValue([]);
-      prisma.leagues.findMany.mockResolvedValue([
+      prisma.client.clubs.groupBy.mockResolvedValue([]);
+      prisma.client.committees.findMany.mockResolvedValue([]);
+      prisma.client.leagues.findMany.mockResolvedValue([
         { id: 10, name: "League Sans Clubs", region: { code: "99" } },
       ]);
 
@@ -125,11 +129,13 @@ describe("ClubsService", () => {
     });
 
     it("should handle leagues without region codes", async () => {
-      prisma.clubs.groupBy.mockResolvedValue([
+      prisma.client.clubs.groupBy.mockResolvedValue([
         { committeeId: 1, _count: { id: 5 } },
       ]);
-      prisma.committees.findMany.mockResolvedValue([{ id: 1, leagueId: 10 }]);
-      prisma.leagues.findMany.mockResolvedValue([
+      prisma.client.committees.findMany.mockResolvedValue([
+        { id: 1, leagueId: 10 },
+      ]);
+      prisma.client.leagues.findMany.mockResolvedValue([
         { id: 10, name: "League X", region: null },
       ]);
 
@@ -139,15 +145,15 @@ describe("ClubsService", () => {
     });
 
     it("should ignore committees with null leagueId", async () => {
-      prisma.clubs.groupBy.mockResolvedValue([
+      prisma.client.clubs.groupBy.mockResolvedValue([
         { committeeId: 1, _count: { id: 5 } },
         { committeeId: 2, _count: { id: 3 } },
       ]);
-      prisma.committees.findMany.mockResolvedValue([
+      prisma.client.committees.findMany.mockResolvedValue([
         { id: 1, leagueId: 10 },
         { id: 2, leagueId: null },
       ]);
-      prisma.leagues.findMany.mockResolvedValue([
+      prisma.client.leagues.findMany.mockResolvedValue([
         { id: 10, name: "League X", region: { code: "01" } },
       ]);
 
@@ -157,12 +163,14 @@ describe("ClubsService", () => {
     });
 
     it("should skip entries where committeeId is null", async () => {
-      prisma.clubs.groupBy.mockResolvedValue([
+      prisma.client.clubs.groupBy.mockResolvedValue([
         { committeeId: null, _count: { id: 3 } },
         { committeeId: 1, _count: { id: 5 } },
       ]);
-      prisma.committees.findMany.mockResolvedValue([{ id: 1, leagueId: 10 }]);
-      prisma.leagues.findMany.mockResolvedValue([
+      prisma.client.committees.findMany.mockResolvedValue([
+        { id: 1, leagueId: 10 },
+      ]);
+      prisma.client.leagues.findMany.mockResolvedValue([
         { id: 10, name: "League X", region: { code: "01" } },
       ]);
 
@@ -173,7 +181,7 @@ describe("ClubsService", () => {
 
     it("should propagate database errors", async () => {
       const dbError = new Error("Database error");
-      prisma.clubs.groupBy.mockRejectedValue(dbError);
+      prisma.client.clubs.groupBy.mockRejectedValue(dbError);
 
       await expect(service.getClubCountsByRegion()).rejects.toThrow(dbError);
     });
@@ -184,7 +192,7 @@ describe("ClubsService", () => {
   // ============================================================================
   describe("getClubCountsByDepartment", () => {
     it("should return club counts by department for all leagues", async () => {
-      prisma.committees.findMany.mockResolvedValue([
+      prisma.client.committees.findMany.mockResolvedValue([
         {
           id: 1,
           name: "Comité de l'Ain",
@@ -220,7 +228,7 @@ describe("ClubsService", () => {
         },
       ]);
 
-      expect(prisma.committees.findMany).toHaveBeenCalledWith({
+      expect(prisma.client.committees.findMany).toHaveBeenCalledWith({
         where: {},
         select: expect.any(Object),
         orderBy: { name: "asc" },
@@ -228,7 +236,7 @@ describe("ClubsService", () => {
     });
 
     it("should filter by leagueId when provided", async () => {
-      prisma.committees.findMany.mockResolvedValue([
+      prisma.client.committees.findMany.mockResolvedValue([
         {
           id: 1,
           name: "Comité de l'Ain",
@@ -240,7 +248,7 @@ describe("ClubsService", () => {
 
       await service.getClubCountsByDepartment(10);
 
-      expect(prisma.committees.findMany).toHaveBeenCalledWith({
+      expect(prisma.client.committees.findMany).toHaveBeenCalledWith({
         where: { leagueId: 10 },
         select: expect.any(Object),
         orderBy: { name: "asc" },
@@ -248,7 +256,7 @@ describe("ClubsService", () => {
     });
 
     it("should return empty array when no committees found", async () => {
-      prisma.committees.findMany.mockResolvedValue([]);
+      prisma.client.committees.findMany.mockResolvedValue([]);
 
       const result = await service.getClubCountsByDepartment();
 
@@ -256,7 +264,7 @@ describe("ClubsService", () => {
     });
 
     it("should handle committees with zero clubs", async () => {
-      prisma.committees.findMany.mockResolvedValue([
+      prisma.client.committees.findMany.mockResolvedValue([
         {
           id: 1,
           name: "Comité Vide",
@@ -273,7 +281,7 @@ describe("ClubsService", () => {
 
     it("should propagate database errors", async () => {
       const dbError = new Error("Database error");
-      prisma.committees.findMany.mockRejectedValue(dbError);
+      prisma.client.committees.findMany.mockRejectedValue(dbError);
 
       await expect(service.getClubCountsByDepartment()).rejects.toThrow(
         dbError,
@@ -301,8 +309,8 @@ describe("ClubsService", () => {
 
     beforeEach(() => {
       // findClubsByFilters now runs Promise.all([findMany, count])
-      prisma.clubs.findMany.mockResolvedValue([mockClub]);
-      prisma.clubs.count.mockResolvedValue(1);
+      prisma.client.clubs.findMany.mockResolvedValue([mockClub]);
+      prisma.client.clubs.count.mockResolvedValue(1);
     });
 
     it("should return paginated response when no filters provided", async () => {
@@ -330,23 +338,23 @@ describe("ClubsService", () => {
         totalPages: 1,
       });
 
-      expect(prisma.clubs.findMany).toHaveBeenCalledWith({
+      expect(prisma.client.clubs.findMany).toHaveBeenCalledWith({
         where: {},
         select: expect.any(Object),
         orderBy: { name: "asc" },
         skip: 0,
         take: 50,
       });
-      expect(prisma.clubs.count).toHaveBeenCalledWith({ where: {} });
+      expect(prisma.client.clubs.count).toHaveBeenCalledWith({ where: {} });
     });
 
     it("should filter by committeeId", async () => {
       await service.findClubsByFilters({ committeeId: 1 });
 
-      expect(prisma.clubs.findMany).toHaveBeenCalledWith(
+      expect(prisma.client.clubs.findMany).toHaveBeenCalledWith(
         expect.objectContaining({ where: { committeeId: 1 } }),
       );
-      expect(prisma.clubs.count).toHaveBeenCalledWith({
+      expect(prisma.client.clubs.count).toHaveBeenCalledWith({
         where: { committeeId: 1 },
       });
     });
@@ -354,7 +362,7 @@ describe("ClubsService", () => {
     it("should filter by leagueId via committee relation", async () => {
       await service.findClubsByFilters({ leagueId: 2 });
 
-      expect(prisma.clubs.findMany).toHaveBeenCalledWith(
+      expect(prisma.client.clubs.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { committee: { leagueId: 2 } },
         }),
@@ -364,7 +372,7 @@ describe("ClubsService", () => {
     it("should filter by category via teams", async () => {
       await service.findClubsByFilters({ category: Category.U18 });
 
-      expect(prisma.clubs.findMany).toHaveBeenCalledWith(
+      expect(prisma.client.clubs.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { teams: { some: { category: Category.U18 } } },
         }),
@@ -374,7 +382,7 @@ describe("ClubsService", () => {
     it("should filter by gender via teams", async () => {
       await service.findClubsByFilters({ gender: Gender.FEMALE });
 
-      expect(prisma.clubs.findMany).toHaveBeenCalledWith(
+      expect(prisma.client.clubs.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { teams: { some: { gender: Gender.FEMALE } } },
         }),
@@ -389,7 +397,7 @@ describe("ClubsService", () => {
         gender: Gender.MALE,
       });
 
-      expect(prisma.clubs.findMany).toHaveBeenCalledWith(
+      expect(prisma.client.clubs.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: {
             committeeId: 1,
@@ -401,17 +409,17 @@ describe("ClubsService", () => {
     });
 
     it("should respect custom page and limit", async () => {
-      prisma.clubs.count.mockResolvedValue(200);
+      prisma.client.clubs.count.mockResolvedValue(200);
 
       await service.findClubsByFilters({ page: 3, limit: 20 });
 
-      expect(prisma.clubs.findMany).toHaveBeenCalledWith(
+      expect(prisma.client.clubs.findMany).toHaveBeenCalledWith(
         expect.objectContaining({ skip: 40, take: 20 }),
       );
     });
 
     it("should compute totalPages correctly", async () => {
-      prisma.clubs.count.mockResolvedValue(105);
+      prisma.client.clubs.count.mockResolvedValue(105);
 
       const result = await service.findClubsByFilters({ limit: 50 });
 
@@ -419,8 +427,8 @@ describe("ClubsService", () => {
     });
 
     it("should return empty items when no clubs match", async () => {
-      prisma.clubs.findMany.mockResolvedValue([]);
-      prisma.clubs.count.mockResolvedValue(0);
+      prisma.client.clubs.findMany.mockResolvedValue([]);
+      prisma.client.clubs.count.mockResolvedValue(0);
 
       const result = await service.findClubsByFilters({
         category: Category.U18,
@@ -432,7 +440,7 @@ describe("ClubsService", () => {
     });
 
     it("should handle null latitude and longitude", async () => {
-      prisma.clubs.findMany.mockResolvedValue([
+      prisma.client.clubs.findMany.mockResolvedValue([
         { ...mockClub, latitude: null, longitude: null },
       ]);
 
@@ -444,7 +452,7 @@ describe("ClubsService", () => {
 
     it("should propagate database errors", async () => {
       const dbError = new Error("Database error");
-      prisma.clubs.findMany.mockRejectedValue(dbError);
+      prisma.client.clubs.findMany.mockRejectedValue(dbError);
 
       await expect(
         service.findClubsByFilters({ committeeId: 1 }),
@@ -500,9 +508,9 @@ describe("ClubsService", () => {
     };
 
     it("should return club with rank and poolSize computed", async () => {
-      prisma.clubs.findUnique.mockResolvedValue(mockPrismaClub);
+      prisma.client.clubs.findUnique.mockResolvedValue(mockPrismaClub);
       // 1 team ranked above → rank 2, 8 teams total
-      prisma.leaderboards.count
+      prisma.client.leaderboards.count
         .mockResolvedValueOnce(1)
         .mockResolvedValueOnce(8);
 
@@ -522,15 +530,15 @@ describe("ClubsService", () => {
         pointDifference: 25,
         poolId: 10,
       });
-      expect(prisma.clubs.findUnique).toHaveBeenCalledWith({
+      expect(prisma.client.clubs.findUnique).toHaveBeenCalledWith({
         where: { id: 1 },
         select: expect.any(Object),
       });
     });
 
     it("should return rank 1 when no teams are ranked above", async () => {
-      prisma.clubs.findUnique.mockResolvedValue(mockPrismaClub);
-      prisma.leaderboards.count
+      prisma.client.clubs.findUnique.mockResolvedValue(mockPrismaClub);
+      prisma.client.leaderboards.count
         .mockResolvedValueOnce(0) // no teams above
         .mockResolvedValueOnce(6);
 
@@ -540,7 +548,7 @@ describe("ClubsService", () => {
     });
 
     it("should return null leaderboard when team has no leaderboard entry", async () => {
-      prisma.clubs.findUnique.mockResolvedValue({
+      prisma.client.clubs.findUnique.mockResolvedValue({
         ...mockPrismaClub,
         teams: [{ ...mockPrismaClub.teams[0], leaderboards: [] }],
       });
@@ -548,11 +556,11 @@ describe("ClubsService", () => {
       const result = await service.findClubById(1);
 
       expect(result.teams[0].leaderboard).toBeNull();
-      expect(prisma.leaderboards.count).not.toHaveBeenCalled();
+      expect(prisma.client.leaderboards.count).not.toHaveBeenCalled();
     });
 
     it("should return null leaderboard when team has no pool", async () => {
-      prisma.clubs.findUnique.mockResolvedValue({
+      prisma.client.clubs.findUnique.mockResolvedValue({
         ...mockPrismaClub,
         teams: [
           {
@@ -567,11 +575,11 @@ describe("ClubsService", () => {
       const result = await service.findClubById(1);
 
       expect(result.teams[0].leaderboard).toBeNull();
-      expect(prisma.leaderboards.count).not.toHaveBeenCalled();
+      expect(prisma.client.leaderboards.count).not.toHaveBeenCalled();
     });
 
     it("should handle club with no teams", async () => {
-      prisma.clubs.findUnique.mockResolvedValue({
+      prisma.client.clubs.findUnique.mockResolvedValue({
         ...mockPrismaClub,
         teams: [],
       });
@@ -579,11 +587,11 @@ describe("ClubsService", () => {
       const result = await service.findClubById(1);
 
       expect(result.teams).toHaveLength(0);
-      expect(prisma.leaderboards.count).not.toHaveBeenCalled();
+      expect(prisma.client.leaderboards.count).not.toHaveBeenCalled();
     });
 
     it("should handle club with null fields", async () => {
-      prisma.clubs.findUnique.mockResolvedValue({
+      prisma.client.clubs.findUnique.mockResolvedValue({
         ...mockPrismaClub,
         address: null,
         phone: null,
@@ -603,7 +611,7 @@ describe("ClubsService", () => {
     });
 
     it("should return club with president data", async () => {
-      prisma.clubs.findUnique.mockResolvedValue({
+      prisma.client.clubs.findUnique.mockResolvedValue({
         ...mockPrismaClub,
         president: {
           id: 1,
@@ -629,15 +637,15 @@ describe("ClubsService", () => {
     });
 
     it("should compute rank and poolSize via parallel count queries", async () => {
-      prisma.clubs.findUnique.mockResolvedValue(mockPrismaClub);
-      prisma.leaderboards.count
+      prisma.client.clubs.findUnique.mockResolvedValue(mockPrismaClub);
+      prisma.client.leaderboards.count
         .mockResolvedValueOnce(2)
         .mockResolvedValueOnce(10);
 
       await service.findClubById(1);
 
-      expect(prisma.leaderboards.count).toHaveBeenCalledTimes(2);
-      expect(prisma.leaderboards.count).toHaveBeenCalledWith({
+      expect(prisma.client.leaderboards.count).toHaveBeenCalledTimes(2);
+      expect(prisma.client.leaderboards.count).toHaveBeenCalledWith({
         where: {
           poolId: 10,
           OR: [
@@ -646,13 +654,13 @@ describe("ClubsService", () => {
           ],
         },
       });
-      expect(prisma.leaderboards.count).toHaveBeenCalledWith({
+      expect(prisma.client.leaderboards.count).toHaveBeenCalledWith({
         where: { poolId: 10 },
       });
     });
 
     it("should throw NotFoundException when club does not exist", async () => {
-      prisma.clubs.findUnique.mockResolvedValue(null);
+      prisma.client.clubs.findUnique.mockResolvedValue(null);
 
       await expect(service.findClubById(999)).rejects.toThrow(
         new NotFoundException("Club with ID 999 not found"),
@@ -661,14 +669,14 @@ describe("ClubsService", () => {
 
     it("should re-throw NotFoundException from inner calls", async () => {
       const notFoundError = new NotFoundException("Club not found");
-      prisma.clubs.findUnique.mockRejectedValue(notFoundError);
+      prisma.client.clubs.findUnique.mockRejectedValue(notFoundError);
 
       await expect(service.findClubById(1)).rejects.toThrow(NotFoundException);
     });
 
     it("should propagate database errors", async () => {
       const dbError = new Error("Database error");
-      prisma.clubs.findUnique.mockRejectedValue(dbError);
+      prisma.client.clubs.findUnique.mockRejectedValue(dbError);
 
       await expect(service.findClubById(1)).rejects.toThrow(dbError);
     });
@@ -679,7 +687,7 @@ describe("ClubsService", () => {
   // ============================================================================
   describe("getAllDepartments", () => {
     it("should return all departments with region info", async () => {
-      prisma.committees.findMany.mockResolvedValue([
+      prisma.client.committees.findMany.mockResolvedValue([
         {
           id: 1,
           name: "Comité de l'Ain",
@@ -710,13 +718,13 @@ describe("ClubsService", () => {
         clubCount: 15,
       });
       expect(result[1].clubCount).toBe(25);
-      expect(prisma.committees.findMany).toHaveBeenCalledWith(
+      expect(prisma.client.committees.findMany).toHaveBeenCalledWith(
         expect.objectContaining({ orderBy: { name: "asc" } }),
       );
     });
 
     it("should return empty array when no departments found", async () => {
-      prisma.committees.findMany.mockResolvedValue([]);
+      prisma.client.committees.findMany.mockResolvedValue([]);
 
       const result = await service.getAllDepartments();
 
@@ -725,7 +733,7 @@ describe("ClubsService", () => {
 
     it("should propagate database errors", async () => {
       const dbError = new Error("Database error");
-      prisma.committees.findMany.mockRejectedValue(dbError);
+      prisma.client.committees.findMany.mockRejectedValue(dbError);
 
       await expect(service.getAllDepartments()).rejects.toThrow(dbError);
     });

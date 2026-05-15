@@ -23,9 +23,11 @@ describe("PoolsService", () => {
 
   // Mock Prisma service
   const mockPrismaService = {
-    pools: {
-      findMany: jest.fn(),
-      findUnique: jest.fn(),
+    client: {
+      pools: {
+        findMany: jest.fn(),
+        findUnique: jest.fn(),
+      },
     },
   };
 
@@ -70,7 +72,7 @@ describe("PoolsService", () => {
         },
       ];
 
-      mockPrismaService.pools.findMany.mockResolvedValue(mockPools);
+      mockPrismaService.client.pools.findMany.mockResolvedValue(mockPools);
 
       // Act
       const result = await service.findPoolsByChampionshipId(championshipId);
@@ -86,7 +88,7 @@ describe("PoolsService", () => {
       });
       expect(result[1].letter).toBe("B");
 
-      expect(mockPrismaService.pools.findMany).toHaveBeenCalledWith({
+      expect(mockPrismaService.client.pools.findMany).toHaveBeenCalledWith({
         where: { championshipId },
         select: {
           id: true,
@@ -105,7 +107,7 @@ describe("PoolsService", () => {
     it("should return empty array when no pools found", async () => {
       // Arrange
       const championshipId = 999;
-      mockPrismaService.pools.findMany.mockResolvedValue([]);
+      mockPrismaService.client.pools.findMany.mockResolvedValue([]);
 
       // Act
       const result = await service.findPoolsByChampionshipId(championshipId);
@@ -118,7 +120,7 @@ describe("PoolsService", () => {
       // Arrange
       const championshipId = 1;
       const dbError = new Error("Database connection failed");
-      mockPrismaService.pools.findMany.mockRejectedValue(dbError);
+      mockPrismaService.client.pools.findMany.mockRejectedValue(dbError);
 
       // Act & Assert
       await expect(
@@ -129,7 +131,7 @@ describe("PoolsService", () => {
     it("should order results by letter ascending", async () => {
       // Arrange
       const championshipId = 1;
-      mockPrismaService.pools.findMany.mockResolvedValue([
+      mockPrismaService.client.pools.findMany.mockResolvedValue([
         {
           id: 1,
           letter: "A",
@@ -143,7 +145,7 @@ describe("PoolsService", () => {
       await service.findPoolsByChampionshipId(championshipId);
 
       // Assert
-      expect(mockPrismaService.pools.findMany).toHaveBeenCalledWith(
+      expect(mockPrismaService.client.pools.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           orderBy: { letter: "asc" },
         }),
@@ -163,7 +165,7 @@ describe("PoolsService", () => {
         matches: [{ matchday: 1 }, { matchday: 2 }],
       };
 
-      mockPrismaService.pools.findUnique.mockResolvedValue(mockPool);
+      mockPrismaService.client.pools.findUnique.mockResolvedValue(mockPool);
 
       // Act
       const result = await service.findPoolById(id);
@@ -177,7 +179,7 @@ describe("PoolsService", () => {
         nbMatchdays: 2,
       });
 
-      expect(mockPrismaService.pools.findUnique).toHaveBeenCalledWith({
+      expect(mockPrismaService.client.pools.findUnique).toHaveBeenCalledWith({
         where: { id },
         select: {
           id: true,
@@ -195,7 +197,7 @@ describe("PoolsService", () => {
     it("should throw NotFoundException when pool not found", async () => {
       // Arrange
       const id = 999;
-      mockPrismaService.pools.findUnique.mockResolvedValue(null);
+      mockPrismaService.client.pools.findUnique.mockResolvedValue(null);
 
       // Act & Assert
       await expect(service.findPoolById(id)).rejects.toThrow(NotFoundException);
@@ -208,7 +210,7 @@ describe("PoolsService", () => {
     it("should use POOL_SELECT constant for consistent queries", async () => {
       // Arrange
       const id = 1;
-      mockPrismaService.pools.findUnique.mockResolvedValue({
+      mockPrismaService.client.pools.findUnique.mockResolvedValue({
         id: 1,
         letter: "A",
         name: "Test",
@@ -220,7 +222,7 @@ describe("PoolsService", () => {
       await service.findPoolById(id);
 
       // Assert
-      expect(mockPrismaService.pools.findUnique).toHaveBeenCalledWith({
+      expect(mockPrismaService.client.pools.findUnique).toHaveBeenCalledWith({
         where: { id },
         select: {
           id: true,
