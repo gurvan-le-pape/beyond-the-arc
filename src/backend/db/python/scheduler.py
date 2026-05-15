@@ -10,6 +10,7 @@ Each worker process initializes its own DB connection pool on first use.
 
 import json
 import logging
+import os
 import time
 from concurrent.futures import ProcessPoolExecutor
 
@@ -52,6 +53,7 @@ def _worker_init() -> None:
 
     global _match_generator
     _match_generator = MatchGenerator(simulator)
+    logger.info(f"Worker initialised (PID {os.getpid()}).")
 
 
 def _generate_worker(match: ScheduledMatch) -> None:
