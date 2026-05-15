@@ -47,7 +47,7 @@ def compute_matchday_datetime(season_start_week: int, season_start_year: int, ma
         weeks_in_year = datetime(year, 12, 28).isocalendar()[1]
 
     rng = random.Random(pool_id * 10000 + matchday)
-    weekday, hour, minute = rng.choice(SLOT_OPTIONS)
+    weekday, hour, minute = rng.choice(SLOT_OPTIONS) # noqa: S2245
     base = datetime.fromisocalendar(year, week, weekday)
     local_dt = datetime(base.year, base.month, base.day, hour, minute, tzinfo=PARIS)
     return local_dt.astimezone(UTC)
