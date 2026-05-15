@@ -7,7 +7,7 @@
     "poststart:dev": "find dist -type f -name '*.spec.js' -exec rm -f {} + 2>/dev/null || true",
     "clean:specs": "find dist -name '*.spec.js' -type f -delete 2>/dev/null || true",
     "start": "nest start --ts-config tsconfig.json",
-    "build": "nest build -p tsconfig.build.json && npm run clean:specs",
+    "build": "prisma generate && nest build -p tsconfig.build.json && npm run clean:specs",
     "test": "jest",
     "lint": "eslint '**/*.ts'",
     "lint:fix": "organize-imports-cli './**/*.ts' && eslint '**/*.{ts,tsx}' --fix",
