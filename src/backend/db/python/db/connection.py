@@ -47,31 +47,3 @@ def get_pool() -> ConnectionPool:
     if _pool is None:
         raise RuntimeError("Connection pool not initialized. Call initialize() first.")
     return _pool
-
-
-# ---------------------------------------------------------------------------
-# Deprecated helpers — kept for any callers not yet migrated to get_pool().
-# New code should use get_pool().connection() as a context manager instead;
-# that pattern handles commit, rollback, and connection return automatically.
-# These will be removed once all callers are migrated.
-# ---------------------------------------------------------------------------
-
-def get():
-    """Deprecated: borrow a connection from the pool manually.
-
-    Prefer:
-        with connection.get_pool().connection() as conn:
-            ...
-    """
-    if _pool is None:
-        raise RuntimeError("Connection pool not initialized. Call initialize() first.")
-    return _pool.getconn()
-
-
-def release(conn) -> None:
-    """Deprecated: return a connection borrowed via get().
-
-    Prefer get_pool().connection() which handles this automatically.
-    """
-    if _pool is not None:
-        _pool.putconn(conn)
