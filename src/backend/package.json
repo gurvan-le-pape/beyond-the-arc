@@ -8,7 +8,7 @@
     "clean:specs": "find dist -name '*.spec.js' -type f -delete 2>/dev/null || true",
     "start": "nest start --ts-config tsconfig.json",
     "build": "prisma generate && nest build -p tsconfig.build.json && npm run clean:specs",
-    "test": "jest",
+    "test": "prisma generate && jest",
     "lint": "eslint '**/*.ts'",
     "lint:fix": "organize-imports-cli './**/*.ts' && eslint '**/*.{ts,tsx}' --fix",
     "format": "prettier --write .",
