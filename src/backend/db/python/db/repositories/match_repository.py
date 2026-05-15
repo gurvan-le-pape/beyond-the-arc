@@ -146,21 +146,17 @@ def insert_shot_locations_bulk(
     if not coords:
         return {}
 
-    cursor.executemany(
-        "INSERT INTO shot_locations (x, y) VALUES (%s, %s) RETURNING id, x, y;",
-        coords,
-        returning=True,
+    placeholders = ",".join(["(%s,%s)"] * len(coords))
+    flat = [val for coord in coords for val in coord]
+    cursor.execute(
+        f"INSERT INTO shot_locations (x, y) VALUES {placeholders} RETURNING id, x, y",
+        flat,
     )
 
-    cache: dict[tuple[float, float], int] = {}
-    while True:
-        row = cursor.fetchone()
-        if row is not None:
-            cache[(float(row[1]), float(row[2]))] = row[0]
-        if not cursor.nextset():
-            break
-
-    return cache
+    return {
+        (float(row[1]), float(row[2])): row[0]
+        for row in cursor.fetchall()
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -175,6 +171,7 @@ def insert_match_events_bulk(
 ) -> list[int]:
     """
     Insert all match events and return their IDs in insertion order.
+    Uses a single INSERT ... VALUES (...) RETURNING for deterministic ID ordering.
     """
     rows = []
     for event in events:
@@ -193,25 +190,14 @@ def insert_match_events_bulk(
     if not rows:
         return []
 
-    cursor.executemany(
-        """
-        INSERT INTO match_events (match_id, event_type, timestamp, description, shot_location_id)
-        VALUES (%s, %s, %s, %s, %s)
-        RETURNING id;
-        """,
-        rows,
-        returning=True,
+    placeholders = ",".join(["(%s,%s,%s,%s,%s)"] * len(rows))
+    flat = [val for row in rows for val in row]
+    cursor.execute(
+        f"INSERT INTO match_events (match_id, event_type, timestamp, description, shot_location_id) VALUES {placeholders} RETURNING id",
+        flat,
     )
 
-    event_ids: list[int] = []
-    while True:
-        row = cursor.fetchone()
-        if row is not None:
-            event_ids.append(row[0])
-        if not cursor.nextset():
-            break
-
-    return event_ids
+    return [row[0] for row in cursor.fetchall()]
 
 
 # ---------------------------------------------------------------------------

@@ -13,7 +13,7 @@ This data changes rarely and benefits from being human-readable and directly ins
 
 **Dynamic data** — teams, players, championships, match schedules, match results, statistics, and shot charts are all produced by a Python pipeline. This runs as a dedicated Docker Compose service (`scheduler`) that boots with the application and keeps running indefinitely.
 
-The pipeline is entirely self-contained: it connects directly to PostgreSQL via psycopg2, with no dependency on the NestJS backend. The NestJS API only ever reads from the database — it plays no role in data generation.
+The pipeline is entirely self-contained: it connects directly to PostgreSQL via psycopg3, with no dependency on the NestJS backend. The NestJS API only ever reads from the database — it plays no role in data generation.
 
 ---
 
@@ -189,9 +189,9 @@ The result is a dict of `player_id → [(start_sec, end_sec), ...]` intervals, p
 
 All database access in the pipeline is handled by three repository modules (`match_repository`, `team_repository`, `championship_repository`), each following the same discipline: **no business logic, pure SQL in, data out**. Cursors are passed in from the caller, keeping transaction control in the hands of the generator and scheduler rather than the repositories.
 
-A threaded connection pool (`psycopg2.pool.ThreadedConnectionPool`, min 2 / max 20) is initialised at startup and shared across the worker threads.
+A connection pool (`psycopg.pool.ConnectionPool`) is initialised once per worker process at startup. Each worker process manages its own pool — no sharing across processes.
 
-Bulk inserts use `executemany` throughout. Shot locations use an upsert pattern with a local cache to avoid inserting duplicate coordinates across multiple events in the same match.
+Bulk inserts that need returned IDs (shot locations, match events) use a single batched `INSERT INTO ... VALUES (...), (...) RETURNING` with `fetchall()` for deterministic ordering. Other bulk inserts use `executemany`. Shot locations have no deduplication — two events at the same coordinate get two rows, which is intentional.
 
 ---
 

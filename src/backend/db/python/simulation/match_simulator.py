@@ -7,20 +7,7 @@ from datetime import timedelta
 
 from simulation.game_state_manager import GameStateManager
 from simulation.event_generator import EventGenerator
-
-
-def _build_substitution_queue(playtimes: dict[int, list[tuple[int, int]]]) -> list[tuple[int, str, int]]:
-    """
-    Convert playtime intervals into a sorted list of (time, action, player_id) events.
-    action is 'enter' or 'exit'.
-    """
-    events: list[tuple[int, str, int]] = []
-    for player_id, intervals in playtimes.items():
-        for start, end in intervals:
-            events.append((start, "enter", player_id))
-            events.append((end, "exit", player_id))
-    events.sort(key=lambda e: e[0])
-    return events
+from simulation.substitution_queue import SubQueue
 
 
 class MatchSimulator:
@@ -53,36 +40,20 @@ class MatchSimulator:
             return event_dict
 
         # Build incremental substitution queues — O(n log n) once, not O(n) per tick
-        home_sub_queue = _build_substitution_queue(home_team_playtimes)
-        away_sub_queue = _build_substitution_queue(away_team_playtimes)
-        home_sub_idx = 0
-        away_sub_idx = 0
-
-        active_home_players: set[int] = set()
-        active_away_players: set[int] = set()
-
-        def _flush_sub_queue(queue, idx, active_set, up_to_time):
-            """Apply all queued enter/exit events up to (and including) up_to_time."""
-            while idx < len(queue) and queue[idx][0] <= up_to_time:
-                _, action, pid = queue[idx]
-                if action == "enter":
-                    active_set.add(pid)
-                else:
-                    active_set.discard(pid)
-                idx += 1
-            return idx
+        home_sub = SubQueue(home_team_playtimes)
+        away_sub = SubQueue(away_team_playtimes)
 
         # Seed initial active players (t=0)
-        home_sub_idx = _flush_sub_queue(home_sub_queue, home_sub_idx, active_home_players, 0)
-        away_sub_idx = _flush_sub_queue(away_sub_queue, away_sub_idx, active_away_players, 0)
+        home_sub.advance(0)
+        away_sub.advance(0)
 
         # Tip-off
         tip_off_winner = random.choice(["home", "away"])  # noqa: S2245
         current_possession = tip_off_winner
 
-        if active_home_players and active_away_players:
+        if home_sub.active and away_sub.active:
             tip_off_player = random.choice(  # noqa: S2245
-                list(active_home_players if tip_off_winner == "home" else active_away_players)
+                list(home_sub.active if tip_off_winner == "home" else away_sub.active)
             )
             add_event({
                 "timestamp": None,
@@ -94,16 +65,16 @@ class MatchSimulator:
 
         while current_time < game_duration:
             # Incrementally update active players for the current time
-            home_sub_idx = _flush_sub_queue(home_sub_queue, home_sub_idx, active_home_players, current_time)
-            away_sub_idx = _flush_sub_queue(away_sub_queue, away_sub_idx, active_away_players, current_time)
+            home_sub.advance(current_time)
+            away_sub.advance(current_time)
 
-            if not active_home_players or not active_away_players:
+            if not home_sub.active or not away_sub.active:
                 current_time += 1
                 continue
 
             # Convert to lists once per tick (needed for random.choice)
-            home_list = list(active_home_players)
-            away_list = list(active_away_players)
+            home_list = list(home_sub.active)
+            away_list = list(away_sub.active)
 
             # Shot clock violation
             if possession_clock == 0:

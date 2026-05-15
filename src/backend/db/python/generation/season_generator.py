@@ -269,7 +269,7 @@ class SeasonGenerator:
             match_rows: list[tuple] = []
             for matchday, pairs in enumerate(schedule, start=1):
                 scheduled_at = compute_matchday_datetime(
-                    SEASON_START_WEEK, SEASON_START_YEAR, matchday
+                    SEASON_START_WEEK, SEASON_START_YEAR, matchday, pool_id
                 )
                 for home_id, away_id in pairs:
                     match_rows.append((pool_id, matchday, scheduled_at, home_id, away_id))

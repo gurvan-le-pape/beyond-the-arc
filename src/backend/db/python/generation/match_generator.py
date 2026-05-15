@@ -185,6 +185,8 @@ class MatchGenerator:
                     s["assists"] += 1
                 elif role == "victim":
                     s["turnovers"] += 1
+                elif role == "blocked":
+                    s["two_points_int_attempted"] += 1
                 elif role == "blocker":
                     s["blocks"] += 1
 

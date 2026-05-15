@@ -51,6 +51,8 @@ def generate(
 
         for exiting in exiting_now:
             if not bench:
+                # Extend their current stint to the end of the game
+                playtimes[exiting][-1] = (playtimes[exiting][-1][0], GAME_DURATION)
                 continue
 
             entering = bench.pop(0)

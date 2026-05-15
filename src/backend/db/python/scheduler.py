@@ -10,6 +10,7 @@ Each worker process initializes its own DB connection pool on first use.
 
 import json
 import logging
+import os
 import time
 from concurrent.futures import ProcessPoolExecutor
 
@@ -52,6 +53,7 @@ def _worker_init() -> None:
 
     global _match_generator
     _match_generator = MatchGenerator(simulator)
+    logger.info(f"Worker initialised (PID {os.getpid()}).")
 
 
 def _generate_worker(match: ScheduledMatch) -> None:
@@ -61,6 +63,9 @@ def _generate_worker(match: ScheduledMatch) -> None:
     UPDATE, so there is no separate set_match_status call needed on the
     happy path.
     """
+    if _match_generator is None:
+        raise RuntimeError("_match_generator not initialised — was _worker_init called?")
+
     with connection.get_pool().connection() as conn:
         conn.autocommit = False
         try:
@@ -118,6 +123,7 @@ class Scheduler:
         SeasonGenerator().run()
 
     def _poll(self) -> None:
+        due = []
         with connection.get_pool().connection() as conn:
             with conn.cursor() as cursor:
                 due = match_repository.fetch_due_matches(cursor)

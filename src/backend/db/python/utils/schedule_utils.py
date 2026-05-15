@@ -31,11 +31,10 @@ def get_first_weekend_of_week(iso_week: int, year: int) -> datetime:
     return datetime.fromisocalendar(year, iso_week, 6)
 
 
-def compute_matchday_datetime(season_start_week: int, season_start_year: int, matchday: int) -> datetime:
+def compute_matchday_datetime(season_start_week: int, season_start_year: int, matchday: int, pool_id: int) -> datetime:
     """
     Compute the scheduled datetime (UTC) for a given matchday.
-    Matchday 1 → season_start_week, matchday 2 → season_start_week + 1, etc.
-    The slot (day + time) is chosen randomly from SLOT_OPTIONS.
+    Slot is deterministic per (pool_id, matchday) — reruns produce identical schedules.
     """
     week = season_start_week + (matchday - 1)
     year = season_start_year
@@ -47,7 +46,8 @@ def compute_matchday_datetime(season_start_week: int, season_start_year: int, ma
         year += 1
         weeks_in_year = datetime(year, 12, 28).isocalendar()[1]
 
-    weekday, hour, minute = random.choice(SLOT_OPTIONS)  # noqa: S2245
+    rng = random.Random(pool_id * 10000 + matchday)
+    weekday, hour, minute = rng.choice(SLOT_OPTIONS) # noqa: S2245
     base = datetime.fromisocalendar(year, week, weekday)
     local_dt = datetime(base.year, base.month, base.day, hour, minute, tzinfo=PARIS)
     return local_dt.astimezone(UTC)
