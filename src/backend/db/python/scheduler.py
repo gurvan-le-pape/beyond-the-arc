@@ -118,6 +118,7 @@ class Scheduler:
         SeasonGenerator().run()
 
     def _poll(self) -> None:
+        due = []
         with connection.get_pool().connection() as conn:
             with conn.cursor() as cursor:
                 due = match_repository.fetch_due_matches(cursor)
