@@ -61,6 +61,9 @@ def _generate_worker(match: ScheduledMatch) -> None:
     UPDATE, so there is no separate set_match_status call needed on the
     happy path.
     """
+    if _match_generator is None:
+        raise RuntimeError("_match_generator not initialised — was _worker_init called?")
+
     with connection.get_pool().connection() as conn:
         conn.autocommit = False
         try:
