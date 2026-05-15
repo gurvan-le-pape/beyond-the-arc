@@ -17,7 +17,7 @@ Usage:
 
 import logging
 
-import psycopg2.extensions
+import psycopg
 
 from db import connection
 
@@ -28,8 +28,7 @@ EntityType = str  # e.g. "league_setup", "match_generated"
 
 def is_done(entity_type: EntityType, entity_id: int) -> bool:
     """Return True if this entity has already been fully processed."""
-    conn = connection.get()
-    try:
+    with connection.get_pool().connection() as conn:
         with conn.cursor() as cursor:
             cursor.execute(
                 """
@@ -39,11 +38,9 @@ def is_done(entity_type: EntityType, entity_id: int) -> bool:
                 (entity_type, entity_id),
             )
             return cursor.fetchone() is not None
-    finally:
-        connection.release(conn)
 
 
-def mark_done(cursor: psycopg2.extensions.cursor, entity_type: EntityType, entity_id: int) -> None:
+def mark_done(cursor: psycopg.Cursor, entity_type: EntityType, entity_id: int) -> None:
     """
     Insert a completed checkpoint. Must be called within an open transaction —
     the caller is responsible for committing.
