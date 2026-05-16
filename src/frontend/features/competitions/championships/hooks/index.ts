@@ -7,7 +7,5 @@ export * from "./useCategoryNavigation";
 export * from "./useChampionshipsDetail";
 export * from "./useChampionshipsDetailById";
 export * from "./useCommitteeLeagueClubFilters";
-export * from "./useDepartmentalChampionships";
 export * from "./useDivisionNavigation";
 export * from "./useGenderNavigation";
-export * from "./useRegionalChampionships";

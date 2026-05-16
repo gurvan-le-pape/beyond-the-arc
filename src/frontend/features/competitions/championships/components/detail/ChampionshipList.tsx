@@ -7,22 +7,21 @@ import { Section } from "@/shared/components/blocks";
 import { GenderCategorizedList } from "@/shared/components/domain";
 import { Gender } from "@/shared/constants";
 import { useToggleCategory } from "@/shared/hooks";
+import { groupBy } from "@/shared/utils";
 
 import type { Championship } from "../../types";
 import { ChampionshipListItem } from "./ChampionshipListItem";
 
 interface ChampionshipListProps {
-  readonly championshipsByGender: Record<Gender, Championship[]>;
-  readonly onItemClick: (championship: Championship) => void;
+  readonly championships: Championship[];
 }
 
-export function ChampionshipList({
-  championshipsByGender,
-  onItemClick,
-}: ChampionshipListProps) {
+export function ChampionshipList({ championships }: ChampionshipListProps) {
   const { expandedCategories, toggleCategory } = useToggleCategory();
   const tCompetitions = useTranslations("competitions");
   const tTeams = useTranslations("teams");
+
+  const championshipsByGender = groupBy(championships, (c) => c.gender);
 
   return (
     <Section
@@ -37,10 +36,7 @@ export function ChampionshipList({
           expandedCategories={expandedCategories}
           toggleCategory={toggleCategory}
           renderItem={(championship) => (
-            <ChampionshipListItem
-              championship={championship}
-              onClick={() => onItemClick(championship)}
-            />
+            <ChampionshipListItem championship={championship} />
           )}
         />
         <GenderCategorizedList
@@ -50,10 +46,7 @@ export function ChampionshipList({
           expandedCategories={expandedCategories}
           toggleCategory={toggleCategory}
           renderItem={(championship) => (
-            <ChampionshipListItem
-              championship={championship}
-              onClick={() => onItemClick(championship)}
-            />
+            <ChampionshipListItem championship={championship} />
           )}
         />
       </div>

@@ -1,80 +1,95 @@
 // src/frontend/app/[locale]/(public)/organizations/leagues/[leagueId]/page.tsx
-"use client";
+import { notFound } from "next/navigation";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { useParams } from "next/navigation";
-import { useTranslations } from "next-intl";
-
+import { serverChampionshipsService } from "@/features/competitions/championships/api";
 import { ChampionshipList } from "@/features/competitions/championships/components";
-import { useRegionalChampionshipsData } from "@/features/competitions/championships/hooks";
-import { useRouter } from "@/navigation";
-import { OrganizationHeader, OrganizationInfo, OrganizationPageSkeleton, SearchableChipList } from "@/shared/components/domain";
-import { ErrorMessage } from "@/shared/components/feedback";
+import { serverCommitteesService } from "@/features/organizations/committees/api";
+import { serverLeaguesService } from "@/features/organizations/leagues/api";
+import {
+  OrganizationHeader,
+  OrganizationInfo,
+  SearchableChipList,
+} from "@/shared/components/domain";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
-import { groupBy } from "@/shared/utils";
+import { CompetitionLevel } from "@/shared/constants";
 
-export default function RegionalChampionshipsPage() {
-  const tCommon = useTranslations("common");
-  const tOrganizations = useTranslations("organizations");
-  const router = useRouter();
-  const params = useParams();
-  const idStr = params?.leagueId as string;
-  const id = Number.parseInt(idStr, 10);
+interface LeaguePageProps {
+  readonly params: Promise<{ locale: string; leagueId: string }>;
+}
 
-  const { championships, league, committees, isLoading, fetchError } =
-    useRegionalChampionshipsData(id);
+export async function generateStaticParams() {
+  try {
+    const leagues = await serverLeaguesService.getAll();
+    return leagues.map((l) => ({ leagueId: String(l.id) }));
+  } catch {
+    return [];
+  }
+}
 
-  const championshipsByGender = groupBy(championships, (c) => c.gender);
+export const dynamicParams = true;
+export const revalidate = 3600;
+
+export default async function RegionalChampionshipsPage({
+  params,
+}: LeaguePageProps) {
+  const { leagueId: leagueIdStr, locale } = await params;
+  setRequestLocale(locale);
+
+  const leagueId = Number.parseInt(leagueIdStr, 10);
+  if (Number.isNaN(leagueId) || leagueId <= 0) notFound();
+
+  const tCommon = await getTranslations({ locale, namespace: "common" });
+  const tOrganizations = await getTranslations({
+    locale,
+    namespace: "organizations",
+  });
+
+  const [league, championships, committees] = await Promise.all([
+    serverLeaguesService.getById(leagueId),
+    serverChampionshipsService.getAll({
+      level: CompetitionLevel.REGIONAL,
+      id: leagueId,
+    }),
+    serverCommitteesService.getAll({ leagueId }),
+  ]);
+
+  if (!league) notFound();
 
   const breadcrumbItems = [
     { label: tOrganizations("breadcrumb"), href: "/organizations" },
-    {
-      label: tOrganizations("leagues.label"),
-      href: "/organizations/leagues",
-    },
-    { label: league?.name ?? "…", current: true },
+    { label: tOrganizations("leagues.label"), href: "/organizations/leagues" },
+    { label: league.name, current: true },
   ];
 
   return (
     <PageLayout>
       <Breadcrumb items={breadcrumbItems} />
+      <div className="space-y-6">
+        {/* Organization Header */}
+        <OrganizationHeader name={league.name} imageFolder="leagues" />
 
-      {fetchError && <ErrorMessage message={tCommon(fetchError)} />}
-      {isLoading && <OrganizationPageSkeleton />}
+        {/* Organization info */}
+        <OrganizationInfo
+          president={league.president}
+          address={league.address}
+          email={league.email}
+          phone={league.phone}
+        />
 
-      {!fetchError && !isLoading && (
-        <div className="space-y-6">
-          {/* Organization Header */}
-          <OrganizationHeader name={league?.name ?? ""} imageFolder="leagues" />
+        {/* Committees */}
+        <SearchableChipList
+          items={committees}
+          title={tCommon("sectionTitles.departmentalCommittees")}
+          searchPlaceholder={tCommon("searchPlaceholder")}
+          basePath="/organizations/committees"
+          showSearch={false}
+        />
 
-          {/* Organization info */}
-          <OrganizationInfo
-            president={league?.president}
-            address={league?.address}
-            email={league?.email}
-            phone={league?.phone}
-          />
-
-          {/* Committees */}
-          <SearchableChipList
-            items={committees}
-            title={tCommon("sectionTitles.departmentalCommittees")}
-            searchPlaceholder={tCommon("searchPlaceholder")}
-            onItemClick={(committee) =>
-              router.push(`/organizations/committees/${committee.id}`)
-            }
-            showSearch={false}
-          />
-
-          {/* Championships */}
-          <ChampionshipList
-            championshipsByGender={championshipsByGender}
-            onItemClick={(championship) =>
-              router.push(`/championships/${championship.id}`)
-            }
-          />
-        </div>
-      )}
+        {/* Championships */}
+        <ChampionshipList championships={championships} />
+      </div>
     </PageLayout>
   );
 }

@@ -1,26 +1,21 @@
 // src/frontend/features/competitions/championships/components/detail/ChampionshipListItem.tsx
-
-import { NavButton } from "@/shared/components/primitives";
+import { Link } from "@/navigation";
 
 import type { Championship } from "../../types/Championship";
 
 interface ChampionshipListItemProps {
   readonly championship: Championship;
-  readonly onClick: () => void;
 }
 
 export function ChampionshipListItem({
   championship,
-  onClick,
 }: ChampionshipListItemProps) {
   return (
-    <NavButton
-      variant="listItem"
-      size="auto"
-      className="py-2.5 px-4 text-sm"
-      onClick={onClick}
+    <Link
+      href={`/championships/${championship.id}`}
+      className="w-full flex items-center justify-start text-left text-sm font-medium py-2.5 px-4 rounded-none border-l-4 border-l-transparent hover:bg-primary-subtle hover:border-l-primary transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"
     >
       {championship.name}
-    </NavButton>
+    </Link>
   );
 }
