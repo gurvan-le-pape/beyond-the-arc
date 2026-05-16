@@ -1,12 +1,14 @@
 // src/frontend/features/teams/api/teams.server.ts
+import type { PaginatedResponse } from "@/shared/types";
+
 import {
   buildQueryString,
   fetchApi,
 } from "../../../lib/services/server/server-api-client";
+import type { Team } from "../types";
 import type { TeamDetail } from "../types/TeamDetail";
 import type { TeamFilters } from "../types/TeamFilters";
 import type { TeamMatchHistory } from "../types/TeamMatchHistory";
-import type { TeamsPaginatedResponse } from "../types/TeamsPaginatedResponse";
 
 /**
  * Service for interacting with the teams API.
@@ -39,7 +41,7 @@ export const serverTeamsService = {
    * @example
    * const teams = await serverTeamsService.getAll({ championshipId: 5 });
    */
-  async getAll(filters?: TeamFilters): Promise<TeamsPaginatedResponse> {
+  async getAll(filters?: TeamFilters): Promise<PaginatedResponse<Team>> {
     const queryString = buildQueryString(filters);
     return fetchApi<any>(`/teams${queryString}`);
   },

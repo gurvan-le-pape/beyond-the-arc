@@ -1,9 +1,10 @@
 // src/frontend/features/teams/api/teams.service.ts
+import type { PaginatedResponse } from "@/shared/types";
+
 import apiClient from "../../../lib/services/client/api-client";
 import type { Team } from "../types/Team";
 import type { TeamFilters } from "../types/TeamFilters";
 import type { TeamFilterValues } from "../types/TeamFilterValues";
-import type { TeamsPaginatedResponse } from "../types/TeamsPaginatedResponse";
 
 /**
  * Service for interacting with the teams API.
@@ -36,8 +37,8 @@ export const teamsService = {
    * @example
    * const teams = await teamsService.getAll({ championshipId: 5 });
    */
-  async getAll(filters?: TeamFilters): Promise<TeamsPaginatedResponse> {
-    const { data } = await apiClient.get<TeamsPaginatedResponse>("/teams", {
+  async getAll(filters?: TeamFilters): Promise<PaginatedResponse<Team>> {
+    const { data } = await apiClient.get<PaginatedResponse<Team>>("/teams", {
       params: filters,
     });
     return data;

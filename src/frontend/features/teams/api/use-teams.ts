@@ -1,14 +1,9 @@
 // src/frontend/features/teams/api/use-teams.ts
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import type { ApiError } from "@/shared/types";
+import type { ApiError, PaginatedResponse } from "@/shared/types";
 
-import type {
-  Team,
-  TeamFilterValues,
-  TeamMatchHistory,
-  TeamsPaginatedResponse,
-} from "../types";
+import type { Team, TeamFilterValues, TeamMatchHistory } from "../types";
 import type { TeamFilters } from "../types/TeamFilters";
 import { teamsPrefetch, teamsQueries } from "./teamsQueries";
 
@@ -31,7 +26,7 @@ export function useTeams(
   filters?: TeamFilters,
   options?: { enabled?: boolean },
 ) {
-  return useQuery<TeamsPaginatedResponse, ApiError>({
+  return useQuery<PaginatedResponse<Team>, ApiError>({
     ...teamsQueries.list(filters),
     enabled: options?.enabled ?? true,
   });

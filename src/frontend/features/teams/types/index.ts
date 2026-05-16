@@ -11,4 +11,3 @@ export * from "./TeamFilterValues";
 export * from "./TeamInfo";
 export * from "./TeamMatchHistory";
 export * from "./TeamPoolRef";
-export * from "./TeamsPaginatedResponse";
