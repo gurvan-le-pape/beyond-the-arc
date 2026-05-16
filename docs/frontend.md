@@ -52,7 +52,7 @@ const [player, matches, matchEvents] = await Promise.all([
 
 Shot charts (`PlayerShotChart`, `TeamShotChart`) receive their `matchEvents` as props this way — they are presentational components, not client-side fetchers. `isLoading={false}` and `error={null}` are passed directly because the data is already resolved on the server.
 
-Used by: player detail, team detail, match detail, map page.
+Used by: player detail, team detail, match detail, map page, league detail, committee detail. League and committee detail pages pre-build all pages at deploy time via `generateStaticParams` (with a try/catch fallback to an empty array when the backend is unavailable at build time), and revalidate hourly. `dynamicParams = true` ensures pages not pre-built are generated on first request and then ISR-cached.
 
 **HydrationBoundary prefetch** — for pages where the initial data needs to be server-rendered but a client component will continue managing it (refetching on focus, responding to in-page navigation). The server component prefetches into a `QueryClient`, dehydrates the cache, and passes it to `HydrationBoundary`. The client component mounts with the cache already populated and TanStack Query takes over.
 
@@ -77,10 +77,6 @@ export default async function ChampionshipsDetailPage({ params }) {
 ```
 
 Used by: championship detail (5-minute revalidation), where the client component manages pool navigation and leaderboard tabs.
-
-**Pure client — hook-driven detail** — organisation detail pages (league detail, committee detail) are `"use client"` files that fetch all data via a single custom hook (`useRegionalChampionshipsData`, `useDepartmentalChampionshipsData`). These hooks compose multiple TanStack Query calls and expose a unified `{ data, isLoading, fetchError }` interface. The page handles the three states — loading skeleton, error message, content — in a single conditional block.
-
-Used by: league detail, committee detail.
 
 **Pure client — filter/search/tab state** — pages that are inherently interactive from the first render. They use TanStack Query hooks for data, local state for filters, and `useSearchParams` for URL-synced tabs.
 
@@ -350,8 +346,6 @@ Client-side Axios errors are normalised to a typed `ApiError` class by `parseApi
 ---
 
 ## Known limitations
-
-**No SSR on organisation detail pages.** League and committee detail pages are pure client components — they show a loading skeleton on every navigation rather than arriving with content already rendered, unlike the `HydrationBoundary` pattern used on championship detail. Applying the same prefetch pattern would give these pages a meaningful first paint.
 
 **Design token inconsistency.** The `(public)` data pages use the semantic token system consistently. Some informational pages (`about`, `architecture`) use raw Tailwind colour values for decorative gradient elements. This is called out in comments as intentional for one-off decorative use, but it means those pages are not fully covered by the token system.
 
