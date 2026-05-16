@@ -1,9 +1,9 @@
 // src/frontend/app/[locale]/(public)/organizations/leagues/page.tsx
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { TitleSection } from "@/features/organizations/components";
 import { serverLeaguesService } from "@/features/organizations/leagues/api";
 import { LeaguesGrid } from "@/features/organizations/leagues/components/list/LeaguesGrid";
-import { TitleSection } from "@/shared/components/domain";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
 import { ViewLevel } from "@/shared/constants";

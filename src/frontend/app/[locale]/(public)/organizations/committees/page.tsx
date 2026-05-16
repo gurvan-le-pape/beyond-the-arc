@@ -3,7 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { serverCommitteesService } from "@/features/organizations/committees/api";
 import { CommitteesGrid } from "@/features/organizations/committees/components/list/CommitteesGrid";
-import { TitleSection } from "@/shared/components/domain";
+import { TitleSection } from "@/features/organizations/components";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
 import { ViewLevel } from "@/shared/constants";

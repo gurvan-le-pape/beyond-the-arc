@@ -5,12 +5,12 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { serverChampionshipsService } from "@/features/competitions/championships/api";
 import { ChampionshipList } from "@/features/competitions/championships/components";
 import { serverCommitteesService } from "@/features/organizations/committees/api";
-import { serverLeaguesService } from "@/features/organizations/leagues/api";
 import {
   OrganizationHeader,
   OrganizationInfo,
   SearchableChipList,
-} from "@/shared/components/domain";
+} from "@/features/organizations/components";
+import { serverLeaguesService } from "@/features/organizations/leagues/api";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
 import { CompetitionLevel } from "@/shared/constants";
