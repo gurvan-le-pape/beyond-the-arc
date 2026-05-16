@@ -1,5 +1,7 @@
 // src/backend/modules/competitions/championships/championships.service.ts
 import { CompetitionLevel } from "@common/constants";
+import { PaginatedResponseDto } from "@common/dto";
+import { Category, Gender } from "@common/index";
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 
@@ -44,6 +46,18 @@ type ChampionshipSelectResult = Prisma.ChampionshipsGetPayload<{
 }>;
 
 /**
+ * Filters for querying championships.
+ */
+type ChampionshipFilters = {
+  level?: CompetitionLevel;
+  id?: number;
+  category?: Category;
+  gender?: Gender;
+  page?: number;
+  limit?: number;
+};
+
+/**
  * Service handling business logic for championships.
  * Encapsulates database access and domain logic.
  */
@@ -54,15 +68,37 @@ export class ChampionshipsService {
   constructor(private readonly prisma: PrismaService) {}
 
   /**
-   * Finds all championships without any filter.
-   * Used by the /championships list page.
+   * Finds championships with optional filters and pagination.
    *
-   * @returns Array of all championship DTOs
+   * @param filters - Optional filter and pagination criteria
+   * @returns Paginated list of championship DTOs
    */
-  async findAllChampionships(): Promise<ChampionshipResponseDto[]> {
-    const championships = await this.queryChampionshipsByCondition({});
+  async findChampionships(
+    filters?: ChampionshipFilters,
+  ): Promise<PaginatedResponseDto<ChampionshipResponseDto>> {
+    const page = Math.max(1, filters?.page ?? 1);
+    const limit = Math.min(Math.max(1, filters?.limit ?? 20), 100);
+    const skip = (page - 1) * limit;
+    const where = this.buildWhereClause(filters);
 
-    return championships.map((c) => this.mapToDto(c));
+    const [championships, total] = await Promise.all([
+      this.prisma.client.championships.findMany({
+        where,
+        select: CHAMPIONSHIP_SELECT,
+        orderBy: [{ division: "asc" }, { category: "asc" }],
+        skip,
+        take: limit,
+      }),
+      this.prisma.client.championships.count({ where }),
+    ]);
+
+    return {
+      items: championships.map((c) => this.mapToDto(c)),
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   /**
@@ -90,89 +126,30 @@ export class ChampionshipsService {
   }
 
   /**
-   * Finds championships by competition level and associated ID.
-   * This is the main business routing logic method.
+   * Builds the Prisma where clause from filters.
+   * Routes the id param to leagueId or committeeId based on level.
    *
-   * @param level - Competition level (regional or departmental)
-   * @param id - League ID (for regional) or Committee ID (for departmental)
-   * @returns Array of ChampionshipResponseDto
-   * @throws NotFoundException if no championships found
+   * @param filters - Championship filters
+   * @returns Prisma where clause
    */
-  async findChampionshipsByLevel(
-    level: CompetitionLevel,
-    id: number,
-  ): Promise<ChampionshipResponseDto[]> {
-    if (level === CompetitionLevel.REGIONAL) {
-      return this.findRegionalChampionships(id);
-    }
-    return this.findDepartmentalChampionships(id);
-  }
+  private buildWhereClause(
+    filters?: ChampionshipFilters,
+  ): Prisma.ChampionshipsWhereInput {
+    const where: Prisma.ChampionshipsWhereInput = {};
 
-  /**
-   * Finds all regional championships for a given league.
-   * Private helper method to avoid circular dependencies.
-   *
-   * @param leagueId - The league ID
-   * @returns Array of championship DTOs
-   * @throws NotFoundException if no championships found
-   */
-  private async findRegionalChampionships(
-    leagueId: number,
-  ): Promise<ChampionshipResponseDto[]> {
-    const championships = await this.queryChampionshipsByCondition({
-      leagueId,
-      level: CompetitionLevel.REGIONAL,
-    });
+    if (filters?.level) where.level = filters.level;
+    if (filters?.category) where.category = filters.category;
+    if (filters?.gender) where.gender = filters.gender;
 
-    if (championships.length === 0) {
-      throw new NotFoundException(
-        `No regional championships found for league ID ${leagueId}`,
-      );
+    if (filters?.id) {
+      if (filters.level === CompetitionLevel.REGIONAL) {
+        where.leagueId = filters.id;
+      } else if (filters.level === CompetitionLevel.DEPARTMENTAL) {
+        where.committeeId = filters.id;
+      }
     }
 
-    return championships.map((c) => this.mapToDto(c));
-  }
-
-  /**
-   * Finds all departmental championships for a given committee.
-   * Private helper method to avoid circular dependencies.
-   *
-   * @param committeeId - The committee ID
-   * @returns Array of championship DTOs
-   * @throws NotFoundException if no championships found
-   */
-  private async findDepartmentalChampionships(
-    committeeId: number,
-  ): Promise<ChampionshipResponseDto[]> {
-    const championships = await this.queryChampionshipsByCondition({
-      committeeId: committeeId,
-      level: CompetitionLevel.DEPARTMENTAL,
-    });
-
-    if (championships.length === 0) {
-      throw new NotFoundException(
-        `No departmental championships found for committee ID ${committeeId}`,
-      );
-    }
-
-    return championships.map((c) => this.mapToDto(c));
-  }
-
-  /**
-   * Private helper method to query championships by condition.
-   * Reduces duplication and centralizes database query logic.
-   *
-   * @param condition - Prisma where condition
-   * @returns Array of championship entities
-   */
-  private async queryChampionshipsByCondition(
-    condition: Prisma.ChampionshipsWhereInput,
-  ): Promise<ChampionshipSelectResult[]> {
-    return this.prisma.client.championships.findMany({
-      where: condition,
-      select: CHAMPIONSHIP_SELECT,
-      orderBy: [{ division: "asc" }, { category: "asc" }],
-    });
+    return where;
   }
 
   /**
@@ -180,7 +157,7 @@ export class ChampionshipsService {
    * Centralizes the mapping logic and handles null values.
    * The `satisfies` operator ensures compile-time type checking.
    *
-   * @param championship - Prisma championship select result
+   * @param entity - Prisma championship select result
    * @returns ChampionshipResponseDto
    */
   private mapToDto(entity: ChampionshipSelectResult): ChampionshipResponseDto {
