@@ -12,60 +12,52 @@ interface League {
   name: string;
 }
 
-interface RegionalFiltersProps {
+interface RegionalFilters {
   leagueId: string;
-  setLeagueId: (value: string) => void;
-  leagues: League[];
   category: Category | undefined;
-  setCategory: (value: Category | undefined) => void;
   gender: Gender | undefined;
+}
+
+interface RegionalSetters {
+  setLeagueId: (value: string) => void;
+  setCategory: (value: Category | undefined) => void;
   setGender: (value: Gender | undefined) => void;
-  seasonYear: string;
-  setSeasonYear: (value: string) => void;
-  seasonYears: { value: string; label: string }[];
+}
+
+interface RegionalFiltersProps {
+  filters: RegionalFilters;
+  setters: RegionalSetters;
+  leagues: League[];
   onReset: () => void;
 }
 
 export const RegionalFilters: React.FC<RegionalFiltersProps> = ({
-  leagueId,
-  setLeagueId,
+  filters,
+  setters,
   leagues,
-  category,
-  setCategory,
-  gender,
-  setGender,
-  seasonYear,
-  setSeasonYear,
-  seasonYears,
   onReset,
 }) => {
   const tCommon = useTranslations("common");
 
-  const leagueName = leagues.find((l) => String(l.id) === leagueId)?.name;
+  const leagueName = leagues.find(
+    (l) => String(l.id) === filters.leagueId,
+  )?.name;
 
   const chips = [
     leagueName && {
       key: "league",
       label: leagueName,
-      onRemove: () => {
-        setLeagueId("");
-        setSeasonYear("");
-      },
+      onRemove: () => setters.setLeagueId(""),
     },
-    category && {
+    filters.category && {
       key: "category",
-      label: tCommon(`category.${category}`),
-      onRemove: () => setCategory(undefined),
+      label: tCommon(`category.${filters.category}`),
+      onRemove: () => setters.setCategory(undefined),
     },
-    gender && {
+    filters.gender && {
       key: "gender",
-      label: tCommon(`gender.${gender}`),
-      onRemove: () => setGender(undefined),
-    },
-    seasonYear && {
-      key: "seasonYear",
-      label: seasonYear,
-      onRemove: () => setSeasonYear(""),
+      label: tCommon(`gender.${filters.gender}`),
+      onRemove: () => setters.setGender(undefined),
     },
   ].filter(Boolean) as { key: string; label: string; onRemove: () => void }[];
 
@@ -79,11 +71,8 @@ export const RegionalFilters: React.FC<RegionalFiltersProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Select
           label={tCommon("filters.leagues")}
-          value={leagueId}
-          onChange={(val) => {
-            setLeagueId(String(val ?? ""));
-            setSeasonYear("");
-          }}
+          value={filters.leagueId}
+          onChange={(val) => setters.setLeagueId(String(val ?? ""))}
           options={[
             { value: "", label: tCommon("filters.allLeagues") },
             ...leagues.map((l) => ({ value: String(l.id), label: l.name })),
@@ -91,21 +80,11 @@ export const RegionalFilters: React.FC<RegionalFiltersProps> = ({
         />
 
         <Select
-          label={tCommon("filters.seasons")}
-          value={seasonYear}
-          onChange={(val) => setSeasonYear(String(val ?? ""))}
-          options={[
-            { value: "", label: tCommon("filters.allSeasons") },
-            ...seasonYears,
-          ]}
-        />
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Select
           label={tCommon("filters.categories")}
-          value={category ?? ""}
-          onChange={(val) => setCategory((val as Category) || undefined)}
+          value={filters.category ?? ""}
+          onChange={(val) =>
+            setters.setCategory((val as Category) || undefined)
+          }
           options={[
             { value: "", label: tCommon("filters.allCategories") },
             ...CATEGORY_LIST.map((cat) => ({
@@ -114,11 +93,13 @@ export const RegionalFilters: React.FC<RegionalFiltersProps> = ({
             })),
           ]}
         />
+      </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Select
           label={tCommon("filters.genders")}
-          value={gender ?? ""}
-          onChange={(val) => setGender((val as Gender) || undefined)}
+          value={filters.gender ?? ""}
+          onChange={(val) => setters.setGender((val as Gender) || undefined)}
           options={[
             { value: "", label: tCommon("filters.allGenders") },
             ...GENDER_LIST.map((g) => ({

@@ -1,35 +1,46 @@
 // src/backend/modules/competitions/championships/dto/championships.query.dto.ts
 import { CompetitionLevel } from "@common/constants";
+import { Category, Gender } from "@common/index";
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsEnum, IsNumber, IsOptional } from "class-validator";
+import { IsEnum, IsInt, IsOptional, Min } from "class-validator";
 
-/**
- * Query parameters for filtering championships.
- * All fields are optional — omitting them returns all championships.
- */
 export class GetChampionshipsQueryDto {
-  @ApiPropertyOptional({
-    description: "Competition level (regional or departmental)",
-    enum: [CompetitionLevel.REGIONAL, CompetitionLevel.DEPARTMENTAL],
-    example: CompetitionLevel.REGIONAL,
-  })
+  @ApiPropertyOptional({ enum: CompetitionLevel })
   @IsOptional()
-  @IsEnum(CompetitionLevel, {
-    message: `level must be either "${CompetitionLevel.REGIONAL}" or "${CompetitionLevel.DEPARTMENTAL}"`,
-  })
-  level?:
-    | typeof CompetitionLevel.REGIONAL
-    | typeof CompetitionLevel.DEPARTMENTAL;
+  @IsEnum(CompetitionLevel)
+  level?: CompetitionLevel;
 
   @ApiPropertyOptional({
-    description:
-      "League ID (for regional level) or Committee ID (for departmental level)",
-    example: 1,
     type: Number,
+    description: "League ID (regional) or Committee ID (departmental)",
   })
   @IsOptional()
   @Type(() => Number)
-  @IsNumber()
+  @IsInt()
   id?: number;
+
+  @ApiPropertyOptional({ enum: Category })
+  @IsOptional()
+  @IsEnum(Category)
+  category?: Category;
+
+  @ApiPropertyOptional({ enum: Gender })
+  @IsOptional()
+  @IsEnum(Gender)
+  gender?: Gender;
+
+  @ApiPropertyOptional({ type: Number, default: 1 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  page?: number;
+
+  @ApiPropertyOptional({ type: Number, default: 20 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  limit?: number;
 }

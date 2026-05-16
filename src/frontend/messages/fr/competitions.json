@@ -1,7 +1,8 @@
 {
   "breadcrumb": "Championnats",
-  "championshipsCount": "championnats",
   "notFound": "Compétition non trouvée.",
+  "tryAdjustingFilters": "Essayez d'ajuster les filtres pour trouver plus de championnats.",
+  "championships": "championnats",
   "categoryLabel": "Catégorie :",
   "divisionLabel": "Division :",
   "divisionWithValue": "Division {value}",

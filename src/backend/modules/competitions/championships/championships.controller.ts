@@ -1,5 +1,6 @@
 // src/backend/modules/competitions/championships/championships.controller.ts
 import { CACHE_TTL, CompetitionLevel } from "@common/constants";
+import { PaginatedResponseDto } from "@common/dto";
 import { CacheInterceptor } from "@common/interceptors";
 import {
   Controller,
@@ -132,22 +133,18 @@ export class ChampionshipsController {
   }
 
   /**
-   * Retrieve championships by competition level and associated ID.
-   * Omitting both parameters returns all championships.
+   * Retrieve championships with optional filters and pagination.
    *
-   * Moderate caching (5 minutes) because championships lists change
-   * occasionally but not frequently.
-   *
-   * @param query - Query parameters containing optional level and id
-   * @returns Array of championships matching the criteria, or all championships if no filters provided
+   * @param query - Optional filter and pagination parameters
+   * @returns Paginated list of championships matching the criteria
    *
    * @example
-   * // Filtered — returns championships for a specific league
-   * GET /championships?level=regional&id=1
-   *
-   * @example
-   * // Unfiltered — returns all championships
+   * // All championships, first page
    * GET /championships
+   *
+   * @example
+   * // Regional championships for league 1, filtered by category
+   * GET /championships?level=regional&id=1&category=U18&page=1&limit=20
    */
   @Get()
   @HttpCode(HttpStatus.OK)
@@ -155,50 +152,72 @@ export class ChampionshipsController {
   @ApiOperation({
     summary: "Get championships",
     description:
-      "Retrieves championships filtered by competition level and associated league/committee ID. Omitting both parameters returns all championships. Results are cached for 5 minutes.",
+      "Paginated, filtered list of championships. All parameters are optional — omitting them returns all championships across all levels.",
   })
   @ApiQuery({
     name: "level",
     required: false,
-    enum: [CompetitionLevel.REGIONAL, CompetitionLevel.DEPARTMENTAL],
-    description: "Competition level. Omit to return all championships.",
+    enum: CompetitionLevel,
+    description: "Competition level filter.",
     example: CompetitionLevel.REGIONAL,
   })
   @ApiQuery({
     name: "id",
     required: false,
     type: Number,
-    description:
-      "League ID (for regional) or Committee ID (for departmental). Omit to return all championships.",
+    description: "League ID (for regional) or Committee ID (for departmental).",
     example: 1,
+  })
+  @ApiQuery({
+    name: "category",
+    required: false,
+    type: String,
+    description: "Age category filter.",
+    example: "U18",
+  })
+  @ApiQuery({
+    name: "gender",
+    required: false,
+    type: String,
+    description: "Gender filter.",
+    example: "male",
+  })
+  @ApiQuery({
+    name: "page",
+    required: false,
+    type: Number,
+    description: "Page number (1-based).",
+    example: 1,
+  })
+  @ApiQuery({
+    name: "limit",
+    required: false,
+    type: Number,
+    description: "Number of results per page (max 100).",
+    example: 20,
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: "List of championships successfully retrieved",
-    type: [ChampionshipResponseDto],
+    description: "Paginated list of championships successfully retrieved",
     schema: {
       example: {
-        data: [
-          {
-            id: 1,
-            name: "Championship Régional U18 male",
-            category: "U18",
-            gender: "male",
-            seasonYear: "2024-2025",
-            level: "regional",
-            division: 1,
-          },
-          {
-            id: 2,
-            name: "Championship Régional Senior female",
-            category: "Senior",
-            gender: "female",
-            seasonYear: "2024-2025",
-            level: "regional",
-            division: 2,
-          },
-        ],
-        meta: { count: 2 },
+        data: {
+          items: [
+            {
+              id: 1,
+              name: "Championship Régional U18 male",
+              category: "U18",
+              gender: "male",
+              seasonYear: "2024-2025",
+              level: "regional",
+              division: 1,
+            },
+          ],
+          total: 384,
+          page: 1,
+          limit: 20,
+          totalPages: 20,
+        },
         timestamp: "2024-02-05T10:00:00Z",
         path: "/championships",
         statusCode: 200,
@@ -207,67 +226,27 @@ export class ChampionshipsController {
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description:
-      "Invalid query parameters — only thrown when parameters are provided but invalid",
+    description: "Invalid query parameters",
     schema: {
       example: {
         statusCode: 400,
-        message: [
-          'level must be either "regional" or "departmental"',
-          "ID must be a valid number string",
-        ],
+        message: ["level must be a valid enum value"],
         error: "BadRequestException",
-        path: "/championships?level=invalid&id=abc",
+        path: "/championships?level=invalid",
         timestamp: "2024-02-05T10:00:00Z",
       },
     },
   })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: "No championships found for the given level and ID",
-    schema: {
-      oneOf: [
-        {
-          properties: {
-            statusCode: { type: "number", example: 404 },
-            message: {
-              type: "string",
-              example: "No regional championships found for league ID 999",
-            },
-            error: { type: "string", example: "NotFoundException" },
-            path: {
-              type: "string",
-              example: "/championships?level=regional&id=999",
-            },
-            timestamp: { type: "string", example: "2024-02-05T10:00:00Z" },
-          },
-        },
-        {
-          properties: {
-            statusCode: { type: "number", example: 404 },
-            message: {
-              type: "string",
-              example:
-                "No departmental championships found for committee ID 999",
-            },
-            error: { type: "string", example: "NotFoundException" },
-            path: {
-              type: "string",
-              example: "/championships?level=departmental&id=999",
-            },
-            timestamp: { type: "string", example: "2024-02-05T10:00:00Z" },
-          },
-        },
-      ],
-    },
-  })
-  async getChampionships(@Query() query: GetChampionshipsQueryDto) {
-    if (!query.level && !query.id) {
-      return this.championshipService.findAllChampionships();
-    }
-    return this.championshipService.findChampionshipsByLevel(
-      query.level!,
-      query.id!,
-    );
+  async getChampionships(
+    @Query() query: GetChampionshipsQueryDto,
+  ): Promise<PaginatedResponseDto<ChampionshipResponseDto>> {
+    return this.championshipService.findChampionships({
+      level: query.level,
+      id: query.id,
+      category: query.category,
+      gender: query.gender,
+      page: query.page ?? 1,
+      limit: query.limit ?? 20,
+    });
   }
 }

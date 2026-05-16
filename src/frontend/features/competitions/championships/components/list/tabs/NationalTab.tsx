@@ -1,73 +1,73 @@
 // src/frontend/features/competitions/championships/components/list/tabs/NationalTab.tsx
 "use client";
 
+import { Trophy } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useMemo, useState } from "react";
 
 import { useChampionships } from "@/features/competitions/championships/api";
-import type { Championship } from "@/features/competitions/championships/types";
-import type { Category, Gender } from "@/shared/constants";
+import { useNationalFilterState } from "@/features/competitions/championships/hooks";
+import { SearchTabShell } from "@/shared/components/domain";
+import { EmptyState } from "@/shared/components/feedback";
 import { CompetitionLevel } from "@/shared/constants";
 
-import { ChampionshipGrid } from "../ChampionshipGrid";
+import type { Championship } from "../../../types";
+import { ChampionshipCard } from "../ChampionshipCard";
 import { NationalFilters } from "../filters/NationalFilters";
 
 export function NationalTab() {
+  const tCommon = useTranslations("common");
   const tCompetitions = useTranslations("competitions");
 
-  const [category, setCategory] = useState<Category | undefined>(undefined);
-  const [gender, setGender] = useState<Gender | undefined>(undefined);
-  const [seasonYear, setSeasonYear] = useState("");
+  const { filters, setters, setCurrentPage, setPageSize, resetFilters } =
+    useNationalFilterState();
 
-  const { data: allChampionships = [], isLoading } = useChampionships();
+  const { data, error, isLoading } = useChampionships({
+    level: CompetitionLevel.NATIONAL,
+    category: filters.category,
+    gender: filters.gender,
+    page: filters.currentPage,
+    limit: filters.pageSize,
+  });
 
-  const championships = useMemo(
-    () => allChampionships.filter((c) => c.level === CompetitionLevel.NATIONAL),
-    [allChampionships],
-  );
-
-  const seasonYears = useMemo(() => {
-    const years = [...new Set(championships.map((c) => c.seasonYear))].sort(
-      (a, b) => b.localeCompare(a),
-    );
-    return years.map((y) => ({ value: y, label: y }));
-  }, [championships]);
-
-  const filtered = useMemo(() => {
-    return championships.filter((c: Championship) => {
-      if (category && c.category !== category) return false;
-      if (gender && c.gender !== gender) return false;
-      if (seasonYear && c.seasonYear !== seasonYear) return false;
-      return true;
-    });
-  }, [championships, category, gender, seasonYear]);
-
-  const handleReset = () => {
-    setCategory(undefined);
-    setGender(undefined);
-    setSeasonYear("");
-  };
+  const championships: Championship[] = data?.items ?? [];
+  const pagination = data
+    ? {
+        total: data.total,
+        page: data.page,
+        limit: data.limit,
+        totalPages: data.totalPages,
+      }
+    : null;
 
   return (
     <div className="space-y-6">
       <NationalFilters
-        category={category}
-        setCategory={setCategory}
-        gender={gender}
-        setGender={setGender}
-        seasonYear={seasonYear}
-        setSeasonYear={setSeasonYear}
-        seasonYears={seasonYears}
-        onReset={handleReset}
+        filters={filters}
+        setters={setters}
+        onReset={resetFilters}
       />
-
-      {!isLoading && (
-        <div className="text-sm text-text-secondary">
-          {filtered.length} {tCompetitions("championshipsCount")}
-        </div>
-      )}
-
-      <ChampionshipGrid championships={filtered} isLoading={isLoading} />
+      <SearchTabShell
+        isLoading={isLoading}
+        error={error}
+        errorMessage={tCommon("errors.fetchChampionships")}
+        isEmpty={championships.length === 0}
+        emptyState={
+          <EmptyState
+            icon={<Trophy className="w-16 h-16" />}
+            title={tCommon("emptyState.championships")}
+            description={tCompetitions("tryAdjustingFilters")}
+          />
+        }
+        pagination={pagination}
+        pageSize={filters.pageSize}
+        onPageSizeChange={setPageSize}
+        onPageChange={(index) => setCurrentPage(index + 1)}
+        itemLabel={tCompetitions("championships")}
+      >
+        {championships.map((c) => (
+          <ChampionshipCard key={c.id} championship={c} />
+        ))}
+      </SearchTabShell>
     </div>
   );
 }

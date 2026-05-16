@@ -2,11 +2,10 @@
 import type { UseQueryResult } from "@tanstack/react-query";
 import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import type { ApiError } from "@/shared/types";
+import type { ApiError, PaginatedResponse } from "@/shared/types";
 
 import type { Match } from "../types/Match";
 import type { MatchDetail } from "../types/MatchDetail";
-import type { MatchesPaginatedResponse } from "../types/MatchesPaginatedResponse";
 import type { MatchEvent } from "../types/MatchEvent";
 import type { MatchFilters } from "../types/MatchFilters";
 import type { MatchPlayerStatsResponse } from "../types/MatchPlayerStats";
@@ -31,7 +30,7 @@ import { matchesPrefetch, matchesQueries } from "./matchesQueries";
  * });
  */
 export function useMatches(filters?: MatchFilters) {
-  return useQuery<MatchesPaginatedResponse, ApiError>(
+  return useQuery<PaginatedResponse<Match>, ApiError>(
     matchesQueries.list(filters),
   );
 }

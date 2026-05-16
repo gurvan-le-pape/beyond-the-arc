@@ -20,15 +20,11 @@ export function useGenderNavigation(
   const router = useRouter();
 
   // Use React Query hook instead of calling service directly
-  const { data: championships } = useChampionships(
-    {
-      level: level,
-      id: id,
-    },
-    {
-      enabled: !!id && !!gender, // Only fetch when we have required params
-    },
+  const { data } = useChampionships(
+    { level, id, limit: 100 },
+    { enabled: !!id && !!gender },
   );
+  const championships = data?.items;
 
   // Compute target championship ID using useMemo
   const targetChampionshipId = useMemo(() => {

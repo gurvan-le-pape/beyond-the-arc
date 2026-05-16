@@ -1,4 +1,6 @@
 // src/frontend/features/players/api/players.server.ts
+import type { PaginatedResponse } from "@/shared/types";
+
 import {
   buildQueryString,
   fetchApi,
@@ -6,7 +8,6 @@ import {
 import type { Player } from "../types/Player";
 import type { PlayerFilters } from "../types/PlayerFilters";
 import type { PlayerMatchHistory } from "../types/PlayerMatchHistory";
-import type { PlayersPaginatedResponse } from "../types/PlayersPaginatedResponse";
 
 /**
  * Service for interacting with the players API.
@@ -40,9 +41,9 @@ export const serverPlayersService = {
    *   limit: 20,
    * });
    */
-  async getAll(filters?: PlayerFilters): Promise<PlayersPaginatedResponse> {
+  async getAll(filters?: PlayerFilters): Promise<PaginatedResponse<Player>> {
     const queryString = buildQueryString(filters);
-    return fetchApi<PlayersPaginatedResponse>(`/players${queryString}`);
+    return fetchApi<PaginatedResponse<Player>>(`/players${queryString}`);
   },
 
   /**

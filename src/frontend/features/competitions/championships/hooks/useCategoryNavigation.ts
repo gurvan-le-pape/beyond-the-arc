@@ -19,10 +19,11 @@ export function useCategoryNavigation(
 ) {
   const router = useRouter();
 
-  const { data: championships } = useChampionships(
-    { level, id },
+  const { data } = useChampionships(
+    { level, id, limit: 100 },
     { enabled: !!id && !!gender },
   );
+  const championships = data?.items;
 
   // Compute derived state using useMemo
   const { categoryMap, availableCategories, currentCategory } = useMemo(() => {

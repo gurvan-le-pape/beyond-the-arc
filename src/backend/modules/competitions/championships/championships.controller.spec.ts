@@ -27,7 +27,7 @@ describe("ChampionshipsController", () => {
   // Mock service
   const mockChampionshipsService = {
     findChampionshipById: jest.fn(),
-    findChampionshipsByLevel: jest.fn(),
+    findChampionships: jest.fn(),
   };
 
   // Mock cache manager
@@ -43,14 +43,8 @@ describe("ChampionshipsController", () => {
       imports: [LoggerModule.forRoot()],
       controllers: [ChampionshipsController],
       providers: [
-        {
-          provide: ChampionshipsService,
-          useValue: mockChampionshipsService,
-        },
-        {
-          provide: CACHE_MANAGER,
-          useValue: mockCacheManager,
-        },
+        { provide: ChampionshipsService, useValue: mockChampionshipsService },
+        { provide: CACHE_MANAGER, useValue: mockCacheManager },
         CacheDedupService,
       ],
     }).compile();
@@ -101,165 +95,112 @@ describe("ChampionshipsController", () => {
         NotFoundException,
       );
     });
-
-    it("should accept ID as number parameter", async () => {
-      // Arrange
-      const mockChampionship: ChampionshipResponseDto = {
-        id: 42,
-        name: "Test Championship",
-        category: null,
-        gender: "male",
-        seasonYear: "2024-2025",
-        level: "regional",
-        division: 1,
-        leagueId: 1,
-        committeeId: null,
-        organizationName: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
-        pools: [],
-      };
-
-      mockChampionshipsService.findChampionshipById.mockResolvedValue(
-        mockChampionship,
-      );
-
-      // Act
-      await controller.getChampionshipById(42);
-
-      // Assert
-      expect(service.findChampionshipById).toHaveBeenCalledWith(42);
-    });
   });
 
   describe("getChampionships", () => {
-    describe("Regional level", () => {
-      it("should return regional championships for valid league ID", async () => {
-        // Arrange
-        const mockChampionships: ChampionshipResponseDto[] = [
-          {
-            id: 1,
-            name: "Championship Régional U18",
-            category: "U18",
-            gender: "male",
-            seasonYear: "2024-2025",
-            level: CompetitionLevel.REGIONAL,
-            division: 1,
-            leagueId: 1,
-            committeeId: null,
-            organizationName: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
-            pools: [],
-          },
-          {
-            id: 2,
-            name: "Championship Régional Senior",
-            category: "Senior",
-            gender: "female",
-            seasonYear: "2024-2025",
-            level: CompetitionLevel.REGIONAL,
-            division: 2,
-            leagueId: 1,
-            committeeId: null,
-            organizationName: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
-            pools: [],
-          },
-        ];
-
-        mockChampionshipsService.findChampionshipsByLevel.mockResolvedValue(
-          mockChampionships,
-        );
-
-        const query = {
-          level: CompetitionLevel.REGIONAL,
+    // Arrange
+    const mockPaginatedResponse = {
+      items: [
+        {
           id: 1,
-        };
-
-        // Act
-        const result = await controller.getChampionships(query);
-
-        // Assert
-        expect(result).toEqual(mockChampionships);
-        expect(service.findChampionshipsByLevel).toHaveBeenCalledWith(
-          CompetitionLevel.REGIONAL,
-          1,
-        );
-      });
-
-      it("should throw NotFoundException when no championships found", async () => {
-        // Arrange
-        mockChampionshipsService.findChampionshipsByLevel.mockRejectedValue(
-          new NotFoundException(
-            "No regional championships found for league ID 999",
-          ),
-        );
-
-        const query = {
+          name: "Championship Régional U18",
+          category: "U18",
+          gender: "male",
+          seasonYear: "2024-2025",
           level: CompetitionLevel.REGIONAL,
-          id: 999,
-        };
+          division: 1,
+          leagueId: 1,
+          committeeId: null,
+          organizationName: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
+          pools: [],
+        },
+      ],
+      total: 1,
+      page: 1,
+      limit: 20,
+      totalPages: 1,
+    };
 
-        // Act & Assert
-        await expect(controller.getChampionships(query)).rejects.toThrow(
-          NotFoundException,
-        );
+    it("should call findChampionships with all query params", async () => {
+      mockChampionshipsService.findChampionships.mockResolvedValue(
+        mockPaginatedResponse,
+      );
+
+      const query = {
+        level: CompetitionLevel.REGIONAL,
+        id: 1,
+        category: "U18" as any,
+        gender: "male" as any,
+        page: 1,
+        limit: 20,
+      };
+
+      // Act
+      const result = await controller.getChampionships(query);
+
+      // Assert
+      expect(result).toEqual(mockPaginatedResponse);
+      expect(service.findChampionships).toHaveBeenCalledWith({
+        level: CompetitionLevel.REGIONAL,
+        id: 1,
+        category: "U18",
+        gender: "male",
+        page: 1,
+        limit: 20,
       });
     });
 
-    describe("Departmental level", () => {
-      it("should return departmental championships for valid committee ID", async () => {
-        // Arrange
-        const mockChampionships: ChampionshipResponseDto[] = [
-          {
-            id: 1,
-            name: "Championship Departmental U15",
-            category: "U15",
-            gender: "male",
-            seasonYear: "2024-2025",
-            level: CompetitionLevel.DEPARTMENTAL,
-            division: 1,
-            leagueId: null,
-            committeeId: 5,
-            organizationName: "COMITE D''ILLE-ET-VILAINE DE BASKET-BALL",
-            pools: [],
-          },
-        ];
+    it("should use default page and limit when not provided", async () => {
+      // Arrange
+      mockChampionshipsService.findChampionships.mockResolvedValue({
+        ...mockPaginatedResponse,
+        items: [],
+        total: 0,
+        totalPages: 0,
+      });
 
-        mockChampionshipsService.findChampionshipsByLevel.mockResolvedValue(
-          mockChampionships,
-        );
+      await controller.getChampionships({});
 
-        const query = {
+      expect(service.findChampionships).toHaveBeenCalledWith(
+        expect.objectContaining({ page: 1, limit: 20 }),
+      );
+    });
+
+    it("should return empty paginated response when no results", async () => {
+      mockChampionshipsService.findChampionships.mockResolvedValue({
+        items: [],
+        total: 0,
+        page: 1,
+        limit: 20,
+        totalPages: 0,
+      });
+
+      const result = await controller.getChampionships({
+        level: CompetitionLevel.REGIONAL,
+        id: 999,
+      });
+
+      // Act & Assert
+      expect(result.items).toHaveLength(0);
+      expect(result.total).toBe(0);
+    });
+
+    it("should filter by departmental level and committee ID", async () => {
+      mockChampionshipsService.findChampionships.mockResolvedValue(
+        mockPaginatedResponse,
+      );
+
+      await controller.getChampionships({
+        level: CompetitionLevel.DEPARTMENTAL,
+        id: 5,
+      });
+
+      expect(service.findChampionships).toHaveBeenCalledWith(
+        expect.objectContaining({
           level: CompetitionLevel.DEPARTMENTAL,
           id: 5,
-        };
-
-        // Act
-        const result = await controller.getChampionships(query);
-
-        // Assert
-        expect(result).toEqual(mockChampionships);
-        expect(service.findChampionshipsByLevel).toHaveBeenCalledWith(
-          CompetitionLevel.DEPARTMENTAL,
-          5,
-        );
-      });
-
-      it("should throw NotFoundException when no championships found", async () => {
-        // Arrange
-        mockChampionshipsService.findChampionshipsByLevel.mockRejectedValue(
-          new NotFoundException(
-            "No departmental championships found for committee ID 999",
-          ),
-        );
-
-        const query = {
-          level: CompetitionLevel.DEPARTMENTAL,
-          id: 999,
-        };
-
-        // Act & Assert
-        await expect(controller.getChampionships(query)).rejects.toThrow(
-          NotFoundException,
-        );
-      });
+        }),
+      );
     });
   });
 

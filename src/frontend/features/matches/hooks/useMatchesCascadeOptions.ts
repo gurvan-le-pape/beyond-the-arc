@@ -28,9 +28,11 @@ export function useMatchesCascadeOptions({
     championshipsFilter = { level: CompetitionLevel.REGIONAL, id: leagueId };
   }
 
-  const { data: championships = [] } = useChampionships(championshipsFilter, {
-    enabled: isDepartmental || isRegional,
-  });
+  const { data } = useChampionships(
+    { ...championshipsFilter, limit: 100 },
+    { enabled: isDepartmental || isRegional },
+  );
+  const championships = data?.items ?? [];
 
   const divisions = Array.from(
     new Set(

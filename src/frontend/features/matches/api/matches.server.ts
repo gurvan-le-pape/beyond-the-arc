@@ -1,11 +1,12 @@
 // src/frontend/features/matches/api/matches.server.ts
+import type { PaginatedResponse } from "@/shared/types";
+
 import {
   buildQueryString,
   fetchApi,
 } from "../../../lib/services/server/server-api-client";
 import type { Match } from "../types/Match";
 import type { MatchDetail } from "../types/MatchDetail";
-import type { MatchesPaginatedResponse } from "../types/MatchesPaginatedResponse";
 import type { MatchEvent } from "../types/MatchEvent";
 import type { MatchFilters } from "../types/MatchFilters";
 import type { MatchPlayerStatsResponse } from "../types/MatchPlayerStats";
@@ -42,9 +43,9 @@ export const serverMatchesService = {
    *   limit: 20,
    * });
    */
-  async getAll(filters?: MatchFilters): Promise<MatchesPaginatedResponse> {
+  async getAll(filters?: MatchFilters): Promise<PaginatedResponse<Match>> {
     const queryString = buildQueryString(filters);
-    return fetchApi<MatchesPaginatedResponse>(`/matches${queryString}`);
+    return fetchApi<PaginatedResponse<Match>>(`/matches${queryString}`);
   },
 
   /**

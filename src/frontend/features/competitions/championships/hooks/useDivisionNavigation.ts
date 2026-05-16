@@ -20,15 +20,11 @@ export function useDivisionNavigation(
   const router = useRouter();
 
   // Use React Query hook instead of calling service directly
-  const { data: championships } = useChampionships(
-    {
-      level: level,
-      id: id,
-    },
-    {
-      enabled: !!id && !!level && !!category && !!gender, // Only fetch when we have required params
-    },
+  const { data } = useChampionships(
+    { level, id, limit: 100 },
+    { enabled: !!id && !!level && !!category && !!gender },
   );
+  const championships = data?.items;
 
   // Compute derived state using useMemo
   const { divisionMap, availableDivisions, currentDivision } = useMemo(() => {

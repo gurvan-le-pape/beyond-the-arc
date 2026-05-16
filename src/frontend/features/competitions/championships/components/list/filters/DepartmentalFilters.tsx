@@ -12,62 +12,52 @@ interface Committee {
   name: string;
 }
 
-interface DepartmentalFiltersProps {
+interface DepartmentalFilters {
   committeeId: string;
-  setCommitteeId: (value: string) => void;
-  committees: Committee[];
   category: Category | undefined;
-  setCategory: (value: Category | undefined) => void;
   gender: Gender | undefined;
+}
+
+interface DepartmentalSetters {
+  setCommitteeId: (value: string) => void;
+  setCategory: (value: Category | undefined) => void;
   setGender: (value: Gender | undefined) => void;
-  seasonYear: string;
-  setSeasonYear: (value: string) => void;
-  seasonYears: { value: string; label: string }[];
+}
+
+interface DepartmentalFiltersProps {
+  filters: DepartmentalFilters;
+  setters: DepartmentalSetters;
+  committees: Committee[];
   onReset: () => void;
 }
 
 export const DepartmentalFilters: React.FC<DepartmentalFiltersProps> = ({
-  committeeId,
-  setCommitteeId,
+  filters,
+  setters,
   committees,
-  category,
-  setCategory,
-  gender,
-  setGender,
-  seasonYear,
-  setSeasonYear,
-  seasonYears,
   onReset,
 }) => {
   const tCommon = useTranslations("common");
 
   const committeeName = committees.find(
-    (c) => String(c.id) === committeeId,
+    (c) => String(c.id) === filters.committeeId,
   )?.name;
 
   const chips = [
     committeeName && {
       key: "committee",
       label: committeeName,
-      onRemove: () => {
-        setCommitteeId("");
-        setSeasonYear("");
-      },
+      onRemove: () => setters.setCommitteeId(""),
     },
-    category && {
+    filters.category && {
       key: "category",
-      label: tCommon(`category.${category}`),
-      onRemove: () => setCategory(undefined),
+      label: tCommon(`category.${filters.category}`),
+      onRemove: () => setters.setCategory(undefined),
     },
-    gender && {
+    filters.gender && {
       key: "gender",
-      label: tCommon(`gender.${gender}`),
-      onRemove: () => setGender(undefined),
-    },
-    seasonYear && {
-      key: "seasonYear",
-      label: seasonYear,
-      onRemove: () => setSeasonYear(""),
+      label: tCommon(`gender.${filters.gender}`),
+      onRemove: () => setters.setGender(undefined),
     },
   ].filter(Boolean) as { key: string; label: string; onRemove: () => void }[];
 
@@ -81,11 +71,8 @@ export const DepartmentalFilters: React.FC<DepartmentalFiltersProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Select
           label={tCommon("filters.committees")}
-          value={committeeId}
-          onChange={(val) => {
-            setCommitteeId(String(val ?? ""));
-            setSeasonYear("");
-          }}
+          value={filters.committeeId}
+          onChange={(val) => setters.setCommitteeId(String(val ?? ""))}
           options={[
             { value: "", label: tCommon("filters.allCommittees") },
             ...committees.map((c) => ({ value: String(c.id), label: c.name })),
@@ -93,21 +80,11 @@ export const DepartmentalFilters: React.FC<DepartmentalFiltersProps> = ({
         />
 
         <Select
-          label={tCommon("filters.seasons")}
-          value={seasonYear}
-          onChange={(val) => setSeasonYear(String(val ?? ""))}
-          options={[
-            { value: "", label: tCommon("filters.allSeasons") },
-            ...seasonYears,
-          ]}
-        />
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Select
           label={tCommon("filters.categories")}
-          value={category ?? ""}
-          onChange={(val) => setCategory((val as Category) || undefined)}
+          value={filters.category ?? ""}
+          onChange={(val) =>
+            setters.setCategory((val as Category) || undefined)
+          }
           options={[
             { value: "", label: tCommon("filters.allCategories") },
             ...CATEGORY_LIST.map((cat) => ({
@@ -116,11 +93,13 @@ export const DepartmentalFilters: React.FC<DepartmentalFiltersProps> = ({
             })),
           ]}
         />
+      </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Select
           label={tCommon("filters.genders")}
-          value={gender ?? ""}
-          onChange={(val) => setGender((val as Gender) || undefined)}
+          value={filters.gender ?? ""}
+          onChange={(val) => setters.setGender((val as Gender) || undefined)}
           options={[
             { value: "", label: tCommon("filters.allGenders") },
             ...GENDER_LIST.map((g) => ({

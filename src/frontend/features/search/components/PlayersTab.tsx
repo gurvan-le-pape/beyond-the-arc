@@ -8,23 +8,17 @@ import { usePlayers } from "@/features/players/api";
 import { PlayerCard, PlayersFilters } from "@/features/players/components";
 import { usePlayersFilterState } from "@/features/players/hooks";
 import type { Player } from "@/features/players/types";
-import { useRouter } from "@/navigation";
 import { SearchTabShell } from "@/shared/components/domain";
 import { EmptyState } from "@/shared/components/feedback";
 
 export function PlayersTab() {
   const tPlayers = useTranslations("players");
   const tCommon = useTranslations("common");
-  const router = useRouter();
 
   const { filters, setters, setCurrentPage, setPageSize, resetFilters } =
     usePlayersFilterState();
 
-  const {
-    data: playersData,
-    error: playersError,
-    isLoading,
-  } = usePlayers({
+  const { data, error, isLoading } = usePlayers({
     name: filters.name || undefined,
     clubId: filters.clubId,
     category: filters.category,
@@ -38,13 +32,13 @@ export function PlayersTab() {
     limit: filters.pageSize,
   });
 
-  const players: Player[] = playersData?.items ?? [];
-  const pagination = playersData
+  const players: Player[] = data?.items ?? [];
+  const pagination = data
     ? {
-        total: playersData.total,
-        page: playersData.page,
-        limit: playersData.limit,
-        totalPages: playersData.totalPages,
+        total: data.total,
+        page: data.page,
+        limit: data.limit,
+        totalPages: data.totalPages,
       }
     : null;
 
@@ -58,7 +52,7 @@ export function PlayersTab() {
 
       <SearchTabShell
         isLoading={isLoading}
-        error={playersError}
+        error={error}
         errorMessage={tCommon("errors.fetchPlayers")}
         isEmpty={players.length === 0}
         emptyState={
@@ -74,12 +68,8 @@ export function PlayersTab() {
         onPageChange={(index) => setCurrentPage(index + 1)}
         itemLabel={tPlayers("players")}
       >
-        {players.map((player: Player) => (
-          <PlayerCard
-            key={player.id}
-            player={player}
-            onClick={(id) => router.push(`/players/${id}`)}
-          />
+        {players.map((player) => (
+          <PlayerCard key={player.id} player={player} />
         ))}
       </SearchTabShell>
     </div>

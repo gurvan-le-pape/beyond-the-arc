@@ -8,44 +8,38 @@ import { useMatches } from "@/features/matches/api";
 import { MatchesCard, MatchesFilters } from "@/features/matches/components";
 import { useMatchesFilterState } from "@/features/matches/hooks";
 import type { Match } from "@/features/matches/types";
-import { useRouter } from "@/navigation";
 import { SearchTabShell } from "@/shared/components/domain";
 import { EmptyState } from "@/shared/components/feedback";
 
 export function MatchesTab() {
   const tMatches = useTranslations("matches");
   const tCommon = useTranslations("common");
-  const router = useRouter();
 
   const { filters, setters, setCurrentPage, setPageSize, resetFilters } =
     useMatchesFilterState();
 
-  const {
-    data: matchesData,
-    error,
-    isLoading,
-  } = useMatches({
-    page: filters.currentPage,
-    limit: filters.pageSize,
+  const { data, error, isLoading } = useMatches({
+    search: filters.search || undefined,
+    date: filters.dateFilter || undefined,
+    category: filters.category,
+    gender: filters.gender,
     level: filters.level,
     division: filters.division,
     committeeId: filters.committeeId,
     leagueId: filters.leagueId,
     poolId: filters.poolId,
     matchday: filters.matchday,
-    category: filters.category,
-    gender: filters.gender,
-    date: filters.dateFilter || undefined,
-    search: filters.search || undefined,
+    page: filters.currentPage,
+    limit: filters.pageSize,
   });
 
-  const matches = matchesData?.items ?? [];
-  const pagination = matchesData
+  const matches: Match[] = data?.items ?? [];
+  const pagination = data
     ? {
-        total: matchesData.total,
-        page: matchesData.page,
-        limit: matchesData.limit,
-        totalPages: matchesData.totalPages,
+        total: data.total,
+        page: data.page,
+        limit: data.limit,
+        totalPages: data.totalPages,
       }
     : null;
 
@@ -75,12 +69,8 @@ export function MatchesTab() {
         onPageChange={(index) => setCurrentPage(index + 1)}
         itemLabel={tMatches("itemLabelPlural")}
       >
-        {matches.map((match: Match) => (
-          <MatchesCard
-            key={match.id}
-            match={match}
-            onClick={(id) => router.push(`/matches/${id}`)}
-          />
+        {matches.map((match) => (
+          <MatchesCard key={match.id} match={match} />
         ))}
       </SearchTabShell>
     </div>

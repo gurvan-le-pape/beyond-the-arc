@@ -1,9 +1,10 @@
 // src/frontend/features/players/api/players.service.ts
+import type { PaginatedResponse } from "@/shared/types";
+
 import apiClient from "../../../lib/services/client/api-client";
 import type { Player } from "../types/Player";
 import type { PlayerFilters } from "../types/PlayerFilters";
 import type { PlayerMatchHistory } from "../types/PlayerMatchHistory";
-import type { PlayersPaginatedResponse } from "../types/PlayersPaginatedResponse";
 
 /**
  * Service for interacting with the players API.
@@ -37,10 +38,13 @@ export const playersService = {
    *   limit: 20,
    * });
    */
-  async getAll(filters?: PlayerFilters): Promise<PlayersPaginatedResponse> {
-    const { data } = await apiClient.get<PlayersPaginatedResponse>("/players", {
-      params: filters,
-    });
+  async getAll(filters?: PlayerFilters): Promise<PaginatedResponse<Player>> {
+    const { data } = await apiClient.get<PaginatedResponse<Player>>(
+      "/players",
+      {
+        params: filters,
+      },
+    );
     return data;
   },
 
