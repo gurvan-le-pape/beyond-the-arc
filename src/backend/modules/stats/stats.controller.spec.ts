@@ -65,6 +65,7 @@ describe("StatsController", () => {
         matches: 48000,
         leagues: 26,
         committees: 95,
+        championshipsByLevel: { national: 12, regional: 84, departmental: 288 },
       };
 
       mockStatsService.getStats.mockResolvedValue(mockStats);
@@ -86,6 +87,7 @@ describe("StatsController", () => {
         matches: 0,
         leagues: 0,
         committees: 0,
+        championshipsByLevel: { national: 0, regional: 0, departmental: 0 },
       };
 
       mockStatsService.getStats.mockResolvedValue(mockStats);

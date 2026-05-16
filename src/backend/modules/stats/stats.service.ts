@@ -21,15 +21,33 @@ export class StatsService {
    * @returns StatsResponseDto with counts for all entities
    */
   async getStats(): Promise<StatsResponseDto> {
-    const [clubs, teams, players, matches, leagues, committees] =
-      await Promise.all([
-        this.prisma.client.clubs.count(),
-        this.prisma.client.teams.count(),
-        this.prisma.client.players.count(),
-        this.prisma.client.matches.count(),
-        this.prisma.client.leagues.count(),
-        this.prisma.client.committees.count(),
-      ]);
+    const [
+      clubs,
+      teams,
+      players,
+      matches,
+      leagues,
+      committees,
+      nationalChampionships,
+      regionalChampionships,
+      departmentalChampionships,
+    ] = await Promise.all([
+      this.prisma.client.clubs.count(),
+      this.prisma.client.teams.count(),
+      this.prisma.client.players.count(),
+      this.prisma.client.matches.count(),
+      this.prisma.client.leagues.count(),
+      this.prisma.client.committees.count(),
+      this.prisma.client.championships.count({
+        where: { level: "national" },
+      }),
+      this.prisma.client.championships.count({
+        where: { level: "regional" },
+      }),
+      this.prisma.client.championships.count({
+        where: { level: "departmental" },
+      }),
+    ]);
 
     return {
       clubs,
@@ -38,6 +56,11 @@ export class StatsService {
       matches,
       leagues,
       committees,
+      championshipsByLevel: {
+        national: nationalChampionships,
+        regional: regionalChampionships,
+        departmental: departmentalChampionships,
+      },
     } satisfies StatsResponseDto;
   }
 }

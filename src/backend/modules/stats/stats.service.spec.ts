@@ -25,6 +25,7 @@ describe("StatsService", () => {
       matches: { count: jest.fn() },
       leagues: { count: jest.fn() },
       committees: { count: jest.fn() },
+      championships: { count: jest.fn() },
     },
   };
 
@@ -54,6 +55,10 @@ describe("StatsService", () => {
       mockPrismaService.client.matches.count.mockResolvedValue(48000);
       mockPrismaService.client.leagues.count.mockResolvedValue(26);
       mockPrismaService.client.committees.count.mockResolvedValue(95);
+      mockPrismaService.client.championships.count
+        .mockResolvedValueOnce(12)
+        .mockResolvedValueOnce(84)
+        .mockResolvedValueOnce(288);
 
       // Act
       const result = await service.getStats();
@@ -66,10 +71,11 @@ describe("StatsService", () => {
         matches: 48000,
         leagues: 26,
         committees: 95,
+        championshipsByLevel: { national: 12, regional: 84, departmental: 288 },
       });
     });
 
-    it("should call all six count queries", async () => {
+    it("should call all count queries", async () => {
       // Arrange
       mockPrismaService.client.clubs.count.mockResolvedValue(0);
       mockPrismaService.client.teams.count.mockResolvedValue(0);
@@ -77,6 +83,7 @@ describe("StatsService", () => {
       mockPrismaService.client.matches.count.mockResolvedValue(0);
       mockPrismaService.client.leagues.count.mockResolvedValue(0);
       mockPrismaService.client.committees.count.mockResolvedValue(0);
+      mockPrismaService.client.championships.count.mockResolvedValue(0);
 
       // Act
       await service.getStats();
@@ -90,6 +97,18 @@ describe("StatsService", () => {
       expect(mockPrismaService.client.committees.count).toHaveBeenCalledTimes(
         1,
       );
+      expect(
+        mockPrismaService.client.championships.count,
+      ).toHaveBeenCalledTimes(3);
+      expect(mockPrismaService.client.championships.count).toHaveBeenCalledWith(
+        { where: { level: "national" } },
+      );
+      expect(mockPrismaService.client.championships.count).toHaveBeenCalledWith(
+        { where: { level: "regional" } },
+      );
+      expect(mockPrismaService.client.championships.count).toHaveBeenCalledWith(
+        { where: { level: "departmental" } },
+      );
     });
 
     it("should return zeroed counts when platform has no data", async () => {
@@ -100,6 +119,7 @@ describe("StatsService", () => {
       mockPrismaService.client.matches.count.mockResolvedValue(0);
       mockPrismaService.client.leagues.count.mockResolvedValue(0);
       mockPrismaService.client.committees.count.mockResolvedValue(0);
+      mockPrismaService.client.championships.count.mockResolvedValue(0);
 
       // Act
       const result = await service.getStats();
@@ -112,6 +132,7 @@ describe("StatsService", () => {
         matches: 0,
         leagues: 0,
         committees: 0,
+        championshipsByLevel: { national: 0, regional: 0, departmental: 0 },
       });
     });
 
@@ -125,6 +146,7 @@ describe("StatsService", () => {
       mockPrismaService.client.matches.count.mockResolvedValue(0);
       mockPrismaService.client.leagues.count.mockResolvedValue(0);
       mockPrismaService.client.committees.count.mockResolvedValue(0);
+      mockPrismaService.client.championships.count.mockResolvedValue(0);
 
       // Act & Assert
       await expect(service.getStats()).rejects.toThrow(
@@ -160,12 +182,18 @@ describe("StatsService", () => {
         order.push("committees");
         return 6;
       });
+      mockPrismaService.client.championships.count.mockImplementation(
+        async () => {
+          order.push("championships");
+          return 0;
+        },
+      );
 
       // Act
       await service.getStats();
 
-      // Assert — all six were called (order is non-deterministic in parallel)
-      expect(order).toHaveLength(6);
+      // Assert — all nine calls were made (order is non-deterministic in parallel)
+      expect(order).toHaveLength(9);
       expect(order).toEqual(
         expect.arrayContaining([
           "clubs",
@@ -174,6 +202,9 @@ describe("StatsService", () => {
           "matches",
           "leagues",
           "committees",
+          "championships",
+          "championships",
+          "championships",
         ]),
       );
     });
