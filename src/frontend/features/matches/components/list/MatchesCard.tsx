@@ -2,17 +2,20 @@
 import { useTranslations } from "next-intl";
 import React from "react";
 
+import { Link } from "@/navigation";
 import { Badge } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { LEVEL_CONFIG } from "@/shared/constants";
-import { cn, formatMatchDate, formatMatchTime, formatNameToFileName } from "@/shared/utils";
+import {
+  cn,
+  formatMatchDate,
+  formatMatchTime,
+  formatNameToFileName,
+} from "@/shared/utils";
 
-interface MatchesCardProps {
-  match: any;
-  onClick: (matchId: number) => void;
-}
+import type { Match } from "../../types";
 
-export const MatchesCard: React.FC<MatchesCardProps> = ({ match, onClick }) => {
+export const MatchesCard: React.FC<{ match: Match }> = ({ match }) => {
   const tMatches = useTranslations("matches");
   const tCommon = useTranslations("common");
 
@@ -22,11 +25,10 @@ export const MatchesCard: React.FC<MatchesCardProps> = ({ match, onClick }) => {
   const hasScore = match.homeTeamScore !== null && match.awayTeamScore !== null;
 
   return (
-    <button
-      type="button"
-      onClick={() => onClick(match.id)}
+    <Link
+      href={`/matches/${match.id}`}
       className={cn(
-        "w-full text-left border-l-8 rounded-card shadow-card hover:shadow-card-hover transition-all duration-200 cursor-pointer overflow-hidden",
+        "w-full text-left border-l-8 rounded-card shadow-card hover:shadow-card-hover transition-all duration-200 overflow-hidden",
         "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ring-offset-surface",
         "surface-raised",
         config.border,
@@ -39,7 +41,6 @@ export const MatchesCard: React.FC<MatchesCardProps> = ({ match, onClick }) => {
       {/* Header */}
       <div className={cn("px-6 py-3", config.bg)}>
         <div className="flex justify-between items-center flex-wrap gap-2">
-          {/* Left: date, time, matchday */}
           <div className="flex items-center gap-3">
             <Text variant="label">
               {formatMatchDate(match.date)} • {formatMatchTime(match.date)}
@@ -49,7 +50,6 @@ export const MatchesCard: React.FC<MatchesCardProps> = ({ match, onClick }) => {
             </Badge>
           </div>
 
-          {/* Right: category, gender, division, pool, level */}
           <div className="flex items-center gap-2 flex-wrap">
             {match.pool?.championship?.category && (
               <Badge variant="outline" size="sm">
@@ -183,7 +183,7 @@ export const MatchesCard: React.FC<MatchesCardProps> = ({ match, onClick }) => {
           </div>
         </div>
       </div>
-    </button>
+    </Link>
   );
 };
 

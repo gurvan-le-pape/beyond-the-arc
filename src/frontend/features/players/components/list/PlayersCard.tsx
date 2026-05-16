@@ -3,17 +3,13 @@ import { useTranslations } from "next-intl";
 import React from "react";
 
 import type { Player } from "@/features/players/types";
+import { Link } from "@/navigation";
 import { Badge } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { LEVEL_CONFIG, NA } from "@/shared/constants";
 import { cn, formatNameToFileName } from "@/shared/utils";
 
-interface PlayerCardProps {
-  player: Player;
-  onClick: (id: number) => void;
-}
-
-export const PlayerCard: React.FC<PlayerCardProps> = ({ player, onClick }) => {
+export const PlayerCard: React.FC<{ player: Player }> = ({ player }) => {
   const tCommon = useTranslations("common");
 
   const clubName = player.team?.club?.name ?? null;
@@ -32,11 +28,10 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, onClick }) => {
       : clubName ?? teamNumber ?? NA;
 
   return (
-    <button
-      type="button"
-      onClick={() => onClick(player.id)}
+    <Link
+      href={`/players/${player.id}`}
       className={cn(
-        "w-full text-left border-l-8 rounded-card shadow-card hover:shadow-card-hover transition-all duration-200 cursor-pointer overflow-hidden",
+        "w-full text-left border-l-8 rounded-card shadow-card hover:shadow-card-hover transition-all duration-200 overflow-hidden",
         "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ring-offset-surface",
         "surface-raised",
         config.border,
@@ -72,7 +67,6 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, onClick }) => {
 
       {/* Body */}
       <div className="px-8 py-6 flex items-center gap-6">
-        {/* Club logo */}
         <div className="flex-shrink-0 w-14 h-14 bg-surface-inset rounded-button flex items-center justify-center overflow-hidden">
           <img
             src={
@@ -89,14 +83,12 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, onClick }) => {
           />
         </div>
 
-        {/* Player info */}
         <div className="flex-1 min-w-0">
           <p className="text-lg font-semibold text-text-heading truncate">
             {player.name}
           </p>
         </div>
 
-        {/* Committee / League */}
         {committee && (
           <div className="hidden md:flex flex-col items-end min-w-0 flex-1">
             {committee.league && (
@@ -110,7 +102,6 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, onClick }) => {
           </div>
         )}
 
-        {/* Number circle */}
         {!!player.number && (
           <div
             className={cn(
@@ -124,7 +115,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, onClick }) => {
           </div>
         )}
       </div>
-    </button>
+    </Link>
   );
 };
 
