@@ -7,44 +7,39 @@ import { Select } from "@/shared/components/forms";
 import type { Category, Gender } from "@/shared/constants";
 import { CATEGORY_LIST, GENDER_LIST } from "@/shared/constants";
 
-interface NationalFiltersProps {
+interface NationalFilters {
   category: Category | undefined;
-  setCategory: (value: Category | undefined) => void;
   gender: Gender | undefined;
+}
+
+interface NationalSetters {
+  setCategory: (value: Category | undefined) => void;
   setGender: (value: Gender | undefined) => void;
-  seasonYear: string;
-  setSeasonYear: (value: string) => void;
-  seasonYears: { value: string; label: string }[];
+}
+
+interface NationalFiltersProps {
+  filters: NationalFilters;
+  setters: NationalSetters;
   onReset: () => void;
 }
 
 export const NationalFilters: React.FC<NationalFiltersProps> = ({
-  category,
-  setCategory,
-  gender,
-  setGender,
-  seasonYear,
-  setSeasonYear,
-  seasonYears,
+  filters,
+  setters,
   onReset,
 }) => {
   const tCommon = useTranslations("common");
 
   const chips = [
-    category && {
+    filters.category && {
       key: "category",
-      label: tCommon(`category.${category}`),
-      onRemove: () => setCategory(undefined),
+      label: tCommon(`category.${filters.category}`),
+      onRemove: () => setters.setCategory(undefined),
     },
-    gender && {
+    filters.gender && {
       key: "gender",
-      label: tCommon(`gender.${gender}`),
-      onRemove: () => setGender(undefined),
-    },
-    seasonYear && {
-      key: "seasonYear",
-      label: seasonYear,
-      onRemove: () => setSeasonYear(""),
+      label: tCommon(`gender.${filters.gender}`),
+      onRemove: () => setters.setGender(undefined),
     },
   ].filter(Boolean) as { key: string; label: string; onRemove: () => void }[];
 
@@ -55,11 +50,13 @@ export const NationalFilters: React.FC<NationalFiltersProps> = ({
       onReset={onReset}
       title={tCommon("competition.levels.national")}
     >
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Select
           label={tCommon("filters.categories")}
-          value={category ?? ""}
-          onChange={(val) => setCategory((val as Category) || undefined)}
+          value={filters.category ?? ""}
+          onChange={(val) =>
+            setters.setCategory((val as Category) || undefined)
+          }
           options={[
             { value: "", label: tCommon("filters.allCategories") },
             ...CATEGORY_LIST.map((cat) => ({
@@ -71,24 +68,14 @@ export const NationalFilters: React.FC<NationalFiltersProps> = ({
 
         <Select
           label={tCommon("filters.genders")}
-          value={gender ?? ""}
-          onChange={(val) => setGender((val as Gender) || undefined)}
+          value={filters.gender ?? ""}
+          onChange={(val) => setters.setGender((val as Gender) || undefined)}
           options={[
             { value: "", label: tCommon("filters.allGenders") },
             ...GENDER_LIST.map((g) => ({
               value: g,
               label: tCommon(`gender.${g}`),
             })),
-          ]}
-        />
-
-        <Select
-          label={tCommon("filters.seasons")}
-          value={seasonYear}
-          onChange={(val) => setSeasonYear(String(val ?? ""))}
-          options={[
-            { value: "", label: tCommon("filters.allSeasons") },
-            ...seasonYears,
           ]}
         />
       </div>
