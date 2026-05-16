@@ -1,12 +1,11 @@
 // src/frontend/features/players/api/use-players.ts
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import type { ApiError } from "@/shared/types";
+import type { ApiError, PaginatedResponse } from "@/shared/types";
 
 import type { Player } from "../types/Player";
 import type { PlayerFilters } from "../types/PlayerFilters";
 import type { PlayerMatchHistory } from "../types/PlayerMatchHistory";
-import type { PlayersPaginatedResponse } from "../types/PlayersPaginatedResponse";
 import { playersPrefetch, playersQueries } from "./playersQueries";
 
 /**
@@ -28,7 +27,7 @@ export function usePlayers(
   filters?: PlayerFilters,
   options?: { enabled?: boolean },
 ) {
-  return useQuery<PlayersPaginatedResponse, ApiError>({
+  return useQuery<PaginatedResponse<Player>, ApiError>({
     ...playersQueries.list(filters),
     enabled: options?.enabled ?? true,
   });
