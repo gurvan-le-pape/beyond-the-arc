@@ -51,7 +51,7 @@ export function OrganizationsGrid({ t }: OrganizationsGridProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
       {types.map((org) => (
-        <OrganizationTypeCard key={org.id} org={org} />
+        <OrganizationTypeCard key={org.id} org={org} t={t} />
       ))}
     </div>
   );

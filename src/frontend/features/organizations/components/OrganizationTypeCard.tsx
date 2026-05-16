@@ -1,4 +1,5 @@
 // src/frontend/features/organizations/components/OrganizationTypeCard.tsx
+import type { useTranslations } from "next-intl";
 import React from "react";
 
 import { Link } from "@/navigation";
@@ -61,9 +62,10 @@ export interface OrgType {
 
 interface OrganizationTypeCardProps {
   readonly org: OrgType;
+  readonly t: ReturnType<typeof useTranslations>;
 }
 
-export function OrganizationTypeCard({ org }: OrganizationTypeCardProps) {
+export function OrganizationTypeCard({ org, t }: OrganizationTypeCardProps) {
   const { label, description, icon, href, id, count } = org;
   const s = STYLES[id];
 
@@ -121,7 +123,7 @@ export function OrganizationTypeCard({ org }: OrganizationTypeCardProps) {
         <span
           className={`text-xs font-medium transition-colors duration-200 ${s.arrow}`}
         >
-          Explore
+          {t("explore")}
         </span>
         <svg
           xmlns="http://www.w3.org/2000/svg"
