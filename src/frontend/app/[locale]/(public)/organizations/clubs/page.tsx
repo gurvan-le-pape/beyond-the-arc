@@ -2,7 +2,7 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { ClubsView } from "@/features/organizations/clubs/components";
-import { TitleSection } from "@/shared/components/domain";
+import { TitleSection } from "@/features/organizations/components";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
 import { ViewLevel } from "@/shared/constants";

@@ -10,7 +10,7 @@ import {
   OrganizationHeader,
   OrganizationInfo,
   SearchableChipList,
-} from "@/shared/components/domain";
+} from "@/features/organizations/components";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
 import { CompetitionLevel } from "@/shared/constants";

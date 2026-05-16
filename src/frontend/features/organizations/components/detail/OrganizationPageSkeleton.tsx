@@ -1,4 +1,4 @@
-// src/frontend/shared/components/domain/organizations/detail/OrganizationPageSkeleton.tsx
+// src/frontend/features/organizations/components/detail/OrganizationPageSkeleton.tsx
 
 import { Skeleton } from "@/shared/components/feedback";
 
