@@ -38,7 +38,7 @@ export const PageLayout = ({
     <main
       aria-label={ariaLabel}
       className={cn(
-        "flex-grow px-4 py-12 sm:px-6 lg:px-8",
+        "flex-grow min-h-[70vh] px-4 py-12 sm:px-6 lg:px-8",
         centered ? "flex flex-col items-center justify-center" : "",
         className,
       )}
