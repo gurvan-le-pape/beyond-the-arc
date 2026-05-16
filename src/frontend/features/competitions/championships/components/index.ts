@@ -15,7 +15,6 @@ export * from "./detail/navigation/DivisionNavigation";
 export * from "./detail/navigation/RoundSelector";
 export * from "./detail/navigation/SwitchGenderButton";
 export * from "./list/ChampionshipCard";
-export * from "./list/ChampionshipGrid";
 export * from "./list/filters/DepartmentalFilters";
 export * from "./list/filters/NationalFilters";
 export * from "./list/filters/RegionalFilters";
