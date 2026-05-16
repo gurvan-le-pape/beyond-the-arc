@@ -1,52 +1,13 @@
 // src/frontend/app/[locale]/(public)/organizations/page.tsx
-import { Building2, MapPin, Users } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { OrganizationTypeCard, type OrgType } from "@/shared/components/domain";
+import {
+  OrganizationsGrid,
+  OrganizationsHeader,
+  OrganizationsStats,
+} from "@/features/organizations/components";
 import { PageLayout } from "@/shared/components/layout";
-import { OrganizationType } from "@/shared/constants";
-
-const ORG_TYPE_CONFIG = [
-  {
-    id: OrganizationType.LEAGUES,
-    labelKey: "leagues.label",
-    descriptionKey: "leagues.description",
-    icon: (
-      <MapPin
-        className="text-5xl text-regional-strong mb-4"
-        aria-hidden
-        focusable={false}
-      />
-    ),
-    href: `/organizations/${OrganizationType.LEAGUES}`,
-  },
-  {
-    id: OrganizationType.COMMITTEES,
-    labelKey: "committees.label",
-    descriptionKey: "committees.description",
-    icon: (
-      <Building2
-        className="text-5xl text-departmental-strong mb-4"
-        aria-hidden
-        focusable={false}
-      />
-    ),
-    href: `/organizations/${OrganizationType.COMMITTEES}`,
-  },
-  {
-    id: OrganizationType.CLUBS,
-    labelKey: "clubs.label",
-    descriptionKey: "clubs.description",
-    icon: (
-      <Users
-        className="text-5xl text-clubs-strong mb-4"
-        aria-hidden
-        focusable={false}
-      />
-    ),
-    href: `/organizations/${OrganizationType.CLUBS}`,
-  },
-] as const;
+import { Divide } from "@/shared/components/primitives";
 
 interface OrganizationsPageProps {
   readonly params: Promise<{ locale: string }>;
@@ -62,21 +23,15 @@ export default async function OrganizationsPage({
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "organizations" });
 
-  const types: OrgType[] = ORG_TYPE_CONFIG.map((org) => ({
-    id: org.id,
-    icon: org.icon,
-    href: org.href,
-    label: t(org.labelKey),
-    description: t(org.descriptionKey),
-  }));
-
   return (
-    <PageLayout centered>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 lg:gap-8">
-        {types.map((org) => (
-          <OrganizationTypeCard key={org.id} org={org} />
-        ))}
-      </div>
+    <PageLayout
+      centered
+      contentClassName="max-w-4xl items-center flex flex-col gap-8"
+    >
+      <OrganizationsHeader t={t} />
+      <OrganizationsStats t={t} />
+      <Divide />
+      <OrganizationsGrid t={t} />
     </PageLayout>
   );
 }

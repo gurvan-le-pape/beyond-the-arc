@@ -7,5 +7,8 @@ export * from "./detail/OrganizationHeader";
 export * from "./detail/OrganizationInfo";
 export * from "./detail/OrganizationPageSkeleton";
 export * from "./detail/SearchableChipsList";
+export * from "./OrganizationsGrid";
+export * from "./OrganizationsHeader";
+export * from "./OrganizationsStats";
 export * from "./OrganizationTypeCard";
 export * from "./TitleSection";

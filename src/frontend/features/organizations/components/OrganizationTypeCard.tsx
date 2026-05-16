@@ -4,13 +4,50 @@ import React from "react";
 import { Link } from "@/navigation";
 import { OrganizationType } from "@/shared/constants";
 
-const COLOR_CLASSES: Record<OrganizationType, string> = {
-  [OrganizationType.LEAGUES]:
-    "from-regional-subtle to-regional-subtle/40 border-regional hover:border-regional-strong",
-  [OrganizationType.COMMITTEES]:
-    "from-departmental-subtle to-departmental-subtle/40 border-departmental hover:border-departmental-strong",
-  [OrganizationType.CLUBS]:
-    "from-clubs-subtle to-clubs-subtle/40 border-clubs hover:border-clubs-strong",
+const STYLES: Record<
+  OrganizationType,
+  {
+    gradient: string;
+    border: string;
+    iconRing: string;
+    iconBg: string;
+    accent: string;
+    arrow: string;
+    pill: string;
+    pillText: string;
+  }
+> = {
+  [OrganizationType.LEAGUES]: {
+    gradient: "from-regional-subtle/60 via-surface-subtle to-surface-subtle",
+    border: "border-regional/30 hover:border-regional",
+    iconRing: "ring-regional/20",
+    iconBg: "bg-regional-subtle",
+    accent: "text-regional-strong",
+    arrow: "text-regional group-hover:text-regional-strong",
+    pill: "bg-regional-subtle",
+    pillText: "text-regional-strong",
+  },
+  [OrganizationType.COMMITTEES]: {
+    gradient:
+      "from-departmental-subtle/60 via-surface-subtle to-surface-subtle",
+    border: "border-departmental/30 hover:border-departmental",
+    iconRing: "ring-departmental/20",
+    iconBg: "bg-departmental-subtle",
+    accent: "text-departmental-strong",
+    arrow: "text-departmental group-hover:text-departmental-strong",
+    pill: "bg-departmental-subtle",
+    pillText: "text-departmental-strong",
+  },
+  [OrganizationType.CLUBS]: {
+    gradient: "from-clubs-subtle/60 via-surface-subtle to-surface-subtle",
+    border: "border-clubs/30 hover:border-clubs",
+    iconRing: "ring-clubs/20",
+    iconBg: "bg-clubs-subtle",
+    accent: "text-clubs-strong",
+    arrow: "text-clubs group-hover:text-clubs-strong",
+    pill: "bg-clubs-subtle",
+    pillText: "text-clubs-strong",
+  },
 };
 
 export interface OrgType {
@@ -19,6 +56,7 @@ export interface OrgType {
   description: string;
   icon: React.ReactElement<React.SVGProps<SVGSVGElement>>;
   href: string;
+  count?: number;
 }
 
 interface OrganizationTypeCardProps {
@@ -26,23 +64,81 @@ interface OrganizationTypeCardProps {
 }
 
 export function OrganizationTypeCard({ org }: OrganizationTypeCardProps) {
-  const { label, description, icon, href, id } = org;
+  const { label, description, icon, href, id, count } = org;
+  const s = STYLES[id];
 
   return (
     <Link
       href={href}
-      className={`cursor-pointer bg-gradient-to-br border-2 rounded-card flex flex-col items-center justify-center p-8 transition-all duration-200 hover:scale-105 shadow-card hover:shadow-card-hover group ${COLOR_CLASSES[id]} focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ring-offset-surface`}
       aria-label={label}
+      className={`
+        group relative flex flex-col gap-5 p-6 rounded-card
+        bg-gradient-to-br ${s.gradient}
+        border ${s.border}
+        shadow-card hover:shadow-card-hover
+        transition-all duration-300 ease-out
+        hover:-translate-y-1
+        focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ring-offset-surface
+      `}
     >
-      <span className="sr-only">{label}</span>
+      {/* Top row: icon + optional count pill */}
+      <div className="flex items-start justify-between">
+        <div
+          className={`
+            flex items-center justify-center w-12 h-12 rounded-xl
+            ${s.iconBg} ring-4 ${s.iconRing}
+          `}
+        >
+          {React.cloneElement(icon, {
+            "aria-hidden": true,
+            focusable: false,
+            className: `w-6 h-6 ${s.accent}`,
+          })}
+        </div>
 
-      {React.cloneElement(icon, { "aria-hidden": true, focusable: false })}
-
-      <div className="text-xl font-semibold mb-2 group-hover:text-primary-bold transition-colors duration-200 text-text-heading">
-        {label}
+        {count !== undefined && (
+          <span
+            className={`
+              text-xs font-semibold px-2.5 py-1 rounded-full
+              ${s.pill} ${s.pillText}
+            `}
+          >
+            {count.toLocaleString()}
+          </span>
+        )}
       </div>
 
-      <div className="text-sm text-text-body text-center">{description}</div>
+      {/* Text content */}
+      <div className="flex-1 space-y-1.5">
+        <div className={`text-base font-semibold ${s.accent}`}>{label}</div>
+        <div className="text-sm text-text-secondary leading-relaxed">
+          {description}
+        </div>
+      </div>
+
+      {/* Bottom arrow */}
+      <div className="flex items-center gap-1.5">
+        <span
+          className={`text-xs font-medium transition-colors duration-200 ${s.arrow}`}
+        >
+          Explore
+        </span>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 16 16"
+          fill="none"
+          aria-hidden="true"
+          className={`w-3.5 h-3.5 transition-all duration-200 group-hover:translate-x-0.5 ${s.arrow}`}
+        >
+          <path
+            d="M3 8h10M9 4l4 4-4 4"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </div>
     </Link>
   );
 }
