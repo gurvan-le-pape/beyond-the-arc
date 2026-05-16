@@ -8,23 +8,17 @@ import { useTeams } from "@/features/teams/api";
 import { TeamCard, TeamsFilters } from "@/features/teams/components";
 import { useTeamsFilterState } from "@/features/teams/hooks";
 import type { Team } from "@/features/teams/types";
-import { useRouter } from "@/navigation";
 import { SearchTabShell } from "@/shared/components/domain";
 import { EmptyState } from "@/shared/components/feedback";
 
 export function TeamsTab() {
   const tTeams = useTranslations("teams");
   const tCommon = useTranslations("common");
-  const router = useRouter();
 
   const { filters, setters, setCurrentPage, setPageSize, resetFilters } =
     useTeamsFilterState();
 
-  const {
-    data: teamsData,
-    error: teamsError,
-    isLoading,
-  } = useTeams({
+  const { data, error, isLoading } = useTeams({
     clubId: filters.clubId,
     number: filters.number,
     category: filters.category,
@@ -38,13 +32,13 @@ export function TeamsTab() {
     limit: filters.pageSize,
   });
 
-  const teams: Team[] = teamsData?.items ?? [];
-  const pagination = teamsData
+  const teams: Team[] = data?.items ?? [];
+  const pagination = data
     ? {
-        total: teamsData.total,
-        page: teamsData.page,
-        limit: teamsData.limit,
-        totalPages: teamsData.totalPages,
+        total: data.total,
+        page: data.page,
+        limit: data.limit,
+        totalPages: data.totalPages,
       }
     : null;
 
@@ -58,7 +52,7 @@ export function TeamsTab() {
 
       <SearchTabShell
         isLoading={isLoading}
-        error={teamsError}
+        error={error}
         errorMessage={tCommon("errors.fetchTeams")}
         isEmpty={teams.length === 0}
         emptyState={
@@ -74,12 +68,8 @@ export function TeamsTab() {
         onPageChange={(index) => setCurrentPage(index + 1)}
         itemLabel={tTeams("teams")}
       >
-        {teams.map((team: Team) => (
-          <TeamCard
-            key={team.id}
-            team={team}
-            onClick={(id) => router.push(`/teams/${id}`)}
-          />
+        {teams.map((team) => (
+          <TeamCard key={team.id} team={team} />
         ))}
       </SearchTabShell>
     </div>
