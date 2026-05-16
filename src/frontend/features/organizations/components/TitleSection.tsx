@@ -1,4 +1,4 @@
-// src/frontend/shared/components/domain/organizations/TitleSection.tsx
+// src/frontend/features/organizations/components/TitleSection.tsx
 "use client";
 
 import { MapPin, SignpostBig, Users } from "lucide-react";

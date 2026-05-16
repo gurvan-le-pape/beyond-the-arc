@@ -1,4 +1,4 @@
-// src/frontend/shared/components/domain/organizations/OrganizationTypeCard.tsx
+// src/frontend/features/organizations/components/OrganizationTypeCard.tsx
 import React from "react";
 
 import { Link } from "@/navigation";

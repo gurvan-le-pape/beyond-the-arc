@@ -1,4 +1,4 @@
-// src/frontend/shared/components/domain/organizations/detail/OrganizationHeader.tsx
+// src/frontend/features/organizations/components/detail/OrganizationHeader.tsx
 "use client";
 
 import Image from "next/image";
