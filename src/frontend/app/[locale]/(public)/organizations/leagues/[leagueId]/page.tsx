@@ -20,8 +20,12 @@ interface LeaguePageProps {
 }
 
 export async function generateStaticParams() {
-  const leagues = await serverLeaguesService.getAll();
-  return leagues.map((l) => ({ leagueId: String(l.id) }));
+  try {
+    const leagues = await serverLeaguesService.getAll();
+    return leagues.map((l) => ({ leagueId: String(l.id) }));
+  } catch {
+    return [];
+  }
 }
 
 export const dynamicParams = true;

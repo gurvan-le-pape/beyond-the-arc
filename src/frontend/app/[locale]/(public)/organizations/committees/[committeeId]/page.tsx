@@ -20,8 +20,12 @@ interface CommitteePageProps {
 }
 
 export async function generateStaticParams() {
-  const committees = await serverCommitteesService.getAll();
-  return committees.map((c) => ({ committeeId: String(c.id) }));
+  try {
+    const committees = await serverCommitteesService.getAll();
+    return committees.map((c) => ({ committeeId: String(c.id) }));
+  } catch {
+    return [];
+  }
 }
 
 export const dynamicParams = true;
