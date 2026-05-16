@@ -4,6 +4,7 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
+import { Link } from "@/navigation";
 import { Section } from "@/shared/components/blocks";
 import { Input } from "@/shared/components/forms";
 import { Text } from "@/shared/components/typography";
@@ -17,7 +18,7 @@ interface SearchableChipListProps<T extends SearchableChipListItem> {
   readonly items: T[];
   readonly title: string;
   readonly searchPlaceholder: string;
-  readonly onItemClick: (item: T) => void;
+  readonly basePath: string;
   readonly showSearch?: boolean;
 }
 
@@ -25,7 +26,7 @@ export function SearchableChipList<T extends SearchableChipListItem>({
   items,
   title,
   searchPlaceholder,
-  onItemClick,
+  basePath,
   showSearch = true,
 }: SearchableChipListProps<T>) {
   const tCompetitions = useTranslations("competitions");
@@ -70,14 +71,13 @@ export function SearchableChipList<T extends SearchableChipListItem>({
           </Text>
         ) : (
           filteredItems.map((item) => (
-            <button
+            <Link
               key={item.id}
-              type="button"
-              onClick={() => onItemClick(item)}
+              href={`${basePath}/${item.id}`}
               className="px-3 py-2 rounded-lg text-sm font-medium border border-divide bg-surface-inset text-text-emphasis hover:border-primary hover:text-primary transition-colors duration-150"
             >
               {item.name}
-            </button>
+            </Link>
           ))
         )}
       </div>
