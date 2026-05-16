@@ -1,4 +1,6 @@
 {
+  "title": "Organizations",
+  "subtitle": "Browse leagues, committees, and clubs across the country",
   "breadcrumb": "Organizations",
   "selectType": "Select a type",
   "leagues": {

@@ -1,4 +1,6 @@
 {
+  "title": "Organisations",
+  "subtitle": "Parcourez les ligues, comités et clubs à travers le pays",
   "breadcrumb": "Organisations",
   "selectType": "Sélectionnez un type",
   "leagues": {
