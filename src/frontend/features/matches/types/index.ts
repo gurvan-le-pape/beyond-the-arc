@@ -7,7 +7,6 @@ export * from "./EventStyle";
 export * from "./EventWithScore";
 export * from "./Match";
 export * from "./MatchDetail";
-export * from "./MatchesPaginatedResponse";
 export * from "./MatchEvent";
 export * from "./MatchFilters";
 export * from "./MatchParticipant";
