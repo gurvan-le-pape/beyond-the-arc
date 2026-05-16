@@ -1,7 +1,7 @@
 // src/frontend/features/competitions/championships/api/use-championships.ts
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import type { ApiError } from "@/shared/types";
+import type { ApiError, PaginatedResponse } from "@/shared/types";
 
 import type { Championship } from "../types/Championship";
 import type { ChampionshipFilters } from "../types/ChampionshipFilters";
@@ -28,7 +28,7 @@ export function useChampionships(
   filters?: ChampionshipFilters,
   options?: { enabled?: boolean },
 ) {
-  return useQuery<Championship[], ApiError>({
+  return useQuery<PaginatedResponse<Championship>, ApiError>({
     ...championshipsQueries.list(filters),
     enabled: options?.enabled ?? true,
   });
