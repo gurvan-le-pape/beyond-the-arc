@@ -1,92 +1,78 @@
 // src/frontend/features/competitions/championships/components/list/tabs/DepartmentalTab.tsx
 "use client";
 
+import { Trophy } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useMemo, useState } from "react";
 
 import { useChampionships } from "@/features/competitions/championships/api";
-import type { Championship } from "@/features/competitions/championships/types";
+import { useDepartmentalFilterState } from "@/features/competitions/championships/hooks";
 import { useCommittees } from "@/features/organizations/committees/api";
-import type { Category, Gender } from "@/shared/constants";
+import { SearchTabShell } from "@/shared/components/domain";
+import { EmptyState } from "@/shared/components/feedback";
 import { CompetitionLevel } from "@/shared/constants";
 
-import { ChampionshipGrid } from "../ChampionshipGrid";
+import type { Championship } from "../../../types";
+import { ChampionshipCard } from "../ChampionshipCard";
 import { DepartmentalFilters } from "../filters/DepartmentalFilters";
 
 export function DepartmentalTab() {
+  const tCommon = useTranslations("common");
   const tCompetitions = useTranslations("competitions");
 
-  const [committeeId, setCommitteeId] = useState("");
-  const [category, setCategory] = useState<Category | undefined>(undefined);
-  const [gender, setGender] = useState<Gender | undefined>(undefined);
-  const [seasonYear, setSeasonYear] = useState("");
+  const { filters, setters, setCurrentPage, setPageSize, resetFilters } =
+    useDepartmentalFilterState();
 
   const { data: committees = [] } = useCommittees();
 
-  const committeeIdNum = Number(committeeId) || undefined;
+  const { data, error, isLoading } = useChampionships({
+    level: CompetitionLevel.DEPARTMENTAL,
+    id: Number(filters.committeeId) || undefined,
+    category: filters.category,
+    gender: filters.gender,
+    page: filters.currentPage,
+    limit: filters.pageSize,
+  });
 
-  const { data: allChampionships = [], isLoading } = useChampionships(
-    committeeIdNum
-      ? { level: CompetitionLevel.DEPARTMENTAL, id: committeeIdNum }
-      : undefined,
-  );
-
-  const championships = useMemo(
-    () =>
-      committeeIdNum
-        ? allChampionships
-        : allChampionships.filter(
-            (c) => c.level === CompetitionLevel.DEPARTMENTAL,
-          ),
-    [allChampionships, committeeIdNum],
-  );
-
-  const seasonYears = useMemo(() => {
-    const years = [...new Set(championships.map((c) => c.seasonYear))].sort(
-      (a, b) => b.localeCompare(a),
-    );
-    return years.map((y) => ({ value: y, label: y }));
-  }, [championships]);
-
-  const filtered = useMemo(() => {
-    return championships.filter((c: Championship) => {
-      if (category && c.category !== category) return false;
-      if (gender && c.gender !== gender) return false;
-      if (seasonYear && c.seasonYear !== seasonYear) return false;
-      return true;
-    });
-  }, [championships, category, gender, seasonYear]);
-
-  const handleReset = () => {
-    setCommitteeId("");
-    setCategory(undefined);
-    setGender(undefined);
-    setSeasonYear("");
-  };
+  const championships: Championship[] = data?.items ?? [];
+  const pagination = data
+    ? {
+        total: data.total,
+        page: data.page,
+        limit: data.limit,
+        totalPages: data.totalPages,
+      }
+    : null;
 
   return (
     <div className="space-y-6">
       <DepartmentalFilters
-        committeeId={committeeId}
-        setCommitteeId={setCommitteeId}
+        filters={filters}
+        setters={setters}
         committees={committees}
-        category={category}
-        setCategory={setCategory}
-        gender={gender}
-        setGender={setGender}
-        seasonYear={seasonYear}
-        setSeasonYear={setSeasonYear}
-        seasonYears={seasonYears}
-        onReset={handleReset}
+        onReset={resetFilters}
       />
-
-      {!isLoading && (
-        <div className="text-sm text-text-secondary">
-          {filtered.length} {tCompetitions("championshipsCount")}
-        </div>
-      )}
-
-      <ChampionshipGrid championships={filtered} isLoading={isLoading} />
+      <SearchTabShell
+        isLoading={isLoading}
+        error={error}
+        errorMessage={tCommon("errors.fetchChampionships")}
+        isEmpty={championships.length === 0}
+        emptyState={
+          <EmptyState
+            icon={<Trophy className="w-16 h-16" />}
+            title={tCommon("emptyState.championships")}
+            description={tCompetitions("tryAdjustingFilters")}
+          />
+        }
+        pagination={pagination}
+        pageSize={filters.pageSize}
+        onPageSizeChange={setPageSize}
+        onPageChange={(index) => setCurrentPage(index + 1)}
+        itemLabel={tCompetitions("championships")}
+      >
+        {championships.map((c) => (
+          <ChampionshipCard key={c.id} championship={c} />
+        ))}
+      </SearchTabShell>
     </div>
   );
 }
