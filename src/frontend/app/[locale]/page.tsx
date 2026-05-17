@@ -1,8 +1,12 @@
 // src/frontend/app/[locale]/page.tsx
 import { getTranslations } from "next-intl/server";
 
+import { ExploreCard, LevelRow } from "@/features/site/home/components";
 import { serverStatsService } from "@/features/stats/api";
+import { Link } from "@/navigation";
 import { Footer, Header } from "@/shared/components/layout";
+import { buttonVariants } from "@/shared/components/primitives";
+import { StatCell } from "@/shared/components/stats";
 import { Text } from "@/shared/components/typography";
 
 export default async function Home({
@@ -28,8 +32,8 @@ export default async function Home({
 
   const exploreCards = [
     {
-      href: `/${locale}/search?tab=players`,
-      badgeClass: "bg-players-subtle text-players-strong",
+      href: "/search?tab=players",
+      badgeVariant: "players" as const,
       badge: t("explore.players.badge"),
       title: t("explore.players.title"),
       desc: t("explore.players.desc"),
@@ -37,8 +41,8 @@ export default async function Home({
       countLabel: t("explore.players.count"),
     },
     {
-      href: `/${locale}/search?tab=teams`,
-      badgeClass: "bg-teams-subtle text-teams-strong",
+      href: "/search?tab=teams",
+      badgeVariant: "teams" as const,
       badge: t("explore.teams.badge"),
       title: t("explore.teams.title"),
       desc: t("explore.teams.desc"),
@@ -46,8 +50,8 @@ export default async function Home({
       countLabel: t("explore.teams.count"),
     },
     {
-      href: `/${locale}/search?tab=matches`,
-      badgeClass: "bg-matches-subtle text-matches-strong",
+      href: "/search?tab=matches",
+      badgeVariant: "matches" as const,
       badge: t("explore.matches.badge"),
       title: t("explore.matches.title"),
       desc: t("explore.matches.desc"),
@@ -64,21 +68,21 @@ export default async function Home({
       name: t("levels.national.name"),
       detail: t("levels.national.detail"),
       count: `${stats.championshipsByLevel.national} ${championshipsLabel}`,
-      href: `/${locale}/championships?tab=national`,
+      href: "/championships?tab=national",
     },
     {
       dot: "bg-regional",
       name: t("levels.regional.name"),
       detail: `${stats.leagues} ${t("stats.leagues")}`,
       count: `${stats.championshipsByLevel.regional} ${championshipsLabel}`,
-      href: `/${locale}/championships?tab=regional`,
+      href: "/championships?tab=regional",
     },
     {
       dot: "bg-departmental",
       name: t("levels.departmental.name"),
       detail: `${stats.committees} ${t("stats.committees")}`,
       count: `${stats.championshipsByLevel.departmental} ${championshipsLabel}`,
-      href: `/${locale}/championships?tab=departmental`,
+      href: "/championships?tab=departmental",
     },
   ] as const;
 
@@ -104,15 +108,15 @@ export default async function Home({
               {t("hero.eyebrow")}
             </Text>
 
-            <h1
-              className="font-extrabold leading-none tracking-tight mb-5 text-text-heading"
-              style={{ fontSize: "clamp(2.5rem, 6vw, 3.75rem)" }}
+            <Text
+              variant="h1"
+              className="font-extrabold leading-none tracking-tight mb-5"
             >
               {t("hero.titleStart")}{" "}
               <em className="not-italic text-primary">
                 {t("hero.titleEmphasis")}
               </em>
-            </h1>
+            </Text>
 
             <Text variant="lead" className="max-w-lg">
               {t("hero.subtitle")}
@@ -124,16 +128,9 @@ export default async function Home({
             {statsBand.map((s, i) => (
               <div
                 key={s.label}
-                className={`flex flex-col items-center justify-center py-5 px-3 text-center ${
-                  i < 5 ? "border-r border-divide" : ""
-                }`}
+                className={i < 5 ? "border-r border-divide" : ""}
               >
-                <span className="text-2xl font-extrabold leading-none text-text-heading tabular-nums">
-                  {s.value}
-                </span>
-                <Text variant="overline" className="mt-1">
-                  {s.label}
-                </Text>
+                <StatCell value={s.value} label={s.label} />
               </div>
             ))}
           </div>
@@ -145,28 +142,7 @@ export default async function Home({
 
           <div className="grid grid-cols-1 md:grid-cols-3 border-b border-divide divide-y md:divide-y-0 md:divide-x divide-divide">
             {exploreCards.map((card) => (
-              <a
-                key={card.href}
-                href={card.href}
-                className="group flex flex-col gap-3 p-7 hover:bg-surface-inset transition-colors duration-150"
-              >
-                <div className="flex items-center justify-between">
-                  <span
-                    className={`text-[10px] font-bold tracking-widest uppercase px-2 py-0.5 rounded ${card.badgeClass}`}
-                  >
-                    {card.badge}
-                  </span>
-                  <span className="text-text-secondary group-hover:translate-x-0.5 transition-transform duration-150">
-                    →
-                  </span>
-                </div>
-                <Text variant="h3">{card.title}</Text>
-                <Text variant="caption">{card.desc}</Text>
-                <p className="text-[12px] font-bold text-text-secondary pt-3 border-t border-divide mt-auto">
-                  <span className="text-text-heading">{card.count}</span>{" "}
-                  {card.countLabel}
-                </p>
-              </a>
+              <ExploreCard key={card.href} {...card} />
             ))}
           </div>
 
@@ -183,23 +159,22 @@ export default async function Home({
             </Text>
             <div className="flex gap-8 pt-4 mt-4 border-t border-divide">
               {mapStats.map((s) => (
-                <div
+                <StatCell
                   key={s.label}
-                  className="flex flex-col gap-0.5 items-center"
-                >
-                  <span className="text-lg font-extrabold leading-none text-text-heading">
-                    {s.value}
-                  </span>
-                  <Text variant="overline">{s.label}</Text>
-                </div>
+                  value={s.value}
+                  label={s.label}
+                  compact
+                />
               ))}
             </div>
-            <a
-              href={`/${locale}/map`}
-              className="mt-5 text-sm font-semibold bg-clubs hover:bg-clubs-strong text-white px-5 py-2.5 rounded-button transition-colors duration-150"
+            <Link
+              href="/map"
+              className={
+                buttonVariants({ variant: "clubs", size: "sm" }) + " mt-5"
+              }
             >
               {t("map.cta")}
-            </a>
+            </Link>
           </div>
 
           {/* ── Competition levels ───────────────────────────────── */}
@@ -209,25 +184,7 @@ export default async function Home({
 
           <div className="flex flex-col gap-2 px-6 pb-10">
             {levelCards.map((level) => (
-              <a
-                key={level.name}
-                href={level.href}
-                className="flex items-center gap-4 px-4 py-3 border border-divide rounded-card hover:bg-surface-inset transition-colors duration-150"
-              >
-                <div
-                  className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${level.dot}`}
-                />
-                <span className="text-sm font-bold flex-1 text-text-heading">
-                  {level.name}
-                </span>
-                <Text variant="muted" className="hidden sm:block">
-                  {level.detail}
-                </Text>
-                <Text variant="caption" className="hidden md:block font-bold">
-                  {level.count}
-                </Text>
-                <span className="text-xs font-semibold text-primary">→</span>
-              </a>
+              <LevelRow key={level.name} {...level} />
             ))}
           </div>
         </div>
