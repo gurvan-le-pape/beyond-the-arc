@@ -62,6 +62,7 @@
     "src/frontend/features/site/docs/components",
     "src/frontend/features/site/docs/hooks",
     "src/frontend/features/site/features/components",
+    "src/frontend/features/site/home/components",
 
     "src/frontend/features/teams/api",
     "src/frontend/features/teams/components",
@@ -78,6 +79,7 @@
     "src/frontend/shared/components/feedback",
     "src/frontend/shared/components/forms",
     "src/frontend/shared/components/primitives",
+    "src/frontend/shared/components/stats",
     "src/frontend/shared/components/typography",
     "src/frontend/shared/constants",
     "src/frontend/shared/hooks",
