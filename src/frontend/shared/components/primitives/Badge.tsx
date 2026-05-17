@@ -24,6 +24,10 @@ const badgeVariants = cva(
         male: "border-transparent bg-team-male-subtle text-team-male-strong",
         female:
           "border-transparent bg-team-female-subtle text-team-female-strong",
+        // Domain entity-specific
+        players: "border-transparent bg-players-subtle text-players-strong",
+        teams: "border-transparent bg-teams-subtle text-teams-strong",
+        matches: "border-transparent bg-matches-subtle text-matches-strong",
         // Competition level-specific
         national: "border-transparent bg-national-subtle text-national-strong",
         regional: "border-transparent bg-regional-subtle text-regional-strong",
@@ -36,6 +40,15 @@ const badgeVariants = cva(
         sm: "px-2 py-0.5",
         md: "px-2.5 py-0.5",
         lg: "px-3 py-1",
+        /**
+         * overline — for label-style badges that use uppercase tracking.
+         * Overrides font-semibold with font-bold and adds uppercase + wide tracking.
+         * Use when the badge reads as a section label rather than a status pill.
+         *
+         * @example
+         * <Badge variant="primary" size="overline">Players</Badge>
+         */
+        overline: "px-2 py-0.5 text-[10px] font-bold tracking-widest uppercase",
       },
     },
     defaultVariants: {
@@ -46,7 +59,7 @@ const badgeVariants = cva(
 );
 
 export interface BadgeProps
-  extends HTMLAttributes<HTMLSpanElement>, // was HTMLDivElement — div is block, invalid inline
+  extends HTMLAttributes<HTMLSpanElement>,
     VariantProps<typeof badgeVariants> {}
 
 /**
@@ -55,11 +68,12 @@ export interface BadgeProps
  * @example
  * <Badge variant="success">Active</Badge>
  * <Badge variant="male">Men's Team</Badge>
+ * <Badge variant="primary" size="overline">Players</Badge>
  */
-export const Badge = forwardRef<HTMLSpanElement, BadgeProps>( // was HTMLDivElement
+export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
   ({ className, variant, size, ...props }, ref) => {
     return (
-      <span // was <div>
+      <span
         ref={ref}
         className={cn(badgeVariants({ variant, size }), className)}
         {...props}

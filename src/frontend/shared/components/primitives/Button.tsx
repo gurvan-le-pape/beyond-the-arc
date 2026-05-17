@@ -56,7 +56,7 @@ const BASE =
 // Button — universal primitive
 // ---------------------------------------------------------------------------
 
-const buttonVariants = cva(BASE, {
+export const buttonVariants = cva(BASE, {
   variants: {
     variant: {
       // ── Core intent variants ──────────────────────────────────────────────
@@ -115,6 +115,12 @@ const buttonVariants = cva(BASE, {
         "hover:bg-team-female-strong " +
         "focus-visible:ring-team-female",
 
+      // Domain entity-specific
+      clubs:
+        "rounded-button bg-clubs text-white shadow-sm " +
+        "hover:bg-clubs-strong " +
+        "focus-visible:ring-clubs",
+
       // Control buttons (filter dropdowns, sort toggles, toolbar actions)
       control:
         "rounded-button border border-divide surface-raised text-text-emphasis font-medium " +
@@ -155,6 +161,7 @@ export interface ButtonProps
  * <Button variant="icon" aria-label="Close"><XIcon /></Button>
  * <Button variant="link" size="sm">Reset all</Button>
  * <Button variant="control">Filters</Button>
+ * <Button variant="clubs">Find a club</Button>
  */
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
