@@ -46,7 +46,7 @@ export default async function RegionalChampionshipsPage({
     namespace: "organizations",
   });
 
-  const [league, championships, committees] = await Promise.all([
+  const [league, { items: championships }, committees] = await Promise.all([
     serverLeaguesService.getById(leagueId),
     serverChampionshipsService.getAll({
       level: CompetitionLevel.REGIONAL,
