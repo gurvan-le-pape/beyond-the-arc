@@ -6,7 +6,6 @@
 export * from "./ChampionshipListItem";
 export * from "./detail/ChampionshipDetailPage";
 export * from "./detail/ChampionshipHeader";
-export * from "./detail/ChampionshipList";
 export * from "./detail/matches/MatchCard";
 export * from "./detail/matches/MatchDetailsTable";
 export * from "./detail/matches/MatchesPanel";
