@@ -1,5 +1,6 @@
 // src/frontend/features/competitions/championships/api/championships.server.ts
 import { CompetitionLevel } from "@/shared/constants";
+import type { PaginatedResponse } from "@/shared/types";
 
 import {
   buildQueryString,
@@ -35,20 +36,24 @@ export const serverChampionshipsService = {
    * Server-side only.
    *
    * @param filters - Filter criteria (level and id required)
-   * @returns Array of championships matching the criteria
+   * @returns Paginated response containing championships matching the criteria
    *
    * @example
-   * const championships = await serverChampionshipsService.getAll({
+   * const { items } = await serverChampionshipsService.getAll({
    *   level: CompetitionLevel.REGIONAL,
    *   id: 1,
    * });
    */
-  async getAll(filters: ChampionshipFilters): Promise<Championship[]> {
+  async getAll(
+    filters: ChampionshipFilters,
+  ): Promise<PaginatedResponse<Championship>> {
     const queryString = buildQueryString({
       level: filters.level,
       id: filters.id,
     });
-    return fetchApi<Championship[]>(`/championships${queryString}`);
+    return fetchApi<PaginatedResponse<Championship>>(
+      `/championships${queryString}`,
+    );
   },
 
   /**
@@ -86,9 +91,9 @@ export const serverChampionshipsService = {
    * }
    */
   async getAllIds(filters?: ChampionshipFilters): Promise<number[]> {
-    const championships = await this.getAll(
+    const { items } = await this.getAll(
       filters ?? { level: CompetitionLevel.REGIONAL, id: 0 },
     );
-    return championships.map((championship) => championship.id);
+    return items.map((championship: Championship) => championship.id);
   },
 };
