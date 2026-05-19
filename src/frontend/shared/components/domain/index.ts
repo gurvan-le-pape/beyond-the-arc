@@ -9,4 +9,3 @@ export * from "./GenderCategorizedSection";
 export * from "./LeaderboardTable";
 export * from "./matches/MatchTeamLabel";
 export * from "./search/SearchTabShell";
-export * from "./TeamListItem";
