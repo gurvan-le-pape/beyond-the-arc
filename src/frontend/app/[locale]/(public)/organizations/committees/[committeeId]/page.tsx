@@ -46,17 +46,18 @@ export default async function DepartmentalChampionshipsPage({
     namespace: "organizations",
   });
 
-  const [committee, championships, { items: clubs }] = await Promise.all([
-    serverCommitteesService.getById(committeeId),
-    serverChampionshipsService.getAll({
-      level: CompetitionLevel.DEPARTMENTAL,
-      id: committeeId,
-    }),
-    serverClubsService.getAll({
-      level: CompetitionLevel.DEPARTMENTAL,
-      committeeId,
-    }),
-  ]);
+  const [committee, { items: championships }, { items: clubs }] =
+    await Promise.all([
+      serverCommitteesService.getById(committeeId),
+      serverChampionshipsService.getAll({
+        level: CompetitionLevel.DEPARTMENTAL,
+        id: committeeId,
+      }),
+      serverClubsService.getAll({
+        level: CompetitionLevel.DEPARTMENTAL,
+        committeeId,
+      }),
+    ]);
 
   if (!committee) notFound();
 
