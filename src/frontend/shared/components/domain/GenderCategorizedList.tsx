@@ -8,15 +8,15 @@ import { cn, groupBy } from "@/shared/utils";
 import { Text } from "../typography";
 import { CategorySection } from "./CategorySection";
 
-interface GenderCategorizedListProps<
-  T extends { id: number | string; category: Category },
-> {
+interface GenderCategorizedListProps<T> {
   readonly genderLabel: string;
   readonly genderKey: Gender;
   readonly items: T[];
   readonly expandedCategories: Record<string, boolean>;
   readonly toggleCategory: (key: string) => void;
-  readonly renderItem: (item: T, index: number) => React.ReactNode;
+  readonly getCategory: (item: T) => Category;
+  readonly getId: (item: T) => number | string;
+  readonly renderItem: (item: T) => React.ReactNode;
   readonly className?: string;
 }
 
@@ -31,19 +31,19 @@ const GENDER_COLOURS: Record<string, { bg: string; text: string }> = {
   },
 };
 
-export function GenderCategorizedList<
-  T extends { id: number | string; category: Category },
->({
+export function GenderCategorizedList<T>({
   genderLabel,
   genderKey,
   items,
   expandedCategories,
   toggleCategory,
+  getCategory,
+  getId,
   renderItem,
   className,
 }: GenderCategorizedListProps<T>) {
   const t = useTranslations("common");
-  const grouped = groupBy(items, (item) => item.category);
+  const grouped = groupBy(items, (item) => getCategory(item));
   const colours = GENDER_COLOURS[genderKey] ?? GENDER_COLOURS[Gender.MALE];
 
   return (
@@ -81,6 +81,7 @@ export function GenderCategorizedList<
                 categoryKey={categoryKey}
                 isExpanded={isExpanded}
                 toggleCategory={toggleCategory}
+                getId={getId}
                 renderItem={renderItem}
                 emptyMessage={t("noItemsAvailable")}
               />

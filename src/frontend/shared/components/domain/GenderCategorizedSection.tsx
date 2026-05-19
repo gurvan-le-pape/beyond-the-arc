@@ -3,6 +3,10 @@
 
 import { useTranslations } from "next-intl";
 
+import { ChampionshipListItem } from "@/features/competitions/championships/components";
+import type { Championship } from "@/features/competitions/championships/types";
+import type { ClubTeamInfo } from "@/features/organizations/clubs/types";
+import { TeamListItem } from "@/features/teams/components";
 import { Section } from "@/shared/components/blocks";
 import type { Category } from "@/shared/constants";
 import { Gender } from "@/shared/constants";
@@ -11,27 +15,44 @@ import { groupBy } from "@/shared/utils";
 
 import { GenderCategorizedList } from "./GenderCategorizedList";
 
-interface GenderCategorizedSectionProps<
-  T extends { id: number | string; category: Category },
-> {
-  readonly items: T[];
-  readonly getGender: (item: T) => Gender;
-  readonly renderItem: (item: T) => React.ReactNode;
+type SectionItem =
+  | { type: "championship"; data: Championship }
+  | { type: "team"; data: ClubTeamInfo; clubName: string };
+
+function getGender(item: SectionItem): Gender {
+  return item.data.gender;
+}
+
+function getCategory(item: SectionItem): Category {
+  return item.data.category;
+}
+
+function getId(item: SectionItem): number | string {
+  return item.data.id;
+}
+
+function renderItem(item: SectionItem) {
+  switch (item.type) {
+    case "championship":
+      return <ChampionshipListItem championship={item.data} />;
+    case "team":
+      return <TeamListItem team={item.data} clubName={item.clubName} />;
+  }
+}
+
+interface GenderCategorizedSectionProps {
+  readonly items: SectionItem[];
   readonly title: string;
   readonly variant?: "highlighted" | "default";
   readonly emptyState: React.ReactNode;
 }
 
-export function GenderCategorizedSection<
-  T extends { id: number | string; category: Category },
->({
+export function GenderCategorizedSection({
   items,
-  getGender,
-  renderItem,
   title,
   variant = "highlighted",
   emptyState,
-}: GenderCategorizedSectionProps<T>) {
+}: GenderCategorizedSectionProps) {
   const { expandedCategories, toggleCategory } = useToggleCategory();
   const tCommon = useTranslations("common");
 
@@ -48,6 +69,8 @@ export function GenderCategorizedSection<
           items={byGender[Gender.FEMALE] || []}
           expandedCategories={expandedCategories}
           toggleCategory={toggleCategory}
+          getCategory={getCategory}
+          getId={getId}
           renderItem={renderItem}
         />
         <GenderCategorizedList
@@ -56,6 +79,8 @@ export function GenderCategorizedSection<
           items={byGender[Gender.MALE] || []}
           expandedCategories={expandedCategories}
           toggleCategory={toggleCategory}
+          getCategory={getCategory}
+          getId={getId}
           renderItem={renderItem}
         />
       </div>

@@ -8,7 +8,6 @@ import {
   OrganizationHeader,
   OrganizationInfo,
 } from "@/features/organizations/components";
-import { TeamListItem } from "@/features/teams/components";
 import { GenderCategorizedSection } from "@/shared/components/domain";
 import { EmptyState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
@@ -89,9 +88,11 @@ export default async function ClubPage({ params }: ClubPageProps) {
 
       {/* Club teams */}
       <GenderCategorizedSection
-        items={club.teams ?? []}
-        getGender={(t) => t.gender}
-        renderItem={(t) => <TeamListItem team={t} clubName={club.name} />}
+        items={club.teams.map((t) => ({
+          type: "team",
+          data: t,
+          clubName: club.name,
+        }))}
         title={t("detail.teamsTitle")}
         emptyState={
           <EmptyState

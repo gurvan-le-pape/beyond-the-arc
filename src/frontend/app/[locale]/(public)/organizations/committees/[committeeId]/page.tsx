@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { serverChampionshipsService } from "@/features/competitions/championships/api";
-import { ChampionshipListItem } from "@/features/competitions/championships/components";
 import { serverClubsService } from "@/features/organizations/clubs/api";
 import { serverCommitteesService } from "@/features/organizations/committees/api";
 import {
@@ -102,9 +101,7 @@ export default async function DepartmentalChampionshipsPage({
 
         {/* Championships */}
         <GenderCategorizedSection
-          items={championships}
-          getGender={(c) => c.gender}
-          renderItem={(c) => <ChampionshipListItem championship={c} />}
+          items={championships.map((c) => ({ type: "championship", data: c }))}
           title={tCompetitions("championshipsSectionTitle")}
           emptyState={
             <EmptyState
