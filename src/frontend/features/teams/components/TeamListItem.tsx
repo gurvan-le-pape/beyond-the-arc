@@ -1,4 +1,4 @@
-// src/frontend/shared/components/domain/TeamListItem.tsx
+// src/frontend/features/teams/components/TeamListItem.tsx
 "use client";
 
 import Link from "next/link";
@@ -6,11 +6,10 @@ import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 
 import type { ClubTeamInfo } from "@/features/organizations/clubs/types";
+import { Badge } from "@/shared/components/primitives";
+import { Text } from "@/shared/components/typography";
 import { CompetitionLevel } from "@/shared/constants";
 import { normalizeString } from "@/shared/utils";
-
-import { Badge } from "../primitives";
-import { Text } from "../typography";
 
 interface TeamListItemProps {
   readonly team: ClubTeamInfo;

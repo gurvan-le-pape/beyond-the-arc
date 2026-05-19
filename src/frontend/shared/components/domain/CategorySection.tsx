@@ -23,12 +23,13 @@ function ChevronRight({ className }: { readonly className?: string }) {
   );
 }
 
-interface CategorySectionProps<T extends { id: number | string }> {
+interface CategorySectionProps<T> {
   readonly category: Category;
   readonly items: T[];
   readonly categoryKey: string;
   readonly isExpanded: boolean;
   readonly toggleCategory: (key: string) => void;
+  readonly getId: (item: T) => number | string;
   readonly renderItem: (item: T, index: number) => React.ReactNode;
   readonly emptyMessage: string;
 }
@@ -61,12 +62,13 @@ interface CategorySectionProps<T extends { id: number | string }> {
  * - Fully accessible (ARIA attributes)
  * - Dark mode support
  */
-export function CategorySection<T extends { id: number | string }>({
+export function CategorySection<T>({
   category,
   items,
   categoryKey,
   isExpanded,
   toggleCategory,
+  getId,
   renderItem,
   emptyMessage,
 }: CategorySectionProps<T>) {
@@ -110,7 +112,7 @@ export function CategorySection<T extends { id: number | string }>({
             <ul>
               {items.map((item, i) => (
                 <li
-                  key={item.id}
+                  key={getId(item)}
                   className="border-b border-divide last:border-b-0"
                 >
                   {renderItem(item, i)}

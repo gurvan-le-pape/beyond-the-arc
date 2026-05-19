@@ -1,18 +1,17 @@
 // src/frontend/app/[locale]/(public)/organizations/clubs/[clubId]/page.tsx
+import { Users } from "lucide-react";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { serverClubsService } from "@/features/organizations/clubs/api";
-import { ClubTeams } from "@/features/organizations/clubs/components";
-import type { ClubTeamInfo } from "@/features/organizations/clubs/types";
 import {
   OrganizationHeader,
   OrganizationInfo,
 } from "@/features/organizations/components";
+import { GenderCategorizedSection } from "@/shared/components/domain";
+import { EmptyState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
-import type { Gender } from "@/shared/constants";
-import { groupTeamsByGender } from "@/shared/utils";
 
 interface ClubPageProps {
   readonly params: Promise<{
@@ -55,11 +54,6 @@ export default async function ClubPage({ params }: ClubPageProps) {
 
   const club = await serverClubsService.getById(clubId);
 
-  const teamsByGender: Record<Gender, ClubTeamInfo[]> =
-    club.teams && club.teams.length > 0
-      ? groupTeamsByGender(club.teams)
-      : ({} as Record<Gender, ClubTeamInfo[]>);
-
   const breadcrumbItems = [
     { label: tOrganizations("breadcrumb"), href: "/organizations" },
     {
@@ -93,7 +87,20 @@ export default async function ClubPage({ params }: ClubPageProps) {
       />
 
       {/* Club teams */}
-      <ClubTeams club={club} teamsByGender={teamsByGender} />
+      <GenderCategorizedSection
+        items={club.teams.map((t) => ({
+          type: "team",
+          data: t,
+          clubName: club.name,
+        }))}
+        title={t("detail.teamsTitle")}
+        emptyState={
+          <EmptyState
+            icon={<Users className="w-16 h-16" />}
+            title={t("noTeams")}
+          />
+        }
+      />
     </PageLayout>
   );
 }

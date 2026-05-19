@@ -9,3 +9,4 @@ export * from "./detail/TeamMatchHistoryTable";
 export * from "./detail/TeamRoster";
 export * from "./list/TeamsCard";
 export * from "./list/TeamsFilters";
+export * from "./TeamListItem";

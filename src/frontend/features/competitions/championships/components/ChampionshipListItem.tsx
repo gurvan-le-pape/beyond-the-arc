@@ -1,7 +1,7 @@
-// src/frontend/features/competitions/championships/components/detail/ChampionshipListItem.tsx
+// src/frontend/features/competitions/championships/components/ChampionshipListItem.tsx
 import { Link } from "@/navigation";
 
-import type { Championship } from "../../types/Championship";
+import type { Championship } from "../types/Championship";
 
 interface ChampionshipListItemProps {
   readonly championship: Championship;
