@@ -5,10 +5,10 @@ import { useCallback, useMemo } from "react";
 
 import { useRouter } from "@/navigation";
 import type { Category, CompetitionLevel, Gender } from "@/shared/constants";
+import { sortCategories } from "@/shared/utils";
 
 import { useChampionships } from "../api";
 import type { Championship } from "../types";
-import { sortCategories } from "../utils";
 
 export function useCategoryNavigation(
   id: number,

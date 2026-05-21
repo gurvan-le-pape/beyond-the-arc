@@ -16,3 +16,4 @@ export * from "./normalizeDepartmentCode";
 export * from "./normalizeString";
 export * from "./parseApiError";
 export * from "./safeFetch";
+export * from "./sortCategories";
