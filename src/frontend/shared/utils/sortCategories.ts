@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/utils/sortCategories.ts
+// src/frontend/shared/utils/sortCategories.ts
 
 import type { Category } from "@/shared/constants";
 
