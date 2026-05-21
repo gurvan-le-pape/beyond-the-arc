@@ -3,7 +3,7 @@ import { useTranslations } from "next-intl";
 
 import type { Category } from "@/shared/constants";
 import { Gender } from "@/shared/constants";
-import { cn, groupBy } from "@/shared/utils";
+import { cn, groupBy, sortCategories } from "@/shared/utils";
 
 import { Text } from "../typography";
 import { CategorySection } from "./CategorySection";
@@ -66,7 +66,7 @@ export function GenderCategorizedList<T>({
 
       {/* Category sections */}
       <div className="space-y-3">
-        {(Object.keys(grouped) as Category[])
+        {sortCategories(Object.keys(grouped) as Category[])
           .filter((category) => (grouped[category]?.length ?? 0) > 0)
           .map((category) => {
             const categoryItems = grouped[category] ?? [];
