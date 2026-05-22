@@ -33,7 +33,7 @@ All check jobs run in parallel. `sonarcloud` depends on `backend-test` to consum
 
 ### backend-lint
 
-Runs ESLint against the NestJS source. Uses Node.js 22 (matching the backend's runtime version) with `npm ci` and a dependency cache keyed to `src/backend/package-lock.json`.
+Runs ESLint against the NestJS source. Uses Node.js 24 (matching the backend's runtime version) with `npm ci` and a dependency cache keyed to `src/backend/package-lock.json`.
 
 ### backend-test
 
@@ -45,7 +45,7 @@ Compiles the NestJS application (`npm run build`) to verify the TypeScript build
 
 ### frontend-lint
 
-Runs ESLint against the Next.js source. Uses Node.js 20 (the frontend's target version).
+Runs ESLint against the Next.js source. Uses Node.js 24 (the frontend's target version).
 
 ### frontend-typecheck
 

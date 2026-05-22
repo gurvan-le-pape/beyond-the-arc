@@ -82,7 +82,7 @@ export default async function ArchitecturePage({
           description: t("architecture.backend.nestjsDesc"),
         },
         {
-          name: "Prisma 6",
+          name: "Prisma 7",
           icon: Database,
           description: t("architecture.backend.prismaDesc"),
         },
