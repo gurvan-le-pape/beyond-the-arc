@@ -52,7 +52,7 @@ export function TeamHeader({ team }: TeamHeaderProps) {
     }
   }
 
-  const clubUrl = `organizations/clubs/${clubId}`;
+  const clubUrl = `/organizations/clubs/${clubId}`;
 
   return (
     <Card variant="highlighted" padding="lg">
