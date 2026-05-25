@@ -69,9 +69,11 @@ export function MatchesTab() {
         onPageChange={(index) => setCurrentPage(index + 1)}
         itemLabel={tMatches("itemLabelPlural")}
       >
-        {matches.map((match) => (
-          <MatchesCard key={match.id} match={match} />
-        ))}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+          {matches.map((match) => (
+            <MatchesCard key={match.id} match={match} />
+          ))}
+        </div>
       </SearchTabShell>
     </div>
   );

@@ -68,9 +68,11 @@ export function PlayersTab() {
         onPageChange={(index) => setCurrentPage(index + 1)}
         itemLabel={tPlayers("players")}
       >
-        {players.map((player) => (
-          <PlayerCard key={player.id} player={player} />
-        ))}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+          {players.map((player) => (
+            <PlayerCard key={player.id} player={player} />
+          ))}
+        </div>
       </SearchTabShell>
     </div>
   );

@@ -68,9 +68,11 @@ export function TeamsTab() {
         onPageChange={(index) => setCurrentPage(index + 1)}
         itemLabel={tTeams("teams")}
       >
-        {teams.map((team) => (
-          <TeamCard key={team.id} team={team} />
-        ))}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+          {teams.map((team) => (
+            <TeamCard key={team.id} team={team} />
+          ))}
+        </div>
       </SearchTabShell>
     </div>
   );
