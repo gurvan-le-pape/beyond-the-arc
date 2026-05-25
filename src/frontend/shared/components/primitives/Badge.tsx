@@ -28,13 +28,24 @@ const badgeVariants = cva(
         players: "border-transparent bg-players-subtle text-players-strong",
         teams: "border-transparent bg-teams-subtle text-teams-strong",
         matches: "border-transparent bg-matches-subtle text-matches-strong",
-        // Competition level-specific
+        // Competition level-specific (standalone, on neutral surface)
         national: "border-transparent bg-national-subtle text-national-strong",
         regional: "border-transparent bg-regional-subtle text-regional-strong",
         departmental:
           "border-transparent bg-departmental-subtle text-departmental-strong",
+        // Competition level-specific (on level-colored header)
+        "national-on-header":
+          "border-transparent bg-national text-national-subtle",
+        "regional-on-header":
+          "border-transparent bg-regional text-regional-subtle",
+        "departmental-on-header":
+          "border-transparent bg-departmental text-departmental-subtle",
         // Player comparison
         vs: "border-2 border-primary text-primary font-black tracking-widest",
+
+        category: "border-transparent bg-category-subtle text-category-strong",
+        division: "border-transparent bg-division-subtle text-division-strong",
+        pool: "border-transparent bg-pool-subtle text-pool-strong",
       },
       size: {
         sm: "px-2 py-0.5",
