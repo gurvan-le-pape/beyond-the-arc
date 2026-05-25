@@ -1,23 +1,40 @@
 // src/frontend/shared/constants/levelConfig.ts
+
 export const LEVEL_CONFIG = {
   departmental: {
-    border: "border-l-departmental",
     bg: "bg-departmental-subtle",
-    badgeVariant: "departmental" as const,
+    border: "border-departmental",
+    text: "text-departmental",
+    badgeVariant: "departmental-on-header" as const,
+    hover:
+      "hover:border-departmental/40 hover:shadow-[0_0_0_1px_var(--color-departmental)]",
   },
+
   regional: {
-    border: "border-l-regional",
     bg: "bg-regional-subtle",
-    badgeVariant: "regional" as const,
+    border: "border-regional",
+    text: "text-regional",
+    badgeVariant: "regional-on-header" as const,
+    hover:
+      "hover:border-regional/40 hover:shadow-[0_0_0_1px_var(--color-regional)]",
   },
+
   national: {
-    border: "border-l-national",
     bg: "bg-national-subtle",
-    badgeVariant: "national" as const,
+    border: "border-national",
+    text: "text-national",
+    badgeVariant: "national-on-header" as const,
+    hover:
+      "hover:border-national/40 hover:shadow-[0_0_0_1px_var(--color-national)]",
   },
+
   default: {
-    border: "border-l-divide",
     bg: "bg-surface-inset",
+    border: "border-divide",
+    text: "text-text-secondary",
     badgeVariant: "default" as const,
+    hover: "hover:border-divide",
   },
 } as const;
+
+export type LevelKey = keyof typeof LEVEL_CONFIG;
