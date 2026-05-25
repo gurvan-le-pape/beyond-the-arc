@@ -161,6 +161,22 @@ module.exports = {
           strong: "var(--color-clubs-strong)",
         },
 
+        category: {
+          subtle: "var(--color-category-subtle)",
+          DEFAULT: "var(--color-category)",
+          strong: "var(--color-category-strong)",
+        },
+        division: {
+          subtle: "var(--color-division-subtle)",
+          DEFAULT: "var(--color-division)",
+          strong: "var(--color-division-strong)",
+        },
+        pool: {
+          subtle: "var(--color-pool-subtle)",
+          DEFAULT: "var(--color-pool)",
+          strong: "var(--color-pool-strong)",
+        },
+
         // Domain entities — subtle/strong flip per theme
         players: {
           subtle: "var(--color-players-subtle)",

@@ -173,6 +173,21 @@ html {
   --color-clubs: #a78bfa;
   --color-clubs-strong: #4c1d95;
 
+  /* Category */
+  --color-category-subtle: #f1f5f9;
+  --color-category: #64748b;
+  --color-category-strong: #1e293b;
+
+  /* Division */
+  --color-division-subtle: #e0f2fe;
+  --color-division: #0284c7;
+  --color-division-strong: #0c4a6e;
+
+  /* Pool */
+  --color-pool-subtle: #fff3e0;
+  --color-pool: #ea580c;
+  --color-pool-strong: #7c2d12;
+
   /* Domain entities
      players = emerald (human/personal feel)
      teams   = violet  (collective/structural feel)
@@ -275,6 +290,18 @@ html {
 
   --color-clubs-subtle: #4c1d95;
   --color-clubs-strong: #ddd6fe;
+
+  /* Category */
+  --color-category-subtle: #1e293b;
+  --color-category-strong: #cbd5e1;
+
+  /* Division */
+  --color-division-subtle: #0c4a6e;
+  --color-division-strong: #bae6fd;
+
+  /* Pool */
+  --color-pool-subtle: #7c2d12;
+  --color-pool-strong: #fed7aa;
 
   /* Domain entities — subtle/strong flipped for dark surfaces        */
   --color-players-subtle: #065f46;
@@ -382,6 +409,21 @@ html {
   --color-clubs-subtle: #2e1065;
   --color-clubs: #cc88ff;
   --color-clubs-strong: #cc88ff;
+
+  /* Category */
+  --color-category-subtle: #1e293b;
+  --color-category: #94a3b8;
+  --color-category-strong: #94a3b8;
+
+  /* Division */
+  --color-division-subtle: #082f49;
+  --color-division: #38bdf8;
+  --color-division-strong: #38bdf8;
+
+  /* Pool */
+  --color-pool-subtle: #431407;
+  --color-pool: #fb923c;
+  --color-pool-strong: #fb923c;
 
   /* Domain entities */
   --color-players-subtle: #052e16;
