@@ -8,8 +8,7 @@ import { ClubCard } from "./ClubCard";
 
 const SKELETON_KEYS = Array.from({ length: 12 }, (_, i) => String(i));
 
-const gridClass =
-  "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4";
+const gridClass = "grid grid-cols-1 md:grid-cols-2 gap-4";
 
 interface ClubsGridProps {
   readonly clubs: ClubBasic[];
