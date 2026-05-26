@@ -13,9 +13,13 @@ interface LeaguesGridProps {
 export function LeaguesGrid({ leagues }: LeaguesGridProps) {
   const t = useTranslations("clubs");
 
+  const sorted = [...leagues].sort((a, b) =>
+    a.region.name.localeCompare(b.region.name),
+  );
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      {leagues.map((league) => (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {sorted.map((league) => (
         <LeagueCard
           key={league.id}
           league={league}
