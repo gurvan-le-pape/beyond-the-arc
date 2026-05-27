@@ -3,22 +3,9 @@ import { useTranslations } from "next-intl";
 
 import type { Championship } from "@/features/competitions/championships/types";
 import { Link } from "@/navigation";
-import { CompetitionLevel } from "@/shared/constants";
-
-const levelColorMap: Record<string, string> = {
-  [CompetitionLevel.REGIONAL]:
-    "bg-regional-subtle text-regional-strong border-regional",
-  [CompetitionLevel.DEPARTMENTAL]:
-    "bg-departmental-subtle text-departmental-strong border-departmental",
-  [CompetitionLevel.NATIONAL]:
-    "bg-national-subtle text-national-strong border-national",
-};
-
-const levelBorderMap: Record<string, string> = {
-  [CompetitionLevel.REGIONAL]: "border-l-regional",
-  [CompetitionLevel.DEPARTMENTAL]: "border-l-departmental",
-  [CompetitionLevel.NATIONAL]: "border-l-national",
-};
+import { Badge } from "@/shared/components/primitives";
+import { LEVEL_CONFIG } from "@/shared/constants";
+import { cn } from "@/shared/utils";
 
 export function ChampionshipCard({
   championship,
@@ -27,43 +14,75 @@ export function ChampionshipCard({
 }) {
   const tCommon = useTranslations("common");
   const tCompetitions = useTranslations("competitions");
-  const levelColor =
-    levelColorMap[championship.level] ??
-    levelColorMap[CompetitionLevel.DEPARTMENTAL];
-  const borderColor =
-    levelBorderMap[championship.level] ??
-    levelBorderMap[CompetitionLevel.DEPARTMENTAL];
+
+  const level = championship.level?.toLowerCase() ?? "";
+  const config =
+    LEVEL_CONFIG[level as keyof typeof LEVEL_CONFIG] ?? LEVEL_CONFIG.default;
 
   return (
     <Link
       href={`/championships/${championship.id}`}
-      className={`group flex flex-col gap-3 p-4 rounded-card border border-divide border-l-4 ${borderColor} surface-subtle hover:shadow-card-hover hover:scale-[1.01] transition-all duration-200 shadow-card`}
+      className={cn(
+        "group relative overflow-hidden rounded-card border",
+        "surface-raised shadow-card",
+        "transition-all duration-200",
+        "hover:-translate-y-0.5 hover:scale-[1.01]",
+        "hover:shadow-card-hover",
+        "focus:outline-none focus:ring-2 focus:ring-primary",
+        "focus:ring-offset-2 focus:ring-offset-surface",
+        config.border,
+        config.hover,
+      )}
     >
-      <div className="flex items-center justify-between gap-2">
-        <span
-          className={`text-xs font-medium px-2 py-0.5 rounded-full border ${levelColor}`}
-        >
-          {tCommon(`competition.levels.${championship.level}`)}
-        </span>
-        <span className="text-xs text-text-muted">
-          {championship.seasonYear}
-        </span>
+      {/* Header */}
+      <div
+        className={cn(
+          "flex items-center justify-between gap-3",
+          "px-5 py-3 border-b border-white/5",
+          config.bg,
+        )}
+      >
+        <div className="flex items-center gap-2">
+          <span className="w-2.5 h-2.5 rounded-full flex-shrink-0 bg-text-heading" />
+          <Badge variant={config.badgeVariant} size="sm">
+            {tCommon(`competition.levels.${level}`)}
+          </Badge>
+        </div>
+        <div className="flex items-center gap-1.5 flex-wrap justify-end">
+          {championship.category && (
+            <Badge variant="category" size="sm">
+              {championship.category}
+            </Badge>
+          )}
+          <Badge
+            variant={championship.gender.toLowerCase() as "male" | "female"}
+            size="sm"
+          >
+            {tCommon(`gender.${championship.gender.toLowerCase()}`)}
+          </Badge>
+          <Badge variant="division" size="sm">
+            {tCompetitions("divisionWithValue", {
+              value: championship.division,
+            })}
+          </Badge>
+          {championship.pools.length > 0 && (
+            <Badge variant="pool" size="sm">
+              {tCompetitions("poolCount", { count: championship.pools.length })}
+            </Badge>
+          )}
+        </div>
       </div>
-      <div className="font-semibold text-text-heading group-hover:text-primary transition-colors duration-200 leading-snug">
-        {championship.name}
-      </div>
-      <div className="flex flex-wrap gap-2">
-        {championship.category && (
-          <span className="text-xs px-2 py-0.5 rounded-button bg-surface-inset text-text-secondary">
-            {championship.category}
+
+      {/* Body */}
+      <div className="px-5 py-4 flex flex-col gap-1">
+        {championship.organizationName && (
+          <span className="text-sm text-text-secondary">
+            {championship.organizationName}
           </span>
         )}
-        <span className="text-xs px-2 py-0.5 rounded-button bg-surface-inset text-text-secondary capitalize">
-          {championship.gender}
-        </span>
-        <span className="text-xs px-2 py-0.5 rounded-button bg-surface-inset text-text-secondary">
-          {tCompetitions("divisionWithValue", { value: championship.division })}
-        </span>
+        <p className="font-semibold text-text-heading leading-snug group-hover:text-primary transition-colors duration-200">
+          {championship.name}
+        </p>
       </div>
     </Link>
   );
