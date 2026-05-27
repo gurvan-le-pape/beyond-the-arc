@@ -69,9 +69,11 @@ export function DepartmentalTab() {
         onPageChange={(index) => setCurrentPage(index + 1)}
         itemLabel={tCompetitions("championships")}
       >
-        {championships.map((c) => (
-          <ChampionshipCard key={c.id} championship={c} />
-        ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {championships.map((c) => (
+            <ChampionshipCard key={c.id} championship={c} />
+          ))}
+        </div>
       </SearchTabShell>
     </div>
   );
