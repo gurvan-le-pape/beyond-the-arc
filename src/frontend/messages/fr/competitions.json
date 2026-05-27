@@ -12,6 +12,7 @@
   "noSearchResults": "Aucun résultat pour « {search} »",
   "noItemsAvailable": "Aucun élément disponible",
   "noResults": "Aucun résultat",
+  "poolCount": "{count, plural, one {# poule} other {# poules}}",
   "roundSelector": {
     "dropdownLabel": "Journée {round}",
     "pillLabel": "J{round}",
