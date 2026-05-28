@@ -154,7 +154,11 @@ export function ChampionshipDetailPage() {
         <Breadcrumb items={breadcrumbItems} />
 
         <ChampionshipHeader
-          regionName={championship.organizationName ?? undefined}
+          organizationName={
+            championship.level === CompetitionLevel.DEPARTMENTAL
+              ? championship.committeeName ?? undefined
+              : championship.leagueName ?? undefined
+          }
           championshipName={championship.name}
           gender={gender}
           onSwitchGender={switchGender}

@@ -6,14 +6,14 @@ import type { Gender } from "@/shared/constants";
 import SwitchGenderButton from "./navigation/SwitchGenderButton";
 
 interface ChampionshipHeaderProps {
-  readonly regionName: string | undefined;
+  readonly organizationName: string | undefined;
   readonly championshipName: string;
   readonly gender: Gender | undefined;
   readonly onSwitchGender: () => void;
 }
 
 export function ChampionshipHeader({
-  regionName,
+  organizationName,
   championshipName,
   gender,
   onSwitchGender,
@@ -22,7 +22,7 @@ export function ChampionshipHeader({
     <Card variant="highlighted" padding="lg">
       <div className="space-y-3">
         {/* Region/Department */}
-        <Text variant="overline">{regionName || ""}</Text>
+        <Text variant="overline">{organizationName || ""}</Text>
 
         <div className="flex justify-between items-start flex-wrap gap-4">
           {/* Championship Name */}
