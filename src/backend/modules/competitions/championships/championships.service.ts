@@ -171,7 +171,8 @@ export class ChampionshipsService {
       division: entity.division,
       leagueId: entity.leagueId ?? null,
       committeeId: entity.committeeId ?? null,
-      organizationName: entity.committee?.name ?? entity.league?.name ?? null,
+      committeeName: entity.committee?.name ?? null,
+      leagueName: entity.league?.name ?? null,
       pools: entity.pools.map((p) => ({
         id: p.id,
         letter: p.letter,
