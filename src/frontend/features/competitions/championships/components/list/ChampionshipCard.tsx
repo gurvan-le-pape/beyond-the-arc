@@ -4,8 +4,8 @@ import { useTranslations } from "next-intl";
 import type { Championship } from "@/features/competitions/championships/types";
 import { Link } from "@/navigation";
 import { Badge } from "@/shared/components/primitives";
-import { LEVEL_CONFIG } from "@/shared/constants";
-import { cn } from "@/shared/utils";
+import { CompetitionLevel, LEVEL_CONFIG } from "@/shared/constants";
+import { cn, formatCommitteeName, formatLeagueName } from "@/shared/utils";
 
 export function ChampionshipCard({
   championship,
@@ -74,15 +74,30 @@ export function ChampionshipCard({
       </div>
 
       {/* Body */}
-      <div className="px-5 py-4 flex flex-col gap-1">
-        {championship.organizationName && (
+      <div className="px-5 py-3 flex flex-col gap-1">
+        {championship.committeeName && (
           <span className="text-sm text-text-secondary">
-            {championship.organizationName}
+            {formatCommitteeName(championship.committeeName)}
           </span>
         )}
-        <p className="font-semibold text-text-heading leading-snug group-hover:text-primary transition-colors duration-200">
-          {championship.name}
-        </p>
+        {championship.leagueName && (
+          <span
+            className={cn(
+              "text-sm",
+              championship.committeeName
+                ? "text-text-muted"
+                : "text-text-secondary",
+            )}
+          >
+            {formatLeagueName(championship.leagueName)}
+          </span>
+        )}
+        {championship.level === CompetitionLevel.NATIONAL &&
+          championship.name && (
+            <p className="font-semibold text-text-heading leading-snug group-hover:text-primary transition-colors duration-200">
+              {championship.name}
+            </p>
+          )}
       </div>
     </Link>
   );
