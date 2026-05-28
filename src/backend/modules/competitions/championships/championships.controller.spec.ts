@@ -68,7 +68,8 @@ describe("ChampionshipsController", () => {
         division: 1,
         leagueId: 1,
         committeeId: null,
-        organizationName: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
+        committeeName: null,
+        leagueName: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
         pools: [],
       };
 
@@ -111,7 +112,8 @@ describe("ChampionshipsController", () => {
           division: 1,
           leagueId: 1,
           committeeId: null,
-          organizationName: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
+          committeeName: null,
+          leagueName: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
           pools: [],
         },
       ],

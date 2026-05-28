@@ -81,13 +81,11 @@ export class ChampionshipResponseDto {
   })
   committeeId!: number | null;
 
-  @ApiProperty({
-    description: "Name of the parent organization (league or committee)",
-    example: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
-    type: String,
-    nullable: true,
-  })
-  organizationName!: string | null;
+  @ApiProperty({ type: String, nullable: true })
+  committeeName!: string | null;
+
+  @ApiProperty({ type: String, nullable: true })
+  leagueName!: string | null;
 
   @ApiProperty({
     description: "Pools in this championship",

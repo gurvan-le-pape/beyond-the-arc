@@ -18,6 +18,7 @@ export interface Championship {
   division: number;
   leagueId: number | null;
   committeeId: number | null;
-  organizationName: string | null;
+  committeeName: string | null;
+  leagueName: string | null;
   pools: ChampionshipPool[];
 }
