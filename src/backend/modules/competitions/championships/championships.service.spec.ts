@@ -91,7 +91,8 @@ describe("ChampionshipsService", () => {
         division: 1,
         leagueId: 1,
         committeeId: null,
-        organizationName: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
+        committeeName: null,
+        leagueName: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
         pools: [{ id: 1, letter: "A", name: "Pool A", nbMatchdays: 2 }],
       });
 
