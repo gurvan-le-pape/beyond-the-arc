@@ -64,20 +64,18 @@ export const matchesService = {
 
   /**
    * Get all matches for a specific pool.
-   * Returns all matches unpaginated (limit: 500).
+   * Uses a dedicated endpoint that returns all matches without pagination.
    *
    * @param poolId - The pool ID
    * @returns Array of all matches in the pool
-   * @throws {AxiosError} 400 if validation fails, 404 if none found
+   * @throws {AxiosError} 404 if pool not found
    *
    * @example
    * const matches = await matchesService.getByPoolId(10);
    */
   async getByPoolId(poolId: number): Promise<Match[]> {
-    const { data } = await apiClient.get<any>("/matches", {
-      params: { poolId, limit: 500 },
-    });
-    return data.items ?? data;
+    const { data } = await apiClient.get<any>(`/matches/pool/${poolId}`);
+    return data;
   },
 
   /**

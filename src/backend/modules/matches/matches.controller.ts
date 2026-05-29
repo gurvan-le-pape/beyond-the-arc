@@ -231,6 +231,39 @@ export class MatchesController {
     });
   }
 
+  @Get("pool/:poolId")
+  @HttpCode(HttpStatus.OK)
+  @UseInterceptors(CacheInterceptor({ ttl: CACHE_TTL.MODERATE_DATA }))
+  @ApiOperation({
+    summary: "Get matches by pool ID",
+    description:
+      "Retrieves all matches for a specific pool without pagination, ordered by date ascending.",
+  })
+  @ApiParam({
+    name: "poolId",
+    description: "Pool ID",
+    type: Number,
+    example: 1,
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Matches successfully retrieved",
+    type: [MatchDetailResponseDto],
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: "Pool not found",
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: "Invalid ID format",
+  })
+  async getMatchesByPoolId(
+    @Param("poolId", ParseIntPipe) poolId: number,
+  ): Promise<MatchDetailResponseDto[]> {
+    return this.matchesService.findMatchesByPoolId(poolId);
+  }
+
   /**
    * Retrieve a single match by ID with full details.
    *
