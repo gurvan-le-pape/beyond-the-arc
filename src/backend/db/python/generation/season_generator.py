@@ -20,7 +20,13 @@ from config import CATEGORIES, GENDERS, SEASON_YEAR, SEASON_START_WEEK, SEASON_S
 from db import checkpoints, connection
 from db.repositories import championship_repository, match_repository, team_repository
 from utils.division_utils import compute_divisions_and_pools
-from utils.name_utils import generate_player_name
+from utils.player_utils import (
+    generate_player_birthdate,
+    generate_player_height,
+    generate_player_name,
+    generate_player_position,
+    generate_player_weight,
+)
 from utils.schedule_utils import build_round_robin_schedule, compute_matchday_datetime
 
 logger = logging.getLogger(__name__)
@@ -108,20 +114,28 @@ class SeasonGenerator:
 
         team_repository.insert_teams(cursor, team_rows)
 
-        team_ids_and_genders = team_repository.fetch_team_ids_and_genders_for_clubs(cursor, club_ids)
-        self._generate_players(cursor, team_ids_and_genders)
+        teams = team_repository.fetch_teams_for_clubs(cursor, club_ids)
+        self._generate_players(cursor, teams)
 
         logger.debug(f"Committee {committee_id}: inserted teams and players for {len(club_ids)} clubs.")
 
     def _generate_players(
         self,
         cursor,
-        team_ids_and_genders: list[tuple[int, str]],
+        teams: list[tuple[int, str, str]],
         players_per_team: int = 12,
     ) -> None:
         rows = [
-            (generate_player_name(gender), number, team_id)
-            for team_id, gender in team_ids_and_genders
+            (
+                generate_player_name(gender),
+                number,
+                generate_player_position(),
+                generate_player_height(category, gender),
+                generate_player_weight(category, gender),
+                generate_player_birthdate(category),
+                team_id,
+            )
+            for team_id, gender, category in teams
             for number in range(1, players_per_team + 1)
         ]
         team_repository.insert_players(cursor, rows)

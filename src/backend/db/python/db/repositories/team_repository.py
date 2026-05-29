@@ -65,13 +65,13 @@ def insert_teams(cursor: psycopg.Cursor, rows: list[tuple]) -> None:
     )
 
 
-def fetch_team_ids_and_genders_for_clubs(
+def fetch_teams_for_clubs(
     cursor: psycopg.Cursor,
     club_ids: list[int],
-) -> list[tuple[int, str]]:
-    """Returns list of (team_id, gender) for all teams belonging to given clubs."""
+) -> list[tuple[int, str, str]]:
+    """Returns list of (team_id, gender, category) for all teams belonging to given clubs."""
     cursor.execute(
-        "SELECT id, gender FROM teams WHERE club_id = ANY(%s);",
+        "SELECT id, gender, category FROM teams WHERE club_id = ANY(%s);",
         (club_ids,),
     )
     return cursor.fetchall()
@@ -80,12 +80,12 @@ def fetch_team_ids_and_genders_for_clubs(
 def insert_players(cursor: psycopg.Cursor, rows: list[tuple]) -> None:
     """
     Bulk insert players.
-    Each row: (name, number, team_id)
+    Each row: (name, number, position, height_cm, weight_kg, birthdate, team_id)
     """
     cursor.executemany(
         """
-        INSERT INTO players (name, number, team_id)
-        VALUES (%s, %s, %s)
+        INSERT INTO players (name, number, position, height_cm, weight_kg, birthdate, team_id)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
         ON CONFLICT (team_id, number) DO NOTHING;
         """,
         rows,

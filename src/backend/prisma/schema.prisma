@@ -203,6 +203,10 @@ model Players {
   id                    Int                       @id @default(autoincrement())
   name                  String
   number                Int
+  position              String?                   @db.VarChar(2)
+  heightCm              Int?                      @map("height_cm")
+  weightKg              Int?                      @map("weight_kg")
+  birthdate             DateTime?                 @db.Date
   team                  Teams                     @relation(fields: [teamId], references: [id])
   teamId                Int                       @map("team_id")
   stats                 PlayerMatchStats[]
