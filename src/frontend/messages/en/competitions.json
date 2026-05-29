@@ -19,12 +19,6 @@
     "scrollLeft": "Scroll left",
     "scrollRight": "Scroll right"
   },
-  "switchGender": {
-    "toFeminine": "Feminine Championship",
-    "toMasculine": "Masculine Championship",
-    "ariaToFeminine": "See feminine championship",
-    "ariaToMasculine": "See masculine championship"
-  },
   "leaderboardTitle": "Leaderboard",
   "championshipsSectionTitle": "Championships",
   "letterFilter": {

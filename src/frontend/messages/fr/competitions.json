@@ -19,12 +19,6 @@
     "scrollLeft": "Défiler à gauche",
     "scrollRight": "Défiler à droite"
   },
-  "switchGender": {
-    "toFeminine": "Championnat féminin",
-    "toMasculine": "Championnat masculin",
-    "ariaToFeminine": "Voir le championnat féminin",
-    "ariaToMasculine": "Voir le championnat masculin"
-  },
   "leaderboardTitle": "Classement",
   "championshipsSectionTitle": "Championnats",
   "letterFilter": {
