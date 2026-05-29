@@ -15,11 +15,7 @@ import { Text } from "@/shared/components/typography";
 import { CompetitionLevel } from "@/shared/constants";
 import { groupBy } from "@/shared/utils";
 
-import {
-  useCategoryNavigation,
-  useDivisionNavigation,
-  useGenderNavigation,
-} from "../../hooks";
+import { useCategoryNavigation, useDivisionNavigation } from "../../hooks";
 import { useChampionshipDetailById } from "../../hooks/useChampionshipsDetailById";
 import ChampionshipHeader from "./ChampionshipHeader";
 import MatchesPanel from "./matches/MatchesPanel";
@@ -78,13 +74,6 @@ export function ChampionshipDetailPage() {
       division,
       buildRoute,
     );
-
-  const { switchGender } = useGenderNavigation(
-    organizationId ?? 0,
-    championship?.level!,
-    gender,
-    buildRoute,
-  );
 
   const [selectedRound, setSelectedRound] = useState<number | null>(null);
   const [expandedMatchIds, setExpandedMatchIds] = useState<number[]>([]);
@@ -160,8 +149,6 @@ export function ChampionshipDetailPage() {
               : championship.leagueName ?? undefined
           }
           championshipName={championship.name}
-          gender={gender}
-          onSwitchGender={switchGender}
         />
 
         <Card variant="highlighted" padding="md">
