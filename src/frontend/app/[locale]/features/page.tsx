@@ -31,6 +31,12 @@ const FEATURES_CONFIG = [
     featureKey: "leaderboards",
   },
   {
+    icon: Calendar,
+    statusKey: "live",
+    color: "from-indigo-500 to-blue-500",
+    featureKey: "matchSchedule",
+  },
+  {
     icon: Clock,
     statusKey: "live",
     color: "from-violet-500 to-purple-500",
@@ -43,6 +49,12 @@ const FEATURES_CONFIG = [
     featureKey: "shotCharts",
   },
   {
+    icon: Users,
+    statusKey: "live",
+    color: "from-purple-500 to-indigo-500",
+    featureKey: "teamRosters",
+  },
+  {
     icon: BarChart3,
     statusKey: "live",
     color: "from-green-500 to-emerald-500",
@@ -53,18 +65,6 @@ const FEATURES_CONFIG = [
     statusKey: "live",
     color: "from-red-500 to-pink-500",
     featureKey: "clubsMap",
-  },
-  {
-    icon: Users,
-    statusKey: "live",
-    color: "from-purple-500 to-indigo-500",
-    featureKey: "teamRosters",
-  },
-  {
-    icon: Calendar,
-    statusKey: "live",
-    color: "from-indigo-500 to-blue-500",
-    featureKey: "matchSchedule",
   },
   {
     icon: TrendingUp,

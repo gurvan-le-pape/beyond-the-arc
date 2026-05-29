@@ -97,7 +97,7 @@
     "subtitle": "Explore the powerful features that make this basketball platform comprehensive and user-friendly",
     "leaderboards": {
       "title": "Championship Leaderboards",
-      "description": "Real-time standings and rankings for all championship levels with detailed statistics and team performance metrics."
+      "description": "Real-time standings for all competition levels."
     },
     "matchSummary": {
       "title": "Detailed Match Summary",
@@ -113,7 +113,7 @@
     },
     "clubsMap": {
       "title": "Interactive Clubs Map",
-      "description": "Geographic visualization of clubs across France with filtering by region, department, and competition level."
+      "description": "Geographic visualization of clubs across France. Zoom in to navigate from regional leagues down to individual clubs."
     },
     "teamRosters": {
       "title": "Team Rosters",
@@ -121,7 +121,7 @@
     },
     "matchSchedule": {
       "title": "Match Schedules",
-      "description": "Comprehensive match calendars with dates, venues, and results for all competitions and divisions."
+      "description": "Past results and upcoming matches, organized by matchday within a pool."
     },
     "liveStats": {
       "title": "Live Match Statistics",
