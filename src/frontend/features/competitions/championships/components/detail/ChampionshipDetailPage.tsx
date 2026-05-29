@@ -142,14 +142,7 @@ export function ChampionshipDetailPage() {
       <div className="w-full xl:flex-1 space-y-6">
         <Breadcrumb items={breadcrumbItems} />
 
-        <ChampionshipHeader
-          organizationName={
-            championship.level === CompetitionLevel.DEPARTMENTAL
-              ? championship.committeeName ?? undefined
-              : championship.leagueName ?? undefined
-          }
-          championshipName={championship.name}
-        />
+        <ChampionshipHeader championship={championship} />
 
         <Card variant="highlighted" padding="md">
           <div className="space-y-4">
