@@ -96,12 +96,12 @@
     "title": "Fonctionnalités",
     "subtitle": "Découvrez les fonctionnalités puissantes qui rendent cette plateforme de basketball complète et conviviale",
     "leaderboards": {
-      "title": "Classements de Championships",
-      "description": "Classements et standings en temps réel pour tous les niveaux de championships avec statistiques détaillées et métriques de performance d'équipe."
+      "title": "Classements",
+      "description": "Classements en temps réel pour tous les niveaux de compétition."
     },
     "matchSummary": {
       "title": "Résumé de Match Détaillé",
-      "description": "Analyses complètes des matchs avec statistiques joueurs, comparaisons d'équipes, cartes de tirs et chronologie des événements."
+      "description": "Analyses complètes des matchs avec statistiques des joueurs, comparaisons des équipes, cartes de tirs et chronologie des événements."
     },
     "shotCharts": {
       "title": "Cartes de Tirs Interactives",
@@ -113,7 +113,7 @@
     },
     "clubsMap": {
       "title": "Carte Interactive des Clubs",
-      "description": "Visualisation géographique des clubs à travers la France avec filtrage par région, département et level de compétition."
+      "description": "Visualisation géographique des clubs à travers la France. Zoomez pour naviguer des ligues régionales jusqu'aux clubs individuels."
     },
     "teamRosters": {
       "title": "Effectifs des Équipes",
@@ -121,7 +121,7 @@
     },
     "matchSchedule": {
       "title": "Calendriers des Matchs",
-      "description": "Calendriers complets des matchs avec dates, lieux et résultats pour toutes les compétitions et divisions."
+      "description": "Résultats passés et matchs à venir, organisés par journée au sein d'une poule."
     },
     "liveStats": {
       "title": "Statistiques en Direct",
