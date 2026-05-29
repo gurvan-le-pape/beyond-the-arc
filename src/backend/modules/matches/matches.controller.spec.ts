@@ -33,6 +33,7 @@ describe("MatchesController", () => {
     findAllIds: jest.fn(),
     findAllMatches: jest.fn(),
     findMatchById: jest.fn(),
+    findMatchesByPoolId: jest.fn(),
     findPlayerMatchStatsByMatchId: jest.fn(),
     findMatchEventsByMatchId: jest.fn(),
     findMatchEventsByTeamId: jest.fn(),
@@ -134,6 +135,51 @@ describe("MatchesController", () => {
 
       expect(result).toBe(mockResponse);
       expect(service.findAllMatches).toHaveBeenCalled();
+    });
+  });
+
+  describe("getMatchesByPoolId", () => {
+    it("should return matches for a pool", async () => {
+      const mockMatches: MatchDetailResponseDto[] = [
+        {
+          id: 1,
+          matchday: 1,
+          date: new Date("2024-01-01"),
+          homeTeamScore: 3,
+          awayTeamScore: 2,
+          forfeit: false,
+          overtime: false,
+          pool: null,
+          homeTeam: {} as any,
+          awayTeam: {} as any,
+          matchEvents: [],
+        },
+      ];
+
+      mockMatchesService.findMatchesByPoolId.mockResolvedValue(mockMatches);
+
+      const result = await controller.getMatchesByPoolId(1);
+
+      expect(result).toBe(mockMatches);
+      expect(service.findMatchesByPoolId).toHaveBeenCalledWith(1);
+    });
+
+    it("should return empty array when pool has no matches", async () => {
+      mockMatchesService.findMatchesByPoolId.mockResolvedValue([]);
+
+      const result = await controller.getMatchesByPoolId(1);
+
+      expect(result).toEqual([]);
+    });
+
+    it("should propagate service errors", async () => {
+      mockMatchesService.findMatchesByPoolId.mockRejectedValue(
+        new NotFoundException("Pool not found"),
+      );
+
+      await expect(controller.getMatchesByPoolId(999)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
