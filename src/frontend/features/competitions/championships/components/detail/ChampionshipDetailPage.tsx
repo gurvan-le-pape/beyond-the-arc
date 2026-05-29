@@ -100,6 +100,7 @@ export function ChampionshipDetailPage() {
   const handlePoolChange = (val: string | number | undefined) => {
     const poolId = Number(val);
     setSelectedPoolId(poolId);
+    setSelectedRound(null);
     const next = new URLSearchParams(searchParams.toString());
     next.set("pool", String(poolId));
     router.replace(`${pathname}?${next.toString()}`, { scroll: false });
