@@ -126,7 +126,7 @@
     "cell": "Cellule",
     "total": "Total",
     "fgPercent": "FG%",
-    "title": "Carte des tirs — {{name}}",
+    "title": "Carte des tirs — {name}",
     "download": "Télécharger le graphique",
     "close": "Fermer"
   },
@@ -170,8 +170,8 @@
     "allPools": "Toutes les poules",
     "clubs": "Clubs",
     "allClubs": "Tous les clubs",
-    "playerNumber": "Numéros de joueur",
-    "allPlayerNumber": "Tous les numéros de joueur",
+    "playerNumbers": "Numéros de joueur",
+    "allPlayerNumbers": "Tous les numéros de joueur",
     "teamNumbers": "Numéros d'équipe",
     "allTeamNumbers": "Tous les numéros d'équipe",
     "reset": "Réinitialiser les filtres"
