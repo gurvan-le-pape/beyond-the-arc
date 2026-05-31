@@ -11,3 +11,4 @@ export * from "./detail/PlayerMatchHistoryTable";
 export * from "./detail/PlayerSearchDropdown";
 export * from "./list/PlayersCard";
 export * from "./list/PlayersFilters";
+export * from "./PlayerAvatar";
