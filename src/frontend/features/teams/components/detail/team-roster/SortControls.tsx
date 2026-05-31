@@ -1,0 +1,71 @@
+// src/frontend/features/teams/components/detail/team-roster/SortControls.tsx
+import { useTranslations } from "next-intl";
+
+import type { SortConfig, SortKey } from "./types";
+
+// ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
+
+const SORT_OPTIONS: { key: SortKey; labelKey: string }[] = [
+  { key: "number", labelKey: "number" },
+  { key: "ppg", labelKey: "statAbbreviations.pts" },
+  { key: "rpg", labelKey: "statAbbreviations.reb" },
+  { key: "apg", labelKey: "statAbbreviations.ast" },
+  { key: "name", labelKey: "name" },
+];
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+interface SortControlsProps {
+  readonly sortConfig: SortConfig;
+  readonly onSort: (key: SortKey) => void;
+}
+
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
+
+export function SortControls({ sortConfig, onSort }: SortControlsProps) {
+  const tCommon = useTranslations("common");
+  const tTeams = useTranslations("teams");
+
+  return (
+    <div className="flex flex-wrap items-center gap-2 mb-6">
+      {SORT_OPTIONS.map(({ key, labelKey }) => {
+        const isActive = sortConfig.key === key;
+        let label: string;
+        if (key === "name") {
+          label = tTeams("teamDetail.player");
+        } else if (key === "number") {
+          label = tTeams("teamDetail.numberShort");
+        } else {
+          label = tCommon(labelKey);
+        }
+
+        return (
+          <button
+            key={key}
+            type="button"
+            onClick={() => onSort(key)}
+            className={[
+              "inline-flex items-center gap-1 px-3 py-1 rounded-button text-xs font-semibold border transition-colors duration-150",
+              isActive
+                ? "bg-primary-subtle text-primary-strong border-primary-subtle"
+                : "bg-transparent text-text-secondary border-divide hover:border-primary hover:text-primary",
+            ].join(" ")}
+          >
+            {label}
+            {isActive && (
+              <span className="text-[10px]">
+                {sortConfig.direction === "desc" ? "↓" : "↑"}
+              </span>
+            )}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
