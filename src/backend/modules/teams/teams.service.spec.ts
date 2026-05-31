@@ -297,7 +297,13 @@ describe("TeamsService", () => {
           awayTeamScore: 72,
           playerMatchStats: [
             {
-              player: { id: 1, name: "Player 1", number: 10, teamId: 1 },
+              player: {
+                id: 1,
+                name: "Player 1",
+                number: 10,
+                position: "PG",
+                teamId: 1,
+              },
               points: 15,
               fouls: 2,
               threePointsMade: 2,
