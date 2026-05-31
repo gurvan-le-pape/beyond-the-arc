@@ -38,7 +38,7 @@ export function LeaderboardTable({
               {tCommon("table.team")}
             </TableHead>
             <TableHead className="text-center text-text-heading">
-              {tCommon("stats.points")}
+              {tCommon("stats.points.full")}
             </TableHead>
             <TableHead className="text-center text-text-heading">
               {tCommon("stats.gamesPlayed")}
