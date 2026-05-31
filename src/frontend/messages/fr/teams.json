@@ -11,6 +11,7 @@
     "assistsPerGame": "Passes / match",
     "stealsPerGame": "Interceptions / match",
     "blocksPerGame": "Contres / match",
+    "position": "Poste",
     "teamNotFound": "Équipe non trouvée",
     "seeCompetition": "Voir la compétition {name}",
     "teamStatsTitle": "Statistiques Équipe",

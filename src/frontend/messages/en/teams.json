@@ -11,6 +11,7 @@
     "assistsPerGame": "Assists / game",
     "stealsPerGame": "Steals / game",
     "blocksPerGame": "Blocks / game",
+    "position": "Position",
     "teamNotFound": "Team not found",
     "seeCompetition": "See competition {name}",
     "teamStatsTitle": "Team Statistics",
