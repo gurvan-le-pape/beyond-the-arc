@@ -193,6 +193,24 @@ module.exports = {
           DEFAULT: "var(--color-matches)",
           strong: "var(--color-matches-strong)",
         },
+
+        position: {
+  g: {
+    subtle: "var(--color-position-g-subtle)",
+    DEFAULT: "var(--color-position-g)",
+    strong: "var(--color-position-g-strong)",
+  },
+  f: {
+    subtle: "var(--color-position-f-subtle)",
+    DEFAULT: "var(--color-position-f)",
+    strong: "var(--color-position-f-strong)",
+  },
+  c: {
+    subtle: "var(--color-position-c-subtle)",
+    DEFAULT: "var(--color-position-c)",
+    strong: "var(--color-position-c-strong)",
+  },
+},
       },
 
       // -----------------------------------------------------------------------

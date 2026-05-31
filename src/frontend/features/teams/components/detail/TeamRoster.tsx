@@ -7,235 +7,119 @@ import React, { useState } from "react";
 import type { PlayerMatchHistoryEntry } from "@/features/players/types";
 import { useRouter } from "@/navigation";
 import { Section } from "@/shared/components/blocks";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableEmpty,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/shared/components/table";
+import { Text } from "@/shared/components/typography";
+
+import { PlayerCard } from "./team-roster/PlayerCard";
+import { SortControls } from "./team-roster/SortControls";
+import type { PlayerStats, SortConfig, SortKey } from "./team-roster/types";
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+function calculatePlayerStats(player: PlayerMatchHistoryEntry[]): PlayerStats {
+  const gp = player.length;
+  const pts = player.reduce((sum, s) => sum + s.stats.points, 0);
+  const reb = player.reduce(
+    (sum, s) => sum + s.stats.rebounds.offensive + s.stats.rebounds.defensive,
+    0,
+  );
+  const ast = player.reduce((sum, s) => sum + s.stats.assists, 0);
+
+  return {
+    gp,
+    ppg: gp > 0 ? (pts / gp).toFixed(1) : "0.0",
+    rpg: gp > 0 ? (reb / gp).toFixed(1) : "0.0",
+    apg: gp > 0 ? (ast / gp).toFixed(1) : "0.0",
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
 
 interface TeamRosterProps {
   players?: PlayerMatchHistoryEntry[][];
 }
 
 export const TeamRoster: React.FC<TeamRosterProps> = ({ players }) => {
-  // Ensure players is always an array
   const safePlayers: PlayerMatchHistoryEntry[][] = players ?? [];
 
-  const tCommon = useTranslations("common");
   const tTeams = useTranslations("teams");
   const router = useRouter();
-  const [sortConfig, setSortConfig] = useState<{
-    key: string;
-    direction: "asc" | "desc";
-  } | null>(null);
 
-  // Helper function to calculate player averages
-  const calculatePlayerStats = (player: PlayerMatchHistoryEntry[]) => {
-    const gp = player.length || 0;
-    const pts = player.reduce((sum, s) => sum + s.stats.points, 0) || 0;
-    const reb =
-      player.reduce(
-        (sum, s) =>
-          sum + (s.stats.rebounds.offensive + s.stats.rebounds.defensive),
-        0,
-      ) || 0;
-    const ast = player.reduce((sum, s) => sum + s.stats.assists, 0) || 0;
+  const [sortConfig, setSortConfig] = useState<SortConfig>({
+    key: "number",
+    direction: "asc",
+  });
 
-    return {
-      gp,
-      ppg: gp > 0 ? (pts / gp).toFixed(1) : "0.0",
-      rpg: gp > 0 ? (reb / gp).toFixed(1) : "0.0",
-      apg: gp > 0 ? (ast / gp).toFixed(1) : "0.0",
-    };
+  const handleSort = (key: SortKey) => {
+    setSortConfig((current) => ({
+      key,
+      direction:
+        current.key === key && current.direction === "desc" ? "asc" : "desc",
+    }));
   };
 
-  // Sort players
   const sortedPlayers = React.useMemo(() => {
-    if (!sortConfig) return safePlayers;
-
     return [...safePlayers].sort((a, b) => {
       const aStats = calculatePlayerStats(a);
       const bStats = calculatePlayerStats(b);
-
-      let aValue: number | string = 0;
-      let bValue: number | string = 0;
+      const dir = sortConfig.direction === "asc" ? 1 : -1;
 
       switch (sortConfig.key) {
-        case "number":
-          aValue = a[0]?.player.number ?? 0;
-          bValue = b[0]?.player.number ?? 0;
-          break;
-        case "name":
-          aValue = a[0]?.player.name ?? "";
-          bValue = b[0]?.player.name ?? "";
-          break;
-        case "gp":
-          aValue = aStats.gp;
-          bValue = bStats.gp;
-          break;
+        case "name": {
+          const aName = a[0]?.player.name ?? "";
+          const bName = b[0]?.player.name ?? "";
+          return aName.localeCompare(bName) * dir;
+        }
+        case "number": {
+          const aN = a[0]?.player.number ?? 0;
+          const bN = b[0]?.player.number ?? 0;
+          return (aN - bN) * dir;
+        }
         case "ppg":
-          aValue = Number.parseFloat(aStats.ppg);
-          bValue = Number.parseFloat(bStats.ppg);
-          break;
+          return (
+            (Number.parseFloat(aStats.ppg) - Number.parseFloat(bStats.ppg)) *
+            dir
+          );
         case "rpg":
-          aValue = Number.parseFloat(aStats.rpg);
-          bValue = Number.parseFloat(bStats.rpg);
-          break;
+          return (
+            (Number.parseFloat(aStats.rpg) - Number.parseFloat(bStats.rpg)) *
+            dir
+          );
         case "apg":
-          aValue = Number.parseFloat(aStats.apg);
-          bValue = Number.parseFloat(bStats.apg);
-          break;
-        case "position":
-          aValue = a[0]?.player.position ?? "";
-          bValue = b[0]?.player.position ?? "";
-          break;
+          return (
+            (Number.parseFloat(aStats.apg) - Number.parseFloat(bStats.apg)) *
+            dir
+          );
+        default:
+          return 0;
       }
-
-      if (aValue < bValue) return sortConfig.direction === "asc" ? -1 : 1;
-      if (aValue > bValue) return sortConfig.direction === "asc" ? 1 : -1;
-      return 0;
     });
-  }, [players, sortConfig]);
-
-  const handleSort = (key: string) => {
-    setSortConfig((current) => {
-      if (current?.key === key) {
-        return {
-          key,
-          direction: current.direction === "asc" ? "desc" : "asc",
-        };
-      }
-      return { key, direction: "desc" };
-    });
-  };
+  }, [safePlayers, sortConfig]);
 
   return (
     <Section title={tTeams("teamDetail.rosterTitle")} variant="highlighted">
-      <div className="overflow-x-auto">
-        <Table className="border border-primary rounded-card box-border">
-          <TableHeader className="bg-primary-subtle border-b border-primary">
-            <TableRow hoverable={false}>
-              <TableHead
-                align="left"
-                sortable
-                sortDirection={
-                  sortConfig?.key === "number" ? sortConfig.direction : null
-                }
-                onSort={() => handleSort("number")}
-              >
-                {tTeams("teamDetail.numberShort")}
-              </TableHead>
-              <TableHead
-                align="left"
-                sortable
-                sortDirection={
-                  sortConfig?.key === "name" ? sortConfig.direction : null
-                }
-                onSort={() => handleSort("name")}
-              >
-                {tTeams("teamDetail.player")}
-              </TableHead>
-              <TableHead
-                align="center"
-                sortable
-                sortDirection={
-                  sortConfig?.key === "gp" ? sortConfig.direction : null
-                }
-                onSort={() => handleSort("gp")}
-              >
-                {tTeams("teamDetail.gamesPlayedShort")}
-              </TableHead>
-              <TableHead
-                align="center"
-                sortable
-                sortDirection={
-                  sortConfig?.key === "ppg" ? sortConfig.direction : null
-                }
-                onSort={() => handleSort("ppg")}
-              >
-                {tCommon("statAbbreviations.pts")}
-              </TableHead>
-              <TableHead
-                align="center"
-                sortable
-                sortDirection={
-                  sortConfig?.key === "rpg" ? sortConfig.direction : null
-                }
-                onSort={() => handleSort("rpg")}
-              >
-                {tCommon("statAbbreviations.reb")}
-              </TableHead>
-              <TableHead
-                align="center"
-                sortable
-                sortDirection={
-                  sortConfig?.key === "apg" ? sortConfig.direction : null
-                }
-                onSort={() => handleSort("apg")}
-              >
-                {tCommon("statAbbreviations.ast")}
-              </TableHead>
-              <TableHead
-                align="center"
-                sortable
-                sortDirection={
-                  sortConfig?.key === "position" ? sortConfig.direction : null
-                }
-                onSort={() => handleSort("position")}
-              >
-                {tTeams("teamDetail.position")}
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-
-          <TableBody>
-            {safePlayers.length === 0 ? (
-              <TableEmpty
-                colSpan={7}
-                message={tTeams("teamDetail.noPlayers")}
+      {safePlayers.length === 0 ? (
+        <Text variant="caption" className="text-text-muted text-center py-8">
+          {tTeams("teamDetail.noPlayers")}
+        </Text>
+      ) : (
+        <>
+          <SortControls sortConfig={sortConfig} onSort={handleSort} />
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+            {sortedPlayers.map((player) => (
+              <PlayerCard
+                key={player[0]?.player.id}
+                player={player}
+                stats={calculatePlayerStats(player)}
+                onClick={() => router.push(`/players/${player[0]?.player.id}`)}
               />
-            ) : (
-              sortedPlayers.map((player: PlayerMatchHistoryEntry[], index) => {
-                const stats = calculatePlayerStats(player);
-
-                return (
-                  <TableRow
-                    key={player[0]?.player.id}
-                    clickable
-                    onClick={() =>
-                      router.push(`/players/${player[0]?.player.id}`)
-                    }
-                    className={
-                      index % 2 === 0 ? "bg-primary-ghost" : "bg-surface-inset"
-                    }
-                  >
-                    <TableCell align="center" highlight>
-                      #{player[0]?.player.number}
-                    </TableCell>
-                    <TableCell
-                      align="center"
-                      className="font-medium hover:text-primary transition-colors duration-200"
-                    >
-                      {player[0]?.player.name}
-                    </TableCell>
-                    <TableCell align="center">{stats.gp}</TableCell>
-                    <TableCell align="center">{stats.ppg}</TableCell>
-                    <TableCell align="center">{stats.rpg}</TableCell>
-                    <TableCell align="center">{stats.apg}</TableCell>
-                    <TableCell align="center">
-                      {player[0]?.player.position}
-                    </TableCell>
-                  </TableRow>
-                );
-              })
-            )}
-          </TableBody>
-        </Table>
-      </div>
+            ))}
+          </div>
+        </>
+      )}
     </Section>
   );
 };

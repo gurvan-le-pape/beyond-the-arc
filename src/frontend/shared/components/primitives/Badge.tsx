@@ -46,6 +46,13 @@ const badgeVariants = cva(
         category: "border-transparent bg-category-subtle text-category-strong",
         division: "border-transparent bg-division-subtle text-division-strong",
         pool: "border-transparent bg-pool-subtle text-pool-strong",
+
+        "position-g":
+          "border-transparent bg-position-g-subtle text-position-g-strong",
+        "position-f":
+          "border-transparent bg-position-f-subtle text-position-f-strong",
+        "position-c":
+          "border-transparent bg-position-c-subtle text-position-c-strong",
       },
       size: {
         sm: "px-2 py-0.5",
