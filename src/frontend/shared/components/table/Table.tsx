@@ -5,6 +5,8 @@ import { cn } from "@/shared/utils";
 
 import { Text } from "../typography";
 
+type Alignment = "left" | "center" | "right";
+
 // ---------------------------------------------------------------------------
 // Table
 // ---------------------------------------------------------------------------
@@ -32,7 +34,7 @@ export const TableHeader = forwardRef<
   HTMLTableSectionElement,
   HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
-  <thead ref={ref} className={cn("bg-surface-subtle", className)} {...props} />
+  <thead ref={ref} className={cn("bg-primary-ghost", className)} {...props} />
 ));
 TableHeader.displayName = "TableHeader";
 
@@ -102,11 +104,12 @@ TableRow.displayName = "TableRow";
 // ---------------------------------------------------------------------------
 
 interface TableHeadProps extends HTMLAttributes<HTMLTableCellElement> {
-  align?: "left" | "center" | "right";
+  align?: Alignment;
   sortable?: boolean;
   sortDirection?: "asc" | "desc" | null;
   onSort?: () => void;
   size?: "default" | "compact";
+  tooltip?: string;
 }
 
 export const TableHead = forwardRef<HTMLTableCellElement, TableHeadProps>(
@@ -118,6 +121,7 @@ export const TableHead = forwardRef<HTMLTableCellElement, TableHeadProps>(
       sortDirection = null,
       onSort,
       size = "default",
+      tooltip,
       children,
       ...props
     },
@@ -129,8 +133,15 @@ export const TableHead = forwardRef<HTMLTableCellElement, TableHeadProps>(
       right: "text-right",
     };
 
+    const alignToJustify: Record<Alignment, string> = {
+      left: "justify-start",
+      center: "justify-center",
+      right: "justify-end",
+    };
+
     return (
       <th
+        title={tooltip}
         ref={ref}
         className={cn(
           size === "compact"
@@ -144,7 +155,7 @@ export const TableHead = forwardRef<HTMLTableCellElement, TableHeadProps>(
         onClick={sortable ? onSort : undefined}
         {...props}
       >
-        <div className="flex items-center justify-center gap-2">
+        <div className={cn("flex items-center gap-2", alignToJustify[align])}>
           <Text variant="label" as="span">
             {children}
           </Text>
@@ -184,7 +195,7 @@ TableHead.displayName = "TableHead";
 // ---------------------------------------------------------------------------
 
 interface TableCellProps extends HTMLAttributes<HTMLTableCellElement> {
-  align?: "left" | "center" | "right";
+  align?: Alignment;
   highlight?: boolean;
   colSpan?: number;
   size?: "default" | "compact";
