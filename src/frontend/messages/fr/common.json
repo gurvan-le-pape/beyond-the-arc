@@ -24,13 +24,13 @@
     "cta": "Découvrir les fonctionnalités"
   },
   "stats": {
-    "points": "Points",
-    "rebounds": "Rebonds",
-    "assists": "Passes décisives",
-    "steals": "Interceptions",
-    "blocks": "Contres",
-    "fouls": "Fautes",
-    "turnovers": "Pertes de balle",
+    "points": { "abbr": "PTS", "full": "Points" },
+    "rebounds": { "abbr": "REB", "full": "Rebonds" },
+    "assists": { "abbr": "AST", "full": "Passes décisives" },
+    "steals": { "abbr": "STL", "full": "Interceptions" },
+    "blocks": { "abbr": "BLK", "full": "Contres" },
+    "fouls": { "abbr": "FL", "full": "Fautes" },
+    "turnovers": { "abbr": "TO", "full": "Pertes de balle" },
     "pointsPerGame": "Points / match",
     "reboundsPerGame": "Rebonds / match",
     "assistsPerGame": "Passes / match",
@@ -39,10 +39,19 @@
     "turnoversPerGame": "Pertes / match",
     "foulsPerGame": "Fautes / match",
     "gamesPlayed": "Matchs joués",
-    "threePoints": "3 Pts",
-    "twoPointsInt": "2 Pts (int)",
-    "twoPointsExt": "2 Pts (ext)",
-    "freeThrows": "Lancers francs",
+    "threePoints": {
+      "abbr": "3P",
+      "full": "3 points"
+    },
+    "twoPointsInt": {
+      "abbr": "2PI",
+      "full": "2 points intérieurs"
+    },
+    "twoPointsExt": {
+      "abbr": "2PE",
+      "full": "2 points extérieurs"
+    },
+    "freeThrows": { "abbr": "FT", "full": "Lancers francs" },
     "fieldGoals": "Tirs réussis",
     "threePointers": "3 Points",
     "reboundsTotal": "Rebonds totaux",
@@ -65,16 +74,6 @@
     "score": "Score",
     "noMatches": "Aucun match joué cette saison",
     "seeAllMatches": "Voir tous les matchs ({count})"
-  },
-  "statAbbreviations": {
-    "pts": "PTS",
-    "reb": "REB",
-    "ast": "AST",
-    "stl": "STL",
-    "blk": "BLK",
-    "to": "TO",
-    "fl": "FL",
-    "ft": "FT"
   },
   "sectionTitles": {
     "regionalLeagues": "Ligues Régionales",

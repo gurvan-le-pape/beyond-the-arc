@@ -9,9 +9,9 @@ import type { SortConfig, SortKey } from "./types";
 
 const SORT_OPTIONS: { key: SortKey; labelKey: string }[] = [
   { key: "number", labelKey: "number" },
-  { key: "ppg", labelKey: "statAbbreviations.pts" },
-  { key: "rpg", labelKey: "statAbbreviations.reb" },
-  { key: "apg", labelKey: "statAbbreviations.ast" },
+  { key: "ppg", labelKey: "stats.points.abbr" },
+  { key: "rpg", labelKey: "stats.rebounds.abbr" },
+  { key: "apg", labelKey: "stats.assists.abbr" },
   { key: "name", labelKey: "name" },
 ];
 

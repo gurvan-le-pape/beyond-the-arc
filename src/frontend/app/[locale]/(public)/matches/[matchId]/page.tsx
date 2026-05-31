@@ -9,10 +9,7 @@ import {
   PlayerMatchStats,
   TeamStatsComparison,
 } from "@/features/matches/components";
-import type {
-  MatchEvent,
-  MatchEventPlayer,
-} from "@/features/matches/types";
+import type { MatchEvent, MatchEventPlayer } from "@/features/matches/types";
 import { buildTeam } from "@/features/matches/utils";
 import { PageLayout } from "@/shared/components/layout";
 import {
@@ -84,16 +81,16 @@ export default async function MatchSummaryPage({
   const statCategories = [
     { key: "fieldGoals", label: tCommon("stats.fieldGoals") },
     { key: "threePointers", label: tCommon("stats.threePointers") },
-    { key: "freeThrows", label: tCommon("stats.freeThrows") },
+    { key: "freeThrows", label: tCommon("stats.freeThrows.full") },
     { key: "reboundsTotal", label: tCommon("stats.reboundsTotal") },
     { key: "reboundsOffensive", label: tCommon("stats.reboundsOffensive") },
     { key: "reboundsDefensive", label: tCommon("stats.reboundsDefensive") },
-    { key: "assists", label: tCommon("stats.assists") },
-    { key: "blocks", label: tCommon("stats.blocks") },
-    { key: "steals", label: tCommon("stats.steals") },
-    { key: "turnovers", label: tCommon("stats.turnovers") },
+    { key: "assists", label: tCommon("stats.assists.full") },
+    { key: "blocks", label: tCommon("stats.blocks.full") },
+    { key: "steals", label: tCommon("stats.steals.full") },
+    { key: "turnovers", label: tCommon("stats.turnovers.full") },
     { key: "pointsInPaint", label: tCommon("stats.pointsInPaint") },
-    { key: "fouls", label: tCommon("stats.fouls") },
+    { key: "fouls", label: tCommon("stats.fouls.full") },
   ];
 
   return (

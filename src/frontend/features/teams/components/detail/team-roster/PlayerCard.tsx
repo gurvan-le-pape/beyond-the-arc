@@ -83,11 +83,11 @@ export function PlayerCard({ player, stats, onClick }: PlayerCardProps) {
       </div>
 
       <div className="w-full border-t border-divide pt-3 flex items-center justify-around">
-        <StatPill label={tCommon("statAbbreviations.pts")} value={stats.ppg} />
+        <StatPill label={tCommon("stats.points.abbr")} value={stats.ppg} />
         <div className="w-px h-6 bg-divide" />
-        <StatPill label={tCommon("statAbbreviations.reb")} value={stats.rpg} />
+        <StatPill label={tCommon("stats.rebounds.abbr")} value={stats.rpg} />
         <div className="w-px h-6 bg-divide" />
-        <StatPill label={tCommon("statAbbreviations.ast")} value={stats.apg} />
+        <StatPill label={tCommon("stats.assists.abbr")} value={stats.apg} />
       </div>
 
       <Text variant="caption" className="text-text-muted -mt-1">
