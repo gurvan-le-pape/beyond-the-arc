@@ -203,6 +203,18 @@ html {
   --color-matches-subtle: #fde68a;
   --color-matches: #d97706;
   --color-matches-strong: #78350f;
+
+  --color-position-g-subtle: #e0e7ff;   /* same hue as national/indigo — guard reads "playmaker" */
+--color-position-g: #6366f1;
+--color-position-g-strong: #312e81;
+
+--color-position-f-subtle: #fde68a;   /* amber — forward energy */
+--color-position-f: #d97706;
+--color-position-f-strong: #78350f;
+
+--color-position-c-subtle: #e9d5ff;   /* violet — anchor/size */
+--color-position-c: #7c3aed;
+--color-position-c-strong: #5b21b6;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -312,6 +324,15 @@ html {
 
   --color-matches-subtle: #78350f;
   --color-matches-strong: #fde68a;
+
+  --color-position-g-subtle: #312e81;
+  --color-position-g-strong: #c7d2fe;
+
+  --color-position-f-subtle: #78350f;
+  --color-position-f-strong: #fde68a;
+
+  --color-position-c-subtle: #3b0764;
+  --color-position-c-strong: #ddd6fe;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -437,6 +458,18 @@ html {
   --color-matches-subtle: #431407;
   --color-matches: #ffaa00;
   --color-matches-strong: #ffaa00;
+
+  --color-position-g-subtle: #1e1b4b;
+  --color-position-g: #8888ff;
+  --color-position-g-strong: #8888ff;
+
+  --color-position-f-subtle: #431407;
+  --color-position-f: #ffaa00;
+  --color-position-f-strong: #ffaa00;
+
+  --color-position-c-subtle: #2e1065;
+  --color-position-c: #cc88ff;
+  --color-position-c-strong: #cc88ff;
 }
 
 /* =============================================================================
