@@ -1,10 +1,12 @@
 // src/frontend/features/teams/types/TeamMatchHistory.ts
+import type { Position } from "@/shared/constants";
 import type { PlayerMatchStats } from "@/shared/types";
 
 export interface TeamMatchPlayerRef {
   id: number;
   name: string;
   number: number;
+  position: Position;
   teamId: number;
 }
 
