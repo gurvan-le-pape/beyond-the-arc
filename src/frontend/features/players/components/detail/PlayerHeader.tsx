@@ -23,6 +23,10 @@ export function PlayerHeader({ player }: PlayerHeaderProps) {
 
   const playerName = player.name;
   const playerNumber = player.number;
+  const position = player.position;
+  const heightCm = player.heightCm;
+  const weightKg = player.weightKg;
+  const birthdate = player.birthdate;
   const team = player.team;
   const teamId = player.teamId;
   const club = team.club;
@@ -58,6 +62,13 @@ export function PlayerHeader({ player }: PlayerHeaderProps) {
 
   const clubUrl = `/organizations/clubs/${clubId}`;
 
+  const age = Math.floor(
+    (Date.now() - new Date(birthdate).getTime()) /
+      (1000 * 60 * 60 * 24 * 365.25),
+  );
+
+  const physicalDetails = `${position} · ${age} ans · ${heightCm} cm · ${weightKg} kg`;
+
   return (
     <Card variant="highlighted" padding="lg">
       <div className="flex items-center gap-6">
@@ -92,6 +103,10 @@ export function PlayerHeader({ player }: PlayerHeaderProps) {
           {/* Category & Gender */}
           <Text variant="lead">
             {category} • {gender}
+          </Text>
+          {/* Physical details */}
+          <Text variant="muted" className="mt-1">
+            {physicalDetails}
           </Text>
           <div className="flex flex-col items-start mt-1">
             {/* Team */}
