@@ -139,10 +139,10 @@ CREATE TABLE players (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     number INT NOT NULL,
-    position VARCHAR(2),
-    height_cm INT,
-    weight_kg INT,
-    birthdate DATE,
+    position VARCHAR(2) NOT NULL,
+    height_cm INT NOT NULL,
+    weight_kg INT NOT NULL,
+    birthdate DATE NOT NULL,
     team_id INT REFERENCES teams(id) ON DELETE CASCADE,
     CONSTRAINT unique_player_per_team UNIQUE (team_id, number)
 );
