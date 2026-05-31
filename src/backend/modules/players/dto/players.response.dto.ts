@@ -1,4 +1,5 @@
 // src/backend/modules/players/dto/players.response.dto.ts
+import { Position } from "@common/constants";
 import { Category, CompetitionLevel, Gender } from "@common/index";
 import { ApiProperty } from "@nestjs/swagger";
 
@@ -26,6 +27,34 @@ export class PlayerResponseDto {
     type: Number,
   })
   number!: number;
+
+  @ApiProperty({
+    description: "Player position",
+    example: "PG",
+    type: String,
+  })
+  position!: Position;
+
+  @ApiProperty({
+    description: "Player height in centimeters",
+    example: 185,
+    type: Number,
+  })
+  heightCm!: number;
+
+  @ApiProperty({
+    description: "Player weight in kilograms",
+    example: 80,
+    type: Number,
+  })
+  weightKg!: number;
+
+  @ApiProperty({
+    description: "Player birthdate",
+    example: "2000-06-15",
+    type: String,
+  })
+  birthdate!: Date;
 
   @ApiProperty({
     description: "Team ID this player belongs to",
@@ -263,6 +292,7 @@ export class MatchHistoryDto {
       id: number;
       name: string;
       number: number;
+      position: Position;
       teamId: number;
     };
     stats: PlayerMatchStatsDto;
