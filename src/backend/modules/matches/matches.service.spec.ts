@@ -40,6 +40,41 @@ describe("MatchesService", () => {
     },
   };
 
+  // Reusable mock player shape
+  const mockPlayer = {
+    id: 1,
+    name: "Player One",
+    number: 10,
+    position: "PG",
+    teamId: 1,
+    team: {
+      id: 1,
+      number: 1,
+      club: { id: 1, name: "Club A" },
+    },
+  };
+
+  // Reusable mock player stats shape
+  const mockPlayerStats = {
+    points: 0,
+    fouls: 0,
+    threePointsMade: 0,
+    threePointsAttempted: 0,
+    twoPointsIntMade: 0,
+    twoPointsIntAttempted: 0,
+    twoPointsExtMade: 0,
+    twoPointsExtAttempted: 0,
+    freeThrowsMade: 0,
+    freeThrowsAttempted: 0,
+    assists: 0,
+    turnovers: 0,
+    reboundsOffensive: 0,
+    reboundsDefensive: 0,
+    steals: 0,
+    blocks: 0,
+    playtimeIntervals: null,
+  };
+
   // Reusable mock shapes matching MATCH_LIST_SELECT
   const mockMatchListResult = {
     id: 1,
@@ -374,9 +409,7 @@ describe("MatchesService", () => {
       mockPrismaService.client.playerMatchStats.findMany.mockResolvedValue([
         {
           player: {
-            id: 1,
-            name: "Player One",
-            number: 10,
+            ...mockPlayer,
             teamId: 1,
             team: {
               id: 100,
@@ -412,6 +445,7 @@ describe("MatchesService", () => {
       expect(result.homeTeamId).toBe(1);
       expect(result.awayTeamId).toBe(2);
       expect(result.stats[0].player.name).toBe("Player One");
+      expect(result.stats[0].player.position).toBe("PG");
       expect(result.stats[0].stats.points).toBe(20);
       expect(result.stats[0].stats.rebounds.total).toBe(5);
       expect(result.stats[0].stats.rebounds.offensive).toBe(2);
@@ -544,29 +578,8 @@ describe("MatchesService", () => {
       });
       mockPrismaService.client.playerMatchStats.findMany.mockResolvedValue([
         {
-          player: {
-            id: 1,
-            name: "Player One",
-            number: 10,
-            teamId: 1,
-            team: { id: 1, number: 1, club: { id: 1, name: "Club A" } },
-          },
-          points: 0,
-          fouls: 0,
-          threePointsMade: 0,
-          threePointsAttempted: 0,
-          twoPointsIntMade: 0,
-          twoPointsIntAttempted: 0,
-          twoPointsExtMade: 0,
-          twoPointsExtAttempted: 0,
-          freeThrowsMade: 0,
-          freeThrowsAttempted: 0,
-          assists: 0,
-          turnovers: 0,
-          reboundsOffensive: 0,
-          reboundsDefensive: 0,
-          steals: 0,
-          blocks: 0,
+          player: mockPlayer,
+          ...mockPlayerStats,
           playtimeIntervals: null,
         },
       ]);
@@ -583,29 +596,8 @@ describe("MatchesService", () => {
       });
       mockPrismaService.client.playerMatchStats.findMany.mockResolvedValue([
         {
-          player: {
-            id: 1,
-            name: "Player One",
-            number: 10,
-            teamId: 1,
-            team: { id: 1, number: 1, club: { id: 1, name: "Club A" } },
-          },
-          points: 0,
-          fouls: 0,
-          threePointsMade: 0,
-          threePointsAttempted: 0,
-          twoPointsIntMade: 0,
-          twoPointsIntAttempted: 0,
-          twoPointsExtMade: 0,
-          twoPointsExtAttempted: 0,
-          freeThrowsMade: 0,
-          freeThrowsAttempted: 0,
-          assists: 0,
-          turnovers: 0,
-          reboundsOffensive: 0,
-          reboundsDefensive: 0,
-          steals: 0,
-          blocks: 0,
+          player: mockPlayer,
+          ...mockPlayerStats,
           playtimeIntervals: [],
         },
       ]);

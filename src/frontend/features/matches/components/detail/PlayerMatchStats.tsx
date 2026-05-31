@@ -106,6 +106,12 @@ export const PlayerMatchStats: React.FC<PlayerMatchStatsProps> = ({
         getValue: (p) => p.player.number,
       },
       {
+        id: "position",
+        label: tMatches("playerMatchStats.position"),
+        align: "left",
+        getValue: (p) => p.player.position,
+      },
+      {
         id: "name",
         getValue: (p) => (
           <PlayerNameCell

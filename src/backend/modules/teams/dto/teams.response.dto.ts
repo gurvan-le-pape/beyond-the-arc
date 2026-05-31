@@ -1,4 +1,5 @@
 // src/backend/modules/teams/dto/teams.response.dto.ts
+import { Position } from "@common/constants";
 import { Category, CompetitionLevel, Gender } from "@common/index";
 import { PlayerMatchStatsDto } from "@modules/players/dto";
 import { ApiProperty } from "@nestjs/swagger";
@@ -142,6 +143,7 @@ export class MatchPlayerDto {
     id: number;
     name: string;
     number: number;
+    position: Position;
     teamId: number;
   };
 
@@ -228,6 +230,7 @@ export class TeamDetailResponseDto extends TeamResponseDto {
     id: number;
     name: string;
     number: number;
+    position: Position;
     teamId: number;
   }>;
 

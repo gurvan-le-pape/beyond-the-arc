@@ -7,4 +7,5 @@ export * from "./cache-ttls";
 export * from "./categories";
 export * from "./competition-levels";
 export * from "./genders";
+export * from "./positions";
 export * from "./roles";

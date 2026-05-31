@@ -89,6 +89,10 @@ export const TeamRoster: React.FC<TeamRosterProps> = ({ players }) => {
           aValue = Number.parseFloat(aStats.apg);
           bValue = Number.parseFloat(bStats.apg);
           break;
+        case "position":
+          aValue = a[0]?.player.position ?? "";
+          bValue = b[0]?.player.position ?? "";
+          break;
       }
 
       if (aValue < bValue) return sortConfig.direction === "asc" ? -1 : 1;
@@ -175,13 +179,23 @@ export const TeamRoster: React.FC<TeamRosterProps> = ({ players }) => {
               >
                 {tCommon("statAbbreviations.ast")}
               </TableHead>
+              <TableHead
+                align="center"
+                sortable
+                sortDirection={
+                  sortConfig?.key === "position" ? sortConfig.direction : null
+                }
+                onSort={() => handleSort("position")}
+              >
+                {tTeams("teamDetail.position")}
+              </TableHead>
             </TableRow>
           </TableHeader>
 
           <TableBody>
             {safePlayers.length === 0 ? (
               <TableEmpty
-                colSpan={6}
+                colSpan={7}
                 message={tTeams("teamDetail.noPlayers")}
               />
             ) : (
@@ -212,6 +226,9 @@ export const TeamRoster: React.FC<TeamRosterProps> = ({ players }) => {
                     <TableCell align="center">{stats.ppg}</TableCell>
                     <TableCell align="center">{stats.rpg}</TableCell>
                     <TableCell align="center">{stats.apg}</TableCell>
+                    <TableCell align="center">
+                      {player[0]?.player.position}
+                    </TableCell>
                   </TableRow>
                 );
               })

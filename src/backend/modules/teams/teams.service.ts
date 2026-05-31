@@ -1,5 +1,5 @@
 // src/backend/modules/teams/teams.service.ts
-import { CompetitionLevel } from "@common/constants";
+import { CompetitionLevel, Position } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
 import { Category, Gender } from "@common/index";
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
@@ -119,6 +119,7 @@ const TEAM_DETAIL_SELECT = {
       id: true,
       name: true,
       number: true,
+      position: true,
       teamId: true,
     },
     orderBy: {
@@ -238,6 +239,7 @@ const TEAM_MATCH_HISTORY_SELECT = {
           id: true,
           name: true,
           number: true,
+          position: true,
           teamId: true,
         },
       },
@@ -506,6 +508,7 @@ export class TeamsService {
         id: p.id,
         name: p.name,
         number: p.number,
+        position: p.position as Position,
         teamId: p.teamId,
       })),
       homeMatches: entity.homeMatches,
@@ -543,6 +546,7 @@ export class TeamsService {
           id: stat.player.id,
           name: stat.player.name,
           number: stat.player.number,
+          position: stat.player.position as Position,
           teamId: stat.player.teamId,
         },
         stats: {

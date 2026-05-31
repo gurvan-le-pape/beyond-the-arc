@@ -11,6 +11,7 @@ export * from "./genders";
 export * from "./levelConfig";
 export * from "./navConfig";
 export * from "./organization-types";
+export * from "./positions";
 export * from "./roles";
 export * from "./strings";
 export * from "./testIds";

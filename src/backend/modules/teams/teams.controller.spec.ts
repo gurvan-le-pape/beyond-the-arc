@@ -363,6 +363,7 @@ describe("TeamsController", () => {
                 id: 1,
                 name: "Player 1",
                 number: 10,
+                position: "PG",
                 teamId: 1,
               },
               stats: {

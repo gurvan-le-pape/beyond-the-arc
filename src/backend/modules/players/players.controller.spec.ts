@@ -111,6 +111,10 @@ describe("PlayersController", () => {
             id: 1,
             name: "Player 1",
             number: 10,
+            position: "PG",
+            heightCm: 185,
+            weightKg: 80,
+            birthdate: new Date("2000-06-15"),
             teamId: 1,
             team: {
               id: 1,
@@ -254,6 +258,10 @@ describe("PlayersController", () => {
         id: 1,
         name: "Player 1",
         number: 10,
+        position: "PG",
+        heightCm: 185,
+        weightKg: 80,
+        birthdate: new Date("2000-06-15"),
         teamId: 1,
         team: {
           id: 1,
@@ -305,6 +313,10 @@ describe("PlayersController", () => {
         id: 42,
         name: "Test Player",
         number: 7,
+        position: "C",
+        heightCm: 210,
+        weightKg: 110,
+        birthdate: new Date("1998-03-22"),
         teamId: 1,
         team: {} as any,
       };
@@ -343,6 +355,7 @@ describe("PlayersController", () => {
               id: 1,
               name: "Player 1",
               number: 10,
+              position: "PG",
               teamId: 1,
             },
             stats: {

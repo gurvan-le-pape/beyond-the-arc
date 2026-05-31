@@ -1,5 +1,5 @@
 // src/backend/modules/matches/matches.service.ts
-import { Role } from "@common/constants";
+import { Position, Role } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
 import { Category, CompetitionLevel, Gender } from "@common/index";
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
@@ -174,6 +174,7 @@ const PLAYER_MATCH_STATS_SELECT = {
       id: true,
       name: true,
       number: true,
+      position: true,
       teamId: true,
       team: {
         select: {
@@ -479,6 +480,7 @@ export class MatchesService {
         id: stat.player.id,
         name: stat.player.name,
         number: stat.player.number,
+        position: stat.player.position as Position,
         teamId: stat.player.teamId,
         team: stat.player.team,
       },
