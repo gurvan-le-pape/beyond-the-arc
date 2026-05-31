@@ -13,5 +13,6 @@ export * from "./DropdownTriggerBase";
 export * from "./ImageWithFallback";
 export * from "./MultiSelectDropdown";
 export * from "./SelectChevron";
+export * from "./StatPill";
 export * from "./Switch";
 export * from "./Tabs";
