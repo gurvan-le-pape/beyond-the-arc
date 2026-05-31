@@ -24,13 +24,13 @@
     "cta": "Discover the Features"
   },
   "stats": {
-    "points": "Points",
-    "rebounds": "Rebounds",
-    "assists": "Assists",
-    "steals": "Steals",
-    "blocks": "Blocks",
-    "fouls": "Fouls",
-    "turnovers": "Turnovers",
+    "points": { "abbr": "PTS", "full": "Points" },
+    "rebounds": { "abbr": "REB", "full": "Rebounds" },
+    "assists": { "abbr": "AST", "full": "Assists" },
+    "steals": { "abbr": "STL", "full": "Steals" },
+    "blocks": { "abbr": "BLK", "full": "Blocks" },
+    "fouls": { "abbr": "FL", "full": "Fouls" },
+    "turnovers": { "abbr": "TO", "full": "Turnovers" },
     "pointsPerGame": "Points / game",
     "reboundsPerGame": "Rebounds / game",
     "assistsPerGame": "Assists / game",
@@ -39,10 +39,19 @@
     "turnoversPerGame": "Turnovers / game",
     "foulsPerGame": "Fouls / game",
     "gamesPlayed": "Games played",
-    "threePoints": "3 Pts",
-    "twoPointsInt": "2 Pts (int)",
-    "twoPointsExt": "2 Pts (ext)",
-    "freeThrows": "Free throws",
+    "threePoints": {
+      "abbr": "3P",
+      "full": "3 points"
+    },
+    "twoPointsInt": {
+      "abbr": "2PI",
+      "full": "2 points interior"
+    },
+    "twoPointsExt": {
+      "abbr": "2PE",
+      "full": "2 points exterior"
+    },
+    "freeThrows": { "abbr": "FT", "full": "Free throws" },
     "fieldGoals": "Field Goals Made",
     "threePointers": "3 Pointers",
     "reboundsTotal": "Total Rebounds",
@@ -65,16 +74,6 @@
     "score": "Score",
     "noMatches": "No matches played this season",
     "seeAllMatches": "See all matches ({count})"
-  },
-  "statAbbreviations": {
-    "pts": "PTS",
-    "reb": "REB",
-    "ast": "AST",
-    "stl": "STL",
-    "blk": "BLK",
-    "to": "TO",
-    "fl": "FL",
-    "ft": "FT"
   },
   "sectionTitles": {
     "regionalLeagues": "Regional Leagues",
