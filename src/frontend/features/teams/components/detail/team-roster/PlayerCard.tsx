@@ -3,33 +3,9 @@ import { useTranslations } from "next-intl";
 
 import { PlayerAvatar } from "@/features/players/components";
 import type { PlayerMatchHistoryEntry } from "@/features/players/types";
-import {
-  Badge,
-  type BadgeProps,
-  Card,
-  StatPill,
-} from "@/shared/components/primitives";
+import { Badge, Card, StatPill } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
-import { Position } from "@/shared/constants";
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-function positionVariant(position: string | undefined): BadgeProps["variant"] {
-  switch (position) {
-    case Position.PG:
-    case Position.SG:
-      return "position-g";
-    case Position.SF:
-    case Position.PF:
-      return "position-f";
-    case Position.C:
-      return "position-c";
-    default:
-      return "default";
-  }
-}
+import { positionVariant } from "@/shared/utils";
 
 // ---------------------------------------------------------------------------
 // Types

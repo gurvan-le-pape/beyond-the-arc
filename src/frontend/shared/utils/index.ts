@@ -16,5 +16,6 @@ export * from "./logger";
 export * from "./normalizeDepartmentCode";
 export * from "./normalizeString";
 export * from "./parseApiError";
+export * from "./positionVariant";
 export * from "./safeFetch";
 export * from "./sortCategories";

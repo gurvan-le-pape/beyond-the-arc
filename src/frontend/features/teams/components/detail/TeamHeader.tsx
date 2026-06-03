@@ -1,12 +1,8 @@
 // src/frontend/features/teams/components/detail/TeamHeader.tsx
-"use client";
+import { getTranslations } from "next-intl/server";
 
-import Image from "next/image";
-import { useTranslations } from "next-intl";
-import { useState } from "react";
-
-import { useRouter } from "@/navigation";
-import { Button, Card } from "@/shared/components/primitives";
+import { Link } from "@/navigation";
+import { Badge, Card, ImageWithFallback } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { CompetitionLevel } from "@/shared/constants";
 import { formatNameToFileName, normalizeString } from "@/shared/utils";
@@ -17,9 +13,9 @@ interface TeamHeaderProps {
   readonly team: Team;
 }
 
-export function TeamHeader({ team }: TeamHeaderProps) {
-  const tCommon = useTranslations("common");
-  const router = useRouter();
+export async function TeamHeader({ team }: TeamHeaderProps) {
+  const tCommon = await getTranslations("common");
+  const tCompetitions = await getTranslations("competitions");
 
   const club = team.club;
   const clubId = club.id;
@@ -31,12 +27,7 @@ export function TeamHeader({ team }: TeamHeaderProps) {
   const gender = team.gender;
   const championship = team.pool?.championship;
 
-  const [logoSrc, setLogoSrc] = useState(
-    `/images/clubs/${formatNameToFileName(clubName)}.webp`,
-  );
-
   let competitionUrl: string | null = null;
-  let competitionName: string | null = null;
 
   if (championship) {
     const level = normalizeString(championship.level);
@@ -48,60 +39,105 @@ export function TeamHeader({ team }: TeamHeaderProps) {
     }
     if (parentId) {
       competitionUrl = `/championships/${championship.id}`;
-      competitionName = championship.name;
     }
   }
 
   const clubUrl = `/organizations/clubs/${clubId}`;
+  const isFemale = gender?.toLowerCase() === "female";
 
   return (
-    <Card variant="highlighted" padding="lg">
-      <div className="flex items-center gap-6">
+    <Card
+      variant="custom"
+      padding="none"
+      className={`overflow-hidden border-2 surface-subtle shadow-card ${
+        isFemale ? "border-team-female" : "border-team-male"
+      }`}
+    >
+      <div className="flex items-center gap-5 p-6">
         {/* Club Logo */}
-        <div className="relative w-20 h-20 md:w-24 md:h-24 flex-shrink-0">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="w-full h-full p-0 border-0 bg-transparent focus:outline-none"
-            aria-label={tCommon("club.seeClub", { name: clubName })}
-            onClick={() => router.push(clubUrl)}
+        <Link
+          href={clubUrl}
+          aria-label={tCommon("club.seeClub", { name: clubName })}
+        >
+          <button
+            className="w-16 h-16 flex-shrink-0 p-0 rounded-card border border-divide bg-surface-inset overflow-hidden flex items-center justify-center"
+            tabIndex={-1}
+            aria-hidden
           >
-            <Image
-              src={logoSrc}
+            <ImageWithFallback
+              src={`/images/clubs/${formatNameToFileName(clubName)}.webp`}
               alt={clubName}
-              fill
-              className="object-contain"
-              onError={() =>
-                setLogoSrc("/images/clubs/defaultLogo.30cc7520.svg")
-              }
-              priority
+              fallback="/images/clubs/defaultLogo.30cc7520.svg"
+              className="w-14 h-14 object-contain"
             />
-          </Button>
+          </button>
+        </Link>
+
+        {/* Info */}
+        <div className="flex-1 min-w-0">
+          <Text variant="h1" className="mb-3">
+            {clubName}
+          </Text>
+
+          {/* Badges */}
+          <div className="flex flex-wrap gap-2 mb-3">
+            {/* Category */}
+            <Badge variant="category" size="sm">
+              {category}
+            </Badge>
+
+            {/* Gender */}
+            <Badge
+              variant={gender.toLowerCase() as "male" | "female"}
+              size="sm"
+            >
+              {tCommon(`gender.${gender.toLowerCase()}`)}
+            </Badge>
+
+            {/* Competition level */}
+            {championship?.level && (
+              <Badge
+                variant={
+                  normalizeString(championship.level) as
+                    | "departmental"
+                    | "regional"
+                    | "national"
+                }
+                size="sm"
+              >
+                {tCommon(
+                  `competition.levels.${normalizeString(
+                    championship.level,
+                  )}Short`,
+                )}
+              </Badge>
+            )}
+
+            {/* Division */}
+            {championship && (
+              <Badge variant="division" size="sm">
+                {`Div ${championship.division}`}
+              </Badge>
+            )}
+          </div>
+
+          {/* Championship link */}
+          {competitionUrl && (
+            <Link
+              href={competitionUrl}
+              aria-label={tCommon("competition.seeCompetition")}
+              className="text-sm text-text-secondary hover:text-primary hover:underline"
+            >
+              {tCompetitions("championship")}
+            </Link>
+          )}
         </div>
 
-        {/* Team Info */}
-        <div className="flex-1">
-          {/* Name & Number */}
-          <Text variant="h1" className="mb-2">
-            {clubName} - {teamNumber}
-          </Text>
-          {/* Category & Gender */}
-          <Text variant="lead">
-            {category} • {gender}
-          </Text>
-          {/* Competition */}
-          {competitionUrl && competitionName && (
-            <Button
-              variant="ghost"
-              className="text-md cursor-pointer hover:underline bg-transparent border-0 p-0 m-0 text-inherit font-inherit"
-              aria-label={tCommon("competition.seeCompetition", {
-                name: competitionName,
-              })}
-              onClick={() => router.push(competitionUrl)}
-            >
-              {competitionName}
-            </Button>
-          )}
+        {/* Team number */}
+        <div className="flex-shrink-0 pl-5 border-l border-divide self-stretch flex items-center">
+          <span className="text-3xl font-bold text-text-muted">
+            #{teamNumber}
+          </span>
         </div>
       </div>
     </Card>
