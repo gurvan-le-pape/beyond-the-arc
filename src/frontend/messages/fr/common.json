@@ -81,7 +81,7 @@
     "clubs": "Clubs"
   },
   "competition": {
-    "seeCompetition": "Voir la compétition {name}",
+    "seeCompetition": "Voir la compétition",
     "levels": {
       "national": "National",
       "nationalShort": "Nat.",

@@ -5,6 +5,12 @@
   "playerNumber": "#{number}",
   "teamNumber": "Équipe #{number}",
   "playerDetail": {
+    "age": "{age} ans",
+    "ageLabel": "Age",
+    "height": "{heightCm} cm",
+    "heightLabel": "Taille",
+    "weight": "{weightKg} kg",
+    "weightLabel": "Poids",
     "playerNotFound": "Joueur non trouvé",
     "club": "Club",
     "seasonStatsTitle": "Statistiques Saison",
