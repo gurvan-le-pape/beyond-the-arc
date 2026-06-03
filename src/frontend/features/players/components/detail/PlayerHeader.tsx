@@ -1,5 +1,4 @@
 // src/frontend/features/players/components/detail/PlayerHeader.tsx
-"use client";
 import { getTranslations } from "next-intl/server";
 
 import { Link } from "@/navigation";
