@@ -2,7 +2,6 @@
 import { useTranslations } from "next-intl";
 
 import { NavButton } from "@/shared/components/primitives";
-import { Text } from "@/shared/components/typography";
 import type { Category } from "@/shared/constants";
 
 interface CategoryNavigationProps {
@@ -21,24 +20,17 @@ export function CategoryNavigation({
   if (availableCategories.length === 0) return null;
 
   return (
-    <div className="flex items-start gap-4 flex-wrap">
-      <div className="min-w-[8rem] pt-2">
-        <Text variant="label" className="text-text-heading">
-          {t("categoryLabel")}
-        </Text>
-      </div>
-      <div className="flex flex-wrap gap-2">
-        {availableCategories.map((cat) => (
-          <NavButton
-            key={cat}
-            variant={cat === currentCategory ? "navActive" : "navInactive"}
-            aria-pressed={cat === currentCategory}
-            onClick={() => onNavigate(cat)}
-          >
-            {cat}
-          </NavButton>
-        ))}
-      </div>
+    <div className="flex flex-wrap gap-2" aria-label={t("categoryAriaLabel")}>
+      {availableCategories.map((cat) => (
+        <NavButton
+          key={cat}
+          variant={cat === currentCategory ? "navActive" : "navInactive"}
+          aria-pressed={cat === currentCategory}
+          onClick={() => onNavigate(cat)}
+        >
+          {cat}
+        </NavButton>
+      ))}
     </div>
   );
 }
