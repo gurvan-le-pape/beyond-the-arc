@@ -89,26 +89,38 @@ export const MatchCard: React.FC<MatchCardProps> = ({
 
         {/* Score */}
         <div className="flex flex-col items-center flex-shrink-0 px-2">
-          <div className="text-xl font-bold text-text-heading mb-1">
-            <span
-              className={isHomeWinner ? "text-primary" : "text-text-emphasis"}
-            >
-              {hasScores ? match.homeTeamScore : "-"}
-            </span>
-            <span className="mx-1.5 text-text-muted">-</span>
-            <span
-              className={isAwayWinner ? "text-primary" : "text-text-emphasis"}
-            >
-              {hasScores ? match.awayTeamScore : "-"}
-            </span>
-          </div>
-          {/* Match Summary Link */}
-          <a
-            href={`/${locale}/matches/${match.id}`}
-            className="text-sm text-primary hover:text-primary-strong hover:underline transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ring-offset-surface rounded-button"
-          >
-            {tMatches("summary")}
-          </a>
+          {hasScores ? (
+            <>
+              <div className="text-xl font-bold text-text-heading mb-1">
+                <span
+                  className={
+                    isHomeWinner ? "text-primary" : "text-text-emphasis"
+                  }
+                >
+                  {match.homeTeamScore}
+                </span>
+                <span className="mx-1.5 text-text-muted">-</span>
+                <span
+                  className={
+                    isAwayWinner ? "text-primary" : "text-text-emphasis"
+                  }
+                >
+                  {match.awayTeamScore}
+                </span>
+              </div>
+              {/* Match Summary Link */}
+              <a
+                href={`/${locale}/matches/${match.id}`}
+                className="text-sm text-primary hover:text-primary-strong hover:underline transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ring-offset-surface rounded-button"
+              >
+                {tMatches("summary")}
+              </a>
+            </>
+          ) : (
+            <Badge variant="outline" size="md">
+              {tMatches("upcoming")}
+            </Badge>
+          )}
         </div>
 
         {/* Away Team */}
