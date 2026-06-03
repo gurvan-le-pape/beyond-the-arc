@@ -17,6 +17,7 @@
   "finalOT": "Terminé/Prol.",
   "viewMatchDetails": "Afficher les détails du match",
   "hideMatchDetails": "Réduire les détails du match",
+  "summary": "Résumé",
   "matchEvents": {
     "eventLabels": {
       "made_layup": "Layup réussi",

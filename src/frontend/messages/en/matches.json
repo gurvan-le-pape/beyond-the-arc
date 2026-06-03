@@ -17,6 +17,7 @@
   "finalOT": "Final/OT",
   "viewMatchDetails": "View match details",
   "hideMatchDetails": "Hide match details",
+  "summary": "Summary",
   "matchEvents": {
     "eventLabels": {
       "made_layup": "Made layup",

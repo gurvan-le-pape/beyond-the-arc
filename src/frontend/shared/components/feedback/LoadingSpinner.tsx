@@ -1,4 +1,6 @@
 // src/frontend/shared/components/feedback/LoadingSpinner.tsx
+import { useTranslations } from "next-intl";
+
 import { cn } from "@/shared/utils";
 
 /**
@@ -14,6 +16,8 @@ export function LoadingSpinner({
   size = "md",
   className,
 }: LoadingSpinnerProps) {
+  const tCommon = useTranslations("common");
+
   const sizeClasses = {
     sm: "h-4 w-4",
     md: "h-8 w-8",
@@ -45,7 +49,7 @@ export function LoadingSpinner({
           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
         />
       </svg>
-      <span className="sr-only">Loading...</span>
+      <span className="sr-only">{tCommon("loading")}</span>
     </div>
   );
 }
