@@ -1,7 +1,12 @@
 // src/backend/modules/players/players.controller.ts
 import { CACHE_TTL } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
-import { Category, CompetitionLevel, Gender } from "@common/index";
+import {
+  Category,
+  CompetitionLevel,
+  Gender,
+  ParseOptionalIntPipe,
+} from "@common/index";
 import { CacheInterceptor } from "@common/interceptors";
 import {
   Controller,
@@ -22,7 +27,11 @@ import {
 } from "@nestjs/swagger";
 
 import { GetPlayersQueryDto } from "./dto/players.query.dto";
-import { MatchHistoryDto, PlayerResponseDto } from "./dto/players.response.dto";
+import {
+  FilterValuesPlayersResponseDto,
+  MatchHistoryDto,
+  PlayerResponseDto,
+} from "./dto/players.response.dto";
 import { PlayersService } from "./players.service";
 
 /**
@@ -291,6 +300,31 @@ export class PlayersController {
       name: query.name,
       page: query.page ?? 1,
       limit: query.limit ?? 50,
+    });
+  }
+
+  @Get("filter-values")
+  @HttpCode(HttpStatus.OK)
+  @UseInterceptors(CacheInterceptor({ ttl: CACHE_TTL.MODERATE_DATA }))
+  @ApiOperation({
+    summary: "Get available filter values for players",
+    description:
+      "Returns available player numbers and team numbers. Optionally scoped to a committee or league.",
+  })
+  @ApiQuery({ name: "committeeId", required: false, type: Number })
+  @ApiQuery({ name: "leagueId", required: false, type: Number })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "Filter values successfully retrieved",
+    type: FilterValuesPlayersResponseDto,
+  })
+  async getPlayerFilterValues(
+    @Query("committeeId", new ParseOptionalIntPipe()) committeeId?: number,
+    @Query("leagueId", new ParseOptionalIntPipe()) leagueId?: number,
+  ): Promise<FilterValuesPlayersResponseDto> {
+    return this.playersService.findPlayerFilterValues({
+      committeeId,
+      leagueId,
     });
   }
 
