@@ -32,6 +32,9 @@ describe("PlayersService", () => {
       playerMatchStats: {
         findMany: jest.fn(),
       },
+      teams: {
+        findMany: jest.fn(),
+      },
     },
   };
 
@@ -209,6 +212,49 @@ describe("PlayersService", () => {
       await expect(service.findAllPlayers()).rejects.toThrow(
         "Database connection failed",
       );
+    });
+  });
+
+  describe("findPlayerFilterValues", () => {
+    it("should return available filter values", async () => {
+      // Arrange
+      mockPrismaService.client.players.findMany.mockResolvedValueOnce([
+        { number: 7 },
+        { number: 10 },
+      ]);
+      mockPrismaService.client.teams.findMany.mockResolvedValueOnce([
+        { number: 1 },
+        { number: 2 },
+      ]);
+
+      // Act
+      const result = await service.findPlayerFilterValues();
+
+      // Assert
+      expect(result.numbers).toEqual([7, 10]);
+      expect(result.teamNumbers).toEqual([1, 2]);
+    });
+
+    it("should scope by committeeId when provided", async () => {
+      // Arrange
+      mockPrismaService.client.players.findMany.mockResolvedValueOnce([
+        { number: 5 },
+      ]);
+      mockPrismaService.client.teams.findMany.mockResolvedValueOnce([
+        { number: 1 },
+      ]);
+
+      // Act
+      const result = await service.findPlayerFilterValues({ committeeId: 1 });
+
+      // Assert
+      expect(mockPrismaService.client.players.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { team: { club: { committeeId: 1 } } },
+        }),
+      );
+      expect(result.numbers).toEqual([5]);
+      expect(result.teamNumbers).toEqual([1]);
     });
   });
 
