@@ -76,6 +76,20 @@ export const playersQueries = {
     // Match results update regularly — refresh more aggressively than player metadata
     staleTime: 2 * 60 * 1000,
   }),
+
+  /**
+   * Query options for fetching available filter values for players.
+   * Returns player numbers and team numbers scoped to an optional
+   * committee or league.
+   *
+   * @example
+   * useQuery(playersQueries.filterValues({ committeeId: 1 }))
+   */
+  filterValues: (params?: { committeeId?: number; leagueId?: number }) => ({
+    queryKey: playersKeys.filterValues(params),
+    queryFn: () => playersService.getFilterValues(params),
+    ...PLAYERS_CONFIG,
+  }),
 } as const;
 
 /**
