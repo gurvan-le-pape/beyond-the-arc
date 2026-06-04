@@ -4,6 +4,7 @@ import type { PaginatedResponse } from "@/shared/types";
 import apiClient from "../../../lib/services/client/api-client";
 import type { Player } from "../types/Player";
 import type { PlayerFilters } from "../types/PlayerFilters";
+import type { PlayerFilterValues } from "../types/PlayerFilterValues";
 import type { PlayerMatchHistory } from "../types/PlayerMatchHistory";
 
 /**
@@ -76,6 +77,24 @@ export const playersService = {
    */
   async getMatches(playerId: number): Promise<PlayerMatchHistory[]> {
     const { data } = await apiClient.get<any>(`/players/${playerId}/matches`);
+    return data;
+  },
+
+  /**
+   * Get available filter values for players (player numbers, team numbers).
+   *
+   * @returns Filter values for players
+   * @example
+   * const filterValues = await playersService.getFilterValues();
+   */
+  async getFilterValues(params?: {
+    committeeId?: number;
+    leagueId?: number;
+  }): Promise<PlayerFilterValues> {
+    const { data } = await apiClient.get<PlayerFilterValues>(
+      "/players/filter-values",
+      { params },
+    );
     return data;
   },
 

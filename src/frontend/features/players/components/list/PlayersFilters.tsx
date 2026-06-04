@@ -6,7 +6,6 @@ import React, { useState } from "react";
 
 import { useCommitteeLeagueClubFilters } from "@/features/competitions/championships/hooks";
 import { useClubSearch } from "@/features/organizations/clubs/api";
-import { useTeamFilterValues } from "@/features/teams/api";
 import { ErrorMessage } from "@/shared/components/feedback";
 import { FiltersShell } from "@/shared/components/filters/FiltersShell";
 import { LevelLocationFilters } from "@/shared/components/filters/LevelLocationFilters";
@@ -20,6 +19,7 @@ import {
 } from "@/shared/constants";
 import { useDebounce } from "@/shared/hooks";
 
+import { usePlayerFilterValues } from "../../api";
 import type {
   PlayersFilterSetters,
   PlayersFilterState,
@@ -82,12 +82,12 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
     label: c.name,
   }));
 
-  const { data: teamFilterValues } = useTeamFilterValues({
+  const { data: playerFilterValues } = usePlayerFilterValues({
     committeeId,
     leagueId,
   });
-  const playerNumbers = teamFilterValues?.numbers ?? [];
-  const teamNumbers = teamFilterValues?.numbers ?? [];
+  const playerNumbers = playerFilterValues?.numbers ?? [];
+  const teamNumbers = playerFilterValues?.teamNumbers ?? [];
 
   const locationLabel =
     level === CompetitionLevel.DEPARTMENTAL

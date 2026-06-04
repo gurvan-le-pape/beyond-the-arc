@@ -8,6 +8,7 @@ import { Test } from "@nestjs/testing";
 import { LoggerModule } from "nestjs-pino";
 
 import type {
+  FilterValuesPlayersResponseDto,
   MatchHistoryDto,
   PlayerResponseDto,
 } from "./dto/players.response.dto";
@@ -31,6 +32,7 @@ describe("PlayersController", () => {
   const mockPlayersService = {
     findAllIds: jest.fn(),
     findAllPlayers: jest.fn(),
+    findPlayerFilterValues: jest.fn(),
     findPlayerById: jest.fn(),
     findPlayerMatchHistory: jest.fn(),
   };
@@ -248,6 +250,39 @@ describe("PlayersController", () => {
 
       // Act & Assert
       await expect(controller.getPlayers({})).rejects.toThrow("Database error");
+    });
+  });
+
+  describe("getPlayerFilterValues", () => {
+    it("should return available filter values", async () => {
+      // Arrange
+      const mockFilterValues: FilterValuesPlayersResponseDto = {
+        numbers: [1, 2, 3],
+        teamNumbers: [1, 2],
+      };
+
+      mockPlayersService.findPlayerFilterValues.mockResolvedValue(
+        mockFilterValues,
+      );
+
+      // Act
+      const result = await controller.getPlayerFilterValues();
+
+      // Assert
+      expect(result).toEqual(mockFilterValues);
+      expect(service.findPlayerFilterValues).toHaveBeenCalled();
+    });
+
+    it("should propagate service errors", async () => {
+      // Arrange
+      mockPlayersService.findPlayerFilterValues.mockRejectedValue(
+        new Error("Database error"),
+      );
+
+      // Act & Assert
+      await expect(controller.getPlayerFilterValues()).rejects.toThrow(
+        "Database error",
+      );
     });
   });
 

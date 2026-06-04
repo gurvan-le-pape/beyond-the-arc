@@ -8,4 +8,6 @@ export const playersKeys = {
   details: () => [...playersKeys.all, "detail"] as const,
   detail: (id: number) => [...playersKeys.details(), id] as const,
   matches: (id: number) => [...playersKeys.detail(id), "matches"] as const,
+  filterValues: (params?: { committeeId?: number; leagueId?: number }) =>
+    [...playersKeys.all, "filter-values", params] as const,
 };
