@@ -150,4 +150,11 @@ export const matchesPrefetch = {
       .prefetchQuery(matchesQueries.playerStats(matchId))
       .catch(() => {});
   },
+
+  /**
+   * Prefetch matches for a specific pool (e.g., on pool selector hover).
+   */
+  byPool: (queryClient: QueryClient) => (poolId: number) => {
+    queryClient.prefetchQuery(matchesQueries.byPool(poolId)).catch(() => {});
+  },
 } as const;
