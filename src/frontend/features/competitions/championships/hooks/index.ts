@@ -4,7 +4,6 @@
  */
 
 export * from "./useCategoryNavigation";
-export * from "./useChampionshipsDetail";
 export * from "./useChampionshipsFilterState";
 export * from "./useCommitteeLeagueClubFilters";
 export * from "./useDivisionNavigation";

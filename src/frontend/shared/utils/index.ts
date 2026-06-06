@@ -4,7 +4,6 @@
  */
 
 export * from "./cn";
-export * from "./createDropdownRefs";
 export * from "./formatNameToFileName";
 export * from "./formatOrganizationName";
 export * from "./grouping";

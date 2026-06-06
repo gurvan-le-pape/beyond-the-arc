@@ -14,5 +14,4 @@ export * from "./organization-types";
 export * from "./positions";
 export * from "./roles";
 export * from "./strings";
-export * from "./testIds";
 export * from "./view-levels";

@@ -6,5 +6,4 @@
 export * from "./CategoryNav";
 export * from "./Championship";
 export * from "./ChampionshipFilters";
-export * from "./Division";
 export * from "./DivisionNav";
