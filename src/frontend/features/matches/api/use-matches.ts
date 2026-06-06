@@ -1,6 +1,11 @@
 // src/frontend/features/matches/api/use-matches.ts
 import type { UseQueryResult } from "@tanstack/react-query";
-import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useQueries,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 import type { ApiError, PaginatedResponse } from "@/shared/types";
 
@@ -55,6 +60,9 @@ export function useMatch(id: number, options?: { enabled?: boolean }) {
 /**
  * Hook to fetch all matches for a specific pool.
  *
+ * Features:
+ * - Keeps previous pool data visible while fetching new pool (instant switching UX)
+ *
  * @param poolId - The pool ID
  * @param options - Additional query options
  * @returns React Query result with matches
@@ -69,6 +77,7 @@ export function useMatchesByPool(
   return useQuery<Match[], ApiError>({
     ...matchesQueries.byPool(poolId),
     enabled: options?.enabled ?? !!poolId,
+    placeholderData: keepPreviousData,
   });
 }
 
@@ -175,5 +184,6 @@ export function useMatchesPrefetch() {
     events: matchesPrefetch.events(queryClient),
     detail: matchesPrefetch.detail(queryClient),
     playerStats: matchesPrefetch.playerStats(queryClient),
+    byPool: matchesPrefetch.byPool(queryClient),
   };
 }
