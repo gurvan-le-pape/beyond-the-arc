@@ -5,7 +5,6 @@
 
 export * from "./useCategoryNavigation";
 export * from "./useChampionshipsDetail";
-export * from "./useChampionshipsDetailById";
 export * from "./useChampionshipsFilterState";
 export * from "./useCommitteeLeagueClubFilters";
 export * from "./useDivisionNavigation";
