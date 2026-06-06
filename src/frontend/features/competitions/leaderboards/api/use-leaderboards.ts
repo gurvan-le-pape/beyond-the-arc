@@ -18,6 +18,7 @@ import {
  * - Automatic caching (2 minutes stale, 5 minutes GC — leaderboards change frequently)
  * - Background refetching on window focus
  * - Conditional enabling
+ * - Supports initialData for server-prefetched hydration (avoids loading flash)
  *
  * @param filters - Filter criteria (poolId)
  * @param options - Additional query options
@@ -32,14 +33,22 @@ import {
  *   { poolId },
  *   { enabled: !!poolId }
  * );
+ *
+ * @example
+ * // With server-prefetched initial data
+ * const { data } = useLeaderboard(
+ *   { poolId: selectedPoolId },
+ *   { initialData: serverLeaderboard }
+ * );
  */
 export function useLeaderboard(
   filters?: LeaderboardFilters,
-  options?: { enabled?: boolean },
+  options?: { enabled?: boolean; initialData?: Leaderboard[] },
 ) {
   return useQuery<Leaderboard[], ApiError>({
     ...leaderboardsQueries.list(filters),
     enabled: options?.enabled ?? true,
+    initialData: options?.initialData,
   });
 }
 
