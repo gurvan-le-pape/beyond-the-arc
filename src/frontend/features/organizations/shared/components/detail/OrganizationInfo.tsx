@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/components/detail/OrganizationInfo.tsx
+// src/frontend/features/organizations/shared/components/detail/OrganizationInfo.tsx
 "use client";
 
 import { Globe, Mail, MapPin, Phone, User } from "lucide-react";
