@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/components/detail/SearchableChipsList.tsx
+// src/frontend/features/organizations/shared/components/detail/SearchableChipsList.tsx
 "use client";
 
 import { useTranslations } from "next-intl";

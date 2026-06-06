@@ -10,7 +10,7 @@ import {
   OrganizationHeader,
   OrganizationInfo,
   SearchableChipList,
-} from "@/features/organizations/components";
+} from "@/features/organizations/shared/components";
 import { GenderCategorizedSection } from "@/shared/components/domain";
 import { EmptyState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
