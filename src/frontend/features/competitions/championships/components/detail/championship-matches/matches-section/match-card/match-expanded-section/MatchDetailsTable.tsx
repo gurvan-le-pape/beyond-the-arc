@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/components/detail/matches/MatchDetailsTable.tsx
+// src/frontend/features/competitions/championships/components/detail/championship-matches/matches-section/match-card/match-expanded-section/MatchDetailsTable.tsx
 import { useTranslations } from "next-intl";
 import React from "react";
 

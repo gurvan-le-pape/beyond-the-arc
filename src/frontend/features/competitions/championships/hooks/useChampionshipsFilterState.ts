@@ -1,4 +1,6 @@
 // src/frontend/features/competitions/championships/hooks/useChampionshipsFilterState.ts
+"use client";
+
 import { useEffect, useState } from "react";
 
 import type { Category, Gender } from "@/shared/constants";

@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/components/detail/navigation/CategoryNavigation.tsx
+// src/frontend/features/competitions/championships/components/detail/championship-navigation/CategoryNavigation.tsx
 import { useTranslations } from "next-intl";
 
 import { NavButton } from "@/shared/components/primitives";
