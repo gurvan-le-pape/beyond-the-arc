@@ -22,48 +22,38 @@ const defaultTeamStatsConfig: StatConfig[] = [
   {
     key: "players",
     labelKey: "teamDetail.players",
-    value: (stats) => stats.players,
+    value: (stats) => stats.players ?? "N/A",
     highlight: true,
   },
   {
     key: "pointsPerGame",
     labelKey: "teamDetail.pointsPerGame",
     value: (stats) =>
-      stats.totalGames > 0
-        ? (stats.points / stats.totalGames).toFixed(1)
-        : "0.0",
+      stats.gamesPlayed > 0 ? stats.pointsPerGame.toFixed(1) : "0.0",
   },
   {
     key: "reboundsPerGame",
     labelKey: "teamDetail.reboundsPerGame",
     value: (stats) =>
-      stats.totalGames > 0
-        ? (stats.rebounds / stats.totalGames).toFixed(1)
-        : "0.0",
+      stats.gamesPlayed > 0 ? stats.reboundsPerGame.toFixed(1) : "0.0",
   },
   {
     key: "assistsPerGame",
     labelKey: "teamDetail.assistsPerGame",
     value: (stats) =>
-      stats.totalGames > 0
-        ? (stats.assists / stats.totalGames).toFixed(1)
-        : "0.0",
+      stats.gamesPlayed > 0 ? stats.assistsPerGame.toFixed(1) : "0.0",
   },
   {
     key: "stealsPerGame",
     labelKey: "teamDetail.stealsPerGame",
     value: (stats) =>
-      stats.totalGames > 0
-        ? (stats.steals / stats.totalGames).toFixed(1)
-        : "0.0",
+      stats.gamesPlayed > 0 ? stats.stealsPerGame.toFixed(1) : "0.0",
   },
   {
     key: "blocksPerGame",
     labelKey: "teamDetail.blocksPerGame",
     value: (stats) =>
-      stats.totalGames > 0
-        ? (stats.blocks / stats.totalGames).toFixed(1)
-        : "0.0",
+      stats.gamesPlayed > 0 ? stats.blocksPerGame.toFixed(1) : "0.0",
   },
 ];
 

@@ -7,9 +7,16 @@ export function aggregateTeamStats(
   teamId: number,
   matches: TeamMatchHistory[],
 ) {
-  const allStats = matches.flatMap((match) =>
-    match.players.filter((p) => p.player.teamId === teamId).map((p) => p.stats),
+  const teamParticipants = matches.flatMap((match) =>
+    match.players.filter((p) => p.player.teamId === teamId),
   );
 
-  return aggregateStats(allStats);
+  const allStats = teamParticipants.map((p) => p.stats);
+  const uniquePlayers = new Set(teamParticipants.map((p) => p.player.id));
+
+  return {
+    ...aggregateStats(allStats),
+    players: uniquePlayers.size,
+    totalGames: aggregateStats(allStats).gamesPlayed, // alias for TeamInfo's naming, or just fix TeamInfo instead
+  };
 }
