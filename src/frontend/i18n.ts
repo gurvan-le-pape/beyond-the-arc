@@ -2,7 +2,7 @@
 import { notFound } from "next/navigation";
 import { getRequestConfig } from "next-intl/server";
 
-const locales = ["en", "fr"];
+const locales = new Set(["en", "fr"]);
 
 // List of all your namespaces
 const namespaces = [
@@ -26,7 +26,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
   let locale = await requestLocale;
 
   // Ensure that a valid locale is used
-  if (!locale || !locales.includes(locale)) {
+  if (!locale || !locales.has(locale)) {
     notFound(); // This will trigger Next.js 404 page
   }
 
