@@ -1,5 +1,5 @@
 // src/backend/modules/matches/matches.service.ts
-import { Position, Role } from "@common/constants";
+import { MatchEventRole, Position } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
 import { Category, CompetitionLevel, Gender } from "@common/index";
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
@@ -451,7 +451,7 @@ export class MatchesService {
       timestamp: event.timestamp,
       description: event.description,
       players: event.players.map((p) => ({
-        role: p.role as Role,
+        role: p.role as MatchEventRole,
         player: {
           id: p.player.id,
           name: p.player.name,
@@ -587,8 +587,6 @@ export class MatchesService {
     const where: Prisma.MatchesWhereInput = {};
 
     if (filters?.poolId) where.poolId = filters.poolId;
-    if (filters?.championshipId)
-      where.pool = { championshipId: filters.championshipId };
 
     const poolFilter = this.buildPoolFilter(filters);
     if (filters?.championshipId && poolFilter) {
