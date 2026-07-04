@@ -40,26 +40,6 @@ def insert_scheduled_matches_bulk(
     )
 
 
-def insert_scheduled_match(
-    cursor: psycopg.Cursor,
-    pool_id: int,
-    matchday: int,
-    scheduled_at: datetime,
-    home_team_id: int,
-    away_team_id: int,
-) -> int:
-    """Single-row insert kept for compatibility. Prefer insert_scheduled_matches_bulk."""
-    cursor.execute(
-        """
-        INSERT INTO matches (pool_id, matchday, date, home_team_id, away_team_id, status)
-        VALUES (%s, %s, %s, %s, %s, 'scheduled')
-        RETURNING id;
-        """,
-        (pool_id, matchday, scheduled_at, home_team_id, away_team_id),
-    )
-    return cursor.fetchone()[0]
-
-
 def fetch_due_matches(cursor: psycopg.Cursor) -> list[ScheduledMatch]:
     """Fetch all matches that are due but not yet generated."""
     cursor.execute(
