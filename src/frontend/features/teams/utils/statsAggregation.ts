@@ -17,6 +17,5 @@ export function aggregateTeamStats(
   return {
     ...aggregateStats(allStats),
     players: uniquePlayers.size,
-    totalGames: aggregateStats(allStats).gamesPlayed, // alias for TeamInfo's naming, or just fix TeamInfo instead
   };
 }
