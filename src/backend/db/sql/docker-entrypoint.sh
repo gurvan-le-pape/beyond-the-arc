@@ -21,6 +21,7 @@ apply_migrations() {
     else
         echo "Directory $dir does not exist. Skipping."
     fi
+    return 0
 }
 
 if [[ -f "$DUMP_FILE" ]]; then
