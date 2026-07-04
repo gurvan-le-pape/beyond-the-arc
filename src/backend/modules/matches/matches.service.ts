@@ -2,6 +2,7 @@
 import { MatchEventRole, Position } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
 import { Category, CompetitionLevel, Gender } from "@common/index";
+import { mapPlayerMatchStats, normalizeLimit, normalizePage } from "@common/utils";
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { fromZonedTime } from "date-fns-tz";
 import { PrismaService } from "prisma/prisma.service";
@@ -248,8 +249,8 @@ export class MatchesService {
   async findAllMatches(
     filters?: MatchFilters,
   ): Promise<PaginatedResponseDto<MatchDetailResponseDto>> {
-    const page = this.validatePage(filters?.page ?? 1);
-    const limit = this.validateLimit(filters?.limit ?? 50);
+    const page = normalizePage(filters?.page ?? 1);
+    const limit = normalizeLimit(filters?.limit ?? 50);
     const skip = (page - 1) * limit;
     const where = this.buildWhereClause(filters);
 
@@ -485,30 +486,10 @@ export class MatchesService {
         team: stat.player.team,
       },
       stats: {
-        points: stat.points,
-        fouls: stat.fouls,
-        threePointsMade: stat.threePointsMade,
-        threePointsAttempted: stat.threePointsAttempted,
-        twoPointsIntMade: stat.twoPointsIntMade,
-        twoPointsIntAttempted: stat.twoPointsIntAttempted,
-        twoPointsExtMade: stat.twoPointsExtMade,
-        twoPointsExtAttempted: stat.twoPointsExtAttempted,
-        freeThrowsMade: stat.freeThrowsMade,
-        freeThrowsAttempted: stat.freeThrowsAttempted,
-        assists: stat.assists,
-        turnovers: stat.turnovers,
-        rebounds: {
-          total: stat.reboundsOffensive + stat.reboundsDefensive,
-          offensive: stat.reboundsOffensive,
-          defensive: stat.reboundsDefensive,
-        },
-        steals: stat.steals,
-        blocks: stat.blocks,
+        ...mapPlayerMatchStats(stat),
         playtime: this.calculatePlaytime(
           stat.playtimeIntervals as number[][] | null,
         ),
-        // playtimeIntervals is stored as Json in Prisma — expected shape: number[][]
-        playtimeIntervals: (stat.playtimeIntervals as number[][]) ?? null,
       },
     }));
   }
@@ -519,14 +500,6 @@ export class MatchesService {
       (total, interval) => total + (interval[1] - interval[0]),
       0,
     );
-  }
-
-  private validatePage(page: number): number {
-    return page > 0 ? page : 1;
-  }
-
-  private validateLimit(limit: number): number {
-    return limit > 0 ? Math.min(limit, 100) : 50;
   }
 
   private buildPoolFilter(

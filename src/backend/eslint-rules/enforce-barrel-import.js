@@ -6,6 +6,7 @@ const BARREL_DIRS = [
   "@common/middleware",
   "@common/pipes",
   "@common/types",
+  "@common/utils",
   "@modules/competitions/championships/dto",
   "@modules/competitions/leaderboards/dto",
   "@modules/competitions/pools/dto",

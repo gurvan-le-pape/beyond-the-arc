@@ -2,6 +2,7 @@
 import { CompetitionLevel, Position } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
 import { Category, Gender } from "@common/index";
+import { mapPlayerMatchStats, normalizeLimit, normalizePage } from "@common/utils";
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 
@@ -331,8 +332,8 @@ export class TeamsService {
   async findAllTeams(
     filters?: TeamFilters,
   ): Promise<PaginatedResponseDto<TeamResponseDto>> {
-    const page = this.validatePage(filters?.page ?? 1);
-    const limit = this.validateLimit(filters?.limit ?? 50);
+    const page = normalizePage(filters?.page ?? 1);
+    const limit = normalizeLimit(filters?.limit ?? 50);
     const skip = (page - 1) * limit;
     const where = this.buildWhereClause(filters);
 
@@ -549,44 +550,9 @@ export class TeamsService {
           position: stat.player.position as Position,
           teamId: stat.player.teamId,
         },
-        stats: {
-          points: stat.points,
-          fouls: stat.fouls,
-          threePointsMade: stat.threePointsMade,
-          threePointsAttempted: stat.threePointsAttempted,
-          twoPointsIntMade: stat.twoPointsIntMade,
-          twoPointsIntAttempted: stat.twoPointsIntAttempted,
-          twoPointsExtMade: stat.twoPointsExtMade,
-          twoPointsExtAttempted: stat.twoPointsExtAttempted,
-          freeThrowsMade: stat.freeThrowsMade,
-          freeThrowsAttempted: stat.freeThrowsAttempted,
-          assists: stat.assists,
-          turnovers: stat.turnovers,
-          rebounds: {
-            total: stat.reboundsOffensive + stat.reboundsDefensive,
-            offensive: stat.reboundsOffensive,
-            defensive: stat.reboundsDefensive,
-          },
-          steals: stat.steals,
-          blocks: stat.blocks,
-          playtimeIntervals: stat.playtimeIntervals as number[][] | null,
-        },
+        stats: mapPlayerMatchStats(stat),
       })),
     } satisfies TeamMatchHistoryDto;
-  }
-
-  /**
-   * Validates and normalizes page number.
-   */
-  private validatePage(page: number): number {
-    return page > 0 ? page : 1;
-  }
-
-  /**
-   * Validates and normalizes limit.
-   */
-  private validateLimit(limit: number): number {
-    return limit > 0 ? Math.min(limit, 100) : 50;
   }
 
   private buildPoolFilter(
