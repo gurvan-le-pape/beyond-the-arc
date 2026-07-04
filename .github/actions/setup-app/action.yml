@@ -1,0 +1,22 @@
+name: Setup app
+description: Set up Node.js with npm cache and install dependencies for a given app directory. Caller must check out the repo first — a local composite action can't check itself out.
+
+inputs:
+  working-directory:
+    description: App directory to install dependencies in (e.g. src/backend or src/frontend)
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 24
+        cache: npm
+        cache-dependency-path: ${{ inputs.working-directory }}/package-lock.json
+
+    - name: Install dependencies
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: npm ci
