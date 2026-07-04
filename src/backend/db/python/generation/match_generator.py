@@ -18,6 +18,7 @@ from datetime import timedelta
 
 from db.repositories import match_repository, team_repository
 from db.repositories.match_repository import ScheduledMatch
+from event_rules import MADE_SHOTS, MISSED_SHOTS, SHOT_CATEGORY_STAT_PREFIX
 from generation.playtime_generator import flatten_intervals, generate as generate_playtime
 from simulation.match_simulator import MatchSimulator
 
@@ -144,24 +145,15 @@ class MatchGenerator:
                 s = get_or_create(player_id)
 
                 if role == "shooter":
-                    if event_type in ["made_catch_and_shoot_three", "made_step_back_three", "3_point_and_1"]:
-                        s["points"] += 3
-                        s["three_points_made"] += 1
-                        s["three_points_attempted"] += 1
-                    elif event_type in ["missed_catch_and_shoot_three", "missed_step_back_three"]:
-                        s["three_points_attempted"] += 1
-                    elif event_type in ["made_layup", "made_dunk", "2_point_int_and_1"]:
-                        s["points"] += 2
-                        s["two_points_int_made"] += 1
-                        s["two_points_int_attempted"] += 1
-                    elif event_type in ["missed_layup", "missed_dunk"]:
-                        s["two_points_int_attempted"] += 1
-                    elif event_type in ["made_fadeaway", "made_pull_up_jump_shot", "2_point_ext_and_1"]:
-                        s["points"] += 2
-                        s["two_points_ext_made"] += 1
-                        s["two_points_ext_attempted"] += 1
-                    elif event_type in ["missed_fadeaway", "missed_pull_up_jump_shot"]:
-                        s["two_points_ext_attempted"] += 1
+                    if event_type in MADE_SHOTS:
+                        category, shot_points = MADE_SHOTS[event_type]
+                        prefix = SHOT_CATEGORY_STAT_PREFIX[category]
+                        s["points"] += shot_points
+                        s[f"{prefix}_made"] += 1
+                        s[f"{prefix}_attempted"] += 1
+                    elif event_type in MISSED_SHOTS:
+                        prefix = SHOT_CATEGORY_STAT_PREFIX[MISSED_SHOTS[event_type]]
+                        s[f"{prefix}_attempted"] += 1
                     elif event_type == "free_throw_made":
                         s["points"] += 1
                         s["free_throws_made"] += 1

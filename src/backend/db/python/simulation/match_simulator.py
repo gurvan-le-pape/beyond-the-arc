@@ -5,6 +5,7 @@ MatchSimulator
 import random
 from datetime import timedelta
 
+from event_rules import AND_ONE_FREE_THROWS, MADE_SHOTS, SHOOTING_FOUL_FREE_THROWS
 from simulation.game_state_manager import GameStateManager
 from simulation.event_generator import EventGenerator
 from simulation.substitution_queue import SubQueue
@@ -110,16 +111,12 @@ class MatchSimulator:
                     event_type = generated_event["event_type"]
 
                     # Update score
-                    if event_type in ["made_catch_and_shoot_three", "made_step_back_three", "3_point_and_1"]:
+                    if event_type in MADE_SHOTS:
+                        _, shot_points = MADE_SHOTS[event_type]
                         if current_possession == "home":
-                            home_team_score += 3
+                            home_team_score += shot_points
                         else:
-                            away_team_score += 3
-                    elif event_type in ["made_layup", "made_dunk", "made_fadeaway", "made_pull_up_jump_shot", "2_point_int_and_1", "2_point_ext_and_1"]:
-                        if current_possession == "home":
-                            home_team_score += 2
-                        else:
-                            away_team_score += 2
+                            away_team_score += shot_points
                     elif event_type == "free_throw_made":
                         if current_possession == "home":
                             home_team_score += 1
@@ -128,13 +125,9 @@ class MatchSimulator:
 
                     # Free throws for fouls
                     shooter_id = generated_event.get("player_roles", {}).get("shooter")
-                    num_free_throws = 0
-                    if event_type == "3_point_shooting_foul":
-                        num_free_throws = 3
-                    elif event_type in ["2_point_ext_shooting_foul", "2_point_int_shooting_foul"]:
-                        num_free_throws = 2
-                    elif event_type in ["3_point_and_1", "2_point_ext_and_1", "2_point_int_and_1"]:
-                        num_free_throws = 1
+                    num_free_throws = SHOOTING_FOUL_FREE_THROWS.get(
+                        event_type, AND_ONE_FREE_THROWS.get(event_type, 0)
+                    )
 
                     if num_free_throws > 0 and shooter_id:
                         ft_team = current_possession
