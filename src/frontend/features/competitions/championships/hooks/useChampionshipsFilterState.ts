@@ -4,16 +4,22 @@
 import { useEffect, useState } from "react";
 
 import type { Category, Gender } from "@/shared/constants";
+import { usePaginationState } from "@/shared/hooks";
 
 function useSharedFilterState() {
   const [category, setCategory] = useState<Category | undefined>(undefined);
   const [gender, setGender] = useState<Gender | undefined>(undefined);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
+  const {
+    currentPage,
+    setCurrentPage,
+    pageSize,
+    setPageSize,
+    resetToFirstPage,
+  } = usePaginationState(20);
 
   useEffect(() => {
-    setCurrentPage(1);
-  }, [category, gender, pageSize]);
+    resetToFirstPage();
+  }, [category, gender, pageSize, resetToFirstPage]);
 
   return {
     filters: { category, gender, currentPage, pageSize },

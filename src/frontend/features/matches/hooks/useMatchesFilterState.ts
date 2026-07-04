@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { useCommitteeLeagueClubFilters } from "@/features/competitions/championships/hooks";
 import type { Category, CompetitionLevel, Gender } from "@/shared/constants";
+import { usePaginationState } from "@/shared/hooks";
 
 export interface MatchesFilterState {
   search: string;
@@ -51,11 +52,16 @@ export function useMatchesFilterState() {
   const [division, setDivision] = useState<number | undefined>(undefined);
   const [poolId, setPoolId] = useState<number | undefined>(undefined);
   const [matchday, setMatchday] = useState<number | undefined>(undefined);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(50);
+  const {
+    currentPage,
+    setCurrentPage,
+    pageSize,
+    setPageSize,
+    resetToFirstPage,
+  } = usePaginationState(50);
 
   useEffect(() => {
-    setCurrentPage(1);
+    resetToFirstPage();
   }, [
     level,
     committeeId,
@@ -67,6 +73,7 @@ export function useMatchesFilterState() {
     gender,
     search,
     dateFilter,
+    resetToFirstPage,
   ]);
 
   const handleSetLevel = useCallback(

@@ -5,4 +5,5 @@
 
 export * from "./useDebounce";
 export * from "./useDropdown";
+export * from "./usePaginationState";
 export * from "./useToggleCategory";
