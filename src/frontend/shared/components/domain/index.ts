@@ -7,5 +7,6 @@ export * from "./CategorySection";
 export * from "./GenderCategorizedList";
 export * from "./GenderCategorizedSection";
 export * from "./LeaderboardTable";
+export * from "./matches/matchHistoryColumns";
 export * from "./matches/MatchTeamLabel";
 export * from "./search/SearchTabShell";

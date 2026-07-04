@@ -2,9 +2,11 @@
 import { useTranslations } from "next-intl";
 import { useMemo } from "react";
 
-import { MatchTeamLabel } from "@/shared/components/domain";
+import {
+  buildMatchDateColumn,
+  buildMatchupColumn,
+} from "@/shared/components/domain";
 import { Badge } from "@/shared/components/primitives";
-import { formatMatchDateTime } from "@/shared/utils";
 
 import type { Team } from "../types/Team";
 import type { TeamMatchHistory } from "../types/TeamMatchHistory";
@@ -15,32 +17,11 @@ export function useTeamMatchHistoryColumns(team: Team) {
 
   return useMemo(
     () => [
-      {
-        key: "date",
-        header: tCommon("matchHistory.date"),
-        render: (match: TeamMatchHistory) => formatMatchDateTime(match.date),
-        align: "center" as const,
-      },
-      {
-        key: "match",
-        header: tCommon("matchHistory.match"),
-        render: (match: TeamMatchHistory) => (
-          <>
-            <MatchTeamLabel
-              name={match.homeTeam.club.name}
-              teamId={match.homeTeam.id}
-              currentTeamId={team.id}
-            />
-            {" vs "}
-            <MatchTeamLabel
-              name={match.awayTeam.club.name}
-              teamId={match.awayTeam.id}
-              currentTeamId={team.id}
-            />
-          </>
-        ),
-        align: "center" as const,
-      },
+      buildMatchDateColumn<TeamMatchHistory>(tCommon("matchHistory.date")),
+      buildMatchupColumn<TeamMatchHistory>(
+        tCommon("matchHistory.match"),
+        team.id,
+      ),
       {
         key: "score",
         header: tCommon("matchHistory.score"),
