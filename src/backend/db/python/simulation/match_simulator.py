@@ -130,23 +130,13 @@ class MatchSimulator:
                     )
 
                     if num_free_throws > 0 and shooter_id:
-                        ft_team = current_possession
-                        for i in range(num_free_throws):
-                            ft_made = random.random() < 0.75  # noqa: S2245
-                            ft_type = "free_throw_made" if ft_made else "free_throw_missed"
-                            add_event({
-                                "timestamp": None,
-                                "event_type": ft_type,
-                                "player_roles": {"shooter": shooter_id},
-                                "description": f"{player_names.get(shooter_id, f'Player {shooter_id}')} {'made' if ft_made else 'missed'} free throw {i + 1} of {num_free_throws}.",
-                            }, current_time)
-                            if ft_made:
-                                if ft_team == "home":
-                                    home_team_score += 1
-                                else:
-                                    away_team_score += 1
-                            if i == num_free_throws - 1:
-                                last_ft_made = ft_made
+                        ft_points, last_ft_made = self._generate_free_throws(
+                            shooter_id, num_free_throws, current_time, add_event
+                        )
+                        if current_possession == "home":
+                            home_team_score += ft_points
+                        else:
+                            away_team_score += ft_points
 
                     # Possession clock updates
                     if event_type in ["traveling", "carrying", "double_dribble", "bad_pass", "steal",
@@ -180,17 +170,41 @@ class MatchSimulator:
             self.state_manager.current_state = next_state
 
             # Advance game clock
-            if next_state == "possession":
-                time_spent = random.randint(10, 15)  # noqa: S2245
-            elif next_state == "shot_attempt":
-                time_spent = random.randint(2, 5)  # noqa: S2245
-            elif next_state == "rebound":
-                time_spent = random.randint(1, 3)  # noqa: S2245
-            else:  # dead_ball
-                time_spent = 0
-
-            time_spent = min(time_spent, possession_clock)
+            time_spent = min(self._time_spent_for_state(next_state), possession_clock)
             current_time += time_spent
             possession_clock -= time_spent
 
         return match_events, home_team_score, away_team_score
+
+    def _generate_free_throws(self, shooter_id, num_free_throws, current_time, add_event):
+        """
+        Simulate a sequence of free throws for one shooting foul.
+        Appends one event per attempt via add_event and returns
+        (points scored, whether the last attempt was made).
+        """
+        points = 0
+        last_made = None
+        for i in range(num_free_throws):
+            made = random.random() < 0.75  # noqa: S2245
+            add_event({
+                "timestamp": None,
+                "event_type": "free_throw_made" if made else "free_throw_missed",
+                "player_roles": {"shooter": shooter_id},
+                "description": f"{self.player_names.get(shooter_id, f'Player {shooter_id}')} {'made' if made else 'missed'} free throw {i + 1} of {num_free_throws}.",
+            }, current_time)
+            if made:
+                points += 1
+            if i == num_free_throws - 1:
+                last_made = made
+        return points, last_made
+
+    def _time_spent_for_state(self, next_state):
+        """Random ticks the game clock advances for the state just entered."""
+        if next_state == "possession":
+            return random.randint(10, 15)  # noqa: S2245
+        elif next_state == "shot_attempt":
+            return random.randint(2, 5)  # noqa: S2245
+        elif next_state == "rebound":
+            return random.randint(1, 3)  # noqa: S2245
+        else:  # dead_ball
+            return 0
