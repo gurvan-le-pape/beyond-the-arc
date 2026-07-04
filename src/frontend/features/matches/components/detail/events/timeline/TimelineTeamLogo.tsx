@@ -3,7 +3,7 @@
 import { formatNameToFileName } from "@/shared/utils";
 
 interface TimelineTeamLogoProps {
-  teamName: string;
+  readonly teamName: string;
 }
 
 /**

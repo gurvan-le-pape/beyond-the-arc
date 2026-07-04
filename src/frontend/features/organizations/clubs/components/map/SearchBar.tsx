@@ -7,11 +7,11 @@ import { useEffect, useRef } from "react";
 import { Text } from "@/shared/components/typography";
 
 interface SearchBarProps {
-  query: string;
-  onQueryChange: (query: string) => void;
-  onClear: () => void;
-  placeholder?: string;
-  resultCount?: number;
+  readonly query: string;
+  readonly onQueryChange: (query: string) => void;
+  readonly onClear: () => void;
+  readonly placeholder?: string;
+  readonly resultCount?: number;
 }
 
 export function SearchBar({

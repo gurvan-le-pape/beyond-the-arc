@@ -6,8 +6,8 @@ import { Layer, Source } from "react-map-gl/maplibre";
 import { MAP_COLORS } from "@/features/organizations/clubs/constants";
 
 interface RegionsLayerProps {
-  geoJson: any;
-  labels?: any;
+  readonly geoJson: any;
+  readonly labels?: any;
 }
 
 export function RegionsLayer({ geoJson, labels }: RegionsLayerProps) {

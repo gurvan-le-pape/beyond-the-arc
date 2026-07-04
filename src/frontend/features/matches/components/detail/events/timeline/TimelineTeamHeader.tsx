@@ -5,8 +5,8 @@ import type { TeamInfo } from "@/features/teams/types";
 import { TimelineTeamLogo } from "./TimelineTeamLogo";
 
 interface TimelineTeamHeaderProps {
-  homeTeam: TeamInfo;
-  awayTeam: TeamInfo;
+  readonly homeTeam: TeamInfo;
+  readonly awayTeam: TeamInfo;
 }
 
 /**
