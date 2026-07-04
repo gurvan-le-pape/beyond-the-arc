@@ -12,6 +12,3 @@ COPY ./src/backend/db/sql/docker-entrypoint.sh /docker-entrypoint-initdb.d/docke
 
 # Make the script executable
 RUN chmod +x /docker-entrypoint-initdb.d/docker-entrypoint.sh
-
-# Explicitly switch to the non-root postgres user for safety
-# USER postgres
