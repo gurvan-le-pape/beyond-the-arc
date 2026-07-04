@@ -19,15 +19,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup app
+        uses: ./.github/actions/setup-app
         with:
-          node-version: 24
-          cache: npm
-          cache-dependency-path: src/backend/package-lock.json
-
-      - name: Install dependencies
-        run: npm ci
+          working-directory: src/backend
 
       - name: Lint
         run: npm run lint
@@ -43,15 +38,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup app
+        uses: ./.github/actions/setup-app
         with:
-          node-version: 24
-          cache: npm
-          cache-dependency-path: src/backend/package-lock.json
-
-      - name: Install dependencies
-        run: npm ci
+          working-directory: src/backend
 
       - name: Run tests with coverage
         run: npm test -- --coverage --coverageReporters=lcov
@@ -73,15 +63,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup app
+        uses: ./.github/actions/setup-app
         with:
-          node-version: 24
-          cache: npm
-          cache-dependency-path: src/backend/package-lock.json
-
-      - name: Install dependencies
-        run: npm ci
+          working-directory: src/backend
 
       - name: Build
         run: npm run build
@@ -100,15 +85,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup app
+        uses: ./.github/actions/setup-app
         with:
-          node-version: 24
-          cache: npm
-          cache-dependency-path: src/frontend/package-lock.json
-
-      - name: Install dependencies
-        run: npm ci
+          working-directory: src/frontend
 
       - name: Lint
         run: npm run lint
@@ -124,15 +104,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup app
+        uses: ./.github/actions/setup-app
         with:
-          node-version: 24
-          cache: npm
-          cache-dependency-path: src/frontend/package-lock.json
-
-      - name: Install dependencies
-        run: npm ci
+          working-directory: src/frontend
 
       - name: Typecheck
         run: npm run typecheck
@@ -148,15 +123,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup app
+        uses: ./.github/actions/setup-app
         with:
-          node-version: 24
-          cache: npm
-          cache-dependency-path: src/frontend/package-lock.json
-
-      - name: Install dependencies
-        run: npm ci
+          working-directory: src/frontend
 
       - name: Build
         run: npm run build
