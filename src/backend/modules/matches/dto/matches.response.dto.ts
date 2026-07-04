@@ -1,5 +1,5 @@
 // src/backend/modules/matches/dto/matches.response.dto.ts
-import { Position, Role } from "@common/constants";
+import { MatchEventRole, Position } from "@common/constants";
 import { Category, CompetitionLevel, Gender } from "@common/index";
 import { ApiProperty } from "@nestjs/swagger";
 
@@ -303,7 +303,7 @@ export class MatchEventPlayerDto {
     example: "scorer",
     type: String,
   })
-  role!: Role;
+  role!: MatchEventRole;
 
   @ApiProperty({
     description: "Player information",
