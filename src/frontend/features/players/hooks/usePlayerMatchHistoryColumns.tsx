@@ -4,8 +4,10 @@
 import { useTranslations } from "next-intl";
 import { useMemo } from "react";
 
-import { MatchTeamLabel } from "@/shared/components/domain";
-import { formatMatchDateTime } from "@/shared/utils";
+import {
+  buildMatchDateColumn,
+  buildMatchupColumn,
+} from "@/shared/components/domain";
 
 import type { Player } from "../types/Player";
 import type { PlayerMatchHistory } from "../types/PlayerMatchHistory";
@@ -15,32 +17,11 @@ export function usePlayerMatchHistoryColumns(player: Player) {
 
   return useMemo(
     () => [
-      {
-        key: "date",
-        header: t("matchHistory.date"),
-        render: (match: PlayerMatchHistory) => formatMatchDateTime(match.date),
-        align: "center" as const,
-      },
-      {
-        key: "match",
-        header: t("matchHistory.match"),
-        render: (match: PlayerMatchHistory) => (
-          <>
-            <MatchTeamLabel
-              name={match.homeTeam.club.name}
-              teamId={match.homeTeam.id}
-              currentTeamId={player.team?.id ?? -1}
-            />
-            {" vs "}
-            <MatchTeamLabel
-              name={match.awayTeam.club.name}
-              teamId={match.awayTeam.id}
-              currentTeamId={player.team?.id ?? -1}
-            />
-          </>
-        ),
-        align: "center" as const,
-      },
+      buildMatchDateColumn<PlayerMatchHistory>(t("matchHistory.date")),
+      buildMatchupColumn<PlayerMatchHistory>(
+        t("matchHistory.match"),
+        player.team?.id ?? -1,
+      ),
       {
         key: "pts",
         header: t("stats.points.abbr"),
