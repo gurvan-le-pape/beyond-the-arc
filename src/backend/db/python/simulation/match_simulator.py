@@ -139,12 +139,13 @@ class MatchSimulator:
                             away_team_score += ft_points
 
                     # Possession clock updates
-                    if event_type in ["traveling", "carrying", "double_dribble", "bad_pass", "steal",
-                                      "shot_clock_violation", "offensive_foul", "quarter_end",
-                                      "defensive_rebound", "charging_foul", "illegal_screen"]:
+                    if (event_type in ["traveling", "carrying", "double_dribble", "bad_pass", "steal",
+                                        "shot_clock_violation", "offensive_foul", "quarter_end",
+                                        "defensive_rebound", "charging_foul", "illegal_screen"]
+                            or event_type.startswith("made_")):
                         possession_clock = 24
                         current_possession = "away" if current_possession == "home" else "home"
-                    elif event_type in ["blocking_foul", "pushing_foul", "reaching_foul"]:
+                    elif event_type in ["blocking_foul", "pushing_foul", "reaching_foul", "offensive_rebound"]:
                         possession_clock = max(14, possession_clock)
                     elif event_type == "technical_foul":
                         possession_clock = 24
@@ -155,17 +156,12 @@ class MatchSimulator:
                         else:
                             next_state = "dead_ball"
                             current_possession = "away" if current_possession == "home" else "home"
-                    elif event_type == "offensive_rebound":
-                        possession_clock = max(14, possession_clock)
                     elif event_type == "blocked_shot":
                         if random.random() < 0.5:  # noqa: S2245
                             possession_clock = 24
                             current_possession = "away" if current_possession == "home" else "home"
                     elif event_type == "inbound":
                         possession_clock = 24
-                    elif event_type.startswith("made_"):
-                        possession_clock = 24
-                        current_possession = "away" if current_possession == "home" else "home"
 
             self.state_manager.current_state = next_state
 
