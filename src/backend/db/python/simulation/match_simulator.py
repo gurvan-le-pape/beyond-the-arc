@@ -103,7 +103,7 @@ class MatchSimulator:
                     continue
 
                 generated_event = self.event_generator.generate_event(
-                    event, home_list, away_list, None, current_possession, self.player_names
+                    event, home_list, away_list, current_possession, self.player_names
                 )
 
                 if generated_event:
