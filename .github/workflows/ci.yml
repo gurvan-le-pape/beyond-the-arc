@@ -4,6 +4,12 @@ on:
   push:
   pull_request:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  # Never cancel a run on main — the deploy job does a live `docker compose up`
+  # + SSH deploy, and cancelling it mid-flight could leave the VPS half-deployed.
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
 jobs:
   # ============================================================================
   # BACKEND
