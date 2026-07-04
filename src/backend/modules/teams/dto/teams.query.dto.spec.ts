@@ -1,4 +1,4 @@
-// src/backend/modules/teams/dto/teams.query.dto.test.ts
+// src/backend/modules/teams/dto/teams.query.dto.spec.ts
 import { CompetitionLevel } from "@common/constants";
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
