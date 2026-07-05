@@ -11,6 +11,7 @@ export const MatchEventRole = {
   WINNER: "winner",
   EXITING_PLAYER: "exiting_player",
   ENTERING_PLAYER: "entering_player",
+  STARTER: "starter",
 } as const;
 
 export const MATCH_EVENT_ROLES_LIST = Object.values(MatchEventRole);

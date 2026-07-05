@@ -382,15 +382,10 @@ export class ClubsService {
             id: true,
             name: true,
             code: true,
-          },
-        },
-        leagueId: true,
-        league: {
-          select: {
-            id: true,
             regionId: true,
           },
         },
+        leagueId: true,
         _count: {
           select: {
             clubs: true,
@@ -411,7 +406,7 @@ export class ClubsService {
         code: committee.department.code,
       },
       leagueId: committee.leagueId,
-      region: { id: committee.league.regionId },
+      region: { id: committee.department.regionId },
       clubCount: committee._count.clubs,
     }));
   }

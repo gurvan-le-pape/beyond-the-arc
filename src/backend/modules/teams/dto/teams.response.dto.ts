@@ -30,6 +30,13 @@ export class TeamResponseDto {
   clubId!: number;
 
   @ApiProperty({
+    description: "Season this team's entry belongs to",
+    example: "2025-2026",
+    type: String,
+  })
+  seasonYear!: string;
+
+  @ApiProperty({
     description: "Age category",
     example: "U18",
     type: String,

@@ -691,17 +691,15 @@ describe("ClubsService", () => {
         {
           id: 1,
           name: "Comité de l'Ain",
-          department: { id: 1, name: "Ain", code: "01" },
+          department: { id: 1, name: "Ain", code: "01", regionId: 5 },
           leagueId: 10,
-          league: { id: 10, regionId: 5 },
           _count: { clubs: 15 },
         },
         {
           id: 2,
           name: "Comité du Rhône",
-          department: { id: 2, name: "Rhône", code: "69" },
+          department: { id: 2, name: "Rhône", code: "69", regionId: 5 },
           leagueId: 10,
-          league: { id: 10, regionId: 5 },
           _count: { clubs: 25 },
         },
       ]);
