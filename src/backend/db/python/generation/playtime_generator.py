@@ -79,18 +79,3 @@ def generate(
         current_time = min(future_ends)
 
     return playtimes, player_names, substitutions
-
-
-def flatten_intervals(
-    home_playtimes: dict[int, list[tuple[int, int]]],
-    away_playtimes: dict[int, list[tuple[int, int]]],
-) -> list[tuple[int, int, int]]:
-    """
-    Flatten all playtime intervals for DB insertion.
-    Returns list of (player_id, start_time, end_time).
-    """
-    rows = []
-    for player_id, intervals in {**home_playtimes, **away_playtimes}.items():
-        for start, end in intervals:
-            rows.append((player_id, start, end))
-    return rows

@@ -26,6 +26,7 @@ def fetch_teams_for_committee(
     committee_id: int,
     gender: str,
     category: str,
+    season_year: str,
 ) -> list[tuple[int, int, int]]:
     """Returns list of (team_id, club_id, team_number)."""
     cursor.execute(
@@ -33,9 +34,10 @@ def fetch_teams_for_committee(
         SELECT teams.id, teams.club_id, teams.number
         FROM teams
         JOIN clubs ON teams.club_id = clubs.id
-        WHERE clubs.committee_id = %s AND teams.gender = %s AND teams.category = %s;
+        WHERE clubs.committee_id = %s AND teams.gender = %s AND teams.category = %s
+          AND teams.season_year = %s;
         """,
-        (committee_id, gender, category),
+        (committee_id, gender, category, season_year),
     )
     return cursor.fetchall()
 
@@ -53,13 +55,13 @@ def fetch_players_for_team(cursor: psycopg.Cursor, team_id: int) -> list[tuple[i
 
 def insert_teams(cursor: psycopg.Cursor, rows: list[tuple]) -> None:
     """
-    Bulk insert teams.
-    Each row: (club_id, category, gender, number)
+    Bulk insert teams — one row per club's entry into one season.
+    Each row: (club_id, season_year, category, gender, number)
     """
     cursor.executemany(
         """
-        INSERT INTO teams (club_id, category, gender, number, pool_id)
-        VALUES (%s, %s, %s, %s, NULL);
+        INSERT INTO teams (club_id, season_year, category, gender, number, pool_id)
+        VALUES (%s, %s, %s, %s, %s, NULL);
         """,
         rows,
     )
@@ -68,11 +70,12 @@ def insert_teams(cursor: psycopg.Cursor, rows: list[tuple]) -> None:
 def fetch_teams_for_clubs(
     cursor: psycopg.Cursor,
     club_ids: list[int],
+    season_year: str,
 ) -> list[tuple[int, str, str]]:
-    """Returns list of (team_id, gender, category) for all teams belonging to given clubs."""
+    """Returns list of (team_id, gender, category) for this season's teams belonging to given clubs."""
     cursor.execute(
-        "SELECT id, gender, category FROM teams WHERE club_id = ANY(%s);",
-        (club_ids,),
+        "SELECT id, gender, category FROM teams WHERE club_id = ANY(%s) AND season_year = %s;",
+        (club_ids, season_year),
     )
     return cursor.fetchall()
 

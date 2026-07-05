@@ -39,11 +39,12 @@ class SeasonGenerator:
             with conn.cursor() as cursor:
                 league_ids = team_repository.fetch_league_ids(cursor)
 
+        checkpoint_type = f"league_setup_{SEASON_YEAR}"
         for league_id in league_ids:
-            if checkpoints.is_done("league_setup", league_id):
-                logger.info(f"League {league_id}: already set up, skipping.")
+            if checkpoints.is_done(checkpoint_type, league_id):
+                logger.info(f"League {league_id}: already set up for {SEASON_YEAR}, skipping.")
                 continue
-            self._setup_league(league_id)
+            self._setup_league(league_id, checkpoint_type)
 
         logger.info("Season setup complete.")
 
@@ -51,7 +52,7 @@ class SeasonGenerator:
     # League
     # ------------------------------------------------------------------
 
-    def _setup_league(self, league_id: int) -> None:
+    def _setup_league(self, league_id: int, checkpoint_type: str) -> None:
         # get_pool().connection() is a context manager that:
         #   - commits automatically on clean exit (if autocommit=False, the default)
         #   - rolls back on exception
@@ -82,7 +83,7 @@ class SeasonGenerator:
                                 cursor, all_league_level_teams, gender, category, league_id
                             )
                     self._build_match_schedule(cursor, league_id)
-                    checkpoints.mark_done(cursor, "league_setup", league_id)
+                    checkpoints.mark_done(cursor, checkpoint_type, league_id)
                 conn.commit()
                 logger.info(f"League {league_id}: championships, pools, and schedule committed.")
 
@@ -110,11 +111,11 @@ class SeasonGenerator:
                 for _ in range(num_teams_per_gender_category):
                     club_id = random.choice(club_ids)  # noqa: S2245
                     club_team_count[club_id] += 1
-                    team_rows.append((club_id, category, gender, club_team_count[club_id]))
+                    team_rows.append((club_id, SEASON_YEAR, category, gender, club_team_count[club_id]))
 
         team_repository.insert_teams(cursor, team_rows)
 
-        teams = team_repository.fetch_teams_for_clubs(cursor, club_ids)
+        teams = team_repository.fetch_teams_for_clubs(cursor, club_ids, SEASON_YEAR)
         self._generate_players(cursor, teams)
 
         logger.debug(f"Committee {committee_id}: inserted teams and players for {len(club_ids)} clubs.")
@@ -156,7 +157,7 @@ class SeasonGenerator:
         Split committee teams 80/20, create committee-level championships,
         and return the team IDs that go up to league level.
         """
-        teams = team_repository.fetch_teams_for_committee(cursor, committee_id, gender, category)
+        teams = team_repository.fetch_teams_for_committee(cursor, committee_id, gender, category, SEASON_YEAR)
         if not teams:
             return []
 
@@ -258,17 +259,23 @@ class SeasonGenerator:
         For every pool in this league, generate the full round-robin schedule
         and bulk-insert all match shells in a single call per pool.
         """
+        # Scoped to this season only — without it, re-running setup for a new
+        # season would also re-schedule already-completed pools from prior
+        # seasons, using their old (fully played) teams.
         cursor.execute(
             """
             SELECT pools.id, pools.name
             FROM pools
             JOIN championships ON pools.championship_id = championships.id
-            WHERE championships.league_id = %s
-               OR championships.committee_id IN (
-                   SELECT id FROM committees WHERE league_id = %s
-               );
+            WHERE championships.season_year = %s
+              AND (
+                championships.league_id = %s
+                OR championships.committee_id IN (
+                    SELECT id FROM committees WHERE league_id = %s
+                )
+              );
             """,
-            (league_id, league_id),
+            (SEASON_YEAR, league_id, league_id),
         )
         pools = cursor.fetchall()
 

@@ -59,7 +59,10 @@ class MatchSimulator:
             add_event({
                 "timestamp": None,
                 "event_type": "tip_off",
-                "player_roles": {"winner": tip_off_player},
+                "player_roles": {
+                    "winner": tip_off_player,
+                    "starter": list(home_sub.active) + list(away_sub.active),
+                },
                 "description": f"Tip-off won by {tip_off_winner} team.",
             }, 0)
             current_time += 1
