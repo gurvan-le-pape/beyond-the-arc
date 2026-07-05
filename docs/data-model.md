@@ -8,9 +8,9 @@
 
 The schema models the French basketball competition hierarchy from top to bottom — national leagues down to individual match events. It is split into three broad areas:
 
-- **Organisations** — leagues, committees, clubs, gyms, presidents
+- **Organisations** — regions, departments, leagues, committees, clubs, gyms, presidents
 - **Competition** — championships, pools, teams, players, leaderboards, matches
-- **Match detail** — events, event players, shot locations, player stats, playtime intervals, substitutions
+- **Match detail** — events, event players, shot locations, player stats
 
 The schema is defined in `migrations/01_schema/01_create_schema.sql` and mirrored in the Prisma schema used by the NestJS backend.
 
@@ -20,12 +20,12 @@ The schema is defined in `migrations/01_schema/01_create_schema.sql` and mirrore
 
 ```
 regions ──< leagues ──< committees ──< clubs
-departments ──< committees
+regions ──< departments ──< committees
 presidents ──< leagues / committees / clubs
 gyms ──< clubs
 ```
 
-**Leagues** belong to a region and represent the top level of the French basketball hierarchy. **Committees** belong to both a department and a league. **Clubs** belong to a committee and optionally reference a gym and a president.
+**Leagues** belong to a region and represent the top level of the French basketball hierarchy. **Departments** also belong to a region — a department's own region and the region of the league that governs its committee should always agree, though this is only enforced by convention (both ultimately trace back to the same real geography, but nothing in the schema cross-checks it — see [Known limitations](#known-limitations)). **Committees** belong to both a department and a league. **Clubs** belong to a committee and optionally reference a gym and a president.
 
 Presidents are stored in a standalone `presidents` table rather than as inline fields on each organisation. This reflects the real structure — a president is a named individual with contact details who holds a role, rather than just a name field — and avoids duplicating contact information if the same person holds multiple roles.
 
@@ -56,7 +56,9 @@ A championship is divided into pools (lettered A, B, C, …). Each pool has its 
 
 ### Teams
 
-Teams belong to a club and are assigned to a pool. The `number` field distinguishes a club's first team from its reserve teams — only first teams (`number == 1`) are eligible for league-level championships. Teams also carry a `category` and `gender` matching the championship they compete in.
+A team row is one club's entry into **one season** of competition, not a permanent identity that persists unchanged across seasons. This matters because a team's `category` ages up as its players get older (a club's "team 2" might be U18 this year and Seniors next year), and its pool assignment resets every season — so each season gets its own `teams` row: same `club_id` and `number`, a new `season_year`, and a fresh `category`/`gender`/`pool_id`. Nothing is overwritten in place.
+
+The `number` field distinguishes a club's first team from its reserve teams — only first teams (`number == 1`) are eligible for league-level championships. The uniqueness constraint reflects this scoping directly: `(club_id, category, gender, number, season_year)` — a club can field a "U11 male team 1" and a "Seniors female team 1" in the same season, both legitimately numbered `1`, because uniqueness is scoped per category/gender bracket, not per club overall.
 
 ### Players
 
@@ -83,15 +85,13 @@ Two constraints are worth noting:
 matches ──< match_events ──< match_event_players
                          ──> shot_locations
 matches ──< player_match_stats
-matches ──< player_playtime_intervals
-matches ──< substitutions
 ```
 
 ### Match events
 
-Each match produces a sequence of `match_events` — tip-offs, shots, fouls, turnovers, rebounds, substitutions, and so on. The full list of valid event types is enforced via a `CHECK` constraint on the `event_type` column.
+Each match produces a sequence of `match_events` — tip-offs, shots, fouls, turnovers, rebounds, substitutions, and so on. The full list of valid event types is enforced via a `CHECK` constraint on the `event_type` column. This is the single source of truth for everything that happens in a match — there is no separate table for substitutions or playtime; both are derived from this event stream (see below).
 
-Events reference players indirectly through `match_event_players`, which records each player's role in the event (shooter, assister, rebounder, fouler, stealer, blocker, victim, etc.). This join table allows an event to involve multiple players with distinct roles without needing a column per role on the event row itself.
+Events reference players indirectly through `match_event_players`, which records each player's role in the event (shooter, assister, rebounder, fouler, stealer, blocker, victim, exiting/entering player on a substitution, etc.). This join table allows an event to involve multiple players with distinct roles without needing a column per role on the event row itself — a made shot might tag both a `shooter` and an `assister`, and the match's opening `tip_off` event tags all ten starting players with role `starter` alongside the jump-ball `winner`.
 
 ### Shot locations
 
@@ -99,13 +99,9 @@ Shot coordinates are stored in a separate `shot_locations` table rather than dir
 
 ### Player match stats
 
-Aggregate per-player, per-match statistics (points, rebounds, assists, fouls, shooting breakdowns by zone and type) are stored in `player_match_stats`. This denormalises data that could in principle be derived from `match_events`, but having it pre-aggregated avoids expensive event scans every time a box score is requested.
+Aggregate per-player, per-match statistics (points, rebounds, assists, fouls, shooting breakdowns by zone and type) are stored in `player_match_stats`. This denormalises data that could in principle be derived from `match_events`, but having it pre-aggregated avoids expensive event scans every time a box score is requested — the same reasoning that motivates the leaderboard triggers below.
 
-The `playtime_intervals` column on this table is a JSONB field that duplicates the data in `player_playtime_intervals`. The dedicated `player_playtime_intervals` table exists for structured querying, while the JSONB column provides a convenient snapshot co-located with the stats row for cases where the full interval detail is needed alongside the stats in a single fetch.
-
-### Player playtime intervals and substitutions
-
-`player_playtime_intervals` records each on-court stint as a `(start_time, end_time)` pair in seconds. `substitutions` records each player swap with its timestamp and the exiting and entering player ids. These are generated by `PlaytimeGenerator` before simulation and persisted after the match result is written.
+The `playtime_intervals` column on this table is a JSONB field holding each player's on-court stints as `(start_time, end_time)` pairs, in seconds. It's computed once from `match_events` when the match is generated (the `starter` role marks who began the game on court, and `substitution` events mark every stint boundary after that) and stored here — there is no separate playtime table to keep in sync.
 
 ---
 
@@ -135,11 +131,15 @@ This is the trigger used in practice by the pipeline — matches are inserted wi
 
 ## Indexes
 
-Three indexes are defined beyond the primary keys and unique constraints:
+Five indexes are defined beyond the primary keys and unique constraints, all in `migrations/02_indexes/02_create_indexes.sql`:
 
 - `idx_match_events_match_id` — on `match_events(match_id)`, supporting fast lookup of all events for a given match (used on every match page load).
 - `idx_match_event_players_event_id` — on `match_event_players(event_id)`, supporting fast lookup of players for a given event when assembling event timelines.
+- `idx_match_event_players_player_id` — on `match_event_players(player_id)`, supporting a player's event history.
+- `idx_player_match_stats_player_id` — on `player_match_stats(player_id)`, supporting a player's stat history across matches.
 - `idx_matches_status_date` — a partial index on `matches(status, date)` filtered to `WHERE status = 'scheduled'`. This is the index used by the scheduler's polling query. Because it only indexes scheduled matches, it shrinks automatically as matches are completed and stays small throughout the season.
+
+`docker-entrypoint.sh` previously only applied `01_schema` and `03_triggers`, silently skipping this `02_indexes` step entirely — meaning none of these indexes actually existed on a database built the normal way, despite the migration file being correct. This has been fixed; the entrypoint now applies all four migration directories in order.
 
 ---
 
@@ -153,8 +153,6 @@ The `seeding_checkpoints` table is used exclusively by the Python pipeline to tr
 
 **Leaderboard insert trigger is effectively dead code** — matches are always inserted without scores, so the null check causes it to exit immediately every time. Only the update trigger actually fires meaningfully.
 
-**JSONB duplication on player_match_stats** — playtime_intervals exists both as JSONB on the stats row and as dedicated rows in player_playtime_intervals. These can drift out of sync with no enforcement.
-
-**No player profile data** — players only have a name and jersey number. No position, age, height, or any other biographical data.
+**No cross-check between a team's organisational lineage and its competition lineage** — a team belongs to a club, which belongs to a committee (a permanent, org-side fact); a team is also assigned to a pool, which belongs to a championship run by a committee or league (a seasonal, competition-side fact). Both facts are real and both are needed, but nothing enforces that they agree — a team could in principle be pool-assigned into a championship run by a different committee than its own club's. In practice this can't happen because pools are only ever populated from a committee's/league's own team list in the first place, so it's a structural gap rather than an observed bug.
 
 **Leaderboard counters can go negative** — the delete trigger decrements counters directly with no floor check. Deleting a match that was never properly counted would produce negative values.
