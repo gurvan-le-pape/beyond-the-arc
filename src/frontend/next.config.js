@@ -9,7 +9,7 @@ const nextConfig = {
   reactStrictMode: false,
   webpack: (config) => {
     config.resolve.alias = {
-      ...(config.resolve.alias || {}),
+      ...config.resolve.alias,
       features: path.resolve(__dirname, "features"),
       lib: path.resolve(__dirname, "lib"),
       styles: path.resolve(__dirname, "styles"),

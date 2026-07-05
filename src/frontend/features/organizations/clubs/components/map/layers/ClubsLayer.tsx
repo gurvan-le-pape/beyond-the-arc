@@ -9,7 +9,7 @@ import {
 } from "@/features/organizations/clubs/constants";
 
 interface ClubsLayerProps {
-  geoJson: any;
+  readonly geoJson: any;
 }
 
 export function ClubsLayer({ geoJson }: ClubsLayerProps) {

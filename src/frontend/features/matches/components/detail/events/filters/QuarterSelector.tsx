@@ -5,8 +5,8 @@ import { Quarter, QUARTER_LIST } from "@/features/matches/constants";
 import { cn } from "@/shared/utils";
 
 interface QuarterSelectorProps {
-  selected: Quarter;
-  onChange: (q: Quarter) => void;
+  readonly selected: Quarter;
+  readonly onChange: (q: Quarter) => void;
 }
 
 /**

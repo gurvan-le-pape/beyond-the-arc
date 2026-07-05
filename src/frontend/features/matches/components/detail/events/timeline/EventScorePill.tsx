@@ -3,10 +3,10 @@
 import { cn } from "@/shared/utils";
 
 interface EventScorePillProps {
-  homeScore: number;
-  awayScore: number;
+  readonly homeScore: number;
+  readonly awayScore: number;
   /** True when the scoring event belongs to the home team (drives colour). */
-  isHomeTeam: boolean;
+  readonly isHomeTeam: boolean;
 }
 
 /**

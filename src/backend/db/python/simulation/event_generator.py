@@ -7,12 +7,12 @@ class EventGenerator:
         self.state_manager = state_manager
         self.logger = logging.getLogger(__name__)
 
-    def generate_event(self, event, active_home_players, active_away_players, current_time, current_possession, player_names):
+    def generate_event(self, event, active_home_players, active_away_players, current_possession, player_names):
         """Generate the details of an event based on the event type."""
         if not active_home_players or not active_away_players:
             self.logger.warning("No active players available for event generation.")
             return None
-        return self._generate_event_details(event, active_home_players, active_away_players, current_time, current_possession, player_names)
+        return self._generate_event_details(event, active_home_players, active_away_players, current_possession, player_names)
 
     def _generate_shot_location(self, event_type):
         """Generate a (x, y) shot location in meters on a FIBA half-court (15m x 14m)."""
@@ -58,7 +58,7 @@ class EventGenerator:
 
         return {"x": round(x, 2), "y": round(y, 2)}
     
-    def _generate_event_details(self, event, active_home_players, active_away_players, current_time, current_possession, player_names):
+    def _generate_event_details(self, event, active_home_players, active_away_players, current_possession, player_names):
         """Generate the full event dict for a given event type."""
         event_type = event["type"]
         offensive = active_home_players if current_possession == "home" else active_away_players
