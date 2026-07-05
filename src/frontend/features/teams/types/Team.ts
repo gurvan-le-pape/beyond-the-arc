@@ -8,6 +8,7 @@ export interface Team {
   id: number;
   number: number;
   clubId: number;
+  seasonYear: string;
   category: Category;
   gender: Gender;
   color: string | null;
