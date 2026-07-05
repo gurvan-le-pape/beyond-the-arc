@@ -7,7 +7,8 @@ CREATE TABLE regions (
 CREATE TABLE departments (
     id SERIAL PRIMARY KEY,
     code VARCHAR(10) UNIQUE NOT NULL,
-    name VARCHAR(255) NOT NULL
+    name VARCHAR(255) NOT NULL,
+    region_id INT NOT NULL REFERENCES regions(id) ON DELETE CASCADE
 );
 
 CREATE TABLE presidents (
@@ -74,10 +75,11 @@ CREATE TABLE championships (
     gender VARCHAR(10) NOT NULL CHECK (gender IN ('male', 'female')),
     committee_id INT REFERENCES committees(id) ON DELETE SET NULL,
     league_id INT REFERENCES leagues(id) ON DELETE SET NULL,
+    -- A championship answers to exactly one authority: a committee at
+    -- departmental level, or a league at regional/national level.
     CONSTRAINT check_level CHECK (
         (level = 'departmental' AND committee_id IS NOT NULL AND league_id IS NOT NULL) OR
-        (level = 'regional' AND committee_id IS NULL AND league_id IS NOT NULL) OR
-        (level = 'national' AND committee_id IS NULL AND league_id IS NOT NULL)
+        (level IN ('regional', 'national') AND committee_id IS NULL AND league_id IS NOT NULL)
     ),
     CONSTRAINT unique_championship UNIQUE (season_year, category, gender, level, division, committee_id, league_id)
 );
@@ -90,14 +92,23 @@ CREATE TABLE pools (
     CONSTRAINT unique_pool UNIQUE (championship_id, letter)
 );
 
+-- A team is one club's entry into one season's competition. Category and
+-- gender age up across seasons, so each season is its own row rather than
+-- an in-place update — the same club/number pair reappears with a new
+-- season_year instead of overwriting its prior season's data.
 CREATE TABLE teams (
     id SERIAL PRIMARY KEY,
     club_id INT REFERENCES clubs(id) ON DELETE CASCADE,
+    season_year VARCHAR(9) NOT NULL,
     category VARCHAR(100),
     gender VARCHAR(10) NOT NULL CHECK (gender IN ('male', 'female')),
     color VARCHAR(50),
     number INT NOT NULL,
-    pool_id INT REFERENCES pools(id) ON DELETE SET NULL
+    pool_id INT REFERENCES pools(id) ON DELETE SET NULL,
+    -- number is only unique within one (club, category, gender) bracket —
+    -- e.g. a club's "U11 male team 1" and "Seniors female team 1" both
+    -- legitimately carry number = 1.
+    CONSTRAINT unique_team_per_season UNIQUE (club_id, category, gender, number, season_year)
 );
 
 CREATE TABLE matches (
@@ -113,8 +124,8 @@ CREATE TABLE matches (
     overtime BOOLEAN DEFAULT FALSE,
     status VARCHAR(20) NOT NULL DEFAULT 'scheduled',
     CONSTRAINT no_draws_allowed CHECK (
-        home_team_score IS NULL OR 
-        away_team_score IS NULL OR 
+        home_team_score IS NULL OR
+        away_team_score IS NULL OR
         home_team_score != away_team_score
     )
 );
@@ -147,31 +158,6 @@ CREATE TABLE players (
     CONSTRAINT unique_player_per_team UNIQUE (team_id, number)
 );
 
--- Add a player_match_stats table
-CREATE TABLE player_match_stats (
-    id SERIAL PRIMARY KEY,
-    match_id INT REFERENCES matches(id) ON DELETE CASCADE,
-    player_id INT REFERENCES players(id) ON DELETE CASCADE,
-    points INT DEFAULT 0,
-    fouls INT DEFAULT 0,
-    three_points_made INT DEFAULT 0,
-    three_points_attempted INT DEFAULT 0,
-    two_points_int_made INT DEFAULT 0,
-    two_points_int_attempted INT DEFAULT 0,
-    two_points_ext_made INT DEFAULT 0,
-    two_points_ext_attempted INT DEFAULT 0,
-    free_throws_made INT DEFAULT 0,
-    free_throws_attempted INT DEFAULT 0,
-    assists INT DEFAULT 0,
-    turnovers INT DEFAULT 0,
-    rebounds_offensive INT DEFAULT 0,
-    rebounds_defensive INT DEFAULT 0,
-    steals INT DEFAULT 0,
-    blocks INT DEFAULT 0,
-    playtime_intervals JSONB DEFAULT '[]',
-    CONSTRAINT unique_player_match UNIQUE (match_id, player_id)
-);
-
 -- Add a shot_locations table
 CREATE TABLE shot_locations (
     id SERIAL PRIMARY KEY,
@@ -180,6 +166,11 @@ CREATE TABLE shot_locations (
 );
 
 -- Add a match_events table
+-- Single source of truth for everything that happens in a match, including
+-- substitutions (event_type = 'substitution') and the starting five
+-- (role = 'starter' on the game's opening event). player_match_stats and
+-- playtime are both derived from this table at generation time — nothing
+-- else stores or duplicates it.
 CREATE TABLE match_events (
     id SERIAL PRIMARY KEY,
     match_id INT REFERENCES matches(id) ON DELETE CASCADE,
@@ -211,32 +202,47 @@ CREATE TABLE match_events (
     shot_location_id INT REFERENCES shot_locations(id) ON DELETE SET NULL
 );
 
+-- Join table between match_events and players — one event can involve
+-- more than one player at once (a made shot has a shooter and sometimes
+-- an assister; a substitution has an exiting and an entering player).
 CREATE TABLE match_event_players (
     id SERIAL PRIMARY KEY,
     event_id INT REFERENCES match_events(id) ON DELETE CASCADE,
     player_id INT REFERENCES players(id) ON DELETE CASCADE,
     role VARCHAR(50) NOT NULL CHECK (role IN (
-        'shooter', 'fouler', 'stealer', 'victim', 'rebounder', 
-        'assister', 'blocker', 'blocked', 'winner', 'exiting_player', 'entering_player'
+        'shooter', 'fouler', 'stealer', 'victim', 'rebounder',
+        'assister', 'blocker', 'blocked', 'winner', 'exiting_player', 'entering_player',
+        'starter'
     ))
 );
 
--- Add a player_playtime_intervals table
-CREATE TABLE player_playtime_intervals (
+-- Materialized per-player, per-match totals — including playtime_intervals,
+-- derived from 'starter' and substitution events. Computed once from
+-- match_events when a match is generated, then served straight from this
+-- table; never recomputed from events at read time. Attaches to a player
+-- and a match only — which team is implicit via the player's roster.
+CREATE TABLE player_match_stats (
     id SERIAL PRIMARY KEY,
     match_id INT REFERENCES matches(id) ON DELETE CASCADE,
     player_id INT REFERENCES players(id) ON DELETE CASCADE,
-    start_time INT NOT NULL, -- Time in seconds from the start of the match
-    end_time INT NOT NULL    -- Time in seconds from the start of the match
-);
-
--- Add a substitutions table
-CREATE TABLE substitutions (
-    id SERIAL PRIMARY KEY,
-    match_id INT REFERENCES matches(id) ON DELETE CASCADE,
-    timestamp INT NOT NULL, -- Time in seconds from the start of the match
-    exiting_player_id INT REFERENCES players(id) ON DELETE CASCADE,
-    entering_player_id INT REFERENCES players(id) ON DELETE CASCADE
+    points INT DEFAULT 0,
+    fouls INT DEFAULT 0,
+    three_points_made INT DEFAULT 0,
+    three_points_attempted INT DEFAULT 0,
+    two_points_int_made INT DEFAULT 0,
+    two_points_int_attempted INT DEFAULT 0,
+    two_points_ext_made INT DEFAULT 0,
+    two_points_ext_attempted INT DEFAULT 0,
+    free_throws_made INT DEFAULT 0,
+    free_throws_attempted INT DEFAULT 0,
+    assists INT DEFAULT 0,
+    turnovers INT DEFAULT 0,
+    rebounds_offensive INT DEFAULT 0,
+    rebounds_defensive INT DEFAULT 0,
+    steals INT DEFAULT 0,
+    blocks INT DEFAULT 0,
+    playtime_intervals JSONB DEFAULT '[]',
+    CONSTRAINT unique_player_match UNIQUE (match_id, player_id)
 );
 
 CREATE TABLE seeding_checkpoints (

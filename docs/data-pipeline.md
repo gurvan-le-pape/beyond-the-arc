@@ -27,7 +27,7 @@ The pipeline is entirely self-contained: it connects directly to PostgreSQL via 
 │       │                                                   │
 │       └── Scheduler                                       │
 │               │                                           │
-│               ├── SeasonGenerator (once)                  │
+│               ├── SeasonGenerator (once per season)       │
 │               │       ├── teams + players                 │
 │               │       ├── championships + pools           │
 │               │       └── match schedule                  │
@@ -69,7 +69,7 @@ The database schema and modelling decisions are covered in → [`data-model.md`]
 1. **Recover stuck matches** — any match left in `generating` status from a previous crash is reset to `scheduled` so it will be retried. This makes the service safe to restart at any time.
 2. **Ensure season setup** — delegates to `SeasonGenerator`, which is idempotent (see below).
 
-After startup, it polls the database every 60 seconds for matches whose `scheduled_at` has passed and dispatches them for generation via a `ThreadPoolExecutor` (8 workers by default).
+After startup, it polls the database every 60 seconds for matches whose `scheduled_at` has passed and dispatches them for generation via a `ProcessPoolExecutor` (8 workers by default) — separate processes, not threads, since match simulation is CPU-bound and would otherwise be serialised by the GIL.
 
 ### Match status lifecycle
 
@@ -90,7 +90,9 @@ The sequence for each league:
 
 ### 1. Teams and players
 
-For each committee in the league, clubs are fetched from the database (seeded via SQL). A number of teams proportional to the club count is generated and distributed randomly across clubs. Each team gets 12 players with French names generated via `Faker("fr_FR")`, using gender-appropriate first names.
+For each committee in the league, clubs are fetched from the database (seeded via SQL). A number of teams proportional to the club count is generated and distributed randomly across clubs, tagged with the current `SEASON_YEAR`. Each team gets 12 players with French names generated via `Faker("fr_FR")`, using gender-appropriate first names.
+
+Because a team row belongs to one season, running the generator again for a new season inserts a fresh set of team rows rather than reusing or overwriting last season's — see [Teams](./data-model.md#teams) in the data model doc.
 
 ### 2. Championships, divisions, and pools
 
@@ -113,6 +115,8 @@ Match shells are inserted into the database with `status = 'scheduled'` and a `s
 
 Each league's setup is wrapped in a single database transaction. The checkpoint is written inside that transaction and committed atomically with the data. If the process crashes mid-league, the partial data is rolled back and the league will be re-processed on the next run.
 
+The checkpoint's entity type is `league_setup_{SEASON_YEAR}`, not a bare `league_setup` — scoping it to the season is what makes running the generator again for a new season actually work: a new `SEASON_YEAR` produces a new checkpoint type, so leagues aren't skipped just because a *previous* season already set them up.
+
 ---
 
 ## Match generator
@@ -123,10 +127,10 @@ Each league's setup is wrapped in a single database transaction. The checkpoint 
 
 1. **Load players** — fetch home and away players from the database.
 2. **Generate playtime** — `PlaytimeGenerator` assigns each player a sequence of on-court intervals (5 players active at a time, rotated via substitutions throughout the 40-minute game).
-3. **Simulate** — `MatchSimulator` runs the full match event by event.
+3. **Simulate** — `MatchSimulator` runs the full match event by event. The starting five for each team (from the playtime generator's initial rotation) are tagged with role `starter` on the opening `tip_off` event, and every substitution becomes its own `substitution` event with `exiting_player`/`entering_player` roles — this is what lets playtime be reconstructed from events alone later.
 4. **Prevent draws** — if the score is tied at the end of regulation, two points are added to the home team and a deciding basket event is appended. Draws do not exist in basketball.
 5. **Detect overtime** — any event timestamped beyond the 2400-second mark (40 minutes) marks the match as overtime.
-6. **Persist** — all results are written in a specific order: match result → shot locations → events → event players → player stats → playtime intervals → substitutions.
+6. **Persist** — all results are written in a specific order: match result → shot locations → events (including substitutions and starters) → event players → player stats (including playtime, computed from those same events).
 
 The entire persist step runs within a single transaction. The caller (`Scheduler`) commits on success or rolls back and marks the match `failed` on error.
 
@@ -181,7 +185,7 @@ A 24-second shot clock is tracked separately and resets appropriately on turnove
 
 `PlaytimeGenerator` simulates rotations for one team before the simulator runs. It maintains exactly 5 active players at all times and rotates them through the bench in order. Each stint lasts 300–480 seconds (5–8 minutes).
 
-The result is a dict of `player_id → [(start_sec, end_sec), ...]` intervals, plus a list of substitution events. The simulator uses these intervals at each clock tick to determine which players are on court when assigning roles.
+The result is a dict of `player_id → [(start_sec, end_sec), ...]` intervals, plus a list of substitution events. The simulator uses these intervals at each clock tick to determine which players are on court when assigning roles, and reads the initial (`t=0`) rotation to tag the starting five per team with role `starter` on the match's opening `tip_off` event.
 
 ---
 

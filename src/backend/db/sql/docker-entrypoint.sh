@@ -33,6 +33,9 @@ else
     # Apply schema migrations
     apply_migrations "$MIGRATIONS_DIR/01_schema"
 
+    # Apply index migrations
+    apply_migrations "$MIGRATIONS_DIR/02_indexes"
+
     # Apply trigger migrations
     apply_migrations "$MIGRATIONS_DIR/03_triggers"
 

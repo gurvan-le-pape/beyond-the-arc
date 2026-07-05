@@ -55,7 +55,7 @@ export function DocsDatabaseSection({ content }: DocsDatabaseSectionProps) {
         {/* Image wrapper — sits inside surface-raised, inset stays at raised (ceiling) */}
         <div className="bg-surface-inset rounded-button overflow-hidden">
           <TransformWrapper
-            initialScale={0.5}
+            initialScale={0.8}
             minScale={0.2}
             maxScale={3}
             wheel={{ step: 0.001 }}

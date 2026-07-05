@@ -191,9 +191,15 @@ def insert_match_event_players_bulk(
 ) -> None:
     rows = []
     for event_id, event in zip(event_ids, events):
-        for role, player_id in event.get("player_roles", {}).items():
-            if player_id is not None:
-                rows.append((event_id, player_id, role))
+        for role, player_id_or_ids in event.get("player_roles", {}).items():
+            # Most roles (shooter, fouler, ...) attach a single player; 'starter'
+            # attaches all ten players on court at tip-off, as a list.
+            player_ids = (
+                player_id_or_ids if isinstance(player_id_or_ids, list) else [player_id_or_ids]
+            )
+            for player_id in player_ids:
+                if player_id is not None:
+                    rows.append((event_id, player_id, role))
 
     if rows:
         cursor.executemany(
@@ -250,48 +256,4 @@ def insert_player_stats_bulk(
             playtime_intervals = EXCLUDED.playtime_intervals;
         """,
         [(match_id, *row) for row in rows],
-    )
-
-
-# ---------------------------------------------------------------------------
-# Playtime intervals
-# ---------------------------------------------------------------------------
-
-def insert_playtime_intervals_bulk(
-    cursor: psycopg.Cursor,
-    match_id: int,
-    intervals: list[tuple[int, int, int]],
-) -> None:
-    """Each interval: (player_id, start_time, end_time)."""
-    if not intervals:
-        return
-    cursor.executemany(
-        """
-        INSERT INTO player_playtime_intervals (match_id, player_id, start_time, end_time)
-        VALUES (%s, %s, %s, %s);
-        """,
-        [(match_id, player_id, start, end) for player_id, start, end in intervals],
-    )
-
-
-# ---------------------------------------------------------------------------
-# Substitutions
-# ---------------------------------------------------------------------------
-
-def insert_substitutions_bulk(
-    cursor: psycopg.Cursor,
-    match_id: int,
-    substitutions: list[dict],
-) -> None:
-    if not substitutions:
-        return
-    cursor.executemany(
-        """
-        INSERT INTO substitutions (match_id, timestamp, exiting_player_id, entering_player_id)
-        VALUES (%s, %s, %s, %s);
-        """,
-        [
-            (match_id, sub["time"], sub["exiting_player"], sub["entering_player"])
-            for sub in substitutions
-        ],
     )

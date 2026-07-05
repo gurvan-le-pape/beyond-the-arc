@@ -6,9 +6,11 @@ Called by the Scheduler for each due match.
 
 Responsibilities:
   1. Load players for both teams
-  2. Generate playtime intervals and substitutions
+  2. Generate playtime rotations and substitutions
   3. Run MatchSimulator
-  4. Persist all results: score, events, stats, intervals, substitutions
+  4. Persist all results: score, events (including substitutions and
+     starters), and per-player stats (including playtime, derived from
+     those same events)
 """
 
 import json
@@ -19,7 +21,7 @@ from datetime import timedelta
 from db.repositories import match_repository, team_repository
 from db.repositories.match_repository import ScheduledMatch
 from event_rules import MADE_SHOTS, MISSED_SHOTS, SHOT_CATEGORY_STAT_PREFIX
-from generation.playtime_generator import flatten_intervals, generate as generate_playtime
+from generation.playtime_generator import generate as generate_playtime
 from simulation.match_simulator import MatchSimulator
 
 logger = logging.getLogger(__name__)
@@ -95,14 +97,9 @@ class MatchGenerator:
         event_ids = match_repository.insert_match_events_bulk(cursor, match.id, match_events, shot_cache)
         match_repository.insert_match_event_players_bulk(cursor, event_ids, match_events)
 
-        # Stats
+        # Stats (including playtime, both derived from match_events above)
         stat_rows = self._compute_player_stats(home_playtimes, away_playtimes, match_events)
         match_repository.insert_player_stats_bulk(cursor, match.id, stat_rows)
-
-        # Intervals and substitutions
-        intervals = flatten_intervals(home_playtimes, away_playtimes)
-        match_repository.insert_playtime_intervals_bulk(cursor, match.id, intervals)
-        match_repository.insert_substitutions_bulk(cursor, match.id, all_subs)
 
         logger.info(f"Match {match.id}: generated ({home_score}–{away_score}).")
 
@@ -140,6 +137,11 @@ class MatchGenerator:
         for event in match_events:
             event_type = event["event_type"]
             for role, player_id in event.get("player_roles", {}).items():
+                if role == "starter":
+                    # Marker only (who was on court at tip-off) — playtime is
+                    # computed separately from playtimes/intervals, not from
+                    # per-role stat counters.
+                    continue
                 if player_id is None:
                     continue
                 s = get_or_create(player_id)
