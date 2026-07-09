@@ -98,6 +98,7 @@ model Clubs {
   teams       Teams[]
 
   @@map("clubs")
+  @@index([committeeId], map: "idx_clubs_committee_id")
 }
 
 model Gyms {
@@ -160,6 +161,7 @@ model Teams {
 
   @@map("teams")
   @@unique([clubId, category, gender, number, seasonYear])
+  @@index([poolId], map: "idx_teams_pool_id")
 }
 
 model Matches {
@@ -181,6 +183,13 @@ model Matches {
   matchEvents         MatchEvents[]
 
   @@map("matches")
+  @@index([poolId, date], map: "idx_matches_pool_id_date")
+  @@index([homeTeamId], map: "idx_matches_home_team_id")
+  @@index([awayTeamId], map: "idx_matches_away_team_id")
+  @@index([date], map: "idx_matches_date")
+  // idx_matches_status_date — partial index (WHERE status = 'scheduled') for the
+  // scheduler's polling query. Prisma cannot express partial indexes, so it is
+  // defined only in db/sql/migrations/02_indexes/02_create_indexes.sql.
 }
 
 model Leaderboards {
@@ -245,6 +254,7 @@ model PlayerMatchStats {
 
   @@map("player_match_stats")
   @@unique([matchId, playerId])
+  @@index([playerId], map: "idx_player_match_stats_player_id")
 }
 
 model MatchEvents {
@@ -259,6 +269,7 @@ model MatchEvents {
   players         MatchEventPlayers[]
 
   @@map("match_events")
+  @@index([matchId], map: "idx_match_events_match_id")
 }
 
 model ShotLocations {
@@ -279,6 +290,8 @@ model MatchEventPlayers {
   role     String      @db.VarChar(50)
 
   @@map("match_event_players")
+  @@index([eventId], map: "idx_match_event_players_event_id")
+  @@index([playerId], map: "idx_match_event_players_player_id")
 }
 
 model SeedingCheckpoints {

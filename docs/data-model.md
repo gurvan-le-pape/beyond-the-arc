@@ -131,15 +131,26 @@ This is the trigger used in practice by the pipeline — matches are inserted wi
 
 ## Indexes
 
-Five indexes are defined beyond the primary keys and unique constraints, all in `migrations/02_indexes/02_create_indexes.sql`:
+Eleven indexes are defined beyond the primary keys and unique constraints, all in `migrations/02_indexes/02_create_indexes.sql`:
 
 - `idx_match_events_match_id` — on `match_events(match_id)`, supporting fast lookup of all events for a given match (used on every match page load).
 - `idx_match_event_players_event_id` — on `match_event_players(event_id)`, supporting fast lookup of players for a given event when assembling event timelines.
 - `idx_match_event_players_player_id` — on `match_event_players(player_id)`, supporting a player's event history.
 - `idx_player_match_stats_player_id` — on `player_match_stats(player_id)`, supporting a player's stat history across matches.
 - `idx_matches_status_date` — a partial index on `matches(status, date)` filtered to `WHERE status = 'scheduled'`. This is the index used by the scheduler's polling query. Because it only indexes scheduled matches, it shrinks automatically as matches are completed and stays small throughout the season.
+- `idx_matches_pool_id_date` — composite on `matches(pool_id, date)`, serving pool and championship match listings (filter by pool, order by date) with a single index.
+- `idx_matches_home_team_id` / `idx_matches_away_team_id` — on `matches(home_team_id)` and `matches(away_team_id)`, supporting team match history queries (`WHERE home_team_id = X OR away_team_id = X`) on every team page.
+- `idx_matches_date` — on `matches(date)`, supporting the global match list (`ORDER BY date DESC`, paginated) and date-range filters.
+- `idx_teams_pool_id` — on `teams(pool_id)`, supporting pool rosters and pool-scoped team filters.
+- `idx_clubs_committee_id` — on `clubs(committee_id)`, supporting committee- and league-scoped filters; clubs, teams, players, and matches queries all join through this column.
+
+Foreign-key columns not listed here are already covered by the leading column of a unique constraint (`players(team_id)`, `leaderboards(pool_id)`, `teams(club_id)`, `pools(championship_id)`, `player_match_stats(match_id)`), or belong to tables too small to benefit (`committees`, `leagues`, `departments`).
+
+Every index that Prisma's schema language can express is mirrored as an `@@index` in `prisma/schema.prisma` (with `map:` pinning the SQL name), so the Prisma schema stays an accurate description of the database. The one exception is `idx_matches_status_date`: Prisma cannot express partial indexes, so it exists only in the SQL migration — a comment in the `Matches` model points to it. When adding an index, update both files.
 
 `docker-entrypoint.sh` previously only applied `01_schema` and `03_triggers`, silently skipping this `02_indexes` step entirely — meaning none of these indexes actually existed on a database built the normal way, despite the migration file being correct. This has been fixed; the entrypoint now applies all four migration directories in order.
+
+Note that the entrypoint only runs when the Postgres data directory is initialised for the first time, so index additions never reach an already-provisioned database through it. Those are applied manually with `CREATE INDEX CONCURRENTLY` (so the scheduler's writes are not blocked while the index builds); the exact statements are recorded in the PR that introduces the index.
 
 ---
 
