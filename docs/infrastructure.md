@@ -63,7 +63,7 @@ A Next.js 15 application served on port 3000.
 
 In development, the source directory is bind-mounted into the container and the dev server runs with hot reload. In production, the image is built in CI, pushed to GHCR, and pulled onto the VPS — no build happens on the server.
 
-Three environment variables are passed as both build args and runtime env vars: `NEXT_PUBLIC_API_URL`, `INTERNAL_API_URL`, and `FRONTEND_URL`. The `NEXT_PUBLIC_` prefix makes the API URL available in the browser bundle. `INTERNAL_API_URL` is used for server-side rendering inside the Docker network, where the frontend container reaches the backend directly by service name rather than going through Nginx. `SENTRY_AUTH_TOKEN` is passed as a build arg only — it is needed at build time for Sentry source map upload and is not present at runtime.
+Three environment variables are passed as both build args and runtime env vars: `NEXT_PUBLIC_API_URL`, `INTERNAL_API_URL`, and `FRONTEND_URL`. The `NEXT_PUBLIC_` prefix makes the API URL available in the browser bundle. `INTERNAL_API_URL` is used for server-side rendering inside the Docker network, where the frontend container reaches the backend directly by service name rather than going through Nginx. `SENTRY_AUTH_TOKEN` is passed as a BuildKit secret mount, exposed only to the `npm run build` step — it is needed at build time for Sentry source map upload and never enters the image config or its layers (a build arg would persist in the image metadata on GHCR).
 
 ### backend
 
