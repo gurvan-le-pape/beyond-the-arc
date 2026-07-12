@@ -10,7 +10,7 @@ The backend exposes a REST API built with NestJS 11, consumed exclusively by the
 
 The API is fully public: there is no authentication or authorisation. This reflects the nature of the platform — all data is competition information that should be openly accessible.
 
-Interactive documentation is available at `/docs` (Swagger UI), served by `@nestjs/swagger`.
+Interactive documentation is available at `/api/docs` (Swagger UI), served by `@nestjs/swagger`. The UI opts into the global `api` prefix (`useGlobalPrefix: true`) so it is served under the same path prefix that Nginx proxies to the backend, making it reachable in production.
 
 ---
 
