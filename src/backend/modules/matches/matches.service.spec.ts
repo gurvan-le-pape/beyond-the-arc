@@ -742,6 +742,47 @@ describe("MatchesService", () => {
       );
     });
 
+    it("should combine organization and search filters with AND when both are set", async () => {
+      await service.findAllMatches({ committeeId: 2, search: "Paris" });
+
+      expect(mockPrismaService.client.matches.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            AND: [
+              {
+                OR: [
+                  { homeTeam: { club: { committeeId: 2 } } },
+                  { awayTeam: { club: { committeeId: 2 } } },
+                ],
+              },
+              {
+                OR: [
+                  {
+                    homeTeam: {
+                      club: {
+                        name: { contains: "Paris", mode: "insensitive" },
+                      },
+                    },
+                  },
+                  {
+                    awayTeam: {
+                      club: {
+                        name: { contains: "Paris", mode: "insensitive" },
+                      },
+                    },
+                  },
+                ],
+              },
+            ],
+          }),
+        }),
+      );
+
+      const { where } =
+        mockPrismaService.client.matches.findMany.mock.calls[0][0];
+      expect(where.OR).toBeUndefined();
+    });
+
     it("should include committeeId and leagueId on club", async () => {
       mockPrismaService.client.matches.findUnique.mockResolvedValue(
         mockMatchDetailResult,
@@ -755,7 +796,7 @@ describe("MatchesService", () => {
       expect(result.awayTeam.club.leagueId).toBe(1);
     });
 
-    it("should include committeeId and leagueId on club", async () => {
+    it("should include committeeId and leagueId on club in list results", async () => {
       mockPrismaService.client.matches.findMany.mockResolvedValue([
         mockMatchListResult,
       ]);
