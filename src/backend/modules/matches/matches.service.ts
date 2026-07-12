@@ -571,7 +571,19 @@ export class MatchesService {
     }
 
     const orgFilter = this.buildOrganizationFilter(filters);
-    if (orgFilter) where.OR = orgFilter;
+    const searchFilter = filters?.search
+      ? this.buildSearchFilter(filters.search)
+      : undefined;
+
+    // Both are OR-groups over home/away team, so when both apply they must be
+    // AND-ed — assigning each to `where.OR` would let one overwrite the other.
+    if (orgFilter && searchFilter) {
+      where.AND = [{ OR: orgFilter }, { OR: searchFilter }];
+    } else if (orgFilter) {
+      where.OR = orgFilter;
+    } else if (searchFilter) {
+      where.OR = searchFilter;
+    }
 
     if (filters?.matchday) where.matchday = filters.matchday;
 
@@ -587,8 +599,6 @@ export class MatchesService {
         ),
       };
     }
-
-    if (filters?.search) where.OR = this.buildSearchFilter(filters.search);
 
     return where;
   }
