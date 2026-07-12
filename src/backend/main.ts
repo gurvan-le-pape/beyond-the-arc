@@ -33,7 +33,9 @@ async function bootstrap() {
     .setVersion("1.0")
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup("docs", app, document);
+  // useGlobalPrefix serves the UI at /api/docs — the only path prefix Nginx
+  // proxies to the backend, so Swagger is reachable in production.
+  SwaggerModule.setup("docs", app, document, { useGlobalPrefix: true });
 
   // Global pipes
   app.useGlobalPipes(
