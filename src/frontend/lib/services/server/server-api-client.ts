@@ -22,6 +22,13 @@ import { logger, parseApiError } from "@/shared/utils";
 const BASE_URL = process.env.INTERNAL_API_URL || "http://backend:4000/api";
 
 /**
+ * Mirrors the 30s timeout of the client-side axios instance. Native fetch has
+ * no default timeout, so without this a hung backend request would block the
+ * SSR render indefinitely.
+ */
+const REQUEST_TIMEOUT_MS = 30_000;
+
+/**
  * Fetches data from the API server-side.
  * Uses absolute URLs required for Node.js environment.
  *
@@ -37,6 +44,7 @@ export async function fetchApi<T>(endpoint: string): Promise<T> {
       headers: {
         "Content-Type": "application/json",
       },
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
     });
 
     if (!response.ok) {
@@ -72,7 +80,7 @@ export function buildQueryString(
 
   const searchParams = new URLSearchParams();
   Object.entries(params).forEach(([key, value]) => {
-    if (value !== undefined) {
+    if (value !== undefined && value !== null) {
       searchParams.append(key, String(value));
     }
   });
