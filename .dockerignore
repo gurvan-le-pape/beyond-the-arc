@@ -1,0 +1,15 @@
+# All Dockerfiles build with the repo root as context (see docker/*/Dockerfile
+# and the compose build sections), so this file must live at the repo root —
+# a .dockerignore inside a subdirectory is silently ignored.
+#
+# Keeps local build contexts small (multi-GB otherwise) and identical to CI's
+# clean checkout: without the node_modules exclusion, a local build would COPY
+# the host's node_modules over the freshly installed ones inside the image.
+.git
+**/node_modules
+**/dist
+**/.next
+venv
+local
+docs
+.github
