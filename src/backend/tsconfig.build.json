@@ -3,6 +3,7 @@
   "include": ["**/*.ts"],
   "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts"],
   "compilerOptions": {
+    "rootDir": ".",
     "paths": {
       "@modules/*": ["./modules/*"],
       "@common/*": ["./common/*"],

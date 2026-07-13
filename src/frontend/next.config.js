@@ -6,6 +6,9 @@ const withNextIntl = createNextIntlPlugin("./i18n.ts");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Emit a self-contained server (server.js + traced node_modules subset) so
+  // the production image ships without the build toolchain.
+  output: "standalone",
   reactStrictMode: false,
   webpack: (config) => {
     config.resolve.alias = {

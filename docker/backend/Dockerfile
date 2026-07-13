@@ -1,17 +1,45 @@
 FROM node:24-alpine AS base
 WORKDIR /app
-COPY ../src/backend/package*.json ./
-COPY ../src/backend/prisma ./prisma
+COPY src/backend/package*.json ./
+COPY src/backend/prisma ./prisma
 RUN npm ci --prefer-offline --no-audit --progress=false && npx prisma generate
 
 FROM base AS dev
-COPY ../src/backend ./
+COPY src/backend ./
 EXPOSE 4000
 CMD ["npm", "run", "start:dev"]
 
-FROM base AS prod
-COPY ../src/backend ./
+FROM base AS build
+COPY src/backend ./
 RUN npm run build
-EXPOSE 4000
+
+# Runtime image: compiled dist + production dependencies only. No Nest CLI,
+# no TypeScript — tsc-alias resolved the path aliases at build time, so dist
+# runs under plain node.
+FROM node:24-alpine AS prod
+WORKDIR /app
 ENV NODE_ENV=production
-CMD ["npm", "run", "start"]
+COPY src/backend/package*.json ./
+# Prisma 7's @prisma/client declares the full CLI toolchain (prisma, Studio,
+# typescript, an embedded dev database) as production dependencies. None of it
+# is used at runtime: the compiled client requires only @prisma/client/runtime/*
+# and @prisma/adapter-pg. Strip the toolchain, the npm cache, and the WASM
+# query compilers of databases other than postgresql (~300 MB combined).
+RUN npm ci --omit=dev --prefer-offline --no-audit --progress=false \
+    && rm -rf /root/.npm \
+       node_modules/prisma \
+       node_modules/typescript \
+       node_modules/effect \
+       node_modules/@electric-sql \
+       node_modules/@prisma/studio-core \
+       node_modules/@prisma/engines \
+       node_modules/@prisma/dev \
+       node_modules/@prisma/config \
+       node_modules/@prisma/fetch-engine \
+       node_modules/@prisma/get-platform \
+    && find node_modules/@prisma/client/runtime \
+       -name 'query_compiler*' ! -name '*postgresql*' -delete
+COPY --from=build --chown=node:node /app/dist ./dist
+USER node
+EXPOSE 4000
+CMD ["node", "dist/main"]
