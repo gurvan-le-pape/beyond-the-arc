@@ -252,4 +252,30 @@ jobs:
             fi
             docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml pull frontend backend
             docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml up -d
+            # Fail the deploy if the new containers don't come up healthy —
+            # a crash-looping container should be a red pipeline, not a
+            # Grafana alert. Rollback: set IMAGE_TAG in .env to the previous
+            # SHA, then rerun the pull + up commands above.
+            backend_ok=""
+            for i in $(seq 1 12); do
+              if curl -fsS -m 5 http://localhost:4000/api/health/ready > /dev/null 2>&1; then
+                backend_ok=1
+                break
+              fi
+              sleep 5
+            done
+            if [ -z "$backend_ok" ]; then
+              echo "::error::Backend failed health check after 60s — deploy failed, prod may be degraded. Roll back via IMAGE_TAG in .env."
+              docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml logs --tail 50 backend
+              exit 1
+            fi
+            echo "Backend healthy."
+            frontend_code=$(curl -s -o /dev/null -m 10 -w '%{http_code}' http://localhost:3000/en)
+            if [ "$frontend_code" != "200" ]; then
+              echo "::error::Frontend returned HTTP $frontend_code — deploy failed, prod may be degraded. Roll back via IMAGE_TAG in .env."
+              docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml logs --tail 50 frontend
+              exit 1
+            fi
+            echo "Frontend healthy."
+            # Prune only after the new containers proved healthy.
             docker system prune -f

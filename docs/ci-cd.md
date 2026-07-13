@@ -88,7 +88,9 @@ docker compose --env-file .env \
   -f docker/docker-compose.yml \
   -f docker/docker-compose.prod.yml \
   up -d
-docker system prune -f
+# poll backend /api/health/ready (up to 60s) and check the frontend
+# renders /en — exit 1 (failing the pipeline) if either is unhealthy
+docker system prune -f   # only after the health checks pass
 ```
 
 `git pull` updates the Compose files and any config on the VPS before pulling images — this ensures the running configuration always matches the repository state. Only the `frontend` and `backend` images are pulled; the `database` and `scheduler` images are built from source and are not stored in GHCR, so they are not affected by the pull step. `docker system prune -f` removes dangling images and unused build cache to keep disk usage in check on the 40GB local disk.
@@ -135,6 +137,6 @@ Note that this rolls back the images only — if the bad deploy also changed Com
 
 **Database and scheduler images are not pushed to GHCR.** These images are built from source on the VPS via `docker compose up --build` (or rebuilt manually). This is acceptable for the database image (which changes rarely) but means scheduler changes require a manual rebuild step on the VPS rather than the same pull-and-restart flow used for the frontend and backend.
 
-**No smoke test after deployment.** The pipeline has no post-deploy health check. A failed deployment (container crash, misconfigured env var) would not be caught by CI — it would surface through Sentry or Grafana alerting instead.
+**Health check, not rollback.** The deploy script fails the pipeline if the new containers don't come up healthy (backend readiness endpoint polled for 60s, frontend page render checked), and prints the rollback instruction — but the rollback itself is manual (set `IMAGE_TAG` in `.env` to the previous SHA and rerun pull + up). Automatic rollback on health-check failure would be the next step if manual proves too slow in practice.
 
 **Frontend build in CI does not use production build args.** The `frontend-build` job builds without `NEXT_PUBLIC_API_URL` and related vars. If a build failure is caused by a missing env var rather than a code error, it would only surface in the `deploy` job rather than the earlier `frontend-build` check.
