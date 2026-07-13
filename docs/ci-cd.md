@@ -64,8 +64,8 @@ Downloads the `backend-coverage` artifact and runs a SonarCloud scan using the `
 Runs only on push to `main`, after all six check jobs pass. It has four steps:
 
 1. **Log in to GHCR** — authenticates using `GITHUB_TOKEN` (automatically available, no manual secret needed).
-2. **Build and push backend image** — builds the `prod` target of `docker/backend/Dockerfile` and pushes to `ghcr.io/<repository>/backend:latest`.
-3. **Build and push frontend image** — builds the `prod` target of `docker/frontend/Dockerfile` with three build args injected from repository secrets (`SENTRY_AUTH_TOKEN`, `NEXT_PUBLIC_API_URL`, `FRONTEND_URL`), and pushes to `ghcr.io/<repository>/frontend:latest`.
+2. **Build and push backend image** — builds the `prod` target of `docker/backend/Dockerfile` and pushes `ghcr.io/<repository>/backend:latest` plus a `:<git sha>` tag.
+3. **Build and push frontend image** — builds the `prod` target of `docker/frontend/Dockerfile` with two build args from repository secrets (`NEXT_PUBLIC_API_URL`, `FRONTEND_URL`) and `SENTRY_AUTH_TOKEN` passed as a BuildKit secret, and pushes `ghcr.io/<repository>/frontend:latest` plus a `:<git sha>` tag.
 4. **Deploy via SSH** — connects to the VPS using `appleboy/ssh-action` and runs a deploy script (10-minute timeout).
 
 ---
@@ -78,6 +78,8 @@ The SSH deploy step runs the following sequence on the VPS:
 cd /opt/beyondthearc
 git pull
 echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+# pin this commit's images (IMAGE_TAG is read by docker-compose.prod.yml)
+sed -i 's/^IMAGE_TAG=.*/IMAGE_TAG=<git sha>/' .env   # appended if absent
 docker compose --env-file .env \
   -f docker/docker-compose.yml \
   -f docker/docker-compose.prod.yml \
@@ -112,17 +114,24 @@ The `up -d` command restarts only containers whose image has changed. Containers
 
 ---
 
-## Image versioning
+## Image versioning and rollback
 
-Both images are tagged `latest` only. There is no per-commit or per-release tag. This means rolling back to a previous image requires either re-running the CI pipeline on an older commit or manually pulling and re-tagging an image on the VPS — neither is currently automated.
+Every deploy pushes each image with two tags: `latest` and the git commit SHA. `docker-compose.prod.yml` references `${IMAGE_TAG:-latest}`, and the deploy script persists `IMAGE_TAG=<git sha>` into the VPS `.env` — so production always runs a pinned, recorded image, and a later manual `compose up` cannot silently jump to a newer `latest`.
+
+**Rollback** — on the VPS, set `IMAGE_TAG` in `/opt/beyondthearc/.env` to any previous commit SHA, then:
+
+```bash
+docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml pull frontend backend
+docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml up -d
+```
+
+Note that this rolls back the images only — if the bad deploy also changed Compose files or Nginx config, those need reverting separately (`git checkout <sha>` in the repo clone).
 
 ---
 
 ## Known limitations
 
 **No staging deployment.** The deploy job targets production directly. There is no equivalent job that deploys to a staging environment first, because no hosted staging environment exists.
-
-**`latest` tag only.** Without versioned image tags, rollback is a manual process. Tagging images with the git SHA (e.g. `backend:abc1234`) alongside `latest` would make rollbacks straightforward.
 
 **Database and scheduler images are not pushed to GHCR.** These images are built from source on the VPS via `docker compose up --build` (or rebuilt manually). This is acceptable for the database image (which changes rarely) but means scheduler changes require a manual rebuild step on the VPS rather than the same pull-and-restart flow used for the frontend and backend.
 
