@@ -230,26 +230,41 @@ jobs:
             NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
             FRONTEND_URL=${{ secrets.FRONTEND_URL }}
 
+      # Plain ssh instead of a third-party action: the deploy is simple enough
+      # that no external action needs to handle the SSH key. Secrets are passed
+      # as env vars, never expanded into script text; the remote script can't
+      # see runner env, so non-secrets ride an env prefix on the ssh command
+      # and the GHCR token is the first line of stdin, read before the script.
       - name: Deploy via SSH
-        uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2 # v1.2.5
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          command_timeout: 10m
-          script: |
-            cd /opt/beyondthearc
-            git pull
-            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-            # Pin the deployed images to this commit's tag. Persisted in .env so
-            # any later manual `compose up` keeps running the same images
-            # instead of silently jumping to whatever :latest points at.
-            # Rollback = set IMAGE_TAG to a previous SHA and rerun pull + up.
-            if grep -q '^IMAGE_TAG=' .env; then
-              sed -i 's/^IMAGE_TAG=.*/IMAGE_TAG=${{ github.sha }}/' .env
-            else
-              echo 'IMAGE_TAG=${{ github.sha }}' >> .env
-            fi
+        timeout-minutes: 10
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GHCR_USER: ${{ github.actor }}
+          DEPLOY_TAG: ${{ github.sha }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "$VPS_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          {
+          printf '%s\n' "$GHCR_TOKEN"
+          cat <<'DEPLOY'
+          set -e
+          cd /opt/beyondthearc
+          git pull
+          echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+          # Pin the deployed images to this commit's tag. Persisted in .env so
+          # any later manual `compose up` keeps running the same images
+          # instead of silently jumping to whatever :latest points at.
+          # Rollback = set IMAGE_TAG to a previous SHA and rerun pull + up.
+          if grep -q '^IMAGE_TAG=' .env; then
+            sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=$DEPLOY_TAG/" .env
+          else
+            echo "IMAGE_TAG=$DEPLOY_TAG" >> .env
+          fi
             docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml pull frontend backend
             docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml up -d
             # Fail the deploy if the new containers don't come up healthy —
@@ -279,3 +294,6 @@ jobs:
             echo "Frontend healthy."
             # Prune only after the new containers proved healthy.
             docker system prune -f
+          DEPLOY
+          } | ssh -i ~/.ssh/deploy_key "$VPS_USER@$VPS_HOST" \
+              "GHCR_USER='$GHCR_USER' DEPLOY_TAG='$DEPLOY_TAG' sh -c 'read -r GHCR_TOKEN && export GHCR_TOKEN && exec bash -s'"

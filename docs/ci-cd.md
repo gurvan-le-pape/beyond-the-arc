@@ -66,7 +66,7 @@ Runs only on push to `main`, after all six check jobs pass. It has four steps:
 1. **Log in to GHCR** — authenticates using `GITHUB_TOKEN` (automatically available, no manual secret needed).
 2. **Build and push backend image** — builds the `prod` target of `docker/backend/Dockerfile` and pushes `ghcr.io/<repository>/backend:latest` plus a `:<git sha>` tag.
 3. **Build and push frontend image** — builds the `prod` target of `docker/frontend/Dockerfile` with two build args from repository secrets (`NEXT_PUBLIC_API_URL`, `FRONTEND_URL`) and `SENTRY_AUTH_TOKEN` passed as a BuildKit secret, and pushes `ghcr.io/<repository>/frontend:latest` plus a `:<git sha>` tag.
-4. **Deploy via SSH** — connects to the VPS using `appleboy/ssh-action` and runs a deploy script (10-minute timeout).
+4. **Deploy via SSH** — plain `ssh` from the runner (no third-party action holds the key): the runner writes the deploy key, ssh-keyscans the host, and pipes the deploy script to `bash -s` on the VPS (10-minute timeout). Secrets are passed as env vars, never expanded into the script text; the GHCR token travels as the first line of stdin.
 
 ---
 
