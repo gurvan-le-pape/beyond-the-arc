@@ -57,7 +57,7 @@ Runs `next build` to verify the production build compiles and exports successful
 
 ### sonarcloud
 
-Downloads the `backend-coverage` artifact and runs a SonarCloud scan using the `SonarSource/sonarcloud-github-action`. The scan uses `fetch-depth: 0` on checkout so SonarCloud has full git history for accurate blame and new-code analysis. Requires the `SONAR_TOKEN` repository secret.
+Downloads the `backend-coverage` artifact and runs a SonarCloud scan using `SonarSource/sonarqube-scan-action` (successor of the deprecated `sonarcloud-github-action`). The scan uses `fetch-depth: 0` on checkout so SonarCloud has full git history for accurate blame and new-code analysis. Requires the `SONAR_TOKEN` repository secret.
 
 ### deploy
 
