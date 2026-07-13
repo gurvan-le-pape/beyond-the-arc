@@ -132,14 +132,18 @@ Resource limits are higher than the other observability services (2 CPU / 4GB RA
 
 ### frontend and backend — multi-stage builds
 
-Both the frontend and backend Dockerfiles use a two-stage build with a shared `base` stage:
+Both the frontend and backend Dockerfiles share a `base` stage and produce a minimal runtime image:
 
 ```
-base  →  dev   (bind-mounted source, dev server)
-      →  prod  (copied source, compiled output)
+base  →  dev    (bind-mounted source, dev server)
+      →  build  (copied source, compiled output)
+      →  prod   (runtime artifacts only, non-root)
 ```
 
-The `base` stage installs dependencies (`npm ci`) so they are cached separately from the source copy. In the `dev` target the source is not copied into the image at all — it is bind-mounted at runtime instead. In the `prod` target the source is copied in and the build step runs (`npm run build`).
+The `base` stage installs dependencies (`npm ci`) so they are cached separately from the source copy. In the `dev` target the source is not copied into the image at all — it is bind-mounted at runtime instead. The `build` stage copies the source in and runs `npm run build`. The `prod` stage starts from a fresh `node:24-alpine`, contains no build toolchain or source, and runs as the unprivileged `node` user:
+
+- **backend** — copies `dist/` from the build stage and installs production dependencies only. `tsc-alias` rewrites the TypeScript path aliases at build time, so the app runs under plain `node dist/main` with no Nest CLI in the image. Prisma 7's CLI toolchain (declared as a production dependency of `@prisma/client` but unused at runtime) is stripped from `node_modules`, along with the WASM query compilers of databases other than PostgreSQL.
+- **frontend** — uses Next.js `output: "standalone"`: the image contains the self-contained `server.js`, the traced subset of `node_modules`, `.next/static`, and `public/`, and runs `node server.js`.
 
 The Compose dev override sets `build.target: dev` to select the dev stage. The prod override bypasses the build entirely by substituting a prebuilt GHCR image.
 
