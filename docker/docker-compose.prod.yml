@@ -1,12 +1,12 @@
 services:
   frontend:
-    image: ghcr.io/gurvan-le-pape/beyond-the-arc/frontend:latest
+    image: ghcr.io/gurvan-le-pape/beyond-the-arc/frontend:${IMAGE_TAG:-latest}
     build: !reset null
     environment:
       - NODE_ENV=production
 
   backend:
-    image: ghcr.io/gurvan-le-pape/beyond-the-arc/backend:latest
+    image: ghcr.io/gurvan-le-pape/beyond-the-arc/backend:${IMAGE_TAG:-latest}
     build: !reset null
     environment:
       - NODE_ENV=production
