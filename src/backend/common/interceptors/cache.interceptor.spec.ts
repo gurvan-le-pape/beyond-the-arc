@@ -1,7 +1,7 @@
 // src/backend/common/interceptors/cache.interceptor.spec.ts
 import type { CallHandler, ExecutionContext } from "@nestjs/common";
 import type { Subscriber } from "rxjs";
-import { from, lastValueFrom, Observable, of } from "rxjs";
+import { from, lastValueFrom, Observable, of, throwError } from "rxjs";
 
 import { CacheDedupService } from "../services/cache-dedup.service";
 
@@ -284,6 +284,82 @@ describe("CacheInterceptor", () => {
 
       // With a shared dedup service, the upstream is called exactly once
       // even though the two requests hit different interceptor instances.
+      expect(handler.handle).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // Upstream errors
+  // -------------------------------------------------------------------------
+
+  describe("upstream errors", () => {
+    function makeErrorHandler(message = "upstream boom"): CallHandler {
+      return {
+        handle: jest
+          .fn()
+          .mockReturnValue(throwError(() => new Error(message))),
+      };
+    }
+
+    it("propagates the error to the caller and cleans the dedup map", async () => {
+      const { instance, dedup } = makeInterceptor();
+      const obs$ = await instance.intercept(
+        makeContext("/error"),
+        makeErrorHandler(),
+      );
+      await expect(lastValueFrom(obs$)).rejects.toThrow("upstream boom");
+      expect(dedup.get("cache:/error")).toBeUndefined();
+    });
+
+    it("does not leave an unhandled rejection from the dedup promise", async () => {
+      // The dedup map stores a second Promise consumer of the upstream. When
+      // the upstream errors and no concurrent request ever consumed that
+      // promise, its rejection must not surface as unhandled — in production
+      // an unhandled rejection terminates the Node process, so any error on
+      // a cached endpoint would crash the whole API.
+      const rejections: unknown[] = [];
+      const onUnhandled = (reason: unknown) => rejections.push(reason);
+      process.on("unhandledRejection", onUnhandled);
+      try {
+        const { instance } = makeInterceptor();
+        const obs$ = await instance.intercept(
+          makeContext("/lonely-error"),
+          makeErrorHandler(),
+        );
+        await expect(lastValueFrom(obs$)).rejects.toThrow("upstream boom");
+        // Let the orphaned promise's rejection reach the macrotask boundary
+        // where Node decides it is unhandled.
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        await new Promise((resolve) => setImmediate(resolve));
+        expect(rejections).toHaveLength(0);
+      } finally {
+        process.off("unhandledRejection", onUnhandled);
+      }
+    });
+
+    it("delivers the error to a late joiner of the in-flight request", async () => {
+      const dedup = new CacheDedupService();
+      const cacheManager = makeCacheManager();
+      const { instance } = makeInterceptor({}, cacheManager, dedup);
+
+      let reject!: (e: unknown) => void;
+      const upstreamPromise = new Promise((_, r) => {
+        reject = r;
+      });
+      const handler: CallHandler = {
+        handle: jest.fn().mockReturnValue(from(upstreamPromise)),
+      };
+
+      const obs1$ = await instance.intercept(makeContext("/joined"), handler);
+      const obs2$ = await instance.intercept(makeContext("/joined"), handler);
+      const p1 = lastValueFrom(obs1$);
+      const p2 = lastValueFrom(obs2$);
+      // Attach expectations before rejecting so neither is unhandled.
+      const a1 = expect(p1).rejects.toThrow("shared boom");
+      const a2 = expect(p2).rejects.toThrow("shared boom");
+
+      reject(new Error("shared boom"));
+      await Promise.all([a1, a2]);
       expect(handler.handle).toHaveBeenCalledTimes(1);
     });
   });
