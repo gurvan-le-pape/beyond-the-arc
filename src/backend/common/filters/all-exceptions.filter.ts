@@ -171,6 +171,27 @@ export class AllExceptionsFilter implements ExceptionFilter {
       .replace(/^[a-z]/, (char) => char.toUpperCase());
   }
 
+  /**
+   * Builds the human-readable log line message.
+   *
+   * For unexpected errors the *response* message is sanitized in production,
+   * so logs use the real exception message — the client must not see it, the
+   * logs must. Array messages (ValidationPipe) are joined because logging an
+   * array directly produces "[object Array]" in some Pino transports.
+   */
+  private toLogMessage(
+    exception: unknown,
+    errorResponse: ErrorResponse,
+  ): string {
+    if (!(exception instanceof HttpException) && exception instanceof Error) {
+      return exception.message;
+    }
+    if (Array.isArray(errorResponse.message)) {
+      return errorResponse.message.join(", ");
+    }
+    return errorResponse.message;
+  }
+
   private logError(
     exception: unknown,
     request: Request,
@@ -178,16 +199,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
   ): void {
     const { method, url, ip, headers } = request;
 
-    // Normalise message to a string for clean log output — logging an array
-    // directly produces "[object Array]" in some Pino transports. For
-    // unexpected errors the response message is sanitized in production, so
-    // log the real one — the client must not see it, the logs must.
-    const message =
-      !(exception instanceof HttpException) && exception instanceof Error
-        ? exception.message
-        : Array.isArray(errorResponse.message)
-          ? errorResponse.message.join(", ")
-          : errorResponse.message;
+    const message = this.toLogMessage(exception, errorResponse);
 
     // traceId is set by pinoHttp's genReqId and attached via customProps.
     // It correlates this error log with all other logs in the same request
