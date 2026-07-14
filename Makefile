@@ -39,7 +39,7 @@ ps:
 
 # Access PostgreSQL shell
 psql:
-	docker exec -it database psql -U $(DATABASE_USER) -d $(DATABASE_NAME)
+	docker compose -f $(DOCKER_COMPOSE) $(ENV_FILE) exec database psql -U $(DATABASE_USER) -d $(DATABASE_NAME)
 
 # Run frontend in dev mode
 dev-frontend:
@@ -91,7 +91,7 @@ logs-scheduler:
 
 # Reset failed matches back to scheduled
 reset-failed-matches:
-	docker exec -it docker-database psql -U $(DATABASE_USER) -d $(DATABASE_NAME) \
+	docker compose -f $(DOCKER_COMPOSE) $(ENV_FILE) exec database psql -U $(DATABASE_USER) -d $(DATABASE_NAME) \
 		-c "UPDATE matches SET status = 'scheduled' WHERE status = 'failed';"
 
 # Show seeding progress
