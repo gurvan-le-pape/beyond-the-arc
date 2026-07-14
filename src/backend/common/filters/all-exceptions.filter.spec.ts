@@ -1,7 +1,12 @@
 // src/backend/common/filters/all-exceptions.filter.spec.ts
 import { HttpException, HttpStatus } from "@nestjs/common";
+import * as Sentry from "@sentry/nestjs";
 
 import { AllExceptionsFilter } from "./all-exceptions.filter";
+
+jest.mock("@sentry/nestjs", () => ({
+  captureException: jest.fn(),
+}));
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -48,6 +53,7 @@ describe("AllExceptionsFilter", () => {
   const originalEnv = process.env.NODE_ENV;
 
   beforeEach(() => {
+    jest.clearAllMocks();
     logger = makeLogger();
 
     filter = new AllExceptionsFilter(logger as any);
@@ -142,11 +148,33 @@ describe("AllExceptionsFilter", () => {
       expect(host.response.status).toHaveBeenCalledWith(500);
     });
 
-    it("uses error.message as the response message", () => {
+    it("sanitizes the message and error name in production", () => {
+      process.env.NODE_ENV = "production";
+      const host = makeHost();
+      filter.catch(
+        new Error("connection to db-internal:5432 refused"),
+        host as never,
+      );
+      const body = host.response.json.mock.calls[0][0];
+      expect(body.message).toBe("Internal server error");
+      expect(body.error).toBe("InternalServerError");
+    });
+
+    it("keeps the real message and error name in development", () => {
+      process.env.NODE_ENV = "development";
       const host = makeHost();
       filter.catch(new Error("something broke"), host as never);
       const body = host.response.json.mock.calls[0][0];
       expect(body.message).toBe("something broke");
+      expect(body.error).toBe("Error");
+    });
+
+    it("logs the real message even when the response is sanitized", () => {
+      process.env.NODE_ENV = "production";
+      const host = makeHost();
+      filter.catch(new Error("secret internal detail"), host as never);
+      const loggedMessage = logger.error.mock.calls[0][1] as string;
+      expect(loggedMessage).toContain("secret internal detail");
     });
   });
 
@@ -155,12 +183,53 @@ describe("AllExceptionsFilter", () => {
   // -------------------------------------------------------------------------
 
   describe("string exception", () => {
-    it("returns 500 and uses the string as the message", () => {
+    it("returns 500 and a generic message in production", () => {
+      process.env.NODE_ENV = "production";
       const host = makeHost();
       filter.catch("raw string error", host as never);
       const body = host.response.json.mock.calls[0][0];
       expect(body.statusCode).toBe(500);
+      expect(body.message).toBe("Internal server error");
+    });
+
+    it("uses the string as the message in development", () => {
+      process.env.NODE_ENV = "development";
+      const host = makeHost();
+      filter.catch("raw string error", host as never);
+      const body = host.response.json.mock.calls[0][0];
       expect(body.message).toBe("raw string error");
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // Sentry capture policy
+  // -------------------------------------------------------------------------
+
+  describe("Sentry capture", () => {
+    it("does not capture 4xx HttpExceptions", () => {
+      const host = makeHost();
+      filter.catch(
+        new HttpException("Not found", HttpStatus.NOT_FOUND),
+        host as never,
+      );
+      expect(Sentry.captureException).not.toHaveBeenCalled();
+    });
+
+    it("captures 5xx HttpExceptions", () => {
+      const host = makeHost();
+      const exception = new HttpException(
+        "Gateway timeout",
+        HttpStatus.GATEWAY_TIMEOUT,
+      );
+      filter.catch(exception, host as never);
+      expect(Sentry.captureException).toHaveBeenCalledWith(exception);
+    });
+
+    it("captures unexpected errors", () => {
+      const host = makeHost();
+      const exception = new Error("boom");
+      filter.catch(exception, host as never);
+      expect(Sentry.captureException).toHaveBeenCalledWith(exception);
     });
   });
 

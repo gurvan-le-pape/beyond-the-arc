@@ -6,7 +6,7 @@ import {
   HttpException,
   HttpStatus,
 } from "@nestjs/common";
-import { SentryExceptionCaptured } from "@sentry/nestjs";
+import * as Sentry from "@sentry/nestjs";
 import { Request, Response } from "express";
 import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 
@@ -63,13 +63,20 @@ export class AllExceptionsFilter implements ExceptionFilter {
     private readonly logger: PinoLogger,
   ) {}
 
-  @SentryExceptionCaptured()
   catch(exception: unknown, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
     const errorResponse = this.buildErrorResponse(exception, request);
+
+    // Only actionable failures go to Sentry. Capturing everything (the old
+    // @SentryExceptionCaptured decorator) meant every bot probing a 404 on
+    // this public API burned quota and diluted alerting.
+    if (errorResponse.statusCode >= 500) {
+      Sentry.captureException(exception);
+    }
+
     this.logError(exception, request, errorResponse);
 
     response.status(errorResponse.statusCode).json(errorResponse);
@@ -104,11 +111,19 @@ export class AllExceptionsFilter implements ExceptionFilter {
           message;
         error = (exceptionResponse as { error?: string }).error ?? error;
       }
-    } else if (exception instanceof Error) {
-      error = exception.name;
-      message = exception.message;
-    } else if (typeof exception === "string") {
-      message = exception;
+    } else if (process.env.NODE_ENV === "development") {
+      // Unexpected errors (Prisma failures, TypeErrors, string throws) keep
+      // their real message in development only. In production both the name
+      // and the message can reveal internals (driver errors carry query
+      // fragments; even "PrismaClientKnownRequestError" is information) —
+      // clients get the generic 500 while the full exception goes to the
+      // logs and Sentry.
+      if (exception instanceof Error) {
+        error = exception.name;
+        message = exception.message;
+      } else if (typeof exception === "string") {
+        message = exception;
+      }
     }
 
     const errorResponse: ErrorResponse = {
@@ -164,10 +179,15 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const { method, url, ip, headers } = request;
 
     // Normalise message to a string for clean log output — logging an array
-    // directly produces "[object Array]" in some Pino transports.
-    const message = Array.isArray(errorResponse.message)
-      ? errorResponse.message.join(", ")
-      : errorResponse.message;
+    // directly produces "[object Array]" in some Pino transports. For
+    // unexpected errors the response message is sanitized in production, so
+    // log the real one — the client must not see it, the logs must.
+    const message =
+      !(exception instanceof HttpException) && exception instanceof Error
+        ? exception.message
+        : Array.isArray(errorResponse.message)
+          ? errorResponse.message.join(", ")
+          : errorResponse.message;
 
     // traceId is set by pinoHttp's genReqId and attached via customProps.
     // It correlates this error log with all other logs in the same request

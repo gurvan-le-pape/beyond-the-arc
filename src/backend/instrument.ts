@@ -6,7 +6,8 @@ Sentry.init({
 
   // Send structured logs to Sentry
   enableLogs: true,
-  // Setting this option to true will send default PII data to Sentry.
-  // For example, automatic IP address collection on events
-  sendDefaultPii: true,
+  // Never send default PII (visitor IP addresses) to Sentry: this is a
+  // public site with an EU audience and error tracking needs no personal
+  // data.
+  sendDefaultPii: false,
 });
