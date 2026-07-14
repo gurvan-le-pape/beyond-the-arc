@@ -123,7 +123,15 @@ export function CacheInterceptor(
       // `lastValueFrom` resolves with the final emitted value, which for this
       // single-emission stream equals the full response — exactly what late
       // joiners need from `from(existing)` above.
-      this.dedup.set(cacheKey, lastValueFrom(upstream$));
+      const inFlight = lastValueFrom(upstream$);
+      // If the upstream errors and no late joiner ever consumed this promise,
+      // its rejection would be unhandled — and an unhandled rejection
+      // terminates the Node process, so any error on a cached endpoint would
+      // crash the whole API. The no-op handler defuses that; late joiners
+      // still receive the real rejection through their own `from(inFlight)`
+      // subscription.
+      inFlight.catch(() => {});
+      this.dedup.set(cacheKey, inFlight);
 
       return upstream$;
     }
