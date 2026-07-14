@@ -48,11 +48,11 @@ The pipeline is entirely self-contained: it connects directly to PostgreSQL via 
 
 ## Static data — SQL seeding
 
-The organisational hierarchy (leagues, committees, clubs) is loaded via SQL files at database initialisation time, baked into the database Docker image.
+The organisational hierarchy (leagues, committees, clubs) is loaded by the `1_seed_static_data` Prisma migration, applied together with the schema by `prisma migrate deploy`.
 
 **Organisational data**
 
-Each organisation type (leagues, committees, clubs) has its own SQL file or set of files under `04_data/`. Records are inserted with their key attributes and committee or league membership resolved by name via subqueries. This data reflects the real French basketball organisational hierarchy.
+Each organisation type (leagues, committees, clubs) was authored as its own SQL file, now concatenated in foreign-key order inside the seed migration. Records are inserted with their key attributes and committee or league membership resolved by name via subqueries. This data reflects the real French basketball organisational hierarchy.
 
 The split between SQL and Python is a deliberate choice: static reference data that a developer might want to inspect or patch directly belongs in SQL, while anything that involves logic (randomness, scheduling, simulation) belongs in Python.
 

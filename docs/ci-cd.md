@@ -64,7 +64,7 @@ Downloads the `backend-coverage` artifact and runs a SonarCloud scan using `Sona
 Runs only on push to `main`, after all six check jobs pass. It has four steps:
 
 1. **Log in to GHCR** — authenticates using `GITHUB_TOKEN` (automatically available, no manual secret needed).
-2. **Build and push backend image** — builds the `prod` target of `docker/backend/Dockerfile` and pushes `ghcr.io/<repository>/backend:latest` plus a `:<git sha>` tag.
+2. **Build and push backend image** — builds the `prod` target of `docker/backend/Dockerfile` and pushes `ghcr.io/<repository>/backend:latest` plus a `:<git sha>` tag. A second step builds the `migrate` target (shares the cached base layers) and pushes `backend-migrate` with the same tags.
 3. **Build and push frontend image** — builds the `prod` target of `docker/frontend/Dockerfile` with two build args from repository secrets (`NEXT_PUBLIC_API_URL`, `FRONTEND_URL`) and `SENTRY_AUTH_TOKEN` passed as a BuildKit secret, and pushes `ghcr.io/<repository>/frontend:latest` plus a `:<git sha>` tag.
 4. **Deploy via SSH** — plain `ssh` from the runner (no third-party action holds the key): the runner writes the deploy key, ssh-keyscans the host, and pipes the deploy script to `bash -s` on the VPS (10-minute timeout). Secrets are passed as env vars, never expanded into the script text; the GHCR token travels as the first line of stdin.
 
@@ -93,7 +93,7 @@ docker compose --env-file .env \
 docker system prune -f   # only after the health checks pass
 ```
 
-`git pull` updates the Compose files and any config on the VPS before pulling images — this ensures the running configuration always matches the repository state. Only the `frontend` and `backend` images are pulled; the `database` and `scheduler` images are built from source and are not stored in GHCR, so they are not affected by the pull step. `docker system prune -f` removes dangling images and unused build cache to keep disk usage in check on the 40GB local disk.
+`git pull` updates the Compose files and any config on the VPS before pulling images — this ensures the running configuration always matches the repository state. The `frontend`, `backend`, and `migrate` images are pulled; the `scheduler` image is built from source on the VPS and the `database` service uses the official `postgres` image, so neither is affected by the pull step. The subsequent `up -d` runs the one-shot `migrate` service (applying any pending Prisma migrations) before `backend` and `scheduler` start. `docker system prune -f` removes dangling images and unused build cache to keep disk usage in check on the 40GB local disk.
 
 The `up -d` command restarts only containers whose image has changed. Containers running unchanged images (database, scheduler, observability stack) are left running.
 

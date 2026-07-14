@@ -11,6 +11,10 @@ services:
     environment:
       - NODE_ENV=production
 
+  migrate:
+    image: ghcr.io/gurvan-le-pape/beyond-the-arc/backend-migrate:${IMAGE_TAG:-latest}
+    build: !reset null
+
   grafana:
     environment:
       - GF_SERVER_ROOT_URL=${GRAFANA_ROOT_URL}
