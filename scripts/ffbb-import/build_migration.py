@@ -444,8 +444,17 @@ def main():
     if dup_names:
         print(f"WARNING: {len(dup_names)} committee names are not unique: {dup_names}")
 
-    out.append("INSERT INTO clubs (code, name, address, phone, email, website, president_id, gym_id, committee_id, zip_code, city, latitude, longitude) VALUES")
-    club_rows = []
+    # A 4368-row VALUES list with a correlated subquery per row for
+    # president_id/gym_id/committee_id (~13,000 subplan executions in one
+    # statement) contributed to a prod incident - sustained CPU/disk load
+    # applying this migration. Instead: build one VALUES list of raw
+    # business keys (president/gym code, committee name, department code)
+    # and resolve all of them in a single set-based join, so Postgres does
+    # a handful of hash/merge joins over the whole set instead of ~13,000
+    # independent per-row lookups. Still matches by business key, not by
+    # an assumed auto-increment id.
+    out.append("INSERT INTO clubs (code, name, address, phone, email, website, president_id, gym_id, committee_id, zip_code, city, latitude, longitude)")
+    value_rows = []
     skipped_clubs = []
     for cl in clubs:
         if "error" in cl:
@@ -457,33 +466,34 @@ def main():
             skipped_clubs.append(cl["code"])
             continue
         pcode = president_code_by_entity_code.get(("club", cl["code"]))
-        pres_sub = f"(SELECT id FROM presidents WHERE code = {sql_str(pcode)})" if pcode else "NULL"
-        gym_sub = "NULL"
+        gcode = None
         if cl.get("gym_name"):
             key = (cl["gym_name"].strip(), (cl.get("gym_address") or "").strip())
             gcode = gym_key_to_code.get(key)
-            if gcode:
-                gym_sub = f"(SELECT id FROM gyms WHERE code = {sql_str(gcode)})"
         zip_code, city = parse_zip_city(cl.get("address"))
         geo = geocoded.get(cl["_url"])
         lat = geo.get("latitude") if geo else None
         lon = geo.get("longitude") if geo else None
+        # department_id narrows this in case two unrelated committees ever
+        # share a name - see committee_name_for above for split ones.
         committee_name = committee_name_for(ckey, dept_code, committee_name_by_key[ckey])
-        # department_id also narrows this in case two unrelated committees
-        # ever share a name - see committee_name_for above for split ones.
-        committee_sub = (
-            f"(SELECT id FROM committees WHERE name = {sql_str(committee_name)} "
-            f"AND department_id = (SELECT id FROM departments WHERE code = {sql_str(dept_code)}))"
-        )
-        club_rows.append(
+        value_rows.append(
             f"({sql_str(cl['code'])}, {sql_str(cl['name'])}, {sql_str(cl.get('address'))}, "
-            f"{sql_str(cl.get('phone'))}, {sql_str(cl.get('email'))}, NULL, "
-            f"{pres_sub}, {gym_sub}, {committee_sub}, "
-            f"{sql_str(zip_code)}, {sql_str(city)}, {sql_str(lat)}, {sql_str(lon)})"
+            f"{sql_str(cl.get('phone'))}, {sql_str(cl.get('email'))}, "
+            f"{sql_str(zip_code)}, {sql_str(city)}, {sql_str(lat)}, {sql_str(lon)}, "
+            f"{sql_str(pcode)}, {sql_str(gcode)}, {sql_str(committee_name)}, {sql_str(dept_code)})"
         )
 
     print(f"Skipped {len(skipped_clubs)} clubs (committee unresolved)")
-    out.append(",\n".join(club_rows) + ";\n")
+    out.append("SELECT v.code, v.name, v.address, v.phone, v.email, NULL,")
+    out.append("       p.id, g.id, c.id, v.zip_code, v.city, v.latitude::decimal(10,8), v.longitude::decimal(11,8)")
+    out.append("FROM (VALUES")
+    out.append(",\n".join(value_rows))
+    out.append(") AS v(code, name, address, phone, email, zip_code, city, latitude, longitude, president_code, gym_code, committee_name, department_code)")
+    out.append("LEFT JOIN presidents p ON p.code = v.president_code")
+    out.append("LEFT JOIN gyms g ON g.code = v.gym_code")
+    out.append("JOIN departments d ON d.code = v.department_code")
+    out.append("JOIN committees c ON c.name = v.committee_name AND c.department_id = d.id;\n")
 
     TARGET_MIGRATION.write_text("\n".join(out), encoding="utf-8")
     print(f"Wrote {TARGET_MIGRATION} - `git diff` it, then verify with a fresh `prisma migrate deploy` before committing.")

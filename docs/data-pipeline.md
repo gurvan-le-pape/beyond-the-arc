@@ -61,6 +61,8 @@ Run both via `make refresh-static-data` (host-side, not Docker — takes roughly
 
 Fill rates reflect what FFBB itself publishes, not scraper gaps (the crawl has zero parse errors across all pages): ~91% of clubs have a president, ~83% a gym, ~97% real coordinates, ~99% phone/email. A small number of committees genuinely cover two departments where club counts are too low to justify a standalone one (e.g. Aube/Haute-Marne) — since `committees.department_id` is a single required FK (see [`data-model.md`](./data-model.md)), these are split into one committee row per department rather than collapsed into one, each keeping the shared contact info.
 
+The generated `clubs` INSERT resolves `president_id`/`gym_id`/`committee_id` via a single set-based join against `presidents`/`gyms`/`departments`/`committees` (matching by business key: code or name), not a correlated subquery per row. That distinction matters: an earlier per-row-subquery version of this same statement (~4368 rows × 3 lookups each) caused a real production incident applying this migration — sustained CPU/disk load severe enough to require a hard power-cycle. Adding indexes on the looked-up columns didn't fix it; the per-row execution pattern itself was the problem. Don't reintroduce correlated subqueries here for a "simpler-looking" diff.
+
 The split between SQL and Python is a deliberate choice: static reference data that a developer might want to inspect or patch directly belongs in SQL, while anything that involves logic (randomness, scheduling, simulation) belongs in Python.
 
 The database schema and modelling decisions are covered in → [`data-model.md`](./data-model.md)
