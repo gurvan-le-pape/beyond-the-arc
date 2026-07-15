@@ -64,7 +64,7 @@ These are enforced by custom ESLint rules in `src/backend/eslint-rules/` and `sr
 
 Two distinct data sources, handled differently:
 - **Static** (competition structure, geography) — real French basketball data for metropolitan France, scraped from FFBB's public site (`scripts/ffbb-import/`) and geocoded via the French government's BAN API, seeded by the `1_seed_static_data` Prisma migration and applied with the schema by `prisma migrate deploy`. Re-run with `make refresh-static-data` when it needs refreshing; see `docs/data-pipeline.md`.
-- **Dynamic** (match results, stats, shot charts) — generated continuously by the Python scheduler (`src/backend/db/python`, run as the `scheduler` Docker service), organized into `generation/` (season/match/playtime generation), `simulation/` (match simulator + game state manager), `geojson/` (map boundary extraction), and `db/` (repository layer). The scheduler uses checkpoints to avoid reprocessing already-handled matches.
+- **Dynamic** (match results, stats, shot charts) — generated continuously by the Python scheduler (`src/backend/db/python`, run as the `scheduler` Docker service), organized into `generation/` (season/match/playtime generation), `simulation/` (match simulator + game state manager), and `db/` (repository layer). The scheduler uses checkpoints to avoid reprocessing already-handled matches.
 
 ## Known limitations (intentional, not oversights)
 

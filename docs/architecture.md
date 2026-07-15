@@ -138,7 +138,6 @@ Match results, player statistics, and shot chart data are generated and updated 
 
 - `generation/` — season schedule generation, match generation, playtime generation
 - `simulation/` — match simulator with a game state manager and event generator
-- `geojson/` — extractors for region and department boundaries used by the map
 - `db/repositories/` — database access layer for the pipeline
 
 The scheduler runs continuously (`restart: unless-stopped`) and uses checkpoints to avoid reprocessing already-handled matches.
