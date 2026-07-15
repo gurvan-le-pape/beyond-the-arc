@@ -18,6 +18,7 @@ make dev-frontend        # npm run dev inside the frontend container
 make dev-backend         # npm run start:dev inside the backend container
 make logs-dev            # tail logs
 make down                # stop containers
+make refresh-static-data # re-scrape FFBB and regenerate the static-data migration (host-side, ~1h20)
 ```
 
 Backend (`src/backend`):
@@ -49,7 +50,7 @@ These are enforced by custom ESLint rules in `src/backend/eslint-rules/` and `sr
 ## Backend architecture
 
 - Feature modules live under `src/backend/modules/<feature>/` (e.g. `teams`, `matches`, `players`, `stats`), each with its own `*.controller.ts`, `*.service.ts`, `*.module.ts`, and `dto/`. `competitions` and `organizations` are parent modules with nested sub-modules (`competitions/championships`, `organizations/clubs`, etc.).
-- Prisma is the ORM; schema and migrations live in `src/backend/prisma`. SQL-based seed migrations for static reference data (competition structure, geography) are in `src/backend/db/sql/migrations`.
+- Prisma is the ORM and owns the schema: edit `src/backend/prisma/schema.prisma`, then generate a migration with `npx prisma migrate dev --name <change>`. Migrations (including the `1_seed_static_data` reference-data seed) live in `src/backend/prisma/migrations` and are applied everywhere — dev and prod — by the one-shot `migrate` compose service running `prisma migrate deploy` before the backend starts. Never edit an applied migration; CHECK constraints, triggers, and partial indexes are hand-maintained in migration SQL because PSL cannot express them.
 - All responses are wrapped by a global `TransformInterceptor` into a `{ data, timestamp, path, statusCode }` envelope; list endpoints add `meta.count`, paginated endpoints nest pagination info inside `data`. Errors go through a global `AllExceptionsFilter` that also forwards to Sentry.
 
 ## Frontend architecture
@@ -62,7 +63,7 @@ These are enforced by custom ESLint rules in `src/backend/eslint-rules/` and `sr
 ## Data pipeline
 
 Two distinct data sources, handled differently:
-- **Static** (competition structure, geography) — seeded once via SQL files in `src/backend/db/sql/migrations`.
+- **Static** (competition structure, geography) — real French basketball data for metropolitan France, scraped from FFBB's public site (`scripts/ffbb-import/`) and geocoded via the French government's BAN API, seeded by the `1_seed_static_data` Prisma migration and applied with the schema by `prisma migrate deploy`. Re-run with `make refresh-static-data` when it needs refreshing; see `docs/data-pipeline.md`.
 - **Dynamic** (match results, stats, shot charts) — generated continuously by the Python scheduler (`src/backend/db/python`, run as the `scheduler` Docker service), organized into `generation/` (season/match/playtime generation), `simulation/` (match simulator + game state manager), `geojson/` (map boundary extraction), and `db/` (repository layer). The scheduler uses checkpoints to avoid reprocessing already-handled matches.
 
 ## Known limitations (intentional, not oversights)

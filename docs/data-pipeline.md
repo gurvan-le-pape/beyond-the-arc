@@ -48,11 +48,18 @@ The pipeline is entirely self-contained: it connects directly to PostgreSQL via 
 
 ## Static data — SQL seeding
 
-The organisational hierarchy (leagues, committees, clubs) is loaded via SQL files at database initialisation time, baked into the database Docker image.
+The organisational hierarchy (regions, departments, leagues, committees, clubs, gyms, presidents) is loaded by the `1_seed_static_data` Prisma migration, applied together with the schema by `prisma migrate deploy`. It covers metropolitan France only.
 
-**Organisational data**
+**Provenance**
 
-Each organisation type (leagues, committees, clubs) has its own SQL file or set of files under `04_data/`. Records are inserted with their key attributes and committee or league membership resolved by name via subqueries. This data reflects the real French basketball organisational hierarchy.
+This isn't hand-authored placeholder data — it's real French basketball organisational data, scraped from FFBB's public site (`competitions.ffbb.com`) by `scripts/ffbb-import/`:
+
+1. `scrape.py` crawls every metro league, committee, and club page (~4480 pages, at the 1 req/s their `robots.txt` asks for) and pulls name/contact/president/gym info out of each page's embedded Next.js data, checkpointing progress to `ffbb_data/*.jsonl` so an interrupted run resumes instead of restarting.
+2. `build_migration.py` geocodes each club's address via the French government's BAN API (`api-adresse.data.gouv.fr`) for real coordinates, resolves each club's department from its own postcode (not a committee-wide guess — see below), and regenerates `1_seed_static_data/migration.sql` from scratch, sorted for readability.
+
+Run both via `make refresh-static-data` (host-side, not Docker — takes roughly 1h20, dominated by the crawl-delay). It's a rare, occasional operation for refreshing contact info as it drifts, not something CI or `make up-dev` ever triggers on its own.
+
+Fill rates reflect what FFBB itself publishes, not scraper gaps (the crawl has zero parse errors across all pages): ~91% of clubs have a president, ~83% a gym, ~97% real coordinates, ~99% phone/email. A small number of committees genuinely cover two departments where club counts are too low to justify a standalone one (e.g. Aube/Haute-Marne) — since `committees.department_id` is a single required FK (see [`data-model.md`](./data-model.md)), these are split into one committee row per department rather than collapsed into one, each keeping the shared contact info.
 
 The split between SQL and Python is a deliberate choice: static reference data that a developer might want to inspect or patch directly belongs in SQL, while anything that involves logic (randomness, scheduling, simulation) belongs in Python.
 
@@ -217,7 +224,7 @@ Bulk inserts that need returned IDs (shot locations, match events) use a single 
 
 **Data is simulated, not real.** All match results, player statistics, and shot charts are produced by the simulator. The competition structure (leagues, committees, clubs) reflects the real French basketball hierarchy, but the gameplay data is synthetic. This is intentional for a portfolio project — it allows the full platform to function with realistic-looking data without requiring a live data feed.
 
-**Incomplete static data.** Presidents, gyms, and club locations (coordinates, addresses) are only partially seeded — coverage varies by department and some fields have not been retrieved yet. This is a work in progress.
+**Static data covers metropolitan France only.** Overseas regions/departments/clubs (DROM, COM, TAAF, Nouvelle-Calédonie, Polynésie) aren't seeded — the platform doesn't model them. Within metro France, a small residual gap remains (~9% of clubs have no president, ~17% no gym, ~11 clubs out of 4379 were dropped entirely for lacking any address to place them) — this reflects gaps in what FFBB itself publishes rather than scraper failures, and isn't expected to reach 100%.
 
 **Overtime is not properly simulated.** When a match ends in a draw, the current implementation simply adds 2 points to the home team and appends a single deciding basket event — it does not simulate an actual overtime period. The correct behaviour would be to run one or more additional 5-minute periods through the same state machine loop, generating events exactly as regulation quarters do, until one team leads at the end of a period. This means overtime matches currently have artificially low event counts and no overtime player statistics, and the `overtime` flag on the match is never actually set by this path (it is only set when a pre-scheduled event falls past the 2400-second mark, which cannot happen here). Fixing this requires extracting the game loop into a reusable function and calling it for each overtime period until the tie is broken.
 

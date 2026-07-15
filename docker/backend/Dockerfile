@@ -9,6 +9,13 @@ COPY src/backend ./
 EXPOSE 4000
 CMD ["npm", "run", "start:dev"]
 
+# One-shot migration runner: base already contains the Prisma CLI, the schema,
+# and prisma/migrations (copied with the prisma directory). Run by compose
+# before backend/scheduler start.
+FROM base AS migrate
+COPY src/backend/prisma.config.ts ./
+CMD ["npx", "prisma", "migrate", "deploy"]
+
 FROM base AS build
 COPY src/backend ./
 RUN npm run build

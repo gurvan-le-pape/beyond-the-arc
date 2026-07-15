@@ -85,6 +85,16 @@ sonar-logs:
 barrels:
 	npm run barrels:watch
 
+# Refresh static reference data (presidents/gyms/coordinates) from FFBB's
+# public site and regenerate prisma/migrations/1_seed_static_data/migration.sql.
+# Host-side (not Docker) - hits competitions.ffbb.com directly and takes
+# ~1h20 (4480 pages at the 1s crawl-delay their robots.txt asks for).
+# Review with `git diff` before committing.
+refresh-static-data:
+	@echo "This will take ~1h20 (scraping ~4480 pages from FFBB at 1 req/s)."
+	venv/bin/python3 scripts/ffbb-import/scrape.py
+	venv/bin/python3 scripts/ffbb-import/build_migration.py
+
 # View scheduler logs
 logs-scheduler:
 	docker compose -f $(DOCKER_COMPOSE) $(ENV_FILE) logs -f scheduler

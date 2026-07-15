@@ -75,14 +75,13 @@ The backend depends on `database` and receives `DATABASE_URL`, `FRONTEND_URL` (u
 
 ### database
 
-A custom image built on top of `postgres:18`.
-(see [`data-model.md`](./data-model.md)).
-
-The Dockerfile copies migration SQL files and an entrypoint shell script into the image. The entrypoint script runs at container startup and applies migrations in order, seeding the full schema and static reference data. This means the database image is self-initialising — standing up the stack for the first time produces a fully seeded database with no additional steps.
-
-In development, the migrations directory is bind-mounted, so schema changes are picked up without rebuilding the image.
+The official `postgres:18` image, unmodified. Schema and static reference data are applied by the `migrate` service (below), not by the database container — standing up the stack for the first time still produces a fully seeded database with no additional steps, but the mechanism is Prisma Migrate rather than init scripts, so it also works against an *existing* database.
 
 Data is persisted in a `postgres_data` named volume. In production this volume is declared `external: true`, which prevents `docker-compose down` or `docker-compose up --build` from recreating it. The volume must be created manually on the VPS before first deployment — this is a deliberate safeguard against accidental data loss.
+
+### migrate
+
+A one-shot service built from the backend Dockerfile's `migrate` target (the dependency stage plus `prisma migrate deploy` as the command). It waits for the database health check, applies any pending migrations, and exits; `backend` and `scheduler` declare `depends_on: service_completed_successfully` on it, so application code never runs against a schema that is behind it.
 
 ### scheduler
 
@@ -149,11 +148,9 @@ The Compose dev override sets `build.target: dev` to select the dev stage. The p
 
 The backend Dockerfile additionally runs `npx prisma generate` in the base stage so the Prisma client is generated as part of the dependency installation layer.
 
-### database — init script pattern
+### migrations — Prisma Migrate
 
-The database image extends the official PostgreSQL image. PostgreSQL's official Docker image automatically runs any `.sh` or `.sql` files placed in `/docker-entrypoint-initdb.d/` on first startup. The Dockerfile copies a shell script to that location, which applies migration files in the correct order.
-
-Migrations live under `src/backend/db/migrations/` and are structured as numbered directories (`01_schema/`, `02_seed/`, etc.) applied in sequence.
+Migrations live in `src/backend/prisma/migrations/` — `0_init` (the full baseline, including trigger and partial-index SQL that Prisma's schema language cannot express) and `1_seed_static_data` (the reference-data seed), plus one directory per schema change after that. `prisma migrate deploy` (run by the `migrate` service) applies whatever the `_prisma_migrations` table says is missing, which is what makes schema changes reach an already-provisioned database — the failure mode where a change only exists on freshly-built databases is gone by construction.
 
 ### scheduler — non-root Python
 

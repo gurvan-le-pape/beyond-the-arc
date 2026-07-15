@@ -12,7 +12,7 @@ The schema models the French basketball competition hierarchy from top to bottom
 - **Competition** — championships, pools, teams, players, leaderboards, matches
 - **Match detail** — events, event players, shot locations, player stats
 
-The schema is defined in `migrations/01_schema/01_create_schema.sql` and mirrored in the Prisma schema used by the NestJS backend.
+The schema is owned by `prisma/schema.prisma` and applied through Prisma Migrate: the `0_init` baseline migration carries the full schema (including a hand-maintained section for what Prisma's schema language cannot express — CHECK constraints, the leaderboard triggers, and partial indexes), and every later change is a new migration generated from a `schema.prisma` edit via `prisma migrate dev`.
 
 ---
 
@@ -25,7 +25,9 @@ presidents ──< leagues / committees / clubs
 gyms ──< clubs
 ```
 
-**Leagues** belong to a region and represent the top level of the French basketball hierarchy. **Departments** also belong to a region — a department's own region and the region of the league that governs its committee should always agree, though this is only enforced by convention (both ultimately trace back to the same real geography, but nothing in the schema cross-checks it — see [Known limitations](#known-limitations)). **Committees** belong to both a department and a league. **Clubs** belong to a committee and optionally reference a gym and a president.
+**Leagues** belong to a region and represent the top level of the French basketball hierarchy. **Departments** also belong to a region — a department's own region and the region of the league that governs its committee should always agree, though this is only enforced by convention (both ultimately trace back to the same real geography, but nothing in the schema cross-checks it — see [Known limitations](#known-limitations)). **Committees** belong to both a department and a league — `department_id` is a single required FK, one department per committee. **Clubs** belong to a committee and optionally reference a gym and a president.
+
+A handful of real FFBB committees actually cover two departments where club counts are too low to justify a standalone one (e.g. one committee jointly serving Aube and Haute-Marne). Rather than relax `department_id` to accommodate that, the seed data models it as two committee rows — one per department, sharing the same name-source/contact/president — so every club still resolves to exactly one department-scoped committee. See [`data-pipeline.md`](./data-pipeline.md) for where this data comes from.
 
 Presidents are stored in a standalone `presidents` table rather than as inline fields on each organisation. This reflects the real structure — a president is a named individual with contact details who holds a role, rather than just a name field — and avoids duplicating contact information if the same person holds multiple roles.
 
@@ -131,7 +133,7 @@ This is the trigger used in practice by the pipeline — matches are inserted wi
 
 ## Indexes
 
-Eleven indexes are defined beyond the primary keys and unique constraints, all in `migrations/02_indexes/02_create_indexes.sql`:
+Twelve indexes are defined beyond the primary keys and unique constraints, all in the `0_init` baseline migration:
 
 - `idx_match_events_match_id` — on `match_events(match_id)`, supporting fast lookup of all events for a given match (used on every match page load).
 - `idx_match_event_players_event_id` — on `match_event_players(event_id)`, supporting fast lookup of players for a given event when assembling event timelines.
@@ -146,11 +148,9 @@ Eleven indexes are defined beyond the primary keys and unique constraints, all i
 
 Foreign-key columns not listed here are already covered by the leading column of a unique constraint (`players(team_id)`, `leaderboards(pool_id)`, `teams(club_id)`, `pools(championship_id)`, `player_match_stats(match_id)`), or belong to tables too small to benefit (`committees`, `leagues`, `departments`).
 
-Every index that Prisma's schema language can express is mirrored as an `@@index` in `prisma/schema.prisma` (with `map:` pinning the SQL name), so the Prisma schema stays an accurate description of the database. The one exception is `idx_matches_status_date`: Prisma cannot express partial indexes, so it exists only in the SQL migration — a comment in the `Matches` model points to it. When adding an index, update both files.
+There is also `unique_championship_no_committee`, a partial *unique* index on `championships` covering regional/national rows: `committee_id` is NULL at those levels and NULLs never collide in the main unique constraint, so without it duplicate regional/national championships would be allowed.
 
-`docker-entrypoint.sh` previously only applied `01_schema` and `03_triggers`, silently skipping this `02_indexes` step entirely — meaning none of these indexes actually existed on a database built the normal way, despite the migration file being correct. This has been fixed; the entrypoint now applies all four migration directories in order.
-
-Note that the entrypoint only runs when the Postgres data directory is initialised for the first time, so index additions never reach an already-provisioned database through it. Those are applied manually with `CREATE INDEX CONCURRENTLY` (so the scheduler's writes are not blocked while the index builds); the exact statements are recorded in the PR that introduces the index.
+Every index that Prisma's schema language can express is declared as an `@@index` in `prisma/schema.prisma` (with `map:` pinning the SQL name). The two partial indexes (`idx_matches_status_date`, `unique_championship_no_committee`) cannot be expressed in PSL and live only in the migration SQL — comments in the relevant models point to them. New plain indexes are added by editing `schema.prisma` and generating a migration; they reach every environment, including production, through `prisma migrate deploy` at the next deployment.
 
 ---
 
