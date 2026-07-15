@@ -130,8 +130,8 @@ Full schema and modelling decisions are in → [`data-model.md`](./data-model.md
 
 The data in Beyond The Arc comes from two distinct sources, each handled differently.
 
-**Static data — SQL files**
-The competition structure (leagues, committees, clubs, divisions) changes rarely and is seeded via SQL files. This makes the initial dataset reproducible and easy to inspect or patch directly.
+**Static data — Prisma migration**
+The competition structure (leagues, committees, clubs, geography) changes rarely and is real French basketball data, scraped from FFBB's public site and geocoded via France's BAN API (`scripts/ffbb-import/`), seeded by the `1_seed_static_data` Prisma migration alongside the schema.
 
 **Dynamic data — Python scripts**
 Match results, player statistics, and shot chart data are generated and updated by a Python scheduler running as a dedicated Docker Compose service (`scheduler`). It contains:
