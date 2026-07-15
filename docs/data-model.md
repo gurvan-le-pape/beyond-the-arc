@@ -25,7 +25,9 @@ presidents ──< leagues / committees / clubs
 gyms ──< clubs
 ```
 
-**Leagues** belong to a region and represent the top level of the French basketball hierarchy. **Departments** also belong to a region — a department's own region and the region of the league that governs its committee should always agree, though this is only enforced by convention (both ultimately trace back to the same real geography, but nothing in the schema cross-checks it — see [Known limitations](#known-limitations)). **Committees** belong to both a department and a league. **Clubs** belong to a committee and optionally reference a gym and a president.
+**Leagues** belong to a region and represent the top level of the French basketball hierarchy. **Departments** also belong to a region — a department's own region and the region of the league that governs its committee should always agree, though this is only enforced by convention (both ultimately trace back to the same real geography, but nothing in the schema cross-checks it — see [Known limitations](#known-limitations)). **Committees** belong to both a department and a league — `department_id` is a single required FK, one department per committee. **Clubs** belong to a committee and optionally reference a gym and a president.
+
+A handful of real FFBB committees actually cover two departments where club counts are too low to justify a standalone one (e.g. one committee jointly serving Aube and Haute-Marne). Rather than relax `department_id` to accommodate that, the seed data models it as two committee rows — one per department, sharing the same name-source/contact/president — so every club still resolves to exactly one department-scoped committee. See [`data-pipeline.md`](./data-pipeline.md) for where this data comes from.
 
 Presidents are stored in a standalone `presidents` table rather than as inline fields on each organisation. This reflects the real structure — a president is a named individual with contact details who holds a role, rather than just a name field — and avoids duplicating contact information if the same person holds multiple roles.
 
