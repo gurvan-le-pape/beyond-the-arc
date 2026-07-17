@@ -162,7 +162,7 @@ export class ChampionshipsService {
     return {
       id: entity.id,
       name: entity.name,
-      category: entity.category ?? null,
+      category: entity.category,
       gender: entity.gender,
       seasonYear: entity.seasonYear,
       level: entity.level,

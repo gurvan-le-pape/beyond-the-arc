@@ -37,9 +37,8 @@ export class ChampionshipResponseDto {
     description: "Age category (e.g., U18, Senior)",
     example: "U18",
     type: String,
-    nullable: true,
   })
-  category!: string | null;
+  category!: string;
 
   @ApiProperty({
     description: "Gender category (male, female, Mixte)",

@@ -232,9 +232,8 @@ export class PlayerMatchStatsDto {
     ],
     type: "array",
     isArray: true,
-    nullable: true,
   })
-  playtimeIntervals!: number[][] | null;
+  playtimeIntervals!: number[][];
 }
 
 /**

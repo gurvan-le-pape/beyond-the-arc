@@ -365,19 +365,17 @@ export class MatchesService {
       awayTeamScore: match.awayTeamScore,
       forfeit: match.forfeit,
       overtime: match.overtime,
-      pool: match.pool
-        ? {
-            id: match.pool.id,
-            name: match.pool.name,
-            championship: {
-              id: match.pool.championship.id,
-              category: match.pool.championship.category as Category,
-              gender: match.pool.championship.gender as Gender,
-              level: match.pool.championship.level as CompetitionLevel,
-              division: match.pool.championship.division,
-            },
-          }
-        : null,
+      pool: {
+        id: match.pool.id,
+        name: match.pool.name,
+        championship: {
+          id: match.pool.championship.id,
+          category: match.pool.championship.category as Category,
+          gender: match.pool.championship.gender as Gender,
+          level: match.pool.championship.level as CompetitionLevel,
+          division: match.pool.championship.division,
+        },
+      },
       homeTeam: {
         id: match.homeTeam.id,
         number: match.homeTeam.number,

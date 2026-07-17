@@ -62,14 +62,13 @@ export class ClubBasicResponseDto {
   })
   website!: string | null;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: "Committee ID",
     example: 1,
-    nullable: true,
   })
   committeeId!: number;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: "League ID",
     example: 1,
   })

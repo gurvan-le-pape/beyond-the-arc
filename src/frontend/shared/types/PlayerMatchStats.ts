@@ -20,5 +20,5 @@ export interface PlayerMatchStats {
   steals: number;
   blocks: number;
   playtime?: number; // present in match context, absent in player history context
-  playtimeIntervals: number[][] | null;
+  playtimeIntervals: number[][];
 }

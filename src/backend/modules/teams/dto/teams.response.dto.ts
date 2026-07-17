@@ -40,7 +40,6 @@ export class TeamResponseDto {
     description: "Age category",
     example: "U18",
     type: String,
-    nullable: true,
   })
   category!: Category;
 
@@ -48,7 +47,6 @@ export class TeamResponseDto {
     description: "Gender category",
     example: "M",
     type: String,
-    nullable: true,
   })
   gender!: Gender;
 
@@ -256,7 +254,7 @@ export class TeamDetailResponseDto extends TeamResponseDto {
       id: number;
       name: string;
       championship: { id: number; name: string };
-    } | null;
+    };
   }>;
 
   @ApiProperty({ description: "Recent away matches (up to 5)", type: Array })
@@ -274,6 +272,6 @@ export class TeamDetailResponseDto extends TeamResponseDto {
       id: number;
       name: string;
       championship: { id: number; name: string };
-    } | null;
+    };
   }>;
 }

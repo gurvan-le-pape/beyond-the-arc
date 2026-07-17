@@ -311,18 +311,6 @@ describe("MatchesService", () => {
       expect(result.matchEvents[0].shotLocation?.y).toBe(3.2);
     });
 
-    it("should return null pool when pool is null", async () => {
-      mockPrismaService.client.matches.findUnique.mockResolvedValue({
-        ...mockMatchDetailResult,
-        pool: null,
-        matchEvents: [],
-      });
-
-      const result = await service.findMatchById(1);
-
-      expect(result.pool).toBeNull();
-    });
-
     it("should throw NotFoundException when match not found", async () => {
       mockPrismaService.client.matches.findUnique.mockResolvedValue(null);
 
