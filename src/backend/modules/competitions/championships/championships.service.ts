@@ -2,7 +2,7 @@
 import { CompetitionLevel } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
 import { Category, Gender } from "@common/index";
-import { Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 
 import { Prisma } from "../../../prisma/generated/prisma/client";
@@ -63,8 +63,6 @@ type ChampionshipFilters = {
  */
 @Injectable()
 export class ChampionshipsService {
-  private readonly logger = new Logger(ChampionshipsService.name);
-
   constructor(private readonly prisma: PrismaService) {}
 
   /**

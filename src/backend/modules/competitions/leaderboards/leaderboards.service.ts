@@ -1,5 +1,5 @@
 // src/backend/modules/competitions/leaderboards/leaderboards.service.ts
-import { Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 
 import { Prisma } from "../../../prisma/generated/prisma/client";
@@ -47,8 +47,6 @@ type LeaderboardSelectResult = Prisma.LeaderboardsGetPayload<{
  */
 @Injectable()
 export class LeaderboardsService {
-  private readonly logger = new Logger(LeaderboardsService.name);
-
   constructor(private readonly prisma: PrismaService) {}
 
   /**

@@ -3,7 +3,7 @@ import { MatchEventRole, Position } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
 import { Category, CompetitionLevel, Gender } from "@common/index";
 import { mapPlayerMatchStats, normalizeLimit, normalizePage } from "@common/utils";
-import { Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { fromZonedTime } from "date-fns-tz";
 import { PrismaService } from "prisma/prisma.service";
 
@@ -228,8 +228,6 @@ type PlayerMatchStatsResult = Prisma.PlayerMatchStatsGetPayload<{
 
 @Injectable()
 export class MatchesService {
-  private readonly logger = new Logger(MatchesService.name);
-
   constructor(private readonly prisma: PrismaService) {}
 
   async findAllMatches(

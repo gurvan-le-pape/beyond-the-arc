@@ -1,5 +1,5 @@
 // src/backend/modules/competitions/pools/pools.service.ts
-import { Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 
 import { Prisma } from "../../../prisma/generated/prisma/client";
@@ -34,8 +34,6 @@ type PoolSelectResult = Prisma.PoolsGetPayload<{
  */
 @Injectable()
 export class PoolsService {
-  private readonly logger = new Logger(PoolsService.name);
-
   constructor(private readonly prisma: PrismaService) {}
 
   /**
