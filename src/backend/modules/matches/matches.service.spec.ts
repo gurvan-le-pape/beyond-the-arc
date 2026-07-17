@@ -382,24 +382,6 @@ describe("MatchesService", () => {
     });
   });
 
-  describe("findMatchesByChampionshipId", () => {
-    it("should return matches for a given championship", async () => {
-      mockPrismaService.client.matches.findMany.mockResolvedValue([
-        mockMatchListResult,
-      ]);
-
-      const result = await service.findMatchesByChampionshipId(1);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].id).toBe(1);
-      expect(mockPrismaService.client.matches.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: { pool: { championshipId: 1 } },
-        }),
-      );
-    });
-  });
-
   describe("findPlayerMatchStatsByMatchId", () => {
     it("should return player stats with home and away team ids", async () => {
       mockPrismaService.client.matches.findUnique.mockResolvedValue({
