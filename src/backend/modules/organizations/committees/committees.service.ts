@@ -1,5 +1,5 @@
 // src/backend/modules/organizations/committees/committees.service.ts
-import { Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 
 import { Prisma } from "../../../prisma/generated/prisma/client";
@@ -50,8 +50,6 @@ type CommitteeSelectResult = Prisma.CommitteesGetPayload<{
  */
 @Injectable()
 export class CommitteesService {
-  private readonly logger = new Logger(CommitteesService.name);
-
   constructor(private readonly prisma: PrismaService) {}
 
   /**

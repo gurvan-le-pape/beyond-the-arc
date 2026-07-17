@@ -1,5 +1,5 @@
 // src/backend/modules/stats/stats.service.ts
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 
 import { StatsResponseDto } from "./dto/stats.response.dto";
@@ -10,8 +10,6 @@ import { StatsResponseDto } from "./dto/stats.response.dto";
  */
 @Injectable()
 export class StatsService {
-  private readonly logger = new Logger(StatsService.name);
-
   constructor(private readonly prisma: PrismaService) {}
 
   /**

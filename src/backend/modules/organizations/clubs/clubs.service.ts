@@ -1,7 +1,7 @@
 // src/backend/modules/organizations/clubs/clubs.service.ts
 import { Category, CompetitionLevel, Gender } from "@common/constants";
 import { PaginatedResponseDto } from "@common/index";
-import { Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 
 import { Prisma } from "../../../prisma/generated/prisma/client";
@@ -114,8 +114,6 @@ type TeamWithRankAndPoolSize = ClubDetailedSelectResult["teams"][number] & {
  */
 @Injectable()
 export class ClubsService {
-  private readonly logger = new Logger(ClubsService.name);
-
   constructor(private readonly prisma: PrismaService) {}
 
   /**

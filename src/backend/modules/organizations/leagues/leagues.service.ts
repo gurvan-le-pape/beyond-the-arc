@@ -1,5 +1,5 @@
 // src/backend/modules/organizations/leagues/leagues.service.ts
-import { Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 
 import { Prisma } from "../../../prisma/generated/prisma/client";
@@ -53,8 +53,6 @@ type LeagueSelectResult = Prisma.LeaguesGetPayload<{
  */
 @Injectable()
 export class LeaguesService {
-  private readonly logger = new Logger(LeaguesService.name);
-
   constructor(private readonly prisma: PrismaService) {}
 
   /**
