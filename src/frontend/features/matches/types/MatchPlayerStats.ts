@@ -13,7 +13,7 @@ export interface MatchPlayerWithTeamRef {
     number: number;
     club: {
       id: number;
-      name: string | null;
+      name: string;
     };
   };
 }

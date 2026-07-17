@@ -6,7 +6,7 @@ export interface Match {
   id: number;
   date: Date;
   matchday: number;
-  pool: MatchPoolRef | null;
+  pool: MatchPoolRef;
   homeTeam: MatchTeamRef;
   awayTeam: MatchTeamRef;
   homeTeamScore: number;

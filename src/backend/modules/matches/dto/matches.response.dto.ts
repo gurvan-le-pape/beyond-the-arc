@@ -31,11 +31,10 @@ export class MatchResponseDto {
   @ApiProperty({
     description: "Pool information",
     type: Object,
-    nullable: true,
   })
   pool!: {
     id: number;
-    name: string | null;
+    name: string;
     championship: {
       id: number;
       category: Category;
@@ -43,7 +42,7 @@ export class MatchResponseDto {
       level: CompetitionLevel;
       division: number;
     };
-  } | null;
+  };
 
   @ApiProperty({
     description: "Home team information",
@@ -54,7 +53,7 @@ export class MatchResponseDto {
     number: number;
     club: {
       id: number;
-      name: string | null;
+      name: string;
       committeeId: number;
       leagueId: number;
     };
@@ -69,7 +68,7 @@ export class MatchResponseDto {
     number: number;
     club: {
       id: number;
-      name: string | null;
+      name: string;
       committeeId: number;
       leagueId: number;
     };
@@ -202,9 +201,8 @@ export class PlayerStatsDto {
     ],
     type: "array",
     isArray: true,
-    nullable: true,
   })
-  playtimeIntervals!: number[][] | null;
+  playtimeIntervals!: number[][];
 }
 
 /**
@@ -247,7 +245,7 @@ export class PlayerWithTeamDto {
     number: number;
     club: {
       id: number;
-      name: string | null;
+      name: string;
     };
   };
 }
@@ -312,11 +310,11 @@ export class MatchEventPlayerDto {
   player!: {
     id: number;
     name: string;
-    number: number | null;
+    number: number;
     team: {
       id: number;
       club: {
-        name: string | null;
+        name: string;
       };
     };
   };

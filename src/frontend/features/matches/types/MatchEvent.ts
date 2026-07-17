@@ -4,11 +4,11 @@ import type { EventType, Role } from "@/shared/constants";
 export interface MatchEventPlayerRef {
   id: number;
   name: string;
-  number: number | null;
+  number: number;
   team: {
     id: number;
     club: {
-      name: string | null;
+      name: string;
     };
   };
 }

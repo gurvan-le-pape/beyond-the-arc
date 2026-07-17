@@ -39,7 +39,7 @@ export interface MappedPlayerMatchStats {
   };
   steals: number;
   blocks: number;
-  playtimeIntervals: number[][] | null;
+  playtimeIntervals: number[][];
 }
 
 /**
@@ -70,6 +70,6 @@ export function mapPlayerMatchStats(
     },
     steals: stat.steals,
     blocks: stat.blocks,
-    playtimeIntervals: stat.playtimeIntervals as number[][] | null,
+    playtimeIntervals: stat.playtimeIntervals as number[][],
   };
 }
