@@ -297,18 +297,6 @@ export class MatchesService {
     return matches.map((m) => this.mapMatchToDto(m));
   }
 
-  async findMatchesByChampionshipId(
-    championshipId: number,
-  ): Promise<MatchDetailResponseDto[]> {
-    const matches = await this.prisma.client.matches.findMany({
-      where: { pool: { championshipId } },
-      select: MATCH_LIST_SELECT,
-      orderBy: { date: "asc" },
-    });
-
-    return matches.map((m) => this.mapMatchToDto(m));
-  }
-
   async findPlayerMatchStatsByMatchId(
     matchId: number,
   ): Promise<MatchPlayerStatsResponseDto> {
