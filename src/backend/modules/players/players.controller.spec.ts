@@ -30,7 +30,6 @@ describe("PlayersController", () => {
 
   // Mock service
   const mockPlayersService = {
-    findAllIds: jest.fn(),
     findAllPlayers: jest.fn(),
     findPlayerFilterValues: jest.fn(),
     findPlayerById: jest.fn(),
@@ -68,41 +67,6 @@ describe("PlayersController", () => {
     jest.clearAllMocks();
   });
 
-  describe("getAllIds", () => {
-    it("should return all player IDs", async () => {
-      // Arrange
-      const mockIds = [{ id: 1 }, { id: 2 }, { id: 3 }];
-      mockPlayersService.findAllIds.mockResolvedValue(mockIds);
-
-      // Act
-      const result = await controller.getAllIds();
-
-      // Assert
-      expect(result).toEqual(mockIds);
-      expect(service.findAllIds).toHaveBeenCalledTimes(1);
-    });
-
-    it("should return empty array when no players exist", async () => {
-      // Arrange
-      mockPlayersService.findAllIds.mockResolvedValue([]);
-
-      // Act
-      const result = await controller.getAllIds();
-
-      // Assert
-      expect(result).toEqual([]);
-    });
-
-    it("should propagate service errors", async () => {
-      // Arrange
-      mockPlayersService.findAllIds.mockRejectedValue(
-        new Error("Database error"),
-      );
-
-      // Act & Assert
-      await expect(controller.getAllIds()).rejects.toThrow("Database error");
-    });
-  });
 
   describe("getPlayers", () => {
     it("should return paginated players list", async () => {

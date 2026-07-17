@@ -232,20 +232,6 @@ export class MatchesService {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  /**
-   * Retrieves all match IDs without filtering.
-   * Intended for sitemap generation — selects only the ID field
-   * to keep the query as lightweight as possible.
-   *
-   * @returns Flat array of objects with match IDs
-   */
-  async findAllIds(): Promise<{ id: number }[]> {
-    return this.prisma.client.matches.findMany({
-      select: { id: true },
-      orderBy: { id: "asc" },
-    });
-  }
-
   async findAllMatches(
     filters?: MatchFilters,
   ): Promise<PaginatedResponseDto<MatchDetailResponseDto>> {

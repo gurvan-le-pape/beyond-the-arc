@@ -175,20 +175,6 @@ export class PlayersService {
   constructor(private readonly prisma: PrismaService) {}
 
   /**
-   * Retrieves all player IDs without filtering.
-   * Intended for sitemap generation — selects only the ID field
-   * to keep the query as lightweight as possible.
-   *
-   * @returns Flat array of objects with player IDs
-   */
-  async findAllIds(): Promise<{ id: number }[]> {
-    return this.prisma.client.players.findMany({
-      select: { id: true },
-      orderBy: { id: "asc" },
-    });
-  }
-
-  /**
    * Retrieves all players with optional filters and pagination.
    *
    * @param filters - Optional filters and pagination params
