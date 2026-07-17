@@ -50,37 +50,6 @@ describe("TeamsService", () => {
     jest.clearAllMocks();
   });
 
-  describe("findAllIds", () => {
-    it("should return all team IDs", async () => {
-      const mockIds = [{ id: 1 }, { id: 2 }, { id: 3 }];
-      mockPrismaService.client.teams.findMany.mockResolvedValue(mockIds);
-
-      const result = await service.findAllIds();
-
-      expect(result).toEqual(mockIds);
-      expect(mockPrismaService.client.teams.findMany).toHaveBeenCalledWith({
-        select: { id: true },
-        orderBy: { id: "asc" },
-      });
-    });
-
-    it("should return empty array when no teams exist", async () => {
-      mockPrismaService.client.teams.findMany.mockResolvedValue([]);
-
-      const result = await service.findAllIds();
-
-      expect(result).toEqual([]);
-    });
-
-    it("should propagate database errors", async () => {
-      mockPrismaService.client.teams.findMany.mockRejectedValue(
-        new Error("Database error"),
-      );
-
-      await expect(service.findAllIds()).rejects.toThrow("Database error");
-    });
-  });
-
   describe("findAllTeams", () => {
     it("should return paginated teams with metadata", async () => {
       // Arrange

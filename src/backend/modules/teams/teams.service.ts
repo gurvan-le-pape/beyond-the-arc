@@ -312,20 +312,6 @@ export class TeamsService {
   constructor(private readonly prisma: PrismaService) {}
 
   /**
-   * Retrieves all team IDs without filtering.
-   * Intended for sitemap generation — selects only the ID field
-   * to keep the query as lightweight as possible.
-   *
-   * @returns Flat array of objects with team IDs
-   */
-  async findAllIds(): Promise<{ id: number }[]> {
-    return this.prisma.client.teams.findMany({
-      select: { id: true },
-      orderBy: { id: "asc" },
-    });
-  }
-
-  /**
    * Retrieves all teams with optional filters and pagination.
    *
    * @param filters - Optional filters and pagination params
