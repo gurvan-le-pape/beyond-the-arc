@@ -367,51 +367,6 @@ export class ClubsService {
   }
 
   /**
-   * Retrieves all departments (committees) with their basic information.
-   * Used for loading all departments at once for the map view.
-   *
-   * @returns Array of all departments with region information
-   */
-  async getAllDepartments(): Promise<ClubStatsByDepartmentDto[]> {
-    const committees = await this.prisma.client.committees.findMany({
-      select: {
-        id: true,
-        name: true,
-        department: {
-          select: {
-            id: true,
-            name: true,
-            code: true,
-            regionId: true,
-          },
-        },
-        leagueId: true,
-        _count: {
-          select: {
-            clubs: true,
-          },
-        },
-      },
-      orderBy: {
-        name: "asc",
-      },
-    });
-
-    return committees.map((committee) => ({
-      id: committee.id,
-      name: committee.name,
-      department: {
-        id: committee.department.id,
-        name: committee.department.name,
-        code: committee.department.code,
-      },
-      leagueId: committee.leagueId,
-      region: { id: committee.department.regionId },
-      clubCount: committee._count.clubs,
-    }));
-  }
-
-  /**
    * Maps a basic club entity to a response DTO.
    * Converts Prisma Decimal types to numbers.
    *

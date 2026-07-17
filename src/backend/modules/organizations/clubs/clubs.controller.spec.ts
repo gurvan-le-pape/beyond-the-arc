@@ -38,7 +38,6 @@ describe("ClubsController", () => {
     getClubCountsByDepartment: jest.fn(),
     findClubsByFilters: jest.fn(),
     findClubById: jest.fn(),
-    getAllDepartments: jest.fn(),
   };
 
   const mockCacheManager = {

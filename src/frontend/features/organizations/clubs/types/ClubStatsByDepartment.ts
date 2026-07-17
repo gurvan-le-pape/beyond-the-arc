@@ -10,6 +10,5 @@ export interface ClubStatsByDepartment {
   name: string;
   department: DepartmentInfo;
   leagueId: number;
-  region?: { id: number } | null;
   clubCount: number;
 }
