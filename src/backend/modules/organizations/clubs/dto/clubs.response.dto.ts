@@ -386,14 +386,6 @@ export class ClubStatsByDepartmentDto {
   })
   leagueId!: number;
 
-  @ApiPropertyOptional({
-    description:
-      "Region information (only returned from /departments endpoint)",
-    type: () => RegionInfoDto,
-    nullable: true,
-  })
-  region?: { id: number };
-
   @ApiProperty({
     description: "Number of clubs in this department",
     example: 15,
@@ -401,7 +393,3 @@ export class ClubStatsByDepartmentDto {
   clubCount!: number;
 }
 
-export class RegionInfoDto {
-  @ApiProperty({ example: 1 })
-  id!: number;
-}

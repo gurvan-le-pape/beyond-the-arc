@@ -102,12 +102,4 @@ export const serverClubsService = {
   async getAllClubs(): Promise<ClubBasic[]> {
     return fetchApi<ClubBasic[]>("/clubs/all");
   },
-
-  /**
-   * Get ALL departments without filtering.
-   * Used for initial map load.
-   */
-  async getAllDepartments(): Promise<ClubStatsByDepartment[]> {
-    return fetchApi<ClubStatsByDepartment[]>("/clubs/departments");
-  },
 };
