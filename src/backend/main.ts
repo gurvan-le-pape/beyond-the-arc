@@ -49,6 +49,10 @@ async function bootstrap() {
   await app.listen(process.env.PORT || 4000);
 }
 
-bootstrap().catch(() => {
+bootstrap().catch((error) => {
+  // The Pino logger may not be wired up yet — write straight to stderr so
+  // startup failures are never silent (a swallowed error here cost us a
+  // prod incident diagnosis).
+  console.error("Fatal error during bootstrap:", error);
   process.exit(1);
 });

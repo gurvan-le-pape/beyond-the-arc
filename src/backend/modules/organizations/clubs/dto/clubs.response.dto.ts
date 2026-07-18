@@ -16,6 +16,7 @@ export class ClubBasicResponseDto {
   @ApiPropertyOptional({
     description: "City",
     example: "Monaco",
+    type: String,
     nullable: true,
   })
   city!: string | null;
@@ -23,6 +24,7 @@ export class ClubBasicResponseDto {
   @ApiPropertyOptional({
     description: "ZIP code",
     example: "98000",
+    type: String,
     nullable: true,
   })
   zipCode!: string | null;
@@ -30,6 +32,7 @@ export class ClubBasicResponseDto {
   @ApiPropertyOptional({
     description: "Latitude",
     example: 43.7384,
+    type: Number,
     nullable: true,
   })
   latitude!: number | null;
@@ -37,6 +40,7 @@ export class ClubBasicResponseDto {
   @ApiPropertyOptional({
     description: "Longitude",
     example: 7.4246,
+    type: Number,
     nullable: true,
   })
   longitude!: number | null;
@@ -44,6 +48,7 @@ export class ClubBasicResponseDto {
   @ApiPropertyOptional({
     description: "Email",
     example: "contact@club.com",
+    type: String,
     nullable: true,
   })
   email!: string | null;
@@ -51,6 +56,7 @@ export class ClubBasicResponseDto {
   @ApiPropertyOptional({
     description: "Phone",
     example: "0123456789",
+    type: String,
     nullable: true,
   })
   phone!: string | null;
@@ -58,6 +64,7 @@ export class ClubBasicResponseDto {
   @ApiPropertyOptional({
     description: "Website",
     example: "https://club.com",
+    type: String,
     nullable: true,
   })
   website!: string | null;
