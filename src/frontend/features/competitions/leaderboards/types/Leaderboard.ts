@@ -1,15 +1,9 @@
 // src/frontend/features/competitions/leaderboards/types/Leaderboard.ts
-export interface Leaderboard {
-  id: number;
-  teamId: number;
-  teamNumber: number;
-  clubName: string;
-  points: number;
-  gamesPlayed: number;
-  gamesWon: number;
-  gamesLost: number;
-  gamesForfeited: number;
-  pointsFor: number;
-  pointsAgainst: number;
-  pointDifference: number;
-}
+import type { components } from "@/shared/types";
+
+/**
+ * Leaderboard entry, generated from the backend OpenAPI document.
+ * Regenerate with `npm run typegen` after backend DTO changes —
+ * CI fails when docs/openapi.json and api.generated.ts drift.
+ */
+export type Leaderboard = components["schemas"]["LeaderboardResponseDto"];
