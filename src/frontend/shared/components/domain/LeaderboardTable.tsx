@@ -1,6 +1,8 @@
 // src/frontend/shared/components/domain/LeaderboardTable.tsx
 import { useTranslations } from "next-intl";
 
+import type { Leaderboard } from "@/features/competitions/leaderboards/types";
+
 import { Section } from "../blocks";
 import {
   Table,
@@ -12,7 +14,7 @@ import {
 } from "../table";
 
 interface LeaderboardTableProps {
-  readonly leaderboards: any[];
+  readonly leaderboards: Leaderboard[];
   readonly dropdown?: React.ReactNode;
 }
 
@@ -64,7 +66,7 @@ export function LeaderboardTable({
             >
               {/* Rank Column */}
               <TableCell highlight className="text-center text-text-heading">
-                {index + 1}
+                {leaderboard.rank}
               </TableCell>
 
               {/* Team Column with Logo */}
