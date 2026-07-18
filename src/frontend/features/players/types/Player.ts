@@ -1,16 +1,9 @@
 // src/frontend/features/players/types/Player.ts
-import type { Position } from "@/shared/constants";
+import type { components } from "@/shared/types";
 
-import type { PlayerTeamRef } from "./PlayerTeamRef";
-
-export interface Player {
-  id: number;
-  name: string;
-  number: number;
-  position: Position;
-  heightCm: number;
-  weightKg: number;
-  birthdate: string;
-  teamId: number;
-  team: PlayerTeamRef;
-}
+/**
+ * Generated from the backend OpenAPI document. Regenerate with
+ * `npm run typegen` after backend DTO changes — CI fails when
+ * docs/openapi.json and api.generated.ts drift.
+ */
+export type Player = components["schemas"]["PlayerResponseDto"];
