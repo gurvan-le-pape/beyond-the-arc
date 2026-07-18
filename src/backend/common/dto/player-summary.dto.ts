@@ -27,7 +27,7 @@ export class PlayerSummaryDto {
   @ApiProperty({
     description: "Player position",
     example: "PG",
-    type: String,
+    enum: Position,
   })
   position!: Position;
 

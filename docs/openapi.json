@@ -4434,7 +4434,14 @@
           "position": {
             "type": "string",
             "description": "Player position",
-            "example": "PG"
+            "example": "PG",
+            "enum": [
+              "PG",
+              "SG",
+              "SF",
+              "PF",
+              "C"
+            ]
           },
           "teamId": {
             "type": "number",
@@ -4888,7 +4895,14 @@
           "position": {
             "type": "string",
             "description": "Player position",
-            "example": "PG"
+            "example": "PG",
+            "enum": [
+              "PG",
+              "SG",
+              "SF",
+              "PF",
+              "C"
+            ]
           },
           "heightCm": {
             "type": "number",
@@ -5020,7 +5034,14 @@
           "position": {
             "type": "string",
             "description": "Player position",
-            "example": "PG"
+            "example": "PG",
+            "enum": [
+              "PG",
+              "SG",
+              "SF",
+              "PF",
+              "C"
+            ]
           },
           "teamId": {
             "type": "number",
