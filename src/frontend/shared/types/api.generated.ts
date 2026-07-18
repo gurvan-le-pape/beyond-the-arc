@@ -751,7 +751,7 @@ export interface components {
              * @description League regionale ID
              * @example 1
              */
-            leagueId: number | null;
+            leagueId: number;
             /**
              * @description Number of clubs in this department
              * @example 15
@@ -829,8 +829,9 @@ export interface components {
             /**
              * @description Competition level
              * @example regional
+             * @enum {string}
              */
-            level: string;
+            level: "departmental" | "regional" | "national";
             /**
              * @description Division
              * @example 1
@@ -857,7 +858,7 @@ export interface components {
              * @description Pool name
              * @example Pool A
              */
-            name: string | null;
+            name: string;
             /** @description Championship details */
             championship: components["schemas"]["ChampionshipInfoDto"];
         };
@@ -917,13 +918,15 @@ export interface components {
             /**
              * @description Category
              * @example U18
+             * @enum {string}
              */
-            category: string | null;
+            category: "U11" | "U13" | "U15" | "U18" | "U21" | "Seniors";
             /**
              * @description Gender
              * @example male
+             * @enum {string}
              */
-            gender: string;
+            gender: "male" | "female";
             /** @description Pool information */
             pool: components["schemas"]["PoolInfoDto"] | null;
             /** @description Team leaderboard stats */
