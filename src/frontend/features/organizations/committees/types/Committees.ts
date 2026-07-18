@@ -1,15 +1,9 @@
 // src/frontend/features/organizations/committees/types/Committees.ts
-import type { Department } from "@/features/geography/types";
-import type { President } from "@/shared/types";
+import type { components } from "@/shared/types/api.generated";
 
-export interface Committee {
-  id: number;
-  name: string;
-  phone: string | null;
-  email: string | null;
-  address: string | null;
-  president: President | null;
-  leagueId: number;
-  department: Department;
-  clubCount: number;
-}
+/**
+ * Committee entity, generated from the backend OpenAPI document.
+ * Regenerate with `npm run typegen` after backend DTO changes —
+ * CI fails when docs/openapi.json and api.generated.ts drift.
+ */
+export type Committee = components["schemas"]["CommitteeResponseDto"];

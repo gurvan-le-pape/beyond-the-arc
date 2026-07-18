@@ -8,7 +8,8 @@
     "lint": "eslint '**/*.{ts,tsx}'",
     "lint:fix": "organize-imports-cli './**/*.ts' './**/*.tsx' && eslint '**/*.{ts,tsx}' --fix",
     "format": "prettier --write .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "typegen": "openapi-typescript ../../docs/openapi.json -o shared/types/api.generated.ts"
   },
   "dependencies": {
     "@sentry/nextjs": "^10.47.0",
@@ -44,6 +45,7 @@
     "eslint": "^9.39.2",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "eslint-plugin-sonarjs": "^3.0.5",
+    "openapi-typescript": "^7.13.0",
     "organize-imports-cli": "^1.0.2",
     "postcss": "^8.4.0",
     "prettier": "^2.5.0",
@@ -52,5 +54,10 @@
   },
   "engines": {
     "node": ">=24.0.0"
+  },
+  "overrides": {
+    "openapi-typescript": {
+      "typescript": "$typescript"
+    }
   }
 }

@@ -73,6 +73,12 @@ export default [
     },
   },
   {
-    ignores: [".next", "node_modules", "*.config.js", "next-env.d.ts"],
+    ignores: [
+      ".next",
+      "node_modules",
+      "*.config.js",
+      "next-env.d.ts",
+      "shared/types/api.generated.ts",
+    ],
   },
 ];
