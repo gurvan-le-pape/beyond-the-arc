@@ -1,6 +1,11 @@
 // src/backend/modules/matches/dto/matches.response.dto.ts
-import { MatchEventRole, Position } from "@common/constants";
-import { Category, CompetitionLevel, Gender } from "@common/index";
+import { MatchEventRole } from "@common/constants";
+import {
+  Category,
+  CompetitionLevel,
+  Gender,
+  PlayerSummaryDto,
+} from "@common/index";
 import { ApiProperty } from "@nestjs/swagger";
 
 /**
@@ -208,34 +213,7 @@ export class PlayerStatsDto {
 /**
  * Player information with team details.
  */
-export class PlayerWithTeamDto {
-  @ApiProperty({ description: "Player ID", example: 1, type: Number })
-  id!: number;
-
-  @ApiProperty({
-    description: "Player name",
-    example: "John Doe",
-    type: String,
-  })
-  name!: string;
-
-  @ApiProperty({
-    description: "Player jersey number",
-    example: 10,
-    type: Number,
-  })
-  number!: number;
-
-  @ApiProperty({
-    description: "Player position",
-    example: "PG",
-    type: String,
-  })
-  position!: Position;
-
-  @ApiProperty({ description: "Team ID", example: 1, type: Number })
-  teamId!: number;
-
+export class PlayerWithTeamDto extends PlayerSummaryDto {
   @ApiProperty({
     description: "Team information",
     type: Object,

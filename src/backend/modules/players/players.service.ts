@@ -5,6 +5,7 @@ import { Category, Gender } from "@common/index";
 import {
   buildClubOrganizationWhere,
   mapPlayerMatchStats,
+  mapPlayerSummary,
   PLAYER_MATCH_STAT_FIELDS_SELECT,
   resolvePagination,
 } from "@common/utils";
@@ -358,13 +359,7 @@ export class PlayersService {
       homeTeamScore: stat.match.homeTeamScore,
       awayTeamScore: stat.match.awayTeamScore,
       player: {
-        player: {
-          id: stat.player.id,
-          name: stat.player.name,
-          number: stat.player.number,
-          position: stat.player.position as Position,
-          teamId: stat.player.teamId,
-        },
+        player: mapPlayerSummary(stat.player),
         stats: mapPlayerMatchStats(stat),
       },
     } satisfies MatchHistoryDto;

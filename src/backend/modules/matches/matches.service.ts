@@ -1,11 +1,12 @@
 // src/backend/modules/matches/matches.service.ts
-import { MatchEventRole, Position } from "@common/constants";
+import { MatchEventRole } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
 import { Category, CompetitionLevel, Gender } from "@common/index";
 import {
   andWhere,
   buildClubOrganizationWhere,
   mapPlayerMatchStats,
+  mapPlayerSummary,
   PLAYER_MATCH_STAT_FIELDS_SELECT,
   resolvePagination,
 } from "@common/utils";
@@ -402,11 +403,7 @@ export class MatchesService {
   ): PlayerWithStatsDto[] {
     return stats.map((stat) => ({
       player: {
-        id: stat.player.id,
-        name: stat.player.name,
-        number: stat.player.number,
-        position: stat.player.position as Position,
-        teamId: stat.player.teamId,
+        ...mapPlayerSummary(stat.player),
         team: stat.player.team,
       },
       stats: {

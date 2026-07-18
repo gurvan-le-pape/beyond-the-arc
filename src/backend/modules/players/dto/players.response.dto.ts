@@ -1,6 +1,11 @@
 // src/backend/modules/players/dto/players.response.dto.ts
 import { Position } from "@common/constants";
-import { Category, CompetitionLevel, Gender } from "@common/index";
+import {
+  Category,
+  CompetitionLevel,
+  Gender,
+  PlayerSummaryDto,
+} from "@common/index";
 import { ApiProperty } from "@nestjs/swagger";
 
 /**
@@ -299,13 +304,7 @@ export class MatchHistoryDto {
     type: Object,
   })
   player!: {
-    player: {
-      id: number;
-      name: string;
-      number: number;
-      position: Position;
-      teamId: number;
-    };
+    player: PlayerSummaryDto;
     stats: PlayerMatchStatsDto;
   };
 }

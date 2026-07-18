@@ -1,10 +1,11 @@
 // src/backend/modules/teams/teams.service.ts
-import { CompetitionLevel, Position } from "@common/constants";
+import { CompetitionLevel } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
 import { Category, Gender } from "@common/index";
 import {
   buildClubOrganizationWhere,
   mapPlayerMatchStats,
+  mapPlayerSummary,
   PLAYER_MATCH_STAT_FIELDS_SELECT,
   resolvePagination,
 } from "@common/utils";
@@ -473,11 +474,7 @@ export class TeamsService {
     return {
       ...baseDto,
       players: entity.players.map((p) => ({
-        id: p.id,
-        name: p.name,
-        number: p.number,
-        position: p.position as Position,
-        teamId: p.teamId,
+        ...mapPlayerSummary(p),
       })),
       homeMatches: entity.homeMatches,
       awayMatches: entity.awayMatches,
@@ -510,13 +507,7 @@ export class TeamsService {
       homeTeamScore: match.homeTeamScore,
       awayTeamScore: match.awayTeamScore,
       players: match.playerMatchStats.map((stat) => ({
-        player: {
-          id: stat.player.id,
-          name: stat.player.name,
-          number: stat.player.number,
-          position: stat.player.position as Position,
-          teamId: stat.player.teamId,
-        },
+        player: mapPlayerSummary(stat.player),
         stats: mapPlayerMatchStats(stat),
       })),
     } satisfies TeamMatchHistoryDto;
