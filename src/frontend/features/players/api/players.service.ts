@@ -116,7 +116,7 @@ export const playersService = {
   ): Promise<Player[]> {
     const { data } = await apiClient.get<any>("/players", {
       params: {
-        name: query,
+        search: query,
         limit: 20,
         ...(filters?.gender && { gender: filters.gender }),
         ...(filters?.category && { category: filters.category }),

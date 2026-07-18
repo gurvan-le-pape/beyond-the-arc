@@ -105,5 +105,5 @@ export class GetPlayersQueryDto extends PaginationQueryDto {
   })
   @IsOptional()
   @IsString()
-  name?: string;
+  search?: string;
 }

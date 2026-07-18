@@ -19,7 +19,7 @@ export function PlayersTab() {
     usePlayersFilterState();
 
   const { data, error, isLoading } = usePlayers({
-    name: filters.name || undefined,
+    search: filters.name || undefined,
     clubId: filters.clubId,
     category: filters.category,
     gender: filters.gender,

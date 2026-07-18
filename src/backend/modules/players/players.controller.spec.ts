@@ -134,7 +134,7 @@ describe("PlayersController", () => {
         leagueId: undefined,
         category: undefined,
         gender: undefined,
-        name: undefined,
+        search: undefined,
         page: 1,
         limit: 50,
       });
@@ -177,7 +177,7 @@ describe("PlayersController", () => {
         leagueId: 222,
         category: undefined,
         gender: undefined,
-        name: undefined,
+        search: undefined,
         page: 2,
         limit: 20,
       });

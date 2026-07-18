@@ -141,7 +141,7 @@ export class PlayersController {
     example: "M",
   })
   @ApiQuery({
-    name: "name",
+    name: "search",
     required: false,
     type: String,
     description: "Search by player name (case-insensitive)",
@@ -230,7 +230,7 @@ export class PlayersController {
       leagueId: query.leagueId,
       category: query.category,
       gender: query.gender,
-      name: query.name,
+      search: query.search,
       page: query.page,
       limit: query.limit,
     });

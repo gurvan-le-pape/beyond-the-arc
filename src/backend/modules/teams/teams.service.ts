@@ -285,7 +285,7 @@ type TeamFilters = {
   number?: number;
   category?: Category;
   gender?: Gender;
-  clubName?: string;
+  search?: string;
   poolLetter?: string;
   page?: number;
   limit?: number;
@@ -538,8 +538,8 @@ export class TeamsService {
 
     if (filters?.clubId) clubWhere.id = filters.clubId;
 
-    if (filters?.clubName) {
-      clubWhere.name = { contains: filters.clubName, mode: "insensitive" };
+    if (filters?.search) {
+      clubWhere.name = { contains: filters.search, mode: "insensitive" };
     }
 
     return Object.keys(clubWhere).length > 0 ? clubWhere : undefined;
