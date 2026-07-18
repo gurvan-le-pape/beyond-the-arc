@@ -168,7 +168,7 @@ jobs:
 
       - name: Regenerate OpenAPI document
         working-directory: src/backend
-        run: node dist/scripts/generate-openapi.js ../../docs/openapi.json
+        run: node dist/scripts/generate-openapi.js
 
       - name: Regenerate frontend API types
         working-directory: src/frontend
