@@ -95,8 +95,6 @@
     "src/backend/common/filters",
     "src/backend/common/interceptors",
     "src/backend/common/middleware",
-    "src/backend/common/pipes",
-    "src/backend/common/types",
     "src/backend/common/utils",
 
     "src/backend/modules/competitions/championships/dto",
@@ -119,5 +117,5 @@
   "location": "top",
   "structure": "flat",
   "barrelName": "index.ts",
-  "exclude": [".*\\.spec\\.ts$", ".*\\.test\\.ts$"]
+  "exclude": [".*\\.spec\\.ts$", ".*\\.test\\.ts$", ".*\\.d\\.ts$"]
 }

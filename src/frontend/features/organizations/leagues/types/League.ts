@@ -1,5 +1,5 @@
 // src/frontend/features/organizations/leagues/types/League.ts
-import type { components } from "@/shared/types/api.generated";
+import type { components } from "@/shared/types";
 
 /**
  * League entity, generated from the backend OpenAPI document.

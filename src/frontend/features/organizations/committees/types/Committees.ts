@@ -1,5 +1,5 @@
 // src/frontend/features/organizations/committees/types/Committees.ts
-import type { components } from "@/shared/types/api.generated";
+import type { components } from "@/shared/types";
 
 /**
  * Committee entity, generated from the backend OpenAPI document.
