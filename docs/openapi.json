@@ -1,0 +1,5850 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/metrics": {
+      "get": {
+        "operationId": "MetricsController_index",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Metrics"
+        ]
+      }
+    },
+    "/clubs/stats/by-region": {
+      "get": {
+        "description": "Retrieves club counts aggregated by league. Results are cached for 10 minutes.",
+        "operationId": "ClubsController_getClubStatsByRegion",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of club statistics by region",
+            "schema": {
+              "example": {
+                "data": [
+                  {
+                    "id": 1,
+                    "code": "84",
+                    "name": "League Auvergne-Rhône-Alpes",
+                    "clubCount": 42
+                  }
+                ],
+                "meta": {
+                  "count": 1
+                },
+                "timestamp": "2024-02-05T10:00:00Z",
+                "path": "/clubs/stats/by-region",
+                "statusCode": 200
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClubStatsByRegionDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Get club statistics by region",
+        "tags": [
+          "clubs"
+        ]
+      }
+    },
+    "/clubs/stats/by-department": {
+      "get": {
+        "description": "Retrieves club counts aggregated by committee. Optionally filter by league. Results are cached for 5 minutes.",
+        "operationId": "ClubsController_getClubStatsByDepartment",
+        "parameters": [
+          {
+            "name": "leagueId",
+            "required": false,
+            "in": "query",
+            "description": "Optional league ID to filter by",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of club statistics by department",
+            "schema": {
+              "example": {
+                "data": [
+                  {
+                    "id": 1,
+                    "name": "Comité de l'Ain",
+                    "department": {
+                      "id": 1,
+                      "name": "Ain",
+                      "code": "01"
+                    },
+                    "leagueId": 1,
+                    "clubCount": 15
+                  }
+                ],
+                "meta": {
+                  "count": 1
+                },
+                "timestamp": "2024-02-05T10:00:00Z",
+                "path": "/clubs/stats/by-department?leagueId=1",
+                "statusCode": 200
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClubStatsByDepartmentDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": [
+                      "League regionale ID must be a valid number string"
+                    ],
+                    "error": "BadRequestException",
+                    "path": "/clubs/stats/by-department?leagueId=abc",
+                    "timestamp": "2024-02-05T10:00:00Z"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Get club statistics by department",
+        "tags": [
+          "clubs"
+        ]
+      }
+    },
+    "/clubs/all": {
+      "get": {
+        "description": "Retrieves all clubs without any filtering or pagination. Intended for map initialization where all club coordinates are needed at once. Results are cached for 5 minutes.",
+        "operationId": "ClubsController_getAllClubs",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Flat list of all clubs",
+            "schema": {
+              "example": {
+                "data": [
+                  {
+                    "id": 1,
+                    "name": "AS Monaco Basket",
+                    "city": "Monaco",
+                    "zipCode": "98000",
+                    "latitude": 43.7384,
+                    "longitude": 7.4246,
+                    "email": "contact@club.com",
+                    "phone": "0123456789",
+                    "website": "https://club.com",
+                    "committeeId": 1,
+                    "leagueId": 1
+                  }
+                ],
+                "meta": {
+                  "count": 1
+                },
+                "timestamp": "2024-02-05T10:00:00Z",
+                "path": "/clubs/all",
+                "statusCode": 200
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClubBasicResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Get all clubs without filtering",
+        "tags": [
+          "clubs"
+        ]
+      }
+    },
+    "/clubs": {
+      "get": {
+        "description": "Retrieves clubs filtered by competition level, committee, league, category, gender, and name search. Supports pagination via page and limit parameters. Results are cached for 3 minutes.",
+        "operationId": "ClubsController_getClubs",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "level",
+            "required": false,
+            "in": "query",
+            "description": "Competition level",
+            "schema": {
+              "enum": [
+                "regional",
+                "departmental"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "committeeId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by committee ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "leagueId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by league ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "category",
+            "required": false,
+            "in": "query",
+            "description": "Filter by category",
+            "schema": {
+              "enum": [
+                "U11",
+                "U13",
+                "U15",
+                "U18",
+                "U21",
+                "Seniors"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "gender",
+            "required": false,
+            "in": "query",
+            "description": "Filter by gender",
+            "schema": {
+              "enum": [
+                "male",
+                "female"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search by club name (case-insensitive)",
+            "schema": {
+              "example": "Monaco",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of clubs matching the filters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "data": {
+                      "items": [
+                        {
+                          "id": 1,
+                          "name": "AS Monaco Basket",
+                          "city": "Monaco",
+                          "zipCode": "98000",
+                          "latitude": 43.7384,
+                          "longitude": 7.4246,
+                          "email": "contact@club.com",
+                          "phone": "0123456789",
+                          "website": "https://club.com",
+                          "committeeId": 1,
+                          "leagueId": 1
+                        }
+                      ],
+                      "total": 1,
+                      "page": 1,
+                      "limit": 50,
+                      "totalPages": 1
+                    },
+                    "timestamp": "2024-02-05T10:00:00Z",
+                    "path": "/clubs",
+                    "statusCode": 200
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": [
+                      "Level must be one of: regional, departmental",
+                      "committeeId must be a number",
+                      "page must not be less than 1"
+                    ],
+                    "error": "BadRequestException",
+                    "path": "/clubs?level=invalid&committeeId=abc",
+                    "timestamp": "2024-02-05T10:00:00Z"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Get clubs with filters and pagination",
+        "tags": [
+          "clubs"
+        ]
+      }
+    },
+    "/clubs/{id}": {
+      "get": {
+        "description": "Retrieves detailed information about a specific club including all teams, pools, and leaderboard data",
+        "operationId": "ClubsController_getClubById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Club ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Club successfully retrieved",
+            "schema": {
+              "example": {
+                "data": {
+                  "id": 1,
+                  "name": "AS Monaco Basket",
+                  "city": "Monaco",
+                  "zipCode": "98000",
+                  "address": "1 Avenue des Papalins",
+                  "phone": "0123456789",
+                  "email": "contact@club.com",
+                  "website": "https://club.com",
+                  "teams": []
+                },
+                "timestamp": "2024-02-05T10:00:00Z",
+                "path": "/clubs/1",
+                "statusCode": 200
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClubDetailedResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "Validation failed (numeric string is expected)",
+                    "error": "BadRequestException",
+                    "path": "/clubs/abc",
+                    "timestamp": "2024-02-05T10:00:00Z"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Club not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Club with ID 999 not found",
+                    "error": "NotFoundException",
+                    "path": "/clubs/999",
+                    "timestamp": "2024-02-05T10:00:00Z"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "summary": "Get club by ID",
+        "tags": [
+          "clubs"
+        ]
+      }
+    },
+    "/committees": {
+      "get": {
+        "description": "Retrieves committees, optionally filtered by league ID. If no filter is provided, returns all departmental committees. Results are cached for 5 minutes.",
+        "operationId": "CommitteesController_getCommittees",
+        "parameters": [
+          {
+            "name": "leagueId",
+            "required": false,
+            "in": "query",
+            "description": "Optional league ID to filter committees",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of committees successfully retrieved",
+            "schema": {
+              "example": {
+                "data": [
+                  {
+                    "id": 1,
+                    "name": "Comité Departmental de l'Ain",
+                    "leagueId": 1,
+                    "department": {
+                      "id": 1,
+                      "name": "Ain",
+                      "code": "01"
+                    }
+                  },
+                  {
+                    "id": 2,
+                    "name": "Comité Departmental de l'Aisne",
+                    "leagueId": 1,
+                    "department": {
+                      "id": 2,
+                      "name": "Aisne",
+                      "code": "02"
+                    }
+                  }
+                ],
+                "meta": {
+                  "count": 2
+                },
+                "timestamp": "2024-02-05T10:00:00Z",
+                "path": "/committees?leagueId=1",
+                "statusCode": 200
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CommitteeResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": [
+                      "leagueId must be a valid number string"
+                    ],
+                    "error": "BadRequestException",
+                    "path": "/committees?leagueId=abc",
+                    "timestamp": "2024-02-05T10:00:00Z"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get committees (departmental committees)",
+        "tags": [
+          "committees"
+        ]
+      }
+    },
+    "/committees/{id}": {
+      "get": {
+        "description": "Retrieves detailed information about a specific committee",
+        "operationId": "CommitteesController_getCommitteeById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Committee ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Committee successfully retrieved",
+            "schema": {
+              "example": {
+                "data": {
+                  "id": 1,
+                  "name": "Comité Departmental de l'Ain",
+                  "leagueId": 1,
+                  "department": {
+                    "id": 1,
+                    "name": "Ain",
+                    "code": "01"
+                  }
+                },
+                "timestamp": "2024-02-05T10:00:00Z",
+                "path": "/committees/1",
+                "statusCode": 200
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommitteeResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "Validation failed (numeric string is expected)",
+                    "error": "BadRequestException",
+                    "path": "/committees/abc",
+                    "timestamp": "2024-02-05T10:00:00Z"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Committee not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Committee with ID 999 not found",
+                    "error": "NotFoundException",
+                    "path": "/committees/999",
+                    "timestamp": "2024-02-05T10:00:00Z"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get committee by ID",
+        "tags": [
+          "committees"
+        ]
+      }
+    },
+    "/leagues": {
+      "get": {
+        "description": "Retrieves a list of all regional leagues. Results are cached for 10 minutes as this data rarely changes.",
+        "operationId": "LeaguesController_getAllLeagues",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of regional leagues successfully retrieved",
+            "schema": {
+              "example": {
+                "data": [
+                  {
+                    "id": 1,
+                    "name": "League Auvergne-Rhône-Alpes"
+                  },
+                  {
+                    "id": 2,
+                    "name": "League Bourgogne-Franche-Comté"
+                  },
+                  {
+                    "id": 3,
+                    "name": "League Bretagne"
+                  }
+                ],
+                "meta": {
+                  "count": 3
+                },
+                "timestamp": "2024-02-05T10:00:00Z",
+                "path": "/leagues",
+                "statusCode": 200
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LeagueResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 500,
+                    "message": "Internal server error",
+                    "error": "InternalServerErrorException",
+                    "path": "/leagues",
+                    "timestamp": "2024-02-05T10:00:00Z"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all regional leagues",
+        "tags": [
+          "leagues"
+        ]
+      }
+    },
+    "/leagues/{id}": {
+      "get": {
+        "description": "Retrieves detailed information about a specific regional league",
+        "operationId": "LeaguesController_getLeagueById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "League regionale ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "League successfully retrieved",
+            "schema": {
+              "example": {
+                "data": {
+                  "id": 1,
+                  "name": "League Auvergne-Rhône-Alpes"
+                },
+                "timestamp": "2024-02-05T10:00:00Z",
+                "path": "/leagues/1",
+                "statusCode": 200
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LeagueResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "Validation failed (numeric string is expected)",
+                    "error": "BadRequestException",
+                    "path": "/leagues/abc",
+                    "timestamp": "2024-02-05T10:00:00Z"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "League not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "League with ID 999 not found",
+                    "error": "NotFoundException",
+                    "path": "/leagues/999",
+                    "timestamp": "2024-02-05T10:00:00Z"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get league by ID",
+        "tags": [
+          "leagues"
+        ]
+      }
+    },
+    "/championships/{id}": {
+      "get": {
+        "description": "Retrieves detailed information about a specific championship",
+        "operationId": "ChampionshipsController_getChampionshipById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Championship ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Championship successfully retrieved",
+            "schema": {
+              "example": {
+                "data": {
+                  "id": 1,
+                  "name": "Championship Régional U18 male",
+                  "category": "U18",
+                  "gender": "male",
+                  "seasonYear": "2024-2025",
+                  "level": "regional",
+                  "division": "Régionale 1"
+                },
+                "timestamp": "2024-02-05T10:00:00Z",
+                "path": "/championships/1",
+                "statusCode": 200
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChampionshipResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "Validation failed (numeric string is expected)",
+                    "error": "BadRequestException",
+                    "path": "/championships/abc",
+                    "timestamp": "2024-02-05T10:00:00Z"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Championship not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Championship with ID 999 not found",
+                    "error": "NotFoundException",
+                    "path": "/championships/999",
+                    "timestamp": "2024-02-05T10:00:00Z"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get championship by ID",
+        "tags": [
+          "championships"
+        ]
+      }
+    },
+    "/championships": {
+      "get": {
+        "description": "Paginated, filtered list of championships. All parameters are optional — omitting them returns all championships across all levels.",
+        "operationId": "ChampionshipsController_getChampionships",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "level",
+            "required": false,
+            "in": "query",
+            "description": "Competition level filter.",
+            "schema": {
+              "enum": [
+                "departmental",
+                "regional",
+                "national"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "required": false,
+            "in": "query",
+            "description": "League ID (for regional) or Committee ID (for departmental).",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "category",
+            "required": false,
+            "in": "query",
+            "description": "Age category filter.",
+            "schema": {
+              "example": "U18",
+              "type": "string",
+              "enum": [
+                "U11",
+                "U13",
+                "U15",
+                "U18",
+                "U21",
+                "Seniors"
+              ]
+            }
+          },
+          {
+            "name": "gender",
+            "required": false,
+            "in": "query",
+            "description": "Gender filter.",
+            "schema": {
+              "example": "male",
+              "type": "string",
+              "enum": [
+                "male",
+                "female"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of championships successfully retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "data": {
+                      "items": [
+                        {
+                          "id": 1,
+                          "name": "Championship Régional U18 male",
+                          "category": "U18",
+                          "gender": "male",
+                          "seasonYear": "2024-2025",
+                          "level": "regional",
+                          "division": 1
+                        }
+                      ],
+                      "total": 384,
+                      "page": 1,
+                      "limit": 20,
+                      "totalPages": 20
+                    },
+                    "timestamp": "2024-02-05T10:00:00Z",
+                    "path": "/championships",
+                    "statusCode": 200
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": [
+                      "level must be a valid enum value"
+                    ],
+                    "error": "BadRequestException",
+                    "path": "/championships?level=invalid",
+                    "timestamp": "2024-02-05T10:00:00Z"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get championships",
+        "tags": [
+          "championships"
+        ]
+      }
+    },
+    "/leaderboards": {
+      "get": {
+        "description": "Retrieves all leaderboard entries for a specific pool, sorted by points and point difference. Results are cached for 5 minutes.",
+        "operationId": "LeaderboardsController_getLeaderboardsByPoolId",
+        "parameters": [
+          {
+            "name": "poolId",
+            "required": true,
+            "in": "query",
+            "description": "Pool ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of leaderboard entries successfully retrieved",
+            "schema": {
+              "example": {
+                "data": [
+                  {
+                    "id": 1,
+                    "teamId": 5,
+                    "teamNumber": 1,
+                    "clubName": "AS Monaco Basket",
+                    "points": 12,
+                    "gamesPlayed": 8,
+                    "gamesWon": 6,
+                    "gamesLost": 2,
+                    "gamesForfeited": 0,
+                    "pointsFor": 645,
+                    "pointsAgainst": 580,
+                    "pointDifference": 65
+                  }
+                ],
+                "meta": {
+                  "count": 10
+                },
+                "timestamp": "2024-02-05T10:00:00Z",
+                "path": "/leaderboards?poolId=1",
+                "statusCode": 200
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LeaderboardResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": [
+                      "poolId must be a valid number string"
+                    ],
+                    "error": "BadRequestException",
+                    "path": "/leaderboards?poolId=abc",
+                    "timestamp": "2024-02-05T10:00:00Z"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get leaderboards by pool ID",
+        "tags": [
+          "leaderboards"
+        ]
+      }
+    },
+    "/leaderboards/{id}": {
+      "get": {
+        "description": "Retrieves detailed information about a specific leaderboard entry",
+        "operationId": "LeaderboardsController_getLeaderboardById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Leaderboard entry ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Leaderboard entry successfully retrieved",
+            "schema": {
+              "example": {
+                "data": {
+                  "id": 1,
+                  "teamId": 5,
+                  "teamNumber": 1,
+                  "clubName": "AS Monaco Basket",
+                  "points": 12,
+                  "gamesPlayed": 8,
+                  "gamesWon": 6,
+                  "gamesLost": 2,
+                  "gamesForfeited": 0,
+                  "pointsFor": 645,
+                  "pointsAgainst": 580,
+                  "pointDifference": 65
+                },
+                "timestamp": "2024-02-05T10:00:00Z",
+                "path": "/leaderboards/1",
+                "statusCode": 200
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LeaderboardResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "Validation failed (numeric string is expected)",
+                    "error": "BadRequestException",
+                    "path": "/leaderboards/abc",
+                    "timestamp": "2024-02-05T10:00:00Z"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Leaderboard entry not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Leaderboard entry with ID 999 not found",
+                    "error": "NotFoundException",
+                    "path": "/leaderboards/999",
+                    "timestamp": "2024-02-05T10:00:00Z"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get leaderboard entry by ID",
+        "tags": [
+          "leaderboards"
+        ]
+      }
+    },
+    "/pools": {
+      "get": {
+        "description": "Retrieves all pools for a specific championship. Results are cached for 5 minutes.",
+        "operationId": "PoolsController_getPoolsByChampionshipId",
+        "parameters": [
+          {
+            "name": "championshipId",
+            "required": true,
+            "in": "query",
+            "description": "Championship ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of pools successfully retrieved (may be empty)",
+            "schema": {
+              "example": {
+                "data": [
+                  {
+                    "id": 1,
+                    "letter": "A",
+                    "name": "Pool A - Seniors",
+                    "championshipId": 1
+                  },
+                  {
+                    "id": 2,
+                    "letter": "B",
+                    "name": "Pool B - Seniors",
+                    "championshipId": 1
+                  }
+                ],
+                "meta": {
+                  "count": 2
+                },
+                "timestamp": "2024-02-05T10:00:00Z",
+                "path": "/pools?championshipId=1",
+                "statusCode": 200
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PoolResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": [
+                      "championshipId must be a valid number string"
+                    ],
+                    "error": "BadRequestException",
+                    "path": "/pools?championshipId=abc",
+                    "timestamp": "2024-02-05T10:00:00Z"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get pools by championship ID",
+        "tags": [
+          "pools"
+        ]
+      }
+    },
+    "/pools/{id}": {
+      "get": {
+        "description": "Retrieves detailed information about a specific pool",
+        "operationId": "PoolsController_getPoolById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Pool ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pool successfully retrieved",
+            "schema": {
+              "example": {
+                "data": {
+                  "id": 1,
+                  "letter": "A",
+                  "name": "Pool A - Seniors",
+                  "championshipId": 1
+                },
+                "timestamp": "2024-02-05T10:00:00Z",
+                "path": "/pools/1",
+                "statusCode": 200
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PoolResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "Validation failed (numeric string is expected)",
+                    "error": "BadRequestException",
+                    "path": "/pools/abc",
+                    "timestamp": "2024-02-05T10:00:00Z"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Pool not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Pool with ID 999 not found",
+                    "error": "NotFoundException",
+                    "path": "/pools/999",
+                    "timestamp": "2024-02-05T10:00:00Z"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get pool by ID",
+        "tags": [
+          "pools"
+        ]
+      }
+    },
+    "/matches": {
+      "get": {
+        "description": "Retrieves a paginated list of matches with optional filtering by level, division, category, gender, and more. Results are cached for 5 minutes.",
+        "operationId": "MatchesController_getMatches",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "level",
+            "required": false,
+            "in": "query",
+            "description": "Competition level",
+            "schema": {
+              "enum": [
+                "regional",
+                "departmental"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "division",
+            "required": false,
+            "in": "query",
+            "description": "Filter by division",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "committeeId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by committee ID (for departmental level)",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "leagueId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by league ID (for regional level)",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "category",
+            "required": false,
+            "in": "query",
+            "description": "Filter by age category",
+            "schema": {
+              "example": "U18",
+              "type": "string",
+              "enum": [
+                "U11",
+                "U13",
+                "U15",
+                "U18",
+                "U21",
+                "Seniors"
+              ]
+            }
+          },
+          {
+            "name": "gender",
+            "required": false,
+            "in": "query",
+            "description": "Filter by gender",
+            "schema": {
+              "example": "M",
+              "type": "string",
+              "enum": [
+                "male",
+                "female"
+              ]
+            }
+          },
+          {
+            "name": "poolId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by pool ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "championshipId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by championship ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "matchday",
+            "required": false,
+            "in": "query",
+            "description": "Filter by matchday number",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "date",
+            "required": false,
+            "in": "query",
+            "description": "Filter by date (YYYY-MM-DD)",
+            "schema": {
+              "pattern": "/^\\d{4}-\\d{2}-\\d{2}$/",
+              "example": "2024-02-05",
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search by club name (case-insensitive)",
+            "schema": {
+              "example": "Paris",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of matches successfully retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters"
+          }
+        },
+        "summary": "Get all matches with filters",
+        "tags": [
+          "matches"
+        ]
+      }
+    },
+    "/matches/pool/{poolId}": {
+      "get": {
+        "description": "Retrieves all matches for a specific pool without pagination, ordered by date ascending.",
+        "operationId": "MatchesController_getMatchesByPoolId",
+        "parameters": [
+          {
+            "name": "poolId",
+            "required": true,
+            "in": "path",
+            "description": "Pool ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Matches successfully retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MatchDetailResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format"
+          },
+          "404": {
+            "description": "Pool not found"
+          }
+        },
+        "summary": "Get matches by pool ID",
+        "tags": [
+          "matches"
+        ]
+      }
+    },
+    "/matches/{matchId}": {
+      "get": {
+        "description": "Retrieves detailed information about a specific match including teams, pool, and events",
+        "operationId": "MatchesController_getMatchById",
+        "parameters": [
+          {
+            "name": "matchId",
+            "required": true,
+            "in": "path",
+            "description": "Match ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Match successfully retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatchDetailResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format"
+          },
+          "404": {
+            "description": "Match not found"
+          }
+        },
+        "summary": "Get match by ID",
+        "tags": [
+          "matches"
+        ]
+      }
+    },
+    "/matches/{matchId}/player-stats": {
+      "get": {
+        "description": "Retrieves all player statistics for a specific match, grouped by team",
+        "operationId": "MatchesController_getPlayerMatchStats",
+        "parameters": [
+          {
+            "name": "matchId",
+            "required": true,
+            "in": "path",
+            "description": "Match ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Player stats successfully retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatchPlayerStatsResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format"
+          },
+          "404": {
+            "description": "Match not found"
+          }
+        },
+        "summary": "Get player stats for a match",
+        "tags": [
+          "matches"
+        ]
+      }
+    },
+    "/matches/{matchId}/events": {
+      "get": {
+        "description": "Retrieves all events (shots, fouls, etc.) for a specific match, ordered by timestamp",
+        "operationId": "MatchesController_getMatchEvents",
+        "parameters": [
+          {
+            "name": "matchId",
+            "required": true,
+            "in": "path",
+            "description": "Match ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Match events successfully retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MatchEventDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format"
+          }
+        },
+        "summary": "Get match events by match ID",
+        "tags": [
+          "matches"
+        ]
+      }
+    },
+    "/matches/team/{teamId}/events": {
+      "get": {
+        "description": "Retrieves all shot events with locations for a specific team across all their matches",
+        "operationId": "MatchesController_getMatchEventsByTeamId",
+        "parameters": [
+          {
+            "name": "teamId",
+            "required": true,
+            "in": "path",
+            "description": "Team ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Shot events successfully retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MatchEventDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format"
+          }
+        },
+        "summary": "Get shot events by team ID",
+        "tags": [
+          "matches"
+        ]
+      }
+    },
+    "/matches/player/{playerId}/events": {
+      "get": {
+        "description": "Retrieves all shot events with locations for a specific player across all their matches",
+        "operationId": "MatchesController_getMatchEventsByPlayerId",
+        "parameters": [
+          {
+            "name": "playerId",
+            "required": true,
+            "in": "path",
+            "description": "Player ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Shot events successfully retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MatchEventDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format"
+          }
+        },
+        "summary": "Get shot events by player ID",
+        "tags": [
+          "matches"
+        ]
+      }
+    },
+    "/players": {
+      "get": {
+        "description": "Retrieves a paginated list of players with optional filtering by level, club, team, category, gender, and more. Results are cached for 5 minutes.",
+        "operationId": "PlayersController_getPlayers",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "level",
+            "required": false,
+            "in": "query",
+            "description": "Competition level",
+            "schema": {
+              "enum": [
+                "departmental",
+                "regional",
+                "national"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "clubId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by club ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "teamId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by team ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "teamNumber",
+            "required": false,
+            "in": "query",
+            "description": "Filter by team number",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "number",
+            "required": false,
+            "in": "query",
+            "description": "Filter by player jersey number",
+            "schema": {
+              "example": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "committeeId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by committee ID (for departmental level)",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "leagueId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by league ID (for regional level)",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "category",
+            "required": false,
+            "in": "query",
+            "description": "Filter by age category",
+            "schema": {
+              "enum": [
+                "U11",
+                "U13",
+                "U15",
+                "U18",
+                "U21",
+                "Seniors"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "gender",
+            "required": false,
+            "in": "query",
+            "description": "Filter by gender",
+            "schema": {
+              "enum": [
+                "male",
+                "female"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search by player name (case-insensitive)",
+            "schema": {
+              "example": "John",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of players successfully retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "data": {
+                      "items": [
+                        {
+                          "id": 1,
+                          "name": "John Doe",
+                          "number": 10,
+                          "teamId": 1,
+                          "team": {
+                            "id": 1,
+                            "number": 1,
+                            "clubId": 1,
+                            "category": "U18",
+                            "gender": "M",
+                            "club": {
+                              "id": 1,
+                              "name": "Club Example",
+                              "committee": {
+                                "id": 1,
+                                "name": "Committee Example",
+                                "league": {
+                                  "id": 1,
+                                  "name": "League Example"
+                                }
+                              }
+                            },
+                            "pool": {
+                              "id": 1,
+                              "name": "Pool A",
+                              "championship": {
+                                "id": 1,
+                                "name": "Championship Régional U18",
+                                "level": "regional",
+                                "division": "Régionale 1"
+                              }
+                            }
+                          }
+                        }
+                      ],
+                      "total": 150,
+                      "page": 1,
+                      "limit": 50,
+                      "totalPages": 3
+                    },
+                    "timestamp": "2024-02-05T10:00:00Z",
+                    "path": "/players",
+                    "statusCode": 200
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": [
+                      "level must be either \"regional\" or \"departmental\"",
+                      "clubId must be a valid number"
+                    ],
+                    "error": "BadRequestException",
+                    "path": "/players?level=invalid&clubId=abc",
+                    "timestamp": "2024-02-05T10:00:00Z"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all players with filters",
+        "tags": [
+          "players"
+        ]
+      }
+    },
+    "/players/filter-values": {
+      "get": {
+        "description": "Returns available player numbers and team numbers. Optionally scoped to a committee or league.",
+        "operationId": "PlayersController_getPlayerFilterValues",
+        "parameters": [
+          {
+            "name": "committeeId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by committee ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "leagueId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by league ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Filter values successfully retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilterValuesPlayersResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get available filter values for players",
+        "tags": [
+          "players"
+        ]
+      }
+    },
+    "/players/{id}": {
+      "get": {
+        "description": "Retrieves detailed information about a specific player including team information",
+        "operationId": "PlayersController_getPlayerById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Player ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Player successfully retrieved",
+            "schema": {
+              "example": {
+                "data": {
+                  "id": 1,
+                  "name": "John Doe",
+                  "number": 10,
+                  "teamId": 1,
+                  "team": {
+                    "id": 1,
+                    "number": 1,
+                    "clubId": 1,
+                    "category": "U18",
+                    "gender": "M",
+                    "club": {
+                      "id": 1,
+                      "name": "Club Example",
+                      "committee": {
+                        "id": 1,
+                        "name": "Committee Example",
+                        "league": {
+                          "id": 1,
+                          "name": "League Example"
+                        }
+                      }
+                    },
+                    "pool": {
+                      "id": 1,
+                      "name": "Pool A",
+                      "championship": {
+                        "id": 1,
+                        "name": "Championship Régional U18",
+                        "level": "regional",
+                        "division": "Régionale 1"
+                      }
+                    }
+                  }
+                },
+                "timestamp": "2024-02-05T10:00:00Z",
+                "path": "/players/1",
+                "statusCode": 200
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlayerResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "Validation failed (numeric string is expected)",
+                    "error": "BadRequestException",
+                    "path": "/players/abc",
+                    "timestamp": "2024-02-05T10:00:00Z"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Player not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Player with ID 999 not found",
+                    "error": "NotFoundException",
+                    "path": "/players/999",
+                    "timestamp": "2024-02-05T10:00:00Z"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get player by ID",
+        "tags": [
+          "players"
+        ]
+      }
+    },
+    "/players/{id}/matches": {
+      "get": {
+        "description": "Retrieves all matches for a specific player with their statistics, ordered by date (most recent first)",
+        "operationId": "PlayersController_getPlayerMatchHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Player ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Match history successfully retrieved",
+            "schema": {
+              "example": {
+                "data": [
+                  {
+                    "id": 1,
+                    "date": "2024-02-05T19:00:00Z",
+                    "homeTeam": {
+                      "id": 1,
+                      "number": 1,
+                      "club": {
+                        "id": 1,
+                        "name": "Club A"
+                      }
+                    },
+                    "awayTeam": {
+                      "id": 2,
+                      "number": 1,
+                      "club": {
+                        "id": 2,
+                        "name": "Club B"
+                      }
+                    },
+                    "homeTeamScore": 85,
+                    "awayTeamScore": 72,
+                    "player": {
+                      "player": {
+                        "id": 1,
+                        "name": "John Doe",
+                        "number": 10,
+                        "teamId": 1
+                      },
+                      "stats": {
+                        "points": 15,
+                        "fouls": 2,
+                        "threePointsMade": 2,
+                        "threePointsAttempted": 5,
+                        "rebounds": {
+                          "total": 8,
+                          "offensive": 3,
+                          "defensive": 5
+                        },
+                        "assists": 7,
+                        "steals": 2,
+                        "blocks": 1,
+                        "turnovers": 3,
+                        "playtimeIntervals": [
+                          [
+                            0,
+                            600
+                          ],
+                          [
+                            1200,
+                            2400
+                          ]
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "timestamp": "2024-02-05T10:00:00Z",
+                "path": "/players/1/matches",
+                "statusCode": 200
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MatchHistoryDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 400,
+                    "message": "Validation failed (numeric string is expected)",
+                    "error": "BadRequestException",
+                    "path": "/players/abc/matches",
+                    "timestamp": "2024-02-05T10:00:00Z"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Player not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "statusCode": 404,
+                    "message": "Player with ID 999 not found",
+                    "error": "NotFoundException",
+                    "path": "/players/999/matches",
+                    "timestamp": "2024-02-05T10:00:00Z"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get player match history",
+        "tags": [
+          "players"
+        ]
+      }
+    },
+    "/teams": {
+      "get": {
+        "description": "Retrieves a paginated list of teams with optional filtering. Results are cached for 5 minutes.",
+        "operationId": "TeamsController_getTeams",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "clubId",
+            "required": false,
+            "in": "query",
+            "description": "Club ID to filter teams by club",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "level",
+            "required": false,
+            "in": "query",
+            "description": "Competition level filter",
+            "schema": {
+              "example": "regional",
+              "type": "string",
+              "enum": [
+                "departmental",
+                "regional",
+                "national"
+              ]
+            }
+          },
+          {
+            "name": "division",
+            "required": false,
+            "in": "query",
+            "description": "Division number to filter teams",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "committeeId",
+            "required": false,
+            "in": "query",
+            "description": "Committee ID (for departmental level)",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "leagueId",
+            "required": false,
+            "in": "query",
+            "description": "League ID (for regional level)",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "number",
+            "required": false,
+            "in": "query",
+            "description": "Team number",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "category",
+            "required": false,
+            "in": "query",
+            "description": "Age category filter",
+            "schema": {
+              "example": "U18",
+              "type": "string",
+              "enum": [
+                "U11",
+                "U13",
+                "U15",
+                "U18",
+                "U21",
+                "Seniors"
+              ]
+            }
+          },
+          {
+            "name": "gender",
+            "required": false,
+            "in": "query",
+            "description": "Gender filter",
+            "schema": {
+              "example": "male",
+              "type": "string",
+              "enum": [
+                "male",
+                "female"
+              ]
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search by club name (case-insensitive partial match)",
+            "schema": {
+              "example": "Paris",
+              "type": "string"
+            }
+          },
+          {
+            "name": "poolLetter",
+            "required": false,
+            "in": "query",
+            "description": "Filter by pool letter",
+            "schema": {
+              "example": "A",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of teams successfully retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all teams with filters",
+        "tags": [
+          "teams"
+        ]
+      }
+    },
+    "/teams/filter-values": {
+      "get": {
+        "description": "Returns available team numbers, pool letters, and divisions. Optionally scoped to a committee or league.",
+        "operationId": "TeamsController_getTeamFilterValues",
+        "parameters": [
+          {
+            "name": "committeeId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by committee ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "leagueId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by league ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Filter values successfully retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilterValuesTeamsResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get available filter values for teams",
+        "tags": [
+          "teams"
+        ]
+      }
+    },
+    "/teams/{id}": {
+      "get": {
+        "description": "Retrieves detailed information about a specific team including players and recent matches",
+        "operationId": "TeamsController_getTeamById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Team ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Team successfully retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamDetailResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format"
+          },
+          "404": {
+            "description": "Team not found"
+          }
+        },
+        "summary": "Get team by ID",
+        "tags": [
+          "teams"
+        ]
+      }
+    },
+    "/teams/{id}/matches": {
+      "get": {
+        "description": "Retrieves all matches for a specific team with player statistics, ordered by date (most recent first)",
+        "operationId": "TeamsController_getTeamMatchHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Team ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Match history successfully retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TeamMatchHistoryDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format"
+          },
+          "404": {
+            "description": "Team not found"
+          }
+        },
+        "summary": "Get team match history",
+        "tags": [
+          "teams"
+        ]
+      }
+    },
+    "/stats": {
+      "get": {
+        "description": "Returns platform-wide entity counts. Cached for 60 seconds.",
+        "operationId": "StatsController_getStats",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Statistics successfully retrieved",
+            "schema": {
+              "example": {
+                "data": {
+                  "clubs": 840,
+                  "teams": 3200,
+                  "players": 12400,
+                  "matches": 48000,
+                  "leagues": 26,
+                  "committees": 95
+                },
+                "timestamp": "2024-02-05T10:00:00Z",
+                "path": "/stats",
+                "statusCode": 200
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatsResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get platform statistics",
+        "tags": [
+          "stats"
+        ]
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "HealthController_check",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The Health Check is successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    },
+                    "info": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {},
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The Health Check is not successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "info": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        },
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Check application health",
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/health/live": {
+      "get": {
+        "operationId": "HealthController_getLiveness",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Application is alive"
+          }
+        },
+        "summary": "Liveness probe",
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/health/ready": {
+      "get": {
+        "operationId": "HealthController_getReadiness",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The Health Check is successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    },
+                    "info": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {},
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The Health Check is not successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "info": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up"
+                        },
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect"
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Readiness probe",
+        "tags": [
+          "health"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Beyond the Arc API",
+    "description": "API documentation for a basketball federation management platform, inspired by the FFBB",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "ClubStatsByRegionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "League regionale ID",
+            "example": 1
+          },
+          "code": {
+            "type": "string",
+            "nullable": true,
+            "description": "Region code",
+            "example": "84"
+          },
+          "name": {
+            "type": "string",
+            "description": "League name",
+            "example": "League Auvergne-Rhône-Alpes"
+          },
+          "clubCount": {
+            "type": "number",
+            "description": "Number of clubs in this region",
+            "example": 42
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name",
+          "clubCount"
+        ]
+      },
+      "DepartmentInfoDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Department ID",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Department name",
+            "example": "Ain"
+          },
+          "code": {
+            "type": "string",
+            "description": "Department code",
+            "example": "01"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "code"
+        ]
+      },
+      "ClubStatsByDepartmentDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Committee ID",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Committee name",
+            "example": "Comité de l'Ain"
+          },
+          "department": {
+            "description": "Department information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DepartmentInfoDto"
+              }
+            ]
+          },
+          "leagueId": {
+            "type": "number",
+            "description": "League regionale ID",
+            "example": 1,
+            "nullable": true
+          },
+          "clubCount": {
+            "type": "number",
+            "description": "Number of clubs in this department",
+            "example": 15
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "department",
+          "leagueId",
+          "clubCount"
+        ]
+      },
+      "ClubBasicResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Club ID",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Club name",
+            "example": "AS Monaco Basket"
+          },
+          "city": {
+            "type": "string",
+            "nullable": true,
+            "description": "City",
+            "example": "Monaco"
+          },
+          "zipCode": {
+            "type": "string",
+            "nullable": true,
+            "description": "ZIP code",
+            "example": "98000"
+          },
+          "latitude": {
+            "type": "number",
+            "nullable": true,
+            "description": "Latitude",
+            "example": 43.7384
+          },
+          "longitude": {
+            "type": "number",
+            "nullable": true,
+            "description": "Longitude",
+            "example": 7.4246
+          },
+          "email": {
+            "type": "string",
+            "nullable": true,
+            "description": "Email",
+            "example": "contact@club.com"
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true,
+            "description": "Phone",
+            "example": "0123456789"
+          },
+          "website": {
+            "type": "string",
+            "nullable": true,
+            "description": "Website",
+            "example": "https://club.com"
+          },
+          "committeeId": {
+            "type": "number",
+            "description": "Committee ID",
+            "example": 1
+          },
+          "leagueId": {
+            "type": "number",
+            "description": "League ID",
+            "example": 1
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "city",
+          "zipCode",
+          "latitude",
+          "longitude",
+          "email",
+          "phone",
+          "website",
+          "committeeId",
+          "leagueId"
+        ]
+      },
+      "ChampionshipInfoDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Championship ID",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Championship name",
+            "example": "Regional U18"
+          },
+          "level": {
+            "type": "string",
+            "description": "Competition level",
+            "example": "regional"
+          },
+          "division": {
+            "type": "number",
+            "description": "Division",
+            "example": 1
+          },
+          "committeeId": {
+            "type": "number",
+            "nullable": true,
+            "description": "Committee ID",
+            "example": 1
+          },
+          "leagueId": {
+            "type": "number",
+            "nullable": true,
+            "description": "League regionale ID",
+            "example": 1
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "level",
+          "division",
+          "committeeId",
+          "leagueId"
+        ]
+      },
+      "PoolInfoDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Pool ID",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Pool name",
+            "example": "Pool A",
+            "nullable": true
+          },
+          "championship": {
+            "description": "Championship details",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ChampionshipInfoDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "championship"
+        ]
+      },
+      "TeamLeaderboardDto": {
+        "type": "object",
+        "properties": {
+          "rank": {
+            "type": "number",
+            "nullable": true,
+            "description": "Position in pool standings",
+            "example": 1
+          },
+          "poolSize": {
+            "type": "number",
+            "nullable": true,
+            "description": "Total number of teams in the pool",
+            "example": 8
+          },
+          "points": {
+            "type": "number",
+            "description": "Points earned",
+            "example": 12
+          },
+          "gamesPlayed": {
+            "type": "number",
+            "description": "Games played",
+            "example": 8
+          },
+          "gamesWon": {
+            "type": "number",
+            "description": "Games won",
+            "example": 6
+          },
+          "gamesLost": {
+            "type": "number",
+            "description": "Games lost",
+            "example": 2
+          },
+          "pointDifference": {
+            "type": "number",
+            "description": "Goal difference",
+            "example": 45
+          },
+          "poolId": {
+            "type": "number",
+            "description": "Pool ID",
+            "example": 1
+          }
+        },
+        "required": [
+          "rank",
+          "poolSize",
+          "points",
+          "gamesPlayed",
+          "gamesWon",
+          "gamesLost",
+          "pointDifference",
+          "poolId"
+        ]
+      },
+      "TeamInfoDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Team ID",
+            "example": 1
+          },
+          "number": {
+            "type": "number",
+            "description": "Team number within club",
+            "example": 1
+          },
+          "category": {
+            "type": "string",
+            "description": "Category",
+            "example": "U18",
+            "nullable": true
+          },
+          "gender": {
+            "type": "string",
+            "description": "Gender",
+            "example": "male"
+          },
+          "pool": {
+            "nullable": true,
+            "description": "Pool information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PoolInfoDto"
+              }
+            ]
+          },
+          "leaderboard": {
+            "nullable": true,
+            "description": "Team leaderboard stats",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TeamLeaderboardDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "category",
+          "gender",
+          "pool",
+          "leaderboard"
+        ]
+      },
+      "PresidentResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "President unique identifier",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "President name",
+            "example": "Jean Dupont"
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true,
+            "description": "President phone number",
+            "example": "02 99 00 00 00"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true,
+            "description": "President email address",
+            "example": "president@ligue-bretagne.fr"
+          },
+          "address": {
+            "type": "string",
+            "nullable": true,
+            "description": "President address",
+            "example": "1 rue de la Ligue, 35000 Rennes"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true,
+            "description": "President code",
+            "example": "PRE-001"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "phone",
+          "email",
+          "address",
+          "code"
+        ]
+      },
+      "ClubDetailedResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Unique club identifier",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Club name",
+            "example": "AS Monaco Basket"
+          },
+          "city": {
+            "type": "string",
+            "nullable": true,
+            "description": "City",
+            "example": "Monaco"
+          },
+          "zipCode": {
+            "type": "string",
+            "nullable": true,
+            "description": "Postal code",
+            "example": "98000"
+          },
+          "address": {
+            "type": "string",
+            "nullable": true,
+            "description": "Street address",
+            "example": "1 Avenue des Papalins"
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true,
+            "description": "Contact phone",
+            "example": "0123456789"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true,
+            "description": "Contact email",
+            "example": "contact@club.com"
+          },
+          "website": {
+            "type": "string",
+            "nullable": true,
+            "description": "Website URL",
+            "example": "https://club.com"
+          },
+          "teams": {
+            "description": "Teams belonging to this club",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TeamInfoDto"
+            }
+          },
+          "president": {
+            "nullable": true,
+            "description": "Club president",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PresidentResponseDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "city",
+          "zipCode",
+          "address",
+          "phone",
+          "email",
+          "website",
+          "teams",
+          "president"
+        ]
+      },
+      "DepartmentResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Department unique identifier",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Department name",
+            "example": "Ain"
+          },
+          "code": {
+            "type": "string",
+            "description": "Department code",
+            "example": "01"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "code"
+        ]
+      },
+      "CommitteeResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Committee unique identifier",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Committee name",
+            "example": "COMITE DE L'AIN DE BASKET-BALL"
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true,
+            "description": "Committee phone number",
+            "example": "02 99 00 00 00"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true,
+            "description": "Committee email address",
+            "example": "contact@comite-bretagne.fr"
+          },
+          "address": {
+            "type": "string",
+            "nullable": true,
+            "description": "Committee address",
+            "example": "1 rue du Comité, 35000 Rennes"
+          },
+          "president": {
+            "nullable": true,
+            "description": "Committee president",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PresidentResponseDto"
+              }
+            ]
+          },
+          "leagueId": {
+            "type": "number",
+            "description": "Associated league ID",
+            "example": 10
+          },
+          "department": {
+            "description": "Associated department information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DepartmentResponseDto"
+              }
+            ]
+          },
+          "clubCount": {
+            "type": "number",
+            "description": "Number of clubs in this committee",
+            "example": 15
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "phone",
+          "email",
+          "address",
+          "president",
+          "leagueId",
+          "department",
+          "clubCount"
+        ]
+      },
+      "RegionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Region unique identifier",
+            "example": 1
+          },
+          "code": {
+            "type": "string",
+            "description": "Region code",
+            "example": "BRE"
+          },
+          "name": {
+            "type": "string",
+            "description": "Region name",
+            "example": "Bretagne"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name"
+        ]
+      },
+      "LeagueResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "League unique identifier",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "League name",
+            "example": "LIGUE REGIONALE BRETAGNE DE BASKET-BALL"
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true,
+            "description": "League phone number",
+            "example": "02 99 00 00 00"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true,
+            "description": "League email address",
+            "example": "contact@ligue-bretagne.fr"
+          },
+          "address": {
+            "type": "string",
+            "nullable": true,
+            "description": "League address",
+            "example": "1 rue de la Ligue, 35000 Rennes"
+          },
+          "president": {
+            "nullable": true,
+            "description": "League president",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PresidentResponseDto"
+              }
+            ]
+          },
+          "region": {
+            "description": "Region the league belongs to",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RegionDto"
+              }
+            ]
+          },
+          "clubCount": {
+            "type": "number",
+            "description": "Number of clubs in this league",
+            "example": 42
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "phone",
+          "email",
+          "address",
+          "president",
+          "region",
+          "clubCount"
+        ]
+      },
+      "ChampionshipPoolDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1
+          },
+          "letter": {
+            "type": "string",
+            "example": "A"
+          },
+          "name": {
+            "type": "string",
+            "example": "Pool A"
+          },
+          "nbMatchdays": {
+            "type": "number",
+            "example": 10
+          }
+        },
+        "required": [
+          "id",
+          "letter",
+          "name",
+          "nbMatchdays"
+        ]
+      },
+      "ChampionshipResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Unique championship identifier",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Championship name",
+            "example": "Championship Régional U18 male"
+          },
+          "category": {
+            "type": "string",
+            "description": "Age category (e.g., U18, Senior)",
+            "example": "U18"
+          },
+          "gender": {
+            "type": "string",
+            "description": "Gender category (male, female, Mixte)",
+            "example": "male"
+          },
+          "seasonYear": {
+            "type": "string",
+            "description": "Season year (e.g., 2024-2025)",
+            "example": "2024-2025"
+          },
+          "level": {
+            "type": "string",
+            "description": "Competition level (national, regional, departmental)",
+            "example": "regional"
+          },
+          "division": {
+            "type": "number",
+            "description": "Division number",
+            "example": 1
+          },
+          "leagueId": {
+            "type": "number",
+            "nullable": true,
+            "description": "Regional league ID",
+            "example": 1
+          },
+          "committeeId": {
+            "type": "number",
+            "nullable": true,
+            "description": "Departmental committee ID",
+            "example": 3
+          },
+          "committeeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "leagueName": {
+            "type": "string",
+            "nullable": true
+          },
+          "pools": {
+            "description": "Pools in this championship",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChampionshipPoolDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "category",
+          "gender",
+          "seasonYear",
+          "level",
+          "division",
+          "leagueId",
+          "committeeId",
+          "committeeName",
+          "leagueName",
+          "pools"
+        ]
+      },
+      "LeaderboardResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Unique leaderboard entry identifier",
+            "example": 1
+          },
+          "teamId": {
+            "type": "number",
+            "description": "Team ID",
+            "example": 5
+          },
+          "rank": {
+            "type": "number",
+            "description": "Position in the pool standings",
+            "example": 1
+          },
+          "teamNumber": {
+            "type": "number",
+            "description": "Team number within the club",
+            "example": 1
+          },
+          "clubName": {
+            "type": "string",
+            "description": "Club name",
+            "example": "AS Monaco Basket"
+          },
+          "points": {
+            "type": "number",
+            "description": "Total points earned",
+            "example": 12
+          },
+          "gamesPlayed": {
+            "type": "number",
+            "description": "Number of games played",
+            "example": 8
+          },
+          "gamesWon": {
+            "type": "number",
+            "description": "Number of games won",
+            "example": 6
+          },
+          "gamesLost": {
+            "type": "number",
+            "description": "Number of games lost",
+            "example": 2
+          },
+          "gamesForfeited": {
+            "type": "number",
+            "description": "Number of games forfeited",
+            "example": 0
+          },
+          "pointsFor": {
+            "type": "number",
+            "description": "Total goals scored",
+            "example": 645
+          },
+          "pointsAgainst": {
+            "type": "number",
+            "description": "Total goals conceded",
+            "example": 580
+          },
+          "pointDifference": {
+            "type": "number",
+            "description": "Goal difference (pointsFor - pointsAgainst)",
+            "example": 65
+          }
+        },
+        "required": [
+          "id",
+          "teamId",
+          "rank",
+          "teamNumber",
+          "clubName",
+          "points",
+          "gamesPlayed",
+          "gamesWon",
+          "gamesLost",
+          "gamesForfeited",
+          "pointsFor",
+          "pointsAgainst",
+          "pointDifference"
+        ]
+      },
+      "PoolResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Unique pool identifier",
+            "example": 1
+          },
+          "letter": {
+            "type": "string",
+            "description": "Pool letter designation",
+            "example": "A"
+          },
+          "name": {
+            "type": "string",
+            "description": "Pool name",
+            "example": "Pool A - Seniors"
+          },
+          "championshipId": {
+            "type": "number",
+            "description": "Associated championship ID",
+            "example": 1
+          },
+          "nbMatchdays": {
+            "type": "number",
+            "description": "Number of matchdays in this pool",
+            "example": 10
+          }
+        },
+        "required": [
+          "id",
+          "letter",
+          "name",
+          "championshipId",
+          "nbMatchdays"
+        ]
+      },
+      "PaginatedResponseDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "description": "Page of result items",
+            "additionalProperties": true,
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "Total number of items",
+            "example": 120
+          },
+          "page": {
+            "type": "number",
+            "description": "Current page (1-based)",
+            "example": 1
+          },
+          "limit": {
+            "type": "number",
+            "description": "Items per page",
+            "example": 50
+          },
+          "totalPages": {
+            "type": "number",
+            "description": "Total number of pages",
+            "example": 3
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "page",
+          "limit",
+          "totalPages"
+        ]
+      },
+      "MatchChampionshipRefDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Championship ID",
+            "example": 1
+          },
+          "category": {
+            "type": "string",
+            "description": "Age category",
+            "example": "U18",
+            "enum": [
+              "U11",
+              "U13",
+              "U15",
+              "U18",
+              "U21",
+              "Seniors"
+            ]
+          },
+          "gender": {
+            "type": "string",
+            "description": "Gender",
+            "example": "male",
+            "enum": [
+              "male",
+              "female"
+            ]
+          },
+          "level": {
+            "type": "string",
+            "description": "Competition level",
+            "example": "regional",
+            "enum": [
+              "departmental",
+              "regional",
+              "national"
+            ]
+          },
+          "division": {
+            "type": "number",
+            "description": "Division number",
+            "example": 1
+          }
+        },
+        "required": [
+          "id",
+          "category",
+          "gender",
+          "level",
+          "division"
+        ]
+      },
+      "MatchPoolRefDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Pool ID",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Pool name",
+            "example": "Poule A"
+          },
+          "championship": {
+            "description": "Championship the pool belongs to",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MatchChampionshipRefDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "championship"
+        ]
+      },
+      "MatchClubRefDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Club ID",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Club name",
+            "example": "AS Monaco Basket"
+          },
+          "committeeId": {
+            "type": "number",
+            "description": "Committee ID",
+            "example": 1
+          },
+          "leagueId": {
+            "type": "number",
+            "description": "League ID",
+            "example": 1
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "committeeId",
+          "leagueId"
+        ]
+      },
+      "MatchTeamRefDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Team ID",
+            "example": 1
+          },
+          "number": {
+            "type": "number",
+            "description": "Team number",
+            "example": 1
+          },
+          "club": {
+            "description": "Club information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MatchClubRefDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "club"
+        ]
+      },
+      "EventClubNameDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Club name",
+            "example": "AS Monaco Basket"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "EventPlayerTeamDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Team ID",
+            "example": 1
+          },
+          "club": {
+            "description": "Club information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EventClubNameDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "club"
+        ]
+      },
+      "EventPlayerDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Player ID",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Player name",
+            "example": "John Doe"
+          },
+          "number": {
+            "type": "number",
+            "description": "Player jersey number",
+            "example": 10
+          },
+          "team": {
+            "description": "Team information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EventPlayerTeamDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "number",
+          "team"
+        ]
+      },
+      "MatchEventPlayerDto": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "description": "Player role in the event",
+            "example": "shooter",
+            "enum": [
+              "shooter",
+              "fouler",
+              "stealer",
+              "victim",
+              "rebounder",
+              "assister",
+              "blocker",
+              "blocked",
+              "winner",
+              "exiting_player",
+              "entering_player",
+              "starter"
+            ]
+          },
+          "player": {
+            "description": "Player information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EventPlayerDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "role",
+          "player"
+        ]
+      },
+      "ShotLocationDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Shot location ID",
+            "example": 1
+          },
+          "x": {
+            "type": "number",
+            "description": "X coordinate",
+            "example": 5.5
+          },
+          "y": {
+            "type": "number",
+            "description": "Y coordinate",
+            "example": 3.2
+          }
+        },
+        "required": [
+          "id",
+          "x",
+          "y"
+        ]
+      },
+      "MatchEventDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Event ID",
+            "example": 1
+          },
+          "matchId": {
+            "type": "number",
+            "description": "Match ID (present on shot event queries)",
+            "example": 1
+          },
+          "eventType": {
+            "type": "string",
+            "description": "Event type",
+            "example": "made_layup",
+            "enum": [
+              "tip_off",
+              "traveling",
+              "carrying",
+              "double_dribble",
+              "bad_pass",
+              "steal",
+              "shot_clock_violation",
+              "offensive_foul",
+              "quarter_end",
+              "blocking_foul",
+              "pushing_foul",
+              "reaching_foul",
+              "charging_foul",
+              "illegal_screen",
+              "technical_foul",
+              "made_layup",
+              "made_dunk",
+              "made_fadeaway",
+              "made_pull_up_jump_shot",
+              "made_catch_and_shoot_three",
+              "made_step_back_three",
+              "missed_layup",
+              "missed_dunk",
+              "missed_fadeaway",
+              "missed_pull_up_jump_shot",
+              "missed_catch_and_shoot_three",
+              "missed_step_back_three",
+              "blocked_shot",
+              "offensive_rebound",
+              "defensive_rebound",
+              "free_throw_made",
+              "free_throw_missed",
+              "3_point_shooting_foul",
+              "2_point_ext_shooting_foul",
+              "2_point_int_shooting_foul",
+              "3_point_and_1",
+              "2_point_ext_and_1",
+              "2_point_int_and_1",
+              "inbound",
+              "substitution"
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "Event timestamp in seconds from match start",
+            "example": 120
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "description": "Event description",
+            "example": "3-pointer"
+          },
+          "players": {
+            "description": "Players involved in the event",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MatchEventPlayerDto"
+            }
+          },
+          "shotLocation": {
+            "nullable": true,
+            "description": "Shot location (if applicable)",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ShotLocationDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "eventType",
+          "timestamp",
+          "description",
+          "players",
+          "shotLocation"
+        ]
+      },
+      "MatchDetailResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Unique match identifier",
+            "example": 1
+          },
+          "date": {
+            "type": "string",
+            "description": "Match date",
+            "example": "2024-02-05T19:00:00Z"
+          },
+          "matchday": {
+            "type": "number",
+            "description": "Matchday number",
+            "example": 1
+          },
+          "pool": {
+            "description": "Pool information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MatchPoolRefDto"
+              }
+            ]
+          },
+          "homeTeam": {
+            "description": "Home team information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MatchTeamRefDto"
+              }
+            ]
+          },
+          "awayTeam": {
+            "description": "Away team information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MatchTeamRefDto"
+              }
+            ]
+          },
+          "homeTeamScore": {
+            "type": "number",
+            "nullable": true,
+            "description": "Home team score",
+            "example": 85
+          },
+          "awayTeamScore": {
+            "type": "number",
+            "nullable": true,
+            "description": "Away team score",
+            "example": 72
+          },
+          "forfeit": {
+            "type": "boolean",
+            "description": "Whether the match was forfeited",
+            "example": false
+          },
+          "overtime": {
+            "type": "boolean",
+            "description": "Whether the match went to overtime",
+            "example": false
+          },
+          "matchEvents": {
+            "description": "Match events",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MatchEventDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "date",
+          "matchday",
+          "pool",
+          "homeTeam",
+          "awayTeam",
+          "homeTeamScore",
+          "awayTeamScore",
+          "forfeit",
+          "overtime",
+          "matchEvents"
+        ]
+      },
+      "ClubNameRefDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Club ID",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Club name",
+            "example": "AS Monaco Basket"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "StatsTeamRefDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Team ID",
+            "example": 1
+          },
+          "number": {
+            "type": "number",
+            "description": "Team number",
+            "example": 1
+          },
+          "club": {
+            "description": "Club information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ClubNameRefDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "club"
+        ]
+      },
+      "PlayerWithTeamDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Player ID",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Player name",
+            "example": "John Doe"
+          },
+          "number": {
+            "type": "number",
+            "description": "Player jersey number",
+            "example": 10
+          },
+          "position": {
+            "type": "string",
+            "description": "Player position",
+            "example": "PG"
+          },
+          "teamId": {
+            "type": "number",
+            "description": "Team ID",
+            "example": 1
+          },
+          "team": {
+            "description": "Team information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/StatsTeamRefDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "number",
+          "position",
+          "teamId",
+          "team"
+        ]
+      },
+      "ReboundsDto": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "number",
+            "description": "Total rebounds",
+            "example": 8
+          },
+          "offensive": {
+            "type": "number",
+            "description": "Offensive rebounds",
+            "example": 3
+          },
+          "defensive": {
+            "type": "number",
+            "description": "Defensive rebounds",
+            "example": 5
+          }
+        },
+        "required": [
+          "total",
+          "offensive",
+          "defensive"
+        ]
+      },
+      "PlayerStatsDto": {
+        "type": "object",
+        "properties": {
+          "points": {
+            "type": "number",
+            "description": "Points scored",
+            "example": 15
+          },
+          "fouls": {
+            "type": "number",
+            "description": "Personal fouls",
+            "example": 2
+          },
+          "threePointsMade": {
+            "type": "number",
+            "description": "Three-pointers made",
+            "example": 2
+          },
+          "threePointsAttempted": {
+            "type": "number",
+            "description": "Three-pointers attempted",
+            "example": 5
+          },
+          "twoPointsIntMade": {
+            "type": "number",
+            "description": "Two-point shots (interior) made",
+            "example": 3
+          },
+          "twoPointsIntAttempted": {
+            "type": "number",
+            "description": "Two-point shots (interior) attempted",
+            "example": 6
+          },
+          "twoPointsExtMade": {
+            "type": "number",
+            "description": "Two-point shots (exterior) made",
+            "example": 1
+          },
+          "twoPointsExtAttempted": {
+            "type": "number",
+            "description": "Two-point shots (exterior) attempted",
+            "example": 3
+          },
+          "freeThrowsMade": {
+            "type": "number",
+            "description": "Free throws made",
+            "example": 4
+          },
+          "freeThrowsAttempted": {
+            "type": "number",
+            "description": "Free throws attempted",
+            "example": 5
+          },
+          "assists": {
+            "type": "number",
+            "description": "Assists",
+            "example": 7
+          },
+          "turnovers": {
+            "type": "number",
+            "description": "Turnovers",
+            "example": 3
+          },
+          "rebounds": {
+            "description": "Rebounds breakdown",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ReboundsDto"
+              }
+            ]
+          },
+          "steals": {
+            "type": "number",
+            "description": "Steals",
+            "example": 2
+          },
+          "blocks": {
+            "type": "number",
+            "description": "Blocks",
+            "example": 1
+          },
+          "playtime": {
+            "type": "number",
+            "description": "Total playtime in seconds",
+            "example": 1200
+          },
+          "playtimeIntervals": {
+            "description": "Playtime intervals [start, end] in seconds",
+            "example": [
+              [
+                0,
+                600
+              ],
+              [
+                1200,
+                2400
+              ]
+            ],
+            "type": "array",
+            "items": {
+              "type": "array"
+            }
+          }
+        },
+        "required": [
+          "points",
+          "fouls",
+          "threePointsMade",
+          "threePointsAttempted",
+          "twoPointsIntMade",
+          "twoPointsIntAttempted",
+          "twoPointsExtMade",
+          "twoPointsExtAttempted",
+          "freeThrowsMade",
+          "freeThrowsAttempted",
+          "assists",
+          "turnovers",
+          "rebounds",
+          "steals",
+          "blocks",
+          "playtime",
+          "playtimeIntervals"
+        ]
+      },
+      "PlayerWithStatsDto": {
+        "type": "object",
+        "properties": {
+          "player": {
+            "description": "Player information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlayerWithTeamDto"
+              }
+            ]
+          },
+          "stats": {
+            "description": "Player statistics for this match",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlayerStatsDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "player",
+          "stats"
+        ]
+      },
+      "MatchPlayerStatsResponseDto": {
+        "type": "object",
+        "properties": {
+          "homeTeamId": {
+            "type": "number",
+            "description": "Home team ID",
+            "example": 1
+          },
+          "awayTeamId": {
+            "type": "number",
+            "description": "Away team ID",
+            "example": 2
+          },
+          "stats": {
+            "description": "Player statistics for both teams",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlayerWithStatsDto"
+            }
+          }
+        },
+        "required": [
+          "homeTeamId",
+          "awayTeamId",
+          "stats"
+        ]
+      },
+      "FilterValuesPlayersResponseDto": {
+        "type": "object",
+        "properties": {
+          "numbers": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "teamNumbers": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "required": [
+          "numbers",
+          "teamNumbers"
+        ]
+      },
+      "PlayerLeagueRefDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "League ID",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "League name",
+            "example": "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "PlayerCommitteeRefDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Committee ID",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Committee name",
+            "example": "Comité Départemental de l'Ain"
+          },
+          "league": {
+            "description": "League information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlayerLeagueRefDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "league"
+        ]
+      },
+      "PlayerClubRefDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Club ID",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Club name",
+            "example": "AS Monaco Basket"
+          },
+          "committee": {
+            "description": "Committee information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlayerCommitteeRefDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "committee"
+        ]
+      },
+      "PlayerChampionshipRefDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Championship ID",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Championship name",
+            "example": "Championship Régional U18 male"
+          },
+          "level": {
+            "type": "string",
+            "description": "Competition level",
+            "example": "regional",
+            "enum": [
+              "departmental",
+              "regional",
+              "national"
+            ]
+          },
+          "division": {
+            "type": "number",
+            "description": "Division number",
+            "example": 1
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "level",
+          "division"
+        ]
+      },
+      "PlayerPoolRefDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Pool ID",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Pool name",
+            "example": "Poule A"
+          },
+          "championship": {
+            "description": "Championship the pool belongs to",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlayerChampionshipRefDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "championship"
+        ]
+      },
+      "PlayerTeamDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Team ID",
+            "example": 1
+          },
+          "number": {
+            "type": "number",
+            "description": "Team number",
+            "example": 1
+          },
+          "clubId": {
+            "type": "number",
+            "description": "Club ID",
+            "example": 1
+          },
+          "category": {
+            "type": "string",
+            "description": "Age category",
+            "example": "U18",
+            "enum": [
+              "U11",
+              "U13",
+              "U15",
+              "U18",
+              "U21",
+              "Seniors"
+            ]
+          },
+          "gender": {
+            "type": "string",
+            "description": "Gender",
+            "example": "male",
+            "enum": [
+              "male",
+              "female"
+            ]
+          },
+          "club": {
+            "description": "Club information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlayerClubRefDto"
+              }
+            ]
+          },
+          "pool": {
+            "nullable": true,
+            "description": "Current pool, or null when the team has none",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlayerPoolRefDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "clubId",
+          "category",
+          "gender",
+          "club",
+          "pool"
+        ]
+      },
+      "PlayerResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Unique player identifier",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Player name",
+            "example": "John Doe"
+          },
+          "number": {
+            "type": "number",
+            "description": "Player jersey number",
+            "example": 10
+          },
+          "position": {
+            "type": "string",
+            "description": "Player position",
+            "example": "PG"
+          },
+          "heightCm": {
+            "type": "number",
+            "description": "Player height in centimeters",
+            "example": 185
+          },
+          "weightKg": {
+            "type": "number",
+            "description": "Player weight in kilograms",
+            "example": 80
+          },
+          "birthdate": {
+            "type": "string",
+            "description": "Player birthdate",
+            "example": "2000-06-15"
+          },
+          "teamId": {
+            "type": "number",
+            "description": "Team ID this player belongs to",
+            "example": 1
+          },
+          "team": {
+            "description": "Team information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlayerTeamDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "number",
+          "position",
+          "heightCm",
+          "weightKg",
+          "birthdate",
+          "teamId",
+          "team"
+        ]
+      },
+      "HistoryClubRefDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Club ID",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Club name",
+            "example": "AS Monaco Basket"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "HistoryTeamRefDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Team ID",
+            "example": 1
+          },
+          "number": {
+            "type": "number",
+            "description": "Team number",
+            "example": 1
+          },
+          "club": {
+            "description": "Club information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/HistoryClubRefDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "club"
+        ]
+      },
+      "PlayerSummaryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Player ID",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Player name",
+            "example": "John Doe"
+          },
+          "number": {
+            "type": "number",
+            "description": "Player jersey number",
+            "example": 10
+          },
+          "position": {
+            "type": "string",
+            "description": "Player position",
+            "example": "PG"
+          },
+          "teamId": {
+            "type": "number",
+            "description": "Team ID",
+            "example": 1
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "number",
+          "position",
+          "teamId"
+        ]
+      },
+      "PlayerMatchStatsDto": {
+        "type": "object",
+        "properties": {
+          "points": {
+            "type": "number",
+            "description": "Points scored",
+            "example": 15
+          },
+          "fouls": {
+            "type": "number",
+            "description": "Personal fouls",
+            "example": 2
+          },
+          "threePointsMade": {
+            "type": "number",
+            "description": "Three-pointers made",
+            "example": 2
+          },
+          "threePointsAttempted": {
+            "type": "number",
+            "description": "Three-pointers attempted",
+            "example": 5
+          },
+          "twoPointsIntMade": {
+            "type": "number",
+            "description": "Two-point shots (interior) made",
+            "example": 3
+          },
+          "twoPointsIntAttempted": {
+            "type": "number",
+            "description": "Two-point shots (interior) attempted",
+            "example": 6
+          },
+          "twoPointsExtMade": {
+            "type": "number",
+            "description": "Two-point shots (exterior) made",
+            "example": 1
+          },
+          "twoPointsExtAttempted": {
+            "type": "number",
+            "description": "Two-point shots (exterior) attempted",
+            "example": 3
+          },
+          "freeThrowsMade": {
+            "type": "number",
+            "description": "Free throws made",
+            "example": 4
+          },
+          "freeThrowsAttempted": {
+            "type": "number",
+            "description": "Free throws attempted",
+            "example": 5
+          },
+          "assists": {
+            "type": "number",
+            "description": "Assists",
+            "example": 7
+          },
+          "turnovers": {
+            "type": "number",
+            "description": "Turnovers",
+            "example": 3
+          },
+          "rebounds": {
+            "description": "Rebounds breakdown",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ReboundsDto"
+              }
+            ]
+          },
+          "steals": {
+            "type": "number",
+            "description": "Steals",
+            "example": 2
+          },
+          "blocks": {
+            "type": "number",
+            "description": "Blocks",
+            "example": 1
+          },
+          "playtimeIntervals": {
+            "description": "Play time intervals",
+            "example": [
+              [
+                0,
+                600
+              ],
+              [
+                1200,
+                2400
+              ]
+            ],
+            "type": "array",
+            "items": {
+              "type": "array"
+            }
+          }
+        },
+        "required": [
+          "points",
+          "fouls",
+          "threePointsMade",
+          "threePointsAttempted",
+          "twoPointsIntMade",
+          "twoPointsIntAttempted",
+          "twoPointsExtMade",
+          "twoPointsExtAttempted",
+          "freeThrowsMade",
+          "freeThrowsAttempted",
+          "assists",
+          "turnovers",
+          "rebounds",
+          "steals",
+          "blocks",
+          "playtimeIntervals"
+        ]
+      },
+      "PlayerMatchEntryDto": {
+        "type": "object",
+        "properties": {
+          "player": {
+            "description": "Player information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlayerSummaryDto"
+              }
+            ]
+          },
+          "stats": {
+            "description": "Player statistics for this match",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlayerMatchStatsDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "player",
+          "stats"
+        ]
+      },
+      "MatchHistoryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Match ID",
+            "example": 1
+          },
+          "date": {
+            "type": "string",
+            "description": "Match date",
+            "example": "2024-02-05T19:00:00Z"
+          },
+          "homeTeam": {
+            "description": "Home team information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/HistoryTeamRefDto"
+              }
+            ]
+          },
+          "awayTeam": {
+            "description": "Away team information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/HistoryTeamRefDto"
+              }
+            ]
+          },
+          "homeTeamScore": {
+            "type": "number",
+            "nullable": true,
+            "description": "Home team score",
+            "example": 85
+          },
+          "awayTeamScore": {
+            "type": "number",
+            "nullable": true,
+            "description": "Away team score",
+            "example": 72
+          },
+          "player": {
+            "description": "Player and their statistics for this match",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlayerMatchEntryDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "date",
+          "homeTeam",
+          "awayTeam",
+          "homeTeamScore",
+          "awayTeamScore",
+          "player"
+        ]
+      },
+      "FilterValuesTeamsResponseDto": {
+        "type": "object",
+        "properties": {
+          "numbers": {
+            "description": "Available team numbers",
+            "example": [
+              1,
+              2,
+              3
+            ],
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "poolLetters": {
+            "description": "Available pool letters",
+            "example": [
+              "A",
+              "B",
+              "C"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "divisions": {
+            "description": "Available divisions",
+            "example": [
+              1,
+              2
+            ],
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "required": [
+          "numbers",
+          "poolLetters",
+          "divisions"
+        ]
+      },
+      "TeamLeagueRefDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "League ID",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "League name",
+            "example": "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "TeamCommitteeRefDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Committee ID",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Committee name",
+            "example": "Comité Départemental de l'Ain"
+          },
+          "league": {
+            "description": "League information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TeamLeagueRefDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "league"
+        ]
+      },
+      "TeamClubRefDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Club ID",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Club name",
+            "example": "AS Monaco Basket"
+          },
+          "committee": {
+            "description": "Committee information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TeamCommitteeRefDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "committee"
+        ]
+      },
+      "TeamChampionshipRefDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Championship ID",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Championship name",
+            "example": "Championship Régional U18 male"
+          },
+          "level": {
+            "type": "string",
+            "description": "Competition level",
+            "example": "regional",
+            "enum": [
+              "departmental",
+              "regional",
+              "national"
+            ]
+          },
+          "division": {
+            "type": "number",
+            "description": "Division number",
+            "example": 1
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "level",
+          "division"
+        ]
+      },
+      "TeamPoolRefDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Pool ID",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Pool name",
+            "example": "Poule A"
+          },
+          "letter": {
+            "type": "string",
+            "description": "Pool letter",
+            "example": "A"
+          },
+          "championship": {
+            "description": "Championship the pool belongs to",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TeamChampionshipRefDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "letter",
+          "championship"
+        ]
+      },
+      "TeamCountDto": {
+        "type": "object",
+        "properties": {
+          "players": {
+            "type": "number",
+            "description": "Player count",
+            "example": 12
+          }
+        },
+        "required": [
+          "players"
+        ]
+      },
+      "RecentMatchChampionshipRefDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Championship ID",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Championship name",
+            "example": "Championship Régional U18 male"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "RecentMatchPoolRefDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Pool ID",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Pool name",
+            "example": "Poule A"
+          },
+          "championship": {
+            "description": "Championship the pool belongs to",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RecentMatchChampionshipRefDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "championship"
+        ]
+      },
+      "RecentHomeMatchDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Match ID",
+            "example": 1
+          },
+          "date": {
+            "type": "string",
+            "description": "Match date",
+            "example": "2024-02-05T19:00:00Z"
+          },
+          "homeTeamScore": {
+            "type": "number",
+            "nullable": true,
+            "description": "Home team score",
+            "example": 85
+          },
+          "awayTeamScore": {
+            "type": "number",
+            "nullable": true,
+            "description": "Away team score",
+            "example": 72
+          },
+          "pool": {
+            "description": "Pool information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RecentMatchPoolRefDto"
+              }
+            ]
+          },
+          "awayTeam": {
+            "description": "Away team information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/HistoryTeamRefDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "date",
+          "homeTeamScore",
+          "awayTeamScore",
+          "pool",
+          "awayTeam"
+        ]
+      },
+      "RecentAwayMatchDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Match ID",
+            "example": 1
+          },
+          "date": {
+            "type": "string",
+            "description": "Match date",
+            "example": "2024-02-05T19:00:00Z"
+          },
+          "homeTeamScore": {
+            "type": "number",
+            "nullable": true,
+            "description": "Home team score",
+            "example": 85
+          },
+          "awayTeamScore": {
+            "type": "number",
+            "nullable": true,
+            "description": "Away team score",
+            "example": 72
+          },
+          "pool": {
+            "description": "Pool information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RecentMatchPoolRefDto"
+              }
+            ]
+          },
+          "homeTeam": {
+            "description": "Home team information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/HistoryTeamRefDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "date",
+          "homeTeamScore",
+          "awayTeamScore",
+          "pool",
+          "homeTeam"
+        ]
+      },
+      "TeamDetailResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Unique team identifier",
+            "example": 1
+          },
+          "number": {
+            "type": "number",
+            "description": "Team number",
+            "example": 1
+          },
+          "clubId": {
+            "type": "number",
+            "description": "Club ID this team belongs to",
+            "example": 1
+          },
+          "seasonYear": {
+            "type": "string",
+            "description": "Season this team's entry belongs to",
+            "example": "2025-2026"
+          },
+          "category": {
+            "type": "string",
+            "description": "Age category",
+            "example": "U18",
+            "enum": [
+              "U11",
+              "U13",
+              "U15",
+              "U18",
+              "U21",
+              "Seniors"
+            ]
+          },
+          "gender": {
+            "type": "string",
+            "description": "Gender category",
+            "example": "male",
+            "enum": [
+              "male",
+              "female"
+            ]
+          },
+          "color": {
+            "type": "string",
+            "nullable": true,
+            "description": "Team color",
+            "example": "Blue"
+          },
+          "poolId": {
+            "type": "number",
+            "nullable": true,
+            "description": "Pool ID",
+            "example": 1
+          },
+          "club": {
+            "description": "Club information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TeamClubRefDto"
+              }
+            ]
+          },
+          "pool": {
+            "nullable": true,
+            "description": "Pool information, or null when the team has none",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TeamPoolRefDto"
+              }
+            ]
+          },
+          "_count": {
+            "description": "Relation counts",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TeamCountDto"
+              }
+            ]
+          },
+          "players": {
+            "description": "Team players",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlayerSummaryDto"
+            }
+          },
+          "homeMatches": {
+            "description": "Recent home matches (up to 5)",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecentHomeMatchDto"
+            }
+          },
+          "awayMatches": {
+            "description": "Recent away matches (up to 5)",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecentAwayMatchDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "clubId",
+          "seasonYear",
+          "category",
+          "gender",
+          "color",
+          "poolId",
+          "club",
+          "pool",
+          "_count",
+          "players",
+          "homeMatches",
+          "awayMatches"
+        ]
+      },
+      "MatchPlayerDto": {
+        "type": "object",
+        "properties": {
+          "player": {
+            "description": "Player information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlayerSummaryDto"
+              }
+            ]
+          },
+          "stats": {
+            "description": "Player statistics for this match",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlayerMatchStatsDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "player",
+          "stats"
+        ]
+      },
+      "TeamMatchHistoryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Match ID",
+            "example": 1
+          },
+          "date": {
+            "type": "string",
+            "description": "Match date",
+            "example": "2024-02-05T19:00:00Z"
+          },
+          "homeTeam": {
+            "description": "Home team information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/HistoryTeamRefDto"
+              }
+            ]
+          },
+          "awayTeam": {
+            "description": "Away team information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/HistoryTeamRefDto"
+              }
+            ]
+          },
+          "homeTeamScore": {
+            "type": "number",
+            "nullable": true,
+            "description": "Home team score",
+            "example": 85
+          },
+          "awayTeamScore": {
+            "type": "number",
+            "nullable": true,
+            "description": "Away team score",
+            "example": 72
+          },
+          "players": {
+            "description": "Players and their statistics for this match",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MatchPlayerDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "date",
+          "homeTeam",
+          "awayTeam",
+          "homeTeamScore",
+          "awayTeamScore",
+          "players"
+        ]
+      },
+      "ChampionshipsByLevelDto": {
+        "type": "object",
+        "properties": {
+          "national": {
+            "type": "number",
+            "description": "Total number of national championships",
+            "example": 12
+          },
+          "regional": {
+            "type": "number",
+            "description": "Total number of regional championships",
+            "example": 84
+          },
+          "departmental": {
+            "type": "number",
+            "description": "Total number of departmental championships",
+            "example": 288
+          }
+        },
+        "required": [
+          "national",
+          "regional",
+          "departmental"
+        ]
+      },
+      "StatsResponseDto": {
+        "type": "object",
+        "properties": {
+          "clubs": {
+            "type": "number",
+            "description": "Total number of clubs",
+            "example": 840
+          },
+          "teams": {
+            "type": "number",
+            "description": "Total number of teams",
+            "example": 3200
+          },
+          "players": {
+            "type": "number",
+            "description": "Total number of players",
+            "example": 12400
+          },
+          "matches": {
+            "type": "number",
+            "description": "Total number of matches",
+            "example": 48000
+          },
+          "leagues": {
+            "type": "number",
+            "description": "Total number of leagues",
+            "example": 26
+          },
+          "committees": {
+            "type": "number",
+            "description": "Total number of committees",
+            "example": 95
+          },
+          "championshipsByLevel": {
+            "$ref": "#/components/schemas/ChampionshipsByLevelDto"
+          }
+        },
+        "required": [
+          "clubs",
+          "teams",
+          "players",
+          "matches",
+          "leagues",
+          "committees",
+          "championshipsByLevel"
+        ]
+      }
+    }
+  }
+}

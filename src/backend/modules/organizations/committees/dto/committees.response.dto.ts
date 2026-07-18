@@ -1,6 +1,6 @@
 // src/backend/modules/organizations/committees/dto/committees.response.dto.ts
 import { PresidentResponseDto } from "@common/dto";
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { ApiProperty } from "@nestjs/swagger";
 
 /**
  * Response DTO for department entity nested in committee.
@@ -46,30 +46,34 @@ export class CommitteeResponseDto {
   })
   name!: string;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: "Committee phone number",
     example: "02 99 00 00 00",
     type: String,
+    nullable: true,
   })
   phone!: string | null;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: "Committee email address",
     example: "contact@comite-bretagne.fr",
     type: String,
+    nullable: true,
   })
   email!: string | null;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: "Committee address",
     example: "1 rue du Comité, 35000 Rennes",
     type: String,
+    nullable: true,
   })
   address!: string | null;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: "Committee president",
     type: PresidentResponseDto,
+    nullable: true,
   })
   president!: PresidentResponseDto | null;
 

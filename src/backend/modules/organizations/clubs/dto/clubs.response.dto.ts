@@ -1,7 +1,7 @@
 // src/backend/modules/organizations/clubs/dto/clubs.response.dto.ts
 import { PresidentResponseDto } from "@common/dto";
 import { Category, CompetitionLevel, Gender } from "@common/index";
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { ApiProperty } from "@nestjs/swagger";
 
 /**
  * Basic club information DTO.
@@ -13,7 +13,7 @@ export class ClubBasicResponseDto {
   @ApiProperty({ description: "Club name", example: "AS Monaco Basket" })
   name!: string;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: "City",
     example: "Monaco",
     type: String,
@@ -21,7 +21,7 @@ export class ClubBasicResponseDto {
   })
   city!: string | null;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: "ZIP code",
     example: "98000",
     type: String,
@@ -29,7 +29,7 @@ export class ClubBasicResponseDto {
   })
   zipCode!: string | null;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: "Latitude",
     example: 43.7384,
     type: Number,
@@ -37,7 +37,7 @@ export class ClubBasicResponseDto {
   })
   latitude!: number | null;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: "Longitude",
     example: 7.4246,
     type: Number,
@@ -45,7 +45,7 @@ export class ClubBasicResponseDto {
   })
   longitude!: number | null;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: "Email",
     example: "contact@club.com",
     type: String,
@@ -53,7 +53,7 @@ export class ClubBasicResponseDto {
   })
   email!: string | null;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: "Phone",
     example: "0123456789",
     type: String,
@@ -61,7 +61,7 @@ export class ClubBasicResponseDto {
   })
   phone!: string | null;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: "Website",
     example: "https://club.com",
     type: String,
@@ -303,7 +303,7 @@ export class ClubDetailedResponseDto {
   })
   teams!: TeamInfoDto[];
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: "Club president",
     type: PresidentResponseDto,
     nullable: true,
@@ -385,7 +385,7 @@ export class ClubStatsByDepartmentDto {
     code: string;
   };
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: "League regionale ID",
     example: 1,
     nullable: true,

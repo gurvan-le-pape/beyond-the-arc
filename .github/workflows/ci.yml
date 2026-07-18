@@ -139,6 +139,49 @@ jobs:
         run: npm run build
 
   # ============================================================================
+  # API CONTRACT
+  # ============================================================================
+  # Regenerates docs/openapi.json from the backend and the frontend's
+  # api.generated.ts from that document, then fails if either differs from
+  # what is committed — backend DTO changes must ship with regenerated types.
+  openapi-drift:
+    name: OpenAPI – Drift check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Setup backend
+        uses: ./.github/actions/setup-app
+        with:
+          working-directory: src/backend
+
+      - name: Setup frontend
+        uses: ./.github/actions/setup-app
+        with:
+          working-directory: src/frontend
+
+      - name: Build backend
+        working-directory: src/backend
+        run: npm run build
+
+      - name: Regenerate OpenAPI document
+        working-directory: src/backend
+        run: node dist/scripts/generate-openapi.js ../../docs/openapi.json
+
+      - name: Regenerate frontend API types
+        working-directory: src/frontend
+        run: npm run typegen
+
+      - name: Fail on drift
+        run: |
+          git diff --exit-code docs/openapi.json src/frontend/shared/types/api.generated.ts || {
+            echo "::error::docs/openapi.json or api.generated.ts is stale — run the backend build, node dist/scripts/generate-openapi.js ../../docs/openapi.json, then npm run typegen in src/frontend, and commit the result."
+            exit 1
+          }
+
+  # ============================================================================
   # SONARCLOUD
   # ============================================================================
   sonarcloud:
@@ -181,6 +224,7 @@ jobs:
       - frontend-lint
       - frontend-typecheck
       - frontend-build
+      - openapi-drift
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
     steps:

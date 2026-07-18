@@ -1,5 +1,5 @@
 // src/backend/common/dto/president.response.dto.ts
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { ApiProperty } from "@nestjs/swagger";
 
 export class PresidentResponseDto {
   @ApiProperty({
@@ -16,31 +16,35 @@ export class PresidentResponseDto {
   })
   name!: string;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: "President phone number",
     example: "02 99 00 00 00",
     type: String,
+    nullable: true,
   })
   phone!: string | null;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: "President email address",
     example: "president@ligue-bretagne.fr",
     type: String,
+    nullable: true,
   })
   email!: string | null;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: "President address",
     example: "1 rue de la Ligue, 35000 Rennes",
     type: String,
+    nullable: true,
   })
   address!: string | null;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: "President code",
     example: "PRE-001",
     type: String,
+    nullable: true,
   })
   code!: string | null;
 }
