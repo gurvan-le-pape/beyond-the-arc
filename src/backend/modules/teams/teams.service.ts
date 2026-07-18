@@ -2,7 +2,11 @@
 import { CompetitionLevel, Position } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
 import { Category, Gender } from "@common/index";
-import { mapPlayerMatchStats, resolvePagination } from "@common/utils";
+import {
+  mapPlayerMatchStats,
+  PLAYER_MATCH_STAT_FIELDS_SELECT,
+  resolvePagination,
+} from "@common/utils";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 
@@ -246,23 +250,7 @@ const TEAM_MATCH_HISTORY_SELECT = {
           teamId: true,
         },
       },
-      points: true,
-      fouls: true,
-      threePointsMade: true,
-      threePointsAttempted: true,
-      twoPointsIntMade: true,
-      twoPointsIntAttempted: true,
-      twoPointsExtMade: true,
-      twoPointsExtAttempted: true,
-      freeThrowsMade: true,
-      freeThrowsAttempted: true,
-      assists: true,
-      turnovers: true,
-      reboundsOffensive: true,
-      reboundsDefensive: true,
-      steals: true,
-      blocks: true,
-      playtimeIntervals: true,
+      ...PLAYER_MATCH_STAT_FIELDS_SELECT,
     },
   },
 } as const;

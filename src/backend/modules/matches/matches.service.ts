@@ -2,7 +2,11 @@
 import { MatchEventRole, Position } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
 import { Category, CompetitionLevel, Gender } from "@common/index";
-import { mapPlayerMatchStats, resolvePagination } from "@common/utils";
+import {
+  mapPlayerMatchStats,
+  PLAYER_MATCH_STAT_FIELDS_SELECT,
+  resolvePagination,
+} from "@common/utils";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { fromZonedTime } from "date-fns-tz";
 import { PrismaService } from "prisma/prisma.service";
@@ -191,23 +195,7 @@ const PLAYER_MATCH_STATS_SELECT = {
       },
     },
   },
-  points: true,
-  fouls: true,
-  threePointsMade: true,
-  threePointsAttempted: true,
-  twoPointsIntMade: true,
-  twoPointsIntAttempted: true,
-  twoPointsExtMade: true,
-  twoPointsExtAttempted: true,
-  freeThrowsMade: true,
-  freeThrowsAttempted: true,
-  assists: true,
-  turnovers: true,
-  reboundsOffensive: true,
-  reboundsDefensive: true,
-  steals: true,
-  blocks: true,
-  playtimeIntervals: true,
+  ...PLAYER_MATCH_STAT_FIELDS_SELECT,
 } as const;
 
 type MatchListResult = Prisma.MatchesGetPayload<{

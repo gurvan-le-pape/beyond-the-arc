@@ -43,6 +43,31 @@ export interface MappedPlayerMatchStats {
 }
 
 /**
+ * Prisma select for the scalar stat columns consumed by mapPlayerMatchStats.
+ * Spread into each service's playerMatchStats select alongside its own
+ * relation fields; `satisfies` keeps it in sync with PlayerMatchStatFields.
+ */
+export const PLAYER_MATCH_STAT_FIELDS_SELECT = {
+  points: true,
+  fouls: true,
+  threePointsMade: true,
+  threePointsAttempted: true,
+  twoPointsIntMade: true,
+  twoPointsIntAttempted: true,
+  twoPointsExtMade: true,
+  twoPointsExtAttempted: true,
+  freeThrowsMade: true,
+  freeThrowsAttempted: true,
+  assists: true,
+  turnovers: true,
+  reboundsOffensive: true,
+  reboundsDefensive: true,
+  steals: true,
+  blocks: true,
+  playtimeIntervals: true,
+} as const satisfies Record<keyof PlayerMatchStatFields, true>;
+
+/**
  * Maps the Prisma player-match-stats fields shared by teams/matches/players
  * services into the common API stats shape. playtimeIntervals is stored as
  * Json in Prisma — expected shape: number[][].
