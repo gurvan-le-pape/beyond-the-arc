@@ -13,6 +13,7 @@ export * from "./dto/organization-scope.query.dto";
 export * from "./dto/paginated-response.dto";
 export * from "./dto/pagination.query.dto";
 export * from "./dto/player-summary.dto";
+export * from "./dto/rebounds.dto";
 export * from "./filters/all-exceptions.filter";
 export * from "./interceptors/cache.interceptor";
 export * from "./interceptors/transform.interceptor";

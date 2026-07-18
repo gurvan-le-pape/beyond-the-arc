@@ -8,3 +8,4 @@ export * from "./paginated-response.dto";
 export * from "./pagination.query.dto";
 export * from "./player-summary.dto";
 export * from "./president.response.dto";
+export * from "./rebounds.dto";
