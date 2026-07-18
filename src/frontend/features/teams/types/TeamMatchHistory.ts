@@ -1,32 +1,16 @@
 // src/frontend/features/teams/types/TeamMatchHistory.ts
-import type { Position } from "@/shared/constants";
-import type { PlayerMatchStats } from "@/shared/types";
+import type { components } from "@/shared/types";
 
-export interface TeamMatchPlayerRef {
-  id: number;
-  name: string;
-  number: number;
-  position: Position;
-  teamId: number;
-}
+/**
+ * Generated from the backend OpenAPI document. Regenerate with
+ * `npm run typegen` after backend DTO changes — CI fails when
+ * docs/openapi.json and api.generated.ts drift.
+ */
+export type TeamMatchPlayerRef = components["schemas"]["PlayerSummaryDto"];
 
-export interface TeamMatchParticipant {
-  player: TeamMatchPlayerRef;
-  stats: PlayerMatchStats;
-}
+export type TeamMatchParticipant = components["schemas"]["MatchPlayerDto"];
 
-export interface TeamMatchHistoryTeamRef {
-  id: number;
-  number: number;
-  club: { id: number; name: string };
-}
+export type TeamMatchHistoryTeamRef =
+  components["schemas"]["HistoryTeamRefDto"];
 
-export interface TeamMatchHistory {
-  id: number;
-  date: Date;
-  homeTeam: TeamMatchHistoryTeamRef;
-  awayTeam: TeamMatchHistoryTeamRef;
-  homeTeamScore: number;
-  awayTeamScore: number;
-  players: TeamMatchParticipant[];
-}
+export type TeamMatchHistory = components["schemas"]["TeamMatchHistoryDto"];

@@ -1,21 +1,9 @@
 // src/frontend/features/teams/types/Team.ts
-import type { Category, Gender } from "@/shared/constants";
+import type { components } from "@/shared/types";
 
-import type { TeamClubRef } from "./TeamClubRef";
-import type { TeamPoolRef } from "./TeamPoolRef";
-
-export interface Team {
-  id: number;
-  number: number;
-  clubId: number;
-  seasonYear: string;
-  category: Category;
-  gender: Gender;
-  color: string | null;
-  poolId: number | null;
-  club: TeamClubRef;
-  pool: TeamPoolRef | null;
-  _count: {
-    players: number;
-  };
-}
+/**
+ * Generated from the backend OpenAPI document. Regenerate with
+ * `npm run typegen` after backend DTO changes — CI fails when
+ * docs/openapi.json and api.generated.ts drift.
+ */
+export type Team = components["schemas"]["TeamResponseDto"];
