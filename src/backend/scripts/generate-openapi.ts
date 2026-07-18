@@ -38,6 +38,17 @@ async function generate(): Promise<void> {
 
   const document = SwaggerModule.createDocument(app, config);
   const outPath = resolve(process.cwd(), outArg);
+
+  // The output path comes from the CLI: refuse anything that escapes the
+  // repository (two levels above src/backend) or isn't a JSON file.
+  const repoRoot = resolve(__dirname, "..", "..", "..", "..");
+  if (!outPath.startsWith(`${repoRoot}/`) || !outPath.endsWith(".json")) {
+    console.error(
+      `Refusing to write outside the repository or to a non-JSON path: ${outPath}`,
+    );
+    process.exit(2);
+  }
+
   writeFileSync(outPath, `${JSON.stringify(document, null, 2)}\n`);
   console.log(`OpenAPI document written to ${outPath}`);
 
