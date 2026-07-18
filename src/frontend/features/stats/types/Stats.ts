@@ -1,14 +1,12 @@
 // src/frontend/features/stats/types/Stats.ts
-export interface Stats {
-  clubs: number;
-  teams: number;
-  players: number;
-  matches: number;
-  leagues: number;
-  committees: number;
-  championshipsByLevel: {
-    national: number;
-    regional: number;
-    departmental: number;
-  };
-}
+import type { components } from "@/shared/types";
+
+/**
+ * Platform statistics, generated from the backend OpenAPI document.
+ * Regenerate with `npm run typegen` after backend DTO changes —
+ * CI fails when docs/openapi.json and api.generated.ts drift.
+ */
+export type ChampionshipsByLevel =
+  components["schemas"]["ChampionshipsByLevelDto"];
+
+export type Stats = components["schemas"]["StatsResponseDto"];
