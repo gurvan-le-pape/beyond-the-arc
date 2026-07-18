@@ -1,9 +1,9 @@
 // src/frontend/shared/types/President.ts
-export interface President {
-  id: number;
-  name: string;
-  phone: string | null;
-  email: string | null;
-  address: string | null;
-  code: string | null;
-}
+import type { components } from "./api.generated";
+
+/**
+ * President entity, generated from the backend OpenAPI document.
+ * Regenerate with `npm run typegen` after backend DTO changes —
+ * CI fails when docs/openapi.json and api.generated.ts drift.
+ */
+export type President = components["schemas"]["PresidentResponseDto"];
