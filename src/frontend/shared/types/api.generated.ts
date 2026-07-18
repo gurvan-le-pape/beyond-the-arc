@@ -1686,7 +1686,7 @@ export interface components {
              *       ]
              *     ]
              */
-            playtimeIntervals: unknown[][];
+            playtimeIntervals: number[][];
         };
         PlayerWithStatsDto: {
             /** @description Player information */
@@ -2007,7 +2007,7 @@ export interface components {
              *       ]
              *     ]
              */
-            playtimeIntervals: unknown[][];
+            playtimeIntervals: number[][];
         };
         PlayerMatchEntryDto: {
             /** @description Player information */
