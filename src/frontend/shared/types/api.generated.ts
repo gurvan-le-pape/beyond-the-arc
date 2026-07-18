@@ -1140,25 +1140,28 @@ export interface components {
              */
             name: string;
             /**
-             * @description Age category (e.g., U18, Senior)
+             * @description Age category
              * @example U18
+             * @enum {string}
              */
-            category: string;
+            category: "U11" | "U13" | "U15" | "U18" | "U21" | "Seniors";
             /**
-             * @description Gender category (male, female, Mixte)
+             * @description Gender
              * @example male
+             * @enum {string}
              */
-            gender: string;
+            gender: "male" | "female";
             /**
              * @description Season year (e.g., 2024-2025)
              * @example 2024-2025
              */
             seasonYear: string;
             /**
-             * @description Competition level (national, regional, departmental)
+             * @description Competition level
              * @example regional
+             * @enum {string}
              */
-            level: string;
+            level: "departmental" | "regional" | "national";
             /**
              * @description Division number
              * @example 1

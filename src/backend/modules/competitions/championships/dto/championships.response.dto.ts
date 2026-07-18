@@ -1,4 +1,5 @@
 // src/backend/modules/competitions/championships/dto/championships.response.dto.ts
+import { Category, CompetitionLevel, Gender } from "@common/constants";
 import { ApiProperty } from "@nestjs/swagger";
 
 /**
@@ -34,18 +35,18 @@ export class ChampionshipResponseDto {
   name!: string;
 
   @ApiProperty({
-    description: "Age category (e.g., U18, Senior)",
+    description: "Age category",
     example: "U18",
-    type: String,
+    enum: Category,
   })
-  category!: string;
+  category!: Category;
 
   @ApiProperty({
-    description: "Gender category (male, female, Mixte)",
-    example: "male",
-    type: String,
+    description: "Gender",
+    example: Gender.MALE,
+    enum: Gender,
   })
-  gender!: string;
+  gender!: Gender;
 
   @ApiProperty({
     description: "Season year (e.g., 2024-2025)",
@@ -55,11 +56,11 @@ export class ChampionshipResponseDto {
   seasonYear!: string;
 
   @ApiProperty({
-    description: "Competition level (national, regional, departmental)",
-    example: "regional",
-    type: String,
+    description: "Competition level",
+    example: CompetitionLevel.REGIONAL,
+    enum: CompetitionLevel,
   })
-  level!: string;
+  level!: CompetitionLevel;
 
   @ApiProperty({ description: "Division number", example: 1, type: Number })
   division!: number;

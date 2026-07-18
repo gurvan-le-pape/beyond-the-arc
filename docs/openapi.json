@@ -3661,13 +3661,25 @@
           },
           "category": {
             "type": "string",
-            "description": "Age category (e.g., U18, Senior)",
-            "example": "U18"
+            "description": "Age category",
+            "example": "U18",
+            "enum": [
+              "U11",
+              "U13",
+              "U15",
+              "U18",
+              "U21",
+              "Seniors"
+            ]
           },
           "gender": {
             "type": "string",
-            "description": "Gender category (male, female, Mixte)",
-            "example": "male"
+            "description": "Gender",
+            "example": "male",
+            "enum": [
+              "male",
+              "female"
+            ]
           },
           "seasonYear": {
             "type": "string",
@@ -3676,8 +3688,13 @@
           },
           "level": {
             "type": "string",
-            "description": "Competition level (national, regional, departmental)",
-            "example": "regional"
+            "description": "Competition level",
+            "example": "regional",
+            "enum": [
+              "departmental",
+              "regional",
+              "national"
+            ]
           },
           "division": {
             "type": "number",
