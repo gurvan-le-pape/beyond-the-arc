@@ -1,11 +1,26 @@
 // src/backend/common/utils/pagination.util.ts
-const DEFAULT_LIMIT = 50;
-const MAX_LIMIT = 100;
+export const DEFAULT_PAGE_LIMIT = 50;
+export const MAX_PAGE_LIMIT = 100;
 
-export function normalizePage(page: number): number {
-  return page > 0 ? page : 1;
+export interface ResolvedPagination {
+  page: number;
+  limit: number;
+  skip: number;
+  take: number;
 }
 
-export function normalizeLimit(limit: number): number {
-  return limit > 0 ? Math.min(limit, MAX_LIMIT) : DEFAULT_LIMIT;
+/**
+ * Applies the shared pagination defaults and derives skip/take.
+ *
+ * Bounds (page >= 1, limit <= MAX_PAGE_LIMIT) are enforced upstream by
+ * PaginationQueryDto validation, so this only fills defaults.
+ */
+export function resolvePagination(query: {
+  page?: number;
+  limit?: number;
+}): ResolvedPagination {
+  const page = query.page ?? 1;
+  const limit = query.limit ?? DEFAULT_PAGE_LIMIT;
+
+  return { page, limit, skip: (page - 1) * limit, take: limit };
 }

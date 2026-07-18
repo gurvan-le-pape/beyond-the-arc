@@ -1,11 +1,11 @@
 // src/backend/modules/competitions/championships/dto/championships.query.dto.ts
 import { CompetitionLevel } from "@common/constants";
-import { Category, Gender } from "@common/index";
+import { Category, Gender, PaginationQueryDto } from "@common/index";
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsEnum, IsInt, IsOptional, Min } from "class-validator";
+import { IsEnum, IsInt, IsOptional } from "class-validator";
 
-export class GetChampionshipsQueryDto {
+export class GetChampionshipsQueryDto extends PaginationQueryDto {
   @ApiPropertyOptional({ enum: CompetitionLevel })
   @IsOptional()
   @IsEnum(CompetitionLevel)
@@ -29,18 +29,4 @@ export class GetChampionshipsQueryDto {
   @IsOptional()
   @IsEnum(Gender)
   gender?: Gender;
-
-  @ApiPropertyOptional({ type: Number, default: 1 })
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  page?: number;
-
-  @ApiPropertyOptional({ type: Number, default: 20 })
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  limit?: number;
 }

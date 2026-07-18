@@ -182,20 +182,6 @@ export class ChampionshipsController {
     description: "Gender filter.",
     example: "male",
   })
-  @ApiQuery({
-    name: "page",
-    required: false,
-    type: Number,
-    description: "Page number (1-based).",
-    example: 1,
-  })
-  @ApiQuery({
-    name: "limit",
-    required: false,
-    type: Number,
-    description: "Number of results per page (max 100).",
-    example: 20,
-  })
   @ApiResponse({
     status: HttpStatus.OK,
     description: "Paginated list of championships successfully retrieved",
@@ -245,8 +231,8 @@ export class ChampionshipsController {
       id: query.id,
       category: query.category,
       gender: query.gender,
-      page: query.page ?? 1,
-      limit: query.limit ?? 20,
+      page: query.page,
+      limit: query.limit,
     });
   }
 }

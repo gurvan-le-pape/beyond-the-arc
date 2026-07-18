@@ -183,7 +183,7 @@ describe("PlayersController", () => {
       });
     });
 
-    it("should use defaults when page and limit not provided", async () => {
+    it("should pass undefined page and limit through when not provided", async () => {
       // Arrange
       const mockResponse: PaginatedResponseDto<PlayerResponseDto> = {
         items: [],
@@ -201,8 +201,8 @@ describe("PlayersController", () => {
       // Assert
       expect(service.findAllPlayers).toHaveBeenCalledWith(
         expect.objectContaining({
-          page: 1,
-          limit: 50,
+          page: undefined,
+          limit: undefined,
         }),
       );
     });

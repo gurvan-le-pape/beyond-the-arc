@@ -277,17 +277,6 @@ describe("MatchesService", () => {
       expect(result.limit).toBe(50);
     });
 
-    it("should cap limit at 100", async () => {
-      mockPrismaService.client.matches.findMany.mockResolvedValue([]);
-      mockPrismaService.client.matches.count.mockResolvedValue(0);
-
-      await service.findAllMatches({ limit: 999 });
-
-      expect(mockPrismaService.client.matches.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({ take: 100 }),
-      );
-    });
-
     it("should propagate database errors", async () => {
       const dbError = new Error("DB error");
       mockPrismaService.client.matches.findMany.mockRejectedValue(dbError);
@@ -470,42 +459,6 @@ describe("MatchesService", () => {
       expect(result[0].id).toBe(1);
       expect(result[0].matchId).toBe(1);
       expect(result[0].shotLocation?.x).toBe(5.5);
-    });
-  });
-
-  describe("validatePage", () => {
-    it("should return 1 when page is 0", async () => {
-      mockPrismaService.client.matches.findMany.mockResolvedValue([]);
-      mockPrismaService.client.matches.count.mockResolvedValue(0);
-
-      const result = await service.findAllMatches({ page: 0 });
-      expect(result.page).toBe(1);
-    });
-
-    it("should return 1 when page is negative", async () => {
-      mockPrismaService.client.matches.findMany.mockResolvedValue([]);
-      mockPrismaService.client.matches.count.mockResolvedValue(0);
-
-      const result = await service.findAllMatches({ page: -1 });
-      expect(result.page).toBe(1);
-    });
-  });
-
-  describe("validateLimit", () => {
-    it("should return 50 when limit is 0", async () => {
-      mockPrismaService.client.matches.findMany.mockResolvedValue([]);
-      mockPrismaService.client.matches.count.mockResolvedValue(0);
-
-      const result = await service.findAllMatches({ limit: 0 });
-      expect(result.limit).toBe(50);
-    });
-
-    it("should return 50 when limit is negative", async () => {
-      mockPrismaService.client.matches.findMany.mockResolvedValue([]);
-      mockPrismaService.client.matches.count.mockResolvedValue(0);
-
-      const result = await service.findAllMatches({ limit: -1 });
-      expect(result.limit).toBe(50);
     });
   });
 

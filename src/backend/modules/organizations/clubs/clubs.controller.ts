@@ -325,20 +325,6 @@ export class ClubsController {
     description: "Search by club name (case-insensitive)",
     example: "Monaco",
   })
-  @ApiQuery({
-    name: "page",
-    required: false,
-    type: Number,
-    description: "Page number (default: 1)",
-    example: 1,
-  })
-  @ApiQuery({
-    name: "limit",
-    required: false,
-    type: Number,
-    description: "Items per page (default: 50)",
-    example: 50,
-  })
   @ApiResponse({
     status: HttpStatus.OK,
     description: "Paginated list of clubs matching the filters",

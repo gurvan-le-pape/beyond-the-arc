@@ -1,6 +1,6 @@
 // src/backend/modules/teams/dto/teams.query.dto.ts
 import { CompetitionLevel } from "@common/constants";
-import { Category, Gender } from "@common/index";
+import { Category, Gender, PaginationQueryDto } from "@common/index";
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
@@ -8,7 +8,7 @@ import { IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
 /**
  * Query parameters for filtering and paginating teams.
  */
-export class GetTeamsQueryDto {
+export class GetTeamsQueryDto extends PaginationQueryDto {
   @ApiPropertyOptional({
     description: "Club ID to filter teams by club",
     example: 1,
@@ -105,26 +105,4 @@ export class GetTeamsQueryDto {
   @IsOptional()
   @IsString()
   poolLetter?: string;
-
-  @ApiPropertyOptional({
-    description: "Page number for pagination",
-    example: 1,
-    type: Number,
-    default: 1,
-  })
-  @IsOptional()
-  @Type(() => Number)
-  @IsNumber()
-  page?: number;
-
-  @ApiPropertyOptional({
-    description: "Number of items per page (max 100)",
-    example: 50,
-    type: Number,
-    default: 50,
-  })
-  @IsOptional()
-  @Type(() => Number)
-  @IsNumber()
-  limit?: number;
 }

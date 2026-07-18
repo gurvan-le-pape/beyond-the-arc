@@ -152,7 +152,7 @@ describe("ChampionshipsController", () => {
       });
     });
 
-    it("should use default page and limit when not provided", async () => {
+    it("should pass undefined page and limit through when not provided", async () => {
       // Arrange
       mockChampionshipsService.findChampionships.mockResolvedValue({
         ...mockPaginatedResponse,
@@ -164,7 +164,7 @@ describe("ChampionshipsController", () => {
       await controller.getChampionships({});
 
       expect(service.findChampionships).toHaveBeenCalledWith(
-        expect.objectContaining({ page: 1, limit: 20 }),
+        expect.objectContaining({ page: undefined, limit: undefined }),
       );
     });
 
