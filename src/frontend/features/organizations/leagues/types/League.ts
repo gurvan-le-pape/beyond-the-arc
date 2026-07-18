@@ -1,15 +1,9 @@
 // src/frontend/features/organizations/leagues/types/League.ts
+import type { components } from "@/shared/types/api.generated";
 
-import type { Region } from "@/features/geography/types";
-import type { President } from "@/shared/types";
-
-export interface League {
-  id: number;
-  name: string;
-  phone: string | null;
-  email: string | null;
-  address: string | null;
-  president: President | null;
-  region: Region;
-  clubCount: number;
-}
+/**
+ * League entity, generated from the backend OpenAPI document.
+ * Regenerate with `npm run typegen` after backend DTO changes —
+ * CI fails when docs/openapi.json and api.generated.ts drift.
+ */
+export type League = components["schemas"]["LeagueResponseDto"];
