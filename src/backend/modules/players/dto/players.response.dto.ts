@@ -163,7 +163,7 @@ export class PlayerResponseDto {
   @ApiProperty({
     description: "Player position",
     example: "PG",
-    type: String,
+    enum: Position,
   })
   position!: Position;
 

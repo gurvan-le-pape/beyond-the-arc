@@ -1567,8 +1567,9 @@ export interface components {
             /**
              * @description Player position
              * @example PG
+             * @enum {string}
              */
-            position: string;
+            position: "PG" | "SG" | "SF" | "PF" | "C";
             /**
              * @description Team ID
              * @example 1
@@ -1836,8 +1837,9 @@ export interface components {
             /**
              * @description Player position
              * @example PG
+             * @enum {string}
              */
-            position: string;
+            position: "PG" | "SG" | "SF" | "PF" | "C";
             /**
              * @description Player height in centimeters
              * @example 185
@@ -1910,8 +1912,9 @@ export interface components {
             /**
              * @description Player position
              * @example PG
+             * @enum {string}
              */
-            position: string;
+            position: "PG" | "SG" | "SF" | "PF" | "C";
             /**
              * @description Team ID
              * @example 1
