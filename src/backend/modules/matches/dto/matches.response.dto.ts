@@ -1,5 +1,5 @@
 // src/backend/modules/matches/dto/matches.response.dto.ts
-import { MatchEventRole } from "@common/constants";
+import { MatchEventRole, MatchEventType } from "@common/constants";
 import {
   Category,
   CompetitionLevel,
@@ -329,10 +329,10 @@ export class MatchEventDto {
 
   @ApiProperty({
     description: "Event type",
-    example: "shot_made",
-    type: String,
+    example: MatchEventType.MADE_LAYUP,
+    enum: MatchEventType,
   })
-  eventType!: string;
+  eventType!: MatchEventType;
 
   @ApiProperty({
     description: "Event timestamp in seconds from match start",

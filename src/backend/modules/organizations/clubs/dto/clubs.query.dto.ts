@@ -3,7 +3,7 @@ import { Category, CompetitionLevel, Gender } from "@common/constants";
 import { PaginationQueryDto } from "@common/dto";
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsEnum, IsInt, IsOptional, IsString } from "class-validator";
 
 /**
  * Query parameters for filtering clubs.
@@ -29,7 +29,7 @@ export class GetClubsQueryDto extends PaginationQueryDto {
   })
   @IsOptional()
   @Type(() => Number)
-  @IsNumber()
+  @IsInt()
   committeeId?: number;
 
   @ApiPropertyOptional({
@@ -39,7 +39,7 @@ export class GetClubsQueryDto extends PaginationQueryDto {
   })
   @IsOptional()
   @Type(() => Number)
-  @IsNumber()
+  @IsInt()
   leagueId?: number;
 
   @ApiPropertyOptional({
@@ -84,6 +84,6 @@ export class GetClubStatsByDepartmentQueryDto {
   })
   @IsOptional()
   @Type(() => Number)
-  @IsNumber()
+  @IsInt()
   leagueId?: number;
 }

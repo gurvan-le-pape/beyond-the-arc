@@ -3,7 +3,7 @@ import { CompetitionLevel } from "@common/constants";
 import { Category, Gender, PaginationQueryDto } from "@common/index";
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsEnum, IsInt, IsOptional, IsString } from "class-validator";
 
 /**
  * Query parameters for filtering and paginating teams.
@@ -16,18 +16,16 @@ export class GetTeamsQueryDto extends PaginationQueryDto {
   })
   @IsOptional()
   @Type(() => Number)
-  @IsNumber()
+  @IsInt()
   clubId?: number;
 
   @ApiPropertyOptional({
-    description: "Competition level (regional or departmental)",
-    enum: [CompetitionLevel.REGIONAL, CompetitionLevel.DEPARTMENTAL],
+    description: "Competition level filter",
+    enum: CompetitionLevel,
     example: CompetitionLevel.REGIONAL,
   })
   @IsOptional()
-  @IsEnum(CompetitionLevel, {
-    message: `level must be either "${CompetitionLevel.REGIONAL}" or "${CompetitionLevel.DEPARTMENTAL}"`,
-  })
+  @IsEnum(CompetitionLevel)
   level?: CompetitionLevel;
 
   @ApiPropertyOptional({
@@ -37,7 +35,7 @@ export class GetTeamsQueryDto extends PaginationQueryDto {
   })
   @IsOptional()
   @Type(() => Number)
-  @IsNumber()
+  @IsInt()
   division?: number;
 
   @ApiPropertyOptional({
@@ -47,7 +45,7 @@ export class GetTeamsQueryDto extends PaginationQueryDto {
   })
   @IsOptional()
   @Type(() => Number)
-  @IsNumber()
+  @IsInt()
   committeeId?: number;
 
   @ApiPropertyOptional({
@@ -57,7 +55,7 @@ export class GetTeamsQueryDto extends PaginationQueryDto {
   })
   @IsOptional()
   @Type(() => Number)
-  @IsNumber()
+  @IsInt()
   leagueId?: number;
 
   @ApiPropertyOptional({
@@ -67,25 +65,25 @@ export class GetTeamsQueryDto extends PaginationQueryDto {
   })
   @IsOptional()
   @Type(() => Number)
-  @IsNumber()
+  @IsInt()
   number?: number;
 
   @ApiPropertyOptional({
     description: "Age category filter",
     example: "U18",
-    type: String,
+    enum: Category,
   })
   @IsOptional()
-  @IsString()
+  @IsEnum(Category)
   category?: Category;
 
   @ApiPropertyOptional({
     description: "Gender filter",
-    example: "M",
-    type: String,
+    example: Gender.MALE,
+    enum: Gender,
   })
   @IsOptional()
-  @IsString()
+  @IsEnum(Gender)
   gender?: Gender;
 
   @ApiPropertyOptional({

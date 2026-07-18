@@ -213,7 +213,7 @@ describe("MatchesController", () => {
       const mockEvents: MatchEventDto[] = [
         {
           id: 1,
-          eventType: "shot_made",
+          eventType: "made_layup",
           timestamp: new Date("2024-02-05T19:02:00Z"),
           description: null,
           players: [],
