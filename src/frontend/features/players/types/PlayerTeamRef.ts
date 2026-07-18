@@ -1,42 +1,21 @@
 // src/frontend/features/players/types/PlayerTeamRef.ts
-import type { Category, Gender } from "@/shared/constants";
+import type { components } from "@/shared/types";
 
-export interface PlayerLeagueRef {
-  id: number;
-  name: string;
-}
+/**
+ * Generated from the backend OpenAPI document. Regenerate with
+ * `npm run typegen` after backend DTO changes — CI fails when
+ * docs/openapi.json and api.generated.ts drift.
+ */
+export type PlayerLeagueRef = components["schemas"]["PlayerLeagueRefDto"];
 
-export interface PlayerCommitteeRef {
-  id: number;
-  name: string;
-  league: PlayerLeagueRef;
-}
+export type PlayerCommitteeRef =
+  components["schemas"]["PlayerCommitteeRefDto"];
 
-export interface PlayerClubRef {
-  id: number;
-  name: string;
-  committee: PlayerCommitteeRef;
-}
+export type PlayerClubRef = components["schemas"]["PlayerClubRefDto"];
 
-export interface PlayerChampionshipRef {
-  id: number;
-  name: string;
-  level: string;
-  division: number;
-}
+export type PlayerChampionshipRef =
+  components["schemas"]["PlayerChampionshipRefDto"];
 
-export interface PlayerPoolRef {
-  id: number;
-  name: string;
-  championship: PlayerChampionshipRef;
-}
+export type PlayerPoolRef = components["schemas"]["PlayerPoolRefDto"];
 
-export interface PlayerTeamRef {
-  id: number;
-  number: number;
-  clubId: number;
-  category: Category;
-  gender: Gender;
-  club: PlayerClubRef;
-  pool: PlayerPoolRef | null;
-}
+export type PlayerTeamRef = components["schemas"]["PlayerTeamDto"];
