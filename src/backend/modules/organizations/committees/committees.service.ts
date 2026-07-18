@@ -1,4 +1,5 @@
 // src/backend/modules/organizations/committees/committees.service.ts
+import { PRESIDENT_SELECT } from "@common/utils";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 
@@ -16,16 +17,7 @@ const COMMITTEE_SELECT = {
   email: true,
   address: true,
   leagueId: true,
-  president: {
-    select: {
-      id: true,
-      name: true,
-      phone: true,
-      email: true,
-      address: true,
-      code: true,
-    },
-  },
+  president: PRESIDENT_SELECT,
   department: {
     select: {
       id: true,

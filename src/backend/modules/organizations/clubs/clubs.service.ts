@@ -1,7 +1,7 @@
 // src/backend/modules/organizations/clubs/clubs.service.ts
 import { Category, CompetitionLevel, Gender } from "@common/constants";
 import { PaginatedResponseDto } from "@common/index";
-import { resolvePagination } from "@common/utils";
+import { PRESIDENT_SELECT, resolvePagination } from "@common/utils";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 
@@ -88,16 +88,7 @@ const CLUB_DETAILED_SELECT = {
     },
     orderBy: { number: "asc" },
   },
-  president: {
-    select: {
-      id: true,
-      name: true,
-      phone: true,
-      email: true,
-      address: true,
-      code: true,
-    },
-  },
+  president: PRESIDENT_SELECT,
 } satisfies Prisma.ClubsDefaultArgs["select"];
 
 type ClubDetailedSelectResult = Prisma.ClubsGetPayload<{

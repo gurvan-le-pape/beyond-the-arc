@@ -1,4 +1,5 @@
 // src/backend/modules/organizations/leagues/leagues.service.ts
+import { PRESIDENT_SELECT } from "@common/utils";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 
@@ -15,16 +16,7 @@ const LEAGUE_SELECT = {
   phone: true,
   email: true,
   address: true,
-  president: {
-    select: {
-      id: true,
-      name: true,
-      phone: true,
-      email: true,
-      address: true,
-      code: true,
-    },
-  },
+  president: PRESIDENT_SELECT,
   region: {
     select: {
       id: true,
