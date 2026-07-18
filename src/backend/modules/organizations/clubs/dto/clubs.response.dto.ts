@@ -137,8 +137,8 @@ export class ChampionshipInfoDto {
 
   @ApiProperty({
     description: "Competition level",
-    example: "regional",
-    type: String,
+    example: CompetitionLevel.REGIONAL,
+    enum: CompetitionLevel,
   })
   level!: CompetitionLevel;
 
@@ -177,7 +177,6 @@ export class PoolInfoDto {
     description: "Pool name",
     example: "Pool A",
     type: String,
-    nullable: true,
   })
   name!: string;
 
@@ -205,15 +204,14 @@ export class TeamInfoDto {
   @ApiProperty({
     description: "Category",
     example: "U18",
-    type: String,
-    nullable: true,
+    enum: Category,
   })
   category!: Category;
 
   @ApiProperty({
     description: "Gender",
-    example: "male",
-    type: String,
+    example: Gender.MALE,
+    enum: Gender,
   })
   gender!: Gender;
 
@@ -388,7 +386,6 @@ export class ClubStatsByDepartmentDto {
   @ApiProperty({
     description: "League regionale ID",
     example: 1,
-    nullable: true,
   })
   leagueId!: number;
 

@@ -3027,8 +3027,7 @@
           "leagueId": {
             "type": "number",
             "description": "League regionale ID",
-            "example": 1,
-            "nullable": true
+            "example": 1
           },
           "clubCount": {
             "type": "number",
@@ -3140,7 +3139,12 @@
           "level": {
             "type": "string",
             "description": "Competition level",
-            "example": "regional"
+            "example": "regional",
+            "enum": [
+              "departmental",
+              "regional",
+              "national"
+            ]
           },
           "division": {
             "type": "number",
@@ -3180,8 +3184,7 @@
           "name": {
             "type": "string",
             "description": "Pool name",
-            "example": "Pool A",
-            "nullable": true
+            "example": "Pool A"
           },
           "championship": {
             "description": "Championship details",
@@ -3272,12 +3275,23 @@
             "type": "string",
             "description": "Category",
             "example": "U18",
-            "nullable": true
+            "enum": [
+              "U11",
+              "U13",
+              "U15",
+              "U18",
+              "U21",
+              "Seniors"
+            ]
           },
           "gender": {
             "type": "string",
             "description": "Gender",
-            "example": "male"
+            "example": "male",
+            "enum": [
+              "male",
+              "female"
+            ]
           },
           "pool": {
             "nullable": true,
