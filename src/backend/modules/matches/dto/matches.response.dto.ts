@@ -249,7 +249,7 @@ export class PlayerStatsDto {
       [1200, 2400],
     ],
     type: "array",
-    isArray: true,
+    items: { type: "array", items: { type: "number" } },
   })
   playtimeIntervals!: number[][];
 }

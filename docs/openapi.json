@@ -4578,6 +4578,7 @@
             "example": 1200
           },
           "playtimeIntervals": {
+            "type": "array",
             "description": "Playtime intervals [start, end] in seconds",
             "example": [
               [
@@ -4589,9 +4590,11 @@
                 2400
               ]
             ],
-            "type": "array",
             "items": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
             }
           }
         },
@@ -5139,6 +5142,7 @@
             "example": 1
           },
           "playtimeIntervals": {
+            "type": "array",
             "description": "Play time intervals",
             "example": [
               [
@@ -5150,9 +5154,11 @@
                 2400
               ]
             ],
-            "type": "array",
             "items": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
             }
           }
         },
