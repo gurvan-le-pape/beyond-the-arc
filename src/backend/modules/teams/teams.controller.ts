@@ -1,5 +1,6 @@
 // src/backend/modules/teams/teams.controller.ts
 import { CACHE_TTL } from "@common/constants";
+import { ApiPaginatedResponse } from "@common/decorators";
 import { OrganizationScopeQueryDto, PaginatedResponseDto } from "@common/dto";
 import { CacheInterceptor } from "@common/interceptors";
 import {
@@ -41,11 +42,10 @@ export class TeamsController {
     description:
       "Retrieves a paginated list of teams with optional filtering. Results are cached for 5 minutes.",
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "List of teams successfully retrieved",
-    type: PaginatedResponseDto,
-  })
+  @ApiPaginatedResponse(
+    TeamResponseDto,
+    "List of teams successfully retrieved",
+  )
   async getTeams(
     @Query() query: GetTeamsQueryDto,
   ): Promise<PaginatedResponseDto<TeamResponseDto>> {

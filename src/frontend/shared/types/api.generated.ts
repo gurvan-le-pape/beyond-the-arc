@@ -815,6 +815,30 @@ export interface components {
              */
             leagueId: number;
         };
+        PaginatedResponseDto: {
+            /** @description Page of result items */
+            items: Record<string, never>[];
+            /**
+             * @description Total number of items
+             * @example 120
+             */
+            total: number;
+            /**
+             * @description Current page (1-based)
+             * @example 1
+             */
+            page: number;
+            /**
+             * @description Items per page
+             * @example 50
+             */
+            limit: number;
+            /**
+             * @description Total number of pages
+             * @example 3
+             */
+            totalPages: number;
+        };
         ChampionshipInfoDto: {
             /**
              * @description Championship ID
@@ -1279,30 +1303,6 @@ export interface components {
              */
             nbMatchdays: number;
         };
-        PaginatedResponseDto: {
-            /** @description Page of result items */
-            items: Record<string, never>[];
-            /**
-             * @description Total number of items
-             * @example 120
-             */
-            total: number;
-            /**
-             * @description Current page (1-based)
-             * @example 1
-             */
-            page: number;
-            /**
-             * @description Items per page
-             * @example 50
-             */
-            limit: number;
-            /**
-             * @description Total number of pages
-             * @example 3
-             */
-            totalPages: number;
-        };
         MatchChampionshipRefDto: {
             /**
              * @description Championship ID
@@ -1707,10 +1707,6 @@ export interface components {
             /** @description Player statistics for both teams */
             stats: components["schemas"]["PlayerWithStatsDto"][];
         };
-        FilterValuesPlayersResponseDto: {
-            numbers: number[];
-            teamNumbers: number[];
-        };
         PlayerLeagueRefDto: {
             /**
              * @description League ID
@@ -1864,6 +1860,10 @@ export interface components {
             teamId: number;
             /** @description Team information */
             team: components["schemas"]["PlayerTeamDto"];
+        };
+        FilterValuesPlayersResponseDto: {
+            numbers: number[];
+            teamNumbers: number[];
         };
         HistoryClubRefDto: {
             /**
@@ -2040,34 +2040,6 @@ export interface components {
             /** @description Player and their statistics for this match */
             player: components["schemas"]["PlayerMatchEntryDto"];
         };
-        FilterValuesTeamsResponseDto: {
-            /**
-             * @description Available team numbers
-             * @example [
-             *       1,
-             *       2,
-             *       3
-             *     ]
-             */
-            numbers: number[];
-            /**
-             * @description Available pool letters
-             * @example [
-             *       "A",
-             *       "B",
-             *       "C"
-             *     ]
-             */
-            poolLetters: string[];
-            /**
-             * @description Available divisions
-             * @example [
-             *       1,
-             *       2
-             *     ]
-             */
-            divisions: number[];
-        };
         TeamLeagueRefDto: {
             /**
              * @description League ID
@@ -2156,6 +2128,84 @@ export interface components {
              * @example 12
              */
             players: number;
+        };
+        TeamResponseDto: {
+            /**
+             * @description Unique team identifier
+             * @example 1
+             */
+            id: number;
+            /**
+             * @description Team number
+             * @example 1
+             */
+            number: number;
+            /**
+             * @description Club ID this team belongs to
+             * @example 1
+             */
+            clubId: number;
+            /**
+             * @description Season this team's entry belongs to
+             * @example 2025-2026
+             */
+            seasonYear: string;
+            /**
+             * @description Age category
+             * @example U18
+             * @enum {string}
+             */
+            category: "U11" | "U13" | "U15" | "U18" | "U21" | "Seniors";
+            /**
+             * @description Gender category
+             * @example male
+             * @enum {string}
+             */
+            gender: "male" | "female";
+            /**
+             * @description Team color
+             * @example Blue
+             */
+            color: string | null;
+            /**
+             * @description Pool ID
+             * @example 1
+             */
+            poolId: number | null;
+            /** @description Club information */
+            club: components["schemas"]["TeamClubRefDto"];
+            /** @description Pool information, or null when the team has none */
+            pool: components["schemas"]["TeamPoolRefDto"] | null;
+            /** @description Relation counts */
+            _count: components["schemas"]["TeamCountDto"];
+        };
+        FilterValuesTeamsResponseDto: {
+            /**
+             * @description Available team numbers
+             * @example [
+             *       1,
+             *       2,
+             *       3
+             *     ]
+             */
+            numbers: number[];
+            /**
+             * @description Available pool letters
+             * @example [
+             *       "A",
+             *       "B",
+             *       "C"
+             *     ]
+             */
+            poolLetters: string[];
+            /**
+             * @description Available divisions
+             * @example [
+             *       1,
+             *       2
+             *     ]
+             */
+            divisions: number[];
         };
         RecentMatchChampionshipRefDto: {
             /**
@@ -2528,7 +2578,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["PaginatedResponseDto"] & {
+                        items: components["schemas"]["ClubBasicResponseDto"][];
+                    };
                 };
             };
             /** @description Invalid query parameters */
@@ -2809,7 +2861,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["PaginatedResponseDto"] & {
+                        items: components["schemas"]["ChampionshipResponseDto"][];
+                    };
                 };
             };
             /** @description Invalid query parameters */
@@ -3011,7 +3065,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PaginatedResponseDto"];
+                    "application/json": components["schemas"]["PaginatedResponseDto"] & {
+                        items: components["schemas"]["MatchDetailResponseDto"][];
+                    };
                 };
             };
             /** @description Invalid query parameters */
@@ -3264,7 +3320,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["PaginatedResponseDto"] & {
+                        items: components["schemas"]["PlayerResponseDto"][];
+                    };
                 };
             };
             /** @description Invalid query parameters */
@@ -3425,7 +3483,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PaginatedResponseDto"];
+                    "application/json": components["schemas"]["PaginatedResponseDto"] & {
+                        items: components["schemas"]["TeamResponseDto"][];
+                    };
                 };
             };
         };

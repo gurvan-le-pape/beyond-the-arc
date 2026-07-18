@@ -312,32 +312,24 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "data": {
-                      "items": [
-                        {
-                          "id": 1,
-                          "name": "AS Monaco Basket",
-                          "city": "Monaco",
-                          "zipCode": "98000",
-                          "latitude": 43.7384,
-                          "longitude": 7.4246,
-                          "email": "contact@club.com",
-                          "phone": "0123456789",
-                          "website": "https://club.com",
-                          "committeeId": 1,
-                          "leagueId": 1
-                        }
-                      ],
-                      "total": 1,
-                      "page": 1,
-                      "limit": 50,
-                      "totalPages": 1
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/PaginatedResponseDto"
                     },
-                    "timestamp": "2024-02-05T10:00:00Z",
-                    "path": "/clubs",
-                    "statusCode": 200
-                  }
+                    {
+                      "properties": {
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/ClubBasicResponseDto"
+                          }
+                        }
+                      },
+                      "required": [
+                        "items"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -945,28 +937,24 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "data": {
-                      "items": [
-                        {
-                          "id": 1,
-                          "name": "Championship Régional U18 male",
-                          "category": "U18",
-                          "gender": "male",
-                          "seasonYear": "2024-2025",
-                          "level": "regional",
-                          "division": 1
-                        }
-                      ],
-                      "total": 384,
-                      "page": 1,
-                      "limit": 20,
-                      "totalPages": 20
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/PaginatedResponseDto"
                     },
-                    "timestamp": "2024-02-05T10:00:00Z",
-                    "path": "/championships",
-                    "statusCode": 200
-                  }
+                    {
+                      "properties": {
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/ChampionshipResponseDto"
+                          }
+                        }
+                      },
+                      "required": [
+                        "items"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -1483,7 +1471,24 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PaginatedResponseDto"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/PaginatedResponseDto"
+                    },
+                    {
+                      "properties": {
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/MatchDetailResponseDto"
+                          }
+                        }
+                      },
+                      "required": [
+                        "items"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -1890,54 +1895,24 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "data": {
-                      "items": [
-                        {
-                          "id": 1,
-                          "name": "John Doe",
-                          "number": 10,
-                          "teamId": 1,
-                          "team": {
-                            "id": 1,
-                            "number": 1,
-                            "clubId": 1,
-                            "category": "U18",
-                            "gender": "M",
-                            "club": {
-                              "id": 1,
-                              "name": "Club Example",
-                              "committee": {
-                                "id": 1,
-                                "name": "Committee Example",
-                                "league": {
-                                  "id": 1,
-                                  "name": "League Example"
-                                }
-                              }
-                            },
-                            "pool": {
-                              "id": 1,
-                              "name": "Pool A",
-                              "championship": {
-                                "id": 1,
-                                "name": "Championship Régional U18",
-                                "level": "regional",
-                                "division": "Régionale 1"
-                              }
-                            }
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/PaginatedResponseDto"
+                    },
+                    {
+                      "properties": {
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/PlayerResponseDto"
                           }
                         }
-                      ],
-                      "total": 150,
-                      "page": 1,
-                      "limit": 50,
-                      "totalPages": 3
-                    },
-                    "timestamp": "2024-02-05T10:00:00Z",
-                    "path": "/players",
-                    "statusCode": 200
-                  }
+                      },
+                      "required": [
+                        "items"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -2405,7 +2380,24 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PaginatedResponseDto"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/PaginatedResponseDto"
+                    },
+                    {
+                      "properties": {
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/TeamResponseDto"
+                          }
+                        }
+                      },
+                      "required": [
+                        "items"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -3121,6 +3113,46 @@
           "website",
           "committeeId",
           "leagueId"
+        ]
+      },
+      "PaginatedResponseDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "description": "Page of result items",
+            "additionalProperties": true,
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "total": {
+            "type": "number",
+            "description": "Total number of items",
+            "example": 120
+          },
+          "page": {
+            "type": "number",
+            "description": "Current page (1-based)",
+            "example": 1
+          },
+          "limit": {
+            "type": "number",
+            "description": "Items per page",
+            "example": 50
+          },
+          "totalPages": {
+            "type": "number",
+            "description": "Total number of pages",
+            "example": 3
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "page",
+          "limit",
+          "totalPages"
         ]
       },
       "ChampionshipInfoDto": {
@@ -3880,46 +3912,6 @@
           "nbMatchdays"
         ]
       },
-      "PaginatedResponseDto": {
-        "type": "object",
-        "properties": {
-          "items": {
-            "description": "Page of result items",
-            "additionalProperties": true,
-            "type": "array",
-            "items": {
-              "type": "object"
-            }
-          },
-          "total": {
-            "type": "number",
-            "description": "Total number of items",
-            "example": 120
-          },
-          "page": {
-            "type": "number",
-            "description": "Current page (1-based)",
-            "example": 1
-          },
-          "limit": {
-            "type": "number",
-            "description": "Items per page",
-            "example": 50
-          },
-          "totalPages": {
-            "type": "number",
-            "description": "Total number of pages",
-            "example": 3
-          }
-        },
-        "required": [
-          "items",
-          "total",
-          "page",
-          "limit",
-          "totalPages"
-        ]
-      },
       "MatchChampionshipRefDto": {
         "type": "object",
         "properties": {
@@ -4668,27 +4660,6 @@
           "stats"
         ]
       },
-      "FilterValuesPlayersResponseDto": {
-        "type": "object",
-        "properties": {
-          "numbers": {
-            "type": "array",
-            "items": {
-              "type": "number"
-            }
-          },
-          "teamNumbers": {
-            "type": "array",
-            "items": {
-              "type": "number"
-            }
-          }
-        },
-        "required": [
-          "numbers",
-          "teamNumbers"
-        ]
-      },
       "PlayerLeagueRefDto": {
         "type": "object",
         "properties": {
@@ -4958,6 +4929,27 @@
           "birthdate",
           "teamId",
           "team"
+        ]
+      },
+      "FilterValuesPlayersResponseDto": {
+        "type": "object",
+        "properties": {
+          "numbers": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "teamNumbers": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "required": [
+          "numbers",
+          "teamNumbers"
         ]
       },
       "HistoryClubRefDto": {
@@ -5247,51 +5239,6 @@
           "player"
         ]
       },
-      "FilterValuesTeamsResponseDto": {
-        "type": "object",
-        "properties": {
-          "numbers": {
-            "description": "Available team numbers",
-            "example": [
-              1,
-              2,
-              3
-            ],
-            "type": "array",
-            "items": {
-              "type": "number"
-            }
-          },
-          "poolLetters": {
-            "description": "Available pool letters",
-            "example": [
-              "A",
-              "B",
-              "C"
-            ],
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "divisions": {
-            "description": "Available divisions",
-            "example": [
-              1,
-              2
-            ],
-            "type": "array",
-            "items": {
-              "type": "number"
-            }
-          }
-        },
-        "required": [
-          "numbers",
-          "poolLetters",
-          "divisions"
-        ]
-      },
       "TeamLeagueRefDto": {
         "type": "object",
         "properties": {
@@ -5448,6 +5395,148 @@
         },
         "required": [
           "players"
+        ]
+      },
+      "TeamResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Unique team identifier",
+            "example": 1
+          },
+          "number": {
+            "type": "number",
+            "description": "Team number",
+            "example": 1
+          },
+          "clubId": {
+            "type": "number",
+            "description": "Club ID this team belongs to",
+            "example": 1
+          },
+          "seasonYear": {
+            "type": "string",
+            "description": "Season this team's entry belongs to",
+            "example": "2025-2026"
+          },
+          "category": {
+            "type": "string",
+            "description": "Age category",
+            "example": "U18",
+            "enum": [
+              "U11",
+              "U13",
+              "U15",
+              "U18",
+              "U21",
+              "Seniors"
+            ]
+          },
+          "gender": {
+            "type": "string",
+            "description": "Gender category",
+            "example": "male",
+            "enum": [
+              "male",
+              "female"
+            ]
+          },
+          "color": {
+            "type": "string",
+            "nullable": true,
+            "description": "Team color",
+            "example": "Blue"
+          },
+          "poolId": {
+            "type": "number",
+            "nullable": true,
+            "description": "Pool ID",
+            "example": 1
+          },
+          "club": {
+            "description": "Club information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TeamClubRefDto"
+              }
+            ]
+          },
+          "pool": {
+            "nullable": true,
+            "description": "Pool information, or null when the team has none",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TeamPoolRefDto"
+              }
+            ]
+          },
+          "_count": {
+            "description": "Relation counts",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TeamCountDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "clubId",
+          "seasonYear",
+          "category",
+          "gender",
+          "color",
+          "poolId",
+          "club",
+          "pool",
+          "_count"
+        ]
+      },
+      "FilterValuesTeamsResponseDto": {
+        "type": "object",
+        "properties": {
+          "numbers": {
+            "description": "Available team numbers",
+            "example": [
+              1,
+              2,
+              3
+            ],
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "poolLetters": {
+            "description": "Available pool letters",
+            "example": [
+              "A",
+              "B",
+              "C"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "divisions": {
+            "description": "Available divisions",
+            "example": [
+              1,
+              2
+            ],
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "required": [
+          "numbers",
+          "poolLetters",
+          "divisions"
         ]
       },
       "RecentMatchChampionshipRefDto": {

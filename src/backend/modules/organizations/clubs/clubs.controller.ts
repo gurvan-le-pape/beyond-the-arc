@@ -1,4 +1,5 @@
 // src/backend/modules/organizations/clubs/clubs.controller.ts
+import { ApiPaginatedResponse } from "@common/decorators";
 import { CACHE_TTL, Category, PaginatedResponseDto } from "@common/index";
 import { CacheInterceptor } from "@common/interceptors";
 import {
@@ -325,38 +326,10 @@ export class ClubsController {
     description: "Search by club name (case-insensitive)",
     example: "Monaco",
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "Paginated list of clubs matching the filters",
-    schema: {
-      example: {
-        data: {
-          items: [
-            {
-              id: 1,
-              name: "AS Monaco Basket",
-              city: "Monaco",
-              zipCode: "98000",
-              latitude: 43.7384,
-              longitude: 7.4246,
-              email: "contact@club.com",
-              phone: "0123456789",
-              website: "https://club.com",
-              committeeId: 1,
-              leagueId: 1,
-            },
-          ],
-          total: 1,
-          page: 1,
-          limit: 50,
-          totalPages: 1,
-        },
-        timestamp: "2024-02-05T10:00:00Z",
-        path: "/clubs",
-        statusCode: 200,
-      },
-    },
-  })
+  @ApiPaginatedResponse(
+    ClubBasicResponseDto,
+    "Paginated list of clubs matching the filters",
+  )
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid query parameters",
