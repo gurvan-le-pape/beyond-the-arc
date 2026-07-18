@@ -1,7 +1,7 @@
 // src/backend/modules/organizations/committees/dto/committees.query.dto.ts
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsNumber, IsOptional } from "class-validator";
+import { IsInt, IsOptional } from "class-validator";
 
 /**
  * Query parameters for filtering committees.
@@ -15,6 +15,6 @@ export class GetCommitteesQueryDto {
   })
   @IsOptional()
   @Type(() => Number)
-  @IsNumber()
+  @IsInt()
   leagueId?: number;
 }

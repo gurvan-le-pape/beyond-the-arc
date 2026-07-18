@@ -5,7 +5,7 @@ import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import {
   IsEnum,
-  IsNumber,
+  IsInt,
   IsOptional,
   IsString,
   Matches,
@@ -16,14 +16,12 @@ import {
  */
 export class GetMatchesQueryDto extends PaginationQueryDto {
   @ApiPropertyOptional({
-    description: "Competition level (regional or departmental)",
-    enum: [CompetitionLevel.REGIONAL, CompetitionLevel.DEPARTMENTAL],
+    description: "Competition level filter",
+    enum: CompetitionLevel,
     example: CompetitionLevel.REGIONAL,
   })
   @IsOptional()
-  @IsEnum(CompetitionLevel, {
-    message: `level must be either "${CompetitionLevel.REGIONAL}" or "${CompetitionLevel.DEPARTMENTAL}"`,
-  })
+  @IsEnum(CompetitionLevel)
   level?: CompetitionLevel;
 
   @ApiPropertyOptional({
@@ -33,7 +31,7 @@ export class GetMatchesQueryDto extends PaginationQueryDto {
   })
   @IsOptional()
   @Type(() => Number)
-  @IsNumber()
+  @IsInt()
   division?: number;
 
   @ApiPropertyOptional({
@@ -43,7 +41,7 @@ export class GetMatchesQueryDto extends PaginationQueryDto {
   })
   @IsOptional()
   @Type(() => Number)
-  @IsNumber()
+  @IsInt()
   committeeId?: number;
 
   @ApiPropertyOptional({
@@ -53,25 +51,25 @@ export class GetMatchesQueryDto extends PaginationQueryDto {
   })
   @IsOptional()
   @Type(() => Number)
-  @IsNumber()
+  @IsInt()
   leagueId?: number;
 
   @ApiPropertyOptional({
     description: "Age category filter",
     example: "U18",
-    type: String,
+    enum: Category,
   })
   @IsOptional()
-  @IsString({ message: "category must be a string" })
+  @IsEnum(Category)
   category?: Category;
 
   @ApiPropertyOptional({
     description: "Gender filter",
-    example: "M",
-    type: String,
+    example: Gender.MALE,
+    enum: Gender,
   })
   @IsOptional()
-  @IsString({ message: "gender must be a string" })
+  @IsEnum(Gender)
   gender?: Gender;
 
   @ApiPropertyOptional({
@@ -81,7 +79,7 @@ export class GetMatchesQueryDto extends PaginationQueryDto {
   })
   @IsOptional()
   @Type(() => Number)
-  @IsNumber()
+  @IsInt()
   poolId?: number;
 
   @ApiPropertyOptional({
@@ -91,7 +89,7 @@ export class GetMatchesQueryDto extends PaginationQueryDto {
   })
   @IsOptional()
   @Type(() => Number)
-  @IsNumber()
+  @IsInt()
   championshipId?: number;
 
   @ApiPropertyOptional({
@@ -101,7 +99,7 @@ export class GetMatchesQueryDto extends PaginationQueryDto {
   })
   @IsOptional()
   @Type(() => Number)
-  @IsNumber()
+  @IsInt()
   matchday?: number;
 
   @ApiPropertyOptional({

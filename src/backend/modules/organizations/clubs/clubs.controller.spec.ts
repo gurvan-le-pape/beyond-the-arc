@@ -451,7 +451,7 @@ describe("ClubsController", () => {
 
       expect(errors.length).toBeGreaterThan(0);
       expect(errors[0].property).toBe("committeeId");
-      expect(errors[0].constraints).toHaveProperty("isNumber");
+      expect(errors[0].constraints).toHaveProperty("isInt");
     });
 
     it("should fail for non-numeric leagueId", async () => {
@@ -463,7 +463,7 @@ describe("ClubsController", () => {
 
       expect(errors.length).toBeGreaterThan(0);
       expect(errors[0].property).toBe("leagueId");
-      expect(errors[0].constraints).toHaveProperty("isNumber");
+      expect(errors[0].constraints).toHaveProperty("isInt");
     });
 
     it("should fail for invalid category", async () => {
@@ -519,7 +519,7 @@ describe("ClubsController", () => {
 
       expect(errors.length).toBeGreaterThan(0);
       expect(errors[0].property).toBe("leagueId");
-      expect(errors[0].constraints).toHaveProperty("isNumber");
+      expect(errors[0].constraints).toHaveProperty("isInt");
     });
 
     it("should accept numeric strings", async () => {

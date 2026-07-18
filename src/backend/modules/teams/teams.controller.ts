@@ -15,7 +15,6 @@ import {
 import {
   ApiOperation,
   ApiParam,
-  ApiQuery,
   ApiResponse,
   ApiTags,
 } from "@nestjs/swagger";
@@ -42,20 +41,6 @@ export class TeamsController {
     description:
       "Retrieves a paginated list of teams with optional filtering. Results are cached for 5 minutes.",
   })
-  @ApiQuery({ name: "clubId", required: false, type: Number })
-  @ApiQuery({
-    name: "level",
-    required: false,
-    enum: ["regional", "departmental"],
-  })
-  @ApiQuery({ name: "division", required: false, type: String })
-  @ApiQuery({ name: "committeeId", required: false, type: Number })
-  @ApiQuery({ name: "leagueId", required: false, type: Number })
-  @ApiQuery({ name: "number", required: false, type: Number })
-  @ApiQuery({ name: "category", required: false, type: String })
-  @ApiQuery({ name: "gender", required: false, type: String })
-  @ApiQuery({ name: "search", required: false, type: String })
-  @ApiQuery({ name: "poolLetter", required: false, type: String })
   @ApiResponse({
     status: HttpStatus.OK,
     description: "List of teams successfully retrieved",

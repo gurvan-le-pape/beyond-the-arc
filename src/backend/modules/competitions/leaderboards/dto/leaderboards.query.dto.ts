@@ -1,7 +1,7 @@
 // src/backend/modules/competitions/leaderboards/dto/leaderboards.query.dto.ts
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsNotEmpty, IsNumber } from "class-validator";
+import { IsInt, IsNotEmpty } from "class-validator";
 
 /**
  * Query parameters for filtering leaderboards by pool ID.
@@ -14,6 +14,6 @@ export class GetLeaderboardsQueryDto {
   })
   @IsNotEmpty({ message: "poolId is required" })
   @Type(() => Number)
-  @IsNumber()
+  @IsInt()
   poolId!: number;
 }

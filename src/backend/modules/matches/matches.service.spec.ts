@@ -119,7 +119,7 @@ describe("MatchesService", () => {
   // Reusable mock shape matching MATCH_EVENT_SELECT
   const mockMatchEventResult = {
     id: 1,
-    eventType: "shot_made",
+    eventType: "made_layup",
     timestamp: new Date("2024-02-05T19:02:00Z"),
     description: "3-pointer",
     players: [
@@ -185,7 +185,7 @@ describe("MatchesService", () => {
     matchEvents: [
       {
         id: 1,
-        eventType: "shot_made",
+        eventType: "made_layup",
         timestamp: new Date("2024-02-05T19:02:00Z"),
         description: "3-pointer",
         players: [
@@ -403,7 +403,7 @@ describe("MatchesService", () => {
 
       expect(result).toHaveLength(1);
       expect(result[0].id).toBe(1);
-      expect(result[0].eventType).toBe("shot_made");
+      expect(result[0].eventType).toBe("made_layup");
       expect(result[0].shotLocation?.x).toBe(5.5);
       expect(result[0].shotLocation?.y).toBe(3.2);
       expect(result[0].players[0].role).toBe("shooter");

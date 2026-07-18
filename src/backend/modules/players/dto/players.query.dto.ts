@@ -3,21 +3,19 @@ import { CompetitionLevel } from "@common/constants";
 import { Category, Gender, PaginationQueryDto } from "@common/index";
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsEnum, IsInt, IsOptional, IsString } from "class-validator";
 
 /**
  * Query parameters for filtering and paginating players.
  */
 export class GetPlayersQueryDto extends PaginationQueryDto {
   @ApiPropertyOptional({
-    description: "Competition level (regional or departmental)",
-    enum: [CompetitionLevel.REGIONAL, CompetitionLevel.DEPARTMENTAL],
+    description: "Competition level filter",
+    enum: CompetitionLevel,
     example: CompetitionLevel.REGIONAL,
   })
   @IsOptional()
-  @IsEnum(CompetitionLevel, {
-    message: `level must be either "${CompetitionLevel.REGIONAL}" or "${CompetitionLevel.DEPARTMENTAL}"`,
-  })
+  @IsEnum(CompetitionLevel)
   level?: CompetitionLevel;
 
   @ApiPropertyOptional({
@@ -27,7 +25,7 @@ export class GetPlayersQueryDto extends PaginationQueryDto {
   })
   @IsOptional()
   @Type(() => Number)
-  @IsNumber()
+  @IsInt()
   clubId?: number;
 
   @ApiPropertyOptional({
@@ -37,7 +35,7 @@ export class GetPlayersQueryDto extends PaginationQueryDto {
   })
   @IsOptional()
   @Type(() => Number)
-  @IsNumber()
+  @IsInt()
   teamId?: number;
 
   @ApiPropertyOptional({
@@ -47,7 +45,7 @@ export class GetPlayersQueryDto extends PaginationQueryDto {
   })
   @IsOptional()
   @Type(() => Number)
-  @IsNumber()
+  @IsInt()
   teamNumber?: number;
 
   @ApiPropertyOptional({
@@ -57,7 +55,7 @@ export class GetPlayersQueryDto extends PaginationQueryDto {
   })
   @IsOptional()
   @Type(() => Number)
-  @IsNumber()
+  @IsInt()
   number?: number;
 
   @ApiPropertyOptional({
@@ -67,7 +65,7 @@ export class GetPlayersQueryDto extends PaginationQueryDto {
   })
   @IsOptional()
   @Type(() => Number)
-  @IsNumber()
+  @IsInt()
   committeeId?: number;
 
   @ApiPropertyOptional({
@@ -77,7 +75,7 @@ export class GetPlayersQueryDto extends PaginationQueryDto {
   })
   @IsOptional()
   @Type(() => Number)
-  @IsNumber()
+  @IsInt()
   leagueId?: number;
 
   @ApiPropertyOptional({
