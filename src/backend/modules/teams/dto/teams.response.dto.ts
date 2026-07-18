@@ -1,7 +1,122 @@
 // src/backend/modules/teams/dto/teams.response.dto.ts
-import { Category, CompetitionLevel, Gender, PlayerSummaryDto } from "@common/index";
-import { PlayerMatchStatsDto } from "@modules/players/dto";
+import {
+  Category,
+  CompetitionLevel,
+  Gender,
+  PlayerSummaryDto,
+} from "@common/index";
+import {
+  HistoryTeamRefDto,
+  PlayerMatchStatsDto,
+} from "@modules/players/dto";
 import { ApiProperty } from "@nestjs/swagger";
+
+/**
+ * League reference embedded in a team's club committee.
+ */
+export class TeamLeagueRefDto {
+  @ApiProperty({ description: "League ID", example: 1, type: Number })
+  id!: number;
+
+  @ApiProperty({
+    description: "League name",
+    example: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
+    type: String,
+  })
+  name!: string;
+}
+
+/**
+ * Committee reference embedded in a team's club.
+ */
+export class TeamCommitteeRefDto {
+  @ApiProperty({ description: "Committee ID", example: 1, type: Number })
+  id!: number;
+
+  @ApiProperty({
+    description: "Committee name",
+    example: "Comité Départemental de l'Ain",
+    type: String,
+  })
+  name!: string;
+
+  @ApiProperty({ description: "League information", type: TeamLeagueRefDto })
+  league!: TeamLeagueRefDto;
+}
+
+/**
+ * Club reference embedded in a team response.
+ */
+export class TeamClubRefDto {
+  @ApiProperty({ description: "Club ID", example: 1, type: Number })
+  id!: number;
+
+  @ApiProperty({
+    description: "Club name",
+    example: "AS Monaco Basket",
+    type: String,
+  })
+  name!: string;
+
+  @ApiProperty({
+    description: "Committee information",
+    type: TeamCommitteeRefDto,
+  })
+  committee!: TeamCommitteeRefDto;
+}
+
+/**
+ * Championship reference embedded in a team's pool.
+ */
+export class TeamChampionshipRefDto {
+  @ApiProperty({ description: "Championship ID", example: 1, type: Number })
+  id!: number;
+
+  @ApiProperty({
+    description: "Championship name",
+    example: "Championship Régional U18 male",
+    type: String,
+  })
+  name!: string;
+
+  @ApiProperty({
+    description: "Competition level",
+    example: CompetitionLevel.REGIONAL,
+    enum: CompetitionLevel,
+  })
+  level!: CompetitionLevel;
+
+  @ApiProperty({ description: "Division number", example: 1, type: Number })
+  division!: number;
+}
+
+/**
+ * Pool reference embedded in a team response.
+ */
+export class TeamPoolRefDto {
+  @ApiProperty({ description: "Pool ID", example: 1, type: Number })
+  id!: number;
+
+  @ApiProperty({ description: "Pool name", example: "Poule A", type: String })
+  name!: string;
+
+  @ApiProperty({ description: "Pool letter", example: "A", type: String })
+  letter!: string;
+
+  @ApiProperty({
+    description: "Championship the pool belongs to",
+    type: TeamChampionshipRefDto,
+  })
+  championship!: TeamChampionshipRefDto;
+}
+
+/**
+ * Relation counts embedded in a team response.
+ */
+export class TeamCountDto {
+  @ApiProperty({ description: "Player count", example: 12, type: Number })
+  players!: number;
+}
 
 /**
  * Response DTO for a team entity.
@@ -38,14 +153,14 @@ export class TeamResponseDto {
   @ApiProperty({
     description: "Age category",
     example: "U18",
-    type: String,
+    enum: Category,
   })
   category!: Category;
 
   @ApiProperty({
     description: "Gender category",
-    example: "M",
-    type: String,
+    example: Gender.MALE,
+    enum: Gender,
   })
   gender!: Gender;
 
@@ -67,45 +182,22 @@ export class TeamResponseDto {
 
   @ApiProperty({
     description: "Club information",
-    type: Object,
+    type: TeamClubRefDto,
   })
-  club!: {
-    id: number;
-    name: string;
-    committee: {
-      id: number;
-      name: string;
-      league: {
-        id: number;
-        name: string;
-      };
-    };
-  };
+  club!: TeamClubRefDto;
 
   @ApiProperty({
-    description: "Pool information",
-    type: Object,
+    description: "Pool information, or null when the team has none",
+    type: TeamPoolRefDto,
     nullable: true,
   })
-  pool!: {
-    id: number;
-    name: string;
-    letter: string;
-    championship: {
-      id: number;
-      name: string;
-      level: CompetitionLevel;
-      division: number;
-    };
-  } | null;
+  pool!: TeamPoolRefDto | null;
 
   @ApiProperty({
-    description: "Player count",
-    type: Object,
+    description: "Relation counts",
+    type: TeamCountDto,
   })
-  _count!: {
-    players: number;
-  };
+  _count!: TeamCountDto;
 }
 
 /**
@@ -172,29 +264,15 @@ export class TeamMatchHistoryDto {
 
   @ApiProperty({
     description: "Home team information",
-    type: Object,
+    type: HistoryTeamRefDto,
   })
-  homeTeam!: {
-    id: number;
-    number: number;
-    club: {
-      id: number;
-      name: string;
-    };
-  };
+  homeTeam!: HistoryTeamRefDto;
 
   @ApiProperty({
     description: "Away team information",
-    type: Object,
+    type: HistoryTeamRefDto,
   })
-  awayTeam!: {
-    id: number;
-    number: number;
-    club: {
-      id: number;
-      name: string;
-    };
-  };
+  awayTeam!: HistoryTeamRefDto;
 
   @ApiProperty({
     description: "Home team score",
@@ -220,45 +298,109 @@ export class TeamMatchHistoryDto {
 }
 
 /**
+ * Championship reference embedded in a recent match's pool.
+ */
+export class RecentMatchChampionshipRefDto {
+  @ApiProperty({ description: "Championship ID", example: 1, type: Number })
+  id!: number;
+
+  @ApiProperty({
+    description: "Championship name",
+    example: "Championship Régional U18 male",
+    type: String,
+  })
+  name!: string;
+}
+
+/**
+ * Pool reference embedded in a recent match.
+ */
+export class RecentMatchPoolRefDto {
+  @ApiProperty({ description: "Pool ID", example: 1, type: Number })
+  id!: number;
+
+  @ApiProperty({ description: "Pool name", example: "Poule A", type: String })
+  name!: string;
+
+  @ApiProperty({
+    description: "Championship the pool belongs to",
+    type: RecentMatchChampionshipRefDto,
+  })
+  championship!: RecentMatchChampionshipRefDto;
+}
+
+/**
+ * Common fields of a recent match entry on the team detail response.
+ */
+export class RecentMatchDto {
+  @ApiProperty({ description: "Match ID", example: 1, type: Number })
+  id!: number;
+
+  @ApiProperty({
+    description: "Match date",
+    example: "2024-02-05T19:00:00Z",
+    type: String,
+  })
+  date!: Date;
+
+  @ApiProperty({
+    description: "Home team score",
+    example: 85,
+    type: Number,
+    nullable: true,
+  })
+  homeTeamScore!: number | null;
+
+  @ApiProperty({
+    description: "Away team score",
+    example: 72,
+    type: Number,
+    nullable: true,
+  })
+  awayTeamScore!: number | null;
+
+  @ApiProperty({ description: "Pool information", type: RecentMatchPoolRefDto })
+  pool!: RecentMatchPoolRefDto;
+}
+
+/**
+ * Recent home match: the opponent is the away team.
+ */
+export class RecentHomeMatchDto extends RecentMatchDto {
+  @ApiProperty({
+    description: "Away team information",
+    type: HistoryTeamRefDto,
+  })
+  awayTeam!: HistoryTeamRefDto;
+}
+
+/**
+ * Recent away match: the opponent is the home team.
+ */
+export class RecentAwayMatchDto extends RecentMatchDto {
+  @ApiProperty({
+    description: "Home team information",
+    type: HistoryTeamRefDto,
+  })
+  homeTeam!: HistoryTeamRefDto;
+}
+
+/**
  * Detailed team response with players and recent matches.
  */
 export class TeamDetailResponseDto extends TeamResponseDto {
   @ApiProperty({ description: "Team players", type: [PlayerSummaryDto] })
   players!: PlayerSummaryDto[];
 
-  @ApiProperty({ description: "Recent home matches (up to 5)", type: Array })
-  homeMatches!: Array<{
-    id: number;
-    date: Date;
-    homeTeamScore: number | null;
-    awayTeamScore: number | null;
-    awayTeam: {
-      id: number;
-      number: number;
-      club: { id: number; name: string };
-    };
-    pool: {
-      id: number;
-      name: string;
-      championship: { id: number; name: string };
-    };
-  }>;
+  @ApiProperty({
+    description: "Recent home matches (up to 5)",
+    type: [RecentHomeMatchDto],
+  })
+  homeMatches!: RecentHomeMatchDto[];
 
-  @ApiProperty({ description: "Recent away matches (up to 5)", type: Array })
-  awayMatches!: Array<{
-    id: number;
-    date: Date;
-    homeTeamScore: number | null;
-    awayTeamScore: number | null;
-    homeTeam: {
-      id: number;
-      number: number;
-      club: { id: number; name: string };
-    };
-    pool: {
-      id: number;
-      name: string;
-      championship: { id: number; name: string };
-    };
-  }>;
+  @ApiProperty({
+    description: "Recent away matches (up to 5)",
+    type: [RecentAwayMatchDto],
+  })
+  awayMatches!: RecentAwayMatchDto[];
 }
