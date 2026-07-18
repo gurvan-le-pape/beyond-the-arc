@@ -6,3 +6,4 @@
 export * from "./pagination.util";
 export * from "./player-match-stats.mapper";
 export * from "./prisma-selects";
+export * from "./ranking.util";

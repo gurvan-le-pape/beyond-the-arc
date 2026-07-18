@@ -1,7 +1,11 @@
 // src/backend/modules/organizations/clubs/clubs.service.ts
 import { Category, CompetitionLevel, Gender } from "@common/constants";
 import { PaginatedResponseDto } from "@common/index";
-import { PRESIDENT_SELECT, resolvePagination } from "@common/utils";
+import {
+  buildRankCountWhere,
+  PRESIDENT_SELECT,
+  resolvePagination,
+} from "@common/utils";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 
@@ -331,16 +335,7 @@ export class ClubsService {
 
         const [rank, poolSize] = await Promise.all([
           this.prisma.client.leaderboards.count({
-            where: {
-              poolId: lb.poolId,
-              OR: [
-                { points: { gt: lb.points } },
-                {
-                  points: lb.points,
-                  pointDifference: { gt: lb.pointDifference },
-                },
-              ],
-            },
+            where: buildRankCountWhere(lb),
           }),
           this.prisma.client.leaderboards.count({
             where: { poolId: lb.poolId },

@@ -1,4 +1,5 @@
 // src/backend/modules/competitions/leaderboards/leaderboards.service.ts
+import { assignRankByCount, buildRankCountWhere } from "@common/utils";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 
@@ -71,8 +72,10 @@ export class LeaderboardsService {
       );
     }
 
-    // Rank derived from sort order
-    return leaderboards.map((entry, index) => this.mapToDto(entry, index + 1));
+    // Competition ranking: ties share a rank (same formula as by-id below)
+    return assignRankByCount(leaderboards).map((entry) =>
+      this.mapToDto(entry, entry.rank),
+    );
   }
 
   /**
@@ -99,16 +102,7 @@ export class LeaderboardsService {
     // Compute rank via count query
     const rank =
       (await this.prisma.client.leaderboards.count({
-        where: {
-          poolId: leaderboard.poolId,
-          OR: [
-            { points: { gt: leaderboard.points } },
-            {
-              points: leaderboard.points,
-              pointDifference: { gt: leaderboard.pointDifference },
-            },
-          ],
-        },
+        where: buildRankCountWhere(leaderboard),
       })) + 1;
 
     return this.mapToDto(leaderboard, rank);

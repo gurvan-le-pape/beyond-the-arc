@@ -94,6 +94,18 @@ describe("LeaderboardsService", () => {
       });
     });
 
+    it("should give tied entries the same rank and skip the next rank", async () => {
+      mockPrismaService.client.leaderboards.findMany.mockResolvedValue([
+        mockPrismaLeaderboard,
+        { ...mockPrismaLeaderboard, id: 2, teamId: 6 },
+        { ...mockPrismaLeaderboard, id: 3, teamId: 7, points: 8 },
+      ]);
+
+      const result = await service.findLeaderboardsByPoolId(1);
+
+      expect(result.map((entry) => entry.rank)).toEqual([1, 1, 3]);
+    });
+
     it("should throw NotFoundException when no leaderboards found", async () => {
       const poolId = 999;
       mockPrismaService.client.leaderboards.findMany.mockResolvedValue([]);
