@@ -76,12 +76,6 @@ export class CommitteesService {
       orderBy: [{ name: "asc" }],
     });
 
-    if (committees.length === 0) {
-      throw new NotFoundException(
-        `No committees found for league ID ${leagueId}`,
-      );
-    }
-
     return committees.map((c) => this.mapToDto(c));
   }
 

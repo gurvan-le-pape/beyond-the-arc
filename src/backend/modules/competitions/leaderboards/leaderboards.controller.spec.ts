@@ -83,14 +83,12 @@ describe("LeaderboardsController", () => {
       expect(service.findLeaderboardsByPoolId).toHaveBeenCalledTimes(1);
     });
 
-    it("should throw NotFoundException when no leaderboards found", async () => {
-      mockLeaderboardsService.findLeaderboardsByPoolId.mockRejectedValue(
-        new NotFoundException("No leaderboard entries found for pool ID 999"),
-      );
+    it("should return an empty array when no leaderboards found", async () => {
+      mockLeaderboardsService.findLeaderboardsByPoolId.mockResolvedValue([]);
 
       await expect(
         controller.getLeaderboardsByPoolId({ poolId: 999 }),
-      ).rejects.toThrow(NotFoundException);
+      ).resolves.toEqual([]);
       expect(service.findLeaderboardsByPoolId).toHaveBeenCalledWith(999);
     });
   });

@@ -26,7 +26,7 @@ export const poolsService = {
    *
    * @param championshipId - The championship ID
    * @returns Array of pools in the championship
-   * @throws {AxiosError} 400 if validation fails, 404 if none found
+   * @throws {AxiosError} 400 if validation fails
    *
    * @example
    * const pools = await poolsService.getByChampionshipId(5);

@@ -53,7 +53,7 @@ export const serverLeaguesService = {
    *
    * @param ids - Array of league IDs
    * @returns Array of leagues
-   * @throws {AxiosError} 400 if validation fails, 404 if none found
+   * @throws {AxiosError} 400 if validation fails
    *
    * @example
    * const leagues = await serverLeaguesService.getByIds(["1", "2", "3"]);

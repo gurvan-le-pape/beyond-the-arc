@@ -160,15 +160,10 @@ describe("CommitteesService", () => {
       );
     });
 
-    it("should throw NotFoundException when no committees found", async () => {
+    it("should return an empty array when no committees found", async () => {
       mockPrismaService.client.committees.findMany.mockResolvedValue([]);
 
-      await expect(service.findCommitteesByLeague(999)).rejects.toThrow(
-        NotFoundException,
-      );
-      await expect(service.findCommitteesByLeague(999)).rejects.toThrow(
-        "No committees found for league ID 999",
-      );
+      await expect(service.findCommitteesByLeague(999)).resolves.toEqual([]);
     });
   });
 

@@ -135,18 +135,14 @@ describe("CommitteesController", () => {
       expect(service.findCommitteesByLeague).toHaveBeenCalledWith(42);
     });
 
-    it("should throw NotFoundException when no committees found for league", async () => {
+    it("should return an empty array when no committees found for league", async () => {
       // Arrange
-      mockCommitteesService.findCommitteesByLeague.mockRejectedValue(
-        new NotFoundException("No committees found for league ID 999"),
-      );
+      mockCommitteesService.findCommitteesByLeague.mockResolvedValue([]);
 
       const query = { leagueId: 999 };
 
       // Act & Assert
-      await expect(controller.getCommittees(query)).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(controller.getCommittees(query)).resolves.toEqual([]);
     });
 
     it("should propagate service errors", async () => {

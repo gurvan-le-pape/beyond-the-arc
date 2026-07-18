@@ -130,19 +130,6 @@ export class LeaderboardsController {
       },
     },
   })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: "No leaderboard entries found for given pool",
-    schema: {
-      example: {
-        statusCode: 404,
-        message: "No leaderboard entries found for pool ID 999",
-        error: "NotFoundException",
-        path: "/leaderboards?poolId=999",
-        timestamp: "2024-02-05T10:00:00Z",
-      },
-    },
-  })
   async getLeaderboardsByPoolId(
     @Query() query: GetLeaderboardsQueryDto,
   ): Promise<LeaderboardResponseDto[]> {

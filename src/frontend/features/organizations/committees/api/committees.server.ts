@@ -29,7 +29,7 @@ export const serverCommitteesService = {
    *
    * @param filters - Optional filter criteria
    * @returns Array of committees
-   * @throws {AxiosError} 400 if validation fails, 404 if none found
+   * @throws {AxiosError} 400 if validation fails
    *
    * @example
    * const committees = await serverCommitteesService.getAll({ leagueId: 1 });
@@ -59,7 +59,7 @@ export const serverCommitteesService = {
    *
    * @param ids - Array of committee IDs
    * @returns Array of committees
-   * @throws {AxiosError} 400 if validation fails, 404 if none found
+   * @throws {AxiosError} 400 if validation fails
    *
    * @example
    * const committees = await serverCommitteesService.getByIds([1, 2, 3]);
