@@ -85,7 +85,7 @@ export const matchesService = {
    *
    * @param championshipId - The championship ID
    * @returns Array of all matches in the championship
-   * @throws {AxiosError} 400 if validation fails, 404 if none found
+   * @throws {AxiosError} 400 if validation fails
    *
    * @example
    * const matches = await matchesService.getByChampionshipId(5);

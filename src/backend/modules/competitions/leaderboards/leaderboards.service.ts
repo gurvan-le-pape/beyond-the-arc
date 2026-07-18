@@ -66,12 +66,6 @@ export class LeaderboardsService {
       orderBy: [{ points: "desc" }, { pointDifference: "desc" }],
     });
 
-    if (leaderboards.length === 0) {
-      throw new NotFoundException(
-        `No leaderboard entries found for pool ID ${poolId}`,
-      );
-    }
-
     // Competition ranking: ties share a rank (same formula as by-id below)
     return assignRankByCount(leaderboards).map((entry) =>
       this.mapToDto(entry, entry.rank),

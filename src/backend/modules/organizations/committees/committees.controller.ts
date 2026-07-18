@@ -133,19 +133,6 @@ export class CommitteesController {
       },
     },
   })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: "No committees found for given league",
-    schema: {
-      example: {
-        statusCode: 404,
-        message: "No committees found for league ID 999",
-        error: "NotFoundException",
-        path: "/committees?leagueId=999",
-        timestamp: "2024-02-05T10:00:00Z",
-      },
-    },
-  })
   async getCommittees(
     @Query() query: GetCommitteesQueryDto,
   ): Promise<CommitteeResponseDto[]> {

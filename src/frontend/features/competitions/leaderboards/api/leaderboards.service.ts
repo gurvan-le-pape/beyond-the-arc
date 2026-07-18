@@ -28,7 +28,7 @@ export const leaderboardsService = {
    *
    * @param filters - Optional filter criteria (poolId, championshipId, etc.)
    * @returns Leaderboard data with team rankings
-   * @throws {AxiosError} 400 if validation fails, 404 if none found
+   * @throws {AxiosError} 400 if validation fails
    *
    * @example
    * // Get leaderboard for a specific pool

@@ -67,7 +67,7 @@ export const serverMatchesService = {
    *
    * @param poolId - The pool ID
    * @returns Array of matches in the pool
-   * @throws {AxiosError} 400 if validation fails, 404 if none found
+   * @throws {AxiosError} 400 if validation fails
    *
    * @example
    * const matches = await serverMatchesService.getByPoolId(10);
@@ -82,7 +82,7 @@ export const serverMatchesService = {
    *
    * @param championshipId - The championship ID
    * @returns Array of matches in the championship
-   * @throws {AxiosError} 400 if validation fails, 404 if none found
+   * @throws {AxiosError} 400 if validation fails
    *
    * @example
    * const matches = await serverMatchesService.getByChampionshipId(5);

@@ -31,7 +31,7 @@ export const clubsService = {
    *
    * @param filters - Optional filter criteria
    * @returns Array of clubs
-   * @throws {AxiosError} 400 if validation fails, 404 if none found
+   * @throws {AxiosError} 400 if validation fails
    *
    * @example
    * const clubs = await clubsService.getAll({ leagueId: 1 });

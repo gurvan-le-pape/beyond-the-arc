@@ -106,12 +106,12 @@ describe("LeaderboardsService", () => {
       expect(result.map((entry) => entry.rank)).toEqual([1, 1, 3]);
     });
 
-    it("should throw NotFoundException when no leaderboards found", async () => {
+    it("should return an empty array when no leaderboards found", async () => {
       const poolId = 999;
       mockPrismaService.client.leaderboards.findMany.mockResolvedValue([]);
 
-      await expect(service.findLeaderboardsByPoolId(poolId)).rejects.toThrow(
-        new NotFoundException("No leaderboard entries found for pool ID 999"),
+      await expect(service.findLeaderboardsByPoolId(poolId)).resolves.toEqual(
+        [],
       );
     });
 
