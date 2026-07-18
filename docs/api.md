@@ -25,11 +25,17 @@ Interactive documentation is available at `/api/docs` (Swagger UI), served by `@
 
 ## Request conventions
 
-**Validation** is handled globally by NestJS's `ValidationPipe` with `transform: true`, `whitelist: true`, and `forbidNonWhitelisted: true`. Unknown query parameters are rejected with a `400`. Path parameters that expect integers are parsed with `ParseIntPipe` — passing a non-numeric value returns a `400` immediately.
+**Validation** is handled globally by NestJS's `ValidationPipe` with `transform: true`, `whitelist: true`, and `forbidNonWhitelisted: true`. Unknown query parameters are rejected with a `400`. Path parameters that expect integers are parsed with `ParseIntPipe` — passing a non-numeric value returns a `400` immediately. Every `@Query()` argument binds a validated DTO class (never a primitive with an inline pipe), so whitelist protection applies uniformly; integer query params use `@Type(Number) @IsInt`, and enum-valued params (`category`, `gender`, `level`, …) use `@IsEnum` against the constant lists in `common/constants` — invalid values are rejected with `400`, never silently ignored or clamped.
 
 **CORS** is enabled for `http://localhost:3000` (development) and the `FRONTEND_URL` environment variable (production). Credentials are allowed.
 
-**No pagination default** exists at the framework level — each endpoint that supports pagination defines its own defaults (typically `page: 1`, `limit: 50`).
+**Pagination** is uniform across all paginated endpoints: query DTOs extend the shared `PaginationQueryDto` (`page ≥ 1`, `1 ≤ limit ≤ 100`, both optional), and services apply defaults through `resolvePagination()` (`page: 1`, `limit: 50`). Out-of-bounds values return `400` — there is no silent clamping. Paginated payloads always have the shape `{ items, total, page, limit, totalPages }`.
+
+**Name search** uses the `search` query parameter everywhere it exists (clubs, teams, players, matches) — case-insensitive partial match.
+
+**404 policy**: only by-id lookups return `404`. List endpoints return `200` with an empty array (or an empty `items` page) when nothing matches — a filter that matches nothing is not an error.
+
+These conventions are mechanically enforced by `src/backend/app.conventions.spec.ts` (query DTO rules) and `src/backend/app.swagger.spec.ts` (schema fidelity) — both run in CI.
 
 ---
 
@@ -119,6 +125,42 @@ Response caching is applied at the route level using a custom `CacheInterceptor`
 | `DYNAMIC_DATA`  | 60 seconds | Platform stats — match counts change on weekends         |
 
 Endpoints that return a single resource by ID (e.g. `GET /clubs/:id`, `GET /matches/:matchId`) are generally not cached, as they are accessed less frequently and may reflect recent changes.
+
+---
+
+## API contract & type generation
+
+The OpenAPI document is load-bearing, not just documentation:
+
+- `docs/openapi.json` is the committed snapshot, produced by `src/backend/scripts/generate-openapi.ts` from the nest build (so `@nestjs/swagger` CLI-plugin metadata is included). Regenerate with:
+
+  ```bash
+  cd src/backend && npm run build && node dist/scripts/generate-openapi.js
+  ```
+
+- The frontend generates `shared/types/api.generated.ts` from that snapshot via `openapi-typescript` (`npm run typegen` in `src/frontend`). Feature types alias the generated schemas — see `features/organizations/committees/types/Committees.ts` for the pattern:
+
+  ```ts
+  export type Committee = components["schemas"]["CommitteeResponseDto"];
+  ```
+
+- The `openapi-drift` CI job regenerates both files and fails when either differs from what is committed, and the deploy depends on it — a backend DTO change cannot reach production without its regenerated contract.
+
+Response DTO rules that keep the generated types truthful:
+
+- No `@ApiProperty({ type: Object })` — every nested shape is a real DTO class (enforced by `app.swagger.spec.ts`).
+- Nullable-but-always-present fields use `@ApiProperty({ nullable: true })`, **not** `@ApiPropertyOptional` — optional means "key may be absent", which the API never does for response fields.
+- Enum-valued fields document `enum:` from `common/constants` instead of bare `String`.
+
+### New-endpoint checklist
+
+1. Query params: one DTO class in `dto/`, extending `PaginationQueryDto` if paginated; `@IsInt` for integers, `@IsEnum` for enum values, `search` for name search. No inline pipes on `@Query()`.
+2. Response: real DTO classes for every nested shape; enums and nullability per the rules above.
+3. List endpoints return `[]` when empty; only by-id endpoints throw `NotFoundException`.
+4. Barrel imports (`@common/dto`, `@modules/<feature>/dto`) and the file-path header comment — both lint-enforced.
+5. Pick the cache TTL tier that matches the data (see Caching above).
+6. Regenerate `docs/openapi.json` and run `npm run typegen` in `src/frontend`; commit both (CI fails otherwise).
+7. `app.conventions.spec.ts` and `app.swagger.spec.ts` pick the new route up automatically — if they fail, the message names the offending property.
 
 ---
 
