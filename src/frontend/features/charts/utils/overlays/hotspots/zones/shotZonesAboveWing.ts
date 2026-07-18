@@ -1,4 +1,4 @@
-// src/frontend/features/charts/utils/charts/overlays/hotspots/zones/shotZonesAboveWing.ts
+// src/frontend/features/charts/utils/overlays/hotspots/zones/shotZonesAboveWing.ts
 import {
   ARC_Y,
   BASKET_X,

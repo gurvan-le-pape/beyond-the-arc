@@ -1,4 +1,4 @@
-// src/frontend/features/charts/utils/charts/overlays/hotspots/isInsideArc.ts
+// src/frontend/features/charts/utils/overlays/hotspots/isInsideArc.ts
 import {
   BASKET_X,
   BASKET_Y,

@@ -1,4 +1,4 @@
-// src/frontend/features/charts/utils/charts/overlays/hotspots/zones/shotZonesApexStripe.ts
+// src/frontend/features/charts/utils/overlays/hotspots/zones/shotZonesApexStripe.ts
 import {
   BASKET_X,
   BASKET_Y,
