@@ -1,5 +1,6 @@
 // src/backend/modules/matches/matches.controller.ts
 import { CACHE_TTL } from "@common/constants";
+import { ApiPaginatedResponse } from "@common/decorators";
 import { PaginatedResponseDto } from "@common/dto";
 import { CacheInterceptor } from "@common/interceptors";
 import {
@@ -140,11 +141,10 @@ export class MatchesController {
     description: "Search by club name (case-insensitive)",
     example: "Paris",
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "List of matches successfully retrieved",
-    type: PaginatedResponseDto,
-  })
+  @ApiPaginatedResponse(
+    MatchDetailResponseDto,
+    "List of matches successfully retrieved",
+  )
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid query parameters",

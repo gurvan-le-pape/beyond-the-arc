@@ -1,5 +1,6 @@
 // src/backend/modules/players/players.controller.ts
 import { CACHE_TTL } from "@common/constants";
+import { ApiPaginatedResponse } from "@common/decorators";
 import { OrganizationScopeQueryDto, PaginatedResponseDto } from "@common/dto";
 import { Category, CompetitionLevel, Gender } from "@common/index";
 import { CacheInterceptor } from "@common/interceptors";
@@ -147,60 +148,10 @@ export class PlayersController {
     description: "Search by player name (case-insensitive)",
     example: "John",
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "List of players successfully retrieved",
-    schema: {
-      example: {
-        data: {
-          items: [
-            {
-              id: 1,
-              name: "John Doe",
-              number: 10,
-              teamId: 1,
-              team: {
-                id: 1,
-                number: 1,
-                clubId: 1,
-                category: "U18",
-                gender: "M",
-                club: {
-                  id: 1,
-                  name: "Club Example",
-                  committee: {
-                    id: 1,
-                    name: "Committee Example",
-                    league: {
-                      id: 1,
-                      name: "League Example",
-                    },
-                  },
-                },
-                pool: {
-                  id: 1,
-                  name: "Pool A",
-                  championship: {
-                    id: 1,
-                    name: "Championship Régional U18",
-                    level: "regional",
-                    division: "Régionale 1",
-                  },
-                },
-              },
-            },
-          ],
-          total: 150,
-          page: 1,
-          limit: 50,
-          totalPages: 3,
-        },
-        timestamp: "2024-02-05T10:00:00Z",
-        path: "/players",
-        statusCode: 200,
-      },
-    },
-  })
+  @ApiPaginatedResponse(
+    PlayerResponseDto,
+    "List of players successfully retrieved",
+  )
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid query parameters",

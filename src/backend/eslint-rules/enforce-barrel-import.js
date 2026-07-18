@@ -1,5 +1,6 @@
 const BARREL_DIRS = [
   "@common/constants",
+  "@common/decorators",
   "@common/dto",
   "@common/filters",
   "@common/interceptors",

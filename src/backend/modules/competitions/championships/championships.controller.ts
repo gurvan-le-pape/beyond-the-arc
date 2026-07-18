@@ -1,5 +1,6 @@
 // src/backend/modules/competitions/championships/championships.controller.ts
 import { CACHE_TTL, CompetitionLevel } from "@common/constants";
+import { ApiPaginatedResponse } from "@common/decorators";
 import { PaginatedResponseDto } from "@common/dto";
 import { CacheInterceptor } from "@common/interceptors";
 import {
@@ -182,34 +183,10 @@ export class ChampionshipsController {
     description: "Gender filter.",
     example: "male",
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "Paginated list of championships successfully retrieved",
-    schema: {
-      example: {
-        data: {
-          items: [
-            {
-              id: 1,
-              name: "Championship Régional U18 male",
-              category: "U18",
-              gender: "male",
-              seasonYear: "2024-2025",
-              level: "regional",
-              division: 1,
-            },
-          ],
-          total: 384,
-          page: 1,
-          limit: 20,
-          totalPages: 20,
-        },
-        timestamp: "2024-02-05T10:00:00Z",
-        path: "/championships",
-        statusCode: 200,
-      },
-    },
-  })
+  @ApiPaginatedResponse(
+    ChampionshipResponseDto,
+    "Paginated list of championships successfully retrieved",
+  )
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid query parameters",

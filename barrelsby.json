@@ -91,6 +91,7 @@
     "src/frontend/lib/providers",
 
     "src/backend/common/constants",
+    "src/backend/common/decorators",
     "src/backend/common/dto",
     "src/backend/common/filters",
     "src/backend/common/interceptors",
