@@ -1,4 +1,4 @@
-// src/frontend/features/charts/utils/charts/overlays/hotspots/zones/shotZonesCorner3.ts
+// src/frontend/features/charts/utils/overlays/hotspots/zones/shotZonesCorner3.ts
 import {
   ARC_Y,
   COURT_WIDTH,

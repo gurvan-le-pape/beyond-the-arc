@@ -1,4 +1,4 @@
-// src/frontend/features/charts/utils/charts/overlays/hotspots/zones/shotZonesPaint.ts
+// src/frontend/features/charts/utils/overlays/hotspots/zones/shotZonesPaint.ts
 import {
   PAINT_HEIGHT,
   PAINT_WIDTH,

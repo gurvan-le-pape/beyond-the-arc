@@ -1,4 +1,4 @@
-// src/frontend/features/charts/utils/charts/overlays/hotspots/binShotsByZones.ts
+// src/frontend/features/charts/utils/overlays/hotspots/binShotsByZones.ts
 // Utility to bin shots into zones and compute stats for each zone
 
 import type { ZoneStats } from "@/features/charts/types";
