@@ -1,7 +1,6 @@
 // src/backend/modules/teams/teams.controller.ts
 import { CACHE_TTL } from "@common/constants";
-import { PaginatedResponseDto } from "@common/dto";
-import { ParseOptionalIntPipe } from "@common/index";
+import { OrganizationScopeQueryDto, PaginatedResponseDto } from "@common/dto";
 import { CacheInterceptor } from "@common/interceptors";
 import {
   Controller,
@@ -89,18 +88,15 @@ export class TeamsController {
     description:
       "Returns available team numbers, pool letters, and divisions. Optionally scoped to a committee or league.",
   })
-  @ApiQuery({ name: "committeeId", required: false, type: Number })
-  @ApiQuery({ name: "leagueId", required: false, type: Number })
   @ApiResponse({
     status: HttpStatus.OK,
     description: "Filter values successfully retrieved",
     type: FilterValuesTeamsResponseDto,
   })
   async getTeamFilterValues(
-    @Query("committeeId", new ParseOptionalIntPipe()) committeeId?: number,
-    @Query("leagueId", new ParseOptionalIntPipe()) leagueId?: number,
+    @Query() query: OrganizationScopeQueryDto,
   ): Promise<FilterValuesTeamsResponseDto> {
-    return this.teamsService.findTeamFilterValues({ committeeId, leagueId });
+    return this.teamsService.findTeamFilterValues(query);
   }
 
   @Get(":id")

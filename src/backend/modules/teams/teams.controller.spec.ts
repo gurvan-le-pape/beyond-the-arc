@@ -210,7 +210,7 @@ describe("TeamsController", () => {
       mockTeamsService.findTeamFilterValues.mockResolvedValue(mockFilterValues);
 
       // Act
-      const result = await controller.getTeamFilterValues();
+      const result = await controller.getTeamFilterValues({});
 
       // Assert
       expect(result).toEqual(mockFilterValues);
@@ -224,7 +224,7 @@ describe("TeamsController", () => {
       );
 
       // Act & Assert
-      await expect(controller.getTeamFilterValues()).rejects.toThrow(
+      await expect(controller.getTeamFilterValues({})).rejects.toThrow(
         "Database error",
       );
     });

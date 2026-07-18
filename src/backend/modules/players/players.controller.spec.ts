@@ -230,7 +230,7 @@ describe("PlayersController", () => {
       );
 
       // Act
-      const result = await controller.getPlayerFilterValues();
+      const result = await controller.getPlayerFilterValues({});
 
       // Assert
       expect(result).toEqual(mockFilterValues);
@@ -244,7 +244,7 @@ describe("PlayersController", () => {
       );
 
       // Act & Assert
-      await expect(controller.getPlayerFilterValues()).rejects.toThrow(
+      await expect(controller.getPlayerFilterValues({})).rejects.toThrow(
         "Database error",
       );
     });
