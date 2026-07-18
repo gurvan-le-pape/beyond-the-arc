@@ -1,6 +1,5 @@
 // src/backend/modules/teams/dto/teams.response.dto.ts
-import { Position } from "@common/constants";
-import { Category, CompetitionLevel, Gender } from "@common/index";
+import { Category, CompetitionLevel, Gender, PlayerSummaryDto } from "@common/index";
 import { PlayerMatchStatsDto } from "@modules/players/dto";
 import { ApiProperty } from "@nestjs/swagger";
 
@@ -142,15 +141,9 @@ export class FilterValuesTeamsResponseDto {
 export class MatchPlayerDto {
   @ApiProperty({
     description: "Player information",
-    type: Object,
+    type: PlayerSummaryDto,
   })
-  player!: {
-    id: number;
-    name: string;
-    number: number;
-    position: Position;
-    teamId: number;
-  };
+  player!: PlayerSummaryDto;
 
   @ApiProperty({
     description: "Player statistics for this match",
@@ -230,14 +223,8 @@ export class TeamMatchHistoryDto {
  * Detailed team response with players and recent matches.
  */
 export class TeamDetailResponseDto extends TeamResponseDto {
-  @ApiProperty({ description: "Team players", type: Array })
-  players!: Array<{
-    id: number;
-    name: string;
-    number: number;
-    position: Position;
-    teamId: number;
-  }>;
+  @ApiProperty({ description: "Team players", type: [PlayerSummaryDto] })
+  players!: PlayerSummaryDto[];
 
   @ApiProperty({ description: "Recent home matches (up to 5)", type: Array })
   homeMatches!: Array<{
