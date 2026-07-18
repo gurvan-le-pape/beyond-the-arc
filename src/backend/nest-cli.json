@@ -1,14 +1,5 @@
 {
   "compilerOptions": {
-    "tsConfigPath": "tsconfig.build.json",
-    "plugins": [
-      {
-        "name": "@nestjs/swagger",
-        "options": {
-          "classValidatorShim": true,
-          "introspectComments": false
-        }
-      }
-    ]
+    "tsConfigPath": "tsconfig.build.json"
   }
 }
