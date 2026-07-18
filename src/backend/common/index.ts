@@ -9,6 +9,7 @@ export * from "./constants/competition-levels";
 export * from "./constants/genders";
 export * from "./constants/match-event-roles";
 export * from "./dto/paginated-response.dto";
+export * from "./dto/pagination.query.dto";
 export * from "./filters/all-exceptions.filter";
 export * from "./interceptors/cache.interceptor";
 export * from "./interceptors/transform.interceptor";

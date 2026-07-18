@@ -57,8 +57,6 @@ export class TeamsController {
   @ApiQuery({ name: "gender", required: false, type: String })
   @ApiQuery({ name: "clubName", required: false, type: String })
   @ApiQuery({ name: "poolLetter", required: false, type: String })
-  @ApiQuery({ name: "page", required: false, type: Number })
-  @ApiQuery({ name: "limit", required: false, type: Number })
   @ApiResponse({
     status: HttpStatus.OK,
     description: "List of teams successfully retrieved",
@@ -78,8 +76,8 @@ export class TeamsController {
       gender: query.gender,
       clubName: query.clubName,
       poolLetter: query.poolLetter,
-      page: query.page ?? 1,
-      limit: query.limit ?? 50,
+      page: query.page,
+      limit: query.limit,
     });
   }
 

@@ -140,20 +140,6 @@ export class MatchesController {
     description: "Search by club name (case-insensitive)",
     example: "Paris",
   })
-  @ApiQuery({
-    name: "page",
-    required: false,
-    type: Number,
-    description: "Page number (default: 1)",
-    example: 1,
-  })
-  @ApiQuery({
-    name: "limit",
-    required: false,
-    type: Number,
-    description: "Items per page (default: 50, max: 100)",
-    example: 50,
-  })
   @ApiResponse({
     status: HttpStatus.OK,
     description: "List of matches successfully retrieved",
@@ -178,8 +164,8 @@ export class MatchesController {
       matchday: query.matchday,
       date: query.date,
       search: query.search,
-      page: query.page ?? 1,
-      limit: query.limit ?? 50,
+      page: query.page,
+      limit: query.limit,
     });
   }
 

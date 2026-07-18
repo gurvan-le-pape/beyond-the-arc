@@ -146,7 +146,7 @@ describe("ChampionshipsService", () => {
         ]),
         total: 1,
         page: 1,
-        limit: 20,
+        limit: 50,
         totalPages: 1,
       });
 
@@ -156,7 +156,7 @@ describe("ChampionshipsService", () => {
         expect.objectContaining({
           where: {},
           skip: 0,
-          take: 20,
+          take: 50,
         }),
       );
     });
@@ -254,7 +254,7 @@ describe("ChampionshipsService", () => {
         items: [],
         total: 0,
         page: 1,
-        limit: 20,
+        limit: 50,
         totalPages: 0,
       });
     });
@@ -272,17 +272,6 @@ describe("ChampionshipsService", () => {
       expect(
         mockPrismaService.client.championships.findMany,
       ).toHaveBeenCalledWith(expect.objectContaining({ skip: 20, take: 10 }));
-    });
-
-    it("should cap limit at 100", async () => {
-      mockPrismaService.client.championships.findMany.mockResolvedValue([]);
-      mockPrismaService.client.championships.count.mockResolvedValue(0);
-
-      await service.findChampionships({ limit: 999 });
-
-      expect(
-        mockPrismaService.client.championships.findMany,
-      ).toHaveBeenCalledWith(expect.objectContaining({ take: 100 }));
     });
   });
 });

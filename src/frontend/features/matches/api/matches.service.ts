@@ -80,7 +80,8 @@ export const matchesService = {
 
   /**
    * Get all matches for a specific championship.
-   * Returns all matches unpaginated (limit: 500).
+   * Pages through /matches (max limit 100 per request) until every
+   * page is fetched, then returns the combined list.
    *
    * @param championshipId - The championship ID
    * @returns Array of all matches in the championship
@@ -90,10 +91,21 @@ export const matchesService = {
    * const matches = await matchesService.getByChampionshipId(5);
    */
   async getByChampionshipId(championshipId: number): Promise<Match[]> {
-    const { data } = await apiClient.get<any>("/matches", {
-      params: { championshipId, limit: 500 },
-    });
-    return data.items ?? data;
+    const limit = 100;
+    const matches: Match[] = [];
+    let page = 1;
+    let totalPages = 1;
+
+    do {
+      const { data } = await apiClient.get<any>("/matches", {
+        params: { championshipId, page, limit },
+      });
+      matches.push(...data.items);
+      totalPages = data.totalPages;
+      page += 1;
+    } while (page <= totalPages);
+
+    return matches;
   },
 
   // ============================================================================

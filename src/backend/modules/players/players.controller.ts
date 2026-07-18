@@ -152,20 +152,6 @@ export class PlayersController {
     description: "Search by player name (case-insensitive)",
     example: "John",
   })
-  @ApiQuery({
-    name: "page",
-    required: false,
-    type: Number,
-    description: "Page number (default: 1)",
-    example: 1,
-  })
-  @ApiQuery({
-    name: "limit",
-    required: false,
-    type: Number,
-    description: "Items per page (default: 50, max: 100)",
-    example: 50,
-  })
   @ApiResponse({
     status: HttpStatus.OK,
     description: "List of players successfully retrieved",
@@ -250,8 +236,8 @@ export class PlayersController {
       category: query.category,
       gender: query.gender,
       name: query.name,
-      page: query.page ?? 1,
-      limit: query.limit ?? 50,
+      page: query.page,
+      limit: query.limit,
     });
   }
 

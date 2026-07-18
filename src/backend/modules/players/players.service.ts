@@ -2,7 +2,7 @@
 import { CompetitionLevel, Position } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
 import { Category, Gender } from "@common/index";
-import { mapPlayerMatchStats, normalizeLimit, normalizePage } from "@common/utils";
+import { mapPlayerMatchStats, resolvePagination } from "@common/utils";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 
@@ -181,9 +181,7 @@ export class PlayersService {
   async findAllPlayers(
     filters?: PlayerFilters,
   ): Promise<PaginatedResponseDto<PlayerResponseDto>> {
-    const page = normalizePage(filters?.page ?? 1);
-    const limit = normalizeLimit(filters?.limit ?? 50);
-    const skip = (page - 1) * limit;
+    const { page, limit, skip } = resolvePagination(filters ?? {});
 
     const where = this.buildWhereClause(filters);
 

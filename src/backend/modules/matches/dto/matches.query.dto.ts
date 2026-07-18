@@ -1,6 +1,6 @@
 // src/backend/modules/matches/dto/matches.query.dto.ts
 import { CompetitionLevel } from "@common/constants";
-import { Category, Gender } from "@common/index";
+import { Category, Gender, PaginationQueryDto } from "@common/index";
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import {
@@ -14,7 +14,7 @@ import {
 /**
  * Query parameters for filtering and paginating matches.
  */
-export class GetMatchesQueryDto {
+export class GetMatchesQueryDto extends PaginationQueryDto {
   @ApiPropertyOptional({
     description: "Competition level (regional or departmental)",
     enum: [CompetitionLevel.REGIONAL, CompetitionLevel.DEPARTMENTAL],
@@ -124,26 +124,4 @@ export class GetMatchesQueryDto {
   @IsOptional()
   @IsString({ message: "search must be a string" })
   search?: string;
-
-  @ApiPropertyOptional({
-    description: "Page number for pagination",
-    example: 1,
-    type: Number,
-    default: 1,
-  })
-  @IsOptional()
-  @Type(() => Number)
-  @IsNumber()
-  page?: number;
-
-  @ApiPropertyOptional({
-    description: "Number of items per page (max 100)",
-    example: 50,
-    type: Number,
-    default: 50,
-  })
-  @IsOptional()
-  @Type(() => Number)
-  @IsNumber()
-  limit?: number;
 }

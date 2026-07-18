@@ -121,34 +121,19 @@ describe("TeamsService", () => {
       );
     });
 
-    it("should validate and cap limit at 100", async () => {
+    it("should apply default pagination when page and limit are omitted", async () => {
       // Arrange
       mockPrismaService.client.teams.findMany.mockResolvedValueOnce([]);
       mockPrismaService.client.teams.count.mockResolvedValue(0);
 
       // Act
-      await service.findAllTeams({ limit: 200 });
-
-      // Assert
-      expect(mockPrismaService.client.teams.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({
-          take: 100,
-        }),
-      );
-    });
-
-    it("should default to page 1 if invalid page provided", async () => {
-      // Arrange
-      mockPrismaService.client.teams.findMany.mockResolvedValueOnce([]);
-      mockPrismaService.client.teams.count.mockResolvedValue(0);
-
-      // Act
-      await service.findAllTeams({ page: -1 });
+      await service.findAllTeams({});
 
       // Assert
       expect(mockPrismaService.client.teams.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           skip: 0,
+          take: 50,
         }),
       );
     });
@@ -335,42 +320,6 @@ describe("TeamsService", () => {
       await expect(service.findTeamMatchHistory(999)).rejects.toThrow(
         "Team with ID 999 not found",
       );
-    });
-  });
-
-  describe("validatePage", () => {
-    it("should return 1 when page is 0", async () => {
-      mockPrismaService.client.teams.findMany.mockResolvedValue([]);
-      mockPrismaService.client.teams.count.mockResolvedValue(0);
-
-      const result = await service.findAllTeams({ page: 0 });
-      expect(result.page).toBe(1);
-    });
-
-    it("should return 1 when page is negative", async () => {
-      mockPrismaService.client.teams.findMany.mockResolvedValue([]);
-      mockPrismaService.client.teams.count.mockResolvedValue(0);
-
-      const result = await service.findAllTeams({ page: -5 });
-      expect(result.page).toBe(1);
-    });
-  });
-
-  describe("validateLimit", () => {
-    it("should return 50 when limit is 0", async () => {
-      mockPrismaService.client.teams.findMany.mockResolvedValue([]);
-      mockPrismaService.client.teams.count.mockResolvedValue(0);
-
-      const result = await service.findAllTeams({ limit: 0 });
-      expect(result.limit).toBe(50);
-    });
-
-    it("should return 50 when limit is negative", async () => {
-      mockPrismaService.client.teams.findMany.mockResolvedValue([]);
-      mockPrismaService.client.teams.count.mockResolvedValue(0);
-
-      const result = await service.findAllTeams({ limit: -1 });
-      expect(result.limit).toBe(50);
     });
   });
 

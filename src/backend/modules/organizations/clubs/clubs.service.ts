@@ -1,6 +1,7 @@
 // src/backend/modules/organizations/clubs/clubs.service.ts
 import { Category, CompetitionLevel, Gender } from "@common/constants";
 import { PaginatedResponseDto } from "@common/index";
+import { resolvePagination } from "@common/utils";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 
@@ -261,9 +262,7 @@ export class ClubsService {
     page?: number;
     limit?: number;
   }): Promise<PaginatedResponseDto<ClubBasicResponseDto>> {
-    const page = filters.page ?? 1;
-    const limit = filters.limit ?? 50;
-    const skip = (page - 1) * limit;
+    const { page, limit, skip } = resolvePagination(filters);
 
     // Build where clause for clubs
     const where: Prisma.ClubsWhereInput = {};

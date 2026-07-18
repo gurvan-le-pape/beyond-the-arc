@@ -1,13 +1,14 @@
 // src/backend/modules/organizations/clubs/dto/clubs.query.dto.ts
 import { Category, CompetitionLevel, Gender } from "@common/constants";
+import { PaginationQueryDto } from "@common/dto";
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsEnum, IsNumber, IsOptional, IsString, Min } from "class-validator";
+import { IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
 
 /**
  * Query parameters for filtering clubs.
  */
-export class GetClubsQueryDto {
+export class GetClubsQueryDto extends PaginationQueryDto {
   @ApiPropertyOptional({
     description: "Competition level filter",
     enum: CompetitionLevel,
@@ -70,28 +71,6 @@ export class GetClubsQueryDto {
   @IsOptional()
   @IsString()
   search?: string;
-
-  @ApiPropertyOptional({
-    description: "Page number",
-    default: 1,
-    type: Number,
-  })
-  @IsOptional()
-  @Type(() => Number)
-  @IsNumber()
-  @Min(1)
-  page?: number = 1;
-
-  @ApiPropertyOptional({
-    description: "Items per page",
-    default: 50,
-    type: Number,
-  })
-  @IsOptional()
-  @Type(() => Number)
-  @IsNumber()
-  @Min(1)
-  limit?: number = 50;
 }
 
 /**

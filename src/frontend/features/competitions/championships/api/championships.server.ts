@@ -50,6 +50,10 @@ export const serverChampionshipsService = {
     const queryString = buildQueryString({
       level: filters.level,
       id: filters.id,
+      category: filters.category,
+      gender: filters.gender,
+      page: filters.page,
+      limit: filters.limit,
     });
     return fetchApi<PaginatedResponse<Championship>>(
       `/championships${queryString}`,

@@ -132,34 +132,19 @@ describe("PlayersService", () => {
       );
     });
 
-    it("should validate and cap limit at 100", async () => {
+    it("should apply default pagination when page and limit are omitted", async () => {
       // Arrange
       mockPrismaService.client.players.findMany.mockResolvedValueOnce([]);
       mockPrismaService.client.players.count.mockResolvedValue(0);
 
       // Act
-      await service.findAllPlayers({ limit: 200 });
+      await service.findAllPlayers({});
 
       // Assert
       expect(mockPrismaService.client.players.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
-          take: 100, // Capped at 100
-        }),
-      );
-    });
-
-    it("should default to page 1 if invalid page provided", async () => {
-      // Arrange
-      mockPrismaService.client.players.findMany.mockResolvedValueOnce([]);
-      mockPrismaService.client.players.count.mockResolvedValue(0);
-
-      // Act
-      await service.findAllPlayers({ page: -1 });
-
-      // Assert
-      expect(mockPrismaService.client.players.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({
-          skip: 0, // Page 1
+          skip: 0,
+          take: 50,
         }),
       );
     });
@@ -363,42 +348,6 @@ describe("PlayersService", () => {
       await expect(service.findPlayerMatchHistory(999)).rejects.toThrow(
         "Player with ID 999 not found",
       );
-    });
-  });
-
-  describe("validatePage", () => {
-    it("should return 1 when page is 0", async () => {
-      mockPrismaService.client.players.findMany.mockResolvedValue([]);
-      mockPrismaService.client.players.count.mockResolvedValue(0);
-
-      const result = await service.findAllPlayers({ page: 0 });
-      expect(result.page).toBe(1);
-    });
-
-    it("should return 1 when page is negative", async () => {
-      mockPrismaService.client.players.findMany.mockResolvedValue([]);
-      mockPrismaService.client.players.count.mockResolvedValue(0);
-
-      const result = await service.findAllPlayers({ page: -5 });
-      expect(result.page).toBe(1);
-    });
-  });
-
-  describe("validateLimit", () => {
-    it("should return 50 when limit is 0", async () => {
-      mockPrismaService.client.players.findMany.mockResolvedValue([]);
-      mockPrismaService.client.players.count.mockResolvedValue(0);
-
-      const result = await service.findAllPlayers({ limit: 0 });
-      expect(result.limit).toBe(50);
-    });
-
-    it("should return 50 when limit is negative", async () => {
-      mockPrismaService.client.players.findMany.mockResolvedValue([]);
-      mockPrismaService.client.players.count.mockResolvedValue(0);
-
-      const result = await service.findAllPlayers({ limit: -1 });
-      expect(result.limit).toBe(50);
     });
   });
 

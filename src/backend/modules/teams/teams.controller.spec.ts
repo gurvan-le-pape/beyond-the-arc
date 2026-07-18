@@ -164,7 +164,7 @@ describe("TeamsController", () => {
       });
     });
 
-    it("should use defaults when page and limit not provided", async () => {
+    it("should pass undefined page and limit through when not provided", async () => {
       // Arrange
       const mockResponse: PaginatedResponseDto<TeamResponseDto> = {
         items: [],
@@ -182,8 +182,8 @@ describe("TeamsController", () => {
       // Assert
       expect(service.findAllTeams).toHaveBeenCalledWith(
         expect.objectContaining({
-          page: 1,
-          limit: 50,
+          page: undefined,
+          limit: undefined,
         }),
       );
     });
