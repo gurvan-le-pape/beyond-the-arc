@@ -5,5 +5,6 @@
 
 export * from "./Player";
 export * from "./PlayerFilters";
+export * from "./PlayerFilterValues";
 export * from "./PlayerMatchHistory";
 export * from "./PlayerTeamRef";

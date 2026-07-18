@@ -4,7 +4,7 @@
  */
 
 export * from "./Api";
-// export * from "./axios";
+export * from "./api.generated";
 export * from "./NavItem";
 export * from "./Pagination";
 export * from "./PlayerMatchStats";
