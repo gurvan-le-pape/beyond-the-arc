@@ -2,6 +2,7 @@
 import { Category, CompetitionLevel, Gender } from "@common/constants";
 import { PaginatedResponseDto } from "@common/index";
 import {
+  buildClubOrganizationWhere,
   buildRankCountWhere,
   PRESIDENT_SELECT,
   resolvePagination,
@@ -260,17 +261,9 @@ export class ClubsService {
     const { page, limit, skip } = resolvePagination(filters);
 
     // Build where clause for clubs
-    const where: Prisma.ClubsWhereInput = {};
-
-    // Filter by committee ID
-    if (filters.committeeId) {
-      where.committeeId = filters.committeeId;
-    }
-
-    // Filter by league ID (via committee relation)
-    if (filters.leagueId) {
-      where.committee = { leagueId: filters.leagueId };
-    }
+    const where: Prisma.ClubsWhereInput = {
+      ...buildClubOrganizationWhere(filters),
+    };
 
     if (filters.search) {
       where.name = { contains: filters.search, mode: "insensitive" };

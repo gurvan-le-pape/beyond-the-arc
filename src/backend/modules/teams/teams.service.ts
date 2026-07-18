@@ -3,6 +3,7 @@ import { CompetitionLevel, Position } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
 import { Category, Gender } from "@common/index";
 import {
+  buildClubOrganizationWhere,
   mapPlayerMatchStats,
   PLAYER_MATCH_STAT_FIELDS_SELECT,
   resolvePagination,
@@ -339,15 +340,8 @@ export class TeamsService {
     committeeId?: number;
     leagueId?: number;
   }): Promise<FilterValuesTeamsResponseDto> {
-    const clubWhere: Prisma.ClubsWhereInput = {};
-    if (filters?.committeeId) {
-      clubWhere.committeeId = filters.committeeId;
-    } else if (filters?.leagueId) {
-      clubWhere.committee = { leagueId: filters.leagueId };
-    }
-
-    const hasClubFilter = Object.keys(clubWhere).length > 0;
-    const teamWhere: Prisma.TeamsWhereInput = hasClubFilter
+    const clubWhere = buildClubOrganizationWhere(filters);
+    const teamWhere: Prisma.TeamsWhereInput = clubWhere
       ? { club: clubWhere }
       : {};
 
@@ -359,13 +353,13 @@ export class TeamsService {
         orderBy: { number: "asc" },
       }),
       this.prisma.client.pools.findMany({
-        where: hasClubFilter ? { teams: { some: teamWhere } } : {},
+        where: clubWhere ? { teams: { some: teamWhere } } : {},
         select: { letter: true },
         distinct: ["letter"],
         orderBy: { letter: "asc" },
       }),
       this.prisma.client.championships.findMany({
-        where: hasClubFilter
+        where: clubWhere
           ? { pools: { some: { teams: { some: teamWhere } } } }
           : {},
         select: { division: true },
@@ -547,35 +541,17 @@ export class TeamsService {
   private buildClubFilter(
     filters?: TeamFilters,
   ): Prisma.ClubsWhereInput | undefined {
-    if (
-      !filters?.clubId &&
-      !filters?.committeeId &&
-      !filters?.leagueId &&
-      !filters?.clubName
-    )
-      return undefined;
-
-    const clubWhere: Prisma.ClubsWhereInput = {};
+    const clubWhere: Prisma.ClubsWhereInput = {
+      ...buildClubOrganizationWhere(filters),
+    };
 
     if (filters?.clubId) clubWhere.id = filters.clubId;
-
-    if (
-      filters?.level === CompetitionLevel.DEPARTMENTAL &&
-      filters?.committeeId
-    ) {
-      clubWhere.committeeId = filters.committeeId;
-    } else if (
-      filters?.level === CompetitionLevel.REGIONAL &&
-      filters?.leagueId
-    ) {
-      clubWhere.committee = { leagueId: filters.leagueId };
-    }
 
     if (filters?.clubName) {
       clubWhere.name = { contains: filters.clubName, mode: "insensitive" };
     }
 
-    return clubWhere;
+    return Object.keys(clubWhere).length > 0 ? clubWhere : undefined;
   }
 
   /**

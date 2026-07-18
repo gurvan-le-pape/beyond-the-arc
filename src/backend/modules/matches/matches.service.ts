@@ -3,6 +3,8 @@ import { MatchEventRole, Position } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
 import { Category, CompetitionLevel, Gender } from "@common/index";
 import {
+  andWhere,
+  buildClubOrganizationWhere,
   mapPlayerMatchStats,
   PLAYER_MATCH_STAT_FIELDS_SELECT,
   resolvePagination,
@@ -448,16 +450,9 @@ export class MatchesService {
   private buildOrganizationFilter(
     filters?: MatchFilters,
   ): Prisma.MatchesWhereInput[] | undefined {
-    if (!filters?.committeeId && !filters?.leagueId) return undefined;
+    const club = buildClubOrganizationWhere(filters);
+    if (!club) return undefined;
 
-    const buildClubFilter = (): Prisma.ClubsWhereInput => {
-      const club: Prisma.ClubsWhereInput = {};
-      if (filters?.committeeId) club.committeeId = filters.committeeId;
-      if (filters?.leagueId) club.committee = { leagueId: filters.leagueId };
-      return club;
-    };
-
-    const club = buildClubFilter();
     return [{ homeTeam: { club } }, { awayTeam: { club } }];
   }
 
@@ -497,15 +492,15 @@ export class MatchesService {
       ? this.buildSearchFilter(filters.search)
       : undefined;
 
-    // Both are OR-groups over home/away team, so when both apply they must be
-    // AND-ed — assigning each to `where.OR` would let one overwrite the other.
-    if (orgFilter && searchFilter) {
-      where.AND = [{ OR: orgFilter }, { OR: searchFilter }];
-    } else if (orgFilter) {
-      where.OR = orgFilter;
-    } else if (searchFilter) {
-      where.OR = searchFilter;
-    }
+    // Both are OR-groups over home/away team — andWhere AND-composes them
+    // instead of letting one overwrite the other on a shared OR key.
+    Object.assign(
+      where,
+      andWhere<Prisma.MatchesWhereInput>(
+        orgFilter ? { OR: orgFilter } : undefined,
+        searchFilter ? { OR: searchFilter } : undefined,
+      ),
+    );
 
     if (filters?.matchday) where.matchday = filters.matchday;
 

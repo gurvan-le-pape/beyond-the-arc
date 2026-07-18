@@ -459,6 +459,18 @@ describe("TeamsService", () => {
       );
     });
 
+    it("should apply committeeId filter without a level param", async () => {
+      await service.findAllTeams({ committeeId: 3 });
+
+      expect(mockPrismaService.client.teams.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            club: expect.objectContaining({ committeeId: 3 }),
+          }),
+        }),
+      );
+    });
+
     it("should apply club filter with clubName", async () => {
       await service.findAllTeams({ clubName: "Paris" });
 
