@@ -6,7 +6,7 @@ import { formatMatchDateTime } from "@/shared/utils";
 import { MatchTeamLabel } from "./MatchTeamLabel";
 
 interface MatchWithTeams {
-  date: Date;
+  date: Date | string;
   homeTeam: { id: number; club: { name: string } };
   awayTeam: { id: number; club: { name: string } };
 }

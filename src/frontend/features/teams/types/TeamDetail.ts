@@ -1,50 +1,21 @@
 // src/frontend/features/teams/types/TeamDetail.ts
-import type { Team } from "./Team";
+import type { components } from "@/shared/types";
 
-export interface TeamPlayerRef {
-  id: number;
-  name: string;
-  number: number;
-  teamId: number;
-}
+/**
+ * Generated from the backend OpenAPI document. Regenerate with
+ * `npm run typegen` after backend DTO changes — CI fails when
+ * docs/openapi.json and api.generated.ts drift.
+ */
+export type TeamPlayerRef = components["schemas"]["PlayerSummaryDto"];
 
-export interface TeamMatchClubRef {
-  id: number;
-  name: string;
-}
+export type TeamMatchClubRef = components["schemas"]["HistoryClubRefDto"];
 
-export interface TeamMatchTeamRef {
-  id: number;
-  number: number;
-  club: TeamMatchClubRef;
-}
+export type TeamMatchTeamRef = components["schemas"]["HistoryTeamRefDto"];
 
-export interface TeamMatchPoolRef {
-  id: number;
-  name: string;
-  championship: { id: number; name: string };
-}
+export type TeamMatchPoolRef = components["schemas"]["RecentMatchPoolRefDto"];
 
-export interface TeamHomeMatch {
-  id: number;
-  date: Date;
-  homeTeamScore: number;
-  awayTeamScore: number;
-  awayTeam: TeamMatchTeamRef;
-  pool: TeamMatchPoolRef | null;
-}
+export type TeamHomeMatch = components["schemas"]["RecentHomeMatchDto"];
 
-export interface TeamAwayMatch {
-  id: number;
-  date: Date;
-  homeTeamScore: number;
-  awayTeamScore: number;
-  homeTeam: TeamMatchTeamRef;
-  pool: TeamMatchPoolRef | null;
-}
+export type TeamAwayMatch = components["schemas"]["RecentAwayMatchDto"];
 
-export interface TeamDetail extends Team {
-  players: TeamPlayerRef[];
-  homeMatches: TeamHomeMatch[];
-  awayMatches: TeamAwayMatch[];
-}
+export type TeamDetail = components["schemas"]["TeamDetailResponseDto"];

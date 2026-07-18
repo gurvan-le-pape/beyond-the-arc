@@ -1,14 +1,12 @@
 // src/frontend/features/teams/types/TeamPoolRef.ts
-export interface TeamChampionshipRef {
-  id: number;
-  name: string;
-  level: string;
-  division: number;
-}
+import type { components } from "@/shared/types";
 
-export interface TeamPoolRef {
-  id: number;
-  name: string;
-  letter: string;
-  championship: TeamChampionshipRef;
-}
+/**
+ * Generated from the backend OpenAPI document. Regenerate with
+ * `npm run typegen` after backend DTO changes — CI fails when
+ * docs/openapi.json and api.generated.ts drift.
+ */
+export type TeamChampionshipRef =
+  components["schemas"]["TeamChampionshipRefDto"];
+
+export type TeamPoolRef = components["schemas"]["TeamPoolRefDto"];
