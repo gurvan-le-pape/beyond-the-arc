@@ -2,7 +2,7 @@
 import type { Category, CompetitionLevel, Gender } from "@/shared/constants";
 
 export interface PlayerFilters {
-  name?: string;
+  search?: string;
   clubId?: number;
   category?: Category;
   gender?: Gender;

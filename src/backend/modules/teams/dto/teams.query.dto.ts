@@ -95,7 +95,7 @@ export class GetTeamsQueryDto extends PaginationQueryDto {
   })
   @IsOptional()
   @IsString()
-  clubName?: string;
+  search?: string;
 
   @ApiPropertyOptional({
     description: "Filter by pool letter",

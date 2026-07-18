@@ -23,7 +23,7 @@ describe("GetPlayersQueryDto", () => {
       leagueId: 1,
       category: "U18",
       gender: "male",
-      name: "John",
+      search: "John",
       page: 1,
       limit: 50,
     });
@@ -106,9 +106,9 @@ describe("GetPlayersQueryDto", () => {
     });
 
     it("should pass for valid name string", async () => {
-      const dto = plainToInstance(GetPlayersQueryDto, { name: "John" });
+      const dto = plainToInstance(GetPlayersQueryDto, { search: "John" });
       const errors = await validate(dto);
-      expect(errors.some((e) => e.property === "name")).toBe(false);
+      expect(errors.some((e) => e.property === "search")).toBe(false);
     });
   });
 });

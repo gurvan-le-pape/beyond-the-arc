@@ -22,7 +22,7 @@ describe("GetTeamsQueryDto", () => {
       number: 1,
       category: "U18",
       gender: "male",
-      clubName: "Paris",
+      search: "Paris",
       poolLetter: "A",
       page: 1,
       limit: 50,
@@ -100,10 +100,10 @@ describe("GetTeamsQueryDto", () => {
       expect(errors.some((e) => e.property === "gender")).toBe(false);
     });
 
-    it("should pass for valid clubName string", async () => {
-      const dto = plainToInstance(GetTeamsQueryDto, { clubName: "Paris" });
+    it("should pass for valid search string", async () => {
+      const dto = plainToInstance(GetTeamsQueryDto, { search: "Paris" });
       const errors = await validate(dto);
-      expect(errors.some((e) => e.property === "clubName")).toBe(false);
+      expect(errors.some((e) => e.property === "search")).toBe(false);
     });
 
     it("should pass for valid poolLetter string", async () => {

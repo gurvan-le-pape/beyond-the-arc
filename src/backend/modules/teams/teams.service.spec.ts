@@ -471,8 +471,8 @@ describe("TeamsService", () => {
       );
     });
 
-    it("should apply club filter with clubName", async () => {
-      await service.findAllTeams({ clubName: "Paris" });
+    it("should apply club filter with search", async () => {
+      await service.findAllTeams({ search: "Paris" });
 
       expect(mockPrismaService.client.teams.findMany).toHaveBeenCalledWith(
         expect.objectContaining({

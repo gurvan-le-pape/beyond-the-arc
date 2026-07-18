@@ -88,7 +88,7 @@ export const serverPlayersService = {
    * // Use in autocomplete: <Autocomplete options={players} />
    */
   async search(name: string): Promise<Player[]> {
-    const queryString = buildQueryString({ name, limit: 20 });
+    const queryString = buildQueryString({ search: name, limit: 20 });
     const data = await fetchApi<any>(`/players${queryString}`);
     // The backend returns { players, pagination, ... }, so extract players array
     return data.items || [];

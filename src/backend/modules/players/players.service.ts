@@ -149,7 +149,7 @@ type PlayerFilters = {
   leagueId?: number;
   category?: Category;
   gender?: Gender;
-  name?: string;
+  search?: string;
   page?: number;
   limit?: number;
 };
@@ -393,8 +393,8 @@ export class PlayersService {
   private buildWhereClause(filters?: PlayerFilters): Prisma.PlayersWhereInput {
     const where: Prisma.PlayersWhereInput = {};
 
-    if (filters?.name)
-      where.name = { contains: filters.name, mode: "insensitive" };
+    if (filters?.search)
+      where.name = { contains: filters.search, mode: "insensitive" };
     if (filters?.number) where.number = filters.number;
 
     const teamWhere = this.buildTeamFilter(filters);

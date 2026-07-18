@@ -357,8 +357,8 @@ describe("PlayersService", () => {
       mockPrismaService.client.players.count.mockResolvedValue(0);
     });
 
-    it("should apply name filter", async () => {
-      await service.findAllPlayers({ name: "John" });
+    it("should apply search filter", async () => {
+      await service.findAllPlayers({ search: "John" });
 
       expect(mockPrismaService.client.players.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
