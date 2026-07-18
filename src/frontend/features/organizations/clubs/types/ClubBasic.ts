@@ -1,14 +1,9 @@
 // src/frontend/features/organizations/clubs/types/ClubBasic.ts
-export interface ClubBasic {
-  id: number;
-  name: string;
-  city: string | null;
-  zipCode: string | null;
-  latitude: number | null;
-  longitude: number | null;
-  email: string | null;
-  phone: string | null;
-  website: string | null;
-  committeeId: number;
-  leagueId: number;
-}
+import type { components } from "@/shared/types";
+
+/**
+ * Basic club entity, generated from the backend OpenAPI document.
+ * Regenerate with `npm run typegen` after backend DTO changes —
+ * CI fails when docs/openapi.json and api.generated.ts drift.
+ */
+export type ClubBasic = components["schemas"]["ClubBasicResponseDto"];
