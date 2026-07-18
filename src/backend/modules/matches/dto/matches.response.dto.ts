@@ -1,5 +1,6 @@
 // src/backend/modules/matches/dto/matches.response.dto.ts
 import { MatchEventRole, MatchEventType } from "@common/constants";
+import { ReboundsDto } from "@common/dto";
 import {
   Category,
   CompetitionLevel,
@@ -156,20 +157,6 @@ export class MatchResponseDto {
     type: Boolean,
   })
   overtime!: boolean;
-}
-
-/**
- * Rebounds breakdown within player match stats.
- */
-export class ReboundsDto {
-  @ApiProperty({ description: "Total rebounds", example: 8, type: Number })
-  total!: number;
-
-  @ApiProperty({ description: "Offensive rebounds", example: 3, type: Number })
-  offensive!: number;
-
-  @ApiProperty({ description: "Defensive rebounds", example: 5, type: Number })
-  defensive!: number;
 }
 
 /**

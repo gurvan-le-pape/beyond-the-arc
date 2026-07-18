@@ -1,5 +1,6 @@
 // src/backend/modules/players/dto/players.response.dto.ts
 import { Position } from "@common/constants";
+import { ReboundsDto } from "@common/dto";
 import {
   Category,
   CompetitionLevel,
@@ -7,6 +8,132 @@ import {
   PlayerSummaryDto,
 } from "@common/index";
 import { ApiProperty } from "@nestjs/swagger";
+
+/**
+ * League reference embedded in a player's club committee.
+ */
+export class PlayerLeagueRefDto {
+  @ApiProperty({ description: "League ID", example: 1, type: Number })
+  id!: number;
+
+  @ApiProperty({
+    description: "League name",
+    example: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
+    type: String,
+  })
+  name!: string;
+}
+
+/**
+ * Committee reference embedded in a player's club.
+ */
+export class PlayerCommitteeRefDto {
+  @ApiProperty({ description: "Committee ID", example: 1, type: Number })
+  id!: number;
+
+  @ApiProperty({
+    description: "Committee name",
+    example: "Comité Départemental de l'Ain",
+    type: String,
+  })
+  name!: string;
+
+  @ApiProperty({ description: "League information", type: PlayerLeagueRefDto })
+  league!: PlayerLeagueRefDto;
+}
+
+/**
+ * Club reference embedded in a player's team.
+ */
+export class PlayerClubRefDto {
+  @ApiProperty({ description: "Club ID", example: 1, type: Number })
+  id!: number;
+
+  @ApiProperty({
+    description: "Club name",
+    example: "AS Monaco Basket",
+    type: String,
+  })
+  name!: string;
+
+  @ApiProperty({
+    description: "Committee information",
+    type: PlayerCommitteeRefDto,
+  })
+  committee!: PlayerCommitteeRefDto;
+}
+
+/**
+ * Championship reference embedded in a player's pool.
+ */
+export class PlayerChampionshipRefDto {
+  @ApiProperty({ description: "Championship ID", example: 1, type: Number })
+  id!: number;
+
+  @ApiProperty({
+    description: "Championship name",
+    example: "Championship Régional U18 male",
+    type: String,
+  })
+  name!: string;
+
+  @ApiProperty({
+    description: "Competition level",
+    example: CompetitionLevel.REGIONAL,
+    enum: CompetitionLevel,
+  })
+  level!: CompetitionLevel;
+
+  @ApiProperty({ description: "Division number", example: 1, type: Number })
+  division!: number;
+}
+
+/**
+ * Pool reference embedded in a player's team.
+ */
+export class PlayerPoolRefDto {
+  @ApiProperty({ description: "Pool ID", example: 1, type: Number })
+  id!: number;
+
+  @ApiProperty({ description: "Pool name", example: "Poule A", type: String })
+  name!: string;
+
+  @ApiProperty({
+    description: "Championship the pool belongs to",
+    type: PlayerChampionshipRefDto,
+  })
+  championship!: PlayerChampionshipRefDto;
+}
+
+/**
+ * Team information embedded in a player response.
+ */
+export class PlayerTeamDto {
+  @ApiProperty({ description: "Team ID", example: 1, type: Number })
+  id!: number;
+
+  @ApiProperty({ description: "Team number", example: 1, type: Number })
+  number!: number;
+
+  @ApiProperty({ description: "Club ID", example: 1, type: Number })
+  clubId!: number;
+
+  @ApiProperty({ description: "Age category", example: "U18", enum: Category })
+  category!: Category;
+
+  @ApiProperty({ description: "Gender", example: Gender.MALE, enum: Gender })
+  gender!: Gender;
+
+  @ApiProperty({ description: "Club information", type: PlayerClubRefDto })
+  club!: PlayerClubRefDto;
+
+  @ApiProperty({
+    description: "Current pool, or null when the team has none",
+    type: PlayerPoolRefDto,
+    nullable: true,
+  })
+  pool!: PlayerPoolRefDto | null;
+}
 
 /**
  * Response DTO for a player entity.
@@ -70,37 +197,9 @@ export class PlayerResponseDto {
 
   @ApiProperty({
     description: "Team information",
-    type: Object,
+    type: PlayerTeamDto,
   })
-  team!: {
-    id: number;
-    number: number;
-    clubId: number;
-    category: Category;
-    gender: Gender;
-    club: {
-      id: number;
-      name: string;
-      committee: {
-        id: number;
-        name: string;
-        league: {
-          id: number;
-          name: string;
-        };
-      };
-    };
-    pool: {
-      id: number;
-      name: string;
-      championship: {
-        id: number;
-        name: string;
-        level: CompetitionLevel;
-        division: number;
-      };
-    } | null;
-  };
+  team!: PlayerTeamDto;
 }
 
 /**
@@ -206,14 +305,9 @@ export class PlayerMatchStatsDto {
 
   @ApiProperty({
     description: "Rebounds breakdown",
-    example: { total: 8, offensive: 3, defensive: 5 },
-    type: Object,
+    type: ReboundsDto,
   })
-  rebounds!: {
-    total: number;
-    offensive: number;
-    defensive: number;
-  };
+  rebounds!: ReboundsDto;
 
   @ApiProperty({
     description: "Steals",
@@ -242,6 +336,49 @@ export class PlayerMatchStatsDto {
 }
 
 /**
+ * Club reference embedded in a match-history team.
+ */
+export class HistoryClubRefDto {
+  @ApiProperty({ description: "Club ID", example: 1, type: Number })
+  id!: number;
+
+  @ApiProperty({
+    description: "Club name",
+    example: "AS Monaco Basket",
+    type: String,
+  })
+  name!: string;
+}
+
+/**
+ * Team reference embedded in a match-history entry.
+ */
+export class HistoryTeamRefDto {
+  @ApiProperty({ description: "Team ID", example: 1, type: Number })
+  id!: number;
+
+  @ApiProperty({ description: "Team number", example: 1, type: Number })
+  number!: number;
+
+  @ApiProperty({ description: "Club information", type: HistoryClubRefDto })
+  club!: HistoryClubRefDto;
+}
+
+/**
+ * Player identity and stats pair within a match-history entry.
+ */
+export class PlayerMatchEntryDto {
+  @ApiProperty({ description: "Player information", type: PlayerSummaryDto })
+  player!: PlayerSummaryDto;
+
+  @ApiProperty({
+    description: "Player statistics for this match",
+    type: PlayerMatchStatsDto,
+  })
+  stats!: PlayerMatchStatsDto;
+}
+
+/**
  * Match history entry for a player.
  */
 export class MatchHistoryDto {
@@ -261,29 +398,15 @@ export class MatchHistoryDto {
 
   @ApiProperty({
     description: "Home team information",
-    type: Object,
+    type: HistoryTeamRefDto,
   })
-  homeTeam!: {
-    id: number;
-    number: number;
-    club: {
-      id: number;
-      name: string;
-    };
-  };
+  homeTeam!: HistoryTeamRefDto;
 
   @ApiProperty({
     description: "Away team information",
-    type: Object,
+    type: HistoryTeamRefDto,
   })
-  awayTeam!: {
-    id: number;
-    number: number;
-    club: {
-      id: number;
-      name: string;
-    };
-  };
+  awayTeam!: HistoryTeamRefDto;
 
   @ApiProperty({
     description: "Home team score",
@@ -301,10 +424,7 @@ export class MatchHistoryDto {
 
   @ApiProperty({
     description: "Player and their statistics for this match",
-    type: Object,
+    type: PlayerMatchEntryDto,
   })
-  player!: {
-    player: PlayerSummaryDto;
-    stats: PlayerMatchStatsDto;
-  };
+  player!: PlayerMatchEntryDto;
 }
