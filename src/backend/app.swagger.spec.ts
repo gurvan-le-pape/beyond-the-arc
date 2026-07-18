@@ -49,35 +49,57 @@ describe("OpenAPI document generation", () => {
     // PaginatedResponseDto.items is the single sanctioned generic object
     // array (its element type is a generic parameter).
     const allowed = new Set(["PaginatedResponseDto.items"]);
-    const offenders: string[] = [];
-
-    for (const [name, schema] of Object.entries(schemas)) {
-      if (typeof schema !== "object" || !("properties" in schema)) continue;
-      for (const [prop, propSchema] of Object.entries(
-        schema.properties ?? {},
-      )) {
-        if (typeof propSchema !== "object" || !("type" in propSchema)) {
-          continue;
-        }
-        const target =
-          propSchema.type === "array" &&
-          typeof propSchema.items === "object" &&
-          propSchema.items !== null
-            ? propSchema.items
-            : propSchema;
-        const isBareObject =
-          typeof target === "object" &&
-          "type" in target &&
-          target.type === "object" &&
-          !("properties" in target) &&
-          !("$ref" in target) &&
-          !("allOf" in target);
-        if (isBareObject && !allowed.has(`${name}.${prop}`)) {
-          offenders.push(`${name}.${prop}`);
-        }
-      }
-    }
+    const offenders = Object.entries(schemas)
+      .flatMap(([name, schema]) => collectBareObjectProps(name, schema))
+      .filter((path) => !allowed.has(path));
 
     expect(offenders).toEqual([]);
   });
 });
+
+/**
+ * Unwraps array schemas to their element schema.
+ */
+function unwrapArraySchema(propSchema: object): object {
+  if (
+    "type" in propSchema &&
+    propSchema.type === "array" &&
+    "items" in propSchema &&
+    typeof propSchema.items === "object" &&
+    propSchema.items !== null
+  ) {
+    return propSchema.items;
+  }
+  return propSchema;
+}
+
+/**
+ * True when a schema is a bare `type: object` with no shape information.
+ */
+function isBareObjectSchema(schema: object): boolean {
+  return (
+    "type" in schema &&
+    schema.type === "object" &&
+    !("properties" in schema) &&
+    !("$ref" in schema) &&
+    !("allOf" in schema)
+  );
+}
+
+/**
+ * Returns `Name.prop` paths of properties documented as bare objects.
+ */
+function collectBareObjectProps(name: string, schema: unknown): string[] {
+  if (typeof schema !== "object" || schema === null) return [];
+  if (!("properties" in schema)) return [];
+
+  const properties = (schema.properties ?? {}) as Record<string, unknown>;
+  return Object.entries(properties)
+    .filter(
+      ([, propSchema]) =>
+        typeof propSchema === "object" &&
+        propSchema !== null &&
+        isBareObjectSchema(unwrapArraySchema(propSchema)),
+    )
+    .map(([prop]) => `${name}.${prop}`);
+}
