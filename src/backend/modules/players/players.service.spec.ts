@@ -483,6 +483,40 @@ describe("PlayersService", () => {
         }),
       );
     });
+
+    it("should apply leagueId filter without a level param", async () => {
+      await service.findAllPlayers({ leagueId: 4 });
+
+      expect(mockPrismaService.client.players.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            team: expect.objectContaining({
+              club: { committee: { leagueId: 4 } },
+            }),
+          }),
+        }),
+      );
+    });
+
+    it("should apply organization and level filters alongside clubId", async () => {
+      await service.findAllPlayers({
+        clubId: 5,
+        committeeId: 3,
+        level: "departmental",
+      });
+
+      expect(mockPrismaService.client.players.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            team: expect.objectContaining({
+              clubId: 5,
+              club: { committeeId: 3 },
+              pool: { championship: { level: "departmental" } },
+            }),
+          }),
+        }),
+      );
+    });
   });
 
   describe("mapToDto", () => {

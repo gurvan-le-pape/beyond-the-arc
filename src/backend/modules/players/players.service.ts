@@ -3,6 +3,7 @@ import { CompetitionLevel, Position } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
 import { Category, Gender } from "@common/index";
 import {
+  buildClubOrganizationWhere,
   mapPlayerMatchStats,
   PLAYER_MATCH_STAT_FIELDS_SELECT,
   resolvePagination,
@@ -203,15 +204,8 @@ export class PlayersService {
     committeeId?: number;
     leagueId?: number;
   }): Promise<FilterValuesPlayersResponseDto> {
-    const clubWhere: Prisma.ClubsWhereInput = {};
-    if (filters?.committeeId) {
-      clubWhere.committeeId = filters.committeeId;
-    } else if (filters?.leagueId) {
-      clubWhere.committee = { leagueId: filters.leagueId };
-    }
-
-    const hasClubFilter = Object.keys(clubWhere).length > 0;
-    const teamWhere: Prisma.TeamsWhereInput = hasClubFilter
+    const clubWhere = buildClubOrganizationWhere(filters);
+    const teamWhere: Prisma.TeamsWhereInput = clubWhere
       ? { club: clubWhere }
       : {};
 
@@ -376,35 +370,15 @@ export class PlayersService {
     } satisfies MatchHistoryDto;
   }
 
-  private buildTeamOrganizationFilter(
-    filters?: PlayerFilters,
-  ): Prisma.TeamsWhereInput {
+  private buildTeamFilter(filters?: PlayerFilters): Prisma.TeamsWhereInput {
     const teamWhere: Prisma.TeamsWhereInput = {};
-    if (filters?.clubId || filters?.teamId) return teamWhere;
 
     if (filters?.level) {
       teamWhere.pool = { championship: { level: filters.level } };
     }
 
-    if (
-      filters?.level === CompetitionLevel.DEPARTMENTAL &&
-      filters?.committeeId
-    ) {
-      teamWhere.club = { committeeId: filters.committeeId };
-    } else if (
-      filters?.level === CompetitionLevel.REGIONAL &&
-      filters?.leagueId
-    ) {
-      teamWhere.club = { committee: { leagueId: filters.leagueId } };
-    }
-
-    return teamWhere;
-  }
-
-  private buildTeamFilter(filters?: PlayerFilters): Prisma.TeamsWhereInput {
-    const teamWhere: Prisma.TeamsWhereInput = {
-      ...this.buildTeamOrganizationFilter(filters),
-    };
+    const clubWhere = buildClubOrganizationWhere(filters);
+    if (clubWhere) teamWhere.club = clubWhere;
 
     if (filters?.teamId) teamWhere.id = filters.teamId;
     if (filters?.teamNumber) teamWhere.number = filters.teamNumber;
