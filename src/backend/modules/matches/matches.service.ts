@@ -92,51 +92,6 @@ const MATCH_LIST_SELECT = {
   overtime: true,
 } as const;
 
-/**
- * Extended select for match detail — includes events.
- */
-const MATCH_DETAIL_SELECT = {
-  ...MATCH_LIST_SELECT,
-  matchEvents: {
-    select: {
-      id: true,
-      eventType: true,
-      timestamp: true,
-      description: true,
-      players: {
-        select: {
-          role: true,
-          player: {
-            select: {
-              id: true,
-              name: true,
-              number: true,
-              team: {
-                select: {
-                  id: true,
-                  club: {
-                    select: {
-                      name: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-      shotLocation: {
-        select: {
-          id: true,
-          x: true,
-          y: true,
-        },
-      },
-    },
-    orderBy: { timestamp: "asc" as const },
-  },
-} as const;
-
 const MATCH_EVENT_SELECT = {
   id: true,
   eventType: true,
@@ -170,6 +125,17 @@ const MATCH_EVENT_SELECT = {
       x: true,
       y: true,
     },
+  },
+} as const;
+
+/**
+ * Extended select for match detail — includes events.
+ */
+const MATCH_DETAIL_SELECT = {
+  ...MATCH_LIST_SELECT,
+  matchEvents: {
+    select: MATCH_EVENT_SELECT,
+    orderBy: { timestamp: "asc" as const },
   },
 } as const;
 
