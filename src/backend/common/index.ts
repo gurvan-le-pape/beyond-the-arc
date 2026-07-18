@@ -17,3 +17,4 @@ export * from "./pipes/parse-optional-int.pipe";
 export * from "./utils/pagination.util";
 export * from "./utils/player-match-stats.mapper";
 export * from "./utils/prisma-selects";
+export * from "./utils/ranking.util";
