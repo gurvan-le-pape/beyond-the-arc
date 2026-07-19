@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/leaderboards/api/use-leaderboards.ts
+// src/frontend/features/competitions/leaderboards/api/useLeaderboards.ts
 import type { UseQueryResult } from "@tanstack/react-query";
 import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 
