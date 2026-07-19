@@ -69,7 +69,6 @@
 
     "src/frontend/features/teams/api",
     "src/frontend/features/teams/components",
-    "src/frontend/features/teams/constants",
     "src/frontend/features/teams/hooks",
     "src/frontend/features/teams/types",
     "src/frontend/features/teams/utils",
@@ -125,6 +124,7 @@
     ".*\\.test\\.tsx?$",
     ".*\\.d\\.ts$",
     ".*/championship-(breadcrumb|header|navigation|matches)/.*",
-    ".*/match-events/(filters|timeline)/.*"
+    ".*/match-events/(filters|timeline)/.*",
+    ".*/team-roster/(?!index\\.tsx$).*"
   ]
 }
