@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/clubs/components/map/ClubsMap.tsx
+// src/frontend/features/organizations/clubs/components/clubs-map/ClubsMap.tsx
 "use client";
 
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -9,23 +9,23 @@ import { Map as MapGL, Popup } from "react-map-gl/maplibre";
 
 import { normalizeDepartmentCode } from "@/shared/utils";
 
-import {
-  GEOJSON_TO_DB_REGION_CODE,
-  INITIAL_VIEW,
-  ZOOM_THRESHOLDS,
-} from "../../constants";
-import { useMapData } from "../../hooks";
-import { useFilters } from "../../hooks/useFilters";
-import { useSearch } from "../../hooks/useSearch";
 import type { ClubBasic } from "../../types/ClubBasic";
 import type { ClubStatsByDepartment } from "../../types/ClubStatsByDepartment";
 import type { ClubStatsByRegion } from "../../types/ClubStatsByRegion";
-import { clubsToGeoJSON, generateLabelFeatures } from "../../utils";
 import { ClubPopupContent } from "./ClubPopupContent";
 import { ClubsLayer } from "./layers/ClubsLayer";
 import { DepartmentsLayer } from "./layers/DepartmentsLayer";
 import { RegionsLayer } from "./layers/RegionsLayer";
+import {
+  GEOJSON_TO_DB_REGION_CODE,
+  INITIAL_VIEW,
+  ZOOM_THRESHOLDS,
+} from "./mapConstants";
+import { clubsToGeoJSON, generateLabelFeatures } from "./mapHelpers";
 import { SidePanel } from "./SidePanel";
+import { useFilters } from "./useFilters";
+import { useMapData } from "./useMapData";
+import { useSearch } from "./useSearch";
 
 interface ClubsMapProps {
   readonly initialRegions: ClubStatsByRegion[];

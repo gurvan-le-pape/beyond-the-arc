@@ -1,7 +1,7 @@
-// src/frontend/features/organizations/clubs/hooks/useFilters.tsx
+// src/frontend/features/organizations/clubs/components/clubs-map/useFilters.tsx
 import { useCallback, useMemo, useState } from "react";
 
-import type { ClubBasic } from "../types/ClubBasic";
+import type { ClubBasic } from "../../types/ClubBasic";
 
 export interface ClubFilters {
   hasWebsite: boolean;

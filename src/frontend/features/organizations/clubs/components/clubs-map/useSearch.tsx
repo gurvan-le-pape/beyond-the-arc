@@ -1,7 +1,7 @@
-// src/frontend/features/organizations/clubs/hooks/useSearch.tsx
+// src/frontend/features/organizations/clubs/components/clubs-map/useSearch.tsx
 import { useCallback, useMemo, useState } from "react";
 
-import type { ClubBasic } from "../types/ClubBasic";
+import type { ClubBasic } from "../../types/ClubBasic";
 
 interface UseSearchReturn {
   query: string;

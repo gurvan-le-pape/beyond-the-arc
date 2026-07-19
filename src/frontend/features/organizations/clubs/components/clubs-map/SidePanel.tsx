@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/clubs/components/map/SidePanel.tsx
+// src/frontend/features/organizations/clubs/components/clubs-map/SidePanel.tsx
 "use client";
 
 import { useTranslations } from "next-intl";
@@ -6,9 +6,9 @@ import { memo, useCallback, useState } from "react";
 
 import { Text } from "@/shared/components/typography";
 
-import type { ClubFilters } from "../../hooks/useFilters";
 import type { ClubBasic } from "../../types/ClubBasic";
 import { SearchBar } from "./SearchBar";
+import type { ClubFilters } from "./useFilters";
 
 interface SidePanelProps {
   clubs: ClubBasic[];

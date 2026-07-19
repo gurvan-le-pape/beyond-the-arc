@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/clubs/components/map/ClubPopupContent.tsx
+// src/frontend/features/organizations/clubs/components/clubs-map/ClubPopupContent.tsx
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 

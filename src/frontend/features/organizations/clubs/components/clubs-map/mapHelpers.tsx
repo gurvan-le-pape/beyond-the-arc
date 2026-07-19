@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/clubs/utils/map/mapHelpers.tsx
+// src/frontend/features/organizations/clubs/components/clubs-map/mapHelpers.tsx
 import centroid from "@turf/centroid";
 
 import type { ClubBasic } from "../../types/ClubBasic";

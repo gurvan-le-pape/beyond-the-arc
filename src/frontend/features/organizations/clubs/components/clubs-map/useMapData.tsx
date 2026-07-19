@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/clubs/hooks/useMapData.tsx
+// src/frontend/features/organizations/clubs/components/clubs-map/useMapData.tsx
 import { useMemo } from "react";
 
 import {
@@ -10,11 +10,11 @@ import {
   useAllClubs,
   useClubStatsByDepartment,
   useClubStatsByRegion,
-} from "../api";
-import type { ClubBasic } from "../types/ClubBasic";
-import type { ClubStatsByDepartment } from "../types/ClubStatsByDepartment";
-import type { ClubStatsByRegion } from "../types/ClubStatsByRegion";
-import type { GeoJsonData } from "../types/Map";
+} from "../../api";
+import type { ClubBasic } from "../../types/ClubBasic";
+import type { ClubStatsByDepartment } from "../../types/ClubStatsByDepartment";
+import type { ClubStatsByRegion } from "../../types/ClubStatsByRegion";
+import type { GeoJsonData } from "../../types/Map";
 
 interface UseMapDataReturn {
   regions: ClubStatsByRegion[];

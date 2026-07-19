@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/clubs/components/map/layers/ClubsLayer.tsx
+// src/frontend/features/organizations/clubs/components/clubs-map/layers/ClubsLayer.tsx
 "use client";
 
 import { Layer, Source } from "react-map-gl/maplibre";
@@ -6,7 +6,7 @@ import { Layer, Source } from "react-map-gl/maplibre";
 import {
   CLUSTER_CONFIG,
   MAP_COLORS,
-} from "@/features/organizations/clubs/constants";
+} from "../mapConstants";
 
 interface ClubsLayerProps {
   readonly geoJson: any;

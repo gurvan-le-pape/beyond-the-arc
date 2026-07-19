@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/clubs/components/map/LoadingMap.tsx
+// src/frontend/features/organizations/clubs/components/clubs-map/LoadingMap.tsx
 "use client";
 
 import { useTranslations } from "next-intl";
