@@ -1,4 +1,4 @@
-// src/frontend/features/players/components/detail/PlayerSearchDropdown.tsx
+// src/frontend/features/players/components/detail/player-comparison/PlayerSearchDropdown.tsx
 "use client";
 
 import { X } from "lucide-react";
@@ -9,8 +9,8 @@ import { Button, ImageWithFallback } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { cn, formatNameToFileName } from "@/shared/utils";
 
-import { usePlayerSearch } from "../../hooks";
-import type { Player } from "../../types/Player";
+import { usePlayerSearch } from "../../../hooks";
+import type { Player } from "../../../types/Player";
 import { PlayerIdentity } from "./PlayerIdentity";
 
 // ─── Dropdown content ─────────────────────────────────────────────────────────
