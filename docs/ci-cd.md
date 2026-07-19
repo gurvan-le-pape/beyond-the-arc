@@ -80,6 +80,7 @@ git pull
 echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 # pin this commit's images (IMAGE_TAG is read by docker-compose.prod.yml)
 sed -i 's/^IMAGE_TAG=.*/IMAGE_TAG=<git sha>/' .env   # appended if absent
+docker image prune -af   # drop previous deploys' :SHA-tagged images
 docker compose --env-file .env \
   -f docker/docker-compose.yml \
   -f docker/docker-compose.prod.yml \
@@ -96,6 +97,8 @@ docker system prune -f   # only after the health checks pass
 `git pull` updates the Compose files and any config on the VPS before pulling images — this ensures the running configuration always matches the repository state. The `frontend`, `backend`, and `migrate` images are pulled; the `scheduler` image is built from source on the VPS and the `database` service uses the official `postgres` image, so neither is affected by the pull step. The subsequent `up -d` runs the one-shot `migrate` service (applying any pending Prisma migrations) before `backend` and `scheduler` start. `docker system prune -f` removes dangling images and unused build cache to keep disk usage in check on the 40GB local disk.
 
 The `up -d` command restarts only containers whose image has changed. Containers running unchanged images (database, scheduler, observability stack) are left running.
+
+Two prunes with different jobs: `docker image prune -af` (before the pull) removes images not referenced by any container — necessary because every deploy pins `:SHA`-tagged images, which are never *dangling* and would otherwise accumulate one pair per merge until the disk fills (this is what tripped the 90% disk health threshold in July 2026). Images used by running or stopped containers are kept, and every tag remains in GHCR, so rollback via `IMAGE_TAG` still re-pulls fine. `docker system prune -f` (after the health checks) clears dangling images and build cache produced by the deploy itself.
 
 ---
 
