@@ -395,4 +395,3 @@ export class ClubStatsByDepartmentDto {
   })
   clubCount!: number;
 }
-

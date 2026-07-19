@@ -58,7 +58,7 @@ export default async function ChampionshipsDetailPage({
   if (pools.length === 0) notFound();
 
   const initialPoolId = poolParam
-    ? pools.find((p) => p.id === Number(poolParam))?.id ?? pools[0].id
+    ? (pools.find((p) => p.id === Number(poolParam))?.id ?? pools[0].id)
     : pools[0].id;
 
   const initialLeaderboard = await serverLeaderboardsService.getAll({

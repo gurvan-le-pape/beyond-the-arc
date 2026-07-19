@@ -1,0 +1,12 @@
+# Build output
+dist
+node_modules
+
+# Generated Prisma client
+prisma/generated
+
+# Migration SQL (hand-maintained + generated seed data)
+prisma/migrations
+
+# Generated / committed lockfile
+package-lock.json

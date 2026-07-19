@@ -67,7 +67,6 @@ describe("PlayersController", () => {
     jest.clearAllMocks();
   });
 
-
   describe("getPlayers", () => {
     it("should return paginated players list", async () => {
       // Arrange

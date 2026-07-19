@@ -3,8 +3,7 @@ import React from "react";
 
 import { cn } from "@/shared/utils";
 
-export interface SwitchProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface SwitchProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   checked: boolean;
   onCheckedChange: (checked: boolean) => void;
   label?: string;

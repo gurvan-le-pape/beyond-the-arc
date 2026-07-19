@@ -23,12 +23,12 @@ describe("buildClubOrganizationWhere", () => {
   });
 
   it("should combine committeeId and leagueId as AND", () => {
-    expect(
-      buildClubOrganizationWhere({ committeeId: 3, leagueId: 4 }),
-    ).toEqual({
-      committeeId: 3,
-      committee: { leagueId: 4 },
-    });
+    expect(buildClubOrganizationWhere({ committeeId: 3, leagueId: 4 })).toEqual(
+      {
+        committeeId: 3,
+        committee: { leagueId: 4 },
+      },
+    );
   });
 });
 

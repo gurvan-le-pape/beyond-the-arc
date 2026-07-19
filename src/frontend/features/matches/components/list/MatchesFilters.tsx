@@ -9,7 +9,11 @@ import { useCommitteeLeagueClubFilters } from "@/features/competitions/champions
 import { useMatchesCascadeOptions } from "@/features/matches/hooks";
 import { ErrorMessage } from "@/shared/components/feedback";
 import type { CascadeStep } from "@/shared/components/filters";
-import { CascadeSelects, FiltersShell, LevelLocationFilters } from "@/shared/components/filters";
+import {
+  CascadeSelects,
+  FiltersShell,
+  LevelLocationFilters,
+} from "@/shared/components/filters";
 import { Input, Select } from "@/shared/components/forms";
 import type { Category, Gender } from "@/shared/constants";
 import {
@@ -18,10 +22,7 @@ import {
   GENDER_LIST,
 } from "@/shared/constants";
 
-import type {
-  MatchesFilterSetters,
-  MatchesFilterState,
-} from "../../hooks";
+import type { MatchesFilterSetters, MatchesFilterState } from "../../hooks";
 
 interface MatchesFiltersProps {
   filters: MatchesFilterState;
@@ -71,7 +72,7 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
   } = setters;
 
   const matchdaysCount = poolId
-    ? pools.find((p) => String(p.id) === String(poolId))?.nbMatchdays ?? 30
+    ? (pools.find((p) => String(p.id) === String(poolId))?.nbMatchdays ?? 30)
     : 30;
 
   const locationLabel =

@@ -115,7 +115,8 @@ export const buttonVariants = cva(BASE, {
 });
 
 export interface ButtonProps
-  extends ButtonHTMLAttributes<HTMLButtonElement>,
+  extends
+    ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   isLoading?: boolean;
   ref?: React.Ref<HTMLButtonElement>;
@@ -207,7 +208,8 @@ const navButtonVariants = cva(BASE, {
 });
 
 export interface NavButtonProps
-  extends ButtonHTMLAttributes<HTMLButtonElement>,
+  extends
+    ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof navButtonVariants> {
   isLoading?: boolean;
   ref?: React.Ref<HTMLButtonElement>;
@@ -295,7 +297,8 @@ const pillButtonVariants = cva(BASE, {
 });
 
 export interface PillButtonProps
-  extends ButtonHTMLAttributes<HTMLButtonElement>,
+  extends
+    ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof pillButtonVariants> {
   isLoading?: boolean;
   ref?: React.Ref<HTMLButtonElement>;

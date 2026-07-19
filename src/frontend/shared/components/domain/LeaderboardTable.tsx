@@ -78,9 +78,8 @@ export function LeaderboardTable({
                     className="w-8 h-8 object-contain"
                     loading="lazy"
                     onError={(e) => {
-                      (
-                        e.target as HTMLImageElement
-                      ).src = `/images/clubs/defaultLogo.30cc7520.svg`;
+                      (e.target as HTMLImageElement).src =
+                        `/images/clubs/defaultLogo.30cc7520.svg`;
                     }}
                   />
                   <span>

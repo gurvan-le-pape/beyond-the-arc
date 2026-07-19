@@ -13,8 +13,10 @@ import { Text } from "../typography";
  * Do not place InfoBox directly on the page (surface-base) or the elevation
  * will look wrong. See the token guide for the nesting convention.
  */
-interface InfoBoxProps
-  extends Omit<HTMLAttributes<HTMLDivElement>, "children"> {
+interface InfoBoxProps extends Omit<
+  HTMLAttributes<HTMLDivElement>,
+  "children"
+> {
   label: string;
   value: string | number | null | undefined;
   href?: string;

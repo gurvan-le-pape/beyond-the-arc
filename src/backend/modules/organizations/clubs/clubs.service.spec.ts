@@ -681,5 +681,4 @@ describe("ClubsService", () => {
       await expect(service.findClubById(1)).rejects.toThrow(dbError);
     });
   });
-
 });

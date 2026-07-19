@@ -5,11 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { useCallback } from "react";
 
 import { usePathname, useRouter } from "@/navigation";
-import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-} from "@/shared/components/primitives";
+import { Tabs, TabsList, TabsTrigger } from "@/shared/components/primitives";
 
 interface QueryTabsProps {
   readonly activeTab: string;

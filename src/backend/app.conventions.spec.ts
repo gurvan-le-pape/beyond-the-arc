@@ -57,7 +57,8 @@ function queryArgsOfHandler(
 
   return Object.entries(routeArgs)
     .filter(
-      ([key]) => Number(key.split(":")[0]) === (RouteParamtypes.QUERY as number),
+      ([key]) =>
+        Number(key.split(":")[0]) === (RouteParamtypes.QUERY as number),
     )
     .map(([, value]) => ({
       controller: metatype.name,

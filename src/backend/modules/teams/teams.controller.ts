@@ -13,12 +13,7 @@ import {
   Query,
   UseInterceptors,
 } from "@nestjs/common";
-import {
-  ApiOperation,
-  ApiParam,
-  ApiResponse,
-  ApiTags,
-} from "@nestjs/swagger";
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 
 import { GetTeamsQueryDto } from "./dto/teams.query.dto";
 import {
@@ -42,10 +37,7 @@ export class TeamsController {
     description:
       "Retrieves a paginated list of teams with optional filtering. Results are cached for 5 minutes.",
   })
-  @ApiPaginatedResponse(
-    TeamResponseDto,
-    "List of teams successfully retrieved",
-  )
+  @ApiPaginatedResponse(TeamResponseDto, "List of teams successfully retrieved")
   async getTeams(
     @Query() query: GetTeamsQueryDto,
   ): Promise<PaginatedResponseDto<TeamResponseDto>> {

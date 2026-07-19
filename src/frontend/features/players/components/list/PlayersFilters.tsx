@@ -7,7 +7,10 @@ import React, { useState } from "react";
 import { useCommitteeLeagueClubFilters } from "@/features/competitions/championships/hooks";
 import { useClubSearch } from "@/features/organizations/clubs/api";
 import { ErrorMessage } from "@/shared/components/feedback";
-import { FiltersShell, LevelLocationFilters } from "@/shared/components/filters";
+import {
+  FiltersShell,
+  LevelLocationFilters,
+} from "@/shared/components/filters";
 import { Input, Select } from "@/shared/components/forms";
 import { ComboBox } from "@/shared/components/primitives";
 import type { Category, Gender } from "@/shared/constants";

@@ -72,7 +72,7 @@ describe("CommitteesController", () => {
       department: { id: 1, name: "Ain", code: "01" },
       leagueId: 1,
       ...overrides,
-    } as CommitteeResponseDto);
+    }) as CommitteeResponseDto;
 
   describe("getCommittees", () => {
     it("should return all committees when no leagueId provided", async () => {

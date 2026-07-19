@@ -101,10 +101,7 @@ describe("buildRankCountWhere", () => {
       buildRankCountWhere({ poolId: 3, points: 10, pointDifference: 5 }),
     ).toEqual({
       poolId: 3,
-      OR: [
-        { points: { gt: 10 } },
-        { points: 10, pointDifference: { gt: 5 } },
-      ],
+      OR: [{ points: { gt: 10 } }, { points: 10, pointDifference: { gt: 5 } }],
     });
   });
 });
