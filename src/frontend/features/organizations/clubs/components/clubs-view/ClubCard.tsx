@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/clubs/components/list/ClubCard.tsx
+// src/frontend/features/organizations/clubs/components/clubs-view/ClubCard.tsx
 import { Link } from "@/navigation";
 import { Badge, ImageWithFallback } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";

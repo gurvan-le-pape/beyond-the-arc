@@ -123,6 +123,7 @@
     ".*/match-events/(filters|timeline)/.*",
     ".*/team-roster/(?!index\\.tsx$).*",
     ".*/player-comparison/(?!index\\.tsx$).*",
-    ".*/clubs-map/(?!index\\.tsx$).*"
+    ".*/clubs-map/(?!index\\.tsx$).*",
+    ".*/clubs-view/(?!index\\.tsx$).*"
   ]
 }
