@@ -7,4 +7,4 @@ export * from "./clubs.server";
 export * from "./clubs.service";
 export * from "./clubsKeys";
 export * from "./clubsQueries";
-export * from "./use-clubs";
+export * from "./useClubs";

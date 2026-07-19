@@ -10,7 +10,7 @@ import {
   useAllClubs,
   useClubStatsByDepartment,
   useClubStatsByRegion,
-} from "../api/use-clubs";
+} from "../api";
 import type { ClubBasic } from "../types/ClubBasic";
 import type { ClubStatsByDepartment } from "../types/ClubStatsByDepartment";
 import type { ClubStatsByRegion } from "../types/ClubStatsByRegion";

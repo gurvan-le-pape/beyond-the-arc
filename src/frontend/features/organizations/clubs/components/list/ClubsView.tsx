@@ -9,7 +9,7 @@ import { useLeagues } from "@/features/organizations/leagues/api";
 import { Pagination } from "@/shared/components/table";
 import { useDebounce } from "@/shared/hooks";
 
-import { useClubs } from "../../api/use-clubs";
+import { useClubs } from "../../api";
 import type { ClubBasic } from "../../types/ClubBasic";
 import { ClubsFilters } from "./ClubsFilters";
 import { ClubsGrid } from "./ClubsGrid";
