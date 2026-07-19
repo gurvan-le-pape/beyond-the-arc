@@ -1,7 +1,9 @@
 // src/frontend/features/matches/types/MatchDetail.ts
-import type { Match } from "./Match";
-import type { MatchEvent } from "./MatchEvent";
+import type { components } from "@/shared/types";
 
-export interface MatchDetail extends Match {
-  matchEvents: MatchEvent[];
-}
+/**
+ * Generated from the backend OpenAPI document. Regenerate with
+ * `npm run typegen` after backend DTO changes — CI fails when
+ * docs/openapi.json and api.generated.ts drift.
+ */
+export type MatchDetail = components["schemas"]["MatchDetailResponseDto"];

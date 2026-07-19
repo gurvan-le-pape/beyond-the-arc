@@ -102,7 +102,7 @@ export function computeQuarterScores(
   events: MatchEvent[],
   homeTeamId: number,
   awayTeamId: number,
-  matchDate: Date,
+  matchDate: Date | string,
 ): QuarterScores {
   const home: [number, number, number, number, number] = [0, 0, 0, 0, 0];
   const away: [number, number, number, number, number] = [0, 0, 0, 0, 0];

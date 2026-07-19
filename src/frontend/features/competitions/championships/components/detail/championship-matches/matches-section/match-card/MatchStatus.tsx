@@ -5,7 +5,7 @@ import { Badge } from "@/shared/components/primitives";
 import { formatMatchDateTime } from "@/shared/utils";
 
 interface MatchStatusProps {
-  readonly date: Date;
+  readonly date: Date | string;
   readonly overtime: boolean;
 }
 

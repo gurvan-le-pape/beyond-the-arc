@@ -1,35 +1,15 @@
 // src/frontend/features/matches/types/MatchEvent.ts
-import type { EventType, Role } from "@/shared/constants";
+import type { components } from "@/shared/types";
 
-export interface MatchEventPlayerRef {
-  id: number;
-  name: string;
-  number: number;
-  team: {
-    id: number;
-    club: {
-      name: string;
-    };
-  };
-}
+/**
+ * Generated from the backend OpenAPI document. Regenerate with
+ * `npm run typegen` after backend DTO changes — CI fails when
+ * docs/openapi.json and api.generated.ts drift.
+ */
+export type MatchEventPlayerRef = components["schemas"]["EventPlayerDto"];
 
-export interface MatchEventPlayer {
-  role: Role;
-  player: MatchEventPlayerRef;
-}
+export type MatchEventPlayer = components["schemas"]["MatchEventPlayerDto"];
 
-export interface ShotLocation {
-  id: number;
-  x: number;
-  y: number;
-}
+export type ShotLocation = components["schemas"]["ShotLocationDto"];
 
-export interface MatchEvent {
-  id: number;
-  matchId?: number;
-  eventType: EventType;
-  timestamp: Date;
-  description: string | null;
-  players: MatchEventPlayer[];
-  shotLocation: ShotLocation | null;
-}
+export type MatchEvent = components["schemas"]["MatchEventDto"];
