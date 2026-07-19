@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/clubs/constants/mapConstants.ts
+// src/frontend/features/organizations/clubs/components/clubs-map/mapConstants.ts
 
 /**
  * Map configuration constants

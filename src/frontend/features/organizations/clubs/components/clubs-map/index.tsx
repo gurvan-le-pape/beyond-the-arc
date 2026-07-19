@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/clubs/components/map/ClubsMapClient.tsx
+// src/frontend/features/organizations/clubs/components/clubs-map/index.tsx
 "use client";
 
 import dynamic from "next/dynamic";

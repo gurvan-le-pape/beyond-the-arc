@@ -1,9 +1,9 @@
-// src/frontend/features/organizations/clubs/components/map/layers/DepartmentsLayer.tsx
+// src/frontend/features/organizations/clubs/components/clubs-map/layers/DepartmentsLayer.tsx
 "use client";
 
 import { Layer, Source } from "react-map-gl/maplibre";
 
-import { MAP_COLORS } from "@/features/organizations/clubs/constants";
+import { MAP_COLORS } from "../mapConstants";
 
 interface DepartmentsLayerProps {
   readonly geoJson: any;
