@@ -7,4 +7,4 @@ export * from "./matches.server";
 export * from "./matches.service";
 export * from "./matchesKeys";
 export * from "./matchesQueries";
-export * from "./use-matches";
+export * from "./useMatches";

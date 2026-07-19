@@ -1,4 +1,4 @@
-// src/frontend/features/matches/components/detail/events/MatchEvents.tsx
+// src/frontend/features/matches/components/detail/match-events/index.tsx
 "use client";
 
 import { useTranslations } from "next-intl";

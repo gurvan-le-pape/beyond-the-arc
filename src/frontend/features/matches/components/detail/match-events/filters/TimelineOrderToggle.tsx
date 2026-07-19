@@ -1,4 +1,4 @@
-// src/frontend/features/matches/components/detail/events/filters/TimelineOrderToggle.tsx
+// src/frontend/features/matches/components/detail/match-events/filters/TimelineOrderToggle.tsx
 import React from "react";
 
 import { Switch } from "@/shared/components/primitives";

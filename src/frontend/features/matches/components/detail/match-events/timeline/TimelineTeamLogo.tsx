@@ -1,4 +1,4 @@
-// src/frontend/features/matches/components/detail/events/timeline/TimelineTeamLogo.tsx
+// src/frontend/features/matches/components/detail/match-events/timeline/TimelineTeamLogo.tsx
 
 import { formatNameToFileName } from "@/shared/utils";
 

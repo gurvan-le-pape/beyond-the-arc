@@ -21,7 +21,7 @@ import {
 import type {
   MatchesFilterSetters,
   MatchesFilterState,
-} from "../../hooks/useMatchesFilterState";
+} from "../../hooks";
 
 interface MatchesFiltersProps {
   filters: MatchesFilterState;

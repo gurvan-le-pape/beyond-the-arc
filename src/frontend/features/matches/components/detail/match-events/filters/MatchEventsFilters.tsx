@@ -1,17 +1,15 @@
-// src/frontend/features/matches/components/detail/events/filters/MatchEventsFilters.tsx
+// src/frontend/features/matches/components/detail/match-events/filters/MatchEventsFilters.tsx
 import { useTranslations } from "next-intl";
 import React from "react";
 
-import {
-  EventCategorySelect,
-  TimelineOrderToggle,
-} from "@/features/matches/components";
 import type { Quarter } from "@/features/matches/constants";
 import type { TeamInfoExtended } from "@/features/teams/types";
 import type { EventCategory } from "@/shared/constants";
 
+import { EventCategorySelect } from "./EventCategorySelect";
 import { PlayerDropdownFilter } from "./PlayerDropdownFilter";
 import { QuarterSelector } from "./QuarterSelector";
+import { TimelineOrderToggle } from "./TimelineOrderToggle";
 
 interface MatchEventsFiltersProps {
   homeTeam: TeamInfoExtended;

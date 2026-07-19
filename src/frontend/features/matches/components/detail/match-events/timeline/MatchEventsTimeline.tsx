@@ -1,4 +1,4 @@
-// src/frontend/features/matches/components/detail/events/timeline/MatchEventsTimeline.tsx
+// src/frontend/features/matches/components/detail/match-events/timeline/MatchEventsTimeline.tsx
 "use client";
 
 import React from "react";

@@ -1,4 +1,4 @@
-// src/frontend/features/matches/components/detail/events/filters/PlayerDropdownFilter.tsx
+// src/frontend/features/matches/components/detail/match-events/filters/PlayerDropdownFilter.tsx
 "use client";
 
 import { useTranslations } from "next-intl";

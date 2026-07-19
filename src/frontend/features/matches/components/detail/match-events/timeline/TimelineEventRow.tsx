@@ -1,4 +1,4 @@
-// src/frontend/features/matches/components/detail/events/timeline/TimelineEventRow.tsx
+// src/frontend/features/matches/components/detail/match-events/timeline/TimelineEventRow.tsx
 import React from "react";
 
 import type { EventStyle, MatchEvent } from "@/features/matches/types";

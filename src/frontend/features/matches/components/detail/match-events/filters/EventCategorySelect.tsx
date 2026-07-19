@@ -1,4 +1,4 @@
-// src/frontend/features/matches/components/detail/events/filters/EventCategorySelect.tsx
+// src/frontend/features/matches/components/detail/match-events/filters/EventCategorySelect.tsx
 import { useTranslations } from "next-intl";
 import React from "react";
 
