@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/hooks/useDivisionNavigation.ts
+// src/frontend/features/competitions/championships/components/detail/championship-navigation/useDivisionNavigation.ts
 "use client";
 
 import { useCallback } from "react";

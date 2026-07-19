@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/components/detail/championship-matches/matches-section/match-card/ExpandButton.tsx
+// src/frontend/features/competitions/championships/components/detail/championship-matches/match-card/ExpandButton.tsx
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useTranslations } from "next-intl";
 

@@ -4,22 +4,6 @@
  */
 
 export * from "./ChampionshipListItem";
-export * from "./detail/championship-breadcrumb/_ChampionshipBreadcrumb";
-export * from "./detail/championship-header/_ChampionshipHeader";
-export * from "./detail/championship-matches/_ChampionshipMatches";
-export * from "./detail/championship-matches/matches-section/_MatchesSection";
-export * from "./detail/championship-matches/matches-section/match-card/_MatchCard";
-export * from "./detail/championship-matches/matches-section/match-card/ExpandButton";
-export * from "./detail/championship-matches/matches-section/match-card/match-expanded-section/_MatchExpandedSection";
-export * from "./detail/championship-matches/matches-section/match-card/match-expanded-section/MatchDetailsTable";
-export * from "./detail/championship-matches/matches-section/match-card/MatchStatus";
-export * from "./detail/championship-matches/matches-section/match-card/ScoreDisplay";
-export * from "./detail/championship-matches/matches-section/match-card/TeamDisplay";
-export * from "./detail/championship-matches/rounds-section/_RoundsSection";
-export * from "./detail/championship-matches/rounds-section/RoundSelector";
-export * from "./detail/championship-navigation/_ChampionshipNavigation";
-export * from "./detail/championship-navigation/CategoryNavigation";
-export * from "./detail/championship-navigation/DivisionNavigation";
 export * from "./detail/ChampionshipDetailPage";
 export * from "./list/ChampionshipCard";
 export * from "./list/filters/DepartmentalFilters";

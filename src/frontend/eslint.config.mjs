@@ -14,7 +14,6 @@ import noMixedTypeFile from "./eslint-rules/no-mixed-type-file.js";
 // one feature and removes its entry here. Never add entries.
 const LEGACY_FEATURES = [
   "features/charts/**",
-  "features/competitions/championships/**",
   "features/competitions/leaderboards/**",
   "features/competitions/pools/**",
   "features/geography/**",
