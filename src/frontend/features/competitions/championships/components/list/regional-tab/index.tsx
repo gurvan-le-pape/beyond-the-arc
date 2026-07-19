@@ -1,28 +1,32 @@
-// src/frontend/features/competitions/championships/components/list/tabs/NationalTab.tsx
+// src/frontend/features/competitions/championships/components/list/regional-tab/index.tsx
 "use client";
 
 import { Trophy } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { useChampionships } from "@/features/competitions/championships/api";
-import { useNationalFilterState } from "@/features/competitions/championships/hooks";
+import { useRegionalFilterState } from "@/features/competitions/championships/hooks";
+import { useLeagues } from "@/features/organizations/leagues/api";
 import { SearchTabShell } from "@/shared/components/domain";
 import { EmptyState } from "@/shared/components/feedback";
 import { CompetitionLevel } from "@/shared/constants";
 
 import type { Championship } from "../../../types";
 import { ChampionshipCard } from "../ChampionshipCard";
-import { NationalFilters } from "../filters/NationalFilters";
+import { RegionalFilters } from "./RegionalFilters";
 
-export function NationalTab() {
+export function RegionalTab() {
   const tCommon = useTranslations("common");
   const tCompetitions = useTranslations("competitions");
 
   const { filters, setters, setCurrentPage, setPageSize, resetFilters } =
-    useNationalFilterState();
+    useRegionalFilterState();
+
+  const { data: leagues = [] } = useLeagues();
 
   const { data, error, isLoading } = useChampionships({
-    level: CompetitionLevel.NATIONAL,
+    level: CompetitionLevel.REGIONAL,
+    id: Number(filters.leagueId) || undefined,
     category: filters.category,
     gender: filters.gender,
     page: filters.currentPage,
@@ -41,9 +45,10 @@ export function NationalTab() {
 
   return (
     <div className="space-y-6">
-      <NationalFilters
+      <RegionalFilters
         filters={filters}
         setters={setters}
+        leagues={leagues}
         onReset={resetFilters}
       />
       <SearchTabShell

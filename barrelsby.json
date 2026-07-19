@@ -124,6 +124,7 @@
     ".*/team-roster/(?!index\\.tsx$).*",
     ".*/player-comparison/(?!index\\.tsx$).*",
     ".*/clubs-map/(?!index\\.tsx$).*",
-    ".*/clubs-view/(?!index\\.tsx$).*"
+    ".*/clubs-view/(?!index\\.tsx$).*",
+    ".*/(national|regional|departmental)-tab/(?!index\\.tsx$).*"
   ]
 }

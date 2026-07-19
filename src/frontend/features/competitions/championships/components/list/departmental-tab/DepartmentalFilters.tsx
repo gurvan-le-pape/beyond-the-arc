@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/components/list/filters/NationalFilters.tsx
+// src/frontend/features/competitions/championships/components/list/departmental-tab/DepartmentalFilters.tsx
 import { useTranslations } from "next-intl";
 import React from "react";
 
@@ -7,30 +7,48 @@ import { Select } from "@/shared/components/forms";
 import type { Category, Gender } from "@/shared/constants";
 import { CATEGORY_LIST, GENDER_LIST } from "@/shared/constants";
 
-interface NationalFilters {
+interface Committee {
+  id: number;
+  name: string;
+}
+
+interface DepartmentalFilters {
+  committeeId: string;
   category: Category | undefined;
   gender: Gender | undefined;
 }
 
-interface NationalSetters {
+interface DepartmentalSetters {
+  setCommitteeId: (value: string) => void;
   setCategory: (value: Category | undefined) => void;
   setGender: (value: Gender | undefined) => void;
 }
 
-interface NationalFiltersProps {
-  filters: NationalFilters;
-  setters: NationalSetters;
+interface DepartmentalFiltersProps {
+  filters: DepartmentalFilters;
+  setters: DepartmentalSetters;
+  committees: Committee[];
   onReset: () => void;
 }
 
-export const NationalFilters: React.FC<NationalFiltersProps> = ({
+export const DepartmentalFilters: React.FC<DepartmentalFiltersProps> = ({
   filters,
   setters,
+  committees,
   onReset,
 }) => {
   const tCommon = useTranslations("common");
 
+  const committeeName = committees.find(
+    (c) => String(c.id) === filters.committeeId,
+  )?.name;
+
   const chips = [
+    committeeName && {
+      key: "committee",
+      label: committeeName,
+      onRemove: () => setters.setCommitteeId(""),
+    },
     filters.category && {
       key: "category",
       label: tCommon(`category.${filters.category}`),
@@ -48,9 +66,19 @@ export const NationalFilters: React.FC<NationalFiltersProps> = ({
       activeFilterCount={chips.length}
       chips={chips}
       onReset={onReset}
-      title={tCommon("competition.levels.national")}
+      title={tCommon("competition.levels.departmental")}
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Select
+          label={tCommon("filters.committees")}
+          value={filters.committeeId}
+          onChange={(val) => setters.setCommitteeId(String(val ?? ""))}
+          options={[
+            { value: "", label: tCommon("filters.allCommittees") },
+            ...committees.map((c) => ({ value: String(c.id), label: c.name })),
+          ]}
+        />
+
         <Select
           label={tCommon("filters.categories")}
           value={filters.category ?? ""}
@@ -65,7 +93,9 @@ export const NationalFilters: React.FC<NationalFiltersProps> = ({
             })),
           ]}
         />
+      </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Select
           label={tCommon("filters.genders")}
           value={filters.gender ?? ""}

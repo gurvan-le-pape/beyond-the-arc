@@ -1,32 +1,32 @@
-// src/frontend/features/competitions/championships/components/list/tabs/RegionalTab.tsx
+// src/frontend/features/competitions/championships/components/list/departmental-tab/index.tsx
 "use client";
 
 import { Trophy } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { useChampionships } from "@/features/competitions/championships/api";
-import { useRegionalFilterState } from "@/features/competitions/championships/hooks";
-import { useLeagues } from "@/features/organizations/leagues/api";
+import { useDepartmentalFilterState } from "@/features/competitions/championships/hooks";
+import { useCommittees } from "@/features/organizations/committees/api";
 import { SearchTabShell } from "@/shared/components/domain";
 import { EmptyState } from "@/shared/components/feedback";
 import { CompetitionLevel } from "@/shared/constants";
 
 import type { Championship } from "../../../types";
 import { ChampionshipCard } from "../ChampionshipCard";
-import { RegionalFilters } from "../filters/RegionalFilters";
+import { DepartmentalFilters } from "./DepartmentalFilters";
 
-export function RegionalTab() {
+export function DepartmentalTab() {
   const tCommon = useTranslations("common");
   const tCompetitions = useTranslations("competitions");
 
   const { filters, setters, setCurrentPage, setPageSize, resetFilters } =
-    useRegionalFilterState();
+    useDepartmentalFilterState();
 
-  const { data: leagues = [] } = useLeagues();
+  const { data: committees = [] } = useCommittees();
 
   const { data, error, isLoading } = useChampionships({
-    level: CompetitionLevel.REGIONAL,
-    id: Number(filters.leagueId) || undefined,
+    level: CompetitionLevel.DEPARTMENTAL,
+    id: Number(filters.committeeId) || undefined,
     category: filters.category,
     gender: filters.gender,
     page: filters.currentPage,
@@ -45,10 +45,10 @@ export function RegionalTab() {
 
   return (
     <div className="space-y-6">
-      <RegionalFilters
+      <DepartmentalFilters
         filters={filters}
         setters={setters}
-        leagues={leagues}
+        committees={committees}
         onReset={resetFilters}
       />
       <SearchTabShell

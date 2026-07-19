@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/components/list/filters/RegionalFilters.tsx
+// src/frontend/features/competitions/championships/components/list/national-tab/NationalFilters.tsx
 import { useTranslations } from "next-intl";
 import React from "react";
 
@@ -7,48 +7,30 @@ import { Select } from "@/shared/components/forms";
 import type { Category, Gender } from "@/shared/constants";
 import { CATEGORY_LIST, GENDER_LIST } from "@/shared/constants";
 
-interface League {
-  id: number;
-  name: string;
-}
-
-interface RegionalFilters {
-  leagueId: string;
+interface NationalFilters {
   category: Category | undefined;
   gender: Gender | undefined;
 }
 
-interface RegionalSetters {
-  setLeagueId: (value: string) => void;
+interface NationalSetters {
   setCategory: (value: Category | undefined) => void;
   setGender: (value: Gender | undefined) => void;
 }
 
-interface RegionalFiltersProps {
-  filters: RegionalFilters;
-  setters: RegionalSetters;
-  leagues: League[];
+interface NationalFiltersProps {
+  filters: NationalFilters;
+  setters: NationalSetters;
   onReset: () => void;
 }
 
-export const RegionalFilters: React.FC<RegionalFiltersProps> = ({
+export const NationalFilters: React.FC<NationalFiltersProps> = ({
   filters,
   setters,
-  leagues,
   onReset,
 }) => {
   const tCommon = useTranslations("common");
 
-  const leagueName = leagues.find(
-    (l) => String(l.id) === filters.leagueId,
-  )?.name;
-
   const chips = [
-    leagueName && {
-      key: "league",
-      label: leagueName,
-      onRemove: () => setters.setLeagueId(""),
-    },
     filters.category && {
       key: "category",
       label: tCommon(`category.${filters.category}`),
@@ -66,19 +48,9 @@ export const RegionalFilters: React.FC<RegionalFiltersProps> = ({
       activeFilterCount={chips.length}
       chips={chips}
       onReset={onReset}
-      title={tCommon("competition.levels.regional")}
+      title={tCommon("competition.levels.national")}
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Select
-          label={tCommon("filters.leagues")}
-          value={filters.leagueId}
-          onChange={(val) => setters.setLeagueId(String(val ?? ""))}
-          options={[
-            { value: "", label: tCommon("filters.allLeagues") },
-            ...leagues.map((l) => ({ value: String(l.id), label: l.name })),
-          ]}
-        />
-
         <Select
           label={tCommon("filters.categories")}
           value={filters.category ?? ""}
@@ -93,9 +65,7 @@ export const RegionalFilters: React.FC<RegionalFiltersProps> = ({
             })),
           ]}
         />
-      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Select
           label={tCommon("filters.genders")}
           value={filters.gender ?? ""}

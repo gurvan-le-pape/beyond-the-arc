@@ -1,32 +1,28 @@
-// src/frontend/features/competitions/championships/components/list/tabs/DepartmentalTab.tsx
+// src/frontend/features/competitions/championships/components/list/national-tab/index.tsx
 "use client";
 
 import { Trophy } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { useChampionships } from "@/features/competitions/championships/api";
-import { useDepartmentalFilterState } from "@/features/competitions/championships/hooks";
-import { useCommittees } from "@/features/organizations/committees/api";
+import { useNationalFilterState } from "@/features/competitions/championships/hooks";
 import { SearchTabShell } from "@/shared/components/domain";
 import { EmptyState } from "@/shared/components/feedback";
 import { CompetitionLevel } from "@/shared/constants";
 
 import type { Championship } from "../../../types";
 import { ChampionshipCard } from "../ChampionshipCard";
-import { DepartmentalFilters } from "../filters/DepartmentalFilters";
+import { NationalFilters } from "./NationalFilters";
 
-export function DepartmentalTab() {
+export function NationalTab() {
   const tCommon = useTranslations("common");
   const tCompetitions = useTranslations("competitions");
 
   const { filters, setters, setCurrentPage, setPageSize, resetFilters } =
-    useDepartmentalFilterState();
-
-  const { data: committees = [] } = useCommittees();
+    useNationalFilterState();
 
   const { data, error, isLoading } = useChampionships({
-    level: CompetitionLevel.DEPARTMENTAL,
-    id: Number(filters.committeeId) || undefined,
+    level: CompetitionLevel.NATIONAL,
     category: filters.category,
     gender: filters.gender,
     page: filters.currentPage,
@@ -45,10 +41,9 @@ export function DepartmentalTab() {
 
   return (
     <div className="space-y-6">
-      <DepartmentalFilters
+      <NationalFilters
         filters={filters}
         setters={setters}
-        committees={committees}
         onReset={resetFilters}
       />
       <SearchTabShell
