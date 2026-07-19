@@ -19,6 +19,7 @@ import type {
   MatchDetailResponseDto,
   MatchEventDto,
   MatchPlayerStatsResponseDto,
+  MatchResponseDto,
   PlayerWithStatsDto,
 } from "./dto/matches.response.dto";
 
@@ -189,7 +190,7 @@ export class MatchesService {
 
   async findAllMatches(
     filters?: MatchFilters,
-  ): Promise<PaginatedResponseDto<MatchDetailResponseDto>> {
+  ): Promise<PaginatedResponseDto<MatchResponseDto>> {
     const { page, limit, skip } = resolvePagination(filters ?? {});
     const where = this.buildWhereClause(filters);
 
@@ -226,7 +227,7 @@ export class MatchesService {
     return this.mapMatchDetailToDto(match);
   }
 
-  async findMatchesByPoolId(poolId: number): Promise<MatchDetailResponseDto[]> {
+  async findMatchesByPoolId(poolId: number): Promise<MatchResponseDto[]> {
     const matches = await this.prisma.client.matches.findMany({
       where: { poolId },
       select: MATCH_LIST_SELECT,
@@ -309,9 +310,9 @@ export class MatchesService {
   }
 
   /**
-   * Maps a list query result to MatchDetailResponseDto (no events).
+   * Maps a list query result to MatchResponseDto (no events).
    */
-  private mapMatchToDto(match: MatchListResult): MatchDetailResponseDto {
+  private mapMatchToDto(match: MatchListResult): MatchResponseDto {
     return {
       id: match.id,
       date: match.date,
@@ -351,7 +352,6 @@ export class MatchesService {
           leagueId: match.awayTeam.club.committee.leagueId,
         },
       },
-      matchEvents: [],
     };
   }
 

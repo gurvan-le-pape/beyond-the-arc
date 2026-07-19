@@ -26,6 +26,7 @@ import {
   MatchDetailResponseDto,
   MatchEventDto,
   MatchPlayerStatsResponseDto,
+  MatchResponseDto,
 } from "./dto/matches.response.dto";
 import { MatchesService } from "./matches.service";
 
@@ -142,7 +143,7 @@ export class MatchesController {
     example: "Paris",
   })
   @ApiPaginatedResponse(
-    MatchDetailResponseDto,
+    MatchResponseDto,
     "List of matches successfully retrieved",
   )
   @ApiResponse({
@@ -151,7 +152,7 @@ export class MatchesController {
   })
   async getMatches(
     @Query() query: GetMatchesQueryDto,
-  ): Promise<PaginatedResponseDto<MatchDetailResponseDto>> {
+  ): Promise<PaginatedResponseDto<MatchResponseDto>> {
     return this.matchesService.findAllMatches({
       level: query.level,
       division: query.division,
@@ -198,7 +199,7 @@ export class MatchesController {
   })
   async getMatchesByPoolId(
     @Param("poolId", ParseIntPipe) poolId: number,
-  ): Promise<MatchDetailResponseDto[]> {
+  ): Promise<MatchResponseDto[]> {
     return this.matchesService.findMatchesByPoolId(poolId);
   }
 
