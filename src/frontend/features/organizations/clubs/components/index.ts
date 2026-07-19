@@ -4,9 +4,6 @@
  */
 
 export * from "./clubs-map/index";
+export * from "./clubs-view/index";
 export * from "./detail/ClubHeader";
 export * from "./detail/ClubInfo";
-export * from "./list/ClubCard";
-export * from "./list/ClubsFilters";
-export * from "./list/ClubsGrid";
-export * from "./list/ClubsView";

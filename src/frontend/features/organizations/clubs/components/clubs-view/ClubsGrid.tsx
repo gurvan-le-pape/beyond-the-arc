@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/clubs/components/list/ClubsGrid.tsx
+// src/frontend/features/organizations/clubs/components/clubs-view/ClubsGrid.tsx
 "use client";
 
 import { useTranslations } from "next-intl";

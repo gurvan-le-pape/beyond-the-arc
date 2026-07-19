@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/clubs/components/list/ClubsFilters.tsx
+// src/frontend/features/organizations/clubs/components/clubs-view/ClubsFilters.tsx
 "use client";
 
 import { Search, X } from "lucide-react";
