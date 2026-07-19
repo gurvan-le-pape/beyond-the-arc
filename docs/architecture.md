@@ -50,7 +50,7 @@ All services run as Docker Compose containers on a single VPS. There is no separ
 
 | Layer          | Technology                                                          |
 | -------------- | ------------------------------------------------------------------- |
-| Frontend       | Next.js 15, React 18, TanStack Query, MapLibre GL, D3, Tailwind CSS |
+| Frontend       | Next.js 15, React 19, TanStack Query, MapLibre GL, D3, Tailwind CSS |
 | Backend        | NestJS 11, Prisma 7, Node.js 24                                     |
 | Database       | PostgreSQL                                                          |
 | Data pipeline  | Python (scheduling, simulation, generation)                         |
