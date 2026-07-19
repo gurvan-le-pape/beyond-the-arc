@@ -2,7 +2,7 @@
 import { useTranslations } from "next-intl";
 import React from "react";
 
-import { FiltersShell } from "@/shared/components/filters/FiltersShell";
+import { FiltersShell } from "@/shared/components/filters";
 import { Select } from "@/shared/components/forms";
 import type { Category, Gender } from "@/shared/constants";
 import { CATEGORY_LIST, GENDER_LIST } from "@/shared/constants";

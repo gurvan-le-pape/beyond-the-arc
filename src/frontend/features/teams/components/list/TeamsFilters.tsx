@@ -8,10 +8,8 @@ import { useCommitteeLeagueClubFilters } from "@/features/competitions/champions
 import { useClubSearch } from "@/features/organizations/clubs/api";
 import { useTeamFilterValues } from "@/features/teams/api";
 import { ErrorMessage } from "@/shared/components/feedback";
-import type { CascadeStep } from "@/shared/components/filters/CascadeSelects";
-import { CascadeSelects } from "@/shared/components/filters/CascadeSelects";
-import { FiltersShell } from "@/shared/components/filters/FiltersShell";
-import { LevelLocationFilters } from "@/shared/components/filters/LevelLocationFilters";
+import type { CascadeStep } from "@/shared/components/filters";
+import { CascadeSelects, FiltersShell, LevelLocationFilters } from "@/shared/components/filters";
 import { Select } from "@/shared/components/forms";
 import { ComboBox } from "@/shared/components/primitives";
 import type { Category, Gender } from "@/shared/constants";

@@ -8,6 +8,8 @@
 
 The frontend is a Next.js 15 application using the App Router. It is not a pure server-rendered app nor a pure SPA — it uses a deliberate split: server components and SSR for the initial page load, TanStack Query for client-side data that needs to stay fresh or respond to user interaction. The rest of this document covers each area where a non-obvious decision was made.
 
+How feature code is organized on disk — component folder structure, hooks/types placement, naming, barrels — is defined and lint-enforced separately in [frontend-conventions.md](./frontend-conventions.md).
+
 ---
 
 ## Routing and rendering
