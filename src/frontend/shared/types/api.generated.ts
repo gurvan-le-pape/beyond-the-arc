@@ -1383,6 +1383,49 @@ export interface components {
             /** @description Club information */
             club: components["schemas"]["MatchClubRefDto"];
         };
+        MatchResponseDto: {
+            /**
+             * @description Unique match identifier
+             * @example 1
+             */
+            id: number;
+            /**
+             * @description Match date
+             * @example 2024-02-05T19:00:00Z
+             */
+            date: string;
+            /**
+             * @description Matchday number
+             * @example 1
+             */
+            matchday: number;
+            /** @description Pool information */
+            pool: components["schemas"]["MatchPoolRefDto"];
+            /** @description Home team information */
+            homeTeam: components["schemas"]["MatchTeamRefDto"];
+            /** @description Away team information */
+            awayTeam: components["schemas"]["MatchTeamRefDto"];
+            /**
+             * @description Home team score
+             * @example 85
+             */
+            homeTeamScore: number | null;
+            /**
+             * @description Away team score
+             * @example 72
+             */
+            awayTeamScore: number | null;
+            /**
+             * @description Whether the match was forfeited
+             * @example false
+             */
+            forfeit: boolean;
+            /**
+             * @description Whether the match went to overtime
+             * @example false
+             */
+            overtime: boolean;
+        };
         EventClubNameDto: {
             /**
              * @description Club name
@@ -3069,7 +3112,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PaginatedResponseDto"] & {
-                        items: components["schemas"]["MatchDetailResponseDto"][];
+                        items: components["schemas"]["MatchResponseDto"][];
                     };
                 };
             };

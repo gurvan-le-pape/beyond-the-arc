@@ -1480,7 +1480,7 @@
                         "items": {
                           "type": "array",
                           "items": {
-                            "$ref": "#/components/schemas/MatchDetailResponseDto"
+                            "$ref": "#/components/schemas/MatchResponseDto"
                           }
                         }
                       },
@@ -4051,6 +4051,84 @@
           "id",
           "number",
           "club"
+        ]
+      },
+      "MatchResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Unique match identifier",
+            "example": 1
+          },
+          "date": {
+            "type": "string",
+            "description": "Match date",
+            "example": "2024-02-05T19:00:00Z"
+          },
+          "matchday": {
+            "type": "number",
+            "description": "Matchday number",
+            "example": 1
+          },
+          "pool": {
+            "description": "Pool information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MatchPoolRefDto"
+              }
+            ]
+          },
+          "homeTeam": {
+            "description": "Home team information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MatchTeamRefDto"
+              }
+            ]
+          },
+          "awayTeam": {
+            "description": "Away team information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MatchTeamRefDto"
+              }
+            ]
+          },
+          "homeTeamScore": {
+            "type": "number",
+            "nullable": true,
+            "description": "Home team score",
+            "example": 85
+          },
+          "awayTeamScore": {
+            "type": "number",
+            "nullable": true,
+            "description": "Away team score",
+            "example": 72
+          },
+          "forfeit": {
+            "type": "boolean",
+            "description": "Whether the match was forfeited",
+            "example": false
+          },
+          "overtime": {
+            "type": "boolean",
+            "description": "Whether the match went to overtime",
+            "example": false
+          }
+        },
+        "required": [
+          "id",
+          "date",
+          "matchday",
+          "pool",
+          "homeTeam",
+          "awayTeam",
+          "homeTeamScore",
+          "awayTeamScore",
+          "forfeit",
+          "overtime"
         ]
       },
       "EventClubNameDto": {
