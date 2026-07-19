@@ -15,10 +15,10 @@ import { groupBy } from "@/shared/utils";
 import type { Leaderboard } from "../../../leaderboards/types";
 import type { Pool } from "../../../pools/types";
 import type { CategoryNav, Championship, DivisionNav } from "../../types";
-import { ChampionshipBreadcrumb } from "./championship-breadcrumb/_ChampionshipBreadcrumb";
-import ChampionshipHeader from "./championship-header/_ChampionshipHeader";
-import MatchesPanel from "./championship-matches/_ChampionshipMatches";
-import { ChampionshipNavigation } from "./championship-navigation/_ChampionshipNavigation";
+import { ChampionshipBreadcrumb } from "./championship-breadcrumb";
+import ChampionshipHeader from "./championship-header";
+import MatchesPanel from "./championship-matches";
+import { ChampionshipNavigation } from "./championship-navigation";
 
 interface ChampionshipDetailPageProps {
   readonly championship: Championship;

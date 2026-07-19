@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/components/detail/championship-breadcrumb/_ChampionshipBreadcrumb.tsx
+// src/frontend/features/competitions/championships/components/detail/championship-breadcrumb/index.tsx
 import { useTranslations } from "next-intl";
 
 import { Breadcrumb } from "@/shared/components/navigation";

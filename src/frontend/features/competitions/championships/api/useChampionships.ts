@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/api/use-championships.ts
+// src/frontend/features/competitions/championships/api/useChampionships.ts
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import type { ApiError, PaginatedResponse } from "@/shared/types";

@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/components/detail/championship-matches/rounds-section/_RoundsSection.tsx
+// src/frontend/features/competitions/championships/components/detail/championship-matches/RoundsSection.tsx
 import { useTranslations } from "next-intl";
 
 import { getSortedRounds } from "@/features/matches/utils";

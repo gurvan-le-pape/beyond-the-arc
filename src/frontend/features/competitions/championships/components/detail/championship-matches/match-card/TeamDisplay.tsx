@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/components/detail/championship-matches/matches-section/match-card/TeamDisplay.tsx
+// src/frontend/features/competitions/championships/components/detail/championship-matches/match-card/TeamDisplay.tsx
 import type { Match } from "@/features/matches/types";
 import { ImageWithFallback } from "@/shared/components/primitives";
 import { formatNameToFileName } from "@/shared/utils";

@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/components/detail/championship-matches/matches-section/match-card/_MatchCard.tsx
+// src/frontend/features/competitions/championships/components/detail/championship-matches/match-card/index.tsx
 "use client";
 
 import { useParams } from "next/navigation";
@@ -8,7 +8,7 @@ import type { Match } from "@/features/matches/types";
 import { Card } from "@/shared/components/primitives";
 
 import { ExpandButton } from "./ExpandButton";
-import { MatchExpandedSection } from "./match-expanded-section/_MatchExpandedSection";
+import { MatchExpandedSection } from "./MatchExpandedSection";
 import { MatchStatus } from "./MatchStatus";
 import { ScoreDisplay } from "./ScoreDisplay";
 import { TeamDisplay } from "./TeamDisplay";

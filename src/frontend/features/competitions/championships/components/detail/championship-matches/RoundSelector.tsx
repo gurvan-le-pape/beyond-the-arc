@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/components/detail/championship-matches/rounds-section/RoundSelector.tsx
+// src/frontend/features/competitions/championships/components/detail/championship-matches/RoundSelector.tsx
 "use client";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";

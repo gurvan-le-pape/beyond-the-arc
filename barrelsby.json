@@ -8,7 +8,6 @@
 
     "src/frontend/features/competitions/championships/api",
     "src/frontend/features/competitions/championships/components",
-    "src/frontend/features/competitions/championships/constants",
     "src/frontend/features/competitions/championships/hooks",
     "src/frontend/features/competitions/championships/types",
     "src/frontend/features/competitions/championships/utils",
@@ -121,5 +120,10 @@
   "location": "top",
   "structure": "flat",
   "barrelName": "index.ts",
-  "exclude": [".*\\.spec\\.tsx?$", ".*\\.test\\.tsx?$", ".*\\.d\\.ts$"]
+  "exclude": [
+    ".*\\.spec\\.tsx?$",
+    ".*\\.test\\.tsx?$",
+    ".*\\.d\\.ts$",
+    ".*/championship-(breadcrumb|header|navigation|matches)/.*"
+  ]
 }

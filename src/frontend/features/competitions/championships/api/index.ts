@@ -7,4 +7,4 @@ export * from "./championships.server";
 export * from "./championships.service";
 export * from "./championshipsKeys";
 export * from "./championshipsQueries";
-export * from "./use-championships";
+export * from "./useChampionships";

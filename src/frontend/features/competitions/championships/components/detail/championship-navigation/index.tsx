@@ -1,11 +1,12 @@
-// src/frontend/features/competitions/championships/components/detail/championship-navigation/_ChampionshipNavigation.tsx
+// src/frontend/features/competitions/championships/components/detail/championship-navigation/index.tsx
 
 import { Card } from "@/shared/components/primitives";
 
-import { useCategoryNavigation, useDivisionNavigation } from "../../../hooks";
 import type { CategoryNav, DivisionNav } from "../../../types";
 import CategoryNavigation from "./CategoryNavigation";
 import DivisionNavigation from "./DivisionNavigation";
+import { useCategoryNavigation } from "./useCategoryNavigation";
+import { useDivisionNavigation } from "./useDivisionNavigation";
 
 interface ChampionshipNavigationProps {
   readonly categoryNav: CategoryNav;

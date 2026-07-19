@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/components/detail/championship-matches/matches-section/match-card/match-expanded-section/_MatchExpandedSection.tsx
+// src/frontend/features/competitions/championships/components/detail/championship-matches/match-card/MatchExpandedSection.tsx
 import { useTranslations } from "next-intl";
 
 import type { Match, MatchEvent } from "@/features/matches/types";

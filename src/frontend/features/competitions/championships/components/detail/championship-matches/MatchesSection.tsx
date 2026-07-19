@@ -1,10 +1,10 @@
-// src/frontend/features/competitions/championships/components/detail/championship-matches/matches-section/_MatchesSection.tsx
+// src/frontend/features/competitions/championships/components/detail/championship-matches/MatchesSection.tsx
 import { useTranslations } from "next-intl";
 
 import { Badge } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 
-import { MatchCard } from "./match-card/_MatchCard";
+import { MatchCard } from "./match-card";
 
 interface MatchesSectionProps {
   readonly currentMatches: any[];

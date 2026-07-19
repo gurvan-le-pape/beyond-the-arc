@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/hooks/useCategoryNavigation.ts
+// src/frontend/features/competitions/championships/components/detail/championship-navigation/useCategoryNavigation.ts
 "use client";
 
 import { useCallback } from "react";

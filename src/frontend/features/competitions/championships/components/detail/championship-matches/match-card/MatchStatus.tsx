@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/components/detail/championship-matches/matches-section/match-card/MatchStatus.tsx
+// src/frontend/features/competitions/championships/components/detail/championship-matches/match-card/MatchStatus.tsx
 import { useTranslations } from "next-intl";
 
 import { Badge } from "@/shared/components/primitives";
