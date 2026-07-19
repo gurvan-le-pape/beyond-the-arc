@@ -1,6 +1,6 @@
 // src/frontend/shared/components/primitives/Card.tsx
 import { cva, type VariantProps } from "class-variance-authority";
-import { forwardRef, type HTMLAttributes } from "react";
+import { type HTMLAttributes } from "react";
 
 import { cn } from "@/shared/utils";
 
@@ -38,7 +38,9 @@ const cardVariants = cva("rounded-card border transition-all duration-200", {
 
 export interface CardProps
   extends HTMLAttributes<HTMLElement>,
-    VariantProps<typeof cardVariants> {}
+    VariantProps<typeof cardVariants> {
+  ref?: React.Ref<HTMLElement>;
+}
 
 /**
  * Card — the surface-subtle container layer.
@@ -53,49 +55,51 @@ export interface CardProps
  * <Card variant="highlighted" padding="lg">…</Card>
  * <Card clickable onClick={() => navigate('/detail')}>…</Card>
  */
-export const Card = forwardRef<HTMLElement, CardProps>(
-  ({ className, variant, padding, clickable, onClick, ...props }, ref) => {
-    if (clickable) {
-      return (
-        <button
-          ref={ref as React.Ref<HTMLButtonElement>}
-          type="button"
-          className={cn(
-            cardVariants({ variant, padding, clickable, className }),
-          )}
-          onClick={onClick as React.MouseEventHandler<HTMLButtonElement>}
-          {...(props as HTMLAttributes<HTMLButtonElement>)}
-        />
-      );
-    }
-
+export const Card = ({
+  className,
+  variant,
+  padding,
+  clickable,
+  onClick,
+  ref,
+  ...props
+}: CardProps) => {
+  if (clickable) {
     return (
-      <div
-        ref={ref as React.Ref<HTMLDivElement>}
+      <button
+        ref={ref as React.Ref<HTMLButtonElement>}
+        type="button"
         className={cn(cardVariants({ variant, padding, clickable, className }))}
-        {...(props as HTMLAttributes<HTMLDivElement>)}
+        onClick={onClick as React.MouseEventHandler<HTMLButtonElement>}
+        {...(props as HTMLAttributes<HTMLButtonElement>)}
       />
     );
-  },
-);
+  }
 
-Card.displayName = "Card";
+  return (
+    <div
+      ref={ref as React.Ref<HTMLDivElement>}
+      className={cn(cardVariants({ variant, padding, clickable, className }))}
+      {...(props as HTMLAttributes<HTMLDivElement>)}
+    />
+  );
+};
 
 // ---------------------------------------------------------------------------
 // Card sub-components
 // ---------------------------------------------------------------------------
 
-export const CardHeader = forwardRef<
-  HTMLDivElement,
-  HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
+export const CardHeader = ({
+  className,
+  ref,
+  ...props
+}: HTMLAttributes<HTMLDivElement> & { ref?: React.Ref<HTMLDivElement> }) => (
   <div
     ref={ref}
     className={cn("flex flex-col space-y-2 pb-4", className)}
     {...props}
   />
-));
-CardHeader.displayName = "CardHeader";
+);
 
 /**
  * CardTitle — uses Text variant="h3" so font tokens stay in one place.
@@ -104,10 +108,15 @@ CardHeader.displayName = "CardHeader";
  * needs to differ from the visual style (e.g. as="h2" for a top-level card).
  * Never skip heading levels — h1 → h2 → h3, never h1 → h3.
  */
-export const CardTitle = forwardRef<
-  HTMLHeadingElement,
-  HTMLAttributes<HTMLHeadingElement> & { as?: React.ElementType }
->(({ className, as = "h3", ...props }, ref) => (
+export const CardTitle = ({
+  className,
+  as = "h3",
+  ref,
+  ...props
+}: HTMLAttributes<HTMLHeadingElement> & {
+  as?: React.ElementType;
+  ref?: React.Ref<HTMLHeadingElement>;
+}) => (
   <Text
     ref={ref as React.Ref<HTMLElement>}
     variant="h3"
@@ -115,8 +124,7 @@ export const CardTitle = forwardRef<
     className={className}
     {...props}
   />
-));
-CardTitle.displayName = "CardTitle";
+);
 
 /**
  * CardDescription — uses Text variant="caption".
@@ -124,10 +132,13 @@ CardTitle.displayName = "CardTitle";
  * Renders as <p>. caption gives text-secondary color and text-sm size,
  * matching the visual role of supporting description text under a title.
  */
-export const CardDescription = forwardRef<
-  HTMLParagraphElement,
-  HTMLAttributes<HTMLParagraphElement>
->(({ className, ...props }, ref) => (
+export const CardDescription = ({
+  className,
+  ref,
+  ...props
+}: HTMLAttributes<HTMLParagraphElement> & {
+  ref?: React.Ref<HTMLParagraphElement>;
+}) => (
   <Text
     ref={ref as React.Ref<HTMLElement>}
     variant="caption"
@@ -135,25 +146,24 @@ export const CardDescription = forwardRef<
     className={className}
     {...props}
   />
-));
-CardDescription.displayName = "CardDescription";
+);
 
-export const CardContent = forwardRef<
-  HTMLDivElement,
-  HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
+export const CardContent = ({
+  className,
+  ref,
+  ...props
+}: HTMLAttributes<HTMLDivElement> & { ref?: React.Ref<HTMLDivElement> }) => (
   <div ref={ref} className={cn("", className)} {...props} />
-));
-CardContent.displayName = "CardContent";
+);
 
-export const CardFooter = forwardRef<
-  HTMLDivElement,
-  HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
+export const CardFooter = ({
+  className,
+  ref,
+  ...props
+}: HTMLAttributes<HTMLDivElement> & { ref?: React.Ref<HTMLDivElement> }) => (
   <div
     ref={ref}
     className={cn("flex items-center pt-4 border-t border-divide", className)}
     {...props}
   />
-));
-CardFooter.displayName = "CardFooter";
+);

@@ -1,6 +1,6 @@
 // src/frontend/shared/components/primitives/Badge.tsx
 import { cva, type VariantProps } from "class-variance-authority";
-import { forwardRef, type HTMLAttributes } from "react";
+import { type HTMLAttributes } from "react";
 
 import { cn } from "@/shared/utils";
 
@@ -78,7 +78,9 @@ const badgeVariants = cva(
 
 export interface BadgeProps
   extends HTMLAttributes<HTMLSpanElement>,
-    VariantProps<typeof badgeVariants> {}
+    VariantProps<typeof badgeVariants> {
+  ref?: React.Ref<HTMLSpanElement>;
+}
 
 /**
  * Badge component for labels, categories, statuses
@@ -88,16 +90,18 @@ export interface BadgeProps
  * <Badge variant="male">Men's Team</Badge>
  * <Badge variant="primary" size="overline">Players</Badge>
  */
-export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
-  ({ className, variant, size, ...props }, ref) => {
-    return (
-      <span
-        ref={ref}
-        className={cn(badgeVariants({ variant, size }), className)}
-        {...props}
-      />
-    );
-  },
-);
-
-Badge.displayName = "Badge";
+export const Badge = ({
+  className,
+  variant,
+  size,
+  ref,
+  ...props
+}: BadgeProps) => {
+  return (
+    <span
+      ref={ref}
+      className={cn(badgeVariants({ variant, size }), className)}
+      {...props}
+    />
+  );
+};
