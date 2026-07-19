@@ -2,7 +2,7 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { serverCommitteesService } from "@/features/organizations/committees/api";
-import { CommitteesGrid } from "@/features/organizations/committees/components/list/CommitteesGrid";
+import { CommitteesGrid } from "@/features/organizations/committees/components";
 import { TitleSection } from "@/features/organizations/components";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";

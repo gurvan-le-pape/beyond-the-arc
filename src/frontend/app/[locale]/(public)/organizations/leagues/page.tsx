@@ -3,7 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { TitleSection } from "@/features/organizations/components";
 import { serverLeaguesService } from "@/features/organizations/leagues/api";
-import { LeaguesGrid } from "@/features/organizations/leagues/components/list/LeaguesGrid";
+import { LeaguesGrid } from "@/features/organizations/leagues/components";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
 import { ViewLevel } from "@/shared/constants";

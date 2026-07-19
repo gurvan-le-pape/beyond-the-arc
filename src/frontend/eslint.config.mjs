@@ -4,6 +4,27 @@ import importSort from "eslint-plugin-simple-import-sort";
 import sonarjs from "eslint-plugin-sonarjs";
 import pathComment from "./eslint-rules/enforce-file-path-comment.js";
 import barrelImport from "./eslint-rules/enforce-barrel-import.js";
+import componentFolderStructure from "./eslint-rules/enforce-component-folder-structure.js";
+import fileNaming from "./eslint-rules/enforce-file-naming.js";
+import noCrossCompositeImport from "./eslint-rules/no-cross-composite-import.js";
+import noMixedTypeFile from "./eslint-rules/no-mixed-type-file.js";
+
+// Migration ratchet for docs/frontend-conventions.md: features not yet
+// restructured to the component conventions. Each migration PR restructures
+// one feature and removes its entry here. Never add entries.
+const LEGACY_FEATURES = [
+  "features/charts/**",
+  "features/competitions/championships/**",
+  "features/competitions/leaderboards/**",
+  "features/competitions/pools/**",
+  "features/geography/**",
+  "features/matches/**",
+  "features/organizations/clubs/**",
+  "features/organizations/committees/**",
+  "features/organizations/leagues/**",
+  "features/players/**",
+  "features/teams/**",
+];
 
 export default [
   // Config for all TS files
@@ -24,6 +45,10 @@ export default [
         rules: {
           "enforce-file-path-comment": pathComment,
           "enforce-barrel-import": barrelImport,
+          "enforce-component-folder-structure": componentFolderStructure,
+          "enforce-file-naming": fileNaming,
+          "no-cross-composite-import": noCrossCompositeImport,
+          "no-mixed-type-file": noMixedTypeFile,
         },
       },
     },
@@ -61,10 +86,28 @@ export default [
       "sonarjs/prefer-immediate-return": "warn",
 
       // Custom rules
-      "local-rules/enforce-file-path-comment": "warn",
-      "local-rules/enforce-barrel-import": "warn",
+      "local-rules/enforce-file-path-comment": "error",
+      "local-rules/enforce-barrel-import": "error",
+      "local-rules/enforce-component-folder-structure": "error",
+      "local-rules/enforce-file-naming": "error",
+      "local-rules/no-cross-composite-import": "error",
+      "local-rules/no-mixed-type-file": "error",
     },
   },
+  // Migration ratchet: legacy features keep the old structure until their
+  // migration PR lands (see docs/frontend-conventions.md).
+  ...(LEGACY_FEATURES.length > 0
+    ? [
+        {
+          files: LEGACY_FEATURES,
+          rules: {
+            "local-rules/enforce-component-folder-structure": "off",
+            "local-rules/enforce-file-naming": "off",
+            "local-rules/no-mixed-type-file": "off",
+          },
+        },
+      ]
+    : []),
   // Override for test files
   {
     files: ["**/*.spec.ts", "**/*.test.ts", "**/*.spec.tsx", "**/*.test.tsx"],

@@ -8,10 +8,8 @@ import React from "react";
 import { useCommitteeLeagueClubFilters } from "@/features/competitions/championships/hooks";
 import { useMatchesCascadeOptions } from "@/features/matches/hooks";
 import { ErrorMessage } from "@/shared/components/feedback";
-import type { CascadeStep } from "@/shared/components/filters/CascadeSelects";
-import { CascadeSelects } from "@/shared/components/filters/CascadeSelects";
-import { FiltersShell } from "@/shared/components/filters/FiltersShell";
-import { LevelLocationFilters } from "@/shared/components/filters/LevelLocationFilters";
+import type { CascadeStep } from "@/shared/components/filters";
+import { CascadeSelects, FiltersShell, LevelLocationFilters } from "@/shared/components/filters";
 import { Input, Select } from "@/shared/components/forms";
 import type { Category, Gender } from "@/shared/constants";
 import {

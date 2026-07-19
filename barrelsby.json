@@ -39,9 +39,11 @@
     "src/frontend/features/organizations/clubs/utils",
 
     "src/frontend/features/organizations/committees/api",
+    "src/frontend/features/organizations/committees/components",
     "src/frontend/features/organizations/committees/types",
 
     "src/frontend/features/organizations/leagues/api",
+    "src/frontend/features/organizations/leagues/components",
     "src/frontend/features/organizations/leagues/types",
 
     "src/frontend/features/organizations/shared/components",
@@ -79,6 +81,7 @@
     "src/frontend/shared/components/table",
     "src/frontend/shared/components/navigation",
     "src/frontend/shared/components/feedback",
+    "src/frontend/shared/components/filters",
     "src/frontend/shared/components/forms",
     "src/frontend/shared/components/primitives",
     "src/frontend/shared/components/stats",
@@ -118,5 +121,5 @@
   "location": "top",
   "structure": "flat",
   "barrelName": "index.ts",
-  "exclude": [".*\\.spec\\.ts$", ".*\\.test\\.ts$", ".*\\.d\\.ts$"]
+  "exclude": [".*\\.spec\\.tsx?$", ".*\\.test\\.tsx?$", ".*\\.d\\.ts$"]
 }

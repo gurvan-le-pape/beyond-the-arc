@@ -42,10 +42,11 @@ Root-level `npm run barrels:watch` (or `make barrels`) regenerates barrel `index
 
 ## Repository-specific conventions
 
-These are enforced by custom ESLint rules in `src/backend/eslint-rules/` and `src/frontend/eslint-rules/` (mirrored in both), so violations fail lint/CI, not just style review:
+These are enforced by custom ESLint rules in `src/backend/eslint-rules/` and `src/frontend/eslint-rules/`, so violations fail lint/CI, not just style review:
 
 - **File path header comment**: every `.ts`/`.tsx` file must start with a comment giving its own path relative to `src/backend` or `src/frontend`, e.g. `// src/backend/modules/teams/teams.service.ts`. Autofixable via `lint:fix`.
-- **Barrel imports required** for a fixed list of directories (`@common/dto`, `@modules/*/dto`, etc. — see `enforce-barrel-import.js` for the exact list): import from the barrel (`@modules/teams/dto`) rather than a direct file path. Autofixable.
+- **Barrel imports required**: import from the barrel (`@modules/teams/dto`) rather than a direct file path. Autofixable. The backend rule keeps a fixed list in `enforce-barrel-import.js`; the frontend rule derives its list from the root `barrelsby.json`.
+- **Frontend component organization** (structure of `features/*` — composite folders with `index.tsx` roots, hooks/types placement, depth cap, naming): defined in `docs/frontend-conventions.md`, enforced by the structure rules in `src/frontend/eslint-rules/`. Features not yet migrated are allowlisted in `LEGACY_FEATURES` in `eslint.config.mjs` — never add entries.
 
 ## Backend architecture
 
