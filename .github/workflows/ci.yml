@@ -324,6 +324,15 @@ jobs:
           else
             echo "IMAGE_TAG=$DEPLOY_TAG" >> .env
           fi
+            # Remove images not referenced by any container before pulling new
+            # ones. The post-deploy `docker system prune -f` only drops
+            # *dangling* images, but every deploy pins :SHA tags, so old
+            # tagged images accumulated until the disk health indicator
+            # tripped (>90% of /). All tags remain in GHCR; rollback re-pulls
+            # by IMAGE_TAG, so local copies of old images are not needed.
+            echo "Disk before image prune:" && df -h / | tail -1
+            docker image prune -af
+            echo "Disk after image prune:" && df -h / | tail -1
             docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml pull frontend backend migrate
             docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml up -d
             # Fail the deploy if the new containers don't come up healthy —
