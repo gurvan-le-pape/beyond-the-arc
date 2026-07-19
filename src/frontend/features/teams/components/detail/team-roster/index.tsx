@@ -1,4 +1,4 @@
-// src/frontend/features/teams/components/detail/TeamRoster.tsx
+// src/frontend/features/teams/components/detail/team-roster/index.tsx
 "use client";
 
 import { useTranslations } from "next-intl";
@@ -9,9 +9,9 @@ import { useRouter } from "@/navigation";
 import { Section } from "@/shared/components/blocks";
 import { Text } from "@/shared/components/typography";
 
-import { PlayerCard } from "./team-roster/PlayerCard";
-import { SortControls } from "./team-roster/SortControls";
-import type { PlayerStats, SortConfig, SortKey } from "./team-roster/types";
+import { PlayerCard } from "./PlayerCard";
+import { SortControls } from "./SortControls";
+import type { PlayerStats, SortConfig, SortKey } from "./types";
 
 // ---------------------------------------------------------------------------
 // Helpers

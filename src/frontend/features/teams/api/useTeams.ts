@@ -1,4 +1,4 @@
-// src/frontend/features/teams/api/use-teams.ts
+// src/frontend/features/teams/api/useTeams.ts
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import type { ApiError, PaginatedResponse } from "@/shared/types";
