@@ -1,4 +1,4 @@
-// src/frontend/features/charts/constants/chart-types.ts
+// src/frontend/features/charts/constants/chartTypes.ts
 export const ChartType = {
   SCATTER: "scatter",
   HOTSPOTS: "hotspots",

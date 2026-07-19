@@ -3,8 +3,9 @@ import { useTranslations } from "next-intl";
 import React from "react";
 import { createPortal } from "react-dom";
 
+import { getTooltipPosition } from "@/features/charts/utils";
+
 import { ShotFilter } from "../../constants";
-import { getTooltipPosition } from "../utils/getTooltipPosition";
 
 export type TooltipState = {
   x: number;
