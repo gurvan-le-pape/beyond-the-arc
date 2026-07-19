@@ -22,7 +22,8 @@ export const MatchesCard: React.FC<{ match: Match }> = ({ match }) => {
   const level = match.pool?.championship?.level?.toLowerCase() ?? "";
   const config =
     LEVEL_CONFIG[level as keyof typeof LEVEL_CONFIG] ?? LEVEL_CONFIG.default;
-  const hasScore = match.homeTeamScore !== null && match.awayTeamScore !== null;
+  const { homeTeamScore, awayTeamScore } = match;
+  const hasScore = homeTeamScore !== null && awayTeamScore !== null;
 
   return (
     <Link
@@ -133,7 +134,7 @@ export const MatchesCard: React.FC<{ match: Match }> = ({ match }) => {
               <p
                 className={cn(
                   "text-lg",
-                  hasScore && match.homeTeamScore > match.awayTeamScore
+                  hasScore && homeTeamScore > awayTeamScore
                     ? "font-bold text-text-heading"
                     : "font-normal text-text-emphasis",
                 )}
@@ -151,23 +152,23 @@ export const MatchesCard: React.FC<{ match: Match }> = ({ match }) => {
                 <span
                   className={cn(
                     "text-2xl",
-                    match.homeTeamScore > match.awayTeamScore
+                    homeTeamScore > awayTeamScore
                       ? "font-bold text-text-heading"
                       : "font-normal text-text-body",
                   )}
                 >
-                  {match.homeTeamScore}
+                  {homeTeamScore}
                 </span>
                 <span className="text-xl text-text-muted">-</span>
                 <span
                   className={cn(
                     "text-2xl",
-                    match.awayTeamScore > match.homeTeamScore
+                    awayTeamScore > homeTeamScore
                       ? "font-bold text-text-heading"
                       : "font-normal text-text-body",
                   )}
                 >
-                  {match.awayTeamScore}
+                  {awayTeamScore}
                 </span>
               </div>
             ) : (
@@ -205,7 +206,7 @@ export const MatchesCard: React.FC<{ match: Match }> = ({ match }) => {
               <p
                 className={cn(
                   "text-lg",
-                  hasScore && match.awayTeamScore > match.homeTeamScore
+                  hasScore && awayTeamScore > homeTeamScore
                     ? "font-bold text-text-heading"
                     : "font-normal text-text-emphasis",
                 )}

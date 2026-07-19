@@ -21,7 +21,7 @@ interface MatchEventsTimelineProps {
     description: string,
     eventPlayers?: MatchEvent["players"],
   ) => string;
-  matchDate: Date;
+  matchDate: Date | string;
 }
 
 /**

@@ -1,16 +1,12 @@
 // src/frontend/features/matches/types/MatchPoolRef.ts
-import type { Category, CompetitionLevel, Gender } from "@/shared/constants";
+import type { components } from "@/shared/types";
 
-export interface MatchChampionshipRef {
-  id: number;
-  category: Category;
-  gender: Gender;
-  level: CompetitionLevel;
-  division: number;
-}
+/**
+ * Generated from the backend OpenAPI document. Regenerate with
+ * `npm run typegen` after backend DTO changes — CI fails when
+ * docs/openapi.json and api.generated.ts drift.
+ */
+export type MatchChampionshipRef =
+  components["schemas"]["MatchChampionshipRefDto"];
 
-export interface MatchPoolRef {
-  id: number;
-  name: string;
-  championship: MatchChampionshipRef;
-}
+export type MatchPoolRef = components["schemas"]["MatchPoolRefDto"];

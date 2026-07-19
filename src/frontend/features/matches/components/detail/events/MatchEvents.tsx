@@ -25,7 +25,7 @@ interface MatchEventsProps {
   events: MatchEvent[];
   homeTeam: TeamInfoExtended;
   awayTeam: TeamInfoExtended;
-  matchDate: Date;
+  matchDate: Date | string;
 }
 
 /**

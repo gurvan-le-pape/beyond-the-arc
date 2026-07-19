@@ -1,16 +1,9 @@
 // src/frontend/features/matches/types/Match.ts
-import type { MatchPoolRef } from "./MatchPoolRef";
-import type { MatchTeamRef } from "./MatchTeamRef";
+import type { components } from "@/shared/types";
 
-export interface Match {
-  id: number;
-  date: Date;
-  matchday: number;
-  pool: MatchPoolRef;
-  homeTeam: MatchTeamRef;
-  awayTeam: MatchTeamRef;
-  homeTeamScore: number;
-  awayTeamScore: number;
-  forfeit: boolean;
-  overtime: boolean;
-}
+/**
+ * Generated from the backend OpenAPI document. Regenerate with
+ * `npm run typegen` after backend DTO changes — CI fails when
+ * docs/openapi.json and api.generated.ts drift.
+ */
+export type Match = components["schemas"]["MatchResponseDto"];

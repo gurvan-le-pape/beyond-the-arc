@@ -35,8 +35,10 @@ export const MatchCard: React.FC<MatchCardProps> = ({
 
   const prefetch = useMatchesPrefetch();
 
-  const isHomeWinner = match.homeTeamScore > match.awayTeamScore;
-  const isAwayWinner = match.awayTeamScore > match.homeTeamScore;
+  const { homeTeamScore, awayTeamScore } = match;
+  const hasScore = homeTeamScore !== null && awayTeamScore !== null;
+  const isHomeWinner = hasScore && homeTeamScore > awayTeamScore;
+  const isAwayWinner = hasScore && awayTeamScore > homeTeamScore;
 
   return (
     <Card padding="sm" className="overflow-hidden">

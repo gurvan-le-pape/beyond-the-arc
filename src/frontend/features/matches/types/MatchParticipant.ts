@@ -1,18 +1,12 @@
 // src/frontend/features/matches/types/MatchParticipant.ts
-import type { Position } from "@/shared/constants";
-import type { PlayerMatchStats } from "@/shared/types";
+import type { components } from "@/shared/types";
 
-// A player reference as it appears inside a match (no circular team/stats references)
-export interface MatchParticipantPlayer {
-  id: number;
-  name: string;
-  number: number;
-  position: Position;
-  teamId: number;
-}
+/**
+ * Generated from the backend OpenAPI document. Regenerate with
+ * `npm run typegen` after backend DTO changes — CI fails when
+ * docs/openapi.json and api.generated.ts drift.
+ */
+export type MatchParticipantPlayer =
+  components["schemas"]["PlayerSummaryDto"];
 
-// Mirrors the { player, stats } shape used in both MatchHistoryDto and TeamMatchHistoryDto
-export interface MatchParticipant {
-  player: MatchParticipantPlayer;
-  stats: PlayerMatchStats;
-}
+export type MatchParticipant = components["schemas"]["PlayerMatchEntryDto"];

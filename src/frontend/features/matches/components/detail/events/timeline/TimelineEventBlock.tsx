@@ -20,7 +20,7 @@ interface TimelineEventBlockProps {
     e: React.MouseEvent<HTMLParagraphElement>,
   ) => void;
   /** Match kick-off time, used to derive the game-clock display. */
-  readonly matchDate: Date;
+  readonly matchDate: Date | string;
 }
 
 function formatGameClock(
