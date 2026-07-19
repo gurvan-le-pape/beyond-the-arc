@@ -16,8 +16,6 @@ const LEGACY_FEATURES = [
   "features/competitions/leaderboards/**",
   "features/competitions/pools/**",
   "features/geography/**",
-  "features/organizations/committees/**",
-  "features/organizations/leagues/**",
 ];
 
 export default [

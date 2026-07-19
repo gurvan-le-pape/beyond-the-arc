@@ -7,4 +7,4 @@ export * from "./leagues.server";
 export * from "./leagues.service";
 export * from "./leaguesKeys";
 export * from "./leaguesQueries";
-export * from "./use-leagues";
+export * from "./useLeagues";

@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/committees/api/use-committees.ts
+// src/frontend/features/organizations/committees/api/useCommittees.ts
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import type { ApiError } from "@/shared/types";
