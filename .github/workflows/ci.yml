@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
   pull_request:
+  # Manual trigger — lets a deploy be re-run from the Actions UI (or via
+  # `gh workflow run ci.yml --ref main`) when a push event fails to fire.
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -225,7 +228,7 @@ jobs:
       - frontend-typecheck
       - frontend-build
       - openapi-drift
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
 
     steps:
       - name: Checkout
