@@ -1,4 +1,4 @@
-// src/frontend/features/charts/components/utils/getTooltipPosition.ts
+// src/frontend/features/charts/utils/getTooltipPosition.ts
 // getTooltipPosition: Utility to compute the best position for a floating tooltip
 // given mouse coordinates, tooltip size, and window size.
 // Can be used in overlays or any component needing smart tooltip placement.

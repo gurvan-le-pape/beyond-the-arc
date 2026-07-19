@@ -13,7 +13,6 @@ import noMixedTypeFile from "./eslint-rules/no-mixed-type-file.js";
 // restructured to the component conventions. Each migration PR restructures
 // one feature and removes its entry here. Never add entries.
 const LEGACY_FEATURES = [
-  "features/charts/**",
   "features/competitions/leaderboards/**",
   "features/competitions/pools/**",
   "features/geography/**",
