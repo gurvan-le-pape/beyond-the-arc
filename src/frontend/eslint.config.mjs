@@ -12,11 +12,7 @@ import noMixedTypeFile from "./eslint-rules/no-mixed-type-file.js";
 // Migration ratchet for docs/frontend-conventions.md: features not yet
 // restructured to the component conventions. Each migration PR restructures
 // one feature and removes its entry here. Never add entries.
-const LEGACY_FEATURES = [
-  "features/competitions/leaderboards/**",
-  "features/competitions/pools/**",
-  "features/geography/**",
-];
+const LEGACY_FEATURES = [];
 
 export default [
   // Config for all TS files

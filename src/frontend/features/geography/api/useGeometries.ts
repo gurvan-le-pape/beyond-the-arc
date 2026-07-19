@@ -1,4 +1,4 @@
-// src/frontend/features/geography/api/use-geometries.ts
+// src/frontend/features/geography/api/useGeometries.ts
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import type { GeoJsonData } from "@/features/organizations/clubs/types";

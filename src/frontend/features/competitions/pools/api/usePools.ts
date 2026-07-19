@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/pools/api/use-pools.ts
+// src/frontend/features/competitions/pools/api/usePools.ts
 import type { UseQueryResult } from "@tanstack/react-query";
 import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 
