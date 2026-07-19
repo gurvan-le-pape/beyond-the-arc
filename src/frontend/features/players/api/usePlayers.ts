@@ -1,4 +1,4 @@
-// src/frontend/features/players/api/use-players.ts
+// src/frontend/features/players/api/usePlayers.ts
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import type { ApiError, PaginatedResponse } from "@/shared/types";

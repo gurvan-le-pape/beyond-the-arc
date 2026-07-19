@@ -1,4 +1,4 @@
-// src/frontend/features/players/components/detail/player-comparison/PlayerComparison.tsx
+// src/frontend/features/players/components/detail/PlayerComparison.tsx
 "use client";
 
 import { useTranslations } from "next-intl";
@@ -11,8 +11,8 @@ import { Section, StatComparison } from "@/shared/components/blocks";
 import { Badge } from "@/shared/components/primitives";
 import { cn } from "@/shared/utils";
 
-import { PlayerIdentity } from "../PlayerIdentity";
-import { PlayerSearchDropdown } from "../PlayerSearchDropdown";
+import { PlayerIdentity } from "./PlayerIdentity";
+import { PlayerSearchDropdown } from "./PlayerSearchDropdown";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 

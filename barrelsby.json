@@ -49,7 +49,6 @@
 
     "src/frontend/features/players/api",
     "src/frontend/features/players/components",
-    "src/frontend/features/players/constants",
     "src/frontend/features/players/hooks",
     "src/frontend/features/players/types",
     "src/frontend/features/players/utils",
