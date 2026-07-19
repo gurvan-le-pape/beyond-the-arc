@@ -19,16 +19,19 @@ import { Gender } from "@/shared/constants";
 export function groupTeamsByGender<T extends { gender: Gender }>(
   teams: T[],
 ): Record<Gender, T[]> {
-  return teams.reduce((acc, team) => {
-    const gender = team.gender;
+  return teams.reduce(
+    (acc, team) => {
+      const gender = team.gender;
 
-    if (!acc[gender]) {
-      acc[gender] = [];
-    }
+      if (!acc[gender]) {
+        acc[gender] = [];
+      }
 
-    acc[gender].push(team);
-    return acc;
-  }, {} as Record<Gender, T[]>);
+      acc[gender].push(team);
+      return acc;
+    },
+    {} as Record<Gender, T[]>,
+  );
 }
 
 /**

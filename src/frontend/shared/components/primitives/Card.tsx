@@ -37,8 +37,7 @@ const cardVariants = cva("rounded-card border transition-all duration-200", {
 });
 
 export interface CardProps
-  extends HTMLAttributes<HTMLElement>,
-    VariantProps<typeof cardVariants> {
+  extends HTMLAttributes<HTMLElement>, VariantProps<typeof cardVariants> {
   ref?: React.Ref<HTMLElement>;
 }
 

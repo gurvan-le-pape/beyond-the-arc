@@ -5,7 +5,12 @@ import { SlidersHorizontal } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
-import { Badge, BottomSheet, Button, Card } from "@/shared/components/primitives";
+import {
+  Badge,
+  BottomSheet,
+  Button,
+  Card,
+} from "@/shared/components/primitives";
 import { cn } from "@/shared/utils";
 
 import type { ActiveFilterChip } from "./ActiveFilterChips";

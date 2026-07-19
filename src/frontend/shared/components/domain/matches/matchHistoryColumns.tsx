@@ -15,7 +15,9 @@ interface MatchWithTeams {
  * Shared "date" column for match-history tables, built the same way across
  * teams/players/matches features.
  */
-export function buildMatchDateColumn<T extends MatchWithTeams>(header: ReactNode) {
+export function buildMatchDateColumn<T extends MatchWithTeams>(
+  header: ReactNode,
+) {
   return {
     key: "date",
     header,

@@ -10,7 +10,7 @@ export function parseApiError(err: unknown): ApiError {
         statusCode: data.statusCode,
         message: Array.isArray(data.message)
           ? data.message.join(", ")
-          : data.message ?? "Unknown error",
+          : (data.message ?? "Unknown error"),
         error: data.error ?? "Error",
         path: data.path,
         timestamp: data.timestamp,

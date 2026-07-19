@@ -9,7 +9,11 @@ import { useClubSearch } from "@/features/organizations/clubs/api";
 import { useTeamFilterValues } from "@/features/teams/api";
 import { ErrorMessage } from "@/shared/components/feedback";
 import type { CascadeStep } from "@/shared/components/filters";
-import { CascadeSelects, FiltersShell, LevelLocationFilters } from "@/shared/components/filters";
+import {
+  CascadeSelects,
+  FiltersShell,
+  LevelLocationFilters,
+} from "@/shared/components/filters";
 import { Select } from "@/shared/components/forms";
 import { ComboBox } from "@/shared/components/primitives";
 import type { Category, Gender } from "@/shared/constants";

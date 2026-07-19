@@ -295,9 +295,7 @@ describe("CacheInterceptor", () => {
   describe("upstream errors", () => {
     function makeErrorHandler(message = "upstream boom"): CallHandler {
       return {
-        handle: jest
-          .fn()
-          .mockReturnValue(throwError(() => new Error(message))),
+        handle: jest.fn().mockReturnValue(throwError(() => new Error(message))),
       };
     }
 

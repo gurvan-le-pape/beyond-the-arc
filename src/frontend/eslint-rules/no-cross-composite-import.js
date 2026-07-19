@@ -72,8 +72,7 @@ module.exports = {
                 .split("/")
                 .slice(
                   0,
-                  importPath.split("/").length -
-                    (innerSegments.length - 1 - i),
+                  importPath.split("/").length - (innerSegments.length - 1 - i),
                 )
                 .join("/"),
             },

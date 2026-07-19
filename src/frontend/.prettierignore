@@ -1,0 +1,13 @@
+# Build output
+.next
+dist
+node_modules
+
+# Generated types (from the OpenAPI snapshot via `npm run typegen`)
+shared/types/api.generated.ts
+
+# Static assets (geojson data, manifests, images)
+public
+
+# Generated / committed lockfile
+package-lock.json

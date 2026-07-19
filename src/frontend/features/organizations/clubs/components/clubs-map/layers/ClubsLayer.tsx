@@ -3,10 +3,7 @@
 
 import { Layer, Source } from "react-map-gl/maplibre";
 
-import {
-  CLUSTER_CONFIG,
-  MAP_COLORS,
-} from "../mapConstants";
+import { CLUSTER_CONFIG, MAP_COLORS } from "../mapConstants";
 
 interface ClubsLayerProps {
   readonly geoJson: any;

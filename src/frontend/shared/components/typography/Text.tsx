@@ -63,8 +63,7 @@ const variantTagMap: Record<string, ElementType> = {
 };
 
 interface TextProps
-  extends HTMLAttributes<HTMLElement>,
-    VariantProps<typeof textVariants> {
+  extends HTMLAttributes<HTMLElement>, VariantProps<typeof textVariants> {
   /**
    * Override the rendered HTML tag.
    *

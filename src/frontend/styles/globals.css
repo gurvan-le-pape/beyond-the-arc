@@ -118,9 +118,10 @@ html {
   --color-secondary-ink: #0a2e18;
 
   /* Shadows                                                          */
-  --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  --shadow-card-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-card:
+    0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-card-hover:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 
   /* Header backdrop                                                  */
   --color-header-bg: rgba(255, 255, 255, 0.9);
@@ -204,17 +205,17 @@ html {
   --color-matches: #d97706;
   --color-matches-strong: #78350f;
 
-  --color-position-g-subtle: #e0e7ff;   /* same hue as national/indigo — guard reads "playmaker" */
---color-position-g: #6366f1;
---color-position-g-strong: #312e81;
+  --color-position-g-subtle: #e0e7ff; /* same hue as national/indigo — guard reads "playmaker" */
+  --color-position-g: #6366f1;
+  --color-position-g-strong: #312e81;
 
---color-position-f-subtle: #fde68a;   /* amber — forward energy */
---color-position-f: #d97706;
---color-position-f-strong: #78350f;
+  --color-position-f-subtle: #fde68a; /* amber — forward energy */
+  --color-position-f: #d97706;
+  --color-position-f-strong: #78350f;
 
---color-position-c-subtle: #e9d5ff;   /* violet — anchor/size */
---color-position-c: #7c3aed;
---color-position-c-strong: #5b21b6;
+  --color-position-c-subtle: #e9d5ff; /* violet — anchor/size */
+  --color-position-c: #7c3aed;
+  --color-position-c-strong: #5b21b6;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -266,8 +267,8 @@ html {
 
   /* Shadows */
   --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.5), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --shadow-card-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.4),
-    0 4px 6px -2px rgba(0, 0, 0, 0.25);
+  --shadow-card-hover:
+    0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.25);
 
   /* Header backdrop */
   --color-header-bg: rgba(17, 24, 39, 0.9);

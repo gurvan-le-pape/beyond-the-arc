@@ -6,8 +6,7 @@ import type { components } from "@/shared/types";
  * `npm run typegen` after backend DTO changes — CI fails when
  * docs/openapi.json and api.generated.ts drift.
  */
-export type MatchPlayerWithTeamRef =
-  components["schemas"]["PlayerWithTeamDto"];
+export type MatchPlayerWithTeamRef = components["schemas"]["PlayerWithTeamDto"];
 
 export type MatchPlayerWithStats = components["schemas"]["PlayerWithStatsDto"];
 

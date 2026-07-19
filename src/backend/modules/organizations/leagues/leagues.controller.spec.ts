@@ -70,7 +70,7 @@ describe("LeaguesController", () => {
       president: null,
       region: { id: 1, name: "Region", code: "REG" },
       ...overrides,
-    } as LeagueResponseDto);
+    }) as LeagueResponseDto;
 
   describe("getAllLeagues", () => {
     it("should return array of leagues with regions", async () => {

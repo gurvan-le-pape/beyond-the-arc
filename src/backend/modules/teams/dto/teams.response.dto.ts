@@ -5,10 +5,7 @@ import {
   Gender,
   PlayerSummaryDto,
 } from "@common/index";
-import {
-  HistoryTeamRefDto,
-  PlayerMatchStatsDto,
-} from "@modules/players/dto";
+import { HistoryTeamRefDto, PlayerMatchStatsDto } from "@modules/players/dto";
 import { ApiProperty } from "@nestjs/swagger";
 
 /**

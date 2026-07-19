@@ -25,7 +25,7 @@ export const PlayerCard: React.FC<{ player: Player }> = ({ player }) => {
   const clubTeamLabel =
     clubName && teamNumber
       ? `${clubName} - ${teamNumber}`
-      : clubName ?? teamNumber ?? NA;
+      : (clubName ?? teamNumber ?? NA);
 
   return (
     <Link

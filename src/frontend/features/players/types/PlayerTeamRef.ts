@@ -8,8 +8,7 @@ import type { components } from "@/shared/types";
  */
 export type PlayerLeagueRef = components["schemas"]["PlayerLeagueRefDto"];
 
-export type PlayerCommitteeRef =
-  components["schemas"]["PlayerCommitteeRefDto"];
+export type PlayerCommitteeRef = components["schemas"]["PlayerCommitteeRefDto"];
 
 export type PlayerClubRef = components["schemas"]["PlayerClubRefDto"];
 
