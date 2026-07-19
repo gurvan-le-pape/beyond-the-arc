@@ -1,5 +1,5 @@
 // src/frontend/features/players/components/PlayerAvatar.tsx
-import { forwardRef, type HTMLAttributes } from "react";
+import { type HTMLAttributes } from "react";
 
 import { cn } from "@/shared/utils";
 
@@ -17,6 +17,7 @@ export interface PlayerAvatarProps extends HTMLAttributes<HTMLDivElement> {
   number?: number;
   /** @default "md" */
   size?: "sm" | "md" | "lg";
+  ref?: React.Ref<HTMLDivElement>;
 }
 
 const sizeConfig = {
@@ -44,40 +45,43 @@ const sizeConfig = {
  * <PlayerAvatar name="Marcus Bell" number={5} />
  * <PlayerAvatar name="Jordan Lee" number={11} size="sm" />
  */
-export const PlayerAvatar = forwardRef<HTMLDivElement, PlayerAvatarProps>(
-  ({ name, number, size = "md", className, ...props }, ref) => {
-    const config = sizeConfig[size];
+export const PlayerAvatar = ({
+  name,
+  number,
+  size = "md",
+  className,
+  ref,
+  ...props
+}: PlayerAvatarProps) => {
+  const config = sizeConfig[size];
 
-    return (
-      <div ref={ref} className={cn("relative", className)} {...props}>
-        <div
+  return (
+    <div ref={ref} className={cn("relative", className)} {...props}>
+      <div
+        className={cn(
+          "rounded-full bg-primary-subtle flex items-center justify-center",
+          config.avatar,
+        )}
+      >
+        <span
           className={cn(
-            "rounded-full bg-primary-subtle flex items-center justify-center",
-            config.avatar,
+            "font-semibold text-primary-strong select-none",
+            config.initials,
           )}
         >
-          <span
-            className={cn(
-              "font-semibold text-primary-strong select-none",
-              config.initials,
-            )}
-          >
-            {getInitials(name)}
-          </span>
-        </div>
-        {number !== undefined && (
-          <span
-            className={cn(
-              "absolute -bottom-1 -right-1 bg-surface-raised border border-divide rounded-button font-semibold text-text-secondary leading-none",
-              config.badge,
-            )}
-          >
-            #{number}
-          </span>
-        )}
+          {getInitials(name)}
+        </span>
       </div>
-    );
-  },
-);
-
-PlayerAvatar.displayName = "PlayerAvatar";
+      {number !== undefined && (
+        <span
+          className={cn(
+            "absolute -bottom-1 -right-1 bg-surface-raised border border-divide rounded-button font-semibold text-text-secondary leading-none",
+            config.badge,
+          )}
+        >
+          #{number}
+        </span>
+      )}
+    </div>
+  );
+};

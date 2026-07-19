@@ -1,6 +1,6 @@
 // src/frontend/shared/components/typography/Text.tsx
 import { cva, type VariantProps } from "class-variance-authority";
-import { type ElementType, forwardRef, type HTMLAttributes } from "react";
+import { type ElementType, type HTMLAttributes } from "react";
 
 import { cn } from "@/shared/utils";
 
@@ -75,20 +75,23 @@ interface TextProps
    */
   as?: ElementType;
   htmlFor?: string;
+  ref?: React.Ref<HTMLElement>;
 }
 
-export const Text = forwardRef<HTMLElement, TextProps>(
-  ({ className, variant = "body", as, ...props }, ref) => {
-    const Tag = as ?? variantTagMap[variant ?? "body"] ?? "p";
+export const Text = ({
+  className,
+  variant = "body",
+  as,
+  ref,
+  ...props
+}: TextProps) => {
+  const Tag = as ?? variantTagMap[variant ?? "body"] ?? "p";
 
-    return (
-      <Tag
-        ref={ref as React.Ref<HTMLElement>}
-        className={cn(textVariants({ variant }), className)}
-        {...props}
-      />
-    );
-  },
-);
-
-Text.displayName = "Text";
+  return (
+    <Tag
+      ref={ref as React.Ref<HTMLElement>}
+      className={cn(textVariants({ variant }), className)}
+      {...props}
+    />
+  );
+};

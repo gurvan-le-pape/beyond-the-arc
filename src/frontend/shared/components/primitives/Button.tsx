@@ -8,7 +8,7 @@
 //
 
 import { cva, type VariantProps } from "class-variance-authority";
-import { type ButtonHTMLAttributes, forwardRef } from "react";
+import { type ButtonHTMLAttributes } from "react";
 
 import { cn } from "@/shared/utils";
 
@@ -118,6 +118,7 @@ export interface ButtonProps
   extends ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   isLoading?: boolean;
+  ref?: React.Ref<HTMLButtonElement>;
 }
 
 /**
@@ -135,24 +136,26 @@ export interface ButtonProps
  * <Button variant="control">Filters</Button>
  * <Button variant="clubs">Find a club</Button>
  */
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    { className, variant, size, isLoading, children, disabled, ...props },
-    ref,
-  ) => (
-    <button
-      ref={ref}
-      className={cn(buttonVariants({ variant, size, className }))}
-      disabled={disabled || isLoading}
-      aria-busy={isLoading || undefined}
-      {...props}
-    >
-      {isLoading ? <LoadingSpinner size="sm" /> : children}
-    </button>
-  ),
+export const Button = ({
+  className,
+  variant,
+  size,
+  isLoading,
+  children,
+  disabled,
+  ref,
+  ...props
+}: ButtonProps) => (
+  <button
+    ref={ref}
+    className={cn(buttonVariants({ variant, size, className }))}
+    disabled={disabled || isLoading}
+    aria-busy={isLoading || undefined}
+    {...props}
+  >
+    {isLoading ? <LoadingSpinner size="sm" /> : children}
+  </button>
 );
-
-Button.displayName = "Button";
 
 // ---------------------------------------------------------------------------
 // NavButton — navigation and list-item patterns
@@ -207,6 +210,7 @@ export interface NavButtonProps
   extends ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof navButtonVariants> {
   isLoading?: boolean;
+  ref?: React.Ref<HTMLButtonElement>;
 }
 
 /**
@@ -224,24 +228,26 @@ export interface NavButtonProps
  *   <ChevronDownIcon /> Departmental
  * </NavButton>
  */
-export const NavButton = forwardRef<HTMLButtonElement, NavButtonProps>(
-  (
-    { className, variant, size, isLoading, children, disabled, ...props },
-    ref,
-  ) => (
-    <button
-      ref={ref}
-      className={cn(navButtonVariants({ variant, size, className }))}
-      disabled={disabled || isLoading}
-      aria-busy={isLoading || undefined}
-      {...props}
-    >
-      {isLoading ? <LoadingSpinner size="sm" /> : children}
-    </button>
-  ),
+export const NavButton = ({
+  className,
+  variant,
+  size,
+  isLoading,
+  children,
+  disabled,
+  ref,
+  ...props
+}: NavButtonProps) => (
+  <button
+    ref={ref}
+    className={cn(navButtonVariants({ variant, size, className }))}
+    disabled={disabled || isLoading}
+    aria-busy={isLoading || undefined}
+    {...props}
+  >
+    {isLoading ? <LoadingSpinner size="sm" /> : children}
+  </button>
 );
-
-NavButton.displayName = "NavButton";
 
 // ---------------------------------------------------------------------------
 // PillButton — round-selector and carousel patterns
@@ -292,6 +298,7 @@ export interface PillButtonProps
   extends ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof pillButtonVariants> {
   isLoading?: boolean;
+  ref?: React.Ref<HTMLButtonElement>;
 }
 
 /**
@@ -304,21 +311,23 @@ export interface PillButtonProps
  *   <ChevronLeftIcon className="h-5 w-5" />
  * </PillButton>
  */
-export const PillButton = forwardRef<HTMLButtonElement, PillButtonProps>(
-  (
-    { className, variant, size, isLoading, children, disabled, ...props },
-    ref,
-  ) => (
-    <button
-      ref={ref}
-      className={cn(pillButtonVariants({ variant, size, className }))}
-      disabled={disabled || isLoading}
-      aria-busy={isLoading || undefined}
-      {...props}
-    >
-      {isLoading ? <LoadingSpinner size="sm" /> : children}
-    </button>
-  ),
+export const PillButton = ({
+  className,
+  variant,
+  size,
+  isLoading,
+  children,
+  disabled,
+  ref,
+  ...props
+}: PillButtonProps) => (
+  <button
+    ref={ref}
+    className={cn(pillButtonVariants({ variant, size, className }))}
+    disabled={disabled || isLoading}
+    aria-busy={isLoading || undefined}
+    {...props}
+  >
+    {isLoading ? <LoadingSpinner size="sm" /> : children}
+  </button>
 );
-
-PillButton.displayName = "PillButton";
