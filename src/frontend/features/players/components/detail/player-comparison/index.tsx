@@ -1,4 +1,4 @@
-// src/frontend/features/players/components/detail/PlayerComparison.tsx
+// src/frontend/features/players/components/detail/player-comparison/index.tsx
 "use client";
 
 import { useTranslations } from "next-intl";

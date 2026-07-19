@@ -1,8 +1,8 @@
-// src/frontend/features/players/components/detail/PlayerIdentity.tsx
+// src/frontend/features/players/components/detail/player-comparison/PlayerIdentity.tsx
 import { Text } from "@/shared/components/typography";
 import { cn } from "@/shared/utils";
 
-import type { Player } from "../../types/Player";
+import type { Player } from "../../../types/Player";
 
 interface PlayerIdentityProps {
   readonly player: Player;

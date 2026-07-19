@@ -124,6 +124,7 @@
     ".*\\.d\\.ts$",
     ".*/championship-(breadcrumb|header|navigation|matches)/.*",
     ".*/match-events/(filters|timeline)/.*",
-    ".*/team-roster/(?!index\\.tsx$).*"
+    ".*/team-roster/(?!index\\.tsx$).*",
+    ".*/player-comparison/(?!index\\.tsx$).*"
   ]
 }
