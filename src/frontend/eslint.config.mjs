@@ -17,7 +17,6 @@ const LEGACY_FEATURES = [
   "features/competitions/pools/**",
   "features/geography/**",
   "features/matches/**",
-  "features/organizations/clubs/**",
   "features/organizations/committees/**",
   "features/organizations/leagues/**",
   "features/players/**",
