@@ -124,6 +124,7 @@
     ".*\\.spec\\.tsx?$",
     ".*\\.test\\.tsx?$",
     ".*\\.d\\.ts$",
-    ".*/championship-(breadcrumb|header|navigation|matches)/.*"
+    ".*/championship-(breadcrumb|header|navigation|matches)/.*",
+    ".*/match-events/(filters|timeline)/.*"
   ]
 }

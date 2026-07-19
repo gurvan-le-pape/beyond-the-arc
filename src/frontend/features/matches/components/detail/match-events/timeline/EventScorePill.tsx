@@ -1,4 +1,4 @@
-// src/frontend/features/matches/components/detail/events/timeline/EventScorePill.tsx
+// src/frontend/features/matches/components/detail/match-events/timeline/EventScorePill.tsx
 
 import { cn } from "@/shared/utils";
 

@@ -1,4 +1,4 @@
-// src/frontend/features/matches/components/detail/events/timeline/TimelineEventBlock.tsx
+// src/frontend/features/matches/components/detail/match-events/timeline/TimelineEventBlock.tsx
 import { useTranslations } from "next-intl";
 import React from "react";
 
