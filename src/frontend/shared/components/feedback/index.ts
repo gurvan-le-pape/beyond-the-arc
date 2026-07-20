@@ -4,6 +4,7 @@
  */
 
 export * from "./EmptyState";
+export * from "./ErrorCard";
 export * from "./ErrorMessage";
 export * from "./LoadingSpinner";
 export * from "./Skeleton";
