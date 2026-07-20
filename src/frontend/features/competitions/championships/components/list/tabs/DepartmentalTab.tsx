@@ -13,7 +13,7 @@ import { CompetitionLevel } from "@/shared/constants";
 
 import type { Championship } from "../../../types";
 import { ChampionshipCard } from "../ChampionshipCard";
-import { DepartmentalFilters } from "../filters/DepartmentalFilters";
+import { ChampionshipFilters } from "../filters/ChampionshipFilters";
 
 export function DepartmentalTab() {
   const tCommon = useTranslations("common");
@@ -45,11 +45,20 @@ export function DepartmentalTab() {
 
   return (
     <div className="space-y-6">
-      <DepartmentalFilters
-        filters={filters}
-        setters={setters}
-        committees={committees}
+      <ChampionshipFilters
+        level="departmental"
+        category={filters.category}
+        gender={filters.gender}
+        onCategoryChange={setters.setCategory}
+        onGenderChange={setters.setGender}
         onReset={resetFilters}
+        scope={{
+          label: tCommon("filters.committees"),
+          allLabel: tCommon("filters.allCommittees"),
+          value: filters.committeeId,
+          onChange: setters.setCommitteeId,
+          options: committees,
+        }}
       />
       <SearchTabShell
         isLoading={isLoading}

@@ -12,7 +12,7 @@ import { CompetitionLevel } from "@/shared/constants";
 
 import type { Championship } from "../../../types";
 import { ChampionshipCard } from "../ChampionshipCard";
-import { NationalFilters } from "../filters/NationalFilters";
+import { ChampionshipFilters } from "../filters/ChampionshipFilters";
 
 export function NationalTab() {
   const tCommon = useTranslations("common");
@@ -41,9 +41,12 @@ export function NationalTab() {
 
   return (
     <div className="space-y-6">
-      <NationalFilters
-        filters={filters}
-        setters={setters}
+      <ChampionshipFilters
+        level="national"
+        category={filters.category}
+        gender={filters.gender}
+        onCategoryChange={setters.setCategory}
+        onGenderChange={setters.setGender}
         onReset={resetFilters}
       />
       <SearchTabShell
