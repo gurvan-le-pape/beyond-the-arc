@@ -66,11 +66,12 @@ describe("aggregateTeamSeasonStats", () => {
 
     const result = aggregateTeamSeasonStats(teamId, matches);
 
-    // 4 team-appearance rows (player 1 twice, players 2 and 3 once).
-    expect(result.gamesPlayed).toBe(4);
+    // Per-game divides by games played (2 matches), not appearances (4 rows).
+    expect(result.gamesPlayed).toBe(2);
     expect(result.points).toBe(36); // 10 + 8 + 12 + 6
     expect(result.assists).toBe(10); // 3 + 2 + 1 + 4
-    expect(result.pointsPerGame).toBe(9); // 36 / 4
+    expect(result.pointsPerGame).toBe(18); // 36 / 2 games
+    expect(result.assistsPerGame).toBe(5); // 10 / 2 games
     // 3 distinct players (1, 2, 3) — player 1 counted once.
     expect(result.players).toBe(3);
   });
