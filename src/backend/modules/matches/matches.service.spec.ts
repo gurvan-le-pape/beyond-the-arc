@@ -381,6 +381,49 @@ describe("MatchesService", () => {
       expect(result.stats[0].stats.playtime).toBe(20);
     });
 
+    it("aggregates team totals partitioned by the player's team id", async () => {
+      mockPrismaService.client.matches.findUnique.mockResolvedValue({
+        homeTeamId: 1,
+        awayTeamId: 2,
+      });
+      mockPrismaService.client.playerMatchStats.findMany.mockResolvedValue([
+        {
+          player: {
+            ...mockPlayer,
+            teamId: 1,
+            team: { id: 100, number: 5, club: { id: 200, name: "Club A" } },
+          },
+          points: 20,
+          fouls: 2,
+          threePointsMade: 1,
+          threePointsAttempted: 2,
+          twoPointsIntMade: 3,
+          twoPointsIntAttempted: 4,
+          twoPointsExtMade: 0,
+          twoPointsExtAttempted: 1,
+          freeThrowsMade: 2,
+          freeThrowsAttempted: 2,
+          assists: 5,
+          turnovers: 1,
+          reboundsOffensive: 2,
+          reboundsDefensive: 3,
+          steals: 1,
+          blocks: 0,
+          playtimeIntervals: [],
+        },
+      ]);
+
+      const result = await service.findPlayerMatchStatsByMatchId(1);
+
+      // Only the single home-team player contributes to the home totals.
+      expect(result.homeTeamStats.assists).toBe(5);
+      expect(result.homeTeamStats.fieldGoals).toBe("4/7");
+      expect(result.homeTeamStats.pointsInPaint).toBe(6);
+      // No away-team rows -> zeroed totals.
+      expect(result.awayTeamStats.assists).toBe(0);
+      expect(result.awayTeamStats.fieldGoalPercentage).toBe("N/A");
+    });
+
     it("should throw NotFoundException if match not found", async () => {
       mockPrismaService.client.matches.findUnique.mockResolvedValue(null);
 

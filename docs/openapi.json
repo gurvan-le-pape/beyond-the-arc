@@ -4721,6 +4721,103 @@
           "stats"
         ]
       },
+      "TeamMatchStatsDto": {
+        "type": "object",
+        "properties": {
+          "fieldGoals": {
+            "type": "string",
+            "description": "Field goals made/attempted",
+            "example": "25/58"
+          },
+          "fieldGoalPercentage": {
+            "type": "string",
+            "description": "Field goal percentage, or \"N/A\" when no attempts",
+            "example": "43%"
+          },
+          "threePointers": {
+            "type": "string",
+            "description": "Three-pointers made/attempted",
+            "example": "8/22"
+          },
+          "threePointPercentage": {
+            "type": "string",
+            "description": "Three-point percentage, or \"N/A\" when no attempts",
+            "example": "36%"
+          },
+          "freeThrows": {
+            "type": "string",
+            "description": "Free throws made/attempted",
+            "example": "14/18"
+          },
+          "freeThrowPercentage": {
+            "type": "string",
+            "description": "Free throw percentage, or \"N/A\" when no attempts",
+            "example": "78%"
+          },
+          "reboundsTotal": {
+            "type": "number",
+            "description": "Total rebounds",
+            "example": 38
+          },
+          "reboundsOffensive": {
+            "type": "number",
+            "description": "Offensive rebounds",
+            "example": 11
+          },
+          "reboundsDefensive": {
+            "type": "number",
+            "description": "Defensive rebounds",
+            "example": 27
+          },
+          "assists": {
+            "type": "number",
+            "description": "Assists",
+            "example": 17
+          },
+          "steals": {
+            "type": "number",
+            "description": "Steals",
+            "example": 6
+          },
+          "blocks": {
+            "type": "number",
+            "description": "Blocks",
+            "example": 3
+          },
+          "turnovers": {
+            "type": "number",
+            "description": "Turnovers",
+            "example": 12
+          },
+          "fouls": {
+            "type": "number",
+            "description": "Personal fouls",
+            "example": 19
+          },
+          "pointsInPaint": {
+            "type": "number",
+            "description": "Points scored in the paint (interior two-pointers x2)",
+            "example": 30
+          }
+        },
+        "required": [
+          "fieldGoals",
+          "fieldGoalPercentage",
+          "threePointers",
+          "threePointPercentage",
+          "freeThrows",
+          "freeThrowPercentage",
+          "reboundsTotal",
+          "reboundsOffensive",
+          "reboundsDefensive",
+          "assists",
+          "steals",
+          "blocks",
+          "turnovers",
+          "fouls",
+          "pointsInPaint"
+        ]
+      },
       "MatchPlayerStatsResponseDto": {
         "type": "object",
         "properties": {
@@ -4740,12 +4837,30 @@
             "items": {
               "$ref": "#/components/schemas/PlayerWithStatsDto"
             }
+          },
+          "homeTeamStats": {
+            "description": "Aggregated totals for the home team",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TeamMatchStatsDto"
+              }
+            ]
+          },
+          "awayTeamStats": {
+            "description": "Aggregated totals for the away team",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TeamMatchStatsDto"
+              }
+            ]
           }
         },
         "required": [
           "homeTeamId",
           "awayTeamId",
-          "stats"
+          "stats",
+          "homeTeamStats",
+          "awayTeamStats"
         ]
       },
       "PlayerLeagueRefDto": {
