@@ -4,9 +4,13 @@
  */
 
 export * from "./CategorySection";
+export * from "./ClubLogo";
+export * from "./EntityCardBadges";
+export * from "./EntityCardBody";
 export * from "./GenderCategorizedList";
 export * from "./GenderCategorizedSection";
 export * from "./LeaderboardTable";
+export * from "./ListEntityCard";
 export * from "./matches/matchHistoryColumns";
 export * from "./matches/MatchTeamLabel";
 export * from "./search/SearchTabShell";
