@@ -13,7 +13,7 @@ import { CompetitionLevel } from "@/shared/constants";
 
 import type { Championship } from "../../../types";
 import { ChampionshipCard } from "../ChampionshipCard";
-import { RegionalFilters } from "../filters/RegionalFilters";
+import { ChampionshipFilters } from "../filters/ChampionshipFilters";
 
 export function RegionalTab() {
   const tCommon = useTranslations("common");
@@ -45,11 +45,20 @@ export function RegionalTab() {
 
   return (
     <div className="space-y-6">
-      <RegionalFilters
-        filters={filters}
-        setters={setters}
-        leagues={leagues}
+      <ChampionshipFilters
+        level="regional"
+        category={filters.category}
+        gender={filters.gender}
+        onCategoryChange={setters.setCategory}
+        onGenderChange={setters.setGender}
         onReset={resetFilters}
+        scope={{
+          label: tCommon("filters.leagues"),
+          allLabel: tCommon("filters.allLeagues"),
+          value: filters.leagueId,
+          onChange: setters.setLeagueId,
+          options: leagues,
+        }}
       />
       <SearchTabShell
         isLoading={isLoading}
