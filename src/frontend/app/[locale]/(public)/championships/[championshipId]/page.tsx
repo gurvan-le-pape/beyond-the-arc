@@ -7,11 +7,12 @@ import { ChampionshipDetailPage } from "@/features/competitions/championships/co
 import {
   buildCategoryNavigation,
   buildDivisionNavigation,
+  resolveInitialPoolId,
+  resolveOrganizationId,
 } from "@/features/competitions/championships/utils";
 import { serverLeaderboardsService } from "@/features/competitions/leaderboards/api";
 import { serverPoolsService } from "@/features/competitions/pools/api";
 import { PageLayout } from "@/shared/components/layout";
-import { CompetitionLevel } from "@/shared/constants";
 
 interface ChampionshipDetailPageProps {
   readonly params: Promise<{ championshipId: string; locale: string }>;
@@ -39,11 +40,7 @@ export default async function ChampionshipsDetailPage({
   const championship = await serverChampionshipsService.getById(championshipId);
   if (!championship) notFound();
 
-  const organizationId =
-    championship.level === CompetitionLevel.DEPARTMENTAL
-      ? championship.committeeId
-      : championship.leagueId;
-
+  const organizationId = resolveOrganizationId(championship);
   if (!organizationId) notFound();
 
   const [pools, { items: championships }] = await Promise.all([
@@ -57,9 +54,7 @@ export default async function ChampionshipsDetailPage({
 
   if (pools.length === 0) notFound();
 
-  const initialPoolId = poolParam
-    ? (pools.find((p) => p.id === Number(poolParam))?.id ?? pools[0].id)
-    : pools[0].id;
+  const initialPoolId = resolveInitialPoolId(pools, poolParam);
 
   const initialLeaderboard = await serverLeaderboardsService.getAll({
     poolId: initialPoolId,
