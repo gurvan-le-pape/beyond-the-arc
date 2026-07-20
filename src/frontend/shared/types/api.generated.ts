@@ -2585,6 +2585,94 @@ export interface components {
             /** @description Players and their statistics for this match */
             players: components["schemas"]["MatchPlayerDto"][];
         };
+        TeamSeasonStatsDto: {
+            /**
+             * @description Games played
+             * @example 24
+             */
+            gamesPlayed: number;
+            /**
+             * @description Total points
+             * @example 372
+             */
+            points: number;
+            /**
+             * @description Total rebounds (offensive + defensive)
+             * @example 168
+             */
+            rebounds: number;
+            /**
+             * @description Total assists
+             * @example 96
+             */
+            assists: number;
+            /**
+             * @description Total steals
+             * @example 41
+             */
+            steals: number;
+            /**
+             * @description Total blocks
+             * @example 18
+             */
+            blocks: number;
+            /**
+             * @description Total turnovers
+             * @example 55
+             */
+            turnovers: number;
+            /**
+             * @description Total personal fouls
+             * @example 62
+             */
+            fouls: number;
+            /**
+             * @description Points per game
+             * @example 15.5
+             */
+            pointsPerGame: number;
+            /**
+             * @description Rebounds per game
+             * @example 7
+             */
+            reboundsPerGame: number;
+            /**
+             * @description Assists per game
+             * @example 4
+             */
+            assistsPerGame: number;
+            /**
+             * @description Steals per game
+             * @example 1.7
+             */
+            stealsPerGame: number;
+            /**
+             * @description Blocks per game
+             * @example 0.8
+             */
+            blocksPerGame: number;
+            /**
+             * @description Turnovers per game
+             * @example 2.3
+             */
+            turnoversPerGame: number;
+            /**
+             * @description Fouls per game
+             * @example 2.6
+             */
+            foulsPerGame: number;
+            /**
+             * @description Number of distinct players who appeared for the team
+             * @example 14
+             */
+            players: number;
+        };
+        TeamMatchHistoryResponseDto: {
+            /** @description Match history entries, ordered by date (most recent first) */
+            matches: components["schemas"]["TeamMatchHistoryDto"][];
+            /** @description Aggregated season totals and per-game averages */
+            seasonStats: components["schemas"]["TeamSeasonStatsDto"];
+        };
         ChampionshipsByLevelDto: {
             /**
              * @description Total number of national championships
@@ -3780,7 +3868,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TeamMatchHistoryDto"][];
+                    "application/json": components["schemas"]["TeamMatchHistoryResponseDto"];
                 };
             };
             /** @description Invalid ID format */

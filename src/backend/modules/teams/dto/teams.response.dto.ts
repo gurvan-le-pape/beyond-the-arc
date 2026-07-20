@@ -5,7 +5,11 @@ import {
   Gender,
   PlayerSummaryDto,
 } from "@common/index";
-import { HistoryTeamRefDto, PlayerMatchStatsDto } from "@modules/players/dto";
+import {
+  HistoryTeamRefDto,
+  PlayerCareerStatsDto,
+  PlayerMatchStatsDto,
+} from "@modules/players/dto";
 import { ApiProperty } from "@nestjs/swagger";
 
 /**
@@ -292,6 +296,37 @@ export class TeamMatchHistoryDto {
     type: [MatchPlayerDto],
   })
   players!: MatchPlayerDto[];
+}
+
+/**
+ * Aggregated season totals for a team: the same counting totals and per-game
+ * averages as a player's career, summed over the team's players, plus the
+ * number of distinct players who appeared for the team.
+ */
+export class TeamSeasonStatsDto extends PlayerCareerStatsDto {
+  @ApiProperty({
+    description: "Number of distinct players who appeared for the team",
+    example: 14,
+    type: Number,
+  })
+  players!: number;
+}
+
+/**
+ * Team match history with aggregated season stats.
+ */
+export class TeamMatchHistoryResponseDto {
+  @ApiProperty({
+    description: "Match history entries, ordered by date (most recent first)",
+    type: [TeamMatchHistoryDto],
+  })
+  matches!: TeamMatchHistoryDto[];
+
+  @ApiProperty({
+    description: "Aggregated season totals and per-game averages",
+    type: TeamSeasonStatsDto,
+  })
+  seasonStats!: TeamSeasonStatsDto;
 }
 
 /**

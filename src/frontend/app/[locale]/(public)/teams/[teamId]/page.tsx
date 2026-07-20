@@ -10,7 +10,7 @@ import {
   TeamMatchHistoryTable,
   TeamRoster,
 } from "@/features/teams/components";
-import { aggregateTeamStats, buildTeamRoster } from "@/features/teams/utils";
+import { buildTeamRoster } from "@/features/teams/utils";
 import { PageLayout } from "@/shared/components/layout";
 import { handleServerError, parseRouteId } from "@/shared/utils";
 
@@ -35,14 +35,13 @@ export default async function TeamDetailPage({ params }: TeamDetailPageProps) {
 
   const teamId = parseRouteId(teamIdStr);
 
-  const [team, matches, matchEvents] = await Promise.all([
+  const [team, matchHistory, matchEvents] = await Promise.all([
     serverTeamsService.getById(teamId),
     serverTeamsService.getMatches(teamId),
     serverMatchesService.getEventsByTeamId(teamId),
   ]).catch(handleServerError);
 
-  // Calculate team season stats from all players
-  const teamStats = aggregateTeamStats(teamId, matches);
+  const { matches, seasonStats } = matchHistory;
 
   const rosterPlayers = buildTeamRoster(matches, teamId);
 
@@ -52,7 +51,7 @@ export default async function TeamDetailPage({ params }: TeamDetailPageProps) {
       <TeamHeader team={team} />
 
       {/* Team Stats */}
-      <TeamInfo stats={teamStats} />
+      <TeamInfo stats={seasonStats} />
 
       {/* Roster */}
       <TeamRoster players={rosterPlayers} />

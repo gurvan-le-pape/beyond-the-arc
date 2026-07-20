@@ -287,17 +287,22 @@ describe("TeamsService", () => {
       const result = await service.findTeamMatchHistory(1);
 
       // Assert
-      expect(result).toHaveLength(1);
-      expect(result[0].id).toBe(1);
-      expect(result[0].players).toHaveLength(1);
-      expect(result[0].players[0].player.id).toBe(1);
-      expect(result[0].players[0].stats.points).toBe(15);
-      expect(result[0].players[0].stats.rebounds.total).toBe(8);
-      expect(result[0].players[0].stats.rebounds.offensive).toBe(3);
-      expect(result[0].players[0].stats.rebounds.defensive).toBe(5);
+      expect(result.matches).toHaveLength(1);
+      expect(result.matches[0].id).toBe(1);
+      expect(result.matches[0].players).toHaveLength(1);
+      expect(result.matches[0].players[0].player.id).toBe(1);
+      expect(result.matches[0].players[0].stats.points).toBe(15);
+      expect(result.matches[0].players[0].stats.rebounds.total).toBe(8);
+      expect(result.matches[0].players[0].stats.rebounds.offensive).toBe(3);
+      expect(result.matches[0].players[0].stats.rebounds.defensive).toBe(5);
+      // Season aggregate over the single team player.
+      expect(result.seasonStats.gamesPlayed).toBe(1);
+      expect(result.seasonStats.points).toBe(15);
+      expect(result.seasonStats.pointsPerGame).toBe(15);
+      expect(result.seasonStats.players).toBe(1);
     });
 
-    it("should return empty array when no matches found", async () => {
+    it("should return an empty history with zeroed season stats when no matches found", async () => {
       // Arrange
       mockPrismaService.client.teams.findUnique.mockResolvedValue({ id: 1 });
       mockPrismaService.client.matches.findMany.mockResolvedValue([]);
@@ -306,7 +311,9 @@ describe("TeamsService", () => {
       const result = await service.findTeamMatchHistory(1);
 
       // Assert
-      expect(result).toEqual([]);
+      expect(result.matches).toEqual([]);
+      expect(result.seasonStats.gamesPlayed).toBe(0);
+      expect(result.seasonStats.players).toBe(0);
     });
 
     it("should throw NotFoundException when team not found", async () => {

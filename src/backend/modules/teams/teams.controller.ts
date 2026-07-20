@@ -19,7 +19,7 @@ import { GetTeamsQueryDto } from "./dto/teams.query.dto";
 import {
   FilterValuesTeamsResponseDto,
   TeamDetailResponseDto,
-  TeamMatchHistoryDto,
+  TeamMatchHistoryResponseDto,
   TeamResponseDto,
 } from "./dto/teams.response.dto";
 import { TeamsService } from "./teams.service";
@@ -111,7 +111,7 @@ export class TeamsController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: "Match history successfully retrieved",
-    type: [TeamMatchHistoryDto],
+    type: TeamMatchHistoryResponseDto,
   })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: "Team not found" })
   @ApiResponse({
@@ -120,7 +120,7 @@ export class TeamsController {
   })
   async getTeamMatchHistory(
     @Param("id", ParseIntPipe) id: number,
-  ): Promise<TeamMatchHistoryDto[]> {
+  ): Promise<TeamMatchHistoryResponseDto> {
     return this.teamsService.findTeamMatchHistory(id);
   }
 }

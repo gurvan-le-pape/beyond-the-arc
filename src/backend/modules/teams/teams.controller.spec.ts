@@ -10,7 +10,7 @@ import { LoggerModule } from "nestjs-pino";
 import type {
   FilterValuesTeamsResponseDto,
   TeamDetailResponseDto,
-  TeamMatchHistoryDto,
+  TeamMatchHistoryResponseDto,
   TeamResponseDto,
 } from "./dto/teams.response.dto";
 import { TeamsController } from "./teams.controller";
@@ -315,57 +315,77 @@ describe("TeamsController", () => {
   describe("getTeamMatchHistory", () => {
     it("should return match history for valid team ID", async () => {
       // Arrange
-      const mockHistory: TeamMatchHistoryDto[] = [
-        {
-          id: 1,
-          date: new Date("2024-02-05"),
-          homeTeam: {
+      const mockHistory: TeamMatchHistoryResponseDto = {
+        matches: [
+          {
             id: 1,
-            number: 1,
-            club: { id: 1, name: "Club A" },
-          },
-          awayTeam: {
-            id: 2,
-            number: 1,
-            club: { id: 2, name: "Club B" },
-          },
-          homeTeamScore: 85,
-          awayTeamScore: 72,
-          players: [
-            {
-              player: {
-                id: 1,
-                name: "Player 1",
-                number: 10,
-                position: "PG",
-                teamId: 1,
-              },
-              stats: {
-                points: 15,
-                fouls: 2,
-                threePointsMade: 2,
-                threePointsAttempted: 5,
-                twoPointsIntMade: 3,
-                twoPointsIntAttempted: 6,
-                twoPointsExtMade: 1,
-                twoPointsExtAttempted: 3,
-                freeThrowsMade: 4,
-                freeThrowsAttempted: 5,
-                assists: 7,
-                turnovers: 3,
-                rebounds: {
-                  total: 8,
-                  offensive: 3,
-                  defensive: 5,
-                },
-                steals: 2,
-                blocks: 1,
-                playtimeIntervals: [[0, 600]],
-              },
+            date: new Date("2024-02-05"),
+            homeTeam: {
+              id: 1,
+              number: 1,
+              club: { id: 1, name: "Club A" },
             },
-          ],
+            awayTeam: {
+              id: 2,
+              number: 1,
+              club: { id: 2, name: "Club B" },
+            },
+            homeTeamScore: 85,
+            awayTeamScore: 72,
+            players: [
+              {
+                player: {
+                  id: 1,
+                  name: "Player 1",
+                  number: 10,
+                  position: "PG",
+                  teamId: 1,
+                },
+                stats: {
+                  points: 15,
+                  fouls: 2,
+                  threePointsMade: 2,
+                  threePointsAttempted: 5,
+                  twoPointsIntMade: 3,
+                  twoPointsIntAttempted: 6,
+                  twoPointsExtMade: 1,
+                  twoPointsExtAttempted: 3,
+                  freeThrowsMade: 4,
+                  freeThrowsAttempted: 5,
+                  assists: 7,
+                  turnovers: 3,
+                  rebounds: {
+                    total: 8,
+                    offensive: 3,
+                    defensive: 5,
+                  },
+                  steals: 2,
+                  blocks: 1,
+                  playtimeIntervals: [[0, 600]],
+                },
+              },
+            ],
+          },
+        ],
+        seasonStats: {
+          gamesPlayed: 1,
+          points: 15,
+          rebounds: 8,
+          assists: 7,
+          steals: 2,
+          blocks: 1,
+          turnovers: 3,
+          fouls: 2,
+          pointsPerGame: 15,
+          reboundsPerGame: 8,
+          assistsPerGame: 7,
+          stealsPerGame: 2,
+          blocksPerGame: 1,
+          turnoversPerGame: 3,
+          foulsPerGame: 2,
+          players: 1,
         },
-      ];
+      };
 
       mockTeamsService.findTeamMatchHistory.mockResolvedValue(mockHistory);
 
@@ -377,15 +397,36 @@ describe("TeamsController", () => {
       expect(service.findTeamMatchHistory).toHaveBeenCalledWith(1);
     });
 
-    it("should return empty array when no matches found", async () => {
+    it("should return an empty history with zeroed season stats", async () => {
       // Arrange
-      mockTeamsService.findTeamMatchHistory.mockResolvedValue([]);
+      const emptyHistory: TeamMatchHistoryResponseDto = {
+        matches: [],
+        seasonStats: {
+          gamesPlayed: 0,
+          points: 0,
+          rebounds: 0,
+          assists: 0,
+          steals: 0,
+          blocks: 0,
+          turnovers: 0,
+          fouls: 0,
+          pointsPerGame: 0,
+          reboundsPerGame: 0,
+          assistsPerGame: 0,
+          stealsPerGame: 0,
+          blocksPerGame: 0,
+          turnoversPerGame: 0,
+          foulsPerGame: 0,
+          players: 0,
+        },
+      };
+      mockTeamsService.findTeamMatchHistory.mockResolvedValue(emptyHistory);
 
       // Act
       const result = await controller.getTeamMatchHistory(1);
 
       // Assert
-      expect(result).toEqual([]);
+      expect(result).toEqual(emptyHistory);
     });
 
     it("should throw NotFoundException for non-existent team", async () => {

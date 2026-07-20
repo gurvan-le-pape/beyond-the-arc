@@ -8,7 +8,7 @@ import {
 import type { Team } from "../types";
 import type { TeamDetail } from "../types/TeamDetail";
 import type { TeamFilters } from "../types/TeamFilters";
-import type { TeamMatchHistory } from "../types/TeamMatchHistory";
+import type { TeamMatchHistoryResponse } from "../types/TeamMatchHistory";
 
 /**
  * Service for interacting with the teams API.
@@ -70,7 +70,7 @@ export const serverTeamsService = {
    * @example
    * const matches = await serverTeamsService.getMatches(123);
    */
-  async getMatches(teamId: number): Promise<TeamMatchHistory[]> {
+  async getMatches(teamId: number): Promise<TeamMatchHistoryResponse> {
     return fetchApi<any>(`/teams/${teamId}/matches`);
   },
 };
