@@ -6,7 +6,7 @@ import { serverClubsService } from "@/features/organizations/clubs/api";
 import { OrganizationDetailView } from "@/features/organizations/shared/components";
 import { EmptyState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
-import { parseRouteId } from "@/shared/utils";
+import { handleServerError, parseRouteId } from "@/shared/utils";
 
 interface ClubPageProps {
   readonly params: Promise<{
@@ -43,7 +43,9 @@ export default async function ClubPage({ params }: ClubPageProps) {
 
   const clubId = parseRouteId(clubIdStr);
 
-  const club = await serverClubsService.getById(clubId);
+  const club = await serverClubsService
+    .getById(clubId)
+    .catch(handleServerError);
 
   return (
     <PageLayout ariaLabel={t("detail.page", { clubName: club.name })}>

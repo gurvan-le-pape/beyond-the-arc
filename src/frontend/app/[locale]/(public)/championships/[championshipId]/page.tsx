@@ -13,7 +13,7 @@ import {
 import { serverLeaderboardsService } from "@/features/competitions/leaderboards/api";
 import { serverPoolsService } from "@/features/competitions/pools/api";
 import { PageLayout } from "@/shared/components/layout";
-import { parseRouteId } from "@/shared/utils";
+import { handleServerError, parseRouteId } from "@/shared/utils";
 
 interface ChampionshipDetailPageProps {
   readonly params: Promise<{ championshipId: string; locale: string }>;
@@ -37,8 +37,9 @@ export default async function ChampionshipsDetailPage({
 
   const championshipId = parseRouteId(championshipIdStr);
 
-  const championship = await serverChampionshipsService.getById(championshipId);
-  if (!championship) notFound();
+  const championship = await serverChampionshipsService
+    .getById(championshipId)
+    .catch(handleServerError);
 
   const organizationId = resolveOrganizationId(championship);
   if (!organizationId) notFound();
