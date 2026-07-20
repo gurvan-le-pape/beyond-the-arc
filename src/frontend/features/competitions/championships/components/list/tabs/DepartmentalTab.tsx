@@ -1,23 +1,18 @@
 // src/frontend/features/competitions/championships/components/list/tabs/DepartmentalTab.tsx
 "use client";
 
-import { Trophy } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { useChampionships } from "@/features/competitions/championships/api";
 import { useDepartmentalFilterState } from "@/features/competitions/championships/hooks";
 import { useCommittees } from "@/features/organizations/committees/api";
-import { SearchTabShell } from "@/shared/components/domain";
-import { EmptyState } from "@/shared/components/feedback";
 import { CompetitionLevel } from "@/shared/constants";
 
-import type { Championship } from "../../../types";
-import { ChampionshipCard } from "../ChampionshipCard";
 import { ChampionshipFilters } from "../filters/ChampionshipFilters";
+import { ChampionshipTab } from "./ChampionshipTab";
 
 export function DepartmentalTab() {
   const tCommon = useTranslations("common");
-  const tCompetitions = useTranslations("competitions");
 
   const { filters, setters, setCurrentPage, setPageSize, resetFilters } =
     useDepartmentalFilterState();
@@ -33,57 +28,31 @@ export function DepartmentalTab() {
     limit: filters.pageSize,
   });
 
-  const championships: Championship[] = data?.items ?? [];
-  const pagination = data
-    ? {
-        total: data.total,
-        page: data.page,
-        limit: data.limit,
-        totalPages: data.totalPages,
-      }
-    : null;
-
   return (
-    <div className="space-y-6">
-      <ChampionshipFilters
-        level="departmental"
-        category={filters.category}
-        gender={filters.gender}
-        onCategoryChange={setters.setCategory}
-        onGenderChange={setters.setGender}
-        onReset={resetFilters}
-        scope={{
-          label: tCommon("filters.committees"),
-          allLabel: tCommon("filters.allCommittees"),
-          value: filters.committeeId,
-          onChange: setters.setCommitteeId,
-          options: committees,
-        }}
-      />
-      <SearchTabShell
-        isLoading={isLoading}
-        error={error}
-        errorMessage={tCommon("errors.fetchChampionships")}
-        isEmpty={championships.length === 0}
-        emptyState={
-          <EmptyState
-            icon={<Trophy className="w-16 h-16" />}
-            title={tCommon("emptyState.championships")}
-            description={tCompetitions("tryAdjustingFilters")}
-          />
-        }
-        pagination={pagination}
-        pageSize={filters.pageSize}
-        onPageSizeChange={setPageSize}
-        onPageChange={(index) => setCurrentPage(index + 1)}
-        itemLabel={tCompetitions("championships")}
-      >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {championships.map((c) => (
-            <ChampionshipCard key={c.id} championship={c} />
-          ))}
-        </div>
-      </SearchTabShell>
-    </div>
+    <ChampionshipTab
+      data={data}
+      error={error}
+      isLoading={isLoading}
+      pageSize={filters.pageSize}
+      onPageSizeChange={setPageSize}
+      onPageChange={(index) => setCurrentPage(index + 1)}
+      filters={
+        <ChampionshipFilters
+          level="departmental"
+          category={filters.category}
+          gender={filters.gender}
+          onCategoryChange={setters.setCategory}
+          onGenderChange={setters.setGender}
+          onReset={resetFilters}
+          scope={{
+            label: tCommon("filters.committees"),
+            allLabel: tCommon("filters.allCommittees"),
+            value: filters.committeeId,
+            onChange: setters.setCommitteeId,
+            options: committees,
+          }}
+        />
+      }
+    />
   );
 }

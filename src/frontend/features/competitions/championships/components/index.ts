@@ -7,6 +7,7 @@ export * from "./ChampionshipListItem";
 export * from "./detail/ChampionshipDetailPage";
 export * from "./list/ChampionshipCard";
 export * from "./list/filters/ChampionshipFilters";
+export * from "./list/tabs/ChampionshipTab";
 export * from "./list/tabs/DepartmentalTab";
 export * from "./list/tabs/NationalTab";
 export * from "./list/tabs/RegionalTab";
