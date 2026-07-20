@@ -5,4 +5,4 @@
 
 export * from "./InfoBox";
 export * from "./Section";
-export * from "./StatComparison";
+export * from "./stat-comparison/index";
