@@ -2,27 +2,23 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import React, { useState } from "react";
+import React from "react";
 
 import { useCommitteeLeagueClubFilters } from "@/features/competitions/championships/hooks";
-import { useClubSearch } from "@/features/organizations/clubs/api";
+import { ClubComboBoxFilter } from "@/features/organizations/clubs/components";
 import { useTeamFilterValues } from "@/features/teams/api";
 import { ErrorMessage } from "@/shared/components/feedback";
-import type { CascadeStep } from "@/shared/components/filters";
+import type { ActiveFilterChip, CascadeStep } from "@/shared/components/filters";
 import {
   CascadeSelects,
   FiltersShell,
+  isLocationSelected,
   LevelLocationFilters,
+  useCategoryGenderOptions,
+  useCommonFilterChips,
 } from "@/shared/components/filters";
 import { Select } from "@/shared/components/forms";
-import { ComboBox } from "@/shared/components/primitives";
 import type { Category, Gender } from "@/shared/constants";
-import {
-  CATEGORY_LIST,
-  CompetitionLevel,
-  GENDER_LIST,
-} from "@/shared/constants";
-import { useDebounce } from "@/shared/hooks";
 
 import type { TeamsFilterSetters, TeamsFilterState } from "../../hooks";
 
@@ -74,17 +70,6 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
     setPool,
   } = setters;
 
-  const [clubSearch, setClubSearch] = useState("");
-  const debouncedClubSearch = useDebounce(clubSearch, 300);
-  const { data: clubData, isLoading: clubsLoading } = useClubSearch(
-    debouncedClubSearch,
-    { committeeId, leagueId },
-  );
-  const clubOptions = (clubData?.items ?? []).map((c) => ({
-    value: String(c.id),
-    label: c.name,
-  }));
-
   const { data: teamFilterValues } = useTeamFilterValues({
     committeeId,
     leagueId,
@@ -93,14 +78,21 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
   const divisions = teamFilterValues?.divisions ?? [];
   const poolLetters = teamFilterValues?.poolLetters ?? [];
 
-  const locationLabel =
-    level === CompetitionLevel.DEPARTMENTAL
-      ? committees.find((c) => c.id === committeeId)?.name
-      : leagues.find((l) => l.id === leagueId)?.name;
-
-  const locationSelected =
-    (level === CompetitionLevel.DEPARTMENTAL && committeeId) ||
-    (level === CompetitionLevel.REGIONAL && leagueId);
+  const { categoryOptions, genderOptions } = useCategoryGenderOptions();
+  const { categoryGenderChips, levelLocationChips } = useCommonFilterChips({
+    category,
+    gender,
+    level,
+    committeeId,
+    leagueId,
+    committees,
+    leagues,
+    setCategory,
+    setGender,
+    setLevel,
+    setCommitteeId,
+    setLeagueId,
+  });
 
   const chips = [
     clubId && {
@@ -116,29 +108,8 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
       label: `${tCommon("filters.teamNumbers")} ${number}`,
       onRemove: () => setNumber(undefined),
     },
-    category && {
-      key: "category",
-      label: tCommon(`category.${category}`),
-      onRemove: () => setCategory(undefined),
-    },
-    gender && {
-      key: "gender",
-      label: tCommon(`gender.${gender}`),
-      onRemove: () => setGender(undefined),
-    },
-    level && {
-      key: "level",
-      label: tCommon(`competition.levels.${level.toLowerCase()}`),
-      onRemove: () => setLevel(undefined),
-    },
-    locationLabel && {
-      key: "location",
-      label: locationLabel,
-      onRemove: () => {
-        setCommitteeId(undefined);
-        setLeagueId(undefined);
-      },
-    },
+    ...categoryGenderChips,
+    ...levelLocationChips,
     division && {
       key: "division",
       label: tMatches("divisionLabel", { div: division }),
@@ -149,27 +120,11 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
       label: tTeams("poolLabel", { letter: pool }),
       onRemove: () => setPool(undefined),
     },
-  ].filter(Boolean) as { key: string; label: string; onRemove: () => void }[];
+  ].filter(Boolean) as ActiveFilterChip[];
 
   const teamNumberOptions = [
     { value: "", label: tCommon("filters.allTeamNumbers") },
     ...teamNumbers.map((n) => ({ value: String(n), label: String(n) })),
-  ];
-
-  const categoryOptions = [
-    { value: "", label: tCommon("filters.allCategories") },
-    ...CATEGORY_LIST.map((cat) => ({
-      value: cat,
-      label: tCommon(`category.${cat}`),
-    })),
-  ];
-
-  const genderOptions = [
-    { value: "", label: tCommon("filters.allGenders") },
-    ...GENDER_LIST.map((g) => ({
-      value: g,
-      label: tCommon(`gender.${g}`),
-    })),
   ];
 
   const cascadeSteps: CascadeStep[] = [
@@ -178,7 +133,7 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
       label: tCommon("filters.divisions"),
       value: division ?? "",
       onChange: (val) => setDivision(Number(val) || undefined),
-      enabled: !!locationSelected,
+      enabled: isLocationSelected(level, committeeId, leagueId),
       options: divisions.map((div) => ({
         value: div,
         label: tMatches("divisionLabel", { div }),
@@ -214,21 +169,12 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
 
       {/* Row 1: Club + Team number */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <ComboBox
-          label={tCommon("filters.clubs")}
-          placeholder={tCommon("filters.allClubs")}
-          options={clubOptions}
-          value={clubId ? String(clubId) : undefined}
-          onChange={(val) => {
-            const parsed = Number(val) || undefined;
-            setClubId(parsed);
-            setSelectedClubName(
-              clubOptions.find((c) => c.value === String(val ?? ""))?.label ??
-                "",
-            );
-          }}
-          onSearchChange={setClubSearch}
-          isLoading={clubsLoading}
+        <ClubComboBoxFilter
+          committeeId={committeeId}
+          leagueId={leagueId}
+          clubId={clubId}
+          setClubId={setClubId}
+          setSelectedClubName={setSelectedClubName}
         />
 
         <Select

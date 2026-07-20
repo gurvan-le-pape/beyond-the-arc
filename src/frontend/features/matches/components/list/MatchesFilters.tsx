@@ -8,19 +8,17 @@ import React from "react";
 import { useCommitteeLeagueClubFilters } from "@/features/competitions/championships/hooks";
 import { useMatchesCascadeOptions } from "@/features/matches/hooks";
 import { ErrorMessage } from "@/shared/components/feedback";
-import type { CascadeStep } from "@/shared/components/filters";
+import type { ActiveFilterChip, CascadeStep } from "@/shared/components/filters";
 import {
   CascadeSelects,
   FiltersShell,
+  isLocationSelected,
   LevelLocationFilters,
+  useCategoryGenderOptions,
+  useCommonFilterChips,
 } from "@/shared/components/filters";
 import { Input, Select } from "@/shared/components/forms";
 import type { Category, Gender } from "@/shared/constants";
-import {
-  CATEGORY_LIST,
-  CompetitionLevel,
-  GENDER_LIST,
-} from "@/shared/constants";
 
 import type { MatchesFilterSetters, MatchesFilterState } from "../../hooks";
 
@@ -75,16 +73,23 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
     ? (pools.find((p) => String(p.id) === String(poolId))?.nbMatchdays ?? 30)
     : 30;
 
-  const locationLabel =
-    level === CompetitionLevel.DEPARTMENTAL
-      ? committees.find((c) => c.id === committeeId)?.name
-      : leagues.find((l) => l.id === leagueId)?.name;
-
-  const locationSelected =
-    (level === CompetitionLevel.DEPARTMENTAL && committeeId) ||
-    (level === CompetitionLevel.REGIONAL && leagueId);
-
   const selectedPool = pools.find((p) => p.id === poolId);
+
+  const { categoryOptions, genderOptions } = useCategoryGenderOptions();
+  const { categoryGenderChips, levelLocationChips } = useCommonFilterChips({
+    category,
+    gender,
+    level,
+    committeeId,
+    leagueId,
+    committees,
+    leagues,
+    setCategory,
+    setGender,
+    setLevel,
+    setCommitteeId,
+    setLeagueId,
+  });
 
   const chips = [
     search && {
@@ -97,29 +102,8 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
       label: dateFilter,
       onRemove: () => setDateFilter(""),
     },
-    category && {
-      key: "category",
-      label: tCommon(`category.${category}`),
-      onRemove: () => setCategory(undefined),
-    },
-    gender && {
-      key: "gender",
-      label: tCommon(`gender.${gender}`),
-      onRemove: () => setGender(undefined),
-    },
-    level && {
-      key: "level",
-      label: tCommon(`competition.levels.${level.toLowerCase()}`),
-      onRemove: () => setLevel(undefined),
-    },
-    locationLabel && {
-      key: "location",
-      label: locationLabel,
-      onRemove: () => {
-        setCommitteeId(undefined);
-        setLeagueId(undefined);
-      },
-    },
+    ...categoryGenderChips,
+    ...levelLocationChips,
     division && {
       key: "division",
       label: tMatches("divisionLabel", { div: division }),
@@ -135,20 +119,7 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
       label: tMatches("matchdayLabel", { matchday }),
       onRemove: () => setMatchday(undefined),
     },
-  ].filter(Boolean) as { key: string; label: string; onRemove: () => void }[];
-
-  const categoryOptions = [
-    { value: "", label: tCommon("filters.allCategories") },
-    ...CATEGORY_LIST.map((cat) => ({
-      value: cat,
-      label: tCommon(`category.${cat}`),
-    })),
-  ];
-
-  const genderOptions = [
-    { value: "", label: tCommon("filters.allGenders") },
-    ...GENDER_LIST.map((g) => ({ value: g, label: tCommon(`gender.${g}`) })),
-  ];
+  ].filter(Boolean) as ActiveFilterChip[];
 
   const cascadeSteps: CascadeStep[] = [
     {
@@ -156,7 +127,7 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
       label: tCommon("filters.divisions"),
       value: division ?? "",
       onChange: (val) => setDivision(Number(val) || undefined),
-      enabled: !!locationSelected,
+      enabled: isLocationSelected(level, committeeId, leagueId),
       options: divisions.map((div) => ({
         value: div,
         label: tMatches("divisionLabel", { div }),
