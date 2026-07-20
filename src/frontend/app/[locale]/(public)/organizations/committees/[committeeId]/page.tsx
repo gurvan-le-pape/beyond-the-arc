@@ -6,15 +6,9 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { serverChampionshipsService } from "@/features/competitions/championships/api";
 import { serverClubsService } from "@/features/organizations/clubs/api";
 import { serverCommitteesService } from "@/features/organizations/committees/api";
-import {
-  OrganizationHeader,
-  OrganizationInfo,
-  SearchableChipList,
-} from "@/features/organizations/shared/components";
-import { GenderCategorizedSection } from "@/shared/components/domain";
+import { OrganizationDetailView } from "@/features/organizations/shared/components";
 import { EmptyState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
-import { Breadcrumb } from "@/shared/components/navigation";
 import { CompetitionLevel } from "@/shared/constants";
 
 interface CommitteePageProps {
@@ -67,50 +61,41 @@ export default async function DepartmentalChampionshipsPage({
 
   if (!committee) notFound();
 
-  const breadcrumbItems = [
-    { label: tOrganizations("breadcrumb"), href: "/organizations" },
-    {
-      label: tOrganizations("committees.label"),
-      href: "/organizations/committees",
-    },
-    { label: committee.name, current: true },
-  ];
-
   return (
     <PageLayout>
-      <Breadcrumb items={breadcrumbItems} />
-      <div className="space-y-6">
-        {/* Organization Header */}
-        <OrganizationHeader name={committee.name} imageFolder="committees" />
-
-        {/* Organization info */}
-        <OrganizationInfo
-          president={committee.president}
-          address={committee.address}
-          email={committee.email}
-          phone={committee.phone}
-        />
-
-        {/* Clubs */}
-        <SearchableChipList
-          items={clubs}
-          title={tCommon("sectionTitles.clubs")}
-          searchPlaceholder={tCommon("searchPlaceholder")}
-          basePath="/organizations/clubs"
-        />
-
-        {/* Championships */}
-        <GenderCategorizedSection
-          items={championships.map((c) => ({ type: "championship", data: c }))}
-          title={tCompetitions("championshipsSectionTitle")}
-          emptyState={
+      <OrganizationDetailView
+        breadcrumb={[
+          { label: tOrganizations("breadcrumb"), href: "/organizations" },
+          {
+            label: tOrganizations("committees.label"),
+            href: "/organizations/committees",
+          },
+          { label: committee.name, current: true },
+        ]}
+        header={{ name: committee.name, imageFolder: "committees" }}
+        info={{
+          president: committee.president,
+          address: committee.address,
+          email: committee.email,
+          phone: committee.phone,
+        }}
+        chipList={{
+          items: clubs,
+          title: tCommon("sectionTitles.clubs"),
+          searchPlaceholder: tCommon("searchPlaceholder"),
+          basePath: "/organizations/clubs",
+        }}
+        section={{
+          items: championships.map((c) => ({ type: "championship", data: c })),
+          title: tCompetitions("championshipsSectionTitle"),
+          emptyState: (
             <EmptyState
               icon={<Trophy className="w-16 h-16" />}
               title={tCompetitions("noChampionships")}
             />
-          }
-        />
-      </div>
+          ),
+        }}
+      />
     </PageLayout>
   );
 }
