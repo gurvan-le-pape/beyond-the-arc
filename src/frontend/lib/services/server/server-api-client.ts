@@ -1,5 +1,7 @@
 // src/frontend/lib/services/server/server-api-client.ts
-import { logger, parseApiError } from "@/shared/utils";
+import type { ApiErrorResponse } from "@/shared/types";
+import { ApiError } from "@/shared/types";
+import { logger } from "@/shared/utils";
 
 /**
  * Server-side API client for use in getStaticProps/getStaticPaths/getServerSideProps.
@@ -48,11 +50,22 @@ export async function fetchApi<T>(endpoint: string): Promise<T> {
     });
 
     if (!response.ok) {
-      // Parse the backend error body so we get a proper ApiError
-      const body = await response.json().catch(() => null);
-      throw parseApiError(
-        body ?? new Error(`${response.status} ${response.statusText}`),
-      );
+      // Build the ApiError from response.status directly. parseApiError only
+      // recovers a status code from axios errors; on this native-fetch path it
+      // receives the plain backend error body and would fall back to status 0,
+      // so a 404 could never be distinguished (e.g. by handleServerError).
+      const body = (await response.json().catch(() => null)) as
+        | Partial<ApiErrorResponse>
+        | null;
+      throw new ApiError({
+        statusCode: response.status,
+        message: Array.isArray(body?.message)
+          ? body.message.join(", ")
+          : (body?.message ?? response.statusText),
+        error: body?.error ?? response.statusText,
+        path: body?.path,
+        timestamp: body?.timestamp,
+      });
     }
 
     const data = await response.json();
