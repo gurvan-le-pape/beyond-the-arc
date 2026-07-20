@@ -13,7 +13,7 @@ import {
 } from "@/shared/components/primitives";
 
 import { MatchEvents } from "../match-events";
-import { PlayerMatchStats } from "../PlayerMatchStats";
+import { PlayerMatchStats } from "../player-match-stats";
 import { TeamStatsComparison } from "../TeamStatsComparison";
 
 interface MatchSummaryTabsProps {
