@@ -8,3 +8,4 @@ export * from "./eventHelpers";
 export * from "./formatPlaytime";
 export * from "./getSortedRounds";
 export * from "./getTeamScore";
+export * from "./groupShotEventsByPlayer";

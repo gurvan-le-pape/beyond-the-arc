@@ -1,24 +1,11 @@
 // src/frontend/app/[locale]/(public)/matches/[matchId]/page.tsx
 import { notFound } from "next/navigation";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { setRequestLocale } from "next-intl/server";
 
 import { serverMatchesService } from "@/features/matches/api";
-import {
-  MatchEvents,
-  MatchScoreCard,
-  PlayerMatchStats,
-  TeamStatsComparison,
-} from "@/features/matches/components";
-import type { MatchEvent, MatchEventPlayer } from "@/features/matches/types";
-import { buildTeam } from "@/features/matches/utils";
+import { MatchScoreCard, MatchSummaryTabs } from "@/features/matches/components";
+import { buildTeam, groupShotEventsByPlayer } from "@/features/matches/utils";
 import { PageLayout } from "@/shared/components/layout";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/shared/components/primitives";
-import { Role } from "@/shared/constants";
 import { handleServerError } from "@/shared/utils";
 
 interface MatchSummaryPageProps {
@@ -40,8 +27,6 @@ export default async function MatchSummaryPage({
 }: MatchSummaryPageProps) {
   const { matchId: matchIdStr, locale } = await params;
   setRequestLocale(locale);
-  const tMatches = await getTranslations({ locale, namespace: "matches" });
-  const tCommon = await getTranslations({ locale, namespace: "common" });
 
   const matchId = Number.parseInt(matchIdStr, 10);
   if (Number.isNaN(matchId) || matchId <= 0) {
@@ -61,94 +46,19 @@ export default async function MatchSummaryPage({
     notFound();
   }
 
-  // Extract shot events per player
-  const shotEventsByPlayer: Record<number, MatchEvent[]> = {};
-  for (const event of match.matchEvents) {
-    const shooterObj = event.players?.find(
-      (p: MatchEventPlayer) => p.role === Role.SHOOTER,
-    );
-    if (
-      event.shotLocation !== null &&
-      shooterObj &&
-      shooterObj.player?.id !== null
-    ) {
-      const playerId = shooterObj.player.id;
-      if (!shotEventsByPlayer[playerId]) shotEventsByPlayer[playerId] = [];
-      shotEventsByPlayer[playerId].push(event);
-    }
-  }
-
-  const statCategories = [
-    { key: "fieldGoals", label: tCommon("stats.fieldGoals") },
-    { key: "threePointers", label: tCommon("stats.threePointers") },
-    { key: "freeThrows", label: tCommon("stats.freeThrows.full") },
-    { key: "reboundsTotal", label: tCommon("stats.reboundsTotal") },
-    { key: "reboundsOffensive", label: tCommon("stats.reboundsOffensive") },
-    { key: "reboundsDefensive", label: tCommon("stats.reboundsDefensive") },
-    { key: "assists", label: tCommon("stats.assists.full") },
-    { key: "blocks", label: tCommon("stats.blocks.full") },
-    { key: "steals", label: tCommon("stats.steals.full") },
-    { key: "turnovers", label: tCommon("stats.turnovers.full") },
-    { key: "pointsInPaint", label: tCommon("stats.pointsInPaint") },
-    { key: "fouls", label: tCommon("stats.fouls.full") },
-  ];
+  const shotEventsByPlayer = groupShotEventsByPlayer(match.matchEvents);
 
   return (
     <PageLayout>
       <MatchScoreCard homeTeam={homeTeam} awayTeam={awayTeam} />
 
-      <Tabs defaultValue="stats">
-        <TabsList>
-          <TabsTrigger value="stats">
-            {tMatches("matchSummary.tabs.teamStats")}
-          </TabsTrigger>
-          <TabsTrigger value="home">
-            {tMatches("matchSummary.tabs.homeTeam")}
-          </TabsTrigger>
-          <TabsTrigger value="away">
-            {tMatches("matchSummary.tabs.awayTeam")}
-          </TabsTrigger>
-          <TabsTrigger value="events">
-            {tMatches("matchSummary.tabs.matchEvents")}
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="stats">
-          <TeamStatsComparison
-            homeStats={homeTeam.stats}
-            awayStats={awayTeam.stats}
-            categories={statCategories}
-            title={tMatches("matchSummary.teamMatchStatsTitle")}
-          />
-        </TabsContent>
-
-        <TabsContent value="home">
-          <PlayerMatchStats
-            team={homeTeam}
-            isHomeTeam={true}
-            opponent={awayTeam}
-            playerShots={shotEventsByPlayer}
-          />
-        </TabsContent>
-
-        <TabsContent value="away">
-          <PlayerMatchStats
-            team={awayTeam}
-            isHomeTeam={false}
-            opponent={homeTeam}
-            playerShots={shotEventsByPlayer}
-          />
-        </TabsContent>
-
-        <TabsContent value="events">
-          <MatchEvents
-            events={match.matchEvents}
-            homeTeam={homeTeam}
-            awayTeam={awayTeam}
-            matchDate={match.date}
-          />
-        </TabsContent>
-      </Tabs>
+      <MatchSummaryTabs
+        homeTeam={homeTeam}
+        awayTeam={awayTeam}
+        matchEvents={match.matchEvents}
+        matchDate={match.date}
+        playerShots={shotEventsByPlayer}
+      />
     </PageLayout>
   );
 }
