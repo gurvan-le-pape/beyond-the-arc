@@ -13,10 +13,12 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 
 import { Prisma } from "../../prisma/generated/prisma/client";
+import { aggregateTeamSeasonStats } from "./aggregate-team-season-stats";
 import type {
   FilterValuesTeamsResponseDto,
   TeamDetailResponseDto,
   TeamMatchHistoryDto,
+  TeamMatchHistoryResponseDto,
   TeamResponseDto,
 } from "./dto/teams.response.dto";
 
@@ -405,7 +407,9 @@ export class TeamsService {
    * @returns Array of match history entries
    * @throws NotFoundException if team doesn't exist
    */
-  async findTeamMatchHistory(teamId: number): Promise<TeamMatchHistoryDto[]> {
+  async findTeamMatchHistory(
+    teamId: number,
+  ): Promise<TeamMatchHistoryResponseDto> {
     const teamExists = await this.prisma.client.teams.findUnique({
       where: { id: teamId },
       select: { id: true },
@@ -415,7 +419,7 @@ export class TeamsService {
       throw new NotFoundException(`Team with ID ${teamId} not found`);
     }
 
-    const matches = await this.prisma.client.matches.findMany({
+    const matchRows = await this.prisma.client.matches.findMany({
       where: {
         OR: [{ homeTeamId: teamId }, { awayTeamId: teamId }],
       },
@@ -423,7 +427,12 @@ export class TeamsService {
       orderBy: { date: "desc" },
     });
 
-    return matches.map((match) => this.mapToMatchHistoryDto(match));
+    const matches = matchRows.map((match) => this.mapToMatchHistoryDto(match));
+
+    return {
+      matches,
+      seasonStats: aggregateTeamSeasonStats(teamId, matches),
+    };
   }
 
   /**

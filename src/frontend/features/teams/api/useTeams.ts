@@ -3,7 +3,11 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import type { ApiError, PaginatedResponse } from "@/shared/types";
 
-import type { Team, TeamFilterValues, TeamMatchHistory } from "../types";
+import type {
+  Team,
+  TeamFilterValues,
+  TeamMatchHistoryResponse,
+} from "../types";
 import type { TeamFilters } from "../types/TeamFilters";
 import { teamsPrefetch, teamsQueries } from "./teamsQueries";
 
@@ -62,7 +66,7 @@ export function useTeam(id: number, options?: { enabled?: boolean }) {
  * const { data: matches, isLoading } = useTeamMatches(123);
  */
 export function useTeamMatches(id: number, options?: { enabled?: boolean }) {
-  return useQuery<TeamMatchHistory[], ApiError>({
+  return useQuery<TeamMatchHistoryResponse, ApiError>({
     ...teamsQueries.matches(id),
     enabled: options?.enabled ?? !!id,
   });

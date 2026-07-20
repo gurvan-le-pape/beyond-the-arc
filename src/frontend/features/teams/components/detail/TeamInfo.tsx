@@ -2,17 +2,18 @@
 import { useTranslations } from "next-intl";
 import React from "react";
 
+import type { TeamSeasonStats } from "@/features/teams/types";
 import { InfoBox, Section } from "@/shared/components/blocks";
 
 interface StatConfig {
   key: string;
   labelKey: string;
-  value: (stats: any) => string | number;
+  value: (stats: TeamSeasonStats) => string | number;
   highlight?: boolean;
 }
 
 interface TeamInfoProps {
-  stats: any;
+  stats: TeamSeasonStats;
   title?: string;
   statsConfig?: StatConfig[];
   gridCols?: string;

@@ -2531,10 +2531,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/TeamMatchHistoryDto"
-                  }
+                  "$ref": "#/components/schemas/TeamMatchHistoryResponseDto"
                 }
               }
             }
@@ -6248,6 +6245,133 @@
           "homeTeamScore",
           "awayTeamScore",
           "players"
+        ]
+      },
+      "TeamSeasonStatsDto": {
+        "type": "object",
+        "properties": {
+          "gamesPlayed": {
+            "type": "number",
+            "description": "Games played",
+            "example": 24
+          },
+          "points": {
+            "type": "number",
+            "description": "Total points",
+            "example": 372
+          },
+          "rebounds": {
+            "type": "number",
+            "description": "Total rebounds (offensive + defensive)",
+            "example": 168
+          },
+          "assists": {
+            "type": "number",
+            "description": "Total assists",
+            "example": 96
+          },
+          "steals": {
+            "type": "number",
+            "description": "Total steals",
+            "example": 41
+          },
+          "blocks": {
+            "type": "number",
+            "description": "Total blocks",
+            "example": 18
+          },
+          "turnovers": {
+            "type": "number",
+            "description": "Total turnovers",
+            "example": 55
+          },
+          "fouls": {
+            "type": "number",
+            "description": "Total personal fouls",
+            "example": 62
+          },
+          "pointsPerGame": {
+            "type": "number",
+            "description": "Points per game",
+            "example": 15.5
+          },
+          "reboundsPerGame": {
+            "type": "number",
+            "description": "Rebounds per game",
+            "example": 7
+          },
+          "assistsPerGame": {
+            "type": "number",
+            "description": "Assists per game",
+            "example": 4
+          },
+          "stealsPerGame": {
+            "type": "number",
+            "description": "Steals per game",
+            "example": 1.7
+          },
+          "blocksPerGame": {
+            "type": "number",
+            "description": "Blocks per game",
+            "example": 0.8
+          },
+          "turnoversPerGame": {
+            "type": "number",
+            "description": "Turnovers per game",
+            "example": 2.3
+          },
+          "foulsPerGame": {
+            "type": "number",
+            "description": "Fouls per game",
+            "example": 2.6
+          },
+          "players": {
+            "type": "number",
+            "description": "Number of distinct players who appeared for the team",
+            "example": 14
+          }
+        },
+        "required": [
+          "gamesPlayed",
+          "points",
+          "rebounds",
+          "assists",
+          "steals",
+          "blocks",
+          "turnovers",
+          "fouls",
+          "pointsPerGame",
+          "reboundsPerGame",
+          "assistsPerGame",
+          "stealsPerGame",
+          "blocksPerGame",
+          "turnoversPerGame",
+          "foulsPerGame",
+          "players"
+        ]
+      },
+      "TeamMatchHistoryResponseDto": {
+        "type": "object",
+        "properties": {
+          "matches": {
+            "description": "Match history entries, ordered by date (most recent first)",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TeamMatchHistoryDto"
+            }
+          },
+          "seasonStats": {
+            "description": "Aggregated season totals and per-game averages",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TeamSeasonStatsDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "matches",
+          "seasonStats"
         ]
       },
       "ChampionshipsByLevelDto": {

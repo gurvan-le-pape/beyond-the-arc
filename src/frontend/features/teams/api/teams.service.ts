@@ -5,6 +5,7 @@ import apiClient from "../../../lib/services/client/api-client";
 import type { Team } from "../types/Team";
 import type { TeamFilters } from "../types/TeamFilters";
 import type { TeamFilterValues } from "../types/TeamFilterValues";
+import type { TeamMatchHistoryResponse } from "../types/TeamMatchHistory";
 
 /**
  * Service for interacting with the teams API.
@@ -69,7 +70,7 @@ export const teamsService = {
    * @example
    * const matches = await teamsService.getMatches(123);
    */
-  async getMatches(teamId: number): Promise<any> {
+  async getMatches(teamId: number): Promise<TeamMatchHistoryResponse> {
     const { data } = await apiClient.get<any>(`/teams/${teamId}/matches`);
     return data;
   },

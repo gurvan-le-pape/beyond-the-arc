@@ -14,3 +14,12 @@ export type TeamMatchHistoryTeamRef =
   components["schemas"]["HistoryTeamRefDto"];
 
 export type TeamMatchHistory = components["schemas"]["TeamMatchHistoryDto"];
+
+/**
+ * The full `/teams/:id/matches` response: the match list plus the team's
+ * aggregated season stats computed on the backend.
+ */
+export type TeamMatchHistoryResponse =
+  components["schemas"]["TeamMatchHistoryResponseDto"];
+
+export type TeamSeasonStats = components["schemas"]["TeamSeasonStatsDto"];
