@@ -4,14 +4,9 @@ import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { serverClubsService } from "@/features/organizations/clubs/api";
-import {
-  OrganizationHeader,
-  OrganizationInfo,
-} from "@/features/organizations/shared/components";
-import { GenderCategorizedSection } from "@/shared/components/domain";
+import { OrganizationDetailView } from "@/features/organizations/shared/components";
 import { EmptyState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
-import { Breadcrumb } from "@/shared/components/navigation";
 
 interface ClubPageProps {
   readonly params: Promise<{
@@ -54,52 +49,45 @@ export default async function ClubPage({ params }: ClubPageProps) {
 
   const club = await serverClubsService.getById(clubId);
 
-  const breadcrumbItems = [
-    { label: tOrganizations("breadcrumb"), href: "/organizations" },
-    {
-      label: tOrganizations("clubs.label"),
-      href: "/organizations/clubs",
-    },
-    { label: club?.name ?? "…", current: true },
-  ];
-
   return (
     <PageLayout ariaLabel={t("detail.page", { clubName: club.name })}>
-      {/* Breadcrumb */}
-      <Breadcrumb items={breadcrumbItems} />
-
-      {/* Organization Header */}
-      <OrganizationHeader
-        name={club.name}
-        imageFolder="clubs"
-        subtitle={[club.city, club.zipCode].filter(Boolean).join(" • ")}
-      />
-
-      {/* Organization info */}
-      <OrganizationInfo
-        president={club?.president}
-        address={club?.address}
-        email={club?.email}
-        phone={club?.phone}
-        city={club?.city}
-        zipCode={club?.zipCode}
-        website={club?.website}
-      />
-
-      {/* Club teams */}
-      <GenderCategorizedSection
-        items={club.teams.map((t) => ({
-          type: "team",
-          data: t,
-          clubName: club.name,
-        }))}
-        title={t("detail.teamsTitle")}
-        emptyState={
-          <EmptyState
-            icon={<Users className="w-16 h-16" />}
-            title={t("noTeams")}
-          />
-        }
+      <OrganizationDetailView
+        breadcrumb={[
+          { label: tOrganizations("breadcrumb"), href: "/organizations" },
+          {
+            label: tOrganizations("clubs.label"),
+            href: "/organizations/clubs",
+          },
+          { label: club?.name ?? "…", current: true },
+        ]}
+        header={{
+          name: club.name,
+          imageFolder: "clubs",
+          subtitle: [club.city, club.zipCode].filter(Boolean).join(" • "),
+        }}
+        info={{
+          president: club?.president,
+          address: club?.address,
+          email: club?.email,
+          phone: club?.phone,
+          city: club?.city,
+          zipCode: club?.zipCode,
+          website: club?.website,
+        }}
+        section={{
+          items: club.teams.map((team) => ({
+            type: "team",
+            data: team,
+            clubName: club.name,
+          })),
+          title: t("detail.teamsTitle"),
+          emptyState: (
+            <EmptyState
+              icon={<Users className="w-16 h-16" />}
+              title={t("noTeams")}
+            />
+          ),
+        }}
       />
     </PageLayout>
   );
