@@ -1,12 +1,12 @@
 // src/frontend/app/[locale]/(public)/organizations/clubs/[clubId]/page.tsx
 import { Users } from "lucide-react";
-import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { serverClubsService } from "@/features/organizations/clubs/api";
 import { OrganizationDetailView } from "@/features/organizations/shared/components";
 import { EmptyState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
+import { parseRouteId } from "@/shared/utils";
 
 interface ClubPageProps {
   readonly params: Promise<{
@@ -41,11 +41,7 @@ export default async function ClubPage({ params }: ClubPageProps) {
     namespace: "organizations",
   });
 
-  const clubId = Number.parseInt(clubIdStr, 10);
-
-  if (Number.isNaN(clubId) || clubId <= 0) {
-    notFound();
-  }
+  const clubId = parseRouteId(clubIdStr);
 
   const club = await serverClubsService.getById(clubId);
 

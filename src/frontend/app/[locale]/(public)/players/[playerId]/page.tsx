@@ -1,5 +1,4 @@
 // src/frontend/app/[locale]/(public)/players/[playerId]/page.tsx
-import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { PlayerShotChart } from "@/features/charts/components";
@@ -13,7 +12,7 @@ import {
 } from "@/features/players/components";
 import { aggregateStats } from "@/features/players/utils";
 import { PageLayout } from "@/shared/components/layout";
-import { handleServerError } from "@/shared/utils";
+import { handleServerError, parseRouteId } from "@/shared/utils";
 
 interface PlayerDetailPageProps {
   readonly params: Promise<{
@@ -36,10 +35,7 @@ export default async function PlayerDetailPage({
   setRequestLocale(locale);
   const tPlayers = await getTranslations({ locale, namespace: "players" });
 
-  const playerId = Number.parseInt(playerIdStr, 10);
-  if (Number.isNaN(playerId) || playerId <= 0) {
-    notFound();
-  }
+  const playerId = parseRouteId(playerIdStr);
 
   const [player, matches, matchEvents] = await Promise.all([
     serverPlayersService.getById(playerId),

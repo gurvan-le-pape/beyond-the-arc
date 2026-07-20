@@ -10,6 +10,7 @@ import { OrganizationDetailView } from "@/features/organizations/shared/componen
 import { EmptyState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { CompetitionLevel } from "@/shared/constants";
+import { parseRouteId } from "@/shared/utils";
 
 interface LeaguePageProps {
   readonly params: Promise<{ locale: string; leagueId: string }>;
@@ -33,8 +34,7 @@ export default async function RegionalChampionshipsPage({
   const { leagueId: leagueIdStr, locale } = await params;
   setRequestLocale(locale);
 
-  const leagueId = Number.parseInt(leagueIdStr, 10);
-  if (Number.isNaN(leagueId) || leagueId <= 0) notFound();
+  const leagueId = parseRouteId(leagueIdStr);
 
   const tCommon = await getTranslations({ locale, namespace: "common" });
   const tCompetitions = await getTranslations({

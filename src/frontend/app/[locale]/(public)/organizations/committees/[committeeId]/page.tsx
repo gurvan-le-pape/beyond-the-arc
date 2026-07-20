@@ -10,6 +10,7 @@ import { OrganizationDetailView } from "@/features/organizations/shared/componen
 import { EmptyState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { CompetitionLevel } from "@/shared/constants";
+import { parseRouteId } from "@/shared/utils";
 
 interface CommitteePageProps {
   readonly params: Promise<{ locale: string; committeeId: string }>;
@@ -33,8 +34,7 @@ export default async function DepartmentalChampionshipsPage({
   const { committeeId: committeeIdStr, locale } = await params;
   setRequestLocale(locale);
 
-  const committeeId = Number.parseInt(committeeIdStr, 10);
-  if (Number.isNaN(committeeId) || committeeId <= 0) notFound();
+  const committeeId = parseRouteId(committeeIdStr);
 
   const tCommon = await getTranslations({ locale, namespace: "common" });
   const tCompetitions = await getTranslations({
