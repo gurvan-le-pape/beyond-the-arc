@@ -13,40 +13,36 @@ import { PlayerCareerStatsDto } from "./dto/players.response.dto";
 export function aggregateCareerStats(
   rows: MappedPlayerMatchStats[],
 ): PlayerCareerStatsDto {
-  const totals = rows.reduce(
-    (acc, stat) => ({
-      gamesPlayed: acc.gamesPlayed + 1,
-      points: acc.points + stat.points,
-      rebounds: acc.rebounds + stat.rebounds.offensive + stat.rebounds.defensive,
-      assists: acc.assists + stat.assists,
-      steals: acc.steals + stat.steals,
-      blocks: acc.blocks + stat.blocks,
-      turnovers: acc.turnovers + stat.turnovers,
-      fouls: acc.fouls + stat.fouls,
-    }),
-    {
-      gamesPlayed: 0,
-      points: 0,
-      rebounds: 0,
-      assists: 0,
-      steals: 0,
-      blocks: 0,
-      turnovers: 0,
-      fouls: 0,
-    },
+  const gamesPlayed = rows.length;
+  const points = rows.reduce((sum, s) => sum + s.points, 0);
+  const rebounds = rows.reduce(
+    (sum, s) => sum + s.rebounds.offensive + s.rebounds.defensive,
+    0,
   );
+  const assists = rows.reduce((sum, s) => sum + s.assists, 0);
+  const steals = rows.reduce((sum, s) => sum + s.steals, 0);
+  const blocks = rows.reduce((sum, s) => sum + s.blocks, 0);
+  const turnovers = rows.reduce((sum, s) => sum + s.turnovers, 0);
+  const fouls = rows.reduce((sum, s) => sum + s.fouls, 0);
 
-  const gp = totals.gamesPlayed || 1;
+  const gp = gamesPlayed || 1;
   const perGame = (n: number) => Number((n / gp).toFixed(1));
 
   return {
-    ...totals,
-    pointsPerGame: perGame(totals.points),
-    reboundsPerGame: perGame(totals.rebounds),
-    assistsPerGame: perGame(totals.assists),
-    stealsPerGame: perGame(totals.steals),
-    blocksPerGame: perGame(totals.blocks),
-    turnoversPerGame: perGame(totals.turnovers),
-    foulsPerGame: perGame(totals.fouls),
+    gamesPlayed,
+    points,
+    rebounds,
+    assists,
+    steals,
+    blocks,
+    turnovers,
+    fouls,
+    pointsPerGame: perGame(points),
+    reboundsPerGame: perGame(rebounds),
+    assistsPerGame: perGame(assists),
+    stealsPerGame: perGame(steals),
+    blocksPerGame: perGame(blocks),
+    turnoversPerGame: perGame(turnovers),
+    foulsPerGame: perGame(fouls),
   };
 }
