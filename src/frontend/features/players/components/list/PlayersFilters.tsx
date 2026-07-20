@@ -2,24 +2,20 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import React, { useState } from "react";
+import React from "react";
 
 import { useCommitteeLeagueClubFilters } from "@/features/competitions/championships/hooks";
-import { useClubSearch } from "@/features/organizations/clubs/api";
+import { ClubComboBoxFilter } from "@/features/organizations/clubs/components";
 import { ErrorMessage } from "@/shared/components/feedback";
+import type { ActiveFilterChip } from "@/shared/components/filters";
 import {
   FiltersShell,
   LevelLocationFilters,
+  useCategoryGenderOptions,
+  useCommonFilterChips,
 } from "@/shared/components/filters";
 import { Input, Select } from "@/shared/components/forms";
-import { ComboBox } from "@/shared/components/primitives";
 import type { Category, Gender } from "@/shared/constants";
-import {
-  CATEGORY_LIST,
-  CompetitionLevel,
-  GENDER_LIST,
-} from "@/shared/constants";
-import { useDebounce } from "@/shared/hooks";
 
 import { usePlayerFilterValues } from "../../api";
 import type {
@@ -73,17 +69,6 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
     setLeagueId,
   } = setters;
 
-  const [clubSearch, setClubSearch] = useState("");
-  const debouncedClubSearch = useDebounce(clubSearch, 300);
-  const { data: clubData, isLoading: clubsLoading } = useClubSearch(
-    debouncedClubSearch,
-    { committeeId, leagueId },
-  );
-  const clubOptions = (clubData?.items ?? []).map((c) => ({
-    value: String(c.id),
-    label: c.name,
-  }));
-
   const { data: playerFilterValues } = usePlayerFilterValues({
     committeeId,
     leagueId,
@@ -91,10 +76,21 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
   const playerNumbers = playerFilterValues?.numbers ?? [];
   const teamNumbers = playerFilterValues?.teamNumbers ?? [];
 
-  const locationLabel =
-    level === CompetitionLevel.DEPARTMENTAL
-      ? committees.find((c) => c.id === committeeId)?.name
-      : leagues.find((l) => l.id === leagueId)?.name;
+  const { categoryOptions, genderOptions } = useCategoryGenderOptions();
+  const { categoryGenderChips, levelLocationChips } = useCommonFilterChips({
+    category,
+    gender,
+    level,
+    committeeId,
+    leagueId,
+    committees,
+    leagues,
+    setCategory,
+    setGender,
+    setLevel,
+    setCommitteeId,
+    setLeagueId,
+  });
 
   const chips = [
     name && { key: "name", label: `"${name}"`, onRemove: () => setName("") },
@@ -106,16 +102,7 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
         setSelectedClubName("");
       },
     },
-    category && {
-      key: "category",
-      label: tCommon(`category.${category}`),
-      onRemove: () => setCategory(undefined),
-    },
-    gender && {
-      key: "gender",
-      label: tCommon(`gender.${gender}`),
-      onRemove: () => setGender(undefined),
-    },
+    ...categoryGenderChips,
     number && {
       key: "number",
       label: `#${number}`,
@@ -126,36 +113,8 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
       label: `${tCommon("filters.teamNumbers")} ${teamNumber}`,
       onRemove: () => setTeamNumber(undefined),
     },
-    level && {
-      key: "level",
-      label: tCommon(`competition.levels.${level.toLowerCase()}`),
-      onRemove: () => setLevel(undefined),
-    },
-    locationLabel && {
-      key: "location",
-      label: locationLabel,
-      onRemove: () => {
-        setCommitteeId(undefined);
-        setLeagueId(undefined);
-      },
-    },
-  ].filter(Boolean) as { key: string; label: string; onRemove: () => void }[];
-
-  const categoryOptions = [
-    { value: "", label: tCommon("filters.allCategories") },
-    ...CATEGORY_LIST.map((cat) => ({
-      value: cat,
-      label: tCommon(`category.${cat}`),
-    })),
-  ];
-
-  const genderOptions = [
-    { value: "", label: tCommon("filters.allGenders") },
-    ...GENDER_LIST.map((g) => ({
-      value: g,
-      label: tCommon(`gender.${g}`),
-    })),
-  ];
+    ...levelLocationChips,
+  ].filter(Boolean) as ActiveFilterChip[];
 
   const playerNumberOptions = [
     { value: "", label: tCommon("filters.allPlayerNumbers") },
@@ -189,21 +148,12 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
           onClear={() => setName("")}
           clearAriaLabel={tCommon("clearSearch")}
         />
-        <ComboBox
-          label={tCommon("filters.clubs")}
-          placeholder={tCommon("filters.allClubs")}
-          options={clubOptions}
-          value={clubId ? String(clubId) : undefined}
-          onChange={(val) => {
-            const parsed = Number(val) || undefined;
-            setClubId(parsed);
-            setSelectedClubName(
-              clubOptions.find((c) => c.value === String(val ?? ""))?.label ??
-                "",
-            );
-          }}
-          onSearchChange={setClubSearch}
-          isLoading={clubsLoading}
+        <ClubComboBoxFilter
+          committeeId={committeeId}
+          leagueId={leagueId}
+          clubId={clubId}
+          setClubId={setClubId}
+          setSelectedClubName={setSelectedClubName}
         />
       </div>
 
