@@ -4,7 +4,6 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { TeamShotChart } from "@/features/charts/components";
 import { serverMatchesService } from "@/features/matches/api";
-import type { PlayerMatchHistoryEntry } from "@/features/players/types";
 import { serverTeamsService } from "@/features/teams/api";
 import {
   TeamHeader,
@@ -12,7 +11,7 @@ import {
   TeamMatchHistoryTable,
   TeamRoster,
 } from "@/features/teams/components";
-import { aggregateTeamStats } from "@/features/teams/utils";
+import { aggregateTeamStats, buildTeamRoster } from "@/features/teams/utils";
 import { PageLayout } from "@/shared/components/layout";
 import { handleServerError } from "@/shared/utils";
 
@@ -49,17 +48,7 @@ export default async function TeamDetailPage({ params }: TeamDetailPageProps) {
   // Calculate team season stats from all players
   const teamStats = aggregateTeamStats(teamId, matches);
 
-  const rosterPlayers: PlayerMatchHistoryEntry[][] = Object.values(
-    matches.reduce<Record<number, PlayerMatchHistoryEntry[]>>((acc, match) => {
-      match.players
-        .filter((p) => p.player.teamId === teamId)
-        .forEach((p) => {
-          if (!acc[p.player.id]) acc[p.player.id] = [];
-          acc[p.player.id].push(p);
-        });
-      return acc;
-    }, {}),
-  );
+  const rosterPlayers = buildTeamRoster(matches, teamId);
 
   return (
     <PageLayout>
