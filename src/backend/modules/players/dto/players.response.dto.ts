@@ -428,3 +428,79 @@ export class MatchHistoryDto {
   })
   player!: PlayerMatchEntryDto;
 }
+
+/**
+ * Aggregated career totals and per-game averages for a player, summed over
+ * their match history. Per-game values are rounded to one decimal.
+ */
+export class PlayerCareerStatsDto {
+  @ApiProperty({ description: "Games played", example: 24, type: Number })
+  gamesPlayed!: number;
+
+  @ApiProperty({ description: "Total points", example: 372, type: Number })
+  points!: number;
+
+  @ApiProperty({
+    description: "Total rebounds (offensive + defensive)",
+    example: 168,
+    type: Number,
+  })
+  rebounds!: number;
+
+  @ApiProperty({ description: "Total assists", example: 96, type: Number })
+  assists!: number;
+
+  @ApiProperty({ description: "Total steals", example: 41, type: Number })
+  steals!: number;
+
+  @ApiProperty({ description: "Total blocks", example: 18, type: Number })
+  blocks!: number;
+
+  @ApiProperty({ description: "Total turnovers", example: 55, type: Number })
+  turnovers!: number;
+
+  @ApiProperty({ description: "Total personal fouls", example: 62, type: Number })
+  fouls!: number;
+
+  @ApiProperty({ description: "Points per game", example: 15.5, type: Number })
+  pointsPerGame!: number;
+
+  @ApiProperty({ description: "Rebounds per game", example: 7, type: Number })
+  reboundsPerGame!: number;
+
+  @ApiProperty({ description: "Assists per game", example: 4, type: Number })
+  assistsPerGame!: number;
+
+  @ApiProperty({ description: "Steals per game", example: 1.7, type: Number })
+  stealsPerGame!: number;
+
+  @ApiProperty({ description: "Blocks per game", example: 0.8, type: Number })
+  blocksPerGame!: number;
+
+  @ApiProperty({
+    description: "Turnovers per game",
+    example: 2.3,
+    type: Number,
+  })
+  turnoversPerGame!: number;
+
+  @ApiProperty({ description: "Fouls per game", example: 2.6, type: Number })
+  foulsPerGame!: number;
+}
+
+/**
+ * Player match history with aggregated career stats.
+ */
+export class PlayerMatchHistoryResponseDto {
+  @ApiProperty({
+    description: "Match history entries, ordered by date (most recent first)",
+    type: [MatchHistoryDto],
+  })
+  matches!: MatchHistoryDto[];
+
+  @ApiProperty({
+    description: "Aggregated career totals and per-game averages",
+    type: PlayerCareerStatsDto,
+  })
+  career!: PlayerCareerStatsDto;
+}

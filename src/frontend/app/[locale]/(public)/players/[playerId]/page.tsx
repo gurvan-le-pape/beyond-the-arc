@@ -10,7 +10,6 @@ import {
   PlayerHeader,
   PlayerMatchHistoryTable,
 } from "@/features/players/components";
-import { aggregateStats } from "@/features/players/utils";
 import { PageLayout } from "@/shared/components/layout";
 import { handleServerError, parseRouteId } from "@/shared/utils";
 
@@ -37,13 +36,13 @@ export default async function PlayerDetailPage({
 
   const playerId = parseRouteId(playerIdStr);
 
-  const [player, matches, matchEvents] = await Promise.all([
+  const [player, matchHistory, matchEvents] = await Promise.all([
     serverPlayersService.getById(playerId),
     serverPlayersService.getMatches(playerId),
     serverMatchesService.getEventsByPlayerId(playerId),
   ]).catch(handleServerError);
 
-  const playerCareerStats = aggregateStats(matches.map((m) => m.player.stats));
+  const { matches, career } = matchHistory;
 
   return (
     <PageLayout>
@@ -51,7 +50,7 @@ export default async function PlayerDetailPage({
       <PlayerHeader player={player} />
 
       {/* Career Stats */}
-      <PlayerCareerStats stats={playerCareerStats} />
+      <PlayerCareerStats stats={career} />
 
       {/* Match History */}
       <PlayerMatchHistoryTable player={player} matches={matches} maxRows={5} />

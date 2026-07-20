@@ -6,7 +6,7 @@ import type { ApiError, PaginatedResponse } from "@/shared/types";
 import type { Player } from "../types/Player";
 import type { PlayerFilters } from "../types/PlayerFilters";
 import type { PlayerFilterValues } from "../types/PlayerFilterValues";
-import type { PlayerMatchHistory } from "../types/PlayerMatchHistory";
+import type { PlayerMatchHistoryResponse } from "../types/PlayerMatchHistory";
 import { playersPrefetch, playersQueries } from "./playersQueries";
 
 /**
@@ -64,7 +64,7 @@ export function usePlayer(id: number, options?: { enabled?: boolean }) {
  * const { data: matches, isLoading } = usePlayerMatches(123);
  */
 export function usePlayerMatches(id: number, options?: { enabled?: boolean }) {
-  return useQuery<PlayerMatchHistory[], ApiError>({
+  return useQuery<PlayerMatchHistoryResponse, ApiError>({
     ...playersQueries.matches(id),
     enabled: options?.enabled ?? !!id,
   });

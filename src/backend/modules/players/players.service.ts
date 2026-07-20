@@ -13,9 +13,11 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 
 import { Prisma } from "../../prisma/generated/prisma/client";
+import { aggregateCareerStats } from "./aggregate-career-stats";
 import type {
   FilterValuesPlayersResponseDto,
   MatchHistoryDto,
+  PlayerMatchHistoryResponseDto,
   PlayerResponseDto,
 } from "./dto/players.response.dto";
 
@@ -259,7 +261,9 @@ export class PlayersService {
    * @returns Array of match history entries
    * @throws NotFoundException if player doesn't exist
    */
-  async findPlayerMatchHistory(playerId: number): Promise<MatchHistoryDto[]> {
+  async findPlayerMatchHistory(
+    playerId: number,
+  ): Promise<PlayerMatchHistoryResponseDto> {
     const playerExists = await this.prisma.client.players.findUnique({
       where: { id: playerId },
       select: { id: true },
@@ -275,7 +279,12 @@ export class PlayersService {
       orderBy: { match: { date: "desc" } },
     });
 
-    return stats.map((stat) => this.mapToMatchHistoryDto(stat));
+    const matches = stats.map((stat) => this.mapToMatchHistoryDto(stat));
+
+    return {
+      matches,
+      career: aggregateCareerStats(matches.map((m) => m.player.stats)),
+    };
   }
 
   /**

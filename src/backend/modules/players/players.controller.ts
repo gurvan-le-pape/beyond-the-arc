@@ -25,7 +25,7 @@ import {
 import { GetPlayersQueryDto } from "./dto/players.query.dto";
 import {
   FilterValuesPlayersResponseDto,
-  MatchHistoryDto,
+  PlayerMatchHistoryResponseDto,
   PlayerResponseDto,
 } from "./dto/players.response.dto";
 import { PlayersService } from "./players.service";
@@ -372,54 +372,73 @@ export class PlayersController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: "Match history successfully retrieved",
-    type: [MatchHistoryDto],
+    type: PlayerMatchHistoryResponseDto,
     schema: {
       example: {
-        data: [
-          {
-            id: 1,
-            date: "2024-02-05T19:00:00Z",
-            homeTeam: {
+        data: {
+          matches: [
+            {
               id: 1,
-              number: 1,
-              club: { id: 1, name: "Club A" },
-            },
-            awayTeam: {
-              id: 2,
-              number: 1,
-              club: { id: 2, name: "Club B" },
-            },
-            homeTeamScore: 85,
-            awayTeamScore: 72,
-            player: {
-              player: {
+              date: "2024-02-05T19:00:00Z",
+              homeTeam: {
                 id: 1,
-                name: "John Doe",
-                number: 10,
-                teamId: 1,
+                number: 1,
+                club: { id: 1, name: "Club A" },
               },
-              stats: {
-                points: 15,
-                fouls: 2,
-                threePointsMade: 2,
-                threePointsAttempted: 5,
-                rebounds: {
-                  total: 8,
-                  offensive: 3,
-                  defensive: 5,
+              awayTeam: {
+                id: 2,
+                number: 1,
+                club: { id: 2, name: "Club B" },
+              },
+              homeTeamScore: 85,
+              awayTeamScore: 72,
+              player: {
+                player: {
+                  id: 1,
+                  name: "John Doe",
+                  number: 10,
+                  teamId: 1,
                 },
-                assists: 7,
-                steals: 2,
-                blocks: 1,
-                turnovers: 3,
-                playtimeIntervals: [
-                  [0, 600],
-                  [1200, 2400],
-                ],
+                stats: {
+                  points: 15,
+                  fouls: 2,
+                  threePointsMade: 2,
+                  threePointsAttempted: 5,
+                  rebounds: {
+                    total: 8,
+                    offensive: 3,
+                    defensive: 5,
+                  },
+                  assists: 7,
+                  steals: 2,
+                  blocks: 1,
+                  turnovers: 3,
+                  playtimeIntervals: [
+                    [0, 600],
+                    [1200, 2400],
+                  ],
+                },
               },
             },
+          ],
+          career: {
+            gamesPlayed: 1,
+            points: 15,
+            rebounds: 8,
+            assists: 7,
+            steals: 2,
+            blocks: 1,
+            turnovers: 3,
+            fouls: 2,
+            pointsPerGame: 15,
+            reboundsPerGame: 8,
+            assistsPerGame: 7,
+            stealsPerGame: 2,
+            blocksPerGame: 1,
+            turnoversPerGame: 3,
+            foulsPerGame: 2,
           },
-        ],
+        },
         timestamp: "2024-02-05T10:00:00Z",
         path: "/players/1/matches",
         statusCode: 200,
@@ -454,7 +473,7 @@ export class PlayersController {
   })
   async getPlayerMatchHistory(
     @Param("id", ParseIntPipe) id: number,
-  ): Promise<MatchHistoryDto[]> {
+  ): Promise<PlayerMatchHistoryResponseDto> {
     return this.playersService.findPlayerMatchHistory(id);
   }
 }

@@ -2,17 +2,18 @@
 import { useTranslations } from "next-intl";
 import React from "react";
 
+import type { PlayerCareerStats as PlayerCareerStatsData } from "@/features/players/types";
 import { InfoBox, Section } from "@/shared/components/blocks";
 
 interface StatConfig {
   key: string;
   labelKey: string;
-  value: (stats: any) => string | number;
+  value: (stats: PlayerCareerStatsData) => string | number;
   highlight?: boolean;
 }
 
 interface PlayerCareerStatsProps {
-  stats: any;
+  stats: PlayerCareerStatsData;
   title?: string;
   statsConfig?: StatConfig[];
   gridCols?: string;
