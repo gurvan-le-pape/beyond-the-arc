@@ -6,7 +6,7 @@ import { serverMatchesService } from "@/features/matches/api";
 import { MatchScoreCard, MatchSummaryTabs } from "@/features/matches/components";
 import { buildTeam, groupShotEventsByPlayer } from "@/features/matches/utils";
 import { PageLayout } from "@/shared/components/layout";
-import { handleServerError } from "@/shared/utils";
+import { handleServerError, parseRouteId } from "@/shared/utils";
 
 interface MatchSummaryPageProps {
   readonly params: Promise<{
@@ -28,10 +28,7 @@ export default async function MatchSummaryPage({
   const { matchId: matchIdStr, locale } = await params;
   setRequestLocale(locale);
 
-  const matchId = Number.parseInt(matchIdStr, 10);
-  if (Number.isNaN(matchId) || matchId <= 0) {
-    notFound();
-  }
+  const matchId = parseRouteId(matchIdStr);
 
   const [match, playerMatchStats] = await Promise.all([
     serverMatchesService.getById(matchId),

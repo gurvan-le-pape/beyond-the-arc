@@ -1,5 +1,4 @@
 // src/frontend/app/[locale]/(public)/teams/[teamId]/page.tsx
-import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { TeamShotChart } from "@/features/charts/components";
@@ -13,7 +12,7 @@ import {
 } from "@/features/teams/components";
 import { aggregateTeamStats, buildTeamRoster } from "@/features/teams/utils";
 import { PageLayout } from "@/shared/components/layout";
-import { handleServerError } from "@/shared/utils";
+import { handleServerError, parseRouteId } from "@/shared/utils";
 
 interface TeamDetailPageProps {
   readonly params: Promise<{
@@ -34,10 +33,7 @@ export default async function TeamDetailPage({ params }: TeamDetailPageProps) {
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "teams" });
 
-  const teamId = Number.parseInt(teamIdStr, 10);
-  if (Number.isNaN(teamId) || teamId <= 0) {
-    notFound();
-  }
+  const teamId = parseRouteId(teamIdStr);
 
   const [team, matches, matchEvents] = await Promise.all([
     serverTeamsService.getById(teamId),
