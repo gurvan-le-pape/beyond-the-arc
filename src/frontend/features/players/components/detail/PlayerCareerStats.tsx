@@ -19,6 +19,9 @@ interface PlayerCareerStatsProps {
   gridCols?: string;
 }
 
+// Per-game averages come precomputed from the backend (`/players/:id/matches`
+// → career). We only format them for display; the backend already guards the
+// zero-games case (gp || 1), so `foo.toFixed(1)` renders "0.0" there too.
 const defaultStatsConfig: StatConfig[] = [
   {
     key: "gamesPlayed",
@@ -29,58 +32,37 @@ const defaultStatsConfig: StatConfig[] = [
   {
     key: "pointsPerGame",
     labelKey: "stats.pointsPerGame",
-    value: (stats) =>
-      stats.gamesPlayed > 0
-        ? (stats.points / stats.gamesPlayed).toFixed(1)
-        : "0.0",
+    value: (stats) => stats.pointsPerGame.toFixed(1),
   },
   {
     key: "reboundsPerGame",
     labelKey: "stats.reboundsPerGame",
-    value: (stats) =>
-      stats.gamesPlayed > 0
-        ? (stats.rebounds / stats.gamesPlayed).toFixed(1)
-        : "0.0",
+    value: (stats) => stats.reboundsPerGame.toFixed(1),
   },
   {
     key: "assistsPerGame",
     labelKey: "stats.assistsPerGame",
-    value: (stats) =>
-      stats.gamesPlayed > 0
-        ? (stats.assists / stats.gamesPlayed).toFixed(1)
-        : "0.0",
+    value: (stats) => stats.assistsPerGame.toFixed(1),
   },
   {
     key: "stealsPerGame",
     labelKey: "stats.stealsPerGame",
-    value: (stats) =>
-      stats.gamesPlayed > 0
-        ? (stats.steals / stats.gamesPlayed).toFixed(1)
-        : "0.0",
+    value: (stats) => stats.stealsPerGame.toFixed(1),
   },
   {
     key: "blocksPerGame",
     labelKey: "stats.blocksPerGame",
-    value: (stats) =>
-      stats.gamesPlayed > 0
-        ? (stats.blocks / stats.gamesPlayed).toFixed(1)
-        : "0.0",
+    value: (stats) => stats.blocksPerGame.toFixed(1),
   },
   {
     key: "turnoversPerGame",
     labelKey: "stats.turnoversPerGame",
-    value: (stats) =>
-      stats.gamesPlayed > 0
-        ? (stats.turnovers / stats.gamesPlayed).toFixed(1)
-        : "0.0",
+    value: (stats) => stats.turnoversPerGame.toFixed(1),
   },
   {
     key: "foulsPerGame",
     labelKey: "stats.foulsPerGame",
-    value: (stats) =>
-      stats.gamesPlayed > 0
-        ? (stats.fouls / stats.gamesPlayed).toFixed(1)
-        : "0.0",
+    value: (stats) => stats.foulsPerGame.toFixed(1),
   },
 ];
 
