@@ -22,7 +22,7 @@ import {
   ZOOM_THRESHOLDS,
 } from "./mapConstants";
 import { clubsToGeoJSON, generateLabelFeatures } from "./mapHelpers";
-import { SidePanel } from "./SidePanel";
+import { SidePanel } from "./side-panel";
 import { useFilters } from "./useFilters";
 import { useMapData } from "./useMapData";
 import { useSearch } from "./useSearch";
