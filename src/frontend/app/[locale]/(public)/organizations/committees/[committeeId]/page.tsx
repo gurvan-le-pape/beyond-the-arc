@@ -1,6 +1,5 @@
 // src/frontend/app/[locale]/(public)/organizations/committees/[committeeId]/page.tsx
 import { Trophy } from "lucide-react";
-import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { serverChampionshipsService } from "@/features/competitions/championships/api";
@@ -10,7 +9,7 @@ import { OrganizationDetailView } from "@/features/organizations/shared/componen
 import { EmptyState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { CompetitionLevel } from "@/shared/constants";
-import { parseRouteId } from "@/shared/utils";
+import { handleServerError, parseRouteId } from "@/shared/utils";
 
 interface CommitteePageProps {
   readonly params: Promise<{ locale: string; committeeId: string }>;
@@ -57,9 +56,7 @@ export default async function DepartmentalChampionshipsPage({
         level: CompetitionLevel.DEPARTMENTAL,
         committeeId,
       }),
-    ]);
-
-  if (!committee) notFound();
+    ]).catch(handleServerError);
 
   return (
     <PageLayout>
