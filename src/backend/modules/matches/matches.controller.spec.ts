@@ -191,10 +191,29 @@ describe("MatchesController", () => {
 
   describe("getPlayerMatchStats", () => {
     it("should return player match stats", async () => {
+      const emptyTeamStats = {
+        fieldGoals: "0/0",
+        fieldGoalPercentage: "N/A",
+        threePointers: "0/0",
+        threePointPercentage: "N/A",
+        freeThrows: "0/0",
+        freeThrowPercentage: "N/A",
+        reboundsTotal: 0,
+        reboundsOffensive: 0,
+        reboundsDefensive: 0,
+        assists: 0,
+        steals: 0,
+        blocks: 0,
+        turnovers: 0,
+        fouls: 0,
+        pointsInPaint: 0,
+      };
       const mockStats: MatchPlayerStatsResponseDto = {
         homeTeamId: 1,
         awayTeamId: 2,
         stats: [],
+        homeTeamStats: emptyTeamStats,
+        awayTeamStats: emptyTeamStats,
       };
 
       mockMatchesService.findPlayerMatchStatsByMatchId.mockResolvedValue(

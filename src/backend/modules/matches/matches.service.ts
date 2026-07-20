@@ -15,6 +15,7 @@ import { fromZonedTime } from "date-fns-tz";
 import { PrismaService } from "prisma/prisma.service";
 
 import { Prisma } from "../../prisma/generated/prisma/client";
+import { aggregateTeamMatchStats } from "./aggregate-team-match-stats";
 import type {
   MatchDetailResponseDto,
   MatchEventDto,
@@ -254,10 +255,20 @@ export class MatchesService {
       select: PLAYER_MATCH_STATS_SELECT,
     });
 
+    const mappedStats = this.mapToPlayerStats(stats);
+    const homeRows = mappedStats.filter(
+      (s) => s.player.teamId === match.homeTeamId,
+    );
+    const awayRows = mappedStats.filter(
+      (s) => s.player.teamId === match.awayTeamId,
+    );
+
     return {
       homeTeamId: match.homeTeamId,
       awayTeamId: match.awayTeamId,
-      stats: this.mapToPlayerStats(stats),
+      stats: mappedStats,
+      homeTeamStats: aggregateTeamMatchStats(homeRows.map((s) => s.stats)),
+      awayTeamStats: aggregateTeamMatchStats(awayRows.map((s) => s.stats)),
     };
   }
 

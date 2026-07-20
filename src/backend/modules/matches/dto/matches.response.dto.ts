@@ -312,6 +312,94 @@ export class PlayerWithStatsDto {
 }
 
 /**
+ * Aggregated team totals for a single match. Made/attempted are pre-formatted
+ * "made/attempted" strings and percentages are "NN%" strings (or "N/A" when
+ * there were no attempts); counting stats are raw numbers.
+ */
+export class TeamMatchStatsDto {
+  @ApiProperty({
+    description: "Field goals made/attempted",
+    example: "25/58",
+    type: String,
+  })
+  fieldGoals!: string;
+
+  @ApiProperty({
+    description: 'Field goal percentage, or "N/A" when no attempts',
+    example: "43%",
+    type: String,
+  })
+  fieldGoalPercentage!: string;
+
+  @ApiProperty({
+    description: "Three-pointers made/attempted",
+    example: "8/22",
+    type: String,
+  })
+  threePointers!: string;
+
+  @ApiProperty({
+    description: 'Three-point percentage, or "N/A" when no attempts',
+    example: "36%",
+    type: String,
+  })
+  threePointPercentage!: string;
+
+  @ApiProperty({
+    description: "Free throws made/attempted",
+    example: "14/18",
+    type: String,
+  })
+  freeThrows!: string;
+
+  @ApiProperty({
+    description: 'Free throw percentage, or "N/A" when no attempts',
+    example: "78%",
+    type: String,
+  })
+  freeThrowPercentage!: string;
+
+  @ApiProperty({ description: "Total rebounds", example: 38, type: Number })
+  reboundsTotal!: number;
+
+  @ApiProperty({
+    description: "Offensive rebounds",
+    example: 11,
+    type: Number,
+  })
+  reboundsOffensive!: number;
+
+  @ApiProperty({
+    description: "Defensive rebounds",
+    example: 27,
+    type: Number,
+  })
+  reboundsDefensive!: number;
+
+  @ApiProperty({ description: "Assists", example: 17, type: Number })
+  assists!: number;
+
+  @ApiProperty({ description: "Steals", example: 6, type: Number })
+  steals!: number;
+
+  @ApiProperty({ description: "Blocks", example: 3, type: Number })
+  blocks!: number;
+
+  @ApiProperty({ description: "Turnovers", example: 12, type: Number })
+  turnovers!: number;
+
+  @ApiProperty({ description: "Personal fouls", example: 19, type: Number })
+  fouls!: number;
+
+  @ApiProperty({
+    description: "Points scored in the paint (interior two-pointers x2)",
+    example: 30,
+    type: Number,
+  })
+  pointsInPaint!: number;
+}
+
+/**
  * Match player statistics response.
  */
 export class MatchPlayerStatsResponseDto {
@@ -334,6 +422,18 @@ export class MatchPlayerStatsResponseDto {
     type: [PlayerWithStatsDto],
   })
   stats!: PlayerWithStatsDto[];
+
+  @ApiProperty({
+    description: "Aggregated totals for the home team",
+    type: TeamMatchStatsDto,
+  })
+  homeTeamStats!: TeamMatchStatsDto;
+
+  @ApiProperty({
+    description: "Aggregated totals for the away team",
+    type: TeamMatchStatsDto,
+  })
+  awayTeamStats!: TeamMatchStatsDto;
 }
 
 /**

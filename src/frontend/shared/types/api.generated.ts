@@ -1737,6 +1737,83 @@ export interface components {
             /** @description Player statistics for this match */
             stats: components["schemas"]["PlayerStatsDto"];
         };
+        TeamMatchStatsDto: {
+            /**
+             * @description Field goals made/attempted
+             * @example 25/58
+             */
+            fieldGoals: string;
+            /**
+             * @description Field goal percentage, or "N/A" when no attempts
+             * @example 43%
+             */
+            fieldGoalPercentage: string;
+            /**
+             * @description Three-pointers made/attempted
+             * @example 8/22
+             */
+            threePointers: string;
+            /**
+             * @description Three-point percentage, or "N/A" when no attempts
+             * @example 36%
+             */
+            threePointPercentage: string;
+            /**
+             * @description Free throws made/attempted
+             * @example 14/18
+             */
+            freeThrows: string;
+            /**
+             * @description Free throw percentage, or "N/A" when no attempts
+             * @example 78%
+             */
+            freeThrowPercentage: string;
+            /**
+             * @description Total rebounds
+             * @example 38
+             */
+            reboundsTotal: number;
+            /**
+             * @description Offensive rebounds
+             * @example 11
+             */
+            reboundsOffensive: number;
+            /**
+             * @description Defensive rebounds
+             * @example 27
+             */
+            reboundsDefensive: number;
+            /**
+             * @description Assists
+             * @example 17
+             */
+            assists: number;
+            /**
+             * @description Steals
+             * @example 6
+             */
+            steals: number;
+            /**
+             * @description Blocks
+             * @example 3
+             */
+            blocks: number;
+            /**
+             * @description Turnovers
+             * @example 12
+             */
+            turnovers: number;
+            /**
+             * @description Personal fouls
+             * @example 19
+             */
+            fouls: number;
+            /**
+             * @description Points scored in the paint (interior two-pointers x2)
+             * @example 30
+             */
+            pointsInPaint: number;
+        };
         MatchPlayerStatsResponseDto: {
             /**
              * @description Home team ID
@@ -1750,6 +1827,10 @@ export interface components {
             awayTeamId: number;
             /** @description Player statistics for both teams */
             stats: components["schemas"]["PlayerWithStatsDto"][];
+            /** @description Aggregated totals for the home team */
+            homeTeamStats: components["schemas"]["TeamMatchStatsDto"];
+            /** @description Aggregated totals for the away team */
+            awayTeamStats: components["schemas"]["TeamMatchStatsDto"];
         };
         PlayerLeagueRefDto: {
             /**
