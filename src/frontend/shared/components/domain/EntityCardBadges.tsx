@@ -1,0 +1,63 @@
+// src/frontend/shared/components/domain/EntityCardBadges.tsx
+"use client";
+
+import { useTranslations } from "next-intl";
+
+import { Badge } from "@/shared/components/primitives";
+
+import { getLevelConfig } from "./ListEntityCard";
+
+interface EntityCardBadgesProps {
+  readonly category?: string | null;
+  readonly gender?: string | null;
+  readonly division?: number | null;
+  /** Pre-formatted pool label (e.g. "Pool A" or a pool name). */
+  readonly poolLabel?: string | null;
+  /** Lowercased competition level. */
+  readonly level: string;
+}
+
+/**
+ * The category / gender / division / pool / level badge cluster shared by the
+ * teams, players, and matches list cards. Omitted entries render nothing.
+ */
+export function EntityCardBadges({
+  category,
+  gender,
+  division,
+  poolLabel,
+  level,
+}: EntityCardBadgesProps) {
+  const tCommon = useTranslations("common");
+  const config = getLevelConfig(level);
+
+  return (
+    <>
+      {category && (
+        <Badge variant="category" size="sm">
+          {category}
+        </Badge>
+      )}
+      {gender && (
+        <Badge variant={gender.toLowerCase() as "male" | "female"} size="sm">
+          {tCommon(`gender.${gender.toLowerCase()}`)}
+        </Badge>
+      )}
+      {division && (
+        <Badge variant="division" size="sm">{`Div ${division}`}</Badge>
+      )}
+      {poolLabel && (
+        <Badge variant="pool" size="sm">
+          {poolLabel}
+        </Badge>
+      )}
+      {level && (
+        <Badge variant={config.badgeVariant} size="sm">
+          {tCommon(`competition.levels.${level}Short`)}
+        </Badge>
+      )}
+    </>
+  );
+}
+
+export default EntityCardBadges;
