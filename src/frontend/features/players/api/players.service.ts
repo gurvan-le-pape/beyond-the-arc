@@ -5,7 +5,7 @@ import apiClient from "../../../lib/services/client/api-client";
 import type { Player } from "../types/Player";
 import type { PlayerFilters } from "../types/PlayerFilters";
 import type { PlayerFilterValues } from "../types/PlayerFilterValues";
-import type { PlayerMatchHistory } from "../types/PlayerMatchHistory";
+import type { PlayerMatchHistoryResponse } from "../types/PlayerMatchHistory";
 
 /**
  * Service for interacting with the players API.
@@ -75,7 +75,7 @@ export const playersService = {
    * @example
    * const matches = await playersService.getMatches(789);
    */
-  async getMatches(playerId: number): Promise<PlayerMatchHistory[]> {
+  async getMatches(playerId: number): Promise<PlayerMatchHistoryResponse> {
     const { data } = await apiClient.get<any>(`/players/${playerId}/matches`);
     return data;
   },

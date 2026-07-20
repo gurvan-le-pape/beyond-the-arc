@@ -3,7 +3,11 @@ import type { PlayerMatchStats } from "@/shared/types";
 
 /**
  * Aggregates player statistics from an array of individual game stats.
- * This utility can be used in both server and client components.
+ *
+ * The player page and player comparison now read career stats straight from
+ * the backend (`/players/:id/matches` → `career`). This remains only as the
+ * helper that `features/teams` composes for its season aggregate; it will be
+ * removed with the teams util once team season stats also move server-side.
  */
 export function aggregateStats(stats: PlayerMatchStats[]) {
   const totals = stats.reduce(

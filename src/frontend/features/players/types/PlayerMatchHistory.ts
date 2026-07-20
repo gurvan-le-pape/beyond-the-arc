@@ -13,3 +13,12 @@ export type PlayerMatchHistoryEntry =
   components["schemas"]["PlayerMatchEntryDto"];
 
 export type PlayerMatchHistory = components["schemas"]["MatchHistoryDto"];
+
+/**
+ * The full `/players/:id/matches` response: the match list plus the player's
+ * aggregated career stats computed on the backend.
+ */
+export type PlayerMatchHistoryResponse =
+  components["schemas"]["PlayerMatchHistoryResponseDto"];
+
+export type PlayerCareerStats = components["schemas"]["PlayerCareerStatsDto"];

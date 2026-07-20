@@ -2116,63 +2116,82 @@
             "description": "Match history successfully retrieved",
             "schema": {
               "example": {
-                "data": [
-                  {
-                    "id": 1,
-                    "date": "2024-02-05T19:00:00Z",
-                    "homeTeam": {
+                "data": {
+                  "matches": [
+                    {
                       "id": 1,
-                      "number": 1,
-                      "club": {
+                      "date": "2024-02-05T19:00:00Z",
+                      "homeTeam": {
                         "id": 1,
-                        "name": "Club A"
-                      }
-                    },
-                    "awayTeam": {
-                      "id": 2,
-                      "number": 1,
-                      "club": {
-                        "id": 2,
-                        "name": "Club B"
-                      }
-                    },
-                    "homeTeamScore": 85,
-                    "awayTeamScore": 72,
-                    "player": {
-                      "player": {
-                        "id": 1,
-                        "name": "John Doe",
-                        "number": 10,
-                        "teamId": 1
+                        "number": 1,
+                        "club": {
+                          "id": 1,
+                          "name": "Club A"
+                        }
                       },
-                      "stats": {
-                        "points": 15,
-                        "fouls": 2,
-                        "threePointsMade": 2,
-                        "threePointsAttempted": 5,
-                        "rebounds": {
-                          "total": 8,
-                          "offensive": 3,
-                          "defensive": 5
+                      "awayTeam": {
+                        "id": 2,
+                        "number": 1,
+                        "club": {
+                          "id": 2,
+                          "name": "Club B"
+                        }
+                      },
+                      "homeTeamScore": 85,
+                      "awayTeamScore": 72,
+                      "player": {
+                        "player": {
+                          "id": 1,
+                          "name": "John Doe",
+                          "number": 10,
+                          "teamId": 1
                         },
-                        "assists": 7,
-                        "steals": 2,
-                        "blocks": 1,
-                        "turnovers": 3,
-                        "playtimeIntervals": [
-                          [
-                            0,
-                            600
-                          ],
-                          [
-                            1200,
-                            2400
+                        "stats": {
+                          "points": 15,
+                          "fouls": 2,
+                          "threePointsMade": 2,
+                          "threePointsAttempted": 5,
+                          "rebounds": {
+                            "total": 8,
+                            "offensive": 3,
+                            "defensive": 5
+                          },
+                          "assists": 7,
+                          "steals": 2,
+                          "blocks": 1,
+                          "turnovers": 3,
+                          "playtimeIntervals": [
+                            [
+                              0,
+                              600
+                            ],
+                            [
+                              1200,
+                              2400
+                            ]
                           ]
-                        ]
+                        }
                       }
                     }
+                  ],
+                  "career": {
+                    "gamesPlayed": 1,
+                    "points": 15,
+                    "rebounds": 8,
+                    "assists": 7,
+                    "steals": 2,
+                    "blocks": 1,
+                    "turnovers": 3,
+                    "fouls": 2,
+                    "pointsPerGame": 15,
+                    "reboundsPerGame": 8,
+                    "assistsPerGame": 7,
+                    "stealsPerGame": 2,
+                    "blocksPerGame": 1,
+                    "turnoversPerGame": 3,
+                    "foulsPerGame": 2
                   }
-                ],
+                },
                 "timestamp": "2024-02-05T10:00:00Z",
                 "path": "/players/1/matches",
                 "statusCode": 200
@@ -2181,10 +2200,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MatchHistoryDto"
-                  }
+                  "$ref": "#/components/schemas/PlayerMatchHistoryResponseDto"
                 }
               }
             }
@@ -5457,6 +5473,127 @@
           "homeTeamScore",
           "awayTeamScore",
           "player"
+        ]
+      },
+      "PlayerCareerStatsDto": {
+        "type": "object",
+        "properties": {
+          "gamesPlayed": {
+            "type": "number",
+            "description": "Games played",
+            "example": 24
+          },
+          "points": {
+            "type": "number",
+            "description": "Total points",
+            "example": 372
+          },
+          "rebounds": {
+            "type": "number",
+            "description": "Total rebounds (offensive + defensive)",
+            "example": 168
+          },
+          "assists": {
+            "type": "number",
+            "description": "Total assists",
+            "example": 96
+          },
+          "steals": {
+            "type": "number",
+            "description": "Total steals",
+            "example": 41
+          },
+          "blocks": {
+            "type": "number",
+            "description": "Total blocks",
+            "example": 18
+          },
+          "turnovers": {
+            "type": "number",
+            "description": "Total turnovers",
+            "example": 55
+          },
+          "fouls": {
+            "type": "number",
+            "description": "Total personal fouls",
+            "example": 62
+          },
+          "pointsPerGame": {
+            "type": "number",
+            "description": "Points per game",
+            "example": 15.5
+          },
+          "reboundsPerGame": {
+            "type": "number",
+            "description": "Rebounds per game",
+            "example": 7
+          },
+          "assistsPerGame": {
+            "type": "number",
+            "description": "Assists per game",
+            "example": 4
+          },
+          "stealsPerGame": {
+            "type": "number",
+            "description": "Steals per game",
+            "example": 1.7
+          },
+          "blocksPerGame": {
+            "type": "number",
+            "description": "Blocks per game",
+            "example": 0.8
+          },
+          "turnoversPerGame": {
+            "type": "number",
+            "description": "Turnovers per game",
+            "example": 2.3
+          },
+          "foulsPerGame": {
+            "type": "number",
+            "description": "Fouls per game",
+            "example": 2.6
+          }
+        },
+        "required": [
+          "gamesPlayed",
+          "points",
+          "rebounds",
+          "assists",
+          "steals",
+          "blocks",
+          "turnovers",
+          "fouls",
+          "pointsPerGame",
+          "reboundsPerGame",
+          "assistsPerGame",
+          "stealsPerGame",
+          "blocksPerGame",
+          "turnoversPerGame",
+          "foulsPerGame"
+        ]
+      },
+      "PlayerMatchHistoryResponseDto": {
+        "type": "object",
+        "properties": {
+          "matches": {
+            "description": "Match history entries, ordered by date (most recent first)",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MatchHistoryDto"
+            }
+          },
+          "career": {
+            "description": "Aggregated career totals and per-game averages",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlayerCareerStatsDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "matches",
+          "career"
         ]
       },
       "TeamLeagueRefDto": {

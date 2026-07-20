@@ -6,7 +6,6 @@ import { useMemo, useState } from "react";
 
 import { usePlayerMatches } from "@/features/players/api";
 import type { Player } from "@/features/players/types";
-import { aggregateStats } from "@/features/players/utils";
 import { Section, StatComparison } from "@/shared/components/blocks";
 import { Badge } from "@/shared/components/primitives";
 import { cn } from "@/shared/utils";
@@ -51,14 +50,14 @@ export function PlayerComparison({ player }: PlayerComparisonProps) {
 
   const [opponent, setOpponent] = useState<Player | null>(null);
 
-  const { data: playerMatches = [] } = usePlayerMatches(player.id);
-  const { data: opponentMatches = [], isLoading: isLoadingOpponent } =
-    usePlayerMatches(opponent?.id ?? 0, { enabled: !!opponent });
+  const { data: playerData } = usePlayerMatches(player.id);
+  const { data: opponentData, isLoading: isLoadingOpponent } = usePlayerMatches(
+    opponent?.id ?? 0,
+    { enabled: !!opponent },
+  );
 
-  const statsA = aggregateStats(playerMatches.map((m) => m.player.stats));
-  const statsB = opponent
-    ? aggregateStats(opponentMatches.map((m) => m.player.stats))
-    : null;
+  const statsA = playerData?.career ?? null;
+  const statsB = opponent ? (opponentData?.career ?? null) : null;
 
   const statCategories = useMemo(
     () => [
@@ -125,7 +124,7 @@ export function PlayerComparison({ player }: PlayerComparisonProps) {
       <div className="mt-5">
         {isLoadingOpponent && <LoadingDots />}
 
-        {statsB && !isLoadingOpponent && (
+        {statsA && statsB && !isLoadingOpponent && (
           <div className="animate-slide-up">
             <StatComparison
               variant="mirrored"

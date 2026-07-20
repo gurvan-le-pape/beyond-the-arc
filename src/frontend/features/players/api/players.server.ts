@@ -7,7 +7,7 @@ import {
 } from "../../../lib/services/server/server-api-client";
 import type { Player } from "../types/Player";
 import type { PlayerFilters } from "../types/PlayerFilters";
-import type { PlayerMatchHistory } from "../types/PlayerMatchHistory";
+import type { PlayerMatchHistoryResponse } from "../types/PlayerMatchHistory";
 
 /**
  * Service for interacting with the players API.
@@ -71,7 +71,7 @@ export const serverPlayersService = {
    * @example
    * const matches = await serverPlayersService.getMatches(789);
    */
-  async getMatches(playerId: number): Promise<PlayerMatchHistory[]> {
+  async getMatches(playerId: number): Promise<PlayerMatchHistoryResponse> {
     return fetchApi<any>(`/players/${playerId}/matches`);
   },
 

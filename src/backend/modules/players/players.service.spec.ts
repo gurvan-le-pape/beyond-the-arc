@@ -315,16 +315,21 @@ describe("PlayersService", () => {
       const result = await service.findPlayerMatchHistory(1);
 
       // Assert
-      expect(result).toHaveLength(1);
-      expect(result[0].id).toBe(1);
-      expect(result[0].player.player.id).toBe(1);
-      expect(result[0].player.stats.points).toBe(15);
-      expect(result[0].player.stats.rebounds.total).toBe(8); // 3 + 5
-      expect(result[0].player.stats.rebounds.offensive).toBe(3);
-      expect(result[0].player.stats.rebounds.defensive).toBe(5);
+      expect(result.matches).toHaveLength(1);
+      expect(result.matches[0].id).toBe(1);
+      expect(result.matches[0].player.player.id).toBe(1);
+      expect(result.matches[0].player.stats.points).toBe(15);
+      expect(result.matches[0].player.stats.rebounds.total).toBe(8); // 3 + 5
+      expect(result.matches[0].player.stats.rebounds.offensive).toBe(3);
+      expect(result.matches[0].player.stats.rebounds.defensive).toBe(5);
+      // Career aggregate over the single game.
+      expect(result.career.gamesPlayed).toBe(1);
+      expect(result.career.points).toBe(15);
+      expect(result.career.rebounds).toBe(8);
+      expect(result.career.pointsPerGame).toBe(15);
     });
 
-    it("should return empty array when no matches found", async () => {
+    it("should return an empty history with zeroed career stats when no matches found", async () => {
       // Arrange
       mockPrismaService.client.players.findUnique.mockResolvedValue({ id: 1 });
       mockPrismaService.client.playerMatchStats.findMany.mockResolvedValue([]);
@@ -333,7 +338,9 @@ describe("PlayersService", () => {
       const result = await service.findPlayerMatchHistory(1);
 
       // Assert
-      expect(result).toEqual([]);
+      expect(result.matches).toEqual([]);
+      expect(result.career.gamesPlayed).toBe(0);
+      expect(result.career.pointsPerGame).toBe(0);
     });
 
     it("should throw NotFoundException when player not found", async () => {
