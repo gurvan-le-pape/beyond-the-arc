@@ -1,7 +1,7 @@
 // src/backend/modules/players/aggregate-career-stats.ts
-import { MappedPlayerMatchStats } from "@common/utils";
+import { type MappedPlayerMatchStats, sumPlayerStats } from "@common/utils";
 
-import { PlayerCareerStatsDto } from "./dto/players.response.dto";
+import type { PlayerCareerStatsDto } from "./dto/players.response.dto";
 
 /**
  * Aggregates a player's per-match stat rows into career totals and per-game
@@ -13,36 +13,28 @@ import { PlayerCareerStatsDto } from "./dto/players.response.dto";
 export function aggregateCareerStats(
   rows: MappedPlayerMatchStats[],
 ): PlayerCareerStatsDto {
-  const gamesPlayed = rows.length;
-  const points = rows.reduce((sum, s) => sum + s.points, 0);
-  const rebounds = rows.reduce(
-    (sum, s) => sum + s.rebounds.offensive + s.rebounds.defensive,
-    0,
-  );
-  const assists = rows.reduce((sum, s) => sum + s.assists, 0);
-  const steals = rows.reduce((sum, s) => sum + s.steals, 0);
-  const blocks = rows.reduce((sum, s) => sum + s.blocks, 0);
-  const turnovers = rows.reduce((sum, s) => sum + s.turnovers, 0);
-  const fouls = rows.reduce((sum, s) => sum + s.fouls, 0);
+  const totals = sumPlayerStats(rows);
+  const rebounds = totals.reboundsOffensive + totals.reboundsDefensive;
 
+  const gamesPlayed = rows.length;
   const gp = gamesPlayed || 1;
   const perGame = (n: number) => Number((n / gp).toFixed(1));
 
   return {
     gamesPlayed,
-    points,
+    points: totals.points,
     rebounds,
-    assists,
-    steals,
-    blocks,
-    turnovers,
-    fouls,
-    pointsPerGame: perGame(points),
+    assists: totals.assists,
+    steals: totals.steals,
+    blocks: totals.blocks,
+    turnovers: totals.turnovers,
+    fouls: totals.fouls,
+    pointsPerGame: perGame(totals.points),
     reboundsPerGame: perGame(rebounds),
-    assistsPerGame: perGame(assists),
-    stealsPerGame: perGame(steals),
-    blocksPerGame: perGame(blocks),
-    turnoversPerGame: perGame(turnovers),
-    foulsPerGame: perGame(fouls),
+    assistsPerGame: perGame(totals.assists),
+    stealsPerGame: perGame(totals.steals),
+    blocksPerGame: perGame(totals.blocks),
+    turnoversPerGame: perGame(totals.turnovers),
+    foulsPerGame: perGame(totals.fouls),
   };
 }
