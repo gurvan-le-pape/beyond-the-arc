@@ -5893,6 +5893,59 @@
           "divisions"
         ]
       },
+      "TeamRosterPlayerDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Player ID",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Player name",
+            "example": "John Doe"
+          },
+          "number": {
+            "type": "number",
+            "description": "Player jersey number",
+            "example": 10
+          },
+          "position": {
+            "type": "string",
+            "description": "Player position",
+            "example": "PG",
+            "enum": [
+              "PG",
+              "SG",
+              "SF",
+              "PF",
+              "C"
+            ]
+          },
+          "teamId": {
+            "type": "number",
+            "description": "Team ID",
+            "example": 1
+          },
+          "seasonStats": {
+            "description": "Season totals and per-game averages",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlayerCareerStatsDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "number",
+          "position",
+          "teamId",
+          "seasonStats"
+        ]
+      },
       "RecentMatchChampionshipRefDto": {
         "type": "object",
         "properties": {
@@ -6128,7 +6181,7 @@
             "description": "Team players",
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/PlayerSummaryDto"
+              "$ref": "#/components/schemas/TeamRosterPlayerDto"
             }
           },
           "homeMatches": {
