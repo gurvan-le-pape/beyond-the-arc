@@ -418,11 +418,24 @@ export class RecentAwayMatchDto extends RecentMatchDto {
 }
 
 /**
+ * A roster player with their season totals and per-game averages. The season is
+ * the player's whole stat history, since a player belongs to one season-specific
+ * team.
+ */
+export class TeamRosterPlayerDto extends PlayerSummaryDto {
+  @ApiProperty({
+    description: "Season totals and per-game averages",
+    type: PlayerCareerStatsDto,
+  })
+  seasonStats!: PlayerCareerStatsDto;
+}
+
+/**
  * Detailed team response with players and recent matches.
  */
 export class TeamDetailResponseDto extends TeamResponseDto {
-  @ApiProperty({ description: "Team players", type: [PlayerSummaryDto] })
-  players!: PlayerSummaryDto[];
+  @ApiProperty({ description: "Team players", type: [TeamRosterPlayerDto] })
+  players!: TeamRosterPlayerDto[];
 
   @ApiProperty({
     description: "Recent home matches (up to 5)",

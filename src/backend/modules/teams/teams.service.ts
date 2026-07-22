@@ -9,6 +9,7 @@ import {
   PLAYER_MATCH_STAT_FIELDS_SELECT,
   resolvePagination,
 } from "@common/utils";
+import { aggregateCareerStats } from "@modules/players/aggregate-career-stats";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 
@@ -132,6 +133,9 @@ const TEAM_DETAIL_SELECT = {
       number: true,
       position: true,
       teamId: true,
+      stats: {
+        select: PLAYER_MATCH_STAT_FIELDS_SELECT,
+      },
     },
     orderBy: {
       number: "asc" as const,
@@ -484,6 +488,7 @@ export class TeamsService {
       ...baseDto,
       players: entity.players.map((p) => ({
         ...mapPlayerSummary(p),
+        seasonStats: aggregateCareerStats(p.stats.map(mapPlayerMatchStats)),
       })),
       homeMatches: entity.homeMatches,
       awayMatches: entity.awayMatches,

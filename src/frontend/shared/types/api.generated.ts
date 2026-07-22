@@ -2417,6 +2417,36 @@ export interface components {
              */
             divisions: number[];
         };
+        TeamRosterPlayerDto: {
+            /**
+             * @description Player ID
+             * @example 1
+             */
+            id: number;
+            /**
+             * @description Player name
+             * @example John Doe
+             */
+            name: string;
+            /**
+             * @description Player jersey number
+             * @example 10
+             */
+            number: number;
+            /**
+             * @description Player position
+             * @example PG
+             * @enum {string}
+             */
+            position: "PG" | "SG" | "SF" | "PF" | "C";
+            /**
+             * @description Team ID
+             * @example 1
+             */
+            teamId: number;
+            /** @description Season totals and per-game averages */
+            seasonStats: components["schemas"]["PlayerCareerStatsDto"];
+        };
         RecentMatchChampionshipRefDto: {
             /**
              * @description Championship ID
@@ -2545,7 +2575,7 @@ export interface components {
             /** @description Relation counts */
             _count: components["schemas"]["TeamCountDto"];
             /** @description Team players */
-            players: components["schemas"]["PlayerSummaryDto"][];
+            players: components["schemas"]["TeamRosterPlayerDto"][];
             /** @description Recent home matches (up to 5) */
             homeMatches: components["schemas"]["RecentHomeMatchDto"][];
             /** @description Recent away matches (up to 5) */
