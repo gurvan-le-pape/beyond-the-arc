@@ -5,11 +5,11 @@ import { PlayerShotChart } from "@/features/charts/components";
 import { serverMatchesService } from "@/features/matches/api";
 import { serverPlayersService } from "@/features/players/api";
 import {
-  PlayerCareerStats,
   PlayerComparison,
   PlayerHeader,
   PlayerMatchHistoryTable,
 } from "@/features/players/components";
+import { PerGameStatsPanel } from "@/shared/components/domain";
 import { PageLayout } from "@/shared/components/layout";
 import { handleServerError, parseRouteId } from "@/shared/utils";
 
@@ -50,7 +50,7 @@ export default async function PlayerDetailPage({
       <PlayerHeader player={player} />
 
       {/* Career Stats */}
-      <PlayerCareerStats stats={career} />
+      <PerGameStatsPanel stats={career} />
 
       {/* Match History */}
       <PlayerMatchHistoryTable player={player} matches={matches} maxRows={5} />

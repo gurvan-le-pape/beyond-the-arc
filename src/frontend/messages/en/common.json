@@ -24,6 +24,7 @@
     "cta": "Discover the Features"
   },
   "stats": {
+    "seasonStatsTitle": "Season Statistics",
     "points": { "abbr": "PTS", "full": "Points" },
     "rebounds": { "abbr": "REB", "full": "Rebounds" },
     "assists": { "abbr": "AST", "full": "Assists" },

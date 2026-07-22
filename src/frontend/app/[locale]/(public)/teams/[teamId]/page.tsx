@@ -6,11 +6,11 @@ import { serverMatchesService } from "@/features/matches/api";
 import { serverTeamsService } from "@/features/teams/api";
 import {
   TeamHeader,
-  TeamInfo,
   TeamMatchHistoryTable,
   TeamRoster,
 } from "@/features/teams/components";
 import { buildTeamRoster } from "@/features/teams/utils";
+import { PerGameStatsPanel } from "@/shared/components/domain";
 import { PageLayout } from "@/shared/components/layout";
 import { handleServerError, parseRouteId } from "@/shared/utils";
 
@@ -51,7 +51,7 @@ export default async function TeamDetailPage({ params }: TeamDetailPageProps) {
       <TeamHeader team={team} />
 
       {/* Team Stats */}
-      <TeamInfo stats={seasonStats} />
+      <PerGameStatsPanel stats={seasonStats} />
 
       {/* Roster */}
       <TeamRoster players={rosterPlayers} />

@@ -4,7 +4,6 @@
  */
 
 export * from "./detail/player-comparison/index";
-export * from "./detail/PlayerCareerStats";
 export * from "./detail/PlayerHeader";
 export * from "./detail/PlayerMatchHistoryTable";
 export * from "./list/PlayersCard";

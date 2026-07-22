@@ -24,6 +24,7 @@
     "cta": "Découvrir les fonctionnalités"
   },
   "stats": {
+    "seasonStatsTitle": "Statistiques Saison",
     "points": { "abbr": "PTS", "full": "Points" },
     "rebounds": { "abbr": "REB", "full": "Rebonds" },
     "assists": { "abbr": "AST", "full": "Passes décisives" },

@@ -5,7 +5,6 @@
 
 export * from "./detail/team-roster/index";
 export * from "./detail/TeamHeader";
-export * from "./detail/TeamInfo";
 export * from "./detail/TeamMatchHistoryTable";
 export * from "./list/TeamsCard";
 export * from "./list/TeamsFilters";
