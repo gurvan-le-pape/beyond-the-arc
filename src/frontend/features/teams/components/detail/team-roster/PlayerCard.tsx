@@ -2,7 +2,7 @@
 import { useTranslations } from "next-intl";
 
 import { PlayerAvatar } from "@/features/players/components";
-import type { PlayerMatchHistoryEntry } from "@/features/players/types";
+import type { TeamPlayerRef } from "@/features/teams/types";
 import { Badge, Card, StatPill } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { positionVariant } from "@/shared/utils";
@@ -12,13 +12,7 @@ import { positionVariant } from "@/shared/utils";
 // ---------------------------------------------------------------------------
 
 export interface PlayerCardProps {
-  readonly player: PlayerMatchHistoryEntry[];
-  readonly stats: {
-    gp: number;
-    ppg: string;
-    rpg: string;
-    apg: string;
-  };
+  readonly player: TeamPlayerRef;
   readonly onClick: () => void;
 }
 
@@ -27,14 +21,13 @@ export interface PlayerCardProps {
 // ---------------------------------------------------------------------------
 
 /**
- * PlayerCard — roster card for a single player.
- * Receives pre-computed stats from TeamRoster to avoid re-calculation.
+ * PlayerCard — roster card for a single player. Per-game averages come
+ * precomputed from the backend (`team.players[].seasonStats`); we only format
+ * them to one decimal for display.
  */
-export function PlayerCard({ player, stats, onClick }: PlayerCardProps) {
+export function PlayerCard({ player, onClick }: PlayerCardProps) {
   const tCommon = useTranslations("common");
-  const info = player[0]?.player;
-
-  if (!info) return null;
+  const { seasonStats } = player;
 
   return (
     <Card
@@ -44,30 +37,39 @@ export function PlayerCard({ player, stats, onClick }: PlayerCardProps) {
       onClick={onClick}
       className="flex flex-col items-center gap-3 text-center hover:border-primary transition-colors duration-200"
     >
-      <PlayerAvatar name={info.name} number={info.number} className="mb-1" />
+      <PlayerAvatar name={player.name} number={player.number} className="mb-1" />
 
       <div className="flex flex-col items-center gap-1.5 w-full">
         <Text
           variant="body"
           className="font-semibold text-text-heading leading-tight"
         >
-          {info.name}
+          {player.name}
         </Text>
-        <Badge variant={positionVariant(info.position)} size="sm">
-          {info.position}
+        <Badge variant={positionVariant(player.position)} size="sm">
+          {player.position}
         </Badge>
       </div>
 
       <div className="w-full border-t border-divide pt-3 flex items-center justify-around">
-        <StatPill label={tCommon("stats.points.abbr")} value={stats.ppg} />
+        <StatPill
+          label={tCommon("stats.points.abbr")}
+          value={seasonStats.pointsPerGame.toFixed(1)}
+        />
         <div className="w-px h-6 bg-divide" />
-        <StatPill label={tCommon("stats.rebounds.abbr")} value={stats.rpg} />
+        <StatPill
+          label={tCommon("stats.rebounds.abbr")}
+          value={seasonStats.reboundsPerGame.toFixed(1)}
+        />
         <div className="w-px h-6 bg-divide" />
-        <StatPill label={tCommon("stats.assists.abbr")} value={stats.apg} />
+        <StatPill
+          label={tCommon("stats.assists.abbr")}
+          value={seasonStats.assistsPerGame.toFixed(1)}
+        />
       </div>
 
       <Text variant="caption" className="text-text-muted -mt-1">
-        {stats.gp} GP
+        {seasonStats.gamesPlayed} GP
       </Text>
     </Card>
   );

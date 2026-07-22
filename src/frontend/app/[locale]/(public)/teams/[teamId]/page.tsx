@@ -9,7 +9,6 @@ import {
   TeamMatchHistoryTable,
   TeamRoster,
 } from "@/features/teams/components";
-import { buildTeamRoster } from "@/features/teams/utils";
 import { PerGameStatsPanel } from "@/shared/components/domain";
 import { PageLayout } from "@/shared/components/layout";
 import { handleServerError, parseRouteId } from "@/shared/utils";
@@ -43,8 +42,6 @@ export default async function TeamDetailPage({ params }: TeamDetailPageProps) {
 
   const { matches, seasonStats } = matchHistory;
 
-  const rosterPlayers = buildTeamRoster(matches, teamId);
-
   return (
     <PageLayout>
       {/* Team Header */}
@@ -54,7 +51,7 @@ export default async function TeamDetailPage({ params }: TeamDetailPageProps) {
       <PerGameStatsPanel stats={seasonStats} />
 
       {/* Roster */}
-      <TeamRoster players={rosterPlayers} />
+      <TeamRoster players={team.players} />
 
       {/* Match History */}
       <TeamMatchHistoryTable team={team} matches={matches} maxRows={5} />

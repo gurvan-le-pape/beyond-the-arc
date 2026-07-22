@@ -6,10 +6,3 @@ export interface SortConfig {
   key: SortKey;
   direction: SortDirection;
 }
-
-export interface PlayerStats {
-  gp: number;
-  ppg: string;
-  rpg: string;
-  apg: string;
-}
