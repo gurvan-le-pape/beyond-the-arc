@@ -1,5 +1,5 @@
 // src/backend/modules/matches/aggregate-team-match-stats.ts
-import type { MappedPlayerMatchStats } from "@common/utils";
+import { type MappedPlayerMatchStats, sumPlayerStats } from "@common/utils";
 
 import type { TeamMatchStatsDto } from "./dto/matches.response.dto";
 
@@ -19,42 +19,28 @@ const NA = "N/A";
 export function aggregateTeamMatchStats(
   rows: MappedPlayerMatchStats[],
 ): TeamMatchStatsDto {
-  const fieldGoalsMade = rows.reduce(
-    (sum, s) => sum + s.threePointsMade + s.twoPointsIntMade + s.twoPointsExtMade,
-    0,
-  );
-  const fieldGoalAttempts = rows.reduce(
-    (sum, s) =>
-      sum +
-      s.threePointsAttempted +
-      s.twoPointsIntAttempted +
-      s.twoPointsExtAttempted,
-    0,
-  );
-  const threePointsMade = rows.reduce((sum, s) => sum + s.threePointsMade, 0);
-  const threePointsAttempted = rows.reduce(
-    (sum, s) => sum + s.threePointsAttempted,
-    0,
-  );
-  const freeThrowsMade = rows.reduce((sum, s) => sum + s.freeThrowsMade, 0);
-  const freeThrowsAttempted = rows.reduce(
-    (sum, s) => sum + s.freeThrowsAttempted,
-    0,
-  );
-  const reboundsOffensive = rows.reduce(
-    (sum, s) => sum + s.rebounds.offensive,
-    0,
-  );
-  const reboundsDefensive = rows.reduce(
-    (sum, s) => sum + s.rebounds.defensive,
-    0,
-  );
-  const assists = rows.reduce((sum, s) => sum + s.assists, 0);
-  const steals = rows.reduce((sum, s) => sum + s.steals, 0);
-  const blocks = rows.reduce((sum, s) => sum + s.blocks, 0);
-  const turnovers = rows.reduce((sum, s) => sum + s.turnovers, 0);
-  const fouls = rows.reduce((sum, s) => sum + s.fouls, 0);
-  const pointsInPaint = rows.reduce((sum, s) => sum + s.twoPointsIntMade * 2, 0);
+  const totals = sumPlayerStats(rows);
+
+  const fieldGoalsMade =
+    totals.threePointsMade + totals.twoPointsIntMade + totals.twoPointsExtMade;
+  const fieldGoalAttempts =
+    totals.threePointsAttempted +
+    totals.twoPointsIntAttempted +
+    totals.twoPointsExtAttempted;
+  const {
+    threePointsMade,
+    threePointsAttempted,
+    freeThrowsMade,
+    freeThrowsAttempted,
+    reboundsOffensive,
+    reboundsDefensive,
+    assists,
+    steals,
+    blocks,
+    turnovers,
+    fouls,
+  } = totals;
+  const pointsInPaint = totals.twoPointsIntMade * 2;
 
   return {
     fieldGoals: `${fieldGoalsMade}/${fieldGoalAttempts}`,
