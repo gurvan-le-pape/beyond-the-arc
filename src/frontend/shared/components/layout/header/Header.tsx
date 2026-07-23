@@ -30,7 +30,7 @@ export const Header: React.FC = () => {
   return (
     <header className="backdrop-blur-md bg-header border-b border-divide shadow-card sticky top-0 z-30 transition-colors">
       <nav
-        className="flex justify-between items-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16"
+        className="flex justify-between items-center px-4 sm:px-6 lg:px-8 h-16"
         role="navigation"
         aria-label={t("header.mainNavAriaLabel")}
       >
