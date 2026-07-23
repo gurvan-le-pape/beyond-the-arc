@@ -48,10 +48,10 @@ export const Footer: React.FC = () => {
 
   return (
     <footer className="surface-base border-t border-divide mt-auto">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-4">
+      <div className="px-4 sm:px-6 lg:px-8 py-6">
+        <div className="flex flex-col items-center text-center lg:items-stretch lg:text-left lg:flex-row lg:justify-between lg:flex-wrap gap-8 mb-4">
           {/* Brand */}
-          <div className="space-y-2">
+          <div className="space-y-2 max-w-sm">
             <div>
               <Text variant="h3" className="mb-2">
                 {t("footer.projectName")}
@@ -65,7 +65,7 @@ export const Footer: React.FC = () => {
             </div>
 
             {/* Social links */}
-            <div className="flex gap-2 pt-1">
+            <div className="flex gap-2 pt-1 justify-center lg:justify-start">
               <a
                 href="https://github.com/gurvan-le-pape"
                 target="_blank"

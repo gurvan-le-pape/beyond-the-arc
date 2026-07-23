@@ -4,7 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { ExploreCard, LevelRow } from "@/features/site/home/components";
 import { serverStatsService } from "@/features/stats/api";
 import { Link } from "@/navigation";
-import { Footer, Header } from "@/shared/components/layout";
+import { PageLayout } from "@/shared/components/layout";
 import { buttonVariants } from "@/shared/components/primitives";
 import { StatCell } from "@/shared/components/stats";
 import { Text } from "@/shared/components/typography";
@@ -93,104 +93,84 @@ export default async function Home({
   ] as const;
 
   return (
-    <div className="flex flex-col min-h-screen surface-base">
-      <Header />
+    <PageLayout edgeToEdge>
+      {/* ── Hero ─────────────────────────────────────────────── */}
+      <section className="flex flex-col items-center text-center px-6 py-16 border-b border-divide">
+        <Text
+          variant="overline"
+          className="inline-flex items-center gap-1.5 text-primary bg-primary-ghost px-3 py-1 rounded mb-6"
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+          {t("hero.eyebrow")}
+        </Text>
 
-      <main className="flex-grow">
-        <div className="max-w-7xl mx-auto w-full">
-          {/* ── Hero ─────────────────────────────────────────────── */}
-          <section className="flex flex-col items-center text-center px-6 py-16 border-b border-divide">
-            <Text
-              variant="overline"
-              className="inline-flex items-center gap-1.5 text-primary bg-primary-ghost px-3 py-1 rounded mb-6"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-              {t("hero.eyebrow")}
-            </Text>
+        <Text
+          variant="h1"
+          className="font-extrabold leading-none tracking-tight mb-5"
+        >
+          {t("hero.titleStart")}{" "}
+          <em className="not-italic text-primary">{t("hero.titleEmphasis")}</em>
+        </Text>
 
-            <Text
-              variant="h1"
-              className="font-extrabold leading-none tracking-tight mb-5"
-            >
-              {t("hero.titleStart")}{" "}
-              <em className="not-italic text-primary">
-                {t("hero.titleEmphasis")}
-              </em>
-            </Text>
+        <Text variant="lead" className="max-w-lg">
+          {t("hero.subtitle")}
+        </Text>
+      </section>
 
-            <Text variant="lead" className="max-w-lg">
-              {t("hero.subtitle")}
-            </Text>
-          </section>
-
-          {/* ── Stats band ───────────────────────────────────────── */}
-          <div className="grid grid-cols-3 md:grid-cols-6 border-b border-divide">
-            {statsBand.map((s, i) => (
-              <div
-                key={s.label}
-                className={i < 5 ? "border-r border-divide" : ""}
-              >
-                <StatCell value={s.value} label={s.label} />
-              </div>
-            ))}
+      {/* ── Stats band ───────────────────────────────────────── */}
+      <div className="grid grid-cols-3 md:grid-cols-6 border-b border-divide">
+        {statsBand.map((s, i) => (
+          <div key={s.label} className={i < 5 ? "border-r border-divide" : ""}>
+            <StatCell value={s.value} label={s.label} />
           </div>
+        ))}
+      </div>
 
-          {/* ── Search & explore ─────────────────────────────────── */}
-          <div className="px-6 pt-7 pb-2 border-b border-divide">
-            <Text variant="overline">{t("explore.sectionTitle")}</Text>
-          </div>
+      {/* ── Search & explore ─────────────────────────────────── */}
+      <div className="px-6 pt-7 pb-2 border-b border-divide">
+        <Text variant="overline">{t("explore.sectionTitle")}</Text>
+      </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 border-b border-divide divide-y md:divide-y-0 md:divide-x divide-divide">
-            {exploreCards.map((card) => (
-              <ExploreCard key={card.href} {...card} />
-            ))}
-          </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 border-b border-divide divide-y md:divide-y-0 md:divide-x divide-divide">
+        {exploreCards.map((card) => (
+          <ExploreCard key={card.href} {...card} />
+        ))}
+      </div>
 
-          {/* ── Clubs & map ──────────────────────────────────────── */}
-          <div className="border-b border-divide px-8 py-16 flex flex-col items-center text-center">
-            <Text variant="overline" className="text-clubs">
-              {t("map.eyebrow")}
-            </Text>
-            <Text variant="h2" className="mt-3 max-w-sm">
-              {t("map.title")}
-            </Text>
-            <Text variant="caption" className="max-w-sm mt-2">
-              {t("map.desc")}
-            </Text>
-            <div className="flex gap-8 pt-4 mt-4 border-t border-divide">
-              {mapStats.map((s) => (
-                <StatCell
-                  key={s.label}
-                  value={s.value}
-                  label={s.label}
-                  compact
-                />
-              ))}
-            </div>
-            <Link
-              href="/map"
-              className={
-                buttonVariants({ variant: "clubs", size: "sm" }) + " mt-5"
-              }
-            >
-              {t("map.cta")}
-            </Link>
-          </div>
-
-          {/* ── Competition levels ───────────────────────────────── */}
-          <div className="px-6 pt-7 pb-2">
-            <Text variant="overline">{t("levels.sectionTitle")}</Text>
-          </div>
-
-          <div className="flex flex-col gap-2 px-6 pb-10">
-            {levelCards.map((level) => (
-              <LevelRow key={level.name} {...level} />
-            ))}
-          </div>
+      {/* ── Clubs & map ──────────────────────────────────────── */}
+      <div className="border-b border-divide px-8 py-16 flex flex-col items-center text-center">
+        <Text variant="overline" className="text-clubs">
+          {t("map.eyebrow")}
+        </Text>
+        <Text variant="h2" className="mt-3 max-w-sm">
+          {t("map.title")}
+        </Text>
+        <Text variant="caption" className="max-w-sm mt-2">
+          {t("map.desc")}
+        </Text>
+        <div className="flex gap-8 pt-4 mt-4 border-t border-divide">
+          {mapStats.map((s) => (
+            <StatCell key={s.label} value={s.value} label={s.label} compact />
+          ))}
         </div>
-      </main>
+        <Link
+          href="/map"
+          className={buttonVariants({ variant: "clubs", size: "sm" }) + " mt-5"}
+        >
+          {t("map.cta")}
+        </Link>
+      </div>
 
-      <Footer />
-    </div>
+      {/* ── Competition levels ───────────────────────────────── */}
+      <div className="px-6 pt-7 pb-2">
+        <Text variant="overline">{t("levels.sectionTitle")}</Text>
+      </div>
+
+      <div className="flex flex-col gap-2 px-6 pb-10">
+        {levelCards.map((level) => (
+          <LevelRow key={level.name} {...level} />
+        ))}
+      </div>
+    </PageLayout>
   );
 }

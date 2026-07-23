@@ -10,6 +10,13 @@ interface PageLayoutProps {
   contentClassName?: string;
   ariaLabel?: string;
   centered?: boolean;
+  /**
+   * When true, `main` has no padding — sections inside are responsible for
+   * their own horizontal spacing, allowing borders/dividers to bleed to the
+   * edges of the shared max-w-7xl column (e.g. the Home page's bento layout).
+   * Content is still capped at max-w-7xl, same as the default layout.
+   */
+  edgeToEdge?: boolean;
 }
 
 /**
@@ -25,6 +32,9 @@ interface PageLayoutProps {
  *
  * // Custom max-width
  * <PageLayout contentClassName="max-w-4xl">...</PageLayout>
+ *
+ * // Full-bleed sections within the standard max-w-7xl column
+ * <PageLayout edgeToEdge>...</PageLayout>
  */
 export const PageLayout = ({
   children,
@@ -32,19 +42,25 @@ export const PageLayout = ({
   contentClassName,
   ariaLabel,
   centered,
+  edgeToEdge,
 }: PageLayoutProps) => (
   <div className="flex flex-col min-h-screen surface-base">
     <Header />
     <main
       aria-label={ariaLabel}
       className={cn(
-        "flex-grow min-h-[70vh] px-4 py-12 sm:px-6 lg:px-8",
+        "flex-grow",
+        edgeToEdge ? "" : "min-h-[70vh] px-4 py-12 sm:px-6 lg:px-8",
         centered ? "flex flex-col items-center justify-center" : "",
         className,
       )}
     >
       <div
-        className={cn("max-w-7xl mx-auto w-full space-y-6", contentClassName)}
+        className={cn(
+          "max-w-7xl mx-auto w-full",
+          edgeToEdge ? "" : "space-y-6",
+          contentClassName,
+        )}
       >
         {children}
       </div>
