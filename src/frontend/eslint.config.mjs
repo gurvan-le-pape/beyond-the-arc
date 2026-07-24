@@ -1,5 +1,6 @@
 import tsPlugin from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
+import a11y from "eslint-plugin-jsx-a11y";
 import importSort from "eslint-plugin-simple-import-sort";
 import sonarjs from "eslint-plugin-sonarjs";
 import pathComment from "./eslint-rules/enforce-file-path-comment.js";
@@ -23,12 +24,14 @@ export default [
       parserOptions: {
         project: "./tsconfig.json",
         sourceType: "module",
+        ecmaFeatures: { jsx: true },
       },
     },
     plugins: {
       "@typescript-eslint": tsPlugin,
       "simple-import-sort": importSort,
       sonarjs: sonarjs,
+      "jsx-a11y": a11y,
       "local-rules": {
         rules: {
           "enforce-file-path-comment": pathComment,
@@ -72,6 +75,11 @@ export default [
       "sonarjs/no-identical-functions": "error",
       "sonarjs/no-small-switch": "warn",
       "sonarjs/prefer-immediate-return": "warn",
+
+      // Accessibility. The recommended set (34 rules, all "error") reports zero
+      // findings on the current tree, so it costs nothing today and only ever
+      // fires on newly written markup.
+      ...a11y.configs.recommended.rules,
 
       // Custom rules
       "local-rules/enforce-file-path-comment": "error",
