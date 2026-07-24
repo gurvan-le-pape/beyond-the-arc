@@ -14,7 +14,7 @@ import {
   Users,
   Zap,
 } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import {
   FeatureCard,
@@ -98,6 +98,7 @@ export default async function FeaturesPage({
   readonly params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "landing" });
 
   const features = FEATURES_CONFIG.map((f) => ({

@@ -11,7 +11,7 @@ import {
   TestTube,
   Wrench,
 } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import type { TechStackItemConfig } from "@/features/site/architecture/components";
 import {
@@ -36,6 +36,7 @@ export default async function ArchitecturePage({
   readonly params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "landing" });
 
   const techStacks: TechStackConfig[] = [

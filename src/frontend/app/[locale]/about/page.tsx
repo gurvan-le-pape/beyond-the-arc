@@ -9,7 +9,7 @@ import {
   Users,
   Wrench,
 } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import {
   AboutCtaSection,
@@ -53,6 +53,7 @@ export default async function AboutPage({
   readonly params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "landing" });
 
   const principles = PRINCIPLES_CONFIG.map((p) => ({

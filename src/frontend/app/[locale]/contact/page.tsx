@@ -1,6 +1,6 @@
 // src/frontend/app/[locale]/contact/page.tsx
 import { Github, Linkedin, Mail, Send } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import {
   ContactAboutSection,
@@ -38,6 +38,7 @@ export default async function ContactPage({
   readonly params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "landing" });
 
   const contactMethods = CONTACT_METHODS_CONFIG.map((method) => ({
