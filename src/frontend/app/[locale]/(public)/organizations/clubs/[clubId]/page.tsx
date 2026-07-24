@@ -11,8 +11,6 @@ import { handleServerError, parseRouteId } from "@/shared/utils";
 interface ClubPageProps {
   readonly params: Promise<{
     locale: string;
-    leagueId: string;
-    committeeId: string;
     clubId: string;
   }>;
 }
@@ -20,7 +18,7 @@ interface ClubPageProps {
 /**
  * Club Detail Page
  * Shows individual club information and teams
- * Path: /clubs/league/[leagueId]/committee/[committeeId]/club/[clubId]
+ * Path: /organizations/clubs/[clubId]
  * Strategy: ISR with hourly revalidation
  */
 
