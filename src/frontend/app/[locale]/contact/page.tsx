@@ -7,28 +7,36 @@ import {
   ContactMethodCard,
 } from "@/features/site/contact/components";
 import { PageHero, PageLayout } from "@/shared/components/layout";
+import {
+  CONTACT_EMAIL,
+  CONTACT_MAILTO,
+  GITHUB_PROFILE_URL,
+  LINKEDIN_URL,
+} from "@/shared/constants";
 import type { LocalePageProps } from "@/shared/types";
+
+const stripScheme = (url: string): string => url.replace(/^https?:\/\//, "");
 
 const CONTACT_METHODS_CONFIG = [
   {
     icon: Mail,
     labelKey: "contact.email",
-    value: "gurvan.lepape@hotmail.fr",
-    href: "mailto:gurvan.lepape@hotmail.fr",
+    value: CONTACT_EMAIL,
+    href: CONTACT_MAILTO,
     color: "from-blue-500 to-cyan-500",
   },
   {
     icon: Github,
     labelKey: "contact.github",
-    value: "github.com/gurvan-le-pape",
-    href: "https://github.com/gurvan-le-pape",
+    value: stripScheme(GITHUB_PROFILE_URL),
+    href: GITHUB_PROFILE_URL,
     color: "from-gray-700 to-gray-900",
   },
   {
     icon: Linkedin,
     labelKey: "contact.linkedin",
-    value: "linkedin.com/in/gurvan-le-pape",
-    href: "https://linkedin.com/in/gurvan-le-pape",
+    value: stripScheme(LINKEDIN_URL),
+    href: LINKEDIN_URL,
     color: "from-blue-600 to-blue-800",
   },
 ] as const;

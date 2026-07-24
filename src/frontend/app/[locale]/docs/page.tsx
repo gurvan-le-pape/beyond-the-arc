@@ -22,10 +22,11 @@ import {
 } from "@/features/site/docs/components";
 import { useAccordion } from "@/features/site/docs/hooks";
 import { PageHero, PageLayout } from "@/shared/components/layout";
+import { CONTACT_MAILTO, GITHUB_REPO_URL } from "@/shared/constants";
 
 const QUICK_LINKS_CONFIG = [
   {
-    href: "https://github.com/gurvan-le-pape/beyond-the-arc",
+    href: GITHUB_REPO_URL,
     icon: Github,
     labelKey: "docs.quickLinks.github",
     subKey: "docs.quickLinks.viewSource",
@@ -48,7 +49,7 @@ const QUICK_LINKS_CONFIG = [
     trailIcon: ExternalLink,
   },
   {
-    href: "mailto:gurvan.lepape@hotmail.fr",
+    href: CONTACT_MAILTO,
     icon: BookOpen,
     labelKey: "docs.quickLinks.contact",
     subKey: "docs.quickLinks.getHelp",
