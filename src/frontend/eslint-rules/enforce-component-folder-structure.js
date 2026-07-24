@@ -41,7 +41,7 @@ module.exports = {
     },
   },
   create(context) {
-    const filename = context.getFilename().replace(/\\/g, "/");
+    const filename = context.getFilename().replaceAll("\\", "/");
     const marker = "/features/";
     if (
       !filename.includes("src/frontend") ||

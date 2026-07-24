@@ -24,7 +24,7 @@ module.exports = {
     },
   },
   create(context) {
-    const filename = context.getFilename().replace(/\\/g, "/");
+    const filename = context.getFilename().replaceAll("\\", "/");
     if (
       !filename.includes("src/frontend") ||
       !filename.includes("/features/") ||
