@@ -35,6 +35,9 @@ export function ImageWithFallback({
   }, [fallback]);
 
   return (
+    // The whole point of this component is driving the underlying <img> node
+    // by ref to swap src on error, which next/image does not expose.
+    // eslint-disable-next-line @next/next/no-img-element
     <img ref={ref} src={src} alt={alt} className={className} loading="lazy" />
   );
 }

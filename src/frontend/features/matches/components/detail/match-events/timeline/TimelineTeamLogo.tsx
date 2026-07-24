@@ -12,6 +12,9 @@ interface TimelineTeamLogoProps {
  */
 export function TimelineTeamLogo({ teamName }: TimelineTeamLogoProps) {
   return (
+    // Local 32px .webp crest with an onError fallback; see ClubLogo for why
+    // next/image isn't used for these.
+    // eslint-disable-next-line @next/next/no-img-element
     <img
       src={`/images/clubs/${formatNameToFileName(teamName)}.webp`}
       alt={teamName}
