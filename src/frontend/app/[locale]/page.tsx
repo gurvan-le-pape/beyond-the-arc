@@ -11,6 +11,13 @@ import { Text } from "@/shared/components/typography";
 import type { LocalePageProps } from "@/shared/types";
 import { handleServerError } from "@/shared/utils";
 
+// Rendered per request: the image build has no backend to fetch stats from.
+// Home is dynamic today only by accident — it is the one page that never calls
+// setRequestLocale, and next-intl's fallback to headers() is what keeps it out
+// of the prerender pass. Saying so explicitly is what lets the locale layout
+// adopt setRequestLocale without breaking the build.
+export const dynamic = "force-dynamic";
+
 export default async function Home({ params }: LocalePageProps) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "home" });

@@ -8,13 +8,12 @@ import { Breadcrumb } from "@/shared/components/navigation";
 import { ViewLevel } from "@/shared/constants";
 import type { LocalePageProps } from "@/shared/types";
 
-export const revalidate = 86400;
-export const dynamic = "force-dynamic";
-
 /**
  * Clubs Page
  * Shows all clubs
- * Strategy: ISR with 24-hour revalidation
+ *
+ * Fetches nothing server-side — ClubsView is a client component on TanStack
+ * Query — so the shell is static and needs no caching directives.
  */
 export default async function ClubsPage({ params }: LocalePageProps) {
   const { locale } = await params;

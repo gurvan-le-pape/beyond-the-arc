@@ -88,9 +88,17 @@ Used by: clubs list (debounced search + cascading league/committee selects + pag
 
 Tabs whose state should survive navigation or be shareable via URL use a `QueryTabs` component that reads the active tab from the `tab` search param via `useSearchParams()`, with a fallback to a default if the param is absent or invalid. Used on: championships list, search page.
 
-### ISR and `dynamic = "force-dynamic"`
+### What each route directive is for
 
-Several pages combine `revalidate` with `export const dynamic = "force-dynamic"`. This is not contradictory — `force-dynamic` prevents build-time pre-rendering (important for pages with 25,000+ possible IDs), while `revalidate` controls how long the runtime-generated response is cached. Pages that should never be pre-built but should still be ISR-cached at runtime use both.
+**The route decides when a page renders. The fetch decides how long its data lives.** Build time renders markup, never data — the frontend image is built with no backend reachable, so nothing that fetches can be pre-rendered.
+
+That gives three cases, and every page is one of them:
+
+- **No directives** — the page fetches nothing server-side, so it prerenders as a static shell. Any data arrives client-side through TanStack Query. Used by: organizations landing, clubs list, about, contact, features, architecture, docs.
+- **`dynamic = "force-dynamic"`** — the page fetches server-side, so it must stay out of the prerender pass. Rendering per request is cheap: the backend call underneath is served from the Data Cache (see [Cache timing policy](#cache-timing-policy)), so a render is a cache read rather than a query. Used by: home, map, committees list, leagues list. Championship detail is also here, but for the ordinary reason — it reads `?pool=`.
+- **`dynamicParams = true` + `revalidate`** — dynamic routes with far too many IDs to enumerate. Nothing is pre-built; each page is generated on first request and the rendered HTML is then cached for the window. Used by: the six detail pages, all at 1 hour.
+
+An earlier version of this document claimed `revalidate` and `force-dynamic` were complementary. They are not. `force-dynamic` opts the route out of the Full Route Cache entirely, which is what `revalidate` writes to, so pairing them leaves the `revalidate` inert — and it was inert a second time over, because the fetch beneath it was uncacheable regardless. Five pages carried the pair; the `revalidate` has been removed from all of them and the real caching now lives on `fetchApi`.
 
 ---
 
