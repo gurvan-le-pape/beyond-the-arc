@@ -123,6 +123,8 @@
     ".*/team-roster/(?!index\\.tsx$).*",
     ".*/player-comparison/(?!index\\.tsx$).*",
     ".*/clubs-map/(?!index\\.tsx$).*",
-    ".*/clubs-view/(?!index\\.tsx$).*"
+    ".*/clubs-view/(?!index\\.tsx$).*",
+    ".*/stat-comparison/(?!index\\.tsx$).*",
+    ".*/player-match-stats/(?!index\\.tsx$).*"
   ]
 }
