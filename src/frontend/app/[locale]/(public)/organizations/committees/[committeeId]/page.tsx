@@ -27,9 +27,7 @@ export async function generateStaticParams() {
 export const dynamicParams = true;
 export const revalidate = 3600;
 
-export default async function DepartmentalChampionshipsPage({
-  params,
-}: CommitteePageProps) {
+export default async function CommitteePage({ params }: CommitteePageProps) {
   const { committeeId: committeeIdStr, locale } = await params;
   setRequestLocale(locale);
 
