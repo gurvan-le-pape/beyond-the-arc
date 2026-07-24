@@ -4,7 +4,7 @@ import "@/styles/map.css";
 
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages } from "next-intl/server";
+import { getMessages, setRequestLocale } from "next-intl/server";
 
 import { Providers } from "../providers";
 
@@ -27,6 +27,12 @@ export default async function LocaleLayout({
   if (!locales.includes(locale)) {
     notFound();
   }
+
+  // next-intl's documented setup. Without it every server API call falls back
+  // to reading headers(), which opts the whole subtree out of prerendering —
+  // pages that could be static were rendering per request instead. Pages that
+  // genuinely must render per request say so with `dynamic = "force-dynamic"`.
+  setRequestLocale(locale);
 
   const messages = await getMessages({ locale });
 
