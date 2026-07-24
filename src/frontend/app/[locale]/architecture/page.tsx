@@ -22,6 +22,7 @@ import {
 } from "@/features/site/architecture/components";
 import { PageHero, PageLayout } from "@/shared/components/layout";
 import { Text } from "@/shared/components/typography";
+import type { LocalePageProps } from "@/shared/types";
 
 interface TechStackConfig {
   title: string;
@@ -30,11 +31,7 @@ interface TechStackConfig {
   items: TechStackItemConfig[];
 }
 
-export default async function ArchitecturePage({
-  params,
-}: {
-  readonly params: Promise<{ locale: string }>;
-}) {
+export default async function ArchitecturePage({ params }: LocalePageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "landing" });

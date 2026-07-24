@@ -11,14 +11,8 @@ import {
 } from "@/features/players/components";
 import { PerGameStatsPanel } from "@/shared/components/domain";
 import { PageLayout } from "@/shared/components/layout";
+import type { LocalePageProps } from "@/shared/types";
 import { handleServerError, parseRouteId } from "@/shared/utils";
-
-interface PlayerDetailPageProps {
-  readonly params: Promise<{
-    locale: string;
-    playerId: string;
-  }>;
-}
 
 export async function generateStaticParams() {
   return [];
@@ -29,7 +23,7 @@ export const revalidate = 3600;
 
 export default async function PlayerDetailPage({
   params,
-}: PlayerDetailPageProps) {
+}: LocalePageProps<{ playerId: string }>) {
   const { playerId: playerIdStr, locale } = await params;
   setRequestLocale(locale);
   const tPlayers = await getTranslations({ locale, namespace: "players" });

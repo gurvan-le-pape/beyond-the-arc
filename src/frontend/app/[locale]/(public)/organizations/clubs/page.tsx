@@ -6,6 +6,7 @@ import { TitleSection } from "@/features/organizations/components";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
 import { ViewLevel } from "@/shared/constants";
+import type { LocalePageProps } from "@/shared/types";
 
 export const revalidate = 86400;
 export const dynamic = "force-dynamic";
@@ -15,11 +16,7 @@ export const dynamic = "force-dynamic";
  * Shows all clubs
  * Strategy: ISR with 24-hour revalidation
  */
-export default async function ClubsPage({
-  params,
-}: {
-  readonly params: Promise<{ locale: string }>;
-}) {
+export default async function ClubsPage({ params }: LocalePageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "organizations" });

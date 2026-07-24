@@ -6,6 +6,7 @@
 export * from "./Api";
 export * from "./api.generated";
 export * from "./NavItem";
+export * from "./PageProps";
 export * from "./Pagination";
 export * from "./PlayerMatchStats";
 export * from "./President";

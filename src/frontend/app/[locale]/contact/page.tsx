@@ -7,6 +7,7 @@ import {
   ContactMethodCard,
 } from "@/features/site/contact/components";
 import { PageHero, PageLayout } from "@/shared/components/layout";
+import type { LocalePageProps } from "@/shared/types";
 
 const CONTACT_METHODS_CONFIG = [
   {
@@ -32,11 +33,7 @@ const CONTACT_METHODS_CONFIG = [
   },
 ] as const;
 
-export default async function ContactPage({
-  params,
-}: {
-  readonly params: Promise<{ locale: string }>;
-}) {
+export default async function ContactPage({ params }: LocalePageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "landing" });
