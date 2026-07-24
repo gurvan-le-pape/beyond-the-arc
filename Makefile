@@ -83,6 +83,11 @@ sonar-logs:
 
 # Generate barrel files (index.ts) for frontend and backend
 barrels:
+	npm run barrels
+
+# Same, but regenerates on every file change. Leaves the frontend barrels
+# without their path-comment header until `npm run barrels:lint` is run.
+barrels-watch:
 	npm run barrels:watch
 
 # Refresh static reference data (presidents/gyms/coordinates) from FFBB's
