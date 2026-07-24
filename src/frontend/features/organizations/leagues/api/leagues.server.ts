@@ -1,5 +1,5 @@
 // src/frontend/features/organizations/leagues/api/leagues.server.ts
-import { fetchApi } from "../../../../lib/services/server/server-api-client";
+import { fetchApi, ServerRevalidate } from "../../../../lib/services/server/server-api-client";
 import type { League } from "../types/League";
 
 /**
@@ -30,7 +30,9 @@ export const serverLeaguesService = {
    * const leagues = await serverLeaguesService.getAll();
    */
   async getAll(): Promise<League[]> {
-    return fetchApi<League[]>("/leagues");
+    return fetchApi<League[]>("/leagues", {
+      revalidate: ServerRevalidate.REFERENCE,
+    });
   },
 
   /**
@@ -44,7 +46,9 @@ export const serverLeaguesService = {
    * const league = await serverLeaguesService.getById("1");
    */
   async getById(id: number): Promise<League> {
-    return fetchApi<League>(`/leagues/${id}`);
+    return fetchApi<League>(`/leagues/${id}`, {
+      revalidate: ServerRevalidate.REFERENCE,
+    });
   },
 
   /**
@@ -59,6 +63,8 @@ export const serverLeaguesService = {
    * const leagues = await serverLeaguesService.getByIds(["1", "2", "3"]);
    */
   async getByIds(ids: number[]): Promise<League[]> {
-    return fetchApi<League[]>(`/leagues/${ids.join(",")}`);
+    return fetchApi<League[]>(`/leagues/${ids.join(",")}`, {
+      revalidate: ServerRevalidate.REFERENCE,
+    });
   },
 };

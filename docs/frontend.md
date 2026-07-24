@@ -107,6 +107,8 @@ Both modules expose the same method signatures against the same backend endpoint
 
 **`fetchApi`** uses `INTERNAL_API_URL` as its base, falling back to `http://backend:4000/api` — the Docker service name — if the env var is absent. This means SSR requests go directly to the backend container over the internal Docker network without going through Nginx or the public domain. It handles one backend-specific detail: the standard API response envelope (`{ data: ... }`) is unwrapped automatically, so server services work with typed data directly rather than needing to extract `.data` at every call site. Errors are normalised through `parseApiError` and re-thrown as `ApiError` instances, consistent with what client-side Axios interceptors produce. `buildQueryString` is a utility exported alongside `fetchApi` that serialises a params object to a query string, used by server services that need filter or pagination parameters.
 
+`fetchApi` also decides how long its response lives in Next's Data Cache, via a `revalidate` option defaulting to one hour — see [Cache timing policy](#cache-timing-policy). This is the layer that caching belongs on. A `revalidate` exported from a page caches rendered HTML, cannot apply to a `force-dynamic` route, and does nothing at all unless the fetch underneath is cacheable; in Next 15 a fetch that passes neither `cache` nor `next.revalidate` is `no-store`, so before this option existed every server-rendered page issued a fresh backend query on every request regardless of what the page declared.
+
 ### Query Options pattern
 
 Client-side data fetching is organised around the **Query Options pattern**, implemented in four files per feature. Using players as an example:
@@ -174,6 +176,19 @@ Cache lifetimes are set per feature based on how often the data realistically ch
 | ---------------------- | ----------- | -------- | ---------------------------------- |
 | Player / team metadata | 5 min       | 10 min   | Changes rarely within a session    |
 | Match history          | 2 min       | 10 min   | Results update throughout the week |
+
+The server half of the dual service layer answers the same question with its own
+tiers, declared as `ServerRevalidate` in `server-api-client.ts` and passed
+through `fetchApi`'s `revalidate` option:
+
+| Tier        | Window | Endpoints                                              |
+| ----------- | ------ | ------------------------------------------------------ |
+| `REFERENCE` | 24 h   | `/clubs*`, `/committees*`, `/leagues*`                 |
+| `DEFAULT`   | 1 h    | `/players`, `/teams`, `/championships`, `/pools`       |
+| `LIVE`      | 60 s   | `/matches*`, `/stats`, `/leaderboards`, `*/matches`    |
+
+`DEFAULT` applies to any call that does not ask for something else, so a new
+server service is cached whether or not its author thought about it.
 
 ---
 

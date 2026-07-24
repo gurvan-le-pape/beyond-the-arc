@@ -31,14 +31,57 @@ const BASE_URL = process.env.INTERNAL_API_URL || "http://backend:4000/api";
 const REQUEST_TIMEOUT_MS = 30_000;
 
 /**
+ * How long a server-side response stays in Next's Data Cache, in seconds.
+ *
+ * The route decides when a page renders; this decides how long its data lives.
+ * A `revalidate` on the page is a different, weaker thing: it caches rendered
+ * HTML, it cannot apply to a `force-dynamic` route, and it does nothing at all
+ * unless the fetch underneath is itself cacheable. A fetch that passes neither
+ * `cache` nor `next.revalidate` is `no-store` in Next 15, which means one
+ * backend round trip per request per page.
+ *
+ * These windows mirror the client-side `staleTime` tiers in the Query Options
+ * factories — same question ("how often does this actually change?"), asked of
+ * the other half of the dual service layer.
+ */
+export const ServerRevalidate = {
+  /**
+   * Competition structure and geography. Only changes when the static-data
+   * migration is refreshed, which is a manual, occasional job.
+   */
+  REFERENCE: 86_400,
+  /**
+   * Entities that move with a data refresh rather than with play: players,
+   * teams, championships, pools. Matches the 1-hour window the detail pages
+   * already declare, so nothing gets staler than it is today.
+   */
+  DEFAULT: 3_600,
+  /** Anything the match scheduler writes: results, stats, leaderboards. */
+  LIVE: 60,
+} as const;
+
+interface FetchApiOptions {
+  /**
+   * Seconds to keep the response in the Data Cache. Defaults to
+   * `ServerRevalidate.DEFAULT` — caching is opt-out rather than opt-in so a
+   * new server service cannot silently reintroduce a per-request query.
+   */
+  readonly revalidate?: number;
+}
+
+/**
  * Fetches data from the API server-side.
  * Uses absolute URLs required for Node.js environment.
  *
  * @param endpoint - API endpoint (e.g., '/clubs')
+ * @param options - Cache window override; see {@link ServerRevalidate}
  * @returns Parsed JSON response
  * @throws {Error} If request fails
  */
-export async function fetchApi<T>(endpoint: string): Promise<T> {
+export async function fetchApi<T>(
+  endpoint: string,
+  options?: FetchApiOptions,
+): Promise<T> {
   const url = `${BASE_URL}${endpoint}`;
 
   try {
@@ -46,6 +89,7 @@ export async function fetchApi<T>(endpoint: string): Promise<T> {
       headers: {
         "Content-Type": "application/json",
       },
+      next: { revalidate: options?.revalidate ?? ServerRevalidate.DEFAULT },
       signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
     });
 

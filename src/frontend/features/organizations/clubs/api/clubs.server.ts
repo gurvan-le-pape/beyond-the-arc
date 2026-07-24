@@ -7,6 +7,7 @@ import type {
 import {
   buildQueryString,
   fetchApi,
+  ServerRevalidate,
 } from "@/lib/services/server/server-api-client";
 
 import type { ClubFilters } from "../types/ClubFilters";
@@ -43,7 +44,9 @@ export const serverClubsService = {
    */
   async getAll(filters?: ClubFilters): Promise<ClubsPaginatedResponse> {
     const queryString = buildQueryString(filters);
-    return fetchApi<ClubsPaginatedResponse>(`/clubs${queryString}`);
+    return fetchApi<ClubsPaginatedResponse>(`/clubs${queryString}`, {
+      revalidate: ServerRevalidate.REFERENCE,
+    });
   },
 
   /**
@@ -57,7 +60,9 @@ export const serverClubsService = {
    * const club = await serverClubsService.getById(123);
    */
   async getById(id: number): Promise<ClubDetailed> {
-    return fetchApi<ClubDetailed>(`/clubs/${id}`);
+    return fetchApi<ClubDetailed>(`/clubs/${id}`, {
+      revalidate: ServerRevalidate.REFERENCE,
+    });
   },
 
   /**
@@ -71,7 +76,9 @@ export const serverClubsService = {
    * // [{ regionId: 1, regionName: 'Bretagne', clubCount: 45 }, ...]
    */
   async getStatsByRegion(): Promise<ClubStatsByRegion[]> {
-    return fetchApi<ClubStatsByRegion[]>("/clubs/stats/by-region");
+    return fetchApi<ClubStatsByRegion[]>("/clubs/stats/by-region", {
+      revalidate: ServerRevalidate.REFERENCE,
+    });
   },
 
   /**
@@ -96,6 +103,7 @@ export const serverClubsService = {
     const queryString = buildQueryString(leagueId ? { leagueId } : undefined);
     return fetchApi<ClubStatsByDepartment[]>(
       `/clubs/stats/by-department${queryString}`,
+      { revalidate: ServerRevalidate.REFERENCE },
     );
   },
 
@@ -104,6 +112,8 @@ export const serverClubsService = {
    * Used for initial map load.
    */
   async getAllClubs(): Promise<ClubBasic[]> {
-    return fetchApi<ClubBasic[]>("/clubs/all");
+    return fetchApi<ClubBasic[]>("/clubs/all", {
+      revalidate: ServerRevalidate.REFERENCE,
+    });
   },
 };

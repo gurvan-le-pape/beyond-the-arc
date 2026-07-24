@@ -2,6 +2,7 @@
 import {
   buildQueryString,
   fetchApi,
+  ServerRevalidate,
 } from "../../../../lib/services/server/server-api-client";
 import type { Leaderboard } from "../types/Leaderboard";
 import type { LeaderboardFilters } from "../types/LeaderboardFilters";
@@ -43,6 +44,8 @@ export const serverLeaderboardsService = {
    */
   async getAll(filters?: LeaderboardFilters): Promise<Leaderboard[]> {
     const queryString = buildQueryString(filters);
-    return fetchApi<any>(`/leaderboards${queryString}`);
+    return fetchApi<any>(`/leaderboards${queryString}`, {
+      revalidate: ServerRevalidate.LIVE,
+    });
   },
 };
