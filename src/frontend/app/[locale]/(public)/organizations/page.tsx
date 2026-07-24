@@ -10,9 +10,6 @@ import { PageLayout } from "@/shared/components/layout";
 import { Divide } from "@/shared/components/primitives";
 import type { LocalePageProps } from "@/shared/types";
 
-export const revalidate = 86400;
-export const dynamic = "force-dynamic";
-
 export default async function OrganizationsPage({ params }: LocalePageProps) {
   const { locale } = await params;
   setRequestLocale(locale);

@@ -10,13 +10,14 @@ import { ViewLevel } from "@/shared/constants";
 import type { LocalePageProps } from "@/shared/types";
 import { handleServerError } from "@/shared/utils";
 
-export const revalidate = 86400;
+// Rendered per request: the image build has no backend to prerender against.
+// The committee list itself is cached for 24h by fetchApi, so a render here is
+// a cache read, not a query.
 export const dynamic = "force-dynamic";
 
 /**
  * Committees Page
  * Shows all departmental committees
- * Strategy: ISR with 24-hour revalidation
  */
 export default async function CommitteesPage({ params }: LocalePageProps) {
   const { locale } = await params;

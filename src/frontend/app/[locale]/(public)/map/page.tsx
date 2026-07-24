@@ -27,7 +27,8 @@ export default async function MapPage() {
   );
 }
 
-// Cache the page with 24-hour revalidation
-export const revalidate = 86400;
-// Prevent build-time rendering, but allow ISR at runtime
+// Rendered per request: the image build has no backend to prerender against.
+// The three club datasets behind it are cached for 24h by fetchApi — including
+// the 990 KB /clubs/all payload — so a render here is a cache read, not three
+// queries.
 export const dynamic = "force-dynamic";
