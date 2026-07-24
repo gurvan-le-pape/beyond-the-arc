@@ -9,6 +9,7 @@ import { PageLayout } from "@/shared/components/layout";
 import type { LocalePageProps } from "@/shared/types";
 import { handleServerError, parseRouteId } from "@/shared/utils";
 
+// Don't pre-build - one page per fixture, far too many to enumerate
 export async function generateStaticParams() {
   return [];
 }

@@ -16,6 +16,7 @@ import { PageLayout } from "@/shared/components/layout";
 import type { LocalePageProps, SearchParamsProps } from "@/shared/types";
 import { handleServerError, parseRouteId } from "@/shared/utils";
 
+// Don't pre-build - the page reads ?pool= and is force-dynamic below
 export async function generateStaticParams() {
   return [];
 }

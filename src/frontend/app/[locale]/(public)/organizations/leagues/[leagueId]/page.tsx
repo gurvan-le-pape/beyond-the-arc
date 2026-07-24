@@ -10,13 +10,17 @@ import { EmptyState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { CompetitionLevel } from "@/shared/constants";
 import type { LocalePageProps } from "@/shared/types";
-import { handleServerError, parseRouteId } from "@/shared/utils";
+import { handleServerError, logger, parseRouteId } from "@/shared/utils";
 
+// Pre-builds every league when the API is reachable at build time. It is not
+// during the Docker image build, so this logs and falls back to rendering on
+// demand rather than failing the build.
 export async function generateStaticParams() {
   try {
     const leagues = await serverLeaguesService.getAll();
     return leagues.map((l) => ({ leagueId: String(l.id) }));
-  } catch {
+  } catch (error) {
+    logger.error(error, "leagues generateStaticParams");
     return [];
   }
 }
