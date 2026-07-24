@@ -1,7 +1,8 @@
 {
   "enabledPlugins": {
     "andrej-karpathy-skills@karpathy-skills": true,
-    "agent-skills@addy-agent-skills": true
+    "agent-skills@addy-agent-skills": true,
+    "context7@context7-marketplace": true
   },
   "extraKnownMarketplaces": {
     "karpathy-skills": {
@@ -14,6 +15,12 @@
       "source": {
         "source": "git",
         "url": "https://github.com/addyosmani/agent-skills.git"
+      }
+    },
+    "context7-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "upstash/context7"
       }
     }
   }
