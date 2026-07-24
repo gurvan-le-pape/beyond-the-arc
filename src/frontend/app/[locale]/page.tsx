@@ -8,6 +8,7 @@ import { PageLayout } from "@/shared/components/layout";
 import { buttonVariants } from "@/shared/components/primitives";
 import { StatCell } from "@/shared/components/stats";
 import { Text } from "@/shared/components/typography";
+import { handleServerError } from "@/shared/utils";
 
 export default async function Home({
   params,
@@ -17,7 +18,7 @@ export default async function Home({
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "home" });
 
-  const stats = await serverStatsService.getStats();
+  const stats = await serverStatsService.getStats().catch(handleServerError);
 
   const formatCount = (n: number): string => n.toLocaleString("fr-FR");
 
