@@ -27,9 +27,7 @@ export async function generateStaticParams() {
 export const dynamicParams = true;
 export const revalidate = 3600;
 
-export default async function RegionalChampionshipsPage({
-  params,
-}: LeaguePageProps) {
+export default async function LeaguePage({ params }: LeaguePageProps) {
   const { leagueId: leagueIdStr, locale } = await params;
   setRequestLocale(locale);
 
