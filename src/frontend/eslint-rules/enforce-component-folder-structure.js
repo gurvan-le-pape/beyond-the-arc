@@ -2,7 +2,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const MAX_DEPTH = 3;
-const FORBIDDEN_DIR_NAMES = ["utils", "types", "hooks"];
+const FORBIDDEN_DIR_NAMES = new Set(["utils", "types", "hooks"]);
 const KEBAB_CASE = /^[a-z][a-z0-9-]*$/;
 const PASCAL_CASE_TSX = /^[A-Z][A-Za-z0-9]*\.tsx$/;
 const HOOK_FILE = /^use[A-Z][A-Za-z0-9]*\.tsx?$/;
@@ -67,7 +67,7 @@ module.exports = {
         }
 
         for (const dir of dirs) {
-          if (FORBIDDEN_DIR_NAMES.includes(dir)) {
+          if (FORBIDDEN_DIR_NAMES.has(dir)) {
             context.report({
               node,
               messageId: "noLayerDirInComponents",
