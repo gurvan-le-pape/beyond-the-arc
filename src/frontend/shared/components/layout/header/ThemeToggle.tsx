@@ -45,6 +45,7 @@ export function ThemeToggle() {
   if (!mounted) {
     return (
       <button
+        type="button"
         className="p-2 rounded-button hover:bg-surface-subtle transition-colors"
         aria-label={t("header.toggleTheme")}
         disabled
@@ -60,6 +61,7 @@ export function ThemeToggle() {
   return (
     <div ref={containerRef} className="relative">
       <button
+        type="button"
         onClick={() => setIsOpen((o) => !o)}
         className={cn(
           "p-2 rounded-button transition-all duration-200",
@@ -92,6 +94,7 @@ export function ThemeToggle() {
           const isActive = theme === id;
           return (
             <button
+              type="button"
               key={id}
               role="menuitem"
               aria-current={isActive ? "true" : undefined}

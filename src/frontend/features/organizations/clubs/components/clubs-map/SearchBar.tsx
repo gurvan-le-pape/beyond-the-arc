@@ -81,6 +81,7 @@ export function SearchBar({
 
           {query && (
             <button
+              type="button"
               onClick={onClear}
               className="p-1.5 hover:bg-surface-inset rounded-full transition-colors"
               aria-label={t("map.clearSearch")}

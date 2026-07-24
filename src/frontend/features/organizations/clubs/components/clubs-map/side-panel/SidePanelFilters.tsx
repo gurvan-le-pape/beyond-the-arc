@@ -27,6 +27,7 @@ export function SidePanelFilters({
   return (
     <div className="border-b border-divide flex-shrink-0">
       <button
+        type="button"
         onClick={onToggleExpanded}
         className="w-full flex items-center justify-between p-4 hover:bg-surface-inset transition-colors"
       >

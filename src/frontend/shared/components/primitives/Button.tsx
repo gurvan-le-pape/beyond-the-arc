@@ -149,6 +149,8 @@ export const Button = ({
 }: ButtonProps) => (
   <button
     ref={ref}
+    // Before the spread: callers can still opt into "submit"/"reset".
+    type="button"
     className={cn(buttonVariants({ variant, size, className }))}
     disabled={disabled || isLoading}
     aria-busy={isLoading || undefined}
@@ -242,6 +244,7 @@ export const NavButton = ({
 }: NavButtonProps) => (
   <button
     ref={ref}
+    type="button"
     className={cn(navButtonVariants({ variant, size, className }))}
     disabled={disabled || isLoading}
     aria-busy={isLoading || undefined}
@@ -326,6 +329,7 @@ export const PillButton = ({
 }: PillButtonProps) => (
   <button
     ref={ref}
+    type="button"
     className={cn(pillButtonVariants({ variant, size, className }))}
     disabled={disabled || isLoading}
     aria-busy={isLoading || undefined}

@@ -106,6 +106,7 @@ export async function PlayerHeader({ player }: PlayerHeaderProps) {
           aria-label={tCommon("club.seeClub", { name: clubName })}
         >
           <button
+            type="button"
             className="w-16 h-16 flex-shrink-0 p-0 rounded-card border border-divide bg-surface-inset overflow-hidden flex items-center justify-center"
             tabIndex={-1}
             aria-hidden

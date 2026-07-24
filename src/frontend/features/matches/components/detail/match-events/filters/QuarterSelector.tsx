@@ -20,6 +20,7 @@ export function QuarterSelector({ selected, onChange }: QuarterSelectorProps) {
     <div className="flex surface-subtle rounded-button p-1">
       {QUARTER_LIST.map((quarter) => (
         <button
+          type="button"
           key={quarter}
           onClick={() => onChange(quarter)}
           className={cn(

@@ -87,6 +87,7 @@ export function ClubsFilters({
 
       {hasActiveFilters && (
         <button
+          type="button"
           onClick={onReset}
           className="flex items-center gap-1.5 text-sm text-text-secondary hover:text-text-heading transition-colors"
         >

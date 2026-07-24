@@ -197,6 +197,7 @@ export function ClubsMap({
         <div className="text-center">
           <p className="text-error font-semibold">{t(error)}</p>
           <button
+            type="button"
             onClick={() => globalThis.location.reload()}
             className="mt-4 px-4 py-2 bg-primary-strong text-white rounded-lg hover:bg-primary-bold"
           >

@@ -87,6 +87,7 @@ export const HeatmapLegend: React.FC<HeatmapLegendProps> = ({
               const isActive = colorScaleName === scale;
               return (
                 <button
+                  type="button"
                   key={scale}
                   onClick={() => setColorScale(scale)}
                   title={scale}
