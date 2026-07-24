@@ -1,7 +1,6 @@
 // src/frontend/app/[locale]/(public)/search/page.tsx
 "use client";
 
-import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 
 import { MatchesTab, PlayersTab, TeamsTab } from "@/features/search/components";
@@ -15,17 +14,8 @@ const TABS = {
   MATCHES: "matches",
 } as const;
 
-type Tab = (typeof TABS)[keyof typeof TABS];
-
 export default function SearchPage() {
   const t = useTranslations("search");
-  const searchParams = useSearchParams();
-
-  const tabParam = searchParams.get("tab");
-  const activeTab: Tab =
-    tabParam === TABS.TEAMS || tabParam === TABS.MATCHES
-      ? tabParam
-      : TABS.PLAYERS;
 
   const tabs = [
     { value: TABS.PLAYERS, label: t("tabs.players") },
@@ -35,7 +25,7 @@ export default function SearchPage() {
 
   return (
     <PageLayout>
-      <QueryTabs activeTab={activeTab} tabs={tabs}>
+      <QueryTabs tabs={tabs}>
         <TabsContent value={TABS.PLAYERS}>
           <PlayersTab />
         </TabsContent>
