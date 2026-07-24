@@ -7,6 +7,7 @@ import { LeaguesGrid } from "@/features/organizations/leagues/components";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
 import { ViewLevel } from "@/shared/constants";
+import { handleServerError } from "@/shared/utils";
 
 export const revalidate = 86400;
 export const dynamic = "force-dynamic";
@@ -25,7 +26,7 @@ export default async function LeaguesPage({
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "organizations" });
 
-  const leagues = await serverLeaguesService.getAll();
+  const leagues = await serverLeaguesService.getAll().catch(handleServerError);
 
   return (
     <PageLayout>

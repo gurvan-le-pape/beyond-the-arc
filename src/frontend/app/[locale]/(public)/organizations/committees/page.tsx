@@ -7,6 +7,7 @@ import { TitleSection } from "@/features/organizations/components";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
 import { ViewLevel } from "@/shared/constants";
+import { handleServerError } from "@/shared/utils";
 
 export const revalidate = 86400;
 export const dynamic = "force-dynamic";
@@ -25,7 +26,9 @@ export default async function CommitteesPage({
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "organizations" });
 
-  const committees = await serverCommitteesService.getAll();
+  const committees = await serverCommitteesService
+    .getAll()
+    .catch(handleServerError);
 
   return (
     <PageLayout>
