@@ -66,6 +66,20 @@ These are enforced by custom ESLint rules in `src/backend/eslint-rules/` and `sr
 - **Query Options pattern** for client data fetching, four files per feature: a key factory (`xKeys.ts`), a query options factory (`xQueries.ts`, single source of truth for query key + fn + cache config), thin hooks (`use-x.ts`) that components actually import, and prefetch helpers exported from the queries file for hover/focus-triggered prefetching.
 - Cache `staleTime`/`gcTime` are set per feature based on how often the underlying data changes (see `docs/frontend.md` for the current table) — match new queries to an existing category rather than picking arbitrary values.
 
+## Looking up library documentation
+
+Several dependencies sit at or past the model's training cutoff, so recalled APIs are likely to be wrong. Two ways to get real docs, in this order:
+
+**1. First-party `llms.txt`** — authoritative, free, just `WebFetch` it. Each is an index; follow its links to the specific page rather than pulling the multi-MB `llms-full.txt` variant.
+
+- Next 15 App Router (fetch caching, `revalidate`, prerendering vs `force-dynamic`) — `https://nextjs.org/docs/llms.txt`
+- Prisma 7.x (client API, `@prisma/adapter-pg`, migrations) — `https://www.prisma.io/docs/llms.txt`, and check `https://www.prisma.io/changelog.md` for breaking changes first, as that index itself instructs
+- NestJS 11 — `https://docs.nestjs.com/llms.txt`
+
+**2. Context7** (`/context7:docs <library> <query>`, or its auto-triggering skill) — for the libraries with no `llms.txt`: **next-intl 4.x**, **TanStack Query 5.x**, **MapLibre 5.x**, **Sentry 10.x**, **TypeScript 6.x**.
+
+Don't look up this repo's own conventions — the barrel rules, the dual service layer, the Query Options pattern, and the API conventions are settled here and in `docs/`, not upstream. Upstream docs describe the library, not how this project uses it; when the two disagree, this file wins.
+
 ## Data pipeline
 
 Two distinct data sources, handled differently:
