@@ -25,6 +25,7 @@ export function DocsSectionAccordion({
     <div className="surface-subtle rounded-card border border-divide shadow-card overflow-hidden">
       {/* Accordion button — hover steps up to surface-raised via inset */}
       <button
+        type="button"
         onClick={() => onToggle(id)}
         className="w-full flex items-center gap-4 p-6 text-left hover:bg-surface-inset transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
         aria-expanded={isActive}

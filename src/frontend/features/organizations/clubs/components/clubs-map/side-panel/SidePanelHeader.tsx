@@ -27,6 +27,7 @@ export function SidePanelHeader({ clubCount, onClose }: SidePanelHeaderProps) {
       <div className="flex items-center gap-1">
         {/* Close button */}
         <button
+          type="button"
           onClick={onClose}
           className="p-2 hover:bg-surface-inset rounded-lg transition-colors"
           aria-label={t("map.closePanel")}

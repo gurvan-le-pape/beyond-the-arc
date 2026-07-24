@@ -121,6 +121,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         <div className="flex items-center gap-1">
           {/* First page */}
           <button
+            type="button"
             onClick={() => setPageIndex(0)}
             disabled={currentPage <= 1}
             className={`${navButtonBase} ${
@@ -133,6 +134,7 @@ export const Pagination: React.FC<PaginationProps> = ({
 
           {/* Previous page */}
           <button
+            type="button"
             onClick={() => setPageIndex(Math.max(0, currentPage - 2))}
             disabled={currentPage <= 1}
             className={`${navButtonBase} ${
@@ -160,6 +162,7 @@ export const Pagination: React.FC<PaginationProps> = ({
 
               return (
                 <button
+                  type="button"
                   key={pageNum}
                   onClick={() => setPageIndex(pageNum - 1)}
                   className={`px-3 py-1.5 rounded-button transition-colors font-medium ${
@@ -182,6 +185,7 @@ export const Pagination: React.FC<PaginationProps> = ({
 
           {/* Next page */}
           <button
+            type="button"
             onClick={() => setPageIndex(Math.min(totalPages - 1, currentPage))}
             disabled={currentPage >= totalPages}
             className={`${navButtonBase} ${
@@ -194,6 +198,7 @@ export const Pagination: React.FC<PaginationProps> = ({
 
           {/* Last page */}
           <button
+            type="button"
             onClick={() => setPageIndex(totalPages - 1)}
             disabled={currentPage >= totalPages}
             className={`${navButtonBase} ${

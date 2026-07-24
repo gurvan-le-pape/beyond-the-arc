@@ -48,6 +48,7 @@ function LogoButton({ team, isWinning }: LogoButtonProps) {
       aria-label={tCommon("club.seeClub", { name: team.clubName ?? "" })}
     >
       <button
+        type="button"
         tabIndex={-1}
         aria-hidden
         className={cn(

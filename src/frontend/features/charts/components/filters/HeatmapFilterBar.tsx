@@ -28,6 +28,7 @@ export const HeatmapFilterBar: React.FC<HeatmapFilterBarProps> = ({
       </span>
       {FILTERS.map(({ key, label }) => (
         <button
+          type="button"
           key={key}
           onClick={() => setShotFilter(key)}
           className={`px-3 py-1 rounded-md border text-sm transition-all ${

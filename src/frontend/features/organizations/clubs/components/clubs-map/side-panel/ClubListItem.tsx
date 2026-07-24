@@ -23,6 +23,7 @@ export const ClubListItem = memo(function ClubListItem({
 
   return (
     <button
+      type="button"
       onClick={handleClick}
       className="w-full text-left p-4 hover:bg-surface-inset transition-colors group"
       style={{ contain: "layout style paint" }}
