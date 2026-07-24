@@ -7,6 +7,7 @@ export * from "./categories";
 export * from "./competition-levels";
 export * from "./event-categories";
 export * from "./event-types";
+export * from "./externalLinks";
 export * from "./genders";
 export * from "./levelConfig";
 export * from "./navConfig";

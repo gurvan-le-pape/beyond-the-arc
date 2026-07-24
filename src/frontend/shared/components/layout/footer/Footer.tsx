@@ -5,6 +5,12 @@ import { ExternalLink, Github, Linkedin, Mail, MapPin } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Link } from "@/navigation";
+import {
+  CONTACT_MAILTO,
+  GITHUB_PROFILE_URL,
+  GITHUB_REPO_URL,
+  LINKEDIN_URL,
+} from "@/shared/constants";
 
 import { Text } from "../../typography";
 
@@ -22,7 +28,7 @@ export const Footer: React.FC = () => {
     ],
     resources: [
       {
-        href: "https://github.com/gurvan-le-pape/beyond-the-arc",
+        href: GITHUB_REPO_URL,
         label: t("footer.sourceCode"),
         external: true,
       },
@@ -67,7 +73,7 @@ export const Footer: React.FC = () => {
             {/* Social links */}
             <div className="flex gap-2 pt-1 justify-center lg:justify-start">
               <a
-                href="https://github.com/gurvan-le-pape"
+                href={GITHUB_PROFILE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={iconLinkClass}
@@ -77,7 +83,7 @@ export const Footer: React.FC = () => {
                 <Github className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" />
               </a>
               <a
-                href="https://linkedin.com/in/gurvan-le-pape"
+                href={LINKEDIN_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={iconLinkClass}
@@ -87,7 +93,7 @@ export const Footer: React.FC = () => {
                 <Linkedin className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" />
               </a>
               <a
-                href="mailto:gurvan.lepape@hotmail.fr"
+                href={CONTACT_MAILTO}
                 className={iconLinkClass}
                 aria-label={t("footer.email")}
                 title={t("footer.email")}
