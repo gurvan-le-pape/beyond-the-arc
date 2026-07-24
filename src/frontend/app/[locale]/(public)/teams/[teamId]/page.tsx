@@ -11,14 +11,8 @@ import {
 } from "@/features/teams/components";
 import { PerGameStatsPanel } from "@/shared/components/domain";
 import { PageLayout } from "@/shared/components/layout";
+import type { LocalePageProps } from "@/shared/types";
 import { handleServerError, parseRouteId } from "@/shared/utils";
-
-interface TeamDetailPageProps {
-  readonly params: Promise<{
-    locale: string;
-    teamId: string;
-  }>;
-}
 
 export async function generateStaticParams() {
   return [];
@@ -27,7 +21,9 @@ export async function generateStaticParams() {
 export const dynamicParams = true;
 export const revalidate = 3600;
 
-export default async function TeamDetailPage({ params }: TeamDetailPageProps) {
+export default async function TeamDetailPage({
+  params,
+}: LocalePageProps<{ teamId: string }>) {
   const { teamId: teamIdStr, locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "teams" });

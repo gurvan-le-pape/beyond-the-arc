@@ -13,12 +13,8 @@ import {
 import { serverLeaderboardsService } from "@/features/competitions/leaderboards/api";
 import { serverPoolsService } from "@/features/competitions/pools/api";
 import { PageLayout } from "@/shared/components/layout";
+import type { LocalePageProps, SearchParamsProps } from "@/shared/types";
 import { handleServerError, parseRouteId } from "@/shared/utils";
-
-interface ChampionshipDetailPageProps {
-  readonly params: Promise<{ championshipId: string; locale: string }>;
-  readonly searchParams: Promise<{ pool?: string }>;
-}
 
 export async function generateStaticParams() {
   return [];
@@ -30,7 +26,8 @@ export const dynamic = "force-dynamic";
 export default async function ChampionshipsDetailPage({
   params,
   searchParams,
-}: ChampionshipDetailPageProps) {
+}: LocalePageProps<{ championshipId: string }> &
+  SearchParamsProps<{ pool?: string }>) {
   const { championshipId: championshipIdStr, locale } = await params;
   const { pool: poolParam } = await searchParams;
   setRequestLocale(locale);

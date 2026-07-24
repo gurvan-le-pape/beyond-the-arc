@@ -8,17 +8,12 @@ import {
 } from "@/features/organizations/components";
 import { PageLayout } from "@/shared/components/layout";
 import { Divide } from "@/shared/components/primitives";
-
-interface OrganizationsPageProps {
-  readonly params: Promise<{ locale: string }>;
-}
+import type { LocalePageProps } from "@/shared/types";
 
 export const revalidate = 86400;
 export const dynamic = "force-dynamic";
 
-export default async function OrganizationsPage({
-  params,
-}: OrganizationsPageProps) {
+export default async function OrganizationsPage({ params }: LocalePageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "organizations" });

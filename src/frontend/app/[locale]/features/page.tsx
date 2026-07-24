@@ -22,6 +22,7 @@ import {
   type HighlightItem,
 } from "@/features/site/features/components";
 import { PageHero, PageLayout } from "@/shared/components/layout";
+import type { LocalePageProps } from "@/shared/types";
 
 const FEATURES_CONFIG = [
   {
@@ -92,11 +93,7 @@ const HIGHLIGHTS_CONFIG = [
   { icon: Sparkles, highlightKey: "responsive" },
 ] as const;
 
-export default async function FeaturesPage({
-  params,
-}: {
-  readonly params: Promise<{ locale: string }>;
-}) {
+export default async function FeaturesPage({ params }: LocalePageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "landing" });

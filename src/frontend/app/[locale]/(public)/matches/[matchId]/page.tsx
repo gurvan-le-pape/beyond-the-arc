@@ -6,14 +6,8 @@ import { serverMatchesService } from "@/features/matches/api";
 import { MatchScoreCard, MatchSummaryTabs } from "@/features/matches/components";
 import { buildTeam, groupShotEventsByPlayer } from "@/features/matches/utils";
 import { PageLayout } from "@/shared/components/layout";
+import type { LocalePageProps } from "@/shared/types";
 import { handleServerError, parseRouteId } from "@/shared/utils";
-
-interface MatchSummaryPageProps {
-  readonly params: Promise<{
-    locale: string;
-    matchId: string;
-  }>;
-}
 
 export async function generateStaticParams() {
   return [];
@@ -24,7 +18,7 @@ export const revalidate = 3600;
 
 export default async function MatchSummaryPage({
   params,
-}: MatchSummaryPageProps) {
+}: LocalePageProps<{ matchId: string }>) {
   const { matchId: matchIdStr, locale } = await params;
   setRequestLocale(locale);
 

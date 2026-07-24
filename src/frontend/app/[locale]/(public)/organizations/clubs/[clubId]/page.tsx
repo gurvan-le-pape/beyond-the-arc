@@ -6,14 +6,8 @@ import { serverClubsService } from "@/features/organizations/clubs/api";
 import { OrganizationDetailView } from "@/features/organizations/shared/components";
 import { EmptyState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
+import type { LocalePageProps } from "@/shared/types";
 import { handleServerError, parseRouteId } from "@/shared/utils";
-
-interface ClubPageProps {
-  readonly params: Promise<{
-    locale: string;
-    clubId: string;
-  }>;
-}
 
 /**
  * Club Detail Page
@@ -30,7 +24,9 @@ export async function generateStaticParams() {
 export const dynamicParams = true;
 export const revalidate = 3600;
 
-export default async function ClubPage({ params }: ClubPageProps) {
+export default async function ClubPage({
+  params,
+}: LocalePageProps<{ clubId: string }>) {
   const { clubId: clubIdStr, locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "clubs" });

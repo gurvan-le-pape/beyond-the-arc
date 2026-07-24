@@ -9,11 +9,8 @@ import { OrganizationDetailView } from "@/features/organizations/shared/componen
 import { EmptyState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { CompetitionLevel } from "@/shared/constants";
+import type { LocalePageProps } from "@/shared/types";
 import { handleServerError, parseRouteId } from "@/shared/utils";
-
-interface CommitteePageProps {
-  readonly params: Promise<{ locale: string; committeeId: string }>;
-}
 
 export async function generateStaticParams() {
   try {
@@ -27,7 +24,9 @@ export async function generateStaticParams() {
 export const dynamicParams = true;
 export const revalidate = 3600;
 
-export default async function CommitteePage({ params }: CommitteePageProps) {
+export default async function CommitteePage({
+  params,
+}: LocalePageProps<{ committeeId: string }>) {
   const { committeeId: committeeIdStr, locale } = await params;
   setRequestLocale(locale);
 

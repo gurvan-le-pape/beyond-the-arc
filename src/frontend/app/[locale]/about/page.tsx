@@ -16,6 +16,7 @@ import {
   PrincipleCard,
 } from "@/features/site/about/components";
 import { PageHero, PageLayout } from "@/shared/components/layout";
+import type { LocalePageProps } from "@/shared/types";
 
 const PRINCIPLES_CONFIG = [
   { icon: Boxes, principleKey: "modular", color: "from-blue-500 to-cyan-500" },
@@ -47,11 +48,7 @@ const PRINCIPLES_CONFIG = [
   },
 ] as const;
 
-export default async function AboutPage({
-  params,
-}: {
-  readonly params: Promise<{ locale: string }>;
-}) {
+export default async function AboutPage({ params }: LocalePageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "landing" });

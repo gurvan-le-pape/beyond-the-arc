@@ -8,13 +8,10 @@ import { PageLayout } from "@/shared/components/layout";
 import { buttonVariants } from "@/shared/components/primitives";
 import { StatCell } from "@/shared/components/stats";
 import { Text } from "@/shared/components/typography";
+import type { LocalePageProps } from "@/shared/types";
 import { handleServerError } from "@/shared/utils";
 
-export default async function Home({
-  params,
-}: {
-  readonly params: Promise<{ locale: string }>;
-}) {
+export default async function Home({ params }: LocalePageProps) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "home" });
 
