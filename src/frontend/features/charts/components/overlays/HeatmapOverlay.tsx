@@ -29,6 +29,16 @@ interface HeatmapOverlayProps {
   colorScale?: (t: number) => string;
 }
 
+// Selects the value to visualize for a cell based on the current filter.
+function getCellValue(
+  cell: { made: number; missed: number; total: number },
+  shotFilter: ShotFilter,
+) {
+  if (shotFilter === ShotFilter.MADE) return cell.made;
+  if (shotFilter === ShotFilter.MISSED) return cell.missed;
+  return cell.total;
+}
+
 export const HeatmapOverlay: React.FC<HeatmapOverlayProps> = ({
   heatmapData,
   shotFilter,
@@ -39,16 +49,12 @@ export const HeatmapOverlay: React.FC<HeatmapOverlayProps> = ({
   maxValue,
   colorScale,
 }) => {
-  // Helper: Selects the value to visualize for a cell based on the current filter
-  function getCellValue(cell: { made: number; missed: number; total: number }) {
-    if (shotFilter === ShotFilter.MADE) return cell.made;
-    if (shotFilter === ShotFilter.MISSED) return cell.missed;
-    return cell.total;
-  }
-
   // Memoize the 2D array of values to display (avoids unnecessary recalculation)
   const heatmapOverlayData = useMemo(
-    () => heatmapData.map((row) => row.map((cell) => getCellValue(cell))),
+    () =>
+      heatmapData.map((row) =>
+        row.map((cell) => getCellValue(cell, shotFilter)),
+      ),
     [heatmapData, shotFilter],
   );
 

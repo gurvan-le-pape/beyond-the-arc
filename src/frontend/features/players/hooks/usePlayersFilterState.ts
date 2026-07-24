@@ -113,7 +113,7 @@ export function usePlayersFilterState() {
     setLevel(undefined);
     setCurrentPage(1);
     resetLocationFilters();
-  }, [resetLocationFilters]);
+  }, [resetLocationFilters, setCurrentPage]);
 
   const filters: PlayersFilterState = {
     name,

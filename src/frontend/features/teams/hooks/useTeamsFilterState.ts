@@ -122,7 +122,7 @@ export function useTeamsFilterState() {
     setPool(undefined);
     setCurrentPage(1);
     resetLocationFilters();
-  }, [resetLocationFilters]);
+  }, [resetLocationFilters, setCurrentPage]);
 
   const filters: TeamsFilterState = {
     clubId,

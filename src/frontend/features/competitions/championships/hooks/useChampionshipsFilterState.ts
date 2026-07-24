@@ -48,9 +48,14 @@ export function useRegionalFilterState() {
   const { filters, setters } = useSharedFilterState();
   const [leagueId, setLeagueId] = useState("");
 
+  // Depend on the setter itself, not on `setters` — that object is a fresh
+  // literal every render, so depending on it would reset the page on every
+  // render and pin pagination to 1. `setCurrentPage` is a useState setter and
+  // therefore stable.
+  const { setCurrentPage } = setters;
   useEffect(() => {
-    setters.setCurrentPage(1);
-  }, [leagueId]);
+    setCurrentPage(1);
+  }, [leagueId, setCurrentPage]);
 
   const resetFilters = () => {
     setLeagueId("");
@@ -71,9 +76,11 @@ export function useDepartmentalFilterState() {
   const { filters, setters } = useSharedFilterState();
   const [committeeId, setCommitteeId] = useState("");
 
+  // See useRegionalFilterState: depend on the stable setter, not on `setters`.
+  const { setCurrentPage } = setters;
   useEffect(() => {
-    setters.setCurrentPage(1);
-  }, [committeeId]);
+    setCurrentPage(1);
+  }, [committeeId, setCurrentPage]);
 
   const resetFilters = () => {
     setCommitteeId("");
