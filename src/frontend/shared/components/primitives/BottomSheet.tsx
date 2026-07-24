@@ -2,7 +2,7 @@
 "use client";
 
 import { X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { cn } from "@/shared/utils";
 
@@ -41,18 +41,18 @@ export function BottomSheet({
     setIsDragging(true);
   };
 
-  const handleDragMove = (clientY: number) => {
+  const handleDragMove = useCallback((clientY: number) => {
     if (dragStartY.current === null) return;
     setDragOffset(Math.max(0, clientY - dragStartY.current));
-  };
+  }, []);
 
-  const handleDragEnd = () => {
+  const handleDragEnd = useCallback(() => {
     const sheetHeight = dialogRef.current?.offsetHeight ?? 300;
     if (dragOffset > sheetHeight * 0.35) onClose();
     dragStartY.current = null;
     setDragOffset(0);
     setIsDragging(false);
-  };
+  }, [dragOffset, onClose]);
 
   useEffect(() => {
     if (!isDragging) return;
@@ -64,7 +64,7 @@ export function BottomSheet({
       globalThis.removeEventListener("mousemove", onMouseMove);
       globalThis.removeEventListener("mouseup", onMouseUp);
     };
-  }, [isDragging, dragOffset]);
+  }, [isDragging, handleDragMove, handleDragEnd]);
 
   if (!isOpen) return null;
 

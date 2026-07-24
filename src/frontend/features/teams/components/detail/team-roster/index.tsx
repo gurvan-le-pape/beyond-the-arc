@@ -22,7 +22,12 @@ interface TeamRosterProps {
 }
 
 export const TeamRoster: React.FC<TeamRosterProps> = ({ players }) => {
-  const safePlayers: TeamPlayerRef[] = players ?? [];
+  // Memoized so the `?? []` fallback doesn't produce a fresh array on every
+  // render and invalidate the sort memo below.
+  const safePlayers: TeamPlayerRef[] = React.useMemo(
+    () => players ?? [],
+    [players],
+  );
 
   const tTeams = useTranslations("teams");
   const router = useRouter();
@@ -55,7 +60,8 @@ export const TeamRoster: React.FC<TeamRosterProps> = ({ players }) => {
           );
         case "rpg":
           return (
-            (a.seasonStats.reboundsPerGame - b.seasonStats.reboundsPerGame) * dir
+            (a.seasonStats.reboundsPerGame - b.seasonStats.reboundsPerGame) *
+            dir
           );
         case "apg":
           return (

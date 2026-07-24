@@ -1,6 +1,7 @@
 import tsPlugin from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
 import a11y from "eslint-plugin-jsx-a11y";
+import reactHooks from "eslint-plugin-react-hooks";
 import importSort from "eslint-plugin-simple-import-sort";
 import sonarjs from "eslint-plugin-sonarjs";
 import pathComment from "./eslint-rules/enforce-file-path-comment.js";
@@ -32,6 +33,7 @@ export default [
       "simple-import-sort": importSort,
       sonarjs: sonarjs,
       "jsx-a11y": a11y,
+      "react-hooks": reactHooks,
       "local-rules": {
         rules: {
           "enforce-file-path-comment": pathComment,
@@ -80,6 +82,14 @@ export default [
       // findings on the current tree, so it costs nothing today and only ever
       // fires on newly written markup.
       ...a11y.configs.recommended.rules,
+
+      // React hooks. These two rules are named deliberately: as of v7 the
+      // plugin's own `recommended` preset is the React Compiler ruleset (16
+      // rules), which flags the ordinary mounted-flag and sync-from-prop
+      // effects and the accumulator in match-events as errors. Spreading it
+      // is not the same thing as enabling the classic pair.
+      "react-hooks/rules-of-hooks": "error",
+      "react-hooks/exhaustive-deps": "error",
 
       // Custom rules
       "local-rules/enforce-file-path-comment": "error",

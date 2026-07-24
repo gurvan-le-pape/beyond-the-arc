@@ -130,7 +130,7 @@ export function useMatchesFilterState() {
     setMatchday(undefined);
     setCurrentPage(1);
     resetLocationFilters();
-  }, [resetLocationFilters]);
+  }, [resetLocationFilters, setCurrentPage]);
 
   const filters: MatchesFilterState = {
     search,

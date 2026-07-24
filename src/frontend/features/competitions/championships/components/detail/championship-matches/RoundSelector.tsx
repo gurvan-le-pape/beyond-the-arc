@@ -16,19 +16,22 @@ interface RoundSelectorProps {
   className?: string;
 }
 
+// Dynamic visible count logic for desktop. Module-level because these are
+// constants, not derived state — keeping them in the component body made the
+// resize effect's empty dependency array look like a suppression.
+const ROUND_SELECTOR_PILL_MIN_WIDTH = 48;
+const PILL_MIN_WIDTH = ROUND_SELECTOR_PILL_MIN_WIDTH + 8; // px (minWidth + px-4 padding)
+const PILL_SPACING = 8; // px (space-x-2)
+const MAX_VISIBLE = 8;
+
 export const RoundSelector: React.FC<RoundSelectorProps> = ({
   rounds,
   selectedRound,
   onSelect,
   className = "",
 }) => {
-  const ROUND_SELECTOR_PILL_MIN_WIDTH = 48;
   const t = useTranslations("competitions");
 
-  // Dynamic visible count logic for desktop
-  const pillMinWidth = ROUND_SELECTOR_PILL_MIN_WIDTH + 8; // px (minWidth + px-4 padding)
-  const pillSpacing = 8; // px (space-x-2)
-  const MAX_VISIBLE = 8;
   const containerRef = useRef<HTMLDivElement>(null);
   const [visibleCount, setVisibleCount] = useState(5);
   const [startIdx, setStartIdx] = useState(0);
@@ -46,7 +49,9 @@ export const RoundSelector: React.FC<RoundSelectorProps> = ({
         1,
         Math.min(
           MAX_VISIBLE,
-          Math.floor((available + pillSpacing) / (pillMinWidth + pillSpacing)),
+          Math.floor(
+            (available + PILL_SPACING) / (PILL_MIN_WIDTH + PILL_SPACING),
+          ),
         ),
       );
       setVisibleCount(count);
@@ -56,15 +61,20 @@ export const RoundSelector: React.FC<RoundSelectorProps> = ({
     return () => window.removeEventListener("resize", updateVisibleCount);
   }, []);
 
-  // Ensure selected round is always visible when it changes
+  // Ensure selected round is always visible when it changes. Uses the
+  // functional setter so the current startIdx is never read from the closure —
+  // returning `prev` unchanged when the round is already visible lets React
+  // bail out instead of re-running this on every startIdx change.
   useEffect(() => {
     if (selectedRound === null) return;
     const idx = rounds.indexOf(selectedRound);
     if (idx === -1) return;
-    if (idx < startIdx) setStartIdx(idx);
-    else if (idx >= startIdx + visibleCount) {
-      setStartIdx(Math.max(0, idx - visibleCount + 1));
-    }
+    setStartIdx((prev) => {
+      if (idx < prev) return idx;
+      if (idx >= prev + visibleCount)
+        return Math.max(0, idx - visibleCount + 1);
+      return prev;
+    });
   }, [selectedRound, rounds, visibleCount]);
 
   const canScrollLeft = startIdx > 0;
