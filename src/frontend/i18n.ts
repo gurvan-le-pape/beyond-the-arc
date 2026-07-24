@@ -35,8 +35,8 @@ export default getRequestConfig(async ({ requestLocale }) => {
 
   await Promise.all(
     namespaces.map(async (namespace) => {
-      const module = await import(`./messages/${locale}/${namespace}.json`);
-      messages[namespace] = module.default;
+      const mod = await import(`./messages/${locale}/${namespace}.json`);
+      messages[namespace] = mod.default;
     }),
   );
 

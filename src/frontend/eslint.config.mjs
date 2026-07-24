@@ -1,3 +1,4 @@
+import nextPlugin from "@next/eslint-plugin-next";
 import tsPlugin from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
 import a11y from "eslint-plugin-jsx-a11y";
@@ -34,6 +35,7 @@ export default [
       sonarjs: sonarjs,
       "jsx-a11y": a11y,
       "react-hooks": reactHooks,
+      "@next/next": nextPlugin,
       "local-rules": {
         rules: {
           "enforce-file-path-comment": pathComment,
@@ -90,6 +92,20 @@ export default [
       // is not the same thing as enabling the classic pair.
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "error",
+
+      // Next.js. The plugin is used directly rather than via
+      // eslint-config-next, whose bundled eslint-plugin-react preset reports
+      // 1250 findings here that are all obsolete under the React 17+ JSX
+      // transform and TypeScript. The recommended set ships at "warn", but CI
+      // runs eslint without --max-warnings so a warning can never block a
+      // merge — promoting everything to "error" subsumes the core-web-vitals
+      // variant, which only raises no-html-link-for-pages and no-sync-scripts.
+      ...Object.fromEntries(
+        Object.keys(nextPlugin.configs.recommended.rules).map((rule) => [
+          rule,
+          "error",
+        ]),
+      ),
 
       // Custom rules
       "local-rules/enforce-file-path-comment": "error",

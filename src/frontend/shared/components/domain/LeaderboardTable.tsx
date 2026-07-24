@@ -72,6 +72,9 @@ export function LeaderboardTable({
               {/* Team Column with Logo */}
               <TableCell className="text-left text-text-heading">
                 <div className="flex items-center gap-2">
+                  {/* Local 32px .webp crest with an onError fallback; see
+                      ClubLogo for why next/image isn't used for these. */}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={`/images/clubs/${leaderboard.clubName}.webp`}
                     alt={`${leaderboard.clubName} logo`}

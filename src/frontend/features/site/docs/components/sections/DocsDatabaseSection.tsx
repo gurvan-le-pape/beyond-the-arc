@@ -96,6 +96,10 @@ export function DocsDatabaseSection({ content }: DocsDatabaseSectionProps) {
                     overflow: "hidden",
                   }}
                 >
+                  {/* SVG served as-is: next/image cannot optimize SVG without
+                      dangerouslyAllowSVG, and this one is pan/zoomed by
+                      react-zoom-pan-pinch at its intrinsic size. */}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src="/docs/data-model.svg"
                     alt={t("docs.database.diagramAlt")}
