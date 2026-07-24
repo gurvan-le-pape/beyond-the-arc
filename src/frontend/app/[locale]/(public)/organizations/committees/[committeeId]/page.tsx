@@ -10,21 +10,11 @@ import { EmptyState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { CompetitionLevel } from "@/shared/constants";
 import type { LocalePageProps } from "@/shared/types";
-import { handleServerError, logger, parseRouteId } from "@/shared/utils";
+import { handleServerError, parseRouteId } from "@/shared/utils";
 
-// Pre-builds every committee when the API is reachable at build time. It is
-// not during the Docker image build, so this logs and falls back to rendering
-// on demand rather than failing the build.
-export async function generateStaticParams() {
-  try {
-    const committees = await serverCommitteesService.getAll();
-    return committees.map((c) => ({ committeeId: String(c.id) }));
-  } catch (error) {
-    logger.error(error, "committees generateStaticParams");
-    return [];
-  }
-}
-
+// No generateStaticParams: the image build has no backend to enumerate
+// committees against, so it could only ever return an empty list. Each page is
+// generated on first request instead and then cached for the revalidate window.
 export const dynamicParams = true;
 export const revalidate = 3600;
 

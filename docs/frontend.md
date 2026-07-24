@@ -54,7 +54,9 @@ const [player, matches, matchEvents] = await Promise.all([
 
 Shot charts (`PlayerShotChart`, `TeamShotChart`) receive their `matchEvents` as props this way — they are presentational components, not client-side fetchers. `isLoading={false}` and `error={null}` are passed directly because the data is already resolved on the server.
 
-Used by: player detail, team detail, match detail, map page, league detail, committee detail. League and committee detail pages pre-build all pages at deploy time via `generateStaticParams` (with a try/catch fallback to an empty array when the backend is unavailable at build time), and revalidate hourly. `dynamicParams = true` ensures pages not pre-built are generated on first request and then ISR-cached.
+Used by: player detail, team detail, match detail, map page, league detail, committee detail.
+
+None of these pre-build. League and committee detail once declared a `generateStaticParams` that enumerated every ID, but the image build has no backend to enumerate against, so it returned an empty list in every build that shipped — and `next dev` never prerenders either, so it never ran anywhere else. Both were removed. `dynamicParams = true` plus an hourly `revalidate` is what actually serves these routes: each page is generated on first request and the rendered HTML is then cached.
 
 **HydrationBoundary prefetch** — for pages where the initial data needs to be server-rendered but a client component will continue managing it (refetching on focus, responding to in-page navigation). The server component prefetches into a `QueryClient`, dehydrates the cache, and passes it to `HydrationBoundary`. The client component mounts with the cache already populated and TanStack Query takes over.
 
