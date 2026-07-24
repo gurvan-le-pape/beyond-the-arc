@@ -54,7 +54,7 @@ export default async function ClubPage({ params }: ClubPageProps) {
             label: tOrganizations("clubs.label"),
             href: "/organizations/clubs",
           },
-          { label: club?.name ?? "…", current: true },
+          { label: club.name, current: true },
         ]}
         header={{
           name: club.name,
@@ -62,13 +62,13 @@ export default async function ClubPage({ params }: ClubPageProps) {
           subtitle: [club.city, club.zipCode].filter(Boolean).join(" • "),
         }}
         info={{
-          president: club?.president,
-          address: club?.address,
-          email: club?.email,
-          phone: club?.phone,
-          city: club?.city,
-          zipCode: club?.zipCode,
-          website: club?.website,
+          president: club.president,
+          address: club.address,
+          email: club.email,
+          phone: club.phone,
+          city: club.city,
+          zipCode: club.zipCode,
+          website: club.website,
         }}
         section={{
           items: club.teams.map((team) => ({
