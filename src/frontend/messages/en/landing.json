@@ -166,7 +166,9 @@
       "dataModel": "Data Model",
       "apiDocs": "API Documentation",
       "contact": "Get Help",
-      "getHelp": "Questions?"
+      "getHelp": "Questions?",
+      "pdf": "PDF",
+      "swagger": "Swagger"
     },
     "sections": {
       "gettingStarted": {
