@@ -22,7 +22,11 @@ import {
 } from "@/features/site/docs/components";
 import { useAccordion } from "@/features/site/docs/hooks";
 import { PageHero, PageLayout } from "@/shared/components/layout";
-import { CONTACT_MAILTO, GITHUB_REPO_URL } from "@/shared/constants";
+import {
+  API_DOCS_URL,
+  CONTACT_MAILTO,
+  GITHUB_REPO_URL,
+} from "@/shared/constants";
 
 const QUICK_LINKS_CONFIG = [
   {
@@ -41,7 +45,7 @@ const QUICK_LINKS_CONFIG = [
     download: true,
   },
   {
-    href: `${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "")}/docs`,
+    href: API_DOCS_URL,
     icon: BookOpen,
     labelKey: "docs.quickLinks.apiDocs",
     sub: "Swagger",
