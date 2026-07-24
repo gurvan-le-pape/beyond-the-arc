@@ -37,7 +37,7 @@ export function ChampionshipTab({
   pageSize,
   onPageSizeChange,
   onPageChange,
-}: ChampionshipTabProps) {
+}: Readonly<ChampionshipTabProps>) {
   const tCommon = useTranslations("common");
   const tCompetitions = useTranslations("competitions");
 
