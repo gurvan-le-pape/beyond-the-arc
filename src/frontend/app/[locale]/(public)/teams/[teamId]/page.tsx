@@ -14,6 +14,7 @@ import { PageLayout } from "@/shared/components/layout";
 import type { LocalePageProps } from "@/shared/types";
 import { handleServerError, parseRouteId } from "@/shared/utils";
 
+// Don't pre-build - one page per team, across every club and division
 export async function generateStaticParams() {
   return [];
 }
