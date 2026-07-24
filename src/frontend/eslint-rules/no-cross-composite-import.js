@@ -22,7 +22,7 @@ module.exports = {
     },
   },
   create(context) {
-    const filename = context.getFilename().replace(/\\/g, "/");
+    const filename = context.getFilename().replaceAll("\\", "/");
     if (!filename.includes("src/frontend")) return {};
 
     const frontendRoot = filename.slice(
@@ -42,7 +42,9 @@ module.exports = {
           return;
         }
         // Importing a composite's explicit /index is importing the composite.
-        resolved = resolved.replace(/\\/g, "/").replace(/\/index$/, "");
+        // The trailing-/index strip stays .replace(): its regex is not global,
+        // and replaceAll() throws a TypeError on a non-global regex.
+        resolved = resolved.replaceAll("\\", "/").replace(/\/index$/, "");
 
         const componentsIdx = resolved.indexOf("/components/");
         if (!resolved.includes("/features/") || componentsIdx === -1) return;
