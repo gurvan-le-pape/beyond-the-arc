@@ -41,14 +41,14 @@ const QUICK_LINKS_CONFIG = [
     href: "/docs/data-model.pdf",
     icon: Download,
     labelKey: "docs.quickLinks.dataModel",
-    sub: "PDF",
+    subKey: "docs.quickLinks.pdf",
     download: true,
   },
   {
     href: API_DOCS_URL,
     icon: BookOpen,
     labelKey: "docs.quickLinks.apiDocs",
-    sub: "Swagger",
+    subKey: "docs.quickLinks.swagger",
     external: true,
     trailIcon: ExternalLink,
   },
@@ -94,7 +94,7 @@ export default function DocsPage() {
   const quickLinks = QUICK_LINKS_CONFIG.map((link) => ({
     ...link,
     label: t(link.labelKey),
-    sub: "subKey" in link ? t(link.subKey) : link.sub,
+    sub: t(link.subKey),
   }));
 
   const sections = SECTIONS_CONFIG.map((section) => ({

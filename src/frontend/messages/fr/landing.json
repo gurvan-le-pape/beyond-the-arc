@@ -166,7 +166,9 @@
       "dataModel": "Modèle de Données",
       "apiDocs": "Documentation API",
       "contact": "Obtenir de l'Aide",
-      "getHelp": "Questions ?"
+      "getHelp": "Questions ?",
+      "pdf": "PDF",
+      "swagger": "Swagger"
     },
     "sections": {
       "gettingStarted": {
