@@ -4,6 +4,7 @@ import type { PaginatedResponse } from "@/shared/types";
 import {
   buildQueryString,
   fetchApi,
+  ServerRevalidate,
 } from "../../../lib/services/server/server-api-client";
 import type { Player } from "../types/Player";
 import type { PlayerFilters } from "../types/PlayerFilters";
@@ -72,7 +73,9 @@ export const serverPlayersService = {
    * const matches = await serverPlayersService.getMatches(789);
    */
   async getMatches(playerId: number): Promise<PlayerMatchHistoryResponse> {
-    return fetchApi<any>(`/players/${playerId}/matches`);
+    return fetchApi<any>(`/players/${playerId}/matches`, {
+      revalidate: ServerRevalidate.LIVE,
+    });
   },
 
   /**

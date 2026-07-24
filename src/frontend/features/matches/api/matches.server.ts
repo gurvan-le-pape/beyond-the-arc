@@ -4,6 +4,7 @@ import type { PaginatedResponse } from "@/shared/types";
 import {
   buildQueryString,
   fetchApi,
+  ServerRevalidate,
 } from "../../../lib/services/server/server-api-client";
 import type { Match } from "../types/Match";
 import type { MatchDetail } from "../types/MatchDetail";
@@ -45,7 +46,9 @@ export const serverMatchesService = {
    */
   async getAll(filters?: MatchFilters): Promise<PaginatedResponse<Match>> {
     const queryString = buildQueryString(filters);
-    return fetchApi<PaginatedResponse<Match>>(`/matches${queryString}`);
+    return fetchApi<PaginatedResponse<Match>>(`/matches${queryString}`, {
+      revalidate: ServerRevalidate.LIVE,
+    });
   },
 
   /**
@@ -59,7 +62,9 @@ export const serverMatchesService = {
    * const match = await serverMatchesService.getById(12345);
    */
   async getById(id: number): Promise<MatchDetail> {
-    return fetchApi<MatchDetail>(`/matches/${id}`);
+    return fetchApi<MatchDetail>(`/matches/${id}`, {
+      revalidate: ServerRevalidate.LIVE,
+    });
   },
 
   /**
@@ -74,7 +79,9 @@ export const serverMatchesService = {
    */
   async getByPoolId(poolId: number): Promise<Match[]> {
     const queryString = buildQueryString({ poolId });
-    return fetchApi<Match[]>(`/matches${queryString}`);
+    return fetchApi<Match[]>(`/matches${queryString}`, {
+      revalidate: ServerRevalidate.LIVE,
+    });
   },
 
   /**
@@ -89,7 +96,9 @@ export const serverMatchesService = {
    */
   async getByChampionshipId(championshipId: number): Promise<Match[]> {
     const queryString = buildQueryString({ championshipId });
-    return fetchApi<Match[]>(`/matches${queryString}`);
+    return fetchApi<Match[]>(`/matches${queryString}`, {
+      revalidate: ServerRevalidate.LIVE,
+    });
   },
 
   // ============================================================================
@@ -108,7 +117,9 @@ export const serverMatchesService = {
    * // [{ type: 'point', minute: 23, playerId: 789, ... }, ...]
    */
   async getEventsByMatchId(matchId: number): Promise<MatchEvent[]> {
-    return fetchApi<MatchEvent[]>(`/matches/${matchId}/events`);
+    return fetchApi<MatchEvent[]>(`/matches/${matchId}/events`, {
+      revalidate: ServerRevalidate.LIVE,
+    });
   },
 
   /**
@@ -122,7 +133,9 @@ export const serverMatchesService = {
    * const events = await serverMatchesService.getEventsByTeamId(456);
    */
   async getEventsByTeamId(teamId: number): Promise<MatchEvent[]> {
-    return fetchApi<MatchEvent[]>(`/matches/team/${teamId}/events`);
+    return fetchApi<MatchEvent[]>(`/matches/team/${teamId}/events`, {
+      revalidate: ServerRevalidate.LIVE,
+    });
   },
 
   /**
@@ -136,7 +149,9 @@ export const serverMatchesService = {
    * const events = await serverMatchesService.getEventsByPlayerId(789);
    */
   async getEventsByPlayerId(playerId: number): Promise<MatchEvent[]> {
-    return fetchApi<MatchEvent[]>(`/matches/player/${playerId}/events`);
+    return fetchApi<MatchEvent[]>(`/matches/player/${playerId}/events`, {
+      revalidate: ServerRevalidate.LIVE,
+    });
   },
 
   // ============================================================================
@@ -160,6 +175,7 @@ export const serverMatchesService = {
   ): Promise<MatchPlayerStatsResponse> {
     return fetchApi<MatchPlayerStatsResponse>(
       `/matches/${matchId}/player-stats`,
+      { revalidate: ServerRevalidate.LIVE },
     );
   },
 };

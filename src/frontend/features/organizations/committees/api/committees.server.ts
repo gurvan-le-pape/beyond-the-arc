@@ -2,6 +2,7 @@
 import {
   buildQueryString,
   fetchApi,
+  ServerRevalidate,
 } from "../../../../lib/services/server/server-api-client";
 import type { Committee } from "../types/Committees";
 import type { CommitteeFilters } from "../types/CommitteesFilters";
@@ -36,7 +37,9 @@ export const serverCommitteesService = {
    */
   async getAll(filters?: CommitteeFilters): Promise<Committee[]> {
     const queryString = buildQueryString(filters);
-    return fetchApi<Committee[]>(`/committees${queryString}`);
+    return fetchApi<Committee[]>(`/committees${queryString}`, {
+      revalidate: ServerRevalidate.REFERENCE,
+    });
   },
 
   /**
@@ -50,7 +53,9 @@ export const serverCommitteesService = {
    * const committee = await serverCommitteesService.getById(123);
    */
   async getById(id: number): Promise<Committee> {
-    return fetchApi<Committee>(`/committees/${id}`);
+    return fetchApi<Committee>(`/committees/${id}`, {
+      revalidate: ServerRevalidate.REFERENCE,
+    });
   },
 
   /**
@@ -65,6 +70,8 @@ export const serverCommitteesService = {
    * const committees = await serverCommitteesService.getByIds([1, 2, 3]);
    */
   async getByIds(ids: number[]): Promise<Committee[]> {
-    return fetchApi<Committee[]>(`/committees/${ids.join(",")}`);
+    return fetchApi<Committee[]>(`/committees/${ids.join(",")}`, {
+      revalidate: ServerRevalidate.REFERENCE,
+    });
   },
 };

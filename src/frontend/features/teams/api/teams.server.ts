@@ -4,6 +4,7 @@ import type { PaginatedResponse } from "@/shared/types";
 import {
   buildQueryString,
   fetchApi,
+  ServerRevalidate,
 } from "../../../lib/services/server/server-api-client";
 import type { Team } from "../types";
 import type { TeamDetail } from "../types/TeamDetail";
@@ -71,6 +72,8 @@ export const serverTeamsService = {
    * const matches = await serverTeamsService.getMatches(123);
    */
   async getMatches(teamId: number): Promise<TeamMatchHistoryResponse> {
-    return fetchApi<any>(`/teams/${teamId}/matches`);
+    return fetchApi<any>(`/teams/${teamId}/matches`, {
+      revalidate: ServerRevalidate.LIVE,
+    });
   },
 };
