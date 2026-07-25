@@ -20,10 +20,6 @@
     "lost": "L"
   },
   "teamStats": {
-    "positionSuffix": "th",
-    "positionSuffixFirst": "st",
-    "positionSuffixSecond": "nd",
-    "positionSuffixThird": "rd",
     "gamesWonShort": "W",
     "gamesLostShort": "L"
   },
