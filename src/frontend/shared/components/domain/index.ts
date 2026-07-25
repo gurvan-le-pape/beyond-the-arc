@@ -7,6 +7,7 @@ export * from "./CategorySection";
 export * from "./ClubLogo";
 export * from "./EntityCardBadges";
 export * from "./EntityCardBody";
+export * from "./EntityHeaderBadges";
 export * from "./GenderCategorizedList";
 export * from "./GenderCategorizedSection";
 export * from "./LeaderboardTable";

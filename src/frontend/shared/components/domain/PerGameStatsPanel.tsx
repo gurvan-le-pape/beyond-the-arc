@@ -19,7 +19,7 @@ interface PerGameStatsPanelProps {
  * Per-game values come precomputed and zero-guarded from the backend (gp || 1),
  * so `toFixed(1)` renders "0.0" for a player/team with no games.
  */
-const STAT_FIELDS: { key: string; value: (s: PlayerCareerStats) => string | number }[] = [
+const STAT_FIELDS = [
   { key: "gamesPlayed", value: (s) => s.gamesPlayed },
   { key: "pointsPerGame", value: (s) => s.pointsPerGame.toFixed(1) },
   { key: "reboundsPerGame", value: (s) => s.reboundsPerGame.toFixed(1) },
@@ -28,7 +28,10 @@ const STAT_FIELDS: { key: string; value: (s: PlayerCareerStats) => string | numb
   { key: "blocksPerGame", value: (s) => s.blocksPerGame.toFixed(1) },
   { key: "turnoversPerGame", value: (s) => s.turnoversPerGame.toFixed(1) },
   { key: "foulsPerGame", value: (s) => s.foulsPerGame.toFixed(1) },
-];
+] as const satisfies readonly {
+  key: string;
+  value: (s: PlayerCareerStats) => string | number;
+}[];
 
 export const PerGameStatsPanel: React.FC<PerGameStatsPanelProps> = ({
   stats,

@@ -2,15 +2,7 @@
 import { EventCategory } from "@/shared/constants";
 
 // Event type configurations with icons, colors, and i18n label keys
-export const eventConfig: Record<
-  string,
-  {
-    icon: string;
-    color: string;
-    labelKey: string;
-    eventCategory: EventCategory;
-  }
-> = {
+export const eventConfig = {
   // Scoring Events
   made_layup: {
     icon: "🏀",
@@ -266,4 +258,12 @@ export const eventConfig: Record<
     labelKey: "matchEvents.eventLabels.substitution",
     eventCategory: EventCategory.SUBSTITUTION,
   },
-};
+} as const satisfies Record<
+  string,
+  {
+    icon: string;
+    color: string;
+    labelKey: string;
+    eventCategory: EventCategory;
+  }
+>;

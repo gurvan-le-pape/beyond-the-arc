@@ -6,7 +6,6 @@ import React from "react";
 
 import { Link, usePathname } from "@/navigation";
 import { navItems } from "@/shared/constants";
-import type { NavItem } from "@/shared/types";
 import { cn } from "@/shared/utils";
 
 interface NavLinksProps {
@@ -24,10 +23,12 @@ export const NavLinks: React.FC<NavLinksProps> = ({
   const t = useTranslations("navigation");
 
   const renderLink = React.useCallback(
-    (item: NavItem) => {
+    (item: (typeof navItems)[number]) => {
+      // The `item.href !== "/"` guard this replaces was unreachable: no nav
+      // item is "/". Matching on a trailing slash keeps "/championships/12"
+      // active without letting "/search" match a sibling like "/searchfoo".
       const isActive =
-        pathname === item.href ||
-        (item.href !== "/" && pathname.startsWith(item.href));
+        pathname === item.href || pathname.startsWith(`${item.href}/`);
 
       const mobileStyles = cn(
         "block w-full text-left px-4 py-3 text-lg rounded-button transition-all duration-200",
@@ -65,7 +66,7 @@ export const NavLinks: React.FC<NavLinksProps> = ({
     [pathname, t, onClick, asList],
   );
 
-  const links = navItems.map((item: NavItem) =>
+  const links = navItems.map((item) =>
     asList ? (
       <li key={item.href} role="none">
         {renderLink(item)}

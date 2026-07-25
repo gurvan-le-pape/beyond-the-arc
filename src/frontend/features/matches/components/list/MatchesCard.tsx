@@ -17,7 +17,7 @@ import type { Match } from "../../types";
 export const MatchesCard: React.FC<{ match: Match }> = ({ match }) => {
   const tMatches = useTranslations("matches");
 
-  const level = match.pool?.championship?.level?.toLowerCase() ?? "";
+  const level = match.pool?.championship?.level;
   const config = getLevelConfig(level);
   const { homeTeamScore, awayTeamScore } = match;
   const hasScore = homeTeamScore !== null && awayTeamScore !== null;

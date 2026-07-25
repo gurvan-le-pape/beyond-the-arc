@@ -20,7 +20,7 @@ export const PlayerCard: React.FC<{ player: Player }> = ({ player }) => {
   const teamNumber = player.team?.number ? String(player.team.number) : null;
   const category = player.team?.category ?? null;
   const gender = player.team?.gender ?? null;
-  const level = player.team?.pool?.championship?.level?.toLowerCase() ?? "";
+  const level = player.team?.pool?.championship?.level;
   const committee = player.team?.club?.committee ?? null;
 
   const config = getLevelConfig(level);

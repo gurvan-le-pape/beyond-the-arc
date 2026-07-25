@@ -128,7 +128,7 @@ export function ClubPopupContent({ club, onClose }: ClubPopupContentProps) {
                 </svg>
               </div>
               <Text variant="caption" className="font-medium text-primary">
-                {t("map.visitWebsite")}
+                {t("detail.visitWebsite")}
               </Text>
             </a>
           )}

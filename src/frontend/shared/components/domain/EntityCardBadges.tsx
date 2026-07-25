@@ -4,17 +4,17 @@
 import { useTranslations } from "next-intl";
 
 import { Badge } from "@/shared/components/primitives";
+import type { CompetitionLevel, Gender } from "@/shared/constants";
 
 import { getLevelConfig } from "./ListEntityCard";
 
 interface EntityCardBadgesProps {
   readonly category?: string | null;
-  readonly gender?: string | null;
+  readonly gender?: Gender | null;
   readonly division?: number | null;
   /** Pre-formatted pool label (e.g. "Pool A" or a pool name). */
   readonly poolLabel?: string | null;
-  /** Lowercased competition level. */
-  readonly level: string;
+  readonly level: CompetitionLevel | undefined;
 }
 
 /**
@@ -39,8 +39,8 @@ export function EntityCardBadges({
         </Badge>
       )}
       {gender && (
-        <Badge variant={gender.toLowerCase() as "male" | "female"} size="sm">
-          {tCommon(`gender.${gender.toLowerCase()}`)}
+        <Badge variant={gender} size="sm">
+          {tCommon(`gender.${gender}`)}
         </Badge>
       )}
       {division && (
