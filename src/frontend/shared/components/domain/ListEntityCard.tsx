@@ -2,21 +2,20 @@
 import type { ReactNode } from "react";
 
 import { Link } from "@/navigation";
+import type { CompetitionLevel } from "@/shared/constants";
 import { LEVEL_CONFIG } from "@/shared/constants";
 import { cn } from "@/shared/utils";
 
-/** The LEVEL_CONFIG entry for a (lowercased) competition level, or default. */
-export function getLevelConfig(level: string) {
-  return (
-    LEVEL_CONFIG[level as keyof typeof LEVEL_CONFIG] ?? LEVEL_CONFIG.default
-  );
+/** The LEVEL_CONFIG entry for a competition level, or the default. */
+export function getLevelConfig(level: CompetitionLevel | undefined) {
+  return (level && LEVEL_CONFIG[level]) || LEVEL_CONFIG.default;
 }
 
 interface ListEntityCardProps {
   readonly href: string;
   readonly ariaLabel: string;
-  /** Lowercased competition level, used for the level-tinted card chrome. */
-  readonly level: string;
+  /** Competition level, used for the level-tinted card chrome. */
+  readonly level: CompetitionLevel | undefined;
   /** Header content after the status dot (title / date). */
   readonly headerLeft: ReactNode;
   /** Right-aligned badge cluster (see EntityCardBadges). */

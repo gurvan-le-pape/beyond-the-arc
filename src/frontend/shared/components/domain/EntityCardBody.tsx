@@ -1,5 +1,6 @@
 // src/frontend/shared/components/domain/EntityCardBody.tsx
 import { Text } from "@/shared/components/typography";
+import type { CompetitionLevel } from "@/shared/constants";
 import { cn } from "@/shared/utils";
 
 import { ClubLogo } from "./ClubLogo";
@@ -18,8 +19,8 @@ interface EntityCardBodyProps {
   readonly committee?: EntityCardCommittee | null;
   /** Jersey / team number, shown inline and in the side block. */
   readonly number?: number | null;
-  /** Lowercased competition level, for the side block tint. */
-  readonly level: string;
+  /** Competition level, for the side block tint. */
+  readonly level: CompetitionLevel | undefined;
 }
 
 /**

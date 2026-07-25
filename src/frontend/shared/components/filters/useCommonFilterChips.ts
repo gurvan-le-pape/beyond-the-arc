@@ -66,7 +66,7 @@ export function useCommonFilterChips({
   const levelLocationChips = [
     level && {
       key: "level",
-      label: tCommon(`competition.levels.${level.toLowerCase()}`),
+      label: tCommon(`competition.levels.${level}`),
       onRemove: () => setLevel(undefined),
     },
     locationLabel && {

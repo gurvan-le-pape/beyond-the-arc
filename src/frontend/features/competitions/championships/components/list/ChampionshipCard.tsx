@@ -15,9 +15,8 @@ export function ChampionshipCard({
   const tCommon = useTranslations("common");
   const tCompetitions = useTranslations("competitions");
 
-  const level = championship.level?.toLowerCase() ?? "";
-  const config =
-    LEVEL_CONFIG[level as keyof typeof LEVEL_CONFIG] ?? LEVEL_CONFIG.default;
+  const level = championship.level;
+  const config = (level && LEVEL_CONFIG[level]) || LEVEL_CONFIG.default;
 
   return (
     <Link
@@ -44,9 +43,11 @@ export function ChampionshipCard({
       >
         <div className="flex items-center gap-2">
           <span className="w-2.5 h-2.5 rounded-full flex-shrink-0 bg-text-heading" />
-          <Badge variant={config.badgeVariant} size="sm">
-            {tCommon(`competition.levels.${level}`)}
-          </Badge>
+          {level && (
+            <Badge variant={config.badgeVariant} size="sm">
+              {tCommon(`competition.levels.${level}`)}
+            </Badge>
+          )}
         </div>
         <div className="flex items-center gap-1.5 flex-wrap justify-end">
           {championship.category && (
@@ -55,10 +56,10 @@ export function ChampionshipCard({
             </Badge>
           )}
           <Badge
-            variant={championship.gender.toLowerCase() as "male" | "female"}
+            variant={championship.gender}
             size="sm"
           >
-            {tCommon(`gender.${championship.gender.toLowerCase()}`)}
+            {tCommon(`gender.${championship.gender}`)}
           </Badge>
           <Badge variant="division" size="sm">
             {tCompetitions("divisionWithValue", {

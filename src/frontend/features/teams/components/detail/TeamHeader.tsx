@@ -88,29 +88,14 @@ export async function TeamHeader({ team }: TeamHeaderProps) {
             </Badge>
 
             {/* Gender */}
-            <Badge
-              variant={gender.toLowerCase() as "male" | "female"}
-              size="sm"
-            >
-              {tCommon(`gender.${gender.toLowerCase()}`)}
+            <Badge variant={gender} size="sm">
+              {tCommon(`gender.${gender}`)}
             </Badge>
 
             {/* Competition level */}
             {championship?.level && (
-              <Badge
-                variant={
-                  normalizeString(championship.level) as
-                    | "departmental"
-                    | "regional"
-                    | "national"
-                }
-                size="sm"
-              >
-                {tCommon(
-                  `competition.levels.${normalizeString(
-                    championship.level,
-                  )}Short`,
-                )}
+              <Badge variant={championship.level} size="sm">
+                {tCommon(`competition.levels.${championship.level}Short`)}
               </Badge>
             )}
 

@@ -41,9 +41,7 @@ export function ChampionshipHeader({ championship }: ChampionshipHeaderProps) {
             <span className="text-text-muted">·</span>
           </>
         )}
-        <Badge variant={gender.toLowerCase() as "male" | "female"}>
-          {tCommon(`gender.${gender.toLowerCase()}`)}
-        </Badge>
+        <Badge variant={gender}>{tCommon(`gender.${gender}`)}</Badge>
         <span className="text-text-muted">·</span>
         <Badge variant="division">
           {tCompetitions("divisionWithValue", { value: division })}

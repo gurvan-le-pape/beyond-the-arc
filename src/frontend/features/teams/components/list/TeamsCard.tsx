@@ -18,7 +18,7 @@ export const TeamCard: React.FC<{ team: Team }> = ({ team }) => {
   const tTeams = useTranslations("teams");
 
   const clubName = team.club?.name ?? null;
-  const level = team.pool?.championship?.level?.toLowerCase() ?? "";
+  const level = team.pool?.championship?.level;
   const division = team.pool?.championship?.division ?? null;
   const poolLetter = team.pool?.letter ?? null;
   const category = team.category ?? null;

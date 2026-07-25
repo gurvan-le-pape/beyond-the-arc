@@ -22,7 +22,12 @@ interface UseMapDataReturn {
   clubs: ClubBasic[];
   regionsGeoJson: GeoJsonData | null;
   departmentsGeoJson: GeoJsonData | null;
-  error: string | null;
+  /** Message key in the `clubs` namespace, or null when everything loaded. */
+  error:
+    | "errorLoadingRegions"
+    | "errorLoadingDepartments"
+    | "errorLoadingClubs"
+    | null;
   getRegionClubCount: (regionId: number) => number;
   getDepartmentClubCount: (departmentId: string | number) => number;
 }

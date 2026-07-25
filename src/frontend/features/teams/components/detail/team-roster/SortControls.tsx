@@ -7,13 +7,13 @@ import type { SortConfig, SortKey } from "./types";
 // Constants
 // ---------------------------------------------------------------------------
 
-const SORT_OPTIONS: { key: SortKey; labelKey: string }[] = [
+const SORT_OPTIONS = [
   { key: "number", labelKey: "number" },
   { key: "ppg", labelKey: "stats.points.abbr" },
   { key: "rpg", labelKey: "stats.rebounds.abbr" },
   { key: "apg", labelKey: "stats.assists.abbr" },
   { key: "name", labelKey: "name" },
-];
+] as const satisfies readonly { key: SortKey; labelKey: string }[];
 
 // ---------------------------------------------------------------------------
 // Types

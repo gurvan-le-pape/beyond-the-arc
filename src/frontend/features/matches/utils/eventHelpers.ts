@@ -9,11 +9,14 @@ import { EventCategory, EventType, Role } from "@/shared/constants";
 
 /** Returns display config (icon, color, label, category) for a given event type. */
 export function getEventStyle(eventType: string): EventStyle {
+  const configured: EventStyle | undefined = (
+    eventConfig as Record<string, EventStyle | undefined>
+  )[eventType];
+
   return (
-    eventConfig[eventType] || {
+    configured ?? {
       icon: "⚪",
       color: "text-text-muted",
-      labelKey: "",
       eventCategory: EventCategory.OTHER,
     }
   );

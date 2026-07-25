@@ -26,7 +26,7 @@ export const TeamEventBlock: React.FC<TeamEventBlockProps> = ({
   handleDescriptionClick,
   showKeyHandler = false,
 }) => {
-  const t = useTranslations("common");
+  const t = useTranslations("matches");
   return (
     <div
       className={`flex items-center gap-3 ${
