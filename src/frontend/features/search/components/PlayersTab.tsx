@@ -8,7 +8,10 @@ import { usePlayers } from "@/features/players/api";
 import { PlayerCard, PlayersFilters } from "@/features/players/components";
 import { usePlayersFilterState } from "@/features/players/hooks";
 import type { Player } from "@/features/players/types";
-import { SearchTabShell } from "@/shared/components/domain";
+import {
+  LIST_ENTITY_CARD_GRID,
+  SearchTabShell,
+} from "@/shared/components/domain";
 import { EmptyState } from "@/shared/components/feedback";
 
 export function PlayersTab() {
@@ -68,7 +71,7 @@ export function PlayersTab() {
         onPageChange={(index) => setCurrentPage(index + 1)}
         itemLabel={tPlayers("players")}
       >
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        <div className={LIST_ENTITY_CARD_GRID}>
           {players.map((player) => (
             <PlayerCard key={player.id} player={player} />
           ))}

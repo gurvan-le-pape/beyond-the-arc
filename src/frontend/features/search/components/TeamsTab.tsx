@@ -8,7 +8,10 @@ import { useTeams } from "@/features/teams/api";
 import { TeamCard, TeamsFilters } from "@/features/teams/components";
 import { useTeamsFilterState } from "@/features/teams/hooks";
 import type { Team } from "@/features/teams/types";
-import { SearchTabShell } from "@/shared/components/domain";
+import {
+  LIST_ENTITY_CARD_GRID,
+  SearchTabShell,
+} from "@/shared/components/domain";
 import { EmptyState } from "@/shared/components/feedback";
 
 export function TeamsTab() {
@@ -68,7 +71,7 @@ export function TeamsTab() {
         onPageChange={(index) => setCurrentPage(index + 1)}
         itemLabel={tTeams("teams")}
       >
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        <div className={LIST_ENTITY_CARD_GRID}>
           {teams.map((team) => (
             <TeamCard key={team.id} team={team} />
           ))}

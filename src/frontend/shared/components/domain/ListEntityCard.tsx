@@ -6,6 +6,19 @@ import type { CompetitionLevel } from "@/shared/constants";
 import { LEVEL_CONFIG } from "@/shared/constants";
 import { cn } from "@/shared/utils";
 
+/**
+ * Grid wrapper for lists of `ListEntityCard`s.
+ *
+ * The second column arrives at `xl`, later than the `md` used by the compact
+ * card grids (championships, clubs, leagues, committees). That is deliberate,
+ * not an oversight: this card carries a wrapping badge cluster and a stats row,
+ * so below ~590px it reflows rather than truncates. Measured at 768px forced to
+ * two columns, a match card grows from 177px tall to 351px — same rows on
+ * screen, each one worse. The compact cards stay at 101–129px throughout and
+ * are fine from `md`.
+ */
+export const LIST_ENTITY_CARD_GRID = "grid grid-cols-1 xl:grid-cols-2 gap-4";
+
 /** The LEVEL_CONFIG entry for a competition level, or the default. */
 export function getLevelConfig(level: CompetitionLevel | undefined) {
   return (level && LEVEL_CONFIG[level]) || LEVEL_CONFIG.default;

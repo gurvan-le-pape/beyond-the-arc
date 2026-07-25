@@ -49,6 +49,8 @@ export function OrganizationsGrid({ t }: OrganizationsGridProps) {
   }));
 
   return (
+    // Three columns, unlike the entity-result grids' two: these are the three
+    // fixed navigation cards (leagues / committees / clubs), not a result list.
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
       {types.map((org) => (
         <OrganizationTypeCard key={org.id} org={org} t={t} />

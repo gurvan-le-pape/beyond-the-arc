@@ -8,7 +8,10 @@ import { useMatches } from "@/features/matches/api";
 import { MatchesCard, MatchesFilters } from "@/features/matches/components";
 import { useMatchesFilterState } from "@/features/matches/hooks";
 import type { Match } from "@/features/matches/types";
-import { SearchTabShell } from "@/shared/components/domain";
+import {
+  LIST_ENTITY_CARD_GRID,
+  SearchTabShell,
+} from "@/shared/components/domain";
 import { EmptyState } from "@/shared/components/feedback";
 
 export function MatchesTab() {
@@ -69,7 +72,7 @@ export function MatchesTab() {
         onPageChange={(index) => setCurrentPage(index + 1)}
         itemLabel={tMatches("itemLabelPlural")}
       >
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        <div className={LIST_ENTITY_CARD_GRID}>
           {matches.map((match) => (
             <MatchesCard key={match.id} match={match} />
           ))}
