@@ -1,5 +1,5 @@
 // src/frontend/features/organizations/committees/components/list/CommitteeCard.tsx
-import { useRouter } from "@/navigation";
+import { Link } from "@/navigation";
 import { Badge, ImageWithFallback } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import {
@@ -17,12 +17,9 @@ interface CommitteeCardProps {
 }
 
 export function CommitteeCard({ committee, clubLabel }: CommitteeCardProps) {
-  const router = useRouter();
-
   return (
-    <button
-      type="button"
-      onClick={() => router.push(`/organizations/committees/${committee.id}`)}
+    <Link
+      href={`/organizations/committees/${committee.id}`}
       className={cn(
         "group relative overflow-hidden rounded-card border text-left w-full",
         "surface-raised shadow-card",
@@ -95,6 +92,6 @@ export function CommitteeCard({ committee, clubLabel }: CommitteeCardProps) {
           </div>
         </div>
       </div>
-    </button>
+    </Link>
   );
 }

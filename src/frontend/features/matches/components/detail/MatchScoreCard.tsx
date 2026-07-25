@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import React from "react";
 
 import type { TeamInfo } from "@/features/teams/types";
-import { Link, useRouter } from "@/navigation";
+import { Link } from "@/navigation";
 import { Card, ImageWithFallback } from "@/shared/components/primitives";
 import { cn, formatNameToFileName } from "@/shared/utils";
 
@@ -15,12 +15,12 @@ interface MatchScoreCardProps {
   className?: string;
 }
 
-interface LogoButtonProps {
+interface LogoLinkProps {
   readonly team: TeamInfo;
   readonly isWinning: boolean;
 }
 
-interface TeamNameButtonProps {
+interface TeamNameLinkProps {
   readonly team: TeamInfo;
   readonly isWinning: boolean;
   readonly align: "left" | "right";
@@ -39,60 +39,50 @@ interface TeamSectionProps {
   readonly align: "left" | "right";
 }
 
-function LogoButton({ team, isWinning }: LogoButtonProps) {
+function LogoLink({ team, isWinning }: LogoLinkProps) {
   const tCommon = useTranslations("common");
 
   return (
     <Link
       href={`/organizations/clubs/${team.clubId}`}
       aria-label={tCommon("club.seeClub", { name: team.clubName ?? "" })}
+      className={cn(
+        "w-16 h-16 md:w-20 md:h-20 flex-shrink-0 p-0 rounded-button overflow-hidden",
+        "flex items-center justify-center",
+        "border-4 bg-surface-inset transition-all duration-200",
+        isWinning
+          ? "border-primary shadow-card-hover"
+          : "border-divide hover:border-primary shadow-card",
+      )}
     >
-      <button
-        type="button"
-        tabIndex={-1}
-        aria-hidden
-        className={cn(
-          "w-16 h-16 md:w-20 md:h-20 flex-shrink-0 p-0 rounded-button overflow-hidden",
-          "flex items-center justify-center",
-          "border-4 bg-surface-inset transition-all duration-200",
-          isWinning
-            ? "border-primary shadow-card-hover"
-            : "border-divide hover:border-primary shadow-card",
-        )}
-      >
-        <ImageWithFallback
-          src={`/images/clubs/${formatNameToFileName(
-            team.clubName ?? "",
-          )}.webp`}
-          alt={team.clubName ?? ""}
-          fallback="/images/clubs/defaultLogo.30cc7520.svg"
-          className="w-12 h-12 md:w-16 md:h-16 object-contain"
-        />
-      </button>
+      <ImageWithFallback
+        src={`/images/clubs/${formatNameToFileName(team.clubName ?? "")}.webp`}
+        alt={team.clubName ?? ""}
+        fallback="/images/clubs/defaultLogo.30cc7520.svg"
+        className="w-12 h-12 md:w-16 md:h-16 object-contain"
+      />
     </Link>
   );
 }
 
-function TeamNameButton({ team, isWinning, align }: TeamNameButtonProps) {
-  const router = useRouter();
+function TeamNameLink({ team, isWinning, align }: TeamNameLinkProps) {
   const tCommon = useTranslations("common");
 
   return (
-    <button
-      type="button"
+    <Link
+      href={`/teams/${team.id}`}
       className={cn(
-        "flex-1 min-w-0 cursor-pointer bg-transparent border-none p-0 m-0 font-inherit",
+        "flex-1 min-w-0",
         "text-xs md:text-sm font-semibold leading-snug [overflow-wrap:break-word] [hyphens:auto]",
         "hover:text-primary transition-colors duration-200",
         "focus:outline-none focus:ring-2 focus:ring-primary ring-offset-surface rounded",
         align === "left" ? "text-left" : "text-right",
         isWinning ? "text-text-heading" : "text-text-body",
       )}
-      onClick={() => router.push(`/teams/${team.id}`)}
       aria-label={tCommon("team.seeTeam", { number: team.name })}
     >
       {team.name}
-    </button>
+    </Link>
   );
 }
 
@@ -134,8 +124,8 @@ function TeamSection({ team, isWinning, align }: TeamSectionProps) {
         align === "left" ? "text-left" : "text-right",
       )}
     >
-      <LogoButton team={team} isWinning={isWinning} />
-      <TeamNameButton team={team} isWinning={isWinning} align={align} />
+      <LogoLink team={team} isWinning={isWinning} />
+      <TeamNameLink team={team} isWinning={isWinning} align={align} />
     </div>
   );
 }
@@ -161,23 +151,23 @@ export const MatchScoreCard: React.FC<MatchScoreCardProps> = ({
       <div className="flex flex-col gap-3 md:hidden">
         {/* Row 1: logos + score */}
         <div className="flex items-center justify-between gap-4">
-          <LogoButton team={homeTeam} isWinning={isHomeWinning} />
+          <LogoLink team={homeTeam} isWinning={isHomeWinning} />
           <ScoreDisplay
             homeScore={homeTeam.score}
             awayScore={awayTeam.score}
             isHomeWinning={isHomeWinning}
             isAwayWinning={isAwayWinning}
           />
-          <LogoButton team={awayTeam} isWinning={isAwayWinning} />
+          <LogoLink team={awayTeam} isWinning={isAwayWinning} />
         </div>
         {/* Row 2: team names, full width */}
         <div className="flex justify-between gap-2">
-          <TeamNameButton
+          <TeamNameLink
             team={homeTeam}
             isWinning={isHomeWinning}
             align="left"
           />
-          <TeamNameButton
+          <TeamNameLink
             team={awayTeam}
             isWinning={isAwayWinning}
             align="right"
