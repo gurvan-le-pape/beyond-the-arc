@@ -5,6 +5,7 @@
 
 export * from "./CategorySection";
 export * from "./ClubLogo";
+export * from "./ClubLogoLink";
 export * from "./EntityCardBadges";
 export * from "./EntityCardBody";
 export * from "./EntityHeaderBadges";
