@@ -10,7 +10,6 @@ export * from "./grouping";
 export * from "./handleServerError";
 export * from "./helpers/date-helpers";
 export * from "./helpers/string-helpers";
-export * from "./helpers/team-helpers";
 export * from "./logger";
 export * from "./normalizeDepartmentCode";
 export * from "./normalizeString";
