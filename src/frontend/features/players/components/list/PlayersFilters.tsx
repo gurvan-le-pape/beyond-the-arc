@@ -14,7 +14,7 @@ import {
   useCategoryGenderOptions,
   useCommonFilterChips,
 } from "@/shared/components/filters";
-import { Input, Select } from "@/shared/components/forms";
+import { DebouncedInput, Select } from "@/shared/components/forms";
 import type { Category, Gender } from "@/shared/constants";
 
 import { usePlayerFilterValues } from "../../api";
@@ -139,12 +139,12 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
 
       {/* Row 1: Name search + Club */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Input
+        <DebouncedInput
           variant="search"
           label={tPlayers("filters.searchName")}
           value={name}
           placeholder={tPlayers("filters.searchNamePlaceholder")}
-          onChange={(e) => setName(e.target.value)}
+          onChange={setName}
           onClear={() => setName("")}
           clearAriaLabel={tCommon("clearSearch")}
         />
