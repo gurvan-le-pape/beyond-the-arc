@@ -1,5 +1,5 @@
 // src/frontend/features/organizations/leagues/components/list/LeagueCard.tsx
-import { useRouter } from "@/navigation";
+import { Link } from "@/navigation";
 import { Badge, ImageWithFallback } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { cn, formatLeagueName, formatNameToFileName } from "@/shared/utils";
@@ -12,12 +12,9 @@ interface LeagueCardProps {
 }
 
 export function LeagueCard({ league, clubLabel }: LeagueCardProps) {
-  const router = useRouter();
-
   return (
-    <button
-      type="button"
-      onClick={() => router.push(`/organizations/leagues/${league.id}`)}
+    <Link
+      href={`/organizations/leagues/${league.id}`}
       className={cn(
         "group relative overflow-hidden rounded-card border text-left w-full",
         "surface-raised shadow-card",
@@ -88,6 +85,6 @@ export function LeagueCard({ league, clubLabel }: LeagueCardProps) {
           </div>
         </div>
       </div>
-    </button>
+    </Link>
   );
 }
