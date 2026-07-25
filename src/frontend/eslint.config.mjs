@@ -20,7 +20,7 @@ const LEGACY_FEATURES = [];
 export default [
   // Config for all TS files
   {
-    files: ["**/*.ts", "**/*.tsx"],
+    files: ["**/*.ts", "**/*.mts", "**/*.tsx"],
     languageOptions: {
       parser: tsParser,
       parserOptions: {
@@ -135,6 +135,13 @@ export default [
     files: ["**/*.spec.ts", "**/*.test.ts", "**/*.spec.tsx", "**/*.test.tsx"],
     rules: {
       "sonarjs/no-duplicate-string": "off", // ← Disable for tests
+    },
+  },
+  // Override for build scripts — they are CLIs, stdout is their output
+  {
+    files: ["scripts/**"],
+    rules: {
+      "no-console": "off",
     },
   },
   {

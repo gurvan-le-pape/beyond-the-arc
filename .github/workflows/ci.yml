@@ -122,6 +122,25 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+  frontend-messages:
+    name: Frontend – Message parity
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/frontend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Setup app
+        uses: ./.github/actions/setup-app
+        with:
+          working-directory: src/frontend
+
+      - name: Check message parity
+        run: npm run check:messages
+
   frontend-build:
     name: Frontend – Build
     runs-on: ubuntu-latest
@@ -226,6 +245,7 @@ jobs:
       - backend-build
       - frontend-lint
       - frontend-typecheck
+      - frontend-messages
       - frontend-build
       - openapi-drift
     if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
