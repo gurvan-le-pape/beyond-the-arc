@@ -120,6 +120,7 @@
     ".*\\.d\\.ts$",
     ".*/championship-(breadcrumb|header|navigation|matches)/.*",
     ".*/match-events/(filters|timeline)/.*",
+    ".*/match-score-card/(?!index\\.tsx$).*",
     ".*/team-roster/(?!index\\.tsx$).*",
     ".*/player-comparison/(?!index\\.tsx$).*",
     ".*/clubs-map/(?!index\\.tsx$).*",

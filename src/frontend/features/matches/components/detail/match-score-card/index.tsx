@@ -1,0 +1,102 @@
+// src/frontend/features/matches/components/detail/match-score-card/index.tsx
+"use client";
+
+import React from "react";
+
+import type { TeamInfo } from "@/features/teams/types";
+import { Card } from "@/shared/components/primitives";
+import { cn } from "@/shared/utils";
+
+import { LogoLink } from "./LogoLink";
+import { ScoreDisplay } from "./ScoreDisplay";
+import { TeamNameLink } from "./TeamNameLink";
+
+interface MatchScoreCardProps {
+  homeTeam: TeamInfo;
+  awayTeam: TeamInfo;
+  className?: string;
+}
+
+interface TeamSectionProps {
+  readonly team: TeamInfo;
+  readonly isWinning: boolean;
+  readonly align: "left" | "right";
+}
+
+// Desktop-only: logo stacked over name. Kept here rather than in its own file
+// because it is pure arrangement of the two links — the root owns layout.
+function TeamSection({ team, isWinning, align }: TeamSectionProps) {
+  return (
+    <div
+      className={cn(
+        "flex-1 flex flex-col items-center gap-4 min-w-0",
+        align === "left" ? "text-left" : "text-right",
+      )}
+    >
+      <LogoLink team={team} isWinning={isWinning} />
+      <TeamNameLink team={team} isWinning={isWinning} align={align} />
+    </div>
+  );
+}
+
+/**
+ * Match score card component
+ * Displays team logos, scores, and names in a card layout.
+ *
+ * Mobile: two-row layout — logos + score on top, full-width team names below.
+ * Desktop: original single-row layout with logo stacked above name.
+ */
+export const MatchScoreCard: React.FC<MatchScoreCardProps> = ({
+  homeTeam,
+  awayTeam,
+  className,
+}) => {
+  const isHomeWinning = homeTeam.score > awayTeam.score;
+  const isAwayWinning = awayTeam.score > homeTeam.score;
+
+  return (
+    <Card variant="highlighted" padding="lg" className={className}>
+      {/* Mobile layout */}
+      <div className="flex flex-col gap-3 md:hidden">
+        {/* Row 1: logos + score */}
+        <div className="flex items-center justify-between gap-4">
+          <LogoLink team={homeTeam} isWinning={isHomeWinning} />
+          <ScoreDisplay
+            homeScore={homeTeam.score}
+            awayScore={awayTeam.score}
+            isHomeWinning={isHomeWinning}
+            isAwayWinning={isAwayWinning}
+          />
+          <LogoLink team={awayTeam} isWinning={isAwayWinning} />
+        </div>
+        {/* Row 2: team names, full width */}
+        <div className="flex justify-between gap-2">
+          <TeamNameLink
+            team={homeTeam}
+            isWinning={isHomeWinning}
+            align="left"
+          />
+          <TeamNameLink
+            team={awayTeam}
+            isWinning={isAwayWinning}
+            align="right"
+          />
+        </div>
+      </div>
+
+      {/* Desktop layout */}
+      <div className="hidden md:flex items-center justify-between gap-6">
+        <TeamSection team={homeTeam} isWinning={isHomeWinning} align="left" />
+        <ScoreDisplay
+          homeScore={homeTeam.score}
+          awayScore={awayTeam.score}
+          isHomeWinning={isHomeWinning}
+          isAwayWinning={isAwayWinning}
+        />
+        <TeamSection team={awayTeam} isWinning={isAwayWinning} align="right" />
+      </div>
+    </Card>
+  );
+};
+
+export default MatchScoreCard;
