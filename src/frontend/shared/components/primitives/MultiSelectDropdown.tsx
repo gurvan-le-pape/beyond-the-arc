@@ -170,7 +170,7 @@ export function MultiSelectDropdown({
         </div>
 
         {/* Divider below header */}
-        <div className="border-t border-divide-light dark:border-divide-dark mb-3" />
+        <div className="border-t border-divide mb-3" />
 
         {/* N columns with N-1 dividers between them */}
         <div className="flex">
