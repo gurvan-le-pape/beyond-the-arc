@@ -17,7 +17,7 @@ import {
   useCategoryGenderOptions,
   useCommonFilterChips,
 } from "@/shared/components/filters";
-import { Input, Select } from "@/shared/components/forms";
+import { DebouncedInput, Input, Select } from "@/shared/components/forms";
 import type { Category, Gender } from "@/shared/constants";
 
 import type { MatchesFilterSetters, MatchesFilterState } from "../../hooks";
@@ -173,12 +173,12 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
 
       {/* Row 1: Search + Date */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Input
+        <DebouncedInput
           variant="search"
           label={tMatches("searchClub")}
           value={search}
           placeholder={tMatches("searchClubPlaceholder")}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={setSearch}
           onClear={() => setSearch("")}
           clearAriaLabel={tCommon("clearSearch")}
         />
