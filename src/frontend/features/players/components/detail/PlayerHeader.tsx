@@ -10,6 +10,7 @@ import { CompetitionLevel } from "@/shared/constants";
 import { normalizeString, positionVariant } from "@/shared/utils";
 
 import type { Player } from "../../types/Player";
+import { PlayerAvatar } from "../PlayerAvatar";
 
 interface PlayerHeaderProps {
   readonly player: Player;
@@ -96,8 +97,8 @@ export async function PlayerHeader({ player }: PlayerHeaderProps) {
       }`}
     >
       <div className="flex items-center gap-5 p-6">
-        {/* Club Logo */}
-        <ClubLogoLink clubId={clubId} clubName={clubName} />
+        {/* Player avatar — carries the jersey number as its badge */}
+        <PlayerAvatar name={playerName} number={playerNumber} size="lg" />
 
         {/* Info */}
         <div className="flex-1 min-w-0">
@@ -137,11 +138,9 @@ export async function PlayerHeader({ player }: PlayerHeaderProps) {
           )}
         </div>
 
-        {/* Player number */}
+        {/* Club crest */}
         <div className="flex-shrink-0 pl-5 border-l border-divide self-stretch flex items-center">
-          <span className="text-3xl font-bold text-text-muted">
-            #{playerNumber}
-          </span>
+          <ClubLogoLink clubId={clubId} clubName={clubName} />
         </div>
       </div>
 
