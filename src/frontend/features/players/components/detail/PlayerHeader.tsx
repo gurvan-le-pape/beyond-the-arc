@@ -2,6 +2,7 @@
 import { getTranslations } from "next-intl/server";
 
 import { Link } from "@/navigation";
+import { EntityHeaderBadges } from "@/shared/components/domain";
 import { Badge, Card, ImageWithFallback } from "@/shared/components/primitives";
 import { StatCell } from "@/shared/components/stats";
 import { Text } from "@/shared/components/typography";
@@ -127,36 +128,15 @@ export async function PlayerHeader({ player }: PlayerHeaderProps) {
           </Text>
 
           {/* Badges */}
-          <div className="flex flex-wrap gap-2 mb-3">
-            {/* Category */}
-            <Badge variant="category" size="sm">
-              {category}
-            </Badge>
-
-            {/* Gender */}
-            <Badge variant={gender} size="sm">
-              {tCommon(`gender.${gender}`)}
-            </Badge>
-
-            {/* Competition level */}
-            {championship?.level && (
-              <Badge variant={championship.level} size="sm">
-                {tCommon(`competition.levels.${championship.level}Short`)}
-              </Badge>
-            )}
-
-            {/* Division */}
-            {championship && (
-              <Badge variant="division" size="sm">
-                {`Div ${championship.division}`}
-              </Badge>
-            )}
-
-            {/* Position */}
+          <EntityHeaderBadges
+            category={category}
+            gender={gender}
+            championship={championship}
+          >
             <Badge variant={positionVariant(position)} size="sm">
               {position}
             </Badge>
-          </div>
+          </EntityHeaderBadges>
 
           {/* Team link */}
           <Link

@@ -2,7 +2,8 @@
 import { getTranslations } from "next-intl/server";
 
 import { Link } from "@/navigation";
-import { Badge, Card, ImageWithFallback } from "@/shared/components/primitives";
+import { EntityHeaderBadges } from "@/shared/components/domain";
+import { Card, ImageWithFallback } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { CompetitionLevel } from "@/shared/constants";
 import { formatNameToFileName, normalizeString } from "@/shared/utils";
@@ -81,31 +82,11 @@ export async function TeamHeader({ team }: TeamHeaderProps) {
           </Text>
 
           {/* Badges */}
-          <div className="flex flex-wrap gap-2 mb-3">
-            {/* Category */}
-            <Badge variant="category" size="sm">
-              {category}
-            </Badge>
-
-            {/* Gender */}
-            <Badge variant={gender} size="sm">
-              {tCommon(`gender.${gender}`)}
-            </Badge>
-
-            {/* Competition level */}
-            {championship?.level && (
-              <Badge variant={championship.level} size="sm">
-                {tCommon(`competition.levels.${championship.level}Short`)}
-              </Badge>
-            )}
-
-            {/* Division */}
-            {championship && (
-              <Badge variant="division" size="sm">
-                {`Div ${championship.division}`}
-              </Badge>
-            )}
-          </div>
+          <EntityHeaderBadges
+            category={category}
+            gender={gender}
+            championship={championship}
+          />
 
           {/* Championship link */}
           {competitionUrl && (
