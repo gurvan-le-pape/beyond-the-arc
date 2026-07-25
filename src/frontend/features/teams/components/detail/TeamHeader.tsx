@@ -2,11 +2,11 @@
 import { getTranslations } from "next-intl/server";
 
 import { Link } from "@/navigation";
-import { EntityHeaderBadges } from "@/shared/components/domain";
-import { Card, ImageWithFallback } from "@/shared/components/primitives";
+import { ClubLogoLink, EntityHeaderBadges } from "@/shared/components/domain";
+import { Card } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { CompetitionLevel } from "@/shared/constants";
-import { formatNameToFileName, normalizeString } from "@/shared/utils";
+import { normalizeString } from "@/shared/utils";
 
 import type { Team } from "../../types/Team";
 
@@ -43,7 +43,6 @@ export async function TeamHeader({ team }: TeamHeaderProps) {
     }
   }
 
-  const clubUrl = `/organizations/clubs/${clubId}`;
   const isFemale = gender?.toLowerCase() === "female";
 
   return (
@@ -56,24 +55,7 @@ export async function TeamHeader({ team }: TeamHeaderProps) {
     >
       <div className="flex items-center gap-5 p-6">
         {/* Club Logo */}
-        <Link
-          href={clubUrl}
-          aria-label={tCommon("club.seeClub", { name: clubName })}
-        >
-          <button
-            type="button"
-            className="w-16 h-16 flex-shrink-0 p-0 rounded-card border border-divide bg-surface-inset overflow-hidden flex items-center justify-center"
-            tabIndex={-1}
-            aria-hidden
-          >
-            <ImageWithFallback
-              src={`/images/clubs/${formatNameToFileName(clubName)}.webp`}
-              alt={clubName}
-              fallback="/images/clubs/defaultLogo.30cc7520.svg"
-              className="w-14 h-14 object-contain"
-            />
-          </button>
-        </Link>
+        <ClubLogoLink clubId={clubId} clubName={clubName} />
 
         {/* Info */}
         <div className="flex-1 min-w-0">

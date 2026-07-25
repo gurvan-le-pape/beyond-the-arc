@@ -3,7 +3,7 @@
 
 import { cn, formatNameToFileName } from "@/shared/utils";
 
-const DEFAULT_CLUB_LOGO = "/images/clubs/defaultLogo.30cc7520.svg";
+export const DEFAULT_CLUB_LOGO = "/images/clubs/defaultLogo.30cc7520.svg";
 
 interface ClubLogoProps {
   readonly clubName: string | null | undefined;

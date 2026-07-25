@@ -2,16 +2,12 @@
 import { getTranslations } from "next-intl/server";
 
 import { Link } from "@/navigation";
-import { EntityHeaderBadges } from "@/shared/components/domain";
-import { Badge, Card, ImageWithFallback } from "@/shared/components/primitives";
+import { ClubLogoLink, EntityHeaderBadges } from "@/shared/components/domain";
+import { Badge, Card } from "@/shared/components/primitives";
 import { StatCell } from "@/shared/components/stats";
 import { Text } from "@/shared/components/typography";
 import { CompetitionLevel } from "@/shared/constants";
-import {
-  formatNameToFileName,
-  normalizeString,
-  positionVariant,
-} from "@/shared/utils";
+import { normalizeString, positionVariant } from "@/shared/utils";
 
 import type { Player } from "../../types/Player";
 
@@ -57,7 +53,6 @@ export async function PlayerHeader({ player }: PlayerHeaderProps) {
     }
   }
 
-  const clubUrl = `/organizations/clubs/${clubId}`;
   const isFemale = gender?.toLowerCase() === "female";
 
   const age = Math.floor(
@@ -102,24 +97,7 @@ export async function PlayerHeader({ player }: PlayerHeaderProps) {
     >
       <div className="flex items-center gap-5 p-6">
         {/* Club Logo */}
-        <Link
-          href={clubUrl}
-          aria-label={tCommon("club.seeClub", { name: clubName })}
-        >
-          <button
-            type="button"
-            className="w-16 h-16 flex-shrink-0 p-0 rounded-card border border-divide bg-surface-inset overflow-hidden flex items-center justify-center"
-            tabIndex={-1}
-            aria-hidden
-          >
-            <ImageWithFallback
-              src={`/images/clubs/${formatNameToFileName(clubName)}.webp`}
-              alt={clubName}
-              fallback="/images/clubs/defaultLogo.30cc7520.svg"
-              className="w-14 h-14 object-contain"
-            />
-          </button>
-        </Link>
+        <ClubLogoLink clubId={clubId} clubName={clubName} />
 
         {/* Info */}
         <div className="flex-1 min-w-0">
