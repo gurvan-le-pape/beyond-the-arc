@@ -18,10 +18,10 @@ How feature code is organized on disk — component folder structure, hooks/type
 
 The app has two distinct areas under `app/[locale]/`:
 
-- **`(public)/`** — the main basketball data pages (championships, matches, players, teams, organisations, map, search). This route group exists purely for layout scoping and adds no URL segment.
-- **Top-level pages** — `about`, `architecture`, `contact`, `docs`, `features`, and the home page (`/`) live directly under `[locale]/` outside the `(public)` group. These are primarily informational pages about the project itself and do not share the `(public)` layout.
+- **`(public)/`** — the main basketball data pages (championships, matches, players, teams, organisations, map, search). This route group adds no URL segment; it scopes the error boundary those pages share (`(public)/error.tsx`).
+- **Top-level pages** — `about`, `architecture`, `contact`, `docs`, `features`, and the home page (`/`) live directly under `[locale]/` outside the `(public)` group. These are primarily informational pages about the project itself, and fall back to the `[locale]/error.tsx` boundary.
 
-The home page is a special case: it fetches live platform stats from `serverStatsService` and renders its own `<Header />` and `<Footer />` inline rather than delegating to `PageLayout`.
+The map page is the one page that does not delegate to `PageLayout`: it renders its own `<Header />` and a full-height `main`, and deliberately has no footer, because the map fills the viewport. Every other page — including the home page, which uses `PageLayout`'s `edgeToEdge` variant for its bento sections — gets its header, footer and page background from `PageLayout`.
 
 The boundary between server and client is drawn around interactivity, not data. If a component renders once and never changes in response to user input, it is a server component. If it needs to filter, paginate, or update reactively, it becomes a client component backed by a TanStack Query hook.
 
