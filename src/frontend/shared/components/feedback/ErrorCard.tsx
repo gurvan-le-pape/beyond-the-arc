@@ -1,5 +1,7 @@
 // src/frontend/shared/components/feedback/ErrorCard.tsx
-import { Button } from "../primitives/Button";
+import { Link } from "@/navigation";
+
+import { Button, buttonVariants } from "../primitives";
 import { Text } from "../typography";
 
 interface ErrorCardProps {
@@ -9,14 +11,28 @@ interface ErrorCardProps {
     label: string;
     onClick: () => void;
   };
+  /**
+   * Navigation out of the error, for boundaries that have nothing to retry —
+   * `not-found.tsx` offers the way home rather than a retry button. Rendered
+   * as a link, never as a `Button`, which is for actions only.
+   */
+  readonly link?: {
+    label: string;
+    href: string;
+  };
 }
 
 /**
  * Full-width centered error card for error boundaries: an error icon badge, a
- * title, an optional description, and an optional retry action. Render it
- * inside a `<PageLayout centered>`.
+ * title, an optional description, and an optional retry action or link out.
+ * Render it inside a `<PageLayout centered>`.
  */
-export const ErrorCard = ({ title, description, action }: ErrorCardProps) => {
+export const ErrorCard = ({
+  title,
+  description,
+  action,
+  link,
+}: ErrorCardProps) => {
   return (
     <div className="bg-surface-subtle rounded-card border border-divide shadow-card p-10 max-w-md w-full text-center space-y-6 mx-auto">
       <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-error-subtle mx-auto">
@@ -43,6 +59,12 @@ export const ErrorCard = ({ title, description, action }: ErrorCardProps) => {
       </div>
 
       {action ? <Button onClick={action.onClick}>{action.label}</Button> : null}
+
+      {link ? (
+        <Link href={link.href} className={buttonVariants()}>
+          {link.label}
+        </Link>
+      ) : null}
     </div>
   );
 };

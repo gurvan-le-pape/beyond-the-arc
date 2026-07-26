@@ -2,6 +2,7 @@
   "loading": "Chargement ...",
   "error": "Une erreur est survenue.",
   "retry": "Réessayer",
+  "backToHome": "Retour à l'accueil",
   "empty": "Aucun résultat trouvé.",
   "seeLess": "Voir moins",
   "expandCategory": "Déplier la catégorie",
@@ -142,7 +143,9 @@
     "fetchPlayers": "Impossible de récupérer les joueurs. Veuillez réessayer plus tard.",
     "fetchTeams": "Impossible de récupérer les équipes. Veuillez réessayer plus tard.",
     "unexpected": "Une erreur est survenue. Veuillez réessayer plus tard.",
-    "unexpectedDescription": "Une erreur inattendue s'est produite. Veuillez réessayer ou contacter le support si le problème persiste."
+    "unexpectedDescription": "Une erreur inattendue s'est produite. Veuillez réessayer ou contacter le support si le problème persiste.",
+    "notFound": "Page introuvable",
+    "notFoundDescription": "Cette page n'existe pas, ou les données correspondantes ne sont plus disponibles."
   },
   "emptyState": {
     "players": "Aucun joueur trouvé",
