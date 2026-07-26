@@ -48,8 +48,6 @@ export const MatchCard: React.FC<MatchCardProps> = ({
         <ScoreDisplay
           homeTeamScore={match.homeTeamScore}
           awayTeamScore={match.awayTeamScore}
-          isHomeWinner={isHomeWinner}
-          isAwayWinner={isAwayWinner}
           matchId={match.id}
           locale={locale}
         />

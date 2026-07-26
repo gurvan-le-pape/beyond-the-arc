@@ -4,11 +4,11 @@
 import React from "react";
 
 import type { TeamInfo } from "@/features/teams/types";
+import { MatchScore } from "@/shared/components/domain";
 import { Card } from "@/shared/components/primitives";
 import { cn } from "@/shared/utils";
 
 import { LogoLink } from "./LogoLink";
-import { ScoreDisplay } from "./ScoreDisplay";
 import { TeamNameLink } from "./TeamNameLink";
 
 interface MatchScoreCardProps {
@@ -61,11 +61,10 @@ export const MatchScoreCard: React.FC<MatchScoreCardProps> = ({
         {/* Row 1: logos + score */}
         <div className="flex items-center justify-between gap-4">
           <LogoLink team={homeTeam} isWinning={isHomeWinning} />
-          <ScoreDisplay
+          <MatchScore
             homeScore={homeTeam.score}
             awayScore={awayTeam.score}
-            isHomeWinning={isHomeWinning}
-            isAwayWinning={isAwayWinning}
+            variant="hero"
           />
           <LogoLink team={awayTeam} isWinning={isAwayWinning} />
         </div>
@@ -87,11 +86,10 @@ export const MatchScoreCard: React.FC<MatchScoreCardProps> = ({
       {/* Desktop layout */}
       <div className="hidden md:flex items-center justify-between gap-6">
         <TeamSection team={homeTeam} isWinning={isHomeWinning} align="left" />
-        <ScoreDisplay
+        <MatchScore
           homeScore={homeTeam.score}
           awayScore={awayTeam.score}
-          isHomeWinning={isHomeWinning}
-          isAwayWinning={isAwayWinning}
+          variant="hero"
         />
         <TeamSection team={awayTeam} isWinning={isAwayWinning} align="right" />
       </div>

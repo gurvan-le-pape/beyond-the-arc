@@ -14,6 +14,7 @@ export * from "./GenderCategorizedSection";
 export * from "./LeaderboardTable";
 export * from "./ListEntityCard";
 export * from "./matches/matchHistoryColumns";
+export * from "./matches/MatchScore";
 export * from "./matches/MatchTeamLabel";
 export * from "./PerGameStatsPanel";
 export * from "./search/SearchTabShell";
