@@ -42,7 +42,7 @@ export default async function ClubPage({
     .catch(handleServerError);
 
   return (
-    <PageLayout ariaLabel={t("detail.page", { clubName: club.name })}>
+    <PageLayout>
       <OrganizationDetailView
         breadcrumb={[
           { label: tOrganizations("breadcrumb"), href: "/organizations" },

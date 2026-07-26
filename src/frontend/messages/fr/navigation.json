@@ -6,6 +6,7 @@
     "map": "Carte"
   },
   "header": {
+    "skipToContent": "Aller au contenu",
     "mainNavAriaLabel": "Navigation principale",
     "openMenu": "Ouvrir le menu",
     "closeMenu": "Fermer le menu",

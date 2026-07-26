@@ -1,5 +1,5 @@
 // src/frontend/app/[locale]/(chrome)/layout.tsx
-import { Footer, Header } from "@/shared/components/layout";
+import { Footer, Header, SkipLink } from "@/shared/components/layout";
 
 /**
  * Site chrome — header, footer and the page background — for every route
@@ -17,6 +17,7 @@ export default function ChromeLayout({
 }) {
   return (
     <div className="flex flex-col min-h-screen surface-base">
+      <SkipLink />
       <Header />
       {children}
       <Footer />
