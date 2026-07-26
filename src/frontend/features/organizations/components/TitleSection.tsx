@@ -97,7 +97,7 @@ export function TitleSection({
       <div className="flex items-start gap-4 mb-4">
         <div className={config.iconClassName}>{config.icon}</div>
         <div className="flex-1 min-w-0">
-          <Text variant="h2" className={config.titleColor}>
+          <Text variant="pageTitle" className={config.titleColor}>
             {config.title}
           </Text>
           {config.subtitle && (

@@ -1,9 +1,18 @@
 // src/frontend/app/[locale]/(fullscreen)/map/page.tsx
+import { getTranslations } from "next-intl/server";
+
 import { serverClubsService } from "@/features/organizations/clubs/api";
 import { ClubsMapClient } from "@/features/organizations/clubs/components";
+import { Text } from "@/shared/components/typography";
+import type { LocalePageProps } from "@/shared/types";
 import { handleServerError } from "@/shared/utils";
 
-export default async function MapPage() {
+export default async function MapPage({ params }: LocalePageProps) {
+  // Locale passed explicitly rather than left to next-intl's request fallback:
+  // this page never calls `setRequestLocale`, and the fallback reads `headers()`.
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "clubs" });
+
   // Pre-fetch initial regions data server-side
   const [initialRegions, initialDepartments, initialClubs] = await Promise.all([
     serverClubsService.getStatsByRegion(),
@@ -15,6 +24,11 @@ export default async function MapPage() {
   // this page contributes the `main` the map fills.
   return (
     <main id="main-content" className="flex-1 relative">
+      {/* The map is the page; this is the document's heading. */}
+      <Text variant="pageTitle" className="sr-only">
+        {t("map.pageTitle")}
+      </Text>
+
       <ClubsMapClient
         initialRegions={initialRegions}
         initialDepartments={initialDepartments}

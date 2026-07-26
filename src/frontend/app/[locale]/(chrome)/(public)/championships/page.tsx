@@ -11,6 +11,7 @@ import {
 import { PageLayout } from "@/shared/components/layout";
 import { QueryTabs } from "@/shared/components/navigation";
 import { TabsContent } from "@/shared/components/primitives";
+import { Text } from "@/shared/components/typography";
 import { CompetitionLevel } from "@/shared/constants";
 
 const TABS = {
@@ -21,6 +22,7 @@ const TABS = {
 
 export default function ChampionshipsPage() {
   const tCommon = useTranslations("common");
+  const tCompetitions = useTranslations("competitions");
 
   const tabs = [
     { value: TABS.NATIONAL, label: tCommon("competition.levels.national") },
@@ -33,6 +35,12 @@ export default function ChampionshipsPage() {
 
   return (
     <PageLayout>
+      {/* The tabs carry the page identity visually; the heading exists so the
+          document does not start at level 2 for a screen reader. */}
+      <Text variant="pageTitle" className="sr-only">
+        {tCompetitions("title")}
+      </Text>
+
       <QueryTabs tabs={tabs}>
         <TabsContent value={TABS.NATIONAL}>
           <NationalTab />

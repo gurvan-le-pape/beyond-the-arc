@@ -17,8 +17,26 @@ export function ChampionshipHeader({ championship }: ChampionshipHeaderProps) {
   const { committeeName, leagueName, category, gender, division, seasonYear } =
     championship;
 
+  // The card shows the championship as an organisation line plus badges, which
+  // reads well but leaves the document with no heading. This says the same
+  // thing in one line, for screen readers only.
+  const documentTitle = [
+    committeeName ? formatCommitteeName(committeeName) : null,
+    leagueName ? formatLeagueName(leagueName) : null,
+    category,
+    tCommon(`gender.${gender}`),
+    tCompetitions("divisionWithValue", { value: division }),
+    seasonYear,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+
   return (
     <Card variant="highlighted" padding="none">
+      <Text variant="pageTitle" className="sr-only">
+        {documentTitle}
+      </Text>
+
       <div className="px-6 py-5">
         <div className="flex flex-col gap-0.5">
           {committeeName && (

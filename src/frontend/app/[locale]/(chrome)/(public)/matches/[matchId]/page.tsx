@@ -1,11 +1,12 @@
 // src/frontend/app/[locale]/(chrome)/(public)/matches/[matchId]/page.tsx
 import { notFound } from "next/navigation";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { serverMatchesService } from "@/features/matches/api";
 import { MatchScoreCard, MatchSummaryTabs } from "@/features/matches/components";
 import { buildTeam, groupShotEventsByPlayer } from "@/features/matches/utils";
 import { PageLayout } from "@/shared/components/layout";
+import { Text } from "@/shared/components/typography";
 import type { LocalePageProps } from "@/shared/types";
 import { handleServerError, parseRouteId } from "@/shared/utils";
 
@@ -22,6 +23,7 @@ export default async function MatchSummaryPage({
 }: LocalePageProps<{ matchId: string }>) {
   const { matchId: matchIdStr, locale } = await params;
   setRequestLocale(locale);
+  const tMatches = await getTranslations({ locale, namespace: "matches" });
 
   const matchId = parseRouteId(matchIdStr);
 
@@ -43,6 +45,14 @@ export default async function MatchSummaryPage({
 
   return (
     <PageLayout>
+      {/* The score card is the visible title; this is the document's heading. */}
+      <Text variant="pageTitle" className="sr-only">
+        {tMatches("matchTitle", {
+          homeTeam: homeTeam.name,
+          awayTeam: awayTeam.name,
+        })}
+      </Text>
+
       <MatchScoreCard homeTeam={homeTeam} awayTeam={awayTeam} />
 
       <MatchSummaryTabs
