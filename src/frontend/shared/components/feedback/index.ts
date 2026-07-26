@@ -8,4 +8,5 @@ export * from "./ErrorCard";
 export * from "./ErrorMessage";
 export * from "./LoadingSpinner";
 export * from "./RouteErrorBoundary";
+export * from "./RouteNotFound";
 export * from "./Skeleton";
