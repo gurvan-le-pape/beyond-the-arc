@@ -145,7 +145,8 @@
     "unexpected": "Something went wrong. Please try again later.",
     "unexpectedDescription": "An unexpected error occurred. Please try again or contact support if the problem persists.",
     "notFound": "Page not found",
-    "notFoundDescription": "This page does not exist, or the data behind it is no longer available."
+    "notFoundDescription": "This page does not exist, or the data behind it is no longer available.",
+    "notFoundSuggestions": "Elsewhere on the site"
   },
   "emptyState": {
     "players": "No players found",
