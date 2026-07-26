@@ -19,10 +19,13 @@ import { PageLayout } from "@/shared/components/layout";
  * `revalidate` down with it — a 500 on each detail page, whether or not the id
  * existed. `useTranslations` reads from the provider and needs no request.
  *
- * Scope: `notFound()` inside the chrome routes. A URL that matches no route at
- * all is still Next's built-in page, because the boundary for those is
- * `app/not-found.tsx`, which sits outside `[locale]` and so has neither a
- * locale nor the message provider the chrome needs.
+ * Scope: everything under `(chrome)`. A URL that matches no route at all gets
+ * here too, since `[...rest]/page.tsx` catches it and calls `notFound()` — a
+ * boundary alone never covers those, because Next renders it when a route
+ * *calls* `notFound()` and an unknown URL enters no route. What is left over is
+ * paths the middleware skips, anything with a dot per its matcher: they carry
+ * no locale, so they have neither a translation nor this provider and still
+ * land on Next's built-in page.
  */
 export default function NotFound() {
   const t = useTranslations("common");
