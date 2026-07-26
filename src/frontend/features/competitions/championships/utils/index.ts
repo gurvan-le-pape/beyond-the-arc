@@ -4,6 +4,7 @@
  */
 
 export * from "./buildCategoryNavigation";
+export * from "./buildChampionshipTitle";
 export * from "./buildDivisionNavigation";
 export * from "./resolveInitialPoolId";
 export * from "./resolveOrganizationId";

@@ -1,4 +1,5 @@
 {
+  "description": "Recherchez joueurs, équipes et matchs du basket français.",
   "title": "Recherche",
   "tabs": {
     "players": "Joueurs",

@@ -1,5 +1,6 @@
 // src/frontend/app/[locale]/(chrome)/(public)/organizations/clubs/[clubId]/page.tsx
 import { Users } from "lucide-react";
+import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { serverClubsService } from "@/features/organizations/clubs/api";
@@ -23,6 +24,22 @@ export async function generateStaticParams() {
 
 export const dynamicParams = true;
 export const revalidate = 3600;
+
+export async function generateMetadata({
+  params,
+}: LocalePageProps<{ clubId: string }>): Promise<Metadata> {
+  const { clubId: clubIdStr, locale } = await params;
+  const tMeta = await getTranslations({ locale, namespace: "clubs" });
+
+  const club = await serverClubsService
+    .getById(parseRouteId(clubIdStr))
+    .catch(handleServerError);
+
+  return {
+    title: club.name,
+    description: tMeta("detail.meta", { name: club.name }),
+  };
+}
 
 export default async function ClubPage({
   params,

@@ -1,4 +1,5 @@
 // src/frontend/app/[locale]/(fullscreen)/map/page.tsx
+import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
 import { serverClubsService } from "@/features/organizations/clubs/api";
@@ -6,6 +7,18 @@ import { ClubsMapClient } from "@/features/organizations/clubs/components";
 import { Text } from "@/shared/components/typography";
 import type { LocalePageProps } from "@/shared/types";
 import { handleServerError } from "@/shared/utils";
+
+export async function generateMetadata({
+  params,
+}: LocalePageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const tMeta = await getTranslations({ locale, namespace: "clubs" });
+
+  return {
+    title: tMeta("map.pageTitle"),
+    description: tMeta("map.description"),
+  };
+}
 
 export default async function MapPage({ params }: LocalePageProps) {
   // Locale passed explicitly rather than left to next-intl's request fallback:

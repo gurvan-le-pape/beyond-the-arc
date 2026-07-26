@@ -1,4 +1,5 @@
 // src/frontend/app/[locale]/(chrome)/(public)/matches/[matchId]/page.tsx
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
@@ -17,6 +18,27 @@ export async function generateStaticParams() {
 
 export const dynamicParams = true;
 export const revalidate = 3600;
+
+export async function generateMetadata({
+  params,
+}: LocalePageProps<{ matchId: string }>): Promise<Metadata> {
+  const { matchId: matchIdStr, locale } = await params;
+  const tMeta = await getTranslations({ locale, namespace: "matches" });
+
+  const match = await serverMatchesService
+    .getById(parseRouteId(matchIdStr))
+    .catch(handleServerError);
+
+  const teams = {
+    homeTeam: match.homeTeam.club.name,
+    awayTeam: match.awayTeam.club.name,
+  };
+
+  return {
+    title: tMeta("matchTitle", teams),
+    description: tMeta("meta", teams),
+  };
+}
 
 export default async function MatchSummaryPage({
   params,

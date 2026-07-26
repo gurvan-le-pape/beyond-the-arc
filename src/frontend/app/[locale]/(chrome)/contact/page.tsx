@@ -1,5 +1,6 @@
 // src/frontend/app/[locale]/(chrome)/contact/page.tsx
 import { Github, Linkedin, Mail, Send } from "lucide-react";
+import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import {
@@ -40,6 +41,15 @@ const CONTACT_METHODS_CONFIG = [
     color: "from-blue-600 to-blue-800",
   },
 ] as const;
+
+export async function generateMetadata({
+  params,
+}: LocalePageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const tMeta = await getTranslations({ locale, namespace: "landing" });
+
+  return { title: tMeta("contact.title"), description: tMeta("contact.intro") };
+}
 
 export default async function ContactPage({ params }: LocalePageProps) {
   const { locale } = await params;

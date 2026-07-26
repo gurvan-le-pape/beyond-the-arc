@@ -11,6 +11,7 @@ import {
   TestTube,
   Wrench,
 } from "lucide-react";
+import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import type { TechStackItemConfig } from "@/features/site/architecture/components";
@@ -29,6 +30,15 @@ interface TechStackConfig {
   icon: typeof Globe;
   color: string;
   items: TechStackItemConfig[];
+}
+
+export async function generateMetadata({
+  params,
+}: LocalePageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const tMeta = await getTranslations({ locale, namespace: "landing" });
+
+  return { title: tMeta("architecture.title"), description: tMeta("architecture.subtitle") };
 }
 
 export default async function ArchitecturePage({ params }: LocalePageProps) {

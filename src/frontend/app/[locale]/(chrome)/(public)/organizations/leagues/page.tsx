@@ -1,4 +1,5 @@
 // src/frontend/app/[locale]/(chrome)/(public)/organizations/leagues/page.tsx
+import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { TitleSection } from "@/features/organizations/components";
@@ -19,6 +20,15 @@ export const dynamic = "force-dynamic";
  * Leagues Page
  * Shows all regional leagues
  */
+export async function generateMetadata({
+  params,
+}: LocalePageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const tMeta = await getTranslations({ locale, namespace: "organizations" });
+
+  return { title: tMeta("leagues.label"), description: tMeta("leagues.description") };
+}
+
 export default async function LeaguesPage({ params }: LocalePageProps) {
   const { locale } = await params;
   setRequestLocale(locale);

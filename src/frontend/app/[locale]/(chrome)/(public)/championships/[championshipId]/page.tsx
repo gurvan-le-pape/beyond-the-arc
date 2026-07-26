@@ -1,11 +1,13 @@
 // src/frontend/app/[locale]/(chrome)/(public)/championships/[championshipId]/page.tsx
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { serverChampionshipsService } from "@/features/competitions/championships/api";
 import { ChampionshipDetailPage } from "@/features/competitions/championships/components";
 import {
   buildCategoryNavigation,
+  buildChampionshipTitle,
   buildDivisionNavigation,
   resolveInitialPoolId,
   resolveOrganizationId,
@@ -23,6 +25,34 @@ export async function generateStaticParams() {
 
 export const dynamicParams = true;
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: LocalePageProps<{ championshipId: string }>): Promise<Metadata> {
+  const { championshipId: championshipIdStr, locale } = await params;
+  const [tCommon, tCompetitions] = await Promise.all([
+    getTranslations({ locale, namespace: "common" }),
+    getTranslations({ locale, namespace: "competitions" }),
+  ]);
+
+  const championship = await serverChampionshipsService
+    .getById(parseRouteId(championshipIdStr))
+    .catch(handleServerError);
+
+  // The same one-liner the page uses as its heading — a championship has no
+  // name of its own.
+  const name = buildChampionshipTitle(championship, {
+    gender: tCommon(`gender.${championship.gender}`),
+    division: tCompetitions("divisionWithValue", {
+      value: championship.division,
+    }),
+  });
+
+  return {
+    title: name,
+    description: tCompetitions("championshipMeta", { name }),
+  };
+}
 
 export default async function ChampionshipsDetailPage({
   params,

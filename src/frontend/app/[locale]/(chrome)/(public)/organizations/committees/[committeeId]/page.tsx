@@ -1,5 +1,6 @@
 // src/frontend/app/[locale]/(chrome)/(public)/organizations/committees/[committeeId]/page.tsx
 import { Trophy } from "lucide-react";
+import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { serverChampionshipsService } from "@/features/competitions/championships/api";
@@ -17,6 +18,22 @@ import { handleServerError, parseRouteId } from "@/shared/utils";
 // generated on first request instead and then cached for the revalidate window.
 export const dynamicParams = true;
 export const revalidate = 3600;
+
+export async function generateMetadata({
+  params,
+}: LocalePageProps<{ committeeId: string }>): Promise<Metadata> {
+  const { committeeId: committeeIdStr, locale } = await params;
+  const tMeta = await getTranslations({ locale, namespace: "organizations" });
+
+  const committee = await serverCommitteesService
+    .getById(parseRouteId(committeeIdStr))
+    .catch(handleServerError);
+
+  return {
+    title: committee.name,
+    description: tMeta("committeeMeta", { name: committee.name }),
+  };
+}
 
 export default async function CommitteePage({
   params,

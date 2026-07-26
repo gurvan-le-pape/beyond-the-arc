@@ -1,4 +1,5 @@
 {
+  "meta": "{homeTeam} contre {awayTeam} — feuille de match, déroulé et cartes de tirs.",
   "matchTitle": "{homeTeam} contre {awayTeam}",
   "label": "Matchs",
   "searchClub": "Rechercher un club",

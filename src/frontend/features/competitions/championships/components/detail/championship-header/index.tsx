@@ -2,6 +2,7 @@
 import { useTranslations } from "next-intl";
 
 import type { Championship } from "@/features/competitions/championships/types";
+import { buildChampionshipTitle } from "@/features/competitions/championships/utils";
 import { Badge, Card, Divide } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { formatCommitteeName, formatLeagueName } from "@/shared/utils";
@@ -19,17 +20,12 @@ export function ChampionshipHeader({ championship }: ChampionshipHeaderProps) {
 
   // The card shows the championship as an organisation line plus badges, which
   // reads well but leaves the document with no heading. This says the same
-  // thing in one line, for screen readers only.
-  const documentTitle = [
-    committeeName ? formatCommitteeName(committeeName) : null,
-    leagueName ? formatLeagueName(leagueName) : null,
-    category,
-    tCommon(`gender.${gender}`),
-    tCompetitions("divisionWithValue", { value: division }),
-    seasonYear,
-  ]
-    .filter(Boolean)
-    .join(" · ");
+  // thing in one line, for screen readers only — and is the same string the
+  // page uses as its document title.
+  const documentTitle = buildChampionshipTitle(championship, {
+    gender: tCommon(`gender.${gender}`),
+    division: tCompetitions("divisionWithValue", { value: division }),
+  });
 
   return (
     <Card variant="highlighted" padding="none">

@@ -1,4 +1,5 @@
 // src/frontend/app/[locale]/(chrome)/page.tsx
+import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
 import { ExploreCard, LevelRow } from "@/features/site/home/components";
@@ -17,6 +18,22 @@ import { handleServerError } from "@/shared/utils";
 // of the prerender pass. Saying so explicitly is what lets the locale layout
 // adopt setRequestLocale without breaking the build.
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: LocalePageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const tMeta = await getTranslations({ locale, namespace: "home" });
+
+  // Absolute: the home page is the site, so it does not want the
+  // "· Beyond The Arc" suffix every other route inherits.
+  return {
+    title: {
+      absolute: `Beyond The Arc — ${tMeta("hero.titleStart")} ${tMeta("hero.titleEmphasis")}`,
+    },
+    description: tMeta("hero.subtitle"),
+  };
+}
 
 export default async function Home({ params }: LocalePageProps) {
   const { locale } = await params;

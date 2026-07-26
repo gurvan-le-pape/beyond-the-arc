@@ -1,4 +1,6 @@
 {
+  "championshipMeta": "{name} — standings, pools and results.",
+  "description": "Every championship, from departmental to national level.",
   "title": "Championships",
   "breadcrumb": "Championships",
   "noChampionships": "No championships available",

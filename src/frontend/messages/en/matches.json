@@ -1,4 +1,5 @@
 {
+  "meta": "{homeTeam} against {awayTeam} — box score, play-by-play and shot charts.",
   "matchTitle": "{homeTeam} vs {awayTeam}",
   "label": "Matches",
   "searchClub": "Search club",

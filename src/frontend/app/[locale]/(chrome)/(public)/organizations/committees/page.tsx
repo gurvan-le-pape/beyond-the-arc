@@ -1,4 +1,5 @@
 // src/frontend/app/[locale]/(chrome)/(public)/organizations/committees/page.tsx
+import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { serverCommitteesService } from "@/features/organizations/committees/api";
@@ -19,6 +20,15 @@ export const dynamic = "force-dynamic";
  * Committees Page
  * Shows all departmental committees
  */
+export async function generateMetadata({
+  params,
+}: LocalePageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const tMeta = await getTranslations({ locale, namespace: "organizations" });
+
+  return { title: tMeta("committees.label"), description: tMeta("committees.description") };
+}
+
 export default async function CommitteesPage({ params }: LocalePageProps) {
   const { locale } = await params;
   setRequestLocale(locale);

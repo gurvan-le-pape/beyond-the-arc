@@ -1,4 +1,5 @@
 // src/frontend/app/[locale]/(chrome)/(public)/players/[playerId]/page.tsx
+import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { PlayerShotChart } from "@/features/charts/components";
@@ -21,6 +22,22 @@ export async function generateStaticParams() {
 
 export const dynamicParams = true;
 export const revalidate = 3600;
+
+export async function generateMetadata({
+  params,
+}: LocalePageProps<{ playerId: string }>): Promise<Metadata> {
+  const { playerId: playerIdStr, locale } = await params;
+  const tMeta = await getTranslations({ locale, namespace: "players" });
+
+  const player = await serverPlayersService
+    .getById(parseRouteId(playerIdStr))
+    .catch(handleServerError);
+
+  return {
+    title: player.name,
+    description: tMeta("meta", { name: player.name }),
+  };
+}
 
 export default async function PlayerDetailPage({
   params,
