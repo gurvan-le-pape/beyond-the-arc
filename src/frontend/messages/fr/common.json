@@ -145,7 +145,8 @@
     "unexpected": "Une erreur est survenue. Veuillez réessayer plus tard.",
     "unexpectedDescription": "Une erreur inattendue s'est produite. Veuillez réessayer ou contacter le support si le problème persiste.",
     "notFound": "Page introuvable",
-    "notFoundDescription": "Cette page n'existe pas, ou les données correspondantes ne sont plus disponibles."
+    "notFoundDescription": "Cette page n'existe pas, ou les données correspondantes ne sont plus disponibles.",
+    "notFoundSuggestions": "Ailleurs sur le site"
   },
   "emptyState": {
     "players": "Aucun joueur trouvé",
