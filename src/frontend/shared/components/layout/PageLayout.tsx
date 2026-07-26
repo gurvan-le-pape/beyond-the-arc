@@ -6,7 +6,6 @@ import { Header } from "./header/Header";
 
 interface PageLayoutProps {
   children: React.ReactNode;
-  className?: string;
   contentClassName?: string;
   ariaLabel?: string;
   centered?: boolean;
@@ -38,7 +37,6 @@ interface PageLayoutProps {
  */
 export const PageLayout = ({
   children,
-  className,
   contentClassName,
   ariaLabel,
   centered,
@@ -52,7 +50,6 @@ export const PageLayout = ({
         "flex-grow",
         edgeToEdge ? "" : "min-h-[70vh] px-4 py-12 sm:px-6 lg:px-8",
         centered ? "flex flex-col items-center justify-center" : "",
-        className,
       )}
     >
       <div
