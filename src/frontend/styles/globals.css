@@ -6,6 +6,13 @@ html {
   scrollbar-gutter: stable;
 }
 
+/* The page background also has to live on the document, not only on the page
+   shell: overscroll (rubber-band on macOS/iOS) reveals the body, and the map
+   page has no shell at all. Uses the same token, so it follows the theme. */
+body {
+  background-color: var(--color-surface-base);
+}
+
 /* =============================================================================
    DESIGN TOKENS
    =============================================================================
