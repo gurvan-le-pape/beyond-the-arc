@@ -5,15 +5,14 @@ import { useMemo } from "react";
 import {
   buildMatchDateColumn,
   buildMatchupColumn,
+  MatchScore,
 } from "@/shared/components/domain";
-import { Badge } from "@/shared/components/primitives";
 
 import type { Team } from "../types/Team";
 import type { TeamMatchHistory } from "../types/TeamMatchHistory";
 
 export function useTeamMatchHistoryColumns(team: Team) {
   const tCommon = useTranslations("common");
-  const tMatches = useTranslations("matches");
 
   return useMemo(
     () => [
@@ -25,39 +24,17 @@ export function useTeamMatchHistoryColumns(team: Team) {
       {
         key: "score",
         header: tCommon("matchHistory.score"),
-        render: (match: TeamMatchHistory) => {
-          const homeScore = match.homeTeamScore;
-          const awayScore = match.awayTeamScore;
-          const hasScore = homeScore !== null && awayScore !== null;
-
-          if (!hasScore) {
-            return (
-              <Badge variant="outline" size="md">
-                {tMatches("upcoming")}
-              </Badge>
-            );
-          }
-
-          return (
-            <span>
-              <span
-                className={homeScore > awayScore ? "font-bold" : "font-normal"}
-              >
-                {homeScore}
-              </span>
-              {" - "}
-              <span
-                className={awayScore > homeScore ? "font-bold" : "font-normal"}
-              >
-                {awayScore}
-              </span>
-            </span>
-          );
-        },
+        render: (match: TeamMatchHistory) => (
+          <MatchScore
+            homeScore={match.homeTeamScore}
+            awayScore={match.awayTeamScore}
+            variant="table"
+          />
+        ),
         align: "center" as const,
       },
     ],
-    [tCommon, tMatches, team.id],
+    [tCommon, team.id],
   );
 }
 

@@ -7,6 +7,7 @@ import {
   EntityCardBadges,
   getLevelConfig,
   ListEntityCard,
+  MatchScore,
 } from "@/shared/components/domain";
 import { Badge } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
@@ -76,35 +77,11 @@ export const MatchesCard: React.FC<{ match: Match }> = ({ match }) => {
 
           {/* Score */}
           <div className="flex-shrink-0 text-center">
-            {hasScore ? (
-              <div className="flex items-center gap-3">
-                <span
-                  className={cn(
-                    "text-2xl",
-                    homeTeamScore > awayTeamScore
-                      ? "font-bold text-text-heading"
-                      : "font-normal text-text-body",
-                  )}
-                >
-                  {homeTeamScore}
-                </span>
-                <span className="text-xl text-text-muted">-</span>
-                <span
-                  className={cn(
-                    "text-2xl",
-                    awayTeamScore > homeTeamScore
-                      ? "font-bold text-text-heading"
-                      : "font-normal text-text-body",
-                  )}
-                >
-                  {awayTeamScore}
-                </span>
-              </div>
-            ) : (
-              <Badge variant="outline" size="md">
-                {tMatches("upcoming")}
-              </Badge>
-            )}
+            <MatchScore
+              homeScore={homeTeamScore}
+              awayScore={awayTeamScore}
+              variant="list"
+            />
           </div>
 
           {/* Away Team */}
