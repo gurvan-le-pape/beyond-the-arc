@@ -1,4 +1,5 @@
 {
+  "matchTitle": "{homeTeam} vs {awayTeam}",
   "label": "Matches",
   "searchClub": "Search club",
   "searchClubPlaceholder": "Club name...",
