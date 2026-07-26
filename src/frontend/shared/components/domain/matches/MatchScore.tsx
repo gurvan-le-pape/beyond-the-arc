@@ -34,7 +34,7 @@ function scoreClasses(variant: MatchScoreVariant, isWinner: boolean): string {
         ? "text-2xl font-bold text-text-heading"
         : "text-2xl font-normal text-text-body";
     case "compact":
-      return isWinner ? "text-primary" : "text-text-emphasis";
+      return isWinner ? "text-text-heading" : "text-text-secondary";
     case "hero":
       return cn(
         "text-2xl md:text-4xl font-bold tabular-nums transition-colors duration-200",
