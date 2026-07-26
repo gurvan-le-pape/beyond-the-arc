@@ -14,6 +14,7 @@ import {
   Users,
   Zap,
 } from "lucide-react";
+import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import {
@@ -92,6 +93,15 @@ const HIGHLIGHTS_CONFIG = [
   { icon: Search, highlightKey: "search" },
   { icon: Sparkles, highlightKey: "responsive" },
 ] as const;
+
+export async function generateMetadata({
+  params,
+}: LocalePageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const tMeta = await getTranslations({ locale, namespace: "landing" });
+
+  return { title: tMeta("features.title"), description: tMeta("features.subtitle") };
+}
 
 export default async function FeaturesPage({ params }: LocalePageProps) {
   const { locale } = await params;

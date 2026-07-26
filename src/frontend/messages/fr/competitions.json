@@ -1,4 +1,6 @@
 {
+  "championshipMeta": "{name} — classements, poules et résultats.",
+  "description": "Tous les championnats, du niveau départemental au national.",
   "title": "Championnats",
   "breadcrumb": "Championnats",
   "noChampionships": "Aucun championnat disponible",

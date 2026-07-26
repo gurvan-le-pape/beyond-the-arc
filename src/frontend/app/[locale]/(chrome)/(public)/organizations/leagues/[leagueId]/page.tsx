@@ -1,5 +1,6 @@
 // src/frontend/app/[locale]/(chrome)/(public)/organizations/leagues/[leagueId]/page.tsx
 import { Trophy } from "lucide-react";
+import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { serverChampionshipsService } from "@/features/competitions/championships/api";
@@ -17,6 +18,22 @@ import { handleServerError, parseRouteId } from "@/shared/utils";
 // on first request instead and then cached for the revalidate window.
 export const dynamicParams = true;
 export const revalidate = 3600;
+
+export async function generateMetadata({
+  params,
+}: LocalePageProps<{ leagueId: string }>): Promise<Metadata> {
+  const { leagueId: leagueIdStr, locale } = await params;
+  const tMeta = await getTranslations({ locale, namespace: "organizations" });
+
+  const league = await serverLeaguesService
+    .getById(parseRouteId(leagueIdStr))
+    .catch(handleServerError);
+
+  return {
+    title: league.name,
+    description: tMeta("leagueMeta", { name: league.name }),
+  };
+}
 
 export default async function LeaguePage({
   params,

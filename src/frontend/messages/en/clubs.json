@@ -9,6 +9,7 @@
   "errorLoadingDepartments": "Failed to load departments",
   "errorLoadingClubs": "Failed to load clubs",
   "detail": {
+    "meta": "{name} — teams, contact details and location.",
     "infoTitle": "Information",
     "address": "Address",
     "city": "City",
@@ -20,6 +21,7 @@
     "teamsTitle": "Teams"
   },
   "map": {
+    "description": "Every French basketball club on an interactive map.",
     "pageTitle": "Clubs map",
     "seeDetails": "See details",
     "retry": "Retry",

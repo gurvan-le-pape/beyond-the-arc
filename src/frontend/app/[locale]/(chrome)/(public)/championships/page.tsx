@@ -1,57 +1,35 @@
 // src/frontend/app/[locale]/(chrome)/(public)/championships/page.tsx
-"use client";
+import type { Metadata } from "next";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { useTranslations } from "next-intl";
-
-import {
-  DepartmentalTab,
-  NationalTab,
-  RegionalTab,
-} from "@/features/competitions/championships/components";
+import { ChampionshipLevelTabs } from "@/features/competitions/championships/components";
 import { PageLayout } from "@/shared/components/layout";
-import { QueryTabs } from "@/shared/components/navigation";
-import { TabsContent } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
-import { CompetitionLevel } from "@/shared/constants";
+import type { LocalePageProps } from "@/shared/types";
 
-const TABS = {
-  NATIONAL: CompetitionLevel.NATIONAL,
-  REGIONAL: CompetitionLevel.REGIONAL,
-  DEPARTMENTAL: CompetitionLevel.DEPARTMENTAL,
-} as const;
+export async function generateMetadata({
+  params,
+}: LocalePageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "competitions" });
 
-export default function ChampionshipsPage() {
-  const tCommon = useTranslations("common");
-  const tCompetitions = useTranslations("competitions");
+  return { title: t("title"), description: t("description") };
+}
 
-  const tabs = [
-    { value: TABS.NATIONAL, label: tCommon("competition.levels.national") },
-    { value: TABS.REGIONAL, label: tCommon("competition.levels.regional") },
-    {
-      value: TABS.DEPARTMENTAL,
-      label: tCommon("competition.levels.departmental"),
-    },
-  ];
+export default async function ChampionshipsPage({ params }: LocalePageProps) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: "competitions" });
 
   return (
     <PageLayout>
       {/* The tabs carry the page identity visually; the heading exists so the
           document does not start at level 2 for a screen reader. */}
       <Text variant="pageTitle" className="sr-only">
-        {tCompetitions("title")}
+        {t("title")}
       </Text>
 
-      <QueryTabs tabs={tabs}>
-        <TabsContent value={TABS.NATIONAL}>
-          <NationalTab />
-        </TabsContent>
-        <TabsContent value={TABS.REGIONAL}>
-          <RegionalTab />
-        </TabsContent>
-        <TabsContent value={TABS.DEPARTMENTAL}>
-          <DepartmentalTab />
-        </TabsContent>
-      </QueryTabs>
+      <ChampionshipLevelTabs />
     </PageLayout>
   );
 }

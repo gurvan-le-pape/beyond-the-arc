@@ -9,6 +9,7 @@ import {
   Users,
   Wrench,
 } from "lucide-react";
+import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import {
@@ -47,6 +48,15 @@ const PRINCIPLES_CONFIG = [
     color: "from-yellow-500 to-orange-500",
   },
 ] as const;
+
+export async function generateMetadata({
+  params,
+}: LocalePageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const tMeta = await getTranslations({ locale, namespace: "landing" });
+
+  return { title: tMeta("about.title"), description: tMeta("about.intro") };
+}
 
 export default async function AboutPage({ params }: LocalePageProps) {
   const { locale } = await params;

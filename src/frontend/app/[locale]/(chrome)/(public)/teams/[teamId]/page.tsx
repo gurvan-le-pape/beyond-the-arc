@@ -1,4 +1,5 @@
 // src/frontend/app/[locale]/(chrome)/(public)/teams/[teamId]/page.tsx
+import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { TeamShotChart } from "@/features/charts/components";
@@ -21,6 +22,30 @@ export async function generateStaticParams() {
 
 export const dynamicParams = true;
 export const revalidate = 3600;
+
+export async function generateMetadata({
+  params,
+}: LocalePageProps<{ teamId: string }>): Promise<Metadata> {
+  const { teamId: teamIdStr, locale } = await params;
+  const [tCommon, tMeta] = await Promise.all([
+    getTranslations({ locale, namespace: "common" }),
+    getTranslations({ locale, namespace: "teams" }),
+  ]);
+
+  const team = await serverTeamsService
+    .getById(parseRouteId(teamIdStr))
+    .catch(handleServerError);
+
+  // A team has no name of its own — the page titles it by club, and the badges
+  // beside that are what distinguish one team of a club from the next.
+  const name = [
+    team.club.name,
+    team.category,
+    tCommon(`gender.${team.gender}`),
+  ].join(" · ");
+
+  return { title: name, description: tMeta("meta", { name }) };
+}
 
 export default async function TeamDetailPage({
   params,

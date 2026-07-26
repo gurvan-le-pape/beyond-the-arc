@@ -9,6 +9,7 @@
   "errorLoadingDepartments": "Impossible de charger les départements",
   "errorLoadingClubs": "Impossible de charger les clubs",
   "detail": {
+    "meta": "{name} — équipes, coordonnées et localisation.",
     "infoTitle": "Informations",
     "address": "Adresse",
     "city": "Ville",
@@ -20,6 +21,7 @@
     "teamsTitle": "Équipes"
   },
   "map": {
+    "description": "Tous les clubs de basket français sur une carte interactive.",
     "pageTitle": "Carte des clubs",
     "seeDetails": "Voir détails",
     "retry": "Réessayer",

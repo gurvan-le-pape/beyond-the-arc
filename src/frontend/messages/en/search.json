@@ -1,4 +1,5 @@
 {
+  "description": "Search players, teams and matches across French basketball.",
   "title": "Search",
   "tabs": {
     "players": "Players",

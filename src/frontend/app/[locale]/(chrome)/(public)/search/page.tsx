@@ -1,28 +1,25 @@
 // src/frontend/app/[locale]/(chrome)/(public)/search/page.tsx
-"use client";
+import type { Metadata } from "next";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { useTranslations } from "next-intl";
-
-import { MatchesTab, PlayersTab, TeamsTab } from "@/features/search/components";
+import { SearchTabs } from "@/features/search/components";
 import { PageLayout } from "@/shared/components/layout";
-import { QueryTabs } from "@/shared/components/navigation";
-import { TabsContent } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
+import type { LocalePageProps } from "@/shared/types";
 
-const TABS = {
-  PLAYERS: "players",
-  TEAMS: "teams",
-  MATCHES: "matches",
-} as const;
+export async function generateMetadata({
+  params,
+}: LocalePageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "search" });
 
-export default function SearchPage() {
-  const t = useTranslations("search");
+  return { title: t("title"), description: t("description") };
+}
 
-  const tabs = [
-    { value: TABS.PLAYERS, label: t("tabs.players") },
-    { value: TABS.TEAMS, label: t("tabs.teams") },
-    { value: TABS.MATCHES, label: t("tabs.matches") },
-  ];
+export default async function SearchPage({ params }: LocalePageProps) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: "search" });
 
   return (
     <PageLayout>
@@ -32,17 +29,7 @@ export default function SearchPage() {
         {t("title")}
       </Text>
 
-      <QueryTabs tabs={tabs}>
-        <TabsContent value={TABS.PLAYERS}>
-          <PlayersTab />
-        </TabsContent>
-        <TabsContent value={TABS.TEAMS}>
-          <TeamsTab />
-        </TabsContent>
-        <TabsContent value={TABS.MATCHES}>
-          <MatchesTab />
-        </TabsContent>
-      </QueryTabs>
+      <SearchTabs />
     </PageLayout>
   );
 }
