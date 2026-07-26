@@ -27,6 +27,7 @@ export function RouteNotFound() {
   return (
     <PageLayout centered>
       <ErrorCard
+        tone="neutral"
         title={tCommon("errors.notFound")}
         description={tCommon("errors.notFoundDescription")}
         link={{ label: tCommon("backToHome"), href: "/" }}
