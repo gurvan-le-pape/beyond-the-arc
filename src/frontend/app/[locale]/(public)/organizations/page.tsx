@@ -16,10 +16,7 @@ export default async function OrganizationsPage({ params }: LocalePageProps) {
   const t = await getTranslations({ locale, namespace: "organizations" });
 
   return (
-    <PageLayout
-      centered
-      contentClassName="max-w-4xl items-center flex flex-col gap-8"
-    >
+    <PageLayout centered contentClassName="max-w-4xl">
       <OrganizationsHeader t={t} />
       <OrganizationsStats t={t} />
       <Divide />
