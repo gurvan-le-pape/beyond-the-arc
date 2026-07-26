@@ -1,5 +1,5 @@
 // src/frontend/app/[locale]/(fullscreen)/layout.tsx
-import { Header } from "@/shared/components/layout";
+import { Header, SkipLink } from "@/shared/components/layout";
 
 /**
  * Chrome for routes that fill the viewport: header only, no footer, and the
@@ -16,6 +16,7 @@ export default function FullscreenLayout({
 }) {
   return (
     <div className="flex flex-col h-screen overflow-hidden surface-base">
+      <SkipLink />
       <Header />
       {children}
     </div>

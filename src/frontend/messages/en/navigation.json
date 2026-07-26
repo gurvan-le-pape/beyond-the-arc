@@ -6,6 +6,7 @@
     "map": "Map"
   },
   "header": {
+    "skipToContent": "Skip to content",
     "mainNavAriaLabel": "Main navigation",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",

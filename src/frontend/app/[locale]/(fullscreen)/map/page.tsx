@@ -14,7 +14,7 @@ export default async function MapPage() {
   // The header and the viewport-height shell come from `(fullscreen)/layout.tsx`;
   // this page contributes the `main` the map fills.
   return (
-    <main className="flex-1 relative">
+    <main id="main-content" className="flex-1 relative">
       <ClubsMapClient
         initialRegions={initialRegions}
         initialDepartments={initialDepartments}

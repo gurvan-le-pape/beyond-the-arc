@@ -13,3 +13,4 @@ export * from "./hooks/useMobileMenu";
 export * from "./hooks/useTheme";
 export * from "./PageHero";
 export * from "./PageLayout";
+export * from "./SkipLink";

@@ -4,7 +4,6 @@ import { cn } from "@/shared/utils";
 interface PageLayoutProps {
   children: React.ReactNode;
   contentClassName?: string;
-  ariaLabel?: string;
   centered?: boolean;
   /**
    * When true, `main` has no padding — sections inside are responsible for
@@ -17,6 +16,7 @@ interface PageLayoutProps {
 
 /**
  * The `<main>` landmark and the shared content column — exactly one per route.
+ * Carries `id="main-content"`, the target of the header's skip link.
  *
  * Header, footer and the page background come from the route-group layout
  * (`(chrome)/layout.tsx`), not from here, so that `error.tsx` and
@@ -40,12 +40,11 @@ interface PageLayoutProps {
 export const PageLayout = ({
   children,
   contentClassName,
-  ariaLabel,
   centered,
   edgeToEdge,
 }: PageLayoutProps) => (
   <main
-    aria-label={ariaLabel}
+    id="main-content"
     className={cn(
       "flex-grow",
       edgeToEdge ? "" : "min-h-[70vh] px-4 py-12 sm:px-6 lg:px-8",

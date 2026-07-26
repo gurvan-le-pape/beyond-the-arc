@@ -17,8 +17,7 @@
     "email": "Email",
     "website": "Website",
     "visitWebsite": "Visit",
-    "teamsTitle": "Teams",
-    "page": "Details of { clubName }"
+    "teamsTitle": "Teams"
   },
   "map": {
     "seeDetails": "See details",
