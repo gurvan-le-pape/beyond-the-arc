@@ -20,23 +20,16 @@ interface PageHeroProps {
   readonly icon: LucideIcon;
 
   /**
-   * Custom gradient colors for the icon background.
+   * Gradient preset for the icon background.
    * Defaults to the primary brand gradient (blue to purple).
-   * Use semantic presets or provide custom Tailwind gradient classes.
    */
-  readonly iconGradient?:
-    | "primary" // blue to purple (default)
-    | "secondary" // green to emerald
-    | "accent" // cyan to teal
-    | "warm" // orange to red
-    | (string & {}); // custom gradient classes like "from-yellow-500 to-orange-500"
+  readonly iconGradient?: keyof typeof GRADIENT_PRESETS;
 }
 
 const GRADIENT_PRESETS = {
-  primary: "from-blue-500 to-purple-500",
+  primary: "from-blue-500 to-purple-500", // default
   secondary: "from-green-500 to-emerald-500",
   accent: "from-blue-500 to-cyan-500",
-  warm: "from-orange-500 to-red-500",
 } as const;
 
 export function PageHero({
@@ -45,11 +38,7 @@ export function PageHero({
   icon: Icon,
   iconGradient = "primary",
 }: PageHeroProps) {
-  // Resolve gradient - use preset if it matches, otherwise use custom string
-  const gradientClasses =
-    iconGradient in GRADIENT_PRESETS
-      ? GRADIENT_PRESETS[iconGradient as keyof typeof GRADIENT_PRESETS]
-      : iconGradient;
+  const gradientClasses = GRADIENT_PRESETS[iconGradient];
 
   return (
     <div className="text-center mb-12">
