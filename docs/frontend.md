@@ -16,12 +16,12 @@ How feature code is organized on disk — component folder structure, hooks/type
 
 ### Route structure
 
-The app has two distinct areas under `app/[locale]/`:
+Two route groups under `app/[locale]/` split the app by the shell it needs. Groups add no URL segment, so the split is invisible in the URLs:
 
-- **`(public)/`** — the main basketball data pages (championships, matches, players, teams, organisations, map, search). This route group adds no URL segment; it scopes the error boundary those pages share (`(public)/error.tsx`).
-- **Top-level pages** — `about`, `architecture`, `contact`, `docs`, `features`, and the home page (`/`) live directly under `[locale]/` outside the `(public)` group. These are primarily informational pages about the project itself, and fall back to the `[locale]/error.tsx` boundary.
+- **`(chrome)/`** — everything with the standard shell. Its layout renders the header, footer and page background; a page contributes only its `<main>`, through `PageLayout`. Inside it, `(public)/` groups the basketball data pages (championships, matches, players, teams, organisations, search) and scopes the error boundary they share; the informational pages (`about`, `architecture`, `contact`, `docs`, `features`) and the home page sit beside it, under the group's own `error.tsx`.
+- **`(fullscreen)/`** — the clubs map, and only the map. Header, no footer, pinned to the viewport height so the map fills what is left. It is a map application rather than a document, and a footer under it would either be unreachable or shrink the map.
 
-The map page is the one page that does not delegate to `PageLayout`: it renders its own `<Header />` and a full-height `main`, and deliberately has no footer, because the map fills the viewport. Every other page — including the home page, which uses `PageLayout`'s `edgeToEdge` variant for its bento sections — gets its header, footer and page background from `PageLayout`.
+**The chrome is a layout, not part of `PageLayout`, because Next renders `error.tsx` and `not-found.tsx` *instead of* the page.** While the header and footer lived inside `PageLayout`, an error boundary had to rebuild the entire shell to keep it, a 404 lost it completely — `notFound()` fell through to Next's built-in page — and a `loading.tsx` could not be added at all without blanking the chrome during navigation. The home page still uses `PageLayout`'s `edgeToEdge` variant for its bento sections.
 
 The boundary between server and client is drawn around interactivity, not data. If a component renders once and never changes in response to user input, it is a server component. If it needs to filter, paginate, or update reactively, it becomes a client component backed by a TanStack Query hook.
 
@@ -206,7 +206,7 @@ server service is cached whether or not its author thought about it.
 
 Internationalisation is handled by **next-intl**. The `[locale]` dynamic segment at the top of the route tree drives locale detection and message loading. All user-facing strings are accessed via the `useTranslations` hook in client components and `getTranslations` in server components — no raw strings appear in component JSX.
 
-The locale segment is present in every URL but is invisible in terms of layout: the `(public)` route group wraps all public pages under a shared layout without adding a URL segment of its own.
+The locale segment is present in every URL but is invisible in terms of layout: the `(chrome)` route group wraps the pages under a shared layout without adding a URL segment of its own.
 
 ---
 
@@ -358,9 +358,9 @@ Error handling is layered across three levels, matching the boundary at which th
 
 The root `global-error.tsx` catches errors that escape the entire React tree — typically crashes in the root layout. It renders outside any Next.js infrastructure, so it cannot use `useTranslations` or any layout component. It captures the error to Sentry and renders Next.js's built-in error page as a fallback.
 
-**Route-level errors — `[locale]/(public)/error.tsx`**
+**Route-level errors — `[locale]/(chrome)/error.tsx`**
 
-Errors thrown by any page within the `(public)` layout are caught here. This boundary has access to next-intl and the full layout, so it renders a styled error card with a translated message and a retry button (`unstable_retry`). It also captures to Sentry via a `useEffect`.
+Errors thrown by a page are caught here, with a closer boundary at `(chrome)/(public)/error.tsx` for the data pages and one at `(fullscreen)/error.tsx` for the map. Each has access to next-intl and renders inside its group's layout — the chrome survives the error — so the result is a styled error card with a translated message and a retry button (`unstable_retry`), captured to Sentry via a `useEffect`.
 
 **Server-side 404s — `handleServerError`**
 
@@ -378,6 +378,6 @@ Client-side Axios errors are normalised to a typed `ApiError` class by `parseApi
 
 **`unstable_retry` in the error boundary.** The retry callback passed to `error.tsx` uses the `unstable_` prefix, signalling it is an experimental Next.js API that may change or be removed in a future release.
 
-**No client-side error boundary below the route level.** Errors in client components are caught at the `[locale]/(public)/error.tsx` boundary, which covers the entire route. There are no finer-grained error boundaries around individual sections of a page, so a rendering error in one widget takes down the whole page rather than degrading gracefully.
+**No client-side error boundary below the route level.** Errors in client components are caught at the nearest route boundary, which covers the entire route. There are no finer-grained error boundaries around individual sections of a page, so a rendering error in one widget takes down the whole page rather than degrading gracefully.
 
 **Internationalisation covers two locales.** The app supports `en` and `fr`. Adding a new locale requires updates to translation files, `generateStaticParams`, and locale validation in the layout — there is no automated process for this.

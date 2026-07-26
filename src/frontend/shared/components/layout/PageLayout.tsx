@@ -1,9 +1,6 @@
 // src/frontend/shared/components/layout/PageLayout.tsx
 import { cn } from "@/shared/utils";
 
-import { Footer } from "./footer/Footer";
-import { Header } from "./header/Header";
-
 interface PageLayoutProps {
   children: React.ReactNode;
   contentClassName?: string;
@@ -19,8 +16,13 @@ interface PageLayoutProps {
 }
 
 /**
- * Standard page shell. Use this in every `app/` page file.
- * Never import this inside `features/` or `shared/` components.
+ * The `<main>` landmark and the shared content column — exactly one per route.
+ *
+ * Header, footer and the page background come from the route-group layout
+ * (`(chrome)/layout.tsx`), not from here, so that `error.tsx` and
+ * `not-found.tsx` render inside the shell instead of replacing it. Render this
+ * from `app/` page files and from route boundaries; never from a feature
+ * component, which would nest a second `main` inside the page's own.
  *
  * @example
  * // Default layout
@@ -42,26 +44,22 @@ export const PageLayout = ({
   centered,
   edgeToEdge,
 }: PageLayoutProps) => (
-  <div className="flex flex-col min-h-screen surface-base">
-    <Header />
-    <main
-      aria-label={ariaLabel}
+  <main
+    aria-label={ariaLabel}
+    className={cn(
+      "flex-grow",
+      edgeToEdge ? "" : "min-h-[70vh] px-4 py-12 sm:px-6 lg:px-8",
+      centered ? "flex flex-col items-center justify-center" : "",
+    )}
+  >
+    <div
       className={cn(
-        "flex-grow",
-        edgeToEdge ? "" : "min-h-[70vh] px-4 py-12 sm:px-6 lg:px-8",
-        centered ? "flex flex-col items-center justify-center" : "",
+        "max-w-7xl mx-auto w-full",
+        edgeToEdge ? "" : "space-y-6",
+        contentClassName,
       )}
     >
-      <div
-        className={cn(
-          "max-w-7xl mx-auto w-full",
-          edgeToEdge ? "" : "space-y-6",
-          contentClassName,
-        )}
-      >
-        {children}
-      </div>
-    </main>
-    <Footer />
-  </div>
+      {children}
+    </div>
+  </main>
 );
