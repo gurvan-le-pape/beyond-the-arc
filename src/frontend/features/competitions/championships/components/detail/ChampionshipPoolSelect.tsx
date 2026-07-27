@@ -18,9 +18,10 @@ interface ChampionshipPoolSelectProps {
 /**
  * Pool picker for the championship detail page.
  *
- * The selected pool lives in the `?pool=` query param, and the page is
- * force-dynamic — so changing it re-renders the server page, which is what
- * refreshes the leaderboard. This component only writes the URL.
+ * The selected pool lives in the `?pool=` query param. Reading a search param is
+ * what makes the page render per request, so writing a new one re-renders the
+ * server page — and that is what refreshes the leaderboard. This component only
+ * writes the URL.
  */
 export function ChampionshipPoolSelect({
   pools,
