@@ -4,6 +4,7 @@
  */
 
 export * from "./CategorySection";
+export * from "./ClubCrest";
 export * from "./ClubLogo";
 export * from "./ClubLogoLink";
 export * from "./EntityCardBadges";

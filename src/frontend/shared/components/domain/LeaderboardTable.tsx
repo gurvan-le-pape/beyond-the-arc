@@ -12,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "../table";
+import { ClubCrest } from "./ClubCrest";
 
 interface LeaderboardTableProps {
   readonly leaderboards: Leaderboard[];
@@ -72,19 +73,7 @@ export function LeaderboardTable({
               {/* Team Column with Logo */}
               <TableCell className="text-left text-text-heading">
                 <div className="flex items-center gap-2">
-                  {/* Local 32px .webp crest with an onError fallback; see
-                      ClubLogo for why next/image isn't used for these. */}
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={`/images/clubs/${leaderboard.clubName}.webp`}
-                    alt={`${leaderboard.clubName} logo`}
-                    className="w-8 h-8 object-contain"
-                    loading="lazy"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src =
-                        `/images/clubs/defaultLogo.30cc7520.svg`;
-                    }}
-                  />
+                  <ClubCrest clubName={leaderboard.clubName} />
                   <span>
                     {leaderboard.clubName} - {leaderboard.teamNumber}
                   </span>

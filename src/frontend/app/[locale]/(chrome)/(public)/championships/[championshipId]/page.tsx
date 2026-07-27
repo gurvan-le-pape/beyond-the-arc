@@ -4,16 +4,23 @@ import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { serverChampionshipsService } from "@/features/competitions/championships/api";
-import { ChampionshipDetailPage } from "@/features/competitions/championships/components";
+import {
+  ChampionshipBreadcrumb,
+  ChampionshipHeader,
+  ChampionshipMatches,
+  ChampionshipNavigation,
+  ChampionshipPoolSelect,
+} from "@/features/competitions/championships/components";
 import {
   buildCategoryNavigation,
   buildChampionshipTitle,
   buildDivisionNavigation,
-  resolveInitialPoolId,
   resolveOrganizationId,
+  resolvePoolId,
 } from "@/features/competitions/championships/utils";
 import { serverLeaderboardsService } from "@/features/competitions/leaderboards/api";
 import { serverPoolsService } from "@/features/competitions/pools/api";
+import { LeaderboardTable } from "@/shared/components/domain";
 import { PageLayout } from "@/shared/components/layout";
 import type { LocalePageProps, SearchParamsProps } from "@/shared/types";
 import { handleServerError, parseRouteId } from "@/shared/utils";
@@ -83,11 +90,9 @@ export default async function ChampionshipsDetailPage({
 
   if (pools.length === 0) notFound();
 
-  const initialPoolId = resolveInitialPoolId(pools, poolParam);
+  const poolId = resolvePoolId(pools, poolParam);
 
-  const initialLeaderboard = await serverLeaderboardsService.getAll({
-    poolId: initialPoolId,
-  });
+  const leaderboard = await serverLeaderboardsService.getAll({ poolId });
 
   const categoryNav = buildCategoryNavigation(
     championships,
@@ -105,14 +110,29 @@ export default async function ChampionshipsDetailPage({
 
   return (
     <PageLayout contentClassName="max-w-[1800px]">
-      <ChampionshipDetailPage
-        championship={championship}
-        pools={pools}
-        initialPoolId={initialPoolId}
-        initialLeaderboard={initialLeaderboard}
-        categoryNav={categoryNav}
-        divisionNav={divisionNav}
-      />
+      <div className="flex flex-col xl:flex-row gap-6">
+        <div className="w-full xl:flex-1 space-y-6">
+          <ChampionshipBreadcrumb name={championship.name} />
+
+          <ChampionshipHeader championship={championship} />
+
+          <ChampionshipNavigation
+            categoryNav={categoryNav}
+            divisionNav={divisionNav}
+          />
+
+          <LeaderboardTable
+            leaderboards={leaderboard}
+            dropdown={
+              <ChampionshipPoolSelect pools={pools} selectedPoolId={poolId} />
+            }
+          />
+        </div>
+
+        <div className="w-full xl:w-[500px] 2xl:w-[600px]">
+          <ChampionshipMatches key={poolId} poolId={poolId} />
+        </div>
+      </div>
     </PageLayout>
   );
 }
