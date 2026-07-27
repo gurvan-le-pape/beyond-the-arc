@@ -24,6 +24,7 @@
     "scrollRight": "Défiler à droite"
   },
   "leaderboardTitle": "Classement",
+  "leaderboardEmpty": "Aucun classement disponible pour le moment",
   "championshipsSectionTitle": "Championnats",
   "letterFilter": {
     "all": "Tous"

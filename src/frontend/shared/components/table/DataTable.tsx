@@ -50,8 +50,12 @@ interface DataTableProps<T> {
    */
   readonly variant?: "plain" | "highlighted";
   readonly size?: "default" | "compact";
-  /** Rendered in place of the rows when `rows` is empty. */
-  readonly emptyMessage?: string;
+  /**
+   * Rendered in place of the rows when `rows` is empty. Required: a header
+   * with nothing under it and no explanation is never the right answer, and
+   * making it optional meant three of the four tables shipped without one.
+   */
+  readonly emptyMessage: string;
   readonly onRowClick?: (row: T) => void;
   /** Whether body rows react to hover. */
   readonly hoverableRows?: boolean;
@@ -98,8 +102,6 @@ export function DataTable<T>({
   cellClassName,
   className,
 }: DataTableProps<T>) {
-  const showEmpty = rows.length === 0 && emptyMessage !== undefined;
-
   return (
     <Table className={cn(VARIANT_TABLE[variant], className)}>
       <TableHeader className={VARIANT_HEADER[variant]}>
@@ -119,7 +121,7 @@ export function DataTable<T>({
       </TableHeader>
 
       <TableBody>
-        {showEmpty ? (
+        {rows.length === 0 ? (
           <TableEmpty colSpan={columns.length} message={emptyMessage} />
         ) : (
           rows.map((row, index) => (
