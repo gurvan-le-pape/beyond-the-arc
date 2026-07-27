@@ -70,13 +70,12 @@ export const MatchEventsTimeline: React.FC<MatchEventsTimelineProps> = ({
         />
 
         {/*
-          Exposed as a list rather than a table: every event belongs to exactly
-          one team, so a three-column table would announce a blank cell on every
-          single row. `role="list"` sits directly on the rows' parent so no
-          intermediate element breaks the list/listitem relationship.
+          A list rather than a table: every event belongs to exactly one team,
+          so a three-column table would announce a blank cell on every single
+          row. The `ul` is the direct parent of the `li` rows, so nothing
+          breaks the list relationship.
         */}
-        <div
-          role="list"
+        <ul
           aria-label={tMatches("matchEvents.timelineLabel")}
           className="space-y-3"
         >
@@ -93,16 +92,17 @@ export const MatchEventsTimeline: React.FC<MatchEventsTimelineProps> = ({
               ? makeDescriptionClickable(event.description, event.players)
               : "";
 
-            const eventTeamName = isHomeTeam
-              ? homeTeam.name
-              : isAwayTeam
-                ? awayTeam.name
-                : null;
+            let eventTeamName: string | null = null;
+            if (isHomeTeam) {
+              eventTeamName = homeTeam.name;
+            } else if (isAwayTeam) {
+              eventTeamName = awayTeam.name;
+            }
 
             return (
               <TimelineRow
+                as="li"
                 key={eventKey}
-                role="listitem"
                 className="items-center"
               >
                 {/*
@@ -158,7 +158,7 @@ export const MatchEventsTimeline: React.FC<MatchEventsTimelineProps> = ({
               </TimelineRow>
             );
           })}
-        </div>
+        </ul>
       </div>
     </div>
   );
