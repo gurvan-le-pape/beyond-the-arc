@@ -2,8 +2,8 @@
 "use client";
 
 import { ErrorMessage, LoadingSpinner } from "@/shared/components/feedback";
+import { Pagination } from "@/shared/components/navigation";
 import { Card } from "@/shared/components/primitives";
-import { Pagination } from "@/shared/components/table";
 import type { Pagination as PaginationType } from "@/shared/types";
 
 interface SearchTabShellProps {
