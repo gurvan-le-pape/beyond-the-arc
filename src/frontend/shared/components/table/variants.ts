@@ -55,6 +55,28 @@ const divider = {
 // Elements
 // ---------------------------------------------------------------------------
 
+export const rowVariants = cva(
+  "border-b border-divide transition-colors duration-200",
+  {
+    variants: {
+      /**
+       * Alternating row background. One recipe for the whole app — this was
+       * previously a `getRowClassName` callback that ignored its row argument
+       * at two call sites and hand-rolled a third, near-identical variant at
+       * the box score.
+       */
+      stripe: {
+        none: "",
+        even: "bg-primary-ghost",
+        odd: "bg-surface-inset",
+      },
+      hoverable: { true: "hover:bg-surface-inset", false: "" },
+      clickable: { true: "cursor-pointer", false: "" },
+    },
+    defaultVariants: { stripe: "none", hoverable: true, clickable: false },
+  },
+);
+
 export const headVariants = cva("", {
   variants: { align, density, wrap, width, divider },
   defaultVariants: {

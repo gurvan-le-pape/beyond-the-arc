@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import type { Leaderboard } from "@/features/competitions/leaderboards/types";
 
 import { Section } from "../blocks";
-import { DataTable, stripedRow, type TableColumn } from "../table";
+import { DataTable, type TableColumn } from "../table";
 import { ClubCrest } from "./ClubCrest";
 
 interface LeaderboardTableProps {
@@ -83,7 +83,7 @@ export function LeaderboardTable({
         getRowKey={(row) => row.id}
         variant="highlighted"
         emptyMessage={tCompetitions("leaderboardEmpty")}
-        getRowClassName={stripedRow}
+        striped
         headerClassName="text-text-heading"
         cellClassName="text-text-heading"
       />

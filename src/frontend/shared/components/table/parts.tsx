@@ -4,12 +4,18 @@ import { type HTMLAttributes, type ReactNode } from "react";
 import { cn } from "@/shared/utils";
 
 import { Text } from "../typography";
-import { cellVariants, headInnerVariants, headVariants } from "./variants";
+import {
+  cellVariants,
+  headInnerVariants,
+  headVariants,
+  rowVariants,
+} from "./variants";
 
 type Alignment = "left" | "center" | "right";
 type Density = "comfortable" | "compact";
 type Width = "auto" | "icon";
 type Divider = "none" | "left" | "right" | "both";
+type Stripe = "none" | "even" | "odd";
 
 // ---------------------------------------------------------------------------
 // Table
@@ -67,6 +73,7 @@ export const TableBody = ({
 interface TableRowProps extends HTMLAttributes<HTMLTableRowElement> {
   hoverable?: boolean;
   clickable?: boolean;
+  stripe?: Stripe;
   ref?: React.Ref<HTMLTableRowElement>;
 }
 
@@ -74,17 +81,13 @@ export const TableRow = ({
   className,
   hoverable = true,
   clickable = false,
+  stripe = "none",
   ref,
   ...props
 }: TableRowProps) => (
   <tr
     ref={ref}
-    className={cn(
-      "border-b border-divide transition-colors duration-200",
-      hoverable && "hover:bg-surface-inset",
-      clickable && "cursor-pointer",
-      className,
-    )}
+    className={cn(rowVariants({ stripe, hoverable, clickable }), className)}
     {...props}
   />
 );
