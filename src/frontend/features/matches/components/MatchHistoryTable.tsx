@@ -16,7 +16,8 @@ interface MatchHistoryTableProps<T> {
   readonly matches: T[];
   readonly columns: TableColumn<T>[];
   readonly emptyMessage: string;
-  readonly onRowClick?: (match: T) => void;
+  readonly getRowHref?: (match: T) => string;
+  readonly getRowLabel?: (match: T) => string;
   readonly showAllLabel: string;
   readonly showLessLabel: string;
   readonly maxRows?: number;
@@ -35,7 +36,7 @@ interface MatchHistoryTableProps<T> {
  *   matches={matches}
  *   columns={columns}
  *   emptyMessage="No matches found"
- *   onRowClick={(match) => router.push(`/matches/${match.id}`)}
+ *   getRowHref={(match) => `/matches/${match.id}`}
  *   showAllLabel="See all 12 matches"
  *   showLessLabel="See less"
  *   maxRows={5}
@@ -46,7 +47,8 @@ export function MatchHistoryTable<T extends { id: number }>({
   matches,
   columns,
   emptyMessage,
-  onRowClick,
+  getRowHref,
+  getRowLabel,
   showAllLabel,
   showLessLabel,
   maxRows = 5,
@@ -64,7 +66,8 @@ export function MatchHistoryTable<T extends { id: number }>({
         rows={displayedMatches}
         getRowKey={(match) => match.id}
         emptyMessage={emptyMessage}
-        onRowClick={onRowClick}
+        getRowHref={getRowHref}
+        getRowLabel={getRowLabel}
         striped
       />
 

@@ -5,7 +5,6 @@
 import { useTranslations } from "next-intl";
 
 import { MatchHistoryTable } from "@/features/matches/components";
-import { useRouter } from "@/navigation";
 
 import { usePlayerMatchHistoryColumns } from "../../hooks";
 import type { Player } from "../../types/Player";
@@ -24,7 +23,6 @@ export function PlayerMatchHistoryTable({
 }: PlayerMatchHistoryTableProps) {
   const tCommon = useTranslations("common");
   const tPlayers = useTranslations("players");
-  const router = useRouter();
 
   const columns = usePlayerMatchHistoryColumns(player);
 
@@ -34,7 +32,13 @@ export function PlayerMatchHistoryTable({
       matches={matches}
       columns={columns}
       emptyMessage={tCommon("matchHistory.noMatches")}
-      onRowClick={(match) => router.push(`/matches/${match.id}`)}
+      getRowHref={(match) => `/matches/${match.id}`}
+      getRowLabel={(match) =>
+        tCommon("matchHistory.viewMatch", {
+          home: match.homeTeam.club.name,
+          away: match.awayTeam.club.name,
+        })
+      }
       showAllLabel={tCommon("matchHistory.seeAllMatches", {
         count: matches.length,
       })}

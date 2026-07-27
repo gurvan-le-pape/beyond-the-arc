@@ -75,7 +75,8 @@
     "match": "Match",
     "score": "Score",
     "noMatches": "Aucun match joué cette saison",
-    "seeAllMatches": "Voir tous les matchs ({count})"
+    "seeAllMatches": "Voir tous les matchs ({count})",
+    "viewMatch": "Voir le match {home} contre {away}"
   },
   "sectionTitles": {
     "regionalLeagues": "Ligues Régionales",

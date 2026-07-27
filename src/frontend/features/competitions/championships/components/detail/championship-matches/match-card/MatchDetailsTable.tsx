@@ -89,7 +89,6 @@ export const MatchDetailsTable: React.FC<MatchDetailsTableProps> = ({
       rows={rows}
       getRowKey={(row) => row.side}
       emptyMessage={tCommon("noData")}
-      hoverableRows={false}
       striped
       frame="outline"
     />
