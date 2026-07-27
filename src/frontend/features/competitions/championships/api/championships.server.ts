@@ -1,5 +1,4 @@
 // src/frontend/features/competitions/championships/api/championships.server.ts
-import { CompetitionLevel } from "@/shared/constants";
 import type { PaginatedResponse } from "@/shared/types";
 
 import {
@@ -72,32 +71,5 @@ export const serverChampionshipsService = {
    */
   async getById(id: number): Promise<Championship> {
     return fetchApi<Championship>(`/championships/${id}`);
-  },
-
-  /**
-   * Get all championship IDs for static path generation.
-   * Server-side only.
-   *
-   * @param filters - Optional filters to narrow down IDs
-   * @returns Array of championship IDs
-   *
-   * @example
-   * // In pages/championships/[id].tsx
-   * export async function getStaticPaths() {
-   *   const ids = await serverChampionshipsService.getAllIds({
-   *     level: CompetitionLevel.REGIONAL,
-   *     id: 1,
-   *   });
-   *   return {
-   *     paths: ids.map(id => ({ params: { id: String(id) } })),
-   *     fallback: 'blocking',
-   *   };
-   * }
-   */
-  async getAllIds(filters?: ChampionshipFilters): Promise<number[]> {
-    const { items } = await this.getAll(
-      filters ?? { level: CompetitionLevel.REGIONAL, id: 0 },
-    );
-    return items.map((championship: Championship) => championship.id);
   },
 };
