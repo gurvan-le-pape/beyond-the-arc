@@ -27,7 +27,7 @@ The boundary between server and client is drawn around interactivity, not data. 
 
 ### Rendering strategies
 
-Five patterns are in use, chosen per page based on data volatility and interactivity needs.
+Four patterns are in use, chosen per page based on data volatility and interactivity needs.
 
 **ISR with server-fetched props** — the server component fetches data using the server-side service, passes it directly as props to child components, and exports a `revalidate` constant. No TanStack Query is involved.
 
@@ -58,29 +58,30 @@ Used by: player detail, team detail, match detail, map page, league detail, comm
 
 None of these pre-build. League and committee detail once declared a `generateStaticParams` that enumerated every ID, but the image build has no backend to enumerate against, so it returned an empty list in every build that shipped — and `next dev` never prerenders either, so it never ran anywhere else. Both were removed. `dynamicParams = true` plus an hourly `revalidate` is what actually serves these routes: each page is generated on first request and the rendered HTML is then cached.
 
-**HydrationBoundary prefetch** — for pages where the initial data needs to be server-rendered but a client component will continue managing it (refetching on focus, responding to in-page navigation). The server component prefetches into a `QueryClient`, dehydrates the cache, and passes it to `HydrationBoundary`. The client component mounts with the cache already populated and TanStack Query takes over.
+**Dynamic server fetch with client islands** — for a page whose data depends on a search param. The route is `force-dynamic`, reads the param, fetches on the server and passes the result down as props. The interactive parts are small client components that do nothing but write the URL; the server re-render that navigation triggers is what refreshes the data.
 
 ```
-async function prefetchData(championshipId: number) {
-  const queryClient = new QueryClient();
-  await queryClient.prefetchQuery({
-    queryKey: championshipsKeys.detail(championshipId),
-    queryFn: () => serverChampionshipsService.getById(championshipId),
-  });
-  return dehydrate(queryClient);
-}
+export const dynamic = "force-dynamic";
 
-export default async function ChampionshipsDetailPage({ params }) {
-  const dehydratedState = await prefetchData(championshipId);
+export default async function ChampionshipsDetailPage({ params, searchParams }) {
+  const { pool: poolParam } = await searchParams;
+  const poolId = resolvePoolId(pools, poolParam);
+  const leaderboard = await serverLeaderboardsService.getAll({ poolId });
+
   return (
-    <HydrationBoundary state={dehydratedState}>
-      <ChampionshipDetailPage />
-    </HydrationBoundary>
+    <LeaderboardTable
+      leaderboards={leaderboard}
+      dropdown={<ChampionshipPoolSelect pools={pools} selectedPoolId={poolId} />}
+    />
   );
 }
 ```
 
-Used by: championship detail (5-minute revalidation), where the client component manages pool navigation and leaderboard tabs.
+Used by: championship detail. The selected pool lives in `?pool=`; `ChampionshipPoolSelect` only calls `router.replace`, and `LeaderboardTable` stays a server component that receives the client picker through its `dropdown` slot. Because the URL holds the state, sibling islands do not need a common client parent to share it — the match panel beside the leaderboard takes `poolId` as a prop and still fetches through TanStack Query, which is what lets it prefetch on pool hover.
+
+Passing a client component into a server component's slot is what keeps the boundary small here. Marking the parent `"use client"` instead would pull the whole subtree — table, header, breadcrumb — into the bundle to be hydrated for nothing.
+
+There is no `HydrationBoundary` prefetching in the app. `QueryProvider` accepts an optional `dehydratedState`, but no route passes one; server-owned data reaches components as props, not through a dehydrated cache.
 
 **Pure client — filter/search/tab state** — pages that are inherently interactive from the first render. They use TanStack Query hooks for data, local state for filters, and `useSearchParams` for URL-synced tabs.
 
