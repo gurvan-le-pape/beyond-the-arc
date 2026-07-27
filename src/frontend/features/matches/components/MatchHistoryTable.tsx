@@ -6,11 +6,7 @@ import React, { useState } from "react";
 
 import { Section } from "@/shared/components/blocks";
 import { Button } from "@/shared/components/primitives";
-import {
-  DataTable,
-  stripedRow,
-  type TableColumn,
-} from "@/shared/components/table";
+import { DataTable, type TableColumn } from "@/shared/components/table";
 
 /**
  * Props for MatchHistoryTable.
@@ -70,7 +66,7 @@ export function MatchHistoryTable<T extends { id: number }>({
         variant="highlighted"
         emptyMessage={emptyMessage}
         onRowClick={onRowClick}
-        getRowClassName={stripedRow}
+        striped
       />
 
       {hasMoreMatches && (

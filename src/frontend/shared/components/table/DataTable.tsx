@@ -41,13 +41,6 @@ export interface TableColumn<T> {
   readonly width?: "auto" | "icon";
 }
 
-/**
- * Alternating row background, previously copy-pasted at each call site.
- * Pass as `getRowClassName`.
- */
-export const stripedRow = (_row: unknown, index: number) =>
-  index % 2 === 0 ? "bg-primary-ghost" : "bg-surface-inset";
-
 interface DataTableProps<T> {
   readonly columns: TableColumn<T>[];
   readonly rows: T[];
@@ -67,8 +60,8 @@ interface DataTableProps<T> {
   readonly onRowClick?: (row: T) => void;
   /** Whether body rows react to hover. */
   readonly hoverableRows?: boolean;
-  /** Per-row background, e.g. `stripedRow`. */
-  readonly getRowClassName?: (row: T, index: number) => string | undefined;
+  /** Alternating row backgrounds. */
+  readonly striped?: boolean;
   /** Extra classes applied to every header cell. */
   readonly headerClassName?: string;
   /** Extra classes applied to every body cell. */
@@ -96,6 +89,12 @@ const VARIANT_HEADER = {
  * per-feature (expand/collapse, sorting, a surrounding Section) stays with the
  * caller.
  */
+/** Which stripe band a row sits in, or none when striping is off. */
+const stripeFor = (striped: boolean, index: number) => {
+  if (!striped) return "none" as const;
+  return index % 2 === 0 ? ("even" as const) : ("odd" as const);
+};
+
 export function DataTable<T>({
   columns,
   rows,
@@ -105,7 +104,7 @@ export function DataTable<T>({
   emptyMessage,
   onRowClick,
   hoverableRows = true,
-  getRowClassName,
+  striped = false,
   headerClassName,
   cellClassName,
   className,
@@ -146,7 +145,7 @@ export function DataTable<T>({
               hoverable={hoverableRows}
               clickable={!!onRowClick}
               onClick={onRowClick ? () => onRowClick(row) : undefined}
-              className={getRowClassName?.(row, index)}
+              stripe={stripeFor(striped, index)}
             >
               {columns.map((column) => (
                 <TableCell

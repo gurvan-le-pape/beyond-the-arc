@@ -90,9 +90,7 @@ export const MatchDetailsTable: React.FC<MatchDetailsTableProps> = ({
       getRowKey={(row) => row.side}
       emptyMessage={tCommon("noData")}
       hoverableRows={false}
-      getRowClassName={(row) =>
-        row.side === "away" ? "bg-surface-inset" : undefined
-      }
+      striped
       className="border border-divide rounded-button"
     />
   );
