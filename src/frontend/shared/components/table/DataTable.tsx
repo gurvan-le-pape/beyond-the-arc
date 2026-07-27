@@ -29,8 +29,16 @@ export interface TableColumn<T> {
   readonly align?: "left" | "center" | "right";
   /** Native tooltip on the header, for abbreviated stat labels. */
   readonly tooltip?: string;
-  /** Extra classes for this column's body cells only. */
-  readonly className?: string;
+  /**
+   * Vertical rule fencing off a group of columns, e.g. the shooting splits.
+   * Drawn on the header cell as well as the body cells — the previous
+   * `className` reached only the body, so group rules stopped below the header.
+   */
+  readonly divider?: "left" | "right" | "both";
+  /** Bold, heading-toned cells, for the one column a table is *about*. */
+  readonly emphasis?: boolean;
+  /** `icon` sizes the column to a single icon button. */
+  readonly width?: "auto" | "icon";
 }
 
 /**
@@ -102,6 +110,11 @@ export function DataTable<T>({
   cellClassName,
   className,
 }: DataTableProps<T>) {
+  // `size` is still the public knob; density and wrapping are separate axes
+  // underneath, so a later change can vary them independently.
+  const density = size === "compact" ? "compact" : "comfortable";
+  const wrap = size !== "compact";
+
   return (
     <Table className={cn(VARIANT_TABLE[variant], className)}>
       <TableHeader className={VARIANT_HEADER[variant]}>
@@ -110,7 +123,10 @@ export function DataTable<T>({
             <TableHead
               key={column.key}
               align={column.align}
-              size={size}
+              density={density}
+              wrap={wrap}
+              width={column.width}
+              divider={column.divider}
               tooltip={column.tooltip}
               className={headerClassName}
             >
@@ -136,8 +152,12 @@ export function DataTable<T>({
                 <TableCell
                   key={column.key}
                   align={column.align}
-                  size={size}
-                  className={cn(column.className, cellClassName)}
+                  density={density}
+                  wrap={wrap}
+                  width={column.width}
+                  divider={column.divider}
+                  emphasis={column.emphasis}
+                  className={cellClassName}
                 >
                   {column.render(row)}
                 </TableCell>

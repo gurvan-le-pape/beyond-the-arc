@@ -23,7 +23,7 @@ export function buildMatchDateColumn<T extends MatchWithTeams>(
     key: "date",
     header,
     render: (match: T) => formatMatchDateTime(match.date),
-    align: "center" as const,
+    align: "center",
   };
 }
 
@@ -53,6 +53,6 @@ export function buildMatchupColumn<T extends MatchWithTeams>(
         />
       </>
     ),
-    align: "center" as const,
+    align: "center",
   };
 }

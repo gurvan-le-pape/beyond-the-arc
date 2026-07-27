@@ -25,7 +25,7 @@ export function LeaderboardTable({
       header: tCommon("table.rank"),
       align: "center",
       render: (row) => row.rank,
-      className: "font-bold",
+      emphasis: true,
     },
     {
       key: "team",

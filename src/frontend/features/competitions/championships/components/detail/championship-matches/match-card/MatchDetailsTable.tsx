@@ -79,7 +79,7 @@ export const MatchDetailsTable: React.FC<MatchDetailsTableProps> = ({
       header: t("matchDetails.totalHeader"),
       align: "center",
       render: (row) => row.total,
-      className: "font-bold text-text-heading",
+      emphasis: true,
     },
   ];
 
