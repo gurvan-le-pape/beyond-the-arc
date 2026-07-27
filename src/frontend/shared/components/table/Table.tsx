@@ -57,28 +57,6 @@ export const TableBody = ({
 );
 
 // ---------------------------------------------------------------------------
-// TableFooter
-// ---------------------------------------------------------------------------
-
-export const TableFooter = ({
-  className,
-  ref,
-  ...props
-}: HTMLAttributes<HTMLTableSectionElement> & {
-  ref?: React.Ref<HTMLTableSectionElement>;
-}) => (
-  <tfoot
-    ref={ref}
-    className={cn(
-      "bg-surface-subtle",
-      "font-medium text-text-heading",
-      className,
-    )}
-    {...props}
-  />
-);
-
-// ---------------------------------------------------------------------------
 // TableRow
 // ---------------------------------------------------------------------------
 
@@ -236,24 +214,6 @@ export const TableCell = ({
     />
   );
 };
-
-// ---------------------------------------------------------------------------
-// TableCaption
-// ---------------------------------------------------------------------------
-
-export const TableCaption = ({
-  className,
-  ref,
-  ...props
-}: HTMLAttributes<HTMLTableCaptionElement> & {
-  ref?: React.Ref<HTMLTableCaptionElement>;
-}) => (
-  <caption
-    ref={ref}
-    className={cn("mt-4 text-sm text-text-secondary", className)}
-    {...props}
-  />
-);
 
 // ---------------------------------------------------------------------------
 // TableEmpty
