@@ -1,4 +1,4 @@
-// src/frontend/shared/components/table/Table.tsx
+// src/frontend/shared/components/table/parts.tsx
 import { type HTMLAttributes, type ReactNode } from "react";
 
 import { cn } from "@/shared/utils";
