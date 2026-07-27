@@ -91,7 +91,7 @@ export const MatchDetailsTable: React.FC<MatchDetailsTableProps> = ({
       emptyMessage={tCommon("noData")}
       hoverableRows={false}
       striped
-      className="border border-divide rounded-button"
+      frame="outline"
     />
   );
 };

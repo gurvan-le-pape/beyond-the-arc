@@ -55,6 +55,24 @@ const divider = {
 // Elements
 // ---------------------------------------------------------------------------
 
+/**
+ * The table's outer treatment. `outline` is for a table that stands on its
+ * own; a table inside a Section uses `none`, because the Section is already a
+ * bordered Card and a second border inside it reads as a boxed-in box.
+ */
+export const tableVariants = cva("min-w-full", {
+  variants: {
+    frame: {
+      none: "",
+      outline: "border border-divide rounded-button",
+    },
+  },
+  defaultVariants: { frame: "none" },
+});
+
+/** One header treatment for every table — no variants, hence no cva. */
+export const TABLE_HEADER = "bg-primary-subtle border-b border-primary";
+
 export const rowVariants = cva(
   "border-b border-divide transition-colors duration-200",
   {

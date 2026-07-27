@@ -73,7 +73,8 @@ export const PlayerMatchStats: React.FC<PlayerMatchStatsProps> = ({
         columns={columns}
         rows={sortedPlayers}
         getRowKey={(playerWithStats) => playerWithStats.player.number}
-        size="compact"
+        density="compact"
+        wrap={false}
         emptyMessage={tCommon("emptyState.players")}
       />
 

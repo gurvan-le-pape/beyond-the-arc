@@ -1,8 +1,6 @@
 // src/frontend/shared/components/table/DataTable.tsx
 import React from "react";
 
-import { cn } from "@/shared/utils";
-
 import {
   Table,
   TableBody,
@@ -46,11 +44,15 @@ interface DataTableProps<T> {
   readonly rows: T[];
   readonly getRowKey: (row: T) => React.Key;
   /**
-   * `highlighted` is the bordered, tinted-header treatment used by the panels
-   * that sit inside a Section; `plain` is the bare table.
+   * The table's outer treatment. `outline` is for a table that stands on its
+   * own; a table inside a Section stays `none`, because the Section is already
+   * a bordered Card.
    */
-  readonly variant?: "plain" | "highlighted";
-  readonly size?: "default" | "compact";
+  readonly frame?: "none" | "outline";
+  /** Cell padding. Says nothing about wrapping — see `wrap`. */
+  readonly density?: "comfortable" | "compact";
+  /** Set false on wide stat tables so cells stay on one line. */
+  readonly wrap?: boolean;
   /**
    * Rendered in place of the rows when `rows` is empty. Required: a header
    * with nothing under it and no explanation is never the right answer, and
@@ -66,19 +68,7 @@ interface DataTableProps<T> {
   readonly headerClassName?: string;
   /** Extra classes applied to every body cell. */
   readonly cellClassName?: string;
-  /** Extra classes on the `table` element itself. */
-  readonly className?: string;
 }
-
-const VARIANT_TABLE = {
-  plain: "",
-  highlighted: "border border-primary rounded-card box-border",
-} as const;
-
-const VARIANT_HEADER = {
-  plain: "",
-  highlighted: "bg-primary-subtle border-b border-primary",
-} as const;
 
 /**
  * Column-driven table.
@@ -99,24 +89,19 @@ export function DataTable<T>({
   columns,
   rows,
   getRowKey,
-  variant = "plain",
-  size = "default",
+  frame = "none",
+  density = "comfortable",
+  wrap = true,
   emptyMessage,
   onRowClick,
   hoverableRows = true,
   striped = false,
   headerClassName,
   cellClassName,
-  className,
 }: DataTableProps<T>) {
-  // `size` is still the public knob; density and wrapping are separate axes
-  // underneath, so a later change can vary them independently.
-  const density = size === "compact" ? "compact" : "comfortable";
-  const wrap = size !== "compact";
-
   return (
-    <Table className={cn(VARIANT_TABLE[variant], className)}>
-      <TableHeader className={VARIANT_HEADER[variant]}>
+    <Table frame={frame}>
+      <TableHeader>
         <TableRow hoverable={false}>
           {columns.map((column) => (
             <TableHead

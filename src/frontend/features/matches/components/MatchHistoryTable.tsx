@@ -63,7 +63,6 @@ export function MatchHistoryTable<T extends { id: number }>({
         columns={columns}
         rows={displayedMatches}
         getRowKey={(match) => match.id}
-        variant="highlighted"
         emptyMessage={emptyMessage}
         onRowClick={onRowClick}
         striped
