@@ -1,41 +1,35 @@
 // src/frontend/features/competitions/championships/api/championships.server.ts
-import type { PaginatedResponse } from "@/shared/types";
-
 import {
   buildQueryString,
   fetchApi,
-} from "../../../../lib/services/server/server-api-client";
+} from "@/lib/services/server/server-api-client";
+import type { PaginatedResponse } from "@/shared/types";
+
 import type { Championship } from "../types/Championship";
 import type { ChampionshipFilters } from "../types/ChampionshipFilters";
 
 /**
  * Server-side championships service.
  *
- * IMPORTANT:
- * - Only for use in getStaticProps/getStaticPaths/getServerSideProps
- * - DO NOT import in client-side code
- * - Uses fetchApi with absolute URLs
- *
- * Usage:
- * - Import in Next.js page server-side functions
- * - Never use in React components or hooks
+ * Server components only — this half of the dual service layer uses native
+ * fetch against the backend's internal address, so it must never be imported
+ * from client code. `championships.service.ts` is the Axios counterpart the
+ * TanStack Query hooks use, with the same method signatures.
  *
  * @example
- * // In pages/championships/[id].tsx
- * import { serverChampionshipsService } from '@/lib/services/server';
- *
- * export async function getStaticProps({ params }) {
- *   const championship = await serverChampionshipsService.getById(params.id);
- *   return { props: { championship } };
- * }
+ * // In an async server component
+ * const championship = await serverChampionshipsService
+ *   .getById(parseRouteId(championshipIdStr))
+ *   .catch(handleServerError);
  */
 export const serverChampionshipsService = {
   /**
-   * Get championships filtered by competition level and associated ID.
-   * Server-side only.
+   * Championships of one organization at one level, paginated.
    *
-   * @param filters - Filter criteria (level and id required)
-   * @returns Paginated response containing championships matching the criteria
+   * @param filters - `level` and `id` identify the organization; `category`,
+   * `gender`, `page` and `limit` narrow it further.
+   * @returns A page of championships, with `items: []` when none match — the
+   * endpoint is a list and never 404s.
    *
    * @example
    * const { items } = await serverChampionshipsService.getAll({
@@ -60,14 +54,16 @@ export const serverChampionshipsService = {
   },
 
   /**
-   * Get a single championship by ID.
-   * Server-side only.
+   * A single championship, with its pools.
    *
-   * @param id - The championship ID
-   * @returns The championship details
+   * @returns The championship. Unlike the list endpoints, this one 404s for an
+   * unknown id — pass the result through `handleServerError` to turn that into
+   * `notFound()`.
    *
    * @example
-   * const championship = await serverChampionshipsService.getById('123');
+   * const championship = await serverChampionshipsService
+   *   .getById(123)
+   *   .catch(handleServerError);
    */
   async getById(id: number): Promise<Championship> {
     return fetchApi<Championship>(`/championships/${id}`);
