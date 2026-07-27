@@ -1,6 +1,7 @@
 // src/frontend/shared/components/domain/matches/matchHistoryColumns.tsx
 import type { ReactNode } from "react";
 
+import type { TableColumn } from "@/shared/components/table";
 import { formatMatchDateTime } from "@/shared/utils";
 
 import { MatchTeamLabel } from "./MatchTeamLabel";
@@ -17,7 +18,7 @@ interface MatchWithTeams {
  */
 export function buildMatchDateColumn<T extends MatchWithTeams>(
   header: ReactNode,
-) {
+): TableColumn<T> {
   return {
     key: "date",
     header,
@@ -33,7 +34,7 @@ export function buildMatchDateColumn<T extends MatchWithTeams>(
 export function buildMatchupColumn<T extends MatchWithTeams>(
   header: ReactNode,
   currentTeamId: number,
-) {
+): TableColumn<T> {
   return {
     key: "match",
     header,

@@ -2,13 +2,14 @@
 import { useTranslations } from "next-intl";
 import { useMemo } from "react";
 
+import type { MatchPlayerWithStats } from "@/features/matches/types";
 import { formatPlaytime } from "@/features/matches/utils";
 import { useRouter } from "@/navigation";
+import type { TableColumn } from "@/shared/components/table";
 import type { NamedEntity } from "@/shared/types";
 
 import { PlayerNameCell } from "./PlayerNameCell";
 import { ShotChartCell } from "./ShotChartCell";
-import type { StatColumn } from "./types";
 
 /**
  * Builds the player match stats table columns. Depends on translations and the
@@ -17,31 +18,31 @@ import type { StatColumn } from "./types";
  */
 export function usePlayerStatColumns(
   onSelectPlayer: (player: NamedEntity) => void,
-): StatColumn[] {
+): TableColumn<MatchPlayerWithStats>[] {
   const tCommon = useTranslations("common");
   const tMatches = useTranslations("matches");
   const router = useRouter();
 
-  return useMemo<StatColumn[]>(
+  return useMemo<TableColumn<MatchPlayerWithStats>[]>(
     () => [
       {
-        id: "number",
-        label: tMatches("playerMatchStats.number"),
+        key: "number",
+        header: tMatches("playerMatchStats.number"),
         align: "center",
-        getValue: (p) => p.player.number,
+        render: (p) => p.player.number,
       },
       {
-        id: "position",
-        label: tMatches("playerMatchStats.position"),
+        key: "position",
+        header: tMatches("playerMatchStats.position"),
         align: "center",
-        getValue: (p) => p.player.position,
+        render: (p) => p.player.position,
       },
       {
-        id: "name",
-        label: tMatches("playerMatchStats.name"),
+        key: "name",
+        header: tMatches("playerMatchStats.name"),
         align: "left",
         className: "border-r border-divide",
-        getValue: (p) => (
+        render: (p) => (
           <PlayerNameCell
             playerId={p.player.id}
             playerName={p.player.name}
@@ -50,102 +51,102 @@ export function usePlayerStatColumns(
         ),
       },
       {
-        id: "points",
-        label: tCommon("stats.points.abbr"),
+        key: "points",
+        header: tCommon("stats.points.abbr"),
         tooltip: tCommon("stats.points.full"),
         align: "center",
-        getValue: (p) => p.stats.points,
+        render: (p) => p.stats.points,
       },
       {
-        id: "rebounds",
-        label: tCommon("stats.rebounds.abbr"),
+        key: "rebounds",
+        header: tCommon("stats.rebounds.abbr"),
         tooltip: tCommon("stats.rebounds.full"),
         align: "center",
-        getValue: (p) =>
+        render: (p) =>
           `${p.stats.rebounds.total} (${p.stats.rebounds.offensive}|${p.stats.rebounds.defensive})`,
       },
       {
-        id: "assists",
-        label: tCommon("stats.assists.abbr"),
+        key: "assists",
+        header: tCommon("stats.assists.abbr"),
         tooltip: tCommon("stats.assists.full"),
         align: "center",
-        getValue: (p) => p.stats.assists,
+        render: (p) => p.stats.assists,
       },
       {
-        id: "steals",
-        label: tCommon("stats.steals.abbr"),
+        key: "steals",
+        header: tCommon("stats.steals.abbr"),
         tooltip: tCommon("stats.steals.full"),
         align: "center",
-        getValue: (p) => p.stats.steals,
+        render: (p) => p.stats.steals,
       },
       {
-        id: "blocks",
-        label: tCommon("stats.blocks.abbr"),
+        key: "blocks",
+        header: tCommon("stats.blocks.abbr"),
         tooltip: tCommon("stats.blocks.full"),
         align: "center",
-        getValue: (p) => p.stats.blocks,
+        render: (p) => p.stats.blocks,
       },
       {
-        id: "fouls",
-        label: tCommon("stats.fouls.abbr"),
+        key: "fouls",
+        header: tCommon("stats.fouls.abbr"),
         tooltip: tCommon("stats.fouls.full"),
         align: "center",
-        getValue: (p) => p.stats.fouls,
+        render: (p) => p.stats.fouls,
       },
       {
-        id: "threePoints",
-        label: tCommon("stats.threePoints.abbr"),
+        key: "threePoints",
+        header: tCommon("stats.threePoints.abbr"),
         tooltip: tCommon("stats.threePoints.full"),
         align: "center",
         className: "border-l border-divide",
-        getValue: (p) =>
+        render: (p) =>
           `${p.stats.threePointsMade}/${p.stats.threePointsAttempted}`,
       },
       {
-        id: "twoPointsInt",
-        label: tCommon("stats.twoPointsInt.abbr"),
+        key: "twoPointsInt",
+        header: tCommon("stats.twoPointsInt.abbr"),
         tooltip: tCommon("stats.twoPointsInt.full"),
         align: "center",
-        getValue: (p) =>
+        render: (p) =>
           `${p.stats.twoPointsIntMade}/${p.stats.twoPointsIntAttempted}`,
       },
       {
-        id: "twoPointsExt",
-        label: tCommon("stats.twoPointsExt.abbr"),
+        key: "twoPointsExt",
+        header: tCommon("stats.twoPointsExt.abbr"),
         tooltip: tCommon("stats.twoPointsExt.full"),
         align: "center",
-        getValue: (p) =>
+        render: (p) =>
           `${p.stats.twoPointsExtMade}/${p.stats.twoPointsExtAttempted}`,
       },
       {
-        id: "freeThrows",
-        label: tCommon("stats.freeThrows.abbr"),
+        key: "freeThrows",
+        header: tCommon("stats.freeThrows.abbr"),
         tooltip: tCommon("stats.freeThrows.full"),
         align: "center",
         className: "border-l border-divide",
-        getValue: (p) =>
+        render: (p) =>
           `${p.stats.freeThrowsMade}/${p.stats.freeThrowsAttempted}`,
       },
       {
-        id: "turnovers",
-        label: tCommon("stats.turnovers.abbr"),
+        key: "turnovers",
+        header: tCommon("stats.turnovers.abbr"),
         tooltip: tCommon("stats.turnovers.full"),
         align: "center",
         className: "border-r border-divide",
-        getValue: (p) => p.stats.turnovers,
+        render: (p) => p.stats.turnovers,
       },
       {
-        id: "playtime",
-        label: tMatches("playerMatchStats.playtime"),
+        key: "playtime",
+        header: tMatches("playerMatchStats.playtime"),
         align: "center",
         className: "border-r border-divide",
-        getValue: (p) => formatPlaytime(p.stats.playtime),
+        render: (p) => formatPlaytime(p.stats.playtime),
       },
       {
-        id: "shots",
+        key: "shots",
         align: "center",
         className: "w-8",
-        getValue: (p) => (
+        render: (p) => (
           <ShotChartCell
             player={p.player}
             onSelect={onSelectPlayer}

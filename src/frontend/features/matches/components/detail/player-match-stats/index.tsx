@@ -9,10 +9,10 @@ import type { MatchEvent } from "@/features/matches/types";
 import type { TeamInfo, TeamInfoExtended } from "@/features/teams/types";
 import { useRouter } from "@/navigation";
 import { Section } from "@/shared/components/blocks";
+import { DataTable } from "@/shared/components/table";
 import { Text } from "@/shared/components/typography";
 import type { NamedEntity } from "@/shared/types";
 
-import { PlayerStatsTable } from "./PlayerStatsTable";
 import { usePlayerStatColumns } from "./usePlayerStatColumns";
 
 interface PlayerMatchStatsProps {
@@ -25,7 +25,7 @@ interface PlayerMatchStatsProps {
 /**
  * A team's per-player match stats table with a shot-chart modal. Owns the
  * selected-player modal state; the column definitions live in
- * usePlayerStatColumns and the table render in PlayerStatsTable.
+ * usePlayerStatColumns.
  */
 export const PlayerMatchStats: React.FC<PlayerMatchStatsProps> = ({
   team,
@@ -68,7 +68,12 @@ export const PlayerMatchStats: React.FC<PlayerMatchStatsProps> = ({
       }
       variant="highlighted"
     >
-      <PlayerStatsTable columns={columns} players={sortedPlayers} />
+      <DataTable
+        columns={columns}
+        rows={sortedPlayers}
+        getRowKey={(playerWithStats) => playerWithStats.player.number}
+        size="compact"
+      />
 
       {/* Modal for shot chart */}
       <ShotModal
