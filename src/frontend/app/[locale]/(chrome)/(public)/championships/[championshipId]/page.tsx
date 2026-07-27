@@ -20,6 +20,7 @@ import {
 } from "@/features/competitions/championships/utils";
 import { serverLeaderboardsService } from "@/features/competitions/leaderboards/api";
 import { serverPoolsService } from "@/features/competitions/pools/api";
+import { serverMatchesService } from "@/features/matches/api";
 import { LeaderboardTable } from "@/shared/components/domain";
 import { PageLayout } from "@/shared/components/layout";
 import type { LocalePageProps, SearchParamsProps } from "@/shared/types";
@@ -90,9 +91,12 @@ export default async function ChampionshipsDetailPage({
 
   const poolId = resolvePoolId(pools, poolParam);
 
-  const leaderboard = await serverLeaderboardsService
-    .getAll({ poolId })
-    .catch(handleServerError);
+  // Both halves of the page are scoped to the selected pool, so they resolve
+  // together once it is known.
+  const [leaderboard, matches] = await Promise.all([
+    serverLeaderboardsService.getAll({ poolId }),
+    serverMatchesService.getByPoolId(poolId),
+  ]).catch(handleServerError);
 
   const categoryNav = buildCategoryNavigation(
     championships,
@@ -130,7 +134,7 @@ export default async function ChampionshipsDetailPage({
         </div>
 
         <div className="w-full xl:w-[500px] 2xl:w-[600px]">
-          <ChampionshipMatches key={poolId} poolId={poolId} />
+          <ChampionshipMatches key={poolId} matches={matches} />
         </div>
       </div>
     </PageLayout>

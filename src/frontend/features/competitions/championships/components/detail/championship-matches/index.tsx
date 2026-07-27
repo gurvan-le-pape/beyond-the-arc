@@ -3,7 +3,7 @@
 
 import { useMemo, useState } from "react";
 
-import { useMatchesByPool } from "@/features/matches/api";
+import type { Match } from "@/features/matches/types";
 import { getSortedRounds } from "@/features/matches/utils";
 import { Card } from "@/shared/components/primitives";
 import { groupBy } from "@/shared/utils";
@@ -12,18 +12,21 @@ import { MatchesSection } from "./MatchesSection";
 import { RoundsSection } from "./RoundsSection";
 
 interface ChampionshipMatchesProps {
-  readonly poolId: number;
+  readonly matches: Match[];
 }
 
 /**
  * Match panel for one pool: the round selector and the cards of the round.
  *
- * Mounted with `key={poolId}` by the page, so a pool switch remounts it and
- * the selected round falls back to the first round of the new pool.
+ * Client-side for its own state — which round is selected, which cards are
+ * expanded — but not for its data. The page already knows the pool, so it
+ * fetches the matches on the server and passes them in; a pool switch is a
+ * `?pool=` navigation that re-renders the page with a new list.
+ *
+ * Mounted with `key={poolId}` by the page, so that switch remounts this and the
+ * selected round falls back to the first round of the new pool.
  */
-export function ChampionshipMatches({ poolId }: ChampionshipMatchesProps) {
-  const { data: matches = [] } = useMatchesByPool(poolId);
-
+export function ChampionshipMatches({ matches }: ChampionshipMatchesProps) {
   const groupedMatches = useMemo(
     () => groupBy(matches, (match) => match.matchday),
     [matches],

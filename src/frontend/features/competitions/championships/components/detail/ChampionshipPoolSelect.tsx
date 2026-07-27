@@ -4,7 +4,6 @@
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 
-import { useMatchesPrefetch } from "@/features/matches/api";
 import { usePathname, useRouter } from "@/navigation";
 import { Select } from "@/shared/components/forms";
 
@@ -31,7 +30,6 @@ export function ChampionshipPoolSelect({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const tPool = useTranslations("pool");
-  const prefetch = useMatchesPrefetch();
 
   const handlePoolChange = (val: string | number | undefined) => {
     const next = new URLSearchParams(searchParams.toString());
@@ -46,9 +44,6 @@ export function ChampionshipPoolSelect({
       options={pools.map((pool) => ({
         value: pool.id,
         label: `${tPool("label")} ${pool.letter}`,
-        // The matches panel still fetches client-side, so warming its query
-        // on hover keeps the round list instant after the pool switch.
-        onMouseEnter: () => prefetch.byPool(pool.id),
       }))}
     />
   );
