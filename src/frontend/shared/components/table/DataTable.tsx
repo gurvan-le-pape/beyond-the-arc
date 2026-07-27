@@ -75,11 +75,13 @@ interface DataTableProps<T> {
   readonly getRowLabel?: (row: T) => string;
   /** Alternating row backgrounds. */
   readonly striped?: boolean;
-  /** Extra classes applied to every header cell. */
-  readonly headerClassName?: string;
-  /** Extra classes applied to every body cell. */
-  readonly cellClassName?: string;
 }
+
+/** Which stripe band a row sits in, or none when striping is off. */
+const stripeFor = (striped: boolean, index: number) => {
+  if (!striped) return "none" as const;
+  return index % 2 === 0 ? ("even" as const) : ("odd" as const);
+};
 
 /**
  * Column-driven table.
@@ -87,15 +89,14 @@ interface DataTableProps<T> {
  * Every table in the app is the same shape — a header built from column
  * labels and a body built by mapping rows through those columns — so that
  * shape lives here once. Callers supply columns and rows; anything genuinely
- * per-feature (expand/collapse, sorting, a surrounding Section) stays with the
- * caller.
+ * per-feature (expand/collapse, a surrounding Section) stays with the caller.
+ *
+ * Presentation is a closed set of typed variants: there are no `className`
+ * props, on the table, the header, the cells or the rows. A look this
+ * component cannot express is a request for a new named variant, reviewed
+ * once here, rather than a class string pasted at a call site — which is how
+ * four tables previously ended up with three framings and two stripe recipes.
  */
-/** Which stripe band a row sits in, or none when striping is off. */
-const stripeFor = (striped: boolean, index: number) => {
-  if (!striped) return "none" as const;
-  return index % 2 === 0 ? ("even" as const) : ("odd" as const);
-};
-
 export function DataTable<T>({
   columns,
   rows,
@@ -107,8 +108,6 @@ export function DataTable<T>({
   getRowHref,
   getRowLabel,
   striped = false,
-  headerClassName,
-  cellClassName,
 }: DataTableProps<T>) {
   return (
     <Table frame={frame}>
@@ -123,7 +122,6 @@ export function DataTable<T>({
               width={column.width}
               divider={column.divider}
               tooltip={column.tooltip}
-              className={headerClassName}
             >
               {column.header}
             </TableHead>
@@ -152,7 +150,6 @@ export function DataTable<T>({
                     width={column.width}
                     divider={column.divider}
                     emphasis={column.emphasis}
-                    className={cellClassName}
                   >
                     {href !== undefined && columnIndex === 0 ? (
                       <Link
