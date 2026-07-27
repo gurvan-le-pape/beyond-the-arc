@@ -30,6 +30,7 @@ export const MatchDetailsTable: React.FC<MatchDetailsTableProps> = ({
   isLoadingEvents,
 }) => {
   const t = useTranslations("competitions");
+  const tCommon = useTranslations("common");
 
   const quarterScores = computeQuarterScores(
     matchEvents,
@@ -87,6 +88,7 @@ export const MatchDetailsTable: React.FC<MatchDetailsTableProps> = ({
       columns={columns}
       rows={rows}
       getRowKey={(row) => row.side}
+      emptyMessage={tCommon("noData")}
       hoverableRows={false}
       getRowClassName={(row) =>
         row.side === "away" ? "bg-surface-inset" : undefined

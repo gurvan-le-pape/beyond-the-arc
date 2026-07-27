@@ -24,6 +24,7 @@
     "scrollRight": "Scroll right"
   },
   "leaderboardTitle": "Leaderboard",
+  "leaderboardEmpty": "No standings available yet",
   "championshipsSectionTitle": "Championships",
   "letterFilter": {
     "all": "All"

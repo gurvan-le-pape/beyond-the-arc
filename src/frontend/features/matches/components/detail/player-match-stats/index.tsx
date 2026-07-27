@@ -35,6 +35,7 @@ export const PlayerMatchStats: React.FC<PlayerMatchStatsProps> = ({
 }) => {
   const router = useRouter();
   const [modalPlayer, setModalPlayer] = useState<NamedEntity | null>(null);
+  const tCommon = useTranslations("common");
   const tMatches = useTranslations("matches");
 
   const getPlayerShots = (playerId: number) => playerShots[playerId] ?? [];
@@ -73,6 +74,7 @@ export const PlayerMatchStats: React.FC<PlayerMatchStatsProps> = ({
         rows={sortedPlayers}
         getRowKey={(playerWithStats) => playerWithStats.player.number}
         size="compact"
+        emptyMessage={tCommon("emptyState.players")}
       />
 
       {/* Modal for shot chart */}
