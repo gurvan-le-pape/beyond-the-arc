@@ -72,7 +72,7 @@ export const MatchEventsTimeline: React.FC<MatchEventsTimelineProps> = ({
 
             const eventKey = `${event.id}`;
 
-            // Pre-compute once; TeamEventBlock will use it via dangerouslySetInnerHTML.
+            // Pre-compute once; TimelineEventBlock will use it via dangerouslySetInnerHTML.
             const descriptionHtml = event.description
               ? makeDescriptionClickable(event.description, event.players)
               : "";
