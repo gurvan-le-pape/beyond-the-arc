@@ -31,13 +31,6 @@ export function TeamMatchHistoryTable({
       matches={matches}
       columns={columns}
       emptyMessage={tCommon("matchHistory.noMatches")}
-      getRowHref={(match) => `/matches/${match.id}`}
-      getRowLabel={(match) =>
-        tCommon("matchHistory.viewMatch", {
-          home: match.homeTeam.club.name,
-          away: match.awayTeam.club.name,
-        })
-      }
       showAllLabel={tCommon("matchHistory.seeAllMatches", {
         count: matches.length,
       })}
