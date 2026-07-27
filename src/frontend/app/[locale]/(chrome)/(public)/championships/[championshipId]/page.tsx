@@ -25,13 +25,11 @@ import { PageLayout } from "@/shared/components/layout";
 import type { LocalePageProps, SearchParamsProps } from "@/shared/types";
 import { handleServerError, parseRouteId } from "@/shared/utils";
 
-// Don't pre-build - the page reads ?pool= and is force-dynamic below
-export async function generateStaticParams() {
-  return [];
-}
-
-export const dynamicParams = true;
-export const dynamic = "force-dynamic";
+// No route directives, and none needed: reading `?pool=` is a request-time API,
+// which already renders this route per request and already keeps it out of the
+// prerender pass. A `force-dynamic` alongside that says nothing extra, and a
+// `generateStaticParams` returning [] is never called on a route that is always
+// dynamic. Caching stays where it belongs, on `fetchApi`.
 
 export async function generateMetadata({
   params,
