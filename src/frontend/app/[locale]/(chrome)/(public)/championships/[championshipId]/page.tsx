@@ -69,6 +69,11 @@ export default async function ChampionshipsDetailPage({
   const { pool: poolParam } = await searchParams;
   setRequestLocale(locale);
 
+  const tCompetitions = await getTranslations({
+    locale,
+    namespace: "competitions",
+  });
+
   const championshipId = parseRouteId(championshipIdStr);
 
   const championship = await serverChampionshipsService
@@ -98,18 +103,12 @@ export default async function ChampionshipsDetailPage({
     serverMatchesService.getByPoolId(poolId),
   ]).catch(handleServerError);
 
-  const categoryNav = buildCategoryNavigation(
-    championships,
-    championshipId,
-    championship.gender,
-  );
+  const categoryLinks = buildCategoryNavigation(championships, championship);
 
-  const divisionNav = buildDivisionNavigation(
+  const divisionLinks = buildDivisionNavigation(
     championships,
-    championship.level,
-    championship.category,
-    championship.gender,
-    championship.division,
+    championship,
+    (value) => tCompetitions("divisionWithValue", { value }),
   );
 
   return (
@@ -121,8 +120,8 @@ export default async function ChampionshipsDetailPage({
           <ChampionshipHeader championship={championship} />
 
           <ChampionshipNavigation
-            categoryNav={categoryNav}
-            divisionNav={divisionNav}
+            categoryLinks={categoryLinks}
+            divisionLinks={divisionLinks}
           />
 
           <LeaderboardTable

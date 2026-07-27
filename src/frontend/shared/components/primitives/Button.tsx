@@ -167,7 +167,9 @@ export const Button = ({
 // (a sidebar, a nav bar, a categorised list). Button shouldn't know that.
 // ---------------------------------------------------------------------------
 
-const navButtonVariants = cva(BASE, {
+// Exported like buttonVariants, so a real `<a>`/`<Link>` can wear the nav-item
+// look without being rebuilt as a button — see ChampionshipNavigation.
+export const navButtonVariants = cva(BASE, {
   variants: {
     variant: {
       // Segmented nav / tab bar
