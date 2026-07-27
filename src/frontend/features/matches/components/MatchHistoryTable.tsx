@@ -7,26 +7,10 @@ import React, { useState } from "react";
 import { Section } from "@/shared/components/blocks";
 import { Button } from "@/shared/components/primitives";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableEmpty,
-  TableHead,
-  TableHeader,
-  TableRow,
+  DataTable,
+  stripedRow,
+  type TableColumn,
 } from "@/shared/components/table";
-
-/**
- * Column configuration for the match history table.
- * Describes how to render a single column — header label, cell content, and alignment.
- * The className prop has been intentionally removed; spacing is handled by the Table primitives.
- */
-export interface MatchHistoryColumn<T> {
-  key: string;
-  header: React.ReactNode;
-  render: (match: T) => React.ReactNode;
-  align?: "left" | "center" | "right";
-}
 
 /**
  * Props for MatchHistoryTable.
@@ -34,7 +18,7 @@ export interface MatchHistoryColumn<T> {
  */
 interface MatchHistoryTableProps<T> {
   readonly matches: T[];
-  readonly columns: MatchHistoryColumn<T>[];
+  readonly columns: TableColumn<T>[];
   readonly emptyMessage: string;
   readonly onRowClick?: (match: T) => void;
   readonly showAllLabel: string;
@@ -79,40 +63,15 @@ export function MatchHistoryTable<T extends { id: number }>({
 
   return (
     <Section title={title} variant="highlighted">
-      <Table className="border border-primary rounded-card box-border">
-        <TableHeader className="bg-primary-subtle border-b border-primary">
-          <TableRow hoverable={false}>
-            {columns.map((col) => (
-              <TableHead key={col.key} align={col.align}>
-                {col.header}
-              </TableHead>
-            ))}
-          </TableRow>
-        </TableHeader>
-
-        <TableBody>
-          {matches.length === 0 ? (
-            <TableEmpty colSpan={columns.length} message={emptyMessage} />
-          ) : (
-            displayedMatches.map((match, index) => (
-              <TableRow
-                key={match.id}
-                clickable={!!onRowClick}
-                onClick={onRowClick ? () => onRowClick(match) : undefined}
-                className={
-                  index % 2 === 0 ? "bg-primary-ghost" : "bg-surface-inset"
-                }
-              >
-                {columns.map((col) => (
-                  <TableCell key={col.key} align={col.align}>
-                    {col.render(match)}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
+      <DataTable<T>
+        columns={columns}
+        rows={displayedMatches}
+        getRowKey={(match) => match.id}
+        variant="highlighted"
+        emptyMessage={emptyMessage}
+        onRowClick={onRowClick}
+        getRowClassName={stripedRow}
+      />
 
       {hasMoreMatches && (
         <div className="flex justify-center py-4 border-t border-divide">
