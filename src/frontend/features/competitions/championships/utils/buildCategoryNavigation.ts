@@ -1,40 +1,35 @@
 // src/frontend/features/competitions/championships/utils/buildCategoryNavigation.ts
-import type { Category, Gender } from "@/shared/constants";
+import type { Category } from "@/shared/constants";
 import { sortCategories } from "@/shared/utils";
 
-import type { Championship } from "../types";
+import type { Championship, ChampionshipNavLink } from "../types";
 
+/**
+ * Links to the same competition in every other category, for one gender.
+ *
+ * `championships` is the sibling list the page already fetched — every
+ * championship of this organization at this level.
+ */
 export function buildCategoryNavigation(
   championships: Championship[],
-  championshipId: number,
-  gender: Gender | undefined,
-) {
-  if (!gender) {
-    return {
-      categoryMap: {} as Record<Category, number>,
-      availableCategories: [] as Category[],
-      currentCategory: undefined,
-    };
+  championship: Championship,
+): ChampionshipNavLink[] {
+  const { gender, category } = championship;
+  if (!gender) return [];
+
+  // One destination per category: the first championship that offers it.
+  const idByCategory = new Map<Category, number>();
+  for (const sibling of championships) {
+    if (sibling.gender !== gender || !sibling.category) continue;
+    if (!idByCategory.has(sibling.category)) {
+      idByCategory.set(sibling.category, sibling.id);
+    }
   }
 
-  const filtered = championships.filter((c) => c.gender === gender);
-
-  const map: Record<string, number> = {};
-  const categories: Category[] = [];
-  let currentCategory: Category | undefined;
-
-  filtered.forEach((champ) => {
-    if (!champ.category) return;
-    if (!categories.includes(champ.category)) categories.push(champ.category);
-    if (!map[champ.category]) map[champ.category] = champ.id;
-    if (champ.id === championshipId) currentCategory = champ.category;
-  });
-
-  const availableCategories = sortCategories(categories.slice());
-
-  return {
-    categoryMap: map as Record<Category, number>,
-    availableCategories,
-    currentCategory: currentCategory ?? availableCategories[0],
-  };
+  // sortCategories sorts in place, so it gets an array of its own.
+  return sortCategories([...idByCategory.keys()]).map((cat) => ({
+    label: cat,
+    href: `/championships/${idByCategory.get(cat)}`,
+    isCurrent: cat === category,
+  }));
 }

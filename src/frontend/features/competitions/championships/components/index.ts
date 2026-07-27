@@ -8,7 +8,7 @@ export * from "./ChampionshipListItem";
 export * from "./detail/championship-breadcrumb/index";
 export * from "./detail/championship-header/index";
 export * from "./detail/championship-matches/index";
-export * from "./detail/championship-navigation/index";
+export * from "./detail/ChampionshipNavigation";
 export * from "./detail/ChampionshipPoolSelect";
 export * from "./list/ChampionshipCard";
 export * from "./list/filters/ChampionshipFilters";
