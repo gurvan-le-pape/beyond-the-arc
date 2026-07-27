@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 import { useCommittees } from "@/features/organizations/committees/api";
 import { useLeagues } from "@/features/organizations/leagues/api";
-import { Pagination } from "@/shared/components/table";
+import { Pagination } from "@/shared/components/navigation";
 import { useDebounce } from "@/shared/hooks";
 
 import { useClubs } from "../../api";

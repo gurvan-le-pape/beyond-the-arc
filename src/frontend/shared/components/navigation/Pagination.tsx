@@ -1,4 +1,4 @@
-// src/frontend/shared/components/table/Pagination.tsx
+// src/frontend/shared/components/navigation/Pagination.tsx
 import {
   ChevronLeft,
   ChevronRight,
