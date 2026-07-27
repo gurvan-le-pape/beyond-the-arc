@@ -83,23 +83,21 @@ export const TableBody = ({
 // ---------------------------------------------------------------------------
 
 interface TableRowProps extends HTMLAttributes<HTMLTableRowElement> {
-  hoverable?: boolean;
-  clickable?: boolean;
+  interactive?: boolean;
   stripe?: Stripe;
   ref?: React.Ref<HTMLTableRowElement>;
 }
 
 export const TableRow = ({
   className,
-  hoverable = true,
-  clickable = false,
+  interactive = false,
   stripe = "none",
   ref,
   ...props
 }: TableRowProps) => (
   <tr
     ref={ref}
-    className={cn(rowVariants({ stripe, hoverable, clickable }), className)}
+    className={cn(rowVariants({ stripe, interactive }), className)}
     {...props}
   />
 );
@@ -194,7 +192,7 @@ interface TableEmptyProps {
 
 export function TableEmpty({ colSpan, message }: TableEmptyProps) {
   return (
-    <TableRow hoverable={false}>
+    <TableRow>
       <TableCell
         colSpan={colSpan}
         align="center"

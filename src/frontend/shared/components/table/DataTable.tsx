@@ -1,6 +1,8 @@
 // src/frontend/shared/components/table/DataTable.tsx
 import React from "react";
 
+import { Link } from "@/navigation";
+
 import {
   Table,
   TableBody,
@@ -10,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "./parts";
+import { ROW_LINK } from "./variants";
 
 /**
  * Definition of one column: how to label it and how to pull a cell out of a row.
@@ -59,9 +62,17 @@ interface DataTableProps<T> {
    * making it optional meant three of the four tables shipped without one.
    */
   readonly emptyMessage: string;
-  readonly onRowClick?: (row: T) => void;
-  /** Whether body rows react to hover. */
-  readonly hoverableRows?: boolean;
+  /**
+   * Makes each row navigate. The lead cell's content becomes a link stretched
+   * over the whole row, so rows are focusable and keyboard-activable — which
+   * `onRowClick` on a `<tr>` never was.
+   */
+  readonly getRowHref?: (row: T) => string;
+  /**
+   * Accessible name for the row link. Supply it whenever the lead cell alone
+   * does not identify the row — a date does not.
+   */
+  readonly getRowLabel?: (row: T) => string;
   /** Alternating row backgrounds. */
   readonly striped?: boolean;
   /** Extra classes applied to every header cell. */
@@ -93,8 +104,8 @@ export function DataTable<T>({
   density = "comfortable",
   wrap = true,
   emptyMessage,
-  onRowClick,
-  hoverableRows = true,
+  getRowHref,
+  getRowLabel,
   striped = false,
   headerClassName,
   cellClassName,
@@ -102,7 +113,7 @@ export function DataTable<T>({
   return (
     <Table frame={frame}>
       <TableHeader>
-        <TableRow hoverable={false}>
+        <TableRow>
           {columns.map((column) => (
             <TableHead
               key={column.key}
@@ -124,30 +135,41 @@ export function DataTable<T>({
         {rows.length === 0 ? (
           <TableEmpty colSpan={columns.length} message={emptyMessage} />
         ) : (
-          rows.map((row, index) => (
-            <TableRow
-              key={getRowKey(row)}
-              hoverable={hoverableRows}
-              clickable={!!onRowClick}
-              onClick={onRowClick ? () => onRowClick(row) : undefined}
-              stripe={stripeFor(striped, index)}
-            >
-              {columns.map((column) => (
-                <TableCell
-                  key={column.key}
-                  align={column.align}
-                  density={density}
-                  wrap={wrap}
-                  width={column.width}
-                  divider={column.divider}
-                  emphasis={column.emphasis}
-                  className={cellClassName}
-                >
-                  {column.render(row)}
-                </TableCell>
-              ))}
-            </TableRow>
-          ))
+          rows.map((row, index) => {
+            const href = getRowHref?.(row);
+            return (
+              <TableRow
+                key={getRowKey(row)}
+                interactive={href !== undefined}
+                stripe={stripeFor(striped, index)}
+              >
+                {columns.map((column, columnIndex) => (
+                  <TableCell
+                    key={column.key}
+                    align={column.align}
+                    density={density}
+                    wrap={wrap}
+                    width={column.width}
+                    divider={column.divider}
+                    emphasis={column.emphasis}
+                    className={cellClassName}
+                  >
+                    {href !== undefined && columnIndex === 0 ? (
+                      <Link
+                        href={href}
+                        aria-label={getRowLabel?.(row)}
+                        className={ROW_LINK}
+                      >
+                        {column.render(row)}
+                      </Link>
+                    ) : (
+                      column.render(row)
+                    )}
+                  </TableCell>
+                ))}
+              </TableRow>
+            );
+          })
         )}
       </TableBody>
     </Table>

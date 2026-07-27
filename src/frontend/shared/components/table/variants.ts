@@ -88,12 +88,31 @@ export const rowVariants = cva(
         even: "bg-primary-ghost",
         odd: "bg-surface-inset",
       },
-      hoverable: { true: "hover:bg-surface-inset", false: "" },
-      clickable: { true: "cursor-pointer", false: "" },
+      /**
+       * A row that navigates. `relative` is the containing block for the
+       * stretched row link; hover is here rather than on its own axis because
+       * hover feedback exists to signal interactivity, so the two must not be
+       * able to drift apart.
+       */
+      interactive: { true: "relative hover:bg-surface-inset", false: "" },
     },
-    defaultVariants: { stripe: "none", hoverable: true, clickable: false },
+    defaultVariants: { stripe: "none", interactive: false },
   },
 );
+
+/**
+ * Stretched row link. `<a>` cannot wrap `<tr>`, so the lead cell's content
+ * becomes the anchor and its ::after covers the whole row — one tab stop per
+ * row, a focus ring around the entire row, and real link behaviour: Enter,
+ * middle-click, open-in-new-tab and a status-bar URL.
+ *
+ * Do not combine with `wrap={false}`: the cells' `overflow-hidden` would clip
+ * the overlay back to the lead cell.
+ */
+export const ROW_LINK =
+  "outline-none after:absolute after:inset-0 after:content-['']" +
+  " focus-visible:after:ring-2 focus-visible:after:ring-inset" +
+  " focus-visible:after:ring-primary";
 
 export const headVariants = cva("", {
   variants: { align, density, wrap, width, divider },
