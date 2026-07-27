@@ -5,9 +5,9 @@
 
 export * from "./ChampionshipLevelTabs";
 export * from "./ChampionshipListItem";
-export * from "./detail/championship-breadcrumb/index";
-export * from "./detail/championship-header/index";
 export * from "./detail/championship-matches/index";
+export * from "./detail/ChampionshipBreadcrumb";
+export * from "./detail/ChampionshipHeader";
 export * from "./detail/ChampionshipNavigation";
 export * from "./detail/ChampionshipPoolSelect";
 export * from "./list/ChampionshipCard";

@@ -118,7 +118,7 @@
     ".*\\.spec\\.tsx?$",
     ".*\\.test\\.tsx?$",
     ".*\\.d\\.ts$",
-    ".*/championship-(breadcrumb|header|matches)/(?!index\\.tsx$).*",
+    ".*/championship-matches/(?!index\\.tsx$).*",
     ".*/match-events/(filters|timeline)/.*",
     ".*/match-score-card/(?!index\\.tsx$).*",
     ".*/team-roster/(?!index\\.tsx$).*",
