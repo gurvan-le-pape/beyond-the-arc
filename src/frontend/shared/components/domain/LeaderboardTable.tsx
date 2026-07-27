@@ -81,7 +81,6 @@ export function LeaderboardTable({
         columns={columns}
         rows={leaderboards}
         getRowKey={(row) => row.id}
-        variant="highlighted"
         emptyMessage={tCompetitions("leaderboardEmpty")}
         striped
         headerClassName="text-text-heading"

@@ -9,6 +9,8 @@ import {
   headInnerVariants,
   headVariants,
   rowVariants,
+  TABLE_HEADER,
+  tableVariants,
 } from "./variants";
 
 type Alignment = "left" | "center" | "right";
@@ -16,6 +18,7 @@ type Density = "comfortable" | "compact";
 type Width = "auto" | "icon";
 type Divider = "none" | "left" | "right" | "both";
 type Stripe = "none" | "even" | "odd";
+type Frame = "none" | "outline";
 
 // ---------------------------------------------------------------------------
 // Table
@@ -23,12 +26,23 @@ type Stripe = "none" | "even" | "odd";
 
 interface TableProps extends HTMLAttributes<HTMLTableElement> {
   children: ReactNode;
+  frame?: Frame;
   ref?: React.Ref<HTMLTableElement>;
 }
 
-export const Table = ({ className, children, ref, ...props }: TableProps) => (
+export const Table = ({
+  className,
+  children,
+  frame = "none",
+  ref,
+  ...props
+}: TableProps) => (
   <div className="w-full overflow-x-auto">
-    <table ref={ref} className={cn("min-w-full", className)} {...props}>
+    <table
+      ref={ref}
+      className={cn(tableVariants({ frame }), className)}
+      {...props}
+    >
       {children}
     </table>
   </div>
@@ -44,9 +58,7 @@ export const TableHeader = ({
   ...props
 }: HTMLAttributes<HTMLTableSectionElement> & {
   ref?: React.Ref<HTMLTableSectionElement>;
-}) => (
-  <thead ref={ref} className={cn("bg-primary-ghost", className)} {...props} />
-);
+}) => <thead ref={ref} className={cn(TABLE_HEADER, className)} {...props} />;
 
 // ---------------------------------------------------------------------------
 // TableBody
