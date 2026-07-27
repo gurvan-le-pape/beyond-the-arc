@@ -1,16 +1,14 @@
 // src/frontend/shared/components/navigation/Breadcrumb.tsx
-"use client";
-
 import { ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-import { useRouter } from "@/navigation";
+import { Link } from "@/navigation";
 
 export interface BreadcrumbItem {
   label: string;
-  href?: string; // If provided, it's clickable
-  onClick?: () => void; // Alternative to href
-  current?: boolean; // Last item in breadcrumb
+  /** Omit on the current page — the last item is treated as current anyway. */
+  href?: string;
+  current?: boolean;
 }
 
 interface BreadcrumbProps {
@@ -20,17 +18,19 @@ interface BreadcrumbProps {
 }
 
 /**
- * Generic Breadcrumb Component
+ * Breadcrumb trail.
  *
- * Renders a breadcrumb navigation trail with clickable links and current page indicator.
+ * Every ancestor is a real page, so every ancestor is a real `<Link>`: the
+ * trail is crawlable, middle-clickable and openable in a new tab, and none of
+ * it needs to reach the browser as JavaScript. A server component — it renders
+ * static markup and nothing else.
  *
  * @example
  * <Breadcrumb
  *   items={[
- *     { label: "France", href: "/clubs" },
- *     { label: "Bretagne", href: "/clubs/league/1" },
- *     { label: "Finistère", href: "/clubs/league/1/committee/29" },
- *     { label: "Club ABC", current: true }
+ *     { label: "Organizations", href: "/organizations" },
+ *     { label: "Clubs", href: "/organizations/clubs" },
+ *     { label: club.name, current: true },
  *   ]}
  * />
  */
@@ -39,20 +39,11 @@ export function Breadcrumb({
   separator,
   className = "",
 }: BreadcrumbProps) {
-  const router = useRouter();
   const tCommon = useTranslations("common");
 
   const defaultSeparator = (
     <ChevronRight className="w-4 h-4 text-text-muted" aria-hidden="true" />
   );
-
-  const handleClick = (item: BreadcrumbItem) => {
-    if (item.onClick) {
-      item.onClick();
-    } else if (item.href) {
-      router.push(item.href);
-    }
-  };
 
   return (
     <nav
@@ -63,21 +54,10 @@ export function Breadcrumb({
         {items.map((item, index) => {
           const isLast = index === items.length - 1;
           const isCurrent = item.current || isLast;
-          const isClickable = !isCurrent && (item.href || item.onClick);
 
           return (
             <li key={item.label} className="flex items-center gap-2">
-              {/* Breadcrumb Item */}
-              {isClickable ? (
-                <button
-                  type="button"
-                  onClick={() => handleClick(item)}
-                  className="text-primary hover:text-primary-strong hover:underline transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ring-offset-surface rounded-button"
-                  aria-current={isCurrent ? "page" : undefined}
-                >
-                  {item.label}
-                </button>
-              ) : (
+              {isCurrent || !item.href ? (
                 <span
                   className={
                     isCurrent
@@ -88,9 +68,15 @@ export function Breadcrumb({
                 >
                   {item.label}
                 </span>
+              ) : (
+                <Link
+                  href={item.href}
+                  className="text-primary hover:text-primary-strong hover:underline transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ring-offset-surface rounded-button"
+                >
+                  {item.label}
+                </Link>
               )}
 
-              {/* Separator */}
               {!isLast && (
                 <span className="flex items-center">
                   {separator || defaultSeparator}
