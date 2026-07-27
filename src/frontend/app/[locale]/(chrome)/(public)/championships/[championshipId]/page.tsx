@@ -86,13 +86,15 @@ export default async function ChampionshipsDetailPage({
       id: organizationId,
       limit: 100,
     }),
-  ]);
+  ]).catch(handleServerError);
 
   if (pools.length === 0) notFound();
 
   const poolId = resolvePoolId(pools, poolParam);
 
-  const leaderboard = await serverLeaderboardsService.getAll({ poolId });
+  const leaderboard = await serverLeaderboardsService
+    .getAll({ poolId })
+    .catch(handleServerError);
 
   const categoryNav = buildCategoryNavigation(
     championships,
