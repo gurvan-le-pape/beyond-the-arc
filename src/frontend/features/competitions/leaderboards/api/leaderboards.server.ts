@@ -3,48 +3,32 @@ import {
   buildQueryString,
   fetchApi,
   ServerRevalidate,
-} from "../../../../lib/services/server/server-api-client";
+} from "@/lib/services/server/server-api-client";
+
 import type { Leaderboard } from "../types/Leaderboard";
 import type { LeaderboardFilters } from "../types/LeaderboardFilters";
 
 /**
- * Service for interacting with the leaderboards API.
- * Retrieves ranking and standings data.
+ * Server-side leaderboards service: standings for one pool.
  *
- * Architecture:
- * - Uses apiClient (axios) for HTTP requests
- * - Backend responses are unwrapped by axios interceptor
- * - Services work directly with typed data
- * - Errors are handled globally by interceptor
- *
- * Usage:
- * - Import this service in React Query hooks
- * - Never call directly from components
- *
- * @example
- * import { serverLeaderboardsService } from '@/lib/services/client';
- * const leaderboard = await serverLeaderboardsService.getAll({ poolId: 1 });
+ * Server components only — this half of the dual service layer uses native
+ * fetch against the backend's internal address, so it must never be imported
+ * from client code. There is no client counterpart: the leaderboard is rendered
+ * on the server and the pool switch is a `?pool=` navigation, not a query.
  */
 export const serverLeaderboardsService = {
   /**
-   * Get leaderboard data with optional filters.
-   * Returns team rankings, standings, and statistics.
+   * Standings for a pool, already ranked by the backend.
    *
-   * @param filters - Optional filter criteria (poolId, championshipId, etc.)
-   * @returns Leaderboard data with team rankings
-   * @throws {AxiosError} 400 if validation fails
+   * Cached for {@link ServerRevalidate.LIVE}, since the scheduler rewrites
+   * standings as matches are played.
    *
    * @example
-   * // Get leaderboard for a specific pool
    * const leaderboard = await serverLeaderboardsService.getAll({ poolId: 1 });
-   *
-   * @example
-   * // Get leaderboard for a championship
-   * const leaderboard = await serverLeaderboardsService.getAll({ championshipId: 10 });
    */
-  async getAll(filters?: LeaderboardFilters): Promise<Leaderboard[]> {
+  async getAll(filters: LeaderboardFilters): Promise<Leaderboard[]> {
     const queryString = buildQueryString(filters);
-    return fetchApi<any>(`/leaderboards${queryString}`, {
+    return fetchApi<Leaderboard[]>(`/leaderboards${queryString}`, {
       revalidate: ServerRevalidate.LIVE,
     });
   },

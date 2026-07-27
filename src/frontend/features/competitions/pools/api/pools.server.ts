@@ -2,38 +2,27 @@
 import {
   buildQueryString,
   fetchApi,
-} from "../../../../lib/services/server/server-api-client";
+} from "@/lib/services/server/server-api-client";
+
 import type { Pool } from "../types/Pool";
 
 /**
- * Service for interacting with the pools (groups/pools) API.
+ * Server-side pools service: the groups a championship's teams are split into.
  *
- * Architecture:
- * - Uses apiClient (axios) for HTTP requests
- * - Backend responses are unwrapped by axios interceptor
- * - Services work directly with typed data
- * - Errors are handled globally by interceptor
- *
- * Usage:
- * - Import this service in React Query hooks
- * - Never call directly from components
- *
- * @example
- * import { serverPoolsService } from '@/lib/services/client';
- * const pools = await serverPoolsService.getByChampionshipId(1);
+ * Server components only — this half of the dual service layer uses native
+ * fetch against the backend's internal address, so it must never be imported
+ * from client code. Cached for the {@link ServerRevalidate} default, since a
+ * pool only changes when the static data is refreshed.
  */
 export const serverPoolsService = {
   /**
-   * Get all pools for a specific championship.
-   * Pools are the groups/pools within a championship.
+   * Every pool of a championship, in the backend's order.
    *
-   * @param championshipId - The championship ID
-   * @returns Array of pools in the championship
-   * @throws {AxiosError} 400 if validation fails
+   * @returns The championship's pools, or `[]` if it has none — the endpoint is
+   * a list and never 404s.
    *
    * @example
    * const pools = await serverPoolsService.getByChampionshipId(5);
-   * // [{ id: 1, name: 'Pool A', ... }, { id: 2, name: 'Pool B', ... }]
    */
   async getByChampionshipId(championshipId: number): Promise<Pool[]> {
     const queryString = buildQueryString({ championshipId });
