@@ -1,13 +1,14 @@
 // src/frontend/features/competitions/championships/components/detail/championship-matches/MatchesSection.tsx
 import { useTranslations } from "next-intl";
 
+import type { Match } from "@/features/matches/types";
 import { Badge } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 
 import { MatchCard } from "./match-card";
 
 interface MatchesSectionProps {
-  readonly currentMatches: any[];
+  readonly currentMatches: Match[];
   readonly expandedMatchIds: number[];
   readonly onToggleExpand: (matchId: number) => void;
 }

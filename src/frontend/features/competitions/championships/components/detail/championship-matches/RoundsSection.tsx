@@ -1,13 +1,14 @@
 // src/frontend/features/competitions/championships/components/detail/championship-matches/RoundsSection.tsx
 import { useTranslations } from "next-intl";
 
+import type { Match } from "@/features/matches/types";
 import { getSortedRounds } from "@/features/matches/utils";
 import { Text } from "@/shared/components/typography";
 
 import RoundSelector from "./RoundSelector";
 
 interface RoundsSectionProps {
-  readonly groupedMatches: Record<number, any[]>;
+  readonly groupedMatches: Record<number, Match[]>;
   readonly selectedRound: number | null;
   readonly onSelectRound: (round: number) => void;
 }

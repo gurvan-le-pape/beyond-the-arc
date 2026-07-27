@@ -1,4 +1,5 @@
 // src/frontend/features/competitions/championships/components/detail/championship-navigation/index.tsx
+"use client";
 
 import { Card } from "@/shared/components/primitives";
 

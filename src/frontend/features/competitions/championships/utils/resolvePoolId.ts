@@ -1,11 +1,11 @@
-// src/frontend/features/competitions/championships/utils/resolveInitialPoolId.ts
+// src/frontend/features/competitions/championships/utils/resolvePoolId.ts
 import type { Pool } from "@/features/competitions/pools/types";
 
 /**
- * The pool to select on first render: the one named by the `pool` query param
+ * The selected pool for a request: the one named by the `pool` query param
  * when it matches, otherwise the first pool. Assumes a non-empty pool list.
  */
-export function resolveInitialPoolId(
+export function resolvePoolId(
   pools: Pool[],
   poolParam: string | undefined,
 ): number {

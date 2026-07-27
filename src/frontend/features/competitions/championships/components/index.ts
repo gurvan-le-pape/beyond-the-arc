@@ -5,7 +5,11 @@
 
 export * from "./ChampionshipLevelTabs";
 export * from "./ChampionshipListItem";
-export * from "./detail/ChampionshipDetailPage";
+export * from "./detail/championship-breadcrumb/index";
+export * from "./detail/championship-header/index";
+export * from "./detail/championship-matches/index";
+export * from "./detail/championship-navigation/index";
+export * from "./detail/ChampionshipPoolSelect";
 export * from "./list/ChampionshipCard";
 export * from "./list/filters/ChampionshipFilters";
 export * from "./list/tabs/ChampionshipTab";
