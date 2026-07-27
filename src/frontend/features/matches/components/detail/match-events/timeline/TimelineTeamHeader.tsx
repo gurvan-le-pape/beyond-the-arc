@@ -2,6 +2,7 @@
 
 import type { TeamInfo } from "@/features/teams/types";
 
+import { TimelineRow } from "./TimelineRow";
 import { TimelineTeamLogo } from "./TimelineTeamLogo";
 
 interface TimelineTeamHeaderProps {
@@ -13,13 +14,21 @@ interface TimelineTeamHeaderProps {
  * Two-column header row displayed above the event timeline.
  * Home team (logo + name) on the left, away team (name + logo) on the right,
  * separated by a bottom border.
+ *
+ * Hidden from assistive tech: it is a legend for a spatial convention (left =
+ * home, right = away) that screen readers never perceive. Each event in the
+ * list below names its own team instead, so exposing this row too would only
+ * add an orphan pair of team names before the list.
  */
 export function TimelineTeamHeader({
   homeTeam,
   awayTeam,
 }: TimelineTeamHeaderProps) {
   return (
-    <div className="grid grid-cols-[1fr_80px_1fr] gap-4 mb-4 pb-3 border-b-2 border-divide">
+    <TimelineRow
+      aria-hidden="true"
+      className="mb-4 pb-3 border-b-2 border-divide"
+    >
       {/* Home (left) */}
       <div className="flex items-center gap-2">
         <TimelineTeamLogo teamName={homeTeam.name} />
@@ -34,7 +43,7 @@ export function TimelineTeamHeader({
         <span className="font-bold text-text-heading">{awayTeam.name}</span>
         <TimelineTeamLogo teamName={awayTeam.name} />
       </div>
-    </div>
+    </TimelineRow>
   );
 }
 
