@@ -275,6 +275,28 @@ The split is justified by layout context: `NavButton` variants know they are ins
 
 The `Text` typography primitive follows the same CVA pattern, additionally implementing a **`variantTagMap`** that maps each variant to its semantically correct HTML element. `h1`–`h4` variants render the matching heading tag by default; `body` renders `<p>`; `caption`, `muted`, `label`, and `overline` render `<span>`. The rendered element can be overridden with the `as` prop, but the default is always semantically appropriate. The `label` variant defaults to `<span>` rather than `<label>` specifically to avoid accidental form associations — consumers that need a real form label must pass `as="label" htmlFor="input-id"` explicitly.
 
+### DataTable
+
+Every table in the app is `DataTable` (`shared/components/table`), driven by a `TableColumn<T>[]`. The `table/` module exports exactly those two names: the `th`/`td`/`tr` primitives live in `parts.tsx` and the CVA definitions in `variants.ts`, both kept out of the barrel by a `barrelsby.json` exclude, so `enforce-barrel-import` blocks any deep import of them.
+
+**Presentation is a closed set of typed variants — there are no `className` props**, on the table, the header, the cells or the rows. This is the CVA rule above applied strictly, and it is load-bearing rather than stylistic: when the props were `variant`/`size` plus four class-string hatches, four tables accumulated three different framings and two different stripe recipes, and the box score had already reached past the `variant` enum to hand-write its own border. A look `DataTable` cannot express is a request for a new named variant, reviewed once in `variants.ts`.
+
+Table-level axes:
+
+| Prop | Values | Meaning |
+| --- | --- | --- |
+| `frame` | `none` \| `outline` | Whether the table draws its own border. `none` inside a `Section`, which is already a bordered `Card` — a framed table inside one draws a second border a padding-width in. `outline` for a table that stands alone. |
+| `density` | `comfortable` \| `compact` | Cell padding only. |
+| `wrap` | boolean | Whether cells may wrap. Separate from `density` so a table can be dense without being forced onto one line. |
+| `striped` | boolean | Alternating row backgrounds, one recipe app-wide. |
+| `emptyMessage` | string, **required** | A header with nothing under it and no explanation is never right, and while this was optional three of the four tables shipped without one. |
+
+Column-level axes on `TableColumn<T>` — `divider`, `emphasis` and `width` — apply to the header cell **and** the body cells. `align`, `density`, `wrap`, `width` and `divider` are declared once in `variants.ts` and shared between `headVariants` and `cellVariants`, so a column's header and its body cells cannot drift apart. They previously could: column styling was a `className` that reached only `<td>`, so the player-stats column-group rules stopped below the header row.
+
+**Row navigation is `getRowHref`, never an `onClick`.** A `<tr>` with an `onClick` is not focusable, has no role and has no key handler — the match-history tables were mouse-only. An `<a>` cannot wrap a `<tr>`, so the lead cell's content becomes a `Link` from `@/navigation` (locale-aware) whose `::after` stretches over the row: one tab stop per row, a focus ring around the whole row, and real link behaviour — Enter, middle-click, open-in-new-tab, a status-bar URL. Pass `getRowLabel` whenever the lead cell does not identify the row; a date does not. Row hover is derived from `getRowHref` rather than being its own prop, so a row cannot advertise a click it does not have. Do not combine `getRowHref` with `wrap={false}` — the cells' `overflow-hidden` would clip the overlay back to the lead cell.
+
+The empty row deliberately does **not** use `feedback/EmptyState`. That component renders its title as `<Text variant="h3">`, and every table already sits inside a `Section` with an `<h2>`; nesting a heading that describes an absence inside the section's own table would pollute the document outline, and its icon/description/action slots are dead weight in a `<td>`.
+
 ---
 
 ## Map integration
