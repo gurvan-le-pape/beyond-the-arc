@@ -4,7 +4,3 @@
  */
 
 export * from "./leaderboards.server";
-export * from "./leaderboards.service";
-export * from "./leaderboardsKeys";
-export * from "./leaderboardsQueries";
-export * from "./useLeaderboards";
