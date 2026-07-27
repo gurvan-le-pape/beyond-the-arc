@@ -91,9 +91,6 @@ export const TableRow = ({
 
 interface TableHeadProps extends HTMLAttributes<HTMLTableCellElement> {
   align?: Alignment;
-  sortable?: boolean;
-  sortDirection?: "asc" | "desc" | null;
-  onSort?: () => void;
   size?: "default" | "compact";
   tooltip?: string;
   ref?: React.Ref<HTMLTableCellElement>;
@@ -102,9 +99,6 @@ interface TableHeadProps extends HTMLAttributes<HTMLTableCellElement> {
 export const TableHead = ({
   className,
   align = "left",
-  sortable = false,
-  sortDirection = null,
-  onSort,
   size = "default",
   tooltip,
   children,
@@ -132,41 +126,14 @@ export const TableHead = ({
           ? "px-1 py-1 overflow-hidden whitespace-nowrap"
           : "px-6 py-4",
         alignmentClasses[align],
-        sortable &&
-          "cursor-pointer select-none hover:bg-surface-inset transition-colors duration-200",
         className,
       )}
-      onClick={sortable ? onSort : undefined}
       {...props}
     >
       <div className={cn("flex items-center gap-2", alignToJustify[align])}>
         <Text variant="label" as="span">
           {children}
         </Text>
-        {sortable && (
-          <span className="flex flex-col" aria-hidden="true">
-            <svg
-              className={cn(
-                "w-3 h-3 transition-opacity duration-200",
-                sortDirection === "asc" ? "opacity-100" : "opacity-30",
-              )}
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path d="M5 10l5-5 5 5H5z" />
-            </svg>
-            <svg
-              className={cn(
-                "w-3 h-3 -mt-1 transition-opacity duration-200",
-                sortDirection === "desc" ? "opacity-100" : "opacity-30",
-              )}
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path d="M15 10l-5 5-5-5h10z" />
-            </svg>
-          </span>
-        )}
       </div>
     </th>
   );
@@ -178,7 +145,6 @@ export const TableHead = ({
 
 interface TableCellProps extends HTMLAttributes<HTMLTableCellElement> {
   align?: Alignment;
-  highlight?: boolean;
   colSpan?: number;
   size?: "default" | "compact";
   ref?: React.Ref<HTMLTableCellElement>;
@@ -187,7 +153,6 @@ interface TableCellProps extends HTMLAttributes<HTMLTableCellElement> {
 export const TableCell = ({
   className,
   align = "left",
-  highlight = false,
   size = "default",
   ref,
   ...props
@@ -207,7 +172,6 @@ export const TableCell = ({
           : "px-6 py-4",
         alignmentClasses[align],
         "text-sm text-text-emphasis",
-        highlight && "font-bold text-text-heading",
         className,
       )}
       {...props}
