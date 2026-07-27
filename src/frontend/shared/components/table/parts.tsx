@@ -4,8 +4,12 @@ import { type HTMLAttributes, type ReactNode } from "react";
 import { cn } from "@/shared/utils";
 
 import { Text } from "../typography";
+import { cellVariants, headInnerVariants, headVariants } from "./variants";
 
 type Alignment = "left" | "center" | "right";
+type Density = "comfortable" | "compact";
+type Width = "auto" | "icon";
+type Divider = "none" | "left" | "right" | "both";
 
 // ---------------------------------------------------------------------------
 // Table
@@ -91,7 +95,10 @@ export const TableRow = ({
 
 interface TableHeadProps extends HTMLAttributes<HTMLTableCellElement> {
   align?: Alignment;
-  size?: "default" | "compact";
+  density?: Density;
+  wrap?: boolean;
+  width?: Width;
+  divider?: Divider;
   tooltip?: string;
   ref?: React.Ref<HTMLTableCellElement>;
 }
@@ -99,45 +106,31 @@ interface TableHeadProps extends HTMLAttributes<HTMLTableCellElement> {
 export const TableHead = ({
   className,
   align = "left",
-  size = "default",
+  density = "comfortable",
+  wrap = true,
+  width = "auto",
+  divider = "none",
   tooltip,
   children,
   ref,
   ...props
-}: TableHeadProps) => {
-  const alignmentClasses = {
-    left: "text-left",
-    center: "text-center",
-    right: "text-right",
-  };
-
-  const alignToJustify: Record<Alignment, string> = {
-    left: "justify-start",
-    center: "justify-center",
-    right: "justify-end",
-  };
-
-  return (
-    <th
-      title={tooltip}
-      ref={ref}
-      className={cn(
-        size === "compact"
-          ? "px-1 py-1 overflow-hidden whitespace-nowrap"
-          : "px-6 py-4",
-        alignmentClasses[align],
-        className,
-      )}
-      {...props}
-    >
-      <div className={cn("flex items-center gap-2", alignToJustify[align])}>
-        <Text variant="label" as="span">
-          {children}
-        </Text>
-      </div>
-    </th>
-  );
-};
+}: TableHeadProps) => (
+  <th
+    title={tooltip}
+    ref={ref}
+    className={cn(
+      headVariants({ align, density, wrap, width, divider }),
+      className,
+    )}
+    {...props}
+  >
+    <div className={cn(headInnerVariants({ align }))}>
+      <Text variant="label" as="span">
+        {children}
+      </Text>
+    </div>
+  </th>
+);
 
 // ---------------------------------------------------------------------------
 // TableCell
@@ -146,38 +139,34 @@ export const TableHead = ({
 interface TableCellProps extends HTMLAttributes<HTMLTableCellElement> {
   align?: Alignment;
   colSpan?: number;
-  size?: "default" | "compact";
+  density?: Density;
+  wrap?: boolean;
+  width?: Width;
+  divider?: Divider;
+  emphasis?: boolean;
   ref?: React.Ref<HTMLTableCellElement>;
 }
 
 export const TableCell = ({
   className,
   align = "left",
-  size = "default",
+  density = "comfortable",
+  wrap = true,
+  width = "auto",
+  divider = "none",
+  emphasis = false,
   ref,
   ...props
-}: TableCellProps) => {
-  const alignmentClasses = {
-    left: "text-left",
-    center: "text-center",
-    right: "text-right",
-  };
-
-  return (
-    <td
-      ref={ref}
-      className={cn(
-        size === "compact"
-          ? "px-1 py-1 overflow-hidden whitespace-nowrap"
-          : "px-6 py-4",
-        alignmentClasses[align],
-        "text-sm text-text-emphasis",
-        className,
-      )}
-      {...props}
-    />
-  );
-};
+}: TableCellProps) => (
+  <td
+    ref={ref}
+    className={cn(
+      cellVariants({ align, density, wrap, width, divider, emphasis }),
+      className,
+    )}
+    {...props}
+  />
+);
 
 // ---------------------------------------------------------------------------
 // TableEmpty

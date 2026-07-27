@@ -41,7 +41,7 @@ export function usePlayerStatColumns(
         key: "name",
         header: tMatches("playerMatchStats.name"),
         align: "left",
-        className: "border-r border-divide",
+        divider: "right",
         render: (p) => (
           <PlayerNameCell
             playerId={p.player.id}
@@ -98,7 +98,7 @@ export function usePlayerStatColumns(
         header: tCommon("stats.threePoints.abbr"),
         tooltip: tCommon("stats.threePoints.full"),
         align: "center",
-        className: "border-l border-divide",
+        divider: "left",
         render: (p) =>
           `${p.stats.threePointsMade}/${p.stats.threePointsAttempted}`,
       },
@@ -123,7 +123,7 @@ export function usePlayerStatColumns(
         header: tCommon("stats.freeThrows.abbr"),
         tooltip: tCommon("stats.freeThrows.full"),
         align: "center",
-        className: "border-l border-divide",
+        divider: "left",
         render: (p) =>
           `${p.stats.freeThrowsMade}/${p.stats.freeThrowsAttempted}`,
       },
@@ -132,20 +132,20 @@ export function usePlayerStatColumns(
         header: tCommon("stats.turnovers.abbr"),
         tooltip: tCommon("stats.turnovers.full"),
         align: "center",
-        className: "border-r border-divide",
+        divider: "right",
         render: (p) => p.stats.turnovers,
       },
       {
         key: "playtime",
         header: tMatches("playerMatchStats.playtime"),
         align: "center",
-        className: "border-r border-divide",
+        divider: "right",
         render: (p) => formatPlaytime(p.stats.playtime),
       },
       {
         key: "shots",
         align: "center",
-        className: "w-8",
+        width: "icon",
         render: (p) => (
           <ShotChartCell
             player={p.player}
