@@ -68,18 +68,18 @@ export const serverMatchesService = {
   },
 
   /**
-   * Get all matches for a specific pool.
+   * Every match of a pool, unpaginated.
    *
-   * @param poolId - The pool ID
-   * @returns Array of matches in the pool
-   * @throws {AxiosError} 400 if validation fails
+   * Uses the dedicated `/matches/pool/:id` endpoint, which returns a bare
+   * array — the same one `matchesService.getByPoolId` calls. The paginated
+   * `/matches?poolId=` returns `{ items, total, … }`, which does not match this
+   * signature.
    *
    * @example
    * const matches = await serverMatchesService.getByPoolId(10);
    */
   async getByPoolId(poolId: number): Promise<Match[]> {
-    const queryString = buildQueryString({ poolId });
-    return fetchApi<Match[]>(`/matches${queryString}`, {
+    return fetchApi<Match[]>(`/matches/pool/${poolId}`, {
       revalidate: ServerRevalidate.LIVE,
     });
   },
