@@ -65,6 +65,7 @@
     },
     "title": "Événements du match",
     "noEvents": "Aucun événement disponible pour ce match.",
+    "timelineLabel": "Chronologie des événements du match",
     "allQuarters": "Tous",
     "allEvents": "Tous les événements",
     "made": "Tirs marqués",

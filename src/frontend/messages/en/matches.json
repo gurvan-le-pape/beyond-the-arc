@@ -65,6 +65,7 @@
     },
     "title": "Match Events",
     "noEvents": "No events available for this match.",
+    "timelineLabel": "Match events timeline",
     "allQuarters": "All",
     "allEvents": "All events",
     "made": "Made shots",

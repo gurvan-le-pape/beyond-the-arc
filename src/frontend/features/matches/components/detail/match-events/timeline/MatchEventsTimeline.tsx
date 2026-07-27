@@ -1,6 +1,7 @@
 // src/frontend/features/matches/components/detail/match-events/timeline/MatchEventsTimeline.tsx
 "use client";
 
+import { useTranslations } from "next-intl";
 import React from "react";
 
 import type {
@@ -14,6 +15,7 @@ import { EventCategory } from "@/shared/constants";
 
 import { EventScorePill } from "./EventScorePill";
 import { TimelineEventBlock } from "./TimelineEventBlock";
+import { TimelineRow } from "./TimelineRow";
 import { TimelineTeamHeader } from "./TimelineTeamHeader";
 
 interface MatchEventsTimelineProps {
@@ -43,6 +45,7 @@ export const MatchEventsTimeline: React.FC<MatchEventsTimelineProps> = ({
   matchDate,
 }) => {
   const router = useRouter();
+  const tMatches = useTranslations("matches");
 
   /** Navigates to a player page when a `.match-player-link` span is clicked. */
   const handleDescriptionClick = (
@@ -60,10 +63,23 @@ export const MatchEventsTimeline: React.FC<MatchEventsTimelineProps> = ({
       <TimelineTeamHeader homeTeam={homeTeam} awayTeam={awayTeam} />
 
       <div className="relative">
-        {/* Centre vertical rule */}
-        <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-divide transform -translate-x-1/2" />
+        {/* Centre vertical rule – purely decorative */}
+        <div
+          aria-hidden="true"
+          className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-divide transform -translate-x-1/2"
+        />
 
-        <div className="space-y-3">
+        {/*
+          Exposed as a list rather than a table: every event belongs to exactly
+          one team, so a three-column table would announce a blank cell on every
+          single row. `role="list"` sits directly on the rows' parent so no
+          intermediate element breaks the list/listitem relationship.
+        */}
+        <div
+          role="list"
+          aria-label={tMatches("matchEvents.timelineLabel")}
+          className="space-y-3"
+        >
           {events.map((event) => {
             const style = getEventStyle(event.eventType);
             const isHomeTeam = event.teamId === homeTeam.id;
@@ -77,11 +93,28 @@ export const MatchEventsTimeline: React.FC<MatchEventsTimelineProps> = ({
               ? makeDescriptionClickable(event.description, event.players)
               : "";
 
+            const eventTeamName = isHomeTeam
+              ? homeTeam.name
+              : isAwayTeam
+                ? awayTeam.name
+                : null;
+
             return (
-              <div
+              <TimelineRow
                 key={eventKey}
-                className="grid grid-cols-[1fr_80px_1fr] gap-4 items-center"
+                role="listitem"
+                className="items-center"
               >
+                {/*
+                  Left/right placement is what conveys the team visually, and
+                  that is invisible to a screen reader. Naming the team here
+                  makes each item self-contained. `sr-only` is absolutely
+                  positioned, so this span never becomes a grid item.
+                */}
+                {eventTeamName && (
+                  <span className="sr-only">{eventTeamName}</span>
+                )}
+
                 {/* Left column – home team event or spacer */}
                 {isHomeTeam ? (
                   <TimelineEventBlock
@@ -122,7 +155,7 @@ export const MatchEventsTimeline: React.FC<MatchEventsTimelineProps> = ({
                 ) : (
                   <div />
                 )}
-              </div>
+              </TimelineRow>
             );
           })}
         </div>
