@@ -1,6 +1,8 @@
 // src/frontend/shared/components/domain/ClubCrest.tsx
 "use client";
 
+import { formatNameToFileName } from "@/shared/utils";
+
 import { DEFAULT_CLUB_LOGO } from "./ClubLogo";
 
 interface ClubCrestProps {
@@ -21,7 +23,7 @@ export function ClubCrest({
     /* Local 32px .webp crest; see ClubLogo for why next/image isn't used. */
     /* eslint-disable-next-line @next/next/no-img-element */
     <img
-      src={`/images/clubs/${clubName}.webp`}
+      src={`/images/clubs/${formatNameToFileName(clubName)}.webp`}
       alt={`${clubName} logo`}
       className={className}
       loading="lazy"
