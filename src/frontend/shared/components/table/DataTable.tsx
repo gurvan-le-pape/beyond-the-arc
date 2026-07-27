@@ -11,7 +11,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "./Table";
+} from "./parts";
 
 /**
  * Definition of one column: how to label it and how to pull a cell out of a row.
