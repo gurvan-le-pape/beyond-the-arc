@@ -84,22 +84,24 @@ export const TABLE_HEADER = "bg-primary-subtle border-b border-primary";
  * publishes `--surface-inset: --color-surface-raised` — the body colour. So
  * odd rows matched the body and only the even rows tinted, in a blue that
  * belongs to the brand ramp rather than to the neutral one.
+ *
+ * Note the absence of a border here too. A `border-b` on the row *and* the
+ * `divide-y` on the body stacked two 1px rules between every pair of rows —
+ * `divide-y` puts a border-top on rows 2..n — and left an orphan rule under
+ * the last row, hanging in the card's padding with nothing beneath it.
  */
-export const rowVariants = cva(
-  "border-b border-divide transition-colors duration-200",
-  {
-    variants: {
-      /**
-       * A row that navigates. `relative` is the containing block for the
-       * stretched row link; hover is here rather than on its own axis because
-       * hover feedback exists to signal interactivity, so the two must not be
-       * able to drift apart.
-       */
-      interactive: { true: "relative hover:bg-surface-inset", false: "" },
-    },
-    defaultVariants: { interactive: false },
+export const rowVariants = cva("transition-colors duration-150", {
+  variants: {
+    /**
+     * A row that navigates. `relative` is the containing block for the
+     * stretched row link; hover is here rather than on its own axis because
+     * hover feedback exists to signal interactivity, so the two must not be
+     * able to drift apart.
+     */
+    interactive: { true: "relative hover:bg-surface-inset", false: "" },
   },
-);
+  defaultVariants: { interactive: false },
+});
 
 /**
  * Stretched row link. `<a>` cannot wrap `<tr>`, so the lead cell's content
