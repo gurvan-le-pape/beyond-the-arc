@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "./parts";
-import { ROW_LINK } from "./variants";
+import { CELL_LINK, ROW_LINK } from "./variants";
 
 /**
  * Definition of one column: how to label it and how to pull a cell out of a row.
@@ -224,6 +224,38 @@ export function DataTable<T>({
         )}
       </TableBody>
     </Table>
+  );
+}
+
+interface TableCellLinkProps {
+  /** Locale-aware path, same contract as `getRowHref`. */
+  readonly href: string;
+  /** Supply when the link text alone does not say where it goes. */
+  readonly "aria-label"?: string;
+  readonly children: React.ReactNode;
+}
+
+/**
+ * Navigation for a cell in a table that cannot use `getRowHref`.
+ *
+ * A `wrap={false}` or `stickyLead` table has no working stretched overlay, and
+ * the props type refuses the combination rather than shipping a row link that
+ * has silently shrunk to the lead cell. Those tables use this instead: a real
+ * link, scoped to the one cell that identifies the row.
+ *
+ * Exists here rather than at the call sites so table link presentation stays
+ * inside the module — the same reason `DataTable` takes no `className`. Reach
+ * for `getRowHref` first; this is the fallback, not the default.
+ */
+export function TableCellLink({
+  href,
+  "aria-label": ariaLabel,
+  children,
+}: TableCellLinkProps) {
+  return (
+    <Link href={href} aria-label={ariaLabel} className={CELL_LINK}>
+      {children}
+    </Link>
   );
 }
 
