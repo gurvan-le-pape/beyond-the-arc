@@ -53,6 +53,21 @@ const width = {
   icon: "w-8",
 } as const;
 
+/**
+ * Lining figures for numeric columns.
+ *
+ * The UI stack's default font uses proportional digits, so `1` is narrower
+ * than `0` and a column of numbers is ragged down its own axis — points
+ * shifting a pixel or two per row. `tabular-nums` fixes every digit to the
+ * same advance width, which is what makes a stat column read as a column.
+ * The design system already relies on this in MatchScore, StatValue and
+ * StatCell; the tables were the gap.
+ */
+const numeric = {
+  true: "tabular-nums",
+  false: "",
+} as const;
+
 /** Vertical rule fencing off a group of columns, e.g. the shooting splits. */
 const divider = {
   none: "",
@@ -156,13 +171,14 @@ export const ROW_LINK =
   " focus-visible:after:ring-primary";
 
 export const headVariants = cva("", {
-  variants: { align, density, wrap, width, divider },
+  variants: { align, density, wrap, width, divider, numeric },
   defaultVariants: {
     align: "left",
     density: "comfortable",
     wrap: true,
     width: "auto",
     divider: "none",
+    numeric: false,
   },
 });
 
@@ -184,6 +200,7 @@ export const cellVariants = cva("text-sm text-text-emphasis", {
     wrap,
     width,
     divider,
+    numeric,
     /** The one column a table is *about* — a rank, a total. */
     emphasis: { true: "font-bold text-text-heading", false: "" },
   },
@@ -193,6 +210,7 @@ export const cellVariants = cva("text-sm text-text-emphasis", {
     wrap: true,
     width: "auto",
     divider: "none",
+    numeric: false,
     emphasis: false,
   },
 });
