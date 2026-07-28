@@ -9,6 +9,7 @@ import {
   headInnerVariants,
   headVariants,
   rowVariants,
+  TABLE_HEAD_TEXT,
   TABLE_HEADER,
   tableVariants,
 } from "./variants";
@@ -151,7 +152,7 @@ export const TableHead = ({
     {...props}
   >
     <div className={cn(headInnerVariants({ align }))}>
-      <Text variant="label" as="span">
+      <Text variant="overline" as="span" className={TABLE_HEAD_TEXT}>
         {children}
       </Text>
     </div>
