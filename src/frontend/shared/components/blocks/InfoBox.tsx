@@ -48,7 +48,6 @@ export const InfoBox = ({
       {/* Label row */}
       <div className="flex items-center gap-2 mb-2">
         {icon && <span className="text-text-secondary">{icon}</span>}
-        {/* overline = text-xs uppercase tracking-widest text-secondary — matches exactly */}
         <Text variant="overline">{label}</Text>
       </div>
 

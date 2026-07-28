@@ -135,27 +135,10 @@ export const frameVariants = cva("", {
  * below even the 3:1 large-text floor. A band is also a third weight of
  * horizontal division on a table whose rows are already separated by a rule.
  *
- * The header now separates itself typographically (see TABLE_HEAD_TEXT) over a
- * single hairline, the same one the rows use.
+ * The header now separates itself typographically — the shared `overline`
+ * token, unmodified — over a single hairline, the same one the rows use.
  */
 export const TABLE_HEADER = "border-b border-divide";
-
-/**
- * Column labels: the shared `overline` token — xs, semibold, uppercase,
- * tracking-widest — recoloured.
- *
- * `overline` ships `text-text-secondary`, and #6b7280 on surface-subtle
- * (#f3f4f6) is 4.39:1, which still misses AA for 12px semibold text (not large
- * text: that needs 18.66px bold or 24px). `text-text-body` is 6.87:1 in light
- * and 12.0:1 in dark, and still sits recessive against the cells'
- * `text-text-emphasis`, which is the hierarchy we want — labels quieter than
- * the data they name.
- *
- * Applied on the `Text` element itself, not the `<th>`: `Text` puts its own
- * colour on the inner span, so a colour on the `<th>` is inherited and loses.
- * `cn` is tailwind-merge, so the later class wins.
- */
-export const TABLE_HEAD_TEXT = "text-text-body";
 
 /**
  * Rows carry no banding. Separation is the `divide-y` on `TableBody` — one

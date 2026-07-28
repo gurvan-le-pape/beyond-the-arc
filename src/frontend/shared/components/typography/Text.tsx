@@ -33,8 +33,14 @@ const textVariants = cva("", {
       // Never render a bare <label> without htmlFor — it's an a11y violation.
       label: "text-sm font-medium text-text-emphasis",
 
+      // Small-caps section label. `text-text-body`, not `text-text-secondary`:
+      // #6b7280 on surface-subtle (#f3f4f6) is 4.39:1, under the 4.5:1 AA needs
+      // for 12px semibold — and this variant is 12px semibold by definition, so
+      // the pairing failed wherever an overline sat on a Card. #4b5563 is
+      // 6.87:1 there and 6.11:1 on surface-raised, and stays recessive against
+      // the `text-text-emphasis` content it labels.
       overline:
-        "text-xs font-semibold uppercase tracking-widest text-text-secondary",
+        "text-xs font-semibold uppercase tracking-widest text-text-body",
     },
   },
   defaultVariants: { variant: "body" },
