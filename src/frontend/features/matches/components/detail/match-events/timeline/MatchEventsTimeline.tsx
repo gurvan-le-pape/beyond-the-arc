@@ -1,14 +1,11 @@
 // src/frontend/features/matches/components/detail/match-events/timeline/MatchEventsTimeline.tsx
 "use client";
 
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import React from "react";
 
-import type {
-  EventStyle,
-  EventWithScore,
-  MatchEvent,
-} from "@/features/matches/types";
+import type { EventStyle, EventWithScore } from "@/features/matches/types";
+import { tokenizeEventDescription } from "@/features/matches/utils";
 import type { TeamInfo } from "@/features/teams/types";
 import { EventCategory } from "@/shared/constants";
 
@@ -22,11 +19,6 @@ interface MatchEventsTimelineProps {
   homeTeam: TeamInfo;
   awayTeam: TeamInfo;
   getEventStyle: (eventType: string) => EventStyle;
-  makeDescriptionClickable: (
-    description: string,
-    locale: string,
-    eventPlayers?: MatchEvent["players"],
-  ) => string;
   matchDate: Date | string;
 }
 
@@ -41,11 +33,9 @@ export const MatchEventsTimeline: React.FC<MatchEventsTimelineProps> = ({
   homeTeam,
   awayTeam,
   getEventStyle,
-  makeDescriptionClickable,
   matchDate,
 }) => {
   const tMatches = useTranslations("matches");
-  const locale = useLocale();
 
   return (
     <div>
@@ -76,14 +66,12 @@ export const MatchEventsTimeline: React.FC<MatchEventsTimelineProps> = ({
 
             const eventKey = `${event.id}`;
 
-            // Pre-compute once; TimelineEventBlock will use it via dangerouslySetInnerHTML.
-            const descriptionHtml = event.description
-              ? makeDescriptionClickable(
-                  event.description,
-                  locale,
-                  event.players,
-                )
-              : "";
+            // Pre-computed here rather than in the block because only one of
+            // the two branches below renders, and the tokens are the same
+            // either way.
+            const descriptionTokens = event.description
+              ? tokenizeEventDescription(event.description, event.players)
+              : [];
 
             let eventTeamName: string | null = null;
             if (isHomeTeam) {
@@ -114,7 +102,7 @@ export const MatchEventsTimeline: React.FC<MatchEventsTimelineProps> = ({
                     align="right"
                     style={style}
                     event={event}
-                    descriptionHtml={descriptionHtml}
+                    descriptionTokens={descriptionTokens}
                     matchDate={matchDate}
                   />
                 ) : (
@@ -140,7 +128,7 @@ export const MatchEventsTimeline: React.FC<MatchEventsTimelineProps> = ({
                     align="left"
                     style={style}
                     event={event}
-                    descriptionHtml={descriptionHtml}
+                    descriptionTokens={descriptionTokens}
                     matchDate={matchDate}
                   />
                 ) : (

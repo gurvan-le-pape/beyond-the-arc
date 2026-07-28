@@ -1,9 +1,6 @@
 // src/frontend/features/matches/utils/eventHelpers.ts
-import type { Locale } from "next-intl";
-
 import { eventConfig } from "@/features/matches/constants";
 import type { EventStyle, MatchEvent } from "@/features/matches/types";
-import { getPathname } from "@/navigation";
 import { EventCategory, EventType, Role } from "@/shared/constants";
 
 // ---------------------------------------------------------------------------
@@ -132,42 +129,74 @@ export function computeQuarterScores(
 }
 
 // ---------------------------------------------------------------------------
-// Clickable description builder
+// Description tokenizer
 // ---------------------------------------------------------------------------
 
-/**
- * Replaces player names inside a description string with links to their pages.
- *
- * These used to be `<span role="button" tabIndex="0">` activated by a delegated
- * click handler on the paragraph. That was focusable but not operable: a
- * `role="button"` span gets no implicit key handling, so Enter and Space did
- * nothing and the only way through was a mouse. They are anchors now, which
- * costs nothing and brings keyboard activation, middle-click, open-in-new-tab
- * and a status-bar URL with it — and removes the handler entirely.
- *
- * `locale` is required because the href has to carry the locale prefix; it is
- * resolved through `getPathname` rather than concatenated, so the routing
- * config stays the single source of truth for what a path looks like.
- *
- * NOTE: the returned string is consumed via dangerouslySetInnerHTML. This is
- * safe as long as `description` originates from a trusted back-end source and
- * is not user-supplied. If that assumption ever changes, switch to a
- * React-based token renderer.
- */
-export function makeDescriptionClickable(
-  description: string,
-  locale: Locale,
-  eventPlayers?: MatchEvent["players"],
-): string {
-  if (!eventPlayers || eventPlayers.length === 0) return description;
+/** One run of a match-event description: plain text, or a player's name. */
+export type EventDescriptionToken =
+  | { readonly kind: "text"; readonly text: string }
+  | {
+      readonly kind: "player";
+      readonly text: string;
+      readonly playerId: number;
+    };
 
-  let result = description;
-  eventPlayers.forEach(({ player }) => {
-    const href = getPathname({ locale, href: `/players/${player.id}` });
-    result = result.replaceAll(
-      player.name,
-      `<a class="text-primary hover:underline match-player-link" href="${href}">${player.name}</a>`,
-    );
-  });
-  return result;
+/**
+ * Splits a description into runs, marking the ones that are a player's name so
+ * the caller can render them as links.
+ *
+ * This returns data rather than markup on purpose. The previous version built
+ * an HTML string of `<a>` tags and the paragraph rendered it through
+ * `dangerouslySetInnerHTML`, which meant the safety of the whole timeline
+ * rested on the description never containing anything that looks like a tag —
+ * an invariant owned by the simulator, not by this file.
+ *
+ * It also fixes a substitution bug that the string form could not: a name is
+ * matched by scanning the description once, left to right, consuming each hit
+ * before continuing. Repeated `replaceAll` passes re-scanned text they had
+ * already rewritten, so a player whose name appears inside another's — or
+ * inside the href or class of a link written by an earlier pass — was wrapped
+ * twice, nesting anchors.
+ */
+export function tokenizeEventDescription(
+  description: string,
+  eventPlayers?: MatchEvent["players"],
+): EventDescriptionToken[] {
+  if (!eventPlayers || eventPlayers.length === 0)
+    return [{ kind: "text", text: description }];
+
+  // Longest first, so "Jean Martin" wins over "Martin" at the same index.
+  // Deduplicated because an event lists a player once per role, and two
+  // tokens for one name would be one link too many.
+  const names = [
+    ...new Map(eventPlayers.map(({ player }) => [player.name, player.id])),
+  ].sort(([a], [b]) => b.length - a.length);
+
+  const tokens: EventDescriptionToken[] = [];
+  let pending = "";
+  let index = 0;
+
+  const flushPending = () => {
+    if (pending) {
+      tokens.push({ kind: "text", text: pending });
+      pending = "";
+    }
+  };
+
+  while (index < description.length) {
+    const hit = names.find(([name]) => description.startsWith(name, index));
+
+    if (hit) {
+      const [name, playerId] = hit;
+      flushPending();
+      tokens.push({ kind: "player", text: name, playerId });
+      index += name.length;
+    } else {
+      pending += description[index];
+      index += 1;
+    }
+  }
+
+  flushPending();
+  return tokens;
 }
