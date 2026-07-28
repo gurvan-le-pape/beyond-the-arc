@@ -343,6 +343,38 @@ module.exports = {
           "background-color": "var(--surface-inset)",
         },
 
+        // ── Horizontal scroll affordance ─────────────────────────────────────
+        //
+        // Edge shadows on a horizontally scrollable region, appearing only
+        // while there is content past that edge.
+        //
+        // Pure CSS on purpose: DataTable renders inside server components, so
+        // a JS overflow observer would push a "use client" boundary onto every
+        // table in the app just to draw two gradients.
+        //
+        // Four layers, and the trick is background-attachment. The two `local`
+        // covers are painted in the container's own background colour and
+        // scroll *with* the content, so at either extreme the cover sits on
+        // top of that side's shadow and hides it. The two `scroll` shadows
+        // stay pinned to the container. Scroll away from an edge and its cover
+        // travels off, revealing the shadow.
+        //
+        // Reads --surface-bg from the nearest .surface-* ancestor, so it is
+        // correct at any elevation, and --color-scroll-shadow, which flips per
+        // theme — a black shadow is invisible on high-contrast's pure black.
+        ".scroll-shadow-x": {
+          "background-image": [
+            "linear-gradient(to right, var(--surface-bg), transparent)",
+            "linear-gradient(to left, var(--surface-bg), transparent)",
+            "linear-gradient(to right, var(--color-scroll-shadow), transparent)",
+            "linear-gradient(to left, var(--color-scroll-shadow), transparent)",
+          ].join(", "),
+          "background-position": "0 0, 100% 0, 0 0, 100% 0",
+          "background-repeat": "no-repeat",
+          "background-size": "28px 100%, 28px 100%, 14px 100%, 14px 100%",
+          "background-attachment": "local, local, scroll, scroll",
+        },
+
         // ── Ghost number stroke — no Tailwind utility exists for -webkit-text-stroke;
         // color: transparent is co-located here to avoid class-order conflicts
         ".text-stroke-primary": {

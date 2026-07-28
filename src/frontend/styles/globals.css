@@ -133,6 +133,10 @@ body {
   /* Header backdrop                                                  */
   --color-header-bg: rgba(255, 255, 255, 0.9);
 
+  /* Scroll affordance — edge shadow on a horizontally scrollable
+     region, consumed by .scroll-shadow-x                             */
+  --color-scroll-shadow: rgba(0, 0, 0, 0.16);
+
   /* ── Semantic colors ────────────────────────────────────────────────
      subtle  = low-emphasis tint  (badge bg, gradient fill)
      DEFAULT = canonical color    (icon, ring, active state)
@@ -280,6 +284,10 @@ body {
   /* Header backdrop */
   --color-header-bg: rgba(17, 24, 39, 0.9);
 
+  /* Scroll affordance — needs more weight than in light, since the
+     surfaces underneath it are already dark                          */
+  --color-scroll-shadow: rgba(0, 0, 0, 0.55);
+
   /* Semantic subtle/strong — flipped for dark surfaces               */
   --color-success-subtle: #064e3b;
   --color-success-strong: #6ee7b7;
@@ -397,6 +405,10 @@ body {
 
   /* Header backdrop */
   --color-header-bg: rgba(0, 0, 0, 0.97);
+
+  /* Scroll affordance — white, like the dividers: a black shadow is
+     invisible against pure-black surfaces                            */
+  --color-scroll-shadow: rgba(255, 255, 255, 0.45);
 
   /* Semantic — max vivid, subtle is just a very dark tint            */
   --color-success-subtle: #052e16;
