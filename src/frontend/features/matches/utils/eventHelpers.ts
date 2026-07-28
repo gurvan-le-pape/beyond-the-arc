@@ -1,6 +1,9 @@
 // src/frontend/features/matches/utils/eventHelpers.ts
+import type { Locale } from "next-intl";
+
 import { eventConfig } from "@/features/matches/constants";
 import type { EventStyle, MatchEvent } from "@/features/matches/types";
+import { getPathname } from "@/navigation";
 import { EventCategory, EventType, Role } from "@/shared/constants";
 
 // ---------------------------------------------------------------------------
@@ -133,24 +136,37 @@ export function computeQuarterScores(
 // ---------------------------------------------------------------------------
 
 /**
- * Replaces player names inside a description string with clickable <span> elements.
+ * Replaces player names inside a description string with links to their pages.
  *
- * NOTE: the returned string is consumed via dangerouslySetInnerHTML.  This is
+ * These used to be `<span role="button" tabIndex="0">` activated by a delegated
+ * click handler on the paragraph. That was focusable but not operable: a
+ * `role="button"` span gets no implicit key handling, so Enter and Space did
+ * nothing and the only way through was a mouse. They are anchors now, which
+ * costs nothing and brings keyboard activation, middle-click, open-in-new-tab
+ * and a status-bar URL with it — and removes the handler entirely.
+ *
+ * `locale` is required because the href has to carry the locale prefix; it is
+ * resolved through `getPathname` rather than concatenated, so the routing
+ * config stays the single source of truth for what a path looks like.
+ *
+ * NOTE: the returned string is consumed via dangerouslySetInnerHTML. This is
  * safe as long as `description` originates from a trusted back-end source and
- * is not user-supplied.  If that assumption ever changes, switch to a
+ * is not user-supplied. If that assumption ever changes, switch to a
  * React-based token renderer.
  */
 export function makeDescriptionClickable(
   description: string,
+  locale: Locale,
   eventPlayers?: MatchEvent["players"],
 ): string {
   if (!eventPlayers || eventPlayers.length === 0) return description;
 
   let result = description;
   eventPlayers.forEach(({ player }) => {
+    const href = getPathname({ locale, href: `/players/${player.id}` });
     result = result.replaceAll(
-      new RegExp(player.name, "g"),
-      `<span class="text-primary hover:underline cursor-pointer match-player-link" data-player-id="${player.id}" tabIndex="0" role="button">${player.name}</span>`,
+      player.name,
+      `<a class="text-primary hover:underline match-player-link" href="${href}">${player.name}</a>`,
     );
   });
   return result;

@@ -1,7 +1,7 @@
 // src/frontend/features/matches/components/detail/match-events/timeline/MatchEventsTimeline.tsx
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import React from "react";
 
 import type {
@@ -10,7 +10,6 @@ import type {
   MatchEvent,
 } from "@/features/matches/types";
 import type { TeamInfo } from "@/features/teams/types";
-import { useRouter } from "@/navigation";
 import { EventCategory } from "@/shared/constants";
 
 import { EventScorePill } from "./EventScorePill";
@@ -25,6 +24,7 @@ interface MatchEventsTimelineProps {
   getEventStyle: (eventType: string) => EventStyle;
   makeDescriptionClickable: (
     description: string,
+    locale: string,
     eventPlayers?: MatchEvent["players"],
   ) => string;
   matchDate: Date | string;
@@ -44,19 +44,8 @@ export const MatchEventsTimeline: React.FC<MatchEventsTimelineProps> = ({
   makeDescriptionClickable,
   matchDate,
 }) => {
-  const router = useRouter();
   const tMatches = useTranslations("matches");
-
-  /** Navigates to a player page when a `.match-player-link` span is clicked. */
-  const handleDescriptionClick = (
-    e: React.MouseEvent<HTMLParagraphElement>,
-  ) => {
-    const target = e.target as HTMLElement;
-    if (target.classList.contains("match-player-link")) {
-      const playerId = target.dataset.playerId;
-      if (playerId) router.push(`/players/${playerId}`);
-    }
-  };
+  const locale = useLocale();
 
   return (
     <div>
@@ -89,7 +78,11 @@ export const MatchEventsTimeline: React.FC<MatchEventsTimelineProps> = ({
 
             // Pre-compute once; TimelineEventBlock will use it via dangerouslySetInnerHTML.
             const descriptionHtml = event.description
-              ? makeDescriptionClickable(event.description, event.players)
+              ? makeDescriptionClickable(
+                  event.description,
+                  locale,
+                  event.players,
+                )
               : "";
 
             let eventTeamName: string | null = null;
@@ -122,7 +115,6 @@ export const MatchEventsTimeline: React.FC<MatchEventsTimelineProps> = ({
                     style={style}
                     event={event}
                     descriptionHtml={descriptionHtml}
-                    onDescriptionClick={handleDescriptionClick}
                     matchDate={matchDate}
                   />
                 ) : (
@@ -149,7 +141,6 @@ export const MatchEventsTimeline: React.FC<MatchEventsTimelineProps> = ({
                     style={style}
                     event={event}
                     descriptionHtml={descriptionHtml}
-                    onDescriptionClick={handleDescriptionClick}
                     matchDate={matchDate}
                   />
                 ) : (

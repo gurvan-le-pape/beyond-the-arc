@@ -13,12 +13,8 @@ interface TimelineEventBlockProps {
   readonly style: EventStyle;
   /** The enriched event (includes description, timestamp, etc.). */
   readonly event: EventWithScore;
-  /** Pre-rendered HTML string – player names already wrapped in clickable spans. */
+  /** Pre-rendered HTML string – player names already wrapped in links. */
   readonly descriptionHtml: string;
-  /** Bubbled click handler; the parent uses it to navigate on player-link clicks. */
-  readonly onDescriptionClick: (
-    e: React.MouseEvent<HTMLParagraphElement>,
-  ) => void;
   /** Match kick-off time, used to derive the game-clock display. */
   readonly matchDate: Date | string;
 }
@@ -49,7 +45,6 @@ export function TimelineEventBlock({
   style,
   event,
   descriptionHtml,
-  onDescriptionClick,
   matchDate,
 }: TimelineEventBlockProps) {
   const tMatches = useTranslations("matches");
@@ -84,27 +79,16 @@ export function TimelineEventBlock({
           )}
         </div>
 
-        {/* Description (may contain clickable player links via dangerouslySetInnerHTML) */}
+        {/* Description; player names inside it are real anchors, so there is no
+            click delegation here any more — the browser handles activation. */}
         {event.description && (
-          <div
-            role="none"
-            onClick={onDescriptionClick}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                onDescriptionClick(
-                  e as unknown as React.MouseEvent<HTMLParagraphElement>,
-                );
-              }
-            }}
-          >
-            <p
-              className={cn(
-                "text-text-body mt-0.5",
-                isRight ? "text-right" : "text-left",
-              )}
-              dangerouslySetInnerHTML={{ __html: descriptionHtml }}
-            />
-          </div>
+          <p
+            className={cn(
+              "text-text-body mt-0.5",
+              isRight ? "text-right" : "text-left",
+            )}
+            dangerouslySetInnerHTML={{ __html: descriptionHtml }}
+          />
         )}
 
         {/* Game clock display */}
