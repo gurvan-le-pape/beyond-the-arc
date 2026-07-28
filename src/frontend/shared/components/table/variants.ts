@@ -73,21 +73,22 @@ export const tableVariants = cva("min-w-full", {
 /** One header treatment for every table — no variants, hence no cva. */
 export const TABLE_HEADER = "bg-primary-subtle border-b border-primary";
 
+/**
+ * Rows carry no banding. Separation is the `divide-y` on `TableBody` — one
+ * mechanism, not three.
+ *
+ * There was a `stripe` axis here (`even: bg-primary-ghost`, `odd:
+ * bg-surface-inset`) that three of the four tables opted into. It was doing
+ * almost nothing: `bg-surface-inset` reads `--surface-inset` from the nearest
+ * surface ancestor, which was `TableBody`'s own `surface-raised`, and that
+ * publishes `--surface-inset: --color-surface-raised` — the body colour. So
+ * odd rows matched the body and only the even rows tinted, in a blue that
+ * belongs to the brand ramp rather than to the neutral one.
+ */
 export const rowVariants = cva(
   "border-b border-divide transition-colors duration-200",
   {
     variants: {
-      /**
-       * Alternating row background. One recipe for the whole app — this was
-       * previously a `getRowClassName` callback that ignored its row argument
-       * at two call sites and hand-rolled a third, near-identical variant at
-       * the box score.
-       */
-      stripe: {
-        none: "",
-        even: "bg-primary-ghost",
-        odd: "bg-surface-inset",
-      },
       /**
        * A row that navigates. `relative` is the containing block for the
        * stretched row link; hover is here rather than on its own axis because
@@ -96,7 +97,7 @@ export const rowVariants = cva(
        */
       interactive: { true: "relative hover:bg-surface-inset", false: "" },
     },
-    defaultVariants: { stripe: "none", interactive: false },
+    defaultVariants: { interactive: false },
   },
 );
 

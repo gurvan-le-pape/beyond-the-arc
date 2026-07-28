@@ -288,8 +288,9 @@ Table-level axes:
 | `frame` | `none` \| `outline` | Whether the table draws its own border. `none` inside a `Section`, which is already a bordered `Card` — a framed table inside one draws a second border a padding-width in. `outline` for a table that stands alone. |
 | `density` | `comfortable` \| `compact` | Cell padding only. |
 | `wrap` | boolean | Whether cells may wrap. Separate from `density` so a table can be dense without being forced onto one line. |
-| `striped` | boolean | Alternating row backgrounds, one recipe app-wide. |
 | `emptyMessage` | string, **required** | A header with nothing under it and no explanation is never right, and while this was optional three of the four tables shipped without one. |
+
+There is no zebra axis. A `striped` prop existed and three of the four tables set it, but it was close to a no-op: its odd band was `bg-surface-inset`, which resolves `--surface-inset` from the nearest surface ancestor — `TableBody`'s own `surface-raised` — and `surface-raised` publishes `--surface-inset: --color-surface-raised`, the body colour. So odd rows matched the body and only the even rows tinted, in a blue drawn from the brand ramp rather than the neutral one. Row separation is the `divide-y` on `TableBody`, and only that.
 
 Column-level axes on `TableColumn<T>` — `divider`, `emphasis` and `width` — apply to the header cell **and** the body cells. `align`, `density`, `wrap`, `width` and `divider` are declared once in `variants.ts` and shared between `headVariants` and `cellVariants`, so a column's header and its body cells cannot drift apart. They previously could: column styling was a `className` that reached only `<td>`, so the player-stats column-group rules stopped below the header row.
 
