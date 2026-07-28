@@ -5,7 +5,6 @@ import { useTranslations } from "next-intl";
 import React, { useState } from "react";
 
 import type { TeamPlayerRef } from "@/features/teams/types";
-import { useRouter } from "@/navigation";
 import { Section } from "@/shared/components/blocks";
 import { Text } from "@/shared/components/typography";
 
@@ -30,7 +29,6 @@ export const TeamRoster: React.FC<TeamRosterProps> = ({ players }) => {
   );
 
   const tTeams = useTranslations("teams");
-  const router = useRouter();
 
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     key: "number",
@@ -87,7 +85,7 @@ export const TeamRoster: React.FC<TeamRosterProps> = ({ players }) => {
               <PlayerCard
                 key={player.id}
                 player={player}
-                onClick={() => router.push(`/players/${player.id}`)}
+                href={`/players/${player.id}`}
               />
             ))}
           </div>

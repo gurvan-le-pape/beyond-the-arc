@@ -13,7 +13,8 @@ import { positionVariant } from "@/shared/utils";
 
 export interface PlayerCardProps {
   readonly player: TeamPlayerRef;
-  readonly onClick: () => void;
+  /** Where the card goes. The whole card is the link. */
+  readonly href: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -25,16 +26,15 @@ export interface PlayerCardProps {
  * precomputed from the backend (`team.players[].seasonStats`); we only format
  * them to one decimal for display.
  */
-export function PlayerCard({ player, onClick }: PlayerCardProps) {
+export function PlayerCard({ player, href }: PlayerCardProps) {
   const tCommon = useTranslations("common");
   const { seasonStats } = player;
 
   return (
     <Card
-      clickable
+      href={href}
       variant="default"
       padding="sm"
-      onClick={onClick}
       className="flex flex-col items-center gap-3 text-center hover:border-primary transition-colors duration-200"
     >
       <PlayerAvatar name={player.name} number={player.number} className="mb-1" />

@@ -2,9 +2,10 @@
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-import { useRouter } from "@/navigation";
-import { Button } from "@/shared/components/primitives";
+import { Link } from "@/navigation";
+import { Button, buttonVariants } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
+import { cn } from "@/shared/utils";
 
 import type { ClubBasic } from "../../types/ClubBasic";
 
@@ -14,8 +15,6 @@ interface ClubPopupContentProps {
 }
 
 export function ClubPopupContent({ club, onClose }: ClubPopupContentProps) {
-  const router = useRouter();
-
   const t = useTranslations("clubs");
 
   return (
@@ -135,15 +134,18 @@ export function ClubPopupContent({ club, onClose }: ClubPopupContentProps) {
         </div>
       )}
 
-      {/* See Details Button */}
-      <Button
-        variant="primary"
-        size="md"
-        className="w-full"
-        onClick={() => router.push(`/organizations/clubs/${club.id}`)}
+      {/* See Details — a link wearing the button's variant classes, which is
+          how the design system already dresses navigation (see the map CTA on
+          the home page). A <button> here would have no href. */}
+      <Link
+        href={`/organizations/clubs/${club.id}`}
+        className={cn(
+          buttonVariants({ variant: "primary", size: "md" }),
+          "w-full",
+        )}
       >
         {t("map.seeDetails")}
-      </Button>
+      </Link>
     </div>
   );
 }
