@@ -230,6 +230,10 @@ Rather than using Tailwind's default colour palette directly in components, all 
 
 Every category ramp (`clubs`, `teams`, `players`, `matches`, `national`, `regional`, `departmental`, …) has three steps, and **which step you take is decided by what you are colouring, not by taste**: `-subtle` fills, the bare token is for icons, arrows and other non-text marks, and `-strong` is the only one for text. The mid step is chosen for its presence against a fill, so it does not carry text contrast — `text-clubs` is 2.60:1 on surface-base, where `text-clubs-strong` is 10.48:1. The ramps invert per theme, so `-strong` stays the readable end in all three.
 
+That rule is why the `-subtle` / `-strong` pair is the only combination a filled chip should use, **and why swapping them is safe while reaching for the mid tone is not**. Contrast is symmetric, so `bg-{x}-strong text-{x}-subtle` reads exactly as well as `bg-{x}-subtle text-{x}-strong` — that is how `Badge`'s three `-on-header` variants get an inverted chip for a level-tinted card header without a second set of numbers to verify. Filling with the bare mid token instead puts a pale tint on a mid tone, which is where those variants had been sitting at 3.63 / 2.21 / 1.85:1.
+
+**`primary` and `secondary` are eleven-step ramps, not three-step ones, and their names do not line up with the category ramps.** `primary-subtle` is the fourth of eleven — a mid tone (`#6d86c0`), not a tint — so it behaves like a category ramp's bare step, and `text-primary-strong` on it is 2.75:1. The tint at the bottom of the brand ramp is `primary-ghost`; that is what a badge or a chip fill wants. Treat the shared word `subtle` as a false friend between the two ramp shapes.
+
 **Structural tokens:**
 
 - `borderRadius.card` (12px), `borderRadius.button` (8px), `borderRadius.input` (6px) — consistent rounding per surface type
