@@ -64,14 +64,14 @@ export function SearchBar({
           value={query}
           onChange={(e) => onQueryChange(e.target.value)}
           placeholder={placeholder}
-          className="w-full pl-10 pr-20 py-2.5 bg-surface-inset border border-divide rounded-lg text-text-heading placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary ring-offset-surface focus:border-transparent transition-all"
+          className="w-full pl-10 pr-20 py-2.5 bg-surface-inset border border-divide rounded-lg text-text-heading placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-primary ring-offset-surface focus:border-transparent transition-all"
         />
 
         {/* Result Count & Clear Button */}
         <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2">
           {query && resultCount !== undefined && (
             <Text
-              variant="muted"
+              variant="caption"
               as="span"
               className="bg-surface-inset px-2 py-1 rounded"
             >
@@ -107,7 +107,7 @@ export function SearchBar({
       {/* Keyboard hint */}
       {!query && (
         <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-          <kbd className="hidden sm:inline-block px-2 py-1 text-xs text-text-muted bg-surface-inset border border-divide rounded">
+          <kbd className="hidden sm:inline-block px-2 py-1 text-xs text-text-secondary bg-surface-inset border border-divide rounded">
             /
           </kbd>
         </div>

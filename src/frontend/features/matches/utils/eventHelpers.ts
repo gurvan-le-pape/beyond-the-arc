@@ -16,7 +16,7 @@ export function getEventStyle(eventType: string): EventStyle {
   return (
     configured ?? {
       icon: "⚪",
-      color: "text-text-muted",
+      color: "text-text-secondary",
       eventCategory: EventCategory.OTHER,
     }
   );

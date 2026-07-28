@@ -69,7 +69,7 @@ function DropdownContent({
           <Text variant="label" as="span" className="text-text-heading">
             #{player.number} {player.name}
           </Text>
-          <Text variant="muted" as="span">
+          <Text variant="caption" as="span">
             {clubName}
           </Text>
         </div>

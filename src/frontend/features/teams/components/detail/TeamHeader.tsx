@@ -84,7 +84,7 @@ export async function TeamHeader({ team }: TeamHeaderProps) {
 
         {/* Team number */}
         <div className="flex-shrink-0 pl-5 border-l border-divide self-stretch flex items-center">
-          <span className="text-3xl font-bold text-text-muted">
+          <span className="text-3xl font-bold text-text-secondary">
             #{teamNumber}
           </span>
         </div>

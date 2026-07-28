@@ -108,7 +108,7 @@ export function TimelineEventBlock({
         )}
 
         {/* Game clock display */}
-        <Text variant="muted" as="span" className="font-mono">
+        <Text variant="caption" as="span" className="font-mono">
           {formatGameClock(event.timestamp, matchDate)}
         </Text>
       </div>

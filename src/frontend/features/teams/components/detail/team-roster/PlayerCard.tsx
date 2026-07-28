@@ -68,7 +68,7 @@ export function PlayerCard({ player, onClick }: PlayerCardProps) {
         />
       </div>
 
-      <Text variant="caption" className="text-text-muted -mt-1">
+      <Text variant="caption" className="-mt-1">
         {seasonStats.gamesPlayed} GP
       </Text>
     </Card>

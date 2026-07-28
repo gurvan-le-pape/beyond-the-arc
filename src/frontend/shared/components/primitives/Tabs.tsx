@@ -105,7 +105,7 @@ export function TabsTrigger({
         ${
           isSelected
             ? "border-primary text-primary font-semibold"
-            : "border-transparent text-text-muted hover:text-text-emphasis hover:border-divide font-normal"
+            : "border-transparent text-text-secondary hover:text-text-emphasis hover:border-divide font-normal"
         }
         ${className}
       `}

@@ -22,9 +22,9 @@ const CONTAINER_CLASSES: Record<BoxVariant, string> = {
 };
 
 const DASH_CLASSES: Record<BoxVariant, string> = {
-  list: "text-xl text-text-muted",
-  compact: "mx-1.5 text-text-muted",
-  hero: "text-xl md:text-2xl text-text-muted",
+  list: "text-xl text-text-secondary",
+  compact: "mx-1.5 text-text-secondary",
+  hero: "text-xl md:text-2xl text-text-secondary",
 };
 
 function scoreClasses(variant: MatchScoreVariant, isWinner: boolean): string {

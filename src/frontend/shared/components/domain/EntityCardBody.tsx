@@ -50,7 +50,7 @@ export function EntityCardBody({
             </p>
 
             {!!number && (
-              <span className="text-sm font-semibold text-text-muted">
+              <span className="text-sm font-semibold text-text-secondary">
                 #{number}
               </span>
             )}
@@ -67,7 +67,7 @@ export function EntityCardBody({
               <Text
                 variant="caption"
                 as="p"
-                className="truncate text-text-muted"
+                className="truncate text-text-secondary"
               >
                 {committee.name}
               </Text>

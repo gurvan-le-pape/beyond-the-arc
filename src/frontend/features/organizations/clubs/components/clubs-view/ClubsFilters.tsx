@@ -27,7 +27,7 @@ interface ClubsFiltersProps {
 }
 
 const inputClass =
-  "text-sm rounded-input border border-divide bg-surface-inset text-text-body placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary ring-offset-surface";
+  "text-sm rounded-input border border-divide bg-surface-inset text-text-body placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-primary ring-offset-surface";
 
 export function ClubsFilters({
   search,
