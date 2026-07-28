@@ -27,7 +27,18 @@ export interface TableColumn<T> {
   readonly header?: React.ReactNode;
   /** Pulls this column's cell content out of a row. */
   readonly render: (row: T) => React.ReactNode;
+  /**
+   * Overrides the alignment. Numeric columns already default to `right` — set
+   * this only to argue with that.
+   */
   readonly align?: "left" | "center" | "right";
+  /**
+   * A column of numbers. Sets `tabular-nums` so digits share one advance width
+   * and the column stops shifting row to row, and defaults the alignment to
+   * `right` so the units line up under each other. Applies to the header cell
+   * as well, so a label never drifts off the column it names.
+   */
+  readonly numeric?: boolean;
   /** Native tooltip on the header, for abbreviated stat labels. */
   readonly tooltip?: string;
   /**
@@ -80,6 +91,14 @@ interface DataTableProps<T> {
 }
 
 /**
+ * Where a column sits. Numbers go right, so their units, tens and hundreds
+ * stack in the same places; everything else goes left. An explicit `align`
+ * still wins, for the cases where a numeric column reads better centred.
+ */
+const alignFor = <T,>(column: TableColumn<T>) =>
+  column.align ?? (column.numeric ? "right" : "left");
+
+/**
  * Column-driven table.
  *
  * Every table in the app is the same shape — a header built from column
@@ -111,11 +130,12 @@ export function DataTable<T>({
           {columns.map((column) => (
             <TableHead
               key={column.key}
-              align={column.align}
+              align={alignFor(column)}
               density={density}
               wrap={wrap}
               width={column.width}
               divider={column.divider}
+              numeric={column.numeric}
               tooltip={column.tooltip}
             >
               {column.header}
@@ -135,11 +155,12 @@ export function DataTable<T>({
                 {columns.map((column, columnIndex) => (
                   <TableCell
                     key={column.key}
-                    align={column.align}
+                    align={alignFor(column)}
                     density={density}
                     wrap={wrap}
                     width={column.width}
                     divider={column.divider}
+                    numeric={column.numeric}
                     emphasis={column.emphasis}
                   >
                     {href !== undefined && columnIndex === 0 ? (

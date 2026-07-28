@@ -71,13 +71,13 @@ export const MatchDetailsTable: React.FC<MatchDetailsTableProps> = ({
       key: `q${index}`,
       header:
         index === 4 ? t("matchDetails.overtimeHeader") : String(index + 1),
-      align: "center",
+      numeric: true,
       render: (row) => display(row.quarters[index]),
     })),
     {
       key: "total",
       header: t("matchDetails.totalHeader"),
-      align: "center",
+      numeric: true,
       render: (row) => row.total,
       emphasis: true,
     },

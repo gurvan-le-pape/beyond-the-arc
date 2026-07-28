@@ -23,7 +23,7 @@ export function LeaderboardTable({
     {
       key: "rank",
       header: tCommon("table.rank"),
-      align: "center",
+      numeric: true,
       render: (row) => row.rank,
       emphasis: true,
     },
@@ -43,31 +43,31 @@ export function LeaderboardTable({
     {
       key: "points",
       header: tCommon("stats.points.full"),
-      align: "center",
+      numeric: true,
       render: (row) => row.points,
     },
     {
       key: "gamesPlayed",
       header: tCommon("stats.gamesPlayed"),
-      align: "center",
+      numeric: true,
       render: (row) => row.gamesPlayed,
     },
     {
       key: "gamesWon",
       header: tCommon("table.gamesWon"),
-      align: "center",
+      numeric: true,
       render: (row) => row.gamesWon,
     },
     {
       key: "gamesLost",
       header: tCommon("table.gamesLost"),
-      align: "center",
+      numeric: true,
       render: (row) => row.gamesLost,
     },
     {
       key: "pointDifference",
       header: tCommon("table.pointDifference"),
-      align: "center",
+      numeric: true,
       render: (row) => row.pointDifference,
     },
   ];
