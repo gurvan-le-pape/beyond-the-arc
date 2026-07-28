@@ -6,12 +6,12 @@ import { cn } from "@/shared/utils";
 import { Text } from "../typography";
 import {
   cellVariants,
+  frameVariants,
   headInnerVariants,
   headVariants,
   rowVariants,
   TABLE_HEAD_TEXT,
   TABLE_HEADER,
-  tableVariants,
 } from "./variants";
 
 type Alignment = "left" | "center" | "right";
@@ -37,12 +37,8 @@ export const Table = ({
   ref,
   ...props
 }: TableProps) => (
-  <div className="w-full overflow-x-auto">
-    <table
-      ref={ref}
-      className={cn(tableVariants({ frame }), className)}
-      {...props}
-    >
+  <div className={cn("w-full overflow-x-auto", frameVariants({ frame }))}>
+    <table ref={ref} className={cn("min-w-full", className)} {...props}>
       {children}
     </table>
   </div>

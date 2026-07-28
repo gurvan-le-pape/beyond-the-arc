@@ -84,12 +84,22 @@ const divider = {
  * The table's outer treatment. `outline` is for a table that stands on its
  * own; a table inside a Section uses `none`, because the Section is already a
  * bordered Card and a second border inside it reads as a boxed-in box.
+ *
+ * Applied to the scroll container, not the `<table>`. Two reasons: the
+ * container is what actually bounds the table once the content is wider than
+ * the viewport, and its `overflow` clips the corners for free — a border
+ * radius on a `<table>` does not clip the rows inside it, so a hovered or
+ * filled last row squares the bottom corners straight off.
+ *
+ * `rounded-card` rather than `rounded-button`: 12px is the radius of the
+ * `Card` this table sits beside, and the table is a card-scale block. 8px is
+ * the button radius and was never the right token here.
  */
-export const tableVariants = cva("min-w-full", {
+export const frameVariants = cva("", {
   variants: {
     frame: {
       none: "",
-      outline: "border border-divide rounded-button",
+      outline: "border border-divide rounded-card",
     },
   },
   defaultVariants: { frame: "none" },
