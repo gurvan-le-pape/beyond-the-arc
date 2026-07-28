@@ -89,6 +89,7 @@ export const MatchDetailsTable: React.FC<MatchDetailsTableProps> = ({
       rows={rows}
       getRowKey={(row) => row.side}
       emptyMessage={tCommon("noData")}
+      density="cozy"
       frame="outline"
     />
   );

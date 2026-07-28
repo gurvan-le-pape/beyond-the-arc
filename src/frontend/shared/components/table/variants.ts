@@ -23,9 +23,19 @@ const align = {
   right: "text-right",
 } as const;
 
+/**
+ * Three steps, because two were not a scale: `comfortable` was `px-6 py-4` and
+ * `compact` was `px-1 py-1` — 48px of horizontal padding per cell dropping
+ * straight to 4px, with nothing in between. Wide tables had to choose between
+ * overflowing on padding alone and being jammed against the column rules.
+ *
+ * `comfortable` is also narrower than it was. The 9-column player match history
+ * overflowed on `px-6` well before its columns needed the room.
+ */
 const density = {
-  comfortable: "px-6 py-4",
-  compact: "px-1 py-1",
+  comfortable: "px-4 py-3.5",
+  cozy: "px-3 py-2.5",
+  compact: "px-2 py-1.5",
 } as const;
 
 /**

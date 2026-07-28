@@ -52,8 +52,12 @@ interface DataTableProps<T> {
    * a bordered Card.
    */
   readonly frame?: "none" | "outline";
-  /** Cell padding. Says nothing about wrapping — see `wrap`. */
-  readonly density?: "comfortable" | "compact";
+  /**
+   * Cell padding. Says nothing about wrapping — see `wrap`. Pick by column
+   * count: `comfortable` up to a handful, `cozy` around eight to ten,
+   * `compact` for a full stat line.
+   */
+  readonly density?: "comfortable" | "cozy" | "compact";
   /** Set false on wide stat tables so cells stay on one line. */
   readonly wrap?: boolean;
   /**
