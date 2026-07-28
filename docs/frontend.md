@@ -222,7 +222,7 @@ Rather than using Tailwind's default colour palette directly in components, all 
 - `primary` / `secondary` — brand colours used for interactive elements and accents
 - `surface.base` / `surface.subtle` / `surface.raised` — layered background surfaces, each step slightly elevated from the one before. Dark equivalents are `surface.*-dark`.
 - `divide.light` / `divide.dark` — border and divider colours
-- `text.*` — a full semantic text scale from `text.muted` (placeholders) through `text.heading` (page titles), with dark equivalents
+- `text.*` — a semantic text scale, `muted` → `secondary` → `body` → `emphasis` → `heading`. **`secondary` is the lightest step that may carry text a reader is meant to read**; `muted` is for decorative icons, separators and disabled controls. That line is a contrast floor, not a preference: on the light theme's `surface-raised`, `muted` is 2.05:1 and cannot be darkened to AA without collapsing into `secondary`. `secondary` itself is a computed value rather than a palette step, because Tailwind has no gray between 500 (3.90:1 on `surface-raised`) and 600 (which is `body`'s own colour); it clears 4.5:1 on all three surfaces in all three themes.
 - `team.male` / `team.female` — gender-coded accent colours used on team and player pages
 - `national` / `regional` / `departmental` — competition level colours that encode hierarchy visually
 - `clubs` — a distinct purple used for club-related UI

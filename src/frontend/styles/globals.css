@@ -65,13 +65,21 @@ body {
   --color-divide: #d1d5db;
 
   /* Text — choose by role, not by shade
-     muted     = placeholders, disabled, decorative icons
+     muted     = decorative icons, separators, disabled controls.
+                 NOT for text a sighted user is meant to read: it is
+                 2.05:1 on surface-raised and cannot be darkened to AA
+                 without collapsing into secondary. Real text starts at
+                 secondary.
      secondary = captions, timestamps, helper text
      body      = default paragraph text
      emphasis  = labels, form labels, stronger secondary text
      heading   = headings, primary values, winner names              */
   --color-text-muted: #9ca3af;
-  --color-text-secondary: #6b7280;
+  /* Computed, not a palette step: gray-500 (#6b7280) is 4.39:1 on
+     surface-subtle and 3.90:1 on surface-raised, and Tailwind has no gray
+     between 500 and 600 that clears 4.5:1 without landing on body's own
+     value. This is 5.64 / 5.36 / 4.76 across base / subtle / raised. */
+  --color-text-secondary: #5d6570;
   --color-text-body: #4b5563;
   --color-text-emphasis: #374151;
   --color-text-heading: #1f2937;
