@@ -220,8 +220,8 @@ Rather than using Tailwind's default colour palette directly in components, all 
 **Colour categories:**
 
 - `primary` / `secondary` — brand colours used for interactive elements and accents
-- `surface.base` / `surface.subtle` / `surface.raised` — layered background surfaces, each step slightly elevated from the one before. Dark equivalents are `surface.*-dark`.
-- `divide.light` / `divide.dark` — border and divider colours
+- `surface.base` / `surface.subtle` / `surface.raised` — layered background surfaces, each step slightly elevated from the one before. There is no `-dark` counterpart: the same three names resolve per theme (see below).
+- `divide` — the single border and divider colour
 - `text.*` — a semantic text scale, `muted` → `secondary` → `body` → `emphasis` → `heading`. **`secondary` is the lightest step that may carry text a reader is meant to read**; `muted` is for decorative icons, separators and disabled controls. That line is a contrast floor, not a preference: on the light theme's `surface-raised`, `muted` is 2.05:1 and cannot be darkened to AA without collapsing into `secondary`. `secondary` itself is a computed value rather than a palette step, because Tailwind has no gray between 500 (3.90:1 on `surface-raised`) and 600 (which is `body`'s own colour); it clears 4.5:1 on all three surfaces in all three themes.
 - `team.male` / `team.female` — gender-coded accent colours used on team and player pages
 - `national` / `regional` / `departmental` — competition level colours that encode hierarchy visually
@@ -233,10 +233,16 @@ Every category ramp (`clubs`, `teams`, `players`, `matches`, `national`, `region
 **Structural tokens:**
 
 - `borderRadius.card` (12px), `borderRadius.button` (8px), `borderRadius.input` (6px) — consistent rounding per surface type
-- `boxShadow.card` / `boxShadow.card-dark` / `boxShadow.card-hover` — elevation shadows
+- `boxShadow.card` / `boxShadow.card-hover` — elevation shadows
 - `spacing.sidebar`, `spacing.panel`, `spacing.panel-lg`, `spacing.panel-xl` — named widths for layout panels
 
-Dark mode is implemented via Tailwind's `class` strategy. Every semantic token has an explicit dark counterpart applied with the `dark:` prefix — there are no CSS custom properties or runtime theme utilities in the Tailwind config itself. `next-themes` manages the `class` toggle on `<html>` via a `ThemeProvider` in `app/providers.tsx`, which wraps the app inside `NextIntlClientProvider` in the locale layout. The provider defaults to `light` but respects the OS preference (`enableSystem: true`). `suppressHydrationWarning` is set on `<html>` to suppress the inevitable mismatch between the server-rendered class and the client-resolved theme. Components that depend on the resolved theme — such as `Logo`, which switches between light and dark image assets — use `useTheme()` with a `mounted` guard, rendering a neutral placeholder until after hydration to avoid visual flicker. `ThemeToggle` in the header follows the same pattern.
+**There are three themes, not two, and no component knows which one is active.** Every token in `tailwind.config.js` is `var(--color-…)`; the values live in `styles/globals.css` as three custom-property blocks — `:root` (light), `.dark`, `.high-contrast`. `next-themes` puts the class on `<html>` and the variables re-resolve, so `text-text-body` or `border-divide` is correct in all three with no theme variant at the call site. That is the point of the indirection: a `dark:` pair per token would be a *triple* here, on every element, and would have to be remembered every time a token is used. Exactly one `dark:` remains in the app — `dark:prose-invert` in the docs accordion, which styles the Tailwind typography plugin rather than a token of ours.
+
+Two consequences worth knowing before adding tokens. **A `dark:` prefix on a themed token is a bug**, not a redundancy — it pins the value and breaks high-contrast. And **a new token needs a value in all three blocks**, or it silently inherits the light one; the `-subtle` / `-strong` pairs in the category ramps deliberately *swap* between light and dark for exactly this reason, so that `text-clubs-strong` stays the readable end everywhere.
+
+On top of the tokens sits a **surface context system**, which is runtime and does live partly in the Tailwind config. The structural classes `.surface-base` / `.surface-subtle` / `.surface-raised` each set their own background *and* publish `--surface-bg`, `--surface-inset` and `--surface-ring-offset`. Utilities defined in `tailwind.config.js` read those — `.bg-surface-own`, `.bg-surface-inset`, `.ring-offset-surface`, `.scroll-shadow-x` — so a component can say "one step above whatever I am sitting on" without knowing where it was mounted. Elevation runs base → subtle → raised and must not be skipped or reversed. **`raised` is the ceiling**: it publishes `--surface-inset` as *itself*, so `bg-surface-inset` inside a `surface-raised` ancestor is a no-op — which is how the old table body made both its zebra striping and its row hover invisible at once.
+
+`ThemeProvider` (`lib/providers/theme-provider.tsx`) is mounted in `app/providers.tsx`, defaults to `light`, registers `["light", "dark", "high-contrast"]` and respects the OS preference (`enableSystem: true`). Adding a fourth theme means a new class block in `globals.css` overriding only what differs, plus its name in that array. `suppressHydrationWarning` is set on `<html>` to suppress the inevitable mismatch between the server-rendered class and the client-resolved theme. Components that depend on the resolved theme — such as `Logo`, which switches between light and dark image assets — use `useTheme()` with a `mounted` guard, rendering a neutral placeholder until after hydration to avoid visual flicker. `ThemeToggle` in the header follows the same pattern.
 
 ### CVA component variants
 
