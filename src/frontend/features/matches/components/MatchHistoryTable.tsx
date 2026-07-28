@@ -81,7 +81,6 @@ export function MatchHistoryTable<T extends MatchHistoryRow>({
             away: match.awayTeam.club.name,
           })
         }
-        striped
       />
 
       {hasMoreMatches && (

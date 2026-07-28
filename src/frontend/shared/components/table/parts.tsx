@@ -17,7 +17,6 @@ type Alignment = "left" | "center" | "right";
 type Density = "comfortable" | "compact";
 type Width = "auto" | "icon";
 type Divider = "none" | "left" | "right" | "both";
-type Stripe = "none" | "even" | "odd";
 type Frame = "none" | "outline";
 
 // ---------------------------------------------------------------------------
@@ -84,20 +83,18 @@ export const TableBody = ({
 
 interface TableRowProps extends HTMLAttributes<HTMLTableRowElement> {
   interactive?: boolean;
-  stripe?: Stripe;
   ref?: React.Ref<HTMLTableRowElement>;
 }
 
 export const TableRow = ({
   className,
   interactive = false,
-  stripe = "none",
   ref,
   ...props
 }: TableRowProps) => (
   <tr
     ref={ref}
-    className={cn(rowVariants({ stripe, interactive }), className)}
+    className={cn(rowVariants({ interactive }), className)}
     {...props}
   />
 );

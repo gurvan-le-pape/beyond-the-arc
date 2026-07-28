@@ -73,15 +73,7 @@ interface DataTableProps<T> {
    * does not identify the row — a date does not.
    */
   readonly getRowLabel?: (row: T) => string;
-  /** Alternating row backgrounds. */
-  readonly striped?: boolean;
 }
-
-/** Which stripe band a row sits in, or none when striping is off. */
-const stripeFor = (striped: boolean, index: number) => {
-  if (!striped) return "none" as const;
-  return index % 2 === 0 ? ("even" as const) : ("odd" as const);
-};
 
 /**
  * Column-driven table.
@@ -107,7 +99,6 @@ export function DataTable<T>({
   emptyMessage,
   getRowHref,
   getRowLabel,
-  striped = false,
 }: DataTableProps<T>) {
   return (
     <Table frame={frame}>
@@ -133,14 +124,10 @@ export function DataTable<T>({
         {rows.length === 0 ? (
           <TableEmpty colSpan={columns.length} message={emptyMessage} />
         ) : (
-          rows.map((row, index) => {
+          rows.map((row) => {
             const href = getRowHref?.(row);
             return (
-              <TableRow
-                key={getRowKey(row)}
-                interactive={href !== undefined}
-                stripe={stripeFor(striped, index)}
-              >
+              <TableRow key={getRowKey(row)} interactive={href !== undefined}>
                 {columns.map((column, columnIndex) => (
                   <TableCell
                     key={column.key}
