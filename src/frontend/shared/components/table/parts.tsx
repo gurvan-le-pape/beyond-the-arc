@@ -128,6 +128,7 @@ interface TableHeadProps extends HTMLAttributes<HTMLTableCellElement> {
   width?: Width;
   divider?: Divider;
   numeric?: boolean;
+  stickyLead?: boolean;
   tooltip?: string;
   ref?: React.Ref<HTMLTableCellElement>;
 }
@@ -140,6 +141,7 @@ export const TableHead = ({
   width = "auto",
   divider = "none",
   numeric = false,
+  stickyLead = false,
   tooltip,
   children,
   ref,
@@ -149,7 +151,7 @@ export const TableHead = ({
     title={tooltip}
     ref={ref}
     className={cn(
-      headVariants({ align, density, wrap, width, divider, numeric }),
+      headVariants({ align, density, wrap, width, divider, numeric, stickyLead }),
       className,
     )}
     {...props}
@@ -174,6 +176,7 @@ interface TableCellProps extends HTMLAttributes<HTMLTableCellElement> {
   width?: Width;
   divider?: Divider;
   numeric?: boolean;
+  stickyLead?: boolean;
   emphasis?: boolean;
   ref?: React.Ref<HTMLTableCellElement>;
 }
@@ -186,6 +189,7 @@ export const TableCell = ({
   width = "auto",
   divider = "none",
   numeric = false,
+  stickyLead = false,
   emphasis = false,
   ref,
   ...props
@@ -193,7 +197,16 @@ export const TableCell = ({
   <td
     ref={ref}
     className={cn(
-      cellVariants({ align, density, wrap, width, divider, numeric, emphasis }),
+      cellVariants({
+        align,
+        density,
+        wrap,
+        width,
+        divider,
+        numeric,
+        stickyLead,
+        emphasis,
+      }),
       className,
     )}
     {...props}
