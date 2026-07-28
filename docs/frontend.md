@@ -228,6 +228,8 @@ Rather than using Tailwind's default colour palette directly in components, all 
 - `clubs` — a distinct purple used for club-related UI
 - `success` / `error` / `warning` / `info` — status colours
 
+Every category ramp (`clubs`, `teams`, `players`, `matches`, `national`, `regional`, `departmental`, …) has three steps, and **which step you take is decided by what you are colouring, not by taste**: `-subtle` fills, the bare token is for icons, arrows and other non-text marks, and `-strong` is the only one for text. The mid step is chosen for its presence against a fill, so it does not carry text contrast — `text-clubs` is 2.60:1 on surface-base, where `text-clubs-strong` is 10.48:1. The ramps invert per theme, so `-strong` stays the readable end in all three.
+
 **Structural tokens:**
 
 - `borderRadius.card` (12px), `borderRadius.button` (8px), `borderRadius.input` (6px) — consistent rounding per surface type
