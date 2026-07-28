@@ -13,7 +13,14 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default: "border-transparent bg-surface-subtle text-text-heading",
-        primary: "border-transparent bg-primary-subtle text-primary-strong",
+        // `primary-ghost`, not `primary-subtle`. Every semantic ramp here is a
+        // three-step (subtle / DEFAULT / strong) whose `-subtle` is a pale
+        // tint, but the brand ramp has eleven steps and its `-subtle` is the
+        // fourth — a mid tone (#6d86c0). `primary-strong` on it is 2.75:1 in
+        // light, 3.50:1 in dark and 3.01:1 in high-contrast. `ghost` is the
+        // brand ramp's actual tint step, and the pairing is 8.23 / 5.23 /
+        // 12.08.
+        primary: "border-transparent bg-primary-ghost text-primary-strong",
         secondary: "border-transparent bg-secondary-faint text-secondary-deep",
         success: "border-transparent bg-success-subtle text-success-strong",
         error: "border-transparent bg-error-subtle text-error-strong",
@@ -33,15 +40,30 @@ const badgeVariants = cva(
         regional: "border-transparent bg-regional-subtle text-regional-strong",
         departmental:
           "border-transparent bg-departmental-subtle text-departmental-strong",
-        // Competition level-specific (on level-colored header)
+        // Competition level-specific (on a `bg-{level}-subtle` card header,
+        // where the plain level variant would be invisible — same fill).
+        //
+        // Each one is exactly its plain variant with foreground and background
+        // swapped, which makes it AA by construction: contrast is symmetric,
+        // so these read 9.27 / 8.41 / 8.38 in light and 7.66 / 7.52 / 7.45 in
+        // dark, the same numbers as `national` / `regional` / `departmental`.
+        // Filling with the mid `bg-{level}` instead — as these used to — put a
+        // pale tint on a mid tone: 3.63, 2.21 and 1.85 in light. And because
+        // the fill is now `-strong` while the header is `-subtle`, the chip
+        // separates from the header by that same ratio.
         "national-on-header":
-          "border-transparent bg-national text-national-subtle",
+          "border-transparent bg-national-strong text-national-subtle",
         "regional-on-header":
-          "border-transparent bg-regional text-regional-subtle",
+          "border-transparent bg-regional-strong text-regional-subtle",
         "departmental-on-header":
-          "border-transparent bg-departmental text-departmental-subtle",
-        // Player comparison
-        vs: "border-2 border-primary text-primary font-black tracking-widest",
+          "border-transparent bg-departmental-strong text-departmental-subtle",
+        // Player comparison. Transparent fill, so both the text and the ring
+        // are measured against whatever surface the badge is mounted on — and
+        // `primary` is 2.84:1 on the dark theme's `surface-raised`, failing the
+        // 4.5:1 text floor and the 3:1 non-text floor at once. `primary-bold`
+        // is the first step that clears both on every surface in every theme
+        // (worst case 6.18:1).
+        vs: "border-2 border-primary-bold text-primary-bold font-black tracking-widest",
 
         category: "border-transparent bg-category-subtle text-category-strong",
         division: "border-transparent bg-division-subtle text-division-strong",
