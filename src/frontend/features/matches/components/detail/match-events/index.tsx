@@ -10,7 +10,6 @@ import {
   getEventStyle,
   getQuarterFromTimestamp,
   getTeamIdFromEvent,
-  makeDescriptionClickable,
   pointsForEvent,
 } from "@/features/matches/utils";
 import type { TeamInfoExtended } from "@/features/teams/types";
@@ -156,7 +155,6 @@ export const MatchEvents: React.FC<MatchEventsProps> = ({
         homeTeam={homeTeam}
         awayTeam={awayTeam}
         getEventStyle={getEventStyle}
-        makeDescriptionClickable={makeDescriptionClickable}
         matchDate={matchDate}
       />
     </Section>

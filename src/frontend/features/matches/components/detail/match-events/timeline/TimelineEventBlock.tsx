@@ -3,6 +3,8 @@ import { useTranslations } from "next-intl";
 import React from "react";
 
 import type { EventStyle, EventWithScore } from "@/features/matches/types";
+import type { EventDescriptionToken } from "@/features/matches/utils";
+import { Link } from "@/navigation";
 import { Text } from "@/shared/components/typography";
 import { cn } from "@/shared/utils";
 
@@ -13,8 +15,8 @@ interface TimelineEventBlockProps {
   readonly style: EventStyle;
   /** The enriched event (includes description, timestamp, etc.). */
   readonly event: EventWithScore;
-  /** Pre-rendered HTML string – player names already wrapped in links. */
-  readonly descriptionHtml: string;
+  /** The description split into runs, player names marked (see utils). */
+  readonly descriptionTokens: readonly EventDescriptionToken[];
   /** Match kick-off time, used to derive the game-clock display. */
   readonly matchDate: Date | string;
 }
@@ -44,7 +46,7 @@ export function TimelineEventBlock({
   align,
   style,
   event,
-  descriptionHtml,
+  descriptionTokens,
   matchDate,
 }: TimelineEventBlockProps) {
   const tMatches = useTranslations("matches");
@@ -79,16 +81,33 @@ export function TimelineEventBlock({
           )}
         </div>
 
-        {/* Description; player names inside it are real anchors, so there is no
-            click delegation here any more — the browser handles activation. */}
+        {/* Description. The player names are real anchors rendered by React,
+            not an HTML string handed to dangerouslySetInnerHTML, so nothing
+            here depends on the description being tag-free. */}
         {event.description && (
           <p
             className={cn(
               "text-text-body mt-0.5",
               isRight ? "text-right" : "text-left",
             )}
-            dangerouslySetInnerHTML={{ __html: descriptionHtml }}
-          />
+          >
+            {descriptionTokens.map((token, index) =>
+              token.kind === "player" ? (
+                <Link
+                  // The tokens are positional runs of one string, so the index
+                  // *is* the identity — there is no stabler key, and a token
+                  // never moves without the whole description changing.
+                  key={`${index}-${token.text}`}
+                  href={`/players/${token.playerId}`}
+                  className="text-primary hover:underline"
+                >
+                  {token.text}
+                </Link>
+              ) : (
+                token.text
+              ),
+            )}
+          </p>
         )}
 
         {/* Game clock display */}
