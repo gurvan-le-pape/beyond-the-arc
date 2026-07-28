@@ -25,6 +25,21 @@ export function usePlayerStatColumns(
 
   return useMemo<TableColumn<MatchPlayerWithStats>[]>(
     () => [
+      // The name leads, so that `stickyLead` pins something that identifies
+      // the row. Pinning the jersey number instead would keep a bare digit on
+      // screen while the player it belongs to scrolled away.
+      {
+        key: "name",
+        header: tMatches("playerMatchStats.name"),
+        align: "left",
+        render: (p) => (
+          <PlayerNameCell
+            playerId={p.player.id}
+            playerName={p.player.name}
+            onNavigate={(id) => router.push(`/players/${id}`)}
+          />
+        ),
+      },
       {
         key: "number",
         header: tMatches("playerMatchStats.number"),
@@ -36,20 +51,9 @@ export function usePlayerStatColumns(
         key: "position",
         header: tMatches("playerMatchStats.position"),
         align: "center",
-        render: (p) => p.player.position,
-      },
-      {
-        key: "name",
-        header: tMatches("playerMatchStats.name"),
-        align: "left",
+        // Closes the identity group; the divider moved here with the reorder.
         divider: "right",
-        render: (p) => (
-          <PlayerNameCell
-            playerId={p.player.id}
-            playerName={p.player.name}
-            onNavigate={(id) => router.push(`/players/${id}`)}
-          />
-        ),
+        render: (p) => p.player.position,
       },
       {
         key: "points",

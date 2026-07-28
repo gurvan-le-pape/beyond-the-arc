@@ -53,7 +53,7 @@ export interface TableColumn<T> {
   readonly width?: "auto" | "icon";
 }
 
-interface DataTableProps<T> {
+interface DataTableBaseProps<T> {
   readonly columns: TableColumn<T>[];
   readonly rows: T[];
   readonly getRowKey: (row: T) => React.Key;
@@ -69,26 +69,65 @@ interface DataTableProps<T> {
    * `compact` for a full stat line.
    */
   readonly density?: "comfortable" | "cozy" | "compact";
-  /** Set false on wide stat tables so cells stay on one line. */
-  readonly wrap?: boolean;
   /**
    * Rendered in place of the rows when `rows` is empty. Required: a header
    * with nothing under it and no explanation is never the right answer, and
    * making it optional meant three of the four tables shipped without one.
    */
   readonly emptyMessage: string;
+}
+
+/**
+ * A table whose rows navigate.
+ *
+ * The two exclusions below used to be comments in `variants.ts`, which is to
+ * say they were not enforced at all — the one `wrap={false}` table happened
+ * not to use row links, and that was the whole guarantee. Both break the same
+ * way and both are now compile errors.
+ */
+interface RowLinkProps<T> {
   /**
    * Makes each row navigate. The lead cell's content becomes a link stretched
    * over the whole row, so rows are focusable and keyboard-activable — which
    * `onRowClick` on a `<tr>` never was.
    */
-  readonly getRowHref?: (row: T) => string;
+  readonly getRowHref: (row: T) => string;
   /**
    * Accessible name for the row link. Supply it whenever the lead cell alone
    * does not identify the row — a date does not.
    */
   readonly getRowLabel?: (row: T) => string;
+  /**
+   * Cannot be `false` alongside `getRowHref`: `wrap={false}` puts
+   * `overflow-hidden` on every cell, which clips the stretched overlay back to
+   * the lead cell and quietly turns the row link into a lead-cell link.
+   */
+  readonly wrap?: true;
+  /**
+   * Cannot be `true` alongside `getRowHref`: `position: sticky` makes the lead
+   * `<td>` a positioned element, so the overlay's `absolute inset-0` resolves
+   * against that cell instead of the `relative` `<tr>` — same collapse,
+   * different cause.
+   */
+  readonly stickyLead?: false;
 }
+
+/** A table whose rows do not navigate, and so has no overlay to protect. */
+interface PlainRowProps {
+  readonly getRowHref?: undefined;
+  readonly getRowLabel?: undefined;
+  /** Set false on wide stat tables so cells stay on one line. */
+  readonly wrap?: boolean;
+  /**
+   * Pins the first column while the rest scrolls sideways, so a wide table
+   * keeps the thing that identifies each row in view. Pair it with a lead
+   * column that actually identifies the row.
+   */
+  readonly stickyLead?: boolean;
+}
+
+type DataTableProps<T> = DataTableBaseProps<T> &
+  (RowLinkProps<T> | PlainRowProps);
 
 /**
  * Where a column sits. Numbers go right, so their units, tens and hundreds
@@ -122,12 +161,13 @@ export function DataTable<T>({
   emptyMessage,
   getRowHref,
   getRowLabel,
+  stickyLead = false,
 }: DataTableProps<T>) {
   return (
     <Table frame={frame}>
       <TableHeader>
         <TableRow>
-          {columns.map((column) => (
+          {columns.map((column, columnIndex) => (
             <TableHead
               key={column.key}
               align={alignFor(column)}
@@ -136,6 +176,7 @@ export function DataTable<T>({
               width={column.width}
               divider={column.divider}
               numeric={column.numeric}
+              stickyLead={stickyLead && columnIndex === 0}
               tooltip={column.tooltip}
             >
               {column.header}
@@ -161,6 +202,7 @@ export function DataTable<T>({
                     width={column.width}
                     divider={column.divider}
                     numeric={column.numeric}
+                    stickyLead={stickyLead && columnIndex === 0}
                     emphasis={column.emphasis}
                   >
                     {href !== undefined && columnIndex === 0 ? (

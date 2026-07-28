@@ -68,6 +68,27 @@ const numeric = {
   false: "",
 } as const;
 
+/**
+ * The lead column, pinned while the rest of the table scrolls sideways.
+ *
+ * `bg-surface-own` is load-bearing, not decoration: a sticky cell floats over
+ * the scrolled content, so without an opaque background the columns passing
+ * underneath show through it. It reads `--surface-bg` from the surface context
+ * system, so the pinned column matches whatever container the table sits in.
+ *
+ * The right-hand rule is what tells you the column is floating rather than
+ * simply first. It is a box-shadow, not a border, and that is not a style
+ * choice: Tailwind's preflight sets `border-collapse: collapse`, under which
+ * cell borders are painted by the table rather than by the cell, so a
+ * `border-r` here stays put while the cell it belongs to travels — the sticky
+ * column loses its edge the moment you scroll. A box-shadow paints with the
+ * element in either collapse mode.
+ */
+const stickyLead = {
+  true: "sticky left-0 z-10 bg-surface-own shadow-[1px_0_0_0_var(--color-divide)]",
+  false: "",
+} as const;
+
 /** Vertical rule fencing off a group of columns, e.g. the shooting splits. */
 const divider = {
   none: "",
@@ -181,7 +202,7 @@ export const ROW_LINK =
   " focus-visible:after:ring-primary";
 
 export const headVariants = cva("", {
-  variants: { align, density, wrap, width, divider, numeric },
+  variants: { align, density, wrap, width, divider, numeric, stickyLead },
   defaultVariants: {
     align: "left",
     density: "comfortable",
@@ -189,6 +210,7 @@ export const headVariants = cva("", {
     width: "auto",
     divider: "none",
     numeric: false,
+    stickyLead: false,
   },
 });
 
@@ -211,6 +233,7 @@ export const cellVariants = cva("text-sm text-text-emphasis", {
     width,
     divider,
     numeric,
+    stickyLead,
     /** The one column a table is *about* — a rank, a total. */
     emphasis: { true: "font-bold text-text-heading", false: "" },
   },
@@ -221,6 +244,7 @@ export const cellVariants = cva("text-sm text-text-emphasis", {
     width: "auto",
     divider: "none",
     numeric: false,
+    stickyLead: false,
     emphasis: false,
   },
 });
