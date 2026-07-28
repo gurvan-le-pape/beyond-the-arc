@@ -32,6 +32,12 @@ interface MatchHistoryTableProps<T> {
   readonly showLessLabel: string;
   readonly maxRows?: number;
   readonly title?: string;
+  /**
+   * Passed through to `DataTable`. Exposed because column count varies by
+   * consumer — the team history is three columns, the player history nine —
+   * and padding that suits one crowds the other.
+   */
+  readonly density?: "comfortable" | "cozy" | "compact";
 }
 
 /**
@@ -60,6 +66,7 @@ export function MatchHistoryTable<T extends MatchHistoryRow>({
   showLessLabel,
   maxRows = 5,
   title,
+  density = "comfortable",
 }: MatchHistoryTableProps<T>) {
   const tCommon = useTranslations("common");
   const [showAll, setShowAll] = useState(false);
@@ -73,6 +80,7 @@ export function MatchHistoryTable<T extends MatchHistoryRow>({
         columns={columns}
         rows={displayedMatches}
         getRowKey={(match) => match.id}
+        density={density}
         emptyMessage={emptyMessage}
         getRowHref={(match) => `/matches/${match.id}`}
         getRowLabel={(match) =>

@@ -15,7 +15,7 @@ import {
 } from "./variants";
 
 type Alignment = "left" | "center" | "right";
-type Density = "comfortable" | "compact";
+type Density = "comfortable" | "cozy" | "compact";
 type Width = "auto" | "icon";
 type Divider = "none" | "left" | "right" | "both";
 type Frame = "none" | "outline";

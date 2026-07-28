@@ -37,6 +37,7 @@ export function PlayerMatchHistoryTable({
       })}
       showLessLabel={tCommon("seeLess")}
       maxRows={maxRows}
+      density="cozy"
     />
   );
 }
