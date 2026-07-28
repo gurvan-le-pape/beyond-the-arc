@@ -7,7 +7,7 @@ import React, { useState } from "react";
 import { ShotModal } from "@/features/charts/components";
 import type { MatchEvent } from "@/features/matches/types";
 import type { TeamInfo, TeamInfoExtended } from "@/features/teams/types";
-import { useRouter } from "@/navigation";
+import { Link } from "@/navigation";
 import { Section } from "@/shared/components/blocks";
 import { DataTable } from "@/shared/components/table";
 import { Text } from "@/shared/components/typography";
@@ -33,7 +33,6 @@ export const PlayerMatchStats: React.FC<PlayerMatchStatsProps> = ({
   opponent,
   playerShots,
 }) => {
-  const router = useRouter();
   const [modalPlayer, setModalPlayer] = useState<NamedEntity | null>(null);
   const tCommon = useTranslations("common");
   const tMatches = useTranslations("matches");
@@ -50,14 +49,15 @@ export const PlayerMatchStats: React.FC<PlayerMatchStatsProps> = ({
     <Section
       title={
         <span>
-          <button
-            type="button"
-            className="text-text-heading cursor-pointer hover:text-primary bg-transparent border-none p-0 m-0 font-inherit transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary ring-offset-surface rounded"
-            onClick={() => router.push(`/teams/${team.id}`)}
+          {/* A link, not a button with router.push — the team page is a place,
+              so it gets an href, a status-bar URL and open-in-new-tab. */}
+          <Link
+            href={`/teams/${team.id}`}
+            className="text-text-heading hover:text-primary transition-colors duration-200 rounded outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ring-offset-surface"
             aria-label={`${tMatches("playerMatchStats.viewTeam")} ${team.name}`}
           >
             {team.name}
-          </button>{" "}
+          </Link>{" "}
           <Text variant="body" as="span">
             (
             {isHomeTeam

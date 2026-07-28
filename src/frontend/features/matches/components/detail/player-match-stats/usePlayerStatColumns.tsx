@@ -4,7 +4,6 @@ import { useMemo } from "react";
 
 import type { MatchPlayerWithStats } from "@/features/matches/types";
 import { formatPlaytime } from "@/features/matches/utils";
-import { useRouter } from "@/navigation";
 import type { TableColumn } from "@/shared/components/table";
 import type { NamedEntity } from "@/shared/types";
 
@@ -12,16 +11,15 @@ import { PlayerNameCell } from "./PlayerNameCell";
 import { ShotChartCell } from "./ShotChartCell";
 
 /**
- * Builds the player match stats table columns. Depends on translations and the
- * router (name cell navigation), so it is a hook rather than a static array.
- * `onSelectPlayer` opens the shot chart modal for a player.
+ * Builds the player match stats table columns. Depends on translations, so it
+ * is a hook rather than a static array. `onSelectPlayer` opens the shot chart
+ * modal for a player.
  */
 export function usePlayerStatColumns(
   onSelectPlayer: (player: NamedEntity) => void,
 ): TableColumn<MatchPlayerWithStats>[] {
   const tCommon = useTranslations("common");
   const tMatches = useTranslations("matches");
-  const router = useRouter();
 
   return useMemo<TableColumn<MatchPlayerWithStats>[]>(
     () => [
@@ -33,11 +31,7 @@ export function usePlayerStatColumns(
         header: tMatches("playerMatchStats.name"),
         align: "left",
         render: (p) => (
-          <PlayerNameCell
-            playerId={p.player.id}
-            playerName={p.player.name}
-            onNavigate={(id) => router.push(`/players/${id}`)}
-          />
+          <PlayerNameCell playerId={p.player.id} playerName={p.player.name} />
         ),
       },
       {
@@ -160,6 +154,6 @@ export function usePlayerStatColumns(
         ),
       },
     ],
-    [tCommon, tMatches, router, onSelectPlayer],
+    [tCommon, tMatches, onSelectPlayer],
   );
 }

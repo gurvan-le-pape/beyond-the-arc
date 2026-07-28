@@ -184,6 +184,28 @@ export const ROW_LINK =
   " focus-visible:after:ring-2 focus-visible:after:ring-inset" +
   " focus-visible:after:ring-primary";
 
+/**
+ * A link occupying one cell, for the tables the stretched row link cannot
+ * serve — `wrap={false}` clips the overlay and `stickyLead` mispositions it, so
+ * the props type forbids `getRowHref` alongside either. Those tables still need
+ * *some* real navigation, and a plain in-cell link is it.
+ *
+ * It navigates one cell rather than the whole row, which is a weaker target,
+ * but it is a genuine link: keyboard-reachable, Enter, middle-click,
+ * open-in-new-tab, status-bar URL. Prefer `getRowHref` when the table can take
+ * it — the whole row is the better hit area.
+ *
+ * `ring-offset-1` rather than the usual `ring-offset-2`: cells are as tight as
+ * `px-2 py-1.5` at `compact`, and the ring has to stay inside that padding or
+ * the cell's `overflow-hidden` clips it. `ring-offset-surface` reads the
+ * surface context, so the offset matches the pinned lead column's own
+ * `bg-surface-own` as well as an ordinary cell.
+ */
+export const CELL_LINK =
+  "rounded outline-none transition-colors duration-150 hover:text-primary" +
+  " focus-visible:ring-2 focus-visible:ring-primary" +
+  " focus-visible:ring-offset-1 ring-offset-surface";
+
 export const headVariants = cva("", {
   variants: { align, density, wrap, width, divider, numeric, stickyLead },
   defaultVariants: {
