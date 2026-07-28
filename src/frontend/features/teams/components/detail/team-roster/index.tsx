@@ -76,7 +76,7 @@ export const TeamRoster: React.FC<TeamRosterProps> = ({ players }) => {
   return (
     <Section title={tTeams("teamDetail.rosterTitle")} variant="highlighted">
       {safePlayers.length === 0 ? (
-        <Text variant="caption" className="text-text-muted text-center py-8">
+        <Text variant="caption" className="text-center py-8">
           {tTeams("teamDetail.noPlayers")}
         </Text>
       ) : (

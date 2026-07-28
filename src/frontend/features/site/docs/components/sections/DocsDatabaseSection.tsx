@@ -125,7 +125,7 @@ export function DocsDatabaseSection({ content }: DocsDatabaseSectionProps) {
               <code className="text-sm font-mono text-primary-strong block">
                 {table.name}
               </code>
-              <Text variant="muted" className="mt-1 block">
+              <Text variant="caption" className="mt-1 block">
                 {t(table.descKey)}
               </Text>
             </div>

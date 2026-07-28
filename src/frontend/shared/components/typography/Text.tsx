@@ -24,9 +24,12 @@ const textVariants = cva("", {
       // Always appears subordinate to an h1, never standalone.
       lead: "text-lg font-normal text-text-body",
 
-      // Supporting text
+      // Supporting text. There is no `muted` variant, deliberately:
+      // `text-text-muted` is 2.05:1 on surface-raised and cannot be darkened to
+      // AA without collapsing into `text-text-secondary`, so it is reserved for
+      // decorative icons, separators and disabled controls. Text that a reader
+      // is meant to read starts here. See the text scale in globals.css.
       caption: "text-sm text-text-secondary",
-      muted: "text-sm text-text-muted",
 
       // UI labels — defaults to <span> intentionally.
       // If you need a real <label>, pass as="label" htmlFor="input-id".
@@ -63,7 +66,6 @@ const variantTagMap: Record<string, ElementType> = {
   body: "p",
   lead: "p",
   caption: "span",
-  muted: "span",
   label: "span",
   overline: "span",
 };

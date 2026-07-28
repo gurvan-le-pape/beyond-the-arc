@@ -45,7 +45,7 @@ export function SearchableChipList<T extends SearchableChipListItem>({
       title={
         <>
           {title}
-          <span className="ml-2 text-sm font-normal text-text-muted">
+          <span className="ml-2 text-sm font-normal text-text-secondary">
             ({items.length})
           </span>
         </>
@@ -66,7 +66,7 @@ export function SearchableChipList<T extends SearchableChipListItem>({
       )}
       <div className="flex flex-wrap gap-2">
         {filteredItems.length === 0 ? (
-          <Text variant="muted" as="span">
+          <Text variant="caption" as="span">
             {tCompetitions("noSearchResults", { search })}
           </Text>
         ) : (

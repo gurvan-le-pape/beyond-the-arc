@@ -125,13 +125,13 @@ export const ComboBox: React.FC<ComboBoxProps> = ({
   const renderOptions = () => {
     if (isLoading) {
       return (
-        <li className="px-4 py-2 text-sm text-text-muted">{t("loading")}</li>
+        <li className="px-4 py-2 text-sm text-text-secondary">{t("loading")}</li>
       );
     }
 
     if (filteredOptions.length === 0) {
       return (
-        <li className="px-4 py-2 text-sm text-text-muted">{t("empty")}</li>
+        <li className="px-4 py-2 text-sm text-text-secondary">{t("empty")}</li>
       );
     }
 
@@ -195,7 +195,7 @@ export const ComboBox: React.FC<ComboBoxProps> = ({
             {selectedOption ? (
               selectedOption.label
             ) : (
-              <span className="text-text-muted">
+              <span className="text-text-secondary">
                 {placeholder || t("table.filterName")}
               </span>
             )}
@@ -225,7 +225,7 @@ export const ComboBox: React.FC<ComboBoxProps> = ({
           <input
             ref={searchRef}
             type="text"
-            className="w-full px-3 py-2 border-b border-divide bg-surface-inset text-text-heading placeholder:text-text-muted focus:outline-none text-sm"
+            className="w-full px-3 py-2 border-b border-divide bg-surface-inset text-text-heading placeholder:text-text-secondary focus:outline-none text-sm"
             placeholder={t("table.filter")}
             value={search}
             onChange={(e) => {

@@ -85,9 +85,12 @@ export function ChampionshipCard({
           <span
             className={cn(
               "text-sm",
+              // Demoted a step when a committee line sits above it, so the two
+              // read as a hierarchy. Both steps have to be readable, so the
+              // pair moves down the scale rather than reaching for `muted`.
               championship.committeeName
-                ? "text-text-muted"
-                : "text-text-secondary",
+                ? "text-text-secondary"
+                : "text-text-body",
             )}
           >
             {formatLeagueName(championship.leagueName)}

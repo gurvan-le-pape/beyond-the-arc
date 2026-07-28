@@ -155,7 +155,7 @@ export const Input = ({
             "border border-divide",
             "bg-surface-inset",
             "text-text-heading",
-            "placeholder:text-text-muted",
+            "placeholder:text-text-secondary",
             "focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary",
             "disabled:cursor-not-allowed disabled:opacity-50",
             "transition-colors duration-200",

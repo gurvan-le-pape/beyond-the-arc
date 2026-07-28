@@ -117,7 +117,7 @@ export function FiltersShell({
             )}
             {!hasActiveFilters && (
               <div className="pt-1 border-t border-divide">
-                <span className="text-xs text-text-muted">
+                <span className="text-xs text-text-secondary">
                   {tFilters("filters.noActiveFilters")}
                 </span>
               </div>

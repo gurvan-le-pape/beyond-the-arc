@@ -32,7 +32,7 @@ export const StatPill = ({
       <span className="text-base font-semibold text-text-emphasis">
         {value}
       </span>
-      <span className="text-[10px] font-bold tracking-widest uppercase text-text-muted">
+      <span className="text-[10px] font-bold tracking-widest uppercase text-text-secondary">
         {label}
       </span>
     </div>

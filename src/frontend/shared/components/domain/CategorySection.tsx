@@ -120,7 +120,7 @@ export function CategorySection<T>({
               ))}
             </ul>
           ) : (
-            <Text variant="muted" as="p" className="py-5 px-4 text-center">
+            <Text variant="caption" as="p" className="py-5 px-4 text-center">
               {emptyMessage}
             </Text>
           )}

@@ -43,7 +43,7 @@ export function PlayerIdentity({
       </Text>
 
       {player.team?.club?.name && (
-        <Text variant="muted" as="span" className="mt-0.5">
+        <Text variant="caption" as="span" className="mt-0.5">
           {player.team.club.name}
         </Text>
       )}

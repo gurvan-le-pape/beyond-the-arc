@@ -55,7 +55,7 @@ export const buttonVariants = cva(BASE, {
       // Inline text action — underlined, no background or border.
       // Use for low-emphasis actions like "Reset all" that sit next to other UI.
       link:
-        "rounded text-text-muted underline underline-offset-2 " +
+        "rounded text-text-secondary underline underline-offset-2 " +
         "hover:text-text-body " +
         "focus-visible:ring-primary " +
         "active:scale-100",

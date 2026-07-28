@@ -33,7 +33,7 @@ export function DocsQuickLinkCard({
       <Icon className="w-6 h-6 text-text-body" aria-hidden />
       <div className="flex flex-col">
         <Text variant="label">{label}</Text>
-        <Text variant="muted">{sub}</Text>
+        <Text variant="caption">{sub}</Text>
       </div>
       {TrailIcon && (
         <TrailIcon className="w-4 h-4 ml-auto text-text-muted" aria-hidden />
