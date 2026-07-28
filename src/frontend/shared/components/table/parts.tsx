@@ -37,7 +37,12 @@ export const Table = ({
   ref,
   ...props
 }: TableProps) => (
-  <div className={cn("w-full overflow-x-auto", frameVariants({ frame }))}>
+  <div
+    className={cn(
+      "w-full overflow-x-auto scroll-shadow-x",
+      frameVariants({ frame }),
+    )}
+  >
     <table ref={ref} className={cn("min-w-full", className)} {...props}>
       {children}
     </table>
