@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import React from "react";
 
 import { useMatchesCascadeOptions } from "@/features/matches/hooks";
-import { useCommitteeLeagueClubFilters } from "@/features/organizations/hooks";
+import { useLocationOptions } from "@/features/organizations/hooks";
 import { ErrorMessage } from "@/shared/components/feedback";
 import type {
   ActiveFilterChip,
@@ -40,11 +40,7 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
   const tCommon = useTranslations("common");
   const tFilters = useTranslations("filters");
 
-  const {
-    committees,
-    leagues,
-    error: locationError,
-  } = useCommitteeLeagueClubFilters();
+  const { committees, leagues, error: locationError } = useLocationOptions();
   const { divisions, pools } = useMatchesCascadeOptions(filters);
 
   const {

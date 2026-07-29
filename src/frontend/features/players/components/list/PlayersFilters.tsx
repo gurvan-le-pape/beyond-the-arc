@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import React from "react";
 
 import { ClubComboBoxFilter } from "@/features/organizations/clubs/components";
-import { useCommitteeLeagueClubFilters } from "@/features/organizations/hooks";
+import { useLocationOptions } from "@/features/organizations/hooks";
 import { ErrorMessage } from "@/shared/components/feedback";
 import type { ActiveFilterChip } from "@/shared/components/filters";
 import {
@@ -37,11 +37,7 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
   const tPlayers = useTranslations("players");
   const tCommon = useTranslations("common");
 
-  const {
-    committees,
-    leagues,
-    error: locationError,
-  } = useCommitteeLeagueClubFilters();
+  const { committees, leagues, error: locationError } = useLocationOptions();
 
   const {
     name,

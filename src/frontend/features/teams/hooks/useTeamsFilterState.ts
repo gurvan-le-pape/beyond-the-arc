@@ -3,7 +3,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-import { useCommitteeLeagueClubFilters } from "@/features/organizations/hooks";
+import { useLocationFilterState } from "@/features/organizations/hooks";
 import type { Category, CompetitionLevel, Gender } from "@/shared/constants";
 import { usePaginationState } from "@/shared/hooks";
 
@@ -42,7 +42,7 @@ export function useTeamsFilterState() {
     leagueId,
     setLeagueId,
     resetFilters: resetLocationFilters,
-  } = useCommitteeLeagueClubFilters();
+  } = useLocationFilterState();
 
   const [clubId, setClubId] = useState<number | undefined>(undefined);
   const [selectedClubName, setSelectedClubName] = useState("");
