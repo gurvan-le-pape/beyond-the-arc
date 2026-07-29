@@ -11,6 +11,7 @@ import componentFolderStructure from "./eslint-rules/enforce-component-folder-st
 import fileNaming from "./eslint-rules/enforce-file-naming.js";
 import noCrossCompositeImport from "./eslint-rules/no-cross-composite-import.js";
 import noMixedTypeFile from "./eslint-rules/no-mixed-type-file.js";
+import noTranslatorProp from "./eslint-rules/no-translator-prop.js";
 
 // Migration ratchet for docs/frontend-conventions.md: features not yet
 // restructured to the component conventions. Each migration PR restructures
@@ -44,6 +45,7 @@ export default [
           "enforce-file-naming": fileNaming,
           "no-cross-composite-import": noCrossCompositeImport,
           "no-mixed-type-file": noMixedTypeFile,
+          "no-translator-prop": noTranslatorProp,
         },
       },
     },
@@ -114,6 +116,7 @@ export default [
       "local-rules/enforce-file-naming": "error",
       "local-rules/no-cross-composite-import": "error",
       "local-rules/no-mixed-type-file": "error",
+      "local-rules/no-translator-prop": "error",
     },
   },
   // Migration ratchet: legacy features keep the old structure until their

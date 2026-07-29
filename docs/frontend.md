@@ -211,7 +211,7 @@ The locale segment is present in every URL but is invisible in terms of layout: 
 
 ### Never pass the translator as a prop
 
-A component either resolves its own strings or receives finished `string`s. The `t` function itself never crosses a component boundary — no `t={t}` props, no `readonly t: ReturnType<typeof useTranslations>` in a props interface.
+A component either resolves its own strings or receives finished `string`s. The `t` function itself never crosses a component boundary — no `t={t}` props, no `readonly t: ReturnType<typeof useTranslations>` in a props interface. This half is enforced by the `no-translator-prop` ESLint rule, which flags both the type and the pass site (the latter resolved through scope, so a renamed `translate={t}` is caught too).
 
 This is a hard rule rather than a stylistic one, for three reasons:
 
