@@ -3,13 +3,15 @@
 
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useState } from "react";
 
 import { DebouncedInput } from "@/shared/components/forms";
 import { Button, ImageWithFallback } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
+import type { Category, Gender } from "@/shared/constants";
 import { cn, formatNameToFileName } from "@/shared/utils";
 
-import { usePlayerSearch } from "../../../hooks";
+import { usePlayerSearch } from "../../../api";
 import type { Player } from "../../../types/Player";
 import { PlayerIdentity } from "./PlayerIdentity";
 
@@ -82,8 +84,8 @@ function DropdownContent({
 
 interface PlayerSearchDropdownProps {
   readonly excludeId: number;
-  readonly gender: string;
-  readonly category: string;
+  readonly gender: Gender;
+  readonly category: Category;
   readonly selectedPlayer: Player | null;
   readonly onSelect: (player: Player) => void;
   readonly onClear: () => void;
@@ -100,7 +102,11 @@ export function PlayerSearchDropdown({
   const tCommon = useTranslations("common");
   const tPlayers = useTranslations("players");
 
-  const { query, setQuery, results, isLoading } = usePlayerSearch({
+  // `query` is already debounced: DebouncedInput only calls onChange once the
+  // typing settles, so this state never holds a per-keystroke value.
+  const [query, setQuery] = useState("");
+
+  const { data: results = [], isLoading } = usePlayerSearch(query, {
     excludeId,
     gender,
     category,

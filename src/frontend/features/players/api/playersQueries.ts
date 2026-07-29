@@ -2,6 +2,7 @@
 import type { QueryClient } from "@tanstack/react-query";
 
 import type { PlayerFilters } from "../types/PlayerFilters";
+import type { PlayerSearchFilters } from "../types/PlayerSearchFilters";
 import { playersService } from "./players.service";
 import { playersKeys } from "./playersKeys";
 
@@ -89,6 +90,21 @@ export const playersQueries = {
     queryKey: playersKeys.filterValues(params),
     queryFn: () => playersService.getFilterValues(params),
     ...PLAYERS_CONFIG,
+  }),
+
+  /**
+   * Query options for the name-search autocomplete.
+   * Shorter cache window than the base config — a search result set is
+   * consulted once and rarely returned to, mirroring the clubs equivalent.
+   *
+   * @example
+   * useQuery(playersQueries.search("dupont", { gender: Gender.M }))
+   */
+  search: (search: string, filters?: PlayerSearchFilters) => ({
+    queryKey: playersKeys.search(search, filters),
+    queryFn: () => playersService.search(search, filters),
+    staleTime: 60 * 1000, // 1 min — search results change more than static lists
+    gcTime: 2 * 60 * 1000,
   }),
 } as const;
 
