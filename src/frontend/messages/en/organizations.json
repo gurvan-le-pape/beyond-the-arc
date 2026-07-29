@@ -19,7 +19,8 @@
     "description": "All clubs registered across France.",
     "searchLabel": "Club name",
     "searchPlaceholder": "Search for a club ...",
-    "noResults": "No results for « {search} »"
+    "itemLabelPlural": "clubs",
+    "tryAdjustingFilters": "Try adjusting your filters to find more clubs."
   },
   "info": {
     "title": "Information",
