@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/hooks/useCommitteeLeagueClubFilters.ts
+// src/frontend/features/organizations/hooks/useCommitteeLeagueClubFilters.ts
 "use client";
 
 import { useCallback, useState } from "react";

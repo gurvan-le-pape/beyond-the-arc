@@ -5,8 +5,8 @@ import { Calendar } from "lucide-react";
 import { useTranslations } from "next-intl";
 import React from "react";
 
-import { useCommitteeLeagueClubFilters } from "@/features/competitions/championships/hooks";
 import { useMatchesCascadeOptions } from "@/features/matches/hooks";
+import { useCommitteeLeagueClubFilters } from "@/features/organizations/hooks";
 import { ErrorMessage } from "@/shared/components/feedback";
 import type {
   ActiveFilterChip,

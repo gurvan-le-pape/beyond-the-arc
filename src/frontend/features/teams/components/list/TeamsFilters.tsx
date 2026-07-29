@@ -4,8 +4,8 @@
 import { useTranslations } from "next-intl";
 import React from "react";
 
-import { useCommitteeLeagueClubFilters } from "@/features/competitions/championships/hooks";
 import { ClubComboBoxFilter } from "@/features/organizations/clubs/components";
+import { useCommitteeLeagueClubFilters } from "@/features/organizations/hooks";
 import { useTeamFilterValues } from "@/features/teams/api";
 import { ErrorMessage } from "@/shared/components/feedback";
 import type {
