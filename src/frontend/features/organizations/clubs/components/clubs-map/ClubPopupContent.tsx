@@ -40,7 +40,7 @@ export function ClubPopupContent({ club, onClose }: ClubPopupContentProps) {
       {(club.city || club.zipCode) && (
         <Text variant="caption" className="mb-3 font-medium">
           {club.city}
-          {club.city && club.zipCode && " • "}
+          {club.city && club.zipCode && <span aria-hidden="true"> • </span>}
           {club.zipCode}
         </Text>
       )}

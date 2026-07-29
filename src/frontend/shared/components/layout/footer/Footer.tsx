@@ -198,7 +198,12 @@ export const Footer: React.FC = () => {
               <Text variant="caption" as="span">
                 {t("footer.nonCommercial")}
               </Text>
-              <Text variant="caption" as="span" className="hidden sm:inline">
+              <Text
+                variant="caption"
+                as="span"
+                className="hidden sm:inline"
+                aria-hidden="true"
+              >
                 •
               </Text>
               <Text variant="caption" as="span">

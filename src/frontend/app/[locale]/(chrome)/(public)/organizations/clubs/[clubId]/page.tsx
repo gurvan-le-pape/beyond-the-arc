@@ -72,7 +72,16 @@ export default async function ClubPage({
         header={{
           name: club.name,
           imageFolder: "clubs",
-          subtitle: [club.city, club.zipCode].filter(Boolean).join(" • "),
+          // The bullet is punctuation, not content — joining it into the
+          // string would have a screen reader read "Saint-Etienne, bullet,
+          // 42000".
+          subtitle: (
+            <>
+              {club.city}
+              {club.city && club.zipCode && <span aria-hidden="true"> • </span>}
+              {club.zipCode}
+            </>
+          ),
         }}
         info={{
           president: club.president,
