@@ -47,11 +47,7 @@ export default async function LeaguesPage({ params }: LocalePageProps) {
           { label: t("leagues.label"), current: true },
         ]}
       />
-      <TitleSection
-        viewLevel={ViewLevel.REGION}
-        selectedLeague={null}
-        selectedCommittee={null}
-      />
+      <TitleSection viewLevel={ViewLevel.REGION} />
       <LeaguesGrid leagues={leagues} />
     </PageLayout>
   );

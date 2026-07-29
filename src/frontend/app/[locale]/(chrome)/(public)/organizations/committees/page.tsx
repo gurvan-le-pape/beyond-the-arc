@@ -49,11 +49,7 @@ export default async function CommitteesPage({ params }: LocalePageProps) {
           { label: t("committees.label"), current: true },
         ]}
       />
-      <TitleSection
-        viewLevel={ViewLevel.DEPARTMENT}
-        selectedLeague={null}
-        selectedCommittee={null}
-      />
+      <TitleSection viewLevel={ViewLevel.DEPARTMENT} />
       <CommitteesGrid committees={committees} />
     </PageLayout>
   );

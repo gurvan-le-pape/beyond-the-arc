@@ -41,11 +41,7 @@ export default async function ClubsPage({ params }: LocalePageProps) {
           { label: t("clubs.label"), current: true },
         ]}
       />
-      <TitleSection
-        viewLevel={ViewLevel.CLUBS}
-        selectedLeague={null}
-        selectedCommittee={null}
-      />
+      <TitleSection viewLevel={ViewLevel.CLUBS} />
       <ClubsView />
     </PageLayout>
   );
