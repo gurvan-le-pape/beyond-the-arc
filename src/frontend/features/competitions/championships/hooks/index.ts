@@ -4,4 +4,3 @@
  */
 
 export * from "./useChampionshipsFilterState";
-export * from "./useCommitteeLeagueClubFilters";

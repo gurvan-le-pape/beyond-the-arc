@@ -3,7 +3,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-import { useCommitteeLeagueClubFilters } from "@/features/competitions/championships/hooks";
+import { useCommitteeLeagueClubFilters } from "@/features/organizations/hooks";
 import type { Category, CompetitionLevel, Gender } from "@/shared/constants";
 import { usePaginationState } from "@/shared/hooks";
 
