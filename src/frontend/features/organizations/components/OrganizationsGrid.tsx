@@ -1,15 +1,11 @@
 // src/frontend/features/organizations/components/OrganizationsGrid.tsx
 import { Building2, MapPin, Users } from "lucide-react";
-import type { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 
 import { OrganizationType } from "@/shared/constants";
 
 import type { OrgType } from "./OrganizationTypeCard";
 import { OrganizationTypeCard } from "./OrganizationTypeCard";
-
-interface OrganizationsGridProps {
-  readonly t: ReturnType<typeof useTranslations>;
-}
 
 const ORG_TYPE_CONFIG = [
   {
@@ -38,7 +34,9 @@ const ORG_TYPE_CONFIG = [
   },
 ] as const;
 
-export function OrganizationsGrid({ t }: OrganizationsGridProps) {
+export async function OrganizationsGrid() {
+  const t = await getTranslations("organizations");
+
   const types: OrgType[] = ORG_TYPE_CONFIG.map((org) => ({
     id: org.id,
     icon: org.icon,
@@ -53,7 +51,7 @@ export function OrganizationsGrid({ t }: OrganizationsGridProps) {
     // fixed navigation cards (leagues / committees / clubs), not a result list.
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
       {types.map((org) => (
-        <OrganizationTypeCard key={org.id} org={org} t={t} />
+        <OrganizationTypeCard key={org.id} org={org} />
       ))}
     </div>
   );

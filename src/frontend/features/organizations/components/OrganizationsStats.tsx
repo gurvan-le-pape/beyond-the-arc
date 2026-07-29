@@ -1,11 +1,7 @@
 // src/frontend/features/organizations/components/OrganizationsStats.tsx
-import type { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 
 import { Text } from "@/shared/components/typography";
-
-interface OrganizationsStatsProps {
-  readonly t: ReturnType<typeof useTranslations>;
-}
 
 const STATS = [
   { labelKey: "leagues.label", value: 112, color: "text-regional-strong" },
@@ -17,7 +13,9 @@ const STATS = [
   { labelKey: "clubs.label", value: 3883, color: "text-clubs-strong" },
 ] as const;
 
-export function OrganizationsStats({ t }: OrganizationsStatsProps) {
+export async function OrganizationsStats() {
+  const t = await getTranslations("organizations");
+
   return (
     <div className="flex items-center justify-center gap-6">
       {STATS.map((stat, i) => (
