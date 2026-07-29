@@ -1,11 +1,10 @@
 // src/frontend/features/teams/components/TeamListItem.tsx
 "use client";
 
-import Link from "next/link";
-import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 
 import type { ClubTeamInfo } from "@/features/organizations/clubs/types";
+import { Link } from "@/navigation";
 import { Badge } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { CompetitionLevel } from "@/shared/constants";
@@ -21,10 +20,7 @@ interface LevelBadgeProps {
   readonly label: string;
 }
 
-function buildCompetitionUrl(
-  team: ClubTeamInfo,
-  locale: string,
-): string | null {
+function buildCompetitionUrl(team: ClubTeamInfo): string | null {
   const championship = team.pool?.championship;
   if (!championship || !team.pool) return null;
 
@@ -38,7 +34,7 @@ function buildCompetitionUrl(
   }
 
   if (!parentId) return null;
-  return `/${locale}/championships/${championship.id}?pool=${team.pool.id}`;
+  return `/championships/${championship.id}?pool=${team.pool.id}`;
 }
 
 function LevelBadge({ level, label }: LevelBadgeProps) {
@@ -64,12 +60,11 @@ function LevelBadge({ level, label }: LevelBadgeProps) {
 export function TeamListItem({ team, clubName }: TeamListItemProps) {
   const t = useTranslations("teams");
   const tCommon = useTranslations("common");
-  const { locale } = useParams<{ locale: string }>();
 
   const leaderboard = team.leaderboard;
   const pool = team.pool;
   const championship = pool?.championship;
-  const competitionUrl = buildCompetitionUrl(team, locale);
+  const competitionUrl = buildCompetitionUrl(team);
 
   let levelLabel: string | null = null;
 
@@ -87,7 +82,7 @@ export function TeamListItem({ team, clubName }: TeamListItemProps) {
       {/* Left */}
       <div className="flex flex-col gap-1">
         <Link
-          href={`/${locale}/teams/${team.id}`}
+          href={`/teams/${team.id}`}
           className="text-[15px] font-medium text-text-heading group-hover:text-primary transition-colors hover:underline"
         >
           {clubName} {team.number || ""}

@@ -1,10 +1,11 @@
 // src/frontend/features/site/about/components/AboutCtaSection.tsx
+import { Link } from "@/navigation";
+
 interface AboutCtaSectionProps {
   readonly title: string;
   readonly description: string;
   readonly featuresLabel: string;
   readonly architectureLabel: string;
-  readonly locale: string;
 }
 
 export function AboutCtaSection({
@@ -12,7 +13,6 @@ export function AboutCtaSection({
   description,
   featuresLabel,
   architectureLabel,
-  locale,
 }: AboutCtaSectionProps) {
   return (
     // Call to Action — decorative gradient, intentionally stays as raw Tailwind
@@ -20,18 +20,18 @@ export function AboutCtaSection({
       <h2 className="text-xl font-bold mb-4">{title}</h2>
       <p className="text-sm mb-6 max-w-2xl mx-auto">{description}</p>
       <div className="flex flex-wrap justify-center gap-4">
-        <a
-          href={`/${locale}/features`}
+        <Link
+          href="/features"
           className="px-6 py-3 bg-white text-primary-strong rounded-button font-semibold hover:bg-gray-100 transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-strong"
         >
           {featuresLabel}
-        </a>
-        <a
-          href={`/${locale}/architecture`}
+        </Link>
+        <Link
+          href="/architecture"
           className="px-6 py-3 bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-button font-semibold hover:bg-white/30 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-strong"
         >
           {architectureLabel}
-        </a>
+        </Link>
       </div>
     </div>
   );
