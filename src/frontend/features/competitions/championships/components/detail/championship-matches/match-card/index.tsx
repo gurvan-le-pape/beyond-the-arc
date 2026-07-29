@@ -1,8 +1,6 @@
 // src/frontend/features/competitions/championships/components/detail/championship-matches/match-card/index.tsx
 "use client";
 
-import { useParams } from "next/navigation";
-
 import { useMatchesPrefetch, useMatchEvents } from "@/features/matches/api";
 import type { Match } from "@/features/matches/types";
 import { Card } from "@/shared/components/primitives";
@@ -24,9 +22,6 @@ export const MatchCard: React.FC<MatchCardProps> = ({
   expanded,
   onToggleExpand,
 }) => {
-  const params = useParams();
-  const locale = params?.locale as string;
-
   const {
     data: matchEvents,
     isLoading: isLoadingEvents,
@@ -49,7 +44,6 @@ export const MatchCard: React.FC<MatchCardProps> = ({
           homeTeamScore={match.homeTeamScore}
           awayTeamScore={match.awayTeamScore}
           matchId={match.id}
-          locale={locale}
         />
         <TeamDisplay team={match.awayTeam} isWinner={isAwayWinner} />
         <ExpandButton

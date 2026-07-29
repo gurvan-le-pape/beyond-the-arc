@@ -91,7 +91,6 @@ export default async function AboutPage({ params }: LocalePageProps) {
         description={t("about.explore")}
         featuresLabel={t("about.viewFeatures")}
         architectureLabel={t("about.viewArchitecture")}
-        locale={locale}
       />
     </PageLayout>
   );
