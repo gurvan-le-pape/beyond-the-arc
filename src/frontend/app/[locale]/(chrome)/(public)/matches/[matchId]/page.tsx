@@ -4,7 +4,10 @@ import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { serverMatchesService } from "@/features/matches/api";
-import { MatchScoreCard, MatchSummaryTabs } from "@/features/matches/components";
+import {
+  MatchScoreCard,
+  MatchSummaryTabs,
+} from "@/features/matches/components";
 import { buildTeam, groupShotEventsByPlayer } from "@/features/matches/utils";
 import { PageLayout } from "@/shared/components/layout";
 import { Text } from "@/shared/components/typography";
@@ -56,8 +59,18 @@ export default async function MatchSummaryPage({
 
   const { homeTeamId, awayTeamId, stats, homeTeamStats, awayTeamStats } =
     playerMatchStats;
-  const homeTeam = buildTeam(stats, homeTeamId, match.homeTeam.club, homeTeamStats);
-  const awayTeam = buildTeam(stats, awayTeamId, match.awayTeam.club, awayTeamStats);
+  const homeTeam = buildTeam(
+    stats,
+    homeTeamId,
+    match.homeTeam.club,
+    homeTeamStats,
+  );
+  const awayTeam = buildTeam(
+    stats,
+    awayTeamId,
+    match.awayTeam.club,
+    awayTeamStats,
+  );
 
   if (!homeTeam || !awayTeam) {
     notFound();

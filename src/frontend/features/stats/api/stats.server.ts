@@ -1,5 +1,8 @@
 // src/frontend/features/stats/api/stats.server.ts
-import { fetchApi, ServerRevalidate } from "@/lib/services/server/server-api-client";
+import {
+  fetchApi,
+  ServerRevalidate,
+} from "@/lib/services/server/server-api-client";
 
 import type { Stats } from "../types/Stats";
 

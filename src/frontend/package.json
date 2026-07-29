@@ -8,6 +8,7 @@
     "lint": "eslint '**/*.{ts,mts,tsx}'",
     "lint:fix": "organize-imports-cli './**/*.ts' './**/*.tsx' && eslint '**/*.{ts,mts,tsx}' --fix",
     "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
     "check:messages": "node scripts/check-message-parity.mts",
     "typegen": "openapi-typescript ../../docs/openapi.json -o shared/types/api.generated.ts"

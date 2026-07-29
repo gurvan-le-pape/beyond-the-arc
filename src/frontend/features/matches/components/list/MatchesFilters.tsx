@@ -8,7 +8,10 @@ import React from "react";
 import { useCommitteeLeagueClubFilters } from "@/features/competitions/championships/hooks";
 import { useMatchesCascadeOptions } from "@/features/matches/hooks";
 import { ErrorMessage } from "@/shared/components/feedback";
-import type { ActiveFilterChip, CascadeStep } from "@/shared/components/filters";
+import type {
+  ActiveFilterChip,
+  CascadeStep,
+} from "@/shared/components/filters";
 import {
   CascadeSelects,
   FiltersShell,

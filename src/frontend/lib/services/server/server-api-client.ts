@@ -98,9 +98,9 @@ export async function fetchApi<T>(
       // recovers a status code from axios errors; on this native-fetch path it
       // receives the plain backend error body and would fall back to status 0,
       // so a 404 could never be distinguished (e.g. by handleServerError).
-      const body = (await response.json().catch(() => null)) as
-        | Partial<ApiErrorResponse>
-        | null;
+      const body = (await response
+        .json()
+        .catch(() => null)) as Partial<ApiErrorResponse> | null;
       throw new ApiError({
         statusCode: response.status,
         message: Array.isArray(body?.message)

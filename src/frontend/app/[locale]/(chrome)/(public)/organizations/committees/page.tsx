@@ -26,7 +26,10 @@ export async function generateMetadata({
   const { locale } = await params;
   const tMeta = await getTranslations({ locale, namespace: "organizations" });
 
-  return { title: tMeta("committees.label"), description: tMeta("committees.description") };
+  return {
+    title: tMeta("committees.label"),
+    description: tMeta("committees.description"),
+  };
 }
 
 export default async function CommitteesPage({ params }: LocalePageProps) {

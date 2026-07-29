@@ -41,7 +41,11 @@ type Leaves = Map<string, string>;
  * Nesting differences fall out of this naturally: if a path is a leaf in one
  * locale and an object in another, the two key sets simply disagree.
  */
-function flatten(value: unknown, prefix = "", into: Leaves = new Map()): Leaves {
+function flatten(
+  value: unknown,
+  prefix = "",
+  into: Leaves = new Map(),
+): Leaves {
   if (typeof value !== "object" || value === null) {
     into.set(prefix, String(value));
     return into;
@@ -96,10 +100,7 @@ const referenceFiles = listJsonFiles(REFERENCE_LOCALE);
 for (const locale of locales.filter((name) => name !== REFERENCE_LOCALE)) {
   const files = listJsonFiles(locale);
 
-  for (const missing of difference(
-    new Set(referenceFiles),
-    new Set(files),
-  )) {
+  for (const missing of difference(new Set(referenceFiles), new Set(files))) {
     problems.push(`${locale}: missing namespace file ${missing}`);
   }
 

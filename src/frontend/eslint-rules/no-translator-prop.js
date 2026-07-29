@@ -73,7 +73,10 @@ module.exports = {
         const expression = value.expression;
         if (expression?.type !== "Identifier") return;
 
-        const variable = lookup(sourceCode.getScope(expression), expression.name);
+        const variable = lookup(
+          sourceCode.getScope(expression),
+          expression.name,
+        );
         const def = variable?.defs?.[0];
         if (def?.type !== "Variable" || !translatorInit(def.node.init)) return;
 

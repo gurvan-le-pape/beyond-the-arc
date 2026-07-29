@@ -2,7 +2,10 @@
 import type { ComponentProps } from "react";
 
 import { GenderCategorizedSection } from "@/shared/components/domain";
-import { Breadcrumb, type BreadcrumbItem } from "@/shared/components/navigation";
+import {
+  Breadcrumb,
+  type BreadcrumbItem,
+} from "@/shared/components/navigation";
 
 import { OrganizationHeader } from "./OrganizationHeader";
 import { OrganizationInfo } from "./OrganizationInfo";

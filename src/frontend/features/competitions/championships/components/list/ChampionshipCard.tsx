@@ -55,10 +55,7 @@ export function ChampionshipCard({
               {championship.category}
             </Badge>
           )}
-          <Badge
-            variant={championship.gender}
-            size="sm"
-          >
+          <Badge variant={championship.gender} size="sm">
             {tCommon(`gender.${championship.gender}`)}
           </Badge>
           <Badge variant="division" size="sm">

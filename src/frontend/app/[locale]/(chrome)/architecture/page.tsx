@@ -38,7 +38,10 @@ export async function generateMetadata({
   const { locale } = await params;
   const tMeta = await getTranslations({ locale, namespace: "landing" });
 
-  return { title: tMeta("architecture.title"), description: tMeta("architecture.subtitle") };
+  return {
+    title: tMeta("architecture.title"),
+    description: tMeta("architecture.subtitle"),
+  };
 }
 
 export default async function ArchitecturePage({ params }: LocalePageProps) {

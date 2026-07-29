@@ -103,6 +103,11 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      # Prettier is not part of the eslint config, so nothing was checking it in
+      # CI and 21 files had drifted by the time this was added.
+      - name: Format
+        run: npm run format:check
+
   frontend-typecheck:
     name: Frontend – Typecheck
     runs-on: ubuntu-latest
