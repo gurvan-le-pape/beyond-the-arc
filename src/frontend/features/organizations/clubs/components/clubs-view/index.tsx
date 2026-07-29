@@ -2,47 +2,28 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
 
-import { useCommittees } from "@/features/organizations/committees/api";
-import { useLeagues } from "@/features/organizations/leagues/api";
 import { Pagination } from "@/shared/components/navigation";
-import { useDebounce } from "@/shared/hooks";
 
 import { useClubs } from "../../api";
+import { useClubsFilterState } from "../../hooks";
 import type { ClubBasic } from "../../types/ClubBasic";
 import { ClubsFilters } from "./ClubsFilters";
 import { ClubsGrid } from "./ClubsGrid";
 
-const LIMIT = 50;
-
 export function ClubsView() {
   const t = useTranslations("organizations");
 
-  const [search, setSearch] = useState("");
-  const [leagueId, setLeagueId] = useState("");
-  const [committeeId, setCommitteeId] = useState("");
-  const [page, setPage] = useState(1);
+  const { filters, setters, setCurrentPage, setPageSize, resetFilters } =
+    useClubsFilterState();
+  const { search, leagueId, committeeId, currentPage, pageSize } = filters;
 
-  const debouncedSearch = useDebounce(search, 400);
-
-  useEffect(() => {
-    setPage(1);
-  }, [debouncedSearch, leagueId, committeeId]);
-  useEffect(() => {
-    setCommitteeId("");
-  }, [leagueId]);
-
-  const { data: leagues = [] } = useLeagues();
-  const { data: committees = [] } = useCommittees(
-    leagueId ? { leagueId: Number(leagueId) } : undefined,
-  );
   const { data: clubsData, isLoading } = useClubs({
-    leagueId: leagueId ? Number(leagueId) : undefined,
-    committeeId: committeeId ? Number(committeeId) : undefined,
-    search: debouncedSearch || undefined,
-    page,
-    limit: LIMIT,
+    leagueId,
+    committeeId,
+    search: search || undefined,
+    page: currentPage,
+    limit: pageSize,
   });
 
   const clubs: ClubBasic[] = clubsData?.items ?? [];
@@ -58,21 +39,9 @@ export function ClubsView() {
   return (
     <>
       <ClubsFilters
-        search={search}
-        leagueId={leagueId}
-        committeeId={committeeId}
-        leagues={leagues}
-        committees={committees}
-        hasActiveFilters={!!(search || leagueId || committeeId)}
-        onSearchChange={setSearch}
-        onLeagueChange={setLeagueId}
-        onCommitteeChange={setCommitteeId}
-        onReset={() => {
-          setSearch("");
-          setLeagueId("");
-          setCommitteeId("");
-          setPage(1);
-        }}
+        filters={filters}
+        setters={setters}
+        onReset={resetFilters}
       />
 
       {!isLoading && pagination && (
@@ -87,9 +56,12 @@ export function ClubsView() {
         <div className="mt-6">
           <Pagination
             pagination={pagination}
-            pageSize={LIMIT}
-            setPageSize={() => {}}
-            setPageIndex={(i) => setPage(i + 1)}
+            pageSize={pageSize}
+            setPageSize={(size) => {
+              setPageSize(size);
+              setCurrentPage(1);
+            }}
+            setPageIndex={(i) => setCurrentPage(i + 1)}
             label={t("clubs.label").toLowerCase()}
           />
         </div>
