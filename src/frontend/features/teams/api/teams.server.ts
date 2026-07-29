@@ -44,11 +44,18 @@ export const serverTeamsService = {
    */
   async getAll(filters?: TeamFilters): Promise<PaginatedResponse<Team>> {
     const queryString = buildQueryString(filters);
-    return fetchApi<any>(`/teams${queryString}`);
+    return fetchApi<any>(`/teams${queryString}`, {
+      revalidate: ServerRevalidate.DEFAULT,
+    });
   },
 
   /**
    * Get detailed information for a single team.
+   *
+   * Cached for {@link ServerRevalidate.LIVE}, not the default hour: the payload
+   * carries `players[].seasonStats` and the recent home/away matches with their
+   * scores, all of which the match scheduler rewrites. `getMatches` below reads
+   * the same kind of data and is already on the live window.
    *
    * @param teamId - The team ID
    * @returns Detailed team information
@@ -58,7 +65,9 @@ export const serverTeamsService = {
    * const team = await serverTeamsService.getById(123);
    */
   async getById(teamId: number): Promise<TeamDetail> {
-    return fetchApi<any>(`/teams/${teamId}`);
+    return fetchApi<any>(`/teams/${teamId}`, {
+      revalidate: ServerRevalidate.LIVE,
+    });
   },
 
   /**

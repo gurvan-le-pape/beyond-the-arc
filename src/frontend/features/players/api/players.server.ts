@@ -44,7 +44,9 @@ export const serverPlayersService = {
    */
   async getAll(filters?: PlayerFilters): Promise<PaginatedResponse<Player>> {
     const queryString = buildQueryString(filters);
-    return fetchApi<PaginatedResponse<Player>>(`/players${queryString}`);
+    return fetchApi<PaginatedResponse<Player>>(`/players${queryString}`, {
+      revalidate: ServerRevalidate.DEFAULT,
+    });
   },
 
   /**
@@ -59,7 +61,9 @@ export const serverPlayersService = {
    * const player = await serverPlayersService.getById(789);
    */
   async getById(playerId: number): Promise<Player> {
-    return fetchApi<any>(`/players/${playerId}`);
+    return fetchApi<any>(`/players/${playerId}`, {
+      revalidate: ServerRevalidate.DEFAULT,
+    });
   },
 
   /**
@@ -92,7 +96,9 @@ export const serverPlayersService = {
    */
   async search(name: string): Promise<Player[]> {
     const queryString = buildQueryString({ search: name, limit: 20 });
-    const data = await fetchApi<any>(`/players${queryString}`);
+    const data = await fetchApi<any>(`/players${queryString}`, {
+      revalidate: ServerRevalidate.DEFAULT,
+    });
     // The backend returns { players, pagination, ... }, so extract players array
     return data.items || [];
   },

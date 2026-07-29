@@ -2,6 +2,7 @@
 import {
   buildQueryString,
   fetchApi,
+  ServerRevalidate,
 } from "@/lib/services/server/server-api-client";
 
 import type { Pool } from "../types/Pool";
@@ -11,8 +12,8 @@ import type { Pool } from "../types/Pool";
  *
  * Server components only — this half of the dual service layer uses native
  * fetch against the backend's internal address, so it must never be imported
- * from client code. Cached for the {@link ServerRevalidate} default, since a
- * pool only changes when the static data is refreshed.
+ * from client code. Cached for {@link ServerRevalidate.DEFAULT}, since a pool
+ * only changes when the static data is refreshed.
  */
 export const serverPoolsService = {
   /**
@@ -26,6 +27,8 @@ export const serverPoolsService = {
    */
   async getByChampionshipId(championshipId: number): Promise<Pool[]> {
     const queryString = buildQueryString({ championshipId });
-    return fetchApi<Pool[]>(`/pools${queryString}`);
+    return fetchApi<Pool[]>(`/pools${queryString}`, {
+      revalidate: ServerRevalidate.DEFAULT,
+    });
   },
 };
