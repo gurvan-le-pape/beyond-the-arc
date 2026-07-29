@@ -34,7 +34,7 @@ export const ClubListItem = memo(function ClubListItem({
       {(club.city || club.zipCode) && (
         <Text variant="caption" className="truncate">
           {club.city}
-          {club.city && club.zipCode && " • "}
+          {club.city && club.zipCode && <span aria-hidden="true"> • </span>}
           {club.zipCode}
         </Text>
       )}

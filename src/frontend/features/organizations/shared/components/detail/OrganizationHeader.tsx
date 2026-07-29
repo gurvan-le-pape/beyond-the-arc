@@ -2,7 +2,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 
 import { Card } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
@@ -13,7 +13,7 @@ type OrganizationImageFolder = "clubs" | "leagues" | "committees";
 interface OrganizationHeaderProps {
   readonly name: string;
   readonly imageFolder: OrganizationImageFolder;
-  readonly subtitle?: string;
+  readonly subtitle?: ReactNode;
 }
 
 export function OrganizationHeader({

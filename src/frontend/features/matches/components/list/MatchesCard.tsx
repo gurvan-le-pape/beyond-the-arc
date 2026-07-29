@@ -34,7 +34,11 @@ export const MatchesCard: React.FC<{ match: Match }> = ({ match }) => {
       headerLeft={
         <div className="flex items-center gap-2">
           <Text variant="label" className={cn("font-semibold", config.text)}>
-            {formatMatchDate(match.date)} • {formatMatchTime(match.date)}
+            {formatMatchDate(match.date)}
+            {/* Punctuation, not content: a screen reader would otherwise
+                read "12 October, bullet, 20:00". */}
+            <span aria-hidden="true"> • </span>
+            {formatMatchTime(match.date)}
           </Text>
           <Badge variant="default" size="sm">
             {tMatches("matchdayLabel", { matchday: match.matchday })}
