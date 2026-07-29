@@ -80,7 +80,7 @@ export function ThemeToggle() {
       {/* Dropdown */}
       <div
         role="menu"
-        aria-label="Select theme"
+        aria-label={t("header.selectTheme")}
         className={cn(
           "absolute right-0 mt-1 w-44 z-50",
           "bg-surface-raised border border-divide rounded-input shadow-card-hover",
