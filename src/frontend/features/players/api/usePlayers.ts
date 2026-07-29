@@ -7,6 +7,7 @@ import type { Player } from "../types/Player";
 import type { PlayerFilters } from "../types/PlayerFilters";
 import type { PlayerFilterValues } from "../types/PlayerFilterValues";
 import type { PlayerMatchHistoryResponse } from "../types/PlayerMatchHistory";
+import type { PlayerSearchFilters } from "../types/PlayerSearchFilters";
 import { playersPrefetch, playersQueries } from "./playersQueries";
 
 /**
@@ -88,6 +89,41 @@ export function usePlayerFilterValues(params?: {
   return useQuery<PlayerFilterValues, ApiError>(
     playersQueries.filterValues(params),
   );
+}
+
+/**
+ * Hook to search players by name, for autocomplete dropdowns.
+ *
+ * Disabled until `search` reaches `minLength`, so an empty or one-character
+ * box issues no request.
+ *
+ * `excludeId` is applied through `select` rather than in the request or the
+ * query key: it drops one already-fetched row, so two dropdowns searching the
+ * same term share one cache entry and each still hides its own player.
+ *
+ * @param search - Name fragment to search for (debounce this at the call site)
+ * @param filters - Optional gender/category scoping, plus a client-side excludeId
+ * @returns React Query result with the matching players
+ *
+ * @example
+ * const debounced = useDebounce(query, 400);
+ * const { data = [], isLoading } = usePlayerSearch(debounced, { excludeId });
+ */
+export function usePlayerSearch(
+  search: string,
+  filters?: PlayerSearchFilters & { excludeId?: number; minLength?: number },
+) {
+  const { excludeId, minLength = 2, ...searchFilters } = filters ?? {};
+  const trimmed = search.trim();
+
+  return useQuery<Player[], ApiError, Player[]>({
+    ...playersQueries.search(trimmed, searchFilters),
+    enabled: trimmed.length >= minLength,
+    select: (players) =>
+      excludeId === undefined
+        ? players
+        : players.filter((player) => player.id !== excludeId),
+  });
 }
 
 /**

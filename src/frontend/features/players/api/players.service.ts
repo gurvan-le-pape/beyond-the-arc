@@ -6,6 +6,7 @@ import type { Player } from "../types/Player";
 import type { PlayerFilters } from "../types/PlayerFilters";
 import type { PlayerFilterValues } from "../types/PlayerFilterValues";
 import type { PlayerMatchHistoryResponse } from "../types/PlayerMatchHistory";
+import type { PlayerSearchFilters } from "../types/PlayerSearchFilters";
 
 /**
  * Service for interacting with the players API.
@@ -102,7 +103,8 @@ export const playersService = {
    * Search players by name (used for dropdowns/autocomplete).
    * Returns a limited set of results (default: 20).
    *
-   * @param name - Player name to search for (partial match)
+   * @param query - Player name to search for (partial match)
+   * @param filters - Optional gender/category scoping, applied server-side
    * @returns Array of matching players
    * @throws {AxiosError} 400 if validation fails
    *
@@ -112,21 +114,20 @@ export const playersService = {
    */
   async search(
     query: string,
-    filters?: { excludeId?: number; gender?: string; category?: string },
+    filters?: PlayerSearchFilters,
   ): Promise<Player[]> {
-    const { data } = await apiClient.get<any>("/players", {
-      params: {
-        search: query,
-        limit: 20,
-        ...(filters?.gender && { gender: filters.gender }),
-        ...(filters?.category && { category: filters.category }),
-        // excludeId intentionally omitted — filtered client-side to avoid cache pollution
+    const { data } = await apiClient.get<PaginatedResponse<Player>>(
+      "/players",
+      {
+        params: {
+          search: query,
+          limit: 20,
+          ...(filters?.gender && { gender: filters.gender }),
+          ...(filters?.category && { category: filters.category }),
+        },
       },
-    });
+    );
 
-    const items: Player[] = data.items || [];
-    return filters?.excludeId
-      ? items.filter((p) => p.id !== filters.excludeId)
-      : items;
+    return data.items ?? [];
   },
 };

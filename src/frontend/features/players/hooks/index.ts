@@ -4,5 +4,4 @@
  */
 
 export * from "./usePlayerMatchHistoryColumns";
-export * from "./usePlayerSearch";
 export * from "./usePlayersFilterState";
