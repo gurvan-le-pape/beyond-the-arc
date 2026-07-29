@@ -3,6 +3,7 @@ import type { PaginatedResponse } from "@/shared/types";
 
 import apiClient from "../../../lib/services/client/api-client";
 import type { Team } from "../types/Team";
+import type { TeamDetail } from "../types/TeamDetail";
 import type { TeamFilters } from "../types/TeamFilters";
 import type { TeamFilterValues } from "../types/TeamFilterValues";
 import type { TeamMatchHistoryResponse } from "../types/TeamMatchHistory";
@@ -55,8 +56,8 @@ export const teamsService = {
    * @example
    * const team = await teamsService.getById(123);
    */
-  async getById(teamId: number): Promise<Team> {
-    const { data } = await apiClient.get<Team>(`/teams/${teamId}`);
+  async getById(teamId: number): Promise<TeamDetail> {
+    const { data } = await apiClient.get<TeamDetail>(`/teams/${teamId}`);
     return data;
   },
 

@@ -5,6 +5,7 @@ import type { ApiError, PaginatedResponse } from "@/shared/types";
 
 import type {
   Team,
+  TeamDetail,
   TeamFilterValues,
   TeamMatchHistoryResponse,
 } from "../types";
@@ -47,7 +48,7 @@ export function useTeams(
  * const { data: team, isLoading } = useTeam(123);
  */
 export function useTeam(id: number, options?: { enabled?: boolean }) {
-  return useQuery<Team, ApiError>({
+  return useQuery<TeamDetail, ApiError>({
     ...teamsQueries.detail(id),
     enabled: options?.enabled ?? !!id,
   });
