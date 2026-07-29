@@ -228,6 +228,13 @@ The choice between self-resolving and receiving strings is decided by **who owns
 
 `shared/components/navigation/Breadcrumb.tsx` shows both in one file, correctly: it resolves `tCommon("breadcrumbAriaLabel")` for its own landmark label while accepting each `items[].label` as a caller-supplied string.
 
+These two mechanics are one rule applied to two kinds of string, not two competing styles to choose between, and neither collapses into the other:
+
+- **Caller content is often not a message at all.** Detail-page breadcrumbs pass `{ label: club.name }` and `{ label: committee.name }` — values straight from the API, with no key in any namespace. A component that insisted on resolving its own content could not render them.
+- **Component chrome does not survive being lifted out.** `Pagination` owns seven strings, one of which interpolates four values. Hoisting those to its callers would mean seven props per call site and a caller that has to know Pagination's interpolation shape, and adding a string would touch every page that paginates.
+
+So the question to ask about a string is never "which pattern does this component use" but "whose string is this" — and the answer is usually obvious.
+
 Feature components are usually the first kind — they are tied to one namespace by construction — so they resolve their own strings and take only domain props. `features/players/components/detail/PlayerHeader.tsx` and `features/teams/components/detail/TeamHeader.tsx` are the server-side pattern (`async` + `await getTranslations(...)`, domain props only); `features/organizations/components/TitleSection.tsx` is the client-side equivalent.
 
 Pages resolve translations for their own JSX and for anything they pass down as content — breadcrumb `items`, `PageHero` copy, config arrays mapped to string props. A page calling `setRequestLocale(locale)` is what lets its server children use the request-scoped short form `await getTranslations("namespace")` instead of the `{ locale, namespace }` object form.
