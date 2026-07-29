@@ -209,6 +209,36 @@ Internationalisation is handled by **next-intl**. The `[locale]` dynamic segment
 
 The locale segment is present in every URL but is invisible in terms of layout: the `(chrome)` route group wraps the pages under a shared layout without adding a URL segment of its own.
 
+### Never pass the translator as a prop
+
+A component either resolves its own strings or receives finished `string`s. The `t` function itself never crosses a component boundary — no `t={t}` props, no `readonly t: ReturnType<typeof useTranslations>` in a props interface.
+
+This is a hard rule rather than a stylistic one, for three reasons:
+
+- **It cannot survive a client boundary.** React refuses to serialise functions from a server component into a client component, so the day a translator-taking component gains `"use client"`, the call site throws at runtime. A component that resolves its own strings is free to move between environments; one that takes `t` is silently pinned to its caller's.
+- **It hides the namespace.** `<Foo t={t} />` gives no indication which namespace `Foo`'s keys are read from — that lives at the call site, arbitrarily far away. `getTranslations("organizations")` inside the component states it where the keys are used.
+- **The two translators are near-identical types.** `useTranslations` (client) and `getTranslations` (server) are structurally similar enough that annotating a prop with one and passing the other type-checks cleanly. The organizations landing page did exactly this and TypeScript never complained.
+
+### Who resolves which string
+
+The choice between self-resolving and receiving strings is decided by **who owns the string**, not by which layer the component sits in — `shared/` contains both kinds.
+
+- **The component's own vocabulary** — chrome that reads the same wherever the component is used — is resolved by the component. `shared/components/navigation/Pagination.tsx` resolves its own `filters` keys (`pagination.nextPage`, `pagination.resultsPerPage`); those strings are Pagination's, not its caller's.
+- **The caller's content** is passed in as plain `string`s. `shared/components/layout/PageHero.tsx` takes `title` and `lead` as strings because each page draws them from its own namespace; the component cannot know which.
+
+`shared/components/navigation/Breadcrumb.tsx` shows both in one file, correctly: it resolves `tCommon("breadcrumbAriaLabel")` for its own landmark label while accepting each `items[].label` as a caller-supplied string.
+
+These two mechanics are one rule applied to two kinds of string, not two competing styles to choose between, and neither collapses into the other:
+
+- **Caller content is often not a message at all.** Detail-page breadcrumbs pass `{ label: club.name }` and `{ label: committee.name }` — values straight from the API, with no key in any namespace. A component that insisted on resolving its own content could not render them.
+- **Component chrome does not survive being lifted out.** `Pagination` owns seven strings, one of which interpolates four values. Hoisting those to its callers would mean seven props per call site and a caller that has to know Pagination's interpolation shape, and adding a string would touch every page that paginates.
+
+So the question to ask about a string is never "which pattern does this component use" but "whose string is this" — and the answer is usually obvious.
+
+Feature components are usually the first kind — they are tied to one namespace by construction — so they resolve their own strings and take only domain props. `features/players/components/detail/PlayerHeader.tsx` and `features/teams/components/detail/TeamHeader.tsx` are the server-side pattern (`async` + `await getTranslations(...)`, domain props only); `features/organizations/components/TitleSection.tsx` is the client-side equivalent.
+
+Pages resolve translations for their own JSX and for anything they pass down as content — breadcrumb `items`, `PageHero` copy, config arrays mapped to string props. A page calling `setRequestLocale(locale)` is what lets its server children use the request-scoped short form `await getTranslations("namespace")` instead of the `{ locale, namespace }` object form.
+
 ---
 
 ## Design system
