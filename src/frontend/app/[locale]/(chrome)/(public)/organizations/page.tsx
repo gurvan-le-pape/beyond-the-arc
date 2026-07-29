@@ -23,14 +23,13 @@ export async function generateMetadata({
 export default async function OrganizationsPage({ params }: LocalePageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations({ locale, namespace: "organizations" });
 
   return (
     <PageLayout centered contentClassName="max-w-4xl">
-      <OrganizationsHeader t={t} />
-      <OrganizationsStats t={t} />
+      <OrganizationsHeader />
+      <OrganizationsStats />
       <Divide />
-      <OrganizationsGrid t={t} />
+      <OrganizationsGrid />
     </PageLayout>
   );
 }

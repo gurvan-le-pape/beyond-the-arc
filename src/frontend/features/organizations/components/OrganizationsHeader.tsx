@@ -1,13 +1,11 @@
 // src/frontend/features/organizations/components/OrganizationsHeader.tsx
-import type { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 
 import { Text } from "@/shared/components/typography";
 
-interface OrganizationsHeaderProps {
-  readonly t: ReturnType<typeof useTranslations>;
-}
+export async function OrganizationsHeader() {
+  const t = await getTranslations("organizations");
 
-export function OrganizationsHeader({ t }: OrganizationsHeaderProps) {
   return (
     <div className="text-center space-y-1">
       <Text variant="h1">{t("title")}</Text>

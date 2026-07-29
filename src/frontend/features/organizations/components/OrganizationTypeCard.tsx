@@ -1,6 +1,6 @@
 // src/frontend/features/organizations/components/OrganizationTypeCard.tsx
 import { ArrowRight } from "lucide-react";
-import type { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import React from "react";
 
 import { Link } from "@/navigation";
@@ -63,10 +63,10 @@ export interface OrgType {
 
 interface OrganizationTypeCardProps {
   readonly org: OrgType;
-  readonly t: ReturnType<typeof useTranslations>;
 }
 
-export function OrganizationTypeCard({ org, t }: OrganizationTypeCardProps) {
+export async function OrganizationTypeCard({ org }: OrganizationTypeCardProps) {
+  const t = await getTranslations("organizations");
   const { label, description, icon, href, id, count } = org;
   const s = STYLES[id];
 
