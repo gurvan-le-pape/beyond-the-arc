@@ -39,7 +39,7 @@ export function TitleSection({
           icon: (
             <MapPin
               className="w-8 h-8 flex-shrink-0 text-regional-strong"
-              aria-label={tCommon("sectionTitles.regionalLeagues")}
+              aria-hidden="true"
             />
           ),
           cardClassName:
@@ -54,7 +54,7 @@ export function TitleSection({
           icon: (
             <SignpostBig
               className="w-8 h-8 flex-shrink-0 text-departmental-strong"
-              aria-label={tCommon("sectionTitles.departmentalCommittees")}
+              aria-hidden="true"
             />
           ),
           cardClassName:
@@ -70,7 +70,7 @@ export function TitleSection({
           icon: (
             <Users
               className="w-8 h-8 flex-shrink-0 text-clubs-strong"
-              aria-label={tCommon("sectionTitles.clubs")}
+              aria-hidden="true"
             />
           ),
           cardClassName:
