@@ -81,11 +81,7 @@ export const MatchEventsTimeline: React.FC<MatchEventsTimelineProps> = ({
             }
 
             return (
-              <TimelineRow
-                as="li"
-                key={eventKey}
-                className="items-center"
-              >
+              <TimelineRow as="li" key={eventKey} className="items-center">
                 {/*
                   Left/right placement is what conveys the team visually, and
                   that is invisible to a screen reader. Naming the team here

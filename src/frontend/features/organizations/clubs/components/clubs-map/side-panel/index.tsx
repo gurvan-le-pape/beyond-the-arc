@@ -74,7 +74,10 @@ export const SidePanel = memo(function SidePanel({
         )}
 
         <div className="flex flex-col h-full">
-          <SidePanelHeader clubCount={clubs.length} onClose={handleToggleOpen} />
+          <SidePanelHeader
+            clubCount={clubs.length}
+            onClose={handleToggleOpen}
+          />
 
           {/* Content */}
           <div className="flex-1 flex flex-col overflow-hidden">

@@ -37,7 +37,11 @@ export function PlayerCard({ player, href }: PlayerCardProps) {
       padding="sm"
       className="flex flex-col items-center gap-3 text-center hover:border-primary transition-colors duration-200"
     >
-      <PlayerAvatar name={player.name} number={player.number} className="mb-1" />
+      <PlayerAvatar
+        name={player.name}
+        number={player.number}
+        className="mb-1"
+      />
 
       <div className="flex flex-col items-center gap-1.5 w-full">
         <Text

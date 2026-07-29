@@ -150,7 +150,15 @@ export const TableHead = ({
     title={tooltip}
     ref={ref}
     className={cn(
-      headVariants({ align, density, wrap, width, divider, numeric, stickyLead }),
+      headVariants({
+        align,
+        density,
+        wrap,
+        width,
+        divider,
+        numeric,
+        stickyLead,
+      }),
       className,
     )}
     {...props}

@@ -22,7 +22,10 @@ export async function generateMetadata({
   const { locale } = await params;
   const tMeta = await getTranslations({ locale, namespace: "organizations" });
 
-  return { title: tMeta("clubs.label"), description: tMeta("clubs.description") };
+  return {
+    title: tMeta("clubs.label"),
+    description: tMeta("clubs.description"),
+  };
 }
 
 export default async function ClubsPage({ params }: LocalePageProps) {

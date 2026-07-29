@@ -26,7 +26,10 @@ export async function generateMetadata({
   const { locale } = await params;
   const tMeta = await getTranslations({ locale, namespace: "organizations" });
 
-  return { title: tMeta("leagues.label"), description: tMeta("leagues.description") };
+  return {
+    title: tMeta("leagues.label"),
+    description: tMeta("leagues.description"),
+  };
 }
 
 export default async function LeaguesPage({ params }: LocalePageProps) {

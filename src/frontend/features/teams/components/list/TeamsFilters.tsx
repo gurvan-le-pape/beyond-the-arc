@@ -8,7 +8,10 @@ import { useCommitteeLeagueClubFilters } from "@/features/competitions/champions
 import { ClubComboBoxFilter } from "@/features/organizations/clubs/components";
 import { useTeamFilterValues } from "@/features/teams/api";
 import { ErrorMessage } from "@/shared/components/feedback";
-import type { ActiveFilterChip, CascadeStep } from "@/shared/components/filters";
+import type {
+  ActiveFilterChip,
+  CascadeStep,
+} from "@/shared/components/filters";
 import {
   CascadeSelects,
   FiltersShell,

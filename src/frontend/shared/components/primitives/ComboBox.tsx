@@ -125,7 +125,9 @@ export const ComboBox: React.FC<ComboBoxProps> = ({
   const renderOptions = () => {
     if (isLoading) {
       return (
-        <li className="px-4 py-2 text-sm text-text-secondary">{t("loading")}</li>
+        <li className="px-4 py-2 text-sm text-text-secondary">
+          {t("loading")}
+        </li>
       );
     }
 

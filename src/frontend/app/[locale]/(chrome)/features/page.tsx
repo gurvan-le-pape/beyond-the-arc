@@ -100,7 +100,10 @@ export async function generateMetadata({
   const { locale } = await params;
   const tMeta = await getTranslations({ locale, namespace: "landing" });
 
-  return { title: tMeta("features.title"), description: tMeta("features.subtitle") };
+  return {
+    title: tMeta("features.title"),
+    description: tMeta("features.subtitle"),
+  };
 }
 
 export default async function FeaturesPage({ params }: LocalePageProps) {
