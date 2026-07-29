@@ -16,6 +16,7 @@ interface ClubPopupContentProps {
 
 export function ClubPopupContent({ club, onClose }: ClubPopupContentProps) {
   const t = useTranslations("clubs");
+  const tCommon = useTranslations("common");
 
   return (
     <div className="min-w-[240px] max-w-[320px] p-4 surface-subtle rounded-xl overflow-hidden">
@@ -28,7 +29,7 @@ export function ClubPopupContent({ club, onClose }: ClubPopupContentProps) {
         <Button
           variant="ghost"
           size="icon"
-          aria-label="Close"
+          aria-label={tCommon("close")}
           onClick={onClose}
           className="shrink-0 -mt-1 -mr-1 h-8 w-8"
         >

@@ -7,7 +7,8 @@
     "committeeOrLeague": "Comité / Ligue",
     "selectLevelFirst": "Sélectionnez un niveau d'abord",
     "selectDivisionFirst": "Sélectionnez une division d'abord",
-    "selectPoolFirst": "Sélectionnez une poule d'abord"
+    "selectPoolFirst": "Sélectionnez une poule d'abord",
+    "removeFilter": "Retirer le filtre {label}"
   },
   "pagination": {
     "pageInfo": "Page {page} sur {totalPages} ({total} {label})",

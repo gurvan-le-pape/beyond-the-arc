@@ -33,7 +33,9 @@ export function ActiveFilterChips({ chips, onReset }: ActiveFilterChipsProps) {
               type="button"
               onClick={chip.onRemove}
               className="text-text-muted hover:text-text-body transition-colors"
-              aria-label={`Remove ${chip.label} filter`}
+              aria-label={tFilters("filters.removeFilter", {
+                label: chip.label,
+              })}
             >
               <X className="w-3 h-3" />
             </button>

@@ -2,6 +2,7 @@
 "use client";
 
 import { X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { cn } from "@/shared/utils";
@@ -21,6 +22,7 @@ export function BottomSheet({
   children,
   footer,
 }: BottomSheetProps) {
+  const tCommon = useTranslations("common");
   const dialogRef = useRef<HTMLDialogElement>(null);
   const dragStartY = useRef<number | null>(null);
   const [dragOffset, setDragOffset] = useState(0);
@@ -91,7 +93,7 @@ export function BottomSheet({
       {/* Drag handle */}
       <button
         type="button"
-        aria-label="Drag to close"
+        aria-label={tCommon("dragToClose")}
         className="flex justify-center pt-3 pb-1 cursor-grab active:cursor-grabbing touch-none w-full"
         onTouchStart={(e) => handleDragStart(e.touches[0].clientY)}
         onTouchMove={(e) => handleDragMove(e.touches[0].clientY)}
@@ -111,7 +113,7 @@ export function BottomSheet({
           type="button"
           onClick={onClose}
           className="p-1.5 rounded-button text-text-muted hover:bg-surface-inset transition-colors"
-          aria-label="Close filters"
+          aria-label={tCommon("close")}
         >
           <X className="w-5 h-5" />
         </button>

@@ -12,7 +12,8 @@
     "closeMenu": "Fermer le menu",
     "lightMode": "Passer en mode clair",
     "darkMode": "Passer en mode sombre",
-    "toggleTheme": "Changer le thème"
+    "toggleTheme": "Changer le thème",
+    "selectTheme": "Choisir le thème"
   },
   "footer": {
     "projectName": "Beyond The Arc",
