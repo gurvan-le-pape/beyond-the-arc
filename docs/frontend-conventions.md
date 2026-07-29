@@ -92,6 +92,7 @@ Custom ESLint rules in `src/frontend/eslint-rules/`, wired in `eslint.config.mjs
 | `no-mixed-type-file` | `types/` files are purely generated-alias or purely hand-written |
 | `enforce-barrel-import` | Imports go through barrels; directory list derived from `barrelsby.json` |
 | `enforce-file-path-comment` | Every file starts with its own path comment (autofixable) |
+| `no-translator-prop` | The next-intl translator is never typed as a value or passed as a prop |
 
 **Migration ratchet**: features that predate these conventions are listed in the `LEGACY_FEATURES` allowlist in `eslint.config.mjs`, which disables the structure rules for them. Each migration PR restructures one feature and removes it from the list; an empty list means the migration is complete. Do not add new entries.
 
@@ -101,5 +102,5 @@ Custom ESLint rules in `src/frontend/eslint-rules/`, wired in `eslint.config.mjs
 2. Place hooks/types/helpers by consumer count: one composite → colocate inside it; two+ consumers (or pages/api) → feature-level directory.
 3. Respect the depth cap (≤ 3 below `components/`) — flatten with name prefixes instead of nesting deeper.
 4. New barrel-worthy directory? Add it to `barrelsby.json` (the ESLint barrel rule follows automatically); composite internals get an exclusion pattern.
-5. Strings: resolve the component's own vocabulary inside it (`useTranslations` / `await getTranslations`), and take the caller's content as plain `string` props. Never accept the translator itself as a prop — see [Internationalisation](./frontend.md#internationalisation) in `frontend.md`. Not lint-enforced.
+5. Strings: resolve the component's own vocabulary inside it (`useTranslations` / `await getTranslations`), and take the caller's content as plain `string` props. Never accept the translator itself as a prop — `no-translator-prop` enforces that half; which side a given string falls on is a judgement call, described under [Internationalisation](./frontend.md#internationalisation) in `frontend.md`.
 6. Run `npm run lint` — the rules above catch the rest.
