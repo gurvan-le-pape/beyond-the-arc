@@ -41,7 +41,7 @@ export default async function Home({ params }: LocalePageProps) {
 
   const stats = await serverStatsService.getStats().catch(handleServerError);
 
-  const formatCount = (n: number): string => n.toLocaleString("fr-FR");
+  const formatCount = (n: number): string => n.toLocaleString(locale);
 
   const statsBand = [
     { value: formatCount(stats.clubs), label: t("stats.clubs") },
@@ -89,21 +89,21 @@ export default async function Home({ params }: LocalePageProps) {
       dot: "bg-national",
       name: t("levels.national.name"),
       detail: t("levels.national.detail"),
-      count: `${stats.championshipsByLevel.national} ${championshipsLabel}`,
+      count: `${formatCount(stats.championshipsByLevel.national)} ${championshipsLabel}`,
       href: "/championships?tab=national",
     },
     {
       dot: "bg-regional",
       name: t("levels.regional.name"),
-      detail: `${stats.leagues} ${t("stats.leagues")}`,
-      count: `${stats.championshipsByLevel.regional} ${championshipsLabel}`,
+      detail: `${formatCount(stats.leagues)} ${t("stats.leagues")}`,
+      count: `${formatCount(stats.championshipsByLevel.regional)} ${championshipsLabel}`,
       href: "/championships?tab=regional",
     },
     {
       dot: "bg-departmental",
       name: t("levels.departmental.name"),
-      detail: `${stats.committees} ${t("stats.committees")}`,
-      count: `${stats.championshipsByLevel.departmental} ${championshipsLabel}`,
+      detail: `${formatCount(stats.committees)} ${t("stats.committees")}`,
+      count: `${formatCount(stats.championshipsByLevel.departmental)} ${championshipsLabel}`,
       href: "/championships?tab=departmental",
     },
   ] as const;
