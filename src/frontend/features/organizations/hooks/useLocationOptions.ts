@@ -8,11 +8,16 @@ import { useLeagues } from "@/features/organizations/leagues/api";
  * The league and committee lists a location filter offers, plus the first
  * error either lookup produced.
  *
- * Data only — the selection itself lives in `useLocationFilterState`. Both
- * queries are unparameterised, so every caller shares one cache entry per list.
+ * Data only — the selection itself lives in `useLocationFilterState`.
+ *
+ * Pass `leagueId` to narrow the committees to that league, which is what a
+ * league → committee cascade needs. Left off, both queries are
+ * unparameterised and every caller shares one cache entry per list.
  */
-export function useLocationOptions() {
-  const { data: committees = [], error: committeesError } = useCommittees();
+export function useLocationOptions(params?: { leagueId?: number }) {
+  const { data: committees = [], error: committeesError } = useCommittees(
+    params?.leagueId ? { leagueId: params.leagueId } : undefined,
+  );
   const { data: leagues = [], error: leaguesError } = useLeagues();
 
   return {

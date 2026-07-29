@@ -17,6 +17,7 @@
   "clubs": {
     "label": "Clubs",
     "description": "Tous les clubs enregistrés en France.",
+    "searchLabel": "Nom du club",
     "searchPlaceholder": "Rechercher un club ...",
     "noResults": "Aucun résultat pour « {search} »"
   },

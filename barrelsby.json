@@ -33,6 +33,7 @@
 
     "src/frontend/features/organizations/clubs/api",
     "src/frontend/features/organizations/clubs/components",
+    "src/frontend/features/organizations/clubs/hooks",
     "src/frontend/features/organizations/clubs/types",
 
     "src/frontend/features/organizations/committees/api",

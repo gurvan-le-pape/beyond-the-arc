@@ -1,100 +1,113 @@
 // src/frontend/features/organizations/clubs/components/clubs-view/ClubsFilters.tsx
 "use client";
 
-import { Search, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-interface League {
-  id: string | number;
-  name: string;
-}
-interface Committee {
-  id: string | number;
-  name: string;
-}
+import { useLocationOptions } from "@/features/organizations/hooks";
+import { ErrorMessage } from "@/shared/components/feedback";
+import type { ActiveFilterChip } from "@/shared/components/filters";
+import { FiltersShell } from "@/shared/components/filters";
+import { DebouncedInput, Select } from "@/shared/components/forms";
+
+import type { ClubsFilterSetters, ClubsFilterState } from "../../hooks";
 
 interface ClubsFiltersProps {
-  readonly search: string;
-  readonly leagueId: string;
-  readonly committeeId: string;
-  readonly leagues: League[];
-  readonly committees: Committee[];
-  readonly hasActiveFilters: boolean;
-  readonly onSearchChange: (v: string) => void;
-  readonly onLeagueChange: (v: string) => void;
-  readonly onCommitteeChange: (v: string) => void;
+  readonly filters: ClubsFilterState;
+  readonly setters: ClubsFilterSetters;
   readonly onReset: () => void;
 }
 
-const inputClass =
-  "text-sm rounded-input border border-divide bg-surface-inset text-text-body placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-primary ring-offset-surface";
-
-export function ClubsFilters({
-  search,
-  leagueId,
-  committeeId,
-  leagues,
-  committees,
-  hasActiveFilters,
-  onSearchChange,
-  onLeagueChange,
-  onCommitteeChange,
-  onReset,
-}: ClubsFiltersProps) {
+export function ClubsFilters({ filters, setters, onReset }: ClubsFiltersProps) {
   const tCommon = useTranslations("common");
   const tOrganizations = useTranslations("organizations");
 
+  const { search, leagueId, committeeId } = filters;
+  const { setSearch, setLeagueId, setCommitteeId } = setters;
+
+  const {
+    leagues,
+    committees,
+    error: locationError,
+  } = useLocationOptions({ leagueId });
+
+  const leagueOptions = [
+    { value: "", label: tCommon("filters.allLeagues") },
+    ...leagues.map((league) => ({
+      value: String(league.id),
+      label: league.name,
+    })),
+  ];
+
+  const committeeOptions = [
+    { value: "", label: tCommon("filters.allCommittees") },
+    ...committees.map((committee) => ({
+      value: String(committee.id),
+      label: committee.name,
+    })),
+  ];
+
+  const selectedLeague = leagues.find((league) => league.id === leagueId);
+  const selectedCommittee = committees.find(
+    (committee) => committee.id === committeeId,
+  );
+
+  const chips = [
+    search && {
+      key: "search",
+      label: `"${search}"`,
+      onRemove: () => setSearch(""),
+    },
+    leagueId && {
+      key: "league",
+      label: selectedLeague?.name ?? String(leagueId),
+      onRemove: () => setLeagueId(undefined),
+    },
+    committeeId && {
+      key: "committee",
+      label: selectedCommittee?.name ?? String(committeeId),
+      onRemove: () => setCommitteeId(undefined),
+    },
+  ].filter(Boolean) as ActiveFilterChip[];
+
   return (
-    <div className="flex flex-wrap items-center gap-3 mb-6">
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-sm" />
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => onSearchChange(e.target.value)}
-          placeholder={tOrganizations("clubs.searchPlaceholder")}
-          className={`${inputClass} pl-9 pr-4 py-2 w-64`}
+    <FiltersShell
+      activeFilterCount={chips.length}
+      chips={chips}
+      onReset={onReset}
+      title={tOrganizations("clubs.label")}
+    >
+      {locationError && (
+        <ErrorMessage message={tCommon("errors.fetchLeagueOrCommittee")} />
+      )}
+
+      <DebouncedInput
+        variant="search"
+        label={tOrganizations("clubs.searchLabel")}
+        value={search}
+        onChange={setSearch}
+        onClear={() => setSearch("")}
+        placeholder={tOrganizations("clubs.searchPlaceholder")}
+        clearAriaLabel={tCommon("clearSearch")}
+      />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Select
+          label={tCommon("filters.leagues")}
+          options={leagueOptions}
+          value={leagueId ?? ""}
+          onChange={(val) => setLeagueId(Number(val) || undefined)}
         />
+
+        {/* Committees are only meaningful once a league scopes them. */}
+        {leagueId && (
+          <Select
+            label={tCommon("filters.committees")}
+            options={committeeOptions}
+            value={committeeId ?? ""}
+            onChange={(val) => setCommitteeId(Number(val) || undefined)}
+          />
+        )}
       </div>
-
-      <select
-        value={leagueId}
-        onChange={(e) => onLeagueChange(e.target.value)}
-        className={`${inputClass} px-3 py-2`}
-      >
-        <option value="">{tCommon("filters.allLeagues")}</option>
-        {leagues.map((l) => (
-          <option key={l.id} value={l.id}>
-            {l.name}
-          </option>
-        ))}
-      </select>
-
-      {leagueId && (
-        <select
-          value={committeeId}
-          onChange={(e) => onCommitteeChange(e.target.value)}
-          className={`${inputClass} px-3 py-2`}
-        >
-          <option value="">{tCommon("filters.allCommittees")}</option>
-          {committees.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
-      )}
-
-      {hasActiveFilters && (
-        <button
-          type="button"
-          onClick={onReset}
-          className="flex items-center gap-1.5 text-sm text-text-secondary hover:text-text-heading transition-colors"
-        >
-          <X className="text-xs" />
-          {tCommon("clearSearch")}
-        </button>
-      )}
-    </div>
+    </FiltersShell>
   );
 }
