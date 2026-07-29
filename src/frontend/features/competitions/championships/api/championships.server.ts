@@ -2,6 +2,7 @@
 import {
   buildQueryString,
   fetchApi,
+  ServerRevalidate,
 } from "@/lib/services/server/server-api-client";
 import type { PaginatedResponse } from "@/shared/types";
 
@@ -50,6 +51,7 @@ export const serverChampionshipsService = {
     });
     return fetchApi<PaginatedResponse<Championship>>(
       `/championships${queryString}`,
+      { revalidate: ServerRevalidate.DEFAULT },
     );
   },
 
@@ -66,6 +68,8 @@ export const serverChampionshipsService = {
    *   .catch(handleServerError);
    */
   async getById(id: number): Promise<Championship> {
-    return fetchApi<Championship>(`/championships/${id}`);
+    return fetchApi<Championship>(`/championships/${id}`, {
+      revalidate: ServerRevalidate.DEFAULT,
+    });
   },
 };
