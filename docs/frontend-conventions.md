@@ -101,4 +101,5 @@ Custom ESLint rules in `src/frontend/eslint-rules/`, wired in `eslint.config.mjs
 2. Place hooks/types/helpers by consumer count: one composite → colocate inside it; two+ consumers (or pages/api) → feature-level directory.
 3. Respect the depth cap (≤ 3 below `components/`) — flatten with name prefixes instead of nesting deeper.
 4. New barrel-worthy directory? Add it to `barrelsby.json` (the ESLint barrel rule follows automatically); composite internals get an exclusion pattern.
-5. Run `npm run lint` — the rules above catch the rest.
+5. Strings: resolve the component's own vocabulary inside it (`useTranslations` / `await getTranslations`), and take the caller's content as plain `string` props. Never accept the translator itself as a prop — see [Internationalisation](./frontend.md#internationalisation) in `frontend.md`. Not lint-enforced.
+6. Run `npm run lint` — the rules above catch the rest.
