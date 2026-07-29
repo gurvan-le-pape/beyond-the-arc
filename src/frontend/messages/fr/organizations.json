@@ -19,7 +19,8 @@
     "description": "Tous les clubs enregistrés en France.",
     "searchLabel": "Nom du club",
     "searchPlaceholder": "Rechercher un club ...",
-    "noResults": "Aucun résultat pour « {search} »"
+    "itemLabelPlural": "clubs",
+    "tryAdjustingFilters": "Essayez d'ajuster vos filtres pour trouver plus de clubs."
   },
   "info": {
     "title": "Informations",
