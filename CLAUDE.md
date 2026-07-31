@@ -63,7 +63,7 @@ These are enforced by custom ESLint rules in `src/backend/eslint-rules/` and `sr
 
 - Pages live under `src/frontend/app/[locale]/(public)/`; feature logic (components, hooks, API calls) lives under `src/frontend/features/<feature>/`, shared UI under `src/frontend/shared/`.
 - **Dual service layer per feature**: `*.service.ts` (Axios, used by client components/TanStack Query) and `*.server.ts` (a `fetchApi` wrapper around native `fetch`, used by server components during SSR — hits the backend directly over the Docker network and auto-unwraps the `{ data }` envelope). Same method signatures in both, so switching a call site between client/server fetching doesn't require touching business logic.
-- **Query Options pattern** for client data fetching, four files per feature: a key factory (`xKeys.ts`), a query options factory (`xQueries.ts`, single source of truth for query key + fn + cache config), thin hooks (`use-x.ts`) that components actually import, and prefetch helpers exported from the queries file for hover/focus-triggered prefetching.
+- **Query Options pattern** for client data fetching, four files per feature: a key factory (`xKeys.ts`), a query options factory (`xQueries.ts`, single source of truth for query key + fn + cache config), thin hooks (`useX.ts` — camelCase, enforced by `enforce-file-naming.js`) that components actually import, and prefetch helpers exported from the queries file for hover/focus-triggered prefetching.
 - Cache `staleTime`/`gcTime` are set per feature based on how often the underlying data changes (see `docs/frontend.md` for the current table) — match new queries to an existing category rather than picking arbitrary values.
 
 ## Looking up library documentation
