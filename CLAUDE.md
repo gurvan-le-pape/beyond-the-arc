@@ -42,6 +42,18 @@ Root-level `npm run barrels` (or `make barrels`) regenerates barrel `index.ts` f
 
 Composite component folders (an `index.tsx` root plus internal files) must be added to `exclude` in `barrelsby.json`, or barrelsby flattens them into the parent barrel and re-exports their internals — which is how a duplicate export can break the build.
 
+## Rule files
+
+`.claude/rules/` holds 21 per-technology rule files, loaded contextually via `paths` frontmatter rather than always-on. They were written from `package.json` / `package-lock.json` and upstream docs only — deliberately **without reading this codebase** — so that divergence between the rules and the code stays visible instead of being ratified. They are most useful for the version-specific traps: Tailwind v3 vs v4 utility names, TypeScript 6.0's changed defaults, Express 5 routing, Jest 30's renamed flags, Prisma 7's explicit adapter.
+
+Where sources disagree:
+
+1. **Machine enforcement** (the custom ESLint rules, `app.conventions.spec.ts`, the `openapi-drift` CI job) — not an opinion, it fails the build.
+2. **This file** — project decisions, stated by the maintainer.
+3. **`.claude/rules/`** — authoritative on library and version behaviour; blind to project decisions.
+
+A conflict between 2 and 3 is a signal, not noise: either this file is stale or a rule overreached. Surface it rather than silently picking one. Do not edit a rule file to match what the code currently does — that inverts the whole point.
+
 ## Repository-specific conventions
 
 These are enforced by custom ESLint rules in `src/backend/eslint-rules/` and `src/frontend/eslint-rules/`, so violations fail lint/CI, not just style review:
