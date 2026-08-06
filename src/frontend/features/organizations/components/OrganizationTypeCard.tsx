@@ -1,6 +1,6 @@
 // src/frontend/features/organizations/components/OrganizationTypeCard.tsx
 import { ArrowRight } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import React from "react";
 
 import { Link } from "@/navigation";
@@ -67,6 +67,7 @@ interface OrganizationTypeCardProps {
 
 export async function OrganizationTypeCard({ org }: OrganizationTypeCardProps) {
   const t = await getTranslations("organizations");
+  const locale = await getLocale();
   const { label, description, icon, href, id, count } = org;
   const s = STYLES[id];
 
@@ -106,7 +107,7 @@ export async function OrganizationTypeCard({ org }: OrganizationTypeCardProps) {
               ${s.pill} ${s.pillText}
             `}
           >
-            {count.toLocaleString()}
+            {count.toLocaleString(locale)}
           </span>
         )}
       </div>
