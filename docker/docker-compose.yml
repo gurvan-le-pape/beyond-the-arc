@@ -144,6 +144,9 @@ services:
       - GF_SMTP_USER=${GMAIL_ADDRESS}
       - GF_SMTP_PASSWORD=${GMAIL_APP_PASSWORD}
       - GF_SMTP_FROM_ADDRESS=${GMAIL_ADDRESS}
+      # Not a GF_* setting: the alerting provisioning file reads it back with
+      # $__env{GMAIL_ADDRESS} to address the notifications.
+      - GMAIL_ADDRESS=${GMAIL_ADDRESS}
     restart: unless-stopped
     networks:
       - my_network

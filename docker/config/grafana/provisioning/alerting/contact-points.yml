@@ -7,4 +7,7 @@ contactPoints:
       - uid: email-admin
         type: email
         settings:
-          addresses: your@email.com
+          # Read from the container environment rather than committed: the repo
+          # is public. Same address the alerts are sent *from*, so alerting
+          # needs one mailbox rather than two.
+          addresses: $__env{GMAIL_ADDRESS}
