@@ -1,4 +1,5 @@
 // src/frontend/features/players/components/detail/PlayerHeader.tsx
+import { differenceInYears, parseISO } from "date-fns";
 import { getTranslations } from "next-intl/server";
 
 import { Link } from "@/navigation";
@@ -56,13 +57,17 @@ export async function PlayerHeader({ player }: PlayerHeaderProps) {
 
   const isFemale = gender?.toLowerCase() === "female";
 
-  const age = Math.floor(
-    (Date.now() - new Date(birthdate).getTime()) /
-      (1000 * 60 * 60 * 24 * 365.25),
-  );
+  // Age is a calendar question, not a duration: a 365.25-day year drifts
+  // against real leap placement and flips the age a day early. `birthdate` is
+  // a plain YYYY-MM-DD, so parseISO reads it as a local calendar date and
+  // differenceInYears compares calendar fields — no zone is involved either
+  // way.
+  const age = differenceInYears(new Date(), parseISO(birthdate));
 
   const statsBand = [
-    ...(age
+    // age >= 0 rather than a truthiness check: a player in their first year
+    // has age 0, which would otherwise drop the stat entirely.
+    ...(age >= 0
       ? [
           {
             value: tPlayers("playerDetail.age", { age }),

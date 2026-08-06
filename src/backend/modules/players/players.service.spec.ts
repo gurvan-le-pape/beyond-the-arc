@@ -244,7 +244,10 @@ describe("PlayersService", () => {
       const result = await service.findPlayerById(1);
 
       // Assert
-      expect(result).toEqual(mockPlayer);
+      // Not toEqual(mockPlayer): the entity carries a Date and the DTO
+      // carries a calendar date string, so they are deliberately not equal.
+      expect(result).toEqual({ ...mockPlayer, birthdate: "2000-06-15" });
+      expect(result.birthdate).toBe("2000-06-15");
       expect(mockPrismaService.client.players.findUnique).toHaveBeenCalledWith({
         where: { id: 1 },
         select: expect.any(Object),

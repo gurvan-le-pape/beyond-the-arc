@@ -1975,7 +1975,8 @@ export interface components {
              */
             weightKg: number;
             /**
-             * @description Player birthdate
+             * Format: date
+             * @description Player birthdate, as a calendar date with no time
              * @example 2000-06-15
              */
             birthdate: string;

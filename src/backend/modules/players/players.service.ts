@@ -10,6 +10,7 @@ import {
   resolvePagination,
 } from "@common/utils";
 import { Injectable, NotFoundException } from "@nestjs/common";
+import { formatInTimeZone } from "date-fns-tz";
 import { PrismaService } from "prisma/prisma.service";
 
 import { Prisma } from "../../prisma/generated/prisma/client";
@@ -301,7 +302,10 @@ export class PlayersService {
       position: entity.position as Position,
       heightCm: entity.heightCm,
       weightKg: entity.weightKg,
-      birthdate: entity.birthdate,
+      // A birthdate is a calendar date, not an instant. The column is
+      // @db.Date and Prisma hands it back as a Date at UTC midnight, so the
+      // zone is named explicitly rather than left to the process's.
+      birthdate: formatInTimeZone(entity.birthdate, "UTC", "yyyy-MM-dd"),
       teamId: entity.teamId,
       team: {
         id: entity.team.id,
