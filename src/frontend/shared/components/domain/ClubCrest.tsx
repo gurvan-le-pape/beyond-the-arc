@@ -1,6 +1,6 @@
 // src/frontend/shared/components/domain/ClubCrest.tsx
-"use client";
 
+import { ImageWithFallback } from "@/shared/components/primitives";
 import { formatNameToFileName } from "@/shared/utils";
 
 import { DEFAULT_CLUB_LOGO } from "./ClubLogo";
@@ -12,8 +12,7 @@ interface ClubCrestProps {
 
 /**
  * The bare inline crest used in table rows — no tile, no gradient, unlike
- * [ClubLogo]. Client-only because the fallback swaps the DOM node's src in an
- * onError handler, which keeps its server-rendered callers server components.
+ * [ClubLogo].
  */
 export function ClubCrest({
   clubName,
@@ -21,15 +20,11 @@ export function ClubCrest({
 }: ClubCrestProps) {
   return (
     /* Local 32px .webp crest; see ClubLogo for why next/image isn't used. */
-    /* eslint-disable-next-line @next/next/no-img-element */
-    <img
+    <ImageWithFallback
       src={`/images/clubs/${formatNameToFileName(clubName)}.webp`}
       alt={`${clubName} logo`}
+      fallback={DEFAULT_CLUB_LOGO}
       className={className}
-      loading="lazy"
-      onError={(e) => {
-        (e.target as HTMLImageElement).src = DEFAULT_CLUB_LOGO;
-      }}
     />
   );
 }
