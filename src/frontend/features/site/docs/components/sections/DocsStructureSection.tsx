@@ -8,7 +8,6 @@ import { Text } from "@/shared/components/typography";
 const BACKEND_EXPLANATION_KEYS = [
   "docs.structure.backendModulesExplanation",
   "docs.structure.backendCommonExplanation",
-  "docs.structure.backendConfigExplanation",
   "docs.structure.backendPrismaExplanation",
 ] as const;
 
