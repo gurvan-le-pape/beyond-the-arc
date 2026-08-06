@@ -11,7 +11,9 @@ Sentry.init({
   // Enable logs to be sent to Sentry
   enableLogs: true,
 
-  // Enable sending user PII (Personally Identifiable Information)
+  // Never send default PII (visitor IP addresses, cookies, request and
+  // response headers and bodies) to Sentry: this is a public site with an EU
+  // audience and error tracking needs no personal data. Matches the backend.
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
-  sendDefaultPii: true,
+  sendDefaultPii: false,
 });
