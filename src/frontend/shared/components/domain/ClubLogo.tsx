@@ -1,6 +1,6 @@
 // src/frontend/shared/components/domain/ClubLogo.tsx
-"use client";
 
+import { ImageWithFallback } from "@/shared/components/primitives";
 import { cn, formatNameToFileName } from "@/shared/utils";
 
 export const DEFAULT_CLUB_LOGO = "/images/clubs/defaultLogo.30cc7520.svg";
@@ -32,16 +32,13 @@ export function ClubLogo({ clubName, alt, className }: ClubLogoProps) {
       )}
     >
       {/* Local 40px .webp crest in a fixed-size tile, so next/image would add a
-          runtime optimizer round-trip for no LCP or CLS gain — and the onError
-          fallback swaps the DOM node's src directly. */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+          runtime optimizer round-trip for no LCP or CLS gain. */}
+      <ImageWithFallback
         src={src}
         alt={alt ?? clubName ?? ""}
+        fallback={DEFAULT_CLUB_LOGO}
         className="w-10 h-10 object-contain transition-transform duration-200 group-hover:scale-105"
-        onError={(e) => {
-          (e.target as HTMLImageElement).src = DEFAULT_CLUB_LOGO;
-        }}
+        loading="eager"
       />
     </div>
   );

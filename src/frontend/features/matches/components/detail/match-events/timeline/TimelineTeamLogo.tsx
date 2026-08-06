@@ -1,5 +1,7 @@
 // src/frontend/features/matches/components/detail/match-events/timeline/TimelineTeamLogo.tsx
 
+import { DEFAULT_CLUB_LOGO } from "@/shared/components/domain";
+import { ImageWithFallback } from "@/shared/components/primitives";
 import { formatNameToFileName } from "@/shared/utils";
 
 interface TimelineTeamLogoProps {
@@ -12,17 +14,13 @@ interface TimelineTeamLogoProps {
  */
 export function TimelineTeamLogo({ teamName }: TimelineTeamLogoProps) {
   return (
-    // Local 32px .webp crest with an onError fallback; see ClubLogo for why
-    // next/image isn't used for these.
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
+    // Local 32px .webp crest; see ClubLogo for why next/image isn't used.
+    <ImageWithFallback
       src={`/images/clubs/${formatNameToFileName(teamName)}.webp`}
       alt={teamName}
+      fallback={DEFAULT_CLUB_LOGO}
       className="w-8 h-8 object-contain"
-      onError={(e) => {
-        (e.target as HTMLImageElement).src =
-          "/images/clubs/defaultLogo.30cc7520.svg";
-      }}
+      loading="eager"
     />
   );
 }
