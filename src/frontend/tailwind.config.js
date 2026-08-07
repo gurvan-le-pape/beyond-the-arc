@@ -34,21 +34,21 @@ module.exports = {
         // background without establishing a new surface context (e.g. a
         // decorative swatch or a non-interactive background overlay).
         surface: {
-          base: "var(--color-surface-base)",
-          subtle: "var(--color-surface-subtle)",
-          raised: "var(--color-surface-raised)",
+          base: "rgb(var(--color-surface-base) / <alpha-value>)",
+          subtle: "rgb(var(--color-surface-subtle) / <alpha-value>)",
+          raised: "rgb(var(--color-surface-raised) / <alpha-value>)",
         },
 
         // Divide — borders and dividers only, never as background
-        divide: "var(--color-divide)",
+        divide: "rgb(var(--color-divide) / <alpha-value>)",
 
         // Text — pick by role, not by shade
         text: {
-          muted: "var(--color-text-muted)",
-          secondary: "var(--color-text-secondary)",
-          body: "var(--color-text-body)",
-          emphasis: "var(--color-text-emphasis)",
-          heading: "var(--color-text-heading)",
+          muted: "rgb(var(--color-text-muted) / <alpha-value>)",
+          secondary: "rgb(var(--color-text-secondary) / <alpha-value>)",
+          body: "rgb(var(--color-text-body) / <alpha-value>)",
+          emphasis: "rgb(var(--color-text-emphasis) / <alpha-value>)",
+          heading: "rgb(var(--color-text-heading) / <alpha-value>)",
         },
 
         // Primary — brand blue (scale shifts per theme)
@@ -64,17 +64,17 @@ module.exports = {
         // darker  = very dark
         // ink     = darkest, near-black
         primary: {
-          ghost: "var(--color-primary-ghost)",
-          faint: "var(--color-primary-faint)",
-          muted: "var(--color-primary-muted)",
-          subtle: "var(--color-primary-subtle)",
-          soft: "var(--color-primary-soft)",
-          DEFAULT: "var(--color-primary)",
-          strong: "var(--color-primary-strong)",
-          bold: "var(--color-primary-bold)",
-          deep: "var(--color-primary-deep)",
-          darker: "var(--color-primary-darker)",
-          ink: "var(--color-primary-ink)",
+          ghost: "rgb(var(--color-primary-ghost) / <alpha-value>)",
+          faint: "rgb(var(--color-primary-faint) / <alpha-value>)",
+          muted: "rgb(var(--color-primary-muted) / <alpha-value>)",
+          subtle: "rgb(var(--color-primary-subtle) / <alpha-value>)",
+          soft: "rgb(var(--color-primary-soft) / <alpha-value>)",
+          DEFAULT: "rgb(var(--color-primary) / <alpha-value>)",
+          strong: "rgb(var(--color-primary-strong) / <alpha-value>)",
+          bold: "rgb(var(--color-primary-bold) / <alpha-value>)",
+          deep: "rgb(var(--color-primary-deep) / <alpha-value>)",
+          darker: "rgb(var(--color-primary-darker) / <alpha-value>)",
+          ink: "rgb(var(--color-primary-ink) / <alpha-value>)",
         },
 
         // Secondary — brand green (scale shifts per theme)
@@ -90,125 +90,125 @@ module.exports = {
         // darker  = very dark
         // ink     = darkest, near-black
         secondary: {
-          ghost: "var(--color-secondary-ghost)",
-          faint: "var(--color-secondary-faint)",
-          muted: "var(--color-secondary-muted)",
-          subtle: "var(--color-secondary-subtle)",
-          soft: "var(--color-secondary-soft)",
-          DEFAULT: "var(--color-secondary)",
-          strong: "var(--color-secondary-strong)",
-          bold: "var(--color-secondary-bold)",
-          deep: "var(--color-secondary-deep)",
-          darker: "var(--color-secondary-darker)",
-          ink: "var(--color-secondary-ink)",
+          ghost: "rgb(var(--color-secondary-ghost) / <alpha-value>)",
+          faint: "rgb(var(--color-secondary-faint) / <alpha-value>)",
+          muted: "rgb(var(--color-secondary-muted) / <alpha-value>)",
+          subtle: "rgb(var(--color-secondary-subtle) / <alpha-value>)",
+          soft: "rgb(var(--color-secondary-soft) / <alpha-value>)",
+          DEFAULT: "rgb(var(--color-secondary) / <alpha-value>)",
+          strong: "rgb(var(--color-secondary-strong) / <alpha-value>)",
+          bold: "rgb(var(--color-secondary-bold) / <alpha-value>)",
+          deep: "rgb(var(--color-secondary-deep) / <alpha-value>)",
+          darker: "rgb(var(--color-secondary-darker) / <alpha-value>)",
+          ink: "rgb(var(--color-secondary-ink) / <alpha-value>)",
         },
 
         // Status — subtle/strong flip per theme; DEFAULT stays vivid
         success: {
-          subtle: "var(--color-success-subtle)",
-          DEFAULT: "var(--color-success)",
-          strong: "var(--color-success-strong)",
+          subtle: "rgb(var(--color-success-subtle) / <alpha-value>)",
+          DEFAULT: "rgb(var(--color-success) / <alpha-value>)",
+          strong: "rgb(var(--color-success-strong) / <alpha-value>)",
         },
         error: {
-          subtle: "var(--color-error-subtle)",
-          DEFAULT: "var(--color-error)",
-          strong: "var(--color-error-strong)",
+          subtle: "rgb(var(--color-error-subtle) / <alpha-value>)",
+          DEFAULT: "rgb(var(--color-error) / <alpha-value>)",
+          strong: "rgb(var(--color-error-strong) / <alpha-value>)",
         },
         warning: {
-          subtle: "var(--color-warning-subtle)",
-          DEFAULT: "var(--color-warning)",
-          strong: "var(--color-warning-strong)",
+          subtle: "rgb(var(--color-warning-subtle) / <alpha-value>)",
+          DEFAULT: "rgb(var(--color-warning) / <alpha-value>)",
+          strong: "rgb(var(--color-warning-strong) / <alpha-value>)",
         },
         info: {
-          subtle: "var(--color-info-subtle)",
-          DEFAULT: "var(--color-info)",
-          strong: "var(--color-info-strong)",
+          subtle: "rgb(var(--color-info-subtle) / <alpha-value>)",
+          DEFAULT: "rgb(var(--color-info) / <alpha-value>)",
+          strong: "rgb(var(--color-info-strong) / <alpha-value>)",
         },
 
         // Team (gender) — subtle/strong flip per theme
         team: {
           male: {
-            subtle: "var(--color-team-male-subtle)",
-            DEFAULT: "var(--color-team-male)",
-            strong: "var(--color-team-male-strong)",
+            subtle: "rgb(var(--color-team-male-subtle) / <alpha-value>)",
+            DEFAULT: "rgb(var(--color-team-male) / <alpha-value>)",
+            strong: "rgb(var(--color-team-male-strong) / <alpha-value>)",
           },
           female: {
-            subtle: "var(--color-team-female-subtle)",
-            DEFAULT: "var(--color-team-female)",
-            strong: "var(--color-team-female-strong)",
+            subtle: "rgb(var(--color-team-female-subtle) / <alpha-value>)",
+            DEFAULT: "rgb(var(--color-team-female) / <alpha-value>)",
+            strong: "rgb(var(--color-team-female-strong) / <alpha-value>)",
           },
         },
 
         // Competition levels — subtle/strong flip per theme
         national: {
-          subtle: "var(--color-national-subtle)",
-          DEFAULT: "var(--color-national)",
-          strong: "var(--color-national-strong)",
+          subtle: "rgb(var(--color-national-subtle) / <alpha-value>)",
+          DEFAULT: "rgb(var(--color-national) / <alpha-value>)",
+          strong: "rgb(var(--color-national-strong) / <alpha-value>)",
         },
         regional: {
-          subtle: "var(--color-regional-subtle)",
-          DEFAULT: "var(--color-regional)",
-          strong: "var(--color-regional-strong)",
+          subtle: "rgb(var(--color-regional-subtle) / <alpha-value>)",
+          DEFAULT: "rgb(var(--color-regional) / <alpha-value>)",
+          strong: "rgb(var(--color-regional-strong) / <alpha-value>)",
         },
         departmental: {
-          subtle: "var(--color-departmental-subtle)",
-          DEFAULT: "var(--color-departmental)",
-          strong: "var(--color-departmental-strong)",
+          subtle: "rgb(var(--color-departmental-subtle) / <alpha-value>)",
+          DEFAULT: "rgb(var(--color-departmental) / <alpha-value>)",
+          strong: "rgb(var(--color-departmental-strong) / <alpha-value>)",
         },
         clubs: {
-          subtle: "var(--color-clubs-subtle)",
-          DEFAULT: "var(--color-clubs)",
-          strong: "var(--color-clubs-strong)",
+          subtle: "rgb(var(--color-clubs-subtle) / <alpha-value>)",
+          DEFAULT: "rgb(var(--color-clubs) / <alpha-value>)",
+          strong: "rgb(var(--color-clubs-strong) / <alpha-value>)",
         },
 
         category: {
-          subtle: "var(--color-category-subtle)",
-          DEFAULT: "var(--color-category)",
-          strong: "var(--color-category-strong)",
+          subtle: "rgb(var(--color-category-subtle) / <alpha-value>)",
+          DEFAULT: "rgb(var(--color-category) / <alpha-value>)",
+          strong: "rgb(var(--color-category-strong) / <alpha-value>)",
         },
         division: {
-          subtle: "var(--color-division-subtle)",
-          DEFAULT: "var(--color-division)",
-          strong: "var(--color-division-strong)",
+          subtle: "rgb(var(--color-division-subtle) / <alpha-value>)",
+          DEFAULT: "rgb(var(--color-division) / <alpha-value>)",
+          strong: "rgb(var(--color-division-strong) / <alpha-value>)",
         },
         pool: {
-          subtle: "var(--color-pool-subtle)",
-          DEFAULT: "var(--color-pool)",
-          strong: "var(--color-pool-strong)",
+          subtle: "rgb(var(--color-pool-subtle) / <alpha-value>)",
+          DEFAULT: "rgb(var(--color-pool) / <alpha-value>)",
+          strong: "rgb(var(--color-pool-strong) / <alpha-value>)",
         },
 
         // Domain entities — subtle/strong flip per theme
         players: {
-          subtle: "var(--color-players-subtle)",
-          DEFAULT: "var(--color-players)",
-          strong: "var(--color-players-strong)",
+          subtle: "rgb(var(--color-players-subtle) / <alpha-value>)",
+          DEFAULT: "rgb(var(--color-players) / <alpha-value>)",
+          strong: "rgb(var(--color-players-strong) / <alpha-value>)",
         },
         teams: {
-          subtle: "var(--color-teams-subtle)",
-          DEFAULT: "var(--color-teams)",
-          strong: "var(--color-teams-strong)",
+          subtle: "rgb(var(--color-teams-subtle) / <alpha-value>)",
+          DEFAULT: "rgb(var(--color-teams) / <alpha-value>)",
+          strong: "rgb(var(--color-teams-strong) / <alpha-value>)",
         },
         matches: {
-          subtle: "var(--color-matches-subtle)",
-          DEFAULT: "var(--color-matches)",
-          strong: "var(--color-matches-strong)",
+          subtle: "rgb(var(--color-matches-subtle) / <alpha-value>)",
+          DEFAULT: "rgb(var(--color-matches) / <alpha-value>)",
+          strong: "rgb(var(--color-matches-strong) / <alpha-value>)",
         },
 
         position: {
           g: {
-            subtle: "var(--color-position-g-subtle)",
-            DEFAULT: "var(--color-position-g)",
-            strong: "var(--color-position-g-strong)",
+            subtle: "rgb(var(--color-position-g-subtle) / <alpha-value>)",
+            DEFAULT: "rgb(var(--color-position-g) / <alpha-value>)",
+            strong: "rgb(var(--color-position-g-strong) / <alpha-value>)",
           },
           f: {
-            subtle: "var(--color-position-f-subtle)",
-            DEFAULT: "var(--color-position-f)",
-            strong: "var(--color-position-f-strong)",
+            subtle: "rgb(var(--color-position-f-subtle) / <alpha-value>)",
+            DEFAULT: "rgb(var(--color-position-f) / <alpha-value>)",
+            strong: "rgb(var(--color-position-f-strong) / <alpha-value>)",
           },
           c: {
-            subtle: "var(--color-position-c-subtle)",
-            DEFAULT: "var(--color-position-c)",
-            strong: "var(--color-position-c-strong)",
+            subtle: "rgb(var(--color-position-c-subtle) / <alpha-value>)",
+            DEFAULT: "rgb(var(--color-position-c) / <alpha-value>)",
+            strong: "rgb(var(--color-position-c-strong) / <alpha-value>)",
           },
         },
       },
@@ -379,11 +379,11 @@ module.exports = {
         // color: transparent is co-located here to avoid class-order conflicts
         ".text-stroke-primary": {
           color: "transparent",
-          "-webkit-text-stroke": "2px var(--color-primary-soft)",
+          "-webkit-text-stroke": "2px rgb(var(--color-primary-soft))",
         },
         ".text-stroke-secondary": {
           color: "transparent",
-          "-webkit-text-stroke": "2px var(--color-secondary-soft)",
+          "-webkit-text-stroke": "2px rgb(var(--color-secondary-soft))",
         },
       });
     },
