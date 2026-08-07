@@ -20,5 +20,11 @@ ENV TZ=UTC
 # Set PYTHONPATH so all package imports resolve from the python root
 ENV PYTHONPATH=/app/db/python
 
+# Drop to the unprivileged user created above. This container holds
+# DATABASE_URL and is one of only two with write access to the database,
+# so it must not run as uid 0. It only reads /app and writes to Postgres
+# (checkpoints live in the database, logs go to stdout).
+USER appuser
+
 # Start the long-running scheduler (handles season setup + match generation)
 CMD ["python", "/app/db/python/run_scheduler.py"]
