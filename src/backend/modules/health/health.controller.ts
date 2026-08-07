@@ -1,5 +1,6 @@
 // src/backend/modules/health/health.controller.ts
-import { Controller, Get } from "@nestjs/common";
+import { HealthCheckExceptionFilter } from "@common/filters";
+import { Controller, Get, UseFilters } from "@nestjs/common";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import {
   DiskHealthIndicator,
@@ -13,9 +14,13 @@ import { PrismaService } from "prisma/prisma.service";
 /**
  * Health check endpoints for monitoring application status.
  * Used by load balancers, Kubernetes probes, and Grafana alerting.
+ *
+ * A failed check reports which indicator failed, so it does not go through
+ * AllExceptionsFilter — see HealthCheckExceptionFilter for why.
  */
 @ApiTags("health")
 @Controller("health")
+@UseFilters(HealthCheckExceptionFilter)
 export class HealthController {
   constructor(
     private readonly health: HealthCheckService,

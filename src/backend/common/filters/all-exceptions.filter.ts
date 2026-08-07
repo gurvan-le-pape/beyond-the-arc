@@ -98,19 +98,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
       // response object carries an explicit `error` field.
       error = this.httpStatusToErrorName(statusCode);
 
-      const exceptionResponse = exception.getResponse();
-
-      if (typeof exceptionResponse === "string") {
-        message = exceptionResponse;
-      } else if (
-        typeof exceptionResponse === "object" &&
-        exceptionResponse !== null
-      ) {
-        message =
-          (exceptionResponse as { message?: string | string[] }).message ??
-          message;
-        error = (exceptionResponse as { error?: string }).error ?? error;
-      }
+      const parsed = this.parseHttpExceptionResponse(exception);
+      message = parsed.message ?? message;
+      error = parsed.error ?? error;
     } else if (process.env.NODE_ENV === "development") {
       // Unexpected errors (Prisma failures, TypeErrors, string throws) keep
       // their real message in development only. In production both the name
@@ -147,6 +137,45 @@ export class AllExceptionsFilter implements ExceptionFilter {
     }
 
     return errorResponse;
+  }
+
+  /**
+   * Pulls `message` and `error` out of an HttpException's payload, which Nest
+   * lets be either a string or an object.
+   *
+   * `error` is adopted only when it really is a string. Not every payload
+   * follows Nest's `{ message, error }` shape — Terminus's health result puts
+   * an indicator *map* there — and assigning one into a field declared
+   * `string` makes the type a lie at runtime and ships a body no client can
+   * parse against the contract. Health checks have their own filter
+   * (HealthCheckExceptionFilter); this guard is what keeps any other
+   * non-conforming payload from doing the same thing silently.
+   *
+   * Returns `undefined` for a field the payload does not supply, so the
+   * caller keeps its own default.
+   */
+  private parseHttpExceptionResponse(exception: HttpException): {
+    message?: string | string[];
+    error?: string;
+  } {
+    const exceptionResponse = exception.getResponse();
+
+    if (typeof exceptionResponse === "string") {
+      return { message: exceptionResponse };
+    }
+    if (typeof exceptionResponse !== "object" || exceptionResponse === null) {
+      return {};
+    }
+
+    const { message, error } = exceptionResponse as {
+      message?: string | string[];
+      error?: unknown;
+    };
+
+    return {
+      message,
+      error: typeof error === "string" ? error : undefined,
+    };
   }
 
   /**
