@@ -10,7 +10,7 @@ html {
    shell: overscroll (rubber-band on macOS/iOS) reveals the body, and the map
    page has no shell at all. Uses the same token, so it follows the theme. */
 body {
-  background-color: var(--color-surface-base);
+  background-color: rgb(var(--color-surface-base));
 }
 
 /* =============================================================================
@@ -26,6 +26,24 @@ body {
    CSS variables are redefined per theme class.
    Components never need dark: or high-contrast: variants for these tokens —
    the variable resolves to the correct value automatically.
+
+   VALUE FORMAT — SPACE-SEPARATED RGB CHANNELS, NOT HEX
+   ─────────────────────────────────────────────────────────────────────────────
+   Every --color-* below is written as "R G B" (e.g. 167 139 250), because
+   tailwind.config.js consumes them as `rgb(var(--color-x) / <alpha-value>)`.
+   That is what makes the opacity modifiers work: `bg-clubs/10`,
+   `border-regional/30`, `from-clubs-subtle/60`.
+
+   Write a hex value here and Tailwind cannot alpha-composite it, so every
+   utility carrying a `/NN` modifier on that token silently generates no CSS
+   at all — no error, no warning, just a missing rule. That is exactly the bug
+   this format fixes: 22 such utilities were dead, which left the organizations
+   cards with no gradient and their borders falling back to preflight's
+   hardcoded #e5e7eb, a grey that does not flip with the theme.
+
+   Two tokens are deliberately NOT in this format — --color-header-bg and
+   --color-scroll-shadow keep baked-in rgba(), because their alpha differs per
+   theme and neither is consumed through the `colors` map.
 
    VARIABLE NAMING CONVENTION
    ─────────────────────────────────────────────────────────────────────────────
@@ -57,12 +75,12 @@ body {
      base   = outermost page background (PageLayout only)
      subtle = cards, panels, section containers
      raised = inputs, modals, infoboxes, skeleton fills              */
-  --color-surface-base: #f9fafb;
-  --color-surface-subtle: #f3f4f6;
-  --color-surface-raised: #e5e7eb;
+  --color-surface-base: 249 250 251;
+  --color-surface-subtle: 243 244 246;
+  --color-surface-raised: 229 231 235;
 
   /* Divide — borders and dividers only, never as background          */
-  --color-divide: #d1d5db;
+  --color-divide: 209 213 219;
 
   /* Text — choose by role, not by shade
      muted     = decorative icons, separators, disabled controls.
@@ -74,15 +92,15 @@ body {
      body      = default paragraph text
      emphasis  = labels, form labels, stronger secondary text
      heading   = headings, primary values, winner names              */
-  --color-text-muted: #9ca3af;
+  --color-text-muted: 156 163 175;
   /* Computed, not a palette step: gray-500 (#6b7280) is 4.39:1 on
      surface-subtle and 3.90:1 on surface-raised, and Tailwind has no gray
      between 500 and 600 that clears 4.5:1 without landing on body's own
      value. This is 5.64 / 5.36 / 4.76 across base / subtle / raised. */
-  --color-text-secondary: #5d6570;
-  --color-text-body: #4b5563;
-  --color-text-emphasis: #374151;
-  --color-text-heading: #1f2937;
+  --color-text-secondary: 93 101 112;
+  --color-text-body: 75 85 99;
+  --color-text-emphasis: 55 65 81;
+  --color-text-heading: 31 41 55;
 
   /* Primary — brand blue
      ghost   = faintest tint  (hover backgrounds, subtle fills)
@@ -96,17 +114,17 @@ body {
      deep    = near-darkest
      darker  = very dark
      ink     = darkest, near-black                                   */
-  --color-primary-ghost: #e6eaf4;
-  --color-primary-faint: #c0cae4;
-  --color-primary-muted: #97a8d2;
-  --color-primary-subtle: #6d86c0;
-  --color-primary-soft: #4d6bb3;
-  --color-primary: #2e51a6;
-  --color-primary-strong: #1e3d8f;
-  --color-primary-bold: #152d75;
-  --color-primary-deep: #0d1f5c;
-  --color-primary-darker: #021b50;
-  --color-primary-ink: #010f30;
+  --color-primary-ghost: 230 234 244;
+  --color-primary-faint: 192 202 228;
+  --color-primary-muted: 151 168 210;
+  --color-primary-subtle: 109 134 192;
+  --color-primary-soft: 77 107 179;
+  --color-primary: 46 81 166;
+  --color-primary-strong: 30 61 143;
+  --color-primary-bold: 21 45 117;
+  --color-primary-deep: 13 31 92;
+  --color-primary-darker: 2 27 80;
+  --color-primary-ink: 1 15 48;
 
   /* Secondary — brand green
      ghost   = faintest tint  (hover backgrounds, subtle fills)
@@ -120,17 +138,17 @@ body {
      deep    = near-darkest
      darker  = very dark
      ink     = darkest, near-black                                   */
-  --color-secondary-ghost: #f0fdf4;
-  --color-secondary-faint: #dcfce7;
-  --color-secondary-muted: #bbf7d0;
-  --color-secondary-subtle: #86efac;
-  --color-secondary-soft: #4ade80;
-  --color-secondary: #22c55e;
-  --color-secondary-strong: #16a34a;
-  --color-secondary-bold: #15803d;
-  --color-secondary-deep: #166534;
-  --color-secondary-darker: #14532d;
-  --color-secondary-ink: #0a2e18;
+  --color-secondary-ghost: 240 253 244;
+  --color-secondary-faint: 220 252 231;
+  --color-secondary-muted: 187 247 208;
+  --color-secondary-subtle: 134 239 172;
+  --color-secondary-soft: 74 222 128;
+  --color-secondary: 34 197 94;
+  --color-secondary-strong: 22 163 74;
+  --color-secondary-bold: 21 128 61;
+  --color-secondary-deep: 22 101 52;
+  --color-secondary-darker: 20 83 45;
+  --color-secondary-ink: 10 46 24;
 
   /* Shadows                                                          */
   --shadow-card:
@@ -151,90 +169,90 @@ body {
      strong  = high-emphasis shade (border, text on light surface)   */
 
   /* Status */
-  --color-success-subtle: #d1fae5;
-  --color-success: #10b981;
-  --color-success-strong: #065f46;
+  --color-success-subtle: 209 250 229;
+  --color-success: 16 185 129;
+  --color-success-strong: 6 95 70;
 
-  --color-error-subtle: #fee2e2;
-  --color-error: #ef4444;
-  --color-error-strong: #991b1b;
+  --color-error-subtle: 254 226 226;
+  --color-error: 239 68 68;
+  --color-error-strong: 153 27 27;
 
-  --color-warning-subtle: #fef3c7;
-  --color-warning: #f59e0b;
-  --color-warning-strong: #92400e;
+  --color-warning-subtle: 254 243 199;
+  --color-warning: 245 158 11;
+  --color-warning-strong: 146 64 14;
 
-  --color-info-subtle: #cffafe;
-  --color-info: #06b6d4;
-  --color-info-strong: #164e63;
+  --color-info-subtle: 207 250 254;
+  --color-info: 6 182 212;
+  --color-info-strong: 22 78 99;
 
   /* Team (gender) */
-  --color-team-male-subtle: #e0f2fe;
-  --color-team-male: #0ea5e9;
-  --color-team-male-strong: #0c4a6e;
+  --color-team-male-subtle: 224 242 254;
+  --color-team-male: 14 165 233;
+  --color-team-male-strong: 12 74 110;
 
-  --color-team-female-subtle: #fce7f3;
-  --color-team-female: #ec4899;
-  --color-team-female-strong: #831843;
+  --color-team-female-subtle: 252 231 243;
+  --color-team-female: 236 72 153;
+  --color-team-female-strong: 131 24 67;
 
   /* Competition levels */
-  --color-national-subtle: #e0e7ff;
-  --color-national: #6366f1;
-  --color-national-strong: #312e81;
+  --color-national-subtle: 224 231 255;
+  --color-national: 99 102 241;
+  --color-national-strong: 49 46 129;
 
-  --color-regional-subtle: #ccfbf1;
-  --color-regional: #14b8a6;
-  --color-regional-strong: #134e4a;
+  --color-regional-subtle: 204 251 241;
+  --color-regional: 20 184 166;
+  --color-regional-strong: 19 78 74;
 
-  --color-departmental-subtle: #fefce8;
-  --color-departmental: #eab308;
-  --color-departmental-strong: #713f12;
+  --color-departmental-subtle: 254 252 232;
+  --color-departmental: 234 179 8;
+  --color-departmental-strong: 113 63 18;
 
-  --color-clubs-subtle: #ede9fe;
-  --color-clubs: #a78bfa;
-  --color-clubs-strong: #4c1d95;
+  --color-clubs-subtle: 237 233 254;
+  --color-clubs: 167 139 250;
+  --color-clubs-strong: 76 29 149;
 
   /* Category */
-  --color-category-subtle: #f1f5f9;
-  --color-category: #64748b;
-  --color-category-strong: #1e293b;
+  --color-category-subtle: 241 245 249;
+  --color-category: 100 116 139;
+  --color-category-strong: 30 41 59;
 
   /* Division */
-  --color-division-subtle: #e0f2fe;
-  --color-division: #0284c7;
-  --color-division-strong: #0c4a6e;
+  --color-division-subtle: 224 242 254;
+  --color-division: 2 132 199;
+  --color-division-strong: 12 74 110;
 
   /* Pool */
-  --color-pool-subtle: #fff3e0;
-  --color-pool: #ea580c;
-  --color-pool-strong: #7c2d12;
+  --color-pool-subtle: 255 243 224;
+  --color-pool: 234 88 12;
+  --color-pool-strong: 124 45 18;
 
   /* Domain entities
      players = emerald (human/personal feel)
      teams   = violet  (collective/structural feel)
      matches = amber   (action/event feel)                            */
-  --color-players-subtle: #d1fae5;
-  --color-players: #059669;
-  --color-players-strong: #064e3b;
+  --color-players-subtle: 209 250 229;
+  --color-players: 5 150 105;
+  --color-players-strong: 6 78 59;
 
-  --color-teams-subtle: #e9d5ff;
-  --color-teams: #7c3aed;
-  --color-teams-strong: #5b21b6;
+  --color-teams-subtle: 233 213 255;
+  --color-teams: 124 58 237;
+  --color-teams-strong: 91 33 182;
 
-  --color-matches-subtle: #fde68a;
-  --color-matches: #d97706;
-  --color-matches-strong: #78350f;
+  --color-matches-subtle: 253 230 138;
+  --color-matches: 217 119 6;
+  --color-matches-strong: 120 53 15;
 
-  --color-position-g-subtle: #e0e7ff; /* same hue as national/indigo — guard reads "playmaker" */
-  --color-position-g: #6366f1;
-  --color-position-g-strong: #312e81;
+  --color-position-g-subtle: 224 231 255; /* same hue as national/indigo — guard reads "playmaker" */
+  --color-position-g: 99 102 241;
+  --color-position-g-strong: 49 46 129;
 
-  --color-position-f-subtle: #fde68a; /* amber — forward energy */
-  --color-position-f: #d97706;
-  --color-position-f-strong: #78350f;
+  --color-position-f-subtle: 253 230 138; /* amber — forward energy */
+  --color-position-f: 217 119 6;
+  --color-position-f-strong: 120 53 15;
 
-  --color-position-c-subtle: #e9d5ff; /* violet — anchor/size */
-  --color-position-c: #7c3aed;
-  --color-position-c-strong: #5b21b6;
+  --color-position-c-subtle: 233 213 255; /* violet — anchor/size */
+  --color-position-c: 124 58 237;
+  --color-position-c-strong: 91 33 182;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -244,45 +262,45 @@ body {
 ───────────────────────────────────────────────────────────────────────────── */
 .dark {
   /* Surface */
-  --color-surface-base: #030712;
-  --color-surface-subtle: #111827;
-  --color-surface-raised: #1f2937;
+  --color-surface-base: 3 7 18;
+  --color-surface-subtle: 17 24 39;
+  --color-surface-raised: 31 41 55;
 
   /* Divide */
-  --color-divide: #374151;
+  --color-divide: 55 65 81;
 
   /* Text */
-  --color-text-muted: #6b7280;
-  --color-text-secondary: #9ca3af;
-  --color-text-body: #d1d5db;
-  --color-text-emphasis: #e5e7eb;
-  --color-text-heading: #f3f4f6;
+  --color-text-muted: 107 114 128;
+  --color-text-secondary: 156 163 175;
+  --color-text-body: 209 213 219;
+  --color-text-emphasis: 229 231 235;
+  --color-text-heading: 243 244 246;
 
   /* Primary — scale inverted, lighter shades become active on dark   */
-  --color-primary-ghost: #010f30;
-  --color-primary-faint: #021b50;
-  --color-primary-muted: #0d1f5c;
-  --color-primary-subtle: #152d75;
-  --color-primary-soft: #1e3d8f;
-  --color-primary: #4d6bb3;
-  --color-primary-strong: #6d86c0;
-  --color-primary-bold: #97a8d2;
-  --color-primary-deep: #c0cae4;
-  --color-primary-darker: #e6eaf4;
-  --color-primary-ink: #f0f3fa;
+  --color-primary-ghost: 1 15 48;
+  --color-primary-faint: 2 27 80;
+  --color-primary-muted: 13 31 92;
+  --color-primary-subtle: 21 45 117;
+  --color-primary-soft: 30 61 143;
+  --color-primary: 77 107 179;
+  --color-primary-strong: 109 134 192;
+  --color-primary-bold: 151 168 210;
+  --color-primary-deep: 192 202 228;
+  --color-primary-darker: 230 234 244;
+  --color-primary-ink: 240 243 250;
 
   /* Secondary — scale inverted, lighter shades become active on dark */
-  --color-secondary-ghost: #0a2e18;
-  --color-secondary-faint: #14532d;
-  --color-secondary-muted: #166534;
-  --color-secondary-subtle: #15803d;
-  --color-secondary-soft: #16a34a;
-  --color-secondary: #22c55e;
-  --color-secondary-strong: #4ade80;
-  --color-secondary-bold: #86efac;
-  --color-secondary-deep: #bbf7d0;
-  --color-secondary-darker: #dcfce7;
-  --color-secondary-ink: #f0fdf4;
+  --color-secondary-ghost: 10 46 24;
+  --color-secondary-faint: 20 83 45;
+  --color-secondary-muted: 22 101 52;
+  --color-secondary-subtle: 21 128 61;
+  --color-secondary-soft: 22 163 74;
+  --color-secondary: 34 197 94;
+  --color-secondary-strong: 74 222 128;
+  --color-secondary-bold: 134 239 172;
+  --color-secondary-deep: 187 247 208;
+  --color-secondary-darker: 220 252 231;
+  --color-secondary-ink: 240 253 244;
 
   /* Shadows */
   --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.5), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
@@ -297,66 +315,66 @@ body {
   --color-scroll-shadow: rgba(0, 0, 0, 0.55);
 
   /* Semantic subtle/strong — flipped for dark surfaces               */
-  --color-success-subtle: #064e3b;
-  --color-success-strong: #6ee7b7;
+  --color-success-subtle: 6 78 59;
+  --color-success-strong: 110 231 183;
 
-  --color-error-subtle: #7f1d1d;
-  --color-error-strong: #fca5a5;
+  --color-error-subtle: 127 29 29;
+  --color-error-strong: 252 165 165;
 
-  --color-warning-subtle: #78350f;
-  --color-warning-strong: #fcd34d;
+  --color-warning-subtle: 120 53 15;
+  --color-warning-strong: 252 211 77;
 
-  --color-info-subtle: #164e63;
-  --color-info-strong: #67e8f9;
+  --color-info-subtle: 22 78 99;
+  --color-info-strong: 103 232 249;
 
-  --color-team-male-subtle: #0c4a6e;
-  --color-team-male-strong: #bae6fd;
+  --color-team-male-subtle: 12 74 110;
+  --color-team-male-strong: 186 230 253;
 
-  --color-team-female-subtle: #831843;
-  --color-team-female-strong: #fbcfe8;
+  --color-team-female-subtle: 131 24 67;
+  --color-team-female-strong: 251 207 232;
 
-  --color-national-subtle: #312e81;
-  --color-national-strong: #c7d2fe;
+  --color-national-subtle: 49 46 129;
+  --color-national-strong: 199 210 254;
 
-  --color-regional-subtle: #134e4a;
-  --color-regional-strong: #99f6e4;
+  --color-regional-subtle: 19 78 74;
+  --color-regional-strong: 153 246 228;
 
-  --color-departmental-subtle: #713f12;
-  --color-departmental-strong: #fef08a;
+  --color-departmental-subtle: 113 63 18;
+  --color-departmental-strong: 254 240 138;
 
-  --color-clubs-subtle: #4c1d95;
-  --color-clubs-strong: #ddd6fe;
+  --color-clubs-subtle: 76 29 149;
+  --color-clubs-strong: 221 214 254;
 
   /* Category */
-  --color-category-subtle: #1e293b;
-  --color-category-strong: #cbd5e1;
+  --color-category-subtle: 30 41 59;
+  --color-category-strong: 203 213 225;
 
   /* Division */
-  --color-division-subtle: #0c4a6e;
-  --color-division-strong: #bae6fd;
+  --color-division-subtle: 12 74 110;
+  --color-division-strong: 186 230 253;
 
   /* Pool */
-  --color-pool-subtle: #7c2d12;
-  --color-pool-strong: #fed7aa;
+  --color-pool-subtle: 124 45 18;
+  --color-pool-strong: 254 215 170;
 
   /* Domain entities — subtle/strong flipped for dark surfaces        */
-  --color-players-subtle: #065f46;
-  --color-players-strong: #a7f3d0;
+  --color-players-subtle: 6 95 70;
+  --color-players-strong: 167 243 208;
 
-  --color-teams-subtle: #3b0764;
-  --color-teams-strong: #ddd6fe;
+  --color-teams-subtle: 59 7 100;
+  --color-teams-strong: 221 214 254;
 
-  --color-matches-subtle: #78350f;
-  --color-matches-strong: #fde68a;
+  --color-matches-subtle: 120 53 15;
+  --color-matches-strong: 253 230 138;
 
-  --color-position-g-subtle: #312e81;
-  --color-position-g-strong: #c7d2fe;
+  --color-position-g-subtle: 49 46 129;
+  --color-position-g-strong: 199 210 254;
 
-  --color-position-f-subtle: #78350f;
-  --color-position-f-strong: #fde68a;
+  --color-position-f-subtle: 120 53 15;
+  --color-position-f-strong: 253 230 138;
 
-  --color-position-c-subtle: #3b0764;
-  --color-position-c-strong: #ddd6fe;
+  --color-position-c-subtle: 59 7 100;
+  --color-position-c-strong: 221 214 254;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -367,45 +385,45 @@ body {
 ───────────────────────────────────────────────────────────────────────────── */
 .high-contrast {
   /* Surface */
-  --color-surface-base: #000000;
-  --color-surface-subtle: #0d0d0d;
-  --color-surface-raised: #1a1a1a;
+  --color-surface-base: 0 0 0;
+  --color-surface-subtle: 13 13 13;
+  --color-surface-raised: 26 26 26;
 
   /* Divide — white for maximum visibility                            */
-  --color-divide: #ffffff;
+  --color-divide: 255 255 255;
 
   /* Text — near-white scale                                          */
-  --color-text-muted: #a3a3a3;
-  --color-text-secondary: #d4d4d4;
-  --color-text-body: #e5e5e5;
-  --color-text-emphasis: #f5f5f5;
-  --color-text-heading: #ffffff;
+  --color-text-muted: 163 163 163;
+  --color-text-secondary: 212 212 212;
+  --color-text-body: 229 229 229;
+  --color-text-emphasis: 245 245 245;
+  --color-text-heading: 255 255 255;
 
   /* Primary — vivid yellow, maximum contrast on black                */
-  --color-primary-ghost: #1a1200;
-  --color-primary-faint: #3d2c00;
-  --color-primary-muted: #6b4c00;
-  --color-primary-subtle: #996d00;
-  --color-primary-soft: #cc9100;
-  --color-primary: #ffb800;
-  --color-primary-strong: #ffc933;
-  --color-primary-bold: #ffd966;
-  --color-primary-deep: #ffe999;
-  --color-primary-darker: #fff4cc;
-  --color-primary-ink: #fffae6;
+  --color-primary-ghost: 26 18 0;
+  --color-primary-faint: 61 44 0;
+  --color-primary-muted: 107 76 0;
+  --color-primary-subtle: 153 109 0;
+  --color-primary-soft: 204 145 0;
+  --color-primary: 255 184 0;
+  --color-primary-strong: 255 201 51;
+  --color-primary-bold: 255 217 102;
+  --color-primary-deep: 255 233 153;
+  --color-primary-darker: 255 244 204;
+  --color-primary-ink: 255 250 230;
 
   /* Secondary — vivid cyan                                           */
-  --color-secondary-ghost: #001a1a;
-  --color-secondary-faint: #003d3d;
-  --color-secondary-muted: #006b6b;
-  --color-secondary-subtle: #009999;
-  --color-secondary-soft: #00cccc;
-  --color-secondary: #00ffff;
-  --color-secondary-strong: #33ffff;
-  --color-secondary-bold: #66ffff;
-  --color-secondary-deep: #99ffff;
-  --color-secondary-darker: #ccffff;
-  --color-secondary-ink: #e6ffff;
+  --color-secondary-ghost: 0 26 26;
+  --color-secondary-faint: 0 61 61;
+  --color-secondary-muted: 0 107 107;
+  --color-secondary-subtle: 0 153 153;
+  --color-secondary-soft: 0 204 204;
+  --color-secondary: 0 255 255;
+  --color-secondary-strong: 51 255 255;
+  --color-secondary-bold: 102 255 255;
+  --color-secondary-deep: 153 255 255;
+  --color-secondary-darker: 204 255 255;
+  --color-secondary-ink: 230 255 255;
 
   /* Shadows — hard borders, no blur                                  */
   --shadow-card: 0 0 0 1px #ffffff;
@@ -419,85 +437,85 @@ body {
   --color-scroll-shadow: rgba(255, 255, 255, 0.45);
 
   /* Semantic — max vivid, subtle is just a very dark tint            */
-  --color-success-subtle: #052e16;
-  --color-success: #00ff88;
-  --color-success-strong: #00ff88;
+  --color-success-subtle: 5 46 22;
+  --color-success: 0 255 136;
+  --color-success-strong: 0 255 136;
 
-  --color-error-subtle: #450a0a;
-  --color-error: #ff4444;
-  --color-error-strong: #ff4444;
+  --color-error-subtle: 69 10 10;
+  --color-error: 255 68 68;
+  --color-error-strong: 255 68 68;
 
-  --color-warning-subtle: #431407;
-  --color-warning: #ffaa00;
-  --color-warning-strong: #ffaa00;
+  --color-warning-subtle: 67 20 7;
+  --color-warning: 255 170 0;
+  --color-warning-strong: 255 170 0;
 
-  --color-info-subtle: #082f49;
-  --color-info: #00ccff;
-  --color-info-strong: #00ccff;
+  --color-info-subtle: 8 47 73;
+  --color-info: 0 204 255;
+  --color-info-strong: 0 204 255;
 
-  --color-team-male-subtle: #082f49;
-  --color-team-male: #00aaff;
-  --color-team-male-strong: #00aaff;
+  --color-team-male-subtle: 8 47 73;
+  --color-team-male: 0 170 255;
+  --color-team-male-strong: 0 170 255;
 
-  --color-team-female-subtle: #500724;
-  --color-team-female: #ff44aa;
-  --color-team-female-strong: #ff44aa;
+  --color-team-female-subtle: 80 7 36;
+  --color-team-female: 255 68 170;
+  --color-team-female-strong: 255 68 170;
 
-  --color-national-subtle: #1e1b4b;
-  --color-national: #8888ff;
-  --color-national-strong: #8888ff;
+  --color-national-subtle: 30 27 75;
+  --color-national: 136 136 255;
+  --color-national-strong: 136 136 255;
 
-  --color-regional-subtle: #042f2e;
-  --color-regional: #00ffcc;
-  --color-regional-strong: #00ffcc;
+  --color-regional-subtle: 4 47 46;
+  --color-regional: 0 255 204;
+  --color-regional-strong: 0 255 204;
 
-  --color-departmental-subtle: #422006;
-  --color-departmental: #ffcc00;
-  --color-departmental-strong: #ffcc00;
+  --color-departmental-subtle: 66 32 6;
+  --color-departmental: 255 204 0;
+  --color-departmental-strong: 255 204 0;
 
-  --color-clubs-subtle: #2e1065;
-  --color-clubs: #cc88ff;
-  --color-clubs-strong: #cc88ff;
+  --color-clubs-subtle: 46 16 101;
+  --color-clubs: 204 136 255;
+  --color-clubs-strong: 204 136 255;
 
   /* Category */
-  --color-category-subtle: #1e293b;
-  --color-category: #94a3b8;
-  --color-category-strong: #94a3b8;
+  --color-category-subtle: 30 41 59;
+  --color-category: 148 163 184;
+  --color-category-strong: 148 163 184;
 
   /* Division */
-  --color-division-subtle: #082f49;
-  --color-division: #38bdf8;
-  --color-division-strong: #38bdf8;
+  --color-division-subtle: 8 47 73;
+  --color-division: 56 189 248;
+  --color-division-strong: 56 189 248;
 
   /* Pool */
-  --color-pool-subtle: #431407;
-  --color-pool: #fb923c;
-  --color-pool-strong: #fb923c;
+  --color-pool-subtle: 67 20 7;
+  --color-pool: 251 146 60;
+  --color-pool-strong: 251 146 60;
 
   /* Domain entities */
-  --color-players-subtle: #052e16;
-  --color-players: #00ff88;
-  --color-players-strong: #00ff88;
+  --color-players-subtle: 5 46 22;
+  --color-players: 0 255 136;
+  --color-players-strong: 0 255 136;
 
-  --color-teams-subtle: #2e1065;
-  --color-teams: #bb88ff;
-  --color-teams-strong: #bb88ff;
+  --color-teams-subtle: 46 16 101;
+  --color-teams: 187 136 255;
+  --color-teams-strong: 187 136 255;
 
-  --color-matches-subtle: #431407;
-  --color-matches: #ffaa00;
-  --color-matches-strong: #ffaa00;
+  --color-matches-subtle: 67 20 7;
+  --color-matches: 255 170 0;
+  --color-matches-strong: 255 170 0;
 
-  --color-position-g-subtle: #1e1b4b;
-  --color-position-g: #8888ff;
-  --color-position-g-strong: #8888ff;
+  --color-position-g-subtle: 30 27 75;
+  --color-position-g: 136 136 255;
+  --color-position-g-strong: 136 136 255;
 
-  --color-position-f-subtle: #431407;
-  --color-position-f: #ffaa00;
-  --color-position-f-strong: #ffaa00;
+  --color-position-f-subtle: 67 20 7;
+  --color-position-f: 255 170 0;
+  --color-position-f-strong: 255 170 0;
 
-  --color-position-c-subtle: #2e1065;
-  --color-position-c: #cc88ff;
-  --color-position-c-strong: #cc88ff;
+  --color-position-c-subtle: 46 16 101;
+  --color-position-c: 204 136 255;
+  --color-position-c-strong: 204 136 255;
 }
 
 /* =============================================================================
@@ -539,23 +557,23 @@ body {
    ============================================================================= */
 
 .surface-base {
-  background-color: var(--color-surface-base);
-  --surface-bg: var(--color-surface-base);
-  --surface-inset: var(--color-surface-subtle);
-  --surface-ring-offset: var(--color-surface-base);
+  background-color: rgb(var(--color-surface-base));
+  --surface-bg: rgb(var(--color-surface-base));
+  --surface-inset: rgb(var(--color-surface-subtle));
+  --surface-ring-offset: rgb(var(--color-surface-base));
 }
 
 .surface-subtle {
-  background-color: var(--color-surface-subtle);
-  --surface-bg: var(--color-surface-subtle);
-  --surface-inset: var(--color-surface-raised);
-  --surface-ring-offset: var(--color-surface-subtle);
+  background-color: rgb(var(--color-surface-subtle));
+  --surface-bg: rgb(var(--color-surface-subtle));
+  --surface-inset: rgb(var(--color-surface-raised));
+  --surface-ring-offset: rgb(var(--color-surface-subtle));
 }
 
 .surface-raised {
-  background-color: var(--color-surface-raised);
-  --surface-bg: var(--color-surface-raised);
+  background-color: rgb(var(--color-surface-raised));
+  --surface-bg: rgb(var(--color-surface-raised));
   /* ceiling — nothing above raised, inset stays at the same level   */
-  --surface-inset: var(--color-surface-raised);
-  --surface-ring-offset: var(--color-surface-raised);
+  --surface-inset: rgb(var(--color-surface-raised));
+  --surface-ring-offset: rgb(var(--color-surface-raised));
 }
