@@ -13,8 +13,8 @@ import { StatsService } from "./stats.service";
  * - Single GET /stats endpoint returning counts for all entities
  *
  * Notes:
- * - Global interceptors (LoggingInterceptor, TransformInterceptor,
- *   AllExceptionsFilter) are registered in main.ts, not here.
+ * - Global interceptors and filters (TransformInterceptor, HttpMetricsInterceptor,
+ *   AllExceptionsFilter) are registered in app.module.ts, not here.
  * - Per-route caching is applied in the controller using CacheInterceptor.
  */
 @Module({

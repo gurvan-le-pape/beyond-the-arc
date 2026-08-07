@@ -17,7 +17,7 @@ import { PlayersService } from "./players.service";
  * - Dynamic filter values (when no filters applied)
  *
  * Architecture:
- * - Global interceptors/filters are registered in main.ts, NOT here
+ * - Global interceptors/filters are registered in app.module.ts, NOT here
  * - CacheInterceptor: Per-route caching (applied in controller with @UseInterceptors)
  */
 @Module({

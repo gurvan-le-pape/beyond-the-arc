@@ -29,9 +29,11 @@ import { ChampionshipResponseDto } from "./dto/championships.response.dto";
  * Controller handling championship-related endpoints.
  * Provides access to divisions, regional, and departmental championships.
  *
- * Global interceptors (applied in module):
- * - LoggingInterceptor: Logs all requests/responses
+ * Global interceptors (registered in app.module.ts):
  * - TransformInterceptor: Wraps responses in standard format
+ * - HttpMetricsInterceptor: Records the Prometheus request metrics
+ *
+ * Request logging is not an interceptor — nestjs-pino's autoLogging produces it.
  *
  * Route-specific interceptors:
  * - CacheInterceptor: Applied to static endpoints (divisions)

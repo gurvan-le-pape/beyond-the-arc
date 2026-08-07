@@ -36,9 +36,11 @@ import {
  * Controller handling club-related endpoints.
  * Provides access to club statistics, filtering, and detailed information.
  *
- * Global interceptors (applied in module):
- * - LoggingInterceptor: Logs all requests/responses
+ * Global interceptors (registered in app.module.ts):
  * - TransformInterceptor: Wraps responses in standard format
+ * - HttpMetricsInterceptor: Records the Prometheus request metrics
+ *
+ * Request logging is not an interceptor — nestjs-pino's autoLogging produces it.
  *
  * Route-specific interceptors:
  * - CacheInterceptor: Applied to static/slow-changing endpoints

@@ -27,9 +27,11 @@ import { PoolsService } from "./pools.service";
  * Controller handling pool-related endpoints.
  * Provides access to pool data by championship and by ID.
  *
- * Global interceptors (applied in main.ts):
- * - LoggingInterceptor: Logs all requests/responses
+ * Global interceptors (registered in app.module.ts):
  * - TransformInterceptor: Wraps responses in standard format
+ * - HttpMetricsInterceptor: Records the Prometheus request metrics
+ *
+ * Request logging is not an interceptor — nestjs-pino's autoLogging produces it.
  *
  * Route-specific interceptors:
  * - CacheInterceptor: Applied to pool list endpoint (moderate caching)

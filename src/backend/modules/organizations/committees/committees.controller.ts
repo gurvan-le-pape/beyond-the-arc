@@ -27,9 +27,11 @@ import { CommitteeResponseDto } from "./dto/committees.response.dto";
  * Controller handling committee-related endpoints.
  * Provides access to departmental committees and their information.
  *
- * Global interceptors (applied in main.ts):
- * - LoggingInterceptor: Logs all requests/responses
+ * Global interceptors (registered in app.module.ts):
  * - TransformInterceptor: Wraps responses in standard format
+ * - HttpMetricsInterceptor: Records the Prometheus request metrics
+ *
+ * Request logging is not an interceptor — nestjs-pino's autoLogging produces it.
  *
  * Route-specific interceptors:
  * - CacheInterceptor: Applied to list endpoints

@@ -14,7 +14,7 @@ import { LeaguesService } from "./leagues.service";
  * - Retrieve league details by ID
  *
  * Architecture:
- * - Global interceptors/filters are registered in main.ts, NOT here
+ * - Global interceptors/filters are registered in app.module.ts, NOT here
  * - CacheInterceptor: Per-route caching (applied in controller with @UseInterceptors)
  */
 @Module({

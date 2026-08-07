@@ -80,9 +80,14 @@ export interface ApiResponse<T> {
  * }
  * ```
  *
+ * Applied globally in app.module.ts. It must be registered as a provider
+ * rather than with `useGlobalInterceptors(new TransformInterceptor())`: the
+ * constructor takes a Reflector, so a hand-built instance throws on the first
+ * request. Registering it through APP_INTERCEPTOR is what injects one.
+ *
  * @example
- * // Apply globally in main.ts
- * app.useGlobalInterceptors(new TransformInterceptor());
+ * // app.module.ts
+ * providers: [{ provide: APP_INTERCEPTOR, useClass: TransformInterceptor }]
  *
  * @example
  * // Apply to specific controller
