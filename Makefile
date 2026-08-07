@@ -43,27 +43,27 @@ psql:
 
 # Run frontend in dev mode
 dev-frontend:
-	docker compose exec frontend npm run dev
+	docker compose -f $(DOCKER_COMPOSE) $(ENV_FILE) exec frontend npm run dev
 
 # Build frontend (production)
 build-frontend:
-	docker compose exec frontend npm run build
+	docker compose -f $(DOCKER_COMPOSE) $(ENV_FILE) exec frontend npm run build
 
 # Start frontend (production)
 start-frontend:
-	docker compose exec frontend npm run start
+	docker compose -f $(DOCKER_COMPOSE) $(ENV_FILE) exec frontend npm run start
 
 # Run backend in dev mode
 dev-backend:
-	docker compose exec backend npm run start:dev
+	docker compose -f $(DOCKER_COMPOSE) $(ENV_FILE) exec backend npm run start:dev
 
 # Build backend (production)
 build-backend:
-	docker compose exec backend npm run build
+	docker compose -f $(DOCKER_COMPOSE) $(ENV_FILE) exec backend npm run build
 
 # Start backend (production)
 start-backend:
-	docker compose exec backend npm run start
+	docker compose -f $(DOCKER_COMPOSE) $(ENV_FILE) exec backend npm run start
 
 # Start SonarQube
 sonar-up:
