@@ -618,8 +618,6 @@ describe("ClubsService", () => {
           name: "Jean Dupont",
           phone: "0123456789",
           email: "jean@club.com",
-          address: null,
-          code: null,
         },
         teams: [],
       });
@@ -631,8 +629,6 @@ describe("ClubsService", () => {
         name: "Jean Dupont",
         phone: "0123456789",
         email: "jean@club.com",
-        address: null,
-        code: null,
       });
     });
 

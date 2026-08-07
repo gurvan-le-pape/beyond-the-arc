@@ -977,16 +977,6 @@ export interface components {
              * @example president@ligue-bretagne.fr
              */
             email: string | null;
-            /**
-             * @description President address
-             * @example 1 rue de la Ligue, 35000 Rennes
-             */
-            address: string | null;
-            /**
-             * @description President code
-             * @example PRE-001
-             */
-            code: string | null;
         };
         ClubDetailedResponseDto: {
             /**

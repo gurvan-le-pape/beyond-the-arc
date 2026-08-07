@@ -53,8 +53,6 @@ describe("CommitteesService", () => {
         name: true,
         phone: true,
         email: true,
-        address: true,
-        code: true,
       },
     },
     department: {
