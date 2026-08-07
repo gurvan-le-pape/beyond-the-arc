@@ -1,16 +1,16 @@
 // src/frontend/features/charts/components/headers/HeatmapHeader.tsx
 import React from "react";
 
-import type { ShotFilter } from "../../constants";
+import type { ColorScaleName, ShotFilter } from "../../constants";
 import HeatmapFilterBar from "../filters/HeatmapFilterBar";
 import HeatmapLegend from "../legends/HeatmapLegend";
 
 interface HeatmapHeaderProps {
   shotFilter: ShotFilter;
   setShotFilter: (f: ShotFilter) => void;
-  colorScale: string;
-  setColorScale: (s: string) => void;
-  colorScaleOptions: string[];
+  colorScale: ColorScaleName;
+  setColorScale: (s: ColorScaleName) => void;
+  colorScaleOptions: readonly ColorScaleName[];
   maxValue: number;
   colorScaleFn: (t: number) => string;
 }

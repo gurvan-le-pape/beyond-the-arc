@@ -1,12 +1,13 @@
 // src/frontend/features/charts/components/headers/HotspotsHeader.tsx
 import React from "react";
 
+import type { ColorScaleName } from "../../constants";
 import HeatmapLegend from "../legends/HeatmapLegend";
 
 interface HotspotsHeaderProps {
-  colorScale: string;
-  setColorScale: (s: string) => void;
-  colorScaleOptions: string[];
+  colorScale: ColorScaleName;
+  setColorScale: (s: ColorScaleName) => void;
+  colorScaleOptions: readonly ColorScaleName[];
   maxValue: number;
   colorScaleFn: (t: number) => string;
 }
