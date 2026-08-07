@@ -64,8 +64,6 @@ describe("LeaguesService", () => {
         name: true,
         phone: true,
         email: true,
-        address: true,
-        code: true,
       },
     },
     region: {

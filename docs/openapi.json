@@ -3390,27 +3390,13 @@
             "nullable": true,
             "description": "President email address",
             "example": "president@ligue-bretagne.fr"
-          },
-          "address": {
-            "type": "string",
-            "nullable": true,
-            "description": "President address",
-            "example": "1 rue de la Ligue, 35000 Rennes"
-          },
-          "code": {
-            "type": "string",
-            "nullable": true,
-            "description": "President code",
-            "example": "PRE-001"
           }
         },
         "required": [
           "id",
           "name",
           "phone",
-          "email",
-          "address",
-          "code"
+          "email"
         ]
       },
       "ClubDetailedResponseDto": {

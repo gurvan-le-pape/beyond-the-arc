@@ -31,20 +31,4 @@ export class PresidentResponseDto {
     nullable: true,
   })
   email!: string | null;
-
-  @ApiProperty({
-    description: "President address",
-    example: "1 rue de la Ligue, 35000 Rennes",
-    type: String,
-    nullable: true,
-  })
-  address!: string | null;
-
-  @ApiProperty({
-    description: "President code",
-    example: "PRE-001",
-    type: String,
-    nullable: true,
-  })
-  code!: string | null;
 }
