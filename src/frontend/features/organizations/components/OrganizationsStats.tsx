@@ -1,19 +1,24 @@
 // src/frontend/features/organizations/components/OrganizationsStats.tsx
 import { getLocale, getTranslations } from "next-intl/server";
 
+import type { OrganizationCounts } from "@/features/organizations/types";
 import { Text } from "@/shared/components/typography";
 
 const STATS = [
-  { labelKey: "leagues.label", value: 112, color: "text-regional-strong" },
+  { key: "leagues", labelKey: "leagues.label", color: "text-regional-strong" },
   {
+    key: "committees",
     labelKey: "committees.label",
-    value: 25,
     color: "text-departmental-strong",
   },
-  { labelKey: "clubs.label", value: 3883, color: "text-clubs-strong" },
+  { key: "clubs", labelKey: "clubs.label", color: "text-clubs-strong" },
 ] as const;
 
-export async function OrganizationsStats() {
+interface OrganizationsStatsProps {
+  readonly counts: OrganizationCounts;
+}
+
+export async function OrganizationsStats({ counts }: OrganizationsStatsProps) {
   const t = await getTranslations("organizations");
   const locale = await getLocale();
 
@@ -23,7 +28,7 @@ export async function OrganizationsStats() {
         <div key={stat.labelKey} className="flex items-center gap-6">
           <div className="text-center">
             <Text variant="h2" as="p" className={stat.color}>
-              {stat.value.toLocaleString(locale)}
+              {counts[stat.key].toLocaleString(locale)}
             </Text>
             <Text variant="overline">{t(stat.labelKey)}</Text>
           </div>

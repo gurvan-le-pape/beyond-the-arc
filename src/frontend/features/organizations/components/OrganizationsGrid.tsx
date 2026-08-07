@@ -2,6 +2,7 @@
 import { Building2, MapPin, Users } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
+import type { OrganizationCounts } from "@/features/organizations/types";
 import { OrganizationType } from "@/shared/constants";
 
 import type { OrgType } from "./OrganizationTypeCard";
@@ -10,31 +11,35 @@ import { OrganizationTypeCard } from "./OrganizationTypeCard";
 const ORG_TYPE_CONFIG = [
   {
     id: OrganizationType.LEAGUES,
+    countKey: "leagues",
     labelKey: "leagues.label",
     descriptionKey: "leagues.description",
     icon: <MapPin aria-hidden focusable={false} />,
     href: `/organizations/${OrganizationType.LEAGUES}`,
-    count: 112,
   },
   {
     id: OrganizationType.COMMITTEES,
+    countKey: "committees",
     labelKey: "committees.label",
     descriptionKey: "committees.description",
     icon: <Building2 aria-hidden focusable={false} />,
     href: `/organizations/${OrganizationType.COMMITTEES}`,
-    count: 25,
   },
   {
     id: OrganizationType.CLUBS,
+    countKey: "clubs",
     labelKey: "clubs.label",
     descriptionKey: "clubs.description",
     icon: <Users aria-hidden focusable={false} />,
     href: `/organizations/${OrganizationType.CLUBS}`,
-    count: 3883,
   },
 ] as const;
 
-export async function OrganizationsGrid() {
+interface OrganizationsGridProps {
+  readonly counts: OrganizationCounts;
+}
+
+export async function OrganizationsGrid({ counts }: OrganizationsGridProps) {
   const t = await getTranslations("organizations");
 
   const types: OrgType[] = ORG_TYPE_CONFIG.map((org) => ({
@@ -43,7 +48,7 @@ export async function OrganizationsGrid() {
     href: org.href,
     label: t(org.labelKey),
     description: t(org.descriptionKey),
-    count: org.count,
+    count: counts[org.countKey],
   }));
 
   return (
