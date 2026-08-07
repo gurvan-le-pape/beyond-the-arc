@@ -38,7 +38,7 @@ npm run typecheck                   # tsc --noEmit
 npm run build
 ```
 
-Root-level `npm run barrels` (or `make barrels`) regenerates barrel `index.ts` files via barrelsby — needed after adding new files to directories listed in the barrel-enforcing eslint rule (see below). It chains `barrels:lint` (`eslint --fix` over the frontend barrels) because barrelsby writes its own `@file` banner and drops the `// src/frontend/...` path comment; `make barrels-watch` is the watch-mode variant and leaves that fix to be run by hand.
+Root-level `npm run barrels` (or `make barrels`) regenerates barrel `index.ts` files via barrelsby — needed after adding new files to directories listed in the barrel-enforcing eslint rule (see below). It chains `barrels:lint` (`eslint --fix` over the frontend barrels) because barrelsby writes its own `@file` banner and drops the `// src/frontend/...` path comment. Regeneration is one-shot: barrelsby 2.8.1 ships no watch mode.
 
 Composite component folders (an `index.tsx` root plus internal files) must be added to `exclude` in `barrelsby.json`, or barrelsby flattens them into the parent barrel and re-exports their internals — which is how a duplicate export can break the build.
 

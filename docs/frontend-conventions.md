@@ -56,7 +56,7 @@ A file must not mix the two: a file importing the generated `components` type ma
 
 ## Barrels
 
-- Barrel directories are defined once in the root `barrelsby.json`; the `enforce-barrel-import` ESLint rule derives its directory list from it, so the two can't drift. Regenerate barrels with `make barrels` / `npm run barrels:watch` after adding files.
+- Barrel directories are defined once in the root `barrelsby.json`; the `enforce-barrel-import` ESLint rule derives its directory list from it, so the two can't drift. Regenerate barrels with `make barrels` / `npm run barrels` after adding files.
 - Barrels are **curated**: they export page-consumed components and shared-layer artifacts. Composite-folder internals are excluded from barrel generation (exclusion patterns in `barrelsby.json`) and blocked from direct import by the `no-cross-composite-import` rule.
 
 ## Naming
