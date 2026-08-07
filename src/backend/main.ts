@@ -46,6 +46,11 @@ async function bootstrap() {
     }),
   );
 
+  // Without this Nest registers no signal listeners at all, so the SIGTERM
+  // every `docker compose up -d` sends kills the process outright:
+  // PrismaService.onModuleDestroy never runs and in-flight requests are cut.
+  app.enableShutdownHooks();
+
   await app.listen(process.env.PORT || 4000);
 }
 
