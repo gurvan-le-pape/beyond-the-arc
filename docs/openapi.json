@@ -5125,8 +5125,9 @@
           },
           "birthdate": {
             "type": "string",
-            "description": "Player birthdate",
-            "example": "2000-06-15"
+            "description": "Player birthdate, as a calendar date with no time",
+            "example": "2000-06-15",
+            "format": "date"
           },
           "teamId": {
             "type": "number",

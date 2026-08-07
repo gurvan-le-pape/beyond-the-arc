@@ -182,11 +182,12 @@ export class PlayerResponseDto {
   weightKg!: number;
 
   @ApiProperty({
-    description: "Player birthdate",
+    description: "Player birthdate, as a calendar date with no time",
     example: "2000-06-15",
     type: String,
+    format: "date",
   })
-  birthdate!: Date;
+  birthdate!: string;
 
   @ApiProperty({
     description: "Team ID this player belongs to",

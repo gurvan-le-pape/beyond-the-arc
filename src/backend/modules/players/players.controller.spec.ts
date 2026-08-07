@@ -79,7 +79,7 @@ describe("PlayersController", () => {
             position: "PG",
             heightCm: 185,
             weightKg: 80,
-            birthdate: new Date("2000-06-15"),
+            birthdate: "2000-06-15",
             teamId: 1,
             team: {
               id: 1,
@@ -259,7 +259,7 @@ describe("PlayersController", () => {
         position: "PG",
         heightCm: 185,
         weightKg: 80,
-        birthdate: new Date("2000-06-15"),
+        birthdate: "2000-06-15",
         teamId: 1,
         team: {
           id: 1,
@@ -314,7 +314,7 @@ describe("PlayersController", () => {
         position: "C",
         heightCm: 210,
         weightKg: 110,
-        birthdate: new Date("1998-03-22"),
+        birthdate: "1998-03-22",
         teamId: 1,
         team: {} as any,
       };
