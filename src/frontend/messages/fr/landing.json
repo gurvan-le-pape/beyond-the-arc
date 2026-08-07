@@ -97,7 +97,7 @@
     "subtitle": "Découvrez les fonctionnalités puissantes qui rendent cette plateforme de basketball complète et conviviale",
     "leaderboards": {
       "title": "Classements",
-      "description": "Classements en temps réel pour tous les niveaux de compétition."
+      "description": "Classements pour tous les niveaux de compétition, mis à jour au fil des résultats."
     },
     "matchSummary": {
       "title": "Résumé de Match Détaillé",
@@ -158,7 +158,7 @@
   },
   "docs": {
     "title": "Documentation",
-    "intro": "Documentation complète couvrant l'installation, l'architecture, la référence API et les directives de contribution.",
+    "intro": "Documentation couvrant l'installation, le modèle de données, la structure du projet et la référence de l'API.",
     "reset": "Réinitialiser",
     "quickLinks": {
       "github": "Dépôt GitHub",
@@ -205,13 +205,12 @@
     },
     "structure": {
       "backend": "Structure Backend (NestJS)",
-      "backendCode": "modules/\n  competitions/\n    championships/\n    leaderboards/\n    pools/\n  geography/\n  health/\n  matches/\n  organizations/\n    clubs/\n    committees/\n    leagues/\n  players/\n  stats/\n  teams/\ncommon/              # Utilitaires partagés, intercepteurs, décorateurs\nconfig/              # Configuration\nprisma/              # Service Prisma\n",
+      "backendCode": "modules/\n  competitions/\n    championships/\n    leaderboards/\n    pools/\n  health/\n  matches/\n  organizations/\n    clubs/\n    committees/\n    leagues/\n  players/\n  stats/\n  teams/\ncommon/              # Shared utilities, interceptors, decorators\nprisma/              # Prisma service, schema, migrations\n",
       "backendModulesExplanation": "Modules de fonctionnalités (competitions, geography, matches, organizations, players, stats, teams) chacun avec son propre contrôleur, service et DTOs.",
       "backendCommonExplanation": "Utilitaires partagés incluant constantes, décorateurs, filtres, intercepteurs, pipes et DTOs utilisés dans tous les modules.",
-      "backendConfigExplanation": "Configuration de l'application et paramétrage de l'environnement.",
       "backendPrismaExplanation": "Service Prisma, schéma et migrations de base de données.",
       "frontend": "Structure Frontend (Next.js)",
-      "frontendCode": "app/                    # Next.js App Router (routage, layouts, pages)\n  [locale]/\n    (public)/           # Routes publiques\n      championships/\n      map/\n      matches/\n      organizations/\n        clubs/\n        committees/\n        leagues/\n      players/\n      search/\n      teams/\n    architecture/\n    about/\n    contact/\n    docs/\n    features/\nfeatures/               # Modules de fonctionnalités\n  competitions/\n    championships/\n    leaderboards/\n    pools/\n  geography/\n  matches/\n  organizations/\n    clubs/\n    committees/\n    leagues/\n  players/\n  search/\n  site/\n    architecture/\n    contact/\n    docs/\n  stats/\n  teams/\nshared/                 # Composants, hooks, utils, types partagés\nlib/                    # Intégrations externes, providers, clients API\nstyles/                 # Styles globaux et thèmes\npublic/                 # Fichiers statiques\n",
+      "frontendCode": "app/                    # Next.js App Router (routing, layouts, pages)\n  [locale]/\n    (chrome)/             # Pages with the site header and footer\n      (public)/\n        championships/\n        matches/\n        organizations/\n          clubs/\n          committees/\n          leagues/\n        players/\n        search/\n        teams/\n      about/\n      architecture/\n      contact/\n      docs/\n      features/\n    (fullscreen)/         # Pages without the chrome\n      map/\nfeatures/               # Feature modules\n  charts/\n  competitions/\n    championships/\n    leaderboards/\n    pools/\n  geography/\n  matches/\n  organizations/\n    clubs/\n    committees/\n    leagues/\n  players/\n  search/\n  site/\n    architecture/\n    contact/\n    docs/\n  stats/\n  teams/\nshared/                 # Shared components, hooks, utils, types\nlib/                    # External integrations, providers, API clients\nstyles/                 # Global styles and themes\npublic/                 # Static assets\n",
       "routingExplanation": "Tout le routage est géré dans app/ en utilisant les conventions Next.js App Router.",
       "featurePrinciple": "Chaque fonctionnalité (ex : 'clubs') possède ses propres components, hooks, api, utils, constants, types et index.ts pour la modularité.",
       "sharedExplanation": "Le code réutilisable (components, hooks, utils, types) se trouve dans shared/.",
@@ -222,7 +221,7 @@
     "bestPractices": {
       "modular": "Architecture modulaire avec principes de conception pilotée par le domaine",
       "typeScript": "Développement type-safe avec TypeScript sur toute la pile",
-      "testing": "Tests unitaires et d'intégration complets avec Jest",
+      "testing": "Modules backend testés unitairement avec Jest",
       "documentation": "Documentation inline claire et spécifications API",
       "gitWorkflow": "Workflow Git avec branches de fonctionnalités et pull requests",
       "codeReview": "Processus de revue de code garantissant qualité et cohérence"
