@@ -1,8 +1,7 @@
 {
   "scripts": {
     "barrels": "barrelsby --config ./barrelsby.json && npm run barrels:lint",
-    "barrels:lint": "cd src/frontend && npx eslint --fix '**/index.ts'",
-    "barrels:watch": "barrelsby --config ./barrelsby.json --watch"
+    "barrels:lint": "cd src/frontend && npx eslint --fix '**/index.ts'"
   },
   "devDependencies": {
     "barrelsby": "^2.8.1",
