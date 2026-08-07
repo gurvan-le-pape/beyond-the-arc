@@ -16,7 +16,11 @@ groups:
             datasourceUid: PBFA97CFB590B2093
             model:
               editorMode: code
-              expr: up{job="backend"} == 0
+              # Not `== 0`: a comparison in PromQL filters, so a healthy
+              # backend returns an empty vector and the rule reads NoData
+              # instead of OK. Query the gauge and let the threshold below
+              # decide.
+              expr: up{job="backend"}
               instant: true
               intervalMs: 1000
               legendFormat: __auto
@@ -30,8 +34,8 @@ groups:
               conditions:
                 - evaluator:
                     params:
-                      - 0
-                    type: gt
+                      - 1
+                    type: lt
                   operator:
                     type: and
                   query:
@@ -49,7 +53,10 @@ groups:
               maxDataPoints: 43200
               refId: C
               type: threshold
-        noDataState: NoData
+        # No `up` series at all means Prometheus has lost the target or is
+        # itself down — we cannot tell whether the backend is serving, which
+        # is the condition this rule exists to report.
+        noDataState: Alerting
         execErrState: Error
         for: 2m
         annotations:
@@ -102,7 +109,9 @@ groups:
               maxDataPoints: 43200
               refId: C
               type: threshold
-        noDataState: NoData
+        # The 5xx selector matches nothing until a 5xx has been served, so an
+        # empty result means "no errors", not "cannot tell".
+        noDataState: OK
         execErrState: Error
         for: 5m
         annotations:
@@ -154,7 +163,9 @@ groups:
               maxDataPoints: 43200
               refId: C
               type: threshold
-        noDataState: NoData
+        # A backend with no traffic in the window has no histogram to take a
+        # quantile of. That is not a latency incident.
+        noDataState: OK
         execErrState: Error
         for: 5m
         annotations:
@@ -206,7 +217,10 @@ groups:
               maxDataPoints: 43200
               refId: C
               type: threshold
-        noDataState: NoData
+        # Absent process metrics mean the process is gone, which is Service
+        # Down's alert to raise — reporting it twice under two names is how
+        # the mailbox stops being read.
+        noDataState: OK
         execErrState: Error
         for: 10m
         annotations:
@@ -258,7 +272,10 @@ groups:
               maxDataPoints: 43200
               refId: C
               type: threshold
-        noDataState: NoData
+        # Losing node-exporter means losing disk visibility entirely, and a
+        # full disk is what took this host down in 2026-07. Silence is the
+        # wrong default here.
+        noDataState: Alerting
         execErrState: Error
         for: 5m
         annotations:
