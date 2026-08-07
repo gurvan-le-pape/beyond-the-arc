@@ -17,6 +17,10 @@ CMD ["npm", "run", "start:dev"]
 # before backend/scheduler start.
 FROM base AS migrate
 COPY src/backend/prisma.config.ts ./
+# Holds DATABASE_URL and is one of only two writers to the database, so it
+# runs unprivileged like the prod stage. migrate deploy only reads the image
+# and writes to Postgres.
+USER node
 CMD ["npx", "prisma", "migrate", "deploy"]
 
 FROM base AS build
