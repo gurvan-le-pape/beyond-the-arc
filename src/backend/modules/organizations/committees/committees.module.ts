@@ -16,7 +16,7 @@ import { CommitteesService } from "./committees.service";
  * - Includes department information
  *
  * Architecture:
- * - Global interceptors/filters are registered in main.ts, NOT here
+ * - Global interceptors/filters are registered in app.module.ts, NOT here
  * - CacheInterceptor: Per-route caching (applied in controller with @UseInterceptors)
  */
 @Module({

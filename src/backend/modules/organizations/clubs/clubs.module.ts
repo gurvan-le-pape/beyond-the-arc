@@ -15,9 +15,8 @@ import { ClubsService } from "./clubs.service";
  * - Detailed club information with teams
  *
  * Architecture:
- * - LoggingInterceptor: Logs all requests/responses (from common/)
- * - TransformInterceptor: Wraps responses in standard format (from common/)
- * - AllExceptionsFilter: Global error handling (from common/)
+ * - Global interceptors/filters (TransformInterceptor, HttpMetricsInterceptor,
+ *   AllExceptionsFilter) are registered in app.module.ts, NOT here
  * - CacheInterceptor: Per-route caching (applied in controller with @UseInterceptors)
  */
 @Module({
