@@ -1,5 +1,5 @@
 // src/frontend/features/organizations/components/OrganizationsStats.tsx
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 
 import { Text } from "@/shared/components/typography";
 
@@ -15,6 +15,7 @@ const STATS = [
 
 export async function OrganizationsStats() {
   const t = await getTranslations("organizations");
+  const locale = await getLocale();
 
   return (
     <div className="flex items-center justify-center gap-6">
@@ -22,7 +23,7 @@ export async function OrganizationsStats() {
         <div key={stat.labelKey} className="flex items-center gap-6">
           <div className="text-center">
             <Text variant="h2" as="p" className={stat.color}>
-              {stat.value.toLocaleString()}
+              {stat.value.toLocaleString(locale)}
             </Text>
             <Text variant="overline">{t(stat.labelKey)}</Text>
           </div>
