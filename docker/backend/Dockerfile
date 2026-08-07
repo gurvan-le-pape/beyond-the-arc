@@ -1,5 +1,8 @@
 FROM node:24-alpine AS base
 WORKDIR /app
+# Every container runs on UTC. Date logic must not depend on where the
+# host happens to be — see .claude/rules/dates-and-timezones.md.
+ENV TZ=UTC
 COPY src/backend/package*.json ./
 COPY src/backend/prisma ./prisma
 RUN npm ci --prefer-offline --no-audit --progress=false && npx prisma generate
@@ -25,6 +28,9 @@ RUN npm run build
 # runs under plain node.
 FROM node:24-alpine AS prod
 WORKDIR /app
+# Every container runs on UTC. Date logic must not depend on where the
+# host happens to be — see .claude/rules/dates-and-timezones.md.
+ENV TZ=UTC
 ENV NODE_ENV=production
 COPY src/backend/package*.json ./
 # Prisma 7's @prisma/client declares the full CLI toolchain (prisma, Studio,

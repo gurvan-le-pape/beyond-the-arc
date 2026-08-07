@@ -13,6 +13,10 @@ COPY ./src/backend/db/python /app/db/python
 # Install Python dependencies
 RUN pip install --no-cache-dir -r /app/db/python/requirements.txt
 
+# Every container runs on UTC. Date logic must not depend on where the
+# host happens to be — see .claude/rules/dates-and-timezones.md.
+ENV TZ=UTC
+
 # Set PYTHONPATH so all package imports resolve from the python root
 ENV PYTHONPATH=/app/db/python
 

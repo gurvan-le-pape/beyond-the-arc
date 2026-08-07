@@ -1,5 +1,8 @@
 FROM node:24-alpine AS base
 WORKDIR /app
+# Every container runs on UTC. Date logic must not depend on where the
+# host happens to be — see .claude/rules/dates-and-timezones.md.
+ENV TZ=UTC
 COPY src/frontend/package*.json ./
 RUN npm ci --prefer-offline --no-audit --progress=false
 
@@ -27,6 +30,9 @@ RUN --mount=type=secret,id=sentry_auth_token \
 # are not included in the standalone folder and must be copied explicitly.
 FROM node:24-alpine AS prod
 WORKDIR /app
+# Every container runs on UTC. Date logic must not depend on where the
+# host happens to be — see .claude/rules/dates-and-timezones.md.
+ENV TZ=UTC
 ENV NODE_ENV=production
 # Next's standalone server binds to localhost unless HOSTNAME is set; inside
 # a container it must listen on all interfaces to be reachable.
