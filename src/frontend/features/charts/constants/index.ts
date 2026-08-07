@@ -4,4 +4,5 @@
  */
 
 export * from "./chartTypes";
+export * from "./colorScales";
 export * from "./courtConstants";

@@ -6,10 +6,14 @@ import React, { useMemo, useState } from "react";
 
 import type { MatchEvent } from "@/features/matches/types";
 
+import type { ColorScaleName } from "../constants";
 import {
   BASELINE_TO_RIM,
   ChartType,
+  COLOR_SCALE_LIST,
+  COLOR_SCALES,
   COURT_WIDTH,
+  DEFAULT_COLOR_SCALE,
   FREE_THROW_LINE_DIST,
   HALF_COURT_HEIGHT,
   NO_CHARGE_LINE_DIST,
@@ -40,16 +44,6 @@ interface ShotChartProps {
   matchEvents: MatchEvent[];
   chartType?: ChartType;
 }
-
-type ColorScaleName = "YlOrRd" | "Viridis" | "Inferno" | "Cividis" | "Turbo";
-
-const COLOR_SCALES: { [key in ColorScaleName]: (t: number) => string } = {
-  YlOrRd: d3.interpolateYlOrRd,
-  Viridis: d3.interpolateViridis,
-  Inferno: d3.interpolateInferno,
-  Cividis: d3.interpolateCividis,
-  Turbo: d3.interpolateTurbo,
-};
 
 // Derived from actual FIBA constants — not hardcoded magic numbers
 const ASPECT = COURT_WIDTH / HALF_COURT_HEIGHT;
@@ -92,7 +86,8 @@ export const ShotChart: React.FC<ShotChartProps> = ({
   }, []);
 
   const [shotFilter, setShotFilter] = useState<ShotFilter>(ShotFilter.ALL);
-  const [colorScale, setColorScale] = useState<ColorScaleName>("YlOrRd");
+  const [colorScale, setColorScale] =
+    useState<ColorScaleName>(DEFAULT_COLOR_SCALE);
 
   // Separate max value for hotspots — fed back from HotspotsOverlay's zone binning,
   // which is more accurate than the heatmap grid binning used for maxValue below.
@@ -165,8 +160,8 @@ export const ShotChart: React.FC<ShotChartProps> = ({
               shotFilter={shotFilter}
               setShotFilter={setShotFilter}
               colorScale={colorScale}
-              setColorScale={(s) => setColorScale(s as ColorScaleName)}
-              colorScaleOptions={Object.keys(COLOR_SCALES)}
+              setColorScale={setColorScale}
+              colorScaleOptions={COLOR_SCALE_LIST}
               maxValue={maxValue}
               colorScaleFn={COLOR_SCALES[colorScale]}
             />
@@ -174,8 +169,8 @@ export const ShotChart: React.FC<ShotChartProps> = ({
           {chartType === ChartType.HOTSPOTS && (
             <HotspotsHeader
               colorScale={colorScale}
-              setColorScale={(s) => setColorScale(s as ColorScaleName)}
-              colorScaleOptions={Object.keys(COLOR_SCALES)}
+              setColorScale={setColorScale}
+              colorScaleOptions={COLOR_SCALE_LIST}
               maxValue={hotspotsMaxValue}
               colorScaleFn={COLOR_SCALES[colorScale]}
             />

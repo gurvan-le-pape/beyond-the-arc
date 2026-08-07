@@ -1,31 +1,26 @@
 // src/frontend/features/charts/components/legends/HeatmapLegend.tsx
-import * as d3 from "d3";
 import { useTranslations } from "next-intl";
 import React from "react";
 
 import { Text } from "@/shared/components/typography";
 
+import type { ColorScaleName } from "../../constants";
+import { COLOR_SCALES, DEFAULT_COLOR_SCALE } from "../../constants";
+
 interface HeatmapLegendProps {
   maxValue: number;
   colorScale?: (t: number) => string;
   compact?: boolean;
-  colorScaleName?: string;
-  setColorScale?: (s: string) => void;
-  colorScaleOptions?: string[];
+  colorScaleName?: ColorScaleName;
+  setColorScale?: (s: ColorScaleName) => void;
+  colorScaleOptions?: readonly ColorScaleName[];
 }
 
 const GRADIENT_STEPS = 32;
 
-function buildGradient(scaleName: string): string {
-  const interpKey = `interpolate${
-    scaleName.charAt(0).toUpperCase() + scaleName.slice(1)
-  }`;
-  const fn = (d3 as Record<string, unknown>)[interpKey] as
-    | ((t: number) => string)
-    | undefined;
-  const interp = fn ?? d3.interpolateYlOrRd;
+function buildGradient(interpolate: (t: number) => string): string {
   return Array.from({ length: GRADIENT_STEPS }, (_, i) =>
-    interp(i / (GRADIENT_STEPS - 1)),
+    interpolate(i / (GRADIENT_STEPS - 1)),
   ).join(",");
 }
 
@@ -40,15 +35,18 @@ export const HeatmapLegend: React.FC<HeatmapLegendProps> = ({
   const t = useTranslations("common");
   const midValue = Math.round(maxValue / 2);
 
-  const activeGradient = React.useMemo(() => {
-    if (colorScaleName) return buildGradient(colorScaleName);
-    if (colorScale) {
-      return Array.from({ length: GRADIENT_STEPS }, (_, i) =>
-        colorScale(i / (GRADIENT_STEPS - 1)),
-      ).join(",");
-    }
-    return buildGradient("YlOrRd");
-  }, [colorScaleName, colorScale]);
+  // `colorScale` first: both call sites already pass the resolved interpolator
+  // alongside its name, so preferring the name here would recompute what is
+  // sitting unread in props.
+  const activeGradient = React.useMemo(
+    () =>
+      buildGradient(
+        colorScale ??
+          COLOR_SCALES[colorScaleName ?? DEFAULT_COLOR_SCALE] ??
+          COLOR_SCALES[DEFAULT_COLOR_SCALE],
+      ),
+    [colorScale, colorScaleName],
+  );
 
   return (
     <div className={`flex flex-col gap-3 w-full ${compact ? "" : "max-w-sm"}`}>
@@ -83,7 +81,7 @@ export const HeatmapLegend: React.FC<HeatmapLegendProps> = ({
           </Text>
           <div className="flex flex-row gap-1.5 flex-wrap">
             {colorScaleOptions.map((scale) => {
-              const gradient = buildGradient(scale);
+              const gradient = buildGradient(COLOR_SCALES[scale]);
               const isActive = colorScaleName === scale;
               return (
                 <button
