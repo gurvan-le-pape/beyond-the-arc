@@ -18,12 +18,22 @@ export const DebouncedInput = ({
   ...props
 }: DebouncedInputProps) => {
   const [localValue, setLocalValue] = useState(externalValue ?? "");
+  const [lastExternalValue, setLastExternalValue] = useState(externalValue);
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  // Sync local value when external value changes (e.g. filter reset)
-  useEffect(() => {
+  // Adjust during render rather than in an effect. An effect that only sets
+  // state from a prop is a computed value in disguise, and it also renders
+  // once with the stale value first.
+  //
+  // Cancelling the pending timer here is the part that matters: without it,
+  // "Reset all" blanked the box and the timer armed a moment earlier still
+  // fired, calling onChange with the pre-reset text ~400 ms later — so the
+  // filter the user had just cleared re-applied itself.
+  if (externalValue !== lastExternalValue) {
+    setLastExternalValue(externalValue);
     setLocalValue(externalValue ?? "");
-  }, [externalValue]);
+    clearTimeout(timeoutRef.current);
+  }
 
   // Cleanup on unmount
   useEffect(() => {
