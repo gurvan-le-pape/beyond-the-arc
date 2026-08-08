@@ -1,9 +1,9 @@
 // src/backend/modules/matches/dto/matches.query.dto.ts
-import { CompetitionLevel } from "@common/constants";
+import { CompetitionLevel, MAX_SEARCH_LENGTH } from "@common/constants";
 import { Category, Gender, PaginationQueryDto } from "@common/index";
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsEnum, IsInt, IsOptional, IsString, Matches } from "class-validator";
+import { IsEnum, IsInt, IsOptional, IsString, Matches, MaxLength } from "class-validator";
 
 /**
  * Query parameters for filtering and paginating matches.
@@ -112,8 +112,10 @@ export class GetMatchesQueryDto extends PaginationQueryDto {
     description: "Search by club name (case-insensitive partial match)",
     example: "Paris",
     type: String,
+    maxLength: MAX_SEARCH_LENGTH,
   })
   @IsOptional()
   @IsString({ message: "search must be a string" })
+  @MaxLength(MAX_SEARCH_LENGTH)
   search?: string;
 }

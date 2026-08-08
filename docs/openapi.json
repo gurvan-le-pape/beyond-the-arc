@@ -216,6 +216,7 @@
             "description": "Page number",
             "schema": {
               "minimum": 1,
+              "maximum": 100000,
               "default": 1,
               "type": "number"
             }
@@ -301,6 +302,7 @@
             "in": "query",
             "description": "Search by club name (case-insensitive)",
             "schema": {
+              "maxLength": 100,
               "example": "Monaco",
               "type": "string"
             }
@@ -858,6 +860,7 @@
             "description": "Page number",
             "schema": {
               "minimum": 1,
+              "maximum": 100000,
               "default": 1,
               "type": "number"
             }
@@ -1322,6 +1325,7 @@
             "description": "Page number",
             "schema": {
               "minimum": 1,
+              "maximum": 100000,
               "default": 1,
               "type": "number"
             }
@@ -1460,6 +1464,7 @@
             "in": "query",
             "description": "Search by club name (case-insensitive)",
             "schema": {
+              "maxLength": 100,
               "example": "Paris",
               "type": "string"
             }
@@ -1758,6 +1763,7 @@
             "description": "Page number",
             "schema": {
               "minimum": 1,
+              "maximum": 100000,
               "default": 1,
               "type": "number"
             }
@@ -1884,6 +1890,7 @@
             "in": "query",
             "description": "Search by player name (case-insensitive)",
             "schema": {
+              "maxLength": 100,
               "example": "John",
               "type": "string"
             }
@@ -2256,6 +2263,7 @@
             "description": "Page number",
             "schema": {
               "minimum": 1,
+              "maximum": 100000,
               "default": 1,
               "type": "number"
             }
@@ -2375,6 +2383,7 @@
             "in": "query",
             "description": "Search by club name (case-insensitive partial match)",
             "schema": {
+              "maxLength": 100,
               "example": "Paris",
               "type": "string"
             }

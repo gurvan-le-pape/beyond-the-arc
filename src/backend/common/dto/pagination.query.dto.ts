@@ -1,5 +1,9 @@
 // src/backend/common/dto/pagination.query.dto.ts
-import { DEFAULT_PAGE_LIMIT, MAX_PAGE_LIMIT } from "@common/utils";
+import {
+  DEFAULT_PAGE_LIMIT,
+  MAX_PAGE_LIMIT,
+  MAX_PAGE_NUMBER,
+} from "@common/utils";
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsInt, IsOptional, Max, Min } from "class-validator";
@@ -16,12 +20,14 @@ export class PaginationQueryDto {
     description: "Page number",
     type: Number,
     minimum: 1,
+    maximum: MAX_PAGE_NUMBER,
     default: 1,
   })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(1)
+  @Max(MAX_PAGE_NUMBER)
   page?: number;
 
   @ApiPropertyOptional({

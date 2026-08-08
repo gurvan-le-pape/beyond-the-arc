@@ -1,9 +1,9 @@
 // src/backend/modules/players/dto/players.query.dto.ts
-import { CompetitionLevel } from "@common/constants";
+import { CompetitionLevel, MAX_SEARCH_LENGTH } from "@common/constants";
 import { Category, Gender, PaginationQueryDto } from "@common/index";
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsEnum, IsInt, IsOptional, IsString } from "class-validator";
+import { IsEnum, IsInt, IsOptional, IsString, MaxLength } from "class-validator";
 
 /**
  * Query parameters for filtering and paginating players.
@@ -100,8 +100,10 @@ export class GetPlayersQueryDto extends PaginationQueryDto {
     description: "Search by player name (case-insensitive partial match)",
     example: "John",
     type: String,
+    maxLength: MAX_SEARCH_LENGTH,
   })
   @IsOptional()
   @IsString()
+  @MaxLength(MAX_SEARCH_LENGTH)
   search?: string;
 }
