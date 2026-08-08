@@ -245,14 +245,16 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     const message = this.toLogMessage(exception, errorResponse);
 
-    // traceId is set by pinoHttp's genReqId and attached via customProps.
-    // It correlates this error log with all other logs in the same request
-    // chain, which is essential for reconstructing request history in Loki.
+    // No request id is added here on purpose. nestjs-pino binds the id from
+    // genReqId to the request's logger, so every line it emits — this one and
+    // pinoHttp's own completion line — already carries it as `req.id`. Adding a
+    // second name for the same value (this used to set `traceId`) meant a Loki
+    // query on one name found the error and missed the request record. One
+    // name: `{service="backend"} | json | req_id="…"` returns both.
     const logContext = {
       method,
       url,
       ip,
-      traceId: request.id ?? null,
       userAgent: headers["user-agent"] ?? "unknown",
       statusCode: errorResponse.statusCode,
       // Carried as a field, never interpolated into the message below: the
