@@ -206,7 +206,12 @@ export function TabsContent({
       // Focusable so the panel is reachable from the tab list even when its
       // own content has no focusable element, per the WAI-ARIA tabs pattern.
       tabIndex={0}
-      className={`animate-in fade-in-50 duration-200 ${className}`}
+      // animate-fade-in, not `animate-in fade-in-50`: those are
+      // tailwindcss-animate classes and that plugin is in neither manifest, so
+      // both were absent from the built CSS and the panel had no enter
+      // animation at all. duration-200 alone did nothing either — a transition
+      // duration with no transition and no animation.
+      className={`animate-fade-in ${className}`}
     >
       {children}
     </div>
