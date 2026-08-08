@@ -13,9 +13,16 @@ import { CompetitionLevel } from "@/shared/constants";
 import type { LocalePageProps } from "@/shared/types";
 import { handleServerError, parseRouteId } from "@/shared/utils";
 
-// No generateStaticParams: the image build has no backend to enumerate
-// committees against, so it could only ever return an empty list. Each page is
-// generated on first request instead and then cached for the revalidate window.
+// The image build has no backend to enumerate committees against, so this can
+// only ever return an empty list — but it has to be exported anyway. Upstream:
+// "You must always return an array from generateStaticParams, even if it's
+// empty. Otherwise, the route will be dynamically rendered." Without it the
+// `revalidate` below is dead config and every request runs a full server
+// render, which is what the four sibling detail routes avoid by doing this.
+export async function generateStaticParams() {
+  return [];
+}
+
 export const dynamicParams = true;
 export const revalidate = 3600;
 
