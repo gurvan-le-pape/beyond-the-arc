@@ -497,6 +497,12 @@ def main():
 
     TARGET_MIGRATION.write_text("\n".join(out), encoding="utf-8")
     print(f"Wrote {TARGET_MIGRATION} - `git diff` it, then verify with a fresh `prisma migrate deploy` before committing.")
+    print(
+        "This file has already been applied in production. `prisma migrate deploy` does not\n"
+        "checksum applied migrations, so it will report nothing pending and the refreshed data\n"
+        "will never reach an existing database. To land this: put [refresh-static-data] in the\n"
+        "PR title (CI blocks the edit otherwise) and the catch-up SQL in the PR body."
+    )
     print(f"presidents={len(presidents)} leagues={len(league_rows)} committees={len(committee_rows)} gyms={len(gyms)}")
 
 
