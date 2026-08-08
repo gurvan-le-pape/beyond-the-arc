@@ -32,7 +32,7 @@ The NestJS backend uses [Pino](https://github.com/pinojs/pino) via `nestjs-pino`
 - **Level**: `debug` in development, `info` in production
 - **Transport**: `pino-pretty` in development (colourised, human-readable); raw JSON to stdout in production
 - **Redaction**: `req.headers.authorization` and `req.headers.cookie` are stripped from all log output
-- **Request ID**: each request is assigned a `traceId` via `genReqId`, sourced from the `x-request-id` header or a generated UUID if absent. This id is attached to every log emitted during that request lifecycle via `customProps`
+- **Request ID**: each request is assigned an id via `genReqId`, sourced from the `x-request-id` header or a generated UUID if absent. `nestjs-pino` binds it to that request's logger, so it appears as **`req.id`** on every line emitted during the request — pinoHttp's own completion line and anything the application or the exception filter logs. There is one name for it, so one query reconstructs the request: `{service="backend"} | json | req_id="…"` (Loki's `| json` flattens `req.id` to `req_id`)
 
 HTTP request logging (method, path, status, duration) is handled automatically by `pinoHttp`. Error logging is handled by the global exception filter. Application code only injects the logger when it needs to record a business-level event — a user action, an external call, a state change.
 

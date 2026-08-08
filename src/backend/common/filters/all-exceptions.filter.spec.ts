@@ -321,11 +321,14 @@ describe("AllExceptionsFilter", () => {
       expect(loggedContext.programmerError).toBeUndefined();
     });
 
-    it("includes traceId in the log context", () => {
+    it("does not add a second name for the request id", () => {
       const host = makeHost();
       filter.catch(new Error("boom"), host as never);
       const loggedContext = logger.error.mock.calls[0][0];
-      expect(loggedContext.traceId).toBe("test-trace-id");
+      // nestjs-pino already binds the id to the request's logger as `req.id`.
+      // A `traceId` field here would be the same value under a second name, so
+      // a Loki query on either one would miss half the request's lines.
+      expect(loggedContext.traceId).toBeUndefined();
     });
   });
 
