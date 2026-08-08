@@ -83,7 +83,10 @@ describe("aggregateTeamMatchStats", () => {
 
   it('returns "N/A" for a percentage when there were no attempts', () => {
     const result = aggregateTeamMatchStats([
-      makeStats({ assists: 5, rebounds: { total: 2, offensive: 1, defensive: 1 } }),
+      makeStats({
+        assists: 5,
+        rebounds: { total: 2, offensive: 1, defensive: 1 },
+      }),
     ]);
 
     expect(result.fieldGoals).toBe("0/0");

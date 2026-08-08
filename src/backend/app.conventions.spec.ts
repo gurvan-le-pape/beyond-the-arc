@@ -125,9 +125,7 @@ function enumValidatedAgainst(
         ((m as unknown as { name?: string }).name ?? m.type) === "isEnum",
     );
 
-  const declared = meta?.constraints?.[0] as
-    | Record<string, string>
-    | undefined;
+  const declared = meta?.constraints?.[0] as Record<string, string> | undefined;
 
   return declared ? Object.values(declared) : null;
 }

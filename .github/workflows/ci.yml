@@ -37,6 +37,11 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      # Same gap the frontend had: Prettier is not part of the eslint config,
+      # so nothing checked it here and four files had drifted.
+      - name: Format
+        run: npm run format:check
+
   backend-test:
     name: Backend – Tests
     runs-on: ubuntu-latest
