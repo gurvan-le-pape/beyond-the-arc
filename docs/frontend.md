@@ -56,7 +56,9 @@ Shot charts (`PlayerShotChart`, `TeamShotChart`) receive their `matchEvents` as 
 
 Used by: player detail, team detail, match detail, map page, league detail, committee detail.
 
-None of these pre-build. League and committee detail once declared a `generateStaticParams` that enumerated every ID, but the image build has no backend to enumerate against, so it returned an empty list in every build that shipped — and `next dev` never prerenders either, so it never ran anywhere else. Both were removed. `dynamicParams = true` plus an hourly `revalidate` is what actually serves these routes: each page is generated on first request and the rendered HTML is then cached.
+None of these pre-build. League and committee detail once declared a `generateStaticParams` that enumerated every ID, but the image build has no backend to enumerate against, so it returned an empty list in every build that shipped — and `next dev` never prerenders either, so it never ran anywhere else.
+
+**Enumerating the IDs was the mistake; removing the export was too much.** `generateStaticParams` returning `[]` is exactly what opts a route into ISR without pre-building anything — upstream: *"You must always return an array from `generateStaticParams`, even if it's empty. Otherwise, the route will be dynamically rendered."* While the export was absent, `dynamicParams = true` and the hourly `revalidate` on those two routes were dead config and every request ran a full server render. Restored in #446, and confirmed in `.next/prerender-manifest.json` → `dynamicRoutes`, which is the only place this is actually observable. All six detail routes now sit there together: `generateStaticParams` returning `[]`, `dynamicParams = true`, and a `revalidate` — each page generated on first request, and the rendered HTML then cached.
 
 **Dynamic server fetch with client islands** — for a page whose data depends on a search param. The route is `force-dynamic`, reads the param, fetches on the server and passes the result down as props. The interactive parts are small client components that do nothing but write the URL; the server re-render that navigation triggers is what refreshes the data.
 
@@ -77,7 +79,9 @@ export default async function ChampionshipsDetailPage({ params, searchParams }) 
 }
 ```
 
-Used by: championship detail. The selected pool lives in `?pool=`; `ChampionshipPoolSelect` only calls `router.replace`, and `LeaderboardTable` stays a server component that receives the client picker through its `dropdown` slot. Because the URL holds the state, sibling islands do not need a common client parent to share it — the match panel beside the leaderboard takes `poolId` as a prop and still fetches through TanStack Query, which is what lets it prefetch on pool hover.
+Used by: championship detail. The selected pool lives in `?pool=`; `ChampionshipPoolSelect` only calls `router.replace`, and `LeaderboardTable` stays a server component that receives the client picker through its `dropdown` slot. Because the URL holds the state, sibling islands do not need a common client parent to share it — the match panel beside the leaderboard receives its `matches` as a prop, server-fetched by the page alongside the leaderboard's own data.
+
+That panel used to fetch through TanStack Query and prefetch on pool hover; #356–#363 moved it server-side, and `useMatchesByPool` and `matchesPrefetch.byPool` have had no call sites since. Do not reintroduce a client fetch here on the strength of the prefetch hook still existing.
 
 Passing a client component into a server component's slot is what keeps the boundary small here. Marking the parent `"use client"` instead would pull the whole subtree — table, header, breadcrumb — into the bundle to be hydrated for nothing.
 
