@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 
 import { usePlayerMatches } from "@/features/players/api";
-import type { Player } from "@/features/players/types";
+import type { Player, PlayerCareerStats } from "@/features/players/types";
 import { Section, StatComparison } from "@/shared/components/blocks";
 import { ErrorMessage } from "@/shared/components/feedback";
 import { Badge } from "@/shared/components/primitives";
@@ -43,22 +43,31 @@ function LoadingDots() {
 
 interface PlayerComparisonProps {
   readonly player: Player;
+  /**
+   * The player's own career aggregate, already fetched server-side by the page
+   * that renders this. Passed in rather than refetched: the identical
+   * /players/{id}/matches response is on screen above this widget, and two
+   * independently invalidated caches for one resource disagree with each other.
+   */
+  readonly careerStats: PlayerCareerStats | null;
 }
 
-export function PlayerComparison({ player }: PlayerComparisonProps) {
+export function PlayerComparison({
+  player,
+  careerStats,
+}: PlayerComparisonProps) {
   const tPlayers = useTranslations("players");
   const tCommon = useTranslations("common");
 
   const [opponent, setOpponent] = useState<Player | null>(null);
 
-  const { data: playerData } = usePlayerMatches(player.id);
   const {
     data: opponentData,
     isLoading: isLoadingOpponent,
     isError: opponentFailed,
   } = usePlayerMatches(opponent?.id ?? 0, { enabled: !!opponent });
 
-  const statsA = playerData?.career ?? null;
+  const statsA = careerStats;
   const statsB = opponent ? (opponentData?.career ?? null) : null;
 
   const statCategories = useMemo(
