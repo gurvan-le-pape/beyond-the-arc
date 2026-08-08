@@ -29,7 +29,7 @@ Interactive documentation is available at `/api/docs` (Swagger UI), served by `@
 
 **CORS** is enabled for `http://localhost:3000` (development) and the `FRONTEND_URL` environment variable (production). Credentials are allowed.
 
-**Pagination** is uniform across all paginated endpoints: query DTOs extend the shared `PaginationQueryDto` (`page ≥ 1`, `1 ≤ limit ≤ 100`, both optional), and services apply defaults through `resolvePagination()` (`page: 1`, `limit: 50`). Out-of-bounds values return `400` — there is no silent clamping. Paginated payloads always have the shape `{ items, total, page, limit, totalPages }`.
+**Pagination** is uniform across all paginated endpoints: query DTOs extend the shared `PaginationQueryDto` (`1 ≤ page ≤ 100 000`, `1 ≤ limit ≤ 100`, both optional), and services apply defaults through `resolvePagination()` (`page: 1`, `limit: 50`). Out-of-bounds values return `400` — there is no silent clamping. **`search` is capped at 100 characters** wherever it appears, which is above the longest name in the dataset and bounds what a caller can put into a cache key. Paginated payloads always have the shape `{ items, total, page, limit, totalPages }`.
 
 **Name search** uses the `search` query parameter everywhere it exists (clubs, teams, players, matches) — case-insensitive partial match.
 

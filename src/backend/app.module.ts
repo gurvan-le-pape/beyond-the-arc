@@ -2,9 +2,10 @@
 import { randomUUID } from "node:crypto";
 
 import { CommonModule } from "@common/common.module";
-import { CACHE_TTL } from "@common/constants";
+import { CACHE_MAX_ENTRIES, CACHE_TTL } from "@common/constants";
 import { MetricsController } from "@common/controllers/metrics.controller";
 import { HttpMetricsInterceptor } from "@common/interceptors";
+import { BoundedMemoryStore } from "@common/utils";
 import { StatsModule } from "@modules/stats/stats.module";
 import { CacheModule } from "@nestjs/cache-manager";
 import { Module } from "@nestjs/common";
@@ -15,6 +16,7 @@ import {
   makeHistogramProvider,
   PrometheusModule,
 } from "@willsoto/nestjs-prometheus";
+import { Keyv } from "keyv";
 import {
   ChampionshipsModule,
   ClubsModule,
@@ -63,8 +65,20 @@ import { AllExceptionsFilter, TransformInterceptor } from "./common";
     }),
     CacheModule.register({
       isGlobal: true, // Makes it available everywhere
-      ttl: CACHE_TTL.MODERATE_DATA, // Default TTL in seconds (5 minutes)
-      max: 100, // Maximum number of items in cache
+      ttl: CACHE_TTL.MODERATE_DATA, // Default TTL in milliseconds (5 minutes)
+      // The ceiling has to be expressed as a store. `max` on this object is
+      // silently discarded: with no `stores` supplied, @nestjs/cache-manager@3
+      // forwards only ttl/refreshThreshold/nonBlocking to createCache(), which
+      // then builds a `new Keyv()` over an unbounded Map. Since the cache is
+      // keyed by request URL on a public unauthenticated API, that is an
+      // open-ended heap. Keyv still owns TTL and expiry; the store only bounds
+      // how many entries may exist at once.
+      stores: [
+        new Keyv({
+          store: new BoundedMemoryStore(CACHE_MAX_ENTRIES),
+          ttl: CACHE_TTL.MODERATE_DATA,
+        }),
+      ],
     }),
     ClubsModule,
     CommonModule,

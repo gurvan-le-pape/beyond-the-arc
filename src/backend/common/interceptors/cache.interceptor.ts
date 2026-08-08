@@ -18,11 +18,11 @@ import { CacheDedupService } from "../services/cache-dedup.service";
 
 interface CacheInterceptorOptions {
   /**
-   * Time-to-live in **seconds** (cache-manager v5+ convention).
-   * Defaults to 300 (5 minutes).
+   * Time-to-live in **milliseconds**. Defaults to 300_000 (5 minutes).
    *
-   * If you are on cache-manager v4 or below (which uses milliseconds),
-   * change the default to 300_000 and update callers accordingly.
+   * cache-manager 7 sits on Keyv, whose `ttl` is milliseconds. Passing a
+   * seconds value here does not fail — it expires the entry 1000x early and
+   * looks like a cache that never hits. Use the `CACHE_TTL` constants.
    */
   ttl?: number;
   /**
@@ -38,9 +38,9 @@ export function CacheInterceptor(
 ): Type<NestInterceptor> {
   @Injectable()
   class MixinCacheInterceptor implements NestInterceptor {
-    // Default: 300 seconds (5 min) — cache-manager v5+ uses seconds.
-    // Swap for 300_000 if on cache-manager v4 (millisecond-based).
-    private readonly ttl: number = options.ttl ?? 300;
+    // Default: 300_000 ms (5 min). Keyv, and therefore cache-manager 7, takes
+    // milliseconds.
+    private readonly ttl: number = options.ttl ?? 300_000;
 
     constructor(
       @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
