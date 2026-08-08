@@ -14,7 +14,7 @@ paths:
 
 ## Barrels are generated output
 
-- `index.ts` barrel files are produced by `barrelsby@2.8.1` from `./barrelsby.json`, via the root scripts `npm run barrels` (one-shot) and `npm run barrels:watch`. `[manifest]`
+- `index.ts` barrel files are produced by `barrelsby@2.8.1` from `./barrelsby.json`, via the root script `npm run barrels`. **Regeneration is one-shot: barrelsby 2.8.1 ships no watch mode.** `[manifest]`+`[upstream]`
 - **Never hand-edit a generated `index.ts`.** Change the source tree or `barrelsby.json` and regenerate. A hand edit is erased by the next run, silently. `[principle]`
 - `npm run barrels` chains into `barrels:lint`, which runs `cd src/frontend && npx eslint --fix '**/index.ts'` — so generated frontend barrels are auto-fixed to satisfy the frontend's lint rules. `[manifest]`
 - `barrels:lint` covers **`src/frontend` only**. `src/backend` also declares `barrelsby`, and its barrels are not lint-fixed by that script. If you regenerate backend barrels, lint them yourself from `src/backend`. `[manifest]`
@@ -37,6 +37,7 @@ paths:
   import { Thing } from './thing';
   ```
 - Barrels also defeat tree-shaking when they front modules with side effects, because importing one name pulls the whole barrel's module graph. Keep barrel-fronted directories free of top-level side effects. `[principle]`
+- **That is necessary but not sufficient, and this tree is the proof:** it already has zero top-level side effects and neither application declares `"sideEffects"`, so a bundler must assume every module may have them and keeps the whole graph anyway. Whether to declare the field is a manifest decision, not a code-layout one. `[manifest]`+`[principle]`
 
 ## Exactly one tool may own import order
 

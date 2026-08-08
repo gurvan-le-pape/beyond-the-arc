@@ -23,7 +23,7 @@ paths:
 The document is emitted by a committed script, `src/backend/scripts/generate-openapi.ts`, run from the build output — not by a running server and never by hand. After any DTO or endpoint change, regenerate **both** sides and commit the result: `[project]`
 
 ```bash
-cd src/backend  && npm run build && node dist/scripts/generate-openapi.js ../../docs/openapi.json
+cd src/backend && npm run build && node dist/scripts/generate-openapi.js
 cd src/frontend && npm run typegen
 ```
 

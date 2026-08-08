@@ -17,7 +17,7 @@ paths:
 
 - The repo contains **three separate npm projects**, each with its own `package.json` **and its own `package-lock.json`**: the repo root, `src/frontend` (`"name": "frontend"`), and `src/backend` (`"name": "backend"`). `[manifest]`
 - The root manifest declares **no `workspaces` key**. These are not npm workspaces — there is no hoisting contract and no single install. Install each project separately. `[manifest]`
-- The root project is **tooling-only**: its sole dependencies are `barrelsby`, `eslint`, `prettier`, and `prettier-plugin-organize-imports`, and its only scripts are `barrels`, `barrels:lint`, `barrels:watch`. A runtime dependency appearing in the root manifest is a mistake. `[manifest]`
+- The root project is **tooling-only**: its sole dependencies are `barrelsby`, `eslint`, `prettier`, and `prettier-plugin-organize-imports`, and its only scripts are `barrels` and `barrels:lint`. A runtime dependency appearing in the root manifest is a mistake. `[manifest]`
 - `src/frontend` owns the Next.js app; `src/backend` owns the NestJS service. Application code, application dependencies, and application scripts belong to one of those two — never to the root. `[manifest]`
 
 > `src/frontend` and `src/backend` are the only application projects. A fourth npm project appearing in the tree means this file needs updating — not working around.
@@ -25,7 +25,7 @@ paths:
 ## Run scripts from the owning project
 
 - Run an npm script from the directory whose `package.json` declares it. `npm run build` means one thing in `src/frontend` (`next build`) and a completely different thing in `src/backend` (`prisma generate && nest build …`). `[manifest]`
-- Only three scripts exist at the root — `barrels`, `barrels:lint`, `barrels:watch`. There is no root `build`, `test`, `lint`, or `format`. Do not invent one; go to the project that has it. `[manifest]`
+- Only two scripts exist at the root — `barrels` and `barrels:lint`. There is no root `build`, `test`, `lint`, or `format`. Do not invent one; go to the project that has it. `[manifest]`
 - Tool config resolution is cwd-sensitive, so running a tool from the wrong directory can silently pick up the wrong config rather than failing. Always `cd` into the project first. `[upstream]`+`[principle]`
 
 ## Node runtime

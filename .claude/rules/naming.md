@@ -25,11 +25,11 @@ paths:
   | `types/` | **PascalCase** `.ts` | `Widget.ts` |
 
 - **Hooks are `useX.ts`, never `use-x.ts`.** The lint rule names this case explicitly. camelCase also keeps the file-matches-export rule above intact — `useWidgetFilters.ts` exports `useWidgetFilters`, where a kebab file name would not. `[project]`+`[principle]`
-- `index.ts` barrels and `*.spec.ts` are exempt; a spec is judged by the name of the file it tests. `components/` is out of this rule's scope — see `component-decomposition.md`. `[project]`
+- `index.ts` barrels and `*.spec.ts` are exempt; a spec is judged by the name of the file it tests. `components/` is out of *this* rule's scope, but not unenforced: `enforce-component-folder-structure.js` (tier 1, `error`) governs it. `component-decomposition.md` covers how components are split, not what their files are called. `[project]`
 - Backend files carry the NestJS role suffix: `widget.controller.ts`, `widget.service.ts`, `widget.module.ts`, `dto/create-widget.dto.ts`. `[project]`
 - Tests are `*.spec.ts`, colocated with the code they test. See `testing.md`. `[manifest]`
 - Barrels are always `index.ts` — that is `barrelsby`'s default and the name the root `barrels:lint` script globs for. Do not rename them. `[upstream]`+`[manifest]`
-- Generated files announce themselves in the filename, the way `shared/types/api.generated.ts` does. A reader should not have to open a file to learn they must not edit it. `[manifest]`+`[principle]`
+- Generated files announce themselves. A reader should not have to open one to learn they must not edit it — but *where* the announcement lives depends on whether the name is already load-bearing. `shared/types/api.generated.ts` says it in the filename; the 90 generated barrels say it in a banner comment, because their name is fixed at `index.ts` by the line above and by `barrelsby`. Name first where the name is free, banner where it is not. `[manifest]`+`[principle]`
 - One primary export per file, named after the file. A file whose name predicts nothing about its contents is a file nobody can find. `[principle]`
 
 ```
@@ -52,7 +52,7 @@ src/backend/modules/widgets/
   dto/create-widget.dto.ts
 ```
 
-These conventions are **machine-enforced**, not habit: `src/frontend/eslint-rules/enforce-file-naming.js` reports on `api/`, `hooks/`, `constants/`, `utils/`, and `types/` inside `features/`. The lint rule is the authority — if this file and the rule ever disagree, the rule wins and this file is stale. `[project]`
+These conventions are **machine-enforced**, not habit, by **two** rules: `src/frontend/eslint-rules/enforce-file-naming.js` reports on `api/`, `hooks/`, `constants/`, `utils/`, and `types/` inside `features/`, and `enforce-component-folder-structure.js` governs `components/`. The lint rules are the authority — if this file and the rule ever disagree, the rule wins and this file is stale. `[project]`
 
 > The lint rule covers `features/` only. Naming under `shared/` and the casing of route-segment directories under `app/` are held by convention alone — match what is already there.
 
@@ -66,7 +66,7 @@ These conventions are **machine-enforced**, not habit: `src/frontend/eslint-rule
 ## Identifiers
 
 - **Booleans read as assertions**: `isReady`, `hasResource`, `canEdit`, `shouldRetry`. Never `flag`, `status`, `check`, or a bare noun. The same applies to functions returning a boolean. `[project]`
-- **All identifiers, comments, and commit messages are in English**, regardless of which locales the UI ships. Only message-catalogue *values* are translated. See `frontend-i18n.md`. `[project]`
+- **All identifiers, comments, and commit messages are in English**, regardless of which locales the UI ships. Only message-catalogue *values* are translated. See `frontend-i18n.md`. **This applies to every language in the repository, including the Python scheduler and `scripts/ffbb-import/` — which this file's own `paths` frontmatter (`.ts`/`.tsx`/`.mts`) cannot load on, so it will not be surfaced automatically where it is most often broken.** `[project]`
 - Name for role, not for type or container: `selectedWidget`, not `widgetObj`; `widgets`, not `widgetArray`; `visibleWidgets`, not `filteredList`. `[principle]`
 - Plural names hold collections; singular names hold one thing. Getting this wrong is the cheapest bug to prevent and one of the more annoying to read past. `[principle]`
 - Functions are verb phrases (`buildWidget`, `resolveResource`); values and components are noun phrases. `[principle]`
@@ -76,6 +76,7 @@ These conventions are **machine-enforced**, not habit: `src/frontend/eslint-rule
 
 ## Domain vocabulary
 
+- **Feature and module directory names are part of this vocabulary and are owned here**, not by `feature-colocation.md`, which is normative about the *shape* of the tree and explicitly disclaims the names. A feature carries one name across `src/frontend/features/<name>/`, `src/backend/modules/<name>/` and its message namespace. `[project]`
 - One concept, one word, everywhere: database column, Prisma model, DTO, OpenAPI schema, generated type, React prop, message key. When the backend calls it a `Resource` and the frontend calls it a `Thing`, every conversation about it costs a translation step. `[principle]`
 - If a name has to change, change it end to end in one pass rather than leaving a half-migrated vocabulary behind. `[principle]`
 - Names that carry a unit or a currency say so: `durationMs`, `sizeBytes`, `priceCents`. A bare number is an invitation to a factor-of-1000 bug. `[principle]`
@@ -86,4 +87,4 @@ These conventions are **machine-enforced**, not habit: `src/frontend/eslint-rule
 - Message-catalogue keys — `frontend-i18n.md` `[principle]`
 - TanStack Query key factories — `frontend-data-fetching.md` `[principle]`
 - Prometheus metric names — `backend-observability.md` `[principle]`
-- Feature and module directory names — `feature-colocation.md` `[project]`
+

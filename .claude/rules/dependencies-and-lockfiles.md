@@ -39,7 +39,7 @@ These are real, currently-locked mismatches. Do not assume the two applications 
 | `eslint-plugin-sonarjs` | `3.0.7` | `3.0.5` |
 | `@types/node` | `25.7.0` (transitive) | `25.0.3` (transitive) |
 
-- Both declare `eslint: ^9.39.2`, so the drift is lockfile-only. Lint results can legitimately differ between the two projects; when a rule fires in one and not the other, check the locked versions before hunting for a config difference. `[manifest]`
+- They declare **different** eslint ranges — `src/frontend` `^9.39.2`, `src/backend` `^9.20.1` — so the drift is a declared one, not merely a lockfile artefact. Lint results can legitimately differ between the two projects; when a rule fires in one and not the other, check the locked versions before hunting for a config difference. `[manifest]`
 - `typescript` (`6.0.3`), `@typescript-eslint/*` (`8.59.3`), `prettier` (`3.7.4`), `barrelsby` (`2.8.1`), `eslint-plugin-simple-import-sort` (`12.1.1`), and `organize-imports-cli` (`1.0.2`) **are** aligned across both applications. Keep them that way — divergence there would cause the two projects to disagree about formatting or type semantics. `[manifest]`+`[principle]`
 
 ## The root toolchain resolves a different TypeScript
@@ -57,6 +57,6 @@ These are real, currently-locked mismatches. Do not assume the two applications 
 
 ## `overrides`
 
-- `src/frontend` pins `openapi-typescript`'s nested `typescript` to `$typescript`, forcing it onto the project's own `^6.0.3` rather than letting a second TypeScript copy install. `[manifest]`
+- `src/frontend` pins `openapi-typescript`'s nested `typescript` to `$typescript`. `openapi-typescript@7.13.0` declares `typescript: ^5.x` as a **peerDependency**, which the project's own `^6.0.3` does not satisfy — so this is not an optimisation that avoids a second copy, it is what lets `npm ci` complete at all. Remove it and the install fails outright. `[manifest]`
 - Keep that override in place. Removing it lets the code generator run under a different compiler than the one that type-checks the generated output. `[manifest]`+`[principle]`
 - Add a new `overrides` entry only to resolve a concrete duplicate-or-incompatible-version problem, and leave a comment in the PR explaining what broke. Overrides silently defeat a package's own peer expectations. `[principle]`

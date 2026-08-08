@@ -34,7 +34,7 @@ Nest 11 runs on **Express 5**. That is the source of most behaviour changes belo
 
 ## Nest 11 framework changes
 
-- **`Reflector.getAllAndOverride` now returns `T | undefined`.** Guards and interceptors reading metadata must handle the undefined case rather than assuming a value. `[upstream]`
+- **`Reflector.getAllAndOverride` returns `undefined` at runtime when no target carries the metadata** — its declared return type does not say so (`reflector.service.d.ts` returns bare `TTransformed`/`TResult` in 11.1.11), which makes this easier to miss, not less real. Guards and interceptors reading metadata must handle the missing case rather than assuming a value. `[upstream]`
 - **Termination lifecycle hooks run in reverse order** to their initialisation counterparts. Shutdown logic that assumed the old ordering needs rechecking. `[upstream]`
 - **Global middleware now runs before** middleware registered by imported modules. `[upstream]`
 - Dynamic modules are resolved by **object reference** rather than a predictable hash. Test stubs keyed on module identity need to override by token instead — see `testing.md`. `[upstream]`
@@ -70,4 +70,4 @@ Nest 11 runs on **Express 5**. That is the source of most behaviour changes belo
 - `tsc-alias` runs **after** `nest build` to rewrite `paths` aliases in the emitted JavaScript. Any change to `paths` must keep both steps working, and TypeScript 6 deprecated `baseUrl` — see `typescript.md`. `[manifest]`+`[upstream]`
 - `prisma generate` precedes both build and dev start because Prisma 7 no longer generates implicitly. Do not remove those steps. `[manifest]`+`[upstream]`
 
-There is **no `@nestjs/config`, no `ConfigModule`, and no config directory.** Environment variables are read directly via `process.env` at their point of use — `main.ts` (`PORT`, `FRONTEND_URL`), `app.module.ts` (`NODE_ENV`), `instrument.ts` (`SENTRY_DSN`), `prisma.config.ts` (`DATABASE_URL`). Follow that pattern rather than introducing a config layer; adding one is an architectural change, not a convenience. Always supply a sensible fallback (`process.env.PORT || 4000`) so a missing variable degrades predictably. `[project]`
+There is **no `@nestjs/config`, no `ConfigModule`, and no config directory.** Environment variables are read directly via `process.env` at their point of use — `main.ts` (`PORT`, `FRONTEND_URL`), `app.module.ts` (`NODE_ENV`), `instrument.ts` (`SENTRY_DSN`), `prisma.config.ts` (`DATABASE_URL`), `prisma/prisma.service.ts` (`DATABASE_URL` again — a second, independent reader) and `common/filters/all-exceptions.filter.ts`. Follow that pattern rather than introducing a config layer; adding one is an architectural change, not a convenience. Always supply a sensible fallback (`process.env.PORT || 4000`) so a missing variable degrades predictably. `[project]`

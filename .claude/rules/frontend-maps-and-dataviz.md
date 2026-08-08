@@ -48,7 +48,8 @@ paths:
 
 ## d3
 
-- `d3@7` is installed as the **full** bundle. Import only the namespaces you use so bundlers can drop the rest: `import { scaleLinear } from 'd3-scale'` — or at minimum named imports from `d3`, never `import * as d3`. `[manifest]`+`[principle]`
+- `d3@7` is installed as the **full** bundle. Import from the specific package where you can — `import { scaleLinear } from 'd3-scale'` — so the rest is never in the graph. `[manifest]`+`[principle]`
+- **`import * as d3` versus named imports from `d3` is not the lever.** Measured on the locked toolchain, converting all six namespace importers to named imports moved total chunk bytes by **+24** (2,817,036 → 2,817,060) — webpack tree-shakes a namespace import with static property access identically. What actually cost 213.7 KB was the barrel-import chain that pulled `features/charts` into eight routes rendering no chart; fixing that is a boundary problem, not an import-style one. `[manifest]`+`[principle]`
 - **Use d3 for maths, React for the DOM.** Scales, shape generators, axes-as-data, interpolators, hierarchies and force layouts are d3's job; producing `<path>`/`<g>` elements is React's. `[principle]`
 - Never call `d3.select(...)` on a node React owns. Two libraries mutating the same subtree produce bugs neither can explain. If you must use a d3 DOM module, give it its own container ref that React never renders into. `[principle]`
 
