@@ -28,7 +28,7 @@ export function useMatchesCascadeOptions({
     championshipsFilter = { level: CompetitionLevel.REGIONAL, id: leagueId };
   }
 
-  const { data } = useChampionships(
+  const { data, isError } = useChampionships(
     { ...championshipsFilter, limit: 100 },
     { enabled: isDepartmental || isRegional },
   );
@@ -62,5 +62,7 @@ export function useMatchesCascadeOptions({
     a.letter.localeCompare(b.letter),
   );
 
-  return { championships, divisions, pools };
+  // Reported so the caller can distinguish "this scope has no divisions" from
+  // "the lookup failed" — both produce empty dropdowns otherwise.
+  return { championships, divisions, pools, isError };
 }

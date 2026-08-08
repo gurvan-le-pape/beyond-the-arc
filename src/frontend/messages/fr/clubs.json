@@ -8,6 +8,7 @@
   "errorLoadingRegions": "Impossible de charger les régions",
   "errorLoadingDepartments": "Impossible de charger les départements",
   "errorLoadingClubs": "Impossible de charger les clubs",
+  "errorLoadingBoundaries": "Impossible de charger les contours de la carte",
   "detail": {
     "meta": "{name} — équipes, coordonnées et localisation.",
     "infoTitle": "Informations",

@@ -65,10 +65,11 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
     setLeagueId,
   } = setters;
 
-  const { data: playerFilterValues } = usePlayerFilterValues({
-    committeeId,
-    leagueId,
-  });
+  const { data: playerFilterValues, isError: filterValuesFailed } =
+    usePlayerFilterValues({
+      committeeId,
+      leagueId,
+    });
   const playerNumbers = playerFilterValues?.numbers ?? [];
   const teamNumbers = playerFilterValues?.teamNumbers ?? [];
 
@@ -131,6 +132,12 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
     >
       {locationError && (
         <ErrorMessage message={tCommon("errors.fetchLeagueOrCommittee")} />
+      )}
+
+      {/* Without this the number dropdowns render empty, which reads as "this
+          scope has no players" rather than a failed request. */}
+      {filterValuesFailed && (
+        <ErrorMessage message={tCommon("errors.fetchPlayers")} />
       )}
 
       {/* Row 1: Name search + Club */}

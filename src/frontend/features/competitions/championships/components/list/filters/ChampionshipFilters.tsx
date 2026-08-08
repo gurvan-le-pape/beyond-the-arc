@@ -2,6 +2,7 @@
 import { useTranslations } from "next-intl";
 import React from "react";
 
+import { ErrorMessage } from "@/shared/components/feedback";
 import { FiltersShell } from "@/shared/components/filters";
 import { Select } from "@/shared/components/forms";
 import type { Category, Gender } from "@/shared/constants";
@@ -32,6 +33,12 @@ interface ChampionshipFiltersProps {
   onReset: () => void;
   /** Present for regional (league) and departmental (committee); omitted for national. */
   scope?: ChampionshipScope;
+  /**
+   * Copy to show when the scope options failed to load, so an empty dropdown
+   * is not mistaken for "this level has no leagues". Already translated by the
+   * caller — this component holds no message keys of its own for it.
+   */
+  scopeError?: string;
 }
 
 export const ChampionshipFilters: React.FC<ChampionshipFiltersProps> = ({
@@ -42,6 +49,7 @@ export const ChampionshipFilters: React.FC<ChampionshipFiltersProps> = ({
   onGenderChange,
   onReset,
   scope,
+  scopeError,
 }) => {
   const tCommon = useTranslations("common");
 
@@ -116,6 +124,8 @@ export const ChampionshipFilters: React.FC<ChampionshipFiltersProps> = ({
       onReset={onReset}
       title={tCommon(`competition.levels.${level}`)}
     >
+      {scopeError && <ErrorMessage message={scopeError} />}
+
       {/* Scoped variants lead with the scope select and push gender to its own row. */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {scopeSelect ?? categorySelect}

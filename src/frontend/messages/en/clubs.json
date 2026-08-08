@@ -8,6 +8,7 @@
   "errorLoadingRegions": "Failed to load regions",
   "errorLoadingDepartments": "Failed to load departments",
   "errorLoadingClubs": "Failed to load clubs",
+  "errorLoadingBoundaries": "Failed to load map boundaries",
   "detail": {
     "meta": "{name} — teams, contact details and location.",
     "infoTitle": "Information",
