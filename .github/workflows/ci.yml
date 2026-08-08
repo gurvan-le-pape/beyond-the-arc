@@ -339,7 +339,8 @@ jobs:
           # The host key is pinned, not discovered. The runner is ephemeral, so
           # ssh-keyscan would re-learn the key on every deploy and trust
           # whatever answered — anyone able to intercept runner → VPS receives
-          # the GHCR token on stdin and runs this script as the deploy user.
+          # the GHCR token on stdin and runs this script as `deploy`, which is
+          # in the `docker` group and so root-equivalent in practice.
           #
           # VPS_HOST_KEY holds the key material only ("ssh-ed25519 AAAA…"), not
           # a full known_hosts line, so the host label below always matches the
@@ -407,5 +408,11 @@ jobs:
             # Prune only after the new containers proved healthy.
             docker system prune -f
           DEPLOY
+          # VPS_USER is `deploy`, an unprivileged account that owns
+          # /opt/beyondthearc and belongs to the `docker` group. The group is
+          # what makes every command above work, and it is also root-equivalent
+          # (`docker run -v /:/host`), so this is an audit-trail and
+          # accident-blast-radius boundary, not a containment one. Bounding what
+          # a stolen VPS_SSH_KEY can do needs an authorized_keys forced command.
           } | ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes "$VPS_USER@$VPS_HOST" \
               "GHCR_USER='$GHCR_USER' DEPLOY_TAG='$DEPLOY_TAG' sh -c 'read -r GHCR_TOKEN && export GHCR_TOKEN && exec bash -s'"

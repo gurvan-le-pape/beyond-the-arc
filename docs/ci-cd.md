@@ -66,7 +66,7 @@ Runs only on push to `main`, after all six check jobs pass. It has four steps:
 1. **Log in to GHCR** — authenticates using `GITHUB_TOKEN` (automatically available, no manual secret needed).
 2. **Build and push backend image** — builds the `prod` target of `docker/backend/Dockerfile` and pushes `ghcr.io/<repository>/backend:latest` plus a `:<git sha>` tag. A second step builds the `migrate` target (shares the cached base layers) and pushes `backend-migrate` with the same tags.
 3. **Build and push frontend image** — builds the `prod` target of `docker/frontend/Dockerfile` with two build args from repository secrets (`NEXT_PUBLIC_API_URL`, `FRONTEND_URL`) and `SENTRY_AUTH_TOKEN` passed as a BuildKit secret, and pushes `ghcr.io/<repository>/frontend:latest` plus a `:<git sha>` tag.
-4. **Deploy via SSH** — plain `ssh` from the runner (no third-party action holds the key): the runner writes the deploy key, ssh-keyscans the host, and pipes the deploy script to `bash -s` on the VPS (10-minute timeout). Secrets are passed as env vars, never expanded into the script text; the GHCR token travels as the first line of stdin.
+4. **Deploy via SSH** — plain `ssh` from the runner (no third-party action holds the key): the runner writes the deploy key, pins the host key from the `VPS_HOST_KEY` secret (it is not discovered with `ssh-keyscan` — see *The deploy account* below), and pipes the deploy script to `bash -s` on the VPS as the `deploy` user (10-minute timeout). Secrets are passed as env vars, never expanded into the script text; the GHCR token travels as the first line of stdin.
 
 ---
 
@@ -98,6 +98,12 @@ docker system prune -f   # only after the health checks pass
 
 The `up -d` command restarts only containers whose image has changed. Containers running unchanged images (database, scheduler, observability stack) are left running.
 
+### The deploy account
+
+The script above runs as **`deploy`**, an unprivileged account that owns `/opt/beyondthearc` and belongs to the `docker` group. That group membership is what lets it run every `docker` and `docker compose` command in the script; the `git pull` works because `origin` is an HTTPS remote on a public repository, so no credential is involved.
+
+One property of this worth knowing before relying on it: **`docker` group membership is root-equivalent.** Anyone who can talk to the Docker socket can start a container that bind-mounts `/`. So `deploy` is an audit-trail and accident-blast-radius boundary — a stray `rm` in the script hits only files it owns — and **not** a containment boundary against a leaked `VPS_SSH_KEY`. Bounding what a stolen key can *do* needs an `authorized_keys` forced command restricting it to a fixed script.
+
 Two prunes with different jobs: `docker image prune -af` (before the pull) removes images not referenced by any container — necessary because every deploy pins `:SHA`-tagged images, which are never *dangling* and would otherwise accumulate one pair per merge until the disk fills (this is what tripped the 90% disk health threshold in July 2026). Images used by running or stopped containers are kept, and every tag remains in GHCR, so rollback via `IMAGE_TAG` still re-pulls fine. `docker system prune -f` (after the health checks) clears dangling images and build cache produced by the deploy itself.
 
 ---
@@ -112,7 +118,7 @@ Two prunes with different jobs: `docker image prune -af` (before the pull) remov
 | `NEXT_PUBLIC_API_URL` | deploy     | Public API URL baked into the frontend bundle at build time               |
 | `FRONTEND_URL`        | deploy     | Frontend origin URL passed to the frontend build                          |
 | `VPS_HOST`            | deploy     | IP address or hostname of the VPS                                         |
-| `VPS_USER`            | deploy     | SSH username on the VPS                                                   |
+| `VPS_USER`            | deploy     | SSH username on the VPS — the unprivileged `deploy` account               |
 | `VPS_SSH_KEY`         | deploy     | Private SSH key for VPS access                                            |
 
 `GITHUB_TOKEN` is automatically provided by GitHub Actions and does not need to be created manually. All other secrets are configured in the repository settings under Actions secrets.
