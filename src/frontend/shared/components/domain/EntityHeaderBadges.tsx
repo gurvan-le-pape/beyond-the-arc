@@ -32,6 +32,7 @@ export function EntityHeaderBadges({
   children,
 }: EntityHeaderBadgesProps) {
   const tCommon = useTranslations("common");
+  const tCompetitions = useTranslations("competitions");
 
   return (
     <div className="flex flex-wrap gap-2 mb-3">
@@ -49,9 +50,13 @@ export function EntityHeaderBadges({
         </Badge>
       )}
 
-      {championship && (
+      {/* Guarded on `division`, not on `championship`: division is optional,
+          and the literal this replaced rendered "Div undefined" without it. */}
+      {championship?.division !== undefined && (
         <Badge variant="division" size="sm">
-          {`Div ${championship.division}`}
+          {tCompetitions("divisionWithValue", {
+            value: championship.division,
+          })}
         </Badge>
       )}
 

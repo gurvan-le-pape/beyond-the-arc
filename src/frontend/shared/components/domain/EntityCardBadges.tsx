@@ -29,6 +29,7 @@ export function EntityCardBadges({
   level,
 }: EntityCardBadgesProps) {
   const tCommon = useTranslations("common");
+  const tCompetitions = useTranslations("competitions");
   const config = getLevelConfig(level);
 
   return (
@@ -44,7 +45,9 @@ export function EntityCardBadges({
         </Badge>
       )}
       {division && (
-        <Badge variant="division" size="sm">{`Div ${division}`}</Badge>
+        <Badge variant="division" size="sm">
+          {tCompetitions("divisionWithValue", { value: division })}
+        </Badge>
       )}
       {poolLabel && (
         <Badge variant="pool" size="sm">
