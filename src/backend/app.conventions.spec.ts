@@ -12,22 +12,21 @@ import {
   CATEGORY_LIST,
   COMPETITION_LEVEL_LIST,
   GENDER_LIST,
-  MATCH_EVENT_ROLES_LIST,
-  MATCH_EVENT_TYPE_LIST,
-  POSITION_LIST,
 } from "./common/constants";
 
 /**
  * Property names that must always be validated with @IsEnum against the
  * matching constant list wherever they appear on a query DTO.
+ *
+ * The values are the contract, not decoration: the check below compares them
+ * against the enum the decorator actually names. Only properties that exist on
+ * a query DTO belong here — `position`, `role` and `eventType` were listed and
+ * matched none, so half the map asserted nothing.
  */
 const ENUM_PROPS: Record<string, readonly string[]> = {
   category: CATEGORY_LIST,
   gender: GENDER_LIST,
   level: COMPETITION_LEVEL_LIST,
-  position: POSITION_LIST,
-  role: MATCH_EVENT_ROLES_LIST,
-  eventType: MATCH_EVENT_TYPE_LIST,
 };
 
 interface QueryArg {
@@ -107,6 +106,33 @@ function constraintNames(target: NewableFunction, property: string): string[] {
 }
 
 /**
+ * The value set an @IsEnum on this property validates against, or null if the
+ * property carries no @IsEnum at all.
+ *
+ * class-validator stores the enum object in `constraints[0]`, which is what
+ * makes "validated against the *matching* list" checkable rather than just
+ * "validated somehow".
+ */
+function enumValidatedAgainst(
+  target: NewableFunction,
+  property: string,
+): string[] | null {
+  const meta = getMetadataStorage()
+    .getTargetValidationMetadatas(target as never, "", false, false)
+    .find(
+      (m) =>
+        m.propertyName === property &&
+        ((m as unknown as { name?: string }).name ?? m.type) === "isEnum",
+    );
+
+  const declared = meta?.constraints?.[0] as
+    | Record<string, string>
+    | undefined;
+
+  return declared ? Object.values(declared) : null;
+}
+
+/**
  * All property names carrying validation metadata on a DTO class.
  */
 function validatedProps(target: NewableFunction): string[] {
@@ -178,19 +204,43 @@ describe("API conventions", () => {
     expect(offenders).toEqual([]);
   });
 
-  it("enum-named query properties are validated with @IsEnum", () => {
+  it("enum-named query properties are validated with @IsEnum against the matching constant list", () => {
     const offenders: string[] = [];
 
     for (const { name, cls } of queryDtos) {
       for (const prop of validatedProps(cls)) {
-        if (!(prop in ENUM_PROPS)) continue;
-        if (!constraintNames(cls, prop).includes("isEnum")) {
-          offenders.push(`${name}.${prop}`);
+        const expected = ENUM_PROPS[prop];
+        if (!expected) continue;
+
+        const actual = enumValidatedAgainst(cls, prop);
+        if (!actual) {
+          offenders.push(`${name}.${prop}: no @IsEnum`);
+          continue;
+        }
+
+        // Compare as sets: @IsEnum takes the enum object, and neither the
+        // declaration order nor the key names are part of the contract.
+        const same =
+          actual.length === expected.length &&
+          [...expected].every((value) => actual.includes(value));
+
+        if (!same) {
+          offenders.push(
+            `${name}.${prop}: @IsEnum validates against [${[...actual].sort().join(", ")}], expected [${[...expected].sort().join(", ")}]`,
+          );
         }
       }
     }
 
     expect(offenders).toEqual([]);
+  });
+
+  it("every property named in ENUM_PROPS exists on at least one query DTO", () => {
+    // Otherwise an entry can be added, match nothing, and look enforced.
+    const seen = new Set(queryDtos.flatMap(({ cls }) => validatedProps(cls)));
+    const dead = Object.keys(ENUM_PROPS).filter((prop) => !seen.has(prop));
+
+    expect(dead).toEqual([]);
   });
 
   it("query DTO numeric properties use @IsInt, never @IsNumber", () => {
