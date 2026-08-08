@@ -3,7 +3,14 @@ import { CompetitionLevel, MAX_SEARCH_LENGTH } from "@common/constants";
 import { Category, Gender, PaginationQueryDto } from "@common/index";
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsEnum, IsInt, IsOptional, IsString, Matches, MaxLength } from "class-validator";
+import {
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+  Matches,
+  MaxLength,
+} from "class-validator";
 
 /**
  * Query parameters for filtering and paginating matches.

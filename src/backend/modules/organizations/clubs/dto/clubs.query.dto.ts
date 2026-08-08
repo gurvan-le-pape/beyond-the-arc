@@ -1,9 +1,20 @@
 // src/backend/modules/organizations/clubs/dto/clubs.query.dto.ts
-import { Category, CompetitionLevel, Gender, MAX_SEARCH_LENGTH } from "@common/constants";
+import {
+  Category,
+  CompetitionLevel,
+  Gender,
+  MAX_SEARCH_LENGTH,
+} from "@common/constants";
 import { PaginationQueryDto } from "@common/dto";
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsEnum, IsInt, IsOptional, IsString, MaxLength } from "class-validator";
+import {
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+  MaxLength,
+} from "class-validator";
 
 /**
  * Query parameters for filtering clubs.

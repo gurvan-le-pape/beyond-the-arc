@@ -5,7 +5,9 @@ describe("BoundedMemoryStore", () => {
   it("rejects a ceiling that is not a positive integer", () => {
     expect(() => new BoundedMemoryStore<string, string>(0)).toThrow(TypeError);
     expect(() => new BoundedMemoryStore<string, string>(-1)).toThrow(TypeError);
-    expect(() => new BoundedMemoryStore<string, string>(1.5)).toThrow(TypeError);
+    expect(() => new BoundedMemoryStore<string, string>(1.5)).toThrow(
+      TypeError,
+    );
   });
 
   it("never grows past the ceiling, however many keys are written", () => {
