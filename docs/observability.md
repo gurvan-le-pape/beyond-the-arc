@@ -38,7 +38,11 @@ HTTP request logging (method, path, status, duration) is handled automatically b
 
 ### Log format
 
-In production, every log line is a JSON object on stdout. Docker captures this and Promtail ships it to Loki. Because the output is structured, Loki can index individual fields like `level`, `traceId`, and any custom fields added per log call.
+In production, every log line is a JSON object on stdout. Docker captures this and Promtail ships it to Loki.
+
+**Loki indexes labels, not fields.** The only labels on these streams are `container`, `service` and `service_name` (set by Promtail's `relabel_configs`); every other field is read at query time by parsing the line, e.g. `{service="backend"} | json | statusCode=500`. That is a filter over the matched streams, not an index lookup, so narrow by label first.
+
+The one field Loki does interpret on its own is the level: it derives `detected_level` from a level *string*, which is why the logger emits `"level": "warn"` rather than pino's numeric `40`. With the numeric default every line arrived as `detected_level="unknown"` and the log panel rendered them uncoloured.
 
 ```json
 {
