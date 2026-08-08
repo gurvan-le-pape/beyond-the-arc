@@ -2,7 +2,7 @@
 import { randomUUID } from "node:crypto";
 
 import { CommonModule } from "@common/common.module";
-import { CACHE_MAX_ENTRIES, CACHE_TTL } from "@common/constants";
+import { CACHE_MAX_ENTRIES, CACHE_TTL, METRICS_PATH } from "@common/constants";
 import { MetricsController } from "@common/controllers/metrics.controller";
 import { HttpMetricsInterceptor } from "@common/interceptors";
 import { BoundedMemoryStore } from "@common/utils";
@@ -53,14 +53,20 @@ import { AllExceptionsFilter, TransformInterceptor } from "./common";
         // pino-pretty is unaffected — it renders and colours both forms
         // identically.
         formatters: { level: (label) => ({ level: label }) },
-        autoLogging: true,
+        // Log every request except Prometheus scraping this service. Each
+        // scrape emits a full request line including the header block, and at
+        // a 15s interval that is a constant ~5 MB/day of Loki's 31-day
+        // retention spent on the monitoring stack watching itself.
+        autoLogging: {
+          ignore: (req) => req.url?.split("?")[0] === METRICS_PATH,
+        },
         genReqId: (req) =>
           (req.headers["x-request-id"] as string) ?? randomUUID(),
       },
     }),
     PrometheusModule.register({
       defaultMetrics: { enabled: true },
-      path: "/metrics",
+      path: METRICS_PATH,
       controller: MetricsController,
     }),
     CacheModule.register({
