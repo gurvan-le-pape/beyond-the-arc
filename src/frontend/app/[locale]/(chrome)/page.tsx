@@ -13,10 +13,18 @@ import type { LocalePageProps } from "@/shared/types";
 import { handleServerError } from "@/shared/utils";
 
 // Rendered per request: the image build has no backend to fetch stats from.
-// Home is dynamic today only by accident — it is the one page that never calls
-// setRequestLocale, and next-intl's fallback to headers() is what keeps it out
-// of the prerender pass. Saying so explicitly is what lets the locale layout
-// adopt setRequestLocale without breaking the build.
+//
+// This is also one of two *server* pages that never call setRequestLocale —
+// the other is (fullscreen)/map/page.tsx, which says so in its own comment.
+// Both fall back to next-intl reading headers(), and both declare
+// force-dynamic, so neither enters the prerender pass and neither can break
+// the build when the locale layout adopts setRequestLocale.
+//
+// Two more pages skip it for reasons that do not bear on that: docs/page.tsx
+// is 'use client' and could not call a server API, and [...rest]/page.tsx
+// only calls notFound(). Recorded here because this comment is the record —
+// a reader auditing "which pages skip setRequestLocale" should find four,
+// two of which are the ones this invariant is about.
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
