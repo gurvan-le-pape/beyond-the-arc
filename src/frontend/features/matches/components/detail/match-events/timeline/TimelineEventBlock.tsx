@@ -1,6 +1,5 @@
 // src/frontend/features/matches/components/detail/match-events/timeline/TimelineEventBlock.tsx
 import { useTranslations } from "next-intl";
-import React from "react";
 
 import type { EventStyle, EventWithScore } from "@/features/matches/types";
 import type { EventDescriptionToken } from "@/features/matches/utils";
