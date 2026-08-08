@@ -1,7 +1,6 @@
 // src/frontend/lib/services/server/server-api-client.ts
 import type { ApiErrorResponse } from "@/shared/types";
 import { ApiError } from "@/shared/types";
-import { logger } from "@/shared/utils";
 
 /**
  * Server-side API client for use in getStaticProps/getStaticPaths/getServerSideProps.
@@ -84,42 +83,42 @@ export async function fetchApi<T>(
 ): Promise<T> {
   const url = `${BASE_URL}${endpoint}`;
 
-  try {
-    const response = await fetch(url, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      next: { revalidate: options?.revalidate ?? ServerRevalidate.DEFAULT },
-      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+  // No try/catch here on purpose. This layer does not handle failures, it
+  // reports them — and a 404 on a detail route is an expected, handled
+  // outcome (handleServerError turns it into notFound()). Logging here made
+  // every one of those an error-level line next to the real failures.
+  // The error is logged once, where it is handled: see handleServerError.
+  const response = await fetch(url, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    next: { revalidate: options?.revalidate ?? ServerRevalidate.DEFAULT },
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+  });
+
+  if (!response.ok) {
+    // Build the ApiError from response.status directly. parseApiError only
+    // recovers a status code from axios errors; on this native-fetch path it
+    // receives the plain backend error body and would fall back to status 0,
+    // so a 404 could never be distinguished (e.g. by handleServerError).
+    const body = (await response
+      .json()
+      .catch(() => null)) as Partial<ApiErrorResponse> | null;
+    throw new ApiError({
+      statusCode: response.status,
+      message: Array.isArray(body?.message)
+        ? body.message.join(", ")
+        : (body?.message ?? response.statusText),
+      error: body?.error ?? response.statusText,
+      path: body?.path,
+      timestamp: body?.timestamp,
     });
-
-    if (!response.ok) {
-      // Build the ApiError from response.status directly. parseApiError only
-      // recovers a status code from axios errors; on this native-fetch path it
-      // receives the plain backend error body and would fall back to status 0,
-      // so a 404 could never be distinguished (e.g. by handleServerError).
-      const body = (await response
-        .json()
-        .catch(() => null)) as Partial<ApiErrorResponse> | null;
-      throw new ApiError({
-        statusCode: response.status,
-        message: Array.isArray(body?.message)
-          ? body.message.join(", ")
-          : (body?.message ?? response.statusText),
-        error: body?.error ?? response.statusText,
-        path: body?.path,
-        timestamp: body?.timestamp,
-      });
-    }
-
-    const data = await response.json();
-
-    // Unwrap the standard API response format
-    return (data && "data" in data ? data.data : data) as T;
-  } catch (error) {
-    logger.error(error, `Server API: ${url}`);
-    throw error; // already an ApiError from parseApiError, or rethrown as-is
   }
+
+  const data = await response.json();
+
+  // Unwrap the standard API response format
+  return (data && "data" in data ? data.data : data) as T;
 }
 
 /**
