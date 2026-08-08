@@ -2,13 +2,13 @@
 import { ApiPaginatedResponse } from "@common/decorators";
 import { CACHE_TTL, Category, PaginatedResponseDto } from "@common/index";
 import { CacheInterceptor } from "@common/interceptors";
+import { ParseEntityIdPipe } from "@common/pipes";
 import {
   Controller,
   Get,
   HttpCode,
   HttpStatus,
   Param,
-  ParseIntPipe,
   Query,
   UseInterceptors,
 } from "@nestjs/common";
@@ -464,7 +464,7 @@ export class ClubsController {
     description: "Internal server error",
   })
   async getClubById(
-    @Param("id", ParseIntPipe) id: number,
+    @Param("id", ParseEntityIdPipe) id: number,
   ): Promise<ClubDetailedResponseDto> {
     return this.clubsService.findClubById(id);
   }

@@ -1,13 +1,13 @@
 // src/backend/modules/organizations/leagues/leagues.controller.ts
 import { CACHE_TTL } from "@common/constants";
 import { CacheInterceptor } from "@common/interceptors";
+import { ParseEntityIdPipe } from "@common/pipes";
 import {
   Controller,
   Get,
   HttpCode,
   HttpStatus,
   Param,
-  ParseIntPipe,
   UseInterceptors,
 } from "@nestjs/common";
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
@@ -175,7 +175,7 @@ export class LeaguesController {
     },
   })
   async getLeagueById(
-    @Param("id", ParseIntPipe) id: number,
+    @Param("id", ParseEntityIdPipe) id: number,
   ): Promise<LeagueResponseDto> {
     return this.leaguesService.findLeagueById(id);
   }
