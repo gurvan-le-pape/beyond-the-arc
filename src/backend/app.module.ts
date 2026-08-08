@@ -43,6 +43,14 @@ import { AllExceptionsFilter, TransformInterceptor } from "./common";
             ? undefined
             : { target: "pino-pretty", options: { colorize: true } },
         redact: ["req.headers.authorization", "req.headers.cookie"],
+        // Emit the level as its label ("warn") rather than pino's numeric code
+        // (40). Loki's level detection only recognises a level *string*, so
+        // with the numeric default every backend line arrives as
+        // detected_level="unknown": the log panel renders them uncoloured and
+        // `| json | level="error"` matches nothing (`level=50` is required).
+        // pino-pretty is unaffected — it renders and colours both forms
+        // identically.
+        formatters: { level: (label) => ({ level: label }) },
         autoLogging: true,
         genReqId: (req) =>
           (req.headers["x-request-id"] as string) ?? randomUUID(),
