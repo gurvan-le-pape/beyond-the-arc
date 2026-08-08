@@ -9,7 +9,7 @@ import {
 
 import { OrganizationHeader } from "./OrganizationHeader";
 import { OrganizationInfo } from "./OrganizationInfo";
-import { SearchableChipList } from "./SearchableChipsList";
+import { SearchableChipList } from "./SearchableChipList";
 
 interface OrganizationDetailViewProps {
   readonly breadcrumb: BreadcrumbItem[];

@@ -1,4 +1,4 @@
-// src/frontend/shared/components/primitives/DropdownTriggerBase.tsx
+// src/frontend/shared/components/primitives/dropdownTriggerBase.ts
 //
 // Single source of truth for the visual contract shared by ALL dropdown-style
 // controls: Select, ComboBox, MultiSelectDropdown.
