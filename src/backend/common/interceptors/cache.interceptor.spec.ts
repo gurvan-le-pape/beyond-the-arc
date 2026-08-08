@@ -432,18 +432,40 @@ describe("CacheInterceptor", () => {
       expect(cacheManager.set).toHaveBeenCalledTimes(2);
     });
 
-    it("sanitizes special characters in the URL", async () => {
+    // The key used to be run through `.replaceAll(/[^a-zA-Z0-9:/?=&_-]/g, "_")`
+    // with `_` inside its own allow-list, so these four search terms all
+    // collapsed onto one entry and whichever request arrived second was served
+    // the first one's body. Reproduced against production: `?search=A.S` is 15
+    // clubs, `?search=A_S` is 637.
+    it.each([
+      ["a dot", "A.S", "A_S"],
+      ["an asterisk", "A*S", "A_S"],
+      ["a space", "A S", "A_S"],
+    ])("does not collide %s with an underscore", async (_label, a, b) => {
       const cacheManager = makeCacheManager();
       const { instance } = makeInterceptor({}, cacheManager);
 
-      const obs$ = await instance.intercept(
-        makeContext("/items/<script>"),
-        makeCallHandler(),
+      await lastValueFrom(
+        await instance.intercept(
+          makeContext(`/clubs?search=${encodeURIComponent(a)}`),
+          makeCallHandler({ total: 15 }),
+        ),
       );
-      await lastValueFrom(obs$);
+      await lastValueFrom(
+        await instance.intercept(
+          makeContext(`/clubs?search=${encodeURIComponent(b)}`),
+          makeCallHandler({ total: 637 }),
+        ),
+      );
 
-      const setKey = (cacheManager.set.mock.calls[0] as unknown[])[0] as string;
-      expect(setKey).not.toMatch(/[<>]/);
+      // Two distinct searches → two entries, and neither inherits the other.
+      expect(cacheManager.set).toHaveBeenCalledTimes(2);
+      const [k1, k2] = cacheManager.set.mock.calls.map((c) => c[0] as string);
+      expect(k1).not.toBe(k2);
+      expect([...cacheManager.store.values()]).toEqual([
+        { total: 15 },
+        { total: 637 },
+      ]);
     });
   });
 

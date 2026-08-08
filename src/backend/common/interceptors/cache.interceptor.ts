@@ -144,6 +144,18 @@ export function CacheInterceptor(
      * - When `options.includeUser` is true, the authenticated user's ID is
      *   prepended so per-user endpoints (e.g. /me) don't bleed across users.
      *
+     * The normalized URL is used verbatim. It must NOT be run through a
+     * character replacement: `URLSearchParams.toString()` has already
+     * percent-encoded the query, so any lossy replace maps distinct queries
+     * onto one key and serves one caller's response to another. `?search=A.S`
+     * and `?search=A_S` are 15 clubs and 637 clubs; collapsing `.` to `_` made
+     * whichever arrived second inherit the first's body.
+     *
+     * The store is an in-memory Map, so the key needs no escaping — it is
+     * never rendered and never reaches a query language. Should a Keyv/Redis
+     * store ever be added, HASH the key (it has no length bound and Redis caps
+     * keys at 512 MB); do not reintroduce a replace.
+     *
      * NOTE: This interceptor has no built-in cache invalidation. If a mutating
      * endpoint (POST/PUT/PATCH/DELETE) should bust related GET caches, call
      * `cacheManager.del(key)` explicitly in the handler or add a dedicated
@@ -167,15 +179,13 @@ export function CacheInterceptor(
         ? `${path}?${normalizedQuery}`
         : path;
 
-      const sanitized = normalizedUrl.replaceAll(/[^a-zA-Z0-9:/?=&_-]/g, "_");
-
       if (options.includeUser && request) {
         const user = request.user as { id?: string } | undefined;
         const userId = user?.id ?? "anon";
-        return `cache:${userId}:${sanitized}`;
+        return `cache:${userId}:${normalizedUrl}`;
       }
 
-      return `cache:${sanitized}`;
+      return `cache:${normalizedUrl}`;
     }
   }
 
