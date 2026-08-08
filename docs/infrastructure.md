@@ -113,7 +113,7 @@ Serves dashboards and alerting on port 3001. Datasources and dashboards are prov
 
 SMTP is configured via environment variables (`GF_SMTP_*`) to enable email alerting through Gmail. In production, `GF_SERVER_ROOT_URL` is also set (via the prod override) so that Grafana generates correct URLs in alert notifications.
 
-Resource limit: 0.5 CPU / 256MB RAM.
+Resource limit: 0.5 CPU / 512MB RAM, with `GOMEMLIMIT=400MiB`. **The two belong together** — Grafana is a Go process, and the Go runtime does not read the container's memory limit. Set only the cgroup limit and the runtime grows its heap past it until the kernel kills the process, which is what happened under the previous 256MB cap: 10 OOM kills in 11 days, every one at ~259 MB, while Grafana's actual steady state was 171 MB RSS on a 75 MB live heap. `GOMEMLIMIT` is the ceiling the garbage collector works to, so raising or lowering `memory` means moving it too.
 
 ### node-exporter
 

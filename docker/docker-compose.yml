@@ -147,6 +147,15 @@ services:
       # Not a GF_* setting: the alerting provisioning file reads it back with
       # $__env{GMAIL_ADDRESS} to address the notifications.
       - GMAIL_ADDRESS=${GMAIL_ADDRESS}
+      # Go has no knowledge of the cgroup limit below, so without this the
+      # runtime grows its heap toward whatever the machine has and the kernel
+      # resolves the overshoot by killing the process. Measured on prod before
+      # this was set: a flat 171 MB RSS on a 75 MB live heap, but a 141 MB GC
+      # goal (GOGC=100) and 412 MB of heap arena reserved *above* a 256M cap —
+      # 10 OOM kills in 11 days, every one at anon-rss ~259 MB.
+      # Keep it comfortably under `memory` below: this is the ceiling the GC
+      # works to, and the container still needs room for non-heap RSS.
+      - GOMEMLIMIT=400MiB
     restart: unless-stopped
     networks:
       - my_network
@@ -157,7 +166,7 @@ services:
       resources:
         limits:
           cpus: "0.5"
-          memory: 256M
+          memory: 512M
 
   node-exporter:
     image: prom/node-exporter:latest
