@@ -3,7 +3,7 @@
 
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useTranslations } from "next-intl";
-import React, { useState } from "react";
+import { useState } from "react";
 
 import { Section } from "@/shared/components/blocks";
 import { Button } from "@/shared/components/primitives";
