@@ -65,7 +65,7 @@ export function TimelineEventBlock({
         >
           {isRight ? (
             <>
-              <span className={cn("font-semibold text-body-sm", style.color)}>
+              <span className={cn("font-semibold text-sm", style.color)}>
                 {style.labelKey ? tMatches(style.labelKey) : event.eventType}
               </span>
               <span className="text-2xl">{style.icon}</span>
@@ -73,7 +73,7 @@ export function TimelineEventBlock({
           ) : (
             <>
               <span className="text-2xl">{style.icon}</span>
-              <span className={cn("font-semibold text-body-sm", style.color)}>
+              <span className={cn("font-semibold text-sm", style.color)}>
                 {style.labelKey ? tMatches(style.labelKey) : event.eventType}
               </span>
             </>
