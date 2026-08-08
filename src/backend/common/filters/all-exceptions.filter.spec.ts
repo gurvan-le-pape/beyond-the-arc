@@ -135,6 +135,25 @@ describe("AllExceptionsFilter", () => {
       expect(logger.error).toHaveBeenCalledTimes(1);
       expect(logger.warn).not.toHaveBeenCalled();
     });
+
+    it("logs a constant message and puts the request detail in fields", () => {
+      const host = makeHost();
+      filter.catch(
+        new HttpException("Player with ID 999999999 not found", 404),
+        host as never,
+      );
+
+      // The msg is what Loki groups on, so it must be identical for every
+      // request. Two 404s for different ids must produce the same string.
+      expect(logger.warn.mock.calls[0][1]).toBe("request failed");
+
+      const loggedContext = logger.warn.mock.calls[0][0];
+      expect(loggedContext).toMatchObject({
+        method: "GET",
+        statusCode: 404,
+        message: "Player with ID 999999999 not found",
+      });
+    });
   });
 
   // -------------------------------------------------------------------------
@@ -173,8 +192,11 @@ describe("AllExceptionsFilter", () => {
       process.env.NODE_ENV = "production";
       const host = makeHost();
       filter.catch(new Error("secret internal detail"), host as never);
-      const loggedMessage = logger.error.mock.calls[0][1] as string;
-      expect(loggedMessage).toContain("secret internal detail");
+      // Carried as a field now, not interpolated into msg — the client must not
+      // see it, the logs must.
+      const loggedContext = logger.error.mock.calls[0][0];
+      expect(loggedContext.message).toBe("secret internal detail");
+      expect(logger.error.mock.calls[0][1]).toBe("request failed");
     });
   });
 
@@ -256,12 +278,14 @@ describe("AllExceptionsFilter", () => {
     );
 
     it.each(programmerErrors)(
-      "%s log message includes [PROGRAMMER ERROR] prefix",
+      "%s is logged under the constant message, with the detail in fields",
       (_, exception) => {
         const host = makeHost();
         filter.catch(exception, host as never);
-        const loggedMessage = logger.error.mock.calls[0][1] as string;
-        expect(loggedMessage).toMatch(/^\[PROGRAMMER ERROR\]/);
+        // The message must not vary per request — see LOG_MESSAGE. What
+        // distinguishes a programmer error is the field, not a msg prefix.
+        expect(logger.error.mock.calls[0][1]).toBe("request failed");
+        expect(logger.error.mock.calls[0][0].programmerError).toBe(true);
       },
     );
 
