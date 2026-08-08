@@ -34,6 +34,15 @@ jobs:
         with:
           working-directory: src/backend
 
+      # The eslint config is type-aware, and 11 source files import from
+      # prisma/generated — which is gitignored and, since Prisma 7 dropped its
+      # postinstall, is not created by `npm ci`. Without this the whole Prisma
+      # surface types as `any` here, and rules like no-floating-promises stop
+      # firing on exactly the call sites they matter most on. `npm test` and
+      # `npm run build` both generate first, so this job was the only gap.
+      - name: Generate Prisma client
+        run: npx prisma generate
+
       - name: Lint
         run: npm run lint
 
