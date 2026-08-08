@@ -27,6 +27,7 @@ interface UseMapDataReturn {
     | "errorLoadingRegions"
     | "errorLoadingDepartments"
     | "errorLoadingClubs"
+    | "errorLoadingBoundaries"
     | null;
   getRegionClubCount: (regionId: number) => number;
   getDepartmentClubCount: (departmentId: string | number) => number;
@@ -56,15 +57,27 @@ export function useMapData(
   });
 
   // Fetch GeoJSON data
-  const { data: regionsGeoJson = null } = useRegionsGeoJson();
-  const { data: departmentsGeoJson = null } = useDepartmentsGeoJson();
+  const { data: regionsGeoJson = null, error: regionsGeoJsonError } =
+    useRegionsGeoJson();
+  const { data: departmentsGeoJson = null, error: departmentsGeoJsonError } =
+    useDepartmentsGeoJson();
 
   const error = useMemo(() => {
     if (regionsError) return "errorLoadingRegions";
     if (departmentsError) return "errorLoadingDepartments";
     if (clubsError) return "errorLoadingClubs";
+    // Boundaries last: without them the map renders, but with no shapes at
+    // all — which looks like an empty country rather than a failed load.
+    if (regionsGeoJsonError || departmentsGeoJsonError)
+      return "errorLoadingBoundaries";
     return null;
-  }, [regionsError, departmentsError, clubsError]);
+  }, [
+    regionsError,
+    departmentsError,
+    clubsError,
+    regionsGeoJsonError,
+    departmentsGeoJsonError,
+  ]);
 
   /**
    * Get club count for a specific region

@@ -17,7 +17,7 @@ export function RegionalTab() {
   const { filters, setters, setCurrentPage, setPageSize, resetFilters } =
     useRegionalFilterState();
 
-  const { data: leagues = [] } = useLeagues();
+  const { data: leagues = [], error: leaguesError } = useLeagues();
 
   const { data, error, isLoading } = useChampionships({
     level: CompetitionLevel.REGIONAL,
@@ -44,6 +44,7 @@ export function RegionalTab() {
           onCategoryChange={setters.setCategory}
           onGenderChange={setters.setGender}
           onReset={resetFilters}
+          scopeError={leaguesError ? tCommon("errors.fetchLeagues") : undefined}
           scope={{
             label: tCommon("filters.leagues"),
             allLabel: tCommon("filters.allLeagues"),

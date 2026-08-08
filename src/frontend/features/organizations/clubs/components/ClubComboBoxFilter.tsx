@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { useClubSearch } from "@/features/organizations/clubs/api";
+import { ErrorMessage } from "@/shared/components/feedback";
 import { ComboBox } from "@/shared/components/primitives";
 import { useDebounce } from "@/shared/hooks";
 
@@ -32,14 +33,21 @@ export function ClubComboBoxFilter({
 
   const [clubSearch, setClubSearch] = useState("");
   const debouncedClubSearch = useDebounce(clubSearch, 300);
-  const { data: clubData, isLoading: clubsLoading } = useClubSearch(
-    debouncedClubSearch,
-    { committeeId, leagueId },
-  );
+  const {
+    data: clubData,
+    isLoading: clubsLoading,
+    isError: clubsFailed,
+  } = useClubSearch(debouncedClubSearch, { committeeId, leagueId });
   const clubOptions = (clubData?.items ?? []).map((c) => ({
     value: String(c.id),
     label: c.name,
   }));
+
+  // A failed search also produces an empty option list, so without this the
+  // combo box reports a broken request as "no clubs match".
+  if (clubsFailed) {
+    return <ErrorMessage message={tCommon("errors.fetchClubs")} />;
+  }
 
   return (
     <ComboBox

@@ -19,12 +19,14 @@ import { PlayerIdentity } from "./PlayerIdentity";
 
 interface DropdownContentProps {
   readonly isLoading: boolean;
+  readonly isError: boolean;
   readonly results: Player[];
   readonly onSelect: (player: Player) => void;
 }
 
 function DropdownContent({
   isLoading,
+  isError,
   results,
   onSelect,
 }: DropdownContentProps) {
@@ -35,6 +37,16 @@ function DropdownContent({
     return (
       <Text variant="caption" className="px-3 py-2.5">
         {tCommon("loading")}
+      </Text>
+    );
+  }
+
+  // Before the empty check: a failed search returns no results either, and
+  // saying "no players found" would report a broken request as an answer.
+  if (isError) {
+    return (
+      <Text variant="caption" role="alert" className="px-3 py-2.5">
+        {tCommon("errors.fetchPlayers")}
       </Text>
     );
   }
@@ -106,7 +118,11 @@ export function PlayerSearchDropdown({
   // typing settles, so this state never holds a per-keystroke value.
   const [query, setQuery] = useState("");
 
-  const { data: results = [], isLoading } = usePlayerSearch(query, {
+  const {
+    data: results = [],
+    isLoading,
+    isError,
+  } = usePlayerSearch(query, {
     excludeId,
     gender,
     category,
@@ -157,6 +173,7 @@ export function PlayerSearchDropdown({
         >
           <DropdownContent
             isLoading={isLoading}
+            isError={isError}
             results={results}
             onSelect={(player) => {
               onSelect(player);

@@ -17,7 +17,7 @@ export function DepartmentalTab() {
   const { filters, setters, setCurrentPage, setPageSize, resetFilters } =
     useDepartmentalFilterState();
 
-  const { data: committees = [] } = useCommittees();
+  const { data: committees = [], error: committeesError } = useCommittees();
 
   const { data, error, isLoading } = useChampionships({
     level: CompetitionLevel.DEPARTMENTAL,
@@ -44,6 +44,9 @@ export function DepartmentalTab() {
           onCategoryChange={setters.setCategory}
           onGenderChange={setters.setGender}
           onReset={resetFilters}
+          scopeError={
+            committeesError ? tCommon("errors.fetchCommittees") : undefined
+          }
           scope={{
             label: tCommon("filters.committees"),
             allLabel: tCommon("filters.allCommittees"),

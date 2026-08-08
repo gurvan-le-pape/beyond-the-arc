@@ -7,6 +7,7 @@ import { useMemo, useState } from "react";
 import { usePlayerMatches } from "@/features/players/api";
 import type { Player } from "@/features/players/types";
 import { Section, StatComparison } from "@/shared/components/blocks";
+import { ErrorMessage } from "@/shared/components/feedback";
 import { Badge } from "@/shared/components/primitives";
 import { cn } from "@/shared/utils";
 
@@ -51,10 +52,11 @@ export function PlayerComparison({ player }: PlayerComparisonProps) {
   const [opponent, setOpponent] = useState<Player | null>(null);
 
   const { data: playerData } = usePlayerMatches(player.id);
-  const { data: opponentData, isLoading: isLoadingOpponent } = usePlayerMatches(
-    opponent?.id ?? 0,
-    { enabled: !!opponent },
-  );
+  const {
+    data: opponentData,
+    isLoading: isLoadingOpponent,
+    isError: opponentFailed,
+  } = usePlayerMatches(opponent?.id ?? 0, { enabled: !!opponent });
 
   const statsA = playerData?.career ?? null;
   const statsB = opponent ? (opponentData?.career ?? null) : null;
@@ -123,6 +125,12 @@ export function PlayerComparison({ player }: PlayerComparisonProps) {
 
       <div className="mt-5">
         {isLoadingOpponent && <LoadingDots />}
+
+        {/* A failed opponent lookup leaves statsB null, which renders exactly
+            like "no opponent picked yet" — silence where a failure happened. */}
+        {opponentFailed && !isLoadingOpponent && (
+          <ErrorMessage message={tCommon("errors.fetchPlayers")} />
+        )}
 
         {statsA && statsB && !isLoadingOpponent && (
           <div className="animate-slide-up">
