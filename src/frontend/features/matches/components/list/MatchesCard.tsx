@@ -1,5 +1,5 @@
 // src/frontend/features/matches/components/list/MatchesCard.tsx
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import React from "react";
 
 import {
@@ -17,6 +17,7 @@ import type { Match } from "../../types";
 
 export const MatchesCard: React.FC<{ match: Match }> = ({ match }) => {
   const tMatches = useTranslations("matches");
+  const locale = useLocale();
 
   const level = match.pool?.championship?.level;
   const config = getLevelConfig(level);
@@ -34,11 +35,11 @@ export const MatchesCard: React.FC<{ match: Match }> = ({ match }) => {
       headerLeft={
         <div className="flex items-center gap-2">
           <Text variant="label" className={cn("font-semibold", config.text)}>
-            {formatMatchDate(match.date)}
+            {formatMatchDate(match.date, locale)}
             {/* Punctuation, not content: a screen reader would otherwise
                 read "12 October, bullet, 20:00". */}
             <span aria-hidden="true"> • </span>
-            {formatMatchTime(match.date)}
+            {formatMatchTime(match.date, locale)}
           </Text>
           <Badge variant="default" size="sm">
             {tMatches("matchdayLabel", { matchday: match.matchday })}
