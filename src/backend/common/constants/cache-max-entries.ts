@@ -10,9 +10,12 @@
  * Sized from the largest body a caller can actually multiply. `limit` is
  * clamped at 100, which caps a paginated page at roughly 50 KB of JSON
  * (`/players?limit=100` measures 49 KB, `/matches?limit=100` 50 KB), so 500
- * entries is on the order of 25 MB of JSON and a few times that once parsed
- * into heap objects. `/clubs/all` is far larger at 990 KB, but it takes no
- * query parameters — it is exactly one key and cannot be multiplied.
+ * entries is on the order of 25 MB. That figure is close to literal here:
+ * Keyv serializes, so an entry is held as a JSON string rather than an object
+ * graph, which is both more compact and easier to reason about than the
+ * unserialized store cache-manager builds by default. `/clubs/all` is far
+ * larger at 990 KB, but it takes no query parameters — it is exactly one key
+ * and cannot be multiplied.
  *
  * Lower this if the backend ever gets a memory limit in compose; raise it only
  * with the same arithmetic redone against the biggest cacheable response.
