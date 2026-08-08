@@ -7,7 +7,7 @@
   "teamNumber": "Équipe #{number}",
   "playerDetail": {
     "age": "{age} ans",
-    "ageLabel": "Age",
+    "ageLabel": "Âge",
     "height": "{heightCm} cm",
     "heightLabel": "Taille",
     "weight": "{weightKg} kg",
