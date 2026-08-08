@@ -1,6 +1,6 @@
 // src/backend/modules/matches/matches.controller.spec.ts
 import type { PaginatedResponseDto } from "@common/dto";
-import type { CompetitionLevel } from "@common/index";
+import type { Category, CompetitionLevel, Gender } from "@common/index";
 import { CacheDedupService } from "@common/services/cache-dedup.service";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { NotFoundException } from "@nestjs/common";
@@ -98,6 +98,15 @@ describe("MatchesController", () => {
       const query = {
         level: "regional" as CompetitionLevel,
         division: 1,
+        committeeId: 7,
+        leagueId: 8,
+        category: "U18" as Category,
+        gender: "female" as Gender,
+        poolId: 9,
+        championshipId: 10,
+        matchday: 11,
+        date: "2026-02-06",
+        search: "croix",
         page: 1,
         limit: 10,
       };
@@ -105,7 +114,53 @@ describe("MatchesController", () => {
       const result = await controller.getMatches(query);
 
       expect(result).toBe(mockResponse);
-      expect(service.findAllMatches).toHaveBeenCalled();
+      // The full mapped object, as players/teams/clubs/championships already
+      // assert. Every one of these 13 fields is a filter a caller can set, and
+      // dropping one from the controller is silent otherwise: the endpoint just
+      // ignores that filter.
+      expect(service.findAllMatches).toHaveBeenCalledWith({
+        level: "regional",
+        division: 1,
+        committeeId: 7,
+        leagueId: 8,
+        category: "U18",
+        gender: "female",
+        poolId: 9,
+        championshipId: 10,
+        matchday: 11,
+        date: "2026-02-06",
+        search: "croix",
+        page: 1,
+        limit: 10,
+      });
+    });
+
+    it("passes every unset filter through as undefined rather than dropping it", async () => {
+      mockMatchesService.findAllMatches.mockResolvedValue({
+        data: [],
+        total: 0,
+        page: 1,
+        limit: 10,
+        totalPages: 0,
+      });
+
+      await controller.getMatches({ page: 1, limit: 10 });
+
+      expect(service.findAllMatches).toHaveBeenCalledWith({
+        level: undefined,
+        division: undefined,
+        committeeId: undefined,
+        leagueId: undefined,
+        category: undefined,
+        gender: undefined,
+        poolId: undefined,
+        championshipId: undefined,
+        matchday: undefined,
+        date: undefined,
+        search: undefined,
+        page: 1,
+        limit: 10,
+      });
     });
   });
 
