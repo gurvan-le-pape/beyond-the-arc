@@ -68,7 +68,9 @@ export default async function PlayerDetailPage({
       <PlayerMatchHistoryTable player={player} matches={matches} maxRows={5} />
 
       {/* Player Comparison */}
-      <PlayerComparison player={player} />
+      {/* career is passed down rather than refetched: the same
+          /players/{id}/matches response is already on screen above. */}
+      <PlayerComparison player={player} careerStats={career} />
 
       {/* Player Shot Chart Hotspots */}
       <PlayerShotChart
