@@ -62,7 +62,10 @@ describe("HealthCheckExceptionFilter", () => {
   it("responds 503 with the full Terminus result, not a flattened body", () => {
     const host = makeHost();
 
-    filter.catch(new ServiceUnavailableException(TERMINUS_PAYLOAD), host as any);
+    filter.catch(
+      new ServiceUnavailableException(TERMINUS_PAYLOAD),
+      host as any,
+    );
 
     expect(host.response.status).toHaveBeenCalledWith(503);
     expect(host.response.json).toHaveBeenCalledWith({
@@ -76,7 +79,10 @@ describe("HealthCheckExceptionFilter", () => {
   it("keeps the reason a failing indicator gave", () => {
     const host = makeHost();
 
-    filter.catch(new ServiceUnavailableException(TERMINUS_PAYLOAD), host as any);
+    filter.catch(
+      new ServiceUnavailableException(TERMINUS_PAYLOAD),
+      host as any,
+    );
 
     const body = host.response.json.mock.calls[0][0];
     expect(body.data.details.database.message).toBe("connection refused");
@@ -86,7 +92,10 @@ describe("HealthCheckExceptionFilter", () => {
   it("mirrors the envelope TransformInterceptor puts on a healthy check", () => {
     const host = makeHost();
 
-    filter.catch(new ServiceUnavailableException(TERMINUS_PAYLOAD), host as any);
+    filter.catch(
+      new ServiceUnavailableException(TERMINUS_PAYLOAD),
+      host as any,
+    );
 
     expect(Object.keys(host.response.json.mock.calls[0][0]).sort()).toEqual([
       "data",

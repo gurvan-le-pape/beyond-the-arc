@@ -460,7 +460,11 @@ export class PlayerCareerStatsDto {
   @ApiProperty({ description: "Total turnovers", example: 55, type: Number })
   turnovers!: number;
 
-  @ApiProperty({ description: "Total personal fouls", example: 62, type: Number })
+  @ApiProperty({
+    description: "Total personal fouls",
+    example: 62,
+    type: Number,
+  })
   fouls!: number;
 
   @ApiProperty({ description: "Points per game", example: 15.5, type: Number })
