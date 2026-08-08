@@ -1,4 +1,4 @@
-// src/frontend/features/teams/components/list/TeamsCard.tsx
+// src/frontend/features/teams/components/list/TeamCard.tsx
 import { useTranslations } from "next-intl";
 import React from "react";
 
@@ -59,5 +59,3 @@ export const TeamCard: React.FC<{ team: Team }> = ({ team }) => {
     </ListEntityCard>
   );
 };
-
-export default TeamCard;

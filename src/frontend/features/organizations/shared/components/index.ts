@@ -6,4 +6,4 @@
 export * from "./detail/OrganizationDetailView";
 export * from "./detail/OrganizationHeader";
 export * from "./detail/OrganizationInfo";
-export * from "./detail/SearchableChipsList";
+export * from "./detail/SearchableChipList";

@@ -17,7 +17,7 @@ import React, { useEffect, useRef } from "react";
 import { cn } from "@/shared/utils";
 
 import { Text } from "../typography";
-import { DROPDOWN_TRIGGER_BASE } from "./DropdownTriggerBase";
+import { DROPDOWN_TRIGGER_BASE } from "./dropdownTriggerBase";
 import { SelectChevron } from "./SelectChevron";
 
 export interface MultiSelectColumn {

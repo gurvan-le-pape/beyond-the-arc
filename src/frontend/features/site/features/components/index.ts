@@ -5,4 +5,4 @@
 
 export * from "./FeatureCard";
 export * from "./FeatureHighlightItem";
-export * from "./FeaturesHighlightSection";
+export * from "./FeaturesHighlightsSection";

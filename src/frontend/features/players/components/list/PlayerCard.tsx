@@ -1,4 +1,4 @@
-// src/frontend/features/players/components/list/PlayersCard.tsx
+// src/frontend/features/players/components/list/PlayerCard.tsx
 import { useTranslations } from "next-intl";
 import React from "react";
 
@@ -57,5 +57,3 @@ export const PlayerCard: React.FC<{ player: Player }> = ({ player }) => {
     </ListEntityCard>
   );
 };
-
-export default PlayerCard;

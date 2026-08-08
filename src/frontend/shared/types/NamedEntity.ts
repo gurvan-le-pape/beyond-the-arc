@@ -1,4 +1,4 @@
-// src/frontend/shared/types/SelectOption.ts
+// src/frontend/shared/types/NamedEntity.ts
 export interface NamedEntity {
   id: number;
   name: string;
