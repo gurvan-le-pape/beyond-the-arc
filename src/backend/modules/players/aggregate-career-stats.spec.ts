@@ -67,6 +67,53 @@ describe("aggregateCareerStats", () => {
     });
   });
 
+  it("rounds per-game averages to one decimal", () => {
+    // Three games, and no total divides evenly by three — which is what makes
+    // the rounding observable. The two-game fixture above divides exactly
+    // every time, so it passes with the rounding removed entirely.
+    const game1 = makeStats({
+      points: 15,
+      rebounds: { total: 8, offensive: 3, defensive: 5 },
+      assists: 7,
+      steals: 2,
+      blocks: 1,
+      turnovers: 3,
+      fouls: 2,
+    });
+    const game2 = makeStats({
+      points: 21,
+      rebounds: { total: 8, offensive: 2, defensive: 6 },
+      assists: 5,
+      steals: 1,
+      blocks: 0,
+      turnovers: 4,
+      fouls: 3,
+    });
+    const game3 = makeStats({
+      points: 14,
+      rebounds: { total: 6, offensive: 2, defensive: 4 },
+      assists: 4,
+      steals: 1,
+      blocks: 1,
+      turnovers: 3,
+      fouls: 2,
+    });
+
+    const career = aggregateCareerStats([game1, game2, game3]);
+
+    // 50/3, 22/3, 16/3, 4/3, 2/3, 10/3, 7/3 — all repeating.
+    expect(career).toMatchObject({
+      gamesPlayed: 3,
+      pointsPerGame: 16.7,
+      reboundsPerGame: 7.3,
+      assistsPerGame: 5.3,
+      stealsPerGame: 1.3,
+      blocksPerGame: 0.7,
+      turnoversPerGame: 3.3,
+      foulsPerGame: 2.3,
+    });
+  });
+
   it("guards games played to at least 1 for an empty history", () => {
     expect(aggregateCareerStats([])).toEqual({
       gamesPlayed: 0,
