@@ -27,6 +27,21 @@ interface ErrorResponse {
 }
 
 /**
+ * The log message for every failure this filter records.
+ *
+ * It is deliberately a constant. Everything that varies per request — method,
+ * url, statusCode, the exception message — is a field on the log object, so the
+ * message stays something you can group and count by in Loki. Interpolating
+ * those values here instead would make `msg` unique per request: every 404 from
+ * a bot scanning ids becomes its own message string, and "which failure is
+ * spiking" stops being answerable.
+ *
+ * Level and `statusCode` distinguish the branches below; `programmerError`
+ * marks the subset that indicates a bug rather than an operational failure.
+ */
+const LOG_MESSAGE = "request failed";
+
+/**
  * Programmer errors: exceptions that indicate a bug in application code, not
  * an expected operational failure. These are logged at `error` level even when
  * they surface as 5xx responses, and should ideally trigger a separate alert
@@ -240,6 +255,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
       traceId: request.id ?? null,
       userAgent: headers["user-agent"] ?? "unknown",
       statusCode: errorResponse.statusCode,
+      // Carried as a field, never interpolated into the message below: the
+      // message has to stay a constant to be groupable, and this is the part
+      // that varies per request.
+      message,
     };
 
     if (errorResponse.statusCode >= 500) {
@@ -255,19 +274,13 @@ export class AllExceptionsFilter implements ExceptionFilter {
         // dead metadata in a future cleanup.
         this.logger.error(
           { err: exception, ...logContext, programmerError: true },
-          `[PROGRAMMER ERROR] ${method} ${url} - ${errorResponse.statusCode} - ${message}`,
+          LOG_MESSAGE,
         );
       } else {
-        this.logger.error(
-          { err: exception, ...logContext },
-          `${method} ${url} - ${errorResponse.statusCode} - ${message}`,
-        );
+        this.logger.error({ err: exception, ...logContext }, LOG_MESSAGE);
       }
     } else if (errorResponse.statusCode >= 400) {
-      this.logger.warn(
-        logContext,
-        `${method} ${url} - ${errorResponse.statusCode} - ${message}`,
-      );
+      this.logger.warn(logContext, LOG_MESSAGE);
     }
     // Intentionally not logging 1xx/2xx/3xx — those are success/redirect
     // paths and should never reach this filter under normal circumstances.
