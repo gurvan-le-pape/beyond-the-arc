@@ -93,8 +93,8 @@ The database is PostgreSQL, inferred from `@prisma/adapter-pg` + `pg`. `[manifes
 - Use `$transaction` for multi-write operations that must succeed or fail together. `[principle]`
 - Prefer Prisma's typed API over `$queryRaw`. When raw SQL is genuinely needed, use the tagged-template form so parameters are bound — never build SQL by string concatenation. `[principle]`
 
-## ESM
+## Module format
 
-- Prisma 7 ships as an ES module and its migration guidance is to set `"type": "module"` with `module: "ESNext"` / `moduleResolution: "bundler"`. `[upstream]`
-- **`src/backend/package.json` has no `"type"` field**, and the build path is `nest build` + `tsc-alias`. `[manifest]`
-- Those two facts have to be reconciled deliberately — read the tsconfig's `module` and `moduleResolution` before changing anything here. A module-format change affects Nest, `tsc-alias`, ts-jest, and Prisma at once, and each of them fails differently. `[principle]`
+- **Prisma 7.8.0 does not require ESM.** None of `prisma`, `@prisma/client`, `@prisma/adapter-pg` or `@prisma/config` declares `"type": "module"`; each exposes a `require` entry point, and the generated client is emitted with extensionless relative specifiers. CommonJS is a supported configuration here, not migration debt. `[manifest]`+`[upstream]`
+- `src/backend` is CommonJS: no `"type"` field, `module: "commonjs"` in the tsconfig, and a `nest build` + `tsc-alias` build path with ts-jest for tests. **Do not open a CJS → ESM migration on Prisma's account** — there is no defect behind it, and a module-format change hits Nest, `tsc-alias`, ts-jest and Prisma at once, each failing differently. `[manifest]`+`[principle]`
+- What *is* worth revisiting is **`moduleResolution`**, which is `node` — the legacy node10 algorithm. Moving to `node16`/`nodenext` is a *resolution* change that stays inside CommonJS, far smaller than a format change; the generated client's extensionless specifiers are the part of it that needs care, since node16 ESM would reject them. See `typescript.md`. `[manifest]`+`[upstream]`

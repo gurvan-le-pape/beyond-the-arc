@@ -63,9 +63,11 @@ Note the `await` on `params` — Next.js 15 made it a Promise. See `frontend-nex
 
 ## Which API to use where
 
-- **Server Components and metadata:** `await getTranslations({ locale, namespace })`. `[upstream]`
-- **Client Components:** `useTranslations(namespace)`. `[upstream]`
-- Do not reach for the client hook in a Server Component to avoid an `await`; it will force a client boundary you did not intend. `[upstream]`+`[principle]`
+- The split is **async vs non-async**, not server vs client. `[upstream]`
+- `useTranslations` is a hook, so it works in any component that is not `async` — **including non-async Server Components**. next-intl ships `react-server` conditional exports, so in a Server Component the hook resolves to the server implementation and reads its config from `i18n/request.ts` rather than from context. It does **not** create a client boundary. `[upstream]`
+- `getTranslations` exists for the one case a hook cannot cover: `async` components. Use `await getTranslations({ locale, namespace })` in `async` Server Components and in `generateMetadata`. The same async/non-async split applies to its siblings — `getFormatter`, `getNow`, `getTimeZone`, `getMessages`, `getLocale`. `[upstream]`
+- Those server APIs are unavailable on the client: imported from a client module graph, every `next-intl/server` export is replaced by a stub that throws. `[upstream]`
+- **Never add `"use client"` to a Server Component in order to use `useTranslations`.** That is what actually pushes it into the client bundle — the opposite of the intent. `[principle]`
 
 ## Catalogue hygiene
 

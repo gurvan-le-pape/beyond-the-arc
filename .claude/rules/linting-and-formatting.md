@@ -61,12 +61,23 @@ paths:
 Both applications: `@typescript-eslint/eslint-plugin` + `parser` (`8.59.3`), `eslint-plugin-simple-import-sort` (`12.1.1`), `eslint-plugin-sonarjs`. Frontend adds `@next/eslint-plugin-next` (`15.5.18`), `eslint-plugin-jsx-a11y` (`6.10.2`), `eslint-plugin-react-hooks` (`7.1.1`). `[manifest]`
 
 - The frontend does **not** install `eslint-config-next`. The Next.js rules must be wired manually from `@next/eslint-plugin-next` in the flat config — there is no preset package doing it for you. `[manifest]`
-- `eslint-plugin-react-hooks@7` exposes flat presets: `reactHooks.configs.flat.recommended` enables `react-hooks/rules-of-hooks` (error) and `react-hooks/exhaustive-deps` (warn). The React Compiler rules are **not** in that preset; they only come with `recommended-latest` or explicit per-rule configuration. `[upstream]`
+- `eslint-plugin-react-hooks@7` exposes two flat presets, `reactHooks.configs.flat.recommended` and `reactHooks.configs.flat['recommended-latest']`, and **both are the React Compiler ruleset**. v7 moved the Compiler rules *into* `recommended`: it is 16 rules, of which only `rules-of-hooks` and `exhaustive-deps` are the classic pair. `recommended-latest` is the same 16 plus `void-use-memo`. `[upstream]`
+- **Do not spread either preset to obtain the classic pair.** Enable the two rules by name. Spread over a codebase not written under the Compiler's assumptions, the preset turns ordinary mounted-flag effects, sync-from-prop effects and manual memoization into errors, and any lint gate in CI goes red. `[upstream]`+`[principle]`
 
   ```js
   import reactHooks from 'eslint-plugin-react-hooks';
-  export default defineConfig([reactHooks.configs.flat.recommended]);
+
+  export default defineConfig([
+    {
+      plugins: { 'react-hooks': reactHooks },
+      rules: {
+        'react-hooks/rules-of-hooks': 'error',
+        'react-hooks/exhaustive-deps': 'error',
+      },
+    },
+  ]);
   ```
+- Adopting the Compiler ruleset is a **separate project decision** with real remediation behind it, not a preset spread. `[principle]`
 - Do not silence `react-hooks/exhaustive-deps` with a blanket disable comment. If a dependency genuinely must be omitted, restructure the effect. `[principle]`
 - `eslint-plugin-sonarjs` reports complexity and duplication. Treat a new sonarjs finding as a design signal, not a lint chore. `[principle]`
 

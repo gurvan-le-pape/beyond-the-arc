@@ -19,6 +19,8 @@ paths:
 - The root manifest declares **no `workspaces` key**. These are not npm workspaces — there is no hoisting contract and no single install. Install each project separately. `[manifest]`
 - The root project is **tooling-only**: its sole dependencies are `barrelsby`, `eslint`, `prettier`, and `prettier-plugin-organize-imports`, and its only scripts are `barrels` and `barrels:lint`. A runtime dependency appearing in the root manifest is a mistake. `[manifest]`
 - `src/frontend` owns the Next.js app; `src/backend` owns the NestJS service. Application code, application dependencies, and application scripts belong to one of those two — never to the root. `[manifest]`
+- **One exception: a cross-cutting generator.** A tool that must see *both* applications at once to do its job belongs to the root, even though its inputs and outputs are application code — splitting it would mean two configs and two sources of truth for one convention. `barrels` is that case: a single `barrelsby.json` enumerates 88 directories, 71 in `src/frontend` and 17 in `src/backend`, and none at the root. The test is **what the tool must read**, not what it writes: a script that only ever touches one application belongs in that application. `[manifest]`+`[principle]`
+- A `barrelsby` declaration in an *application* manifest is therefore the mistake, not the root script — the root copy is the one that runs. `[manifest]`
 
 > `src/frontend` and `src/backend` are the only application projects. A fourth npm project appearing in the tree means this file needs updating — not working around.
 
@@ -38,7 +40,7 @@ paths:
 
 State these rather than working around them silently.
 
-- Both applications declare `barrelsby`, but the root `barrels:lint` script only runs ESLint inside `src/frontend`. Barrels regenerated under `src/backend` are **not** lint-fixed by that script. `[manifest]`
+- The root `barrels:lint` script only runs ESLint inside `src/frontend`, so barrels regenerated under `src/backend` are **not** lint-fixed. Both applications also still declare `barrelsby` themselves; those declarations are dead — nothing invokes them — and are the mistake described above, not a second entry point. `[manifest]`
 - Neither application manifest sets `"private": true`, and both are stuck at `"version": "1.0.0"`. Neither is intended for npm publication. `[manifest]`+`[principle]`
 - Neither application manifest declares `@types/node`, yet both resolve it transitively (backend `25.0.3`, frontend `25.7.0`). Under TypeScript 6 this matters — see `typescript.md`. `[manifest]`
 
