@@ -1,38 +1,68 @@
 // src/frontend/shared/utils/helpers/date-helpers.ts
-import { format } from "date-fns";
-import { toZonedTime } from "date-fns-tz";
 
 /**
- * Formats date and time for match history tables
- * Converts UTC to Paris timezone for display
+ * The competition's own time zone. Every match instant is stored in UTC and
+ * displayed as French wall-clock time, regardless of where the viewer is.
+ */
+const COMPETITION_TIME_ZONE = "Europe/Paris";
+
+/**
+ * Numeric date parts. The *order* is left to the locale — that is the whole
+ * point: `05/08/2026` reads as 8 May to an English reader and 5 August to a
+ * French one, so a fixed `dd/MM/yyyy` silently shows English visitors the
+ * wrong date.
+ */
+const DATE_PARTS = {
+  day: "2-digit",
+  month: "2-digit",
+  year: "numeric",
+} as const;
+
+/** Hour and minute; the locale decides 12- vs 24-hour. */
+const TIME_PARTS = {
+  hour: "2-digit",
+  minute: "2-digit",
+} as const;
+
+function toDate(date: Date | string): Date {
+  return typeof date === "string" ? new Date(date) : date;
+}
+
+/**
+ * `Intl.DateTimeFormat` resolves the zone and the locale in one pass, so no
+ * conversion is chained ahead of the format and no `Date` is produced that
+ * lies about its own zone.
+ */
+function formatIn(
+  date: Date | string,
+  locale: string,
+  parts: Intl.DateTimeFormatOptions,
+): string {
+  return new Intl.DateTimeFormat(locale, {
+    ...parts,
+    timeZone: COMPETITION_TIME_ZONE,
+  }).format(toDate(date));
+}
+
+/**
+ * Date and time of a match, in the competition's zone and the viewer's locale.
  *
- * @param date - Match date (ISO string in UTC)
- * @returns Formatted string like "30/12/2025 19:00" (Paris time)
+ * @param date - Match instant (ISO string in UTC)
+ * @param locale - Active locale, from `useLocale()` or the route's `params`
  */
-export function formatMatchDateTime(date: Date | string): string {
-  const dateObj = typeof date === "string" ? new Date(date) : date;
-
-  // Convert UTC to Paris timezone
-  const parisDate = toZonedTime(dateObj, "Europe/Paris");
-
-  // Format consistently
-  return format(parisDate, "dd/MM/yyyy HH:mm");
+export function formatMatchDateTime(
+  date: Date | string,
+  locale: string,
+): string {
+  return formatIn(date, locale, { ...DATE_PARTS, ...TIME_PARTS });
 }
 
-/**
- * Formats just the date in Paris timezone
- */
-export function formatMatchDate(date: Date | string): string {
-  const dateObj = typeof date === "string" ? new Date(date) : date;
-  const parisDate = toZonedTime(dateObj, "Europe/Paris");
-  return format(parisDate, "dd/MM/yyyy");
+/** Just the date, in the competition's zone and the viewer's locale. */
+export function formatMatchDate(date: Date | string, locale: string): string {
+  return formatIn(date, locale, DATE_PARTS);
 }
 
-/**
- * Formats just the time in Paris timezone
- */
-export function formatMatchTime(date: Date | string): string {
-  const dateObj = typeof date === "string" ? new Date(date) : date;
-  const parisDate = toZonedTime(dateObj, "Europe/Paris");
-  return format(parisDate, "HH:mm");
+/** Just the time, in the competition's zone and the viewer's locale. */
+export function formatMatchTime(date: Date | string, locale: string): string {
+  return formatIn(date, locale, TIME_PARTS);
 }

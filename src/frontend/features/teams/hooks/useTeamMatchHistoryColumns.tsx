@@ -1,5 +1,5 @@
 // src/frontend/features/teams/hooks/useTeamMatchHistoryColumns.tsx
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useMemo } from "react";
 
 import {
@@ -16,10 +16,14 @@ export function useTeamMatchHistoryColumns(
   team: Team,
 ): TableColumn<TeamMatchHistory>[] {
   const tCommon = useTranslations("common");
+  const locale = useLocale();
 
   return useMemo<TableColumn<TeamMatchHistory>[]>(
     () => [
-      buildMatchDateColumn<TeamMatchHistory>(tCommon("matchHistory.date")),
+      buildMatchDateColumn<TeamMatchHistory>(
+        tCommon("matchHistory.date"),
+        locale,
+      ),
       buildMatchupColumn<TeamMatchHistory>(
         tCommon("matchHistory.match"),
         team.id,
@@ -37,7 +41,7 @@ export function useTeamMatchHistoryColumns(
         align: "center",
       },
     ],
-    [tCommon, team.id],
+    [tCommon, locale, team.id],
   );
 }
 

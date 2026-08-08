@@ -1,7 +1,7 @@
 // src/frontend/features/players/hooks/usePlayerMatchHistoryColumns.tsx
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useMemo } from "react";
 
 import {
@@ -17,10 +17,11 @@ export function usePlayerMatchHistoryColumns(
   player: Player,
 ): TableColumn<PlayerMatchHistory>[] {
   const t = useTranslations("common");
+  const locale = useLocale();
 
   return useMemo<TableColumn<PlayerMatchHistory>[]>(
     () => [
-      buildMatchDateColumn<PlayerMatchHistory>(t("matchHistory.date")),
+      buildMatchDateColumn<PlayerMatchHistory>(t("matchHistory.date"), locale),
       buildMatchupColumn<PlayerMatchHistory>(
         t("matchHistory.match"),
         player.team?.id ?? -1,
@@ -69,7 +70,7 @@ export function usePlayerMatchHistoryColumns(
         numeric: true,
       },
     ],
-    [t, player.team?.id],
+    [t, locale, player.team?.id],
   );
 }
 

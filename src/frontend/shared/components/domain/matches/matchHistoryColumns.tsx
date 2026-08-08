@@ -18,11 +18,12 @@ interface MatchWithTeams {
  */
 export function buildMatchDateColumn<T extends MatchWithTeams>(
   header: ReactNode,
+  locale: string,
 ): TableColumn<T> {
   return {
     key: "date",
     header,
-    render: (match: T) => formatMatchDateTime(match.date),
+    render: (match: T) => formatMatchDateTime(match.date, locale),
     align: "center",
   };
 }
