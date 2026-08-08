@@ -90,8 +90,16 @@ barrels:
 # Host-side (not Docker) - hits competitions.ffbb.com directly and takes
 # ~1h20 (4480 pages at the 1s crawl-delay their robots.txt asks for).
 # Review with `git diff` before committing.
+#
+# This rewrites a migration that production has already applied, and
+# `prisma migrate deploy` does not checksum applied migrations — so the
+# refreshed data reaches a *fresh* database and nothing else. Landing a refresh
+# therefore takes two things: `[refresh-static-data]` in the PR title (the
+# migration-immutability CI job blocks the edit otherwise) and the catch-up SQL
+# in the PR body, to apply the same change to production by hand.
 refresh-static-data:
 	@echo "This will take ~1h20 (scraping ~4480 pages from FFBB at 1 req/s)."
+	@echo "Note: the regenerated migration is a no-op on any database that already applied it - production included. See the comment above this target."
 	venv/bin/python3 scripts/ffbb-import/scrape.py
 	venv/bin/python3 scripts/ffbb-import/build_migration.py
 

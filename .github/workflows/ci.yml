@@ -209,6 +209,62 @@ jobs:
           }
 
   # ============================================================================
+  # MIGRATIONS
+  # ============================================================================
+  # `prisma migrate deploy` does not checksum migrations it has already applied
+  # — it branches on the pending count alone, so an edited migration file is
+  # silently ignored on every database that already ran it, while a fresh one
+  # gets the new content. Nothing reports the divergence. This job is the only
+  # mechanical enforcement of CLAUDE.md's "Never edit an applied migration".
+  #
+  # Pull requests only: on a push to main there is nothing left to gate.
+  migration-immutability:
+    name: Migrations – No edits to applied migrations
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The base commit must be present locally for the diff below.
+          fetch-depth: 0
+
+      - name: Fail on a changed migration
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          changed=$(git diff --name-status "$BASE_SHA" HEAD -- src/backend/prisma/migrations/ \
+            | grep -v '^A' || true)
+
+          if [ -z "$changed" ]; then
+            echo "No committed migration was changed; new migrations are unrestricted."
+            exit 0
+          fi
+
+          # `make refresh-static-data` legitimately rewrites 1_seed_static_data.
+          # It is allowed through, because the alternative is that the workflow
+          # cannot land at all — but it has to be deliberate, and the PR has to
+          # carry the SQL that applies the same change to already-seeded
+          # databases, production included.
+          case "$PR_TITLE" in
+            *"[refresh-static-data]"*)
+              echo "::warning::This PR edits an applied migration under a [refresh-static-data] marker."
+              echo "$changed"
+              echo "Production has already applied these files, so the deploy will NOT pick the change up."
+              echo "The PR body must carry the SQL that brings already-seeded databases in line."
+              exit 0
+              ;;
+          esac
+
+          # No backticks in the message: this is a double-quoted shell string,
+          # where they would be command substitution rather than punctuation.
+          echo "::error::This PR changes a migration that has already been committed, and every database that already applied it will silently ignore the change (prisma migrate deploy does not checksum applied migrations). Add a new migration instead. If this is a deliberate 'make refresh-static-data' refresh, put [refresh-static-data] in the PR title and the catch-up SQL in the PR body."
+          echo "$changed"
+          exit 1
+
+  # ============================================================================
   # SONARCLOUD
   # ============================================================================
   sonarcloud:
