@@ -155,58 +155,40 @@ describe("StatsService", () => {
     });
 
     it("should run all queries in parallel via Promise.all", async () => {
-      // Arrange — track resolution order
-      const order: string[] = [];
+      // The count assertions live in the test above; this one has to observe
+      // *concurrency* or it proves nothing the other does not.
+      //
+      // Each mock records how many queries had started by the time it resumed
+      // from its first await. Under Promise.all every call is issued before any
+      // continuation runs, so every reading is 9. Serially the readings are
+      // 1, 2, 3 … — so the minimum is the discriminator, and it needs no timers.
+      const TOTAL_QUERIES = 9;
+      let started = 0;
+      const startedOnResume: number[] = [];
 
-      mockPrismaService.client.clubs.count.mockImplementation(async () => {
-        order.push("clubs");
-        return 1;
-      });
-      mockPrismaService.client.teams.count.mockImplementation(async () => {
-        order.push("teams");
-        return 2;
-      });
-      mockPrismaService.client.players.count.mockImplementation(async () => {
-        order.push("players");
-        return 3;
-      });
-      mockPrismaService.client.matches.count.mockImplementation(async () => {
-        order.push("matches");
-        return 4;
-      });
-      mockPrismaService.client.leagues.count.mockImplementation(async () => {
-        order.push("leagues");
-        return 5;
-      });
-      mockPrismaService.client.committees.count.mockImplementation(async () => {
-        order.push("committees");
-        return 6;
-      });
+      const countingMock = () => async () => {
+        started += 1;
+        await Promise.resolve();
+        startedOnResume.push(started);
+        return 0;
+      };
+
+      mockPrismaService.client.clubs.count.mockImplementation(countingMock());
+      mockPrismaService.client.teams.count.mockImplementation(countingMock());
+      mockPrismaService.client.players.count.mockImplementation(countingMock());
+      mockPrismaService.client.matches.count.mockImplementation(countingMock());
+      mockPrismaService.client.leagues.count.mockImplementation(countingMock());
+      mockPrismaService.client.committees.count.mockImplementation(
+        countingMock(),
+      );
       mockPrismaService.client.championships.count.mockImplementation(
-        async () => {
-          order.push("championships");
-          return 0;
-        },
+        countingMock(),
       );
 
-      // Act
       await service.getStats();
 
-      // Assert — all nine calls were made (order is non-deterministic in parallel)
-      expect(order).toHaveLength(9);
-      expect(order).toEqual(
-        expect.arrayContaining([
-          "clubs",
-          "teams",
-          "players",
-          "matches",
-          "leagues",
-          "committees",
-          "championships",
-          "championships",
-          "championships",
-        ]),
-      );
+      expect(startedOnResume).toHaveLength(TOTAL_QUERIES);
+      expect(Math.min(...startedOnResume)).toBe(TOTAL_QUERIES);
     });
   });
 });
