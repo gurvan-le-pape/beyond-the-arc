@@ -3,13 +3,13 @@ import { CACHE_TTL } from "@common/constants";
 import { ApiPaginatedResponse } from "@common/decorators";
 import { OrganizationScopeQueryDto, PaginatedResponseDto } from "@common/dto";
 import { CacheInterceptor } from "@common/interceptors";
+import { ParseEntityIdPipe } from "@common/pipes";
 import {
   Controller,
   Get,
   HttpCode,
   HttpStatus,
   Param,
-  ParseIntPipe,
   Query,
   UseInterceptors,
 } from "@nestjs/common";
@@ -95,7 +95,7 @@ export class TeamsController {
     description: "Invalid ID format",
   })
   async getTeamById(
-    @Param("id", ParseIntPipe) id: number,
+    @Param("id", ParseEntityIdPipe) id: number,
   ): Promise<TeamDetailResponseDto> {
     return this.teamsService.findTeamById(id);
   }
@@ -119,7 +119,7 @@ export class TeamsController {
     description: "Invalid ID format",
   })
   async getTeamMatchHistory(
-    @Param("id", ParseIntPipe) id: number,
+    @Param("id", ParseEntityIdPipe) id: number,
   ): Promise<TeamMatchHistoryResponseDto> {
     return this.teamsService.findTeamMatchHistory(id);
   }

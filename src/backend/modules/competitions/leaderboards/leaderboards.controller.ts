@@ -1,13 +1,13 @@
 // src/backend/modules/competitions/leaderboards/leaderboards.controller.ts
 import { CACHE_TTL } from "@common/constants";
 import { CacheInterceptor } from "@common/interceptors";
+import { ParseEntityIdPipe } from "@common/pipes";
 import {
   Controller,
   Get,
   HttpCode,
   HttpStatus,
   Param,
-  ParseIntPipe,
   Query,
   UseInterceptors,
 } from "@nestjs/common";
@@ -236,7 +236,7 @@ export class LeaderboardsController {
     },
   })
   async getLeaderboardById(
-    @Param("id", ParseIntPipe) id: number,
+    @Param("id", ParseEntityIdPipe) id: number,
   ): Promise<LeaderboardResponseDto> {
     return this.leaderboardsService.findLeaderboardById(id);
   }

@@ -3,13 +3,13 @@ import { CACHE_TTL } from "@common/constants";
 import { ApiPaginatedResponse } from "@common/decorators";
 import { PaginatedResponseDto } from "@common/dto";
 import { CacheInterceptor } from "@common/interceptors";
+import { ParseEntityIdPipe } from "@common/pipes";
 import {
   Controller,
   Get,
   HttpCode,
   HttpStatus,
   Param,
-  ParseIntPipe,
   Query,
   UseInterceptors,
 } from "@nestjs/common";
@@ -200,7 +200,7 @@ export class MatchesController {
     description: "Invalid ID format",
   })
   async getMatchesByPoolId(
-    @Param("poolId", ParseIntPipe) poolId: number,
+    @Param("poolId", ParseEntityIdPipe) poolId: number,
   ): Promise<MatchResponseDto[]> {
     return this.matchesService.findMatchesByPoolId(poolId);
   }
@@ -240,7 +240,7 @@ export class MatchesController {
     description: "Invalid ID format",
   })
   async getMatchById(
-    @Param("matchId", ParseIntPipe) matchId: number,
+    @Param("matchId", ParseEntityIdPipe) matchId: number,
   ): Promise<MatchDetailResponseDto> {
     return this.matchesService.findMatchById(matchId);
   }
@@ -280,7 +280,7 @@ export class MatchesController {
     description: "Invalid ID format",
   })
   async getPlayerMatchStats(
-    @Param("matchId", ParseIntPipe) matchId: number,
+    @Param("matchId", ParseEntityIdPipe) matchId: number,
   ): Promise<MatchPlayerStatsResponseDto> {
     return this.matchesService.findPlayerMatchStatsByMatchId(matchId);
   }
@@ -316,7 +316,7 @@ export class MatchesController {
     description: "Invalid ID format",
   })
   async getMatchEvents(
-    @Param("matchId", ParseIntPipe) matchId: number,
+    @Param("matchId", ParseEntityIdPipe) matchId: number,
   ): Promise<MatchEventDto[]> {
     return this.matchesService.findMatchEventsByMatchId(matchId);
   }
@@ -352,7 +352,7 @@ export class MatchesController {
     description: "Invalid ID format",
   })
   async getMatchEventsByTeamId(
-    @Param("teamId", ParseIntPipe) teamId: number,
+    @Param("teamId", ParseEntityIdPipe) teamId: number,
   ): Promise<MatchEventDto[]> {
     return this.matchesService.findMatchEventsByTeamId(teamId);
   }
@@ -388,7 +388,7 @@ export class MatchesController {
     description: "Invalid ID format",
   })
   async getMatchEventsByPlayerId(
-    @Param("playerId", ParseIntPipe) playerId: number,
+    @Param("playerId", ParseEntityIdPipe) playerId: number,
   ): Promise<MatchEventDto[]> {
     return this.matchesService.findMatchEventsByPlayerId(playerId);
   }

@@ -1,13 +1,13 @@
 // src/backend/modules/competitions/pools/pools.controller.ts
 import { CACHE_TTL } from "@common/constants";
 import { CacheInterceptor } from "@common/interceptors";
+import { ParseEntityIdPipe } from "@common/pipes";
 import {
   Controller,
   Get,
   HttpCode,
   HttpStatus,
   Param,
-  ParseIntPipe,
   Query,
   UseInterceptors,
 } from "@nestjs/common";
@@ -216,7 +216,7 @@ export class PoolsController {
     },
   })
   async getPoolById(
-    @Param("id", ParseIntPipe) id: number,
+    @Param("id", ParseEntityIdPipe) id: number,
   ): Promise<PoolResponseDto> {
     return this.poolsService.findPoolById(id);
   }
