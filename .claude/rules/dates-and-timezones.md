@@ -64,4 +64,6 @@ Six exported functions: `[upstream]`
 - Pass the time zone explicitly through the call chain rather than reading it from ambient state deep inside a helper. A function that formats a time should take the zone as an argument. `[principle]`
 - Any test asserting on formatted dates must pin the zone explicitly, or it passes only on machines set to the author's zone. `[principle]`
 
-> The display time zone has exactly **one** source per request or render, and is threaded from there. Whether that source is a user profile, a request header, the browser, or a fixed business zone is a design decision — but there is only ever one, and helpers receive it as an argument rather than reaching for it themselves.
+> The display time zone has exactly **one definition**. Whether it comes from a user profile, a request header, the browser, or a fixed business zone is a design decision — but it is defined once, and helpers receive it as an argument rather than reaching for it themselves.
+>
+> A *fixed* business zone needs no per-request plumbing, only a single exported constant. The failure mode to watch for is therefore duplication, not missing machinery: the same zone identifier written out at several call sites, in several languages, is one rename away from disagreeing with itself.
