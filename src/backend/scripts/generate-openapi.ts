@@ -2,6 +2,7 @@
 import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
+import { METRICS_PATH } from "@common/constants";
 import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 
@@ -21,6 +22,14 @@ import { AppModule } from "../app.module";
  */
 async function generate(): Promise<void> {
   const app = await NestFactory.create(AppModule, { logger: false });
+
+  // Must match main.ts. The prefix is part of the contract, not a deployment
+  // detail: without it every `paths` key here is missing the `/api` the
+  // deployed API actually serves, and the document describes 34 routes that
+  // do not exist. The `openapi-drift` CI job cannot catch that — both sides
+  // of its diff come from this same script, so they agree with each other
+  // while disagreeing with production.
+  app.setGlobalPrefix("api", { exclude: [METRICS_PATH] });
 
   // Keep in sync with the DocumentBuilder config in main.ts.
   const config = new DocumentBuilder()
