@@ -1,4 +1,4 @@
-// src/frontend/shared/components/domain/GenderCategorizedSection.tsx
+// src/frontend/features/organizations/shared/components/detail/gender-categorized-section/index.tsx
 "use client";
 
 import { useTranslations } from "next-intl";

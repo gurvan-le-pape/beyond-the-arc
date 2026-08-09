@@ -1,12 +1,12 @@
 // src/frontend/features/organizations/shared/components/detail/OrganizationDetailView.tsx
 import type { ComponentProps } from "react";
 
-import { GenderCategorizedSection } from "@/shared/components/domain";
 import {
   Breadcrumb,
   type BreadcrumbItem,
 } from "@/shared/components/navigation";
 
+import { GenderCategorizedSection } from "./gender-categorized-section";
 import { OrganizationHeader } from "./OrganizationHeader";
 import { OrganizationInfo } from "./OrganizationInfo";
 import { SearchableChipList } from "./SearchableChipList";

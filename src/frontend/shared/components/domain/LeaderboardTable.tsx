@@ -1,7 +1,7 @@
 // src/frontend/shared/components/domain/LeaderboardTable.tsx
 import { useTranslations } from "next-intl";
 
-import type { Leaderboard } from "@/features/competitions/leaderboards/types";
+import type { Leaderboard } from "@/shared/types";
 
 import { Section } from "../blocks";
 import { DataTable, type TableColumn } from "../table";

@@ -5,10 +5,12 @@
 
 export * from "./Api";
 export * from "./api.generated";
+export * from "./Leaderboard";
 export * from "./NamedEntity";
 export * from "./NavItem";
 export * from "./PageProps";
 export * from "./Pagination";
+export * from "./PlayerCareerStats";
 export * from "./PlayerMatchStats";
 export * from "./President";
 export * from "./ShotEvent";
