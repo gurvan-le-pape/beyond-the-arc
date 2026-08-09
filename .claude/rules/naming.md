@@ -52,9 +52,11 @@ src/backend/modules/widgets/
   dto/create-widget.dto.ts
 ```
 
-These conventions are **machine-enforced**, not habit, by **two** rules: `src/frontend/eslint-rules/enforce-file-naming.js` reports on `api/`, `hooks/`, `constants/`, `utils/`, and `types/` inside `features/`, and `enforce-component-folder-structure.js` governs `components/`. The lint rules are the authority — if this file and the rule ever disagree, the rule wins and this file is stale. `[project]`
+**Inside `features/`, these conventions are machine-enforced**, not habit, by **two** rules: `src/frontend/eslint-rules/enforce-file-naming.js` reports on `api/`, `hooks/`, `constants/`, `utils/`, and `types/`, and `enforce-component-folder-structure.js` governs `components/`. Within that scope the lint rules are the authority — if this file and a rule disagree there, the rule wins and this file is stale. `[project]`
 
-> The lint rule covers `features/` only. Naming under `shared/` and the casing of route-segment directories under `app/` are held by convention alone — match what is already there.
+**Everywhere else the same conventions are held by convention alone**, and everywhere else is most of the tree: all of `shared/`, all of `app/`, the entire backend, and any file inside `features/` that is not in one of the six directories those two rules name. **Do not read a clean lint run as evidence that a name is right** — over most of the codebase the rules were never asked. `[project]`+`[principle]`
+
+> **Under `shared/`, casing carries a signal — follow the distinction, not the majority.** A file whose contents mirror a backend enum or another domain vocabulary is kebab-case, matching the backend's own uniform kebab (`competition-levels.ts`, `event-types.ts`, `organization-types.ts`). Everything else — app configuration, link tables, UI-only constants — is camelCase (`navConfig.ts`, `externalLinks.ts`). The point of the split is that a reader can tell at a glance whether a file has a counterpart on the other side of the wire, so renaming for uniformity would destroy information rather than tidy it. Route-segment directory casing under `app/` is held by convention alone — match what is already there.
 
 ## Types
 
