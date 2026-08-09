@@ -74,7 +74,7 @@ export const matchesService = {
    * const matches = await matchesService.getByPoolId(10);
    */
   async getByPoolId(poolId: number): Promise<Match[]> {
-    const { data } = await apiClient.get<any>(`/matches/pool/${poolId}`);
+    const { data } = await apiClient.get<Match[]>(`/matches/pool/${poolId}`);
     return data;
   },
 

@@ -3416,7 +3416,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MatchDetailResponseDto"][];
+                    "application/json": components["schemas"]["MatchResponseDto"][];
                 };
             };
             /** @description Invalid ID format */

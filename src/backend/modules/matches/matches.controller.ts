@@ -189,7 +189,7 @@ export class MatchesController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: "Matches successfully retrieved",
-    type: [MatchDetailResponseDto],
+    type: [MatchResponseDto],
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
