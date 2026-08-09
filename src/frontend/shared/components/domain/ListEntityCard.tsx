@@ -58,7 +58,12 @@ export function ListEntityCard({
       aria-label={ariaLabel}
       className={cn(
         "group relative overflow-hidden rounded-card border",
-        "surface-raised shadow-card",
+        // Cards sit at `subtle`, never `raised`. These list cards sit directly
+        // on the page (`surface-base`), so `raised` here skipped a rung — and
+        // `raised` is the ceiling, which makes `bg-surface-inset` a no-op for
+        // everything inside. Separation comes from the border and the shadow,
+        // not from a louder background. See globals.css "ELEVATION RULES".
+        "surface-subtle shadow-card",
         "transition-all duration-200",
         "hover:-translate-y-0.5 hover:scale-[1.01]",
         "hover:shadow-card-hover",

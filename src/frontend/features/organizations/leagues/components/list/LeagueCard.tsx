@@ -17,7 +17,7 @@ export function LeagueCard({ league, clubLabel }: LeagueCardProps) {
       href={`/organizations/leagues/${league.id}`}
       className={cn(
         "group relative overflow-hidden rounded-card border text-left w-full",
-        "surface-raised shadow-card",
+        "surface-subtle shadow-card",
         "transition-all duration-200",
         "hover:-translate-y-0.5 hover:scale-[1.01]",
         "hover:shadow-card-hover",

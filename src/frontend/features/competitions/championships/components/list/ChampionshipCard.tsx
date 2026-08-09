@@ -23,7 +23,7 @@ export function ChampionshipCard({
       href={`/championships/${championship.id}`}
       className={cn(
         "group relative overflow-hidden rounded-card border",
-        "surface-raised shadow-card",
+        "surface-subtle shadow-card",
         "transition-all duration-200",
         "hover:-translate-y-0.5 hover:scale-[1.01]",
         "hover:shadow-card-hover",

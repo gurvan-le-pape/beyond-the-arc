@@ -18,7 +18,7 @@ export function CommitteeCard({ committee, clubLabel }: CommitteeCardProps) {
       href={`/organizations/committees/${committee.id}`}
       className={cn(
         "group relative overflow-hidden rounded-card border text-left w-full",
-        "surface-raised shadow-card",
+        "surface-subtle shadow-card",
         "transition-all duration-200",
         "hover:-translate-y-0.5 hover:scale-[1.01]",
         "hover:shadow-card-hover",
