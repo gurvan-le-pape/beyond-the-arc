@@ -223,6 +223,56 @@ jobs:
           }
 
   # ============================================================================
+  # BARRELS
+  # ============================================================================
+  # The root project is installed by nothing else in CI — every `npm ci` goes
+  # through setup-app with src/backend or src/frontend — so barrelsby.json and
+  # the 88 barrels it generates were verified nowhere.
+  #
+  # Two halves, because they catch different things. Regenerating and diffing
+  # catches a barrel whose *content* has gone stale. It does NOT catch a defect
+  # in the config: an unrecognised key and a directory with no barrel both emit
+  # byte-identical output, which is exactly how three of them survived. The
+  # script covers that half.
+  barrels-drift:
+    name: Barrels – Config and drift check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup root
+        uses: ./.github/actions/setup-app
+        with:
+          working-directory: .
+
+      # barrels:lint runs eslint --fix over the generated frontend barrels,
+      # which needs the frontend's own config and plugins installed.
+      - name: Setup frontend
+        uses: ./.github/actions/setup-app
+        with:
+          working-directory: src/frontend
+
+      - name: Validate barrelsby.json
+        run: node scripts/check-barrels-config.mjs
+
+      - name: Regenerate barrels
+        run: npm run barrels
+
+      # `git add -A` first: a directory newly added to barrelsby.json produces a
+      # barrel that does not exist in the commit yet, and `git diff` alone does
+      # not see untracked files — so the most likely drift of all (add a
+      # directory, forget to regenerate) would pass silently.
+      - name: Fail on drift
+        run: |
+          git add -A
+          git diff --cached --exit-code || {
+            echo "::error::Generated barrels are stale. Run 'make barrels' (or 'npm run barrels') and commit the result."
+            exit 1
+          }
+
+  # ============================================================================
   # MIGRATIONS
   # ============================================================================
   # `prisma migrate deploy` does not checksum migrations it has already applied
@@ -323,6 +373,7 @@ jobs:
       - frontend-messages
       - frontend-build
       - openapi-drift
+      - barrels-drift
     if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
 
     steps:
