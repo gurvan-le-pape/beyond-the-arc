@@ -2,7 +2,6 @@
 import { CACHE_TTL } from "@common/constants";
 import { ApiPaginatedResponse } from "@common/decorators";
 import { OrganizationScopeQueryDto, PaginatedResponseDto } from "@common/dto";
-import { Category, CompetitionLevel, Gender } from "@common/index";
 import { CacheInterceptor } from "@common/interceptors";
 import { ParseEntityIdPipe } from "@common/pipes";
 import {
@@ -14,13 +13,7 @@ import {
   Query,
   UseInterceptors,
 } from "@nestjs/common";
-import {
-  ApiOperation,
-  ApiParam,
-  ApiQuery,
-  ApiResponse,
-  ApiTags,
-} from "@nestjs/swagger";
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 
 import { GetPlayersQueryDto } from "./dto/players.query.dto";
 import {
@@ -79,76 +72,6 @@ export class PlayersController {
     summary: "Get all players with filters",
     description:
       "Retrieves a paginated list of players with optional filtering by level, club, team, category, gender, and more. Results are cached for 5 minutes.",
-  })
-  @ApiQuery({
-    name: "level",
-    required: false,
-    enum: CompetitionLevel,
-    description: "Competition level",
-    example: "regional",
-  })
-  @ApiQuery({
-    name: "clubId",
-    required: false,
-    type: Number,
-    description: "Filter by club ID",
-    example: 1,
-  })
-  @ApiQuery({
-    name: "teamId",
-    required: false,
-    type: Number,
-    description: "Filter by team ID",
-    example: 1,
-  })
-  @ApiQuery({
-    name: "teamNumber",
-    required: false,
-    type: Number,
-    description: "Filter by team number",
-    example: 1,
-  })
-  @ApiQuery({
-    name: "number",
-    required: false,
-    type: Number,
-    description: "Filter by player jersey number",
-    example: 10,
-  })
-  @ApiQuery({
-    name: "committeeId",
-    required: false,
-    type: Number,
-    description: "Filter by committee ID (for departmental level)",
-    example: 1,
-  })
-  @ApiQuery({
-    name: "leagueId",
-    required: false,
-    type: Number,
-    description: "Filter by league ID (for regional level)",
-    example: 1,
-  })
-  @ApiQuery({
-    name: "category",
-    required: false,
-    enum: Category,
-    description: "Filter by age category",
-    example: "U18",
-  })
-  @ApiQuery({
-    name: "gender",
-    required: false,
-    enum: Gender,
-    description: "Filter by gender",
-    example: "M",
-  })
-  @ApiQuery({
-    name: "search",
-    required: false,
-    type: String,
-    description: "Search by player name (case-insensitive)",
-    example: "John",
   })
   @ApiPaginatedResponse(
     PlayerResponseDto,

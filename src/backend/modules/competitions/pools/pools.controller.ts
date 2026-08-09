@@ -11,13 +11,7 @@ import {
   Query,
   UseInterceptors,
 } from "@nestjs/common";
-import {
-  ApiOperation,
-  ApiParam,
-  ApiQuery,
-  ApiResponse,
-  ApiTags,
-} from "@nestjs/swagger";
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 
 import { GetPoolsByChampionshipIdQueryDto } from "./dto/pools.query.dto";
 import { PoolResponseDto } from "./dto/pools.response.dto";
@@ -81,13 +75,6 @@ export class PoolsController {
     summary: "Get pools by championship ID",
     description:
       "Retrieves all pools for a specific championship. Results are cached for 5 minutes.",
-  })
-  @ApiQuery({
-    name: "championshipId",
-    required: true,
-    type: Number,
-    description: "Championship ID",
-    example: 1,
   })
   @ApiResponse({
     status: HttpStatus.OK,

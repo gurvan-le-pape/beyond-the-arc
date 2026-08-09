@@ -78,7 +78,7 @@
             "name": "leagueId",
             "required": false,
             "in": "query",
-            "description": "Optional league ID to filter by",
+            "description": "Filter by league ID",
             "schema": {
               "example": 1,
               "type": "number"
@@ -237,13 +237,15 @@
             "name": "level",
             "required": false,
             "in": "query",
-            "description": "Competition level",
+            "description": "Competition level filter",
             "schema": {
+              "example": "regional",
+              "type": "string",
               "enum": [
+                "departmental",
                 "regional",
-                "departmental"
-              ],
-              "type": "string"
+                "national"
+              ]
             }
           },
           {
@@ -272,6 +274,8 @@
             "in": "query",
             "description": "Filter by category",
             "schema": {
+              "example": "U18",
+              "type": "string",
               "enum": [
                 "U11",
                 "U13",
@@ -279,8 +283,7 @@
                 "U18",
                 "U21",
                 "Seniors"
-              ],
-              "type": "string"
+              ]
             }
           },
           {
@@ -289,18 +292,19 @@
             "in": "query",
             "description": "Filter by gender",
             "schema": {
+              "example": "male",
+              "type": "string",
               "enum": [
                 "male",
                 "female"
-              ],
-              "type": "string"
+              ]
             }
           },
           {
             "name": "search",
             "required": false,
             "in": "query",
-            "description": "Search by club name (case-insensitive)",
+            "description": "Search by club name",
             "schema": {
               "maxLength": 100,
               "example": "Monaco",
@@ -462,7 +466,7 @@
             "name": "leagueId",
             "required": false,
             "in": "query",
-            "description": "Optional league ID to filter committees",
+            "description": "Filter committees by league ID. If not provided, returns all departmental committees.",
             "schema": {
               "example": 1,
               "type": "number"
@@ -881,21 +885,22 @@
             "name": "level",
             "required": false,
             "in": "query",
-            "description": "Competition level filter.",
+            "description": "Competition level filter",
             "schema": {
+              "example": "regional",
+              "type": "string",
               "enum": [
                 "departmental",
                 "regional",
                 "national"
-              ],
-              "type": "string"
+              ]
             }
           },
           {
             "name": "id",
             "required": false,
             "in": "query",
-            "description": "League ID (for regional) or Committee ID (for departmental).",
+            "description": "League ID (regional) or Committee ID (departmental)",
             "schema": {
               "example": 1,
               "type": "number"
@@ -905,7 +910,7 @@
             "name": "category",
             "required": false,
             "in": "query",
-            "description": "Age category filter.",
+            "description": "Age category filter",
             "schema": {
               "example": "U18",
               "type": "string",
@@ -923,7 +928,7 @@
             "name": "gender",
             "required": false,
             "in": "query",
-            "description": "Gender filter.",
+            "description": "Gender filter",
             "schema": {
               "example": "male",
               "type": "string",
@@ -1346,20 +1351,22 @@
             "name": "level",
             "required": false,
             "in": "query",
-            "description": "Competition level",
+            "description": "Competition level filter",
             "schema": {
+              "example": "regional",
+              "type": "string",
               "enum": [
+                "departmental",
                 "regional",
-                "departmental"
-              ],
-              "type": "string"
+                "national"
+              ]
             }
           },
           {
             "name": "division",
             "required": false,
             "in": "query",
-            "description": "Filter by division",
+            "description": "Division number to filter matches",
             "schema": {
               "example": 1,
               "type": "number"
@@ -1369,7 +1376,7 @@
             "name": "committeeId",
             "required": false,
             "in": "query",
-            "description": "Filter by committee ID (for departmental level)",
+            "description": "Committee ID (for departmental level)",
             "schema": {
               "example": 1,
               "type": "number"
@@ -1379,7 +1386,7 @@
             "name": "leagueId",
             "required": false,
             "in": "query",
-            "description": "Filter by league ID (for regional level)",
+            "description": "League ID (for regional level)",
             "schema": {
               "example": 1,
               "type": "number"
@@ -1389,7 +1396,7 @@
             "name": "category",
             "required": false,
             "in": "query",
-            "description": "Filter by age category",
+            "description": "Age category filter",
             "schema": {
               "example": "U18",
               "type": "string",
@@ -1407,9 +1414,9 @@
             "name": "gender",
             "required": false,
             "in": "query",
-            "description": "Filter by gender",
+            "description": "Gender filter",
             "schema": {
-              "example": "M",
+              "example": "male",
               "type": "string",
               "enum": [
                 "male",
@@ -1421,7 +1428,7 @@
             "name": "poolId",
             "required": false,
             "in": "query",
-            "description": "Filter by pool ID",
+            "description": "Pool ID to filter matches",
             "schema": {
               "example": 1,
               "type": "number"
@@ -1431,7 +1438,7 @@
             "name": "championshipId",
             "required": false,
             "in": "query",
-            "description": "Filter by championship ID",
+            "description": "Championship ID to filter matches",
             "schema": {
               "example": 1,
               "type": "number"
@@ -1441,7 +1448,7 @@
             "name": "matchday",
             "required": false,
             "in": "query",
-            "description": "Filter by matchday number",
+            "description": "Matchday number",
             "schema": {
               "example": 1,
               "type": "number"
@@ -1451,9 +1458,9 @@
             "name": "date",
             "required": false,
             "in": "query",
-            "description": "Filter by date (YYYY-MM-DD)",
+            "description": "Date filter (YYYY-MM-DD format)",
             "schema": {
-              "pattern": "/^\\d{4}-\\d{2}-\\d{2}$/",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
               "example": "2024-02-05",
               "type": "string"
             }
@@ -1462,7 +1469,7 @@
             "name": "search",
             "required": false,
             "in": "query",
-            "description": "Search by club name (case-insensitive)",
+            "description": "Search by club name (case-insensitive partial match)",
             "schema": {
               "maxLength": 100,
               "example": "Paris",
@@ -1784,21 +1791,22 @@
             "name": "level",
             "required": false,
             "in": "query",
-            "description": "Competition level",
+            "description": "Competition level filter",
             "schema": {
+              "example": "regional",
+              "type": "string",
               "enum": [
                 "departmental",
                 "regional",
                 "national"
-              ],
-              "type": "string"
+              ]
             }
           },
           {
             "name": "clubId",
             "required": false,
             "in": "query",
-            "description": "Filter by club ID",
+            "description": "Club ID to filter players by club",
             "schema": {
               "example": 1,
               "type": "number"
@@ -1808,7 +1816,7 @@
             "name": "teamId",
             "required": false,
             "in": "query",
-            "description": "Filter by team ID",
+            "description": "Team ID to filter players by team",
             "schema": {
               "example": 1,
               "type": "number"
@@ -1818,7 +1826,7 @@
             "name": "teamNumber",
             "required": false,
             "in": "query",
-            "description": "Filter by team number",
+            "description": "Team number to filter players",
             "schema": {
               "example": 1,
               "type": "number"
@@ -1828,7 +1836,7 @@
             "name": "number",
             "required": false,
             "in": "query",
-            "description": "Filter by player jersey number",
+            "description": "Player number to filter by jersey number",
             "schema": {
               "example": 10,
               "type": "number"
@@ -1838,7 +1846,7 @@
             "name": "committeeId",
             "required": false,
             "in": "query",
-            "description": "Filter by committee ID (for departmental level)",
+            "description": "Committee ID (for departmental level)",
             "schema": {
               "example": 1,
               "type": "number"
@@ -1848,7 +1856,7 @@
             "name": "leagueId",
             "required": false,
             "in": "query",
-            "description": "Filter by league ID (for regional level)",
+            "description": "League ID (for regional level)",
             "schema": {
               "example": 1,
               "type": "number"
@@ -1858,8 +1866,10 @@
             "name": "category",
             "required": false,
             "in": "query",
-            "description": "Filter by age category",
+            "description": "Age category filter",
             "schema": {
+              "example": "U18",
+              "type": "string",
               "enum": [
                 "U11",
                 "U13",
@@ -1867,28 +1877,28 @@
                 "U18",
                 "U21",
                 "Seniors"
-              ],
-              "type": "string"
+              ]
             }
           },
           {
             "name": "gender",
             "required": false,
             "in": "query",
-            "description": "Filter by gender",
+            "description": "Gender filter",
             "schema": {
+              "example": "male",
+              "type": "string",
               "enum": [
                 "male",
                 "female"
-              ],
-              "type": "string"
+              ]
             }
           },
           {
             "name": "search",
             "required": false,
             "in": "query",
-            "description": "Search by player name (case-insensitive)",
+            "description": "Search by player name (case-insensitive partial match)",
             "schema": {
               "maxLength": 100,
               "example": "John",
