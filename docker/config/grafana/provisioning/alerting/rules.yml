@@ -130,7 +130,7 @@ groups:
             datasourceUid: PBFA97CFB590B2093
             model:
               editorMode: code
-              expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))
+              expr: histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket[5m])))
               instant: true
               intervalMs: 1000
               legendFormat: __auto
@@ -184,7 +184,7 @@ groups:
             datasourceUid: PBFA97CFB590B2093
             model:
               editorMode: code
-              expr: process_resident_memory_bytes / 1024 / 1024
+              expr: process_resident_memory_bytes{job="backend"} / 1024 / 1024
               instant: true
               intervalMs: 1000
               legendFormat: __auto
@@ -239,7 +239,7 @@ groups:
             datasourceUid: PBFA97CFB590B2093
             model:
               editorMode: code
-              expr: (node_filesystem_size_bytes{mountpoint="/"} - node_filesystem_free_bytes{mountpoint="/"}) / node_filesystem_size_bytes{mountpoint="/"}
+              expr: (node_filesystem_size_bytes{mountpoint="/"} - node_filesystem_avail_bytes{mountpoint="/"}) / node_filesystem_size_bytes{mountpoint="/"}
               instant: true
               intervalMs: 1000
               legendFormat: __auto
