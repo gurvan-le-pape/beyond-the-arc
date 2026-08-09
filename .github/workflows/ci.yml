@@ -260,9 +260,14 @@ jobs:
       - name: Regenerate barrels
         run: npm run barrels
 
+      # `git add -A` first: a directory newly added to barrelsby.json produces a
+      # barrel that does not exist in the commit yet, and `git diff` alone does
+      # not see untracked files — so the most likely drift of all (add a
+      # directory, forget to regenerate) would pass silently.
       - name: Fail on drift
         run: |
-          git diff --exit-code || {
+          git add -A
+          git diff --cached --exit-code || {
             echo "::error::Generated barrels are stale. Run 'make barrels' (or 'npm run barrels') and commit the result."
             exit 1
           }
