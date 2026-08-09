@@ -59,4 +59,9 @@ RUN npm ci --omit=dev --prefer-offline --no-audit --progress=false \
 COPY --from=build --chown=node:node /app/dist ./dist
 USER node
 EXPOSE 4000
-CMD ["node", "dist/main"]
+# --enable-source-maps is what makes the .map files emitted by tsconfig.build.json
+# do anything: Node does not apply them to Error.stack otherwise. Measured in this
+# image — without the flag a frame reads dist/common/pipes/parse-entity-id.pipe.js:31,
+# with it, common/pipes/parse-entity-id.pipe.ts:30. Shipping the maps without the
+# flag costs the image size and resolves nothing.
+CMD ["node", "--enable-source-maps", "dist/main"]

@@ -12,6 +12,12 @@
       "prisma/*": ["./prisma/*"],
       "modules": ["./modules/index.js"]
     },
-    "outDir": "dist"
+    "outDir": "dist",
+    // Emitted so a stack trace resolves back to TypeScript instead of to
+    // compiled dist. The .map files ship next to dist/*.js in the runtime image
+    // rather than being uploaded, so this needs no build-time Sentry token —
+    // but it does need `node --enable-source-maps`, which the prod stage of
+    // docker/backend/Dockerfile passes. Without that flag these files are inert.
+    "sourceMap": true
   }
 }

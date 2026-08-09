@@ -8,6 +8,11 @@ import * as Sentry from "@sentry/nextjs";
 Sentry.init({
   dsn: "https://174ddf843e686ddcc585076640c1e384@o4511179148230656.ingest.de.sentry.io/4511179315937360",
 
+  // @sentry/core defaults `environment` to the literal string "production", so
+  // leaving it unset files local development errors into the production project
+  // indistinguishably from real ones. Set it explicitly. Matches the backend.
+  environment: process.env.NODE_ENV,
+
   // Enable logs to be sent to Sentry
   enableLogs: true,
 
