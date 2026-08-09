@@ -63,7 +63,7 @@ export const SidePanel = memo(function SidePanel({
 
       {/* Panel */}
       <div
-        className="fixed top-16 right-0 h-[calc(100vh-4rem)] surface-raised shadow-2xl z-20 w-full sm:w-96 transition-transform duration-300 ease-in-out"
+        className="fixed top-16 right-0 h-[calc(100vh-4rem)] surface-subtle shadow-2xl z-20 w-full sm:w-96 transition-transform duration-300 ease-in-out"
         style={{
           transform: isOpen ? "translateX(0)" : "translateX(100%)",
         }}

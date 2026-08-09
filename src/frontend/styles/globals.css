@@ -554,6 +554,17 @@ body {
 
    Never skip or reverse the order. Never place .surface-raised directly on
    the page without an intervening .surface-subtle ancestor.
+
+   INSIDE A .surface-raised SURFACE
+   ─────────────────────────────────────────────────────────────────────────────
+   raised is the ceiling, so .bg-surface-inset there resolves to raised itself
+   and paints nothing. A modal, sheet or popover legitimately sits at raised,
+   and its children still need a visible step — so inside one, name a
+   neighbouring token explicitly (.bg-surface-subtle) rather than reaching for
+   the context-aware utility. subtle differs from raised in all three themes,
+   so it reads as a distinct field or hover in each. Do not "fix" this by
+   giving .surface-raised a --surface-inset one step up: there is nothing
+   above raised, and the next component to nest inside would hit the same wall.
    ============================================================================= */
 
 .surface-base {

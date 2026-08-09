@@ -24,7 +24,7 @@ const PAGE_SIZES = [25, 50, 100, 200];
 
 const navButtonBase = "p-2 rounded-button transition-colors";
 const navButtonEnabled =
-  "surface-raised text-text-emphasis hover:bg-surface-inset border border-divide";
+  "surface-subtle text-text-emphasis hover:bg-surface-inset border border-divide";
 const navButtonDisabled =
   "bg-surface-subtle text-text-muted cursor-not-allowed";
 

@@ -112,7 +112,7 @@ export function BottomSheet({
         <button
           type="button"
           onClick={onClose}
-          className="p-1.5 rounded-button text-text-muted hover:bg-surface-inset transition-colors"
+          className="p-1.5 rounded-button text-text-muted hover:bg-surface-subtle transition-colors"
           aria-label={tCommon("close")}
         >
           <X className="w-5 h-5" />

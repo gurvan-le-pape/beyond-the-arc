@@ -95,7 +95,7 @@ export const buttonVariants = cva(BASE, {
 
       // Control buttons (filter dropdowns, sort toggles, toolbar actions)
       control:
-        "rounded-button border border-divide surface-raised text-text-emphasis font-medium " +
+        "rounded-button border border-divide surface-subtle text-text-emphasis font-medium " +
         "hover:bg-surface-inset " +
         "focus-visible:ring-2 focus-visible:ring-primary",
     },
