@@ -1,0 +1,41 @@
+# Root-level Prettier ignores.
+#
+# Prettier resolves --ignore-path relative to cwd and never searches upward, so
+# src/backend/.prettierignore and src/frontend/.prettierignore do not apply to a
+# run started here. Without this file, `prettier --write .` at the repo root
+# rewrites 59 files — including both artefacts the openapi-drift CI job diffs,
+# which turns a formatting command into a red pipeline.
+#
+# The root has no `format` script and Prettier is not a root workflow; the
+# config here exists because both apps resolve it (--find-config-path from
+# either returns ../../.prettierrc.json). This file bounds the damage if the
+# command is run anyway.
+
+# Dependencies and build output
+node_modules/
+.next/
+dist/
+coverage/
+
+# Generated contract artefacts — reformatting either one fails openapi-drift,
+# and both are overwritten by their generators on every regeneration.
+docs/openapi.json
+src/frontend/shared/types/api.generated.ts
+src/backend/prisma/generated/
+
+# Scraped source data, written by scripts/ffbb-import and not hand-edited
+scripts/ffbb-import/ffbb_data/
+
+# Written by tools, not by us
+.sonarlint/
+src/frontend/public/
+
+# Agent rules and audit records: authored prose with deliberate structure,
+# and .claude/audit is a local-only record excluded via .git/info/exclude
+# (which Prettier does not read — it reads .gitignore).
+.claude/
+
+# Authored prose. These are cited by file:line from CLAUDE.md, the docs
+# themselves and the agent rules, so reflowing a paragraph silently
+# invalidates references rather than tidying anything.
+*.md
