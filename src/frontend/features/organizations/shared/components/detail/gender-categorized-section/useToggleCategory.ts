@@ -1,4 +1,4 @@
-// src/frontend/shared/hooks/useToggleCategory.ts
+// src/frontend/features/organizations/shared/components/detail/gender-categorized-section/useToggleCategory.ts
 "use client";
 
 import { useCallback, useState } from "react";

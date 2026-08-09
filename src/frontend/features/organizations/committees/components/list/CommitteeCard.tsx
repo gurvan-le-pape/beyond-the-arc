@@ -1,13 +1,9 @@
 // src/frontend/features/organizations/committees/components/list/CommitteeCard.tsx
+import { normalizeDepartmentCode } from "@/features/organizations/utils";
 import { Link } from "@/navigation";
 import { Badge, ImageWithFallback } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
-import {
-  cn,
-  formatCommitteeName,
-  formatNameToFileName,
-  normalizeDepartmentCode,
-} from "@/shared/utils";
+import { cn, formatCommitteeName, formatNameToFileName } from "@/shared/utils";
 
 import type { Committee } from "../../types";
 

@@ -4,3 +4,4 @@
  */
 
 export * from "./OrganizationCounts";
+export * from "./President";

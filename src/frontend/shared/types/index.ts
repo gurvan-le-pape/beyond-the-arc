@@ -12,5 +12,4 @@ export * from "./PageProps";
 export * from "./Pagination";
 export * from "./PlayerCareerStats";
 export * from "./PlayerMatchStats";
-export * from "./President";
 export * from "./ShotEvent";

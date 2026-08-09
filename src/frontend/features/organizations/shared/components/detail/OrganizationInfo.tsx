@@ -4,10 +4,10 @@
 import { Globe, Mail, MapPin, Phone, User } from "lucide-react";
 import { useTranslations } from "next-intl";
 
+import type { President } from "@/features/organizations/types";
 import { InfoBox, Section } from "@/shared/components/blocks";
 import { Text } from "@/shared/components/typography";
 import { NA } from "@/shared/constants";
-import type { President } from "@/shared/types";
 import { formatPhone } from "@/shared/utils";
 
 interface OrganizationInfoProps {

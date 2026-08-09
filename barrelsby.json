@@ -31,6 +31,7 @@
     "src/frontend/features/organizations/components",
     "src/frontend/features/organizations/hooks",
     "src/frontend/features/organizations/types",
+    "src/frontend/features/organizations/utils",
 
     "src/frontend/features/organizations/clubs/api",
     "src/frontend/features/organizations/clubs/components",

@@ -3,7 +3,7 @@
 
 import { useTranslations } from "next-intl";
 
-import { normalizeDepartmentCode } from "@/shared/utils";
+import { normalizeDepartmentCode } from "@/features/organizations/utils";
 
 import type { Committee } from "../../types";
 import { CommitteeCard } from "./CommitteeCard";
