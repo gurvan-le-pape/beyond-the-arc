@@ -2802,7 +2802,7 @@ export interface operations {
     ClubsController_getClubStatsByDepartment: {
         parameters: {
             query?: {
-                /** @description Optional league ID to filter by */
+                /** @description Filter by league ID */
                 leagueId?: number;
             };
             header?: never;
@@ -2872,8 +2872,8 @@ export interface operations {
                 page?: number;
                 /** @description Items per page */
                 limit?: number;
-                /** @description Competition level */
-                level?: "regional" | "departmental";
+                /** @description Competition level filter */
+                level?: "departmental" | "regional" | "national";
                 /** @description Filter by committee ID */
                 committeeId?: number;
                 /** @description Filter by league ID */
@@ -2882,7 +2882,7 @@ export interface operations {
                 category?: "U11" | "U13" | "U15" | "U18" | "U21" | "Seniors";
                 /** @description Filter by gender */
                 gender?: "male" | "female";
-                /** @description Search by club name (case-insensitive) */
+                /** @description Search by club name */
                 search?: string;
             };
             header?: never;
@@ -2971,7 +2971,7 @@ export interface operations {
     CommitteesController_getCommittees: {
         parameters: {
             query?: {
-                /** @description Optional league ID to filter committees */
+                /** @description Filter committees by league ID. If not provided, returns all departmental committees. */
                 leagueId?: number;
             };
             header?: never;
@@ -3159,13 +3159,13 @@ export interface operations {
                 page?: number;
                 /** @description Items per page */
                 limit?: number;
-                /** @description Competition level filter. */
+                /** @description Competition level filter */
                 level?: "departmental" | "regional" | "national";
-                /** @description League ID (for regional) or Committee ID (for departmental). */
+                /** @description League ID (regional) or Committee ID (departmental) */
                 id?: number;
-                /** @description Age category filter. */
+                /** @description Age category filter */
                 category?: "U11" | "U13" | "U15" | "U18" | "U21" | "Seniors";
-                /** @description Gender filter. */
+                /** @description Gender filter */
                 gender?: "male" | "female";
             };
             header?: never;
@@ -3349,27 +3349,27 @@ export interface operations {
                 page?: number;
                 /** @description Items per page */
                 limit?: number;
-                /** @description Competition level */
-                level?: "regional" | "departmental";
-                /** @description Filter by division */
+                /** @description Competition level filter */
+                level?: "departmental" | "regional" | "national";
+                /** @description Division number to filter matches */
                 division?: number;
-                /** @description Filter by committee ID (for departmental level) */
+                /** @description Committee ID (for departmental level) */
                 committeeId?: number;
-                /** @description Filter by league ID (for regional level) */
+                /** @description League ID (for regional level) */
                 leagueId?: number;
-                /** @description Filter by age category */
+                /** @description Age category filter */
                 category?: "U11" | "U13" | "U15" | "U18" | "U21" | "Seniors";
-                /** @description Filter by gender */
+                /** @description Gender filter */
                 gender?: "male" | "female";
-                /** @description Filter by pool ID */
+                /** @description Pool ID to filter matches */
                 poolId?: number;
-                /** @description Filter by championship ID */
+                /** @description Championship ID to filter matches */
                 championshipId?: number;
-                /** @description Filter by matchday number */
+                /** @description Matchday number */
                 matchday?: number;
-                /** @description Filter by date (YYYY-MM-DD) */
+                /** @description Date filter (YYYY-MM-DD format) */
                 date?: string;
-                /** @description Search by club name (case-insensitive) */
+                /** @description Search by club name (case-insensitive partial match) */
                 search?: string;
             };
             header?: never;
@@ -3606,25 +3606,25 @@ export interface operations {
                 page?: number;
                 /** @description Items per page */
                 limit?: number;
-                /** @description Competition level */
+                /** @description Competition level filter */
                 level?: "departmental" | "regional" | "national";
-                /** @description Filter by club ID */
+                /** @description Club ID to filter players by club */
                 clubId?: number;
-                /** @description Filter by team ID */
+                /** @description Team ID to filter players by team */
                 teamId?: number;
-                /** @description Filter by team number */
+                /** @description Team number to filter players */
                 teamNumber?: number;
-                /** @description Filter by player jersey number */
+                /** @description Player number to filter by jersey number */
                 number?: number;
-                /** @description Filter by committee ID (for departmental level) */
+                /** @description Committee ID (for departmental level) */
                 committeeId?: number;
-                /** @description Filter by league ID (for regional level) */
+                /** @description League ID (for regional level) */
                 leagueId?: number;
-                /** @description Filter by age category */
+                /** @description Age category filter */
                 category?: "U11" | "U13" | "U15" | "U18" | "U21" | "Seniors";
-                /** @description Filter by gender */
+                /** @description Gender filter */
                 gender?: "male" | "female";
-                /** @description Search by player name (case-insensitive) */
+                /** @description Search by player name (case-insensitive partial match) */
                 search?: string;
             };
             header?: never;

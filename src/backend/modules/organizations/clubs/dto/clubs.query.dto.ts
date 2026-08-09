@@ -77,6 +77,7 @@ export class GetClubsQueryDto extends PaginationQueryDto {
 
   @ApiPropertyOptional({
     description: "Search by club name",
+    example: "Monaco",
     type: String,
     maxLength: MAX_SEARCH_LENGTH,
   })

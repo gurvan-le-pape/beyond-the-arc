@@ -1,6 +1,6 @@
 // src/backend/modules/organizations/clubs/clubs.controller.ts
 import { ApiPaginatedResponse } from "@common/decorators";
-import { CACHE_TTL, Category, PaginatedResponseDto } from "@common/index";
+import { CACHE_TTL, PaginatedResponseDto } from "@common/index";
 import { CacheInterceptor } from "@common/interceptors";
 import { ParseEntityIdPipe } from "@common/pipes";
 import {
@@ -12,13 +12,7 @@ import {
   Query,
   UseInterceptors,
 } from "@nestjs/common";
-import {
-  ApiOperation,
-  ApiParam,
-  ApiQuery,
-  ApiResponse,
-  ApiTags,
-} from "@nestjs/swagger";
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 
 import { ClubsService } from "./clubs.service";
 import {
@@ -153,13 +147,6 @@ export class ClubsController {
     description:
       "Retrieves club counts aggregated by committee. Optionally filter by league. Results are cached for 5 minutes.",
   })
-  @ApiQuery({
-    name: "leagueId",
-    required: false,
-    type: Number,
-    description: "Optional league ID to filter by",
-    example: 1,
-  })
   @ApiResponse({
     status: HttpStatus.OK,
     description: "List of club statistics by department",
@@ -285,48 +272,6 @@ export class ClubsController {
     summary: "Get clubs with filters and pagination",
     description:
       "Retrieves clubs filtered by competition level, committee, league, category, gender, and name search. Supports pagination via page and limit parameters. Results are cached for 3 minutes.",
-  })
-  @ApiQuery({
-    name: "level",
-    required: false,
-    enum: ["regional", "departmental"],
-    description: "Competition level",
-    example: "regional",
-  })
-  @ApiQuery({
-    name: "committeeId",
-    required: false,
-    type: Number,
-    description: "Filter by committee ID",
-    example: 1,
-  })
-  @ApiQuery({
-    name: "leagueId",
-    required: false,
-    type: Number,
-    description: "Filter by league ID",
-    example: 1,
-  })
-  @ApiQuery({
-    name: "category",
-    required: false,
-    enum: Category,
-    description: "Filter by category",
-    example: "U18",
-  })
-  @ApiQuery({
-    name: "gender",
-    required: false,
-    enum: ["male", "female"],
-    description: "Filter by gender",
-    example: "male",
-  })
-  @ApiQuery({
-    name: "search",
-    required: false,
-    type: String,
-    description: "Search by club name (case-insensitive)",
-    example: "Monaco",
   })
   @ApiPaginatedResponse(
     ClubBasicResponseDto,

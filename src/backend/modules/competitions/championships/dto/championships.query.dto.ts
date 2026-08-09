@@ -6,26 +6,39 @@ import { Type } from "class-transformer";
 import { IsEnum, IsInt, IsOptional } from "class-validator";
 
 export class GetChampionshipsQueryDto extends PaginationQueryDto {
-  @ApiPropertyOptional({ enum: CompetitionLevel })
+  @ApiPropertyOptional({
+    description: "Competition level filter",
+    enum: CompetitionLevel,
+    example: CompetitionLevel.REGIONAL,
+  })
   @IsOptional()
   @IsEnum(CompetitionLevel)
   level?: CompetitionLevel;
 
   @ApiPropertyOptional({
-    type: Number,
     description: "League ID (regional) or Committee ID (departmental)",
+    example: 1,
+    type: Number,
   })
   @IsOptional()
   @Type(() => Number)
   @IsInt()
   id?: number;
 
-  @ApiPropertyOptional({ enum: Category })
+  @ApiPropertyOptional({
+    description: "Age category filter",
+    enum: Category,
+    example: Category.U18,
+  })
   @IsOptional()
   @IsEnum(Category)
   category?: Category;
 
-  @ApiPropertyOptional({ enum: Gender })
+  @ApiPropertyOptional({
+    description: "Gender filter",
+    enum: Gender,
+    example: Gender.MALE,
+  })
   @IsOptional()
   @IsEnum(Gender)
   gender?: Gender;

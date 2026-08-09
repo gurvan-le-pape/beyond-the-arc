@@ -1,5 +1,5 @@
 // src/backend/modules/competitions/championships/championships.controller.ts
-import { CACHE_TTL, CompetitionLevel } from "@common/constants";
+import { CACHE_TTL } from "@common/constants";
 import { ApiPaginatedResponse } from "@common/decorators";
 import { PaginatedResponseDto } from "@common/dto";
 import { CacheInterceptor } from "@common/interceptors";
@@ -13,13 +13,7 @@ import {
   Query,
   UseInterceptors,
 } from "@nestjs/common";
-import {
-  ApiOperation,
-  ApiParam,
-  ApiQuery,
-  ApiResponse,
-  ApiTags,
-} from "@nestjs/swagger";
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 
 import { ChampionshipsService } from "./championships.service";
 import { GetChampionshipsQueryDto } from "./dto/championships.query.dto";
@@ -156,34 +150,6 @@ export class ChampionshipsController {
     summary: "Get championships",
     description:
       "Paginated, filtered list of championships. All parameters are optional — omitting them returns all championships across all levels.",
-  })
-  @ApiQuery({
-    name: "level",
-    required: false,
-    enum: CompetitionLevel,
-    description: "Competition level filter.",
-    example: CompetitionLevel.REGIONAL,
-  })
-  @ApiQuery({
-    name: "id",
-    required: false,
-    type: Number,
-    description: "League ID (for regional) or Committee ID (for departmental).",
-    example: 1,
-  })
-  @ApiQuery({
-    name: "category",
-    required: false,
-    type: String,
-    description: "Age category filter.",
-    example: "U18",
-  })
-  @ApiQuery({
-    name: "gender",
-    required: false,
-    type: String,
-    description: "Gender filter.",
-    example: "male",
   })
   @ApiPaginatedResponse(
     ChampionshipResponseDto,

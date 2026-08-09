@@ -95,7 +95,7 @@ export class GetPlayersQueryDto extends PaginationQueryDto {
 
   @ApiPropertyOptional({
     description: "Gender filter",
-    example: "M",
+    example: Gender.MALE,
     enum: Gender,
   })
   @IsOptional()

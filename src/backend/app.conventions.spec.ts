@@ -4,6 +4,7 @@ import type { INestApplication } from "@nestjs/common";
 import { ROUTE_ARGS_METADATA } from "@nestjs/common/constants";
 import { RouteParamtypes } from "@nestjs/common/enums/route-paramtypes.enum";
 import { ModulesContainer } from "@nestjs/core";
+import { DECORATORS } from "@nestjs/swagger/dist/constants";
 import { Test } from "@nestjs/testing";
 import { getMetadataStorage } from "class-validator";
 
@@ -31,6 +32,7 @@ const ENUM_PROPS: Record<string, readonly string[]> = {
 
 interface QueryArg {
   controller: string;
+  controllerClass: NewableFunction;
   handler: string;
   metatype: unknown;
   pipes: unknown[];
@@ -61,6 +63,7 @@ function queryArgsOfHandler(
     )
     .map(([, value]) => ({
       controller: metatype.name,
+      controllerClass: metatype,
       handler: handlerName,
       metatype: paramtypes[value.index],
       pipes: value.pipes ?? [],
@@ -131,6 +134,53 @@ function enumValidatedAgainst(
 }
 
 /**
+ * Names of the query parameters a handler declares with @ApiQuery.
+ *
+ * @nestjs/swagger stores each one on the handler function itself under
+ * `DECORATORS.API_PARAMETERS`, tagged with the `in` it applies to — so
+ * @ApiParam and @ApiBody land in the same array and are filtered out here.
+ */
+function apiQueryNamesOfHandler(
+  metatype: NewableFunction,
+  handlerName: string,
+): string[] {
+  const prototype = metatype.prototype as Record<string, object>;
+  const declared =
+    (Reflect.getMetadata(DECORATORS.API_PARAMETERS, prototype[handlerName]) as
+      | { name?: string; in?: string }[]
+      | undefined) ?? [];
+
+  return declared
+    .filter((param) => param.in === "query" && typeof param.name === "string")
+    .map((param) => param.name as string);
+}
+
+/**
+ * Property names a DTO class documents to Swagger, including inherited ones.
+ *
+ * Read from two places on purpose: `@ApiProperty` records the property in
+ * `API_MODEL_PROPERTIES_ARRAY` on the prototype that declares it — which does
+ * not merge across the prototype chain — and class-validator's storage covers
+ * a property that carries validators but no explicit Swagger decorator.
+ */
+function documentedProps(target: NewableFunction): string[] {
+  const names = new Set(validatedProps(target));
+
+  let prototype: object | null = target.prototype as object;
+  while (prototype && prototype !== Object.prototype) {
+    const declared =
+      (Reflect.getOwnMetadata(
+        DECORATORS.API_MODEL_PROPERTIES_ARRAY,
+        prototype,
+      ) as string[] | undefined) ?? [];
+    for (const key of declared) names.add(key.replace(/^:/, ""));
+    prototype = Object.getPrototypeOf(prototype) as object | null;
+  }
+
+  return [...names];
+}
+
+/**
  * All property names carrying validation metadata on a DTO class.
  */
 function validatedProps(target: NewableFunction): string[] {
@@ -187,6 +237,35 @@ describe("API conventions", () => {
       .filter((arg) => arg.pipes.length > 0)
       .map((arg) => `${arg.controller}.${arg.handler}`);
 
+    expect(offenders).toEqual([]);
+  });
+
+  it("no @ApiQuery re-declares a parameter the bound query DTO already documents", () => {
+    const offenders: string[] = [];
+
+    for (const arg of queryArgs) {
+      const dto = arg.metatype as NewableFunction | undefined;
+      if (!dto) continue;
+
+      const documented = new Set(documentedProps(dto));
+      for (const name of apiQueryNamesOfHandler(
+        arg.controllerClass,
+        arg.handler,
+      )) {
+        if (documented.has(name)) {
+          offenders.push(`${arg.controller}.${arg.handler}: ${name}`);
+        }
+      }
+    }
+
+    // The DTO is the single declaration of the query contract. A second one on
+    // the controller does not merely duplicate it: @nestjs/swagger merges the
+    // explicit parameter over the reflected one key by key, so the decorator
+    // silently wins on every field it sets and the DTO's own `example` and
+    // `enum` stop reaching the document. That is how `gender` came to be
+    // published with `example: "M"` against an enum of `male`/`female`, and
+    // how two endpoints published a two-member `level` enum for a DTO that
+    // accepts three.
     expect(offenders).toEqual([]);
   });
 

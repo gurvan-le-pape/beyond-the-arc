@@ -13,13 +13,7 @@ import {
   Query,
   UseInterceptors,
 } from "@nestjs/common";
-import {
-  ApiOperation,
-  ApiParam,
-  ApiQuery,
-  ApiResponse,
-  ApiTags,
-} from "@nestjs/swagger";
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 
 import { GetMatchesQueryDto } from "./dto/matches.query.dto";
 import {
@@ -66,83 +60,6 @@ export class MatchesController {
     summary: "Get all matches with filters",
     description:
       "Retrieves a paginated list of matches with optional filtering by level, division, category, gender, and more. Results are cached for 5 minutes.",
-  })
-  @ApiQuery({
-    name: "level",
-    required: false,
-    enum: ["regional", "departmental"],
-    description: "Competition level",
-    example: "regional",
-  })
-  @ApiQuery({
-    name: "division",
-    required: false,
-    type: Number,
-    description: "Filter by division",
-    example: 1,
-  })
-  @ApiQuery({
-    name: "committeeId",
-    required: false,
-    type: Number,
-    description: "Filter by committee ID (for departmental level)",
-    example: 1,
-  })
-  @ApiQuery({
-    name: "leagueId",
-    required: false,
-    type: Number,
-    description: "Filter by league ID (for regional level)",
-    example: 1,
-  })
-  @ApiQuery({
-    name: "category",
-    required: false,
-    type: String,
-    description: "Filter by age category",
-    example: "U18",
-  })
-  @ApiQuery({
-    name: "gender",
-    required: false,
-    type: String,
-    description: "Filter by gender",
-    example: "M",
-  })
-  @ApiQuery({
-    name: "poolId",
-    required: false,
-    type: Number,
-    description: "Filter by pool ID",
-    example: 1,
-  })
-  @ApiQuery({
-    name: "championshipId",
-    required: false,
-    type: Number,
-    description: "Filter by championship ID",
-    example: 1,
-  })
-  @ApiQuery({
-    name: "matchday",
-    required: false,
-    type: Number,
-    description: "Filter by matchday number",
-    example: 1,
-  })
-  @ApiQuery({
-    name: "date",
-    required: false,
-    type: String,
-    description: "Filter by date (YYYY-MM-DD)",
-    example: "2024-02-05",
-  })
-  @ApiQuery({
-    name: "search",
-    required: false,
-    type: String,
-    description: "Search by club name (case-insensitive)",
-    example: "Paris",
   })
   @ApiPaginatedResponse(
     MatchResponseDto,

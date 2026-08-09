@@ -11,13 +11,7 @@ import {
   Query,
   UseInterceptors,
 } from "@nestjs/common";
-import {
-  ApiOperation,
-  ApiParam,
-  ApiQuery,
-  ApiResponse,
-  ApiTags,
-} from "@nestjs/swagger";
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 
 import { CommitteesService } from "./committees.service";
 import { GetCommitteesQueryDto } from "./dto/committees.query.dto";
@@ -79,13 +73,6 @@ export class CommitteesController {
     summary: "Get committees (departmental committees)",
     description:
       "Retrieves committees, optionally filtered by league ID. If no filter is provided, returns all departmental committees. Results are cached for 5 minutes.",
-  })
-  @ApiQuery({
-    name: "leagueId",
-    required: false,
-    type: Number,
-    description: "Optional league ID to filter committees",
-    example: 1,
   })
   @ApiResponse({
     status: HttpStatus.OK,

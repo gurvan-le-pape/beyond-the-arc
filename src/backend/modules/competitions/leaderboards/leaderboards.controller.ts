@@ -11,13 +11,7 @@ import {
   Query,
   UseInterceptors,
 } from "@nestjs/common";
-import {
-  ApiOperation,
-  ApiParam,
-  ApiQuery,
-  ApiResponse,
-  ApiTags,
-} from "@nestjs/swagger";
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 
 import { GetLeaderboardsQueryDto } from "./dto/leaderboards.query.dto";
 import { LeaderboardResponseDto } from "./dto/leaderboards.response.dto";
@@ -82,13 +76,6 @@ export class LeaderboardsController {
     summary: "Get leaderboards by pool ID",
     description:
       "Retrieves all leaderboard entries for a specific pool, sorted by points and point difference. Results are cached for 5 minutes.",
-  })
-  @ApiQuery({
-    name: "poolId",
-    required: true,
-    type: Number,
-    description: "Pool ID",
-    example: 1,
   })
   @ApiResponse({
     status: HttpStatus.OK,

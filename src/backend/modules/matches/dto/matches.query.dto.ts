@@ -107,6 +107,11 @@ export class GetMatchesQueryDto extends PaginationQueryDto {
     description: "Date filter (YYYY-MM-DD format)",
     example: "2024-02-05",
     type: String,
+    // Stated explicitly because the @nestjs/swagger CLI plugin's
+    // classValidatorShim derives `pattern` from the source text of the
+    // @Matches argument — for a RegExp literal that text carries the
+    // surrounding slashes, which is not a valid JSON Schema pattern.
+    pattern: "^\\d{4}-\\d{2}-\\d{2}$",
   })
   @IsOptional()
   @IsString({ message: "date must be a string" })
