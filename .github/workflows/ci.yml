@@ -479,6 +479,9 @@ jobs:
           cat <<'DEPLOY'
           set -e
           cd /opt/beyondthearc
+          # Remembered across the pull so the Grafana reload below can tell
+          # whether this deploy actually changed any alerting provisioning.
+          pre_pull_head=$(git rev-parse HEAD)
           git pull
           echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
           # Pin the deployed images to this commit's tag. Persisted in .env so
@@ -501,6 +504,23 @@ jobs:
             echo "Disk after image prune:" && df -h / | tail -1
             docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml pull frontend backend migrate
             docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml up -d
+            # Grafana reads provisioning/alerting/*.yml only at startup, and
+            # `up -d` recreates a container only when its *configuration*
+            # changes — bind-mounted file contents are not part of that hash.
+            # So an alerting change lands on disk and does nothing until
+            # something restarts Grafana. Measured on prod 2026-08-09: the
+            # rules API served the previous expressions while the files had
+            # been correct since the deploy, with the container 29 h old.
+            #
+            # Conditional rather than unconditional because a restart restarts
+            # the `for:` clocks, which run 2-10 minutes here — an unrelated
+            # deploy should not delay a pending Disk Full by ten minutes.
+            # Dashboards need no equivalent: their provider sets no
+            # updateIntervalSeconds, so Grafana's own poll picks them up.
+            if ! git diff --quiet "$pre_pull_head" HEAD -- docker/config/grafana/provisioning/alerting/; then
+              echo "Alerting provisioning changed in this deploy — restarting Grafana to load it"
+              docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml restart grafana
+            fi
             # Fail the deploy if the new containers don't come up healthy —
             # a crash-looping container should be a red pipeline, not a
             # Grafana alert. Rollback: set IMAGE_TAG in .env to the previous

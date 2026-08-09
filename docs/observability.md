@@ -147,6 +147,10 @@ Grafana Alerting fires email notifications via Gmail SMTP when thresholds are cr
 | Memory Pressure | RSS > 400MB over 10m             | Warning  |
 | Disk Usage High | disk usage > 85%                 | Warning  |
 
+The rules are provisioned from `docker/config/grafana/provisioning/alerting/rules.yml`. **Grafana reads that file only at startup.** `docker compose up -d` recreates a container only when its *configuration* changes, and the provisioning directory is a bind mount whose file contents are not part of that hash — so an alerting change reaches the VPS and does nothing until Grafana restarts. The deploy therefore restarts Grafana when, and only when, a deploy actually changes anything under `provisioning/alerting/`; a restart resets the `for:` clocks, which run 2–10 minutes, so it is not done unconditionally.
+
+Dashboards need no equivalent: their provider sets no `updateIntervalSeconds`, so Grafana's own poll picks up changes to the dashboard JSON without a restart.
+
 The backend exposes three health endpoints under `/api/health`:
 
 | Endpoint            | Checks                                    | Use                                      |
