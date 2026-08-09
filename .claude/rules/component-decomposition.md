@@ -18,7 +18,8 @@ paths:
 | **feature components** (`features/<feature>/components/`) `[project]` | data, copy, behaviour, composition | reimplement a primitive |
 
 - A primitive is describable without naming a feature. If its doc sentence needs a domain noun, it is a feature component in the wrong directory. `[principle]`
-- Every primitive accepts `className` and merges it with `cn`, or callers cannot adapt it and will fork it instead. See `frontend-styling.md`. `[project]`+`[principle]`
+- A primitive accepts `className` and merges it with `cn`, or callers cannot adapt it and will fork it instead. See `frontend-styling.md`. `[project]`+`[principle]`
+- **Exception: a component whose presentation is a *closed* set of typed variants takes no `className` at all** — not on itself, not on its parts. A look the variant API cannot express is a request for a new named variant, reviewed once, rather than a class string written at a call site. The escape hatch is precisely what fails here: given one, callers use it, and a family of components that should look identical accumulates several framings nobody chose. Closing the API is the load-bearing decision; the absent `className` is its consequence, not an oversight — so do not "fix" a primitive by adding one back. `[project]`+`[principle]`
 - Primitives take no message keys and call no translation hook. Copy is passed in, so the same primitive serves every locale and every caller. See `frontend-i18n.md`. `[project]`+`[principle]`
 - Feature components compose primitives; they do not restyle them from the outside with deep selectors or `!important`. If a primitive cannot express what a feature needs, add a variant to the primitive. `[principle]`
 
