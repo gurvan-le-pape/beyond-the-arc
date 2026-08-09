@@ -1,4 +1,4 @@
-// src/frontend/shared/utils/normalizeDepartmentCode.ts
+// src/frontend/features/organizations/utils/normalizeDepartmentCode.ts
 /**
  * Normalize department code by removing leading zeros
  * Example: "01" -> "1", "2A" -> "2A"

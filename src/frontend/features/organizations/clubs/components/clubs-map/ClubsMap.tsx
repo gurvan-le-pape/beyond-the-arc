@@ -7,7 +7,7 @@ import { useTranslations } from "next-intl";
 import { useCallback, useMemo, useState, useTransition } from "react";
 import { Map as MapGL, Popup } from "react-map-gl/maplibre";
 
-import { normalizeDepartmentCode } from "@/shared/utils";
+import { normalizeDepartmentCode } from "@/features/organizations/utils";
 
 import type { ClubBasic } from "../../types/ClubBasic";
 import type { ClubStatsByDepartment } from "../../types/ClubStatsByDepartment";

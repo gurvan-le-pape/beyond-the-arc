@@ -10,10 +10,10 @@ import { TeamListItem } from "@/features/teams/components";
 import { Section } from "@/shared/components/blocks";
 import type { Category } from "@/shared/constants";
 import { Gender } from "@/shared/constants";
-import { useToggleCategory } from "@/shared/hooks";
 import { groupBy } from "@/shared/utils";
 
 import { GenderCategorizedList } from "./GenderCategorizedList";
+import { useToggleCategory } from "./useToggleCategory";
 
 type SectionItem =
   | { type: "championship"; data: Championship }
