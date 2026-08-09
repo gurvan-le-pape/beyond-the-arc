@@ -113,7 +113,6 @@
     "src/backend/modules/stats/dto"
   ],
   "delete": true,
-  "watch": true,
   "location": "top",
   "structure": "flat",
   "name": "index.ts",
