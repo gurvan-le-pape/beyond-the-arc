@@ -1,30 +1,66 @@
-const BARREL_DIRS = [
-  "@common/constants",
-  "@common/decorators",
-  "@common/dto",
-  "@common/filters",
-  "@common/interceptors",
-  "@common/middleware",
-  "@common/pipes",
-  "@common/types",
-  "@common/utils",
-  "@modules/competitions/championships/dto",
-  "@modules/competitions/leaderboards/dto",
-  "@modules/competitions/pools/dto",
-  "@modules/geography/dto",
-  "@modules/geography/departments/dto",
-  "@modules/geography/regions/dto",
-  "@modules/matches/dto",
-  "@modules/organizations/clubs/dto",
-  "@modules/organizations/committees/dto",
-  "@modules/organizations/leagues/dto",
-  "@modules/players/dto",
-  "@modules/teams/dto",
-  "@modules/stats/dto",
+const fs = require("node:fs");
+const path = require("node:path");
+
+// Derived from the barrels that actually exist on disk.
+//
+// This was a hand-maintained array of 22 entries and it had drifted: five of
+// them named directories with no barrel behind them — `@common/middleware`
+// (emptied when RequestIdMiddleware was removed), `@common/types` (holds only
+// `express.d.ts`, which barrelsby excludes, so it can never acquire one), and
+// three `@modules/geography/*` paths for a module that does not exist. A stale
+// entry is not inert here: the rule is `fixable`, so `eslint --fix` would
+// rewrite a resolvable specifier to an unresolvable one.
+//
+// Scanning the tree rather than reading the root `barrelsby.json` — which is
+// what the frontend rule does — is deliberate. The backend dev container
+// mounts only `src/backend`, so reaching up to the repo root would fail there
+// exactly as the frontend equivalent already does. Disk is also the better
+// authority for this rule: it enforces "import through the barrel that
+// exists", and it cannot disagree with itself.
+const BACKEND_ROOT = path.join(__dirname, "..");
+
+// Directory -> path alias, from tsconfig.json's `paths`.
+const ALIASED_ROOTS = [
+  ["common", "@common"],
+  ["modules", "@modules"],
 ];
 
-// Filters out backend paths (no @ alias there)
-const FRONTEND_BARREL_DIRS = BARREL_DIRS.filter((dir) => dir.startsWith("@"));
+/**
+ * Every directory below `root` that holds an `index.ts`, as an aliased path.
+ * The aliased root itself is skipped: `common/index.ts` and `modules/index.ts`
+ * exist, but treating `@common` as a barrel would rewrite every `@common/x/y`
+ * import to `"@common"`.
+ */
+function barrelDirsUnder(root, alias) {
+  const found = [];
+
+  const walk = (absolute, relative) => {
+    let entries;
+    try {
+      entries = fs.readdirSync(absolute, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    if (relative && entries.some((e) => e.isFile() && e.name === "index.ts")) {
+      found.push(`${alias}/${relative}`);
+    }
+    for (const entry of entries) {
+      if (entry.isDirectory() && entry.name !== "node_modules") {
+        walk(
+          path.join(absolute, entry.name),
+          relative ? `${relative}/${entry.name}` : entry.name,
+        );
+      }
+    }
+  };
+
+  walk(path.join(BACKEND_ROOT, root), "");
+  return found;
+}
+
+const BARREL_DIRS = ALIASED_ROOTS.flatMap(([root, alias]) =>
+  barrelDirsUnder(root, alias),
+);
 
 module.exports = {
   meta: {
@@ -44,7 +80,7 @@ module.exports = {
       ImportDeclaration(node) {
         const importPath = node.source.value.replace(/\/index$/, "");
 
-        const matchingBarrel = FRONTEND_BARREL_DIRS.find((barrel) =>
+        const matchingBarrel = BARREL_DIRS.find((barrel) =>
           importPath.startsWith(barrel + "/"),
         );
 
