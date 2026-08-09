@@ -28,6 +28,12 @@ services:
       - FRONTEND_URL=${FRONTEND_URL}
       - DATABASE_URL=${DATABASE_URL}
       - SENTRY_DSN=${SENTRY_DSN}
+      # Names the build an event came from. IMAGE_TAG is the deploy's commit
+      # SHA, written into the VPS .env by the deploy job, and it is also what
+      # selects the image in docker-compose.prod.yml — so a release always
+      # names an image that exists, and an IMAGE_TAG rollback re-tags with it.
+      # Locally there is no image tag, hence the `dev` fallback.
+      - SENTRY_RELEASE=${IMAGE_TAG:-dev}
     depends_on:
       migrate:
         condition: service_completed_successfully
