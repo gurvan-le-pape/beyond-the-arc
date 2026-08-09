@@ -317,8 +317,9 @@ export class ClubStatsByRegionDto {
   id!: number;
 
   @ApiProperty({
-    description: "Region code",
-    example: "84",
+    description:
+      "Region code — the FFBB's alphabetic league code, not the INSEE numeric region code",
+    example: "ARA",
     type: String,
     nullable: true,
   })
@@ -326,7 +327,7 @@ export class ClubStatsByRegionDto {
 
   @ApiProperty({
     description: "League name",
-    example: "League Auvergne-Rhône-Alpes",
+    example: "AUVERGNE-RHÔNE-ALPES",
     type: String,
   })
   name!: string;

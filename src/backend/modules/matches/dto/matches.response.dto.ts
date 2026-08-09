@@ -539,8 +539,9 @@ export class MatchEventDto {
   eventType!: MatchEventType;
 
   @ApiProperty({
-    description: "Event timestamp in seconds from match start",
-    example: 120,
+    description:
+      "Instant the event occurred, as an ISO 8601 UTC timestamp — not an offset from the start of the match. The team and player event endpoints return events from many matches in one response, so there is no single match start to be relative to; compute elapsed time against the match's own `date`.",
+    example: "2024-02-05T19:02:00.000Z",
     type: String,
   })
   timestamp!: Date;
