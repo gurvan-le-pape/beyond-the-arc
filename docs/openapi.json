@@ -1532,7 +1532,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/MatchDetailResponseDto"
+                    "$ref": "#/components/schemas/MatchResponseDto"
                   }
                 }
               }
