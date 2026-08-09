@@ -42,24 +42,25 @@ src/backend/
 ```
 
 - **The feature is the unit of change.** Adding a field should touch one feature directory on each side plus the contract — not fifteen files scattered across `components/`, `hooks/`, `types/`, and `services/`. If a routine change fans out across the tree, the boundary is in the wrong place. `[principle]`
-- Conversely, **deleting a feature should be deleting a directory**, its entry in the parent barrel, and its message namespace. Anything left behind after that is something that was filed by kind rather than by feature. `[principle]`
+- Conversely, **deleting a feature should be deleting a directory** and its entry in the parent barrel. Anything left behind after that is something that was filed by kind rather than by feature. (Message namespaces are a separate question — see "Keeping the two sides aligned"; a namespace may outlive the feature it was named after.) `[principle]`
 
 > Directory names above are illustrative. What is normative is the **shape**: one directory per feature, shared code promoted out of it, no sideways imports between features. Confirm the actual names before relying on a literal path.
 
-## Cross-feature access: barrel only
+## Cross-feature access: through a barrel
 
-- **A feature may import another feature only through its `index.ts` barrel.** Reaching into `features/<other>/components/…` or `features/<other>/hooks/…` is forbidden. `[project]`
+- **A feature may import another feature only through a generated barrel**, never by a path that names an individual file. `[project]`
+- **The barrel is per *kind*, not per feature.** `@/features/things/components`, `@/features/things/api`, `@/features/things/types` — there is no feature-root `index.ts`, and the barrel-import lint rule autofixes toward the kind-level path. `[project]`
 
   ```ts
-  // Wrong — reaches past the boundary into another feature's internals
+  // Wrong — names a file, so the barrel is not the surface at all
   import { ThingRow } from '@/features/things/components/ThingRow';
 
-  // Right — through the public surface
-  import { ThingRow } from '@/features/things';
+  // Right — the kind-level barrel
+  import { ThingRow } from '@/features/things/components';
   ```
-- This makes the generated barrel the **actual** public surface, not merely a convenience. It follows that **internals must not be exported from it** — a barrel that re-exports everything in the directory enforces no boundary at all. See `imports-and-barrels.md` for the `barrelsby` config options that control this. `[project]`+`[manifest]`
+- **Be exact about what this buys.** A kind-level barrel makes the *file* private. It does not make the feature private: every kind is published, so any feature can reach any other feature's components. The cross-feature boundary is therefore held by review, not by the module graph — a sideways import is a design question to answer, even though nothing will stop you writing it. Do not read a passing lint run as the boundary being enforced. `[project]`+`[principle]`
 - **Inside** a feature, import siblings by direct path, never through the feature's own barrel — that is the import cycle described in `imports-and-barrels.md`. `[principle]`
-- The barrel is generated. If the boundary is wrong, change the source layout or `barrelsby.json`; do not hand-edit the barrel to hide something. `[manifest]`+`[principle]`
+- The barrel is generated. If the boundary is wrong, change the source layout or `barrelsby.json`; do not hand-edit the barrel to hide something. And a module that must never cross into another environment needs a mechanism that **fails** — a barrel that merely omits it is a naming convention, not a boundary. See `imports-and-barrels.md`. `[manifest]`+`[principle]`
 - A circular dependency between two features means the boundary is wrong. Extract the shared piece rather than reaching for a lazy import. `[principle]`
 
 ## What belongs in `shared/`
@@ -90,4 +91,4 @@ src/backend/
 
 - The same feature should carry the same name on both sides and in the message catalogue. One vocabulary, end to end — see `naming.md`. `[principle]`
 - A contract change is a coordinated change: backend DTO, regenerated OpenAPI document, regenerated frontend types, then the frontend feature. See `api-contract.md`. `[principle]`
-- Message keys are namespaced by feature, so a deleted feature takes its namespace with it. See `frontend-i18n.md`. `[principle]`
+- **Message namespaces are not this file's to allocate.** A namespace is a *vocabulary*, and which component resolves which string is decided by **who owns the string** — not by which feature directory the component happens to sit in. A feature reading a namespace named after another feature is therefore normal and not a colocation defect. The rule lives in `docs/frontend.md` under "Who resolves which string"; see also `frontend-i18n.md`. `[project]`

@@ -18,12 +18,14 @@ paths:
 | Authorization | **None** `[project]` |
 | Network exposure | **Reachable from the public internet** `[project]` |
 | Data handled | **Includes personal data** `[project]` |
-| Rate limiting | **None** — not in the app, not at the edge `[project]`+`[manifest]` |
+| Rate limiting | **None in the application** — no limiter, no `@nestjs/throttler`. What the edge does is a deployment question, not settled here `[project]`+`[manifest]` |
 | Secrets | Environment variables only, never committed `[project]` |
 
 The manifests corroborate the middle rows: neither application declares `@nestjs/passport`, `@nestjs/jwt`, `passport`, `jsonwebtoken`, `bcrypt`, `argon2`, `next-auth`, `helmet`, `@nestjs/throttler`, `cookie-parser`, or any CSRF or HTML-sanitizer package. `[manifest]`
 
-**Every endpoint is therefore a world-readable endpoint over personal data, with nothing limiting how fast anyone can call it.** That is worth raising with whoever owns this system — it is a posture decision, not a coding one, and no rule below fixes it. Until it changes, the rules below are what keep the blast radius small. Write code for the system as it is; do not write code that quietly assumes an authentication layer that is not there. `[project]`+`[principle]`
+**Every endpoint is therefore a world-readable endpoint over personal data, with nothing in the application limiting how fast anyone can call it.** That is worth raising with whoever owns this system — it is a posture decision, not a coding one, and no rule below fixes it. Until it changes, the rules below are what keep the blast radius small. Write code for the system as it is; do not write code that quietly assumes an authentication layer that is not there. `[project]`+`[principle]`
+
+**Rate limiting must exist somewhere in the path, but not necessarily in the application.** Before adding a limiter in code, establish what the edge already provides — a CDN or reverse proxy in front of the deployment is usually the cheaper and better-placed control, and it is the first thing to reach for when an endpoint turns out to be expensive to call. Confirm it rather than assuming it in either direction: this file states no deployment topology, and an application-level limiter added on top of an edge rule that already exists is duplicated logic in the wrong layer. `[principle]`
 
 > Deployment topology, where TLS terminates, how CORS is configured, and which specific personal data the system handles are not settled here. The rules below are stated by category and hold however those are answered.
 
