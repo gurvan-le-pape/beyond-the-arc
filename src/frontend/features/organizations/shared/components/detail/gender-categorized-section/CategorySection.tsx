@@ -1,10 +1,9 @@
-// src/frontend/shared/components/domain/CategorySection.tsx
+// src/frontend/features/organizations/shared/components/detail/gender-categorized-section/CategorySection.tsx
 
+import { NavButton } from "@/shared/components/primitives";
+import { Text } from "@/shared/components/typography";
 import type { Category } from "@/shared/constants";
 import { cn } from "@/shared/utils";
-
-import { NavButton } from "../primitives";
-import { Text } from "../typography";
 
 function ChevronRight({ className }: { readonly className?: string }) {
   return (

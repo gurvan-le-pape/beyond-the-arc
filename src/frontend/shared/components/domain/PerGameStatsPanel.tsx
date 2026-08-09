@@ -2,8 +2,8 @@
 import { useTranslations } from "next-intl";
 import React from "react";
 
-import type { PlayerCareerStats } from "@/features/players/types";
 import { InfoBox, Section } from "@/shared/components/blocks";
+import type { PlayerCareerStats } from "@/shared/types";
 
 interface PerGameStatsPanelProps {
   /** Season/career aggregate. A team's season stats are a superset of this. */

@@ -128,6 +128,7 @@
     ".*/player-comparison/(?!index\\.tsx$).*",
     ".*/clubs-map/(?!index\\.tsx$).*",
     ".*/clubs-view/(?!index\\.tsx$).*",
+    ".*/gender-categorized-section/(?!index\\.tsx$).*",
     ".*/stat-comparison/(?!index\\.tsx$).*",
     ".*/player-match-stats/(?!index\\.tsx$).*",
     ".*/shared/components/table/(parts\\.tsx|variants\\.ts)$"

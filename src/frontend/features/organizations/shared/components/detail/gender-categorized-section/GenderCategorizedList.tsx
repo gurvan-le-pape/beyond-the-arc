@@ -1,11 +1,11 @@
-// src/frontend/shared/components/domain/GenderCategorizedList.tsx
+// src/frontend/features/organizations/shared/components/detail/gender-categorized-section/GenderCategorizedList.tsx
 import { useTranslations } from "next-intl";
 
+import { Text } from "@/shared/components/typography";
 import type { Category } from "@/shared/constants";
 import { Gender } from "@/shared/constants";
 import { cn, groupBy, sortCategories } from "@/shared/utils";
 
-import { Text } from "../typography";
 import { CategorySection } from "./CategorySection";
 
 interface GenderCategorizedListProps<T> {
