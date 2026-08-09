@@ -9,4 +9,4 @@ import type { paths } from "@/shared/types";
  * api.generated.ts drift.
  */
 export type ClubsPaginatedResponse =
-  paths["/clubs"]["get"]["responses"][200]["content"]["application/json"];
+  paths["/api/clubs"]["get"]["responses"][200]["content"]["application/json"];

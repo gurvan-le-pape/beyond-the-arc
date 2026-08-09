@@ -20,7 +20,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/clubs/stats/by-region": {
+    "/api/clubs/stats/by-region": {
         parameters: {
             query?: never;
             header?: never;
@@ -40,7 +40,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/clubs/stats/by-department": {
+    "/api/clubs/stats/by-department": {
         parameters: {
             query?: never;
             header?: never;
@@ -60,7 +60,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/clubs/all": {
+    "/api/clubs/all": {
         parameters: {
             query?: never;
             header?: never;
@@ -80,7 +80,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/clubs": {
+    "/api/clubs": {
         parameters: {
             query?: never;
             header?: never;
@@ -100,7 +100,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/clubs/{id}": {
+    "/api/clubs/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -120,7 +120,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/committees": {
+    "/api/committees": {
         parameters: {
             query?: never;
             header?: never;
@@ -140,7 +140,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/committees/{id}": {
+    "/api/committees/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -160,7 +160,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/leagues": {
+    "/api/leagues": {
         parameters: {
             query?: never;
             header?: never;
@@ -180,7 +180,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/leagues/{id}": {
+    "/api/leagues/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -200,7 +200,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/championships/{id}": {
+    "/api/championships/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -220,7 +220,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/championships": {
+    "/api/championships": {
         parameters: {
             query?: never;
             header?: never;
@@ -240,7 +240,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/leaderboards": {
+    "/api/leaderboards": {
         parameters: {
             query?: never;
             header?: never;
@@ -260,7 +260,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/leaderboards/{id}": {
+    "/api/leaderboards/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -280,7 +280,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/pools": {
+    "/api/pools": {
         parameters: {
             query?: never;
             header?: never;
@@ -300,7 +300,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/pools/{id}": {
+    "/api/pools/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -320,7 +320,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/matches": {
+    "/api/matches": {
         parameters: {
             query?: never;
             header?: never;
@@ -340,7 +340,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/matches/pool/{poolId}": {
+    "/api/matches/pool/{poolId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -360,7 +360,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/matches/{matchId}": {
+    "/api/matches/{matchId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -380,7 +380,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/matches/{matchId}/player-stats": {
+    "/api/matches/{matchId}/player-stats": {
         parameters: {
             query?: never;
             header?: never;
@@ -400,7 +400,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/matches/{matchId}/events": {
+    "/api/matches/{matchId}/events": {
         parameters: {
             query?: never;
             header?: never;
@@ -420,7 +420,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/matches/team/{teamId}/events": {
+    "/api/matches/team/{teamId}/events": {
         parameters: {
             query?: never;
             header?: never;
@@ -440,7 +440,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/matches/player/{playerId}/events": {
+    "/api/matches/player/{playerId}/events": {
         parameters: {
             query?: never;
             header?: never;
@@ -460,7 +460,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/players": {
+    "/api/players": {
         parameters: {
             query?: never;
             header?: never;
@@ -480,7 +480,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/players/filter-values": {
+    "/api/players/filter-values": {
         parameters: {
             query?: never;
             header?: never;
@@ -500,7 +500,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/players/{id}": {
+    "/api/players/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -520,7 +520,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/players/{id}/matches": {
+    "/api/players/{id}/matches": {
         parameters: {
             query?: never;
             header?: never;
@@ -540,7 +540,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/teams": {
+    "/api/teams": {
         parameters: {
             query?: never;
             header?: never;
@@ -560,7 +560,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/teams/filter-values": {
+    "/api/teams/filter-values": {
         parameters: {
             query?: never;
             header?: never;
@@ -580,7 +580,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/teams/{id}": {
+    "/api/teams/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -600,7 +600,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/teams/{id}/matches": {
+    "/api/teams/{id}/matches": {
         parameters: {
             query?: never;
             header?: never;
@@ -620,7 +620,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/stats": {
+    "/api/stats": {
         parameters: {
             query?: never;
             header?: never;
@@ -640,7 +640,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/health": {
+    "/api/health": {
         parameters: {
             query?: never;
             header?: never;
@@ -657,7 +657,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/health/live": {
+    "/api/health/live": {
         parameters: {
             query?: never;
             header?: never;
@@ -674,7 +674,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/health/ready": {
+    "/api/health/ready": {
         parameters: {
             query?: never;
             header?: never;

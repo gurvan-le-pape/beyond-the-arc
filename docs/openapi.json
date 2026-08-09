@@ -22,7 +22,7 @@
         ]
       }
     },
-    "/clubs/stats/by-region": {
+    "/api/clubs/stats/by-region": {
       "get": {
         "description": "Retrieves club counts aggregated by league. Results are cached for 10 minutes.",
         "operationId": "ClubsController_getClubStatsByRegion",
@@ -69,7 +69,7 @@
         ]
       }
     },
-    "/clubs/stats/by-department": {
+    "/api/clubs/stats/by-department": {
       "get": {
         "description": "Retrieves club counts aggregated by committee. Optionally filter by league. Results are cached for 5 minutes.",
         "operationId": "ClubsController_getClubStatsByDepartment",
@@ -150,7 +150,7 @@
         ]
       }
     },
-    "/clubs/all": {
+    "/api/clubs/all": {
       "get": {
         "description": "Retrieves all clubs without any filtering or pagination. Intended for map initialization where all club coordinates are needed at once. Results are cached for 5 minutes.",
         "operationId": "ClubsController_getAllClubs",
@@ -204,7 +204,7 @@
         ]
       }
     },
-    "/clubs": {
+    "/api/clubs": {
       "get": {
         "description": "Retrieves clubs filtered by competition level, committee, league, category, gender, and name search. Supports pagination via page and limit parameters. Results are cached for 3 minutes.",
         "operationId": "ClubsController_getClubs",
@@ -366,7 +366,7 @@
         ]
       }
     },
-    "/clubs/{id}": {
+    "/api/clubs/{id}": {
       "get": {
         "description": "Retrieves detailed information about a specific club including all teams, pools, and leaderboard data",
         "operationId": "ClubsController_getClubById",
@@ -453,7 +453,7 @@
         ]
       }
     },
-    "/committees": {
+    "/api/committees": {
       "get": {
         "description": "Retrieves committees, optionally filtered by league ID. If no filter is provided, returns all departmental committees. Results are cached for 5 minutes.",
         "operationId": "CommitteesController_getCommittees",
@@ -540,7 +540,7 @@
         ]
       }
     },
-    "/committees/{id}": {
+    "/api/committees/{id}": {
       "get": {
         "description": "Retrieves detailed information about a specific committee",
         "operationId": "CommitteesController_getCommitteeById",
@@ -623,7 +623,7 @@
         ]
       }
     },
-    "/leagues": {
+    "/api/leagues": {
       "get": {
         "description": "Retrieves a list of all regional leagues. Results are cached for 10 minutes as this data rarely changes.",
         "operationId": "LeaguesController_getAllLeagues",
@@ -689,7 +689,7 @@
         ]
       }
     },
-    "/leagues/{id}": {
+    "/api/leagues/{id}": {
       "get": {
         "description": "Retrieves detailed information about a specific regional league",
         "operationId": "LeaguesController_getLeagueById",
@@ -766,7 +766,7 @@
         ]
       }
     },
-    "/championships/{id}": {
+    "/api/championships/{id}": {
       "get": {
         "description": "Retrieves detailed information about a specific championship",
         "operationId": "ChampionshipsController_getChampionshipById",
@@ -848,7 +848,7 @@
         ]
       }
     },
-    "/championships": {
+    "/api/championships": {
       "get": {
         "description": "Paginated, filtered list of championships. All parameters are optional — omitting them returns all championships across all levels.",
         "operationId": "ChampionshipsController_getChampionships",
@@ -987,7 +987,7 @@
         ]
       }
     },
-    "/leaderboards": {
+    "/api/leaderboards": {
       "get": {
         "description": "Retrieves all leaderboard entries for a specific pool, sorted by points and point difference. Results are cached for 5 minutes.",
         "operationId": "LeaderboardsController_getLeaderboardsByPoolId",
@@ -1068,7 +1068,7 @@
         ]
       }
     },
-    "/leaderboards/{id}": {
+    "/api/leaderboards/{id}": {
       "get": {
         "description": "Retrieves detailed information about a specific leaderboard entry",
         "operationId": "LeaderboardsController_getLeaderboardById",
@@ -1155,7 +1155,7 @@
         ]
       }
     },
-    "/pools": {
+    "/api/pools": {
       "get": {
         "description": "Retrieves all pools for a specific championship. Results are cached for 5 minutes.",
         "operationId": "PoolsController_getPoolsByChampionshipId",
@@ -1234,7 +1234,7 @@
         ]
       }
     },
-    "/pools/{id}": {
+    "/api/pools/{id}": {
       "get": {
         "description": "Retrieves detailed information about a specific pool",
         "operationId": "PoolsController_getPoolById",
@@ -1313,7 +1313,7 @@
         ]
       }
     },
-    "/matches": {
+    "/api/matches": {
       "get": {
         "description": "Retrieves a paginated list of matches with optional filtering by level, division, category, gender, and more. Results are cached for 5 minutes.",
         "operationId": "MatchesController_getMatches",
@@ -1508,7 +1508,7 @@
         ]
       }
     },
-    "/matches/pool/{poolId}": {
+    "/api/matches/pool/{poolId}": {
       "get": {
         "description": "Retrieves all matches for a specific pool without pagination, ordered by date ascending.",
         "operationId": "MatchesController_getMatchesByPoolId",
@@ -1551,7 +1551,7 @@
         ]
       }
     },
-    "/matches/{matchId}": {
+    "/api/matches/{matchId}": {
       "get": {
         "description": "Retrieves detailed information about a specific match including teams, pool, and events",
         "operationId": "MatchesController_getMatchById",
@@ -1591,7 +1591,7 @@
         ]
       }
     },
-    "/matches/{matchId}/player-stats": {
+    "/api/matches/{matchId}/player-stats": {
       "get": {
         "description": "Retrieves all player statistics for a specific match, grouped by team",
         "operationId": "MatchesController_getPlayerMatchStats",
@@ -1631,7 +1631,7 @@
         ]
       }
     },
-    "/matches/{matchId}/events": {
+    "/api/matches/{matchId}/events": {
       "get": {
         "description": "Retrieves all events (shots, fouls, etc.) for a specific match, ordered by timestamp",
         "operationId": "MatchesController_getMatchEvents",
@@ -1671,7 +1671,7 @@
         ]
       }
     },
-    "/matches/team/{teamId}/events": {
+    "/api/matches/team/{teamId}/events": {
       "get": {
         "description": "Retrieves all shot events with locations for a specific team across all their matches",
         "operationId": "MatchesController_getMatchEventsByTeamId",
@@ -1711,7 +1711,7 @@
         ]
       }
     },
-    "/matches/player/{playerId}/events": {
+    "/api/matches/player/{playerId}/events": {
       "get": {
         "description": "Retrieves all shot events with locations for a specific player across all their matches",
         "operationId": "MatchesController_getMatchEventsByPlayerId",
@@ -1751,7 +1751,7 @@
         ]
       }
     },
-    "/players": {
+    "/api/players": {
       "get": {
         "description": "Retrieves a paginated list of players with optional filtering by level, club, team, category, gender, and more. Results are cached for 5 minutes.",
         "operationId": "PlayersController_getPlayers",
@@ -1950,7 +1950,7 @@
         ]
       }
     },
-    "/players/filter-values": {
+    "/api/players/filter-values": {
       "get": {
         "description": "Returns available player numbers and team numbers. Optionally scoped to a committee or league.",
         "operationId": "PlayersController_getPlayerFilterValues",
@@ -1994,7 +1994,7 @@
         ]
       }
     },
-    "/players/{id}": {
+    "/api/players/{id}": {
       "get": {
         "description": "Retrieves detailed information about a specific player including team information",
         "operationId": "PlayersController_getPlayerById",
@@ -2102,7 +2102,7 @@
         ]
       }
     },
-    "/players/{id}/matches": {
+    "/api/players/{id}/matches": {
       "get": {
         "description": "Retrieves all matches for a specific player with their statistics, ordered by date (most recent first)",
         "operationId": "PlayersController_getPlayerMatchHistory",
@@ -2251,7 +2251,7 @@
         ]
       }
     },
-    "/teams": {
+    "/api/teams": {
       "get": {
         "description": "Retrieves a paginated list of teams with optional filtering. Results are cached for 5 minutes.",
         "operationId": "TeamsController_getTeams",
@@ -2434,7 +2434,7 @@
         ]
       }
     },
-    "/teams/filter-values": {
+    "/api/teams/filter-values": {
       "get": {
         "description": "Returns available team numbers, pool letters, and divisions. Optionally scoped to a committee or league.",
         "operationId": "TeamsController_getTeamFilterValues",
@@ -2478,7 +2478,7 @@
         ]
       }
     },
-    "/teams/{id}": {
+    "/api/teams/{id}": {
       "get": {
         "description": "Retrieves detailed information about a specific team including players and recent matches",
         "operationId": "TeamsController_getTeamById",
@@ -2518,7 +2518,7 @@
         ]
       }
     },
-    "/teams/{id}/matches": {
+    "/api/teams/{id}/matches": {
       "get": {
         "description": "Retrieves all matches for a specific team with player statistics, ordered by date (most recent first)",
         "operationId": "TeamsController_getTeamMatchHistory",
@@ -2558,7 +2558,7 @@
         ]
       }
     },
-    "/stats": {
+    "/api/stats": {
       "get": {
         "description": "Returns platform-wide entity counts. Cached for 60 seconds.",
         "operationId": "StatsController_getStats",
@@ -2596,7 +2596,7 @@
         ]
       }
     },
-    "/health": {
+    "/api/health": {
       "get": {
         "operationId": "HealthController_check",
         "parameters": [],
@@ -2765,7 +2765,7 @@
         ]
       }
     },
-    "/health/live": {
+    "/api/health/live": {
       "get": {
         "operationId": "HealthController_getLiveness",
         "parameters": [],
@@ -2780,7 +2780,7 @@
         ]
       }
     },
-    "/health/ready": {
+    "/api/health/ready": {
       "get": {
         "operationId": "HealthController_getReadiness",
         "parameters": [],
