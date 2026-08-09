@@ -15,7 +15,7 @@ export function SidePanelToggleButton({ onOpen }: SidePanelToggleButtonProps) {
     <button
       type="button"
       onClick={onOpen}
-      className="fixed top-20 right-4 z-20 p-3 surface-raised rounded-lg shadow-lg hover:bg-surface-inset transition-colors border border-divide"
+      className="fixed top-20 right-4 z-20 p-3 surface-subtle rounded-lg shadow-lg hover:bg-surface-inset transition-colors border border-divide"
       aria-label={t("map.openPanel")}
       title={t("map.openPanel")}
     >

@@ -34,7 +34,7 @@ export function SkeletonCard() {
 
 export function SkeletonInfoBox() {
   return (
-    <div className="surface-raised p-4 rounded-card border border-divide">
+    <div className="surface-subtle p-4 rounded-card border border-divide">
       <Skeleton className="h-3 w-20 mb-2" />
       <Skeleton className="h-5 w-32" />
     </div>

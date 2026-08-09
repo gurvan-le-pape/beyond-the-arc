@@ -227,7 +227,7 @@ export const ComboBox: React.FC<ComboBoxProps> = ({
           <input
             ref={searchRef}
             type="text"
-            className="w-full px-3 py-2 border-b border-divide bg-surface-inset text-text-heading placeholder:text-text-secondary focus:outline-none text-sm"
+            className="w-full px-3 py-2 border-b border-divide bg-surface-subtle text-text-heading placeholder:text-text-secondary focus:outline-none text-sm"
             placeholder={t("table.filter")}
             value={search}
             onChange={(e) => {

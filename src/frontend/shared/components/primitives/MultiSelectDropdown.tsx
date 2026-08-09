@@ -161,7 +161,7 @@ export function MultiSelectDropdown({
               "h-6 w-6 flex items-center justify-center rounded",
               "text-text-muted",
               "hover:text-text-heading",
-              "hover:bg-surface-inset",
+              "hover:bg-surface-subtle",
               "transition-colors duration-150",
             )}
           >
@@ -225,7 +225,7 @@ function ColumnList({ column }: { readonly column: MultiSelectColumn }) {
             key={item.id}
             className={cn(
               "flex items-center gap-2 text-sm p-1 rounded transition-colors duration-150 cursor-pointer",
-              "hover:bg-surface-inset",
+              "hover:bg-surface-subtle",
             )}
           >
             <input
