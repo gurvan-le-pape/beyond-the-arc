@@ -5,11 +5,6 @@
   "backToHome": "Retour à l'accueil",
   "empty": "Aucun résultat trouvé.",
   "seeLess": "Voir moins",
-  "expandCategory": "Déplier la catégorie",
-  "cancel": "Annuler",
-  "save": "Enregistrer",
-  "delete": "Supprimer",
-  "edit": "Modifier",
   "all": "Tous",
   "close": "Fermer",
   "dragToClose": "Faire glisser pour fermer",
@@ -22,18 +17,38 @@
   "noItemsAvailable": "Aucun élément disponible",
   "homepage": {
     "title": "Bienvenue à Beyond The Arc",
-    "subtitle": "Découvrez les compétitions, clubs, équipes et statistiques des joueurs. Plongez au cœur du basket avec des données en temps réel, des fonctionnalités interactives et une expérience moderne et intuitive.",
-    "cta": "Découvrir les fonctionnalités"
+    "subtitle": "Découvrez les compétitions, clubs, équipes et statistiques des joueurs. Plongez au cœur du basket avec des données en temps réel, des fonctionnalités interactives et une expérience moderne et intuitive."
   },
   "stats": {
     "seasonStatsTitle": "Statistiques Saison",
-    "points": { "abbr": "PTS", "full": "Points" },
-    "rebounds": { "abbr": "REB", "full": "Rebonds" },
-    "assists": { "abbr": "AST", "full": "Passes décisives" },
-    "steals": { "abbr": "STL", "full": "Interceptions" },
-    "blocks": { "abbr": "BLK", "full": "Contres" },
-    "fouls": { "abbr": "FL", "full": "Fautes" },
-    "turnovers": { "abbr": "TO", "full": "Pertes de balle" },
+    "points": {
+      "abbr": "PTS",
+      "full": "Points"
+    },
+    "rebounds": {
+      "abbr": "REB",
+      "full": "Rebonds"
+    },
+    "assists": {
+      "abbr": "AST",
+      "full": "Passes décisives"
+    },
+    "steals": {
+      "abbr": "STL",
+      "full": "Interceptions"
+    },
+    "blocks": {
+      "abbr": "BLK",
+      "full": "Contres"
+    },
+    "fouls": {
+      "abbr": "FL",
+      "full": "Fautes"
+    },
+    "turnovers": {
+      "abbr": "TO",
+      "full": "Pertes de balle"
+    },
     "pointsPerGame": "Points / match",
     "reboundsPerGame": "Rebonds / match",
     "assistsPerGame": "Passes / match",
@@ -54,7 +69,10 @@
       "abbr": "2PE",
       "full": "2 points extérieurs"
     },
-    "freeThrows": { "abbr": "FT", "full": "Lancers francs" },
+    "freeThrows": {
+      "abbr": "FT",
+      "full": "Lancers francs"
+    },
     "fieldGoals": "Tirs réussis",
     "threePointers": "3 Points",
     "reboundsTotal": "Rebonds totaux",
@@ -141,7 +159,6 @@
     "fetchLeagues": "Impossible de récupérer les ligues. Veuillez réessayer plus tard.",
     "fetchMatchEvents": "Impossible de récupérer les événements du match. Veuillez réessayer plus tard.",
     "fetchMatches": "Impossible de récupérer les matchs. Veuillez réessayer plus tard.",
-    "fetchPools": "Impossible de récupérer les poules. Veuillez réessayer plus tard.",
     "fetchPlayers": "Impossible de récupérer les joueurs. Veuillez réessayer plus tard.",
     "fetchTeams": "Impossible de récupérer les équipes. Veuillez réessayer plus tard.",
     "unexpected": "Une erreur est survenue. Veuillez réessayer plus tard.",
@@ -167,10 +184,7 @@
     "allCommittees": "Tous les comités",
     "leagues": "Ligues",
     "allLeagues": "Toutes les ligues",
-    "seasons": "Saisons",
-    "allSeasons": "Toutes les saisons",
     "divisions": "Divisions",
-    "allDivisions": "Toutes les divisions",
     "pools": "Poules",
     "allPools": "Toutes les poules",
     "clubs": "Clubs",

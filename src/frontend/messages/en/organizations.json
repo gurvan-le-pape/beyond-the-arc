@@ -5,7 +5,6 @@
   "subtitle": "Browse leagues, committees, and clubs across the country",
   "explore": "Explore",
   "breadcrumb": "Organizations",
-  "selectType": "Select a type",
   "leagues": {
     "label": "Leagues",
     "description": "Regional leagues overseeing departmental committees."
@@ -41,6 +40,5 @@
     "city": "City",
     "zipCode": "Postal code",
     "visitWebsite": "Visit website"
-  },
-  "notFound": "Organization not found."
+  }
 }

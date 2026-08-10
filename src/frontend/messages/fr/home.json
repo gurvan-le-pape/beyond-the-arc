@@ -41,8 +41,7 @@
     "eyebrow": "Clubs & carte",
     "title": "Trouvez des clubs près de chez vous",
     "desc": "Parcourez tous les clubs de France sur une carte interactive. Filtrez par région, département ou niveau de compétition.",
-    "cta": "Ouvrir la carte",
-    "placeholder": "Carte interactive"
+    "cta": "Ouvrir la carte"
   },
   "levels": {
     "championships": "championnats",

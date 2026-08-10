@@ -5,11 +5,6 @@
   "backToHome": "Back to home",
   "empty": "No results found.",
   "seeLess": "See less",
-  "expandCategory": "Expand category",
-  "cancel": "Cancel",
-  "save": "Save",
-  "delete": "Delete",
-  "edit": "Edit",
   "all": "All",
   "close": "Close",
   "dragToClose": "Drag to close",
@@ -22,18 +17,38 @@
   "noItemsAvailable": "No items available",
   "homepage": {
     "title": "Welcome to Beyond The Arc",
-    "subtitle": "Explore competitions, clubs, teams, and player stats. Dive into the heart of basketball with real-time data, interactive features, and a modern, user-friendly experience.",
-    "cta": "Discover the Features"
+    "subtitle": "Explore competitions, clubs, teams, and player stats. Dive into the heart of basketball with real-time data, interactive features, and a modern, user-friendly experience."
   },
   "stats": {
     "seasonStatsTitle": "Season Statistics",
-    "points": { "abbr": "PTS", "full": "Points" },
-    "rebounds": { "abbr": "REB", "full": "Rebounds" },
-    "assists": { "abbr": "AST", "full": "Assists" },
-    "steals": { "abbr": "STL", "full": "Steals" },
-    "blocks": { "abbr": "BLK", "full": "Blocks" },
-    "fouls": { "abbr": "FL", "full": "Fouls" },
-    "turnovers": { "abbr": "TO", "full": "Turnovers" },
+    "points": {
+      "abbr": "PTS",
+      "full": "Points"
+    },
+    "rebounds": {
+      "abbr": "REB",
+      "full": "Rebounds"
+    },
+    "assists": {
+      "abbr": "AST",
+      "full": "Assists"
+    },
+    "steals": {
+      "abbr": "STL",
+      "full": "Steals"
+    },
+    "blocks": {
+      "abbr": "BLK",
+      "full": "Blocks"
+    },
+    "fouls": {
+      "abbr": "FL",
+      "full": "Fouls"
+    },
+    "turnovers": {
+      "abbr": "TO",
+      "full": "Turnovers"
+    },
     "pointsPerGame": "Points / game",
     "reboundsPerGame": "Rebounds / game",
     "assistsPerGame": "Assists / game",
@@ -54,7 +69,10 @@
       "abbr": "2PE",
       "full": "2 points exterior"
     },
-    "freeThrows": { "abbr": "FT", "full": "Free throws" },
+    "freeThrows": {
+      "abbr": "FT",
+      "full": "Free throws"
+    },
     "fieldGoals": "Field Goals Made",
     "threePointers": "3 Pointers",
     "reboundsTotal": "Total Rebounds",
@@ -141,7 +159,6 @@
     "fetchLeagues": "Failed to fetch leagues. Please try again later.",
     "fetchMatchEvents": "Failed to fetch match events. Please try again later.",
     "fetchMatches": "Failed to fetch matches. Please try again later.",
-    "fetchPools": "Failed to fetch pools. Please try again later.",
     "fetchPlayers": "Failed to fetch players. Please try again later.",
     "fetchTeams": "Failed to fetch teams. Please try again later.",
     "unexpected": "Something went wrong. Please try again later.",
@@ -167,10 +184,7 @@
     "allCommittees": "All committees",
     "leagues": "Leagues",
     "allLeagues": "All leagues",
-    "seasons": "Seasons",
-    "allSeasons": "All seasons",
     "divisions": "Divisions",
-    "allDivisions": "All divisions",
     "pools": "Pools",
     "allPools": "All pools",
     "clubs": "Clubs",

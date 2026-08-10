@@ -8,26 +8,14 @@
   "poolLabel": "Poule {letter}",
   "teamDetail": {
     "position": "Poste",
-    "teamNotFound": "Équipe non trouvée",
     "rosterTitle": "Effectif",
     "numberShort": "N°",
     "player": "Joueur",
-    "gamesPlayedShort": "Matchs",
     "noPlayers": "Aucun joueur dans l'effectif",
     "matchHistoryTitle": "Historique des Matchs",
     "shotchartTitle": "Carte des tirs (Heatmap)",
     "shotchartDescription": "Cette heatmap montre la distribution des tirs de l'équipe cette saison.",
     "won": "V",
     "lost": "D"
-  },
-  "teamStats": {
-    "gamesWonShort": "V",
-    "gamesLostShort": "D"
-  },
-  "teamsTable": {
-    "genderHeading": {
-      "masculine": "Masculin",
-      "feminine": "Féminin"
-    }
   }
 }
