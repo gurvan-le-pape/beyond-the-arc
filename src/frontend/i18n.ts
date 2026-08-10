@@ -2,6 +2,7 @@
 import { notFound } from "next/navigation";
 import { getRequestConfig } from "next-intl/server";
 
+import { LOCALES } from "./locales";
 import clubs from "./messages/en/clubs.json";
 import common from "./messages/en/common.json";
 import competitions from "./messages/en/competitions.json";
@@ -52,10 +53,11 @@ export type Messages = typeof referenceMessages;
  */
 const namespaces = Object.keys(referenceMessages) as (keyof Messages)[];
 
-// Duplicated from `routing.locales` in navigation.ts, as before this change.
-// Importing routing here narrows the request config's `locale` to the routing
-// union, which pulls in ~35 call sites — deliberately left to its own PR.
-const locales = new Set(["en", "fr"]);
+// Read from the shared list rather than `routing`: importing routing here
+// narrows the request config's `locale` to the routing union, which pulls in
+// ~35 call sites. Widening to `string` keeps that boundary where it was while
+// still having one definition of which locales exist.
+const locales = new Set<string>(LOCALES);
 
 export default getRequestConfig(async ({ requestLocale }) => {
   // This typically corresponds to the `[locale]` segment

@@ -6,12 +6,12 @@ import { notFound } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 
+import { LOCALES } from "@/locales";
+
 import { Providers } from "../providers";
 
-const locales = ["en", "fr"];
-
 export function generateStaticParams() {
-  return locales.map((locale) => ({ locale }));
+  return LOCALES.map((locale) => ({ locale }));
 }
 
 export default async function LocaleLayout({
@@ -24,7 +24,7 @@ export default async function LocaleLayout({
   const { locale } = await params;
 
   // Validate locale
-  if (!locales.includes(locale)) {
+  if (!(LOCALES as readonly string[]).includes(locale)) {
     notFound();
   }
 

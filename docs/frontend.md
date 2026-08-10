@@ -469,4 +469,6 @@ Client-side Axios errors are normalised to a typed `ApiError` class by `parseApi
 
 **No client-side error boundary below the route level.** Errors in client components are caught at the nearest route boundary, which covers the entire route. There are no finer-grained error boundaries around individual sections of a page, so a rendering error in one widget takes down the whole page rather than degrading gracefully.
 
-**Internationalisation covers two locales.** The app supports `en` and `fr`. Adding a new locale requires updates to translation files, `generateStaticParams`, and locale validation in the layout — there is no automated process for this.
+**Internationalisation covers two locales.** The app supports `en` and `fr`, declared once in `locales.ts` and read from there by `navigation.ts` (next-intl routing), `i18n.ts` (request-config validation), the `[locale]` layout (`generateStaticParams` and its 404 guard) and `sitemap.ts`. Adding a locale means editing that one file and adding `messages/<locale>/*.json`.
+
+The one copy that cannot read it is the middleware `matcher`, which Next requires to be a static literal — a computed value is ignored. `npm run check:messages` closes that gap: it reads the declared list and fails when a locale has no messages directory, when a directory exists for a locale nobody declared, or when the matcher does not route a declared locale. That check used to pass on a codebase with an entire locale deleted, because it discovered locales by listing directories and had nothing left to compare against.
