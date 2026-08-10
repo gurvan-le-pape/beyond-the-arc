@@ -1,5 +1,8 @@
 // src/frontend/features/matches/utils/eventHelpers.ts
-import { eventConfig } from "@/features/matches/constants";
+import {
+  EVENT_CATEGORY_COLOR,
+  eventConfig,
+} from "@/features/matches/constants";
 import type { EventStyle, MatchEvent } from "@/features/matches/types";
 import { EventCategory, EventType, Role } from "@/shared/constants";
 
@@ -7,19 +10,24 @@ import { EventCategory, EventType, Role } from "@/shared/constants";
 // Event-style lookup
 // ---------------------------------------------------------------------------
 
-/** Returns display config (icon, color, label, category) for a given event type. */
+/**
+ * Returns display config (icon, color, label, category) for a given event type.
+ *
+ * `color` is derived from the category rather than stored per event type, so
+ * the 40 entries in `eventConfig` cannot drift from each other or from the
+ * contrast the tokens guarantee. See `eventColors.ts`.
+ */
 export function getEventStyle(eventType: string): EventStyle {
-  const configured: EventStyle | undefined = (
-    eventConfig as Record<string, EventStyle | undefined>
+  const configured: Omit<EventStyle, "color"> | undefined = (
+    eventConfig as Record<string, Omit<EventStyle, "color"> | undefined>
   )[eventType];
 
-  return (
-    configured ?? {
-      icon: "⚪",
-      color: "text-text-secondary",
-      eventCategory: EventCategory.OTHER,
-    }
-  );
+  const base = configured ?? {
+    icon: "⚪",
+    eventCategory: EventCategory.OTHER,
+  };
+
+  return { ...base, color: EVENT_CATEGORY_COLOR[base.eventCategory] };
 }
 
 // ---------------------------------------------------------------------------
