@@ -4,7 +4,7 @@ export const LEVEL_CONFIG = {
   departmental: {
     bg: "bg-departmental-subtle",
     border: "border-departmental",
-    text: "text-departmental",
+    text: "text-departmental-strong",
     badgeVariant: "departmental-on-header" as const,
     hover:
       "hover:border-departmental/40 hover:shadow-[0_0_0_1px_var(--color-departmental)]",
@@ -13,7 +13,7 @@ export const LEVEL_CONFIG = {
   regional: {
     bg: "bg-regional-subtle",
     border: "border-regional",
-    text: "text-regional",
+    text: "text-regional-strong",
     badgeVariant: "regional-on-header" as const,
     hover:
       "hover:border-regional/40 hover:shadow-[0_0_0_1px_var(--color-regional)]",
@@ -22,7 +22,7 @@ export const LEVEL_CONFIG = {
   national: {
     bg: "bg-national-subtle",
     border: "border-national",
-    text: "text-national",
+    text: "text-national-strong",
     badgeVariant: "national-on-header" as const,
     hover:
       "hover:border-national/40 hover:shadow-[0_0_0_1px_var(--color-national)]",

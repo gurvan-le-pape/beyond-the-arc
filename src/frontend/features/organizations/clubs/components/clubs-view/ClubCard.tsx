@@ -52,7 +52,7 @@ export function ClubCard({ club }: ClubCardProps) {
               {club.city && (
                 <Text
                   variant="label"
-                  className="font-medium text-clubs truncate"
+                  className="font-medium text-clubs-strong truncate"
                 >
                   {club.city}
                 </Text>

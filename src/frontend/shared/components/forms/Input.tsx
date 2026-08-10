@@ -182,7 +182,7 @@ export const Input = ({
           variant="caption"
           as="p"
           id={`${inputId}-error`}
-          className="mt-1.5 text-error"
+          className="mt-1.5 text-error-strong"
           role="alert"
         >
           {error}

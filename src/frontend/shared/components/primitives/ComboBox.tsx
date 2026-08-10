@@ -247,7 +247,7 @@ export const ComboBox: React.FC<ComboBoxProps> = ({
           variant="caption"
           as="p"
           id={`${inputId}-error`}
-          className="mt-2 text-error"
+          className="mt-2 text-error-strong"
           role="alert"
         >
           {error}

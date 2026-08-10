@@ -60,7 +60,7 @@ export function CommitteeCard({ committee, clubLabel }: CommitteeCardProps) {
             <span className="w-2 h-2 rounded-full flex-shrink-0 bg-departmental" />
             <Text
               variant="label"
-              className="font-semibold text-departmental truncate"
+              className="font-semibold text-departmental-strong truncate"
             >
               {committee.department?.name ?? committee.department?.code}
             </Text>
