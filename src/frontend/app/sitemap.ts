@@ -1,9 +1,10 @@
 // src/frontend/app/sitemap.ts
 import type { MetadataRoute } from "next";
 
+import { LOCALES } from "../locales";
+
 const BASE_URL = process.env.FRONTEND_URL;
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
-const LOCALES = ["en", "fr"] as const;
 
 const isBuild = process.env.CI === "true";
 

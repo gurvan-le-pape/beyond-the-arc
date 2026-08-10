@@ -1,5 +1,5 @@
 // src/frontend/scripts/check-message-parity.mts
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 /**
@@ -24,10 +24,48 @@ import { join } from "node:path";
  * `next.config.js`, `postcss.config.js` and `tailwind.config.js` are CommonJS.
  */
 
+const problems: string[] = [];
+
 const MESSAGES_DIR = join(import.meta.dirname, "..", "messages");
+const MIDDLEWARE_FILE = join(import.meta.dirname, "..", "middleware.ts");
+const LOCALES_FILE = join(import.meta.dirname, "..", "locales.ts");
+
+/**
+ * Reads the locale set out of `locales.ts` as text rather than importing it.
+ *
+ * Importing works but makes Node reparse a type-less `.ts` module and warn on
+ * every run (MODULE_TYPELESS_PACKAGE_JSON); `"type": "module"` is not available
+ * as a fix because `next.config.js`, `postcss.config.js` and
+ * `tailwind.config.js` are CommonJS. Parsing keeps this script dependency-free
+ * and coupled to nothing, and a rename or a reshape of the declaration throws
+ * here rather than silently checking an empty list.
+ */
+function declaredLocales(): { locales: string[]; defaultLocale: string } {
+  const source = readFileSync(LOCALES_FILE, "utf8");
+
+  const list = /export const LOCALES = \[([^\]]*)\]/.exec(source)?.[1];
+  const fallback = /export const DEFAULT_LOCALE: Locale = "(\w+)"/.exec(
+    source,
+  )?.[1];
+
+  if (!list || !fallback) {
+    throw new Error(
+      `Could not read LOCALES/DEFAULT_LOCALE out of ${LOCALES_FILE}. ` +
+        `If the declaration moved or changed shape, update this parser — ` +
+        `an unparsed list would silently check nothing.`,
+    );
+  }
+
+  return {
+    locales: [...list.matchAll(/"(\w+)"/g)].map(([, name]) => name),
+    defaultLocale: fallback,
+  };
+}
+
+const DECLARED = declaredLocales();
 
 /** The locale every other locale is compared against. */
-const REFERENCE_LOCALE = "en";
+const REFERENCE_LOCALE = DECLARED.defaultLocale;
 
 /** Matches the name in an ICU argument: `{name}`, `{count, plural, ...}`. */
 const PLACEHOLDER = /\{\s*(\w+)/g;
@@ -83,21 +121,56 @@ function difference(a: Set<string>, b: Set<string>): string[] {
   return sorted(a).filter((value) => !b.has(value));
 }
 
-const problems: string[] = [];
-
-const locales = sorted(
+// The locale list comes from `locales.ts`, not from whatever happens to be on
+// disk. Discovering directories instead made deletion invisible: remove
+// `messages/fr` entirely and the loop below had nothing left to compare, so the
+// script printed "OK" and exited 0 on a codebase with one locale's copy gone.
+const locales = sorted(DECLARED.locales);
+const present = new Set(
   readdirSync(MESSAGES_DIR, { withFileTypes: true })
     .filter((entry) => entry.isDirectory())
     .map((entry) => entry.name),
 );
 
-if (!locales.includes(REFERENCE_LOCALE)) {
+for (const locale of locales.filter((name) => !present.has(name))) {
+  problems.push(`no messages/${locale} directory for declared locale`);
+}
+
+for (const extra of sorted(present).filter((name) => !locales.includes(name))) {
+  problems.push(`messages/${extra} is not a locale declared in locales.ts`);
+}
+
+if (!present.has(REFERENCE_LOCALE)) {
   throw new Error(`No "${REFERENCE_LOCALE}" directory in ${MESSAGES_DIR}`);
+}
+
+// The middleware matcher must be a literal — Next ignores computed values, so
+// it cannot import the list. Check the literal instead, or a new locale routes
+// nowhere while every other copy agrees it exists.
+if (existsSync(MIDDLEWARE_FILE)) {
+  const matcher = readFileSync(MIDDLEWARE_FILE, "utf8");
+  const alternation = /"\/\(([a-z|]+)\)\/:path\*"/.exec(matcher)?.[1];
+
+  if (!alternation) {
+    problems.push(`middleware.ts: no locale matcher found to check`);
+  } else {
+    const matched = new Set(alternation.split("|"));
+
+    for (const missing of locales.filter((name) => !matched.has(name))) {
+      problems.push(`middleware.ts: matcher does not route "${missing}"`);
+    }
+
+    for (const extra of sorted(matched).filter((n) => !locales.includes(n))) {
+      problems.push(`middleware.ts: matcher routes undeclared "${extra}"`);
+    }
+  }
 }
 
 const referenceFiles = listJsonFiles(REFERENCE_LOCALE);
 
-for (const locale of locales.filter((name) => name !== REFERENCE_LOCALE)) {
+for (const locale of locales.filter(
+  (name) => name !== REFERENCE_LOCALE && present.has(name),
+)) {
   const files = listJsonFiles(locale);
 
   for (const missing of difference(new Set(referenceFiles), new Set(files))) {
@@ -151,8 +224,9 @@ if (problems.length > 0) {
   );
   for (const problem of problems) console.error(`  ${problem}`);
   console.error(
-    `\nEvery locale must define exactly the same keys, with the same ICU ` +
-      `placeholders, as "${REFERENCE_LOCALE}".`,
+    `\nEvery locale declared in locales.ts must have a messages directory, be ` +
+      `routed by the middleware matcher, and define exactly the same keys — ` +
+      `with the same ICU placeholders — as "${REFERENCE_LOCALE}".`,
   );
   process.exit(1);
 }
