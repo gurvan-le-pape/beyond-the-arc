@@ -8,26 +8,14 @@
   "poolLabel": "Pool {letter}",
   "teamDetail": {
     "position": "Position",
-    "teamNotFound": "Team not found",
     "rosterTitle": "Roster",
     "numberShort": "No.",
     "player": "Player",
-    "gamesPlayedShort": "Games",
     "noPlayers": "No players in roster",
     "matchHistoryTitle": "Match History",
     "shotchartTitle": "Shot Chart (Heatmap)",
     "shotchartDescription": "This heatmap shows the shot distribution for the team this season.",
     "won": "W",
     "lost": "L"
-  },
-  "teamStats": {
-    "gamesWonShort": "W",
-    "gamesLostShort": "L"
-  },
-  "teamsTable": {
-    "genderHeading": {
-      "masculine": "Masculine",
-      "feminine": "Feminine"
-    }
   }
 }

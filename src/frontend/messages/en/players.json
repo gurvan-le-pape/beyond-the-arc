@@ -3,7 +3,6 @@
   "players": "players",
   "label": "Players",
   "tryAdjustingFilters": "Try adjusting your filters to find more players.",
-  "playerNumber": "#{number}",
   "teamNumber": "Team #{number}",
   "playerDetail": {
     "age": "{age} yrs",
@@ -12,7 +11,6 @@
     "heightLabel": "Height",
     "weight": "{weightKg} kg",
     "weightLabel": "Weight",
-    "playerNotFound": "Player not found",
     "club": "Club",
     "shotchartTitle": "Shot Chart (Hotspots)",
     "shotchartDescription": "This hot spot chart shows the shot distribution for the team this season.",

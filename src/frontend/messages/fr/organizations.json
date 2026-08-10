@@ -5,7 +5,6 @@
   "subtitle": "Parcourez les ligues, comités et clubs à travers le pays",
   "explore": "Explorer",
   "breadcrumb": "Organisations",
-  "selectType": "Sélectionnez un type",
   "leagues": {
     "label": "Ligues",
     "description": "Ligues régionales supervisant les comités départementaux."
@@ -41,6 +40,5 @@
     "city": "Ville",
     "zipCode": "Code postal",
     "visitWebsite": "Visiter le site"
-  },
-  "notFound": "Organisation introuvable."
+  }
 }

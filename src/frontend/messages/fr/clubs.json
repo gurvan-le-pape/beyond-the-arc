@@ -11,13 +11,7 @@
   "errorLoadingBoundaries": "Impossible de charger les contours de la carte",
   "detail": {
     "meta": "{name} — équipes, coordonnées et localisation.",
-    "infoTitle": "Informations",
-    "address": "Adresse",
-    "city": "Ville",
-    "zipCode": "Code Postal",
-    "phone": "Téléphone",
     "email": "Email",
-    "website": "Site Web",
     "visitWebsite": "Visiter",
     "teamsTitle": "Équipes"
   },

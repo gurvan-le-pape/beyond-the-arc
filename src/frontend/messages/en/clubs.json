@@ -11,13 +11,7 @@
   "errorLoadingBoundaries": "Failed to load map boundaries",
   "detail": {
     "meta": "{name} — teams, contact details and location.",
-    "infoTitle": "Information",
-    "address": "Address",
-    "city": "City",
-    "zipCode": "Zip Code",
-    "phone": "Phone",
     "email": "Email",
-    "website": "Website",
     "visitWebsite": "Visit",
     "teamsTitle": "Teams"
   },

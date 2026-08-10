@@ -10,8 +10,6 @@
     "mainNavAriaLabel": "Main navigation",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
-    "lightMode": "Switch to light mode",
-    "darkMode": "Switch to dark mode",
     "toggleTheme": "Toggle theme",
     "selectTheme": "Select theme"
   },
@@ -30,7 +28,6 @@
     "project": "Project",
     "resources": "Resources",
     "clubsMap": "Interactive Club Map",
-    "statistics": "Statistics Dashboard",
     "teams": "Teams Explorer",
     "sourceCode": "Source Code",
     "officialSite": "Official FFBB",
@@ -42,7 +39,6 @@
     "email": "Send email"
   },
   "logo": {
-    "alt": "Basketball Logo",
-    "appName": "Beyond The Arc"
+    "alt": "Basketball Logo"
   }
 }

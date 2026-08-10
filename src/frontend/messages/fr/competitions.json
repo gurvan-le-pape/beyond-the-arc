@@ -4,7 +4,6 @@
   "title": "Championnats",
   "breadcrumb": "Championnats",
   "noChampionships": "Aucun championnat disponible",
-  "notFound": "Compétition non trouvée.",
   "tryAdjustingFilters": "Essayez d'ajuster les filtres pour trouver plus de championnats.",
   "championship": "Championnat",
   "championships": "championnats",
@@ -36,10 +35,6 @@
   },
   "info": {
     "title": "Informations",
-    "president": "Président",
-    "presidentName": "Nom",
-    "presidentEmail": "Email du président",
-    "presidentPhone": "Téléphone du président",
     "address": "Adresse",
     "email": "Email",
     "phone": "Téléphone"

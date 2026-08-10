@@ -10,8 +10,6 @@
     "mainNavAriaLabel": "Navigation principale",
     "openMenu": "Ouvrir le menu",
     "closeMenu": "Fermer le menu",
-    "lightMode": "Passer en mode clair",
-    "darkMode": "Passer en mode sombre",
     "toggleTheme": "Changer le thème",
     "selectTheme": "Choisir le thème"
   },
@@ -30,7 +28,6 @@
     "project": "Projet",
     "resources": "Ressources",
     "clubsMap": "Carte interactive des clubs",
-    "statistics": "Tableau de bord statistiques",
     "teams": "Explorateur d'équipes",
     "sourceCode": "Code source",
     "officialSite": "Site officiel FFBB",
@@ -42,7 +39,6 @@
     "email": "Envoyer un email"
   },
   "logo": {
-    "alt": "Logo de basket",
-    "appName": "Beyond The Arc"
+    "alt": "Logo de basket"
   }
 }

@@ -103,78 +103,86 @@ export const Footer: React.FC = () => {
             </div>
           </div>
 
-          {/* Featured */}
-          <div>
-            <Text variant="overline" className="mb-4 block">
-              {t("footer.featuredWork")}
-            </Text>
-            <ul className="space-y-2">
-              {footerLinks.features.map((link) => {
-                const Icon = link.icon;
-                return (
+          {/* The three link groups are one navigation region. `contents` keeps
+              them as direct flex children of the row above, so the landmark is
+              added without moving anything. */}
+          <nav
+            aria-label={t("footer.navigationAriaLabel")}
+            className="contents"
+          >
+            {/* Featured */}
+            <div>
+              <Text variant="overline" className="mb-4 block">
+                {t("footer.featuredWork")}
+              </Text>
+              <ul className="space-y-2">
+                {footerLinks.features.map((link) => {
+                  const Icon = link.icon;
+                  return (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        className={`text-sm inline-flex items-center gap-2 group ${navLinkClass}`}
+                      >
+                        <Icon className="w-4 h-4 transition-transform duration-200 group-hover:scale-110" />
+                        {link.label}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+
+            {/* Project */}
+            <div>
+              <Text variant="overline" className="mb-4 block">
+                {t("footer.project")}
+              </Text>
+              <ul className="space-y-2">
+                {footerLinks.project.map((link) => (
                   <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className={`text-sm inline-flex items-center gap-2 group ${navLinkClass}`}
-                    >
-                      <Icon className="w-4 h-4 transition-transform duration-200 group-hover:scale-110" />
-                      {link.label}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-
-          {/* Project */}
-          <div>
-            <Text variant="overline" className="mb-4 block">
-              {t("footer.project")}
-            </Text>
-            <ul className="space-y-2">
-              {footerLinks.project.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className={`text-sm inline-block ${navLinkClass}`}
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Resources */}
-          <div>
-            <Text variant="overline" className="mb-4 block">
-              {t("footer.resources")}
-            </Text>
-            <ul className="space-y-2">
-              {footerLinks.resources.map((link) => (
-                <li key={link.href}>
-                  {link.external ? (
-                    <a
-                      href={link.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`text-sm inline-flex items-center gap-1 group ${navLinkClass}`}
-                    >
-                      {link.label}
-                      <ExternalLink className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                    </a>
-                  ) : (
                     <Link
                       href={link.href}
                       className={`text-sm inline-block ${navLinkClass}`}
                     >
                       {link.label}
                     </Link>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Resources */}
+            <div>
+              <Text variant="overline" className="mb-4 block">
+                {t("footer.resources")}
+              </Text>
+              <ul className="space-y-2">
+                {footerLinks.resources.map((link) => (
+                  <li key={link.href}>
+                    {link.external ? (
+                      <a
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`text-sm inline-flex items-center gap-1 group ${navLinkClass}`}
+                      >
+                        {link.label}
+                        <ExternalLink className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                      </a>
+                    ) : (
+                      <Link
+                        href={link.href}
+                        className={`text-sm inline-block ${navLinkClass}`}
+                      >
+                        {link.label}
+                      </Link>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </nav>
         </div>
 
         {/* Bottom bar */}
