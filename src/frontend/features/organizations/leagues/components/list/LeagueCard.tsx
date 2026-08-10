@@ -57,7 +57,7 @@ export function LeagueCard({ league, clubLabel }: LeagueCardProps) {
             <span className="w-2 h-2 rounded-full flex-shrink-0 bg-regional" />
             <Text
               variant="label"
-              className="font-semibold text-regional truncate"
+              className="font-semibold text-regional-strong truncate"
             >
               {league.region.name}
             </Text>
