@@ -157,6 +157,20 @@ module.exports = {
           strong: "rgb(var(--color-clubs-strong) / <alpha-value>)",
         },
 
+        // Match-event categories. One colour per EventCategory, and no
+        // subtle/DEFAULT/strong triad: these are only ever label text, so the
+        // single step each theme defines is already the readable one.
+        event: {
+          made: "rgb(var(--color-event-made) / <alpha-value>)",
+          miss: "rgb(var(--color-event-miss) / <alpha-value>)",
+          foul: "rgb(var(--color-event-foul) / <alpha-value>)",
+          turnover: "rgb(var(--color-event-turnover) / <alpha-value>)",
+          defensive: "rgb(var(--color-event-defensive) / <alpha-value>)",
+          rebound: "rgb(var(--color-event-rebound) / <alpha-value>)",
+          substitution: "rgb(var(--color-event-substitution) / <alpha-value>)",
+          game: "rgb(var(--color-event-game) / <alpha-value>)",
+        },
+
         category: {
           subtle: "rgb(var(--color-category-subtle) / <alpha-value>)",
           DEFAULT: "rgb(var(--color-category) / <alpha-value>)",

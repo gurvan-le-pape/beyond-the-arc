@@ -4,5 +4,6 @@
  */
 
 export * from "./eventCategories";
+export * from "./eventColors";
 export * from "./eventConfig";
 export * from "./quarter";
