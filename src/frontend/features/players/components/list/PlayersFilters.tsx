@@ -36,6 +36,7 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
 }) => {
   const tPlayers = useTranslations("players");
   const tCommon = useTranslations("common");
+  const tTeams = useTranslations("teams");
 
   const { committees, leagues, error: locationError } = useLocationOptions();
 
@@ -107,7 +108,7 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
     },
     teamNumber && {
       key: "teamNumber",
-      label: `${tCommon("filters.teamNumbers")} ${teamNumber}`,
+      label: tTeams("teamNumber", { number: teamNumber }),
       onRemove: () => setTeamNumber(undefined),
     },
     ...levelLocationChips,

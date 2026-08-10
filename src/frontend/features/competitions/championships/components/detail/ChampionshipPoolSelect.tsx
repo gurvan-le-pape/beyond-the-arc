@@ -29,7 +29,7 @@ export function ChampionshipPoolSelect({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const tPool = useTranslations("pool");
+  const tTeams = useTranslations("teams");
 
   const handlePoolChange = (val: string | number | undefined) => {
     const next = new URLSearchParams(searchParams.toString());
@@ -43,7 +43,7 @@ export function ChampionshipPoolSelect({
       onChange={handlePoolChange}
       options={pools.map((pool) => ({
         value: pool.id,
-        label: `${tPool("label")} ${pool.letter}`,
+        label: tTeams("poolLabel", { letter: pool.letter }),
       }))}
     />
   );

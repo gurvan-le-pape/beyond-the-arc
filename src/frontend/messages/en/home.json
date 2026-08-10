@@ -3,7 +3,8 @@
     "eyebrow": "French Basketball — All levels",
     "titleStart": "The complete reference for",
     "titleEmphasis": "French basketball",
-    "subtitle": "Stats, standings, player profiles and club data — from national championships down to local departmental competitions."
+    "subtitle": "Stats, standings, player profiles and club data — from national championships down to local departmental competitions.",
+    "metaTitle": "Beyond The Arc — The complete reference for French basketball"
   },
   "stats": {
     "clubs": "Clubs",
@@ -50,10 +51,14 @@
       "name": "National",
       "detail": "Pro leagues & national championships"
     },
-    "regional": { "name": "Regional", "detail": "Regional leagues" },
+    "regional": {
+      "name": "Regional",
+      "detail": "Regional leagues"
+    },
     "departmental": {
       "name": "Departmental",
       "detail": "Departmental committees"
-    }
+    },
+    "championshipCount": "{count, plural, one {# championship} other {# championships}}"
   }
 }

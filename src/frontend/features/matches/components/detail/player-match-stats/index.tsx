@@ -54,7 +54,9 @@ export const PlayerMatchStats: React.FC<PlayerMatchStatsProps> = ({
           <Link
             href={`/teams/${team.id}`}
             className="text-text-heading hover:text-primary transition-colors duration-200 rounded outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ring-offset-surface"
-            aria-label={`${tMatches("playerMatchStats.viewTeam")} ${team.name}`}
+            aria-label={tMatches("playerMatchStats.viewTeam", {
+              team: team.name,
+            })}
           >
             {team.name}
           </Link>{" "}

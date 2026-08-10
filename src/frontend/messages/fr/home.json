@@ -3,7 +3,8 @@
     "eyebrow": "Basketball français — Tous niveaux",
     "titleStart": "La référence complète du",
     "titleEmphasis": "basketball français",
-    "subtitle": "Stats, classements, profils de joueurs et données de clubs — des championnats nationaux jusqu'aux compétitions départementales."
+    "subtitle": "Stats, classements, profils de joueurs et données de clubs — des championnats nationaux jusqu'aux compétitions départementales.",
+    "metaTitle": "Beyond The Arc — La référence complète du basketball français"
   },
   "stats": {
     "clubs": "Clubs",
@@ -50,10 +51,14 @@
       "name": "National",
       "detail": "Ligues pro & championnats nationaux"
     },
-    "regional": { "name": "Régional", "detail": "Ligues régionales" },
+    "regional": {
+      "name": "Régional",
+      "detail": "Ligues régionales"
+    },
     "departmental": {
       "name": "Départemental",
       "detail": "Comités départementaux"
-    }
+    },
+    "championshipCount": "{count, plural, one {# championnat} other {# championnats}}"
   }
 }
