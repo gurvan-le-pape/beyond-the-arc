@@ -139,6 +139,7 @@ export function MultiSelectDropdown({
       {/* Popover — always mounted, toggled via opacity/scale for smooth animation */}
       <div
         ref={dropdownRef}
+        inert={!isOpen}
         className={cn(
           "absolute top-full left-0 mt-1 z-10 p-4 w-max max-w-[90vw]",
           "surface-raised",

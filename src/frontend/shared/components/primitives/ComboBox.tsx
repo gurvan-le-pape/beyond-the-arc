@@ -209,9 +209,14 @@ export const ComboBox: React.FC<ComboBoxProps> = ({
         </span>
       </div>
 
-      {/* Popover — always mounted, toggled via opacity/scale */}
+      {/* Popover — always mounted, toggled via opacity/scale.
+          `inert` is what makes "closed" mean closed: opacity and
+          pointer-events hide it from sight and from the mouse, but the search
+          input and every option stay in the tab order and in the
+          accessibility tree without it. */}
       <div
         id={`${inputId}-listbox`}
+        inert={!open}
         className={cn(
           "absolute z-10 mt-1 w-full",
           "surface-raised",
@@ -227,7 +232,7 @@ export const ComboBox: React.FC<ComboBoxProps> = ({
           <input
             ref={searchRef}
             type="text"
-            className="w-full px-3 py-2 border-b border-divide bg-surface-subtle text-text-heading placeholder:text-text-secondary focus:outline-none text-sm"
+            className="w-full px-3 py-2 border-b border-divide bg-surface-subtle text-text-heading placeholder:text-text-secondary text-sm focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
             placeholder={t("table.filter")}
             value={search}
             onChange={(e) => {
