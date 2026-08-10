@@ -35,7 +35,7 @@ import { ChampionshipResponseDto } from "./dto/championships.response.dto";
 @ApiTags("championships")
 @Controller("championships")
 export class ChampionshipsController {
-  constructor(private readonly championshipService: ChampionshipsService) {}
+  constructor(private readonly championshipsService: ChampionshipsService) {}
 
   /**
    * Retrieve a single championship by its ID.
@@ -126,7 +126,7 @@ export class ChampionshipsController {
   async getChampionshipById(
     @Param("id", ParseEntityIdPipe) id: number,
   ): Promise<ChampionshipResponseDto> {
-    return this.championshipService.findChampionshipById(id);
+    return this.championshipsService.findChampionshipById(id);
   }
 
   /**
@@ -171,7 +171,7 @@ export class ChampionshipsController {
   async getChampionships(
     @Query() query: GetChampionshipsQueryDto,
   ): Promise<PaginatedResponseDto<ChampionshipResponseDto>> {
-    return this.championshipService.findChampionships({
+    return this.championshipsService.findChampionships({
       level: query.level,
       id: query.id,
       category: query.category,

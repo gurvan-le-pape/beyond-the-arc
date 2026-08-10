@@ -1,5 +1,5 @@
 // src/backend/modules/matches/dto/matches.response.dto.ts
-import { MatchEventRole, MatchEventType } from "@common/constants";
+import { EventType, Role } from "@common/constants";
 import { ReboundsDto } from "@common/dto";
 import {
   Category,
@@ -490,10 +490,10 @@ export class EventPlayerDto {
 export class MatchEventPlayerDto {
   @ApiProperty({
     description: "Player role in the event",
-    example: MatchEventRole.SHOOTER,
-    enum: MatchEventRole,
+    example: Role.SHOOTER,
+    enum: Role,
   })
-  role!: MatchEventRole;
+  role!: Role;
 
   @ApiProperty({
     description: "Player information",
@@ -533,10 +533,10 @@ export class MatchEventDto {
 
   @ApiProperty({
     description: "Event type",
-    example: MatchEventType.MADE_LAYUP,
-    enum: MatchEventType,
+    example: EventType.MADE_LAYUP,
+    enum: EventType,
   })
-  eventType!: MatchEventType;
+  eventType!: EventType;
 
   @ApiProperty({
     description:

@@ -5,7 +5,7 @@
  * constraint in prisma/migrations/0_init/migration.sql — the database is
  * the source of truth for the allowed values.
  */
-export const MatchEventType = {
+export const EventType = {
   TIP_OFF: "tip_off",
   TRAVELING: "traveling",
   CARRYING: "carrying",
@@ -48,5 +48,5 @@ export const MatchEventType = {
   SUBSTITUTION: "substitution",
 } as const;
 
-export const MATCH_EVENT_TYPE_LIST = Object.values(MatchEventType);
-export type MatchEventType = (typeof MATCH_EVENT_TYPE_LIST)[number];
+export const EVENT_TYPE_LIST = Object.values(EventType);
+export type EventType = (typeof EVENT_TYPE_LIST)[number];

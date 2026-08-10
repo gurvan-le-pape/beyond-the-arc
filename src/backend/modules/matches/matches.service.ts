@@ -1,5 +1,5 @@
 // src/backend/modules/matches/matches.service.ts
-import { MatchEventRole, MatchEventType } from "@common/constants";
+import { EventType, Role } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
 import { Category, CompetitionLevel, Gender } from "@common/index";
 import {
@@ -384,11 +384,11 @@ export class MatchesService {
     return {
       id: event.id,
       matchId: event.matchId,
-      eventType: event.eventType as MatchEventType,
+      eventType: event.eventType as EventType,
       timestamp: event.timestamp,
       description: event.description,
       players: event.players.map((p) => ({
-        role: p.role as MatchEventRole,
+        role: p.role as Role,
         player: {
           id: p.player.id,
           name: p.player.name,

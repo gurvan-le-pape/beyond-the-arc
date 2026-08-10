@@ -1,5 +1,5 @@
-// src/backend/common/constants/match-event-roles.ts
-export const MatchEventRole = {
+// src/backend/common/constants/roles.ts
+export const Role = {
   SHOOTER: "shooter",
   FOULER: "fouler",
   STEALER: "stealer",
@@ -14,5 +14,5 @@ export const MatchEventRole = {
   STARTER: "starter",
 } as const;
 
-export const MATCH_EVENT_ROLES_LIST = Object.values(MatchEventRole);
-export type MatchEventRole = (typeof MATCH_EVENT_ROLES_LIST)[number];
+export const ROLE_LIST = Object.values(Role);
+export type Role = (typeof ROLE_LIST)[number];
