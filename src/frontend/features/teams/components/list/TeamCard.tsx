@@ -44,7 +44,9 @@ export const TeamCard: React.FC<{ team: Team }> = ({ team }) => {
           category={category}
           gender={gender}
           division={division}
-          poolLabel={poolLetter ? `${tTeams("pool")} ${poolLetter}` : null}
+          poolLabel={
+            poolLetter ? tTeams("poolLabel", { letter: poolLetter }) : null
+          }
           level={level}
         />
       }

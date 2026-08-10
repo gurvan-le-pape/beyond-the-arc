@@ -99,7 +99,7 @@
     "playtime": "Temps de jeu",
     "shots": "Tirs",
     "shotChart": "Voir le shot chart",
-    "viewTeam": "Voir l'équipe"
+    "viewTeam": "Voir l'équipe {team}"
   },
   "matchesTable": {
     "club": "Club"

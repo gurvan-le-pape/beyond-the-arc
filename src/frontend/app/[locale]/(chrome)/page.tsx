@@ -37,7 +37,7 @@ export async function generateMetadata({
   // "· Beyond The Arc" suffix every other route inherits.
   return {
     title: {
-      absolute: `Beyond The Arc — ${tMeta("hero.titleStart")} ${tMeta("hero.titleEmphasis")}`,
+      absolute: tMeta("hero.metaTitle"),
     },
     description: tMeta("hero.subtitle"),
   };
@@ -90,28 +90,31 @@ export default async function Home({ params }: LocalePageProps) {
     },
   ] as const;
 
-  const championshipsLabel = t("levels.championships");
+  // One message, three counts — ICU picks the plural form, and the key is
+  // named once rather than at each call site.
+  const championshipCount = (count: number) =>
+    t("levels.championshipCount", { count });
 
   const levelCards = [
     {
       dot: "bg-national",
       name: t("levels.national.name"),
       detail: t("levels.national.detail"),
-      count: `${formatCount(stats.championshipsByLevel.national)} ${championshipsLabel}`,
+      count: championshipCount(stats.championshipsByLevel.national),
       href: "/championships?tab=national",
     },
     {
       dot: "bg-regional",
       name: t("levels.regional.name"),
-      detail: `${formatCount(stats.leagues)} ${t("stats.leagues")}`,
-      count: `${formatCount(stats.championshipsByLevel.regional)} ${championshipsLabel}`,
+      detail: t("levels.regional.detail"),
+      count: championshipCount(stats.championshipsByLevel.regional),
       href: "/championships?tab=regional",
     },
     {
       dot: "bg-departmental",
       name: t("levels.departmental.name"),
-      detail: `${formatCount(stats.committees)} ${t("stats.committees")}`,
-      count: `${formatCount(stats.championshipsByLevel.departmental)} ${championshipsLabel}`,
+      detail: t("levels.departmental.detail"),
+      count: championshipCount(stats.championshipsByLevel.departmental),
       href: "/championships?tab=departmental",
     },
   ] as const;

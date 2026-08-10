@@ -99,7 +99,7 @@
     "playtime": "Playtime",
     "shots": "Shots",
     "shotChart": "See shot chart",
-    "viewTeam": "View team"
+    "viewTeam": "View team {team}"
   },
   "matchesTable": {
     "club": "Club"

@@ -105,7 +105,7 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
     },
     number && {
       key: "number",
-      label: `${tCommon("filters.teamNumbers")} ${number}`,
+      label: tTeams("teamNumber", { number }),
       onRemove: () => setNumber(undefined),
     },
     ...categoryGenderChips,
