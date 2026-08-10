@@ -71,6 +71,10 @@ export const Header: React.FC = () => {
               ? "opacity-100 translate-y-0 pointer-events-auto"
               : "opacity-0 -translate-y-2 pointer-events-none"
           }`}
+          // aria-hidden alone hides it from assistive tech but leaves every
+          // link tabbable, which is the worse of the two states: a stop that
+          // announces nothing. inert removes both.
+          inert={!menuOpen}
           aria-hidden={!menuOpen}
         >
           <div className="flex flex-col py-4 px-4 space-y-1 max-h-[calc(100vh-4rem)] overflow-y-auto scrollbar-hide">

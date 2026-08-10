@@ -81,6 +81,10 @@ export function ThemeToggle() {
       <div
         role="menu"
         aria-label={t("header.selectTheme")}
+        // Without this the three theme buttons stay tabbable and the menu
+        // stays in the accessibility tree while closed — on every page, since
+        // this lives in the header.
+        inert={!isOpen}
         className={cn(
           "absolute right-0 mt-1 w-44 z-50",
           "bg-surface-raised border border-divide rounded-input shadow-card-hover",
