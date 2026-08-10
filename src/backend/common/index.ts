@@ -8,7 +8,7 @@ export * from "./constants/categories";
 export * from "./constants/competition-levels";
 export * from "./constants/event-types";
 export * from "./constants/genders";
-export * from "./constants/match-event-roles";
+export * from "./constants/roles";
 export * from "./dto/organization-scope.query.dto";
 export * from "./dto/paginated-response.dto";
 export * from "./dto/pagination.query.dto";

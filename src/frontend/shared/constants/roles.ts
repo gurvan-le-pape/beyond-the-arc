@@ -14,5 +14,5 @@ export const Role = {
   STARTER: "starter",
 } as const;
 
-export const ROLES_LIST = Object.values(Role);
-export type Role = (typeof ROLES_LIST)[number];
+export const ROLE_LIST = Object.values(Role);
+export type Role = (typeof ROLE_LIST)[number];

@@ -5,7 +5,7 @@ import apiClient from "../../../../lib/services/client/api-client";
 import type { Championship } from "../types/Championship";
 import type { ChampionshipFilters } from "../types/ChampionshipFilters";
 
-export const championshipService = {
+export const championshipsService = {
   async getAll(
     filters?: ChampionshipFilters,
   ): Promise<PaginatedResponse<Championship>> {

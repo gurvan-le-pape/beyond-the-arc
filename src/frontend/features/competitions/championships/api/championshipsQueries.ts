@@ -2,7 +2,7 @@
 import type { QueryClient } from "@tanstack/react-query";
 
 import type { ChampionshipFilters } from "../types/ChampionshipFilters";
-import { championshipService } from "./championships.service";
+import { championshipsService } from "./championships.service";
 import { championshipsKeys } from "./championshipsKeys";
 
 /**
@@ -46,7 +46,7 @@ export const championshipsQueries = {
    */
   list: (filters?: ChampionshipFilters) => ({
     queryKey: championshipsKeys.list(filters),
-    queryFn: () => championshipService.getAll(filters),
+    queryFn: () => championshipsService.getAll(filters),
     ...CHAMPIONSHIPS_CONFIG,
   }),
 
@@ -58,7 +58,7 @@ export const championshipsQueries = {
    */
   detail: (id: number) => ({
     queryKey: championshipsKeys.detail(id),
-    queryFn: () => championshipService.getById(id),
+    queryFn: () => championshipsService.getById(id),
     ...CHAMPIONSHIPS_CONFIG,
   }),
 } as const;

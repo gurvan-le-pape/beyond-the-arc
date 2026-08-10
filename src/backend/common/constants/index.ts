@@ -8,7 +8,7 @@ export * from "./categories";
 export * from "./competition-levels";
 export * from "./event-types";
 export * from "./genders";
-export * from "./match-event-roles";
 export * from "./metrics-path";
 export * from "./positions";
+export * from "./roles";
 export * from "./search-limits";
