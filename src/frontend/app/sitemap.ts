@@ -1,12 +1,29 @@
 // src/frontend/app/sitemap.ts
 import type { MetadataRoute } from "next";
 
+import { serverClubsService } from "@/features/organizations/clubs/api";
+import { serverCommitteesService } from "@/features/organizations/committees/api";
+import { serverLeaguesService } from "@/features/organizations/leagues/api";
+
 import { LOCALES } from "../locales";
 
 const BASE_URL = process.env.FRONTEND_URL;
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-const isBuild = process.env.CI === "true";
+/**
+ * Generated per request, never at build.
+ *
+ * Prerendering this route means enumerating every club while the image is
+ * being built — where the only reachable API is the public production origin,
+ * over the internet, with no backend on the build network. A build that runs
+ * while production is slow or down then bakes an empty sitemap into the image
+ * and serves it until the next revalidation.
+ *
+ * Per-request generation is not the expensive half it looks like: the three
+ * services below read through Next's Data Cache at `ServerRevalidate.REFERENCE`,
+ * so this costs one backend call per endpoint per day however often the
+ * sitemap is fetched — and it is correct the moment a deploy finishes.
+ */
+export const dynamic = "force-dynamic";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -29,41 +46,6 @@ function localizedUrls(
       ),
     },
   }));
-}
-
-/**
- * Fetches IDs from a NestJS backend endpoint.
- *
- * Handles the TransformInterceptor wrapper shape: { data: [{ id, ... }] }
- * as well as plain array responses.
- *
- * Returns [] on any failure — a broken endpoint never takes down
- * the entire sitemap build.
- */
-async function fetchIds(endpoint: string): Promise<number[]> {
-  try {
-    const res = await fetch(`${API_URL}${endpoint}`, {
-      next: { revalidate: 86400 },
-    });
-
-    if (!res.ok) return [];
-
-    const json = await res.json();
-
-    // TransformInterceptor wraps: { data: [...], meta, timestamp, ... }
-    let items: { id: number }[];
-    if (Array.isArray(json)) {
-      items = json;
-    } else if (Array.isArray(json?.data)) {
-      items = json.data;
-    } else {
-      items = [];
-    }
-
-    return items.map((item) => item.id).filter(Boolean);
-  } catch {
-    return [];
-  }
 }
 
 // ---------------------------------------------------------------------------
@@ -102,30 +84,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   // --- Dynamic routes ------------------------------------------------------
-  const [clubIds, leagueIds, committeeIds] = isBuild
-    ? [[], [], []]
-    : await Promise.all([
-        fetchIds("/clubs/all"),
-        fetchIds("/leagues"),
-        fetchIds("/committees"),
-      ]);
+  // Each list degrades to [] on its own: one unavailable endpoint costs its own
+  // entity's URLs, never the whole sitemap.
+  const [clubs, leagues, committees] = await Promise.all([
+    serverClubsService.getAllClubs().catch(() => []),
+    serverLeaguesService.getAll().catch(() => []),
+    serverCommitteesService.getAll().catch(() => []),
+  ]);
 
-  // --- Dynamic routes ------------------------------------------------------
   const dynamicRoutes: MetadataRoute.Sitemap = [
-    ...clubIds.flatMap((id) =>
-      localizedUrls(`/organizations/clubs/${id}`, {
+    ...clubs.flatMap((club) =>
+      localizedUrls(`/organizations/clubs/${club.id}`, {
         changeFrequency: "weekly",
         priority: 0.6,
       }),
     ),
-    ...leagueIds.flatMap((id) =>
-      localizedUrls(`/organizations/leagues/${id}`, {
+    ...leagues.flatMap((league) =>
+      localizedUrls(`/organizations/leagues/${league.id}`, {
         changeFrequency: "weekly",
         priority: 0.6,
       }),
     ),
-    ...committeeIds.flatMap((id) =>
-      localizedUrls(`/organizations/committees/${id}`, {
+    ...committees.flatMap((committee) =>
+      localizedUrls(`/organizations/committees/${committee.id}`, {
         changeFrequency: "monthly",
         priority: 0.5,
       }),
