@@ -44,7 +44,7 @@ export const serverTeamsService = {
    */
   async getAll(filters?: TeamFilters): Promise<PaginatedResponse<Team>> {
     const queryString = buildQueryString(filters);
-    return fetchApi<any>(`/teams${queryString}`, {
+    return fetchApi<PaginatedResponse<Team>>(`/teams${queryString}`, {
       revalidate: ServerRevalidate.DEFAULT,
     });
   },
@@ -65,7 +65,7 @@ export const serverTeamsService = {
    * const team = await serverTeamsService.getById(123);
    */
   async getById(teamId: number): Promise<TeamDetail> {
-    return fetchApi<any>(`/teams/${teamId}`, {
+    return fetchApi<TeamDetail>(`/teams/${teamId}`, {
       revalidate: ServerRevalidate.LIVE,
     });
   },
@@ -81,7 +81,7 @@ export const serverTeamsService = {
    * const matches = await serverTeamsService.getMatches(123);
    */
   async getMatches(teamId: number): Promise<TeamMatchHistoryResponse> {
-    return fetchApi<any>(`/teams/${teamId}/matches`, {
+    return fetchApi<TeamMatchHistoryResponse>(`/teams/${teamId}/matches`, {
       revalidate: ServerRevalidate.LIVE,
     });
   },

@@ -72,7 +72,9 @@ export const teamsService = {
    * const matches = await teamsService.getMatches(123);
    */
   async getMatches(teamId: number): Promise<TeamMatchHistoryResponse> {
-    const { data } = await apiClient.get<any>(`/teams/${teamId}/matches`);
+    const { data } = await apiClient.get<TeamMatchHistoryResponse>(
+      `/teams/${teamId}/matches`,
+    );
     return data;
   },
 

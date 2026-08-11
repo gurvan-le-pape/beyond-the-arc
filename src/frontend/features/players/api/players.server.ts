@@ -61,7 +61,7 @@ export const serverPlayersService = {
    * const player = await serverPlayersService.getById(789);
    */
   async getById(playerId: number): Promise<Player> {
-    return fetchApi<any>(`/players/${playerId}`, {
+    return fetchApi<Player>(`/players/${playerId}`, {
       revalidate: ServerRevalidate.DEFAULT,
     });
   },
@@ -77,9 +77,12 @@ export const serverPlayersService = {
    * const matches = await serverPlayersService.getMatches(789);
    */
   async getMatches(playerId: number): Promise<PlayerMatchHistoryResponse> {
-    return fetchApi<any>(`/players/${playerId}/matches`, {
-      revalidate: ServerRevalidate.LIVE,
-    });
+    return fetchApi<PlayerMatchHistoryResponse>(
+      `/players/${playerId}/matches`,
+      {
+        revalidate: ServerRevalidate.LIVE,
+      },
+    );
   },
 
   /**
@@ -96,10 +99,12 @@ export const serverPlayersService = {
    */
   async search(name: string): Promise<Player[]> {
     const queryString = buildQueryString({ search: name, limit: 20 });
-    const data = await fetchApi<any>(`/players${queryString}`, {
-      revalidate: ServerRevalidate.DEFAULT,
-    });
-    // The backend returns { players, pagination, ... }, so extract players array
-    return data.items || [];
+    const data = await fetchApi<PaginatedResponse<Player>>(
+      `/players${queryString}`,
+      {
+        revalidate: ServerRevalidate.DEFAULT,
+      },
+    );
+    return data.items;
   },
 };

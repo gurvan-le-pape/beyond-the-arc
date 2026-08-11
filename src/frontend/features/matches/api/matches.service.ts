@@ -41,7 +41,7 @@ export const matchesService = {
    * });
    */
   async getAll(filters?: MatchFilters): Promise<PaginatedResponse<Match>> {
-    const { data } = await apiClient.get<any>("/matches", {
+    const { data } = await apiClient.get<PaginatedResponse<Match>>("/matches", {
       params: filters,
     });
     return data;
@@ -58,7 +58,7 @@ export const matchesService = {
    * const match = await matchesService.getById(12345);
    */
   async getById(id: number): Promise<MatchDetail> {
-    const { data } = await apiClient.get<any>(`/matches/${id}`);
+    const { data } = await apiClient.get<MatchDetail>(`/matches/${id}`);
     return data;
   },
 
@@ -97,9 +97,12 @@ export const matchesService = {
     let totalPages = 1;
 
     do {
-      const { data } = await apiClient.get<any>("/matches", {
-        params: { championshipId, page, limit },
-      });
+      const { data } = await apiClient.get<PaginatedResponse<Match>>(
+        "/matches",
+        {
+          params: { championshipId, page, limit },
+        },
+      );
       matches.push(...data.items);
       totalPages = data.totalPages;
       page += 1;
@@ -124,7 +127,9 @@ export const matchesService = {
    * // [{ type: 'point', minute: 23, playerId: 789, ... }, ...]
    */
   async getEventsByMatchId(matchId: number): Promise<MatchEvent[]> {
-    const { data } = await apiClient.get<any>(`/matches/${matchId}/events`);
+    const { data } = await apiClient.get<MatchEvent[]>(
+      `/matches/${matchId}/events`,
+    );
     return data;
   },
 
@@ -139,7 +144,7 @@ export const matchesService = {
    * const events = await matchesService.getEventsByTeamId(456);
    */
   async getEventsByTeamId(teamId: number): Promise<MatchEvent[]> {
-    const { data } = await apiClient.get<any>(
+    const { data } = await apiClient.get<MatchEvent[]>(
       `/matches/teams/${teamId}/events`,
     );
     return data;
@@ -156,7 +161,7 @@ export const matchesService = {
    * const events = await matchesService.getEventsByPlayerId(789);
    */
   async getEventsByPlayerId(playerId: number): Promise<MatchEvent[]> {
-    const { data } = await apiClient.get<any>(
+    const { data } = await apiClient.get<MatchEvent[]>(
       `/matches/player/${playerId}/events`,
     );
     return data;
@@ -181,7 +186,7 @@ export const matchesService = {
   async getPlayerStatsByMatchId(
     matchId: number,
   ): Promise<MatchPlayerStatsResponse> {
-    const { data } = await apiClient.get<any>(
+    const { data } = await apiClient.get<MatchPlayerStatsResponse>(
       `/matches/${matchId}/player-stats`,
     );
     return data;

@@ -62,7 +62,7 @@ export const playersService = {
    * const player = await playersService.getById(789);
    */
   async getById(playerId: number): Promise<Player> {
-    const { data } = await apiClient.get<any>(`/players/${playerId}`);
+    const { data } = await apiClient.get<Player>(`/players/${playerId}`);
     return data;
   },
 
@@ -77,7 +77,9 @@ export const playersService = {
    * const matches = await playersService.getMatches(789);
    */
   async getMatches(playerId: number): Promise<PlayerMatchHistoryResponse> {
-    const { data } = await apiClient.get<any>(`/players/${playerId}/matches`);
+    const { data } = await apiClient.get<PlayerMatchHistoryResponse>(
+      `/players/${playerId}/matches`,
+    );
     return data;
   },
 
