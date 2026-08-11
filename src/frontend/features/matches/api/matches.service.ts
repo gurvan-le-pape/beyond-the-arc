@@ -40,9 +40,13 @@ export const matchesService = {
    *   limit: 20,
    * });
    */
-  async getAll(filters?: MatchFilters): Promise<PaginatedResponse<Match>> {
-    const { data } = await apiClient.get<any>("/matches", {
+  async getAll(
+    filters?: MatchFilters,
+    signal?: AbortSignal,
+  ): Promise<PaginatedResponse<Match>> {
+    const { data } = await apiClient.get<PaginatedResponse<Match>>("/matches", {
       params: filters,
+      signal,
     });
     return data;
   },
@@ -57,8 +61,10 @@ export const matchesService = {
    * @example
    * const match = await matchesService.getById(12345);
    */
-  async getById(id: number): Promise<MatchDetail> {
-    const { data } = await apiClient.get<any>(`/matches/${id}`);
+  async getById(id: number, signal?: AbortSignal): Promise<MatchDetail> {
+    const { data } = await apiClient.get<MatchDetail>(`/matches/${id}`, {
+      signal,
+    });
     return data;
   },
 
@@ -73,8 +79,10 @@ export const matchesService = {
    * @example
    * const matches = await matchesService.getByPoolId(10);
    */
-  async getByPoolId(poolId: number): Promise<Match[]> {
-    const { data } = await apiClient.get<Match[]>(`/matches/pool/${poolId}`);
+  async getByPoolId(poolId: number, signal?: AbortSignal): Promise<Match[]> {
+    const { data } = await apiClient.get<Match[]>(`/matches/pool/${poolId}`, {
+      signal,
+    });
     return data;
   },
 
@@ -90,16 +98,23 @@ export const matchesService = {
    * @example
    * const matches = await matchesService.getByChampionshipId(5);
    */
-  async getByChampionshipId(championshipId: number): Promise<Match[]> {
+  async getByChampionshipId(
+    championshipId: number,
+    signal?: AbortSignal,
+  ): Promise<Match[]> {
     const limit = 100;
     const matches: Match[] = [];
     let page = 1;
     let totalPages = 1;
 
     do {
-      const { data } = await apiClient.get<any>("/matches", {
-        params: { championshipId, page, limit },
-      });
+      const { data } = await apiClient.get<PaginatedResponse<Match>>(
+        "/matches",
+        {
+          params: { championshipId, page, limit },
+          signal,
+        },
+      );
       matches.push(...data.items);
       totalPages = data.totalPages;
       page += 1;
@@ -123,8 +138,14 @@ export const matchesService = {
    * const events = await matchesService.getEventsByMatchId(12345);
    * // [{ type: 'point', minute: 23, playerId: 789, ... }, ...]
    */
-  async getEventsByMatchId(matchId: number): Promise<MatchEvent[]> {
-    const { data } = await apiClient.get<any>(`/matches/${matchId}/events`);
+  async getEventsByMatchId(
+    matchId: number,
+    signal?: AbortSignal,
+  ): Promise<MatchEvent[]> {
+    const { data } = await apiClient.get<MatchEvent[]>(
+      `/matches/${matchId}/events`,
+      { signal },
+    );
     return data;
   },
 
@@ -138,9 +159,13 @@ export const matchesService = {
    * @example
    * const events = await matchesService.getEventsByTeamId(456);
    */
-  async getEventsByTeamId(teamId: number): Promise<MatchEvent[]> {
-    const { data } = await apiClient.get<any>(
+  async getEventsByTeamId(
+    teamId: number,
+    signal?: AbortSignal,
+  ): Promise<MatchEvent[]> {
+    const { data } = await apiClient.get<MatchEvent[]>(
       `/matches/teams/${teamId}/events`,
+      { signal },
     );
     return data;
   },
@@ -155,9 +180,13 @@ export const matchesService = {
    * @example
    * const events = await matchesService.getEventsByPlayerId(789);
    */
-  async getEventsByPlayerId(playerId: number): Promise<MatchEvent[]> {
-    const { data } = await apiClient.get<any>(
+  async getEventsByPlayerId(
+    playerId: number,
+    signal?: AbortSignal,
+  ): Promise<MatchEvent[]> {
+    const { data } = await apiClient.get<MatchEvent[]>(
       `/matches/player/${playerId}/events`,
+      { signal },
     );
     return data;
   },
@@ -180,9 +209,11 @@ export const matchesService = {
    */
   async getPlayerStatsByMatchId(
     matchId: number,
+    signal?: AbortSignal,
   ): Promise<MatchPlayerStatsResponse> {
-    const { data } = await apiClient.get<any>(
+    const { data } = await apiClient.get<MatchPlayerStatsResponse>(
       `/matches/${matchId}/player-stats`,
+      { signal },
     );
     return data;
   },

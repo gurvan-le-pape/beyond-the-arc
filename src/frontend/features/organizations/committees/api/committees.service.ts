@@ -31,9 +31,13 @@ export const committeesService = {
    * @example
    * const committees = await committeesService.getAll({ leagueId: 1 });
    */
-  async getAll(filters?: CommitteeFilters): Promise<Committee[]> {
+  async getAll(
+    filters?: CommitteeFilters,
+    signal?: AbortSignal,
+  ): Promise<Committee[]> {
     const { data } = await apiClient.get<Committee[]>("/committees", {
       params: filters,
+      signal,
     });
     return data;
   },
@@ -48,8 +52,10 @@ export const committeesService = {
    * @example
    * const committee = await committeesService.getById(123);
    */
-  async getById(id: number): Promise<Committee> {
-    const { data } = await apiClient.get<Committee>(`/committees/${id}`);
+  async getById(id: number, signal?: AbortSignal): Promise<Committee> {
+    const { data } = await apiClient.get<Committee>(`/committees/${id}`, {
+      signal,
+    });
     return data;
   },
 
@@ -64,9 +70,10 @@ export const committeesService = {
    * @example
    * const committees = await committeesService.getByIds([1, 2, 3]);
    */
-  async getByIds(ids: number[]): Promise<Committee[]> {
+  async getByIds(ids: number[], signal?: AbortSignal): Promise<Committee[]> {
     const { data } = await apiClient.get<Committee[]>(
       `/committees/${ids.join(",")}`,
+      { signal },
     );
     return data;
   },

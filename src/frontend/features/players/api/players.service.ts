@@ -40,11 +40,15 @@ export const playersService = {
    *   limit: 20,
    * });
    */
-  async getAll(filters?: PlayerFilters): Promise<PaginatedResponse<Player>> {
+  async getAll(
+    filters?: PlayerFilters,
+    signal?: AbortSignal,
+  ): Promise<PaginatedResponse<Player>> {
     const { data } = await apiClient.get<PaginatedResponse<Player>>(
       "/players",
       {
         params: filters,
+        signal,
       },
     );
     return data;
@@ -61,8 +65,10 @@ export const playersService = {
    * @example
    * const player = await playersService.getById(789);
    */
-  async getById(playerId: number): Promise<Player> {
-    const { data } = await apiClient.get<any>(`/players/${playerId}`);
+  async getById(playerId: number, signal?: AbortSignal): Promise<Player> {
+    const { data } = await apiClient.get<Player>(`/players/${playerId}`, {
+      signal,
+    });
     return data;
   },
 
@@ -76,8 +82,14 @@ export const playersService = {
    * @example
    * const matches = await playersService.getMatches(789);
    */
-  async getMatches(playerId: number): Promise<PlayerMatchHistoryResponse> {
-    const { data } = await apiClient.get<any>(`/players/${playerId}/matches`);
+  async getMatches(
+    playerId: number,
+    signal?: AbortSignal,
+  ): Promise<PlayerMatchHistoryResponse> {
+    const { data } = await apiClient.get<PlayerMatchHistoryResponse>(
+      `/players/${playerId}/matches`,
+      { signal },
+    );
     return data;
   },
 
@@ -88,13 +100,16 @@ export const playersService = {
    * @example
    * const filterValues = await playersService.getFilterValues();
    */
-  async getFilterValues(params?: {
-    committeeId?: number;
-    leagueId?: number;
-  }): Promise<PlayerFilterValues> {
+  async getFilterValues(
+    params?: {
+      committeeId?: number;
+      leagueId?: number;
+    },
+    signal?: AbortSignal,
+  ): Promise<PlayerFilterValues> {
     const { data } = await apiClient.get<PlayerFilterValues>(
       "/players/filter-values",
-      { params },
+      { params, signal },
     );
     return data;
   },
@@ -115,6 +130,7 @@ export const playersService = {
   async search(
     query: string,
     filters?: PlayerSearchFilters,
+    signal?: AbortSignal,
   ): Promise<Player[]> {
     const { data } = await apiClient.get<PaginatedResponse<Player>>(
       "/players",
@@ -125,6 +141,7 @@ export const playersService = {
           ...(filters?.gender && { gender: filters.gender }),
           ...(filters?.category && { category: filters.category }),
         },
+        signal,
       },
     );
 

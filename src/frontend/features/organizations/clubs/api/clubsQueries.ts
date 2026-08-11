@@ -1,5 +1,5 @@
 // src/frontend/features/organizations/clubs/api/clubsQueries.ts
-import type { QueryClient } from "@tanstack/react-query";
+import type { QueryClient, QueryFunctionContext } from "@tanstack/react-query";
 
 import type { ClubFilters } from "../types/ClubFilters";
 import { clubsService } from "./clubs.service";
@@ -58,7 +58,8 @@ export const clubsQueries = {
    */
   list: (filters?: ClubFilters) => ({
     queryKey: clubsKeys.list(filters),
-    queryFn: () => clubsService.getAll(filters),
+    queryFn: ({ signal }: QueryFunctionContext) =>
+      clubsService.getAll(filters, signal),
     ...CLUBS_CONFIG,
   }),
 
@@ -70,7 +71,8 @@ export const clubsQueries = {
    */
   detail: (id: number) => ({
     queryKey: clubsKeys.detail(id),
-    queryFn: () => clubsService.getById(id),
+    queryFn: ({ signal }: QueryFunctionContext) =>
+      clubsService.getById(id, signal),
     ...CLUBS_CONFIG,
   }),
 
@@ -84,7 +86,8 @@ export const clubsQueries = {
    */
   statsByRegion: () => ({
     queryKey: clubsKeys.statsByRegion(),
-    queryFn: () => clubsService.getStatsByRegion(),
+    queryFn: ({ signal }: QueryFunctionContext) =>
+      clubsService.getStatsByRegion(signal),
     ...CLUBS_STATIC_CONFIG,
     staleTime: 24 * 60 * 60 * 1000,
   }),
@@ -99,7 +102,8 @@ export const clubsQueries = {
    */
   statsByDepartment: () => ({
     queryKey: clubsKeys.statsByDepartment(),
-    queryFn: () => clubsService.getStatsByDepartment(),
+    queryFn: ({ signal }: QueryFunctionContext) =>
+      clubsService.getStatsByDepartment(undefined, signal),
     ...CLUBS_STATIC_CONFIG,
     staleTime: 60 * 60 * 1000,
   }),
@@ -114,7 +118,8 @@ export const clubsQueries = {
    */
   allClubs: () => ({
     queryKey: clubsKeys.allClubs(),
-    queryFn: () => clubsService.getAllClubs(),
+    queryFn: ({ signal }: QueryFunctionContext) =>
+      clubsService.getAllClubs(signal),
     ...CLUBS_STATIC_CONFIG,
     staleTime: 60 * 60 * 1000,
   }),
@@ -124,8 +129,8 @@ export const clubsQueries = {
     filters?: Pick<ClubFilters, "committeeId" | "leagueId">,
   ) => ({
     queryKey: clubsKeys.search(search, filters),
-    queryFn: () =>
-      clubsService.getAll({ search, ...filters, limit: 20, page: 1 }),
+    queryFn: ({ signal }: QueryFunctionContext) =>
+      clubsService.getAll({ search, ...filters, limit: 20, page: 1 }, signal),
     staleTime: 60 * 1000, // 1 min — search results change more than static lists
     gcTime: 2 * 60 * 1000,
     enabled: true,

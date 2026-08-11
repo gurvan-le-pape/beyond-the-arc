@@ -1,5 +1,5 @@
 // src/frontend/features/players/api/playersQueries.ts
-import type { QueryClient } from "@tanstack/react-query";
+import type { QueryClient, QueryFunctionContext } from "@tanstack/react-query";
 
 import type { PlayerFilters } from "../types/PlayerFilters";
 import type { PlayerSearchFilters } from "../types/PlayerSearchFilters";
@@ -46,7 +46,8 @@ export const playersQueries = {
    */
   list: (filters?: PlayerFilters) => ({
     queryKey: playersKeys.list(filters),
-    queryFn: () => playersService.getAll(filters),
+    queryFn: ({ signal }: QueryFunctionContext) =>
+      playersService.getAll(filters, signal),
     ...PLAYERS_CONFIG,
   }),
 
@@ -58,7 +59,8 @@ export const playersQueries = {
    */
   detail: (id: number) => ({
     queryKey: playersKeys.detail(id),
-    queryFn: () => playersService.getById(id),
+    queryFn: ({ signal }: QueryFunctionContext) =>
+      playersService.getById(id, signal),
     ...PLAYERS_CONFIG,
   }),
 
@@ -72,7 +74,8 @@ export const playersQueries = {
    */
   matches: (id: number) => ({
     queryKey: playersKeys.matches(id),
-    queryFn: () => playersService.getMatches(id),
+    queryFn: ({ signal }: QueryFunctionContext) =>
+      playersService.getMatches(id, signal),
     ...PLAYERS_CONFIG,
     // Match results update regularly — refresh more aggressively than player metadata
     staleTime: 2 * 60 * 1000,
@@ -88,7 +91,8 @@ export const playersQueries = {
    */
   filterValues: (params?: { committeeId?: number; leagueId?: number }) => ({
     queryKey: playersKeys.filterValues(params),
-    queryFn: () => playersService.getFilterValues(params),
+    queryFn: ({ signal }: QueryFunctionContext) =>
+      playersService.getFilterValues(params, signal),
     ...PLAYERS_CONFIG,
   }),
 
@@ -102,7 +106,8 @@ export const playersQueries = {
    */
   search: (search: string, filters?: PlayerSearchFilters) => ({
     queryKey: playersKeys.search(search, filters),
-    queryFn: () => playersService.search(search, filters),
+    queryFn: ({ signal }: QueryFunctionContext) =>
+      playersService.search(search, filters, signal),
     staleTime: 60 * 1000, // 1 min — search results change more than static lists
     gcTime: 2 * 60 * 1000,
   }),

@@ -36,9 +36,13 @@ export const clubsService = {
    * @example
    * const clubs = await clubsService.getAll({ leagueId: 1 });
    */
-  async getAll(filters?: ClubFilters): Promise<ClubsPaginatedResponse> {
+  async getAll(
+    filters?: ClubFilters,
+    signal?: AbortSignal,
+  ): Promise<ClubsPaginatedResponse> {
     const { data } = await apiClient.get<ClubsPaginatedResponse>("/clubs", {
       params: filters,
+      signal,
     });
     return data;
   },
@@ -53,8 +57,10 @@ export const clubsService = {
    * @example
    * const club = await clubsService.getById(123);
    */
-  async getById(id: number): Promise<ClubDetailed> {
-    const { data } = await apiClient.get<ClubDetailed>(`/clubs/${id}`);
+  async getById(id: number, signal?: AbortSignal): Promise<ClubDetailed> {
+    const { data } = await apiClient.get<ClubDetailed>(`/clubs/${id}`, {
+      signal,
+    });
     return data;
   },
 
@@ -68,9 +74,10 @@ export const clubsService = {
    * const stats = await clubsService.getStatsByRegion();
    * // [{ regionId: 1, regionName: 'Bretagne', clubCount: 45 }, ...]
    */
-  async getStatsByRegion(): Promise<ClubStatsByRegion[]> {
+  async getStatsByRegion(signal?: AbortSignal): Promise<ClubStatsByRegion[]> {
     const { data } = await apiClient.get<ClubStatsByRegion[]>(
       "/clubs/stats/by-region",
+      { signal },
     );
     return data;
   },
@@ -93,11 +100,13 @@ export const clubsService = {
    */
   async getStatsByDepartment(
     leagueId?: number,
+    signal?: AbortSignal,
   ): Promise<ClubStatsByDepartment[]> {
     const { data } = await apiClient.get<ClubStatsByDepartment[]>(
       "/clubs/stats/by-department",
       {
         params: leagueId ? { leagueId } : undefined,
+        signal,
       },
     );
     return data;
@@ -113,8 +122,8 @@ export const clubsService = {
    * @example
    * const clubs = await clubsService.getAllClubs();
    */
-  async getAllClubs(): Promise<ClubBasic[]> {
-    const { data } = await apiClient.get<ClubBasic[]>("/clubs/all");
+  async getAllClubs(signal?: AbortSignal): Promise<ClubBasic[]> {
+    const { data } = await apiClient.get<ClubBasic[]>("/clubs/all", { signal });
     return data;
   },
 };

@@ -29,8 +29,8 @@ export const leaguesService = {
    * @example
    * const leagues = await leaguesService.getAll();
    */
-  async getAll(): Promise<League[]> {
-    const { data } = await apiClient.get<League[]>("/leagues");
+  async getAll(signal?: AbortSignal): Promise<League[]> {
+    const { data } = await apiClient.get<League[]>("/leagues", { signal });
     return data;
   },
 
@@ -44,8 +44,8 @@ export const leaguesService = {
    * @example
    * const league = await leaguesService.getById(1);
    */
-  async getById(id: number): Promise<League> {
-    const { data } = await apiClient.get<League>(`/leagues/${id}`);
+  async getById(id: number, signal?: AbortSignal): Promise<League> {
+    const { data } = await apiClient.get<League>(`/leagues/${id}`, { signal });
     return data;
   },
 
@@ -60,8 +60,11 @@ export const leaguesService = {
    * @example
    * const leagues = await leaguesService.getByIds([1, 2, 3]);
    */
-  async getByIds(ids: number[]): Promise<League[]> {
-    const { data } = await apiClient.get<League[]>(`/leagues/${ids.join(",")}`);
+  async getByIds(ids: number[], signal?: AbortSignal): Promise<League[]> {
+    const { data } = await apiClient.get<League[]>(
+      `/leagues/${ids.join(",")}`,
+      { signal },
+    );
     return data;
   },
 };

@@ -1,5 +1,5 @@
 // src/frontend/features/organizations/leagues/api/leaguesQueries.ts
-import type { QueryClient } from "@tanstack/react-query";
+import type { QueryClient, QueryFunctionContext } from "@tanstack/react-query";
 
 import { leaguesService } from "./leagues.service";
 import { leaguesKeys } from "./leaguesKeys";
@@ -47,7 +47,8 @@ export const leaguesQueries = {
    */
   list: () => ({
     queryKey: leaguesKeys.all,
-    queryFn: () => leaguesService.getAll(),
+    queryFn: ({ signal }: QueryFunctionContext) =>
+      leaguesService.getAll(signal),
     ...LEAGUES_CONFIG,
   }),
 
@@ -59,7 +60,8 @@ export const leaguesQueries = {
    */
   detail: (id: number) => ({
     queryKey: leaguesKeys.detail(id),
-    queryFn: () => leaguesService.getById(id),
+    queryFn: ({ signal }: QueryFunctionContext) =>
+      leaguesService.getById(id, signal),
     ...LEAGUES_CONFIG,
   }),
 
@@ -72,7 +74,8 @@ export const leaguesQueries = {
    */
   byIds: (ids: number[]) => ({
     queryKey: leaguesKeys.byIds(ids),
-    queryFn: () => leaguesService.getByIds(ids),
+    queryFn: ({ signal }: QueryFunctionContext) =>
+      leaguesService.getByIds(ids, signal),
     ...LEAGUES_CONFIG,
   }),
 } as const;

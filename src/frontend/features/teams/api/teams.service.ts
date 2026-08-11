@@ -39,9 +39,13 @@ export const teamsService = {
    * @example
    * const teams = await teamsService.getAll({ championshipId: 5 });
    */
-  async getAll(filters?: TeamFilters): Promise<PaginatedResponse<Team>> {
+  async getAll(
+    filters?: TeamFilters,
+    signal?: AbortSignal,
+  ): Promise<PaginatedResponse<Team>> {
     const { data } = await apiClient.get<PaginatedResponse<Team>>("/teams", {
       params: filters,
+      signal,
     });
     return data;
   },
@@ -56,8 +60,10 @@ export const teamsService = {
    * @example
    * const team = await teamsService.getById(123);
    */
-  async getById(teamId: number): Promise<TeamDetail> {
-    const { data } = await apiClient.get<TeamDetail>(`/teams/${teamId}`);
+  async getById(teamId: number, signal?: AbortSignal): Promise<TeamDetail> {
+    const { data } = await apiClient.get<TeamDetail>(`/teams/${teamId}`, {
+      signal,
+    });
     return data;
   },
 
@@ -71,8 +77,14 @@ export const teamsService = {
    * @example
    * const matches = await teamsService.getMatches(123);
    */
-  async getMatches(teamId: number): Promise<TeamMatchHistoryResponse> {
-    const { data } = await apiClient.get<any>(`/teams/${teamId}/matches`);
+  async getMatches(
+    teamId: number,
+    signal?: AbortSignal,
+  ): Promise<TeamMatchHistoryResponse> {
+    const { data } = await apiClient.get<TeamMatchHistoryResponse>(
+      `/teams/${teamId}/matches`,
+      { signal },
+    );
     return data;
   },
 
@@ -83,13 +95,16 @@ export const teamsService = {
    * @example
    * const filterValues = await teamsService.getFilterValues();
    */
-  async getFilterValues(params?: {
-    committeeId?: number;
-    leagueId?: number;
-  }): Promise<TeamFilterValues> {
+  async getFilterValues(
+    params?: {
+      committeeId?: number;
+      leagueId?: number;
+    },
+    signal?: AbortSignal,
+  ): Promise<TeamFilterValues> {
     const { data } = await apiClient.get<TeamFilterValues>(
       "/teams/filter-values",
-      { params },
+      { params, signal },
     );
     return data;
   },

@@ -8,6 +8,7 @@ import type { ChampionshipFilters } from "../types/ChampionshipFilters";
 export const championshipsService = {
   async getAll(
     filters?: ChampionshipFilters,
+    signal?: AbortSignal,
   ): Promise<PaginatedResponse<Championship>> {
     const { data } = await apiClient.get<PaginatedResponse<Championship>>(
       "/championships",
@@ -20,13 +21,16 @@ export const championshipsService = {
           page: filters?.page,
           limit: filters?.limit,
         },
+        signal,
       },
     );
     return data;
   },
 
-  async getById(id: number): Promise<Championship> {
-    const { data } = await apiClient.get<Championship>(`/championships/${id}`);
+  async getById(id: number, signal?: AbortSignal): Promise<Championship> {
+    const { data } = await apiClient.get<Championship>(`/championships/${id}`, {
+      signal,
+    });
     return data;
   },
 };
