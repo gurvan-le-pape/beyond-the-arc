@@ -75,7 +75,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     ...localizedUrls("", { changeFrequency: "daily", priority: 1 }),
     ...localizedUrls("/about", { changeFrequency: "monthly", priority: 0.5 }),
-    ...localizedUrls("/features", {
+    ...localizedUrls("/product", {
       changeFrequency: "monthly",
       priority: 0.5,
     }),

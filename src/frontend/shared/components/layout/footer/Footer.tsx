@@ -22,7 +22,7 @@ export const Footer: React.FC = () => {
     features: [{ href: "/map", label: t("footer.clubsMap"), icon: MapPin }],
     project: [
       { href: "/about", label: t("footer.about") },
-      { href: "/features", label: t("footer.features") },
+      { href: "/product", label: t("footer.product") },
       { href: "/architecture", label: t("footer.architecture") },
       { href: "/docs", label: t("footer.documentation") },
     ],

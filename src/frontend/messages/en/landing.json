@@ -41,7 +41,7 @@
     },
     "exploreTitle": "Explore the Project",
     "explore": "Discover the features, architecture, and documentation to learn more about this project and my approach to software engineering.",
-    "viewFeatures": "View Features",
+    "viewProduct": "View Product",
     "viewArchitecture": "View Architecture"
   },
   "architecture": {
@@ -92,8 +92,8 @@
       }
     }
   },
-  "features": {
-    "title": "Features",
+  "product": {
+    "title": "Product",
     "subtitle": "Explore the powerful features that make this basketball platform comprehensive and user-friendly",
     "leaderboards": {
       "title": "Championship Leaderboards",

@@ -4,14 +4,14 @@ import { Link } from "@/navigation";
 interface AboutCtaSectionProps {
   readonly title: string;
   readonly description: string;
-  readonly featuresLabel: string;
+  readonly productLabel: string;
   readonly architectureLabel: string;
 }
 
 export function AboutCtaSection({
   title,
   description,
-  featuresLabel,
+  productLabel,
   architectureLabel,
 }: AboutCtaSectionProps) {
   return (
@@ -21,10 +21,10 @@ export function AboutCtaSection({
       <p className="text-sm mb-6 max-w-2xl mx-auto">{description}</p>
       <div className="flex flex-wrap justify-center gap-4">
         <Link
-          href="/features"
+          href="/product"
           className="px-6 py-3 bg-white text-primary-strong rounded-button font-semibold hover:bg-gray-100 transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-strong"
         >
-          {featuresLabel}
+          {productLabel}
         </Link>
         <Link
           href="/architecture"

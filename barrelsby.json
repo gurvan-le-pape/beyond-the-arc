@@ -64,8 +64,8 @@
     "src/frontend/features/site/contact/components",
     "src/frontend/features/site/docs/components",
     "src/frontend/features/site/docs/hooks",
-    "src/frontend/features/site/features/components",
     "src/frontend/features/site/home/components",
+    "src/frontend/features/site/product/components",
 
     "src/frontend/features/teams/api",
     "src/frontend/features/teams/components",
