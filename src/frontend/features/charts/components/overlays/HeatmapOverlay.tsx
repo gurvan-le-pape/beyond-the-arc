@@ -3,7 +3,8 @@
 
 // HeatmapOverlay: React component for rendering a binned heatmap overlay (SVG) with interactive tooltips.
 // Uses D3 for color scaling and supports filtering by shot type (made/missed/all).
-import * as d3 from "d3";
+import { scaleSequential } from "d3-scale";
+import { interpolateYlOrRd } from "d3-scale-chromatic";
 import React, { useMemo, useState } from "react";
 
 import { ShotFilter } from "../../constants";
@@ -25,7 +26,7 @@ interface HeatmapOverlayProps {
   cellHeight: number;
   // Maximum value for color scaling (precomputed for performance)
   maxValue: number;
-  // Optional: custom color scale (defaults to d3.interpolateYlOrRd)
+  // Optional: custom color scale (defaults to interpolateYlOrRd)
   colorScale?: (t: number) => string;
 }
 
@@ -62,9 +63,10 @@ export const HeatmapOverlay: React.FC<HeatmapOverlayProps> = ({
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
 
   // D3 color scale for cell fill (default: YlOrRd, can be overridden by prop)
-  const color = d3
-    .scaleSequential(colorScale || d3.interpolateYlOrRd)
-    .domain([0, maxValue]);
+  const color = scaleSequential(colorScale || interpolateYlOrRd).domain([
+    0,
+    maxValue,
+  ]);
 
   return (
     <>

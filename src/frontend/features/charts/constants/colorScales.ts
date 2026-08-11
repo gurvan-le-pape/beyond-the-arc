@@ -1,5 +1,11 @@
 // src/frontend/features/charts/constants/colorScales.ts
-import * as d3 from "d3";
+import {
+  interpolateCividis,
+  interpolateInferno,
+  interpolateTurbo,
+  interpolateViridis,
+  interpolateYlOrRd,
+} from "d3-scale-chromatic";
 
 /**
  * The five sequential interpolators the shot chart offers.
@@ -12,11 +18,11 @@ import * as d3 from "d3";
  * are the only ones any call site passes.
  */
 export const COLOR_SCALES = {
-  YlOrRd: d3.interpolateYlOrRd,
-  Viridis: d3.interpolateViridis,
-  Inferno: d3.interpolateInferno,
-  Cividis: d3.interpolateCividis,
-  Turbo: d3.interpolateTurbo,
+  YlOrRd: interpolateYlOrRd,
+  Viridis: interpolateViridis,
+  Inferno: interpolateInferno,
+  Cividis: interpolateCividis,
+  Turbo: interpolateTurbo,
 } as const;
 
 export type ColorScaleName = keyof typeof COLOR_SCALES;
