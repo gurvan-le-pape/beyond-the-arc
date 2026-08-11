@@ -1,36 +1,18 @@
 // src/frontend/app/[locale]/(chrome)/architecture/page.tsx
-import {
-  Code2,
-  Container,
-  Database,
-  GitBranch,
-  Globe,
-  Layers,
-  Package,
-  Server,
-  TestTube,
-  Wrench,
-} from "lucide-react";
+import { Code2, Database, Globe, Layers, Package, Server } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import type { TechStackItemConfig } from "@/features/site/architecture/components";
 import {
   ArchitectureArrow,
   ArchitectureDiagramNode,
   FeatureBadge,
   TechStackCard,
 } from "@/features/site/architecture/components";
+import { TECH_STACKS } from "@/features/site/architecture/constants";
 import { PageHero, PageLayout } from "@/shared/components/layout";
 import { Text } from "@/shared/components/typography";
 import type { LocalePageProps } from "@/shared/types";
-
-interface TechStackConfig {
-  title: string;
-  icon: typeof Globe;
-  color: string;
-  items: TechStackItemConfig[];
-}
 
 export async function generateMetadata({
   params,
@@ -49,104 +31,16 @@ export default async function ArchitecturePage({ params }: LocalePageProps) {
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "landing" });
 
-  const techStacks: TechStackConfig[] = [
-    {
-      title: t("architecture.frontendTitle"),
-      icon: Globe,
-      color: "from-blue-500 to-cyan-500",
-      items: [
-        {
-          name: "Next.js 15",
-          icon: Layers,
-          description: t("architecture.frontend.nextjsDesc"),
-        },
-        {
-          name: "TypeScript 6",
-          icon: Code2,
-          description: t("architecture.frontend.tsDesc"),
-        },
-        {
-          name: "Tailwind CSS 3",
-          icon: Wrench,
-          description: t("architecture.frontend.tailwindDesc"),
-        },
-        {
-          name: "React Query",
-          icon: Database,
-          description: t("architecture.frontend.reactQueryDesc"),
-        },
-        {
-          name: "next-intl",
-          icon: Globe,
-          description: t("architecture.frontend.i18nDesc"),
-        },
-      ],
-    },
-    {
-      title: t("architecture.backendTitle"),
-      icon: Server,
-      color: "from-green-500 to-emerald-500",
-      items: [
-        {
-          name: "NestJS 11",
-          icon: Server,
-          description: t("architecture.backend.nestjsDesc"),
-        },
-        {
-          name: "Prisma 7",
-          icon: Database,
-          description: t("architecture.backend.prismaDesc"),
-        },
-        {
-          name: "PostgreSQL",
-          icon: Database,
-          description: t("architecture.backend.pgDesc"),
-        },
-        {
-          name: "TypeScript 6",
-          icon: Code2,
-          description: t("architecture.backend.tsDesc"),
-        },
-        {
-          name: "RESTful API",
-          icon: GitBranch,
-          description: t("architecture.backend.restDesc"),
-        },
-      ],
-    },
-    {
-      title: t("architecture.devopsTitle"),
-      icon: Wrench,
-      color: "from-purple-500 to-pink-500",
-      items: [
-        {
-          name: "Docker",
-          icon: Container,
-          description: t("architecture.devops.dockerDesc"),
-        },
-        {
-          name: "Docker Compose",
-          icon: Layers,
-          description: t("architecture.devops.composeDesc"),
-        },
-        {
-          name: "Jest",
-          icon: TestTube,
-          description: t("architecture.devops.jestDesc"),
-        },
-        {
-          name: "ESLint & Prettier",
-          icon: Wrench,
-          description: t("architecture.devops.lintDesc"),
-        },
-        {
-          name: "GitHub Actions",
-          icon: GitBranch,
-          description: t("architecture.devops.cicdDesc"),
-        },
-      ],
-    },
-  ];
+  const techStacks = TECH_STACKS.map((stack) => ({
+    title: t(stack.titleKey),
+    icon: stack.icon,
+    color: stack.color,
+    items: stack.items.map((item) => ({
+      name: item.name,
+      icon: item.icon,
+      description: t(item.descriptionKey),
+    })),
+  }));
 
   return (
     <PageLayout>
