@@ -1,7 +1,8 @@
 // src/frontend/features/charts/components/overlays/HotspotsOverlay.tsx
 "use client";
 
-import * as d3 from "d3";
+import { scaleSequential } from "d3-scale";
+import { interpolateYlOrRd } from "d3-scale-chromatic";
 import React, { useMemo, useState } from "react";
 
 import type { ShotEvent } from "@/shared/types";
@@ -58,7 +59,7 @@ export const HotspotsOverlay: React.FC<HotspotsOverlayProps> = ({
   svgWidth,
   onMaxTotalChange,
 }) => {
-  const colorFn = colorScale || d3.interpolateYlOrRd;
+  const colorFn = colorScale || interpolateYlOrRd;
 
   const maxTotal = useMemo(() => {
     const allZones = ALL_ZONE_GETTERS.flatMap((getter) => getter());
@@ -72,7 +73,7 @@ export const HotspotsOverlay: React.FC<HotspotsOverlayProps> = ({
   }, [maxTotal, onMaxTotalChange]);
 
   const zoneColorScale = useMemo(
-    () => d3.scaleSequential(colorFn).domain([0, maxTotal]),
+    () => scaleSequential(colorFn).domain([0, maxTotal]),
     [colorFn, maxTotal],
   );
 

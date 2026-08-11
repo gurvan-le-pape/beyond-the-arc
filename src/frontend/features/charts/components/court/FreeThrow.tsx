@@ -1,5 +1,5 @@
 // src/frontend/features/charts/components/court/FreeThrow.tsx
-import * as d3 from "d3";
+import { arc } from "d3-shape";
 import React from "react";
 
 import {
@@ -43,7 +43,7 @@ export const FreeThrow: React.FC<FreeThrowProps> = ({
     {/* Free-throw semi-circle */}
     <path
       d={
-        d3.arc()({
+        arc()({
           innerRadius: xScale(FREE_THROW_CIRCLE_RADIUS) - xScale(0),
           outerRadius: xScale(FREE_THROW_CIRCLE_RADIUS) - xScale(0),
           startAngle: -Math.PI / 2,

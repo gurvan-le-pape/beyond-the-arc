@@ -1,5 +1,5 @@
 // src/frontend/features/charts/components/court/NoCharge.tsx
-import * as d3 from "d3";
+import { arc } from "d3-shape";
 import React from "react";
 
 import { COURT_WIDTH, LINE_WIDTH, NO_CHARGE_RADIUS } from "../../constants";
@@ -35,7 +35,7 @@ export const NoCharge: React.FC<NoChargeProps> = ({
     {/* No-charge semi-circle */}
     <path
       d={
-        d3.arc()({
+        arc()({
           innerRadius: xScale(NO_CHARGE_RADIUS) - xScale(0),
           outerRadius: xScale(NO_CHARGE_RADIUS) - xScale(0),
           startAngle: -Math.PI / 2,

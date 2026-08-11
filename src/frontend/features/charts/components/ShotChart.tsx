@@ -1,7 +1,7 @@
 // src/frontend/features/charts/components/ShotChart.tsx
 "use client";
 
-import * as d3 from "d3";
+import { scaleLinear } from "d3-scale";
 import React, { useMemo, useState } from "react";
 
 import type { MatchEvent } from "@/features/matches/types";
@@ -97,11 +97,11 @@ export const ShotChart: React.FC<ShotChartProps> = ({
   const svgHeight = containerSize?.height ?? 0;
 
   const xScale = useMemo(
-    () => d3.scaleLinear().domain([0, COURT_WIDTH]).range([0, svgWidth]),
+    () => scaleLinear().domain([0, COURT_WIDTH]).range([0, svgWidth]),
     [svgWidth],
   );
   const yScale = useMemo(
-    () => d3.scaleLinear().domain([0, HALF_COURT_HEIGHT]).range([svgHeight, 0]),
+    () => scaleLinear().domain([0, HALF_COURT_HEIGHT]).range([svgHeight, 0]),
     [svgHeight],
   );
 
