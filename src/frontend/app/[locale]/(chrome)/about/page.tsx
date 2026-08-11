@@ -89,7 +89,7 @@ export default async function AboutPage({ params }: LocalePageProps) {
       <AboutCtaSection
         title={t("about.exploreTitle")}
         description={t("about.explore")}
-        featuresLabel={t("about.viewFeatures")}
+        productLabel={t("about.viewProduct")}
         architectureLabel={t("about.viewArchitecture")}
       />
     </PageLayout>

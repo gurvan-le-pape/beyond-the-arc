@@ -41,7 +41,7 @@
     },
     "exploreTitle": "Explorez le Projet",
     "explore": "Découvrez les fonctionnalités, l'architecture et la documentation pour en savoir plus sur ce projet et mon approche de l'ingénierie logicielle.",
-    "viewFeatures": "Voir les Fonctionnalités",
+    "viewProduct": "Voir le Produit",
     "viewArchitecture": "Voir l'Architecture"
   },
   "architecture": {
@@ -92,8 +92,8 @@
       }
     }
   },
-  "features": {
-    "title": "Fonctionnalités",
+  "product": {
+    "title": "Produit",
     "subtitle": "Découvrez les fonctionnalités puissantes qui rendent cette plateforme de basketball complète et conviviale",
     "leaderboards": {
       "title": "Classements",

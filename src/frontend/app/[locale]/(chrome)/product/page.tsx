@@ -1,4 +1,4 @@
-// src/frontend/app/[locale]/(chrome)/features/page.tsx
+// src/frontend/app/[locale]/(chrome)/product/page.tsx
 import {
   BarChart3,
   Calendar,
@@ -21,7 +21,7 @@ import {
   FeatureCard,
   FeaturesHighlightsSection,
   type HighlightItem,
-} from "@/features/site/features/components";
+} from "@/features/site/product/components";
 import { PageHero, PageLayout } from "@/shared/components/layout";
 import type { LocalePageProps } from "@/shared/types";
 
@@ -101,12 +101,12 @@ export async function generateMetadata({
   const tMeta = await getTranslations({ locale, namespace: "landing" });
 
   return {
-    title: tMeta("features.title"),
-    description: tMeta("features.subtitle"),
+    title: tMeta("product.title"),
+    description: tMeta("product.subtitle"),
   };
 }
 
-export default async function FeaturesPage({ params }: LocalePageProps) {
+export default async function ProductPage({ params }: LocalePageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "landing" });
@@ -115,22 +115,22 @@ export default async function FeaturesPage({ params }: LocalePageProps) {
     icon: f.icon,
     status: f.statusKey,
     color: f.color,
-    title: t(`features.${f.featureKey}.title`),
-    description: t(`features.${f.featureKey}.description`),
-    statusLabel: t(`features.status.${f.statusKey}`),
+    title: t(`product.${f.featureKey}.title`),
+    description: t(`product.${f.featureKey}.description`),
+    statusLabel: t(`product.status.${f.statusKey}`),
   }));
 
   const highlights: HighlightItem[] = HIGHLIGHTS_CONFIG.map((h) => ({
     icon: h.icon,
-    title: t(`features.highlights.${h.highlightKey}.title`),
-    description: t(`features.highlights.${h.highlightKey}.description`),
+    title: t(`product.highlights.${h.highlightKey}.title`),
+    description: t(`product.highlights.${h.highlightKey}.description`),
   }));
 
   return (
     <PageLayout>
       <PageHero
-        title={t("features.title")}
-        lead={t("features.subtitle")}
+        title={t("product.title")}
+        lead={t("product.subtitle")}
         icon={Sparkles}
       />
 
@@ -143,7 +143,7 @@ export default async function FeaturesPage({ params }: LocalePageProps) {
 
       {/* Highlights Section */}
       <FeaturesHighlightsSection
-        title={t("features.highlightsTitle")}
+        title={t("product.highlightsTitle")}
         highlights={highlights}
       />
     </PageLayout>

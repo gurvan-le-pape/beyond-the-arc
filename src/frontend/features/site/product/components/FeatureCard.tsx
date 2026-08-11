@@ -1,4 +1,4 @@
-// src/frontend/features/site/features/components/FeatureCard.tsx
+// src/frontend/features/site/product/components/FeatureCard.tsx
 import type { LucideIcon } from "lucide-react";
 
 import { Text } from "@/shared/components/typography";
