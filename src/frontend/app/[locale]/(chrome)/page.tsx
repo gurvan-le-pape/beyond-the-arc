@@ -3,6 +3,12 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
 import { ExploreCard, LevelRow } from "@/features/site/home/components";
+import {
+  EXPLORE_CARDS,
+  LEVEL_ROWS,
+  MAP_STATS,
+  STATS_BAND_KEYS,
+} from "@/features/site/home/constants";
 import { serverStatsService } from "@/features/stats/api";
 import { Link } from "@/navigation";
 import { PageLayout } from "@/shared/components/layout";
@@ -51,79 +57,37 @@ export default async function Home({ params }: LocalePageProps) {
 
   const formatCount = (n: number): string => n.toLocaleString(locale);
 
-  const statsBand = [
-    { value: formatCount(stats.clubs), label: t("stats.clubs") },
-    { value: formatCount(stats.teams), label: t("stats.teams") },
-    { value: formatCount(stats.players), label: t("stats.players") },
-    { value: formatCount(stats.matches), label: t("stats.matches") },
-    { value: formatCount(stats.leagues), label: t("stats.leagues") },
-    { value: formatCount(stats.committees), label: t("stats.committees") },
-  ] as const;
+  const statsBand = STATS_BAND_KEYS.map((key) => ({
+    value: formatCount(stats[key]),
+    label: t(`stats.${key}`),
+  }));
 
-  const exploreCards = [
-    {
-      href: "/search?tab=players",
-      badgeVariant: "players" as const,
-      badge: t("explore.players.badge"),
-      title: t("explore.players.title"),
-      desc: t("explore.players.desc"),
-      count: formatCount(stats.players),
-      countLabel: t("explore.players.count"),
-    },
-    {
-      href: "/search?tab=teams",
-      badgeVariant: "teams" as const,
-      badge: t("explore.teams.badge"),
-      title: t("explore.teams.title"),
-      desc: t("explore.teams.desc"),
-      count: formatCount(stats.teams),
-      countLabel: t("explore.teams.count"),
-    },
-    {
-      href: "/search?tab=matches",
-      badgeVariant: "matches" as const,
-      badge: t("explore.matches.badge"),
-      title: t("explore.matches.title"),
-      desc: t("explore.matches.desc"),
-      count: formatCount(stats.matches),
-      countLabel: t("explore.matches.count"),
-    },
-  ] as const;
+  const exploreCards = EXPLORE_CARDS.map((card) => ({
+    href: card.href,
+    badgeVariant: card.badgeVariant,
+    badge: t(`explore.${card.key}.badge`),
+    title: t(`explore.${card.key}.title`),
+    desc: t(`explore.${card.key}.desc`),
+    count: formatCount(stats[card.key]),
+    countLabel: t(`explore.${card.key}.count`),
+  }));
 
-  // One message, three counts — ICU picks the plural form, and the key is
-  // named once rather than at each call site.
-  const championshipCount = (count: number) =>
-    t("levels.championshipCount", { count });
+  const levelCards = LEVEL_ROWS.map((row) => ({
+    dot: row.dot,
+    name: t(`levels.${row.level}.name`),
+    detail: t(`levels.${row.level}.detail`),
+    // One message, three counts — ICU picks the plural form, and the key is
+    // named once rather than at each call site.
+    count: t("levels.championshipCount", {
+      count: stats.championshipsByLevel[row.level],
+    }),
+    href: `/championships?tab=${row.level}`,
+  }));
 
-  const levelCards = [
-    {
-      dot: "bg-national",
-      name: t("levels.national.name"),
-      detail: t("levels.national.detail"),
-      count: championshipCount(stats.championshipsByLevel.national),
-      href: "/championships?tab=national",
-    },
-    {
-      dot: "bg-regional",
-      name: t("levels.regional.name"),
-      detail: t("levels.regional.detail"),
-      count: championshipCount(stats.championshipsByLevel.regional),
-      href: "/championships?tab=regional",
-    },
-    {
-      dot: "bg-departmental",
-      name: t("levels.departmental.name"),
-      detail: t("levels.departmental.detail"),
-      count: championshipCount(stats.championshipsByLevel.departmental),
-      href: "/championships?tab=departmental",
-    },
-  ] as const;
-
-  const mapStats = [
-    { value: formatCount(stats.clubs), label: t("stats.clubs") },
-    { value: formatCount(stats.committees), label: t("stats.departments") },
-    { value: formatCount(stats.leagues), label: t("stats.regions") },
-  ] as const;
+  const mapStats = MAP_STATS.map((stat) => ({
+    value: formatCount(stats[stat.statKey]),
+    label: t(`stats.${stat.labelKey}`),
+  }));
 
   return (
     <PageLayout edgeToEdge>

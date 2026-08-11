@@ -1,15 +1,7 @@
 // src/frontend/app/[locale]/(chrome)/docs/page.tsx
 "use client";
 
-import {
-  BookOpen,
-  Database,
-  Download,
-  ExternalLink,
-  FolderTree,
-  Github,
-  Lightbulb,
-} from "lucide-react";
+import { BookOpen } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import {
@@ -20,84 +12,21 @@ import {
   DocsSectionAccordion,
   DocsStructureSection,
 } from "@/features/site/docs/components";
+import { DOCS_SECTIONS, QUICK_LINKS } from "@/features/site/docs/constants";
 import { useAccordion } from "@/features/site/docs/hooks";
 import { PageHero, PageLayout } from "@/shared/components/layout";
-import {
-  API_DOCS_URL,
-  CONTACT_MAILTO,
-  GITHUB_REPO_URL,
-} from "@/shared/constants";
-
-const QUICK_LINKS_CONFIG = [
-  {
-    href: GITHUB_REPO_URL,
-    icon: Github,
-    labelKey: "docs.quickLinks.github",
-    subKey: "docs.quickLinks.viewSource",
-    external: true,
-    trailIcon: ExternalLink,
-  },
-  {
-    href: "/docs/data-model.pdf",
-    icon: Download,
-    labelKey: "docs.quickLinks.dataModel",
-    subKey: "docs.quickLinks.pdf",
-    download: true,
-  },
-  {
-    href: API_DOCS_URL,
-    icon: BookOpen,
-    labelKey: "docs.quickLinks.apiDocs",
-    subKey: "docs.quickLinks.swagger",
-    external: true,
-    trailIcon: ExternalLink,
-  },
-  {
-    href: CONTACT_MAILTO,
-    icon: BookOpen,
-    labelKey: "docs.quickLinks.contact",
-    subKey: "docs.quickLinks.getHelp",
-  },
-] as const;
-
-const SECTIONS_CONFIG = [
-  {
-    id: "getting-started",
-    icon: BookOpen,
-    titleKey: "docs.sections.gettingStarted.title",
-    contentKey: "docs.sections.gettingStarted.content",
-  },
-  {
-    id: "database",
-    icon: Database,
-    titleKey: "docs.sections.database.title",
-    contentKey: "docs.sections.database.content",
-  },
-  {
-    id: "structure",
-    icon: FolderTree,
-    titleKey: "docs.sections.structure.title",
-    contentKey: "docs.sections.structure.content",
-  },
-  {
-    id: "best-practices",
-    icon: Lightbulb,
-    titleKey: "docs.sections.bestPractices.title",
-    contentKey: "docs.sections.bestPractices.content",
-  },
-] as const;
 
 export default function DocsPage() {
   const t = useTranslations("landing");
   const { toggle, isActive } = useAccordion("database");
 
-  const quickLinks = QUICK_LINKS_CONFIG.map((link) => ({
+  const quickLinks = QUICK_LINKS.map((link) => ({
     ...link,
     label: t(link.labelKey),
     sub: t(link.subKey),
   }));
 
-  const sections = SECTIONS_CONFIG.map((section) => ({
+  const sections = DOCS_SECTIONS.map((section) => ({
     ...section,
     title: t(section.titleKey),
     content: t(section.contentKey),

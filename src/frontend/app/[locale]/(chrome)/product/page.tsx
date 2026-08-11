@@ -1,19 +1,5 @@
 // src/frontend/app/[locale]/(chrome)/product/page.tsx
-import {
-  BarChart3,
-  Calendar,
-  Clock,
-  Globe2,
-  MapPin,
-  Search,
-  Shield,
-  Sparkles,
-  Target,
-  TrendingUp,
-  Trophy,
-  Users,
-  Zap,
-} from "lucide-react";
+import { Sparkles } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
@@ -22,77 +8,12 @@ import {
   FeaturesHighlightsSection,
   type HighlightItem,
 } from "@/features/site/product/components";
+import {
+  PRODUCT_FEATURES,
+  PRODUCT_HIGHLIGHTS,
+} from "@/features/site/product/constants";
 import { PageHero, PageLayout } from "@/shared/components/layout";
 import type { LocalePageProps } from "@/shared/types";
-
-const FEATURES_CONFIG = [
-  {
-    icon: Trophy,
-    statusKey: "live",
-    color: "from-yellow-500 to-orange-500",
-    featureKey: "leaderboards",
-  },
-  {
-    icon: Calendar,
-    statusKey: "live",
-    color: "from-indigo-500 to-blue-500",
-    featureKey: "matchSchedule",
-  },
-  {
-    icon: Clock,
-    statusKey: "live",
-    color: "from-violet-500 to-purple-500",
-    featureKey: "matchSummary",
-  },
-  {
-    icon: Target,
-    statusKey: "live",
-    color: "from-blue-500 to-cyan-500",
-    featureKey: "shotCharts",
-  },
-  {
-    icon: Users,
-    statusKey: "live",
-    color: "from-purple-500 to-indigo-500",
-    featureKey: "teamRosters",
-  },
-  {
-    icon: BarChart3,
-    statusKey: "live",
-    color: "from-green-500 to-emerald-500",
-    featureKey: "playerComparison",
-  },
-  {
-    icon: MapPin,
-    statusKey: "live",
-    color: "from-red-500 to-pink-500",
-    featureKey: "clubsMap",
-  },
-  {
-    icon: TrendingUp,
-    statusKey: "coming-soon",
-    color: "from-cyan-500 to-teal-500",
-    featureKey: "liveStats",
-  },
-  {
-    icon: Zap,
-    statusKey: "coming-soon",
-    color: "from-orange-500 to-red-500",
-    featureKey: "liveUpdates",
-  },
-  {
-    icon: Shield,
-    statusKey: "planned",
-    color: "from-gray-500 to-gray-700",
-    featureKey: "userAccounts",
-  },
-] as const;
-
-const HIGHLIGHTS_CONFIG = [
-  { icon: Globe2, highlightKey: "i18n" },
-  { icon: Search, highlightKey: "search" },
-  { icon: Sparkles, highlightKey: "responsive" },
-] as const;
 
 export async function generateMetadata({
   params,
@@ -111,7 +32,7 @@ export default async function ProductPage({ params }: LocalePageProps) {
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "landing" });
 
-  const features = FEATURES_CONFIG.map((f) => ({
+  const features = PRODUCT_FEATURES.map((f) => ({
     icon: f.icon,
     status: f.statusKey,
     color: f.color,
@@ -120,7 +41,7 @@ export default async function ProductPage({ params }: LocalePageProps) {
     statusLabel: t(`product.status.${f.statusKey}`),
   }));
 
-  const highlights: HighlightItem[] = HIGHLIGHTS_CONFIG.map((h) => ({
+  const highlights: HighlightItem[] = PRODUCT_HIGHLIGHTS.map((h) => ({
     icon: h.icon,
     title: t(`product.highlights.${h.highlightKey}.title`),
     description: t(`product.highlights.${h.highlightKey}.description`),

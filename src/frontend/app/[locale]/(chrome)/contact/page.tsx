@@ -1,5 +1,5 @@
 // src/frontend/app/[locale]/(chrome)/contact/page.tsx
-import { Github, Linkedin, Mail, Send } from "lucide-react";
+import { Send } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
@@ -7,40 +7,9 @@ import {
   ContactAboutSection,
   ContactMethodCard,
 } from "@/features/site/contact/components";
+import { CONTACT_METHODS } from "@/features/site/contact/constants";
 import { PageHero, PageLayout } from "@/shared/components/layout";
-import {
-  CONTACT_EMAIL,
-  CONTACT_MAILTO,
-  GITHUB_PROFILE_URL,
-  LINKEDIN_URL,
-} from "@/shared/constants";
 import type { LocalePageProps } from "@/shared/types";
-
-const stripScheme = (url: string): string => url.replace(/^https?:\/\//, "");
-
-const CONTACT_METHODS_CONFIG = [
-  {
-    icon: Mail,
-    labelKey: "contact.email",
-    value: CONTACT_EMAIL,
-    href: CONTACT_MAILTO,
-    color: "from-blue-500 to-cyan-500",
-  },
-  {
-    icon: Github,
-    labelKey: "contact.github",
-    value: stripScheme(GITHUB_PROFILE_URL),
-    href: GITHUB_PROFILE_URL,
-    color: "from-gray-700 to-gray-900",
-  },
-  {
-    icon: Linkedin,
-    labelKey: "contact.linkedin",
-    value: stripScheme(LINKEDIN_URL),
-    href: LINKEDIN_URL,
-    color: "from-blue-600 to-blue-800",
-  },
-] as const;
 
 export async function generateMetadata({
   params,
@@ -56,7 +25,7 @@ export default async function ContactPage({ params }: LocalePageProps) {
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "landing" });
 
-  const contactMethods = CONTACT_METHODS_CONFIG.map((method) => ({
+  const contactMethods = CONTACT_METHODS.map((method) => ({
     ...method,
     label: t(method.labelKey),
   }));
