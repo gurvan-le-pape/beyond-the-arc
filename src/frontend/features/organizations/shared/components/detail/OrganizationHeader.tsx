@@ -30,12 +30,21 @@ export function OrganizationHeader({
   return (
     <Card variant="highlighted" padding="lg">
       <div className="flex items-center gap-6">
-        <div className="relative w-20 h-20 md:w-24 md:h-24 flex-shrink-0">
+        <div className="w-20 h-20 md:w-24 md:h-24 flex-shrink-0">
+          {/* Intrinsic size rather than `fill`: `fill` has no idea how big it
+              will be drawn, so it defaults `sizes` to `100vw` and the browser
+              requests a viewport-sized candidate — it was fetching the 1920w
+              variant for a logo drawn at 96px. Given a width, next/image
+              derives the 1x/2x candidates itself, so there is no `sizes`
+              string duplicating the box classes and nothing to drift.
+              The CSS still owns the drawn size; 96 is the larger of the two
+              breakpoints, so the image is never upscaled. */}
           <Image
             src={logoSrc}
             alt={`${name} logo`}
-            fill
-            className="object-contain"
+            width={96}
+            height={96}
+            className="w-full h-full object-contain"
             onError={() => setLogoSrc(FALLBACK_LOGO)}
             priority
           />
