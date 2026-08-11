@@ -1,5 +1,5 @@
 // src/frontend/features/competitions/championships/api/championshipsQueries.ts
-import type { QueryClient } from "@tanstack/react-query";
+import type { QueryClient, QueryFunctionContext } from "@tanstack/react-query";
 
 import type { ChampionshipFilters } from "../types/ChampionshipFilters";
 import { championshipsService } from "./championships.service";
@@ -46,7 +46,8 @@ export const championshipsQueries = {
    */
   list: (filters?: ChampionshipFilters) => ({
     queryKey: championshipsKeys.list(filters),
-    queryFn: () => championshipsService.getAll(filters),
+    queryFn: ({ signal }: QueryFunctionContext) =>
+      championshipsService.getAll(filters, signal),
     ...CHAMPIONSHIPS_CONFIG,
   }),
 
@@ -58,7 +59,8 @@ export const championshipsQueries = {
    */
   detail: (id: number) => ({
     queryKey: championshipsKeys.detail(id),
-    queryFn: () => championshipsService.getById(id),
+    queryFn: ({ signal }: QueryFunctionContext) =>
+      championshipsService.getById(id, signal),
     ...CHAMPIONSHIPS_CONFIG,
   }),
 } as const;

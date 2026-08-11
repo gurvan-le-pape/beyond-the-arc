@@ -1,5 +1,5 @@
 // src/frontend/features/teams/api/teamsQueries.ts
-import type { QueryClient } from "@tanstack/react-query";
+import type { QueryClient, QueryFunctionContext } from "@tanstack/react-query";
 
 import type { TeamFilters } from "../types/TeamFilters";
 import { teamsService } from "./teams.service";
@@ -45,7 +45,8 @@ export const teamsQueries = {
    */
   list: (filters?: TeamFilters) => ({
     queryKey: teamsKeys.list(filters),
-    queryFn: () => teamsService.getAll(filters),
+    queryFn: ({ signal }: QueryFunctionContext) =>
+      teamsService.getAll(filters, signal),
     ...TEAMS_CONFIG,
   }),
 
@@ -57,7 +58,8 @@ export const teamsQueries = {
    */
   detail: (id: number) => ({
     queryKey: teamsKeys.detail(id),
-    queryFn: () => teamsService.getById(id),
+    queryFn: ({ signal }: QueryFunctionContext) =>
+      teamsService.getById(id, signal),
     ...TEAMS_CONFIG,
   }),
 
@@ -71,7 +73,8 @@ export const teamsQueries = {
    */
   matches: (id: number) => ({
     queryKey: teamsKeys.matches(id),
-    queryFn: () => teamsService.getMatches(id),
+    queryFn: ({ signal }: QueryFunctionContext) =>
+      teamsService.getMatches(id, signal),
     ...TEAMS_CONFIG,
     // Match results update regularly — refresh more aggressively than team metadata
     staleTime: 2 * 60 * 1000,
@@ -88,7 +91,8 @@ export const teamsQueries = {
    */
   filterValues: (params?: { committeeId?: number; leagueId?: number }) => ({
     queryKey: teamsKeys.filterValues(params),
-    queryFn: () => teamsService.getFilterValues(params),
+    queryFn: ({ signal }: QueryFunctionContext) =>
+      teamsService.getFilterValues(params, signal),
     ...TEAMS_CONFIG,
     // Filter values reflect live admin changes — keep very fresh
     staleTime: 30 * 1000,

@@ -1,5 +1,5 @@
 // src/frontend/features/matches/api/matchesQueries.ts
-import type { QueryClient } from "@tanstack/react-query";
+import type { QueryClient, QueryFunctionContext } from "@tanstack/react-query";
 
 import type { MatchFilters } from "../types/MatchFilters";
 import { matchesService } from "./matches.service";
@@ -44,7 +44,8 @@ export const matchesQueries = {
    */
   list: (filters?: MatchFilters) => ({
     queryKey: matchesKeys.list(filters),
-    queryFn: () => matchesService.getAll(filters),
+    queryFn: ({ signal }: QueryFunctionContext) =>
+      matchesService.getAll(filters, signal),
     ...MATCHES_CONFIG,
   }),
 
@@ -56,7 +57,8 @@ export const matchesQueries = {
    */
   detail: (id: number) => ({
     queryKey: matchesKeys.detail(id),
-    queryFn: () => matchesService.getById(id),
+    queryFn: ({ signal }: QueryFunctionContext) =>
+      matchesService.getById(id, signal),
     ...MATCHES_CONFIG,
   }),
 
@@ -69,7 +71,8 @@ export const matchesQueries = {
    */
   byPool: (poolId: number) => ({
     queryKey: matchesKeys.byPool(poolId),
-    queryFn: () => matchesService.getByPoolId(poolId),
+    queryFn: ({ signal }: QueryFunctionContext) =>
+      matchesService.getByPoolId(poolId, signal),
     ...MATCHES_CONFIG,
   }),
 
@@ -82,7 +85,8 @@ export const matchesQueries = {
    */
   byChampionship: (championshipId: number) => ({
     queryKey: matchesKeys.byChampionship(championshipId),
-    queryFn: () => matchesService.getByChampionshipId(championshipId),
+    queryFn: ({ signal }: QueryFunctionContext) =>
+      matchesService.getByChampionshipId(championshipId, signal),
     ...MATCHES_CONFIG,
   }),
 
@@ -95,7 +99,8 @@ export const matchesQueries = {
    */
   events: (matchId: number) => ({
     queryKey: matchesKeys.events(matchId),
-    queryFn: () => matchesService.getEventsByMatchId(matchId),
+    queryFn: ({ signal }: QueryFunctionContext) =>
+      matchesService.getEventsByMatchId(matchId, signal),
     ...MATCHES_CONFIG,
     // Events don't change after match ends - extend cache for finished matches
     staleTime: 5 * 60 * 1000,
@@ -110,7 +115,8 @@ export const matchesQueries = {
    */
   playerStats: (matchId: number) => ({
     queryKey: matchesKeys.playerStats(matchId),
-    queryFn: () => matchesService.getPlayerStatsByMatchId(matchId),
+    queryFn: ({ signal }: QueryFunctionContext) =>
+      matchesService.getPlayerStatsByMatchId(matchId, signal),
     ...MATCHES_CONFIG,
     // Stats don't change after match ends - extend cache
     staleTime: 5 * 60 * 1000,

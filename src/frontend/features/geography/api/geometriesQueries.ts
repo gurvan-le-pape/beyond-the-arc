@@ -1,5 +1,5 @@
 // src/frontend/features/geography/api/geometriesQueries.ts
-import type { QueryClient } from "@tanstack/react-query";
+import type { QueryClient, QueryFunctionContext } from "@tanstack/react-query";
 
 import type { GeoJsonData } from "@/features/organizations/clubs/types";
 import { safeFetch } from "@/shared/utils";
@@ -41,7 +41,8 @@ export const geometriesQueries = {
    */
   regions: () => ({
     queryKey: geometriesKeys.regions(),
-    queryFn: () => safeFetch<GeoJsonData>("/geojson/regions.json"),
+    queryFn: ({ signal }: QueryFunctionContext) =>
+      safeFetch<GeoJsonData>("/geojson/regions.json", signal),
     ...GEOMETRIES_CONFIG,
   }),
 
@@ -54,7 +55,8 @@ export const geometriesQueries = {
    */
   departments: () => ({
     queryKey: geometriesKeys.departments(),
-    queryFn: () => safeFetch<GeoJsonData>("/geojson/departments.json"),
+    queryFn: ({ signal }: QueryFunctionContext) =>
+      safeFetch<GeoJsonData>("/geojson/departments.json", signal),
     ...GEOMETRIES_CONFIG,
   }),
 } as const;

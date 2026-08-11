@@ -1,5 +1,5 @@
 // src/frontend/features/organizations/committees/api/committeesQueries.ts
-import type { QueryClient } from "@tanstack/react-query";
+import type { QueryClient, QueryFunctionContext } from "@tanstack/react-query";
 
 import type { CommitteeFilters } from "../types/CommitteesFilters";
 import { committeesService } from "./committees.service";
@@ -46,7 +46,8 @@ export const committeesQueries = {
    */
   list: (filters?: CommitteeFilters) => ({
     queryKey: committeesKeys.list(filters),
-    queryFn: () => committeesService.getAll(filters),
+    queryFn: ({ signal }: QueryFunctionContext) =>
+      committeesService.getAll(filters, signal),
     ...COMMITTEES_CONFIG,
   }),
 
@@ -58,7 +59,8 @@ export const committeesQueries = {
    */
   detail: (id: number) => ({
     queryKey: committeesKeys.detail(id),
-    queryFn: () => committeesService.getById(id),
+    queryFn: ({ signal }: QueryFunctionContext) =>
+      committeesService.getById(id, signal),
     ...COMMITTEES_CONFIG,
   }),
 
@@ -71,7 +73,8 @@ export const committeesQueries = {
    */
   byIds: (ids: number[]) => ({
     queryKey: committeesKeys.byIds(ids),
-    queryFn: () => committeesService.getByIds(ids),
+    queryFn: ({ signal }: QueryFunctionContext) =>
+      committeesService.getByIds(ids, signal),
     ...COMMITTEES_CONFIG,
   }),
 } as const;
