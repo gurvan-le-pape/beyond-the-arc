@@ -7,8 +7,21 @@ services:
         - SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
         - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
         - FRONTEND_URL=${FRONTEND_URL}
+    # Loopback only. Nothing off-host consumes a published port: Nginx runs on
+    # the VPS itself and proxies to localhost, and every container-to-container
+    # call goes over my_network by service name. Publishing on 0.0.0.0 put the
+    # Postgres superuser port and an unauthenticated Prometheus one console rule
+    # away from the internet — Docker's published-port iptables rules sit in
+    # front of host firewalls, so that rule was the *only* control, it lives
+    # outside this repository, and the origin IP is a DNS lookup away
+    # (grafana.beyondthearc.app is deliberately DNS-only).
+    #
+    # Both loopback addresses, not just 127.0.0.1: /etc/hosts on the VPS maps
+    # `localhost` to 127.0.0.1 *and* ::1, and the Nginx config proxies to
+    # `localhost` — an IPv4-only bind leaves half of that resolution dead.
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
+      - "[::1]:3000:3000"
     depends_on:
       - backend
     environment:
@@ -22,8 +35,12 @@ services:
     build:
       context: ../
       dockerfile: docker/backend/Dockerfile
+    # Loopback only — see the frontend service. /metrics also lives on this
+    # port, outside the /api prefix Nginx proxies, so it must not be reachable
+    # from anywhere but the host.
     ports:
-      - "4000:4000"
+      - "127.0.0.1:4000:4000"
+      - "[::1]:4000:4000"
     environment:
       - FRONTEND_URL=${FRONTEND_URL}
       - DATABASE_URL=${DATABASE_URL}
@@ -63,8 +80,12 @@ services:
       POSTGRES_USER: ${DATABASE_USER}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
       POSTGRES_DB: ${DATABASE_NAME}
+    # Loopback only — see the frontend service. `make psql` and every other
+    # database target go through `docker compose exec`, so nothing here depends
+    # on the published port; it stays published for a host-side psql over SSH.
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
+      - "[::1]:5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql
     healthcheck:
@@ -90,8 +111,11 @@ services:
 
   prometheus:
     image: prom/prometheus:latest
+    # Loopback only — see the frontend service. Prometheus has no authentication
+    # of any kind, and it scrapes over my_network rather than through this port.
     ports:
-      - "9090:9090"
+      - "127.0.0.1:9090:9090"
+      - "[::1]:9090:9090"
     volumes:
       - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
@@ -138,8 +162,11 @@ services:
 
   grafana:
     image: grafana/grafana:latest
+    # Loopback only — see the frontend service. Nginx terminates TLS for
+    # grafana.beyondthearc.app and proxies here.
     ports:
-      - "3001:3000"
+      - "127.0.0.1:3001:3000"
+      - "[::1]:3001:3000"
     volumes:
       - grafana_data:/var/lib/grafana
       - ./config/grafana/provisioning:/etc/grafana/provisioning
