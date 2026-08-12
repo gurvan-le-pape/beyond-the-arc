@@ -3,8 +3,8 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { PlayerShotChart } from "@/features/charts/components";
-import { serverMatchesService } from "@/features/matches/api";
-import { serverPlayersService } from "@/features/players/api";
+import { serverMatchesService } from "@/features/matches/api/matches.server";
+import { serverPlayersService } from "@/features/players/api/players.server";
 import {
   PlayerComparison,
   PlayerHeader,

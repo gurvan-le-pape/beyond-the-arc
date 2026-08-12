@@ -3,8 +3,8 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { TeamShotChart } from "@/features/charts/components";
-import { serverMatchesService } from "@/features/matches/api";
-import { serverTeamsService } from "@/features/teams/api";
+import { serverMatchesService } from "@/features/matches/api/matches.server";
+import { serverTeamsService } from "@/features/teams/api/teams.server";
 import {
   TeamHeader,
   TeamMatchHistoryTable,

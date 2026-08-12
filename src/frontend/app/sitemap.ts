@@ -1,9 +1,9 @@
 // src/frontend/app/sitemap.ts
 import type { MetadataRoute } from "next";
 
-import { serverClubsService } from "@/features/organizations/clubs/api";
-import { serverCommitteesService } from "@/features/organizations/committees/api";
-import { serverLeaguesService } from "@/features/organizations/leagues/api";
+import { serverClubsService } from "@/features/organizations/clubs/api/clubs.server";
+import { serverCommitteesService } from "@/features/organizations/committees/api/committees.server";
+import { serverLeaguesService } from "@/features/organizations/leagues/api/leagues.server";
 
 import { LOCALES } from "../locales";
 

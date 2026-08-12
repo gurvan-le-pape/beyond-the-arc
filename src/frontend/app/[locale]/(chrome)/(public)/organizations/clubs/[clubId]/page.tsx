@@ -3,7 +3,7 @@ import { Users } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { serverClubsService } from "@/features/organizations/clubs/api";
+import { serverClubsService } from "@/features/organizations/clubs/api/clubs.server";
 import { OrganizationDetailView } from "@/features/organizations/shared/components";
 import { EmptyState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";

@@ -15,6 +15,21 @@ const FRONTEND_BARREL_DIRS = barrelsbyConfig.directory
   .filter((dir) => dir.startsWith("src/frontend/"))
   .map((dir) => dir.replace(/^src\/frontend\//, "@/"));
 
+// A file barrelsby is told to skip has no barrel form, so demanding one would
+// name an export that does not exist — and the autofix would write it. Derived
+// from the same config as the directory list, for the same reason.
+const EXCLUDED_FROM_BARRELS = (barrelsbyConfig.exclude ?? []).map(
+  (pattern) => new RegExp(pattern),
+);
+
+function isExcludedFromBarrel(importPath) {
+  const filePath = importPath.replace(/^@\//, "src/frontend/");
+
+  return EXCLUDED_FROM_BARRELS.some((pattern) =>
+    [".ts", ".tsx"].some((extension) => pattern.test(filePath + extension)),
+  );
+}
+
 module.exports = {
   meta: {
     type: "suggestion",
@@ -38,6 +53,8 @@ module.exports = {
         );
 
         if (!matchingBarrel) return;
+
+        if (isExcludedFromBarrel(importPath)) return;
 
         context.report({
           node: node.source,

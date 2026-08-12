@@ -43,6 +43,7 @@ The feature-level directories (`hooks/`, `types/`, `utils/`, `constants/`) hold 
 
 - **Promotion rule**: the moment a second consumer appears, the artifact moves up to the feature-level directory (and into the barrel). That's the entire judgement call — don't pre-emptively "share" single-consumer code.
 - `api/` is always a feature-level layer: the dual service pattern (`*.service.ts` / `*.server.ts`) and the Query Options quartet (`xKeys.ts`, `xQueries.ts`, `useX.ts`) never colocate.
+- The `api/` barrel publishes the client half only. `*.server.ts` is excluded from barrel generation and imported by path (`@/features/players/api/players.server`) — otherwise a client component importing a hook from the barrel pulls the server module into the browser bundle with it.
 - Empty layer directories are deleted, not kept with `.gitkeep` placeholders.
 
 ## Types

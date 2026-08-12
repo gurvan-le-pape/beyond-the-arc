@@ -9,7 +9,7 @@ import {
   MAP_STATS,
   STATS_BAND_KEYS,
 } from "@/features/site/home/constants";
-import { serverStatsService } from "@/features/stats/api";
+import { serverStatsService } from "@/features/stats/api/stats.server";
 import { Link } from "@/navigation";
 import { PageLayout } from "@/shared/components/layout";
 import { buttonVariants } from "@/shared/components/primitives";

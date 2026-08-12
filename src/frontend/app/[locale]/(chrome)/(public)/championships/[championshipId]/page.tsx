@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { serverChampionshipsService } from "@/features/competitions/championships/api";
+import { serverChampionshipsService } from "@/features/competitions/championships/api/championships.server";
 import {
   ChampionshipBreadcrumb,
   ChampionshipHeader,
@@ -18,9 +18,9 @@ import {
   resolveOrganizationId,
   resolvePoolId,
 } from "@/features/competitions/championships/utils";
-import { serverLeaderboardsService } from "@/features/competitions/leaderboards/api";
-import { serverPoolsService } from "@/features/competitions/pools/api";
-import { serverMatchesService } from "@/features/matches/api";
+import { serverLeaderboardsService } from "@/features/competitions/leaderboards/api/leaderboards.server";
+import { serverPoolsService } from "@/features/competitions/pools/api/pools.server";
+import { serverMatchesService } from "@/features/matches/api/matches.server";
 import { LeaderboardTable } from "@/shared/components/domain";
 import { PageLayout } from "@/shared/components/layout";
 import type { LocalePageProps, SearchParamsProps } from "@/shared/types";
