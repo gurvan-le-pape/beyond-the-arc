@@ -441,6 +441,18 @@ The shot chart is always a client component — SVG rendering and D3 scaling req
 
 ---
 
+## Bundle side effects
+
+`src/frontend/package.json` declares `"sideEffects": ["*.css"]`. It is the assertion that no module in this application does work at import time except the stylesheets, and it is what lets webpack drop the parts of a barrel a route does not use.
+
+Without it, webpack falls back to analysing each module's source and treats any top-level call it cannot prove pure as a side effect — `cva(...)`, `createContext(...)`, a module-scope `new` — which describes most of the design system. Those modules were then kept in every bundle that reached them through a barrel, used or not. Declaring the field removed **448 kB of First Load JS across 23 routes**; the club, committee and league detail pages lost 100 kB each, which was the whole Axios client stack, `html-to-image`, and the shot-chart court constants on three routes that render entirely on the server.
+
+The maintenance rule this creates: **a module that genuinely runs work when imported must be listed in the array**, or it will be dropped from any bundle that does not use one of its exports. Today the only such module is `lib/services/client/api-client.ts`, which registers Axios response interceptors at module scope — safe unlisted, because inclusion is per module, so every route that uses the `apiClient` export gets the registration with it. A polyfill, an analytics registration, or anything imported as a bare `import "./x"` for its effect alone is not safe, and adding one means adding it here.
+
+`import "server-only"` is unaffected: it resolves into the `next` package, whose own manifest makes no such claim, and the guard is a loader error raised while the module is built — long before anything is shaken out.
+
+---
+
 ## Error handling
 
 Error handling is layered across three levels, matching the boundary at which the error can be meaningfully caught and recovered from.
