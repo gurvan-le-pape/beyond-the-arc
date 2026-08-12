@@ -218,7 +218,7 @@ jobs:
       - name: Fail on drift
         run: |
           git diff --exit-code docs/openapi.json src/frontend/shared/types/api.generated.ts || {
-            echo "::error::docs/openapi.json or api.generated.ts is stale — run the backend build, node dist/scripts/generate-openapi.js ../../docs/openapi.json, then npm run typegen in src/frontend, and commit the result."
+            echo "::error::docs/openapi.json or api.generated.ts is stale — from src/backend run 'npm run build && node dist/scripts/generate-openapi.js', then from src/frontend run 'npm run typegen', and commit both files. Neither script takes a path: each derives it from its own location, so the snapshot this check diffs is always the one they write."
             exit 1
           }
 
