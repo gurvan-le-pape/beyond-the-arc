@@ -1,5 +1,6 @@
 // src/backend/common/pipes/parse-entity-id.pipe.spec.ts
-import { ArgumentMetadata, BadRequestException } from "@nestjs/common";
+import type { ArgumentMetadata } from "@nestjs/common";
+import { BadRequestException } from "@nestjs/common";
 
 import { ParseEntityIdPipe } from "./parse-entity-id.pipe";
 

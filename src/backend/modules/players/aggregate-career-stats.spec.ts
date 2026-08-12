@@ -1,5 +1,5 @@
 // src/backend/modules/players/aggregate-career-stats.spec.ts
-import { MappedPlayerMatchStats } from "@common/utils";
+import type { MappedPlayerMatchStats } from "@common/utils";
 
 import { aggregateCareerStats } from "./aggregate-career-stats";
 

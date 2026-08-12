@@ -1,5 +1,5 @@
 // src/backend/common/utils/player-summary.mapper.ts
-import { Position } from "@common/constants";
+import type { Position } from "@common/constants";
 
 /**
  * Prisma player fields backing PlayerSummaryDto.

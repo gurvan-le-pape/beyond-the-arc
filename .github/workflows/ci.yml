@@ -247,12 +247,17 @@ jobs:
         with:
           working-directory: .
 
-      # barrels:lint runs eslint --fix over the generated frontend barrels,
-      # which needs the frontend's own config and plugins installed.
+      # barrels:lint runs eslint --fix over the generated barrels of both
+      # applications, each of which needs its own config and plugins installed.
       - name: Setup frontend
         uses: ./.github/actions/setup-app
         with:
           working-directory: src/frontend
+
+      - name: Setup backend
+        uses: ./.github/actions/setup-app
+        with:
+          working-directory: src/backend
 
       - name: Validate barrelsby.json
         run: node scripts/check-barrels-config.mjs

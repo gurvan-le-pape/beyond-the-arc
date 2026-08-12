@@ -60,9 +60,12 @@ export default [
       "sonarjs/no-small-switch": "warn",
       "sonarjs/prefer-immediate-return": "warn",
 
-      // Custom rules
-      "local-rules/enforce-file-path-comment": "warn",
-      "local-rules/enforce-barrel-import": "warn",
+      // Custom rules. `error`, matching the frontend: these are the repo's own
+      // conventions, and CI runs `npm run lint` without `--max-warnings`, so a
+      // warning here can never block a merge — which made CLAUDE.md's "violations
+      // fail lint/CI" false on this side. Vendor rules stay `warn`.
+      "local-rules/enforce-file-path-comment": "error",
+      "local-rules/enforce-barrel-import": "error",
     },
   },
   // Override for test files
@@ -73,6 +76,11 @@ export default [
     },
   },
   {
-    ignores: ["dist", "node_modules", "*.config.js"],
+    // `prisma/generated` is the Prisma client: 26 files, written by the
+    // generator, gitignored. Linting it passed only because Prisma emits a
+    // `/* eslint-disable */` header — strip that one line and the backend goes
+    // from 0 errors to 23, so the exit code of a deploy gate was a property of
+    // someone else's code generator. ESLint 9 does not read `.gitignore`.
+    ignores: ["dist", "node_modules", "*.config.js", "prisma/generated"],
   },
 ];
