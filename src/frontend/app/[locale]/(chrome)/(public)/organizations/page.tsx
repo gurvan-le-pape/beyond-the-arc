@@ -8,7 +8,7 @@ import {
   OrganizationsStats,
 } from "@/features/organizations/components";
 import type { OrganizationCounts } from "@/features/organizations/types";
-import { serverStatsService } from "@/features/stats/api";
+import { serverStatsService } from "@/features/stats/api/stats.server";
 import { PageLayout } from "@/shared/components/layout";
 import { Divide } from "@/shared/components/primitives";
 import type { LocalePageProps } from "@/shared/types";

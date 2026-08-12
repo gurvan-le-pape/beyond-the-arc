@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
-import { serverClubsService } from "@/features/organizations/clubs/api";
+import { serverClubsService } from "@/features/organizations/clubs/api/clubs.server";
 import { ClubsMapClient } from "@/features/organizations/clubs/components";
 import { Text } from "@/shared/components/typography";
 import type { LocalePageProps } from "@/shared/types";

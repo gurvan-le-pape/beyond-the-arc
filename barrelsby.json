@@ -12,10 +12,8 @@
     "src/frontend/features/competitions/championships/types",
     "src/frontend/features/competitions/championships/utils",
 
-    "src/frontend/features/competitions/leaderboards/api",
     "src/frontend/features/competitions/leaderboards/types",
 
-    "src/frontend/features/competitions/pools/api",
     "src/frontend/features/competitions/pools/types",
 
     "src/frontend/features/geography/api",
@@ -56,7 +54,6 @@
 
     "src/frontend/features/search/components",
 
-    "src/frontend/features/stats/api",
     "src/frontend/features/stats/types",
 
     "src/frontend/features/site/about/components",
@@ -126,6 +123,7 @@
     ".*\\.spec\\.tsx?$",
     ".*\\.test\\.tsx?$",
     ".*\\.d\\.ts$",
+    ".*\\.server\\.ts$",
     ".*/championship-matches/(?!index\\.tsx$).*",
     ".*/match-events/(filters|timeline)/.*",
     ".*/match-score-card/(?!index\\.tsx$).*",

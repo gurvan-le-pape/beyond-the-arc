@@ -1,4 +1,9 @@
 // src/frontend/features/organizations/committees/api/committees.server.ts
+
+// Kept out of the `api/` barrel by `barrelsby.json`, and poisoned for the client
+// graph here: importing this from a client module is a build error, not a leak.
+import "server-only";
+
 import {
   buildQueryString,
   fetchApi,

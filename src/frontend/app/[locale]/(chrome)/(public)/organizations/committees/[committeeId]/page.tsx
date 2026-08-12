@@ -3,9 +3,9 @@ import { Trophy } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { serverChampionshipsService } from "@/features/competitions/championships/api";
-import { serverClubsService } from "@/features/organizations/clubs/api";
-import { serverCommitteesService } from "@/features/organizations/committees/api";
+import { serverChampionshipsService } from "@/features/competitions/championships/api/championships.server";
+import { serverClubsService } from "@/features/organizations/clubs/api/clubs.server";
+import { serverCommitteesService } from "@/features/organizations/committees/api/committees.server";
 import { OrganizationDetailView } from "@/features/organizations/shared/components";
 import { EmptyState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
