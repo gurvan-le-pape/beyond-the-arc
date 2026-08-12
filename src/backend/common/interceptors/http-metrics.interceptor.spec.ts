@@ -1,10 +1,6 @@
 // src/backend/common/interceptors/http-metrics.interceptor.spec.ts
-import {
-  BadRequestException,
-  CallHandler,
-  ExecutionContext,
-  NotFoundException,
-} from "@nestjs/common";
+import type { CallHandler, ExecutionContext } from "@nestjs/common";
+import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { lastValueFrom, of, throwError } from "rxjs";
 
 import { HttpMetricsInterceptor } from "./http-metrics.interceptor";
