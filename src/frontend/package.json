@@ -14,7 +14,7 @@
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
     "check:messages": "node scripts/check-message-parity.mts",
-    "typegen": "openapi-typescript ../../docs/openapi.json -o shared/types/api.generated.ts"
+    "typegen": "node scripts/typegen.mts"
   },
   "dependencies": {
     "@sentry/nextjs": "^10.47.0",
