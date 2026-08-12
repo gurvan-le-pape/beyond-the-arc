@@ -16,7 +16,14 @@ All services share a single Docker bridge network (`my_network`) and communicate
 
 The server is a **Hetzner CX23** (2 vCPU, 4GB RAM, 40GB local disk) located in Nuremberg, Germany (eu-central). It runs Ubuntu and hosts all application and observability containers.
 
-The Hetzner firewall allows inbound TCP on three ports only: 22 (SSH), 80 (HTTP), and 443 (HTTPS). All other ports — including the Docker service ports (3000, 4000, 5432, 9090, 3001) — are not exposed publicly. Nginx on the host is the sole external entry point; internal services are only reachable from within the VPS itself.
+Two independent controls keep the Docker service ports (3000, 4000, 5432, 9090, 3001) off the internet, and it takes both:
+
+- **The compose file binds them to loopback.** Every published port in `docker/docker-compose.yml` carries a `127.0.0.1:` / `[::1]:` host address, so the listener exists only on the VPS itself. Both loopback families are published because Nginx proxies to `localhost`, which `/etc/hosts` resolves to `127.0.0.1` *and* `::1` — an IPv4-only bind would leave half of that resolution without a listener.
+- **The Hetzner firewall allows inbound TCP on three ports only**: 22 (SSH), 80 (HTTP), and 443 (HTTPS).
+
+The firewall alone was not enough to rely on: Docker writes its published-port rules into `iptables` ahead of host firewalls such as `ufw`, so a `0.0.0.0` bind put the Postgres superuser port and an unauthenticated Prometheus one cloud-console rule away from the public internet — a rule this repository neither contains nor tests, on a host whose address is a DNS lookup away (see the Grafana subdomain below). The loopback bind makes that guarantee local instead of remote.
+
+Nginx on the host is the sole external entry point; internal services are only reachable from within the VPS itself.
 
 ---
 
