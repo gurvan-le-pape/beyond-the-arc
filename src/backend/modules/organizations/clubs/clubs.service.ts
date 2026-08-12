@@ -357,8 +357,10 @@ export class ClubsService {
       zipCode: club.zipCode,
       latitude: club.latitude ? club.latitude.toNumber() : null,
       longitude: club.longitude ? club.longitude.toNumber() : null,
-      email: club.email,
-      phone: club.phone,
+      // Presence, not value — see ClubBasicResponseDto. The columns are
+      // still selected because that is what answers the question.
+      hasEmail: Boolean(club.email),
+      hasPhone: Boolean(club.phone),
       website: club.website,
       committeeId: club.committeeId,
       leagueId: club.committee.leagueId,

@@ -54,7 +54,7 @@ export const ClubListItem = memo(function ClubListItem({
             />
           </svg>
         )}
-        {club.email && (
+        {club.hasEmail && (
           <svg
             className="w-4 h-4 text-text-muted"
             fill="none"
@@ -69,7 +69,7 @@ export const ClubListItem = memo(function ClubListItem({
             />
           </svg>
         )}
-        {club.phone && (
+        {club.hasPhone && (
           <svg
             className="w-4 h-4 text-text-muted"
             fill="none"
