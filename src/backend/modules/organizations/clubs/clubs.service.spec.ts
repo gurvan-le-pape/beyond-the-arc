@@ -325,8 +325,8 @@ describe("ClubsService", () => {
             zipCode: "98000",
             latitude: 43.7384,
             longitude: 7.4246,
-            email: "contact@monaco.com",
-            phone: "0123456789",
+            hasEmail: true,
+            hasPhone: true,
             website: "https://monaco.com",
             committeeId: 1,
             leagueId: 5,
@@ -610,14 +610,15 @@ describe("ClubsService", () => {
       expect(result.president).toBeNull();
     });
 
+    // The mock returns exactly what PRESIDENT_SELECT selects: contact details
+    // are not read from the database at all, so nothing downstream can leak
+    // them by accident.
     it("should return club with president data", async () => {
       prisma.client.clubs.findUnique.mockResolvedValue({
         ...mockPrismaClub,
         president: {
           id: 1,
           name: "Jean Dupont",
-          phone: "0123456789",
-          email: "jean@club.com",
         },
         teams: [],
       });
@@ -627,9 +628,9 @@ describe("ClubsService", () => {
       expect(result.president).toEqual({
         id: 1,
         name: "Jean Dupont",
-        phone: "0123456789",
-        email: "jean@club.com",
       });
+      expect(result.president).not.toHaveProperty("phone");
+      expect(result.president).not.toHaveProperty("email");
     });
 
     it("should compute rank and poolSize via parallel count queries", async () => {

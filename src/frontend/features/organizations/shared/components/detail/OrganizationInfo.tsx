@@ -83,23 +83,15 @@ export function OrganizationInfo({
             </Text>
             <div className="flex-1 h-px bg-divide" />
           </div>
+          {/* Name only. The API stopped returning the president's phone and
+              email — they are a named individual's personal contact details on
+              an endpoint anyone can enumerate, and the organisation's own
+              contact details are already above. */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <InfoBox
               label={t("info.president.name")}
               value={president?.name ?? NA}
               icon={<User className="w-4 h-4" />}
-            />
-            <InfoBox
-              label={t("info.president.email")}
-              value={president?.email}
-              href={president?.email ? `mailto:${president.email}` : undefined}
-              icon={<Mail className="w-4 h-4" />}
-            />
-            <InfoBox
-              label={t("info.president.phone")}
-              value={formatPhone(president?.phone)}
-              href={president?.phone ? `tel:${president.phone}` : undefined}
-              icon={<Phone className="w-4 h-4" />}
             />
           </div>
         </>

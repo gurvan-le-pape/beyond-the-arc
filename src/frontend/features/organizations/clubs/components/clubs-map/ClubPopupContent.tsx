@@ -3,10 +3,12 @@ import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Link } from "@/navigation";
+import { Skeleton } from "@/shared/components/feedback";
 import { Button, buttonVariants } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { cn } from "@/shared/utils";
 
+import { useClub } from "../../api";
 import type { ClubBasic } from "../../types/ClubBasic";
 
 interface ClubPopupContentProps {
@@ -17,6 +19,13 @@ interface ClubPopupContentProps {
 export function ClubPopupContent({ club, onClose }: ClubPopupContentProps) {
   const t = useTranslations("clubs");
   const tCommon = useTranslations("common");
+
+  // The list this popup is opened from carries `hasEmail`/`hasPhone`, not the
+  // values — 4,368 clubs' contact details are not something to ship on first
+  // paint of a public map. Opening a popup is the point at which one club's
+  // details are actually wanted, so that is when they are fetched. The query is
+  // cached for 5 minutes, so reopening the same popup costs nothing.
+  const { data: detail, isPending } = useClub(club.id);
 
   return (
     <div className="min-w-[240px] max-w-[320px] p-4 surface-subtle rounded-xl overflow-hidden">
@@ -47,14 +56,14 @@ export function ClubPopupContent({ club, onClose }: ClubPopupContentProps) {
       )}
 
       {/* Contact Information */}
-      {(club.email || club.phone || club.website) && (
+      {(club.hasEmail || club.hasPhone || club.website) && (
         <div className="space-y-2 mb-4">
           {/* Email */}
-          {club.email && (
+          {club.hasEmail && (
             <a
-              href={`mailto:${club.email}`}
+              href={detail?.email ? `mailto:${detail.email}` : undefined}
               className="flex items-center gap-3 p-2.5 bg-surface-inset rounded-lg hover:brightness-95 transition-colors group"
-              title={club.email}
+              title={detail?.email ?? undefined}
             >
               <div className="w-8 h-8 flex items-center justify-center border border-divide rounded-full">
                 <svg
@@ -71,17 +80,21 @@ export function ClubPopupContent({ club, onClose }: ClubPopupContentProps) {
                   />
                 </svg>
               </div>
-              <Text
-                variant="caption"
-                className="font-medium truncate text-primary"
-              >
-                {club.email}
-              </Text>
+              {isPending ? (
+                <Skeleton className="h-4 w-32" />
+              ) : (
+                <Text
+                  variant="caption"
+                  className="font-medium truncate text-primary"
+                >
+                  {detail?.email}
+                </Text>
+              )}
             </a>
           )}
 
           {/* Phone */}
-          {club.phone && (
+          {club.hasPhone && (
             <div className="flex items-center gap-3 p-2.5 bg-surface-inset rounded-lg">
               <div className="w-8 h-8 flex items-center justify-center border border-divide rounded-full">
                 <svg
@@ -98,9 +111,13 @@ export function ClubPopupContent({ club, onClose }: ClubPopupContentProps) {
                   />
                 </svg>
               </div>
-              <Text variant="caption" className="font-medium">
-                {club.phone}
-              </Text>
+              {isPending ? (
+                <Skeleton className="h-4 w-28" />
+              ) : (
+                <Text variant="caption" className="font-medium">
+                  {detail?.phone}
+                </Text>
+              )}
             </div>
           )}
 

@@ -25,9 +25,7 @@
     "title": "Informations",
     "president": {
       "label": "Président",
-      "name": "Nom",
-      "email": "Email",
-      "phone": "Téléphone"
+      "name": "Nom"
     },
     "address": "Adresse",
     "email": "Email",

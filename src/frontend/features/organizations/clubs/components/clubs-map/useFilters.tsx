@@ -53,8 +53,8 @@ export function useFilters(clubs: ClubBasic[]): UseFiltersReturn {
     return clubs.filter((club) => {
       // All active filters must match (AND logic)
       if (filters.hasWebsite && !club.website) return false;
-      if (filters.hasEmail && !club.email) return false;
-      if (filters.hasPhone && !club.phone) return false;
+      if (filters.hasEmail && !club.hasEmail) return false;
+      if (filters.hasPhone && !club.hasPhone) return false;
 
       return true;
     });

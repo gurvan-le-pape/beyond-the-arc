@@ -790,15 +790,15 @@ export interface components {
              */
             longitude: number | null;
             /**
-             * @description Email
-             * @example contact@club.com
+             * @description Whether the club has a contact email. The address itself is only on the detail endpoint
+             * @example true
              */
-            email: string | null;
+            hasEmail: boolean;
             /**
-             * @description Phone
-             * @example 0123456789
+             * @description Whether the club has a contact phone. The number itself is only on the detail endpoint
+             * @example true
              */
-            phone: string | null;
+            hasPhone: boolean;
             /**
              * @description Website
              * @example https://club.com
@@ -967,16 +967,6 @@ export interface components {
              * @example Jean Dupont
              */
             name: string;
-            /**
-             * @description President phone number
-             * @example 02 99 00 00 00
-             */
-            phone: string | null;
-            /**
-             * @description President email address
-             * @example president@ligue-bretagne.fr
-             */
-            email: string | null;
         };
         ClubDetailedResponseDto: {
             /**

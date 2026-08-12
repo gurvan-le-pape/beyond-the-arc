@@ -3104,17 +3104,15 @@
             "description": "Longitude",
             "example": 7.4246
           },
-          "email": {
-            "type": "string",
-            "nullable": true,
-            "description": "Email",
-            "example": "contact@club.com"
+          "hasEmail": {
+            "type": "boolean",
+            "description": "Whether the club has a contact email. The address itself is only on the detail endpoint",
+            "example": true
           },
-          "phone": {
-            "type": "string",
-            "nullable": true,
-            "description": "Phone",
-            "example": "0123456789"
+          "hasPhone": {
+            "type": "boolean",
+            "description": "Whether the club has a contact phone. The number itself is only on the detail endpoint",
+            "example": true
           },
           "website": {
             "type": "string",
@@ -3140,8 +3138,8 @@
           "zipCode",
           "latitude",
           "longitude",
-          "email",
-          "phone",
+          "hasEmail",
+          "hasPhone",
           "website",
           "committeeId",
           "leagueId"
@@ -3397,25 +3395,11 @@
             "type": "string",
             "description": "President name",
             "example": "Jean Dupont"
-          },
-          "phone": {
-            "type": "string",
-            "nullable": true,
-            "description": "President phone number",
-            "example": "02 99 00 00 00"
-          },
-          "email": {
-            "type": "string",
-            "nullable": true,
-            "description": "President email address",
-            "example": "president@ligue-bretagne.fr"
           }
         },
         "required": [
           "id",
-          "name",
-          "phone",
-          "email"
+          "name"
         ]
       },
       "ClubDetailedResponseDto": {
