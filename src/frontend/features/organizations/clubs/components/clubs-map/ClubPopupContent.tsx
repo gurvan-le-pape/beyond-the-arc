@@ -6,7 +6,7 @@ import { Link } from "@/navigation";
 import { Skeleton } from "@/shared/components/feedback";
 import { Button, buttonVariants } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
-import { cn } from "@/shared/utils";
+import { cn, toSafeExternalUrl } from "@/shared/utils";
 
 import { useClub } from "../../api";
 import type { ClubBasic } from "../../types/ClubBasic";
@@ -26,6 +26,10 @@ export function ClubPopupContent({ club, onClose }: ClubPopupContentProps) {
   // details are actually wanted, so that is when they are fetched. The query is
   // cached for 5 minutes, so reopening the same popup costs nothing.
   const { data: detail, isPending } = useClub(club.id);
+
+  // Scraped, therefore untrusted input reaching an href. Anything that is not
+  // an absolute http(s) URL is treated as no website at all.
+  const safeWebsite = toSafeExternalUrl(club.website);
 
   return (
     <div className="min-w-[240px] max-w-[320px] p-4 surface-subtle rounded-xl overflow-hidden">
@@ -56,7 +60,7 @@ export function ClubPopupContent({ club, onClose }: ClubPopupContentProps) {
       )}
 
       {/* Contact Information */}
-      {(club.hasEmail || club.hasPhone || club.website) && (
+      {(club.hasEmail || club.hasPhone || safeWebsite) && (
         <div className="space-y-2 mb-4">
           {/* Email */}
           {club.hasEmail && (
@@ -122,9 +126,9 @@ export function ClubPopupContent({ club, onClose }: ClubPopupContentProps) {
           )}
 
           {/* Website */}
-          {club.website && (
+          {safeWebsite && (
             <a
-              href={club.website}
+              href={safeWebsite}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-3 p-2.5 bg-surface-inset rounded-lg hover:brightness-95 transition-colors group"
