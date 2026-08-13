@@ -1,6 +1,7 @@
 // src/backend/main.ts
 import "./instrument";
 
+import { resolveCorsOrigins } from "@common/utils";
 import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
@@ -14,11 +15,12 @@ async function bootstrap() {
   // Use Pino as the application logger
   app.useLogger(app.get(Logger));
 
-  // Enable CORS for the frontend
+  // Enable CORS for the frontend. No `credentials`: the API has no auth, sets
+  // no cookies and reads no Authorization header, so a credentialed contract
+  // would be claiming a trust relationship that does not exist.
   app.enableCors({
-    origin: ["http://localhost:3000", process.env.FRONTEND_URL || ""],
+    origin: resolveCorsOrigins(),
     methods: "GET,POST,PUT,PATCH,DELETE",
-    credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
   });
 

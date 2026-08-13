@@ -78,7 +78,7 @@ A NestJS 11 application served on port 4000.
 
 In development, the source directory is bind-mounted and the NestJS dev server runs with watch mode. In production, the prebuilt image from GHCR is used.
 
-The backend depends on `database` and receives `DATABASE_URL`, `FRONTEND_URL` (used for CORS), and `SENTRY_DSN` at runtime.
+The backend depends on `database` and receives `DATABASE_URL`, `FRONTEND_URL`, and `SENTRY_DSN` at runtime. `FRONTEND_URL` is the CORS allowlist and is **required in production** — it is the only origin allowed there, so the backend throws at boot when it is missing instead of starting with an allowlist no browser can match.
 
 ### database
 
