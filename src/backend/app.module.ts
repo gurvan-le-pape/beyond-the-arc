@@ -5,7 +5,7 @@ import { CommonModule } from "@common/common.module";
 import { CACHE_MAX_ENTRIES, CACHE_TTL, METRICS_PATH } from "@common/constants";
 import { MetricsController } from "@common/controllers/metrics.controller";
 import { HttpMetricsInterceptor } from "@common/interceptors";
-import { BoundedMemoryStore } from "@common/utils";
+import { BoundedMemoryStore, serializeRequestLog } from "@common/utils";
 import { StatsModule } from "@modules/stats/stats.module";
 import { CacheModule } from "@nestjs/cache-manager";
 import { Module } from "@nestjs/common";
@@ -44,7 +44,12 @@ import { AllExceptionsFilter, TransformInterceptor } from "./common";
           process.env.NODE_ENV === "production"
             ? undefined
             : { target: "pino-pretty", options: { colorize: true } },
-        redact: ["req.headers.authorization", "req.headers.cookie"],
+        // An explicit header allowlist, not a redact list. pino-http's default
+        // `req` serializer emits every header plus remoteAddress/remotePort,
+        // which behind Cloudflare + Nginx means the visitor's IP in every line
+        // for Loki's 31-day retention — see request-log.util.ts for why the
+        // allowlist replaces `redact` rather than extending it.
+        serializers: { req: serializeRequestLog },
         // Emit the level as its label ("warn") rather than pino's numeric code
         // (40). Loki's level detection only recognises a level *string*, so
         // with the numeric default every backend line arrives as
