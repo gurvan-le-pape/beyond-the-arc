@@ -152,7 +152,10 @@ docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-com
 docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml up -d
 ```
 
-Note that this rolls back the images only — if the bad deploy also changed Compose files or Nginx config, those need reverting separately (`git checkout <sha>` in the repo clone).
+This rolls back the **images** only. The other two things a bad deploy can change need separate handling, and they are not alike:
+
+- **Compose files and anything else in the repo** — the VPS holds a clone at `/opt/beyondthearc` that the deploy script `git pull`s, so `git checkout <sha> -- docker/` restores them. **Undo it before the next deploy**, which starts with that `git pull`: the pull exits 1 both on a detached `HEAD` (`git checkout <sha>` with no path — "You are not currently on a branch") and on uncommitted local changes to a file the incoming commit touches. Either way the rollback becomes a second outage, in the deploy meant to end the first one.
+- **Nginx** — not in this repository at all, so there is no committed previous version to return to and `git checkout` cannot reach it. It runs on the host from `/etc/nginx/sites-available/beyondthearc`; reverting means editing that file directly, then `nginx -t && systemctl reload nginx` as root. See [*Nginx config is not version-controlled*](./infrastructure.md#known-limitations).
 
 ---
 
