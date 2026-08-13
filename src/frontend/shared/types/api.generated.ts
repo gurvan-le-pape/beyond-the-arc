@@ -2996,15 +2996,6 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    /**
-                     * @example {
-                     *       "statusCode": 400,
-                     *       "message": "Validation failed (numeric string is expected)",
-                     *       "error": "Bad Request",
-                     *       "path": "/api/clubs/abc",
-                     *       "timestamp": "2024-02-05T10:00:00Z"
-                     *     }
-                     */
                     "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
@@ -3107,15 +3098,6 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    /**
-                     * @example {
-                     *       "statusCode": 400,
-                     *       "message": "Validation failed (numeric string is expected)",
-                     *       "error": "Bad Request",
-                     *       "path": "/api/committees/abc",
-                     *       "timestamp": "2024-02-05T10:00:00Z"
-                     *     }
-                     */
                     "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
@@ -3204,15 +3186,6 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    /**
-                     * @example {
-                     *       "statusCode": 400,
-                     *       "message": "Validation failed (numeric string is expected)",
-                     *       "error": "Bad Request",
-                     *       "path": "/api/leagues/abc",
-                     *       "timestamp": "2024-02-05T10:00:00Z"
-                     *     }
-                     */
                     "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
@@ -3263,15 +3236,6 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    /**
-                     * @example {
-                     *       "statusCode": 400,
-                     *       "message": "Validation failed (numeric string is expected)",
-                     *       "error": "Bad Request",
-                     *       "path": "/api/championships/abc",
-                     *       "timestamp": "2024-02-05T10:00:00Z"
-                     *     }
-                     */
                     "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
@@ -3420,15 +3384,6 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    /**
-                     * @example {
-                     *       "statusCode": 400,
-                     *       "message": "Validation failed (numeric string is expected)",
-                     *       "error": "Bad Request",
-                     *       "path": "/api/leaderboards/abc",
-                     *       "timestamp": "2024-02-05T10:00:00Z"
-                     *     }
-                     */
                     "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
@@ -3522,15 +3477,6 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    /**
-                     * @example {
-                     *       "statusCode": 400,
-                     *       "message": "Validation failed (numeric string is expected)",
-                     *       "error": "Bad Request",
-                     *       "path": "/api/pools/abc",
-                     *       "timestamp": "2024-02-05T10:00:00Z"
-                     *     }
-                     */
                     "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
@@ -3951,15 +3897,6 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    /**
-                     * @example {
-                     *       "statusCode": 400,
-                     *       "message": "Validation failed (numeric string is expected)",
-                     *       "error": "Bad Request",
-                     *       "path": "/api/players/abc",
-                     *       "timestamp": "2024-02-05T10:00:00Z"
-                     *     }
-                     */
                     "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
@@ -4010,15 +3947,6 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    /**
-                     * @example {
-                     *       "statusCode": 400,
-                     *       "message": "Validation failed (numeric string is expected)",
-                     *       "error": "Bad Request",
-                     *       "path": "/api/players/abc/matches",
-                     *       "timestamp": "2024-02-05T10:00:00Z"
-                     *     }
-                     */
                     "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };

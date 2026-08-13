@@ -192,13 +192,6 @@ export class PoolsController {
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid ID format",
     type: ApiErrorResponseDto,
-    example: {
-      statusCode: 400,
-      message: "Validation failed (numeric string is expected)",
-      error: "Bad Request",
-      path: "/api/pools/abc",
-      timestamp: "2024-02-05T10:00:00Z",
-    },
   })
   async getPoolById(
     @Param("id", ParseEntityIdPipe) id: number,
