@@ -37,6 +37,17 @@ export class ApiError extends Error {
   error: string;
   path?: string;
   timestamp?: string;
+  /**
+   * The backend's `x-request-id` for the failed call, read off the response
+   * header rather than the body — it is not part of the error envelope above.
+   *
+   * It is the same value the backend logs as `req.id`, so it is what joins a
+   * frontend failure to the backend line that caused it:
+   * `{service="backend"} | json | req_id="…"`. Absent when the request never
+   * reached the backend (a network error or a timeout has no response, and so
+   * no id).
+   */
+  requestId?: string;
 
   constructor(params: {
     statusCode: number;
@@ -44,6 +55,7 @@ export class ApiError extends Error {
     error: string;
     path?: string;
     timestamp?: string;
+    requestId?: string;
   }) {
     super(params.message);
     this.name = "ApiError";
@@ -51,5 +63,6 @@ export class ApiError extends Error {
     this.error = params.error;
     this.path = params.path;
     this.timestamp = params.timestamp;
+    this.requestId = params.requestId;
   }
 }

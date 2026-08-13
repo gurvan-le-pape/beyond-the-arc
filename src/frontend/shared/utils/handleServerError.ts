@@ -17,6 +17,24 @@ import { logger } from "./logger";
 export function handleServerError(error: unknown): never {
   if (error instanceof ApiError && error.statusCode === 404) notFound();
 
-  logger.error(error, "Server fetch failed");
+  logger.error(error, buildContext(error));
   throw error;
+}
+
+/**
+ * The id goes in the *message*, not just on the error object.
+ *
+ * `logger.error` is a `console.error` wrapper, so an own property of the error
+ * would only appear in the trailing block `util.inspect` prints after the
+ * stack — and Promtail ships each of those as its own log line, unattached to
+ * anything searchable. Putting it in the first line is what makes
+ * `{service="frontend"} |= "<id>"` and `{service="backend"} | json | req_id="<id>"`
+ * name the same request.
+ */
+function buildContext(error: unknown): string {
+  const requestId = error instanceof ApiError ? error.requestId : undefined;
+
+  return requestId
+    ? `Server fetch failed x-request-id=${requestId}`
+    : "Server fetch failed";
 }

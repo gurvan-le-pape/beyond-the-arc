@@ -13,6 +13,7 @@ export * from "./levelConfig";
 export * from "./navConfig";
 export * from "./organization-types";
 export * from "./positions";
+export * from "./request-id-header";
 export * from "./roles";
 export * from "./strings";
 export * from "./view-levels";

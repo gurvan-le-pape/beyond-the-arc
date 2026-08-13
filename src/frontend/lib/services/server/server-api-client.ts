@@ -1,4 +1,5 @@
 // src/frontend/lib/services/server/server-api-client.ts
+import { REQUEST_ID_HEADER } from "@/shared/constants";
 import type { ApiErrorResponse } from "@/shared/types";
 import { ApiError } from "@/shared/types";
 
@@ -112,6 +113,10 @@ export async function fetchApi<T>(
       error: body?.error ?? response.statusText,
       path: body?.path,
       timestamp: body?.timestamp,
+      // The correlation id comes off the header, not the body. Carried here so
+      // handleServerError can log it: that is the only thing joining this
+      // failure to the backend line that produced it.
+      requestId: response.headers.get(REQUEST_ID_HEADER) ?? undefined,
     });
   }
 

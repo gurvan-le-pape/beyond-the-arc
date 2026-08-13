@@ -32,7 +32,9 @@ The NestJS backend uses [Pino](https://github.com/pinojs/pino) via `nestjs-pino`
 - **Level**: `debug` in development, `info` in production
 - **Transport**: `pino-pretty` in development (colourised, human-readable); raw JSON to stdout in production
 - **Header allowlist**: a custom `req` serializer (`serializeRequestLog`, `common/utils`) emits `id`, `method`, `url` and **only** the headers named in `LOGGED_REQUEST_HEADERS` — `host`, `user-agent`, `content-type`, `accept`. pino-http's default serializer emits the whole header block plus `remoteAddress`/`remotePort`; behind Cloudflare and Nginx that put the visitor's IP (`cf-connecting-ip`, `x-forwarded-for`, `x-real-ip`) on every line for the full 31-day retention, contradicting the `sendDefaultPii: false` policy written three files away in `instrument.ts`. It is an allowlist rather than an extension of pino's `redact` paths because a redact list allows everything except what it names, so it cannot cover a header a future proxy adds; an allowlist fails closed. `authorization` and `cookie` are simply not in it, which is what replaced the two redact paths that used to be here. The exception filter logs no `ip` for the same reason — Express has no `trust proxy` setting, so `request.ip` only ever held the proxy's address. The URL keeps its query string: search terms stay in the logs deliberately, since the dataset is public and, with the IP gone, a search term is attached to nobody
-- **Request ID**: each request is assigned an id via `genReqId`, sourced from the `x-request-id` header or a generated UUID if absent. `nestjs-pino` binds it to that request's logger, so it appears as **`req.id`** on every line emitted during the request — pinoHttp's own completion line and anything the application or the exception filter logs. There is one name for it, so one query reconstructs the request: `{service="backend"} | json | req_id="…"` (Loki's `| json` flattens `req.id` to `req_id`)
+- **Request ID**: each request is assigned an id by `resolveRequestId` (`common/utils`), wired into `genReqId` — an inbound `x-request-id` is reused when it is well-formed (word characters, dots and dashes, ≤128, so a UUID or an Nginx `$request_id` propagates), otherwise a UUID is minted. `nestjs-pino` binds it to that request's logger, so it appears as **`req.id`** on every line emitted during the request — pinoHttp's own completion line and anything the application or the exception filter logs. There is one name for it, so one query reconstructs the request: `{service="backend"} | json | req_id="…"` (Loki's `| json` flattens `req.id` to `req_id`)
+- **The same id is returned to the caller** as the `x-request-id` response header, on every response — success, 404, validation 400, the unmatched-route 404, and `/metrics`. It hangs off `genReqId` rather than an interceptor for two reasons: that is where the id is derived, so nothing else has to agree about what it is; and an interceptor is bound to a route handler, so it never runs for a request matching no route (measured: `/api/no-such-thing` gets a 404 the global `HttpMetricsInterceptor` records no metric for) and `TransformInterceptor` in particular is skipped by `@SkipTransform` and never reaches its `map` when the handler throws. The one path with no header is `/api/docs`: `swagger-ui-express` is mounted straight onto the Express instance before Nest's global middleware, so those requests are not logged either and there is no id to hand out. An inbound id that fails the pattern above is replaced rather than echoed — measured on Node 24.15.0, `res.setHeader` throws for none of a tab, a high byte, an empty string or 9,000 characters, so without the check anything a caller sent would be reflected back and bound into every Loki line for the 31-day retention
+- **CORS**: `main.ts` lists the header in `exposedHeaders`. That is inert in production, where Nginx serves the app and the API under one origin, and exists so the header is readable in dev — the one genuinely cross-origin configuration
 
 HTTP request logging (method, path, status, duration) is handled automatically by `pinoHttp`. Error logging is handled by the global exception filter. Application code only injects the logger when it needs to record a business-level event — a user action, an external call, a state change.
 
@@ -69,6 +71,15 @@ A real line (`res`/`responseTime` also appear on the completion line and are tri
 `query` and `params` are gone from that object: both were a second copy of what `url` already carries.
 
 There is no `traceId` and no `userId`: the correlation id is `req.id` and the API has no authenticated users.
+
+**Joining a frontend failure to the backend line that caused it.** A server-side fetch failure is logged once, by `handleServerError` (`src/frontend/shared/utils`), and that line carries the backend's id — `[Server fetch failed x-request-id=…]`. The id goes in the message rather than only on the error object because the frontend logger is a `console.error` wrapper: an own property of the error prints in the block `util.inspect` writes after the stack, which Promtail ships as its own unattached line. So the pair is:
+
+```
+{service="frontend"} |= "<id>"
+{service="backend"} | json | req_id="<id>"
+```
+
+The id is absent when the request never reached the backend — a network error or a timeout has no response, and therefore no header.
 
 ---
 
@@ -216,7 +227,9 @@ The backend exposes three health endpoints under `/api/health`:
 
 ## Known limitations
 
-**No distributed tracing.** There is no OpenTelemetry or Tempo integration. For a single-node, single-process backend this is an acceptable omission, but it means there is no way to trace a request across the frontend SSR layer and the backend API in a unified view.
+**No distributed tracing.** There is no OpenTelemetry or Tempo integration. For a single-node, single-process backend this is an acceptable omission, but it means there is no unified view of a request crossing the frontend SSR layer and the backend API — only the two log streams and the `x-request-id` that joins them, one query each way.
+
+**The correlation id stops at the API boundary.** It is minted per *backend* request, so the document request the browser made has no id of its own and one page render fans out into several unrelated ids. Nginx has a built-in `$request_id` that could be generated at the edge and passed both upstream and back to the client, which would also give a user something quotable when an SSR render fails — the error boundary never sees the backend's id, since a production build replaces a server-thrown error with a generic message plus a `digest` before the client receives it. That is a change to the Nginx config, which is not version-controlled (see `docs/infrastructure.md`).
 
 **Grafana subdomain leaks the VPS IP.** Because `grafana.beyondthearc.app` is DNS-only (not proxied through Cloudflare), the VPS IP is publicly resolvable via that record. This is a deliberate tradeoff — Cloudflare proxying of WebSocket-heavy Grafana traffic adds latency and complexity — but it means the server IP is not fully hidden.
 

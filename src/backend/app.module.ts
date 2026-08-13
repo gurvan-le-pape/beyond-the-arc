@@ -1,11 +1,13 @@
 // src/backend/app.module.ts
-import { randomUUID } from "node:crypto";
-
 import { CommonModule } from "@common/common.module";
 import { CACHE_MAX_ENTRIES, CACHE_TTL, METRICS_PATH } from "@common/constants";
 import { MetricsController } from "@common/controllers/metrics.controller";
 import { HttpMetricsInterceptor } from "@common/interceptors";
-import { BoundedMemoryStore, serializeRequestLog } from "@common/utils";
+import {
+  BoundedMemoryStore,
+  resolveRequestId,
+  serializeRequestLog,
+} from "@common/utils";
 import { StatsModule } from "@modules/stats/stats.module";
 import { CacheModule } from "@nestjs/cache-manager";
 import { Module } from "@nestjs/common";
@@ -65,8 +67,10 @@ import { AllExceptionsFilter, TransformInterceptor } from "./common";
         autoLogging: {
           ignore: (req) => req.url?.split("?")[0] === METRICS_PATH,
         },
-        genReqId: (req) =>
-          (req.headers["x-request-id"] as string) ?? randomUUID(),
+        // Also the only place the id is written back to the caller — see
+        // resolveRequestId for why it hangs off genReqId rather than an
+        // interceptor.
+        genReqId: (req, res) => resolveRequestId(req, res),
       },
     }),
     PrometheusModule.register({

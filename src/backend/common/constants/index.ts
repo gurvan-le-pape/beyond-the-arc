@@ -11,5 +11,6 @@ export * from "./event-types";
 export * from "./genders";
 export * from "./metrics-path";
 export * from "./positions";
+export * from "./request-id-header";
 export * from "./roles";
 export * from "./search-limits";
