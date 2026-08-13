@@ -17,3 +17,4 @@ export * from "./parseRouteId";
 export * from "./positionVariant";
 export * from "./safeFetch";
 export * from "./sortCategories";
+export * from "./toSafeExternalUrl";

@@ -8,7 +8,7 @@ import type { President } from "@/features/organizations/types";
 import { InfoBox, Section } from "@/shared/components/blocks";
 import { Text } from "@/shared/components/typography";
 import { NA } from "@/shared/constants";
-import { formatPhone } from "@/shared/utils";
+import { formatPhone, toSafeExternalUrl } from "@/shared/utils";
 
 interface OrganizationInfoProps {
   readonly address?: string | null;
@@ -30,6 +30,12 @@ export function OrganizationInfo({
   president,
 }: OrganizationInfoProps) {
   const t = useTranslations("organizations");
+
+  // `website` is scraped, so it is untrusted input reaching an href. A value
+  // that is not an absolute http(s) URL renders as "no website" rather than as
+  // a link — same treatment as null, which is what the field already is for
+  // every club in production.
+  const safeWebsite = toSafeExternalUrl(website);
 
   return (
     <Section title={t("info.title")} variant="highlighted">
@@ -68,8 +74,8 @@ export function OrganizationInfo({
         {website !== undefined && (
           <InfoBox
             label={t("info.website")}
-            value={website ? t("info.visitWebsite") : null}
-            href={website ?? undefined}
+            value={safeWebsite ? t("info.visitWebsite") : null}
+            href={safeWebsite}
             icon={<Globe className="w-4 h-4" />}
           />
         )}
