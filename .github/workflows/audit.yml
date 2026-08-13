@@ -1,0 +1,101 @@
+name: Dependency audit
+
+# Deliberately a separate workflow from ci.yml, for the schedule. A newly
+# published advisory needs no push to become true, so the check that matters
+# most runs on a timer — and putting a `schedule` trigger on ci.yml would run
+# all eleven of its jobs weekly to reach this one.
+on:
+  pull_request:
+  schedule:
+    # Mondays, 07:00 UTC. Weekly rather than daily: an advisory that appears on
+    # a Tuesday is not more actionable for being seen six days sooner in a
+    # project with no on-call, and a daily red badge is how a signal becomes
+    # wallpaper.
+    - cron: "0 7 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  npm-audit:
+    name: Dependencies – Advisory audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # No `npm ci`: `npm audit` resolves against the lockfile and the registry,
+      # not against an installed tree. Three separate runs because there are no
+      # workspaces — the root, the backend and the frontend each own a lockfile.
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+
+      - name: Audit every lockfile
+        run: |
+          set -uo pipefail
+
+          {
+            echo "## Dependency advisories"
+            echo
+            echo "| lockfile | critical | high | moderate | low | total |"
+            echo "|---|---|---|---|---|---|"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          criticals=0
+
+          for dir in . src/backend src/frontend; do
+            # `npm audit` exits non-zero whenever it finds anything, so its
+            # status says nothing useful here. The counts are the signal.
+            report=$(cd "$dir" && npm audit --json 2>/dev/null || true)
+
+            # A parse failure means the audit did not run — a network error, a
+            # broken lockfile. Fail loudly rather than reporting zeros, which
+            # would read as "clean" and is the one wrong answer this job can
+            # give.
+            counts=$(
+              printf '%s' "$report" | node -e '
+                let raw = "";
+                process.stdin.on("data", (d) => (raw += d));
+                process.stdin.on("end", () => {
+                  const v = JSON.parse(raw).metadata.vulnerabilities;
+                  process.stdout.write(
+                    [v.critical, v.high, v.moderate, v.low, v.total].join(" "),
+                  );
+                });
+              '
+            ) || {
+              echo "::error::npm audit produced no parseable report in $dir"
+              exit 1
+            }
+
+            read -r c h m l t <<< "$counts"
+
+            echo "| \`$dir\` | $c | $h | $m | $l | $t |" >> "$GITHUB_STEP_SUMMARY"
+            echo "$dir: critical=$c high=$h moderate=$m low=$l total=$t"
+
+            criticals=$((criticals + c))
+          done
+
+          {
+            echo
+            echo "This job is **advisory** and is not in \`deploy\`'s \`needs:\`."
+            echo "It fails only on a **critical** advisory."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          # The one hard stop. High and moderate advisories are common in
+          # transitive devDependencies and mostly unreachable here, so failing
+          # on them would stop unrelated work every week until the badge meant
+          # nothing — the failure mode this project already has evidence of, in
+          # a SonarCloud gate that sat red for thirty days. `critical` is rare
+          # enough that a red check still means "go and look".
+          if [ "$criticals" -gt 0 ]; then
+            echo "::error::$criticals critical advisory/advisories across the three lockfiles. Run 'npm audit' in each project."
+            exit 1
+          fi
+
+          echo "No critical advisories."
