@@ -122,6 +122,16 @@ One property of this worth knowing before relying on it: **`docker` group member
 
 Two prunes with different jobs: `docker image prune -af` (before the pull) removes images not referenced by any container — necessary because every deploy pins `:SHA`-tagged images, which are never *dangling* and would otherwise accumulate one pair per merge until the disk fills (this is what tripped the 90% disk health threshold in July 2026). Images used by running or stopped containers are kept, and every tag remains in GHCR, so rollback via `IMAGE_TAG` still re-pulls fine. `docker system prune -f` (after the health checks) clears dangling images and build cache produced by the deploy itself.
 
+### The VPS `.env`
+
+`/opt/beyondthearc/.env` holds the Grafana admin password, the Gmail app password and `DATABASE_URL`. It is owned by `deploy` and **must be mode `600`** — on a rebuilt VPS, `chmod 600` it as soon as it is created:
+
+```bash
+chmod 600 /opt/beyondthearc/.env
+```
+
+The default `644` is not merely untidy here. `node-exporter` mounts `/:/rootfs:ro` (`docker/docker-compose.yml`) and runs as `nobody` (uid 65534), so at `644` a container whose job is host CPU and disk metrics can read every secret in that file; at `600` it cannot, and it never needed to. Nothing legitimate loses access — no service declares `env_file`, the file is not bind-mounted into any container, and the deploy script reaches it as `deploy`, which owns it. The script's `sed -i` rewrite of `IMAGE_TAG` preserves the mode (GNU sed replaces the file but copies its permissions across), so the setting survives every deploy rather than reverting at the next one.
+
 ---
 
 ## Secrets
