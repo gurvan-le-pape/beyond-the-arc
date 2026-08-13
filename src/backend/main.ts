@@ -1,6 +1,7 @@
 // src/backend/main.ts
 import "./instrument";
 
+import { REQUEST_ID_HEADER } from "@common/constants";
 import { resolveCorsOrigins } from "@common/utils";
 import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
@@ -18,10 +19,18 @@ async function bootstrap() {
   // Enable CORS for the frontend. No `credentials`: the API has no auth, sets
   // no cookies and reads no Authorization header, so a credentialed contract
   // would be claiming a trust relationship that does not exist.
+  // `exposedHeaders` is what lets a browser read the correlation id off a
+  // response. It changes nothing in production, where Nginx serves the app and
+  // the API under one origin and no CORS rule applies — it exists so the
+  // header is readable in dev, the one configuration where the browser really
+  // is cross-origin (page on :3000, API on :4000). Without it the id would
+  // work in production and silently read `null` on localhost, which is where
+  // anyone would be debugging.
   app.enableCors({
     origin: resolveCorsOrigins(),
     methods: "GET,POST,PUT,PATCH,DELETE",
     allowedHeaders: ["Content-Type", "Authorization"],
+    exposedHeaders: [REQUEST_ID_HEADER],
   });
 
   app.setGlobalPrefix("api", { exclude: ["/metrics"] });

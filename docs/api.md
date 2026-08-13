@@ -97,6 +97,8 @@ Errors are handled by a global `AllExceptionsFilter` (which also forwards to Sen
 }
 ```
 
+**Every response carries an `x-request-id` header** — success and error alike — and it is the same id the backend logs that request under. It is the value to quote in a bug report, and the one thing that ties a failure seen by a caller to the server-side line that explains it (`{service="backend"} | json | req_id="…"`). It is not part of the error body above; it is a header, and a well-formed inbound `x-request-id` is reused rather than replaced so an id can be propagated from further upstream. See `docs/observability.md`.
+
 Validation errors return an array of messages:
 
 ```json
