@@ -241,7 +241,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     request: Request,
     errorResponse: ErrorResponse,
   ): void {
-    const { method, url, ip, headers } = request;
+    const { method, url, headers } = request;
 
     const message = this.toLogMessage(exception, errorResponse);
 
@@ -251,10 +251,14 @@ export class AllExceptionsFilter implements ExceptionFilter {
     // second name for the same value (this used to set `traceId`) meant a Loki
     // query on one name found the error and missed the request record. One
     // name: `{service="backend"} | json | req_id="…"` returns both.
+    // No `ip`. Express is not configured with `trust proxy`, so `request.ip`
+    // was never the visitor's address — behind Cloudflare and Nginx it is the
+    // Docker gateway, identical on every line. It cost 31 days of Loki
+    // retention to record which proxy spoke to us, and would silently become a
+    // real IP the day `trust proxy` is turned on.
     const logContext = {
       method,
       url,
-      ip,
       userAgent: headers["user-agent"] ?? "unknown",
       statusCode: errorResponse.statusCode,
       // Carried as a field, never interpolated into the message below: the

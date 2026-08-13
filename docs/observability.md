@@ -31,7 +31,7 @@ The NestJS backend uses [Pino](https://github.com/pinojs/pino) via `nestjs-pino`
 
 - **Level**: `debug` in development, `info` in production
 - **Transport**: `pino-pretty` in development (colourised, human-readable); raw JSON to stdout in production
-- **Redaction**: `req.headers.authorization` and `req.headers.cookie` are stripped from all log output
+- **Header allowlist**: a custom `req` serializer (`serializeRequestLog`, `common/utils`) emits `id`, `method`, `url` and **only** the headers named in `LOGGED_REQUEST_HEADERS` — `host`, `user-agent`, `content-type`, `accept`. pino-http's default serializer emits the whole header block plus `remoteAddress`/`remotePort`; behind Cloudflare and Nginx that put the visitor's IP (`cf-connecting-ip`, `x-forwarded-for`, `x-real-ip`) on every line for the full 31-day retention, contradicting the `sendDefaultPii: false` policy written three files away in `instrument.ts`. It is an allowlist rather than an extension of pino's `redact` paths because a redact list allows everything except what it names, so it cannot cover a header a future proxy adds; an allowlist fails closed. `authorization` and `cookie` are simply not in it, which is what replaced the two redact paths that used to be here. The exception filter logs no `ip` for the same reason — Express has no `trust proxy` setting, so `request.ip` only ever held the proxy's address. The URL keeps its query string: search terms stay in the logs deliberately, since the dataset is public and, with the IP gone, a search term is attached to nobody
 - **Request ID**: each request is assigned an id via `genReqId`, sourced from the `x-request-id` header or a generated UUID if absent. `nestjs-pino` binds it to that request's logger, so it appears as **`req.id`** on every line emitted during the request — pinoHttp's own completion line and anything the application or the exception filter logs. There is one name for it, so one query reconstructs the request: `{service="backend"} | json | req_id="…"` (Loki's `| json` flattens `req.id` to `req_id`)
 
 HTTP request logging (method, path, status, duration) is handled automatically by `pinoHttp`. Error logging is handled by the global exception filter. Application code only injects the logger when it needs to record a business-level event — a user action, an external call, a state change.
@@ -44,7 +44,7 @@ In production, every log line is a JSON object on stdout. Docker captures this a
 
 The one field Loki does interpret on its own is the level: it derives `detected_level` from a level *string*, which is why the logger emits `"level": "warn"` rather than pino's numeric `40`. With the numeric default every line arrived as `detected_level="unknown"` and the log panel rendered them uncoloured.
 
-A real line, taken from production and trimmed (`req.headers` is long, and `res`/`responseTime` appear on the completion line):
+A real line (`res`/`responseTime` also appear on the completion line and are trimmed here). `req` is now short enough to print whole — that is the header allowlist above, and it is most of why a request line went from ~920 bytes to ~500:
 
 ```json
 {
@@ -56,13 +56,17 @@ A real line, taken from production and trimmed (`req.headers` is long, and `res`
     "id": "1871d672-be27-49e0-b392-544ee6da7cda",
     "method": "GET",
     "url": "/api/matches/team/661/events",
-    "query": {},
-    "params": { "path": ["matches", "team", "661", "events"] },
-    "headers": { "...": "..." }
+    "headers": {
+      "host": "backend:4000",
+      "user-agent": "Mozilla/5.0 …",
+      "accept": "application/json"
+    }
   },
   "msg": "request completed"
 }
 ```
+
+`query` and `params` are gone from that object: both were a second copy of what `url` already carries.
 
 There is no `traceId` and no `userId`: the correlation id is `req.id` and the API has no authenticated users.
 

@@ -154,6 +154,22 @@ describe("AllExceptionsFilter", () => {
         message: "Player with ID 999999999 not found",
       });
     });
+
+    // The mock request carries an `ip`, as a real one does. Behind Cloudflare
+    // and Nginx it is the proxy's address, and Express has no `trust proxy`
+    // setting, so it never held a visitor's — but it went to Loki for 31 days
+    // and would start holding one the moment that setting changed.
+    it("does not log the request ip", () => {
+      const host = makeHost("/api/players/999999999");
+      filter.catch(
+        new HttpException("Player with ID 999999999 not found", 404),
+        host as never,
+      );
+
+      const loggedContext = logger.warn.mock.calls[0][0];
+      expect(loggedContext).not.toHaveProperty("ip");
+      expect(JSON.stringify(loggedContext)).not.toContain("127.0.0.1");
+    });
   });
 
   // -------------------------------------------------------------------------
