@@ -1,7 +1,11 @@
 // src/backend/modules/teams/teams.controller.ts
 import { CACHE_TTL } from "@common/constants";
 import { ApiPaginatedResponse } from "@common/decorators";
-import { OrganizationScopeQueryDto, PaginatedResponseDto } from "@common/dto";
+import {
+  ApiErrorResponseDto,
+  OrganizationScopeQueryDto,
+  PaginatedResponseDto,
+} from "@common/dto";
 import { CacheInterceptor } from "@common/interceptors";
 import { ParseEntityIdPipe } from "@common/pipes";
 import {
@@ -89,10 +93,15 @@ export class TeamsController {
     description: "Team successfully retrieved",
     type: TeamDetailResponseDto,
   })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: "Team not found" })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: "Team not found",
+    type: ApiErrorResponseDto,
+  })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid ID format",
+    type: ApiErrorResponseDto,
   })
   async getTeamById(
     @Param("id", ParseEntityIdPipe) id: number,
@@ -113,10 +122,15 @@ export class TeamsController {
     description: "Match history successfully retrieved",
     type: TeamMatchHistoryResponseDto,
   })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: "Team not found" })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: "Team not found",
+    type: ApiErrorResponseDto,
+  })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid ID format",
+    type: ApiErrorResponseDto,
   })
   async getTeamMatchHistory(
     @Param("id", ParseEntityIdPipe) id: number,

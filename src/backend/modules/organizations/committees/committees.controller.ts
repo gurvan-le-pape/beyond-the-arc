@@ -1,5 +1,6 @@
 // src/backend/modules/organizations/committees/committees.controller.ts
 import { CACHE_TTL } from "@common/constants";
+import { ApiErrorResponseDto } from "@common/dto";
 import { CacheInterceptor } from "@common/interceptors";
 import { ParseEntityIdPipe } from "@common/pipes";
 import {
@@ -112,14 +113,13 @@ export class CommitteesController {
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid query parameters",
-    schema: {
-      example: {
-        statusCode: 400,
-        message: ["leagueId must be a valid number string"],
-        error: "BadRequestException",
-        path: "/committees?leagueId=abc",
-        timestamp: "2024-02-05T10:00:00Z",
-      },
+    type: ApiErrorResponseDto,
+    example: {
+      statusCode: 400,
+      message: ["leagueId must be a valid number string"],
+      error: "Bad Request",
+      path: "/api/committees?leagueId=abc",
+      timestamp: "2024-02-05T10:00:00Z",
     },
   })
   async getCommittees(
@@ -196,28 +196,19 @@ export class CommitteesController {
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: "Committee not found",
-    schema: {
-      example: {
-        statusCode: 404,
-        message: "Committee with ID 999 not found",
-        error: "NotFoundException",
-        path: "/committees/999",
-        timestamp: "2024-02-05T10:00:00Z",
-      },
+    type: ApiErrorResponseDto,
+    example: {
+      statusCode: 404,
+      message: "Committee with ID 999 not found",
+      error: "Not Found",
+      path: "/api/committees/999",
+      timestamp: "2024-02-05T10:00:00Z",
     },
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid ID format",
-    schema: {
-      example: {
-        statusCode: 400,
-        message: "Validation failed (numeric string is expected)",
-        error: "BadRequestException",
-        path: "/committees/abc",
-        timestamp: "2024-02-05T10:00:00Z",
-      },
-    },
+    type: ApiErrorResponseDto,
   })
   async getCommitteeById(
     @Param("id", ParseEntityIdPipe) id: number,

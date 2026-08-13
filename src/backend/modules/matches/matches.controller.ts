@@ -1,7 +1,7 @@
 // src/backend/modules/matches/matches.controller.ts
 import { CACHE_TTL } from "@common/constants";
 import { ApiPaginatedResponse } from "@common/decorators";
-import { PaginatedResponseDto } from "@common/dto";
+import { ApiErrorResponseDto, PaginatedResponseDto } from "@common/dto";
 import { CacheInterceptor } from "@common/interceptors";
 import { ParseEntityIdPipe } from "@common/pipes";
 import {
@@ -68,6 +68,7 @@ export class MatchesController {
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid query parameters",
+    type: ApiErrorResponseDto,
   })
   async getMatches(
     @Query() query: GetMatchesQueryDto,
@@ -111,10 +112,12 @@ export class MatchesController {
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: "Pool not found",
+    type: ApiErrorResponseDto,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid ID format",
+    type: ApiErrorResponseDto,
   })
   async getMatchesByPoolId(
     @Param("poolId", ParseEntityIdPipe) poolId: number,
@@ -151,10 +154,12 @@ export class MatchesController {
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: "Match not found",
+    type: ApiErrorResponseDto,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid ID format",
+    type: ApiErrorResponseDto,
   })
   async getMatchById(
     @Param("matchId", ParseEntityIdPipe) matchId: number,
@@ -191,10 +196,12 @@ export class MatchesController {
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: "Match not found",
+    type: ApiErrorResponseDto,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid ID format",
+    type: ApiErrorResponseDto,
   })
   async getPlayerMatchStats(
     @Param("matchId", ParseEntityIdPipe) matchId: number,
@@ -231,6 +238,7 @@ export class MatchesController {
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid ID format",
+    type: ApiErrorResponseDto,
   })
   async getMatchEvents(
     @Param("matchId", ParseEntityIdPipe) matchId: number,
@@ -267,6 +275,7 @@ export class MatchesController {
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid ID format",
+    type: ApiErrorResponseDto,
   })
   async getMatchEventsByTeamId(
     @Param("teamId", ParseEntityIdPipe) teamId: number,
@@ -303,6 +312,7 @@ export class MatchesController {
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid ID format",
+    type: ApiErrorResponseDto,
   })
   async getMatchEventsByPlayerId(
     @Param("playerId", ParseEntityIdPipe) playerId: number,

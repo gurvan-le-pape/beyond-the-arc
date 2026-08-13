@@ -1,5 +1,6 @@
 // src/backend/modules/competitions/pools/pools.controller.ts
 import { CACHE_TTL } from "@common/constants";
+import { ApiErrorResponseDto } from "@common/dto";
 import { CacheInterceptor } from "@common/interceptors";
 import { ParseEntityIdPipe } from "@common/pipes";
 import {
@@ -106,14 +107,13 @@ export class PoolsController {
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid query parameters",
-    schema: {
-      example: {
-        statusCode: 400,
-        message: ["championshipId must be a valid number string"],
-        error: "BadRequestException",
-        path: "/pools?championshipId=abc",
-        timestamp: "2024-02-05T10:00:00Z",
-      },
+    type: ApiErrorResponseDto,
+    example: {
+      statusCode: 400,
+      message: ["championshipId must be a valid number string"],
+      error: "Bad Request",
+      path: "/api/pools?championshipId=abc",
+      timestamp: "2024-02-05T10:00:00Z",
     },
   })
   async getPoolsByChampionshipId(
@@ -179,28 +179,19 @@ export class PoolsController {
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: "Pool not found",
-    schema: {
-      example: {
-        statusCode: 404,
-        message: "Pool with ID 999 not found",
-        error: "NotFoundException",
-        path: "/pools/999",
-        timestamp: "2024-02-05T10:00:00Z",
-      },
+    type: ApiErrorResponseDto,
+    example: {
+      statusCode: 404,
+      message: "Pool with ID 999 not found",
+      error: "Not Found",
+      path: "/api/pools/999",
+      timestamp: "2024-02-05T10:00:00Z",
     },
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid ID format",
-    schema: {
-      example: {
-        statusCode: 400,
-        message: "Validation failed (numeric string is expected)",
-        error: "BadRequestException",
-        path: "/pools/abc",
-        timestamp: "2024-02-05T10:00:00Z",
-      },
-    },
+    type: ApiErrorResponseDto,
   })
   async getPoolById(
     @Param("id", ParseEntityIdPipe) id: number,

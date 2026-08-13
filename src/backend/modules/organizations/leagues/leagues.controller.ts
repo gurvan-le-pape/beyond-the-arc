@@ -1,5 +1,6 @@
 // src/backend/modules/organizations/leagues/leagues.controller.ts
 import { CACHE_TTL } from "@common/constants";
+import { ApiErrorResponseDto } from "@common/dto";
 import { CacheInterceptor } from "@common/interceptors";
 import { ParseEntityIdPipe } from "@common/pipes";
 import {
@@ -84,14 +85,13 @@ export class LeaguesController {
   @ApiResponse({
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: "Internal server error",
-    schema: {
-      example: {
-        statusCode: 500,
-        message: "Internal server error",
-        error: "InternalServerErrorException",
-        path: "/leagues",
-        timestamp: "2024-02-05T10:00:00Z",
-      },
+    type: ApiErrorResponseDto,
+    example: {
+      statusCode: 500,
+      message: "Internal server error",
+      error: "Internal Server Error",
+      path: "/api/leagues",
+      timestamp: "2024-02-05T10:00:00Z",
     },
   })
   async getAllLeagues(): Promise<LeagueResponseDto[]> {
@@ -151,28 +151,19 @@ export class LeaguesController {
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: "League not found",
-    schema: {
-      example: {
-        statusCode: 404,
-        message: "League with ID 999 not found",
-        error: "NotFoundException",
-        path: "/leagues/999",
-        timestamp: "2024-02-05T10:00:00Z",
-      },
+    type: ApiErrorResponseDto,
+    example: {
+      statusCode: 404,
+      message: "League with ID 999 not found",
+      error: "Not Found",
+      path: "/api/leagues/999",
+      timestamp: "2024-02-05T10:00:00Z",
     },
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid ID format",
-    schema: {
-      example: {
-        statusCode: 400,
-        message: "Validation failed (numeric string is expected)",
-        error: "BadRequestException",
-        path: "/leagues/abc",
-        timestamp: "2024-02-05T10:00:00Z",
-      },
-    },
+    type: ApiErrorResponseDto,
   })
   async getLeagueById(
     @Param("id", ParseEntityIdPipe) id: number,

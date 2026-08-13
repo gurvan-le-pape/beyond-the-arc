@@ -60,7 +60,14 @@
             }
           },
           "500": {
-            "description": "Internal server error"
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Get club statistics by region",
@@ -127,21 +134,29 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "statusCode": 400,
-                    "message": [
-                      "League regionale ID must be a valid number string"
-                    ],
-                    "error": "BadRequestException",
-                    "path": "/clubs/stats/by-department?leagueId=abc",
-                    "timestamp": "2024-02-05T10:00:00Z"
-                  }
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                },
+                "example": {
+                  "statusCode": 400,
+                  "message": [
+                    "League regionale ID must be a valid number string"
+                  ],
+                  "error": "Bad Request",
+                  "path": "/api/clubs/stats/by-department?leagueId=abc",
+                  "timestamp": "2024-02-05T10:00:00Z"
                 }
               }
             }
           },
           "500": {
-            "description": "Internal server error"
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Get club statistics by department",
@@ -195,7 +210,14 @@
             }
           },
           "500": {
-            "description": "Internal server error"
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Get all clubs without filtering",
@@ -345,23 +367,31 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "statusCode": 400,
-                    "message": [
-                      "Level must be one of: regional, departmental",
-                      "committeeId must be a number",
-                      "page must not be less than 1"
-                    ],
-                    "error": "BadRequestException",
-                    "path": "/clubs?level=invalid&committeeId=abc",
-                    "timestamp": "2024-02-05T10:00:00Z"
-                  }
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                },
+                "example": {
+                  "statusCode": 400,
+                  "message": [
+                    "Level must be one of: regional, departmental",
+                    "committeeId must be a number",
+                    "page must not be less than 1"
+                  ],
+                  "error": "Bad Request",
+                  "path": "/api/clubs?level=invalid&committeeId=abc",
+                  "timestamp": "2024-02-05T10:00:00Z"
                 }
               }
             }
           },
           "500": {
-            "description": "Internal server error"
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Get clubs with filters and pagination",
@@ -420,13 +450,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "statusCode": 400,
-                    "message": "Validation failed (numeric string is expected)",
-                    "error": "BadRequestException",
-                    "path": "/clubs/abc",
-                    "timestamp": "2024-02-05T10:00:00Z"
-                  }
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
                 }
               }
             }
@@ -436,19 +460,27 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "statusCode": 404,
-                    "message": "Club with ID 999 not found",
-                    "error": "NotFoundException",
-                    "path": "/clubs/999",
-                    "timestamp": "2024-02-05T10:00:00Z"
-                  }
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                },
+                "example": {
+                  "statusCode": 404,
+                  "message": "Club with ID 999 not found",
+                  "error": "Not Found",
+                  "path": "/api/clubs/999",
+                  "timestamp": "2024-02-05T10:00:00Z"
                 }
               }
             }
           },
           "500": {
-            "description": "Internal server error"
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Get club by ID",
@@ -524,15 +556,16 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "statusCode": 400,
-                    "message": [
-                      "leagueId must be a valid number string"
-                    ],
-                    "error": "BadRequestException",
-                    "path": "/committees?leagueId=abc",
-                    "timestamp": "2024-02-05T10:00:00Z"
-                  }
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                },
+                "example": {
+                  "statusCode": 400,
+                  "message": [
+                    "leagueId must be a valid number string"
+                  ],
+                  "error": "Bad Request",
+                  "path": "/api/committees?leagueId=abc",
+                  "timestamp": "2024-02-05T10:00:00Z"
                 }
               }
             }
@@ -593,13 +626,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "statusCode": 400,
-                    "message": "Validation failed (numeric string is expected)",
-                    "error": "BadRequestException",
-                    "path": "/committees/abc",
-                    "timestamp": "2024-02-05T10:00:00Z"
-                  }
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
                 }
               }
             }
@@ -609,13 +636,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "statusCode": 404,
-                    "message": "Committee with ID 999 not found",
-                    "error": "NotFoundException",
-                    "path": "/committees/999",
-                    "timestamp": "2024-02-05T10:00:00Z"
-                  }
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                },
+                "example": {
+                  "statusCode": 404,
+                  "message": "Committee with ID 999 not found",
+                  "error": "Not Found",
+                  "path": "/api/committees/999",
+                  "timestamp": "2024-02-05T10:00:00Z"
                 }
               }
             }
@@ -675,13 +703,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "statusCode": 500,
-                    "message": "Internal server error",
-                    "error": "InternalServerErrorException",
-                    "path": "/leagues",
-                    "timestamp": "2024-02-05T10:00:00Z"
-                  }
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                },
+                "example": {
+                  "statusCode": 500,
+                  "message": "Internal server error",
+                  "error": "Internal Server Error",
+                  "path": "/api/leagues",
+                  "timestamp": "2024-02-05T10:00:00Z"
                 }
               }
             }
@@ -736,13 +765,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "statusCode": 400,
-                    "message": "Validation failed (numeric string is expected)",
-                    "error": "BadRequestException",
-                    "path": "/leagues/abc",
-                    "timestamp": "2024-02-05T10:00:00Z"
-                  }
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
                 }
               }
             }
@@ -752,13 +775,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "statusCode": 404,
-                    "message": "League with ID 999 not found",
-                    "error": "NotFoundException",
-                    "path": "/leagues/999",
-                    "timestamp": "2024-02-05T10:00:00Z"
-                  }
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                },
+                "example": {
+                  "statusCode": 404,
+                  "message": "League with ID 999 not found",
+                  "error": "Not Found",
+                  "path": "/api/leagues/999",
+                  "timestamp": "2024-02-05T10:00:00Z"
                 }
               }
             }
@@ -818,13 +842,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "statusCode": 400,
-                    "message": "Validation failed (numeric string is expected)",
-                    "error": "BadRequestException",
-                    "path": "/championships/abc",
-                    "timestamp": "2024-02-05T10:00:00Z"
-                  }
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
                 }
               }
             }
@@ -834,13 +852,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "statusCode": 404,
-                    "message": "Championship with ID 999 not found",
-                    "error": "NotFoundException",
-                    "path": "/championships/999",
-                    "timestamp": "2024-02-05T10:00:00Z"
-                  }
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                },
+                "example": {
+                  "statusCode": 404,
+                  "message": "Championship with ID 999 not found",
+                  "error": "Not Found",
+                  "path": "/api/championships/999",
+                  "timestamp": "2024-02-05T10:00:00Z"
                 }
               }
             }
@@ -972,15 +991,16 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "statusCode": 400,
-                    "message": [
-                      "level must be a valid enum value"
-                    ],
-                    "error": "BadRequestException",
-                    "path": "/championships?level=invalid",
-                    "timestamp": "2024-02-05T10:00:00Z"
-                  }
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                },
+                "example": {
+                  "statusCode": 400,
+                  "message": [
+                    "level must be a valid enum value"
+                  ],
+                  "error": "Bad Request",
+                  "path": "/api/championships?level=invalid",
+                  "timestamp": "2024-02-05T10:00:00Z"
                 }
               }
             }
@@ -1053,15 +1073,16 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "statusCode": 400,
-                    "message": [
-                      "poolId must be a valid number string"
-                    ],
-                    "error": "BadRequestException",
-                    "path": "/leaderboards?poolId=abc",
-                    "timestamp": "2024-02-05T10:00:00Z"
-                  }
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                },
+                "example": {
+                  "statusCode": 400,
+                  "message": [
+                    "poolId must be a valid number string"
+                  ],
+                  "error": "Bad Request",
+                  "path": "/api/leaderboards?poolId=abc",
+                  "timestamp": "2024-02-05T10:00:00Z"
                 }
               }
             }
@@ -1126,13 +1147,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "statusCode": 400,
-                    "message": "Validation failed (numeric string is expected)",
-                    "error": "BadRequestException",
-                    "path": "/leaderboards/abc",
-                    "timestamp": "2024-02-05T10:00:00Z"
-                  }
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
                 }
               }
             }
@@ -1142,13 +1157,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "statusCode": 404,
-                    "message": "Leaderboard entry with ID 999 not found",
-                    "error": "NotFoundException",
-                    "path": "/leaderboards/999",
-                    "timestamp": "2024-02-05T10:00:00Z"
-                  }
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                },
+                "example": {
+                  "statusCode": 404,
+                  "message": "Leaderboard entry with ID 999 not found",
+                  "error": "Not Found",
+                  "path": "/api/leaderboards/999",
+                  "timestamp": "2024-02-05T10:00:00Z"
                 }
               }
             }
@@ -1219,15 +1235,16 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "statusCode": 400,
-                    "message": [
-                      "championshipId must be a valid number string"
-                    ],
-                    "error": "BadRequestException",
-                    "path": "/pools?championshipId=abc",
-                    "timestamp": "2024-02-05T10:00:00Z"
-                  }
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                },
+                "example": {
+                  "statusCode": 400,
+                  "message": [
+                    "championshipId must be a valid number string"
+                  ],
+                  "error": "Bad Request",
+                  "path": "/api/pools?championshipId=abc",
+                  "timestamp": "2024-02-05T10:00:00Z"
                 }
               }
             }
@@ -1284,13 +1301,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "statusCode": 400,
-                    "message": "Validation failed (numeric string is expected)",
-                    "error": "BadRequestException",
-                    "path": "/pools/abc",
-                    "timestamp": "2024-02-05T10:00:00Z"
-                  }
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
                 }
               }
             }
@@ -1300,13 +1311,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "statusCode": 404,
-                    "message": "Pool with ID 999 not found",
-                    "error": "NotFoundException",
-                    "path": "/pools/999",
-                    "timestamp": "2024-02-05T10:00:00Z"
-                  }
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                },
+                "example": {
+                  "statusCode": 404,
+                  "message": "Pool with ID 999 not found",
+                  "error": "Not Found",
+                  "path": "/api/pools/999",
+                  "timestamp": "2024-02-05T10:00:00Z"
                 }
               }
             }
@@ -1506,7 +1518,14 @@
             }
           },
           "400": {
-            "description": "Invalid query parameters"
+            "description": "Invalid query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Get all matches with filters",
@@ -1546,10 +1565,24 @@
             }
           },
           "400": {
-            "description": "Invalid ID format"
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Pool not found"
+            "description": "Pool not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Get matches by pool ID",
@@ -1586,10 +1619,24 @@
             }
           },
           "400": {
-            "description": "Invalid ID format"
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Match not found"
+            "description": "Match not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Get match by ID",
@@ -1626,10 +1673,24 @@
             }
           },
           "400": {
-            "description": "Invalid ID format"
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Match not found"
+            "description": "Match not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Get player stats for a match",
@@ -1669,7 +1730,14 @@
             }
           },
           "400": {
-            "description": "Invalid ID format"
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Get match events by match ID",
@@ -1709,7 +1777,14 @@
             }
           },
           "400": {
-            "description": "Invalid ID format"
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Get shot events by team ID",
@@ -1749,7 +1824,14 @@
             }
           },
           "400": {
-            "description": "Invalid ID format"
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Get shot events by player ID",
@@ -1939,16 +2021,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "statusCode": 400,
-                    "message": [
-                      "level must be either \"regional\" or \"departmental\"",
-                      "clubId must be a valid number"
-                    ],
-                    "error": "BadRequestException",
-                    "path": "/players?level=invalid&clubId=abc",
-                    "timestamp": "2024-02-05T10:00:00Z"
-                  }
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                },
+                "example": {
+                  "statusCode": 400,
+                  "message": [
+                    "level must be either \"regional\" or \"departmental\"",
+                    "clubId must be a valid number"
+                  ],
+                  "error": "Bad Request",
+                  "path": "/api/players?level=invalid&clubId=abc",
+                  "timestamp": "2024-02-05T10:00:00Z"
                 }
               }
             }
@@ -2078,13 +2161,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "statusCode": 400,
-                    "message": "Validation failed (numeric string is expected)",
-                    "error": "BadRequestException",
-                    "path": "/players/abc",
-                    "timestamp": "2024-02-05T10:00:00Z"
-                  }
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
                 }
               }
             }
@@ -2094,13 +2171,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "statusCode": 404,
-                    "message": "Player with ID 999 not found",
-                    "error": "NotFoundException",
-                    "path": "/players/999",
-                    "timestamp": "2024-02-05T10:00:00Z"
-                  }
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                },
+                "example": {
+                  "statusCode": 404,
+                  "message": "Player with ID 999 not found",
+                  "error": "Not Found",
+                  "path": "/api/players/999",
+                  "timestamp": "2024-02-05T10:00:00Z"
                 }
               }
             }
@@ -2227,13 +2305,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "statusCode": 400,
-                    "message": "Validation failed (numeric string is expected)",
-                    "error": "BadRequestException",
-                    "path": "/players/abc/matches",
-                    "timestamp": "2024-02-05T10:00:00Z"
-                  }
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
                 }
               }
             }
@@ -2243,13 +2315,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "example": {
-                    "statusCode": 404,
-                    "message": "Player with ID 999 not found",
-                    "error": "NotFoundException",
-                    "path": "/players/999/matches",
-                    "timestamp": "2024-02-05T10:00:00Z"
-                  }
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                },
+                "example": {
+                  "statusCode": 404,
+                  "message": "Player with ID 999 not found",
+                  "error": "Not Found",
+                  "path": "/api/players/999/matches",
+                  "timestamp": "2024-02-05T10:00:00Z"
                 }
               }
             }
@@ -2516,10 +2589,24 @@
             }
           },
           "400": {
-            "description": "Invalid ID format"
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Team not found"
+            "description": "Team not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Get team by ID",
@@ -2556,10 +2643,24 @@
             }
           },
           "400": {
-            "description": "Invalid ID format"
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Team not found"
+            "description": "Team not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "summary": "Get team match history",
@@ -3000,6 +3101,53 @@
           "code",
           "name",
           "clubCount"
+        ]
+      },
+      "ApiErrorResponseDto": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number",
+            "description": "HTTP status code, repeated in the body for convenience",
+            "example": 404
+          },
+          "message": {
+            "description": "What went wrong, for a developer reading logs — never user-facing copy. An array when it carries per-field validation failures.",
+            "example": "Player with ID 999999999 not found",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ]
+          },
+          "error": {
+            "type": "string",
+            "description": "The HTTP status name, e.g. \"Not Found\" or \"Bad Request\" — derived from the status code, never the exception class name",
+            "example": "Not Found"
+          },
+          "path": {
+            "type": "string",
+            "description": "The request path, including the /api prefix",
+            "example": "/api/players/999999999"
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "When the error was produced, as an ISO 8601 UTC instant",
+            "example": "2026-02-05T10:00:00.000Z"
+          }
+        },
+        "required": [
+          "statusCode",
+          "message",
+          "error",
+          "path",
+          "timestamp"
         ]
       },
       "DepartmentInfoDto": {

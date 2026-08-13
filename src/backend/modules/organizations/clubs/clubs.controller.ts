@@ -1,5 +1,6 @@
 // src/backend/modules/organizations/clubs/clubs.controller.ts
 import { ApiPaginatedResponse } from "@common/decorators";
+import { ApiErrorResponseDto } from "@common/dto";
 import { CACHE_TTL, PaginatedResponseDto } from "@common/index";
 import { CacheInterceptor } from "@common/interceptors";
 import { ParseEntityIdPipe } from "@common/pipes";
@@ -102,6 +103,7 @@ export class ClubsController {
   @ApiResponse({
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: "Internal server error",
+    type: ApiErrorResponseDto,
   })
   async getClubStatsByRegion(): Promise<ClubStatsByRegionDto[]> {
     return this.clubsService.getClubCountsByRegion();
@@ -176,19 +178,19 @@ export class ClubsController {
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid query parameters",
-    schema: {
-      example: {
-        statusCode: 400,
-        message: ["League regionale ID must be a valid number string"],
-        error: "BadRequestException",
-        path: "/clubs/stats/by-department?leagueId=abc",
-        timestamp: "2024-02-05T10:00:00Z",
-      },
+    type: ApiErrorResponseDto,
+    example: {
+      statusCode: 400,
+      message: ["League regionale ID must be a valid number string"],
+      error: "Bad Request",
+      path: "/api/clubs/stats/by-department?leagueId=abc",
+      timestamp: "2024-02-05T10:00:00Z",
     },
   })
   @ApiResponse({
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: "Internal server error",
+    type: ApiErrorResponseDto,
   })
   async getClubStatsByDepartment(
     @Query() query: GetClubStatsByDepartmentQueryDto,
@@ -246,6 +248,7 @@ export class ClubsController {
   @ApiResponse({
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: "Internal server error",
+    type: ApiErrorResponseDto,
   })
   async getAllClubs(): Promise<ClubBasicResponseDto[]> {
     return this.clubsService.findAllClubs();
@@ -280,23 +283,23 @@ export class ClubsController {
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid query parameters",
-    schema: {
-      example: {
-        statusCode: 400,
-        message: [
-          "Level must be one of: regional, departmental",
-          "committeeId must be a number",
-          "page must not be less than 1",
-        ],
-        error: "BadRequestException",
-        path: "/clubs?level=invalid&committeeId=abc",
-        timestamp: "2024-02-05T10:00:00Z",
-      },
+    type: ApiErrorResponseDto,
+    example: {
+      statusCode: 400,
+      message: [
+        "Level must be one of: regional, departmental",
+        "committeeId must be a number",
+        "page must not be less than 1",
+      ],
+      error: "Bad Request",
+      path: "/api/clubs?level=invalid&committeeId=abc",
+      timestamp: "2024-02-05T10:00:00Z",
     },
   })
   @ApiResponse({
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: "Internal server error",
+    type: ApiErrorResponseDto,
   })
   async getClubs(
     @Query() query: GetClubsQueryDto,
@@ -381,32 +384,24 @@ export class ClubsController {
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: "Club not found",
-    schema: {
-      example: {
-        statusCode: 404,
-        message: "Club with ID 999 not found",
-        error: "NotFoundException",
-        path: "/clubs/999",
-        timestamp: "2024-02-05T10:00:00Z",
-      },
+    type: ApiErrorResponseDto,
+    example: {
+      statusCode: 404,
+      message: "Club with ID 999 not found",
+      error: "Not Found",
+      path: "/api/clubs/999",
+      timestamp: "2024-02-05T10:00:00Z",
     },
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid ID format",
-    schema: {
-      example: {
-        statusCode: 400,
-        message: "Validation failed (numeric string is expected)",
-        error: "BadRequestException",
-        path: "/clubs/abc",
-        timestamp: "2024-02-05T10:00:00Z",
-      },
-    },
+    type: ApiErrorResponseDto,
   })
   @ApiResponse({
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: "Internal server error",
+    type: ApiErrorResponseDto,
   })
   async getClubById(
     @Param("id", ParseEntityIdPipe) id: number,

@@ -1,7 +1,11 @@
 // src/backend/modules/players/players.controller.ts
 import { CACHE_TTL } from "@common/constants";
 import { ApiPaginatedResponse } from "@common/decorators";
-import { OrganizationScopeQueryDto, PaginatedResponseDto } from "@common/dto";
+import {
+  ApiErrorResponseDto,
+  OrganizationScopeQueryDto,
+  PaginatedResponseDto,
+} from "@common/dto";
 import { CacheInterceptor } from "@common/interceptors";
 import { ParseEntityIdPipe } from "@common/pipes";
 import {
@@ -80,17 +84,16 @@ export class PlayersController {
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid query parameters",
-    schema: {
-      example: {
-        statusCode: 400,
-        message: [
-          'level must be either "regional" or "departmental"',
-          "clubId must be a valid number",
-        ],
-        error: "BadRequestException",
-        path: "/players?level=invalid&clubId=abc",
-        timestamp: "2024-02-05T10:00:00Z",
-      },
+    type: ApiErrorResponseDto,
+    example: {
+      statusCode: 400,
+      message: [
+        'level must be either "regional" or "departmental"',
+        "clubId must be a valid number",
+      ],
+      error: "Bad Request",
+      path: "/api/players?level=invalid&clubId=abc",
+      timestamp: "2024-02-05T10:00:00Z",
     },
   })
   async getPlayers(
@@ -218,28 +221,19 @@ export class PlayersController {
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: "Player not found",
-    schema: {
-      example: {
-        statusCode: 404,
-        message: "Player with ID 999 not found",
-        error: "NotFoundException",
-        path: "/players/999",
-        timestamp: "2024-02-05T10:00:00Z",
-      },
+    type: ApiErrorResponseDto,
+    example: {
+      statusCode: 404,
+      message: "Player with ID 999 not found",
+      error: "Not Found",
+      path: "/api/players/999",
+      timestamp: "2024-02-05T10:00:00Z",
     },
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid ID format",
-    schema: {
-      example: {
-        statusCode: 400,
-        message: "Validation failed (numeric string is expected)",
-        error: "BadRequestException",
-        path: "/players/abc",
-        timestamp: "2024-02-05T10:00:00Z",
-      },
-    },
+    type: ApiErrorResponseDto,
   })
   async getPlayerById(
     @Param("id", ParseEntityIdPipe) id: number,
@@ -373,28 +367,19 @@ export class PlayersController {
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: "Player not found",
-    schema: {
-      example: {
-        statusCode: 404,
-        message: "Player with ID 999 not found",
-        error: "NotFoundException",
-        path: "/players/999/matches",
-        timestamp: "2024-02-05T10:00:00Z",
-      },
+    type: ApiErrorResponseDto,
+    example: {
+      statusCode: 404,
+      message: "Player with ID 999 not found",
+      error: "Not Found",
+      path: "/api/players/999/matches",
+      timestamp: "2024-02-05T10:00:00Z",
     },
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid ID format",
-    schema: {
-      example: {
-        statusCode: 400,
-        message: "Validation failed (numeric string is expected)",
-        error: "BadRequestException",
-        path: "/players/abc/matches",
-        timestamp: "2024-02-05T10:00:00Z",
-      },
-    },
+    type: ApiErrorResponseDto,
   })
   async getPlayerMatchHistory(
     @Param("id", ParseEntityIdPipe) id: number,
