@@ -175,6 +175,8 @@ All containers share a single Docker bridge network (`my_network`). Services com
 
 Nginx runs on the VPS host (not as a Docker container) and reverse-proxies inbound traffic to the appropriate container. The backend is not on a separate subdomain — it is proxied under the `/api/` path on the main domain.
 
+The config lives at `/etc/nginx/sites-available/beyondthearc`, symlinked into `sites-enabled`, root-owned and edited in place — it is outside the deploy clone, so `git pull` never updates it and no rollback in this repository can revert it (see *Known limitations* below).
+
 | Request                     | Proxied to                      |
 | --------------------------- | ------------------------------- |
 | `beyondthearc.app/`         | `localhost:3000` (frontend)     |
