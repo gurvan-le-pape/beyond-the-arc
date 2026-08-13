@@ -25,6 +25,19 @@ The firewall alone was not enough to rely on: Docker writes its published-port r
 
 Nginx on the host is the sole external entry point; internal services are only reachable from within the VPS itself.
 
+### SSH
+
+Port 22 is the one open port that answers with a service the internet can talk to, and it is under continuous automated attack — the current `auth.log` holds tens of thousands of failed password attempts. **Both accounts authenticate with keys only**, enforced in `/etc/ssh/sshd_config.d/10-disable-password-auth.conf`:
+
+```
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+```
+
+`PermitRootLogin` is `without-password`, so `root` accepts a key and never a password; `root` does hold a password, but only for the Hetzner console. On a rebuilt VPS, write that drop-in as part of provisioning. Neither setting can be left to the defaults: sshd ships with `PasswordAuthentication` **on**, and it was on here — not because anything enabled it, but because nothing had turned it off. That was safe only by accident, since no account with a usable password also accepted password auth; the day one is given a password it becomes a remote login on a publicly-resolvable address (see the Grafana subdomain below).
+
+Two mechanics make this easy to get wrong. `sshd_config` is **first-value-wins**, the opposite of most config systems, and `Include /etc/ssh/sshd_config.d/*.conf` sits at the top of the main file — so drop-ins beat it, and among drop-ins the lexically *first* one wins. A file named to sort after an existing one that sets the same keyword is silently inert. And `sshd_config` is not the effective config: read it with `sshd -T`, which resolves drop-ins and defaults. Validate with `sshd -t` and apply with `systemctl reload ssh` — never `restart` — so a rejected config leaves the running daemon serving the old one.
+
 ---
 
 ## DNS and TLS
