@@ -14,18 +14,24 @@ There is no separate staging environment. A push to `main` that passes CI goes s
 
 ## Workflow structure
 
-The workflow is composed of eight jobs:
+There are two workflows. `ci.yml` is composed of twelve jobs — eleven checks and the deploy:
 
 ```
-backend-lint ───────┐
-backend-test ───────┼── sonarcloud ─┐
-backend-build ──────┤               ├── deploy (main only)
-frontend-lint ──────┤               │
-frontend-typecheck ─┤───────────────┘
-frontend-build ─────┘
+backend-lint ──────────┐
+backend-test ──────────┼── sonarcloud
+backend-build ─────────┤
+frontend-lint ─────────┤
+frontend-typecheck ────┼────────────── deploy (main only)
+frontend-messages ─────┤
+frontend-build ────────┤
+openapi-drift ─────────┤
+barrels-drift ─────────┘
+migration-immutability   (PRs only, not a deploy gate)
 ```
 
-All check jobs run in parallel. `sonarcloud` depends on `backend-test` to consume the coverage report. `deploy` depends on all six check jobs and only runs on a push to `main`.
+All check jobs run in parallel. `sonarcloud` depends on `backend-test` to consume the coverage report; it is **not** a deploy gate, and neither is `migration-immutability`. `deploy` depends on the nine jobs shown feeding into it and only runs on a push to `main`.
+
+`audit.yml` is the second workflow and holds one job, `npm-audit`. It is separate for the sake of its `schedule` trigger: a newly published advisory needs no push to become true, and putting a `schedule` on `ci.yml` would run all eleven of its jobs weekly to reach this one.
 
 ---
 
@@ -59,9 +65,19 @@ Runs `next build` to verify the production build compiles and exports successful
 
 Downloads the `backend-coverage` artifact and runs a SonarCloud scan using `SonarSource/sonarqube-scan-action` (successor of the deprecated `sonarcloud-github-action`). The scan uses `fetch-depth: 0` on checkout so SonarCloud has full git history for accurate blame and new-code analysis. Requires the `SONAR_TOKEN` repository secret.
 
+### npm-audit (workflow `audit.yml`)
+
+Runs `npm audit` against all three lockfiles — the root, `src/backend` and `src/frontend`. Three separate runs, because there are no npm workspaces here. It skips `npm ci` entirely: `npm audit` resolves against the lockfile and the registry, not against an installed tree.
+
+Triggers are `pull_request`, `workflow_dispatch`, and a **weekly schedule** (Mondays 07:00 UTC). The schedule is the reason this lives outside `ci.yml`: an advisory is published without anyone pushing, so the run that catches it has to be on a timer. Weekly rather than daily, because an advisory seen six days sooner is no more actionable in a project with no on-call, and a daily red badge becomes wallpaper.
+
+Each run writes a severity table to the job summary and **fails only on a `critical` advisory**. High and moderate advisories are common in transitive devDependencies and mostly unreachable here, so failing on them would stop unrelated work every week until the badge meant nothing.
+
+The job is **advisory**: it is in a different workflow from `deploy`, so it cannot gate it even by accident. The trade-off is deliberate and it is the whole design question — a blocking audit means a fresh advisory in a transitive devDependency blocks deploys of unrelated work, while a purely decorative one gets ignored (`sonarcloud`, which is also non-gating, sat red for thirty days). Failing on `critical` only is the middle: rare enough that a red check still means *go and look*.
+
 ### deploy
 
-Runs only on push to `main`, after all six check jobs pass. It has four steps:
+Runs only on push to `main`, after the nine check jobs in its `needs:` list pass. It has four steps:
 
 1. **Log in to GHCR** — authenticates using `GITHUB_TOKEN` (automatically available, no manual secret needed).
 2. **Build and push backend image** — builds the `prod` target of `docker/backend/Dockerfile` and pushes `ghcr.io/<repository>/backend:latest` plus a `:<git sha>` tag. A second step builds the `migrate` target (shares the cached base layers) and pushes `backend-migrate` with the same tags.
@@ -149,3 +165,5 @@ Note that this rolls back the images only — if the bad deploy also changed Com
 **Health check, not rollback.** The deploy script fails the pipeline if the new containers don't come up healthy (backend readiness endpoint polled for 60s, frontend page render checked), and prints the rollback instruction — but the rollback itself is manual (set `IMAGE_TAG` in `.env` to the previous SHA and rerun pull + up). Automatic rollback on health-check failure would be the next step if manual proves too slow in practice.
 
 **Frontend build in CI does not use production build args.** The `frontend-build` job builds without `NEXT_PUBLIC_API_URL` and related vars. If a build failure is caused by a missing env var rather than a code error, it would only surface in the `deploy` job rather than the earlier `frontend-build` check.
+
+**A `high` advisory stops nothing.** `npm-audit` fails only on `critical`, and it cannot gate `deploy` at all. As of 2026-08-13 that leaves 31 high-severity advisories standing across the three lockfiles (root 4, backend 16, frontend 11), most of them in transitive devDependencies and unreachable in this deployment. They are visible in the job summary of every run and nothing forces them to be addressed — which is the accepted cost of not blocking unrelated deploys on them.
