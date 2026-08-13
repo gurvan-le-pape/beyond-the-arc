@@ -1,7 +1,7 @@
 // src/backend/modules/competitions/championships/championships.controller.ts
 import { CACHE_TTL } from "@common/constants";
 import { ApiPaginatedResponse } from "@common/decorators";
-import { PaginatedResponseDto } from "@common/dto";
+import { ApiErrorResponseDto, PaginatedResponseDto } from "@common/dto";
 import { CacheInterceptor } from "@common/interceptors";
 import { ParseEntityIdPipe } from "@common/pipes";
 import {
@@ -100,27 +100,25 @@ export class ChampionshipsController {
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: "Championship not found",
-    schema: {
-      example: {
-        statusCode: 404,
-        message: "Championship with ID 999 not found",
-        error: "NotFoundException",
-        path: "/championships/999",
-        timestamp: "2024-02-05T10:00:00Z",
-      },
+    type: ApiErrorResponseDto,
+    example: {
+      statusCode: 404,
+      message: "Championship with ID 999 not found",
+      error: "Not Found",
+      path: "/api/championships/999",
+      timestamp: "2024-02-05T10:00:00Z",
     },
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid ID format",
-    schema: {
-      example: {
-        statusCode: 400,
-        message: "Validation failed (numeric string is expected)",
-        error: "BadRequestException",
-        path: "/championships/abc",
-        timestamp: "2024-02-05T10:00:00Z",
-      },
+    type: ApiErrorResponseDto,
+    example: {
+      statusCode: 400,
+      message: "Validation failed (numeric string is expected)",
+      error: "Bad Request",
+      path: "/api/championships/abc",
+      timestamp: "2024-02-05T10:00:00Z",
     },
   })
   async getChampionshipById(
@@ -158,14 +156,13 @@ export class ChampionshipsController {
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid query parameters",
-    schema: {
-      example: {
-        statusCode: 400,
-        message: ["level must be a valid enum value"],
-        error: "BadRequestException",
-        path: "/championships?level=invalid",
-        timestamp: "2024-02-05T10:00:00Z",
-      },
+    type: ApiErrorResponseDto,
+    example: {
+      statusCode: 400,
+      message: ["level must be a valid enum value"],
+      error: "Bad Request",
+      path: "/api/championships?level=invalid",
+      timestamp: "2024-02-05T10:00:00Z",
     },
   })
   async getChampionships(

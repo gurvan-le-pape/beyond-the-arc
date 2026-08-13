@@ -717,6 +717,33 @@ export interface components {
              */
             clubCount: number;
         };
+        ApiErrorResponseDto: {
+            /**
+             * @description HTTP status code, repeated in the body for convenience
+             * @example 404
+             */
+            statusCode: number;
+            /**
+             * @description What went wrong, for a developer reading logs — never user-facing copy. An array when it carries per-field validation failures.
+             * @example Player with ID 999999999 not found
+             */
+            message: string | string[];
+            /**
+             * @description The HTTP status name, e.g. "Not Found" or "Bad Request" — derived from the status code, never the exception class name
+             * @example Not Found
+             */
+            error: string;
+            /**
+             * @description The request path, including the /api prefix
+             * @example /api/players/999999999
+             */
+            path: string;
+            /**
+             * @description When the error was produced, as an ISO 8601 UTC instant
+             * @example 2026-02-05T10:00:00.000Z
+             */
+            timestamp: string;
+        };
         DepartmentInfoDto: {
             /**
              * @description Department ID
@@ -2785,7 +2812,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
             };
         };
     };
@@ -2816,7 +2845,18 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    /**
+                     * @example {
+                     *       "statusCode": 400,
+                     *       "message": [
+                     *         "League regionale ID must be a valid number string"
+                     *       ],
+                     *       "error": "Bad Request",
+                     *       "path": "/api/clubs/stats/by-department?leagueId=abc",
+                     *       "timestamp": "2024-02-05T10:00:00Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
             /** @description Internal server error */
@@ -2824,7 +2864,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
             };
         };
     };
@@ -2851,7 +2893,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
             };
         };
     };
@@ -2898,7 +2942,20 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    /**
+                     * @example {
+                     *       "statusCode": 400,
+                     *       "message": [
+                     *         "Level must be one of: regional, departmental",
+                     *         "committeeId must be a number",
+                     *         "page must not be less than 1"
+                     *       ],
+                     *       "error": "Bad Request",
+                     *       "path": "/api/clubs?level=invalid&committeeId=abc",
+                     *       "timestamp": "2024-02-05T10:00:00Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
             /** @description Internal server error */
@@ -2906,7 +2963,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
             };
         };
     };
@@ -2937,7 +2996,16 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    /**
+                     * @example {
+                     *       "statusCode": 400,
+                     *       "message": "Validation failed (numeric string is expected)",
+                     *       "error": "Bad Request",
+                     *       "path": "/api/clubs/abc",
+                     *       "timestamp": "2024-02-05T10:00:00Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
             /** @description Club not found */
@@ -2946,7 +3014,16 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    /**
+                     * @example {
+                     *       "statusCode": 404,
+                     *       "message": "Club with ID 999 not found",
+                     *       "error": "Not Found",
+                     *       "path": "/api/clubs/999",
+                     *       "timestamp": "2024-02-05T10:00:00Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
             /** @description Internal server error */
@@ -2954,7 +3031,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
             };
         };
     };
@@ -2985,7 +3064,18 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    /**
+                     * @example {
+                     *       "statusCode": 400,
+                     *       "message": [
+                     *         "leagueId must be a valid number string"
+                     *       ],
+                     *       "error": "Bad Request",
+                     *       "path": "/api/committees?leagueId=abc",
+                     *       "timestamp": "2024-02-05T10:00:00Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
         };
@@ -3017,7 +3107,16 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    /**
+                     * @example {
+                     *       "statusCode": 400,
+                     *       "message": "Validation failed (numeric string is expected)",
+                     *       "error": "Bad Request",
+                     *       "path": "/api/committees/abc",
+                     *       "timestamp": "2024-02-05T10:00:00Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
             /** @description Committee not found */
@@ -3026,7 +3125,16 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    /**
+                     * @example {
+                     *       "statusCode": 404,
+                     *       "message": "Committee with ID 999 not found",
+                     *       "error": "Not Found",
+                     *       "path": "/api/committees/999",
+                     *       "timestamp": "2024-02-05T10:00:00Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
         };
@@ -3055,7 +3163,16 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    /**
+                     * @example {
+                     *       "statusCode": 500,
+                     *       "message": "Internal server error",
+                     *       "error": "Internal Server Error",
+                     *       "path": "/api/leagues",
+                     *       "timestamp": "2024-02-05T10:00:00Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
         };
@@ -3087,7 +3204,16 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    /**
+                     * @example {
+                     *       "statusCode": 400,
+                     *       "message": "Validation failed (numeric string is expected)",
+                     *       "error": "Bad Request",
+                     *       "path": "/api/leagues/abc",
+                     *       "timestamp": "2024-02-05T10:00:00Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
             /** @description League not found */
@@ -3096,7 +3222,16 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    /**
+                     * @example {
+                     *       "statusCode": 404,
+                     *       "message": "League with ID 999 not found",
+                     *       "error": "Not Found",
+                     *       "path": "/api/leagues/999",
+                     *       "timestamp": "2024-02-05T10:00:00Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
         };
@@ -3128,7 +3263,16 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    /**
+                     * @example {
+                     *       "statusCode": 400,
+                     *       "message": "Validation failed (numeric string is expected)",
+                     *       "error": "Bad Request",
+                     *       "path": "/api/championships/abc",
+                     *       "timestamp": "2024-02-05T10:00:00Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
             /** @description Championship not found */
@@ -3137,7 +3281,16 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    /**
+                     * @example {
+                     *       "statusCode": 404,
+                     *       "message": "Championship with ID 999 not found",
+                     *       "error": "Not Found",
+                     *       "path": "/api/championships/999",
+                     *       "timestamp": "2024-02-05T10:00:00Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
         };
@@ -3181,7 +3334,18 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    /**
+                     * @example {
+                     *       "statusCode": 400,
+                     *       "message": [
+                     *         "level must be a valid enum value"
+                     *       ],
+                     *       "error": "Bad Request",
+                     *       "path": "/api/championships?level=invalid",
+                     *       "timestamp": "2024-02-05T10:00:00Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
         };
@@ -3213,7 +3377,18 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    /**
+                     * @example {
+                     *       "statusCode": 400,
+                     *       "message": [
+                     *         "poolId must be a valid number string"
+                     *       ],
+                     *       "error": "Bad Request",
+                     *       "path": "/api/leaderboards?poolId=abc",
+                     *       "timestamp": "2024-02-05T10:00:00Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
         };
@@ -3245,7 +3420,16 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    /**
+                     * @example {
+                     *       "statusCode": 400,
+                     *       "message": "Validation failed (numeric string is expected)",
+                     *       "error": "Bad Request",
+                     *       "path": "/api/leaderboards/abc",
+                     *       "timestamp": "2024-02-05T10:00:00Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
             /** @description Leaderboard entry not found */
@@ -3254,7 +3438,16 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    /**
+                     * @example {
+                     *       "statusCode": 404,
+                     *       "message": "Leaderboard entry with ID 999 not found",
+                     *       "error": "Not Found",
+                     *       "path": "/api/leaderboards/999",
+                     *       "timestamp": "2024-02-05T10:00:00Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
         };
@@ -3286,7 +3479,18 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    /**
+                     * @example {
+                     *       "statusCode": 400,
+                     *       "message": [
+                     *         "championshipId must be a valid number string"
+                     *       ],
+                     *       "error": "Bad Request",
+                     *       "path": "/api/pools?championshipId=abc",
+                     *       "timestamp": "2024-02-05T10:00:00Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
         };
@@ -3318,7 +3522,16 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    /**
+                     * @example {
+                     *       "statusCode": 400,
+                     *       "message": "Validation failed (numeric string is expected)",
+                     *       "error": "Bad Request",
+                     *       "path": "/api/pools/abc",
+                     *       "timestamp": "2024-02-05T10:00:00Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
             /** @description Pool not found */
@@ -3327,7 +3540,16 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    /**
+                     * @example {
+                     *       "statusCode": 404,
+                     *       "message": "Pool with ID 999 not found",
+                     *       "error": "Not Found",
+                     *       "path": "/api/pools/999",
+                     *       "timestamp": "2024-02-05T10:00:00Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
         };
@@ -3384,7 +3606,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
             };
         };
     };
@@ -3414,14 +3638,18 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
             };
             /** @description Pool not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
             };
         };
     };
@@ -3451,14 +3679,18 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
             };
             /** @description Match not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
             };
         };
     };
@@ -3488,14 +3720,18 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
             };
             /** @description Match not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
             };
         };
     };
@@ -3525,7 +3761,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
             };
         };
     };
@@ -3555,7 +3793,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
             };
         };
     };
@@ -3585,7 +3825,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
             };
         };
     };
@@ -3640,7 +3882,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    /**
+                     * @example {
+                     *       "statusCode": 400,
+                     *       "message": [
+                     *         "level must be either \"regional\" or \"departmental\"",
+                     *         "clubId must be a valid number"
+                     *       ],
+                     *       "error": "Bad Request",
+                     *       "path": "/api/players?level=invalid&clubId=abc",
+                     *       "timestamp": "2024-02-05T10:00:00Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
         };
@@ -3697,7 +3951,16 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    /**
+                     * @example {
+                     *       "statusCode": 400,
+                     *       "message": "Validation failed (numeric string is expected)",
+                     *       "error": "Bad Request",
+                     *       "path": "/api/players/abc",
+                     *       "timestamp": "2024-02-05T10:00:00Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
             /** @description Player not found */
@@ -3706,7 +3969,16 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    /**
+                     * @example {
+                     *       "statusCode": 404,
+                     *       "message": "Player with ID 999 not found",
+                     *       "error": "Not Found",
+                     *       "path": "/api/players/999",
+                     *       "timestamp": "2024-02-05T10:00:00Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
         };
@@ -3738,7 +4010,16 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    /**
+                     * @example {
+                     *       "statusCode": 400,
+                     *       "message": "Validation failed (numeric string is expected)",
+                     *       "error": "Bad Request",
+                     *       "path": "/api/players/abc/matches",
+                     *       "timestamp": "2024-02-05T10:00:00Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
             /** @description Player not found */
@@ -3747,7 +4028,16 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    /**
+                     * @example {
+                     *       "statusCode": 404,
+                     *       "message": "Player with ID 999 not found",
+                     *       "error": "Not Found",
+                     *       "path": "/api/players/999/matches",
+                     *       "timestamp": "2024-02-05T10:00:00Z"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
         };
@@ -3850,14 +4140,18 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
             };
             /** @description Team not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
             };
         };
     };
@@ -3887,14 +4181,18 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
             };
             /** @description Team not found */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
             };
         };
     };

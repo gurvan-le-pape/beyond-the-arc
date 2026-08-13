@@ -1,15 +1,19 @@
 // src/frontend/shared/types/Api.ts
+import type { components } from "./api.generated";
+
 /**
- * Standard API error response from backend.
- * Matches the format returned by AllExceptionsFilter.
+ * The error body the backend sends, taken from the contract rather than
+ * restated here.
+ *
+ * This used to be a hand-written interface whose comment claimed
+ * `error: "NotFoundException"`. The API has always sent the HTTP status name —
+ * `"Not Found"` — and nothing checked the claim, because the error body was the
+ * one payload with no generated type: the two `as Partial<ApiErrorResponse>`
+ * casts below and in `server-api-client.ts` were asserting against a local
+ * belief. Aliasing the generated schema makes them assertions against the
+ * document the backend emits.
  */
-export interface ApiErrorResponse {
-  statusCode: number;
-  message: string | string[]; // Array for validation errors
-  error: string; // e.g., "NotFoundException"
-  path: string;
-  timestamp: string;
-}
+export type ApiErrorResponse = components["schemas"]["ApiErrorResponseDto"];
 
 /**
  * Standard API success response from backend.

@@ -1,4 +1,5 @@
 // src/backend/common/filters/all-exceptions.filter.ts
+import { ApiErrorResponseDto } from "@common/dto";
 import {
   ArgumentsHost,
   Catch,
@@ -17,12 +18,22 @@ interface DevErrorDetails {
   cause: string | undefined;
 }
 
-interface ErrorResponse {
-  statusCode: number;
-  message: string | string[];
-  error: string;
-  path: string;
-  timestamp: string;
+/**
+ * What this filter sends: the documented contract plus a development-only
+ * extra.
+ *
+ * Extending `ApiErrorResponseDto` rather than restating its five fields is
+ * what keeps the emitted body and the published one the same object — a field
+ * added to the DTO stops compiling here until it is actually sent, and a field
+ * dropped here stops compiling too. They were separate declarations before,
+ * and the drift was live: the DTO's ancestor in the OpenAPI examples claimed
+ * `error: "NotFoundException"` while this filter has always derived the name
+ * from the status.
+ *
+ * `details` is not on the DTO on purpose — it is added only when
+ * `NODE_ENV === "development"`, so it is not part of the deployed contract.
+ */
+interface ErrorResponse extends ApiErrorResponseDto {
   details?: DevErrorDetails;
 }
 
