@@ -413,6 +413,7 @@ export class MatchHistoryDto {
     description: "Home team score",
     example: 85,
     type: Number,
+    nullable: true,
   })
   homeTeamScore!: number | null;
 
@@ -420,6 +421,7 @@ export class MatchHistoryDto {
     description: "Away team score",
     example: 72,
     type: Number,
+    nullable: true,
   })
   awayTeamScore!: number | null;
 

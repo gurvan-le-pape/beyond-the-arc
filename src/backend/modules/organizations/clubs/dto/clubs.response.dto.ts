@@ -233,6 +233,7 @@ export class TeamInfoDto {
   @ApiProperty({
     description: "Team leaderboard stats",
     type: TeamLeaderboardDto,
+    nullable: true,
   })
   leaderboard!: TeamLeaderboardDto | null;
 }
