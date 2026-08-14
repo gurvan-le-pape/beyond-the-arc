@@ -105,12 +105,13 @@ export class MatchesController {
     type: Number,
     example: 1,
   })
+  // No 404 documented, because none is sent. This is a list endpoint: an
+  // unknown pool id returns 200 with an empty array, the same as a pool that
+  // exists and has no matches — verified on prod, `pool/999999999` →
+  // `{"data":[],"meta":{"count":0},…}`. The 404 declared here was a response
+  // that could never occur, which is the `api-contract 4` defect class: a
+  // documented value a client could branch on and never reach.
   @ApiEnvelopeList(MatchResponseDto, "Matches successfully retrieved")
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: "Pool not found",
-    type: ApiErrorResponseDto,
-  })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid ID format",

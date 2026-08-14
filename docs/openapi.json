@@ -1587,16 +1587,6 @@
                 }
               }
             }
-          },
-          "404": {
-            "description": "Pool not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponseDto"
-                }
-              }
-            }
           }
         },
         "summary": "Get matches by pool ID",
