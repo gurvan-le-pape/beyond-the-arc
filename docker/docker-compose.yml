@@ -28,6 +28,21 @@ services:
       - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
       - INTERNAL_API_URL=${INTERNAL_API_URL}
       - FRONTEND_URL=${FRONTEND_URL}
+    # Requests a page rather than checking the port, because "listening but
+    # every render 500s" is the frontend failure this is for and a TCP probe
+    # cannot see it. `/` is a 307 to `/en` from the next-intl middleware;
+    # wget follows it, so this exercises a real render.
+    #
+    # That render calls the backend over my_network, so a backend outage marks
+    # the frontend unhealthy too. That coupling is deliberate: the page really
+    # is broken then, and nothing acts on the status automatically (see the
+    # backend service below).
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     networks:
       - my_network
 
@@ -54,6 +69,30 @@ services:
     depends_on:
       migrate:
         condition: service_completed_successfully
+    # What finally calls /api/health. The endpoint has run the database ping,
+    # the 300 MB heap check and the 90 % disk check since it was written, and
+    # nothing invoked it: Prometheus scrapes only /metrics, every alert rule is
+    # a Prometheus expression, and the sole caller under /health was one
+    # post-deploy curl in ci.yml. The checks were dead code that read as a
+    # control in place — the exact conditions of the 2026-07 disk incident.
+    #
+    # `--spider` sends HEAD; Express answers it from the same GET handler, so
+    # the indicators still run and only the body is discarded. A 503 from a
+    # failing indicator is a non-zero exit, which is what marks it unhealthy.
+    #
+    # **This does not restart anything.** Measured, not assumed: a container
+    # held unhealthy for 20 s under `restart: unless-stopped` showed
+    # RestartCount 0 and an unchanged StartedAt. Docker's restart policy fires
+    # on process *exit*, not on health status; auto-restart on unhealthy needs
+    # Swarm or an autoheal sidecar, neither of which is here. What this buys is
+    # that the checks execute on a schedule and their verdict is visible in
+    # `docker compose ps` — nothing pages anyone. See docs/observability.md.
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:4000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     networks:
       - my_network
 
