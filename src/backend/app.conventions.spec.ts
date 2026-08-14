@@ -1,9 +1,13 @@
 // src/backend/app.conventions.spec.ts
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+
 import { PaginationQueryDto } from "@common/dto";
 import type { INestApplication } from "@nestjs/common";
 import { ROUTE_ARGS_METADATA } from "@nestjs/common/constants";
 import { RouteParamtypes } from "@nestjs/common/enums/route-paramtypes.enum";
 import { ModulesContainer } from "@nestjs/core";
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { DECORATORS } from "@nestjs/swagger/dist/constants";
 import { Test } from "@nestjs/testing";
 import { getMetadataStorage } from "class-validator";
@@ -193,6 +197,74 @@ function validatedProps(target: NewableFunction): string[] {
   ];
 }
 
+/** The committed contract — the artefact the frontend generates from. */
+function committedSchemas(): Record<string, unknown> {
+  const path = resolve(__dirname, "../../docs/openapi.json");
+  const document = JSON.parse(readFileSync(path, "utf8")) as {
+    components?: { schemas?: Record<string, unknown> };
+  };
+  const schemas = document.components?.schemas;
+  // A silently empty read would make both response-side checks vacuous, which
+  // is the failure mode this whole section exists to prevent.
+  if (!schemas || Object.keys(schemas).length === 0) {
+    throw new Error(`No component schemas found in ${path}`);
+  }
+  return schemas;
+}
+
+/** `Name.prop` for every property carrying `nullable: true`. */
+function nullableProps(schemas: Record<string, unknown>): Set<string> {
+  const found = new Set<string>();
+  for (const [name, schema] of Object.entries(schemas)) {
+    const properties = (schema as { properties?: Record<string, unknown> })
+      .properties;
+    for (const [prop, propSchema] of Object.entries(properties ?? {})) {
+      if ((propSchema as { nullable?: boolean })?.nullable === true) {
+        found.add(`${name}.${prop}`);
+      }
+    }
+  }
+  return found;
+}
+
+/**
+ * `Name.path` for every property documented as an inline object with its own
+ * `properties`, rather than a `$ref` to a named class.
+ *
+ * Recurses through arrays and nested properties so a shape buried two levels
+ * down is caught too.
+ */
+function collectInlineObjectProps(name: string, schema: unknown): string[] {
+  const offenders: string[] = [];
+
+  const walk = (node: unknown, path: string): void => {
+    if (typeof node !== "object" || node === null) return;
+    const shape = node as {
+      type?: string;
+      items?: unknown;
+      properties?: Record<string, unknown>;
+    };
+
+    if (shape.type === "array" && shape.items) {
+      walk(shape.items, `${path}[]`);
+      return;
+    }
+    if (shape.type === "object" && shape.properties) {
+      offenders.push(`${name}.${path}`);
+    }
+    for (const [key, child] of Object.entries(shape.properties ?? {})) {
+      walk(child, `${path}.${key}`);
+    }
+  };
+
+  const properties = (schema as { properties?: Record<string, unknown> })
+    .properties;
+  for (const [prop, propSchema] of Object.entries(properties ?? {})) {
+    walk(propSchema, prop);
+  }
+  return offenders;
+}
+
 describe("API conventions", () => {
   let app: INestApplication;
   let queryArgs: QueryArg[];
@@ -332,5 +404,68 @@ describe("API conventions", () => {
     }
 
     expect(offenders).toEqual([]);
+  });
+
+  // ---------------------------------------------------------------------
+  // Response side
+  //
+  // Everything above this line checks query DTOs. `CLAUDE.md` credits this
+  // file with the response-side conventions too, and until now it asserted
+  // none of them — the absence `api-contract 2` went through, where a
+  // decorator named `MatchDetailResponseDto` for a route shipping
+  // `MatchResponseDto` and nothing noticed.
+  //
+  // Both checks below read the **committed** `docs/openapi.json` rather than
+  // a document built in-process. That is deliberate: the `@nestjs/swagger`
+  // CLI plugin is configured in `nest-cli.json`, so it runs for `nest build`
+  // and **not** under ts-jest — a document built here is missing whatever the
+  // plugin infers. The committed file is the artefact that ships, the
+  // `openapi-drift` CI job already fails when it is stale, and checking it
+  // means these conventions are asserted against what consumers actually get.
+  // ---------------------------------------------------------------------
+
+  it("response DTO properties reference real nested classes, never inline object schemas", () => {
+    // A nested shape must be its own DTO class, so it lands in
+    // `components.schemas` and generates a named frontend type. An inline
+    // `{ type: "object", properties: {...} }` describes the same data as an
+    // anonymous shape nothing can name or reuse.
+    //
+    // Distinct from `app.swagger.spec.ts`'s check, which rejects a *bare*
+    // `type: object` with no shape at all. An inline object carries
+    // `properties`, so it passes that check and fails this one.
+    const offenders = Object.entries(committedSchemas()).flatMap(
+      ([name, schema]) => collectInlineObjectProps(name, schema),
+    );
+
+    expect(offenders).toEqual([]);
+  });
+
+  it("nullable response properties say so in @ApiProperty, not via plugin inference", () => {
+    // The convention is that the *decorator* states nullability. A property
+    // typed `Foo | null` whose `@ApiProperty` omits `nullable: true` still
+    // reaches the document marked nullable, because the CLI plugin infers it
+    // from the TypeScript type — so the contract is right by accident, and
+    // only for as long as the plugin runs.
+    //
+    // Comparing the two documents is what makes that visible: this one is
+    // built without the plugin, the committed one with it. A property nullable
+    // there and not here is relying on inference. Three were, when this test
+    // was written (`MatchHistoryDto.homeTeamScore`, `.awayTeamScore`,
+    // `TeamInfoDto.leaderboard`) — each sitting beside a sibling that did
+    // declare it.
+    const document = SwaggerModule.createDocument(
+      app,
+      new DocumentBuilder().setVersion("1.0").build(),
+    );
+
+    const declared = nullableProps(document.components?.schemas ?? {});
+    const shipped = nullableProps(committedSchemas());
+
+    // Only one direction is this test's business. The reverse (declared here,
+    // absent from the committed file) means the snapshot is stale, which is
+    // `openapi-drift`'s job and would be a confusing failure to raise here.
+    const inferredOnly = [...shipped].filter((p) => !declared.has(p)).sort();
+
+    expect(inferredOnly).toEqual([]);
   });
 });
