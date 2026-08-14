@@ -7,6 +7,7 @@ export * from "./cache-max-entries";
 export * from "./cache-ttls";
 export * from "./categories";
 export * from "./competition-levels";
+export * from "./competition-time-zone";
 export * from "./event-types";
 export * from "./genders";
 export * from "./metrics-path";
