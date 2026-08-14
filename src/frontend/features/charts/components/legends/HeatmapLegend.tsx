@@ -50,6 +50,13 @@ export const HeatmapLegend: React.FC<HeatmapLegendProps> = ({
 
   return (
     <div className={`flex flex-col gap-3 w-full ${compact ? "" : "max-w-sm"}`}>
+      {/* Names the quantity the colour encodes. On hotspots the zone labels
+          print FG%, a different quantity from the fill — without this, the two
+          are indistinguishable. */}
+      <Text variant="caption" as="p" className="text-text-secondary">
+        {t("shotChart.colorMeaning")}
+      </Text>
+
       {/* Gradient bar */}
       <div className="flex items-center gap-3 w-full">
         <Text variant="caption" as="span" className="font-medium shrink-0">
