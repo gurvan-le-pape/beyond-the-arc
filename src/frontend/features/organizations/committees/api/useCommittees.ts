@@ -12,7 +12,7 @@ import { committeesPrefetch, committeesQueries } from "./committeesQueries";
  *
  * Features:
  * - Automatic caching (5 minutes stale, 10 minutes GC)
- * - Background refetching on window focus
+ * - Background refetch on mount when stale (window-focus refetching is off)
  *
  * @param filters - Optional filter criteria
  * @param options - Additional query options
