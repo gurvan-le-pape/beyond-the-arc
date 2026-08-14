@@ -17,6 +17,7 @@ import {
   CATEGORY_LIST,
   COMPETITION_LEVEL_LIST,
   GENDER_LIST,
+  METRICS_PATH,
 } from "./common/constants";
 
 /**
@@ -195,6 +196,64 @@ function validatedProps(target: NewableFunction): string[] {
         .map((meta) => meta.propertyName),
     ),
   ];
+}
+
+/** `$ref` every enveloped response composes onto. */
+const ENVELOPE_REF = "#/components/schemas/ApiEnvelopeDto";
+
+interface SuccessResponse {
+  path: string;
+  status: string;
+  schema: unknown;
+  responses: Record<string, unknown>;
+  pathParams: number;
+}
+
+/**
+ * Every 2xx in the committed document, with the sibling responses and path
+ * parameters of the operation it belongs to.
+ *
+ * Reads `paths` rather than `components`, because both checks below are about
+ * what a *route* declares, not what a DTO looks like.
+ */
+function successResponses(): SuccessResponse[] {
+  const path = resolve(__dirname, "../../docs/openapi.json");
+  const document = JSON.parse(readFileSync(path, "utf8")) as {
+    paths?: Record<string, Record<string, unknown>>;
+  };
+  const paths = document.paths ?? {};
+  if (Object.keys(paths).length === 0) {
+    throw new Error(`No paths found in ${path}`);
+  }
+
+  const found: SuccessResponse[] = [];
+  for (const [route, operations] of Object.entries(paths)) {
+    for (const operation of Object.values(operations)) {
+      const op = operation as {
+        responses?: Record<string, { content?: Record<string, unknown> }>;
+        parameters?: { in?: string }[];
+      };
+      const responses = op.responses ?? {};
+      const pathParams = (op.parameters ?? []).filter(
+        (parameter) => parameter.in === "path",
+      ).length;
+
+      for (const [status, response] of Object.entries(responses)) {
+        if (!status.startsWith("2")) continue;
+        found.push({
+          path: route,
+          status,
+          schema:
+            (response.content as Record<string, { schema?: unknown }>)?.[
+              "application/json"
+            ]?.schema ?? null,
+          responses,
+          pathParams,
+        });
+      }
+    }
+  }
+  return found;
 }
 
 /** The committed contract — the artefact the frontend generates from. */
@@ -467,5 +526,70 @@ describe("API conventions", () => {
     const inferredOnly = [...shipped].filter((p) => !declared.has(p)).sort();
 
     expect(inferredOnly).toEqual([]);
+  });
+
+  it("every 2xx on an /api route is documented as the response envelope", () => {
+    // `TransformInterceptor` wraps every route under the global prefix, and
+    // `@SkipTransform` is applied in exactly one place — `/metrics`, which is
+    // outside the prefix and serves Prometheus text. So a 2xx documented as a
+    // bare DTO describes a body the API does not send, which is what all 34 of
+    // them did before #523.
+    //
+    // The guard #523 deferred: nothing stopped one hand-written
+    // `@ApiResponse({ type: Dto })` from undoing the convention for a route,
+    // silently, because the document would still look plausible.
+    const offenders = successResponses().filter(
+      ({ path, schema }) =>
+        path !== METRICS_PATH && !JSON.stringify(schema).includes(ENVELOPE_REF),
+    );
+
+    expect(offenders.map(({ path, status }) => `${path} ${status}`)).toEqual(
+      [],
+    );
+  });
+
+  it("only by-id endpoints declare a 404; list endpoints return an empty array", () => {
+    // The half of the convention neither spec checked. It is checkable now
+    // only because #523 made the response *shape* explicit in the document —
+    // a 200 carrying `ApiListMetaDto` or `ApiPageMetaDto` is a list, and a
+    // list has nothing to 404 on: an unknown id yields the same empty array
+    // as a real id with no rows.
+    //
+    // `/api/matches/pool/{poolId}` declared one and could never send it
+    // (prod: `pool/999999999` → 200 `{"data":[],"meta":{"count":0}}`). Note
+    // that "has a path param" is *not* the discriminator — that route has one
+    // and is still a list.
+    const listsWith404 = successResponses()
+      .filter(({ schema }) => {
+        const text = JSON.stringify(schema);
+        return (
+          text.includes("ApiListMetaDto") || text.includes("ApiPageMetaDto")
+        );
+      })
+      .filter(({ responses }) => "404" in responses)
+      .map(({ path }) => path);
+
+    expect(listsWith404).toEqual([]);
+
+    // The converse: a single-object route addressed by id must say it can
+    // 404, since that is the one shape where an unknown id has no empty
+    // answer to give. Routes with no path param (`/api/stats`,
+    // `/api/players/filter-values`, the health probes) are excluded — there
+    // is no id to miss.
+    const byIdWithout404 = successResponses()
+      .filter(({ schema }) => {
+        const text = JSON.stringify(schema);
+        return (
+          text.includes(ENVELOPE_REF) &&
+          !text.includes("ApiListMetaDto") &&
+          !text.includes("ApiPageMetaDto")
+        );
+      })
+      .filter(
+        ({ pathParams, responses }) => pathParams > 0 && !("404" in responses),
+      )
+      .map(({ path }) => path);
+
+    expect(byIdWithout404).toEqual([]);
   });
 });
