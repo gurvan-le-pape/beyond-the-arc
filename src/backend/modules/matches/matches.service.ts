@@ -1,5 +1,5 @@
 // src/backend/modules/matches/matches.service.ts
-import { EventType, Role } from "@common/constants";
+import { COMPETITION_TIME_ZONE, EventType, Role } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
 import { Category, CompetitionLevel, Gender } from "@common/index";
 import {
@@ -516,11 +516,11 @@ export class MatchesService {
       where.date = {
         gte: fromZonedTime(
           new Date(filters.date + "T00:00:00"),
-          "Europe/Paris",
+          COMPETITION_TIME_ZONE,
         ),
         lt: fromZonedTime(
           new Date(filters.date + "T23:59:59.999"),
-          "Europe/Paris",
+          COMPETITION_TIME_ZONE,
         ),
       };
     }

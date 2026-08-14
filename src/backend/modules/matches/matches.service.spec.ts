@@ -641,6 +641,11 @@ describe("MatchesService", () => {
       );
     });
 
+    // The "Europe/Paris" literals below are the oracle and must stay literal.
+    // The service now reads COMPETITION_TIME_ZONE; importing that constant here
+    // too would make this assertion compare the constant with itself, so the
+    // test would pass for any zone and stop pinning the range to France. The
+    // duplication is what gives the test its teeth — do not tidy it away.
     it("should apply date filter as range in Paris timezone", async () => {
       await service.findAllMatches({ date: "2024-02-05" });
 

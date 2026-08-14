@@ -124,6 +124,24 @@ The domain models the French basketball competition hierarchy:
 
 Full schema and modelling decisions are in → [`data-model.md`](./data-model.md)
 
+### The competition time zone is mirrored in three languages, on purpose
+
+Every match instant is stored in UTC. Its wall-clock meaning is defined in one zone — `Europe/Paris` — because the competition is French: a date filter of `2026-02-05` means the French calendar day, not the server's, which is UTC in the container and whatever a laptop is set to in development.
+
+That identifier is named once per language, and the three are **deliberately not shared**:
+
+| language | constant | file |
+| --- | --- | --- |
+| backend (TS) | `COMPETITION_TIME_ZONE` | `src/backend/common/constants/competition-time-zone.ts` |
+| frontend (TS) | `COMPETITION_TIME_ZONE` | `src/frontend/shared/utils/helpers/date-helpers.ts` |
+| scheduler (Python) | `PARIS` | `src/backend/db/python/utils/schedule_utils.py` |
+
+No cross-language mechanism exists in this repo and none was invented for one string. An environment variable would turn a compile-time constant into a runtime input, so a typo becomes a production bug instead of a build failure; a code generator is new build machinery for a value that has never changed. This is the posture the repo already takes for the enum lists mirrored between backend and frontend.
+
+The cost this accepts is that a change means editing three files. It is written down here so the duplication is not mistaken for an oversight and "fixed" into a shared runtime input.
+
+One deliberate exception: `matches.service.spec.ts` keeps the literal `"Europe/Paris"` rather than importing the backend constant. The spec is the oracle for that constant — importing it would compare the value with itself, and the test would pass for any zone.
+
 ---
 
 ## Data pipeline
