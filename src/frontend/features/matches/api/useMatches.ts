@@ -19,7 +19,7 @@ import { matchesPrefetch, matchesQueries } from "./matchesQueries";
  *
  * Features:
  * - Automatic caching (2 minutes stale, 5 minutes GC)
- * - Background refetching on window focus
+ * - Background refetch on mount when stale (window-focus refetching is off)
  * - Pagination support
  *
  * @param filters - Optional filter criteria

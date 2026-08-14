@@ -11,7 +11,7 @@ import { leaguesPrefetch, leaguesQueries } from "./leaguesQueries";
  *
  * Features:
  * - Automatic caching (5 minutes stale, 15 minutes GC)
- * - Background refetching on window focus
+ * - Background refetch on mount when stale (window-focus refetching is off)
  *
  * @returns React Query result with leagues data
  *

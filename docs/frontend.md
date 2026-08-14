@@ -187,12 +187,33 @@ The `usePlayersPrefetch` hook composes these with `useQueryClient` so components
 
 ### Cache timing policy
 
-Cache lifetimes are set per feature based on how often the data realistically changes:
+Cache lifetimes are set per query based on how often the data realistically
+changes. Every tier the client sets is listed here — a new query picks one of
+these rows rather than a fresh number, and adding a row is the way to introduce
+a genuinely new answer to "how often does this change?":
 
-| Data                   | `staleTime` | `gcTime` | Rationale                          |
-| ---------------------- | ----------- | -------- | ---------------------------------- |
-| Player / team metadata | 5 min       | 10 min   | Changes rarely within a session    |
-| Match history          | 2 min       | 10 min   | Results update throughout the week |
+| Data                                                               | `staleTime` | `gcTime` | Rationale                                                      |
+| ------------------------------------------------------------------ | ----------- | -------- | -------------------------------------------------------------- |
+| Anything that sets neither (`QueryClient` default)                 | 1 min       | 5 min    | A floor, not a policy — every tier below states its own        |
+| Team filter values                                                 | 30 s        | 10 min   | Pool numbers and letters shift as admins edit them             |
+| Name-search results (players, clubs)                               | 1 min       | 2 min    | A result set is consulted once and rarely returned to          |
+| Matches — list, detail, by pool, by championship                   | 2 min       | 5 min    | The scheduler writes results continuously                      |
+| Match history of one player or team                                | 2 min       | 10 min   | Same volatility; `gcTime` inherited from the feature base      |
+| Match events and player stats                                      | 5 min       | 5 min    | Immutable once the match has ended                             |
+| Entity metadata — championships, players, teams, clubs, committees | 5 min       | 10 min   | Changes rarely within a session                                |
+| Leagues                                                            | 5 min       | 15 min   | Reference data, loaded early and reused across features        |
+| Club aggregates by département, and the full club list             | 1 h         | 10 min   | Only a static-data refresh moves them                          |
+| Club aggregates by region                                          | 24 h        | 10 min   | The coarsest aggregate; static between refreshes               |
+| GeoJSON boundaries                                                 | ∞           | ∞        | Static assets — French administrative boundaries do not change |
+
+Every one of these pairs is set in a `features/*/api/*Queries.ts` options
+factory; the hooks spread those options and never set a lifetime of their own,
+so the tier a query belongs to is readable in one file.
+
+**Background refetching on window focus is off** — `refetchOnWindowFocus: false`
+on the `QueryClient`, and no query overrides it. `refetchOnMount` is `true`, so a
+stale query refetches when a component mounts and not before. That is the only
+automatic refetch in the client half; nothing polls.
 
 The server half of the dual service layer answers the same question with its own
 tiers, declared as `ServerRevalidate` in `server-api-client.ts` and passed
