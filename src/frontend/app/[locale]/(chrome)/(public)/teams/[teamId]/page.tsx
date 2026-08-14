@@ -26,14 +26,16 @@ export const revalidate = 3600;
 export async function generateMetadata({
   params,
 }: LocalePageProps<{ teamId: string }>): Promise<Metadata> {
-  const { teamId: teamIdStr, locale } = await params;
+  const routeParams = await params;
+  const { locale } = routeParams;
+  const teamId = parseRouteId(routeParams.teamId);
   const [tCommon, tMeta] = await Promise.all([
     getTranslations({ locale, namespace: "common" }),
     getTranslations({ locale, namespace: "teams" }),
   ]);
 
   const team = await serverTeamsService
-    .getById(parseRouteId(teamIdStr))
+    .getById(teamId)
     .catch(handleServerError);
 
   // A team has no name of its own — the page titles it by club, and the badges
@@ -50,11 +52,11 @@ export async function generateMetadata({
 export default async function TeamDetailPage({
   params,
 }: LocalePageProps<{ teamId: string }>) {
-  const { teamId: teamIdStr, locale } = await params;
+  const routeParams = await params;
+  const { locale } = routeParams;
+  const teamId = parseRouteId(routeParams.teamId);
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "teams" });
-
-  const teamId = parseRouteId(teamIdStr);
 
   const [team, matchHistory, matchEvents] = await Promise.all([
     serverTeamsService.getById(teamId),

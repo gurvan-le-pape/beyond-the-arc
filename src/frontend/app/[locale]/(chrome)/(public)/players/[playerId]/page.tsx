@@ -26,11 +26,13 @@ export const revalidate = 3600;
 export async function generateMetadata({
   params,
 }: LocalePageProps<{ playerId: string }>): Promise<Metadata> {
-  const { playerId: playerIdStr, locale } = await params;
+  const routeParams = await params;
+  const { locale } = routeParams;
+  const playerId = parseRouteId(routeParams.playerId);
   const tMeta = await getTranslations({ locale, namespace: "players" });
 
   const player = await serverPlayersService
-    .getById(parseRouteId(playerIdStr))
+    .getById(playerId)
     .catch(handleServerError);
 
   return {
@@ -42,11 +44,11 @@ export async function generateMetadata({
 export default async function PlayerDetailPage({
   params,
 }: LocalePageProps<{ playerId: string }>) {
-  const { playerId: playerIdStr, locale } = await params;
+  const routeParams = await params;
+  const { locale } = routeParams;
+  const playerId = parseRouteId(routeParams.playerId);
   setRequestLocale(locale);
   const tPlayers = await getTranslations({ locale, namespace: "players" });
-
-  const playerId = parseRouteId(playerIdStr);
 
   const [player, matchHistory, matchEvents] = await Promise.all([
     serverPlayersService.getById(playerId),

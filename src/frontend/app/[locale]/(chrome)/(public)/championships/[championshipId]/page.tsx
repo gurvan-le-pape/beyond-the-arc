@@ -35,14 +35,16 @@ import { handleServerError, parseRouteId } from "@/shared/utils";
 export async function generateMetadata({
   params,
 }: LocalePageProps<{ championshipId: string }>): Promise<Metadata> {
-  const { championshipId: championshipIdStr, locale } = await params;
+  const routeParams = await params;
+  const { locale } = routeParams;
+  const championshipId = parseRouteId(routeParams.championshipId);
   const [tCommon, tCompetitions] = await Promise.all([
     getTranslations({ locale, namespace: "common" }),
     getTranslations({ locale, namespace: "competitions" }),
   ]);
 
   const championship = await serverChampionshipsService
-    .getById(parseRouteId(championshipIdStr))
+    .getById(championshipId)
     .catch(handleServerError);
 
   // The same one-liner the page uses as its heading — a championship has no
@@ -65,7 +67,9 @@ export default async function ChampionshipsDetailPage({
   searchParams,
 }: LocalePageProps<{ championshipId: string }> &
   SearchParamsProps<{ pool?: string }>) {
-  const { championshipId: championshipIdStr, locale } = await params;
+  const routeParams = await params;
+  const { locale } = routeParams;
+  const championshipId = parseRouteId(routeParams.championshipId);
   const { pool: poolParam } = await searchParams;
   setRequestLocale(locale);
 
@@ -73,8 +77,6 @@ export default async function ChampionshipsDetailPage({
     locale,
     namespace: "competitions",
   });
-
-  const championshipId = parseRouteId(championshipIdStr);
 
   const championship = await serverChampionshipsService
     .getById(championshipId)

@@ -29,11 +29,13 @@ export const revalidate = 3600;
 export async function generateMetadata({
   params,
 }: LocalePageProps<{ committeeId: string }>): Promise<Metadata> {
-  const { committeeId: committeeIdStr, locale } = await params;
+  const routeParams = await params;
+  const { locale } = routeParams;
+  const committeeId = parseRouteId(routeParams.committeeId);
   const tMeta = await getTranslations({ locale, namespace: "organizations" });
 
   const committee = await serverCommitteesService
-    .getById(parseRouteId(committeeIdStr))
+    .getById(committeeId)
     .catch(handleServerError);
 
   return {
@@ -45,10 +47,10 @@ export async function generateMetadata({
 export default async function CommitteePage({
   params,
 }: LocalePageProps<{ committeeId: string }>) {
-  const { committeeId: committeeIdStr, locale } = await params;
+  const routeParams = await params;
+  const { locale } = routeParams;
+  const committeeId = parseRouteId(routeParams.committeeId);
   setRequestLocale(locale);
-
-  const committeeId = parseRouteId(committeeIdStr);
 
   const tCommon = await getTranslations({ locale, namespace: "common" });
   const tCompetitions = await getTranslations({
