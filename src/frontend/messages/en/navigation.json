@@ -11,7 +11,12 @@
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
     "toggleTheme": "Toggle theme",
-    "selectTheme": "Select theme"
+    "selectTheme": "Select theme",
+    "themes": {
+      "light": "Light",
+      "dark": "Dark",
+      "highContrast": "High contrast"
+    }
   },
   "footer": {
     "projectName": "Beyond The Arc",

@@ -8,10 +8,21 @@ import { useEffect, useRef, useState } from "react";
 
 import { cn } from "@/shared/utils";
 
+/**
+ * `labelKey`, not `label`: these three are visible menu text, so they belong
+ * in the catalogue like every other user-facing string. They were hardcoded
+ * English and rendered as-is to French users, while the two `aria-label`s
+ * below went through next-intl correctly.
+ *
+ * The keys are written out rather than built from `id` (`header.themes.${id}`
+ * would be shorter). A literal key stays greppable, which is what lets the
+ * orphaned-key sweep see it — and `id` is `"high-contrast"`, which would need
+ * a hyphenated key just to keep the two in step.
+ */
 const THEMES = [
-  { id: "light", label: "Light", Icon: Sun },
-  { id: "dark", label: "Dark", Icon: Moon },
-  { id: "high-contrast", label: "High contrast", Icon: Eye },
+  { id: "light", labelKey: "header.themes.light", Icon: Sun },
+  { id: "dark", labelKey: "header.themes.dark", Icon: Moon },
+  { id: "high-contrast", labelKey: "header.themes.highContrast", Icon: Eye },
 ] as const;
 
 /**
@@ -55,7 +66,10 @@ export function ThemeToggle() {
     );
   }
 
-  const active = THEMES.find((t) => t.id === theme) ?? THEMES[0];
+  // Not `(t) =>` — that shadowed the translation function, which was harmless
+  // while nothing in this file resolved a message but is a trap now that the
+  // labels do.
+  const active = THEMES.find((entry) => entry.id === theme) ?? THEMES[0];
   const ActiveIcon = active.Icon;
 
   return (
@@ -94,7 +108,7 @@ export function ThemeToggle() {
             : "opacity-0 scale-95 pointer-events-none",
         )}
       >
-        {THEMES.map(({ id, label, Icon }) => {
+        {THEMES.map(({ id, labelKey, Icon }) => {
           const isActive = theme === id;
           return (
             <button
@@ -115,7 +129,7 @@ export function ThemeToggle() {
               )}
             >
               <Icon className="w-4 h-4 shrink-0" />
-              {label}
+              {t(labelKey)}
             </button>
           );
         })}
