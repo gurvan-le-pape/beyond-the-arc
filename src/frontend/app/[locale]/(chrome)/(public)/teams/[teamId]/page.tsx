@@ -21,7 +21,10 @@ export async function generateStaticParams() {
 }
 
 export const dynamicParams = true;
-export const revalidate = 3600;
+// 60s, not the hour this once declared: every fetch here is `ServerRevalidate.LIVE`,
+// and the lowest revalidate in a route wins — so 60 has always been what was in
+// force, whatever the number above it said.
+export const revalidate = 60;
 
 export async function generateMetadata({
   params,
