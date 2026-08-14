@@ -3,11 +3,11 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 import { PaginationQueryDto } from "@common/dto";
+import { applyApiPrefix, createOpenApiDocument } from "@common/utils";
 import type { INestApplication } from "@nestjs/common";
 import { ROUTE_ARGS_METADATA } from "@nestjs/common/constants";
 import { RouteParamtypes } from "@nestjs/common/enums/route-paramtypes.enum";
 import { ModulesContainer } from "@nestjs/core";
-import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { DECORATORS } from "@nestjs/swagger/dist/constants";
 import { Test } from "@nestjs/testing";
 import { getMetadataStorage } from "class-validator";
@@ -347,6 +347,8 @@ describe("API conventions", () => {
       imports: [AppModule],
     }).compile();
     app = moduleRef.createNestApplication();
+    // main.ts applies the prefix before building the document; so must this.
+    applyApiPrefix(app);
     queryArgs = collectQueryArgs(app);
 
     const primitives = new Set<unknown>([Object, String, Number, Boolean]);
@@ -525,10 +527,9 @@ describe("API conventions", () => {
     // was written (`MatchHistoryDto.homeTeamScore`, `.awayTeamScore`,
     // `TeamInfoDto.leaderboard`) — each sitting beside a sibling that did
     // declare it.
-    const document = SwaggerModule.createDocument(
-      app,
-      new DocumentBuilder().setVersion("1.0").build(),
-    );
+    // `createOpenApiDocument`, the same call main.ts makes — a locally built
+    // DocumentBuilder here would be another copy of the config #529 removed.
+    const document = createOpenApiDocument(app);
 
     const declared = nullableProps(document.components?.schemas ?? {});
     const shipped = nullableProps(committedSchemas());
