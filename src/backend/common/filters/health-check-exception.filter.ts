@@ -31,6 +31,18 @@ import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
  * Only ServiceUnavailableException is caught. A genuine bug in the controller
  * still falls through to AllExceptionsFilter and still reaches Sentry.
  */
+/**
+ * The log message for every failed poll this filter records.
+ *
+ * Constant for the same reason `AllExceptionsFilter`'s is: `msg` is what Loki
+ * groups on, so everything that varies per request — method, url, statusCode,
+ * the health result — is a field on the log object instead. This used to
+ * interpolate all three into the message, which made `msg` unique per route
+ * and left "which health check is failing, and how often" unanswerable by
+ * grouping, while the same three values sat in fields on the same line.
+ */
+const LOG_MESSAGE = "health check failed";
+
 @Catch(ServiceUnavailableException)
 export class HealthCheckExceptionFilter implements ExceptionFilter {
   constructor(
@@ -46,15 +58,19 @@ export class HealthCheckExceptionFilter implements ExceptionFilter {
     const statusCode = exception.getStatus();
     const data = exception.getResponse();
 
+    // No request id is added here on purpose — the same reason
+    // AllExceptionsFilter gives. nestjs-pino binds the id from genReqId to the
+    // request's logger, so this line already carries it as `req.id`; a second
+    // name for the same value (this used to set `traceId`) meant a Loki query
+    // on one name found the failure and missed the request record.
     this.logger.error(
       {
         method: request.method,
         url: request.url,
-        traceId: request.id ?? null,
         statusCode,
         health: data,
       },
-      `${request.method} ${request.url} - ${statusCode} - health check failed`,
+      LOG_MESSAGE,
     );
 
     response.status(statusCode).json({

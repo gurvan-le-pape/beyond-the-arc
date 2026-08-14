@@ -123,10 +123,42 @@ describe("HealthCheckExceptionFilter", () => {
     expect(logger.error).toHaveBeenCalledTimes(1);
     const [context, message] = logger.error.mock.calls[0];
     expect(context).toMatchObject({
+      method: "GET",
       url: "/api/health",
       statusCode: 503,
       health: TERMINUS_PAYLOAD,
     });
     expect(message).toContain("health check failed");
+  });
+
+  it("logs a constant message and puts the request detail in fields", () => {
+    // `msg` is what Loki groups on, so it must be identical for every poll.
+    // The previous message interpolated method, url and statusCode — all three
+    // already fields on the same object — which made it unique per route and
+    // stopped "which health check is failing" being answerable by grouping.
+    // `toContain` above passes either way; this asserts the whole string.
+    filter.catch(
+      new ServiceUnavailableException(TERMINUS_PAYLOAD),
+      makeHost("/api/health/ready") as any,
+    );
+
+    expect(logger.error.mock.calls[0][1]).toBe("health check failed");
+    expect(logger.error.mock.calls[0][0]).toMatchObject({
+      url: "/api/health/ready",
+    });
+  });
+
+  it("does not give the request id a second name", () => {
+    // nestjs-pino already binds the id to the request's logger as `req.id`
+    // (`makeHost` sets one). A `traceId` field here would be the same value
+    // under a second name, so a Loki query on either would miss half the
+    // request's lines — the defect #441 removed from AllExceptionsFilter,
+    // which this filter carried because it was written three days earlier.
+    filter.catch(
+      new ServiceUnavailableException(TERMINUS_PAYLOAD),
+      makeHost() as any,
+    );
+
+    expect(logger.error.mock.calls[0][0].traceId).toBeUndefined();
   });
 });
