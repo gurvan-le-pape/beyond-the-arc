@@ -1,5 +1,6 @@
 // src/backend/modules/organizations/leagues/leagues.controller.ts
 import { CACHE_TTL } from "@common/constants";
+import { ApiEnvelope, ApiEnvelopeList } from "@common/decorators";
 import { ApiErrorResponseDto } from "@common/dto";
 import { CacheInterceptor } from "@common/interceptors";
 import { ParseEntityIdPipe } from "@common/pipes";
@@ -64,24 +65,10 @@ export class LeaguesController {
     description:
       "Retrieves a list of all regional leagues. Results are cached for 10 minutes as this data rarely changes.",
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "List of regional leagues successfully retrieved",
-    type: [LeagueResponseDto],
-    schema: {
-      example: {
-        data: [
-          { id: 1, name: "League Auvergne-Rhône-Alpes" },
-          { id: 2, name: "League Bourgogne-Franche-Comté" },
-          { id: 3, name: "League Bretagne" },
-        ],
-        meta: { count: 3 },
-        timestamp: "2024-02-05T10:00:00Z",
-        path: "/leagues",
-        statusCode: 200,
-      },
-    },
-  })
+  @ApiEnvelopeList(
+    LeagueResponseDto,
+    "List of regional leagues successfully retrieved",
+  )
   @ApiResponse({
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: "Internal server error",
@@ -132,22 +119,7 @@ export class LeaguesController {
     type: Number,
     example: 1,
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "League successfully retrieved",
-    type: LeagueResponseDto,
-    schema: {
-      example: {
-        data: {
-          id: 1,
-          name: "League Auvergne-Rhône-Alpes",
-        },
-        timestamp: "2024-02-05T10:00:00Z",
-        path: "/leagues/1",
-        statusCode: 200,
-      },
-    },
-  })
+  @ApiEnvelope(LeagueResponseDto, "League successfully retrieved")
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: "League not found",

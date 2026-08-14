@@ -695,6 +695,30 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        ApiEnvelopeDto: {
+            /**
+             * @description When the response was produced, as an ISO 8601 UTC instant
+             * @example 2026-02-05T10:00:00.000Z
+             */
+            timestamp: string;
+            /**
+             * @description The request path that produced this response, including the /api prefix and any query string
+             * @example /api/leagues
+             */
+            path: string;
+            /**
+             * @description HTTP status code, repeated in the body for convenience
+             * @example 200
+             */
+            statusCode: number;
+        };
+        ApiListMetaDto: {
+            /**
+             * @description Number of items in `data`
+             * @example 3
+             */
+            count: number;
+        };
         ClubStatsByRegionDto: {
             /**
              * @description League regionale ID
@@ -841,6 +865,28 @@ export interface components {
              * @example 1
              */
             leagueId: number;
+        };
+        ApiPageMetaDto: {
+            /**
+             * @description Number of items on the current page — not the size of the full result set, which is `data.total`
+             * @example 50
+             */
+            count: number;
+            /**
+             * @description Current page (1-based), mirroring `data.page`
+             * @example 1
+             */
+            page: number;
+            /**
+             * @description Requested page size, mirroring `data.limit`
+             * @example 50
+             */
+            limit: number;
+            /**
+             * @description Total number of pages, mirroring `data.totalPages`
+             * @example 3
+             */
+            totalPages: number;
         };
         PaginatedResponseDto: {
             /** @description Page of result items */
@@ -2761,6 +2807,67 @@ export interface components {
             committees: number;
             championshipsByLevel: components["schemas"]["ChampionshipsByLevelDto"];
         };
+        HealthIndicatorDto: {
+            /**
+             * @description Indicator verdict — "up" or "down"
+             * @example up
+             */
+            status: string;
+        };
+        HealthCheckResultDto: {
+            /**
+             * @description Overall result — "ok" when every indicator is up
+             * @example ok
+             */
+            status: string;
+            /**
+             * @description Indicators that are up, keyed by indicator name
+             * @example {
+             *       "database": {
+             *         "status": "up"
+             *       }
+             *     }
+             */
+            info?: {
+                [key: string]: components["schemas"]["HealthIndicatorDto"];
+            } | null;
+            /**
+             * @description Indicators that are down, keyed by indicator name
+             * @example {}
+             */
+            error?: {
+                [key: string]: components["schemas"]["HealthIndicatorDto"];
+            } | null;
+            /**
+             * @description Every indicator's verdict, up or down, keyed by name
+             * @example {
+             *       "database": {
+             *         "status": "up"
+             *       },
+             *       "memory_heap": {
+             *         "status": "up"
+             *       },
+             *       "storage": {
+             *         "status": "up"
+             *       }
+             *     }
+             */
+            details: {
+                [key: string]: components["schemas"]["HealthIndicatorDto"];
+            };
+        };
+        LivenessResponseDto: {
+            /**
+             * @description Always "ok" — reaching the handler is the check
+             * @example ok
+             */
+            status: string;
+            /**
+             * @description When the probe answered, as an ISO 8601 UTC instant. Distinct from the envelope's own `timestamp`, though the two are produced microseconds apart.
+             * @example 2026-02-05T10:00:00.000Z
+             */
+            timestamp: string;
+        };
     };
     responses: never;
     parameters: never;
@@ -2804,7 +2911,10 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ClubStatsByRegionDto"][];
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["ClubStatsByRegionDto"][];
+                        meta: components["schemas"]["ApiListMetaDto"];
+                    };
                 };
             };
             /** @description Internal server error */
@@ -2836,7 +2946,10 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ClubStatsByDepartmentDto"][];
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["ClubStatsByDepartmentDto"][];
+                        meta: components["schemas"]["ApiListMetaDto"];
+                    };
                 };
             };
             /** @description Invalid query parameters */
@@ -2885,7 +2998,10 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ClubBasicResponseDto"][];
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["ClubBasicResponseDto"][];
+                        meta: components["schemas"]["ApiListMetaDto"];
+                    };
                 };
             };
             /** @description Internal server error */
@@ -2931,8 +3047,11 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PaginatedResponseDto"] & {
-                        items: components["schemas"]["ClubBasicResponseDto"][];
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["PaginatedResponseDto"] & {
+                            items: components["schemas"]["ClubBasicResponseDto"][];
+                        };
+                        meta: components["schemas"]["ApiPageMetaDto"];
                     };
                 };
             };
@@ -2987,7 +3106,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ClubDetailedResponseDto"];
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["ClubDetailedResponseDto"];
+                    };
                 };
             };
             /** @description Invalid ID format */
@@ -3046,7 +3167,10 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["CommitteeResponseDto"][];
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["CommitteeResponseDto"][];
+                        meta: components["schemas"]["ApiListMetaDto"];
+                    };
                 };
             };
             /** @description Invalid query parameters */
@@ -3089,7 +3213,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["CommitteeResponseDto"];
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["CommitteeResponseDto"];
+                    };
                 };
             };
             /** @description Invalid ID format */
@@ -3136,7 +3262,10 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LeagueResponseDto"][];
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["LeagueResponseDto"][];
+                        meta: components["schemas"]["ApiListMetaDto"];
+                    };
                 };
             };
             /** @description Internal server error */
@@ -3177,7 +3306,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LeagueResponseDto"];
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["LeagueResponseDto"];
+                    };
                 };
             };
             /** @description Invalid ID format */
@@ -3227,7 +3358,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ChampionshipResponseDto"];
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["ChampionshipResponseDto"];
+                    };
                 };
             };
             /** @description Invalid ID format */
@@ -3287,8 +3420,11 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PaginatedResponseDto"] & {
-                        items: components["schemas"]["ChampionshipResponseDto"][];
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["PaginatedResponseDto"] & {
+                            items: components["schemas"]["ChampionshipResponseDto"][];
+                        };
+                        meta: components["schemas"]["ApiPageMetaDto"];
                     };
                 };
             };
@@ -3332,7 +3468,10 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LeaderboardResponseDto"][];
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["LeaderboardResponseDto"][];
+                        meta: components["schemas"]["ApiListMetaDto"];
+                    };
                 };
             };
             /** @description Invalid query parameters */
@@ -3375,7 +3514,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LeaderboardResponseDto"];
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["LeaderboardResponseDto"];
+                    };
                 };
             };
             /** @description Invalid ID format */
@@ -3425,7 +3566,10 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PoolResponseDto"][];
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["PoolResponseDto"][];
+                        meta: components["schemas"]["ApiListMetaDto"];
+                    };
                 };
             };
             /** @description Invalid query parameters */
@@ -3468,7 +3612,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PoolResponseDto"];
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["PoolResponseDto"];
+                    };
                 };
             };
             /** @description Invalid ID format */
@@ -3542,8 +3688,11 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PaginatedResponseDto"] & {
-                        items: components["schemas"]["MatchResponseDto"][];
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["PaginatedResponseDto"] & {
+                            items: components["schemas"]["MatchResponseDto"][];
+                        };
+                        meta: components["schemas"]["ApiPageMetaDto"];
                     };
                 };
             };
@@ -3576,7 +3725,10 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MatchResponseDto"][];
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["MatchResponseDto"][];
+                        meta: components["schemas"]["ApiListMetaDto"];
+                    };
                 };
             };
             /** @description Invalid ID format */
@@ -3617,7 +3769,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MatchDetailResponseDto"];
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["MatchDetailResponseDto"];
+                    };
                 };
             };
             /** @description Invalid ID format */
@@ -3658,7 +3812,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MatchPlayerStatsResponseDto"];
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["MatchPlayerStatsResponseDto"];
+                    };
                 };
             };
             /** @description Invalid ID format */
@@ -3699,7 +3855,10 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MatchEventDto"][];
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["MatchEventDto"][];
+                        meta: components["schemas"]["ApiListMetaDto"];
+                    };
                 };
             };
             /** @description Invalid ID format */
@@ -3731,7 +3890,10 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MatchEventDto"][];
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["MatchEventDto"][];
+                        meta: components["schemas"]["ApiListMetaDto"];
+                    };
                 };
             };
             /** @description Invalid ID format */
@@ -3763,7 +3925,10 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MatchEventDto"][];
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["MatchEventDto"][];
+                        meta: components["schemas"]["ApiListMetaDto"];
+                    };
                 };
             };
             /** @description Invalid ID format */
@@ -3817,8 +3982,11 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PaginatedResponseDto"] & {
-                        items: components["schemas"]["PlayerResponseDto"][];
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["PaginatedResponseDto"] & {
+                            items: components["schemas"]["PlayerResponseDto"][];
+                        };
+                        meta: components["schemas"]["ApiPageMetaDto"];
                     };
                 };
             };
@@ -3865,7 +4033,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["FilterValuesPlayersResponseDto"];
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["FilterValuesPlayersResponseDto"];
+                    };
                 };
             };
         };
@@ -3888,7 +4058,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PlayerResponseDto"];
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["PlayerResponseDto"];
+                    };
                 };
             };
             /** @description Invalid ID format */
@@ -3938,7 +4110,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PlayerMatchHistoryResponseDto"];
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["PlayerMatchHistoryResponseDto"];
+                    };
                 };
             };
             /** @description Invalid ID format */
@@ -4010,8 +4184,11 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PaginatedResponseDto"] & {
-                        items: components["schemas"]["TeamResponseDto"][];
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["PaginatedResponseDto"] & {
+                            items: components["schemas"]["TeamResponseDto"][];
+                        };
+                        meta: components["schemas"]["ApiPageMetaDto"];
                     };
                 };
             };
@@ -4037,7 +4214,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["FilterValuesTeamsResponseDto"];
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["FilterValuesTeamsResponseDto"];
+                    };
                 };
             };
         };
@@ -4060,7 +4239,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TeamDetailResponseDto"];
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["TeamDetailResponseDto"];
+                    };
                 };
             };
             /** @description Invalid ID format */
@@ -4101,7 +4282,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TeamMatchHistoryResponseDto"];
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["TeamMatchHistoryResponseDto"];
+                    };
                 };
             };
             /** @description Invalid ID format */
@@ -4139,7 +4322,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["StatsResponseDto"];
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["StatsResponseDto"];
+                    };
                 };
             };
         };
@@ -4153,110 +4338,25 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description The Health Check is successful */
+            /** @description Application is healthy */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        /** @example ok */
-                        status?: string;
-                        /**
-                         * @example {
-                         *       "database": {
-                         *         "status": "up"
-                         *       }
-                         *     }
-                         */
-                        info?: {
-                            [key: string]: {
-                                status: string;
-                            } & {
-                                [key: string]: unknown;
-                            };
-                        } | null;
-                        /** @example {} */
-                        error?: {
-                            [key: string]: {
-                                status: string;
-                            } & {
-                                [key: string]: unknown;
-                            };
-                        } | null;
-                        /**
-                         * @example {
-                         *       "database": {
-                         *         "status": "up"
-                         *       }
-                         *     }
-                         */
-                        details?: {
-                            [key: string]: {
-                                status: string;
-                            } & {
-                                [key: string]: unknown;
-                            };
-                        };
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["HealthCheckResultDto"];
                     };
                 };
             };
-            /** @description The Health Check is not successful */
+            /** @description Application is unhealthy — `data.error` names the failing indicators */
             503: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        /** @example error */
-                        status?: string;
-                        /**
-                         * @example {
-                         *       "database": {
-                         *         "status": "up"
-                         *       }
-                         *     }
-                         */
-                        info?: {
-                            [key: string]: {
-                                status: string;
-                            } & {
-                                [key: string]: unknown;
-                            };
-                        } | null;
-                        /**
-                         * @example {
-                         *       "redis": {
-                         *         "status": "down",
-                         *         "message": "Could not connect"
-                         *       }
-                         *     }
-                         */
-                        error?: {
-                            [key: string]: {
-                                status: string;
-                            } & {
-                                [key: string]: unknown;
-                            };
-                        } | null;
-                        /**
-                         * @example {
-                         *       "database": {
-                         *         "status": "up"
-                         *       },
-                         *       "redis": {
-                         *         "status": "down",
-                         *         "message": "Could not connect"
-                         *       }
-                         *     }
-                         */
-                        details?: {
-                            [key: string]: {
-                                status: string;
-                            } & {
-                                [key: string]: unknown;
-                            };
-                        };
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["HealthCheckResultDto"];
                     };
                 };
             };
@@ -4276,7 +4376,11 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["LivenessResponseDto"];
+                    };
+                };
             };
         };
     };
@@ -4289,110 +4393,25 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description The Health Check is successful */
+            /** @description Application is ready */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        /** @example ok */
-                        status?: string;
-                        /**
-                         * @example {
-                         *       "database": {
-                         *         "status": "up"
-                         *       }
-                         *     }
-                         */
-                        info?: {
-                            [key: string]: {
-                                status: string;
-                            } & {
-                                [key: string]: unknown;
-                            };
-                        } | null;
-                        /** @example {} */
-                        error?: {
-                            [key: string]: {
-                                status: string;
-                            } & {
-                                [key: string]: unknown;
-                            };
-                        } | null;
-                        /**
-                         * @example {
-                         *       "database": {
-                         *         "status": "up"
-                         *       }
-                         *     }
-                         */
-                        details?: {
-                            [key: string]: {
-                                status: string;
-                            } & {
-                                [key: string]: unknown;
-                            };
-                        };
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["HealthCheckResultDto"];
                     };
                 };
             };
-            /** @description The Health Check is not successful */
+            /** @description Application is not ready — the database is unreachable */
             503: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        /** @example error */
-                        status?: string;
-                        /**
-                         * @example {
-                         *       "database": {
-                         *         "status": "up"
-                         *       }
-                         *     }
-                         */
-                        info?: {
-                            [key: string]: {
-                                status: string;
-                            } & {
-                                [key: string]: unknown;
-                            };
-                        } | null;
-                        /**
-                         * @example {
-                         *       "redis": {
-                         *         "status": "down",
-                         *         "message": "Could not connect"
-                         *       }
-                         *     }
-                         */
-                        error?: {
-                            [key: string]: {
-                                status: string;
-                            } & {
-                                [key: string]: unknown;
-                            };
-                        } | null;
-                        /**
-                         * @example {
-                         *       "database": {
-                         *         "status": "up"
-                         *       },
-                         *       "redis": {
-                         *         "status": "down",
-                         *         "message": "Could not connect"
-                         *       }
-                         *     }
-                         */
-                        details?: {
-                            [key: string]: {
-                                status: string;
-                            } & {
-                                [key: string]: unknown;
-                            };
-                        };
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["HealthCheckResultDto"];
                     };
                 };
             };

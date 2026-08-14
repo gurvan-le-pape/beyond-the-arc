@@ -1,6 +1,10 @@
 // src/backend/modules/matches/matches.controller.ts
 import { CACHE_TTL } from "@common/constants";
-import { ApiPaginatedResponse } from "@common/decorators";
+import {
+  ApiEnvelope,
+  ApiEnvelopeList,
+  ApiEnvelopePage,
+} from "@common/decorators";
 import { ApiErrorResponseDto, PaginatedResponseDto } from "@common/dto";
 import { CacheInterceptor } from "@common/interceptors";
 import { ParseEntityIdPipe } from "@common/pipes";
@@ -61,10 +65,7 @@ export class MatchesController {
     description:
       "Retrieves a paginated list of matches with optional filtering by level, division, category, gender, and more. Results are cached for 5 minutes.",
   })
-  @ApiPaginatedResponse(
-    MatchResponseDto,
-    "List of matches successfully retrieved",
-  )
+  @ApiEnvelopePage(MatchResponseDto, "List of matches successfully retrieved")
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid query parameters",
@@ -104,11 +105,7 @@ export class MatchesController {
     type: Number,
     example: 1,
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "Matches successfully retrieved",
-    type: [MatchResponseDto],
-  })
+  @ApiEnvelopeList(MatchResponseDto, "Matches successfully retrieved")
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: "Pool not found",
@@ -146,11 +143,7 @@ export class MatchesController {
     type: Number,
     example: 1,
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "Match successfully retrieved",
-    type: MatchDetailResponseDto,
-  })
+  @ApiEnvelope(MatchDetailResponseDto, "Match successfully retrieved")
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: "Match not found",
@@ -188,11 +181,10 @@ export class MatchesController {
     type: Number,
     example: 1,
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "Player stats successfully retrieved",
-    type: MatchPlayerStatsResponseDto,
-  })
+  @ApiEnvelope(
+    MatchPlayerStatsResponseDto,
+    "Player stats successfully retrieved",
+  )
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: "Match not found",
@@ -230,11 +222,7 @@ export class MatchesController {
     type: Number,
     example: 1,
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "Match events successfully retrieved",
-    type: [MatchEventDto],
-  })
+  @ApiEnvelopeList(MatchEventDto, "Match events successfully retrieved")
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid ID format",
@@ -267,11 +255,7 @@ export class MatchesController {
     type: Number,
     example: 1,
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "Shot events successfully retrieved",
-    type: [MatchEventDto],
-  })
+  @ApiEnvelopeList(MatchEventDto, "Shot events successfully retrieved")
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid ID format",
@@ -304,11 +288,7 @@ export class MatchesController {
     type: Number,
     example: 1,
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "Shot events successfully retrieved",
-    type: [MatchEventDto],
-  })
+  @ApiEnvelopeList(MatchEventDto, "Shot events successfully retrieved")
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid ID format",

@@ -1,7 +1,8 @@
 // src/backend/modules/health/health.controller.ts
+import { ApiEnvelope } from "@common/decorators";
 import { HealthCheckExceptionFilter } from "@common/filters";
-import { Controller, Get, UseFilters } from "@nestjs/common";
-import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { Controller, Get, HttpStatus, UseFilters } from "@nestjs/common";
+import { ApiExtraModels, ApiOperation, ApiTags } from "@nestjs/swagger";
 import {
   DiskHealthIndicator,
   HealthCheck,
@@ -11,16 +12,43 @@ import {
 } from "@nestjs/terminus";
 import { PrismaService } from "prisma/prisma.service";
 
+import {
+  HealthCheckResultDto,
+  HealthIndicatorDto,
+  LivenessResponseDto,
+} from "./dto/health.response.dto";
+
 /**
  * Health check endpoints for monitoring application status.
  * Used by load balancers, Kubernetes probes, and Grafana alerting.
  *
  * A failed check reports which indicator failed, so it does not go through
  * AllExceptionsFilter — see HealthCheckExceptionFilter for why.
+ *
+ * `@HealthCheck()` is passed `swaggerDocumentation: false`. Left on, it
+ * registers its own 200 and 503 schemas describing the bare
+ * `{ status, info, error, details }` object as the whole response body — true
+ * before this API had an envelope, not true since, and it silently outranked
+ * the `@ApiEnvelope` declarations below it (decorators apply bottom-up, so the
+ * *higher* one writes its status key last and wins). Turning its documentation
+ * off removes the conflict instead of winning it by ordering, which no reader
+ * would see and any reordering would undo.
+ *
+ * `noCache: true` is passed explicitly because it must be: the option object
+ * replaces Terminus's defaults wholesale rather than merging with them, so
+ * passing only `swaggerDocumentation` would leave `noCache` undefined and drop
+ * the `Cache-Control: no-cache, no-store, must-revalidate` header these two
+ * routes send today.
  */
 @ApiTags("health")
 @Controller("health")
 @UseFilters(HealthCheckExceptionFilter)
+// `HealthCheckResultDto` names `HealthIndicatorDto` from inside an
+// `additionalProperties`, which is a hand-written `$ref` rather than a `type:`
+// the plugin can follow — so nothing else registers it and the reference
+// dangles. `openapi-typescript` treats an unresolvable `$ref` as fatal and
+// fails `npm run typegen`, which is why this is not cosmetic.
+@ApiExtraModels(HealthIndicatorDto)
 export class HealthController {
   constructor(
     private readonly health: HealthCheckService,
@@ -35,10 +63,14 @@ export class HealthController {
    * Returns 503 if any check fails.
    */
   @Get()
-  @HealthCheck()
+  @HealthCheck({ noCache: true, swaggerDocumentation: false })
   @ApiOperation({ summary: "Check application health" })
-  @ApiResponse({ status: 200, description: "Application is healthy" })
-  @ApiResponse({ status: 503, description: "Application is unhealthy" })
+  @ApiEnvelope(HealthCheckResultDto, "Application is healthy")
+  @ApiEnvelope(
+    HealthCheckResultDto,
+    "Application is unhealthy — `data.error` names the failing indicators",
+    HttpStatus.SERVICE_UNAVAILABLE,
+  )
   check() {
     return this.health.check([
       () => this.prismaHealth.pingCheck("database", this.prisma.client),
@@ -54,7 +86,7 @@ export class HealthController {
    */
   @Get("live")
   @ApiOperation({ summary: "Liveness probe" })
-  @ApiResponse({ status: 200, description: "Application is alive" })
+  @ApiEnvelope(LivenessResponseDto, "Application is alive")
   getLiveness() {
     return {
       status: "ok",
@@ -68,10 +100,14 @@ export class HealthController {
    * Use for Kubernetes readiness probes and load balancer health checks.
    */
   @Get("ready")
-  @HealthCheck()
+  @HealthCheck({ noCache: true, swaggerDocumentation: false })
   @ApiOperation({ summary: "Readiness probe" })
-  @ApiResponse({ status: 200, description: "Application is ready" })
-  @ApiResponse({ status: 503, description: "Application is not ready" })
+  @ApiEnvelope(HealthCheckResultDto, "Application is ready")
+  @ApiEnvelope(
+    HealthCheckResultDto,
+    "Application is not ready — the database is unreachable",
+    HttpStatus.SERVICE_UNAVAILABLE,
+  )
   getReadiness() {
     return this.health.check([
       () => this.prismaHealth.pingCheck("database", this.prisma.client),

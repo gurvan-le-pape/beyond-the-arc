@@ -1,6 +1,6 @@
 // src/backend/modules/players/players.controller.ts
 import { CACHE_TTL } from "@common/constants";
-import { ApiPaginatedResponse } from "@common/decorators";
+import { ApiEnvelope, ApiEnvelopePage } from "@common/decorators";
 import {
   ApiErrorResponseDto,
   OrganizationScopeQueryDto,
@@ -77,10 +77,7 @@ export class PlayersController {
     description:
       "Retrieves a paginated list of players with optional filtering by level, club, team, category, gender, and more. Results are cached for 5 minutes.",
   })
-  @ApiPaginatedResponse(
-    PlayerResponseDto,
-    "List of players successfully retrieved",
-  )
+  @ApiEnvelopePage(PlayerResponseDto, "List of players successfully retrieved")
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid query parameters",
@@ -123,11 +120,10 @@ export class PlayersController {
     description:
       "Returns available player numbers and team numbers. Optionally scoped to a committee or league.",
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "Filter values successfully retrieved",
-    type: FilterValuesPlayersResponseDto,
-  })
+  @ApiEnvelope(
+    FilterValuesPlayersResponseDto,
+    "Filter values successfully retrieved",
+  )
   async getPlayerFilterValues(
     @Query() query: OrganizationScopeQueryDto,
   ): Promise<FilterValuesPlayersResponseDto> {
@@ -171,53 +167,7 @@ export class PlayersController {
     type: Number,
     example: 1,
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "Player successfully retrieved",
-    type: PlayerResponseDto,
-    schema: {
-      example: {
-        data: {
-          id: 1,
-          name: "John Doe",
-          number: 10,
-          teamId: 1,
-          team: {
-            id: 1,
-            number: 1,
-            clubId: 1,
-            category: "U18",
-            gender: "M",
-            club: {
-              id: 1,
-              name: "Club Example",
-              committee: {
-                id: 1,
-                name: "Committee Example",
-                league: {
-                  id: 1,
-                  name: "League Example",
-                },
-              },
-            },
-            pool: {
-              id: 1,
-              name: "Pool A",
-              championship: {
-                id: 1,
-                name: "Championship Régional U18",
-                level: "regional",
-                division: "Régionale 1",
-              },
-            },
-          },
-        },
-        timestamp: "2024-02-05T10:00:00Z",
-        path: "/players/1",
-        statusCode: 200,
-      },
-    },
-  })
+  @ApiEnvelope(PlayerResponseDto, "Player successfully retrieved")
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: "Player not found",
@@ -288,82 +238,10 @@ export class PlayersController {
     type: Number,
     example: 1,
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "Match history successfully retrieved",
-    type: PlayerMatchHistoryResponseDto,
-    schema: {
-      example: {
-        data: {
-          matches: [
-            {
-              id: 1,
-              date: "2024-02-05T19:00:00Z",
-              homeTeam: {
-                id: 1,
-                number: 1,
-                club: { id: 1, name: "Club A" },
-              },
-              awayTeam: {
-                id: 2,
-                number: 1,
-                club: { id: 2, name: "Club B" },
-              },
-              homeTeamScore: 85,
-              awayTeamScore: 72,
-              player: {
-                player: {
-                  id: 1,
-                  name: "John Doe",
-                  number: 10,
-                  teamId: 1,
-                },
-                stats: {
-                  points: 15,
-                  fouls: 2,
-                  threePointsMade: 2,
-                  threePointsAttempted: 5,
-                  rebounds: {
-                    total: 8,
-                    offensive: 3,
-                    defensive: 5,
-                  },
-                  assists: 7,
-                  steals: 2,
-                  blocks: 1,
-                  turnovers: 3,
-                  playtimeIntervals: [
-                    [0, 600],
-                    [1200, 2400],
-                  ],
-                },
-              },
-            },
-          ],
-          career: {
-            gamesPlayed: 1,
-            points: 15,
-            rebounds: 8,
-            assists: 7,
-            steals: 2,
-            blocks: 1,
-            turnovers: 3,
-            fouls: 2,
-            pointsPerGame: 15,
-            reboundsPerGame: 8,
-            assistsPerGame: 7,
-            stealsPerGame: 2,
-            blocksPerGame: 1,
-            turnoversPerGame: 3,
-            foulsPerGame: 2,
-          },
-        },
-        timestamp: "2024-02-05T10:00:00Z",
-        path: "/players/1/matches",
-        statusCode: 200,
-      },
-    },
-  })
+  @ApiEnvelope(
+    PlayerMatchHistoryResponseDto,
+    "Match history successfully retrieved",
+  )
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: "Player not found",

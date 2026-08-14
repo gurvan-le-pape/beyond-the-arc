@@ -1,5 +1,6 @@
 // src/backend/modules/competitions/pools/pools.controller.ts
 import { CACHE_TTL } from "@common/constants";
+import { ApiEnvelope, ApiEnvelopeList } from "@common/decorators";
 import { ApiErrorResponseDto } from "@common/dto";
 import { CacheInterceptor } from "@common/interceptors";
 import { ParseEntityIdPipe } from "@common/pipes";
@@ -77,33 +78,10 @@ export class PoolsController {
     description:
       "Retrieves all pools for a specific championship. Results are cached for 5 minutes.",
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "List of pools successfully retrieved (may be empty)",
-    type: [PoolResponseDto],
-    schema: {
-      example: {
-        data: [
-          {
-            id: 1,
-            letter: "A",
-            name: "Pool A - Seniors",
-            championshipId: 1,
-          },
-          {
-            id: 2,
-            letter: "B",
-            name: "Pool B - Seniors",
-            championshipId: 1,
-          },
-        ],
-        meta: { count: 2 },
-        timestamp: "2024-02-05T10:00:00Z",
-        path: "/pools?championshipId=1",
-        statusCode: 200,
-      },
-    },
-  })
+  @ApiEnvelopeList(
+    PoolResponseDto,
+    "List of pools successfully retrieved (may be empty)",
+  )
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid query parameters",
@@ -158,24 +136,7 @@ export class PoolsController {
     type: Number,
     example: 1,
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "Pool successfully retrieved",
-    type: PoolResponseDto,
-    schema: {
-      example: {
-        data: {
-          id: 1,
-          letter: "A",
-          name: "Pool A - Seniors",
-          championshipId: 1,
-        },
-        timestamp: "2024-02-05T10:00:00Z",
-        path: "/pools/1",
-        statusCode: 200,
-      },
-    },
-  })
+  @ApiEnvelope(PoolResponseDto, "Pool successfully retrieved")
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: "Pool not found",

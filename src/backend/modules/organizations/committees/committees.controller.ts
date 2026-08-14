@@ -1,5 +1,6 @@
 // src/backend/modules/organizations/committees/committees.controller.ts
 import { CACHE_TTL } from "@common/constants";
+import { ApiEnvelope, ApiEnvelopeList } from "@common/decorators";
 import { ApiErrorResponseDto } from "@common/dto";
 import { CacheInterceptor } from "@common/interceptors";
 import { ParseEntityIdPipe } from "@common/pipes";
@@ -75,41 +76,10 @@ export class CommitteesController {
     description:
       "Retrieves committees, optionally filtered by league ID. If no filter is provided, returns all departmental committees. Results are cached for 5 minutes.",
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "List of committees successfully retrieved",
-    type: [CommitteeResponseDto],
-    schema: {
-      example: {
-        data: [
-          {
-            id: 1,
-            name: "Comité Departmental de l'Ain",
-            leagueId: 1,
-            department: {
-              id: 1,
-              name: "Ain",
-              code: "01",
-            },
-          },
-          {
-            id: 2,
-            name: "Comité Departmental de l'Aisne",
-            leagueId: 1,
-            department: {
-              id: 2,
-              name: "Aisne",
-              code: "02",
-            },
-          },
-        ],
-        meta: { count: 2 },
-        timestamp: "2024-02-05T10:00:00Z",
-        path: "/committees?leagueId=1",
-        statusCode: 200,
-      },
-    },
-  })
+  @ApiEnvelopeList(
+    CommitteeResponseDto,
+    "List of committees successfully retrieved",
+  )
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid query parameters",
@@ -171,28 +141,7 @@ export class CommitteesController {
     type: Number,
     example: 1,
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "Committee successfully retrieved",
-    type: CommitteeResponseDto,
-    schema: {
-      example: {
-        data: {
-          id: 1,
-          name: "Comité Departmental de l'Ain",
-          leagueId: 1,
-          department: {
-            id: 1,
-            name: "Ain",
-            code: "01",
-          },
-        },
-        timestamp: "2024-02-05T10:00:00Z",
-        path: "/committees/1",
-        statusCode: 200,
-      },
-    },
-  })
+  @ApiEnvelope(CommitteeResponseDto, "Committee successfully retrieved")
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: "Committee not found",

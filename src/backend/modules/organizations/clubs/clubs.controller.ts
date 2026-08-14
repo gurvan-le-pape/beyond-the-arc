@@ -1,5 +1,9 @@
 // src/backend/modules/organizations/clubs/clubs.controller.ts
-import { ApiPaginatedResponse } from "@common/decorators";
+import {
+  ApiEnvelope,
+  ApiEnvelopeList,
+  ApiEnvelopePage,
+} from "@common/decorators";
 import { ApiErrorResponseDto } from "@common/dto";
 import { CACHE_TTL, PaginatedResponseDto } from "@common/index";
 import { CacheInterceptor } from "@common/interceptors";
@@ -79,27 +83,7 @@ export class ClubsController {
     description:
       "Retrieves club counts aggregated by league. Results are cached for 10 minutes.",
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "List of club statistics by region",
-    type: [ClubStatsByRegionDto],
-    schema: {
-      example: {
-        data: [
-          {
-            id: 1,
-            code: "84",
-            name: "League Auvergne-Rhône-Alpes",
-            clubCount: 42,
-          },
-        ],
-        meta: { count: 1 },
-        timestamp: "2024-02-05T10:00:00Z",
-        path: "/clubs/stats/by-region",
-        statusCode: 200,
-      },
-    },
-  })
+  @ApiEnvelopeList(ClubStatsByRegionDto, "List of club statistics by region")
   @ApiResponse({
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: "Internal server error",
@@ -149,32 +133,10 @@ export class ClubsController {
     description:
       "Retrieves club counts aggregated by committee. Optionally filter by league. Results are cached for 5 minutes.",
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "List of club statistics by department",
-    type: [ClubStatsByDepartmentDto],
-    schema: {
-      example: {
-        data: [
-          {
-            id: 1,
-            name: "Comité de l'Ain",
-            department: {
-              id: 1,
-              name: "Ain",
-              code: "01",
-            },
-            leagueId: 1,
-            clubCount: 15,
-          },
-        ],
-        meta: { count: 1 },
-        timestamp: "2024-02-05T10:00:00Z",
-        path: "/clubs/stats/by-department?leagueId=1",
-        statusCode: 200,
-      },
-    },
-  })
+  @ApiEnvelopeList(
+    ClubStatsByDepartmentDto,
+    "List of club statistics by department",
+  )
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid query parameters",
@@ -217,34 +179,7 @@ export class ClubsController {
     description:
       "Retrieves all clubs without any filtering or pagination. Intended for map initialization where all club coordinates are needed at once. Results are cached for 5 minutes.",
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "Flat list of all clubs",
-    type: [ClubBasicResponseDto],
-    schema: {
-      example: {
-        data: [
-          {
-            id: 1,
-            name: "AS Monaco Basket",
-            city: "Monaco",
-            zipCode: "98000",
-            latitude: 43.7384,
-            longitude: 7.4246,
-            email: "contact@club.com",
-            phone: "0123456789",
-            website: "https://club.com",
-            committeeId: 1,
-            leagueId: 1,
-          },
-        ],
-        meta: { count: 1 },
-        timestamp: "2024-02-05T10:00:00Z",
-        path: "/clubs/all",
-        statusCode: 200,
-      },
-    },
-  })
+  @ApiEnvelopeList(ClubBasicResponseDto, "Flat list of all clubs")
   @ApiResponse({
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: "Internal server error",
@@ -276,7 +211,7 @@ export class ClubsController {
     description:
       "Retrieves clubs filtered by competition level, committee, league, category, gender, and name search. Supports pagination via page and limit parameters. Results are cached for 3 minutes.",
   })
-  @ApiPaginatedResponse(
+  @ApiEnvelopePage(
     ClubBasicResponseDto,
     "Paginated list of clubs matching the filters",
   )
@@ -358,29 +293,7 @@ export class ClubsController {
     type: Number,
     example: 1,
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "Club successfully retrieved",
-    type: ClubDetailedResponseDto,
-    schema: {
-      example: {
-        data: {
-          id: 1,
-          name: "AS Monaco Basket",
-          city: "Monaco",
-          zipCode: "98000",
-          address: "1 Avenue des Papalins",
-          phone: "0123456789",
-          email: "contact@club.com",
-          website: "https://club.com",
-          teams: [],
-        },
-        timestamp: "2024-02-05T10:00:00Z",
-        path: "/clubs/1",
-        statusCode: 200,
-      },
-    },
-  })
+  @ApiEnvelope(ClubDetailedResponseDto, "Club successfully retrieved")
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: "Club not found",

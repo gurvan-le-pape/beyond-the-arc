@@ -1,6 +1,6 @@
 // src/backend/modules/competitions/championships/championships.controller.ts
 import { CACHE_TTL } from "@common/constants";
-import { ApiPaginatedResponse } from "@common/decorators";
+import { ApiEnvelope, ApiEnvelopePage } from "@common/decorators";
 import { ApiErrorResponseDto, PaginatedResponseDto } from "@common/dto";
 import { CacheInterceptor } from "@common/interceptors";
 import { ParseEntityIdPipe } from "@common/pipes";
@@ -76,27 +76,7 @@ export class ChampionshipsController {
     type: Number,
     example: 1,
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "Championship successfully retrieved",
-    type: ChampionshipResponseDto,
-    schema: {
-      example: {
-        data: {
-          id: 1,
-          name: "Championship Régional U18 male",
-          category: "U18",
-          gender: "male",
-          seasonYear: "2024-2025",
-          level: "regional",
-          division: "Régionale 1",
-        },
-        timestamp: "2024-02-05T10:00:00Z",
-        path: "/championships/1",
-        statusCode: 200,
-      },
-    },
-  })
+  @ApiEnvelope(ChampionshipResponseDto, "Championship successfully retrieved")
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: "Championship not found",
@@ -142,7 +122,7 @@ export class ChampionshipsController {
     description:
       "Paginated, filtered list of championships. All parameters are optional — omitting them returns all championships across all levels.",
   })
-  @ApiPaginatedResponse(
+  @ApiEnvelopePage(
     ChampionshipResponseDto,
     "Paginated list of championships successfully retrieved",
   )

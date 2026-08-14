@@ -74,6 +74,25 @@ function unwrapArraySchema(propSchema: object): object {
 }
 
 /**
+ * True when `additionalProperties` types the values of an open-keyed map.
+ *
+ * A map whose keys are data — Terminus keys health indicators by indicator
+ * name — cannot be described with `properties`, but it is not therefore
+ * untyped: `additionalProperties: { $ref: … }` generates
+ * `{ [key: string]: HealthIndicatorDto }`, which is exactly as checkable as a
+ * named property. `additionalProperties: true` is the opposite and stays an
+ * offender — it generates an index signature onto `unknown`, which is the
+ * thing this spec exists to reject. `PaginatedResponseDto.items` is the one
+ * sanctioned instance of that, and keeps its allowlist entry.
+ */
+function hasTypedAdditionalProperties(schema: object): boolean {
+  if (!("additionalProperties" in schema)) return false;
+  const additional = schema.additionalProperties;
+  if (typeof additional !== "object" || additional === null) return false;
+  return "$ref" in additional || "properties" in additional;
+}
+
+/**
  * True when a schema is a bare `type: object` with no shape information.
  */
 function isBareObjectSchema(schema: object): boolean {
@@ -82,7 +101,8 @@ function isBareObjectSchema(schema: object): boolean {
     schema.type === "object" &&
     !("properties" in schema) &&
     !("$ref" in schema) &&
-    !("allOf" in schema)
+    !("allOf" in schema) &&
+    !hasTypedAdditionalProperties(schema)
   );
 }
 
