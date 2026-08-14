@@ -33,12 +33,20 @@ services:
     # cannot see it. `/` is a 307 to `/en` from the next-intl middleware;
     # wget follows it, so this exercises a real render.
     #
+    # `127.0.0.1`, never `localhost`. The Dockerfile sets `HOSTNAME=0.0.0.0`,
+    # so Next's standalone server binds **IPv4 only** — `/proc/net/tcp6` in the
+    # prod image is empty — while Alpine's /etc/hosts maps `localhost` to
+    # 127.0.0.1 *and* ::1. BusyBox wget tries ::1 and gets ECONNREFUSED. This
+    # is the same half-dead resolution the port comments above describe for
+    # Nginx, one layer in: it passed in dev (where `next dev` binds dual-stack)
+    # and failed on the first production deploy.
+    #
     # That render calls the backend over my_network, so a backend outage marks
     # the frontend unhealthy too. That coupling is deliberate: the page really
     # is broken then, and nothing acts on the status automatically (see the
     # backend service below).
     healthcheck:
-      test: ["CMD-SHELL", "wget -q -O /dev/null http://localhost:3000/"]
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:3000/"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -77,7 +85,12 @@ services:
     # control in place — the exact conditions of the 2026-07 disk incident.
     #
     # `--spider` sends HEAD; Express answers it from the same GET handler, so
-    # the indicators still run and only the body is discarded. A 503 from a
+    # the indicators still run and only the body is discarded.
+    #
+    # `127.0.0.1` for the same reason the frontend uses it, though this one
+    # would work either way: Nest's `app.listen(port)` binds `::` dual-stack,
+    # so ::1 resolves here. Written explicitly so the two probes match and
+    # neither depends on a bind default that is not stated anywhere. A 503 from a
     # failing indicator is a non-zero exit, which is what marks it unhealthy.
     #
     # **This does not restart anything.** Measured, not assumed: a container
@@ -88,7 +101,7 @@ services:
     # that the checks execute on a schedule and their verdict is visible in
     # `docker compose ps` — nothing pages anyone. See docs/observability.md.
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://localhost:4000/api/health"]
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:4000/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
