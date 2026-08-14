@@ -26,12 +26,20 @@ const CLUBS_CONFIG = {
 } as const;
 
 /**
- * Extended cache config for static/aggregated data that is served
- * through Next.js API routes with their own server-side TTL.
+ * Cache config for the three aggregate endpoints — by-region, by-department,
+ * and the full club list. They are read straight from the backend over HTTP:
+ * this app declares no Route Handlers and no rewrites, so nothing sits between
+ * the browser and the API to cache on the way past.
  *
- * These endpoints cache at the server level (24h for regions, 1h for
- * departments/all), so client staleTime mirrors server TTL to avoid
- * redundant revalidations within the same window.
+ * The server-side window is on the other half of the dual service layer.
+ * `clubs.server.ts` passes `ServerRevalidate.REFERENCE` (24 h) to `fetchApi`
+ * for all three, and `/map` renders from that — which is also why the client
+ * `queryFn`s below do not run there: `useMapData` seeds every one of them with
+ * `initialData` from that server fetch, and seeded data counts as fresh.
+ *
+ * Only `gcTime` is shared here; each query states its own `staleTime`. Note
+ * that `gcTime` caps them: an inactive query is evicted after 10 minutes, and
+ * the next mount refetches however long its `staleTime` said.
  */
 const CLUBS_STATIC_CONFIG = {
   gcTime: CLUBS_CONFIG.gcTime,
@@ -78,8 +86,8 @@ export const clubsQueries = {
 
   /**
    * Query options for fetching club statistics aggregated by region.
-   * Initial data is server-fetched and passed via initialData.
-   * Client revalidates after 24 hours.
+   * `GET /clubs/stats/by-region`, 24 h `staleTime` — matching the 24 h
+   * `ServerRevalidate.REFERENCE` window the server half uses for it.
    *
    * @example
    * useQuery(clubsQueries.statsByRegion())
@@ -94,8 +102,7 @@ export const clubsQueries = {
 
   /**
    * Query options for fetching club statistics aggregated by département.
-   * Initial data is server-fetched and passed via initialData.
-   * Client revalidates after 1 hour.
+   * `GET /clubs/stats/by-department`, 1 h `staleTime`.
    *
    * @example
    * useQuery(clubsQueries.statsByDepartment())
@@ -110,8 +117,7 @@ export const clubsQueries = {
 
   /**
    * Query options for fetching all clubs without filtering.
-   * Initial data is server-fetched and passed via initialData.
-   * Client revalidates after 1 hour.
+   * `GET /clubs/all`, 1 h `staleTime`.
    *
    * @example
    * useQuery(clubsQueries.allClubs())
