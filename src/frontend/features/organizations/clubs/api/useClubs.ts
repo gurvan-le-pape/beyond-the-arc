@@ -55,8 +55,9 @@ export function useClub(id: number, options?: { enabled?: boolean }) {
 
 /**
  * Hook to fetch club statistics aggregated by region.
- * Hits the Next.js API route which caches for 24 hours server-side.
- * Client staleTime is aligned to 24h to avoid redundant revalidations.
+ * Reads `/clubs/stats/by-region` from the backend directly; 24 h `staleTime`.
+ * See `CLUBS_STATIC_CONFIG` in `clubsQueries.ts` for how that relates to the
+ * server half's window, and why `initialData` keeps this from fetching.
  *
  * @param options - Additional query options including optional initialData for SSR
  * @returns React Query result with region stats
@@ -79,7 +80,7 @@ export function useClubStatsByRegion(options?: {
 
 /**
  * Hook to fetch club statistics aggregated by département.
- * Hits the Next.js API route which caches for 1 hour server-side.
+ * Reads `/clubs/stats/by-department` from the backend directly; 1 h `staleTime`.
  *
  * @returns React Query result with department stats
  *
@@ -97,7 +98,7 @@ export function useClubStatsByDepartment(options?: {
 
 /**
  * Hook to fetch all clubs without filtering.
- * Hits the Next.js API route which caches for 1 hour server-side.
+ * Reads `/clubs/all` from the backend directly; 1 h `staleTime`.
  * Useful for typeaheads, selects, and autocomplete widgets.
  *
  * @returns React Query result with all clubs
