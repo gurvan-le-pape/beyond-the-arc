@@ -82,8 +82,6 @@ export default async function PlayerDetailPage({
         matchEvents={matchEvents}
         title={tPlayers("playerDetail.shotchartTitle")}
         description={tPlayers("playerDetail.shotchartDescription")}
-        isLoading={false}
-        error={null}
       />
     </PageLayout>
   );

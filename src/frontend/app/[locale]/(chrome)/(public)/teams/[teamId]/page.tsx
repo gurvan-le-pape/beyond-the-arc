@@ -88,8 +88,6 @@ export default async function TeamDetailPage({
         matchEvents={matchEvents}
         title={t("teamDetail.shotchartTitle")}
         description={t("teamDetail.shotchartDescription")}
-        isLoading={false}
-        error={null}
       />
     </PageLayout>
   );
