@@ -149,7 +149,12 @@
     "fgPercent": "FG%",
     "title": "Shot Chart — {name}",
     "download": "Download chart",
-    "close": "Close"
+    "close": "Close",
+    "scatterChartLabel": "Shot chart: every shot plotted on the court",
+    "heatmapChartLabel": "Shot chart: shot density across the court",
+    "hotspotsChartLabel": "Shot chart: shooting by court zone",
+    "chartSummary": "{total, plural, =0 {{total} shots recorded.} other {{total} shots, {made} made and {missed} missed ({percent}% shooting).}}",
+    "colorMeaning": "Colour shows the number of shots attempted"
   },
   "errors": {
     "fetchCommittees": "Failed to fetch committees. Please try again later.",

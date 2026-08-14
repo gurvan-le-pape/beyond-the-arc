@@ -34,6 +34,7 @@
     "loadingMapClient": "Chargement de la carte ...",
     "clearSearch": "Effacer la recherche",
     "searchPlaceholder": "Rechercher un club, une ville ...",
-    "closeMenu": "Fermer le menu"
+    "closeMenu": "Fermer le menu",
+    "mapAriaLabel": "Carte des clubs de basket en France"
   }
 }

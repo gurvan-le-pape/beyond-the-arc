@@ -2,7 +2,8 @@
 "use client";
 
 import { scaleLinear } from "d3-scale";
-import React, { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
+import React, { useId, useMemo, useState } from "react";
 
 import type { MatchEvent } from "@/features/matches/types";
 
@@ -136,6 +137,33 @@ export const ShotChart: React.FC<ShotChartProps> = ({
     cellHeight,
   );
 
+  const t = useTranslations("common");
+
+  // `role="img"` needs a name and a description that carry the same information
+  // the colours do, since none of it survives for a screen reader otherwise.
+  const titleId = useId();
+  const descId = useId();
+
+  // Literal keys per branch: next-intl types `t` against the catalogue, so a
+  // key held in a `string` variable does not type-check.
+  const chartLabel =
+    chartType === ChartType.HEATMAP
+      ? t("shotChart.heatmapChartLabel")
+      : chartType === ChartType.HOTSPOTS
+        ? t("shotChart.hotspotsChartLabel")
+        : t("shotChart.scatterChartLabel");
+
+  const summary = useMemo(() => {
+    const total = shotEvents.length;
+    const made = shotEvents.filter((shot) => shot.made).length;
+    return {
+      total,
+      made,
+      missed: total - made,
+      percent: total > 0 ? Math.round((made / total) * 100) : 0,
+    };
+  }, [shotEvents]);
+
   const flat = heatmapData.flat();
   const maxValue = useMemo(() => {
     if (shotFilter === ShotFilter.MADE)
@@ -183,7 +211,12 @@ export const ShotChart: React.FC<ShotChartProps> = ({
             style={{ background: "#f8f5f2" }}
             className="w-full h-auto block rounded-xl"
             preserveAspectRatio="xMidYMid meet"
+            role="img"
+            aria-labelledby={titleId}
+            aria-describedby={descId}
           >
+            <title id={titleId}>{chartLabel}</title>
+            <desc id={descId}>{t("shotChart.chartSummary", summary)}</desc>
             {/* --- Overlays (between background and lines) --- */}
             {chartType === ChartType.HEATMAP && (
               <HeatmapOverlay

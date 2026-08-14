@@ -214,6 +214,10 @@ export function ClubsMap({
         {...viewState}
         onMove={(e) => setViewState(e.viewState)}
         mapStyle={mapStyle}
+        // MapLibre labels its own canvas `role="region"` with the untranslated
+        // string "Map"; `locale` patches that table, so the region is named for
+        // what it shows and is named in the reader's language.
+        locale={{ "Map.Title": t("map.mapAriaLabel") }}
         interactiveLayerIds={showClubs ? ["clubs-point", "clusters"] : []}
         onClick={onClick}
         style={{ width: "100%", height: "100%" }}
