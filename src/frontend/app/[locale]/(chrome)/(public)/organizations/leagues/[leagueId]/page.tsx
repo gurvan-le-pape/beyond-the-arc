@@ -29,11 +29,13 @@ export const revalidate = 3600;
 export async function generateMetadata({
   params,
 }: LocalePageProps<{ leagueId: string }>): Promise<Metadata> {
-  const { leagueId: leagueIdStr, locale } = await params;
+  const routeParams = await params;
+  const { locale } = routeParams;
+  const leagueId = parseRouteId(routeParams.leagueId);
   const tMeta = await getTranslations({ locale, namespace: "organizations" });
 
   const league = await serverLeaguesService
-    .getById(parseRouteId(leagueIdStr))
+    .getById(leagueId)
     .catch(handleServerError);
 
   return {
@@ -45,10 +47,10 @@ export async function generateMetadata({
 export default async function LeaguePage({
   params,
 }: LocalePageProps<{ leagueId: string }>) {
-  const { leagueId: leagueIdStr, locale } = await params;
+  const routeParams = await params;
+  const { locale } = routeParams;
+  const leagueId = parseRouteId(routeParams.leagueId);
   setRequestLocale(locale);
-
-  const leagueId = parseRouteId(leagueIdStr);
 
   const tCommon = await getTranslations({ locale, namespace: "common" });
   const tCompetitions = await getTranslations({

@@ -25,11 +25,13 @@ export const revalidate = 3600;
 export async function generateMetadata({
   params,
 }: LocalePageProps<{ matchId: string }>): Promise<Metadata> {
-  const { matchId: matchIdStr, locale } = await params;
+  const routeParams = await params;
+  const { locale } = routeParams;
+  const matchId = parseRouteId(routeParams.matchId);
   const tMeta = await getTranslations({ locale, namespace: "matches" });
 
   const match = await serverMatchesService
-    .getById(parseRouteId(matchIdStr))
+    .getById(matchId)
     .catch(handleServerError);
 
   const teams = {
@@ -46,11 +48,11 @@ export async function generateMetadata({
 export default async function MatchSummaryPage({
   params,
 }: LocalePageProps<{ matchId: string }>) {
-  const { matchId: matchIdStr, locale } = await params;
+  const routeParams = await params;
+  const { locale } = routeParams;
+  const matchId = parseRouteId(routeParams.matchId);
   setRequestLocale(locale);
   const tMatches = await getTranslations({ locale, namespace: "matches" });
-
-  const matchId = parseRouteId(matchIdStr);
 
   const [match, playerMatchStats] = await Promise.all([
     serverMatchesService.getById(matchId),

@@ -28,11 +28,13 @@ export const revalidate = 3600;
 export async function generateMetadata({
   params,
 }: LocalePageProps<{ clubId: string }>): Promise<Metadata> {
-  const { clubId: clubIdStr, locale } = await params;
+  const routeParams = await params;
+  const { locale } = routeParams;
+  const clubId = parseRouteId(routeParams.clubId);
   const tMeta = await getTranslations({ locale, namespace: "clubs" });
 
   const club = await serverClubsService
-    .getById(parseRouteId(clubIdStr))
+    .getById(clubId)
     .catch(handleServerError);
 
   return {
@@ -44,15 +46,15 @@ export async function generateMetadata({
 export default async function ClubPage({
   params,
 }: LocalePageProps<{ clubId: string }>) {
-  const { clubId: clubIdStr, locale } = await params;
+  const routeParams = await params;
+  const { locale } = routeParams;
+  const clubId = parseRouteId(routeParams.clubId);
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "clubs" });
   const tOrganizations = await getTranslations({
     locale,
     namespace: "organizations",
   });
-
-  const clubId = parseRouteId(clubIdStr);
 
   const club = await serverClubsService
     .getById(clubId)

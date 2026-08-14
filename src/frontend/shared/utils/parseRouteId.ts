@@ -15,6 +15,11 @@ const MAX_ROUTE_ID = 2_147_483_647;
 /**
  * Parses a dynamic route segment into a positive integer id.
  *
+ * The parameter is `segment`, not `idStr`: this is the one scope where a raw
+ * string and its parsed id are both legitimately live, and naming the input
+ * after what it *is* avoids the `idStr`/`id` pair that D13f removed from the
+ * seven route files calling this.
+ *
  * Triggers Next's `notFound()` (which throws) for non-numeric, non-positive or
  * out-of-range values, so callers can treat the returned value as a
  * guaranteed-valid id.
@@ -25,8 +30,8 @@ const MAX_ROUTE_ID = 2_147_483_647;
  * check `/players/2147483648` rendered the error boundary and reported a
  * Sentry event for what is just a bad URL.
  */
-export function parseRouteId(idStr: string): number {
-  const id = Number.parseInt(idStr, 10);
+export function parseRouteId(segment: string): number {
+  const id = Number.parseInt(segment, 10);
   if (Number.isNaN(id) || id <= 0 || id > MAX_ROUTE_ID) notFound();
   return id;
 }

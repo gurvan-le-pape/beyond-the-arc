@@ -24,8 +24,10 @@ import type { ChampionshipFilters } from "../types/ChampionshipFilters";
  *
  * @example
  * // In an async server component
+ * const routeParams = await params;
+ * const championshipId = parseRouteId(routeParams.championshipId);
  * const championship = await serverChampionshipsService
- *   .getById(parseRouteId(championshipIdStr))
+ *   .getById(championshipId)
  *   .catch(handleServerError);
  */
 export const serverChampionshipsService = {
