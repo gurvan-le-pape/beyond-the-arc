@@ -3,11 +3,11 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 import { PaginationQueryDto } from "@common/dto";
+import { applyApiPrefix, createOpenApiDocument } from "@common/utils";
 import type { INestApplication } from "@nestjs/common";
 import { ROUTE_ARGS_METADATA } from "@nestjs/common/constants";
 import { RouteParamtypes } from "@nestjs/common/enums/route-paramtypes.enum";
 import { ModulesContainer } from "@nestjs/core";
-import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { DECORATORS } from "@nestjs/swagger/dist/constants";
 import { Test } from "@nestjs/testing";
 import { getMetadataStorage } from "class-validator";
@@ -256,6 +256,19 @@ function successResponses(): SuccessResponse[] {
   return found;
 }
 
+/** Every path key in the committed document. */
+function documentedPaths(): string[] {
+  const path = resolve(__dirname, "../../docs/openapi.json");
+  const document = JSON.parse(readFileSync(path, "utf8")) as {
+    paths?: Record<string, unknown>;
+  };
+  const paths = Object.keys(document.paths ?? {});
+  if (paths.length === 0) {
+    throw new Error(`No paths found in ${path}`);
+  }
+  return paths;
+}
+
 /** The committed contract — the artefact the frontend generates from. */
 function committedSchemas(): Record<string, unknown> {
   const path = resolve(__dirname, "../../docs/openapi.json");
@@ -334,6 +347,8 @@ describe("API conventions", () => {
       imports: [AppModule],
     }).compile();
     app = moduleRef.createNestApplication();
+    // main.ts applies the prefix before building the document; so must this.
+    applyApiPrefix(app);
     queryArgs = collectQueryArgs(app);
 
     const primitives = new Set<unknown>([Object, String, Number, Boolean]);
@@ -512,10 +527,9 @@ describe("API conventions", () => {
     // was written (`MatchHistoryDto.homeTeamScore`, `.awayTeamScore`,
     // `TeamInfoDto.leaderboard`) — each sitting beside a sibling that did
     // declare it.
-    const document = SwaggerModule.createDocument(
-      app,
-      new DocumentBuilder().setVersion("1.0").build(),
-    );
+    // `createOpenApiDocument`, the same call main.ts makes — a locally built
+    // DocumentBuilder here would be another copy of the config #529 removed.
+    const document = createOpenApiDocument(app);
 
     const declared = nullableProps(document.components?.schemas ?? {});
     const shipped = nullableProps(committedSchemas());
@@ -526,6 +540,28 @@ describe("API conventions", () => {
     const inferredOnly = [...shipped].filter((p) => !declared.has(p)).sort();
 
     expect(inferredOnly).toEqual([]);
+  });
+
+  it("every documented path carries the global /api prefix, except /metrics", () => {
+    // The guard `api-contract 1` did not have. That row shipped a one-line
+    // fix — the generator was missing `setGlobalPrefix` — but nothing would
+    // notice it going missing again, because `openapi-drift` regenerates the
+    // document and diffs it against the committed one: both sides come from
+    // the generator, so they agree with each other while disagreeing with the
+    // deployed app. Production was the only witness.
+    //
+    // #529 removed the duplication that caused it; this is what would catch a
+    // recurrence. `/metrics` is excluded from the prefix by `applyApiPrefix`
+    // and so is excluded here — the one path that must *not* be prefixed.
+    const documented = documentedPaths();
+    expect(documented.length).toBeGreaterThan(1);
+
+    const unprefixed = documented.filter(
+      (path) => path !== METRICS_PATH && !path.startsWith("/api/"),
+    );
+
+    expect(unprefixed).toEqual([]);
+    expect(documented).toContain(METRICS_PATH);
   });
 
   it("every 2xx on an /api route is documented as the response envelope", () => {

@@ -5,6 +5,7 @@
 
 export * from "./bounded-memory-store";
 export * from "./cors-origins.util";
+export * from "./openapi.util";
 export * from "./organization-filter.util";
 export * from "./pagination.util";
 export * from "./player-match-stats.mapper";

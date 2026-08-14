@@ -2,9 +2,8 @@
 import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-import { METRICS_PATH } from "@common/constants";
+import { applyApiPrefix, createOpenApiDocument } from "@common/utils";
 import { NestFactory } from "@nestjs/core";
-import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 
 import { AppModule } from "../app.module";
 
@@ -23,24 +22,15 @@ import { AppModule } from "../app.module";
 async function generate(): Promise<void> {
   const app = await NestFactory.create(AppModule, { logger: false });
 
-  // Must match main.ts. The prefix is part of the contract, not a deployment
-  // detail: without it every `paths` key here is missing the `/api` the
-  // deployed API actually serves, and the document describes 34 routes that
-  // do not exist. The `openapi-drift` CI job cannot catch that — both sides
-  // of its diff come from this same script, so they agree with each other
-  // while disagreeing with production.
-  app.setGlobalPrefix("api", { exclude: [METRICS_PATH] });
-
-  // Keep in sync with the DocumentBuilder config in main.ts.
-  const config = new DocumentBuilder()
-    .setTitle("Beyond the Arc API")
-    .setDescription(
-      "API documentation for a basketball federation management platform, inspired by the FFBB",
-    )
-    .setVersion("1.0")
-    .build();
-
-  const document = SwaggerModule.createDocument(app, config);
+  // The same two calls main.ts makes, from the same module — not a copy of
+  // them. The prefix is part of the contract, not a deployment detail: without
+  // it every `paths` key here is missing the `/api` the deployed API serves,
+  // and the document describes 34 routes that do not exist. That was
+  // `api-contract 1`, and the reason it went unnoticed is that `openapi-drift`
+  // cannot see it — both sides of its diff come from this script, so they
+  // agree with each other while disagreeing with production.
+  applyApiPrefix(app);
+  const document = createOpenApiDocument(app);
 
   // Compiled location is src/backend/dist/scripts — four levels below the
   // repository root.

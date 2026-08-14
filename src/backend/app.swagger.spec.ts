@@ -1,6 +1,6 @@
 // src/backend/app.swagger.spec.ts
+import { applyApiPrefix, createOpenApiDocument } from "@common/utils";
 import type { INestApplication } from "@nestjs/common";
-import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { Test } from "@nestjs/testing";
 
 import { AppModule } from "./app.module";
@@ -21,6 +21,8 @@ describe("OpenAPI document generation", () => {
       imports: [AppModule],
     }).compile();
     app = moduleRef.createNestApplication();
+    // main.ts applies the prefix before building the document; so must this.
+    applyApiPrefix(app);
   });
 
   afterAll(async () => {
@@ -30,20 +32,20 @@ describe("OpenAPI document generation", () => {
   });
 
   it("should build the document without throwing", () => {
-    const config = new DocumentBuilder()
-      .setTitle("Beyond the Arc API")
-      .setVersion("1.0")
-      .build();
-
-    const document = SwaggerModule.createDocument(app, config);
+    // `createOpenApiDocument`, not a `DocumentBuilder` written out here. This
+    // spec exists because a broken DTO once made document generation throw at
+    // startup — so it has to exercise the call `main.ts` makes, not an
+    // approximation of it. It built its own config with a different set of
+    // fields and no global prefix, which is the same defect `api-contract 10`
+    // is about, one layer down.
+    const document = createOpenApiDocument(app);
 
     expect(Object.keys(document.paths).length).toBeGreaterThan(0);
     expect(document.components?.schemas).toBeDefined();
   });
 
   it("should not contain untyped object schemas for response DTO properties", () => {
-    const config = new DocumentBuilder().setVersion("1.0").build();
-    const document = SwaggerModule.createDocument(app, config);
+    const document = createOpenApiDocument(app);
     const schemas = document.components?.schemas ?? {};
 
     // PaginatedResponseDto.items is the single sanctioned generic object
