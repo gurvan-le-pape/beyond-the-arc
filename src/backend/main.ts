@@ -2,10 +2,14 @@
 import "./instrument";
 
 import { REQUEST_ID_HEADER } from "@common/constants";
-import { resolveCorsOrigins } from "@common/utils";
+import {
+  applyApiPrefix,
+  createOpenApiDocument,
+  resolveCorsOrigins,
+} from "@common/utils";
 import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
-import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { SwaggerModule } from "@nestjs/swagger";
 import { Logger } from "nestjs-pino";
 
 import { AppModule } from "./app.module";
@@ -33,17 +37,13 @@ async function bootstrap() {
     exposedHeaders: [REQUEST_ID_HEADER],
   });
 
-  app.setGlobalPrefix("api", { exclude: ["/metrics"] });
+  // Both of these are shared with scripts/generate-openapi.ts, which writes the
+  // committed snapshot. They are the only parts of this bootstrap that change
+  // what the document says, and they were duplicated there until #529 — see
+  // openapi.util.ts for why a "keep in sync" comment could not hold them.
+  applyApiPrefix(app);
+  const document = createOpenApiDocument(app);
 
-  // Swagger/OpenAPI setup
-  const config = new DocumentBuilder()
-    .setTitle("Beyond the Arc API")
-    .setDescription(
-      "API documentation for a basketball federation management platform, inspired by the FFBB",
-    )
-    .setVersion("1.0")
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
   // useGlobalPrefix serves the UI at /api/docs — the only path prefix Nginx
   // proxies to the backend, so Swagger is reachable in production.
   SwaggerModule.setup("docs", app, document, { useGlobalPrefix: true });

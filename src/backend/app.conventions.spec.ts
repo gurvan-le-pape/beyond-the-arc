@@ -256,6 +256,19 @@ function successResponses(): SuccessResponse[] {
   return found;
 }
 
+/** Every path key in the committed document. */
+function documentedPaths(): string[] {
+  const path = resolve(__dirname, "../../docs/openapi.json");
+  const document = JSON.parse(readFileSync(path, "utf8")) as {
+    paths?: Record<string, unknown>;
+  };
+  const paths = Object.keys(document.paths ?? {});
+  if (paths.length === 0) {
+    throw new Error(`No paths found in ${path}`);
+  }
+  return paths;
+}
+
 /** The committed contract — the artefact the frontend generates from. */
 function committedSchemas(): Record<string, unknown> {
   const path = resolve(__dirname, "../../docs/openapi.json");
@@ -526,6 +539,28 @@ describe("API conventions", () => {
     const inferredOnly = [...shipped].filter((p) => !declared.has(p)).sort();
 
     expect(inferredOnly).toEqual([]);
+  });
+
+  it("every documented path carries the global /api prefix, except /metrics", () => {
+    // The guard `api-contract 1` did not have. That row shipped a one-line
+    // fix — the generator was missing `setGlobalPrefix` — but nothing would
+    // notice it going missing again, because `openapi-drift` regenerates the
+    // document and diffs it against the committed one: both sides come from
+    // the generator, so they agree with each other while disagreeing with the
+    // deployed app. Production was the only witness.
+    //
+    // #529 removed the duplication that caused it; this is what would catch a
+    // recurrence. `/metrics` is excluded from the prefix by `applyApiPrefix`
+    // and so is excluded here — the one path that must *not* be prefixed.
+    const documented = documentedPaths();
+    expect(documented.length).toBeGreaterThan(1);
+
+    const unprefixed = documented.filter(
+      (path) => path !== METRICS_PATH && !path.startsWith("/api/"),
+    );
+
+    expect(unprefixed).toEqual([]);
+    expect(documented).toContain(METRICS_PATH);
   });
 
   it("every 2xx on an /api route is documented as the response envelope", () => {
