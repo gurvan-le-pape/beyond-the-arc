@@ -1,6 +1,6 @@
 // src/backend/modules/teams/teams.controller.ts
 import { CACHE_TTL } from "@common/constants";
-import { ApiPaginatedResponse } from "@common/decorators";
+import { ApiEnvelope, ApiEnvelopePage } from "@common/decorators";
 import {
   ApiErrorResponseDto,
   OrganizationScopeQueryDto,
@@ -41,7 +41,7 @@ export class TeamsController {
     description:
       "Retrieves a paginated list of teams with optional filtering. Results are cached for 5 minutes.",
   })
-  @ApiPaginatedResponse(TeamResponseDto, "List of teams successfully retrieved")
+  @ApiEnvelopePage(TeamResponseDto, "List of teams successfully retrieved")
   async getTeams(
     @Query() query: GetTeamsQueryDto,
   ): Promise<PaginatedResponseDto<TeamResponseDto>> {
@@ -69,11 +69,10 @@ export class TeamsController {
     description:
       "Returns available team numbers, pool letters, and divisions. Optionally scoped to a committee or league.",
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "Filter values successfully retrieved",
-    type: FilterValuesTeamsResponseDto,
-  })
+  @ApiEnvelope(
+    FilterValuesTeamsResponseDto,
+    "Filter values successfully retrieved",
+  )
   async getTeamFilterValues(
     @Query() query: OrganizationScopeQueryDto,
   ): Promise<FilterValuesTeamsResponseDto> {
@@ -88,11 +87,7 @@ export class TeamsController {
       "Retrieves detailed information about a specific team including players and recent matches",
   })
   @ApiParam({ name: "id", description: "Team ID", type: Number, example: 1 })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "Team successfully retrieved",
-    type: TeamDetailResponseDto,
-  })
+  @ApiEnvelope(TeamDetailResponseDto, "Team successfully retrieved")
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: "Team not found",
@@ -117,11 +112,10 @@ export class TeamsController {
       "Retrieves all matches for a specific team with player statistics, ordered by date (most recent first)",
   })
   @ApiParam({ name: "id", description: "Team ID", type: Number, example: 1 })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "Match history successfully retrieved",
-    type: TeamMatchHistoryResponseDto,
-  })
+  @ApiEnvelope(
+    TeamMatchHistoryResponseDto,
+    "Match history successfully retrieved",
+  )
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: "Team not found",

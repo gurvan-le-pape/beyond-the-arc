@@ -1,5 +1,6 @@
 // src/backend/modules/competitions/leaderboards/leaderboards.controller.ts
 import { CACHE_TTL } from "@common/constants";
+import { ApiEnvelope, ApiEnvelopeList } from "@common/decorators";
 import { ApiErrorResponseDto } from "@common/dto";
 import { CacheInterceptor } from "@common/interceptors";
 import { ParseEntityIdPipe } from "@common/pipes";
@@ -78,35 +79,10 @@ export class LeaderboardsController {
     description:
       "Retrieves all leaderboard entries for a specific pool, sorted by points and point difference. Results are cached for 5 minutes.",
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "List of leaderboard entries successfully retrieved",
-    type: [LeaderboardResponseDto],
-    schema: {
-      example: {
-        data: [
-          {
-            id: 1,
-            teamId: 5,
-            teamNumber: 1,
-            clubName: "AS Monaco Basket",
-            points: 12,
-            gamesPlayed: 8,
-            gamesWon: 6,
-            gamesLost: 2,
-            gamesForfeited: 0,
-            pointsFor: 645,
-            pointsAgainst: 580,
-            pointDifference: 65,
-          },
-        ],
-        meta: { count: 10 },
-        timestamp: "2024-02-05T10:00:00Z",
-        path: "/leaderboards?poolId=1",
-        statusCode: 200,
-      },
-    },
-  })
+  @ApiEnvelopeList(
+    LeaderboardResponseDto,
+    "List of leaderboard entries successfully retrieved",
+  )
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
     description: "Invalid query parameters",
@@ -170,32 +146,10 @@ export class LeaderboardsController {
     type: Number,
     example: 1,
   })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "Leaderboard entry successfully retrieved",
-    type: LeaderboardResponseDto,
-    schema: {
-      example: {
-        data: {
-          id: 1,
-          teamId: 5,
-          teamNumber: 1,
-          clubName: "AS Monaco Basket",
-          points: 12,
-          gamesPlayed: 8,
-          gamesWon: 6,
-          gamesLost: 2,
-          gamesForfeited: 0,
-          pointsFor: 645,
-          pointsAgainst: 580,
-          pointDifference: 65,
-        },
-        timestamp: "2024-02-05T10:00:00Z",
-        path: "/leaderboards/1",
-        statusCode: 200,
-      },
-    },
-  })
+  @ApiEnvelope(
+    LeaderboardResponseDto,
+    "Leaderboard entry successfully retrieved",
+  )
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: "Leaderboard entry not found",

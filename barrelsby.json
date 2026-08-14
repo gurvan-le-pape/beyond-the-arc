@@ -104,6 +104,8 @@
     "src/backend/modules/competitions/leaderboards/dto",
     "src/backend/modules/competitions/pools/dto",
 
+    "src/backend/modules/health/dto",
+
     "src/backend/modules/matches/dto",
 
     "src/backend/modules/organizations/clubs/dto",

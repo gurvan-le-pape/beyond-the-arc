@@ -30,31 +30,31 @@
         "responses": {
           "200": {
             "description": "List of club statistics by region",
-            "schema": {
-              "example": {
-                "data": [
-                  {
-                    "id": 1,
-                    "code": "84",
-                    "name": "League Auvergne-Rhône-Alpes",
-                    "clubCount": 42
-                  }
-                ],
-                "meta": {
-                  "count": 1
-                },
-                "timestamp": "2024-02-05T10:00:00Z",
-                "path": "/clubs/stats/by-region",
-                "statusCode": 200
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ClubStatsByRegionDto"
-                  }
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/ClubStatsByRegionDto"
+                          }
+                        },
+                        "meta": {
+                          "$ref": "#/components/schemas/ApiListMetaDto"
+                        }
+                      },
+                      "required": [
+                        "data",
+                        "meta"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -95,36 +95,31 @@
         "responses": {
           "200": {
             "description": "List of club statistics by department",
-            "schema": {
-              "example": {
-                "data": [
-                  {
-                    "id": 1,
-                    "name": "Comité de l'Ain",
-                    "department": {
-                      "id": 1,
-                      "name": "Ain",
-                      "code": "01"
-                    },
-                    "leagueId": 1,
-                    "clubCount": 15
-                  }
-                ],
-                "meta": {
-                  "count": 1
-                },
-                "timestamp": "2024-02-05T10:00:00Z",
-                "path": "/clubs/stats/by-department?leagueId=1",
-                "statusCode": 200
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ClubStatsByDepartmentDto"
-                  }
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/ClubStatsByDepartmentDto"
+                          }
+                        },
+                        "meta": {
+                          "$ref": "#/components/schemas/ApiListMetaDto"
+                        }
+                      },
+                      "required": [
+                        "data",
+                        "meta"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -173,38 +168,31 @@
         "responses": {
           "200": {
             "description": "Flat list of all clubs",
-            "schema": {
-              "example": {
-                "data": [
-                  {
-                    "id": 1,
-                    "name": "AS Monaco Basket",
-                    "city": "Monaco",
-                    "zipCode": "98000",
-                    "latitude": 43.7384,
-                    "longitude": 7.4246,
-                    "email": "contact@club.com",
-                    "phone": "0123456789",
-                    "website": "https://club.com",
-                    "committeeId": 1,
-                    "leagueId": 1
-                  }
-                ],
-                "meta": {
-                  "count": 1
-                },
-                "timestamp": "2024-02-05T10:00:00Z",
-                "path": "/clubs/all",
-                "statusCode": 200
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ClubBasicResponseDto"
-                  }
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/ClubBasicResponseDto"
+                          }
+                        },
+                        "meta": {
+                          "$ref": "#/components/schemas/ApiListMetaDto"
+                        }
+                      },
+                      "required": [
+                        "data",
+                        "meta"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -342,19 +330,37 @@
                 "schema": {
                   "allOf": [
                     {
-                      "$ref": "#/components/schemas/PaginatedResponseDto"
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
                     },
                     {
                       "properties": {
-                        "items": {
-                          "type": "array",
-                          "items": {
-                            "$ref": "#/components/schemas/ClubBasicResponseDto"
-                          }
+                        "data": {
+                          "allOf": [
+                            {
+                              "$ref": "#/components/schemas/PaginatedResponseDto"
+                            },
+                            {
+                              "properties": {
+                                "items": {
+                                  "type": "array",
+                                  "items": {
+                                    "$ref": "#/components/schemas/ClubBasicResponseDto"
+                                  }
+                                }
+                              },
+                              "required": [
+                                "items"
+                              ]
+                            }
+                          ]
+                        },
+                        "meta": {
+                          "$ref": "#/components/schemas/ApiPageMetaDto"
                         }
                       },
                       "required": [
-                        "items"
+                        "data",
+                        "meta"
                       ]
                     }
                   ]
@@ -419,28 +425,24 @@
         "responses": {
           "200": {
             "description": "Club successfully retrieved",
-            "schema": {
-              "example": {
-                "data": {
-                  "id": 1,
-                  "name": "AS Monaco Basket",
-                  "city": "Monaco",
-                  "zipCode": "98000",
-                  "address": "1 Avenue des Papalins",
-                  "phone": "0123456789",
-                  "email": "contact@club.com",
-                  "website": "https://club.com",
-                  "teams": []
-                },
-                "timestamp": "2024-02-05T10:00:00Z",
-                "path": "/clubs/1",
-                "statusCode": 200
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ClubDetailedResponseDto"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ClubDetailedResponseDto"
+                        }
+                      },
+                      "required": [
+                        "data"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -508,45 +510,31 @@
         "responses": {
           "200": {
             "description": "List of committees successfully retrieved",
-            "schema": {
-              "example": {
-                "data": [
-                  {
-                    "id": 1,
-                    "name": "Comité Departmental de l'Ain",
-                    "leagueId": 1,
-                    "department": {
-                      "id": 1,
-                      "name": "Ain",
-                      "code": "01"
-                    }
-                  },
-                  {
-                    "id": 2,
-                    "name": "Comité Departmental de l'Aisne",
-                    "leagueId": 1,
-                    "department": {
-                      "id": 2,
-                      "name": "Aisne",
-                      "code": "02"
-                    }
-                  }
-                ],
-                "meta": {
-                  "count": 2
-                },
-                "timestamp": "2024-02-05T10:00:00Z",
-                "path": "/committees?leagueId=1",
-                "statusCode": 200
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/CommitteeResponseDto"
-                  }
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/CommitteeResponseDto"
+                          }
+                        },
+                        "meta": {
+                          "$ref": "#/components/schemas/ApiListMetaDto"
+                        }
+                      },
+                      "required": [
+                        "data",
+                        "meta"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -596,27 +584,24 @@
         "responses": {
           "200": {
             "description": "Committee successfully retrieved",
-            "schema": {
-              "example": {
-                "data": {
-                  "id": 1,
-                  "name": "Comité Departmental de l'Ain",
-                  "leagueId": 1,
-                  "department": {
-                    "id": 1,
-                    "name": "Ain",
-                    "code": "01"
-                  }
-                },
-                "timestamp": "2024-02-05T10:00:00Z",
-                "path": "/committees/1",
-                "statusCode": 200
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CommitteeResponseDto"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/CommitteeResponseDto"
+                        }
+                      },
+                      "required": [
+                        "data"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -663,37 +648,31 @@
         "responses": {
           "200": {
             "description": "List of regional leagues successfully retrieved",
-            "schema": {
-              "example": {
-                "data": [
-                  {
-                    "id": 1,
-                    "name": "League Auvergne-Rhône-Alpes"
-                  },
-                  {
-                    "id": 2,
-                    "name": "League Bourgogne-Franche-Comté"
-                  },
-                  {
-                    "id": 3,
-                    "name": "League Bretagne"
-                  }
-                ],
-                "meta": {
-                  "count": 3
-                },
-                "timestamp": "2024-02-05T10:00:00Z",
-                "path": "/leagues",
-                "statusCode": 200
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/LeagueResponseDto"
-                  }
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/LeagueResponseDto"
+                          }
+                        },
+                        "meta": {
+                          "$ref": "#/components/schemas/ApiListMetaDto"
+                        }
+                      },
+                      "required": [
+                        "data",
+                        "meta"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -741,21 +720,24 @@
         "responses": {
           "200": {
             "description": "League successfully retrieved",
-            "schema": {
-              "example": {
-                "data": {
-                  "id": 1,
-                  "name": "League Auvergne-Rhône-Alpes"
-                },
-                "timestamp": "2024-02-05T10:00:00Z",
-                "path": "/leagues/1",
-                "statusCode": 200
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LeagueResponseDto"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/LeagueResponseDto"
+                        }
+                      },
+                      "required": [
+                        "data"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -813,26 +795,24 @@
         "responses": {
           "200": {
             "description": "Championship successfully retrieved",
-            "schema": {
-              "example": {
-                "data": {
-                  "id": 1,
-                  "name": "Championship Régional U18 male",
-                  "category": "U18",
-                  "gender": "male",
-                  "seasonYear": "2024-2025",
-                  "level": "regional",
-                  "division": "Régionale 1"
-                },
-                "timestamp": "2024-02-05T10:00:00Z",
-                "path": "/championships/1",
-                "statusCode": 200
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ChampionshipResponseDto"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ChampionshipResponseDto"
+                        }
+                      },
+                      "required": [
+                        "data"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -966,19 +946,37 @@
                 "schema": {
                   "allOf": [
                     {
-                      "$ref": "#/components/schemas/PaginatedResponseDto"
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
                     },
                     {
                       "properties": {
-                        "items": {
-                          "type": "array",
-                          "items": {
-                            "$ref": "#/components/schemas/ChampionshipResponseDto"
-                          }
+                        "data": {
+                          "allOf": [
+                            {
+                              "$ref": "#/components/schemas/PaginatedResponseDto"
+                            },
+                            {
+                              "properties": {
+                                "items": {
+                                  "type": "array",
+                                  "items": {
+                                    "$ref": "#/components/schemas/ChampionshipResponseDto"
+                                  }
+                                }
+                              },
+                              "required": [
+                                "items"
+                              ]
+                            }
+                          ]
+                        },
+                        "meta": {
+                          "$ref": "#/components/schemas/ApiPageMetaDto"
                         }
                       },
                       "required": [
-                        "items"
+                        "data",
+                        "meta"
                       ]
                     }
                   ]
@@ -1031,39 +1029,31 @@
         "responses": {
           "200": {
             "description": "List of leaderboard entries successfully retrieved",
-            "schema": {
-              "example": {
-                "data": [
-                  {
-                    "id": 1,
-                    "teamId": 5,
-                    "teamNumber": 1,
-                    "clubName": "AS Monaco Basket",
-                    "points": 12,
-                    "gamesPlayed": 8,
-                    "gamesWon": 6,
-                    "gamesLost": 2,
-                    "gamesForfeited": 0,
-                    "pointsFor": 645,
-                    "pointsAgainst": 580,
-                    "pointDifference": 65
-                  }
-                ],
-                "meta": {
-                  "count": 10
-                },
-                "timestamp": "2024-02-05T10:00:00Z",
-                "path": "/leaderboards?poolId=1",
-                "statusCode": 200
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/LeaderboardResponseDto"
-                  }
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/LeaderboardResponseDto"
+                          }
+                        },
+                        "meta": {
+                          "$ref": "#/components/schemas/ApiListMetaDto"
+                        }
+                      },
+                      "required": [
+                        "data",
+                        "meta"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -1113,31 +1103,24 @@
         "responses": {
           "200": {
             "description": "Leaderboard entry successfully retrieved",
-            "schema": {
-              "example": {
-                "data": {
-                  "id": 1,
-                  "teamId": 5,
-                  "teamNumber": 1,
-                  "clubName": "AS Monaco Basket",
-                  "points": 12,
-                  "gamesPlayed": 8,
-                  "gamesWon": 6,
-                  "gamesLost": 2,
-                  "gamesForfeited": 0,
-                  "pointsFor": 645,
-                  "pointsAgainst": 580,
-                  "pointDifference": 65
-                },
-                "timestamp": "2024-02-05T10:00:00Z",
-                "path": "/leaderboards/1",
-                "statusCode": 200
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LeaderboardResponseDto"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/LeaderboardResponseDto"
+                        }
+                      },
+                      "required": [
+                        "data"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -1195,37 +1178,31 @@
         "responses": {
           "200": {
             "description": "List of pools successfully retrieved (may be empty)",
-            "schema": {
-              "example": {
-                "data": [
-                  {
-                    "id": 1,
-                    "letter": "A",
-                    "name": "Pool A - Seniors",
-                    "championshipId": 1
-                  },
-                  {
-                    "id": 2,
-                    "letter": "B",
-                    "name": "Pool B - Seniors",
-                    "championshipId": 1
-                  }
-                ],
-                "meta": {
-                  "count": 2
-                },
-                "timestamp": "2024-02-05T10:00:00Z",
-                "path": "/pools?championshipId=1",
-                "statusCode": 200
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PoolResponseDto"
-                  }
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/PoolResponseDto"
+                          }
+                        },
+                        "meta": {
+                          "$ref": "#/components/schemas/ApiListMetaDto"
+                        }
+                      },
+                      "required": [
+                        "data",
+                        "meta"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -1275,23 +1252,24 @@
         "responses": {
           "200": {
             "description": "Pool successfully retrieved",
-            "schema": {
-              "example": {
-                "data": {
-                  "id": 1,
-                  "letter": "A",
-                  "name": "Pool A - Seniors",
-                  "championshipId": 1
-                },
-                "timestamp": "2024-02-05T10:00:00Z",
-                "path": "/pools/1",
-                "statusCode": 200
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PoolResponseDto"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/PoolResponseDto"
+                        }
+                      },
+                      "required": [
+                        "data"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -1497,19 +1475,37 @@
                 "schema": {
                   "allOf": [
                     {
-                      "$ref": "#/components/schemas/PaginatedResponseDto"
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
                     },
                     {
                       "properties": {
-                        "items": {
-                          "type": "array",
-                          "items": {
-                            "$ref": "#/components/schemas/MatchResponseDto"
-                          }
+                        "data": {
+                          "allOf": [
+                            {
+                              "$ref": "#/components/schemas/PaginatedResponseDto"
+                            },
+                            {
+                              "properties": {
+                                "items": {
+                                  "type": "array",
+                                  "items": {
+                                    "$ref": "#/components/schemas/MatchResponseDto"
+                                  }
+                                }
+                              },
+                              "required": [
+                                "items"
+                              ]
+                            }
+                          ]
+                        },
+                        "meta": {
+                          "$ref": "#/components/schemas/ApiPageMetaDto"
                         }
                       },
                       "required": [
-                        "items"
+                        "data",
+                        "meta"
                       ]
                     }
                   ]
@@ -1556,10 +1552,28 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MatchResponseDto"
-                  }
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/MatchResponseDto"
+                          }
+                        },
+                        "meta": {
+                          "$ref": "#/components/schemas/ApiListMetaDto"
+                        }
+                      },
+                      "required": [
+                        "data",
+                        "meta"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -1613,7 +1627,21 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MatchDetailResponseDto"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/MatchDetailResponseDto"
+                        }
+                      },
+                      "required": [
+                        "data"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -1667,7 +1695,21 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MatchPlayerStatsResponseDto"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/MatchPlayerStatsResponseDto"
+                        }
+                      },
+                      "required": [
+                        "data"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -1721,10 +1763,28 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MatchEventDto"
-                  }
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/MatchEventDto"
+                          }
+                        },
+                        "meta": {
+                          "$ref": "#/components/schemas/ApiListMetaDto"
+                        }
+                      },
+                      "required": [
+                        "data",
+                        "meta"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -1768,10 +1828,28 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MatchEventDto"
-                  }
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/MatchEventDto"
+                          }
+                        },
+                        "meta": {
+                          "$ref": "#/components/schemas/ApiListMetaDto"
+                        }
+                      },
+                      "required": [
+                        "data",
+                        "meta"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -1815,10 +1893,28 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MatchEventDto"
-                  }
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/MatchEventDto"
+                          }
+                        },
+                        "meta": {
+                          "$ref": "#/components/schemas/ApiListMetaDto"
+                        }
+                      },
+                      "required": [
+                        "data",
+                        "meta"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -1996,19 +2092,37 @@
                 "schema": {
                   "allOf": [
                     {
-                      "$ref": "#/components/schemas/PaginatedResponseDto"
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
                     },
                     {
                       "properties": {
-                        "items": {
-                          "type": "array",
-                          "items": {
-                            "$ref": "#/components/schemas/PlayerResponseDto"
-                          }
+                        "data": {
+                          "allOf": [
+                            {
+                              "$ref": "#/components/schemas/PaginatedResponseDto"
+                            },
+                            {
+                              "properties": {
+                                "items": {
+                                  "type": "array",
+                                  "items": {
+                                    "$ref": "#/components/schemas/PlayerResponseDto"
+                                  }
+                                }
+                              },
+                              "required": [
+                                "items"
+                              ]
+                            }
+                          ]
+                        },
+                        "meta": {
+                          "$ref": "#/components/schemas/ApiPageMetaDto"
                         }
                       },
                       "required": [
-                        "items"
+                        "data",
+                        "meta"
                       ]
                     }
                   ]
@@ -2075,7 +2189,21 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FilterValuesPlayersResponseDto"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/FilterValuesPlayersResponseDto"
+                        }
+                      },
+                      "required": [
+                        "data"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -2106,52 +2234,24 @@
         "responses": {
           "200": {
             "description": "Player successfully retrieved",
-            "schema": {
-              "example": {
-                "data": {
-                  "id": 1,
-                  "name": "John Doe",
-                  "number": 10,
-                  "teamId": 1,
-                  "team": {
-                    "id": 1,
-                    "number": 1,
-                    "clubId": 1,
-                    "category": "U18",
-                    "gender": "M",
-                    "club": {
-                      "id": 1,
-                      "name": "Club Example",
-                      "committee": {
-                        "id": 1,
-                        "name": "Committee Example",
-                        "league": {
-                          "id": 1,
-                          "name": "League Example"
-                        }
-                      }
-                    },
-                    "pool": {
-                      "id": 1,
-                      "name": "Pool A",
-                      "championship": {
-                        "id": 1,
-                        "name": "Championship Régional U18",
-                        "level": "regional",
-                        "division": "Régionale 1"
-                      }
-                    }
-                  }
-                },
-                "timestamp": "2024-02-05T10:00:00Z",
-                "path": "/players/1",
-                "statusCode": 200
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PlayerResponseDto"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/PlayerResponseDto"
+                        }
+                      },
+                      "required": [
+                        "data"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -2209,93 +2309,24 @@
         "responses": {
           "200": {
             "description": "Match history successfully retrieved",
-            "schema": {
-              "example": {
-                "data": {
-                  "matches": [
-                    {
-                      "id": 1,
-                      "date": "2024-02-05T19:00:00Z",
-                      "homeTeam": {
-                        "id": 1,
-                        "number": 1,
-                        "club": {
-                          "id": 1,
-                          "name": "Club A"
-                        }
-                      },
-                      "awayTeam": {
-                        "id": 2,
-                        "number": 1,
-                        "club": {
-                          "id": 2,
-                          "name": "Club B"
-                        }
-                      },
-                      "homeTeamScore": 85,
-                      "awayTeamScore": 72,
-                      "player": {
-                        "player": {
-                          "id": 1,
-                          "name": "John Doe",
-                          "number": 10,
-                          "teamId": 1
-                        },
-                        "stats": {
-                          "points": 15,
-                          "fouls": 2,
-                          "threePointsMade": 2,
-                          "threePointsAttempted": 5,
-                          "rebounds": {
-                            "total": 8,
-                            "offensive": 3,
-                            "defensive": 5
-                          },
-                          "assists": 7,
-                          "steals": 2,
-                          "blocks": 1,
-                          "turnovers": 3,
-                          "playtimeIntervals": [
-                            [
-                              0,
-                              600
-                            ],
-                            [
-                              1200,
-                              2400
-                            ]
-                          ]
-                        }
-                      }
-                    }
-                  ],
-                  "career": {
-                    "gamesPlayed": 1,
-                    "points": 15,
-                    "rebounds": 8,
-                    "assists": 7,
-                    "steals": 2,
-                    "blocks": 1,
-                    "turnovers": 3,
-                    "fouls": 2,
-                    "pointsPerGame": 15,
-                    "reboundsPerGame": 8,
-                    "assistsPerGame": 7,
-                    "stealsPerGame": 2,
-                    "blocksPerGame": 1,
-                    "turnoversPerGame": 3,
-                    "foulsPerGame": 2
-                  }
-                },
-                "timestamp": "2024-02-05T10:00:00Z",
-                "path": "/players/1/matches",
-                "statusCode": 200
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PlayerMatchHistoryResponseDto"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/PlayerMatchHistoryResponseDto"
+                        }
+                      },
+                      "required": [
+                        "data"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -2490,19 +2521,37 @@
                 "schema": {
                   "allOf": [
                     {
-                      "$ref": "#/components/schemas/PaginatedResponseDto"
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
                     },
                     {
                       "properties": {
-                        "items": {
-                          "type": "array",
-                          "items": {
-                            "$ref": "#/components/schemas/TeamResponseDto"
-                          }
+                        "data": {
+                          "allOf": [
+                            {
+                              "$ref": "#/components/schemas/PaginatedResponseDto"
+                            },
+                            {
+                              "properties": {
+                                "items": {
+                                  "type": "array",
+                                  "items": {
+                                    "$ref": "#/components/schemas/TeamResponseDto"
+                                  }
+                                }
+                              },
+                              "required": [
+                                "items"
+                              ]
+                            }
+                          ]
+                        },
+                        "meta": {
+                          "$ref": "#/components/schemas/ApiPageMetaDto"
                         }
                       },
                       "required": [
-                        "items"
+                        "data",
+                        "meta"
                       ]
                     }
                   ]
@@ -2549,7 +2598,21 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FilterValuesTeamsResponseDto"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/FilterValuesTeamsResponseDto"
+                        }
+                      },
+                      "required": [
+                        "data"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -2583,7 +2646,21 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TeamDetailResponseDto"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/TeamDetailResponseDto"
+                        }
+                      },
+                      "required": [
+                        "data"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -2637,7 +2714,21 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TeamMatchHistoryResponseDto"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/TeamMatchHistoryResponseDto"
+                        }
+                      },
+                      "required": [
+                        "data"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -2677,25 +2768,24 @@
         "responses": {
           "200": {
             "description": "Statistics successfully retrieved",
-            "schema": {
-              "example": {
-                "data": {
-                  "clubs": 840,
-                  "teams": 3200,
-                  "players": 12400,
-                  "matches": 48000,
-                  "leagues": 26,
-                  "committees": 95
-                },
-                "timestamp": "2024-02-05T10:00:00Z",
-                "path": "/stats",
-                "statusCode": 200
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/StatsResponseDto"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/StatsResponseDto"
+                        }
+                      },
+                      "required": [
+                        "data"
+                      ]
+                    }
+                  ]
                 }
               }
             }
@@ -2713,158 +2803,49 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "The Health Check is successful",
+            "description": "Application is healthy",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "ok"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
                     },
-                    "info": {
-                      "type": "object",
-                      "example": {
-                        "database": {
-                          "status": "up"
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/HealthCheckResultDto"
                         }
                       },
-                      "additionalProperties": {
-                        "type": "object",
-                        "required": [
-                          "status"
-                        ],
-                        "properties": {
-                          "status": {
-                            "type": "string"
-                          }
-                        },
-                        "additionalProperties": true
-                      },
-                      "nullable": true
-                    },
-                    "error": {
-                      "type": "object",
-                      "example": {},
-                      "additionalProperties": {
-                        "type": "object",
-                        "required": [
-                          "status"
-                        ],
-                        "properties": {
-                          "status": {
-                            "type": "string"
-                          }
-                        },
-                        "additionalProperties": true
-                      },
-                      "nullable": true
-                    },
-                    "details": {
-                      "type": "object",
-                      "example": {
-                        "database": {
-                          "status": "up"
-                        }
-                      },
-                      "additionalProperties": {
-                        "type": "object",
-                        "required": [
-                          "status"
-                        ],
-                        "properties": {
-                          "status": {
-                            "type": "string"
-                          }
-                        },
-                        "additionalProperties": true
-                      }
+                      "required": [
+                        "data"
+                      ]
                     }
-                  }
+                  ]
                 }
               }
             }
           },
           "503": {
-            "description": "The Health Check is not successful",
+            "description": "Application is unhealthy — `data.error` names the failing indicators",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "error"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
                     },
-                    "info": {
-                      "type": "object",
-                      "example": {
-                        "database": {
-                          "status": "up"
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/HealthCheckResultDto"
                         }
                       },
-                      "additionalProperties": {
-                        "type": "object",
-                        "required": [
-                          "status"
-                        ],
-                        "properties": {
-                          "status": {
-                            "type": "string"
-                          }
-                        },
-                        "additionalProperties": true
-                      },
-                      "nullable": true
-                    },
-                    "error": {
-                      "type": "object",
-                      "example": {
-                        "redis": {
-                          "status": "down",
-                          "message": "Could not connect"
-                        }
-                      },
-                      "additionalProperties": {
-                        "type": "object",
-                        "required": [
-                          "status"
-                        ],
-                        "properties": {
-                          "status": {
-                            "type": "string"
-                          }
-                        },
-                        "additionalProperties": true
-                      },
-                      "nullable": true
-                    },
-                    "details": {
-                      "type": "object",
-                      "example": {
-                        "database": {
-                          "status": "up"
-                        },
-                        "redis": {
-                          "status": "down",
-                          "message": "Could not connect"
-                        }
-                      },
-                      "additionalProperties": {
-                        "type": "object",
-                        "required": [
-                          "status"
-                        ],
-                        "properties": {
-                          "status": {
-                            "type": "string"
-                          }
-                        },
-                        "additionalProperties": true
-                      }
+                      "required": [
+                        "data"
+                      ]
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -2882,7 +2863,28 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Application is alive"
+            "description": "Application is alive",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/LivenessResponseDto"
+                        }
+                      },
+                      "required": [
+                        "data"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "summary": "Liveness probe",
@@ -2897,158 +2899,49 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "The Health Check is successful",
+            "description": "Application is ready",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "ok"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
                     },
-                    "info": {
-                      "type": "object",
-                      "example": {
-                        "database": {
-                          "status": "up"
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/HealthCheckResultDto"
                         }
                       },
-                      "additionalProperties": {
-                        "type": "object",
-                        "required": [
-                          "status"
-                        ],
-                        "properties": {
-                          "status": {
-                            "type": "string"
-                          }
-                        },
-                        "additionalProperties": true
-                      },
-                      "nullable": true
-                    },
-                    "error": {
-                      "type": "object",
-                      "example": {},
-                      "additionalProperties": {
-                        "type": "object",
-                        "required": [
-                          "status"
-                        ],
-                        "properties": {
-                          "status": {
-                            "type": "string"
-                          }
-                        },
-                        "additionalProperties": true
-                      },
-                      "nullable": true
-                    },
-                    "details": {
-                      "type": "object",
-                      "example": {
-                        "database": {
-                          "status": "up"
-                        }
-                      },
-                      "additionalProperties": {
-                        "type": "object",
-                        "required": [
-                          "status"
-                        ],
-                        "properties": {
-                          "status": {
-                            "type": "string"
-                          }
-                        },
-                        "additionalProperties": true
-                      }
+                      "required": [
+                        "data"
+                      ]
                     }
-                  }
+                  ]
                 }
               }
             }
           },
           "503": {
-            "description": "The Health Check is not successful",
+            "description": "Application is not ready — the database is unreachable",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "error"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
                     },
-                    "info": {
-                      "type": "object",
-                      "example": {
-                        "database": {
-                          "status": "up"
+                    {
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/HealthCheckResultDto"
                         }
                       },
-                      "additionalProperties": {
-                        "type": "object",
-                        "required": [
-                          "status"
-                        ],
-                        "properties": {
-                          "status": {
-                            "type": "string"
-                          }
-                        },
-                        "additionalProperties": true
-                      },
-                      "nullable": true
-                    },
-                    "error": {
-                      "type": "object",
-                      "example": {
-                        "redis": {
-                          "status": "down",
-                          "message": "Could not connect"
-                        }
-                      },
-                      "additionalProperties": {
-                        "type": "object",
-                        "required": [
-                          "status"
-                        ],
-                        "properties": {
-                          "status": {
-                            "type": "string"
-                          }
-                        },
-                        "additionalProperties": true
-                      },
-                      "nullable": true
-                    },
-                    "details": {
-                      "type": "object",
-                      "example": {
-                        "database": {
-                          "status": "up"
-                        },
-                        "redis": {
-                          "status": "down",
-                          "message": "Could not connect"
-                        }
-                      },
-                      "additionalProperties": {
-                        "type": "object",
-                        "required": [
-                          "status"
-                        ],
-                        "properties": {
-                          "status": {
-                            "type": "string"
-                          }
-                        },
-                        "additionalProperties": true
-                      }
+                      "required": [
+                        "data"
+                      ]
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -3071,6 +2964,44 @@
   "servers": [],
   "components": {
     "schemas": {
+      "ApiEnvelopeDto": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "description": "When the response was produced, as an ISO 8601 UTC instant",
+            "example": "2026-02-05T10:00:00.000Z"
+          },
+          "path": {
+            "type": "string",
+            "description": "The request path that produced this response, including the /api prefix and any query string",
+            "example": "/api/leagues"
+          },
+          "statusCode": {
+            "type": "number",
+            "description": "HTTP status code, repeated in the body for convenience",
+            "example": 200
+          }
+        },
+        "required": [
+          "timestamp",
+          "path",
+          "statusCode"
+        ]
+      },
+      "ApiListMetaDto": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "number",
+            "description": "Number of items in `data`",
+            "example": 3
+          }
+        },
+        "required": [
+          "count"
+        ]
+      },
       "ClubStatsByRegionDto": {
         "type": "object",
         "properties": {
@@ -3291,6 +3222,37 @@
           "website",
           "committeeId",
           "leagueId"
+        ]
+      },
+      "ApiPageMetaDto": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "number",
+            "description": "Number of items on the current page — not the size of the full result set, which is `data.total`",
+            "example": 50
+          },
+          "page": {
+            "type": "number",
+            "description": "Current page (1-based), mirroring `data.page`",
+            "example": 1
+          },
+          "limit": {
+            "type": "number",
+            "description": "Requested page size, mirroring `data.limit`",
+            "example": 50
+          },
+          "totalPages": {
+            "type": "number",
+            "description": "Total number of pages, mirroring `data.totalPages`",
+            "example": 3
+          }
+        },
+        "required": [
+          "count",
+          "page",
+          "limit",
+          "totalPages"
         ]
       },
       "PaginatedResponseDto": {
@@ -6635,6 +6597,92 @@
           "leagues",
           "committees",
           "championshipsByLevel"
+        ]
+      },
+      "HealthIndicatorDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Indicator verdict — \"up\" or \"down\"",
+            "example": "up"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "HealthCheckResultDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Overall result — \"ok\" when every indicator is up",
+            "example": "ok"
+          },
+          "info": {
+            "type": "object",
+            "description": "Indicators that are up, keyed by indicator name",
+            "example": {
+              "database": {
+                "status": "up"
+              }
+            },
+            "additionalProperties": {
+              "$ref": "#/components/schemas/HealthIndicatorDto"
+            },
+            "nullable": true
+          },
+          "error": {
+            "type": "object",
+            "description": "Indicators that are down, keyed by indicator name",
+            "example": {},
+            "additionalProperties": {
+              "$ref": "#/components/schemas/HealthIndicatorDto"
+            },
+            "nullable": true
+          },
+          "details": {
+            "type": "object",
+            "description": "Every indicator's verdict, up or down, keyed by name",
+            "example": {
+              "database": {
+                "status": "up"
+              },
+              "memory_heap": {
+                "status": "up"
+              },
+              "storage": {
+                "status": "up"
+              }
+            },
+            "additionalProperties": {
+              "$ref": "#/components/schemas/HealthIndicatorDto"
+            }
+          }
+        },
+        "required": [
+          "status",
+          "details"
+        ]
+      },
+      "LivenessResponseDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Always \"ok\" — reaching the handler is the check",
+            "example": "ok"
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "When the probe answered, as an ISO 8601 UTC instant. Distinct from the envelope's own `timestamp`, though the two are produced microseconds apart.",
+            "example": "2026-02-05T10:00:00.000Z"
+          }
+        },
+        "required": [
+          "status",
+          "timestamp"
         ]
       }
     }

@@ -64,7 +64,7 @@ List endpoints additionally include a `meta` object with a `count` field:
 }
 ```
 
-Paginated endpoints (clubs, teams, players, matches) nest the pagination metadata inside `data` rather than `meta`:
+Paginated endpoints (clubs, championships, teams, players, matches) nest the pagination metadata inside `data` — **and also send a `meta`**, which is the one place the two halves differ: `data.total` is the size of the full result set, `meta.count` is the length of the page in hand.
 
 ```json
 {
@@ -75,27 +75,46 @@ Paginated endpoints (clubs, teams, players, matches) nest the pagination metadat
     "limit": 50,
     "totalPages": 3
   },
+  "meta": { "count": 50, "page": 1, "limit": 50, "totalPages": 3 },
   "timestamp": "2024-02-05T10:00:00Z",
   "path": "/api/players?page=1",
   "statusCode": 200
 }
 ```
 
+`meta` is absent entirely from a single-object response — the key is not sent, rather than sent as null.
+
+### The envelope is in the contract
+
+All three shapes are described in `docs/openapi.json`, and therefore in the generated frontend types. They come from `ApiEnvelopeDto` + `ApiListMetaDto` / `ApiPageMetaDto` in `@common/dto`, composed onto a concrete `data` schema by the three decorators in `@common/decorators`:
+
+| decorator | `data` | `meta` |
+|---|---|---|
+| `@ApiEnvelope(Dto, description)` | one object | absent |
+| `@ApiEnvelopeList(Dto, description)` | array | `{ count }` |
+| `@ApiEnvelopePage(ItemDto, description)` | `PaginatedResponseDto` with typed `items` | `{ count, page, limit, totalPages }` |
+
+**A new 200 on an `/api` route uses one of these, not a bare `@ApiResponse`.** `@SkipTransform` is applied in exactly one place — `/metrics`, which is outside the global prefix and serves Prometheus text — so every other route is enveloped, and a hand-written `@ApiResponse({ type: Dto })` documents a body the API does not send. That was true of all 34 of them before this was introduced: the document described the unwrapped payload while the API had never sent one.
+
+Note for the two `@HealthCheck()` routes: Terminus's decorator registers its own 200 and 503 schemas describing the bare health result as the whole body, and it outranks anything declared below it. They pass `swaggerDocumentation: false` (and must re-pass `noCache: true`, which the option object replaces rather than merges) so the envelope decorators are the only declaration.
+
 ---
 
 ## Error responses
 
-Errors are handled by a global `AllExceptionsFilter` (which also forwards to Sentry). The error envelope mirrors the success envelope:
+Errors are handled by a global `AllExceptionsFilter` (which also forwards to Sentry). An error body is **not** enveloped — it is the body itself, described by `ApiErrorResponseDto`:
 
 ```json
 {
   "statusCode": 404,
   "message": "Player with ID 999 not found",
-  "error": "NotFoundException",
+  "error": "Not Found",
   "path": "/api/players/999",
   "timestamp": "2024-02-05T10:00:00Z"
 }
 ```
+
+`error` is the HTTP status name, derived from the status code — never the exception class name. The health routes are the exception to the exception: their 503 goes through `HealthCheckExceptionFilter` and *is* enveloped, carrying the Terminus result under `data`.
 
 **Every response carries an `x-request-id` header** — success and error alike — and it is the same id the backend logs that request under. It is the value to quote in a bug report, and the one thing that ties a failure seen by a caller to the server-side line that explains it (`{service="backend"} | json | req_id="…"`). It is not part of the error body above; it is a header, and a well-formed inbound `x-request-id` is reused rather than replaced so an id can be propagated from further upstream. See `docs/observability.md`.
 
@@ -323,6 +342,8 @@ Exposed at `/metrics` (outside the `/api` prefix) for Prometheus scraping. Retur
 **In-memory cache only.** The cache is in-process with a maximum of 100 entries. It does not survive restarts and is not shared across hypothetical multiple instances. A Redis-backed cache would be needed for any multi-instance deployment.
 
 **Inconsistent pagination envelope.** List endpoints return `meta.count` while paginated endpoints return `data.items`, `data.total`, `data.page`, etc. The two patterns are not unified, which means frontend consumers need to handle both shapes.
+
+Sharper than it reads, now that the envelope is described in the contract rather than only in prose: a paginated endpoint sends the pagination numbers **twice**, once inside `data` and once in `meta`, and they are not the same numbers — `data.total` is the size of the result set while `meta.count` is the length of the page. `page`, `limit` and `totalPages` are straight duplicates. Unifying them is a breaking wire change and is not scheduled; until then, `ApiPageMetaDto`'s property descriptions say which is which.
 
 **`/matches/team/:teamId/events` and `/matches/player/:playerId/events` are under `/matches`.** These endpoints are scoped to a team or player but live under the matches controller. This is a pragmatic grouping — they return match event data — but it is not immediately obvious from the URL that `/matches/team/:teamId/events` and `/teams/:id/matches` are different resources serving different purposes.
 

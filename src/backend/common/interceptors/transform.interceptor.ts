@@ -1,4 +1,5 @@
 // src/backend/common/interceptors/transform.interceptor.ts
+import { ApiEnvelopeDto, ApiListMetaDto, ApiPageMetaDto } from "@common/dto";
 import {
   CallHandler,
   ExecutionContext,
@@ -11,54 +12,38 @@ import { map, Observable } from "rxjs";
 import { SKIP_TRANSFORM_KEY } from "./skip-transform.interceptor";
 
 /**
- * Standard API response structure.
- * Provides consistency across all endpoints.
+ * What `generateMeta` can produce: always a `count`, plus the three pagination
+ * numbers when the payload is a page.
+ *
+ * `Partial<ApiPageMetaDto>` rather than a union with `ApiPageMetaDto` because
+ * the paginated branch reads `page` and `limit` off an untyped payload and
+ * computes `totalPages` only when `limit` is set — so at the type level any of
+ * the three may be missing, even though every paginated endpoint in the API
+ * supplies all three today (`resolvePagination` always defaults them).
  */
-export interface ApiResponse<T> {
-  /**
-   * The actual response data
-   */
+type EnvelopeMeta = ApiListMetaDto & Partial<ApiPageMetaDto>;
+
+/**
+ * The envelope this interceptor emits, defined in terms of the DTOs that
+ * publish it rather than restating their fields.
+ *
+ * The two used to be independent declarations, and the drift that allows is
+ * not hypothetical — it is the whole of `api-contract 5`. This interface
+ * described `{ data, meta?, timestamp, path, statusCode }` correctly while the
+ * OpenAPI document described the *unwrapped* payload, and nothing connected
+ * them, so 34 endpoints published a body the API had never sent. Extending
+ * `ApiEnvelopeDto` and building `meta` out of `ApiListMetaDto` /
+ * `ApiPageMetaDto` means a field renamed on either side stops compiling here.
+ *
+ * @see ApiEnvelopeDto — the published counterpart
+ * @see ApiEnvelope, ApiEnvelopeList, ApiEnvelopePage in `@common/decorators`
+ */
+export interface ApiResponse<T> extends ApiEnvelopeDto {
+  /** The handler's return value — what the document describes per endpoint. */
   data: T;
 
-  /**
-   * Response metadata (optional)
-   */
-  meta?: {
-    /**
-     * Total count of items (useful for pagination)
-     */
-    count?: number;
-
-    /**
-     * Current page (if paginated)
-     */
-    page?: number;
-
-    /**
-     * Items per page (if paginated)
-     */
-    limit?: number;
-
-    /**
-     * Total number of pages (if paginated)
-     */
-    totalPages?: number;
-  };
-
-  /**
-   * Timestamp of the response
-   */
-  timestamp: string;
-
-  /**
-   * Request path
-   */
-  path: string;
-
-  /**
-   * HTTP status code
-   */
-  statusCode: number;
+  /** Absent entirely on single-object responses; see `generateMeta`. */
+  meta?: EnvelopeMeta;
 }
 
 /**
