@@ -80,7 +80,7 @@ export function useClubStatsByRegion(options?: {
 
 /**
  * Hook to fetch club statistics aggregated by département.
- * Reads `/clubs/stats/by-department` from the backend directly; 1 h `staleTime`.
+ * Reads `/clubs/stats/by-department` from the backend directly; 24 h `staleTime`.
  *
  * @returns React Query result with department stats
  *
@@ -98,7 +98,7 @@ export function useClubStatsByDepartment(options?: {
 
 /**
  * Hook to fetch all clubs without filtering.
- * Reads `/clubs/all` from the backend directly; 1 h `staleTime`.
+ * Reads `/clubs/all` from the backend directly; 24 h `staleTime`.
  * Useful for typeaheads, selects, and autocomplete widgets.
  *
  * @returns React Query result with all clubs
