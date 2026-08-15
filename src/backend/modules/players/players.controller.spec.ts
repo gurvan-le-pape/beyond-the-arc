@@ -336,7 +336,7 @@ describe("PlayersController", () => {
         matches: [
           {
             id: 1,
-            date: new Date("2024-02-05"),
+            startsAt: new Date("2024-02-05"),
             homeTeam: {
               id: 1,
               number: 1,

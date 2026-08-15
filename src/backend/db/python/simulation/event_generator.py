@@ -71,7 +71,7 @@ class EventGenerator:
             shooter = random.choice(offensive)  # noqa: S2245
             fouler = random.choice(defensive)  # noqa: S2245
             return {
-                "timestamp": None,
+                "occurred_at": None,
                 "event_type": event_type,
                 "player_roles": {"shooter": shooter, "fouler": fouler},
                 "description": f"{name(shooter)} scored and was fouled by {name(fouler)} ({event_type.replace('_', ' ')}).",
@@ -81,7 +81,7 @@ class EventGenerator:
             shooter = random.choice(offensive)  # noqa: S2245
             fouler = random.choice(defensive)  # noqa: S2245
             return {
-                "timestamp": None,
+                "occurred_at": None,
                 "event_type": event_type,
                 "player_roles": {"shooter": shooter, "fouler": fouler},
                 "description": f"{name(fouler)} committed a {event_type.replace('_', ' ')} on {name(shooter)}.",
@@ -91,7 +91,7 @@ class EventGenerator:
             stealer = random.choice(defensive)  # noqa: S2245
             victim = random.choice(offensive)  # noqa: S2245
             return {
-                "timestamp": None,
+                "occurred_at": None,
                 "event_type": event_type,
                 "player_roles": {"stealer": stealer, "victim": victim},
                 "description": f"{name(stealer)} stole the ball from {name(victim)}.",
@@ -101,7 +101,7 @@ class EventGenerator:
             shooter = random.choice(offensive)  # noqa: S2245
             blocker = random.choice(defensive)  # noqa: S2245
             return {
-                "timestamp": None,
+                "occurred_at": None,
                 "event_type": event_type,
                 "player_roles": {"blocked": shooter, "blocker": blocker},
                 "description": f"{name(blocker)} blocked {name(shooter)}'s shot.",
@@ -111,7 +111,7 @@ class EventGenerator:
             fouler = random.choice(defensive)  # noqa: S2245
             victim = random.choice(offensive)  # noqa: S2245
             return {
-                "timestamp": None,
+                "occurred_at": None,
                 "event_type": event_type,
                 "player_roles": {"fouler": fouler, "victim": victim},
                 "description": f"{name(fouler)} committed a {event_type.replace('_', ' ')} on {name(victim)}.",
@@ -120,7 +120,7 @@ class EventGenerator:
         elif event_type == "technical_foul":
             player = random.choice(offensive + defensive)  # noqa: S2245
             return {
-                "timestamp": None,
+                "occurred_at": None,
                 "event_type": event_type,
                 "player_roles": {"fouler": player},
                 "description": f"{name(player)} received a technical foul.",
@@ -129,7 +129,7 @@ class EventGenerator:
         elif event_type == "inbound":
             player = random.choice(offensive)  # noqa: S2245
             return {
-                "timestamp": None,
+                "occurred_at": None,
                 "event_type": event_type,
                 "player_roles": {"shooter": player},
                 "description": f"{name(player)} inbounded the ball.",
@@ -139,7 +139,7 @@ class EventGenerator:
             pool = offensive if event_type == "offensive_rebound" else defensive
             rebounder = random.choice(pool)  # noqa: S2245
             return {
-                "timestamp": None,
+                "occurred_at": None,
                 "event_type": event_type,
                 "player_roles": {"rebounder": rebounder},
                 "description": f"{name(rebounder)} grabbed a {event_type.replace('_', ' ')}.",
@@ -148,7 +148,7 @@ class EventGenerator:
         elif event_type in ["free_throw_made", "free_throw_missed"]:
             shooter = random.choice(offensive)  # noqa: S2245
             return {
-                "timestamp": None,
+                "occurred_at": None,
                 "event_type": event_type,
                 "player_roles": {"shooter": shooter},
                 "description": f"{name(shooter)} {'made' if event_type == 'free_throw_made' else 'missed'} a free throw.",
@@ -158,7 +158,7 @@ class EventGenerator:
                             "shot_clock_violation", "offensive_foul", "quarter_end"]:
             player = random.choice(offensive)  # noqa: S2245
             return {
-                "timestamp": None,
+                "occurred_at": None,
                 "event_type": event_type,
                 "player_roles": {"shooter": player},
                 "description": f"{name(player)} committed a {event_type.replace('_', ' ')}.",
@@ -177,7 +177,7 @@ class EventGenerator:
                     desc = f"{name(shooter)} made a {event_type.replace('made_', '').replace('_', ' ')} (assisted by {name(assister)})."
 
             return {
-                "timestamp": None,
+                "occurred_at": None,
                 "event_type": event_type,
                 "player_roles": roles,
                 "description": desc,
@@ -187,7 +187,7 @@ class EventGenerator:
         elif event_type.startswith("missed_"):
             player = random.choice(offensive)  # noqa: S2245
             return {
-                "timestamp": None,
+                "occurred_at": None,
                 "event_type": event_type,
                 "player_roles": {"shooter": player},
                 "description": f"{name(player)} missed a {event_type.replace('missed_', '').replace('_', ' ')}.",

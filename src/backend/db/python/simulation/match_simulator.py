@@ -36,7 +36,7 @@ class MatchSimulator:
                 last_event_second = event_second
             else:
                 current_milliseconds += 1
-            event_dict["timestamp"] = match_datetime + timedelta(seconds=event_second, milliseconds=current_milliseconds)
+            event_dict["occurred_at"] = match_datetime + timedelta(seconds=event_second, milliseconds=current_milliseconds)
             match_events.append(event_dict)
             return event_dict
 
@@ -57,7 +57,7 @@ class MatchSimulator:
                 list(home_sub.active if tip_off_winner == "home" else away_sub.active)
             )
             add_event({
-                "timestamp": None,
+                "occurred_at": None,
                 "event_type": "tip_off",
                 "player_roles": {
                     "winner": tip_off_player,
@@ -84,7 +84,7 @@ class MatchSimulator:
             if possession_clock == 0:
                 violator = random.choice(home_list if current_possession == "home" else away_list)  # noqa: S2245
                 add_event({
-                    "timestamp": None,
+                    "occurred_at": None,
                     "event_type": "shot_clock_violation",
                     "player_roles": {"shooter": violator},
                     "description": "Shot clock violation.",
@@ -186,7 +186,7 @@ class MatchSimulator:
         for i in range(num_free_throws):
             made = random.random() < 0.75  # noqa: S2245
             add_event({
-                "timestamp": None,
+                "occurred_at": None,
                 "event_type": "free_throw_made" if made else "free_throw_missed",
                 "player_roles": {"shooter": shooter_id},
                 "description": f"{self.player_names.get(shooter_id, f'Player {shooter_id}')} {'made' if made else 'missed'} free throw {i + 1} of {num_free_throws}.",

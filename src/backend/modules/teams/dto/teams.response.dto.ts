@@ -257,11 +257,11 @@ export class TeamMatchHistoryDto {
   id!: number;
 
   @ApiProperty({
-    description: "Match date",
+    description: "Tip-off instant, as an ISO 8601 UTC timestamp",
     example: "2024-02-05T19:00:00Z",
     type: String,
   })
-  date!: Date;
+  startsAt!: Date;
 
   @ApiProperty({
     description: "Home team information",
@@ -369,11 +369,11 @@ export class RecentMatchDto {
   id!: number;
 
   @ApiProperty({
-    description: "Match date",
+    description: "Tip-off instant, as an ISO 8601 UTC timestamp",
     example: "2024-02-05T19:00:00Z",
     type: String,
   })
-  date!: Date;
+  startsAt!: Date;
 
   @ApiProperty({
     description: "Home team score",

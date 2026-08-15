@@ -12,7 +12,7 @@ interface TimelineEventBlockProps {
   readonly align: "left" | "right";
   /** Resolved display config for this event's type. */
   readonly style: EventStyle;
-  /** The enriched event (includes description, timestamp, etc.). */
+  /** The enriched event (includes description, occurredAt, etc.). */
   readonly event: EventWithScore;
   /** The description split into runs, player names marked (see utils). */
   readonly descriptionTokens: readonly EventDescriptionToken[];
@@ -21,11 +21,11 @@ interface TimelineEventBlockProps {
 }
 
 function formatGameClock(
-  eventTimestamp: Date | string,
+  occurredAt: Date | string,
   matchDate: Date | string,
 ): string {
   const elapsedSeconds = Math.floor(
-    (new Date(eventTimestamp).getTime() - new Date(matchDate).getTime()) / 1000,
+    (new Date(occurredAt).getTime() - new Date(matchDate).getTime()) / 1000,
   );
   const minutes = Math.floor(elapsedSeconds / 60)
     .toString()
@@ -36,7 +36,7 @@ function formatGameClock(
 
 /**
  * Renders the icon, event-type label, optional clickable description,
- * and timestamp for a single event on one side of the timeline.
+ * and game clock for a single event on one side of the timeline.
  *
  * Defined at module scope (not inside another component) so that React can
  * reconcile instances across re-renders instead of remounting every time.
@@ -111,7 +111,7 @@ export function TimelineEventBlock({
 
         {/* Game clock display */}
         <Text variant="caption" as="span" className="font-mono">
-          {formatGameClock(event.timestamp, matchDate)}
+          {formatGameClock(event.occurredAt, matchDate)}
         </Text>
       </div>
     </div>

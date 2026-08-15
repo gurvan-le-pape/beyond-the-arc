@@ -9,7 +9,7 @@ Responsibilities:
   2. Split teams 80/20 between committee-level and league-level championships
   3. Create championships, divisions, pools
   4. Assign teams to pools
-  5. Build the round-robin match schedule (empty match shells with scheduled_at)
+  5. Build the round-robin match schedule (empty match shells with starts_at)
 """
 
 import logging
@@ -289,11 +289,11 @@ class SeasonGenerator:
 
             match_rows: list[tuple] = []
             for matchday, pairs in enumerate(schedule, start=1):
-                scheduled_at = compute_matchday_datetime(
+                starts_at = compute_matchday_datetime(
                     SEASON_START_WEEK, SEASON_START_YEAR, matchday, pool_id
                 )
                 for home_id, away_id in pairs:
-                    match_rows.append((pool_id, matchday, scheduled_at, home_id, away_id))
+                    match_rows.append((pool_id, matchday, starts_at, home_id, away_id))
 
             if match_rows:
                 match_repository.insert_scheduled_matches_bulk(cursor, match_rows)

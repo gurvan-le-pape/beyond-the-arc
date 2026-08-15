@@ -76,7 +76,7 @@ describe("MatchesController", () => {
           {
             id: 1,
             matchday: 1,
-            date: new Date("2024-01-01"),
+            startsAt: new Date("2024-01-01"),
             homeTeamScore: 3,
             awayTeamScore: 2,
             forfeit: false,
@@ -170,7 +170,7 @@ describe("MatchesController", () => {
         {
           id: 1,
           matchday: 1,
-          date: new Date("2024-01-01"),
+          startsAt: new Date("2024-01-01"),
           homeTeamScore: 3,
           awayTeamScore: 2,
           forfeit: false,
@@ -213,7 +213,7 @@ describe("MatchesController", () => {
     it("should return match by id", async () => {
       const mockMatch: MatchDetailResponseDto = {
         id: 1,
-        date: new Date("2024-01-01"),
+        startsAt: new Date("2024-01-01"),
         matchday: 1,
         pool: {} as any,
         homeTeam: {} as any,
@@ -288,7 +288,7 @@ describe("MatchesController", () => {
         {
           id: 1,
           eventType: "made_layup",
-          timestamp: new Date("2024-02-05T19:02:00Z"),
+          occurredAt: new Date("2024-02-05T19:02:00Z"),
           description: null,
           players: [],
           shotLocation: null,

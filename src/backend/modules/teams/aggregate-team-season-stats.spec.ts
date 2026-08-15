@@ -12,7 +12,7 @@ function makeMatch(
 ): TeamMatchHistoryDto {
   return {
     id: 1,
-    date: new Date("2024-02-05"),
+    startsAt: new Date("2024-02-05"),
     homeTeam: { id: 1, number: 1, club: { id: 1, name: "Club A" } },
     awayTeam: { id: 2, number: 1, club: { id: 2, name: "Club B" } },
     homeTeamScore: 80,

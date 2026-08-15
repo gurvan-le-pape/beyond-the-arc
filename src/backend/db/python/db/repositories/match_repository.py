@@ -16,7 +16,7 @@ class ScheduledMatch:
     matchday: int
     home_team_id: int
     away_team_id: int
-    scheduled_at: datetime
+    starts_at: datetime
 
 
 # ---------------------------------------------------------------------------
@@ -29,11 +29,11 @@ def insert_scheduled_matches_bulk(
 ) -> None:
     """
     Bulk insert scheduled matches.
-    Each row: (pool_id, matchday, scheduled_at, home_team_id, away_team_id)
+    Each row: (pool_id, matchday, starts_at, home_team_id, away_team_id)
     """
     cursor.executemany(
         """
-        INSERT INTO matches (pool_id, matchday, date, home_team_id, away_team_id, status)
+        INSERT INTO matches (pool_id, matchday, starts_at, home_team_id, away_team_id, status)
         VALUES (%s, %s, %s, %s, %s, 'scheduled')
         """,
         rows,
@@ -44,10 +44,10 @@ def fetch_due_matches(cursor: psycopg.Cursor) -> list[ScheduledMatch]:
     """Fetch all matches that are due but not yet generated."""
     cursor.execute(
         """
-        SELECT id, pool_id, matchday, home_team_id, away_team_id, date
+        SELECT id, pool_id, matchday, home_team_id, away_team_id, starts_at
         FROM matches
-        WHERE date <= NOW() AND status = 'scheduled'
-        ORDER BY date ASC;
+        WHERE starts_at <= NOW() AND status = 'scheduled'
+        ORDER BY starts_at ASC;
         """
     )
     return [
@@ -57,7 +57,7 @@ def fetch_due_matches(cursor: psycopg.Cursor) -> list[ScheduledMatch]:
             matchday=row[2],
             home_team_id=row[3],
             away_team_id=row[4],
-            scheduled_at=row[5],
+            starts_at=row[5],
         )
         for row in cursor.fetchall()
     ]
@@ -162,7 +162,7 @@ def insert_match_events_bulk(
         rows.append((
             match_id,
             event["event_type"],
-            event["timestamp"],
+            event["occurred_at"],
             event.get("description"),
             shot_location_id,
         ))
@@ -173,7 +173,7 @@ def insert_match_events_bulk(
     placeholders = ",".join(["(%s,%s,%s,%s,%s)"] * len(rows))
     flat = [val for row in rows for val in row]
     cursor.execute(
-        f"INSERT INTO match_events (match_id, event_type, timestamp, description, shot_location_id) VALUES {placeholders} RETURNING id",
+        f"INSERT INTO match_events (match_id, event_type, occurred_at, description, shot_location_id) VALUES {placeholders} RETURNING id",
         flat,
     )
 

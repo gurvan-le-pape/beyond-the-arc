@@ -209,7 +209,7 @@ export class PlayersController {
    *   "data": [
    *     {
    *       "id": 1,
-   *       "date": "2024-02-05T19:00:00Z",
+   *       "startsAt": "2024-02-05T19:00:00Z",
    *       "homeTeam": { ... },
    *       "awayTeam": { ... },
    *       "homeTeamScore": 85,

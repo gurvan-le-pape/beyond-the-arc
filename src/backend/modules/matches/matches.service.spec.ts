@@ -668,7 +668,7 @@ describe("MatchesService", () => {
       expect(mockPrismaService.client.matches.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
-            date: {
+            startsAt: {
               gte: fromZonedTime(
                 new Date("2024-02-05T00:00:00"),
                 "Europe/Paris",

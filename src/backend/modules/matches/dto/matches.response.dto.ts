@@ -97,11 +97,11 @@ export class MatchResponseDto {
   id!: number;
 
   @ApiProperty({
-    description: "Match date",
+    description: "Tip-off instant, as an ISO 8601 UTC timestamp",
     example: "2024-02-05T19:00:00Z",
     type: String,
   })
-  date!: Date;
+  startsAt!: Date;
 
   @ApiProperty({
     description: "Matchday number",
@@ -574,11 +574,11 @@ export class MatchEventDto {
 
   @ApiProperty({
     description:
-      "Instant the event occurred, as an ISO 8601 UTC timestamp — not an offset from the start of the match. The team and player event endpoints return events from many matches in one response, so there is no single match start to be relative to; compute elapsed time against the match's own `date`.",
+      "Instant the event occurred, as an ISO 8601 UTC timestamp — not an offset from the start of the match. The team and player event endpoints return events from many matches in one response, so there is no single match start to be relative to; compute elapsed time against the match's own `startsAt`.",
     example: "2024-02-05T19:02:00.000Z",
     type: String,
   })
-  timestamp!: Date;
+  occurredAt!: Date;
 
   @ApiProperty({
     description: "Event description",

@@ -65,15 +65,15 @@ export function getTeamIdFromEvent(event: MatchEvent): number | undefined {
 // ---------------------------------------------------------------------------
 
 /**
- * Derives the 1-based quarter number (1–4, 5 = OT) from an event timestamp
- * relative to the match start date (10-min quarters, 600s each).
+ * Derives the 1-based quarter number (1–4, 5 = OT) from the instant an event
+ * occurred, relative to the match start (10-min quarters, 600s each).
  */
 export function getQuarterFromTimestamp(
-  eventTimestamp: Date | string,
+  occurredAt: Date | string,
   matchDate: Date | string,
 ): number {
   const elapsedSeconds =
-    (new Date(eventTimestamp).getTime() - new Date(matchDate).getTime()) / 1000;
+    (new Date(occurredAt).getTime() - new Date(matchDate).getTime()) / 1000;
 
   if (elapsedSeconds <= 600) return 1;
   if (elapsedSeconds <= 1200) return 2;
@@ -125,7 +125,7 @@ export function computeQuarterScores(
     const points = pointsForEvent(event.eventType, style);
     if (points === 0) continue;
 
-    const quarter = getQuarterFromTimestamp(event.timestamp, matchDate);
+    const quarter = getQuarterFromTimestamp(event.occurredAt, matchDate);
     const idx = Math.min(quarter - 1, 4); // clamp OT+ to index 4
 
     const teamId = getTeamIdFromEvent(event);

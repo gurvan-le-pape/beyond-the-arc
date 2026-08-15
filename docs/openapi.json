@@ -4163,9 +4163,9 @@
             "description": "Unique match identifier",
             "example": 1
           },
-          "date": {
+          "startsAt": {
             "type": "string",
-            "description": "Match date",
+            "description": "Tip-off instant, as an ISO 8601 UTC timestamp",
             "example": "2024-02-05T19:00:00Z"
           },
           "matchday": {
@@ -4222,7 +4222,7 @@
         },
         "required": [
           "id",
-          "date",
+          "startsAt",
           "matchday",
           "pool",
           "homeTeam",
@@ -4423,9 +4423,9 @@
               "substitution"
             ]
           },
-          "timestamp": {
+          "occurredAt": {
             "type": "string",
-            "description": "Instant the event occurred, as an ISO 8601 UTC timestamp — not an offset from the start of the match. The team and player event endpoints return events from many matches in one response, so there is no single match start to be relative to; compute elapsed time against the match's own `date`.",
+            "description": "Instant the event occurred, as an ISO 8601 UTC timestamp — not an offset from the start of the match. The team and player event endpoints return events from many matches in one response, so there is no single match start to be relative to; compute elapsed time against the match's own `startsAt`.",
             "example": "2024-02-05T19:02:00.000Z"
           },
           "description": {
@@ -4454,7 +4454,7 @@
         "required": [
           "id",
           "eventType",
-          "timestamp",
+          "occurredAt",
           "description",
           "players",
           "shotLocation"
@@ -4468,9 +4468,9 @@
             "description": "Unique match identifier",
             "example": 1
           },
-          "date": {
+          "startsAt": {
             "type": "string",
-            "description": "Match date",
+            "description": "Tip-off instant, as an ISO 8601 UTC timestamp",
             "example": "2024-02-05T19:00:00Z"
           },
           "matchday": {
@@ -4534,7 +4534,7 @@
         },
         "required": [
           "id",
-          "date",
+          "startsAt",
           "matchday",
           "pool",
           "homeTeam",
@@ -5513,9 +5513,9 @@
             "description": "Match ID",
             "example": 1
           },
-          "date": {
+          "startsAt": {
             "type": "string",
-            "description": "Match date",
+            "description": "Tip-off instant, as an ISO 8601 UTC timestamp",
             "example": "2024-02-05T19:00:00Z"
           },
           "homeTeam": {
@@ -5557,7 +5557,7 @@
         },
         "required": [
           "id",
-          "date",
+          "startsAt",
           "homeTeam",
           "awayTeam",
           "homeTeamScore",
@@ -6094,9 +6094,9 @@
             "description": "Match ID",
             "example": 1
           },
-          "date": {
+          "startsAt": {
             "type": "string",
-            "description": "Match date",
+            "description": "Tip-off instant, as an ISO 8601 UTC timestamp",
             "example": "2024-02-05T19:00:00Z"
           },
           "homeTeamScore": {
@@ -6130,7 +6130,7 @@
         },
         "required": [
           "id",
-          "date",
+          "startsAt",
           "homeTeamScore",
           "awayTeamScore",
           "pool",
@@ -6145,9 +6145,9 @@
             "description": "Match ID",
             "example": 1
           },
-          "date": {
+          "startsAt": {
             "type": "string",
-            "description": "Match date",
+            "description": "Tip-off instant, as an ISO 8601 UTC timestamp",
             "example": "2024-02-05T19:00:00Z"
           },
           "homeTeamScore": {
@@ -6181,7 +6181,7 @@
         },
         "required": [
           "id",
-          "date",
+          "startsAt",
           "homeTeamScore",
           "awayTeamScore",
           "pool",
@@ -6342,9 +6342,9 @@
             "description": "Match ID",
             "example": 1
           },
-          "date": {
+          "startsAt": {
             "type": "string",
-            "description": "Match date",
+            "description": "Tip-off instant, as an ISO 8601 UTC timestamp",
             "example": "2024-02-05T19:00:00Z"
           },
           "homeTeam": {
@@ -6385,7 +6385,7 @@
         },
         "required": [
           "id",
-          "date",
+          "startsAt",
           "homeTeam",
           "awayTeam",
           "homeTeamScore",
