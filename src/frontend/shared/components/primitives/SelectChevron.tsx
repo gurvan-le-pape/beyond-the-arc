@@ -1,4 +1,5 @@
 // src/frontend/shared/components/primitives/SelectChevron.tsx
+import { cn } from "@/shared/utils";
 
 export function SelectChevron({
   open,
@@ -9,9 +10,11 @@ export function SelectChevron({
 }) {
   return (
     <svg
-      className={`w-3.5 h-3.5 flex-shrink-0 text-text-muted transition-transform duration-200 ${
-        open ? "rotate-180" : ""
-      } ${className}`}
+      className={cn(
+        "w-3.5 h-3.5 flex-shrink-0 text-text-muted transition-transform duration-200",
+        open && "rotate-180",
+        className,
+      )}
       aria-hidden="true"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"

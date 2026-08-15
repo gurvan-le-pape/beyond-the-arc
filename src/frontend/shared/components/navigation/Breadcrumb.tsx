@@ -3,6 +3,7 @@ import { ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Link } from "@/navigation";
+import { cn } from "@/shared/utils";
 
 export interface BreadcrumbItem {
   label: string;
@@ -47,7 +48,7 @@ export function Breadcrumb({
 
   return (
     <nav
-      className={`mb-6 flex items-center gap-2 text-sm ${className}`}
+      className={cn("mb-6 flex items-center gap-2 text-sm", className)}
       aria-label={tCommon("breadcrumbAriaLabel")}
     >
       <ol className="flex items-center gap-2">
