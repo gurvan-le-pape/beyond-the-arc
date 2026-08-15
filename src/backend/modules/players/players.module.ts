@@ -24,6 +24,5 @@ import { PlayersService } from "./players.service";
   imports: [PrismaModule, CommonModule],
   controllers: [PlayersController],
   providers: [PlayersService],
-  exports: [PlayersService], // Export service for use in other modules
 })
 export class PlayersModule {}

@@ -22,6 +22,5 @@ import { PoolsService } from "./pools.service";
   imports: [PrismaModule, CommonModule],
   controllers: [PoolsController],
   providers: [PoolsService],
-  exports: [PoolsService], // Export service for use in other modules
 })
 export class PoolsModule {}

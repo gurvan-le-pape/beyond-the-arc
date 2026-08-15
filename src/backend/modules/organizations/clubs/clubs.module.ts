@@ -23,6 +23,5 @@ import { ClubsService } from "./clubs.service";
   imports: [PrismaModule, CommonModule],
   controllers: [ClubsController],
   providers: [ClubsService],
-  exports: [ClubsService], // Export if needed by other modules
 })
 export class ClubsModule {}

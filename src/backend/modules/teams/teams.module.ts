@@ -24,6 +24,5 @@ import { TeamsService } from "./teams.service";
   imports: [PrismaModule, CommonModule],
   controllers: [TeamsController],
   providers: [TeamsService],
-  exports: [TeamsService], // Export service for use in other modules
 })
 export class TeamsModule {}

@@ -27,6 +27,5 @@ import { MatchesService } from "./matches.service";
   imports: [PrismaModule, CommonModule],
   controllers: [MatchesController],
   providers: [MatchesService],
-  exports: [MatchesService], // Export service for use in other modules
 })
 export class MatchesModule {}

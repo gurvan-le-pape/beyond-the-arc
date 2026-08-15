@@ -23,6 +23,5 @@ import { CommitteesService } from "./committees.service";
   imports: [PrismaModule, CommonModule],
   controllers: [CommitteesController],
   providers: [CommitteesService],
-  exports: [CommitteesService], // Export service for use in other modules
 })
 export class CommitteesModule {}
