@@ -1,0 +1,26 @@
+{
+  // The two `.mts` files under `scripts/` are executed directly by Node
+  // (`node scripts/typegen.mts`), with no build step, so Node strips their
+  // types rather than compiling them. That imposes constraints the main
+  // tsconfig does not express, and which nothing else in the pipeline checks:
+  // an `enum`, a namespace with runtime code, a parameter property, a
+  // decorator, or a type imported in value position all type-check happily
+  // under the app config and then throw at run time.
+  //
+  // Verified when this file was added: the app's `tsc --noEmit` exits 0 on a
+  // file containing an `enum` and a value-position type import, while `node`
+  // on the same file crashes. These two flags reject both at type-check time.
+  //
+  // `nodenext` resolution matches how Node itself resolves these files, which
+  // is also what makes extensionless relative imports an error here — another
+  // rule of type-stripping the app config would not catch.
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "verbatimModuleSyntax": true,
+    "erasableSyntaxOnly": true
+  },
+  "include": ["scripts/**/*.mts"]
+}
