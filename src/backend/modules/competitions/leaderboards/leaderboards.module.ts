@@ -22,6 +22,5 @@ import { LeaderboardsService } from "./leaderboards.service";
   imports: [PrismaModule, CommonModule],
   controllers: [LeaderboardsController],
   providers: [LeaderboardsService],
-  exports: [LeaderboardsService], // Export service for use in other modules
 })
 export class LeaderboardsModule {}

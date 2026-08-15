@@ -24,6 +24,5 @@ import { ChampionshipsService } from "./championships.service";
   imports: [PrismaModule, CommonModule],
   controllers: [ChampionshipsController],
   providers: [ChampionshipsService],
-  exports: [ChampionshipsService], // Export service for use in other modules
 })
 export class ChampionshipsModule {}

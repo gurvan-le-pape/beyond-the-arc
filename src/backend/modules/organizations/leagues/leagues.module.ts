@@ -21,6 +21,5 @@ import { LeaguesService } from "./leagues.service";
   imports: [PrismaModule, CommonModule],
   controllers: [LeaguesController],
   providers: [LeaguesService],
-  exports: [LeaguesService], // Export service for use in other modules
 })
 export class LeaguesModule {}
