@@ -28,14 +28,14 @@ Backend (`src/backend`):
 npm run test                        # prisma generate && jest
 npx jest path/to/file.spec.ts       # run a single test file
 npm run lint                        # eslint '**/*.ts'
-npm run lint:fix                    # organize-imports-cli + eslint --fix
+npm run lint:fix                    # organize-imports-cli + eslint --fix + prettier --write
 npm run build                       # prisma generate && nest build
 ```
 
 Frontend (`src/frontend`):
 ```bash
 npm run lint
-npm run lint:fix
+npm run lint:fix                    # same three steps as the backend's
 npm run typecheck                   # tsc --noEmit
 npm run build
 ```

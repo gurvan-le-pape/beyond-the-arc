@@ -69,7 +69,13 @@ export default [
       // Recommended additional rules
       "@typescript-eslint/no-floating-promises": "error",
       "@typescript-eslint/no-misused-promises": "error",
-      "@typescript-eslint/consistent-type-imports": "warn",
+      // `error`, not `warn`: `lint:fix` runs organize-imports-cli, which rewrites
+      // a value-position type import into `import type` — so at `warn` the two
+      // commands disagreed and the tree could never be stably clean. `lint`
+      // reported 0 errors on a file `lint:fix` then rewrote, and nothing
+      // rejected either state. Asserting it here is what makes the fixer's
+      // transformation visible to the gate.
+      "@typescript-eslint/consistent-type-imports": "error",
       "promise/prefer-top-level-await": "off",
       eqeqeq: ["error", "always"],
       "no-console": "warn",
