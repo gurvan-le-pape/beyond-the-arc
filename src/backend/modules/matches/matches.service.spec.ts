@@ -3,7 +3,6 @@ import { CacheDedupService } from "@common/services/cache-dedup.service";
 import { NotFoundException } from "@nestjs/common";
 import type { TestingModule } from "@nestjs/testing";
 import { Test } from "@nestjs/testing";
-import { fromZonedTime } from "date-fns-tz";
 import { LoggerModule } from "nestjs-pino";
 import { PrismaService } from "prisma/prisma.service";
 
@@ -657,31 +656,66 @@ describe("MatchesService", () => {
       );
     });
 
-    // The "Europe/Paris" literals below are the oracle and must stay literal.
-    // The service now reads COMPETITION_TIME_ZONE; importing that constant here
-    // too would make this assertion compare the constant with itself, so the
-    // test would pass for any zone and stop pinning the range to France. The
-    // duplication is what gives the test its teeth — do not tidy it away.
-    it("should apply date filter as range in Paris timezone", async () => {
-      await service.findAllMatches({ date: "2024-02-05" });
+    // The expected instants below are written out in UTC, deliberately, and
+    // must stay that way.
+    //
+    // The previous version of this test called `fromZonedTime(new Date(day +
+    // "T00:00:00"), "Europe/Paris")` — the implementation's own expression,
+    // recomputed. Keeping "Europe/Paris" literal pinned the *zone*, which the
+    // old comment was right about, but nothing else: any defect in how the
+    // wall-clock string is parsed, or in where the upper bound sits, was
+    // reproduced identically on both sides and the assertion passed. A test
+    // that recomputes the implementation can only fail when the implementation
+    // fails to run.
+    //
+    // A literal instant has no such symmetry. It is also readable: 2024-02-05
+    // in Paris is CET, so the day runs 23:00Z the evening before to 23:00Z that
+    // evening.
+    describe.each([
+      {
+        label: "a plain CET day",
+        day: "2024-02-05",
+        gte: "2024-02-04T23:00:00.000Z",
+        lt: "2024-02-05T22:59:59.999Z",
+      },
+      {
+        // Spring forward: 02:00 -> 03:00 on this date, so the Paris day is 23
+        // hours long. An implementation that computed the upper bound as
+        // `gte + 24h` would put it an hour into 2024-04-01 and this case is
+        // what would catch it.
+        label: "the spring-forward day (23 h long)",
+        day: "2024-03-31",
+        gte: "2024-03-30T23:00:00.000Z",
+        lt: "2024-03-31T21:59:59.999Z",
+      },
+      {
+        // Fall back: 03:00 -> 02:00, so the Paris day is 25 hours long and the
+        // offset changes *inside* the range.
+        label: "the fall-back day (25 h long)",
+        day: "2024-10-27",
+        gte: "2024-10-26T22:00:00.000Z",
+        lt: "2024-10-27T22:59:59.999Z",
+      },
+    ])("date filter as a Paris-day range — $label", ({ day, gte, lt }) => {
+      it(`bounds ${day} at ${gte} .. ${lt}`, async () => {
+        await service.findAllMatches({ date: day });
 
-      expect(mockPrismaService.client.matches.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: expect.objectContaining({
-            startsAt: {
-              gte: fromZonedTime(
-                new Date("2024-02-05T00:00:00"),
-                "Europe/Paris",
-              ),
-              lt: fromZonedTime(
-                new Date("2024-02-05T23:59:59.999"),
-                "Europe/Paris",
-              ),
-            },
+        expect(mockPrismaService.client.matches.findMany).toHaveBeenCalledWith(
+          expect.objectContaining({
+            where: expect.objectContaining({
+              startsAt: { gte: new Date(gte), lt: new Date(lt) },
+            }),
           }),
-        }),
-      );
+        );
+      });
     });
+
+    // The upper bounds above end at `23:59:59.999` local rather than at the
+    // next day's midnight, which leaves a one-millisecond hole at the end of
+    // every day: a match starting at exactly 23:59:59.999 Paris time is
+    // excluded by `lt`. That is `dates-and-timezones 3`, fixed separately —
+    // these literals are what makes that fix a visible change here rather than
+    // a silent one, which is why this test had to land first.
 
     it("should apply search filter as OR across home and away team", async () => {
       await service.findAllMatches({ search: "Paris" });
