@@ -26,6 +26,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
     data: matchEvents,
     isLoading: isLoadingEvents,
     error: matchEventsError,
+    refetch: refetchMatchEvents,
   } = useMatchEvents(match.id, { enabled: expanded });
 
   const prefetch = useMatchesPrefetch();
@@ -58,6 +59,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
           matchEvents={matchEvents ?? []}
           isLoadingEvents={isLoadingEvents}
           hasError={!!matchEventsError}
+          onRetryEvents={refetchMatchEvents}
         />
       )}
     </Card>

@@ -10,6 +10,8 @@ interface SearchTabShellProps {
   readonly isLoading: boolean;
   readonly error: unknown;
   readonly errorMessage: string;
+  /** The list query's `refetch` — see `ErrorMessage`'s `onRetry`. */
+  readonly onRetry: () => unknown;
   readonly isEmpty: boolean;
   readonly emptyState: React.ReactNode;
   readonly pagination: PaginationType | null;
@@ -24,6 +26,7 @@ export function SearchTabShell({
   isLoading,
   error,
   errorMessage,
+  onRetry,
   isEmpty,
   emptyState,
   pagination,
@@ -42,7 +45,7 @@ export function SearchTabShell({
   }
 
   if (error) {
-    return <ErrorMessage message={errorMessage} />;
+    return <ErrorMessage message={errorMessage} onRetry={onRetry} />;
   }
 
   if (isEmpty) {

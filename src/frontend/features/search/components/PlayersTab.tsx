@@ -21,7 +21,7 @@ export function PlayersTab() {
   const { filters, setters, setCurrentPage, setPageSize, resetFilters } =
     usePlayersFilterState();
 
-  const { data, error, isLoading } = usePlayers({
+  const { data, error, isLoading, refetch } = usePlayers({
     search: filters.name || undefined,
     clubId: filters.clubId,
     category: filters.category,
@@ -57,6 +57,7 @@ export function PlayersTab() {
         isLoading={isLoading}
         error={error}
         errorMessage={tCommon("errors.fetchPlayers")}
+        onRetry={refetch}
         isEmpty={players.length === 0}
         emptyState={
           <EmptyState

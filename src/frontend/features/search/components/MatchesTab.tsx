@@ -21,7 +21,7 @@ export function MatchesTab() {
   const { filters, setters, setCurrentPage, setPageSize, resetFilters } =
     useMatchesFilterState();
 
-  const { data, error, isLoading } = useMatches({
+  const { data, error, isLoading, refetch } = useMatches({
     search: filters.search || undefined,
     date: filters.dateFilter || undefined,
     category: filters.category,
@@ -58,6 +58,7 @@ export function MatchesTab() {
         isLoading={isLoading}
         error={error}
         errorMessage={tCommon("errors.fetchMatches")}
+        onRetry={refetch}
         isEmpty={matches.length === 0}
         emptyState={
           <EmptyState

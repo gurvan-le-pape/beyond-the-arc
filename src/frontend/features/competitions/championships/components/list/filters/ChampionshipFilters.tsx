@@ -39,6 +39,8 @@ interface ChampionshipFiltersProps {
    * caller — this component holds no message keys of its own for it.
    */
   scopeError?: string;
+  /** Re-runs the scope lookup `scopeError` describes. */
+  onScopeRetry?: () => unknown;
 }
 
 export const ChampionshipFilters: React.FC<ChampionshipFiltersProps> = ({
@@ -50,6 +52,7 @@ export const ChampionshipFilters: React.FC<ChampionshipFiltersProps> = ({
   onReset,
   scope,
   scopeError,
+  onScopeRetry,
 }) => {
   const tCommon = useTranslations("common");
 
@@ -124,7 +127,9 @@ export const ChampionshipFilters: React.FC<ChampionshipFiltersProps> = ({
       onReset={onReset}
       title={tCommon(`competition.levels.${level}`)}
     >
-      {scopeError && <ErrorMessage message={scopeError} />}
+      {scopeError && (
+        <ErrorMessage message={scopeError} onRetry={onScopeRetry} />
+      )}
 
       {/* Scoped variants lead with the scope select and push gender to its own row. */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

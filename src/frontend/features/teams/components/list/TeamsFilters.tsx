@@ -41,7 +41,12 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
   const tMatches = useTranslations("matches");
   const tFilters = useTranslations("filters");
 
-  const { committees, leagues, error: locationError } = useLocationOptions();
+  const {
+    committees,
+    leagues,
+    error: locationError,
+    retry: retryLocation,
+  } = useLocationOptions();
 
   const {
     clubId,
@@ -69,11 +74,14 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
     setPool,
   } = setters;
 
-  const { data: teamFilterValues, isError: filterValuesFailed } =
-    useTeamFilterValues({
-      committeeId,
-      leagueId,
-    });
+  const {
+    data: teamFilterValues,
+    isError: filterValuesFailed,
+    refetch: retryFilterValues,
+  } = useTeamFilterValues({
+    committeeId,
+    leagueId,
+  });
   const teamNumbers = teamFilterValues?.numbers ?? [];
   const divisions = teamFilterValues?.divisions ?? [];
   const poolLetters = teamFilterValues?.poolLetters ?? [];
@@ -164,13 +172,19 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
       title={tTeams("label")}
     >
       {locationError && (
-        <ErrorMessage message={tCommon("errors.fetchLeagueOrCommittee")} />
+        <ErrorMessage
+          message={tCommon("errors.fetchLeagueOrCommittee")}
+          onRetry={retryLocation}
+        />
       )}
 
       {/* Without this the number/division/pool dropdowns render empty, which
           reads as "this scope has no teams" rather than a failed request. */}
       {filterValuesFailed && (
-        <ErrorMessage message={tCommon("errors.fetchTeams")} />
+        <ErrorMessage
+          message={tCommon("errors.fetchTeams")}
+          onRetry={retryFilterValues}
+        />
       )}
 
       {/* Row 1: Club + Team number */}

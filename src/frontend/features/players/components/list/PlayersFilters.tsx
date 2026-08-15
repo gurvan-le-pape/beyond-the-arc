@@ -38,7 +38,12 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
   const tCommon = useTranslations("common");
   const tTeams = useTranslations("teams");
 
-  const { committees, leagues, error: locationError } = useLocationOptions();
+  const {
+    committees,
+    leagues,
+    error: locationError,
+    retry: retryLocation,
+  } = useLocationOptions();
 
   const {
     name,
@@ -66,11 +71,14 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
     setLeagueId,
   } = setters;
 
-  const { data: playerFilterValues, isError: filterValuesFailed } =
-    usePlayerFilterValues({
-      committeeId,
-      leagueId,
-    });
+  const {
+    data: playerFilterValues,
+    isError: filterValuesFailed,
+    refetch: retryFilterValues,
+  } = usePlayerFilterValues({
+    committeeId,
+    leagueId,
+  });
   const playerNumbers = playerFilterValues?.numbers ?? [];
   const teamNumbers = playerFilterValues?.teamNumbers ?? [];
 
@@ -132,13 +140,19 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
       title={tPlayers("label")}
     >
       {locationError && (
-        <ErrorMessage message={tCommon("errors.fetchLeagueOrCommittee")} />
+        <ErrorMessage
+          message={tCommon("errors.fetchLeagueOrCommittee")}
+          onRetry={retryLocation}
+        />
       )}
 
       {/* Without this the number dropdowns render empty, which reads as "this
           scope has no players" rather than a failed request. */}
       {filterValuesFailed && (
-        <ErrorMessage message={tCommon("errors.fetchPlayers")} />
+        <ErrorMessage
+          message={tCommon("errors.fetchPlayers")}
+          onRetry={retryFilterValues}
+        />
       )}
 
       {/* Row 1: Name search + Club */}

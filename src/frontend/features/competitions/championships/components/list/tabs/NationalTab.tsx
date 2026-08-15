@@ -12,7 +12,7 @@ export function NationalTab() {
   const { filters, setters, setCurrentPage, setPageSize, resetFilters } =
     useNationalFilterState();
 
-  const { data, error, isLoading } = useChampionships({
+  const { data, error, isLoading, refetch } = useChampionships({
     level: CompetitionLevel.NATIONAL,
     category: filters.category,
     gender: filters.gender,
@@ -25,6 +25,7 @@ export function NationalTab() {
       data={data}
       error={error}
       isLoading={isLoading}
+      onRetry={refetch}
       pageSize={filters.pageSize}
       onPageSizeChange={setPageSize}
       onPageChange={(index) => setCurrentPage(index + 1)}

@@ -28,6 +28,7 @@ export function ClubsFilters({ filters, setters, onReset }: ClubsFiltersProps) {
     leagues,
     committees,
     error: locationError,
+    retry: retryLocation,
   } = useLocationOptions({ leagueId });
 
   const leagueOptions = [
@@ -77,7 +78,10 @@ export function ClubsFilters({ filters, setters, onReset }: ClubsFiltersProps) {
       title={tOrganizations("clubs.label")}
     >
       {locationError && (
-        <ErrorMessage message={tCommon("errors.fetchLeagueOrCommittee")} />
+        <ErrorMessage
+          message={tCommon("errors.fetchLeagueOrCommittee")}
+          onRetry={retryLocation}
+        />
       )}
 
       <DebouncedInput

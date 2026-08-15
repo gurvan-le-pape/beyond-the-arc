@@ -11,6 +11,7 @@ interface MatchExpandedSectionProps {
   readonly matchEvents: MatchEvent[];
   readonly isLoadingEvents: boolean;
   readonly hasError: boolean;
+  readonly onRetryEvents: () => unknown;
 }
 
 export function MatchExpandedSection({
@@ -18,13 +19,17 @@ export function MatchExpandedSection({
   matchEvents,
   isLoadingEvents,
   hasError,
+  onRetryEvents,
 }: MatchExpandedSectionProps) {
   const tCommon = useTranslations("common");
 
   return (
     <div className="mt-3 pt-3 border-t border-divide animate-slide-down">
       {hasError ? (
-        <ErrorMessage message={tCommon("errors.fetchMatchEvents")} />
+        <ErrorMessage
+          message={tCommon("errors.fetchMatchEvents")}
+          onRetry={onRetryEvents}
+        />
       ) : (
         <MatchDetailsTable
           match={match}

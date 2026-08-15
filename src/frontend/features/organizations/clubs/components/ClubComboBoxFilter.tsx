@@ -37,6 +37,7 @@ export function ClubComboBoxFilter({
     data: clubData,
     isLoading: clubsLoading,
     isError: clubsFailed,
+    refetch: retryClubSearch,
   } = useClubSearch(debouncedClubSearch, { committeeId, leagueId });
   const clubOptions = (clubData?.items ?? []).map((c) => ({
     value: String(c.id),
@@ -46,7 +47,12 @@ export function ClubComboBoxFilter({
   // A failed search also produces an empty option list, so without this the
   // combo box reports a broken request as "no clubs match".
   if (clubsFailed) {
-    return <ErrorMessage message={tCommon("errors.fetchClubs")} />;
+    return (
+      <ErrorMessage
+        message={tCommon("errors.fetchClubs")}
+        onRetry={retryClubSearch}
+      />
+    );
   }
 
   return (
