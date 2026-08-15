@@ -282,21 +282,26 @@ export class MatchesService {
     return events.map((e) => this.mapEventToDto(e));
   }
 
+  /**
+   * Every shot a team took, across its season.
+   *
+   * The match filter is a relation, not an `IN` list. It used to be two
+   * queries: fetch the team's match ids, materialise them in Node, then send
+   * them back as `matchId: { in: [...] }`. That is a round trip and a
+   * hand-rolled join for something the database can do in one statement — and
+   * the id list is caller-visible growth, bounded here only because `Teams` is
+   * season-scoped (22 matches for a team, measured on production).
+   *
+   * The filter is kept rather than dropped. `players: { some: … }` already
+   * restricts to events a player of this team took part in, and since a player
+   * belongs to exactly one team, every such event is in a match that team
+   * played — so the match clause is provably redundant *today*. It stays
+   * because it is the clause that states the intent, and it costs nothing.
+   */
   async findMatchEventsByTeamId(teamId: number): Promise<MatchEventDto[]> {
-    const matches = await this.prisma.client.matches.findMany({
-      where: { OR: [{ homeTeamId: teamId }, { awayTeamId: teamId }] },
-      select: { id: true },
-    });
-
-    const matchIds = matches.map((m) => m.id);
-
-    if (matchIds.length === 0) {
-      return [];
-    }
-
     const events = await this.prisma.client.matchEvents.findMany({
       where: {
-        matchId: { in: matchIds },
+        match: { OR: [{ homeTeamId: teamId }, { awayTeamId: teamId }] },
         shotLocation: { isNot: null },
         players: { some: { player: { teamId } } },
       },
