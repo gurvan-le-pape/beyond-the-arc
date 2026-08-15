@@ -32,7 +32,7 @@ export function CommitteeCard({ committee, clubLabel }: CommitteeCardProps) {
       <div
         className={cn(
           "flex-shrink-0 w-20 flex items-center justify-center",
-          "bg-gradient-to-br from-surface-inset to-surface-own",
+          "bg-gradient-to-br from-[var(--surface-inset)] to-[var(--surface-bg)]",
           "border-r border-white/5",
         )}
       >
