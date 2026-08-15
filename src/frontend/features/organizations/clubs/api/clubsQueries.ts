@@ -102,7 +102,10 @@ export const clubsQueries = {
 
   /**
    * Query options for fetching club statistics aggregated by département.
-   * `GET /clubs/stats/by-department`, 1 h `staleTime`.
+   * `GET /clubs/stats/by-department`, 24 h `staleTime` — the same window the
+   * server half uses (`ServerRevalidate.REFERENCE`) and the same as
+   * `statsByRegion`, because all three move only when the static-data refresh
+   * runs.
    *
    * @example
    * useQuery(clubsQueries.statsByDepartment())
@@ -112,12 +115,12 @@ export const clubsQueries = {
     queryFn: ({ signal }: QueryFunctionContext) =>
       clubsService.getStatsByDepartment(undefined, signal),
     ...CLUBS_STATIC_CONFIG,
-    staleTime: 60 * 60 * 1000,
+    staleTime: 24 * 60 * 60 * 1000,
   }),
 
   /**
    * Query options for fetching all clubs without filtering.
-   * `GET /clubs/all`, 1 h `staleTime`.
+   * `GET /clubs/all`, 24 h `staleTime` — see `statsByDepartment` above.
    *
    * @example
    * useQuery(clubsQueries.allClubs())
@@ -127,7 +130,7 @@ export const clubsQueries = {
     queryFn: ({ signal }: QueryFunctionContext) =>
       clubsService.getAllClubs(signal),
     ...CLUBS_STATIC_CONFIG,
-    staleTime: 60 * 60 * 1000,
+    staleTime: 24 * 60 * 60 * 1000,
   }),
 
   search: (

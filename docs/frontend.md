@@ -206,8 +206,7 @@ a genuinely new answer to "how often does this change?":
 | Match events and player stats                                      | 5 min       | 5 min    | Immutable once the match has ended                             |
 | Entity metadata — championships, players, teams, clubs, committees | 5 min       | 10 min   | Changes rarely within a session                                |
 | Leagues                                                            | 5 min       | 15 min   | Reference data, loaded early and reused across features        |
-| Club aggregates by département, and the full club list             | 1 h         | 10 min   | Only a static-data refresh moves them                          |
-| Club aggregates by region                                          | 24 h        | 10 min   | The coarsest aggregate; static between refreshes               |
+| Club aggregates (by region, by département) and the full club list | 24 h        | 10 min   | Only a static-data refresh moves them, and the server half caches all three for the same 24 h (`ServerRevalidate.REFERENCE`) |
 | GeoJSON boundaries                                                 | ∞           | ∞        | Static assets — French administrative boundaries do not change |
 
 Every one of these pairs is set in a `features/*/api/*Queries.ts` options
