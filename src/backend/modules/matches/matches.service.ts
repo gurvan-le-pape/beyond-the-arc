@@ -424,7 +424,7 @@ export class MatchesService {
       },
       stats: {
         ...mapPlayerMatchStats(stat),
-        playtime: this.calculatePlaytime(
+        playtimeSeconds: this.calculatePlaytime(
           stat.playtimeIntervals as number[][] | null,
         ),
       },

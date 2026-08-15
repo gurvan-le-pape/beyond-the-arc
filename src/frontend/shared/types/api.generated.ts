@@ -1531,12 +1531,12 @@ export interface components {
              */
             id: number;
             /**
-             * @description X coordinate
+             * @description Metres across the court from the baseline corner (0–15)
              * @example 5.5
              */
             x: number;
             /**
-             * @description Y coordinate
+             * @description Metres from the baseline towards half-court (0–14)
              * @example 3.2
              */
             y: number;
@@ -1765,12 +1765,12 @@ export interface components {
              */
             blocks: number;
             /**
-             * @description Total playtime in seconds
+             * @description Total time on court, in seconds
              * @example 1200
              */
-            playtime: number;
+            playtimeSeconds: number;
             /**
-             * @description Playtime intervals [start, end] in seconds
+             * @description Intervals the player was on court, as [start, end] pairs of seconds from tip-off
              * @example [
              *       [
              *         0,
@@ -2173,7 +2173,7 @@ export interface components {
              */
             blocks: number;
             /**
-             * @description Play time intervals
+             * @description Intervals the player was on court, as [start, end] pairs of seconds from tip-off
              * @example [
              *       [
              *         0,

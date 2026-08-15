@@ -236,14 +236,21 @@ export class PlayerStatsDto {
   blocks!: number;
 
   @ApiProperty({
-    description: "Total playtime in seconds",
+    description: "Total time on court, in seconds",
     example: 1200,
     type: Number,
   })
-  playtime!: number;
+  playtimeSeconds!: number;
 
   @ApiProperty({
-    description: "Playtime intervals [start, end] in seconds",
+    // `playtimeIntervals` keeps its name rather than gaining a `Seconds`
+    // suffix like the field above: it is a stored column
+    // (`player_match_stats.playtime_intervals`), and renaming only the DTO
+    // would put a different name on each side of the same value — the drift
+    // `naming.md` exists to prevent. `playtimeSeconds` has no such
+    // counterpart; it is computed from these intervals and stored nowhere.
+    description:
+      "Intervals the player was on court, as [start, end] pairs of seconds from tip-off",
     example: [
       [0, 600],
       [1200, 2400],
@@ -511,14 +518,35 @@ export class MatchEventPlayerDto {
 /**
  * Shot location information.
  */
+/**
+ * Where a shot was taken from, in half-court metres.
+ *
+ * The frame, which used to be recoverable only by reading the frontend's
+ * `courtConstants.ts`: the origin is the baseline corner, `x` runs across the
+ * court's 15 m width and `y` from the baseline towards half-court over 14 m.
+ * The basket is at `x` 7.5, `y` 1.575. Measured on production, real shots fall
+ * in x 0.23–14.98 and y 1.61–8.73.
+ *
+ * The fields are not `xMeters`/`yMeters`. A unit suffix would state half of
+ * what is missing and the less important half — a coordinate is meaningless
+ * without its origin, and no suffix can carry that.
+ */
 export class ShotLocationDto {
   @ApiProperty({ description: "Shot location ID", example: 1, type: Number })
   id!: number;
 
-  @ApiProperty({ description: "X coordinate", example: 5.5, type: Number })
+  @ApiProperty({
+    description: "Metres across the court from the baseline corner (0–15)",
+    example: 5.5,
+    type: Number,
+  })
   x!: number;
 
-  @ApiProperty({ description: "Y coordinate", example: 3.2, type: Number })
+  @ApiProperty({
+    description: "Metres from the baseline towards half-court (0–14)",
+    example: 3.2,
+    type: Number,
+  })
   y!: number;
 }
 

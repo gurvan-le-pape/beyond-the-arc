@@ -325,7 +325,8 @@ export class PlayerMatchStatsDto {
   blocks!: number;
 
   @ApiProperty({
-    description: "Play time intervals",
+    description:
+      "Intervals the player was on court, as [start, end] pairs of seconds from tip-off",
     example: [
       [0, 600],
       [1200, 2400],
