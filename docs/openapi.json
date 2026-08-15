@@ -4348,12 +4348,12 @@
           },
           "x": {
             "type": "number",
-            "description": "X coordinate",
+            "description": "Metres across the court from the baseline corner (0–15)",
             "example": 5.5
           },
           "y": {
             "type": "number",
-            "description": "Y coordinate",
+            "description": "Metres from the baseline towards half-court (0–14)",
             "example": 3.2
           }
         },
@@ -4752,14 +4752,14 @@
             "description": "Blocks",
             "example": 1
           },
-          "playtime": {
+          "playtimeSeconds": {
             "type": "number",
-            "description": "Total playtime in seconds",
+            "description": "Total time on court, in seconds",
             "example": 1200
           },
           "playtimeIntervals": {
             "type": "array",
-            "description": "Playtime intervals [start, end] in seconds",
+            "description": "Intervals the player was on court, as [start, end] pairs of seconds from tip-off",
             "example": [
               [
                 0,
@@ -4794,7 +4794,7 @@
           "rebounds",
           "steals",
           "blocks",
-          "playtime",
+          "playtimeSeconds",
           "playtimeIntervals"
         ]
       },
@@ -5442,7 +5442,7 @@
           },
           "playtimeIntervals": {
             "type": "array",
-            "description": "Play time intervals",
+            "description": "Intervals the player was on court, as [start, end] pairs of seconds from tip-off",
             "example": [
               [
                 0,

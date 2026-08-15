@@ -135,11 +135,11 @@ export function usePlayerStatColumns(
         render: (p) => p.stats.turnovers,
       },
       {
-        key: "playtime",
+        key: "playtimeSeconds",
         header: tMatches("playerMatchStats.playtime"),
         numeric: true,
         divider: "right",
-        render: (p) => formatPlaytime(p.stats.playtime),
+        render: (p) => formatPlaytime(p.stats.playtimeSeconds),
       },
       {
         key: "shots",

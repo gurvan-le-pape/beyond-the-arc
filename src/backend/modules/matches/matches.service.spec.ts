@@ -378,7 +378,7 @@ describe("MatchesService", () => {
       expect(result.stats[0].stats.rebounds.total).toBe(5);
       expect(result.stats[0].stats.rebounds.offensive).toBe(2);
       expect(result.stats[0].stats.rebounds.defensive).toBe(3);
-      expect(result.stats[0].stats.playtime).toBe(20);
+      expect(result.stats[0].stats.playtimeSeconds).toBe(20);
     });
 
     it("aggregates team totals partitioned by the player's team id", async () => {
@@ -536,7 +536,7 @@ describe("MatchesService", () => {
       ]);
 
       const result = await service.findPlayerMatchStatsByMatchId(1);
-      expect(result.stats[0].stats.playtime).toBe(0);
+      expect(result.stats[0].stats.playtimeSeconds).toBe(0);
       expect(result.stats[0].stats.playtimeIntervals).toBeNull();
     });
 
@@ -554,7 +554,7 @@ describe("MatchesService", () => {
       ]);
 
       const result = await service.findPlayerMatchStatsByMatchId(1);
-      expect(result.stats[0].stats.playtime).toBe(0);
+      expect(result.stats[0].stats.playtimeSeconds).toBe(0);
     });
   });
 
