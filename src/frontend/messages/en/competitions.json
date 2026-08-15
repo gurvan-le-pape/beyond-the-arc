@@ -6,7 +6,6 @@
   "noChampionships": "No championships available",
   "tryAdjustingFilters": "Try adjusting filters to find more championships.",
   "championship": "Championship",
-  "championships": "championships",
   "categoryAriaLabel": "Category",
   "divisionAriaLabel": "Division",
   "divisionWithValue": "Division {value}",
@@ -38,5 +37,6 @@
     "address": "Address",
     "email": "Email",
     "phone": "Phone"
-  }
+  },
+  "itemLabel": "{count, plural, one {championship} other {championships}}"
 }

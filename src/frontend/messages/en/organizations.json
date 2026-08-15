@@ -18,8 +18,8 @@
     "description": "All clubs registered across France.",
     "searchLabel": "Club name",
     "searchPlaceholder": "Search for a club ...",
-    "itemLabelPlural": "clubs",
-    "tryAdjustingFilters": "Try adjusting your filters to find more clubs."
+    "tryAdjustingFilters": "Try adjusting your filters to find more clubs.",
+    "itemLabel": "{count, plural, one {club} other {clubs}}"
   },
   "info": {
     "title": "Information",

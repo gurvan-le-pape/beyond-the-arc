@@ -17,7 +17,13 @@ interface PaginationProps {
   pageSize: number;
   setPageSize: (size: number) => void;
   setPageIndex: (index: number) => void;
-  label: string; // e.g. "joueurs", "équipes"
+  /**
+   * The item noun, already agreed with `pagination.total` by the caller — the
+   * plural rule belongs to the noun, and the noun belongs to the caller's
+   * namespace. Passing a bare plural rendered `(1 joueurs)` on any filter
+   * matching one row.
+   */
+  label: string;
 }
 
 const PAGE_SIZES = [25, 50, 100, 200];

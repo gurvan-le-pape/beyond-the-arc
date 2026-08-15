@@ -11,7 +11,6 @@
   "allMatchdays": "Toutes les journées",
   "matchdayLabel": "J{matchday}",
   "noResults": "Aucun match trouvé",
-  "itemLabelPlural": "matchs",
   "upcoming": "À venir",
   "tryAdjustingFilters": "Essayez d'ajuster vos filtres pour trouver plus de matchs.",
   "final": "Terminé",
@@ -102,5 +101,6 @@
   },
   "matchesTable": {
     "club": "Club"
-  }
+  },
+  "itemLabel": "{count, plural, one {match} other {matchs}}"
 }

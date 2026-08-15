@@ -68,7 +68,9 @@ export function ClubsView() {
         pageSize={pageSize}
         onPageSizeChange={setPageSize}
         onPageChange={(index) => setCurrentPage(index + 1)}
-        itemLabel={tOrganizations("clubs.itemLabelPlural")}
+        itemLabel={tOrganizations("clubs.itemLabel", {
+          count: pagination?.total ?? 0,
+        })}
       >
         <div className={CLUBS_GRID}>
           {clubs.map((club) => (

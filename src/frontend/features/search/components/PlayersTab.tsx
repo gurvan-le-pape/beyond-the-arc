@@ -70,7 +70,7 @@ export function PlayersTab() {
         pageSize={filters.pageSize}
         onPageSizeChange={setPageSize}
         onPageChange={(index) => setCurrentPage(index + 1)}
-        itemLabel={tPlayers("players")}
+        itemLabel={tPlayers("itemLabel", { count: pagination?.total ?? 0 })}
       >
         <div className={LIST_ENTITY_CARD_GRID}>
           {players.map((player) => (

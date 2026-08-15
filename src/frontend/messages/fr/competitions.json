@@ -6,7 +6,6 @@
   "noChampionships": "Aucun championnat disponible",
   "tryAdjustingFilters": "Essayez d'ajuster les filtres pour trouver plus de championnats.",
   "championship": "Championnat",
-  "championships": "championnats",
   "categoryAriaLabel": "Catégorie",
   "divisionAriaLabel": "Division",
   "divisionWithValue": "Division {value}",
@@ -38,5 +37,6 @@
     "address": "Adresse",
     "email": "Email",
     "phone": "Téléphone"
-  }
+  },
+  "itemLabel": "{count, plural, one {championnat} other {championnats}}"
 }

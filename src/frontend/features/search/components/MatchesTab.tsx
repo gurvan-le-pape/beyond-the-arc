@@ -71,7 +71,7 @@ export function MatchesTab() {
         pageSize={filters.pageSize}
         onPageSizeChange={setPageSize}
         onPageChange={(index) => setCurrentPage(index + 1)}
-        itemLabel={tMatches("itemLabelPlural")}
+        itemLabel={tMatches("itemLabel", { count: pagination?.total ?? 0 })}
       >
         <div className={LIST_ENTITY_CARD_GRID}>
           {matches.map((match) => (

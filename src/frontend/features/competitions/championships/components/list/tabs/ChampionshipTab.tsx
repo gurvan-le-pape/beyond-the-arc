@@ -74,7 +74,9 @@ export function ChampionshipTab({
         pageSize={pageSize}
         onPageSizeChange={onPageSizeChange}
         onPageChange={onPageChange}
-        itemLabel={tCompetitions("championships")}
+        itemLabel={tCompetitions("itemLabel", {
+          count: pagination?.total ?? 0,
+        })}
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {championships.map((c) => (

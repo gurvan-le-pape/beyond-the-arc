@@ -1,6 +1,5 @@
 {
   "meta": "{name} — roster, season stats and results.",
-  "teams": "teams",
   "label": "Teams",
   "tryAdjustingFilters": "Try adjusting your filters to find more teams.",
   "teamNumber": "Team #{number}",
@@ -17,5 +16,6 @@
     "shotchartDescription": "This heatmap shows the shot distribution for the team this season.",
     "won": "W",
     "lost": "L"
-  }
+  },
+  "itemLabel": "{count, plural, one {team} other {teams}}"
 }
