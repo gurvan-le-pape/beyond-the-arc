@@ -333,6 +333,15 @@ module.exports = {
         //                          use for: scrollable containers that need to
         //                          read their own bg (e.g. sticky headers)
         //
+        // These are `background-color` utilities and nothing else. There is no
+        // `from-surface-inset` or `to-surface-own`, because a gradient stop is
+        // a different Tailwind mechanism — `--tw-gradient-from` and the stops
+        // chain, not `background-color`. Four components wrote those names and
+        // got no gradient at all: neither class exists, `--tw-gradient-stops`
+        // stayed unset, and the whole `background-image` was invalid. For a
+        // gradient over the surface context, read the variables directly:
+        // `from-[var(--surface-inset)] to-[var(--surface-bg)]`.
+        //
         // .ring-offset-surface   — focus ring offset matching the current surface
         //                          always pair with focus:ring-2 focus:ring-*
         //

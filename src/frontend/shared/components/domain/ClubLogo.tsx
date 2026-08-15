@@ -26,7 +26,7 @@ export function ClubLogo({ clubName, alt, className }: ClubLogoProps) {
       className={cn(
         "w-14 h-14 rounded-card flex-shrink-0",
         "flex items-center justify-center overflow-hidden",
-        "bg-gradient-to-br from-surface-inset to-surface-own",
+        "bg-gradient-to-br from-[var(--surface-inset)] to-[var(--surface-bg)]",
         "border border-divide/60 shadow-sm",
         className,
       )}
