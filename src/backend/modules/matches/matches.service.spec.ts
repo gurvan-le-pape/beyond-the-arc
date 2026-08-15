@@ -465,7 +465,6 @@ describe("MatchesService", () => {
 
   describe("findMatchEventsByTeamId", () => {
     it("should return mapped match events for a team", async () => {
-      mockPrismaService.client.matches.findMany.mockResolvedValue([{ id: 1 }]);
       mockPrismaService.client.matchEvents.findMany.mockResolvedValue([
         { ...mockMatchEventResult, matchId: 1 },
       ]);
@@ -478,15 +477,32 @@ describe("MatchesService", () => {
       expect(result[0].shotLocation?.x).toBe(5.5);
     });
 
-    it("should return empty array if no matches found for team", async () => {
-      mockPrismaService.client.matches.findMany.mockResolvedValue([]);
+    it("should scope the query to the team's own matches", async () => {
+      mockPrismaService.client.matchEvents.findMany.mockResolvedValue([]);
+
+      await service.findMatchEventsByTeamId(7);
+
+      // The match clause is what states the intent, so it is asserted rather
+      // than left to `players: { some: … }` to imply. One query, not two.
+      expect(
+        mockPrismaService.client.matchEvents.findMany,
+      ).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            match: { OR: [{ homeTeamId: 7 }, { awayTeamId: 7 }] },
+            players: { some: { player: { teamId: 7 } } },
+          }),
+        }),
+      );
+      expect(mockPrismaService.client.matches.findMany).not.toHaveBeenCalled();
+    });
+
+    it("should return empty array when the team has no shot events", async () => {
+      mockPrismaService.client.matchEvents.findMany.mockResolvedValue([]);
 
       const result = await service.findMatchEventsByTeamId(999);
 
       expect(result).toEqual([]);
-      expect(
-        mockPrismaService.client.matchEvents.findMany,
-      ).not.toHaveBeenCalled();
     });
   });
 
