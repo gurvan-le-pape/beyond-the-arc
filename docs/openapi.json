@@ -4832,9 +4832,10 @@
             "example": "25/58"
           },
           "fieldGoalPercentage": {
-            "type": "string",
-            "description": "Field goal percentage, or \"N/A\" when no attempts",
-            "example": "43%"
+            "type": "number",
+            "nullable": true,
+            "description": "Field goal percentage out of 100, null when there were no attempts",
+            "example": 43
           },
           "threePointers": {
             "type": "string",
@@ -4842,9 +4843,10 @@
             "example": "8/22"
           },
           "threePointPercentage": {
-            "type": "string",
-            "description": "Three-point percentage, or \"N/A\" when no attempts",
-            "example": "36%"
+            "type": "number",
+            "nullable": true,
+            "description": "Three-point percentage out of 100, null when there were no attempts",
+            "example": 36
           },
           "freeThrows": {
             "type": "string",
@@ -4852,9 +4854,10 @@
             "example": "14/18"
           },
           "freeThrowPercentage": {
-            "type": "string",
-            "description": "Free throw percentage, or \"N/A\" when no attempts",
-            "example": "78%"
+            "type": "number",
+            "nullable": true,
+            "description": "Free throw percentage out of 100, null when there were no attempts",
+            "example": 78
           },
           "reboundsTotal": {
             "type": "number",

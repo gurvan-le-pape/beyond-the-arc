@@ -325,11 +325,13 @@ export class TeamMatchStatsDto {
   fieldGoals!: string;
 
   @ApiProperty({
-    description: 'Field goal percentage, or "N/A" when no attempts',
-    example: "43%",
-    type: String,
+    description:
+      "Field goal percentage out of 100, null when there were no attempts",
+    example: 43,
+    type: Number,
+    nullable: true,
   })
-  fieldGoalPercentage!: string;
+  fieldGoalPercentage!: number | null;
 
   @ApiProperty({
     description: "Three-pointers made/attempted",
@@ -339,11 +341,13 @@ export class TeamMatchStatsDto {
   threePointers!: string;
 
   @ApiProperty({
-    description: 'Three-point percentage, or "N/A" when no attempts',
-    example: "36%",
-    type: String,
+    description:
+      "Three-point percentage out of 100, null when there were no attempts",
+    example: 36,
+    type: Number,
+    nullable: true,
   })
-  threePointPercentage!: string;
+  threePointPercentage!: number | null;
 
   @ApiProperty({
     description: "Free throws made/attempted",
@@ -353,11 +357,13 @@ export class TeamMatchStatsDto {
   freeThrows!: string;
 
   @ApiProperty({
-    description: 'Free throw percentage, or "N/A" when no attempts',
-    example: "78%",
-    type: String,
+    description:
+      "Free throw percentage out of 100, null when there were no attempts",
+    example: 78,
+    type: Number,
+    nullable: true,
   })
-  freeThrowPercentage!: string;
+  freeThrowPercentage!: number | null;
 
   @ApiProperty({ description: "Total rebounds", example: 38, type: Number })
   reboundsTotal!: number;
