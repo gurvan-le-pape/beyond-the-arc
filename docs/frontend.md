@@ -185,6 +185,10 @@ export const playersPrefetch = {
 
 The `usePlayersPrefetch` hook composes these with `useQueryClient` so components get a stable, queryClient-bound prefetch function without touching the query infrastructure directly.
 
+**The prefetch surface is complete per feature, and almost none of it is called. That is deliberate, and worth stating plainly so nobody reads it as dead code to delete.** Counted on `main`: 8 `*Prefetch` objects, 8 `use*Prefetch` hooks, and exactly **one** call site — `useMatchesPrefetch`, on the match card's expand button. A feature whose prefetch object is missing the one function a future hover handler wants is a feature someone has to go and extend first, and the symmetry is what makes that unnecessary; the cost is a few dozen lines that tree-shake out. If you are auditing unused exports, this is the answer for these.
+
+**The same applies to the detail hooks**, for a different reason. 19 of 39 exported query hooks have no consumer outside their own file — 7 of those are the prefetch hooks above, and most of the rest are `useX(id)` detail hooks (`usePlayer`, `useTeam`, `useMatch`, `useLeague`, `useCommittee`, `useChampionship`). They are unused because **every detail page fetches server-side** through the `*.server.ts` half of the dual service layer, not because the hook is wrong. They are the client-side half of a pair, and switching a page between server and client fetching is meant to be a call-site change — which only works if both halves exist.
+
 ### Cache timing policy
 
 Cache lifetimes are set per query based on how often the data realistically
