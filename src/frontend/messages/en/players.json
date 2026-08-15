@@ -1,6 +1,5 @@
 {
   "meta": "{name} — season stats, match history and shot chart.",
-  "players": "players",
   "label": "Players",
   "tryAdjustingFilters": "Try adjusting your filters to find more players.",
   "teamNumber": "Team #{number}",
@@ -22,5 +21,6 @@
   "filters": {
     "searchName": "Search player",
     "searchNamePlaceholder": "Player name..."
-  }
+  },
+  "itemLabel": "{count, plural, one {player} other {players}}"
 }

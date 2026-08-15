@@ -1,6 +1,5 @@
 {
   "meta": "{name} — statistiques de la saison, historique des matchs et carte de tirs.",
-  "players": "joueurs",
   "label": "Joueurs",
   "tryAdjustingFilters": "Essayez d'ajuster vos filtres pour trouver plus de joueurs.",
   "teamNumber": "Équipe #{number}",
@@ -22,5 +21,6 @@
   "filters": {
     "searchName": "Rechercher un joueur",
     "searchNamePlaceholder": "Nom du joueur ..."
-  }
+  },
+  "itemLabel": "{count, plural, one {joueur} other {joueurs}}"
 }

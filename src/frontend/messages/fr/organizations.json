@@ -18,8 +18,8 @@
     "description": "Tous les clubs enregistrés en France.",
     "searchLabel": "Nom du club",
     "searchPlaceholder": "Rechercher un club ...",
-    "itemLabelPlural": "clubs",
-    "tryAdjustingFilters": "Essayez d'ajuster vos filtres pour trouver plus de clubs."
+    "tryAdjustingFilters": "Essayez d'ajuster vos filtres pour trouver plus de clubs.",
+    "itemLabel": "{count, plural, one {club} other {clubs}}"
   },
   "info": {
     "title": "Informations",

@@ -70,7 +70,7 @@ export function TeamsTab() {
         pageSize={filters.pageSize}
         onPageSizeChange={setPageSize}
         onPageChange={(index) => setCurrentPage(index + 1)}
-        itemLabel={tTeams("teams")}
+        itemLabel={tTeams("itemLabel", { count: pagination?.total ?? 0 })}
       >
         <div className={LIST_ENTITY_CARD_GRID}>
           {teams.map((team) => (

@@ -1,6 +1,5 @@
 {
   "meta": "{name} — effectif, statistiques de la saison et résultats.",
-  "teams": "équipes",
   "label": "Équipes",
   "tryAdjustingFilters": "Essayez d'ajuster vos filtres pour trouver plus d'équipes.",
   "teamNumber": "Équipe #{number}",
@@ -17,5 +16,6 @@
     "shotchartDescription": "Cette heatmap montre la distribution des tirs de l'équipe cette saison.",
     "won": "V",
     "lost": "D"
-  }
+  },
+  "itemLabel": "{count, plural, one {équipe} other {équipes}}"
 }
