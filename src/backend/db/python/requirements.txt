@@ -1,3 +1,33 @@
-psycopg[binary,pool]>=3.2
+# Scheduler dependencies — fully pinned, transitive dependencies included.
+#
+# This file is both the declaration and the lock. Two files would let the
+# declaration and the lock disagree, and since the Dockerfile can only install
+# one of them, the disagreement would be silent: an edit to the unused file
+# would change nothing at all.
+#
+# Everything is `==` because this image generates every match, stat and shot
+# chart in the product, and `faker` names the players. `>=` on that half meant
+# two builds of the same commit could produce different schedulers — faker has
+# published 503 releases, 7 of them in one nine-day window. The other half had
+# already drifted in silence: the code was written against psycopg 3.2, and
+# `>=3.2` has been installing 3.3.x since 2025-12-01.
+#
+# Regenerate (from the repo root, in the same image the Dockerfile uses):
+#
+#   docker run --rm python:3.14-slim sh -c \
+#     'pip install --no-cache-dir -q "psycopg[binary,pool]==3.3.4" "faker==40.36.0" \
+#      && pip freeze'
+#
+# Bumping a version means editing the direct requirement, rerunning that with
+# the new version, and replacing everything below.
 
-faker
+# Declared: faker, and psycopg with its binary and pool extras. The two extras
+# are separate distributions, named here rather than left to `psycopg[...]` so
+# that every version this image installs is written down in one place.
+Faker==40.36.0
+psycopg==3.3.4
+psycopg-binary==3.3.4
+psycopg-pool==3.3.1
+
+# Pulled in by the above.
+typing_extensions==4.16.0

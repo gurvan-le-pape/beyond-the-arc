@@ -97,11 +97,27 @@ barrels:
 # therefore takes two things: `[refresh-static-data]` in the PR title (the
 # migration-immutability CI job blocks the edit otherwise) and the catch-up SQL
 # in the PR body, to apply the same change to production by hand.
-refresh-static-data:
+refresh-static-data: venv/.stamp
 	@echo "This will take ~1h20 (scraping ~4480 pages from FFBB at 1 req/s)."
 	@echo "Note: the regenerated migration is a no-op on any database that already applied it - production included. See the comment above this target."
 	venv/bin/python3 scripts/ffbb-import/scrape.py
 	venv/bin/python3 scripts/ffbb-import/build_migration.py
+
+# The virtualenv the two host-side scraper scripts run in. Gitignored, so it is
+# built from a pinned manifest rather than assumed to exist - before this
+# target, `refresh-static-data` called venv/bin/python3 on a directory that no
+# clean clone had, and `requests` was declared in no manifest anywhere.
+# Idempotent: re-running only reinstalls when the manifest is newer than the
+# stamp. The stamp is the real target, not the directory - `venv/` exists as
+# soon as it is created, and make would then call a bare `venv:` target
+# up to date whatever the manifest said.
+.PHONY: venv
+venv: venv/.stamp
+venv/.stamp: scripts/ffbb-import/requirements.txt
+	python3 -m venv venv
+	venv/bin/pip install --disable-pip-version-check -q -r scripts/ffbb-import/requirements.txt
+	@touch venv/.stamp
+	@venv/bin/python3 --version
 
 # View scheduler logs
 logs-scheduler:

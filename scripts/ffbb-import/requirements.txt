@@ -1,0 +1,24 @@
+# Dependencies for the FFBB scraper and the migration builder, fully pinned
+# with transitive dependencies included — same rule and same reason as
+# src/backend/db/python/requirements.txt.
+#
+# These two scripts import `requests` and nothing else outside the standard
+# library, and they had been running against whatever happened to be in a venv
+# nobody could reproduce: the venv is gitignored, it was never mentioned in any
+# manifest, and `make refresh-static-data` calls `venv/bin/python3` directly.
+# A clean clone therefore could not run the documented command at all.
+#
+# `make venv` builds the environment this file describes.
+#
+# Regenerate (from the repo root):
+#
+#   docker run --rm python:3.14-slim sh -c \
+#     'pip install --no-cache-dir -q "requests==2.34.2" && pip freeze'
+
+requests==2.34.2
+
+# Pulled in by requests.
+certifi==2026.7.22
+charset-normalizer==3.5.1
+idna==3.18
+urllib3==2.7.0
