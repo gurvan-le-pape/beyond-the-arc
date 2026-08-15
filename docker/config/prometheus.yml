@@ -14,3 +14,46 @@ scrape_configs:
   - job_name: "node"
     static_configs:
       - targets: ["node-exporter:9100"]
+
+  # Availability probes. The three jobs above scrape services that instrument
+  # themselves; these two ask a service that does not whether it answers at all.
+  #
+  # The relabel dance is how blackbox works and is not optional: the scrape
+  # target has to become a *parameter* of a request to the exporter. `__param_target`
+  # carries the URL being probed, `instance` keeps it as the series label, and
+  # `__address__` is rewritten to the exporter itself — otherwise Prometheus
+  # would try to scrape the probed service directly, which is the thing it
+  # cannot do.
+  - job_name: "blackbox-http"
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+          # The page a visitor actually loads. #531's healthcheck already proves
+          # this route is a valid probe of a working render.
+          - http://frontend:3000/
+          # Not /metrics: this exercises the database ping, heap and disk
+          # indicators, which until now ran only on the Compose healthcheck.
+          - http://backend:4000/api/health
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+
+  - job_name: "blackbox-tcp"
+    metrics_path: /probe
+    params:
+      module: [tcp_connect]
+    static_configs:
+      - targets: ["database:5432"]
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
