@@ -7,6 +7,15 @@ services:
       - HOST=0.0.0.0
     volumes:
       - ../src/frontend:/app
+      # The real root file, read-only, over the copy the image carries, so the
+      # two cannot diverge while you are editing. The frontend's barrel ESLint
+      # rule reads it — see eslint-rules/enforce-barrel-import.js.
+      #
+      # Target /barrelsby.json, never /app/barrelsby.json: /app is itself a
+      # bind mount of src/frontend, so a target inside it makes Docker create
+      # the mountpoint on the host — a root-owned empty barrelsby.json in the
+      # working tree, which the rule then finds first and fails to parse.
+      - ../barrelsby.json:/barrelsby.json:ro
       - /app/node_modules
 
   backend:
