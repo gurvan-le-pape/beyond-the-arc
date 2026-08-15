@@ -67,9 +67,6 @@ const DECLARED = declaredLocales();
 /** The locale every other locale is compared against. */
 const REFERENCE_LOCALE = DECLARED.defaultLocale;
 
-/** Matches the name in an ICU argument: `{name}`, `{count, plural, ...}`. */
-const PLACEHOLDER = /\{\s*(\w+)/g;
-
 type Leaves = Map<string, string>;
 
 /**
@@ -96,8 +93,140 @@ function flatten(
   return into;
 }
 
+/** ICU argument types whose style is a set of submessages, not a format. */
+const SUBMESSAGE_TYPES = new Set(["plural", "select", "selectordinal"]);
+
+/**
+ * The ICU argument names in a message.
+ *
+ * This walks the string rather than matching it, because the distinction it
+ * has to make is positional and not lexical. A regex over `{\s*(\w+)` reads
+ * every `{word` as an argument, but in
+ *
+ *   {count, plural, =1 {joueur} other {joueurs}}
+ *
+ * two of the three braces open *submessages* whose contents are literal text —
+ * so the checker reported `joueur` and `joueurs` as placeholders, found
+ * `player` and `players` on the English side, and failed a correct
+ * translation while naming placeholders that do not exist. It read as a
+ * translation bug rather than a tool bug.
+ *
+ * That never fired because the only two plural messages in the catalogue begin
+ * every branch with `#`, which is not `\w`. `#` cannot carry a message with
+ * more than one number in it, so the first one that needed two would have hit
+ * this.
+ *
+ * Submessages are descended into, so an argument used only inside a branch is
+ * still counted.
+ *
+ * What this returns is a *set of names*, which is the check's contract and not
+ * an oversight: a translation may legitimately word one branch without the
+ * number the others carry (`no players` against `{count} players`), and locales
+ * do not even agree on how many branches exist — French has `one`/`other` where
+ * Russian has `one`/`few`/`many`/`other`. Per-branch parity across locales
+ * would therefore reject correct translations. A name that appears in no branch
+ * at all is what this catches, and still does.
+ */
 function placeholdersOf(message: string): Set<string> {
-  return new Set([...message.matchAll(PLACEHOLDER)].map(([, name]) => name));
+  const names = new Set<string>();
+  readMessage(message, 0, names);
+  return names;
+}
+
+/** Reads message text from `from` until the end or an unmatched `}`. */
+function readMessage(source: string, from: number, into: Set<string>): number {
+  let index = from;
+
+  while (index < source.length) {
+    const char = source[index];
+
+    if (char === "}") return index;
+    if (char === "'") {
+      const afterQuote = skipQuoted(source, index);
+      if (afterQuote !== index) {
+        index = afterQuote;
+        continue;
+      }
+    }
+
+    index = char === "{" ? readArgument(source, index, into) : index + 1;
+  }
+
+  return index;
+}
+
+/** Reads one `{...}` argument, starting at its opening brace. */
+function readArgument(source: string, from: number, into: Set<string>): number {
+  let index = skipSpace(source, from + 1);
+
+  const nameStart = index;
+  while (index < source.length && /[\w.]/.test(source[index]!)) index++;
+  const name = source.slice(nameStart, index);
+  if (name) into.add(name);
+
+  const end = closingBrace(source, from);
+
+  index = skipSpace(source, index);
+  if (source[index] !== ",") return end + 1;
+
+  index = skipSpace(source, index + 1);
+  const typeStart = index;
+  while (index < source.length && /\w/.test(source[index]!)) index++;
+  const type = source.slice(typeStart, index);
+
+  // `{when, date, short}` and friends: the style is a format, never a message.
+  if (!SUBMESSAGE_TYPES.has(type)) return end + 1;
+
+  // `{count, plural, =1 {…} other {…}}` — each selector is text and each
+  // brace after one opens a submessage that may hold arguments of its own.
+  while (index < end) {
+    if (source[index] === "{") {
+      index = readMessage(source, index + 1, into) + 1;
+    } else {
+      index++;
+    }
+  }
+
+  return end + 1;
+}
+
+/** Index of the `}` matching the `{` at `from`. */
+function closingBrace(source: string, from: number): number {
+  let depth = 0;
+
+  for (let index = from; index < source.length; index++) {
+    const afterQuote = skipQuoted(source, index);
+    if (afterQuote !== index) {
+      index = afterQuote - 1;
+      continue;
+    }
+
+    if (source[index] === "{") depth++;
+    else if (source[index] === "}" && --depth === 0) return index;
+  }
+
+  return source.length;
+}
+
+/**
+ * Index just past an ICU quoted section, or `from` when there is none.
+ *
+ * Only `'{`, `'}` and `'#` start one — a lone apostrophe is a literal, which
+ * is what keeps every `l'équipe` and `s'est` in the French catalogue from
+ * being read as an escape.
+ */
+function skipQuoted(source: string, from: number): number {
+  if (source[from] !== "'") return from;
+  if (!"{}#".includes(source[from + 1] ?? "")) return from;
+
+  const close = source.indexOf("'", from + 2);
+  return close === -1 ? source.length : close + 1;
+}
+
+function skipSpace(source: string, from: number): number {
+  let index = from;
+  while (index < source.length && /\s/.test(source[index]!)) index++;
+  return index;
 }
 
 function readNamespace(locale: string, file: string): Leaves {
