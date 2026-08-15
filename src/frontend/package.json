@@ -12,7 +12,7 @@
     "lint:fix": "organize-imports-cli './**/*.ts' './**/*.tsx' && eslint '**/*.{ts,mts,tsx}' --fix && npm run format",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.scripts.json",
     "check:messages": "node scripts/check-message-parity.mts",
     "typegen": "node scripts/typegen.mts"
   },
