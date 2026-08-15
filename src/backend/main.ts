@@ -3,11 +3,10 @@ import "./instrument";
 
 import { REQUEST_ID_HEADER } from "@common/constants";
 import {
-  applyApiPrefix,
+  configureApp,
   createOpenApiDocument,
   resolveCorsOrigins,
 } from "@common/utils";
-import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { SwaggerModule } from "@nestjs/swagger";
 import { Logger } from "nestjs-pino";
@@ -37,25 +36,17 @@ async function bootstrap() {
     exposedHeaders: [REQUEST_ID_HEADER],
   });
 
-  // Both of these are shared with scripts/generate-openapi.ts, which writes the
-  // committed snapshot. They are the only parts of this bootstrap that change
-  // what the document says, and they were duplicated there until #529 — see
-  // openapi.util.ts for why a "keep in sync" comment could not hold them.
-  applyApiPrefix(app);
+  // The global prefix and the ValidationPipe. Extracted so app.pipeline.spec.ts
+  // exercises this pipeline rather than a second declaration of it — see
+  // app-bootstrap.util.ts. `createOpenApiDocument` is shared with
+  // scripts/generate-openapi.ts for the same class of reason, and still needs
+  // the prefix already applied, which configureApp does first.
+  configureApp(app);
   const document = createOpenApiDocument(app);
 
   // useGlobalPrefix serves the UI at /api/docs — the only path prefix Nginx
   // proxies to the backend, so Swagger is reachable in production.
   SwaggerModule.setup("docs", app, document, { useGlobalPrefix: true });
-
-  // Global pipes
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      whitelist: true,
-      forbidNonWhitelisted: true,
-    }),
-  );
 
   // Without this Nest registers no signal listeners at all, so the SIGTERM
   // every `docker compose up -d` sends kills the process outright:
