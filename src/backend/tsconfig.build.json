@@ -7,8 +7,6 @@
     "paths": {
       "@modules/*": ["./modules/*"],
       "@common/*": ["./common/*"],
-      "@database/*": ["./database/*"],
-      "@config/*": ["./config/*"],
       "prisma/*": ["./prisma/*"],
       "modules": ["./modules/index.js"]
     },
