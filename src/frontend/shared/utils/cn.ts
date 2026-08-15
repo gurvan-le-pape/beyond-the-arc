@@ -24,6 +24,30 @@ import { extendTailwindMerge } from "tailwind-merge";
  * `.animation` and `.spacing` exactly; `fontSize` and `fontWeight` need no
  * entry because they override Tailwind's own keys rather than adding new ones.
  */
+/**
+ * **tailwind-merge is a major ahead of Tailwind here, deliberately.** The
+ * installed 3.6.0 targets Tailwind v4 — its default config carries v4-only
+ * class groups (`text-shadow`, `inset-shadow`, `drop-shadow-color`) — while
+ * this project is on `tailwindcss@3.4.19`. The 2.x line is the one that
+ * targets v3.
+ *
+ * That mismatch matters because its failure mode is silent: a class whose
+ * grouping changed between the majors would leave *both* classes in the string
+ * and let CSS source order decide, exactly as the custom-key bug above did.
+ *
+ * So it was measured rather than assumed. Every class-like token in the
+ * codebase (1,180 after filtering) was bucketed by utility prefix and every
+ * same-prefix pair (2,026) merged under both 3.6.0 and 2.6.1: **zero
+ * disagreements**. The harness is not vacuous — it detects a real one,
+ * `outline-none` + `outline-hidden`, which 3.x collapses (v4 renamed the
+ * utility) and 2.x keeps. The project uses `outline-none` in 41 places and
+ * `outline-hidden` in none, so the pair cannot arise.
+ *
+ * Conclusion: stay on 3.x. Re-run that differential before adopting a class
+ * from a v3/v4 rename pair (`bg-gradient-*`/`bg-linear-*`, `shadow-sm`/
+ * `shadow-xs`, `blur-sm`/`blur-xs`, `outline-none`/`outline-hidden`), and
+ * revisit the whole question when the project moves to Tailwind v4.
+ */
 const twMerge = extendTailwindMerge({
   extend: {
     theme: {
