@@ -541,6 +541,23 @@ jobs:
             # deploy should not delay a pending Disk Full by ten minutes.
             # Dashboards need no equivalent: their provider sets no
             # updateIntervalSeconds, so Grafana's own poll picks them up.
+            # Same mechanism, one layer down: Prometheus reads its scrape
+            # config only at startup, and `up -d` recreates a container when its
+            # *configuration* changes — a bind-mounted file's contents are not
+            # part of that hash. So a new scrape job lands on disk and is never
+            # loaded. Verified locally: `compose restart prometheus` does re-read
+            # the file (a job removed from it disappeared from /status/config and
+            # came back when restored).
+            #
+            # This must run BEFORE the Grafana restart below. An alert whose
+            # series does not exist yet reads NoData, and the availability rules
+            # set `noDataState: Alerting` on purpose — so restarting Grafana
+            # first would fire a false alert for the two minutes it takes
+            # Prometheus to come back and scrape.
+            if ! git diff --quiet "$pre_pull_head" HEAD -- docker/config/prometheus.yml docker/config/blackbox.yml; then
+              echo "Prometheus or blackbox config changed in this deploy — restarting both to load it"
+              docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml restart blackbox-exporter prometheus
+            fi
             if ! git diff --quiet "$pre_pull_head" HEAD -- docker/config/grafana/provisioning/alerting/; then
               echo "Alerting provisioning changed in this deploy — restarting Grafana to load it"
               docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml restart grafana
