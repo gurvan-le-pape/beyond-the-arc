@@ -1,7 +1,7 @@
 """
 MatchGenerator
 
-Simulates and persists a single match that has reached its scheduled_at time.
+Simulates and persists a single match that has reached its starts_at time.
 Called by the Scheduler for each due match.
 
 Responsibilities:
@@ -46,21 +46,21 @@ class MatchGenerator:
         all_subs = home_subs + away_subs
 
         match_events, home_score, away_score = self.simulator.simulate_match(
-            home_playtimes, away_playtimes, all_names, match.scheduled_at
+            home_playtimes, away_playtimes, all_names, match.starts_at
         )
 
         # Prevent draws
         if home_score == away_score:
             home_score += 2
             match_events.append({
-                "timestamp": match.scheduled_at + timedelta(seconds=2401),
+                "occurred_at": match.starts_at + timedelta(seconds=2401),
                 "player_roles": {"shooter": random.choice(list(home_playtimes.keys()))},  # noqa: S2245
                 "event_type": "made_layup",
                 "description": "Deciding basket.",
             })
 
         overtime = any(
-            e["timestamp"] > match.scheduled_at + timedelta(seconds=2400)
+            e["occurred_at"] > match.starts_at + timedelta(seconds=2400)
             for e in match_events
         )
 
@@ -69,7 +69,7 @@ class MatchGenerator:
             exiting_name = all_names.get(sub["exiting_player"], f"Player {sub['exiting_player']}")
             entering_name = all_names.get(sub["entering_player"], f"Player {sub['entering_player']}")
             match_events.append({
-                "timestamp": match.scheduled_at + timedelta(seconds=sub["time"]),
+                "occurred_at": match.starts_at + timedelta(seconds=sub["time"]),
                 "event_type": "substitution",
                 "player_roles": {
                     "exiting_player": sub["exiting_player"],
@@ -78,7 +78,7 @@ class MatchGenerator:
                 "description": f"{entering_name} substitutes in for {exiting_name}.",
             })
 
-        match_events.sort(key=lambda e: e["timestamp"])
+        match_events.sort(key=lambda e: e["occurred_at"])
 
         # Persist result
         match_repository.update_match_result(

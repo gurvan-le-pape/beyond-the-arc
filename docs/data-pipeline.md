@@ -124,7 +124,7 @@ The `compute_divisions_and_pools` utility then determines how many divisions and
 
 For every pool, a full **round-robin schedule** is generated — one home leg and one return leg. Each matchday is assigned a datetime: a Saturday or Sunday slot (14:00, 19:00, or 22:00 Paris time) chosen randomly from a fixed set of options, starting from the configured season start week.
 
-Match shells are inserted into the database with `status = 'scheduled'` and a `scheduled_at` datetime. They have no result yet — the scheduler will fill them in as their date arrives.
+Match shells are inserted into the database with `status = 'scheduled'` and a `starts_at` tip-off instant. They have no result yet — the scheduler will fill them in as their tip-off arrives.
 
 ### Checkpointing
 

@@ -42,7 +42,7 @@ export interface MatchFilters {
 
 const MATCH_LIST_SELECT = {
   id: true,
-  date: true,
+  startsAt: true,
   matchday: true,
   pool: {
     select: {
@@ -100,7 +100,7 @@ const MATCH_LIST_SELECT = {
 const MATCH_EVENT_SELECT = {
   id: true,
   eventType: true,
-  timestamp: true,
+  occurredAt: true,
   description: true,
   players: {
     select: {
@@ -140,7 +140,7 @@ const MATCH_DETAIL_SELECT = {
   ...MATCH_LIST_SELECT,
   matchEvents: {
     select: MATCH_EVENT_SELECT,
-    orderBy: { timestamp: "asc" as const },
+    orderBy: { occurredAt: "asc" as const },
   },
 } as const;
 
@@ -199,7 +199,7 @@ export class MatchesService {
       this.prisma.client.matches.findMany({
         where,
         select: MATCH_LIST_SELECT,
-        orderBy: { date: "desc" },
+        orderBy: { startsAt: "desc" },
         skip,
         take: limit,
       }),
@@ -232,7 +232,7 @@ export class MatchesService {
     const matches = await this.prisma.client.matches.findMany({
       where: { poolId },
       select: MATCH_LIST_SELECT,
-      orderBy: { date: "asc" },
+      orderBy: { startsAt: "asc" },
     });
 
     return matches.map((m) => this.mapMatchToDto(m));
@@ -276,7 +276,7 @@ export class MatchesService {
     const events = await this.prisma.client.matchEvents.findMany({
       where: { matchId },
       select: MATCH_EVENT_SELECT,
-      orderBy: { timestamp: "asc" },
+      orderBy: { occurredAt: "asc" },
     });
 
     return events.map((e) => this.mapEventToDto(e));
@@ -306,7 +306,7 @@ export class MatchesService {
         players: { some: { player: { teamId } } },
       },
       select: { ...MATCH_EVENT_SELECT, matchId: true },
-      orderBy: { timestamp: "asc" },
+      orderBy: { occurredAt: "asc" },
     });
 
     return events.map((e) => this.mapEventToDto(e));
@@ -319,7 +319,7 @@ export class MatchesService {
         players: { some: { playerId } },
       },
       select: { ...MATCH_EVENT_SELECT, matchId: true },
-      orderBy: { timestamp: "asc" },
+      orderBy: { occurredAt: "asc" },
     });
 
     return events.map((e) => this.mapEventToDto(e));
@@ -331,7 +331,7 @@ export class MatchesService {
   private mapMatchToDto(match: MatchListResult): MatchResponseDto {
     return {
       id: match.id,
-      date: match.date,
+      startsAt: match.startsAt,
       matchday: match.matchday,
       homeTeamScore: match.homeTeamScore,
       awayTeamScore: match.awayTeamScore,
@@ -390,7 +390,7 @@ export class MatchesService {
       id: event.id,
       matchId: event.matchId,
       eventType: event.eventType as EventType,
-      timestamp: event.timestamp,
+      occurredAt: event.occurredAt,
       description: event.description,
       players: event.players.map((p) => ({
         role: p.role as Role,
@@ -518,7 +518,7 @@ export class MatchesService {
     if (filters?.matchday) where.matchday = filters.matchday;
 
     if (filters?.date) {
-      where.date = {
+      where.startsAt = {
         gte: fromZonedTime(
           new Date(filters.date + "T00:00:00"),
           COMPETITION_TIME_ZONE,

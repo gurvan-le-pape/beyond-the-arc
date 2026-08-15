@@ -36,7 +36,7 @@ export const MatchDetailsTable: React.FC<MatchDetailsTableProps> = ({
     matchEvents,
     match.homeTeam.id,
     match.awayTeam.id,
-    match.date,
+    match.startsAt,
   );
 
   const display = (value: number) => (isLoadingEvents ? "-" : value);

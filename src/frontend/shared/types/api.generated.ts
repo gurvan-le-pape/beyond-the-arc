@@ -1443,10 +1443,10 @@ export interface components {
              */
             id: number;
             /**
-             * @description Match date
+             * @description Tip-off instant, as an ISO 8601 UTC timestamp
              * @example 2024-02-05T19:00:00Z
              */
-            date: string;
+            startsAt: string;
             /**
              * @description Matchday number
              * @example 1
@@ -1559,10 +1559,10 @@ export interface components {
              */
             eventType: "tip_off" | "traveling" | "carrying" | "double_dribble" | "bad_pass" | "steal" | "shot_clock_violation" | "offensive_foul" | "quarter_end" | "blocking_foul" | "pushing_foul" | "reaching_foul" | "charging_foul" | "illegal_screen" | "technical_foul" | "made_layup" | "made_dunk" | "made_fadeaway" | "made_pull_up_jump_shot" | "made_catch_and_shoot_three" | "made_step_back_three" | "missed_layup" | "missed_dunk" | "missed_fadeaway" | "missed_pull_up_jump_shot" | "missed_catch_and_shoot_three" | "missed_step_back_three" | "blocked_shot" | "offensive_rebound" | "defensive_rebound" | "free_throw_made" | "free_throw_missed" | "3_point_shooting_foul" | "2_point_ext_shooting_foul" | "2_point_int_shooting_foul" | "3_point_and_1" | "2_point_ext_and_1" | "2_point_int_and_1" | "inbound" | "substitution";
             /**
-             * @description Instant the event occurred, as an ISO 8601 UTC timestamp — not an offset from the start of the match. The team and player event endpoints return events from many matches in one response, so there is no single match start to be relative to; compute elapsed time against the match's own `date`.
+             * @description Instant the event occurred, as an ISO 8601 UTC timestamp — not an offset from the start of the match. The team and player event endpoints return events from many matches in one response, so there is no single match start to be relative to; compute elapsed time against the match's own `startsAt`.
              * @example 2024-02-05T19:02:00.000Z
              */
-            timestamp: string;
+            occurredAt: string;
             /**
              * @description Event description
              * @example 3-pointer
@@ -1580,10 +1580,10 @@ export interface components {
              */
             id: number;
             /**
-             * @description Match date
+             * @description Tip-off instant, as an ISO 8601 UTC timestamp
              * @example 2024-02-05T19:00:00Z
              */
-            date: string;
+            startsAt: string;
             /**
              * @description Matchday number
              * @example 1
@@ -2200,10 +2200,10 @@ export interface components {
              */
             id: number;
             /**
-             * @description Match date
+             * @description Tip-off instant, as an ISO 8601 UTC timestamp
              * @example 2024-02-05T19:00:00Z
              */
-            date: string;
+            startsAt: string;
             /** @description Home team information */
             homeTeam: components["schemas"]["HistoryTeamRefDto"];
             /** @description Away team information */
@@ -2534,10 +2534,10 @@ export interface components {
              */
             id: number;
             /**
-             * @description Match date
+             * @description Tip-off instant, as an ISO 8601 UTC timestamp
              * @example 2024-02-05T19:00:00Z
              */
-            date: string;
+            startsAt: string;
             /**
              * @description Home team score
              * @example 85
@@ -2560,10 +2560,10 @@ export interface components {
              */
             id: number;
             /**
-             * @description Match date
+             * @description Tip-off instant, as an ISO 8601 UTC timestamp
              * @example 2024-02-05T19:00:00Z
              */
-            date: string;
+            startsAt: string;
             /**
              * @description Home team score
              * @example 85
@@ -2648,10 +2648,10 @@ export interface components {
              */
             id: number;
             /**
-             * @description Match date
+             * @description Tip-off instant, as an ISO 8601 UTC timestamp
              * @example 2024-02-05T19:00:00Z
              */
-            date: string;
+            startsAt: string;
             /** @description Home team information */
             homeTeam: components["schemas"]["HistoryTeamRefDto"];
             /** @description Away team information */

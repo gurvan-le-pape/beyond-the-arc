@@ -139,10 +139,10 @@ Twelve indexes are defined beyond the primary keys and unique constraints, all i
 - `idx_match_event_players_event_id` — on `match_event_players(event_id)`, supporting fast lookup of players for a given event when assembling event timelines.
 - `idx_match_event_players_player_id` — on `match_event_players(player_id)`, supporting a player's event history.
 - `idx_player_match_stats_player_id` — on `player_match_stats(player_id)`, supporting a player's stat history across matches.
-- `idx_matches_status_date` — a partial index on `matches(status, date)` filtered to `WHERE status = 'scheduled'`. This is the index used by the scheduler's polling query. Because it only indexes scheduled matches, it shrinks automatically as matches are completed and stays small throughout the season.
-- `idx_matches_pool_id_date` — composite on `matches(pool_id, date)`, serving pool and championship match listings (filter by pool, order by date) with a single index.
+- `idx_matches_status_starts_at` — a partial index on `matches(status, starts_at)` filtered to `WHERE status = 'scheduled'`. This is the index used by the scheduler's polling query. Because it only indexes scheduled matches, it shrinks automatically as matches are completed and stays small throughout the season.
+- `idx_matches_pool_id_starts_at` — composite on `matches(pool_id, starts_at)`, serving pool and championship match listings (filter by pool, order by tip-off) with a single index.
 - `idx_matches_home_team_id` / `idx_matches_away_team_id` — on `matches(home_team_id)` and `matches(away_team_id)`, supporting team match history queries (`WHERE home_team_id = X OR away_team_id = X`) on every team page.
-- `idx_matches_date` — on `matches(date)`, supporting the global match list (`ORDER BY date DESC`, paginated) and date-range filters.
+- `idx_matches_starts_at` — on `matches(starts_at)`, supporting the global match list (`ORDER BY starts_at DESC`, paginated) and date-range filters.
 - `idx_teams_pool_id` — on `teams(pool_id)`, supporting pool rosters and pool-scoped team filters.
 - `idx_clubs_committee_id` — on `clubs(committee_id)`, supporting committee- and league-scoped filters; clubs, teams, players, and matches queries all join through this column.
 
@@ -150,7 +150,7 @@ Foreign-key columns not listed here are already covered by the leading column of
 
 There is also `unique_championship_no_committee`, a partial *unique* index on `championships` covering regional/national rows: `committee_id` is NULL at those levels and NULLs never collide in the main unique constraint, so without it duplicate regional/national championships would be allowed.
 
-Every index that Prisma's schema language can express is declared as an `@@index` in `prisma/schema.prisma` (with `map:` pinning the SQL name). The two partial indexes (`idx_matches_status_date`, `unique_championship_no_committee`) cannot be expressed in PSL and live only in the migration SQL — comments in the relevant models point to them. New plain indexes are added by editing `schema.prisma` and generating a migration; they reach every environment, including production, through `prisma migrate deploy` at the next deployment.
+Every index that Prisma's schema language can express is declared as an `@@index` in `prisma/schema.prisma` (with `map:` pinning the SQL name). The two partial indexes (`idx_matches_status_starts_at`, `unique_championship_no_committee`) cannot be expressed in PSL and live only in the migration SQL — comments in the relevant models point to them. New plain indexes are added by editing `schema.prisma` and generating a migration; they reach every environment, including production, through `prisma migrate deploy` at the next deployment.
 
 ---
 

@@ -86,7 +86,7 @@ const PLAYER_MATCH_HISTORY_SELECT = {
   match: {
     select: {
       id: true,
-      date: true,
+      startsAt: true,
       homeTeamScore: true,
       awayTeamScore: true,
       homeTeam: {
@@ -277,7 +277,7 @@ export class PlayersService {
     const stats = await this.prisma.client.playerMatchStats.findMany({
       where: { playerId },
       select: PLAYER_MATCH_HISTORY_SELECT,
-      orderBy: { match: { date: "desc" } },
+      orderBy: { match: { startsAt: "desc" } },
     });
 
     const matches = stats.map((stat) => this.mapToMatchHistoryDto(stat));
@@ -352,7 +352,7 @@ export class PlayersService {
   ): MatchHistoryDto {
     return {
       id: stat.match.id,
-      date: stat.match.date,
+      startsAt: stat.match.startsAt,
       homeTeam: {
         id: stat.match.homeTeam.id,
         number: stat.match.homeTeam.number,

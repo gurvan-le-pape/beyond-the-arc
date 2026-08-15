@@ -7,13 +7,13 @@ import { formatMatchDateTime } from "@/shared/utils";
 import { MatchTeamLabel } from "./MatchTeamLabel";
 
 interface MatchWithTeams {
-  date: Date | string;
+  startsAt: Date | string;
   homeTeam: { id: number; club: { name: string } };
   awayTeam: { id: number; club: { name: string } };
 }
 
 /**
- * Shared "date" column for match-history tables, built the same way across
+ * Shared "starts at" column for match-history tables, built the same way across
  * teams/players/matches features.
  */
 export function buildMatchDateColumn<T extends MatchWithTeams>(
@@ -21,9 +21,9 @@ export function buildMatchDateColumn<T extends MatchWithTeams>(
   locale: string,
 ): TableColumn<T> {
   return {
-    key: "date",
+    key: "startsAt",
     header,
-    render: (match: T) => formatMatchDateTime(match.date, locale),
+    render: (match: T) => formatMatchDateTime(match.startsAt, locale),
     align: "center",
   };
 }

@@ -274,7 +274,7 @@ Results are sorted by competition points and point difference. Leaderboard rows 
 | GET    | `/matches/all`                     | All match IDs unfiltered (for sitemap generation)   | 5 min  |
 | GET    | `/matches/:matchId`                | Single match with full detail                       | No     |
 | GET    | `/matches/:matchId/player-stats`   | Player statistics for a match, grouped by team      | No     |
-| GET    | `/matches/:matchId/events`         | All events for a match, ordered by timestamp        | No     |
+| GET    | `/matches/:matchId/events`         | All events for a match, ordered by `occurredAt`     | No     |
 | GET    | `/matches/team/:teamId/events`     | All shot events for a team across all their matches | No     |
 | GET    | `/matches/player/:playerId/events` | All shot events for a player across all matches     | No     |
 

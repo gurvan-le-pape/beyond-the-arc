@@ -38,7 +38,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
 
   return (
     <Card padding="sm" className="overflow-hidden">
-      <MatchStatus date={match.date} overtime={match.overtime} />
+      <MatchStatus date={match.startsAt} overtime={match.overtime} />
       <div className="flex items-center justify-between gap-2">
         <TeamDisplay team={match.homeTeam} isWinner={isHomeWinner} />
         <ScoreDisplay

@@ -144,7 +144,7 @@ const TEAM_DETAIL_SELECT = {
   homeMatches: {
     select: {
       id: true,
-      date: true,
+      startsAt: true,
       homeTeamScore: true,
       awayTeamScore: true,
       awayTeam: {
@@ -173,14 +173,14 @@ const TEAM_DETAIL_SELECT = {
       },
     },
     orderBy: {
-      date: "desc" as const,
+      startsAt: "desc" as const,
     },
     take: 5,
   },
   awayMatches: {
     select: {
       id: true,
-      date: true,
+      startsAt: true,
       homeTeamScore: true,
       awayTeamScore: true,
       homeTeam: {
@@ -209,7 +209,7 @@ const TEAM_DETAIL_SELECT = {
       },
     },
     orderBy: {
-      date: "desc" as const,
+      startsAt: "desc" as const,
     },
     take: 5,
   },
@@ -220,7 +220,7 @@ const TEAM_DETAIL_SELECT = {
  */
 const TEAM_MATCH_HISTORY_SELECT = {
   id: true,
-  date: true,
+  startsAt: true,
   homeTeamScore: true,
   awayTeamScore: true,
   homeTeam: {
@@ -428,7 +428,7 @@ export class TeamsService {
         OR: [{ homeTeamId: teamId }, { awayTeamId: teamId }],
       },
       select: TEAM_MATCH_HISTORY_SELECT,
-      orderBy: { date: "desc" },
+      orderBy: { startsAt: "desc" },
     });
 
     const matches = matchRows.map((match) => this.mapToMatchHistoryDto(match));
@@ -501,7 +501,7 @@ export class TeamsService {
   private mapToMatchHistoryDto(match: MatchSelectResult): TeamMatchHistoryDto {
     return {
       id: match.id,
-      date: match.date,
+      startsAt: match.startsAt,
       homeTeam: {
         id: match.homeTeam.id,
         number: match.homeTeam.number,

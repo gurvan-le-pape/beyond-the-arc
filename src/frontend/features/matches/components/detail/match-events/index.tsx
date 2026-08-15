@@ -75,7 +75,7 @@ export const MatchEvents: React.FC<MatchEventsProps> = ({
     return events.map((event) => {
       const style = getEventStyle(event.eventType);
       const teamId = getTeamIdFromEvent(event);
-      const quarter = getQuarterFromTimestamp(event.timestamp, matchDate);
+      const quarter = getQuarterFromTimestamp(event.occurredAt, matchDate);
 
       if (style.eventCategory === EventCategory.MADE) {
         const points = pointsForEvent(event.eventType, style);

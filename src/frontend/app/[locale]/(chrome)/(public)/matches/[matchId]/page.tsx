@@ -99,7 +99,7 @@ export default async function MatchSummaryPage({
         homeTeam={homeTeam}
         awayTeam={awayTeam}
         matchEvents={match.matchEvents}
-        matchDate={match.date}
+        matchDate={match.startsAt}
         playerShots={shotEventsByPlayer}
       />
     </PageLayout>
