@@ -10,6 +10,8 @@ import {
   useState,
 } from "react";
 
+import { cn } from "@/shared/utils";
+
 // Context for managing tab state
 interface TabsContextType {
   value: string;
@@ -63,7 +65,7 @@ export function Tabs({
 
   return (
     <TabsContext.Provider value={contextValue}>
-      <div className={className}>{children}</div>
+      <div className={cn(className)}>{children}</div>
     </TabsContext.Provider>
   );
 }
@@ -82,7 +84,7 @@ export function TabsList({
   ariaLabel,
 }: TabsListProps) {
   return (
-    <div className={`flex justify-center mb-6 ${className}`}>
+    <div className={cn("flex justify-center mb-6", className)}>
       <div
         className="flex w-full border-b-2 border-divide"
         role="tablist"
@@ -163,17 +165,15 @@ export function TabsTrigger({
       tabIndex={isSelected ? 0 : -1}
       onClick={() => onValueChange(value)}
       onKeyDown={handleKeyDown}
-      className={`
-        flex-1 py-3 text-sm whitespace-nowrap text-center
-        border-b-2 -mb-px transition-all duration-200
-        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2
-        ${
-          isSelected
-            ? "border-primary text-primary font-semibold"
-            : "border-transparent text-text-secondary hover:text-text-emphasis hover:border-divide font-normal"
-        }
-        ${className}
-      `}
+      className={cn(
+        "flex-1 py-3 text-sm whitespace-nowrap text-center",
+        "border-b-2 -mb-px transition-all duration-200",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
+        isSelected
+          ? "border-primary text-primary font-semibold"
+          : "border-transparent text-text-secondary hover:text-text-emphasis hover:border-divide font-normal",
+        className,
+      )}
     >
       {children}
     </button>
@@ -211,7 +211,7 @@ export function TabsContent({
       // both were absent from the built CSS and the panel had no enter
       // animation at all. duration-200 alone did nothing either — a transition
       // duration with no transition and no animation.
-      className={`animate-fade-in ${className}`}
+      className={cn("animate-fade-in", className)}
     >
       {children}
     </div>

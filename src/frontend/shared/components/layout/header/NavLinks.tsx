@@ -79,11 +79,11 @@ export const NavLinks: React.FC<NavLinksProps> = ({
   return (
     <nav aria-label={t("header.mainNavAriaLabel")}>
       {asList ? (
-        <ul className={cn(className, "space-y-1")} data-testid="nav-list">
+        <ul className={cn("space-y-1", className)} data-testid="nav-list">
           {links}
         </ul>
       ) : (
-        <div className={className} data-testid="nav-inline">
+        <div className={cn(className)} data-testid="nav-inline">
           {links}
         </div>
       )}
