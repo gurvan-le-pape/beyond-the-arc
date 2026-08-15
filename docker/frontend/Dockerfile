@@ -8,6 +8,15 @@ RUN npm ci --prefer-offline --no-audit --progress=false
 
 FROM base AS dev
 COPY src/frontend ./
+# The frontend's own ESLint rule derives its barrel-directory list from this
+# file, so a copy of src/frontend without it cannot lint (see
+# eslint-rules/enforce-barrel-import.js). It goes at / rather than in /app
+# because /app *is* src/frontend here, so the container root is playing the
+# part of the repo root — and because the dev compose file bind-mounts the
+# real file over this copy, and a target inside /app would be inside the
+# src/frontend bind mount, where Docker would create the mountpoint as a
+# root-owned empty file in the working tree.
+COPY barrelsby.json /barrelsby.json
 EXPOSE 3000
 CMD ["npm", "run", "dev"]
 
@@ -17,6 +26,10 @@ ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 ARG FRONTEND_URL
 ENV FRONTEND_URL=${FRONTEND_URL}
 COPY src/frontend ./
+# `next build` runs ESLint, and without this the barrel rule threw ENOENT and
+# Next skipped the whole lint pass — non-fatal, so the image built green with
+# its lint gate off. Same placement and reason as the dev stage above.
+COPY barrelsby.json /barrelsby.json
 # SENTRY_AUTH_TOKEN is exposed to the build command only, via a BuildKit secret
 # mount. It must never be an ARG/ENV: those persist in the image config pushed
 # to the registry, where anyone who can pull the image can read them.
