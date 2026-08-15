@@ -40,13 +40,19 @@ const LEAGUES_CONFIG = {
 export const leaguesQueries = {
   /**
    * Query options for fetching all leagues.
-   * Uses the root `all` key — there are no filters for the full list.
+   *
+   * Keyed on the `lists()` rung even though the list takes no filters. Keying
+   * it on `all` — which is what "there are no filters" used to argue — puts it
+   * *above* the rung, so `invalidateQueries({ queryKey: leaguesKeys.lists() })`
+   * misses the full list while still matching `byIds`. Measured: 1 match
+   * without the list, against 2 with it. Every other feature keys its list this
+   * way; leagues was the one factory of eight that did not.
    *
    * @example
    * useQuery(leaguesQueries.list())
    */
   list: () => ({
-    queryKey: leaguesKeys.all,
+    queryKey: leaguesKeys.lists(),
     queryFn: ({ signal }: QueryFunctionContext) =>
       leaguesService.getAll(signal),
     ...LEAGUES_CONFIG,
