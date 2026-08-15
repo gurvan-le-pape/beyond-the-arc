@@ -676,7 +676,7 @@ describe("MatchesService", () => {
         label: "a plain CET day",
         day: "2024-02-05",
         gte: "2024-02-04T23:00:00.000Z",
-        lt: "2024-02-05T22:59:59.999Z",
+        lt: "2024-02-05T23:00:00.000Z",
       },
       {
         // Spring forward: 02:00 -> 03:00 on this date, so the Paris day is 23
@@ -686,7 +686,7 @@ describe("MatchesService", () => {
         label: "the spring-forward day (23 h long)",
         day: "2024-03-31",
         gte: "2024-03-30T23:00:00.000Z",
-        lt: "2024-03-31T21:59:59.999Z",
+        lt: "2024-03-31T22:00:00.000Z",
       },
       {
         // Fall back: 03:00 -> 02:00, so the Paris day is 25 hours long and the
@@ -694,7 +694,7 @@ describe("MatchesService", () => {
         label: "the fall-back day (25 h long)",
         day: "2024-10-27",
         gte: "2024-10-26T22:00:00.000Z",
-        lt: "2024-10-27T22:59:59.999Z",
+        lt: "2024-10-27T23:00:00.000Z",
       },
     ])("date filter as a Paris-day range — $label", ({ day, gte, lt }) => {
       it(`bounds ${day} at ${gte} .. ${lt}`, async () => {
@@ -710,12 +710,10 @@ describe("MatchesService", () => {
       });
     });
 
-    // The upper bounds above end at `23:59:59.999` local rather than at the
-    // next day's midnight, which leaves a one-millisecond hole at the end of
-    // every day: a match starting at exactly 23:59:59.999 Paris time is
-    // excluded by `lt`. That is `dates-and-timezones 3`, fixed separately —
-    // these literals are what makes that fix a visible change here rather than
-    // a silent one, which is why this test had to land first.
+    // The upper bounds are the *next day's* midnight, and `lt` excludes its own
+    // bound, so the range is half-open and covers the whole Paris day with no
+    // gap. They are deliberately not `gte + 24h`: 2024-03-31 is 23 hours long
+    // and 2024-10-27 is 25, which is what those two cases exist to pin.
 
     it("should apply search filter as OR across home and away team", async () => {
       await service.findAllMatches({ search: "Paris" });
