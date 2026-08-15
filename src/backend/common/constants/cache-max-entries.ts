@@ -17,6 +17,14 @@
  * larger at 990 KB, but it takes no query parameters — it is exactly one key
  * and cannot be multiplied.
  *
+ * That distinction is the whole test, and it is what keeps
+ * `/matches/team/:teamId/events` out of the cache: 495 KB serialized (measured
+ * on production 2026-08-15, 1,089 events) and keyed by one of 60,168 teams, so
+ * it is both large *and* multipliable. Caching it would take this ceiling's
+ * cost from ~25 MB to ~247 MB, on a backend container that has no `memory`
+ * limit in compose. `/matches/player/:playerId/events` passes the same test at
+ * 59 KB and is cached.
+ *
  * Lower this if the backend ever gets a memory limit in compose; raise it only
  * with the same arithmetic redone against the biggest cacheable response.
  */

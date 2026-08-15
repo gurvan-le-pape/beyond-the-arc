@@ -1863,7 +1863,7 @@
     },
     "/api/matches/player/{playerId}/events": {
       "get": {
-        "description": "Retrieves all shot events with locations for a specific player across all their matches",
+        "description": "Retrieves all shot events with locations for a specific player across all their matches. Results are cached for 5 minutes.",
         "operationId": "MatchesController_getMatchEventsByPlayerId",
         "parameters": [
           {

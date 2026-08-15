@@ -205,10 +205,13 @@ export class MatchesController {
   /**
    * Retrieve match events for a specific match.
    *
-   * No caching because events may be added/updated after the match.
+   * Deliberately uncached: this is the live-match surface. The frontend match
+   * page revalidates at 60 s precisely because the event stream moves while a
+   * match is being generated, and a 5-minute cache here would serve a stale
+   * scoreboard for longer than the page's own window.
    *
    * @param matchId - The match ID
-   * @returns Array of match events ordered by timestamp
+   * @returns Array of match events ordered by occurredAt
    */
   @Get(":matchId/events")
   @HttpCode(HttpStatus.OK)
@@ -238,7 +241,16 @@ export class MatchesController {
   /**
    * Retrieve all shot events for a team across all matches.
    *
-   * No caching because new matches may be added.
+   * Uncached, and the reason is size rather than freshness — the events of a
+   * finished match never change, so this would cache safely. Measured on
+   * production 2026-08-15: 1,089 events, **495 KB** once serialized. The
+   * response cache holds at most CACHE_MAX_ENTRIES entries and that ceiling was
+   * sized against ~50 KB bodies, so caching this route would take the bound
+   * from ~25 MB to ~247 MB. Unlike `/clubs/all` — the one large response the
+   * ceiling accepts, because it takes no parameters and is exactly one key —
+   * this one is keyed by team and there are 60,168 of them, all reachable
+   * unauthenticated. Cache it only after the payload shrinks or the store grows
+   * a per-entry size limit. See `common/constants/cache-max-entries.ts`.
    *
    * @param teamId - The team ID
    * @returns Array of shot events with locations
@@ -271,17 +283,23 @@ export class MatchesController {
   /**
    * Retrieve all shot events for a player across all matches.
    *
-   * No caching because new matches may be added.
+   * Moderate caching (5 minutes): a finished match's events never change, so
+   * the only staleness is a just-generated match appearing on the shot chart up
+   * to 5 minutes late. Measured on production 2026-08-15: 118 events, 59 KB
+   * serialized — within the ~50 KB per-entry body that CACHE_MAX_ENTRIES was
+   * sized against, which is what makes this route cacheable and the team one
+   * (495 KB) not.
    *
    * @param playerId - The player ID
    * @returns Array of shot events with locations
    */
   @Get("player/:playerId/events")
   @HttpCode(HttpStatus.OK)
+  @UseInterceptors(CacheInterceptor({ ttl: CACHE_TTL.MODERATE_DATA }))
   @ApiOperation({
     summary: "Get shot events by player ID",
     description:
-      "Retrieves all shot events with locations for a specific player across all their matches",
+      "Retrieves all shot events with locations for a specific player across all their matches. Results are cached for 5 minutes.",
   })
   @ApiParam({
     name: "playerId",
