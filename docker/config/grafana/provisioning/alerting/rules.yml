@@ -283,3 +283,69 @@ groups:
         isPaused: false
         notification_settings:
           receiver: email-admin
+      - uid: bfk1x7prb2s0wa
+        title: Endpoint Unreachable
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: PBFA97CFB590B2093
+            model:
+              editorMode: code
+              # One rule for every probed target rather than one per service:
+              # `probe_success` carries the URL in its `instance` label, so a
+              # new target in prometheus.yml is covered the moment it is added
+              # and needs no second rule to be remembered.
+              #
+              # Queried as a gauge, not `== 0`, for the same reason as Service
+              # Down: a comparison filters, so a healthy target would return an
+              # empty vector and the rule would read NoData instead of OK.
+              expr: probe_success
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: C
+            queryType: expression
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 1
+                    type: lt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: C
+              type: threshold
+        # No `probe_success` series at all means the exporter itself is gone or
+        # Prometheus cannot reach it — in which case nothing is being probed and
+        # the availability of every target is unknown, which is the condition
+        # this rule exists to report.
+        noDataState: Alerting
+        execErrState: Error
+        # Two minutes, matching Service Down: long enough to ride out a deploy
+        # recreating a container, short enough that a real outage is not sat on.
+        for: 2m
+        annotations:
+          summary: "A probed endpoint is not answering: {{ $labels.instance }}"
+        isPaused: false
+        notification_settings:
+          receiver: email-admin

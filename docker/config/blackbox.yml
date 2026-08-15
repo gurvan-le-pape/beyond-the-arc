@@ -1,0 +1,39 @@
+# Blackbox exporter probe definitions.
+#
+# The exporter itself does not know what to probe — Prometheus passes the target
+# as a query parameter and names the module to use. So this file defines *how*
+# to probe; `prometheus.yml`'s blackbox jobs define *what*.
+#
+# Why blackbox rather than a scrape target per service: the frontend, the
+# database and the scheduler expose no metrics at all, so there is nothing for
+# Prometheus to scrape. A probe asks the only question that matters for
+# availability — does a request to this service succeed — and it answers it for
+# a service that has no instrumentation of its own.
+modules:
+  # Plain HTTP GET, success = a 2xx response.
+  http_2xx:
+    prober: http
+    # Well under Prometheus's 15s scrape interval, so a hanging target fails the
+    # probe rather than stalling the scrape.
+    timeout: 5s
+    http:
+      valid_status_codes: [] # empty means any 2xx
+      method: GET
+      # Redirects are followed, and this is load-bearing rather than a default
+      # left alone: the frontend's `/` answers **307** to `/en` (the next-intl
+      # locale middleware), so a probe that does not follow scores every healthy
+      # frontend as down. Measured with follow_redirects off — probe_success 0,
+      # probe_http_status_code 307 — which would have shipped an alert that fires
+      # forever. Following it also makes the probe measure what a visitor gets:
+      # a rendered page, not a middleware hop.
+      follow_redirects: true
+      preferred_ip_protocol: ip4
+
+  # TCP connect only. Postgres speaks its own protocol, so a successful
+  # handshake at the socket level is the strongest signal available without
+  # credentials — it separates "container gone" from "database busy".
+  tcp_connect:
+    prober: tcp
+    timeout: 5s
+    tcp:
+      preferred_ip_protocol: ip4

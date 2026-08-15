@@ -268,6 +268,23 @@ services:
     networks:
       - my_network
 
+  # Availability probing for the services that expose no metrics of their own —
+  # the frontend, the database, the scheduler. `up` only ever covered the three
+  # scraped targets, so until now a dead frontend produced no series change and
+  # no alert: the site was down and every backend metric stayed green.
+  #
+  # No port published. It is scraped by Prometheus over my_network, like every
+  # other exporter here, and it has no authentication.
+  blackbox-exporter:
+    image: prom/blackbox-exporter:latest
+    volumes:
+      - ./config/blackbox.yml:/etc/blackboxexporter/config.yml:ro
+    command:
+      - "--config.file=/etc/blackboxexporter/config.yml"
+    restart: unless-stopped
+    networks:
+      - my_network
+
 volumes:
   postgres_data:
   prometheus_data:

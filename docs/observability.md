@@ -117,7 +117,7 @@ The frontend DSN is a literal in each of the three init files. A DSN identifies 
 
 ## Metrics — Prometheus
 
-Prometheus scrapes every 15 seconds and retains data for 15 days (`--storage.tsdb.retention.time=15d`). It scrapes the backend, `node-exporter` for host-level metrics, and itself.
+Prometheus scrapes every 15 seconds and retains data for 15 days (`--storage.tsdb.retention.time=15d`). It scrapes the backend, `node-exporter` for host-level metrics, and itself, and it probes the frontend, the backend's health route and Postgres through `blackbox-exporter`.
 
 ### Backend metrics
 
@@ -131,17 +131,34 @@ The route sits outside the `/api` global prefix and is not published by Nginx, s
 
 ### Prometheus config
 
-`docker/config/prometheus.yml` defines three scrape jobs, all on the global 15-second interval:
+`docker/config/prometheus.yml` defines five scrape jobs, all on the global 15-second interval:
 
-| job          | target                | notes                                       |
-| ------------ | --------------------- | ------------------------------------------- |
-| `backend`    | `backend:4000/metrics` | the application's own counters and histograms |
-| `node`       | `node-exporter:9100`  | host CPU, memory, disk, network              |
-| `prometheus` | `localhost:9090`      | Prometheus scraping itself                   |
+| job             | target                                              | notes                                         |
+| --------------- | --------------------------------------------------- | --------------------------------------------- |
+| `backend`       | `backend:4000/metrics`                              | the application's own counters and histograms  |
+| `node`          | `node-exporter:9100`                                | host CPU, memory, disk, network                |
+| `prometheus`    | `localhost:9090`                                    | Prometheus scraping itself                     |
+| `blackbox-http` | `frontend:3000/`, `backend:4000/api/health`         | availability probes, via `blackbox-exporter`   |
+| `blackbox-tcp`  | `database:5432`                                     | TCP handshake only — Postgres speaks no HTTP   |
 
 **The host job is named `node`, not `node-exporter`.** That is the `job` label value, so it is what a query or an alert expression has to match — `up{job="node"}`, not `up{job="node-exporter"}`.
 
-Nothing scrapes the frontend, the database, the scheduler, Loki, Promtail or Grafana — three of the ten Compose services are covered, and *Service Down* alerts on the backend alone. If the frontend container dies, nothing notifies: the site is down and every backend metric stays green.
+### Availability probing — blackbox-exporter
+
+The three scrape jobs above only cover services that instrument themselves. The frontend, the database and the scheduler expose no metrics at all, so `up` could never say anything about them: if the frontend container died the site was down and every backend metric stayed green.
+
+`blackbox-exporter` closes that by asking the only question available for an uninstrumented service — does a request to it succeed. Prometheus passes the target as a query parameter (`/probe?target=…&module=…`) and rewrites `__address__` to the exporter, which is what the `relabel_configs` in each blackbox job are doing; without them Prometheus would try to scrape the probed service directly.
+
+**Two details are load-bearing rather than defaults left alone:**
+
+- **`follow_redirects: true`.** The frontend's `/` answers **307** to `/en` — the next-intl locale middleware — so a probe that does not follow scores a perfectly healthy frontend as down. Measured with it off: `probe_success 0`, `probe_http_status_code 307`. Following it also makes the probe measure what a visitor gets, a rendered page rather than a middleware hop.
+- **The backend is probed at `/api/health`, not `/metrics`.** That exercises the database ping, heap and disk indicators, which before this ran only on the Compose healthcheck.
+
+**Cost, measured rather than assumed**: the probes add **41 series** against a head of **2,361** — 1.7 %. Prometheus's own RSS is dominated by the Go runtime and query workload at this scale, not by series count.
+
+**Verified by killing the thing.** With `docker stop` on the frontend container, `probe_success{instance="http://frontend:3000/"}` went to **0** while **every `up` series stayed at 1** — which is precisely the gap this exists to close, demonstrated rather than argued. It returned to 1 on restart.
+
+Loki, Promtail, Grafana and the scheduler are still unwatched. Grafana's `:3001/metrics` answers unauthenticated on the internal network and is the obvious next target if its memory curve is ever wanted.
 
 ---
 
@@ -204,6 +221,7 @@ Grafana Alerting fires email notifications via Gmail SMTP when thresholds are cr
 | High Latency    | backend P95 request duration > 2s                                          | 5m   |
 | Memory Pressure | backend RSS > 400MB                                                        | 10m  |
 | Disk Full       | root filesystem > 85% used                                                 | 5m   |
+| Endpoint Unreachable | `probe_success < 1` — any probed target stops answering               | 2m   |
 
 **`High Error Rate` measures an absolute rate, not a percentage.** `0.01` is 0.01 5xx responses per second — roughly one every 100 seconds — and nothing divides by the total request rate, so the name, this table's older wording and the rule's own `summary` annotation all promise a ratio that is not computed. What it actually catches is "5xx responses are being served at all, steadily". Changing it to a real percentage means a second query and a new threshold, which is a decision rather than a correction, so it is recorded here rather than quietly reworded.
 
@@ -221,7 +239,7 @@ The backend exposes three health endpoints under `/api/health`:
 
 `/health` returns `200` when all three checks pass and `503` when any fail. `/health/live` and `/health/ready` follow the standard Kubernetes probe split — liveness confirms the process is up, readiness confirms it can handle requests. The project does not use Kubernetes, but the endpoints are wired up correctly if that changes.
 
-**Grafana alerting does not call `/health`.** *Service Down* evaluates `up{job="backend"}`, which is Prometheus's own scrape of `/metrics` — so it detects a backend that has stopped answering. The database, heap and disk checks inside `/health` are a separate matter, and until they had a caller they were dead code that read as a control in place.
+**Two things call `/health` now, and neither is *Service Down*.** That alert evaluates `up{job="backend"}`, which is Prometheus's own scrape of `/metrics` — it detects a backend that has stopped answering, and it never touches the health route. What does: the Compose `healthcheck` below, and the `blackbox-http` probe, whose `probe_success` feeds *Endpoint Unreachable*. So the database, heap and disk indicators inside `/health` now run on a schedule **and** their failure reaches a notification, which was not true when they were filed as dead code reading as a control in place.
 
 **A Compose `healthcheck` is now that caller**, on `backend` (`--spider` against `/api/health`) and on `frontend` (a request to `/`, which the next-intl middleware redirects to `/en`, so it exercises a real render rather than just the port). Both run every 30s.
 
@@ -230,7 +248,7 @@ The backend exposes three health endpoints under `/api/health`:
 - **It does not restart anything.** Measured, not assumed: a container held unhealthy for 20 s under `restart: unless-stopped` reported `RestartCount 0` and an unchanged `StartedAt`. Docker's restart policy fires on process *exit*, not on health status — auto-restart on unhealthy needs Swarm mode or an autoheal sidecar, and neither is deployed here.
 - **It notifies nobody.** Prometheus scrapes `/metrics`, not Docker's health status, so an unhealthy container produces no series, no `up` change and no alert.
 
-What it does buy: the three indicators actually execute on a schedule, and their verdict shows in `docker compose ps` — so `Up 2 minutes (unhealthy)` is visible to anyone looking at the box, and the deploy's own post-deploy check is no longer the only thing that ever exercises the health path. Turning that verdict into a *notification* still needs a Prometheus blackbox job or a Grafana rule.
+What it does buy: the three indicators actually execute on a schedule, and their verdict shows in `docker compose ps` — so `Up 2 minutes (unhealthy)` is visible to anyone looking at the box, and the deploy's own post-deploy check is no longer the only thing that ever exercises the health path. Turning that verdict into a *notification* is what the `blackbox-http` probe added: it requests the same routes over HTTP, so a failure becomes `probe_success 0` and fires *Endpoint Unreachable*. The healthcheck and the probe overlap deliberately — the healthcheck is what `docker compose ps` reads, the probe is what alerts.
 
 Verified end to end: stopping the database moves the backend to `unhealthy` after ~92 s (three 30 s retries) with the probe log showing `0 0 1 1 1`, and restarting it recovers to `healthy` in ~32 s. Note the probe uses `--spider`, so it records *that* a check failed, not which indicator — read the endpoint directly to find out.
 
@@ -244,6 +262,6 @@ Verified end to end: stopping the database moves the backend to `unhealthy` afte
 
 **Grafana subdomain leaks the VPS IP.** Because `grafana.beyondthearc.app` is DNS-only (not proxied through Cloudflare), the VPS IP is publicly resolvable via that record. This is a deliberate tradeoff — Cloudflare proxying of WebSocket-heavy Grafana traffic adds latency and complexity — but it means the server IP is not fully hidden.
 
-**Availability is only monitored for the backend, and the Compose healthchecks do not change that.** `up` covers `backend`, `node` and `prometheus`; the frontend, database, scheduler, Loki, Promtail and Grafana are scraped by nothing. The `backend` and `frontend` healthchecks added since make those two containers *report* their state, but nothing reads it — so if the frontend dies, the site is down, every backend metric stays green, and no alert fires. Closing that is a different mechanism (a blackbox exporter, or a scrape target per service), not a healthcheck. See the health section above.
+**Availability now covers the frontend, the backend and the database; the scheduler, Loki, Promtail and Grafana are still unwatched.** `up` covers only what instruments itself (`backend`, `node`, `prometheus`, and the exporter jobs), which is why the healthchecks alone never closed this: a Docker health status is not a metric and nothing read it. The `blackbox-http`/`blackbox-tcp` probes are what closed it, for the three services a user notices first — verified by stopping the frontend container, which took `probe_success` to 0 while every `up` series stayed at 1. The scheduler remains deliberate (`docs/data-pipeline.md`); Grafana's `:3001/metrics` is the obvious next target.
 
 **No alerting on scheduler failures.** The Python scheduler logs to stdout (captured by Loki) but there are no Grafana alert rules targeting scheduler log output. A failed match or a crashed scheduler would not trigger a notification — it would only be visible by inspecting Loki logs or the database directly.
