@@ -28,7 +28,7 @@ export function useMatchesCascadeOptions({
     championshipsFilter = { level: CompetitionLevel.REGIONAL, id: leagueId };
   }
 
-  const { data, isError } = useChampionships(
+  const { data, isError, refetch } = useChampionships(
     { ...championshipsFilter, limit: 100 },
     { enabled: isDepartmental || isRegional },
   );
@@ -63,6 +63,7 @@ export function useMatchesCascadeOptions({
   );
 
   // Reported so the caller can distinguish "this scope has no divisions" from
-  // "the lookup failed" — both produce empty dropdowns otherwise.
-  return { championships, divisions, pools, isError };
+  // "the lookup failed" — both produce empty dropdowns otherwise. `retry` is
+  // what turns the failure into something the user can act on.
+  return { championships, divisions, pools, isError, retry: refetch };
 }

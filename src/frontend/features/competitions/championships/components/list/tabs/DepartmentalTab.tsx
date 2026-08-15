@@ -17,9 +17,13 @@ export function DepartmentalTab() {
   const { filters, setters, setCurrentPage, setPageSize, resetFilters } =
     useDepartmentalFilterState();
 
-  const { data: committees = [], error: committeesError } = useCommittees();
+  const {
+    data: committees = [],
+    error: committeesError,
+    refetch: refetchCommittees,
+  } = useCommittees();
 
-  const { data, error, isLoading } = useChampionships({
+  const { data, error, isLoading, refetch } = useChampionships({
     level: CompetitionLevel.DEPARTMENTAL,
     id: Number(filters.committeeId) || undefined,
     category: filters.category,
@@ -33,6 +37,7 @@ export function DepartmentalTab() {
       data={data}
       error={error}
       isLoading={isLoading}
+      onRetry={refetch}
       pageSize={filters.pageSize}
       onPageSizeChange={setPageSize}
       onPageChange={(index) => setCurrentPage(index + 1)}
@@ -47,6 +52,7 @@ export function DepartmentalTab() {
           scopeError={
             committeesError ? tCommon("errors.fetchCommittees") : undefined
           }
+          onScopeRetry={refetchCommittees}
           scope={{
             label: tCommon("filters.committees"),
             allLabel: tCommon("filters.allCommittees"),

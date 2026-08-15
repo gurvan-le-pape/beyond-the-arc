@@ -25,7 +25,7 @@ export function ClubsView() {
     useClubsFilterState();
   const { search, leagueId, committeeId, currentPage, pageSize } = filters;
 
-  const { data, error, isLoading } = useClubs({
+  const { data, error, isLoading, refetch } = useClubs({
     leagueId,
     committeeId,
     search: search || undefined,
@@ -55,6 +55,7 @@ export function ClubsView() {
         isLoading={isLoading}
         error={error}
         errorMessage={tCommon("errors.fetchClubs")}
+        onRetry={refetch}
         isEmpty={clubs.length === 0}
         emptyState={
           <EmptyState

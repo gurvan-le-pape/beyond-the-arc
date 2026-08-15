@@ -65,6 +65,7 @@ export function PlayerComparison({
     data: opponentData,
     isLoading: isLoadingOpponent,
     isError: opponentFailed,
+    refetch: retryOpponent,
   } = usePlayerMatches(opponent?.id ?? 0, { enabled: !!opponent });
 
   const statsA = careerStats;
@@ -138,7 +139,10 @@ export function PlayerComparison({
         {/* A failed opponent lookup leaves statsB null, which renders exactly
             like "no opponent picked yet" — silence where a failure happened. */}
         {opponentFailed && !isLoadingOpponent && (
-          <ErrorMessage message={tCommon("errors.fetchPlayers")} />
+          <ErrorMessage
+            message={tCommon("errors.fetchPlayers")}
+            onRetry={retryOpponent}
+          />
         )}
 
         {statsA && statsB && !isLoadingOpponent && (

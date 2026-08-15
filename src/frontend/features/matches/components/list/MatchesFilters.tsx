@@ -40,11 +40,17 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
   const tCommon = useTranslations("common");
   const tFilters = useTranslations("filters");
 
-  const { committees, leagues, error: locationError } = useLocationOptions();
+  const {
+    committees,
+    leagues,
+    error: locationError,
+    retry: retryLocation,
+  } = useLocationOptions();
   const {
     divisions,
     pools,
     isError: cascadeFailed,
+    retry: retryCascade,
   } = useMatchesCascadeOptions(filters);
 
   const {
@@ -171,13 +177,19 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
       title={tMatches("label")}
     >
       {locationError && (
-        <ErrorMessage message={tCommon("errors.fetchLeagueOrCommittee")} />
+        <ErrorMessage
+          message={tCommon("errors.fetchLeagueOrCommittee")}
+          onRetry={retryLocation}
+        />
       )}
 
       {/* Without this the division and pool dropdowns render empty, which
           reads as "this scope has none" rather than a failed request. */}
       {cascadeFailed && (
-        <ErrorMessage message={tCommon("errors.fetchChampionships")} />
+        <ErrorMessage
+          message={tCommon("errors.fetchChampionships")}
+          onRetry={retryCascade}
+        />
       )}
 
       {/* Row 1: Search + Date */}

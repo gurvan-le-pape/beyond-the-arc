@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
+import { ErrorMessage } from "@/shared/components/feedback";
 import { DebouncedInput } from "@/shared/components/forms";
 import { Button, ImageWithFallback } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
@@ -22,6 +23,7 @@ interface DropdownContentProps {
   readonly isError: boolean;
   readonly results: Player[];
   readonly onSelect: (player: Player) => void;
+  readonly onRetry: () => unknown;
 }
 
 function DropdownContent({
@@ -29,6 +31,7 @@ function DropdownContent({
   isError,
   results,
   onSelect,
+  onRetry,
 }: DropdownContentProps) {
   const tPlayers = useTranslations("players");
   const tCommon = useTranslations("common");
@@ -45,9 +48,11 @@ function DropdownContent({
   // saying "no players found" would report a broken request as an answer.
   if (isError) {
     return (
-      <Text variant="caption" role="alert" className="px-3 py-2.5">
-        {tCommon("errors.fetchPlayers")}
-      </Text>
+      <ErrorMessage
+        message={tCommon("errors.fetchPlayers")}
+        onRetry={onRetry}
+        className="px-3 py-2.5"
+      />
     );
   }
 
@@ -122,6 +127,7 @@ export function PlayerSearchDropdown({
     data: results = [],
     isLoading,
     isError,
+    refetch,
   } = usePlayerSearch(query, {
     excludeId,
     gender,
@@ -179,6 +185,7 @@ export function PlayerSearchDropdown({
               onSelect(player);
               setQuery("");
             }}
+            onRetry={refetch}
           />
         </div>
       )}

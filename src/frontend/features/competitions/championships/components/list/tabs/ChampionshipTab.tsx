@@ -18,6 +18,8 @@ interface ChampionshipTabProps {
   data: PaginatedResponse<Championship> | undefined;
   error: ApiError | null;
   isLoading: boolean;
+  /** Re-runs the championships query — see `ErrorMessage`'s `onRetry`. */
+  onRetry: () => unknown;
   pageSize: number;
   onPageSizeChange: (size: number) => void;
   /** Receives a 0-based page index (as emitted by the pagination control). */
@@ -34,6 +36,7 @@ export function ChampionshipTab({
   data,
   error,
   isLoading,
+  onRetry,
   pageSize,
   onPageSizeChange,
   onPageChange,
@@ -58,6 +61,7 @@ export function ChampionshipTab({
         isLoading={isLoading}
         error={error}
         errorMessage={tCommon("errors.fetchChampionships")}
+        onRetry={onRetry}
         isEmpty={championships.length === 0}
         emptyState={
           <EmptyState

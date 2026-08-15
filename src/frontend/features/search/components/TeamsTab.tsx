@@ -21,7 +21,7 @@ export function TeamsTab() {
   const { filters, setters, setCurrentPage, setPageSize, resetFilters } =
     useTeamsFilterState();
 
-  const { data, error, isLoading } = useTeams({
+  const { data, error, isLoading, refetch } = useTeams({
     clubId: filters.clubId,
     number: filters.number,
     category: filters.category,
@@ -57,6 +57,7 @@ export function TeamsTab() {
         isLoading={isLoading}
         error={error}
         errorMessage={tCommon("errors.fetchTeams")}
+        onRetry={refetch}
         isEmpty={teams.length === 0}
         emptyState={
           <EmptyState
