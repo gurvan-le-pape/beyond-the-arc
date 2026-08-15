@@ -1797,30 +1797,30 @@ export interface components {
              */
             fieldGoals: string;
             /**
-             * @description Field goal percentage, or "N/A" when no attempts
-             * @example 43%
+             * @description Field goal percentage out of 100, null when there were no attempts
+             * @example 43
              */
-            fieldGoalPercentage: string;
+            fieldGoalPercentage: number | null;
             /**
              * @description Three-pointers made/attempted
              * @example 8/22
              */
             threePointers: string;
             /**
-             * @description Three-point percentage, or "N/A" when no attempts
-             * @example 36%
+             * @description Three-point percentage out of 100, null when there were no attempts
+             * @example 36
              */
-            threePointPercentage: string;
+            threePointPercentage: number | null;
             /**
              * @description Free throws made/attempted
              * @example 14/18
              */
             freeThrows: string;
             /**
-             * @description Free throw percentage, or "N/A" when no attempts
-             * @example 78%
+             * @description Free throw percentage out of 100, null when there were no attempts
+             * @example 78
              */
-            freeThrowPercentage: string;
+            freeThrowPercentage: number | null;
             /**
              * @description Total rebounds
              * @example 38

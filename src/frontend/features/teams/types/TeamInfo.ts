@@ -17,13 +17,15 @@ export interface TeamInfoExtended extends TeamInfo {
 }
 
 export interface TeamStats {
-  [key: string]: string | number;
+  [key: string]: string | number | null;
   fieldGoals: string;
-  fieldGoalPercentage: string;
+  /** Out of 100, or null when there were no attempts. The API sends a number
+   *  and no unit — the "%" is added where the value is rendered. */
+  fieldGoalPercentage: number | null;
   threePointers: string;
-  threePointPercentage: string;
+  threePointPercentage: number | null;
   freeThrows: string;
-  freeThrowPercentage: string;
+  freeThrowPercentage: number | null;
   reboundsTotal: number;
   reboundsOffensive: number;
   reboundsDefensive: number;

@@ -28,7 +28,8 @@ export interface StatComparisonProps {
   /**
    * Percentage key map, only applied in the "dual" variant.
    * e.g. { fieldGoals: "fieldGoalPercentage" }
-   * Renders as "made (pct%)".
+   * Renders as "made (pct%)" — the mapped value is a number, and the "%" is
+   * added here. A null percentage renders the made/attempted value alone.
    */
   readonly percentageMap?: Record<string, string>;
 }

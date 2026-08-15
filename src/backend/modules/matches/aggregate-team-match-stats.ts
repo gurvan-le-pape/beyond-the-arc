@@ -4,17 +4,17 @@ import { type MappedPlayerMatchStats, sumPlayerStats } from "@common/utils";
 import type { TeamMatchStatsDto } from "./dto/matches.response.dto";
 
 /**
- * Value used for a percentage when there were no attempts to divide by.
- */
-const NA = "N/A";
-
-/**
- * Aggregates a team's per-player match stat rows into team totals, matching the
- * frontend `calculateTeamMatchStats` conventions exactly: made/attempted are
- * "made/attempted" strings, percentages are rounded "NN%" strings (or "N/A"
- * when there were no attempts), and counting stats are raw sums. Field goals
- * combine three-pointers with interior and exterior two-pointers; points in the
- * paint are interior two-pointers made times two.
+ * Aggregates a team's per-player match stat rows into team totals: made and
+ * attempted are "made/attempted" strings, percentages are numbers out of 100
+ * (or `null` when there were no attempts to divide by), and counting stats are
+ * raw sums. Field goals combine three-pointers with interior and exterior
+ * two-pointers; points in the paint are interior two-pointers made times two.
+ *
+ * The percentages used to be strings — `"43%"`, or the literal `"N/A"`. Both
+ * halves of that were display decisions taken in the wrong place: the unit
+ * lived in the value where the field name already carries it, and `"N/A"` is
+ * English copy shipped from the API into a bilingual UI. The rounding stays
+ * here so the rendered number is unchanged.
  */
 export function aggregateTeamMatchStats(
   rows: MappedPlayerMatchStats[],
@@ -45,16 +45,16 @@ export function aggregateTeamMatchStats(
   return {
     fieldGoals: `${fieldGoalsMade}/${fieldGoalAttempts}`,
     fieldGoalPercentage: fieldGoalAttempts
-      ? `${Math.round((fieldGoalsMade / fieldGoalAttempts) * 100)}%`
-      : NA,
+      ? Math.round((fieldGoalsMade / fieldGoalAttempts) * 100)
+      : null,
     threePointers: `${threePointsMade}/${threePointsAttempted}`,
     threePointPercentage: threePointsAttempted
-      ? `${Math.round((threePointsMade / threePointsAttempted) * 100)}%`
-      : NA,
+      ? Math.round((threePointsMade / threePointsAttempted) * 100)
+      : null,
     freeThrows: `${freeThrowsMade}/${freeThrowsAttempted}`,
     freeThrowPercentage: freeThrowsAttempted
-      ? `${Math.round((freeThrowsMade / freeThrowsAttempted) * 100)}%`
-      : NA,
+      ? Math.round((freeThrowsMade / freeThrowsAttempted) * 100)
+      : null,
     reboundsTotal: reboundsOffensive + reboundsDefensive,
     reboundsOffensive,
     reboundsDefensive,

@@ -421,7 +421,7 @@ describe("MatchesService", () => {
       expect(result.homeTeamStats.pointsInPaint).toBe(6);
       // No away-team rows -> zeroed totals.
       expect(result.awayTeamStats.assists).toBe(0);
-      expect(result.awayTeamStats.fieldGoalPercentage).toBe("N/A");
+      expect(result.awayTeamStats.fieldGoalPercentage).toBeNull();
     });
 
     it("should throw NotFoundException if match not found", async () => {

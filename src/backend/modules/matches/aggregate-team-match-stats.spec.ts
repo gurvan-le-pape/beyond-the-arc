@@ -64,11 +64,11 @@ describe("aggregateTeamMatchStats", () => {
 
     expect(aggregateTeamMatchStats([playerA, playerB])).toEqual({
       fieldGoals: "9/23",
-      fieldGoalPercentage: "39%",
+      fieldGoalPercentage: 39,
       threePointers: "3/9",
-      threePointPercentage: "33%",
+      threePointPercentage: 33,
       freeThrows: "6/7",
-      freeThrowPercentage: "86%",
+      freeThrowPercentage: 86,
       reboundsTotal: 11,
       reboundsOffensive: 3,
       reboundsDefensive: 8,
@@ -81,7 +81,7 @@ describe("aggregateTeamMatchStats", () => {
     });
   });
 
-  it('returns "N/A" for a percentage when there were no attempts', () => {
+  it("returns null for a percentage when there were no attempts", () => {
     const result = aggregateTeamMatchStats([
       makeStats({
         assists: 5,
@@ -90,9 +90,9 @@ describe("aggregateTeamMatchStats", () => {
     ]);
 
     expect(result.fieldGoals).toBe("0/0");
-    expect(result.fieldGoalPercentage).toBe("N/A");
-    expect(result.threePointPercentage).toBe("N/A");
-    expect(result.freeThrowPercentage).toBe("N/A");
+    expect(result.fieldGoalPercentage).toBeNull();
+    expect(result.threePointPercentage).toBeNull();
+    expect(result.freeThrowPercentage).toBeNull();
     expect(result.assists).toBe(5);
     expect(result.reboundsTotal).toBe(2);
   });
@@ -100,11 +100,11 @@ describe("aggregateTeamMatchStats", () => {
   it("handles an empty roster as all zeros", () => {
     expect(aggregateTeamMatchStats([])).toEqual({
       fieldGoals: "0/0",
-      fieldGoalPercentage: "N/A",
+      fieldGoalPercentage: null,
       threePointers: "0/0",
-      threePointPercentage: "N/A",
+      threePointPercentage: null,
       freeThrows: "0/0",
-      freeThrowPercentage: "N/A",
+      freeThrowPercentage: null,
       reboundsTotal: 0,
       reboundsOffensive: 0,
       reboundsDefensive: 0,

@@ -248,11 +248,11 @@ describe("MatchesController", () => {
     it("should return player match stats", async () => {
       const emptyTeamStats = {
         fieldGoals: "0/0",
-        fieldGoalPercentage: "N/A",
+        fieldGoalPercentage: null,
         threePointers: "0/0",
-        threePointPercentage: "N/A",
+        threePointPercentage: null,
         freeThrows: "0/0",
-        freeThrowPercentage: "N/A",
+        freeThrowPercentage: null,
         reboundsTotal: 0,
         reboundsOffensive: 0,
         reboundsDefensive: 0,
