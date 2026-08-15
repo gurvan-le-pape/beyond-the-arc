@@ -15,6 +15,15 @@ services:
     image: ghcr.io/gurvan-le-pape/beyond-the-arc/backend-migrate:${IMAGE_TAG:-latest}
     build: !reset null
 
+  # Pinned to the deploy's tag like the other three. Before this the service
+  # had a `build:` and no `image:` anywhere, so it was never pushed and never
+  # pulled: `up -d` builds only when an image is absent, so the VPS kept the
+  # one it happened to build once and no deploy replaced it. That also left it
+  # the one service with no tag to roll back to.
+  scheduler:
+    image: ghcr.io/gurvan-le-pape/beyond-the-arc/scheduler:${IMAGE_TAG:-latest}
+    build: !reset null
+
   grafana:
     environment:
       - GF_SERVER_ROOT_URL=${GRAFANA_ROOT_URL}

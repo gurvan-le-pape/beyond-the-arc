@@ -425,6 +425,25 @@ jobs:
           cache-from: type=gha,scope=backend
           cache-to: type=gha,mode=max,scope=backend
 
+      # The scheduler generates every match, stat and shot chart. It had no
+      # build step here at all, so the VPS ran whatever image it had built
+      # locally — measured 2026-08-15: an image from 2026-07-15, unchanged
+      # through 336 successful pipelines, still on the faker version that was
+      # newest the evening the box was provisioned. Publishing it means the
+      # deploy carries it like everything else, and that it has a :SHA tag to
+      # roll back to.
+      - name: Build and push scheduler
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        with:
+          context: .
+          file: docker/python-script/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}/scheduler:latest
+            ghcr.io/${{ github.repository }}/scheduler:${{ github.sha }}
+          cache-from: type=gha,scope=scheduler
+          cache-to: type=gha,mode=max,scope=scheduler
+
       - name: Build and push frontend
         uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
         with:
@@ -507,7 +526,7 @@ jobs:
             echo "Disk before image prune:" && df -h / | tail -1
             docker image prune -af
             echo "Disk after image prune:" && df -h / | tail -1
-            docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml pull frontend backend migrate
+            docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml pull frontend backend migrate scheduler
             docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml up -d
             # Grafana reads provisioning/alerting/*.yml only at startup, and
             # `up -d` recreates a container only when its *configuration*
