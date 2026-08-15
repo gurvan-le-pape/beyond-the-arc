@@ -65,6 +65,8 @@ Runs `next build` to verify the production build compiles and exports successful
 
 Downloads the `backend-coverage` artifact and runs a SonarCloud scan using `SonarSource/sonarqube-scan-action` (successor of the deprecated `sonarcloud-github-action`). The scan uses `fetch-depth: 0` on checkout so SonarCloud has full git history for accurate blame and new-code analysis. Requires the `SONAR_TOKEN` repository secret.
 
+**The frontend is excluded from coverage, and that is a deliberate, temporary exclusion.** Only the backend produces an lcov report, so before the exclusion every one of the frontend's ~24,000 lines counted as uncovered: project coverage sat at 25%, the gate's `new_coverage >= 80` condition failed on every PR touching the frontend, and the gate had been ERROR for the whole window anyone had looked at. A check that can never be green cannot report a regression in the five conditions that do work — that is the cost being paid, not the untested frontend itself, which is tracked separately. `sonar-project.properties` names the removal condition inline: `src/frontend/**` comes out of `sonar.coverage.exclusions` the moment a frontend test runner lands. The gate remains advisory either way (see the dependency graph above), so this changes what a red mark *means*, not what it blocks.
+
 ### npm-audit (workflow `audit.yml`)
 
 Runs `npm audit` against all three lockfiles — the root, `src/backend` and `src/frontend`. Three separate runs, because there are no npm workspaces here. It skips `npm ci` entirely: `npm audit` resolves against the lockfile and the registry, not against an installed tree.
