@@ -127,6 +127,7 @@
     ".*\\.test\\.tsx?$",
     ".*\\.d\\.ts$",
     ".*\\.server\\.ts$",
+    ".*/shared/types/api\\.generated\\.ts$",
     ".*/championship-matches/(?!index\\.tsx$).*",
     ".*/match-events/(?!index\\.tsx$).*",
     ".*/match-score-card/(?!index\\.tsx$).*",

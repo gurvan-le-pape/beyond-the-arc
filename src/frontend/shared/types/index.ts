@@ -4,7 +4,6 @@
  */
 
 export * from "./Api";
-export * from "./api.generated";
 export * from "./Leaderboard";
 export * from "./NamedEntity";
 export * from "./NavItem";

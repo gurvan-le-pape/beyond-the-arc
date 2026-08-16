@@ -1,5 +1,5 @@
 // src/frontend/features/matches/types/MatchPoolRef.ts
-import type { components } from "@/shared/types";
+import type { components } from "@/shared/types/api.generated";
 
 /**
  * Generated from the backend OpenAPI document. Regenerate with

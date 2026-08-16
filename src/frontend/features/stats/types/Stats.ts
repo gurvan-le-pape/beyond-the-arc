@@ -1,5 +1,5 @@
 // src/frontend/features/stats/types/Stats.ts
-import type { components } from "@/shared/types";
+import type { components } from "@/shared/types/api.generated";
 
 /**
  * Platform statistics, generated from the backend OpenAPI document.

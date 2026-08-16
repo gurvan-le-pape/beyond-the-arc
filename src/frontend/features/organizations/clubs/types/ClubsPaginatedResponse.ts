@@ -1,5 +1,5 @@
 // src/frontend/features/organizations/clubs/types/ClubsPaginatedResponse.ts
-import type { paths } from "@/shared/types";
+import type { paths } from "@/shared/types/api.generated";
 
 /**
  * Paginated clubs list, generated from the backend OpenAPI document —

@@ -1,5 +1,5 @@
 // src/frontend/features/competitions/leaderboards/types/Leaderboard.ts
-import type { components } from "@/shared/types";
+import type { components } from "@/shared/types/api.generated";
 
 /**
  * Leaderboard entry, generated from the backend OpenAPI document.

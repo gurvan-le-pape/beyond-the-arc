@@ -1,5 +1,5 @@
 // src/frontend/features/organizations/types/President.ts
-import type { components } from "@/shared/types";
+import type { components } from "@/shared/types/api.generated";
 
 /**
  * President entity, generated from the backend OpenAPI document.
