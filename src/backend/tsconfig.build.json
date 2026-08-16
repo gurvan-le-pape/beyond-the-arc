@@ -7,7 +7,8 @@
     "paths": {
       "@modules/*": ["./modules/*"],
       "@common/*": ["./common/*"],
-      "prisma/*": ["./prisma/*"],
+      "prisma/prisma.module": ["./prisma/prisma.module"],
+      "prisma/prisma.service": ["./prisma/prisma.service"],
       "modules": ["./modules/index.js"]
     },
     "outDir": "dist",
