@@ -9,10 +9,15 @@ import {
   MatchSummaryTabs,
 } from "@/features/matches/components";
 import { buildTeam, groupShotEventsByPlayer } from "@/features/matches/utils";
+import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { Text } from "@/shared/components/typography";
 import type { LocalePageProps } from "@/shared/types";
-import { handleServerError, parseRouteId } from "@/shared/utils";
+import {
+  handleServerError,
+  parseRouteId,
+  withServerErrorMetadata,
+} from "@/shared/utils";
 
 // Don't pre-build - one page per fixture, far too many to enumerate
 export async function generateStaticParams() {
@@ -25,7 +30,7 @@ export const dynamicParams = true;
 // force. A match detail page during a live game is the case LIVE exists for.
 export const revalidate = 60;
 
-export async function generateMetadata({
+async function buildMetadata({
   params,
 }: LocalePageProps<{ matchId: string }>): Promise<Metadata> {
   const routeParams = await params;
@@ -48,7 +53,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function MatchSummaryPage({
+async function MatchSummaryPage({
   params,
 }: LocalePageProps<{ matchId: string }>) {
   const routeParams = await params;
@@ -105,3 +110,7 @@ export default async function MatchSummaryPage({
     </PageLayout>
   );
 }
+
+export default withServerErrorState(MatchSummaryPage);
+
+export const generateMetadata = withServerErrorMetadata(buildMetadata);

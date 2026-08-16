@@ -5,10 +5,14 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { serverClubsService } from "@/features/organizations/clubs/api/clubs.server";
 import { OrganizationDetailView } from "@/features/organizations/shared/components";
-import { EmptyState } from "@/shared/components/feedback";
+import { EmptyState, withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import type { LocalePageProps } from "@/shared/types";
-import { handleServerError, parseRouteId } from "@/shared/utils";
+import {
+  handleServerError,
+  parseRouteId,
+  withServerErrorMetadata,
+} from "@/shared/utils";
 
 /**
  * Club Detail Page
@@ -25,7 +29,7 @@ export async function generateStaticParams() {
 export const dynamicParams = true;
 export const revalidate = 3600;
 
-export async function generateMetadata({
+async function buildMetadata({
   params,
 }: LocalePageProps<{ clubId: string }>): Promise<Metadata> {
   const routeParams = await params;
@@ -43,9 +47,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function ClubPage({
-  params,
-}: LocalePageProps<{ clubId: string }>) {
+async function ClubPage({ params }: LocalePageProps<{ clubId: string }>) {
   const routeParams = await params;
   const { locale } = routeParams;
   const clubId = parseRouteId(routeParams.clubId);
@@ -112,3 +114,7 @@ export default async function ClubPage({
     </PageLayout>
   );
 }
+
+export default withServerErrorState(ClubPage);
+
+export const generateMetadata = withServerErrorMetadata(buildMetadata);

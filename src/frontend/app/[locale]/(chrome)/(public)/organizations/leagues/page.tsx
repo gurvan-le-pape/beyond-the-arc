@@ -5,6 +5,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { TitleSection } from "@/features/organizations/components";
 import { serverLeaguesService } from "@/features/organizations/leagues/api/leagues.server";
 import { LeaguesGrid } from "@/features/organizations/leagues/components";
+import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
 import { ViewLevel } from "@/shared/constants";
@@ -32,7 +33,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function LeaguesPage({ params }: LocalePageProps) {
+async function LeaguesPage({ params }: LocalePageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "organizations" });
@@ -52,3 +53,5 @@ export default async function LeaguesPage({ params }: LocalePageProps) {
     </PageLayout>
   );
 }
+
+export default withServerErrorState(LeaguesPage);

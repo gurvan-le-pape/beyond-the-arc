@@ -22,8 +22,28 @@ services:
     ports:
       - "127.0.0.1:3000:3000"
       - "[::1]:3000:3000"
+    # `service_healthy`, not the bare list form. Waiting only for the backend
+    # *container* to start is not waiting for anything useful: Nest and Prisma
+    # take seconds to come up after the process does, so `up -d` produced a
+    # window on every deploy where the frontend served requests that no backend
+    # could answer. That window used to be cosmetic — the pages 500'd and the
+    # client recovered. It stopped being cosmetic when those pages started
+    # answering 200: a 200 is written to the ISR cache, so one request landing
+    # in the window pins an error card on a `revalidate = 3600` route for the
+    # next hour, against a cache that a container recreate has just emptied.
+    # Measured: `x-nextjs-cache: HIT` still serving the error card long after
+    # the backend was healthy again. See shared/components/feedback/
+    # withServerErrorState.tsx.
+    #
+    # The trade-off, accepted: a backend that never reports healthy now keeps
+    # the frontend from starting at all, where before it would have come up and
+    # rendered error cards. The deploy already fails in that case — its own
+    # health gate covers both services — so the failure mode changes from
+    # "deploy fails with a degraded site" to "deploy fails", and the rollback
+    # is the same one either way.
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     environment:
       - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
       - INTERNAL_API_URL=${INTERNAL_API_URL}

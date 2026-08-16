@@ -5,6 +5,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { serverCommitteesService } from "@/features/organizations/committees/api/committees.server";
 import { CommitteesGrid } from "@/features/organizations/committees/components";
 import { TitleSection } from "@/features/organizations/components";
+import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
 import { ViewLevel } from "@/shared/constants";
@@ -32,7 +33,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function CommitteesPage({ params }: LocalePageProps) {
+async function CommitteesPage({ params }: LocalePageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "organizations" });
@@ -54,3 +55,5 @@ export default async function CommitteesPage({ params }: LocalePageProps) {
     </PageLayout>
   );
 }
+
+export default withServerErrorState(CommitteesPage);

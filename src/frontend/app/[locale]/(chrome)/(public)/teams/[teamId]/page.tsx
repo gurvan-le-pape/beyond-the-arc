@@ -11,9 +11,14 @@ import {
   TeamRoster,
 } from "@/features/teams/components";
 import { PerGameStatsPanel } from "@/shared/components/domain";
+import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import type { LocalePageProps } from "@/shared/types";
-import { handleServerError, parseRouteId } from "@/shared/utils";
+import {
+  handleServerError,
+  parseRouteId,
+  withServerErrorMetadata,
+} from "@/shared/utils";
 
 // Don't pre-build - one page per team, across every club and division
 export async function generateStaticParams() {
@@ -26,7 +31,7 @@ export const dynamicParams = true;
 // force, whatever the number above it said.
 export const revalidate = 60;
 
-export async function generateMetadata({
+async function buildMetadata({
   params,
 }: LocalePageProps<{ teamId: string }>): Promise<Metadata> {
   const routeParams = await params;
@@ -52,9 +57,7 @@ export async function generateMetadata({
   return { title: name, description: tMeta("meta", { name }) };
 }
 
-export default async function TeamDetailPage({
-  params,
-}: LocalePageProps<{ teamId: string }>) {
+async function TeamDetailPage({ params }: LocalePageProps<{ teamId: string }>) {
   const routeParams = await params;
   const { locale } = routeParams;
   const teamId = parseRouteId(routeParams.teamId);
@@ -92,3 +95,7 @@ export default async function TeamDetailPage({
     </PageLayout>
   );
 }
+
+export default withServerErrorState(TeamDetailPage);
+
+export const generateMetadata = withServerErrorMetadata(buildMetadata);

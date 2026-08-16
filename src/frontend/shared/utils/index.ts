@@ -18,3 +18,4 @@ export * from "./positionVariant";
 export * from "./safeFetch";
 export * from "./sortCategories";
 export * from "./toSafeExternalUrl";
+export * from "./withServerErrorMetadata";

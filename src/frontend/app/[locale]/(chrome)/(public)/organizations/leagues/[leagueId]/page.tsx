@@ -7,11 +7,15 @@ import { serverChampionshipsService } from "@/features/competitions/championship
 import { serverCommitteesService } from "@/features/organizations/committees/api/committees.server";
 import { serverLeaguesService } from "@/features/organizations/leagues/api/leagues.server";
 import { OrganizationDetailView } from "@/features/organizations/shared/components";
-import { EmptyState } from "@/shared/components/feedback";
+import { EmptyState, withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { CompetitionLevel } from "@/shared/constants";
 import type { LocalePageProps } from "@/shared/types";
-import { handleServerError, parseRouteId } from "@/shared/utils";
+import {
+  handleServerError,
+  parseRouteId,
+  withServerErrorMetadata,
+} from "@/shared/utils";
 
 // The image build has no backend to enumerate leagues against, so this can
 // only ever return an empty list — but it has to be exported anyway. Upstream:
@@ -26,7 +30,7 @@ export async function generateStaticParams() {
 export const dynamicParams = true;
 export const revalidate = 3600;
 
-export async function generateMetadata({
+async function buildMetadata({
   params,
 }: LocalePageProps<{ leagueId: string }>): Promise<Metadata> {
   const routeParams = await params;
@@ -44,9 +48,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function LeaguePage({
-  params,
-}: LocalePageProps<{ leagueId: string }>) {
+async function LeaguePage({ params }: LocalePageProps<{ leagueId: string }>) {
   const routeParams = await params;
   const { locale } = routeParams;
   const leagueId = parseRouteId(routeParams.leagueId);
@@ -110,3 +112,7 @@ export default async function LeaguePage({
     </PageLayout>
   );
 }
+
+export default withServerErrorState(LeaguePage);
+
+export const generateMetadata = withServerErrorMetadata(buildMetadata);
