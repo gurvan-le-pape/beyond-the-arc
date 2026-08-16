@@ -64,8 +64,27 @@ groups:
         isPaused: false
         notification_settings:
           receiver: email-admin
+      # Absolute rate, and the title says so. This rule was called "High Error
+      # Rate" and annotated "exceeded 1%" while computing no ratio at all —
+      # nothing divides by the total request rate. Ruled 2026-08-16 to keep the
+      # instrument and fix the label, because at this deployment's volume a
+      # percentage is the wrong instrument, not the right one worded badly:
+      #
+      #   guaranteed traffic is 0.1 req/s, all 200s, and all counted — the
+      #   blackbox probe hits /api/health every 15s and the backend's own
+      #   compose healthcheck every 30s (1/15 + 1/30). Only /metrics is
+      #   excluded from http_requests_total, not /api/health.
+      #
+      # So 0.01/s ≈ 3 errors per 5 minutes ≈ 10 % of idle traffic — the rule is
+      # an order of magnitude *less* trigger-happy than the 1 % it claimed. A
+      # true 1 % ratio would fire on a single 5xx in five minutes, since one
+      # error in ~30 requests is 3.3 %. The two only coincide at 1 req/s.
+      #
+      # The trade-off accepted: absolute thresholds do not scale with traffic.
+      # If sustained volume ever clears ~1 req/s this wants revisiting as a
+      # ratio with a minimum-volume guard.
       - uid: dfjgorz70lfy8c
-        title: High Error Rate
+        title: Backend 5xx Rate
         condition: C
         data:
           - refId: A
@@ -115,7 +134,9 @@ groups:
         execErrState: Error
         for: 5m
         annotations:
-          summary: 5xx error rate exceeded 1% over the last 5 minutes
+          summary:
+            Backend 5xx responses exceeded 0.01/s — about 3 in 5 minutes —
+            sustained for 5 minutes. This is an absolute rate, not a percentage.
         isPaused: false
         notification_settings:
           receiver: email-admin
