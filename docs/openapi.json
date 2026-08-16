@@ -3299,14 +3299,14 @@
             "example": "Regional U18"
           },
           "level": {
-            "type": "string",
-            "description": "Competition level",
-            "example": "regional",
             "enum": [
               "departmental",
               "regional",
               "national"
-            ]
+            ],
+            "type": "string",
+            "description": "Competition level",
+            "example": "regional"
           },
           "division": {
             "type": "number",
@@ -3434,9 +3434,6 @@
             "example": 1
           },
           "category": {
-            "type": "string",
-            "description": "Category",
-            "example": "U18",
             "enum": [
               "U11",
               "U13",
@@ -3444,20 +3441,24 @@
               "U18",
               "U21",
               "Seniors"
-            ]
+            ],
+            "type": "string",
+            "description": "Category",
+            "example": "U18"
           },
           "gender": {
-            "type": "string",
-            "description": "Gender",
-            "example": "male",
             "enum": [
               "male",
               "female"
-            ]
+            ],
+            "type": "string",
+            "description": "Gender",
+            "example": "male"
           },
           "pool": {
             "nullable": true,
             "description": "Pool information",
+            "type": "object",
             "allOf": [
               {
                 "$ref": "#/components/schemas/PoolInfoDto"
@@ -3467,6 +3468,7 @@
           "leaderboard": {
             "nullable": true,
             "description": "Team leaderboard stats",
+            "type": "object",
             "allOf": [
               {
                 "$ref": "#/components/schemas/TeamLeaderboardDto"
@@ -3561,6 +3563,7 @@
           "president": {
             "nullable": true,
             "description": "Club president",
+            "type": "object",
             "allOf": [
               {
                 "$ref": "#/components/schemas/PresidentResponseDto"
@@ -3640,6 +3643,7 @@
           "president": {
             "nullable": true,
             "description": "Committee president",
+            "type": "object",
             "allOf": [
               {
                 "$ref": "#/components/schemas/PresidentResponseDto"
@@ -3736,6 +3740,7 @@
           "president": {
             "nullable": true,
             "description": "League president",
+            "type": "object",
             "allOf": [
               {
                 "$ref": "#/components/schemas/PresidentResponseDto"
@@ -3808,9 +3813,6 @@
             "example": "Championship Régional U18 male"
           },
           "category": {
-            "type": "string",
-            "description": "Age category",
-            "example": "U18",
             "enum": [
               "U11",
               "U13",
@@ -3818,16 +3820,19 @@
               "U18",
               "U21",
               "Seniors"
-            ]
+            ],
+            "type": "string",
+            "description": "Age category",
+            "example": "U18"
           },
           "gender": {
-            "type": "string",
-            "description": "Gender",
-            "example": "male",
             "enum": [
               "male",
               "female"
-            ]
+            ],
+            "type": "string",
+            "description": "Gender",
+            "example": "male"
           },
           "seasonYear": {
             "type": "string",
@@ -3835,14 +3840,14 @@
             "example": "2024-2025"
           },
           "level": {
-            "type": "string",
-            "description": "Competition level",
-            "example": "regional",
             "enum": [
               "departmental",
               "regional",
               "national"
-            ]
+            ],
+            "type": "string",
+            "description": "Competition level",
+            "example": "regional"
           },
           "division": {
             "type": "number",
@@ -4023,9 +4028,6 @@
             "example": 1
           },
           "category": {
-            "type": "string",
-            "description": "Age category",
-            "example": "U18",
             "enum": [
               "U11",
               "U13",
@@ -4033,26 +4035,29 @@
               "U18",
               "U21",
               "Seniors"
-            ]
+            ],
+            "type": "string",
+            "description": "Age category",
+            "example": "U18"
           },
           "gender": {
-            "type": "string",
-            "description": "Gender",
-            "example": "male",
             "enum": [
               "male",
               "female"
-            ]
+            ],
+            "type": "string",
+            "description": "Gender",
+            "example": "male"
           },
           "level": {
-            "type": "string",
-            "description": "Competition level",
-            "example": "regional",
             "enum": [
               "departmental",
               "regional",
               "national"
-            ]
+            ],
+            "type": "string",
+            "description": "Competition level",
+            "example": "regional"
           },
           "division": {
             "type": "number",
@@ -4306,9 +4311,6 @@
         "type": "object",
         "properties": {
           "role": {
-            "type": "string",
-            "description": "Player role in the event",
-            "example": "shooter",
             "enum": [
               "shooter",
               "fouler",
@@ -4322,7 +4324,10 @@
               "exiting_player",
               "entering_player",
               "starter"
-            ]
+            ],
+            "type": "string",
+            "description": "Player role in the event",
+            "example": "shooter"
           },
           "player": {
             "description": "Player information",
@@ -4377,9 +4382,6 @@
             "example": 1
           },
           "eventType": {
-            "type": "string",
-            "description": "Event type",
-            "example": "made_layup",
             "enum": [
               "tip_off",
               "traveling",
@@ -4421,7 +4423,10 @@
               "2_point_int_and_1",
               "inbound",
               "substitution"
-            ]
+            ],
+            "type": "string",
+            "description": "Event type",
+            "example": "made_layup"
           },
           "occurredAt": {
             "type": "string",
@@ -4444,6 +4449,7 @@
           "shotLocation": {
             "nullable": true,
             "description": "Shot location (if applicable)",
+            "type": "object",
             "allOf": [
               {
                 "$ref": "#/components/schemas/ShotLocationDto"
@@ -4612,16 +4618,16 @@
             "example": 10
           },
           "position": {
-            "type": "string",
-            "description": "Player position",
-            "example": "PG",
             "enum": [
               "PG",
               "SG",
               "SF",
               "PF",
               "C"
-            ]
+            ],
+            "type": "string",
+            "description": "Player position",
+            "example": "PG"
           },
           "teamId": {
             "type": "number",
@@ -5057,14 +5063,14 @@
             "example": "Championship Régional U18 male"
           },
           "level": {
-            "type": "string",
-            "description": "Competition level",
-            "example": "regional",
             "enum": [
               "departmental",
               "regional",
               "national"
-            ]
+            ],
+            "type": "string",
+            "description": "Competition level",
+            "example": "regional"
           },
           "division": {
             "type": "number",
@@ -5126,9 +5132,6 @@
             "example": 1
           },
           "category": {
-            "type": "string",
-            "description": "Age category",
-            "example": "U18",
             "enum": [
               "U11",
               "U13",
@@ -5136,16 +5139,19 @@
               "U18",
               "U21",
               "Seniors"
-            ]
+            ],
+            "type": "string",
+            "description": "Age category",
+            "example": "U18"
           },
           "gender": {
-            "type": "string",
-            "description": "Gender",
-            "example": "male",
             "enum": [
               "male",
               "female"
-            ]
+            ],
+            "type": "string",
+            "description": "Gender",
+            "example": "male"
           },
           "club": {
             "description": "Club information",
@@ -5158,6 +5164,7 @@
           "pool": {
             "nullable": true,
             "description": "Current pool, or null when the team has none",
+            "type": "object",
             "allOf": [
               {
                 "$ref": "#/components/schemas/PlayerPoolRefDto"
@@ -5194,16 +5201,16 @@
             "example": 10
           },
           "position": {
-            "type": "string",
-            "description": "Player position",
-            "example": "PG",
             "enum": [
               "PG",
               "SG",
               "SF",
               "PF",
               "C"
-            ]
+            ],
+            "type": "string",
+            "description": "Player position",
+            "example": "PG"
           },
           "heightCm": {
             "type": "number",
@@ -5334,16 +5341,16 @@
             "example": 10
           },
           "position": {
-            "type": "string",
-            "description": "Player position",
-            "example": "PG",
             "enum": [
               "PG",
               "SG",
               "SF",
               "PF",
               "C"
-            ]
+            ],
+            "type": "string",
+            "description": "Player position",
+            "example": "PG"
           },
           "teamId": {
             "type": "number",
@@ -5775,14 +5782,14 @@
             "example": "Championship Régional U18 male"
           },
           "level": {
-            "type": "string",
-            "description": "Competition level",
-            "example": "regional",
             "enum": [
               "departmental",
               "regional",
               "national"
-            ]
+            ],
+            "type": "string",
+            "description": "Competition level",
+            "example": "regional"
           },
           "division": {
             "type": "number",
@@ -5868,9 +5875,6 @@
             "example": "2025-2026"
           },
           "category": {
-            "type": "string",
-            "description": "Age category",
-            "example": "U18",
             "enum": [
               "U11",
               "U13",
@@ -5878,16 +5882,19 @@
               "U18",
               "U21",
               "Seniors"
-            ]
+            ],
+            "type": "string",
+            "description": "Age category",
+            "example": "U18"
           },
           "gender": {
-            "type": "string",
-            "description": "Gender category",
-            "example": "male",
             "enum": [
               "male",
               "female"
-            ]
+            ],
+            "type": "string",
+            "description": "Gender category",
+            "example": "male"
           },
           "color": {
             "type": "string",
@@ -5912,6 +5919,7 @@
           "pool": {
             "nullable": true,
             "description": "Pool information, or null when the team has none",
+            "type": "object",
             "allOf": [
               {
                 "$ref": "#/components/schemas/TeamPoolRefDto"
@@ -6005,16 +6013,16 @@
             "example": 10
           },
           "position": {
-            "type": "string",
-            "description": "Player position",
-            "example": "PG",
             "enum": [
               "PG",
               "SG",
               "SF",
               "PF",
               "C"
-            ]
+            ],
+            "type": "string",
+            "description": "Player position",
+            "example": "PG"
           },
           "teamId": {
             "type": "number",
@@ -6212,9 +6220,6 @@
             "example": "2025-2026"
           },
           "category": {
-            "type": "string",
-            "description": "Age category",
-            "example": "U18",
             "enum": [
               "U11",
               "U13",
@@ -6222,16 +6227,19 @@
               "U18",
               "U21",
               "Seniors"
-            ]
+            ],
+            "type": "string",
+            "description": "Age category",
+            "example": "U18"
           },
           "gender": {
-            "type": "string",
-            "description": "Gender category",
-            "example": "male",
             "enum": [
               "male",
               "female"
-            ]
+            ],
+            "type": "string",
+            "description": "Gender category",
+            "example": "male"
           },
           "color": {
             "type": "string",
@@ -6256,6 +6264,7 @@
           "pool": {
             "nullable": true,
             "description": "Pool information, or null when the team has none",
+            "type": "object",
             "allOf": [
               {
                 "$ref": "#/components/schemas/TeamPoolRefDto"
@@ -6615,28 +6624,31 @@
           },
           "info": {
             "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/HealthIndicatorDto"
+            },
             "description": "Indicators that are up, keyed by indicator name",
             "example": {
               "database": {
                 "status": "up"
               }
             },
-            "additionalProperties": {
-              "$ref": "#/components/schemas/HealthIndicatorDto"
-            },
             "nullable": true
           },
           "error": {
             "type": "object",
-            "description": "Indicators that are down, keyed by indicator name",
-            "example": {},
             "additionalProperties": {
               "$ref": "#/components/schemas/HealthIndicatorDto"
             },
+            "description": "Indicators that are down, keyed by indicator name",
+            "example": {},
             "nullable": true
           },
           "details": {
             "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/HealthIndicatorDto"
+            },
             "description": "Every indicator's verdict, up or down, keyed by name",
             "example": {
               "database": {
@@ -6648,9 +6660,6 @@
               "storage": {
                 "status": "up"
               }
-            },
-            "additionalProperties": {
-              "$ref": "#/components/schemas/HealthIndicatorDto"
             }
           }
         },
