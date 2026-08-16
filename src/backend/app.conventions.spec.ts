@@ -8,7 +8,7 @@ import type { INestApplication } from "@nestjs/common";
 import { ROUTE_ARGS_METADATA } from "@nestjs/common/constants";
 import { RouteParamtypes } from "@nestjs/common/enums/route-paramtypes.enum";
 import { ModulesContainer } from "@nestjs/core";
-import { DECORATORS } from "@nestjs/swagger/dist/constants";
+import { DECORATORS } from "@nestjs/swagger";
 import { Test } from "@nestjs/testing";
 import { getMetadataStorage } from "class-validator";
 

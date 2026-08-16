@@ -7,17 +7,36 @@ import {
 } from "@common/dto";
 import type { Type } from "@nestjs/common";
 import { applyDecorators, HttpStatus } from "@nestjs/common";
+import type { OpenAPIObject } from "@nestjs/swagger";
 import {
   ApiExtraModels,
   ApiOkResponse,
   ApiResponse,
   getSchemaPath,
 } from "@nestjs/swagger";
-// `SchemaObject` is exported by the file but not re-exported from the package
-// root or from `dist/interfaces/index.d.ts`, which publishes only
-// `OpenAPIObject` — so this deep path is the only way to name the type that
-// `@ApiResponse`'s own `schema` option is declared as.
-import type { SchemaObject } from "@nestjs/swagger/dist/interfaces/open-api-spec.interface";
+
+/**
+ * The schema type, derived from the package's public surface.
+ *
+ * `SchemaObject` is declared in `dist/interfaces/open-api-spec.interface` and
+ * re-exported from neither the package root nor `dist/interfaces/index.d.ts`,
+ * which publishes only `ApiTagOptions` and `OpenAPIObject`. This used to be a
+ * deep `@nestjs/swagger/dist/…` import, which worked because `moduleResolution`
+ * was `node10` and ignored `exports` maps. Two things then changed: the backend
+ * moved to `nodenext`, and `@nestjs/swagger` 11.4.6 added an `exports` map
+ * publishing only `.`, `./plugin` and `./package.json`. The deep path is now
+ * `TS2307`, and no version of it will come back — that map is the package
+ * saying which surface it supports.
+ *
+ * Indexed access reaches the same type through a name the package *does*
+ * publish, so it survives the next release the way a private path cannot. It
+ * resolves to `SchemaObject | ReferenceObject`, which is wider than the old
+ * import by exactly the `$ref` case — harmless here, since every value this
+ * module builds is a schema and `getSchemaPath` produces the refs.
+ */
+type SchemaObject = NonNullable<
+  NonNullable<OpenAPIObject["components"]>["schemas"]
+>[string];
 
 /**
  * The three shapes a successful response can take, as decorators that document
