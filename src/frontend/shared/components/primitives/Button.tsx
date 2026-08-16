@@ -12,7 +12,12 @@ import { type ButtonHTMLAttributes } from "react";
 
 import { cn } from "@/shared/utils";
 
-import { LoadingSpinner } from "../feedback";
+// Narrow path, not the `../feedback` barrel: that barrel re-exports
+// `EmptyState`, which imports this file, so the barrel form closes a runtime
+// import cycle (Button → feedback/index → EmptyState → Button) and drags the
+// whole feedback + layout graph in behind it. `EmptyState.tsx` already writes
+// the narrow form in the other direction.
+import { LoadingSpinner } from "../feedback/LoadingSpinner";
 
 // ---------------------------------------------------------------------------
 // Shared base styles
