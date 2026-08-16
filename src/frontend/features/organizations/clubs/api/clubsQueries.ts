@@ -133,6 +133,20 @@ export const clubsQueries = {
     staleTime: 24 * 60 * 60 * 1000,
   }),
 
+  /**
+   * Query options for the club name-search combo box.
+   *
+   * No `enabled` here, deliberately. Whether a search should run is a decision
+   * about the *call site* — `usePlayerSearch` gates its equivalent at two
+   * characters, while `ClubComboBoxFilter` wants the first twenty clubs listed
+   * before the user types anything, because it is a filter dropdown rather than
+   * an autocomplete. A shared options factory is the wrong place to settle
+   * that: it is spread into every consumer, and a consumer reading its own
+   * `useQuery` call cannot see the flag that decides whether it fetches.
+   *
+   * @example
+   * useQuery(clubsQueries.search("monaco", { leagueId: 3 }))
+   */
   search: (
     search: string,
     filters?: Pick<ClubFilters, "committeeId" | "leagueId">,
@@ -142,7 +156,6 @@ export const clubsQueries = {
       clubsService.getAll({ search, ...filters, limit: 20, page: 1 }, signal),
     staleTime: 60 * 1000, // 1 min — search results change more than static lists
     gcTime: 2 * 60 * 1000,
-    enabled: true,
   }),
 } as const;
 
