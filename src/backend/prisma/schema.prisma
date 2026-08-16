@@ -2,9 +2,25 @@ datasource db {
   provider = "postgresql"
 }
 
+// Both options below default to "inferred from environment", and what they
+// infer from is the tsconfig. Moving the backend to `module: nodenext` flipped
+// them without touching this file: the client came out ESM-flavoured, and the
+// CommonJS emit then failed on it at load time. Nothing here is ESM —
+// package.json declares no `"type": "module"` — so the format is pinned rather
+// than inferred.
+//
+// The extension is pinned to bare because two resolvers have to agree on it.
+// `nodenext` in CJS mode accepts an extension or none, but Jest's resolver
+// does not rewrite `.js` to `.ts`, so the inferred `"js"` resolves under `tsc`
+// and fails 24 suites with "Cannot find module ./internal/class.js".
+//
+// Note this whole schema is inlined verbatim into the generated client,
+// comments included.
 generator client {
-  provider = "prisma-client"
-  output   = "./generated/prisma"
+  provider            = "prisma-client"
+  output              = "./generated/prisma"
+  moduleFormat        = "cjs"
+  importFileExtension = ""
 }
 
 model Presidents {
