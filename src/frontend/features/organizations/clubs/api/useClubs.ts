@@ -154,6 +154,13 @@ export function useClubsPrefetch() {
  * - staleTime: 1 minute (search results change more frequently than static lists)
  * - gcTime: 2 minutes
  *
+ * **Runs on an empty search**, unlike `usePlayerSearch`, which gates at two
+ * characters. That is the intended behaviour for the only consumer: a filter
+ * combo box should offer options before the user types, so an empty query
+ * lists the first twenty clubs. Gate it here, on the hook, if a consumer ever
+ * needs autocomplete semantics instead — not in the shared options factory,
+ * where the flag would be invisible to every call site.
+ *
  * @param search - The search string to filter club names by (case-insensitive)
  * @param filters - Optional committeeId or leagueId to scope results to a location
  * @returns React Query result with paginated clubs matching the search
