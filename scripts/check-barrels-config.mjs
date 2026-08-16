@@ -4,14 +4,13 @@
  *
  * The barrels' *content* is already checked indirectly: `enforce-barrel-import`
  * forces imports through the barrel, so a stale barrel is a type error at the
- * import site and the typecheck/build jobs fail. What nothing checks is the
- * config, which is why three defects survived in one ~100-line file — an
- * unrecognised `barrelName` key, a `watch` flag barrelsby 2.8.1 does not read,
- * and a directory whose barrel had been deleted.
+ * import site and the typecheck/build jobs fail. What nothing else checks is
+ * the config — where an unrecognised key, a flag barrelsby 2.8.1 does not read,
+ * or an entry for a directory whose barrel is gone all sit undetected.
  *
- * None of those three change the generated output, so a regenerate-and-diff
- * check cannot see them. That is what this script is for; the diff check in
- * CI covers the other half.
+ * None of those change the generated output, so a regenerate-and-diff check
+ * cannot see them. That is what this script is for; the diff check in CI covers
+ * the other half.
  */
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";

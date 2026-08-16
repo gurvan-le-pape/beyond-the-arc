@@ -10,11 +10,11 @@ import type { TeamMatchStatsDto } from "./dto/matches.response.dto";
  * raw sums. Field goals combine three-pointers with interior and exterior
  * two-pointers; points in the paint are interior two-pointers made times two.
  *
- * The percentages used to be strings — `"43%"`, or the literal `"N/A"`. Both
- * halves of that were display decisions taken in the wrong place: the unit
- * lived in the value where the field name already carries it, and `"N/A"` is
- * English copy shipped from the API into a bilingual UI. The rounding stays
- * here so the rendered number is unchanged.
+ * The percentages are numbers and `null`, never strings like `"43%"` or the
+ * literal `"N/A"`. Both of those are display decisions taken in the wrong
+ * place: the unit belongs in the field name, which already carries it, and
+ * `"N/A"` is English copy shipped from the API into a bilingual UI. The
+ * rounding stays here, so every consumer renders the same number.
  */
 export function aggregateTeamMatchStats(
   rows: MappedPlayerMatchStats[],

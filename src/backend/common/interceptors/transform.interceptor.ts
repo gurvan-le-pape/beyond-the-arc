@@ -27,12 +27,11 @@ type EnvelopeMeta = ApiListMetaDto & Partial<ApiPageMetaDto>;
  * The envelope this interceptor emits, defined in terms of the DTOs that
  * publish it rather than restating their fields.
  *
- * The two used to be independent declarations, and the drift that allows is
- * not hypothetical — it is the whole of `api-contract 5`. This interface
- * described `{ data, meta?, timestamp, path, statusCode }` correctly while the
- * OpenAPI document described the *unwrapped* payload, and nothing connected
- * them, so 34 endpoints published a body the API had never sent. Extending
- * `ApiEnvelopeDto` and building `meta` out of `ApiListMetaDto` /
+ * As two independent declarations they drift silently: this interface can
+ * describe `{ data, meta?, timestamp, path, statusCode }` correctly while the
+ * OpenAPI document describes the *unwrapped* payload, with nothing connecting
+ * them — and every endpoint then publishes a body the API never sends.
+ * Extending `ApiEnvelopeDto` and building `meta` out of `ApiListMetaDto` /
  * `ApiPageMetaDto` means a field renamed on either side stops compiling here.
  *
  * @see ApiEnvelopeDto — the published counterpart

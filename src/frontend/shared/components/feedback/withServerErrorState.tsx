@@ -17,8 +17,8 @@ import { ServerErrorState } from "./ServerErrorState";
  * before any JSX is returned — so catching there catches all of them. This
  * wrapper is that `try/catch`, written once instead of twelve times.
  *
- * The trade-off it accepts, decided deliberately: the response is now **200**
- * with a rendered error card rather than 500 with a blank body. A crawler is
+ * The trade-off it accepts, decided deliberately: the response is **200** with
+ * a rendered error card rather than 500 with a blank body. A crawler is
  * told `noindex` by `ServerErrorState`; a backend outage is still alerted on,
  * by the blackbox probe against `/api/health` rather than by the frontend
  * returning 500.
@@ -29,9 +29,9 @@ import { ServerErrorState } from "./ServerErrorState";
  *
  * Sentry is captured here because catching the error means Next's
  * `onRequestError` hook (wired to `Sentry.captureRequestError` in
- * `instrumentation.ts`) no longer sees it. `handleServerError` has already
- * logged it once on the way past; this adds the capture that the throw used to
- * earn for free, and no second one, since the client boundary no longer runs.
+ * `instrumentation.ts`) never sees it. `handleServerError` has already logged
+ * it once on the way past, so this is the one capture — the client boundary
+ * does not run, so there is no second.
  *
  * Pair with `withServerErrorMetadata` on the same page: `generateMetadata`
  * runs as its own function and its throw is not caught by this.

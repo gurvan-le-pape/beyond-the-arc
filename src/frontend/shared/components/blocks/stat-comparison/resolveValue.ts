@@ -41,10 +41,10 @@ export function resolveValue(
   const pctKey = percentageMap?.[key];
   const pct = pctKey ? stats[pctKey] : undefined;
 
-  // The "%" belongs here, not in the value. The API used to send `"43%"` and
-  // the literal `"N/A"`; it now sends a number or null, so the unit is added
-  // at the point of display and the absent case simply drops the parenthetical
-  // rather than printing an English sentinel into a bilingual UI.
+  // The "%" belongs here, not in the value. The API sends a number or null, so
+  // the unit is added at the point of display and the absent case simply drops
+  // the parenthetical rather than printing an English sentinel like "N/A" into
+  // a bilingual UI.
   let display: string | number;
 
   if (raw === null || raw === undefined) {

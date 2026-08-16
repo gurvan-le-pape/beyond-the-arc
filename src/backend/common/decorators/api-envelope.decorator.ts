@@ -20,19 +20,18 @@ import {
  *
  * `SchemaObject` is declared in `dist/interfaces/open-api-spec.interface` and
  * re-exported from neither the package root nor `dist/interfaces/index.d.ts`,
- * which publishes only `ApiTagOptions` and `OpenAPIObject`. This used to be a
- * deep `@nestjs/swagger/dist/…` import, which worked because `moduleResolution`
- * was `node10` and ignored `exports` maps. Two things then changed: the backend
- * moved to `nodenext`, and `@nestjs/swagger` 11.4.6 added an `exports` map
- * publishing only `.`, `./plugin` and `./package.json`. The deep path is now
- * `TS2307`, and no version of it will come back — that map is the package
- * saying which surface it supports.
+ * which publishes only `ApiTagOptions` and `OpenAPIObject`. A deep
+ * `@nestjs/swagger/dist/…` import is not the way in: `@nestjs/swagger` 11.4.6
+ * carries an `exports` map publishing only `.`, `./plugin` and
+ * `./package.json`, and this project resolves with `nodenext`, which honours
+ * it. The deep path is `TS2307`, and no version of it will come back — that
+ * map is the package saying which surface it supports.
  *
  * Indexed access reaches the same type through a name the package *does*
  * publish, so it survives the next release the way a private path cannot. It
- * resolves to `SchemaObject | ReferenceObject`, which is wider than the old
- * import by exactly the `$ref` case — harmless here, since every value this
- * module builds is a schema and `getSchemaPath` produces the refs.
+ * resolves to `SchemaObject | ReferenceObject`, wider by exactly the `$ref`
+ * case — harmless here, since every value this module builds is a schema and
+ * `getSchemaPath` produces the refs.
  */
 type SchemaObject = NonNullable<
   NonNullable<OpenAPIObject["components"]>["schemas"]

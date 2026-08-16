@@ -39,9 +39,9 @@ export interface CareerStats {
  * with gp guarded to at least 1.
  *
  * It lives beside `sumPlayerStats`, whose docblock names this as one of the
- * three aggregators deriving from those totals. The other two already import
- * from here; this one used to sit in `modules/players/` and be reached
- * sideways by `modules/teams/` through a file in no barrel.
+ * three aggregators deriving from those totals. All three belong here, in
+ * `common/`, so that no module reaches sideways into another module's
+ * directory — through a file in no barrel — to get one of them.
  */
 export function aggregateCareerStats(
   rows: MappedPlayerMatchStats[],

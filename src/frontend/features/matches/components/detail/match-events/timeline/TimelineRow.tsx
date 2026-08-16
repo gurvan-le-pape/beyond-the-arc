@@ -6,8 +6,8 @@ import { cn } from "@/shared/utils";
 /**
  * The timeline's column track: home side | 80px centre gutter | away side.
  * Declared once here because the team legend and every event row must stay on
- * the same grid — previously this string was repeated at each call site and
- * drifting it in one place silently misaligned the centre score pills.
+ * the same grid — repeated at each call site, one copy can drift and silently
+ * misalign the centre score pills.
  */
 const TIMELINE_GRID = "grid grid-cols-[1fr_80px_1fr] gap-4";
 

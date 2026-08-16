@@ -259,13 +259,13 @@ export class AllExceptionsFilter implements ExceptionFilter {
     // No request id is added here on purpose. nestjs-pino binds the id from
     // genReqId to the request's logger, so every line it emits — this one and
     // pinoHttp's own completion line — already carries it as `req.id`. Adding a
-    // second name for the same value (this used to set `traceId`) meant a Loki
-    // query on one name found the error and missed the request record. One
-    // name: `{service="backend"} | json | req_id="…"` returns both.
-    // No `ip`. Express is not configured with `trust proxy`, so `request.ip`
-    // was never the visitor's address — behind Cloudflare and Nginx it is the
-    // Docker gateway, identical on every line. It cost 31 days of Loki
-    // retention to record which proxy spoke to us, and would silently become a
+    // second name for the same value means a Loki query on one name finds the
+    // error and misses the request record. One name:
+    // `{service="backend"} | json | req_id="…"` returns both.
+    // No `ip`. Express is not configured with `trust proxy`, so `request.ip` is
+    // not the visitor's address — behind Cloudflare and Nginx it is the Docker
+    // gateway, identical on every line. Logging it spends 31 days of Loki
+    // retention recording which proxy spoke to us, and would silently become a
     // real IP the day `trust proxy` is turned on.
     const logContext = {
       method,

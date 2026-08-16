@@ -516,14 +516,10 @@ export class MatchEventPlayerDto {
 }
 
 /**
- * Shot location information.
- */
-/**
  * Where a shot was taken from, in half-court metres.
  *
- * The frame, which used to be recoverable only by reading the frontend's
- * `courtConstants.ts`: the origin is the baseline corner, `x` runs across the
- * court's 15 m width and `y` from the baseline towards half-court over 14 m.
+ * The frame: the origin is the baseline corner, `x` runs across the court's
+ * 15 m width and `y` from the baseline towards half-court over 14 m.
  * The basket is at `x` 7.5, `y` 1.575. Measured on production, real shots fall
  * in x 0.23–14.98 and y 1.61–8.73.
  *

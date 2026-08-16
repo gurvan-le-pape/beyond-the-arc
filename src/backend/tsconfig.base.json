@@ -2,23 +2,22 @@
   "compilerOptions": {
     "target": "ES2022",
     // `nodenext` rather than `commonjs` + `node10`. This is a resolution
-    // change, not a module-format change: package.json declares no
-    // `"type": "module"`, so every file here is still resolved and emitted as
+    // setting, not a module format: package.json declares no
+    // `"type": "module"`, so every file here is resolved and emitted as
     // CommonJS — `tsc --traceResolution` reports "Resolving in CJS mode with
     // conditions 'require', 'types', 'node'". `nodenext` over `node16` because
     // it models the Node this backend actually runs (`engines.node >= 24`,
     // `node:24-alpine`, CI on 24); measured, the two produce an identical
     // program here.
     //
-    // Two reasons to move. `node10` is deprecated and stops functioning in
-    // TypeScript 7.0, and it was silenced by an undated `ignoreDeprecations:
-    // "6.0"` rather than recorded. And `node10` forces
+    // Two reasons it is not `node10`. `node10` is deprecated and stops
+    // functioning in TypeScript 7.0. And it forces
     // `resolvePackageJsonExports: false`, so a dual package's `require`
-    // condition was ignored: `cache-manager` and `keyv` are `"type": "module"`
-    // and were type-checked against their ESM `dist/index.d.ts` while this
-    // code emits `require()`, which loads `dist/index.cjs`. Those two
-    // declaration files happen to be byte-identical today, so nothing was
-    // actually mistyped — the value is that the type-checker now follows the
+    // condition is ignored: `cache-manager` and `keyv` are `"type": "module"`,
+    // so they would be type-checked against their ESM `dist/index.d.ts` while
+    // this code emits `require()`, which loads `dist/index.cjs`. Those two
+    // declaration files happen to be byte-identical today, so nothing is
+    // mistyped either way — the value is that the type-checker follows the
     // same conditions the runtime does, and would notice if they diverged.
     "module": "nodenext",
     "lib": ["es2022", "dom"],

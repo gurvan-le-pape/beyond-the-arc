@@ -3,10 +3,9 @@ import { EventCategory } from "@/shared/constants";
 
 /**
  * The colour of a match event is a property of its **category**, not of the
- * event type. Every one of the 40 entries in `eventConfig` used to carry its
- * own hand-picked Tailwind palette value, which is how all 40 came to fail
- * WCAG AA in at least one theme — three of them only in dark, where nobody
- * had looked.
+ * event type. A hand-picked Tailwind palette value per entry — there are 40 in
+ * `eventConfig` — is how colours come to fail WCAG AA in one theme and not the
+ * other, and the dark-only failures are the ones nobody looks at.
  *
  * Deriving it here means a new event type cannot arrive with a wrong, missing,
  * or raw-palette colour: it picks up its category's colour or it does not

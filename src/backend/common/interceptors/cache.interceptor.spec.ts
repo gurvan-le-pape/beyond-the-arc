@@ -255,10 +255,9 @@ describe("CacheInterceptor", () => {
     });
 
     it("shared dedup state across two interceptor instances (simulates mixin multi-instantiation)", async () => {
-      // This is the core regression test for the singleton scope fix.
-      // Before the fix, each interceptor instance had its own inFlight map,
-      // so concurrent requests reaching *different* instances would both miss
-      // the dedup check and fire duplicate upstream calls.
+      // Dedup state has to be a shared singleton: with an inFlight map per
+      // interceptor instance, concurrent requests reaching *different*
+      // instances both miss the dedup check and fire duplicate upstream calls.
       const dedup = new CacheDedupService(); // shared singleton
       const cacheManager = makeCacheManager();
 
@@ -432,11 +431,10 @@ describe("CacheInterceptor", () => {
       expect(cacheManager.set).toHaveBeenCalledTimes(2);
     });
 
-    // The key used to be run through `.replaceAll(/[^a-zA-Z0-9:/?=&_-]/g, "_")`
-    // with `_` inside its own allow-list, so these four search terms all
-    // collapsed onto one entry and whichever request arrived second was served
-    // the first one's body. Reproduced against production: `?search=A.S` is 15
-    // clubs, `?search=A_S` is 637.
+    // Running the key through `.replaceAll(/[^a-zA-Z0-9:/?=&_-]/g, "_")` with
+    // `_` inside its own allow-list collapses these search terms onto one
+    // entry, and whichever request arrives second is served the first one's
+    // body. On production `?search=A.S` is 15 clubs and `?search=A_S` is 637.
     it.each([
       ["a dot", "A.S", "A_S"],
       ["an asterisk", "A*S", "A_S"],

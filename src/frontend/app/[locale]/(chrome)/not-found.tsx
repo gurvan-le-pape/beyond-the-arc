@@ -7,8 +7,8 @@ import { RouteNotFound } from "@/shared/components/feedback";
  * Rendered when a chrome route calls `notFound()` — an unknown match,
  * championship, player, team, club, committee or league id. It renders inside
  * `(chrome)/layout.tsx`, so the header, footer and page background survive.
- * Before this existed those calls fell through to Next's built-in 404, which
- * has none of them, nor translations.
+ * Without it those calls fall through to Next's built-in 404, which has none
+ * of them, nor translations.
  *
  * Scope: everything under `(chrome)`. A URL that matches no route at all gets
  * here too, since `[...rest]/page.tsx` catches it and calls `notFound()` — a

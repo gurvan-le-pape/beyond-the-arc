@@ -291,12 +291,12 @@ export class MatchesService {
   /**
    * Every shot a team took, across its season.
    *
-   * The match filter is a relation, not an `IN` list. It used to be two
-   * queries: fetch the team's match ids, materialise them in Node, then send
-   * them back as `matchId: { in: [...] }`. That is a round trip and a
-   * hand-rolled join for something the database can do in one statement — and
-   * the id list is caller-visible growth, bounded here only because `Teams` is
-   * season-scoped (22 matches for a team, measured on production).
+   * The match filter is a relation, not an `IN` list. Fetching the team's match
+   * ids, materialising them in Node and sending them back as
+   * `matchId: { in: [...] }` is a round trip and a hand-rolled join for
+   * something the database does in one statement — and the id list is
+   * caller-visible growth, bounded only because `Teams` is season-scoped
+   * (22 matches for a team, measured on production).
    *
    * The filter is kept rather than dropped. `players: { some: … }` already
    * restricts to events a player of this team took part in, and since a player
