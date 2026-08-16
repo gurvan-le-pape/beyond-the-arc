@@ -72,16 +72,3 @@ export const EmptyState = ({
 /**
  * Simple text-only empty state (for backward compatibility)
  */
-interface SimpleEmptyStateProps {
-  readonly message: string;
-}
-
-export function SimpleEmptyState({ message }: SimpleEmptyStateProps) {
-  return (
-    <div className="py-8 text-center">
-      <Text variant="body" as="p">
-        {message}
-      </Text>
-    </div>
-  );
-}
