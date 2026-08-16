@@ -241,13 +241,19 @@ Grafana Alerting fires email notifications via Gmail SMTP when thresholds are cr
 | Alert           | Fires when                                                                | For  |
 | --------------- | ------------------------------------------------------------------------- | ---- |
 | Service Down    | `up{job="backend"} < 1` — Prometheus cannot scrape the backend             | 2m   |
-| High Error Rate | `rate(http_requests_total{status_code=~"5.."}[5m]) > 0.01`                 | 5m   |
+| Backend 5xx Rate | `rate(http_requests_total{status_code=~"5.."}[5m]) > 0.01`                | 5m   |
 | High Latency    | backend P95 request duration > 2s                                          | 5m   |
 | Memory Pressure | backend RSS > 400MB                                                        | 10m  |
 | Disk Full       | root filesystem > 85% used                                                 | 5m   |
 | Endpoint Unreachable | `probe_success < 1` — any probed target stops answering               | 2m   |
 
-**`High Error Rate` measures an absolute rate, not a percentage.** `0.01` is 0.01 5xx responses per second — roughly one every 100 seconds — and nothing divides by the total request rate, so the name, this table's older wording and the rule's own `summary` annotation all promise a ratio that is not computed. What it actually catches is "5xx responses are being served at all, steadily". Changing it to a real percentage means a second query and a new threshold, which is a decision rather than a correction, so it is recorded here rather than quietly reworded.
+**`Backend 5xx Rate` measures an absolute rate, and is now named for it.** `0.01` is 0.01 5xx responses per second — roughly one every 100 seconds, or about three in five minutes — and nothing divides by the total request rate. It was called *High Error Rate* and annotated "exceeded 1%" until 2026-08-16, promising a ratio that no part of the rule computed. The rule was kept and the label fixed, rather than the reverse, because at this deployment's volume a percentage is the wrong instrument rather than the right one worded badly:
+
+- Guaranteed traffic is **0.1 req/s**, all 200s, and all of it counted: the blackbox probe hits `/api/health` every 15s and the backend's own Compose healthcheck every 30s (`1/15 + 1/30`). `HttpMetricsInterceptor` excludes only `/metrics`, not `/api/health`.
+- So `0.01/s` is **≈ 10% of idle traffic** — the rule was an order of magnitude *less* trigger-happy than the 1% it advertised, not more.
+- A true 1% ratio would fire on **a single 5xx in five minutes**, because one error in ~30 requests is 3.3%. The absolute and ratio forms only coincide at 1 req/s.
+
+What it catches is "5xx responses are being served at all, steadily". The trade-off accepted is that absolute thresholds do not scale with traffic: if sustained volume ever clears ~1 req/s, this wants revisiting as a ratio with a minimum-volume guard, which needs a second query, a `$A / $B` expression and a floor.
 
 The rules are provisioned from `docker/config/grafana/provisioning/alerting/rules.yml`. **Grafana reads that file only at startup.** `docker compose up -d` recreates a container only when its *configuration* changes, and the provisioning directory is a bind mount whose file contents are not part of that hash — so an alerting change reaches the VPS and does nothing until Grafana restarts. The deploy therefore restarts Grafana when, and only when, a deploy actually changes anything under `provisioning/alerting/`; a restart resets the `for:` clocks, which run 2–10 minutes, so it is not done unconditionally.
 
