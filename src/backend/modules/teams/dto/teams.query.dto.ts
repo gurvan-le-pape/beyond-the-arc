@@ -1,6 +1,11 @@
 // src/backend/modules/teams/dto/teams.query.dto.ts
-import { CompetitionLevel, MAX_SEARCH_LENGTH } from "@common/constants";
-import { Category, Gender, PaginationQueryDto } from "@common/index";
+import {
+  Category,
+  CompetitionLevel,
+  Gender,
+  MAX_SEARCH_LENGTH,
+} from "@common/constants";
+import { PaginationQueryDto } from "@common/dto";
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import {

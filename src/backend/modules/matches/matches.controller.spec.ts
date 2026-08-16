@@ -1,6 +1,6 @@
 // src/backend/modules/matches/matches.controller.spec.ts
+import type { Category, CompetitionLevel, Gender } from "@common/constants";
 import type { PaginatedResponseDto } from "@common/dto";
-import type { Category, CompetitionLevel, Gender } from "@common/index";
 import { CacheDedupService } from "@common/services/cache-dedup.service";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import { NotFoundException } from "@nestjs/common";

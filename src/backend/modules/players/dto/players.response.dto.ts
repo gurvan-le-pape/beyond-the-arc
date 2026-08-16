@@ -1,12 +1,11 @@
 // src/backend/modules/players/dto/players.response.dto.ts
-import { Position } from "@common/constants";
-import { ReboundsDto } from "@common/dto";
 import {
   Category,
   CompetitionLevel,
   Gender,
-  PlayerSummaryDto,
-} from "@common/index";
+  Position,
+} from "@common/constants";
+import { PlayerSummaryDto, ReboundsDto } from "@common/dto";
 import { ApiProperty } from "@nestjs/swagger";
 
 /**

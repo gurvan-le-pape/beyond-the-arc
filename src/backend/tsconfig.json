@@ -5,8 +5,7 @@
       "@modules/*": ["./modules/*"],
       "@common/*": ["./common/*"],
       "prisma/prisma.module": ["./prisma/prisma.module"],
-      "prisma/prisma.service": ["./prisma/prisma.service"],
-      "modules": ["./modules/index.ts"]
+      "prisma/prisma.service": ["./prisma/prisma.service"]
     },
     "outDir": "dist",
     "moduleResolution": "node",

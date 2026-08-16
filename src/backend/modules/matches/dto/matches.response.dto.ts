@@ -1,12 +1,12 @@
 // src/backend/modules/matches/dto/matches.response.dto.ts
-import { EventType, Role } from "@common/constants";
-import { ReboundsDto } from "@common/dto";
 import {
   Category,
   CompetitionLevel,
+  EventType,
   Gender,
-  PlayerSummaryDto,
-} from "@common/index";
+  Role,
+} from "@common/constants";
+import { PlayerSummaryDto, ReboundsDto } from "@common/dto";
 import { ApiProperty } from "@nestjs/swagger";
 
 /**

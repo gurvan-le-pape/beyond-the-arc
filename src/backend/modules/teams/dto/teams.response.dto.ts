@@ -1,10 +1,6 @@
 // src/backend/modules/teams/dto/teams.response.dto.ts
-import {
-  Category,
-  CompetitionLevel,
-  Gender,
-  PlayerSummaryDto,
-} from "@common/index";
+import { Category, CompetitionLevel, Gender } from "@common/constants";
+import { PlayerSummaryDto } from "@common/dto";
 import {
   HistoryTeamRefDto,
   PlayerCareerStatsDto,

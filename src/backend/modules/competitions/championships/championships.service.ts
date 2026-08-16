@@ -1,7 +1,6 @@
 // src/backend/modules/competitions/championships/championships.service.ts
-import { CompetitionLevel } from "@common/constants";
+import { Category, CompetitionLevel, Gender } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
-import { Category, Gender } from "@common/index";
 import { resolvePagination } from "@common/utils";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";

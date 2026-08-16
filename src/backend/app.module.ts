@@ -2,13 +2,25 @@
 import { CommonModule } from "@common/common.module";
 import { CACHE_MAX_ENTRIES, CACHE_TTL, METRICS_PATH } from "@common/constants";
 import { MetricsController } from "@common/controllers/metrics.controller";
+import { AllExceptionsFilter } from "@common/filters";
 import { HttpMetricsInterceptor } from "@common/interceptors";
+import { TransformInterceptor } from "@common/interceptors";
 import {
   BoundedMemoryStore,
   resolveRequestId,
   serializeRequestLog,
 } from "@common/utils";
+import { ChampionshipsModule } from "@modules/competitions/championships/championships.module";
+import { LeaderboardsModule } from "@modules/competitions/leaderboards/leaderboards.module";
+import { PoolsModule } from "@modules/competitions/pools/pools.module";
+import { HealthModule } from "@modules/health/health.module";
+import { MatchesModule } from "@modules/matches/matches.module";
+import { ClubsModule } from "@modules/organizations/clubs/clubs.module";
+import { CommitteesModule } from "@modules/organizations/committees/committees.module";
+import { LeaguesModule } from "@modules/organizations/leagues/leagues.module";
+import { PlayersModule } from "@modules/players/players.module";
 import { StatsModule } from "@modules/stats/stats.module";
+import { TeamsModule } from "@modules/teams/teams.module";
 import { CacheModule } from "@nestjs/cache-manager";
 import { Module } from "@nestjs/common";
 import { APP_FILTER, APP_INTERCEPTOR } from "@nestjs/core";
@@ -19,22 +31,8 @@ import {
   PrometheusModule,
 } from "@willsoto/nestjs-prometheus";
 import { Keyv } from "keyv";
-import {
-  ChampionshipsModule,
-  ClubsModule,
-  CommitteesModule,
-  HealthModule,
-  LeaderboardsModule,
-  LeaguesModule,
-  MatchesModule,
-  PlayersModule,
-  PoolsModule,
-  TeamsModule,
-} from "modules";
 import { LoggerModule } from "nestjs-pino";
 import { PrismaModule } from "prisma/prisma.module";
-
-import { AllExceptionsFilter, TransformInterceptor } from "./common";
 
 @Module({
   imports: [
