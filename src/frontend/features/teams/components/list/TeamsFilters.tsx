@@ -14,14 +14,13 @@ import type {
 } from "@/shared/components/filters";
 import {
   CascadeSelects,
+  CategoryGenderSelects,
   FiltersShell,
   isLocationSelected,
   LevelLocationFilters,
-  useCategoryGenderOptions,
   useCommonFilterChips,
 } from "@/shared/components/filters";
 import { Select } from "@/shared/components/forms";
-import type { Category, Gender } from "@/shared/constants";
 
 import type { TeamsFilterSetters, TeamsFilterState } from "../../hooks";
 
@@ -86,7 +85,6 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
   const divisions = teamFilterValues?.divisions ?? [];
   const poolLetters = teamFilterValues?.poolLetters ?? [];
 
-  const { categoryOptions, genderOptions } = useCategoryGenderOptions();
   const { categoryGenderChips, levelLocationChips } = useCommonFilterChips({
     category,
     gender,
@@ -206,21 +204,12 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
       </div>
 
       {/* Row 2: Category + Gender */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Select
-          label={tCommon("filters.categories")}
-          options={categoryOptions}
-          value={category ?? ""}
-          onChange={(val) => setCategory((val as Category) || undefined)}
-        />
-
-        <Select
-          label={tCommon("filters.genders")}
-          options={genderOptions}
-          value={gender ?? ""}
-          onChange={(val) => setGender((val as Gender) || undefined)}
-        />
-      </div>
+      <CategoryGenderSelects
+        category={category}
+        setCategory={setCategory}
+        gender={gender}
+        setGender={setGender}
+      />
 
       {/* Divider */}
       <div className="border-t border-divide" />

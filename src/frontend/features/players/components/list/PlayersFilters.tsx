@@ -9,13 +9,12 @@ import { useLocationOptions } from "@/features/organizations/hooks";
 import { ErrorMessage } from "@/shared/components/feedback";
 import type { ActiveFilterChip } from "@/shared/components/filters";
 import {
+  CategoryGenderSelects,
   FiltersShell,
   LevelLocationFilters,
-  useCategoryGenderOptions,
   useCommonFilterChips,
 } from "@/shared/components/filters";
 import { DebouncedInput, Select } from "@/shared/components/forms";
-import type { Category, Gender } from "@/shared/constants";
 
 import { usePlayerFilterValues } from "../../api";
 import type {
@@ -82,7 +81,6 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
   const playerNumbers = playerFilterValues?.numbers ?? [];
   const teamNumbers = playerFilterValues?.teamNumbers ?? [];
 
-  const { categoryOptions, genderOptions } = useCategoryGenderOptions();
   const { categoryGenderChips, levelLocationChips } = useCommonFilterChips({
     category,
     gender,
@@ -176,23 +174,12 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
       </div>
 
       {/* Row 2: Category + Gender */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Select
-          label={tCommon("filters.categories")}
-          options={categoryOptions}
-          value={category ?? ""}
-          onChange={(val) => setCategory((val as Category) || undefined)}
-          placeholder={tCommon("filters.allCategories")}
-        />
-
-        <Select
-          label={tCommon("filters.genders")}
-          options={genderOptions}
-          value={gender ?? ""}
-          onChange={(val) => setGender((val as Gender) || undefined)}
-          placeholder={tCommon("filters.allGenders")}
-        />
-      </div>
+      <CategoryGenderSelects
+        category={category}
+        setCategory={setCategory}
+        gender={gender}
+        setGender={setGender}
+      />
 
       {/* Row 3: Player number + Team number */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
