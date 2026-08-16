@@ -42,7 +42,6 @@ State these rather than working around them silently.
 
 - The root `barrels:lint` script only runs ESLint inside `src/frontend`, so barrels regenerated under `src/backend` are **not** lint-fixed. Both applications also still declare `barrelsby` themselves; those declarations are dead — nothing invokes them — and are the mistake described above, not a second entry point. `[manifest]`
 - Neither application manifest sets `"private": true`, and both are stuck at `"version": "1.0.0"`. Neither is intended for npm publication. `[manifest]`+`[principle]`
-- Neither application manifest declares `@types/node`, yet both resolve it transitively (backend `25.0.3`, frontend `25.7.0`). Under TypeScript 6 this matters — see `typescript.md`. `[manifest]`
 
 ## Adding a dependency
 
