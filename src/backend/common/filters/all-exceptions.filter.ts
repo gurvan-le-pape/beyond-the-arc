@@ -281,14 +281,23 @@ export class AllExceptionsFilter implements ExceptionFilter {
     if (errorResponse.statusCode >= 500) {
       if (isProgrammerError(exception)) {
         // Programmer errors (TypeError, RangeError, etc.) indicate a bug in
-        // application code. Log them with a distinct `programmerError: true`
-        // field so alert rules and dashboards can route them separately from
-        // expected operational failures (e.g. DB timeouts, third-party 5xx).
+        // application code. This flag is what separates them from expected
+        // operational failures (DB timeout, third-party 5xx), which otherwise
+        // produce a byte-identical log line — same level, same `msg`, same
+        // 5xx `statusCode`.
         //
-        // NOTE: this flag is only valuable if your alerting layer (Pino
-        // transport, log shipper, or APM) explicitly routes on it. Document
-        // the routing rule in docs/ops/runbook.md so it isn't stripped as
-        // dead metadata in a future cleanup.
+        // It is read at **query time**, not by an alert. Nothing routes on it:
+        // all six Grafana rules query Prometheus, and Promtail attaches no
+        // pipeline stage, so `programmerError` is not a Loki label. It does
+        // not need to be one — `| json` parses the line and filters on any
+        // field, label or not:
+        //
+        //   {service="backend"} | json | programmerError="true"
+        //
+        // Verified against Loki with the three-line control in
+        // docs/observability.md § "Separating bugs from operational failures",
+        // which is also where that query is written down. Keep the two in step
+        // if this field is renamed.
         this.logger.error(
           { err: exception, ...logContext, programmerError: true },
           LOG_MESSAGE,
