@@ -5,8 +5,6 @@ import { type HTMLAttributes } from "react";
 import { Link } from "@/navigation";
 import { cn } from "@/shared/utils";
 
-import { Text } from "../typography";
-
 /**
  * Card variants
  */
@@ -121,86 +119,3 @@ export const Card = ({
     />
   );
 };
-
-// ---------------------------------------------------------------------------
-// Card sub-components
-// ---------------------------------------------------------------------------
-
-export const CardHeader = ({
-  className,
-  ref,
-  ...props
-}: HTMLAttributes<HTMLDivElement> & { ref?: React.Ref<HTMLDivElement> }) => (
-  <div
-    ref={ref}
-    className={cn("flex flex-col space-y-2 pb-4", className)}
-    {...props}
-  />
-);
-
-/**
- * CardTitle — uses Text variant="h3" so font tokens stay in one place.
- *
- * Renders as <h3> by default. Override with `as` when the heading level
- * needs to differ from the visual style (e.g. as="h2" for a top-level card).
- * Never skip heading levels — h1 → h2 → h3, never h1 → h3.
- */
-export const CardTitle = ({
-  className,
-  as = "h3",
-  ref,
-  ...props
-}: HTMLAttributes<HTMLHeadingElement> & {
-  as?: React.ElementType;
-  ref?: React.Ref<HTMLHeadingElement>;
-}) => (
-  <Text
-    ref={ref as React.Ref<HTMLElement>}
-    variant="h3"
-    as={as}
-    className={className}
-    {...props}
-  />
-);
-
-/**
- * CardDescription — uses Text variant="caption".
- *
- * Renders as <p>. caption gives text-secondary color and text-sm size,
- * matching the visual role of supporting description text under a title.
- */
-export const CardDescription = ({
-  className,
-  ref,
-  ...props
-}: HTMLAttributes<HTMLParagraphElement> & {
-  ref?: React.Ref<HTMLParagraphElement>;
-}) => (
-  <Text
-    ref={ref as React.Ref<HTMLElement>}
-    variant="caption"
-    as="p"
-    className={className}
-    {...props}
-  />
-);
-
-export const CardContent = ({
-  className,
-  ref,
-  ...props
-}: HTMLAttributes<HTMLDivElement> & { ref?: React.Ref<HTMLDivElement> }) => (
-  <div ref={ref} className={cn("", className)} {...props} />
-);
-
-export const CardFooter = ({
-  className,
-  ref,
-  ...props
-}: HTMLAttributes<HTMLDivElement> & { ref?: React.Ref<HTMLDivElement> }) => (
-  <div
-    ref={ref}
-    className={cn("flex items-center pt-4 border-t border-divide", className)}
-    {...props}
-  />
-);
