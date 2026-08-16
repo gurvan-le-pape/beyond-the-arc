@@ -27,12 +27,12 @@ import {
  *
  * `@HealthCheck()` is passed `swaggerDocumentation: false`. Left on, it
  * registers its own 200 and 503 schemas describing the bare
- * `{ status, info, error, details }` object as the whole response body — true
- * before this API had an envelope, not true since, and it silently outranked
- * the `@ApiEnvelope` declarations below it (decorators apply bottom-up, so the
- * *higher* one writes its status key last and wins). Turning its documentation
- * off removes the conflict instead of winning it by ordering, which no reader
- * would see and any reordering would undo.
+ * `{ status, info, error, details }` object as the whole response body, which
+ * is not what this API sends — every response goes through the envelope — and
+ * it silently outranks the `@ApiEnvelope` declarations below it (decorators
+ * apply bottom-up, so the *higher* one writes its status key last and wins).
+ * Turning its documentation off removes the conflict instead of winning it by
+ * ordering, which no reader would see and any reordering would undo.
  *
  * `noCache: true` is passed explicitly because it must be: the option object
  * replaces Terminus's defaults wholesale rather than merging with them, so

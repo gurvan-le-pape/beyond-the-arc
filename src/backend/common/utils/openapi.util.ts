@@ -10,30 +10,26 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
  * the document at `/api/docs`, and `scripts/generate-openapi.ts`, which writes
  * the committed snapshot.
  *
- * They used to be written out twice, held together by a `// Keep in sync with
- * main.ts` comment. That is the root cause of `api-contract 1`: the script had
- * no `setGlobalPrefix`, so every one of the 34 `paths` keys in
- * `docs/openapi.json` was missing the `/api` the deployed API actually serves.
+ * **A second copy held together by a `// Keep in sync with main.ts` comment is
+ * not enough here, because nothing can see the disagreement.**
+ * `openapi-drift` regenerates the document and diffs it against the committed
+ * one — both sides come from the script, so they agree with each other while
+ * disagreeing with production. The only witness is the deployed app. A second
+ * copy that no test compares is worse than no copy.
  *
- * **The reason a comment was not enough is that nothing could see the
- * disagreement.** `openapi-drift` regenerates the document and diffs it against
- * the committed one — both sides come from the script, so they agree with each
- * other while disagreeing with production. The only witness was the deployed
- * app. A second copy that no test compares is worse than no copy.
- *
- * Scope of the guarantee, stated because it is narrower than "the bootstraps
- * now match": what `SwaggerModule.createDocument` reads is the module graph,
- * the route decorators, the global prefix and the `DocumentBuilder` config.
- * The rest of `main.ts` — CORS, the validation pipe, shutdown hooks, the Pino
- * logger — cannot change the document, so it is deliberately *not* shared.
- * These two functions cover everything that can.
+ * Scope of the guarantee, stated because it is narrower than "the two
+ * bootstraps match": what `SwaggerModule.createDocument` reads is the module
+ * graph, the route decorators, the global prefix and the `DocumentBuilder`
+ * config. The rest of `main.ts` — CORS, the validation pipe, shutdown hooks,
+ * the Pino logger — cannot change the document, so it is deliberately *not*
+ * shared. These two functions cover everything that can.
  */
 
 /** The global prefix, exactly as the deployed app applies it. */
 export function applyApiPrefix(app: INestApplication): void {
-  // `METRICS_PATH`, not a literal "/metrics". `main.ts` hardcoded the string
-  // while the script used the constant — the same value, which is precisely
-  // how this class of divergence stays invisible until one of them moves.
+  // `METRICS_PATH`, not a literal "/metrics". Two spellings of one value agree
+  // until one of them moves, which is precisely how this class of divergence
+  // stays invisible.
   app.setGlobalPrefix("api", { exclude: [METRICS_PATH] });
 }
 

@@ -9,8 +9,8 @@ import { useCallback, useState } from "react";
  * State only — it fetches nothing. The lists to choose from come from
  * `useLocationOptions`, which the filter component calls separately. Keeping
  * the two apart means the `use<X>FilterState` hooks (which want the state) and
- * the `<X>Filters` components (which want the options) no longer each
- * instantiate both halves.
+ * the `<X>Filters` components (which want the options) do not each instantiate
+ * both halves.
  */
 export function useLocationFilterState() {
   const [committeeId, setCommitteeId] = useState<number | undefined>(undefined);

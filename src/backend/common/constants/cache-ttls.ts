@@ -3,10 +3,9 @@
  * Centralized cache TTL (Time To Live) constants.
  *
  * All values are in **milliseconds**. cache-manager 7 is built on Keyv, whose
- * `ttl` is milliseconds — the seconds convention these constants used to claim
- * belonged to cache-manager 4. Measured on the locked 7.2.8: an entry written
- * with `ttl: 300` is already gone 400 ms later, so every cache here was living
- * 0.3 s instead of 5 minutes.
+ * `ttl` is milliseconds; the seconds convention belongs to cache-manager 4.
+ * Measured on the locked 7.2.8: an entry written with `ttl: 300` is already
+ * gone 400 ms later, not in five minutes.
  *
  * Keep the unit in the name of anything derived from these (`ttlMs`), and do
  * not reintroduce a bare number at a call site.

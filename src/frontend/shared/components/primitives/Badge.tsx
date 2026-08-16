@@ -47,10 +47,10 @@ const badgeVariants = cva(
         // swapped, which makes it AA by construction: contrast is symmetric,
         // so these read 9.27 / 8.41 / 8.38 in light and 7.66 / 7.52 / 7.45 in
         // dark, the same numbers as `national` / `regional` / `departmental`.
-        // Filling with the mid `bg-{level}` instead — as these used to — put a
-        // pale tint on a mid tone: 3.63, 2.21 and 1.85 in light. And because
-        // the fill is now `-strong` while the header is `-subtle`, the chip
-        // separates from the header by that same ratio.
+        // Filling with the mid `bg-{level}` instead puts a pale tint on a mid
+        // tone: 3.63, 2.21 and 1.85 in light. And because the fill is
+        // `-strong` while the header is `-subtle`, the chip separates from the
+        // header by that same ratio.
         "national-on-header":
           "border-transparent bg-national-strong text-national-subtle",
         "regional-on-header":

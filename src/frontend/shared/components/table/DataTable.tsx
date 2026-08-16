@@ -70,9 +70,9 @@ interface DataTableBaseProps<T> {
    */
   readonly density?: "comfortable" | "cozy" | "compact";
   /**
-   * Rendered in place of the rows when `rows` is empty. Required: a header
-   * with nothing under it and no explanation is never the right answer, and
-   * making it optional meant three of the four tables shipped without one.
+   * Rendered in place of the rows when `rows` is empty. Required: a header with
+   * nothing under it and no explanation is never the right answer, and optional
+   * means most tables ship without one.
    */
   readonly emptyMessage: string;
 }
@@ -80,10 +80,10 @@ interface DataTableBaseProps<T> {
 /**
  * A table whose rows navigate.
  *
- * The two exclusions below used to be comments in `variants.ts`, which is to
- * say they were not enforced at all — the one `wrap={false}` table happened
- * not to use row links, and that was the whole guarantee. Both break the same
- * way and both are now compile errors.
+ * The two exclusions below are expressed in the type rather than as comments in
+ * `variants.ts`. As comments they are not enforced at all — nothing stops a
+ * caller combining them, and the only guarantee is that no table happens to.
+ * Both break the same way, so both are compile errors.
  */
 interface RowLinkProps<T> {
   /**
@@ -149,7 +149,7 @@ const alignFor = <T,>(column: TableColumn<T>) =>
  * props, on the table, the header, the cells or the rows. A look this
  * component cannot express is a request for a new named variant, reviewed
  * once here, rather than a class string pasted at a call site — which is how
- * four tables previously ended up with three framings and two stripe recipes.
+ * four tables end up with three framings and two stripe recipes.
  */
 export function DataTable<T>({
   columns,

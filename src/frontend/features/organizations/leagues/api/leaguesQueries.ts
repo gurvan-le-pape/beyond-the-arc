@@ -42,11 +42,10 @@ export const leaguesQueries = {
    * Query options for fetching all leagues.
    *
    * Keyed on the `lists()` rung even though the list takes no filters. Keying
-   * it on `all` — which is what "there are no filters" used to argue — puts it
+   * it on `all` — the tempting reading of "there are no filters" — puts it
    * *above* the rung, so `invalidateQueries({ queryKey: leaguesKeys.lists() })`
    * misses the full list while still matching `byIds`. Measured: 1 match
-   * without the list, against 2 with it. Every other feature keys its list this
-   * way; leagues was the one factory of eight that did not.
+   * without the list, against 2 with it. Every feature keys its list this way.
    *
    * @example
    * useQuery(leaguesQueries.list())

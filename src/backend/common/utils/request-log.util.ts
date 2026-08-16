@@ -6,11 +6,11 @@
  * pino-http's default `req` serializer emits the **entire** header block plus
  * `remoteAddress`/`remotePort`. On this deployment the app sits behind
  * Cloudflare and then Nginx, so the visitor's real IP arrives in the headers —
- * `cf-connecting-ip`, `x-forwarded-for`, `x-real-ip` — and every request line
- * carried all three into Loki, where they sat for the 31-day retention set in
+ * `cf-connecting-ip`, `x-forwarded-for`, `x-real-ip` — and the default would
+ * put all three on every request line in Loki, for the 31-day retention set in
  * `docker/config/loki.yml`. That is the exact thing `instrument.ts` refuses to
- * send to Sentry ("Never send default PII (visitor IP addresses)"): the written
- * policy was honoured by one sink and contradicted by the other.
+ * send to Sentry ("Never send default PII (visitor IP addresses)"), and one
+ * policy honoured by one sink and contradicted by the other is not a policy.
  *
  * This is an allowlist rather than an extension of pino's `redact` paths on
  * purpose. A redact list is an allow-everything list with named exceptions, so
@@ -18,9 +18,8 @@
  * by default and nothing fails. An allowlist fails closed: a new header is
  * simply not logged until someone adds it here and says why.
  *
- * `authorization` and `cookie` used to be the two redacted paths. They are
- * absent from this list, so they can no longer be emitted at all; the spec
- * asserts it rather than leaving it to be re-derived.
+ * `authorization` and `cookie` are absent from this list, so they cannot be
+ * emitted at all; the spec asserts it rather than leaving it to be re-derived.
  */
 export const LOGGED_REQUEST_HEADERS = [
   "host",

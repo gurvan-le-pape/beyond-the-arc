@@ -69,13 +69,13 @@ export const TableHeader = ({
  * in, which for every table but one is a `Section`, i.e. a `Card` at
  * surface-subtle.
  *
- * It used to carry `surface-raised`, the elevation globals.css reserves for
- * "inputs, modals, infoboxes, skeleton fills" and documents as the ceiling. A
- * table body is none of those, and the result was a darker grey slab boxed
- * inside an already-grey card. Inheriting also repairs row hover: under
- * `surface-raised`, `--surface-inset` resolved back to surface-raised (the
- * ceiling has nowhere above it), so `hover:bg-surface-inset` on navigable rows
- * painted the colour the row already was.
+ * Not `surface-raised`: globals.css reserves that elevation for "inputs,
+ * modals, infoboxes, skeleton fills" and documents it as the ceiling. A table
+ * body is none of those, and setting it puts a darker grey slab inside an
+ * already-grey card. It also breaks row hover — under `surface-raised`,
+ * `--surface-inset` resolves back to surface-raised (the ceiling has nowhere
+ * above it), so `hover:bg-surface-inset` on navigable rows paints the colour
+ * the row already is.
  *
  * Row separation lives here, as `divide-y`, and only here — `rowVariants` must
  * not also set a `border-b`.

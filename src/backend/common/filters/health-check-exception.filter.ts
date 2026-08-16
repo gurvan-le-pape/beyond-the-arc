@@ -36,10 +36,10 @@ import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
  *
  * Constant for the same reason `AllExceptionsFilter`'s is: `msg` is what Loki
  * groups on, so everything that varies per request — method, url, statusCode,
- * the health result — is a field on the log object instead. This used to
- * interpolate all three into the message, which made `msg` unique per route
- * and left "which health check is failing, and how often" unanswerable by
- * grouping, while the same three values sat in fields on the same line.
+ * the health result — is a field on the log object instead. Interpolating them
+ * into the message makes `msg` unique per route, which leaves "which health
+ * check is failing, and how often" unanswerable by grouping while the same
+ * values sit in fields on the same line.
  */
 const LOG_MESSAGE = "health check failed";
 
@@ -61,8 +61,8 @@ export class HealthCheckExceptionFilter implements ExceptionFilter {
     // No request id is added here on purpose — the same reason
     // AllExceptionsFilter gives. nestjs-pino binds the id from genReqId to the
     // request's logger, so this line already carries it as `req.id`; a second
-    // name for the same value (this used to set `traceId`) meant a Loki query
-    // on one name found the failure and missed the request record.
+    // name for the same value means a Loki query on one name finds the failure
+    // and misses the request record.
     this.logger.error(
       {
         method: request.method,

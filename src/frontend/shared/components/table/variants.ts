@@ -129,13 +129,13 @@ export const frameVariants = cva("", {
 /**
  * One header treatment for every table — no variants, hence no cva.
  *
- * No fill. The header used to be a `bg-primary-subtle` band under a
- * `border-primary` rule, which in the light theme put `text-text-emphasis`
- * (#374151) on #6d86c0 — 2.86:1, below the 4.5:1 AA needs for body text and
- * below even the 3:1 large-text floor. A band is also a third weight of
- * horizontal division on a table whose rows are already separated by a rule.
+ * No fill. A `bg-primary-subtle` band under a `border-primary` rule puts
+ * `text-text-emphasis` (#374151) on #6d86c0 in the light theme — 2.86:1, below
+ * the 4.5:1 AA needs for body text and below even the 3:1 large-text floor. A
+ * band is also a third weight of horizontal division on a table whose rows are
+ * already separated by a rule.
  *
- * The header now separates itself typographically — the shared `overline`
+ * The header separates itself typographically instead — the shared `overline`
  * token, unmodified — over a single hairline, the same one the rows use.
  */
 export const TABLE_HEADER = "border-b border-divide";

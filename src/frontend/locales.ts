@@ -3,11 +3,11 @@
 /**
  * The locale set, defined once.
  *
- * It used to live in five places — `navigation.ts`'s routing config, a `Set` in
- * `i18n.ts`, an array in the `[locale]` layout, another in `sitemap.ts`, and a
- * regex alternation in the middleware matcher. Adding a locale to some of them
- * fails loudly and to others silently, which is the worst combination: the
- * sitemap simply omits the new locale and nothing reports it.
+ * `navigation.ts`'s routing config, `i18n.ts`, the `[locale]` layout and
+ * `sitemap.ts` all derive from here rather than restating the set. Adding a
+ * locale to some copies and not others fails loudly in some and silently in
+ * others, which is the worst combination: the sitemap simply omits the new
+ * locale and nothing reports it.
  *
  * This file has no imports on purpose. It is read by the Next.js runtime, by
  * the middleware, and by `scripts/check-message-parity.mts`, which Node runs

@@ -49,7 +49,7 @@ describe("serializeRequestLog", () => {
     }
   });
 
-  it("drops credentials, which no longer depend on a redact path", () => {
+  it("drops credentials without depending on a redact path", () => {
     const line = JSON.stringify(serializeRequestLog(VISITOR_REQUEST));
 
     expect(line).not.toContain("secret");

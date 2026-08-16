@@ -9,7 +9,7 @@ import { REQUEST_ID_HEADER } from "@common/constants";
  *
  * It admits every form that could realistically arrive — an RFC 4122 UUID,
  * Nginx's `$request_id` (32 hex characters), Cloudflare's `cf-ray` — and
- * nothing else. No caller sends one today, so nothing is being taken away.
+ * nothing else. No caller sends one today.
  *
  * The reason for the check is not a crash. Measured on Node 24.15.0, a
  * hostile inbound value is simply echoed: `res.setHeader` threw for none of
@@ -21,8 +21,8 @@ import { REQUEST_ID_HEADER } from "@common/constants";
  * response header of the caller's chosen size.
  *
  * The empty string is the case that matters most in practice: it is not
- * nullish, so before this check a request sending `x-request-id:` got an
- * empty `req.id` and correlated to nothing.
+ * nullish, so it survives a null check. A request sending `x-request-id:`
+ * would otherwise take an empty `req.id` and correlate to nothing.
  */
 const SAFE_REQUEST_ID = /^[\w.-]{1,128}$/;
 

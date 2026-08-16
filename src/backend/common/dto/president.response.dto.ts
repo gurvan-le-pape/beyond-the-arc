@@ -4,10 +4,10 @@ import { ApiProperty } from "@nestjs/swagger";
 /**
  * The president relation exposed by leagues, committees and clubs.
  *
- * Name only. `phone` and `email` used to be here, which made 3,953 phone
- * numbers and 3,968 email addresses of named private individuals readable
- * one request at a time over a sequential, publicly-handed-out id space —
- * on an API with no authentication. No screen needs them: the detail pages
+ * Name only — no `phone`, no `email`. A president is a named private
+ * individual, and this API is unauthenticated over a sequential,
+ * publicly-handed-out id space, so any contact field here is a bulk export
+ * readable one request at a time. No screen needs them: the detail pages
  * render the organisation's own contact details, not the president's.
  */
 export class PresidentResponseDto {

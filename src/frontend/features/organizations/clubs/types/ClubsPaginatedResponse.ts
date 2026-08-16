@@ -12,9 +12,9 @@ import type { paths } from "@/shared/types/api.generated";
  * is where the unwrapping both HTTP clients perform becomes visible in the
  * types. `api-client.ts` and `server-api-client.ts` each strip the response
  * envelope before a service method sees the payload, so what a caller receives
- * is the `data` half, not the whole body. The document used to describe the
- * page *as* the body, which made this alias accidentally correct — indexing
- * explicitly is what keeps it correct now that the envelope is documented.
+ * is the `data` half, not the whole body. The document describes the envelope,
+ * so indexing explicitly is what keeps this alias correct rather than
+ * accidentally correct.
  */
 export type ClubsPaginatedResponse =
   paths["/api/clubs"]["get"]["responses"][200]["content"]["application/json"]["data"];
