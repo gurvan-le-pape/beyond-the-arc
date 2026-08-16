@@ -28,9 +28,9 @@ HERE = Path(__file__).parent
 DATA = HERE / "ffbb_data"
 TARGET_MIGRATION = HERE / "../../src/backend/prisma/migrations/1_seed_static_data/migration.sql"
 
-# FFBB's own ligue code -> our regions.code (differs only for PCA, which
+# FFBB's own league code -> our regions.code (differs only for PCA, which
 # FFBB brands "Ligue du Sud" / code SUD)
-LIGUE_TO_REGION = {
+LEAGUE_TO_REGION = {
     "ARA": "ARA", "BFC": "BFC", "BRE": "BRE", "COR": "COR", "CVL": "CVL",
     "GES": "GES", "HDF": "HDF", "IDF": "IDF", "NAQ": "NAQ", "NOR": "NOR",
     "OCC": "OCC", "PDL": "PDL", "SUD": "PCA",
@@ -174,9 +174,9 @@ def url_parts(url):
     parts = url.strip("/").split("/")
     d = {}
     if len(parts) >= 2:
-        d["ligue"] = parts[1]
+        d["league"] = parts[1]
     if len(parts) >= 4:
-        d["comite"] = parts[3]
+        d["committee"] = parts[3]
     if len(parts) >= 6:
         d["club"] = parts[5]
     return d
@@ -215,7 +215,7 @@ def main():
     leagues.sort(key=lambda lg: name_sort_key(lg.get("name") or ""))
 
     # Group committees by league in the *same* order as the leagues table
-    # above (alphabetical by region name) - sorting by FFBB's own raw ligue
+    # above (alphabetical by region name) - sorting by FFBB's own raw league
     # code instead would silently disagree with it (e.g. "cor" < "cvl" but
     # "Centre-Val-de-Loire" < "Corse", so COR committees would end up before
     # CVL committees while the leagues table has it the other way around).
@@ -223,8 +223,8 @@ def main():
 
     def committee_sort_key(co):
         parts = url_parts(co["_url"])
-        region_code = LIGUE_TO_REGION[parts["ligue"].upper()]
-        return (name_sort_key(region_name_by_code[region_code]), parts.get("comite", ""))
+        region_code = LEAGUE_TO_REGION[parts["league"].upper()]
+        return (name_sort_key(region_name_by_code[region_code]), parts.get("committee", ""))
 
     committees.sort(key=committee_sort_key)
     clubs.sort(key=lambda cl: cl.get("code") or "")
@@ -253,7 +253,7 @@ def main():
         if "error" in co or not (co.get("president_name") or "").strip():
             continue
         parts = url_parts(co["_url"])
-        entity_code = f"{parts['ligue'].upper()}{parts['comite']}"
+        entity_code = f"{parts['league'].upper()}{parts['committee']}"
         code = f"PRES-C-{entity_code}"
         presidents.append({
             "code": code, "name": co["president_name"],
@@ -311,52 +311,52 @@ def main():
         return None
 
     club_dept = {}
-    ckey_of_club = {}
+    committee_key_by_club = {}
     for cl in clubs:
         if "error" in cl:
             continue
         parts = url_parts(cl["_url"])
-        ckey = f"{parts['ligue'].upper()}{parts['comite']}"
-        ckey_of_club[cl["_url"]] = ckey
+        committee_key = f"{parts['league'].upper()}{parts['committee']}"
+        committee_key_by_club[cl["_url"]] = committee_key
         dcode = club_department(cl)
         if dcode is not None:
             club_dept[cl["_url"]] = dcode
 
-    ckey_depts = {}
+    depts_by_committee_key = {}
     for url, dcode in club_dept.items():
-        ckey_depts.setdefault(ckey_of_club[url], set()).add(dcode)
+        depts_by_committee_key.setdefault(committee_key_by_club[url], set()).add(dcode)
 
     # Fallback for clubs with no parseable address: if every OTHER club in
     # the same committee agrees on a single department, use it.
     unresolved_urls = [cl["_url"] for cl in clubs if "error" not in cl and cl["_url"] not in club_dept]
     fallback_resolved = 0
     for url in unresolved_urls:
-        ckey = ckey_of_club[url]
-        depts = ckey_depts.get(ckey)
+        committee_key = committee_key_by_club[url]
+        depts = depts_by_committee_key.get(committee_key)
         if depts and len(depts) == 1:
             club_dept[url] = next(iter(depts))
             fallback_resolved += 1
     print(f"{len(unresolved_urls)} clubs had no parseable address; {fallback_resolved} resolved via committee fallback")
 
-    split_committees = {k: v for k, v in ckey_depts.items() if len(v) > 1}
+    split_committees = {k: v for k, v in depts_by_committee_key.items() if len(v) > 1}
     if split_committees:
         print(f"Splitting {len(split_committees)} multi-department committees: {split_committees}")
 
-    def committee_name_for(ckey, dept_code, original_name):
+    def committee_name_for(committee_key, dept_code, original_name):
         # Split committees (e.g. "AUBE - HAUTE-MARNE") get one row per
         # department, each named after its own department - not the shared
         # merged name - so "committee X/Y" becomes "committee X" and
         # "committee Y", matching how every other (non-merged) FFBB
         # committee is already named after its single department.
-        if ckey in split_committees:
+        if committee_key in split_committees:
             return dept_name_by_code[dept_code]
         return original_name
 
     unresolved_committees = [
-        f"{url_parts(co['_url'])['ligue'].upper()}{url_parts(co['_url'])['comite']}"
+        f"{url_parts(co['_url'])['league'].upper()}{url_parts(co['_url'])['committee']}"
         for co in committees
         if "error" not in co
-        and f"{url_parts(co['_url'])['ligue'].upper()}{url_parts(co['_url'])['comite']}" not in ckey_depts
+        and f"{url_parts(co['_url'])['league'].upper()}{url_parts(co['_url'])['committee']}" not in depts_by_committee_key
     ]
     if unresolved_committees:
         print(f"WARNING: {len(unresolved_committees)} committees have no resolvable department: {unresolved_committees}")
@@ -389,7 +389,7 @@ def main():
             continue
         pcode = president_code_by_entity_code.get(("league", lg["code"]))
         pres_sub = f"(SELECT id FROM presidents WHERE code = {sql_str(pcode)})" if pcode else "NULL"
-        region_code = LIGUE_TO_REGION[lg["code"]]
+        region_code = LEAGUE_TO_REGION[lg["code"]]
         league_rows.append(
             f"({sql_str(lg['name'])}, {sql_str(lg['phone'])}, {sql_str(lg['email'])}, "
             f"{sql_str(lg['address'])}, {pres_sub}, "
@@ -404,17 +404,17 @@ def main():
         if "error" in co:
             continue
         parts = url_parts(co["_url"])
-        ckey = f"{parts['ligue'].upper()}{parts['comite']}"
-        depts = ckey_depts.get(ckey)
+        committee_key = f"{parts['league'].upper()}{parts['committee']}"
+        depts = depts_by_committee_key.get(committee_key)
         if not depts:
-            skipped_committees.append(ckey)
+            skipped_committees.append(committee_key)
             continue
-        pcode = president_code_by_entity_code.get(("committee", ckey))
+        pcode = president_code_by_entity_code.get(("committee", committee_key))
         pres_sub = f"(SELECT id FROM presidents WHERE code = {sql_str(pcode)})" if pcode else "NULL"
-        region_code = LIGUE_TO_REGION[parts["ligue"].upper()]
+        region_code = LEAGUE_TO_REGION[parts["league"].upper()]
         league_sub = f"(SELECT lg.id FROM leagues lg JOIN regions r ON lg.region_id = r.id WHERE r.code = {sql_str(region_code)})"
         for dept_code in sorted(depts):
-            name = committee_name_for(ckey, dept_code, co["name"])
+            name = committee_name_for(committee_key, dept_code, co["name"])
             committee_rows.append(
                 f"({sql_str(name)}, {sql_str(co['phone'])}, {sql_str(co['email'])}, "
                 f"{sql_str(co['address'])}, {pres_sub}, "
@@ -434,8 +434,8 @@ def main():
         if "error" in co:
             continue
         parts = url_parts(co["_url"])
-        ckey = f"{parts['ligue'].upper()}{parts['comite']}"
-        committee_name_by_key[ckey] = co["name"]
+        committee_key = f"{parts['league'].upper()}{parts['committee']}"
+        committee_name_by_key[committee_key] = co["name"]
 
     name_counts = {}
     for n in committee_name_by_key.values():
@@ -460,9 +460,9 @@ def main():
         if "error" in cl:
             continue
         parts = url_parts(cl["_url"])
-        ckey = f"{parts['ligue'].upper()}{parts['comite']}"
+        committee_key = f"{parts['league'].upper()}{parts['committee']}"
         dept_code = club_dept.get(cl["_url"])
-        if ckey in skipped_committees or dept_code is None or ckey not in committee_name_by_key:
+        if committee_key in skipped_committees or dept_code is None or committee_key not in committee_name_by_key:
             skipped_clubs.append(cl["code"])
             continue
         pcode = president_code_by_entity_code.get(("club", cl["code"]))
@@ -476,7 +476,7 @@ def main():
         lon = geo.get("longitude") if geo else None
         # department_id narrows this in case two unrelated committees ever
         # share a name - see committee_name_for above for split ones.
-        committee_name = committee_name_for(ckey, dept_code, committee_name_by_key[ckey])
+        committee_name = committee_name_for(committee_key, dept_code, committee_name_by_key[committee_key])
         value_rows.append(
             f"({sql_str(cl['code'])}, {sql_str(cl['name'])}, {sql_str(cl.get('address'))}, "
             f"{sql_str(cl.get('phone'))}, {sql_str(cl.get('email'))}, "

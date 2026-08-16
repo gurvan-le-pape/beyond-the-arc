@@ -94,8 +94,8 @@ def parse_entity(profile: dict) -> dict:
     general = profile.get("general", {})
     contact = get_informations(profile, "contact")
     president = get_informations(profile, "president")
-    correspondant = get_informations(profile, "correspondant")
-    salle = get_informations(profile, "salle")
+    correspondent = get_informations(profile, "correspondant")
+    gym = get_informations(profile, "salle")
     return {
         "code": general.get("id"),
         "name": general.get("label"),
@@ -103,9 +103,9 @@ def parse_entity(profile: dict) -> dict:
         "email": contact.get("E-mail"),
         "address": contact.get("Adresse"),
         "president_name": president.get("Nom"),
-        "correspondant_name": correspondant.get("Nom"),
-        "gym_name": salle.get("Nom"),
-        "gym_address": salle.get("Adresse"),
+        "correspondent_name": correspondent.get("Nom"),
+        "gym_name": gym.get("Nom"),
+        "gym_address": gym.get("Adresse"),
     }
 
 
