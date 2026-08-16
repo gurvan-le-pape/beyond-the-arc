@@ -1,5 +1,5 @@
 // src/frontend/features/geography/types/Region.ts
-import type { components } from "@/shared/types";
+import type { components } from "@/shared/types/api.generated";
 
 /**
  * Region entity, generated from the backend OpenAPI document.

@@ -1,5 +1,5 @@
 // src/frontend/features/organizations/clubs/types/ClubStatsByDepartment.ts
-import type { components } from "@/shared/types";
+import type { components } from "@/shared/types/api.generated";
 
 /**
  * Department-level club statistics, generated from the backend OpenAPI

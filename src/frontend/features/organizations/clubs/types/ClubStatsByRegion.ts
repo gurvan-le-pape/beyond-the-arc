@@ -1,5 +1,5 @@
 // src/frontend/features/organizations/clubs/types/ClubStatsByRegion.ts
-import type { components } from "@/shared/types";
+import type { components } from "@/shared/types/api.generated";
 
 /**
  * Region-level club statistics, generated from the backend OpenAPI

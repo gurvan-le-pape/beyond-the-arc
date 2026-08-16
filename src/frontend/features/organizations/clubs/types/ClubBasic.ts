@@ -1,5 +1,5 @@
 // src/frontend/features/organizations/clubs/types/ClubBasic.ts
-import type { components } from "@/shared/types";
+import type { components } from "@/shared/types/api.generated";
 
 /**
  * Basic club entity, generated from the backend OpenAPI document.

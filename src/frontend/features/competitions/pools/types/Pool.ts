@@ -1,5 +1,5 @@
 // src/frontend/features/competitions/pools/types/Pool.ts
-import type { components } from "@/shared/types";
+import type { components } from "@/shared/types/api.generated";
 
 /**
  * Pool entity, generated from the backend OpenAPI document.

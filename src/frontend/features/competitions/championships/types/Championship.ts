@@ -1,5 +1,5 @@
 // src/frontend/features/competitions/championships/types/Championship.ts
-import type { components } from "@/shared/types";
+import type { components } from "@/shared/types/api.generated";
 
 /**
  * Championship entities, generated from the backend OpenAPI document.
