@@ -1,7 +1,6 @@
-// src/backend/modules/players/aggregate-career-stats.spec.ts
-import type { MappedPlayerMatchStats } from "@common/utils";
-
+// src/backend/common/utils/aggregate-career-stats.spec.ts
 import { aggregateCareerStats } from "./aggregate-career-stats";
+import type { MappedPlayerMatchStats } from "./player-match-stats.mapper";
 
 function makeStats(
   overrides: Partial<MappedPlayerMatchStats> = {},

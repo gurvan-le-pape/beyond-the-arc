@@ -3,13 +3,13 @@ import { CompetitionLevel } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
 import { Category, Gender } from "@common/index";
 import {
+  aggregateCareerStats,
   buildClubOrganizationWhere,
   mapPlayerMatchStats,
   mapPlayerSummary,
   PLAYER_MATCH_STAT_FIELDS_SELECT,
   resolvePagination,
 } from "@common/utils";
-import { aggregateCareerStats } from "@modules/players/aggregate-career-stats";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 
