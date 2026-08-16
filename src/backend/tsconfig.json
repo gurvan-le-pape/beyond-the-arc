@@ -7,11 +7,7 @@
       "prisma/prisma.module": ["./prisma/prisma.module"],
       "prisma/prisma.service": ["./prisma/prisma.service"]
     },
-    "outDir": "dist",
-    "moduleResolution": "node",
-    "target": "ES2022",
-    "module": "commonjs",
-    "strict": true
+    "outDir": "dist"
   },
   "exclude": [],
   "include": ["**/*.ts", "**/*.tsx"]
