@@ -81,6 +81,30 @@ There is no `traceId` and no `userId`: the correlation id is `req.id` and the AP
 
 The id is absent when the request never reached the backend — a network error or a timeout has no response, and therefore no header.
 
+### Separating bugs from operational failures
+
+Two very different 5xx failures produce otherwise identical log lines. A `TypeError` reading a property of `undefined` is a bug in application code; a Prisma connection timeout is the database being slow. Both are logged by `AllExceptionsFilter` at `error`, both carry `msg: "request failed"` — which is deliberately a constant, see above — and both carry a 5xx `statusCode`. Nothing in the line distinguishes them except the serialized `err`.
+
+So the filter adds one field to the first kind:
+
+```
+{service="backend"} | json | programmerError="true"
+```
+
+The set it marks is deliberately conservative — `TypeError`, `RangeError`, `ReferenceError`, in `PROGRAMMER_ERROR_TYPES`. Application-level error classes are operational and are not in it.
+
+**This is a query-time filter, not an alert.** No alert rule routes on it: all six rules in `provisioning/alerting/rules.yml` query Prometheus, and none queries Loki. It is also **not a Loki label** — Promtail attaches no pipeline stage, so nothing promotes it. It does not need to be one, and this is the general point made under "Log format" above: `| json` parses the line and filters on any field it finds, label or not. Labels select streams; fields filter within them.
+
+Verified against a Loki instance rather than assumed. Three lines pushed to one `{service="backend"}` stream — a `TypeError` line carrying the flag, a Prisma-timeout 5xx without it, and a 404 — then queried:
+
+| query | entries |
+|---|---|
+| `{service="backend"}` (control) | 3 |
+| `{service="backend"} \| json \| programmerError="true"` | 1 — the `TypeError` |
+| `{service="backend"} \| json \| programmerError!="true"` | 2 — the other two |
+
+`/loki/api/v1/labels` over the same window returned `service` and `service_name` only, confirming the filter resolved with no label backing it.
+
 ---
 
 ## Error tracking — Sentry
