@@ -8,8 +8,7 @@
       "@modules/*": ["./modules/*"],
       "@common/*": ["./common/*"],
       "prisma/prisma.module": ["./prisma/prisma.module"],
-      "prisma/prisma.service": ["./prisma/prisma.service"],
-      "modules": ["./modules/index.js"]
+      "prisma/prisma.service": ["./prisma/prisma.service"]
     },
     "outDir": "dist",
     // Emitted so a stack trace resolves back to TypeScript instead of to

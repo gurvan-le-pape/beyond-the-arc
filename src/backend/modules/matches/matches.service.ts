@@ -1,7 +1,13 @@
 // src/backend/modules/matches/matches.service.ts
-import { COMPETITION_TIME_ZONE, EventType, Role } from "@common/constants";
+import {
+  Category,
+  COMPETITION_TIME_ZONE,
+  CompetitionLevel,
+  EventType,
+  Gender,
+  Role,
+} from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
-import { Category, CompetitionLevel, Gender } from "@common/index";
 import {
   andWhere,
   buildClubOrganizationWhere,

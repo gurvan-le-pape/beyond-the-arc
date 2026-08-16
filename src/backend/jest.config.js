@@ -17,7 +17,5 @@ module.exports = {
     // tsconfig.json and tsconfig.build.json, which must be kept in step.
     "^prisma/prisma\\.module$": "<rootDir>/prisma/prisma.module",
     "^prisma/prisma\\.service$": "<rootDir>/prisma/prisma.service",
-    "^modules$": "<rootDir>/modules",
-    "^common$": "<rootDir>/common",
   },
 };

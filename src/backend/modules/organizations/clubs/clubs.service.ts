@@ -1,6 +1,6 @@
 // src/backend/modules/organizations/clubs/clubs.service.ts
 import { Category, CompetitionLevel, Gender } from "@common/constants";
-import { PaginatedResponseDto } from "@common/index";
+import { PaginatedResponseDto } from "@common/dto";
 import {
   buildClubOrganizationWhere,
   buildRankCountWhere,

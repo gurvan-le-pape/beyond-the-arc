@@ -1,6 +1,6 @@
 // src/backend/modules/competitions/championships/dto/championships.query.dto.ts
-import { CompetitionLevel } from "@common/constants";
-import { Category, Gender, PaginationQueryDto } from "@common/index";
+import { Category, CompetitionLevel, Gender } from "@common/constants";
+import { PaginationQueryDto } from "@common/dto";
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsEnum, IsInt, IsOptional } from "class-validator";

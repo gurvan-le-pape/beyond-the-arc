@@ -1,7 +1,11 @@
 // src/backend/modules/players/players.service.ts
-import { CompetitionLevel, Position } from "@common/constants";
+import {
+  Category,
+  CompetitionLevel,
+  Gender,
+  Position,
+} from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
-import { Category, Gender } from "@common/index";
 import {
   aggregateCareerStats,
   buildClubOrganizationWhere,

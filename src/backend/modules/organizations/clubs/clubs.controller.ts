@@ -1,11 +1,11 @@
 // src/backend/modules/organizations/clubs/clubs.controller.ts
+import { CACHE_TTL } from "@common/constants";
 import {
   ApiEnvelope,
   ApiEnvelopeList,
   ApiEnvelopePage,
 } from "@common/decorators";
-import { ApiErrorResponseDto } from "@common/dto";
-import { CACHE_TTL, PaginatedResponseDto } from "@common/index";
+import { ApiErrorResponseDto, PaginatedResponseDto } from "@common/dto";
 import { CacheInterceptor } from "@common/interceptors";
 import { ParseEntityIdPipe } from "@common/pipes";
 import {
