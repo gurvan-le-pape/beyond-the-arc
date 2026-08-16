@@ -27,6 +27,7 @@ Backend (`src/backend`):
 ```bash
 npm run test                        # prisma generate && jest
 npx jest path/to/file.spec.ts       # run a single test file
+npm run typecheck                   # tsc --noEmit -p tsconfig.json — covers specs, ~2s, no prisma generate
 npm run lint                        # eslint '**/*.ts'
 npm run lint:fix                    # organize-imports-cli + eslint --fix + prettier --write
 npm run build                       # prisma generate && nest build
