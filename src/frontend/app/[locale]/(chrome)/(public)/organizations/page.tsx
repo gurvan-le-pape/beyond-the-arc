@@ -9,6 +9,7 @@ import {
 } from "@/features/organizations/components";
 import type { OrganizationCounts } from "@/features/organizations/types";
 import { serverStatsService } from "@/features/stats/api/stats.server";
+import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { Divide } from "@/shared/components/primitives";
 import type { LocalePageProps } from "@/shared/types";
@@ -28,7 +29,7 @@ export async function generateMetadata({
   return { title: tMeta("title"), description: tMeta("subtitle") };
 }
 
-export default async function OrganizationsPage({ params }: LocalePageProps) {
+async function OrganizationsPage({ params }: LocalePageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
 
@@ -50,3 +51,5 @@ export default async function OrganizationsPage({ params }: LocalePageProps) {
     </PageLayout>
   );
 }
+
+export default withServerErrorState(OrganizationsPage);

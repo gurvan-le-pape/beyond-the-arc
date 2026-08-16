@@ -22,9 +22,14 @@ import { serverLeaderboardsService } from "@/features/competitions/leaderboards/
 import { serverPoolsService } from "@/features/competitions/pools/api/pools.server";
 import { serverMatchesService } from "@/features/matches/api/matches.server";
 import { LeaderboardTable } from "@/shared/components/domain";
+import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import type { LocalePageProps, SearchParamsProps } from "@/shared/types";
-import { handleServerError, parseRouteId } from "@/shared/utils";
+import {
+  handleServerError,
+  parseRouteId,
+  withServerErrorMetadata,
+} from "@/shared/utils";
 
 // No route directives, and none needed: reading `?pool=` is a request-time API,
 // which already renders this route per request and already keeps it out of the
@@ -32,7 +37,7 @@ import { handleServerError, parseRouteId } from "@/shared/utils";
 // `generateStaticParams` returning [] is never called on a route that is always
 // dynamic. Caching stays where it belongs, on `fetchApi`.
 
-export async function generateMetadata({
+async function buildMetadata({
   params,
 }: LocalePageProps<{ championshipId: string }>): Promise<Metadata> {
   const routeParams = await params;
@@ -62,7 +67,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function ChampionshipsDetailPage({
+async function ChampionshipsDetailPage({
   params,
   searchParams,
 }: LocalePageProps<{ championshipId: string }> &
@@ -141,3 +146,7 @@ export default async function ChampionshipsDetailPage({
     </PageLayout>
   );
 }
+
+export default withServerErrorState(ChampionshipsDetailPage);
+
+export const generateMetadata = withServerErrorMetadata(buildMetadata);

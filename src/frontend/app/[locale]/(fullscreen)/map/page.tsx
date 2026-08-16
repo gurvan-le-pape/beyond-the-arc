@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 
 import { serverClubsService } from "@/features/organizations/clubs/api/clubs.server";
 import { ClubsMapClient } from "@/features/organizations/clubs/components";
+import { withServerErrorState } from "@/shared/components/feedback";
 import { Text } from "@/shared/components/typography";
 import type { LocalePageProps } from "@/shared/types";
 import { handleServerError } from "@/shared/utils";
@@ -20,7 +21,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function MapPage({ params }: LocalePageProps) {
+async function MapPage({ params }: LocalePageProps) {
   // Locale passed explicitly rather than left to next-intl's request fallback:
   // this page never calls `setRequestLocale`, and the fallback reads `headers()`.
   const { locale } = await params;
@@ -56,3 +57,5 @@ export default async function MapPage({ params }: LocalePageProps) {
 // the 990 KB /clubs/all payload — so a render here is a cache read, not three
 // queries.
 export const dynamic = "force-dynamic";
+
+export default withServerErrorState(MapPage);

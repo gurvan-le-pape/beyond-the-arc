@@ -7,11 +7,15 @@ import { serverChampionshipsService } from "@/features/competitions/championship
 import { serverClubsService } from "@/features/organizations/clubs/api/clubs.server";
 import { serverCommitteesService } from "@/features/organizations/committees/api/committees.server";
 import { OrganizationDetailView } from "@/features/organizations/shared/components";
-import { EmptyState } from "@/shared/components/feedback";
+import { EmptyState, withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { CompetitionLevel } from "@/shared/constants";
 import type { LocalePageProps } from "@/shared/types";
-import { handleServerError, parseRouteId } from "@/shared/utils";
+import {
+  handleServerError,
+  parseRouteId,
+  withServerErrorMetadata,
+} from "@/shared/utils";
 
 // The image build has no backend to enumerate committees against, so this can
 // only ever return an empty list — but it has to be exported anyway. Upstream:
@@ -26,7 +30,7 @@ export async function generateStaticParams() {
 export const dynamicParams = true;
 export const revalidate = 3600;
 
-export async function generateMetadata({
+async function buildMetadata({
   params,
 }: LocalePageProps<{ committeeId: string }>): Promise<Metadata> {
   const routeParams = await params;
@@ -44,7 +48,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function CommitteePage({
+async function CommitteePage({
   params,
 }: LocalePageProps<{ committeeId: string }>) {
   const routeParams = await params;
@@ -113,3 +117,7 @@ export default async function CommitteePage({
     </PageLayout>
   );
 }
+
+export default withServerErrorState(CommitteePage);
+
+export const generateMetadata = withServerErrorMetadata(buildMetadata);

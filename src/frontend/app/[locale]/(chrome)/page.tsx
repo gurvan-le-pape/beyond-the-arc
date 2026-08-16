@@ -11,6 +11,7 @@ import {
 } from "@/features/site/home/constants";
 import { serverStatsService } from "@/features/stats/api/stats.server";
 import { Link } from "@/navigation";
+import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { buttonVariants } from "@/shared/components/primitives";
 import { StatCell } from "@/shared/components/stats";
@@ -49,7 +50,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function Home({ params }: LocalePageProps) {
+async function Home({ params }: LocalePageProps) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "home" });
 
@@ -174,3 +175,5 @@ export default async function Home({ params }: LocalePageProps) {
     </PageLayout>
   );
 }
+
+export default withServerErrorState(Home);

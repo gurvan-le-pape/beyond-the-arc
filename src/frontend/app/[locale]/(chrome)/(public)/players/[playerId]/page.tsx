@@ -11,9 +11,14 @@ import {
   PlayerMatchHistoryTable,
 } from "@/features/players/components";
 import { PerGameStatsPanel } from "@/shared/components/domain";
+import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import type { LocalePageProps } from "@/shared/types";
-import { handleServerError, parseRouteId } from "@/shared/utils";
+import {
+  handleServerError,
+  parseRouteId,
+  withServerErrorMetadata,
+} from "@/shared/utils";
 
 // Don't pre-build - hundreds of thousands of licensed players
 export async function generateStaticParams() {
@@ -26,7 +31,7 @@ export const dynamicParams = true;
 // always been what was in force, whatever the number above it said.
 export const revalidate = 60;
 
-export async function generateMetadata({
+async function buildMetadata({
   params,
 }: LocalePageProps<{ playerId: string }>): Promise<Metadata> {
   const routeParams = await params;
@@ -44,7 +49,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function PlayerDetailPage({
+async function PlayerDetailPage({
   params,
 }: LocalePageProps<{ playerId: string }>) {
   const routeParams = await params;
@@ -86,3 +91,7 @@ export default async function PlayerDetailPage({
     </PageLayout>
   );
 }
+
+export default withServerErrorState(PlayerDetailPage);
+
+export const generateMetadata = withServerErrorMetadata(buildMetadata);
