@@ -40,7 +40,7 @@ TypeScript 6.0 is a transition release toward the 7.0 native rewrite. It **chang
   { "compilerOptions": { "types": ["node", "jest"] } }
   ```
 
-  Neither application declares `@types/node` in its manifest even though both resolve it transitively — declare it wherever you list it in `types`. `[manifest]`+`[upstream]`
+  Whatever you list in `types` must be declared in that project's manifest — naming `node` there is only safe if `@types/node` is a declared dependency, not a transitive one. See `dependencies-and-lockfiles.md`. `[manifest]`+`[upstream]`
 - If a config previously relied on `rootDir` being inferred from the input file set, it must now set `rootDir` explicitly or the emitted directory structure changes. This matters for the backend, which emits to `dist` and then rewrites paths with `tsc-alias`. `[upstream]`+`[manifest]`
 - Do not "fix" a new 6.0 error by turning `strict` back off. Fix the code. `[principle]`
 

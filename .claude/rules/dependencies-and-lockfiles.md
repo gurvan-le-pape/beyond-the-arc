@@ -37,7 +37,6 @@ These are real, currently-locked mismatches. Do not assume the two applications 
 |---|---|---|
 | `eslint` | `9.39.4` | `9.39.2` |
 | `eslint-plugin-sonarjs` | `3.0.7` | `3.0.5` |
-| `@types/node` | `25.7.0` (transitive) | `25.0.3` (transitive) |
 
 - They declare **different** eslint ranges — `src/frontend` `^9.39.2`, `src/backend` `^9.20.1` — so the drift is a declared one, not merely a lockfile artefact. Lint results can legitimately differ between the two projects; when a rule fires in one and not the other, check the locked versions before hunting for a config difference. `[manifest]`
 - `typescript` (`6.0.3`), `@typescript-eslint/*` (`8.59.3`), `prettier` (`3.7.4`), `barrelsby` (`2.8.1`), `eslint-plugin-simple-import-sort` (`12.1.1`), and `organize-imports-cli` (`1.0.2`) **are** aligned across both applications. Keep them that way — divergence there would cause the two projects to disagree about formatting or type semantics. `[manifest]`+`[principle]`
@@ -52,7 +51,7 @@ These are real, currently-locked mismatches. Do not assume the two applications 
 ## Undeclared-but-used dependencies
 
 - `date-fns@4.1.0` resolves in **both** projects, but only `src/frontend` declares it. The backend gets it transitively through `date-fns-tz`. If backend code imports `date-fns` directly, declare it in `src/backend/package.json`. `[manifest]`+`[principle]`
-- Neither project declares `@types/node`, yet both resolve it. Under TypeScript 6 the `types` compiler option defaults to `[]`, so `@types/node` is only in scope if the tsconfig names it — and it is only guaranteed present if the manifest declares it. Declare it in both. `[manifest]`+`[upstream]`
+- **`@types/node` must be declared by any project whose tsconfig names `node` in `types`.** Under TypeScript 6 the `types` compiler option defaults to `[]`, so the package is only in scope if the tsconfig names it — and naming it only works if the manifest guarantees the package is there. A transitive resolution is not that guarantee: it can disappear under an unrelated dependency bump, and the failure surfaces as `Cannot find name 'process'` in a project nobody touched. `[manifest]`+`[upstream]`
 - `src/frontend` does **not** declare `eslint-config-next`; it declares `@next/eslint-plugin-next` directly. The flat config must therefore wire that plugin and its rules by hand. `[manifest]`
 
 ## `overrides`
