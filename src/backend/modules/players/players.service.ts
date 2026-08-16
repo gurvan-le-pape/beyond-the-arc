@@ -3,6 +3,7 @@ import { CompetitionLevel, Position } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
 import { Category, Gender } from "@common/index";
 import {
+  aggregateCareerStats,
   buildClubOrganizationWhere,
   mapPlayerMatchStats,
   mapPlayerSummary,
@@ -14,7 +15,6 @@ import { formatInTimeZone } from "date-fns-tz";
 import { PrismaService } from "prisma/prisma.service";
 
 import { Prisma } from "../../prisma/generated/prisma/client";
-import { aggregateCareerStats } from "./aggregate-career-stats";
 import type {
   FilterValuesPlayersResponseDto,
   MatchHistoryDto,

@@ -1,5 +1,5 @@
 // src/backend/modules/teams/aggregate-team-season-stats.ts
-import { aggregateCareerStats } from "@modules/players/aggregate-career-stats";
+import { aggregateCareerStats } from "@common/utils";
 
 import type {
   TeamMatchHistoryDto,
