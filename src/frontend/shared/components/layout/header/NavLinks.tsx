@@ -14,6 +14,22 @@ interface NavLinksProps {
   className?: string;
 }
 
+/**
+ * The site navigation links, marking the current section.
+ *
+ * **`asList` changes semantics, not just layout.** As a list it renders
+ * `<ul>`/`<li>` with `role="menuitem"` links for the mobile menu; otherwise it
+ * renders them inline for the desktop bar. Pick it to match the surrounding
+ * structure, not the appearance you want.
+ *
+ * A link is active on an exact path match **or** on a path beneath it, so a
+ * championship detail page keeps "Championships" highlighted while `/searchfoo`
+ * never matches `/search`.
+ *
+ * The link set comes from the `navItems` constant rather than props — adding a
+ * destination is a change there, and it appears in both layouts at once.
+ * `onClick` exists so the mobile menu can close itself on navigation.
+ */
 export const NavLinks: React.FC<NavLinksProps> = ({
   onClick,
   asList = false,
@@ -24,9 +40,8 @@ export const NavLinks: React.FC<NavLinksProps> = ({
 
   const renderLink = React.useCallback(
     (item: (typeof navItems)[number]) => {
-      // The `item.href !== "/"` guard this replaces was unreachable: no nav
-      // item is "/". Matching on a trailing slash keeps "/championships/12"
-      // active without letting "/search" match a sibling like "/searchfoo".
+      // The trailing slash is what keeps "/championships/12" active without
+      // letting "/search" also match a sibling like "/searchfoo".
       const isActive =
         pathname === item.href || pathname.startsWith(`${item.href}/`);
 

@@ -28,6 +28,20 @@ interface SortControlsProps {
 // Component
 // ---------------------------------------------------------------------------
 
+/**
+ * The row of sort buttons above the roster, showing which key is active and in
+ * which direction.
+ *
+ * **`SORT_OPTIONS` here and the sort switch in `TeamRoster` must stay in step.**
+ * A key added to this list renders a button immediately, but falls through to
+ * the switch's default and returns 0 — the button highlights, the arrow flips,
+ * and nothing reorders. Neither the compiler nor a test catches that; the two
+ * lists are joined only by the `SortKey` union.
+ *
+ * Labels come from two namespaces on purpose: the stat abbreviations are shared
+ * vocabulary in `common`, while "player" and the number heading are the team
+ * page's own wording.
+ */
 export function SortControls({ sortConfig, onSort }: SortControlsProps) {
   const tCommon = useTranslations("common");
   const tTeams = useTranslations("teams");

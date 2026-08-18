@@ -28,6 +28,25 @@ interface PlayersFiltersProps {
   onReset: () => void;
 }
 
+/**
+ * The filter panel for the players list — name search, club, category, gender,
+ * jersey and team number, and the level → committee/league cascade.
+ *
+ * Holds no state of its own: `filters` and `setters` come from
+ * `usePlayersFilterState`, which also owns the reset-to-page-1 behaviour. Wiring
+ * it to hand-rolled state instead loses that.
+ *
+ * Two option sources are fetched here rather than passed in — `useLocationOptions`
+ * for committees and leagues, `usePlayerFilterValues` for the jersey and team
+ * numbers that actually occur. The latter is not optional: without it those
+ * dropdowns render empty, which reads as "no players match" rather than as a
+ * failure. Location errors surface inline with a retry; the rest of the panel
+ * stays usable.
+ *
+ * Rendered inside `FiltersShell`, so this subtree exists **twice** in the DOM —
+ * once in the mobile sheet, once in the desktop card. Nothing here may rely on a
+ * unique `id` or on being mounted once.
+ */
 export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
   filters,
   setters,
@@ -153,7 +172,6 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
         />
       )}
 
-      {/* Row 1: Name search + Club */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <DebouncedInput
           variant="search"
@@ -173,7 +191,6 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
         />
       </div>
 
-      {/* Row 2: Category + Gender */}
       <CategoryGenderSelects
         category={category}
         setCategory={setCategory}
@@ -181,7 +198,6 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
         setGender={setGender}
       />
 
-      {/* Row 3: Player number + Team number */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Select
           label={tCommon("filters.playerNumbers")}
@@ -199,10 +215,8 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
         />
       </div>
 
-      {/* Divider */}
       <div className="border-t border-divide" />
 
-      {/* Row 4: Level → Committee/League */}
       <LevelLocationFilters
         level={level}
         setLevel={setLevel}

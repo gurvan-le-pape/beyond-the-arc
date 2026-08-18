@@ -24,6 +24,9 @@ import { unstable_rethrow } from "next/navigation";
  * `unstable_rethrow` first, for the same reason as the page wrapper:
  * `handleServerError` turns a 404 into `notFound()`, which is a throw, and
  * several pages depend on that happening in `generateMetadata`.
+ *
+ * @param generateMetadata - the page's own metadata builder, which may fetch
+ * @returns a drop-in replacement that falls back to `{}` rather than throwing
  */
 export function withServerErrorMetadata<P extends object>(
   generateMetadata: (props: P) => Promise<Metadata>,

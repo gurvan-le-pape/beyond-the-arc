@@ -40,6 +40,13 @@ function getCellValue(
   return cell.total;
 }
 
+/**
+ * Binned heatmap of shot density — one coloured cell per grid bin.
+ *
+ * Zero-shot cells render nothing, and the colour domain is fixed to
+ * `0..maxValue`, which the caller must precompute across the whole grid so the
+ * same value means the same colour everywhere.
+ */
 export const HeatmapOverlay: React.FC<HeatmapOverlayProps> = ({
   heatmapData,
   shotFilter,

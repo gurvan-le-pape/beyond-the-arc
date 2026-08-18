@@ -22,7 +22,7 @@ import type { ClubStatsByDepartment } from "../types/ClubStatsByDepartment";
  * - Never call directly from components
  *
  * @example
- * import { clubsService } from '@/lib/services/client';
+ * import { clubsService } from "@/features/organizations/clubs/api";
  * const clubs = await clubsService.getAll({ leagueId: 1 });
  */
 export const clubsService = {
@@ -35,6 +35,8 @@ export const clubsService = {
    *
    * @example
    * const clubs = await clubsService.getAll({ leagueId: 1 });
+   *
+   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
    */
   async getAll(
     filters?: ClubFilters,
@@ -56,6 +58,8 @@ export const clubsService = {
    *
    * @example
    * const club = await clubsService.getById(123);
+   *
+   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
    */
   async getById(id: number, signal?: AbortSignal): Promise<ClubDetailed> {
     const { data } = await apiClient.get<ClubDetailed>(`/clubs/${id}`, {
@@ -73,6 +77,8 @@ export const clubsService = {
    * @example
    * const stats = await clubsService.getStatsByRegion();
    * // [{ regionId: 1, regionName: 'Bretagne', clubCount: 45 }, ...]
+   *
+   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
    */
   async getStatsByRegion(signal?: AbortSignal): Promise<ClubStatsByRegion[]> {
     const { data } = await apiClient.get<ClubStatsByRegion[]>(
@@ -97,6 +103,8 @@ export const clubsService = {
    * @example
    * // Filter by regional league
    * const stats = await clubsService.getStatsByDepartment(1);
+   *
+   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
    */
   async getStatsByDepartment(
     leagueId?: number,
@@ -121,6 +129,8 @@ export const clubsService = {
    *
    * @example
    * const clubs = await clubsService.getAllClubs();
+   *
+   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
    */
   async getAllClubs(signal?: AbortSignal): Promise<ClubBasic[]> {
     const { data } = await apiClient.get<ClubBasic[]>("/clubs/all", { signal });

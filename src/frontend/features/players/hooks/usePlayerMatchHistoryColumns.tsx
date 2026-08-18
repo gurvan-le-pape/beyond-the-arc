@@ -13,6 +13,22 @@ import type { TableColumn } from "@/shared/components/table";
 import type { Player } from "../types/Player";
 import type { PlayerMatchHistory } from "../types/PlayerMatchHistory";
 
+/**
+ * Column definitions for a player's match-history table: date, matchup, then
+ * the per-game stat line.
+ *
+ * `player` is read only for its team id, which the matchup column needs to
+ * decide which side is "home" from this player's point of view. **A player with
+ * no team falls back to `-1`**, an id that matches nothing, so the matchup
+ * renders without the perspective rather than throwing.
+ *
+ * Memoised on the player and locale — the returned array is a new reference
+ * only when one of those changes, which is what keeps `DataTable` from
+ * re-rendering every row on an unrelated parent update.
+ *
+ * @param player - the player the table belongs to; supplies the team id
+ * @returns column definitions, stable between renders
+ */
 export function usePlayerMatchHistoryColumns(
   player: Player,
 ): TableColumn<PlayerMatchHistory>[] {

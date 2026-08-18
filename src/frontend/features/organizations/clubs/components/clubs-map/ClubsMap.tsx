@@ -222,12 +222,10 @@ export function ClubsMap({
         onClick={onClick}
         style={{ width: "100%", height: "100%" }}
       >
-        {/* Regions Layer */}
         {showRegions && regionsGeoJson && (
           <RegionsLayer geoJson={regionsGeoJson} labels={regionLabels} />
         )}
 
-        {/* Departments Layer */}
         {showDepartments && departmentsGeoJson && (
           <DepartmentsLayer
             geoJson={departmentsGeoJson}
@@ -235,10 +233,8 @@ export function ClubsMap({
           />
         )}
 
-        {/* Clubs Layer */}
         {clubPoints && <ClubsLayer geoJson={clubPoints} />}
 
-        {/* Club Popup */}
         {selectedClub && (
           <Popup
             longitude={selectedClub.longitude!}
@@ -253,7 +249,6 @@ export function ClubsMap({
         )}
       </MapGL>
 
-      {/* Side Panel */}
       <SidePanel
         clubs={displayClubs}
         filters={filters}

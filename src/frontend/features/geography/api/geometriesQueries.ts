@@ -56,6 +56,10 @@ const FRANCE_LAT_RANGE = [41, 51.5] as const;
  * a French coordinate is roughly `[2.6, 49.1]`; transposed it becomes
  * `[49.1, 2.6]`, and 49.1 is far outside the longitude range France occupies.
  * The two ranges do not overlap, so the order is recoverable from one point.
+ *
+ * @param data - the parsed GeoJSON asset
+ * @param source - the asset's name, for the error message when the check fails
+ * @returns the data unchanged when the order is right; throws otherwise, so a transposed file never reaches the map
  */
 function assertLngLatOrder(data: GeoJsonData, source: string): GeoJsonData {
   const feature = data.features?.[0];
@@ -89,6 +93,8 @@ export const geometriesQueries = {
    *
    * @example
    * useQuery(geometriesQueries.regions())
+   *
+   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
    */
   regions: () => ({
     queryKey: geometriesKeys.regions(),
@@ -105,6 +111,8 @@ export const geometriesQueries = {
    *
    * @example
    * useQuery(geometriesQueries.departments())
+   *
+   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
    */
   departments: () => ({
     queryKey: geometriesKeys.departments(),
@@ -128,6 +136,9 @@ export const geometriesPrefetch = {
    * @example
    * const prefetch = geometriesPrefetch.regions(queryClient);
    * <MapSection onMouseEnter={() => prefetch()} />
+   *
+   * @param queryClient - the client to warm
+   * @returns a prefetcher taking no arguments — the asset has one cache entry
    */
   regions: (queryClient: QueryClient) => () => {
     queryClient.prefetchQuery(geometriesQueries.regions()).catch(() => {
@@ -141,6 +152,9 @@ export const geometriesPrefetch = {
    * @example
    * const prefetch = geometriesPrefetch.departments(queryClient);
    * <RegionCard onMouseEnter={() => prefetch()} />
+   *
+   * @param queryClient - the client to warm
+   * @returns a prefetcher taking no arguments — the asset has one cache entry
    */
   departments: (queryClient: QueryClient) => () => {
     queryClient.prefetchQuery(geometriesQueries.departments()).catch(() => {});

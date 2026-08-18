@@ -22,7 +22,7 @@ import type { MatchPlayerStatsResponse } from "../types/MatchPlayerStats";
  * - Never call directly from components
  *
  * @example
- * import { matchesService } from '@/lib/services/client';
+ * import { matchesService } from "@/features/matches/api";
  * const matches = await matchesService.getAll({ championshipId: 1 });
  */
 export const matchesService = {
@@ -39,6 +39,8 @@ export const matchesService = {
    *   page: 1,
    *   limit: 20,
    * });
+   *
+   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
    */
   async getAll(
     filters?: MatchFilters,
@@ -60,6 +62,8 @@ export const matchesService = {
    *
    * @example
    * const match = await matchesService.getById(12345);
+   *
+   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
    */
   async getById(id: number, signal?: AbortSignal): Promise<MatchDetail> {
     const { data } = await apiClient.get<MatchDetail>(`/matches/${id}`, {
@@ -78,6 +82,8 @@ export const matchesService = {
    *
    * @example
    * const matches = await matchesService.getByPoolId(10);
+   *
+   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
    */
   async getByPoolId(poolId: number, signal?: AbortSignal): Promise<Match[]> {
     const { data } = await apiClient.get<Match[]>(`/matches/pool/${poolId}`, {
@@ -97,6 +103,8 @@ export const matchesService = {
    *
    * @example
    * const matches = await matchesService.getByChampionshipId(5);
+   *
+   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
    */
   async getByChampionshipId(
     championshipId: number,
@@ -137,6 +145,8 @@ export const matchesService = {
    * @example
    * const events = await matchesService.getEventsByMatchId(12345);
    * // [{ type: 'point', minute: 23, playerId: 789, ... }, ...]
+   *
+   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
    */
   async getEventsByMatchId(
     matchId: number,
@@ -158,6 +168,8 @@ export const matchesService = {
    *
    * @example
    * const events = await matchesService.getEventsByTeamId(456);
+   *
+   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
    */
   async getEventsByTeamId(
     teamId: number,
@@ -179,6 +191,8 @@ export const matchesService = {
    *
    * @example
    * const events = await matchesService.getEventsByPlayerId(789);
+   *
+   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
    */
   async getEventsByPlayerId(
     playerId: number,
@@ -206,6 +220,8 @@ export const matchesService = {
    * @example
    * const stats = await matchesService.getPlayerStatsByMatchId(12345);
    * // { homeTeam: [...], awayTeam: [...] }
+   *
+   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
    */
   async getPlayerStatsByMatchId(
     matchId: number,

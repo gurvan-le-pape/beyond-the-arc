@@ -25,6 +25,15 @@ interface ShotModalProps {
   getPlayerShots: (playerId: number) => MatchEvent[];
 }
 
+/**
+ * Full-screen shot-chart dialog for one player: scoreboard header, scatter
+ * chart, and a PNG download of the chart.
+ *
+ * `getPlayerShots` is invoked during render while the modal is open, so it
+ * should be a cheap lookup rather than a one-shot fetch. The download button
+ * sits outside the capture ref on purpose — the PNG is the chart, not the
+ * scoreboard.
+ */
 export const ShotModal: React.FC<ShotModalProps> = ({
   open,
   player,
@@ -93,13 +102,11 @@ export const ShotModal: React.FC<ShotModalProps> = ({
           <div className="relative w-full max-w-2xl surface-subtle rounded-2xl shadow-2xl">
             {/* Header — intentional decorative gradient, stays as raw Tailwind */}
             <div className="bg-gradient-to-r from-[#1976d2] to-[#43a047] text-white rounded-t-2xl px-6 pt-5 pb-4 flex items-center justify-center relative min-h-[64px]">
-              {/* Team 1 */}
               <div className="flex-1 flex items-center justify-end font-bold text-lg pr-4 text-right whitespace-normal break-words">
                 <span className="bg-white/10 rounded px-3 py-1 inline-block">
                   {teamName}
                 </span>
               </div>
-              {/* Scoreboard */}
               <div className="flex flex-col items-center justify-center mx-3 min-w-[90px]">
                 <div className="font-extrabold text-3xl tracking-wide bg-white/20 rounded-xl px-6 py-0.5 text-white shadow mb-0.5">
                   {teamScore}{" "}
@@ -110,13 +117,11 @@ export const ShotModal: React.FC<ShotModalProps> = ({
                   {t("matchHistory.score")}
                 </div>
               </div>
-              {/* Team 2 */}
               <div className="flex-1 flex items-center justify-start font-bold text-lg pl-4 text-left whitespace-normal break-words">
                 <span className="bg-white/10 rounded px-3 py-1 inline-block">
                   {opponentTeamName}
                 </span>
               </div>
-              {/* Close button */}
               <Button
                 variant="ghost"
                 size="icon"

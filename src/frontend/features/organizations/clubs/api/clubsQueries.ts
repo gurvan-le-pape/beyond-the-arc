@@ -63,6 +63,9 @@ export const clubsQueries = {
    *
    * @example
    * useQuery(clubsQueries.list({ committeeId: 123 }))
+   *
+   * @param filters - filter and pagination criteria; part of the cache key, so each combination caches separately
+   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
    */
   list: (filters?: ClubFilters) => ({
     queryKey: clubsKeys.list(filters),
@@ -76,6 +79,9 @@ export const clubsQueries = {
    *
    * @example
    * useQuery(clubsQueries.detail(123))
+   *
+   * @param id - the club's id
+   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
    */
   detail: (id: number) => ({
     queryKey: clubsKeys.detail(id),
@@ -91,6 +97,8 @@ export const clubsQueries = {
    *
    * @example
    * useQuery(clubsQueries.statsByRegion())
+   *
+   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
    */
   statsByRegion: () => ({
     queryKey: clubsKeys.statsByRegion(),
@@ -109,6 +117,8 @@ export const clubsQueries = {
    *
    * @example
    * useQuery(clubsQueries.statsByDepartment())
+   *
+   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
    */
   statsByDepartment: () => ({
     queryKey: clubsKeys.statsByDepartment(),
@@ -124,6 +134,8 @@ export const clubsQueries = {
    *
    * @example
    * useQuery(clubsQueries.allClubs())
+   *
+   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
    */
   allClubs: () => ({
     queryKey: clubsKeys.allClubs(),
@@ -146,6 +158,10 @@ export const clubsQueries = {
    *
    * @example
    * useQuery(clubsQueries.search("monaco", { leagueId: 3 }))
+   *
+   * @param search - the term to match club names against
+   * @param filters - optional committee or league scope
+   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
    */
   search: (
     search: string,
@@ -170,6 +186,9 @@ export const clubsPrefetch = {
    * @example
    * const prefetch = clubsPrefetch.detail(queryClient);
    * <tr onMouseEnter={() => prefetch(club.id)} />
+   *
+   * @param queryClient - the client to warm
+   * @returns a prefetcher taking a club id — call it on hover or focus, before navigation
    */
   detail: (queryClient: QueryClient) => (clubId: number) => {
     queryClient.prefetchQuery(clubsQueries.detail(clubId)).catch(() => {
@@ -183,6 +202,9 @@ export const clubsPrefetch = {
    * @example
    * const prefetch = clubsPrefetch.list(queryClient);
    * <Tab onMouseEnter={() => prefetch({ committeeId: 5 })} />
+   *
+   * @param queryClient - the client to warm
+   * @returns a prefetcher taking filters — warms the same key the list query will read
    */
   list: (queryClient: QueryClient) => (filters?: ClubFilters) => {
     queryClient.prefetchQuery(clubsQueries.list(filters)).catch(() => {});
@@ -194,6 +216,9 @@ export const clubsPrefetch = {
    * @example
    * const prefetch = clubsPrefetch.statsByRegion(queryClient);
    * <MapSection onMouseEnter={() => prefetch()} />
+   *
+   * @param queryClient - the client to warm
+   * @returns a prefetcher taking no arguments — the aggregate has one cache entry
    */
   statsByRegion: (queryClient: QueryClient) => () => {
     queryClient.prefetchQuery(clubsQueries.statsByRegion()).catch(() => {});
@@ -201,6 +226,9 @@ export const clubsPrefetch = {
 
   /**
    * Prefetch department stats (e.g., on drill-down navigation).
+   *
+   * @param queryClient - the client to warm
+   * @returns a prefetcher taking no arguments — the aggregate has one cache entry
    */
   statsByDepartment: (queryClient: QueryClient) => () => {
     queryClient.prefetchQuery(clubsQueries.statsByDepartment()).catch(() => {});
@@ -208,6 +236,9 @@ export const clubsPrefetch = {
 
   /**
    * Prefetch all clubs list (e.g., before a select/autocomplete mounts).
+   *
+   * @param queryClient - the client to warm
+   * @returns a prefetcher taking no arguments — the full list has one cache entry
    */
   allClubs: (queryClient: QueryClient) => () => {
     queryClient.prefetchQuery(clubsQueries.allClubs()).catch(() => {});

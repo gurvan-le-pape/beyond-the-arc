@@ -24,6 +24,18 @@ interface FiltersShellProps {
   readonly title: string;
 }
 
+/**
+ * The responsive chrome around a set of filter controls: a trigger button and
+ * `BottomSheet` below `md`, an inline `Card` above it.
+ *
+ * **`children` is rendered twice** — once in the sheet, once in the card — and
+ * both copies are in the DOM at all times, with only `md:hidden` /
+ * `hidden md:block` deciding which is visible. Anything inside must therefore
+ * tolerate being duplicated: no bare `id`/`htmlFor` pairs, no `autoFocus`, and
+ * no uncontrolled inputs, or the two copies will collide or drift apart. Filter
+ * state belongs to the caller and is passed down, which is what keeps the two
+ * copies agreeing.
+ */
 export function FiltersShell({
   children,
   activeFilterCount,
@@ -38,7 +50,6 @@ export function FiltersShell({
 
   return (
     <>
-      {/* Mobile trigger */}
       <div className="md:hidden">
         <Button
           type="button"
@@ -107,7 +118,6 @@ export function FiltersShell({
         </BottomSheet>
       </div>
 
-      {/* Desktop */}
       <div className="hidden md:block">
         <Card variant="highlighted" padding="lg">
           <div className="space-y-5">

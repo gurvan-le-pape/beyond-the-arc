@@ -32,6 +32,11 @@ function toDate(date: Date | string): Date {
  * `Intl.DateTimeFormat` resolves the zone and the locale in one pass, so no
  * conversion is chained ahead of the format and no `Date` is produced that
  * lies about its own zone.
+ *
+ * @param date - the instant, as a `Date` or an ISO string
+ * @param locale - BCP 47 tag deciding wording and field order
+ * @param parts - which fields to render; the time zone is fixed and not overridable
+ * @returns the formatted string in the competition's zone
  */
 function formatIn(
   date: Date | string,
@@ -49,6 +54,7 @@ function formatIn(
  *
  * @param date - Match instant (ISO string in UTC)
  * @param locale - Active locale, from `useLocale()` or the route's `params`
+ * @returns date and time together, in the competition's zone
  */
 export function formatMatchDateTime(
   date: Date | string,
@@ -57,12 +63,20 @@ export function formatMatchDateTime(
   return formatIn(date, locale, { ...DATE_PARTS, ...TIME_PARTS });
 }
 
-/** Just the date, in the competition's zone and the viewer's locale. */
+/** Just the date, in the competition's zone and the viewer's locale. *
+ * @param date - the instant, as a `Date` or an ISO string
+ * @param locale - BCP 47 tag, from `useLocale()` or the route params
+ * @returns the date alone — the instant's zone is the competition's, not the viewer's
+ */
 export function formatMatchDate(date: Date | string, locale: string): string {
   return formatIn(date, locale, DATE_PARTS);
 }
 
-/** Just the time, in the competition's zone and the viewer's locale. */
+/** Just the time, in the competition's zone and the viewer's locale. *
+ * @param date - the instant, as a `Date` or an ISO string
+ * @param locale - BCP 47 tag, from `useLocale()` or the route params
+ * @returns the time alone — the instant's zone is the competition's, not the viewer's
+ */
 export function formatMatchTime(date: Date | string, locale: string): string {
   return formatIn(date, locale, TIME_PARTS);
 }

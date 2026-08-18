@@ -7,6 +7,13 @@ interface ChampionshipListItemProps {
   readonly championship: Championship;
 }
 
+/**
+ * A championship as a row in an organisation's detail page.
+ *
+ * A championship has no name of its own — the label is assembled from its
+ * category, gender and division, so a row missing any of those reads as a
+ * partial title rather than as an error.
+ */
 export function ChampionshipListItem({
   championship,
 }: ChampionshipListItemProps) {

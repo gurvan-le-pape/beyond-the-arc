@@ -9,6 +9,11 @@ import type { Championship, ChampionshipNavLink } from "../types";
  *
  * `championships` is the sibling list the page already fetched — every
  * championship of this organization at this level.
+ *
+ * @returns the category tabs for a championship listing, in display order
+ *
+ * @param championships - the sibling list the page already fetched, at this organisation and level
+ * @param championship - the one currently shown, whose gender scopes the links and whose category is excluded
  */
 export function buildCategoryNavigation(
   championships: Championship[],

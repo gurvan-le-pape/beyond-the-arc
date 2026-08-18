@@ -14,6 +14,17 @@ interface StatValueProps {
   readonly align: "left" | "right";
 }
 
+/**
+ * One side's value in a comparison row, styled by whether it won.
+ *
+ * The two variants mark the winner differently and that is the whole of the
+ * difference: **dual** underlines the winning value and draws no bar here,
+ * while **mirrored** colours it and grows a full-width pill beneath it. Passing
+ * `isDual` therefore changes what renders, not just how it looks.
+ *
+ * The pill starts 300ms after `delayMs`, so a row's value settles before its
+ * bar moves.
+ */
 export function StatValue({
   value,
   winner,

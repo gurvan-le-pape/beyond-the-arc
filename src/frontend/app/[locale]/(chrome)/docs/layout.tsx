@@ -18,10 +18,16 @@ export async function generateMetadata({
   return { title: tMeta("docs.title"), description: tMeta("docs.intro") };
 }
 
-export default function DocsLayout({
-  children,
-}: {
+interface DocsLayoutProps {
   readonly children: React.ReactNode;
-}) {
+}
+
+/**
+ * Passes its children through untouched.
+ *
+ * The segment exists only so `generateMetadata` above has somewhere to live —
+ * see that function. There is no wrapper markup to add here.
+ */
+export default function DocsLayout({ children }: DocsLayoutProps) {
   return children;
 }

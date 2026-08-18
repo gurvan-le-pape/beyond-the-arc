@@ -4,6 +4,10 @@
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import type { ReactNode } from "react";
 
+interface ThemeProviderProps {
+  readonly children: ReactNode;
+}
+
 /**
  * Theme provider — registers all supported themes.
  *
@@ -12,7 +16,7 @@ import type { ReactNode } from "react";
  *  2. Add the name to the themes array below
  *  That's it — no component changes needed.
  */
-export function ThemeProvider({ children }: { readonly children: ReactNode }) {
+export function ThemeProvider({ children }: ThemeProviderProps) {
   return (
     <NextThemesProvider
       attribute="class"

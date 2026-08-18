@@ -13,6 +13,14 @@ interface MatchesSectionProps {
   readonly onToggleExpand: (matchId: number) => void;
 }
 
+/**
+ * The fixtures of the selected matchday.
+ *
+ * Expansion state is **a list of ids held by the parent**, not per-card state,
+ * so more than one match can be open at once and the set survives changing
+ * matchday. Wiring `onToggleExpand` to local state instead would collapse
+ * everything on every re-render.
+ */
 export function MatchesSection({
   currentMatches,
   expandedMatchIds,

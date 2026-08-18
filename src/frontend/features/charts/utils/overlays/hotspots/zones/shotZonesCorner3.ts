@@ -20,6 +20,12 @@ function containsCorner3Right(x: number, y: number) {
   );
 }
 
+/**
+ * The two corner-three zones: the rectangles between each sideline and the
+ * three-point line.
+ *
+ * @returns the zone definitions in court units, each with the bounding box used to draw it and the `contains` predicate used to hit-test it; bounds are half-open so a shot on a shared edge falls in exactly one zone
+ */
 export function getCorner3Zones() {
   return [
     {

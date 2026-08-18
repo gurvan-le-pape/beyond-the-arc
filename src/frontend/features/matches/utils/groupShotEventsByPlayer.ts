@@ -9,6 +9,9 @@ import type { MatchEvent } from "../types";
  * A shot event is one that has a `shotLocation` and a player in the
  * `SHOOTER` role; other events are ignored. The returned map is keyed by
  * that shooter's player id.
+ *
+ * @param events - every event in the match; non-shots are skipped
+ * @returns shot events keyed by shooter id — a player who took none has no key at all
  */
 export function groupShotEventsByPlayer(
   events: MatchEvent[],

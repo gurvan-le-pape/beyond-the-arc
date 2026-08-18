@@ -24,6 +24,16 @@ interface TeamScoreRow {
 /** Regulation quarters, plus overtime when the match went to OT. */
 const REGULATION_QUARTERS = [0, 1, 2, 3];
 
+/**
+ * The per-quarter score table for one fixture.
+ *
+ * Quarter totals are derived from the events, while the final score comes from
+ * the match record — so the two can disagree if events are missing, and the
+ * final column is `null` rather than a sum until the match has one recorded.
+ *
+ * Overtime collapses into a single trailing column: every period past the
+ * fourth is counted together.
+ */
 export const MatchDetailsTable: React.FC<MatchDetailsTableProps> = ({
   match,
   matchEvents,

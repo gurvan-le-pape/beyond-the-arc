@@ -9,6 +9,12 @@ interface FeatureHighlightItemProps {
   readonly description: string;
 }
 
+/**
+ * One entry in the highlights list: icon, heading, and a line of explanation.
+ *
+ * Presentation only — it holds no copy and no link, so the same item shape
+ * serves any highlight the caller assembles.
+ */
 export function FeatureHighlightItem({
   icon: Icon,
   title,

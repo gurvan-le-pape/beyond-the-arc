@@ -16,6 +16,14 @@ interface ClubPopupContentProps {
   readonly onClose: () => void;
 }
 
+/**
+ * The contents of a club's map popup: name, location, and whatever contact
+ * details exist.
+ *
+ * Every contact row is conditional, so a club with none renders as name and
+ * location alone rather than as a list of blanks. The website link goes through
+ * the safe-URL check, because that value is scraped rather than authored.
+ */
 export function ClubPopupContent({ club, onClose }: ClubPopupContentProps) {
   const t = useTranslations("clubs");
   const tCommon = useTranslations("common");
@@ -33,9 +41,7 @@ export function ClubPopupContent({ club, onClose }: ClubPopupContentProps) {
 
   return (
     <div className="min-w-[240px] max-w-[320px] p-4 surface-subtle rounded-xl overflow-hidden">
-      {/* Header */}
       <div className="flex items-start justify-between gap-2 mb-1">
-        {/* Club Name */}
         <Text variant="h3" className="leading-tight">
           {club.name}
         </Text>
@@ -50,7 +56,6 @@ export function ClubPopupContent({ club, onClose }: ClubPopupContentProps) {
         </Button>
       </div>
 
-      {/* City and Zip */}
       {(club.city || club.zipCode) && (
         <Text variant="caption" className="mb-3 font-medium">
           {club.city}
@@ -59,10 +64,8 @@ export function ClubPopupContent({ club, onClose }: ClubPopupContentProps) {
         </Text>
       )}
 
-      {/* Contact Information */}
       {(club.hasEmail || club.hasPhone || safeWebsite) && (
         <div className="space-y-2 mb-4">
-          {/* Email */}
           {club.hasEmail && (
             <a
               href={detail?.email ? `mailto:${detail.email}` : undefined}
@@ -97,7 +100,6 @@ export function ClubPopupContent({ club, onClose }: ClubPopupContentProps) {
             </a>
           )}
 
-          {/* Phone */}
           {club.hasPhone && (
             <div className="flex items-center gap-3 p-2.5 bg-surface-inset rounded-lg">
               <div className="w-8 h-8 flex items-center justify-center border border-divide rounded-full">
@@ -125,7 +127,6 @@ export function ClubPopupContent({ club, onClose }: ClubPopupContentProps) {
             </div>
           )}
 
-          {/* Website */}
           {safeWebsite && (
             <a
               href={safeWebsite}

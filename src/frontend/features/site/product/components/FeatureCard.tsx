@@ -22,6 +22,20 @@ interface FeatureCardProps {
   readonly statusLabel: string;
 }
 
+/**
+ * One product feature: icon, name, description, and a status chip.
+ *
+ * `status` selects from a **closed set of three** chip styles. The `planned`
+ * style deliberately uses `bg-surface-inset` rather than a fixed grey, so the
+ * chip resolves against whatever surface the card sits on instead of assuming
+ * an elevation.
+ *
+ * `color` is a **raw Tailwind gradient class pair** (`from-… to-…`), not a
+ * semantic token, interpolated straight into the class string. It must be a
+ * complete literal — Tailwind only generates classes it can see written out,
+ * so a value assembled at runtime produces no gradient at all. Decorative by
+ * design; the token system does not cover these.
+ */
 export function FeatureCard({
   icon: Icon,
   title,

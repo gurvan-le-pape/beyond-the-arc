@@ -14,6 +14,19 @@ import {
 
 import { Text } from "../../typography";
 
+/**
+ * The site footer: brand blurb, social links, three link groups, and the
+ * copyright line.
+ *
+ * **`"use client"` is here for the copyright year.** `new Date()` in a server
+ * component is evaluated when the page renders — which, for a statically
+ * rendered route, is at build time, freezing the year into the output. Reading
+ * it on the client keeps it correct without making every page dynamic.
+ *
+ * Destinations come from the shared link constants, and external ones open in a
+ * new tab with `noopener noreferrer`. Adding a link is a change to the group
+ * arrays here plus a catalogue key.
+ */
 export const Footer: React.FC = () => {
   const t = useTranslations("navigation");
   const currentYear = new Date().getFullYear();
@@ -56,7 +69,6 @@ export const Footer: React.FC = () => {
     <footer className="surface-base border-t border-divide mt-auto">
       <div className="px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex flex-col items-center text-center lg:items-stretch lg:text-left lg:flex-row lg:justify-between lg:flex-wrap gap-8 mb-4">
-          {/* Brand */}
           <div className="space-y-2 max-w-sm">
             <div>
               <Text variant="h3" className="mb-2">
@@ -70,7 +82,6 @@ export const Footer: React.FC = () => {
               </Text>
             </div>
 
-            {/* Social links */}
             <div className="flex gap-2 pt-1 justify-center lg:justify-start">
               <a
                 href={GITHUB_PROFILE_URL}
@@ -110,7 +121,6 @@ export const Footer: React.FC = () => {
             aria-label={t("footer.navigationAriaLabel")}
             className="contents"
           >
-            {/* Featured */}
             <div>
               <Text variant="overline" className="mb-4 block">
                 {t("footer.featuredWork")}
@@ -133,7 +143,6 @@ export const Footer: React.FC = () => {
               </ul>
             </div>
 
-            {/* Project */}
             <div>
               <Text variant="overline" className="mb-4 block">
                 {t("footer.project")}
@@ -152,7 +161,6 @@ export const Footer: React.FC = () => {
               </ul>
             </div>
 
-            {/* Resources */}
             <div>
               <Text variant="overline" className="mb-4 block">
                 {t("footer.resources")}
@@ -185,10 +193,8 @@ export const Footer: React.FC = () => {
           </nav>
         </div>
 
-        {/* Bottom bar */}
         <div className="pt-4 border-t border-divide">
           <div className="flex flex-col gap-2">
-            {/* Copyright and tech stack */}
             <div className="flex flex-col sm:flex-row justify-between items-center gap-1">
               <Text variant="body" as="p" className="text-center sm:text-left">
                 {t("footer.copyright", {
@@ -201,7 +207,6 @@ export const Footer: React.FC = () => {
               </Text>
             </div>
 
-            {/* Disclaimer */}
             <div className="flex flex-col sm:flex-row justify-center items-center gap-1">
               <Text variant="caption" as="span">
                 {t("footer.nonCommercial")}

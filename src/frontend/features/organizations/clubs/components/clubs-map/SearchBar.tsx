@@ -14,6 +14,13 @@ interface SearchBarProps {
   readonly resultCount?: number;
 }
 
+/**
+ * The club search overlaid on the map.
+ *
+ * Fully controlled — matching is done by the map, which owns both the club list
+ * and the camera. This reports the query and renders the result count it is
+ * given; it filters nothing itself.
+ */
 export function SearchBar({
   query,
   onQueryChange,
@@ -40,7 +47,6 @@ export function SearchBar({
   return (
     <div className="relative">
       <div className="relative">
-        {/* Search Icon */}
         <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
           <svg
             className="w-5 h-5 text-text-muted"
@@ -57,7 +63,6 @@ export function SearchBar({
           </svg>
         </div>
 
-        {/* Input */}
         <input
           ref={inputRef}
           type="text"
@@ -67,7 +72,6 @@ export function SearchBar({
           className="w-full pl-10 pr-20 py-2.5 bg-surface-inset border border-divide rounded-lg text-text-heading placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-primary ring-offset-surface focus:border-transparent transition-all"
         />
 
-        {/* Result Count & Clear Button */}
         <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2">
           {query && resultCount !== undefined && (
             <Text
@@ -104,7 +108,6 @@ export function SearchBar({
         </div>
       </div>
 
-      {/* Keyboard hint */}
       {!query && (
         <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
           <kbd className="hidden sm:inline-block px-2 py-1 text-xs text-text-secondary bg-surface-inset border border-divide rounded">

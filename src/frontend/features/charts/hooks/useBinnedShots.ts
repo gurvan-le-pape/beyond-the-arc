@@ -7,6 +7,22 @@ import type { ShotEvent } from "@/shared/types";
 
 import type { ZoneStats } from "../types";
 
+/**
+ * Bins shot events into a `rows`×`cols` grid and derives the shot events, in
+ * one memo.
+ *
+ * Shots with negative coordinates are dropped; a shot past the last cell is
+ * clamped into it rather than dropped, so the grid's edges absorb the
+ * overshoot.
+ *
+ * @returns the shots bucketed into the heatmap grid, memoised so the overlay is not rebuilt on unrelated renders
+ *
+ * @param matchEvents - every event; non-shots and negative coordinates are dropped
+ * @param rows - grid rows across the half court
+ * @param cols - grid columns across the half court
+ * @param cellWidth - one cell's width in court units
+ * @param cellHeight - one cell's height in court units
+ */
 export function useBinnedShots(
   matchEvents: MatchEvent[],
   rows: number,

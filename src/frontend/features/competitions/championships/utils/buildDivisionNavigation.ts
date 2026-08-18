@@ -7,6 +7,12 @@ import type { Championship, ChampionshipNavLink } from "../types";
  * `formatLabel` is passed in rather than translated here, so this works from a
  * server component (`getTranslations`) and a client one (`useTranslations`)
  * alike — the same arrangement {@link buildChampionshipTitle} uses.
+ *
+ * @returns the division tabs for a championship listing, in ascending division order
+ *
+ * @param championships - the sibling list the page already fetched
+ * @param championship - the one currently shown; its category, gender and level scope the links
+ * @param formatLabel - renders a division number, passed in so this works from a server or client component
  */
 export function buildDivisionNavigation(
   championships: Championship[],

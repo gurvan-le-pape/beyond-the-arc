@@ -15,6 +15,17 @@ export interface Shot {
   made: boolean;
 }
 
+/**
+ * Bins shots into zones, returning one stat line per zone.
+ *
+ * A shot lands in the **first** zone whose `contains` accepts it, so
+ * overlapping zones are resolved by list order; shots matching no zone are
+ * dropped. Every zone keeps an entry (zeroed) so the result's keys are stable.
+ *
+ * @param shots - every shot to attribute; each is tested against the zones in order
+ * @param zones - the zone definitions, each carrying its own `contains` predicate
+ * @returns made/missed/total per zone key — a zone with no shots is present with zeros, not absent
+ */
 export function binShotsByZones(
   shots: Shot[],
   zones: Zone[],

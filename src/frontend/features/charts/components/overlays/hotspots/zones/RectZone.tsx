@@ -17,6 +17,16 @@ interface RectZoneProps {
   onMouseLeave: () => void;
 }
 
+/**
+ * One rectangular hotspot zone: the shaded box plus its made/missed label.
+ *
+ * Converts the zone's court-unit bounds through the scales, so callers pass
+ * geometry in court units and never in pixels.
+ *
+ * `zone` is typed `any`, which is a gap rather than a decision — the zone
+ * objects have a real shape (`key`, `x0`, `x1`, `y0`, `y1`, `contains`) and
+ * nothing checks that what arrives here matches it.
+ */
 export const RectZone: React.FC<RectZoneProps> = ({
   zone,
   stats,

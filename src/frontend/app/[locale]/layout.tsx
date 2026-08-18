@@ -10,17 +10,37 @@ import { LOCALES } from "@/locales";
 
 import { Providers } from "../providers";
 
+/**
+ * The locales to pre-build.
+ *
+ * Unlike the detail routes' empty arrays, this one is populated: the locale set
+ * is known at build time and does not depend on the backend, so every locale's
+ * shell is generated ahead of time.
+ *
+ * @returns one entry per configured locale
+ */
 export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }));
 }
 
+interface LocaleLayoutProps {
+  readonly children: React.ReactNode;
+  readonly params: Promise<{ locale: string }>;
+}
+
+/**
+ * The root of every localised route: sets the request locale and provides the
+ * message catalogue.
+ *
+ * **`setRequestLocale` must run before any other next-intl call** in the render,
+ * which is why it happens here rather than in the pages. It is also what keeps
+ * routes statically renderable — reading the locale from headers instead would
+ * force every page dynamic.
+ */
 export default async function LocaleLayout({
   children,
   params,
-}: {
-  readonly children: React.ReactNode;
-  readonly params: Promise<{ locale: string }>;
-}) {
+}: LocaleLayoutProps) {
   const { locale } = await params;
 
   // Validate locale

@@ -36,6 +36,14 @@ interface DualBarProps {
   readonly mounted: boolean;
 }
 
+/**
+ * One track split between the two sides, A filling from the left and B from the
+ * right so the pair always totals the track width.
+ *
+ * Both halves share `delayMs`, so they animate as one bar rather than in
+ * sequence. Widths apply only once `mounted` is true — see `StatComparison`,
+ * which withholds it for a frame so the growth is visible.
+ */
 export function DualBar({ fillA, fillB, delayMs, mounted }: DualBarProps) {
   return (
     <div className="h-2.5 w-full bg-surface-inset rounded-button overflow-hidden flex">
@@ -64,6 +72,16 @@ interface MirroredBarsProps {
   readonly mounted: boolean;
 }
 
+/**
+ * Two tracks growing inward toward a centre dot, A right-aligned and B
+ * left-aligned.
+ *
+ * **Returns three sibling elements, not a wrapper** — track, dot, track — so
+ * the parent must supply the three-column grid that positions them. Dropped
+ * into a plain block container they stack.
+ *
+ * Widths apply only once `mounted` is true, as with `DualBar`.
+ */
 export function MirroredBars({
   fillA,
   fillB,

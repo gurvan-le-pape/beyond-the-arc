@@ -73,7 +73,6 @@ export function ListEntityCard({
         config.hover,
       )}
     >
-      {/* Header */}
       <div
         className={cn(
           "flex items-center justify-between gap-3 flex-wrap",

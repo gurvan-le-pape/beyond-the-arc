@@ -3,6 +3,12 @@ import { getTranslations } from "next-intl/server";
 
 import { Text } from "@/shared/components/typography";
 
+/**
+ * The heading block of the organisations landing page.
+ *
+ * An **async server component** with no props: it resolves its own copy and
+ * has no data to receive.
+ */
 export async function OrganizationsHeader() {
   const t = await getTranslations("organizations");
 

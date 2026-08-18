@@ -143,6 +143,12 @@ function containsApexSidelineRight(x: number, y: number) {
   return y >= arcY && y <= arcY + APEX_STRIPE_HEIGHT;
 }
 
+/**
+ * The two apex-sideline zones: from each sideline to the paint, following the
+ * arc and rising 2 m above it — the tallest zones on the chart.
+ *
+ * @returns the zone definitions in court units, each with the bounding box used to draw it and the `contains` predicate used to hit-test it; bounds are half-open so a shot on a shared edge falls in exactly one zone
+ */
 export function getArcApexSidelineZones() {
   return [
     {

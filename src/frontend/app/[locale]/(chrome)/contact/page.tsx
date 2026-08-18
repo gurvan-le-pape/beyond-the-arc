@@ -11,6 +11,11 @@ import { CONTACT_METHODS } from "@/features/site/contact/constants";
 import { PageHero, PageLayout } from "@/shared/components/layout";
 import type { LocalePageProps } from "@/shared/types";
 
+/**
+ * Metadata for the contact page.
+ *
+ * Next calls this separately from the page, so a fetch failure here is not caught by the page's own error handling — hence the `withServerErrorMetadata` wrapper where one fetches.
+ */
 export async function generateMetadata({
   params,
 }: LocalePageProps): Promise<Metadata> {
@@ -20,6 +25,12 @@ export async function generateMetadata({
   return { title: tMeta("contact.title"), description: tMeta("contact.intro") };
 }
 
+/**
+ * The contact page: the ways to get in touch, and a short about section.
+ *
+ * `params` is a Promise in Next 15 and is awaited here, so the feature
+ * components below receive plain values.
+ */
 export default async function ContactPage({ params }: LocalePageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
@@ -39,14 +50,12 @@ export default async function ContactPage({ params }: LocalePageProps) {
         iconGradient="accent"
       />
 
-      {/* Contact Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
         {contactMethods.map((method) => (
           <ContactMethodCard key={method.href} {...method} />
         ))}
       </div>
 
-      {/* About section */}
       <ContactAboutSection
         title={t("contact.aboutProject")}
         description={t("contact.projectDescription")}

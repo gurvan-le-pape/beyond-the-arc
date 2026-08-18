@@ -29,6 +29,18 @@ interface TableProps extends HTMLAttributes<HTMLTableElement> {
   ref?: React.Ref<HTMLTableElement>;
 }
 
+/**
+ * The table element and the horizontally scrollable frame around it.
+ *
+ * **That wrapper is `overflow-x-auto`, which is what makes a sticky `thead`
+ * impossible** — a sticky header resolves against the nearest scroll container,
+ * so it would stick to the horizontal scroller rather than the viewport. Column
+ * pinning is available instead, through `stickyLead` on the cells.
+ *
+ * These parts are the raw layer and accept `className`. Prefer `DataTable`,
+ * whose variant API is deliberately closed; reach for these only where a table
+ * cannot be expressed through it.
+ */
 export const Table = ({
   className,
   children,
@@ -52,6 +64,14 @@ export const Table = ({
 // TableHeader
 // ---------------------------------------------------------------------------
 
+/**
+ * The `<thead>`, carrying the shared header token.
+ *
+ * **No fill by design.** The header separates itself typographically over the
+ * same hairline the rows use, because a tinted band under small semibold text
+ * failed contrast on every surface this table sits on. Adding a background here
+ * reintroduces that.
+ */
 export const TableHeader = ({
   className,
   ref,
@@ -103,6 +123,16 @@ interface TableRowProps extends HTMLAttributes<HTMLTableRowElement> {
   ref?: React.Ref<HTMLTableRowElement>;
 }
 
+/**
+ * A `<tr>`, optionally styled as navigable.
+ *
+ * `interactive` controls hover affordance only — it adds no handler and no
+ * link. Under `DataTable` it is derived from whether the row actually has a
+ * destination, so a row cannot advertise a click it does not have; setting it
+ * by hand here reintroduces that possibility.
+ *
+ * Row separation comes from `TableBody`'s `divide-y`, never from a border here.
+ */
 export const TableRow = ({
   className,
   interactive = false,
@@ -132,6 +162,18 @@ interface TableHeadProps extends HTMLAttributes<HTMLTableCellElement> {
   ref?: React.Ref<HTMLTableCellElement>;
 }
 
+/**
+ * A header cell, sharing every layout axis with `TableCell`.
+ *
+ * The axes — align, density, wrap, width, divider, numeric — are declared once
+ * in `variants.ts` and consumed by both, so a column's header and its body
+ * cells cannot drift apart. Styling one through `className` alone is what
+ * breaks that.
+ *
+ * `numeric` is the one to reach for on a column of figures: it sets
+ * `tabular-nums` and defaults the alignment right, on the header as well as the
+ * cells, so a label never sits off the column it names.
+ */
 export const TableHead = ({
   className,
   align = "left",
@@ -188,6 +230,17 @@ interface TableCellProps extends HTMLAttributes<HTMLTableCellElement> {
   ref?: React.Ref<HTMLTableCellElement>;
 }
 
+/**
+ * A body cell, sharing every layout axis with `TableHead`.
+ *
+ * `emphasis` is the only axis the header does not have. The rest mirror it
+ * exactly and come from the same variant definitions, which is what keeps a
+ * column aligned end to end.
+ *
+ * `stickyLead` pins the cell horizontally, and doing so makes it a positioned
+ * element — which is why it cannot be combined with a row-level link overlay;
+ * `DataTable`'s props type refuses that pairing outright.
+ */
 export const TableCell = ({
   className,
   align = "left",
@@ -229,6 +282,14 @@ interface TableEmptyProps {
   readonly message: string;
 }
 
+/**
+ * The "no rows" message, as a single full-width row.
+ *
+ * **`colSpan` must match the table's column count.** Nothing checks it: too few
+ * leaves a ragged trailing gap, too many stretches the table wider than its
+ * header. It is passed rather than derived because these parts never see the
+ * column definitions — `DataTable` does, and supplies it.
+ */
 export function TableEmpty({ colSpan, message }: TableEmptyProps) {
   return (
     <TableRow>

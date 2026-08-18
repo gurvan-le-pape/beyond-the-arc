@@ -57,6 +57,23 @@ function LevelBadge({ level, label }: LevelBadgeProps) {
   return null;
 }
 
+/**
+ * A team row inside a **club** detail page: name, competition, pool link, and
+ * the leaderboard standing when there is one.
+ *
+ * Takes `ClubTeamInfo` rather than `Team` — the shape the clubs feature loads —
+ * which is why `clubName` arrives as its own prop instead of coming off the
+ * team.
+ *
+ * **Only regional and departmental teams get a level badge and a competition
+ * link.** Both are derived from the championship level and its matching parent
+ * id, and both return `null` for anything else, so a national team renders
+ * without either rather than with a placeholder. That is a display decision,
+ * not missing data.
+ *
+ * The leaderboard block renders only when the team has standings; a rank of
+ * `null` inside it shows an em dash.
+ */
 export function TeamListItem({ team, clubName }: TeamListItemProps) {
   const t = useTranslations("teams");
   const tCommon = useTranslations("common");
@@ -79,7 +96,6 @@ export function TeamListItem({ team, clubName }: TeamListItemProps) {
 
   return (
     <div className="w-full px-6 py-3.5 flex items-center justify-between hover:bg-surface-inset transition-colors group">
-      {/* Left */}
       <div className="flex flex-col gap-1">
         <Link
           href={`/teams/${team.id}`}
@@ -108,10 +124,8 @@ export function TeamListItem({ team, clubName }: TeamListItemProps) {
         )}
       </div>
 
-      {/* Right */}
       {leaderboard && (
         <div className="flex flex-col items-end gap-1.5 ml-4 shrink-0">
-          {/* Rank */}
           <div className="flex items-baseline gap-1 px-2.5 py-1.5 rounded-lg bg-warning-subtle border border-warning">
             <span className="text-base font-medium text-warning-strong leading-none">
               {leaderboard.rank ?? "—"}
@@ -123,7 +137,6 @@ export function TeamListItem({ team, clubName }: TeamListItemProps) {
             )}
           </div>
 
-          {/* W / L */}
           <div className="flex items-center gap-1.5">
             <span className="text-xs font-medium text-success-strong">
               {leaderboard.gamesWon}

@@ -14,6 +14,19 @@ import {
 } from "@/shared/components/domain";
 import { EmptyState } from "@/shared/components/feedback";
 
+/**
+ * The teams tab of the search page: its own filter panel, results grid, and
+ * pagination.
+ *
+ * Takes no props and owns everything — filter state, the query, and the
+ * loading, error, empty and paginated states via `SearchTabShell`.
+ *
+ * **Pagination indices are converted here**, as in the sibling tabs: the shell
+ * is zero-based, the API is one-based, and `onPageChange` bridges them.
+ *
+ * The three tabs are deliberately independent — each holds its own filter state,
+ * so switching tabs does not carry one tab's filters into another.
+ */
 export function TeamsTab() {
   const tTeams = useTranslations("teams");
   const tCommon = useTranslations("common");

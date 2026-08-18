@@ -15,6 +15,18 @@ interface ActiveFilterChipsProps {
   readonly onReset: () => void;
 }
 
+/**
+ * The removable chips summarising which filters are currently applied, with a
+ * reset control beside them.
+ *
+ * **Renders nothing when `chips` is empty** — including its own top border — so
+ * a panel with no active filters shows no stray divider.
+ *
+ * Each chip carries its own `onRemove`; this owns no filter state and does not
+ * know what a chip means. The remove button's accessible name is built from the
+ * chip's label, so a label that reads well in a sentence reads well to a screen
+ * reader too.
+ */
 export function ActiveFilterChips({ chips, onReset }: ActiveFilterChipsProps) {
   const tFilters = useTranslations("filters");
 

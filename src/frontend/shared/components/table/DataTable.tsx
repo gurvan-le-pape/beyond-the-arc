@@ -17,8 +17,8 @@ import { CELL_LINK, ROW_LINK } from "./variants";
 /**
  * Definition of one column: how to label it and how to pull a cell out of a row.
  *
- * This replaced two near-identical per-feature column types (a match-history
- * one and a player-stats one) that differed only in field names.
+ * One type serves every table. A per-feature column type that differs only in
+ * field names is this type with `T` bound — declare the binding, not a new type.
  */
 export interface TableColumn<T> {
   /** Stable identity for the column, used as the React key. */

@@ -17,6 +17,12 @@ import { ClubsFilters } from "./ClubsFilters";
 // from `xl` — hence a local grid instead of `LIST_ENTITY_CARD_GRID`.
 const CLUBS_GRID = "grid grid-cols-1 md:grid-cols-2 gap-4";
 
+/**
+ * The clubs list page: filters, results grid and pagination.
+ *
+ * Takes no props and owns everything, including its own data — which is why the
+ * clubs route needs no server fetch and prerenders as a static shell.
+ */
 export function ClubsView() {
   const tCommon = useTranslations("common");
   const tOrganizations = useTranslations("organizations");

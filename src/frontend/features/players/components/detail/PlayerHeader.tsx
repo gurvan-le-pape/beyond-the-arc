@@ -17,6 +17,20 @@ interface PlayerHeaderProps {
   readonly player: Player;
 }
 
+/**
+ * Identity block at the top of a player detail page: avatar, name, physical
+ * badges, and links out to the team, club and championship.
+ *
+ * **Requires a fully hydrated player.** It reads
+ * `player.team.club.committee.league.id` without optional chaining, so a player
+ * whose team, club or committee is absent throws rather than degrading. Only
+ * the detail response (`getById`) carries that depth — a player from a list
+ * response will not. `PlayerCard` optional-chains the same path precisely
+ * because it renders the shallower shape.
+ *
+ * An **async server component**: it awaits its own translations, so it cannot be
+ * rendered inside a client boundary.
+ */
 export async function PlayerHeader({ player }: PlayerHeaderProps) {
   const tCommon = await getTranslations("common");
   const tPlayers = await getTranslations("players");
@@ -102,16 +116,13 @@ export async function PlayerHeader({ player }: PlayerHeaderProps) {
       }`}
     >
       <div className="flex items-center gap-5 p-6">
-        {/* Player avatar — carries the jersey number as its badge */}
         <PlayerAvatar name={playerName} number={playerNumber} size="lg" />
 
-        {/* Info */}
         <div className="flex-1 min-w-0">
           <Text variant="h1" className="mb-3">
             {playerName}
           </Text>
 
-          {/* Badges */}
           <EntityHeaderBadges
             category={category}
             gender={gender}
@@ -122,7 +133,6 @@ export async function PlayerHeader({ player }: PlayerHeaderProps) {
             </Badge>
           </EntityHeaderBadges>
 
-          {/* Team link */}
           <Link
             href={`/teams/${teamId}`}
             aria-label={tCommon("team.seeTeam", { number: teamNumber })}
@@ -131,7 +141,6 @@ export async function PlayerHeader({ player }: PlayerHeaderProps) {
             {clubName} · {teamNumber}
           </Link>
 
-          {/* Championship link */}
           {competitionUrl && (
             <Link
               href={competitionUrl}
@@ -143,13 +152,11 @@ export async function PlayerHeader({ player }: PlayerHeaderProps) {
           )}
         </div>
 
-        {/* Club crest */}
         <div className="flex-shrink-0 pl-5 border-l border-divide self-stretch flex items-center">
           <ClubLogoLink clubId={clubId} clubName={clubName} />
         </div>
       </div>
 
-      {/* Stats band */}
       {statsBand.length > 0 && (
         <div
           className="grid border-t border-divide"

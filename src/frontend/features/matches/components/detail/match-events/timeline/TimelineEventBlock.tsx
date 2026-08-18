@@ -109,7 +109,6 @@ export function TimelineEventBlock({
           </p>
         )}
 
-        {/* Game clock display */}
         <Text variant="caption" as="span" className="font-mono">
           {formatGameClock(event.occurredAt, matchDate)}
         </Text>

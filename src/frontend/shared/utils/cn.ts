@@ -71,6 +71,9 @@ const twMerge = extendTailwindMerge({
  * cn('px-4', 'py-2', condition && 'bg-blue-500')
  * cn('px-4', 'px-6')                 // px-6 wins
  * cn('rounded-button', 'rounded-full') // rounded-full wins — see above
+ *
+ * @param inputs - class values in cascade order — a later conflicting utility wins
+ * @returns one merged class string, deduplicated by Tailwind group
  */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

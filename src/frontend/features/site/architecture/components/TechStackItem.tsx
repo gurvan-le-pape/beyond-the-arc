@@ -9,6 +9,12 @@ interface TechStackItemProps {
   readonly description: string;
 }
 
+/**
+ * One technology in a stack card: icon, name, and a one-line description.
+ *
+ * The border is transparent until hover, so the row reserves its width and the
+ * layout does not shift as the pointer crosses it.
+ */
 export function TechStackItem({
   icon: Icon,
   name,

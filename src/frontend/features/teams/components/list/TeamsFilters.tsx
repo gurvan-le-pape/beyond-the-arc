@@ -30,6 +30,26 @@ interface TeamsFiltersProps {
   onReset: () => void;
 }
 
+/**
+ * The filter panel for the teams list — club, team number, category, gender,
+ * the level → committee/league cascade, and the division → pool cascade.
+ *
+ * Holds no state: `filters` and `setters` come from `useTeamsFilterState`, which
+ * also owns the reset-to-page-1 behaviour and the cascade clearing.
+ *
+ * **The division → pool cascade stays disabled until a location is chosen.**
+ * `isLocationSelected` gates it, because divisions only mean something within a
+ * committee or league; the steps render dimmed rather than hidden so the panel
+ * does not change shape as filters are filled in.
+ *
+ * Option sources are fetched here rather than passed in — `useLocationOptions`
+ * for committees and leagues, `useTeamFilterValues` for the numbers, divisions
+ * and pools that actually occur. Without the latter those dropdowns render
+ * empty, which reads as "no teams match" rather than as a failure.
+ *
+ * Rendered inside `FiltersShell`, so this subtree exists **twice** in the DOM —
+ * mobile sheet and desktop card. Nothing here may rely on a unique `id`.
+ */
 export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
   filters,
   setters,
@@ -185,7 +205,6 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
         />
       )}
 
-      {/* Row 1: Club + Team number */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <ClubComboBoxFilter
           committeeId={committeeId}
@@ -203,7 +222,6 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
         />
       </div>
 
-      {/* Row 2: Category + Gender */}
       <CategoryGenderSelects
         category={category}
         setCategory={setCategory}
@@ -211,10 +229,8 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
         setGender={setGender}
       />
 
-      {/* Divider */}
       <div className="border-t border-divide" />
 
-      {/* Row 3: Level → Committee/League cascade */}
       <LevelLocationFilters
         level={level}
         setLevel={setLevel}
@@ -226,7 +242,7 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
         leagues={leagues}
       />
 
-      {/* Row 4: Division → Pool cascade */}
+      {/* Division → Pool */}
       <CascadeSelects steps={cascadeSteps} cols={2} />
     </FiltersShell>
   );

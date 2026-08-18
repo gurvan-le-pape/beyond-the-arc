@@ -51,19 +51,16 @@ export const MatchEventsFilters: React.FC<MatchEventsFiltersProps> = ({
 
   return (
     <div className="flex flex-wrap items-center gap-3">
-      {/* Quarter pills */}
       <QuarterSelector
         selected={selectedQuarter}
         onChange={setSelectedQuarter}
       />
 
-      {/* Category dropdown */}
       <EventCategorySelect
         value={selectedEventCategory}
         onChange={setSelectedEventCategory}
       />
 
-      {/* Player multi-select */}
       <PlayerDropdownFilter
         homeTeam={homeTeam}
         awayTeam={awayTeam}
@@ -74,7 +71,6 @@ export const MatchEventsFilters: React.FC<MatchEventsFiltersProps> = ({
         setIsOpen={setShowPlayerDropdown}
       />
 
-      {/* Latest-first toggle */}
       <TimelineOrderToggle
         checked={latestFirst}
         onChange={setLatestFirst}

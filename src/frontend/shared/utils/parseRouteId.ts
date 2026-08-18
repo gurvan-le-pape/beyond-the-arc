@@ -15,20 +15,18 @@ const MAX_ROUTE_ID = 2_147_483_647;
 /**
  * Parses a dynamic route segment into a positive integer id.
  *
- * The parameter is `segment`, not `idStr`: this is the one scope where a raw
- * string and its parsed id are both legitimately live, and naming the input
- * after what it *is* avoids the `idStr`/`id` pair that D13f removed from the
- * seven route files calling this.
- *
  * Triggers Next's `notFound()` (which throws) for non-numeric, non-positive or
  * out-of-range values, so callers can treat the returned value as a
  * guaranteed-valid id.
  *
  * The upper bound is what keeps an unroutable id a 404 rather than a 500. The
- * backend answers 400 for these (`ParseEntityIdPipe`, added in #443), and
- * `handleServerError` maps only 404 to the not-found boundary — so without this
- * check `/players/2147483648` rendered the error boundary and reported a
- * Sentry event for what is just a bad URL.
+ * backend answers 400 for an out-of-range id, and `handleServerError` maps only
+ * 404 to the not-found boundary — so without this check a segment above the
+ * `int4` ceiling reaches the error boundary and reports a Sentry event for what
+ * is just a bad URL.
+ *
+ * @param segment - the raw dynamic route segment, as Next supplies it
+ * @returns a positive, in-range id; for anything else it does not return at all
  */
 export function parseRouteId(segment: string): number {
   const id = Number.parseInt(segment, 10);

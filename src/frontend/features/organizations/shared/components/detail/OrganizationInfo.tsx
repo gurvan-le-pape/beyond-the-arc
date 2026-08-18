@@ -20,6 +20,13 @@ interface OrganizationInfoProps {
   readonly president?: President | null;
 }
 
+/**
+ * The contact and address panel on an organisation detail page.
+ *
+ * Every field is optional and absent ones are omitted rather than shown blank,
+ * so the panel shrinks to what is known. The website goes through the safe-URL
+ * check, since that value is scraped rather than authored.
+ */
 export function OrganizationInfo({
   address,
   city,

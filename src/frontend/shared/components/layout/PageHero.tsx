@@ -32,6 +32,15 @@ const GRADIENT_PRESETS = {
   accent: "from-blue-500 to-cyan-500",
 } as const;
 
+/**
+ * The centred title block at the top of an informational page: gradient icon,
+ * heading, and a lead paragraph.
+ *
+ * `iconGradient` is a **closed set of three presets**, not a colour prop. The
+ * gradients are raw palette values rather than semantic tokens because they are
+ * purely decorative — a new look means a new preset here, reviewed once, not a
+ * class string at a call site.
+ */
 export function PageHero({
   title,
   lead,
@@ -42,19 +51,16 @@ export function PageHero({
 
   return (
     <div className="text-center mb-12">
-      {/* Icon with gradient background */}
       <div
         className={`inline-flex items-center justify-center w-16 h-16 rounded-button bg-gradient-to-br ${gradientClasses} text-white mb-4 shadow-card`}
       >
         <Icon className="w-8 h-8" />
       </div>
 
-      {/* Title */}
       <Text variant="h1" className="mb-4">
         {title}
       </Text>
 
-      {/* Lead text with consistent max-width */}
       <Text variant="lead" className="max-w-2xl mx-auto">
         {lead}
       </Text>

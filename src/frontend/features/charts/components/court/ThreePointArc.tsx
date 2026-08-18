@@ -3,26 +3,26 @@ import React from "react";
 
 import { ARC_Y, LINE_WIDTH } from "../../constants";
 
-/**
- * ThreePointArc component draws the FIBA three-point arc and side lines.
- *
- * @param xScale - d3 scale function for x
- * @param yScale - d3 scale function for y
- * @param svgWidth - SVG width for scaling
- * @param COURT_WIDTH - court width in meters
- * @param THREE_PT_RADIUS - three-point arc radius in meters
- * @param THREE_PT_LINE_DIST - distance from sideline to arc endpoint in meters
- * @param BASELINE_TO_RIM - distance from baseline to rim in meters
- */
-export interface ThreePointArcProps {
-  xScale: (x: number) => number;
-  yScale: (y: number) => number;
-  svgWidth: number;
-  COURT_WIDTH: number;
-  THREE_PT_RADIUS: number;
-  THREE_PT_LINE_DIST: number;
+interface ThreePointArcProps {
+  /** Court units to SVG pixels, horizontally. */
+  readonly xScale: (x: number) => number;
+  /** Court units to SVG pixels, vertically. */
+  readonly yScale: (y: number) => number;
+  /** Chart width; scales the stroke so line weight stays proportional. */
+  readonly svgWidth: number;
+  /**
+   * Court width in metres. A **parameter** despite the constant-style name —
+   * this and the two below are passed in, unlike every other court part, which
+   * reads the same values from the shared constants.
+   */
+  readonly COURT_WIDTH: number;
+  /** Arc radius in metres. Passed in, not imported — see above. */
+  readonly THREE_PT_RADIUS: number;
+  /** Sideline-to-arc-endpoint distance in metres. Passed in, not imported. */
+  readonly THREE_PT_LINE_DIST: number;
 }
 
+/** The three-point arc and the two side lines running from its endpoints to the baseline. */
 export const ThreePointArc: React.FC<ThreePointArcProps> = ({
   xScale,
   yScale,

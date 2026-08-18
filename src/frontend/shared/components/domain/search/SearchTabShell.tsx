@@ -22,6 +22,21 @@ interface SearchTabShellProps {
   readonly children: React.ReactNode;
 }
 
+/**
+ * The loading, error, empty and paginated frame every search tab renders
+ * inside.
+ *
+ * **The four states are strictly ordered and each returns early** — loading
+ * beats error beats empty beats content. So an error arriving while results are
+ * on screen replaces them rather than annotating them; there is no
+ * stale-with-banner state.
+ *
+ * `onPageChange` reports a **zero-based** index. The API counts pages from one,
+ * so every caller adds the offset — see the search tabs.
+ *
+ * Pagination renders only when there is more than one page, and `children`
+ * render only in the success path.
+ */
 export function SearchTabShell({
   isLoading,
   error,

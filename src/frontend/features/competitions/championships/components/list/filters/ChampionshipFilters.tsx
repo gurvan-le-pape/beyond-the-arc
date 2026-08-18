@@ -43,6 +43,17 @@ interface ChampionshipFiltersProps {
   onScopeRetry?: () => unknown;
 }
 
+/**
+ * The filter panel shared by all three level tabs.
+ *
+ * **`scope` is what varies by level**: regional filters by league, departmental
+ * by committee, and national omits it because there is nothing above a national
+ * championship to scope by. The scoped variants lead with that select and push
+ * gender onto its own row.
+ *
+ * Error copy for a failed scope lookup is passed in already translated, so an
+ * empty dropdown is never mistaken for "this level has no leagues".
+ */
 export const ChampionshipFilters: React.FC<ChampionshipFiltersProps> = ({
   level,
   category,

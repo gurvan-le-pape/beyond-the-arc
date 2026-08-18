@@ -52,6 +52,19 @@ function localizedUrls(
 // Sitemap
 // ---------------------------------------------------------------------------
 
+/**
+ * The sitemap Next generates, covering the static routes in every locale.
+ *
+ * **Static routes only.** The detail pages are omitted deliberately: there are
+ * hundreds of thousands of them, they are generated on first request rather
+ * than pre-built, and enumerating them would need the backend the build does
+ * not have.
+ *
+ * Each entry carries `alternates.languages` for both locales, so a crawler
+ * treats the two as translations of one page rather than as duplicates.
+ *
+ * @returns the sitemap entries Next serialises to `/sitemap.xml`
+ */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // --- Static routes -------------------------------------------------------
   const staticRoutes: MetadataRoute.Sitemap = [

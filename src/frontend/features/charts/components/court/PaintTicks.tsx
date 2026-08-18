@@ -3,29 +3,29 @@ import React from "react";
 
 import { COURT_WIDTH, LINE_WIDTH } from "../../constants";
 
-/**
- * PaintTicks component draws the tick marks and blocks on the paint (restricted area).
- *
- * @param xLeft_px - SVG x position of left paint edge
- * @param xRight_px - SVG x position of right paint edge
- * @param tickLength_px - length of tick marks in SVG units
- * @param tickYs - array of y positions for tick marks
- * @param yScale - d3 scale function for y
- * @param svgWidth - SVG width for scaling
- * @param blockY - y position of block start
- * @param blockHeight - height of block
- */
-export interface PaintTicksProps {
-  xLeft_px: number;
-  xRight_px: number;
-  tickLength_px: number;
-  tickYs: number[];
-  yScale: (y: number) => number;
-  svgWidth: number;
-  blockY: number;
-  blockHeight: number;
+interface PaintTicksProps {
+  /** Left paint edge, in SVG pixels — the `_px` suffix is the unit, and load-bearing. */
+  readonly xLeft_px: number;
+  /** Right paint edge, in SVG pixels. */
+  readonly xRight_px: number;
+  /** Tick length in SVG pixels, so ticks keep their proportion at any chart size. */
+  readonly tickLength_px: number;
+  /** Tick heights in **court units** — unlike the `_px` props above, these go through `yScale`. */
+  readonly tickYs: number[];
+  /** Court units to SVG pixels, vertically. */
+  readonly yScale: (y: number) => number;
+  /** Chart width; scales the stroke so line weight stays proportional. */
+  readonly svgWidth: number;
+  /** Block start, in court units. */
+  readonly blockY: number;
+  /** Block height, in court units. */
+  readonly blockHeight: number;
 }
 
+/**
+ * Tick marks along the paint edges and the low-post block rectangles — the
+ * name says ticks, but the blocks are drawn here too.
+ */
 export const PaintTicks: React.FC<PaintTicksProps> = ({
   xLeft_px,
   xRight_px,
@@ -41,7 +41,6 @@ export const PaintTicks: React.FC<PaintTicksProps> = ({
   const blockYStart_px = yScale(blockY);
   return (
     <g>
-      {/* Tick marks */}
       {tickYs.map((y) => {
         const y_px = yScale(y);
         return (

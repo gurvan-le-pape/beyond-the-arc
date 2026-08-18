@@ -17,6 +17,14 @@ interface AboveWingZonesProps {
   onZoneLeave: () => void;
 }
 
+/**
+ * The zones above each wing, between the wing and the arc apex.
+ *
+ * Colour encodes **volume, not accuracy** — `colorScale` is fed the zone's
+ * total attempts, so ten makes and ten misses shade identically. A zone with
+ * no shots still renders, at a fainter opacity, so the court's zone map stays
+ * whole rather than developing holes.
+ */
 const AboveWingZones: React.FC<AboveWingZonesProps> = ({
   shots,
   xScale,

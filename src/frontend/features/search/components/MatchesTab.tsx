@@ -14,6 +14,20 @@ import {
 } from "@/shared/components/domain";
 import { EmptyState } from "@/shared/components/feedback";
 
+/**
+ * The matches tab of the search page: its own filter panel, results grid, and
+ * pagination.
+ *
+ * Takes no props and owns everything — filter state, the query, and the
+ * loading, error, empty and paginated states via `SearchTabShell`.
+ *
+ * **Pagination indices are converted here**, as in the sibling tabs: the shell
+ * is zero-based, the API is one-based, and `onPageChange` bridges them.
+ *
+ * Carries the deepest filter set of the three — division, pool and matchday on
+ * top of the shared level and location cascade — so its query has the most
+ * parameters that must stay in step with `useMatchesFilterState`.
+ */
 export function MatchesTab() {
   const tMatches = useTranslations("matches");
   const tCommon = useTranslations("common");

@@ -32,13 +32,12 @@ function SearchIcon() {
 // Clear button — only rendered when variant="search" + value + onClear
 // ---------------------------------------------------------------------------
 
-function ClearButton({
-  onClick,
-  ariaLabel,
-}: {
+interface ClearButtonProps {
   readonly onClick: () => void;
   readonly ariaLabel: string;
-}) {
+}
+
+function ClearButton({ onClick, ariaLabel }: ClearButtonProps) {
   return (
     <button
       type="button"
@@ -87,6 +86,19 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   ref?: React.Ref<HTMLInputElement>;
 }
 
+/**
+ * Text input with label, error and helper-text slots, wrapping a native
+ * `<input>` — every unlisted prop passes straight through.
+ *
+ * The two icon slots are not symmetric, and that asymmetry is the thing worth
+ * knowing: `leftIcon` is decorative and made click-through, while `rightIcon`
+ * may hold a real control (a clear button), so it keeps pointer events and a
+ * decorative icon placed there must opt out itself.
+ *
+ * `variant="search"` fills both slots for you — the search icon on the left,
+ * and a clear button on the right once the value is non-empty and `onClear` is
+ * given. Passing your own icons alongside it is how they end up fighting.
+ */
 export const Input = ({
   className,
   type = "text",

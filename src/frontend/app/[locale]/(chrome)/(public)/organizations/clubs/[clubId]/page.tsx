@@ -15,13 +15,12 @@ import {
 } from "@/shared/utils";
 
 /**
- * Club Detail Page
- * Shows individual club information and teams
- * Path: /organizations/clubs/[clubId]
- * Strategy: ISR with hourly revalidation
+ * Pre-build list for club detail — always empty.
+ *
+ * Too many clubs (25,000+). But the export must stay: returning `[]` is what
+ * opts the route into ISR, and without it `dynamicParams` and `revalidate`
+ * below are inert. See docs/frontend.md, "What each route directive is for".
  */
-
-// Don't pre-build - too many clubs (25,000+)
 export async function generateStaticParams() {
   return [];
 }

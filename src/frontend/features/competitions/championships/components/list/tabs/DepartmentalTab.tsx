@@ -11,6 +11,22 @@ import { CompetitionLevel } from "@/shared/constants";
 import { ChampionshipFilters } from "../filters/ChampionshipFilters";
 import { ChampionshipTab } from "./ChampionshipTab";
 
+/**
+ * The departmental tab of the championships page.
+ *
+ * Takes no props and owns everything — filter state, the query, and the list,
+ * error and pagination states through `ChampionshipTab`.
+ *
+ * Fetches the committee list itself to populate the scope select, and surfaces
+ * that lookup's own error and retry separately from the championship query's.
+ *
+ * **Pagination indices are converted here** — `ChampionshipTab` reports a
+ * zero-based page index while the API counts from one, so `onPageChange` adds
+ * the offset, as in the search tabs.
+ *
+ * The three level tabs hold independent filter state, so switching tabs does
+ * not carry one level's category or gender into another.
+ */
 export function DepartmentalTab() {
   const tCommon = useTranslations("common");
 

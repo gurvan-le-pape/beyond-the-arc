@@ -26,7 +26,7 @@ import type { CommitteeFilters } from "../types/CommitteesFilters";
  * - Never call directly from components
  *
  * @example
- * import { serverCommitteesService } from '@/lib/services/client';
+ * import { serverCommitteesService } from "@/features/organizations/committees/api/committees.server";
  * const committees = await serverCommitteesService.getAll({ leagueId: 1 });
  */
 export const serverCommitteesService = {

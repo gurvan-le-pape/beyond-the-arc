@@ -11,6 +11,11 @@ import { PRINCIPLES } from "@/features/site/about/constants";
 import { PageHero, PageLayout } from "@/shared/components/layout";
 import type { LocalePageProps } from "@/shared/types";
 
+/**
+ * Metadata for the about page.
+ *
+ * Next calls this separately from the page, so a fetch failure here is not caught by the page's own error handling — hence the `withServerErrorMetadata` wrapper where one fetches.
+ */
 export async function generateMetadata({
   params,
 }: LocalePageProps): Promise<Metadata> {
@@ -20,6 +25,12 @@ export async function generateMetadata({
   return { title: tMeta("about.title"), description: tMeta("about.intro") };
 }
 
+/**
+ * The about page: project background and engineering principles.
+ *
+ * `params` is a Promise in Next 15 and is awaited here, so the feature
+ * components below receive plain values.
+ */
 export default async function AboutPage({ params }: LocalePageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
@@ -40,14 +51,12 @@ export default async function AboutPage({ params }: LocalePageProps) {
         icon={Target}
       />
 
-      {/* Engineering Principles Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
         {principles.map((principle) => (
           <PrincipleCard key={principle.title} {...principle} />
         ))}
       </div>
 
-      {/* Call to Action */}
       <AboutCtaSection
         title={t("about.exploreTitle")}
         description={t("about.explore")}

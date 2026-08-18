@@ -12,6 +12,15 @@ interface LevelRowProps {
   readonly count: string;
 }
 
+/**
+ * One competition level in the home page's list, linking to its listing.
+ *
+ * `dot` is the level's colour class, applied to the leading marker — a literal
+ * Tailwind class, since a constructed one would generate nothing.
+ *
+ * `count` is a pre-formatted string for the same reason as `ExploreCard`'s:
+ * separators and plurals are the locale's business, not this component's.
+ */
 export function LevelRow({ href, dot, name, detail, count }: LevelRowProps) {
   return (
     <Link

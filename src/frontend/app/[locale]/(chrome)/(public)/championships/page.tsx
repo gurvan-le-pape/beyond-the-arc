@@ -7,6 +7,11 @@ import { PageLayout } from "@/shared/components/layout";
 import { Text } from "@/shared/components/typography";
 import type { LocalePageProps } from "@/shared/types";
 
+/**
+ * Metadata for the championships listing.
+ *
+ * Next calls this separately from the page, so a fetch failure here is not caught by the page's own error handling — hence the `withServerErrorMetadata` wrapper where one fetches.
+ */
 export async function generateMetadata({
   params,
 }: LocalePageProps): Promise<Metadata> {
@@ -16,6 +21,12 @@ export async function generateMetadata({
   return { title: t("title"), description: t("description") };
 }
 
+/**
+ * The championships listing, split into national, regional and departmental tabs.
+ *
+ * `params` is a Promise in Next 15 and is awaited here, so the feature
+ * components below receive plain values. The active tab lives in `?tab=`, so it survives a reload and can be linked to.
+ */
 export default async function ChampionshipsPage({ params }: LocalePageProps) {
   const { locale } = await params;
   setRequestLocale(locale);

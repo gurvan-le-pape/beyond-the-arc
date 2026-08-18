@@ -12,6 +12,13 @@ interface CommitteeCardProps {
   readonly clubLabel: string;
 }
 
+/**
+ * A committee as a card, with its club count.
+ *
+ * `clubLabel` arrives already pluralised — the count and its noun are resolved
+ * by the caller, because the plural rule belongs to the locale rather than to
+ * this component.
+ */
 export function CommitteeCard({ committee, clubLabel }: CommitteeCardProps) {
   return (
     <Link
@@ -28,7 +35,6 @@ export function CommitteeCard({ committee, clubLabel }: CommitteeCardProps) {
         "flex",
       )}
     >
-      {/* Logo panel */}
       <div
         className={cn(
           "flex-shrink-0 w-20 flex items-center justify-center",
@@ -46,9 +52,7 @@ export function CommitteeCard({ committee, clubLabel }: CommitteeCardProps) {
         />
       </div>
 
-      {/* Content */}
       <div className="flex-1 min-w-0 flex flex-col">
-        {/* Header */}
         <div
           className={cn(
             "flex items-center justify-between gap-3",
@@ -70,7 +74,6 @@ export function CommitteeCard({ committee, clubLabel }: CommitteeCardProps) {
           </Badge>
         </div>
 
-        {/* Body */}
         <div className="px-4 py-3 flex items-center justify-between gap-3 flex-1">
           <Text
             variant="h3"

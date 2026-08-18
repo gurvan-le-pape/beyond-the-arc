@@ -5,6 +5,14 @@ interface HamburgerButtonProps {
   open: boolean;
 }
 
+/**
+ * The three-bar menu glyph, animating into a cross when `open`.
+ *
+ * **This is a `<span>`, not a button**, despite the name. It draws the icon and
+ * nothing else — the caller supplies the real `<button>`, its click handler,
+ * `aria-expanded`, `aria-controls` and accessible name. Rendering it alone
+ * produces a control no keyboard or screen reader can reach.
+ */
 export const HamburgerButton: React.FC<HamburgerButtonProps> = ({ open }) => (
   <span className="relative w-6 h-6 block">
     <span

@@ -7,7 +7,10 @@ import { Suspense, useCallback } from "react";
 import { usePathname, useRouter } from "@/navigation";
 import { Tabs, TabsList, TabsTrigger } from "@/shared/components/primitives";
 
-type Tab = { value: string; label: string };
+interface Tab {
+  value: string;
+  label: string;
+}
 
 interface QueryTabsProps {
   readonly tabs: Tab[];
@@ -40,7 +43,11 @@ export function QueryTabs({ tabs, children }: QueryTabsProps) {
  * component swaps in once search params are available, so a visitor landing on
  * `?tab=` sees the bar in place rather than a gap.
  */
-function QueryTabsFallback({ tabs }: { readonly tabs: Tab[] }) {
+interface QueryTabsFallbackProps {
+  readonly tabs: Tab[];
+}
+
+function QueryTabsFallback({ tabs }: QueryTabsFallbackProps) {
   return (
     <Tabs defaultValue={tabs[0].value}>
       <TabsList>

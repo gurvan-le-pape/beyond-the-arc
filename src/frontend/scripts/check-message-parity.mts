@@ -39,6 +39,8 @@ const LOCALES_FILE = join(import.meta.dirname, "..", "locales.ts");
  * `tailwind.config.js` are CommonJS. Parsing keeps this script dependency-free
  * and coupled to nothing, and a rename or a reshape of the declaration throws
  * here rather than silently checking an empty list.
+ *
+ * @returns the declared locale list and the default, parsed out of the file's text
  */
 function declaredLocales(): { locales: string[]; defaultLocale: string } {
   const source = readFileSync(LOCALES_FILE, "utf8");
@@ -75,6 +77,11 @@ type Leaves = Map<string, string>;
  *
  * Nesting differences fall out of this naturally: if a path is a leaf in one
  * locale and an object in another, the two key sets simply disagree.
+ *
+ * @param value - the node to flatten; a non-object is treated as a leaf
+ * @param prefix - the dotted path accumulated so far
+ * @param into - the set leaves are collected into, mutated in place
+ * @returns the same map, so a leaf and an object at one path simply disagree between locales
  */
 function flatten(
   value: unknown,
@@ -126,6 +133,9 @@ const SUBMESSAGE_TYPES = new Set(["plural", "select", "selectordinal"]);
  * Russian has `one`/`few`/`many`/`other`. Per-branch parity across locales
  * would therefore reject correct translations. A name that appears in no branch
  * at all is what this catches, and still does.
+ *
+ * @param message - one catalogue string, ICU syntax included
+ * @returns the argument names it declares — an empty set for a message with none
  */
 function placeholdersOf(message: string): Set<string> {
   const names = new Set<string>();
@@ -133,7 +143,14 @@ function placeholdersOf(message: string): Set<string> {
   return names;
 }
 
-/** Reads message text from `from` until the end or an unmatched `}`. */
+/**
+ * Reads message text from `from` until the end or an unmatched `}`.
+ *
+ * @param source - the message text being scanned
+ * @param from - the index to start at
+ * @param into - the set argument names are collected into, mutated in place
+ * @returns the index of the unmatched `}` that ended the message, or the source length
+ */
 function readMessage(source: string, from: number, into: Set<string>): number {
   let index = from;
 
@@ -155,7 +172,14 @@ function readMessage(source: string, from: number, into: Set<string>): number {
   return index;
 }
 
-/** Reads one `{...}` argument, starting at its opening brace. */
+/**
+ * Reads one `{...}` argument, starting at its opening brace.
+ *
+ * @param source - the message text being scanned
+ * @param from - the index of the argument's opening brace
+ * @param into - the set argument names are collected into, mutated in place
+ * @returns the index just past the argument's closing brace
+ */
 function readArgument(source: string, from: number, into: Set<string>): number {
   let index = skipSpace(source, from + 1);
 
@@ -190,7 +214,13 @@ function readArgument(source: string, from: number, into: Set<string>): number {
   return end + 1;
 }
 
-/** Index of the `}` matching the `{` at `from`. */
+/**
+ * Index of the `}` matching the `{` at `from`.
+ *
+ * @param source - the message text being scanned
+ * @param from - the index of the opening brace to match
+ * @returns the matching brace's index, or the source length when it is unmatched
+ */
 function closingBrace(source: string, from: number): number {
   let depth = 0;
 
@@ -214,6 +244,10 @@ function closingBrace(source: string, from: number): number {
  * Only `'{`, `'}` and `'#` start one — a lone apostrophe is a literal, which
  * is what keeps every `l'équipe` and `s'est` in the French catalogue from
  * being read as an escape.
+ *
+ * @param source - the message text being scanned
+ * @param from - the index to start at
+ * @returns the index just past the quoted section, or `from` unchanged when none starts here
  */
 function skipQuoted(source: string, from: number): number {
   if (source[from] !== "'") return from;

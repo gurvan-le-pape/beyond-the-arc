@@ -86,6 +86,8 @@ export function useClubStatsByRegion(options?: {
  *
  * @example
  * const { data: departments = [] } = useClubStatsByDepartment();
+ *
+ * @param options - `initialData` seeds the cache from a server render, so the first paint has no loading state
  */
 export function useClubStatsByDepartment(options?: {
   initialData?: ClubStatsByDepartment[];
@@ -105,6 +107,8 @@ export function useClubStatsByDepartment(options?: {
  *
  * @example
  * const { data: clubs = [] } = useAllClubs();
+ *
+ * @param options - `initialData` seeds the cache from a server render, so the first paint has no loading state
  */
 export function useAllClubs(options?: { initialData?: ClubBasic[] }) {
   return useQuery<ClubBasic[], ApiError>({

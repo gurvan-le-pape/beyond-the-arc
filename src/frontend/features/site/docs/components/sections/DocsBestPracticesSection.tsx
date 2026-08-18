@@ -18,6 +18,12 @@ interface DocsBestPracticesSectionProps {
   readonly content: string;
 }
 
+/**
+ * The best-practices chapter of the docs page.
+ *
+ * `content` is a single already-translated string; this contributes the
+ * heading and the frame, no copy of its own.
+ */
 export function DocsBestPracticesSection({
   content,
 }: DocsBestPracticesSectionProps) {

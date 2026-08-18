@@ -51,6 +51,13 @@ const ALL_ZONE_GETTERS: (() => Zone[])[] = [
   getTopKeyZone,
 ];
 
+/**
+ * The hotspots view: every zone group on the court, coloured by shots made.
+ *
+ * The colour domain is computed here from every zone (see `ALL_ZONE_GETTERS`)
+ * and reported through `onMaxTotalChange`, so the legend outside the SVG can
+ * match — adding a zone group means adding it to that list.
+ */
 export const HotspotsOverlay: React.FC<HotspotsOverlayProps> = ({
   shots,
   xScale,

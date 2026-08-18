@@ -12,6 +12,15 @@ interface LeaderboardTableProps {
   readonly dropdown?: React.ReactNode;
 }
 
+/**
+ * A pool's standings — rank, team, and the season record.
+ *
+ * Stays a **server component**. The `dropdown` slot is what keeps it that way:
+ * a client-side pool picker is passed in as an element rather than rendered
+ * here, so choosing a pool does not pull the table, its columns and the crests
+ * into the browser bundle. Marking this `"use client"` to add interactivity
+ * would undo that.
+ */
 export function LeaderboardTable({
   leaderboards,
   dropdown,

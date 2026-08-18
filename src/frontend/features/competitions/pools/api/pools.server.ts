@@ -29,6 +29,8 @@ export const serverPoolsService = {
    *
    * @example
    * const pools = await serverPoolsService.getByChampionshipId(5);
+   *
+   * @param championshipId - the championship whose pools to fetch
    */
   async getByChampionshipId(championshipId: number): Promise<Pool[]> {
     const queryString = buildQueryString({ championshipId });

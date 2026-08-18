@@ -18,6 +18,17 @@ interface TechStackCardProps {
   readonly items: TechStackItemConfig[];
 }
 
+/**
+ * A titled group of technologies — one layer of the stack.
+ *
+ * `items` decides the contents entirely; this adds the heading and the frame.
+ *
+ * `color` is a **raw Tailwind gradient class pair** (`from-… to-…`), not a
+ * semantic token, interpolated straight into the class string. It must be a
+ * complete literal — Tailwind only generates classes it can see written out,
+ * so a value assembled at runtime produces no gradient at all. Decorative by
+ * design; the token system does not cover these.
+ */
 export function TechStackCard({
   title,
   icon: Icon,

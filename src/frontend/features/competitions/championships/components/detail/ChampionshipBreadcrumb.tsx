@@ -7,6 +7,13 @@ interface ChampionshipBreadcrumbProps {
   readonly name: string;
 }
 
+/**
+ * The trail above a championship detail page.
+ *
+ * Takes the finished name rather than the championship, because the caller has
+ * already assembled it for the heading and the document title — deriving it a
+ * second time here would let the two disagree.
+ */
 export function ChampionshipBreadcrumb({ name }: ChampionshipBreadcrumbProps) {
   const tCompetitions = useTranslations("competitions");
 

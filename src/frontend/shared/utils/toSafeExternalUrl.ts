@@ -28,6 +28,9 @@ const SAFE_PROTOCOLS = new Set(["http:", "https:"]);
  *
  * Hrefs the application builds itself — `mailto:`, `tel:` — do not go through
  * here. They are not untrusted input; their scheme is written in the code.
+ *
+ * @param url - an externally-sourced value, possibly absent
+ * @returns the URL unchanged when it is absolute http(s), otherwise `undefined` — never a repaired one
  */
 export function toSafeExternalUrl(
   url: string | null | undefined,

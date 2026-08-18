@@ -23,6 +23,18 @@ const ClubsMap = dynamic(
   },
 );
 
+/**
+ * The boundary that keeps MapLibre out of the server render and out of every
+ * other route's bundle.
+ *
+ * `ClubsMap` is imported with **`ssr: false`**, which is not optional: MapLibre
+ * needs `window` and WebGL, so rendering it on the server throws. The dynamic
+ * import is also what stops the map's weight from being pulled in by anything
+ * that merely imports this feature.
+ *
+ * The `initial*` props are server-fetched and passed straight through, so the
+ * map paints from real data on first render rather than fetching after mount.
+ */
 export function ClubsMapClient(props: ClubsMapClientProps) {
   return (
     <div className="absolute inset-0 w-full h-full">

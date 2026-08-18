@@ -35,6 +35,19 @@ export interface PlayersFilterSetters {
   setLeagueId: (value: number | undefined) => void;
 }
 
+/**
+ * Owns every filter on the players list, plus its pagination.
+ *
+ * **Changing any filter resets to page 1.** That happens here, in an effect, so
+ * a caller must not also reset on change — doing it twice is what makes the
+ * list flash through an intermediate page. Page size defaults to 50.
+ *
+ * Location filters (committee, league) are delegated to `useLocationFilterState`
+ * so the level → committee/league cascade behaves the same on every list;
+ * `resetFilters` clears those alongside the local ones.
+ *
+ * @returns the current filter values, their setters, and pagination state
+ */
 export function usePlayersFilterState() {
   const {
     committeeId,

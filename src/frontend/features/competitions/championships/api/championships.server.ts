@@ -73,6 +73,8 @@ export const serverChampionshipsService = {
    * const championship = await serverChampionshipsService
    *   .getById(123)
    *   .catch(handleServerError);
+   *
+   * @param id - the championship's id
    */
   async getById(id: number): Promise<Championship> {
     return fetchApi<Championship>(`/championships/${id}`, {

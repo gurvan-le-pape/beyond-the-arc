@@ -91,7 +91,6 @@ export function ThemeToggle() {
         <ActiveIcon className="w-5 h-5 text-text-emphasis" />
       </button>
 
-      {/* Dropdown */}
       <div
         role="menu"
         aria-label={t("header.selectTheme")}

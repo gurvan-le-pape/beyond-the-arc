@@ -10,6 +10,15 @@ interface ArchitectureDiagramNodeProps {
   readonly color: string;
 }
 
+/**
+ * One box in the architecture diagram: icon, title, and a technology subtitle.
+ *
+ * `color` is a **raw Tailwind gradient class pair** (`from-… to-…`), not a
+ * semantic token, interpolated straight into the class string. It must be a
+ * complete literal — Tailwind only generates classes it can see written out,
+ * so a value assembled at runtime produces no gradient at all. Decorative by
+ * design; the token system does not cover these.
+ */
 export function ArchitectureDiagramNode({
   icon: Icon,
   title,

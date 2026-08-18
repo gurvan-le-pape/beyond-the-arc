@@ -17,6 +17,14 @@ interface ClubsFiltersProps {
   readonly onReset: () => void;
 }
 
+/**
+ * The filter panel for the clubs list — name search, and the level →
+ * committee/league cascade.
+ *
+ * Holds no state: values and setters come from the caller's filter hook. The
+ * committee select is gated on a league being chosen, because committees are
+ * only meaningful once a league scopes them.
+ */
 export function ClubsFilters({ filters, setters, onReset }: ClubsFiltersProps) {
   const tCommon = useTranslations("common");
   const tOrganizations = useTranslations("organizations");

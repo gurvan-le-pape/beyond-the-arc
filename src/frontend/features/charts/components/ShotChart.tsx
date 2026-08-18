@@ -52,6 +52,13 @@ const ASPECT = COURT_WIDTH / HALF_COURT_HEIGHT;
 // Minimum width below which the chart becomes unusable on mobile
 const MIN_CHART_WIDTH = 320;
 
+/**
+ * The shot chart for a set of match events, in the variant `chartType` picks.
+ *
+ * Court markings are painted *after* the overlay data — SVG paints in document
+ * order, so overlays first and the lines on top is what keeps shots from
+ * burying the court.
+ */
 export const ShotChart: React.FC<ShotChartProps> = ({
   matchEvents,
   chartType = ChartType.SCATTER,
@@ -180,9 +187,7 @@ export const ShotChart: React.FC<ShotChartProps> = ({
     >
       {containerSize && (
         <>
-          {/* Legend above the SVG */}
           {chartType === ChartType.SCATTER && <ScatterHeader />}
-          {/* Filter controls and color legend for heatmap/hotspots */}
           {chartType === ChartType.HEATMAP && (
             <HeatmapHeader
               shotFilter={shotFilter}
@@ -249,14 +254,12 @@ export const ShotChart: React.FC<ShotChartProps> = ({
             )}
 
             {/* --- Court lines and markings (always on top) --- */}
-            {/* Court boundary, center line, baseline */}
             <CourtBoundary
               svgWidth={svgWidth}
               svgHeight={svgHeight}
               yScale={yScale}
             />
 
-            {/* Paint (restricted area) */}
             <Paint
               paintLeft={paintLeft}
               paintRight={paintRight}
@@ -265,7 +268,6 @@ export const ShotChart: React.FC<ShotChartProps> = ({
               svgWidth={svgWidth}
             />
 
-            {/* Basket area (backboard, block, rim) */}
             <Basket
               centerX={centerX}
               rimY={rimY}
@@ -274,7 +276,6 @@ export const ShotChart: React.FC<ShotChartProps> = ({
               svgWidth={svgWidth}
             />
 
-            {/* Free-throw line and semi-circle */}
             <FreeThrow
               centerX={centerX}
               ftLineY={ftLineY}
@@ -282,7 +283,6 @@ export const ShotChart: React.FC<ShotChartProps> = ({
               svgWidth={svgWidth}
             />
 
-            {/* No-charge semi-circle and side lines */}
             <NoCharge
               centerX={centerX}
               rimY={rimY}
@@ -292,7 +292,6 @@ export const ShotChart: React.FC<ShotChartProps> = ({
               svgWidth={svgWidth}
             />
 
-            {/* Paint tick marks and blocks */}
             <PaintTicks
               xLeft_px={xScale((COURT_WIDTH - PAINT_WIDTH) / 2)}
               xRight_px={xScale((COURT_WIDTH + PAINT_WIDTH) / 2)}
@@ -304,14 +303,12 @@ export const ShotChart: React.FC<ShotChartProps> = ({
               blockHeight={blockHeight}
             />
 
-            {/* Centre circle (top half) */}
             <CentreCircle
               centerX={centerX}
               xScale={xScale}
               svgWidth={svgWidth}
             />
 
-            {/* 3pt arc and side lines */}
             <ThreePointArc
               xScale={xScale}
               yScale={yScale}

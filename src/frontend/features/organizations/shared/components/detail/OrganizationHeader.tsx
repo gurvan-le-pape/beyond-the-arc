@@ -11,11 +11,35 @@ import { formatNameToFileName } from "@/shared/utils";
 type OrganizationImageFolder = "clubs" | "leagues" | "committees";
 
 interface OrganizationHeaderProps {
+  /**
+   * Displayed as the heading **and** used as the logo lookup key, via
+   * `formatNameToFileName`. A name that does not match a shipped file falls
+   * back to the default crest rather than erroring.
+   */
   readonly name: string;
+  /** Which `public/images/*` directory the logo is looked up in. */
   readonly imageFolder: OrganizationImageFolder;
+  /** Secondary line under the heading — city, department, or similar. */
   readonly subtitle?: ReactNode;
 }
 
+/**
+ * Card heading for a league, committee or club detail page: logo, name, and an
+ * optional subtitle line.
+ *
+ * The logo is resolved from the props, not passed in:
+ * `/images/{imageFolder}/{formatNameToFileName(name)}.webp`. Renaming an
+ * organisation upstream therefore swaps its logo for the default silently, and
+ * the two stay in step only if the asset is renamed alongside it.
+ *
+ * Only `leagues` and `committees` ship real logos. `clubs` ships the fallback
+ * alone, so every club header renders the default crest — there are tens of
+ * thousands of clubs and no per-club artwork.
+ *
+ * `"use client"` is here for one reason: the `onError` fallback needs state.
+ * Nothing else in this component is interactive, so keep it that way rather
+ * than letting the boundary grow.
+ */
 export function OrganizationHeader({
   name,
   imageFolder,

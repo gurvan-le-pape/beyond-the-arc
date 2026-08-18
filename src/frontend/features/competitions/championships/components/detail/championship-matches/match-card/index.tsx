@@ -17,6 +17,16 @@ interface MatchCardProps {
   readonly onToggleExpand: (matchId: number) => void;
 }
 
+/**
+ * One fixture: teams, score, status, and an expandable box score.
+ *
+ * Controlled expansion — `expanded` and `onToggleExpand` belong to the parent,
+ * which is what lets several cards stay open together.
+ *
+ * The events behind the expanded view are fetched lazily and prefetched on
+ * hover, so opening a card that has already been pointed at is instant while a
+ * page of collapsed cards costs nothing.
+ */
 export const MatchCard: React.FC<MatchCardProps> = ({
   match,
   expanded,

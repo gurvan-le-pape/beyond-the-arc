@@ -16,6 +16,13 @@ interface ExploreCardProps {
   readonly countLabel: string;
 }
 
+/**
+ * A destination tile on the home page: badge, title, blurb, and a count.
+ *
+ * `count` and `countLabel` are **pre-formatted strings**, not a number and a
+ * noun. Thousands separators and the plural rule both belong to the locale, so
+ * the caller resolves them and this only places them.
+ */
 export function ExploreCard({
   href,
   badgeVariant,

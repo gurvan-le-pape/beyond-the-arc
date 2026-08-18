@@ -17,6 +17,14 @@ interface Corner3ZonesProps {
   onZoneLeave: () => void;
 }
 
+/**
+ * The two corner-three zones, between each sideline and the three-point line.
+ *
+ * Colour encodes **volume, not accuracy** — `colorScale` is fed the zone's
+ * total attempts, so ten makes and ten misses shade identically. A zone with
+ * no shots still renders, at a fainter opacity, so the court's zone map stays
+ * whole rather than developing holes.
+ */
 const Corner3Zones: React.FC<Corner3ZonesProps> = ({
   shots,
   xScale,

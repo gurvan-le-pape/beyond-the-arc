@@ -10,6 +10,14 @@ interface RimProps {
   svgWidth: number;
 }
 
+/**
+ * The rim, as a circle of the regulation radius centred on the basket.
+ *
+ * Takes `centerX` and `rimY` **already in SVG pixels** but `xScale` for the
+ * radius, because a radius is a length rather than a position and must be
+ * converted from court units. Mixing those two spaces up is the usual reason a
+ * rim renders at the wrong size but the right place.
+ */
 export const Rim: React.FC<RimProps> = ({
   centerX,
   rimY,

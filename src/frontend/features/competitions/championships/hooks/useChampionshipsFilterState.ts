@@ -27,6 +27,14 @@ function useSharedFilterState() {
   };
 }
 
+/**
+ * Filter state for the national championships tab.
+ *
+ * Category and gender only — a national championship has no league or committee
+ * above it, so there is no scope to filter by and no cascade to reset.
+ *
+ * @returns the filter values, their setters, and pagination state
+ */
 export function useNationalFilterState() {
   const { filters, setters } = useSharedFilterState();
 
@@ -44,6 +52,15 @@ export function useNationalFilterState() {
   };
 }
 
+/**
+ * Filter state for the regional championships tab.
+ *
+ * Adds a league scope on top of the shared category and gender. Changing the
+ * league resets to page 1 — the effect depends on the stable setter rather than
+ * on the setters object, which would re-run every render.
+ *
+ * @returns the filter values, their setters, and pagination state
+ */
 export function useRegionalFilterState() {
   const { filters, setters } = useSharedFilterState();
   const [leagueId, setLeagueId] = useState("");
@@ -72,6 +89,15 @@ export function useRegionalFilterState() {
   };
 }
 
+/**
+ * Filter state for the departmental championships tab.
+ *
+ * The committee counterpart of the regional hook: same shared category and
+ * gender, same page-1 reset on a scope change, scoped by committee instead of
+ * league.
+ *
+ * @returns the filter values, their setters, and pagination state
+ */
 export function useDepartmentalFilterState() {
   const { filters, setters } = useSharedFilterState();
   const [committeeId, setCommitteeId] = useState("");

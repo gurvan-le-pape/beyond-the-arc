@@ -22,6 +22,19 @@ interface SearchableChipListProps<T extends SearchableChipListItem> {
   readonly showSearch?: boolean;
 }
 
+/**
+ * A filterable list of links, used for the championships and clubs under an
+ * organisation.
+ *
+ * Filtering is **client-side over the whole list** — everything is already
+ * loaded, so there is no query behind the box and the list is expected to stay
+ * small enough to hold in memory.
+ *
+ * `basePath` is joined with each item's id to build its href, so the items need
+ * carry only an id and a name.
+ *
+ * @typeParam T - the item shape, which must expose `id` and `name`
+ */
 export function SearchableChipList<T extends SearchableChipListItem>({
   items,
   title,

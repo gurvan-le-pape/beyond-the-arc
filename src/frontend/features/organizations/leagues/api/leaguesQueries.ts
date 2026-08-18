@@ -49,6 +49,8 @@ export const leaguesQueries = {
    *
    * @example
    * useQuery(leaguesQueries.list())
+   *
+   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
    */
   list: () => ({
     queryKey: leaguesKeys.lists(),
@@ -62,6 +64,9 @@ export const leaguesQueries = {
    *
    * @example
    * useQuery(leaguesQueries.detail(1))
+   *
+   * @param id - the league's id
+   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
    */
   detail: (id: number) => ({
     queryKey: leaguesKeys.detail(id),
@@ -76,6 +81,9 @@ export const leaguesQueries = {
    *
    * @example
    * useQuery(leaguesQueries.byIds([1, 2, 3]))
+   *
+   * @param ids - the leagues to fetch together; the key is order-sensitive, so sort before calling if callers may differ
+   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
    */
   byIds: (ids: number[]) => ({
     queryKey: leaguesKeys.byIds(ids),
@@ -96,6 +104,9 @@ export const leaguesPrefetch = {
    * @example
    * const prefetch = leaguesPrefetch.list(queryClient);
    * <LeagueSelector onOpen={() => prefetch()} />
+   *
+   * @param queryClient - the client to warm
+   * @returns a prefetcher taking no arguments — the list has one cache entry
    */
   list: (queryClient: QueryClient) => () => {
     queryClient.prefetchQuery(leaguesQueries.list()).catch(() => {
@@ -109,6 +120,9 @@ export const leaguesPrefetch = {
    * @example
    * const prefetch = leaguesPrefetch.detail(queryClient);
    * <tr onMouseEnter={() => prefetch(league.id)} />
+   *
+   * @param queryClient - the client to warm
+   * @returns a prefetcher taking a league id — call it on hover or focus, before navigation
    */
   detail: (queryClient: QueryClient) => (leagueId: number) => {
     queryClient.prefetchQuery(leaguesQueries.detail(leagueId)).catch(() => {});

@@ -16,6 +16,13 @@ interface FeaturesHighlightsSectionProps {
   readonly highlights: HighlightItem[];
 }
 
+/**
+ * The titled block of product highlights beneath the feature grid.
+ *
+ * `highlights` decides the contents; this contributes the heading and the
+ * layout. It is the named counterpart of the features grid above it, which is
+ * still a raw `div` in the page.
+ */
 export function FeaturesHighlightsSection({
   title,
   highlights,

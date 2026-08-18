@@ -12,6 +12,12 @@ interface CommitteesGridProps {
   readonly committees: Committee[];
 }
 
+/**
+ * The committees listing as a responsive grid.
+ *
+ * Renders whatever it is given and nothing else — the empty state and the
+ * fetching both belong to the page above it.
+ */
 export function CommitteesGrid({ committees }: CommitteesGridProps) {
   const t = useTranslations("clubs");
 

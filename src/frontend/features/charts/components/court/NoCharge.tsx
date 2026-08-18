@@ -4,25 +4,22 @@ import React from "react";
 
 import { COURT_WIDTH, LINE_WIDTH, NO_CHARGE_RADIUS } from "../../constants";
 
-/**
- * NoCharge component draws the no-charge semi-circle and side lines under the basket.
- *
- * @param centerX - SVG x position of court center
- * @param rimY - SVG y position of rim
- * @param ncLineY1 - SVG y position of start of side lines
- * @param ncLineY2 - SVG y position of end of side lines
- * @param xScale - d3 scale function for x
- * @param svgWidth - SVG width for scaling
- */
-export interface NoChargeProps {
-  centerX: number;
-  rimY: number;
-  ncLineY1: number;
-  ncLineY2: number;
-  xScale: (x: number) => number;
-  svgWidth: number;
+interface NoChargeProps {
+  /** Court centre, already in SVG pixels — the caller applies the scale. */
+  readonly centerX: number;
+  /** The rim's height, already in SVG pixels — the caller applies the scale — the arc is centred on it. */
+  readonly rimY: number;
+  /** Where the side lines start, already in SVG pixels — the caller applies the scale. */
+  readonly ncLineY1: number;
+  /** Where the side lines end, already in SVG pixels — the caller applies the scale. */
+  readonly ncLineY2: number;
+  /** Court units to SVG pixels — used for the arc radius, which is a length rather than a position. */
+  readonly xScale: (x: number) => number;
+  /** Chart width; scales the stroke so line weight stays proportional. */
+  readonly svgWidth: number;
 }
 
+/** The no-charge semi-circle plus the two side lines running from it toward the baseline. */
 export const NoCharge: React.FC<NoChargeProps> = ({
   centerX,
   rimY,

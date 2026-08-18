@@ -25,6 +25,9 @@ interface CommonFilterChipsArgs {
  * The active-filter chips shared by the teams, players, and matches filter
  * panels. Returned as two groups (category+gender, level+location) so each
  * panel can slot them among its own feature-specific chips in the right order.
+ *
+ * @param root0 - the filter values, their setters, and the committee and league lists the labels are resolved from
+ * @returns two chip groups — category+gender and level+location — for the panel to interleave with its own
  */
 export function useCommonFilterChips({
   category,

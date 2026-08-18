@@ -10,6 +10,13 @@ interface DepartmentsLayerProps {
   readonly labels?: any;
 }
 
+/**
+ * The department polygons and their club counts.
+ *
+ * The zoomed-in counterpart of the regions layer; the two swap at a zoom
+ * threshold rather than both drawing. `labels` carries the centroids the counts
+ * are anchored to, computed once outside the render.
+ */
 export function DepartmentsLayer({ geoJson, labels }: DepartmentsLayerProps) {
   return (
     <>

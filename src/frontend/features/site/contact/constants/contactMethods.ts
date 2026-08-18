@@ -8,7 +8,12 @@ import {
   LINKEDIN_URL,
 } from "@/shared/constants";
 
-/** The displayed value drops the scheme; the href keeps it. */
+/**
+ * The displayed value drops the scheme; the href keeps it.
+ *
+ * @param url - an absolute URL
+ * @returns the URL without its scheme, for display where the protocol is noise
+ */
 const stripScheme = (url: string): string => url.replace(/^https?:\/\//, "");
 
 /**

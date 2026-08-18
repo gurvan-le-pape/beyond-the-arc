@@ -10,6 +10,13 @@ interface RegionsLayerProps {
   readonly labels?: any;
 }
 
+/**
+ * The region polygons and their club counts.
+ *
+ * Visible only at low zoom — the departments layer replaces it as you zoom in,
+ * so the two are mutually exclusive rather than stacked. `labels` carries the
+ * centroids the counts are anchored to, computed once outside the render.
+ */
 export function RegionsLayer({ geoJson, labels }: RegionsLayerProps) {
   return (
     <>

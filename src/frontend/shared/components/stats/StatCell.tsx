@@ -12,6 +12,16 @@ interface StatCellProps {
   readonly compact?: boolean;
 }
 
+/**
+ * A single number with its label beneath, for stat bands and map summaries.
+ *
+ * `value` is a string, not a number: formatting — decimals, separators, units —
+ * belongs to the caller, so this never rounds or reformats what it is given.
+ *
+ * The `compact` layout is smaller and tighter for dense blocks. Note it does
+ * **not** apply `tabular-nums`, which the default layout does, so a compact row
+ * of changing numbers can shift by a pixel between renders.
+ */
 export function StatCell({ value, label, compact = false }: StatCellProps) {
   if (compact) {
     return (

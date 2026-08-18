@@ -5,11 +5,22 @@ import * as Sentry from "@sentry/nextjs";
 import NextError from "next/error";
 import { useEffect } from "react";
 
-export default function GlobalError({
-  error,
-}: {
+interface GlobalErrorProps {
   readonly error: Error & { digest?: string };
-}) {
+}
+
+/**
+ * The last-resort boundary, for a failure in the root layout itself.
+ *
+ * Because the root layout is what broke, this **renders its own `<html>` and
+ * `<body>`** — nothing above it is available to supply them. That also means no
+ * providers, no theme and no translations here, so the copy is deliberately
+ * plain and English.
+ *
+ * Sentry is captured on mount because a failure this high never reaches the
+ * server-side handler.
+ */
+export default function GlobalError({ error }: GlobalErrorProps) {
   useEffect(() => {
     Sentry.captureException(error);
   }, [error]);

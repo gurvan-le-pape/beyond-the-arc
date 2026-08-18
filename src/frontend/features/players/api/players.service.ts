@@ -22,7 +22,7 @@ import type { PlayerSearchFilters } from "../types/PlayerSearchFilters";
  * - Never call directly from components
  *
  * @example
- * import { playersService } from '@/lib/services/client';
+ * import { playersService } from "@/features/players/api";
  * const players = await playersService.getAll({ teamId: 1, page: 1 });
  */
 export const playersService = {
@@ -39,6 +39,8 @@ export const playersService = {
    *   page: 1,
    *   limit: 20,
    * });
+   *
+   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
    */
   async getAll(
     filters?: PlayerFilters,
@@ -58,12 +60,10 @@ export const playersService = {
    * Get detailed information for a single player.
    * Includes match statistics and performance data.
    *
-   * @param playerId - The player ID
-   * @returns Detailed player information with match stats
+   * @param playerId - the player's id
+   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
+   * @returns the fully hydrated player, with team, club and committee
    * @throws {AxiosError} 404 if not found, 400 if invalid ID
-   *
-   * @example
-   * const player = await playersService.getById(789);
    */
   async getById(playerId: number, signal?: AbortSignal): Promise<Player> {
     const { data } = await apiClient.get<Player>(`/players/${playerId}`, {
@@ -81,6 +81,8 @@ export const playersService = {
    *
    * @example
    * const matches = await playersService.getMatches(789);
+   *
+   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
    */
   async getMatches(
     playerId: number,
@@ -99,6 +101,9 @@ export const playersService = {
    * @returns Filter values for players
    * @example
    * const filterValues = await playersService.getFilterValues();
+   *
+   * @param params - optional committee or league to scope the values to; omitted, they span every player
+   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
    */
   async getFilterValues(
     params?: {
@@ -126,6 +131,8 @@ export const playersService = {
    * @example
    * const players = await playersService.search('Dupont');
    * // Use in autocomplete: <Autocomplete options={players} />
+   *
+   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
    */
   async search(
     query: string,

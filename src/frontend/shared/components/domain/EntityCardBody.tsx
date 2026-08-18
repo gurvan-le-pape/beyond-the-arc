@@ -38,11 +38,9 @@ export function EntityCardBody({
 
   return (
     <div className="px-5 py-4 flex flex-col sm:flex-row gap-4">
-      {/* Main content */}
       <div className="flex items-center gap-4 flex-1 min-w-0">
         <ClubLogo clubName={clubName} />
 
-        {/* Identity */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 min-w-0">
             <p className="text-lg font-bold text-text-heading truncate">
@@ -76,7 +74,6 @@ export function EntityCardBody({
         </div>
       </div>
 
-      {/* Number block */}
       {!!number && (
         <div
           className={cn(

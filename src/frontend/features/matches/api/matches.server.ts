@@ -31,7 +31,7 @@ import type { MatchPlayerStatsResponse } from "../types/MatchPlayerStats";
  * - Never call directly from components
  *
  * @example
- * import { serverMatchesService } from '@/lib/services/client';
+ * import { serverMatchesService } from "@/features/matches/api/matches.server";
  * const matches = await serverMatchesService.getAll({ championshipId: 1 });
  */
 export const serverMatchesService = {
@@ -82,6 +82,9 @@ export const serverMatchesService = {
    *
    * @example
    * const matches = await serverMatchesService.getByPoolId(10);
+   *
+   * @param poolId - the pool whose fixtures to fetch
+   * @returns every match in the pool, unpaginated — the caller slices for display
    */
   async getByPoolId(poolId: number): Promise<Match[]> {
     return fetchApi<Match[]>(`/matches/pool/${poolId}`, {

@@ -1,15 +1,24 @@
 // src/frontend/features/charts/components/overlays/ScatterOverlay.tsx
 import type { ShotEvent } from "@/shared/types";
 
-export const ScatterOverlay: React.FC<{
-  shots: ShotEvent[];
-  xScale: (x: number) => number;
-  yScale: (y: number) => number;
-}> = ({ shots, xScale, yScale }) => {
+interface ScatterOverlayProps {
+  /** The shots to plot; each is drawn individually rather than binned. */
+  readonly shots: ShotEvent[];
+  /** Court units to SVG pixels, horizontally. */
+  readonly xScale: (x: number) => number;
+  /** Court units to SVG pixels, vertically. */
+  readonly yScale: (y: number) => number;
+}
+
+/** One glyph per shot: a green circle for a make, a red cross for a miss. */
+export const ScatterOverlay: React.FC<ScatterOverlayProps> = ({
+  shots,
+  xScale,
+  yScale,
+}) => {
   const r = 6; // radius for made shots, half-length for cross arms
   return (
     <g>
-      {/* Shots */}
       {shots.map((shot) => {
         const cx = xScale(shot.x);
         const cy = yScale(shot.y);

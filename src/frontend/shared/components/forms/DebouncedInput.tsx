@@ -10,6 +10,20 @@ export interface DebouncedInputProps extends Omit<InputProps, "onChange"> {
   debounceMs?: number;
 }
 
+/**
+ * A text input that reports its value only once typing settles.
+ *
+ * **`onChange` receives the string, not the event**, and fires after
+ * `debounceMs` (400 by default) — the one difference from `Input`, whose other
+ * props all pass through.
+ *
+ * Changing `value` from outside **cancels any pending callback**. That is what
+ * makes a "reset all" hold: without it the timer armed a moment earlier would
+ * still fire and re-apply the filter the user had just cleared.
+ *
+ * Clearing is immediate and not debounced, so the clear button feels instant
+ * while typing stays cheap.
+ */
 export const DebouncedInput = ({
   value: externalValue,
   onChange,

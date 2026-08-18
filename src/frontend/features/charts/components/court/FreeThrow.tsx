@@ -9,21 +9,18 @@ import {
   LINE_WIDTH,
 } from "../../constants";
 
-/**
- * FreeThrow component draws the free-throw line and semi-circle for FIBA half-court.
- *
- * @param centerX - SVG x position of court center
- * @param ftLineY - SVG y position of free-throw line
- * @param xScale - d3 scale function for x
- * @param svgWidth - SVG width for scaling
- */
-export interface FreeThrowProps {
-  centerX: number;
-  ftLineY: number;
-  xScale: (x: number) => number;
-  svgWidth: number;
+interface FreeThrowProps {
+  /** Court centre, already in SVG pixels — the caller applies the scale. */
+  readonly centerX: number;
+  /** The free-throw line's height, already in SVG pixels — the caller applies the scale. */
+  readonly ftLineY: number;
+  /** Court units to SVG pixels — used for the half-width and arc radius, which are lengths rather than positions. */
+  readonly xScale: (x: number) => number;
+  /** Chart width; scales the stroke so line weight stays proportional. */
+  readonly svgWidth: number;
 }
 
+/** The free-throw line and its semi-circle. */
 export const FreeThrow: React.FC<FreeThrowProps> = ({
   centerX,
   ftLineY,

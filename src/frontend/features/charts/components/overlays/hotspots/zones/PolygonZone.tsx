@@ -40,6 +40,11 @@ function polygonCentroid(polygon: [number, number][]): [number, number] {
   return [cx, cy];
 }
 
+/**
+ * One hotspot zone drawn as a polygon, with its stat label at the true
+ * area-weighted centroid — computed by the shoelace formula because a
+ * bounding-box centre drifts on irregular, arc-sampled zones.
+ */
 export const PolygonZone: React.FC<PolygonZoneProps> = ({
   zone,
   stats,

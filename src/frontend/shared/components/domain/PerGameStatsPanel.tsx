@@ -10,15 +10,6 @@ interface PerGameStatsPanelProps {
   readonly stats: PlayerCareerStats;
 }
 
-/**
- * Renders a season/career per-game stat panel: games played followed by the
- * seven per-game averages. Shared verbatim by the player detail (career) and
- * team detail (season) pages — both consume the same PlayerCareerStatsDto shape,
- * so there is one panel, one field list, and one heading.
- *
- * Per-game values come precomputed and zero-guarded from the backend (gp || 1),
- * so `toFixed(1)` renders "0.0" for a player/team with no games.
- */
 const STAT_FIELDS = [
   { key: "gamesPlayed", value: (s) => s.gamesPlayed },
   { key: "pointsPerGame", value: (s) => s.pointsPerGame.toFixed(1) },
@@ -33,6 +24,18 @@ const STAT_FIELDS = [
   value: (s: PlayerCareerStats) => string | number;
 }[];
 
+/**
+ * A season or career per-game panel: games played, then the seven per-game
+ * averages.
+ *
+ * Shared verbatim by player detail (career) and team detail (season) — both
+ * consume the same aggregate shape, so there is one panel, one field list and
+ * one heading rather than a copy per feature.
+ *
+ * **The averages arrive precomputed and zero-guarded from the backend**, which
+ * divides by `gamesPlayed || 1`. Nothing is divided here, so a player or team
+ * with no games renders `0.0` rather than `NaN`.
+ */
 export const PerGameStatsPanel: React.FC<PerGameStatsPanelProps> = ({
   stats,
 }) => {

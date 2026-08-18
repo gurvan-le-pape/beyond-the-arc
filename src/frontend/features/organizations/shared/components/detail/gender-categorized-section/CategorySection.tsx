@@ -5,7 +5,11 @@ import { Text } from "@/shared/components/typography";
 import type { Category } from "@/shared/constants";
 import { cn } from "@/shared/utils";
 
-function ChevronRight({ className }: { readonly className?: string }) {
+interface ChevronRightProps {
+  readonly className?: string;
+}
+
+function ChevronRight({ className }: ChevronRightProps) {
   return (
     <svg
       viewBox="0 0 20 20"
@@ -40,7 +44,7 @@ interface CategorySectionProps<T> {
  * category header. Used within GenderCategorizedList to organize items by
  * category (e.g., "U11", "U13", "U15").
  *
- * @template T - The type of items being displayed
+ * @typeParam T - The type of items being displayed
  *
  * @example
  * <CategorySection
@@ -75,7 +79,6 @@ export function CategorySection<T>({
 
   return (
     <div>
-      {/* Toggle header */}
       <NavButton
         variant="categoryHeader"
         size="auto"
@@ -101,7 +104,6 @@ export function CategorySection<T>({
         </Text>
       </NavButton>
 
-      {/* Collapsible body */}
       {isExpanded && (
         <div
           id={contentId}

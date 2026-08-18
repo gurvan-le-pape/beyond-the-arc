@@ -14,6 +14,26 @@ interface TeamHeaderProps {
   readonly team: Team;
 }
 
+/**
+ * Identity block at the top of a team detail page: club crest, club name, the
+ * badges that identify the team, and a link into its championship.
+ *
+ * **Requires a fully hydrated team.** It reads `team.club.committee.league.id`
+ * without optional chaining, so a team whose club or committee is missing
+ * throws rather than degrading. Only the detail response carries that depth —
+ * `TeamCard` optional-chains the same path because it renders list data.
+ *
+ * The championship link appears only for regional and departmental teams, where
+ * a league or committee id exists to anchor it; otherwise the name renders
+ * unlinked.
+ *
+ * The card border is a **two-way split on gender**: anything that is not
+ * `"female"` — including a missing value — takes the male border. There is no
+ * neutral state.
+ *
+ * An **async server component**: it awaits its own translations, so it cannot be
+ * rendered inside a client boundary.
+ */
 export async function TeamHeader({ team }: TeamHeaderProps) {
   const tCommon = await getTranslations("common");
   const tCompetitions = await getTranslations("competitions");
@@ -54,23 +74,19 @@ export async function TeamHeader({ team }: TeamHeaderProps) {
       }`}
     >
       <div className="flex items-center gap-5 p-6">
-        {/* Club Logo */}
         <ClubLogoLink clubId={clubId} clubName={clubName} />
 
-        {/* Info */}
         <div className="flex-1 min-w-0">
           <Text variant="h1" className="mb-3">
             {clubName}
           </Text>
 
-          {/* Badges */}
           <EntityHeaderBadges
             category={category}
             gender={gender}
             championship={championship}
           />
 
-          {/* Championship link */}
           {competitionUrl && (
             <Link
               href={competitionUrl}
@@ -82,7 +98,6 @@ export async function TeamHeader({ team }: TeamHeaderProps) {
           )}
         </div>
 
-        {/* Team number */}
         <div className="flex-shrink-0 pl-5 border-l border-divide self-stretch flex items-center">
           <span className="text-3xl font-bold text-text-secondary">
             #{teamNumber}

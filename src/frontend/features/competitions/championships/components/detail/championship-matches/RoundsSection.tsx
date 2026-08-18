@@ -13,6 +13,14 @@ interface RoundsSectionProps {
   readonly onSelectRound: (round: number) => void;
 }
 
+/**
+ * The matchday selector, driven by which rounds actually have fixtures.
+ *
+ * The round list is derived from `groupedMatches`' keys, so a matchday with no
+ * matches simply never appears — there is no empty round to select. Those keys
+ * are strings at runtime whatever the type says, which is why they are
+ * converted before sorting.
+ */
 export function RoundsSection({
   groupedMatches,
   selectedRound,
