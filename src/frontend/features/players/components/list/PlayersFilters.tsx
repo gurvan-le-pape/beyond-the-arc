@@ -2,7 +2,6 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import React from "react";
 
 import { ClubComboBoxFilter } from "@/features/organizations/clubs/components";
 import { useLocationOptions } from "@/features/organizations/hooks";
@@ -47,11 +46,11 @@ interface PlayersFiltersProps {
  * once in the mobile sheet, once in the desktop card. Nothing here may rely on a
  * unique `id` or on being mounted once.
  */
-export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
+export function PlayersFilters({
   filters,
   setters,
   onReset,
-}) => {
+}: PlayersFiltersProps) {
   const tPlayers = useTranslations("players");
   const tCommon = useTranslations("common");
   const tTeams = useTranslations("teams");
@@ -229,6 +228,6 @@ export const PlayersFilters: React.FC<PlayersFiltersProps> = ({
       />
     </FiltersShell>
   );
-};
+}
 
 export default PlayersFilters;

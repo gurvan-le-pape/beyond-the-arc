@@ -4,7 +4,7 @@
 import { toPng } from "html-to-image";
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 import type { MatchEvent } from "@/features/matches/types";
 import { Button } from "@/shared/components/primitives";
@@ -34,7 +34,7 @@ interface ShotModalProps {
  * sits outside the capture ref on purpose — the PNG is the chart, not the
  * scoreboard.
  */
-export const ShotModal: React.FC<ShotModalProps> = ({
+export function ShotModal({
   open,
   player,
   onClose,
@@ -43,7 +43,7 @@ export const ShotModal: React.FC<ShotModalProps> = ({
   teamScore,
   opponentScore,
   getPlayerShots,
-}) => {
+}: ShotModalProps) {
   const t = useTranslations("common");
   const dialogRef = useRef<HTMLDialogElement>(null);
   const chartRef = useRef<HTMLDivElement>(null);
@@ -182,6 +182,6 @@ export const ShotModal: React.FC<ShotModalProps> = ({
       )}
     </dialog>
   );
-};
+}
 
 export default ShotModal;

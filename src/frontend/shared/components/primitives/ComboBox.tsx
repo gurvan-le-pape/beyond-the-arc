@@ -9,7 +9,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import React, { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 
 import { cn } from "@/shared/utils";
 
@@ -64,7 +64,7 @@ function getFilteredOptions(
  * // Not searchable — short static lists (used internally by Select)
  * <ComboBox searchable={false} options={categoryOptions} value={category} onChange={setCategory} />
  */
-export const ComboBox: React.FC<ComboBoxProps> = ({
+export function ComboBox({
   options = [],
   value,
   onChange,
@@ -78,7 +78,7 @@ export const ComboBox: React.FC<ComboBoxProps> = ({
   isLoading = false,
   error,
   helperText,
-}) => {
+}: ComboBoxProps) {
   const t = useTranslations("common");
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
@@ -266,6 +266,6 @@ export const ComboBox: React.FC<ComboBoxProps> = ({
       )}
     </div>
   );
-};
+}
 
 export default ComboBox;

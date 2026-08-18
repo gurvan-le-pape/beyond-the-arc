@@ -2,7 +2,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import React, { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { eventCategories, Quarter } from "@/features/matches/constants";
 import type { MatchEvent } from "@/features/matches/types";
@@ -32,12 +32,12 @@ interface MatchEventsProps {
  * Owns all filter/sort state, computes the enriched event list in a single
  * O(n) pass, and delegates rendering to MatchEventsFilters + MatchEventsTimeline.
  */
-export const MatchEvents: React.FC<MatchEventsProps> = ({
+export function MatchEvents({
   events,
   homeTeam,
   awayTeam,
   matchDate,
-}) => {
+}: MatchEventsProps) {
   const tMatches = useTranslations("matches");
   const tCommon = useTranslations("common");
 
@@ -159,6 +159,6 @@ export const MatchEvents: React.FC<MatchEventsProps> = ({
       />
     </Section>
   );
-};
+}
 
 export default MatchEvents;

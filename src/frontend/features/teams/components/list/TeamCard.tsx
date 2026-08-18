@@ -1,6 +1,5 @@
 // src/frontend/features/teams/components/list/TeamCard.tsx
 import { useTranslations } from "next-intl";
-import React from "react";
 
 import type { Team } from "@/features/teams/types";
 import {
@@ -31,7 +30,7 @@ interface TeamCardProps {
  * `TeamHeader` reads the same `Team` type without chaining and needs the
  * hydrated detail shape — the two disagree deliberately.
  */
-export const TeamCard: React.FC<TeamCardProps> = ({ team }) => {
+export function TeamCard({ team }: TeamCardProps) {
   const tCommon = useTranslations("common");
   const tTeams = useTranslations("teams");
 
@@ -78,4 +77,4 @@ export const TeamCard: React.FC<TeamCardProps> = ({ team }) => {
       />
     </ListEntityCard>
   );
-};
+}

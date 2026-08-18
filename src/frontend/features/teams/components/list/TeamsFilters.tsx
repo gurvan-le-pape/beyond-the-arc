@@ -2,7 +2,6 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import React from "react";
 
 import { ClubComboBoxFilter } from "@/features/organizations/clubs/components";
 import { useLocationOptions } from "@/features/organizations/hooks";
@@ -50,11 +49,7 @@ interface TeamsFiltersProps {
  * Rendered inside `FiltersShell`, so this subtree exists **twice** in the DOM —
  * mobile sheet and desktop card. Nothing here may rely on a unique `id`.
  */
-export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
-  filters,
-  setters,
-  onReset,
-}) => {
+export function TeamsFilters({ filters, setters, onReset }: TeamsFiltersProps) {
   const tTeams = useTranslations("teams");
   const tCommon = useTranslations("common");
   const tMatches = useTranslations("matches");
@@ -246,6 +241,6 @@ export const TeamsFilters: React.FC<TeamsFiltersProps> = ({
       <CascadeSelects steps={cascadeSteps} cols={2} />
     </FiltersShell>
   );
-};
+}
 
 export default TeamsFilters;

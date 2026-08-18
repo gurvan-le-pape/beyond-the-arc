@@ -59,10 +59,10 @@ const MIN_CHART_WIDTH = 320;
  * order, so overlays first and the lines on top is what keeps shots from
  * burying the court.
  */
-export const ShotChart: React.FC<ShotChartProps> = ({
+export function ShotChart({
   matchEvents,
   chartType = ChartType.SCATTER,
-}) => {
+}: ShotChartProps) {
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   // null until first ResizeObserver measurement — prevents flash of wrong size
@@ -322,6 +322,6 @@ export const ShotChart: React.FC<ShotChartProps> = ({
       )}
     </div>
   );
-};
+}
 
 export default ShotChart;

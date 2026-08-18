@@ -1,6 +1,5 @@
 // src/frontend/features/charts/components/overlays/TooltipContent.tsx
 import { useTranslations } from "next-intl";
-import React from "react";
 import { createPortal } from "react-dom";
 
 import { getTooltipPosition } from "@/features/charts/utils";
@@ -27,10 +26,7 @@ interface TooltipContentProps {
  * The hover tooltip for a chart cell or zone, portaled to `document.body` so
  * it escapes the SVG — fixed at the cursor and non-interactive.
  */
-const TooltipContent: React.FC<TooltipContentProps> = ({
-  tooltip,
-  shotFilter,
-}) => {
+function TooltipContent({ tooltip, shotFilter }: TooltipContentProps) {
   const t = useTranslations("common");
   const { left, top } = getTooltipPosition(tooltip.x, tooltip.y);
 
@@ -107,6 +103,6 @@ const TooltipContent: React.FC<TooltipContentProps> = ({
     </div>,
     globalThis.document.body,
   );
-};
+}
 
 export default TooltipContent;

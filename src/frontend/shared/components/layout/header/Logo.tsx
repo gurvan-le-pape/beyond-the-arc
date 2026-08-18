@@ -16,7 +16,7 @@ import { Link } from "@/navigation";
  * mismatch on hydration; the cost is a brief flash of the light logo on a dark
  * first paint, taken deliberately over a hydration error.
  */
-export const Logo: React.FC = () => {
+export function Logo() {
   const t = useTranslations("navigation");
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -35,4 +35,4 @@ export const Logo: React.FC = () => {
       </div>
     </Link>
   );
-};
+}

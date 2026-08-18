@@ -1,5 +1,4 @@
 // src/frontend/features/charts/components/court/Basket.tsx
-import React from "react";
 
 import Backboard from "./basket/Backboard";
 import Block from "./basket/Block";
@@ -21,13 +20,13 @@ interface BasketProps {
  * transform: all of them receive the same scales, so the rim cannot drift from
  * the backboard it hangs off.
  */
-export const Basket: React.FC<BasketProps> = ({
+export function Basket({
   centerX,
   rimY,
   xScale,
   yScale,
   svgWidth,
-}) => {
+}: BasketProps) {
   return (
     <g>
       <Backboard xScale={xScale} yScale={yScale} svgWidth={svgWidth} />
@@ -35,6 +34,6 @@ export const Basket: React.FC<BasketProps> = ({
       <Rim centerX={centerX} rimY={rimY} xScale={xScale} svgWidth={svgWidth} />
     </g>
   );
-};
+}
 
 export default Basket;

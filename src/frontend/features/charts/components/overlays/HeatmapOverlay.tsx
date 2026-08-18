@@ -5,7 +5,7 @@
 // Uses D3 for color scaling and supports filtering by shot type (made/missed/all).
 import { scaleSequential } from "d3-scale";
 import { interpolateYlOrRd } from "d3-scale-chromatic";
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { ShotFilter } from "../../constants";
 import HeatmapCell from "./HeatmapCell";
@@ -47,7 +47,7 @@ function getCellValue(
  * `0..maxValue`, which the caller must precompute across the whole grid so the
  * same value means the same colour everywhere.
  */
-export const HeatmapOverlay: React.FC<HeatmapOverlayProps> = ({
+export function HeatmapOverlay({
   heatmapData,
   shotFilter,
   xScale,
@@ -56,7 +56,7 @@ export const HeatmapOverlay: React.FC<HeatmapOverlayProps> = ({
   cellHeight,
   maxValue,
   colorScale,
-}) => {
+}: HeatmapOverlayProps) {
   // Memoize the 2D array of values to display (avoids unnecessary recalculation)
   const heatmapOverlayData = useMemo(
     () =>
@@ -135,6 +135,6 @@ export const HeatmapOverlay: React.FC<HeatmapOverlayProps> = ({
         )}
     </>
   );
-};
+}
 
 export default HeatmapOverlay;

@@ -33,14 +33,14 @@ function buildGradient(interpolate: (t: number) => string): string {
  * silently. `colorScale` (the resolved interpolator) wins over `colorScaleName`
  * when both are given.
  */
-export const HeatmapLegend: React.FC<HeatmapLegendProps> = ({
+export function HeatmapLegend({
   maxValue,
   colorScale,
   compact,
   colorScaleName,
   setColorScale,
   colorScaleOptions,
-}) => {
+}: HeatmapLegendProps) {
   const t = useTranslations("common");
   const midValue = Math.round(maxValue / 2);
 
@@ -129,6 +129,6 @@ export const HeatmapLegend: React.FC<HeatmapLegendProps> = ({
       )}
     </div>
   );
-};
+}
 
 export default HeatmapLegend;

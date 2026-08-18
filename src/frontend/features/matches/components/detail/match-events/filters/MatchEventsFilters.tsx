@@ -1,6 +1,5 @@
 // src/frontend/features/matches/components/detail/match-events/filters/MatchEventsFilters.tsx
 import { useTranslations } from "next-intl";
-import React from "react";
 
 import type { Quarter } from "@/features/matches/constants";
 import type { TeamInfoExtended } from "@/features/teams/types";
@@ -32,7 +31,7 @@ interface MatchEventsFiltersProps {
  * Composes QuarterSelector, a category <Select>, PlayerFilter, and a
  * latest-first toggle into a single responsive row.
  */
-export const MatchEventsFilters: React.FC<MatchEventsFiltersProps> = ({
+export function MatchEventsFilters({
   homeTeam,
   awayTeam,
   selectedQuarter,
@@ -46,7 +45,7 @@ export const MatchEventsFilters: React.FC<MatchEventsFiltersProps> = ({
   setShowPlayerDropdown,
   latestFirst,
   setLatestFirst,
-}) => {
+}: MatchEventsFiltersProps) {
   const t = useTranslations("matches");
 
   return (
@@ -78,6 +77,6 @@ export const MatchEventsFilters: React.FC<MatchEventsFiltersProps> = ({
       />
     </div>
   );
-};
+}
 
 export default MatchEventsFilters;

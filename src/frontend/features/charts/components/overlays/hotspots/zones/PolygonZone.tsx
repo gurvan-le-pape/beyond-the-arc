@@ -45,7 +45,7 @@ function polygonCentroid(polygon: [number, number][]): [number, number] {
  * area-weighted centroid — computed by the shoelace formula because a
  * bounding-box centre drifts on irregular, arc-sampled zones.
  */
-export const PolygonZone: React.FC<PolygonZoneProps> = ({
+export function PolygonZone({
   zone,
   stats,
   xScale,
@@ -57,7 +57,7 @@ export const PolygonZone: React.FC<PolygonZoneProps> = ({
   svgWidth,
   onMouseMove,
   onMouseLeave,
-}) => {
+}: PolygonZoneProps) {
   const points = zone.polygon
     .map(([x, y]: [number, number]) => `${xScale(x)},${yScale(y)}`)
     .join(" ");
@@ -91,6 +91,6 @@ export const PolygonZone: React.FC<PolygonZoneProps> = ({
       />
     </g>
   );
-};
+}
 
 export default PolygonZone;

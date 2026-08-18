@@ -27,7 +27,7 @@ import { Text } from "../../typography";
  * new tab with `noopener noreferrer`. Adding a link is a change to the group
  * arrays here plus a catalogue key.
  */
-export const Footer: React.FC = () => {
+export function Footer() {
   const t = useTranslations("navigation");
   const currentYear = new Date().getFullYear();
 
@@ -228,6 +228,6 @@ export const Footer: React.FC = () => {
       </div>
     </footer>
   );
-};
+}
 
 export default Footer;

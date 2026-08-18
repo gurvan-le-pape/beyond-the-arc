@@ -35,7 +35,7 @@ interface TeamRosterProps {
  * `players` is optional and memoised through a `?? []` fallback, because a fresh
  * empty array on every render would invalidate the sort memo below it.
  */
-export const TeamRoster: React.FC<TeamRosterProps> = ({ players }) => {
+export function TeamRoster({ players }: TeamRosterProps) {
   // Memoized so the `?? []` fallback doesn't produce a fresh array on every
   // render and invalidate the sort memo below.
   const safePlayers: TeamPlayerRef[] = React.useMemo(
@@ -108,6 +108,6 @@ export const TeamRoster: React.FC<TeamRosterProps> = ({ players }) => {
       )}
     </Section>
   );
-};
+}
 
 export default TeamRoster;

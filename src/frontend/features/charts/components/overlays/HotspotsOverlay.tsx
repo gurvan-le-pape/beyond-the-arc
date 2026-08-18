@@ -58,14 +58,14 @@ const ALL_ZONE_GETTERS: (() => Zone[])[] = [
  * and reported through `onMaxTotalChange`, so the legend outside the SVG can
  * match — adding a zone group means adding it to that list.
  */
-export const HotspotsOverlay: React.FC<HotspotsOverlayProps> = ({
+export function HotspotsOverlay({
   shots,
   xScale,
   yScale,
   colorScale,
   svgWidth,
   onMaxTotalChange,
-}) => {
+}: HotspotsOverlayProps) {
   const colorFn = colorScale || interpolateYlOrRd;
 
   const maxTotal = useMemo(() => {
@@ -133,6 +133,6 @@ export const HotspotsOverlay: React.FC<HotspotsOverlayProps> = ({
         )}
     </g>
   );
-};
+}
 
 export default HotspotsOverlay;

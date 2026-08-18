@@ -27,11 +27,7 @@ interface MatchCardProps {
  * hover, so opening a card that has already been pointed at is instant while a
  * page of collapsed cards costs nothing.
  */
-export const MatchCard: React.FC<MatchCardProps> = ({
-  match,
-  expanded,
-  onToggleExpand,
-}) => {
+export function MatchCard({ match, expanded, onToggleExpand }: MatchCardProps) {
   const {
     data: matchEvents,
     isLoading: isLoadingEvents,
@@ -74,4 +70,4 @@ export const MatchCard: React.FC<MatchCardProps> = ({
       )}
     </Card>
   );
-};
+}

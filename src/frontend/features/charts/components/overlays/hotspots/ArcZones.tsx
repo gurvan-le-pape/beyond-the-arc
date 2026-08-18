@@ -25,7 +25,7 @@ interface ArcZonesProps {
  * no shots still renders, at a fainter opacity, so the court's zone map stays
  * whole rather than developing holes.
  */
-const ArcZones: React.FC<ArcZonesProps> = ({
+function ArcZones({
   shots,
   xScale,
   yScale,
@@ -33,7 +33,7 @@ const ArcZones: React.FC<ArcZonesProps> = ({
   svgWidth,
   onZoneHover,
   onZoneLeave,
-}) => {
+}: ArcZonesProps) {
   // Retrieve arc zones geometry
   const zones = React.useMemo(() => getArcZones(), []);
 
@@ -70,6 +70,6 @@ const ArcZones: React.FC<ArcZonesProps> = ({
       })}
     </g>
   );
-};
+}
 
 export default ArcZones;

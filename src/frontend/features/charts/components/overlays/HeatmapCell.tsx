@@ -19,7 +19,7 @@ interface HeatmapCellProps {
  * HeatmapCell renders a single SVG rect for a heatmap cell.
  * Handles highlight, color, and mouse events.
  */
-export const HeatmapCell: React.FC<HeatmapCellProps> = ({
+export function HeatmapCell({
   x,
   y,
   width,
@@ -31,20 +31,22 @@ export const HeatmapCell: React.FC<HeatmapCellProps> = ({
   onMouseMove,
   onMouseLeave,
   style,
-}) => (
-  <rect
-    x={x}
-    y={y}
-    width={width}
-    height={height}
-    fill={fill}
-    fillOpacity={fillOpacity}
-    stroke={stroke}
-    strokeWidth={strokeWidth}
-    onMouseMove={onMouseMove}
-    onMouseLeave={onMouseLeave}
-    style={style}
-  />
-);
+}: HeatmapCellProps) {
+  return (
+    <rect
+      x={x}
+      y={y}
+      width={width}
+      height={height}
+      fill={fill}
+      fillOpacity={fillOpacity}
+      stroke={stroke}
+      strokeWidth={strokeWidth}
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
+      style={style}
+    />
+  );
+}
 
 export default HeatmapCell;

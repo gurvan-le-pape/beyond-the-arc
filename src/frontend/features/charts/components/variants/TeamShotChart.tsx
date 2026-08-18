@@ -1,5 +1,4 @@
 // src/frontend/features/charts/components/variants/TeamShotChart.tsx
-import React from "react";
 
 import type { MatchEvent } from "@/features/matches/types";
 import { Section } from "@/shared/components/blocks";
@@ -15,11 +14,11 @@ interface TeamShotChartProps {
 }
 
 /** The team detail's shot chart — pins `ShotChart` to the heatmap variant so team pages do not choose a chart type. */
-export const TeamShotChart: React.FC<TeamShotChartProps> = ({
+export function TeamShotChart({
   matchEvents,
   title,
   description,
-}) => {
+}: TeamShotChartProps) {
   return (
     <Section title={title} variant="highlighted">
       <div className="w-full max-w-3xl mx-auto">
@@ -32,6 +31,6 @@ export const TeamShotChart: React.FC<TeamShotChartProps> = ({
       </div>
     </Section>
   );
-};
+}
 
 export default TeamShotChart;

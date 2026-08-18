@@ -25,7 +25,7 @@ interface AboveWingZonesProps {
  * no shots still renders, at a fainter opacity, so the court's zone map stays
  * whole rather than developing holes.
  */
-const AboveWingZones: React.FC<AboveWingZonesProps> = ({
+function AboveWingZones({
   shots,
   xScale,
   yScale,
@@ -33,7 +33,7 @@ const AboveWingZones: React.FC<AboveWingZonesProps> = ({
   svgWidth,
   onZoneHover,
   onZoneLeave,
-}) => {
+}: AboveWingZonesProps) {
   // Retrieve above wing zones geometry
   const zones = React.useMemo(() => getAboveWingZones(), []);
 
@@ -70,6 +70,6 @@ const AboveWingZones: React.FC<AboveWingZonesProps> = ({
       })}
     </g>
   );
-};
+}
 
 export default AboveWingZones;

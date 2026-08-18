@@ -31,7 +31,7 @@ interface ArcZoneProps {
  * shorten the sample where the paint interrupts the circle, so those two
  * zones read as the arc-to-paint slivers rather than full arcs.
  */
-export const ArcZone: React.FC<ArcZoneProps> = ({
+export function ArcZone({
   zone,
   stats,
   xScale,
@@ -44,7 +44,7 @@ export const ArcZone: React.FC<ArcZoneProps> = ({
   onMouseMove,
   onMouseLeave,
   arcParams,
-}) => {
+}: ArcZoneProps) {
   const { x0, x1, y0, y1, key, label } = zone;
   const { basketX, basketY, paintX0, paintX1, threePtRadius } = arcParams;
   const N = 40;
@@ -113,6 +113,6 @@ export const ArcZone: React.FC<ArcZoneProps> = ({
       />
     </g>
   );
-};
+}
 
 export default ArcZone;

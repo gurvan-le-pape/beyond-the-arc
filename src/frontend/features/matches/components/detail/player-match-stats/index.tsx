@@ -2,7 +2,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import React, { useState } from "react";
+import { useState } from "react";
 
 import { ShotModal } from "@/features/charts/components";
 import type { MatchEvent } from "@/features/matches/types";
@@ -27,12 +27,12 @@ interface PlayerMatchStatsProps {
  * selected-player modal state; the column definitions live in
  * usePlayerStatColumns.
  */
-export const PlayerMatchStats: React.FC<PlayerMatchStatsProps> = ({
+export function PlayerMatchStats({
   team,
   isHomeTeam,
   opponent,
   playerShots,
-}) => {
+}: PlayerMatchStatsProps) {
   const [modalPlayer, setModalPlayer] = useState<NamedEntity | null>(null);
   const tCommon = useTranslations("common");
   const tMatches = useTranslations("matches");
@@ -93,6 +93,6 @@ export const PlayerMatchStats: React.FC<PlayerMatchStatsProps> = ({
       />
     </Section>
   );
-};
+}
 
 export default PlayerMatchStats;

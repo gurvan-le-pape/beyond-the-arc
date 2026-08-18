@@ -1,5 +1,4 @@
 // src/frontend/features/charts/components/court/Baseline.tsx
-import React from "react";
 
 import { COURT_WIDTH, LINE_WIDTH } from "../../constants";
 
@@ -16,15 +15,17 @@ interface BaselineProps {
  * On a half-court render this coincides with `CenterLine`: both draw at
  * `yScale(0)`, so the two overlap exactly.
  */
-export const Baseline: React.FC<BaselineProps> = ({ svgWidth, y }) => (
-  <line
-    x1={0}
-    y1={y}
-    x2={svgWidth}
-    y2={y}
-    stroke="#000"
-    strokeWidth={(LINE_WIDTH * svgWidth) / COURT_WIDTH}
-  />
-);
+export function Baseline({ svgWidth, y }: BaselineProps) {
+  return (
+    <line
+      x1={0}
+      y1={y}
+      x2={svgWidth}
+      y2={y}
+      stroke="#000"
+      strokeWidth={(LINE_WIDTH * svgWidth) / COURT_WIDTH}
+    />
+  );
+}
 
 export default Baseline;

@@ -1,5 +1,4 @@
 // src/frontend/features/charts/components/court/PaintTicks.tsx
-import React from "react";
 
 import { COURT_WIDTH, LINE_WIDTH } from "../../constants";
 
@@ -26,7 +25,7 @@ interface PaintTicksProps {
  * Tick marks along the paint edges and the low-post block rectangles — the
  * name says ticks, but the blocks are drawn here too.
  */
-export const PaintTicks: React.FC<PaintTicksProps> = ({
+export function PaintTicks({
   xLeft_px,
   xRight_px,
   tickLength_px,
@@ -35,7 +34,7 @@ export const PaintTicks: React.FC<PaintTicksProps> = ({
   svgWidth,
   blockY,
   blockHeight,
-}) => {
+}: PaintTicksProps) {
   // Block (rectangle) at low post
   const blockY_px = yScale(blockY + blockHeight); // SVG y is inverted
   const blockYStart_px = yScale(blockY);
@@ -84,6 +83,6 @@ export const PaintTicks: React.FC<PaintTicksProps> = ({
       />
     </g>
   );
-};
+}
 
 export default PaintTicks;

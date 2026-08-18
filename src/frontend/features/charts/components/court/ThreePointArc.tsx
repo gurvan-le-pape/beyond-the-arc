@@ -1,5 +1,4 @@
 // src/frontend/features/charts/components/court/ThreePointArc.tsx
-import React from "react";
 
 import { ARC_Y, LINE_WIDTH } from "../../constants";
 
@@ -23,14 +22,14 @@ interface ThreePointArcProps {
 }
 
 /** The three-point arc and the two side lines running from its endpoints to the baseline. */
-export const ThreePointArc: React.FC<ThreePointArcProps> = ({
+export function ThreePointArc({
   xScale,
   yScale,
   svgWidth,
   COURT_WIDTH,
   THREE_PT_RADIUS,
   THREE_PT_LINE_DIST,
-}) => {
+}: ThreePointArcProps) {
   const arcRadiusPx = xScale(THREE_PT_RADIUS) - xScale(0);
   const xLeft_m = THREE_PT_LINE_DIST;
   const xRight_m = COURT_WIDTH - THREE_PT_LINE_DIST;
@@ -67,6 +66,6 @@ export const ThreePointArc: React.FC<ThreePointArcProps> = ({
       />
     </>
   );
-};
+}
 
 export default ThreePointArc;

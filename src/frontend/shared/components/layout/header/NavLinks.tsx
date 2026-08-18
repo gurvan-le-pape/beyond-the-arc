@@ -30,11 +30,11 @@ interface NavLinksProps {
  * destination is a change there, and it appears in both layouts at once.
  * `onClick` exists so the mobile menu can close itself on navigation.
  */
-export const NavLinks: React.FC<NavLinksProps> = ({
+export function NavLinks({
   onClick,
   asList = false,
   className = "",
-}) => {
+}: NavLinksProps) {
   const pathname = usePathname();
   const t = useTranslations("navigation");
 
@@ -104,6 +104,6 @@ export const NavLinks: React.FC<NavLinksProps> = ({
       )}
     </nav>
   );
-};
+}
 
 export default NavLinks;

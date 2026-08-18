@@ -1,8 +1,6 @@
 // src/frontend/features/matches/components/detail/match-score-card/index.tsx
 "use client";
 
-import React from "react";
-
 import type { TeamInfo } from "@/features/teams/types";
 import { MatchScore } from "@/shared/components/domain";
 import { Card } from "@/shared/components/primitives";
@@ -46,11 +44,11 @@ function TeamSection({ team, isWinning, align }: TeamSectionProps) {
  * Mobile: two-row layout — logos + score on top, full-width team names below.
  * Desktop: original single-row layout with logo stacked above name.
  */
-export const MatchScoreCard: React.FC<MatchScoreCardProps> = ({
+export function MatchScoreCard({
   homeTeam,
   awayTeam,
   className,
-}) => {
+}: MatchScoreCardProps) {
   const isHomeWinning = homeTeam.score > awayTeam.score;
   const isAwayWinning = awayTeam.score > homeTeam.score;
 
@@ -91,6 +89,6 @@ export const MatchScoreCard: React.FC<MatchScoreCardProps> = ({
       </div>
     </Card>
   );
-};
+}
 
 export default MatchScoreCard;

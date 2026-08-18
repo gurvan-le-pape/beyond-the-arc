@@ -25,7 +25,7 @@ interface PaintZonesProps {
  * no shots still renders, at a fainter opacity, so the court's zone map stays
  * whole rather than developing holes.
  */
-const PaintZones: React.FC<PaintZonesProps> = ({
+function PaintZones({
   shots,
   xScale,
   yScale,
@@ -33,7 +33,7 @@ const PaintZones: React.FC<PaintZonesProps> = ({
   svgWidth,
   onZoneHover,
   onZoneLeave,
-}) => {
+}: PaintZonesProps) {
   // Retrieve paint zones geometry
   const zones = React.useMemo(() => getPaintZones(), []);
 
@@ -70,6 +70,6 @@ const PaintZones: React.FC<PaintZonesProps> = ({
       })}
     </g>
   );
-};
+}
 
 export default PaintZones;

@@ -1,6 +1,5 @@
 // src/frontend/features/competitions/championships/components/detail/championship-matches/match-card/MatchDetailsTable.tsx
 import { useTranslations } from "next-intl";
-import React from "react";
 
 import type { Match, MatchEvent } from "@/features/matches/types";
 import { computeQuarterScores } from "@/features/matches/utils";
@@ -34,11 +33,11 @@ const REGULATION_QUARTERS = [0, 1, 2, 3];
  * Overtime collapses into a single trailing column: every period past the
  * fourth is counted together.
  */
-export const MatchDetailsTable: React.FC<MatchDetailsTableProps> = ({
+export function MatchDetailsTable({
   match,
   matchEvents,
   isLoadingEvents,
-}) => {
+}: MatchDetailsTableProps) {
   const t = useTranslations("competitions");
   const tCommon = useTranslations("common");
 
@@ -103,6 +102,6 @@ export const MatchDetailsTable: React.FC<MatchDetailsTableProps> = ({
       frame="outline"
     />
   );
-};
+}
 
 export default MatchDetailsTable;
