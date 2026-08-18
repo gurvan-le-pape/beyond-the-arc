@@ -47,7 +47,7 @@ Composite component folders (an `index.tsx` root plus internal files) must be ad
 
 ## Rule files
 
-`.claude/rules/` holds 21 per-technology rule files, loaded contextually via `paths` frontmatter rather than always-on. They were written from `package.json` / `package-lock.json` and upstream docs only — deliberately **without reading this codebase** — so that divergence between the rules and the code stays visible instead of being ratified. They are most useful for the version-specific traps: Tailwind v3 vs v4 utility names, TypeScript 6.0's changed defaults, Express 5 routing, Jest 30's renamed flags, Prisma 7's explicit adapter.
+`.claude/rules/` holds 22 per-technology rule files, loaded contextually via `paths` frontmatter rather than always-on. They were written from `package.json` / `package-lock.json` and upstream docs only — deliberately **without reading this codebase** — so that divergence between the rules and the code stays visible instead of being ratified. They are most useful for the version-specific traps: Tailwind v3 vs v4 utility names, TypeScript 6.0's changed defaults, Express 5 routing, Jest 30's renamed flags, Prisma 7's explicit adapter, TSDoc's tags versus JSDoc's.
 
 Where sources disagree:
 
