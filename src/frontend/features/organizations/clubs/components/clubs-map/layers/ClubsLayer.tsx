@@ -9,6 +9,16 @@ interface ClubsLayerProps {
   readonly geoJson: any;
 }
 
+/**
+ * The club points, clustered by MapLibre rather than by React.
+ *
+ * Clustering, colour steps and radii are declared as **MapLibre paint
+ * expressions** and evaluated on the GPU — one `Source` for thousands of clubs
+ * instead of a marker component each, which is what keeps panning smooth.
+ *
+ * `geoJson` must keep a stable identity between renders; a fresh object forces
+ * MapLibre to re-diff the whole source.
+ */
 export function ClubsLayer({ geoJson }: ClubsLayerProps) {
   return (
     <Source
@@ -19,7 +29,6 @@ export function ClubsLayer({ geoJson }: ClubsLayerProps) {
       clusterMaxZoom={CLUSTER_CONFIG.MAX_ZOOM}
       clusterRadius={CLUSTER_CONFIG.RADIUS}
     >
-      {/* Cluster circles */}
       <Layer
         id="clusters"
         type="circle"
@@ -48,7 +57,6 @@ export function ClubsLayer({ geoJson }: ClubsLayerProps) {
         }}
       />
 
-      {/* Cluster count labels */}
       <Layer
         id="cluster-count"
         type="symbol"
@@ -63,7 +71,6 @@ export function ClubsLayer({ geoJson }: ClubsLayerProps) {
         }}
       />
 
-      {/* Individual club points */}
       <Layer
         id="clubs-point"
         type="circle"

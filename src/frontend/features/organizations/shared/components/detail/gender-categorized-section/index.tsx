@@ -47,6 +47,13 @@ interface GenderCategorizedSectionProps {
   readonly emptyState: React.ReactNode;
 }
 
+/**
+ * A titled section grouping its items by gender and then by category.
+ *
+ * The grouping is derived from the items themselves, so a gender or category
+ * with nothing in it never appears. `emptyState` covers only the case where
+ * there are no items at all.
+ */
 export function GenderCategorizedSection({
   items,
   title,

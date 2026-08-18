@@ -26,6 +26,18 @@ interface ErrorMessageProps extends HTMLAttributes<HTMLDivElement> {
   ref?: React.Ref<HTMLDivElement>;
 }
 
+/**
+ * The terminal failure state for a data-backed view: a message and, given
+ * `onRetry`, the only way out of it.
+ *
+ * **Nothing retries on its own once a query has settled** — the reasons are on
+ * `onRetry` below. Rendering this without one leaves the user with a dead end,
+ * so treat the prop as optional in the types and required in practice.
+ *
+ * `message` is chosen by the caller from the message catalogue. This never
+ * derives copy from an error object, which carries backend prose no user should
+ * read.
+ */
 export const ErrorMessage = ({
   message,
   onRetry,

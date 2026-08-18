@@ -10,6 +10,13 @@ interface ClubCardProps {
   readonly club: ClubBasic;
 }
 
+/**
+ * A club as a card in the list.
+ *
+ * The committee and its league are optional-chained throughout, since the list
+ * response does not always carry them; a club missing either renders without
+ * the location line rather than failing.
+ */
 export function ClubCard({ club }: ClubCardProps) {
   return (
     <Link
@@ -26,7 +33,6 @@ export function ClubCard({ club }: ClubCardProps) {
         "flex",
       )}
     >
-      {/* Logo panel */}
       <div
         className={cn(
           "flex-shrink-0 w-20 flex items-center justify-center",
@@ -42,9 +48,7 @@ export function ClubCard({ club }: ClubCardProps) {
         />
       </div>
 
-      {/* Content */}
       <div className="flex-1 min-w-0 flex flex-col">
-        {/* Header */}
         {(club.city || club.zipCode) && (
           <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-white/5 bg-clubs/10">
             <div className="flex items-center gap-2 min-w-0">
@@ -66,7 +70,6 @@ export function ClubCard({ club }: ClubCardProps) {
           </div>
         )}
 
-        {/* Body */}
         <div className="px-4 py-3 flex items-center flex-1">
           <Text
             variant="h3"

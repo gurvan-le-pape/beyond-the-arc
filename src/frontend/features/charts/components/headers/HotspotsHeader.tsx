@@ -12,6 +12,13 @@ interface HotspotsHeaderProps {
   colorScaleFn: (t: number) => string;
 }
 
+/**
+ * The controls above a hotspots chart: the colour-scale picker alone.
+ *
+ * There is no shot filter here, and its absence is the point — hotspot zones
+ * are shaded by attempt volume, so filtering to makes or misses would leave the
+ * colours unchanged and the chart lying.
+ */
 export const HotspotsHeader: React.FC<HotspotsHeaderProps> = ({
   colorScale,
   setColorScale,

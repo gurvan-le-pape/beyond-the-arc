@@ -4,8 +4,13 @@ import { type HTMLAttributes } from "react";
 import { cn } from "@/shared/utils";
 
 /**
- * Skeleton component for loading states
- * Better UX than just a spinner
+ * A pulsing placeholder block. Shape and size come entirely from `className` —
+ * this contributes only the animation, the radius and the fill, and forwards
+ * every other div prop.
+ *
+ * Its fill is `surface-inset`, which resolves against the nearest surface
+ * ancestor, so a skeleton placed directly on the page background renders
+ * invisible. Put it inside the same surface the real content will occupy.
  */
 export function Skeleton({
   className,
@@ -20,7 +25,12 @@ export function Skeleton({
 }
 
 /**
- * Preset skeleton layouts
+ * The placeholder for a card: a title line, a subtitle, and a content block,
+ * on the same surface and border a real card uses.
+ *
+ * **Its dimensions mirror the component it stands in for.** Change the card and
+ * this drifts silently — the swap from skeleton to content will jump, and
+ * nothing fails.
  */
 export function SkeletonCard() {
   return (
@@ -32,6 +42,13 @@ export function SkeletonCard() {
   );
 }
 
+/**
+ * The placeholder for an `InfoBox`: a short label line above a value line, on
+ * the same surface and border.
+ *
+ * **Its dimensions mirror `InfoBox`.** Change that component's padding or type
+ * scale and this drifts silently, so the swap from skeleton to content jumps.
+ */
 export function SkeletonInfoBox() {
   return (
     <div className="surface-subtle p-4 rounded-card border border-divide">

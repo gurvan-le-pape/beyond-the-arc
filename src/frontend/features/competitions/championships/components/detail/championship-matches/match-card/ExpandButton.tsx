@@ -8,6 +8,14 @@ interface ExpandButtonProps {
   readonly onMouseEnter: () => void;
 }
 
+/**
+ * The chevron that opens a match card's box score.
+ *
+ * `onMouseEnter` is separate from `onToggle` on purpose — it is the prefetch
+ * trigger, warming the events query before the click. Wiring both to the same
+ * handler loses the head start; omitting `onMouseEnter` makes every expand pay
+ * the full round trip.
+ */
 export function ExpandButton({
   expanded,
   onToggle,

@@ -21,6 +21,13 @@ interface DocsDatabaseSectionProps {
   readonly content: string;
 }
 
+/**
+ * The database chapter of the docs page: the ERD image and its explanation.
+ *
+ * `content` is a single already-translated string; this adds no copy of its
+ * own. The diagram is a static asset, so a schema change updates the image
+ * separately from this component and the two can drift.
+ */
 export function DocsDatabaseSection({ content }: DocsDatabaseSectionProps) {
   const t = useTranslations("landing");
 

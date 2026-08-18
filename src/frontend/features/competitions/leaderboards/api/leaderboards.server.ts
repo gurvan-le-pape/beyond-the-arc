@@ -30,6 +30,9 @@ export const serverLeaderboardsService = {
    *
    * @example
    * const leaderboard = await serverLeaderboardsService.getAll({ poolId: 1 });
+   *
+   * @param filters - narrows the standings to one pool or championship
+   * @returns the standings rows, already ranked by the backend
    */
   async getAll(filters: LeaderboardFilters): Promise<Leaderboard[]> {
     const queryString = buildQueryString(filters);

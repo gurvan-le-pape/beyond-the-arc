@@ -22,6 +22,15 @@ const PERCENTAGE_MAP: Record<string, string> = {
   freeThrows: "freeThrowPercentage",
 };
 
+/**
+ * The two teams' stat lines side by side, one row per category the caller asks
+ * for.
+ *
+ * Which stats appear is entirely `categories`; this component adds only the
+ * percentage pairing. `PERCENTAGE_MAP` covers **field goals, three-pointers and
+ * free throws** — a category outside that set renders its raw totals with no
+ * percentage beside them, silently, because there is no field to read one from.
+ */
 export function TeamStatsComparison({
   homeStats,
   awayStats,

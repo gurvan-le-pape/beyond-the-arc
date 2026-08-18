@@ -42,6 +42,9 @@ export const teamsQueries = {
    *
    * @example
    * useQuery(teamsQueries.list({ clubId: 1, page: 1 }))
+   *
+   * @param filters - filter and pagination criteria; part of the cache key, so each combination caches separately
+   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
    */
   list: (filters?: TeamFilters) => ({
     queryKey: teamsKeys.list(filters),
@@ -55,6 +58,9 @@ export const teamsQueries = {
    *
    * @example
    * useQuery(teamsQueries.detail(123))
+   *
+   * @param id - the team's id
+   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
    */
   detail: (id: number) => ({
     queryKey: teamsKeys.detail(id),
@@ -70,6 +76,9 @@ export const teamsQueries = {
    *
    * @example
    * useQuery(teamsQueries.matches(123))
+   *
+   * @param id - the team whose matches to fetch
+   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
    */
   matches: (id: number) => ({
     queryKey: teamsKeys.matches(id),
@@ -88,6 +97,9 @@ export const teamsQueries = {
    *
    * @example
    * useQuery(teamsQueries.filterValues({ committeeId: 1 }))
+   *
+   * @param params - optional committee or league scope for the available values
+   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
    */
   filterValues: (params?: { committeeId?: number; leagueId?: number }) => ({
     queryKey: teamsKeys.filterValues(params),
@@ -110,6 +122,9 @@ export const teamsPrefetch = {
    * @example
    * const prefetch = teamsPrefetch.detail(queryClient);
    * <tr onMouseEnter={() => prefetch(team.id)} />
+   *
+   * @param queryClient - the client to warm
+   * @returns a prefetcher taking a team id — call it on hover or focus, before navigation
    */
   detail: (queryClient: QueryClient) => (teamId: number) => {
     queryClient.prefetchQuery(teamsQueries.detail(teamId)).catch(() => {
@@ -123,6 +138,9 @@ export const teamsPrefetch = {
    * @example
    * const prefetch = teamsPrefetch.matches(queryClient);
    * <TeamCard onMouseEnter={() => prefetch(team.id)} />
+   *
+   * @param queryClient - the client to warm
+   * @returns a prefetcher taking a team id — call it on hover or focus, before navigation
    */
   matches: (queryClient: QueryClient) => (teamId: number) => {
     queryClient.prefetchQuery(teamsQueries.matches(teamId)).catch(() => {});
@@ -134,6 +152,9 @@ export const teamsPrefetch = {
    * @example
    * const prefetch = teamsPrefetch.list(queryClient);
    * <FilterPanel onOpen={() => prefetch({ clubId: 1 })} />
+   *
+   * @param queryClient - the client to warm
+   * @returns a prefetcher taking filters — warms the same key the list query will read
    */
   list: (queryClient: QueryClient) => (filters?: TeamFilters) => {
     queryClient.prefetchQuery(teamsQueries.list(filters)).catch(() => {});

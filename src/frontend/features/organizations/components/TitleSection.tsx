@@ -21,6 +21,14 @@ interface ViewConfig {
   description: string;
 }
 
+/**
+ * The heading above an organisation listing, styled for its level.
+ *
+ * `viewLevel` selects from a **closed set of configurations** — icon, accent and
+ * copy together — so a level renders consistently across the clubs, committees
+ * and leagues pages. There is no way to override one part of a configuration;
+ * a new look means a new entry.
+ */
 export function TitleSection({ viewLevel }: TitleSectionProps) {
   const tClubs = useTranslations("clubs");
   const tCommon = useTranslations("common");

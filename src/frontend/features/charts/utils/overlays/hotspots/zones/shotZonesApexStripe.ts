@@ -43,6 +43,15 @@ function containsApexStripe(x: number, y: number) {
   return y >= arcY && y <= APEX_STRIPE_Y1;
 }
 
+/**
+ * The apex-stripe zone: the 2 m-deep band at the top of the three-point arc,
+ * between the paint edges.
+ *
+ * `contains` re-derives the arc rather than testing the polygon — the two
+ * must describe the same region.
+ *
+ * @returns the zone definitions in court units, each with the bounding box used to draw it and the `contains` predicate used to hit-test it; bounds are half-open so a shot on a shared edge falls in exactly one zone
+ */
 export function getApexStripeZone() {
   return [
     {

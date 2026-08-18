@@ -16,6 +16,13 @@ import { DOCS_SECTIONS, QUICK_LINKS } from "@/features/site/docs/constants";
 import { useAccordion } from "@/features/site/docs/hooks";
 import { PageHero, PageLayout } from "@/shared/components/layout";
 
+/**
+ * The documentation page: quick links and the collapsible chapters.
+ *
+ * A **client component** — the whole page is an accordion, so it holds the open
+ * section in state. That is why its metadata lives in the sibling `layout.tsx`
+ * instead: a client component cannot export `generateMetadata`.
+ */
 export default function DocsPage() {
   const t = useTranslations("landing");
   const { toggle, isActive } = useAccordion("database");
@@ -47,7 +54,6 @@ export default function DocsPage() {
         ))}
       </div>
 
-      {/* Documentation Sections */}
       <div className="space-y-4 mb-12">
         {sections.map((section) => (
           <DocsSectionAccordion
@@ -58,19 +64,15 @@ export default function DocsPage() {
             isActive={isActive(section.id)}
             onToggle={toggle}
           >
-            {/* Getting Started Section */}
             {section.id === "getting-started" && (
               <DocsGettingStartedSection content={section.content} />
             )}
-            {/* Database Section */}
             {section.id === "database" && (
               <DocsDatabaseSection content={section.content} />
             )}
-            {/* Structure Section */}
             {section.id === "structure" && (
               <DocsStructureSection content={section.content} />
             )}
-            {/* Best Practices Section */}
             {section.id === "best-practices" && (
               <DocsBestPracticesSection content={section.content} />
             )}

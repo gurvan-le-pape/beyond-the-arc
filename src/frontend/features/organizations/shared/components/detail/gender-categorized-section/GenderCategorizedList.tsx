@@ -31,6 +31,16 @@ const GENDER_COLOURS: Record<string, { bg: string; text: string }> = {
   },
 };
 
+/**
+ * The category groups within one gender, each collapsible.
+ *
+ * Categories are ordered by age rather than alphabetically — U11 before U13
+ * before U15 — which is what `sortCategories` exists for. Note that it sorts in
+ * place, so the array handed here must be one this component owns.
+ *
+ * @typeParam T - the item shape; `getCategory` tells this component how to read
+ * a category off it, so the items need no particular fields
+ */
 export function GenderCategorizedList<T>({
   genderLabel,
   genderKey,
@@ -48,7 +58,6 @@ export function GenderCategorizedList<T>({
 
   return (
     <div className={className}>
-      {/* Gender badge */}
       <div className="flex items-center gap-3 mb-4">
         <span
           className={cn(
@@ -64,7 +73,6 @@ export function GenderCategorizedList<T>({
         <span className="flex-1 h-px bg-divide" />
       </div>
 
-      {/* Category sections */}
       <div className="space-y-3">
         {sortCategories(Object.keys(grouped) as Category[])
           .filter((category) => (grouped[category]?.length ?? 0) > 0)

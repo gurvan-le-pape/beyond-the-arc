@@ -35,6 +35,23 @@ export interface MatchesFilterSetters {
   setMatchday: (value: number | undefined) => void;
 }
 
+/**
+ * Owns every filter on the matches list, plus its pagination.
+ *
+ * **The setters cascade — they are not plain setters.** Changing the level
+ * clears committee, league, division, pool and matchday; changing the committee
+ * or league clears division, pool and matchday. Without that, a matchday chosen
+ * under one pool would survive into another scope and narrow the results to
+ * nothing for no visible reason.
+ *
+ * **Any filter change resets to page 1**, in an effect here, so a caller must
+ * not also reset. Page size defaults to 50.
+ *
+ * Committee and league are delegated to `useLocationFilterState`, shared with
+ * the other lists so the location cascade behaves identically everywhere.
+ *
+ * @returns the current filter values, their cascading setters, and pagination
+ */
 export function useMatchesFilterState() {
   const {
     committeeId,

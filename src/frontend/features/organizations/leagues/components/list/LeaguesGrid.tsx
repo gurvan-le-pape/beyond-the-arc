@@ -10,6 +10,12 @@ interface LeaguesGridProps {
   readonly leagues: League[];
 }
 
+/**
+ * The leagues listing as a responsive grid.
+ *
+ * Renders whatever it is given and nothing else — the empty state and the
+ * fetching both belong to the page above it.
+ */
 export function LeaguesGrid({ leagues }: LeaguesGridProps) {
   const t = useTranslations("clubs");
 

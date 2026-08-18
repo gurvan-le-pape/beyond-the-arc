@@ -151,7 +151,6 @@ export function MultiSelectDropdown({
             : "opacity-0 scale-95 pointer-events-none",
         )}
       >
-        {/* Header */}
         <div className="flex items-center justify-between mb-3">
           <Text variant="label">{label}</Text>
           <button
@@ -170,7 +169,6 @@ export function MultiSelectDropdown({
           </button>
         </div>
 
-        {/* Divider below header */}
         <div className="border-t border-divide mb-3" />
 
         {/* N columns with N-1 dividers between them */}
@@ -213,7 +211,11 @@ export function MultiSelectDropdown({
 // Internal — column of labelled checkboxes
 // ---------------------------------------------------------------------------
 
-function ColumnList({ column }: { readonly column: MultiSelectColumn }) {
+interface ColumnListProps {
+  readonly column: MultiSelectColumn;
+}
+
+function ColumnList({ column }: ColumnListProps) {
   return (
     <div className="min-w-0">
       <Text variant="h4" className="text-sm mb-2">

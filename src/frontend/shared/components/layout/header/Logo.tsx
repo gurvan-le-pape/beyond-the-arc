@@ -8,6 +8,14 @@ import { useEffect, useState } from "react";
 
 import { Link } from "@/navigation";
 
+/**
+ * The wordmark, linking home, in the variant that suits the active theme.
+ *
+ * **Renders the light logo until mounted**, whatever the theme. The theme is
+ * only knowable on the client, so drawing the dark variant during SSR would
+ * mismatch on hydration; the cost is a brief flash of the light logo on a dark
+ * first paint, taken deliberately over a hydration error.
+ */
 export const Logo: React.FC = () => {
   const t = useTranslations("navigation");
   const { resolvedTheme } = useTheme();

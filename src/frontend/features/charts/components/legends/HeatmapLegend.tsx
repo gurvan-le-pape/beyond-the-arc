@@ -24,6 +24,15 @@ function buildGradient(interpolate: (t: number) => string): string {
   ).join(",");
 }
 
+/**
+ * Gradient legend for a heatmap or hotspots fill, from 0 to `maxValue`, with
+ * an optional colour-scale picker.
+ *
+ * The picker renders only when `colorScaleName`, `setColorScale` and
+ * `colorScaleOptions` are all present — passing some but not others hides it
+ * silently. `colorScale` (the resolved interpolator) wins over `colorScaleName`
+ * when both are given.
+ */
 export const HeatmapLegend: React.FC<HeatmapLegendProps> = ({
   maxValue,
   colorScale,
@@ -57,7 +66,6 @@ export const HeatmapLegend: React.FC<HeatmapLegendProps> = ({
         {t("shotChart.colorMeaning")}
       </Text>
 
-      {/* Gradient bar */}
       <div className="flex items-center gap-3 w-full">
         <Text variant="caption" as="span" className="font-medium shrink-0">
           {t("shotChart.low")}
@@ -80,7 +88,6 @@ export const HeatmapLegend: React.FC<HeatmapLegendProps> = ({
         </Text>
       </div>
 
-      {/* Color scale picker */}
       {colorScaleOptions && setColorScale && colorScaleName && (
         <div className="flex items-center gap-2 w-full">
           <Text variant="caption" as="span" className="shrink-0">

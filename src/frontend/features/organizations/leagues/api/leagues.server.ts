@@ -24,7 +24,7 @@ import type { League } from "../types/League";
  * - Never call directly from components
  *
  * @example
- * import { serverLeaguesService } from '@/lib/services/client';
+ * import { serverLeaguesService } from "@/features/organizations/leagues/api/leagues.server";
  * const leagues = await serverLeaguesService.getAll();
  */
 export const serverLeaguesService = {

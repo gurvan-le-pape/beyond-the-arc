@@ -33,7 +33,7 @@ import type { ClubStatsByDepartment } from "../types/ClubStatsByDepartment";
  * - Never call directly from components
  *
  * @example
- * import { serverClubsService } from '@/lib/services/client';
+ * import { serverClubsService } from "@/features/organizations/clubs/api/clubs.server";
  * const clubs = await serverClubsService.getAll({ leagueId: 1 });
  */
 export const serverClubsService = {
@@ -115,6 +115,8 @@ export const serverClubsService = {
   /**
    * Get ALL clubs without any filtering.
    * Used for initial map load.
+   *
+   * @returns every club, unpaginated — the full list the map and typeaheads read
    */
   async getAllClubs(): Promise<ClubBasic[]> {
     return fetchApi<ClubBasic[]>("/clubs/all", {

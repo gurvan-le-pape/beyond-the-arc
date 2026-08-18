@@ -7,11 +7,18 @@ import { Badge } from "@/shared/components/primitives";
 import { CompetitionLevel, LEVEL_CONFIG } from "@/shared/constants";
 import { cn, formatCommitteeName, formatLeagueName } from "@/shared/utils";
 
-export function ChampionshipCard({
-  championship,
-}: {
+interface ChampionshipCardProps {
   readonly championship: Championship;
-}) {
+}
+
+/**
+ * A championship as a card in the level listings.
+ *
+ * Like the list row, the title is derived rather than stored: level, category,
+ * gender and division together are what identify a championship. The level
+ * also drives the card's accent, so a championship with none renders neutral.
+ */
+export function ChampionshipCard({ championship }: ChampionshipCardProps) {
   const tCommon = useTranslations("common");
   const tCompetitions = useTranslations("competitions");
 
@@ -33,7 +40,6 @@ export function ChampionshipCard({
         config.hover,
       )}
     >
-      {/* Header */}
       <div
         className={cn(
           "flex items-center justify-between gap-3",
@@ -71,7 +77,6 @@ export function ChampionshipCard({
         </div>
       </div>
 
-      {/* Body */}
       <div className="px-5 py-3 flex flex-col gap-1">
         {championship.committeeName && (
           <span className="text-sm text-text-secondary">

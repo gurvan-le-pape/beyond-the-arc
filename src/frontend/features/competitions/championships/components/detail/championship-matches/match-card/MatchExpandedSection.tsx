@@ -14,6 +14,16 @@ interface MatchExpandedSectionProps {
   readonly onRetryEvents: () => unknown;
 }
 
+/**
+ * The panel revealed under a match card: quarter scores and the event timeline.
+ *
+ * Takes the events and their loading and error state as props rather than
+ * fetching, so the card above owns when the request happens — which is what
+ * makes hover prefetching possible.
+ *
+ * `onRetryEvents` is the query's `refetch`; without it a failed load has no way
+ * back, since a settled query does not retry itself.
+ */
 export function MatchExpandedSection({
   match,
   matchEvents,

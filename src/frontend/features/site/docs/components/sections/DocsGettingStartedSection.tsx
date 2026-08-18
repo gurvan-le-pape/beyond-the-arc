@@ -20,6 +20,15 @@ interface DocsGettingStartedSectionProps {
   readonly content: string;
 }
 
+/**
+ * The getting-started chapter: the intro prose plus the setup commands.
+ *
+ * `content` supplies only the prose. The commands are literals in this file —
+ * they are not user-facing copy and must not be translated, so they sit outside
+ * the message catalogue deliberately. Their dark code block is a raw colour
+ * rather than a surface token, because a code sample reads the same in both
+ * themes.
+ */
 export function DocsGettingStartedSection({
   content,
 }: DocsGettingStartedSectionProps) {

@@ -15,6 +15,13 @@ interface HeatmapHeaderProps {
   colorScaleFn: (t: number) => string;
 }
 
+/**
+ * The controls above a heatmap: the shot filter and the colour-scale picker.
+ *
+ * Carries one control more than `HotspotsHeader` — the made/missed filter —
+ * because a heatmap shades by outcome and hotspots shade by volume. The two
+ * headers are deliberately not interchangeable.
+ */
 export const HeatmapHeader: React.FC<HeatmapHeaderProps> = ({
   shotFilter,
   setShotFilter,

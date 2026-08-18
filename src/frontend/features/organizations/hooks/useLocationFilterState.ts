@@ -11,6 +11,8 @@ import { useCallback, useState } from "react";
  * the two apart means the `use<X>FilterState` hooks (which want the state) and
  * the `<X>Filters` components (which want the options) do not each instantiate
  * both halves.
+ *
+ * @returns the committee and league ids, their setters, and a `resetFilters` that clears both
  */
 export function useLocationFilterState() {
   const [committeeId, setCommitteeId] = useState<number | undefined>(undefined);

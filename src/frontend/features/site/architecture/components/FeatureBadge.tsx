@@ -10,6 +10,14 @@ interface FeatureBadgeProps {
   readonly description: string;
 }
 
+/**
+ * An icon, heading and caption in a centred column, for the feature grid.
+ *
+ * `iconClassName` is a **raw class string** interpolated into the icon's
+ * wrapper, so it must be complete literal Tailwind classes — a value built at
+ * runtime generates nothing. It carries the badge's colour, which is why it is
+ * required rather than defaulted.
+ */
 export function FeatureBadge({
   icon: Icon,
   iconClassName,

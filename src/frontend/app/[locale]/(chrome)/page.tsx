@@ -34,6 +34,11 @@ import { handleServerError } from "@/shared/utils";
 // two of which are the ones this invariant is about.
 export const dynamic = "force-dynamic";
 
+/**
+ * Metadata for the home page.
+ *
+ * Next calls this separately from the page, so a fetch failure here is not caught by the page's own error handling — hence the `withServerErrorMetadata` wrapper where one fetches.
+ */
 export async function generateMetadata({
   params,
 }: LocalePageProps): Promise<Metadata> {
@@ -92,7 +97,6 @@ async function Home({ params }: LocalePageProps) {
 
   return (
     <PageLayout edgeToEdge>
-      {/* ── Hero ─────────────────────────────────────────────── */}
       <section className="flex flex-col items-center text-center px-6 py-16 border-b border-divide">
         <Text
           variant="overline"
@@ -115,7 +119,6 @@ async function Home({ params }: LocalePageProps) {
         </Text>
       </section>
 
-      {/* ── Stats band ───────────────────────────────────────── */}
       <div className="grid grid-cols-3 md:grid-cols-6 border-b border-divide">
         {statsBand.map((s, i) => (
           <div key={s.label} className={i < 5 ? "border-r border-divide" : ""}>
@@ -124,7 +127,6 @@ async function Home({ params }: LocalePageProps) {
         ))}
       </div>
 
-      {/* ── Search & explore ─────────────────────────────────── */}
       <div className="px-6 pt-7 pb-2 border-b border-divide">
         <Text variant="overline">{t("explore.sectionTitle")}</Text>
       </div>
@@ -135,7 +137,6 @@ async function Home({ params }: LocalePageProps) {
         ))}
       </div>
 
-      {/* ── Clubs & map ──────────────────────────────────────── */}
       <div className="border-b border-divide px-8 py-16 flex flex-col items-center text-center">
         {/* -strong, not the mid tone: `text-clubs` (#a78bfa) is 2.60:1 on
             surface-base. The mid step of a category ramp is for icons and
@@ -162,7 +163,6 @@ async function Home({ params }: LocalePageProps) {
         </Link>
       </div>
 
-      {/* ── Competition levels ───────────────────────────────── */}
       <div className="px-6 pt-7 pb-2">
         <Text variant="overline">{t("levels.sectionTitle")}</Text>
       </div>

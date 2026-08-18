@@ -13,6 +13,17 @@ interface DocsQuickLinkCardProps {
   readonly trailIcon?: LucideIcon;
 }
 
+/**
+ * A shortcut tile in the docs index.
+ *
+ * `external` and `download` change the anchor's behaviour rather than its look:
+ * external adds a new tab with `noopener`, download asks the browser to save
+ * rather than navigate. Setting both is contradictory — download wins, because
+ * a saved file never opens a tab.
+ *
+ * `trailIcon` overrides the default chevron, which is how an external link
+ * signals where it goes before it is clicked.
+ */
 export function DocsQuickLinkCard({
   href,
   icon: Icon,

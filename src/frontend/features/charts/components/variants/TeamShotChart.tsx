@@ -14,6 +14,7 @@ interface TeamShotChartProps {
   description?: string;
 }
 
+/** The team detail's shot chart — pins `ShotChart` to the heatmap variant so team pages do not choose a chart type. */
 export const TeamShotChart: React.FC<TeamShotChartProps> = ({
   matchEvents,
   title,

@@ -4,6 +4,27 @@ import { CompetitionLevel } from "@/shared/constants";
 
 import type { MatchesFilterState } from "./useMatchesFilterState";
 
+/**
+ * Supplies the division and pool options for the matches filter cascade, based
+ * on the level and location already chosen.
+ *
+ * **No query runs until the scope is complete** — departmental with a committee,
+ * or regional with a league. National level and half-filled scopes fetch
+ * nothing and yield empty lists, which is why the caller must gate those steps
+ * rather than treat empty as "none exist".
+ *
+ * Two details shape the result. Championships are fetched with a **hard limit of
+ * 100**, so a scope larger than that silently offers incomplete divisions. And
+ * pools are **deduplicated by letter, keeping whichever has the most
+ * matchdays** — several championships in one scope can share a letter, and the
+ * longest is taken as representative.
+ *
+ * Division matching compares stringified values, because the selected division
+ * and the championship's own can arrive as different primitive types.
+ *
+ * @param filters - the level, location and division currently selected
+ * @returns championships, divisions, pools, and the error/retry pair
+ */
 export function useMatchesCascadeOptions({
   level,
   committeeId,

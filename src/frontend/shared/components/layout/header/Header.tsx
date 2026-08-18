@@ -12,6 +12,20 @@ import { Logo } from "./Logo";
 import NavLinks from "./NavLinks";
 import { ThemeToggle } from "./ThemeToggle";
 
+/**
+ * The sticky site header: wordmark, navigation, theme toggle, and the mobile
+ * menu.
+ *
+ * **Closes the mobile menu on every route change.** Next keeps this component
+ * mounted across navigations, so without that the menu would stay open over the
+ * page the user just moved to.
+ *
+ * Owns the two refs `useMobileMenu` needs — the panel and the toggle — which is
+ * why the open state lives here rather than inside the menu itself.
+ *
+ * Rendered by the `(chrome)` layout, so pages never mount it; a page that wants
+ * no header belongs in a different route group.
+ */
 export const Header: React.FC = () => {
   const pathname = usePathname();
   const t = useTranslations("navigation");
@@ -36,17 +50,14 @@ export const Header: React.FC = () => {
       >
         <Logo />
 
-        {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-1">
           <NavLinks />
         </div>
 
-        {/* Desktop actions */}
         <div className="hidden md:flex items-center gap-2">
           <ThemeToggle />
         </div>
 
-        {/* Mobile menu button */}
         <div className="md:hidden flex items-center gap-2">
           <ThemeToggle />
           <button
@@ -62,7 +73,6 @@ export const Header: React.FC = () => {
           </button>
         </div>
 
-        {/* Mobile menu */}
         <div
           id="mobile-menu"
           ref={mobileMenuRef}

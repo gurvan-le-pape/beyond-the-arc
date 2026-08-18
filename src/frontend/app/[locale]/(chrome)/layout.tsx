@@ -1,6 +1,10 @@
 // src/frontend/app/[locale]/(chrome)/layout.tsx
 import { Footer, Header, SkipLink } from "@/shared/components/layout";
 
+interface ChromeLayoutProps {
+  readonly children: React.ReactNode;
+}
+
 /**
  * Site chrome — header, footer and the page background — for every route
  * except the full-viewport map.
@@ -10,11 +14,7 @@ import { Footer, Header, SkipLink } from "@/shared/components/layout";
  * `not-found.tsx` and any future `loading.tsx`. Pages contribute only their
  * `<main>`, which `PageLayout` provides.
  */
-export default function ChromeLayout({
-  children,
-}: {
-  readonly children: React.ReactNode;
-}) {
+export default function ChromeLayout({ children }: ChromeLayoutProps) {
   return (
     <div className="flex flex-col min-h-screen surface-base">
       <SkipLink />

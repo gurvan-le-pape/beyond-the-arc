@@ -11,6 +11,14 @@ interface ChampionshipHeaderProps {
   readonly championship: Championship;
 }
 
+/**
+ * The identity block on a championship detail page: derived title, level badge,
+ * and a link back to the owning committee or league.
+ *
+ * The parent link resolves to the committee at departmental level and the
+ * league otherwise, and is omitted entirely when neither is set — national
+ * championships have no organisation above them.
+ */
 export function ChampionshipHeader({ championship }: ChampionshipHeaderProps) {
   const tCommon = useTranslations("common");
   const tCompetitions = useTranslations("competitions");

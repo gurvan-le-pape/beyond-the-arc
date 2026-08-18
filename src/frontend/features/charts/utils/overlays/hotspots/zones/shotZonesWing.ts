@@ -19,6 +19,12 @@ function containsWingRight(x: number, y: number) {
   );
 }
 
+/**
+ * The two wing zones: the rectangles between the paint and the three-point
+ * line, stacked above the corner-three zones.
+ *
+ * @returns the zone definitions in court units, each with the bounding box used to draw it and the `contains` predicate used to hit-test it; bounds are half-open so a shot on a shared edge falls in exactly one zone
+ */
 export function getWingZones() {
   return [
     {

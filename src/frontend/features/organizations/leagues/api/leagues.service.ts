@@ -16,7 +16,7 @@ import type { League } from "../types/League";
  * - Never call directly from components
  *
  * @example
- * import { leaguesService } from '@/lib/services/client';
+ * import { leaguesService } from "@/features/organizations/leagues/api";
  * const leagues = await leaguesService.getAll();
  */
 export const leaguesService = {
@@ -28,6 +28,8 @@ export const leaguesService = {
    *
    * @example
    * const leagues = await leaguesService.getAll();
+   *
+   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
    */
   async getAll(signal?: AbortSignal): Promise<League[]> {
     const { data } = await apiClient.get<League[]>("/leagues", { signal });
@@ -43,6 +45,8 @@ export const leaguesService = {
    *
    * @example
    * const league = await leaguesService.getById(1);
+   *
+   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
    */
   async getById(id: number, signal?: AbortSignal): Promise<League> {
     const { data } = await apiClient.get<League>(`/leagues/${id}`, { signal });
@@ -59,6 +63,8 @@ export const leaguesService = {
    *
    * @example
    * const leagues = await leaguesService.getByIds([1, 2, 3]);
+   *
+   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
    */
   async getByIds(ids: number[], signal?: AbortSignal): Promise<League[]> {
     const { data } = await apiClient.get<League[]>(

@@ -11,6 +11,13 @@ interface LeagueCardProps {
   readonly clubLabel: string;
 }
 
+/**
+ * A league as a card, with its club count.
+ *
+ * `clubLabel` arrives already pluralised — the count and its noun are resolved
+ * by the caller, because the plural rule belongs to the locale rather than to
+ * this component.
+ */
 export function LeagueCard({ league, clubLabel }: LeagueCardProps) {
   return (
     <Link
@@ -27,7 +34,6 @@ export function LeagueCard({ league, clubLabel }: LeagueCardProps) {
         "flex",
       )}
     >
-      {/* Logo panel */}
       <div
         className={cn(
           "flex-shrink-0 w-20 flex items-center justify-center",
@@ -43,9 +49,7 @@ export function LeagueCard({ league, clubLabel }: LeagueCardProps) {
         />
       </div>
 
-      {/* Content */}
       <div className="flex-1 min-w-0 flex flex-col">
-        {/* Header */}
         <div
           className={cn(
             "flex items-center justify-between gap-3",
@@ -67,7 +71,6 @@ export function LeagueCard({ league, clubLabel }: LeagueCardProps) {
           </Badge>
         </div>
 
-        {/* Body */}
         <div className="px-4 py-3 flex items-center justify-between gap-3 flex-1">
           <Text
             variant="h3"

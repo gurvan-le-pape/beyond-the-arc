@@ -13,6 +13,7 @@ interface BlockProps {
   svgWidth: number;
 }
 
+/** The block: the short vertical mark below the backboard, 15cm long. */
 export const Block: React.FC<BlockProps> = ({ centerX, yScale, svgWidth }) => (
   <line
     x1={centerX}

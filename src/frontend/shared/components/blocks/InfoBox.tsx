@@ -5,14 +5,6 @@ import { cn } from "@/shared/utils";
 
 import { Text } from "../typography";
 
-/**
- * InfoBox — label/value pair block.
- *
- * Elevation: sits on surface-subtle (inside a Card). This is intentional —
- * surface-raised is one step above surface-subtle, giving the inset effect.
- * Do not place InfoBox directly on the page (surface-base) or the elevation
- * will look wrong. See the token guide for the nesting convention.
- */
 interface InfoBoxProps extends Omit<
   HTMLAttributes<HTMLDivElement>,
   "children"
@@ -24,6 +16,18 @@ interface InfoBoxProps extends Omit<
   ref?: React.Ref<HTMLDivElement>;
 }
 
+/**
+ * A labelled value in an inset panel — the unit the stat grids are built from.
+ *
+ * **Expects to sit on `surface-subtle`, inside a Card.** Its own
+ * `surface-inset` resolves one step above whatever surface encloses it, so
+ * placed directly on the page it renders flat and the inset effect disappears.
+ * That is a placement contract, not a default to override.
+ *
+ * A `null` or `undefined` value renders as `N/A` rather than collapsing, so a
+ * grid keeps its shape when a stat is missing. Supplying `href` turns the value
+ * into a link that **always opens in a new tab**.
+ */
 export const InfoBox = ({
   label,
   value,
@@ -45,13 +49,11 @@ export const InfoBox = ({
       )}
       {...props}
     >
-      {/* Label row */}
       <div className="flex items-center gap-2 mb-2">
         {icon && <span className="text-text-secondary">{icon}</span>}
         <Text variant="overline">{label}</Text>
       </div>
 
-      {/* Value */}
       {href ? (
         <a
           href={href}

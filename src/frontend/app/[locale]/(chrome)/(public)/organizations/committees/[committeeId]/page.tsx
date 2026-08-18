@@ -17,12 +17,13 @@ import {
   withServerErrorMetadata,
 } from "@/shared/utils";
 
-// The image build has no backend to enumerate committees against, so this can
-// only ever return an empty list — but it has to be exported anyway. Upstream:
-// "You must always return an array from generateStaticParams, even if it's
-// empty. Otherwise, the route will be dynamically rendered." Without it the
-// `revalidate` below is dead config and every request runs a full server
-// render, which is what the four sibling detail routes avoid by doing this.
+/**
+ * Pre-build list for committee detail — always empty.
+ *
+ * The image build has no backend to enumerate committees against. But the export must stay: returning `[]` is what
+ * opts the route into ISR, and without it `dynamicParams` and `revalidate`
+ * below are inert. See docs/frontend.md, "What each route directive is for".
+ */
 export async function generateStaticParams() {
   return [];
 }

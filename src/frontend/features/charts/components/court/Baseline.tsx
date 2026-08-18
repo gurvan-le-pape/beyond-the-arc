@@ -3,13 +3,20 @@ import React from "react";
 
 import { COURT_WIDTH, LINE_WIDTH } from "../../constants";
 
+interface BaselineProps {
+  /** Chart width in SVG pixels; also scales the stroke. */
+  readonly svgWidth: number;
+  /** Vertical position, already in SVG pixels — the caller applies `yScale`. */
+  readonly y: number;
+}
+
 /**
- * Draws the baseline of the court.
+ * The baseline — the court's far edge, spanning the full chart width.
+ *
+ * On a half-court render this coincides with `CenterLine`: both draw at
+ * `yScale(0)`, so the two overlap exactly.
  */
-export const Baseline: React.FC<{ svgWidth: number; y: number }> = ({
-  svgWidth,
-  y,
-}) => (
+export const Baseline: React.FC<BaselineProps> = ({ svgWidth, y }) => (
   <line
     x1={0}
     y1={y}

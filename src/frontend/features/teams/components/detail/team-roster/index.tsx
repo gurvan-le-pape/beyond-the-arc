@@ -20,6 +20,21 @@ interface TeamRosterProps {
   players?: TeamPlayerRef[];
 }
 
+/**
+ * The team's players, sortable by number, name, or a per-game stat.
+ *
+ * **Sorting is client-side over the whole roster** — there is no pagination and
+ * no server round trip, so the list is expected to stay small. The input array
+ * is copied before sorting, so the `players` prop is never reordered underneath
+ * its owner.
+ *
+ * **The first click on any column sorts descending**, including on `number`.
+ * Only clicking an already-descending column flips it back to ascending; the
+ * initial render is ascending by number.
+ *
+ * `players` is optional and memoised through a `?? []` fallback, because a fresh
+ * empty array on every render would invalidate the sort memo below it.
+ */
 export const TeamRoster: React.FC<TeamRosterProps> = ({ players }) => {
   // Memoized so the `?? []` fallback doesn't produce a fresh array on every
   // render and invalidate the sort memo below.

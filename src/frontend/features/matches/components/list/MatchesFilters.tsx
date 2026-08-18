@@ -30,6 +30,27 @@ interface MatchesFiltersProps {
   onReset: () => void;
 }
 
+/**
+ * The filter panel for the matches list — text search, date, category, gender,
+ * the level → committee/league cascade, and the division → pool → matchday
+ * cascade.
+ *
+ * Holds no state: `filters` and `setters` come from `useMatchesFilterState`,
+ * which owns the cascade clearing and the reset to page 1.
+ *
+ * **The three-step cascade is gated twice over.** `isLocationSelected` keeps
+ * divisions and pools inert until a committee or league is chosen, and the
+ * matchday step depends on the selected pool, since the number of matchdays is
+ * a property of that pool rather than of the championship.
+ *
+ * Options are fetched here rather than passed in — `useLocationOptions` for
+ * committees and leagues, `useMatchesCascadeOptions` for divisions and pools.
+ * Both surface their own error and retry, so a failed lookup reads as a failure
+ * instead of as an empty dropdown.
+ *
+ * Rendered inside `FiltersShell`, so this subtree exists **twice** in the DOM —
+ * mobile sheet and desktop card. Nothing here may rely on a unique `id`.
+ */
 export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
   filters,
   setters,
@@ -190,7 +211,6 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
         />
       )}
 
-      {/* Row 1: Search + Date */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <DebouncedInput
           variant="search"
@@ -212,7 +232,6 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
         />
       </div>
 
-      {/* Row 2: Category + Gender */}
       <CategoryGenderSelects
         category={category}
         setCategory={setCategory}
@@ -220,10 +239,8 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
         setGender={setGender}
       />
 
-      {/* Divider */}
       <div className="border-t border-divide" />
 
-      {/* Row 3: Level → Committee/League cascade */}
       <LevelLocationFilters
         level={level}
         setLevel={setLevel}
@@ -235,7 +252,7 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
         leagues={leagues}
       />
 
-      {/* Row 4: Division → Pool → Matchday cascade */}
+      {/* Division → Pool → Matchday */}
       <CascadeSelects steps={cascadeSteps} cols={3} />
     </FiltersShell>
   );

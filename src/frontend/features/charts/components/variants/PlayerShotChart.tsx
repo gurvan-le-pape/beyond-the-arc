@@ -14,6 +14,7 @@ interface PlayerShotChartProps {
   description?: string;
 }
 
+/** The player detail's shot chart — pins `ShotChart` to the hotspots variant so player pages do not choose a chart type. */
 export const PlayerShotChart: React.FC<PlayerShotChartProps> = ({
   matchEvents,
   title,

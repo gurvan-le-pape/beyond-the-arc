@@ -1,4 +1,11 @@
 // src/frontend/features/site/architecture/components/ArchitectureArrow.tsx
+/**
+ * The connector between two nodes of the architecture diagram.
+ *
+ * **Disappears below `md`.** The diagram reflows to a vertical stack on narrow
+ * screens, where a rightward arrow would point at nothing — so the connection
+ * is implied by order rather than drawn. Purely decorative either way.
+ */
 export function ArchitectureArrow() {
   return (
     <div className="hidden md:block text-text-muted">

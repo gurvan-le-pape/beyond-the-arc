@@ -29,7 +29,6 @@ export function TimelineTeamHeader({
       aria-hidden="true"
       className="mb-4 pb-3 border-b-2 border-divide"
     >
-      {/* Home (left) */}
       <div className="flex items-center gap-2">
         <TimelineTeamLogo teamName={homeTeam.name} />
         <span className="font-bold text-text-heading">{homeTeam.name}</span>
@@ -38,7 +37,6 @@ export function TimelineTeamHeader({
       {/* Centre spacer (matches the 80px score-pill column) */}
       <div />
 
-      {/* Away (right) */}
       <div className="flex items-center gap-2 justify-end">
         <span className="font-bold text-text-heading">{awayTeam.name}</span>
         <TimelineTeamLogo teamName={awayTeam.name} />

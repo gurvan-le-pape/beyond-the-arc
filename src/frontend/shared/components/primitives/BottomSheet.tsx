@@ -15,6 +15,23 @@ interface BottomSheetProps {
   readonly footer?: React.ReactNode;
 }
 
+/**
+ * A drag-to-dismiss sheet anchored to the bottom of the viewport, built on a
+ * native `<dialog>` so focus trapping and the backdrop come from the platform.
+ *
+ * **Mounting is opening.** `isOpen` gates the render, and `showModal()` runs
+ * once on mount — so the sheet is opened by being rendered and closed by being
+ * unmounted, not by toggling the prop against `close()`. A caller that keeps it
+ * mounted while `isOpen` is false gets nothing on screen and no dialog.
+ *
+ * **Mobile only, and the caller must enforce that.** The sheet carries
+ * `md:hidden`, which hides it without preventing it: rendered open on a wide
+ * viewport it would still take the top layer and lock body scroll behind a
+ * `display: none` element. Gate it at the call site, as `FiltersShell` does.
+ *
+ * `onClose` fires on the close button, on backdrop dismissal via `onCancel`,
+ * and once a drag passes roughly a third of the sheet's height.
+ */
 export function BottomSheet({
   isOpen,
   onClose,
@@ -90,7 +107,6 @@ export function BottomSheet({
       )}
       style={{ transform: `translateY(${dragOffset}px)` }}
     >
-      {/* Drag handle */}
       <button
         type="button"
         aria-label={tCommon("dragToClose")}
@@ -104,7 +120,6 @@ export function BottomSheet({
         <div className="w-10 h-1 rounded-full bg-divide" />
       </button>
 
-      {/* Header */}
       <div className="flex items-center justify-between px-5 py-3 border-b border-divide">
         <span className="text-base font-semibold text-text-heading">
           {title}
@@ -119,10 +134,8 @@ export function BottomSheet({
         </button>
       </div>
 
-      {/* Content */}
       <div className="flex-1 overflow-y-auto px-5 py-4">{children}</div>
 
-      {/* Footer */}
       {footer && (
         <div className="px-5 py-4 border-t border-divide">{footer}</div>
       )}

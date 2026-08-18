@@ -17,7 +17,7 @@ import type { CommitteeFilters } from "../types/CommitteesFilters";
  * - Never call directly from components
  *
  * @example
- * import { committeesService } from '@/lib/services/client';
+ * import { committeesService } from "@/features/organizations/committees/api";
  * const committees = await committeesService.getAll({ leagueId: 1 });
  */
 export const committeesService = {
@@ -30,6 +30,8 @@ export const committeesService = {
    *
    * @example
    * const committees = await committeesService.getAll({ leagueId: 1 });
+   *
+   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
    */
   async getAll(
     filters?: CommitteeFilters,
@@ -51,6 +53,8 @@ export const committeesService = {
    *
    * @example
    * const committee = await committeesService.getById(123);
+   *
+   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
    */
   async getById(id: number, signal?: AbortSignal): Promise<Committee> {
     const { data } = await apiClient.get<Committee>(`/committees/${id}`, {
@@ -69,6 +73,8 @@ export const committeesService = {
    *
    * @example
    * const committees = await committeesService.getByIds([1, 2, 3]);
+   *
+   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
    */
   async getByIds(ids: number[], signal?: AbortSignal): Promise<Committee[]> {
     const { data } = await apiClient.get<Committee[]>(

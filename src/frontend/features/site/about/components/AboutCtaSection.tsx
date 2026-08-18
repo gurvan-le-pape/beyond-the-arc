@@ -8,6 +8,13 @@ interface AboutCtaSectionProps {
   readonly architectureLabel: string;
 }
 
+/**
+ * The closing call-to-action on the about page, linking to the product and
+ * architecture pages.
+ *
+ * Both destinations are fixed — only their labels are passed in, so the caller
+ * supplies translations without being able to redirect the section elsewhere.
+ */
 export function AboutCtaSection({
   title,
   description,

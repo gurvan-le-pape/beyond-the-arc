@@ -101,6 +101,16 @@ function containsAboveWingRight(x: number, y: number) {
   return x <= arcX && x >= PAINT_X1;
 }
 
+/**
+ * The two above-wing zones — the slivers between the three-point arc and the
+ * paint, one per side.
+ *
+ * Each zone pairs a `polygon` (for drawing) with a hand-written `contains`
+ * that tests the arc equation directly; the two must describe the same region,
+ * and editing one without the other makes hover disagree with the drawn shape.
+ *
+ * @returns the zone definitions in court units, each with the bounding box used to draw it and the `contains` predicate used to hit-test it; bounds are half-open so a shot on a shared edge falls in exactly one zone
+ */
 export function getAboveWingZones() {
   return [
     {

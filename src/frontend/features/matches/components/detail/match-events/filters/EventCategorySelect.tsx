@@ -10,6 +10,17 @@ interface EventCategorySelectProps {
   onChange: (value: EventCategory | undefined) => void;
 }
 
+/**
+ * Single-select for narrowing the match event timeline to one category.
+ *
+ * `undefined` is "all events" and is what the empty option maps to — the empty
+ * string is an internal `Select` value and never reaches `onChange`.
+ *
+ * The option list is **hand-maintained against `EventCategory`** rather than
+ * derived from it, so a category added to the constant does not appear here
+ * until it is added below as well. The omission is silent: filtering simply
+ * never offers it.
+ */
 export const EventCategorySelect: React.FC<EventCategorySelectProps> = ({
   value,
   onChange,

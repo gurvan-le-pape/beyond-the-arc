@@ -14,6 +14,11 @@ import { PageHero, PageLayout } from "@/shared/components/layout";
 import { Text } from "@/shared/components/typography";
 import type { LocalePageProps } from "@/shared/types";
 
+/**
+ * Metadata for the architecture page.
+ *
+ * Next calls this separately from the page, so a fetch failure here is not caught by the page's own error handling — hence the `withServerErrorMetadata` wrapper where one fetches.
+ */
 export async function generateMetadata({
   params,
 }: LocalePageProps): Promise<Metadata> {
@@ -26,6 +31,12 @@ export async function generateMetadata({
   };
 }
 
+/**
+ * The architecture page: the stack, the request diagram, and the key properties.
+ *
+ * `params` is a Promise in Next 15 and is awaited here, so the feature
+ * components below receive plain values.
+ */
 export default async function ArchitecturePage({ params }: LocalePageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
@@ -69,8 +80,9 @@ export default async function ArchitecturePage({ params }: LocalePageProps) {
         <Text variant="h2" className="mb-6 text-center text-xl">
           {t("architecture.systemArchitecture")}
         </Text>
+        {/* Every `color` below is a decorative gradient, deliberately raw
+            palette values rather than semantic tokens. */}
         <div className="flex flex-col md:flex-row items-center justify-center gap-8">
-          {/* Client — decorative gradient, intentional */}
           <ArchitectureDiagramNode
             icon={Globe}
             title={t("architecture.diagram.client")}
@@ -78,10 +90,8 @@ export default async function ArchitecturePage({ params }: LocalePageProps) {
             color="from-blue-500 to-cyan-500"
           />
 
-          {/* Arrow */}
           <ArchitectureArrow />
 
-          {/* Server — decorative gradient, intentional */}
           <ArchitectureDiagramNode
             icon={Server}
             title={t("architecture.diagram.server")}
@@ -89,10 +99,8 @@ export default async function ArchitecturePage({ params }: LocalePageProps) {
             color="from-green-500 to-emerald-500"
           />
 
-          {/* Arrow */}
           <ArchitectureArrow />
 
-          {/* Database — decorative gradient, intentional */}
           <ArchitectureDiagramNode
             icon={Database}
             title={t("architecture.diagram.database")}
@@ -103,21 +111,18 @@ export default async function ArchitecturePage({ params }: LocalePageProps) {
 
         {/* Key Features — icon badges use bg-surface-inset, resolves to surface-raised */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Modular architecture — feature badge */}
           <FeatureBadge
             icon={Package}
             iconClassName="bg-primary-subtle text-primary-strong"
             title={t("architecture.features.modular.title")}
             description={t("architecture.features.modular.description")}
           />
-          {/* Type safety — feature badge */}
           <FeatureBadge
             icon={Code2}
             iconClassName="bg-success-subtle text-success"
             title={t("architecture.features.typeSafety.title")}
             description={t("architecture.features.typeSafety.description")}
           />
-          {/* Scalable design — feature badge */}
           <FeatureBadge
             icon={Layers}
             iconClassName="bg-clubs-subtle text-clubs"

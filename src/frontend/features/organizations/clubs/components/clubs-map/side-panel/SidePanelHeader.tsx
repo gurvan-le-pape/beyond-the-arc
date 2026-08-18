@@ -25,7 +25,6 @@ export function SidePanelHeader({ clubCount, onClose }: SidePanelHeaderProps) {
         </Text>
       </div>
       <div className="flex items-center gap-1">
-        {/* Close button */}
         <button
           type="button"
           onClick={onClose}

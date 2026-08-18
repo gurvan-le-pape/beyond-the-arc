@@ -54,14 +54,12 @@ export function ChampionshipMatches({ matches }: ChampionshipMatchesProps) {
       className="sticky top-20 lg:top-24"
     >
       <div className="space-y-4">
-        {/* Rounds Section */}
         <RoundsSection
           groupedMatches={groupedMatches}
           selectedRound={selectedRound}
           onSelectRound={setRound}
         />
 
-        {/* Matches Section */}
         <MatchesSection
           currentMatches={currentMatches}
           expandedMatchIds={expandedMatchIds}

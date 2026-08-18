@@ -7,7 +7,7 @@ import { getTooltipPosition } from "@/features/charts/utils";
 
 import { ShotFilter } from "../../constants";
 
-export type TooltipState = {
+export interface TooltipState {
   x: number;
   y: number;
   made: number;
@@ -16,13 +16,17 @@ export type TooltipState = {
   fg: number | null;
   cellRow?: number;
   cellCol?: number;
-};
+}
 
 interface TooltipContentProps {
   tooltip: NonNullable<TooltipState>;
   shotFilter: ShotFilter;
 }
 
+/**
+ * The hover tooltip for a chart cell or zone, portaled to `document.body` so
+ * it escapes the SVG — fixed at the cursor and non-interactive.
+ */
 const TooltipContent: React.FC<TooltipContentProps> = ({
   tooltip,
   shotFilter,

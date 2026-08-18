@@ -23,10 +23,18 @@ export const metadata: Metadata = {
   manifest: "/site.webmanifest",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+interface RootLayoutProps {
+  readonly children: React.ReactNode;
+}
+
+/**
+ * The document shell: `<html>`, `<body>`, fonts, and the provider tree.
+ *
+ * Renders once for the whole app and persists across navigation, so anything
+ * mounted here keeps its state for the session — which is what makes it the
+ * right place for the query client and the theme, and the wrong place for
+ * anything route-specific.
+ */
+export default function RootLayout({ children }: RootLayoutProps) {
   return children;
 }

@@ -43,6 +43,9 @@ export const championshipsQueries = {
    *
    * @example
    * useQuery(championshipsQueries.list({ level: 'national' }))
+   *
+   * @param filters - filter criteria; part of the cache key
+   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
    */
   list: (filters?: ChampionshipFilters) => ({
     queryKey: championshipsKeys.list(filters),
@@ -56,6 +59,9 @@ export const championshipsQueries = {
    *
    * @example
    * useQuery(championshipsQueries.detail(123))
+   *
+   * @param id - the championship's id
+   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
    */
   detail: (id: number) => ({
     queryKey: championshipsKeys.detail(id),
@@ -76,6 +82,9 @@ export const championshipsPrefetch = {
    * @example
    * const prefetch = championshipsPrefetch.detail(queryClient);
    * <tr onMouseEnter={() => prefetch(championship.id)} />
+   *
+   * @param queryClient - the client to warm
+   * @returns a prefetcher taking a championship id — call it on hover or focus, before navigation
    */
   detail: (queryClient: QueryClient) => (championshipId: number) => {
     queryClient
@@ -91,6 +100,9 @@ export const championshipsPrefetch = {
    * @example
    * const prefetch = championshipsPrefetch.list(queryClient);
    * <FilterPanel onOpen={() => prefetch({ level: 'regional' })} />
+   *
+   * @param queryClient - the client to warm
+   * @returns a prefetcher taking filters — warms the same key the list query will read
    */
   list: (queryClient: QueryClient) => (filters?: ChampionshipFilters) => {
     queryClient

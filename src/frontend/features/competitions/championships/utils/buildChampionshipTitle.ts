@@ -16,6 +16,11 @@ interface ChampionshipTitleLabels {
  * Used for the page's heading and its document title. Takes the two translated
  * labels as arguments so it works from both a client component (`useTranslations`)
  * and `generateMetadata` (`getTranslations`).
+ *
+ * @returns the championship's display title, assembled from its level, category and division
+ *
+ * @param championship - the championship to name
+ * @param labels - the two already-translated strings, passed in so this works from a server or client component
  */
 export function buildChampionshipTitle(
   championship: Championship,

@@ -8,6 +8,16 @@ interface TeamDisplayProps {
   readonly isWinner: boolean;
 }
 
+/**
+ * One side of a fixture: club crest, name, and team number.
+ *
+ * The crest is resolved from the club **name** through `formatNameToFileName`,
+ * so a renamed club silently falls back to the default badge. Only leagues and
+ * committees ship real logos; club crests are the fallback in practice.
+ *
+ * `isWinner` is supplied, not derived — this compares no scores and only styles
+ * what it is told.
+ */
 export function TeamDisplay({ team, isWinner }: TeamDisplayProps) {
   return (
     <div className="flex flex-col items-center flex-1 min-w-0">

@@ -22,6 +22,15 @@ export interface ClubsFilterSetters {
 
 const DEFAULT_PAGE_SIZE = 50;
 
+/**
+ * Owns the clubs list's filters and pagination.
+ *
+ * Any filter change resets to page 1, and the location half is delegated to
+ * `useLocationFilterState` so the level → committee/league cascade behaves the
+ * same here as on the other lists. Page size defaults to 50.
+ *
+ * @returns the filter values, their setters, and pagination state
+ */
 export function useClubsFilterState() {
   const {
     committeeId,

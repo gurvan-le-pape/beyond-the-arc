@@ -17,6 +17,14 @@ interface PaintZonesProps {
   onZoneLeave: () => void;
 }
 
+/**
+ * The zones inside the paint, where attempt density is highest.
+ *
+ * Colour encodes **volume, not accuracy** — `colorScale` is fed the zone's
+ * total attempts, so ten makes and ten misses shade identically. A zone with
+ * no shots still renders, at a fainter opacity, so the court's zone map stays
+ * whole rather than developing holes.
+ */
 const PaintZones: React.FC<PaintZonesProps> = ({
   shots,
   xScale,

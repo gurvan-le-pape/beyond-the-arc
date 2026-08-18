@@ -108,6 +108,18 @@ interface PlayerSearchDropdownProps {
   readonly onClear: () => void;
 }
 
+/**
+ * Typeahead for picking the second player in a comparison.
+ *
+ * **The search is scoped, not global.** `gender` and `category` narrow it to
+ * players who are actually comparable, and `excludeId` keeps the subject out of
+ * their own comparison. All three are required for that reason — widening the
+ * search means passing different values, never omitting them.
+ *
+ * Debouncing belongs to the input, not to this component: `DebouncedInput`
+ * only fires once typing settles, so the query state never holds a
+ * per-keystroke value and no timer is managed here.
+ */
 export function PlayerSearchDropdown({
   excludeId,
   gender,

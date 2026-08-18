@@ -7,6 +7,8 @@ import { CATEGORY_LIST, GENDER_LIST } from "@/shared/constants";
  * The category and gender `<Select>` option lists shared by the teams,
  * players, and matches filter panels — an "all" entry followed by every
  * category / gender, translated.
+ *
+ * @returns the category and gender option lists, translated and in display order
  */
 export function useCategoryGenderOptions() {
   const tCommon = useTranslations("common");

@@ -30,7 +30,7 @@ import type { TeamMatchHistoryResponse } from "../types/TeamMatchHistory";
  * - Never call directly from components
  *
  * @example
- * import { serverTeamsService } from '@/lib/services/client';
+ * import { serverTeamsService } from "@/features/teams/api/teams.server";
  * const teams = await serverTeamsService.getAll({ clubId: 1 });
  */
 export const serverTeamsService = {

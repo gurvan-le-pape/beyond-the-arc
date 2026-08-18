@@ -39,6 +39,12 @@ interface OrganizationsGridProps {
   readonly counts: OrganizationCounts;
 }
 
+/**
+ * The three organisation-type cards side by side.
+ *
+ * An **async server component**, and the counts come from one fetch made by the
+ * page — the same numbers the stats band shows, so the two cannot disagree.
+ */
 export async function OrganizationsGrid({ counts }: OrganizationsGridProps) {
   const t = await getTranslations("organizations");
 

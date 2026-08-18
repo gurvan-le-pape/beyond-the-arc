@@ -19,15 +19,20 @@ import {
   withServerErrorMetadata,
 } from "@/shared/utils";
 
-// Don't pre-build - one page per fixture, far too many to enumerate
+/**
+ * Pre-build list for match detail — always empty.
+ *
+ * One page per fixture, far too many to enumerate. But the export must stay: returning `[]` is what
+ * opts the route into ISR, and without it `dynamicParams` and `revalidate`
+ * below are inert. See docs/frontend.md, "What each route directive is for".
+ */
 export async function generateStaticParams() {
   return [];
 }
 
 export const dynamicParams = true;
-// 60s, not the hour this once declared: every fetch here is `ServerRevalidate.LIVE`,
-// and the lowest revalidate in a route wins — so 60 has always been what was in
-// force. A match detail page during a live game is the case LIVE exists for.
+// 60s because every fetch here is `ServerRevalidate.LIVE` and the lowest
+// revalidate in a route sets the frequency for the whole route.
 export const revalidate = 60;
 
 async function buildMetadata({

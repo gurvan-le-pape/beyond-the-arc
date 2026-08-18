@@ -15,6 +15,16 @@ interface TeamMatchHistoryTableProps {
   readonly maxRows?: number;
 }
 
+/**
+ * A team's recent matches with the final score for each.
+ *
+ * `team` is not rendered — it configures the columns, giving the matchup column
+ * the id it needs to work out which side was this team. The rows come entirely
+ * from `matches`.
+ *
+ * Shows `maxRows` (5 by default) behind a show-all toggle, so passing the full
+ * history is expected rather than wasteful.
+ */
 export function TeamMatchHistoryTable({
   team,
   matches,

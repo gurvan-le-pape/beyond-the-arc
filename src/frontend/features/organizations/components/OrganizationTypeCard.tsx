@@ -65,6 +65,14 @@ interface OrganizationTypeCardProps {
   readonly org: OrgType;
 }
 
+/**
+ * One of the three organisation types on the landing page, with its count.
+ *
+ * An **async server component**: it awaits its own translations and locale, so
+ * it cannot be rendered inside a client boundary. The count is formatted with
+ * the request's locale rather than passed pre-formatted, which is why the
+ * locale is needed here at all.
+ */
 export async function OrganizationTypeCard({ org }: OrganizationTypeCardProps) {
   const t = await getTranslations("organizations");
   const locale = await getLocale();
@@ -85,7 +93,6 @@ export async function OrganizationTypeCard({ org }: OrganizationTypeCardProps) {
         focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ring-offset-surface
       `}
     >
-      {/* Top row: icon + optional count pill */}
       <div className="flex items-start justify-between">
         <div
           className={`
@@ -112,7 +119,6 @@ export async function OrganizationTypeCard({ org }: OrganizationTypeCardProps) {
         )}
       </div>
 
-      {/* Text content */}
       <div className="flex-1 space-y-1.5">
         <div className={`text-base font-semibold ${s.accent}`}>{label}</div>
         <div className="text-sm text-text-secondary leading-relaxed">
@@ -120,7 +126,6 @@ export async function OrganizationTypeCard({ org }: OrganizationTypeCardProps) {
         </div>
       </div>
 
-      {/* Bottom arrow */}
       <div className="flex items-center gap-1.5">
         <span
           className={`text-xs font-medium transition-colors duration-200 ${s.arrow}`}

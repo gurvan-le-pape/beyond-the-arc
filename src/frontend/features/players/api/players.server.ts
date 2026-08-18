@@ -29,7 +29,7 @@ import type { PlayerMatchHistoryResponse } from "../types/PlayerMatchHistory";
  * - Never call directly from components
  *
  * @example
- * import { serverPlayersService } from '@/lib/services/client';
+ * import { serverPlayersService } from "@/features/players/api/players.server";
  * const players = await serverPlayersService.getAll({ teamId: 1, page: 1 });
  */
 export const serverPlayersService = {

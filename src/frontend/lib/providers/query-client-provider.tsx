@@ -18,6 +18,29 @@ interface Props {
   readonly dehydratedState?: DehydratedState | null;
 }
 
+/**
+ * Supplies the TanStack Query client to the whole app, plus the hydration
+ * boundary and the development devtools.
+ *
+ * **The client is created inside `useState`, and that is load-bearing.** A
+ * client built at module scope would be shared across requests on the server
+ * and leak one visitor's cached data into another's render. The factory form
+ * gives every render tree its own.
+ *
+ * Two defaults are worth knowing before writing a query. **4xx responses are
+ * never retried** — only network failures and 5xx get up to two attempts —
+ * because a 400 or 404 will fail identically however often it is repeated. And
+ * refetch-on-window-focus is off, so a tab left open does not re-query on
+ * return; features that need freshness set their own `staleTime` rather than
+ * relying on focus.
+ *
+ * Every query error is logged **once, here**, through a cache subscription.
+ * Hooks and components must not log failures again; they choose UI from
+ * `isError` instead.
+ *
+ * `dehydratedState` exists for server prefetching but no route currently passes
+ * one — server-owned data reaches components as props.
+ */
 export function QueryProvider({ children, dehydratedState }: Props) {
   const [queryClient] = useState(() => {
     const client = new QueryClient({

@@ -10,11 +10,9 @@ import { ViewLevel } from "@/shared/constants";
 import type { LocalePageProps } from "@/shared/types";
 
 /**
- * Clubs Page
- * Shows all clubs
+ * Metadata for the clubs listing.
  *
- * Fetches nothing server-side — ClubsView is a client component on TanStack
- * Query — so the shell is static and needs no caching directives.
+ * Next calls this separately from the page, so a fetch failure here is not caught by the page's own error handling — hence the `withServerErrorMetadata` wrapper where one fetches.
  */
 export async function generateMetadata({
   params,
@@ -28,6 +26,12 @@ export async function generateMetadata({
   };
 }
 
+/**
+ * The clubs listing.
+ *
+ * `params` is a Promise in Next 15 and is awaited here, so the feature
+ * components below receive plain values. Fetches nothing server-side — `ClubsView` is a client component on TanStack Query — so this shell prerenders as static.
+ */
 export default async function ClubsPage({ params }: LocalePageProps) {
   const { locale } = await params;
   setRequestLocale(locale);

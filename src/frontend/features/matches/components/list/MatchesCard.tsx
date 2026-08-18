@@ -15,7 +15,23 @@ import { cn, formatMatchDate, formatMatchTime } from "@/shared/utils";
 
 import type { Match } from "../../types";
 
-export const MatchesCard: React.FC<{ match: Match }> = ({ match }) => {
+interface MatchesCardProps {
+  readonly match: Match;
+}
+
+/**
+ * One match in a list: date and time, matchday badge, the two clubs, and the
+ * score once there is one.
+ *
+ * **A score renders only when both sides are non-null.** A fixture that has not
+ * been played shows the teams without a scoreline rather than showing zeros,
+ * so an unplayed match and a 0–0 are distinguishable.
+ *
+ * Championship data is optional-chained throughout, since list responses do not
+ * always carry the pool and its championship; the badges and the level accent
+ * fall back to neutral rather than failing.
+ */
+export const MatchesCard: React.FC<MatchesCardProps> = ({ match }) => {
   const tMatches = useTranslations("matches");
   const locale = useLocale();
 
@@ -56,10 +72,8 @@ export const MatchesCard: React.FC<{ match: Match }> = ({ match }) => {
         />
       }
     >
-      {/* Match Content */}
       <div className="px-5 py-4">
         <div className="flex items-center justify-between gap-6">
-          {/* Home Team */}
           <div className="flex-1 flex flex-col items-center gap-3">
             <ClubLogo
               clubName={match.homeTeam?.club?.name}
@@ -80,7 +94,6 @@ export const MatchesCard: React.FC<{ match: Match }> = ({ match }) => {
             </div>
           </div>
 
-          {/* Score */}
           <div className="flex-shrink-0 text-center">
             <MatchScore
               homeScore={homeTeamScore}
@@ -89,7 +102,6 @@ export const MatchesCard: React.FC<{ match: Match }> = ({ match }) => {
             />
           </div>
 
-          {/* Away Team */}
           <div className="flex-1 flex flex-col items-center gap-3">
             <ClubLogo
               clubName={match.awayTeam?.club?.name}

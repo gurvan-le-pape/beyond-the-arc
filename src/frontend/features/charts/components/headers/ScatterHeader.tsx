@@ -4,6 +4,10 @@ import React from "react";
 
 import { Text } from "@/shared/components/typography";
 
+/**
+ * The scatter chart's legend. The glyphs must stay in sync with
+ * `ScatterOverlay`'s — circle for a made shot, cross for a miss.
+ */
 export const ScatterHeader: React.FC = () => {
   const t = useTranslations("common");
 

@@ -3,24 +3,27 @@ import React from "react";
 
 import { COURT_WIDTH, LINE_WIDTH } from "../../constants";
 
-/**
- * Paint (restricted area) component for FIBA half-court.
- * Draws the rectangular paint area under the basket.
- *
- * @param paintLeft - SVG x position of left edge
- * @param paintRight - SVG x position of right edge
- * @param paintTopY - SVG y position of top edge
- * @param paintBottomY - SVG y position of bottom edge
- * @param svgWidth - SVG width for scaling
- */
-export interface PaintProps {
-  paintLeft: number;
-  paintRight: number;
-  paintTopY: number;
-  paintBottomY: number;
-  svgWidth: number;
+interface PaintProps {
+  /** Left edge, already in SVG pixels — the caller applies the scale. */
+  readonly paintLeft: number;
+  /** Right edge, already in SVG pixels — the caller applies the scale. */
+  readonly paintRight: number;
+  /** Top edge, already in SVG pixels — the caller applies the scale. */
+  readonly paintTopY: number;
+  /** Bottom edge, already in SVG pixels — the caller applies the scale. */
+  readonly paintBottomY: number;
+  /** Chart width; scales the stroke so line weight stays proportional. */
+  readonly svgWidth: number;
 }
 
+/**
+ * The paint, drawn as an unfilled rectangle from four edges.
+ *
+ * **Receives its edges already in SVG pixels**, unlike the court parts that
+ * take scale functions and convert internally. The caller owns the conversion
+ * here, so passing court units silently draws a rectangle a few pixels wide in
+ * the corner rather than failing.
+ */
 export const Paint: React.FC<PaintProps> = ({
   paintLeft,
   paintRight,

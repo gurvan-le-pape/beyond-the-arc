@@ -9,6 +9,15 @@ interface HeatmapFilterBarProps {
   setShotFilter: (f: ShotFilter) => void;
 }
 
+/**
+ * The all / made / missed selector above a heatmap.
+ *
+ * Fully controlled — it holds no state and the three options are fixed, so
+ * adding a filter is a change here and in `ShotFilter` together.
+ *
+ * Only the heatmap has this. Hotspots shades by attempt volume rather than by
+ * outcome, so a made/missed filter would have nothing to change.
+ */
 export const HeatmapFilterBar: React.FC<HeatmapFilterBarProps> = ({
   shotFilter,
   setShotFilter,

@@ -65,7 +65,7 @@ Runs `next build` to verify the production build compiles and exports successful
 
 Downloads the `backend-coverage` artifact and runs a SonarCloud scan using `SonarSource/sonarqube-scan-action` (successor of the deprecated `sonarcloud-github-action`). The scan uses `fetch-depth: 0` on checkout so SonarCloud has full git history for accurate blame and new-code analysis. Requires the `SONAR_TOKEN` repository secret.
 
-**The frontend is excluded from coverage, and that is a deliberate, temporary exclusion.** Only the backend produces an lcov report, so before the exclusion every one of the frontend's ~24,000 lines counted as uncovered: project coverage sat at 25%, the gate's `new_coverage >= 80` condition failed on every PR touching the frontend, and the gate had been ERROR for the whole window anyone had looked at. A check that can never be green cannot report a regression in the five conditions that do work — that is the cost being paid, not the untested frontend itself, which is tracked separately. `sonar-project.properties` names the removal condition inline: `src/frontend/**` comes out of `sonar.coverage.exclusions` the moment a frontend test runner lands. The gate remains advisory either way (see the dependency graph above), so this changes what a red mark *means*, not what it blocks.
+**The frontend is excluded from coverage, and that is a deliberate, temporary exclusion.** Only the backend produces an lcov report, so without the exclusion every one of the frontend's ~24,000 lines counts as uncovered: project coverage sits at 25%, the gate's `new_coverage >= 80` condition fails on every PR touching the frontend, and the gate is permanently ERROR. A check that can never be green cannot report a regression in the five conditions that do work — that is the cost being paid, not the untested frontend itself, which is tracked separately. `sonar-project.properties` names the removal condition inline: `src/frontend/**` comes out of `sonar.coverage.exclusions` the moment a frontend test runner lands. The gate remains advisory either way (see the dependency graph above), so this changes what a red mark *means*, not what it blocks.
 
 ### npm-audit (workflow `audit.yml`)
 
@@ -79,11 +79,11 @@ The job is **advisory**: it is in a different workflow from `deploy`, so it cann
 
 ### deploy
 
-Runs only on push to `main`, after the nine check jobs in its `needs:` list pass. It has four steps:
+Runs only on push to `main`, after the nine check jobs in its `needs:` list pass. It has five steps:
 
 1. **Log in to GHCR** — authenticates using `GITHUB_TOKEN` (automatically available, no manual secret needed).
 2. **Build and push backend image** — builds the `prod` target of `docker/backend/Dockerfile` and pushes `ghcr.io/<repository>/backend:latest` plus a `:<git sha>` tag. A second step builds the `migrate` target (shares the cached base layers) and pushes `backend-migrate` with the same tags.
-3. **Build and push scheduler image** — builds `docker/python-script/Dockerfile` and pushes `ghcr.io/<repository>/scheduler:latest` plus a `:<git sha>` tag. It was added on 2026-08-15; before that the scheduler had no build step here and no `image:` anywhere, so the VPS ran whatever it had built locally — measured, an image from 2026-07-15 that 336 successful pipelines had not replaced.
+3. **Build and push scheduler image** — builds `docker/python-script/Dockerfile` and pushes `ghcr.io/<repository>/scheduler:latest` plus a `:<git sha>` tag. Without a build step and an `image:` the VPS runs whatever it last built locally, so a scheduler change reaches the repository and stops there, with no tag to roll back to either.
 4. **Build and push frontend image** — builds the `prod` target of `docker/frontend/Dockerfile` with two build args from repository secrets (`NEXT_PUBLIC_API_URL`, `FRONTEND_URL`) and `SENTRY_AUTH_TOKEN` passed as a BuildKit secret, and pushes `ghcr.io/<repository>/frontend:latest` plus a `:<git sha>` tag.
 5. **Deploy via SSH** — plain `ssh` from the runner (no third-party action holds the key): the runner writes the deploy key, pins the host key from the `VPS_HOST_KEY` secret (it is not discovered with `ssh-keyscan` — see *The deploy account* below), and pipes the deploy script to `bash -s` on the VPS as the `deploy` user (10-minute timeout). Secrets are passed as env vars, never expanded into the script text; the GHCR token travels as the first line of stdin.
 
@@ -176,7 +176,7 @@ This rolls back the **images** only. The other two things a bad deploy can chang
 
 **No staging deployment.** The deploy job targets production directly. There is no equivalent job that deploys to a staging environment first, because no hosted staging environment exists.
 
-**The database image is not pushed to GHCR.** It is the official `postgres` image, pulled from Docker Hub by the base Compose file, so it needs no build step here. *(The scheduler used to be in this paragraph. It is published and pinned like the other three since 2026-08-15 — the previous arrangement meant a scheduler change reached the repository and stopped there, with no tag to roll back to either.)*
+**The database image is not pushed to GHCR.** It is the official `postgres` image, pulled from Docker Hub by the base Compose file, so it needs no build step here. The other four — frontend, backend, migrate and scheduler — are all published and pinned.
 
 **Health check, not rollback.** The deploy script fails the pipeline if the new containers don't come up healthy (backend readiness endpoint polled for 60s, frontend page render checked), and prints the rollback instruction — but the rollback itself is manual (set `IMAGE_TAG` in `.env` to the previous SHA and rerun pull + up). Automatic rollback on health-check failure would be the next step if manual proves too slow in practice.
 

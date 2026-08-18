@@ -44,22 +44,18 @@ export const EmptyState = ({
       aria-live="polite"
       {...props}
     >
-      {/* Icon */}
       {icon && <div className="mb-4 text-text-muted">{icon}</div>}
 
-      {/* Title */}
       <Text variant="h3" className="mb-2">
         {title}
       </Text>
 
-      {/* Description */}
       {descriptionText && (
         <Text variant="caption" as="p" className="mb-6 max-w-md">
           {descriptionText}
         </Text>
       )}
 
-      {/* Action */}
       {action && (
         <Button onClick={action.onClick} variant="outline">
           {action.label}

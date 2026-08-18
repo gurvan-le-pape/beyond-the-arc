@@ -52,6 +52,20 @@ interface PlayerComparisonProps {
   readonly careerStats: PlayerCareerStats | null;
 }
 
+/**
+ * Side-by-side career comparison between the page's player and one the reader
+ * picks.
+ *
+ * **The two sides are loaded differently, deliberately.** The subject's stats
+ * arrive as a prop from the page that already fetched them; the opponent's are
+ * fetched client-side once one is chosen. So only the right-hand column has
+ * loading and error states, and only it can fail while the rest of the widget
+ * still renders.
+ *
+ * The opponent query is issued with an id of `0` until a player is selected,
+ * which is safe only because `enabled` gates it — the query never runs with
+ * that id. Keep the two together if you touch either.
+ */
 export function PlayerComparison({
   player,
   careerStats,
@@ -99,7 +113,6 @@ export function PlayerComparison({
       variant="highlighted"
     >
       <div className="relative rounded-2xl min-h-[140px]">
-        {/* Decorations */}
         <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
           <div className="absolute inset-0 bg-gradient-to-r from-primary-ghost via-transparent to-secondary-ghost opacity-50" />
           <div className="absolute left-1/2 top-4 bottom-4 w-px -translate-x-1/2 bg-divide opacity-25" />

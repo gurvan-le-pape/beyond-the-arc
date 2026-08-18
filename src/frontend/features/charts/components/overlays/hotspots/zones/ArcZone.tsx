@@ -24,6 +24,13 @@ interface ArcZoneProps {
   };
 }
 
+/**
+ * A hotspot zone whose top edge follows the three-point arc.
+ *
+ * The arc is sampled into a polygon; the `arc_left` and `arc_right` keys
+ * shorten the sample where the paint interrupts the circle, so those two
+ * zones read as the arc-to-paint slivers rather than full arcs.
+ */
 export const ArcZone: React.FC<ArcZoneProps> = ({
   zone,
   stats,

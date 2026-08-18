@@ -13,6 +13,12 @@ interface ContactAboutSectionProps {
   readonly description: string;
 }
 
+/**
+ * The prose block beneath the contact methods.
+ *
+ * Copy only — both strings arrive already translated, so this holds no message
+ * keys and renders identically in every locale it is given.
+ */
 export function ContactAboutSection({
   title,
   description,
@@ -25,7 +31,6 @@ export function ContactAboutSection({
       <Text variant="body" className="mb-4">
         {description}
       </Text>
-      {/* Tech stack chips */}
       <div className="flex flex-wrap gap-2">
         {TECH_STACK.map((tech) => (
           <span

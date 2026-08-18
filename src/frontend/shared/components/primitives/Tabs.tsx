@@ -41,6 +41,18 @@ interface TabsProps {
   readonly onValueChange?: (value: string) => void; // optional external handler
 }
 
+/**
+ * The root of a tab set: owns which tab is selected and publishes it, plus a
+ * unique id base, through context.
+ *
+ * **Uncontrolled by design.** There is no `value` prop — `defaultValue` sets the
+ * initial tab and the state lives here. `onValueChange` observes changes but
+ * cannot drive them, so a consumer that needs the tab to follow the URL wraps
+ * this rather than controlling it; `QueryTabs` is that wrapper.
+ *
+ * The id base comes from `useId`, so two tab sets on one page cannot collide in
+ * their `aria-controls` and `aria-labelledby` wiring.
+ */
 export function Tabs({
   defaultValue,
   children,
@@ -78,6 +90,14 @@ interface TabsListProps {
   readonly ariaLabel?: string;
 }
 
+/**
+ * The `role="tablist"` container that lays the triggers out along a bottom
+ * rule.
+ *
+ * Must wrap `TabsTrigger` elements directly — `TabsTrigger` locates its
+ * siblings by walking up to the nearest `[role="tablist"]` for keyboard
+ * navigation, so an intervening wrapper breaks the arrow keys.
+ */
 export function TabsList({
   children,
   className = "",
@@ -103,6 +123,21 @@ interface TabsTriggerProps {
   readonly className?: string;
 }
 
+/**
+ * One tab button, marking itself selected and owning the keyboard pattern for
+ * the list.
+ *
+ * **Arrow keys move focus; Enter or Space activates** — the WAI-ARIA *manual*
+ * activation variant. Automatic activation would be wrong here because every
+ * consumer writes the tab to the URL, so arrowing across the list would fire a
+ * navigation per keypress.
+ *
+ * Siblings are read from the DOM rather than registered in context, which keeps
+ * a tab list declarative: triggers can be rendered conditionally without
+ * anything to register or clean up.
+ *
+ * Requires a `Tabs` ancestor; without one the context lookup throws.
+ */
 export function TabsTrigger({
   value,
   children,
@@ -187,6 +222,17 @@ interface TabsContentProps {
   readonly className?: string;
 }
 
+/**
+ * One tab panel, rendered only while its tab is selected.
+ *
+ * **The inactive panel is unmounted, not hidden.** Anything it holds — scroll
+ * position, an open dropdown, uncommitted input, an in-flight component state —
+ * is discarded on every tab switch and rebuilt on return. State that must
+ * survive belongs above the tabs or in the URL.
+ *
+ * The panel is focusable so it can be reached from the tab list even when it
+ * contains nothing focusable of its own, per the WAI-ARIA tabs pattern.
+ */
 export function TabsContent({
   value,
   children,

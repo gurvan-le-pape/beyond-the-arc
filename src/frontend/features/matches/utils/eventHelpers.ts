@@ -16,6 +16,9 @@ import { EventCategory, EventType, Role } from "@/shared/constants";
  * `color` is derived from the category rather than stored per event type, so
  * the 40 entries in `eventConfig` cannot drift from each other or from the
  * contrast the tokens guarantee. See `eventColors.ts`.
+ *
+ * @param eventType - the raw event type from the API
+ * @returns the display config; an unrecognised type falls back to a neutral marker rather than throwing
  */
 export function getEventStyle(eventType: string): EventStyle {
   const configured: Omit<EventStyle, "color"> | undefined = (
@@ -34,7 +37,12 @@ export function getEventStyle(eventType: string): EventStyle {
 // Team-id resolution
 // ---------------------------------------------------------------------------
 
-/** Extracts the owning team-id from an event via its player roles. */
+/**
+ * Extracts the owning team-id from an event via its player roles.
+ *
+ * @param event - the event to attribute
+ * @returns the owning team's id, or `undefined` when no player in a qualifying role is present
+ */
 export function getTeamIdFromEvent(event: MatchEvent): number | undefined {
   // Substitution events – either the exiting or entering player owns the team.
   if (event.eventType === EventType.SUBSTITUTION) {
@@ -67,6 +75,10 @@ export function getTeamIdFromEvent(event: MatchEvent): number | undefined {
 /**
  * Derives the 1-based quarter number (1–4, 5 = OT) from the instant an event
  * occurred, relative to the match start (10-min quarters, 600s each).
+ *
+ * @param occurredAt - when the event happened
+ * @param matchDate - the match's start instant, the origin all quarters are measured from
+ * @returns 1–4 for regulation, 5 for anything past it — every overtime period collapses into 5
  */
 export function getQuarterFromTimestamp(
   occurredAt: Date | string,
@@ -86,7 +98,13 @@ export function getQuarterFromTimestamp(
 // Points calculation
 // ---------------------------------------------------------------------------
 
-/** Returns the point value implied by an event type. */
+/**
+ * The point value implied by an event type.
+ *
+ * @param eventType - the raw event type
+ * @param style - its resolved display config, whose category decides the two-point case
+ * @returns 3, 2, 1 or 0 — a non-scoring event is 0, never negative
+ */
 export function pointsForEvent(eventType: string, style: EventStyle): number {
   if (eventType.includes("three") || eventType === EventType.THREE_POINT_AND_1)
     return 3;
@@ -108,6 +126,12 @@ export interface QuarterScores {
  * Computes per-quarter scores for both teams by bucketing scoring events
  * relative to the match start time.
  * Index 0–3 = Q1–Q4, index 4 = OT.
+ *
+ * @param events - every event in the match, scoring or not
+ * @param homeTeamId - id used to attribute a scoring event to the home side
+ * @param awayTeamId - id used to attribute a scoring event to the away side
+ * @param matchDate - the match's start instant; every quarter boundary is measured from it
+ * @returns five-slot arrays per side: indices 0–3 are Q1–Q4 and index 4 is all overtime combined
  */
 export function computeQuarterScores(
   events: MatchEvent[],
@@ -153,18 +177,19 @@ export type EventDescriptionToken =
  * Splits a description into runs, marking the ones that are a player's name so
  * the caller can render them as links.
  *
- * This returns data rather than markup on purpose. The previous version built
- * an HTML string of `<a>` tags and the paragraph rendered it through
- * `dangerouslySetInnerHTML`, which meant the safety of the whole timeline
- * rested on the description never containing anything that looks like a tag —
- * an invariant owned by the simulator, not by this file.
+ * **Returns data, not markup.** Rendering an HTML string here would put the
+ * timeline's safety on the description never containing anything tag-shaped —
+ * an invariant owned by the simulator rather than by this file. Tokens let
+ * React build the anchors instead.
  *
- * It also fixes a substitution bug that the string form could not: a name is
- * matched by scanning the description once, left to right, consuming each hit
- * before continuing. Repeated `replaceAll` passes re-scanned text they had
- * already rewritten, so a player whose name appears inside another's — or
- * inside the href or class of a link written by an earlier pass — was wrapped
- * twice, nesting anchors.
+ * The description is scanned **once, left to right, consuming each hit** before
+ * continuing. Repeated whole-string replacement would re-scan text it had
+ * already rewritten, so a player whose name occurs inside another's would be
+ * wrapped twice and the anchors would nest.
+ *
+ * @param description - the event's sentence, as the simulator wrote it
+ * @param eventPlayers - the players to recognise; absent or empty yields a single text token
+ * @returns the description as alternating text and player runs, for the caller to render
  */
 export function tokenizeEventDescription(
   description: string,

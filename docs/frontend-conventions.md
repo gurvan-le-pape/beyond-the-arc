@@ -6,9 +6,9 @@
 
 ## Overview
 
-Every feature follows the same top-level layout: `api/`, `components/`, and — only when they have content — `constants/`, `hooks/`, `types/`, `utils/`. This document defines the rules *inside* that layout. They are mechanically enforced by custom ESLint rules in `src/frontend/eslint-rules/` (see [Enforcement](#enforcement)), so violations fail lint/CI, not just style review.
+Every feature follows the same top-level layout: `api/`, `components/`, and — only when they have content — `constants/`, `hooks/`, `types/`, `utils/`. This document defines the rules *inside* that layout. Most are mechanically enforced by custom ESLint rules in `src/frontend/eslint-rules/` (see [Enforcement](#enforcement)), so violations fail lint/CI rather than style review; [Comments](#comments) is the one section with no rule behind it.
 
-`shared/components/` has its own settled category-folder layout (`primitives/`, `blocks/`, `table/`, …) and is not covered here.
+`shared/components/` has its own settled category-folder layout (`primitives/`, `blocks/`, `table/`, …) and is not covered here — except by [Comments](#comments), which applies to all of `src/frontend`.
 
 ---
 
@@ -75,6 +75,123 @@ A file must not mix the two: a file importing the generated `components` type ma
 
 Hooks that return JSX (e.g. table column factories) are `.tsx` but still follow `useX` naming and the placement rules above.
 
+## Props
+
+A component's props are a **named, local `interface`**, one per component, called `<Component>Props`.
+
+```tsx
+interface BaselineProps {
+  /** Chart width in SVG pixels; also scales the stroke. */
+  readonly svgWidth: number;
+  /** Vertical position, already in SVG pixels — the caller applies `yScale`. */
+  readonly y: number;
+}
+
+/**
+ * The baseline — the court's far edge, spanning the full chart width.
+ */
+export function Baseline({ svgWidth, y }: BaselineProps) { … }
+```
+
+Three separate decisions, with different authorities behind them:
+
+- **`interface`, not `type`.** The TypeScript handbook's own heuristic: *"use `interface` until you need to use features from `type`"*, and interfaces with `extends` are cheaper for the compiler than intersections. Enforced by `@typescript-eslint/consistent-type-definitions`. Reach for `type` only when you need a union, a primitive, or a mapped type — at which point it is no longer a props object.
+- **Named, not inline — and this one is ours, not React's.** react.dev shows the inline form first and only suggests naming it *"once you start to have a few fields to describe"*. That is a threshold, and we have chosen uniformity instead: even two props get a name. A name is what a type error quotes, what an editor shows at a call site, and the only place a per-prop doc comment can live — see [Docstrings](#docstrings), which routes prop documentation to interface members. Enforced by `enforce-named-props`.
+- **Local, not exported.** Export a props interface only when another component genuinely composes it. Publishing one widens a surface for no consumer, and every court component that exported its props had no importer at all.
+
+Members are `readonly` and carry their own doc comment where they have anything to say. What they should say is the unit, the coordinate space, the sentinel — whatever the type cannot express:
+
+```tsx
+/** Tick heights in **court units** — unlike the `_px` props above, these go through `yScale`. */
+readonly tickYs: number[];
+```
+
+**Never `@param` on the interface.** Those tags belong to functions; on a type declaration they document nothing, render nowhere, and drift from the members beside them. No rule catches this — `check-param-names` validates tags only against a *function's* parameters — so it is on review.
+
+**`React.FC` is not required and not preferred.** react.dev models plain function declarations throughout and never mentions it; the community position is that it is "not needed" since `@types/react` 18 dropped its implicit `children`. It remains in use here and is not worth a sweep of its own, but new components take the plain form.
+
+## Comments
+
+> Scope: unlike the rest of this document, this section governs **all of `src/frontend`** — `app/`, `features/` and `shared/` alike.
+
+**A comment must say something the reader cannot get from the line beneath it.** That is the whole test, and it is applied to the *pair* — the comment together with what it sits above — never to the comment alone. Judging comments by reading a list of them is what lets a restatement pass.
+
+### The next-line test
+
+| The next line is… | The comment is… | |
+| --- | --- | --- |
+| a named component or element whose name already contains the comment's content | a restatement | **delete** |
+| opaque — a raw SVG/DOM element, an expression, a prop whose value is defined elsewhere | the only thing naming it | **keep** |
+
+```tsx
+{/* Player Header */}                 // delete — the name is the comment
+<PlayerHeader player={player} />
+
+{/* Division → Pool → Matchday */}    // keep — `cascadeSteps` hides the chain
+<CascadeSelects steps={cascadeSteps} cols={3} />
+
+{/* Free-throw semi-circle */}        // keep — nothing else says what this path draws
+<path d={arc()({ startAngle: -Math.PI / 2, … })} />
+```
+
+A comment that documents the *child's* internals belongs in the child, not at the call site. `{/* Player Shot Chart Hotspots */}` over `<PlayerShotChart />` names a `ChartType` the page never passes and cannot see; it goes stale the moment the child changes, and the page has no say in it.
+
+### What always earns a comment
+
+A comment stating a **constraint** rather than an identity, because a constraint is invisible in the code that satisfies it:
+
+- **an ordering that must hold** — SVG paints in document order, so overlays precede court lines or the lines are buried under them
+- **why a value is that value** — `revalidate = 60` because every fetch in the route is `ServerRevalidate.LIVE` and the lowest in a route wins
+- **a trap** — a hook that still exists but has no call sites and must not be reintroduced
+- **a decision that looks like a mistake** — answering 200 with an error card rather than 500
+
+### Comments say what is true now
+
+Never write how the code got here; `git log` holds that, and a comment describing a former state reads as current the moment its context is gone.
+
+```
+// 60s, not the hour this once declared — so 60 has always been what was in force   ← no
+// 60s because every fetch here is `ServerRevalidate.LIVE`, and the lowest wins      ← yes
+```
+
+The same applies to explanatory prose in `docs/`: state the rule, not the history of the rule.
+
+### A comment can be a symptom
+
+Two cases where the fix is code rather than prose. Both are rules stated elsewhere; this is where they surface:
+
+- **The comment is a better name than the name** — rename it. See `naming.md`: *a name that needs a comment to explain it is the wrong name*.
+- **The comment marks where one section ends and the next begins** — extract a component. `component-decomposition.md` lists exactly that as a split trigger. `{/* Features Grid */}` above a raw `<div className="grid …">` is naming the component that should exist.
+
+Section labels therefore never survive on their own terms: if the section deserves a name it becomes a component, and if it does not, the label was noise. The exception is a comment that groups *several* siblings under a constraint they share — that is an ordering or layout fact, not a label.
+
+### Docstrings
+
+The **prose** of a doc comment is held to everything above — it must say what the declaration does not. The **tags** are not: they are structure, and structure repeats by design. `@param items - the collection to bucket` is worth writing beside `items: T[]`, because the type gives a shape and the tag gives a role, and an editor renders them in separate places. Do not strip a `@param` for "restating" the signature; strip one that restates the *type*.
+
+Rules specific to the form:
+
+- **Types belong to TypeScript.** Never `@param {string} name`. The signature already carries the shape, and a copy of it in prose drifts independently. Document meaning, units and constraints; leave the type to the compiler.
+- **The description is the free text at the top, never a tag.** TSDoc — which TypeScript's tooling follows — standardises 24 tags and `@description` is not among them: *"any content appearing prior to the first block tag is interpreted as the special summary section."* `@description`/`@desc` are JSDoc aliases for a case that does not arise here, and using one leaves the summary section empty while the prose renders as a trailing footnote. Note that `shared/types/api.generated.ts` contains 613 of them — that is `openapi-typescript` mapping the OpenAPI `description` field mechanically, not a convention to copy.
+- **`@example` must show what the signature does not.** `getByChampionshipId(5)` above `getByChampionshipId(championshipId: number): Promise<Pool[]>` restates it. An example earns its place for usage that is genuinely non-obvious — an options object with interacting fields, a factory whose result is passed somewhere particular, a required call order.
+- **Nothing verifies an example.** TypeScript does not typecheck code inside comments and this app has no test runner, so an example is prose shaped like code and rots in silence. Write real import paths, and prefer pointing at an existing call site over inventing a snippet.
+- **`@param` and `@returns` are mandatory on non-component declarations**, each with a description. `jsdoc/require-param`, `require-returns` and their `-description` variants enforce this over `.ts`/`.mts`; `.tsx` is exempt because a component's single destructured props object and its JSX return are both meaningless as tags. A `@returns` earns its place by naming what the value *means* at the edges — the sentinel, the empty case, the `null` — not by repeating the return type.
+- **`@param` for functions; interface members for props.** A component takes one parameter — a props object — so `@param props` says nothing and `@param name` names a destructured member TSDoc does not model. Document a prop on its own member instead, which is what an editor surfaces when you hover the attribute at a JSX call site; `TableColumn<T>` in `shared/components/table/DataTable.tsx` is the pattern. Reserve `@param` for ordinary functions, where it documents a real parameter.
+
+**Every exported declaration carries one.** That is settled — the judgement is not whether to write a docstring but what it says, and the failure mode is a *restating* one: `/** Card showing a club. */` above `ClubCard` is a label in a different syntax and costs a reader the same as any other noise.
+
+So write the **contract** rather than the summary. What does it really accept? What does it do with input it does not recognise? What must a caller handle? Lead with a constraint that cannot be seen from the outside whenever there is one:
+
+- **a closed variant API** — the component takes no `className`, so "make it look different" means adding a variant, and nothing in the signature says so
+- **props that interact** — `getRowHref` cannot combine with `wrap={false}`; one prop changing another's meaning is invisible per-prop
+- **a constraint the name does not carry** — a sheet whose open state is its mounted state, an icon slot that must stay non-interactive
+- **a boundary** — why this is `'use client'`, what must not cross into it, what is lazily loaded
+- **an edge** — the value returned for an unrecognised input, a hard limit, an index base, a silent fallback
+
+A declaration with no interesting edges still has a contract; a fifteen-line switch has one in its `default` arm. If nothing survives that question, the reading was too shallow, not the declaration too simple.
+
+And a constraint documented in `docs/` but not on the component is documented where nobody will meet it: the docstring is what an editor shows at the import.
+
 ## Tests
 
 Component tests are **colocated** next to what they test (`Component.test.tsx`, `useX.test.ts`), mirroring the backend's colocated `*.spec.ts`. Test files are excluded from barrel generation and from Sonar coverage sources. The test runner and setup are defined by the frontend testing effort, not this document.
@@ -94,6 +211,11 @@ Custom ESLint rules in `src/frontend/eslint-rules/`, wired in `eslint.config.mjs
 | `enforce-barrel-import` | Imports go through barrels; directory list derived from `barrelsby.json` |
 | `enforce-file-path-comment` | Every file starts with its own path comment (autofixable) |
 | `no-translator-prop` | The next-intl translator is never typed as a value or passed as a prop |
+| `enforce-named-props` | Component props are a named interface, not an inline object type |
+
+Two upstream rules carry conventions of their own: `@typescript-eslint/consistent-type-definitions` (`interface` over `type`, see [Props](#props)) and the `jsdoc/*` set described under [Docstrings](#docstrings) — `require-jsdoc`, `require-param`, `require-returns`, their `-description` variants, `check-param-names`, `check-tag-names` and `no-types`, all at **error**.
+
+**[Comments](#comments) is review-enforced**, and so is the ban on `@param` tags sitting on a props interface. No rule covers either. Review it by reading each comment against the line beneath it — a review that reads comments as a *list* will pass restatements, because a label only looks redundant next to the thing it labels.
 
 **Migration ratchet**: features that predate these conventions are listed in the `LEGACY_FEATURES` allowlist in `eslint.config.mjs`, which disables the structure rules for them. Each migration PR restructures one feature and removes it from the list; an empty list means the migration is complete. Do not add new entries.
 
@@ -104,4 +226,6 @@ Custom ESLint rules in `src/frontend/eslint-rules/`, wired in `eslint.config.mjs
 3. Respect the depth cap (≤ 3 below `components/`) — flatten with name prefixes instead of nesting deeper.
 4. New barrel-worthy directory? Add it to `barrelsby.json` (the ESLint barrel rule follows automatically); composite internals get an exclusion pattern.
 5. Strings: resolve the component's own vocabulary inside it (`useTranslations` / `await getTranslations`), and take the caller's content as plain `string` props. Never accept the translator itself as a prop — `no-translator-prop` enforces that half; which side a given string falls on is a judgement call, described under [Internationalisation](./frontend.md#internationalisation) in `frontend.md`.
-6. Run `npm run lint` — the rules above catch the rest.
+6. Props: a local `interface <Component>Props`, members `readonly` and documented where they carry a unit, a coordinate space or a sentinel. See [Props](#props).
+7. Comments: read each one against the line below it, not on its own. Delete restatements; keep constraints. If a comment names a section, extract the section instead. See [Comments](#comments).
+8. Run `npm run lint` — the rules above catch the rest.

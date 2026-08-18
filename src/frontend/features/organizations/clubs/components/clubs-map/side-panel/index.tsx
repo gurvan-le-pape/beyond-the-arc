@@ -61,14 +61,12 @@ export const SidePanel = memo(function SidePanel({
       {/* Toggle button when closed - separate from panel */}
       {!isOpen && <SidePanelToggleButton onOpen={handleToggleOpen} />}
 
-      {/* Panel */}
       <div
         className="fixed top-16 right-0 h-[calc(100vh-4rem)] surface-subtle shadow-2xl z-20 w-full sm:w-96 transition-transform duration-300 ease-in-out"
         style={{
           transform: isOpen ? "translateX(0)" : "translateX(100%)",
         }}
       >
-        {/* Loading indicator */}
         {isPending && (
           <div className="absolute top-0 left-0 right-0 h-1 bg-primary animate-pulse z-10" />
         )}
@@ -79,9 +77,7 @@ export const SidePanel = memo(function SidePanel({
             onClose={handleToggleOpen}
           />
 
-          {/* Content */}
           <div className="flex-1 flex flex-col overflow-hidden">
-            {/* Search Bar */}
             <div className="p-4 border-b border-divide flex-shrink-0">
               <SearchBar
                 query={query}

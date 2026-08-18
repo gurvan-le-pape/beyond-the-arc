@@ -13,7 +13,25 @@ import { Text } from "@/shared/components/typography";
 import { NA } from "@/shared/constants";
 import { cn } from "@/shared/utils";
 
-export const TeamCard: React.FC<{ team: Team }> = ({ team }) => {
+interface TeamCardProps {
+  readonly team: Team;
+}
+
+/**
+ * One team in a list, linking to its detail page.
+ *
+ * **A team has no name of its own**, so the club name is rendered twice — as the
+ * header and as the card title — and what actually distinguishes two teams of
+ * the same club is the number plus the badges beside it (category, gender,
+ * division, pool). Dropping a badge makes sibling teams indistinguishable
+ * rather than merely plainer.
+ *
+ * Every path through `club` and `pool` is optional-chained and falls back to
+ * `NA`, because list responses do not always carry the nested championship.
+ * `TeamHeader` reads the same `Team` type without chaining and needs the
+ * hydrated detail shape — the two disagree deliberately.
+ */
+export const TeamCard: React.FC<TeamCardProps> = ({ team }) => {
   const tCommon = useTranslations("common");
   const tTeams = useTranslations("teams");
 

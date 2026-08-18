@@ -13,6 +13,9 @@ import { logger } from "./logger";
  * the not-found boundary, so it is not an error-level event. Anything else
  * propagates to the segment's `error.tsx`, and is logged here once on the way
  * past rather than at every layer it crosses.
+ *
+ * @param error - whatever the server-side fetch rejected with
+ * @returns never — a 404 throws into the not-found boundary, anything else rethrows
  */
 export function handleServerError(error: unknown): never {
   if (error instanceof ApiError && error.statusCode === 404) notFound();
@@ -30,6 +33,9 @@ export function handleServerError(error: unknown): never {
  * anything searchable. Putting it in the first line is what makes
  * `{service="frontend"} |= "<id>"` and `{service="backend"} | json | req_id="<id>"`
  * name the same request.
+ *
+ * @param error - the failure being logged; an `ApiError` contributes its request id
+ * @returns the log message's first line, with the id inline where there is one
  */
 function buildContext(error: unknown): string {
   const requestId = error instanceof ApiError ? error.requestId : undefined;

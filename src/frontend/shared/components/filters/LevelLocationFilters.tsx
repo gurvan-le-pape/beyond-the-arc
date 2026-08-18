@@ -15,6 +15,19 @@ interface LevelLocationFiltersProps {
   readonly leagues: { id: number; name: string }[];
 }
 
+/**
+ * The competition-level select and, beneath it, the location select that level
+ * implies.
+ *
+ * **The second select appears only for departmental and regional.** Those levels
+ * are scoped by a committee and a league respectively; national competitions
+ * have no parent to pick, so nothing renders and no location is required. That
+ * asymmetry is the whole component — it is why callers gate their own deeper
+ * cascades on a location actually being selected.
+ *
+ * The option lists are supplied by the caller, which fetches them; this renders
+ * whatever it is given.
+ */
 export function LevelLocationFilters({
   level,
   setLevel,

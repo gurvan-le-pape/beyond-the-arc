@@ -14,6 +14,22 @@ import {
 } from "@/shared/components/domain";
 import { EmptyState } from "@/shared/components/feedback";
 
+/**
+ * The players tab of the search page: its own filter panel, results grid, and
+ * pagination.
+ *
+ * Takes no props and owns everything — filter state, the query, and the
+ * loading, error, empty and paginated states via `SearchTabShell`. Mounting it
+ * is the whole integration.
+ *
+ * **Pagination indices are converted here.** The shell reports a zero-based page
+ * index while the API counts from one, so `onPageChange` adds the offset. Wiring
+ * a page control straight to the API param would be off by one, silently, and
+ * only on page two onward.
+ *
+ * An empty search box is sent as `undefined` rather than an empty string, so the
+ * parameter is omitted from the request instead of filtering on nothing.
+ */
 export function PlayersTab() {
   const tPlayers = useTranslations("players");
   const tCommon = useTranslations("common");

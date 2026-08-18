@@ -22,7 +22,7 @@ import type { TeamMatchHistoryResponse } from "../types/TeamMatchHistory";
  * - Never call directly from components
  *
  * @example
- * import { teamsService } from '@/lib/services/client';
+ * import { teamsService } from "@/features/teams/api";
  * const teams = await teamsService.getAll({ clubId: 1 });
  */
 export const teamsService = {
@@ -38,6 +38,8 @@ export const teamsService = {
    *
    * @example
    * const teams = await teamsService.getAll({ championshipId: 5 });
+   *
+   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
    */
   async getAll(
     filters?: TeamFilters,
@@ -59,6 +61,8 @@ export const teamsService = {
    *
    * @example
    * const team = await teamsService.getById(123);
+   *
+   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
    */
   async getById(teamId: number, signal?: AbortSignal): Promise<TeamDetail> {
     const { data } = await apiClient.get<TeamDetail>(`/teams/${teamId}`, {
@@ -76,6 +80,8 @@ export const teamsService = {
    *
    * @example
    * const matches = await teamsService.getMatches(123);
+   *
+   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
    */
   async getMatches(
     teamId: number,
@@ -94,6 +100,9 @@ export const teamsService = {
    * @returns Filter values for teams
    * @example
    * const filterValues = await teamsService.getFilterValues();
+   *
+   * @param params - optional committee or league to scope the values to; omitted, they span every team
+   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
    */
   async getFilterValues(
     params?: {

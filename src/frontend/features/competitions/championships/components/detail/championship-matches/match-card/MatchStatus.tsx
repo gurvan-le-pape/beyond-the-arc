@@ -9,6 +9,13 @@ interface MatchStatusProps {
   readonly overtime: boolean;
 }
 
+/**
+ * The kickoff time and a final-score badge.
+ *
+ * **Assumes the match has been played** — the badge reads "final", or "final
+ * (OT)" when `overtime`. There is no scheduled or in-progress state, so
+ * rendering this for a future fixture labels it final.
+ */
 export function MatchStatus({ date, overtime }: MatchStatusProps) {
   const tMatches = useTranslations("matches");
   const locale = useLocale();

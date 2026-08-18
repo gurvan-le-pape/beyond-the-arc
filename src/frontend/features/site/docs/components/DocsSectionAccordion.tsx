@@ -13,6 +13,16 @@ interface DocsSectionAccordionProps {
   readonly children: React.ReactNode;
 }
 
+/**
+ * One collapsible documentation section.
+ *
+ * **Fully controlled** — `isActive` and `onToggle` live in the parent, which is
+ * what lets it enforce one-open-at-a-time. Wiring `onToggle` to local state
+ * instead gives independent sections and loses that.
+ *
+ * `id` is not just a key: it is echoed into `aria-controls`, so it must match
+ * the panel's id or the button announces a relationship to nothing.
+ */
 export function DocsSectionAccordion({
   id,
   icon: Icon,

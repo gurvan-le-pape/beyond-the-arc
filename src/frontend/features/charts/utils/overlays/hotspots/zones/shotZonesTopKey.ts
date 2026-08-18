@@ -45,6 +45,12 @@ function containsTopKeyZone(x: number, y: number) {
   );
 }
 
+/**
+ * The top-key zone: the full-width strip between the top of the paint and
+ * the three-point arc.
+ *
+ * @returns the zone definitions in court units, each with the bounding box used to draw it and the `contains` predicate used to hit-test it; bounds are half-open so a shot on a shared edge falls in exactly one zone
+ */
 export function getTopKeyZone() {
   return [
     {

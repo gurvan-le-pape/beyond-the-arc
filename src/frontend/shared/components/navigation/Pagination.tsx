@@ -34,6 +34,20 @@ const navButtonEnabled =
 const navButtonDisabled =
   "bg-surface-subtle text-text-muted cursor-not-allowed";
 
+/**
+ * The page control beneath a paginated list: item count, page-size select, and
+ * page navigation.
+ *
+ * **Displays one-based pages but reports a zero-based index.** `pagination.page`
+ * arrives from the API counting from one, while `setPageIndex` hands back an
+ * index counting from zero — so every caller adds the offset. That conversion is
+ * the single most common place for an off-by-one here, and it is silent: page
+ * one looks right and everything after it is wrong.
+ *
+ * Page sizes are a fixed set (25/50/100/200); changing them is a change here,
+ * not a prop. On narrow screens the numbered pages collapse to a current-page
+ * indicator, keeping first/previous/next/last reachable.
+ */
 export const Pagination: React.FC<PaginationProps> = ({
   pagination,
   pageSize,
@@ -89,7 +103,6 @@ export const Pagination: React.FC<PaginationProps> = ({
 
   return (
     <div className="flex flex-col md:flex-row md:justify-between md:items-center px-4 sm:px-6 py-4 border-t border-divide surface-base gap-4">
-      {/* Info text */}
       <div className="text-sm text-text-body">
         {t("pagination.pageInfo", {
           page: currentPage,
@@ -99,9 +112,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         })}
       </div>
 
-      {/* Controls */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-        {/* Page size selector */}
         <div className="flex items-center gap-2">
           <Text variant="label" as="span" className="whitespace-nowrap">
             {t("pagination.resultsPerPage")}
@@ -123,9 +134,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           </select>
         </div>
 
-        {/* Page navigation */}
         <div className="flex items-center gap-1">
-          {/* First page */}
           <button
             type="button"
             onClick={() => setPageIndex(0)}
@@ -138,7 +147,6 @@ export const Pagination: React.FC<PaginationProps> = ({
             <ChevronsLeft className="w-4 h-4" />
           </button>
 
-          {/* Previous page */}
           <button
             type="button"
             onClick={() => setPageIndex(Math.max(0, currentPage - 2))}
@@ -151,7 +159,6 @@ export const Pagination: React.FC<PaginationProps> = ({
             <ChevronLeft className="w-4 h-4" />
           </button>
 
-          {/* Page numbers */}
           <div className="hidden sm:flex items-center gap-1">
             {getPageNumbers().map((pageNum, idx) => {
               if (pageNum < 0) {
@@ -184,12 +191,10 @@ export const Pagination: React.FC<PaginationProps> = ({
             })}
           </div>
 
-          {/* Mobile: Current page indicator */}
           <div className="sm:hidden px-3 py-1.5 bg-primary-strong text-white rounded-button font-medium">
             {currentPage}
           </div>
 
-          {/* Next page */}
           <button
             type="button"
             onClick={() => setPageIndex(Math.min(totalPages - 1, currentPage))}
@@ -202,7 +207,6 @@ export const Pagination: React.FC<PaginationProps> = ({
             <ChevronRight className="w-4 h-4" />
           </button>
 
-          {/* Last page */}
           <button
             type="button"
             onClick={() => setPageIndex(totalPages - 1)}

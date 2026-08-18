@@ -25,6 +25,22 @@ import { SIDE_CLASSES } from "./sideClasses";
 import { StatValue } from "./StatValue";
 import type { StatComparisonProps } from "./types";
 
+/**
+ * Two stat lines compared row by row, with the winner of each marked.
+ *
+ * Two presentations, and they are not interchangeable. **`dual`** puts one
+ * split bar per row and underlines the winning value — used where the two sides
+ * are halves of one whole, like the teams in a match. **`mirrored`** (the
+ * default) grows two bars inward from a centre dot and colours the winner —
+ * used where the sides are independent, like two players' careers.
+ *
+ * **`percentageMap` applies to `dual` only** and is silently dropped otherwise;
+ * a mirrored comparison shows bare values.
+ *
+ * Bars are held at zero width for one frame after mount, so the first paint
+ * animates instead of appearing already filled. Which stats appear, their
+ * labels, and which direction wins are entirely the caller's `config`.
+ */
 export function StatComparison({
   sideA,
   sideB,
@@ -46,7 +62,6 @@ export function StatComparison({
 
   return (
     <div className="w-full">
-      {/* ── Column headers ── */}
       <div className="grid grid-cols-[1fr_auto_1fr] gap-3 items-center mb-5 px-1">
         <span
           className={cn(
@@ -67,7 +82,6 @@ export function StatComparison({
         </span>
       </div>
 
-      {/* ── Stat rows ── */}
       <div className="space-y-4">
         {config.map(({ key, label, value: valueFn, lowerIsBetter }, index) => {
           const { display: displayA, numeric: numA } = resolveValue(

@@ -13,6 +13,9 @@ import { useLeagues } from "@/features/organizations/leagues/api";
  * Pass `leagueId` to narrow the committees to that league, which is what a
  * league → committee cascade needs. Left off, both queries are
  * unparameterised and every caller shares one cache entry per list.
+ *
+ * @param params - `leagueId` narrows the committees to that league; omitted, both lists are unparameterised and shared across callers
+ * @returns the two option lists, the first error either lookup produced, and a `retry` for it
  */
 export function useLocationOptions(params?: { leagueId?: number }) {
   const {

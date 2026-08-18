@@ -41,6 +41,9 @@ export const matchesQueries = {
    *
    * @example
    * useQuery(matchesQueries.list({ championshipId: 1 }))
+   *
+   * @param filters - filter and pagination criteria; part of the cache key, so each combination caches separately
+   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
    */
   list: (filters?: MatchFilters) => ({
     queryKey: matchesKeys.list(filters),
@@ -54,6 +57,9 @@ export const matchesQueries = {
    *
    * @example
    * useQuery(matchesQueries.detail(123))
+   *
+   * @param id - the match's id
+   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
    */
   detail: (id: number) => ({
     queryKey: matchesKeys.detail(id),
@@ -68,6 +74,9 @@ export const matchesQueries = {
    *
    * @example
    * useQuery(matchesQueries.byPool(10))
+   *
+   * @param poolId - the pool whose fixtures to list
+   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
    */
   byPool: (poolId: number) => ({
     queryKey: matchesKeys.byPool(poolId),
@@ -82,6 +91,9 @@ export const matchesQueries = {
    *
    * @example
    * useQuery(matchesQueries.byChampionship(5))
+   *
+   * @param championshipId - the championship whose matches to list
+   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
    */
   byChampionship: (championshipId: number) => ({
     queryKey: matchesKeys.byChampionship(championshipId),
@@ -96,6 +108,9 @@ export const matchesQueries = {
    *
    * @example
    * useQuery(matchesQueries.events(123))
+   *
+   * @param matchId - the match whose events to load
+   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
    */
   events: (matchId: number) => ({
     queryKey: matchesKeys.events(matchId),
@@ -112,6 +127,9 @@ export const matchesQueries = {
    *
    * @example
    * useQuery(matchesQueries.playerStats(123))
+   *
+   * @param matchId - the match whose box score to load
+   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
    */
   playerStats: (matchId: number) => ({
     queryKey: matchesKeys.playerStats(matchId),
@@ -134,6 +152,9 @@ export const matchesPrefetch = {
    * @example
    * const prefetch = matchesPrefetch.events(queryClient);
    * <button onMouseEnter={() => prefetch(matchId)} />
+   *
+   * @param queryClient - the client to warm
+   * @returns a prefetcher taking a match id — call it on hover or focus, before navigation
    */
   events: (queryClient: QueryClient) => (matchId: number) => {
     queryClient.prefetchQuery(matchesQueries.events(matchId)).catch(() => {
@@ -143,6 +164,9 @@ export const matchesPrefetch = {
 
   /**
    * Prefetch match detail (e.g., on link hover).
+   *
+   * @param queryClient - the client to warm
+   * @returns a prefetcher taking a match id — call it on hover or focus, before navigation
    */
   detail: (queryClient: QueryClient) => (matchId: number) => {
     queryClient.prefetchQuery(matchesQueries.detail(matchId)).catch(() => {});
@@ -150,6 +174,9 @@ export const matchesPrefetch = {
 
   /**
    * Prefetch player stats (e.g., on tab navigation).
+   *
+   * @param queryClient - the client to warm
+   * @returns a prefetcher taking a match id — call it on hover or focus, before navigation
    */
   playerStats: (queryClient: QueryClient) => (matchId: number) => {
     queryClient
@@ -159,6 +186,9 @@ export const matchesPrefetch = {
 
   /**
    * Prefetch matches for a specific pool (e.g., on pool selector hover).
+   *
+   * @param queryClient - the client to warm
+   * @returns a prefetcher taking a pool id — warms the same key the pool query will read
    */
   byPool: (queryClient: QueryClient) => (poolId: number) => {
     queryClient.prefetchQuery(matchesQueries.byPool(poolId)).catch(() => {});

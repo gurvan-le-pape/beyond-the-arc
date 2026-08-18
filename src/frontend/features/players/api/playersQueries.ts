@@ -43,6 +43,9 @@ export const playersQueries = {
    *
    * @example
    * useQuery(playersQueries.list({ leagueId: 1, page: 1 }))
+   *
+   * @param filters - filter and pagination criteria; part of the cache key, so each combination caches separately
+   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
    */
   list: (filters?: PlayerFilters) => ({
     queryKey: playersKeys.list(filters),
@@ -56,6 +59,9 @@ export const playersQueries = {
    *
    * @example
    * useQuery(playersQueries.detail(123))
+   *
+   * @param id - the player's id
+   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
    */
   detail: (id: number) => ({
     queryKey: playersKeys.detail(id),
@@ -71,6 +77,9 @@ export const playersQueries = {
    *
    * @example
    * useQuery(playersQueries.matches(123))
+   *
+   * @param id - the player whose matches to fetch
+   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
    */
   matches: (id: number) => ({
     queryKey: playersKeys.matches(id),
@@ -88,6 +97,9 @@ export const playersQueries = {
    *
    * @example
    * useQuery(playersQueries.filterValues({ committeeId: 1 }))
+   *
+   * @param params - optional committee or league scope for the available values
+   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
    */
   filterValues: (params?: { committeeId?: number; leagueId?: number }) => ({
     queryKey: playersKeys.filterValues(params),
@@ -103,6 +115,10 @@ export const playersQueries = {
    *
    * @example
    * useQuery(playersQueries.search("dupont", { gender: Gender.M }))
+   *
+   * @param search - the search term, already debounced by the caller
+   * @param filters - narrows the search to comparable players
+   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
    */
   search: (search: string, filters?: PlayerSearchFilters) => ({
     queryKey: playersKeys.search(search, filters),
@@ -124,6 +140,9 @@ export const playersPrefetch = {
    * @example
    * const prefetch = playersPrefetch.detail(queryClient);
    * <tr onMouseEnter={() => prefetch(player.id)} />
+   *
+   * @param queryClient - the client to warm
+   * @returns a prefetcher taking a player id — call it on hover or focus, before navigation
    */
   detail: (queryClient: QueryClient) => (playerId: number) => {
     queryClient.prefetchQuery(playersQueries.detail(playerId)).catch(() => {
@@ -137,6 +156,9 @@ export const playersPrefetch = {
    * @example
    * const prefetch = playersPrefetch.matches(queryClient);
    * <PlayerCard onMouseEnter={() => prefetch(player.id)} />
+   *
+   * @param queryClient - the client to warm
+   * @returns a prefetcher taking a player id — call it on hover or focus, before navigation
    */
   matches: (queryClient: QueryClient) => (playerId: number) => {
     queryClient.prefetchQuery(playersQueries.matches(playerId)).catch(() => {});

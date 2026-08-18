@@ -12,14 +12,15 @@ import { ViewLevel } from "@/shared/constants";
 import type { LocalePageProps } from "@/shared/types";
 import { handleServerError } from "@/shared/utils";
 
-// Rendered per request: the image build has no backend to prerender against.
-// The committee list itself is cached for 24h by fetchApi, so a render here is
-// a cache read, not a query.
+// Fetches server-side, so it stays out of the prerender pass - the image build
+// has no backend. The committee list is cached for 24h by fetchApi, so a render
+// here is a cache read, not a query.
 export const dynamic = "force-dynamic";
 
 /**
- * Committees Page
- * Shows all departmental committees
+ * Metadata for the committees listing.
+ *
+ * Next calls this separately from the page, so a fetch failure here is not caught by the page's own error handling — hence the `withServerErrorMetadata` wrapper where one fetches.
  */
 export async function generateMetadata({
   params,

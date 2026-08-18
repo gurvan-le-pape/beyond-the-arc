@@ -81,7 +81,6 @@ export const PlayerMatchStats: React.FC<PlayerMatchStatsProps> = ({
         emptyMessage={tCommon("emptyState.players")}
       />
 
-      {/* Modal for shot chart */}
       <ShotModal
         open={!!modalPlayer}
         player={modalPlayer ?? null}

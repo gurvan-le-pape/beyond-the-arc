@@ -3,13 +3,20 @@ import React from "react";
 
 import { COURT_WIDTH, LINE_WIDTH } from "../../constants";
 
+interface BoundaryRectProps {
+  /** Chart width in SVG pixels; also scales the stroke. */
+  readonly svgWidth: number;
+  /** Chart height in SVG pixels. */
+  readonly svgHeight: number;
+}
+
 /**
  * Draws the outer boundary rectangle of the court.
  */
-export const BoundaryRect: React.FC<{
-  svgWidth: number;
-  svgHeight: number;
-}> = ({ svgWidth, svgHeight }) => (
+export const BoundaryRect: React.FC<BoundaryRectProps> = ({
+  svgWidth,
+  svgHeight,
+}) => (
   <rect
     x={0}
     y={0}

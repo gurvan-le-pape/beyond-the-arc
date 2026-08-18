@@ -35,6 +35,24 @@ export interface TeamsFilterSetters {
   setPool: (value: string | undefined) => void;
 }
 
+/**
+ * Owns every filter on the teams list, plus its pagination.
+ *
+ * **The setters cascade — they are not plain setters.** Changing the level
+ * clears committee, league, division and pool; changing the committee clears
+ * the team number, division and pool. That is what stops a stale child filter
+ * silently narrowing results to nothing after its parent moves. Call them
+ * rather than the raw `useState` setters.
+ *
+ * **Any filter change resets to page 1**, in an effect here, so a caller must
+ * not also reset — doing it twice flashes the list through an intermediate
+ * page. Page size defaults to 50.
+ *
+ * Committee and league are delegated to `useLocationFilterState` so the cascade
+ * behaves identically on every list; `resetFilters` clears those too.
+ *
+ * @returns the current filter values, their cascading setters, and pagination
+ */
 export function useTeamsFilterState() {
   const {
     committeeId,

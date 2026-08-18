@@ -4,6 +4,22 @@
 import type { RefObject } from "react";
 import { useEffect, useState } from "react";
 
+/**
+ * Open state for the mobile navigation, with click-away, Escape, and a Tab
+ * focus trap.
+ *
+ * **Both refs must be attached for click-away to work** — the menu to know what
+ * is inside, and the button so that clicking the toggle does not close and
+ * immediately reopen. If either is unattached, outside clicks are ignored and
+ * the menu can only be dismissed with Escape.
+ *
+ * The trap captures its focusable elements **once, when the menu opens**.
+ * Anything rendered into the menu afterwards is outside the cycle and unreachable
+ * by Tab until the menu is closed and reopened.
+ *
+ * @param refs - the menu container and the toggle button
+ * @returns the open flag and its setter
+ */
 export function useMobileMenu(refs: {
   menu: RefObject<HTMLDivElement | null>;
   button: RefObject<HTMLButtonElement | null>;

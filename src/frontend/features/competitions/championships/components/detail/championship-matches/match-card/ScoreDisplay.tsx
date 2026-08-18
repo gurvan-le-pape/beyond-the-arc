@@ -10,6 +10,13 @@ interface ScoreDisplayProps {
   readonly matchId: number;
 }
 
+/**
+ * The scoreline, and a link to the full match summary beneath it.
+ *
+ * **The link appears only when both scores are present.** An unplayed fixture
+ * therefore has no route to its detail page from here, which is deliberate:
+ * there is nothing to show yet.
+ */
 export function ScoreDisplay({
   homeTeamScore,
   awayTeamScore,

@@ -7,19 +7,16 @@ import {
   LINE_WIDTH,
 } from "../../constants";
 
-/**
- * CentreCircle component draws the top half of the center circle for FIBA half-court.
- *
- * @param centerX - SVG x position of court center
- * @param xScale - d3 scale function for x
- * @param svgWidth - SVG width for scaling
- */
-export interface CentreCircleProps {
-  centerX: number;
-  xScale: (x: number) => number;
-  svgWidth: number;
+interface CentreCircleProps {
+  /** Court centre, already in SVG pixels — the caller applies the scale. */
+  readonly centerX: number;
+  /** Court units to SVG pixels — used for the radius, which is a length rather than a position. */
+  readonly xScale: (x: number) => number;
+  /** Chart width; scales the stroke so line weight stays proportional. */
+  readonly svgWidth: number;
 }
 
+/** The centre circle — the top half only; the bottom half belongs to the other end of the half-court. */
 export const CentreCircle: React.FC<CentreCircleProps> = ({
   centerX,
   xScale,

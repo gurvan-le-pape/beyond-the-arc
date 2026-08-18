@@ -43,6 +43,11 @@ function makeContainsPaintZone(x0: number, x1: number, y0: number, y1: number) {
   return (x: number, y: number) => x >= x0 && x < x1 && y >= y0 && y < y1;
 }
 
+/**
+ * The paint split into a 2×2 grid of rectangular zones.
+ *
+ * @returns the zone definitions in court units, each with the bounding box used to draw it and the `contains` predicate used to hit-test it; bounds are half-open so a shot on a shared edge falls in exactly one zone
+ */
 export function getPaintZones() {
   return paintZones;
 }

@@ -20,15 +20,20 @@ import {
   withServerErrorMetadata,
 } from "@/shared/utils";
 
-// Don't pre-build - one page per team, across every club and division
+/**
+ * Pre-build list for team detail — always empty.
+ *
+ * One page per team, across every club and division. But the export must stay: returning `[]` is what
+ * opts the route into ISR, and without it `dynamicParams` and `revalidate`
+ * below are inert. See docs/frontend.md, "What each route directive is for".
+ */
 export async function generateStaticParams() {
   return [];
 }
 
 export const dynamicParams = true;
-// 60s, not the hour this once declared: every fetch here is `ServerRevalidate.LIVE`,
-// and the lowest revalidate in a route wins — so 60 has always been what was in
-// force, whatever the number above it said.
+// 60s because every fetch here is `ServerRevalidate.LIVE` and the lowest
+// revalidate in a route sets the frequency for the whole route.
 export const revalidate = 60;
 
 async function buildMetadata({
@@ -74,19 +79,14 @@ async function TeamDetailPage({ params }: LocalePageProps<{ teamId: string }>) {
 
   return (
     <PageLayout>
-      {/* Team Header */}
       <TeamHeader team={team} />
 
-      {/* Team Stats */}
       <PerGameStatsPanel stats={seasonStats} />
 
-      {/* Roster */}
       <TeamRoster players={team.players} />
 
-      {/* Match History */}
       <TeamMatchHistoryTable team={team} matches={matches} maxRows={5} />
 
-      {/* Team Shot Chart Heatmap */}
       <TeamShotChart
         matchEvents={matchEvents}
         title={t("teamDetail.shotchartTitle")}

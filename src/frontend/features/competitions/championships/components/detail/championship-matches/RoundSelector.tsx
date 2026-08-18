@@ -24,6 +24,16 @@ const PILL_MIN_WIDTH = ROUND_SELECTOR_PILL_MIN_WIDTH + 8; // px (minWidth + px-4
 const PILL_SPACING = 8; // px (space-x-2)
 const MAX_VISIBLE = 8;
 
+/**
+ * The matchday picker above a championship's fixtures.
+ *
+ * `rounds` arrives already sorted numerically — the keys come out of a grouped
+ * object as strings, so the caller converts and sorts before passing them here.
+ * A `selectedRound` of `null` means none is chosen yet, not round zero.
+ *
+ * Renders a dropdown below `md` and a scrollable pill carousel above it; the
+ * arrows exist only in the carousel, where the list can overflow.
+ */
 export const RoundSelector: React.FC<RoundSelectorProps> = ({
   rounds,
   selectedRound,
@@ -88,7 +98,6 @@ export const RoundSelector: React.FC<RoundSelectorProps> = ({
 
   return (
     <div className={cn("mb-4", className)}>
-      {/* Mobile: Dropdown */}
       <div className="block md:hidden w-full">
         <Select
           value={selectedRound ?? ""}
@@ -101,12 +110,10 @@ export const RoundSelector: React.FC<RoundSelectorProps> = ({
         />
       </div>
 
-      {/* Desktop: Carousel */}
       <div
         className="hidden md:flex items-center justify-center space-x-2 px-0 py-2"
         ref={containerRef}
       >
-        {/* Left Arrow Button */}
         <PillButton
           variant="carouselArrow"
           size="icon"
@@ -117,7 +124,6 @@ export const RoundSelector: React.FC<RoundSelectorProps> = ({
           <ChevronLeft className="w-5 h-5" />
         </PillButton>
 
-        {/* Pills Row */}
         <div className="flex space-x-2">
           {rounds.slice(startIdx, endIdx).map((round) => {
             const isActive = selectedRound === round;
@@ -137,7 +143,6 @@ export const RoundSelector: React.FC<RoundSelectorProps> = ({
           })}
         </div>
 
-        {/* Right Arrow Button */}
         <PillButton
           variant="carouselArrow"
           size="icon"

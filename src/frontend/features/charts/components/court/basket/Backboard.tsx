@@ -14,6 +14,15 @@ interface BackboardProps {
   svgWidth: number;
 }
 
+/**
+ * The backboard line, centred on the court and set back from the baseline by
+ * the FIBA distance.
+ *
+ * Takes **scale functions, not pixels** — the court dimensions are read from
+ * constants and converted here, unlike `Paint`, which receives its edges
+ * already scaled. Stroke weight is derived from `svgWidth` so the line stays
+ * proportionally thin at any chart size.
+ */
 export const Backboard: React.FC<BackboardProps> = ({
   xScale,
   yScale,

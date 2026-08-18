@@ -24,6 +24,13 @@ interface DocsStructureSectionProps {
   readonly content: string;
 }
 
+/**
+ * The project-structure chapter: the prose plus the directory trees.
+ *
+ * `content` supplies only the prose. The trees are literals here — paths are
+ * not translatable, and a drifted tree is a documentation bug rather than a
+ * missing key, so nothing in `check:messages` would catch it.
+ */
 export function DocsStructureSection({ content }: DocsStructureSectionProps) {
   const t = useTranslations("landing");
 

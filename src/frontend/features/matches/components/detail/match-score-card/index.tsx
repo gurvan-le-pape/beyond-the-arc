@@ -56,9 +56,7 @@ export const MatchScoreCard: React.FC<MatchScoreCardProps> = ({
 
   return (
     <Card variant="highlighted" padding="lg" className={className}>
-      {/* Mobile layout */}
       <div className="flex flex-col gap-3 md:hidden">
-        {/* Row 1: logos + score */}
         <div className="flex items-center justify-between gap-4">
           <LogoLink team={homeTeam} isWinning={isHomeWinning} />
           <MatchScore
@@ -68,7 +66,6 @@ export const MatchScoreCard: React.FC<MatchScoreCardProps> = ({
           />
           <LogoLink team={awayTeam} isWinning={isAwayWinning} />
         </div>
-        {/* Row 2: team names, full width */}
         <div className="flex justify-between gap-2">
           <TeamNameLink
             team={homeTeam}
@@ -83,7 +80,6 @@ export const MatchScoreCard: React.FC<MatchScoreCardProps> = ({
         </div>
       </div>
 
-      {/* Desktop layout */}
       <div className="hidden md:flex items-center justify-between gap-6">
         <TeamSection team={homeTeam} isWinning={isHomeWinning} align="left" />
         <MatchScore

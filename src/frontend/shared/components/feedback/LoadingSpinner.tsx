@@ -3,15 +3,21 @@ import { useTranslations } from "next-intl";
 
 import { cn } from "@/shared/utils";
 
-/**
- * Loading spinner component
- * Now with dark mode support
- */
 interface LoadingSpinnerProps {
   readonly size?: "sm" | "md" | "lg";
   readonly className?: string;
 }
 
+/**
+ * A spinner for a region that is still loading.
+ *
+ * Announces itself: the region is `aria-live="polite"` and carries visually
+ * hidden text, so a screen reader hears that loading is under way rather than
+ * silence. Callers do not need to add their own live region around it.
+ *
+ * Colour comes from `text-primary`; `size` picks one of three fixed dimensions
+ * and `className` positions the wrapper.
+ */
 export function LoadingSpinner({
   size = "md",
   className,
