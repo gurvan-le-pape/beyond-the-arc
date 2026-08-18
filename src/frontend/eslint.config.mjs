@@ -1,4 +1,5 @@
 import nextPlugin from "@next/eslint-plugin-next";
+import jsdoc from "eslint-plugin-jsdoc";
 import tsPlugin from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
 import a11y from "eslint-plugin-jsx-a11y";
@@ -12,6 +13,7 @@ import fileNaming from "./eslint-rules/enforce-file-naming.js";
 import noCrossCompositeImport from "./eslint-rules/no-cross-composite-import.js";
 import noMixedTypeFile from "./eslint-rules/no-mixed-type-file.js";
 import noTranslatorProp from "./eslint-rules/no-translator-prop.js";
+import enforceNamedProps from "./eslint-rules/enforce-named-props.js";
 
 // Migration ratchet for docs/frontend-conventions.md: features not yet
 // restructured to the component conventions. Each migration PR restructures
@@ -37,6 +39,7 @@ export default [
       "jsx-a11y": a11y,
       "react-hooks": reactHooks,
       "@next/next": nextPlugin,
+      jsdoc,
       "local-rules": {
         rules: {
           "enforce-file-path-comment": pathComment,
@@ -46,10 +49,36 @@ export default [
           "no-cross-composite-import": noCrossCompositeImport,
           "no-mixed-type-file": noMixedTypeFile,
           "no-translator-prop": noTranslatorProp,
+          "enforce-named-props": enforceNamedProps,
         },
       },
     },
+    settings: {
+      jsdoc: {
+        mode: "typescript",
+        // TSDoc's spelling wins: the plugin defaults to JSDoc's `@template`.
+        tagNamePreference: { template: "typeParam" },
+      },
+    },
     rules: {
+      // Doc comments: that one exists, and that what it claims matches the code.
+      "jsdoc/require-jsdoc": [
+        "error",
+        {
+          publicOnly: true,
+          require: {
+            FunctionDeclaration: true,
+            ArrowFunctionExpression: true,
+            FunctionExpression: true,
+          },
+        },
+      ],
+      // Names and order must match the signature. Destructured members are not
+      // required — props are documented on their interface, not as `props.x`.
+      "jsdoc/check-param-names": ["error", { checkDestructured: false }],
+      "jsdoc/check-tag-names": "error",
+      "jsdoc/no-types": "error",
+
       // Import sorting
       "simple-import-sort/imports": "error",
       "simple-import-sort/exports": "error",
@@ -59,6 +88,9 @@ export default [
       "@typescript-eslint/explicit-function-return-type": "off",
       "@typescript-eslint/explicit-module-boundary-types": "off",
       "@typescript-eslint/no-explicit-any": "off",
+      // TS handbook: "use `interface` until you need to use features from
+      // `type`". Interfaces also extend more cheaply than intersections.
+      "@typescript-eslint/consistent-type-definitions": ["error", "interface"],
 
       // Report unused variables
       "@typescript-eslint/no-unused-vars": [
@@ -123,6 +155,23 @@ export default [
       "local-rules/no-cross-composite-import": "error",
       "local-rules/no-mixed-type-file": "error",
       "local-rules/no-translator-prop": "error",
+      "local-rules/enforce-named-props": "error",
+    },
+  },
+  // `@param`/`@returns` are required for ordinary functions but not for
+  // components: a component takes one destructured props object (which the
+  // plugin names `root0`) and returns JSX, so both tags would be noise. Props
+  // are documented on their interface members instead — see
+  // docs/frontend-conventions.md#docstrings. `.tsx` is therefore excluded, at
+  // the cost of missing the few JSX-returning hooks that live there.
+  {
+    files: ["**/*.ts", "**/*.mts"],
+    ignores: ["**/*.spec.ts", "**/*.test.ts"],
+    rules: {
+      "jsdoc/require-param": ["error", { checkDestructured: false }],
+      "jsdoc/require-param-description": "error",
+      "jsdoc/require-returns": "error",
+      "jsdoc/require-returns-description": "error",
     },
   },
   // Migration ratchet: legacy features keep the old structure until their
