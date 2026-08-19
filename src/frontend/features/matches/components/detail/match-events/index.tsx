@@ -21,10 +21,10 @@ import { MatchEventsFilters } from "./filters/MatchEventsFilters";
 import { MatchEventsTimeline } from "./timeline/MatchEventsTimeline";
 
 interface MatchEventsProps {
-  events: MatchEvent[];
-  homeTeam: TeamInfoExtended;
-  awayTeam: TeamInfoExtended;
-  matchDate: Date | string;
+  readonly events: MatchEvent[];
+  readonly homeTeam: TeamInfoExtended;
+  readonly awayTeam: TeamInfoExtended;
+  readonly matchDate: Date | string;
 }
 
 /**

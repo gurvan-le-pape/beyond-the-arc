@@ -6,9 +6,9 @@ import { computeQuarterScores } from "@/features/matches/utils";
 import { DataTable, type TableColumn } from "@/shared/components/table";
 
 interface MatchDetailsTableProps {
-  match: Match;
-  matchEvents: MatchEvent[];
-  isLoadingEvents: boolean;
+  readonly match: Match;
+  readonly matchEvents: MatchEvent[];
+  readonly isLoadingEvents: boolean;
 }
 
 /** One team's line in the quarter-by-quarter box score. */

@@ -17,7 +17,7 @@ import type { SortConfig, SortKey } from "./types";
 // ---------------------------------------------------------------------------
 
 interface TeamRosterProps {
-  players?: TeamPlayerRef[];
+  readonly players?: TeamPlayerRef[];
 }
 
 /**

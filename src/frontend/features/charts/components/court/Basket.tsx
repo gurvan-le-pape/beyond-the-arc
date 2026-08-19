@@ -5,11 +5,11 @@ import Block from "./basket/Block";
 import Rim from "./basket/Rim";
 
 interface BasketProps {
-  centerX: number;
-  rimY: number;
-  xScale: (x: number) => number;
-  yScale: (y: number) => number;
-  svgWidth: number;
+  readonly centerX: number;
+  readonly rimY: number;
+  readonly xScale: (x: number) => number;
+  readonly yScale: (y: number) => number;
+  readonly svgWidth: number;
 }
 
 /**

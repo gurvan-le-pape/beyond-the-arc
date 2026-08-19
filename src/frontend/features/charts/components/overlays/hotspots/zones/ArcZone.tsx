@@ -4,18 +4,20 @@ import React from "react";
 import ZoneStatLabel from "../../ZoneStatLabel";
 
 interface ArcZoneProps {
-  zone: any;
-  stats: { made: number; missed: number; total: number };
-  xScale: (x: number) => number;
-  yScale: (y: number) => number;
-  fill: string;
-  fillOpacity: number;
-  stroke: string;
-  strokeWidth: number;
-  svgWidth: number;
-  onMouseMove: (e: React.MouseEvent<SVGPathElement, MouseEvent>) => void;
-  onMouseLeave: () => void;
-  arcParams: {
+  readonly zone: any;
+  readonly stats: { made: number; missed: number; total: number };
+  readonly xScale: (x: number) => number;
+  readonly yScale: (y: number) => number;
+  readonly fill: string;
+  readonly fillOpacity: number;
+  readonly stroke: string;
+  readonly strokeWidth: number;
+  readonly svgWidth: number;
+  readonly onMouseMove: (
+    e: React.MouseEvent<SVGPathElement, MouseEvent>,
+  ) => void;
+  readonly onMouseLeave: () => void;
+  readonly arcParams: {
     basketX: number;
     basketY: number;
     paintX0: number;

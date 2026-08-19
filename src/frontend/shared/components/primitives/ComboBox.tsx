@@ -23,21 +23,21 @@ export interface ComboBoxOption {
 }
 
 export interface ComboBoxProps {
-  options?: ComboBoxOption[];
-  value: string | number | undefined;
-  onChange: (value: string | number | undefined) => void;
-  label?: string;
-  placeholder?: string;
-  disabled?: boolean;
-  className?: string;
-  testId?: string;
+  readonly options?: ComboBoxOption[];
+  readonly value: string | number | undefined;
+  readonly onChange: (value: string | number | undefined) => void;
+  readonly label?: string;
+  readonly placeholder?: string;
+  readonly disabled?: boolean;
+  readonly className?: string;
+  readonly testId?: string;
   /** Show a search/filter input inside the popover. Default: true. */
-  searchable?: boolean;
+  readonly searchable?: boolean;
   /** Provide to handle search externally (e.g. server-side). */
-  onSearchChange?: (value: string) => void;
-  isLoading?: boolean;
-  error?: string;
-  helperText?: string;
+  readonly onSearchChange?: (value: string) => void;
+  readonly isLoading?: boolean;
+  readonly error?: string;
+  readonly helperText?: string;
 }
 
 function getFilteredOptions(

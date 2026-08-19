@@ -10,10 +10,10 @@ import { PillButton } from "@/shared/components/primitives";
 import { cn } from "@/shared/utils";
 
 interface RoundSelectorProps {
-  rounds: number[];
-  selectedRound: number | null;
-  onSelect: (round: number) => void;
-  className?: string;
+  readonly rounds: number[];
+  readonly selectedRound: number | null;
+  readonly onSelect: (round: number) => void;
+  readonly className?: string;
 }
 
 // Dynamic visible count logic for desktop. Module-level because these are

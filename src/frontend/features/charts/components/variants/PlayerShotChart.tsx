@@ -8,9 +8,9 @@ import { ChartType } from "../../constants";
 import ShotChart from "../ShotChart";
 
 interface PlayerShotChartProps {
-  matchEvents: MatchEvent[];
-  title?: string;
-  description?: string;
+  readonly matchEvents: MatchEvent[];
+  readonly title?: string;
+  readonly description?: string;
 }
 
 /** The player detail's shot chart — pins `ShotChart` to the hotspots variant so player pages do not choose a chart type. */

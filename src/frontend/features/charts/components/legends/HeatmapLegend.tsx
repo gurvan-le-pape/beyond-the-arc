@@ -8,12 +8,12 @@ import type { ColorScaleName } from "../../constants";
 import { COLOR_SCALES, DEFAULT_COLOR_SCALE } from "../../constants";
 
 interface HeatmapLegendProps {
-  maxValue: number;
-  colorScale?: (t: number) => string;
-  compact?: boolean;
-  colorScaleName?: ColorScaleName;
-  setColorScale?: (s: ColorScaleName) => void;
-  colorScaleOptions?: readonly ColorScaleName[];
+  readonly maxValue: number;
+  readonly colorScale?: (t: number) => string;
+  readonly compact?: boolean;
+  readonly colorScaleName?: ColorScaleName;
+  readonly setColorScale?: (s: ColorScaleName) => void;
+  readonly colorScaleOptions?: readonly ColorScaleName[];
 }
 
 const GRADIENT_STEPS = 32;

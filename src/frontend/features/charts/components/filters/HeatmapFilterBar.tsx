@@ -4,8 +4,8 @@ import { useTranslations } from "next-intl";
 import { ShotFilter } from "../../constants";
 
 interface HeatmapFilterBarProps {
-  shotFilter: ShotFilter;
-  setShotFilter: (f: ShotFilter) => void;
+  readonly shotFilter: ShotFilter;
+  readonly setShotFilter: (f: ShotFilter) => void;
 }
 
 /**

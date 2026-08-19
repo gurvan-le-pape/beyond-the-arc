@@ -12,17 +12,17 @@ import type { Pagination as PaginationType } from "@/shared/types";
 import { Text } from "../typography";
 
 interface PaginationProps {
-  pagination: PaginationType | null;
-  pageSize: number;
-  setPageSize: (size: number) => void;
-  setPageIndex: (index: number) => void;
+  readonly pagination: PaginationType | null;
+  readonly pageSize: number;
+  readonly setPageSize: (size: number) => void;
+  readonly setPageIndex: (index: number) => void;
   /**
    * The item noun, already agreed with `pagination.total` by the caller — the
    * plural rule belongs to the noun, and the noun belongs to the caller's
    * namespace. Passing a bare plural rendered `(1 joueurs)` on any filter
    * matching one row.
    */
-  label: string;
+  readonly label: string;
 }
 
 const PAGE_SIZES = [25, 50, 100, 200];

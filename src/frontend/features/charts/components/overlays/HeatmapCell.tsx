@@ -2,17 +2,19 @@
 import React from "react";
 
 interface HeatmapCellProps {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  fill: string;
-  fillOpacity: number;
-  stroke: string;
-  strokeWidth: number;
-  onMouseMove: (e: React.MouseEvent<SVGRectElement, MouseEvent>) => void;
-  onMouseLeave: () => void;
-  style?: React.CSSProperties;
+  readonly x: number;
+  readonly y: number;
+  readonly width: number;
+  readonly height: number;
+  readonly fill: string;
+  readonly fillOpacity: number;
+  readonly stroke: string;
+  readonly strokeWidth: number;
+  readonly onMouseMove: (
+    e: React.MouseEvent<SVGRectElement, MouseEvent>,
+  ) => void;
+  readonly onMouseLeave: () => void;
+  readonly style?: React.CSSProperties;
 }
 
 /**

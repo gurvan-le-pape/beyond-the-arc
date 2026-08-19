@@ -15,19 +15,19 @@ import TooltipContent from "./TooltipContent";
 // Props for HeatmapOverlay
 interface HeatmapOverlayProps {
   // 2D array of binned shot data per cell
-  heatmapData: { made: number; missed: number; total: number }[][];
+  readonly heatmapData: { made: number; missed: number; total: number }[][];
   // Which shot type to visualize (affects color intensity and tooltip)
-  shotFilter: ShotFilter;
+  readonly shotFilter: ShotFilter;
   // Scales to convert court coordinates to SVG coordinates
-  xScale: (x: number) => number;
-  yScale: (y: number) => number;
+  readonly xScale: (x: number) => number;
+  readonly yScale: (y: number) => number;
   // Cell size in meters
-  cellWidth: number;
-  cellHeight: number;
+  readonly cellWidth: number;
+  readonly cellHeight: number;
   // Maximum value for color scaling (precomputed for performance)
-  maxValue: number;
+  readonly maxValue: number;
   // Optional: custom color scale (defaults to interpolateYlOrRd)
-  colorScale?: (t: number) => string;
+  readonly colorScale?: (t: number) => string;
 }
 
 // Selects the value to visualize for a cell based on the current filter.

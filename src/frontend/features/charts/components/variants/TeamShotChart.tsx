@@ -8,9 +8,9 @@ import { ChartType } from "../../constants";
 import ShotChart from "../ShotChart";
 
 interface TeamShotChartProps {
-  matchEvents: MatchEvent[];
-  title?: string;
-  description?: string;
+  readonly matchEvents: MatchEvent[];
+  readonly title?: string;
+  readonly description?: string;
 }
 
 /** The team detail's shot chart — pins `ShotChart` to the heatmap variant so team pages do not choose a chart type. */

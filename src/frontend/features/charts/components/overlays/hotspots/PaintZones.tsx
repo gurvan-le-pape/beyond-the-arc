@@ -8,13 +8,17 @@ import type { ShotEvent } from "@/shared/types";
 import RectZone from "./zones/RectZone";
 
 interface PaintZonesProps {
-  shots: ShotEvent[];
-  xScale: (x: number) => number;
-  yScale: (y: number) => number;
-  colorScale: (t: number) => string;
-  svgWidth: number;
-  onZoneHover: (zoneKey: string, stats: ZoneStats, e: React.MouseEvent) => void;
-  onZoneLeave: () => void;
+  readonly shots: ShotEvent[];
+  readonly xScale: (x: number) => number;
+  readonly yScale: (y: number) => number;
+  readonly colorScale: (t: number) => string;
+  readonly svgWidth: number;
+  readonly onZoneHover: (
+    zoneKey: string,
+    stats: ZoneStats,
+    e: React.MouseEvent,
+  ) => void;
+  readonly onZoneLeave: () => void;
 }
 
 /**

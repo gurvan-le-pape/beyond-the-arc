@@ -15,14 +15,14 @@ import { ChartType } from "../../constants";
 import ShotChart from "../ShotChart";
 
 interface ShotModalProps {
-  open: boolean;
-  player: NamedEntity | null;
-  onClose: () => void;
-  teamName: string;
-  opponentTeamName: string;
-  teamScore: number;
-  opponentScore: number;
-  getPlayerShots: (playerId: number) => MatchEvent[];
+  readonly open: boolean;
+  readonly player: NamedEntity | null;
+  readonly onClose: () => void;
+  readonly teamName: string;
+  readonly opponentTeamName: string;
+  readonly teamScore: number;
+  readonly opponentScore: number;
+  readonly getPlayerShots: (playerId: number) => MatchEvent[];
 }
 
 /**

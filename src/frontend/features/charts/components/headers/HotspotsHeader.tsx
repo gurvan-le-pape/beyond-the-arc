@@ -4,11 +4,11 @@ import type { ColorScaleName } from "../../constants";
 import HeatmapLegend from "../legends/HeatmapLegend";
 
 interface HotspotsHeaderProps {
-  colorScale: ColorScaleName;
-  setColorScale: (s: ColorScaleName) => void;
-  colorScaleOptions: readonly ColorScaleName[];
-  maxValue: number;
-  colorScaleFn: (t: number) => string;
+  readonly colorScale: ColorScaleName;
+  readonly setColorScale: (s: ColorScaleName) => void;
+  readonly colorScaleOptions: readonly ColorScaleName[];
+  readonly maxValue: number;
+  readonly colorScaleFn: (t: number) => string;
 }
 
 /**

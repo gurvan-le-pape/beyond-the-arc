@@ -24,9 +24,9 @@ import { Select } from "@/shared/components/forms";
 import type { TeamsFilterSetters, TeamsFilterState } from "../../hooks";
 
 interface TeamsFiltersProps {
-  filters: TeamsFilterState;
-  setters: TeamsFilterSetters;
-  onReset: () => void;
+  readonly filters: TeamsFilterState;
+  readonly setters: TeamsFilterSetters;
+  readonly onReset: () => void;
 }
 
 /**
