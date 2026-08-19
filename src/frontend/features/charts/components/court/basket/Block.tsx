@@ -7,9 +7,9 @@ import {
 } from "../../../constants";
 
 interface BlockProps {
-  centerX: number;
-  yScale: (y: number) => number;
-  svgWidth: number;
+  readonly centerX: number;
+  readonly yScale: (y: number) => number;
+  readonly svgWidth: number;
 }
 
 /** The block: the short vertical mark below the backboard, 15cm long. */

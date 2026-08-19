@@ -24,9 +24,9 @@ import { DebouncedInput, Input } from "@/shared/components/forms";
 import type { MatchesFilterSetters, MatchesFilterState } from "../../hooks";
 
 interface MatchesFiltersProps {
-  filters: MatchesFilterState;
-  setters: MatchesFilterSetters;
-  onReset: () => void;
+  readonly filters: MatchesFilterState;
+  readonly setters: MatchesFilterSetters;
+  readonly onReset: () => void;
 }
 
 /**

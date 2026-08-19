@@ -1,12 +1,12 @@
 // src/frontend/features/charts/components/overlays/ZoneStatLabel.tsx
 
 interface ZoneStatLabelProps {
-  x: number;
-  y: number;
-  label: string;
-  fg: number | null;
-  total: number;
-  svgWidth: number;
+  readonly x: number;
+  readonly y: number;
+  readonly label: string;
+  readonly fg: number | null;
+  readonly total: number;
+  readonly svgWidth: number;
 }
 
 /**

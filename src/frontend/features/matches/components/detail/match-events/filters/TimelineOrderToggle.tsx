@@ -4,9 +4,9 @@ import { Switch } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 
 interface TimelineOrderToggleProps {
-  checked: boolean;
-  onChange: (checked: boolean) => void;
-  label: string;
+  readonly checked: boolean;
+  readonly onChange: (checked: boolean) => void;
+  readonly label: string;
 }
 
 /**

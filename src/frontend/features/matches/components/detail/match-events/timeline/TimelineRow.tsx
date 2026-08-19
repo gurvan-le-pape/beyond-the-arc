@@ -30,7 +30,7 @@ export function TimelineRow({
   className,
   children,
   ...props
-}: TimelineRowProps) {
+}: Readonly<TimelineRowProps>) {
   return (
     <Component className={cn(TIMELINE_GRID, className)} {...props}>
       {children}

@@ -16,10 +16,10 @@ import type { NamedEntity } from "@/shared/types";
 import { usePlayerStatColumns } from "./usePlayerStatColumns";
 
 interface PlayerMatchStatsProps {
-  team: TeamInfoExtended;
-  isHomeTeam: boolean;
-  opponent: TeamInfo;
-  playerShots: Record<number, MatchEvent[]>;
+  readonly team: TeamInfoExtended;
+  readonly isHomeTeam: boolean;
+  readonly opponent: TeamInfo;
+  readonly playerShots: Record<number, MatchEvent[]>;
 }
 
 /**

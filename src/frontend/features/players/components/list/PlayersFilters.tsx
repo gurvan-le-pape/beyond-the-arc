@@ -22,9 +22,9 @@ import type {
 } from "../../hooks/usePlayersFilterState";
 
 interface PlayersFiltersProps {
-  filters: PlayersFilterState;
-  setters: PlayersFilterSetters;
-  onReset: () => void;
+  readonly filters: PlayersFilterState;
+  readonly setters: PlayersFilterSetters;
+  readonly onReset: () => void;
 }
 
 /**

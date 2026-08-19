@@ -10,9 +10,9 @@ import { LogoLink } from "./LogoLink";
 import { TeamNameLink } from "./TeamNameLink";
 
 interface MatchScoreCardProps {
-  homeTeam: TeamInfo;
-  awayTeam: TeamInfo;
-  className?: string;
+  readonly homeTeam: TeamInfo;
+  readonly awayTeam: TeamInfo;
+  readonly className?: string;
 }
 
 interface TeamSectionProps {

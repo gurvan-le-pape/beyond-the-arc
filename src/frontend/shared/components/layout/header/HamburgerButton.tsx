@@ -1,7 +1,7 @@
 // src/frontend/shared/components/layout/header/HamburgerButton.tsx
 
 interface HamburgerButtonProps {
-  open: boolean;
+  readonly open: boolean;
 }
 
 /**

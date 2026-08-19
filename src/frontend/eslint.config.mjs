@@ -118,6 +118,9 @@ export default [
       "sonarjs/no-duplicate-string": "warn", // ← Enable for source code
       "sonarjs/no-identical-functions": "error",
       "sonarjs/no-small-switch": "warn",
+      // Props are readonly — a component that mutates its own props is a bug
+      // the type system can rule out. See docs/frontend-conventions.md#props.
+      "sonarjs/prefer-read-only-props": "error",
       "sonarjs/prefer-immediate-return": "warn",
 
       // Accessibility. The recommended set (34 rules, all "error") reports zero

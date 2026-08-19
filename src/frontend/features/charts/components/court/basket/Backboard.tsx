@@ -8,9 +8,9 @@ import {
 } from "../../../constants";
 
 interface BackboardProps {
-  xScale: (x: number) => number;
-  yScale: (y: number) => number;
-  svgWidth: number;
+  readonly xScale: (x: number) => number;
+  readonly yScale: (y: number) => number;
+  readonly svgWidth: number;
 }
 
 /**

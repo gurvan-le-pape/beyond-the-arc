@@ -31,12 +31,12 @@ import WingZones from "./hotspots/WingZones";
 import TooltipContent from "./TooltipContent";
 
 interface HotspotsOverlayProps {
-  shots: ShotEvent[];
-  xScale: (x: number) => number;
-  yScale: (y: number) => number;
-  colorScale?: (t: number) => string;
-  svgWidth: number;
-  onMaxTotalChange?: (maxTotal: number) => void;
+  readonly shots: ShotEvent[];
+  readonly xScale: (x: number) => number;
+  readonly yScale: (y: number) => number;
+  readonly colorScale?: (t: number) => string;
+  readonly svgWidth: number;
+  readonly onMaxTotalChange?: (maxTotal: number) => void;
 }
 
 // All zone getter functions collected for computing maxTotal across all zones

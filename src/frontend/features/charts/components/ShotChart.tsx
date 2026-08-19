@@ -42,8 +42,8 @@ import HotspotsOverlay from "./overlays/HotspotsOverlay";
 import ScatterOverlay from "./overlays/ScatterOverlay";
 
 interface ShotChartProps {
-  matchEvents: MatchEvent[];
-  chartType?: ChartType;
+  readonly matchEvents: MatchEvent[];
+  readonly chartType?: ChartType;
 }
 
 // Derived from actual FIBA constants — not hardcoded magic numbers

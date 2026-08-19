@@ -8,9 +8,9 @@ import CenterLine from "./CenterLine";
  * Props for CourtBoundary
  */
 export interface CourtBoundaryProps {
-  svgWidth: number;
-  svgHeight: number;
-  yScale: (y: number) => number;
+  readonly svgWidth: number;
+  readonly svgHeight: number;
+  readonly yScale: (y: number) => number;
 }
 
 /**

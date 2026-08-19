@@ -9,9 +9,9 @@ import { navItems } from "@/shared/constants";
 import { cn } from "@/shared/utils";
 
 interface NavLinksProps {
-  onClick?: () => void;
-  asList?: boolean;
-  className?: string;
+  readonly onClick?: () => void;
+  readonly asList?: boolean;
+  readonly className?: string;
 }
 
 /**

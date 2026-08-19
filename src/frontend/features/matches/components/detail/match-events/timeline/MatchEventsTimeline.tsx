@@ -14,11 +14,11 @@ import { TimelineRow } from "./TimelineRow";
 import { TimelineTeamHeader } from "./TimelineTeamHeader";
 
 interface MatchEventsTimelineProps {
-  events: EventWithScore[];
-  homeTeam: TeamInfo;
-  awayTeam: TeamInfo;
-  getEventStyle: (eventType: string) => EventStyle;
-  matchDate: Date | string;
+  readonly events: EventWithScore[];
+  readonly homeTeam: TeamInfo;
+  readonly awayTeam: TeamInfo;
+  readonly getEventStyle: (eventType: string) => EventStyle;
+  readonly matchDate: Date | string;
 }
 
 /**

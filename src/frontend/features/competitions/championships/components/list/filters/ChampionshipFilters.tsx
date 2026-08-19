@@ -24,22 +24,22 @@ export interface ChampionshipScope {
 
 interface ChampionshipFiltersProps {
   /** Competition level, used for the panel title (common.competition.levels.*). */
-  level: "national" | "regional" | "departmental";
-  category: Category | undefined;
-  gender: Gender | undefined;
-  onCategoryChange: (value: Category | undefined) => void;
-  onGenderChange: (value: Gender | undefined) => void;
-  onReset: () => void;
+  readonly level: "national" | "regional" | "departmental";
+  readonly category: Category | undefined;
+  readonly gender: Gender | undefined;
+  readonly onCategoryChange: (value: Category | undefined) => void;
+  readonly onGenderChange: (value: Gender | undefined) => void;
+  readonly onReset: () => void;
   /** Present for regional (league) and departmental (committee); omitted for national. */
-  scope?: ChampionshipScope;
+  readonly scope?: ChampionshipScope;
   /**
    * Copy to show when the scope options failed to load, so an empty dropdown
    * is not mistaken for "this level has no leagues". Already translated by the
    * caller — this component holds no message keys of its own for it.
    */
-  scopeError?: string;
+  readonly scopeError?: string;
   /** Re-runs the scope lookup `scopeError` describes. */
-  onScopeRetry?: () => unknown;
+  readonly onScopeRetry?: () => unknown;
 }
 
 /**

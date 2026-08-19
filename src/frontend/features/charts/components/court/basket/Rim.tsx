@@ -3,10 +3,10 @@
 import { COURT_WIDTH, LINE_WIDTH, RIM_RADIUS } from "../../../constants";
 
 interface RimProps {
-  centerX: number;
-  rimY: number;
-  xScale: (x: number) => number;
-  svgWidth: number;
+  readonly centerX: number;
+  readonly rimY: number;
+  readonly xScale: (x: number) => number;
+  readonly svgWidth: number;
 }
 
 /**

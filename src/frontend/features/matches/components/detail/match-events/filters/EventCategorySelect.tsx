@@ -5,8 +5,8 @@ import { Select } from "@/shared/components/forms";
 import { EventCategory } from "@/shared/constants";
 
 interface EventCategorySelectProps {
-  value: EventCategory | undefined;
-  onChange: (value: EventCategory | undefined) => void;
+  readonly value: EventCategory | undefined;
+  readonly onChange: (value: EventCategory | undefined) => void;
 }
 
 /**

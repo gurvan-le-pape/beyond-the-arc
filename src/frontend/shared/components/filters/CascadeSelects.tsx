@@ -14,8 +14,8 @@ export interface CascadeStep {
 }
 
 interface CascadeSelectsProps {
-  steps: CascadeStep[];
-  cols?: 2 | 3;
+  readonly steps: CascadeStep[];
+  readonly cols?: 2 | 3;
 }
 
 /**

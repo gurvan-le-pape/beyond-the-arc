@@ -5,13 +5,13 @@ import HeatmapFilterBar from "../filters/HeatmapFilterBar";
 import HeatmapLegend from "../legends/HeatmapLegend";
 
 interface HeatmapHeaderProps {
-  shotFilter: ShotFilter;
-  setShotFilter: (f: ShotFilter) => void;
-  colorScale: ColorScaleName;
-  setColorScale: (s: ColorScaleName) => void;
-  colorScaleOptions: readonly ColorScaleName[];
-  maxValue: number;
-  colorScaleFn: (t: number) => string;
+  readonly shotFilter: ShotFilter;
+  readonly setShotFilter: (f: ShotFilter) => void;
+  readonly colorScale: ColorScaleName;
+  readonly setColorScale: (s: ColorScaleName) => void;
+  readonly colorScaleOptions: readonly ColorScaleName[];
+  readonly maxValue: number;
+  readonly colorScaleFn: (t: number) => string;
 }
 
 /**

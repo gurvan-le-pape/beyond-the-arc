@@ -11,19 +11,19 @@ import { QuarterSelector } from "./QuarterSelector";
 import { TimelineOrderToggle } from "./TimelineOrderToggle";
 
 interface MatchEventsFiltersProps {
-  homeTeam: TeamInfoExtended;
-  awayTeam: TeamInfoExtended;
-  selectedQuarter: Quarter;
-  setSelectedQuarter: (q: Quarter) => void;
-  selectedEventCategory: EventCategory | undefined;
-  setSelectedEventCategory: (ec: EventCategory | undefined) => void;
-  selectedPlayerIds: Set<number>;
-  setSelectedPlayerIds: (ids: Set<number>) => void;
-  togglePlayer: (id: number) => void;
-  showPlayerDropdown: boolean;
-  setShowPlayerDropdown: (show: boolean) => void;
-  latestFirst: boolean;
-  setLatestFirst: (b: boolean) => void;
+  readonly homeTeam: TeamInfoExtended;
+  readonly awayTeam: TeamInfoExtended;
+  readonly selectedQuarter: Quarter;
+  readonly setSelectedQuarter: (q: Quarter) => void;
+  readonly selectedEventCategory: EventCategory | undefined;
+  readonly setSelectedEventCategory: (ec: EventCategory | undefined) => void;
+  readonly selectedPlayerIds: Set<number>;
+  readonly setSelectedPlayerIds: (ids: Set<number>) => void;
+  readonly togglePlayer: (id: number) => void;
+  readonly showPlayerDropdown: boolean;
+  readonly setShowPlayerDropdown: (show: boolean) => void;
+  readonly latestFirst: boolean;
+  readonly setLatestFirst: (b: boolean) => void;
 }
 
 /**
