@@ -1,6 +1,5 @@
 // src/frontend/features/players/components/list/PlayerCard.tsx
 import { useTranslations } from "next-intl";
-import React from "react";
 
 import type { Player } from "@/features/players/types";
 import {
@@ -31,7 +30,7 @@ interface PlayerCardProps {
  * The level drives the accent colour through `getLevelConfig`, so a player whose
  * team has no championship renders in the neutral default rather than failing.
  */
-export const PlayerCard: React.FC<PlayerCardProps> = ({ player }) => {
+export function PlayerCard({ player }: PlayerCardProps) {
   const tCommon = useTranslations("common");
 
   const clubName = player.team?.club?.name ?? null;
@@ -74,4 +73,4 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player }) => {
       />
     </ListEntityCard>
   );
-};
+}

@@ -1,6 +1,5 @@
 // src/frontend/features/competitions/championships/components/list/filters/ChampionshipFilters.tsx
 import { useTranslations } from "next-intl";
-import React from "react";
 
 import { ErrorMessage } from "@/shared/components/feedback";
 import { FiltersShell } from "@/shared/components/filters";
@@ -54,7 +53,7 @@ interface ChampionshipFiltersProps {
  * Error copy for a failed scope lookup is passed in already translated, so an
  * empty dropdown is never mistaken for "this level has no leagues".
  */
-export const ChampionshipFilters: React.FC<ChampionshipFiltersProps> = ({
+export function ChampionshipFilters({
   level,
   category,
   gender,
@@ -64,7 +63,7 @@ export const ChampionshipFilters: React.FC<ChampionshipFiltersProps> = ({
   scope,
   scopeError,
   onScopeRetry,
-}) => {
+}: ChampionshipFiltersProps) {
   const tCommon = useTranslations("common");
 
   const scopeName = scope?.options.find(
@@ -155,4 +154,4 @@ export const ChampionshipFilters: React.FC<ChampionshipFiltersProps> = ({
       )}
     </FiltersShell>
   );
-};
+}

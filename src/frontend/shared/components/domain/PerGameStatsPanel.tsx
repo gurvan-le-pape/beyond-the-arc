@@ -1,6 +1,5 @@
 // src/frontend/shared/components/domain/PerGameStatsPanel.tsx
 import { useTranslations } from "next-intl";
-import React from "react";
 
 import { InfoBox, Section } from "@/shared/components/blocks";
 import type { PlayerCareerStats } from "@/shared/types";
@@ -36,9 +35,7 @@ const STAT_FIELDS = [
  * divides by `gamesPlayed || 1`. Nothing is divided here, so a player or team
  * with no games renders `0.0` rather than `NaN`.
  */
-export const PerGameStatsPanel: React.FC<PerGameStatsPanelProps> = ({
-  stats,
-}) => {
+export function PerGameStatsPanel({ stats }: PerGameStatsPanelProps) {
   const tCommon = useTranslations("common");
 
   return (
@@ -54,6 +51,6 @@ export const PerGameStatsPanel: React.FC<PerGameStatsPanelProps> = ({
       </div>
     </Section>
   );
-};
+}
 
 export default PerGameStatsPanel;

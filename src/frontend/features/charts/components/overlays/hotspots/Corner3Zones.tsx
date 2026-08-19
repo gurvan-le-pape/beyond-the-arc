@@ -25,7 +25,7 @@ interface Corner3ZonesProps {
  * no shots still renders, at a fainter opacity, so the court's zone map stays
  * whole rather than developing holes.
  */
-const Corner3Zones: React.FC<Corner3ZonesProps> = ({
+function Corner3Zones({
   shots,
   xScale,
   yScale,
@@ -33,7 +33,7 @@ const Corner3Zones: React.FC<Corner3ZonesProps> = ({
   svgWidth,
   onZoneHover,
   onZoneLeave,
-}) => {
+}: Corner3ZonesProps) {
   // Retrieve corner 3 zones geometry
   const zones = React.useMemo(() => getCorner3Zones(), []);
 
@@ -70,6 +70,6 @@ const Corner3Zones: React.FC<Corner3ZonesProps> = ({
       })}
     </g>
   );
-};
+}
 
 export default Corner3Zones;

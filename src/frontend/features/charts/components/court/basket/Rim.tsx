@@ -1,5 +1,4 @@
 // src/frontend/features/charts/components/court/basket/Rim.tsx
-import React from "react";
 
 import { COURT_WIDTH, LINE_WIDTH, RIM_RADIUS } from "../../../constants";
 
@@ -18,20 +17,17 @@ interface RimProps {
  * converted from court units. Mixing those two spaces up is the usual reason a
  * rim renders at the wrong size but the right place.
  */
-export const Rim: React.FC<RimProps> = ({
-  centerX,
-  rimY,
-  xScale,
-  svgWidth,
-}) => (
-  <circle
-    cx={centerX}
-    cy={rimY}
-    r={xScale(RIM_RADIUS) - xScale(0)}
-    fill="none"
-    stroke="#000"
-    strokeWidth={(LINE_WIDTH * svgWidth) / COURT_WIDTH}
-  />
-);
+export function Rim({ centerX, rimY, xScale, svgWidth }: RimProps) {
+  return (
+    <circle
+      cx={centerX}
+      cy={rimY}
+      r={xScale(RIM_RADIUS) - xScale(0)}
+      fill="none"
+      stroke="#000"
+      strokeWidth={(LINE_WIDTH * svgWidth) / COURT_WIDTH}
+    />
+  );
+}
 
 export default Rim;

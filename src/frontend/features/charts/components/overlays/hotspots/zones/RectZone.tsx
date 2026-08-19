@@ -27,7 +27,7 @@ interface RectZoneProps {
  * objects have a real shape (`key`, `x0`, `x1`, `y0`, `y1`, `contains`) and
  * nothing checks that what arrives here matches it.
  */
-export const RectZone: React.FC<RectZoneProps> = ({
+export function RectZone({
   zone,
   stats,
   xScale,
@@ -39,7 +39,7 @@ export const RectZone: React.FC<RectZoneProps> = ({
   svgWidth,
   onMouseMove,
   onMouseLeave,
-}) => {
+}: RectZoneProps) {
   const x = xScale(zone.x0);
   const y = yScale(zone.y1);
   const width = xScale(zone.x1) - xScale(zone.x0);
@@ -74,6 +74,6 @@ export const RectZone: React.FC<RectZoneProps> = ({
       />
     </g>
   );
-};
+}
 
 export default RectZone;

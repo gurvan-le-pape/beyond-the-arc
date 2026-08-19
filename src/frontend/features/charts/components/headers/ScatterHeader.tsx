@@ -1,6 +1,5 @@
 // src/frontend/features/charts/components/headers/ScatterHeader.tsx
 import { useTranslations } from "next-intl";
-import React from "react";
 
 import { Text } from "@/shared/components/typography";
 
@@ -8,7 +7,7 @@ import { Text } from "@/shared/components/typography";
  * The scatter chart's legend. The glyphs must stay in sync with
  * `ScatterOverlay`'s — circle for a made shot, cross for a miss.
  */
-export const ScatterHeader: React.FC = () => {
+export function ScatterHeader() {
   const t = useTranslations("common");
 
   return (
@@ -57,6 +56,6 @@ export const ScatterHeader: React.FC = () => {
       </span>
     </div>
   );
-};
+}
 
 export default ScatterHeader;

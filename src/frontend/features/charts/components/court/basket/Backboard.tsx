@@ -1,5 +1,4 @@
 // src/frontend/features/charts/components/court/basket/Backboard.tsx
-import React from "react";
 
 import {
   BACKBOARD_WIDTH,
@@ -23,19 +22,17 @@ interface BackboardProps {
  * already scaled. Stroke weight is derived from `svgWidth` so the line stays
  * proportionally thin at any chart size.
  */
-export const Backboard: React.FC<BackboardProps> = ({
-  xScale,
-  yScale,
-  svgWidth,
-}) => (
-  <line
-    x1={xScale(COURT_WIDTH / 2 - BACKBOARD_WIDTH / 2)}
-    x2={xScale(COURT_WIDTH / 2 + BACKBOARD_WIDTH / 2)}
-    y1={yScale(BASELINE_TO_BACKBOARD)}
-    y2={yScale(BASELINE_TO_BACKBOARD)}
-    stroke="#000"
-    strokeWidth={(LINE_WIDTH * svgWidth) / COURT_WIDTH}
-  />
-);
+export function Backboard({ xScale, yScale, svgWidth }: BackboardProps) {
+  return (
+    <line
+      x1={xScale(COURT_WIDTH / 2 - BACKBOARD_WIDTH / 2)}
+      x2={xScale(COURT_WIDTH / 2 + BACKBOARD_WIDTH / 2)}
+      y1={yScale(BASELINE_TO_BACKBOARD)}
+      y2={yScale(BASELINE_TO_BACKBOARD)}
+      stroke="#000"
+      strokeWidth={(LINE_WIDTH * svgWidth) / COURT_WIDTH}
+    />
+  );
+}
 
 export default Backboard;

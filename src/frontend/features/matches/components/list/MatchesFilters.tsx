@@ -3,7 +3,6 @@
 
 import { Calendar } from "lucide-react";
 import { useTranslations } from "next-intl";
-import React from "react";
 
 import { useMatchesCascadeOptions } from "@/features/matches/hooks";
 import { useLocationOptions } from "@/features/organizations/hooks";
@@ -51,11 +50,11 @@ interface MatchesFiltersProps {
  * Rendered inside `FiltersShell`, so this subtree exists **twice** in the DOM —
  * mobile sheet and desktop card. Nothing here may rely on a unique `id`.
  */
-export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
+export function MatchesFilters({
   filters,
   setters,
   onReset,
-}) => {
+}: MatchesFiltersProps) {
   const tMatches = useTranslations("matches");
   const tCommon = useTranslations("common");
   const tFilters = useTranslations("filters");
@@ -256,6 +255,6 @@ export const MatchesFilters: React.FC<MatchesFiltersProps> = ({
       <CascadeSelects steps={cascadeSteps} cols={3} />
     </FiltersShell>
   );
-};
+}
 
 export default MatchesFilters;

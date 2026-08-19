@@ -1,5 +1,4 @@
 // src/frontend/features/charts/components/variants/PlayerShotChart.tsx
-import React from "react";
 
 import type { MatchEvent } from "@/features/matches/types";
 import { Section } from "@/shared/components/blocks";
@@ -15,11 +14,11 @@ interface PlayerShotChartProps {
 }
 
 /** The player detail's shot chart — pins `ShotChart` to the hotspots variant so player pages do not choose a chart type. */
-export const PlayerShotChart: React.FC<PlayerShotChartProps> = ({
+export function PlayerShotChart({
   matchEvents,
   title,
   description,
-}) => {
+}: PlayerShotChartProps) {
   return (
     <Section title={title} variant="highlighted">
       <div className="w-full max-w-3xl mx-auto">
@@ -32,6 +31,6 @@ export const PlayerShotChart: React.FC<PlayerShotChartProps> = ({
       </div>
     </Section>
   );
-};
+}
 
 export default PlayerShotChart;

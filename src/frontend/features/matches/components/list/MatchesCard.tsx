@@ -1,6 +1,5 @@
 // src/frontend/features/matches/components/list/MatchesCard.tsx
 import { useLocale, useTranslations } from "next-intl";
-import React from "react";
 
 import {
   ClubLogo,
@@ -31,7 +30,7 @@ interface MatchesCardProps {
  * always carry the pool and its championship; the badges and the level accent
  * fall back to neutral rather than failing.
  */
-export const MatchesCard: React.FC<MatchesCardProps> = ({ match }) => {
+export function MatchesCard({ match }: MatchesCardProps) {
   const tMatches = useTranslations("matches");
   const locale = useLocale();
 
@@ -125,6 +124,6 @@ export const MatchesCard: React.FC<MatchesCardProps> = ({ match }) => {
       </div>
     </ListEntityCard>
   );
-};
+}
 
 export default MatchesCard;

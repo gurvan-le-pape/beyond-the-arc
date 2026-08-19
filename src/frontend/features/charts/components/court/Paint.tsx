@@ -1,5 +1,4 @@
 // src/frontend/features/charts/components/court/Paint.tsx
-import React from "react";
 
 import { COURT_WIDTH, LINE_WIDTH } from "../../constants";
 
@@ -24,22 +23,24 @@ interface PaintProps {
  * here, so passing court units silently draws a rectangle a few pixels wide in
  * the corner rather than failing.
  */
-export const Paint: React.FC<PaintProps> = ({
+export function Paint({
   paintLeft,
   paintRight,
   paintTopY,
   paintBottomY,
   svgWidth,
-}) => (
-  <rect
-    x={paintLeft}
-    y={paintTopY}
-    width={paintRight - paintLeft}
-    height={paintBottomY - paintTopY}
-    fill="none"
-    stroke="#000"
-    strokeWidth={(LINE_WIDTH * svgWidth) / COURT_WIDTH}
-  />
-);
+}: PaintProps) {
+  return (
+    <rect
+      x={paintLeft}
+      y={paintTopY}
+      width={paintRight - paintLeft}
+      height={paintBottomY - paintTopY}
+      fill="none"
+      stroke="#000"
+      strokeWidth={(LINE_WIDTH * svgWidth) / COURT_WIDTH}
+    />
+  );
+}
 
 export default Paint;

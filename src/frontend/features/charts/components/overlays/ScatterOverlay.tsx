@@ -11,11 +11,7 @@ interface ScatterOverlayProps {
 }
 
 /** One glyph per shot: a green circle for a make, a red cross for a miss. */
-export const ScatterOverlay: React.FC<ScatterOverlayProps> = ({
-  shots,
-  xScale,
-  yScale,
-}) => {
+export function ScatterOverlay({ shots, xScale, yScale }: ScatterOverlayProps) {
   const r = 6; // radius for made shots, half-length for cross arms
   return (
     <g>
@@ -62,6 +58,6 @@ export const ScatterOverlay: React.FC<ScatterOverlayProps> = ({
       })}
     </g>
   );
-};
+}
 
 export default ScatterOverlay;

@@ -25,7 +25,7 @@ interface TopKeyZonesProps {
  * no shots still renders, at a fainter opacity, so the court's zone map stays
  * whole rather than developing holes.
  */
-const TopKeyZones: React.FC<TopKeyZonesProps> = ({
+function TopKeyZones({
   shots,
   xScale,
   yScale,
@@ -33,7 +33,7 @@ const TopKeyZones: React.FC<TopKeyZonesProps> = ({
   svgWidth,
   onZoneHover,
   onZoneLeave,
-}) => {
+}: TopKeyZonesProps) {
   // Retrieve top key zone geometry
   const zones = React.useMemo(() => getTopKeyZone(), []);
 
@@ -70,6 +70,6 @@ const TopKeyZones: React.FC<TopKeyZonesProps> = ({
       })}
     </g>
   );
-};
+}
 
 export default TopKeyZones;

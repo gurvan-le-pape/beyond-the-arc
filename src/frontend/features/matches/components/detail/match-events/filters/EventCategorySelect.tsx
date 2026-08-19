@@ -1,6 +1,5 @@
 // src/frontend/features/matches/components/detail/match-events/filters/EventCategorySelect.tsx
 import { useTranslations } from "next-intl";
-import React from "react";
 
 import { Select } from "@/shared/components/forms";
 import { EventCategory } from "@/shared/constants";
@@ -21,10 +20,10 @@ interface EventCategorySelectProps {
  * until it is added below as well. The omission is silent: filtering simply
  * never offers it.
  */
-export const EventCategorySelect: React.FC<EventCategorySelectProps> = ({
+export function EventCategorySelect({
   value,
   onChange,
-}) => {
+}: EventCategorySelectProps) {
   const t = useTranslations("matches");
 
   const options = [
@@ -49,6 +48,6 @@ export const EventCategorySelect: React.FC<EventCategorySelectProps> = ({
       className="w-fit"
     />
   );
-};
+}
 
 export default EventCategorySelect;

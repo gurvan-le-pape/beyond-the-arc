@@ -6,7 +6,6 @@ import {
   ChevronsRight,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import React from "react";
 
 import type { Pagination as PaginationType } from "@/shared/types";
 
@@ -48,13 +47,13 @@ const navButtonDisabled =
  * not a prop. On narrow screens the numbered pages collapse to a current-page
  * indicator, keeping first/previous/next/last reachable.
  */
-export const Pagination: React.FC<PaginationProps> = ({
+export function Pagination({
   pagination,
   pageSize,
   setPageSize,
   setPageIndex,
   label,
-}: PaginationProps) => {
+}: PaginationProps) {
   const t = useTranslations("filters");
 
   if (!pagination) return null;
@@ -222,6 +221,6 @@ export const Pagination: React.FC<PaginationProps> = ({
       </div>
     </div>
   );
-};
+}
 
 export default Pagination;

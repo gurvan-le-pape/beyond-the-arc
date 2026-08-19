@@ -3,7 +3,7 @@
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Select } from "@/shared/components/forms";
 import { PillButton } from "@/shared/components/primitives";
@@ -34,12 +34,12 @@ const MAX_VISIBLE = 8;
  * Renders a dropdown below `md` and a scrollable pill carousel above it; the
  * arrows exist only in the carousel, where the list can overflow.
  */
-export const RoundSelector: React.FC<RoundSelectorProps> = ({
+export function RoundSelector({
   rounds,
   selectedRound,
   onSelect,
   className = "",
-}) => {
+}: RoundSelectorProps) {
   const t = useTranslations("competitions");
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -155,6 +155,6 @@ export const RoundSelector: React.FC<RoundSelectorProps> = ({
       </div>
     </div>
   );
-};
+}
 
 export default RoundSelector;

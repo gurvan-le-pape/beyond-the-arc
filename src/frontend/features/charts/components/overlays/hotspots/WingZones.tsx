@@ -25,7 +25,7 @@ interface WingZonesProps {
  * no shots still renders, at a fainter opacity, so the court's zone map stays
  * whole rather than developing holes.
  */
-const WingZones: React.FC<WingZonesProps> = ({
+function WingZones({
   shots,
   xScale,
   yScale,
@@ -33,7 +33,7 @@ const WingZones: React.FC<WingZonesProps> = ({
   svgWidth,
   onZoneHover,
   onZoneLeave,
-}) => {
+}: WingZonesProps) {
   // Retrieve wing zones geometry
   const zones = React.useMemo(() => getWingZones(), []);
 
@@ -68,6 +68,6 @@ const WingZones: React.FC<WingZonesProps> = ({
       })}
     </g>
   );
-};
+}
 
 export default WingZones;

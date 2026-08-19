@@ -2,7 +2,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 import { usePathname } from "@/navigation";
 
@@ -26,7 +26,7 @@ import { ThemeToggle } from "./ThemeToggle";
  * Rendered by the `(chrome)` layout, so pages never mount it; a page that wants
  * no header belongs in a different route group.
  */
-export const Header: React.FC = () => {
+export function Header() {
   const pathname = usePathname();
   const t = useTranslations("navigation");
   const mobileMenuRef = useRef<HTMLDivElement>(null);
@@ -94,6 +94,6 @@ export const Header: React.FC = () => {
       </nav>
     </header>
   );
-};
+}
 
 export default Header;

@@ -1,6 +1,5 @@
 // src/frontend/features/charts/components/filters/HeatmapFilterBar.tsx
 import { useTranslations } from "next-intl";
-import React from "react";
 
 import { ShotFilter } from "../../constants";
 
@@ -18,10 +17,10 @@ interface HeatmapFilterBarProps {
  * Only the heatmap has this. Hotspots shades by attempt volume rather than by
  * outcome, so a made/missed filter would have nothing to change.
  */
-export const HeatmapFilterBar: React.FC<HeatmapFilterBarProps> = ({
+export function HeatmapFilterBar({
   shotFilter,
   setShotFilter,
-}) => {
+}: HeatmapFilterBarProps) {
   const t = useTranslations("common");
 
   const FILTERS: { key: ShotFilter; label: string }[] = [
@@ -51,6 +50,6 @@ export const HeatmapFilterBar: React.FC<HeatmapFilterBarProps> = ({
       ))}
     </div>
   );
-};
+}
 
 export default HeatmapFilterBar;

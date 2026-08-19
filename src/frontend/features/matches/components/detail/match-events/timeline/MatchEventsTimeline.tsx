@@ -2,7 +2,6 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import React from "react";
 
 import type { EventStyle, EventWithScore } from "@/features/matches/types";
 import { tokenizeEventDescription } from "@/features/matches/utils";
@@ -28,13 +27,13 @@ interface MatchEventsTimelineProps {
  * away team on the right.  Scoring events show a running-score pill in the
  * centre column; non-scoring events show a small dot.
  */
-export const MatchEventsTimeline: React.FC<MatchEventsTimelineProps> = ({
+export function MatchEventsTimeline({
   events,
   homeTeam,
   awayTeam,
   getEventStyle,
   matchDate,
-}) => {
+}: MatchEventsTimelineProps) {
   const tMatches = useTranslations("matches");
 
   return (
@@ -137,6 +136,6 @@ export const MatchEventsTimeline: React.FC<MatchEventsTimelineProps> = ({
       </div>
     </div>
   );
-};
+}
 
 export default MatchEventsTimeline;

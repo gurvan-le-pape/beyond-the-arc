@@ -1,5 +1,4 @@
 // src/frontend/features/charts/components/overlays/ZoneStatLabel.tsx
-import React from "react";
 
 interface ZoneStatLabelProps {
   x: number;
@@ -15,14 +14,14 @@ interface ZoneStatLabelProps {
  * Font size scales proportionally with svgWidth so labels stay correctly
  * sized at any container width.
  */
-export const ZoneStatLabel: React.FC<ZoneStatLabelProps> = ({
+export function ZoneStatLabel({
   x,
   y,
   label,
   fg,
   total,
   svgWidth,
-}) => {
+}: ZoneStatLabelProps) {
   // Scale font size with container — tuned so labels fit at all widths
   const statFontSize = Math.max(9, svgWidth / 55);
   const statLineHeight = statFontSize * 1.4;
@@ -57,6 +56,6 @@ export const ZoneStatLabel: React.FC<ZoneStatLabelProps> = ({
       </text>
     </>
   );
-};
+}
 
 export default ZoneStatLabel;

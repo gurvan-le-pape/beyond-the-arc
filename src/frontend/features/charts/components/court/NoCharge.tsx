@@ -1,6 +1,5 @@
 // src/frontend/features/charts/components/court/NoCharge.tsx
 import { arc } from "d3-shape";
-import React from "react";
 
 import { COURT_WIDTH, LINE_WIDTH, NO_CHARGE_RADIUS } from "../../constants";
 
@@ -20,48 +19,50 @@ interface NoChargeProps {
 }
 
 /** The no-charge semi-circle plus the two side lines running from it toward the baseline. */
-export const NoCharge: React.FC<NoChargeProps> = ({
+export function NoCharge({
   centerX,
   rimY,
   ncLineY1,
   ncLineY2,
   xScale,
   svgWidth,
-}) => (
-  <g>
-    {/* No-charge semi-circle */}
-    <path
-      d={
-        arc()({
-          innerRadius: xScale(NO_CHARGE_RADIUS) - xScale(0),
-          outerRadius: xScale(NO_CHARGE_RADIUS) - xScale(0),
-          startAngle: -Math.PI / 2,
-          endAngle: Math.PI / 2,
-        }) ?? undefined
-      }
-      transform={`translate(${centerX},${rimY})`}
-      fill="none"
-      stroke="#000"
-      strokeWidth={(LINE_WIDTH * svgWidth) / COURT_WIDTH}
-    />
-    {/* No-charge semi-circle side lines */}
-    <line
-      x1={centerX - (xScale(NO_CHARGE_RADIUS) - xScale(0))}
-      x2={centerX - (xScale(NO_CHARGE_RADIUS) - xScale(0))}
-      y1={ncLineY1}
-      y2={ncLineY2}
-      stroke="#000"
-      strokeWidth={(LINE_WIDTH * svgWidth) / COURT_WIDTH}
-    />
-    <line
-      x1={centerX + (xScale(NO_CHARGE_RADIUS) - xScale(0))}
-      x2={centerX + (xScale(NO_CHARGE_RADIUS) - xScale(0))}
-      y1={ncLineY1}
-      y2={ncLineY2}
-      stroke="#000"
-      strokeWidth={(LINE_WIDTH * svgWidth) / COURT_WIDTH}
-    />
-  </g>
-);
+}: NoChargeProps) {
+  return (
+    <g>
+      {/* No-charge semi-circle */}
+      <path
+        d={
+          arc()({
+            innerRadius: xScale(NO_CHARGE_RADIUS) - xScale(0),
+            outerRadius: xScale(NO_CHARGE_RADIUS) - xScale(0),
+            startAngle: -Math.PI / 2,
+            endAngle: Math.PI / 2,
+          }) ?? undefined
+        }
+        transform={`translate(${centerX},${rimY})`}
+        fill="none"
+        stroke="#000"
+        strokeWidth={(LINE_WIDTH * svgWidth) / COURT_WIDTH}
+      />
+      {/* No-charge semi-circle side lines */}
+      <line
+        x1={centerX - (xScale(NO_CHARGE_RADIUS) - xScale(0))}
+        x2={centerX - (xScale(NO_CHARGE_RADIUS) - xScale(0))}
+        y1={ncLineY1}
+        y2={ncLineY2}
+        stroke="#000"
+        strokeWidth={(LINE_WIDTH * svgWidth) / COURT_WIDTH}
+      />
+      <line
+        x1={centerX + (xScale(NO_CHARGE_RADIUS) - xScale(0))}
+        x2={centerX + (xScale(NO_CHARGE_RADIUS) - xScale(0))}
+        y1={ncLineY1}
+        y2={ncLineY2}
+        stroke="#000"
+        strokeWidth={(LINE_WIDTH * svgWidth) / COURT_WIDTH}
+      />
+    </g>
+  );
+}
 
 export default NoCharge;

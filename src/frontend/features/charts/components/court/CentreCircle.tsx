@@ -1,5 +1,4 @@
 // src/frontend/features/charts/components/court/CentreCircle.tsx
-import React from "react";
 
 import {
   COURT_WIDTH,
@@ -17,11 +16,7 @@ interface CentreCircleProps {
 }
 
 /** The centre circle — the top half only; the bottom half belongs to the other end of the half-court. */
-export const CentreCircle: React.FC<CentreCircleProps> = ({
-  centerX,
-  xScale,
-  svgWidth,
-}) => {
+export function CentreCircle({ centerX, xScale, svgWidth }: CentreCircleProps) {
   const r = xScale(FREE_THROW_CIRCLE_RADIUS) - xScale(0);
   const cx = centerX;
   const cy = 0;
@@ -37,6 +32,6 @@ export const CentreCircle: React.FC<CentreCircleProps> = ({
       strokeWidth={(LINE_WIDTH * svgWidth) / COURT_WIDTH}
     />
   );
-};
+}
 
 export default CentreCircle;
