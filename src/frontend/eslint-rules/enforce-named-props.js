@@ -39,7 +39,7 @@ module.exports = {
 
     /** Reports when `annotation` is an inline object type. */
     const check = (annotation, name, node) => {
-      if (!annotation || annotation.type !== "TSTypeLiteral") return;
+      if (annotation?.type !== "TSTypeLiteral") return;
       if (!isComponentName(name)) return;
       context.report({ node, messageId: "inlineProps", data: { name } });
     };
