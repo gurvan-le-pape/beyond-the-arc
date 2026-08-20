@@ -1,5 +1,6 @@
 // src/frontend/features/charts/components/court/CourtBoundary.tsx
 
+import { HALF_COURT_HEIGHT } from "../../constants";
 import Baseline from "./Baseline";
 import BoundaryRect from "./BoundaryRect";
 import CenterLine from "./CenterLine";
@@ -24,7 +25,10 @@ export function CourtBoundary({
   return (
     <g>
       <BoundaryRect svgWidth={svgWidth} svgHeight={svgHeight} />
-      <CenterLine svgWidth={svgWidth} y={yScale(0)} />
+      {/* The half-court line is the far end of the half-court: court unit
+          HALF_COURT_HEIGHT maps to the top of the SVG, while yScale(0) is the
+          baseline under the basket — which is Baseline's job, not this one's. */}
+      <CenterLine svgWidth={svgWidth} y={yScale(HALF_COURT_HEIGHT)} />
       <Baseline svgWidth={svgWidth} y={yScale(0)} />
     </g>
   );

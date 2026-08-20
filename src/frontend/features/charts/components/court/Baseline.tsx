@@ -10,10 +10,10 @@ interface BaselineProps {
 }
 
 /**
- * The baseline — the court's far edge, spanning the full chart width.
- *
- * On a half-court render this coincides with `CenterLine`: both draw at
- * `yScale(0)`, so the two overlap exactly.
+ * The baseline — the endline under the basket, the near edge of a half-court
+ * render (the rim sits `BASELINE_TO_RIM` inside it). Drawn at `yScale(0)`, the
+ * bottom of the chart. The line at the far end, `yScale(HALF_COURT_HEIGHT)`,
+ * is `CenterLine`'s job — see `CourtBoundary`.
  */
 export function Baseline({ svgWidth, y }: BaselineProps) {
   return (
