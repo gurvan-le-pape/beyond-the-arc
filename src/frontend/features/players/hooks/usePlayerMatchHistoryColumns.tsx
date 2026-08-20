@@ -41,6 +41,7 @@ export function usePlayerMatchHistoryColumns(
       buildMatchupColumn<PlayerMatchHistory>(
         t("matchHistory.match"),
         player.team?.id ?? -1,
+        t("matchHistory.vs"),
       ),
       {
         key: "pts",

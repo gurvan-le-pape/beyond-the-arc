@@ -11,6 +11,7 @@
   "searchPlaceholder": "Rechercher ...",
   "breadcrumbAriaLabel": "Fil d'Ariane",
   "noData": "Aucune donnée disponible",
+  "notAvailable": "Non disponible",
   "clear": "Effacer",
   "clearSearch": "Effacer la recherche",
   "clearSelection": "Effacer la séléction",
@@ -57,6 +58,7 @@
     "turnoversPerGame": "Pertes / match",
     "foulsPerGame": "Fautes / match",
     "gamesPlayed": "Matchs joués",
+    "gamesPlayedShort": "MJ",
     "threePoints": {
       "abbr": "3P",
       "full": "3 points"
@@ -92,6 +94,7 @@
   "matchHistory": {
     "date": "Date",
     "match": "Match",
+    "vs": " contre ",
     "score": "Score",
     "noMatches": "Aucun match joué cette saison",
     "seeAllMatches": "Voir tous les matchs ({count})",

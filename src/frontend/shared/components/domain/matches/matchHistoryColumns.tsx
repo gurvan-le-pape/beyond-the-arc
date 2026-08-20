@@ -31,10 +31,15 @@ export function buildMatchDateColumn<T extends MatchWithTeams>(
 /**
  * Shared "home vs away" matchup column for match-history tables. `currentTeamId`
  * lets MatchTeamLabel highlight whichever side the table is scoped to.
+ *
+ * `separator` is the caller's string — the "vs" between the two club names is
+ * visible user-facing text, so it is resolved by the caller's translator, not
+ * hardcoded here in one language.
  */
 export function buildMatchupColumn<T extends MatchWithTeams>(
   header: ReactNode,
   currentTeamId: number,
+  separator: string,
 ): TableColumn<T> {
   return {
     key: "match",
@@ -46,7 +51,7 @@ export function buildMatchupColumn<T extends MatchWithTeams>(
           teamId={match.homeTeam.id}
           currentTeamId={currentTeamId}
         />
-        {" vs "}
+        {separator}
         <MatchTeamLabel
           name={match.awayTeam.club.name}
           teamId={match.awayTeam.id}

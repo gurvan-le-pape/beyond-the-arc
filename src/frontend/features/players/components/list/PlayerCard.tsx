@@ -9,7 +9,6 @@ import {
   ListEntityCard,
 } from "@/shared/components/domain";
 import { Text } from "@/shared/components/typography";
-import { NA } from "@/shared/constants";
 import { cn } from "@/shared/utils";
 
 interface PlayerCardProps {
@@ -22,10 +21,11 @@ interface PlayerCardProps {
  * page.
  *
  * **Tolerates a player with no team.** Every path through `player.team` is
- * optional-chained and falls back to `NA`, because list responses do not always
- * carry the nested club and championship. `PlayerHeader` reads the same `Player`
- * type without chaining and requires the fully hydrated detail shape — the two
- * disagree deliberately, and feeding this component's data to that one throws.
+ * optional-chained and falls back to a translated "not available" label,
+ * because list responses do not always carry the nested club and championship.
+ * `PlayerHeader` reads the same `Player` type without chaining and requires
+ * the fully hydrated detail shape — the two disagree deliberately, and feeding
+ * this component's data to that one throws.
  *
  * The level drives the accent colour through `getLevelConfig`, so a player whose
  * team has no championship renders in the neutral default rather than failing.
@@ -45,7 +45,7 @@ export function PlayerCard({ player }: PlayerCardProps) {
   const clubTeamLabel =
     clubName && teamNumber
       ? `${clubName} - ${teamNumber}`
-      : (clubName ?? teamNumber ?? NA);
+      : (clubName ?? teamNumber ?? tCommon("notAvailable"));
 
   return (
     <ListEntityCard

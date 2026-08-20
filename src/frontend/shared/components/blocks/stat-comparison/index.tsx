@@ -14,6 +14,7 @@
 //
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 import { Text } from "@/shared/components/typography";
@@ -50,6 +51,7 @@ export function StatComparison({
   variant = "mirrored",
   percentageMap,
 }: StatComparisonProps) {
+  const tCommon = useTranslations("common");
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     const id = requestAnimationFrame(() => setMounted(true));
@@ -89,12 +91,14 @@ export function StatComparison({
             key,
             valueFn,
             resolvedPercentageMap,
+            tCommon("notAvailable"),
           );
           const { display: displayB, numeric: numB } = resolveValue(
             sideB,
             key,
             valueFn,
             resolvedPercentageMap,
+            tCommon("notAvailable"),
           );
           const winner = getWinner(numA, numB, lowerIsBetter);
           const delayMs = Math.min(index * 60, 400);

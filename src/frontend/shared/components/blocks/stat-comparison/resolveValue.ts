@@ -1,6 +1,4 @@
 // src/frontend/shared/components/blocks/stat-comparison/resolveValue.ts
-import { NA } from "@/shared/constants";
-
 import type { Stats, StatValue } from "./types";
 
 /**
@@ -48,12 +46,14 @@ function toNumber(value: StatValue): number {
  * and therefore a permanent tie. Return a bare number from `valueFn` and let
  * this add the presentation.
  *
- * A missing stat displays the shared `NA` constant and compares as `NaN`.
+ * A missing stat displays `missingLabel` and compares as `NaN`.
  *
  * @param stats - the side's stat object
  * @param key - which stat to read
  * @param valueFn - custom resolver; must return an unformatted value
  * @param percentageMap - stat key to percentage-field key, appended in parentheses
+ * @param missingLabel - what to render when the stat is absent; a locale-neutral dash by
+ *   default, callers that have a translator in scope pass a translated string
  * @returns the display value and the number to compare on
  */
 export function resolveValue(
@@ -61,6 +61,7 @@ export function resolveValue(
   key: string,
   valueFn?: (s: Stats) => string | number,
   percentageMap?: Record<string, string>,
+  missingLabel = "–",
 ): { display: string | number; numeric: number } {
   // Custom resolver path
   if (valueFn) {
@@ -82,7 +83,7 @@ export function resolveValue(
   let display: string | number;
 
   if (raw === null || raw === undefined) {
-    display = NA;
+    display = missingLabel;
   } else if (typeof pct === "number") {
     display = `${raw} (${pct}%)`;
   } else {

@@ -41,6 +41,7 @@ export function useTeamMatchHistoryColumns(
       buildMatchupColumn<TeamMatchHistory>(
         tCommon("matchHistory.match"),
         team.id,
+        tCommon("matchHistory.vs"),
       ),
       {
         key: "score",

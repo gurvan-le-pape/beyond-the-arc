@@ -26,13 +26,17 @@ export function capitalize(str: string): string {
 }
 
 /**
- * Formats a phone number for display
+ * Formats a phone number for display.
+ *
+ * Returns `null` for a missing or empty value rather than an English sentinel —
+ * the caller decides what an absent phone looks like (the translated
+ * "not available" label, or omission).
  *
  * @param phone - Phone number string
- * @returns Formatted phone number
+ * @returns Formatted phone number, or `null` when there is nothing to format
  */
-export function formatPhone(phone: string | null | undefined): string {
-  if (!phone) return "N/A";
+export function formatPhone(phone: string | null | undefined): string | null {
+  if (!phone) return null;
 
   // Remove all non-numeric characters
   const cleaned = phone.replaceAll(/\D/g, "");

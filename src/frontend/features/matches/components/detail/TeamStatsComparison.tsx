@@ -1,6 +1,8 @@
 // src/frontend/features/matches/components/detail/TeamStatsComparison.tsx
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import type { TeamStats } from "@/features/teams/types";
 import { Section, StatComparison } from "@/shared/components/blocks";
 
@@ -37,14 +39,16 @@ export function TeamStatsComparison({
   categories,
   title,
 }: TeamStatsComparisonProps) {
+  const tMatches = useTranslations("matches");
+
   return (
     <Section variant="highlighted" title={title} className="text-center">
       <StatComparison
         variant="dual"
         sideA={homeStats}
         sideB={awayStats}
-        labelA="Home"
-        labelB="Away"
+        labelA={tMatches("playerMatchStats.home")}
+        labelB={tMatches("playerMatchStats.away")}
         config={categories}
         percentageMap={PERCENTAGE_MAP}
       />

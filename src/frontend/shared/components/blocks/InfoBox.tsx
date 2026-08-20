@@ -1,4 +1,5 @@
 // src/frontend/shared/components/blocks/InfoBox.tsx
+import { useTranslations } from "next-intl";
 import { type HTMLAttributes } from "react";
 
 import { cn } from "@/shared/utils";
@@ -24,9 +25,14 @@ interface InfoBoxProps extends Omit<
  * placed directly on the page it renders flat and the inset effect disappears.
  * That is a placement contract, not a default to override.
  *
- * A `null` or `undefined` value renders as `N/A` rather than collapsing, so a
- * grid keeps its shape when a stat is missing. Supplying `href` turns the value
- * into a link that **always opens in a new tab**.
+ * A `null` or `undefined` value renders as the translated "not available"
+ * label rather than collapsing, so a grid keeps its shape when a stat is
+ * missing. Supplying `href` turns the value into a link that **always opens in
+ * a new tab**.
+ *
+ * The missing-value string is the component's own vocabulary, so it is
+ * resolved here via `useTranslations` — next-intl v4 provides that hook in the
+ * react-server build too, so this stays a server-safe component.
  */
 export const InfoBox = ({
   label,
@@ -37,6 +43,8 @@ export const InfoBox = ({
   ref,
   ...props
 }: InfoBoxProps) => {
+  const t = useTranslations("common");
+
   return (
     <div
       ref={ref}
@@ -63,12 +71,12 @@ export const InfoBox = ({
         >
           {/* h4 = text-lg font-medium text-heading — link overrides color */}
           <Text variant="h4" as="span">
-            {value ?? "N/A"}
+            {value ?? t("notAvailable")}
           </Text>
         </a>
       ) : (
         <Text variant="h4" as="p">
-          {value ?? "N/A"}
+          {value ?? t("notAvailable")}
         </Text>
       )}
     </div>
