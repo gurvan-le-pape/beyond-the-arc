@@ -137,7 +137,7 @@ export interface ButtonProps
  * @example
  * <Button variant="primary" size="lg">Save</Button>
  * <Button variant="danger" isLoading={isDeleting}>Delete</Button>
- * <Button variant="icon" aria-label="Close"><XIcon /></Button>
+ * <Button size="icon" aria-label="Close"><XIcon /></Button>
  * <Button variant="link" size="sm">Reset all</Button>
  * <Button variant="control">Filters</Button>
  * <Button variant="clubs">Find a club</Button>
