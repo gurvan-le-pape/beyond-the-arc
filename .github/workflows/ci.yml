@@ -160,6 +160,28 @@ jobs:
       - name: Check message parity
         run: npm run check:messages
 
+  # Unit tests for the pure-TS modules (zone predicates, data transforms).
+  # Runs vitest in the node environment; spec files live next to the code as
+  # *.spec.ts, which barrelsby already excludes.
+  frontend-test:
+    name: Frontend – Unit tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/frontend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup app
+        uses: ./.github/actions/setup-app
+        with:
+          working-directory: src/frontend
+
+      - name: Run unit tests
+        run: npm run test
+
   frontend-build:
     name: Frontend – Build
     runs-on: ubuntu-latest
@@ -376,6 +398,7 @@ jobs:
       - frontend-lint
       - frontend-typecheck
       - frontend-messages
+      - frontend-test
       - frontend-build
       - openapi-drift
       - barrels-drift
