@@ -9,8 +9,6 @@ import {
   THREE_PT_RADIUS,
 } from "@/features/charts/constants";
 
-import { isInsideArc } from "../isInsideArc";
-
 // Number of points to sample along the arc for polygon smoothness
 const N = 30;
 
@@ -47,22 +45,24 @@ const leftPolygon = buildArcZonePolygon(ARC_LEFT_X, PAINT_X0, PAINT_HEIGHT);
 const rightPolygon = buildArcZonePolygon(PAINT_X1, ARC_RIGHT_X, PAINT_HEIGHT);
 
 // Custom contains logic for arc zones
-function containsArcZone(
-  x: number,
-  y: number,
-  x0: number,
-  x1: number,
-  y0: number,
-  y1: number,
-) {
-  return x >= x0 && x < x1 && y >= y0 && y < y1 && isInsideArc(x, y, y1);
+function containsArcZone(x: number, y: number, x0: number, x1: number) {
+  // The drawn sliver spans from the paint's top edge (`PAINT_HEIGHT`) up to
+  // the three-point arc at this x. The old check capped y at `ARC_Y` — the y
+  // where the arc meets the *straight* 3-pt line, which sits below the paint
+  // top, so the interval was empty and the zone could never match a shot.
+  return (
+    x >= x0 &&
+    x < x1 &&
+    y >= PAINT_HEIGHT &&
+    Math.hypot(x - BASKET_X, y - BASKET_Y) <= THREE_PT_RADIUS
+  );
 }
 
 /**
  * The two arc zones — the slivers between the paint and the three-point arc.
  *
- * `contains` is the bounding box plus `isInsideArc`; the drawn `polygon` must
- * describe the same region as the test.
+ * `contains` tests the same region the `polygon` draws: above the paint's top
+ * edge and inside the three-point circle.
  *
  * @returns the zone definitions in court units, each with the bounding box used to draw it and the `contains` predicate used to hit-test it; bounds are half-open so a shot on a shared edge falls in exactly one zone
  */
@@ -76,7 +76,7 @@ export function getArcZones() {
       y1: ARC_Y,
       polygon: leftPolygon,
       contains: (x: number, y: number) =>
-        containsArcZone(x, y, ARC_LEFT_X, PAINT_X0, PAINT_HEIGHT, ARC_Y),
+        containsArcZone(x, y, ARC_LEFT_X, PAINT_X0),
     },
     {
       key: "arc_right",
@@ -86,7 +86,7 @@ export function getArcZones() {
       y1: ARC_Y,
       polygon: rightPolygon,
       contains: (x: number, y: number) =>
-        containsArcZone(x, y, PAINT_X1, ARC_RIGHT_X, PAINT_HEIGHT, ARC_Y),
+        containsArcZone(x, y, PAINT_X1, ARC_RIGHT_X),
     },
   ];
 }

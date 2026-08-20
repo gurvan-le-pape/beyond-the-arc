@@ -5,7 +5,6 @@
 
 export * from "./getTooltipPosition";
 export * from "./overlays/hotspots/binShotsByZones";
-export * from "./overlays/hotspots/isInsideArc";
 export * from "./overlays/hotspots/zones/shotZonesAboveWing";
 export * from "./overlays/hotspots/zones/shotZonesApexStripe";
 export * from "./overlays/hotspots/zones/shotZonesArc";

@@ -9,8 +9,6 @@ import {
   THREE_PT_RADIUS,
 } from "@/features/charts/constants";
 
-import { isInsideArc } from "../isInsideArc";
-
 // Build the top key zone polygon
 // from x0 to x1 at baseline y0
 function buildTopKeyZonePolygon(
@@ -36,12 +34,15 @@ const polygon = buildTopKeyZonePolygon(PAINT_X0, PAINT_X1, PAINT_HEIGHT);
 
 // Custom contains logic for top key zone
 function containsTopKeyZone(x: number, y: number) {
+  // The drawn strip spans from the paint's top edge (`PAINT_HEIGHT`) up to
+  // the three-point arc at this x. The old check capped y at `ARC_Y` — the y
+  // where the arc meets the *straight* 3-pt line, below the paint top — so
+  // the interval was empty and the zone could never match a shot.
   return (
     x >= PAINT_X0 &&
     x < PAINT_X1 &&
     y >= PAINT_HEIGHT &&
-    y < ARC_Y &&
-    isInsideArc(x, y, ARC_Y)
+    Math.hypot(x - BASKET_X, y - BASKET_Y) <= THREE_PT_RADIUS
   );
 }
 
