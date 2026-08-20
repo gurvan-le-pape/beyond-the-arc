@@ -223,16 +223,18 @@ function readArgument(source: string, from: number, into: Set<string>): number {
  */
 function closingBrace(source: string, from: number): number {
   let depth = 0;
+  let index = from;
 
-  for (let index = from; index < source.length; index++) {
+  while (index < source.length) {
     const afterQuote = skipQuoted(source, index);
     if (afterQuote !== index) {
-      index = afterQuote - 1;
+      index = afterQuote;
       continue;
     }
 
     if (source[index] === "{") depth++;
     else if (source[index] === "}" && --depth === 0) return index;
+    index++;
   }
 
   return source.length;

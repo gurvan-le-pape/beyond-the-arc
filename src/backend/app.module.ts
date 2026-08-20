@@ -3,8 +3,10 @@ import { CommonModule } from "@common/common.module";
 import { CACHE_MAX_ENTRIES, CACHE_TTL, METRICS_PATH } from "@common/constants";
 import { MetricsController } from "@common/controllers/metrics.controller";
 import { AllExceptionsFilter } from "@common/filters";
-import { HttpMetricsInterceptor } from "@common/interceptors";
-import { TransformInterceptor } from "@common/interceptors";
+import {
+  HttpMetricsInterceptor,
+  TransformInterceptor,
+} from "@common/interceptors";
 import {
   BoundedMemoryStore,
   resolveRequestId,

@@ -153,12 +153,16 @@ export function ShotChart({
 
   // Literal keys per branch: next-intl types `t` against the catalogue, so a
   // key held in a `string` variable does not type-check.
-  const chartLabel =
-    chartType === ChartType.HEATMAP
-      ? t("shotChart.heatmapChartLabel")
-      : chartType === ChartType.HOTSPOTS
-        ? t("shotChart.hotspotsChartLabel")
-        : t("shotChart.scatterChartLabel");
+  const chartLabel = (() => {
+    switch (chartType) {
+      case ChartType.HEATMAP:
+        return t("shotChart.heatmapChartLabel");
+      case ChartType.HOTSPOTS:
+        return t("shotChart.hotspotsChartLabel");
+      default:
+        return t("shotChart.scatterChartLabel");
+    }
+  })();
 
   const summary = useMemo(() => {
     const total = shotEvents.length;

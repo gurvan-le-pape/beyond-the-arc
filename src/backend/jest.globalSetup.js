@@ -3,6 +3,6 @@
 // whatever zone the machine happens to be in, so they pass locally and fail
 // on a runner set elsewhere — or, worse, pass everywhere and hide a bug that
 // only appears in one zone. Set before any test module is loaded.
-module.exports = () => {
+module.exports = function globalSetup() {
   process.env.TZ = "UTC";
 };
