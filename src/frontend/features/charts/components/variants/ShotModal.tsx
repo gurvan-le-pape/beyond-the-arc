@@ -10,6 +10,7 @@ import type { MatchEvent } from "@/features/matches/types";
 import { Button } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import type { NamedEntity } from "@/shared/types";
+import { logger } from "@/shared/utils";
 
 import { ChartType } from "../../constants";
 import ShotChart from "../ShotChart";
@@ -87,9 +88,11 @@ export function ShotModal({
       const dataUrl = await toPng(el, { cacheBust: true });
       const a = document.createElement("a");
       a.href = dataUrl;
-      a.download = `shotchart-${player.name.replaceAll(" ", "_")}.png`;
+      // Any run of non-letter/non-digit characters (spaces, slashes, …)
+      // becomes an underscore so the filename is valid on every platform.
+      a.download = `shotchart-${player.name.replace(/[^\p{L}\p{N}]+/gu, "_")}.png`;
       a.click();
-    })().catch(console.error);
+    })().catch((error) => logger.error(error, "shotchart download"));
   };
 
   return (

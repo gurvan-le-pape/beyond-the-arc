@@ -1,6 +1,8 @@
 // src/frontend/features/organizations/clubs/components/clubs-map/mapHelpers.tsx
 import centroid from "@turf/centroid";
 
+import { logger } from "@/shared/utils";
+
 import type { ClubBasic } from "../../types/ClubBasic";
 
 /**
@@ -31,7 +33,7 @@ export function generateLabelFeatures(
           },
         };
       } catch (error) {
-        console.warn("Failed to calculate centroid for feature:", error);
+        logger.warn("Failed to calculate centroid for feature:", error);
         return null;
       }
     })
