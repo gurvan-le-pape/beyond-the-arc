@@ -136,7 +136,7 @@ export const matchesService = {
   // ============================================================================
 
   /**
-   * Get all events (goals, cards, substitutions) for a specific match.
+   * Get all events for a specific match.
    *
    * @param matchId - The match ID
    * @returns Array of match events
@@ -176,7 +176,7 @@ export const matchesService = {
     signal?: AbortSignal,
   ): Promise<MatchEvent[]> {
     const { data } = await apiClient.get<MatchEvent[]>(
-      `/matches/teams/${teamId}/events`,
+      `/matches/team/${teamId}/events`,
       { signal },
     );
     return data;
@@ -211,15 +211,13 @@ export const matchesService = {
 
   /**
    * Get detailed player statistics for a specific match.
-   * Includes goals, assists, cards, and other performance metrics.
    *
    * @param matchId - The match ID
-   * @returns Player statistics for both teams
+   * @returns Both teams' per-player box-score lines
    * @throws {AxiosError} 404 if match not found
    *
    * @example
    * const stats = await matchesService.getPlayerStatsByMatchId(12345);
-   * // { homeTeam: [...], awayTeam: [...] }
    *
    * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
    */

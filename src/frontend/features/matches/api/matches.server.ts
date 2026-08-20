@@ -93,20 +93,38 @@ export const serverMatchesService = {
   },
 
   /**
-   * Get all matches for a specific championship.
+   * Every match of a championship, unpaginated.
+   *
+   * Pages through `/matches` (max limit 100 per request) until every page is
+   * fetched, then returns the combined list — the same loop the client half
+   * (`matchesService.getByChampionshipId`) runs, so both halves of the mirror
+   * return the same shape. A bare `GET /matches?championshipId=` would only
+   * return the first page *and* type a paginated envelope as an array.
    *
    * @param championshipId - The championship ID
-   * @returns Array of matches in the championship
-   * @throws {AxiosError} 400 if validation fails
+   * @returns every match in the championship, unpaginated
+   * @throws {ApiError} 400 if validation fails
    *
    * @example
    * const matches = await serverMatchesService.getByChampionshipId(5);
    */
   async getByChampionshipId(championshipId: number): Promise<Match[]> {
-    const queryString = buildQueryString({ championshipId });
-    return fetchApi<Match[]>(`/matches${queryString}`, {
-      revalidate: ServerRevalidate.LIVE,
-    });
+    const limit = 100;
+    const matches: Match[] = [];
+    let page = 1;
+    let totalPages = 1;
+
+    do {
+      const queryString = buildQueryString({ championshipId, page, limit });
+      const { items, totalPages: pages } = await fetchApi<
+        PaginatedResponse<Match>
+      >(`/matches${queryString}`, { revalidate: ServerRevalidate.LIVE });
+      matches.push(...items);
+      totalPages = pages;
+      page += 1;
+    } while (page <= totalPages);
+
+    return matches;
   },
 
   // ============================================================================
@@ -114,15 +132,14 @@ export const serverMatchesService = {
   // ============================================================================
 
   /**
-   * Get all events (goals, cards, substitutions) for a specific match.
+   * Get all events for a specific match.
    *
    * @param matchId - The match ID
    * @returns Array of match events
-   * @throws {AxiosError} 404 if match not found
+   * @throws {ApiError} 404 if match not found
    *
    * @example
    * const events = await serverMatchesService.getEventsByMatchId(12345);
-   * // [{ type: 'point', minute: 23, playerId: 789, ... }, ...]
    */
   async getEventsByMatchId(matchId: number): Promise<MatchEvent[]> {
     return fetchApi<MatchEvent[]>(`/matches/${matchId}/events`, {
