@@ -13,6 +13,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit && tsc -p tsconfig.scripts.json",
+    "test": "vitest run",
     "check:messages": "node scripts/check-message-parity.mts",
     "typegen": "node scripts/typegen.mts"
   },
@@ -62,7 +63,8 @@
     "postcss": "^8.5.26",
     "prettier": "3.7.4",
     "tailwindcss": "^3.4.19",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.11"
   },
   "engines": {
     "node": ">=24.0.0"
