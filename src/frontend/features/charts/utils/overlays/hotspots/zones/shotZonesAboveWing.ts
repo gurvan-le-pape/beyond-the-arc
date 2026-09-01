@@ -81,9 +81,11 @@ const rightPolygon = buildAboveWingZonePolygon({
 function containsAboveWingLeft(x: number, y: number) {
   // Horizontal bounds: from THREE_PT_LINE_DIST to PAINT_X0
   if (x < THREE_PT_LINE_DIST || x > PAINT_X0) return false;
-  // Vertical bounds: from PAINT_HEIGHT to ARC_Y
-  if (y < PAINT_HEIGHT || y > ARC_Y) return false;
-  // For y between PAINT_HEIGHT and ARC_Y, x must be to the right of the arc and left of PAINT_X0
+  // Vertical bounds: from the straight 3-pt line (`ARC_Y`) up to the paint's
+  // top (`PAINT_HEIGHT`). The old check had these inverted, so the interval
+  // was empty and the zone could never match a shot.
+  if (y < ARC_Y || y > PAINT_HEIGHT) return false;
+  // For y in that band, x must be to the right of the arc and left of PAINT_X0
   const arcX = get3ptArcXAtY(y, true);
   if (arcX === null) return false;
   return x >= arcX && x <= PAINT_X0;
@@ -93,10 +95,12 @@ function containsAboveWingLeft(x: number, y: number) {
 function containsAboveWingRight(x: number, y: number) {
   // Horizontal bounds: from PAINT_X1 to COURT_WIDTH - THREE_PT_LINE_DIST
   if (x < PAINT_X1 || x > COURT_WIDTH - THREE_PT_LINE_DIST) return false;
-  // Vertical bounds: from PAINT_HEIGHT to ARC_Y
-  if (y < PAINT_HEIGHT || y > ARC_Y) return false;
-  // For y between PAINT_HEIGHT and ARC_Y, x must be to the left of the arc and right of PAINT_X1
-  const arcX = get3ptArcXAtY(y, true);
+  // Vertical bounds: from the straight 3-pt line (`ARC_Y`) up to the paint's top
+  if (y < ARC_Y || y > PAINT_HEIGHT) return false;
+  // For y in that band, x must be to the left of the *right* arc and right of
+  // PAINT_X1. The old check sampled the left arc, so even with the y bounds
+  // fixed the right zone could never match.
+  const arcX = get3ptArcXAtY(y, false);
   if (arcX === null) return false;
   return x <= arcX && x >= PAINT_X1;
 }
