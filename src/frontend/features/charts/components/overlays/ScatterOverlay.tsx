@@ -15,10 +15,13 @@ export function ScatterOverlay({ shots, xScale, yScale }: ScatterOverlayProps) {
   const r = 6; // radius for made shots, half-length for cross arms
   return (
     <g>
-      {shots.map((shot) => {
+      {shots.map((shot, index) => {
         const cx = xScale(shot.x);
         const cy = yScale(shot.y);
-        const key = `${shot.x}-${shot.y}-${shot.made}`;
+        // ShotEvent carries no id, so the index is part of the key: two made
+        // free throws are taken from the same spot and would otherwise collide
+        // on `x-y-made`.
+        const key = `${index}-${shot.x}-${shot.y}-${shot.made}`;
         if (shot.made) {
           return (
             <circle
