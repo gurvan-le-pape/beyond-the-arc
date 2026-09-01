@@ -6,7 +6,13 @@
 import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
-  dsn: "https://174ddf843e686ddcc585076640c1e384@o4511179148230656.ingest.de.sentry.io/4511179315937360",
+  // In the browser bundle `SENTRY_DSN` is not inlined (it is not a
+  // `NEXT_PUBLIC_` variable), so the client always uses the public literal
+  // below; the `??` keeps the intent explicit and lets a future public
+  // variable replace it without touching this file.
+  dsn:
+    process.env.SENTRY_DSN ??
+    "https://174ddf843e686ddcc585076640c1e384@o4511179148230656.ingest.de.sentry.io/4511179315937360",
 
   // @sentry/core defaults `environment` to the literal string "production", so
   // leaving it unset files local development errors into the production project
