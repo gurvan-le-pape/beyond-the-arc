@@ -73,7 +73,7 @@ export function PlayerCard({ player, href }: PlayerCardProps) {
       </div>
 
       <Text variant="caption" className="-mt-1">
-        {seasonStats.gamesPlayed} GP
+        {seasonStats.gamesPlayed} {tCommon("stats.gamesPlayedShort")}
       </Text>
     </Card>
   );

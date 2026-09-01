@@ -11,6 +11,7 @@
   "searchPlaceholder": "Search...",
   "breadcrumbAriaLabel": "Breadcrumb",
   "noData": "No data available",
+  "notAvailable": "Not available",
   "clear": "Clear",
   "clearSearch": "Clear search",
   "clearSelection": "Clear selection",
@@ -57,6 +58,7 @@
     "turnoversPerGame": "Turnovers / game",
     "foulsPerGame": "Fouls / game",
     "gamesPlayed": "Games played",
+    "gamesPlayedShort": "GP",
     "threePoints": {
       "abbr": "3P",
       "full": "3 points"
@@ -92,6 +94,7 @@
   "matchHistory": {
     "date": "Date",
     "match": "Match",
+    "vs": " vs ",
     "score": "Score",
     "noMatches": "No matches played this season",
     "seeAllMatches": "See all matches ({count})",

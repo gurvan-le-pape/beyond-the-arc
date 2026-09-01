@@ -7,7 +7,6 @@ import { useTranslations } from "next-intl";
 import type { President } from "@/features/organizations/types";
 import { InfoBox, Section } from "@/shared/components/blocks";
 import { Text } from "@/shared/components/typography";
-import { NA } from "@/shared/constants";
 import { formatPhone, toSafeExternalUrl } from "@/shared/utils";
 
 interface OrganizationInfoProps {
@@ -37,6 +36,7 @@ export function OrganizationInfo({
   president,
 }: OrganizationInfoProps) {
   const t = useTranslations("organizations");
+  const tCommon = useTranslations("common");
 
   // `website` is scraped, so it is untrusted input reaching an href. A value
   // that is not an absolute http(s) URL renders as "no website" rather than as
@@ -103,7 +103,7 @@ export function OrganizationInfo({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <InfoBox
               label={t("info.president.name")}
-              value={president?.name ?? NA}
+              value={president?.name ?? tCommon("notAvailable")}
               icon={<User className="w-4 h-4" />}
             />
           </div>

@@ -9,7 +9,6 @@ import {
   ListEntityCard,
 } from "@/shared/components/domain";
 import { Text } from "@/shared/components/typography";
-import { NA } from "@/shared/constants";
 import { cn } from "@/shared/utils";
 
 interface TeamCardProps {
@@ -25,10 +24,10 @@ interface TeamCardProps {
  * division, pool). Dropping a badge makes sibling teams indistinguishable
  * rather than merely plainer.
  *
- * Every path through `club` and `pool` is optional-chained and falls back to
- * `NA`, because list responses do not always carry the nested championship.
- * `TeamHeader` reads the same `Team` type without chaining and needs the
- * hydrated detail shape — the two disagree deliberately.
+ * Every path through `club` and `pool` is optional-chained and falls back to a
+ * translated "not available" label, because list responses do not always carry
+ * the nested championship. `TeamHeader` reads the same `Team` type without
+ * chaining and needs the hydrated detail shape — the two disagree deliberately.
  */
 export function TeamCard({ team }: TeamCardProps) {
   const tCommon = useTranslations("common");
@@ -53,7 +52,7 @@ export function TeamCard({ team }: TeamCardProps) {
           variant="label"
           className={cn("truncate font-semibold", config.text)}
         >
-          {clubName ?? NA}
+          {clubName ?? tCommon("notAvailable")}
         </Text>
       }
       badges={
@@ -70,7 +69,7 @@ export function TeamCard({ team }: TeamCardProps) {
     >
       <EntityCardBody
         clubName={clubName}
-        title={clubName ?? NA}
+        title={clubName ?? tCommon("notAvailable")}
         committee={team.club?.committee}
         number={team.number}
         level={level}
