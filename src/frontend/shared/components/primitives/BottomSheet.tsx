@@ -19,10 +19,13 @@ interface BottomSheetProps {
  * A drag-to-dismiss sheet anchored to the bottom of the viewport, built on a
  * native `<dialog>` so focus trapping and the backdrop come from the platform.
  *
- * **Mounting is opening.** `isOpen` gates the render, and `showModal()` runs
- * once on mount — so the sheet is opened by being rendered and closed by being
- * unmounted, not by toggling the prop against `close()`. A caller that keeps it
- * mounted while `isOpen` is false gets nothing on screen and no dialog.
+ * **`isOpen` drives the modal, not the mount.** The effect runs against
+ * `[isOpen]` and calls `showModal()`/`close()` from it, so both usage patterns
+ * work: keep the sheet mounted and toggle the prop (as `FiltersShell` does), or
+ * mount it only while open. The original contract — `showModal()` once on
+ * mount, close by unmounting — silently rendered nothing when a caller kept the
+ * sheet mounted and flipped `isOpen`, because the mount-time effect ran before
+ * the dialog existed in the DOM.
  *
  * **Mobile only, and the caller must enforce that.** The sheet carries
  * `md:hidden`, which hides it without preventing it: rendered open on a wide
@@ -42,18 +45,31 @@ export function BottomSheet({
   const tCommon = useTranslations("common");
   const dialogRef = useRef<HTMLDialogElement>(null);
   const dragStartY = useRef<number | null>(null);
+  // The offset is read from a ref in `handleDragEnd` so that callback can be
+  // stable — otherwise it is recreated on every drag frame and the
+  // mousemove/mouseup listeners below rebind on every move.
+  const dragOffsetRef = useRef(0);
+  // Remember the caller's own overflow so restoring it later does not clobber
+  // a value that was already set before this sheet opened.
+  const previousBodyOverflow = useRef("");
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
-    dialog.showModal();
-    document.body.style.overflow = "hidden";
+    if (isOpen) {
+      previousBodyOverflow.current = document.body.style.overflow;
+      dialog.showModal();
+      document.body.style.overflow = "hidden";
+    } else {
+      dialog.close();
+      document.body.style.overflow = previousBodyOverflow.current;
+    }
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow = previousBodyOverflow.current;
     };
-  }, []);
+  }, [isOpen]);
 
   const handleDragStart = (clientY: number) => {
     dragStartY.current = clientY;
@@ -62,16 +78,19 @@ export function BottomSheet({
 
   const handleDragMove = useCallback((clientY: number) => {
     if (dragStartY.current === null) return;
-    setDragOffset(Math.max(0, clientY - dragStartY.current));
+    const offset = Math.max(0, clientY - dragStartY.current);
+    dragOffsetRef.current = offset;
+    setDragOffset(offset);
   }, []);
 
   const handleDragEnd = useCallback(() => {
     const sheetHeight = dialogRef.current?.offsetHeight ?? 300;
-    if (dragOffset > sheetHeight * 0.35) onClose();
+    if (dragOffsetRef.current > sheetHeight * 0.35) onClose();
     dragStartY.current = null;
+    dragOffsetRef.current = 0;
     setDragOffset(0);
     setIsDragging(false);
-  }, [dragOffset, onClose]);
+  }, [onClose]);
 
   useEffect(() => {
     if (!isDragging) return;
@@ -89,7 +108,6 @@ export function BottomSheet({
 
   return (
     <dialog
-      key="bottom-sheet"
       ref={dialogRef}
       aria-label={title}
       onCancel={(e) => {
@@ -115,7 +133,14 @@ export function BottomSheet({
         onTouchMove={(e) => handleDragMove(e.touches[0].clientY)}
         onTouchEnd={handleDragEnd}
         onMouseDown={(e) => handleDragStart(e.clientY)}
-        onKeyDown={(e) => e.key === "Enter" && onClose()}
+        onKeyDown={(e) => {
+          // Enter and Space both close, matching native button activation;
+          // Space's default (page scroll) must be suppressed.
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onClose();
+          }
+        }}
       >
         <div className="w-10 h-1 rounded-full bg-divide" />
       </button>
