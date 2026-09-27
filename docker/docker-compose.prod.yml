@@ -1,18 +1,21 @@
+# REGISTRY_IMAGE is the registry path without a tag, set in .env on the VPS
+# (registry.gitlab.com/<namespace>/beyond-the-arc). Kept out of this file so the
+# same overlay works for any registry, and so moving hosts is an .env change.
 services:
   frontend:
-    image: ghcr.io/gurvan-le-pape/beyond-the-arc/frontend:${IMAGE_TAG:-latest}
+    image: ${REGISTRY_IMAGE}/frontend:${IMAGE_TAG:-latest}
     build: !reset null
     environment:
       - NODE_ENV=production
 
   backend:
-    image: ghcr.io/gurvan-le-pape/beyond-the-arc/backend:${IMAGE_TAG:-latest}
+    image: ${REGISTRY_IMAGE}/backend:${IMAGE_TAG:-latest}
     build: !reset null
     environment:
       - NODE_ENV=production
 
   migrate:
-    image: ghcr.io/gurvan-le-pape/beyond-the-arc/backend-migrate:${IMAGE_TAG:-latest}
+    image: ${REGISTRY_IMAGE}/backend-migrate:${IMAGE_TAG:-latest}
     build: !reset null
 
   # Pinned to the deploy's tag like the other three. Before this the service
@@ -21,7 +24,7 @@ services:
   # one it happened to build once and no deploy replaced it. That also left it
   # the one service with no tag to roll back to.
   scheduler:
-    image: ghcr.io/gurvan-le-pape/beyond-the-arc/scheduler:${IMAGE_TAG:-latest}
+    image: ${REGISTRY_IMAGE}/scheduler:${IMAGE_TAG:-latest}
     build: !reset null
 
   grafana:
