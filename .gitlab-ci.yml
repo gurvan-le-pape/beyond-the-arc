@@ -1,0 +1,508 @@
+# GitLab CI — port of .github/workflows/ci.yml.
+#
+# Runs on a self-hosted runner, which is why no job budgets compute minutes:
+# GitLab bills only shared runners, and a runner you host is unmetered. The
+# runner is registered with the docker executor and the host Docker socket
+# mounted, so the `deploy` job talks to a long-lived daemon and keeps its layer
+# cache between pipelines. That replaces the GitHub Actions cache backend
+# (cache-from/cache-to: type=gha), which has no equivalent here.
+
+stages:
+  - check
+  - analyze
+  - deploy
+
+# Mirrors the GitHub triggers: merge requests, and pushes to main. The final
+# `when: never` is what stops a branch with an open merge request from
+# producing two pipelines for the same commit.
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main"
+    # Manual run from the UI or the API, the counterpart of the GitHub
+    # workflow's workflow_dispatch. Kept because a dropped push webhook once
+    # left a merge to main with no pipeline and no way to re-fire it. Safe on
+    # any branch: `deploy` gates on main separately, so a manual run elsewhere
+    # executes the checks and nothing else.
+    - if: $CI_PIPELINE_SOURCE == "web"
+    - when: never
+
+default:
+  image: node:24
+  # Lets a superseded pipeline be cancelled. `deploy` overrides this to false:
+  # it runs a live compose up over SSH, and cancelling it mid-flight could
+  # leave the VPS half-deployed.
+  interruptible: true
+
+# ==============================================================================
+# SETUP
+# ==============================================================================
+# The equivalent of .github/actions/setup-app. A composite action has no direct
+# counterpart here, so it is a YAML anchor extended by each job: `extends` plus
+# an APP_DIR variable, which drives both the install directory and the cache key.
+.setup-app:
+  variables:
+    APP_DIR: "."
+  cache:
+    key:
+      files:
+        - $APP_DIR/package-lock.json
+    paths:
+      - $APP_DIR/.npm
+  before_script:
+    - cd "$APP_DIR"
+    # --cache keeps the downloaded tarballs inside the project directory, which
+    # is the only place GitLab's cache can collect from.
+    - npm ci --cache .npm --prefer-offline
+    - cd "$CI_PROJECT_DIR"
+
+# ==============================================================================
+# BACKEND
+# ==============================================================================
+backend-lint:
+  stage: check
+  extends: .setup-app
+  variables:
+    APP_DIR: src/backend
+  script:
+    - cd src/backend
+    # The eslint config is type-aware, and 11 source files import from
+    # prisma/generated — which is gitignored and, since Prisma 7 dropped its
+    # postinstall, is not created by `npm ci`. Without this the whole Prisma
+    # surface types as `any` here, and rules like no-floating-promises stop
+    # firing on exactly the call sites they matter most on.
+    - npx prisma generate
+    - npm run lint
+    # Prettier is not part of the eslint config, so nothing else checks it.
+    - npm run format:check
+
+backend-test:
+  stage: check
+  extends: .setup-app
+  variables:
+    APP_DIR: src/backend
+  script:
+    - cd src/backend
+    - npm test -- --coverage --coverageReporters=lcov
+  artifacts:
+    # Consumed by the sonarcloud job.
+    paths:
+      - src/backend/coverage/lcov.info
+    expire_in: 1 week
+
+backend-build:
+  stage: check
+  extends: .setup-app
+  variables:
+    APP_DIR: src/backend
+  script:
+    - cd src/backend
+    - npm run build
+
+# ==============================================================================
+# FRONTEND
+# ==============================================================================
+frontend-lint:
+  stage: check
+  extends: .setup-app
+  variables:
+    APP_DIR: src/frontend
+  script:
+    - cd src/frontend
+    - npm run lint
+    - npm run format:check
+
+frontend-typecheck:
+  stage: check
+  extends: .setup-app
+  variables:
+    APP_DIR: src/frontend
+  script:
+    - cd src/frontend
+    - npm run typecheck
+
+frontend-messages:
+  stage: check
+  extends: .setup-app
+  variables:
+    APP_DIR: src/frontend
+  script:
+    - cd src/frontend
+    - npm run check:messages
+
+frontend-test:
+  stage: check
+  extends: .setup-app
+  variables:
+    APP_DIR: src/frontend
+  script:
+    - cd src/frontend
+    - npm run test
+
+frontend-build:
+  stage: check
+  extends: .setup-app
+  variables:
+    APP_DIR: src/frontend
+  script:
+    - cd src/frontend
+    - npm run build
+
+# ==============================================================================
+# API CONTRACT
+# ==============================================================================
+# Regenerates docs/openapi.json from the backend and the frontend's
+# api.generated.ts from that document, then fails if either differs from what
+# is committed — backend DTO changes must ship with regenerated types.
+#
+# Installs two projects, so it cannot use the single-directory .setup-app
+# anchor and carries its own cache and install steps.
+openapi-drift:
+  stage: check
+  cache:
+    - key:
+        files:
+          - src/backend/package-lock.json
+      paths:
+        - src/backend/.npm
+    - key:
+        files:
+          - src/frontend/package-lock.json
+      paths:
+        - src/frontend/.npm
+  script:
+    - (cd src/backend && npm ci --cache .npm --prefer-offline)
+    - (cd src/frontend && npm ci --cache .npm --prefer-offline)
+    - (cd src/backend && npm run build)
+    - (cd src/backend && node dist/scripts/generate-openapi.js)
+    - (cd src/frontend && npm run typegen)
+    - |
+      git diff --exit-code docs/openapi.json src/frontend/shared/types/api.generated.ts || {
+        echo "ERROR: docs/openapi.json or api.generated.ts is stale — from src/backend run 'npm run build && node dist/scripts/generate-openapi.js', then from src/frontend run 'npm run typegen', and commit both files. Neither script takes a path: each derives it from its own location, so the snapshot this check diffs is always the one they write."
+        exit 1
+      }
+
+# ==============================================================================
+# BARRELS
+# ==============================================================================
+# Two halves, because they catch different things. Regenerating and diffing
+# catches a barrel whose *content* has gone stale. It does NOT catch a defect in
+# the config: an unrecognised key and a directory with no barrel both emit
+# byte-identical output. check-barrels-config.mjs covers that half.
+#
+# barrels:lint runs eslint --fix over the generated barrels of both
+# applications, each of which needs its own config and plugins installed, so
+# this job installs all three projects.
+barrels-drift:
+  stage: check
+  cache:
+    - key:
+        files:
+          - package-lock.json
+      paths:
+        - .npm
+    - key:
+        files:
+          - src/frontend/package-lock.json
+      paths:
+        - src/frontend/.npm
+    - key:
+        files:
+          - src/backend/package-lock.json
+      paths:
+        - src/backend/.npm
+  script:
+    - npm ci --cache .npm --prefer-offline
+    - (cd src/frontend && npm ci --cache .npm --prefer-offline)
+    - (cd src/backend && npm ci --cache .npm --prefer-offline)
+    - node scripts/check-barrels-config.mjs
+    - npm run barrels
+    # `git add -A` first: a directory newly added to barrelsby.json produces a
+    # barrel that does not exist in the commit yet, and `git diff` alone does
+    # not see untracked files — so the most likely drift of all (add a
+    # directory, forget to regenerate) would pass silently.
+    #
+    - |
+      git add -A
+      git diff --cached --exit-code || {
+        echo "ERROR: Generated barrels are stale. Run 'make barrels' (or 'npm run barrels') and commit the result."
+        exit 1
+      }
+
+# ==============================================================================
+# MIGRATIONS
+# ==============================================================================
+# `prisma migrate deploy` does not checksum migrations it has already applied —
+# it branches on the pending count alone, so an edited migration file is
+# silently ignored on every database that already ran it, while a fresh one gets
+# the new content. Nothing reports the divergence. This job is the only
+# mechanical enforcement of CLAUDE.md's "Never edit an applied migration".
+#
+# Merge requests only: on a push to main there is nothing left to gate.
+migration-immutability:
+  stage: check
+  image: alpine:3.22
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  variables:
+    # The merge base must be present locally for the diff below.
+    GIT_DEPTH: 0
+  before_script:
+    - apk add --no-cache git
+  script:
+    - |
+      changed=$(git diff --name-status "$CI_MERGE_REQUEST_DIFF_BASE_SHA" HEAD -- src/backend/prisma/migrations/ \
+        | grep -v '^A' || true)
+
+      if [ -z "$changed" ]; then
+        echo "No committed migration was changed; new migrations are unrestricted."
+        exit 0
+      fi
+
+      # `make refresh-static-data` legitimately rewrites 1_seed_static_data.
+      # It is allowed through, because the alternative is that the workflow
+      # cannot land at all — but it has to be deliberate, and the merge request
+      # has to carry the SQL that applies the same change to already-seeded
+      # databases, production included.
+      case "$CI_MERGE_REQUEST_TITLE" in
+        *"[refresh-static-data]"*)
+          echo "WARNING: This merge request edits an applied migration under a [refresh-static-data] marker."
+          echo "$changed"
+          echo "Production has already applied these files, so the deploy will NOT pick the change up."
+          echo "The description must carry the SQL that brings already-seeded databases in line."
+          exit 0
+          ;;
+      esac
+
+      echo "ERROR: This merge request changes a migration that has already been committed, and every database that already applied it will silently ignore the change (prisma migrate deploy does not checksum applied migrations). Add a new migration instead. If this is a deliberate 'make refresh-static-data' refresh, put [refresh-static-data] in the title and the catch-up SQL in the description."
+      echo "$changed"
+      exit 1
+
+# ==============================================================================
+# SONARCLOUD
+# ==============================================================================
+# Advisory: `deploy` deliberately does not list it in `needs`, so a failed
+# quality gate reports without blocking a release.
+sonarcloud:
+  stage: analyze
+  image:
+    name: sonarsource/sonar-scanner-cli:11
+    entrypoint: [""]
+  needs:
+    - job: backend-test
+      artifacts: true
+  variables:
+    GIT_DEPTH: 0
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"
+  cache:
+    key: sonar-cache
+    paths:
+      - .sonar/cache
+  script:
+    - sonar-scanner
+  allow_failure: true
+
+# ==============================================================================
+# DEPLOY
+# ==============================================================================
+deploy:
+  stage: deploy
+  image: docker:28-cli
+  interruptible: false
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+  # Explicit, and deliberately not the whole `check` stage: sonarcloud is
+  # advisory and migration-immutability does not run on main.
+  needs:
+    - backend-lint
+    - backend-test
+    - backend-build
+    - frontend-lint
+    - frontend-typecheck
+    - frontend-messages
+    - frontend-test
+    - frontend-build
+    - openapi-drift
+    - barrels-drift
+  variables:
+    # The runner mounts the host Docker socket, so builds hit a long-lived
+    # daemon and reuse its layer cache. No buildx, no dind, no cache export.
+    DOCKER_HOST: unix:///var/run/docker.sock
+    # Required for --secret below.
+    DOCKER_BUILDKIT: "1"
+  script:
+    - apk add --no-cache openssh-client
+    - echo "$CI_REGISTRY_PASSWORD" | docker login "$CI_REGISTRY" -u "$CI_REGISTRY_USER" --password-stdin
+
+    - docker build -f docker/backend/Dockerfile --target prod
+      -t "$CI_REGISTRY_IMAGE/backend:$CI_COMMIT_SHA" -t "$CI_REGISTRY_IMAGE/backend:latest" .
+    # Same Dockerfile, `migrate` target — shares the backend's cached base
+    # layers, so this adds seconds, not a build.
+    - docker build -f docker/backend/Dockerfile --target migrate
+      -t "$CI_REGISTRY_IMAGE/backend-migrate:$CI_COMMIT_SHA" -t "$CI_REGISTRY_IMAGE/backend-migrate:latest" .
+    # The scheduler generates every match, stat and shot chart. It is built and
+    # published like the rest so the deploy carries it, and so it has a :SHA
+    # tag to roll back to.
+    - docker build -f docker/python-script/Dockerfile
+      -t "$CI_REGISTRY_IMAGE/scheduler:$CI_COMMIT_SHA" -t "$CI_REGISTRY_IMAGE/scheduler:latest" .
+    # SENTRY_AUTH_TOKEN goes in as a BuildKit secret, never a build arg: the
+    # Dockerfile mounts it at /run/secrets/sentry_auth_token, and an ARG/ENV
+    # would persist in the image config that gets pushed. Written to a file
+    # rather than passed as env= so the form works on any BuildKit version.
+    - |
+      umask 077
+      printf '%s' "$SENTRY_AUTH_TOKEN" > /tmp/sentry_auth_token
+      docker build -f docker/frontend/Dockerfile --target prod \
+        --build-arg "NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL" \
+        --build-arg "FRONTEND_URL=$FRONTEND_URL" \
+        --secret id=sentry_auth_token,src=/tmp/sentry_auth_token \
+        -t "$CI_REGISTRY_IMAGE/frontend:$CI_COMMIT_SHA" -t "$CI_REGISTRY_IMAGE/frontend:latest" .
+      rm -f /tmp/sentry_auth_token
+
+    - for n in backend backend-migrate scheduler frontend; do
+        docker push --all-tags "$CI_REGISTRY_IMAGE/$n";
+      done
+
+    # Plain ssh rather than a third-party integration: the deploy is simple
+    # enough that nothing external needs to handle the SSH key. Secrets are
+    # passed as env vars, never expanded into script text; the remote script
+    # cannot see runner env, so non-secrets ride an env prefix on the ssh
+    # command and the registry token is the first line of stdin, read before
+    # the script.
+    - |
+      mkdir -p ~/.ssh
+      # VPS_SSH_KEY is a File-type CI variable, so it arrives as the path to a
+      # temp file holding the key. Copied rather than echoed: a File variable
+      # keeps the key's line structure intact, which an echo through the shell
+      # can mangle.
+      cp "$VPS_SSH_KEY" ~/.ssh/deploy_key
+      chmod 600 ~/.ssh/deploy_key
+      # The host key is pinned, not discovered. ssh-keyscan would re-learn the
+      # key on every deploy and trust whatever answered — anyone able to
+      # intercept runner → VPS receives the registry token on stdin and runs
+      # this script as `deploy`, which is in the `docker` group and so
+      # root-equivalent in practice.
+      #
+      # VPS_HOST_KEY holds the key material only ("ssh-ed25519 AAAA…"), not a
+      # full known_hosts line, so the host label below always matches the
+      # address ssh is about to use. Refresh it after checking the fingerprint
+      # against the Hetzner console:
+      #   ssh-keyscan -t ed25519 <VPS_HOST> | grep -v '^#' | cut -d' ' -f2-
+      if [ -z "$VPS_HOST_KEY" ]; then
+        echo "ERROR: VPS_HOST_KEY is not set. Deploying would mean trusting an unverified SSH host key, so this step fails instead."
+        exit 1
+      fi
+      printf '%s %s\n' "$VPS_HOST" "$VPS_HOST_KEY" > ~/.ssh/known_hosts
+      chmod 600 ~/.ssh/known_hosts
+      {
+      printf '%s\n' "$DEPLOY_REGISTRY_TOKEN"
+      cat <<'DEPLOY'
+      set -e
+      cd /opt/beyondthearc
+      # Remembered across the pull so the Grafana reload below can tell whether
+      # this deploy actually changed any alerting provisioning.
+      pre_pull_head=$(git rev-parse HEAD)
+      git pull
+      echo "$REGISTRY_TOKEN" | docker login "$REGISTRY_HOST" -u "$DEPLOY_REGISTRY_USER" --password-stdin
+      # Pin the deployed images to this commit's tag. Persisted in .env so any
+      # later manual `compose up` keeps running the same images instead of
+      # silently jumping to whatever :latest points at.
+      # Rollback = set IMAGE_TAG to a previous SHA and rerun pull + up.
+      if grep -q '^IMAGE_TAG=' .env; then
+        sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=$DEPLOY_TAG/" .env
+      else
+        echo "IMAGE_TAG=$DEPLOY_TAG" >> .env
+      fi
+      echo "Disk before pull:" && df -h / | tail -1
+      docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml pull frontend backend migrate scheduler
+      docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml up -d
+      # Pull first, prune second. Every deploy pins :SHA tags, so old tagged
+      # images accumulate until the disk health indicator trips (>90% of /) —
+      # they do have to go. But pruning before the pull means a registry that
+      # refuses the login, or a tag that was never pushed, lands on a host whose
+      # previous images have already been deleted: production down, with nothing
+      # local to roll back to. Pruning after a successful pull turns that same
+      # failure into a red pipeline and an untouched host.
+      #
+      # Safe to run while the new containers are up: it removes images no
+      # container references, and `up -d` above has already moved them onto the
+      # new ones. All tags remain in the registry, so rollback re-pulls by
+      # IMAGE_TAG and local copies of old images are not needed.
+      echo "Disk before image prune:" && df -h / | tail -1
+      docker image prune -af
+      echo "Disk after image prune:" && df -h / | tail -1
+      # Prometheus reads its scrape config only at startup, and `up -d`
+      # recreates a container when its *configuration* changes — a bind-mounted
+      # file's contents are not part of that hash. So a new scrape job lands on
+      # disk and is never loaded.
+      #
+      # This must run BEFORE the Grafana restart below. An alert whose series
+      # does not exist yet reads NoData, and the availability rules set
+      # `noDataState: Alerting` on purpose — so restarting Grafana first would
+      # fire a false alert for the two minutes it takes Prometheus to come back
+      # and scrape.
+      if ! git diff --quiet "$pre_pull_head" HEAD -- docker/config/prometheus.yml docker/config/blackbox.yml; then
+        echo "Prometheus or blackbox config changed in this deploy — restarting both to load it"
+        docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml restart blackbox-exporter prometheus
+      fi
+      # Grafana reads provisioning/alerting/*.yml only at startup, and the same
+      # configuration-hash rule applies. Conditional rather than unconditional
+      # because a restart restarts the `for:` clocks, which run 2-10 minutes
+      # here — an unrelated deploy should not delay a pending Disk Full by ten
+      # minutes. Dashboards need no equivalent: their provider sets no
+      # updateIntervalSeconds, so Grafana's own poll picks them up.
+      if ! git diff --quiet "$pre_pull_head" HEAD -- docker/config/grafana/provisioning/alerting/; then
+        echo "Alerting provisioning changed in this deploy — restarting Grafana to load it"
+        docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml restart grafana
+      fi
+      # Fail the deploy if the new containers don't come up healthy — a
+      # crash-looping container should be a red pipeline, not a Grafana alert.
+      backend_ok=""
+      for i in $(seq 1 12); do
+        if curl -fsS -m 5 http://localhost:4000/api/health/ready > /dev/null 2>&1; then
+          backend_ok=1
+          break
+        fi
+        sleep 5
+      done
+      if [ -z "$backend_ok" ]; then
+        echo "ERROR: Backend failed health check after 60s — deploy failed, prod may be degraded. Roll back via IMAGE_TAG in .env."
+        docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml logs --tail 50 backend
+        exit 1
+      fi
+      echo "Backend healthy."
+      # The same retry loop as the backend, and it has to be one.
+      # `frontend.depends_on` waits for `service_healthy`, so the frontend
+      # starts *after* the loop above succeeds — a single un-retried curl fires
+      # against a socket that is not listening yet, exits 56, and `set -e` kills
+      # the deploy before the `if` below can report a code.
+      #
+      # `frontend_code` is assigned inside the `if` condition on purpose: under
+      # `set -e` a bare `x=$(curl ...)` that cannot connect aborts the script.
+      frontend_ok=""
+      frontend_code=""
+      for i in $(seq 1 12); do
+        if frontend_code=$(curl -s -o /dev/null -m 5 -w '%{http_code}' http://localhost:3000/en) \
+           && [ "$frontend_code" = "200" ]; then
+          frontend_ok=1
+          break
+        fi
+        sleep 5
+      done
+      if [ -z "$frontend_ok" ]; then
+        echo "ERROR: Frontend failed health check after 60s (last HTTP '$frontend_code') — deploy failed, prod may be degraded. Roll back via IMAGE_TAG in .env."
+        docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml logs --tail 50 frontend
+        exit 1
+      fi
+      echo "Frontend healthy."
+      # Prune only after the new containers proved healthy.
+      docker system prune -f
+      DEPLOY
+      # VPS_USER is `deploy`, an unprivileged account that owns
+      # /opt/beyondthearc and belongs to the `docker` group. The group is what
+      # makes every command above work, and it is also root-equivalent
+      # (`docker run -v /:/host`), so this is an audit-trail and
+      # accident-blast-radius boundary, not a containment one. Bounding what a
+      # stolen VPS_SSH_KEY can do needs an authorized_keys forced command.
+      } | ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes "$VPS_USER@$VPS_HOST" \
+          "REGISTRY_HOST='$CI_REGISTRY' DEPLOY_REGISTRY_USER='$DEPLOY_REGISTRY_USER' DEPLOY_TAG='$CI_COMMIT_SHA' sh -c 'read -r REGISTRY_TOKEN && export REGISTRY_TOKEN && exec bash -s'"
