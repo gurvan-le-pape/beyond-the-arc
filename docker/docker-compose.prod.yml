@@ -7,12 +7,22 @@ services:
     build: !reset null
     environment:
       - NODE_ENV=production
+    # Prod only. Every other long-running service carries this in the base
+    # file, but the two application containers defaulted to `no`, so a VPS
+    # reboot brought Postgres, the scheduler and the whole observability stack
+    # back while the site itself stayed down until someone ran `up -d` by hand.
+    # Kept out of the base file because dev wants the opposite: a dev server
+    # that crashes should stay down and be read, not be respawned in a loop.
+    restart: unless-stopped
 
   backend:
     image: ${REGISTRY_IMAGE}/backend:${IMAGE_TAG:-latest}
     build: !reset null
     environment:
       - NODE_ENV=production
+    # See the frontend service. `unless-stopped` rather than `always` so a
+    # deliberate `compose stop` during an incident is not undone by a reboot.
+    restart: unless-stopped
 
   migrate:
     image: ${REGISTRY_IMAGE}/backend-migrate:${IMAGE_TAG:-latest}
