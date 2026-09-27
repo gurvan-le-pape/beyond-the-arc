@@ -19,6 +19,12 @@ workflow:
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH == "main"
+    # Manual run from the UI or the API, the counterpart of the GitHub
+    # workflow's workflow_dispatch. Kept because a dropped push webhook once
+    # left a merge to main with no pipeline and no way to re-fire it. Safe on
+    # any branch: `deploy` gates on main separately, so a manual run elsewhere
+    # executes the checks and nothing else.
+    - if: $CI_PIPELINE_SOURCE == "web"
     - when: never
 
 default:
