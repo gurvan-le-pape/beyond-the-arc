@@ -222,10 +222,8 @@ barrels-drift:
     # not see untracked files — so the most likely drift of all (add a
     # directory, forget to regenerate) would pass silently.
     #
-    # .npm is excluded because the install steps above create it inside the
-    # project directory, where `git add -A` would otherwise stage it as drift.
     - |
-      git add -A -- ':!.npm' ':!src/*/.npm'
+      git add -A
       git diff --cached --exit-code || {
         echo "ERROR: Generated barrels are stale. Run 'make barrels' (or 'npm run barrels') and commit the result."
         exit 1
