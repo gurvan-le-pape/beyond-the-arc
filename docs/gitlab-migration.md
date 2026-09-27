@@ -14,6 +14,8 @@ GitLab requires for shared runners.
 
 ## Runner registration
 
+Two settings are not optional, and neither announces itself when missed.
+
 Register with the **docker executor**, and mount the host Docker socket so the
 `deploy` job builds against a long-lived daemon. That daemon's layer cache is
 what replaces GitHub's `cache-from/cache-to: type=gha`, which has no counterpart
@@ -29,6 +31,22 @@ The socket makes the job root-equivalent on the host. That is acceptable here
 because the runner runs on the developer's own machine and builds only this
 repository's own Dockerfiles; it would not be on a runner shared with anything
 else.
+
+**Untagged jobs.** A new runner runs only jobs carrying a matching tag. No job
+here declares `tags:`, so the runner must be created with *Run untagged jobs*
+checked, or every pipeline sits pending with no error.
+
+**Instance runners off.** Settings -> CI/CD -> Runners -> disable *Enable
+instance runners for this project*. Left on, GitLab's shared runners win most
+jobs — measured on the first green pipeline: 11 of 12 jobs ran on
+`k8s.saas-linux-small-amd64`, one on `wsl-local`. That spends the 400 free
+compute minutes the self-hosted runner exists to avoid, and it breaks `deploy`
+outright, which needs the host Docker socket that only this runner mounts.
+
+**Concurrency.** `concurrent = 1` is the default, a global key at the top of
+`config.toml`, and it serializes all twelve jobs. `concurrent = 4` on an 8-core
+host runs a full pipeline in under two minutes and leaves the machine usable;
+raise it only if that proves slow.
 
 WSL note: the runner only executes while WSL is up. `ci.yml`'s triggers are
 pushes and merge requests, which only happen while you are working, so this
@@ -81,11 +99,41 @@ every deploy pushes four `:SHA`-tagged images. Set a cleanup policy on the
 container registry (keep the most recent N tags plus `latest`) or the quota will
 fill the way the VPS disk did.
 
+## SonarCloud
+
+The original organization is owned by the GitHub-authenticated identity.
+Signing in through GitLab creates a separate SonarCloud user that is a member
+of nothing — the old project stays readable only because it is public, and its
+binding still points at the suspended GitHub repository. The scanner
+authenticates, then fails resolving the merge request against that binding:
+
+    Auto-configuring pull request 1
+    ERROR Could not find the pullrequest with key '1'
+
+Restricting the job to `main` would sidestep it, and is the wrong trade: the
+analysis exists to catch a regression before it is merged, not after.
+
+So the project now lives in a new organization bound to GitLab —
+`sonar.organization=beyondthearc`, `sonar.projectKey=gurvan-le-pape_beyond-the-arc2`,
+still on `https://sonarcloud.io`. Analysis history and the server-side quality
+gate did not carry over; the exclusions and their reasoning did, since they
+live in `sonar-project.properties`.
+
+Disable *Automatic Analysis* (project -> Administration -> Analysis Method).
+It ignores `sonar-project.properties` entirely — its first run reported 58k
+lines of code and 1.9k maintainability issues against the configured
+analysis's 34k and 4 — and SonarCloud refuses a CI analysis while it is on.
+
 ## Still to do
 
 - Rewrite `docs/ci-cd.md`, which documents the GitHub pipeline.
 - Port `.github/workflows/audit.yml` as a scheduled pipeline.
-- Recreate the SonarCloud project against GitLab: `sonar-project.properties`
-  pins `sonar.projectKey=gurvan-le-pape_beyond-the-arc` and
-  `sonar.organization=gurvan-le-pape`, both bound to the GitHub account.
 - Replace Dependabot, which has no GitLab equivalent, with Renovate.
+- Bound the Next.js cache. `docker/frontend/Dockerfile` copies `.next/standalone`
+  and `.next/static` and mounts nothing at `/app/.next/cache`, so the fetch Data
+  Cache grows unbounded in the container's writable layer. Deploy frequency was
+  its only eviction mechanism — every deploy recreated the container — and five
+  weeks without one filled the VPS disk (27.4 GB in that layer alone, 38 GB
+  total). See `docs/observability.md` for the alerting side: the Disk Full rule
+  fired correctly and Grafana then stopped writing at 100%, because it stores
+  its alert state on the disk it is watching.
