@@ -413,17 +413,24 @@ deploy:
       else
         echo "IMAGE_TAG=$DEPLOY_TAG" >> .env
       fi
-      # Remove images not referenced by any container before pulling new ones.
-      # A post-deploy `docker system prune -f` only drops *dangling* images, but
-      # every deploy pins :SHA tags, so old tagged images accumulate until the
-      # disk health indicator trips (>90% of /). All tags remain in the
-      # registry; rollback re-pulls by IMAGE_TAG, so local copies of old images
-      # are not needed.
+      echo "Disk before pull:" && df -h / | tail -1
+      docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml pull frontend backend migrate scheduler
+      docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml up -d
+      # Pull first, prune second. Every deploy pins :SHA tags, so old tagged
+      # images accumulate until the disk health indicator trips (>90% of /) —
+      # they do have to go. But pruning before the pull means a registry that
+      # refuses the login, or a tag that was never pushed, lands on a host whose
+      # previous images have already been deleted: production down, with nothing
+      # local to roll back to. Pruning after a successful pull turns that same
+      # failure into a red pipeline and an untouched host.
+      #
+      # Safe to run while the new containers are up: it removes images no
+      # container references, and `up -d` above has already moved them onto the
+      # new ones. All tags remain in the registry, so rollback re-pulls by
+      # IMAGE_TAG and local copies of old images are not needed.
       echo "Disk before image prune:" && df -h / | tail -1
       docker image prune -af
       echo "Disk after image prune:" && df -h / | tail -1
-      docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml pull frontend backend migrate scheduler
-      docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml up -d
       # Prometheus reads its scrape config only at startup, and `up -d`
       # recreates a container when its *configuration* changes — a bind-mounted
       # file's contents are not part of that hash. So a new scrape job lands on
