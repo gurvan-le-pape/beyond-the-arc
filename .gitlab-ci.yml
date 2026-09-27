@@ -367,7 +367,11 @@ deploy:
     # the script.
     - |
       mkdir -p ~/.ssh
-      printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/deploy_key
+      # VPS_SSH_KEY is a File-type CI variable, so it arrives as the path to a
+      # temp file holding the key. Copied rather than echoed: a File variable
+      # keeps the key's line structure intact, which an echo through the shell
+      # can mangle.
+      cp "$VPS_SSH_KEY" ~/.ssh/deploy_key
       chmod 600 ~/.ssh/deploy_key
       # The host key is pinned, not discovered. ssh-keyscan would re-learn the
       # key on every deploy and trust whatever answered — anyone able to
