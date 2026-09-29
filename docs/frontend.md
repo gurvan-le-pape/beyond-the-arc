@@ -231,6 +231,27 @@ through `fetchApi`'s `revalidate` option:
 `DEFAULT` applies to any call that does not ask for something else, so a new
 server service is cached whether or not its author thought about it.
 
+#### Where the server cache lives
+
+In memory only. `experimental.isrFlushToDisk: false` in `next.config.js` stops
+Next writing the Data Cache (`.next/cache/fetch-cache/`) and ISR renders
+(`.next/server/app/`) to disk, which leaves the in-process LRU as the single
+store, capped by `cacheMaxMemorySize` (50 MB by default).
+
+With disk writes on, nothing ever deleted those files. A player detail page
+costs about 340 KB per locale (three fetch entries, plus HTML, RSC payload and
+metadata), and there are hundreds of thousands of player pages. Recreating the
+container on every deploy was the only thing that cleared them, and five weeks
+without a deploy filled the production disk (2026-09-27, 27.4 GB in the
+frontend container alone).
+
+The trade-off: the cache is empty after a restart, and an entry evicted by
+size is re-rendered on its next request. Neither is new: every deploy already
+started from an empty cache, and a long-tail page such as one player out of
+hundreds of thousands is rarely requested twice within its revalidate window
+anyway. Build-time prerendered pages are unaffected, since they are read from
+the image rather than from the cache.
+
 ---
 
 ## Internationalisation

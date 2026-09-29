@@ -9,6 +9,16 @@ const nextConfig = {
   // the production image ships without the build toolchain.
   output: "standalone",
   reactStrictMode: false,
+  experimental: {
+    // Keep the Data Cache and ISR pages in memory only. With the default
+    // `true`, every cached fetch and every ISR render is also written under
+    // `.next/` and nothing ever deletes it: ~340 KB per player page per
+    // locale, across hundreds of thousands of players, in a container layer
+    // with no size limit. Memory is the in-process LRU capped by
+    // `cacheMaxMemorySize` (50 MB default), so eviction is by size instead
+    // of by redeploy. See docs/frontend.md, "Where the server cache lives".
+    isrFlushToDisk: false,
+  },
 };
 
 module.exports = withSentryConfig(withNextIntl(nextConfig), {
