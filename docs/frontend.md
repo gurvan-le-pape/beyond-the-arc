@@ -213,6 +213,12 @@ Every one of these pairs is set in a `features/*/api/*Queries.ts` options
 factory; the hooks spread those options and never set a lifetime of their own,
 so the tier a query belongs to is readable in one file.
 
+The `gcTime` column applies in the browser only. During a server render the
+`QueryProvider` builds a client that pins every query's `gcTime` to `Infinity`,
+TanStack's server default. A finite value there arms a timer that keeps the
+whole render in memory until it fires; see `ServerQueryClient` in
+`lib/providers/query-client-provider.tsx`.
+
 **Background refetching on window focus is off** — `refetchOnWindowFocus: false`
 on the `QueryClient`, and no query overrides it. `refetchOnMount` is `true`, so a
 stale query refetches when a component mounts and not before. That is the only
