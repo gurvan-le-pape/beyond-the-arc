@@ -129,11 +129,9 @@ analysis's 34k and 4 — and SonarCloud refuses a CI analysis while it is on.
 - Rewrite `docs/ci-cd.md`, which documents the GitHub pipeline.
 - Port `.github/workflows/audit.yml` as a scheduled pipeline.
 - Replace Dependabot, which has no GitLab equivalent, with Renovate.
-- Bound the Next.js cache. `docker/frontend/Dockerfile` copies `.next/standalone`
-  and `.next/static` and mounts nothing at `/app/.next/cache`, so the fetch Data
-  Cache grows unbounded in the container's writable layer. Deploy frequency was
-  its only eviction mechanism — every deploy recreated the container — and five
-  weeks without one filled the VPS disk (27.4 GB in that layer alone, 38 GB
-  total). See `docs/observability.md` for the alerting side: the Disk Full rule
-  fired correctly and Grafana then stopped writing at 100%, because it stores
-  its alert state on the disk it is watching.
+- Give the disk alert an off-host heartbeat. When the Next.js cache filled the
+  VPS disk (27.4 GB in the frontend container's layer, 38 GB total; the cache is
+  now memory-only, see `docs/frontend.md`, "Where the server cache lives"), the
+  Disk Full rule fired correctly and Grafana then stopped writing at 100%,
+  because it stores its alert state on the disk it is watching. See
+  `docs/observability.md`.
