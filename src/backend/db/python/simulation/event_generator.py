@@ -2,6 +2,9 @@ import math
 import random
 import logging
 
+from event_rules import BALL_HANDLER_TURNOVERS, OFFENSIVE_FOULS
+
+
 class EventGenerator:
     def __init__(self, state_manager):
         self.state_manager = state_manager
@@ -107,7 +110,17 @@ class EventGenerator:
                 "description": f"{name(blocker)} blocked {name(shooter)}'s shot.",
             }
 
-        elif event_type in ["blocking_foul", "pushing_foul", "reaching_foul", "charging_foul", "illegal_screen"]:
+        elif event_type in OFFENSIVE_FOULS:
+            fouler = random.choice(offensive)  # noqa: S2245
+            victim = random.choice(defensive)  # noqa: S2245
+            return {
+                "occurred_at": None,
+                "event_type": event_type,
+                "player_roles": {"fouler": fouler, "victim": victim},
+                "description": f"{name(fouler)} committed a {event_type.replace('_', ' ')} on {name(victim)}.",
+            }
+
+        elif event_type in ["blocking_foul", "pushing_foul", "reaching_foul"]:
             fouler = random.choice(defensive)  # noqa: S2245
             victim = random.choice(offensive)  # noqa: S2245
             return {
@@ -162,8 +175,7 @@ class EventGenerator:
                 "description": "End of the quarter.",
             }
 
-        elif event_type in ["traveling", "carrying", "double_dribble", "bad_pass",
-                            "shot_clock_violation", "offensive_foul"]:
+        elif event_type in BALL_HANDLER_TURNOVERS:
             player = random.choice(offensive)  # noqa: S2245
             return {
                 "occurred_at": None,

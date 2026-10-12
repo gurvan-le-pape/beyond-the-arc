@@ -21,7 +21,13 @@ from datetime import datetime, timedelta
 
 from db.repositories import match_repository, team_repository
 from db.repositories.match_repository import ScheduledMatch
-from event_rules import BALL_HANDLER_TURNOVERS, MADE_SHOTS, MISSED_SHOTS, SHOT_CATEGORY_STAT_PREFIX
+from event_rules import (
+    BALL_HANDLER_TURNOVERS,
+    MADE_SHOTS,
+    MISSED_SHOTS,
+    OFFENSIVE_FOULS,
+    SHOT_CATEGORY_STAT_PREFIX,
+)
 from generation.playtime_generator import generate as generate_playtime
 from simulation.match_simulator import MatchSimulator
 
@@ -180,6 +186,12 @@ def _tally_rebounder(stats: dict[str, int], event_type: str) -> None:
         stats["rebounds_defensive"] += 1
 
 
+def _tally_fouler(stats: dict[str, int], event_type: str) -> None:
+    stats["fouls"] += 1
+    if event_type in OFFENSIVE_FOULS:
+        stats["turnovers"] += 1
+
+
 def _tally_victim(stats: dict[str, int], event_type: str) -> None:
     # The victim of a steal lost the ball; the victim of a foul did not.
     if event_type == "steal":
@@ -197,7 +209,7 @@ def _count(column: str):
 # player a row.
 _ROLE_TALLIES = {
     "shooter": _tally_shooter,
-    "fouler": _count("fouls"),
+    "fouler": _tally_fouler,
     "rebounder": _tally_rebounder,
     "stealer": _count("steals"),
     "assister": _count("assists"),
