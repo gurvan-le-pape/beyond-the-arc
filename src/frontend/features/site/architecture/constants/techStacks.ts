@@ -131,7 +131,7 @@ export const TECH_STACKS = [
         descriptionKey: "architecture.devops.lintDesc",
       },
       {
-        name: "GitHub Actions",
+        name: "GitLab CI",
         icon: GitBranch,
         descriptionKey: "architecture.devops.cicdDesc",
       },

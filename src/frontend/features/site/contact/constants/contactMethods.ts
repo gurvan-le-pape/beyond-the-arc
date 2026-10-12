@@ -1,10 +1,10 @@
 // src/frontend/features/site/contact/constants/contactMethods.ts
-import { Github, Linkedin, Mail } from "lucide-react";
+import { Gitlab, Linkedin, Mail } from "lucide-react";
 
 import {
   CONTACT_EMAIL,
   CONTACT_MAILTO,
-  GITHUB_PROFILE_URL,
+  GITLAB_PROFILE_URL,
   LINKEDIN_URL,
 } from "@/shared/constants";
 
@@ -30,10 +30,10 @@ export const CONTACT_METHODS = [
     color: "from-blue-500 to-cyan-500",
   },
   {
-    icon: Github,
-    labelKey: "contact.github",
-    value: stripScheme(GITHUB_PROFILE_URL),
-    href: GITHUB_PROFILE_URL,
+    icon: Gitlab,
+    labelKey: "contact.gitlab",
+    value: stripScheme(GITLAB_PROFILE_URL),
+    href: GITLAB_PROFILE_URL,
     color: "from-gray-700 to-gray-900",
   },
   {

@@ -1,9 +1,9 @@
 // src/frontend/features/site/docs/components/sections/DocsGettingStartedSection.tsx
 import { Text } from "@/shared/components/typography";
-import { GITHUB_CLONE_URL } from "@/shared/constants";
+import { GITLAB_CLONE_URL } from "@/shared/constants";
 
 const GETTING_STARTED_COMMANDS = `# Clone the repository
-git clone ${GITHUB_CLONE_URL}
+git clone ${GITLAB_CLONE_URL}
 
 # Install dependencies
 cd beyond-the-arc

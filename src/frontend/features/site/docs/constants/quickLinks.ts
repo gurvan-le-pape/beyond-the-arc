@@ -1,10 +1,10 @@
 // src/frontend/features/site/docs/constants/quickLinks.ts
-import { BookOpen, Download, ExternalLink, Github } from "lucide-react";
+import { BookOpen, Download, ExternalLink, Gitlab } from "lucide-react";
 
 import {
   API_DOCS_URL,
   CONTACT_MAILTO,
-  GITHUB_REPO_URL,
+  GITLAB_REPO_URL,
 } from "@/shared/constants";
 
 /**
@@ -13,9 +13,9 @@ import {
  */
 export const QUICK_LINKS = [
   {
-    href: GITHUB_REPO_URL,
-    icon: Github,
-    labelKey: "docs.quickLinks.github",
+    href: GITLAB_REPO_URL,
+    icon: Gitlab,
+    labelKey: "docs.quickLinks.gitlab",
     subKey: "docs.quickLinks.viewSource",
     external: true,
     trailIcon: ExternalLink,
