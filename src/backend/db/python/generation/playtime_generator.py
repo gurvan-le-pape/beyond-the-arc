@@ -80,8 +80,8 @@ def generate(
     active = order[:ON_COURT]
     bench = order[ON_COURT:]
     playtimes: dict[int, list[tuple[int, int]]] = {pid: [] for pid in order}
-    stint_start = {pid: 0 for pid in active}
-    played = {pid: 0.0 for pid in order}
+    stint_start = dict.fromkeys(active, 0)
+    played = dict.fromkeys(order, 0.0)
     substitutions: list[dict] = []
 
     now = 0
