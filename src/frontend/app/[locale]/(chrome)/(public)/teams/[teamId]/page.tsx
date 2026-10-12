@@ -9,7 +9,9 @@ import {
   TeamHeader,
   TeamMatchHistoryTable,
   TeamRoster,
+  TeamUpcomingMatchesTable,
 } from "@/features/teams/components";
+import { splitMatchHistory } from "@/features/teams/utils";
 import { PerGameStatsPanel } from "@/shared/components/domain";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
@@ -76,6 +78,7 @@ async function TeamDetailPage({ params }: LocalePageProps<{ teamId: string }>) {
   ]).catch(handleServerError);
 
   const { matches, seasonStats } = matchHistory;
+  const { played, upcoming } = splitMatchHistory(matches);
 
   return (
     <PageLayout>
@@ -85,7 +88,9 @@ async function TeamDetailPage({ params }: LocalePageProps<{ teamId: string }>) {
 
       <TeamRoster players={team.players} />
 
-      <TeamMatchHistoryTable team={team} matches={matches} maxRows={5} />
+      <TeamMatchHistoryTable team={team} matches={played} maxRows={5} />
+
+      <TeamUpcomingMatchesTable team={team} matches={upcoming} />
 
       <TeamShotChart
         matchEvents={matchEvents}
