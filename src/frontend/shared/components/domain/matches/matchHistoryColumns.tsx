@@ -4,8 +4,6 @@ import type { ReactNode } from "react";
 import type { TableColumn } from "@/shared/components/table";
 import { formatMatchDateTime } from "@/shared/utils";
 
-import { MatchTeamLabel } from "./MatchTeamLabel";
-
 interface MatchWithTeams {
   startsAt: Date | string;
   homeTeam: { id: number; club: { name: string } };
@@ -29,36 +27,26 @@ export function buildMatchDateColumn<T extends MatchWithTeams>(
 }
 
 /**
- * Shared "home vs away" matchup column for match-history tables. `currentTeamId`
- * lets MatchTeamLabel highlight whichever side the table is scoped to.
+ * Shared "opponent" column for match-history tables scoped to one team — a
+ * team's own history, or a player's.
  *
- * `separator` is the caller's string — the "vs" between the two club names is
- * visible user-facing text, so it is resolved by the caller's translator, not
- * hardcoded here in one language.
+ * Every row involves that team, so naming it again on each row only pushes the
+ * stat columns off a phone screen. The column names the other side and which
+ * side hosted: `describe` is the caller's translator, since "vs"/"at" (or
+ * "contre"/"chez") is user-facing text.
  */
-export function buildMatchupColumn<T extends MatchWithTeams>(
+export function buildOpponentColumn<T extends MatchWithTeams>(
   header: ReactNode,
   currentTeamId: number,
-  separator: string,
+  describe: (opponent: string, venue: "home" | "away") => string,
 ): TableColumn<T> {
   return {
-    key: "match",
+    key: "opponent",
     header,
-    render: (match: T) => (
-      <>
-        <MatchTeamLabel
-          name={match.homeTeam.club.name}
-          teamId={match.homeTeam.id}
-          currentTeamId={currentTeamId}
-        />
-        {separator}
-        <MatchTeamLabel
-          name={match.awayTeam.club.name}
-          teamId={match.awayTeam.id}
-          currentTeamId={currentTeamId}
-        />
-      </>
-    ),
-    align: "center",
+    render: (match: T) =>
+      match.homeTeam.id === currentTeamId
+        ? describe(match.awayTeam.club.name, "home")
+        : describe(match.homeTeam.club.name, "away"),
+    align: "left",
   };
 }

@@ -20,7 +20,7 @@ interface PlayerMatchHistoryTableProps {
  * A player's recent matches with their stat line for each.
  *
  * `player` is not rendered — it configures the columns, supplying the team id
- * the matchup column needs to work out which side this player was on. The rows
+ * the opponent column needs to work out which side this player was on. The rows
  * come entirely from `matches`.
  *
  * Shows `maxRows` (5 by default) behind a show-all toggle, so passing the full
