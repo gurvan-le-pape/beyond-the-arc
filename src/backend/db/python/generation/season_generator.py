@@ -22,10 +22,11 @@ from db.repositories import championship_repository, match_repository, team_repo
 from utils.division_utils import compute_divisions_and_pools
 from utils.player_utils import (
     generate_player_birthdate,
+    generate_player_build,
     generate_player_height,
     generate_player_name,
-    generate_player_position,
     generate_player_weight,
+    generate_roster_positions,
 )
 from utils.schedule_utils import build_round_robin_schedule, compute_matchday_datetime
 
@@ -126,19 +127,20 @@ class SeasonGenerator:
         teams: list[tuple[int, str, str]],
         players_per_team: int = 12,
     ) -> None:
-        rows = [
-            (
-                generate_player_name(gender),
-                number,
-                generate_player_position(),
-                generate_player_height(category, gender),
-                generate_player_weight(category, gender),
-                generate_player_birthdate(category),
-                team_id,
-            )
-            for team_id, gender, category in teams
-            for number in range(1, players_per_team + 1)
-        ]
+        rows = []
+        for team_id, gender, category in teams:
+            positions = generate_roster_positions(players_per_team)
+            for number, position in enumerate(positions, start=1):
+                build = generate_player_build(position)
+                rows.append((
+                    generate_player_name(gender),
+                    number,
+                    position,
+                    generate_player_height(category, gender, build),
+                    generate_player_weight(category, gender, build),
+                    generate_player_birthdate(category),
+                    team_id,
+                ))
         team_repository.insert_players(cursor, rows)
 
     # ------------------------------------------------------------------

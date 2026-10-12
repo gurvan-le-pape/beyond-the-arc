@@ -16,18 +16,48 @@ def generate_player_name(gender: str) -> str:
     return f"{first} {_faker.last_name()}"
 
 
-def generate_player_position() -> str:
-    return random.choice(POSITIONS)  # noqa: S2245
+# Where each position sits in its category's height range, as a fraction of
+# the range: guards at the short end, centres at the tall end.
+POSITION_BUILD = {"PG": 0.2, "SG": 0.35, "SF": 0.5, "PF": 0.68, "C": 0.85}
+BUILD_SPREAD = 0.12
 
 
-def generate_player_height(category: str, gender: str) -> int:
+def generate_roster_positions(size: int) -> list[str]:
+    """
+    Positions for one roster: as many full sets of the five positions as fit,
+    the rest drawn among guards and forwards, in random order so jersey
+    numbers say nothing about position.
+    """
+    positions = list(POSITIONS) * (size // len(POSITIONS))
+    positions += random.choices(["PG", "SG", "SF", "PF"], k=size - len(positions))  # noqa: S2245
+    random.shuffle(positions)  # noqa: S2245
+    return positions
+
+
+def generate_player_build(position: str) -> float:
+    """
+    Where a player sits in their category's height and weight ranges, from 0
+    (smallest) to 1 (largest): around their position's usual build, with
+    enough spread for a tall guard or a short centre now and then.
+    """
+    build = random.gauss(POSITION_BUILD[position], BUILD_SPREAD)  # noqa: S2245
+    return min(1.0, max(0.0, build))
+
+
+def _in_range(low: int, high: int, fraction: float) -> int:
+    return round(low + (high - low) * fraction)
+
+
+def generate_player_height(category: str, gender: str, build: float) -> int:
     low, high = HEIGHT_RANGES[gender][category]
-    return random.randint(low, high)  # noqa: S2245
+    return _in_range(low, high, build)
 
 
-def generate_player_weight(category: str, gender: str) -> int:
+def generate_player_weight(category: str, gender: str, build: float) -> int:
+    # Weight follows height loosely, not exactly.
     low, high = WEIGHT_RANGES[gender][category]
-    return random.randint(low, high)  # noqa: S2245
+    fraction = min(1.0, max(0.0, build + random.gauss(0, 0.1)))  # noqa: S2245
+    return _in_range(low, high, fraction)
 
 
 def generate_player_birthdate(category: str) -> date:
