@@ -36,9 +36,11 @@ function toNumber(value: StatValue): number {
  * Produces the two things a comparison row needs from one stat: the string to
  * show, and the number to compare.
  *
- * The pair is deliberately not the same value. In the key-lookup path the
- * numeric side is read from the **raw** stat, so appending a percentage to the
- * display never affects who wins.
+ * The pair is deliberately not the same value. In the key-lookup path a stat
+ * paired with a percentage **compares on that percentage**: its raw value is a
+ * made/attempted string like `"27/54"`, which is not a number, and shooting is
+ * judged on accuracy rather than on volume. An unpaired stat compares on its raw
+ * value. Either way, formatting the display never affects who wins.
  *
  * **The custom-resolver path does not have that separation** — with `valueFn`
  * the number is parsed back out of whatever it returned. A resolver that
@@ -92,6 +94,6 @@ export function resolveValue(
 
   return {
     display,
-    numeric: toNumber(raw),
+    numeric: typeof pct === "number" ? pct : toNumber(raw),
   };
 }

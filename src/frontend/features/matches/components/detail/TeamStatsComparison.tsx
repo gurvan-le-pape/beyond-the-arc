@@ -30,8 +30,10 @@ const PERCENTAGE_MAP: Record<string, string> = {
  *
  * Which stats appear is entirely `categories`; this component adds only the
  * percentage pairing. `PERCENTAGE_MAP` covers **field goals, three-pointers and
- * free throws** — a category outside that set renders its raw totals with no
- * percentage beside them, silently, because there is no field to read one from.
+ * free throws**: those rows show made/attempted with the percentage beside it,
+ * and the two teams are compared on that percentage. A category outside that
+ * set renders its raw totals with no percentage, silently, because there is no
+ * field to read one from.
  */
 export function TeamStatsComparison({
   homeStats,
