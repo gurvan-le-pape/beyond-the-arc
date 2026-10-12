@@ -16,176 +16,179 @@ SHOT_CLOCK = 24
 SHOT_CLOCK_AFTER_OFFENSIVE_REBOUND = 14
 
 
+GAME_DURATION = 2400  # 40 minutes in seconds
+
+# Events after which the other team has the ball, on a fresh shot clock.
+POSSESSION_CHANGES = {
+    "traveling", "carrying", "double_dribble", "bad_pass", "steal",
+    "shot_clock_violation", "offensive_foul", "quarter_end",
+    "defensive_rebound", "charging_foul", "illegal_screen",
+}
+SHOOTING_FOULS = set(SHOOTING_FOUL_FREE_THROWS) | set(AND_ONE_FREE_THROWS)
+
+
+class _Match:
+    """The running state of one simulated match."""
+
+    def __init__(self, starts_at):
+        self.starts_at = starts_at
+        self.events = []
+        self.score = {"home": 0, "away": 0}
+        self.possession = None
+        self.shot_clock = SHOT_CLOCK
+        self.time = 0
+        self._last_event_second = -1
+        self._milliseconds = 0
+
+    def add_event(self, event, second):
+        """Timestamp an event at `second`, a millisecond apart from others in that second."""
+        if second != self._last_event_second:
+            self._milliseconds = 0
+            self._last_event_second = second
+        else:
+            self._milliseconds += 1
+        event["occurred_at"] = self.starts_at + timedelta(seconds=second, milliseconds=self._milliseconds)
+        self.events.append(event)
+        return event
+
+    def switch_possession(self):
+        self.possession = "away" if self.possession == "home" else "home"
+
+    def turn_over(self):
+        """The other team gets the ball on a fresh shot clock."""
+        self.shot_clock = SHOT_CLOCK
+        self.switch_possession()
+
+
 class MatchSimulator:
     def __init__(self, game_states, transition_events):
         self.state_manager = GameStateManager(game_states, transition_events)
         self.event_generator = EventGenerator(self.state_manager)
 
-    def simulate_match(self, home_team_playtimes, away_team_playtimes, player_names, match_datetime):
-        game_duration = 2400  # 40 minutes in seconds
-        possession_clock = 24
-        current_time = 0
-        next_state = None
+    def simulate_match(self, home_team_playtimes, away_team_playtimes, player_names, match_datetime,
+                       player_positions=None):
         self.player_names = player_names
-
-        match_events = []
-        home_team_score = 0
-        away_team_score = 0
-        current_milliseconds = 0
-        last_event_second = -1
-
-        def add_event(event_dict, event_second):
-            nonlocal current_milliseconds, last_event_second
-            if event_second != last_event_second:
-                current_milliseconds = 0
-                last_event_second = event_second
-            else:
-                current_milliseconds += 1
-            event_dict["occurred_at"] = match_datetime + timedelta(seconds=event_second, milliseconds=current_milliseconds)
-            match_events.append(event_dict)
-            return event_dict
+        self.event_generator.positions = player_positions or {}
+        match = _Match(match_datetime)
 
         # Build incremental substitution queues — O(n log n) once, not O(n) per tick
         home_sub = SubQueue(home_team_playtimes)
         away_sub = SubQueue(away_team_playtimes)
-
-        # Seed initial active players (t=0)
         home_sub.advance(0)
         away_sub.advance(0)
 
-        # Tip-off
-        tip_off_winner = random.choice(["home", "away"])  # noqa: S2245
-        current_possession = tip_off_winner
+        self._tip_off(match, home_sub, away_sub)
 
-        if home_sub.active and away_sub.active:
-            tip_off_player = random.choice(  # noqa: S2245
-                list(home_sub.active if tip_off_winner == "home" else away_sub.active)
-            )
-            add_event({
-                "occurred_at": None,
-                "event_type": "tip_off",
-                "player_roles": {
-                    "winner": tip_off_player,
-                    "starter": list(home_sub.active) + list(away_sub.active),
-                },
-                "description": f"Tip-off won by {tip_off_winner} team.",
-            }, 0)
-            current_time += 1
-
-        while current_time < game_duration:
-            # Incrementally update active players for the current time
-            home_sub.advance(current_time)
-            away_sub.advance(current_time)
-
+        while match.time < GAME_DURATION:
+            home_sub.advance(match.time)
+            away_sub.advance(match.time)
             if not home_sub.active or not away_sub.active:
-                current_time += 1
+                match.time += 1
                 continue
+            self._play_tick(match, list(home_sub.active), list(away_sub.active))
 
-            # Convert to lists once per tick (needed for random.choice)
-            home_list = list(home_sub.active)
-            away_list = list(away_sub.active)
+        return match.events, match.score["home"], match.score["away"]
 
-            # Shot clock violation
-            if possession_clock == 0:
-                violator = random.choice(home_list if current_possession == "home" else away_list)  # noqa: S2245
-                add_event({
-                    "occurred_at": None,
-                    "event_type": "shot_clock_violation",
-                    "player_roles": {"shooter": violator},
-                    "description": "Shot clock violation.",
-                }, current_time)
-                self.state_manager.current_state = "possession"
-                possession_clock = 24
-                current_possession = "away" if current_possession == "home" else "home"
-                continue
+    def _tip_off(self, match, home_sub, away_sub):
+        tip_off_winner = random.choice(["home", "away"])  # noqa: S2245
+        match.possession = tip_off_winner
+        if not (home_sub.active and away_sub.active):
+            return
 
-            next_state = self.state_manager.get_next_state()
-            events_defined = self.state_manager.transition_events.get(self.state_manager.current_state, {}).get(next_state, [])
+        tip_off_player = self.event_generator.pick(
+            list(home_sub.active if tip_off_winner == "home" else away_sub.active), "rebound"
+        )
+        match.add_event({
+            "occurred_at": None,
+            "event_type": "tip_off",
+            "player_roles": {
+                "winner": tip_off_player,
+                "starter": list(home_sub.active) + list(away_sub.active),
+            },
+            "description": f"Tip-off won by {tip_off_winner} team.",
+        }, 0)
+        match.time += 1
 
-            last_ft_made = None
+    def _play_tick(self, match, home_list, away_list):
+        """Move the game from its current state to the next, emitting that transition's event."""
+        if match.shot_clock == 0:
+            violator = self.event_generator.pick(
+                home_list if match.possession == "home" else away_list, "turnover"
+            )
+            match.add_event({
+                "occurred_at": None,
+                "event_type": "shot_clock_violation",
+                "player_roles": {"shooter": violator},
+                "description": "Shot clock violation.",
+            }, match.time)
+            self.state_manager.current_state = "possession"
+            match.turn_over()
+            return
 
-            if events_defined:
-                event = self.state_manager.get_event_for_transition(next_state)
-                if event is None:
-                    self.state_manager.current_state = next_state
-                    continue
+        next_state = self.state_manager.get_next_state()
+        transitions = self.state_manager.transition_events.get(self.state_manager.current_state, {})
+        if transitions.get(next_state):
+            event = self.state_manager.get_event_for_transition(next_state)
+            if event is None:
+                self.state_manager.current_state = next_state
+                return
+            generated_event = self.event_generator.generate_event(
+                event, home_list, away_list, match.possession, self.player_names
+            )
+            if generated_event:
+                next_state = self._apply_event(match, generated_event, next_state)
 
-                generated_event = self.event_generator.generate_event(
-                    event, home_list, away_list, current_possession, self.player_names
-                )
+        self.state_manager.current_state = next_state
 
-                if generated_event:
-                    add_event(generated_event, current_time)
-                    event_type = generated_event["event_type"]
+        # Advance game clock
+        time_spent = min(self._time_spent_for_state(next_state, match.shot_clock), match.shot_clock)
+        match.time += time_spent
+        match.shot_clock -= time_spent
 
-                    # Update score
-                    if event_type in MADE_SHOTS:
-                        _, shot_points = MADE_SHOTS[event_type]
-                        if current_possession == "home":
-                            home_team_score += shot_points
-                        else:
-                            away_team_score += shot_points
-                    elif event_type == "free_throw_made":
-                        if current_possession == "home":
-                            home_team_score += 1
-                        else:
-                            away_team_score += 1
+    def _apply_event(self, match, event, next_state):
+        """Record an event, score it, shoot its free throws, and return the state that follows it."""
+        match.add_event(event, match.time)
+        event_type = event["event_type"]
 
-                    # Free throws for fouls
-                    shooter_id = generated_event.get("player_roles", {}).get("shooter")
-                    num_free_throws = SHOOTING_FOUL_FREE_THROWS.get(
-                        event_type, AND_ONE_FREE_THROWS.get(event_type, 0)
-                    )
+        if event_type in MADE_SHOTS:
+            match.score[match.possession] += MADE_SHOTS[event_type][1]
+        elif event_type == "free_throw_made":
+            match.score[match.possession] += 1
 
-                    if num_free_throws > 0 and shooter_id:
-                        ft_points, last_ft_made = self._generate_free_throws(
-                            shooter_id, num_free_throws, current_time, add_event
-                        )
-                        if current_possession == "home":
-                            home_team_score += ft_points
-                        else:
-                            away_team_score += ft_points
+        last_ft_made = None
+        shooter_id = event.get("player_roles", {}).get("shooter")
+        num_free_throws = SHOOTING_FOUL_FREE_THROWS.get(event_type, AND_ONE_FREE_THROWS.get(event_type, 0))
+        if num_free_throws > 0 and shooter_id:
+            ft_points, last_ft_made = self._generate_free_throws(
+                shooter_id, num_free_throws, match.time, match.add_event
+            )
+            match.score[match.possession] += ft_points
 
-                    # Possession clock updates
-                    if (event_type in ["traveling", "carrying", "double_dribble", "bad_pass", "steal",
-                                        "shot_clock_violation", "offensive_foul", "quarter_end",
-                                        "defensive_rebound", "charging_foul", "illegal_screen"]
-                            or event_type.startswith("made_")):
-                        possession_clock = 24
-                        current_possession = "away" if current_possession == "home" else "home"
-                    elif event_type in MISSED_SHOTS:
-                        # The ball hit the rim: the rebound decides the next clock.
-                        possession_clock = SHOT_CLOCK
-                    elif event_type == "offensive_rebound":
-                        possession_clock = SHOT_CLOCK_AFTER_OFFENSIVE_REBOUND
-                    elif event_type in ["blocking_foul", "pushing_foul", "reaching_foul"]:
-                        possession_clock = max(SHOT_CLOCK_AFTER_OFFENSIVE_REBOUND, possession_clock)
-                    elif event_type == "technical_foul":
-                        possession_clock = 24
-                    elif event_type in ["3_point_shooting_foul", "2_point_ext_shooting_foul", "2_point_int_shooting_foul",
-                                        "3_point_and_1", "2_point_ext_and_1", "2_point_int_and_1"]:
-                        if last_ft_made is False:
-                            # A missed last free throw hit the rim, like a missed shot.
-                            possession_clock = SHOT_CLOCK
-                            next_state = "rebound"
-                        else:
-                            next_state = "dead_ball"
-                            current_possession = "away" if current_possession == "home" else "home"
-                    elif event_type == "blocked_shot":
-                        if random.random() < 0.5:  # noqa: S2245
-                            possession_clock = 24
-                            current_possession = "away" if current_possession == "home" else "home"
-                    elif event_type == "inbound":
-                        possession_clock = 24
+        return self._update_shot_clock(match, event_type, last_ft_made, next_state)
 
-            self.state_manager.current_state = next_state
-
-            # Advance game clock
-            time_spent = min(self._time_spent_for_state(next_state, possession_clock), possession_clock)
-            current_time += time_spent
-            possession_clock -= time_spent
-
-        return match_events, home_team_score, away_team_score
+    def _update_shot_clock(self, match, event_type, last_ft_made, next_state):
+        """Apply an event's effect on possession and the shot clock; return the next state."""
+        if event_type in POSSESSION_CHANGES or event_type.startswith("made_"):
+            match.turn_over()
+        elif event_type in MISSED_SHOTS:
+            # The ball hit the rim: the rebound decides the next clock.
+            match.shot_clock = SHOT_CLOCK
+        elif event_type == "offensive_rebound":
+            match.shot_clock = SHOT_CLOCK_AFTER_OFFENSIVE_REBOUND
+        elif event_type in ["blocking_foul", "pushing_foul", "reaching_foul"]:
+            match.shot_clock = max(SHOT_CLOCK_AFTER_OFFENSIVE_REBOUND, match.shot_clock)
+        elif event_type in ("technical_foul", "inbound"):
+            match.shot_clock = SHOT_CLOCK
+        elif event_type in SHOOTING_FOULS:
+            if last_ft_made is False:
+                # A missed last free throw hit the rim, like a missed shot.
+                match.shot_clock = SHOT_CLOCK
+                return "rebound"
+            match.switch_possession()
+            return "dead_ball"
+        elif event_type == "blocked_shot" and random.random() < 0.5:  # noqa: S2245
+            match.turn_over()
+        return next_state
 
     def _generate_free_throws(self, shooter_id, num_free_throws, current_time, add_event):
         """

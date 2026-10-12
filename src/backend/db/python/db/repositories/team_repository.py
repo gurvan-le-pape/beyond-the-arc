@@ -47,9 +47,9 @@ def fetch_teams_for_pool(cursor: psycopg.Cursor, pool_id: int) -> list[int]:
     return [row[0] for row in cursor.fetchall()]
 
 
-def fetch_players_for_team(cursor: psycopg.Cursor, team_id: int) -> list[tuple[int, str]]:
-    """Returns list of (player_id, player_name)."""
-    cursor.execute("SELECT id, name FROM players WHERE team_id = %s;", (team_id,))
+def fetch_players_for_team(cursor: psycopg.Cursor, team_id: int) -> list[tuple[int, str, str]]:
+    """Returns list of (player_id, player_name, position)."""
+    cursor.execute("SELECT id, name, position FROM players WHERE team_id = %s;", (team_id,))
     return cursor.fetchall()
 
 

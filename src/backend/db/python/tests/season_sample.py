@@ -25,6 +25,8 @@ class SampleReport:
     matches: int
     per_team_game: dict[str, float]
     events_per_team_game: dict[str, float]
+    # Position -> stat -> average per player and game, for players who played.
+    per_position_player_game: dict[str, dict[str, float]]
 
 
 def build_generator() -> MatchGenerator:
@@ -34,8 +36,15 @@ def build_generator() -> MatchGenerator:
     return MatchGenerator(simulator)
 
 
-def roster(first_id: int) -> list[tuple[int, str]]:
-    return [(first_id + i, f"Player {first_id + i}") for i in range(ROSTER_SIZE)]
+# Two of each position, then a spare guard and forward: a balanced 12.
+ROSTER_POSITIONS = ("PG", "SG", "SF", "PF", "C") * 2 + ("SG", "SF")
+
+
+def roster(first_id: int) -> list[tuple[int, str, str]]:
+    return [
+        (first_id + i, f"Player {first_id + i}", position)
+        for i, position in enumerate(ROSTER_POSITIONS)
+    ]
 
 
 def simulate_sample(matches: int, seed: int) -> SampleReport:
@@ -45,12 +54,19 @@ def simulate_sample(matches: int, seed: int) -> SampleReport:
 
     stat_totals: Counter[str] = Counter()
     event_totals: Counter[str] = Counter()
+    position_totals: dict[str, Counter[str]] = {}
+    position_games: Counter[str] = Counter()
     for index in range(matches):
         base = index * 100
-        result = generator.simulate(roster(base), roster(base + ROSTER_SIZE), starts_at)
+        home, away = roster(base), roster(base + ROSTER_SIZE)
+        positions = {player_id: position for player_id, _, position in home + away}
+        result = generator.simulate(home, away, starts_at)
         for row in result.stat_rows:
+            position = positions[row[0]]
+            position_games[position] += 1
             for column, value in zip(STAT_COLUMNS, row[1:-1]):
                 stat_totals[column] += value
+                position_totals.setdefault(position, Counter())[column] += value
         event_totals.update(e["event_type"] for e in result.events)
 
     team_games = matches * 2
@@ -58,6 +74,10 @@ def simulate_sample(matches: int, seed: int) -> SampleReport:
         matches=matches,
         per_team_game={k: v / team_games for k, v in stat_totals.items()},
         events_per_team_game={k: v / team_games for k, v in event_totals.items()},
+        per_position_player_game={
+            position: {k: v / position_games[position] for k, v in totals.items()}
+            for position, totals in position_totals.items()
+        },
     )
 
 
@@ -68,3 +88,10 @@ if __name__ == "__main__":
     print()
     for name, value in sorted(report.events_per_team_game.items(), key=lambda kv: -kv[1])[:20]:
         print(f"{name:28} {value:6.2f}")
+    print()
+    shown = ("points", "three_points_attempted", "two_points_int_attempted", "assists",
+             "rebounds_offensive", "rebounds_defensive", "steals", "blocks", "turnovers", "fouls")
+    print("per player and game " + "".join(f"{p:>7}" for p in ROSTER_POSITIONS[:5]))
+    for name in shown:
+        values = "".join(f"{report.per_position_player_game[p].get(name, 0):7.2f}" for p in ROSTER_POSITIONS[:5])
+        print(f"{name:28}{values}")
