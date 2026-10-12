@@ -74,6 +74,7 @@
     "src/frontend/features/teams/components",
     "src/frontend/features/teams/hooks",
     "src/frontend/features/teams/types",
+    "src/frontend/features/teams/utils",
 
     "src/frontend/shared/components/domain",
     "src/frontend/shared/components/layout",

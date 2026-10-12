@@ -12,6 +12,7 @@
     "player": "Player",
     "noPlayers": "No players in roster",
     "matchHistoryTitle": "Match History",
+    "upcomingMatchesTitle": "Upcoming Matches",
     "shotchartTitle": "Shot Chart (Heatmap)",
     "shotchartDescription": "This heatmap shows the shot distribution for the team this season.",
     "won": "W",

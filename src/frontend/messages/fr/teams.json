@@ -12,6 +12,7 @@
     "player": "Joueur",
     "noPlayers": "Aucun joueur dans l'effectif",
     "matchHistoryTitle": "Historique des Matchs",
+    "upcomingMatchesTitle": "Prochains matchs",
     "shotchartTitle": "Carte des tirs (Heatmap)",
     "shotchartDescription": "Cette heatmap montre la distribution des tirs de l'équipe cette saison.",
     "won": "V",
