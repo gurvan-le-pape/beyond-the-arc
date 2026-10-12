@@ -5,7 +5,7 @@ from collections import Counter
 
 import pytest
 
-from simulation.player_picker import pick
+from simulation.player_picker import pick, player_level
 from tests.season_sample import simulate_sample
 
 
@@ -32,5 +32,6 @@ def test_an_unknown_position_gets_the_neutral_weight():
     random.seed(3)
     picks = Counter(pick([1, 2], "rebound", {1: "C"}) for _ in range(4000))
 
-    # C weighs 2.0 against the neutral 1.0 for player 2, so about two thirds.
-    assert 0.62 < picks[1] / 4000 < 0.71
+    # C weighs 2.0 against the neutral 1.0 for player 2, each scaled by level.
+    centre, unknown = 2.0 * player_level(1), 1.0 * player_level(2)
+    assert abs(picks[1] / 4000 - centre / (centre + unknown)) < 0.03

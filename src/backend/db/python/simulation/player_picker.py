@@ -5,9 +5,14 @@ Every action draws one player from the five on court, weighted by position:
 a centre rebounds and blocks far more than a point guard, who in turn
 passes, steals and shoots threes far more. A weight of 1.0 is the neutral
 share; a player whose position is unknown gets it for every action.
+
+On top of position, each player has a level (see player_level) that scales
+their share of every action but fouls, so each team has players who carry
+it and players who do not.
 """
 
 import random
+from functools import lru_cache
 
 # Action -> position -> relative weight. Shot actions use the shot categories
 # of event_rules ("three", "two_int", "two_ext").
@@ -24,8 +29,28 @@ POSITION_WEIGHTS: dict[str, dict[str, float]] = {
 }
 
 
+PLAYER_LEVEL_RANGE = (0.7, 1.3)
+
+# Actions a player's level does not scale: a better player does not foul more.
+LEVEL_NEUTRAL_ACTIONS = {"foul"}
+
+
+@lru_cache(maxsize=65536)
+def player_level(player_id: int) -> float:
+    """
+    A player's level, fixed for as long as they exist: derived from their id
+    rather than stored, so it needs no column and every match agrees on it.
+    """
+    return random.Random(player_id).uniform(*PLAYER_LEVEL_RANGE)  # noqa: S2245
+
+
 def pick(players: list[int], action: str, positions: dict[int, str]) -> int:
     """Draw the player who performs `action` among `players`."""
     by_position = POSITION_WEIGHTS[action]
-    weights = [by_position.get(positions.get(player), 1.0) for player in players]
+    scale_by_level = action not in LEVEL_NEUTRAL_ACTIONS
+    weights = [
+        by_position.get(positions.get(player), 1.0)
+        * (player_level(player) if scale_by_level else 1.0)
+        for player in players
+    ]
     return random.choices(players, weights=weights)[0]  # noqa: S2245
