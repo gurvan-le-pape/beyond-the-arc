@@ -149,6 +149,27 @@ frontend-build:
     - npm run build
 
 # ==============================================================================
+# SCHEDULER
+# ==============================================================================
+# The Python match simulator. Same base image as docker/python-script, and the
+# dev requirements, which add pytest on top of the image's own pins.
+python-test:
+  stage: check
+  image: python:3.14-slim
+  variables:
+    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.pip-cache"
+  cache:
+    key:
+      files:
+        - src/backend/db/python/requirements-dev.txt
+    paths:
+      - .pip-cache
+  script:
+    - cd src/backend/db/python
+    - pip install -r requirements-dev.txt
+    - python -m pytest
+
+# ==============================================================================
 # API CONTRACT
 # ==============================================================================
 # Regenerates docs/openapi.json from the backend and the frontend's
@@ -324,6 +345,7 @@ deploy:
     - frontend-build
     - openapi-drift
     - barrels-drift
+    - python-test
   variables:
     # The runner mounts the host Docker socket, so builds hit a long-lived
     # daemon and reuse its layer cache. No buildx, no dind, no cache export.

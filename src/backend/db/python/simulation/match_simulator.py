@@ -5,10 +5,15 @@ MatchSimulator
 import random
 from datetime import timedelta
 
-from event_rules import AND_ONE_FREE_THROWS, MADE_SHOTS, SHOOTING_FOUL_FREE_THROWS
+from event_rules import AND_ONE_FREE_THROWS, MADE_SHOTS, MISSED_SHOTS, SHOOTING_FOUL_FREE_THROWS
 from simulation.game_state_manager import GameStateManager
 from simulation.event_generator import EventGenerator
 from simulation.substitution_queue import SubQueue
+
+
+# FIBA shot clock: 24 s for a new possession, 14 s after an offensive rebound.
+SHOT_CLOCK = 24
+SHOT_CLOCK_AFTER_OFFENSIVE_REBOUND = 14
 
 
 class MatchSimulator:
@@ -148,13 +153,20 @@ class MatchSimulator:
                             or event_type.startswith("made_")):
                         possession_clock = 24
                         current_possession = "away" if current_possession == "home" else "home"
-                    elif event_type in ["blocking_foul", "pushing_foul", "reaching_foul", "offensive_rebound"]:
-                        possession_clock = max(14, possession_clock)
+                    elif event_type in MISSED_SHOTS:
+                        # The ball hit the rim: the rebound decides the next clock.
+                        possession_clock = SHOT_CLOCK
+                    elif event_type == "offensive_rebound":
+                        possession_clock = SHOT_CLOCK_AFTER_OFFENSIVE_REBOUND
+                    elif event_type in ["blocking_foul", "pushing_foul", "reaching_foul"]:
+                        possession_clock = max(SHOT_CLOCK_AFTER_OFFENSIVE_REBOUND, possession_clock)
                     elif event_type == "technical_foul":
                         possession_clock = 24
                     elif event_type in ["3_point_shooting_foul", "2_point_ext_shooting_foul", "2_point_int_shooting_foul",
                                         "3_point_and_1", "2_point_ext_and_1", "2_point_int_and_1"]:
                         if last_ft_made is False:
+                            # A missed last free throw hit the rim, like a missed shot.
+                            possession_clock = SHOT_CLOCK
                             next_state = "rebound"
                         else:
                             next_state = "dead_ball"
@@ -169,7 +181,7 @@ class MatchSimulator:
             self.state_manager.current_state = next_state
 
             # Advance game clock
-            time_spent = min(self._time_spent_for_state(next_state), possession_clock)
+            time_spent = min(self._time_spent_for_state(next_state, possession_clock), possession_clock)
             current_time += time_spent
             possession_clock -= time_spent
 
@@ -197,10 +209,19 @@ class MatchSimulator:
                 last_made = made
         return points, last_made
 
-    def _time_spent_for_state(self, next_state):
-        """Random ticks the game clock advances for the state just entered."""
+    def _time_spent_for_state(self, next_state, possession_clock):
+        """
+        Random ticks the game clock advances for the state just entered.
+
+        A possession takes 10–15 s on a full clock. With less left, the offence
+        plays to the clock and keeps 6 s: the shot attempt that follows takes
+        2–5 s, and the shot itself is only emitted on the tick after it, so the
+        clock must still be running then. Running the clock out is the `shot_clock_violation` event in
+        game_config.json, not a side effect of this timing.
+        """
         if next_state == "possession":
-            return random.randint(10, 15)  # noqa: S2245
+            latest = max(1, possession_clock - 6)
+            return random.randint(min(10, latest), min(15, latest))  # noqa: S2245
         elif next_state == "shot_attempt":
             return random.randint(2, 5)  # noqa: S2245
         elif next_state == "rebound":

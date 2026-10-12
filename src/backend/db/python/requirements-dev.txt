@@ -1,0 +1,18 @@
+# Test dependencies — never installed in the scheduler image, which installs
+# requirements.txt only. Fully pinned for the same reason as that file.
+#
+# Regenerate (from the repo root, in the same image the Dockerfile uses):
+#
+#   docker run --rm python:3.14-slim sh -c \
+#     'pip install --no-cache-dir -q "pytest==8.4.2" && pip freeze'
+
+-r requirements.txt
+
+# Declared.
+pytest==8.4.2
+
+# Pulled in by the above.
+iniconfig==2.3.1
+packaging==26.3
+pluggy==1.6.0
+Pygments==2.21.0

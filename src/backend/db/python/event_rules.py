@@ -50,3 +50,14 @@ AND_ONE_FREE_THROWS = {
     "2_point_ext_and_1": 1,
     "2_point_int_and_1": 1,
 }
+
+# Turnovers charged to the event's ball handler (its `shooter` role). A steal is
+# charged to its `victim` instead, and `quarter_end` is nobody's turnover.
+BALL_HANDLER_TURNOVERS = {
+    "traveling",
+    "carrying",
+    "double_dribble",
+    "bad_pass",
+    "shot_clock_violation",
+    "offensive_foul",
+}
