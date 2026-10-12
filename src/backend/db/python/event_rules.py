@@ -52,12 +52,20 @@ AND_ONE_FREE_THROWS = {
 }
 
 # Turnovers charged to the event's ball handler (its `shooter` role). A steal is
-# charged to its `victim` instead, and `quarter_end` is nobody's turnover.
+# charged to its `victim`, an offensive foul to its `fouler` (see
+# OFFENSIVE_FOULS), and `quarter_end` is nobody's turnover.
 BALL_HANDLER_TURNOVERS = {
     "traveling",
     "carrying",
     "double_dribble",
     "bad_pass",
     "shot_clock_violation",
+}
+
+# Fouls committed by the offence. Each is both a foul and a turnover for its
+# `fouler`, an attacker; its `victim` is the defender who drew it.
+OFFENSIVE_FOULS = {
     "offensive_foul",
+    "charging_foul",
+    "illegal_screen",
 }
