@@ -49,9 +49,17 @@ export function MatchSummaryTabs({
     { key: "assists", label: tCommon("stats.assists.full") },
     { key: "blocks", label: tCommon("stats.blocks.full") },
     { key: "steals", label: tCommon("stats.steals.full") },
-    { key: "turnovers", label: tCommon("stats.turnovers.full") },
+    {
+      key: "turnovers",
+      label: tCommon("stats.turnovers.full"),
+      lowerIsBetter: true,
+    },
     { key: "pointsInPaint", label: tCommon("stats.pointsInPaint") },
-    { key: "fouls", label: tCommon("stats.fouls.full") },
+    {
+      key: "fouls",
+      label: tCommon("stats.fouls.full"),
+      lowerIsBetter: true,
+    },
   ];
 
   return (
