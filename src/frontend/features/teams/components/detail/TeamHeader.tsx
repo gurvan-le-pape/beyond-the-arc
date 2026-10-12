@@ -73,7 +73,7 @@ export async function TeamHeader({ team }: TeamHeaderProps) {
         isFemale ? "border-team-female" : "border-team-male"
       }`}
     >
-      <div className="flex items-center gap-5 p-6">
+      <div className="flex items-center gap-3 p-4 sm:gap-5 sm:p-6">
         <ClubLogoLink clubId={clubId} clubName={clubName} />
 
         <div className="flex-1 min-w-0">
@@ -98,8 +98,8 @@ export async function TeamHeader({ team }: TeamHeaderProps) {
           )}
         </div>
 
-        <div className="flex-shrink-0 pl-5 border-l border-divide self-stretch flex items-center">
-          <span className="text-3xl font-bold text-text-secondary">
+        <div className="flex-shrink-0 pl-3 sm:pl-5 border-l border-divide self-stretch flex items-center">
+          <span className="text-2xl sm:text-3xl font-bold text-text-secondary">
             #{teamNumber}
           </span>
         </div>
