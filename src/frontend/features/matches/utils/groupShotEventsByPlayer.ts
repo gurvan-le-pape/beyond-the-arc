@@ -6,9 +6,9 @@ import type { MatchEvent } from "../types";
 /**
  * Groups a match's shot events by the shooting player's id.
  *
- * A shot event is one that has a `shotLocation` and a player in the
- * `SHOOTER` role; other events are ignored. The returned map is keyed by
- * that shooter's player id.
+ * A shot event is one that has a `shotLocation` and a player who took the
+ * shot: `SHOOTER` on a made or missed shot, `BLOCKED` on a blocked one. Other
+ * events are ignored. The returned map is keyed by that player's id.
  *
  * @param events - every event in the match; non-shots are skipped
  * @returns shot events keyed by shooter id — a player who took none has no key at all
@@ -19,7 +19,9 @@ export function groupShotEventsByPlayer(
   const shotEventsByPlayer: Record<number, MatchEvent[]> = {};
 
   for (const event of events) {
-    const shooter = event.players?.find((p) => p.role === Role.SHOOTER);
+    const shooter = event.players?.find(
+      (p) => p.role === Role.SHOOTER || p.role === Role.BLOCKED,
+    );
     if (event.shotLocation === null || !shooter) continue;
 
     const playerId = shooter.player.id;

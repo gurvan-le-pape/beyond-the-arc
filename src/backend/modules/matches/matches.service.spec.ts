@@ -490,7 +490,12 @@ describe("MatchesService", () => {
         expect.objectContaining({
           where: expect.objectContaining({
             match: { OR: [{ homeTeamId: 7 }, { awayTeamId: 7 }] },
-            players: { some: { player: { teamId: 7 } } },
+            players: {
+              some: {
+                player: { teamId: 7 },
+                role: { in: [Role.SHOOTER, Role.BLOCKED] },
+              },
+            },
           }),
         }),
       );
@@ -520,7 +525,7 @@ describe("MatchesService", () => {
       expect(result[0].shotLocation?.x).toBe(5.5);
     });
 
-    it("should only match events where the player is the shooter", async () => {
+    it("should only match events where the player took the shot", async () => {
       mockPrismaService.client.matchEvents.findMany.mockResolvedValue([]);
 
       await service.findMatchEventsByPlayerId(7);
@@ -530,7 +535,12 @@ describe("MatchesService", () => {
       ).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
-            players: { some: { playerId: 7, role: Role.SHOOTER } },
+            players: {
+              some: {
+                playerId: 7,
+                role: { in: [Role.SHOOTER, Role.BLOCKED] },
+              },
+            },
           }),
         }),
       );
