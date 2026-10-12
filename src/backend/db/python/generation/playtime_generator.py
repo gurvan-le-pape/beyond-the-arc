@@ -3,11 +3,57 @@ Generates player playtime intervals and substitutions for a single match.
 
 This is pure simulation logic with no DB access.
 Results are consumed by MatchGenerator before simulation runs.
+
+The coach starts the best player at each position (by player level) and
+gives the rest of the roster minutes in order of level. Every few minutes
+they take off whoever is furthest ahead of their target minutes and send on
+whoever is furthest behind.
 """
 
 import random
 
+from simulation.player_picker import player_level
+
 GAME_DURATION = 40 * 60  # 40 minutes in seconds
+ON_COURT = 5
+
+# Target minutes by rank, for a 12-player roster: the five starters, then the
+# bench from best to worst. They add up to 200, five players for 40 minutes;
+# another roster size takes the first ranks and is rescaled to that total.
+TARGET_MINUTES = (29, 29, 29, 29, 29, 16, 12, 10, 7, 5, 3, 2)
+
+# Seconds between two rounds of substitutions.
+ROTATION_INTERVAL = (120, 240)
+
+
+def _rotation_order(players: list[tuple]) -> list[int]:
+    """Starters first (the best player at each position), then the bench by level."""
+    by_level = sorted((p[0] for p in players), key=player_level, reverse=True)
+    position = {p[0]: p[2] for p in players if len(p) > 2}
+
+    starters: list[int] = []
+    covered: set[str] = set()
+    for player_id in by_level:
+        player_position = position.get(player_id)
+        if player_position is not None and player_position not in covered:
+            starters.append(player_id)
+            covered.add(player_position)
+        if len(starters) == ON_COURT:
+            break
+    # A roster missing a position fills the gap with its best remaining players.
+    for player_id in by_level:
+        if len(starters) == ON_COURT:
+            break
+        if player_id not in starters:
+            starters.append(player_id)
+
+    return starters + [p for p in by_level if p not in starters]
+
+
+def _target_seconds(order: list[int]) -> dict[int, float]:
+    minutes = [TARGET_MINUTES[min(rank, len(TARGET_MINUTES) - 1)] for rank in range(len(order))]
+    scale = ON_COURT * GAME_DURATION / (sum(minutes) * 60)
+    return {player_id: m * 60 * scale for player_id, m in zip(order, minutes)}
 
 
 def generate(
@@ -17,7 +63,7 @@ def generate(
     Simulate playtime rotations and substitutions for one team.
 
     Args:
-        players: list of (player_id, player_name, ...) — extra fields are ignored
+        players: list of (player_id, player_name, position); position is optional
 
     Returns:
         playtimes: dict of player_id → list of (start_sec, end_sec) intervals
@@ -27,55 +73,43 @@ def generate(
     if not players:
         return {}, {}, []
 
-    player_ids = [p[0] for p in players]
     player_names = {p[0]: p[1] for p in players}
+    order = _rotation_order(players)
+    target = _target_seconds(order)
 
-    active = random.sample(player_ids, min(5, len(player_ids)))  # noqa: S2245
-    bench = [p for p in player_ids if p not in active]
-
-    playtimes: dict[int, list[tuple[int, int]]] = {pid: [] for pid in player_ids}
+    active = order[:ON_COURT]
+    bench = order[ON_COURT:]
+    playtimes: dict[int, list[tuple[int, int]]] = {pid: [] for pid in order}
+    stint_start = {pid: 0 for pid in active}
+    played = {pid: 0.0 for pid in order}
     substitutions: list[dict] = []
 
-    # Give each starter an initial stint
-    for pid in active:
-        end = random.randint(300, 480)  # noqa: S2245
-        playtimes[pid].append((0, end))
-
-    current_time = min(intervals[-1][1] for intervals in playtimes.values() if intervals)
-
-    while current_time < GAME_DURATION:
-        # Collect ALL players whose current stint ends at this exact time.
-        exiting_now = [
-            pid for pid in active if playtimes[pid][-1][1] == current_time
-        ]
-
-        for exiting in exiting_now:
-            if not bench:
-                # Extend their current stint to the end of the game
-                playtimes[exiting][-1] = (playtimes[exiting][-1][0], GAME_DURATION)
-                continue
-
-            entering = bench.pop(0)
-            bench.append(exiting)
-
-            substitutions.append({
-                "time": current_time,
-                "exiting_player": exiting,
-                "entering_player": entering,
-            })
-
-            new_end = min(current_time + random.randint(300, 480), GAME_DURATION)  # noqa: S2245
-            playtimes[entering].append((current_time, new_end))
-            active[active.index(exiting)] = entering
-
-        future_ends = [
-            interval[1]
-            for intervals in playtimes.values()
-            for interval in intervals
-            if interval[1] > current_time
-        ]
-        if not future_ends:
+    now = 0
+    while True:
+        now += random.randint(*ROTATION_INTERVAL)  # noqa: S2245
+        if now >= GAME_DURATION or not bench:
             break
-        current_time = min(future_ends)
+
+        def ahead(pid: int) -> float:
+            # Seconds played beyond the target pace at `now` (negative: behind).
+            on_court = now - stint_start[pid] if pid in stint_start else 0
+            return played[pid] + on_court - target[pid] * now / GAME_DURATION
+
+        for _ in range(random.randint(1, 2)):  # noqa: S2245
+            exiting = max(active, key=ahead)
+            entering = min(bench, key=ahead)
+            if ahead(entering) >= 0 or ahead(exiting) <= ahead(entering):
+                break
+
+            started = stint_start.pop(exiting)
+            played[exiting] += now - started
+            playtimes[exiting].append((started, now))
+            stint_start[entering] = now
+            active[active.index(exiting)] = entering
+            bench[bench.index(entering)] = exiting
+            substitutions.append({"time": now, "exiting_player": exiting, "entering_player": entering})
+
+    for pid in active:
+        playtimes[pid].append((stint_start[pid], GAME_DURATION))
 
     return playtimes, player_names, substitutions
