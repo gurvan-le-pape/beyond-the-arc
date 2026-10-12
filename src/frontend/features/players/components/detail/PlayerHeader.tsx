@@ -115,7 +115,7 @@ export async function PlayerHeader({ player }: PlayerHeaderProps) {
         isFemale ? "border-team-female" : "border-team-male"
       }`}
     >
-      <div className="flex items-center gap-5 p-6">
+      <div className="flex items-center gap-3 p-4 sm:gap-5 sm:p-6">
         <PlayerAvatar name={playerName} number={playerNumber} size="lg" />
 
         <div className="flex-1 min-w-0">
@@ -152,7 +152,9 @@ export async function PlayerHeader({ player }: PlayerHeaderProps) {
           )}
         </div>
 
-        <div className="flex-shrink-0 pl-5 border-l border-divide self-stretch flex items-center">
+        {/* Hidden on phones, where it would take a third of the row from the
+            name and badges; the club name above already links to the team. */}
+        <div className="hidden sm:flex flex-shrink-0 pl-5 border-l border-divide self-stretch items-center">
           <ClubLogoLink clubId={clubId} clubName={clubName} />
         </div>
       </div>
