@@ -1,6 +1,6 @@
 """Turnover attribution, one event at a time."""
 
-from generation.match_generator import compute_player_stats
+from generation.match_generator import STAT_COLUMNS, compute_player_stats
 from simulation.event_generator import EventGenerator
 
 ATTACKER = 1
@@ -10,8 +10,8 @@ PLAYTIMES = {ATTACKER: [(0, 2400)]}, {DEFENDER: [(0, 2400)]}
 
 def turnovers_by_player(*events: dict) -> dict[int, int]:
     rows = compute_player_stats(*PLAYTIMES, list(events))
-    # Row layout: player_id first, turnovers at index 12 — see STAT_COLUMNS in season_sample.
-    return {row[0]: row[12] for row in rows}
+    index = 1 + STAT_COLUMNS.index("turnovers")  # the row starts with the player id
+    return {row[0]: row[index] for row in rows}
 
 
 def test_a_steal_is_the_victims_turnover():

@@ -14,23 +14,10 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 
 from config import GAME_CONFIG_PATH
-from generation.match_generator import MatchGenerator
+from generation.match_generator import STAT_COLUMNS, MatchGenerator
 from simulation.match_simulator import MatchSimulator
 
 ROSTER_SIZE = 12
-
-# Column order of a stat row, after the leading player id — see
-# generation.match_generator.compute_player_stats.
-STAT_COLUMNS = (
-    "points", "fouls",
-    "three_points_made", "three_points_attempted",
-    "two_points_int_made", "two_points_int_attempted",
-    "two_points_ext_made", "two_points_ext_attempted",
-    "free_throws_made", "free_throws_attempted",
-    "assists", "turnovers",
-    "rebounds_offensive", "rebounds_defensive",
-    "steals", "blocks",
-)
 
 
 @dataclass

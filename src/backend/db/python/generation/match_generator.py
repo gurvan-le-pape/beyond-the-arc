@@ -139,6 +139,74 @@ class MatchGenerator:
 # Stats aggregation
 # ------------------------------------------------------------------
 
+# Column order of a stat row, between the leading player id and the trailing
+# playtime intervals — insert_player_stats_bulk's row shape.
+STAT_COLUMNS = (
+    "points", "fouls",
+    "three_points_made", "three_points_attempted",
+    "two_points_int_made", "two_points_int_attempted",
+    "two_points_ext_made", "two_points_ext_attempted",
+    "free_throws_made", "free_throws_attempted",
+    "assists", "turnovers",
+    "rebounds_offensive", "rebounds_defensive",
+    "steals", "blocks",
+)
+
+
+def _tally_shooter(stats: dict[str, int], event_type: str) -> None:
+    if event_type in MADE_SHOTS:
+        category, shot_points = MADE_SHOTS[event_type]
+        prefix = SHOT_CATEGORY_STAT_PREFIX[category]
+        stats["points"] += shot_points
+        stats[f"{prefix}_made"] += 1
+        stats[f"{prefix}_attempted"] += 1
+    elif event_type in MISSED_SHOTS:
+        prefix = SHOT_CATEGORY_STAT_PREFIX[MISSED_SHOTS[event_type]]
+        stats[f"{prefix}_attempted"] += 1
+    elif event_type == "free_throw_made":
+        stats["points"] += 1
+        stats["free_throws_made"] += 1
+        stats["free_throws_attempted"] += 1
+    elif event_type == "free_throw_missed":
+        stats["free_throws_attempted"] += 1
+    elif event_type in BALL_HANDLER_TURNOVERS:
+        stats["turnovers"] += 1
+
+
+def _tally_rebounder(stats: dict[str, int], event_type: str) -> None:
+    if event_type == "offensive_rebound":
+        stats["rebounds_offensive"] += 1
+    elif event_type == "defensive_rebound":
+        stats["rebounds_defensive"] += 1
+
+
+def _tally_victim(stats: dict[str, int], event_type: str) -> None:
+    # The victim of a steal lost the ball; the victim of a foul did not.
+    if event_type == "steal":
+        stats["turnovers"] += 1
+
+
+def _count(column: str):
+    def tally(stats: dict[str, int], _event_type: str) -> None:
+        stats[column] += 1
+    return tally
+
+
+# What each role in an event adds to that player's stat line. A role missing
+# here (winner, the substitution roles) adds nothing, but still gives the
+# player a row.
+_ROLE_TALLIES = {
+    "shooter": _tally_shooter,
+    "fouler": _count("fouls"),
+    "rebounder": _tally_rebounder,
+    "stealer": _count("steals"),
+    "assister": _count("assists"),
+    "victim": _tally_victim,
+    "blocked": _count("two_points_int_attempted"),
+    "blocker": _count("blocks"),
+}
+
+
 def compute_player_stats(
     home_playtimes: dict,
     away_playtimes: dict,
@@ -149,87 +217,24 @@ def compute_player_stats(
     Returns list of tuples matching insert_player_stats_bulk's expected shape.
     """
     all_playtimes = {**home_playtimes, **away_playtimes}
-    stats: dict[int, dict] = {}
-
-    def get_or_create(pid: int) -> dict:
-        if pid not in stats:
-            stats[pid] = {
-                "points": 0, "fouls": 0,
-                "three_points_made": 0, "three_points_attempted": 0,
-                "two_points_int_made": 0, "two_points_int_attempted": 0,
-                "two_points_ext_made": 0, "two_points_ext_attempted": 0,
-                "free_throws_made": 0, "free_throws_attempted": 0,
-                "assists": 0, "turnovers": 0,
-                "rebounds_offensive": 0, "rebounds_defensive": 0,
-                "steals": 0, "blocks": 0,
-            }
-        return stats[pid]
+    stats: dict[int, dict[str, int]] = {}
 
     for event in match_events:
-        event_type = event["event_type"]
         for role, player_id in event.get("player_roles", {}).items():
-            if role == "starter":
-                # Marker only (who was on court at tip-off) — playtime is
-                # computed separately from playtimes/intervals, not from
-                # per-role stat counters.
+            # `starter` only marks who was on court at tip-off; playtime comes
+            # from the intervals, not from the events.
+            if role == "starter" or player_id is None:
                 continue
-            if player_id is None:
-                continue
-            s = get_or_create(player_id)
+            player_stats = stats.setdefault(player_id, dict.fromkeys(STAT_COLUMNS, 0))
+            tally = _ROLE_TALLIES.get(role)
+            if tally:
+                tally(player_stats, event["event_type"])
 
-            if role == "shooter":
-                if event_type in MADE_SHOTS:
-                    category, shot_points = MADE_SHOTS[event_type]
-                    prefix = SHOT_CATEGORY_STAT_PREFIX[category]
-                    s["points"] += shot_points
-                    s[f"{prefix}_made"] += 1
-                    s[f"{prefix}_attempted"] += 1
-                elif event_type in MISSED_SHOTS:
-                    prefix = SHOT_CATEGORY_STAT_PREFIX[MISSED_SHOTS[event_type]]
-                    s[f"{prefix}_attempted"] += 1
-                elif event_type == "free_throw_made":
-                    s["points"] += 1
-                    s["free_throws_made"] += 1
-                    s["free_throws_attempted"] += 1
-                elif event_type == "free_throw_missed":
-                    s["free_throws_attempted"] += 1
-                elif event_type in BALL_HANDLER_TURNOVERS:
-                    s["turnovers"] += 1
-
-            elif role == "fouler":
-                s["fouls"] += 1
-            elif role == "rebounder":
-                if event_type == "offensive_rebound":
-                    s["rebounds_offensive"] += 1
-                elif event_type == "defensive_rebound":
-                    s["rebounds_defensive"] += 1
-            elif role == "stealer":
-                s["steals"] += 1
-            elif role == "assister":
-                s["assists"] += 1
-            elif role == "victim":
-                # The victim of a steal lost the ball; the victim of a foul did not.
-                if event_type == "steal":
-                    s["turnovers"] += 1
-            elif role == "blocked":
-                s["two_points_int_attempted"] += 1
-            elif role == "blocker":
-                s["blocks"] += 1
-
-    rows = []
-    for player_id, s in stats.items():
-        intervals = all_playtimes.get(player_id, [])
-        rows.append((
+    return [
+        (
             player_id,
-            s["points"], s["fouls"],
-            s["three_points_made"], s["three_points_attempted"],
-            s["two_points_int_made"], s["two_points_int_attempted"],
-            s["two_points_ext_made"], s["two_points_ext_attempted"],
-            s["free_throws_made"], s["free_throws_attempted"],
-            s["assists"], s["turnovers"],
-            s["rebounds_offensive"], s["rebounds_defensive"],
-            s["steals"], s["blocks"],
-            json.dumps(intervals),
-        ))
-
-    return rows
+            *(player_stats[column] for column in STAT_COLUMNS),
+            json.dumps(all_playtimes.get(player_id, [])),
+        )
+        for player_id, player_stats in stats.items()
+    ]
