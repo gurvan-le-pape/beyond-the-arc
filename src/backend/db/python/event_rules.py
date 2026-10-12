@@ -69,3 +69,11 @@ OFFENSIVE_FOULS = {
     "charging_foul",
     "illegal_screen",
 }
+
+# A blocked shot's category, drawn with these weights: most blocks are on
+# shots at the rim, few on jump shots.
+BLOCKED_SHOT_CATEGORY_WEIGHTS = {
+    "two_int": 0.7,
+    "two_ext": 0.2,
+    "three": 0.1,
+}

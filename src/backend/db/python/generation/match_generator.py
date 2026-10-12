@@ -109,6 +109,7 @@ class MatchGenerator:
                 "player_roles": {"shooter": random.choice(list(home_playtimes.keys()))},  # noqa: S2245
                 "event_type": "made_layup",
                 "description": "Deciding basket.",
+                "shot_location": self.simulator.event_generator.generate_shot_location("two_int"),
             })
 
         overtime = any(
@@ -159,7 +160,8 @@ STAT_COLUMNS = (
 )
 
 
-def _tally_shooter(stats: dict[str, int], event_type: str) -> None:
+def _tally_shooter(stats: dict[str, int], event: dict) -> None:
+    event_type = event["event_type"]
     if event_type in MADE_SHOTS:
         category, shot_points = MADE_SHOTS[event_type]
         prefix = SHOT_CATEGORY_STAT_PREFIX[category]
@@ -179,27 +181,34 @@ def _tally_shooter(stats: dict[str, int], event_type: str) -> None:
         stats["turnovers"] += 1
 
 
-def _tally_rebounder(stats: dict[str, int], event_type: str) -> None:
+def _tally_rebounder(stats: dict[str, int], event: dict) -> None:
+    event_type = event["event_type"]
     if event_type == "offensive_rebound":
         stats["rebounds_offensive"] += 1
     elif event_type == "defensive_rebound":
         stats["rebounds_defensive"] += 1
 
 
-def _tally_fouler(stats: dict[str, int], event_type: str) -> None:
+def _tally_fouler(stats: dict[str, int], event: dict) -> None:
     stats["fouls"] += 1
-    if event_type in OFFENSIVE_FOULS:
+    if event["event_type"] in OFFENSIVE_FOULS:
         stats["turnovers"] += 1
 
 
-def _tally_victim(stats: dict[str, int], event_type: str) -> None:
+def _tally_victim(stats: dict[str, int], event: dict) -> None:
     # The victim of a steal lost the ball; the victim of a foul did not.
-    if event_type == "steal":
+    if event["event_type"] == "steal":
         stats["turnovers"] += 1
+
+
+def _tally_blocked(stats: dict[str, int], event: dict) -> None:
+    # A blocked shot is a missed attempt in its own category.
+    prefix = SHOT_CATEGORY_STAT_PREFIX[event.get("shot_category", "two_int")]
+    stats[f"{prefix}_attempted"] += 1
 
 
 def _count(column: str):
-    def tally(stats: dict[str, int], _event_type: str) -> None:
+    def tally(stats: dict[str, int], _event: dict) -> None:
         stats[column] += 1
     return tally
 
@@ -214,7 +223,7 @@ _ROLE_TALLIES = {
     "stealer": _count("steals"),
     "assister": _count("assists"),
     "victim": _tally_victim,
-    "blocked": _count("two_points_int_attempted"),
+    "blocked": _tally_blocked,
     "blocker": _count("blocks"),
 }
 
@@ -240,7 +249,7 @@ def compute_player_stats(
             player_stats = stats.setdefault(player_id, dict.fromkeys(STAT_COLUMNS, 0))
             tally = _ROLE_TALLIES.get(role)
             if tally:
-                tally(player_stats, event["event_type"])
+                tally(player_stats, event)
 
     return [
         (

@@ -175,6 +175,13 @@ const PLAYER_MATCH_STATS_SELECT = {
   ...PLAYER_MATCH_STAT_FIELDS_SELECT,
 } as const;
 
+/**
+ * The roles of the player who took a shot: `shooter` on a made or missed shot,
+ * `blocked` on a blocked one. Every other role on a shot event (assister,
+ * blocker, fouler) belongs to someone who did not shoot.
+ */
+const SHOT_TAKER_ROLES: Role[] = [Role.SHOOTER, Role.BLOCKED];
+
 type MatchListResult = Prisma.MatchesGetPayload<{
   select: typeof MATCH_LIST_SELECT;
 }>;
@@ -298,7 +305,11 @@ export class MatchesService {
    * caller-visible growth, bounded only because `Teams` is season-scoped
    * (22 matches for a team, measured on production).
    *
-   * The filter is kept rather than dropped. `players: { some: … }` already
+   * Only the team's own attempts count: one of its players must have taken the
+   * shot (see `SHOT_TAKER_ROLES`). Matching any role would also pull in the
+   * opponent's shots this team's defenders blocked or fouled.
+   *
+   * The match filter is kept rather than dropped. `players: { some: … }` already
    * restricts to events a player of this team took part in, and since a player
    * belongs to exactly one team, every such event is in a match that team
    * played — so the match clause is provably redundant *today*. It stays
@@ -309,7 +320,9 @@ export class MatchesService {
       where: {
         match: { OR: [{ homeTeamId: teamId }, { awayTeamId: teamId }] },
         shotLocation: { isNot: null },
-        players: { some: { player: { teamId } } },
+        players: {
+          some: { player: { teamId }, role: { in: SHOT_TAKER_ROLES } },
+        },
       },
       select: { ...MATCH_EVENT_SELECT, matchId: true },
       orderBy: { occurredAt: "asc" },
@@ -321,15 +334,15 @@ export class MatchesService {
   /**
    * Every shot a player took, across their season.
    *
-   * The player must be the event's `shooter`. A made shot also carries an
-   * `assister`, so matching the player in any role would put the shots they
-   * assisted on their own chart, as made baskets.
+   * The player must have taken the shot (see `SHOT_TAKER_ROLES`). A made shot
+   * also carries an `assister`, so matching the player in any role would put
+   * the shots they assisted on their own chart, as made baskets.
    */
   async findMatchEventsByPlayerId(playerId: number): Promise<MatchEventDto[]> {
     const events = await this.prisma.client.matchEvents.findMany({
       where: {
         shotLocation: { isNot: null },
-        players: { some: { playerId, role: Role.SHOOTER } },
+        players: { some: { playerId, role: { in: SHOT_TAKER_ROLES } } },
       },
       select: { ...MATCH_EVENT_SELECT, matchId: true },
       orderBy: { occurredAt: "asc" },

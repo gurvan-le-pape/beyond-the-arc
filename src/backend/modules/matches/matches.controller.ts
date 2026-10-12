@@ -260,7 +260,7 @@ export class MatchesController {
   @ApiOperation({
     summary: "Get shot events by team ID",
     description:
-      "Retrieves all shot events with locations for a specific team across all their matches",
+      "Retrieves every shot a specific team took, with its location, across all their matches, blocked attempts included. Shots its players blocked or fouled are excluded.",
   })
   @ApiParam({
     name: "teamId",
@@ -299,7 +299,7 @@ export class MatchesController {
   @ApiOperation({
     summary: "Get shot events by player ID",
     description:
-      "Retrieves every shot a specific player took, with its location, across all their matches. Shots the player only assisted on are excluded. Results are cached for 5 minutes.",
+      "Retrieves every shot a specific player took, with its location, across all their matches, blocked attempts included. Shots the player only assisted on are excluded. Results are cached for 5 minutes.",
   })
   @ApiParam({
     name: "playerId",

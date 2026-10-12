@@ -429,7 +429,7 @@ export interface paths {
         };
         /**
          * Get shot events by team ID
-         * @description Retrieves all shot events with locations for a specific team across all their matches
+         * @description Retrieves every shot a specific team took, with its location, across all their matches, blocked attempts included. Shots its players blocked or fouled are excluded.
          */
         get: operations["MatchesController_getMatchEventsByTeamId"];
         put?: never;
@@ -449,7 +449,7 @@ export interface paths {
         };
         /**
          * Get shot events by player ID
-         * @description Retrieves every shot a specific player took, with its location, across all their matches. Shots the player only assisted on are excluded. Results are cached for 5 minutes.
+         * @description Retrieves every shot a specific player took, with its location, across all their matches, blocked attempts included. Shots the player only assisted on are excluded. Results are cached for 5 minutes.
          */
         get: operations["MatchesController_getMatchEventsByPlayerId"];
         put?: never;
