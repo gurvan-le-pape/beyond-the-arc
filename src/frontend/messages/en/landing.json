@@ -3,7 +3,7 @@
     "title": "Get in Touch",
     "intro": "Interested in discussing this project or exploring collaboration opportunities?",
     "email": "Email",
-    "github": "GitHub",
+    "gitlab": "GitLab",
     "linkedin": "LinkedIn",
     "aboutProject": "About This Project",
     "projectDescription": "This is a portfolio project showcasing full-stack development skills with modern web technologies. Built to demonstrate clean architecture, scalable design, and attention to detail."
@@ -161,7 +161,7 @@
     "intro": "Documentation covering setup, the data model, project structure, and the API reference.",
     "reset": "Reset",
     "quickLinks": {
-      "github": "GitHub Repository",
+      "gitlab": "GitLab Repository",
       "viewSource": "View source code",
       "dataModel": "Data Model",
       "apiDocs": "API Documentation",

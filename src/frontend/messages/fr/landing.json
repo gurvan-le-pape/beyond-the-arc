@@ -3,7 +3,7 @@
     "title": "Contactez-moi",
     "intro": "Intéressé pour discuter de ce projet ou explorer des opportunités de collaboration ?",
     "email": "Email",
-    "github": "GitHub",
+    "gitlab": "GitLab",
     "linkedin": "LinkedIn",
     "aboutProject": "À propos du Projet",
     "projectDescription": "Ceci est un projet portfolio présentant des compétences en développement full-stack avec des technologies web modernes. Conçu pour démontrer une architecture propre, un design évolutif et une attention aux détails."
@@ -161,7 +161,7 @@
     "intro": "Documentation couvrant l'installation, le modèle de données, la structure du projet et la référence de l'API.",
     "reset": "Réinitialiser",
     "quickLinks": {
-      "github": "Dépôt GitHub",
+      "gitlab": "Dépôt GitLab",
       "viewSource": "Voir le code source",
       "dataModel": "Modèle de Données",
       "apiDocs": "Documentation API",
