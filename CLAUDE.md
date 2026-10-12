@@ -41,6 +41,12 @@ npm run typecheck                   # tsc --noEmit
 npm run build
 ```
 
+Scheduler (`src/backend/db/python`) — pytest, in the image the scheduler runs on. `tests/season_sample.py` simulates a seeded sample of matches with no database and prints per-team, per-game averages; run it before and after any simulator change, since the simulator's behaviour is only observable in aggregate:
+```bash
+docker run --rm -v "$PWD/src/backend/db/python":/app -w /app -e PYTHONDONTWRITEBYTECODE=1 python:3.14-slim \
+  sh -c 'pip install -q -r requirements-dev.txt && python -m pytest && python -m tests.season_sample'
+```
+
 Root-level `npm run barrels` (or `make barrels`) regenerates barrel `index.ts` files via barrelsby — needed after adding new files to directories listed in the barrel-enforcing eslint rule (see below). It chains `barrels:lint` (`eslint --fix` over the frontend barrels) because barrelsby writes its own `@file` banner and drops the `// src/frontend/...` path comment. Regeneration is one-shot: barrelsby 2.8.1 ships no watch mode.
 
 Composite component folders (an `index.tsx` root plus internal files) must be added to `exclude` in `barrelsby.json`, or barrelsby flattens them into the parent barrel and re-exports their internals — which is how a duplicate export can break the build.

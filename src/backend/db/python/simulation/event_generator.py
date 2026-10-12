@@ -154,8 +154,16 @@ class EventGenerator:
                 "description": f"{name(shooter)} {'made' if event_type == 'free_throw_made' else 'missed'} a free throw.",
             }
 
+        elif event_type == "quarter_end":
+            return {
+                "occurred_at": None,
+                "event_type": event_type,
+                "player_roles": {},
+                "description": "End of the quarter.",
+            }
+
         elif event_type in ["traveling", "carrying", "double_dribble", "bad_pass",
-                            "shot_clock_violation", "offensive_foul", "quarter_end"]:
+                            "shot_clock_violation", "offensive_foul"]:
             player = random.choice(offensive)  # noqa: S2245
             return {
                 "occurred_at": None,
