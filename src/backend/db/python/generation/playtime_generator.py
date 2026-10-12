@@ -11,13 +11,13 @@ GAME_DURATION = 40 * 60  # 40 minutes in seconds
 
 
 def generate(
-    players: list[tuple[int, str]],
+    players: list[tuple],
 ) -> tuple[dict[int, list[tuple[int, int]]], dict[int, str], list[dict]]:
     """
     Simulate playtime rotations and substitutions for one team.
 
     Args:
-        players: list of (player_id, player_name)
+        players: list of (player_id, player_name, ...) — extra fields are ignored
 
     Returns:
         playtimes: dict of player_id → list of (start_sec, end_sec) intervals

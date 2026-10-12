@@ -8,13 +8,21 @@ from event_rules import (
     MADE_SHOTS,
     MISSED_SHOTS,
     OFFENSIVE_FOULS,
+    SHOOTING_FOUL_CATEGORY,
 )
+from simulation import player_picker
 
 
 class EventGenerator:
     def __init__(self, state_manager):
         self.state_manager = state_manager
         self.logger = logging.getLogger(__name__)
+        # player_id -> position, set by the simulator for each match.
+        self.positions: dict[int, str] = {}
+
+    def pick(self, players, action):
+        """The player among `players` who performs `action` — see player_picker."""
+        return player_picker.pick(players, action, self.positions)
 
     def generate_event(self, event, active_home_players, active_away_players, current_possession, player_names):
         """Generate the details of an event based on the event type."""
@@ -80,8 +88,8 @@ class EventGenerator:
             return player_names.get(pid, f"Player {pid}")
 
         if event_type in ["3_point_and_1", "2_point_ext_and_1", "2_point_int_and_1"]:
-            shooter = random.choice(offensive)  # noqa: S2245
-            fouler = random.choice(defensive)  # noqa: S2245
+            shooter = self.pick(offensive, MADE_SHOTS[event_type][0])
+            fouler = self.pick(defensive, "foul")
             return {
                 "occurred_at": None,
                 "event_type": event_type,
@@ -91,8 +99,8 @@ class EventGenerator:
             }
 
         elif event_type in ["3_point_shooting_foul", "2_point_ext_shooting_foul", "2_point_int_shooting_foul"]:
-            shooter = random.choice(offensive)  # noqa: S2245
-            fouler = random.choice(defensive)  # noqa: S2245
+            shooter = self.pick(offensive, SHOOTING_FOUL_CATEGORY[event_type])
+            fouler = self.pick(defensive, "foul")
             return {
                 "occurred_at": None,
                 "event_type": event_type,
@@ -101,8 +109,8 @@ class EventGenerator:
             }
 
         elif event_type == "steal":
-            stealer = random.choice(defensive)  # noqa: S2245
-            victim = random.choice(offensive)  # noqa: S2245
+            stealer = self.pick(defensive, "steal")
+            victim = self.pick(offensive, "turnover")
             return {
                 "occurred_at": None,
                 "event_type": event_type,
@@ -111,12 +119,12 @@ class EventGenerator:
             }
 
         elif event_type == "blocked_shot":
-            shooter = random.choice(offensive)  # noqa: S2245
-            blocker = random.choice(defensive)  # noqa: S2245
             category = random.choices(  # noqa: S2245
                 list(BLOCKED_SHOT_CATEGORY_WEIGHTS),
                 weights=list(BLOCKED_SHOT_CATEGORY_WEIGHTS.values()),
             )[0]
+            shooter = self.pick(offensive, category)
+            blocker = self.pick(defensive, "block")
             return {
                 "occurred_at": None,
                 "event_type": event_type,
@@ -129,7 +137,7 @@ class EventGenerator:
             }
 
         elif event_type in OFFENSIVE_FOULS:
-            fouler = random.choice(offensive)  # noqa: S2245
+            fouler = self.pick(offensive, "foul")
             victim = random.choice(defensive)  # noqa: S2245
             return {
                 "occurred_at": None,
@@ -139,7 +147,7 @@ class EventGenerator:
             }
 
         elif event_type in ["blocking_foul", "pushing_foul", "reaching_foul"]:
-            fouler = random.choice(defensive)  # noqa: S2245
+            fouler = self.pick(defensive, "foul")
             victim = random.choice(offensive)  # noqa: S2245
             return {
                 "occurred_at": None,
@@ -168,7 +176,7 @@ class EventGenerator:
 
         elif event_type in ["offensive_rebound", "defensive_rebound"]:
             pool = offensive if event_type == "offensive_rebound" else defensive
-            rebounder = random.choice(pool)  # noqa: S2245
+            rebounder = self.pick(pool, "rebound")
             return {
                 "occurred_at": None,
                 "event_type": event_type,
@@ -194,7 +202,7 @@ class EventGenerator:
             }
 
         elif event_type in BALL_HANDLER_TURNOVERS:
-            player = random.choice(offensive)  # noqa: S2245
+            player = self.pick(offensive, "turnover")
             return {
                 "occurred_at": None,
                 "event_type": event_type,
@@ -203,14 +211,14 @@ class EventGenerator:
             }
 
         elif event_type.startswith("made_"):
-            shooter = random.choice(offensive)  # noqa: S2245
+            shooter = self.pick(offensive, MADE_SHOTS[event_type][0])
             roles = {"shooter": shooter}
             desc = f"{name(shooter)} made a {event_type.replace('made_', '').replace('_', ' ')}."
 
             if random.random() < 0.6:  # noqa: S2245
                 candidates = [p for p in offensive if p != shooter]
                 if candidates:
-                    assister = random.choice(candidates)  # noqa: S2245
+                    assister = self.pick(candidates, "assist")
                     roles["assister"] = assister
                     desc = f"{name(shooter)} made a {event_type.replace('made_', '').replace('_', ' ')} (assisted by {name(assister)})."
 
@@ -223,7 +231,7 @@ class EventGenerator:
             }
 
         elif event_type.startswith("missed_"):
-            player = random.choice(offensive)  # noqa: S2245
+            player = self.pick(offensive, MISSED_SHOTS[event_type])
             return {
                 "occurred_at": None,
                 "event_type": event_type,

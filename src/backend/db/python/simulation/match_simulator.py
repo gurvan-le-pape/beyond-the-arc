@@ -21,12 +21,14 @@ class MatchSimulator:
         self.state_manager = GameStateManager(game_states, transition_events)
         self.event_generator = EventGenerator(self.state_manager)
 
-    def simulate_match(self, home_team_playtimes, away_team_playtimes, player_names, match_datetime):
+    def simulate_match(self, home_team_playtimes, away_team_playtimes, player_names, match_datetime,
+                       player_positions=None):
         game_duration = 2400  # 40 minutes in seconds
         possession_clock = 24
         current_time = 0
         next_state = None
         self.player_names = player_names
+        self.event_generator.positions = player_positions or {}
 
         match_events = []
         home_team_score = 0
@@ -58,8 +60,8 @@ class MatchSimulator:
         current_possession = tip_off_winner
 
         if home_sub.active and away_sub.active:
-            tip_off_player = random.choice(  # noqa: S2245
-                list(home_sub.active if tip_off_winner == "home" else away_sub.active)
+            tip_off_player = self.event_generator.pick(
+                list(home_sub.active if tip_off_winner == "home" else away_sub.active), "rebound"
             )
             add_event({
                 "occurred_at": None,
@@ -87,7 +89,9 @@ class MatchSimulator:
 
             # Shot clock violation
             if possession_clock == 0:
-                violator = random.choice(home_list if current_possession == "home" else away_list)  # noqa: S2245
+                violator = self.event_generator.pick(
+                    home_list if current_possession == "home" else away_list, "turnover"
+                )
                 add_event({
                     "occurred_at": None,
                     "event_type": "shot_clock_violation",

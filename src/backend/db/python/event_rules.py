@@ -44,6 +44,13 @@ SHOOTING_FOUL_FREE_THROWS = {
     "2_point_int_shooting_foul": 2,
 }
 
+# Shooting-foul event types -> category of the shot the foul interrupted.
+SHOOTING_FOUL_CATEGORY = {
+    "3_point_shooting_foul": "three",
+    "2_point_ext_shooting_foul": "two_ext",
+    "2_point_int_shooting_foul": "two_int",
+}
+
 # "And-1" event types (made shot + shooting foul) -> number of free throws awarded.
 AND_ONE_FREE_THROWS = {
     "3_point_and_1": 1,

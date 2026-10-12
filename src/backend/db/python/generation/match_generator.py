@@ -83,8 +83,8 @@ class MatchGenerator:
 
     def simulate(
         self,
-        home_players: list[tuple[int, str]],
-        away_players: list[tuple[int, str]],
+        home_players: list[tuple[int, str, str]],
+        away_players: list[tuple[int, str, str]],
         starts_at: datetime,
     ) -> SimulatedMatch:
         """
@@ -97,8 +97,9 @@ class MatchGenerator:
         all_names = {**home_names, **away_names}
         all_subs = home_subs + away_subs
 
+        positions = {player_id: position for player_id, _, position in home_players + away_players}
         match_events, home_score, away_score = self.simulator.simulate_match(
-            home_playtimes, away_playtimes, all_names, starts_at
+            home_playtimes, away_playtimes, all_names, starts_at, positions
         )
 
         # Prevent draws
