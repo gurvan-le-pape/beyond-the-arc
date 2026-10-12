@@ -1,4 +1,5 @@
 // src/backend/modules/matches/matches.service.spec.ts
+import { Role } from "@common/constants";
 import { CacheDedupService } from "@common/services/cache-dedup.service";
 import { NotFoundException } from "@nestjs/common";
 import type { TestingModule } from "@nestjs/testing";
@@ -517,6 +518,22 @@ describe("MatchesService", () => {
       expect(result[0].id).toBe(1);
       expect(result[0].matchId).toBe(1);
       expect(result[0].shotLocation?.x).toBe(5.5);
+    });
+
+    it("should only match events where the player is the shooter", async () => {
+      mockPrismaService.client.matchEvents.findMany.mockResolvedValue([]);
+
+      await service.findMatchEventsByPlayerId(7);
+
+      expect(
+        mockPrismaService.client.matchEvents.findMany,
+      ).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            players: { some: { playerId: 7, role: Role.SHOOTER } },
+          }),
+        }),
+      );
     });
   });
 

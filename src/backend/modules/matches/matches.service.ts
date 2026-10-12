@@ -318,11 +318,18 @@ export class MatchesService {
     return events.map((e) => this.mapEventToDto(e));
   }
 
+  /**
+   * Every shot a player took, across their season.
+   *
+   * The player must be the event's `shooter`. A made shot also carries an
+   * `assister`, so matching the player in any role would put the shots they
+   * assisted on their own chart, as made baskets.
+   */
   async findMatchEventsByPlayerId(playerId: number): Promise<MatchEventDto[]> {
     const events = await this.prisma.client.matchEvents.findMany({
       where: {
         shotLocation: { isNot: null },
-        players: { some: { playerId } },
+        players: { some: { playerId, role: Role.SHOOTER } },
       },
       select: { ...MATCH_EVENT_SELECT, matchId: true },
       orderBy: { occurredAt: "asc" },
