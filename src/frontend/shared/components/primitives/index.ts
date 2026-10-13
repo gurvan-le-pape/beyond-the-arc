@@ -17,3 +17,4 @@ export * from "./SelectChevron";
 export * from "./StatPill";
 export * from "./Switch";
 export * from "./Tabs";
+export * from "./TextLink";

@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 
 import type { ClubTeamInfo } from "@/features/organizations/clubs/types";
 import { Link } from "@/navigation";
-import { Badge } from "@/shared/components/primitives";
+import { Badge, TextLink } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { CompetitionLevel } from "@/shared/constants";
 import { normalizeString } from "@/shared/utils";
@@ -97,12 +97,11 @@ export function TeamListItem({ team, clubName }: TeamListItemProps) {
   return (
     <div className="w-full px-6 py-3.5 flex items-center justify-between hover:bg-surface-inset transition-colors group">
       <div className="flex flex-col gap-1">
-        <Link
-          href={`/teams/${team.id}`}
-          className="text-[15px] font-medium text-text-heading group-hover:text-primary transition-colors hover:underline"
-        >
-          {clubName} {team.number || ""}
-        </Link>
+        <span className="text-[15px] font-medium text-text-heading">
+          <TextLink href={`/teams/${team.id}`} variant="plain">
+            {clubName} {team.number || ""}
+          </TextLink>
+        </span>
 
         {championship && levelLabel && (
           <div className="flex items-center gap-1.5 flex-wrap">

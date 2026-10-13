@@ -2,9 +2,8 @@
 import { differenceInYears, parseISO } from "date-fns";
 import { getTranslations } from "next-intl/server";
 
-import { Link } from "@/navigation";
 import { ClubLogoLink, EntityHeaderBadges } from "@/shared/components/domain";
-import { Badge, Card } from "@/shared/components/primitives";
+import { Badge, Card, TextLink } from "@/shared/components/primitives";
 import { StatCell } from "@/shared/components/stats";
 import { Text } from "@/shared/components/typography";
 import { CompetitionLevel } from "@/shared/constants";
@@ -133,22 +132,26 @@ export async function PlayerHeader({ player }: PlayerHeaderProps) {
             </Badge>
           </EntityHeaderBadges>
 
-          <Link
-            href={`/teams/${teamId}`}
-            aria-label={tCommon("team.seeTeam", { number: teamNumber })}
-            className="text-sm font-medium text-text-heading hover:underline"
-          >
-            {clubName} · {teamNumber}
-          </Link>
+          <span className="text-sm font-medium text-text-heading">
+            <TextLink
+              href={`/teams/${teamId}`}
+              variant="plain"
+              ariaLabel={tCommon("team.seeTeam", { number: teamNumber })}
+            >
+              {clubName} · {teamNumber}
+            </TextLink>
+          </span>
 
           {competitionUrl && (
-            <Link
-              href={competitionUrl}
-              aria-label={tCommon("competition.seeCompetition")}
-              className="block text-sm text-text-secondary hover:text-primary hover:underline mt-1"
-            >
-              {tCompetitions("championship")}
-            </Link>
+            <span className="block text-sm text-text-secondary mt-1">
+              <TextLink
+                href={competitionUrl}
+                variant="plain"
+                ariaLabel={tCommon("competition.seeCompetition")}
+              >
+                {tCompetitions("championship")}
+              </TextLink>
+            </span>
           )}
         </div>
 

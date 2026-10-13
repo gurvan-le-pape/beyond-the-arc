@@ -2,8 +2,9 @@
 import { ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-import { Link } from "@/navigation";
 import { cn } from "@/shared/utils";
+
+import { TextLink } from "../primitives/TextLink";
 
 export interface BreadcrumbItem {
   label: string;
@@ -70,12 +71,7 @@ export function Breadcrumb({
                   {item.label}
                 </span>
               ) : (
-                <Link
-                  href={item.href}
-                  className="text-primary hover:text-primary-strong hover:underline transition-colors duration-200 focus-ring rounded-button"
-                >
-                  {item.label}
-                </Link>
+                <TextLink href={item.href}>{item.label}</TextLink>
               )}
 
               {!isLast && (

@@ -1,9 +1,8 @@
 // src/frontend/features/teams/components/detail/TeamHeader.tsx
 import { getTranslations } from "next-intl/server";
 
-import { Link } from "@/navigation";
 import { ClubLogoLink, EntityHeaderBadges } from "@/shared/components/domain";
-import { Card } from "@/shared/components/primitives";
+import { Card, TextLink } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { CompetitionLevel } from "@/shared/constants";
 import { normalizeString } from "@/shared/utils";
@@ -88,13 +87,15 @@ export async function TeamHeader({ team }: TeamHeaderProps) {
           />
 
           {competitionUrl && (
-            <Link
-              href={competitionUrl}
-              aria-label={tCommon("competition.seeCompetition")}
-              className="text-sm text-text-secondary hover:text-primary hover:underline"
-            >
-              {tCompetitions("championship")}
-            </Link>
+            <span className="text-sm text-text-secondary">
+              <TextLink
+                href={competitionUrl}
+                variant="plain"
+                ariaLabel={tCommon("competition.seeCompetition")}
+              >
+                {tCompetitions("championship")}
+              </TextLink>
+            </span>
           )}
         </div>
 
