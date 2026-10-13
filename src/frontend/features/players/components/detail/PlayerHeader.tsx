@@ -2,7 +2,7 @@
 import { differenceInYears, parseISO } from "date-fns";
 import { getTranslations } from "next-intl/server";
 
-import { ClubLogoLink, EntityHeaderBadges } from "@/shared/components/domain";
+import { ClubMarkLink, EntityHeaderBadges } from "@/shared/components/domain";
 import { Badge, Card, TextLink } from "@/shared/components/primitives";
 import { StatCell } from "@/shared/components/stats";
 import { Text } from "@/shared/components/typography";
@@ -158,7 +158,7 @@ export async function PlayerHeader({ player }: PlayerHeaderProps) {
         {/* Hidden on phones, where it would take a third of the row from the
             name and badges; the club name above already links to the team. */}
         <div className="hidden sm:flex flex-shrink-0 pl-5 border-l border-divide self-stretch items-center">
-          <ClubLogoLink clubId={clubId} clubName={clubName} />
+          <ClubMarkLink clubId={clubId} clubName={clubName} />
         </div>
       </div>
 

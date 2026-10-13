@@ -1,9 +1,9 @@
 // src/frontend/features/matches/components/detail/match-events/timeline/TimelineTeamHeader.tsx
 
 import type { TeamInfo } from "@/features/teams/types";
+import { ClubMark } from "@/shared/components/domain";
 
 import { TimelineRow } from "./TimelineRow";
-import { TimelineTeamLogo } from "./TimelineTeamLogo";
 
 interface TimelineTeamHeaderProps {
   readonly homeTeam: TeamInfo;
@@ -30,7 +30,7 @@ export function TimelineTeamHeader({
       className="mb-4 pb-3 border-b-2 border-divide"
     >
       <div className="flex items-center gap-2">
-        <TimelineTeamLogo teamName={homeTeam.name} />
+        <ClubMark clubName={homeTeam.clubName} size="sm" />
         <span className="font-bold text-text-heading">{homeTeam.name}</span>
       </div>
 
@@ -39,7 +39,7 @@ export function TimelineTeamHeader({
 
       <div className="flex items-center gap-2 justify-end">
         <span className="font-bold text-text-heading">{awayTeam.name}</span>
-        <TimelineTeamLogo teamName={awayTeam.name} />
+        <ClubMark clubName={awayTeam.clubName} size="sm" />
       </div>
     </TimelineRow>
   );

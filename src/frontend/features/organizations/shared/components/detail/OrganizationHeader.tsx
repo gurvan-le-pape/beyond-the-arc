@@ -4,6 +4,7 @@
 import Image from "next/image";
 import { type ReactNode, useState } from "react";
 
+import { ClubMark } from "@/shared/components/domain";
 import { Card } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { formatNameToFileName } from "@/shared/utils";
@@ -32,9 +33,8 @@ interface OrganizationHeaderProps {
  * organisation upstream therefore swaps its logo for the default silently, and
  * the two stay in step only if the asset is renamed alongside it.
  *
- * Only `leagues` and `committees` ship real logos. `clubs` ships the fallback
- * alone, so every club header renders the default crest — there are tens of
- * thousands of clubs and no per-club artwork.
+ * Only `leagues` and `committees` ship real logos. There is no per-club
+ * artwork for the thousands of clubs, so a club is drawn as its `ClubMark`.
  *
  * `"use client"` is here for one reason: the `onError` fallback needs state.
  * Nothing else in this component is interactive, so keep it that way rather
@@ -54,8 +54,11 @@ export function OrganizationHeader({
   return (
     <Card variant="highlighted" padding="lg">
       <div className="flex items-center gap-6">
-        <div className="w-20 h-20 md:w-24 md:h-24 flex-shrink-0">
-          {/* Intrinsic size rather than `fill`: `fill` has no idea how big it
+        {imageFolder === "clubs" ? (
+          <ClubMark clubName={name} size="2xl" />
+        ) : (
+          <div className="w-20 h-20 md:w-24 md:h-24 flex-shrink-0">
+            {/* Intrinsic size rather than `fill`: `fill` has no idea how big it
               will be drawn, so it defaults `sizes` to `100vw` and the browser
               requests a viewport-sized candidate — it was fetching the 1920w
               variant for a logo drawn at 96px. Given a width, next/image
@@ -63,16 +66,17 @@ export function OrganizationHeader({
               string duplicating the box classes and nothing to drift.
               The CSS still owns the drawn size; 96 is the larger of the two
               breakpoints, so the image is never upscaled. */}
-          <Image
-            src={logoSrc}
-            alt={`${name} logo`}
-            width={96}
-            height={96}
-            className="w-full h-full object-contain"
-            onError={() => setLogoSrc(FALLBACK_LOGO)}
-            priority
-          />
-        </div>
+            <Image
+              src={logoSrc}
+              alt={`${name} logo`}
+              width={96}
+              height={96}
+              className="w-full h-full object-contain"
+              onError={() => setLogoSrc(FALLBACK_LOGO)}
+              priority
+            />
+          </div>
+        )}
         <div className="flex-1">
           <Text variant="h1" className="text-xl md:text-2xl">
             {name}

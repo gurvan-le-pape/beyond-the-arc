@@ -3,7 +3,7 @@ import { Text } from "@/shared/components/typography";
 import type { CompetitionLevel } from "@/shared/constants";
 import { cn } from "@/shared/utils";
 
-import { ClubLogo } from "./ClubLogo";
+import { ClubMark } from "./ClubMark";
 import { getLevelConfig } from "./ListEntityCard";
 
 interface EntityCardCommittee {
@@ -39,7 +39,7 @@ export function EntityCardBody({
   return (
     <div className="px-5 py-4 flex flex-col sm:flex-row gap-4">
       <div className="flex items-center gap-4 flex-1 min-w-0">
-        <ClubLogo clubName={clubName} />
+        <ClubMark clubName={clubName} size="lg" />
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 min-w-0">

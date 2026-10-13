@@ -1,7 +1,7 @@
 // src/frontend/features/teams/components/detail/TeamHeader.tsx
 import { getTranslations } from "next-intl/server";
 
-import { ClubLogoLink, EntityHeaderBadges } from "@/shared/components/domain";
+import { ClubMarkLink, EntityHeaderBadges } from "@/shared/components/domain";
 import { Card, TextLink } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { CompetitionLevel } from "@/shared/constants";
@@ -73,7 +73,7 @@ export async function TeamHeader({ team }: TeamHeaderProps) {
       }`}
     >
       <div className="flex items-center gap-3 p-4 sm:gap-5 sm:p-6">
-        <ClubLogoLink clubId={clubId} clubName={clubName} />
+        <ClubMarkLink clubId={clubId} clubName={clubName} />
 
         <div className="flex-1 min-w-0">
           <Text variant="h1" className="mb-3">

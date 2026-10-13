@@ -2,7 +2,7 @@
 import { useLocale, useTranslations } from "next-intl";
 
 import {
-  ClubLogo,
+  ClubMark,
   EntityCardBadges,
   getLevelConfig,
   ListEntityCard,
@@ -74,10 +74,7 @@ export function MatchesCard({ match }: MatchesCardProps) {
       <div className="px-5 py-4">
         <div className="flex items-center justify-between gap-6">
           <div className="flex-1 flex flex-col items-center gap-3">
-            <ClubLogo
-              clubName={match.homeTeam?.club?.name}
-              alt={match.homeTeam?.club?.name || tMatches("matchesTable.club")}
-            />
+            <ClubMark clubName={match.homeTeam?.club?.name} size="lg" />
             <div className="text-center">
               <p
                 className={cn(
@@ -102,10 +99,7 @@ export function MatchesCard({ match }: MatchesCardProps) {
           </div>
 
           <div className="flex-1 flex flex-col items-center gap-3">
-            <ClubLogo
-              clubName={match.awayTeam?.club?.name}
-              alt={match.awayTeam?.club?.name || tMatches("matchesTable.club")}
-            />
+            <ClubMark clubName={match.awayTeam?.club?.name} size="lg" />
             <div className="text-center">
               <p
                 className={cn(

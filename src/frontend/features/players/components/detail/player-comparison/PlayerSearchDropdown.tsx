@@ -5,12 +5,13 @@ import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
+import { ClubMark } from "@/shared/components/domain";
 import { ErrorMessage } from "@/shared/components/feedback";
 import { DebouncedInput } from "@/shared/components/forms";
-import { Button, ImageWithFallback } from "@/shared/components/primitives";
+import { Button } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import type { Category, Gender } from "@/shared/constants";
-import { cn, formatNameToFileName } from "@/shared/utils";
+import { cn } from "@/shared/utils";
 
 import { usePlayerSearch } from "../../../api";
 import type { Player } from "../../../types/Player";
@@ -78,12 +79,7 @@ function DropdownContent({
           i !== 0 && "border-t border-divide",
         )}
       >
-        <ImageWithFallback
-          src={`/images/clubs/${formatNameToFileName(clubName)}.webp`}
-          alt={clubName}
-          fallback="/images/clubs/defaultLogo.30cc7520.svg"
-          className="w-6 h-6 object-contain shrink-0"
-        />
+        <ClubMark clubName={clubName} size="xs" />
         <div className="min-w-0 flex flex-col">
           <Text variant="label" as="span" className="text-text-heading">
             #{player.number} {player.name}

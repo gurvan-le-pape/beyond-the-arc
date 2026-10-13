@@ -5,7 +5,7 @@ import type { Leaderboard } from "@/shared/types";
 
 import { Section } from "../blocks";
 import { DataTable, type TableColumn } from "../table";
-import { ClubCrest } from "./ClubCrest";
+import { ClubMark } from "./ClubMark";
 
 interface LeaderboardTableProps {
   readonly leaderboards: Leaderboard[];
@@ -42,7 +42,7 @@ export function LeaderboardTable({
       align: "left",
       render: (row) => (
         <div className="flex items-center gap-2">
-          <ClubCrest clubName={row.clubName} />
+          <ClubMark clubName={row.clubName} size="sm" />
           <span>
             {row.clubName} - {row.teamNumber}
           </span>

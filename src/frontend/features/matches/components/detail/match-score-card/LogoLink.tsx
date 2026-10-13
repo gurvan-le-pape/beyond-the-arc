@@ -5,8 +5,8 @@ import { useTranslations } from "next-intl";
 
 import type { TeamInfo } from "@/features/teams/types";
 import { Link } from "@/navigation";
-import { ImageWithFallback } from "@/shared/components/primitives";
-import { cn, formatNameToFileName } from "@/shared/utils";
+import { ClubMark } from "@/shared/components/domain";
+import { cn } from "@/shared/utils";
 
 interface LogoLinkProps {
   readonly team: TeamInfo;
@@ -30,12 +30,7 @@ export function LogoLink({ team, isWinning }: LogoLinkProps) {
           : "border-divide hover:border-primary shadow-card",
       )}
     >
-      <ImageWithFallback
-        src={`/images/clubs/${formatNameToFileName(team.clubName ?? "")}.webp`}
-        alt={team.clubName ?? ""}
-        fallback="/images/clubs/defaultLogo.30cc7520.svg"
-        className="w-12 h-12 md:w-16 md:h-16 object-contain"
-      />
+      <ClubMark clubName={team.clubName} size="xl" />
     </Link>
   );
 }
