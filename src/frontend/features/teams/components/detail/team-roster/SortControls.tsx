@@ -64,6 +64,9 @@ export function SortControls({ sortConfig, onSort }: SortControlsProps) {
             key={key}
             type="button"
             onClick={() => onSort(key)}
+            // A sort toggle, not a radio: pressing the active one again
+            // reverses it, so the state is "pressed" plus its direction.
+            aria-pressed={isActive}
             className={[
               "inline-flex items-center gap-1 px-3 py-1 rounded-button text-xs font-semibold border transition-colors duration-150 focus-ring",
               isActive
@@ -74,7 +77,12 @@ export function SortControls({ sortConfig, onSort }: SortControlsProps) {
             {label}
             {isActive && (
               <span className="text-[10px]">
-                {sortConfig.direction === "desc" ? "↓" : "↑"}
+                <span aria-hidden="true">
+                  {sortConfig.direction === "desc" ? "↓" : "↑"}
+                </span>
+                <span className="sr-only">
+                  {tCommon(`sortDirection.${sortConfig.direction}`)}
+                </span>
               </span>
             )}
           </button>

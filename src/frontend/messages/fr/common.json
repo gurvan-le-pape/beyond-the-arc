@@ -203,5 +203,9 @@
     "teamNumbers": "Numéros d'équipe",
     "allTeamNumbers": "Tous les numéros d'équipe",
     "reset": "Réinitialiser les filtres"
+  },
+  "sortDirection": {
+    "asc": "croissant",
+    "desc": "décroissant"
   }
 }

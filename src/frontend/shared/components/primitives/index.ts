@@ -12,6 +12,7 @@ export * from "./Divide";
 export * from "./dropdownTriggerBase";
 export * from "./ImageWithFallback";
 export * from "./MultiSelectDropdown";
+export * from "./SegmentedControl";
 export * from "./SelectChevron";
 export * from "./StatPill";
 export * from "./Switch";

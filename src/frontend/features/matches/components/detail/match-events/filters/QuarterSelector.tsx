@@ -2,39 +2,27 @@
 import { useTranslations } from "next-intl";
 
 import { Quarter, QUARTER_LIST } from "@/features/matches/constants";
-import { cn } from "@/shared/utils";
+import { SegmentedControl } from "@/shared/components/primitives";
 
 interface QuarterSelectorProps {
   readonly selected: Quarter;
   readonly onChange: (q: Quarter) => void;
 }
 
-/**
- * Pill-group that lets the user pick a single quarter or "All".
- * The active pill is highlighted; inactive pills are plain text buttons.
- */
+/** The quarter the timeline shows, or all of them. */
 export function QuarterSelector({ selected, onChange }: QuarterSelectorProps) {
   const t = useTranslations("matches");
 
   return (
-    <div className="flex surface-subtle rounded-button p-1">
-      {QUARTER_LIST.map((quarter) => (
-        <button
-          type="button"
-          key={quarter}
-          onClick={() => onChange(quarter)}
-          className={cn(
-            "px-3 py-1.5 text-sm font-medium rounded-button transition-colors duration-200",
-            "focus-ring",
-            selected === quarter
-              ? "bg-primary text-white"
-              : "text-text-body hover:text-text-heading",
-          )}
-        >
-          {quarter === Quarter.ALL ? t("matchEvents.allQuarters") : quarter}
-        </button>
-      ))}
-    </div>
+    <SegmentedControl
+      label={t("matchEvents.quarter")}
+      value={selected}
+      onChange={onChange}
+      options={QUARTER_LIST.map((quarter) => ({
+        value: quarter,
+        label: quarter === Quarter.ALL ? t("matchEvents.allQuarters") : quarter,
+      }))}
+    />
   );
 }
 
