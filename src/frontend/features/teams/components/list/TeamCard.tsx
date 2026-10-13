@@ -9,7 +9,7 @@ import {
   ListEntityCard,
 } from "@/shared/components/domain";
 import { Text } from "@/shared/components/typography";
-import { cn } from "@/shared/utils";
+import { cn, formatTeamName } from "@/shared/utils";
 
 interface TeamCardProps {
   readonly team: Team;
@@ -69,9 +69,8 @@ export function TeamCard({ team }: TeamCardProps) {
     >
       <EntityCardBody
         clubName={clubName}
-        title={clubName ?? tCommon("notAvailable")}
+        title={formatTeamName(clubName, team.number) || tCommon("notAvailable")}
         committee={team.club?.committee}
-        number={team.number}
         level={level}
       />
     </ListEntityCard>

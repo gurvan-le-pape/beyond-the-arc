@@ -8,7 +8,7 @@ import { Link } from "@/navigation";
 import { Badge, TextLink } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { CompetitionLevel } from "@/shared/constants";
-import { normalizeString } from "@/shared/utils";
+import { formatTeamName, normalizeString } from "@/shared/utils";
 
 interface TeamListItemProps {
   readonly team: ClubTeamInfo;
@@ -99,7 +99,7 @@ export function TeamListItem({ team, clubName }: TeamListItemProps) {
       <div className="flex flex-col gap-1">
         <span className="text-[15px] font-medium text-text-heading">
           <TextLink href={`/teams/${team.id}`} variant="plain">
-            {clubName} {team.number || ""}
+            {formatTeamName(clubName, team.number)}
           </TextLink>
         </span>
 

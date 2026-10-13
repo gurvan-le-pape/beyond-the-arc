@@ -5,7 +5,7 @@ import { ClubMarkLink, EntityHeaderBadges } from "@/shared/components/domain";
 import { Card, TextLink } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { CompetitionLevel } from "@/shared/constants";
-import { normalizeString } from "@/shared/utils";
+import { formatTeamName, normalizeString } from "@/shared/utils";
 
 import type { Team } from "../../types/Team";
 
@@ -14,7 +14,7 @@ interface TeamHeaderProps {
 }
 
 /**
- * Identity block at the top of a team detail page: club crest, club name, the
+ * Identity block at the top of a team detail page: club mark, team name, the
  * badges that identify the team, and a link into its championship.
  *
  * **Requires a fully hydrated team.** It reads `team.club.committee.league.id`
@@ -77,7 +77,7 @@ export async function TeamHeader({ team }: TeamHeaderProps) {
 
         <div className="flex-1 min-w-0">
           <Text variant="h1" className="mb-3">
-            {clubName}
+            {formatTeamName(clubName, teamNumber)}
           </Text>
 
           <EntityHeaderBadges
@@ -97,12 +97,6 @@ export async function TeamHeader({ team }: TeamHeaderProps) {
               </TextLink>
             </span>
           )}
-        </div>
-
-        <div className="flex-shrink-0 pl-3 sm:pl-5 border-l border-divide self-stretch flex items-center">
-          <span className="text-2xl sm:text-3xl font-bold text-text-secondary">
-            #{teamNumber}
-          </span>
         </div>
       </div>
     </Card>

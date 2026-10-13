@@ -2,7 +2,7 @@
   "meta": "{name} — season stats, match history and shot chart.",
   "label": "Players",
   "tryAdjustingFilters": "Try adjusting your filters to find more players.",
-  "teamNumber": "Team #{number}",
+  "teamNumber": "Team {number}",
   "playerDetail": {
     "age": "{age} yrs",
     "ageLabel": "Age",

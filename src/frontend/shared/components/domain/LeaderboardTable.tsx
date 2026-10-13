@@ -2,6 +2,7 @@
 import { useTranslations } from "next-intl";
 
 import type { Leaderboard } from "@/shared/types";
+import { formatTeamName } from "@/shared/utils";
 
 import { Section } from "../blocks";
 import { DataTable, type TableColumn } from "../table";
@@ -43,9 +44,7 @@ export function LeaderboardTable({
       render: (row) => (
         <div className="flex items-center gap-2">
           <ClubMark clubName={row.clubName} size="sm" />
-          <span>
-            {row.clubName} - {row.teamNumber}
-          </span>
+          <span>{formatTeamName(row.clubName, row.teamNumber)}</span>
         </div>
       ),
     },

@@ -10,7 +10,12 @@ import {
 } from "@/shared/components/domain";
 import { Badge } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
-import { cn, formatMatchDate, formatMatchTime } from "@/shared/utils";
+import {
+  cn,
+  formatMatchDate,
+  formatMatchTime,
+  formatTeamName,
+} from "@/shared/utils";
 
 import type { Match } from "../../types";
 
@@ -84,8 +89,10 @@ export function MatchesCard({ match }: MatchesCardProps) {
                     : "font-normal text-text-emphasis",
                 )}
               >
-                {match.homeTeam?.club?.name}
-                {!!match.homeTeam?.number && ` - ${match.homeTeam.number}`}
+                {formatTeamName(
+                  match.homeTeam?.club?.name,
+                  match.homeTeam?.number,
+                )}
               </p>
             </div>
           </div>
@@ -109,8 +116,10 @@ export function MatchesCard({ match }: MatchesCardProps) {
                     : "font-normal text-text-emphasis",
                 )}
               >
-                {match.awayTeam?.club?.name}
-                {!!match.awayTeam?.number && ` - ${match.awayTeam.number}`}
+                {formatTeamName(
+                  match.awayTeam?.club?.name,
+                  match.awayTeam?.number,
+                )}
               </p>
             </div>
           </div>

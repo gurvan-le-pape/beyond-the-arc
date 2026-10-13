@@ -2,7 +2,7 @@
   "meta": "{name} — effectif, statistiques de la saison et résultats.",
   "label": "Équipes",
   "tryAdjustingFilters": "Essayez d'ajuster vos filtres pour trouver plus d'équipes.",
-  "teamNumber": "Équipe #{number}",
+  "teamNumber": "Équipe {number}",
   "pool": "Poule",
   "poolLabel": "Poule {letter}",
   "teamDetail": {

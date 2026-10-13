@@ -1,6 +1,7 @@
 // src/frontend/features/matches/utils/buildTeam.ts
 import type { MatchPlayerWithStats } from "@/features/matches/types";
 import type { TeamInfoExtended, TeamStats } from "@/features/teams/types";
+import { formatTeamName } from "@/shared/utils";
 
 import type { MatchTeamRef } from "../types";
 
@@ -28,7 +29,7 @@ export function buildTeam(
 ): TeamInfoExtended {
   return {
     id: team.id,
-    name: `${team.club.name ?? ""} - ${team.number ?? ""}`,
+    name: formatTeamName(team.club.name, team.number),
     clubId: team.club.id,
     clubName: team.club.name,
     committeeId: team.club.committeeId,

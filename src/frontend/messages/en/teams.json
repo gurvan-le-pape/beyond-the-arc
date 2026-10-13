@@ -2,7 +2,7 @@
   "meta": "{name} — roster, season stats and results.",
   "label": "Teams",
   "tryAdjustingFilters": "Try adjusting your filters to find more teams.",
-  "teamNumber": "Team #{number}",
+  "teamNumber": "Team {number}",
   "pool": "Pool",
   "poolLabel": "Pool {letter}",
   "teamDetail": {
