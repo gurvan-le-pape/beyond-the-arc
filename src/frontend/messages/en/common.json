@@ -203,5 +203,9 @@
     "teamNumbers": "Team numbers",
     "allTeamNumbers": "All team numbers",
     "reset": "Reset filters"
+  },
+  "sortDirection": {
+    "asc": "ascending",
+    "desc": "descending"
   }
 }

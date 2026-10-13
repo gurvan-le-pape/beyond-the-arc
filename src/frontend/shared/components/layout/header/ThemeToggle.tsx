@@ -85,7 +85,7 @@ export function ThemeToggle() {
         )}
         aria-label={t("header.toggleTheme")}
         aria-expanded={isOpen}
-        aria-haspopup="listbox"
+        aria-haspopup="menu"
       >
         <ActiveIcon className="w-5 h-5 text-text-emphasis" />
       </button>
@@ -112,8 +112,8 @@ export function ThemeToggle() {
             <button
               type="button"
               key={id}
-              role="menuitem"
-              aria-current={isActive ? "true" : undefined}
+              role="menuitemradio"
+              aria-checked={isActive}
               onClick={() => {
                 setTheme(id);
                 setIsOpen(false);

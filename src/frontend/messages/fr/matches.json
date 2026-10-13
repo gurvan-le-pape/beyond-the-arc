@@ -79,7 +79,8 @@
     "substitutions": "Remplacements",
     "players": "Joueurs",
     "clearSelection": "Effacer la sélection",
-    "latestFirst": "Récent d'abord"
+    "latestFirst": "Récent d'abord",
+    "quarter": "Quart-temps"
   },
   "matchSummary": {
     "title": "Résumé du match",

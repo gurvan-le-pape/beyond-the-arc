@@ -1,6 +1,8 @@
 // src/frontend/features/charts/components/filters/HeatmapFilterBar.tsx
 import { useTranslations } from "next-intl";
 
+import { SegmentedControl } from "@/shared/components/primitives";
+
 import { ShotFilter } from "../../constants";
 
 interface HeatmapFilterBarProps {
@@ -31,23 +33,16 @@ export function HeatmapFilterBar({
 
   return (
     <div className="w-full flex flex-row items-center gap-2 justify-center">
-      <span className="font-semibold text-sm text-text-body mr-1">
-        {t("shotChart.shots")}:
+      {/* Seen, not read: the group below carries the same name. */}
+      <span aria-hidden="true" className="font-semibold text-sm text-text-body">
+        {t("shotChart.shots")} :
       </span>
-      {FILTERS.map(({ key, label }) => (
-        <button
-          type="button"
-          key={key}
-          onClick={() => setShotFilter(key)}
-          className={`px-3 py-1 rounded-md border text-sm transition-all ${
-            shotFilter === key
-              ? "font-semibold border-primary bg-primary-subtle text-primary-strong shadow-sm"
-              : "border-divide bg-surface-inset text-text-body hover:border-text-muted"
-          }`}
-        >
-          {label}
-        </button>
-      ))}
+      <SegmentedControl
+        label={t("shotChart.shots")}
+        value={shotFilter}
+        onChange={setShotFilter}
+        options={FILTERS.map(({ key, label }) => ({ value: key, label }))}
+      />
     </div>
   );
 }

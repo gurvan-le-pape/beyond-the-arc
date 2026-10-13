@@ -2,6 +2,7 @@
 import { useTranslations } from "next-intl";
 import React from "react";
 
+import { SegmentedControl } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 
 import type { ColorScaleName } from "../../constants";
@@ -93,38 +94,27 @@ export function HeatmapLegend({
           <Text variant="caption" as="span" className="shrink-0">
             {t("shotChart.color")}
           </Text>
-          <div className="flex flex-row gap-1.5 flex-wrap">
-            {colorScaleOptions.map((scale) => {
-              const gradient = buildGradient(COLOR_SCALES[scale]);
-              const isActive = colorScaleName === scale;
-              return (
-                <button
-                  type="button"
-                  key={scale}
-                  onClick={() => setColorScale(scale)}
-                  title={scale}
-                  className={`
-                    flex flex-col items-center gap-0.5 px-1.5 py-1 rounded-lg border transition-all
-                    ${
-                      isActive
-                        ? "border-primary ring-2 ring-primary-subtle bg-primary-subtle"
-                        : "border-divide bg-surface-inset hover:border-text-muted"
-                    }
-                  `}
-                >
+          <SegmentedControl
+            label={t("shotChart.color")}
+            size="sm"
+            value={colorScaleName}
+            onChange={setColorScale}
+            options={colorScaleOptions.map((scale) => ({
+              value: scale,
+              label: (
+                <span className="flex flex-col items-center gap-0.5">
                   <span
+                    aria-hidden="true"
                     className="block w-8 h-2.5 rounded-sm"
                     style={{
-                      background: `linear-gradient(to right, ${gradient})`,
+                      background: `linear-gradient(to right, ${buildGradient(COLOR_SCALES[scale])})`,
                     }}
                   />
-                  <Text variant="caption" as="span" className="leading-none">
-                    {scale}
-                  </Text>
-                </button>
-              );
-            })}
-          </div>
+                  {scale}
+                </span>
+              ),
+            }))}
+          />
         </div>
       )}
     </div>

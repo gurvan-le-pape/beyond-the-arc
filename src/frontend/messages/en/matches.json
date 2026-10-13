@@ -79,7 +79,8 @@
     "rebounds": "Rebounds",
     "players": "Players",
     "clearSelection": "Clear selection",
-    "latestFirst": "Latest first"
+    "latestFirst": "Latest first",
+    "quarter": "Quarter"
   },
   "matchSummary": {
     "title": "Match Summary",
