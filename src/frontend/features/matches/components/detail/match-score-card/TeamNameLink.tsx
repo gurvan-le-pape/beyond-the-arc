@@ -24,7 +24,7 @@ export function TeamNameLink({ team, isWinning, align }: TeamNameLinkProps) {
         "flex-1 min-w-0",
         "text-xs md:text-sm font-semibold leading-snug [overflow-wrap:break-word] [hyphens:auto]",
         "hover:text-primary transition-colors duration-200",
-        "focus:outline-none focus:ring-2 focus:ring-primary ring-offset-surface rounded",
+        "focus-ring rounded",
         align === "left" ? "text-left" : "text-right",
         isWinning ? "text-text-heading" : "text-text-body",
       )}

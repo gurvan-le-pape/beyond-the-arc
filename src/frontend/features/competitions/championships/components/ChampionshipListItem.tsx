@@ -20,7 +20,7 @@ export function ChampionshipListItem({
   return (
     <Link
       href={`/championships/${championship.id}`}
-      className="w-full flex items-center justify-start text-left text-sm font-medium py-2.5 px-4 rounded-none border-l-4 border-l-transparent hover:bg-primary-subtle hover:border-l-primary transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary"
+      className="w-full flex items-center justify-start text-left text-sm font-medium py-2.5 px-4 rounded-none border-l-4 border-l-transparent hover:bg-primary-subtle hover:border-l-primary transition-all duration-200 focus-ring-inset"
     >
       {championship.name}
     </Link>

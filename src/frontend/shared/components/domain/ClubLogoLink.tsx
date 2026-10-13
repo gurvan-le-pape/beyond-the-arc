@@ -29,7 +29,7 @@ export function ClubLogoLink({ clubId, clubName }: ClubLogoLinkProps) {
     <Link
       href={`/organizations/clubs/${clubId}`}
       aria-label={tCommon("club.seeClub", { name: clubName })}
-      className="w-16 h-16 flex-shrink-0 rounded-card border border-divide bg-surface-inset overflow-hidden flex items-center justify-center"
+      className="w-16 h-16 flex-shrink-0 rounded-card border border-divide bg-surface-inset overflow-hidden flex items-center justify-center focus-ring"
     >
       <ImageWithFallback
         src={`/images/clubs/${formatNameToFileName(clubName)}.webp`}

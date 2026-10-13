@@ -318,6 +318,47 @@ module.exports = {
           "&::-webkit-scrollbar": { width: "8px", height: "8px" },
         },
 
+        // ── Focus indicator ──────────────────────────────────────────────────
+        //
+        // The keyboard focus style. globals.css already gives every element
+        // this indicator by default; .focus-ring names it explicitly on
+        // interactive primitives. An outline rather than a ring: a
+        // box-shadow ring disappears in forced-colors mode (Windows high
+        // contrast) and fights an element's own shadow, an outline does
+        // neither. :focus-visible, so a mouse click does not draw it.
+        // primary-strong, not primary: a focus indicator needs 3:1 against the
+        // surface, and primary is 2.84:1 on the dark surfaces.
+        //
+        // .focus-ring-inset draws inside the box, for elements whose container
+        // clips overflow (table cells, tab strips, list rows).
+        //
+        // On a coloured panel, where primary-strong does not stand out, set
+        // --focus-ring-color on the panel ([--focus-ring-color:white]).
+        ".focus-ring": {
+          "&:focus-visible": {
+            outline:
+              "2px solid var(--focus-ring-color, rgb(var(--color-primary-strong)))",
+            "outline-offset": "2px",
+          },
+        },
+        ".focus-ring-inset": {
+          "&:focus-visible": {
+            outline:
+              "2px solid var(--focus-ring-color, rgb(var(--color-primary-strong)))",
+            "outline-offset": "-2px",
+          },
+        },
+        // .focus-ring-overlay draws on the element's ::after, for a link whose
+        // ::after is stretched over a larger box (the table row link).
+        ".focus-ring-overlay": {
+          "&:focus-visible": { outline: "none" },
+          "&:focus-visible::after": {
+            outline:
+              "2px solid var(--focus-ring-color, rgb(var(--color-primary-strong)))",
+            "outline-offset": "-2px",
+          },
+        },
+
         // ── Surface context consumers ────────────────────────────────────────
         //
         // These utilities read from CSS variables set by the nearest

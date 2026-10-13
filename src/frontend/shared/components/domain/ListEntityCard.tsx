@@ -67,8 +67,7 @@ export function ListEntityCard({
         "transition-all duration-200",
         "hover:-translate-y-0.5 hover:scale-[1.01]",
         "hover:shadow-card-hover",
-        "focus:outline-none focus:ring-2 focus:ring-primary",
-        "focus:ring-offset-2 focus:ring-offset-surface",
+        "focus-ring",
         config.border,
         config.hover,
       )}

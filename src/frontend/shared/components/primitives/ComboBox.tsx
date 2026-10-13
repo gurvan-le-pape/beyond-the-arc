@@ -184,7 +184,7 @@ export function ComboBox({
             DROPDOWN_TRIGGER_BASE,
             "text-left",
             selectedOption && value !== "" && "border-primary",
-            error && "border-error focus:ring-error focus:border-error",
+            error && "border-error focus-ring focus:border-error",
           )}
           onClick={() => setOpen((o) => !o)}
           disabled={disabled}
@@ -232,7 +232,7 @@ export function ComboBox({
           <input
             ref={searchRef}
             type="text"
-            className="w-full px-3 py-2 border-b border-divide bg-surface-subtle text-text-heading placeholder:text-text-secondary text-sm focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
+            className="w-full px-3 py-2 border-b border-divide bg-surface-subtle text-text-heading placeholder:text-text-secondary text-sm focus-ring-inset"
             placeholder={t("table.filter")}
             value={search}
             onChange={(e) => {

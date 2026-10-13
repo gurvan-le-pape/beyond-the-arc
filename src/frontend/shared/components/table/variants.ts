@@ -180,9 +180,7 @@ export const rowVariants = cva("transition-colors duration-150", {
  * the overlay back to the lead cell.
  */
 export const ROW_LINK =
-  "outline-none after:absolute after:inset-0 after:content-['']" +
-  " focus-visible:after:ring-2 focus-visible:after:ring-inset" +
-  " focus-visible:after:ring-primary";
+  "after:absolute after:inset-0 after:content-[''] focus-ring-overlay";
 
 /**
  * A link occupying one cell, for the tables the stretched row link cannot
@@ -195,16 +193,12 @@ export const ROW_LINK =
  * open-in-new-tab, status-bar URL. Prefer `getRowHref` when the table can take
  * it — the whole row is the better hit area.
  *
- * `ring-offset-1` rather than the usual `ring-offset-2`: cells are as tight as
- * `px-2 py-1.5` at `compact`, and the ring has to stay inside that padding or
- * the cell's `overflow-hidden` clips it. `ring-offset-surface` reads the
- * surface context, so the offset matches the pinned lead column's own
- * `bg-surface-own` as well as an ordinary cell.
+ * `focus-ring-inset` rather than `focus-ring`: cells are as tight as
+ * `px-2 py-1.5` at `compact`, and an outline drawn outside the link would be
+ * clipped by the cell's `overflow-hidden`.
  */
 export const CELL_LINK =
-  "rounded outline-none transition-colors duration-150 hover:text-primary" +
-  " focus-visible:ring-2 focus-visible:ring-primary" +
-  " focus-visible:ring-offset-1 ring-offset-surface";
+  "rounded transition-colors duration-150 hover:text-primary focus-ring-inset";
 
 export const headVariants = cva("", {
   variants: { align, density, wrap, width, divider, numeric, stickyLead },

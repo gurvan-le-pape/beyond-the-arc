@@ -39,7 +39,7 @@ export function DocsQuickLinkCard({
       target={external ? "_blank" : undefined}
       rel={external ? "noopener noreferrer" : undefined}
       {...(download ? { download: true } : {})}
-      className="surface-subtle flex items-center gap-3 p-4 rounded-card border border-divide shadow-card hover:shadow-card-hover transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ring-offset-surface"
+      className="surface-subtle flex items-center gap-3 p-4 rounded-card border border-divide shadow-card hover:shadow-card-hover transition-all duration-200 focus-ring"
     >
       <Icon className="w-6 h-6 text-text-body" aria-hidden />
       <div className="flex flex-col">

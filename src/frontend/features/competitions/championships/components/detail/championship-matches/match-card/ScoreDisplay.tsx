@@ -36,7 +36,7 @@ export function ScoreDisplay({
       {hasScores && (
         <Link
           href={`/matches/${matchId}`}
-          className="text-sm text-primary hover:text-primary-strong hover:underline transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ring-offset-surface rounded-button"
+          className="text-sm text-primary hover:text-primary-strong hover:underline transition-colors duration-200 focus-ring rounded-button"
         >
           {tMatches("summary")}
         </Link>

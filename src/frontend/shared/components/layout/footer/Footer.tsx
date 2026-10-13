@@ -59,8 +59,7 @@ export function Footer() {
   const iconLinkClass =
     "p-2 rounded-button hover:bg-surface-inset " +
     "text-text-body hover:text-primary " +
-    "transition-all duration-200 group focus:outline-none focus:ring-2 " +
-    "focus:ring-primary";
+    "transition-all duration-200 group focus-ring";
 
   const navLinkClass =
     "text-text-body hover:text-primary transition-colors duration-200";

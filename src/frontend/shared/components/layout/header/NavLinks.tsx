@@ -54,8 +54,7 @@ export function NavLinks({
 
       const desktopStyles = cn(
         "px-4 py-2 rounded-button font-medium transition-all duration-200",
-        "focus:outline-none focus:ring-2 focus:ring-primary",
-        "focus:ring-offset-2 ring-offset-surface",
+        "focus-ring",
         isActive
           ? "bg-primary-subtle text-primary-strong font-semibold shadow-sm"
           : "text-text-emphasis hover:bg-surface-inset hover:text-text-heading",

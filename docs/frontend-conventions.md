@@ -37,6 +37,14 @@ components/detail/match-card/
 - **Role grouping** (charts style: `court/`, `overlays/`, `headers/`) is permitted for a feature that is essentially one component with many small parts — the same depth cap applies.
 - No `utils/`, `types/`, or `hooks/` *directories* inside `components/`. Component-private helpers live as files inside their composite folder; anything else belongs in the feature-level directories.
 
+### Focus
+
+Every element reached by the keyboard already shows the focus indicator: `globals.css` sets it on `:focus-visible` for the whole document. Do not remove it (`outline-none`) and do not draw another one (`focus:ring-*`). Vary it only through the utilities:
+
+- `focus-ring-inset` — drawn inside the box, for an element whose container clips overflow (table cells, tab strips, list rows);
+- `focus-ring-overlay` — drawn on the element's `::after`, for a link stretched over a larger box (the table row link);
+- `[--focus-ring-color:white]` on a coloured panel, where the default colour does not stand out.
+
 ## Placement: shared vs component-private
 
 The feature-level directories (`hooks/`, `types/`, `utils/`, `constants/`) hold only artifacts consumed by **two or more components, or by pages or the `api/` layer**. Anything consumed by exactly one composite lives inside that composite's folder.

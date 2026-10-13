@@ -122,7 +122,7 @@ export function Pagination({
               setPageSize(Number(e.target.value));
               setPageIndex(0);
             }}
-            className="px-3 py-1.5 border border-divide rounded-input bg-surface-inset text-text-heading focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
+            className="px-3 py-1.5 border border-divide rounded-input bg-surface-inset text-text-heading focus-ring transition-colors"
             aria-label={t("pagination.resultsPerPage")}
           >
             {PAGE_SIZES.map((size) => (

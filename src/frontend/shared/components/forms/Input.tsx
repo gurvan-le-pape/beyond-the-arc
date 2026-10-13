@@ -168,12 +168,12 @@ export const Input = ({
             "bg-surface-inset",
             "text-text-heading",
             "placeholder:text-text-secondary",
-            "focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary",
+            "focus-ring focus:border-primary",
             "disabled:cursor-not-allowed disabled:opacity-50",
             "transition-colors duration-200",
             resolvedLeftIcon && "pl-10",
             resolvedRightIcon && "pr-10",
-            error && "border-error focus:ring-error focus:border-error",
+            error && "border-error focus:border-error",
             className,
           )}
           aria-describedby={ariaDescribedBy}
