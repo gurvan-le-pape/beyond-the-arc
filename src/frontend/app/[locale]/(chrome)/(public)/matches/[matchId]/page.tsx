@@ -1,12 +1,12 @@
 // src/frontend/app/[locale]/(chrome)/(public)/matches/[matchId]/page.tsx
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { serverMatchesService } from "@/features/matches/api/matches.server";
 import {
   MatchScoreCard,
   MatchSummaryTabs,
+  UpcomingMatchNotice,
 } from "@/features/matches/components";
 import { buildTeam, groupShotEventsByPlayer } from "@/features/matches/utils";
 import { withServerErrorState } from "@/shared/components/feedback";
@@ -72,24 +72,20 @@ async function MatchSummaryPage({
     serverMatchesService.getPlayerStatsByMatchId(matchId),
   ]).catch(handleServerError);
 
-  const { homeTeamId, awayTeamId, stats, homeTeamStats, awayTeamStats } =
-    playerMatchStats;
+  const { stats, homeTeamStats, awayTeamStats } = playerMatchStats;
   const homeTeam = buildTeam(
+    match.homeTeam,
+    match.homeTeamScore,
     stats,
-    homeTeamId,
-    match.homeTeam.club,
     homeTeamStats,
   );
   const awayTeam = buildTeam(
+    match.awayTeam,
+    match.awayTeamScore,
     stats,
-    awayTeamId,
-    match.awayTeam.club,
     awayTeamStats,
   );
-
-  if (!homeTeam || !awayTeam) {
-    notFound();
-  }
+  const isPlayed = match.homeTeamScore !== null && match.awayTeamScore !== null;
 
   const shotEventsByPlayer = groupShotEventsByPlayer(match.matchEvents);
 
@@ -105,13 +101,17 @@ async function MatchSummaryPage({
 
       <MatchScoreCard homeTeam={homeTeam} awayTeam={awayTeam} />
 
-      <MatchSummaryTabs
-        homeTeam={homeTeam}
-        awayTeam={awayTeam}
-        matchEvents={match.matchEvents}
-        matchDate={match.startsAt}
-        playerShots={shotEventsByPlayer}
-      />
+      {isPlayed ? (
+        <MatchSummaryTabs
+          homeTeam={homeTeam}
+          awayTeam={awayTeam}
+          matchEvents={match.matchEvents}
+          matchDate={match.startsAt}
+          playerShots={shotEventsByPlayer}
+        />
+      ) : (
+        <UpcomingMatchNotice startsAt={match.startsAt} />
+      )}
     </PageLayout>
   );
 }

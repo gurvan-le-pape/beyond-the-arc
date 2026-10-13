@@ -49,8 +49,11 @@ export function MatchScoreCard({
   awayTeam,
   className,
 }: MatchScoreCardProps) {
-  const isHomeWinning = homeTeam.score > awayTeam.score;
-  const isAwayWinning = awayTeam.score > homeTeam.score;
+  const { score: homeScore } = homeTeam;
+  const { score: awayScore } = awayTeam;
+  const isPlayed = homeScore !== null && awayScore !== null;
+  const isHomeWinning = isPlayed && homeScore > awayScore;
+  const isAwayWinning = isPlayed && awayScore > homeScore;
 
   return (
     <Card variant="highlighted" padding="lg" className={className}>
@@ -58,8 +61,8 @@ export function MatchScoreCard({
         <div className="flex items-center justify-between gap-4">
           <LogoLink team={homeTeam} isWinning={isHomeWinning} />
           <MatchScore
-            homeScore={homeTeam.score}
-            awayScore={awayTeam.score}
+            homeScore={homeScore}
+            awayScore={awayScore}
             variant="hero"
           />
           <LogoLink team={awayTeam} isWinning={isAwayWinning} />
@@ -81,8 +84,8 @@ export function MatchScoreCard({
       <div className="hidden md:flex items-center justify-between gap-6">
         <TeamSection team={homeTeam} isWinning={isHomeWinning} align="left" />
         <MatchScore
-          homeScore={homeTeam.score}
-          awayScore={awayTeam.score}
+          homeScore={homeScore}
+          awayScore={awayScore}
           variant="hero"
         />
         <TeamSection team={awayTeam} isWinning={isAwayWinning} align="right" />

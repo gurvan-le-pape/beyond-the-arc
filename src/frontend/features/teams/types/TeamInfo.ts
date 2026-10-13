@@ -8,7 +8,8 @@ export interface TeamInfo {
   clubName: string | null;
   committeeId: number | null;
   leagueId: number | null;
-  score: number;
+  /** The final score, `null` while the match has not been played. */
+  score: number | null;
 }
 
 export interface TeamInfoExtended extends TeamInfo {
