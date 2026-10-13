@@ -3,7 +3,7 @@ import { useTranslations } from "next-intl";
 
 import type { EventStyle, EventWithScore } from "@/features/matches/types";
 import type { EventDescriptionToken } from "@/features/matches/utils";
-import { Link } from "@/navigation";
+import { TextLink } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { cn } from "@/shared/utils";
 
@@ -92,16 +92,15 @@ export function TimelineEventBlock({
           >
             {descriptionTokens.map((token, index) =>
               token.kind === "player" ? (
-                <Link
+                <TextLink
                   // The tokens are positional runs of one string, so the index
                   // *is* the identity — there is no stabler key, and a token
                   // never moves without the whole description changing.
                   key={`${index}-${token.text}`}
                   href={`/players/${token.playerId}`}
-                  className="text-primary hover:underline"
                 >
                   {token.text}
-                </Link>
+                </TextLink>
               ) : (
                 token.text
               ),

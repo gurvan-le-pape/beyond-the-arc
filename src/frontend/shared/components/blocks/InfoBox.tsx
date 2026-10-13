@@ -4,6 +4,7 @@ import { type HTMLAttributes } from "react";
 
 import { cn } from "@/shared/utils";
 
+import { TextLink } from "../primitives/TextLink";
 import { Text } from "../typography";
 
 interface InfoBoxProps extends Omit<
@@ -63,17 +64,11 @@ export const InfoBox = ({
       </div>
 
       {href ? (
-        <a
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-primary hover:text-primary-strong hover:underline transition-colors"
-        >
-          {/* h4 = text-lg font-medium text-heading — link overrides color */}
-          <Text variant="h4" as="span">
+        <Text variant="h4" as="p">
+          <TextLink href={href} external>
             {value ?? t("notAvailable")}
-          </Text>
-        </a>
+          </TextLink>
+        </Text>
       ) : (
         <Text variant="h4" as="p">
           {value ?? t("notAvailable")}

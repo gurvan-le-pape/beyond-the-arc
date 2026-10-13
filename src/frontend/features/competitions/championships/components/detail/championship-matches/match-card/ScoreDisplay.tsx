@@ -1,8 +1,8 @@
 // src/frontend/features/competitions/championships/components/detail/championship-matches/match-card/ScoreDisplay.tsx
 import { useTranslations } from "next-intl";
 
-import { Link } from "@/navigation";
 import { MatchScore } from "@/shared/components/domain";
+import { TextLink } from "@/shared/components/primitives";
 
 interface ScoreDisplayProps {
   readonly homeTeamScore: number | null;
@@ -34,12 +34,11 @@ export function ScoreDisplay({
         className="mb-1"
       />
       {hasScores && (
-        <Link
-          href={`/matches/${matchId}`}
-          className="text-sm text-primary hover:text-primary-strong hover:underline transition-colors duration-200 focus-ring rounded-button"
-        >
-          {tMatches("summary")}
-        </Link>
+        <span className="text-sm">
+          <TextLink href={`/matches/${matchId}`}>
+            {tMatches("summary")}
+          </TextLink>
+        </span>
       )}
     </div>
   );
