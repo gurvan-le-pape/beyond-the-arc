@@ -1,4 +1,6 @@
 // src/frontend/features/matches/utils/eventHelpers.ts
+import { Circle } from "lucide-react";
+
 import {
   EVENT_CATEGORY_COLOR,
   eventConfig,
@@ -26,7 +28,7 @@ export function getEventStyle(eventType: string): EventStyle {
   )[eventType];
 
   const base = configured ?? {
-    icon: "⚪",
+    icon: Circle,
     eventCategory: EventCategory.OTHER,
   };
 
