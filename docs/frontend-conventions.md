@@ -29,6 +29,42 @@ components/detail/match-card/
 - Consumers import the folder path (`.../detail/match-card`), never a file inside it. Nothing inside a composite folder is exported from the feature barrel.
 - No underscore-prefixed root markers (`_MatchCard.tsx`) and no sibling root file next to the folder (`MatchCard.tsx` beside `match-card/`) — the folder's `index.tsx` *is* the root.
 - A single-file component stays a single PascalCase file; only create a folder when there are private sub-parts.
+- A folder holding only its `index.tsx` is a single-file component in disguise: make it the PascalCase file.
+
+### When to split
+
+The rules above say **how** a component is split. Whether to split is decided by **responsibility, never by line count**: a 250-line component doing one thing stays whole, a 60-line one doing three does not.
+
+Split when the component:
+
+- **derives or fetches data and also renders non-trivial UI** — the derivation moves to a hook (`useMatchEventsView`), the component keeps the markup;
+- **contains a piece that is, or is about to be, used elsewhere** — and if that piece can be described without naming a feature, it is not a sub-part at all but a shared primitive (see [The basketball vocabulary](#the-basketball-vocabulary));
+- **nests conditional rendering more than two levels deep** — extract the branches;
+- **needs a comment to say where one section ends and the next begins** — that boundary is a component.
+
+Do **not** split when:
+
+- the extracted piece is used once and only shortens its parent — that is indirection;
+- the split would thread props through a component that does nothing with most of them;
+- the length comes from configuration rather than logic. The list filters (`MatchesFilters`, `TeamsFilters`, `PlayersFilters`) are long because they declare chips and cascade steps, and they already assemble shared filter blocks: they stay whole.
+
+`match-events/` is the reference for a good split: the root owns filter state, `filters/` is the control panel, `timeline/` the display — one role per part.
+
+### The basketball vocabulary
+
+Clubs, teams, matches and their parts are drawn the same way everywhere, so each has **exactly one implementation**, in `shared/components/domain/`:
+
+| Concept | One implementation of |
+| --- | --- |
+| A club | its mark (logo or monogram), at every size |
+| A team | its display name (club + number) and its label with link and winning state |
+| A match | the two sides and the score, in hero, list and row sizes, with one rule for who won |
+| Home and away | one colour each, from the theme |
+| A match event | its icon and label |
+
+A feature composes these; it never redraws one (no `<img src="/images/clubs/…">`, no hand-written `club - number`, no local winner comparison). When a feature needs a variant the shared component lacks, the variant is added there.
+
+The same holds one layer down: an interface piece that can be described without naming a feature — a segmented control, a text link, a card — lives in `shared/components/primitives/`, even if only one feature uses it today.
 
 ### Sections and depth
 
@@ -221,11 +257,12 @@ Two upstream rules carry conventions of their own: `@typescript-eslint/consisten
 
 ### New-component checklist
 
-1. Single file or composite? Only create a folder if the component has private sub-parts; root is `index.tsx`.
-2. Place hooks/types/helpers by consumer count: one composite → colocate inside it; two+ consumers (or pages/api) → feature-level directory.
-3. Respect the depth cap (≤ 3 below `components/`) — flatten with name prefixes instead of nesting deeper.
-4. New barrel-worthy directory? Add it to `barrelsby.json` (the ESLint barrel rule follows automatically); composite internals get an exclusion pattern.
-5. Strings: resolve the component's own vocabulary inside it (`useTranslations` / `await getTranslations`), and take the caller's content as plain `string` props. Never accept the translator itself as a prop — `no-translator-prop` enforces that half; which side a given string falls on is a judgement call, described under [Internationalisation](./frontend.md#internationalisation) in `frontend.md`.
-6. Props: a local `interface <Component>Props`, members `readonly` and documented where they carry a unit, a coordinate space or a sentinel. See [Props](#props).
-7. Comments: read each one against the line below it, not on its own. Delete restatements; keep constraints. If a comment names a section, extract the section instead. See [Comments](#comments).
-8. Run `npm run lint` — the rules above catch the rest.
+1. Single file or composite? Split by responsibility (see [When to split](#when-to-split)); only create a folder if the component has private sub-parts; root is `index.tsx`.
+2. Does it draw a club, team, match, side or event? Use the shared domain component (see [The basketball vocabulary](#the-basketball-vocabulary)).
+3. Place hooks/types/helpers by consumer count: one composite → colocate inside it; two+ consumers (or pages/api) → feature-level directory.
+4. Respect the depth cap (≤ 3 below `components/`) — flatten with name prefixes instead of nesting deeper.
+5. New barrel-worthy directory? Add it to `barrelsby.json` (the ESLint barrel rule follows automatically); composite internals get an exclusion pattern.
+6. Strings: resolve the component's own vocabulary inside it (`useTranslations` / `await getTranslations`), and take the caller's content as plain `string` props. Never accept the translator itself as a prop — `no-translator-prop` enforces that half; which side a given string falls on is a judgement call, described under [Internationalisation](./frontend.md#internationalisation) in `frontend.md`.
+7. Props: a local `interface <Component>Props`, members `readonly` and documented where they carry a unit, a coordinate space or a sentinel. See [Props](#props).
+8. Comments: read each one against the line below it, not on its own. Delete restatements; keep constraints. If a comment names a section, extract the section instead. See [Comments](#comments).
+9. Run `npm run lint` — the rules above catch the rest.
