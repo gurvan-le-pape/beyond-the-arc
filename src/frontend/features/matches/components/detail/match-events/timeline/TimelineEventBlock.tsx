@@ -50,6 +50,7 @@ export function TimelineEventBlock({
 }: TimelineEventBlockProps) {
   const tMatches = useTranslations("matches");
   const isRight = align === "right";
+  const Icon = style.icon;
 
   return (
     <div
@@ -68,11 +69,17 @@ export function TimelineEventBlock({
               <span className={cn("font-semibold text-sm", style.color)}>
                 {style.labelKey ? tMatches(style.labelKey) : event.eventType}
               </span>
-              <span className="text-2xl">{style.icon}</span>
+              <Icon
+                aria-hidden="true"
+                className={cn("w-5 h-5 shrink-0", style.color)}
+              />
             </>
           ) : (
             <>
-              <span className="text-2xl">{style.icon}</span>
+              <Icon
+                aria-hidden="true"
+                className={cn("w-5 h-5 shrink-0", style.color)}
+              />
               <span className={cn("font-semibold text-sm", style.color)}>
                 {style.labelKey ? tMatches(style.labelKey) : event.eventType}
               </span>
