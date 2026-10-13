@@ -13,6 +13,16 @@ body {
   background-color: rgb(var(--color-surface-base));
 }
 
+/* Every element reached by the keyboard gets the same visible indicator, so a
+   component that forgets its focus style is still usable. The focus-ring
+   utilities (tailwind.config.js) only vary it: drawn inside the box, on a
+   stretched ::after, or in another colour through --focus-ring-color.
+   :focus-visible, so a mouse click draws nothing. */
+:focus-visible {
+  outline: 2px solid var(--focus-ring-color, rgb(var(--color-primary-strong)));
+  outline-offset: 2px;
+}
+
 /* =============================================================================
    DESIGN TOKENS
    =============================================================================

@@ -203,7 +203,7 @@ export function TabsTrigger({
       className={cn(
         "flex-1 py-3 text-sm whitespace-nowrap text-center",
         "border-b-2 -mb-px transition-all duration-200",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
+        "focus-ring",
         isSelected
           ? "border-primary text-primary font-semibold"
           : "border-transparent text-text-secondary hover:text-text-emphasis hover:border-divide font-normal",

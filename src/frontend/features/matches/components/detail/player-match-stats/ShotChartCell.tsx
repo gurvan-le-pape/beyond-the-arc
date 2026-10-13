@@ -16,7 +16,7 @@ export function ShotChartCell({ player, onSelect, label }: ShotChartCellProps) {
   return (
     <button
       type="button"
-      className="p-1 bg-transparent border-none cursor-pointer hover:opacity-80 transition-opacity duration-200 focus:outline-none focus:ring-2 focus:ring-primary ring-offset-surface rounded"
+      className="p-1 bg-transparent border-none cursor-pointer hover:opacity-80 transition-opacity duration-200 focus-ring rounded"
       title={label}
       onClick={() => onSelect(player)}
       aria-label={label}

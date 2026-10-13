@@ -90,7 +90,7 @@ export async function OrganizationTypeCard({ org }: OrganizationTypeCardProps) {
         shadow-card hover:shadow-card-hover
         transition-all duration-300 ease-out
         hover:-translate-y-1
-        focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ring-offset-surface
+        focus-ring
       `}
     >
       <div className="flex items-start justify-between">

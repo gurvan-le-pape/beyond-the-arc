@@ -37,7 +37,7 @@ export function DocsSectionAccordion({
       <button
         type="button"
         onClick={() => onToggle(id)}
-        className="w-full flex items-center gap-4 p-6 text-left hover:bg-surface-inset transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
+        className="w-full flex items-center gap-4 p-6 text-left hover:bg-surface-inset transition-colors duration-200 focus-ring-inset"
         aria-expanded={isActive}
         aria-controls={`docs-section-${id}`}
       >

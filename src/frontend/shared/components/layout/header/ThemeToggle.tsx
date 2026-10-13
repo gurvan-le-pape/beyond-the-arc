@@ -80,8 +80,7 @@ export function ThemeToggle() {
         className={cn(
           "p-2 rounded-button transition-all duration-200",
           "hover:bg-surface-subtle",
-          "focus:outline-none focus:ring-2 focus:ring-primary",
-          "focus:ring-offset-2 focus:ring-offset-surface-raised",
+          "focus-ring",
           isOpen && "bg-surface-subtle",
         )}
         aria-label={t("header.toggleTheme")}

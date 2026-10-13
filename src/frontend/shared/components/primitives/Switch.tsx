@@ -61,8 +61,8 @@ export const Switch = ({
       tabIndex={0}
       className={cn(
         "relative inline-flex shrink-0 items-center rounded-full transition-colors",
-        "focus:outline-none focus:ring-2 focus:ring-primary",
-        "focus:ring-offset-2 ring-offset-surface",
+        "focus-ring",
+        "focus-ring",
         "disabled:cursor-not-allowed disabled:opacity-50",
         checked ? "bg-primary" : "bg-divide",
         s.track,

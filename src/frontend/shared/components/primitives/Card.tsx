@@ -8,32 +8,35 @@ import { cn } from "@/shared/utils";
 /**
  * Card variants
  */
-const cardVariants = cva("rounded-card border transition-all duration-200", {
-  variants: {
-    variant: {
-      default: "surface-subtle border-divide shadow-card",
-      highlighted: "surface-subtle border-primary border-2 shadow-card-hover",
-      ghost: "bg-transparent border-transparent",
-      // Empty — allows full custom styling via className
-      custom: "",
+const cardVariants = cva(
+  "rounded-card border transition-all duration-200 focus-ring",
+  {
+    variants: {
+      variant: {
+        default: "surface-subtle border-divide shadow-card",
+        highlighted: "surface-subtle border-primary border-2 shadow-card-hover",
+        ghost: "bg-transparent border-transparent",
+        // Empty — allows full custom styling via className
+        custom: "",
+      },
+      padding: {
+        none: "p-0",
+        sm: "p-4",
+        md: "p-6",
+        lg: "p-8",
+      },
+      clickable: {
+        true: "hover:shadow-card-hover cursor-pointer active:scale-[0.98]",
+        false: "",
+      },
     },
-    padding: {
-      none: "p-0",
-      sm: "p-4",
-      md: "p-6",
-      lg: "p-8",
-    },
-    clickable: {
-      true: "hover:shadow-card-hover cursor-pointer active:scale-[0.98]",
-      false: "",
+    defaultVariants: {
+      variant: "default",
+      padding: "md",
+      clickable: false,
     },
   },
-  defaultVariants: {
-    variant: "default",
-    padding: "md",
-    clickable: false,
-  },
-});
+);
 
 interface CardBaseProps
   extends HTMLAttributes<HTMLElement>, VariantProps<typeof cardVariants> {

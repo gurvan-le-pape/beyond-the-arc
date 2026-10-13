@@ -25,8 +25,7 @@ import { LoadingSpinner } from "../feedback/LoadingSpinner";
 
 const BASE =
   "inline-flex items-center justify-center font-medium transition-all duration-200 " +
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 " +
-  "focus-visible:ring-offset-surface " +
+  "focus-ring " +
   "disabled:pointer-events-none disabled:opacity-50 active:scale-95";
 
 // ---------------------------------------------------------------------------
@@ -37,72 +36,50 @@ export const buttonVariants = cva(BASE, {
   variants: {
     variant: {
       // ── Core intent variants ──────────────────────────────────────────────
-      primary:
-        "rounded-button bg-primary text-white " +
-        "hover:bg-primary-strong " +
-        "focus-visible:ring-primary",
+      primary: "rounded-button bg-primary text-white hover:bg-primary-strong",
 
       secondary:
-        "rounded-button bg-secondary text-white " +
-        "hover:bg-secondary-strong " +
-        "focus-visible:ring-secondary",
+        "rounded-button bg-secondary text-white hover:bg-secondary-strong",
 
       outline:
         "rounded-button border-2 border-primary text-primary bg-surface-inset " +
-        "hover:bg-primary-subtle " +
-        "focus-visible:ring-primary",
+        "hover:bg-primary-subtle",
 
-      ghost:
-        "rounded-button text-primary " +
-        "hover:bg-primary-subtle " +
-        "focus-visible:ring-primary",
+      ghost: "rounded-button text-primary hover:bg-primary-subtle",
 
       // Inline text action — underlined, no background or border.
       // Use for low-emphasis actions like "Reset all" that sit next to other UI.
       link:
         "rounded text-text-secondary underline underline-offset-2 " +
-        "hover:text-text-body " +
-        "focus-visible:ring-primary " +
-        "active:scale-100",
+        "hover:text-text-body active:scale-100",
 
-      danger:
-        "rounded-button bg-error text-white " +
-        "hover:bg-error-strong " +
-        "focus-visible:ring-error",
+      danger: "rounded-button bg-error text-white hover:bg-error-strong",
 
-      success:
-        "rounded-button bg-success text-white " +
-        "hover:bg-success-strong " +
-        "focus-visible:ring-success",
+      success: "rounded-button bg-success text-white hover:bg-success-strong",
 
       download:
         "rounded-button bg-gradient-to-r from-primary-bold to-secondary-strong text-white shadow " +
-        "hover:from-primary-deep hover:to-secondary-bold " +
-        "focus-visible:ring-primary",
+        "hover:from-primary-deep hover:to-secondary-bold",
 
       // ── Semantic / branded ────────────────────────────────────────────────
       // Gender-specific: kept here because they encode meaning, not layout.
       male:
         "rounded-button bg-team-male text-white shadow-sm " +
-        "hover:bg-team-male-strong " +
-        "focus-visible:ring-team-male",
+        "hover:bg-team-male-strong",
 
       female:
         "rounded-button bg-team-female text-white shadow-sm " +
-        "hover:bg-team-female-strong " +
-        "focus-visible:ring-team-female",
+        "hover:bg-team-female-strong",
 
       // Domain entity-specific
       clubs:
         "rounded-button bg-clubs text-white shadow-sm " +
-        "hover:bg-clubs-strong " +
-        "focus-visible:ring-clubs",
+        "hover:bg-clubs-strong",
 
       // Control buttons (filter dropdowns, sort toggles, toolbar actions)
       control:
         "rounded-button border border-divide surface-subtle text-text-emphasis font-medium " +
-        "hover:bg-surface-inset " +
-        "focus-visible:ring-2 focus-visible:ring-primary",
+        "hover:bg-surface-inset",
     },
 
     size: {
@@ -180,27 +157,22 @@ export const navButtonVariants = cva(BASE, {
       // Segmented nav / tab bar
       navActive:
         "rounded-button bg-primary text-white border-2 border-primary shadow-md " +
-        "hover:bg-primary-strong " +
-        "focus-visible:ring-primary",
+        "hover:bg-primary-strong",
 
       navInactive:
         "rounded-button surface-raised text-primary border-2 border-primary-subtle shadow-sm " +
-        "hover:bg-primary-subtle hover:border-primary " +
-        "focus-visible:ring-primary",
+        "hover:bg-primary-subtle hover:border-primary",
 
       // List item variants
       listItem:
         "w-full justify-start text-left rounded-none border-l-4 border-l-transparent " +
         "hover:bg-primary-subtle hover:border-l-primary " +
-        "focus-visible:ring-inset focus-visible:ring-primary " +
-        "active:scale-100",
+        "focus-ring-inset active:scale-100",
 
       // Expandable section headers
       categoryHeader:
         "w-full justify-start gap-2 text-left rounded " +
-        "hover:bg-transparent " +
-        "focus-visible:ring-primary " +
-        "active:scale-100",
+        "hover:bg-transparent active:scale-100",
     },
 
     size: {
@@ -275,22 +247,18 @@ const pillButtonVariants = cva(BASE, {
       // RoundSelector active pill
       pillActive:
         "rounded-full bg-primary text-white font-bold shadow-md " +
-        "ring-2 ring-primary-subtle border border-primary z-10 " +
-        "focus-visible:ring-primary",
+        "ring-2 ring-primary-subtle border border-primary z-10",
 
       // RoundSelector inactive pill
       pillInactive:
         "rounded-full surface-raised text-text-emphasis border border-divide " +
-        "hover:bg-primary-subtle hover:text-primary-strong hover:border-primary-subtle " +
-        "focus-visible:ring-primary",
+        "hover:bg-primary-subtle hover:text-primary-strong hover:border-primary-subtle",
 
       // Carousel prev/next arrows
       carouselArrow:
         "rounded-full p-2 border border-divide surface-raised text-text-muted " +
         "hover:bg-primary-subtle hover:text-primary " +
-        "disabled:opacity-30 disabled:cursor-not-allowed " +
-        "focus-visible:ring-primary " +
-        "focus-visible:ring-offset-surface",
+        "disabled:opacity-30 disabled:cursor-not-allowed",
     },
 
     size: {

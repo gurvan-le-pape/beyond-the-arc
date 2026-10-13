@@ -32,7 +32,7 @@ export function ExpandButton({
       aria-label={
         expanded ? tMatches("hideMatchDetails") : tMatches("viewMatchDetails")
       }
-      className="flex-shrink-0 p-1 rounded-button hover:bg-surface-inset transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary ring-offset-surface"
+      className="flex-shrink-0 p-1 rounded-button hover:bg-surface-inset transition-colors duration-200 focus-ring"
     >
       {expanded ? (
         <ChevronUp className="h-5 w-5 text-text-body" />

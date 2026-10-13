@@ -29,7 +29,10 @@ export function Logo() {
       : "/BeyondTheArcLogo.png";
 
   return (
-    <Link href="/" className="flex items-center group">
+    <Link
+      href="/"
+      className="flex items-center group rounded-button focus-ring"
+    >
       <div className="relative h-16 w-auto overflow-hidden flex items-center justify-center transition-all duration-300 group-hover:scale-105">
         <Image src={src} alt={t("logo.alt")} width={180} height={60} priority />
       </div>

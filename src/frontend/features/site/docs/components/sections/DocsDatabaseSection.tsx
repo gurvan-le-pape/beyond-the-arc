@@ -43,7 +43,7 @@ export function DocsDatabaseSection({ content }: DocsDatabaseSectionProps) {
             <a
               href="/docs/data-model.pdf"
               download
-              className="px-3 py-1 bg-primary-strong text-white rounded-button text-sm hover:bg-primary-bold transition-colors duration-200 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ring-offset-surface"
+              className="px-3 py-1 bg-primary-strong text-white rounded-button text-sm hover:bg-primary-bold transition-colors duration-200 flex items-center gap-1 focus-ring"
             >
               <Download className="w-4 h-4" aria-hidden />
               PDF
@@ -51,7 +51,7 @@ export function DocsDatabaseSection({ content }: DocsDatabaseSectionProps) {
             <a
               href="/docs/data-model.svg"
               download
-              className="px-3 py-1 bg-success text-white rounded-button text-sm hover:bg-success-strong transition-colors duration-200 flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-success focus:ring-offset-2 ring-offset-surface"
+              className="px-3 py-1 bg-success text-white rounded-button text-sm hover:bg-success-strong transition-colors duration-200 flex items-center gap-1 focus-ring"
             >
               <Download className="w-4 h-4" aria-hidden />
               SVG

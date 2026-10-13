@@ -194,7 +194,7 @@ export function MultiSelectDropdown({
                 "mt-3 w-full px-3 py-1.5 text-sm rounded-input",
                 "text-error-strong",
                 "hover:bg-error-subtle",
-                "focus:outline-none focus:ring-2 focus:ring-error",
+                "focus-ring",
                 "transition-colors duration-150",
               )}
             >
@@ -235,7 +235,7 @@ function ColumnList({ column }: ColumnListProps) {
               type="checkbox"
               checked={item.checked}
               onChange={item.onToggle}
-              className="w-4 h-4 text-primary rounded focus:ring-2 focus:ring-primary"
+              className="w-4 h-4 text-primary rounded focus-ring"
             />
             <Text variant="label" as="span">
               {item.label}
