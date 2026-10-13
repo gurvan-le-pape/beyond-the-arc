@@ -2,7 +2,7 @@
   "meta": "{name} — statistiques de la saison, historique des matchs et carte de tirs.",
   "label": "Joueurs",
   "tryAdjustingFilters": "Essayez d'ajuster vos filtres pour trouver plus de joueurs.",
-  "teamNumber": "Équipe #{number}",
+  "teamNumber": "Équipe {number}",
   "playerDetail": {
     "age": "{age} ans",
     "ageLabel": "Âge",

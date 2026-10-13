@@ -1,6 +1,7 @@
 // src/frontend/features/competitions/championships/components/detail/championship-matches/match-card/TeamDisplay.tsx
 import type { Match } from "@/features/matches/types";
 import { ClubMark } from "@/shared/components/domain";
+import { formatTeamName } from "@/shared/utils";
 
 interface TeamDisplayProps {
   readonly team: Match["homeTeam"] | Match["awayTeam"];
@@ -8,11 +9,8 @@ interface TeamDisplayProps {
 }
 
 /**
- * One side of a fixture: club crest, name, and team number.
- *
- * The crest is resolved from the club **name** through `formatNameToFileName`,
- * so a renamed club silently falls back to the default badge. Only leagues and
- * committees ship real logos; club crests are the fallback in practice.
+ * One side of a fixture: club mark, club name, and team number below it, with
+ * the full team name on hover since the club's name may be truncated.
  *
  * `isWinner` is supplied, not derived — this compares no scores and only styles
  * what it is told.
@@ -29,7 +27,7 @@ export function TeamDisplay({ team, isWinner }: TeamDisplayProps) {
             ? "font-bold text-text-heading"
             : "font-normal text-text-body"
         }`}
-        title={`${team.club.name} - ${team.number}`}
+        title={formatTeamName(team.club.name, team.number)}
       >
         <div className="truncate">{team.club.name}</div>
         <div className="text-xs text-text-secondary">{team.number}</div>

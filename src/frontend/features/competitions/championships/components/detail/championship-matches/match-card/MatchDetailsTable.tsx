@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import type { Match, MatchEvent } from "@/features/matches/types";
 import { computeQuarterScores } from "@/features/matches/utils";
 import { DataTable, type TableColumn } from "@/shared/components/table";
+import { formatTeamName } from "@/shared/utils";
 
 interface MatchDetailsTableProps {
   readonly match: Match;
@@ -53,13 +54,13 @@ export function MatchDetailsTable({
   const rows: TeamScoreRow[] = [
     {
       side: "home",
-      label: `${match.homeTeam.club.name} - ${match.homeTeam.number}`,
+      label: formatTeamName(match.homeTeam.club.name, match.homeTeam.number),
       quarters: quarterScores.home,
       total: match.homeTeamScore,
     },
     {
       side: "away",
-      label: `${match.awayTeam.club.name} - ${match.awayTeam.number}`,
+      label: formatTeamName(match.awayTeam.club.name, match.awayTeam.number),
       quarters: quarterScores.away,
       total: match.awayTeamScore,
     },

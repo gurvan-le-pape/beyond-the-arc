@@ -9,7 +9,7 @@ import {
   ListEntityCard,
 } from "@/shared/components/domain";
 import { Text } from "@/shared/components/typography";
-import { cn } from "@/shared/utils";
+import { cn, formatTeamName } from "@/shared/utils";
 
 interface PlayerCardProps {
   readonly player: Player;
@@ -34,7 +34,6 @@ export function PlayerCard({ player }: PlayerCardProps) {
   const tCommon = useTranslations("common");
 
   const clubName = player.team?.club?.name ?? null;
-  const teamNumber = player.team?.number ? String(player.team.number) : null;
   const category = player.team?.category ?? null;
   const gender = player.team?.gender ?? null;
   const level = player.team?.pool?.championship?.level;
@@ -43,9 +42,7 @@ export function PlayerCard({ player }: PlayerCardProps) {
   const config = getLevelConfig(level);
 
   const clubTeamLabel =
-    clubName && teamNumber
-      ? `${clubName} - ${teamNumber}`
-      : (clubName ?? teamNumber ?? tCommon("notAvailable"));
+    formatTeamName(clubName, player.team?.number) || tCommon("notAvailable");
 
   return (
     <ListEntityCard

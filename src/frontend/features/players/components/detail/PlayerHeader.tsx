@@ -7,7 +7,11 @@ import { Badge, Card, TextLink } from "@/shared/components/primitives";
 import { StatCell } from "@/shared/components/stats";
 import { Text } from "@/shared/components/typography";
 import { CompetitionLevel } from "@/shared/constants";
-import { normalizeString, positionVariant } from "@/shared/utils";
+import {
+  formatTeamName,
+  normalizeString,
+  positionVariant,
+} from "@/shared/utils";
 
 import type { Player } from "../../types/Player";
 import { PlayerAvatar } from "../PlayerAvatar";
@@ -138,7 +142,7 @@ export async function PlayerHeader({ player }: PlayerHeaderProps) {
               variant="plain"
               ariaLabel={tCommon("team.seeTeam", { number: teamNumber })}
             >
-              {clubName} · {teamNumber}
+              {formatTeamName(clubName, teamNumber)}
             </TextLink>
           </span>
 
