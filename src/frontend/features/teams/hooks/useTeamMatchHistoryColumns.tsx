@@ -4,7 +4,7 @@ import { useMemo } from "react";
 
 import {
   buildMatchDateColumn,
-  buildMatchupColumn,
+  buildOpponentColumn,
   MatchScore,
 } from "@/shared/components/domain";
 import type { TableColumn } from "@/shared/components/table";
@@ -13,17 +13,17 @@ import type { Team } from "../types/Team";
 import type { TeamMatchHistory } from "../types/TeamMatchHistory";
 
 /**
- * Column definitions for a team's match-history table: date, matchup, and the
+ * Column definitions for a team's match-history table: date, opponent, and the
  * final score.
  *
- * `team` is read only for its id, which the matchup column uses to render each
+ * `team` is read only for its id, which the opponent column uses to render each
  * fixture from this team's side. Unlike the player equivalent there is no
  * fallback id — a team always has one.
  *
  * Memoised on the team id and locale, so the returned array keeps its identity
  * between unrelated parent renders and `DataTable` does not rebuild every row.
  *
- * @param team - the team the table belongs to; supplies the matchup perspective
+ * @param team - the team the table belongs to; supplies the opponent's perspective
  * @returns column definitions, stable between renders
  */
 export function useTeamMatchHistoryColumns(
@@ -38,10 +38,13 @@ export function useTeamMatchHistoryColumns(
         tCommon("matchHistory.date"),
         locale,
       ),
-      buildMatchupColumn<TeamMatchHistory>(
-        tCommon("matchHistory.match"),
+      buildOpponentColumn<TeamMatchHistory>(
+        tCommon("matchHistory.opponent"),
         team.id,
-        tCommon("matchHistory.vs"),
+        (opponent, venue) =>
+          venue === "home"
+            ? tCommon("matchHistory.opponentHome", { opponent })
+            : tCommon("matchHistory.opponentAway", { opponent }),
       ),
       {
         key: "score",

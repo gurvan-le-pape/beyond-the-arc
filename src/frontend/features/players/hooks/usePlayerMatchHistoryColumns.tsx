@@ -6,7 +6,7 @@ import { useMemo } from "react";
 
 import {
   buildMatchDateColumn,
-  buildMatchupColumn,
+  buildOpponentColumn,
 } from "@/shared/components/domain";
 import type { TableColumn } from "@/shared/components/table";
 
@@ -14,13 +14,14 @@ import type { Player } from "../types/Player";
 import type { PlayerMatchHistory } from "../types/PlayerMatchHistory";
 
 /**
- * Column definitions for a player's match-history table: date, matchup, then
+ * Column definitions for a player's match-history table: date, opponent, then
  * the per-game stat line.
  *
- * `player` is read only for its team id, which the matchup column needs to
- * decide which side is "home" from this player's point of view. **A player with
- * no team falls back to `-1`**, an id that matches nothing, so the matchup
- * renders without the perspective rather than throwing.
+ * `player` is read only for its team id, which the opponent column needs to
+ * tell the other side, and the venue, from this player's point of view. **A
+ * player with no team falls back to `-1`**, an id that matches nothing, so
+ * every match renders as an away game against its home team rather than
+ * throwing.
  *
  * Memoised on the player and locale — the returned array is a new reference
  * only when one of those changes, which is what keeps `DataTable` from
@@ -38,10 +39,13 @@ export function usePlayerMatchHistoryColumns(
   return useMemo<TableColumn<PlayerMatchHistory>[]>(
     () => [
       buildMatchDateColumn<PlayerMatchHistory>(t("matchHistory.date"), locale),
-      buildMatchupColumn<PlayerMatchHistory>(
-        t("matchHistory.match"),
+      buildOpponentColumn<PlayerMatchHistory>(
+        t("matchHistory.opponent"),
         player.team?.id ?? -1,
-        t("matchHistory.vs"),
+        (opponent, venue) =>
+          venue === "home"
+            ? t("matchHistory.opponentHome", { opponent })
+            : t("matchHistory.opponentAway", { opponent }),
       ),
       {
         key: "pts",

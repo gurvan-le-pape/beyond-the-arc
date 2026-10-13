@@ -18,7 +18,7 @@ interface TeamMatchHistoryTableProps {
 /**
  * A team's recent matches with the final score for each.
  *
- * `team` is not rendered — it configures the columns, giving the matchup column
+ * `team` is not rendered — it configures the columns, giving the opponent column
  * the id it needs to work out which side was this team. The rows come entirely
  * from `matches`.
  *

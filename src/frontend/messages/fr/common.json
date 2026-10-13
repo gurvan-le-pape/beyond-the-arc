@@ -93,8 +93,9 @@
   },
   "matchHistory": {
     "date": "Date",
-    "match": "Match",
-    "vs": " contre ",
+    "opponent": "Adversaire",
+    "opponentHome": "contre {opponent}",
+    "opponentAway": "chez {opponent}",
     "score": "Score",
     "noMatches": "Aucun match joué cette saison",
     "seeAllMatches": "Voir tous les matchs ({count})",
