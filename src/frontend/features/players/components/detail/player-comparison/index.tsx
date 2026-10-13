@@ -115,10 +115,12 @@ export function PlayerComparison({
       <div className="relative rounded-2xl min-h-[140px]">
         <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
           <div className="absolute inset-0 bg-gradient-to-r from-primary-ghost via-transparent to-secondary-ghost opacity-50" />
-          <div className="absolute left-1/2 top-4 bottom-4 w-px -translate-x-1/2 bg-divide opacity-25" />
+          <div className="hidden sm:block absolute left-1/2 top-4 bottom-4 w-px -translate-x-1/2 bg-divide opacity-25" />
         </div>
 
-        <div className="relative z-10 flex items-center justify-between px-6 py-6 gap-4">
+        {/* Side by side from sm up; stacked on phones, where the search box
+            would otherwise shrink to its icon beside the player card. */}
+        <div className="relative z-10 flex flex-col sm:flex-row items-stretch sm:items-center justify-between px-4 py-4 sm:px-6 sm:py-6 gap-4">
           <PlayerIdentity
             player={player}
             side="left"
@@ -128,12 +130,12 @@ export function PlayerComparison({
           <Badge
             variant="vs"
             size="lg"
-            className="w-12 h-12 rounded-full justify-center shadow-lg mx-2"
+            className="w-12 h-12 rounded-full justify-center shadow-lg self-center sm:mx-2"
           >
             VS
           </Badge>
 
-          <div className="flex-1 flex justify-end">
+          <div className="sm:flex-1 flex justify-end">
             <PlayerSearchDropdown
               excludeId={player.id}
               gender={player.team.gender}
