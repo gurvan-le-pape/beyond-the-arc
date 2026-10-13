@@ -1,7 +1,6 @@
 // src/frontend/features/competitions/championships/components/detail/championship-matches/match-card/TeamDisplay.tsx
 import type { Match } from "@/features/matches/types";
-import { ImageWithFallback } from "@/shared/components/primitives";
-import { formatNameToFileName } from "@/shared/utils";
+import { ClubMark } from "@/shared/components/domain";
 
 interface TeamDisplayProps {
   readonly team: Match["homeTeam"] | Match["awayTeam"];
@@ -21,12 +20,9 @@ interface TeamDisplayProps {
 export function TeamDisplay({ team, isWinner }: TeamDisplayProps) {
   return (
     <div className="flex flex-col items-center flex-1 min-w-0">
-      <ImageWithFallback
-        src={`/images/clubs/${formatNameToFileName(team.club.name ?? "")}.webp`}
-        alt={`${team.club.name} logo`}
-        fallback="/images/clubs/defaultLogo.30cc7520.svg"
-        className="w-8 h-8 object-contain mb-1"
-      />
+      <span className="mb-1">
+        <ClubMark clubName={team.club.name} size="sm" />
+      </span>
       <div
         className={`text-sm text-center w-full ${
           isWinner

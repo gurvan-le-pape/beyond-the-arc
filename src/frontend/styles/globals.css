@@ -571,6 +571,36 @@ body {
 }
 
 /* =============================================================================
+   CLUB MARK
+   =============================================================================
+
+   The monogram ClubMark draws for a club, on a colour derived from its name.
+   ClubMark sets --club-hue; the saturation and lightness per theme are fixed
+   here so that every hue clears 4.5:1 between letters and fill (checked by
+   shared/utils/clubMark.spec.ts across all 360 hues). The saturation is kept
+   low on purpose: the hue only tells clubs apart, and a saturated one would
+   read as a colour that carries meaning (pink for women's teams, green for a
+   win, red for a loss). High contrast drops the fill for the page's own black
+   and keeps the hue on the border only.
+   ============================================================================= */
+
+.club-mark {
+  background-color: hsl(var(--club-hue) 12% 91%);
+  color: hsl(var(--club-hue) 20% 28%);
+}
+
+.dark .club-mark {
+  background-color: hsl(var(--club-hue) 12% 24%);
+  color: hsl(var(--club-hue) 20% 86%);
+}
+
+.high-contrast .club-mark {
+  background-color: rgb(var(--color-surface-base));
+  color: rgb(255 255 255);
+  box-shadow: inset 0 0 0 2px hsl(var(--club-hue) 90% 60%);
+}
+
+/* =============================================================================
    SURFACE CONTEXT SYSTEM
    =============================================================================
 

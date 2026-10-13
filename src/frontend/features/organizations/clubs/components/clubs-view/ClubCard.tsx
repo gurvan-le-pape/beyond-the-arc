@@ -1,8 +1,9 @@
 // src/frontend/features/organizations/clubs/components/clubs-view/ClubCard.tsx
 import { Link } from "@/navigation";
-import { Badge, ImageWithFallback } from "@/shared/components/primitives";
+import { ClubMark } from "@/shared/components/domain";
+import { Badge } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
-import { cn, formatNameToFileName } from "@/shared/utils";
+import { cn } from "@/shared/utils";
 
 import type { ClubBasic } from "../../types/ClubBasic";
 
@@ -39,12 +40,7 @@ export function ClubCard({ club }: ClubCardProps) {
           "border-r border-white/5",
         )}
       >
-        <ImageWithFallback
-          src={`/images/clubs/${formatNameToFileName(club.name)}.webp`}
-          alt={club.name}
-          fallback="/images/clubs/defaultLogo.30cc7520.svg"
-          className="w-12 h-12 object-contain transition-transform duration-200 group-hover:scale-105"
-        />
+        <ClubMark clubName={club.name} size="lg" />
       </div>
 
       <div className="flex-1 min-w-0 flex flex-col">
