@@ -8,6 +8,7 @@ export * from "./detail/match-score-card/index";
 export * from "./detail/match-summary-tabs/index";
 export * from "./detail/player-match-stats/index";
 export * from "./detail/TeamStatsComparison";
+export * from "./detail/UpcomingMatchNotice";
 export * from "./list/MatchesCard";
 export * from "./list/MatchesFilters";
 export * from "./MatchHistoryTable";

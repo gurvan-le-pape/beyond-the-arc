@@ -12,6 +12,10 @@
   "matchdayLabel": "R{matchday}",
   "noResults": "No matches found",
   "upcoming": "Upcoming",
+  "upcomingMatch": {
+    "title": "Upcoming match",
+    "body": "Tip-off on {date} at {time}. Stats and the play-by-play appear once the match has been played."
+  },
   "tryAdjustingFilters": "Try adjusting your filters to find more matches.",
   "final": "Final",
   "finalOT": "Final/OT",

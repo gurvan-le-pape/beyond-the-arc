@@ -21,8 +21,8 @@ interface ShotModalProps {
   readonly onClose: () => void;
   readonly teamName: string;
   readonly opponentTeamName: string;
-  readonly teamScore: number;
-  readonly opponentScore: number;
+  readonly teamScore: number | null;
+  readonly opponentScore: number | null;
   readonly getPlayerShots: (playerId: number) => MatchEvent[];
 }
 
@@ -112,9 +112,9 @@ export function ShotModal({
               </div>
               <div className="flex flex-col items-center justify-center mx-3 min-w-[90px]">
                 <div className="font-extrabold text-3xl tracking-wide bg-white/20 rounded-xl px-6 py-0.5 text-white shadow mb-0.5">
-                  {teamScore}{" "}
+                  {teamScore ?? "–"}{" "}
                   <span className="font-normal text-white/70">-</span>{" "}
-                  {opponentScore}
+                  {opponentScore ?? "–"}
                 </div>
                 <div className="text-xs text-white/70 font-normal">
                   {t("matchHistory.score")}

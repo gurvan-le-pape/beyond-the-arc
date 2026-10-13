@@ -12,6 +12,10 @@
   "matchdayLabel": "J{matchday}",
   "noResults": "Aucun match trouvé",
   "upcoming": "À venir",
+  "upcomingMatch": {
+    "title": "Match à venir",
+    "body": "Coup d'envoi le {date} à {time}. Les statistiques et le déroulé du match apparaîtront une fois la rencontre jouée."
+  },
   "tryAdjustingFilters": "Essayez d'ajuster vos filtres pour trouver plus de matchs.",
   "final": "Terminé",
   "finalOT": "Terminé/Prol.",
