@@ -12,6 +12,7 @@ export * from "./court/BoundaryRect";
 export * from "./court/CenterLine";
 export * from "./court/CentreCircle";
 export * from "./court/CourtBoundary";
+export * from "./court/CourtMarkings";
 export * from "./court/FreeThrow";
 export * from "./court/NoCharge";
 export * from "./court/Paint";

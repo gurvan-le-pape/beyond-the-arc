@@ -13,3 +13,4 @@ export * from "./overlays/hotspots/zones/shotZonesCorner3";
 export * from "./overlays/hotspots/zones/shotZonesPaint";
 export * from "./overlays/hotspots/zones/shotZonesTopKey";
 export * from "./overlays/hotspots/zones/shotZonesWing";
+export * from "./shotSummary";

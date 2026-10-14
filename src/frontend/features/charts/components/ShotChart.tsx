@@ -3,37 +3,23 @@
 
 import { scaleLinear } from "d3-scale";
 import { useTranslations } from "next-intl";
-import React, { useId, useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 
 import type { MatchEvent } from "@/features/matches/types";
 
 import type { ColorScaleName } from "../constants";
 import {
-  BASELINE_TO_RIM,
   ChartType,
   COLOR_SCALE_LIST,
   COLOR_SCALES,
   COURT_WIDTH,
   DEFAULT_COLOR_SCALE,
-  FREE_THROW_LINE_DIST,
   HALF_COURT_HEIGHT,
-  NO_CHARGE_LINE_DIST,
-  NO_CHARGE_LINE_LENGTH,
-  PAINT_HEIGHT,
-  PAINT_WIDTH,
   ShotFilter,
-  THREE_PT_LINE_DIST,
-  THREE_PT_RADIUS,
 } from "../constants";
-import { useBinnedShots } from "../hooks";
-import Basket from "./court/Basket";
-import CentreCircle from "./court/CentreCircle";
-import CourtBoundary from "./court/CourtBoundary";
-import FreeThrow from "./court/FreeThrow";
-import NoCharge from "./court/NoCharge";
-import Paint from "./court/Paint";
-import PaintTicks from "./court/PaintTicks";
-import ThreePointArc from "./court/ThreePointArc";
+import { useBinnedShots, useCourtSize } from "../hooks";
+import { maxCellValue, summarizeShots } from "../utils";
+import { CourtMarkings } from "./court/CourtMarkings";
 import HeatmapHeader from "./headers/HeatmapHeader";
 import HotspotsHeader from "./headers/HotspotsHeader";
 import ScatterHeader from "./headers/ScatterHeader";
@@ -52,6 +38,12 @@ const ASPECT = COURT_WIDTH / HALF_COURT_HEIGHT;
 // Minimum width below which the chart becomes unusable on mobile
 const MIN_CHART_WIDTH = 320;
 
+// The heatmap's grid over the half court.
+const HEATMAP_ROWS = 56;
+const HEATMAP_COLS = 60;
+const CELL_WIDTH = COURT_WIDTH / HEATMAP_COLS;
+const CELL_HEIGHT = HALF_COURT_HEIGHT / HEATMAP_ROWS;
+
 /**
  * The shot chart for a set of match events, in the variant `chartType` picks.
  *
@@ -63,35 +55,10 @@ export function ShotChart({
   matchEvents,
   chartType = ChartType.SCATTER,
 }: ShotChartProps) {
-  const containerRef = React.useRef<HTMLDivElement>(null);
-
-  // null until first ResizeObserver measurement — prevents flash of wrong size
-  const [containerSize, setContainerSize] = React.useState<{
-    width: number;
-    height: number;
-  } | null>(null);
-
-  React.useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-
-    let rafId: number;
-    const observer = new ResizeObserver((entries) => {
-      cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(() => {
-        const entry = entries[0];
-        if (!entry) return;
-        const w = Math.max(entry.contentRect.width, MIN_CHART_WIDTH);
-        setContainerSize({ width: w, height: w / ASPECT });
-      });
-    });
-
-    observer.observe(el);
-    return () => {
-      observer.disconnect();
-      cancelAnimationFrame(rafId);
-    };
-  }, []);
+  const { containerRef, size: containerSize } = useCourtSize(
+    ASPECT,
+    MIN_CHART_WIDTH,
+  );
 
   const [shotFilter, setShotFilter] = useState<ShotFilter>(ShotFilter.ALL);
   const [colorScale, setColorScale] =
@@ -113,35 +80,12 @@ export function ShotChart({
     [svgHeight],
   );
 
-  // FIBA geometry (all in meters)
-  const centerX = xScale(COURT_WIDTH / 2);
-  const paintLeft = xScale((COURT_WIDTH - PAINT_WIDTH) / 2);
-  const paintRight = xScale((COURT_WIDTH + PAINT_WIDTH) / 2);
-  const paintTopY = yScale(PAINT_HEIGHT);
-  const paintBottomY = yScale(0);
-  const ftLineY = yScale(FREE_THROW_LINE_DIST);
-  const rimY = yScale(BASELINE_TO_RIM);
-  const ncLineY1 = yScale(NO_CHARGE_LINE_DIST);
-  const ncLineY2 = yScale(NO_CHARGE_LINE_DIST + NO_CHARGE_LINE_LENGTH);
-  const tickLength = 0.1;
-  const tick1Y = 1.75;
-  const blockY = tick1Y + 0.85;
-  const blockHeight = 0.4;
-  const tick2Y = blockY + blockHeight + 0.85;
-  const tick3Y = tick2Y + 0.85;
-
-  // Heatmap grid/cell config
-  const rows = 56,
-    cols = 60;
-  const cellWidth = COURT_WIDTH / cols;
-  const cellHeight = HALF_COURT_HEIGHT / rows;
-
   const { bins: heatmapData, shotEvents } = useBinnedShots(
     matchEvents,
-    rows,
-    cols,
-    cellWidth,
-    cellHeight,
+    HEATMAP_ROWS,
+    HEATMAP_COLS,
+    CELL_WIDTH,
+    CELL_HEIGHT,
   );
 
   const t = useTranslations("common");
@@ -164,25 +108,11 @@ export function ShotChart({
     }
   })();
 
-  const summary = useMemo(() => {
-    const total = shotEvents.length;
-    const made = shotEvents.filter((shot) => shot.made).length;
-    return {
-      total,
-      made,
-      missed: total - made,
-      percent: total > 0 ? Math.round((made / total) * 100) : 0,
-    };
-  }, [shotEvents]);
-
-  const flat = heatmapData.flat();
-  const maxValue = useMemo(() => {
-    if (shotFilter === ShotFilter.MADE)
-      return Math.max(1, ...flat.map((cell) => cell.made));
-    if (shotFilter === ShotFilter.MISSED)
-      return Math.max(1, ...flat.map((cell) => cell.missed));
-    return Math.max(1, ...flat.map((cell) => cell.total));
-  }, [flat, shotFilter]);
+  const summary = useMemo(() => summarizeShots(shotEvents), [shotEvents]);
+  const maxValue = useMemo(
+    () => maxCellValue(heatmapData, shotFilter),
+    [heatmapData, shotFilter],
+  );
 
   return (
     <div
@@ -225,7 +155,9 @@ export function ShotChart({
             aria-describedby={descId}
           >
             <title id={titleId}>{chartLabel}</title>
-            <desc id={descId}>{t("shotChart.chartSummary", summary)}</desc>
+            <desc id={descId}>
+              {t("shotChart.chartSummary", { ...summary })}
+            </desc>
             {/* --- Overlays (between background and lines) --- */}
             {chartType === ChartType.HEATMAP && (
               <HeatmapOverlay
@@ -233,8 +165,8 @@ export function ShotChart({
                 shotFilter={shotFilter}
                 xScale={xScale}
                 yScale={yScale}
-                cellWidth={cellWidth}
-                cellHeight={cellHeight}
+                cellWidth={CELL_WIDTH}
+                cellHeight={CELL_HEIGHT}
                 maxValue={maxValue}
                 colorScale={COLOR_SCALES[colorScale]}
               />
@@ -258,68 +190,11 @@ export function ShotChart({
             )}
 
             {/* --- Court lines and markings (always on top) --- */}
-            <CourtBoundary
+            <CourtMarkings
+              xScale={xScale}
+              yScale={yScale}
               svgWidth={svgWidth}
               svgHeight={svgHeight}
-              yScale={yScale}
-            />
-
-            <Paint
-              paintLeft={paintLeft}
-              paintRight={paintRight}
-              paintTopY={paintTopY}
-              paintBottomY={paintBottomY}
-              svgWidth={svgWidth}
-            />
-
-            <Basket
-              centerX={centerX}
-              rimY={rimY}
-              xScale={xScale}
-              yScale={yScale}
-              svgWidth={svgWidth}
-            />
-
-            <FreeThrow
-              centerX={centerX}
-              ftLineY={ftLineY}
-              xScale={xScale}
-              svgWidth={svgWidth}
-            />
-
-            <NoCharge
-              centerX={centerX}
-              rimY={rimY}
-              ncLineY1={ncLineY1}
-              ncLineY2={ncLineY2}
-              xScale={xScale}
-              svgWidth={svgWidth}
-            />
-
-            <PaintTicks
-              xLeft_px={xScale((COURT_WIDTH - PAINT_WIDTH) / 2)}
-              xRight_px={xScale((COURT_WIDTH + PAINT_WIDTH) / 2)}
-              tickLength_px={xScale(tickLength) - xScale(0)}
-              tickYs={[tick1Y, tick2Y, tick3Y]}
-              yScale={yScale}
-              svgWidth={svgWidth}
-              blockY={blockY}
-              blockHeight={blockHeight}
-            />
-
-            <CentreCircle
-              centerX={centerX}
-              xScale={xScale}
-              svgWidth={svgWidth}
-            />
-
-            <ThreePointArc
-              xScale={xScale}
-              yScale={yScale}
-              svgWidth={svgWidth}
-              COURT_WIDTH={COURT_WIDTH}
-              THREE_PT_RADIUS={THREE_PT_RADIUS}
-              THREE_PT_LINE_DIST={THREE_PT_LINE_DIST}
             />
           </svg>
         </>
