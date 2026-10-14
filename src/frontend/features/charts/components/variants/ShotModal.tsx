@@ -60,74 +60,76 @@ export function ShotModal({
   return (
     <dialog
       ref={dialogRef}
-      className="fixed inset-0 z-50 overflow-y-auto bg-black/40 m-0 max-w-none w-full h-full p-0 border-0 backdrop:bg-transparent"
+      className="fixed inset-0 z-50 overflow-y-auto bg-black/40 m-0 max-w-none w-full h-full p-4 sm:p-6 border-0 backdrop:bg-transparent open:flex justify-center"
     >
+      {/* The card is the dialog's direct child, so a click on the padding
+          around it targets the dialog itself and dismisses it. `my-auto`
+          rather than `items-center` keeps a card taller than the screen
+          scrollable from its top. */}
       {player && (
-        <div className="flex min-h-full items-start justify-center p-4 sm:items-center sm:p-6">
-          <div className="relative w-full max-w-2xl surface-subtle rounded-2xl shadow-2xl">
-            {/* Header — intentional decorative gradient, stays as raw Tailwind */}
-            <div className="bg-gradient-to-r from-[#1976d2] to-[#43a047] text-white rounded-t-2xl px-6 pt-5 pb-4 flex items-center justify-center relative min-h-[64px]">
-              <div className="flex-1 flex items-center justify-end font-bold text-lg pr-4 text-right whitespace-normal break-words">
-                <span className="bg-white/10 rounded px-3 py-1 inline-block">
-                  {teamName}
-                </span>
-              </div>
-              <div className="flex flex-col items-center justify-center mx-3 min-w-[90px]">
-                <div className="font-extrabold text-3xl tracking-wide bg-white/20 rounded-xl px-6 py-0.5 text-white shadow mb-0.5">
-                  {teamScore ?? "–"}{" "}
-                  <span className="font-normal text-white/70">-</span>{" "}
-                  {opponentScore ?? "–"}
-                </div>
-                <div className="text-xs text-white/70 font-normal">
-                  {t("matchHistory.score")}
-                </div>
-              </div>
-              <div className="flex-1 flex items-center justify-start font-bold text-lg pl-4 text-left whitespace-normal break-words">
-                <span className="bg-white/10 rounded px-3 py-1 inline-block">
-                  {opponentTeamName}
-                </span>
-              </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute top-2 right-2 text-white hover:text-red-300 bg-black/20 hover:bg-black/40 rounded-full"
-                onClick={onClose}
-                aria-label={t("shotChart.close")}
-              >
-                <X className="w-5 h-5" />
-              </Button>
+        <div className="relative w-full max-w-2xl h-fit sm:my-auto surface-subtle rounded-2xl shadow-2xl">
+          {/* Header — intentional decorative gradient, stays as raw Tailwind */}
+          <div className="bg-gradient-to-r from-[#1976d2] to-[#43a047] text-white rounded-t-2xl px-6 pt-5 pb-4 flex items-center justify-center relative min-h-[64px]">
+            <div className="flex-1 flex items-center justify-end font-bold text-lg pr-4 text-right whitespace-normal break-words">
+              <span className="bg-white/10 rounded px-3 py-1 inline-block">
+                {teamName}
+              </span>
             </div>
-
-            {/* Chart content — ref used for png capture */}
-            <div
-              ref={chartRef}
-              className="px-6 pt-6 pb-6 bg-surface-inset rounded-b-2xl"
+            <div className="flex flex-col items-center justify-center mx-3 min-w-[90px]">
+              <div className="font-extrabold text-3xl tracking-wide bg-white/20 rounded-xl px-6 py-0.5 text-white shadow mb-0.5">
+                {teamScore ?? "–"}{" "}
+                <span className="font-normal text-white/70">-</span>{" "}
+                {opponentScore ?? "–"}
+              </div>
+              <div className="text-xs text-white/70 font-normal">
+                {t("matchHistory.score")}
+              </div>
+            </div>
+            <div className="flex-1 flex items-center justify-start font-bold text-lg pl-4 text-left whitespace-normal break-words">
+              <span className="bg-white/10 rounded px-3 py-1 inline-block">
+                {opponentTeamName}
+              </span>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute top-2 right-2 text-white hover:text-red-300 bg-black/20 hover:bg-black/40 rounded-full"
+              onClick={onClose}
+              aria-label={t("shotChart.close")}
             >
-              <Text
-                variant="h3"
-                className="mb-4 text-center text-primary tracking-wide"
-              >
-                {t("shotChart.title", { name: player.name })}
-              </Text>
+              <X className="w-5 h-5" />
+            </Button>
+          </div>
 
-              <ShotChart
-                matchEvents={getPlayerShots(player.id)}
-                chartType={ChartType.SCATTER}
-              />
-            </div>
+          {/* Chart content — ref used for png capture */}
+          <div
+            ref={chartRef}
+            className="px-6 pt-6 pb-6 bg-surface-inset rounded-b-2xl"
+          >
+            <Text
+              variant="h3"
+              className="mb-4 text-center text-primary tracking-wide"
+            >
+              {t("shotChart.title", { name: player.name })}
+            </Text>
 
-            {/* Download button outside chartRef */}
-            <div className="flex justify-center py-4 bg-surface-inset rounded-b-2xl border-t border-divide">
-              <Button
-                variant="download"
-                size="lg"
-                className="rounded-full gap-2"
-                onClick={handleDownload}
-              >
-                <Download className="w-5 h-5" aria-hidden="true" />
-                {t("shotChart.download")}
-              </Button>
-            </div>
+            <ShotChart
+              matchEvents={getPlayerShots(player.id)}
+              chartType={ChartType.SCATTER}
+            />
+          </div>
+
+          {/* Download button outside chartRef */}
+          <div className="flex justify-center py-4 bg-surface-inset rounded-b-2xl border-t border-divide">
+            <Button
+              variant="download"
+              size="lg"
+              className="rounded-full gap-2"
+              onClick={handleDownload}
+            >
+              <Download className="w-5 h-5" aria-hidden="true" />
+              {t("shotChart.download")}
+            </Button>
           </div>
         </div>
       )}
