@@ -1,4 +1,4 @@
-// src/frontend/features/matches/components/detail/match-summary-tabs/index.tsx
+// src/frontend/features/matches/components/detail/MatchSummaryTabs.tsx
 "use client";
 
 import { useTranslations } from "next-intl";
@@ -12,9 +12,9 @@ import {
   TabsTrigger,
 } from "@/shared/components/primitives";
 
-import { MatchEvents } from "../match-events";
-import { PlayerMatchStats } from "../player-match-stats";
-import { TeamStatsComparison } from "../TeamStatsComparison";
+import { MatchEvents } from "./match-events";
+import { PlayerMatchStats } from "./player-match-stats";
+import { TeamStatsComparison } from "./TeamStatsComparison";
 
 interface MatchSummaryTabsProps {
   readonly homeTeam: TeamInfoExtended;
