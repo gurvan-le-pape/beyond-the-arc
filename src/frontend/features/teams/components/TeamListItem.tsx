@@ -7,54 +7,11 @@ import type { ClubTeamInfo } from "@/features/organizations/clubs/types";
 import { Link } from "@/navigation";
 import { Badge, TextLink } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
-import { CompetitionLevel } from "@/shared/constants";
-import { formatTeamName, normalizeString } from "@/shared/utils";
+import { formatTeamName } from "@/shared/utils";
 
 interface TeamListItemProps {
   readonly team: ClubTeamInfo;
   readonly clubName: string;
-}
-
-interface LevelBadgeProps {
-  readonly level: string;
-  readonly label: string;
-}
-
-function buildCompetitionUrl(team: ClubTeamInfo): string | null {
-  const championship = team.pool?.championship;
-  if (!championship || !team.pool) return null;
-
-  const level = normalizeString(championship.level);
-  let parentId: number | null = null;
-
-  if (level === CompetitionLevel.DEPARTMENTAL) {
-    parentId = championship.committeeId;
-  } else if (level === CompetitionLevel.REGIONAL) {
-    parentId = championship.leagueId;
-  }
-
-  if (!parentId) return null;
-  return `/championships/${championship.id}?pool=${team.pool.id}`;
-}
-
-function LevelBadge({ level, label }: LevelBadgeProps) {
-  const normalized = normalizeString(level);
-
-  if (normalized === CompetitionLevel.REGIONAL) {
-    return (
-      <Badge variant="regional" size="sm">
-        {label}
-      </Badge>
-    );
-  }
-  if (normalized === CompetitionLevel.DEPARTMENTAL) {
-    return (
-      <Badge variant="departmental" size="sm">
-        {label}
-      </Badge>
-    );
-  }
-  return null;
 }
 
 /**
@@ -64,12 +21,6 @@ function LevelBadge({ level, label }: LevelBadgeProps) {
  * Takes `ClubTeamInfo` rather than `Team` — the shape the clubs feature loads —
  * which is why `clubName` arrives as its own prop instead of coming off the
  * team.
- *
- * **Only regional and departmental teams get a level badge and a competition
- * link.** Both are derived from the championship level and its matching parent
- * id, and both return `null` for anything else, so a national team renders
- * without either rather than with a placeholder. That is a display decision,
- * not missing data.
  *
  * The leaderboard block renders only when the team has standings; a rank of
  * `null` inside it shows an em dash.
@@ -81,18 +32,6 @@ export function TeamListItem({ team, clubName }: TeamListItemProps) {
   const leaderboard = team.leaderboard;
   const pool = team.pool;
   const championship = pool?.championship;
-  const competitionUrl = buildCompetitionUrl(team);
-
-  let levelLabel: string | null = null;
-
-  if (championship) {
-    const level = normalizeString(championship.level);
-    if (level === CompetitionLevel.REGIONAL) {
-      levelLabel = tCommon("competition.levels.regional");
-    } else if (level === CompetitionLevel.DEPARTMENTAL) {
-      levelLabel = tCommon("competition.levels.departmental");
-    }
-  }
 
   return (
     <div className="w-full px-6 py-3.5 flex items-center justify-between hover:bg-surface-inset transition-colors group">
@@ -103,18 +42,20 @@ export function TeamListItem({ team, clubName }: TeamListItemProps) {
           </TextLink>
         </span>
 
-        {championship && levelLabel && (
+        {championship && (
           <div className="flex items-center gap-1.5 flex-wrap">
-            <LevelBadge level={championship.level} label={levelLabel} />
+            <Badge variant={championship.level} size="sm">
+              {tCommon(`competition.levels.${championship.level}`)}
+            </Badge>
             <Text variant="caption" as="span">
               {championship.name}
             </Text>
           </div>
         )}
 
-        {competitionUrl && pool?.name && (
+        {championship && pool.name && (
           <Link
-            href={competitionUrl}
+            href={`/championships/${championship.id}?pool=${pool.id}`}
             className="inline-flex items-center gap-1.5 text-xs font-medium text-clubs-strong hover:underline transition-colors w-fit"
           >
             <span className="w-1.5 h-1.5 rounded-full bg-clubs" />
