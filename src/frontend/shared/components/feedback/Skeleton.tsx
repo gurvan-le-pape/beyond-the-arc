@@ -3,6 +3,8 @@ import { type HTMLAttributes } from "react";
 
 import { cn } from "@/shared/utils";
 
+import { Card } from "../primitives/Card";
+
 /**
  * A pulsing placeholder block. Shape and size come entirely from `className` —
  * this contributes only the animation, the radius and the fill, and forwards
@@ -34,11 +36,11 @@ export function Skeleton({
  */
 export function SkeletonCard() {
   return (
-    <div className="surface-subtle p-6 rounded-card border border-divide">
+    <Card>
       <Skeleton className="h-4 w-3/4 mb-4" />
       <Skeleton className="h-4 w-1/2 mb-2" />
       <Skeleton className="h-20 w-full" />
-    </div>
+    </Card>
   );
 }
 
@@ -51,9 +53,9 @@ export function SkeletonCard() {
  */
 export function SkeletonInfoBox() {
   return (
-    <div className="surface-subtle p-4 rounded-card border border-divide">
+    <Card padding="sm">
       <Skeleton className="h-3 w-20 mb-2" />
       <Skeleton className="h-5 w-32" />
-    </div>
+    </Card>
   );
 }

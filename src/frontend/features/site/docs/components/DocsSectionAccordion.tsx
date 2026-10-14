@@ -2,6 +2,7 @@
 import type { LucideIcon } from "lucide-react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 
+import { Card } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 
 interface DocsSectionAccordionProps {
@@ -32,7 +33,7 @@ export function DocsSectionAccordion({
   children,
 }: DocsSectionAccordionProps) {
   return (
-    <div className="surface-subtle rounded-card border border-divide shadow-card overflow-hidden">
+    <Card padding="none" className="overflow-hidden">
       {/* Accordion button — hover steps up to surface-raised via inset */}
       <button
         type="button"
@@ -74,6 +75,6 @@ export function DocsSectionAccordion({
           </div>
         </div>
       )}
-    </div>
+    </Card>
   );
 }

@@ -1,6 +1,7 @@
 // src/frontend/features/site/product/components/FeaturesHighlightsSection.tsx
 import type { LucideIcon } from "lucide-react";
 
+import { Card } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 
 import { FeatureHighlightItem } from "./FeatureHighlightItem";
@@ -29,7 +30,7 @@ export function FeaturesHighlightsSection({
 }: FeaturesHighlightsSectionProps) {
   return (
     // Highlights Section — sits on surface-base, establishes surface-subtle context
-    <div className="surface-subtle rounded-card border border-divide shadow-card p-8">
+    <Card padding="lg">
       <Text variant="h2" className="mb-6 text-center text-xl">
         {title}
       </Text>
@@ -43,6 +44,6 @@ export function FeaturesHighlightsSection({
           />
         ))}
       </div>
-    </div>
+    </Card>
   );
 }

@@ -1,7 +1,6 @@
 // src/frontend/features/organizations/clubs/components/clubs-view/ClubCard.tsx
-import { Link } from "@/navigation";
 import { ClubMark } from "@/shared/components/domain";
-import { Badge } from "@/shared/components/primitives";
+import { Badge, Card } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { cn } from "@/shared/utils";
 
@@ -20,15 +19,11 @@ interface ClubCardProps {
  */
 export function ClubCard({ club }: ClubCardProps) {
   return (
-    <Link
+    <Card
+      padding="none"
       href={`/organizations/clubs/${club.id}`}
       className={cn(
-        "group relative overflow-hidden rounded-card border text-left w-full",
-        "surface-subtle shadow-card",
-        "transition-all duration-200",
-        "hover:-translate-y-0.5 hover:scale-[1.01]",
-        "hover:shadow-card-hover",
-        "focus-ring",
+        "group relative overflow-hidden",
         "border-clubs/40 hover:border-clubs",
         "flex",
       )}
@@ -74,6 +69,6 @@ export function ClubCard({ club }: ClubCardProps) {
           </Text>
         </div>
       </div>
-    </Link>
+    </Card>
   );
 }

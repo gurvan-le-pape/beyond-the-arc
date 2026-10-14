@@ -1,4 +1,5 @@
 // src/frontend/features/site/contact/components/ContactAboutSection.tsx
+import { Card } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 
 const TECH_STACK = [
@@ -24,7 +25,7 @@ export function ContactAboutSection({
   description,
 }: ContactAboutSectionProps) {
   return (
-    <div className="surface-subtle rounded-card border border-divide shadow-card p-8">
+    <Card padding="lg">
       <Text variant="h2" className="mb-4 text-xl">
         {title}
       </Text>
@@ -41,6 +42,6 @@ export function ContactAboutSection({
           </span>
         ))}
       </div>
-    </div>
+    </Card>
   );
 }

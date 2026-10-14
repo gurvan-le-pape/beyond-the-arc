@@ -65,10 +65,9 @@ export function EntityHeader({
 
   return (
     <Card
-      variant="custom"
       padding="none"
       className={cn(
-        "overflow-hidden border-2 surface-subtle shadow-card",
+        "overflow-hidden border-2",
         isFemale ? "border-team-female" : "border-team-male",
       )}
     >
