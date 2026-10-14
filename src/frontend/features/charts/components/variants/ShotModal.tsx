@@ -68,27 +68,53 @@ export function ShotModal({
           scrollable from its top. */}
       {player && (
         <div className="relative w-full max-w-2xl h-fit sm:my-auto surface-subtle rounded-2xl shadow-2xl">
-          {/* Header — intentional decorative gradient, stays as raw Tailwind */}
-          <div className="bg-gradient-to-r from-[#1976d2] to-[#43a047] text-white rounded-t-2xl px-6 pt-5 pb-4 flex items-center justify-center relative min-h-[64px]">
-            <div className="flex-1 flex items-center justify-end font-bold text-lg pr-4 text-right whitespace-normal break-words">
-              <span className="bg-white/10 rounded px-3 py-1 inline-block">
-                {teamName}
-              </span>
+          {/* Header — intentional decorative gradient, stays as raw Tailwind.
+              A phone has no room for two names beside the score without
+              breaking words, so below `sm` it is a two-line scoreboard. */}
+          <div className="bg-gradient-to-r from-[#1976d2] to-[#43a047] text-white rounded-t-2xl pl-4 pr-14 py-4 sm:px-14 sm:pt-5 relative min-h-[64px]">
+            <div className="flex flex-col gap-1.5 sm:hidden">
+              {[
+                { side: "team", name: teamName, score: teamScore },
+                {
+                  side: "opponent",
+                  name: opponentTeamName,
+                  score: opponentScore,
+                },
+              ].map(({ side, name, score }) => (
+                <div
+                  key={side}
+                  className="flex items-baseline justify-between gap-3"
+                >
+                  <span className="min-w-0 break-words font-bold text-sm">
+                    {name}
+                  </span>
+                  <span className="font-extrabold text-2xl tabular-nums">
+                    {score ?? "–"}
+                  </span>
+                </div>
+              ))}
             </div>
-            <div className="flex flex-col items-center justify-center mx-3 min-w-[90px]">
-              <div className="font-extrabold text-3xl tracking-wide bg-white/20 rounded-xl px-6 py-0.5 text-white shadow mb-0.5">
-                {teamScore ?? "–"}{" "}
-                <span className="font-normal text-white/70">-</span>{" "}
-                {opponentScore ?? "–"}
+            <div className="hidden sm:flex items-center justify-center">
+              <div className="flex-1 min-w-0 flex items-center justify-end font-bold text-lg text-right break-words">
+                <span className="bg-white/10 rounded px-3 py-1 inline-block max-w-full">
+                  {teamName}
+                </span>
               </div>
-              <div className="text-xs text-white/70 font-normal">
-                {t("matchHistory.score")}
+              <div className="flex flex-col items-center justify-center mx-3 shrink-0">
+                <div className="font-extrabold text-3xl tracking-wide whitespace-nowrap bg-white/20 rounded-xl px-6 py-0.5 text-white shadow mb-0.5">
+                  {teamScore ?? "–"}{" "}
+                  <span className="font-normal text-white/70">-</span>{" "}
+                  {opponentScore ?? "–"}
+                </div>
+                <div className="text-xs text-white/70 font-normal">
+                  {t("matchHistory.score")}
+                </div>
               </div>
-            </div>
-            <div className="flex-1 flex items-center justify-start font-bold text-lg pl-4 text-left whitespace-normal break-words">
-              <span className="bg-white/10 rounded px-3 py-1 inline-block">
-                {opponentTeamName}
-              </span>
+              <div className="flex-1 min-w-0 flex items-center justify-start font-bold text-lg text-left break-words">
+                <span className="bg-white/10 rounded px-3 py-1 inline-block max-w-full">
+                  {opponentTeamName}
+                </span>
+              </div>
             </div>
             <Button
               variant="ghost"
