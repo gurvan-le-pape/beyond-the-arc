@@ -1,0 +1,106 @@
+// src/frontend/features/matches/components/detail/match-events/matchEventsView.spec.ts
+import { describe, expect, it } from "vitest";
+
+import { Quarter } from "@/features/matches/constants";
+import type { MatchEvent } from "@/features/matches/types";
+import { EventCategory, EventType, Role } from "@/shared/constants";
+
+import {
+  filterEvents,
+  type MatchEventsFilter,
+  scoreEvents,
+} from "./matchEventsView";
+
+const TIP_OFF = "2026-10-01T18:00:00.000Z";
+const HOME = 1;
+const AWAY = 2;
+
+// An event by one player, `minute` minutes after tip-off.
+function event(
+  id: number,
+  eventType: string,
+  role: string,
+  playerId: number,
+  teamId: number,
+  minute: number,
+): MatchEvent {
+  return {
+    id,
+    eventType,
+    occurredAt: new Date(Date.parse(TIP_OFF) + minute * 60_000).toISOString(),
+    players: [{ role, player: { id: playerId, team: { id: teamId } } }],
+  } as unknown as MatchEvent;
+}
+
+const EVENTS = [
+  event(1, EventType.MADE_LAYUP, Role.SHOOTER, 10, HOME, 1),
+  event(2, EventType.MADE_STEP_BACK_THREE, Role.SHOOTER, 20, AWAY, 5),
+  event(3, EventType.MISSED_LAYUP, Role.SHOOTER, 10, HOME, 12),
+  event(4, EventType.STEAL, Role.STEALER, 20, AWAY, 15),
+  event(5, EventType.MADE_LAYUP, Role.SHOOTER, 11, HOME, 25),
+];
+
+const NO_FILTER: MatchEventsFilter = {
+  quarter: Quarter.ALL,
+  category: undefined,
+  playerIds: new Set(),
+  latestFirst: false,
+};
+
+describe("scoreEvents", () => {
+  it("carries the score after each event, counting made shots only", () => {
+    const scored = scoreEvents(EVENTS, HOME, AWAY, TIP_OFF);
+    expect(scored.map((e) => [e.homeScore, e.awayScore])).toEqual([
+      [2, 0],
+      [2, 3],
+      [2, 3],
+      [2, 3],
+      [4, 3],
+    ]);
+  });
+
+  it("attributes each event to its team and quarter", () => {
+    const scored = scoreEvents(EVENTS, HOME, AWAY, TIP_OFF);
+    expect(scored.map((e) => [e.teamId, e.quarter])).toEqual([
+      [HOME, 1],
+      [AWAY, 1],
+      [HOME, 2],
+      [AWAY, 2],
+      [HOME, 3],
+    ]);
+  });
+});
+
+describe("filterEvents", () => {
+  const scored = scoreEvents(EVENTS, HOME, AWAY, TIP_OFF);
+  const ids = (filter: Partial<MatchEventsFilter>) =>
+    filterEvents(scored, { ...NO_FILTER, ...filter }).map((e) => e.id);
+
+  it("keeps everything without a filter", () => {
+    expect(ids({})).toEqual([1, 2, 3, 4, 5]);
+  });
+
+  it("narrows to a quarter, a category and players", () => {
+    expect(ids({ quarter: Quarter.Q2 })).toEqual([3, 4]);
+    expect(ids({ category: EventCategory.MADE })).toEqual([1, 2, 5]);
+    expect(ids({ playerIds: new Set([10, 11]) })).toEqual([1, 3, 5]);
+    expect(
+      ids({
+        quarter: Quarter.Q1,
+        category: EventCategory.MADE,
+        playerIds: new Set([20]),
+      }),
+    ).toEqual([2]);
+  });
+
+  it("puts the latest first when asked, keeping the match's score", () => {
+    const latest = filterEvents(scored, { ...NO_FILTER, latestFirst: true });
+    expect(latest.map((e) => e.id)).toEqual([5, 4, 3, 2, 1]);
+    expect(latest[0].homeScore).toBe(4);
+  });
+
+  it("does not reorder the list it was given", () => {
+    filterEvents(scored, { ...NO_FILTER, latestFirst: true });
+    expect(scored.map((e) => e.id)).toEqual([1, 2, 3, 4, 5]);
+  });
+});
