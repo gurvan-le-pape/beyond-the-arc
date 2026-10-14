@@ -7,6 +7,7 @@ export * from "./ClubMark";
 export * from "./ClubMarkLink";
 export * from "./EntityCardBadges";
 export * from "./EntityCardBody";
+export * from "./EntityHeader";
 export * from "./EntityHeaderBadges";
 export * from "./LeaderboardTable";
 export * from "./ListEntityCard";
