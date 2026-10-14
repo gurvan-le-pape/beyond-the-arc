@@ -4,7 +4,7 @@ import { SearchX, X } from "lucide-react";
 import { Link } from "@/navigation";
 import { cn } from "@/shared/utils";
 
-import { Button, buttonVariants } from "../primitives";
+import { Button, buttonVariants, Card } from "../primitives";
 import { Text } from "../typography";
 
 /**
@@ -60,7 +60,10 @@ export const ErrorCard = ({
   const { badge, icon, Icon } = tones[tone];
 
   return (
-    <div className="bg-surface-subtle rounded-card border border-divide shadow-card p-10 max-w-md w-full text-center space-y-6 mx-auto">
+    <Card
+      padding="lg"
+      className="max-w-md w-full text-center space-y-6 mx-auto"
+    >
       <div
         className={cn(
           "inline-flex items-center justify-center w-16 h-16 rounded-full mx-auto",
@@ -84,7 +87,7 @@ export const ErrorCard = ({
           {link.label}
         </Link>
       ) : null}
-    </div>
+    </Card>
   );
 };
 

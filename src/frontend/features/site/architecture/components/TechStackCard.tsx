@@ -1,6 +1,7 @@
 // src/frontend/features/site/architecture/components/TechStackCard.tsx
 import type { LucideIcon } from "lucide-react";
 
+import { Card } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 
 import { TechStackItem } from "./TechStackItem";
@@ -36,7 +37,7 @@ export function TechStackCard({
   items,
 }: TechStackCardProps) {
   return (
-    <div className="surface-subtle rounded-card border border-divide shadow-card hover:shadow-card-hover transition-all duration-200 overflow-hidden">
+    <Card padding="none" className="overflow-hidden">
       <div className={`bg-gradient-to-r ${color} p-6 text-white`}>
         <div className="flex items-center gap-3">
           <Icon className="w-8 h-8" />
@@ -55,6 +56,6 @@ export function TechStackCard({
           />
         ))}
       </div>
-    </div>
+    </Card>
   );
 }

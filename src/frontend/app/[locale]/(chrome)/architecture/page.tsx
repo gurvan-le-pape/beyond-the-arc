@@ -11,6 +11,7 @@ import {
 } from "@/features/site/architecture/components";
 import { TECH_STACKS } from "@/features/site/architecture/constants";
 import { PageHero, PageLayout } from "@/shared/components/layout";
+import { Card } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import type { LocalePageProps } from "@/shared/types";
 
@@ -76,7 +77,7 @@ export default async function ArchitecturePage({ params }: LocalePageProps) {
       </div>
 
       {/* Architecture Diagram — sits on surface-base, establishes surface-subtle context */}
-      <div className="surface-subtle rounded-card border border-divide shadow-card p-8">
+      <Card padding="lg">
         <Text variant="h2" className="mb-6 text-center text-xl">
           {t("architecture.systemArchitecture")}
         </Text>
@@ -130,7 +131,7 @@ export default async function ArchitecturePage({ params }: LocalePageProps) {
             description={t("architecture.features.scalable.description")}
           />
         </div>
-      </div>
+      </Card>
     </PageLayout>
   );
 }

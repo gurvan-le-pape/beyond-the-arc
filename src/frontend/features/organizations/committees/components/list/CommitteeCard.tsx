@@ -1,7 +1,6 @@
 // src/frontend/features/organizations/committees/components/list/CommitteeCard.tsx
 import { normalizeDepartmentCode } from "@/features/organizations/utils";
-import { Link } from "@/navigation";
-import { Badge, ImageWithFallback } from "@/shared/components/primitives";
+import { Badge, Card, ImageWithFallback } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { cn, formatCommitteeName, formatNameToFileName } from "@/shared/utils";
 
@@ -21,15 +20,11 @@ interface CommitteeCardProps {
  */
 export function CommitteeCard({ committee, clubLabel }: CommitteeCardProps) {
   return (
-    <Link
+    <Card
+      padding="none"
       href={`/organizations/committees/${committee.id}`}
       className={cn(
-        "group relative overflow-hidden rounded-card border text-left w-full",
-        "surface-subtle shadow-card",
-        "transition-all duration-200",
-        "hover:-translate-y-0.5 hover:scale-[1.01]",
-        "hover:shadow-card-hover",
-        "focus-ring",
+        "group relative overflow-hidden",
         "border-departmental/40 hover:border-departmental",
         "flex",
       )}
@@ -90,6 +85,6 @@ export function CommitteeCard({ committee, clubLabel }: CommitteeCardProps) {
           </div>
         </div>
       </div>
-    </Link>
+    </Card>
   );
 }

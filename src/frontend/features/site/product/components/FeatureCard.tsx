@@ -1,6 +1,7 @@
 // src/frontend/features/site/product/components/FeatureCard.tsx
 import type { LucideIcon } from "lucide-react";
 
+import { Card } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 
 type FeatureStatus = "live" | "coming-soon" | "planned";
@@ -45,7 +46,7 @@ export function FeatureCard({
   statusLabel,
 }: FeatureCardProps) {
   return (
-    <div className="surface-subtle rounded-card border border-divide shadow-card hover:shadow-card-hover transition-all duration-200 p-6">
+    <Card>
       <div className="flex items-start justify-between mb-4">
         {/* Feature icon — decorative gradient, intentional */}
         <div
@@ -63,6 +64,6 @@ export function FeatureCard({
         {title}
       </Text>
       <Text variant="caption">{description}</Text>
-    </div>
+    </Card>
   );
 }

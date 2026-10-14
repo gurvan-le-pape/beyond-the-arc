@@ -1,6 +1,5 @@
 // src/frontend/features/organizations/leagues/components/list/LeagueCard.tsx
-import { Link } from "@/navigation";
-import { Badge, ImageWithFallback } from "@/shared/components/primitives";
+import { Badge, Card, ImageWithFallback } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { cn, formatLeagueName, formatNameToFileName } from "@/shared/utils";
 
@@ -20,15 +19,11 @@ interface LeagueCardProps {
  */
 export function LeagueCard({ league, clubLabel }: LeagueCardProps) {
   return (
-    <Link
+    <Card
+      padding="none"
       href={`/organizations/leagues/${league.id}`}
       className={cn(
-        "group relative overflow-hidden rounded-card border text-left w-full",
-        "surface-subtle shadow-card",
-        "transition-all duration-200",
-        "hover:-translate-y-0.5 hover:scale-[1.01]",
-        "hover:shadow-card-hover",
-        "focus-ring",
+        "group relative overflow-hidden",
         "border-regional/40 hover:border-regional",
         "flex",
       )}
@@ -87,6 +82,6 @@ export function LeagueCard({ league, clubLabel }: LeagueCardProps) {
           </div>
         </div>
       </div>
-    </Link>
+    </Card>
   );
 }

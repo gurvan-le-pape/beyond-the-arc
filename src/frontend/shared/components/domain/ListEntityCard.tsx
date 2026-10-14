@@ -1,7 +1,7 @@
 // src/frontend/shared/components/domain/ListEntityCard.tsx
 import type { ReactNode } from "react";
 
-import { Link } from "@/navigation";
+import { Card } from "@/shared/components/primitives";
 import type { CompetitionLevel } from "@/shared/constants";
 import { LEVEL_CONFIG } from "@/shared/constants";
 import { cn } from "@/shared/utils";
@@ -53,21 +53,12 @@ export function ListEntityCard({
   const config = getLevelConfig(level);
 
   return (
-    <Link
+    <Card
       href={href}
       aria-label={ariaLabel}
+      padding="none"
       className={cn(
-        "group relative overflow-hidden rounded-card border",
-        // Cards sit at `subtle`, never `raised`. These list cards sit directly
-        // on the page (`surface-base`), so `raised` here skipped a rung — and
-        // `raised` is the ceiling, which makes `bg-surface-inset` a no-op for
-        // everything inside. Separation comes from the border and the shadow,
-        // not from a louder background. See globals.css "ELEVATION RULES".
-        "surface-subtle shadow-card",
-        "transition-all duration-200",
-        "hover:-translate-y-0.5 hover:scale-[1.01]",
-        "hover:shadow-card-hover",
-        "focus-ring",
+        "group relative overflow-hidden",
         config.border,
         config.hover,
       )}
@@ -89,7 +80,7 @@ export function ListEntityCard({
       </div>
 
       {children}
-    </Link>
+    </Card>
   );
 }
 

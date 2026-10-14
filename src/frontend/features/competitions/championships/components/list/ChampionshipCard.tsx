@@ -2,8 +2,7 @@
 import { useTranslations } from "next-intl";
 
 import type { Championship } from "@/features/competitions/championships/types";
-import { Link } from "@/navigation";
-import { Badge } from "@/shared/components/primitives";
+import { Badge, Card } from "@/shared/components/primitives";
 import { CompetitionLevel, LEVEL_CONFIG } from "@/shared/constants";
 import { cn, formatCommitteeName, formatLeagueName } from "@/shared/utils";
 
@@ -26,15 +25,11 @@ export function ChampionshipCard({ championship }: ChampionshipCardProps) {
   const config = (level && LEVEL_CONFIG[level]) || LEVEL_CONFIG.default;
 
   return (
-    <Link
+    <Card
+      padding="none"
       href={`/championships/${championship.id}`}
       className={cn(
-        "group relative overflow-hidden rounded-card border",
-        "surface-subtle shadow-card",
-        "transition-all duration-200",
-        "hover:-translate-y-0.5 hover:scale-[1.01]",
-        "hover:shadow-card-hover",
-        "focus-ring",
+        "group relative overflow-hidden",
         config.border,
         config.hover,
       )}
@@ -104,6 +99,6 @@ export function ChampionshipCard({ championship }: ChampionshipCardProps) {
             </p>
           )}
       </div>
-    </Link>
+    </Card>
   );
 }

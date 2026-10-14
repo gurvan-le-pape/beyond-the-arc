@@ -1,6 +1,7 @@
 // src/frontend/features/site/docs/components/DocsQuickLinkCard.tsx
 import type { LucideIcon } from "lucide-react";
 
+import { Card } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 
 interface DocsQuickLinkCardProps {
@@ -34,12 +35,12 @@ export function DocsQuickLinkCard({
   trailIcon: TrailIcon,
 }: DocsQuickLinkCardProps) {
   return (
-    <a
+    <Card
       href={href}
-      target={external ? "_blank" : undefined}
-      rel={external ? "noopener noreferrer" : undefined}
-      {...(download ? { download: true } : {})}
-      className="surface-subtle flex items-center gap-3 p-4 rounded-card border border-divide shadow-card hover:shadow-card-hover transition-all duration-200 focus-ring"
+      external={external}
+      download={download}
+      padding="sm"
+      className="flex items-center gap-3"
     >
       <Icon className="w-6 h-6 text-text-body" aria-hidden />
       <div className="flex flex-col">
@@ -49,6 +50,6 @@ export function DocsQuickLinkCard({
       {TrailIcon && (
         <TrailIcon className="w-4 h-4 ml-auto text-text-muted" aria-hidden />
       )}
-    </a>
+    </Card>
   );
 }

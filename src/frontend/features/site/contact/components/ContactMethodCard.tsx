@@ -1,6 +1,7 @@
 // src/frontend/features/site/contact/components/ContactMethodCard.tsx
 import type { LucideIcon } from "lucide-react";
 
+import { Card } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 
 interface ContactMethodCardProps {
@@ -34,12 +35,7 @@ export function ContactMethodCard({
   const isExternal = href.startsWith("http");
 
   return (
-    <a
-      href={href}
-      target={isExternal ? "_blank" : undefined}
-      rel={isExternal ? "noopener noreferrer" : undefined}
-      className="surface-subtle rounded-card border border-divide shadow-card hover:shadow-card-hover transition-all duration-200 p-6 group focus-ring"
-    >
+    <Card href={href} external={isExternal} className="group">
       {/* Contact icon — decorative gradient, intentional */}
       <div
         className={`inline-flex items-center justify-center w-12 h-12 rounded-button bg-gradient-to-br ${color} text-white mb-4 shadow-sm group-hover:scale-110 transition-transform duration-200`}
@@ -52,6 +48,6 @@ export function ContactMethodCard({
       <Text variant="caption" className="break-all">
         {value}
       </Text>
-    </a>
+    </Card>
   );
 }

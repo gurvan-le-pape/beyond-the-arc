@@ -25,8 +25,10 @@ const cardVariants = cva(
         md: "p-6",
         lg: "p-8",
       },
+      // A card that goes or does something lifts on hover. `motion-safe`: no
+      // movement for a reader who asked the system for less.
       clickable: {
-        true: "hover:shadow-card-hover cursor-pointer active:scale-[0.98]",
+        true: "hover:shadow-card-hover motion-safe:hover:-translate-y-0.5 cursor-pointer",
         false: "",
       },
     },
@@ -46,6 +48,14 @@ interface CardBaseProps
 /** A card that navigates. Gets the clickable styling without asking for it. */
 interface CardLinkProps {
   readonly href: string;
+  /**
+   * A website outside the app: a plain anchor opening in a new tab, instead of
+   * the locale-aware router link. A `mailto:` or `tel:` address is a plain
+   * anchor without this, opening in place.
+   */
+  readonly external?: boolean;
+  /** A file to save rather than a page to open: a plain anchor with `download`. */
+  readonly download?: boolean;
   readonly clickable?: never;
   readonly onClick?: never;
 }
@@ -53,6 +63,8 @@ interface CardLinkProps {
 /** A card that either does nothing or runs an action in place. */
 interface CardPlainProps {
   readonly href?: undefined;
+  readonly external?: never;
+  readonly download?: never;
   readonly clickable?: boolean;
 }
 
@@ -82,9 +94,33 @@ export const Card = ({
   padding,
   clickable,
   href,
+  external,
+  download,
   ref,
+  children,
   ...props
 }: CardProps) => {
+  // A plain anchor for anything the router does not handle: another site, a
+  // file to save, or a `mailto:` / `tel:` address.
+  if (href !== undefined && (external || download || !href.startsWith("/"))) {
+    return (
+      <a
+        href={href}
+        ref={ref as React.Ref<HTMLAnchorElement>}
+        target={external ? "_blank" : undefined}
+        rel={external ? "noopener noreferrer" : undefined}
+        download={download || undefined}
+        className={cn(
+          "block",
+          cardVariants({ variant, padding, clickable: true, className }),
+        )}
+        {...(props as HTMLAttributes<HTMLAnchorElement>)}
+      >
+        {children}
+      </a>
+    );
+  }
+
   if (href !== undefined) {
     return (
       <Link
@@ -99,7 +135,9 @@ export const Card = ({
           cardVariants({ variant, padding, clickable: true, className }),
         )}
         {...(props as HTMLAttributes<HTMLAnchorElement>)}
-      />
+      >
+        {children}
+      </Link>
     );
   }
 
@@ -110,7 +148,9 @@ export const Card = ({
         type="button"
         className={cn(cardVariants({ variant, padding, clickable, className }))}
         {...(props as HTMLAttributes<HTMLButtonElement>)}
-      />
+      >
+        {children}
+      </button>
     );
   }
 
@@ -119,6 +159,8 @@ export const Card = ({
       ref={ref as React.Ref<HTMLDivElement>}
       className={cn(cardVariants({ variant, padding, clickable, className }))}
       {...(props as HTMLAttributes<HTMLDivElement>)}
-    />
+    >
+      {children}
+    </div>
   );
 };
