@@ -15,7 +15,8 @@
     "typecheck": "tsc --noEmit && tsc -p tsconfig.scripts.json",
     "test": "vitest run",
     "check:messages": "node scripts/check-message-parity.mts",
-    "typegen": "node scripts/typegen.mts"
+    "typegen": "node scripts/typegen.mts",
+    "palette": "node scripts/generate-palette.mts"
   },
   "dependencies": {
     "@sentry/nextjs": "^10.47.0",
@@ -44,6 +45,7 @@
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^15.5.18",
+    "@radix-ui/colors": "3.0.0",
     "@tanstack/react-query-devtools": "^5.100.10",
     "@types/d3": "^7.4.3",
     "@types/node": "^24",
