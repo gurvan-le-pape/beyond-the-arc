@@ -1,18 +1,19 @@
 // src/frontend/features/charts/components/variants/ShotModal.tsx
 "use client";
 
-import { toPng } from "html-to-image";
-import { X } from "lucide-react";
+import { Download, X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 
 import type { MatchEvent } from "@/features/matches/types";
 import { Button } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
+import { useModalDialog } from "@/shared/hooks";
 import type { NamedEntity } from "@/shared/types";
 import { logger } from "@/shared/utils";
 
 import { ChartType } from "../../constants";
+import { downloadPng, shotChartFileName } from "../../utils";
 import ShotChart from "../ShotChart";
 
 interface ShotModalProps {
@@ -46,53 +47,14 @@ export function ShotModal({
   getPlayerShots,
 }: ShotModalProps) {
   const t = useTranslations("common");
-  const dialogRef = useRef<HTMLDialogElement>(null);
+  const dialogRef = useModalDialog(open, onClose);
   const chartRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
-    if (open) {
-      dialog.showModal();
-      document.body.style.overflow = "hidden";
-    } else {
-      dialog.close();
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [open]);
-
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
-    dialog.addEventListener("close", onClose);
-    return () => dialog.removeEventListener("close", onClose);
-  }, [onClose]);
-
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
-    const handleClick = (e: MouseEvent) => {
-      if (e.target === dialog) onClose();
-    };
-    dialog.addEventListener("click", handleClick);
-    return () => dialog.removeEventListener("click", handleClick);
-  }, [onClose]);
 
   const handleDownload = () => {
     if (!chartRef.current || !player) return;
-    const el = chartRef.current;
-    (async () => {
-      const dataUrl = await toPng(el, { cacheBust: true });
-      const a = document.createElement("a");
-      a.href = dataUrl;
-      // Any run of non-letter/non-digit characters (spaces, slashes, …)
-      // becomes an underscore so the filename is valid on every platform.
-      a.download = `shotchart-${player.name.replace(/[^\p{L}\p{N}]+/gu, "_")}.png`;
-      a.click();
-    })().catch((error) => logger.error(error, "shotchart download"));
+    downloadPng(chartRef.current, shotChartFileName(player.name)).catch(
+      (error) => logger.error(error, "shotchart download"),
+    );
   };
 
   return (
@@ -162,21 +124,7 @@ export function ShotModal({
                 className="rounded-full gap-2"
                 onClick={handleDownload}
               >
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                  <polyline points="7 10 12 15 17 10" />
-                  <line x1="12" y1="15" x2="12" y2="3" />
-                </svg>
+                <Download className="w-5 h-5" aria-hidden="true" />
                 {t("shotChart.download")}
               </Button>
             </div>
