@@ -131,7 +131,6 @@
     ".*/shared/types/api\\.generated\\.ts$",
     ".*/championship-matches/(?!index\\.tsx$).*",
     ".*/match-events/(?!index\\.tsx$).*",
-    ".*/match-summary-tabs/(?!index\\.tsx$).*",
     ".*/team-roster/(?!index\\.tsx$).*",
     ".*/player-comparison/(?!index\\.tsx$).*",
     ".*/clubs-map/(?!index\\.tsx$).*",
