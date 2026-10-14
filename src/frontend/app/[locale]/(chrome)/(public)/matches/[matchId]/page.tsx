@@ -4,13 +4,18 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { serverMatchesService } from "@/features/matches/api/matches.server";
 import {
-  MatchScoreCard,
   MatchSummaryTabs,
   UpcomingMatchNotice,
 } from "@/features/matches/components";
-import { buildTeam, groupShotEventsByPlayer } from "@/features/matches/utils";
+import {
+  buildTeam,
+  groupShotEventsByPlayer,
+  teamInfoMatchupSide,
+} from "@/features/matches/utils";
+import { Matchup } from "@/shared/components/domain";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
+import { Card } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import type { LocalePageProps } from "@/shared/types";
 import {
@@ -99,7 +104,14 @@ async function MatchSummaryPage({
         })}
       </Text>
 
-      <MatchScoreCard homeTeam={homeTeam} awayTeam={awayTeam} />
+      <Card variant="highlighted" padding="lg">
+        <Matchup
+          home={teamInfoMatchupSide(homeTeam)}
+          away={teamInfoMatchupSide(awayTeam)}
+          size="hero"
+          linked
+        />
+      </Card>
 
       {isPlayed ? (
         <MatchSummaryTabs

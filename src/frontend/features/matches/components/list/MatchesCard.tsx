@@ -2,22 +2,17 @@
 import { useLocale, useTranslations } from "next-intl";
 
 import {
-  ClubMark,
   EntityCardBadges,
   getLevelConfig,
   ListEntityCard,
-  MatchScore,
+  Matchup,
 } from "@/shared/components/domain";
 import { Badge } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
-import {
-  cn,
-  formatMatchDate,
-  formatMatchTime,
-  formatTeamName,
-} from "@/shared/utils";
+import { cn, formatMatchDate, formatMatchTime } from "@/shared/utils";
 
 import type { Match } from "../../types";
+import { matchupSide } from "../../utils";
 
 interface MatchesCardProps {
   readonly match: Match;
@@ -26,10 +21,6 @@ interface MatchesCardProps {
 /**
  * One match in a list: date and time, matchday badge, the two clubs, and the
  * score once there is one.
- *
- * **A score renders only when both sides are non-null.** A fixture that has not
- * been played shows the teams without a scoreline rather than showing zeros,
- * so an unplayed match and a 0–0 are distinguishable.
  *
  * Championship data is optional-chained throughout, since list responses do not
  * always carry the pool and its championship; the badges and the level accent
@@ -41,8 +32,6 @@ export function MatchesCard({ match }: MatchesCardProps) {
 
   const level = match.pool?.championship?.level;
   const config = getLevelConfig(level);
-  const { homeTeamScore, awayTeamScore } = match;
-  const hasScore = homeTeamScore !== null && awayTeamScore !== null;
 
   return (
     <ListEntityCard
@@ -77,53 +66,11 @@ export function MatchesCard({ match }: MatchesCardProps) {
       }
     >
       <div className="px-5 py-4">
-        <div className="flex items-center justify-between gap-6">
-          <div className="flex-1 flex flex-col items-center gap-3">
-            <ClubMark clubName={match.homeTeam?.club?.name} size="lg" />
-            <div className="text-center">
-              <p
-                className={cn(
-                  "text-lg",
-                  hasScore && homeTeamScore > awayTeamScore
-                    ? "font-bold text-text-heading"
-                    : "font-normal text-text-emphasis",
-                )}
-              >
-                {formatTeamName(
-                  match.homeTeam?.club?.name,
-                  match.homeTeam?.number,
-                )}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex-shrink-0 text-center">
-            <MatchScore
-              homeScore={homeTeamScore}
-              awayScore={awayTeamScore}
-              variant="list"
-            />
-          </div>
-
-          <div className="flex-1 flex flex-col items-center gap-3">
-            <ClubMark clubName={match.awayTeam?.club?.name} size="lg" />
-            <div className="text-center">
-              <p
-                className={cn(
-                  "text-lg",
-                  hasScore && awayTeamScore > homeTeamScore
-                    ? "font-bold text-text-heading"
-                    : "font-normal text-text-emphasis",
-                )}
-              >
-                {formatTeamName(
-                  match.awayTeam?.club?.name,
-                  match.awayTeam?.number,
-                )}
-              </p>
-            </div>
-          </div>
-        </div>
+        <Matchup
+          home={matchupSide(match.homeTeam, match.homeTeamScore)}
+          away={matchupSide(match.awayTeam, match.awayTeamScore)}
+          size="card"
+        />
       </div>
     </ListEntityCard>
   );

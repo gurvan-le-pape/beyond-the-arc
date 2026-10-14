@@ -21,7 +21,7 @@ A component with private sub-parts gets a **kebab-case folder** whose root is **
 ```
 components/detail/match-card/
   index.tsx            ← exports MatchCard
-  ScoreDisplay.tsx     ← sub-component, private to the composite
+  MatchStatus.tsx      ← sub-component, private to the composite
   useMatchCard.ts      ← hook private to the composite
   types.ts             ← view types private to the composite
 ```
@@ -108,7 +108,7 @@ A file must not mix the two: a file importing the generated `components` type ma
 
 | Thing | Convention | Example |
 | --- | --- | --- |
-| Component files | PascalCase `.tsx` | `ScoreDisplay.tsx` |
+| Component files | PascalCase `.tsx` | `MatchStatus.tsx` |
 | Composite/section folders | kebab-case | `match-card/` |
 | Hook files (everywhere, `api/` included) | camelCase `useX.ts(x)` | `useMatchesFilterState.ts`, `useTeams.ts` |
 | Constants files | camelCase `.ts` | `eventCategories.ts` |

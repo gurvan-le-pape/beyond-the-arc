@@ -2,7 +2,7 @@
 import { useTranslations } from "next-intl";
 
 import { Badge } from "@/shared/components/primitives";
-import { cn } from "@/shared/utils";
+import { cn, matchWinner } from "@/shared/utils";
 
 type MatchScoreVariant = "list" | "compact" | "hero" | "table";
 
@@ -67,8 +67,9 @@ export function MatchScore({
     );
   }
 
-  const isHomeWinner = homeScore > awayScore;
-  const isAwayWinner = awayScore > homeScore;
+  const winner = matchWinner(homeScore, awayScore);
+  const isHomeWinner = winner === "home";
+  const isAwayWinner = winner === "away";
   const homeSpan = (
     <span className={scoreClasses(variant, isHomeWinner)}>{homeScore}</span>
   );
