@@ -3,11 +3,13 @@
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useEffect, useRef, useState } from "react";
 
 import { Select } from "@/shared/components/forms";
 import { PillButton } from "@/shared/components/primitives";
 import { cn } from "@/shared/utils";
+
+import { ROUND_PILL_MIN_WIDTH } from "./roundWindow";
+import { useRoundWindow } from "./useRoundWindow";
 
 interface RoundSelectorProps {
   readonly rounds: number[];
@@ -15,14 +17,6 @@ interface RoundSelectorProps {
   readonly onSelect: (round: number) => void;
   readonly className?: string;
 }
-
-// Dynamic visible count logic for desktop. Module-level because these are
-// constants, not derived state — keeping them in the component body made the
-// resize effect's empty dependency array look like a suppression.
-const ROUND_SELECTOR_PILL_MIN_WIDTH = 48;
-const PILL_MIN_WIDTH = ROUND_SELECTOR_PILL_MIN_WIDTH + 8; // px (minWidth + px-4 padding)
-const PILL_SPACING = 8; // px (space-x-2)
-const MAX_VISIBLE = 8;
 
 /**
  * The matchday picker above a championship's fixtures.
@@ -42,57 +36,14 @@ export function RoundSelector({
 }: RoundSelectorProps) {
   const t = useTranslations("competitions");
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [visibleCount, setVisibleCount] = useState(5);
-  const [startIdx, setStartIdx] = useState(0);
-  const endIdx = Math.min(startIdx + visibleCount, rounds.length);
-
-  // Recalculate visibleCount on resize
-  useEffect(() => {
-    function updateVisibleCount() {
-      const container = containerRef.current;
-      if (!container) return;
-      const width = container.offsetWidth;
-      // 2 arrows + (n pills * pillMinWidth + (n-1)*pillSpacing)
-      const available = width - 80; // 2*36px arrows + 8px buffer
-      const count = Math.max(
-        1,
-        Math.min(
-          MAX_VISIBLE,
-          Math.floor(
-            (available + PILL_SPACING) / (PILL_MIN_WIDTH + PILL_SPACING),
-          ),
-        ),
-      );
-      setVisibleCount(count);
-    }
-    updateVisibleCount();
-    window.addEventListener("resize", updateVisibleCount);
-    return () => window.removeEventListener("resize", updateVisibleCount);
-  }, []);
-
-  // Ensure selected round is always visible when it changes. Uses the
-  // functional setter so the current startIdx is never read from the closure —
-  // returning `prev` unchanged when the round is already visible lets React
-  // bail out instead of re-running this on every startIdx change.
-  useEffect(() => {
-    if (selectedRound === null) return;
-    const idx = rounds.indexOf(selectedRound);
-    if (idx === -1) return;
-    setStartIdx((prev) => {
-      if (idx < prev) return idx;
-      if (idx >= prev + visibleCount)
-        return Math.max(0, idx - visibleCount + 1);
-      return prev;
-    });
-  }, [selectedRound, rounds, visibleCount]);
-
-  const canScrollLeft = startIdx > 0;
-  const canScrollRight = endIdx < rounds.length;
-
-  const handleLeft = () => setStartIdx((prev) => Math.max(0, prev - 1));
-  const handleRight = () =>
-    setStartIdx((prev) => Math.min(rounds.length - visibleCount, prev + 1));
+  const {
+    containerRef,
+    visibleRounds,
+    canScrollLeft,
+    canScrollRight,
+    scrollLeft,
+    scrollRight,
+  } = useRoundWindow(rounds, selectedRound);
 
   if (rounds.length === 0) return null;
 
@@ -117,7 +68,7 @@ export function RoundSelector({
         <PillButton
           variant="carouselArrow"
           size="icon"
-          onClick={handleLeft}
+          onClick={scrollLeft}
           disabled={!canScrollLeft}
           aria-label={t("roundSelector.scrollLeft")}
         >
@@ -125,7 +76,7 @@ export function RoundSelector({
         </PillButton>
 
         <div className="flex space-x-2">
-          {rounds.slice(startIdx, endIdx).map((round) => {
+          {visibleRounds.map((round) => {
             const isActive = selectedRound === round;
             return (
               <PillButton
@@ -133,7 +84,7 @@ export function RoundSelector({
                 variant={isActive ? "pillActive" : "pillInactive"}
                 size="pill"
                 onClick={() => onSelect(round)}
-                style={{ minWidth: ROUND_SELECTOR_PILL_MIN_WIDTH }}
+                style={{ minWidth: ROUND_PILL_MIN_WIDTH }}
                 aria-pressed={isActive}
                 aria-label={t("roundSelector.pillLabel", { round })}
               >
@@ -146,7 +97,7 @@ export function RoundSelector({
         <PillButton
           variant="carouselArrow"
           size="icon"
-          onClick={handleRight}
+          onClick={scrollRight}
           disabled={!canScrollRight}
           aria-label={t("roundSelector.scrollRight")}
         >
