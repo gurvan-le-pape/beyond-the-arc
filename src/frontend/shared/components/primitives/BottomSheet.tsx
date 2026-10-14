@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { useModalDialog } from "@/shared/hooks";
 import { cn } from "@/shared/utils";
 
 interface BottomSheetProps {
@@ -19,13 +20,9 @@ interface BottomSheetProps {
  * A drag-to-dismiss sheet anchored to the bottom of the viewport, built on a
  * native `<dialog>` so focus trapping and the backdrop come from the platform.
  *
- * **`isOpen` drives the modal, not the mount.** The effect runs against
- * `[isOpen]` and calls `showModal()`/`close()` from it, so both usage patterns
- * work: keep the sheet mounted and toggle the prop (as `FiltersShell` does), or
- * mount it only while open. The original contract — `showModal()` once on
- * mount, close by unmounting — silently rendered nothing when a caller kept the
- * sheet mounted and flipped `isOpen`, because the mount-time effect ran before
- * the dialog existed in the DOM.
+ * **`isOpen` drives the modal, not the mount** (through `useModalDialog`), so
+ * both usage patterns work: keep the sheet mounted and toggle the prop (as
+ * `FiltersShell` does), or mount it only while open.
  *
  * **Mobile only, and the caller must enforce that.** The sheet carries
  * `md:hidden`, which hides it without preventing it: rendered open on a wide
@@ -43,33 +40,14 @@ export function BottomSheet({
   footer,
 }: BottomSheetProps) {
   const tCommon = useTranslations("common");
-  const dialogRef = useRef<HTMLDialogElement>(null);
+  const dialogRef = useModalDialog(isOpen);
   const dragStartY = useRef<number | null>(null);
   // The offset is read from a ref in `handleDragEnd` so that callback can be
   // stable — otherwise it is recreated on every drag frame and the
   // mousemove/mouseup listeners below rebind on every move.
   const dragOffsetRef = useRef(0);
-  // Remember the caller's own overflow so restoring it later does not clobber
-  // a value that was already set before this sheet opened.
-  const previousBodyOverflow = useRef("");
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
-
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
-    if (isOpen) {
-      previousBodyOverflow.current = document.body.style.overflow;
-      dialog.showModal();
-      document.body.style.overflow = "hidden";
-    } else {
-      dialog.close();
-      document.body.style.overflow = previousBodyOverflow.current;
-    }
-    return () => {
-      document.body.style.overflow = previousBodyOverflow.current;
-    };
-  }, [isOpen]);
 
   const handleDragStart = (clientY: number) => {
     dragStartY.current = clientY;
@@ -90,7 +68,7 @@ export function BottomSheet({
     dragOffsetRef.current = 0;
     setDragOffset(0);
     setIsDragging(false);
-  }, [onClose]);
+  }, [onClose, dialogRef]);
 
   useEffect(() => {
     if (!isDragging) return;
