@@ -12,6 +12,7 @@ export * from "./handleServerError";
 export * from "./helpers/date-helpers";
 export * from "./helpers/string-helpers";
 export * from "./logger";
+export * from "./matchWinner";
 export * from "./normalizeString";
 export * from "./parseApiError";
 export * from "./parseRouteId";
