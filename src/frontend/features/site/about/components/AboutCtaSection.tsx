@@ -22,20 +22,19 @@ export function AboutCtaSection({
   architectureLabel,
 }: AboutCtaSectionProps) {
   return (
-    // Call to Action — decorative gradient, intentionally stays as raw Tailwind
-    <div className="bg-gradient-to-r from-blue-500 to-purple-500 rounded-card shadow-card p-8 text-center text-white [--focus-ring-color:white]">
+    <div className="bg-solid-primary text-on-solid-primary [--focus-ring-color:rgb(var(--color-on-solid-primary))] rounded-card shadow-card p-8 text-center">
       <h2 className="text-xl font-bold mb-4">{title}</h2>
       <p className="text-sm mb-6 max-w-2xl mx-auto">{description}</p>
       <div className="flex flex-wrap justify-center gap-4">
         <Link
           href="/product"
-          className="px-6 py-3 bg-white text-ink-primary rounded-button font-semibold hover:bg-gray-100 transition-all duration-200 shadow-sm focus-ring"
+          className="px-6 py-3 bg-surface-base text-ink-primary rounded-button font-semibold hover:bg-surface-subtle transition-all duration-200 shadow-sm focus-ring"
         >
           {productLabel}
         </Link>
         <Link
           href="/architecture"
-          className="px-6 py-3 bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-button font-semibold hover:bg-white/30 transition-all duration-200 focus-ring"
+          className="px-6 py-3 bg-on-solid-primary/10 border border-on-solid-primary/40 rounded-button font-semibold hover:bg-on-solid-primary/20 transition-all duration-200 focus-ring"
         >
           {architectureLabel}
         </Link>

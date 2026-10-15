@@ -47,7 +47,6 @@ export default async function ContactPage({ params }: LocalePageProps) {
         title={t("contact.title")}
         lead={t("contact.intro")}
         icon={Send}
-        iconGradient="accent"
       />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">

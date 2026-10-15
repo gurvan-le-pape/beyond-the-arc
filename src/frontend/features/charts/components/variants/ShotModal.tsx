@@ -68,10 +68,9 @@ export function ShotModal({
           scrollable from its top. */}
       {player && (
         <div className="relative w-full max-w-2xl h-fit sm:my-auto surface-subtle rounded-2xl shadow-2xl">
-          {/* Header — intentional decorative gradient, stays as raw Tailwind.
-              A phone has no room for two names beside the score without
+          {/* Header, in the brand's solid fill. A phone has no room for two names beside the score without
               breaking words, so below `sm` it is a two-line scoreboard. */}
-          <div className="bg-gradient-to-r from-[#1976d2] to-[#43a047] text-white rounded-t-2xl pl-4 pr-14 py-4 sm:px-14 sm:pt-5 relative min-h-[64px]">
+          <div className="bg-solid-primary text-on-solid-primary [--focus-ring-color:rgb(var(--color-on-solid-primary))] rounded-t-2xl pl-4 pr-14 py-4 sm:px-14 sm:pt-5 relative min-h-[64px]">
             <div className="flex flex-col gap-1.5 sm:hidden">
               {[
                 { side: "team", name: teamName, score: teamScore },
@@ -96,22 +95,21 @@ export function ShotModal({
             </div>
             <div className="hidden sm:flex items-center justify-center">
               <div className="flex-1 min-w-0 flex items-center justify-end font-bold text-lg text-right break-words">
-                <span className="bg-white/10 rounded px-3 py-1 inline-block max-w-full">
+                <span className="bg-on-solid-primary/10 rounded px-3 py-1 inline-block max-w-full">
                   {teamName}
                 </span>
               </div>
               <div className="flex flex-col items-center justify-center mx-3 shrink-0">
-                <div className="font-extrabold text-3xl tracking-wide whitespace-nowrap bg-white/20 rounded-xl px-6 py-0.5 text-white shadow mb-0.5">
-                  {teamScore ?? "–"}{" "}
-                  <span className="font-normal text-white/70">-</span>{" "}
+                <div className="font-extrabold text-3xl tracking-wide whitespace-nowrap bg-on-solid-primary/15 rounded-xl px-6 py-0.5 shadow mb-0.5">
+                  {teamScore ?? "–"} <span className="font-normal">-</span>{" "}
                   {opponentScore ?? "–"}
                 </div>
-                <div className="text-xs text-white/70 font-normal">
+                <div className="text-xs font-normal">
                   {t("matchHistory.score")}
                 </div>
               </div>
               <div className="flex-1 min-w-0 flex items-center justify-start font-bold text-lg text-left break-words">
-                <span className="bg-white/10 rounded px-3 py-1 inline-block max-w-full">
+                <span className="bg-on-solid-primary/10 rounded px-3 py-1 inline-block max-w-full">
                   {opponentTeamName}
                 </span>
               </div>
@@ -119,7 +117,7 @@ export function ShotModal({
             <Button
               variant="ghost"
               size="icon"
-              className="absolute top-2 right-2 text-white hover:text-red-300 bg-black/20 hover:bg-black/40 rounded-full"
+              className="absolute top-2 right-2 text-on-solid-primary bg-on-solid-primary/10 hover:bg-on-solid-primary/20 rounded-full"
               onClick={onClose}
               aria-label={t("shotChart.close")}
             >

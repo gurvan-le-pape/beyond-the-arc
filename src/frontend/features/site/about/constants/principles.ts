@@ -17,31 +17,26 @@ import {
  * and the key that locates the strings.
  */
 export const PRINCIPLES = [
-  { icon: Boxes, principleKey: "modular", color: "from-blue-500 to-cyan-500" },
+  { icon: Boxes, principleKey: "modular" },
   {
     icon: FileCode2,
     principleKey: "separation",
-    color: "from-green-500 to-emerald-500",
   },
   {
     icon: Recycle,
     principleKey: "reusability",
-    color: "from-purple-500 to-pink-500",
   },
   {
     icon: TrendingUp,
     principleKey: "scalability",
-    color: "from-orange-500 to-red-500",
   },
   {
     icon: Users,
     principleKey: "readability",
-    color: "from-indigo-500 to-blue-500",
   },
-  { icon: Globe, principleKey: "i18n", color: "from-cyan-500 to-teal-500" },
+  { icon: Globe, principleKey: "i18n" },
   {
     icon: Wrench,
     principleKey: "tooling",
-    color: "from-yellow-500 to-orange-500",
   },
 ] as const;
