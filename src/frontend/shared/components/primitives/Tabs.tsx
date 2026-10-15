@@ -205,7 +205,7 @@ export function TabsTrigger({
         "border-b-2 -mb-px transition-all duration-200",
         "focus-ring",
         isSelected
-          ? "border-primary text-primary font-semibold"
+          ? "border-solid-primary text-ink-primary font-semibold"
           : "border-transparent text-text-secondary hover:text-text-emphasis hover:border-divide font-normal",
         className,
       )}

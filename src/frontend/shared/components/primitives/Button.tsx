@@ -36,16 +36,17 @@ export const buttonVariants = cva(BASE, {
   variants: {
     variant: {
       // ── Core intent variants ──────────────────────────────────────────────
-      primary: "rounded-button bg-primary text-white hover:bg-primary-strong",
+      primary:
+        "rounded-button bg-solid-primary text-on-solid-primary hover:bg-solid-primary-hover",
 
       secondary:
-        "rounded-button bg-secondary text-white hover:bg-secondary-strong",
+        "rounded-button bg-solid-secondary text-on-solid-secondary hover:bg-solid-secondary-hover",
 
       outline:
-        "rounded-button border-2 border-primary text-primary bg-surface-inset " +
-        "hover:bg-primary-subtle",
+        "rounded-button border-2 border-solid-primary text-ink-primary bg-surface-inset " +
+        "hover:bg-tint-primary",
 
-      ghost: "rounded-button text-primary hover:bg-primary-subtle",
+      ghost: "rounded-button text-ink-primary hover:bg-tint-primary",
 
       // Inline text action — underlined, no background or border.
       // Use for low-emphasis actions like "Reset all" that sit next to other UI.
@@ -53,9 +54,11 @@ export const buttonVariants = cva(BASE, {
         "rounded text-text-secondary underline underline-offset-2 " +
         "hover:text-text-body active:scale-100",
 
-      danger: "rounded-button bg-error text-white hover:bg-error-strong",
+      danger:
+        "rounded-button bg-solid-error text-on-solid-error hover:bg-solid-error-hover",
 
-      success: "rounded-button bg-success text-white hover:bg-success-strong",
+      success:
+        "rounded-button bg-solid-success text-on-solid-success hover:bg-solid-success-hover",
 
       download:
         "rounded-button bg-gradient-to-r from-primary-bold to-secondary-strong text-white shadow " +
@@ -64,17 +67,17 @@ export const buttonVariants = cva(BASE, {
       // ── Semantic / branded ────────────────────────────────────────────────
       // Gender-specific: kept here because they encode meaning, not layout.
       male:
-        "rounded-button bg-team-male text-white shadow-sm " +
-        "hover:bg-team-male-strong",
+        "rounded-button bg-solid-male text-on-solid-male shadow-sm " +
+        "hover:bg-solid-male-hover",
 
       female:
-        "rounded-button bg-team-female text-white shadow-sm " +
-        "hover:bg-team-female-strong",
+        "rounded-button bg-solid-female text-on-solid-female shadow-sm " +
+        "hover:bg-solid-female-hover",
 
       // Domain entity-specific
       clubs:
-        "rounded-button bg-clubs text-white shadow-sm " +
-        "hover:bg-clubs-strong",
+        "rounded-button bg-solid-clubs text-on-solid-clubs shadow-sm " +
+        "hover:bg-solid-clubs-hover",
 
       // Control buttons (filter dropdowns, sort toggles, toolbar actions)
       control:
@@ -156,17 +159,17 @@ export const navButtonVariants = cva(BASE, {
     variant: {
       // Segmented nav / tab bar
       navActive:
-        "rounded-button bg-primary text-white border-2 border-primary shadow-md " +
-        "hover:bg-primary-strong",
+        "rounded-button bg-solid-primary text-on-solid-primary border-2 border-solid-primary shadow-md " +
+        "hover:bg-solid-primary-hover",
 
       navInactive:
-        "rounded-button surface-raised text-primary border-2 border-primary-subtle shadow-sm " +
-        "hover:bg-primary-subtle hover:border-primary",
+        "rounded-button surface-raised text-ink-primary border-2 border-line-primary shadow-sm " +
+        "hover:bg-tint-primary hover:border-solid-primary",
 
       // List item variants
       listItem:
         "w-full justify-start text-left rounded-none border-l-4 border-l-transparent " +
-        "hover:bg-primary-subtle hover:border-l-primary " +
+        "hover:bg-tint-primary hover:border-l-solid-primary " +
         "focus-ring-inset active:scale-100",
 
       // Expandable section headers
@@ -246,18 +249,18 @@ const pillButtonVariants = cva(BASE, {
     variant: {
       // RoundSelector active pill
       pillActive:
-        "rounded-full bg-primary text-white font-bold shadow-md " +
-        "ring-2 ring-primary-subtle border border-primary z-10",
+        "rounded-full bg-solid-primary text-on-solid-primary font-bold shadow-md " +
+        "ring-2 ring-line-primary border border-solid-primary z-10",
 
       // RoundSelector inactive pill
       pillInactive:
         "rounded-full surface-raised text-text-emphasis border border-divide " +
-        "hover:bg-primary-subtle hover:text-primary-strong hover:border-primary-subtle",
+        "hover:bg-tint-primary hover:text-ink-primary hover:border-line-primary",
 
       // Carousel prev/next arrows
       carouselArrow:
         "rounded-full p-2 border border-divide surface-raised text-text-muted " +
-        "hover:bg-primary-subtle hover:text-primary " +
+        "hover:bg-tint-primary hover:text-ink-primary " +
         "disabled:opacity-30 disabled:cursor-not-allowed",
     },
 

@@ -24,8 +24,8 @@ interface TextLinkProps {
 }
 
 const VARIANT_CLASSES = {
-  accent: "text-primary-strong hover:underline",
-  plain: "hover:text-primary-strong hover:underline",
+  accent: "text-ink-primary hover:underline",
+  plain: "hover:text-ink-primary hover:underline",
 } as const;
 
 /**

@@ -13,68 +13,49 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default: "border-transparent bg-surface-subtle text-text-heading",
-        // `primary-ghost`, not `primary-subtle`. Every semantic ramp here is a
-        // three-step (subtle / DEFAULT / strong) whose `-subtle` is a pale
-        // tint, but the brand ramp has eleven steps and its `-subtle` is the
-        // fourth — a mid tone (#6d86c0). `primary-strong` on it is 2.75:1 in
-        // light, 3.50:1 in dark and 3.01:1 in high-contrast. `ghost` is the
-        // brand ramp's actual tint step, and the pairing is 8.23 / 5.23 /
-        // 12.08.
-        primary: "border-transparent bg-primary-ghost text-primary-strong",
-        secondary: "border-transparent bg-secondary-faint text-secondary-deep",
-        success: "border-transparent bg-success-subtle text-success-strong",
-        error: "border-transparent bg-error-subtle text-error-strong",
-        warning: "border-transparent bg-warning-subtle text-warning-strong",
-        info: "border-transparent bg-info-subtle text-info-strong",
+        primary: "border-transparent bg-tint-primary text-ink-primary",
+        secondary: "border-transparent bg-tint-secondary text-ink-secondary",
+        success: "border-transparent bg-tint-success text-ink-success",
+        error: "border-transparent bg-tint-error text-ink-error",
+        warning: "border-transparent bg-tint-warning text-ink-warning",
+        info: "border-transparent bg-tint-info text-ink-info",
         outline: "border-divide text-text-emphasis",
         // Team-specific
-        male: "border-transparent bg-team-male-subtle text-team-male-strong",
-        female:
-          "border-transparent bg-team-female-subtle text-team-female-strong",
+        male: "border-transparent bg-tint-male text-ink-male",
+        female: "border-transparent bg-tint-female text-ink-female",
         // Domain entity-specific
-        players: "border-transparent bg-players-subtle text-players-strong",
-        teams: "border-transparent bg-teams-subtle text-teams-strong",
-        matches: "border-transparent bg-matches-subtle text-matches-strong",
+        players: "border-transparent bg-tint-players text-ink-players",
+        teams: "border-transparent bg-tint-teams text-ink-teams",
+        matches: "border-transparent bg-tint-matches text-ink-matches",
         // Competition level-specific (standalone, on neutral surface)
-        national: "border-transparent bg-national-subtle text-national-strong",
-        regional: "border-transparent bg-regional-subtle text-regional-strong",
+        national: "border-transparent bg-tint-national text-ink-national",
+        regional: "border-transparent bg-tint-regional text-ink-regional",
         departmental:
-          "border-transparent bg-departmental-subtle text-departmental-strong",
-        // Competition level-specific (on a `bg-{level}-subtle` card header,
-        // where the plain level variant would be invisible — same fill).
-        //
-        // Each one is exactly its plain variant with foreground and background
-        // swapped, which makes it AA by construction: contrast is symmetric,
-        // so these read 9.27 / 8.41 / 8.38 in light and 7.66 / 7.52 / 7.45 in
-        // dark, the same numbers as `national` / `regional` / `departmental`.
-        // Filling with the mid `bg-{level}` instead puts a pale tint on a mid
-        // tone: 3.63, 2.21 and 1.85 in light. And because the fill is
-        // `-strong` while the header is `-subtle`, the chip separates from the
-        // header by that same ratio.
+          "border-transparent bg-tint-departmental text-ink-departmental",
+        // Competition level-specific, on a card header filled with the
+        // level's colour, where the plain variant would vanish into the fill:
+        // the plain variant's ink and tint swapped, so its contrast is the
+        // same pair the roles already guarantee.
         "national-on-header":
-          "border-transparent bg-national-strong text-national-subtle",
+          "border-transparent bg-ink-national text-tint-national",
         "regional-on-header":
-          "border-transparent bg-regional-strong text-regional-subtle",
+          "border-transparent bg-ink-regional text-tint-regional",
         "departmental-on-header":
-          "border-transparent bg-departmental-strong text-departmental-subtle",
-        // Player comparison. Transparent fill, so both the text and the ring
-        // are measured against whatever surface the badge is mounted on — and
-        // `primary` is 2.84:1 on the dark theme's `surface-raised`, failing the
-        // 4.5:1 text floor and the 3:1 non-text floor at once. `primary-bold`
-        // is the first step that clears both on every surface in every theme
-        // (worst case 6.18:1).
-        vs: "border-2 border-primary-bold text-primary-bold font-black tracking-widest",
+          "border-transparent bg-ink-departmental text-tint-departmental",
+        // Player comparison. Transparent fill, so its ink is the one role
+        // guaranteed on every surface.
+        vs: "border-2 border-ink-primary text-ink-primary font-black tracking-widest",
 
-        category: "border-transparent bg-category-subtle text-category-strong",
-        division: "border-transparent bg-division-subtle text-division-strong",
-        pool: "border-transparent bg-pool-subtle text-pool-strong",
+        category: "border-transparent bg-tint-category text-ink-category",
+        division: "border-transparent bg-tint-division text-ink-division",
+        pool: "border-transparent bg-tint-pool text-ink-pool",
 
         "position-g":
-          "border-transparent bg-position-g-subtle text-position-g-strong",
+          "border-transparent bg-tint-position-g text-ink-position-g",
         "position-f":
-          "border-transparent bg-position-f-subtle text-position-f-strong",
+          "border-transparent bg-tint-position-f text-ink-position-f",
         "position-c":
-          "border-transparent bg-position-c-subtle text-position-c-strong",
+          "border-transparent bg-tint-position-c text-ink-position-c",
       },
       size: {
         sm: "px-2 py-0.5",

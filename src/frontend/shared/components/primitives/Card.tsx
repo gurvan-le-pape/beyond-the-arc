@@ -14,7 +14,8 @@ const cardVariants = cva(
     variants: {
       variant: {
         default: "surface-subtle border-divide shadow-card",
-        highlighted: "surface-subtle border-primary border-2 shadow-card-hover",
+        highlighted:
+          "surface-subtle border-solid-primary border-2 shadow-card-hover",
         ghost: "bg-transparent border-transparent",
         // Empty — allows full custom styling via className
         custom: "",
