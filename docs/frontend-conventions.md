@@ -79,7 +79,7 @@ Every element reached by the keyboard already shows the focus indicator: `global
 
 - `focus-ring-inset` — drawn inside the box, for an element whose container clips overflow (table cells, tab strips, list rows);
 - `focus-ring-overlay` — drawn on the element's `::after`, for a link stretched over a larger box (the table row link);
-- `[--focus-ring-color:white]` on a coloured panel, where the default colour does not stand out.
+- `[--focus-ring-color:rgb(var(--color-on-solid-primary))]` on a panel filled with a solid role, where the default colour does not stand out: the panel's own `on-solid` colour is the one guaranteed to read on it.
 
 ## Placement: shared vs component-private
 
@@ -115,7 +115,7 @@ A file must not mix the two: a file importing the generated `components` type ma
 | Utils files | camelCase `.ts` (`.tsx` allowed for JSX helpers) | `eventHelpers.ts` |
 | Shared view types / API alias files | PascalCase `.ts` in `types/` | `MatchFilters.ts` |
 | Component-private types | `types.ts` in the composite folder | `match-card/types.ts` |
-| Component tests | colocated `X.test.tsx` / `useX.test.ts` | `match-card/index.test.tsx` |
+| Tests | colocated `x.spec.ts`, beside the module | `shared/utils/teamName.spec.ts` |
 
 Hooks that return JSX (e.g. table column factories) are `.tsx` but still follow `useX` naming and the placement rules above.
 
@@ -218,7 +218,7 @@ Rules specific to the form:
 - **Types belong to TypeScript.** Never `@param {string} name`. The signature already carries the shape, and a copy of it in prose drifts independently. Document meaning, units and constraints; leave the type to the compiler.
 - **The description is the free text at the top, never a tag.** TSDoc — which TypeScript's tooling follows — standardises 24 tags and `@description` is not among them: *"any content appearing prior to the first block tag is interpreted as the special summary section."* `@description`/`@desc` are JSDoc aliases for a case that does not arise here, and using one leaves the summary section empty while the prose renders as a trailing footnote. Note that `shared/types/api.generated.ts` contains 613 of them — that is `openapi-typescript` mapping the OpenAPI `description` field mechanically, not a convention to copy.
 - **`@example` must show what the signature does not.** `getByChampionshipId(5)` above `getByChampionshipId(championshipId: number): Promise<Pool[]>` restates it. An example earns its place for usage that is genuinely non-obvious — an options object with interacting fields, a factory whose result is passed somewhere particular, a required call order.
-- **Nothing verifies an example.** TypeScript does not typecheck code inside comments and this app has no test runner, so an example is prose shaped like code and rots in silence. Write real import paths, and prefer pointing at an existing call site over inventing a snippet.
+- **Nothing verifies an example.** TypeScript does not typecheck code inside comments and no test runs one, so an example is prose shaped like code and rots in silence. Write real import paths, and prefer pointing at an existing call site over inventing a snippet.
 - **`@param` and `@returns` are mandatory on non-component declarations**, each with a description. `jsdoc/require-param`, `require-returns` and their `-description` variants enforce this over `.ts`/`.mts`; `.tsx` is exempt because a component's single destructured props object and its JSX return are both meaningless as tags. A `@returns` earns its place by naming what the value *means* at the edges — the sentinel, the empty case, the `null` — not by repeating the return type.
 - **`@param` for functions; interface members for props.** A component takes one parameter — a props object — so `@param props` says nothing and `@param name` names a destructured member TSDoc does not model. Document a prop on its own member instead, which is what an editor surfaces when you hover the attribute at a JSX call site; `TableColumn<T>` in `shared/components/table/DataTable.tsx` is the pattern. Reserve `@param` for ordinary functions, where it documents a real parameter.
 
@@ -238,7 +238,11 @@ And a constraint documented in `docs/` but not on the component is documented wh
 
 ## Tests
 
-Component tests are **colocated** next to what they test (`Component.test.tsx`, `useX.test.ts`), mirroring the backend's colocated `*.spec.ts`. Test files are excluded from barrel generation and from Sonar coverage sources. The test runner and setup are defined by the frontend testing effort, not this document.
+Tests are **Vitest**, run by `npm run test` and by the `frontend-test` CI job. Each is a `*.spec.ts` colocated with the module it tests, mirroring the backend, and runs in the `node` environment (`vitest.config.ts`): there is no DOM and no JSX transform, so what gets tested is **pure TypeScript** — the data derivations, geometry and rules that components call (`matchWinner`, `roundWindow`, `shotSummary`, the shot-zone predicates). That is one more reason to split along [When to split](#when-to-split): logic moved out of a component into a `.ts` module becomes testable.
+
+`styles/contrast.spec.ts` is the one test over the stylesheet rather than code: it reads every colour token in the three themes and fails CI on any promised text/background pair below its WCAG floor. See the design system section of [`frontend.md`](./frontend.md#design-system).
+
+Spec files are excluded from barrel generation and from Sonar coverage sources.
 
 ---
 
