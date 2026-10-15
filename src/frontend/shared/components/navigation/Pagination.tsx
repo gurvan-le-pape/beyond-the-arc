@@ -179,7 +179,7 @@ export function Pagination({
                   onClick={() => setPageIndex(pageNum - 1)}
                   className={`px-3 py-1.5 rounded-button transition-colors font-medium ${
                     pageNum === currentPage
-                      ? "bg-primary text-white"
+                      ? "bg-solid-primary text-on-solid-primary"
                       : navButtonEnabled
                   }`}
                   aria-current={pageNum === currentPage ? "page" : undefined}
@@ -190,7 +190,7 @@ export function Pagination({
             })}
           </div>
 
-          <div className="sm:hidden px-3 py-1.5 bg-primary-strong text-white rounded-button font-medium">
+          <div className="sm:hidden px-3 py-1.5 bg-solid-primary text-on-solid-primary rounded-button font-medium">
             {currentPage}
           </div>
 

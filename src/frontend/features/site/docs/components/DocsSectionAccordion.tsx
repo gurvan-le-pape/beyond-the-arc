@@ -42,8 +42,8 @@ export function DocsSectionAccordion({
         aria-expanded={isActive}
         aria-controls={`docs-section-${id}`}
       >
-        <div className="flex-shrink-0 w-10 h-10 rounded-button bg-primary-subtle flex items-center justify-center">
-          <Icon className="w-5 h-5 text-primary-strong" aria-hidden />
+        <div className="flex-shrink-0 w-10 h-10 rounded-button bg-tint-primary flex items-center justify-center">
+          <Icon className="w-5 h-5 text-ink-primary" aria-hidden />
         </div>
         <Text
           variant="label"

@@ -122,7 +122,7 @@ export function ThemeToggle() {
                 "w-full flex items-center gap-3 px-3 py-2 text-sm transition-colors duration-150",
                 "first:rounded-t-input last:rounded-b-input",
                 isActive
-                  ? "bg-primary text-white"
+                  ? "bg-solid-primary text-on-solid-primary"
                   : "text-text-body hover:bg-surface-subtle hover:text-text-heading",
               )}
             >

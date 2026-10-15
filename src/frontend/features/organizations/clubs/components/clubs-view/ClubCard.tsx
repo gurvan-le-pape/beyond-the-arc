@@ -63,7 +63,7 @@ export function ClubCard({ club }: ClubCardProps) {
         <div className="px-4 py-3 flex items-center flex-1">
           <Text
             variant="h3"
-            className="leading-snug line-clamp-2 text-base md:text-lg group-hover:text-primary-strong transition-colors duration-200"
+            className="leading-snug line-clamp-2 text-base md:text-lg group-hover:text-ink-primary transition-colors duration-200"
           >
             {club.name}
           </Text>

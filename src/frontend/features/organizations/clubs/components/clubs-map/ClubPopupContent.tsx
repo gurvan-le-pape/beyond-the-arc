@@ -74,7 +74,7 @@ export function ClubPopupContent({ club, onClose }: ClubPopupContentProps) {
             >
               <div className="w-8 h-8 flex items-center justify-center border border-divide rounded-full">
                 <svg
-                  className="w-4 h-4 text-primary"
+                  className="w-4 h-4 text-ink-primary"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -92,7 +92,7 @@ export function ClubPopupContent({ club, onClose }: ClubPopupContentProps) {
               ) : (
                 <Text
                   variant="caption"
-                  className="font-medium truncate text-primary"
+                  className="font-medium truncate text-ink-primary"
                 >
                   {detail?.email}
                 </Text>
@@ -104,7 +104,7 @@ export function ClubPopupContent({ club, onClose }: ClubPopupContentProps) {
             <div className="flex items-center gap-3 p-2.5 bg-surface-inset rounded-lg">
               <div className="w-8 h-8 flex items-center justify-center border border-divide rounded-full">
                 <svg
-                  className="w-4 h-4 text-primary"
+                  className="w-4 h-4 text-ink-primary"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -136,7 +136,7 @@ export function ClubPopupContent({ club, onClose }: ClubPopupContentProps) {
             >
               <div className="w-8 h-8 flex items-center justify-center border border-divide rounded-full">
                 <svg
-                  className="w-4 h-4 text-primary"
+                  className="w-4 h-4 text-ink-primary"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -149,7 +149,7 @@ export function ClubPopupContent({ club, onClose }: ClubPopupContentProps) {
                   />
                 </svg>
               </div>
-              <Text variant="caption" className="font-medium text-primary">
+              <Text variant="caption" className="font-medium text-ink-primary">
                 {t("detail.visitWebsite")}
               </Text>
             </a>

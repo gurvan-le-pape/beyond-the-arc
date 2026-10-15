@@ -100,9 +100,9 @@ async function Home({ params }: LocalePageProps) {
       <section className="flex flex-col items-center text-center px-6 py-16 border-b border-divide">
         <Text
           variant="overline"
-          className="inline-flex items-center gap-1.5 text-primary bg-primary-ghost px-3 py-1 rounded mb-6"
+          className="inline-flex items-center gap-1.5 text-ink-primary bg-tint-primary px-3 py-1 rounded mb-6"
         >
-          <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+          <span className="w-1.5 h-1.5 rounded-full bg-solid-primary" />
           {t("hero.eyebrow")}
         </Text>
 
@@ -111,7 +111,9 @@ async function Home({ params }: LocalePageProps) {
           className="font-extrabold leading-none tracking-tight mb-5"
         >
           {t("hero.titleStart")}{" "}
-          <em className="not-italic text-primary">{t("hero.titleEmphasis")}</em>
+          <em className="not-italic text-ink-primary">
+            {t("hero.titleEmphasis")}
+          </em>
         </Text>
 
         <Text variant="lead" className="max-w-lg">

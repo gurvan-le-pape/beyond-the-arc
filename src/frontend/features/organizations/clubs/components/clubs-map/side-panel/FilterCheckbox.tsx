@@ -21,7 +21,7 @@ export const FilterCheckbox = memo(function FilterCheckbox({
         type="checkbox"
         checked={checked}
         onChange={onChange}
-        className="w-4 h-4 text-primary border-divide rounded focus-ring bg-surface-inset"
+        className="w-4 h-4 text-solid-primary border-divide rounded focus-ring bg-surface-inset"
       />
       <span className="text-sm text-text-emphasis group-hover:text-text-heading">
         {label}

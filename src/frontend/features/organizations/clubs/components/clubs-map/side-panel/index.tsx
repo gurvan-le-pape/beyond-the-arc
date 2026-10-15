@@ -68,7 +68,7 @@ export const SidePanel = memo(function SidePanel({
         }}
       >
         {isPending && (
-          <div className="absolute top-0 left-0 right-0 h-1 bg-primary animate-pulse z-10" />
+          <div className="absolute top-0 left-0 right-0 h-1 bg-solid-primary animate-pulse z-10" />
         )}
 
         <div className="flex flex-col h-full">

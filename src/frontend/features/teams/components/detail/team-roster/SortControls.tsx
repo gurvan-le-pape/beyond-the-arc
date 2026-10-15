@@ -70,8 +70,8 @@ export function SortControls({ sortConfig, onSort }: SortControlsProps) {
             className={[
               "inline-flex items-center gap-1 px-3 py-1 rounded-button text-xs font-semibold border transition-colors duration-150 focus-ring",
               isActive
-                ? "bg-primary-subtle text-primary-strong border-primary-subtle"
-                : "bg-transparent text-text-secondary border-divide hover:border-primary hover:text-primary",
+                ? "bg-tint-primary text-ink-primary border-line-primary"
+                : "bg-transparent text-text-secondary border-divide hover:border-solid-primary hover:text-ink-primary",
             ].join(" ")}
           >
             {label}

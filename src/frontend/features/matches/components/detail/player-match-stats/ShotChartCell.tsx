@@ -21,7 +21,7 @@ export function ShotChartCell({ player, onSelect, label }: ShotChartCellProps) {
       onClick={() => onSelect(player)}
       aria-label={label}
     >
-      <BarChart2 className="h-5 w-5 text-primary" aria-hidden />
+      <BarChart2 className="h-5 w-5 text-ink-primary" aria-hidden />
     </button>
   );
 }

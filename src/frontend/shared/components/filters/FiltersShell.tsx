@@ -58,20 +58,20 @@ export function FiltersShell({
           onClick={() => setIsOpen(true)}
           className={cn(
             "w-full justify-between",
-            hasActiveFilters && "border-primary bg-primary-subtle",
+            hasActiveFilters && "border-solid-primary bg-tint-primary",
           )}
         >
           <div className="flex items-center gap-2">
             <SlidersHorizontal
               className={cn(
                 "w-5 h-5",
-                hasActiveFilters ? "text-primary" : "text-text-muted",
+                hasActiveFilters ? "text-ink-primary" : "text-text-muted",
               )}
             />
             <span
               className={cn(
                 "text-sm font-medium",
-                hasActiveFilters ? "text-primary-strong" : "text-text-body",
+                hasActiveFilters ? "text-ink-primary" : "text-text-body",
               )}
             >
               {tFilters("filters.label")}

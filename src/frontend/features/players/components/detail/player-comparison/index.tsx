@@ -29,7 +29,7 @@ function LoadingDots() {
         <span
           key={i}
           className={cn(
-            "inline-block w-2 h-2 rounded-full bg-primary animate-pulse",
+            "inline-block w-2 h-2 rounded-full bg-solid-primary animate-pulse",
             i === 1 && "[animation-delay:200ms]",
             i === 2 && "[animation-delay:400ms]",
           )}
@@ -114,7 +114,7 @@ export function PlayerComparison({
     >
       <div className="relative rounded-2xl min-h-[140px]">
         <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
-          <div className="absolute inset-0 bg-gradient-to-r from-primary-ghost via-transparent to-secondary-ghost opacity-50" />
+          <div className="absolute inset-0 bg-gradient-to-r from-tint-primary via-transparent to-tint-secondary opacity-50" />
           <div className="hidden sm:block absolute left-1/2 top-4 bottom-4 w-px -translate-x-1/2 bg-divide opacity-25" />
         </div>
 

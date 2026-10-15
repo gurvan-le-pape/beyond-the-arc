@@ -14,7 +14,7 @@ export interface StatPillProps extends HTMLAttributes<HTMLDivElement> {
  *
  * @example
  * <StatPill label="PTS" value="21.4" />
- * <StatPill label="REB" value="7.4" className="text-primary" />
+ * <StatPill label="REB" value="7.4" className="text-ink-primary" />
  */
 export const StatPill = ({
   label,

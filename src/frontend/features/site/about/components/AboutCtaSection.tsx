@@ -29,7 +29,7 @@ export function AboutCtaSection({
       <div className="flex flex-wrap justify-center gap-4">
         <Link
           href="/product"
-          className="px-6 py-3 bg-white text-primary-strong rounded-button font-semibold hover:bg-gray-100 transition-all duration-200 shadow-sm focus-ring"
+          className="px-6 py-3 bg-white text-ink-primary rounded-button font-semibold hover:bg-gray-100 transition-all duration-200 shadow-sm focus-ring"
         >
           {productLabel}
         </Link>

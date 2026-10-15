@@ -210,7 +210,7 @@ export function ClubsMap({
           <button
             type="button"
             onClick={() => globalThis.location.reload()}
-            className="mt-4 px-4 py-2 bg-primary-strong text-white rounded-lg hover:bg-primary-bold"
+            className="mt-4 px-4 py-2 bg-solid-primary text-on-solid-primary rounded-lg hover:bg-solid-primary-hover"
           >
             {t("map.retry")}
           </button>

@@ -87,7 +87,7 @@ export function SearchableChipList<T extends SearchableChipListItem>({
             <Link
               key={item.id}
               href={`${basePath}/${item.id}`}
-              className="px-3 py-2 rounded-lg text-sm font-medium border border-divide bg-surface-inset text-text-emphasis hover:border-primary hover:text-primary transition-colors duration-150"
+              className="px-3 py-2 rounded-lg text-sm font-medium border border-divide bg-surface-inset text-text-emphasis hover:border-solid-primary hover:text-ink-primary transition-colors duration-150"
             >
               {item.name}
             </Link>
