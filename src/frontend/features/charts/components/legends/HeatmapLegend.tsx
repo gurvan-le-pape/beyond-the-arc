@@ -2,19 +2,13 @@
 import { useTranslations } from "next-intl";
 import React from "react";
 
-import { SegmentedControl } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 
-import type { ColorScaleName } from "../../constants";
-import { COLOR_SCALES, DEFAULT_COLOR_SCALE } from "../../constants";
+import { SHOT_COLOR_SCALE } from "../../constants";
 
 interface HeatmapLegendProps {
   readonly maxValue: number;
-  readonly colorScale?: (t: number) => string;
   readonly compact?: boolean;
-  readonly colorScaleName?: ColorScaleName;
-  readonly setColorScale?: (s: ColorScaleName) => void;
-  readonly colorScaleOptions?: readonly ColorScaleName[];
 }
 
 const GRADIENT_STEPS = 32;
@@ -26,37 +20,16 @@ function buildGradient(interpolate: (t: number) => string): string {
 }
 
 /**
- * Gradient legend for a heatmap or hotspots fill, from 0 to `maxValue`, with
- * an optional colour-scale picker.
+ * The colour legend of the heatmap and hotspots charts: the gradient from no
+ * shot to the busiest cell or zone.
  *
- * The picker renders only when `colorScaleName`, `setColorScale` and
- * `colorScaleOptions` are all present — passing some but not others hides it
- * silently. `colorScale` (the resolved interpolator) wins over `colorScaleName`
- * when both are given.
+ * Only the two ends are labelled. A middle tick would be a rounded count
+ * printed at an exact midpoint: with a maximum of 3, "2" where the colour
+ * means 1.5.
  */
-export function HeatmapLegend({
-  maxValue,
-  colorScale,
-  compact,
-  colorScaleName,
-  setColorScale,
-  colorScaleOptions,
-}: HeatmapLegendProps) {
+export function HeatmapLegend({ maxValue, compact }: HeatmapLegendProps) {
   const t = useTranslations("common");
-  const midValue = Math.round(maxValue / 2);
-
-  // `colorScale` first: both call sites already pass the resolved interpolator
-  // alongside its name, so preferring the name here would recompute what is
-  // sitting unread in props.
-  const activeGradient = React.useMemo(
-    () =>
-      buildGradient(
-        colorScale ??
-          COLOR_SCALES[colorScaleName ?? DEFAULT_COLOR_SCALE] ??
-          COLOR_SCALES[DEFAULT_COLOR_SCALE],
-      ),
-    [colorScale, colorScaleName],
-  );
+  const gradient = React.useMemo(() => buildGradient(SHOT_COLOR_SCALE), []);
 
   return (
     <div className={`flex flex-col gap-3 w-full ${compact ? "" : "max-w-sm"}`}>
@@ -74,13 +47,10 @@ export function HeatmapLegend({
         <div className="flex flex-col flex-1 min-w-0 gap-0.5">
           <div
             className="w-full h-4 rounded shadow-sm"
-            style={{
-              background: `linear-gradient(to right, ${activeGradient})`,
-            }}
+            style={{ background: `linear-gradient(to right, ${gradient})` }}
           />
           <div className="flex justify-between text-[11px] text-text-secondary px-0.5">
             <span>0</span>
-            <span>{midValue}</span>
             <span>{maxValue}</span>
           </div>
         </div>
@@ -88,35 +58,6 @@ export function HeatmapLegend({
           {t("shotChart.high")}
         </Text>
       </div>
-
-      {colorScaleOptions && setColorScale && colorScaleName && (
-        <div className="flex items-center gap-2 w-full">
-          <Text variant="caption" as="span" className="shrink-0">
-            {t("shotChart.color")}
-          </Text>
-          <SegmentedControl
-            label={t("shotChart.color")}
-            size="sm"
-            value={colorScaleName}
-            onChange={setColorScale}
-            options={colorScaleOptions.map((scale) => ({
-              value: scale,
-              label: (
-                <span className="flex flex-col items-center gap-0.5">
-                  <span
-                    aria-hidden="true"
-                    className="block w-8 h-2.5 rounded-sm"
-                    style={{
-                      background: `linear-gradient(to right, ${buildGradient(COLOR_SCALES[scale])})`,
-                    }}
-                  />
-                  {scale}
-                </span>
-              ),
-            }))}
-          />
-        </div>
-      )}
     </div>
   );
 }

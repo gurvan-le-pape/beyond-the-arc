@@ -11,7 +11,7 @@
     "weight": "{weightKg} kg",
     "weightLabel": "Weight",
     "club": "Club",
-    "shotchartTitle": "Shot Chart (Hotspots)",
+    "shotchartTitle": "Shots by zone",
     "shotchartDescription": "This chart shows where the player shot from this season, zone by zone, with their success rate.",
     "matchHistoryTitle": "Match History",
     "compareTitle": "Compare with another player",
