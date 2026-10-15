@@ -14,6 +14,7 @@ import {
   IsOptional,
   IsString,
   MaxLength,
+  Min,
 } from "class-validator";
 
 /**
@@ -37,6 +38,7 @@ export class GetPlayersQueryDto extends PaginationQueryDto {
   @IsOptional()
   @Type(() => Number)
   @IsInt()
+  @Min(1)
   clubId?: number;
 
   @ApiPropertyOptional({
@@ -47,6 +49,7 @@ export class GetPlayersQueryDto extends PaginationQueryDto {
   @IsOptional()
   @Type(() => Number)
   @IsInt()
+  @Min(1)
   teamId?: number;
 
   @ApiPropertyOptional({
@@ -57,6 +60,7 @@ export class GetPlayersQueryDto extends PaginationQueryDto {
   @IsOptional()
   @Type(() => Number)
   @IsInt()
+  @Min(1)
   teamNumber?: number;
 
   @ApiPropertyOptional({
@@ -67,6 +71,7 @@ export class GetPlayersQueryDto extends PaginationQueryDto {
   @IsOptional()
   @Type(() => Number)
   @IsInt()
+  @Min(1)
   number?: number;
 
   @ApiPropertyOptional({
@@ -77,6 +82,7 @@ export class GetPlayersQueryDto extends PaginationQueryDto {
   @IsOptional()
   @Type(() => Number)
   @IsInt()
+  @Min(1)
   committeeId?: number;
 
   @ApiPropertyOptional({
@@ -87,6 +93,7 @@ export class GetPlayersQueryDto extends PaginationQueryDto {
   @IsOptional()
   @Type(() => Number)
   @IsInt()
+  @Min(1)
   leagueId?: number;
 
   @ApiPropertyOptional({

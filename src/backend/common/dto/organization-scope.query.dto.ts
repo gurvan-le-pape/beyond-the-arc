@@ -1,7 +1,7 @@
 // src/backend/common/dto/organization-scope.query.dto.ts
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsInt, IsOptional } from "class-validator";
+import { IsInt, IsOptional, Min } from "class-validator";
 
 /**
  * Query parameters scoping a request to an organization.
@@ -18,6 +18,7 @@ export class OrganizationScopeQueryDto {
   @IsOptional()
   @Type(() => Number)
   @IsInt()
+  @Min(1)
   committeeId?: number;
 
   @ApiPropertyOptional({
@@ -28,5 +29,6 @@ export class OrganizationScopeQueryDto {
   @IsOptional()
   @Type(() => Number)
   @IsInt()
+  @Min(1)
   leagueId?: number;
 }
