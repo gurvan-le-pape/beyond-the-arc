@@ -12,7 +12,7 @@
     "weightLabel": "Weight",
     "club": "Club",
     "shotchartTitle": "Shot Chart (Hotspots)",
-    "shotchartDescription": "This hot spot chart shows the shot distribution for the team this season.",
+    "shotchartDescription": "This chart shows where the player shot from this season, zone by zone, with their success rate.",
     "matchHistoryTitle": "Match History",
     "compareTitle": "Compare with another player",
     "compareSearch": "Search for a player to compare...",
