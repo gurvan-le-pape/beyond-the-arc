@@ -97,6 +97,15 @@ const divider = {
   both: "border-x border-divide",
 } as const;
 
+/**
+ * The width from which a column shows. `sm` drops it on phones, for a table
+ * whose secondary columns would otherwise push it past the screen's width.
+ */
+const from = {
+  all: "",
+  sm: "hidden sm:table-cell",
+} as const;
+
 // ---------------------------------------------------------------------------
 // Elements
 // ---------------------------------------------------------------------------
@@ -201,7 +210,7 @@ export const CELL_LINK =
   "rounded transition-colors duration-150 hover:text-ink-primary focus-ring-inset";
 
 export const headVariants = cva("", {
-  variants: { align, density, wrap, width, divider, numeric, stickyLead },
+  variants: { align, density, wrap, width, divider, numeric, stickyLead, from },
   defaultVariants: {
     align: "left",
     density: "comfortable",
@@ -210,6 +219,7 @@ export const headVariants = cva("", {
     divider: "none",
     numeric: false,
     stickyLead: false,
+    from: "all",
   },
 });
 
@@ -233,6 +243,7 @@ export const cellVariants = cva("text-sm text-text-emphasis", {
     divider,
     numeric,
     stickyLead,
+    from,
     /** The one column a table is *about* — a rank, a total. */
     emphasis: { true: "font-bold text-text-heading", false: "" },
   },
@@ -244,6 +255,7 @@ export const cellVariants = cva("text-sm text-text-emphasis", {
     divider: "none",
     numeric: false,
     stickyLead: false,
+    from: "all",
     emphasis: false,
   },
 });

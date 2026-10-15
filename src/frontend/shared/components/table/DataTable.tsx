@@ -51,6 +51,8 @@ export interface TableColumn<T> {
   readonly emphasis?: boolean;
   /** `icon` sizes the column to a single icon button. */
   readonly width?: "auto" | "icon";
+  /** `sm` shows the column from the `sm` breakpoint up only, not on phones. */
+  readonly from?: "sm";
 }
 
 interface DataTableBaseProps<T> {
@@ -177,6 +179,7 @@ export function DataTable<T>({
               divider={column.divider}
               numeric={column.numeric}
               stickyLead={stickyLead && columnIndex === 0}
+              from={column.from}
               tooltip={column.tooltip}
             >
               {column.header}
@@ -203,6 +206,7 @@ export function DataTable<T>({
                     divider={column.divider}
                     numeric={column.numeric}
                     stickyLead={stickyLead && columnIndex === 0}
+                    from={column.from}
                     emphasis={column.emphasis}
                   >
                     {href !== undefined && columnIndex === 0 ? (

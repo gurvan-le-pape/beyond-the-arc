@@ -158,6 +158,7 @@ interface TableHeadProps extends HTMLAttributes<HTMLTableCellElement> {
   divider?: Divider;
   numeric?: boolean;
   stickyLead?: boolean;
+  from?: "all" | "sm";
   tooltip?: string;
   ref?: React.Ref<HTMLTableCellElement>;
 }
@@ -183,6 +184,7 @@ export const TableHead = ({
   divider = "none",
   numeric = false,
   stickyLead = false,
+  from = "all",
   tooltip,
   children,
   ref,
@@ -200,6 +202,7 @@ export const TableHead = ({
         divider,
         numeric,
         stickyLead,
+        from,
       }),
       className,
     )}
@@ -226,6 +229,7 @@ interface TableCellProps extends HTMLAttributes<HTMLTableCellElement> {
   divider?: Divider;
   numeric?: boolean;
   stickyLead?: boolean;
+  from?: "all" | "sm";
   emphasis?: boolean;
   ref?: React.Ref<HTMLTableCellElement>;
 }
@@ -250,6 +254,7 @@ export const TableCell = ({
   divider = "none",
   numeric = false,
   stickyLead = false,
+  from = "all",
   emphasis = false,
   ref,
   ...props
@@ -265,6 +270,7 @@ export const TableCell = ({
         divider,
         numeric,
         stickyLead,
+        from,
         emphasis,
       }),
       className,
