@@ -2616,7 +2616,7 @@
     },
     "/api/teams/{id}": {
       "get": {
-        "description": "Retrieves detailed information about a specific team including players and recent matches",
+        "description": "Retrieves detailed information about a specific team including its roster with season stats",
         "operationId": "TeamsController_getTeamById",
         "parameters": [
           {
@@ -6059,155 +6059,6 @@
           "seasonStats"
         ]
       },
-      "RecentMatchChampionshipRefDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "number",
-            "description": "Championship ID",
-            "example": 1
-          },
-          "name": {
-            "type": "string",
-            "description": "Championship name",
-            "example": "Championship Régional U18 male"
-          }
-        },
-        "required": [
-          "id",
-          "name"
-        ]
-      },
-      "RecentMatchPoolRefDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "number",
-            "description": "Pool ID",
-            "example": 1
-          },
-          "name": {
-            "type": "string",
-            "description": "Pool name",
-            "example": "Poule A"
-          },
-          "championship": {
-            "description": "Championship the pool belongs to",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/RecentMatchChampionshipRefDto"
-              }
-            ]
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "championship"
-        ]
-      },
-      "RecentHomeMatchDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "number",
-            "description": "Match ID",
-            "example": 1
-          },
-          "startsAt": {
-            "type": "string",
-            "description": "Tip-off instant, as an ISO 8601 UTC timestamp",
-            "example": "2024-02-05T19:00:00Z"
-          },
-          "homeTeamScore": {
-            "type": "number",
-            "nullable": true,
-            "description": "Home team score",
-            "example": 85
-          },
-          "awayTeamScore": {
-            "type": "number",
-            "nullable": true,
-            "description": "Away team score",
-            "example": 72
-          },
-          "pool": {
-            "description": "Pool information",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/RecentMatchPoolRefDto"
-              }
-            ]
-          },
-          "awayTeam": {
-            "description": "Away team information",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/HistoryTeamRefDto"
-              }
-            ]
-          }
-        },
-        "required": [
-          "id",
-          "startsAt",
-          "homeTeamScore",
-          "awayTeamScore",
-          "pool",
-          "awayTeam"
-        ]
-      },
-      "RecentAwayMatchDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "number",
-            "description": "Match ID",
-            "example": 1
-          },
-          "startsAt": {
-            "type": "string",
-            "description": "Tip-off instant, as an ISO 8601 UTC timestamp",
-            "example": "2024-02-05T19:00:00Z"
-          },
-          "homeTeamScore": {
-            "type": "number",
-            "nullable": true,
-            "description": "Home team score",
-            "example": 85
-          },
-          "awayTeamScore": {
-            "type": "number",
-            "nullable": true,
-            "description": "Away team score",
-            "example": 72
-          },
-          "pool": {
-            "description": "Pool information",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/RecentMatchPoolRefDto"
-              }
-            ]
-          },
-          "homeTeam": {
-            "description": "Home team information",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/HistoryTeamRefDto"
-              }
-            ]
-          }
-        },
-        "required": [
-          "id",
-          "startsAt",
-          "homeTeamScore",
-          "awayTeamScore",
-          "pool",
-          "homeTeam"
-        ]
-      },
       "TeamDetailResponseDto": {
         "type": "object",
         "properties": {
@@ -6297,20 +6148,6 @@
             "items": {
               "$ref": "#/components/schemas/TeamRosterPlayerDto"
             }
-          },
-          "homeMatches": {
-            "description": "Recent home matches (up to 5)",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RecentHomeMatchDto"
-            }
-          },
-          "awayMatches": {
-            "description": "Recent away matches (up to 5)",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RecentAwayMatchDto"
-            }
           }
         },
         "required": [
@@ -6325,9 +6162,7 @@
           "club",
           "pool",
           "_count",
-          "players",
-          "homeMatches",
-          "awayMatches"
+          "players"
         ]
       },
       "MatchPlayerDto": {

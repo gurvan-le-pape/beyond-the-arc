@@ -12,10 +12,4 @@ export type TeamMatchClubRef = components["schemas"]["HistoryClubRefDto"];
 
 export type TeamMatchTeamRef = components["schemas"]["HistoryTeamRefDto"];
 
-export type TeamMatchPoolRef = components["schemas"]["RecentMatchPoolRefDto"];
-
-export type TeamHomeMatch = components["schemas"]["RecentHomeMatchDto"];
-
-export type TeamAwayMatch = components["schemas"]["RecentAwayMatchDto"];
-
 export type TeamDetail = components["schemas"]["TeamDetailResponseDto"];

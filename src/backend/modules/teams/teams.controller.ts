@@ -84,7 +84,7 @@ export class TeamsController {
   @ApiOperation({
     summary: "Get team by ID",
     description:
-      "Retrieves detailed information about a specific team including players and recent matches",
+      "Retrieves detailed information about a specific team including its roster with season stats",
   })
   @ApiParam({ name: "id", description: "Team ID", type: Number, example: 1 })
   @ApiEnvelope(TeamDetailResponseDto, "Team successfully retrieved")

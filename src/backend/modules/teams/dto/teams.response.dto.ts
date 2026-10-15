@@ -326,94 +326,6 @@ export class TeamMatchHistoryResponseDto {
 }
 
 /**
- * Championship reference embedded in a recent match's pool.
- */
-export class RecentMatchChampionshipRefDto {
-  @ApiProperty({ description: "Championship ID", example: 1, type: Number })
-  id!: number;
-
-  @ApiProperty({
-    description: "Championship name",
-    example: "Championship Régional U18 male",
-    type: String,
-  })
-  name!: string;
-}
-
-/**
- * Pool reference embedded in a recent match.
- */
-export class RecentMatchPoolRefDto {
-  @ApiProperty({ description: "Pool ID", example: 1, type: Number })
-  id!: number;
-
-  @ApiProperty({ description: "Pool name", example: "Poule A", type: String })
-  name!: string;
-
-  @ApiProperty({
-    description: "Championship the pool belongs to",
-    type: RecentMatchChampionshipRefDto,
-  })
-  championship!: RecentMatchChampionshipRefDto;
-}
-
-/**
- * Common fields of a recent match entry on the team detail response.
- */
-export class RecentMatchDto {
-  @ApiProperty({ description: "Match ID", example: 1, type: Number })
-  id!: number;
-
-  @ApiProperty({
-    description: "Tip-off instant, as an ISO 8601 UTC timestamp",
-    example: "2024-02-05T19:00:00Z",
-    type: String,
-  })
-  startsAt!: Date;
-
-  @ApiProperty({
-    description: "Home team score",
-    example: 85,
-    type: Number,
-    nullable: true,
-  })
-  homeTeamScore!: number | null;
-
-  @ApiProperty({
-    description: "Away team score",
-    example: 72,
-    type: Number,
-    nullable: true,
-  })
-  awayTeamScore!: number | null;
-
-  @ApiProperty({ description: "Pool information", type: RecentMatchPoolRefDto })
-  pool!: RecentMatchPoolRefDto;
-}
-
-/**
- * Recent home match: the opponent is the away team.
- */
-export class RecentHomeMatchDto extends RecentMatchDto {
-  @ApiProperty({
-    description: "Away team information",
-    type: HistoryTeamRefDto,
-  })
-  awayTeam!: HistoryTeamRefDto;
-}
-
-/**
- * Recent away match: the opponent is the home team.
- */
-export class RecentAwayMatchDto extends RecentMatchDto {
-  @ApiProperty({
-    description: "Home team information",
-    type: HistoryTeamRefDto,
-  })
-  homeTeam!: HistoryTeamRefDto;
-}
-
-/**
  * A roster player with their season totals and per-game averages. The season is
  * the player's whole stat history, since a player belongs to one season-specific
  * team.
@@ -427,21 +339,9 @@ export class TeamRosterPlayerDto extends PlayerSummaryDto {
 }
 
 /**
- * Detailed team response with players and recent matches.
+ * Detailed team response with its roster.
  */
 export class TeamDetailResponseDto extends TeamResponseDto {
   @ApiProperty({ description: "Team players", type: [TeamRosterPlayerDto] })
   players!: TeamRosterPlayerDto[];
-
-  @ApiProperty({
-    description: "Recent home matches (up to 5)",
-    type: [RecentHomeMatchDto],
-  })
-  homeMatches!: RecentHomeMatchDto[];
-
-  @ApiProperty({
-    description: "Recent away matches (up to 5)",
-    type: [RecentAwayMatchDto],
-  })
-  awayMatches!: RecentAwayMatchDto[];
 }

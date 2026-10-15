@@ -11,7 +11,7 @@ import { TeamsService } from "./teams.service";
  *
  * Features:
  * - Team listing with extensive filtering
- * - Team details by ID with players and recent matches
+ * - Team details by ID with its roster
  * - Team match history with player statistics
  * - Pagination support
  * - Dynamic filter values (when no filters applied)
