@@ -207,7 +207,10 @@ export class MatchesService {
     filters?: MatchFilters,
   ): Promise<PaginatedResponseDto<MatchResponseDto>> {
     const { page, limit, skip } = resolvePagination(filters ?? {});
-    const where = this.buildWhereClause(filters);
+    const searchClubIds = filters?.search
+      ? await this.findClubIdsByName(filters.search)
+      : undefined;
+    const where = this.buildWhereClause(filters, searchClubIds);
 
     const [matches, total] = await Promise.all([
       this.prisma.client.matches.findMany({
@@ -497,14 +500,30 @@ export class MatchesService {
     return [{ homeTeam: { club } }, { awayTeam: { club } }];
   }
 
-  private buildSearchFilter(search: string): Prisma.MatchesWhereInput[] {
+  /**
+   * The ids of the clubs whose name contains `search`, at most one per club in
+   * the database (4,368 in production), so the list is a bounded set of bind
+   * parameters however short the search.
+   *
+   * The match search filters on these ids rather than on `club.name` through
+   * the relation. On a production-sized database, the relation form joins both
+   * teams and both clubs and sorts every match before the `OR` on two names can
+   * discard any: 600 ms for a 20-row page and 219 ms for its count, against
+   * 1.4 ms and 111 ms filtering on club ids.
+   */
+  private async findClubIdsByName(search: string): Promise<number[]> {
+    const clubs = await this.prisma.client.clubs.findMany({
+      where: { name: { contains: search, mode: "insensitive" } },
+      select: { id: true },
+    });
+
+    return clubs.map((club) => club.id);
+  }
+
+  private buildSearchFilter(clubIds: number[]): Prisma.MatchesWhereInput[] {
     return [
-      {
-        homeTeam: { club: { name: { contains: search, mode: "insensitive" } } },
-      },
-      {
-        awayTeam: { club: { name: { contains: search, mode: "insensitive" } } },
-      },
+      { homeTeam: { clubId: { in: clubIds } } },
+      { awayTeam: { clubId: { in: clubIds } } },
     ];
   }
 
@@ -512,9 +531,13 @@ export class MatchesService {
    * Builds the Prisma where clause from filters.
    *
    * @param filters - Match filters
+   * @param searchClubIds - Ids of the clubs matching `filters.search`, when set
    * @returns Prisma where clause
    */
-  private buildWhereClause(filters?: MatchFilters): Prisma.MatchesWhereInput {
+  private buildWhereClause(
+    filters?: MatchFilters,
+    searchClubIds?: number[],
+  ): Prisma.MatchesWhereInput {
     const where: Prisma.MatchesWhereInput = {};
 
     if (filters?.poolId) where.poolId = filters.poolId;
@@ -529,8 +552,8 @@ export class MatchesService {
     }
 
     const orgFilter = this.buildOrganizationFilter(filters);
-    const searchFilter = filters?.search
-      ? this.buildSearchFilter(filters.search)
+    const searchFilter = searchClubIds
+      ? this.buildSearchFilter(searchClubIds)
       : undefined;
 
     // Both are OR-groups over home/away team — andWhere AND-composes them

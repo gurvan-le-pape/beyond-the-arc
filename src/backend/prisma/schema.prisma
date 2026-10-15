@@ -250,6 +250,8 @@ model Players {
   eventParticipations MatchEventPlayers[]
 
   @@unique([teamId, number])
+  // Trigram index for the name search; pg_trgm is created by its migration.
+  @@index([name(ops: raw("gin_trgm_ops"))], type: Gin, map: "idx_players_name_trgm")
   @@map("players")
 }
 

@@ -135,7 +135,7 @@ This is the trigger used in practice by the pipeline — matches are inserted wi
 
 ## Indexes
 
-Twelve indexes are defined beyond the primary keys and unique constraints, all in the `0_init` baseline migration:
+Thirteen indexes are defined beyond the primary keys and unique constraints, twelve of them in the `0_init` baseline migration:
 
 - `idx_match_events_match_id` — on `match_events(match_id)`, supporting fast lookup of all events for a given match (used on every match page load).
 - `idx_match_event_players_event_id` — on `match_event_players(event_id)`, supporting fast lookup of players for a given event when assembling event timelines.
@@ -147,6 +147,7 @@ Twelve indexes are defined beyond the primary keys and unique constraints, all i
 - `idx_matches_starts_at` — on `matches(starts_at)`, supporting the global match list (`ORDER BY starts_at DESC`, paginated) and date-range filters.
 - `idx_teams_pool_id` — on `teams(pool_id)`, supporting pool rosters and pool-scoped team filters.
 - `idx_clubs_committee_id` — on `clubs(committee_id)`, supporting committee- and league-scoped filters; clubs, teams, players, and matches queries all join through this column.
+- `idx_players_name_trgm` — a GIN trigram index (`gin_trgm_ops`, from the `pg_trgm` extension) on `players(name)`, added by `20261016140000_players_name_trigram_index`. It serves the player name search, a case-insensitive `contains` that Prisma emits as `ILIKE '%term%'`, which a B-tree cannot use. Terms shorter than three characters have no trigram and still scan the table.
 
 Foreign-key columns not listed here are already covered by the leading column of a unique constraint (`players(team_id)`, `leaderboards(pool_id)`, `teams(club_id)`, `pools(championship_id)`, `player_match_stats(match_id)`), or belong to tables too small to benefit (`committees`, `leagues`, `departments`).
 
