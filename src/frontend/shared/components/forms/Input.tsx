@@ -168,7 +168,7 @@ export const Input = ({
             "bg-surface-inset",
             "text-text-heading",
             "placeholder:text-text-secondary",
-            "focus-ring focus:border-primary",
+            "focus-ring focus:border-solid-primary",
             "disabled:cursor-not-allowed disabled:opacity-50",
             "transition-colors duration-200",
             resolvedLeftIcon && "pl-10",

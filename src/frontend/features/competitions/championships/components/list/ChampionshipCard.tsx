@@ -94,7 +94,7 @@ export function ChampionshipCard({ championship }: ChampionshipCardProps) {
         )}
         {championship.level === CompetitionLevel.NATIONAL &&
           championship.name && (
-            <p className="font-semibold text-text-heading leading-snug group-hover:text-primary transition-colors duration-200">
+            <p className="font-semibold text-text-heading leading-snug group-hover:text-ink-primary transition-colors duration-200">
               {championship.name}
             </p>
           )}

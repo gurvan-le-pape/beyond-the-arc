@@ -59,13 +59,13 @@ export const PlayerAvatar = ({
     <div ref={ref} className={cn("relative", className)} {...props}>
       <div
         className={cn(
-          "rounded-full bg-primary-subtle flex items-center justify-center",
+          "rounded-full bg-tint-primary flex items-center justify-center",
           config.avatar,
         )}
       >
         <span
           className={cn(
-            "font-semibold text-primary-strong select-none",
+            "font-semibold text-ink-primary select-none",
             config.initials,
           )}
         >

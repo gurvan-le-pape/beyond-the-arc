@@ -43,7 +43,7 @@ export function DocsDatabaseSection({ content }: DocsDatabaseSectionProps) {
             <a
               href="/docs/data-model.pdf"
               download
-              className="px-3 py-1 bg-primary-strong text-white rounded-button text-sm hover:bg-primary-bold transition-colors duration-200 flex items-center gap-1 focus-ring"
+              className="px-3 py-1 bg-solid-primary text-on-solid-primary rounded-button text-sm hover:bg-solid-primary-hover transition-colors duration-200 flex items-center gap-1 focus-ring"
             >
               <Download className="w-4 h-4" aria-hidden />
               PDF
@@ -129,7 +129,7 @@ export function DocsDatabaseSection({ content }: DocsDatabaseSectionProps) {
               key={table.name}
               className="p-3 bg-surface-inset rounded-button border border-divide"
             >
-              <code className="text-sm font-mono text-primary-strong block">
+              <code className="text-sm font-mono text-ink-primary block">
                 {table.name}
               </code>
               <Text variant="caption" className="mt-1 block">

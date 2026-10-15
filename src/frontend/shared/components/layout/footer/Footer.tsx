@@ -58,11 +58,11 @@ export function Footer() {
   // these are <a> elements and the icon scaling group effect is specific here.
   const iconLinkClass =
     "p-2 rounded-button hover:bg-surface-inset " +
-    "text-text-body hover:text-primary " +
+    "text-text-body hover:text-ink-primary " +
     "transition-all duration-200 group focus-ring";
 
   const navLinkClass =
-    "text-text-body hover:text-primary transition-colors duration-200";
+    "text-text-body hover:text-ink-primary transition-colors duration-200";
 
   return (
     <footer className="surface-base border-t border-divide mt-auto">

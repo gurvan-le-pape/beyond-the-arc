@@ -48,7 +48,7 @@ export function NavLinks({
       const mobileStyles = cn(
         "block w-full text-left px-4 py-3 text-lg rounded-button transition-all duration-200",
         isActive
-          ? "bg-primary-subtle text-primary-strong font-semibold border-l-4 border-primary"
+          ? "bg-tint-primary text-ink-primary font-semibold border-l-4 border-solid-primary"
           : "text-text-emphasis hover:bg-surface-inset hover:text-text-heading",
       );
 
@@ -56,7 +56,7 @@ export function NavLinks({
         "px-4 py-2 rounded-button font-medium transition-all duration-200",
         "focus-ring",
         isActive
-          ? "bg-primary-subtle text-primary-strong font-semibold shadow-sm"
+          ? "bg-tint-primary text-ink-primary font-semibold shadow-sm"
           : "text-text-emphasis hover:bg-surface-inset hover:text-text-heading",
       );
 

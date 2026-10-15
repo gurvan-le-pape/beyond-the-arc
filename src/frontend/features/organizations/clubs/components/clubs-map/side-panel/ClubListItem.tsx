@@ -28,7 +28,7 @@ export const ClubListItem = memo(function ClubListItem({
       className="w-full text-left p-4 hover:bg-surface-inset transition-colors group"
       style={{ contain: "layout style paint" }}
     >
-      <Text variant="h3" className="mb-1 truncate group-hover:text-primary">
+      <Text variant="h3" className="mb-1 truncate group-hover:text-ink-primary">
         {club.name}
       </Text>
       {(club.city || club.zipCode) && (

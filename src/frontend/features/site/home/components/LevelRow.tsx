@@ -41,7 +41,7 @@ export function LevelRow({ href, dot, name, detail, count }: LevelRowProps) {
 
       <ArrowRight
         aria-hidden
-        className="w-3.5 h-3.5 text-primary transition-transform duration-150 group-hover:translate-x-0.5"
+        className="w-3.5 h-3.5 text-ink-primary transition-transform duration-150 group-hover:translate-x-0.5"
       />
     </Link>
   );

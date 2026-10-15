@@ -114,7 +114,7 @@ export default async function ArchitecturePage({ params }: LocalePageProps) {
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
           <FeatureBadge
             icon={Package}
-            iconClassName="bg-primary-subtle text-primary-strong"
+            iconClassName="bg-tint-primary text-ink-primary"
             title={t("architecture.features.modular.title")}
             description={t("architecture.features.modular.description")}
           />

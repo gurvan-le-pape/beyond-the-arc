@@ -198,7 +198,7 @@ export const ROW_LINK =
  * clipped by the cell's `overflow-hidden`.
  */
 export const CELL_LINK =
-  "rounded transition-colors duration-150 hover:text-primary focus-ring-inset";
+  "rounded transition-colors duration-150 hover:text-ink-primary focus-ring-inset";
 
 export const headVariants = cva("", {
   variants: { align, density, wrap, width, divider, numeric, stickyLead },

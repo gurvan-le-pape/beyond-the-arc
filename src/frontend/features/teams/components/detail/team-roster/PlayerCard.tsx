@@ -35,7 +35,7 @@ export function PlayerCard({ player, href }: PlayerCardProps) {
       href={href}
       variant="default"
       padding="sm"
-      className="flex flex-col items-center gap-3 text-center hover:border-primary transition-colors duration-200"
+      className="flex flex-col items-center gap-3 text-center hover:border-solid-primary transition-colors duration-200"
     >
       <PlayerAvatar
         name={player.name}

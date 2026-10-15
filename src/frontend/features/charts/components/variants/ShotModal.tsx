@@ -134,7 +134,7 @@ export function ShotModal({
           >
             <Text
               variant="h3"
-              className="mb-4 text-center text-primary tracking-wide"
+              className="mb-4 text-center text-ink-primary tracking-wide"
             >
               {t("shotChart.title", { name: player.name })}
             </Text>

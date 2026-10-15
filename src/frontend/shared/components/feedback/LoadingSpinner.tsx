@@ -15,7 +15,7 @@ interface LoadingSpinnerProps {
  * hidden text, so a screen reader hears that loading is under way rather than
  * silence. Callers do not need to add their own live region around it.
  *
- * Colour comes from `text-primary`; `size` picks one of three fixed dimensions
+ * Colour comes from `text-ink-primary`; `size` picks one of three fixed dimensions
  * and `className` positions the wrapper.
  */
 export function LoadingSpinner({
@@ -36,7 +36,7 @@ export function LoadingSpinner({
       aria-live="polite"
     >
       <svg
-        className={cn("animate-spin text-primary", sizeClasses[size])}
+        className={cn("animate-spin text-ink-primary", sizeClasses[size])}
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"

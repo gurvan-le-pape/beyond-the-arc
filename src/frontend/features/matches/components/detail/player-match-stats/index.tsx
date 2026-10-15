@@ -53,7 +53,7 @@ export function PlayerMatchStats({
               so it gets an href, a status-bar URL and open-in-new-tab. */}
           <Link
             href={`/teams/${team.id}`}
-            className="text-text-heading hover:text-primary transition-colors duration-200 rounded focus-ring"
+            className="text-text-heading hover:text-ink-primary transition-colors duration-200 rounded focus-ring"
             aria-label={tMatches("playerMatchStats.viewTeam", {
               team: team.name,
             })}

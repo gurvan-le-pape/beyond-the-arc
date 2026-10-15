@@ -3,10 +3,10 @@ import { Card } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 
 const TECH_STACK = [
-  { name: "Next.js", color: "bg-primary-subtle text-primary-strong" },
+  { name: "Next.js", color: "bg-tint-primary text-ink-primary" },
   { name: "NestJS", color: "bg-success-subtle text-success-strong" },
   { name: "TypeScript", color: "bg-info-subtle text-info-strong" },
-  { name: "PostgreSQL", color: "bg-secondary-faint text-secondary-bold" },
+  { name: "PostgreSQL", color: "bg-tint-secondary text-ink-secondary" },
 ] as const;
 
 interface ContactAboutSectionProps {

@@ -49,7 +49,7 @@ export function SidePanelFilters({
             {t("map.filters")}
           </span>
           {activeFilterCount > 0 && (
-            <span className="bg-primary-subtle text-primary-strong text-xs font-medium px-2 py-0.5 rounded-full">
+            <span className="bg-tint-primary text-ink-primary text-xs font-medium px-2 py-0.5 rounded-full">
               {activeFilterCount}
             </span>
           )}
