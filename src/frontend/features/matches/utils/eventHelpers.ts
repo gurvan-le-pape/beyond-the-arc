@@ -181,7 +181,7 @@ export type EventDescriptionToken =
  *
  * **Returns data, not markup.** Rendering an HTML string here would put the
  * timeline's safety on the description never containing anything tag-shaped —
- * an invariant owned by the simulator rather than by this file. Tokens let
+ * an invariant owned by the message catalogue rather than by this file. Tokens let
  * React build the anchors instead.
  *
  * The description is scanned **once, left to right, consuming each hit** before
@@ -189,7 +189,7 @@ export type EventDescriptionToken =
  * already rewritten, so a player whose name occurs inside another's would be
  * wrapped twice and the anchors would nest.
  *
- * @param description - the event's sentence, as the simulator wrote it
+ * @param description - the event's translated sentence (see `describeEvent`)
  * @param eventPlayers - the players to recognise; absent or empty yields a single text token
  * @returns the description as alternating text and player runs, for the caller to render
  */
