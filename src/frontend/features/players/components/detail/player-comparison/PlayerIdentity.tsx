@@ -32,7 +32,7 @@ export function PlayerIdentity({
       <span
         className={cn(
           "text-7xl font-black leading-none select-none pointer-events-none opacity-35 text-transparent",
-          isRight ? "text-stroke-secondary" : "text-stroke-primary",
+          isRight ? "text-stroke-away" : "text-stroke-home",
         )}
       >
         #{player.number}

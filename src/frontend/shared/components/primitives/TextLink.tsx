@@ -31,9 +31,6 @@ const VARIANT_CLASSES = {
 /**
  * A link inside text. It sets colour, underline and focus only: size, weight
  * and layout come from the element around it, so it reads as part of that text.
- *
- * `primary-strong` rather than `primary` for the accent: `primary` is 2.84:1 on
- * the dark surfaces.
  */
 export function TextLink({
   href,
