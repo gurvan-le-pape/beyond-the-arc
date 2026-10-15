@@ -89,7 +89,11 @@
     "team": "Team",
     "gamesWon": "Games won",
     "gamesLost": "Games lost",
-    "pointDifference": "Point difference"
+    "pointDifference": "Point difference",
+    "abbr": {
+      "gamesPlayed": "GP",
+      "pointDifference": "Diff"
+    }
   },
   "matchHistory": {
     "date": "Date",

@@ -29,6 +29,20 @@ export function LeaderboardTable({
   const tCommon = useTranslations("common");
   const tCompetitions = useTranslations("competitions");
 
+  // On a phone the table keeps rank, team, points, games played and point
+  // difference — wins and losses follow from those — with abbreviated
+  // headings whose full label stays on the abbreviation, and the club mark
+  // steps aside for the name. All seven at full width made the table more
+  // than twice the phone's width.
+  const heading = (abbr: string, full: string) => (
+    <>
+      <abbr title={full} className="no-underline sm:hidden">
+        {abbr}
+      </abbr>
+      <span className="hidden sm:inline">{full}</span>
+    </>
+  );
+
   const columns: TableColumn<Leaderboard>[] = [
     {
       key: "rank",
@@ -43,38 +57,53 @@ export function LeaderboardTable({
       align: "left",
       render: (row) => (
         <div className="flex items-center gap-2">
-          <ClubMark clubName={row.clubName} size="sm" />
-          <span>{formatTeamName(row.clubName, row.teamNumber)}</span>
+          <span className="hidden sm:block">
+            <ClubMark clubName={row.clubName} size="sm" />
+          </span>
+          <span className="line-clamp-2">
+            {formatTeamName(row.clubName, row.teamNumber)}
+          </span>
         </div>
       ),
     },
     {
       key: "points",
-      header: tCommon("stats.points.full"),
+      header: heading(
+        tCommon("stats.points.abbr"),
+        tCommon("stats.points.full"),
+      ),
       numeric: true,
       render: (row) => row.points,
     },
     {
       key: "gamesPlayed",
-      header: tCommon("stats.gamesPlayed"),
+      header: heading(
+        tCommon("table.abbr.gamesPlayed"),
+        tCommon("stats.gamesPlayed"),
+      ),
       numeric: true,
       render: (row) => row.gamesPlayed,
     },
     {
       key: "gamesWon",
       header: tCommon("table.gamesWon"),
+      from: "sm",
       numeric: true,
       render: (row) => row.gamesWon,
     },
     {
       key: "gamesLost",
       header: tCommon("table.gamesLost"),
+      from: "sm",
       numeric: true,
       render: (row) => row.gamesLost,
     },
     {
       key: "pointDifference",
-      header: tCommon("table.pointDifference"),
+      header: heading(
+        tCommon("table.abbr.pointDifference"),
+        tCommon("table.pointDifference"),
+      ),
       numeric: true,
       render: (row) => row.pointDifference,
     },
@@ -89,6 +118,7 @@ export function LeaderboardTable({
         columns={columns}
         rows={leaderboards}
         getRowKey={(row) => row.id}
+        density="cozy"
         emptyMessage={tCompetitions("leaderboardEmpty")}
       />
     </Section>
