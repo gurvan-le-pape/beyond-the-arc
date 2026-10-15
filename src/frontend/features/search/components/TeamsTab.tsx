@@ -1,7 +1,7 @@
 // src/frontend/features/search/components/TeamsTab.tsx
 "use client";
 
-import { Users } from "lucide-react";
+import { Search, Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { useTeams } from "@/features/teams/api";
@@ -13,6 +13,7 @@ import {
   SearchTabShell,
 } from "@/shared/components/domain";
 import { EmptyState } from "@/shared/components/feedback";
+import { hasCriteria } from "@/shared/utils";
 
 /**
  * The teams tab of the search page: its own filter panel, results grid, and
@@ -30,11 +31,12 @@ import { EmptyState } from "@/shared/components/feedback";
 export function TeamsTab() {
   const tTeams = useTranslations("teams");
   const tCommon = useTranslations("common");
+  const tSearch = useTranslations("search");
 
   const { filters, setters, setCurrentPage, setPageSize, resetFilters } =
     useTeamsFilterState();
 
-  const { data, error, isLoading, refetch } = useTeams({
+  const criteria = {
     clubId: filters.clubId,
     number: filters.number,
     category: filters.category,
@@ -44,9 +46,14 @@ export function TeamsTab() {
     leagueId: filters.leagueId,
     division: filters.division,
     poolLetter: filters.pool,
-    page: filters.currentPage,
-    limit: filters.pageSize,
-  });
+  };
+  // Nothing is listed until a filter narrows the 60k teams.
+  const searching = hasCriteria(criteria);
+
+  const { data, error, isLoading, refetch } = useTeams(
+    { ...criteria, page: filters.currentPage, limit: filters.pageSize },
+    { enabled: searching },
+  );
 
   const teams: Team[] = data?.items ?? [];
   const pagination = data
@@ -73,11 +80,19 @@ export function TeamsTab() {
         onRetry={refetch}
         isEmpty={teams.length === 0}
         emptyState={
-          <EmptyState
-            icon={<Users className="w-16 h-16" />}
-            title={tCommon("emptyState.teams")}
-            description={tTeams("tryAdjustingFilters")}
-          />
+          searching ? (
+            <EmptyState
+              icon={<Users className="w-16 h-16" />}
+              title={tCommon("emptyState.teams")}
+              description={tTeams("tryAdjustingFilters")}
+            />
+          ) : (
+            <EmptyState
+              icon={<Search className="w-16 h-16" />}
+              title={tSearch("prompt.title")}
+              description={tSearch("prompt.teams")}
+            />
+          )
         }
         pagination={pagination}
         pageSize={filters.pageSize}

@@ -1,7 +1,7 @@
 // src/frontend/features/search/components/PlayersTab.tsx
 "use client";
 
-import { User } from "lucide-react";
+import { Search, User } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { usePlayers } from "@/features/players/api";
@@ -13,6 +13,7 @@ import {
   SearchTabShell,
 } from "@/shared/components/domain";
 import { EmptyState } from "@/shared/components/feedback";
+import { hasCriteria } from "@/shared/utils";
 
 /**
  * The players tab of the search page: its own filter panel, results grid, and
@@ -33,11 +34,12 @@ import { EmptyState } from "@/shared/components/feedback";
 export function PlayersTab() {
   const tPlayers = useTranslations("players");
   const tCommon = useTranslations("common");
+  const tSearch = useTranslations("search");
 
   const { filters, setters, setCurrentPage, setPageSize, resetFilters } =
     usePlayersFilterState();
 
-  const { data, error, isLoading, refetch } = usePlayers({
+  const criteria = {
     search: filters.name || undefined,
     clubId: filters.clubId,
     category: filters.category,
@@ -47,9 +49,15 @@ export function PlayersTab() {
     level: filters.level,
     committeeId: filters.committeeId,
     leagueId: filters.leagueId,
-    page: filters.currentPage,
-    limit: filters.pageSize,
-  });
+  };
+  // Nothing is listed until something narrows the 722k players: an
+  // unfiltered page is an alphabetical slice that answers no question.
+  const searching = hasCriteria(criteria);
+
+  const { data, error, isLoading, refetch } = usePlayers(
+    { ...criteria, page: filters.currentPage, limit: filters.pageSize },
+    { enabled: searching },
+  );
 
   const players: Player[] = data?.items ?? [];
   const pagination = data
@@ -76,11 +84,19 @@ export function PlayersTab() {
         onRetry={refetch}
         isEmpty={players.length === 0}
         emptyState={
-          <EmptyState
-            icon={<User className="w-16 h-16" />}
-            title={tCommon("emptyState.players")}
-            description={tPlayers("tryAdjustingFilters")}
-          />
+          searching ? (
+            <EmptyState
+              icon={<User className="w-16 h-16" />}
+              title={tCommon("emptyState.players")}
+              description={tPlayers("tryAdjustingFilters")}
+            />
+          ) : (
+            <EmptyState
+              icon={<Search className="w-16 h-16" />}
+              title={tSearch("prompt.title")}
+              description={tSearch("prompt.players")}
+            />
+          )
         }
         pagination={pagination}
         pageSize={filters.pageSize}

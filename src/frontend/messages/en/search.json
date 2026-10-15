@@ -5,5 +5,11 @@
     "players": "Players",
     "teams": "Teams",
     "matches": "Matches"
+  },
+  "prompt": {
+    "title": "Start a search",
+    "players": "Type a name or pick a filter to list players.",
+    "teams": "Pick a club or a filter to list teams.",
+    "matches": "Type a club, a date or pick a filter to list matches."
   }
 }
