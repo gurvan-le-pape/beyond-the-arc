@@ -7,8 +7,8 @@ import { Text } from "@/shared/components/typography";
 type FeatureStatus = "live" | "coming-soon" | "planned";
 
 const STATUS_COLORS: Record<FeatureStatus, string> = {
-  live: "bg-success-subtle text-success-strong border border-success/30",
-  "coming-soon": "bg-info-subtle text-info-strong border border-info/30",
+  live: "bg-tint-success text-ink-success border border-line-success",
+  "coming-soon": "bg-tint-info text-ink-info border border-line-info",
   // planned uses bg-surface-inset so it resolves correctly regardless of
   // which surface the card sits on — no hardcoded elevation level needed
   planned: "bg-surface-inset text-text-emphasis border border-divide",

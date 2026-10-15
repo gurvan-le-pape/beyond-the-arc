@@ -206,7 +206,7 @@ export function ClubsMap({
     return (
       <div className="absolute inset-0 flex items-center justify-center surface-subtle">
         <div className="text-center">
-          <p className="text-error font-semibold">{t(error)}</p>
+          <p className="text-ink-error font-semibold">{t(error)}</p>
           <button
             type="button"
             onClick={() => globalThis.location.reload()}

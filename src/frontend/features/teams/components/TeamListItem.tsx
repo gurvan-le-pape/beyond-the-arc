@@ -66,24 +66,24 @@ export function TeamListItem({ team, clubName }: TeamListItemProps) {
 
       {leaderboard && (
         <div className="flex flex-col items-end gap-1.5 ml-4 shrink-0">
-          <div className="flex items-baseline gap-1 px-2.5 py-1.5 rounded-lg bg-warning-subtle border border-warning">
-            <span className="text-base font-medium text-warning-strong leading-none">
+          <div className="flex items-baseline gap-1 px-2.5 py-1.5 rounded-lg bg-tint-warning border border-solid-warning">
+            <span className="text-base font-medium text-ink-warning leading-none">
               {leaderboard.rank ?? "—"}
             </span>
             {leaderboard.poolSize && (
-              <span className="text-xs text-warning-strong/60 leading-none">
+              <span className="text-xs text-ink-warning leading-none">
                 /{leaderboard.poolSize}
               </span>
             )}
           </div>
 
           <div className="flex items-center gap-1.5">
-            <span className="text-xs font-medium text-success-strong">
+            <span className="text-xs font-medium text-ink-success">
               {leaderboard.gamesWon}
               {t("teamDetail.won")}
             </span>
             <span className="w-px h-3 bg-text-muted" />
-            <span className="text-xs font-medium text-error-strong">
+            <span className="text-xs font-medium text-ink-error">
               {leaderboard.gamesLost}
               {t("teamDetail.lost")}
             </span>

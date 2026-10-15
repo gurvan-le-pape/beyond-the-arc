@@ -35,8 +35,8 @@ export function DocsBestPracticesSection({
       <ul className="space-y-3">
         {BEST_PRACTICE_KEYS.map((key) => (
           <li key={key} className="flex items-start gap-3">
-            <div className="flex-shrink-0 w-6 h-6 rounded-button bg-success-subtle flex items-center justify-center mt-0.5">
-              <span className="text-success-strong text-sm" aria-hidden>
+            <div className="flex-shrink-0 w-6 h-6 rounded-button bg-tint-success flex items-center justify-center mt-0.5">
+              <span className="text-ink-success text-sm" aria-hidden>
                 ✓
               </span>
             </div>

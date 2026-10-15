@@ -51,7 +51,7 @@ export function DocsDatabaseSection({ content }: DocsDatabaseSectionProps) {
             <a
               href="/docs/data-model.svg"
               download
-              className="px-3 py-1 bg-success text-white rounded-button text-sm hover:bg-success-strong transition-colors duration-200 flex items-center gap-1 focus-ring"
+              className="px-3 py-1 bg-solid-success text-on-solid-success rounded-button text-sm hover:bg-solid-success-hover transition-colors duration-200 flex items-center gap-1 focus-ring"
             >
               <Download className="w-4 h-4" aria-hidden />
               SVG

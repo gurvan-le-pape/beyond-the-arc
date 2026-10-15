@@ -66,7 +66,7 @@ export const ErrorMessage = ({
         variant="body"
         as="p"
         role="alert"
-        className="text-error-strong font-semibold"
+        className="text-ink-error font-semibold"
       >
         {message}
       </Text>
