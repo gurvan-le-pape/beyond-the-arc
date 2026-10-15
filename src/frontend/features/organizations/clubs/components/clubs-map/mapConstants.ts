@@ -36,30 +36,44 @@ export const ZOOM_THRESHOLDS = {
   CLUBS: 8.5, // Above this: show clubs with clustering
 } as const;
 
-// Map style colors
+// Map layer sizes and opacities. The colours come from the theme, through
+// useMapColours.
 export const MAP_COLORS = {
   REGIONS: {
-    FILL: "#22c55e",
     FILL_OPACITY: 0.25,
-    BORDER: "#16a34a",
     BORDER_WIDTH: 2,
     LABEL_CIRCLE_RADIUS: 20,
     LABEL_TEXT_SIZE: 14,
   },
   DEPARTMENTS: {
-    FILL: "#3b82f6",
     FILL_OPACITY: 0.25,
-    BORDER: "#2563eb",
     BORDER_WIDTH: 2,
     LABEL_CIRCLE_RADIUS: 18,
     LABEL_TEXT_SIZE: 12,
   },
   CLUBS: {
-    CLUSTER_COLORS: ["#3b82f6", "#2563eb", "#1d4ed8"] as const,
     CLUSTER_THRESHOLDS: [10, 30] as const,
     CLUSTER_SIZES: [15, 20, 25] as const,
     POINT_RADIUS: 6,
-    POINT_COLOR: "#2563eb",
+  },
+} as const;
+
+// The OpenStreetMap tiles are drawn light. In the dark themes they are
+// inverted (brightness-min above brightness-max flips light and dark) and
+// their hues turned back half a circle, so water stays blue and land stays
+// green under a dark sea of grey; high contrast drops the colour entirely.
+export const BASEMAP_PAINT = {
+  light: {},
+  dark: {
+    "raster-brightness-min": 0.9,
+    "raster-brightness-max": 0.1,
+    "raster-hue-rotate": 180,
+    "raster-saturation": -0.4,
+  },
+  "high-contrast": {
+    "raster-brightness-min": 1,
+    "raster-brightness-max": 0,
+    "raster-saturation": -1,
   },
 } as const;
 

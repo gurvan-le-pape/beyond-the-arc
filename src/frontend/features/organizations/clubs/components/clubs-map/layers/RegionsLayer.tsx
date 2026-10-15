@@ -4,10 +4,12 @@
 import { Layer, Source } from "react-map-gl/maplibre";
 
 import { MAP_COLORS } from "../mapConstants";
+import type { MapColours } from "../useMapColours";
 
 interface RegionsLayerProps {
   readonly geoJson: any;
   readonly labels?: any;
+  readonly colours: MapColours;
 }
 
 /**
@@ -17,7 +19,8 @@ interface RegionsLayerProps {
  * so the two are mutually exclusive rather than stacked. `labels` carries the
  * centroids the counts are anchored to, computed once outside the render.
  */
-export function RegionsLayer({ geoJson, labels }: RegionsLayerProps) {
+export function RegionsLayer({ geoJson, labels, colours }: RegionsLayerProps) {
+  const area = colours.regions;
   return (
     <>
       <Source id="regions" type="geojson" data={geoJson}>
@@ -25,7 +28,7 @@ export function RegionsLayer({ geoJson, labels }: RegionsLayerProps) {
           id="regions-fill"
           type="fill"
           paint={{
-            "fill-color": MAP_COLORS.REGIONS.FILL,
+            "fill-color": area.fill,
             "fill-opacity": MAP_COLORS.REGIONS.FILL_OPACITY,
           }}
         />
@@ -33,7 +36,7 @@ export function RegionsLayer({ geoJson, labels }: RegionsLayerProps) {
           id="regions-outline"
           type="line"
           paint={{
-            "line-color": MAP_COLORS.REGIONS.BORDER,
+            "line-color": area.border,
             "line-width": MAP_COLORS.REGIONS.BORDER_WIDTH,
           }}
         />
@@ -46,9 +49,9 @@ export function RegionsLayer({ geoJson, labels }: RegionsLayerProps) {
             type="circle"
             paint={{
               "circle-radius": MAP_COLORS.REGIONS.LABEL_CIRCLE_RADIUS,
-              "circle-color": "#ffffff",
+              "circle-color": colours.labelBackground,
               "circle-stroke-width": 2,
-              "circle-stroke-color": MAP_COLORS.REGIONS.BORDER,
+              "circle-stroke-color": area.border,
               "circle-opacity": 0.9,
             }}
           />
@@ -61,7 +64,7 @@ export function RegionsLayer({ geoJson, labels }: RegionsLayerProps) {
               "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
             }}
             paint={{
-              "text-color": MAP_COLORS.REGIONS.BORDER,
+              "text-color": area.label,
             }}
           />
         </Source>

@@ -17,6 +17,7 @@ import { ClubsLayer } from "./layers/ClubsLayer";
 import { DepartmentsLayer } from "./layers/DepartmentsLayer";
 import { RegionsLayer } from "./layers/RegionsLayer";
 import {
+  BASEMAP_PAINT,
   GEOJSON_TO_DB_REGION_CODE,
   INITIAL_VIEW,
   ZOOM_THRESHOLDS,
@@ -24,6 +25,7 @@ import {
 import { clubsToGeoJSON, generateLabelFeatures } from "./mapHelpers";
 import { SidePanel } from "./side-panel";
 import { useFilters } from "./useFilters";
+import { useMapColours } from "./useMapColours";
 import { useMapData } from "./useMapData";
 import { useSearch } from "./useSearch";
 
@@ -98,6 +100,8 @@ export function ClubsMap({
   }, []);
 
   // Map style configuration
+  const colours = useMapColours();
+  const basemapTheme = colours?.theme ?? "light";
   const mapStyle = useMemo(
     () => ({
       version: 8 as const,
@@ -108,9 +112,16 @@ export function ClubsMap({
           tileSize: 256,
         },
       },
-      layers: [{ id: "osm", type: "raster" as const, source: "osm" }],
+      layers: [
+        {
+          id: "osm",
+          type: "raster" as const,
+          source: "osm",
+          paint: BASEMAP_PAINT[basemapTheme],
+        },
+      ],
     }),
-    [],
+    [basemapTheme],
   );
 
   // Generate region labels with club counts
@@ -222,18 +233,25 @@ export function ClubsMap({
         onClick={onClick}
         style={{ width: "100%", height: "100%" }}
       >
-        {showRegions && regionsGeoJson && (
-          <RegionsLayer geoJson={regionsGeoJson} labels={regionLabels} />
-        )}
-
-        {showDepartments && departmentsGeoJson && (
-          <DepartmentsLayer
-            geoJson={departmentsGeoJson}
-            labels={departmentLabels}
+        {colours && showRegions && regionsGeoJson && (
+          <RegionsLayer
+            geoJson={regionsGeoJson}
+            labels={regionLabels}
+            colours={colours}
           />
         )}
 
-        {clubPoints && <ClubsLayer geoJson={clubPoints} />}
+        {colours && showDepartments && departmentsGeoJson && (
+          <DepartmentsLayer
+            geoJson={departmentsGeoJson}
+            labels={departmentLabels}
+            colours={colours}
+          />
+        )}
+
+        {colours && clubPoints && (
+          <ClubsLayer geoJson={clubPoints} colours={colours} />
+        )}
 
         {selectedClub && (
           <Popup
