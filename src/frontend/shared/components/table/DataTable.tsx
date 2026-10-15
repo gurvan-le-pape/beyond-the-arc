@@ -43,8 +43,9 @@ export interface TableColumn<T> {
   readonly tooltip?: string;
   /**
    * Vertical rule fencing off a group of columns, e.g. the shooting splits.
-   * Drawn on the header cell as well as the body cells — the previous
-   * `className` reached only the body, so group rules stopped below the header.
+   * Drawn on the header cell as well as the body cells, so a group rule runs
+   * the full height of the table; a `className` on the cells would reach the
+   * body only and stop the rule below the header.
    */
   readonly divider?: "left" | "right" | "both";
   /** Bold, heading-toned cells, for the one column a table is *about*. */

@@ -546,29 +546,20 @@ export class MatchesService {
     if (filters?.matchday) where.matchday = filters.matchday;
 
     if (filters?.date) {
-      // Half-open [start of day, start of next day), and both bounds are built
-      // from the *string* overload of `fromZonedTime`.
+      // Half-open [start of day, start of next day), both bounds built from
+      // the *string* overload of `fromZonedTime`, which never consults the
+      // process's ambient time zone. `new Date("2024-02-05T00:00:00")` would:
+      // with no zone designator it parses as ambient local time, and across
+      // all 418 IANA zones x 366 days of 2024 it slides an hour on 7 (zone,
+      // day) pairs — the days those zones spring forward at midnight, where
+      // 00:00 does not exist locally. `TZ=UTC` is pinned in every image and in
+      // Jest, but the bound must not depend on configuration.
       //
-      // Two things were wrong with the previous form, and neither could fail a
-      // test that recomputed it (see `matches.service.spec.ts`).
-      //
-      // `new Date("2024-02-05T00:00:00")` — no zone designator — is parsed as
-      // *ambient* local time, so the wall clock handed to `fromZonedTime` came
-      // from whatever TZ the process happened to run in. Swept across all 418
-      // IANA zones x 366 days of 2024, the two forms disagree on 7 (zone, day)
-      // pairs: the days those zones spring forward at midnight, where 00:00
-      // does not exist locally and the parse slides an hour. `TZ=UTC` is pinned
-      // in every image and in Jest, so this was unreachable — but it was
-      // unreachable by configuration, not by construction. The string overload
-      // never consults the ambient zone at all.
-      //
-      // The upper bound closed on `23:59:59.999`, which is a millisecond short
-      // of the day: `lt` excludes its own bound, so a match tipping off at
-      // exactly 23:59:59.999 Paris time was invisible to a filter naming its
-      // date. Next-day midnight closes that, and stays correct across DST
-      // because the bound is a wall-clock instant rather than `start + 24h` —
-      // a Paris day is 23 hours on the last Sunday in March and 25 on the last
-      // in October.
+      // The upper bound is next-day midnight under `lt`: a bound at
+      // `23:59:59.999` would leave a match tipping off at exactly that instant
+      // outside its own date. It is a wall-clock instant rather than
+      // `start + 24h` because a Paris day is 23 hours on the last Sunday in
+      // March and 25 on the last in October.
       const nextDay = new Date(`${filters.date}T00:00:00Z`);
       nextDay.setUTCDate(nextDay.getUTCDate() + 1);
 

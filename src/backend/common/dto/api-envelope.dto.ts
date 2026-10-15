@@ -60,9 +60,9 @@ export class ApiEnvelopeDto {
  * `meta` on a list response: the length of the `data` array, and nothing else.
  *
  * Measured rather than inferred — `generateMeta` returns exactly `{ count }`
- * for an array, so a list response has no `page`/`limit`/`totalPages` even
- * though the interceptor's own interface once declared all four as optional on
- * one type. Two shapes, two classes, so the document can say which is which.
+ * for an array, so a list response has no `page`/`limit`/`totalPages`. A
+ * single type with all four optional would let the document claim them; two
+ * shapes, two classes, so it says which is which.
  */
 export class ApiListMetaDto {
   @ApiProperty({

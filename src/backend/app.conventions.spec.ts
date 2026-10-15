@@ -483,11 +483,11 @@ describe("API conventions", () => {
   // ---------------------------------------------------------------------
   // Response side
   //
-  // Everything above this line checks query DTOs. `CLAUDE.md` credits this
-  // file with the response-side conventions too, and until now it asserted
-  // none of them — the absence `api-contract 2` went through, where a
-  // decorator named `MatchDetailResponseDto` for a route shipping
-  // `MatchResponseDto` and nothing noticed.
+  // Everything above this line checks query DTOs; the checks below hold the
+  // response-side conventions `CLAUDE.md` credits this file with. What they
+  // catch is a route whose decorator names one response DTO while it ships
+  // another — `MatchDetailResponseDto` declared on a route returning
+  // `MatchResponseDto` — which nothing else in the build notices.
   //
   // Both checks below read the **committed** `docs/openapi.json` rather than
   // a document built in-process. That is deliberate: the `@nestjs/swagger`

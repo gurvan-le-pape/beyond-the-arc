@@ -49,10 +49,9 @@ body {
 
    Write a hex value here and Tailwind cannot alpha-composite it, so every
    utility carrying a `/NN` modifier on that token silently generates no CSS
-   at all — no error, no warning, just a missing rule. That is exactly the bug
-   this format fixes: 22 such utilities were dead, which left the organizations
-   cards with no gradient and their borders falling back to preflight's
-   hardcoded #e5e7eb, a grey that does not flip with the theme.
+   at all — no error, no warning, just a missing rule: a card loses its
+   gradient, a border falls back to preflight's hardcoded #e5e7eb, a grey that
+   does not flip with the theme.
 
    Two tokens are deliberately NOT in this format — --color-header-bg and
    --color-scroll-shadow keep baked-in rgba(), because their alpha differs per

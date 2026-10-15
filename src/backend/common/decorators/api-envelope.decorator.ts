@@ -125,11 +125,8 @@ export const ApiEnvelopeList = <TDto extends Type<unknown>>(
  * `meta`, with one difference that matters: `data.total` is the size of the
  * full result set and `meta.count` is the length of this page. Both halves are
  * documented because both are sent; the descriptions on `ApiPageMetaDto` say
- * which is which.
- *
- * Replaces the earlier `ApiPaginatedResponse`, which documented the page as
- * the whole body. It was right about the part it described and wrong about
- * where that part sits.
+ * which is which. Documenting the page as the whole body would describe the
+ * right fields in the wrong place.
  */
 export const ApiEnvelopePage = <TItem extends Type<unknown>>(
   itemDto: TItem,
