@@ -62,7 +62,6 @@ function ApexStripeZones({
             yScale={yScale}
             fill={fill}
             fillOpacity={fillOpacity}
-            stroke="#222"
             strokeWidth={1}
             svgWidth={svgWidth}
             onMouseMove={(e) => onZoneHover(zone.key, stats, e)}

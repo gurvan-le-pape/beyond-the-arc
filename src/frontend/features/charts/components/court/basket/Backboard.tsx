@@ -29,7 +29,7 @@ export function Backboard({ xScale, yScale, svgWidth }: BackboardProps) {
       x2={xScale(COURT_WIDTH / 2 + BACKBOARD_WIDTH / 2)}
       y1={yScale(BASELINE_TO_BACKBOARD)}
       y2={yScale(BASELINE_TO_BACKBOARD)}
-      stroke="#000"
+      className="stroke-court-line"
       strokeWidth={(LINE_WIDTH * svgWidth) / COURT_WIDTH}
     />
   );

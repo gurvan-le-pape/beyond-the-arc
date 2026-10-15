@@ -24,7 +24,7 @@ export function Rim({ centerX, rimY, xScale, svgWidth }: RimProps) {
       cy={rimY}
       r={xScale(RIM_RADIUS) - xScale(0)}
       fill="none"
-      stroke="#000"
+      className="stroke-court-line"
       strokeWidth={(LINE_WIDTH * svgWidth) / COURT_WIDTH}
     />
   );

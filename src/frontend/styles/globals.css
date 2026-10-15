@@ -93,6 +93,12 @@ body {
    LIGHT THEME (default)
 ───────────────────────────────────────────────────────────────────────────── */
 :root {
+  /* Court — the shot chart's floor, its markings, and the zone figures
+     drawn over it. Lines and figures clear 4.5:1 on the floor.        */
+  --color-court-floor: 248 245 242;
+  --color-court-line: 28 32 36;
+  --color-court-label: 28 32 36;
+
   /* Surface
      Elevation order (never skip or reverse): base → subtle → raised
      base   = outermost page background (PageLayout only)
@@ -298,6 +304,11 @@ body {
    subtle/strong flip so components need no dark: variants.
 ───────────────────────────────────────────────────────────────────────────── */
 .dark {
+  /* Court */
+  --color-court-floor: 38 35 32;
+  --color-court-line: 222 216 208;
+  --color-court-label: 237 238 240;
+
   /* Surface */
   --color-surface-base: 3 7 18;
   --color-surface-subtle: 17 24 39;
@@ -435,6 +446,11 @@ body {
    Register in theme-provider.tsx → themes={["light","dark","high-contrast"]}
 ───────────────────────────────────────────────────────────────────────────── */
 .high-contrast {
+  /* Court */
+  --color-court-floor: 0 0 0;
+  --color-court-line: 255 255 255;
+  --color-court-label: 255 255 255;
+
   /* Surface */
   --color-surface-base: 0 0 0;
   --color-surface-subtle: 13 13 13;

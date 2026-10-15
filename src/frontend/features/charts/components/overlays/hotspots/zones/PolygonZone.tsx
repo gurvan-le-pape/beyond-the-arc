@@ -1,6 +1,8 @@
 // src/frontend/features/charts/components/overlays/hotspots/zones/PolygonZone.tsx
 import React from "react";
 
+import { COURT_COLOURS } from "@/features/charts/constants";
+
 import ZoneStatLabel from "../../ZoneStatLabel";
 
 interface PolygonZoneProps {
@@ -10,7 +12,6 @@ interface PolygonZoneProps {
   readonly yScale: (y: number) => number;
   readonly fill: string;
   readonly fillOpacity: number;
-  readonly stroke: string;
   readonly strokeWidth: number;
   readonly svgWidth: number;
   readonly onMouseMove: (
@@ -54,7 +55,6 @@ export function PolygonZone({
   yScale,
   fill,
   fillOpacity,
-  stroke,
   strokeWidth,
   svgWidth,
   onMouseMove,
@@ -77,11 +77,10 @@ export function PolygonZone({
         points={points}
         fill={fill}
         fillOpacity={fillOpacity}
-        stroke={stroke}
         strokeWidth={strokeWidth}
         onMouseMove={onMouseMove}
         onMouseLeave={onMouseLeave}
-        style={{ cursor: "pointer" }}
+        style={{ cursor: "pointer", stroke: COURT_COLOURS.line }}
       />
       <ZoneStatLabel
         x={cx}

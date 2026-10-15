@@ -41,7 +41,7 @@ export function NoCharge({
         }
         transform={`translate(${centerX},${rimY})`}
         fill="none"
-        stroke="#000"
+        className="stroke-court-line"
         strokeWidth={(LINE_WIDTH * svgWidth) / COURT_WIDTH}
       />
       {/* No-charge semi-circle side lines */}
@@ -50,7 +50,7 @@ export function NoCharge({
         x2={centerX - (xScale(NO_CHARGE_RADIUS) - xScale(0))}
         y1={ncLineY1}
         y2={ncLineY2}
-        stroke="#000"
+        className="stroke-court-line"
         strokeWidth={(LINE_WIDTH * svgWidth) / COURT_WIDTH}
       />
       <line
@@ -58,7 +58,7 @@ export function NoCharge({
         x2={centerX + (xScale(NO_CHARGE_RADIUS) - xScale(0))}
         y1={ncLineY1}
         y2={ncLineY2}
-        stroke="#000"
+        className="stroke-court-line"
         strokeWidth={(LINE_WIDTH * svgWidth) / COURT_WIDTH}
       />
     </g>

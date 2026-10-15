@@ -147,8 +147,7 @@ export function ShotChart({
             width={svgWidth}
             height={svgHeight}
             viewBox={`0 0 ${svgWidth} ${svgHeight}`}
-            style={{ background: "#f8f5f2" }}
-            className="w-full h-auto block rounded-xl"
+            className="w-full h-auto block rounded-xl bg-court-floor"
             preserveAspectRatio="xMidYMid meet"
             role="img"
             aria-labelledby={titleId}

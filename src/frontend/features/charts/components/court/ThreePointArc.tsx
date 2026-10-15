@@ -44,7 +44,7 @@ export function ThreePointArc({
       <path
         d={arcPath}
         fill="none"
-        stroke="#000"
+        className="stroke-court-line"
         strokeWidth={(LINE_WIDTH * svgWidth) / COURT_WIDTH}
       />
       {/* 3pt lines (side) */}
@@ -53,7 +53,7 @@ export function ThreePointArc({
         x2={xScale(THREE_PT_LINE_DIST)}
         y1={yScale(0)}
         y2={y_px}
-        stroke="#000"
+        className="stroke-court-line"
         strokeWidth={(LINE_WIDTH * svgWidth) / COURT_WIDTH}
       />
       <line
@@ -61,7 +61,7 @@ export function ThreePointArc({
         x2={xScale(COURT_WIDTH - THREE_PT_LINE_DIST)}
         y1={yScale(0)}
         y2={y_px}
-        stroke="#000"
+        className="stroke-court-line"
         strokeWidth={(LINE_WIDTH * svgWidth) / COURT_WIDTH}
       />
     </>

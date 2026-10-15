@@ -20,7 +20,7 @@ export function BoundaryRect({ svgWidth, svgHeight }: BoundaryRectProps) {
       width={svgWidth}
       height={svgHeight}
       fill="none"
-      stroke="#000"
+      className="stroke-court-line"
       strokeWidth={(LINE_WIDTH * svgWidth) / COURT_WIDTH}
     />
   );

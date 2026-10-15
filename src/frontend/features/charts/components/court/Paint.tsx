@@ -37,7 +37,7 @@ export function Paint({
       width={paintRight - paintLeft}
       height={paintBottomY - paintTopY}
       fill="none"
-      stroke="#000"
+      className="stroke-court-line"
       strokeWidth={(LINE_WIDTH * svgWidth) / COURT_WIDTH}
     />
   );
