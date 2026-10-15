@@ -14,7 +14,7 @@ export function MobileOverlay({ onClose }: MobileOverlayProps) {
   return (
     <button
       type="button"
-      className="fixed inset-0 top-16 bg-black/50 z-10 lg:hidden w-full cursor-default"
+      className="fixed inset-0 top-16 bg-black/50 z-backdrop lg:hidden w-full cursor-default"
       onClick={onClose}
       aria-label={t("map.closeMenu")}
     />

@@ -93,7 +93,7 @@ export function BottomSheet({
         onClose();
       }}
       className={cn(
-        "fixed bottom-0 inset-x-0 z-50 md:hidden",
+        "fixed bottom-0 inset-x-0 z-modal md:hidden",
         "surface-raised",
         "rounded-t-2xl shadow-2xl",
         "max-h-[90vh] w-full max-w-full flex flex-col",

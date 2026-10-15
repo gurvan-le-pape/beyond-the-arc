@@ -62,13 +62,13 @@ export const SidePanel = memo(function SidePanel({
       {!isOpen && <SidePanelToggleButton onOpen={handleToggleOpen} />}
 
       <div
-        className="fixed top-16 right-0 h-[calc(100vh-4rem)] surface-subtle shadow-2xl z-20 w-full sm:w-96 transition-transform duration-300 ease-in-out"
+        className="fixed top-16 right-0 h-[calc(100vh-4rem)] surface-subtle shadow-2xl z-drawer w-full sm:w-96 transition-transform duration-300 ease-in-out"
         style={{
           transform: isOpen ? "translateX(0)" : "translateX(100%)",
         }}
       >
         {isPending && (
-          <div className="absolute top-0 left-0 right-0 h-1 bg-solid-primary animate-pulse z-10" />
+          <div className="absolute top-0 left-0 right-0 h-1 bg-solid-primary animate-pulse z-raised" />
         )}
 
         <div className="flex flex-col h-full">

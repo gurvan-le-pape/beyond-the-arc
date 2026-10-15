@@ -98,7 +98,7 @@ export function ThemeToggle() {
         // this lives in the header.
         inert={!isOpen}
         className={cn(
-          "absolute right-0 mt-1 w-44 z-50",
+          "absolute right-0 mt-1 w-44 z-dropdown",
           "bg-surface-raised border border-divide rounded-input shadow-card-hover",
           "transition-all duration-200 origin-top-right",
           isOpen

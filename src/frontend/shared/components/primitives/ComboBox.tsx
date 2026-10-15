@@ -218,7 +218,7 @@ export function ComboBox({
         id={`${inputId}-listbox`}
         inert={!open}
         className={cn(
-          "absolute z-10 mt-1 w-full",
+          "absolute z-dropdown mt-1 w-full",
           "surface-raised",
           "border border-divide",
           "rounded-input shadow-card-hover overflow-hidden",

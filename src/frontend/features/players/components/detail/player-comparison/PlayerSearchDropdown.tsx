@@ -179,7 +179,7 @@ export function PlayerSearchDropdown({
       {showDropdown && (
         <div
           className={cn(
-            "absolute top-full left-0 right-0 mt-1 z-20",
+            "absolute top-full left-0 right-0 mt-1 z-dropdown",
             "max-h-64 overflow-y-auto scrollbar-hide",
             "rounded-lg border border-divide",
             "surface-subtle shadow-card-hover",

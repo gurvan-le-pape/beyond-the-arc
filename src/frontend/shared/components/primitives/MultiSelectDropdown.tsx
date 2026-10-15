@@ -141,7 +141,7 @@ export function MultiSelectDropdown({
         ref={dropdownRef}
         inert={!isOpen}
         className={cn(
-          "absolute top-full left-0 mt-1 z-10 p-4 w-max max-w-[90vw]",
+          "absolute top-full left-0 mt-1 z-dropdown p-4 w-max max-w-[90vw]",
           "surface-raised",
           "border border-divide",
           "rounded-input shadow-card-hover",

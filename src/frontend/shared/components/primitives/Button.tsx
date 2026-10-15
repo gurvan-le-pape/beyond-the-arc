@@ -250,7 +250,7 @@ const pillButtonVariants = cva(BASE, {
       // RoundSelector active pill
       pillActive:
         "rounded-full bg-solid-primary text-on-solid-primary font-bold shadow-md " +
-        "ring-2 ring-line-primary border border-solid-primary z-10",
+        "ring-2 ring-line-primary border border-solid-primary z-raised",
 
       // RoundSelector inactive pill
       pillInactive:
