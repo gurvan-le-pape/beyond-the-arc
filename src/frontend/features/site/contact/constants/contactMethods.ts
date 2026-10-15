@@ -27,20 +27,17 @@ export const CONTACT_METHODS = [
     labelKey: "contact.email",
     value: CONTACT_EMAIL,
     href: CONTACT_MAILTO,
-    color: "from-blue-500 to-cyan-500",
   },
   {
     icon: Gitlab,
     labelKey: "contact.gitlab",
     value: stripScheme(GITLAB_PROFILE_URL),
     href: GITLAB_PROFILE_URL,
-    color: "from-gray-700 to-gray-900",
   },
   {
     icon: Linkedin,
     labelKey: "contact.linkedin",
     value: stripScheme(LINKEDIN_URL),
     href: LINKEDIN_URL,
-    color: "from-blue-600 to-blue-800",
   },
 ] as const;

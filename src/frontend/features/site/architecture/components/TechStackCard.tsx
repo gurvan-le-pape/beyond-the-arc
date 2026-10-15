@@ -4,6 +4,7 @@ import type { LucideIcon } from "lucide-react";
 import { Card } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 
+import { STACK_TONE_CLASSES, type StackTone } from "../constants";
 import { TechStackItem } from "./TechStackItem";
 
 export interface TechStackItemConfig {
@@ -15,7 +16,7 @@ export interface TechStackItemConfig {
 interface TechStackCardProps {
   readonly title: string;
   readonly icon: LucideIcon;
-  readonly color: string;
+  readonly tone: StackTone;
   readonly items: TechStackItemConfig[];
 }
 
@@ -23,25 +24,19 @@ interface TechStackCardProps {
  * A titled group of technologies — one layer of the stack.
  *
  * `items` decides the contents entirely; this adds the heading and the frame.
- *
- * `color` is a **raw Tailwind gradient class pair** (`from-… to-…`), not a
- * semantic token, interpolated straight into the class string. It must be a
- * complete literal — Tailwind only generates classes it can see written out,
- * so a value assembled at runtime produces no gradient at all. Decorative by
- * design; the token system does not cover these.
  */
 export function TechStackCard({
   title,
   icon: Icon,
-  color,
+  tone,
   items,
 }: TechStackCardProps) {
   return (
     <Card padding="none" className="overflow-hidden">
-      <div className={`bg-gradient-to-r ${color} p-6 text-white`}>
+      <div className={`${STACK_TONE_CLASSES[tone]} p-6`}>
         <div className="flex items-center gap-3">
           <Icon className="w-8 h-8" />
-          <Text variant="h2" className="text-white text-xl">
+          <Text variant="h2" className="text-inherit text-xl">
             {title}
           </Text>
         </div>

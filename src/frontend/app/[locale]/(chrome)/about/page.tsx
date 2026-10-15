@@ -38,7 +38,6 @@ export default async function AboutPage({ params }: LocalePageProps) {
 
   const principles = PRINCIPLES.map((p) => ({
     icon: p.icon,
-    color: p.color,
     title: t(`about.${p.principleKey}.title`),
     description: t(`about.${p.principleKey}.description`),
   }));

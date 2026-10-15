@@ -61,8 +61,7 @@ export const buttonVariants = cva(BASE, {
         "rounded-button bg-solid-success text-on-solid-success hover:bg-solid-success-hover",
 
       download:
-        "rounded-button bg-gradient-to-r from-solid-primary to-solid-secondary text-white shadow " +
-        "hover:from-solid-primary-hover hover:to-solid-secondary-hover",
+        "rounded-button bg-solid-primary text-on-solid-primary shadow hover:bg-solid-primary-hover",
 
       // ── Semantic / branded ────────────────────────────────────────────────
       // Gender-specific: kept here because they encode meaning, not layout.

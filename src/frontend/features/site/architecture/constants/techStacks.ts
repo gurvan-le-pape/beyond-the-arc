@@ -12,6 +12,8 @@ import {
   Wrench,
 } from "lucide-react";
 
+import type { StackTone } from "./stackTones";
+
 /**
  * The static half of a tech-stack column: everything that is not translated.
  *
@@ -28,7 +30,7 @@ interface TechStackItemSpec {
 interface TechStackSpec {
   readonly titleKey: string;
   readonly icon: LucideIcon;
-  readonly color: string;
+  readonly tone: StackTone;
   readonly items: readonly TechStackItemSpec[];
 }
 
@@ -44,7 +46,7 @@ export const TECH_STACKS = [
   {
     titleKey: "architecture.frontendTitle",
     icon: Globe,
-    color: "from-blue-500 to-cyan-500",
+    tone: "primary",
     items: [
       {
         name: "Next.js 15",
@@ -76,7 +78,7 @@ export const TECH_STACKS = [
   {
     titleKey: "architecture.backendTitle",
     icon: Server,
-    color: "from-green-500 to-emerald-500",
+    tone: "secondary",
     items: [
       {
         name: "NestJS 11",
@@ -108,7 +110,7 @@ export const TECH_STACKS = [
   {
     titleKey: "architecture.devopsTitle",
     icon: Wrench,
-    color: "from-purple-500 to-pink-500",
+    tone: "category",
     items: [
       {
         name: "Docker",

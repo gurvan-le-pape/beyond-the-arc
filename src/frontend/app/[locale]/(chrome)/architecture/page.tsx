@@ -46,7 +46,7 @@ export default async function ArchitecturePage({ params }: LocalePageProps) {
   const techStacks = TECH_STACKS.map((stack) => ({
     title: t(stack.titleKey),
     icon: stack.icon,
-    color: stack.color,
+    tone: stack.tone,
     items: stack.items.map((item) => ({
       name: item.name,
       icon: item.icon,
@@ -60,7 +60,6 @@ export default async function ArchitecturePage({ params }: LocalePageProps) {
         title={t("architecture.title")}
         lead={t("architecture.subtitle")}
         icon={Layers}
-        iconGradient="secondary"
       />
 
       {/* Tech Stack Cards — sit on surface-base, establish surface-subtle context */}
@@ -70,7 +69,7 @@ export default async function ArchitecturePage({ params }: LocalePageProps) {
             key={stack.title}
             title={stack.title}
             icon={stack.icon}
-            color={stack.color}
+            tone={stack.tone}
             items={stack.items}
           />
         ))}
@@ -81,14 +80,12 @@ export default async function ArchitecturePage({ params }: LocalePageProps) {
         <Text variant="h2" className="mb-6 text-center text-xl">
           {t("architecture.systemArchitecture")}
         </Text>
-        {/* Every `color` below is a decorative gradient, deliberately raw
-            palette values rather than semantic tokens. */}
         <div className="flex flex-col md:flex-row items-center justify-center gap-8">
           <ArchitectureDiagramNode
             icon={Globe}
             title={t("architecture.diagram.client")}
             subtitle="Next.js + React"
-            color="from-blue-500 to-cyan-500"
+            tone="primary"
           />
 
           <ArchitectureArrow />
@@ -97,7 +94,7 @@ export default async function ArchitecturePage({ params }: LocalePageProps) {
             icon={Server}
             title={t("architecture.diagram.server")}
             subtitle="NestJS + REST"
-            color="from-green-500 to-emerald-500"
+            tone="secondary"
           />
 
           <ArchitectureArrow />
@@ -106,7 +103,7 @@ export default async function ArchitecturePage({ params }: LocalePageProps) {
             icon={Database}
             title={t("architecture.diagram.database")}
             subtitle="PostgreSQL"
-            color="from-purple-500 to-pink-500"
+            tone="category"
           />
         </div>
 
