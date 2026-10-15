@@ -10,6 +10,9 @@
   "matchday": "Journée",
   "allMatchdays": "Toutes les journées",
   "matchdayLabel": "J{matchday}",
+  "matchdayWithValue": "Journée {matchday}",
+  "poolWithLetter": "Poule {letter}",
+  "startsAt": "{date} à {time}",
   "noResults": "Aucun match trouvé",
   "upcoming": "À venir",
   "upcomingMatch": {

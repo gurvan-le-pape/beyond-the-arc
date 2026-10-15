@@ -2,8 +2,12 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { serverChampionshipsService } from "@/features/competitions/championships/api/championships.server";
+import { buildChampionshipTitle } from "@/features/competitions/championships/utils";
 import { serverMatchesService } from "@/features/matches/api/matches.server";
 import {
+  MatchBreadcrumb,
+  MatchMeta,
   MatchSummaryTabs,
   UpcomingMatchNotice,
 } from "@/features/matches/components";
@@ -70,12 +74,22 @@ async function MatchSummaryPage({
   const { locale } = routeParams;
   const matchId = parseRouteId(routeParams.matchId);
   setRequestLocale(locale);
-  const tMatches = await getTranslations({ locale, namespace: "matches" });
+  const [tMatches, tCommon, tCompetitions] = await Promise.all([
+    getTranslations({ locale, namespace: "matches" }),
+    getTranslations({ locale, namespace: "common" }),
+    getTranslations({ locale, namespace: "competitions" }),
+  ]);
 
   const [match, playerMatchStats] = await Promise.all([
     serverMatchesService.getById(matchId),
     serverMatchesService.getPlayerStatsByMatchId(matchId),
   ]).catch(handleServerError);
+
+  // The match names its championship by id only; the organisation and season
+  // that make up the championship's display name come from this second fetch.
+  const championship = await serverChampionshipsService
+    .getById(match.pool.championship.id)
+    .catch(handleServerError);
 
   const { stats, homeTeamStats, awayTeamStats } = playerMatchStats;
   const homeTeam = buildTeam(
@@ -96,6 +110,18 @@ async function MatchSummaryPage({
 
   return (
     <PageLayout>
+      <MatchBreadcrumb
+        championshipId={championship.id}
+        poolId={match.pool.id}
+        championshipName={buildChampionshipTitle(championship, {
+          gender: tCommon(`gender.${championship.gender}`),
+          division: tCompetitions("divisionWithValue", {
+            value: championship.division,
+          }),
+        })}
+        matchName={`${homeTeam.name} – ${awayTeam.name}`}
+      />
+
       {/* The score card is the visible title; this is the document's heading. */}
       <Text variant="pageTitle" className="sr-only">
         {tMatches("matchTitle", {
@@ -104,7 +130,12 @@ async function MatchSummaryPage({
         })}
       </Text>
 
-      <Card variant="highlighted" padding="lg">
+      <Card variant="highlighted" padding="lg" className="space-y-4">
+        <MatchMeta
+          startsAt={match.startsAt}
+          matchday={match.matchday}
+          poolLetter={match.pool.letter}
+        />
         <Matchup
           home={teamInfoMatchupSide(homeTeam)}
           away={teamInfoMatchupSide(awayTeam)}

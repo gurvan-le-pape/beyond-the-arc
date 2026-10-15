@@ -52,7 +52,7 @@ export function Breadcrumb({
       className={cn("mb-6 flex items-center gap-2 text-sm", className)}
       aria-label={tCommon("breadcrumbAriaLabel")}
     >
-      <ol className="flex items-center gap-2">
+      <ol className="flex flex-wrap items-center gap-x-2 gap-y-1">
         {items.map((item, index) => {
           const isLast = index === items.length - 1;
           const isCurrent = item.current || isLast;

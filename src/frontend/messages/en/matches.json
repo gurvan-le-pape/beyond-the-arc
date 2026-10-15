@@ -10,6 +10,9 @@
   "matchday": "Matchday",
   "allMatchdays": "All matchdays",
   "matchdayLabel": "R{matchday}",
+  "matchdayWithValue": "Matchday {matchday}",
+  "poolWithLetter": "Pool {letter}",
+  "startsAt": "{date} at {time}",
   "noResults": "No matches found",
   "upcoming": "Upcoming",
   "upcomingMatch": {
