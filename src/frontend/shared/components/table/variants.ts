@@ -85,7 +85,7 @@ const numeric = {
  * element in either collapse mode.
  */
 const stickyLead = {
-  true: "sticky left-0 z-raised bg-surface-own shadow-[1px_0_0_0_var(--color-divide)]",
+  true: "sticky left-0 z-raised bg-surface-own shadow-[1px_0_0_0_rgb(var(--color-divide))]",
   false: "",
 } as const;
 
