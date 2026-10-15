@@ -66,9 +66,8 @@ export function ThemeToggle() {
     );
   }
 
-  // Not `(t) =>` — that shadowed the translation function, which was harmless
-  // while nothing in this file resolved a message but is a trap now that the
-  // labels do.
+  // Not `(t) =>`: that would shadow the translation function the labels
+  // below resolve their messages with.
   const active = THEMES.find((entry) => entry.id === theme) ?? THEMES[0];
   const ActiveIcon = active.Icon;
 

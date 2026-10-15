@@ -38,8 +38,9 @@ async function OrganizationsPage({ params }: LocalePageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  // One fetch for both render sites: the stats band and the three cards showed
-  // the same three numbers from two hardcoded copies, and all six were wrong.
+  // One fetch for both render sites: the stats band and the three cards show
+  // the same three numbers, and a second source is a second chance for them
+  // to disagree.
   const stats = await serverStatsService.getStats().catch(handleServerError);
   const counts: OrganizationCounts = {
     leagues: stats.leagues,

@@ -22,8 +22,8 @@ interface OrganizationsStatsProps {
  * The counts band on the organisations landing page.
  *
  * An **async server component**. Shares one fetch with the card grid rather
- * than querying again — the two showed the same three numbers from separate
- * sources once, and all six were wrong.
+ * than querying again: both show the same three numbers, which must come from
+ * one source to agree.
  */
 export async function OrganizationsStats({ counts }: OrganizationsStatsProps) {
   const t = await getTranslations("organizations");

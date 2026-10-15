@@ -20,8 +20,7 @@ import { AppModule } from "./app.module";
  * filter on its own. The properties below belong to none of them individually
  * — they only exist once the global prefix, the `ValidationPipe`, the route
  * cache, the envelope interceptor and the exception filter are stacked in one
- * order around one route. A unit test cannot state them, which is why they
- * were verified by hand until now.
+ * order around one route. A unit test cannot state them; this tier does.
  *
  * The seam is `PrismaService`, and nothing below it: no database, no fixtures,
  * no migrations. Everything above it is the real wiring, including the module
