@@ -28,7 +28,7 @@ type MockedPrismaService = {
       findMany: jest.Mock;
     };
     leaderboards: {
-      count: jest.Mock;
+      findMany: jest.Mock;
     };
   };
 };
@@ -53,7 +53,7 @@ describe("ClubsService", () => {
           findMany: jest.fn(),
         },
         leaderboards: {
-          count: jest.fn(),
+          findMany: jest.fn(),
         },
       },
     };
@@ -493,37 +493,38 @@ describe("ClubsService", () => {
               leagueId: 1,
             },
           },
-          leaderboards: [
-            {
-              points: 15,
-              gamesPlayed: 10,
-              gamesWon: 7,
-              gamesLost: 3,
-              pointDifference: 25,
-              poolId: 10,
-            },
-          ],
         },
       ],
       president: null,
     };
 
-    it("should return club with rank and poolSize computed", async () => {
+    /** A standings row of pool 10, as STANDING_SELECT returns it. */
+    const row = (teamId: number, points: number, pointDifference: number) => ({
+      teamId,
+      poolId: 10,
+      points,
+      gamesPlayed: 10,
+      gamesWon: 7,
+      gamesLost: 3,
+      pointDifference,
+    });
+
+    it("should rank the team within its pool and report the pool size", async () => {
       prisma.client.clubs.findUnique.mockResolvedValue(mockPrismaClub);
-      // 1 team ranked above → rank 2, 8 teams total
-      prisma.client.leaderboards.count
-        .mockResolvedValueOnce(1)
-        .mockResolvedValueOnce(8);
+      prisma.client.leaderboards.findMany.mockResolvedValue([
+        row(1, 15, 25),
+        row(2, 17, 0),
+        row(3, 15, 10),
+        row(4, 12, 5),
+      ]);
 
       const result = await service.findClubById(1);
 
-      expect(result).toMatchObject({
-        id: 1,
-        name: "AS Monaco Basket",
-      });
-      expect(result.teams[0].leaderboard).toMatchObject({
+      expect(result).toMatchObject({ id: 1, name: "AS Monaco Basket" });
+      // Behind team 2 on points, ahead of team 3 on point difference.
+      expect(result.teams[0].leaderboard).toEqual({
         rank: 2,
-        poolSize: 8,
+        poolSize: 4,
         points: 15,
         gamesPlayed: 10,
         gamesWon: 7,
@@ -531,52 +532,60 @@ describe("ClubsService", () => {
         pointDifference: 25,
         poolId: 10,
       });
-      expect(prisma.client.clubs.findUnique).toHaveBeenCalledWith({
-        where: { id: 1 },
-        select: expect.any(Object),
-      });
     });
 
-    it("should return rank 1 when no teams are ranked above", async () => {
+    it("should share a rank between tied teams, like the pool standings", async () => {
       prisma.client.clubs.findUnique.mockResolvedValue(mockPrismaClub);
-      prisma.client.leaderboards.count
-        .mockResolvedValueOnce(0) // no teams above
-        .mockResolvedValueOnce(6);
+      prisma.client.leaderboards.findMany.mockResolvedValue([
+        row(2, 15, 25),
+        row(1, 15, 25),
+        row(3, 9, 0),
+      ]);
 
       const result = await service.findClubById(1);
 
       expect(result.teams[0].leaderboard?.rank).toBe(1);
     });
 
-    it("should return null leaderboard when team has no leaderboard entry", async () => {
-      prisma.client.clubs.findUnique.mockResolvedValue({
-        ...mockPrismaClub,
-        teams: [{ ...mockPrismaClub.teams[0], leaderboards: [] }],
-      });
-
-      const result = await service.findClubById(1);
-
-      expect(result.teams[0].leaderboard).toBeNull();
-      expect(prisma.client.leaderboards.count).not.toHaveBeenCalled();
-    });
-
-    it("should return null leaderboard when team has no pool", async () => {
+    it("should read every pool of the club in one query", async () => {
       prisma.client.clubs.findUnique.mockResolvedValue({
         ...mockPrismaClub,
         teams: [
-          {
-            ...mockPrismaClub.teams[0],
-            pool: null,
-            poolId: null,
-            leaderboards: [],
-          },
+          mockPrismaClub.teams[0],
+          { ...mockPrismaClub.teams[0], id: 2, poolId: 11 },
+          { ...mockPrismaClub.teams[0], id: 3, poolId: 10 },
         ],
+      });
+      prisma.client.leaderboards.findMany.mockResolvedValue([]);
+
+      await service.findClubById(1);
+
+      expect(prisma.client.leaderboards.findMany).toHaveBeenCalledTimes(1);
+      expect(prisma.client.leaderboards.findMany).toHaveBeenCalledWith({
+        where: { poolId: { in: [10, 11] } },
+        select: expect.any(Object),
+      });
+    });
+
+    it("should return null leaderboard when team has no standings row", async () => {
+      prisma.client.clubs.findUnique.mockResolvedValue(mockPrismaClub);
+      prisma.client.leaderboards.findMany.mockResolvedValue([row(2, 15, 25)]);
+
+      const result = await service.findClubById(1);
+
+      expect(result.teams[0].leaderboard).toBeNull();
+    });
+
+    it("should return null leaderboard without querying when team has no pool", async () => {
+      prisma.client.clubs.findUnique.mockResolvedValue({
+        ...mockPrismaClub,
+        teams: [{ ...mockPrismaClub.teams[0], pool: null, poolId: null }],
       });
 
       const result = await service.findClubById(1);
 
       expect(result.teams[0].leaderboard).toBeNull();
-      expect(prisma.client.leaderboards.count).not.toHaveBeenCalled();
+      expect(prisma.client.leaderboards.findMany).not.toHaveBeenCalled();
     });
 
     it("should handle club with no teams", async () => {
@@ -588,7 +597,7 @@ describe("ClubsService", () => {
       const result = await service.findClubById(1);
 
       expect(result.teams).toHaveLength(0);
-      expect(prisma.client.leaderboards.count).not.toHaveBeenCalled();
+      expect(prisma.client.leaderboards.findMany).not.toHaveBeenCalled();
     });
 
     it("should handle club with null fields", async () => {
@@ -632,29 +641,6 @@ describe("ClubsService", () => {
       });
       expect(result.president).not.toHaveProperty("phone");
       expect(result.president).not.toHaveProperty("email");
-    });
-
-    it("should compute rank and poolSize via parallel count queries", async () => {
-      prisma.client.clubs.findUnique.mockResolvedValue(mockPrismaClub);
-      prisma.client.leaderboards.count
-        .mockResolvedValueOnce(2)
-        .mockResolvedValueOnce(10);
-
-      await service.findClubById(1);
-
-      expect(prisma.client.leaderboards.count).toHaveBeenCalledTimes(2);
-      expect(prisma.client.leaderboards.count).toHaveBeenCalledWith({
-        where: {
-          poolId: 10,
-          OR: [
-            { points: { gt: 15 } },
-            { points: 15, pointDifference: { gt: 25 } },
-          ],
-        },
-      });
-      expect(prisma.client.leaderboards.count).toHaveBeenCalledWith({
-        where: { poolId: 10 },
-      });
     });
 
     it("should throw NotFoundException when club does not exist", async () => {

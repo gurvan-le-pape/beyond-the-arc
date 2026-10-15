@@ -2,8 +2,8 @@
 import { Category, CompetitionLevel, Gender } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
 import {
+  assignRankByCount,
   buildClubOrganizationWhere,
-  buildRankCountWhere,
   PRESIDENT_SELECT,
   resolvePagination,
 } from "@common/utils";
@@ -42,9 +42,9 @@ type ClubBasicSelectResult = Prisma.ClubsGetPayload<{
 }>;
 
 /**
- * Fields to select from the clubs table for detailed view.
- * Includes teams with their current pool, championship, and leaderboard.
- * Leaderboard is limited to 1 entry (current season) per team.
+ * Fields to select from the clubs table for detailed view: the club and its
+ * teams with their pool and championship. Standings are read separately, a
+ * whole pool at a time, since a rank depends on the pool's other teams.
  */
 const CLUB_DETAILED_SELECT = {
   id: true,
@@ -79,18 +79,6 @@ const CLUB_DETAILED_SELECT = {
           },
         },
       },
-      leaderboards: {
-        select: {
-          points: true,
-          gamesPlayed: true,
-          gamesWon: true,
-          gamesLost: true,
-          pointDifference: true,
-          poolId: true,
-        },
-        orderBy: { poolId: "desc" },
-        take: 1, // current season only — one entry per pool per team
-      },
     },
     orderBy: { number: "asc" },
   },
@@ -101,10 +89,23 @@ type ClubDetailedSelectResult = Prisma.ClubsGetPayload<{
   select: typeof CLUB_DETAILED_SELECT;
 }>;
 
-type TeamWithRankAndPoolSize = ClubDetailedSelectResult["teams"][number] & {
-  rank: number | null;
-  poolSize: number | null;
-};
+/** A team's standings row, as the club page shows it. */
+const STANDING_SELECT = {
+  teamId: true,
+  poolId: true,
+  points: true,
+  gamesPlayed: true,
+  gamesWon: true,
+  gamesLost: true,
+  pointDifference: true,
+} satisfies Prisma.LeaderboardsDefaultArgs["select"];
+
+type Standing = Prisma.LeaderboardsGetPayload<{
+  select: typeof STANDING_SELECT;
+}>;
+
+/** A standings row with its rank in the pool and the pool's size. */
+type RankedStanding = Standing & { rank: number; poolSize: number };
 
 /**
  * Service handling business logic for clubs.
@@ -302,8 +303,14 @@ export class ClubsService {
   }
 
   /**
-   * Finds a club by its ID with detailed information including teams.
-   * Computes rank and pool size for each team via parallel count queries.
+   * Finds a club by its ID with detailed information including teams, each
+   * with its rank and record in its pool.
+   *
+   * The standings of every pool the club plays in are read in one query and
+   * ranked in memory with the same rule as the pool standings endpoint
+   * (`assignRankByCount`), so a team's rank here and in its pool's table
+   * cannot disagree. Pools hold about ten teams, so this is a few hundred rows
+   * at most, against two count queries per team before.
    *
    * @param clubId - The club ID
    * @returns Detailed club information
@@ -318,29 +325,41 @@ export class ClubsService {
       throw new NotFoundException(`Club with ID ${clubId} not found`);
     }
 
-    // Compute rank and pool size for each team via parallel count queries
-    const teamsWithRanks: TeamWithRankAndPoolSize[] = await Promise.all(
-      club.teams.map(async (team) => {
-        const lb = team.leaderboards[0];
+    const standings = await this.findRankedStandings(club.teams);
 
-        if (!lb || !team.pool) {
-          return { ...team, rank: null, poolSize: null };
-        }
+    return this.mapToDetailedDto(club, standings);
+  }
 
-        const [rank, poolSize] = await Promise.all([
-          this.prisma.client.leaderboards.count({
-            where: buildRankCountWhere(lb),
-          }),
-          this.prisma.client.leaderboards.count({
-            where: { poolId: lb.poolId },
-          }),
-        ]);
+  /**
+   * Ranks every pool the given teams play in, and returns each of those teams'
+   * ranked row, keyed by team id. A team without a pool or without a row is
+   * absent from the map.
+   */
+  private async findRankedStandings(
+    teams: { id: number; poolId: number | null }[],
+  ): Promise<Map<number, RankedStanding>> {
+    const poolIds = [...new Set(teams.flatMap((team) => team.poolId ?? []))];
+    if (poolIds.length === 0) return new Map();
 
-        return { ...team, rank: rank + 1, poolSize };
-      }),
-    );
+    const rows = await this.prisma.client.leaderboards.findMany({
+      where: { poolId: { in: poolIds } },
+      select: STANDING_SELECT,
+    });
 
-    return this.mapToDetailedDto({ ...club, teams: teamsWithRanks });
+    const byPool = new Map<number, Standing[]>();
+    for (const row of rows) {
+      byPool.set(row.poolId, [...(byPool.get(row.poolId) ?? []), row]);
+    }
+
+    const ranked = new Map<number, RankedStanding>();
+    for (const poolRows of byPool.values()) {
+      for (const row of assignRankByCount(poolRows)) {
+        ranked.set(row.teamId, { ...row, poolSize: poolRows.length });
+      }
+    }
+
+    const teamIds = new Set(teams.map((team) => team.id));
+    return new Map([...ranked].filter(([teamId]) => teamIds.has(teamId)));
   }
 
   /**
@@ -369,17 +388,16 @@ export class ClubsService {
   }
 
   /**
-   * Maps a detailed club entity to a response DTO.
-   * Handles nested relations and maps computed rank/poolSize
-   * from TeamWithRankAndPoolSize into the singular leaderboard entry.
+   * Maps a detailed club entity and its teams' ranked standings to a response
+   * DTO.
    *
-   * @param club - Prisma club select result with teams enriched with rank and poolSize
+   * @param club - Prisma club select result
+   * @param standings - each team's ranked standings row, keyed by team id
    * @returns ClubDetailedResponseDto
    */
   private mapToDetailedDto(
-    club: Omit<ClubDetailedSelectResult, "teams"> & {
-      teams: TeamWithRankAndPoolSize[];
-    },
+    club: ClubDetailedSelectResult,
+    standings: Map<number, RankedStanding>,
   ): ClubDetailedResponseDto {
     return {
       id: club.id,
@@ -410,21 +428,24 @@ export class ClubsService {
               },
             }
           : null,
-        // singular leaderboard — one entry per team per pool
-        leaderboard: team.leaderboards[0]
-          ? {
-              rank: team.rank,
-              poolSize: team.poolSize,
-              points: team.leaderboards[0].points,
-              gamesPlayed: team.leaderboards[0].gamesPlayed,
-              gamesWon: team.leaderboards[0].gamesWon,
-              gamesLost: team.leaderboards[0].gamesLost,
-              pointDifference: team.leaderboards[0].pointDifference,
-              poolId: team.leaderboards[0].poolId,
-            }
-          : null,
+        leaderboard: this.mapStanding(standings.get(team.id)),
       })),
       president: club.president,
+    };
+  }
+
+  private mapStanding(standing: RankedStanding | undefined) {
+    if (!standing) return null;
+
+    return {
+      rank: standing.rank,
+      poolSize: standing.poolSize,
+      points: standing.points,
+      gamesPlayed: standing.gamesPlayed,
+      gamesWon: standing.gamesWon,
+      gamesLost: standing.gamesLost,
+      pointDifference: standing.pointDifference,
+      poolId: standing.poolId,
     };
   }
 }
