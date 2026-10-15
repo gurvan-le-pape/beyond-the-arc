@@ -42,11 +42,10 @@ export function HeatmapCell({
       height={height}
       fill={fill}
       fillOpacity={fillOpacity}
-      stroke={stroke}
       strokeWidth={strokeWidth}
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
-      style={style}
+      style={{ ...style, stroke }}
     />
   );
 }

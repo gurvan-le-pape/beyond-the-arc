@@ -50,7 +50,7 @@ export function PaintTicks({
               y1={y_px}
               x2={xLeft_px - tickLength_px}
               y2={y_px}
-              stroke="#000"
+              className="stroke-court-line"
               strokeWidth={(LINE_WIDTH * svgWidth) / COURT_WIDTH}
             />
             {/* Right tick */}
@@ -59,7 +59,7 @@ export function PaintTicks({
               y1={y_px}
               x2={xRight_px + tickLength_px}
               y2={y_px}
-              stroke="#000"
+              className="stroke-court-line"
               strokeWidth={(LINE_WIDTH * svgWidth) / COURT_WIDTH}
             />
           </g>
@@ -71,7 +71,7 @@ export function PaintTicks({
         y={blockY_px}
         width={tickLength_px}
         height={blockYStart_px - blockY_px}
-        fill="#000"
+        className="fill-court-line"
       />
       {/* Right block */}
       <rect
@@ -79,7 +79,7 @@ export function PaintTicks({
         y={blockY_px}
         width={tickLength_px}
         height={blockYStart_px - blockY_px}
-        fill="#000"
+        className="fill-court-line"
       />
     </g>
   );

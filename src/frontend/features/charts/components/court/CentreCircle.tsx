@@ -28,7 +28,7 @@ export function CentreCircle({ centerX, xScale, svgWidth }: CentreCircleProps) {
     <path
       d={`M ${startX},${startY} A ${r},${r} 0 0 0 ${endX},${endY}`}
       fill="none"
-      stroke="#000"
+      className="stroke-court-line"
       strokeWidth={(LINE_WIDTH * svgWidth) / COURT_WIDTH}
     />
   );

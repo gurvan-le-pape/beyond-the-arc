@@ -53,7 +53,6 @@ function AboveWingZones({
         const stats = zoneStats[zone.key];
         const fill = colorScale(stats.total);
         const fillOpacity = stats.total > 0 ? 0.7 : 0.18;
-        const stroke = "#333";
         const strokeWidth = 1;
         return (
           <PolygonZone
@@ -64,7 +63,6 @@ function AboveWingZones({
             yScale={yScale}
             fill={fill}
             fillOpacity={fillOpacity}
-            stroke={stroke}
             strokeWidth={strokeWidth}
             svgWidth={svgWidth}
             onMouseMove={(e) => onZoneHover(zone.key, stats, e)}

@@ -34,7 +34,7 @@ export function FreeThrow({
         x2={centerX + xScale(FREE_THROW_LINE_WIDTH / 2) - xScale(0)}
         y1={ftLineY}
         y2={ftLineY}
-        stroke="#000"
+        className="stroke-court-line"
         strokeWidth={(LINE_WIDTH * svgWidth) / COURT_WIDTH}
       />
       {/* Free-throw semi-circle */}
@@ -49,7 +49,7 @@ export function FreeThrow({
         }
         transform={`translate(${centerX},${ftLineY})`}
         fill="none"
-        stroke="#000"
+        className="stroke-court-line"
         strokeWidth={(LINE_WIDTH * svgWidth) / COURT_WIDTH}
       />
     </g>

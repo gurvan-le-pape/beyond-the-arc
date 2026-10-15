@@ -32,3 +32,13 @@ export const BASKET_Y = BASELINE_TO_RIM;
 export const PAINT_X0 = (COURT_WIDTH - PAINT_WIDTH) / 2;
 // x position of right edge of paint
 export const PAINT_X1 = PAINT_X0 + PAINT_WIDTH;
+
+/**
+ * Court colours, from the `court-*` tokens in globals.css so they follow the
+ * theme. For a colour handed to an SVG element as a value rather than a
+ * Tailwind class: such an element must set it through `style`, because a
+ * presentation attribute (`stroke="…"`) does not resolve `var()`.
+ */
+export const COURT_COLOURS = {
+  line: "rgb(var(--color-court-line))",
+} as const;

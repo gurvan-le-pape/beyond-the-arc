@@ -231,6 +231,13 @@ module.exports = {
           },
         },
 
+        // Shot-chart court: floor, markings, zone figures
+        court: {
+          floor: "rgb(var(--color-court-floor) / <alpha-value>)",
+          line: "rgb(var(--color-court-line) / <alpha-value>)",
+          label: "rgb(var(--color-court-label) / <alpha-value>)",
+        },
+
         // Colour roles, one set per tone of styles/tones.json, solved from
         // the Radix scales by scripts/generate-palette.mts so that each pair
         // clears 4.5:1 in every theme. Use them as pairs:

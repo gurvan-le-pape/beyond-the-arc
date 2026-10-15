@@ -35,7 +35,10 @@ export function ZoneStatLabel({
           textAnchor="middle"
           dominantBaseline="middle"
           style={{ fontSize: `${statFontSize}px` }}
-          fill="#222"
+          className="fill-court-label stroke-court-floor"
+          strokeWidth={3}
+          paintOrder="stroke"
+          strokeLinejoin="round"
           opacity={0.7}
           pointerEvents="none"
         >
@@ -48,7 +51,10 @@ export function ZoneStatLabel({
         textAnchor="middle"
         dominantBaseline="middle"
         style={{ fontSize: `${statFontSize}px` }}
-        fill="#222"
+        className="fill-court-label stroke-court-floor"
+        strokeWidth={3}
+        paintOrder="stroke"
+        strokeLinejoin="round"
         opacity={0.85}
         pointerEvents="none"
       >

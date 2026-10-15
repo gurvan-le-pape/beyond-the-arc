@@ -31,7 +31,7 @@ export function ScatterOverlay({ shots, xScale, yScale }: ScatterOverlayProps) {
               r={r}
               fill="none"
               fillOpacity={0.7}
-              stroke="#43a047"
+              className="stroke-event-made"
               strokeWidth={1}
             />
           );
@@ -44,7 +44,7 @@ export function ScatterOverlay({ shots, xScale, yScale }: ScatterOverlayProps) {
                 y1={cy - r}
                 x2={cx + r}
                 y2={cy + r}
-                stroke="#d32f2f"
+                className="stroke-event-miss"
                 strokeWidth={2}
               />
               <line
@@ -52,7 +52,7 @@ export function ScatterOverlay({ shots, xScale, yScale }: ScatterOverlayProps) {
                 y1={cy + r}
                 x2={cx + r}
                 y2={cy - r}
-                stroke="#d32f2f"
+                className="stroke-event-miss"
                 strokeWidth={2}
               />
             </g>

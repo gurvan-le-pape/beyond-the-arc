@@ -19,7 +19,7 @@ export function CenterLine({ svgWidth, y }: CenterLineProps) {
       y1={y}
       x2={svgWidth}
       y2={y}
-      stroke="#000"
+      className="stroke-court-line"
       strokeWidth={(LINE_WIDTH * svgWidth) / COURT_WIDTH}
     />
   );

@@ -1,6 +1,8 @@
 // src/frontend/features/charts/components/overlays/hotspots/zones/RectZone.tsx
 import React from "react";
 
+import { COURT_COLOURS } from "@/features/charts/constants";
+
 import ZoneStatLabel from "../../ZoneStatLabel";
 
 interface RectZoneProps {
@@ -10,7 +12,6 @@ interface RectZoneProps {
   readonly yScale: (y: number) => number;
   readonly fill: string;
   readonly fillOpacity: number;
-  readonly stroke: string;
   readonly strokeWidth: number;
   readonly svgWidth: number;
   readonly onMouseMove: (
@@ -36,7 +37,6 @@ export function RectZone({
   yScale,
   fill,
   fillOpacity,
-  stroke,
   strokeWidth,
   svgWidth,
   onMouseMove,
@@ -60,11 +60,10 @@ export function RectZone({
         height={height}
         fill={fill}
         fillOpacity={fillOpacity}
-        stroke={stroke}
         strokeWidth={strokeWidth}
         onMouseMove={onMouseMove}
         onMouseLeave={onMouseLeave}
-        style={{ cursor: "pointer" }}
+        style={{ cursor: "pointer", stroke: COURT_COLOURS.line }}
       />
       <ZoneStatLabel
         x={cx}

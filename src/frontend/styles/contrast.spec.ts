@@ -17,6 +17,8 @@ import { describe, expect, it } from "vitest";
  */
 
 const MIN_TEXT_CONTRAST = 4.5;
+/** WCAG's floor for graphics that carry meaning (a made or missed shot). */
+const MIN_GRAPHIC_CONTRAST = 3;
 /** What the colour roles promise in the high-contrast theme: WCAG AAA. */
 const MIN_HIGH_CONTRAST_ROLE = 7;
 const CSS_PATHS = [
@@ -96,11 +98,15 @@ const SURFACES = ["surface-base", "surface-subtle", "surface-raised"];
  * - filled buttons: white text on the fill and on its hover fill;
  * - chips: a ramp's `-strong` text on its own `-subtle` fill;
  * - the colour roles of every tone: `on-solid` on `solid` and its hover, and
- *   `ink` on every surface and on the tone's `tint` and its hover.
+ *   `ink` on every surface and on the tone's `tint` and its hover;
+ * - the shot-chart court: its lines and zone figures on its floor, and the
+ *   made and missed shot marks on it at the 3:1 graphics floor.
  * `text-muted` is left out on purpose: it is reserved for decorative marks and
  * is documented as below AA.
  */
-function promisedPairs(palette: Palette): [fg: string, bg: string][] {
+type Pair = [fg: string, bg: string, min?: number];
+
+function promisedPairs(palette: Palette): Pair[] {
   const tokens = Object.keys(palette);
   const ramps = tokens
     .filter(
@@ -138,7 +144,11 @@ function promisedPairs(palette: Palette): [fg: string, bg: string][] {
       `${ramp}-strong`,
       `${ramp}-subtle`,
     ]),
-    ...TONES.flatMap((tone): [string, string][] => [
+    ["court-line", "court-floor"],
+    ["court-label", "court-floor"],
+    ["event-made", "court-floor", MIN_GRAPHIC_CONTRAST],
+    ["event-miss", "court-floor", MIN_GRAPHIC_CONTRAST],
+    ...TONES.flatMap((tone): Pair[] => [
       [`on-solid-${tone}`, `solid-${tone}`],
       [`on-solid-${tone}`, `solid-${tone}-hover`],
       ...[...SURFACES, `tint-${tone}`, `tint-${tone}-hover`].map(
@@ -159,13 +169,14 @@ function colourOf(palette: Palette, token: string): Rgb {
 function failingPairs(): Record<string, number> {
   const failures: Record<string, number> = {};
   for (const [theme, palette] of Object.entries(readPalettes())) {
-    for (const [fg, bg] of promisedPairs(palette)) {
+    for (const [fg, bg, pairMin] of promisedPairs(palette)) {
       const ratio = contrastRatio(colourOf(palette, fg), colourOf(palette, bg));
       const isRole = fg.startsWith("on-solid-") || fg.startsWith("ink-");
       const min =
-        theme === "high-contrast" && isRole
+        pairMin ??
+        (theme === "high-contrast" && isRole
           ? MIN_HIGH_CONTRAST_ROLE
-          : MIN_TEXT_CONTRAST;
+          : MIN_TEXT_CONTRAST);
       if (ratio < min) {
         failures[`${theme} | ${fg} on ${bg}`] = Math.round(ratio * 100) / 100;
       }

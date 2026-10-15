@@ -7,7 +7,7 @@ import { scaleSequential } from "d3-scale";
 import { interpolateYlOrRd } from "d3-scale-chromatic";
 import { useMemo, useState } from "react";
 
-import { ShotFilter } from "../../constants";
+import { COURT_COLOURS, ShotFilter } from "../../constants";
 import HeatmapCell from "./HeatmapCell";
 import type { TooltipState } from "./TooltipContent";
 import TooltipContent from "./TooltipContent";
@@ -95,7 +95,7 @@ export function HeatmapOverlay({
                 height={yScale(y) - yScale(y + cellHeight)}
                 fill={color(value)}
                 fillOpacity={0.6}
-                stroke={isHighlighted ? "#222" : "none"}
+                stroke={isHighlighted ? COURT_COLOURS.line : "none"}
                 strokeWidth={isHighlighted ? 1.5 : 0}
                 onMouseMove={(e) => {
                   const cell = heatmapData[i]?.[j] || {
