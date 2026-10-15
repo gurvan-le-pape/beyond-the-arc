@@ -22,7 +22,7 @@ body {
    stretched ::after, or in another colour through --focus-ring-color.
    :focus-visible, so a mouse click draws nothing. */
 :focus-visible {
-  outline: 2px solid var(--focus-ring-color, rgb(var(--color-primary-strong)));
+  outline: 2px solid var(--focus-ring-color, rgb(var(--color-ink-primary)));
   outline-offset: 2px;
 }
 
@@ -44,8 +44,8 @@ body {
    ─────────────────────────────────────────────────────────────────────────────
    Every --color-* below is written as "R G B" (e.g. 167 139 250), because
    tailwind.config.js consumes them as `rgb(var(--color-x) / <alpha-value>)`.
-   That is what makes the opacity modifiers work: `bg-clubs/10`,
-   `border-regional/30`, `from-clubs-subtle/60`.
+   That is what makes the opacity modifiers work: `bg-solid-clubs/10`,
+   `from-tint-regional/60`.
 
    Write a hex value here and Tailwind cannot alpha-composite it, so every
    utility carrying a `/NN` modifier on that token silently generates no CSS
@@ -58,29 +58,20 @@ body {
    --color-scroll-shadow keep baked-in rgba(), because their alpha differs per
    theme and neither is consumed through the `colors` map.
 
-   VARIABLE NAMING CONVENTION
+   WHAT LIVES HERE
    ─────────────────────────────────────────────────────────────────────────────
-   Surface, divide, text → theme-sensitive, redefined per theme.
-
-   Semantic colors use subtle / DEFAULT / strong to describe role:
-     subtle  = low-emphasis tint  (badge background, gradient fill)
-     DEFAULT = the canonical color (icon, ring, active state)
-     strong  = high-emphasis shade (border, text on current surface)
-   These three flip between themes so components stay static —
-   "text-regional-strong border-regional" just works in every theme.
-
-   Primary, secondary → redefined per theme (brand accent shifts).
-   Status, team, level → subtle/strong flip; DEFAULT stays vivid.
+   The neutrals (surface, divide, text), the shot-chart court and the
+   match-event label colours, each redefined per theme. Every coloured tone
+   — brand, status, gender, level, entity, home/away — is a colour role.
 
    COLOUR ROLES — styles/roles.css (generated)
    ─────────────────────────────────────────────────────────────────────────────
    Each tone of styles/tones.json (primary, error, clubs, home…) has the roles
    solid / solid-hover / on-solid, tint / tint-hover, ink and line, solved from
    the Radix scales in palette.css by scripts/generate-palette.mts so that
-   every pair clears 4.5:1 in each theme. They are the pairs new code uses:
-   bg-solid-error text-on-solid-error, bg-tint-clubs text-ink-clubs. The
-   subtle / DEFAULT / strong tokens below predate them. Regenerate with
-   `npm run palette` after changing a surface colour here.
+   every pair clears 4.5:1 in each theme (7:1 in high contrast). Use them as
+   pairs: bg-solid-error text-on-solid-error, bg-tint-clubs text-ink-clubs.
+   Regenerate with `npm run palette` after changing a surface colour here.
 
    ADDING A NEW THEME
    ─────────────────────────────────────────────────────────────────────────────
@@ -131,54 +122,6 @@ body {
   --color-text-emphasis: 55 65 81;
   --color-text-heading: 31 41 55;
 
-  /* Primary — brand blue
-     ghost   = faintest tint  (hover backgrounds, subtle fills)
-     faint   = very low emphasis (disabled states, decorative)
-     muted   = low emphasis
-     subtle  = below-default emphasis
-     soft    = slightly below default
-     DEFAULT = canonical active color (icon, ring, active state)
-     strong  = high emphasis (borders, text on light surface)
-     bold    = stronger emphasis
-     deep    = near-darkest
-     darker  = very dark
-     ink     = darkest, near-black                                   */
-  --color-primary-ghost: 230 234 244;
-  --color-primary-faint: 192 202 228;
-  --color-primary-muted: 151 168 210;
-  --color-primary-subtle: 109 134 192;
-  --color-primary-soft: 77 107 179;
-  --color-primary: 46 81 166;
-  --color-primary-strong: 30 61 143;
-  --color-primary-bold: 21 45 117;
-  --color-primary-deep: 13 31 92;
-  --color-primary-darker: 2 27 80;
-  --color-primary-ink: 1 15 48;
-
-  /* Secondary — brand green
-     ghost   = faintest tint  (hover backgrounds, subtle fills)
-     faint   = very low emphasis (disabled states, decorative)
-     muted   = low emphasis
-     subtle  = below-default emphasis
-     soft    = slightly below default
-     DEFAULT = canonical active color (icon, ring, active state)
-     strong  = high emphasis (borders, text on light surface)
-     bold    = stronger emphasis
-     deep    = near-darkest
-     darker  = very dark
-     ink     = darkest, near-black                                   */
-  --color-secondary-ghost: 240 253 244;
-  --color-secondary-faint: 220 252 231;
-  --color-secondary-muted: 187 247 208;
-  --color-secondary-subtle: 134 239 172;
-  --color-secondary-soft: 74 222 128;
-  --color-secondary: 34 197 94;
-  --color-secondary-strong: 22 163 74;
-  --color-secondary-bold: 21 128 61;
-  --color-secondary-deep: 22 101 52;
-  --color-secondary-darker: 20 83 45;
-  --color-secondary-ink: 10 46 24;
-
   /* Shadows                                                          */
   --shadow-card:
     0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
@@ -192,110 +135,19 @@ body {
      region, consumed by .scroll-shadow-x                             */
   --color-scroll-shadow: rgba(0, 0, 0, 0.16);
 
-  /* ── Semantic colors ────────────────────────────────────────────────
-     subtle  = low-emphasis tint  (badge bg, gradient fill)
-     DEFAULT = canonical color    (icon, ring, active state)
-     strong  = high-emphasis shade (border, text on light surface)   */
-
-  /* Status */
-  --color-success-subtle: 209 250 229;
-  --color-success: 16 185 129;
-  --color-success-strong: 6 95 70;
-
-  --color-error-subtle: 254 226 226;
-  --color-error: 239 68 68;
-  --color-error-strong: 153 27 27;
-
-  --color-warning-subtle: 254 243 199;
-  --color-warning: 245 158 11;
-  --color-warning-strong: 146 64 14;
-
-  --color-info-subtle: 207 250 254;
-  --color-info: 6 182 212;
-  --color-info-strong: 22 78 99;
-
-  /* Team (gender) */
-  --color-team-male-subtle: 224 242 254;
-  --color-team-male: 14 165 233;
-  --color-team-male-strong: 12 74 110;
-
-  --color-team-female-subtle: 252 231 243;
-  --color-team-female: 236 72 153;
-  --color-team-female-strong: 131 24 67;
-
-  /* Competition levels */
-  --color-national-subtle: 224 231 255;
-  --color-national: 99 102 241;
-  --color-national-strong: 49 46 129;
-
-  --color-regional-subtle: 204 251 241;
-  --color-regional: 20 184 166;
-  --color-regional-strong: 19 78 74;
-
-  --color-departmental-subtle: 254 252 232;
-  --color-departmental: 234 179 8;
-  --color-departmental-strong: 113 63 18;
-
-  --color-clubs-subtle: 237 233 254;
-  --color-clubs: 167 139 250;
-  --color-clubs-strong: 76 29 149;
-
   /* Match-event categories — one colour per EventCategory.
      Solved rather than picked: each is the most saturated colour at its
-     hue that still clears 4.5:1 on this theme's surface-subtle, and every
+     hue that still clears 4.5:1 on each of this theme's surfaces, and every
      pair is >= 23 CIE76 dE apart, the point below which two labels stop
      being separable at text size. See eventColors.ts. */
-  --color-event-made: 12 120 69;
+  --color-event-made: 6 118 67;
   --color-event-miss: 162 8 41;
-  --color-event-foul: 127 108 6;
+  --color-event-foul: 121 102 0;
   --color-event-turnover: 164 81 2;
-  --color-event-defensive: 1 122 121;
-  --color-event-rebound: 188 2 176;
-  --color-event-substitution: 2 109 172;
-  --color-event-game: 108 109 111;
-
-  /* Category */
-  --color-category-subtle: 241 245 249;
-  --color-category: 100 116 139;
-  --color-category-strong: 30 41 59;
-
-  /* Division */
-  --color-division-subtle: 224 242 254;
-  --color-division: 2 132 199;
-  --color-division-strong: 12 74 110;
-
-  /* Pool */
-  --color-pool-subtle: 255 243 224;
-  --color-pool: 234 88 12;
-  --color-pool-strong: 124 45 18;
-
-  /* Domain entities
-     players = emerald (human/personal feel)
-     teams   = violet  (collective/structural feel)
-     matches = amber   (action/event feel)                            */
-  --color-players-subtle: 209 250 229;
-  --color-players: 5 150 105;
-  --color-players-strong: 6 78 59;
-
-  --color-teams-subtle: 233 213 255;
-  --color-teams: 124 58 237;
-  --color-teams-strong: 91 33 182;
-
-  --color-matches-subtle: 253 230 138;
-  --color-matches: 217 119 6;
-  --color-matches-strong: 120 53 15;
-
-  --color-position-g-subtle: 224 231 255; /* same hue as national/indigo — guard reads "playmaker" */
-  --color-position-g: 99 102 241;
-  --color-position-g-strong: 49 46 129;
-
-  --color-position-f-subtle: 253 230 138; /* amber — forward energy */
-  --color-position-f: 217 119 6;
-  --color-position-f-strong: 120 53 15;
-
-  --color-position-c-subtle: 233 213 255; /* violet — anchor/size */
-  --color-position-c: 124 58 237;
-  --color-position-c-strong: 91 33 182;
+  --color-event-defensive: 0 115 114;
+  --color-event-rebound: 185 0 173;
+  --color-event-substitution: 0 107 169;
+  --color-event-game: 102 103 105;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -324,32 +176,6 @@ body {
   --color-text-emphasis: 229 231 235;
   --color-text-heading: 243 244 246;
 
-  /* Primary — scale inverted, lighter shades become active on dark   */
-  --color-primary-ghost: 1 15 48;
-  --color-primary-faint: 2 27 80;
-  --color-primary-muted: 13 31 92;
-  --color-primary-subtle: 21 45 117;
-  --color-primary-soft: 30 61 143;
-  --color-primary: 77 107 179;
-  --color-primary-strong: 109 134 192;
-  --color-primary-bold: 151 168 210;
-  --color-primary-deep: 192 202 228;
-  --color-primary-darker: 230 234 244;
-  --color-primary-ink: 240 243 250;
-
-  /* Secondary — scale inverted, lighter shades become active on dark */
-  --color-secondary-ghost: 10 46 24;
-  --color-secondary-faint: 20 83 45;
-  --color-secondary-muted: 22 101 52;
-  --color-secondary-subtle: 21 128 61;
-  --color-secondary-soft: 22 163 74;
-  --color-secondary: 34 197 94;
-  --color-secondary-strong: 74 222 128;
-  --color-secondary-bold: 134 239 172;
-  --color-secondary-deep: 187 247 208;
-  --color-secondary-darker: 220 252 231;
-  --color-secondary-ink: 240 253 244;
-
   /* Shadows */
   --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.5), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
   --shadow-card-hover:
@@ -362,40 +188,9 @@ body {
      surfaces underneath it are already dark                          */
   --color-scroll-shadow: rgba(0, 0, 0, 0.55);
 
-  /* Semantic subtle/strong — flipped for dark surfaces               */
-  --color-success-subtle: 6 78 59;
-  --color-success-strong: 110 231 183;
-
-  --color-error-subtle: 127 29 29;
-  --color-error-strong: 252 165 165;
-
-  --color-warning-subtle: 120 53 15;
-  --color-warning-strong: 252 211 77;
-
-  --color-info-subtle: 22 78 99;
-  --color-info-strong: 103 232 249;
-
-  --color-team-male-subtle: 12 74 110;
-  --color-team-male-strong: 186 230 253;
-
-  --color-team-female-subtle: 131 24 67;
-  --color-team-female-strong: 251 207 232;
-
-  --color-national-subtle: 49 46 129;
-  --color-national-strong: 199 210 254;
-
-  --color-regional-subtle: 19 78 74;
-  --color-regional-strong: 153 246 228;
-
-  --color-departmental-subtle: 113 63 18;
-  --color-departmental-strong: 254 240 138;
-
-  --color-clubs-subtle: 76 29 149;
-  --color-clubs-strong: 221 214 254;
-
   /* Match-event categories — one colour per EventCategory.
      Solved rather than picked: each is the most saturated colour at its
-     hue that still clears 4.5:1 on this theme's surface-subtle, and every
+     hue that still clears 4.5:1 on each of this theme's surfaces, and every
      pair is >= 23 CIE76 dE apart, the point below which two labels stop
      being separable at text size. See eventColors.ts. */
   --color-event-made: 77 239 79;
@@ -406,37 +201,6 @@ body {
   --color-event-rebound: 244 155 255;
   --color-event-substitution: 125 186 253;
   --color-event-game: 184 185 186;
-
-  /* Category */
-  --color-category-subtle: 30 41 59;
-  --color-category-strong: 203 213 225;
-
-  /* Division */
-  --color-division-subtle: 12 74 110;
-  --color-division-strong: 186 230 253;
-
-  /* Pool */
-  --color-pool-subtle: 124 45 18;
-  --color-pool-strong: 254 215 170;
-
-  /* Domain entities — subtle/strong flipped for dark surfaces        */
-  --color-players-subtle: 6 95 70;
-  --color-players-strong: 167 243 208;
-
-  --color-teams-subtle: 59 7 100;
-  --color-teams-strong: 221 214 254;
-
-  --color-matches-subtle: 120 53 15;
-  --color-matches-strong: 253 230 138;
-
-  --color-position-g-subtle: 49 46 129;
-  --color-position-g-strong: 199 210 254;
-
-  --color-position-f-subtle: 120 53 15;
-  --color-position-f-strong: 253 230 138;
-
-  --color-position-c-subtle: 59 7 100;
-  --color-position-c-strong: 221 214 254;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -466,32 +230,6 @@ body {
   --color-text-emphasis: 245 245 245;
   --color-text-heading: 255 255 255;
 
-  /* Primary — vivid yellow, maximum contrast on black                */
-  --color-primary-ghost: 26 18 0;
-  --color-primary-faint: 61 44 0;
-  --color-primary-muted: 107 76 0;
-  --color-primary-subtle: 153 109 0;
-  --color-primary-soft: 204 145 0;
-  --color-primary: 255 184 0;
-  --color-primary-strong: 255 201 51;
-  --color-primary-bold: 255 217 102;
-  --color-primary-deep: 255 233 153;
-  --color-primary-darker: 255 244 204;
-  --color-primary-ink: 255 250 230;
-
-  /* Secondary — vivid cyan                                           */
-  --color-secondary-ghost: 0 26 26;
-  --color-secondary-faint: 0 61 61;
-  --color-secondary-muted: 0 107 107;
-  --color-secondary-subtle: 0 153 153;
-  --color-secondary-soft: 0 204 204;
-  --color-secondary: 0 255 255;
-  --color-secondary-strong: 51 255 255;
-  --color-secondary-bold: 102 255 255;
-  --color-secondary-deep: 153 255 255;
-  --color-secondary-darker: 204 255 255;
-  --color-secondary-ink: 230 255 255;
-
   /* Shadows — hard borders, no blur                                  */
   --shadow-card: 0 0 0 1px #ffffff;
   --shadow-card-hover: 0 0 0 2px #ffb800;
@@ -503,50 +241,9 @@ body {
      invisible against pure-black surfaces                            */
   --color-scroll-shadow: rgba(255, 255, 255, 0.45);
 
-  /* Semantic — max vivid, subtle is just a very dark tint            */
-  --color-success-subtle: 5 46 22;
-  --color-success: 0 255 136;
-  --color-success-strong: 0 255 136;
-
-  --color-error-subtle: 69 10 10;
-  --color-error: 255 68 68;
-  --color-error-strong: 255 68 68;
-
-  --color-warning-subtle: 67 20 7;
-  --color-warning: 255 170 0;
-  --color-warning-strong: 255 170 0;
-
-  --color-info-subtle: 8 47 73;
-  --color-info: 0 204 255;
-  --color-info-strong: 0 204 255;
-
-  --color-team-male-subtle: 8 47 73;
-  --color-team-male: 0 170 255;
-  --color-team-male-strong: 0 170 255;
-
-  --color-team-female-subtle: 80 7 36;
-  --color-team-female: 255 68 170;
-  --color-team-female-strong: 255 68 170;
-
-  --color-national-subtle: 30 27 75;
-  --color-national: 136 136 255;
-  --color-national-strong: 136 136 255;
-
-  --color-regional-subtle: 4 47 46;
-  --color-regional: 0 255 204;
-  --color-regional-strong: 0 255 204;
-
-  --color-departmental-subtle: 66 32 6;
-  --color-departmental: 255 204 0;
-  --color-departmental-strong: 255 204 0;
-
-  --color-clubs-subtle: 46 16 101;
-  --color-clubs: 204 136 255;
-  --color-clubs-strong: 204 136 255;
-
   /* Match-event categories — one colour per EventCategory.
      Solved rather than picked: each is the most saturated colour at its
-     hue that still clears 4.5:1 on this theme's surface-subtle, and every
+     hue that still clears 4.5:1 on each of this theme's surfaces, and every
      pair is >= 23 CIE76 dE apart, the point below which two labels stop
      being separable at text size. See eventColors.ts. */
   --color-event-made: 15 234 114;
@@ -557,46 +254,6 @@ body {
   --color-event-rebound: 248 162 255;
   --color-event-substitution: 121 194 254;
   --color-event-game: 192 193 195;
-
-  /* Category */
-  --color-category-subtle: 30 41 59;
-  --color-category: 148 163 184;
-  --color-category-strong: 148 163 184;
-
-  /* Division */
-  --color-division-subtle: 8 47 73;
-  --color-division: 56 189 248;
-  --color-division-strong: 56 189 248;
-
-  /* Pool */
-  --color-pool-subtle: 67 20 7;
-  --color-pool: 251 146 60;
-  --color-pool-strong: 251 146 60;
-
-  /* Domain entities */
-  --color-players-subtle: 5 46 22;
-  --color-players: 0 255 136;
-  --color-players-strong: 0 255 136;
-
-  --color-teams-subtle: 46 16 101;
-  --color-teams: 187 136 255;
-  --color-teams-strong: 187 136 255;
-
-  --color-matches-subtle: 67 20 7;
-  --color-matches: 255 170 0;
-  --color-matches-strong: 255 170 0;
-
-  --color-position-g-subtle: 30 27 75;
-  --color-position-g: 136 136 255;
-  --color-position-g-strong: 136 136 255;
-
-  --color-position-f-subtle: 67 20 7;
-  --color-position-f: 255 170 0;
-  --color-position-f-strong: 255 170 0;
-
-  --color-position-c-subtle: 46 16 101;
-  --color-position-c: 204 136 255;
-  --color-position-c-strong: 204 136 255;
 }
 
 /* =============================================================================

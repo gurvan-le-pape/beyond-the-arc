@@ -1,5 +1,5 @@
 // src/frontend/styles/contrast.spec.ts
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import path from "node:path";
 
 import { describe, expect, it } from "vitest";
@@ -7,13 +7,8 @@ import { describe, expect, it } from "vitest";
 /**
  * WCAG contrast of every foreground/background pairing the design system
  * promises, in all three themes, read straight from the custom properties in
- * `globals.css` and the generated `roles.css`.
- *
- * Works as a ratchet. `contrast.baseline.json` lists the pairings known to fail
- * today; the test fails when a pairing fails that is not listed (a regression),
- * and when a listed pairing now passes (so the list only ever shrinks). Rewrite
- * the list after an intended change with
- * `UPDATE_CONTRAST_BASELINE=1 npx vitest run styles/contrast.spec.ts`.
+ * `globals.css` and the generated `roles.css`. Every pairing must clear its
+ * floor: there is no list of known failures to fall back on.
  */
 
 const MIN_TEXT_CONTRAST = 4.5;
@@ -28,7 +23,6 @@ const CSS_PATHS = [
 const TONES = Object.keys(
   JSON.parse(readFileSync(path.join(__dirname, "tones.json"), "utf8")),
 );
-const BASELINE_PATH = path.join(__dirname, "contrast.baseline.json");
 
 type Rgb = readonly [number, number, number];
 type Palette = Record<string, Rgb>;
@@ -87,16 +81,12 @@ function contrastRatio(a: Rgb, b: Rgb): number {
   return (light + 0.05) / (dark + 0.05);
 }
 
-const WHITE: Rgb = [255, 255, 255];
 const SURFACES = ["surface-base", "surface-subtle", "surface-raised"];
 
 /**
- * The pairings the system promises are readable, by the role each token
- * plays (see the naming convention at the top of globals.css):
- * - reading text on every surface: the text scale from `secondary` up, links
- *   (`primary`), every ramp's `-strong` end and the event label colours;
- * - filled buttons: white text on the fill and on its hover fill;
- * - chips: a ramp's `-strong` text on its own `-subtle` fill;
+ * The pairings the system promises are readable:
+ * - reading text on every surface: the text scale from `secondary` up and the
+ *   match-event label colours;
  * - the colour roles of every tone: `on-solid` on `solid` and its hover, and
  *   `ink` on every surface and on the tone's `tint` and its hover;
  * - the shot-chart court: its lines and zone figures on its floor, and the
@@ -107,43 +97,16 @@ const SURFACES = ["surface-base", "surface-subtle", "surface-raised"];
 type Pair = [fg: string, bg: string, min?: number];
 
 function promisedPairs(palette: Palette): Pair[] {
-  const tokens = Object.keys(palette);
-  const ramps = tokens
-    .filter(
-      (t) =>
-        t.endsWith("-subtle") &&
-        tokens.includes(t.replace(/-subtle$/, "-strong")),
-    )
-    .map((t) => t.replace(/-subtle$/, ""))
-    .filter((ramp) => ramp !== "surface");
   const readingText = [
     "text-secondary",
     "text-body",
     "text-emphasis",
     "text-heading",
-    "primary",
-    ...ramps.map((ramp) => `${ramp}-strong`),
-    ...tokens.filter((t) => t.startsWith("event-")),
+    ...Object.keys(palette).filter((t) => t.startsWith("event-")),
   ];
-  const buttonFills = [
-    "primary",
-    "secondary",
-    "success",
-    "error",
-    "team-male",
-    "team-female",
-    "clubs",
-  ].flatMap((fill) => [fill, `${fill}-strong`]);
 
   return [
-    ...readingText.flatMap((fg) =>
-      SURFACES.map((bg): [string, string] => [fg, bg]),
-    ),
-    ...buttonFills.map((bg): [string, string] => ["white", bg]),
-    ...ramps.map((ramp): [string, string] => [
-      `${ramp}-strong`,
-      `${ramp}-subtle`,
-    ]),
+    ...readingText.flatMap((fg) => SURFACES.map((bg): Pair => [fg, bg])),
     ["court-line", "court-floor"],
     ["court-label", "court-floor"],
     ["event-made", "court-floor", MIN_GRAPHIC_CONTRAST],
@@ -152,14 +115,13 @@ function promisedPairs(palette: Palette): Pair[] {
       [`on-solid-${tone}`, `solid-${tone}`],
       [`on-solid-${tone}`, `solid-${tone}-hover`],
       ...[...SURFACES, `tint-${tone}`, `tint-${tone}-hover`].map(
-        (bg): [string, string] => [`ink-${tone}`, bg],
+        (bg): Pair => [`ink-${tone}`, bg],
       ),
     ]),
   ];
 }
 
 function colourOf(palette: Palette, token: string): Rgb {
-  if (token === "white") return WHITE;
   const value = palette[token];
   if (!value) throw new Error(`Unknown colour token --color-${token}`);
   return value;
@@ -186,28 +148,7 @@ function failingPairs(): Record<string, number> {
 }
 
 describe("design-token contrast", () => {
-  const failures = failingPairs();
-
-  if (process.env.UPDATE_CONTRAST_BASELINE) {
-    const sorted = Object.fromEntries(
-      Object.entries(failures).sort(([a], [b]) => a.localeCompare(b)),
-    );
-    writeFileSync(BASELINE_PATH, `${JSON.stringify(sorted, null, 2)}\n`);
-  }
-
-  const baseline: Record<string, number> = JSON.parse(
-    readFileSync(BASELINE_PATH, "utf8"),
-  );
-
-  it("introduces no pairing below 4.5:1 that is not already known", () => {
-    const regressions = Object.keys(failures).filter(
-      (key) => !(key in baseline),
-    );
-    expect(regressions).toEqual([]);
-  });
-
-  it("lists no known failure that has since been fixed", () => {
-    const fixed = Object.keys(baseline).filter((key) => !(key in failures));
-    expect(fixed).toEqual([]);
+  it("clears every promised pairing in every theme", () => {
+    expect(failingPairs()).toEqual({});
   });
 });
