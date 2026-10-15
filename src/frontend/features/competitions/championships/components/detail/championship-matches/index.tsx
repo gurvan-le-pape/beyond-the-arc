@@ -4,7 +4,7 @@
 import { useMemo, useState } from "react";
 
 import type { Match } from "@/features/matches/types";
-import { getSortedRounds } from "@/features/matches/utils";
+import { getCurrentRound } from "@/features/matches/utils";
 import { Card } from "@/shared/components/primitives";
 import { groupBy } from "@/shared/utils";
 
@@ -24,7 +24,7 @@ interface ChampionshipMatchesProps {
  * `?pool=` navigation that re-renders the page with a new list.
  *
  * Mounted with `key={poolId}` by the page, so that switch remounts this and the
- * selected round falls back to the first round of the new pool.
+ * selected round falls back to the current round of the new pool.
  */
 export function ChampionshipMatches({ matches }: ChampionshipMatchesProps) {
   const groupedMatches = useMemo(
@@ -33,7 +33,7 @@ export function ChampionshipMatches({ matches }: ChampionshipMatchesProps) {
   );
 
   const [round, setRound] = useState<number | null>(null);
-  const selectedRound = round ?? getSortedRounds(groupedMatches)[0] ?? null;
+  const selectedRound = round ?? getCurrentRound(groupedMatches);
 
   const [expandedMatchIds, setExpandedMatchIds] = useState<number[]>([]);
 
