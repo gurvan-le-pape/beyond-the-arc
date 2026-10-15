@@ -12,7 +12,7 @@
     "weightLabel": "Poids",
     "club": "Club",
     "shotchartTitle": "Carte des tirs (Hotspots)",
-    "shotchartDescription": "Cette charte hot spots montre la distribution des tirs de l'équipe cette saison.",
+    "shotchartDescription": "Cette carte montre d'où le joueur a tiré cette saison, zone par zone, avec son taux de réussite.",
     "matchHistoryTitle": "Historique des Matchs",
     "compareTitle": "Comparer avec un autre joueur",
     "compareSearch": "Rechercher un joueur à comparer ...",
