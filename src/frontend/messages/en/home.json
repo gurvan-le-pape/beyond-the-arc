@@ -58,6 +58,6 @@
       "name": "Departmental",
       "detail": "Departmental committees"
     },
-    "championshipCount": "{count, plural, one {# championship} other {# championships}}"
+    "championshipCount": "{count, plural, =0 {Not covered yet} one {# championship} other {# championships}}"
   }
 }

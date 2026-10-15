@@ -58,6 +58,6 @@
       "name": "Départemental",
       "detail": "Comités départementaux"
     },
-    "championshipCount": "{count, plural, one {# championnat} other {# championnats}}"
+    "championshipCount": "{count, plural, =0 {Pas encore couvert} one {# championnat} other {# championnats}}"
   }
 }
