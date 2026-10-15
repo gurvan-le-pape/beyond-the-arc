@@ -2,6 +2,7 @@
 import { useTranslations } from "next-intl";
 
 import type { Championship } from "@/features/competitions/championships/types";
+import { ChampionshipLabel } from "@/shared/components/domain";
 import { Badge, Card } from "@/shared/components/primitives";
 import { CompetitionLevel, LEVEL_CONFIG } from "@/shared/constants";
 import { cn, formatCommitteeName, formatLeagueName } from "@/shared/utils";
@@ -92,12 +93,15 @@ export function ChampionshipCard({ championship }: ChampionshipCardProps) {
             {formatLeagueName(championship.leagueName)}
           </span>
         )}
-        {championship.level === CompetitionLevel.NATIONAL &&
-          championship.name && (
-            <p className="font-semibold text-text-heading leading-snug group-hover:text-ink-primary transition-colors duration-200">
-              {championship.name}
-            </p>
-          )}
+        {championship.level === CompetitionLevel.NATIONAL && (
+          <p className="font-semibold text-text-heading leading-snug group-hover:text-ink-primary transition-colors duration-200">
+            <ChampionshipLabel
+              category={championship.category}
+              gender={championship.gender}
+              division={championship.division}
+            />
+          </p>
+        )}
       </div>
     </Card>
   );

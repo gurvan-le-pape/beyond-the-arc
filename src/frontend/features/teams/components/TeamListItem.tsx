@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 
 import type { ClubTeamInfo } from "@/features/organizations/clubs/types";
 import { Link } from "@/navigation";
+import { ChampionshipLabel } from "@/shared/components/domain";
 import { Badge, TextLink } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { formatTeamName } from "@/shared/utils";
@@ -48,7 +49,11 @@ export function TeamListItem({ team, clubName }: TeamListItemProps) {
               {tCommon(`competition.levels.${championship.level}`)}
             </Badge>
             <Text variant="caption" as="span">
-              {championship.name}
+              <ChampionshipLabel
+                category={team.category}
+                gender={team.gender}
+                division={championship.division}
+              />
             </Text>
           </div>
         )}
