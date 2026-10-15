@@ -956,6 +956,11 @@ export interface components {
              * @example Pool A
              */
             name: string;
+            /**
+             * @description Pool letter
+             * @example A
+             */
+            letter: string;
             /** @description Championship details */
             championship: components["schemas"]["ChampionshipInfoDto"];
         };
@@ -1397,6 +1402,11 @@ export interface components {
              * @example Poule A
              */
             name: string;
+            /**
+             * @description Pool letter
+             * @example A
+             */
+            letter: string;
             /** @description Championship the pool belongs to */
             championship: components["schemas"]["MatchChampionshipRefDto"];
         };

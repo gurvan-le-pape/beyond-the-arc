@@ -28,6 +28,7 @@ interface MatchesCardProps {
  */
 export function MatchesCard({ match }: MatchesCardProps) {
   const tMatches = useTranslations("matches");
+  const tTeams = useTranslations("teams");
   const locale = useLocale();
 
   const level = match.pool?.championship?.level;
@@ -60,7 +61,11 @@ export function MatchesCard({ match }: MatchesCardProps) {
           category={match.pool?.championship?.category}
           gender={match.pool?.championship?.gender}
           division={match.pool?.championship?.division}
-          poolLabel={match.pool?.name}
+          poolLabel={
+            match.pool
+              ? tTeams("poolLabel", { letter: match.pool.letter })
+              : null
+          }
           level={level}
         />
       }

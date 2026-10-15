@@ -483,6 +483,7 @@ describe("ClubsService", () => {
           pool: {
             id: 10,
             name: "Pool A",
+            letter: "A",
             championship: {
               id: 1,
               name: "Championship Régional U18",

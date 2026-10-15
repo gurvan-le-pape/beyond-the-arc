@@ -291,6 +291,7 @@ describe("ClubsController", () => {
             pool: {
               id: 1,
               name: "Pool A",
+              letter: "A",
               championship: {
                 id: 1,
                 name: "Championship Régional U18",
@@ -343,6 +344,7 @@ describe("ClubsController", () => {
             pool: {
               id: 2,
               name: "Pool B",
+              letter: "B",
               championship: {
                 id: 2,
                 name: "Championship Départemental U11",

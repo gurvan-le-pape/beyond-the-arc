@@ -188,6 +188,9 @@ export class PoolInfoDto {
   })
   name!: string;
 
+  @ApiProperty({ description: "Pool letter", example: "A", type: String })
+  letter!: string;
+
   @ApiProperty({
     description: "Championship details",
     type: ChampionshipInfoDto,
