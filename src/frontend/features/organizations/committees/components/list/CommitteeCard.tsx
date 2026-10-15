@@ -25,7 +25,7 @@ export function CommitteeCard({ committee, clubLabel }: CommitteeCardProps) {
       href={`/organizations/committees/${committee.id}`}
       className={cn(
         "group relative overflow-hidden",
-        "border-departmental/40 hover:border-departmental",
+        "border-line-departmental hover:border-solid-departmental",
         "flex",
       )}
     >
@@ -51,14 +51,14 @@ export function CommitteeCard({ committee, clubLabel }: CommitteeCardProps) {
           className={cn(
             "flex items-center justify-between gap-3",
             "px-4 py-3 border-b border-white/5",
-            "bg-departmental/10",
+            "bg-tint-departmental",
           )}
         >
           <div className="flex items-center gap-2 min-w-0">
-            <span className="w-2 h-2 rounded-full flex-shrink-0 bg-departmental" />
+            <span className="w-2 h-2 rounded-full flex-shrink-0 bg-solid-departmental" />
             <Text
               variant="label"
-              className="font-semibold text-departmental-strong truncate"
+              className="font-semibold text-ink-departmental truncate"
             >
               {committee.department?.name ?? committee.department?.code}
             </Text>
@@ -76,7 +76,7 @@ export function CommitteeCard({ committee, clubLabel }: CommitteeCardProps) {
             {formatCommitteeName(committee.name)}
           </Text>
           <div className="flex-shrink-0 text-right">
-            <p className="text-2xl font-bold text-departmental-strong leading-none">
+            <p className="text-2xl font-bold text-ink-departmental leading-none">
               {committee.clubCount}
             </p>
             <Text variant="caption" className="mt-0.5">

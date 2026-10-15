@@ -2,30 +2,30 @@
 
 export const LEVEL_CONFIG = {
   departmental: {
-    bg: "bg-departmental-subtle",
-    border: "border-departmental",
-    text: "text-departmental-strong",
+    bg: "bg-tint-departmental",
+    border: "border-solid-departmental",
+    text: "text-ink-departmental",
     badgeVariant: "departmental-on-header" as const,
     hover:
-      "hover:border-departmental/40 hover:shadow-[0_0_0_1px_var(--color-departmental)]",
+      "hover:border-line-departmental hover:shadow-[0_0_0_1px_rgb(var(--color-solid-departmental))]",
   },
 
   regional: {
-    bg: "bg-regional-subtle",
-    border: "border-regional",
-    text: "text-regional-strong",
+    bg: "bg-tint-regional",
+    border: "border-solid-regional",
+    text: "text-ink-regional",
     badgeVariant: "regional-on-header" as const,
     hover:
-      "hover:border-regional/40 hover:shadow-[0_0_0_1px_var(--color-regional)]",
+      "hover:border-line-regional hover:shadow-[0_0_0_1px_rgb(var(--color-solid-regional))]",
   },
 
   national: {
-    bg: "bg-national-subtle",
-    border: "border-national",
-    text: "text-national-strong",
+    bg: "bg-tint-national",
+    border: "border-solid-national",
+    text: "text-ink-national",
     badgeVariant: "national-on-header" as const,
     hover:
-      "hover:border-national/40 hover:shadow-[0_0_0_1px_var(--color-national)]",
+      "hover:border-line-national hover:shadow-[0_0_0_1px_rgb(var(--color-solid-national))]",
   },
 
   default: {

@@ -24,7 +24,7 @@ export function LeagueCard({ league, clubLabel }: LeagueCardProps) {
       href={`/organizations/leagues/${league.id}`}
       className={cn(
         "group relative overflow-hidden",
-        "border-regional/40 hover:border-regional",
+        "border-line-regional hover:border-solid-regional",
         "flex",
       )}
     >
@@ -48,14 +48,14 @@ export function LeagueCard({ league, clubLabel }: LeagueCardProps) {
           className={cn(
             "flex items-center justify-between gap-3",
             "px-4 py-3 border-b border-white/5",
-            "bg-regional/10",
+            "bg-tint-regional",
           )}
         >
           <div className="flex items-center gap-2 min-w-0">
-            <span className="w-2 h-2 rounded-full flex-shrink-0 bg-regional" />
+            <span className="w-2 h-2 rounded-full flex-shrink-0 bg-solid-regional" />
             <Text
               variant="label"
-              className="font-semibold text-regional-strong truncate"
+              className="font-semibold text-ink-regional truncate"
             >
               {league.region.name}
             </Text>
@@ -73,7 +73,7 @@ export function LeagueCard({ league, clubLabel }: LeagueCardProps) {
             {formatLeagueName(league.name)}
           </Text>
           <div className="flex-shrink-0 text-right">
-            <p className="text-2xl font-bold text-regional-strong leading-none">
+            <p className="text-2xl font-bold text-ink-regional leading-none">
               {league.clubCount}
             </p>
             <Text variant="caption" className="mt-0.5">

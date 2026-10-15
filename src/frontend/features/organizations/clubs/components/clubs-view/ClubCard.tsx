@@ -24,7 +24,7 @@ export function ClubCard({ club }: ClubCardProps) {
       href={`/organizations/clubs/${club.id}`}
       className={cn(
         "group relative overflow-hidden",
-        "border-clubs/40 hover:border-clubs",
+        "border-line-clubs hover:border-solid-clubs",
         "flex",
       )}
     >
@@ -40,13 +40,13 @@ export function ClubCard({ club }: ClubCardProps) {
 
       <div className="flex-1 min-w-0 flex flex-col">
         {(club.city || club.zipCode) && (
-          <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-white/5 bg-clubs/10">
+          <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-white/5 bg-tint-clubs">
             <div className="flex items-center gap-2 min-w-0">
-              <span className="w-2 h-2 rounded-full flex-shrink-0 bg-clubs" />
+              <span className="w-2 h-2 rounded-full flex-shrink-0 bg-solid-clubs" />
               {club.city && (
                 <Text
                   variant="label"
-                  className="font-medium text-clubs-strong truncate"
+                  className="font-medium text-ink-clubs truncate"
                 >
                   {club.city}
                 </Text>

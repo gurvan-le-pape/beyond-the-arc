@@ -126,7 +126,7 @@ export default async function ArchitecturePage({ params }: LocalePageProps) {
           />
           <FeatureBadge
             icon={Layers}
-            iconClassName="bg-clubs-subtle text-clubs"
+            iconClassName="bg-tint-clubs text-ink-clubs"
             title={t("architecture.features.scalable.title")}
             description={t("architecture.features.scalable.description")}
           />

@@ -39,12 +39,12 @@ export function TitleSection({ viewLevel }: TitleSectionProps) {
         return {
           icon: (
             <MapPin
-              className="w-8 h-8 flex-shrink-0 text-regional-strong"
+              className="w-8 h-8 flex-shrink-0 text-ink-regional"
               aria-hidden="true"
             />
           ),
           cardClassName:
-            "bg-gradient-to-br from-regional-subtle to-regional-subtle/40 border-regional shadow-card",
+            "bg-gradient-to-br from-tint-regional to-tint-regional/40 border-solid-regional shadow-card",
           iconClassName: "",
           titleColor: "text-text-heading",
           title: tCommon("sectionTitles.regionalLeagues"),
@@ -54,12 +54,12 @@ export function TitleSection({ viewLevel }: TitleSectionProps) {
         return {
           icon: (
             <SignpostBig
-              className="w-8 h-8 flex-shrink-0 text-departmental-strong"
+              className="w-8 h-8 flex-shrink-0 text-ink-departmental"
               aria-hidden="true"
             />
           ),
           cardClassName:
-            "bg-gradient-to-br from-departmental-subtle to-departmental-subtle/40 border-departmental shadow-card",
+            "bg-gradient-to-br from-tint-departmental to-tint-departmental/40 border-solid-departmental shadow-card",
           iconClassName: "", // color handled in icon
           titleColor: "text-text-heading",
           title: tCommon("sectionTitles.departmentalCommittees"),
@@ -69,12 +69,12 @@ export function TitleSection({ viewLevel }: TitleSectionProps) {
         return {
           icon: (
             <Users
-              className="w-8 h-8 flex-shrink-0 text-clubs-strong"
+              className="w-8 h-8 flex-shrink-0 text-ink-clubs"
               aria-hidden="true"
             />
           ),
           cardClassName:
-            "bg-gradient-to-br from-clubs-subtle to-clubs-subtle/40 border-clubs shadow-card",
+            "bg-gradient-to-br from-tint-clubs to-tint-clubs/40 border-solid-clubs shadow-card",
           iconClassName: "",
           titleColor: "text-text-heading",
           title: tCommon("sectionTitles.clubs"),

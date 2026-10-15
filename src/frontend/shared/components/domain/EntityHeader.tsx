@@ -68,7 +68,7 @@ export function EntityHeader({
       padding="none"
       className={cn(
         "overflow-hidden border-2",
-        isFemale ? "border-team-female" : "border-team-male",
+        isFemale ? "border-solid-female" : "border-solid-male",
       )}
     >
       <div className="flex items-center gap-3 p-4 sm:gap-5 sm:p-6">
