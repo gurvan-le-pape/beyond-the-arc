@@ -11,8 +11,6 @@ import { formatPhone, toSafeExternalUrl } from "@/shared/utils";
 
 interface OrganizationInfoProps {
   readonly address?: string | null;
-  readonly city?: string | null;
-  readonly zipCode?: string | null;
   readonly phone?: string | null;
   readonly email?: string | null;
   readonly website?: string | null;
@@ -28,8 +26,6 @@ interface OrganizationInfoProps {
  */
 export function OrganizationInfo({
   address,
-  city,
-  zipCode,
   phone,
   email,
   website,
@@ -39,9 +35,9 @@ export function OrganizationInfo({
   const tCommon = useTranslations("common");
 
   // `website` is scraped, so it is untrusted input reaching an href. A value
-  // that is not an absolute http(s) URL renders as "no website" rather than as
-  // a link — same treatment as null, which is what the field already is for
-  // every club in production.
+  // that is not an absolute http(s) URL gets no tile, like null — which is
+  // what the field is for every club in production, so a "not available" tile
+  // would be on every page.
   const safeWebsite = toSafeExternalUrl(website);
 
   return (
@@ -52,20 +48,6 @@ export function OrganizationInfo({
           value={address}
           icon={<MapPin className="w-4 h-4" />}
         />
-        {city !== undefined && (
-          <InfoBox
-            label={t("info.city")}
-            value={city}
-            icon={<MapPin className="w-4 h-4" />}
-          />
-        )}
-        {zipCode !== undefined && (
-          <InfoBox
-            label={t("info.zipCode")}
-            value={zipCode}
-            icon={<MapPin className="w-4 h-4" />}
-          />
-        )}
         <InfoBox
           label={t("info.phone")}
           value={formatPhone(phone)}
@@ -78,10 +60,10 @@ export function OrganizationInfo({
           href={email ? `mailto:${email}` : undefined}
           icon={<Mail className="w-4 h-4" />}
         />
-        {website !== undefined && (
+        {safeWebsite && (
           <InfoBox
             label={t("info.website")}
-            value={safeWebsite ? t("info.visitWebsite") : null}
+            value={t("info.visitWebsite")}
             href={safeWebsite}
             icon={<Globe className="w-4 h-4" />}
           />

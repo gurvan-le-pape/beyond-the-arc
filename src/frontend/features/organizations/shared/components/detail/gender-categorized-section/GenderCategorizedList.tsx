@@ -12,7 +12,7 @@ interface GenderCategorizedListProps<T> {
   readonly genderLabel: string;
   readonly genderKey: Gender;
   readonly items: T[];
-  readonly expandedCategories: Record<string, boolean>;
+  readonly isExpanded: (categoryKey: string) => boolean;
   readonly toggleCategory: (key: string) => void;
   readonly getCategory: (item: T) => Category;
   readonly getId: (item: T) => number | string;
@@ -45,7 +45,7 @@ export function GenderCategorizedList<T>({
   genderLabel,
   genderKey,
   items,
-  expandedCategories,
+  isExpanded,
   toggleCategory,
   getCategory,
   getId,
@@ -79,7 +79,6 @@ export function GenderCategorizedList<T>({
           .map((category) => {
             const categoryItems = grouped[category] ?? [];
             const categoryKey = `${genderKey}-${category}`;
-            const isExpanded = expandedCategories[categoryKey] === true;
 
             return (
               <CategorySection
@@ -87,7 +86,7 @@ export function GenderCategorizedList<T>({
                 category={category}
                 items={categoryItems}
                 categoryKey={categoryKey}
-                isExpanded={isExpanded}
+                isExpanded={isExpanded(categoryKey)}
                 toggleCategory={toggleCategory}
                 getId={getId}
                 renderItem={renderItem}

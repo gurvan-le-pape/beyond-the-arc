@@ -45,6 +45,12 @@ interface GenderCategorizedSectionProps {
   readonly title: string;
   readonly variant?: "highlighted" | "default";
   readonly emptyState: React.ReactNode;
+  /**
+   * Opens every category on arrival. Right for a club's handful of teams,
+   * which are the point of the page; wrong for an organisation's dozens of
+   * championships, which stay folded.
+   */
+  readonly defaultExpanded?: boolean;
 }
 
 /**
@@ -59,8 +65,9 @@ export function GenderCategorizedSection({
   title,
   variant = "highlighted",
   emptyState,
+  defaultExpanded = false,
 }: GenderCategorizedSectionProps) {
-  const { expandedCategories, toggleCategory } = useToggleCategory();
+  const { isExpanded, toggleCategory } = useToggleCategory(defaultExpanded);
   const tCommon = useTranslations("common");
 
   if (!items?.length) return <>{emptyState}</>;
@@ -74,7 +81,7 @@ export function GenderCategorizedSection({
           genderLabel={tCommon("gender.female")}
           genderKey={Gender.FEMALE}
           items={byGender[Gender.FEMALE] || []}
-          expandedCategories={expandedCategories}
+          isExpanded={isExpanded}
           toggleCategory={toggleCategory}
           getCategory={getCategory}
           getId={getId}
@@ -84,7 +91,7 @@ export function GenderCategorizedSection({
           genderLabel={tCommon("gender.male")}
           genderKey={Gender.MALE}
           items={byGender[Gender.MALE] || []}
-          expandedCategories={expandedCategories}
+          isExpanded={isExpanded}
           toggleCategory={toggleCategory}
           getCategory={getCategory}
           getId={getId}

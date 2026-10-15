@@ -7,22 +7,30 @@ import { useCallback, useState } from "react";
  * Expansion state for the category groups, keyed by category.
  *
  * **Independently expandable**, unlike the docs accordion — a reader comparing
- * two age groups keeps both open. A category absent from the record is closed,
- * so the initial state is an empty object rather than one entry per category.
+ * two age groups keeps both open. A category absent from the record takes
+ * `defaultExpanded`, so the initial state is an empty object rather than one
+ * entry per category.
  *
- * @returns the per-category open flags and a toggle taking a category key
+ * @param defaultExpanded - whether a category nobody has toggled yet is open
+ * @returns whether a category is open, and a toggle taking a category key
  */
-export function useToggleCategory() {
-  const [expandedCategories, setExpandedCategories] = useState<
-    Record<string, boolean>
-  >({});
+export function useToggleCategory(defaultExpanded = false) {
+  const [toggled, setToggled] = useState<Record<string, boolean>>({});
 
-  const toggleCategory = useCallback((categoryKey: string) => {
-    setExpandedCategories((prev) => ({
-      ...prev,
-      [categoryKey]: !prev[categoryKey],
-    }));
-  }, []);
+  const isExpanded = useCallback(
+    (categoryKey: string) => toggled[categoryKey] ?? defaultExpanded,
+    [toggled, defaultExpanded],
+  );
 
-  return { expandedCategories, toggleCategory };
+  const toggleCategory = useCallback(
+    (categoryKey: string) => {
+      setToggled((prev) => ({
+        ...prev,
+        [categoryKey]: !(prev[categoryKey] ?? defaultExpanded),
+      }));
+    },
+    [defaultExpanded],
+  );
+
+  return { isExpanded, toggleCategory };
 }
