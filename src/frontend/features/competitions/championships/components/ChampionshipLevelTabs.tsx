@@ -35,7 +35,9 @@ export function ChampionshipLevelTabs() {
   ];
 
   return (
-    <QueryTabs tabs={tabs}>
+    // Opens on regional: the import holds no national championships, so the
+    // national tab is empty and stays only to show where that level sits.
+    <QueryTabs tabs={tabs} defaultTab={TABS.REGIONAL}>
       <TabsContent value={TABS.NATIONAL}>
         <NationalTab />
       </TabsContent>
