@@ -29,7 +29,7 @@ export function TeamUpcomingMatchesTable({
   const tCommon = useTranslations("common");
   const tTeams = useTranslations("teams");
 
-  const columns = useTeamMatchHistoryColumns(team);
+  const columns = useTeamMatchHistoryColumns(team, { withResult: false });
 
   if (matches.length === 0) return null;
 

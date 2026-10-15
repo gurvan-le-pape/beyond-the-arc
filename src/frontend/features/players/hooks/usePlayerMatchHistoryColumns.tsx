@@ -7,6 +7,7 @@ import { useMemo } from "react";
 import {
   buildMatchDateColumn,
   buildOpponentColumn,
+  buildResultColumn,
 } from "@/shared/components/domain";
 import type { TableColumn } from "@/shared/components/table";
 
@@ -46,6 +47,16 @@ export function usePlayerMatchHistoryColumns(
           venue === "home"
             ? t("matchHistory.opponentHome", { opponent })
             : t("matchHistory.opponentAway", { opponent }),
+      ),
+      buildResultColumn<PlayerMatchHistory>(
+        t("matchHistory.result"),
+        player.team?.id ?? -1,
+        {
+          win: t("matchHistory.win"),
+          winShort: t("matchHistory.winShort"),
+          loss: t("matchHistory.loss"),
+          lossShort: t("matchHistory.lossShort"),
+        },
       ),
       {
         key: "pts",
