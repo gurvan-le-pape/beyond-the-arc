@@ -11,6 +11,7 @@ import { Type } from "class-transformer";
 import {
   IsEnum,
   IsInt,
+  IsISO8601,
   IsOptional,
   IsString,
   Matches,
@@ -123,6 +124,9 @@ export class GetMatchesQueryDto extends PaginationQueryDto {
   @Matches(/^\d{4}-\d{2}-\d{2}$/, {
     message: "date must be in YYYY-MM-DD format",
   })
+  // The pattern accepts 2026-02-30; strict ISO 8601 checks the day exists, so
+  // an impossible date is a 400 here rather than an Invalid Date in the query.
+  @IsISO8601({ strict: true }, { message: "date must be a calendar date" })
   date?: string;
 
   @ApiPropertyOptional({
