@@ -4,6 +4,8 @@
  */
 
 export * from "./detail/match-events/index";
+export * from "./detail/MatchBreadcrumb";
+export * from "./detail/MatchMeta";
 export * from "./detail/MatchSummaryTabs";
 export * from "./detail/player-match-stats/index";
 export * from "./detail/TeamStatsComparison";
