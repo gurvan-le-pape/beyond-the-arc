@@ -120,7 +120,7 @@ export function PlayerComparison({
 
         {/* Side by side from sm up; stacked on phones, where the search box
             would otherwise shrink to its icon beside the player card. */}
-        <div className="relative z-10 flex flex-col sm:flex-row items-stretch sm:items-center justify-between px-4 py-4 sm:px-6 sm:py-6 gap-4">
+        <div className="relative z-raised flex flex-col sm:flex-row items-stretch sm:items-center justify-between px-4 py-4 sm:px-6 sm:py-6 gap-4">
           <PlayerIdentity
             player={player}
             side="left"

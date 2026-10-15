@@ -60,7 +60,7 @@ export function ShotModal({
   return (
     <dialog
       ref={dialogRef}
-      className="fixed inset-0 z-50 overflow-y-auto bg-black/40 m-0 max-w-none max-h-none w-full h-full p-4 sm:p-6 border-0 backdrop:bg-transparent open:flex justify-center"
+      className="fixed inset-0 z-modal overflow-y-auto bg-black/40 m-0 max-w-none max-h-none w-full h-full p-4 sm:p-6 border-0 backdrop:bg-transparent open:flex justify-center"
     >
       {/* The card is the dialog's direct child, so a click on the padding
           around it targets the dialog itself and dismisses it. `my-auto`

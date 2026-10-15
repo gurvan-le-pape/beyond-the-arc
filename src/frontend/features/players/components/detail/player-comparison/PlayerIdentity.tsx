@@ -38,7 +38,7 @@ export function PlayerIdentity({
         #{player.number}
       </span>
 
-      <Text variant="h4" as="span" className="-mt-2 relative z-10">
+      <Text variant="h4" as="span" className="-mt-2 relative z-raised">
         {player.name}
       </Text>
 

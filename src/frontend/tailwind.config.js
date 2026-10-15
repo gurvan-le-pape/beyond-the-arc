@@ -94,6 +94,22 @@ module.exports = {
       },
 
       // -----------------------------------------------------------------------
+      // STACKING — one named layer per job, so two components never fight with
+      // raw numbers. Ordered: an element lifted inside its own component, a
+      // menu anchored to a control, the sticky header, a drawer's backdrop and
+      // the drawer, a modal dialog, the skip link above everything.
+      // -----------------------------------------------------------------------
+      zIndex: {
+        raised: "10",
+        dropdown: "20",
+        header: "30",
+        backdrop: "40",
+        drawer: "45",
+        modal: "50",
+        skip: "60",
+      },
+
+      // -----------------------------------------------------------------------
       // TYPOGRAPHY
       // -----------------------------------------------------------------------
       fontSize: {

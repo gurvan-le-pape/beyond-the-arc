@@ -42,7 +42,7 @@ export function Header() {
   }, [pathname, setMenuOpen]);
 
   return (
-    <header className="backdrop-blur-md bg-header border-b border-divide shadow-card sticky top-0 z-30 transition-colors">
+    <header className="backdrop-blur-md bg-header border-b border-divide shadow-card sticky top-0 z-header transition-colors">
       <nav
         className="flex justify-between items-center px-4 sm:px-6 lg:px-8 h-16"
         role="navigation"
