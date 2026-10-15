@@ -4,6 +4,7 @@
  */
 
 export * from "./buildTeam";
+export * from "./eventDescription";
 export * from "./eventHelpers";
 export * from "./formatPlaytime";
 export * from "./getSortedRounds";

@@ -12,9 +12,9 @@ interface TimelineEventBlockProps {
   readonly align: "left" | "right";
   /** Resolved display config for this event's type. */
   readonly style: EventStyle;
-  /** The enriched event (includes description, occurredAt, etc.). */
+  /** The enriched event (occurredAt, score, players). */
   readonly event: EventWithScore;
-  /** The description split into runs, player names marked (see utils). */
+  /** The translated description split into runs, player names marked; empty when the event has none. */
   readonly descriptionTokens: readonly EventDescriptionToken[];
   /** Match kick-off time, used to derive the game-clock display. */
   readonly matchDate: Date | string;
@@ -90,7 +90,7 @@ export function TimelineEventBlock({
         {/* Description. The player names are real anchors rendered by React,
             not an HTML string handed to dangerouslySetInnerHTML, so nothing
             here depends on the description being tag-free. */}
-        {event.description && (
+        {descriptionTokens.length > 0 && (
           <p
             className={cn(
               "text-text-body mt-0.5",

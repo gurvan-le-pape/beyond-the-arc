@@ -80,7 +80,27 @@
     "players": "Joueurs",
     "clearSelection": "Effacer la sélection",
     "latestFirst": "Récent d'abord",
-    "quarter": "Quart-temps"
+    "quarter": "Quart-temps",
+    "descriptions": {
+      "shotMade": "{shooter} marque.",
+      "shotMadeAssisted": "{shooter} marque sur une passe de {assister}.",
+      "shotMissed": "{shooter} manque son tir.",
+      "freeThrowMade": "{shooter} réussit son lancer franc.",
+      "freeThrowMissed": "{shooter} manque son lancer franc.",
+      "andOne": "{shooter} marque malgré la faute de {fouler}.",
+      "shootingFoul": "{fouler} fait faute sur le tir de {shooter}.",
+      "foul": "{fouler} fait faute sur {victim}.",
+      "technicalFoul": "Faute technique pour {fouler}.",
+      "steal": "{stealer} intercepte le ballon de {victim}.",
+      "block": "{blocker} contre le tir de {blocked}.",
+      "rebound": "{rebounder} prend le rebond.",
+      "inbound": "{shooter} remet le ballon en jeu.",
+      "turnover": "Perte de balle de {shooter}.",
+      "substitution": "{entering} remplace {exiting}.",
+      "tipOff": "{winner} remporte l'entre-deux.",
+      "quarterEnd": "Fin du quart-temps.",
+      "shotClock": "Violation des 24 secondes."
+    }
   },
   "matchSummary": {
     "title": "Résumé du match",

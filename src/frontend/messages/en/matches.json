@@ -80,7 +80,27 @@
     "players": "Players",
     "clearSelection": "Clear selection",
     "latestFirst": "Latest first",
-    "quarter": "Quarter"
+    "quarter": "Quarter",
+    "descriptions": {
+      "shotMade": "{shooter} scores.",
+      "shotMadeAssisted": "{shooter} scores, assisted by {assister}.",
+      "shotMissed": "{shooter} misses.",
+      "freeThrowMade": "{shooter} makes the free throw.",
+      "freeThrowMissed": "{shooter} misses the free throw.",
+      "andOne": "{shooter} scores through {fouler}'s foul.",
+      "shootingFoul": "{fouler} fouls {shooter} on the shot.",
+      "foul": "{fouler} fouls {victim}.",
+      "technicalFoul": "Technical foul on {fouler}.",
+      "steal": "{stealer} steals the ball from {victim}.",
+      "block": "{blocker} blocks {blocked}'s shot.",
+      "rebound": "{rebounder} grabs the rebound.",
+      "inbound": "{shooter} inbounds the ball.",
+      "turnover": "Turnover by {shooter}.",
+      "substitution": "{entering} comes in for {exiting}.",
+      "tipOff": "{winner} wins the tip-off.",
+      "quarterEnd": "End of the quarter.",
+      "shotClock": "Shot clock violation."
+    }
   },
   "matchSummary": {
     "title": "Match Summary",

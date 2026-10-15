@@ -4,7 +4,10 @@
 import { useTranslations } from "next-intl";
 
 import type { EventStyle, EventWithScore } from "@/features/matches/types";
-import { tokenizeEventDescription } from "@/features/matches/utils";
+import {
+  describeEvent,
+  tokenizeEventDescription,
+} from "@/features/matches/utils";
 import type { TeamInfo } from "@/features/teams/types";
 import { EventCategory } from "@/shared/constants";
 
@@ -68,8 +71,15 @@ export function MatchEventsTimeline({
             // Pre-computed here rather than in the block because only one of
             // the two branches below renders, and the tokens are the same
             // either way.
-            const descriptionTokens = event.description
-              ? tokenizeEventDescription(event.description, event.players)
+            const description = describeEvent(event);
+            const descriptionTokens = description
+              ? tokenizeEventDescription(
+                  tMatches(
+                    `matchEvents.descriptions.${description.key}`,
+                    description.values,
+                  ),
+                  event.players,
+                )
               : [];
 
             let eventTeamName: string | null = null;
