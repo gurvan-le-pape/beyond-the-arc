@@ -6,6 +6,7 @@ import {
   buildClubOrganizationWhere,
   mapPlayerMatchStats,
   mapPlayerSummary,
+  nameContains,
   PLAYER_MATCH_STAT_FIELDS_SELECT,
   resolvePagination,
 } from "@common/utils";
@@ -505,7 +506,7 @@ export class TeamsService {
     if (filters?.clubId) clubWhere.id = filters.clubId;
 
     if (filters?.search) {
-      clubWhere.name = { contains: filters.search, mode: "insensitive" };
+      clubWhere.name = nameContains(filters.search);
     }
 
     return Object.keys(clubWhere).length > 0 ? clubWhere : undefined;

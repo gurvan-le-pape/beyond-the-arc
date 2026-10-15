@@ -11,6 +11,7 @@ import {
   buildClubOrganizationWhere,
   mapPlayerMatchStats,
   mapPlayerSummary,
+  nameContains,
   PLAYER_MATCH_STAT_FIELDS_SELECT,
   resolvePagination,
 } from "@common/utils";
@@ -410,8 +411,7 @@ export class PlayersService {
   private buildWhereClause(filters?: PlayerFilters): Prisma.PlayersWhereInput {
     const where: Prisma.PlayersWhereInput = {};
 
-    if (filters?.search)
-      where.name = { contains: filters.search, mode: "insensitive" };
+    if (filters?.search) where.name = nameContains(filters.search);
     if (filters?.number) where.number = filters.number;
 
     const teamWhere = this.buildTeamFilter(filters);

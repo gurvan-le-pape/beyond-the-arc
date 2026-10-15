@@ -4,6 +4,7 @@ import { PaginatedResponseDto } from "@common/dto";
 import {
   assignRankByCount,
   buildClubOrganizationWhere,
+  nameContains,
   PRESIDENT_SELECT,
   resolvePagination,
 } from "@common/utils";
@@ -268,7 +269,7 @@ export class ClubsService {
     };
 
     if (filters.search) {
-      where.name = { contains: filters.search, mode: "insensitive" };
+      where.name = nameContains(filters.search);
     }
 
     // Build teams filter if category, gender, or level specified
