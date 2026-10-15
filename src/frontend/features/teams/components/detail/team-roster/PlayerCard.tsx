@@ -51,7 +51,7 @@ export function PlayerCard({ player, href }: PlayerCardProps) {
           {player.name}
         </Text>
         <Badge variant={positionVariant(player.position)} size="sm">
-          {player.position}
+          {tCommon(`positions.${player.position}`)}
         </Badge>
       </div>
 

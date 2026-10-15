@@ -47,7 +47,7 @@ export function usePlayerStatColumns(
         align: "center",
         // Closes the identity group; the divider moved here with the reorder.
         divider: "right",
-        render: (p) => p.player.position,
+        render: (p) => tCommon(`positions.${p.player.position}`),
       },
       {
         key: "points",
