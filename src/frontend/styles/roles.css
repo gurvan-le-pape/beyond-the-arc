@@ -330,33 +330,33 @@
 }
 
 .high-contrast {
-  --color-solid-primary: 62 99 221; /* indigo-9 */
-  --color-solid-primary-hover: 67 93 177; /* indigo-8 */
-  --color-on-solid-primary: 255 255 255; /* white */
-  --color-tint-primary: 24 36 73; /* indigo-3 */
-  --color-tint-primary-hover: 29 46 98; /* indigo-4 */
-  --color-ink-primary: 158 177 255; /* indigo-11→12 at 0% */
-  --color-line-primary: 58 79 151; /* indigo-7 */
-  --color-solid-secondary: 70 167 88; /* grass-9 */
-  --color-solid-secondary-hover: 83 179 101; /* grass-10 */
+  --color-solid-primary: 255 230 41; /* yellow-9 */
+  --color-solid-primary-hover: 255 255 87; /* yellow-10 */
+  --color-on-solid-primary: 28 32 36; /* light slate-12 */
+  --color-tint-primary: 45 35 5; /* yellow-3 */
+  --color-tint-primary-hover: 54 43 0; /* yellow-4 */
+  --color-ink-primary: 245 225 71; /* yellow-11→12 at 0% */
+  --color-line-primary: 102 84 23; /* yellow-7 */
+  --color-solid-secondary: 76 204 230; /* cyan-11 */
+  --color-solid-secondary-hover: 182 236 247; /* cyan-12 */
   --color-on-solid-secondary: 28 32 36; /* light slate-12 */
-  --color-tint-secondary: 27 42 30; /* grass-3 */
-  --color-tint-secondary-hover: 29 58 36; /* grass-4 */
-  --color-ink-secondary: 113 208 131; /* grass-11→12 at 0% */
-  --color-line-secondary: 54 103 64; /* grass-7 */
-  --color-solid-success: 48 164 108; /* green-9 */
-  --color-solid-success-hover: 51 176 116; /* green-10 */
+  --color-tint-secondary: 8 44 54; /* cyan-3 */
+  --color-tint-secondary-hover: 0 56 72; /* cyan-4 */
+  --color-ink-secondary: 96 209 233; /* cyan-11→12 at 15% */
+  --color-line-secondary: 18 103 126; /* cyan-7 */
+  --color-solid-success: 61 214 140; /* green-11 */
+  --color-solid-success-hover: 177 241 203; /* green-12 */
   --color-on-solid-success: 28 32 36; /* light slate-12 */
   --color-tint-success: 19 45 33; /* green-3 */
   --color-tint-success-hover: 17 59 41; /* green-4 */
-  --color-ink-success: 61 214 140; /* green-11→12 at 0% */
+  --color-ink-success: 85 218 149; /* green-11→12 at 15% */
   --color-line-success: 40 104 74; /* green-7 */
-  --color-solid-error: 236 93 94; /* red-10 */
-  --color-solid-error-hover: 255 149 146; /* red-11 */
+  --color-solid-error: 255 149 146; /* red-11 */
+  --color-solid-error-hover: 255 209 217; /* red-12 */
   --color-on-solid-error: 28 32 36; /* light slate-12 */
   --color-tint-error: 59 18 25; /* red-3 */
   --color-tint-error-hover: 80 15 28; /* red-4 */
-  --color-ink-error: 255 149 146; /* red-11→12 at 0% */
+  --color-ink-error: 255 152 150; /* red-11→12 at 5% */
   --color-line-error: 140 51 58; /* red-7 */
   --color-solid-warning: 255 197 61; /* amber-9 */
   --color-solid-warning-hover: 255 214 10; /* amber-10 */
@@ -365,40 +365,40 @@
   --color-tint-warning-hover: 63 39 0; /* amber-4 */
   --color-ink-warning: 255 202 22; /* amber-11→12 at 0% */
   --color-line-warning: 113 79 25; /* amber-7 */
-  --color-solid-info: 0 162 199; /* cyan-9 */
-  --color-solid-info-hover: 35 175 208; /* cyan-10 */
+  --color-solid-info: 76 204 230; /* cyan-11 */
+  --color-solid-info-hover: 182 236 247; /* cyan-12 */
   --color-on-solid-info: 28 32 36; /* light slate-12 */
   --color-tint-info: 8 44 54; /* cyan-3 */
   --color-tint-info-hover: 0 56 72; /* cyan-4 */
-  --color-ink-info: 76 204 230; /* cyan-11→12 at 0% */
+  --color-ink-info: 96 209 233; /* cyan-11→12 at 15% */
   --color-line-info: 18 103 126; /* cyan-7 */
   --color-solid-male: 124 226 254; /* sky-9 */
   --color-solid-male-hover: 168 238 255; /* sky-10 */
   --color-on-solid-male: 28 32 36; /* light slate-12 */
   --color-tint-male: 17 40 64; /* sky-3 */
   --color-tint-male-hover: 17 53 85; /* sky-4 */
-  --color-ink-male: 117 199 240; /* sky-11→12 at 0% */
+  --color-ink-male: 125 203 242; /* sky-11→12 at 10% */
   --color-line-male: 31 102 146; /* sky-7 */
-  --color-solid-female: 222 81 168; /* pink-10 */
-  --color-solid-female-hover: 255 141 204; /* pink-11 */
+  --color-solid-female: 255 141 204; /* pink-11 */
+  --color-solid-female-hover: 253 209 234; /* pink-12 */
   --color-on-solid-female: 28 32 36; /* light slate-12 */
   --color-tint-female: 55 23 47; /* pink-3 */
   --color-tint-female-hover: 75 20 61; /* pink-4 */
-  --color-ink-female: 255 141 204; /* pink-11→12 at 0% */
+  --color-ink-female: 255 148 207; /* pink-11→12 at 10% */
   --color-line-female: 131 56 105; /* pink-7 */
-  --color-solid-national: 91 91 214; /* iris-9 */
-  --color-solid-national-hover: 89 88 177; /* iris-8 */
-  --color-on-solid-national: 255 255 255; /* white */
+  --color-solid-national: 177 169 255; /* iris-11 */
+  --color-solid-national-hover: 224 223 254; /* iris-12 */
+  --color-on-solid-national: 28 32 36; /* light slate-12 */
   --color-tint-national: 32 34 72; /* iris-3 */
   --color-tint-national-hover: 38 42 101; /* iris-4 */
-  --color-ink-national: 177 169 255; /* iris-11→12 at 0% */
+  --color-ink-national: 188 183 255; /* iris-11→12 at 25% */
   --color-line-national: 74 74 149; /* iris-7 */
-  --color-solid-regional: 18 165 148; /* teal-9 */
-  --color-solid-regional-hover: 14 179 158; /* teal-10 */
+  --color-solid-regional: 11 216 182; /* teal-11 */
+  --color-solid-regional-hover: 173 240 221; /* teal-12 */
   --color-on-solid-regional: 28 32 36; /* light slate-12 */
   --color-tint-regional: 13 45 42; /* teal-3 */
   --color-tint-regional-hover: 2 59 55; /* teal-4 */
-  --color-ink-regional: 11 216 182; /* teal-11→12 at 0% */
+  --color-ink-regional: 52 219 186; /* teal-11→12 at 10% */
   --color-line-regional: 28 105 97; /* teal-7 */
   --color-solid-departmental: 255 230 41; /* yellow-9 */
   --color-solid-departmental-hover: 255 255 87; /* yellow-10 */
@@ -407,47 +407,47 @@
   --color-tint-departmental-hover: 54 43 0; /* yellow-4 */
   --color-ink-departmental: 245 225 71; /* yellow-11→12 at 0% */
   --color-line-departmental: 102 84 23; /* yellow-7 */
-  --color-solid-clubs: 110 86 207; /* violet-9 */
-  --color-solid-clubs-hover: 105 88 173; /* violet-8 */
-  --color-on-solid-clubs: 255 255 255; /* white */
+  --color-solid-clubs: 186 167 255; /* violet-11 */
+  --color-solid-clubs-hover: 226 221 254; /* violet-12 */
+  --color-on-solid-clubs: 28 32 36; /* light slate-12 */
   --color-tint-clubs: 41 31 67; /* violet-3 */
   --color-tint-clubs-hover: 51 37 91; /* violet-4 */
-  --color-ink-clubs: 186 167 255; /* violet-11→12 at 0% */
+  --color-ink-clubs: 194 178 255; /* violet-11→12 at 20% */
   --color-line-clubs: 86 70 139; /* violet-7 */
-  --color-solid-category: 105 110 119; /* slate-9 */
-  --color-solid-category-hover: 90 97 105; /* slate-8 */
-  --color-on-solid-category: 255 255 255; /* white */
+  --color-solid-category: 176 180 186; /* slate-11 */
+  --color-solid-category-hover: 237 238 240; /* slate-12 */
+  --color-on-solid-category: 28 32 36; /* light slate-12 */
   --color-tint-category: 33 34 37; /* slate-3 */
   --color-tint-category-hover: 39 42 45; /* slate-4 */
-  --color-ink-category: 176 180 186; /* slate-11→12 at 0% */
+  --color-ink-category: 179 183 189; /* slate-11→12 at 5% */
   --color-line-category: 67 72 78; /* slate-7 */
   --color-solid-division: 124 226 254; /* sky-9 */
   --color-solid-division-hover: 168 238 255; /* sky-10 */
   --color-on-solid-division: 28 32 36; /* light slate-12 */
   --color-tint-division: 17 40 64; /* sky-3 */
   --color-tint-division-hover: 17 53 85; /* sky-4 */
-  --color-ink-division: 117 199 240; /* sky-11→12 at 0% */
+  --color-ink-division: 125 203 242; /* sky-11→12 at 10% */
   --color-line-division: 31 102 146; /* sky-7 */
-  --color-solid-pool: 247 107 21; /* orange-9 */
-  --color-solid-pool-hover: 255 128 31; /* orange-10 */
+  --color-solid-pool: 255 160 87; /* orange-11 */
+  --color-solid-pool-hover: 255 224 194; /* orange-12 */
   --color-on-solid-pool: 28 32 36; /* light slate-12 */
   --color-tint-pool: 51 30 11; /* orange-3 */
   --color-tint-pool-hover: 70 33 0; /* orange-4 */
   --color-ink-pool: 255 160 87; /* orange-11→12 at 0% */
   --color-line-pool: 126 69 29; /* orange-7 */
-  --color-solid-players: 41 163 131; /* jade-9 */
-  --color-solid-players-hover: 39 176 139; /* jade-10 */
+  --color-solid-players: 31 216 164; /* jade-11 */
+  --color-solid-players-hover: 173 240 212; /* jade-12 */
   --color-on-solid-players: 28 32 36; /* light slate-12 */
   --color-tint-players: 15 46 34; /* jade-3 */
   --color-tint-players-hover: 11 59 44; /* jade-4 */
-  --color-ink-players: 31 216 164; /* jade-11→12 at 0% */
+  --color-ink-players: 59 219 169; /* jade-11→12 at 10% */
   --color-line-players: 36 104 84; /* jade-7 */
-  --color-solid-teams: 142 78 198; /* purple-9 */
-  --color-solid-teams-hover: 132 87 170; /* purple-8 */
-  --color-on-solid-teams: 255 255 255; /* white */
+  --color-solid-teams: 209 157 255; /* purple-11 */
+  --color-solid-teams-hover: 236 217 250; /* purple-12 */
+  --color-on-solid-teams: 28 32 36; /* light slate-12 */
   --color-tint-teams: 48 28 59; /* purple-3 */
   --color-tint-teams-hover: 61 34 78; /* purple-4 */
-  --color-ink-teams: 209 157 255; /* purple-11→12 at 0% */
+  --color-ink-teams: 214 169 254; /* purple-11→12 at 20% */
   --color-line-teams: 102 66 130; /* purple-7 */
   --color-solid-matches: 255 197 61; /* amber-9 */
   --color-solid-matches-hover: 255 214 10; /* amber-10 */
@@ -456,12 +456,12 @@
   --color-tint-matches-hover: 63 39 0; /* amber-4 */
   --color-ink-matches: 255 202 22; /* amber-11→12 at 0% */
   --color-line-matches: 113 79 25; /* amber-7 */
-  --color-solid-position-g: 91 91 214; /* iris-9 */
-  --color-solid-position-g-hover: 89 88 177; /* iris-8 */
-  --color-on-solid-position-g: 255 255 255; /* white */
+  --color-solid-position-g: 177 169 255; /* iris-11 */
+  --color-solid-position-g-hover: 224 223 254; /* iris-12 */
+  --color-on-solid-position-g: 28 32 36; /* light slate-12 */
   --color-tint-position-g: 32 34 72; /* iris-3 */
   --color-tint-position-g-hover: 38 42 101; /* iris-4 */
-  --color-ink-position-g: 177 169 255; /* iris-11→12 at 0% */
+  --color-ink-position-g: 188 183 255; /* iris-11→12 at 25% */
   --color-line-position-g: 74 74 149; /* iris-7 */
   --color-solid-position-f: 255 197 61; /* amber-9 */
   --color-solid-position-f-hover: 255 214 10; /* amber-10 */
@@ -470,22 +470,22 @@
   --color-tint-position-f-hover: 63 39 0; /* amber-4 */
   --color-ink-position-f: 255 202 22; /* amber-11→12 at 0% */
   --color-line-position-f: 113 79 25; /* amber-7 */
-  --color-solid-position-c: 142 78 198; /* purple-9 */
-  --color-solid-position-c-hover: 132 87 170; /* purple-8 */
-  --color-on-solid-position-c: 255 255 255; /* white */
+  --color-solid-position-c: 209 157 255; /* purple-11 */
+  --color-solid-position-c-hover: 236 217 250; /* purple-12 */
+  --color-on-solid-position-c: 28 32 36; /* light slate-12 */
   --color-tint-position-c: 48 28 59; /* purple-3 */
   --color-tint-position-c-hover: 61 34 78; /* purple-4 */
-  --color-ink-position-c: 209 157 255; /* purple-11→12 at 0% */
+  --color-ink-position-c: 214 169 254; /* purple-11→12 at 20% */
   --color-line-position-c: 102 66 130; /* purple-7 */
-  --color-solid-home: 0 144 255; /* blue-9 */
-  --color-solid-home-hover: 59 158 255; /* blue-10 */
+  --color-solid-home: 112 184 255; /* blue-11 */
+  --color-solid-home-hover: 194 230 255; /* blue-12 */
   --color-on-solid-home: 28 32 36; /* light slate-12 */
   --color-tint-home: 13 40 71; /* blue-3 */
   --color-tint-home-hover: 0 51 98; /* blue-4 */
-  --color-ink-home: 112 184 255; /* blue-11→12 at 0% */
+  --color-ink-home: 137 198 255; /* blue-11→12 at 30% */
   --color-line-home: 32 93 158; /* blue-7 */
-  --color-solid-away: 247 107 21; /* orange-9 */
-  --color-solid-away-hover: 255 128 31; /* orange-10 */
+  --color-solid-away: 255 160 87; /* orange-11 */
+  --color-solid-away-hover: 255 224 194; /* orange-12 */
   --color-on-solid-away: 28 32 36; /* light slate-12 */
   --color-tint-away: 51 30 11; /* orange-3 */
   --color-tint-away-hover: 70 33 0; /* orange-4 */

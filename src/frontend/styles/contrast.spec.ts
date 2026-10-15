@@ -17,6 +17,8 @@ import { describe, expect, it } from "vitest";
  */
 
 const MIN_TEXT_CONTRAST = 4.5;
+/** What the colour roles promise in the high-contrast theme: WCAG AAA. */
+const MIN_HIGH_CONTRAST_ROLE = 7;
 const CSS_PATHS = [
   path.join(__dirname, "globals.css"),
   path.join(__dirname, "roles.css"),
@@ -159,7 +161,12 @@ function failingPairs(): Record<string, number> {
   for (const [theme, palette] of Object.entries(readPalettes())) {
     for (const [fg, bg] of promisedPairs(palette)) {
       const ratio = contrastRatio(colourOf(palette, fg), colourOf(palette, bg));
-      if (ratio < MIN_TEXT_CONTRAST) {
+      const isRole = fg.startsWith("on-solid-") || fg.startsWith("ink-");
+      const min =
+        theme === "high-contrast" && isRole
+          ? MIN_HIGH_CONTRAST_ROLE
+          : MIN_TEXT_CONTRAST;
+      if (ratio < min) {
         failures[`${theme} | ${fg} on ${bg}`] = Math.round(ratio * 100) / 100;
       }
     }
