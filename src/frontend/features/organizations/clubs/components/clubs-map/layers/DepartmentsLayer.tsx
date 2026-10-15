@@ -4,10 +4,12 @@
 import { Layer, Source } from "react-map-gl/maplibre";
 
 import { MAP_COLORS } from "../mapConstants";
+import type { MapColours } from "../useMapColours";
 
 interface DepartmentsLayerProps {
   readonly geoJson: any;
   readonly labels?: any;
+  readonly colours: MapColours;
 }
 
 /**
@@ -17,7 +19,12 @@ interface DepartmentsLayerProps {
  * threshold rather than both drawing. `labels` carries the centroids the counts
  * are anchored to, computed once outside the render.
  */
-export function DepartmentsLayer({ geoJson, labels }: DepartmentsLayerProps) {
+export function DepartmentsLayer({
+  geoJson,
+  labels,
+  colours,
+}: DepartmentsLayerProps) {
+  const area = colours.departments;
   return (
     <>
       <Source id="departments" type="geojson" data={geoJson}>
@@ -25,7 +32,7 @@ export function DepartmentsLayer({ geoJson, labels }: DepartmentsLayerProps) {
           id="departments-fill"
           type="fill"
           paint={{
-            "fill-color": MAP_COLORS.DEPARTMENTS.FILL,
+            "fill-color": area.fill,
             "fill-opacity": MAP_COLORS.DEPARTMENTS.FILL_OPACITY,
           }}
         />
@@ -33,7 +40,7 @@ export function DepartmentsLayer({ geoJson, labels }: DepartmentsLayerProps) {
           id="departments-outline"
           type="line"
           paint={{
-            "line-color": MAP_COLORS.DEPARTMENTS.BORDER,
+            "line-color": area.border,
             "line-width": MAP_COLORS.DEPARTMENTS.BORDER_WIDTH,
           }}
         />
@@ -46,9 +53,9 @@ export function DepartmentsLayer({ geoJson, labels }: DepartmentsLayerProps) {
             type="circle"
             paint={{
               "circle-radius": MAP_COLORS.DEPARTMENTS.LABEL_CIRCLE_RADIUS,
-              "circle-color": "#ffffff",
+              "circle-color": colours.labelBackground,
               "circle-stroke-width": 2,
-              "circle-stroke-color": MAP_COLORS.DEPARTMENTS.BORDER,
+              "circle-stroke-color": area.border,
               "circle-opacity": 0.9,
             }}
           />
@@ -61,7 +68,7 @@ export function DepartmentsLayer({ geoJson, labels }: DepartmentsLayerProps) {
               "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
             }}
             paint={{
-              "text-color": MAP_COLORS.DEPARTMENTS.BORDER,
+              "text-color": area.label,
             }}
           />
         </Source>

@@ -4,9 +4,11 @@
 import { Layer, Source } from "react-map-gl/maplibre";
 
 import { CLUSTER_CONFIG, MAP_COLORS } from "../mapConstants";
+import type { MapColours } from "../useMapColours";
 
 interface ClubsLayerProps {
   readonly geoJson: any;
+  readonly colours: MapColours;
 }
 
 /**
@@ -19,7 +21,7 @@ interface ClubsLayerProps {
  * `geoJson` must keep a stable identity between renders; a fresh object forces
  * MapLibre to re-diff the whole source.
  */
-export function ClubsLayer({ geoJson }: ClubsLayerProps) {
+export function ClubsLayer({ geoJson, colours }: ClubsLayerProps) {
   return (
     <Source
       id="clubs"
@@ -34,15 +36,7 @@ export function ClubsLayer({ geoJson }: ClubsLayerProps) {
         type="circle"
         filter={["has", "point_count"]}
         paint={{
-          "circle-color": [
-            "step",
-            ["get", "point_count"],
-            MAP_COLORS.CLUBS.CLUSTER_COLORS[0],
-            MAP_COLORS.CLUBS.CLUSTER_THRESHOLDS[0],
-            MAP_COLORS.CLUBS.CLUSTER_COLORS[1],
-            MAP_COLORS.CLUBS.CLUSTER_THRESHOLDS[1],
-            MAP_COLORS.CLUBS.CLUSTER_COLORS[2],
-          ],
+          "circle-color": colours.clubs.fill,
           "circle-radius": [
             "step",
             ["get", "point_count"],
@@ -53,7 +47,7 @@ export function ClubsLayer({ geoJson }: ClubsLayerProps) {
             MAP_COLORS.CLUBS.CLUSTER_SIZES[2],
           ],
           "circle-stroke-width": 2,
-          "circle-stroke-color": "#ffffff",
+          "circle-stroke-color": colours.labelBackground,
         }}
       />
 
@@ -67,7 +61,7 @@ export function ClubsLayer({ geoJson }: ClubsLayerProps) {
           "text-size": 12,
         }}
         paint={{
-          "text-color": "#ffffff",
+          "text-color": colours.clubs.text,
         }}
       />
 
@@ -77,9 +71,9 @@ export function ClubsLayer({ geoJson }: ClubsLayerProps) {
         filter={["!", ["has", "point_count"]]}
         paint={{
           "circle-radius": MAP_COLORS.CLUBS.POINT_RADIUS,
-          "circle-color": MAP_COLORS.CLUBS.POINT_COLOR,
+          "circle-color": colours.clubs.fill,
           "circle-stroke-width": 2,
-          "circle-stroke-color": "white",
+          "circle-stroke-color": colours.labelBackground,
         }}
       />
     </Source>
