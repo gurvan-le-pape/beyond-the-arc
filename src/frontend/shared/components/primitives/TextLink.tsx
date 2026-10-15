@@ -40,7 +40,11 @@ export function TextLink({
   ariaLabel,
 }: TextLinkProps) {
   const className = cn(
-    "rounded-sm underline-offset-2 transition-colors duration-200 focus-ring",
+    "relative rounded-sm underline-offset-2 transition-colors duration-200 focus-ring",
+    // The hit area reaches 4px above and below the text, without moving it:
+    // a 17px line becomes a 25px target, past WCAG's 24px for a link that
+    // stands on its own ("Résumé" on a match card).
+    "after:absolute after:inset-x-0 after:-inset-y-1 after:content-['']",
     VARIANT_CLASSES[variant],
   );
 

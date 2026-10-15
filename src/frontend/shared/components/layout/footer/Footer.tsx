@@ -131,7 +131,7 @@ export function Footer() {
                     <li key={link.href}>
                       <Link
                         href={link.href}
-                        className={`text-sm inline-flex items-center gap-2 group ${navLinkClass}`}
+                        className={`text-sm inline-flex items-center min-h-6 gap-2 group ${navLinkClass}`}
                       >
                         <Icon className="w-4 h-4 transition-transform duration-200 group-hover:scale-110" />
                         {link.label}
@@ -151,7 +151,7 @@ export function Footer() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className={`text-sm inline-block ${navLinkClass}`}
+                      className={`text-sm inline-flex items-center min-h-6 ${navLinkClass}`}
                     >
                       {link.label}
                     </Link>
@@ -172,7 +172,7 @@ export function Footer() {
                         href={link.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`text-sm inline-flex items-center gap-1 group ${navLinkClass}`}
+                        className={`text-sm inline-flex items-center min-h-6 gap-1 group ${navLinkClass}`}
                       >
                         {link.label}
                         <ExternalLink className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -180,7 +180,7 @@ export function Footer() {
                     ) : (
                       <Link
                         href={link.href}
-                        className={`text-sm inline-block ${navLinkClass}`}
+                        className={`text-sm inline-flex items-center min-h-6 ${navLinkClass}`}
                       >
                         {link.label}
                       </Link>
