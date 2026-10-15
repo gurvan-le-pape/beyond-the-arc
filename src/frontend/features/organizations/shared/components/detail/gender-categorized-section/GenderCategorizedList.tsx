@@ -22,12 +22,12 @@ interface GenderCategorizedListProps<T> {
 
 const GENDER_COLOURS: Record<string, { bg: string; text: string }> = {
   [Gender.FEMALE]: {
-    bg: "bg-team-female-subtle",
-    text: "text-team-female-strong",
+    bg: "bg-tint-female",
+    text: "text-ink-female",
   },
   [Gender.MALE]: {
-    bg: "bg-team-male-subtle",
-    text: "text-team-male-strong",
+    bg: "bg-tint-male",
+    text: "text-ink-male",
   },
 };
 

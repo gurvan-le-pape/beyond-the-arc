@@ -33,9 +33,9 @@ export const EXPLORE_CARDS = [
  * `dot` is a complete literal class so Tailwind can see it.
  */
 export const LEVEL_ROWS = [
-  { level: "national", dot: "bg-national" },
-  { level: "regional", dot: "bg-regional" },
-  { level: "departmental", dot: "bg-departmental" },
+  { level: "national", dot: "bg-solid-national" },
+  { level: "regional", dot: "bg-solid-regional" },
+  { level: "departmental", dot: "bg-solid-departmental" },
 ] as const;
 
 /** The map band's three figures. Label keys diverge from the stat keys here. */

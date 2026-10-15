@@ -5,13 +5,13 @@ import type { OrganizationCounts } from "@/features/organizations/types";
 import { Text } from "@/shared/components/typography";
 
 const STATS = [
-  { key: "leagues", labelKey: "leagues.label", color: "text-regional-strong" },
+  { key: "leagues", labelKey: "leagues.label", color: "text-ink-regional" },
   {
     key: "committees",
     labelKey: "committees.label",
-    color: "text-departmental-strong",
+    color: "text-ink-departmental",
   },
-  { key: "clubs", labelKey: "clubs.label", color: "text-clubs-strong" },
+  { key: "clubs", labelKey: "clubs.label", color: "text-ink-clubs" },
 ] as const;
 
 interface OrganizationsStatsProps {

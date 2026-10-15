@@ -140,10 +140,7 @@ async function Home({ params }: LocalePageProps) {
       </div>
 
       <div className="border-b border-divide px-8 py-16 flex flex-col items-center text-center">
-        {/* -strong, not the mid tone: `text-clubs` (#a78bfa) is 2.60:1 on
-            surface-base. The mid step of a category ramp is for icons and
-            fills; category-coloured text takes -strong everywhere else. */}
-        <Text variant="overline" className="text-clubs-strong">
+        <Text variant="overline" className="text-ink-clubs">
           {t("map.eyebrow")}
         </Text>
         <Text variant="h2" className="mt-3 max-w-sm">
