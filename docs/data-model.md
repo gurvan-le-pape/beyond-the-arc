@@ -12,7 +12,9 @@ The schema models the French basketball competition hierarchy from top to bottom
 - **Competition** — championships, pools, teams, players, leaderboards, matches
 - **Match detail** — events, event players, shot locations, player stats
 
-The schema is owned by `prisma/schema.prisma` and applied through Prisma Migrate: the `0_init` baseline migration carries the full schema (including a hand-maintained section for what Prisma's schema language cannot express — CHECK constraints, the leaderboard triggers, and partial indexes), and every later change is a new migration generated from a `schema.prisma` edit via `prisma migrate dev`.
+The schema is owned by `prisma/schema.prisma` and applied through Prisma Migrate: the `0_init` baseline migration carries the full schema (including a hand-maintained section for what Prisma's schema language cannot express — CHECK constraints, the leaderboard triggers, and partial indexes), and every later change is a new migration: generated from a `schema.prisma` edit via `prisma migrate dev`, or written by hand when it is one of those inexpressible objects.
+
+Every string column that the API reads as a closed set carries a CHECK constraint listing its values, matching the constant in `common/constants`: `level`, `gender` and `category` on championships, `gender` and `category` on teams, `position` on players, `event_type` on match events and `role` on match event players. The `as Category`-style casts in the services rely on it.
 
 ---
 
