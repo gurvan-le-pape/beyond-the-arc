@@ -14,6 +14,8 @@ interface Tab {
 
 interface QueryTabsProps {
   readonly tabs: Tab[];
+  /** The tab shown when `?tab=` is absent or unrecognised. Defaults to the first tab. */
+  readonly defaultTab?: string;
   readonly children: React.ReactNode;
 }
 
@@ -21,7 +23,7 @@ interface QueryTabsProps {
  * Generic tab container that syncs the active tab with the URL ?tab= param.
  *
  * The active tab is derived from `?tab=` against `tabs`; an absent or
- * unrecognised value falls back to the first tab.
+ * unrecognised value falls back to `defaultTab`, or to the first tab.
  *
  * The Suspense boundary is here rather than at each call site because
  * `useSearchParams` is what needs it: without a boundary above it, the whole
@@ -30,10 +32,16 @@ interface QueryTabsProps {
  * Keeping it inside the component means a future page cannot use these tabs and
  * forget.
  */
-export function QueryTabs({ tabs, children }: QueryTabsProps) {
+export function QueryTabs({ tabs, defaultTab, children }: QueryTabsProps) {
+  const fallbackTab = defaultTab ?? tabs[0].value;
+
   return (
-    <Suspense fallback={<QueryTabsFallback tabs={tabs} />}>
-      <QueryTabsContent tabs={tabs}>{children}</QueryTabsContent>
+    <Suspense
+      fallback={<QueryTabsFallback tabs={tabs} defaultTab={fallbackTab} />}
+    >
+      <QueryTabsContent tabs={tabs} defaultTab={fallbackTab}>
+        {children}
+      </QueryTabsContent>
     </Suspense>
   );
 }
@@ -45,11 +53,12 @@ export function QueryTabs({ tabs, children }: QueryTabsProps) {
  */
 interface QueryTabsFallbackProps {
   readonly tabs: Tab[];
+  readonly defaultTab: string;
 }
 
-function QueryTabsFallback({ tabs }: QueryTabsFallbackProps) {
+function QueryTabsFallback({ tabs, defaultTab }: QueryTabsFallbackProps) {
   return (
-    <Tabs defaultValue={tabs[0].value}>
+    <Tabs defaultValue={defaultTab}>
       <TabsList>
         {tabs.map((tab) => (
           <TabsTrigger key={tab.value} value={tab.value}>
@@ -61,7 +70,17 @@ function QueryTabsFallback({ tabs }: QueryTabsFallbackProps) {
   );
 }
 
-function QueryTabsContent({ tabs, children }: QueryTabsProps) {
+interface QueryTabsContentProps {
+  readonly tabs: Tab[];
+  readonly defaultTab: string;
+  readonly children: React.ReactNode;
+}
+
+function QueryTabsContent({
+  tabs,
+  defaultTab,
+  children,
+}: QueryTabsContentProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -69,7 +88,7 @@ function QueryTabsContent({ tabs, children }: QueryTabsProps) {
   const tabParam = searchParams.get("tab");
   const activeTab = tabs.some((tab) => tab.value === tabParam)
     ? (tabParam as string)
-    : tabs[0].value;
+    : defaultTab;
 
   const handleTabChange = useCallback(
     (value: string) => {
