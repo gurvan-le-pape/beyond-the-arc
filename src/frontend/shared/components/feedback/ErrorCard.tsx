@@ -12,7 +12,7 @@ import { Text } from "../typography";
  * apart — a red icon on a neutral badge reads as a rendering bug.
  */
 const tones = {
-  error: { badge: "bg-error-subtle", icon: "text-error", Icon: X },
+  error: { badge: "bg-tint-error", icon: "text-ink-error", Icon: X },
   neutral: {
     badge: "bg-surface-raised",
     icon: "text-text-secondary",

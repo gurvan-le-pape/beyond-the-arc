@@ -24,7 +24,7 @@ export function EventScorePill({
         "px-3 py-1 rounded-button text-sm font-bold",
         isHomeTeam
           ? "bg-tint-primary text-ink-primary"
-          : "bg-error-subtle text-error-strong",
+          : "bg-tint-error text-ink-error",
       )}
     >
       {homeScore} - {awayScore}

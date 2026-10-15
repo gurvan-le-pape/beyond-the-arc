@@ -120,7 +120,7 @@ export default async function ArchitecturePage({ params }: LocalePageProps) {
           />
           <FeatureBadge
             icon={Code2}
-            iconClassName="bg-success-subtle text-success"
+            iconClassName="bg-tint-success text-ink-success"
             title={t("architecture.features.typeSafety.title")}
             description={t("architecture.features.typeSafety.description")}
           />

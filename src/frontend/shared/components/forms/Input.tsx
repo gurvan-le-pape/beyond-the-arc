@@ -173,7 +173,7 @@ export const Input = ({
             "transition-colors duration-200",
             resolvedLeftIcon && "pl-10",
             resolvedRightIcon && "pr-10",
-            error && "border-error focus:border-error",
+            error && "border-solid-error focus:border-solid-error",
             className,
           )}
           aria-describedby={ariaDescribedBy}
@@ -194,7 +194,7 @@ export const Input = ({
           variant="caption"
           as="p"
           id={`${inputId}-error`}
-          className="mt-1.5 text-error-strong"
+          className="mt-1.5 text-ink-error"
           role="alert"
         >
           {error}

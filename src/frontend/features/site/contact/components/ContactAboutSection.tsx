@@ -4,8 +4,8 @@ import { Text } from "@/shared/components/typography";
 
 const TECH_STACK = [
   { name: "Next.js", color: "bg-tint-primary text-ink-primary" },
-  { name: "NestJS", color: "bg-success-subtle text-success-strong" },
-  { name: "TypeScript", color: "bg-info-subtle text-info-strong" },
+  { name: "NestJS", color: "bg-tint-success text-ink-success" },
+  { name: "TypeScript", color: "bg-tint-info text-ink-info" },
   { name: "PostgreSQL", color: "bg-tint-secondary text-ink-secondary" },
 ] as const;
 

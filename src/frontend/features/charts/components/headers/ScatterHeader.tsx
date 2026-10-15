@@ -21,7 +21,7 @@ export function ScatterHeader() {
             fill="none"
             stroke="currentColor"
             strokeWidth={3}
-            className="text-success"
+            className="text-ink-success"
           />
         </svg>
         <Text variant="caption" as="span" className="text-text-heading">
@@ -38,7 +38,7 @@ export function ScatterHeader() {
             y2={18}
             stroke="currentColor"
             strokeWidth={3}
-            className="text-error"
+            className="text-ink-error"
           />
           <line
             x1={4}
@@ -47,7 +47,7 @@ export function ScatterHeader() {
             y2={4}
             stroke="currentColor"
             strokeWidth={3}
-            className="text-error"
+            className="text-ink-error"
           />
         </svg>
         <Text variant="caption" as="span" className="text-text-heading">
