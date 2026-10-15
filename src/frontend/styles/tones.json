@@ -1,6 +1,12 @@
 {
-  "primary": "indigo",
-  "secondary": "grass",
+  "primary": {
+    "default": "indigo",
+    "high-contrast": "yellow"
+  },
+  "secondary": {
+    "default": "grass",
+    "high-contrast": "cyan"
+  },
   "success": "green",
   "error": "red",
   "warning": "amber",

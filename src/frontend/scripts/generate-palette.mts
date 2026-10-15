@@ -80,7 +80,9 @@ function block(selector: string, suffix: "" | "Dark"): string {
 
 /**
  * Each tone in `styles/tones.json` (primary, error, clubs, home…) names the
- * scale it is drawn from, and gets one value per role in each theme:
+ * scale it is drawn from — or, as `{ "default": …, "high-contrast": … }`, a
+ * different scale for that one theme — and gets one value per role in each
+ * theme:
  *
  * - `solid` / `solid-hover`: a filled control's background, at rest and on
  *   hover, with `on-solid` the text on both;
@@ -98,22 +100,38 @@ function block(selector: string, suffix: "" | "Dark"): string {
  * surfaces and on the tint: step 12 alone is near-black, and would drop the
  * hue the text is meant to carry. `styles/contrast.spec.ts` checks the result
  * independently.
+ *
+ * The high-contrast theme runs the same rule at 7:1, WCAG's AAA level, which
+ * is the promise that theme exists to keep.
  */
 
 type Rgb = readonly [number, number, number];
-type Theme = "light" | "dark" | "high-contrast";
+const HIGH_CONTRAST = "high-contrast";
+type Theme = "light" | "dark" | typeof HIGH_CONTRAST;
 
-const MIN_CONTRAST = 4.5;
+const MIN_CONTRAST: Record<Theme, number> = {
+  light: 4.5,
+  dark: 4.5,
+  [HIGH_CONTRAST]: 7,
+};
 const WHITE: Rgb = [255, 255, 255];
 const THEME_SELECTOR: Record<Theme, string> = {
   light: ":root",
   dark: ".dark",
-  "high-contrast": ".high-contrast",
+  [HIGH_CONTRAST]: ".high-contrast",
 };
+
+type Scale = (typeof SCALES)[number];
 
 const tones = JSON.parse(
   readFileSync(join(import.meta.dirname, "..", "styles", "tones.json"), "utf8"),
-) as Record<string, (typeof SCALES)[number]>;
+) as Record<string, Scale | { default: Scale; [HIGH_CONTRAST]?: Scale }>;
+
+function scaleOf(tone: string, theme: Theme): Scale {
+  const entry = tones[tone];
+  if (typeof entry === "string") return entry;
+  return (theme === HIGH_CONTRAST && entry[HIGH_CONTRAST]) || entry.default;
+}
 
 function rgb(hex: string): Rgb {
   const value = Number.parseInt(hex.slice(1), 16);
@@ -225,7 +243,9 @@ interface Solved {
 function solve(scale: string, theme: Theme): Solved {
   const darkInk = step("slate", "light", 12);
   const readableOn = (fg: Rgb, n: number) =>
-    n >= 1 && n <= 12 && contrast(fg, step(scale, theme, n)) >= MIN_CONTRAST;
+    n >= 1 &&
+    n <= 12 &&
+    contrast(fg, step(scale, theme, n)) >= MIN_CONTRAST[theme];
 
   let fill: Pick<Solved, "solid" | "hover" | "onSolid"> | undefined;
   for (const onSolid of ["white", "ink"] as const) {
@@ -245,7 +265,8 @@ function solve(scale: string, theme: Theme): Solved {
   ];
   const inkMix = Array.from({ length: 21 }, (_, i) => i * 5).find((percent) =>
     backgrounds.every(
-      (bg) => contrast(inkColour(scale, theme, percent), bg) >= MIN_CONTRAST,
+      (bg) =>
+        contrast(inkColour(scale, theme, percent), bg) >= MIN_CONTRAST[theme],
     ),
   );
   if (inkMix === undefined) throw new Error(`No ink for ${scale} in ${theme}`);
@@ -254,7 +275,8 @@ function solve(scale: string, theme: Theme): Solved {
 }
 
 function rolesBlock(theme: Theme): string {
-  const lines = Object.entries(tones).flatMap(([tone, scale]) => {
+  const lines = Object.keys(tones).flatMap((tone) => {
+    const scale = scaleOf(tone, theme);
     const s = solve(scale, theme);
     const value = (n: number) =>
       `${step(scale, theme, n).join(" ")}; /* ${scale}-${n} */`;
@@ -295,7 +317,7 @@ const roles = [
   ...banner,
   rolesBlock("light"),
   rolesBlock("dark"),
-  rolesBlock("high-contrast"),
+  rolesBlock(HIGH_CONTRAST),
 ].join("\n");
 
 const stylesDir = join(import.meta.dirname, "..", "styles");
