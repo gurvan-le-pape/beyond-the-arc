@@ -1,4 +1,5 @@
 @import "./palette.css";
+@import "./roles.css";
 
 @tailwind base;
 @tailwind components;
@@ -70,6 +71,16 @@ body {
 
    Primary, secondary → redefined per theme (brand accent shifts).
    Status, team, level → subtle/strong flip; DEFAULT stays vivid.
+
+   COLOUR ROLES — styles/roles.css (generated)
+   ─────────────────────────────────────────────────────────────────────────────
+   Each tone of styles/tones.json (primary, error, clubs, home…) has the roles
+   solid / solid-hover / on-solid, tint / tint-hover, ink and line, solved from
+   the Radix scales in palette.css by scripts/generate-palette.mts so that
+   every pair clears 4.5:1 in each theme. They are the pairs new code uses:
+   bg-solid-error text-on-solid-error, bg-tint-clubs text-ink-clubs. The
+   subtle / DEFAULT / strong tokens below predate them. Regenerate with
+   `npm run palette` after changing a surface colour here.
 
    ADDING A NEW THEME
    ─────────────────────────────────────────────────────────────────────────────
