@@ -1,3 +1,12 @@
+const tones = Object.keys(require("./styles/tones.json"));
+
+/** A colour role from styles/roles.css, with Tailwind's opacity modifier. */
+const role = (name) => `rgb(var(--color-${name}) / <alpha-value>)`;
+
+/** One entry per tone of styles/tones.json, built from its name. */
+const byTone = (build) =>
+  Object.fromEntries(tones.map((tone) => [tone, build(tone)]));
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: "class",
@@ -221,6 +230,24 @@ module.exports = {
             strong: "rgb(var(--color-position-c-strong) / <alpha-value>)",
           },
         },
+
+        // Colour roles, one set per tone of styles/tones.json, solved from
+        // the Radix scales by scripts/generate-palette.mts so that each pair
+        // clears 4.5:1 in every theme. Use them as pairs:
+        //   bg-solid-<tone> hover:bg-solid-<tone>-hover text-on-solid-<tone>
+        //   bg-tint-<tone> hover:bg-tint-<tone>-hover text-ink-<tone>
+        //   text-ink-<tone> on any surface, border-line-<tone> for a border
+        solid: byTone((tone) => ({
+          DEFAULT: role(`solid-${tone}`),
+          hover: role(`solid-${tone}-hover`),
+        })),
+        "on-solid": byTone((tone) => role(`on-solid-${tone}`)),
+        tint: byTone((tone) => ({
+          DEFAULT: role(`tint-${tone}`),
+          hover: role(`tint-${tone}-hover`),
+        })),
+        ink: byTone((tone) => role(`ink-${tone}`)),
+        line: byTone((tone) => role(`line-${tone}`)),
       },
 
       // -----------------------------------------------------------------------

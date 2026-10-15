@@ -7,7 +7,7 @@ import { describe, expect, it } from "vitest";
 /**
  * WCAG contrast of every foreground/background pairing the design system
  * promises, in all three themes, read straight from the custom properties in
- * `globals.css`.
+ * `globals.css` and the generated `roles.css`.
  *
  * Works as a ratchet. `contrast.baseline.json` lists the pairings known to fail
  * today; the test fails when a pairing fails that is not listed (a regression),
@@ -17,7 +17,13 @@ import { describe, expect, it } from "vitest";
  */
 
 const MIN_TEXT_CONTRAST = 4.5;
-const CSS_PATH = path.join(__dirname, "globals.css");
+const CSS_PATHS = [
+  path.join(__dirname, "globals.css"),
+  path.join(__dirname, "roles.css"),
+];
+const TONES = Object.keys(
+  JSON.parse(readFileSync(path.join(__dirname, "tones.json"), "utf8")),
+);
 const BASELINE_PATH = path.join(__dirname, "contrast.baseline.json");
 
 type Rgb = readonly [number, number, number];
@@ -31,7 +37,7 @@ const THEME_SELECTORS = {
 
 function readThemeBlock(css: string, selector: string): string {
   const start = css.indexOf(`${selector} {`);
-  if (start === -1) throw new Error(`No ${selector} block in globals.css`);
+  if (start === -1) throw new Error(`No ${selector} block`);
   return css.slice(start, css.indexOf("\n}", start));
 }
 
@@ -47,14 +53,17 @@ function parsePalette(block: string): Palette {
 
 /** Each theme's palette; a theme inherits every value it does not redefine. */
 function readPalettes(): Record<keyof typeof THEME_SELECTORS, Palette> {
-  const css = readFileSync(CSS_PATH, "utf8");
-  const light = parsePalette(readThemeBlock(css, THEME_SELECTORS.light));
+  const sheets = CSS_PATHS.map((file) => readFileSync(file, "utf8"));
+  const read = (selector: string): Palette =>
+    Object.assign(
+      {},
+      ...sheets.map((css) => parsePalette(readThemeBlock(css, selector))),
+    );
+  const light = read(THEME_SELECTORS.light);
   const palettes = {} as Record<keyof typeof THEME_SELECTORS, Palette>;
   for (const [theme, selector] of Object.entries(THEME_SELECTORS)) {
     palettes[theme as keyof typeof THEME_SELECTORS] =
-      theme === "light"
-        ? light
-        : { ...light, ...parsePalette(readThemeBlock(css, selector)) };
+      theme === "light" ? light : { ...light, ...read(selector) };
   }
   return palettes;
 }
@@ -83,7 +92,9 @@ const SURFACES = ["surface-base", "surface-subtle", "surface-raised"];
  * - reading text on every surface: the text scale from `secondary` up, links
  *   (`primary`), every ramp's `-strong` end and the event label colours;
  * - filled buttons: white text on the fill and on its hover fill;
- * - chips: a ramp's `-strong` text on its own `-subtle` fill.
+ * - chips: a ramp's `-strong` text on its own `-subtle` fill;
+ * - the colour roles of every tone: `on-solid` on `solid` and its hover, and
+ *   `ink` on every surface and on the tone's `tint` and its hover.
  * `text-muted` is left out on purpose: it is reserved for decorative marks and
  * is documented as below AA.
  */
@@ -124,6 +135,13 @@ function promisedPairs(palette: Palette): [fg: string, bg: string][] {
     ...ramps.map((ramp): [string, string] => [
       `${ramp}-strong`,
       `${ramp}-subtle`,
+    ]),
+    ...TONES.flatMap((tone): [string, string][] => [
+      [`on-solid-${tone}`, `solid-${tone}`],
+      [`on-solid-${tone}`, `solid-${tone}-hover`],
+      ...[...SURFACES, `tint-${tone}`, `tint-${tone}-hover`].map(
+        (bg): [string, string] => [`ink-${tone}`, bg],
+      ),
     ]),
   ];
 }
