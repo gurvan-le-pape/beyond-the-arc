@@ -7,6 +7,7 @@ export * from "./buildTeam";
 export * from "./eventDescription";
 export * from "./eventHelpers";
 export * from "./formatPlaytime";
+export * from "./getCurrentRound";
 export * from "./getSortedRounds";
 export * from "./groupShotEventsByPlayer";
 export * from "./matchupSide";
