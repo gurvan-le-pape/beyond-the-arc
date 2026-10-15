@@ -54,6 +54,7 @@ const MATCH_LIST_SELECT = {
     select: {
       id: true,
       name: true,
+      letter: true,
       championship: {
         select: {
           id: true,
@@ -366,6 +367,7 @@ export class MatchesService {
       pool: {
         id: match.pool.id,
         name: match.pool.name,
+        letter: match.pool.letter,
         championship: {
           id: match.pool.championship.id,
           category: match.pool.championship.category as Category,

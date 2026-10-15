@@ -86,6 +86,7 @@ describe("MatchesService", () => {
     pool: {
       id: 1,
       name: "Pool A",
+      letter: "A",
       championship: {
         id: 1,
         category: "Senior",
@@ -174,6 +175,7 @@ describe("MatchesService", () => {
     pool: {
       id: 1,
       name: "Pool A",
+      letter: "A",
       championship: {
         id: 1,
         category: "Senior",

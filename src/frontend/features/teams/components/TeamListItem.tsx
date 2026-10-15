@@ -58,13 +58,13 @@ export function TeamListItem({ team, clubName }: TeamListItemProps) {
           </div>
         )}
 
-        {championship && pool.name && (
+        {championship && (
           <Link
             href={`/championships/${championship.id}?pool=${pool.id}`}
             className="inline-flex items-center gap-1.5 text-xs font-medium text-ink-clubs hover:underline transition-colors w-fit"
           >
             <span className="w-1.5 h-1.5 rounded-full bg-solid-clubs" />
-            {pool.name}
+            {t("poolLabel", { letter: pool.letter })}
           </Link>
         )}
       </div>

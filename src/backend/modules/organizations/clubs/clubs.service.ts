@@ -66,6 +66,7 @@ const CLUB_DETAILED_SELECT = {
         select: {
           id: true,
           name: true,
+          letter: true,
           championship: {
             select: {
               id: true,
@@ -398,6 +399,7 @@ export class ClubsService {
           ? {
               id: team.pool.id,
               name: team.pool.name,
+              letter: team.pool.letter,
               championship: {
                 id: team.pool.championship.id,
                 name: team.pool.championship.name,
