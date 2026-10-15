@@ -144,8 +144,8 @@ export function ComboBox({
           className={cn(
             "w-full text-left px-4 py-2 text-sm transition-colors duration-150",
             value === opt.value
-              ? "bg-primary-subtle font-semibold text-primary-strong border-l-2 border-primary"
-              : "text-text-heading hover:bg-primary-subtle hover:text-primary-strong",
+              ? "bg-tint-primary font-semibold text-ink-primary border-l-2 border-solid-primary"
+              : "text-text-heading hover:bg-tint-primary hover:text-ink-primary",
           )}
           onClick={() => {
             onChange(opt.value);
@@ -183,8 +183,8 @@ export function ComboBox({
           className={cn(
             DROPDOWN_TRIGGER_BASE,
             "text-left",
-            selectedOption && value !== "" && "border-primary",
-            error && "border-error focus-ring focus:border-error",
+            selectedOption && value !== "" && "border-solid-primary",
+            error && "border-solid-error focus-ring focus:border-solid-error",
           )}
           onClick={() => setOpen((o) => !o)}
           disabled={disabled}
@@ -252,7 +252,7 @@ export function ComboBox({
           variant="caption"
           as="p"
           id={`${inputId}-error`}
-          className="mt-2 text-error-strong"
+          className="mt-2 text-ink-error"
           role="alert"
         >
           {error}

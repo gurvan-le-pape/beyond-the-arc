@@ -92,7 +92,7 @@ export function SegmentedControl<TValue extends string>({
               "rounded-button transition-colors duration-150 focus-ring",
               size === "sm" ? "px-2.5 py-1 text-xs" : "px-3 py-1.5 text-sm",
               isSelected
-                ? "bg-primary-ghost text-primary-strong font-semibold"
+                ? "bg-tint-primary text-ink-primary font-semibold"
                 : "text-text-body font-medium hover:text-text-heading",
             )}
           >

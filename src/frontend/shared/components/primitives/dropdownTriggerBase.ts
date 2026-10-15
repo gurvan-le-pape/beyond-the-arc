@@ -18,7 +18,7 @@ export const DROPDOWN_TRIGGER_BASE = [
   // Text
   "text-text-heading",
   // Focus
-  "focus-ring focus:border-primary",
+  "focus-ring focus:border-solid-primary",
   // States
   "disabled:opacity-50 disabled:cursor-not-allowed",
   "transition-colors duration-200",

@@ -64,7 +64,7 @@ export const Switch = ({
         "focus-ring",
         "focus-ring",
         "disabled:cursor-not-allowed disabled:opacity-50",
-        checked ? "bg-primary" : "bg-divide",
+        checked ? "bg-solid-primary" : "bg-divide",
         s.track,
         className,
       )}
