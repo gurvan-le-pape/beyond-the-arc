@@ -28,6 +28,7 @@ import type {
   MatchPlayerStatsResponseDto,
   MatchResponseDto,
   PlayerWithStatsDto,
+  ShotDto,
 } from "./dto/matches.response.dto";
 
 export interface MatchFilters {
@@ -183,6 +184,12 @@ const PLAYER_MATCH_STATS_SELECT = {
  */
 const SHOT_TAKER_ROLES: Role[] = [Role.SHOOTER, Role.BLOCKED];
 
+/** What a shot chart reads of a shot event: its type and location. */
+const SHOT_SELECT = {
+  eventType: true,
+  shotLocation: { select: { x: true, y: true } },
+} as const;
+
 type MatchListResult = Prisma.MatchesGetPayload<{
   select: typeof MATCH_LIST_SELECT;
 }>;
@@ -193,6 +200,10 @@ type MatchDetailResult = Prisma.MatchesGetPayload<{
 
 type MatchEventResult = Prisma.MatchEventsGetPayload<{
   select: typeof MATCH_EVENT_SELECT;
+}>;
+
+type ShotResult = Prisma.MatchEventsGetPayload<{
+  select: typeof SHOT_SELECT;
 }>;
 
 type PlayerMatchStatsResult = Prisma.PlayerMatchStatsGetPayload<{
@@ -300,26 +311,23 @@ export class MatchesService {
   }
 
   /**
-   * Every shot a team took, across its season.
+   * Every shot a team took, across its season, as its chart reads it.
    *
    * The match filter is a relation, not an `IN` list. Fetching the team's match
    * ids, materialising them in Node and sending them back as
    * `matchId: { in: [...] }` is a round trip and a hand-rolled join for
-   * something the database does in one statement — and the id list is
-   * caller-visible growth, bounded only because `Teams` is season-scoped
-   * (22 matches for a team, measured on production).
+   * something the database does in one statement.
    *
    * Only the team's own attempts count: one of its players must have taken the
    * shot (see `SHOT_TAKER_ROLES`). Matching any role would also pull in the
    * opponent's shots this team's defenders blocked or fouled.
    *
-   * The match filter is kept rather than dropped. `players: { some: … }` already
-   * restricts to events a player of this team took part in, and since a player
-   * belongs to exactly one team, every such event is in a match that team
-   * played — so the match clause is provably redundant *today*. It stays
-   * because it is the clause that states the intent, and it costs nothing.
+   * The match filter is kept although `players: { some: … }` already implies
+   * it (a player belongs to exactly one team, so every such event is in a
+   * match that team played): it is the clause that states the intent, and it
+   * costs nothing.
    */
-  async findMatchEventsByTeamId(teamId: number): Promise<MatchEventDto[]> {
+  async findShotsByTeamId(teamId: number): Promise<ShotDto[]> {
     const events = await this.prisma.client.matchEvents.findMany({
       where: {
         match: { OR: [{ homeTeamId: teamId }, { awayTeamId: teamId }] },
@@ -328,31 +336,47 @@ export class MatchesService {
           some: { player: { teamId }, role: { in: SHOT_TAKER_ROLES } },
         },
       },
-      select: { ...MATCH_EVENT_SELECT, matchId: true },
+      select: SHOT_SELECT,
       orderBy: { occurredAt: "asc" },
     });
 
-    return events.map((e) => this.mapEventToDto(e));
+    return events.flatMap((e) => this.mapShotToDto(e));
   }
 
   /**
-   * Every shot a player took, across their season.
+   * Every shot a player took, across their season, as their chart reads it.
    *
    * The player must have taken the shot (see `SHOT_TAKER_ROLES`). A made shot
    * also carries an `assister`, so matching the player in any role would put
    * the shots they assisted on their own chart, as made baskets.
    */
-  async findMatchEventsByPlayerId(playerId: number): Promise<MatchEventDto[]> {
+  async findShotsByPlayerId(playerId: number): Promise<ShotDto[]> {
     const events = await this.prisma.client.matchEvents.findMany({
       where: {
         shotLocation: { isNot: null },
         players: { some: { playerId, role: { in: SHOT_TAKER_ROLES } } },
       },
-      select: { ...MATCH_EVENT_SELECT, matchId: true },
+      select: SHOT_SELECT,
       orderBy: { occurredAt: "asc" },
     });
 
-    return events.map((e) => this.mapEventToDto(e));
+    return events.flatMap((e) => this.mapShotToDto(e));
+  }
+
+  /**
+   * Maps a shot event to its chart entry. The queries filter on a non-null
+   * location, so the empty branch only satisfies the type.
+   */
+  private mapShotToDto(event: ShotResult): ShotDto[] {
+    if (!event.shotLocation) return [];
+
+    return [
+      {
+        x: event.shotLocation.x.toNumber(),
+        y: event.shotLocation.y.toNumber(),
+        eventType: event.eventType as EventType,
+      },
+    ];
   }
 
   /**
@@ -414,12 +438,9 @@ export class MatchesService {
     };
   }
 
-  private mapEventToDto(
-    event: MatchEventResult & { matchId?: number },
-  ): MatchEventDto {
+  private mapEventToDto(event: MatchEventResult): MatchEventDto {
     return {
       id: event.id,
-      matchId: event.matchId,
       eventType: event.eventType as EventType,
       occurredAt: event.occurredAt,
       description: event.description,

@@ -1,39 +1,25 @@
 // src/frontend/features/players/utils/transformShotEvents.spec.ts
 import { describe, expect, it } from "vitest";
 
-import type { MatchEvent } from "@/features/matches/types";
+import type { Shot } from "@/features/matches/types";
 
 import { transformToShotEvents } from "./transformShotEvents";
 
-/**
- * Builds a minimal located shot event. The payload fields other than
- * `eventType` and `shotLocation` are irrelevant to the transform, so they are
- * filled with the smallest valid values the DTO accepts.
- */
+/** Builds a shot of the given type at the given spot. */
 function shotEvent(
-  eventType: MatchEvent["eventType"],
-  shotLocation: { x: number; y: number } | null,
-): MatchEvent {
-  return {
-    id: 1,
-    matchId: 2,
-    eventType,
-    occurredAt: "2024-02-05T19:02:00.000Z",
-    description: null,
-    players: [],
-    shotLocation,
-  } as MatchEvent;
+  eventType: Shot["eventType"],
+  location: { x: number; y: number },
+): Shot {
+  return { eventType, ...location };
 }
 
 describe("transformToShotEvents", () => {
-  it("drops events without a shot location", () => {
+  it("keeps the location and reads made from the event type", () => {
     const result = transformToShotEvents([
-      shotEvent("tip_off", null),
       shotEvent("made_layup", { x: 1.5, y: 1.0 }),
     ]);
 
-    expect(result).toHaveLength(1);
-    expect(result[0]).toEqual({ x: 1.5, y: 1.0, made: true });
+    expect(result).toEqual([{ x: 1.5, y: 1.0, made: true }]);
   });
 
   it("classifies the made_* family as makes", () => {

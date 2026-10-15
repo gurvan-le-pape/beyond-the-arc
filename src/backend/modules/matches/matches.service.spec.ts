@@ -468,24 +468,27 @@ describe("MatchesService", () => {
     });
   });
 
-  describe("findMatchEventsByTeamId", () => {
-    it("should return mapped match events for a team", async () => {
+  // What the shot queries' select returns: type and location only.
+  const mockShotResult = {
+    eventType: "made_layup",
+    shotLocation: { x: new Prisma.Decimal(5.5), y: new Prisma.Decimal(3.2) },
+  };
+
+  describe("findShotsByTeamId", () => {
+    it("should return each shot as its location and type, nothing else", async () => {
       mockPrismaService.client.matchEvents.findMany.mockResolvedValue([
-        { ...mockMatchEventResult, matchId: 1 },
+        mockShotResult,
       ]);
 
-      const result = await service.findMatchEventsByTeamId(1);
+      const result = await service.findShotsByTeamId(1);
 
-      expect(result).toHaveLength(1);
-      expect(result[0].id).toBe(1);
-      expect(result[0].matchId).toBe(1);
-      expect(result[0].shotLocation?.x).toBe(5.5);
+      expect(result).toEqual([{ x: 5.5, y: 3.2, eventType: "made_layup" }]);
     });
 
     it("should scope the query to the team's own matches", async () => {
       mockPrismaService.client.matchEvents.findMany.mockResolvedValue([]);
 
-      await service.findMatchEventsByTeamId(7);
+      await service.findShotsByTeamId(7);
 
       // The match clause is what states the intent, so it is asserted rather
       // than left to `players: { some: … }` to imply. One query, not two.
@@ -507,33 +510,30 @@ describe("MatchesService", () => {
       expect(mockPrismaService.client.matches.findMany).not.toHaveBeenCalled();
     });
 
-    it("should return empty array when the team has no shot events", async () => {
+    it("should return empty array when the team has no shots", async () => {
       mockPrismaService.client.matchEvents.findMany.mockResolvedValue([]);
 
-      const result = await service.findMatchEventsByTeamId(999);
+      const result = await service.findShotsByTeamId(999);
 
       expect(result).toEqual([]);
     });
   });
 
-  describe("findMatchEventsByPlayerId", () => {
-    it("should return mapped match events for a player", async () => {
+  describe("findShotsByPlayerId", () => {
+    it("should return each shot as its location and type, nothing else", async () => {
       mockPrismaService.client.matchEvents.findMany.mockResolvedValue([
-        { ...mockMatchEventResult, matchId: 1 },
+        mockShotResult,
       ]);
 
-      const result = await service.findMatchEventsByPlayerId(1);
+      const result = await service.findShotsByPlayerId(1);
 
-      expect(result).toHaveLength(1);
-      expect(result[0].id).toBe(1);
-      expect(result[0].matchId).toBe(1);
-      expect(result[0].shotLocation?.x).toBe(5.5);
+      expect(result).toEqual([{ x: 5.5, y: 3.2, eventType: "made_layup" }]);
     });
 
     it("should only match events where the player took the shot", async () => {
       mockPrismaService.client.matchEvents.findMany.mockResolvedValue([]);
 
-      await service.findMatchEventsByPlayerId(7);
+      await service.findShotsByPlayerId(7);
 
       expect(
         mockPrismaService.client.matchEvents.findMany,

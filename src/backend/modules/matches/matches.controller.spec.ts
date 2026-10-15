@@ -12,6 +12,7 @@ import type {
   MatchDetailResponseDto,
   MatchEventDto,
   MatchPlayerStatsResponseDto,
+  ShotDto,
 } from "./dto/matches.response.dto";
 import { MatchesController } from "./matches.controller";
 import { MatchesService } from "./matches.service";
@@ -35,8 +36,8 @@ describe("MatchesController", () => {
     findMatchesByPoolId: jest.fn(),
     findPlayerMatchStatsByMatchId: jest.fn(),
     findMatchEventsByMatchId: jest.fn(),
-    findMatchEventsByTeamId: jest.fn(),
-    findMatchEventsByPlayerId: jest.fn(),
+    findShotsByTeamId: jest.fn(),
+    findShotsByPlayerId: jest.fn(),
   };
 
   const mockCacheManager = {
@@ -304,31 +305,29 @@ describe("MatchesController", () => {
     });
   });
 
-  describe("getMatchEventsByTeamId", () => {
-    it("should return match events for team", async () => {
-      const mockEvents: MatchEventDto[] = [];
+  describe("getShotsByTeamId", () => {
+    it("should return the team's shots", async () => {
+      const mockShots: ShotDto[] = [];
 
-      mockMatchesService.findMatchEventsByTeamId.mockResolvedValue(mockEvents);
+      mockMatchesService.findShotsByTeamId.mockResolvedValue(mockShots);
 
-      const result = await controller.getMatchEventsByTeamId(1);
+      const result = await controller.getShotsByTeamId(1);
 
-      expect(result).toBe(mockEvents);
-      expect(service.findMatchEventsByTeamId).toHaveBeenCalledWith(1);
+      expect(result).toBe(mockShots);
+      expect(service.findShotsByTeamId).toHaveBeenCalledWith(1);
     });
   });
 
-  describe("getMatchEventsByPlayerId", () => {
-    it("should return match events for player", async () => {
-      const mockEvents: MatchEventDto[] = [];
+  describe("getShotsByPlayerId", () => {
+    it("should return the player's shots", async () => {
+      const mockShots: ShotDto[] = [];
 
-      mockMatchesService.findMatchEventsByPlayerId.mockResolvedValue(
-        mockEvents,
-      );
+      mockMatchesService.findShotsByPlayerId.mockResolvedValue(mockShots);
 
-      const result = await controller.getMatchEventsByPlayerId(1);
+      const result = await controller.getShotsByPlayerId(1);
 
-      expect(result).toBe(mockEvents);
-      expect(service.findMatchEventsByPlayerId).toHaveBeenCalledWith(1);
+      expect(result).toBe(mockShots);
+      expect(service.findShotsByPlayerId).toHaveBeenCalledWith(1);
     });
   });
 

@@ -7,6 +7,7 @@ import type { MatchDetail } from "../types/MatchDetail";
 import type { MatchEvent } from "../types/MatchEvent";
 import type { MatchFilters } from "../types/MatchFilters";
 import type { MatchPlayerStatsResponse } from "../types/MatchPlayerStats";
+import type { Shot } from "../types/Shot";
 
 /**
  * Service for interacting with the matches API.
@@ -160,46 +161,42 @@ export const matchesService = {
   },
 
   /**
-   * Get all events for matches involving a specific team.
+   * Get every shot a team took this season, for its shot chart.
    *
    * @param teamId - The team ID
-   * @returns Array of match events for the team
-   * @throws {AxiosError} 404 if team not found
+   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
+   * @returns The team's shots: location and event type
    *
    * @example
-   * const events = await matchesService.getEventsByTeamId(456);
-   *
-   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
+   * const shots = await matchesService.getShotsByTeamId(456);
    */
-  async getEventsByTeamId(
+  async getShotsByTeamId(
     teamId: number,
     signal?: AbortSignal,
-  ): Promise<MatchEvent[]> {
-    const { data } = await apiClient.get<MatchEvent[]>(
-      `/matches/team/${teamId}/events`,
+  ): Promise<Shot[]> {
+    const { data } = await apiClient.get<Shot[]>(
+      `/matches/team/${teamId}/shots`,
       { signal },
     );
     return data;
   },
 
   /**
-   * Get all events involving a specific player.
+   * Get every shot a player took this season, for their shot chart.
    *
    * @param playerId - The player ID
-   * @returns Array of match events for the player
-   * @throws {AxiosError} 404 if player not found
+   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
+   * @returns The player's shots: location and event type
    *
    * @example
-   * const events = await matchesService.getEventsByPlayerId(789);
-   *
-   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
+   * const shots = await matchesService.getShotsByPlayerId(789);
    */
-  async getEventsByPlayerId(
+  async getShotsByPlayerId(
     playerId: number,
     signal?: AbortSignal,
-  ): Promise<MatchEvent[]> {
-    const { data } = await apiClient.get<MatchEvent[]>(
-      `/matches/player/${playerId}/events`,
+  ): Promise<Shot[]> {
+    const { data } = await apiClient.get<Shot[]>(
+      `/matches/player/${playerId}/shots`,
       { signal },
     );
     return data;

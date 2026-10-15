@@ -5,7 +5,7 @@ import { Download, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRef } from "react";
 
-import type { MatchEvent } from "@/features/matches/types";
+import type { Shot } from "@/features/matches/types";
 import { Button } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { useModalDialog } from "@/shared/hooks";
@@ -24,7 +24,7 @@ interface ShotModalProps {
   readonly opponentTeamName: string;
   readonly teamScore: number | null;
   readonly opponentScore: number | null;
-  readonly getPlayerShots: (playerId: number) => MatchEvent[];
+  readonly getPlayerShots: (playerId: number) => Shot[];
 }
 
 /**
@@ -138,7 +138,7 @@ export function ShotModal({
             </Text>
 
             <ShotChart
-              matchEvents={getPlayerShots(player.id)}
+              shots={getPlayerShots(player.id)}
               chartType={ChartType.SCATTER}
             />
           </div>

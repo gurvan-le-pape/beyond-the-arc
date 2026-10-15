@@ -16,6 +16,7 @@ import type { MatchDetail } from "../types/MatchDetail";
 import type { MatchEvent } from "../types/MatchEvent";
 import type { MatchFilters } from "../types/MatchFilters";
 import type { MatchPlayerStatsResponse } from "../types/MatchPlayerStats";
+import type { Shot } from "../types/Shot";
 
 /**
  * Service for interacting with the matches API.
@@ -148,33 +149,31 @@ export const serverMatchesService = {
   },
 
   /**
-   * Get all events for matches involving a specific team.
+   * Get every shot a team took this season, for its shot chart.
    *
    * @param teamId - The team ID
-   * @returns Array of match events for the team
-   * @throws {AxiosError} 404 if team not found
+   * @returns The team's shots: location and event type
    *
    * @example
-   * const events = await serverMatchesService.getEventsByTeamId(456);
+   * const shots = await serverMatchesService.getShotsByTeamId(456);
    */
-  async getEventsByTeamId(teamId: number): Promise<MatchEvent[]> {
-    return fetchApi<MatchEvent[]>(`/matches/team/${teamId}/events`, {
+  async getShotsByTeamId(teamId: number): Promise<Shot[]> {
+    return fetchApi<Shot[]>(`/matches/team/${teamId}/shots`, {
       revalidate: ServerRevalidate.LIVE,
     });
   },
 
   /**
-   * Get all events involving a specific player.
+   * Get every shot a player took this season, for their shot chart.
    *
    * @param playerId - The player ID
-   * @returns Array of match events for the player
-   * @throws {AxiosError} 404 if player not found
+   * @returns The player's shots: location and event type
    *
    * @example
-   * const events = await serverMatchesService.getEventsByPlayerId(789);
+   * const shots = await serverMatchesService.getShotsByPlayerId(789);
    */
-  async getEventsByPlayerId(playerId: number): Promise<MatchEvent[]> {
-    return fetchApi<MatchEvent[]>(`/matches/player/${playerId}/events`, {
+  async getShotsByPlayerId(playerId: number): Promise<Shot[]> {
+    return fetchApi<Shot[]>(`/matches/player/${playerId}/shots`, {
       revalidate: ServerRevalidate.LIVE,
     });
   },
