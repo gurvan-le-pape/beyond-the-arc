@@ -300,36 +300,47 @@ Pages resolve translations for their own JSX and for anything they pass down as 
 
 ## Design system
 
-### Tailwind design tokens
+### Colour: palette, roles, neutrals
 
-Rather than using Tailwind's default colour palette directly in components, all colours, spacing, shadows, and radii are defined as named semantic tokens in `tailwind.config.js` and referenced by name throughout the codebase.
+Components never name a colour. They name a **role** — what the colour is for — and the role resolves per theme. There are three layers, each in its own file:
 
-**Colour categories:**
+| Layer | File | What it holds |
+| --- | --- | --- |
+| Palette | `styles/palette.css` (generated) | The Radix Colors scales the app draws from, twelve steps each, light and dark, as `R G B` channel triplets. Nothing references it directly. |
+| Roles | `styles/roles.css` (generated) | For every **tone** of `styles/tones.json` — brand (`primary`, `secondary`), status (`success`, `error`, `warning`, `info`), gender (`male`, `female`), level (`national`, `regional`, `departmental`), entities (`clubs`, `players`, `teams`, `matches`, `category`, `division`, `pool`, `position-g/f/c`) and sides (`home`, `away`) — seven roles per theme. |
+| Neutrals and fixed sets | `styles/globals.css` | Surfaces, `divide`, the text scale, the shot-chart court, and the match-event label colours. |
 
-- `primary` / `secondary` — brand colours used for interactive elements and accents
-- `surface.base` / `surface.subtle` / `surface.raised` — layered background surfaces, each step slightly elevated from the one before. There is no `-dark` counterpart: the same three names resolve per theme (see below).
-- `divide` — the single border and divider colour
-- `text.*` — a semantic text scale, `muted` → `secondary` → `body` → `emphasis` → `heading`. **`secondary` is the lightest step that may carry text a reader is meant to read**; `muted` is for decorative icons, separators and disabled controls. That line is a contrast floor, not a preference: on the light theme's `surface-raised`, `muted` is 2.05:1 and cannot be darkened to AA without collapsing into `secondary`. `secondary` itself is a computed value rather than a palette step, because Tailwind has no gray between 500 (3.90:1 on `surface-raised`) and 600 (which is `body`'s own colour); it clears 4.5:1 on all three surfaces in all three themes.
-- `team.male` / `team.female` — gender-coded accent colours used on team and player pages
-- `national` / `regional` / `departmental` — competition level colours that encode hierarchy visually
-- `clubs` — a distinct purple used for club-related UI
-- `success` / `error` / `warning` / `info` — status colours
+**The roles come in pairs, and a pair is what a component uses:**
 
-Every category ramp (`clubs`, `teams`, `players`, `matches`, `national`, `regional`, `departmental`, …) has three steps, and **which step you take is decided by what you are colouring, not by taste**: `-subtle` fills, the bare token is for icons, arrows and other non-text marks, and `-strong` is the only one for text. The mid step is chosen for its presence against a fill, so it does not carry text contrast — `text-clubs` is 2.60:1 on surface-base, where `text-clubs-strong` is 10.48:1. The ramps invert per theme, so `-strong` stays the readable end in all three.
+| Role | Tailwind | For |
+| --- | --- | --- |
+| `solid` / `solid-hover` with `on-solid` | `bg-solid-error hover:bg-solid-error-hover text-on-solid-error` | A filled control or panel, and the text on it |
+| `tint` / `tint-hover` with `ink` | `bg-tint-clubs text-ink-clubs` | A low-emphasis fill — a badge, a chip, a selected option — and the text on it |
+| `ink` | `text-ink-primary` | Text or an icon in the tone, on any surface (links included) |
+| `line` | `border-line-regional` | A border in the tone |
 
-That rule is why the `-subtle` / `-strong` pair is the only combination a filled chip should use, **and why swapping them is safe while reaching for the mid tone is not**. Contrast is symmetric, so `bg-{x}-strong text-{x}-subtle` reads exactly as well as `bg-{x}-subtle text-{x}-strong` — that is how `Badge`'s three `-on-header` variants get an inverted chip for a level-tinted card header without a second set of numbers to verify. Filling with the bare mid token instead puts a pale tint on a mid tone, which lands those three variants at 3.63 / 2.21 / 1.85:1.
+**The steps are solved, not picked.** Radix tunes its scales for APCA rather than WCAG 2, so a fixed step per role does not hold 4.5:1 — white on blue step 9 is 3.3:1, on amber step 9 1.6:1. `scripts/generate-palette.mts` (`npm run palette`) therefore chooses each tone's steps per theme by one rule: `solid` is the first step from 9 up that carries white at 4.5:1 with a hover step beside it that does too, else the same search with dark ink; `ink` is the lightest OKLab mix of steps 11 and 12 that clears 4.5:1 on the three surfaces and on the tone's tint (step 12 alone is near-black and drops the hue). In light, that makes most fills a step 11 with white text; in dark, the vivid scales keep step 9 and take dark text. The high-contrast theme runs the same rule at **7:1**, and a tone may name another scale for that theme alone — the brand is yellow there, the secondary cyan. Regenerate after changing `tones.json`, a surface colour, or the Radix version; the output is Prettier-clean, so a regeneration diff is a real change.
 
-**`primary` and `secondary` are eleven-step ramps, not three-step ones, and their names do not line up with the category ramps.** `primary-subtle` is the fourth of eleven — a mid tone (`#6d86c0`), not a tint — so it behaves like a category ramp's bare step, and `text-primary-strong` on it is 2.75:1. The tint at the bottom of the brand ramp is `primary-ghost`; that is what a badge or a chip fill wants. Treat the shared word `subtle` as a false friend between the two ramp shapes.
+**`styles/contrast.spec.ts` checks every promise, and it blocks CI.** It reads the custom properties of `globals.css` and `roles.css` in all three themes and fails on any of: the text scale from `secondary` up on each surface; each event label colour on each surface; every tone's `on-solid` on its `solid` and `solid-hover`, and its `ink` on each surface and on its `tint` and `tint-hover` (7:1 for the roles in high contrast); the court's lines and figures on its floor (4.5:1) and the made/missed marks on it (3:1, WCAG's floor for meaningful graphics). There is no list of tolerated failures.
+
+So the rules for a component are short. **Pair the role with its partner**: `on-solid` on `solid`, `ink` on a surface or on `tint` — never white on a fill, never `ink` on a `solid`. **Do not lower a role's opacity under text** (`text-ink-warning/60` is no longer `ink`). Opacity on a fill is fine where the text sits on a surface the test covers. And a tone carries meaning — a feature that wants colour for decoration takes the brand, not a status or a level whose hue would read as a statement.
+
+**Neutrals:**
+
+- `surface.base` / `surface.subtle` / `surface.raised` — layered backgrounds; see the surface context system below.
+- `divide` — the single border and divider colour.
+- `text.*` — `muted` → `secondary` → `body` → `emphasis` → `heading`. **`secondary` is the lightest step that may carry text a reader is meant to read**; `muted` is for decorative icons, separators and disabled controls, and cannot be darkened to AA without collapsing into `secondary`.
+- `court.floor` / `court.line` / `court.label` — the shot chart; see [Shot chart](#shot-chart).
+- `event.*` — one label colour per match-event category, solved per theme to clear 4.5:1 on every surface while staying at least 23 CIE76 dE apart; see `features/matches/constants/eventColors.ts`.
 
 **Structural tokens:**
 
 - `borderRadius.card` (12px), `borderRadius.button` (8px), `borderRadius.input` (6px) — consistent rounding per surface type
 - `boxShadow.card` / `boxShadow.card-hover` — elevation shadows
 - `spacing.sidebar`, `spacing.panel`, `spacing.panel-lg`, `spacing.panel-xl` — named widths for layout panels
+- `zIndex` — named layers in order: `raised` (lifted inside its own component), `dropdown` (a menu anchored to a control), `header`, `backdrop` and `drawer` (a side panel and its scrim), `modal`, `skip` (the skip link). An element takes the layer of its job; a raw `z-50` has nothing saying what it outranks.
 
-**There are three themes, not two, and no component knows which one is active.** Every token in `tailwind.config.js` is `var(--color-…)`; the values live in `styles/globals.css` as three custom-property blocks — `:root` (light), `.dark`, `.high-contrast`. `next-themes` puts the class on `<html>` and the variables re-resolve, so `text-text-body` or `border-divide` is correct in all three with no theme variant at the call site. That is the point of the indirection: a `dark:` pair per token would be a *triple* here, on every element, and would have to be remembered every time a token is used. Exactly one `dark:` remains in the app — `dark:prose-invert` in the docs accordion, which styles the Tailwind typography plugin rather than a token of ours.
-
-Two consequences worth knowing before adding tokens. **A `dark:` prefix on a themed token is a bug**, not a redundancy — it pins the value and breaks high-contrast. And **a new token needs a value in all three blocks**, or it silently inherits the light one; the `-subtle` / `-strong` pairs in the category ramps deliberately *swap* between light and dark for exactly this reason, so that `text-clubs-strong` stays the readable end everywhere.
+**There are three themes, not two, and no component knows which one is active.** Every colour in `tailwind.config.js` is `rgb(var(--color-…) / <alpha-value>)`; the values live in custom-property blocks — `:root` (light), `.dark`, `.high-contrast` — in `globals.css` and `roles.css`. `next-themes` puts the class on `<html>` and the variables re-resolve, so `text-ink-primary` or `border-divide` is correct in all three with no theme variant at the call site. Exactly one `dark:` remains in the app — `dark:prose-invert` in the docs accordion, which styles the Tailwind typography plugin rather than a token of ours. **A `dark:` prefix on a themed token is a bug**: it pins the value and breaks high contrast. **A token is an `R G B` triplet, never a colour**: write `rgb(var(--color-divide))` wherever one is used outside a Tailwind colour utility (an arbitrary shadow, an inline style). A bare `var(--color-divide)` is an invalid colour and the declaration silently does nothing — that left the pinned table column with no edge and the level cards with no hover outline. And a value MapLibre or an SVG presentation attribute needs is resolved first: `useMapColours` reads the roles off the document, and the court sets SVG colours through `style`, since an attribute does not resolve `var()`.
 
 On top of the tokens sits a **surface context system**, which is runtime and does live partly in the Tailwind config. The structural classes `.surface-base` / `.surface-subtle` / `.surface-raised` each set their own background *and* publish `--surface-bg`, `--surface-inset` and `--surface-ring-offset`. Utilities defined in `tailwind.config.js` read those — `.bg-surface-own`, `.bg-surface-inset`, `.ring-offset-surface`, `.scroll-shadow-x` — so a component can say "one step above whatever I am sitting on" without knowing where it was mounted. Elevation runs base → subtle → raised and must not be skipped or reversed. **`raised` is the ceiling**: it publishes `--surface-inset` as *itself*, so `bg-surface-inset` inside a `surface-raised` ancestor is a no-op — which is how the old table body made both its zebra striping and its row hover invisible at once.
 
@@ -346,11 +357,12 @@ const buttonVariants = cva(BASE, {
   variants: {
     variant: {
       primary:
-        "rounded-button bg-primary-strong text-white hover:bg-primary-bold ...",
-      outline: "rounded-button border-2 border-primary-strong ...",
-      ghost: "rounded-button text-primary-strong hover:bg-primary-ghost ...",
+        "rounded-button bg-solid-primary text-on-solid-primary hover:bg-solid-primary-hover",
+      outline:
+        "rounded-button border-2 border-solid-primary text-ink-primary bg-surface-inset hover:bg-tint-primary",
+      ghost: "rounded-button text-ink-primary hover:bg-tint-primary",
       control:
-        "rounded-button border border-divide-light bg-surface-raised ...",
+        "rounded-button border border-divide surface-subtle text-text-emphasis font-medium hover:bg-surface-inset",
       // ...
     },
     size: {
@@ -396,7 +408,9 @@ Table-level axes:
 
 There is no zebra axis. A `striped` prop existed and three of the four tables set it, but it was close to a no-op: its odd band was `bg-surface-inset`, which resolves `--surface-inset` from the nearest surface ancestor — `TableBody`'s own `surface-raised` — and `surface-raised` publishes `--surface-inset: --color-surface-raised`, the body colour. So odd rows matched the body and only the even rows tinted, in a blue drawn from the brand ramp rather than the neutral one. Row separation is the `divide-y` on `TableBody`, and only that.
 
-Column-level axes on `TableColumn<T>` — `numeric`, `divider`, `emphasis` and `width` — apply to the header cell **and** the body cells. `align`, `density`, `wrap`, `width`, `divider` and `numeric` are declared once in `variants.ts` and shared between `headVariants` and `cellVariants`, so a column's header and its body cells cannot drift apart. Styling a column through a `className` instead reaches only `<td>`, which is what leaves column-group rules stopping below the header row.
+Column-level axes on `TableColumn<T>` — `numeric`, `divider`, `emphasis`, `width` and `from` — apply to the header cell **and** the body cells. `align`, `density`, `wrap`, `width`, `divider`, `numeric` and `from` are declared once in `variants.ts` and shared between `headVariants` and `cellVariants`, so a column's header and its body cells cannot drift apart. Styling a column through a `className` instead reaches only `<td>`, which is what leaves column-group rules stopping below the header row.
+
+**`from: "sm"` drops a column below the `sm` breakpoint**, header and cells together, for a table whose secondary columns would push it past a phone's width. The standings use it for wins and losses, which follow from games played and points; what stays is rank, team, points, games played and point difference under abbreviated headings, the full label kept on an `<abbr title>`.
 
 **Columns of numbers set `numeric`, not `align`.** It applies `tabular-nums` and defaults the alignment to `right`. The first half matters more than it sounds: the UI font uses proportional digits, so `1` is narrower than `0` and a stat column is ragged down its own axis, shifting a pixel or two per row. Lining figures are what make a column of numbers read as a column, and the design system already relies on them in `MatchScore`, `StatValue` and `StatCell`. An explicit `align` still wins, for the cases where a numeric column reads better centred — the box score's jersey `number` takes both, being an identifier rather than a quantity.
 
@@ -406,7 +420,7 @@ Column-level axes on `TableColumn<T>` — `numeric`, `divider`, `emphasis` and `
 
 **The tables that cannot take a row link use `TableCellLink`.** Refusing `getRowHref` on the box score keeps a broken overlay out of the codebase, but it does not by itself make those rows reachable — the box score's player name was a `<button>` calling `router.push`, which is not navigation: no href, no status-bar URL, no middle-click, no open-in-new-tab, nothing for a crawler to follow. `TableCellLink` is the fallback, a real `Link` scoped to the one cell that identifies the row. It lives in the table module rather than at the call sites for the same reason `DataTable` takes no `className` — table link presentation is the module's to own. Its focus ring uses `ring-offset-1`, not the usual `2`: cells are as tight as `px-2 py-1.5` at `compact` density and the ring has to fit inside that padding, because `wrap={false}` puts `overflow-hidden` on the cell. Prefer `getRowHref` wherever the table can accept it; the whole row is the better target.
 
-**The header has no fill, and the reason is contrast.** A `bg-primary-subtle` band under a `border-primary` rule with `Text variant="label"` on top is `#374151` on `#6d86c0` in the light theme — 2.86:1, below the 4.5:1 AA needs for body text and below even the 3:1 large-text floor. It separates itself typographically instead: the shared `overline` token over the same hairline the rows use, with no local override — `overline` itself carries `text-text-body` (see below), which is 6.87:1 on surface-subtle and stays recessive against the cells' `text-text-emphasis`.
+**The header has no fill.** A mid-tone brand band behind the labels put them at 2.86:1 in the light theme, below the 4.5:1 AA needs for body text and below even the 3:1 large-text floor. It separates itself typographically instead: the shared `overline` token over the same hairline the rows use, with no local override — `overline` itself carries `text-text-body` (see below), which is 6.87:1 on surface-subtle and stays recessive against the cells' `text-text-emphasis`.
 
 **`overline` is `text-text-body`, and that is a contrast decision, not a taste one.** The variant is 12px semibold by definition, so it needs the full 4.5:1 — the large-text exemption starts at 18.66px bold or 24px. Its original `text-text-secondary` (#6b7280) is 4.39:1 on surface-subtle and 3.90:1 on surface-raised, so it failed on every Card in the app: `InfoBox`, `StatCell`, `Footer`, the homepage section labels and the table headers alike. `text-text-body` (#4b5563) is 6.87:1 and 6.11:1 on those two surfaces and rises in the dark and high-contrast themes, where the token inverts. Because the colour lives on the variant, a consumer overriding it must beat `Text`'s own `<span>` — a colour on a parent element is merely inherited and loses, which is exactly why the table's old `headerClassName` prop was a no-op.
 
@@ -446,6 +460,8 @@ Region and department labels are generated via `generateLabelFeatures`, which co
 
 The map uses OpenStreetMap raster tiles, configured inline as a MapLibre style object. There is no external style provider or API key required.
 
+The tiles are drawn light; the dark themes recolour them with MapLibre's raster paint (`BASEMAP_PAINT` in `mapConstants.ts`): `raster-brightness-min` above `raster-brightness-max` inverts light and dark, and a 180° hue rotation turns the hues back so water stays blue. High contrast drops the colour entirely. The layers above — regions, departments, club clusters and markers — take their colours from the colour roles through `useMapColours`, which reads them off the document and reads them again when the theme class changes, since MapLibre paints with literal colours.
+
 ### Search and filtering
 
 A `SidePanel` sits over the map and provides a search input and filter toggles. Search results flow through `useSearch` (text matching against the club list) then `useFilters` (categorical filters). Filter state changes are wrapped in `useTransition` to keep the map interaction responsive while the filtered club list updates. Clicking a club in the side panel sets the view state to zoom to that club's coordinates and opens its popup.
@@ -461,6 +477,8 @@ The shot chart is a custom SVG renderer built in React, using D3 for coordinate 
 The court is built from a set of atomic SVG components, each responsible for a single court marking: `Backboard`, `Rim`, `Block`, `Paint`, `PaintTicks`, `FreeThrow`, `ThreePointArc`, `NoCharge`, `CentreCircle`, `Baseline`, `BoundaryRect`. These are composed into a `Basket` group and assembled into the full `CourtBoundary`.
 
 All coordinates are defined in real-world metres and converted to SVG pixel space via `xScale` and `yScale` functions passed as props. Stroke widths scale proportionally with SVG width (`(LINE_WIDTH * svgWidth) / COURT_WIDTH`) so the court renders correctly at any size without fixed pixel values.
+
+The court follows the theme. Floor, markings and zone figures take the `court-floor` / `court-line` / `court-label` tokens (a dark parquet with cream lines in dark, white on black in high contrast), and the shot marks take the `event-made` / `event-miss` label colours. Static markings use the Tailwind classes (`stroke-court-line`); an element given a colour as a value — the zone outlines in `PolygonZone` and `RectZone`, a highlighted heatmap cell — sets it through `style` with `COURT_COLOURS`, because an SVG presentation attribute does not resolve `var()`. Zone figures carry a floor-coloured halo (`paint-order: stroke`) so they read over any heat colour.
 
 Court geometry constants (`BASKET_X`, `BASKET_Y`, `COURT_WIDTH`, `PAINT_HEIGHT`, `THREE_PT_RADIUS`, etc.) are defined in `shared/constants` and shared across both the court renderer and the zone system.
 
