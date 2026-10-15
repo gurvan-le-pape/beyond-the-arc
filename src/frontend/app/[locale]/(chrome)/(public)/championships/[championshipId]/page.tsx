@@ -78,10 +78,10 @@ async function ChampionshipsDetailPage({
   const { pool: poolParam } = await searchParams;
   setRequestLocale(locale);
 
-  const tCompetitions = await getTranslations({
-    locale,
-    namespace: "competitions",
-  });
+  const [tCommon, tCompetitions] = await Promise.all([
+    getTranslations({ locale, namespace: "common" }),
+    getTranslations({ locale, namespace: "competitions" }),
+  ]);
 
   const championship = await serverChampionshipsService
     .getById(championshipId)
@@ -122,7 +122,14 @@ async function ChampionshipsDetailPage({
     <PageLayout contentClassName="max-w-[1800px]">
       <div className="flex flex-col xl:flex-row gap-6">
         <div className="w-full xl:flex-1 space-y-6">
-          <ChampionshipBreadcrumb name={championship.name} />
+          <ChampionshipBreadcrumb
+            name={buildChampionshipTitle(championship, {
+              gender: tCommon(`gender.${championship.gender}`),
+              division: tCompetitions("divisionWithValue", {
+                value: championship.division,
+              }),
+            })}
+          />
 
           <ChampionshipHeader championship={championship} />
 
