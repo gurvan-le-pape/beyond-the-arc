@@ -283,14 +283,16 @@ describe("TeamsService", () => {
       const result = await service.findTeamMatchHistory(1);
 
       // Assert
+      // Only this team's box-score rows are read.
+      expect(
+        mockPrismaService.client.matches.findMany.mock.calls[0][0].select
+          .playerMatchStats.where,
+      ).toEqual({ player: { teamId: 1 } });
       expect(result.matches).toHaveLength(1);
       expect(result.matches[0].id).toBe(1);
-      expect(result.matches[0].players).toHaveLength(1);
-      expect(result.matches[0].players[0].player.id).toBe(1);
-      expect(result.matches[0].players[0].stats.points).toBe(15);
-      expect(result.matches[0].players[0].stats.rebounds.total).toBe(8);
-      expect(result.matches[0].players[0].stats.rebounds.offensive).toBe(3);
-      expect(result.matches[0].players[0].stats.rebounds.defensive).toBe(5);
+      // The box scores feed the season stats but are not returned.
+      expect(result.matches[0]).not.toHaveProperty("players");
+      expect(result.seasonStats.rebounds).toBe(8);
       // Season aggregate over the single team player.
       expect(result.seasonStats.gamesPlayed).toBe(1);
       expect(result.seasonStats.points).toBe(15);

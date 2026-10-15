@@ -2576,12 +2576,6 @@ export interface components {
             /** @description Team players */
             players: components["schemas"]["TeamRosterPlayerDto"][];
         };
-        MatchPlayerDto: {
-            /** @description Player information */
-            player: components["schemas"]["PlayerSummaryDto"];
-            /** @description Player statistics for this match */
-            stats: components["schemas"]["PlayerMatchStatsDto"];
-        };
         TeamMatchHistoryDto: {
             /**
              * @description Match ID
@@ -2607,8 +2601,6 @@ export interface components {
              * @example 72
              */
             awayTeamScore: number | null;
-            /** @description Players and their statistics for this match */
-            players: components["schemas"]["MatchPlayerDto"][];
         };
         TeamSeasonStatsDto: {
             /**

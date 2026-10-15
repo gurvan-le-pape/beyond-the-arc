@@ -225,23 +225,6 @@ export class FilterValuesTeamsResponseDto {
 }
 
 /**
- * Player with their statistics for a match.
- */
-export class MatchPlayerDto {
-  @ApiProperty({
-    description: "Player information",
-    type: PlayerSummaryDto,
-  })
-  player!: PlayerSummaryDto;
-
-  @ApiProperty({
-    description: "Player statistics for this match",
-    type: PlayerMatchStatsDto,
-  })
-  stats!: PlayerMatchStatsDto;
-}
-
-/**
  * Match history entry for a team.
  */
 export class TeamMatchHistoryDto {
@@ -286,12 +269,6 @@ export class TeamMatchHistoryDto {
     nullable: true,
   })
   awayTeamScore!: number | null;
-
-  @ApiProperty({
-    description: "Players and their statistics for this match",
-    type: [MatchPlayerDto],
-  })
-  players!: MatchPlayerDto[];
 }
 
 /**

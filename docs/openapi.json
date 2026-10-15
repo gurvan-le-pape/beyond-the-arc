@@ -6227,31 +6227,6 @@
           "players"
         ]
       },
-      "MatchPlayerDto": {
-        "type": "object",
-        "properties": {
-          "player": {
-            "description": "Player information",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/PlayerSummaryDto"
-              }
-            ]
-          },
-          "stats": {
-            "description": "Player statistics for this match",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/PlayerMatchStatsDto"
-              }
-            ]
-          }
-        },
-        "required": [
-          "player",
-          "stats"
-        ]
-      },
       "TeamMatchHistoryDto": {
         "type": "object",
         "properties": {
@@ -6292,13 +6267,6 @@
             "nullable": true,
             "description": "Away team score",
             "example": 72
-          },
-          "players": {
-            "description": "Players and their statistics for this match",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/MatchPlayerDto"
-            }
           }
         },
         "required": [
@@ -6307,8 +6275,7 @@
           "homeTeam",
           "awayTeam",
           "homeTeamScore",
-          "awayTeamScore",
-          "players"
+          "awayTeamScore"
         ]
       },
       "TeamSeasonStatsDto": {
