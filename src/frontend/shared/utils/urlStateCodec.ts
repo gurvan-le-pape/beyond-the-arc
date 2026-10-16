@@ -23,7 +23,7 @@ export const intParam: UrlCodec<number> = {
     const value = Number(raw);
     return value >= 1 ? value : undefined;
   },
-  serialize: (value) => String(value),
+  serialize: String,
 };
 
 /** A calendar day as YYYY-MM-DD, the value of an `<input type="date">`. */
