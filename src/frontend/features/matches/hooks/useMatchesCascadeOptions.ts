@@ -1,5 +1,6 @@
 // src/frontend/features/matches/hooks/useMatchesCascadeOptions.ts
 import { useChampionships } from "@/features/competitions/championships/api";
+import type { ChampionshipFilters } from "@/features/competitions/championships/types";
 import { CompetitionLevel } from "@/shared/constants";
 
 import type { MatchesFilterState } from "./useMatchesFilterState";
@@ -39,14 +40,11 @@ export function useMatchesCascadeOptions({
   const isRegional =
     level === CompetitionLevel.REGIONAL && leagueId !== undefined;
 
-  let championshipsFilter: { level: CompetitionLevel; id: number } | undefined;
+  let championshipsFilter: ChampionshipFilters | undefined;
   if (isDepartmental) {
-    championshipsFilter = {
-      level: CompetitionLevel.DEPARTMENTAL,
-      id: committeeId,
-    };
+    championshipsFilter = { level: CompetitionLevel.DEPARTMENTAL, committeeId };
   } else if (isRegional) {
-    championshipsFilter = { level: CompetitionLevel.REGIONAL, id: leagueId };
+    championshipsFilter = { level: CompetitionLevel.REGIONAL, leagueId };
   }
 
   const { data, isError, refetch } = useChampionships(

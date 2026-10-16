@@ -130,7 +130,8 @@ describe("ChampionshipsController", () => {
 
       const query = {
         level: CompetitionLevel.REGIONAL,
-        id: 1,
+        leagueId: 1,
+        committeeId: 5,
         category: "U18" as any,
         gender: "male" as any,
         page: 1,
@@ -144,7 +145,8 @@ describe("ChampionshipsController", () => {
       expect(result).toEqual(mockPaginatedResponse);
       expect(service.findChampionships).toHaveBeenCalledWith({
         level: CompetitionLevel.REGIONAL,
-        id: 1,
+        leagueId: 1,
+        committeeId: 5,
         category: "U18",
         gender: "male",
         page: 1,
@@ -179,7 +181,7 @@ describe("ChampionshipsController", () => {
 
       const result = await controller.getChampionships({
         level: CompetitionLevel.REGIONAL,
-        id: 999,
+        leagueId: 999,
       });
 
       // Act & Assert
@@ -194,13 +196,13 @@ describe("ChampionshipsController", () => {
 
       await controller.getChampionships({
         level: CompetitionLevel.DEPARTMENTAL,
-        id: 5,
+        committeeId: 5,
       });
 
       expect(service.findChampionships).toHaveBeenCalledWith(
         expect.objectContaining({
           level: CompetitionLevel.DEPARTMENTAL,
-          id: 5,
+          committeeId: 5,
         }),
       );
     });

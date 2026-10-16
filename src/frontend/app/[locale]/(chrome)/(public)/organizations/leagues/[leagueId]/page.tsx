@@ -69,7 +69,8 @@ async function LeaguePage({ params }: LocalePageProps<{ leagueId: string }>) {
     serverLeaguesService.getById(leagueId),
     serverChampionshipsService.getAll({
       level: CompetitionLevel.REGIONAL,
-      id: leagueId,
+      leagueId,
+      limit: 100,
     }),
     serverCommitteesService.getAll({ leagueId }),
   ]).catch(handleServerError);

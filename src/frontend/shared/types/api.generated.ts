@@ -3334,8 +3334,10 @@ export interface operations {
                 limit?: number;
                 /** @description Competition level filter */
                 level?: "departmental" | "regional" | "national";
-                /** @description League ID (regional) or Committee ID (departmental) */
-                id?: number;
+                /** @description League ID: championships in that league's area, its own regional ones and its committees' departmental ones; add level=regional for the league's own */
+                leagueId?: number;
+                /** @description Committee ID: championships organised by that committee (departmental) */
+                committeeId?: number;
                 /** @description Age category filter */
                 category?: "U11" | "U13" | "U15" | "U18" | "U21" | "Seniors";
                 /** @description Gender filter */
