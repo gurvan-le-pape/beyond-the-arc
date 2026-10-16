@@ -82,8 +82,8 @@ function containsAboveWingLeft(x: number, y: number) {
   // Horizontal bounds: from THREE_PT_LINE_DIST to PAINT_X0
   if (x < THREE_PT_LINE_DIST || x > PAINT_X0) return false;
   // Vertical bounds: from the straight 3-pt line (`ARC_Y`) up to the paint's
-  // top (`PAINT_HEIGHT`). The old check had these inverted, so the interval
-  // was empty and the zone could never match a shot.
+  // top (`PAINT_HEIGHT`), in that order — inverted, the interval is empty and
+  // the zone never matches a shot.
   if (y < ARC_Y || y > PAINT_HEIGHT) return false;
   // For y in that band, x must be to the right of the arc and left of PAINT_X0
   const arcX = get3ptArcXAtY(y, true);
@@ -98,8 +98,8 @@ function containsAboveWingRight(x: number, y: number) {
   // Vertical bounds: from the straight 3-pt line (`ARC_Y`) up to the paint's top
   if (y < ARC_Y || y > PAINT_HEIGHT) return false;
   // For y in that band, x must be to the left of the *right* arc and right of
-  // PAINT_X1. The old check sampled the left arc, so even with the y bounds
-  // fixed the right zone could never match.
+  // PAINT_X1. It has to be the right arc: the left one never reaches
+  // PAINT_X1, so sampling it would leave this zone unmatchable.
   const arcX = get3ptArcXAtY(y, false);
   if (arcX === null) return false;
   return x <= arcX && x >= PAINT_X1;
