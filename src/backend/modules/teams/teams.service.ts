@@ -174,20 +174,23 @@ const TEAM_MATCH_HISTORY_SELECT = {
       },
     },
   },
-  playerMatchStats: {
+} as const;
+
+/**
+ * A match's box-score rows, as the season aggregation reads them. The query
+ * narrows them to one team's players with a `where`.
+ */
+const TEAM_MATCH_PLAYER_STATS_SELECT = {
+  player: {
     select: {
-      player: {
-        select: {
-          id: true,
-          name: true,
-          number: true,
-          position: true,
-          teamId: true,
-        },
-      },
-      ...PLAYER_MATCH_STAT_FIELDS_SELECT,
+      id: true,
+      name: true,
+      number: true,
+      position: true,
+      teamId: true,
     },
   },
+  ...PLAYER_MATCH_STAT_FIELDS_SELECT,
 } as const;
 
 /**
@@ -204,6 +207,10 @@ type TeamDetailSelectResult = Prisma.TeamsGetPayload<{
 
 type MatchSelectResult = Prisma.MatchesGetPayload<{
   select: typeof TEAM_MATCH_HISTORY_SELECT;
+}>;
+
+type TeamMatchPlayerStatsResult = Prisma.PlayerMatchStatsGetPayload<{
+  select: typeof TEAM_MATCH_PLAYER_STATS_SELECT;
 }>;
 
 /**
@@ -350,19 +357,32 @@ export class TeamsService {
       throw new NotFoundException(`Team with ID ${teamId} not found`);
     }
 
+    // The box scores feed the season stats only; the history itself does not
+    // return them, so only this team's rows are read.
     const matchRows = await this.prisma.client.matches.findMany({
       where: {
         OR: [{ homeTeamId: teamId }, { awayTeamId: teamId }],
       },
-      select: TEAM_MATCH_HISTORY_SELECT,
+      select: {
+        ...TEAM_MATCH_HISTORY_SELECT,
+        playerMatchStats: {
+          where: { player: { teamId } },
+          select: TEAM_MATCH_PLAYER_STATS_SELECT,
+        },
+      },
       orderBy: { startsAt: "desc" },
     });
 
-    const matches = matchRows.map((match) => this.mapToMatchHistoryDto(match));
-
     return {
-      matches,
-      seasonStats: aggregateTeamSeasonStats(teamId, matches),
+      matches: matchRows.map((match) => this.mapToMatchHistoryDto(match)),
+      seasonStats: aggregateTeamSeasonStats(
+        teamId,
+        matchRows.map((match) => ({
+          players: match.playerMatchStats.map((stat) =>
+            this.mapToMatchPlayer(stat),
+          ),
+        })),
+      ),
     };
   }
 
@@ -445,11 +465,18 @@ export class TeamsService {
       },
       homeTeamScore: match.homeTeamScore,
       awayTeamScore: match.awayTeamScore,
-      players: match.playerMatchStats.map((stat) => ({
-        player: mapPlayerSummary(stat.player),
-        stats: mapPlayerMatchStats(stat),
-      })),
     } satisfies TeamMatchHistoryDto;
+  }
+
+  /**
+   * Maps a box-score row to the player-and-stats pair the season aggregation
+   * reads.
+   */
+  private mapToMatchPlayer(stat: TeamMatchPlayerStatsResult) {
+    return {
+      player: mapPlayerSummary(stat.player),
+      stats: mapPlayerMatchStats(stat),
+    };
   }
 
   private buildPoolFilter(

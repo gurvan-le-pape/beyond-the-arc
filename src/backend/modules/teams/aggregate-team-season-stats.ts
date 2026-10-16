@@ -1,14 +1,23 @@
 // src/backend/modules/teams/aggregate-team-season-stats.ts
+import type { PlayerSummaryDto } from "@common/dto";
 import { aggregateCareerStats } from "@common/utils";
+import type { PlayerMatchStatsDto } from "@modules/players/dto";
 
-import type {
-  TeamMatchHistoryDto,
-  TeamSeasonStatsDto,
-} from "./dto/teams.response.dto";
+import type { TeamSeasonStatsDto } from "./dto/teams.response.dto";
 
 /**
- * Aggregates a team's season stats from its match history. It keeps only the
- * rows belonging to the requested team (a match carries both teams' players),
+ * The box-score rows of one match, as the aggregation reads them.
+ */
+export interface MatchParticipants {
+  readonly players: readonly {
+    readonly player: PlayerSummaryDto;
+    readonly stats: PlayerMatchStatsDto;
+  }[];
+}
+
+/**
+ * Aggregates a team's season stats from its matches' box scores. It keeps only
+ * the rows belonging to the requested team (a match may carry both teams' players),
  * sums the season totals, and counts the distinct players who appeared.
  *
  * Per-game averages divide by the number of games the team played — the
@@ -17,7 +26,7 @@ import type {
  */
 export function aggregateTeamSeasonStats(
   teamId: number,
-  matches: TeamMatchHistoryDto[],
+  matches: readonly MatchParticipants[],
 ): TeamSeasonStatsDto {
   const teamMatches = matches.filter((match) =>
     match.players.some((p) => p.player.teamId === teamId),

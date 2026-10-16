@@ -1,22 +1,18 @@
 // src/backend/modules/teams/aggregate-team-season-stats.spec.ts
-import { aggregateTeamSeasonStats } from "./aggregate-team-season-stats";
-import type { TeamMatchHistoryDto } from "./dto/teams.response.dto";
+import {
+  aggregateTeamSeasonStats,
+  type MatchParticipants,
+} from "./aggregate-team-season-stats";
 
 /**
- * Builds a match-history entry with the given per-team player rows. Only the
+ * Builds one match's box score from the given per-team player rows. Only the
  * fields the aggregation reads (player.teamId, player.id, and the counting
  * stats) need to be realistic.
  */
 function makeMatch(
   players: { id: number; teamId: number; points: number; assists: number }[],
-): TeamMatchHistoryDto {
+): MatchParticipants {
   return {
-    id: 1,
-    startsAt: new Date("2024-02-05"),
-    homeTeam: { id: 1, number: 1, club: { id: 1, name: "Club A" } },
-    awayTeam: { id: 2, number: 1, club: { id: 2, name: "Club B" } },
-    homeTeamScore: 80,
-    awayTeamScore: 70,
     players: players.map((p) => ({
       player: {
         id: p.id,

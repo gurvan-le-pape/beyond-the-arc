@@ -1,11 +1,7 @@
 // src/backend/modules/teams/dto/teams.response.dto.ts
 import { Category, CompetitionLevel, Gender } from "@common/constants";
 import { PlayerSummaryDto } from "@common/dto";
-import {
-  HistoryTeamRefDto,
-  PlayerCareerStatsDto,
-  PlayerMatchStatsDto,
-} from "@modules/players/dto";
+import { HistoryTeamRefDto, PlayerCareerStatsDto } from "@modules/players/dto";
 import { ApiProperty } from "@nestjs/swagger";
 
 /**
@@ -225,23 +221,6 @@ export class FilterValuesTeamsResponseDto {
 }
 
 /**
- * Player with their statistics for a match.
- */
-export class MatchPlayerDto {
-  @ApiProperty({
-    description: "Player information",
-    type: PlayerSummaryDto,
-  })
-  player!: PlayerSummaryDto;
-
-  @ApiProperty({
-    description: "Player statistics for this match",
-    type: PlayerMatchStatsDto,
-  })
-  stats!: PlayerMatchStatsDto;
-}
-
-/**
  * Match history entry for a team.
  */
 export class TeamMatchHistoryDto {
@@ -286,12 +265,6 @@ export class TeamMatchHistoryDto {
     nullable: true,
   })
   awayTeamScore!: number | null;
-
-  @ApiProperty({
-    description: "Players and their statistics for this match",
-    type: [MatchPlayerDto],
-  })
-  players!: MatchPlayerDto[];
 }
 
 /**

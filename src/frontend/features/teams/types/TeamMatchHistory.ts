@@ -8,8 +8,6 @@ import type { components } from "@/shared/types/api.generated";
  */
 export type TeamMatchPlayerRef = components["schemas"]["PlayerSummaryDto"];
 
-export type TeamMatchParticipant = components["schemas"]["MatchPlayerDto"];
-
 export type TeamMatchHistoryTeamRef =
   components["schemas"]["HistoryTeamRefDto"];
 
