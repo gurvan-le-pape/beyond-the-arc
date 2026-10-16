@@ -84,7 +84,7 @@ export async function PlayerHeader({ player }: PlayerHeaderProps) {
       championship={team.pool?.championship}
       extraBadges={
         <Badge variant={positionVariant(position)} size="sm">
-          {position}
+          {tCommon(`positions.${position}`)}
         </Badge>
       }
       subtitle={

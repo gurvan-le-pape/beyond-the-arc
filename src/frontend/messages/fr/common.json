@@ -216,5 +216,12 @@
   "sortDirection": {
     "asc": "croissant",
     "desc": "décroissant"
+  },
+  "positions": {
+    "PG": "Meneur",
+    "SG": "Arrière",
+    "SF": "Ailier",
+    "PF": "Ailier fort",
+    "C": "Pivot"
   }
 }
