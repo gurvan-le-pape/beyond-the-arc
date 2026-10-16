@@ -90,13 +90,14 @@ function QueryTabsContent({
     ? (tabParam as string)
     : defaultTab;
 
+  // A tab change keeps only `tab`: the other parameters are the previous
+  // tab's filters, and tabs reuse names with other meanings (`number` is a
+  // jersey on the players tab and a team number on the teams tab).
   const handleTabChange = useCallback(
     (value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set("tab", value);
-      router.replace(`${pathname}?${params.toString()}`);
+      router.replace(`${pathname}?${new URLSearchParams({ tab: value })}`);
     },
-    [pathname, router, searchParams],
+    [pathname, router],
   );
 
   return (

@@ -1,11 +1,18 @@
 // src/frontend/features/matches/hooks/useMatchesFilterState.ts
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useMemo } from "react";
 
-import { useLocationFilterState } from "@/features/organizations/hooks";
-import type { Category, CompetitionLevel, Gender } from "@/shared/constants";
-import { usePaginationState } from "@/shared/hooks";
+import {
+  type Category,
+  CATEGORY_LIST,
+  COMPETITION_LEVEL_LIST,
+  type CompetitionLevel,
+  type Gender,
+  GENDER_LIST,
+} from "@/shared/constants";
+import { useUrlState } from "@/shared/hooks";
+import { dateParam, enumParam, intParam, textParam } from "@/shared/utils";
 
 export interface MatchesFilterState {
   search: string;
@@ -35,147 +42,136 @@ export interface MatchesFilterSetters {
   setMatchday: (value: number | undefined) => void;
 }
 
+const DEFAULT_PAGE_SIZE = 50;
+
+/** The matches tab's query parameters, one codec each. */
+const CODECS = {
+  q: textParam,
+  date: dateParam,
+  category: enumParam(CATEGORY_LIST),
+  gender: enumParam(GENDER_LIST),
+  level: enumParam(COMPETITION_LEVEL_LIST),
+  committee: intParam,
+  league: intParam,
+  division: intParam,
+  pool: intParam,
+  matchday: intParam,
+  page: intParam,
+  size: intParam,
+};
+
+/** Merged into every filter change: a new filter starts again from page 1. */
+const FIRST_PAGE = { page: undefined } as const;
+
 /**
- * Owns every filter on the matches list, plus its pagination.
+ * Owns every filter on the matches list, plus its pagination, in the query
+ * string: a filtered list survives a reload and the back button, and can be
+ * shared as a link.
  *
- * **The setters cascade — they are not plain setters.** Changing the level
- * clears committee, league, division, pool and matchday; changing the committee
- * or league clears division, pool and matchday. Without that, a matchday chosen
- * under one pool would survive into another scope and narrow the results to
- * nothing for no visible reason.
+ * **Changing any filter resets to page 1**, in the same URL update, so a caller
+ * must not also reset on change. Page size defaults to 50.
  *
- * **Any filter change resets to page 1**, in an effect here, so a caller must
- * not also reset. Page size defaults to 50.
+ * The competition filters cascade top-down — level, then committee or league,
+ * then division, pool and matchday — and choosing one clears everything below
+ * it, whose options depended on it.
  *
- * Committee and league are delegated to `useLocationFilterState`, shared with
- * the other lists so the location cascade behaves identically everywhere.
- *
- * @returns the current filter values, their cascading setters, and pagination
+ * @returns the current filter values, their setters, and pagination state
  */
 export function useMatchesFilterState() {
-  const {
-    committeeId,
-    setCommitteeId,
-    leagueId,
-    setLeagueId,
-    resetFilters: resetLocationFilters,
-  } = useLocationFilterState();
-
-  const [search, setSearch] = useState("");
-  const [dateFilter, setDateFilter] = useState("");
-  const [category, setCategory] = useState<Category | undefined>(undefined);
-  const [gender, setGender] = useState<Gender | undefined>(undefined);
-  const [level, setLevel] = useState<CompetitionLevel | undefined>(undefined);
-  const [division, setDivision] = useState<number | undefined>(undefined);
-  const [poolId, setPoolId] = useState<number | undefined>(undefined);
-  const [matchday, setMatchday] = useState<number | undefined>(undefined);
-  const {
-    currentPage,
-    setCurrentPage,
-    pageSize,
-    setPageSize,
-    resetToFirstPage,
-  } = usePaginationState(50);
-
-  useEffect(() => {
-    resetToFirstPage();
-  }, [
-    level,
-    committeeId,
-    leagueId,
-    division,
-    poolId,
-    matchday,
-    category,
-    gender,
-    search,
-    dateFilter,
-    resetToFirstPage,
-  ]);
-
-  const handleSetLevel = useCallback(
-    (value: CompetitionLevel | undefined) => {
-      setLevel(value);
-      setCommitteeId(undefined);
-      setLeagueId(undefined);
-      setDivision(undefined);
-      setPoolId(undefined);
-      setMatchday(undefined);
-    },
-    [setCommitteeId, setLeagueId],
-  );
-
-  const handleSetCommitteeId = useCallback(
-    (value: number | undefined) => {
-      setCommitteeId(value);
-      setDivision(undefined);
-      setPoolId(undefined);
-      setMatchday(undefined);
-    },
-    [setCommitteeId],
-  );
-
-  const handleSetLeagueId = useCallback(
-    (value: number | undefined) => {
-      setLeagueId(value);
-      setDivision(undefined);
-      setPoolId(undefined);
-      setMatchday(undefined);
-    },
-    [setLeagueId],
-  );
-
-  const handleSetDivision = useCallback((value: number | undefined) => {
-    setDivision(value);
-    setPoolId(undefined);
-    setMatchday(undefined);
-  }, []);
-
-  const handleSetPoolId = useCallback((value: number | undefined) => {
-    setPoolId(value);
-    setMatchday(undefined);
-  }, []);
-
-  const resetFilters = useCallback(() => {
-    setSearch("");
-    setDateFilter("");
-    setCategory(undefined);
-    setGender(undefined);
-    setLevel(undefined);
-    setDivision(undefined);
-    setPoolId(undefined);
-    setMatchday(undefined);
-    setCurrentPage(1);
-    resetLocationFilters();
-  }, [resetLocationFilters, setCurrentPage]);
+  const { state, update } = useUrlState(CODECS);
 
   const filters: MatchesFilterState = {
-    search,
-    dateFilter,
-    category,
-    gender,
-    level,
-    committeeId,
-    leagueId,
-    division,
-    poolId,
-    matchday,
-    currentPage,
-    pageSize,
+    search: state.q ?? "",
+    dateFilter: state.date ?? "",
+    category: state.category,
+    gender: state.gender,
+    level: state.level,
+    committeeId: state.committee,
+    leagueId: state.league,
+    division: state.division,
+    poolId: state.pool,
+    matchday: state.matchday,
+    currentPage: state.page ?? 1,
+    pageSize: state.size ?? DEFAULT_PAGE_SIZE,
   };
 
-  const setters: MatchesFilterSetters = {
-    setSearch,
-    setDateFilter,
-    setCategory,
-    setGender,
-    setLevel: handleSetLevel,
-    setCommitteeId: handleSetCommitteeId,
-    setLeagueId: handleSetLeagueId,
-    setDivision: handleSetDivision,
-    setPoolId: handleSetPoolId,
-    setMatchday,
-  };
+  const setters: MatchesFilterSetters = useMemo(
+    () => ({
+      setSearch: (value) => update({ q: value, ...FIRST_PAGE }),
+      setDateFilter: (value) => update({ date: value, ...FIRST_PAGE }),
+      setCategory: (value) => update({ category: value, ...FIRST_PAGE }),
+      setGender: (value) => update({ gender: value, ...FIRST_PAGE }),
+      setLevel: (value) =>
+        update({
+          level: value,
+          committee: undefined,
+          league: undefined,
+          division: undefined,
+          pool: undefined,
+          matchday: undefined,
+          ...FIRST_PAGE,
+        }),
+      setCommitteeId: (value) =>
+        update({
+          committee: value,
+          division: undefined,
+          pool: undefined,
+          matchday: undefined,
+          ...FIRST_PAGE,
+        }),
+      setLeagueId: (value) =>
+        update({
+          league: value,
+          division: undefined,
+          pool: undefined,
+          matchday: undefined,
+          ...FIRST_PAGE,
+        }),
+      setDivision: (value) =>
+        update({
+          division: value,
+          pool: undefined,
+          matchday: undefined,
+          ...FIRST_PAGE,
+        }),
+      setPoolId: (value) =>
+        update({ pool: value, matchday: undefined, ...FIRST_PAGE }),
+      setMatchday: (value) => update({ matchday: value, ...FIRST_PAGE }),
+    }),
+    [update],
+  );
+
+  const setCurrentPage = useCallback(
+    (page: number) => update({ page: page > 1 ? page : undefined }),
+    [update],
+  );
+
+  const setPageSize = useCallback(
+    (size: number) =>
+      update({
+        size: size === DEFAULT_PAGE_SIZE ? undefined : size,
+        ...FIRST_PAGE,
+      }),
+    [update],
+  );
+
+  const resetFilters = useCallback(
+    () =>
+      update({
+        q: undefined,
+        date: undefined,
+        category: undefined,
+        gender: undefined,
+        level: undefined,
+        committee: undefined,
+        league: undefined,
+        division: undefined,
+        pool: undefined,
+        matchday: undefined,
+        ...FIRST_PAGE,
+      }),
+    [update],
+  );
 
   return { filters, setters, setCurrentPage, setPageSize, resetFilters };
 }

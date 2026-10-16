@@ -22,4 +22,5 @@ export * from "./safeFetch";
 export * from "./sortCategories";
 export * from "./teamName";
 export * from "./toSafeExternalUrl";
+export * from "./urlStateCodec";
 export * from "./withServerErrorMetadata";
