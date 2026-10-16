@@ -1,11 +1,7 @@
 // src/backend/modules/teams/dto/teams.response.dto.ts
 import { Category, CompetitionLevel, Gender } from "@common/constants";
 import { PlayerSummaryDto } from "@common/dto";
-import {
-  HistoryTeamRefDto,
-  PlayerCareerStatsDto,
-  PlayerMatchStatsDto,
-} from "@modules/players/dto";
+import { HistoryTeamRefDto, PlayerCareerStatsDto } from "@modules/players/dto";
 import { ApiProperty } from "@nestjs/swagger";
 
 /**
