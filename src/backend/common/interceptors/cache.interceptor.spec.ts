@@ -46,7 +46,7 @@ function makeLogger() {
  * directly so tests remain fast and free of module bootstrapping overhead.
  */
 function makeInterceptor(
-  options: { ttl?: number; includeUser?: boolean } = {},
+  options: { ttl?: number } = {},
   cacheManager = makeCacheManager(),
   dedup = new CacheDedupService(),
 ) {
@@ -382,53 +382,6 @@ describe("CacheInterceptor", () => {
 
       // Second request should hit the cache from the first, so set is called once
       expect(cacheManager.set).toHaveBeenCalledTimes(1);
-    });
-
-    it("includes the user ID in the key when includeUser is true", async () => {
-      const cacheManager = makeCacheManager();
-      const { instance } = makeInterceptor({ includeUser: true }, cacheManager);
-
-      const ctx = makeContext("/me", "GET", { id: "user-42" });
-      const obs$ = await instance.intercept(ctx, makeCallHandler());
-      await lastValueFrom(obs$);
-
-      const setKey = (cacheManager.set.mock.calls[0] as unknown[])[0] as string;
-      expect(setKey).toContain("user-42");
-    });
-
-    it("uses 'anon' as user ID when includeUser is true but request has no user", async () => {
-      const cacheManager = makeCacheManager();
-      const { instance } = makeInterceptor({ includeUser: true }, cacheManager);
-
-      const obs$ = await instance.intercept(
-        makeContext("/public"),
-        makeCallHandler(),
-      );
-      await lastValueFrom(obs$);
-
-      const setKey = (cacheManager.set.mock.calls[0] as unknown[])[0] as string;
-      expect(setKey).toContain("anon");
-    });
-
-    it("different users get different cache keys", async () => {
-      const cacheManager = makeCacheManager();
-      const { instance } = makeInterceptor({ includeUser: true }, cacheManager);
-
-      await lastValueFrom(
-        await instance.intercept(
-          makeContext("/me", "GET", { id: "alice" }),
-          makeCallHandler({ name: "Alice" }),
-        ),
-      );
-      await lastValueFrom(
-        await instance.intercept(
-          makeContext("/me", "GET", { id: "bob" }),
-          makeCallHandler({ name: "Bob" }),
-        ),
-      );
-
-      // Two different users → two cache.set calls (no cross-user hit)
-      expect(cacheManager.set).toHaveBeenCalledTimes(2);
     });
 
     // Running the key through `.replaceAll(/[^a-zA-Z0-9:/?=&_-]/g, "_")` with

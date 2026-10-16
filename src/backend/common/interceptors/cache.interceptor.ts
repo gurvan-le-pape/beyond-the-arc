@@ -25,12 +25,6 @@ interface CacheInterceptorOptions {
    * looks like a cache that never hits. Use the `CACHE_TTL` constants.
    */
   ttl?: number;
-  /**
-   * When true, the authenticated user's ID is included in the cache key.
-   * Enable for any endpoint whose response differs per user (e.g. /me, /profile).
-   * Assumes `request.user.id` is populated by your auth guard.
-   */
-  includeUser?: boolean;
 }
 
 export function CacheInterceptor(
@@ -64,7 +58,7 @@ export function CacheInterceptor(
         return next.handle();
       }
 
-      const cacheKey = this.generateCacheKey(url, request);
+      const cacheKey = this.generateCacheKey(url);
       const cachedResponse = await this.cacheManager.get(cacheKey);
 
       // Use !== undefined so falsy values (false, 0, "") are still served
@@ -139,32 +133,23 @@ export function CacheInterceptor(
     /**
      * Produces a stable cache key from a URL.
      *
-     * - Query parameters are sorted so `/items?b=2&a=1` and `/items?a=1&b=2`
-     *   resolve to the same entry.
-     * - When `options.includeUser` is true, the authenticated user's ID is
-     *   prepended so per-user endpoints (e.g. /me) don't bleed across users.
+     * Query parameters are sorted so `/items?b=2&a=1` and `/items?a=1&b=2`
+     * resolve to the same entry. The key holds nothing but the URL: the API is
+     * public and has no user, so no response varies by caller.
      *
      * The normalized URL is used verbatim. It must NOT be run through a
      * character replacement: `URLSearchParams.toString()` has already
      * percent-encoded the query, so any lossy replace maps distinct queries
      * onto one key and serves one caller's response to another. `?search=A.S`
-     * and `?search=A_S` are 15 clubs and 637 clubs; collapsing `.` to `_` made
-     * whichever arrived second inherit the first's body.
+     * and `?search=A_S` are 15 clubs and 637 clubs; collapsing `.` to `_` would
+     * serve whichever arrives second the first one's body.
      *
      * The store is an in-memory Map, so the key needs no escaping — it is
      * never rendered and never reaches a query language. Should a Keyv/Redis
      * store ever be added, HASH the key (it has no length bound and Redis caps
      * keys at 512 MB); do not reintroduce a replace.
-     *
-     * NOTE: This interceptor has no built-in cache invalidation. If a mutating
-     * endpoint (POST/PUT/PATCH/DELETE) should bust related GET caches, call
-     * `cacheManager.del(key)` explicitly in the handler or add a dedicated
-     * invalidation interceptor that shares this key format.
      */
-    private generateCacheKey(
-      url: string,
-      request?: Record<string, unknown>,
-    ): string {
+    private generateCacheKey(url: string): string {
       const [path, query] = url.split("?");
 
       const normalizedQuery = query
@@ -178,12 +163,6 @@ export function CacheInterceptor(
       const normalizedUrl = normalizedQuery
         ? `${path}?${normalizedQuery}`
         : path;
-
-      if (options.includeUser && request) {
-        const user = request.user as { id?: string } | undefined;
-        const userId = user?.id ?? "anon";
-        return `cache:${userId}:${normalizedUrl}`;
-      }
 
       return `cache:${normalizedUrl}`;
     }
