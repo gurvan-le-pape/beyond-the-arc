@@ -9,6 +9,7 @@ export * from "./formatNameToFileName";
 export * from "./formatOrganizationName";
 export * from "./grouping";
 export * from "./handleServerError";
+export * from "./hasCriteria";
 export * from "./helpers/date-helpers";
 export * from "./helpers/string-helpers";
 export * from "./logger";

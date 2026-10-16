@@ -5,5 +5,11 @@
     "players": "Joueurs",
     "teams": "Équipes",
     "matches": "Matchs"
+  },
+  "prompt": {
+    "title": "Lancez une recherche",
+    "players": "Saisissez un nom ou choisissez un filtre pour afficher des joueurs.",
+    "teams": "Choisissez un club ou un filtre pour afficher des équipes.",
+    "matches": "Saisissez un club, une date ou choisissez un filtre pour afficher des matchs."
   }
 }

@@ -23,6 +23,7 @@ import { matchesPrefetch, matchesQueries } from "./matchesQueries";
  * - Pagination support
  *
  * @param filters - Optional filter criteria
+ * @param options - Additional query options
  * @returns React Query result with paginated matches
  *
  * @example
@@ -32,10 +33,14 @@ import { matchesPrefetch, matchesQueries } from "./matchesQueries";
  *   limit: 20,
  * });
  */
-export function useMatches(filters?: MatchFilters) {
-  return useQuery<PaginatedResponse<Match>, ApiError>(
-    matchesQueries.list(filters),
-  );
+export function useMatches(
+  filters?: MatchFilters,
+  options?: { enabled?: boolean },
+) {
+  return useQuery<PaginatedResponse<Match>, ApiError>({
+    ...matchesQueries.list(filters),
+    enabled: options?.enabled ?? true,
+  });
 }
 
 /**

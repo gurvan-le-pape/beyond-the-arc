@@ -13,6 +13,7 @@ import {
   SearchTabShell,
 } from "@/shared/components/domain";
 import { EmptyState } from "@/shared/components/feedback";
+import { hasCriteria } from "@/shared/utils";
 
 /**
  * The matches tab of the search page: its own filter panel, results grid, and
@@ -31,11 +32,12 @@ import { EmptyState } from "@/shared/components/feedback";
 export function MatchesTab() {
   const tMatches = useTranslations("matches");
   const tCommon = useTranslations("common");
+  const tSearch = useTranslations("search");
 
   const { filters, setters, setCurrentPage, setPageSize, resetFilters } =
     useMatchesFilterState();
 
-  const { data, error, isLoading, refetch } = useMatches({
+  const criteria = {
     search: filters.search || undefined,
     date: filters.dateFilter || undefined,
     category: filters.category,
@@ -46,9 +48,14 @@ export function MatchesTab() {
     leagueId: filters.leagueId,
     poolId: filters.poolId,
     matchday: filters.matchday,
-    page: filters.currentPage,
-    limit: filters.pageSize,
-  });
+  };
+  // Nothing is listed until something narrows the 600k matches.
+  const searching = hasCriteria(criteria);
+
+  const { data, error, isLoading, refetch } = useMatches(
+    { ...criteria, page: filters.currentPage, limit: filters.pageSize },
+    { enabled: searching },
+  );
 
   const matches: Match[] = data?.items ?? [];
   const pagination = data
@@ -75,11 +82,19 @@ export function MatchesTab() {
         onRetry={refetch}
         isEmpty={matches.length === 0}
         emptyState={
-          <EmptyState
-            icon={<Search className="w-16 h-16" />}
-            title={tMatches("noResults")}
-            description={tMatches("tryAdjustingFilters")}
-          />
+          searching ? (
+            <EmptyState
+              icon={<Search className="w-16 h-16" />}
+              title={tMatches("noResults")}
+              description={tMatches("tryAdjustingFilters")}
+            />
+          ) : (
+            <EmptyState
+              icon={<Search className="w-16 h-16" />}
+              title={tSearch("prompt.title")}
+              description={tSearch("prompt.matches")}
+            />
+          )
         }
         pagination={pagination}
         pageSize={filters.pageSize}
