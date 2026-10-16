@@ -37,6 +37,9 @@ describe("MatchesService", () => {
       matchEvents: {
         findMany: jest.fn(),
       },
+      clubs: {
+        findMany: jest.fn(),
+      },
     },
   };
 
@@ -744,22 +747,38 @@ describe("MatchesService", () => {
     // gap. They are deliberately not `gte + 24h`: 2024-03-31 is 23 hours long
     // and 2024-10-27 is 25, which is what those two cases exist to pin.
 
-    it("should apply search filter as OR across home and away team", async () => {
+    it("should search on the ids of the clubs whose name matches, home or away", async () => {
+      mockPrismaService.client.clubs.findMany.mockResolvedValue([
+        { id: 7 },
+        { id: 9 },
+      ]);
+
       await service.findAllMatches({ search: "Paris" });
 
-      expect(mockPrismaService.client.matches.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: expect.objectContaining({
-            OR: expect.arrayContaining([
-              expect.objectContaining({ homeTeam: expect.any(Object) }),
-              expect.objectContaining({ awayTeam: expect.any(Object) }),
-            ]),
-          }),
-        }),
-      );
+      expect(mockPrismaService.client.clubs.findMany).toHaveBeenCalledWith({
+        where: { name: { contains: "Paris", mode: "insensitive" } },
+        select: { id: true },
+      });
+      const { where } =
+        mockPrismaService.client.matches.findMany.mock.calls[0][0];
+      expect(where.OR).toEqual([
+        { homeTeam: { clubId: { in: [7, 9] } } },
+        { awayTeam: { clubId: { in: [7, 9] } } },
+      ]);
+      expect(
+        mockPrismaService.client.matches.count.mock.calls[0][0].where,
+      ).toEqual(where);
+    });
+
+    it("should not look clubs up when there is no search", async () => {
+      await service.findAllMatches({ committeeId: 2 });
+
+      expect(mockPrismaService.client.clubs.findMany).not.toHaveBeenCalled();
     });
 
     it("should combine organization and search filters with AND when both are set", async () => {
+      mockPrismaService.client.clubs.findMany.mockResolvedValue([{ id: 7 }]);
+
       await service.findAllMatches({ committeeId: 2, search: "Paris" });
 
       expect(mockPrismaService.client.matches.findMany).toHaveBeenCalledWith(
@@ -774,20 +793,8 @@ describe("MatchesService", () => {
               },
               {
                 OR: [
-                  {
-                    homeTeam: {
-                      club: {
-                        name: { contains: "Paris", mode: "insensitive" },
-                      },
-                    },
-                  },
-                  {
-                    awayTeam: {
-                      club: {
-                        name: { contains: "Paris", mode: "insensitive" },
-                      },
-                    },
-                  },
+                  { homeTeam: { clubId: { in: [7] } } },
+                  { awayTeam: { clubId: { in: [7] } } },
                 ],
               },
             ],
