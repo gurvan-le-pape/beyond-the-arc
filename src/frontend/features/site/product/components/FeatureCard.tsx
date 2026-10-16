@@ -48,7 +48,7 @@ export function FeatureCard({
           {statusLabel}
         </span>
       </div>
-      <Text variant="h3" className="mb-2">
+      <Text variant="h3" as="h2" className="mb-2">
         {title}
       </Text>
       <Text variant="caption">{description}</Text>

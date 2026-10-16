@@ -70,7 +70,10 @@ export function Footer() {
         <div className="flex flex-col items-center text-center lg:items-stretch lg:text-left lg:flex-row lg:justify-between lg:flex-wrap gap-8 mb-4">
           <div className="space-y-2 max-w-sm">
             <div>
-              <Text variant="h3" className="mb-2">
+              {/* Styled as a heading, but not one: the footer is not a section
+                  of the page's outline, and an h3 here followed every page's
+                  h1 with no h2 between. */}
+              <Text variant="h3" as="p" className="mb-2">
                 {t("footer.projectName")}
               </Text>
               <Text variant="body" as="p" className="leading-relaxed mb-3">

@@ -46,7 +46,7 @@ export const EmptyState = ({
     >
       {icon && <div className="mb-4 text-text-muted">{icon}</div>}
 
-      <Text variant="h3" className="mb-2">
+      <Text variant="h3" as="p" className="mb-2">
         {title}
       </Text>
 

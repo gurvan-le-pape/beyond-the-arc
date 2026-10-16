@@ -43,11 +43,11 @@ export function Header() {
 
   return (
     <header className="backdrop-blur-md bg-header border-b border-divide shadow-card sticky top-0 z-header transition-colors">
-      <nav
-        className="flex justify-between items-center px-4 sm:px-6 lg:px-8 h-16"
-        role="navigation"
-        aria-label={t("header.mainNavAriaLabel")}
-      >
+      {/* A plain row, not a landmark: the links inside are the navigation
+          (NavLinks renders the labelled <nav>); the logo and theme toggle
+          around them are not. Two nested navs under one name read as two
+          regions to a screen reader. */}
+      <div className="flex justify-between items-center px-4 sm:px-6 lg:px-8 h-16">
         <Logo />
 
         <div className="hidden md:flex items-center gap-1">
@@ -91,7 +91,7 @@ export function Header() {
             <NavLinks asList onClick={() => setMenuOpen(false)} />
           </div>
         </div>
-      </nav>
+      </div>
     </header>
   );
 }

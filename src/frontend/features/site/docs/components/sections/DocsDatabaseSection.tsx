@@ -38,7 +38,9 @@ export function DocsDatabaseSection({ content }: DocsDatabaseSectionProps) {
       {/* Database Diagram — establishes surface-raised context */}
       <div className="surface-raised rounded-button p-6 border border-divide">
         <div className="flex justify-between items-center mb-4">
-          <Text variant="h3">{t("docs.database.diagramTitle")}</Text>
+          <Text variant="h3" as="h2">
+            {t("docs.database.diagramTitle")}
+          </Text>
           <div className="flex gap-2">
             <a
               href="/docs/data-model.pdf"
@@ -120,7 +122,7 @@ export function DocsDatabaseSection({ content }: DocsDatabaseSectionProps) {
 
       {/* Key Tables — sit inside surface-subtle, inset resolves to surface-raised */}
       <div>
-        <Text variant="h3" className="mb-3">
+        <Text variant="h3" as="h2" className="mb-3">
           {t("docs.database.keyTables")}
         </Text>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

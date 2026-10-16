@@ -130,7 +130,9 @@ async function Home({ params }: LocalePageProps) {
       </div>
 
       <div className="px-6 pt-7 pb-2 border-b border-divide">
-        <Text variant="overline">{t("explore.sectionTitle")}</Text>
+        <Text variant="overline" as="h2">
+          {t("explore.sectionTitle")}
+        </Text>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 border-b border-divide divide-y md:divide-y-0 md:divide-x divide-divide">
@@ -163,7 +165,9 @@ async function Home({ params }: LocalePageProps) {
       </div>
 
       <div className="px-6 pt-7 pb-2">
-        <Text variant="overline">{t("levels.sectionTitle")}</Text>
+        <Text variant="overline" as="h2">
+          {t("levels.sectionTitle")}
+        </Text>
       </div>
 
       <div className="flex flex-col gap-2 px-6 pb-10">
