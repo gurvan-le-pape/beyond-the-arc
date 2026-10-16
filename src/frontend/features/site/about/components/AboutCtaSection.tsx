@@ -34,7 +34,10 @@ export function AboutCtaSection({
         </Link>
         <Link
           href="/architecture"
-          className="px-6 py-3 bg-on-solid-primary/10 border border-on-solid-primary/40 rounded-button font-semibold hover:bg-on-solid-primary/20 transition-all duration-200 focus-ring"
+          // Outline only, no wash: any wash of the ink over the solid fill
+          // lightens it under the label (10% gives 4.3:1). Hover thickens the
+          // border and underlines instead of tinting the fill.
+          className="px-6 py-3 border border-on-solid-primary/60 rounded-button font-semibold hover:border-on-solid-primary hover:underline transition-all duration-200 focus-ring"
         >
           {architectureLabel}
         </Link>

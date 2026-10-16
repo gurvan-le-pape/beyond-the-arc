@@ -39,7 +39,7 @@ export function DocsStructureSection({ content }: DocsStructureSectionProps) {
       <Text variant="body">{content}</Text>
 
       <div>
-        <Text variant="h3" className="mb-3">
+        <Text variant="h3" as="h2" className="mb-3">
           {t("docs.structure.backend")}
         </Text>
         {/* Code block — intentional dark bg for readability */}
@@ -54,7 +54,7 @@ export function DocsStructureSection({ content }: DocsStructureSectionProps) {
       </div>
 
       <div>
-        <Text variant="h3" className="mb-3">
+        <Text variant="h3" as="h2" className="mb-3">
           {t("docs.structure.frontend")}
         </Text>
         {/* Code block — intentional dark bg for readability */}

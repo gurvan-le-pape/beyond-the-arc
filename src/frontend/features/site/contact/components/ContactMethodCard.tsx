@@ -32,7 +32,7 @@ export function ContactMethodCard({
       <div className="mb-4 w-fit transition-transform duration-200 motion-safe:group-hover:scale-110">
         <IconTile icon={Icon} />
       </div>
-      <Text variant="h3" className="mb-2 text-base">
+      <Text variant="h3" as="h2" className="mb-2 text-base">
         {label}
       </Text>
       <Text variant="caption" className="break-all">

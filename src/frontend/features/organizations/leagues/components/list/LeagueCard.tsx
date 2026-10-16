@@ -68,6 +68,7 @@ export function LeagueCard({ league, clubLabel }: LeagueCardProps) {
         <div className="px-4 py-3 flex items-center justify-between gap-3 flex-1">
           <Text
             variant="h3"
+            as="h2"
             className="leading-snug line-clamp-2 text-base md:text-lg"
           >
             {formatLeagueName(league.name)}
