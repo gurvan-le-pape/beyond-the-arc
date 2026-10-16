@@ -40,8 +40,7 @@ const density = {
 
 /**
  * Kept separate from `density` so a table can be dense without being forced
- * onto one line, or roomy and still nowrap. The old `size="compact"` was the
- * pair of them.
+ * onto one line, or roomy and still nowrap.
  */
 const wrap = {
   true: "",

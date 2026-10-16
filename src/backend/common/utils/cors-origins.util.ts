@@ -16,11 +16,11 @@ export const DEV_ORIGIN = "http://localhost:3000";
  * allowed to read this API from a visitor's browser. There is no auth here, so
  * that costs nothing today; it costs everything the day there is.
  *
- * A missing FRONTEND_URL in production throws rather than degrading. The
- * previous `process.env.FRONTEND_URL || ""` put an empty string in the list,
- * which matches no Origin header — so the real frontend silently lost its CORS
- * while `http://localhost:3000` kept working. Failing at boot is the loud
- * version of that, and the deploy surfaces it instead of the users.
+ * A missing FRONTEND_URL in production throws rather than degrading. Falling
+ * back to an empty string would put an origin in the list that matches no
+ * Origin header, so the real frontend would silently lose its CORS while
+ * `http://localhost:3000` kept working. Failing at boot is the loud version of
+ * that, and the deploy surfaces it instead of the users.
  */
 export function resolveCorsOrigins(
   env: Record<string, string | undefined> = process.env,

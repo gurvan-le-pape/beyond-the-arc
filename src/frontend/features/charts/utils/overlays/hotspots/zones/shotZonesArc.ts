@@ -47,9 +47,9 @@ const rightPolygon = buildArcZonePolygon(PAINT_X1, ARC_RIGHT_X, PAINT_HEIGHT);
 // Custom contains logic for arc zones
 function containsArcZone(x: number, y: number, x0: number, x1: number) {
   // The drawn sliver spans from the paint's top edge (`PAINT_HEIGHT`) up to
-  // the three-point arc at this x. The old check capped y at `ARC_Y` — the y
-  // where the arc meets the *straight* 3-pt line, which sits below the paint
-  // top, so the interval was empty and the zone could never match a shot.
+  // the three-point arc at this x. Not up to `ARC_Y`: that is the y where the
+  // arc meets the *straight* 3-pt line, below the paint top, so capping there
+  // leaves an empty interval and a zone that never matches a shot.
   return (
     x >= x0 &&
     x < x1 &&

@@ -3,13 +3,13 @@
 /**
  * Upper bound on the `search` query parameter, in characters.
  *
- * `search` was declared `@IsString()` with no length bound, and production
- * accepted 2,000 characters and more. Two things make that worth closing.
+ * Two things make a bound necessary.
  *
- * It is cache-key material: the response cache is keyed by request URL, so an
- * unbounded `search` is an unbounded key held in memory for the life of the
- * entry. And it feeds an unanchored `ILIKE '%...%'` with no trigram or GIN
- * index behind it, so the cost is paid on every call.
+ * `search` is cache-key material: the response cache is keyed by request URL,
+ * so an unbounded `search` is an unbounded key held in memory for the life of
+ * the entry. And it feeds an unanchored `ILIKE '%...%'`, whose cost grows with
+ * the term: the player name's trigram index splits it into one trigram per
+ * character, and the club name has no index at all.
  *
  * 100 is generous against the data: the longest club name in the seeded set is
  * 89 characters, so nothing longer can match anything.
