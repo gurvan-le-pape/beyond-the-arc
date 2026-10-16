@@ -71,10 +71,10 @@ async function TeamDetailPage({ params }: LocalePageProps<{ teamId: string }>) {
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "teams" });
 
-  const [team, matchHistory, matchEvents] = await Promise.all([
+  const [team, matchHistory, shots] = await Promise.all([
     serverTeamsService.getById(teamId),
     serverTeamsService.getMatches(teamId),
-    serverMatchesService.getEventsByTeamId(teamId),
+    serverMatchesService.getShotsByTeamId(teamId),
   ]).catch(handleServerError);
 
   const { matches, seasonStats } = matchHistory;
@@ -93,7 +93,7 @@ async function TeamDetailPage({ params }: LocalePageProps<{ teamId: string }>) {
       <TeamUpcomingMatchesTable team={team} matches={upcoming} />
 
       <TeamShotChart
-        matchEvents={matchEvents}
+        shots={shots}
         title={t("teamDetail.shotchartTitle")}
         description={t("teamDetail.shotchartDescription")}
       />

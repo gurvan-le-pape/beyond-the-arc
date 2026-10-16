@@ -3,7 +3,7 @@
 
 import { useTranslations } from "next-intl";
 
-import type { MatchEvent } from "@/features/matches/types";
+import type { MatchEvent, Shot } from "@/features/matches/types";
 import type { TeamInfoExtended } from "@/features/teams/types";
 import {
   Tabs,
@@ -21,7 +21,7 @@ interface MatchSummaryTabsProps {
   readonly awayTeam: TeamInfoExtended;
   readonly matchEvents: MatchEvent[];
   readonly matchDate: Date | string;
-  readonly playerShots: Record<number, MatchEvent[]>;
+  readonly playerShots: Record<number, Shot[]>;
 }
 
 /**

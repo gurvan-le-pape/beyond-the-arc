@@ -550,19 +550,42 @@ export class ShotLocationDto {
 }
 
 /**
+ * One shot on a team's or player's season shot chart: where it was taken and
+ * what kind of attempt it was. The chart needs nothing else, so this carries
+ * nothing else — not the event's players, clubs or description, which made the
+ * full event ~470 bytes against ~55 for this.
+ *
+ * Coordinates are the same as `ShotLocationDto`'s.
+ */
+export class ShotDto {
+  @ApiProperty({
+    description: "Metres across the court from the baseline corner (0–15)",
+    example: 5.5,
+    type: Number,
+  })
+  x!: number;
+
+  @ApiProperty({
+    description: "Metres from the baseline towards half-court (0–14)",
+    example: 3.2,
+    type: Number,
+  })
+  y!: number;
+
+  @ApiProperty({
+    description: "Event type of the attempt (made, missed, blocked, and-1)",
+    example: EventType.MADE_LAYUP,
+    enum: EventType,
+  })
+  eventType!: EventType;
+}
+
+/**
  * Match event response.
  */
 export class MatchEventDto {
   @ApiProperty({ description: "Event ID", example: 1, type: Number })
   id!: number;
-
-  @ApiProperty({
-    description: "Match ID (present on shot event queries)",
-    example: 1,
-    type: Number,
-    required: false,
-  })
-  matchId?: number;
 
   @ApiProperty({
     description: "Event type",

@@ -63,10 +63,10 @@ async function PlayerDetailPage({
   setRequestLocale(locale);
   const tPlayers = await getTranslations({ locale, namespace: "players" });
 
-  const [player, matchHistory, matchEvents] = await Promise.all([
+  const [player, matchHistory, shots] = await Promise.all([
     serverPlayersService.getById(playerId),
     serverPlayersService.getMatches(playerId),
-    serverMatchesService.getEventsByPlayerId(playerId),
+    serverMatchesService.getShotsByPlayerId(playerId),
   ]).catch(handleServerError);
 
   const { matches, career } = matchHistory;
@@ -84,7 +84,7 @@ async function PlayerDetailPage({
       <PlayerComparison player={player} careerStats={career} />
 
       <PlayerShotChart
-        matchEvents={matchEvents}
+        shots={shots}
         title={tPlayers("playerDetail.shotchartTitle")}
         description={tPlayers("playerDetail.shotchartDescription")}
       />

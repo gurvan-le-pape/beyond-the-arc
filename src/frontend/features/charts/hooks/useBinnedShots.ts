@@ -1,7 +1,7 @@
 // src/frontend/features/charts/hooks/useBinnedShots.ts
 import { useMemo } from "react";
 
-import type { MatchEvent } from "@/features/matches/types";
+import type { Shot } from "@/features/matches/types";
 import { transformToShotEvents } from "@/features/players/utils";
 import type { ShotEvent } from "@/shared/types";
 
@@ -17,14 +17,14 @@ import type { ZoneStats } from "../types";
  *
  * @returns the shots bucketed into the heatmap grid, memoised so the overlay is not rebuilt on unrelated renders
  *
- * @param matchEvents - every event; non-shots and negative coordinates are dropped
+ * @param shots - every event; non-shots and negative coordinates are dropped
  * @param rows - grid rows across the half court
  * @param cols - grid columns across the half court
  * @param cellWidth - one cell's width in court units
  * @param cellHeight - one cell's height in court units
  */
 export function useBinnedShots(
-  matchEvents: MatchEvent[],
+  shots: Shot[],
   rows: number,
   cols: number,
   cellWidth: number,
@@ -37,7 +37,7 @@ export function useBinnedShots(
     const bins = Array.from({ length: rows }, () =>
       Array.from({ length: cols }, () => ({ made: 0, missed: 0, total: 0 })),
     );
-    const shotEvents = transformToShotEvents(matchEvents ?? []);
+    const shotEvents = transformToShotEvents(shots ?? []);
 
     shotEvents.forEach((shotEvent) => {
       const col = Math.min(Math.floor(shotEvent.x / cellWidth), cols - 1);
@@ -55,5 +55,5 @@ export function useBinnedShots(
     });
 
     return { bins, shotEvents };
-  }, [matchEvents, rows, cols, cellWidth, cellHeight]);
+  }, [shots, rows, cols, cellWidth, cellHeight]);
 }

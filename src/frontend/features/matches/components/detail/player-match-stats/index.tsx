@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { ShotModal } from "@/features/charts/components";
-import type { MatchEvent } from "@/features/matches/types";
+import type { Shot } from "@/features/matches/types";
 import type { TeamInfo, TeamInfoExtended } from "@/features/teams/types";
 import { Link } from "@/navigation";
 import { Section } from "@/shared/components/blocks";
@@ -19,7 +19,7 @@ interface PlayerMatchStatsProps {
   readonly team: TeamInfoExtended;
   readonly isHomeTeam: boolean;
   readonly opponent: TeamInfo;
-  readonly playerShots: Record<number, MatchEvent[]>;
+  readonly playerShots: Record<number, Shot[]>;
 }
 
 /**

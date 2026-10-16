@@ -5,7 +5,7 @@ import { scaleLinear } from "d3-scale";
 import { useTranslations } from "next-intl";
 import { useId, useMemo, useState } from "react";
 
-import type { MatchEvent } from "@/features/matches/types";
+import type { Shot } from "@/features/matches/types";
 
 import type { ColorScaleName } from "../constants";
 import {
@@ -28,7 +28,7 @@ import HotspotsOverlay from "./overlays/HotspotsOverlay";
 import ScatterOverlay from "./overlays/ScatterOverlay";
 
 interface ShotChartProps {
-  readonly matchEvents: MatchEvent[];
+  readonly shots: Shot[];
   readonly chartType?: ChartType;
 }
 
@@ -52,7 +52,7 @@ const CELL_HEIGHT = HALF_COURT_HEIGHT / HEATMAP_ROWS;
  * burying the court.
  */
 export function ShotChart({
-  matchEvents,
+  shots,
   chartType = ChartType.SCATTER,
 }: ShotChartProps) {
   const { containerRef, size: containerSize } = useCourtSize(
@@ -81,7 +81,7 @@ export function ShotChart({
   );
 
   const { bins: heatmapData, shotEvents } = useBinnedShots(
-    matchEvents,
+    shots,
     HEATMAP_ROWS,
     HEATMAP_COLS,
     CELL_WIDTH,

@@ -420,7 +420,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/matches/team/{teamId}/events": {
+    "/api/matches/team/{teamId}/shots": {
         parameters: {
             query?: never;
             header?: never;
@@ -428,10 +428,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get shot events by team ID
-         * @description Retrieves every shot a specific team took, with its location, across all their matches, blocked attempts included. Shots its players blocked or fouled are excluded.
+         * Get shots by team ID
+         * @description Retrieves every shot a specific team took, with its location and event type, across all their matches, blocked attempts included. Shots its players blocked or fouled are excluded.
          */
-        get: operations["MatchesController_getMatchEventsByTeamId"];
+        get: operations["MatchesController_getShotsByTeamId"];
         put?: never;
         post?: never;
         delete?: never;
@@ -440,7 +440,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/matches/player/{playerId}/events": {
+    "/api/matches/player/{playerId}/shots": {
         parameters: {
             query?: never;
             header?: never;
@@ -448,10 +448,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get shot events by player ID
-         * @description Retrieves every shot a specific player took, with its location, across all their matches, blocked attempts included. Shots the player only assisted on are excluded. Results are cached for 5 minutes.
+         * Get shots by player ID
+         * @description Retrieves every shot a specific player took, with its location and event type, across all their matches, blocked attempts included. Shots the player only assisted on are excluded. Results are cached for 5 minutes.
          */
-        get: operations["MatchesController_getMatchEventsByPlayerId"];
+        get: operations["MatchesController_getShotsByPlayerId"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1558,11 +1558,6 @@ export interface components {
              */
             id: number;
             /**
-             * @description Match ID (present on shot event queries)
-             * @example 1
-             */
-            matchId?: number;
-            /**
              * @description Event type
              * @example made_layup
              * @enum {string}
@@ -1894,6 +1889,24 @@ export interface components {
             homeTeamStats: components["schemas"]["TeamMatchStatsDto"];
             /** @description Aggregated totals for the away team */
             awayTeamStats: components["schemas"]["TeamMatchStatsDto"];
+        };
+        ShotDto: {
+            /**
+             * @description Metres across the court from the baseline corner (0–15)
+             * @example 5.5
+             */
+            x: number;
+            /**
+             * @description Metres from the baseline towards half-court (0–14)
+             * @example 3.2
+             */
+            y: number;
+            /**
+             * @description Event type of the attempt (made, missed, blocked, and-1)
+             * @example made_layup
+             * @enum {string}
+             */
+            eventType: "tip_off" | "traveling" | "carrying" | "double_dribble" | "bad_pass" | "steal" | "shot_clock_violation" | "offensive_foul" | "quarter_end" | "blocking_foul" | "pushing_foul" | "reaching_foul" | "charging_foul" | "illegal_screen" | "technical_foul" | "made_layup" | "made_dunk" | "made_fadeaway" | "made_pull_up_jump_shot" | "made_catch_and_shoot_three" | "made_step_back_three" | "missed_layup" | "missed_dunk" | "missed_fadeaway" | "missed_pull_up_jump_shot" | "missed_catch_and_shoot_three" | "missed_step_back_three" | "blocked_shot" | "offensive_rebound" | "defensive_rebound" | "free_throw_made" | "free_throw_missed" | "3_point_shooting_foul" | "2_point_ext_shooting_foul" | "2_point_int_shooting_foul" | "3_point_and_1" | "2_point_ext_and_1" | "2_point_int_and_1" | "inbound" | "substitution";
         };
         PlayerLeagueRefDto: {
             /**
@@ -3791,7 +3804,7 @@ export interface operations {
             };
         };
     };
-    MatchesController_getMatchEventsByTeamId: {
+    MatchesController_getShotsByTeamId: {
         parameters: {
             query?: never;
             header?: never;
@@ -3803,14 +3816,14 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Shot events successfully retrieved */
+            /** @description Shots successfully retrieved */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": components["schemas"]["ApiEnvelopeDto"] & {
-                        data: components["schemas"]["MatchEventDto"][];
+                        data: components["schemas"]["ShotDto"][];
                         meta: components["schemas"]["ApiListMetaDto"];
                     };
                 };
@@ -3826,7 +3839,7 @@ export interface operations {
             };
         };
     };
-    MatchesController_getMatchEventsByPlayerId: {
+    MatchesController_getShotsByPlayerId: {
         parameters: {
             query?: never;
             header?: never;
@@ -3838,14 +3851,14 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Shot events successfully retrieved */
+            /** @description Shots successfully retrieved */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": components["schemas"]["ApiEnvelopeDto"] & {
-                        data: components["schemas"]["MatchEventDto"][];
+                        data: components["schemas"]["ShotDto"][];
                         meta: components["schemas"]["ApiListMetaDto"];
                     };
                 };
