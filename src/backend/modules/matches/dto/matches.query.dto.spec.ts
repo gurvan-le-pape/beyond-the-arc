@@ -92,6 +92,21 @@ describe("GetMatchesQueryDto", () => {
       expect(errors.some((e) => e.property === "date")).toBe(true);
     });
 
+    it.each(["2026-02-30", "2025-02-29", "2026-13-01", "2026-04-31"])(
+      "should fail for %s, which is not a calendar date",
+      async (date) => {
+        const dto = plainToInstance(GetMatchesQueryDto, { date });
+        const errors = await validate(dto);
+        expect(errors.some((e) => e.property === "date")).toBe(true);
+      },
+    );
+
+    it("should pass for 29 February in a leap year", async () => {
+      const dto = plainToInstance(GetMatchesQueryDto, { date: "2028-02-29" });
+      const errors = await validate(dto);
+      expect(errors.some((e) => e.property === "date")).toBe(false);
+    });
+
     it("should fail for partial date", async () => {
       const dto = plainToInstance(GetMatchesQueryDto, { date: "2024-02" });
       const errors = await validate(dto);
