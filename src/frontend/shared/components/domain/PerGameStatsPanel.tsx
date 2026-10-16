@@ -39,7 +39,7 @@ export function PerGameStatsPanel({ stats }: PerGameStatsPanelProps) {
   const tCommon = useTranslations("common");
 
   return (
-    <Section title={tCommon("stats.seasonStatsTitle")} variant="highlighted">
+    <Section title={tCommon("stats.seasonStatsTitle")}>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {STAT_FIELDS.map((field) => (
           <InfoBox

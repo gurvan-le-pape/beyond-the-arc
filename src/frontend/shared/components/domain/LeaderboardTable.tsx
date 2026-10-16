@@ -110,7 +110,7 @@ export function LeaderboardTable({
   ];
 
   return (
-    <Section variant="highlighted" title={tCompetitions("leaderboardTitle")}>
+    <Section title={tCompetitions("leaderboardTitle")}>
       <div className="flex justify-end mb-2">
         <div className="min-w-[200px]">{dropdown}</div>
       </div>

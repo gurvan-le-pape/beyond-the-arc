@@ -20,7 +20,7 @@ export function TeamShotChart({
   description,
 }: TeamShotChartProps) {
   return (
-    <Section title={title} variant="highlighted">
+    <Section title={title}>
       <div className="w-full max-w-3xl mx-auto">
         <ShotChart chartType={ChartType.HEATMAP} shots={shots} />
         {description && (

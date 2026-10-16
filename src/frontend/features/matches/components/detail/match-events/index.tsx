@@ -42,7 +42,7 @@ export function MatchEvents({
 
   if (!events || events.length === 0) {
     return (
-      <Section title={tMatches("matchEvents.title")} variant="highlighted">
+      <Section title={tMatches("matchEvents.title")}>
         <EmptyState
           title={tCommon("noData")}
           message={tMatches("matchEvents.noEvents")}
@@ -52,7 +52,7 @@ export function MatchEvents({
   }
 
   return (
-    <Section title={tMatches("matchEvents.title")} variant="highlighted">
+    <Section title={tMatches("matchEvents.title")}>
       <div className="mb-6">
         <MatchEventsFilters
           homeTeam={homeTeam}

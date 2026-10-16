@@ -43,7 +43,6 @@ function renderItem(item: SectionItem) {
 interface GenderCategorizedSectionProps {
   readonly items: SectionItem[];
   readonly title: string;
-  readonly variant?: "highlighted" | "default";
   readonly emptyState: React.ReactNode;
   /**
    * Opens every category on arrival. Right for a club's handful of teams,
@@ -63,7 +62,6 @@ interface GenderCategorizedSectionProps {
 export function GenderCategorizedSection({
   items,
   title,
-  variant = "highlighted",
   emptyState,
   defaultExpanded = false,
 }: GenderCategorizedSectionProps) {
@@ -75,7 +73,7 @@ export function GenderCategorizedSection({
   const byGender = groupBy(items, getGender);
 
   return (
-    <Section title={title} variant={variant}>
+    <Section title={title}>
       <div className="flex flex-col gap-2">
         <GenderCategorizedList
           genderLabel={tCommon("gender.female")}

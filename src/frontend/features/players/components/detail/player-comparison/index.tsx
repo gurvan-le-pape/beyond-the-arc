@@ -108,10 +108,7 @@ export function PlayerComparison({
   );
 
   return (
-    <Section
-      title={tPlayers("playerDetail.compareTitle")}
-      variant="highlighted"
-    >
+    <Section title={tPlayers("playerDetail.compareTitle")}>
       <div className="relative rounded-2xl min-h-[140px]">
         <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
           <div className="absolute inset-0 bg-gradient-to-r from-tint-primary via-transparent to-tint-secondary opacity-50" />

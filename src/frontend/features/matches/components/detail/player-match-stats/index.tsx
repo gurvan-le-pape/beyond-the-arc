@@ -69,7 +69,6 @@ export function PlayerMatchStats({
           </Text>
         </span>
       }
-      variant="highlighted"
     >
       <DataTable
         columns={columns}
