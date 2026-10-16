@@ -31,10 +31,17 @@ async function bootstrap() {
   // anyone would be debugging.
   app.enableCors({
     origin: resolveCorsOrigins(),
-    methods: "GET,POST,PUT,PATCH,DELETE",
-    allowedHeaders: ["Content-Type", "Authorization"],
+    // The API is read-only: every route is a GET. Content-Type is the one
+    // request header to grant, because the axios client sets it on every
+    // request; there is no Authorization to accept.
+    methods: "GET",
+    allowedHeaders: ["Content-Type"],
     exposedHeaders: [REQUEST_ID_HEADER],
   });
+
+  // Express announces itself in `X-Powered-By` by default: a free hint about
+  // the stack to anyone probing it, and no use to a client.
+  app.getHttpAdapter().getInstance().disable("x-powered-by");
 
   // The global prefix and the ValidationPipe. Extracted so app.pipeline.spec.ts
   // exercises this pipeline rather than a second declaration of it — see

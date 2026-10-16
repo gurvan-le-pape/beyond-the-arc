@@ -9,6 +9,9 @@ const nextConfig = {
   // the production image ships without the build toolchain.
   output: "standalone",
   reactStrictMode: false,
+  // No `X-Powered-By: Next.js` on every response: a hint about the stack for
+  // anyone probing it, and no use to a visitor.
+  poweredByHeader: false,
   experimental: {
     // Keep the Data Cache and ISR pages in memory only. With the default
     // `true`, every cached fetch and every ISR render is also written under
