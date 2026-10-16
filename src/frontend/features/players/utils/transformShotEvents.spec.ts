@@ -42,8 +42,7 @@ describe("transformToShotEvents", () => {
   });
 
   it("classifies the and-one family as makes despite the name not starting with 'made'", () => {
-    // The old `eventType.startsWith("made")` check silently plotted these as
-    // misses; they are made baskets.
+    // Made baskets whose names do not begin with "made".
     const result = transformToShotEvents([
       shotEvent("3_point_and_1", { x: 2.0, y: 7.0 }),
       shotEvent("2_point_int_and_1", { x: 6.0, y: 2.0 }),
