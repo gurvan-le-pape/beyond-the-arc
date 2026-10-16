@@ -257,8 +257,6 @@ describe("TeamsController", () => {
         pool: null,
         _count: { players: 12 },
         players: [],
-        homeMatches: [],
-        awayMatches: [],
       };
 
       mockTeamsService.findTeamById.mockResolvedValue(mockTeam);
@@ -298,8 +296,6 @@ describe("TeamsController", () => {
         pool: null,
         _count: { players: 0 },
         players: [],
-        homeMatches: [],
-        awayMatches: [],
       };
 
       mockTeamsService.findTeamById.mockResolvedValue(mockTeam);

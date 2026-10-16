@@ -203,8 +203,6 @@ describe("TeamsService", () => {
         pool: null,
         _count: { players: 12 },
         players: [],
-        homeMatches: [],
-        awayMatches: [],
       };
 
       mockPrismaService.client.teams.findUnique.mockResolvedValue(mockTeam);
@@ -216,8 +214,6 @@ describe("TeamsService", () => {
       expect(result.id).toBe(1);
       expect(result._count.players).toBe(12);
       expect(result.players).toEqual([]);
-      expect(result.homeMatches).toEqual([]);
-      expect(result.awayMatches).toEqual([]);
       expect(mockPrismaService.client.teams.findUnique).toHaveBeenCalledWith({
         where: { id: 1 },
         select: expect.any(Object),

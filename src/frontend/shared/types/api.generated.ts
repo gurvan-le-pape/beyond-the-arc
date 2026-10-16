@@ -589,7 +589,7 @@ export interface paths {
         };
         /**
          * Get team by ID
-         * @description Retrieves detailed information about a specific team including players and recent matches
+         * @description Retrieves detailed information about a specific team including its roster with season stats
          */
         get: operations["TeamsController_getTeamById"];
         put?: never;
@@ -2511,84 +2511,6 @@ export interface components {
             /** @description Season totals and per-game averages */
             seasonStats: components["schemas"]["PlayerCareerStatsDto"];
         };
-        RecentMatchChampionshipRefDto: {
-            /**
-             * @description Championship ID
-             * @example 1
-             */
-            id: number;
-            /**
-             * @description Championship name
-             * @example Championship Régional U18 male
-             */
-            name: string;
-        };
-        RecentMatchPoolRefDto: {
-            /**
-             * @description Pool ID
-             * @example 1
-             */
-            id: number;
-            /**
-             * @description Pool name
-             * @example Poule A
-             */
-            name: string;
-            /** @description Championship the pool belongs to */
-            championship: components["schemas"]["RecentMatchChampionshipRefDto"];
-        };
-        RecentHomeMatchDto: {
-            /**
-             * @description Match ID
-             * @example 1
-             */
-            id: number;
-            /**
-             * @description Tip-off instant, as an ISO 8601 UTC timestamp
-             * @example 2024-02-05T19:00:00Z
-             */
-            startsAt: string;
-            /**
-             * @description Home team score
-             * @example 85
-             */
-            homeTeamScore: number | null;
-            /**
-             * @description Away team score
-             * @example 72
-             */
-            awayTeamScore: number | null;
-            /** @description Pool information */
-            pool: components["schemas"]["RecentMatchPoolRefDto"];
-            /** @description Away team information */
-            awayTeam: components["schemas"]["HistoryTeamRefDto"];
-        };
-        RecentAwayMatchDto: {
-            /**
-             * @description Match ID
-             * @example 1
-             */
-            id: number;
-            /**
-             * @description Tip-off instant, as an ISO 8601 UTC timestamp
-             * @example 2024-02-05T19:00:00Z
-             */
-            startsAt: string;
-            /**
-             * @description Home team score
-             * @example 85
-             */
-            homeTeamScore: number | null;
-            /**
-             * @description Away team score
-             * @example 72
-             */
-            awayTeamScore: number | null;
-            /** @description Pool information */
-            pool: components["schemas"]["RecentMatchPoolRefDto"];
-            /** @description Home team information */
-            homeTeam: components["schemas"]["HistoryTeamRefDto"];
-        };
         TeamDetailResponseDto: {
             /**
              * @description Unique team identifier
@@ -2640,10 +2562,6 @@ export interface components {
             _count: components["schemas"]["TeamCountDto"];
             /** @description Team players */
             players: components["schemas"]["TeamRosterPlayerDto"][];
-            /** @description Recent home matches (up to 5) */
-            homeMatches: components["schemas"]["RecentHomeMatchDto"][];
-            /** @description Recent away matches (up to 5) */
-            awayMatches: components["schemas"]["RecentAwayMatchDto"][];
         };
         MatchPlayerDto: {
             /** @description Player information */

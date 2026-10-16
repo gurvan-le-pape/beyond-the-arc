@@ -76,7 +76,7 @@ const TEAM_SELECT = {
 } as const;
 
 /**
- * Fields to select for team details with players and matches.
+ * Fields to select for team details with their roster.
  */
 const TEAM_DETAIL_SELECT = {
   id: true,
@@ -139,78 +139,6 @@ const TEAM_DETAIL_SELECT = {
     orderBy: {
       number: "asc" as const,
     },
-  },
-  homeMatches: {
-    select: {
-      id: true,
-      startsAt: true,
-      homeTeamScore: true,
-      awayTeamScore: true,
-      awayTeam: {
-        select: {
-          id: true,
-          number: true,
-          club: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
-        },
-      },
-      pool: {
-        select: {
-          id: true,
-          name: true,
-          championship: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
-        },
-      },
-    },
-    orderBy: {
-      startsAt: "desc" as const,
-    },
-    take: 5,
-  },
-  awayMatches: {
-    select: {
-      id: true,
-      startsAt: true,
-      homeTeamScore: true,
-      awayTeamScore: true,
-      homeTeam: {
-        select: {
-          id: true,
-          number: true,
-          club: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
-        },
-      },
-      pool: {
-        select: {
-          id: true,
-          name: true,
-          championship: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
-        },
-      },
-    },
-    orderBy: {
-      startsAt: "desc" as const,
-    },
-    take: 5,
   },
 } as const;
 
@@ -384,7 +312,7 @@ export class TeamsService {
   }
 
   /**
-   * Finds a team by ID with full details including players and recent matches.
+   * Finds a team by ID with full details including its roster and season stats.
    *
    * @param id - The team ID
    * @returns Team with full details
@@ -489,8 +417,6 @@ export class TeamsService {
         ...mapPlayerSummary(p),
         seasonStats: aggregateCareerStats(p.stats.map(mapPlayerMatchStats)),
       })),
-      homeMatches: entity.homeMatches,
-      awayMatches: entity.awayMatches,
     } satisfies TeamDetailResponseDto;
   }
 
