@@ -170,7 +170,7 @@ describe("ChampionshipsService", () => {
       // Act
       await service.findChampionships({
         level: CompetitionLevel.REGIONAL,
-        id: 1,
+        leagueId: 1,
       });
       // Assert
       expect(
@@ -204,7 +204,7 @@ describe("ChampionshipsService", () => {
       // Act
       await service.findChampionships({
         level: CompetitionLevel.DEPARTMENTAL,
-        id: 5,
+        committeeId: 5,
       });
 
       // Assert
@@ -247,7 +247,7 @@ describe("ChampionshipsService", () => {
 
       const result = await service.findChampionships({
         level: CompetitionLevel.REGIONAL,
-        id: 999,
+        leagueId: 999,
       });
 
       expect(result).toEqual({
@@ -257,6 +257,17 @@ describe("ChampionshipsService", () => {
         limit: 50,
         totalPages: 0,
       });
+    });
+
+    it("should filter by an organiser without needing a level", async () => {
+      mockPrismaService.client.championships.findMany.mockResolvedValue([]);
+      mockPrismaService.client.championships.count.mockResolvedValue(0);
+
+      await service.findChampionships({ committeeId: 5 });
+
+      expect(
+        mockPrismaService.client.championships.findMany.mock.calls[0][0].where,
+      ).toEqual({ committeeId: 5 });
     });
 
     it("should apply pagination correctly", async () => {

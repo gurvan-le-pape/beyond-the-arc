@@ -72,7 +72,8 @@ async function CommitteePage({
       serverCommitteesService.getById(committeeId),
       serverChampionshipsService.getAll({
         level: CompetitionLevel.DEPARTMENTAL,
-        id: committeeId,
+        committeeId,
+        limit: 100,
       }),
       serverClubsService.getAll({
         level: CompetitionLevel.DEPARTMENTAL,

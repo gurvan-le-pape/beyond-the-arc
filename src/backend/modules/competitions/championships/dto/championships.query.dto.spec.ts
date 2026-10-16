@@ -8,7 +8,7 @@ import { GetChampionshipsQueryDto } from "./championships.query.dto";
 describe("GetChampionshipsQueryDto", () => {
   const validDto = {
     level: CompetitionLevel.REGIONAL,
-    id: 1,
+    leagueId: 1,
   };
 
   describe("level", () => {
@@ -37,28 +37,28 @@ describe("GetChampionshipsQueryDto", () => {
     });
 
     it("should pass validation when level is omitted", async () => {
-      const dto = plainToInstance(GetChampionshipsQueryDto, { id: 1 });
+      const dto = plainToInstance(GetChampionshipsQueryDto, { leagueId: 1 });
       const errors = await validate(dto);
       expect(errors).toHaveLength(0);
     });
   });
 
-  describe("id", () => {
-    it("should pass validation for valid numeric id", async () => {
+  describe("leagueId", () => {
+    it("should pass validation for valid numeric leagueId", async () => {
       const dto = plainToInstance(GetChampionshipsQueryDto, validDto);
       const errors = await validate(dto);
       expect(errors).toHaveLength(0);
     });
 
-    it("should transform string id to number", async () => {
+    it("should transform string leagueId to number", async () => {
       const dto = plainToInstance(GetChampionshipsQueryDto, {
         ...validDto,
-        id: "42",
+        leagueId: "42",
       });
-      expect(dto.id).toBe(42);
+      expect(dto.leagueId).toBe(42);
     });
 
-    it("should pass validation when id is omitted", async () => {
+    it("should pass validation when leagueId is omitted", async () => {
       const dto = plainToInstance(GetChampionshipsQueryDto, {
         level: CompetitionLevel.REGIONAL,
       });
@@ -66,13 +66,13 @@ describe("GetChampionshipsQueryDto", () => {
       expect(errors).toHaveLength(0);
     });
 
-    it("should fail validation when id is not a number", async () => {
+    it("should fail validation when leagueId is not a number", async () => {
       const dto = plainToInstance(GetChampionshipsQueryDto, {
         ...validDto,
-        id: "abc",
+        leagueId: "abc",
       });
       const errors = await validate(dto);
-      expect(errors.some((e) => e.property === "id")).toBe(true);
+      expect(errors.some((e) => e.property === "leagueId")).toBe(true);
     });
   });
 

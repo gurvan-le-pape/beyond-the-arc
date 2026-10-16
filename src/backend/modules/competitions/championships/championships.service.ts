@@ -50,7 +50,8 @@ type ChampionshipSelectResult = Prisma.ChampionshipsGetPayload<{
  */
 type ChampionshipFilters = {
   level?: CompetitionLevel;
-  id?: number;
+  leagueId?: number;
+  committeeId?: number;
   category?: Category;
   gender?: Gender;
   page?: number;
@@ -122,8 +123,9 @@ export class ChampionshipsService {
   }
 
   /**
-   * Builds the Prisma where clause from filters.
-   * Routes the id param to leagueId or committeeId based on level.
+   * Builds the Prisma where clause from filters. Each filter applies on its
+   * own: `leagueId` and `committeeId` name the organiser directly rather than
+   * through the level.
    *
    * @param filters - Championship filters
    * @returns Prisma where clause
@@ -136,14 +138,8 @@ export class ChampionshipsService {
     if (filters?.level) where.level = filters.level;
     if (filters?.category) where.category = filters.category;
     if (filters?.gender) where.gender = filters.gender;
-
-    if (filters?.id) {
-      if (filters.level === CompetitionLevel.REGIONAL) {
-        where.leagueId = filters.id;
-      } else if (filters.level === CompetitionLevel.DEPARTMENTAL) {
-        where.committeeId = filters.id;
-      }
-    }
+    if (filters?.leagueId) where.leagueId = filters.leagueId;
+    if (filters?.committeeId) where.committeeId = filters.committeeId;
 
     return where;
   }

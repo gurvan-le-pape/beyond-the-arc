@@ -112,7 +112,7 @@ export class ChampionshipsController {
    *
    * @example
    * // Regional championships for league 1, filtered by category
-   * GET /championships?level=regional&id=1&category=U18&page=1&limit=20
+   * GET /championships?level=regional&leagueId=1&category=U18&page=1&limit=20
    */
   @Get()
   @HttpCode(HttpStatus.OK)
@@ -143,7 +143,8 @@ export class ChampionshipsController {
   ): Promise<PaginatedResponseDto<ChampionshipResponseDto>> {
     return this.championshipsService.findChampionships({
       level: query.level,
-      id: query.id,
+      leagueId: query.leagueId,
+      committeeId: query.committeeId,
       category: query.category,
       gender: query.gender,
       page: query.page,

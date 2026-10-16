@@ -900,13 +900,24 @@
             }
           },
           {
-            "name": "id",
+            "name": "leagueId",
             "required": false,
             "in": "query",
-            "description": "League ID (regional) or Committee ID (departmental)",
+            "description": "League ID: championships in that league's area, its own regional ones and its committees' departmental ones; add level=regional for the league's own",
             "schema": {
               "minimum": 1,
               "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "committeeId",
+            "required": false,
+            "in": "query",
+            "description": "Committee ID: championships organised by that committee (departmental)",
+            "schema": {
+              "minimum": 1,
+              "example": 5,
               "type": "number"
             }
           },

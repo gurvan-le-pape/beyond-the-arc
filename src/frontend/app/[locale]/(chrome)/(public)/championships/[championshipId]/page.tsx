@@ -24,6 +24,7 @@ import { serverMatchesService } from "@/features/matches/api/matches.server";
 import { LeaderboardTable } from "@/shared/components/domain";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
+import { CompetitionLevel } from "@/shared/constants";
 import type { LocalePageProps, SearchParamsProps } from "@/shared/types";
 import {
   handleServerError,
@@ -92,9 +93,12 @@ async function ChampionshipsDetailPage({
 
   const [pools, { items: championships }] = await Promise.all([
     serverPoolsService.getByChampionshipId(championshipId),
+    // Its siblings: same organiser, same level.
     serverChampionshipsService.getAll({
       level: championship.level,
-      id: organizationId,
+      ...(championship.level === CompetitionLevel.DEPARTMENTAL
+        ? { committeeId: organizationId }
+        : { leagueId: organizationId }),
       limit: 100,
     }),
   ]).catch(handleServerError);

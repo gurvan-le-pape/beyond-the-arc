@@ -16,7 +16,8 @@ export class GetChampionshipsQueryDto extends PaginationQueryDto {
   level?: CompetitionLevel;
 
   @ApiPropertyOptional({
-    description: "League ID (regional) or Committee ID (departmental)",
+    description:
+      "League ID: championships in that league's area, its own regional ones and its committees' departmental ones; add level=regional for the league's own",
     example: 1,
     type: Number,
   })
@@ -24,7 +25,19 @@ export class GetChampionshipsQueryDto extends PaginationQueryDto {
   @Type(() => Number)
   @IsInt()
   @Min(1)
-  id?: number;
+  leagueId?: number;
+
+  @ApiPropertyOptional({
+    description:
+      "Committee ID: championships organised by that committee (departmental)",
+    example: 5,
+    type: Number,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  committeeId?: number;
 
   @ApiPropertyOptional({
     description: "Age category filter",

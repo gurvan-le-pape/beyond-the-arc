@@ -42,7 +42,7 @@ export const serverChampionshipsService = {
    * @example
    * const { items } = await serverChampionshipsService.getAll({
    *   level: CompetitionLevel.REGIONAL,
-   *   id: 1,
+   *   leagueId: 1,
    * });
    */
   async getAll(
@@ -50,7 +50,8 @@ export const serverChampionshipsService = {
   ): Promise<PaginatedResponse<Championship>> {
     const queryString = buildQueryString({
       level: filters.level,
-      id: filters.id,
+      leagueId: filters.leagueId,
+      committeeId: filters.committeeId,
       category: filters.category,
       gender: filters.gender,
       page: filters.page,

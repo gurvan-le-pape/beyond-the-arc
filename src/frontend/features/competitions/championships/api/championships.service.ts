@@ -15,7 +15,8 @@ export const championshipsService = {
       {
         params: {
           level: filters?.level,
-          id: filters?.id,
+          leagueId: filters?.leagueId,
+          committeeId: filters?.committeeId,
           category: filters?.category,
           gender: filters?.gender,
           page: filters?.page,

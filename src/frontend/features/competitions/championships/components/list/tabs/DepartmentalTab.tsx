@@ -41,7 +41,7 @@ export function DepartmentalTab() {
 
   const { data, error, isLoading, refetch } = useChampionships({
     level: CompetitionLevel.DEPARTMENTAL,
-    id: Number(filters.committeeId) || undefined,
+    committeeId: Number(filters.committeeId) || undefined,
     category: filters.category,
     gender: filters.gender,
     page: filters.currentPage,
