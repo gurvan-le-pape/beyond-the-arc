@@ -3,7 +3,7 @@ import { Category, CompetitionLevel, Gender } from "@common/constants";
 import { PaginationQueryDto } from "@common/dto";
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsEnum, IsInt, IsOptional } from "class-validator";
+import { IsEnum, IsInt, IsOptional, Min } from "class-validator";
 
 export class GetChampionshipsQueryDto extends PaginationQueryDto {
   @ApiPropertyOptional({
@@ -23,6 +23,7 @@ export class GetChampionshipsQueryDto extends PaginationQueryDto {
   @IsOptional()
   @Type(() => Number)
   @IsInt()
+  @Min(1)
   id?: number;
 
   @ApiPropertyOptional({
