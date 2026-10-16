@@ -7,6 +7,7 @@ export * from "./aggregate-career-stats";
 export * from "./app-bootstrap.util";
 export * from "./bounded-memory-store";
 export * from "./cors-origins.util";
+export * from "./name-search.util";
 export * from "./openapi.util";
 export * from "./organization-filter.util";
 export * from "./pagination.util";

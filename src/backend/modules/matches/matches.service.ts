@@ -13,6 +13,7 @@ import {
   buildClubOrganizationWhere,
   mapPlayerMatchStats,
   mapPlayerSummary,
+  nameContains,
   PLAYER_MATCH_STAT_FIELDS_SELECT,
   resolvePagination,
 } from "@common/utils";
@@ -534,7 +535,7 @@ export class MatchesService {
    */
   private async findClubIdsByName(search: string): Promise<number[]> {
     const clubs = await this.prisma.client.clubs.findMany({
-      where: { name: { contains: search, mode: "insensitive" } },
+      where: { name: nameContains(search) },
       select: { id: true },
     });
 
