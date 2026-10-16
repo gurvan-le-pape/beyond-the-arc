@@ -35,8 +35,6 @@
     "department": "Department",
     "league": "League",
     "committee": "Committee",
-    "city": "City",
-    "zipCode": "Postal code",
     "visitWebsite": "Visit website"
   }
 }

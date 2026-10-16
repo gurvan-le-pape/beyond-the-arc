@@ -91,8 +91,6 @@ async function ClubPage({ params }: LocalePageProps<{ clubId: string }>) {
           address: club.address,
           email: club.email,
           phone: club.phone,
-          city: club.city,
-          zipCode: club.zipCode,
           website: club.website,
         }}
         section={{
@@ -102,6 +100,7 @@ async function ClubPage({ params }: LocalePageProps<{ clubId: string }>) {
             clubName: club.name,
           })),
           title: t("detail.teamsTitle"),
+          defaultExpanded: true,
           emptyState: (
             <EmptyState
               icon={<Users className="w-16 h-16" />}
