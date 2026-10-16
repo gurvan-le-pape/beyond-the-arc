@@ -25,6 +25,9 @@ interface SidePanelProps {
   isPending?: boolean;
 }
 
+/** Matches Tailwind's `lg`, the breakpoint where the mobile backdrop stops. */
+const PANEL_OPEN_BY_DEFAULT_QUERY = "(min-width: 1024px)";
+
 /**
  * Sliding side panel over the clubs map. Owns only its two UI toggles
  * (open/closed, filters expanded); all data arrives via props. Composes the
@@ -43,7 +46,13 @@ export const SidePanel = memo(function SidePanel({
   isPending = false,
 }: SidePanelProps) {
   const t = useTranslations("clubs");
-  const [isOpen, setIsOpen] = useState(true);
+  // Open on wide screens only. Below `lg` the panel covers the map (full width
+  // under `sm`, behind a backdrop up to `lg`), so a phone landed on a list with
+  // no map in sight. The map is client-only (`ssr: false`), so `window` exists
+  // on the first render and there is no server markup to disagree with.
+  const [isOpen, setIsOpen] = useState(
+    () => window.matchMedia(PANEL_OPEN_BY_DEFAULT_QUERY).matches,
+  );
   const [filtersExpanded, setFiltersExpanded] = useState(false);
 
   const activeFilterCount = Object.values(filters).filter(Boolean).length;
