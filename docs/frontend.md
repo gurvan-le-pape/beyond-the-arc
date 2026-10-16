@@ -400,7 +400,7 @@ Table-level axes:
 
 | Prop | Values | Meaning |
 | --- | --- | --- |
-| `frame` | `none` \| `outline` | Whether the table draws its own border. `none` inside a `Section`, which is already a bordered `Card` — a framed table inside one draws a second border a padding-width in. `outline` for a table that stands alone. Drawn on the **scroll container**, not the `<table>`: a border radius on a `<table>` does not clip the rows inside it, so anything painted to the edge squares the corners back off, and a border on the table would scroll away with the content. |
+| `frame` | `none` \| `outline` | Whether the table draws its own border. `none` inside a `Section`, which lays its content flat under the section title — the table's rules and header are frame enough there. `outline` for a table that stands alone. Drawn on the **scroll container**, not the `<table>`: a border radius on a `<table>` does not clip the rows inside it, so anything painted to the edge squares the corners back off, and a border on the table would scroll away with the content. |
 | `density` | `comfortable` \| `cozy` \| `compact` | Cell padding only. Pick by column count — `comfortable` (`px-4 py-3.5`) up to a handful, `cozy` (`px-3 py-2.5`) around eight to ten, `compact` (`px-2 py-1.5`) for a full stat line. |
 | `wrap` | boolean | Whether cells may wrap. Separate from `density` so a table can be dense without being forced onto one line. |
 | `stickyLead` | boolean | Pins the first column while the rest scrolls sideways. Only worth setting when the lead column identifies the row — the box score's `name` column was moved to the front for exactly this reason, because pinning its jersey number would have kept a bare digit on screen while the player left. |

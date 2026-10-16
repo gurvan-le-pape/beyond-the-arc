@@ -3,7 +3,6 @@ import type { ReactNode } from "react";
 
 import { cn } from "@/shared/utils";
 
-import { Card } from "../primitives/Card";
 import { Text } from "../typography";
 
 interface SectionTitleProps {
@@ -23,26 +22,22 @@ function SectionTitle({ title, className }: SectionTitleProps) {
 interface SectionProps {
   readonly title?: ReactNode;
   readonly children: ReactNode;
-  readonly variant?: "default" | "highlighted";
   readonly className?: string;
 }
 
 /**
- * Section — a titled Card block.
+ * Section — a titled block of a detail page, laid flat on the page.
  *
- * Sits at surface-subtle elevation (Card). Content inside should use
- * surface-raised components (InfoBox, Input) — not another Card.
+ * The page's header is its one framed card; sections below it take their
+ * structure from their title and the space between them, so their content
+ * gets the full width of the page. Content inside sits on the page surface
+ * and uses surface-raised components (InfoBox, Input) where it needs a fill.
  */
-export function Section({
-  title,
-  children,
-  variant = "default",
-  className,
-}: SectionProps) {
+export function Section({ title, children, className }: SectionProps) {
   return (
-    <Card variant={variant} padding="lg" className={className}>
+    <section className={className}>
       {title && <SectionTitle title={title} />}
       {children}
-    </Card>
+    </section>
   );
 }

@@ -87,7 +87,7 @@ export function TeamRoster({ players }: TeamRosterProps) {
   }, [safePlayers, sortConfig]);
 
   return (
-    <Section title={tTeams("teamDetail.rosterTitle")} variant="highlighted">
+    <Section title={tTeams("teamDetail.rosterTitle")}>
       {safePlayers.length === 0 ? (
         <Text variant="caption" className="text-center py-8">
           {tTeams("teamDetail.noPlayers")}

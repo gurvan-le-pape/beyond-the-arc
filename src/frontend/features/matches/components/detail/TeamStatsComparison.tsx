@@ -44,7 +44,7 @@ export function TeamStatsComparison({
   const tMatches = useTranslations("matches");
 
   return (
-    <Section variant="highlighted" title={title} className="text-center">
+    <Section title={title} className="text-center">
       <StatComparison
         variant="dual"
         sideA={homeStats}

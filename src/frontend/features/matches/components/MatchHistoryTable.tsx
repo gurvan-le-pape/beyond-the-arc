@@ -75,7 +75,7 @@ export function MatchHistoryTable<T extends MatchHistoryRow>({
   const hasMoreMatches = matches.length > maxRows;
 
   return (
-    <Section title={title} variant="highlighted">
+    <Section title={title}>
       <DataTable<T>
         columns={columns}
         rows={displayedMatches}

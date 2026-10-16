@@ -63,7 +63,6 @@ export function SearchableChipList<T extends SearchableChipListItem>({
           </span>
         </>
       }
-      variant="highlighted"
     >
       {showSearch && (
         <div className="mb-4 max-w-xs">
