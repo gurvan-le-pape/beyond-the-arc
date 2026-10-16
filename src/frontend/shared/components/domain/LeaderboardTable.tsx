@@ -60,9 +60,7 @@ export function LeaderboardTable({
           <span className="hidden sm:block">
             <ClubMark clubName={row.clubName} size="sm" />
           </span>
-          <span className="line-clamp-2">
-            {formatTeamName(row.clubName, row.teamNumber)}
-          </span>
+          <span>{formatTeamName(row.clubName, row.teamNumber)}</span>
         </div>
       ),
     },
