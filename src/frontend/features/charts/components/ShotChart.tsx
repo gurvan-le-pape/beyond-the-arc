@@ -7,14 +7,11 @@ import { useId, useMemo, useState } from "react";
 
 import type { Shot } from "@/features/matches/types";
 
-import type { ColorScaleName } from "../constants";
 import {
   ChartType,
-  COLOR_SCALE_LIST,
-  COLOR_SCALES,
   COURT_WIDTH,
-  DEFAULT_COLOR_SCALE,
   HALF_COURT_HEIGHT,
+  SHOT_COLOR_SCALE,
   ShotFilter,
 } from "../constants";
 import { useBinnedShots, useCourtSize } from "../hooks";
@@ -61,8 +58,6 @@ export function ShotChart({
   );
 
   const [shotFilter, setShotFilter] = useState<ShotFilter>(ShotFilter.ALL);
-  const [colorScale, setColorScale] =
-    useState<ColorScaleName>(DEFAULT_COLOR_SCALE);
 
   // Separate max value for hotspots — fed back from HotspotsOverlay's zone binning,
   // which is more accurate than the heatmap grid binning used for maxValue below.
@@ -126,21 +121,11 @@ export function ShotChart({
             <HeatmapHeader
               shotFilter={shotFilter}
               setShotFilter={setShotFilter}
-              colorScale={colorScale}
-              setColorScale={setColorScale}
-              colorScaleOptions={COLOR_SCALE_LIST}
               maxValue={maxValue}
-              colorScaleFn={COLOR_SCALES[colorScale]}
             />
           )}
           {chartType === ChartType.HOTSPOTS && (
-            <HotspotsHeader
-              colorScale={colorScale}
-              setColorScale={setColorScale}
-              colorScaleOptions={COLOR_SCALE_LIST}
-              maxValue={hotspotsMaxValue}
-              colorScaleFn={COLOR_SCALES[colorScale]}
-            />
+            <HotspotsHeader maxValue={hotspotsMaxValue} />
           )}
 
           <svg
@@ -167,7 +152,7 @@ export function ShotChart({
                 cellWidth={CELL_WIDTH}
                 cellHeight={CELL_HEIGHT}
                 maxValue={maxValue}
-                colorScale={COLOR_SCALES[colorScale]}
+                colorScale={SHOT_COLOR_SCALE}
               />
             )}
             {chartType === ChartType.SCATTER && (
@@ -182,7 +167,7 @@ export function ShotChart({
                 shots={shotEvents}
                 xScale={xScale}
                 yScale={yScale}
-                colorScale={COLOR_SCALES[colorScale]}
+                colorScale={SHOT_COLOR_SCALE}
                 svgWidth={svgWidth}
                 onMaxTotalChange={setHotspotsMaxValue}
               />

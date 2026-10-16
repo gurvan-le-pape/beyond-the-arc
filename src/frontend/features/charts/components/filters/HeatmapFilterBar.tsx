@@ -32,11 +32,10 @@ export function HeatmapFilterBar({
   ];
 
   return (
-    <div className="w-full flex flex-row items-center gap-2 justify-center">
-      {/* Seen, not read: the group below carries the same name. */}
-      <span aria-hidden="true" className="font-semibold text-sm text-text-body">
-        {t("shotChart.shots")} :
-      </span>
+    // No visible "Tirs :" prefix: under the chart's title the three options
+    // name themselves, and at 390 px the prefix pushed the third onto a second
+    // line. The group keeps the name for assistive technology.
+    <div className="w-full flex flex-row items-center justify-center">
       <SegmentedControl
         label={t("shotChart.shots")}
         value={shotFilter}

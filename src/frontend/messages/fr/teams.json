@@ -13,8 +13,8 @@
     "noPlayers": "Aucun joueur dans l'effectif",
     "matchHistoryTitle": "Historique des Matchs",
     "upcomingMatchesTitle": "Prochains matchs",
-    "shotchartTitle": "Carte des tirs (Heatmap)",
-    "shotchartDescription": "Cette heatmap montre la distribution des tirs de l'équipe cette saison.",
+    "shotchartTitle": "Carte des tirs",
+    "shotchartDescription": "Où l'équipe a tiré cette saison, et combien de fois depuis chaque endroit.",
     "won": "V",
     "lost": "D"
   },
