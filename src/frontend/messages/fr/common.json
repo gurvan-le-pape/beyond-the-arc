@@ -101,6 +101,11 @@
     "opponentHome": "contre {opponent}",
     "opponentAway": "chez {opponent}",
     "score": "Score",
+    "result": "Résultat",
+    "win": "Victoire",
+    "winShort": "V",
+    "loss": "Défaite",
+    "lossShort": "D",
     "noMatches": "Aucun match joué cette saison",
     "seeAllMatches": "Voir tous les matchs ({count})",
     "viewMatch": "Voir le match {home} contre {away}"
