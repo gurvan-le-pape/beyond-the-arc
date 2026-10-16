@@ -13,15 +13,15 @@ from zoneinfo import ZoneInfo
 PARIS = ZoneInfo("Europe/Paris")
 UTC = ZoneInfo("UTC")
 
-# Available slots: (weekday, hour, minute)
-# weekday: 5 = Saturday, 6 = Sunday
+# Available slots: (weekday, hour, minute), local Paris time.
+# weekday is ISO, as datetime.fromisocalendar reads it: 6 = Saturday, 7 = Sunday.
 SLOT_OPTIONS: list[tuple[int, int, int]] = [
-    (5, 14, 0),   # Saturday 14:00
-    (5, 19, 0),   # Saturday 19:00
-    (5, 22, 0),   # Saturday 22:00
-    (6, 14, 0),   # Sunday 14:00
-    (6, 19, 0),   # Sunday 19:00
-    (6, 22, 0),   # Sunday 22:00
+    (6, 14, 0),   # Saturday 14:00
+    (6, 19, 0),   # Saturday 19:00
+    (6, 22, 0),   # Saturday 22:00
+    (7, 14, 0),   # Sunday 14:00
+    (7, 19, 0),   # Sunday 19:00
+    (7, 22, 0),   # Sunday 22:00
 ]
 
 
