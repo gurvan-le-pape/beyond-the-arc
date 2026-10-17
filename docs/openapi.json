@@ -3212,16 +3212,6 @@
             "description": "Longitude",
             "example": 7.4246
           },
-          "hasEmail": {
-            "type": "boolean",
-            "description": "Whether the club has a contact email. The address itself is only on the detail endpoint",
-            "example": true
-          },
-          "hasPhone": {
-            "type": "boolean",
-            "description": "Whether the club has a contact phone. The number itself is only on the detail endpoint",
-            "example": true
-          },
           "website": {
             "type": "string",
             "nullable": true,
@@ -3246,8 +3236,6 @@
           "zipCode",
           "latitude",
           "longitude",
-          "hasEmail",
-          "hasPhone",
           "website",
           "committeeId",
           "leagueId"
@@ -3530,25 +3518,6 @@
           "leaderboard"
         ]
       },
-      "PresidentResponseDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "number",
-            "description": "President unique identifier",
-            "example": 1
-          },
-          "name": {
-            "type": "string",
-            "description": "President name",
-            "example": "Jean Dupont"
-          }
-        },
-        "required": [
-          "id",
-          "name"
-        ]
-      },
       "ClubDetailedResponseDto": {
         "type": "object",
         "properties": {
@@ -3580,18 +3549,6 @@
             "description": "Street address",
             "example": "1 Avenue des Papalins"
           },
-          "phone": {
-            "type": "string",
-            "nullable": true,
-            "description": "Contact phone",
-            "example": "0123456789"
-          },
-          "email": {
-            "type": "string",
-            "nullable": true,
-            "description": "Contact email",
-            "example": "contact@club.com"
-          },
           "website": {
             "type": "string",
             "nullable": true,
@@ -3610,16 +3567,6 @@
             "items": {
               "$ref": "#/components/schemas/TeamInfoDto"
             }
-          },
-          "president": {
-            "nullable": true,
-            "description": "Club president",
-            "type": "object",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/PresidentResponseDto"
-              }
-            ]
           }
         },
         "required": [
@@ -3628,12 +3575,9 @@
           "city",
           "zipCode",
           "address",
-          "phone",
-          "email",
           "website",
           "ffbbUrl",
-          "teams",
-          "president"
+          "teams"
         ]
       },
       "DepartmentResponseDto": {
@@ -3674,33 +3618,11 @@
             "description": "Committee name",
             "example": "COMITE DE L'AIN DE BASKET-BALL"
           },
-          "phone": {
-            "type": "string",
-            "nullable": true,
-            "description": "Committee phone number",
-            "example": "02 99 00 00 00"
-          },
-          "email": {
-            "type": "string",
-            "nullable": true,
-            "description": "Committee email address",
-            "example": "contact@comite-bretagne.fr"
-          },
           "address": {
             "type": "string",
             "nullable": true,
             "description": "Committee address",
             "example": "1 rue du Comité, 35000 Rennes"
-          },
-          "president": {
-            "nullable": true,
-            "description": "Committee president",
-            "type": "object",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/PresidentResponseDto"
-              }
-            ]
           },
           "leagueId": {
             "type": "number",
@@ -3730,10 +3652,7 @@
         "required": [
           "id",
           "name",
-          "phone",
-          "email",
           "address",
-          "president",
           "leagueId",
           "department",
           "clubCount",
@@ -3778,33 +3697,11 @@
             "description": "League name",
             "example": "LIGUE REGIONALE BRETAGNE DE BASKET-BALL"
           },
-          "phone": {
-            "type": "string",
-            "nullable": true,
-            "description": "League phone number",
-            "example": "02 99 00 00 00"
-          },
-          "email": {
-            "type": "string",
-            "nullable": true,
-            "description": "League email address",
-            "example": "contact@ligue-bretagne.fr"
-          },
           "address": {
             "type": "string",
             "nullable": true,
             "description": "League address",
             "example": "1 rue de la Ligue, 35000 Rennes"
-          },
-          "president": {
-            "nullable": true,
-            "description": "League president",
-            "type": "object",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/PresidentResponseDto"
-              }
-            ]
           },
           "region": {
             "description": "Region the league belongs to",
@@ -3829,10 +3726,7 @@
         "required": [
           "id",
           "name",
-          "phone",
-          "email",
           "address",
-          "president",
           "region",
           "clubCount",
           "ffbbUrl"

@@ -1,5 +1,5 @@
 // src/backend/modules/organizations/committees/committees.service.ts
-import { ffbbCommitteeUrl, PRESIDENT_SELECT } from "@common/utils";
+import { ffbbCommitteeUrl } from "@common/utils";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 
@@ -13,11 +13,8 @@ import { CommitteeResponseDto } from "./dto/committees.response.dto";
 const COMMITTEE_SELECT = {
   id: true,
   name: true,
-  phone: true,
-  email: true,
   address: true,
   leagueId: true,
-  president: PRESIDENT_SELECT,
   department: {
     select: {
       id: true,
@@ -117,10 +114,7 @@ export class CommitteesService {
     return {
       id: committee.id,
       name: committee.name,
-      phone: committee.phone,
-      email: committee.email,
       address: committee.address,
-      president: committee.president,
       leagueId: committee.leagueId,
       department: {
         id: committee.department.id,

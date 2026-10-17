@@ -43,10 +43,7 @@ describe("HTTP pipeline (composed)", () => {
   const leagueRow = {
     id: 1,
     name: "Ligue Test",
-    phone: null,
-    email: null,
     address: null,
-    president: null,
     region: { id: 10, name: "Region Test", code: "RT" },
     committees: [
       { _count: { clubs: 3 }, clubs: [{ code: "ARA0001001" }] },

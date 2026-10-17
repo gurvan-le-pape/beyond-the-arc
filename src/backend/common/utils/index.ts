@@ -14,7 +14,6 @@ export * from "./organization-filter.util";
 export * from "./pagination.util";
 export * from "./player-match-stats.mapper";
 export * from "./player-summary.mapper";
-export * from "./prisma-selects";
 export * from "./ranking.util";
 export * from "./request-id.util";
 export * from "./request-log.util";

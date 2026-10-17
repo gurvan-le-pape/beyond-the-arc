@@ -6,7 +6,6 @@ import {
   buildClubOrganizationWhere,
   ffbbClubUrl,
   nameContains,
-  PRESIDENT_SELECT,
   resolvePagination,
 } from "@common/utils";
 import { Injectable, NotFoundException } from "@nestjs/common";
@@ -32,8 +31,6 @@ const CLUB_BASIC_SELECT = {
   zipCode: true,
   latitude: true,
   longitude: true,
-  email: true,
-  phone: true,
   website: true,
   committeeId: true,
   committee: { select: { leagueId: true } },
@@ -54,8 +51,6 @@ const CLUB_DETAILED_SELECT = {
   city: true,
   zipCode: true,
   address: true,
-  phone: true,
-  email: true,
   website: true,
   code: true,
   teams: {
@@ -85,7 +80,6 @@ const CLUB_DETAILED_SELECT = {
     },
     orderBy: { number: "asc" },
   },
-  president: PRESIDENT_SELECT,
 } satisfies Prisma.ClubsDefaultArgs["select"];
 
 type ClubDetailedSelectResult = Prisma.ClubsGetPayload<{
@@ -380,10 +374,6 @@ export class ClubsService {
       zipCode: club.zipCode,
       latitude: club.latitude ? club.latitude.toNumber() : null,
       longitude: club.longitude ? club.longitude.toNumber() : null,
-      // Presence, not value — see ClubBasicResponseDto. The columns are
-      // still selected because that is what answers the question.
-      hasEmail: Boolean(club.email),
-      hasPhone: Boolean(club.phone),
       website: club.website,
       committeeId: club.committeeId,
       leagueId: club.committee.leagueId,
@@ -408,8 +398,6 @@ export class ClubsService {
       city: club.city,
       zipCode: club.zipCode,
       address: club.address,
-      phone: club.phone,
-      email: club.email,
       website: club.website,
       ffbbUrl: ffbbClubUrl(club.code),
       teams: club.teams.map((team) => ({
@@ -434,7 +422,6 @@ export class ClubsService {
           : null,
         leaderboard: this.mapStanding(standings.get(team.id)),
       })),
-      president: club.president,
     };
   }
 

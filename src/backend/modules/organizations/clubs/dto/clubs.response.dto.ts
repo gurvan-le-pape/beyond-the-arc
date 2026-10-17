@@ -1,18 +1,12 @@
 // src/backend/modules/organizations/clubs/dto/clubs.response.dto.ts
 import { Category, CompetitionLevel, Gender } from "@common/constants";
-import { PresidentResponseDto } from "@common/dto";
 import { ApiProperty } from "@nestjs/swagger";
 
 /**
  * Basic club information DTO — the shape of every list response.
  *
- * Contact details are presence flags here, not values. This shape is what
- * `/clubs/all` returns 4,368 of in one anonymous request, and the values
- * were 4,352 email addresses and 4,341 phone numbers, 1,092 of them of the
- * `firstname.lastname@` form. The screens that consume this list only need
- * to know whether a club can be contacted — the map filters on it and the
- * side-panel list draws an icon; the popup fetches the detail endpoint when
- * it opens, which is one club rather than all of them.
+ * No contact details: a club's phone and email are mostly a volunteer's own,
+ * and FFBB publishes them on the page the detail endpoint's `ffbbUrl` links to.
  */
 export class ClubBasicResponseDto {
   @ApiProperty({ description: "Club ID", example: 1 })
@@ -52,22 +46,6 @@ export class ClubBasicResponseDto {
     nullable: true,
   })
   longitude!: number | null;
-
-  @ApiProperty({
-    description:
-      "Whether the club has a contact email. The address itself is only on the detail endpoint",
-    example: true,
-    type: Boolean,
-  })
-  hasEmail!: boolean;
-
-  @ApiProperty({
-    description:
-      "Whether the club has a contact phone. The number itself is only on the detail endpoint",
-    example: true,
-    type: Boolean,
-  })
-  hasPhone!: boolean;
 
   @ApiProperty({
     description: "Website",
@@ -284,22 +262,6 @@ export class ClubDetailedResponseDto {
   address!: string | null;
 
   @ApiProperty({
-    description: "Contact phone",
-    example: "0123456789",
-    type: String,
-    nullable: true,
-  })
-  phone!: string | null;
-
-  @ApiProperty({
-    description: "Contact email",
-    example: "contact@club.com",
-    type: String,
-    nullable: true,
-  })
-  email!: string | null;
-
-  @ApiProperty({
     description: "Website URL",
     example: "https://club.com",
     type: String,
@@ -322,13 +284,6 @@ export class ClubDetailedResponseDto {
     type: [TeamInfoDto],
   })
   teams!: TeamInfoDto[];
-
-  @ApiProperty({
-    description: "Club president",
-    type: PresidentResponseDto,
-    nullable: true,
-  })
-  president!: PresidentResponseDto | null;
 }
 
 /**

@@ -1,5 +1,4 @@
 // src/backend/modules/organizations/leagues/dto/leagues.response.dto.ts
-import { PresidentResponseDto } from "@common/dto";
 import { ApiProperty } from "@nestjs/swagger";
 
 /**
@@ -47,35 +46,12 @@ export class LeagueResponseDto {
   name!: string;
 
   @ApiProperty({
-    description: "League phone number",
-    example: "02 99 00 00 00",
-    type: String,
-    nullable: true,
-  })
-  phone!: string | null;
-
-  @ApiProperty({
-    description: "League email address",
-    example: "contact@ligue-bretagne.fr",
-    type: String,
-    nullable: true,
-  })
-  email!: string | null;
-
-  @ApiProperty({
     description: "League address",
     example: "1 rue de la Ligue, 35000 Rennes",
     type: String,
     nullable: true,
   })
   address!: string | null;
-
-  @ApiProperty({
-    description: "League president",
-    type: PresidentResponseDto,
-    nullable: true,
-  })
-  president!: PresidentResponseDto | null;
 
   @ApiProperty({
     description: "Region the league belongs to",

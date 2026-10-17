@@ -841,16 +841,6 @@ export interface components {
              */
             longitude: number | null;
             /**
-             * @description Whether the club has a contact email. The address itself is only on the detail endpoint
-             * @example true
-             */
-            hasEmail: boolean;
-            /**
-             * @description Whether the club has a contact phone. The number itself is only on the detail endpoint
-             * @example true
-             */
-            hasPhone: boolean;
-            /**
              * @description Website
              * @example https://club.com
              */
@@ -1034,18 +1024,6 @@ export interface components {
             /** @description Team leaderboard stats */
             leaderboard: components["schemas"]["TeamLeaderboardDto"] | null;
         };
-        PresidentResponseDto: {
-            /**
-             * @description President unique identifier
-             * @example 1
-             */
-            id: number;
-            /**
-             * @description President name
-             * @example Jean Dupont
-             */
-            name: string;
-        };
         ClubDetailedResponseDto: {
             /**
              * @description Unique club identifier
@@ -1073,16 +1051,6 @@ export interface components {
              */
             address: string | null;
             /**
-             * @description Contact phone
-             * @example 0123456789
-             */
-            phone: string | null;
-            /**
-             * @description Contact email
-             * @example contact@club.com
-             */
-            email: string | null;
-            /**
              * @description Website URL
              * @example https://club.com
              */
@@ -1094,8 +1062,6 @@ export interface components {
             ffbbUrl: string | null;
             /** @description Teams belonging to this club */
             teams: components["schemas"]["TeamInfoDto"][];
-            /** @description Club president */
-            president: components["schemas"]["PresidentResponseDto"] | null;
         };
         DepartmentResponseDto: {
             /**
@@ -1126,22 +1092,10 @@ export interface components {
              */
             name: string;
             /**
-             * @description Committee phone number
-             * @example 02 99 00 00 00
-             */
-            phone: string | null;
-            /**
-             * @description Committee email address
-             * @example contact@comite-bretagne.fr
-             */
-            email: string | null;
-            /**
              * @description Committee address
              * @example 1 rue du Comité, 35000 Rennes
              */
             address: string | null;
-            /** @description Committee president */
-            president: components["schemas"]["PresidentResponseDto"] | null;
             /**
              * @description Associated league ID
              * @example 10
@@ -1189,22 +1143,10 @@ export interface components {
              */
             name: string;
             /**
-             * @description League phone number
-             * @example 02 99 00 00 00
-             */
-            phone: string | null;
-            /**
-             * @description League email address
-             * @example contact@ligue-bretagne.fr
-             */
-            email: string | null;
-            /**
              * @description League address
              * @example 1 rue de la Ligue, 35000 Rennes
              */
             address: string | null;
-            /** @description League president */
-            president: components["schemas"]["PresidentResponseDto"] | null;
             /** @description Region the league belongs to */
             region: components["schemas"]["RegionDto"];
             /**
