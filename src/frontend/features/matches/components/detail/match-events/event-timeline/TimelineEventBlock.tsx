@@ -1,4 +1,4 @@
-// src/frontend/features/matches/components/detail/match-events/timeline/TimelineEventBlock.tsx
+// src/frontend/features/matches/components/detail/match-events/event-timeline/TimelineEventBlock.tsx
 import { useTranslations } from "next-intl";
 
 import type { EventStyle, EventWithScore } from "@/features/matches/types";
