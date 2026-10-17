@@ -69,7 +69,7 @@ The same holds one layer down: an interface piece that can be described without 
 ### Sections and depth
 
 - The first level under `components/` may be **section folders** (`detail/`, `list/`, `map/`) grouping components by the page area they serve. Section folders contain component files and composite folders; they have no `index.tsx` of their own.
-- **Maximum depth: 3 folder levels below `components/`** (section → composite → sub-composite). Deeper trees flatten into siblings, with ownership expressed by name prefix (`MatchDetailsTable`, not another nesting level).
+- **Maximum depth: 3 folder levels below `components/`** (section → composite → sub-composite). Deeper trees flatten into siblings, with ownership expressed by name prefix (`MatchStatusBadge` beside `MatchStatus`, not a `match-status/` folder).
 - **Role grouping** (charts style: `court/`, `overlays/`, `headers/`) is permitted for a feature that is essentially one component with many small parts — the same depth cap applies.
 - No `utils/`, `types/`, or `hooks/` *directories* inside `components/`. Component-private helpers live as files inside their composite folder; anything else belongs in the feature-level directories.
 

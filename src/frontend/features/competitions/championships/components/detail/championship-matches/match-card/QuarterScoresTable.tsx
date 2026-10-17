@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/components/detail/championship-matches/match-card/MatchDetailsTable.tsx
+// src/frontend/features/competitions/championships/components/detail/championship-matches/match-card/QuarterScoresTable.tsx
 import { useTranslations } from "next-intl";
 
 import type { Match, MatchEvent } from "@/features/matches/types";
@@ -6,7 +6,7 @@ import { computeQuarterScores } from "@/features/matches/utils";
 import { DataTable, type TableColumn } from "@/shared/components/table";
 import { formatTeamName } from "@/shared/utils";
 
-interface MatchDetailsTableProps {
+interface QuarterScoresTableProps {
   readonly match: Match;
   readonly matchEvents: MatchEvent[];
   readonly isLoadingEvents: boolean;
@@ -34,11 +34,11 @@ const REGULATION_QUARTERS = [0, 1, 2, 3];
  * Overtime collapses into a single trailing column: every period past the
  * fourth is counted together.
  */
-export function MatchDetailsTable({
+export function QuarterScoresTable({
   match,
   matchEvents,
   isLoadingEvents,
-}: MatchDetailsTableProps) {
+}: QuarterScoresTableProps) {
   const t = useTranslations("competitions");
   const tCommon = useTranslations("common");
 
@@ -104,5 +104,3 @@ export function MatchDetailsTable({
     />
   );
 }
-
-export default MatchDetailsTable;
