@@ -192,8 +192,6 @@ describe("ClubsController", () => {
           zipCode: "98000",
           latitude: 43.7384,
           longitude: 7.4246,
-          hasEmail: true,
-          hasPhone: true,
           website: "https://monaco.com",
           committeeId: 1,
           leagueId: 2,
@@ -279,8 +277,6 @@ describe("ClubsController", () => {
         city: "Monaco",
         zipCode: "98000",
         address: "1 Avenue des Papalins",
-        phone: "0123456789",
-        email: "contact@monaco.com",
         website: "https://monaco.com",
         ffbbUrl: null,
         teams: [
@@ -314,7 +310,6 @@ describe("ClubsController", () => {
             },
           },
         ],
-        president: null,
       };
 
       mockClubsService.findClubById.mockResolvedValue(mockClub);
@@ -333,8 +328,6 @@ describe("ClubsController", () => {
         city: "Monaco",
         zipCode: "98000",
         address: null,
-        phone: null,
-        email: null,
         website: null,
         ffbbUrl: null,
         teams: [
@@ -359,7 +352,6 @@ describe("ClubsController", () => {
             leaderboard: null, // no games played yet
           },
         ],
-        president: null,
       };
 
       mockClubsService.findClubById.mockResolvedValue(mockClub);
@@ -377,12 +369,9 @@ describe("ClubsController", () => {
         city: "Paris",
         zipCode: "75001",
         address: null,
-        phone: null,
-        email: null,
         website: null,
         ffbbUrl: null,
         teams: [],
-        president: null,
       };
 
       mockClubsService.findClubById.mockResolvedValue(mockClub);

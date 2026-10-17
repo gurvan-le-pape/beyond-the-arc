@@ -55,15 +55,7 @@ describe("LeaguesService", () => {
   const EXPECTED_SELECT = {
     id: true,
     name: true,
-    phone: true,
-    email: true,
     address: true,
-    president: {
-      select: {
-        id: true,
-        name: true,
-      },
-    },
     region: {
       select: {
         id: true,
@@ -84,10 +76,7 @@ describe("LeaguesService", () => {
   };
 
   const mockLeagueData = (overrides = {}) => ({
-    phone: null,
-    email: null,
     address: null,
-    president: null,
     committees: [],
     ...overrides,
   });

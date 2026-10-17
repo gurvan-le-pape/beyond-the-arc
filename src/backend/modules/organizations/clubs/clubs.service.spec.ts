@@ -300,8 +300,6 @@ describe("ClubsService", () => {
       zipCode: "98000",
       latitude: { toNumber: () => 43.7384 } as any,
       longitude: { toNumber: () => 7.4246 } as any,
-      email: "contact@monaco.com",
-      phone: "0123456789",
       website: "https://monaco.com",
       committeeId: 1,
       committee: { leagueId: 5 },
@@ -325,8 +323,6 @@ describe("ClubsService", () => {
             zipCode: "98000",
             latitude: 43.7384,
             longitude: 7.4246,
-            hasEmail: true,
-            hasPhone: true,
             website: "https://monaco.com",
             committeeId: 1,
             leagueId: 5,
@@ -470,8 +466,6 @@ describe("ClubsService", () => {
       city: "Monaco",
       zipCode: "98000",
       address: "1 Avenue des Papalins",
-      phone: "0123456789",
-      email: "contact@monaco.com",
       website: "https://monaco.com",
       code: "SUD0013011",
       teams: [
@@ -496,7 +490,6 @@ describe("ClubsService", () => {
           },
         },
       ],
-      president: null,
     };
 
     /** A standings row of pool 10, as STANDING_SELECT returns it. */
@@ -610,43 +603,33 @@ describe("ClubsService", () => {
       prisma.client.clubs.findUnique.mockResolvedValue({
         ...mockPrismaClub,
         address: null,
-        phone: null,
-        email: null,
         website: null,
+        code: null,
         teams: [],
-        president: null,
       });
 
       const result = await service.findClubById(1);
 
       expect(result.address).toBeNull();
-      expect(result.phone).toBeNull();
-      expect(result.email).toBeNull();
       expect(result.website).toBeNull();
-      expect(result.president).toBeNull();
+      expect(result.ffbbUrl).toBeNull();
     });
 
-    // The mock returns exactly what PRESIDENT_SELECT selects: contact details
-    // are not read from the database at all, so nothing downstream can leak
-    // them by accident.
-    it("should return club with president data", async () => {
+    // Contact details are FFBB's to publish; they are not read at all, so
+    // nothing downstream can return them by accident.
+    it("neither selects nor returns contact details", async () => {
       prisma.client.clubs.findUnique.mockResolvedValue({
         ...mockPrismaClub,
-        president: {
-          id: 1,
-          name: "Jean Dupont",
-        },
         teams: [],
       });
 
       const result = await service.findClubById(1);
 
-      expect(result.president).toEqual({
-        id: 1,
-        name: "Jean Dupont",
-      });
-      expect(result.president).not.toHaveProperty("phone");
-      expect(result.president).not.toHaveProperty("email");
+      const { select } = prisma.client.clubs.findUnique.mock.calls[0][0];
+      for (const field of ["phone", "email", "president"]) {
+        expect(select).not.toHaveProperty(field);
+        expect(result).not.toHaveProperty(field);
+      }
     });
 
     it("should throw NotFoundException when club does not exist", async () => {

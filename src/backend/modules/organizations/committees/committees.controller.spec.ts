@@ -65,10 +65,7 @@ describe("CommitteesController", () => {
     overrides: Partial<CommitteeResponseDto> = {},
   ): CommitteeResponseDto =>
     ({
-      phone: null,
-      email: null,
       address: null,
-      president: null,
       department: { id: 1, name: "Ain", code: "01" },
       leagueId: 1,
       ...overrides,

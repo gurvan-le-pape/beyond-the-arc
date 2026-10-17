@@ -64,10 +64,7 @@ describe("LeaguesController", () => {
     overrides: Partial<LeagueResponseDto> = {},
   ): LeagueResponseDto =>
     ({
-      phone: null,
-      email: null,
       address: null,
-      president: null,
       region: { id: 1, name: "Region", code: "REG" },
       ...overrides,
     }) as LeagueResponseDto;

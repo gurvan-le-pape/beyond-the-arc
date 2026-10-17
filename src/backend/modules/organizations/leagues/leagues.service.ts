@@ -1,5 +1,5 @@
 // src/backend/modules/organizations/leagues/leagues.service.ts
-import { ffbbLeagueUrl, PRESIDENT_SELECT } from "@common/utils";
+import { ffbbLeagueUrl } from "@common/utils";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 
@@ -13,10 +13,7 @@ import { LeagueResponseDto } from "./dto/leagues.response.dto";
 const LEAGUE_SELECT = {
   id: true,
   name: true,
-  phone: true,
-  email: true,
   address: true,
-  president: PRESIDENT_SELECT,
   region: {
     select: {
       id: true,
@@ -104,10 +101,7 @@ export class LeaguesService {
     return {
       id: league.id,
       name: league.name,
-      phone: league.phone,
-      email: league.email,
       address: league.address,
-      president: league.president,
       region: league.region,
       clubCount,
       ffbbUrl: ffbbLeagueUrl(

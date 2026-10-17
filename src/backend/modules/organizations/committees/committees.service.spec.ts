@@ -43,16 +43,8 @@ describe("CommitteesService", () => {
   const EXPECTED_SELECT = {
     id: true,
     name: true,
-    phone: true,
-    email: true,
     address: true,
     leagueId: true,
-    president: {
-      select: {
-        id: true,
-        name: true,
-      },
-    },
     department: {
       select: { id: true, name: true, code: true },
     },
@@ -65,10 +57,7 @@ describe("CommitteesService", () => {
   };
 
   const mockCommitteeData = (overrides = {}) => ({
-    phone: null,
-    email: null,
     address: null,
-    president: null,
     _count: { clubs: 0 },
     clubs: [],
     ...overrides,
