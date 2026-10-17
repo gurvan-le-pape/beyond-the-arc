@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
-"""One-off importer: competitions.ffbb.com -> presidents/contact/gym data
-for metropolitan France leagues, committees and clubs.
+"""One-off importer: competitions.ffbb.com -> name/address/gym data for
+metropolitan France leagues, committees and clubs. No contact details: phone
+numbers, emails and the people named on a page (president, correspondent)
+are not collected — the site links to each organisation's FFBB page instead.
 
 Respects robots.txt (crawl-delay: 1s, no relevant Disallow). Writes JSON
 Lines checkpoints under ffbb_data/ so it can resume after interruption.
@@ -93,17 +95,11 @@ def get_informations(profile: dict, block_type: str) -> dict:
 def parse_entity(profile: dict) -> dict:
     general = profile.get("general", {})
     contact = get_informations(profile, "contact")
-    president = get_informations(profile, "president")
-    correspondent = get_informations(profile, "correspondant")
     gym = get_informations(profile, "salle")
     return {
         "code": general.get("id"),
         "name": general.get("label"),
-        "phone": contact.get("Téléphone"),
-        "email": contact.get("E-mail"),
         "address": contact.get("Adresse"),
-        "president_name": president.get("Nom"),
-        "correspondent_name": correspondent.get("Nom"),
         "gym_name": gym.get("Nom"),
         "gym_address": gym.get("Adresse"),
     }
