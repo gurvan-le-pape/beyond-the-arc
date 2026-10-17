@@ -48,7 +48,7 @@ Do **not** split when:
 - the split would thread props through a component that does nothing with most of them;
 - the length comes from configuration rather than logic. The list filters (`MatchesFilters`, `TeamsFilters`, `PlayersFilters`) are long because they declare chips and cascade steps, and they already assemble shared filter blocks: they stay whole.
 
-`match-events/` is the reference for a good split: the root owns filter state, `filters/` is the control panel, `timeline/` the display — one role per part.
+`match-events/` is the reference for a good split: the root owns filter state, `event-filters/` is the control panel, `event-timeline/` the display — one role per part, each a sub-composite with its own `index.tsx`.
 
 ### The basketball vocabulary
 

@@ -1,4 +1,4 @@
-// src/frontend/features/matches/components/detail/match-events/timeline/TimelineTeamHeader.tsx
+// src/frontend/features/matches/components/detail/match-events/event-timeline/TimelineTeamHeader.tsx
 
 import type { TeamInfo } from "@/features/teams/types";
 import { ClubMark } from "@/shared/components/domain";

@@ -1,4 +1,4 @@
-// src/frontend/features/matches/components/detail/match-events/timeline/MatchEventsTimeline.tsx
+// src/frontend/features/matches/components/detail/match-events/event-timeline/index.tsx
 "use client";
 
 import { useTranslations } from "next-intl";
@@ -16,7 +16,7 @@ import { TimelineEventBlock } from "./TimelineEventBlock";
 import { TimelineRow } from "./TimelineRow";
 import { TimelineTeamHeader } from "./TimelineTeamHeader";
 
-interface MatchEventsTimelineProps {
+interface EventTimelineProps {
   readonly events: EventWithScore[];
   readonly homeTeam: TeamInfo;
   readonly awayTeam: TeamInfo;
@@ -30,13 +30,13 @@ interface MatchEventsTimelineProps {
  * away team on the right.  Scoring events show a running-score pill in the
  * centre column; non-scoring events show a small dot.
  */
-export function MatchEventsTimeline({
+export function EventTimeline({
   events,
   homeTeam,
   awayTeam,
   getEventStyle,
   matchDate,
-}: MatchEventsTimelineProps) {
+}: EventTimelineProps) {
   const tMatches = useTranslations("matches");
 
   return (
@@ -147,5 +147,3 @@ export function MatchEventsTimeline({
     </div>
   );
 }
-
-export default MatchEventsTimeline;

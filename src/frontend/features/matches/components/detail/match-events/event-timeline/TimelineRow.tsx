@@ -1,4 +1,4 @@
-// src/frontend/features/matches/components/detail/match-events/timeline/TimelineRow.tsx
+// src/frontend/features/matches/components/detail/match-events/event-timeline/TimelineRow.tsx
 import React from "react";
 
 import { cn } from "@/shared/utils";
@@ -23,7 +23,7 @@ interface TimelineRowProps extends React.HTMLAttributes<HTMLElement> {
  * One row on the match-events timeline, laid out on the shared column track.
  *
  * Semantics are left to the caller — the legend and the event rows mean
- * different things (see MatchEventsTimeline).
+ * different things (see EventTimeline).
  */
 export function TimelineRow({
   as: Component = "div",

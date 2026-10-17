@@ -9,8 +9,8 @@ import type { TeamInfoExtended } from "@/features/teams/types";
 import { Section } from "@/shared/components/blocks";
 import { EmptyState } from "@/shared/components/feedback";
 
-import { MatchEventsFilters } from "./filters/MatchEventsFilters";
-import { MatchEventsTimeline } from "./timeline/MatchEventsTimeline";
+import { EventFilters } from "./event-filters";
+import { EventTimeline } from "./event-timeline";
 import { useMatchEvents } from "./useMatchEvents";
 
 interface MatchEventsProps {
@@ -54,14 +54,10 @@ export function MatchEvents({
   return (
     <Section title={tMatches("matchEvents.title")}>
       <div className="mb-6">
-        <MatchEventsFilters
-          homeTeam={homeTeam}
-          awayTeam={awayTeam}
-          {...filters}
-        />
+        <EventFilters homeTeam={homeTeam} awayTeam={awayTeam} {...filters} />
       </div>
 
-      <MatchEventsTimeline
+      <EventTimeline
         events={filteredEvents}
         homeTeam={homeTeam}
         awayTeam={awayTeam}

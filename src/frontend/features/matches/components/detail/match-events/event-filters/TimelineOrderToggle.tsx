@@ -1,4 +1,4 @@
-// src/frontend/features/matches/components/detail/match-events/filters/TimelineOrderToggle.tsx
+// src/frontend/features/matches/components/detail/match-events/event-filters/TimelineOrderToggle.tsx
 
 import { Switch } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
