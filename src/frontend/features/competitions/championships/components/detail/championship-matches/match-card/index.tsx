@@ -7,11 +7,12 @@ import { useMatchesPrefetch, useMatchEvents } from "@/features/matches/api";
 import type { Match } from "@/features/matches/types";
 import { matchupSide } from "@/features/matches/utils";
 import { Matchup } from "@/shared/components/domain";
+import { ErrorMessage } from "@/shared/components/feedback";
 import { Card, TextLink } from "@/shared/components/primitives";
 
 import { ExpandButton } from "./ExpandButton";
-import { MatchExpandedSection } from "./MatchExpandedSection";
 import { MatchStatus } from "./MatchStatus";
+import { QuarterScoresTable } from "./QuarterScoresTable";
 
 interface MatchCardProps {
   readonly match: Match;
@@ -42,6 +43,7 @@ export function MatchCard({ match, expanded, onToggleExpand }: MatchCardProps) {
 
   const prefetch = useMatchesPrefetch();
   const tMatches = useTranslations("matches");
+  const tCommon = useTranslations("common");
 
   const { homeTeamScore, awayTeamScore } = match;
   const hasScore = homeTeamScore !== null && awayTeamScore !== null;
@@ -73,13 +75,20 @@ export function MatchCard({ match, expanded, onToggleExpand }: MatchCardProps) {
         />
       </div>
       {expanded && (
-        <MatchExpandedSection
-          match={match}
-          matchEvents={matchEvents ?? []}
-          isLoadingEvents={isLoadingEvents}
-          hasError={!!matchEventsError}
-          onRetryEvents={refetchMatchEvents}
-        />
+        <div className="mt-3 pt-3 border-t border-divide animate-slide-down">
+          {matchEventsError ? (
+            <ErrorMessage
+              message={tCommon("errors.fetchMatchEvents")}
+              onRetry={refetchMatchEvents}
+            />
+          ) : (
+            <QuarterScoresTable
+              match={match}
+              matchEvents={matchEvents ?? []}
+              isLoadingEvents={isLoadingEvents}
+            />
+          )}
+        </div>
       )}
     </Card>
   );
