@@ -202,7 +202,15 @@ The config lives at `/etc/nginx/sites-available/beyondthearc`, symlinked into `s
 | `beyondthearc.app/api/`     | `localhost:4000/api/` (backend) |
 | `grafana.beyondthearc.app/` | `localhost:3001` (Grafana)      |
 
-All HTTP traffic is redirected to HTTPS. Security headers (`X-Frame-Options`, `X-Content-Type-Options`, `X-XSS-Protection`, `Strict-Transport-Security`) are set on the main app server block.
+All HTTP traffic is redirected to HTTPS. Security headers are set on the main app server block, so they cover both the frontend and the API: `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Strict-Transport-Security`, `Referrer-Policy: strict-origin-when-cross-origin`, `X-XSS-Protection: 0` (the legacy filter is switched off, as current browsers recommend) and a `Content-Security-Policy`:
+
+```
+default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';
+img-src 'self' data: blob: https://a.tile.openstreetmap.org; connect-src 'self' https://a.tile.openstreetmap.org;
+worker-src 'self' blob:; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+```
+
+The external origins are the OpenStreetMap tile server the clubs map draws from (`ClubsMap.tsx`) — MapLibre fetches tiles and paints them through `blob:` URLs and runs a `blob:` worker. Sentry needs no entry: it reports through the same-origin `/monitoring` tunnel. `'unsafe-inline'` in `script-src` is for the inline scripts Next.js emits without a nonce. A change that loads anything from another origin — a new tile server, a font, an analytics script — needs this header updated in the same step, or the browser blocks it.
 
 The Grafana block additionally sets `Upgrade` and `Connection` headers to support WebSocket connections, which Grafana uses for live dashboard updates.
 
