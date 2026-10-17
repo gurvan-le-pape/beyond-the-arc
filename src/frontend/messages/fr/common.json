@@ -31,23 +31,23 @@
       "full": "Rebonds"
     },
     "assists": {
-      "abbr": "AST",
+      "abbr": "PD",
       "full": "Passes décisives"
     },
     "steals": {
-      "abbr": "STL",
+      "abbr": "INT",
       "full": "Interceptions"
     },
     "blocks": {
-      "abbr": "BLK",
+      "abbr": "CTR",
       "full": "Contres"
     },
     "fouls": {
-      "abbr": "FL",
+      "abbr": "FP",
       "full": "Fautes"
     },
     "turnovers": {
-      "abbr": "TO",
+      "abbr": "BP",
       "full": "Pertes de balle"
     },
     "pointsPerGame": "Points / match",
@@ -72,7 +72,7 @@
       "full": "2 points extérieurs"
     },
     "freeThrows": {
-      "abbr": "FT",
+      "abbr": "LF",
       "full": "Lancers francs"
     },
     "fieldGoals": "Tirs réussis",
