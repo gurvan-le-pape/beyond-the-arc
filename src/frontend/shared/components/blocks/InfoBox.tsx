@@ -23,10 +23,9 @@ interface InfoBoxProps extends Omit<
 /**
  * A labelled value in an inset panel — the unit the stat grids are built from.
  *
- * **Expects to sit on `surface-subtle`, inside a Card.** Its own
- * `surface-inset` resolves one step above whatever surface encloses it, so
- * placed directly on the page it renders flat and the inset effect disappears.
- * That is a placement contract, not a default to override.
+ * Its `surface-inset` fill resolves one step above whatever surface encloses
+ * it, so it reads as an inset panel on the page itself — where a detail
+ * page's flat sections place it — as well as inside a Card.
  *
  * A `null` or `undefined` value renders as the translated "not available"
  * label rather than collapsing, so a grid keeps its shape when a stat is
