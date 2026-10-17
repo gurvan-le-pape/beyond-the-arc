@@ -23,20 +23,6 @@ generator client {
   importFileExtension = ""
 }
 
-model Presidents {
-  id         Int          @id @default(autoincrement())
-  name       String       @db.VarChar(255)
-  phone      String?      @db.VarChar(50)
-  email      String?      @db.VarChar(100)
-  address    String?      @db.VarChar(255)
-  code       String?      @db.VarChar(50)
-  leagues    Leagues[]
-  committees Committees[]
-  clubs      Clubs[]
-
-  @@map("presidents")
-}
-
 model Regions {
   id          Int           @id @default(autoincrement())
   code        String        @unique @db.VarChar(10)
@@ -63,11 +49,7 @@ model Departments {
 model Leagues {
   id            Int             @id @default(autoincrement())
   name          String          @db.VarChar(255)
-  phone         String?         @db.VarChar(50)
-  email         String?         @db.VarChar(100)
   address       String?         @db.VarChar(255)
-  presidentId   Int?            @map("president_id")
-  president     Presidents?     @relation(fields: [presidentId], references: [id], onDelete: SetNull)
   regionId      Int             @map("region_id")
   region        Regions         @relation(fields: [regionId], references: [id], onDelete: Cascade)
   committees    Committees[]
@@ -79,11 +61,7 @@ model Leagues {
 model Committees {
   id            Int             @id @default(autoincrement())
   name          String          @db.VarChar(255)
-  phone         String?         @db.VarChar(50)
-  email         String?         @db.VarChar(100)
   address       String?         @db.VarChar(255)
-  presidentId   Int?            @map("president_id")
-  president     Presidents?     @relation(fields: [presidentId], references: [id], onDelete: SetNull)
   departmentId  Int             @map("department_id")
   department    Departments     @relation(fields: [departmentId], references: [id], onDelete: Cascade)
   league        Leagues         @relation(fields: [leagueId], references: [id], onDelete: Cascade)
@@ -95,25 +73,21 @@ model Committees {
 }
 
 model Clubs {
-  id          Int         @id @default(autoincrement())
-  code        String?     @db.VarChar(50)
-  name        String      @db.VarChar(255)
-  address     String?     @db.VarChar(255)
-  phone       String?     @db.VarChar(50)
-  email       String?     @db.VarChar(100)
-  website     String?     @db.VarChar(255)
-  presidentId Int?        @map("president_id")
-  president   Presidents? @relation(fields: [presidentId], references: [id], onDelete: SetNull)
-  gymId       Int?        @map("gym_id")
-  gym         Gyms?       @relation(fields: [gymId], references: [id], onDelete: SetNull)
-  committeeId Int         @map("committee_id")
+  id          Int        @id @default(autoincrement())
+  code        String?    @db.VarChar(50)
+  name        String     @db.VarChar(255)
+  address     String?    @db.VarChar(255)
+  website     String?    @db.VarChar(255)
+  gymId       Int?       @map("gym_id")
+  gym         Gyms?      @relation(fields: [gymId], references: [id], onDelete: SetNull)
+  committeeId Int        @map("committee_id")
   // Restrict: a club cannot exist unaffiliated (committeeId is required), so
   // deleting a committee with clubs must be an explicit, ordered operation.
-  committee   Committees  @relation(fields: [committeeId], references: [id], onDelete: Restrict)
-  zipCode     String?     @map("zip_code") @db.VarChar(5)
-  city        String?     @db.VarChar(255)
-  latitude    Decimal?    @db.Decimal(10, 8)
-  longitude   Decimal?    @db.Decimal(11, 8)
+  committee   Committees @relation(fields: [committeeId], references: [id], onDelete: Restrict)
+  zipCode     String?    @map("zip_code") @db.VarChar(5)
+  city        String?    @db.VarChar(255)
+  latitude    Decimal?   @db.Decimal(10, 8)
+  longitude   Decimal?   @db.Decimal(11, 8)
   teams       Teams[]
 
   @@index([committeeId], map: "idx_clubs_committee_id")

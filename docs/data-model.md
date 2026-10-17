@@ -8,7 +8,7 @@
 
 The schema models the French basketball competition hierarchy from top to bottom — national leagues down to individual match events. It is split into three broad areas:
 
-- **Organisations** — regions, departments, leagues, committees, clubs, gyms, presidents
+- **Organisations** — regions, departments, leagues, committees, clubs, gyms
 - **Competition** — championships, pools, teams, players, leaderboards, matches
 - **Match detail** — events, event players, shot locations, player stats
 
@@ -23,19 +23,16 @@ Every string column that the API reads as a closed set carries a CHECK constrain
 ```
 regions ──< leagues ──< committees ──< clubs
 regions ──< departments ──< committees
-presidents ──< leagues / committees / clubs
 gyms ──< clubs
 ```
 
-**Leagues** belong to a region and represent the top level of the French basketball hierarchy. **Departments** also belong to a region — a department's own region and the region of the league that governs its committee should always agree, though this is only enforced by convention (both ultimately trace back to the same real geography, but nothing in the schema cross-checks it — see [Known limitations](#known-limitations)). **Committees** belong to both a department and a league — `department_id` is a single required FK, one department per committee. **Clubs** belong to a committee and optionally reference a gym and a president.
+**Leagues** belong to a region and represent the top level of the French basketball hierarchy. **Departments** also belong to a region — a department's own region and the region of the league that governs its committee should always agree, though this is only enforced by convention (both ultimately trace back to the same real geography, but nothing in the schema cross-checks it — see [Known limitations](#known-limitations)). **Committees** belong to both a department and a league — `department_id` is a single required FK, one department per committee. **Clubs** belong to a committee and optionally reference a gym.
 
-A handful of real FFBB committees actually cover two departments where club counts are too low to justify a standalone one (e.g. one committee jointly serving Aube and Haute-Marne). Rather than relax `department_id` to accommodate that, the seed data models it as two committee rows — one per department, sharing the same name-source/contact/president — so every club still resolves to exactly one department-scoped committee. See [`data-pipeline.md`](./data-pipeline.md) for where this data comes from.
+A handful of real FFBB committees actually cover two departments where club counts are too low to justify a standalone one (e.g. one committee jointly serving Aube and Haute-Marne). Rather than relax `department_id` to accommodate that, the seed data models it as two committee rows — one per department, sharing the same name source and address — so every club still resolves to exactly one department-scoped committee. See [`data-pipeline.md`](./data-pipeline.md) for where this data comes from.
 
-Presidents are stored in a standalone `presidents` table rather than as inline fields on each organisation. This reflects the real structure — a president is a named individual with contact details who holds a role, rather than just a name field — and avoids duplicating contact information if the same person holds multiple roles.
+No organisation carries contact details — no phone, no email, no president. They are FFBB's to publish and keep current, and mostly a volunteer's own; the API instead gives each league, committee and club an `ffbbUrl`, its page on the FFBB site, derived from the clubs' FFBB `code` (see `common/utils/ffbb-links.util.ts`).
 
-The `gyms` table follows the same logic: a gym is a venue with its own identity that can be referenced by a club, not just an address string on the club row.
-
-Both `presidents` and `gyms` use a `code` field for robust cross-referencing during the seeding process, independent of auto-generated ids.
+A gym is a standalone `gyms` row rather than an address string on the club: a venue with its own identity that a club references. Gyms carry a `code` for robust cross-referencing during the seeding process, independent of auto-generated ids.
 
 ---
 
