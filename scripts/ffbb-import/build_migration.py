@@ -209,7 +209,7 @@ def main():
     clubs = load_jsonl("clubs")
 
     # Sort upfront (not just at output time) so every downstream grouping -
-    # presidents per entity type, gym dedup order, club_rows - inherits a
+    # gym dedup order, club_rows - inherits a
     # stable, readable order for free instead of the incidental order
     # scrape.py happened to visit URLs in.
     leagues.sort(key=lambda lg: name_sort_key(lg.get("name") or ""))
@@ -235,41 +235,6 @@ def main():
     print(f"Errors: {len(club_errors)} clubs, {len(committee_errors)} committees")
 
     geocoded = geocode_clubs(clubs)
-
-    presidents = []
-    president_code_by_entity_code = {}
-
-    for lg in leagues:
-        if "error" in lg or not (lg.get("president_name") or "").strip():
-            continue
-        code = f"PRES-L-{lg['code']}"
-        presidents.append({
-            "code": code, "name": lg["president_name"],
-            "phone": None, "email": None, "address": None,
-        })
-        president_code_by_entity_code[("league", lg["code"])] = code
-
-    for co in committees:
-        if "error" in co or not (co.get("president_name") or "").strip():
-            continue
-        parts = url_parts(co["_url"])
-        entity_code = f"{parts['league'].upper()}{parts['committee']}"
-        code = f"PRES-C-{entity_code}"
-        presidents.append({
-            "code": code, "name": co["president_name"],
-            "phone": None, "email": None, "address": None,
-        })
-        president_code_by_entity_code[("committee", entity_code)] = code
-
-    for cl in clubs:
-        if "error" in cl or not (cl.get("president_name") or "").strip():
-            continue
-        code = f"PRES-{cl['code']}"
-        presidents.append({
-            "code": code, "name": cl["president_name"],
-            "phone": cl.get("phone"), "email": cl.get("email"), "address": None,
-        })
-        president_code_by_entity_code[("club", cl["code"])] = code
 
     # gyms: dedup by (name, address)
     gym_key_to_code = {}
@@ -364,8 +329,9 @@ def main():
     out = []
     out.append("-- Static reference data (competition structure, geography),")
     out.append("-- metropolitan France only. Order respects foreign keys:")
-    out.append("-- regions -> departments -> presidents -> leagues -> committees")
-    out.append("-- -> gyms -> clubs.\n")
+    out.append("-- regions -> departments -> leagues -> committees -> gyms -> clubs.")
+    out.append("-- No contact details: phones, emails and presidents are FFBB's to")
+    out.append("-- publish, and the site links to each organisation's FFBB page.\n")
 
     out.append("INSERT INTO regions (code, name) VALUES")
     out.append(",\n".join(f"({sql_str(c)}, {sql_str(n)})" for c, n in metro_regions) + ";\n")
@@ -376,28 +342,19 @@ def main():
         for c, n, r in metro_departments
     ) + ";\n")
 
-    out.append("INSERT INTO presidents (name, phone, email, address, code) VALUES")
-    out.append(",\n".join(
-        f"({sql_str(p['name'])}, {sql_str(p['phone'])}, {sql_str(p['email'])}, {sql_str(p['address'])}, {sql_str(p['code'])})"
-        for p in presidents
-    ) + ";\n")
-
-    out.append("INSERT INTO leagues (name, phone, email, address, president_id, region_id) VALUES")
+    out.append("INSERT INTO leagues (name, address, region_id) VALUES")
     league_rows = []
     for lg in leagues:
         if "error" in lg:
             continue
-        pcode = president_code_by_entity_code.get(("league", lg["code"]))
-        pres_sub = f"(SELECT id FROM presidents WHERE code = {sql_str(pcode)})" if pcode else "NULL"
         region_code = LEAGUE_TO_REGION[lg["code"]]
         league_rows.append(
-            f"({sql_str(lg['name'])}, {sql_str(lg['phone'])}, {sql_str(lg['email'])}, "
-            f"{sql_str(lg['address'])}, {pres_sub}, "
+            f"({sql_str(lg['name'])}, {sql_str(lg['address'])}, "
             f"(SELECT id FROM regions WHERE code = {sql_str(region_code)}))"
         )
     out.append(",\n".join(league_rows) + ";\n")
 
-    out.append("INSERT INTO committees (name, phone, email, address, president_id, department_id, league_id) VALUES")
+    out.append("INSERT INTO committees (name, address, department_id, league_id) VALUES")
     committee_rows = []
     skipped_committees = []
     for co in committees:
@@ -409,15 +366,12 @@ def main():
         if not depts:
             skipped_committees.append(committee_key)
             continue
-        pcode = president_code_by_entity_code.get(("committee", committee_key))
-        pres_sub = f"(SELECT id FROM presidents WHERE code = {sql_str(pcode)})" if pcode else "NULL"
         region_code = LEAGUE_TO_REGION[parts["league"].upper()]
         league_sub = f"(SELECT lg.id FROM leagues lg JOIN regions r ON lg.region_id = r.id WHERE r.code = {sql_str(region_code)})"
         for dept_code in sorted(depts):
             name = committee_name_for(committee_key, dept_code, co["name"])
             committee_rows.append(
-                f"({sql_str(name)}, {sql_str(co['phone'])}, {sql_str(co['email'])}, "
-                f"{sql_str(co['address'])}, {pres_sub}, "
+                f"({sql_str(name)}, {sql_str(co['address'])}, "
                 f"(SELECT id FROM departments WHERE code = {sql_str(dept_code)}), "
                 f"{league_sub})"
             )
@@ -444,16 +398,15 @@ def main():
     if dup_names:
         print(f"WARNING: {len(dup_names)} committee names are not unique: {dup_names}")
 
-    # A 4368-row VALUES list with a correlated subquery per row for
-    # president_id/gym_id/committee_id (~13,000 subplan executions in one
-    # statement) contributed to a prod incident - sustained CPU/disk load
-    # applying this migration. Instead: build one VALUES list of raw
-    # business keys (president/gym code, committee name, department code)
-    # and resolve all of them in a single set-based join, so Postgres does
-    # a handful of hash/merge joins over the whole set instead of ~13,000
-    # independent per-row lookups. Still matches by business key, not by
+    # A 4368-row VALUES list with a correlated subquery per row for each
+    # foreign key (~13,000 subplan executions in one statement) contributed
+    # to a prod incident - sustained CPU/disk load applying this migration.
+    # Instead: build one VALUES list of raw business keys (gym code,
+    # committee name, department code) and resolve all of them in a single
+    # set-based join, so Postgres does a handful of hash/merge joins over
+    # the whole set instead of thousands of independent per-row lookups. Still matches by business key, not by
     # an assumed auto-increment id.
-    out.append("INSERT INTO clubs (code, name, address, phone, email, website, president_id, gym_id, committee_id, zip_code, city, latitude, longitude)")
+    out.append("INSERT INTO clubs (code, name, address, website, gym_id, committee_id, zip_code, city, latitude, longitude)")
     value_rows = []
     skipped_clubs = []
     for cl in clubs:
@@ -465,7 +418,6 @@ def main():
         if committee_key in skipped_committees or dept_code is None or committee_key not in committee_name_by_key:
             skipped_clubs.append(cl["code"])
             continue
-        pcode = president_code_by_entity_code.get(("club", cl["code"]))
         gcode = None
         if cl.get("gym_name"):
             key = (cl["gym_name"].strip(), (cl.get("gym_address") or "").strip())
@@ -479,18 +431,16 @@ def main():
         committee_name = committee_name_for(committee_key, dept_code, committee_name_by_key[committee_key])
         value_rows.append(
             f"({sql_str(cl['code'])}, {sql_str(cl['name'])}, {sql_str(cl.get('address'))}, "
-            f"{sql_str(cl.get('phone'))}, {sql_str(cl.get('email'))}, "
             f"{sql_str(zip_code)}, {sql_str(city)}, {sql_str(lat)}, {sql_str(lon)}, "
-            f"{sql_str(pcode)}, {sql_str(gcode)}, {sql_str(committee_name)}, {sql_str(dept_code)})"
+            f"{sql_str(gcode)}, {sql_str(committee_name)}, {sql_str(dept_code)})"
         )
 
     print(f"Skipped {len(skipped_clubs)} clubs (committee unresolved)")
-    out.append("SELECT v.code, v.name, v.address, v.phone, v.email, NULL,")
-    out.append("       p.id, g.id, c.id, v.zip_code, v.city, v.latitude::decimal(10,8), v.longitude::decimal(11,8)")
+    out.append("SELECT v.code, v.name, v.address, NULL,")
+    out.append("       g.id, c.id, v.zip_code, v.city, v.latitude::decimal(10,8), v.longitude::decimal(11,8)")
     out.append("FROM (VALUES")
     out.append(",\n".join(value_rows))
-    out.append(") AS v(code, name, address, phone, email, zip_code, city, latitude, longitude, president_code, gym_code, committee_name, department_code)")
-    out.append("LEFT JOIN presidents p ON p.code = v.president_code")
+    out.append(") AS v(code, name, address, zip_code, city, latitude, longitude, gym_code, committee_name, department_code)")
     out.append("LEFT JOIN gyms g ON g.code = v.gym_code")
     out.append("JOIN departments d ON d.code = v.department_code")
     out.append("JOIN committees c ON c.name = v.committee_name AND c.department_id = d.id;\n")
@@ -503,7 +453,7 @@ def main():
         "will never reach an existing database. To land this: put [refresh-static-data] in the\n"
         "PR title (CI blocks the edit otherwise) and the catch-up SQL in the PR body."
     )
-    print(f"presidents={len(presidents)} leagues={len(league_rows)} committees={len(committee_rows)} gyms={len(gyms)}")
+    print(f"leagues={len(league_rows)} committees={len(committee_rows)} gyms={len(gyms)}")
 
 
 if __name__ == "__main__":
