@@ -5,7 +5,7 @@ import { useChampionships } from "@/features/competitions/championships/api";
 import { useNationalFilterState } from "@/features/competitions/championships/hooks";
 import { CompetitionLevel } from "@/shared/constants";
 
-import { ChampionshipFilters } from "../filters/ChampionshipFilters";
+import { ChampionshipFilters } from "../ChampionshipFilters";
 import { ChampionshipTab } from "./ChampionshipTab";
 
 /**

@@ -11,7 +11,7 @@ export * from "./detail/ChampionshipHeader";
 export * from "./detail/ChampionshipNavigation";
 export * from "./detail/ChampionshipPoolSelect";
 export * from "./list/ChampionshipCard";
-export * from "./list/filters/ChampionshipFilters";
+export * from "./list/ChampionshipFilters";
 export * from "./list/tabs/ChampionshipTab";
 export * from "./list/tabs/DepartmentalTab";
 export * from "./list/tabs/NationalTab";
