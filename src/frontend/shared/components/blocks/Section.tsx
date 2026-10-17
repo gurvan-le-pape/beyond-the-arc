@@ -30,8 +30,9 @@ interface SectionProps {
  *
  * The page's header is its one framed card; sections below it take their
  * structure from their title and the space between them, so their content
- * gets the full width of the page. Content inside sits on the page surface
- * and uses surface-raised components (InfoBox, Input) where it needs a fill.
+ * gets the full width of the page. Content inside sits on the page surface;
+ * a panel that needs a fill (InfoBox, Input) takes `bg-surface-inset`, which
+ * resolves one step above it.
  */
 export function Section({ title, children, className }: SectionProps) {
   return (
