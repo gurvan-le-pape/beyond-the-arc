@@ -8,7 +8,7 @@ import { useRegionalFilterState } from "@/features/competitions/championships/ho
 import { useLeagues } from "@/features/organizations/leagues/api";
 import { CompetitionLevel } from "@/shared/constants";
 
-import { ChampionshipFilters } from "../filters/ChampionshipFilters";
+import { ChampionshipFilters } from "../ChampionshipFilters";
 import { ChampionshipTab } from "./ChampionshipTab";
 
 /**

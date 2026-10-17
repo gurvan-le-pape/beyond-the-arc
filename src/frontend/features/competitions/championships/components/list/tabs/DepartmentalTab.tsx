@@ -8,7 +8,7 @@ import { useDepartmentalFilterState } from "@/features/competitions/championship
 import { useCommittees } from "@/features/organizations/committees/api";
 import { CompetitionLevel } from "@/shared/constants";
 
-import { ChampionshipFilters } from "../filters/ChampionshipFilters";
+import { ChampionshipFilters } from "../ChampionshipFilters";
 import { ChampionshipTab } from "./ChampionshipTab";
 
 /**

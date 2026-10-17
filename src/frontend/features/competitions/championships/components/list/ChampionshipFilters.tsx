@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/components/list/filters/ChampionshipFilters.tsx
+// src/frontend/features/competitions/championships/components/list/ChampionshipFilters.tsx
 import { useTranslations } from "next-intl";
 
 import { ErrorMessage } from "@/shared/components/feedback";
