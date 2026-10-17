@@ -1,5 +1,5 @@
 // src/backend/modules/organizations/committees/committees.service.ts
-import { PRESIDENT_SELECT } from "@common/utils";
+import { ffbbCommitteeUrl, PRESIDENT_SELECT } from "@common/utils";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 
@@ -26,6 +26,12 @@ const COMMITTEE_SELECT = {
     },
   },
   _count: { select: { clubs: true } },
+  // One club is enough: its code carries the committee's FFBB code.
+  clubs: {
+    select: { code: true },
+    where: { code: { not: null } },
+    take: 1,
+  },
 } as const;
 
 /**
@@ -122,6 +128,7 @@ export class CommitteesService {
         code: committee.department.code,
       },
       clubCount: committee._count.clubs,
+      ffbbUrl: ffbbCommitteeUrl(committee.clubs[0]?.code ?? null),
     } satisfies CommitteeResponseDto;
   }
 }

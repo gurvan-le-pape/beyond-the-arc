@@ -473,6 +473,7 @@ describe("ClubsService", () => {
       phone: "0123456789",
       email: "contact@monaco.com",
       website: "https://monaco.com",
+      code: "SUD0013011",
       teams: [
         {
           id: 1,
@@ -520,7 +521,12 @@ describe("ClubsService", () => {
 
       const result = await service.findClubById(1);
 
-      expect(result).toMatchObject({ id: 1, name: "AS Monaco Basket" });
+      expect(result).toMatchObject({
+        id: 1,
+        name: "AS Monaco Basket",
+        ffbbUrl:
+          "https://competitions.ffbb.com/ligues/sud/comites/0013/clubs/sud0013011",
+      });
       // Behind team 2 on points, ahead of team 3 on point difference.
       expect(result.teams[0].leaderboard).toEqual({
         rank: 2,

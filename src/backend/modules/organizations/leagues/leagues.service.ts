@@ -1,5 +1,5 @@
 // src/backend/modules/organizations/leagues/leagues.service.ts
-import { PRESIDENT_SELECT } from "@common/utils";
+import { ffbbLeagueUrl, PRESIDENT_SELECT } from "@common/utils";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 
@@ -27,6 +27,12 @@ const LEAGUE_SELECT = {
   committees: {
     select: {
       _count: { select: { clubs: true } },
+      // One club is enough: its code carries the league's FFBB code.
+      clubs: {
+        select: { code: true },
+        where: { code: { not: null } },
+        take: 1,
+      },
     },
   },
 } as const;
@@ -104,6 +110,9 @@ export class LeaguesService {
       president: league.president,
       region: league.region,
       clubCount,
+      ffbbUrl: ffbbLeagueUrl(
+        league.committees.find((c) => c.clubs.length)?.clubs[0].code ?? null,
+      ),
     } satisfies LeagueResponseDto; // TypeScript validates this matches
   }
 }

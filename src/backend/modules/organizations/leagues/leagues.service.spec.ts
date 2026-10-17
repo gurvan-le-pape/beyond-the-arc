@@ -74,6 +74,11 @@ describe("LeaguesService", () => {
     committees: {
       select: {
         _count: { select: { clubs: true } },
+        clubs: {
+          select: { code: true },
+          where: { code: { not: null } },
+          take: 1,
+        },
       },
     },
   };
@@ -162,7 +167,11 @@ describe("LeaguesService", () => {
         id: 1,
         name: "LIGUE REGIONALE BRETAGNE DE BASKET-BALL",
         region: { id: 3, name: "Bretagne", code: "BRE" },
-        committees: [{ _count: { clubs: 10 } }, { _count: { clubs: 5 } }],
+        committees: [
+          { _count: { clubs: 0 }, clubs: [] },
+          { _count: { clubs: 10 }, clubs: [{ code: "BRE0029001" }] },
+          { _count: { clubs: 5 }, clubs: [{ code: "BRE0035002" }] },
+        ],
       });
 
       mockPrismaService.client.leagues.findUnique.mockResolvedValue(mockLeague);
@@ -175,6 +184,7 @@ describe("LeaguesService", () => {
       expect(result.name).toBe("LIGUE REGIONALE BRETAGNE DE BASKET-BALL");
       expect(result.clubCount).toBe(15);
       expect(result.region).toEqual({ id: 3, name: "Bretagne", code: "BRE" });
+      expect(result.ffbbUrl).toBe("https://competitions.ffbb.com/ligues/bre");
 
       expect(mockPrismaService.client.leagues.findUnique).toHaveBeenCalledWith({
         where: { id: 1 },

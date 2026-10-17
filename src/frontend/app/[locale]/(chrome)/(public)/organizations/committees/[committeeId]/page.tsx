@@ -94,10 +94,8 @@ async function CommitteePage({
         ]}
         header={{ name: committee.name, imageFolder: "committees" }}
         info={{
-          president: committee.president,
           address: committee.address,
-          email: committee.email,
-          phone: committee.phone,
+          ffbbUrl: committee.ffbbUrl,
         }}
         chipList={{
           items: clubs,

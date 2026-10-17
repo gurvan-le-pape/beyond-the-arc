@@ -96,4 +96,13 @@ export class CommitteeResponseDto {
     type: Number,
   })
   clubCount!: number;
+
+  @ApiProperty({
+    description:
+      "The committee's page on the FFBB competitions site, where its contact details are kept up to date",
+    example: "https://competitions.ffbb.com/ligues/sud/comites/0013",
+    type: String,
+    nullable: true,
+  })
+  ffbbUrl!: string | null;
 }

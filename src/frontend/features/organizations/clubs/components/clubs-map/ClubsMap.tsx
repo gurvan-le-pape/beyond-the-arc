@@ -4,7 +4,7 @@
 import "maplibre-gl/dist/maplibre-gl.css";
 
 import { useTranslations } from "next-intl";
-import { useCallback, useMemo, useState, useTransition } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Map as MapGL, Popup } from "react-map-gl/maplibre";
 
 import { normalizeDepartmentCode } from "@/features/organizations/utils";
@@ -24,7 +24,6 @@ import {
 } from "./mapConstants";
 import { clubsToGeoJSON, generateLabelFeatures } from "./mapHelpers";
 import { SidePanel } from "./side-panel";
-import { useFilters } from "./useFilters";
 import { useMapColours } from "./useMapColours";
 import { useMapData } from "./useMapData";
 import { useSearch } from "./useSearch";
@@ -51,7 +50,6 @@ export function ClubsMap({
   const t = useTranslations("clubs");
   const [selectedClub, setSelectedClub] = useState<ClubBasic | null>(null);
   const [viewState, setViewState] = useState(INITIAL_VIEW);
-  const [isPending, startTransition] = useTransition();
 
   const {
     regions,
@@ -71,20 +69,12 @@ export function ClubsMap({
     zoom >= ZOOM_THRESHOLDS.DEPARTMENTS && zoom < ZOOM_THRESHOLDS.CLUBS;
   const showClubs = zoom >= ZOOM_THRESHOLDS.CLUBS;
 
-  // Search and filter logic
-  const { query, setQuery, results, clearSearch } = useSearch(clubs);
-  const { filters, toggleFilter, filteredClubs } = useFilters(results);
-  const displayClubs = filteredClubs;
-
-  // Wrap filter toggle in transition for better UX
-  const handleToggleFilter = useCallback(
-    (key: any) => {
-      startTransition(() => {
-        toggleFilter(key);
-      });
-    },
-    [toggleFilter],
-  );
+  const {
+    query,
+    setQuery,
+    results: displayClubs,
+    clearSearch,
+  } = useSearch(clubs);
 
   // Handle club marker click - zoom and show popup
   const handleClubClick = useCallback((club: ClubBasic) => {
@@ -269,14 +259,11 @@ export function ClubsMap({
 
       <SidePanel
         clubs={displayClubs}
-        filters={filters}
-        onToggleFilter={handleToggleFilter}
         onClubClick={handleClubClick}
         query={query}
         onQueryChange={setQuery}
         onClearSearch={clearSearch}
         resultCount={displayClubs.length}
-        isPending={isPending}
       />
     </div>
   );

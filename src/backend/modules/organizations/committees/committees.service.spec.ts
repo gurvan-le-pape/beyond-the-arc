@@ -57,6 +57,11 @@ describe("CommitteesService", () => {
       select: { id: true, name: true, code: true },
     },
     _count: { select: { clubs: true } },
+    clubs: {
+      select: { code: true },
+      where: { code: { not: null } },
+      take: 1,
+    },
   };
 
   const mockCommitteeData = (overrides = {}) => ({
@@ -65,6 +70,7 @@ describe("CommitteesService", () => {
     address: null,
     president: null,
     _count: { clubs: 0 },
+    clubs: [],
     ...overrides,
   });
 
@@ -171,6 +177,7 @@ describe("CommitteesService", () => {
         leagueId: 1,
         department: { id: 1, name: "Ain", code: "01" },
         _count: { clubs: 5 },
+        clubs: [{ code: "ARA0001042" }],
       });
 
       mockPrismaService.client.committees.findUnique.mockResolvedValue(
@@ -183,6 +190,9 @@ describe("CommitteesService", () => {
       expect(result.name).toBe("Comité Departmental de l'Ain");
       expect(result.clubCount).toBe(5);
       expect(result.department).toEqual({ id: 1, name: "Ain", code: "01" });
+      expect(result.ffbbUrl).toBe(
+        "https://competitions.ffbb.com/ligues/ara/comites/0001",
+      );
 
       expect(
         mockPrismaService.client.committees.findUnique,

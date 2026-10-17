@@ -10,8 +10,7 @@
   "errorLoadingClubs": "Impossible de charger les clubs",
   "errorLoadingBoundaries": "Impossible de charger les contours de la carte",
   "detail": {
-    "meta": "{name} — équipes, coordonnées et localisation.",
-    "email": "Email",
+    "meta": "{name} — équipes et localisation.",
     "visitWebsite": "Visiter",
     "teamsTitle": "Équipes"
   },
@@ -23,10 +22,6 @@
     "openPanel": "Liste des clubs",
     "closePanel": "Réduire le panneau",
     "title": "Clubs",
-    "filters": "Filtres",
-    "filterWebsite": "Avec site web",
-    "filterEmail": "Avec email",
-    "filterPhone": "Avec téléphone",
     "noResults": "Aucun résultat",
     "noClubsFound": "Aucun club trouvé",
     "tryAnotherSearch": "Essayez une autre recherche",

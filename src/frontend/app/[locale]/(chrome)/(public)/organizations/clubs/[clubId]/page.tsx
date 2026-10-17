@@ -87,11 +87,9 @@ async function ClubPage({ params }: LocalePageProps<{ clubId: string }>) {
           ),
         }}
         info={{
-          president: club.president,
           address: club.address,
-          email: club.email,
-          phone: club.phone,
           website: club.website,
+          ffbbUrl: club.ffbbUrl,
         }}
         section={{
           items: club.teams.map((team) => ({

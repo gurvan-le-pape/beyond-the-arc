@@ -4,6 +4,7 @@ import { PaginatedResponseDto } from "@common/dto";
 import {
   assignRankByCount,
   buildClubOrganizationWhere,
+  ffbbClubUrl,
   nameContains,
   PRESIDENT_SELECT,
   resolvePagination,
@@ -56,6 +57,7 @@ const CLUB_DETAILED_SELECT = {
   phone: true,
   email: true,
   website: true,
+  code: true,
   teams: {
     select: {
       id: true,
@@ -409,6 +411,7 @@ export class ClubsService {
       phone: club.phone,
       email: club.email,
       website: club.website,
+      ffbbUrl: ffbbClubUrl(club.code),
       teams: club.teams.map((team) => ({
         id: team.id,
         number: team.number,

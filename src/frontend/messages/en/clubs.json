@@ -10,8 +10,7 @@
   "errorLoadingClubs": "Failed to load clubs",
   "errorLoadingBoundaries": "Failed to load map boundaries",
   "detail": {
-    "meta": "{name} — teams, contact details and location.",
-    "email": "Email",
+    "meta": "{name} — teams and location.",
     "visitWebsite": "Visit",
     "teamsTitle": "Teams"
   },
@@ -23,10 +22,6 @@
     "openPanel": "Club list",
     "closePanel": "Close panel",
     "title": "Clubs",
-    "filters": "Filters",
-    "filterWebsite": "Has website",
-    "filterEmail": "Has email",
-    "filterPhone": "Has phone",
     "noResults": "No results",
     "noClubsFound": "No clubs found",
     "tryAnotherSearch": "Try another search",
