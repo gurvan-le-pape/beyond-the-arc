@@ -14,6 +14,8 @@ interface InfoBoxProps extends Omit<
   label: string;
   value: string | number | null | undefined;
   href?: string;
+  /** A line of secondary text under the value. */
+  hint?: string;
   icon?: React.ReactNode;
   ref?: React.Ref<HTMLDivElement>;
 }
@@ -39,6 +41,7 @@ export const InfoBox = ({
   label,
   value,
   href,
+  hint,
   icon,
   className,
   ref,
@@ -72,6 +75,12 @@ export const InfoBox = ({
       ) : (
         <Text variant="h4" as="p">
           {value ?? t("notAvailable")}
+        </Text>
+      )}
+
+      {hint && (
+        <Text variant="caption" as="p" className="mt-1">
+          {hint}
         </Text>
       )}
     </div>

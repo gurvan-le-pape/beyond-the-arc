@@ -3598,6 +3598,12 @@
             "description": "Website URL",
             "example": "https://club.com"
           },
+          "ffbbUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "The club's page on the FFBB competitions site, where its contact details are kept up to date",
+            "example": "https://competitions.ffbb.com/ligues/sud/comites/0013/clubs/sud0013011"
+          },
           "teams": {
             "description": "Teams belonging to this club",
             "type": "array",
@@ -3625,6 +3631,7 @@
           "phone",
           "email",
           "website",
+          "ffbbUrl",
           "teams",
           "president"
         ]
@@ -3712,6 +3719,12 @@
             "type": "number",
             "description": "Number of clubs in this committee",
             "example": 15
+          },
+          "ffbbUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "The committee's page on the FFBB competitions site, where its contact details are kept up to date",
+            "example": "https://competitions.ffbb.com/ligues/sud/comites/0013"
           }
         },
         "required": [
@@ -3723,7 +3736,8 @@
           "president",
           "leagueId",
           "department",
-          "clubCount"
+          "clubCount",
+          "ffbbUrl"
         ]
       },
       "RegionDto": {
@@ -3804,6 +3818,12 @@
             "type": "number",
             "description": "Number of clubs in this league",
             "example": 42
+          },
+          "ffbbUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "The league's page on the FFBB competitions site, where its contact details are kept up to date",
+            "example": "https://competitions.ffbb.com/ligues/sud"
           }
         },
         "required": [
@@ -3814,7 +3834,8 @@
           "address",
           "president",
           "region",
-          "clubCount"
+          "clubCount",
+          "ffbbUrl"
         ]
       },
       "ChampionshipPoolDto": {

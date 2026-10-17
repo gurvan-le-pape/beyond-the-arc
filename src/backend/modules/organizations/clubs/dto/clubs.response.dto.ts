@@ -308,6 +308,16 @@ export class ClubDetailedResponseDto {
   website!: string | null;
 
   @ApiProperty({
+    description:
+      "The club's page on the FFBB competitions site, where its contact details are kept up to date",
+    example:
+      "https://competitions.ffbb.com/ligues/sud/comites/0013/clubs/sud0013011",
+    type: String,
+    nullable: true,
+  })
+  ffbbUrl!: string | null;
+
+  @ApiProperty({
     description: "Teams belonging to this club",
     type: [TeamInfoDto],
   })

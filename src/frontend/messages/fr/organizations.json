@@ -23,13 +23,10 @@
   },
   "info": {
     "title": "Informations",
-    "president": {
-      "label": "Président",
-      "name": "Nom"
-    },
     "address": "Adresse",
-    "email": "Email",
-    "phone": "Téléphone",
+    "contact": "Contact",
+    "ffbbPage": "Fiche officielle sur ffbb.com",
+    "ffbbPageHint": "Téléphone, email et dirigeants, tenus à jour par la fédération.",
     "website": "Site web",
     "region": "Région",
     "department": "Département",

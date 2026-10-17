@@ -462,9 +462,9 @@ The map uses OpenStreetMap raster tiles, configured inline as a MapLibre style o
 
 The tiles are drawn light; the dark themes recolour them with MapLibre's raster paint (`BASEMAP_PAINT` in `mapConstants.ts`): `raster-brightness-min` above `raster-brightness-max` inverts light and dark, and a 180° hue rotation turns the hues back so water stays blue. High contrast drops the colour entirely. The layers above — regions, departments, club clusters and markers — take their colours from the colour roles through `useMapColours`, which reads them off the document and reads them again when the theme class changes, since MapLibre paints with literal colours.
 
-### Search and filtering
+### Search
 
-A `SidePanel` sits over the map and provides a search input and filter toggles. Search results flow through `useSearch` (text matching against the club list) then `useFilters` (categorical filters). Filter state changes are wrapped in `useTransition` to keep the map interaction responsive while the filtered club list updates. Clicking a club in the side panel sets the view state to zoom to that club's coordinates and opens its popup.
+A `SidePanel` sits over the map and provides a search input. Results come from `useSearch`, text matching against the club list, and feed both the side-panel list and the club markers. Clicking a club in the side panel sets the view state to zoom to that club's coordinates and opens its popup: name, location, website when there is one, and a link to the club's page — no contact details, which the club page leaves to FFBB's own.
 
 ---
 

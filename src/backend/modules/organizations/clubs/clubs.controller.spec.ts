@@ -282,6 +282,7 @@ describe("ClubsController", () => {
         phone: "0123456789",
         email: "contact@monaco.com",
         website: "https://monaco.com",
+        ffbbUrl: null,
         teams: [
           {
             id: 1,
@@ -335,6 +336,7 @@ describe("ClubsController", () => {
         phone: null,
         email: null,
         website: null,
+        ffbbUrl: null,
         teams: [
           {
             id: 2,
@@ -378,6 +380,7 @@ describe("ClubsController", () => {
         phone: null,
         email: null,
         website: null,
+        ffbbUrl: null,
         teams: [],
         president: null,
       };

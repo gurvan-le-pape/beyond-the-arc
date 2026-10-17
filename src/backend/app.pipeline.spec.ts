@@ -48,7 +48,10 @@ describe("HTTP pipeline (composed)", () => {
     address: null,
     president: null,
     region: { id: 10, name: "Region Test", code: "RT" },
-    committees: [{ _count: { clubs: 3 } }, { _count: { clubs: 4 } }],
+    committees: [
+      { _count: { clubs: 3 }, clubs: [{ code: "ARA0001001" }] },
+      { _count: { clubs: 4 }, clubs: [{ code: "ARA0003001" }] },
+    ],
   };
 
   const prisma = {

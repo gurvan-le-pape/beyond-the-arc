@@ -1087,6 +1087,11 @@ export interface components {
              * @example https://club.com
              */
             website: string | null;
+            /**
+             * @description The club's page on the FFBB competitions site, where its contact details are kept up to date
+             * @example https://competitions.ffbb.com/ligues/sud/comites/0013/clubs/sud0013011
+             */
+            ffbbUrl: string | null;
             /** @description Teams belonging to this club */
             teams: components["schemas"]["TeamInfoDto"][];
             /** @description Club president */
@@ -1149,6 +1154,11 @@ export interface components {
              * @example 15
              */
             clubCount: number;
+            /**
+             * @description The committee's page on the FFBB competitions site, where its contact details are kept up to date
+             * @example https://competitions.ffbb.com/ligues/sud/comites/0013
+             */
+            ffbbUrl: string | null;
         };
         RegionDto: {
             /**
@@ -1202,6 +1212,11 @@ export interface components {
              * @example 42
              */
             clubCount: number;
+            /**
+             * @description The league's page on the FFBB competitions site, where its contact details are kept up to date
+             * @example https://competitions.ffbb.com/ligues/sud
+             */
+            ffbbUrl: string | null;
         };
         ChampionshipPoolDto: {
             /** @example 1 */

@@ -88,10 +88,8 @@ async function LeaguePage({ params }: LocalePageProps<{ leagueId: string }>) {
         ]}
         header={{ name: league.name, imageFolder: "leagues" }}
         info={{
-          president: league.president,
           address: league.address,
-          email: league.email,
-          phone: league.phone,
+          ffbbUrl: league.ffbbUrl,
         }}
         chipList={{
           items: committees,

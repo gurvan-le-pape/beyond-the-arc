@@ -89,4 +89,13 @@ export class LeagueResponseDto {
     type: Number,
   })
   clubCount!: number;
+
+  @ApiProperty({
+    description:
+      "The league's page on the FFBB competitions site, where its contact details are kept up to date",
+    example: "https://competitions.ffbb.com/ligues/sud",
+    type: String,
+    nullable: true,
+  })
+  ffbbUrl!: string | null;
 }

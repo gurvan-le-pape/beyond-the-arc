@@ -3,12 +3,10 @@ import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Link } from "@/navigation";
-import { Skeleton } from "@/shared/components/feedback";
 import { Button, buttonVariants } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { cn, toSafeExternalUrl } from "@/shared/utils";
 
-import { useClub } from "../../api";
 import type { ClubBasic } from "../../types/ClubBasic";
 
 interface ClubPopupContentProps {
@@ -17,23 +15,15 @@ interface ClubPopupContentProps {
 }
 
 /**
- * The contents of a club's map popup: name, location, and whatever contact
- * details exist.
+ * The contents of a club's map popup: name, location, the website when there
+ * is one, and a link to the club's page.
  *
- * Every contact row is conditional, so a club with none renders as name and
- * location alone rather than as a list of blanks. The website link goes through
- * the safe-URL check, because that value is scraped rather than authored.
+ * The website link goes through the safe-URL check, because that value is
+ * scraped rather than authored.
  */
 export function ClubPopupContent({ club, onClose }: ClubPopupContentProps) {
   const t = useTranslations("clubs");
   const tCommon = useTranslations("common");
-
-  // The list this popup is opened from carries `hasEmail`/`hasPhone`, not the
-  // values — 4,368 clubs' contact details are not something to ship on first
-  // paint of a public map. Opening a popup is the point at which one club's
-  // details are actually wanted, so that is when they are fetched. The query is
-  // cached for 5 minutes, so reopening the same popup costs nothing.
-  const { data: detail, isPending } = useClub(club.id);
 
   // Scraped, therefore untrusted input reaching an href. Anything that is not
   // an absolute http(s) URL is treated as no website at all.
@@ -64,97 +54,32 @@ export function ClubPopupContent({ club, onClose }: ClubPopupContentProps) {
         </Text>
       )}
 
-      {(club.hasEmail || club.hasPhone || safeWebsite) && (
-        <div className="space-y-2 mb-4">
-          {club.hasEmail && (
-            <a
-              href={detail?.email ? `mailto:${detail.email}` : undefined}
-              className="flex items-center gap-3 p-2.5 bg-surface-inset rounded-lg hover:brightness-95 transition-colors group"
-              title={detail?.email ?? undefined}
+      {safeWebsite && (
+        <a
+          href={safeWebsite}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mb-4 flex items-center gap-3 p-2.5 bg-surface-inset rounded-lg hover:brightness-95 transition-colors group"
+        >
+          <div className="w-8 h-8 flex items-center justify-center border border-divide rounded-full">
+            <svg
+              className="w-4 h-4 text-ink-primary"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              <div className="w-8 h-8 flex items-center justify-center border border-divide rounded-full">
-                <svg
-                  className="w-4 h-4 text-ink-primary"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                  />
-                </svg>
-              </div>
-              {isPending ? (
-                <Skeleton className="h-4 w-32" />
-              ) : (
-                <Text
-                  variant="caption"
-                  className="font-medium truncate text-ink-primary"
-                >
-                  {detail?.email}
-                </Text>
-              )}
-            </a>
-          )}
-
-          {club.hasPhone && (
-            <div className="flex items-center gap-3 p-2.5 bg-surface-inset rounded-lg">
-              <div className="w-8 h-8 flex items-center justify-center border border-divide rounded-full">
-                <svg
-                  className="w-4 h-4 text-ink-primary"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                  />
-                </svg>
-              </div>
-              {isPending ? (
-                <Skeleton className="h-4 w-28" />
-              ) : (
-                <Text variant="caption" className="font-medium">
-                  {detail?.phone}
-                </Text>
-              )}
-            </div>
-          )}
-
-          {safeWebsite && (
-            <a
-              href={safeWebsite}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 p-2.5 bg-surface-inset rounded-lg hover:brightness-95 transition-colors group"
-            >
-              <div className="w-8 h-8 flex items-center justify-center border border-divide rounded-full">
-                <svg
-                  className="w-4 h-4 text-ink-primary"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
-                  />
-                </svg>
-              </div>
-              <Text variant="caption" className="font-medium text-ink-primary">
-                {t("detail.visitWebsite")}
-              </Text>
-            </a>
-          )}
-        </div>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+              />
+            </svg>
+          </div>
+          <Text variant="caption" className="font-medium text-ink-primary">
+            {t("detail.visitWebsite")}
+          </Text>
+        </a>
       )}
 
       {/* See Details — a link wearing the button's variant classes, which is
