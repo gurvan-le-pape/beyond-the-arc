@@ -2,7 +2,6 @@
   "directory": [
     "src/frontend/features/charts/components",
     "src/frontend/features/charts/constants",
-    "src/frontend/features/charts/hooks",
     "src/frontend/features/charts/types",
     "src/frontend/features/charts/utils",
 
@@ -131,6 +130,7 @@
     ".*/shared/types/api\\.generated\\.ts$",
     ".*/championship-matches/(?!index\\.tsx$).*",
     ".*/match-events/(?!index\\.tsx$).*",
+    ".*/shot-chart/(?!index\\.tsx$).*",
     ".*/team-roster/(?!index\\.tsx$).*",
     ".*/player-comparison/(?!index\\.tsx$).*",
     ".*/clubs-map/(?!index\\.tsx$).*",

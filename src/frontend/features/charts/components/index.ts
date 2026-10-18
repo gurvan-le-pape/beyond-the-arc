@@ -40,7 +40,7 @@ export * from "./overlays/HotspotsOverlay";
 export * from "./overlays/ScatterOverlay";
 export * from "./overlays/TooltipContent";
 export * from "./overlays/ZoneStatLabel";
-export * from "./ShotChart";
+export * from "./shot-chart/index";
 export * from "./variants/PlayerShotChart";
 export * from "./variants/ShotModal";
 export * from "./variants/TeamShotChart";

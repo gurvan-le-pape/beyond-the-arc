@@ -1,11 +1,9 @@
-// src/frontend/features/charts/components/ShotChart.tsx
+// src/frontend/features/charts/components/shot-chart/index.tsx
 "use client";
 
 import { scaleLinear } from "d3-scale";
 import { useTranslations } from "next-intl";
 import { useId, useMemo, useState } from "react";
-
-import type { Shot } from "@/features/matches/types";
 
 import {
   ChartType,
@@ -13,16 +11,19 @@ import {
   HALF_COURT_HEIGHT,
   SHOT_COLOR_SCALE,
   ShotFilter,
-} from "../constants";
-import { useBinnedShots, useCourtSize } from "../hooks";
-import { maxCellValue, summarizeShots } from "../utils";
-import { CourtMarkings } from "./court/CourtMarkings";
-import HeatmapHeader from "./headers/HeatmapHeader";
-import HotspotsHeader from "./headers/HotspotsHeader";
-import ScatterHeader from "./headers/ScatterHeader";
-import HeatmapOverlay from "./overlays/HeatmapOverlay";
-import HotspotsOverlay from "./overlays/HotspotsOverlay";
-import ScatterOverlay from "./overlays/ScatterOverlay";
+} from "@/features/charts/constants";
+import { maxCellValue, summarizeShots } from "@/features/charts/utils";
+import type { Shot } from "@/features/matches/types";
+
+import { CourtMarkings } from "../court/CourtMarkings";
+import HeatmapHeader from "../headers/HeatmapHeader";
+import HotspotsHeader from "../headers/HotspotsHeader";
+import ScatterHeader from "../headers/ScatterHeader";
+import HeatmapOverlay from "../overlays/HeatmapOverlay";
+import HotspotsOverlay from "../overlays/HotspotsOverlay";
+import ScatterOverlay from "../overlays/ScatterOverlay";
+import { useBinnedShots } from "./useBinnedShots";
+import { useCourtSize } from "./useCourtSize";
 
 interface ShotChartProps {
   readonly shots: Shot[];

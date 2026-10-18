@@ -5,7 +5,7 @@ import { Section } from "@/shared/components/blocks";
 import { Text } from "@/shared/components/typography";
 
 import { ChartType } from "../../constants";
-import ShotChart from "../ShotChart";
+import ShotChart from "../shot-chart";
 
 interface TeamShotChartProps {
   readonly shots: Shot[];
