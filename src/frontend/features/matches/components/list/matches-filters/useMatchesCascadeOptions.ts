@@ -1,9 +1,8 @@
-// src/frontend/features/matches/hooks/useMatchesCascadeOptions.ts
+// src/frontend/features/matches/components/list/matches-filters/useMatchesCascadeOptions.ts
 import { useChampionships } from "@/features/competitions/championships/api";
 import type { ChampionshipFilters } from "@/features/competitions/championships/types";
+import type { MatchesFilterState } from "@/features/matches/hooks";
 import { CompetitionLevel } from "@/shared/constants";
-
-import type { MatchesFilterState } from "./useMatchesFilterState";
 
 /**
  * Supplies the division and pool options for the matches filter cascade, based

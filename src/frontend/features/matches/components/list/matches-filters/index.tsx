@@ -1,10 +1,13 @@
-// src/frontend/features/matches/components/list/MatchesFilters.tsx
+// src/frontend/features/matches/components/list/matches-filters/index.tsx
 "use client";
 
 import { Calendar } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-import { useMatchesCascadeOptions } from "@/features/matches/hooks";
+import type {
+  MatchesFilterSetters,
+  MatchesFilterState,
+} from "@/features/matches/hooks";
 import { useLocationOptions } from "@/features/organizations/hooks";
 import { ErrorMessage } from "@/shared/components/feedback";
 import type {
@@ -21,7 +24,7 @@ import {
 } from "@/shared/components/filters";
 import { DebouncedInput, Input } from "@/shared/components/forms";
 
-import type { MatchesFilterSetters, MatchesFilterState } from "../../hooks";
+import { useMatchesCascadeOptions } from "./useMatchesCascadeOptions";
 
 interface MatchesFiltersProps {
   readonly filters: MatchesFilterState;
