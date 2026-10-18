@@ -8,10 +8,10 @@ import { SearchTabShell } from "@/shared/components/domain";
 import { EmptyState } from "@/shared/components/feedback";
 
 import { useClubs } from "../../api";
-import { useClubsFilterState } from "../../hooks";
 import type { ClubBasic } from "../../types/ClubBasic";
 import { ClubCard } from "./ClubCard";
 import { ClubsFilters } from "./ClubsFilters";
+import { useClubsFilterState } from "./useClubsFilterState";
 
 // `ClubCard` is a wide horizontal card, so it pairs up from `md` rather than
 // from `xl` — hence a local grid instead of `LIST_ENTITY_CARD_GRID`.
