@@ -9,7 +9,10 @@ import type { ActiveFilterChip } from "@/shared/components/filters";
 import { FiltersShell } from "@/shared/components/filters";
 import { DebouncedInput, Select } from "@/shared/components/forms";
 
-import type { ClubsFilterSetters, ClubsFilterState } from "../../hooks";
+import type {
+  ClubsFilterSetters,
+  ClubsFilterState,
+} from "./useClubsFilterState";
 
 interface ClubsFiltersProps {
   readonly filters: ClubsFilterState;
