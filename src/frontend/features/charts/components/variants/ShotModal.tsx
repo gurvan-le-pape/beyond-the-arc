@@ -14,7 +14,7 @@ import { logger } from "@/shared/utils";
 
 import { ChartType } from "../../constants";
 import { downloadPng, shotChartFileName } from "../../utils";
-import ShotChart from "../ShotChart";
+import ShotChart from "../shot-chart";
 
 interface ShotModalProps {
   readonly open: boolean;

@@ -1,4 +1,4 @@
-// src/frontend/features/charts/hooks/useCourtSize.ts
+// src/frontend/features/charts/components/shot-chart/useCourtSize.ts
 import { type RefObject, useEffect, useRef, useState } from "react";
 
 export interface CourtSize {

@@ -1,11 +1,10 @@
-// src/frontend/features/charts/hooks/useBinnedShots.ts
+// src/frontend/features/charts/components/shot-chart/useBinnedShots.ts
 import { useMemo } from "react";
 
+import type { ZoneStats } from "@/features/charts/types";
 import type { Shot } from "@/features/matches/types";
 import { transformToShotEvents } from "@/features/players/utils";
 import type { ShotEvent } from "@/shared/types";
-
-import type { ZoneStats } from "../types";
 
 /**
  * Bins shot events into a `rows`×`cols` grid and derives the shot events, in
