@@ -124,7 +124,7 @@ describe("MatchesService", () => {
   const mockMatchEventResult = {
     id: 1,
     eventType: "made_layup",
-    timestamp: new Date("2024-02-05T19:02:00Z"),
+    occurredAt: new Date("2024-02-05T19:02:00Z"),
     description: "3-pointer",
     players: [
       {
@@ -150,7 +150,7 @@ describe("MatchesService", () => {
   // Reusable mock shape matching MATCH_DETAIL_SELECT
   const mockMatchDetailResult = {
     id: 1,
-    date: new Date("2024-01-01"),
+    startsAt: new Date("2024-02-05T19:00:00Z"),
     matchday: 1,
     homeTeamScore: 85,
     awayTeamScore: 72,
@@ -191,7 +191,7 @@ describe("MatchesService", () => {
       {
         id: 1,
         eventType: "made_layup",
-        timestamp: new Date("2024-02-05T19:02:00Z"),
+        occurredAt: new Date("2024-02-05T19:02:00Z"),
         description: "3-pointer",
         players: [
           {
@@ -303,6 +303,7 @@ describe("MatchesService", () => {
       expect(result.matchEvents).toHaveLength(1);
       expect(result.matchEvents[0].shotLocation?.x).toBe(5.5);
       expect(result.matchEvents[0].shotLocation?.y).toBe(3.2);
+      expect(result.matchEvents[0].period).toBe(1);
     });
 
     it("should throw NotFoundException when match not found", async () => {
@@ -442,6 +443,12 @@ describe("MatchesService", () => {
   });
 
   describe("findMatchEventsByMatchId", () => {
+    beforeEach(() => {
+      mockPrismaService.client.matches.findUnique.mockResolvedValue({
+        startsAt: new Date("2024-02-05T19:00:00Z"),
+      });
+    });
+
     it("should return mapped match events with Decimal coordinates converted", async () => {
       mockPrismaService.client.matchEvents.findMany.mockResolvedValue([
         mockMatchEventResult,
@@ -465,6 +472,30 @@ describe("MatchesService", () => {
       const result = await service.findMatchEventsByMatchId(1);
 
       expect(result[0].shotLocation).toBeNull();
+    });
+
+    it("gives each event its period, counted from the match's tip-off", async () => {
+      mockPrismaService.client.matchEvents.findMany.mockResolvedValue([
+        {
+          ...mockMatchEventResult,
+          occurredAt: new Date("2024-02-05T19:10:01Z"),
+        },
+        {
+          ...mockMatchEventResult,
+          occurredAt: new Date("2024-02-05T19:40:01Z"),
+        },
+      ]);
+
+      const result = await service.findMatchEventsByMatchId(1);
+
+      expect(result.map((e) => e.period)).toEqual([2, 5]);
+    });
+
+    it("returns an empty list for an unknown match", async () => {
+      mockPrismaService.client.matches.findUnique.mockResolvedValue(null);
+      mockPrismaService.client.matchEvents.findMany.mockResolvedValue([]);
+
+      await expect(service.findMatchEventsByMatchId(999)).resolves.toEqual([]);
     });
   });
 

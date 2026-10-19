@@ -37,7 +37,6 @@ export function MatchEvents({
     events,
     homeTeam.id,
     awayTeam.id,
-    matchDate,
   );
 
   if (!events || events.length === 0) {

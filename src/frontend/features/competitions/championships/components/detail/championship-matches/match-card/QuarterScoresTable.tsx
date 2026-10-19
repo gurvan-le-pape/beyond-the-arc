@@ -46,7 +46,6 @@ export function QuarterScoresTable({
     matchEvents,
     match.homeTeam.id,
     match.awayTeam.id,
-    match.startsAt,
   );
 
   const display = (value: number) => (isLoadingEvents ? "-" : value);

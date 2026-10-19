@@ -71,32 +71,6 @@ export function getTeamIdFromEvent(event: MatchEvent): number | undefined {
 }
 
 // ---------------------------------------------------------------------------
-// Quarter derivation
-// ---------------------------------------------------------------------------
-
-/**
- * Derives the 1-based quarter number (1–4, 5 = OT) from the instant an event
- * occurred, relative to the match start (10-min quarters, 600s each).
- *
- * @param occurredAt - when the event happened
- * @param matchDate - the match's start instant, the origin all quarters are measured from
- * @returns 1–4 for regulation, 5 for anything past it — every overtime period collapses into 5
- */
-export function getQuarterFromTimestamp(
-  occurredAt: Date | string,
-  matchDate: Date | string,
-): number {
-  const elapsedSeconds =
-    (new Date(occurredAt).getTime() - new Date(matchDate).getTime()) / 1000;
-
-  if (elapsedSeconds <= 600) return 1;
-  if (elapsedSeconds <= 1200) return 2;
-  if (elapsedSeconds <= 1800) return 3;
-  if (elapsedSeconds <= 2400) return 4;
-  return 5; // OT
-}
-
-// ---------------------------------------------------------------------------
 // Points calculation
 // ---------------------------------------------------------------------------
 
@@ -125,21 +99,19 @@ export interface QuarterScores {
 }
 
 /**
- * Computes per-quarter scores for both teams by bucketing scoring events
- * relative to the match start time.
+ * Computes per-quarter scores for both teams by bucketing scoring events by
+ * the period the API assigns them.
  * Index 0–3 = Q1–Q4, index 4 = OT.
  *
  * @param events - every event in the match, scoring or not
  * @param homeTeamId - id used to attribute a scoring event to the home side
  * @param awayTeamId - id used to attribute a scoring event to the away side
- * @param matchDate - the match's start instant; every quarter boundary is measured from it
  * @returns five-slot arrays per side: indices 0–3 are Q1–Q4 and index 4 is all overtime combined
  */
 export function computeQuarterScores(
   events: MatchEvent[],
   homeTeamId: number,
   awayTeamId: number,
-  matchDate: Date | string,
 ): QuarterScores {
   const home: [number, number, number, number, number] = [0, 0, 0, 0, 0];
   const away: [number, number, number, number, number] = [0, 0, 0, 0, 0];
@@ -151,8 +123,7 @@ export function computeQuarterScores(
     const points = pointsForEvent(event.eventType, style);
     if (points === 0) continue;
 
-    const quarter = getQuarterFromTimestamp(event.occurredAt, matchDate);
-    const idx = Math.min(quarter - 1, 4); // clamp OT+ to index 4
+    const idx = Math.min(event.period - 1, 4); // every overtime period shares index 4
 
     const teamId = getTeamIdFromEvent(event);
     if (teamId === homeTeamId) home[idx] += points;

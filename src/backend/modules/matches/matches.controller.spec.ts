@@ -289,6 +289,7 @@ describe("MatchesController", () => {
         {
           id: 1,
           eventType: "made_layup",
+          period: 1,
           occurredAt: new Date("2024-02-05T19:02:00Z"),
           description: null,
           players: [],

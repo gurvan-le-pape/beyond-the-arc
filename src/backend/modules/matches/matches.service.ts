@@ -31,6 +31,7 @@ import type {
   PlayerWithStatsDto,
   ShotDto,
 } from "./dto/matches.response.dto";
+import { matchPeriod } from "./match-period";
 
 export interface MatchFilters {
   level?: CompetitionLevel;
@@ -302,13 +303,20 @@ export class MatchesService {
   }
 
   async findMatchEventsByMatchId(matchId: number): Promise<MatchEventDto[]> {
-    const events = await this.prisma.client.matchEvents.findMany({
-      where: { matchId },
-      select: MATCH_EVENT_SELECT,
-      orderBy: { occurredAt: "asc" },
-    });
+    const [match, events] = await Promise.all([
+      this.prisma.client.matches.findUnique({
+        where: { id: matchId },
+        select: { startsAt: true },
+      }),
+      this.prisma.client.matchEvents.findMany({
+        where: { matchId },
+        select: MATCH_EVENT_SELECT,
+        orderBy: { occurredAt: "asc" },
+      }),
+    ]);
+    if (!match) return [];
 
-    return events.map((e) => this.mapEventToDto(e));
+    return events.map((e) => this.mapEventToDto(e, match.startsAt));
   }
 
   /**
@@ -435,15 +443,21 @@ export class MatchesService {
   ): MatchDetailResponseDto {
     return {
       ...this.mapMatchToDto(match),
-      matchEvents: match.matchEvents.map((e) => this.mapEventToDto(e)),
+      matchEvents: match.matchEvents.map((e) =>
+        this.mapEventToDto(e, match.startsAt),
+      ),
     };
   }
 
-  private mapEventToDto(event: MatchEventResult): MatchEventDto {
+  private mapEventToDto(
+    event: MatchEventResult,
+    startsAt: Date,
+  ): MatchEventDto {
     return {
       id: event.id,
       eventType: event.eventType as EventType,
       occurredAt: event.occurredAt,
+      period: matchPeriod(event.occurredAt, startsAt),
       description: event.description,
       players: event.players.map((p) => ({
         role: p.role as Role,
