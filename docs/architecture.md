@@ -142,6 +142,8 @@ The cost this accepts is that a change means editing three files. It is written 
 
 One deliberate exception: `matches.service.spec.ts` keeps the literal `"Europe/Paris"` rather than importing the backend constant. The spec is the oracle for that constant — importing it would compare the value with itself, and the test would pass for any zone.
 
+Every other assumption the scheduler, backend and frontend make about each other without a check behind it is listed in → [`boundary.md`](./boundary.md)
+
 ---
 
 ## Data pipeline
