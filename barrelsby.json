@@ -130,6 +130,7 @@
     ".*/championship-matches/(?!index\\.tsx$).*",
     ".*/match-events/(?!index\\.tsx$).*",
     ".*/shot-chart/(?!index\\.tsx$).*",
+    ".*/matches-filters/(?!index\\.tsx$).*",
     ".*/team-roster/(?!index\\.tsx$).*",
     ".*/player-comparison/(?!index\\.tsx$).*",
     ".*/clubs-map/(?!index\\.tsx$).*",
