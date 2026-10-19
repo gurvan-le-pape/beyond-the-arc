@@ -17,14 +17,12 @@ import { filterEvents, scoreEvents } from "./matchEventsView";
  * @param events - the match's events, in order
  * @param homeTeamId - the home side's team id
  * @param awayTeamId - the away side's team id
- * @param matchDate - tip-off, from which each event's quarter is derived
  * @returns the events to show, and the filter values and setters for the panel
  */
 export function useMatchEvents(
   events: readonly MatchEvent[],
   homeTeamId: number,
   awayTeamId: number,
-  matchDate: Date | string,
 ) {
   const [selectedQuarter, setSelectedQuarter] = useState<Quarter>(Quarter.ALL);
   const [latestFirst, setLatestFirst] = useState(false);
@@ -46,8 +44,8 @@ export function useMatchEvents(
   }, []);
 
   const scoredEvents = useMemo(
-    () => scoreEvents(events, homeTeamId, awayTeamId, matchDate),
-    [events, homeTeamId, awayTeamId, matchDate],
+    () => scoreEvents(events, homeTeamId, awayTeamId),
+    [events, homeTeamId, awayTeamId],
   );
 
   const filteredEvents = useMemo(

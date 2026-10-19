@@ -15,29 +15,30 @@ const TIP_OFF = "2026-10-01T18:00:00.000Z";
 const HOME = 1;
 const AWAY = 2;
 
-// An event by one player, `minute` minutes after tip-off.
+// An event by one player, in the given period.
 function event(
   id: number,
   eventType: string,
   role: string,
   playerId: number,
   teamId: number,
-  minute: number,
+  period: number,
 ): MatchEvent {
   return {
     id,
     eventType,
-    occurredAt: new Date(Date.parse(TIP_OFF) + minute * 60_000).toISOString(),
+    occurredAt: TIP_OFF,
+    period,
     players: [{ role, player: { id: playerId, team: { id: teamId } } }],
   } as unknown as MatchEvent;
 }
 
 const EVENTS = [
   event(1, EventType.MADE_LAYUP, Role.SHOOTER, 10, HOME, 1),
-  event(2, EventType.MADE_STEP_BACK_THREE, Role.SHOOTER, 20, AWAY, 5),
-  event(3, EventType.MISSED_LAYUP, Role.SHOOTER, 10, HOME, 12),
-  event(4, EventType.STEAL, Role.STEALER, 20, AWAY, 15),
-  event(5, EventType.MADE_LAYUP, Role.SHOOTER, 11, HOME, 25),
+  event(2, EventType.MADE_STEP_BACK_THREE, Role.SHOOTER, 20, AWAY, 1),
+  event(3, EventType.MISSED_LAYUP, Role.SHOOTER, 10, HOME, 2),
+  event(4, EventType.STEAL, Role.STEALER, 20, AWAY, 2),
+  event(5, EventType.MADE_LAYUP, Role.SHOOTER, 11, HOME, 3),
 ];
 
 const NO_FILTER: MatchEventsFilter = {
@@ -49,7 +50,7 @@ const NO_FILTER: MatchEventsFilter = {
 
 describe("scoreEvents", () => {
   it("carries the score after each event, counting made shots only", () => {
-    const scored = scoreEvents(EVENTS, HOME, AWAY, TIP_OFF);
+    const scored = scoreEvents(EVENTS, HOME, AWAY);
     expect(scored.map((e) => [e.homeScore, e.awayScore])).toEqual([
       [2, 0],
       [2, 3],
@@ -59,20 +60,14 @@ describe("scoreEvents", () => {
     ]);
   });
 
-  it("attributes each event to its team and quarter", () => {
-    const scored = scoreEvents(EVENTS, HOME, AWAY, TIP_OFF);
-    expect(scored.map((e) => [e.teamId, e.quarter])).toEqual([
-      [HOME, 1],
-      [AWAY, 1],
-      [HOME, 2],
-      [AWAY, 2],
-      [HOME, 3],
-    ]);
+  it("attributes each event to its team", () => {
+    const scored = scoreEvents(EVENTS, HOME, AWAY);
+    expect(scored.map((e) => e.teamId)).toEqual([HOME, AWAY, HOME, AWAY, HOME]);
   });
 });
 
 describe("filterEvents", () => {
-  const scored = scoreEvents(EVENTS, HOME, AWAY, TIP_OFF);
+  const scored = scoreEvents(EVENTS, HOME, AWAY);
   const ids = (filter: Partial<MatchEventsFilter>) =>
     filterEvents(scored, { ...NO_FILTER, ...filter }).map((e) => e.id);
 

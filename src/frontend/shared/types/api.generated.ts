@@ -1526,6 +1526,11 @@ export interface components {
              */
             occurredAt: string;
             /**
+             * @description Period the event belongs to: 1–4 for the quarters, 5 for the first overtime, 6 for the second, and so on. A `quarter_end` event belongs to the period it closes.
+             * @example 2
+             */
+            period: number;
+            /**
              * @description Event description
              * @example 3-pointer
              */
