@@ -15,7 +15,6 @@ Responsibilities:
 
 import json
 import logging
-import random
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 
@@ -29,7 +28,7 @@ from event_rules import (
     SHOT_CATEGORY_STAT_PREFIX,
 )
 from generation.playtime_generator import generate as generate_playtime
-from simulation.match_simulator import MatchSimulator
+from simulation.match_simulator import GAME_DURATION, MatchSimulator
 
 logger = logging.getLogger(__name__)
 
@@ -98,25 +97,13 @@ class MatchGenerator:
         all_subs = home_subs + away_subs
 
         positions = {player_id: position for player_id, _, position in home_players + away_players}
-        match_events, home_score, away_score = self.simulator.simulate_match(
+        match_events, home_score, away_score, final_buzzer = self.simulator.simulate_match(
             home_playtimes, away_playtimes, all_names, starts_at, positions
         )
-
-        # Prevent draws
-        if home_score == away_score:
-            home_score += 2
-            match_events.append({
-                "occurred_at": starts_at + timedelta(seconds=2401),
-                "player_roles": {"shooter": random.choice(list(home_playtimes.keys()))},  # noqa: S2245
-                "event_type": "made_layup",
-                "description": "Deciding basket.",
-                "shot_location": self.simulator.event_generator.generate_shot_location("two_int"),
-            })
-
-        overtime = any(
-            e["occurred_at"] > starts_at + timedelta(seconds=2400)
-            for e in match_events
-        )
+        overtime = final_buzzer > GAME_DURATION
+        if overtime:
+            _play_on_through_overtime(home_playtimes, final_buzzer)
+            _play_on_through_overtime(away_playtimes, final_buzzer)
 
         # Append substitution events before sorting
         for sub in all_subs:
@@ -141,6 +128,19 @@ class MatchGenerator:
             overtime=overtime,
             stat_rows=compute_player_stats(home_playtimes, away_playtimes, match_events),
         )
+
+
+def _play_on_through_overtime(playtimes: dict, final_buzzer: int) -> None:
+    """
+    Extend to `final_buzzer` the stints still open at the end of regulation.
+
+    The rotation is planned for 40 minutes, so the players on court at the
+    final buzzer are exactly those whose last stint ends at GAME_DURATION;
+    they play every overtime period, and their minutes must say so.
+    """
+    for stints in playtimes.values():
+        if stints and stints[-1][1] == GAME_DURATION:
+            stints[-1] = (stints[-1][0], final_buzzer)
 
 
 # ------------------------------------------------------------------
