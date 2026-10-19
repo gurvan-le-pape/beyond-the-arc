@@ -19,6 +19,7 @@ SHOT_CLOCK_AFTER_OFFENSIVE_REBOUND = 14
 QUARTER_LENGTH = 600  # 10 minutes in seconds
 QUARTERS = 4
 GAME_DURATION = QUARTER_LENGTH * QUARTERS
+OVERTIME_LENGTH = 300  # 5 minutes in seconds
 
 # Events after which the other team has the ball, on a fresh shot clock.
 POSSESSION_CHANGES = {
@@ -84,18 +85,33 @@ class MatchSimulator:
 
         for quarter in range(1, QUARTERS + 1):
             if quarter > 1:
-                self._start_quarter(match, quarter)
-            quarter_end = quarter * QUARTER_LENGTH
-            while match.time < quarter_end:
+                self._start_period(match, quarter)
+            buzzer = quarter * QUARTER_LENGTH
+            while match.time < buzzer:
                 home_sub.advance(match.time)
                 away_sub.advance(match.time)
                 if not home_sub.active or not away_sub.active:
                     match.time += 1
                     continue
                 self._play_tick(match, list(home_sub.active), list(away_sub.active))
-            self._end_quarter(match, quarter_end)
+            self._end_period(match, buzzer)
 
-        return match.events, match.score["home"], match.score["away"]
+        # Overtime: the rotations stop at the final buzzer, so the fives on
+        # court then play every overtime period, with no substitutions.
+        home_five, away_five = list(home_sub.active), list(away_sub.active)
+        period, buzzer = QUARTERS, GAME_DURATION
+        # A side with nobody on court cannot play overtime. Rather than loop
+        # forever, the match stays level: the `no_draws_allowed` constraint
+        # then rejects it, and the scheduler rolls it back and logs it.
+        while match.score["home"] == match.score["away"] and home_five and away_five:
+            period += 1
+            buzzer += OVERTIME_LENGTH
+            self._start_period(match, period)
+            while match.time < buzzer:
+                self._play_tick(match, home_five, away_five)
+            self._end_period(match, buzzer)
+
+        return match.events, match.score["home"], match.score["away"], buzzer
 
     def _tip_off(self, match, home_sub, away_sub):
         tip_off_winner = random.choice(["home", "away"])  # noqa: S2245
@@ -118,33 +134,34 @@ class MatchSimulator:
         }, 0)
         match.time += 1
 
-    def _end_quarter(self, match, quarter_end):
+    def _end_period(self, match, buzzer):
         """
-        Close a quarter on the buzzer, whatever was in play.
+        Close a quarter or an overtime period on its buzzer, whatever was in play.
 
-        The last tick of a quarter can overshoot the buzzer by up to a
+        The last tick of a period can overshoot the buzzer by up to a
         possession's length; nothing is emitted in that overshoot, since the
         loop stops before the next tick. Play resumes one second after the
-        buzzer, so every event of a quarter lies in (start, buzzer].
+        buzzer, so every event of a period lies in (start, buzzer].
         """
         match.add_event({
             "occurred_at": None,
             "event_type": "quarter_end",
             "player_roles": {},
-            "description": "End of the quarter.",
-        }, quarter_end)
-        match.time = quarter_end + 1
+            "description": "End of overtime." if buzzer > GAME_DURATION else "End of the quarter.",
+        }, buzzer)
+        match.time = buzzer + 1
 
-    def _start_quarter(self, match, quarter):
+    def _start_period(self, match, period):
         """
-        Open quarters 2–4 with a fresh possession, by the alternating-possession arrow.
+        Open every period after the first with a fresh possession, by the
+        alternating-possession arrow.
 
         FIBA gives the first alternating possession to the team that lost the
-        tip-off, so the tip-off loser starts the even quarters and the winner
-        the odd ones.
+        tip-off, so the tip-off loser starts the even periods and the winner
+        the odd ones — overtime periods 5, 6, … included.
         """
         loser = "away" if match.tip_off_winner == "home" else "home"
-        match.possession = match.tip_off_winner if quarter % 2 == 1 else loser
+        match.possession = match.tip_off_winner if period % 2 == 1 else loser
         match.shot_clock = SHOT_CLOCK
         self.state_manager.current_state = "possession"
 
