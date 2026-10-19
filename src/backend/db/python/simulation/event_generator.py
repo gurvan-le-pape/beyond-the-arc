@@ -193,14 +193,6 @@ class EventGenerator:
                 "description": f"{name(shooter)} {'made' if event_type == 'free_throw_made' else 'missed'} a free throw.",
             }
 
-        elif event_type == "quarter_end":
-            return {
-                "occurred_at": None,
-                "event_type": event_type,
-                "player_roles": {},
-                "description": "End of the quarter.",
-            }
-
         elif event_type in BALL_HANDLER_TURNOVERS:
             player = self.pick(offensive, "turnover")
             return {
