@@ -16,12 +16,14 @@ SHOT_CLOCK = 24
 SHOT_CLOCK_AFTER_OFFENSIVE_REBOUND = 14
 
 
-GAME_DURATION = 2400  # 40 minutes in seconds
+QUARTER_LENGTH = 600  # 10 minutes in seconds
+QUARTERS = 4
+GAME_DURATION = QUARTER_LENGTH * QUARTERS
 
 # Events after which the other team has the ball, on a fresh shot clock.
 POSSESSION_CHANGES = {
     "traveling", "carrying", "double_dribble", "bad_pass", "steal",
-    "shot_clock_violation", "offensive_foul", "quarter_end",
+    "shot_clock_violation", "offensive_foul",
     "defensive_rebound", "charging_foul", "illegal_screen",
 }
 SHOOTING_FOULS = set(SHOOTING_FOUL_FREE_THROWS) | set(AND_ONE_FREE_THROWS)
@@ -35,6 +37,7 @@ class _Match:
         self.events = []
         self.score = {"home": 0, "away": 0}
         self.possession = None
+        self.tip_off_winner = None
         self.shot_clock = SHOT_CLOCK
         self.time = 0
         self._last_event_second = -1
@@ -79,19 +82,25 @@ class MatchSimulator:
 
         self._tip_off(match, home_sub, away_sub)
 
-        while match.time < GAME_DURATION:
-            home_sub.advance(match.time)
-            away_sub.advance(match.time)
-            if not home_sub.active or not away_sub.active:
-                match.time += 1
-                continue
-            self._play_tick(match, list(home_sub.active), list(away_sub.active))
+        for quarter in range(1, QUARTERS + 1):
+            if quarter > 1:
+                self._start_quarter(match, quarter)
+            quarter_end = quarter * QUARTER_LENGTH
+            while match.time < quarter_end:
+                home_sub.advance(match.time)
+                away_sub.advance(match.time)
+                if not home_sub.active or not away_sub.active:
+                    match.time += 1
+                    continue
+                self._play_tick(match, list(home_sub.active), list(away_sub.active))
+            self._end_quarter(match, quarter_end)
 
         return match.events, match.score["home"], match.score["away"]
 
     def _tip_off(self, match, home_sub, away_sub):
         tip_off_winner = random.choice(["home", "away"])  # noqa: S2245
         match.possession = tip_off_winner
+        match.tip_off_winner = tip_off_winner
         if not (home_sub.active and away_sub.active):
             return
 
@@ -108,6 +117,36 @@ class MatchSimulator:
             "description": f"Tip-off won by {tip_off_winner} team.",
         }, 0)
         match.time += 1
+
+    def _end_quarter(self, match, quarter_end):
+        """
+        Close a quarter on the buzzer, whatever was in play.
+
+        The last tick of a quarter can overshoot the buzzer by up to a
+        possession's length; nothing is emitted in that overshoot, since the
+        loop stops before the next tick. Play resumes one second after the
+        buzzer, so every event of a quarter lies in (start, buzzer].
+        """
+        match.add_event({
+            "occurred_at": None,
+            "event_type": "quarter_end",
+            "player_roles": {},
+            "description": "End of the quarter.",
+        }, quarter_end)
+        match.time = quarter_end + 1
+
+    def _start_quarter(self, match, quarter):
+        """
+        Open quarters 2–4 with a fresh possession, by the alternating-possession arrow.
+
+        FIBA gives the first alternating possession to the team that lost the
+        tip-off, so the tip-off loser starts the even quarters and the winner
+        the odd ones.
+        """
+        loser = "away" if match.tip_off_winner == "home" else "home"
+        match.possession = match.tip_off_winner if quarter % 2 == 1 else loser
+        match.shot_clock = SHOT_CLOCK
+        self.state_manager.current_state = "possession"
 
     def _play_tick(self, match, home_list, away_list):
         """Move the game from its current state to the next, emitting that transition's event."""

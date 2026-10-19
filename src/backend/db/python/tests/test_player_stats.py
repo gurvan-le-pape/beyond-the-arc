@@ -45,9 +45,8 @@ def test_a_violation_is_the_ball_handlers_turnover():
 
 
 def test_the_end_of_a_quarter_involves_no_player():
-    event = generate("quarter_end")
+    event = {"event_type": "quarter_end", "player_roles": {}}
 
-    assert event["player_roles"] == {}
     assert turnovers_by_player(event) == {}
 
 
