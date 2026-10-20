@@ -15,6 +15,36 @@ export type ScoredMatchEvent = MatchEvent & {
   readonly teamId: number | undefined;
 };
 
+const REGULATION_QUARTERS = 4;
+
+/**
+ * Whether the match went past regulation.
+ *
+ * @param events - the match's events
+ * @returns true when any event lies in an overtime period
+ */
+export function hasOvertime(events: readonly MatchEvent[]): boolean {
+  return events.some((event) => event.period > REGULATION_QUARTERS);
+}
+
+/**
+ * Whether an event's period belongs to the chosen quarter.
+ *
+ * @param quarter - the reader's choice; `OT` covers every overtime period
+ * @param period - the event's 1-based period from the API
+ * @returns true when the event should be shown for that quarter
+ */
+function isInQuarter(quarter: Quarter, period: number): boolean {
+  switch (quarter) {
+    case Quarter.ALL:
+      return true;
+    case Quarter.OT:
+      return period > REGULATION_QUARTERS;
+    default:
+      return period === Number.parseInt(quarter.replace("Q", ""));
+  }
+}
+
 /** What the reader has narrowed the timeline to. */
 export interface MatchEventsFilter {
   readonly quarter: Quarter;
@@ -66,10 +96,6 @@ export function filterEvents(
   events: readonly ScoredMatchEvent[],
   filter: MatchEventsFilter,
 ): ScoredMatchEvent[] {
-  const quarter =
-    filter.quarter === Quarter.ALL
-      ? undefined
-      : Number.parseInt(filter.quarter.replace("Q", ""));
   const allowedTypes =
     filter.category === undefined
       ? undefined
@@ -77,7 +103,7 @@ export function filterEvents(
 
   const result = events.filter(
     (event) =>
-      (quarter === undefined || event.period === quarter) &&
+      isInQuarter(filter.quarter, event.period) &&
       (allowedTypes === undefined || allowedTypes.includes(event.eventType)) &&
       (filter.playerIds.size === 0 ||
         (event.players ?? []).some((p) => filter.playerIds.has(p.player.id))),

@@ -4,6 +4,8 @@ export const Quarter = {
   Q2: "Q2",
   Q3: "Q3",
   Q4: "Q4",
+  /** Every overtime period together. */
+  OT: "OT",
   ALL: "ALL",
 } as const;
 
