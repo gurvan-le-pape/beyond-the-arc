@@ -282,7 +282,13 @@ describe("ChampionshipsService", () => {
 
       expect(
         mockPrismaService.client.championships.findMany,
-      ).toHaveBeenCalledWith(expect.objectContaining({ skip: 20, take: 10 }));
+      ).toHaveBeenCalledWith(
+        expect.objectContaining({
+          orderBy: [{ division: "asc" }, { category: "asc" }, { id: "asc" }],
+          skip: 20,
+          take: 10,
+        }),
+      );
     });
   });
 });

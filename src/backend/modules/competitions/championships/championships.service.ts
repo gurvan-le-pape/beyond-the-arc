@@ -82,7 +82,7 @@ export class ChampionshipsService {
       this.prisma.client.championships.findMany({
         where,
         select: CHAMPIONSHIP_SELECT,
-        orderBy: [{ division: "asc" }, { category: "asc" }],
+        orderBy: [{ division: "asc" }, { category: "asc" }, { id: "asc" }],
         skip,
         take: limit,
       }),

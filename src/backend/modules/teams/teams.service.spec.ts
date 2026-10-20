@@ -115,6 +115,7 @@ describe("TeamsService", () => {
 
       expect(mockPrismaService.client.teams.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
+          orderBy: [{ club: { name: "asc" } }, { id: "asc" }],
           skip: 20,
           take: 20,
         }),

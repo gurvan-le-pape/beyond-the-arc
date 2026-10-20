@@ -337,7 +337,7 @@ describe("ClubsService", () => {
       expect(prisma.client.clubs.findMany).toHaveBeenCalledWith({
         where: {},
         select: expect.any(Object),
-        orderBy: { name: "asc" },
+        orderBy: [{ name: "asc" }, { id: "asc" }],
         skip: 0,
         take: 50,
       });

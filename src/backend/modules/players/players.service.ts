@@ -187,7 +187,7 @@ export class PlayersService {
       this.prisma.client.players.findMany({
         where,
         select: PLAYER_SELECT,
-        orderBy: { name: "asc" },
+        orderBy: [{ name: "asc" }, { id: "asc" }],
         skip,
         take: limit,
       }),

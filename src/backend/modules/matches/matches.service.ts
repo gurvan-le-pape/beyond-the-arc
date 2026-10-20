@@ -229,7 +229,7 @@ export class MatchesService {
       this.prisma.client.matches.findMany({
         where,
         select: MATCH_LIST_SELECT,
-        orderBy: { startsAt: "desc" },
+        orderBy: [{ startsAt: "desc" }, { id: "asc" }],
         skip,
         take: limit,
       }),

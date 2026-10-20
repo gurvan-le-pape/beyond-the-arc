@@ -25,6 +25,9 @@ export interface ResolvedPagination {
  *
  * Bounds (page >= 1, limit <= MAX_PAGE_LIMIT) are enforced upstream by
  * PaginationQueryDto validation, so this only fills defaults.
+ *
+ * The query using `skip`/`take` must end its `orderBy` with `id`: rows that
+ * tie on the sort key come back in no fixed order, so pages would overlap.
  */
 export function resolvePagination(query: {
   page?: number;
