@@ -7,6 +7,7 @@ import { EventCategory, EventType, Role } from "@/shared/constants";
 
 import {
   filterEvents,
+  hasOvertime,
   type MatchEventsFilter,
   scoreEvents,
 } from "./matchEventsView";
@@ -94,8 +95,40 @@ describe("filterEvents", () => {
     expect(latest[0].homeScore).toBe(4);
   });
 
+  it("narrows to every overtime period at once", () => {
+    const withOvertime = scoreEvents(
+      [
+        ...EVENTS,
+        event(6, EventType.MADE_LAYUP, Role.SHOOTER, 10, HOME, 5),
+        event(7, EventType.MADE_LAYUP, Role.SHOOTER, 20, AWAY, 6),
+      ],
+      HOME,
+      AWAY,
+    );
+    const shown = filterEvents(withOvertime, {
+      ...NO_FILTER,
+      quarter: Quarter.OT,
+    });
+    expect(shown.map((e) => e.id)).toEqual([6, 7]);
+  });
+
   it("does not reorder the list it was given", () => {
     filterEvents(scored, { ...NO_FILTER, latestFirst: true });
     expect(scored.map((e) => e.id)).toEqual([1, 2, 3, 4, 5]);
+  });
+});
+
+describe("hasOvertime", () => {
+  it("is false for a match decided in regulation", () => {
+    expect(hasOvertime(EVENTS)).toBe(false);
+  });
+
+  it("is true once any event lies past the fourth period", () => {
+    expect(
+      hasOvertime([
+        ...EVENTS,
+        event(6, EventType.MADE_LAYUP, Role.SHOOTER, 10, HOME, 5),
+      ]),
+    ).toBe(true);
   });
 });

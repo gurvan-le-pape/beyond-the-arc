@@ -13,6 +13,8 @@ import { TimelineOrderToggle } from "./TimelineOrderToggle";
 interface EventFiltersProps {
   readonly homeTeam: TeamInfoExtended;
   readonly awayTeam: TeamInfoExtended;
+  /** Offers the overtime choice in the quarter selector. */
+  readonly hasOvertime: boolean;
   readonly selectedQuarter: Quarter;
   readonly setSelectedQuarter: (q: Quarter) => void;
   readonly selectedEventCategory: EventCategory | undefined;
@@ -34,6 +36,7 @@ interface EventFiltersProps {
 export function EventFilters({
   homeTeam,
   awayTeam,
+  hasOvertime,
   selectedQuarter,
   setSelectedQuarter,
   selectedEventCategory,
@@ -53,6 +56,7 @@ export function EventFilters({
       <QuarterSelector
         selected={selectedQuarter}
         onChange={setSelectedQuarter}
+        hasOvertime={hasOvertime}
       />
 
       <EventCategorySelect

@@ -5,7 +5,7 @@ import { Quarter } from "@/features/matches/constants";
 import type { MatchEvent } from "@/features/matches/types";
 import type { EventCategory } from "@/shared/constants";
 
-import { filterEvents, scoreEvents } from "./matchEventsView";
+import { filterEvents, hasOvertime, scoreEvents } from "./matchEventsView";
 
 /**
  * The timeline's filter state and the events it selects.
@@ -68,6 +68,7 @@ export function useMatchEvents(
   return {
     filteredEvents,
     filters: {
+      hasOvertime: hasOvertime(events),
       selectedQuarter,
       setSelectedQuarter,
       selectedEventCategory,
