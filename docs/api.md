@@ -29,7 +29,7 @@ Interactive documentation is available at `/api/docs` (Swagger UI), served by `@
 
 **CORS** allows exactly one origin in production — the `FRONTEND_URL` environment variable, which is therefore **required** there: the backend refuses to boot without it rather than serving an allowlist that matches nothing. Outside production `http://localhost:3000` is allowed as well, because dev is the only configuration where the browser is genuinely cross-origin (page on `:3000`, API on `:4000`); in production Nginx serves both under one origin. The allowlist is built by `resolveCorsOrigins()` (`common/utils`). **Credentials are not allowed** — the API has no auth, sets no cookies and reads no `Authorization` header, so there is no credentialed contract to grant.
 
-**Pagination** is uniform across all paginated endpoints: query DTOs extend the shared `PaginationQueryDto` (`1 ≤ page ≤ 100 000`, `1 ≤ limit ≤ 100`, both optional), and services apply defaults through `resolvePagination()` (`page: 1`, `limit: 50`). Out-of-bounds values return `400` — there is no silent clamping. **`search` is capped at 100 characters** wherever it appears, which is above the longest name in the dataset and bounds what a caller can put into a cache key. Paginated payloads always have the shape `{ items, total, page, limit, totalPages }`.
+**Pagination** is uniform across all paginated endpoints: query DTOs extend the shared `PaginationQueryDto` (`1 ≤ page ≤ 100 000`, `1 ≤ limit ≤ 100`, both optional), and services apply defaults through `resolvePagination()` (`page: 1`, `limit: 50`). Out-of-bounds values return `400` — there is no silent clamping. **`search` is capped at 100 characters** wherever it appears, which is above the longest name in the dataset and bounds what a caller can put into a cache key. Paginated payloads always have the shape `{ items, total, page, limit, totalPages }`. **A paginated query's `orderBy` ends with `id`.** Pages are `OFFSET`/`LIMIT` slices, and Postgres returns rows that tie on the sort key in no fixed order, so without a unique last key consecutive pages overlap and some rows are never returned — on a match day where thousands of matches share a kick-off time, over a third of them.
 
 **Name search** uses the `search` query parameter everywhere it exists (clubs, teams, players, matches) — case-insensitive partial match.
 
@@ -178,10 +178,11 @@ Response DTO rules that keep the generated types truthful:
 1. Query params: one DTO class in `dto/`, extending `PaginationQueryDto` if paginated; `@IsInt` for integers, `@IsEnum` for enum values, `search` for name search. No inline pipes on `@Query()`.
 2. Response: real DTO classes for every nested shape; enums and nullability per the rules above.
 3. List endpoints return `[]` when empty; only by-id endpoints throw `NotFoundException`.
-4. Barrel imports (`@common/dto`, `@modules/<feature>/dto`) and the file-path header comment — both lint-enforced.
-5. Pick the cache TTL tier that matches the data (see Caching above).
-6. Regenerate `docs/openapi.json` and run `npm run typegen` in `src/frontend`; commit both (CI fails otherwise).
-7. `app.conventions.spec.ts` and `app.swagger.spec.ts` pick the new route up automatically — if they fail, the message names the offending property.
+4. Paginated: the `orderBy` ends with `{ id: "asc" }`.
+5. Barrel imports (`@common/dto`, `@modules/<feature>/dto`) and the file-path header comment — both lint-enforced.
+6. Pick the cache TTL tier that matches the data (see Caching above).
+7. Regenerate `docs/openapi.json` and run `npm run typegen` in `src/frontend`; commit both (CI fails otherwise).
+8. `app.conventions.spec.ts` and `app.swagger.spec.ts` pick the new route up automatically — if they fail, the message names the offending property.
 
 ---
 

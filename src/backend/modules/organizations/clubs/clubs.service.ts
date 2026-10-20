@@ -283,7 +283,7 @@ export class ClubsService {
       this.prisma.client.clubs.findMany({
         where,
         select: CLUB_BASIC_SELECT,
-        orderBy: { name: "asc" },
+        orderBy: [{ name: "asc" }, { id: "asc" }],
         skip,
         take: limit,
       }),

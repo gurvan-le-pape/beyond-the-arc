@@ -266,6 +266,7 @@ describe("MatchesService", () => {
 
       expect(mockPrismaService.client.matches.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
+          orderBy: [{ startsAt: "desc" }, { id: "asc" }],
           skip: 20,
           take: 20,
         }),

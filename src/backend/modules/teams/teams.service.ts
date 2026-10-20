@@ -256,7 +256,7 @@ export class TeamsService {
       this.prisma.client.teams.findMany({
         where,
         select: TEAM_SELECT,
-        orderBy: { club: { name: "asc" } },
+        orderBy: [{ club: { name: "asc" } }, { id: "asc" }],
         skip,
         take: limit,
       }),
