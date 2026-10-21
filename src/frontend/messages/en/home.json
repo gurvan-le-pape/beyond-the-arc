@@ -20,7 +20,8 @@
   "latestRound": {
     "eyebrow": "Latest round · Matchday {matchday}",
     "resultsTitle": "Results",
-    "cta": "See the championship"
+    "cta": "See the championship",
+    "fullStandings": "Full standings · {count} teams"
   },
   "explore": {
     "sectionTitle": "Search & explore",

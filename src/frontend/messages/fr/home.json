@@ -20,7 +20,8 @@
   "latestRound": {
     "eyebrow": "Dernière journée · Journée {matchday}",
     "resultsTitle": "Résultats",
-    "cta": "Voir le championnat"
+    "cta": "Voir le championnat",
+    "fullStandings": "Classement complet · {count} équipes"
   },
   "explore": {
     "sectionTitle": "Rechercher & explorer",

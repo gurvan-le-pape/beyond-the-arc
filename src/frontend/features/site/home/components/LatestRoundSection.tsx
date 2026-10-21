@@ -9,6 +9,9 @@ import { Card, TextLink } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import type { Leaderboard } from "@/shared/types";
 
+/** Standings rows shown before the link to the full table. */
+const STANDINGS_PREVIEW_ROWS = 5;
+
 interface LatestRoundSectionProps {
   /** The championship's one-line title, already translated. */
   readonly championshipTitle: string;
@@ -21,7 +24,8 @@ interface LatestRoundSectionProps {
 
 /**
  * The home page's live band: one pool's latest matchday results beside its
- * standings, so the page shows the data and not only counts of it.
+ * standings, so the page shows the data and not only counts of it. The
+ * standings stop at the top of the table; the rest is a link away.
  *
  * Which pool is the caller's decision — the backend's `/pools/recent` order —
  * and this only lays it out. A server component: nothing here is interactive.
@@ -76,7 +80,18 @@ export function LatestRoundSection({
           </ul>
         </Section>
 
-        <LeaderboardTable leaderboards={leaderboard} />
+        <div className="flex flex-col gap-3">
+          <LeaderboardTable
+            leaderboards={leaderboard.slice(0, STANDINGS_PREVIEW_ROWS)}
+          />
+          {leaderboard.length > STANDINGS_PREVIEW_ROWS && (
+            <span className="text-sm">
+              <TextLink href={championshipHref}>
+                {t("fullStandings", { count: leaderboard.length })}
+              </TextLink>
+            </span>
+          )}
+        </div>
       </div>
     </section>
   );
