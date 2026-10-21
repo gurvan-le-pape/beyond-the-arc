@@ -16,7 +16,10 @@ import {
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 
 import { GetPoolsByChampionshipIdQueryDto } from "./dto/pools.query.dto";
-import { PoolResponseDto } from "./dto/pools.response.dto";
+import {
+  PoolResponseDto,
+  RecentPoolResponseDto,
+} from "./dto/pools.response.dto";
 import { PoolsService } from "./pools.service";
 
 /**
@@ -98,6 +101,31 @@ export class PoolsController {
     @Query() query: GetPoolsByChampionshipIdQueryDto,
   ): Promise<PoolResponseDto[]> {
     return this.poolsService.findPoolsByChampionshipId(query.championshipId);
+  }
+
+  /**
+   * Retrieve the pools that played the most recent completed round.
+   *
+   * Short caching (1 minute): the answer moves whenever the scheduler
+   * completes a new round. Declared before `:id`, which would otherwise
+   * capture `recent` and reject it as an invalid id.
+   *
+   * @returns Up to 10 pools with the matchday they played, most prominent first
+   */
+  @Get("recent")
+  @HttpCode(HttpStatus.OK)
+  @UseInterceptors(CacheInterceptor({ ttl: CACHE_TTL.DYNAMIC_DATA }))
+  @ApiOperation({
+    summary: "Get pools that played the most recent round",
+    description:
+      "Retrieves up to 10 pools with a completed match at the latest tip-off instant, ordered by level (national, regional, departmental), then category (Seniors, then U21 down to U11), then division, then pool ID. Returns an empty array before any match is completed. Results are cached for 1 minute.",
+  })
+  @ApiEnvelopeList(
+    RecentPoolResponseDto,
+    "List of recent pools successfully retrieved (may be empty)",
+  )
+  async getRecentPools(): Promise<RecentPoolResponseDto[]> {
+    return this.poolsService.findRecentPools();
   }
 
   /**

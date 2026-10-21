@@ -1251,6 +1251,50 @@
         ]
       }
     },
+    "/api/pools/recent": {
+      "get": {
+        "description": "Retrieves up to 10 pools with a completed match at the latest tip-off instant, ordered by level (national, regional, departmental), then category (Seniors, then U21 down to U11), then division, then pool ID. Returns an empty array before any match is completed. Results are cached for 1 minute.",
+        "operationId": "PoolsController_getRecentPools",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of recent pools successfully retrieved (may be empty)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/RecentPoolResponseDto"
+                          }
+                        },
+                        "meta": {
+                          "$ref": "#/components/schemas/ApiListMetaDto"
+                        }
+                      },
+                      "required": [
+                        "data",
+                        "meta"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get pools that played the most recent round",
+        "tags": [
+          "pools"
+        ]
+      }
+    },
     "/api/pools/{id}": {
       "get": {
         "description": "Retrieves detailed information about a specific pool",
@@ -3977,6 +4021,55 @@
           "name",
           "championshipId",
           "nbMatchdays"
+        ]
+      },
+      "RecentPoolResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Unique pool identifier",
+            "example": 1
+          },
+          "letter": {
+            "type": "string",
+            "description": "Pool letter designation",
+            "example": "A"
+          },
+          "name": {
+            "type": "string",
+            "description": "Pool name",
+            "example": "Pool A - Seniors"
+          },
+          "championshipId": {
+            "type": "number",
+            "description": "Associated championship ID",
+            "example": 1
+          },
+          "nbMatchdays": {
+            "type": "number",
+            "description": "Number of matchdays in this pool",
+            "example": 10
+          },
+          "matchday": {
+            "type": "number",
+            "description": "Matchday this pool played in the most recent round",
+            "example": 4
+          },
+          "playedAt": {
+            "type": "string",
+            "description": "Tip-off instant of the most recent round, as an ISO 8601 UTC timestamp",
+            "example": "2026-10-17T20:00:00Z"
+          }
+        },
+        "required": [
+          "id",
+          "letter",
+          "name",
+          "championshipId",
+          "nbMatchdays",
+          "matchday",
+          "playedAt"
         ]
       },
       "MatchChampionshipRefDto": {

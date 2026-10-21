@@ -40,3 +40,23 @@ export class PoolResponseDto {
   })
   nbMatchdays!: number;
 }
+
+/**
+ * Response DTO for a pool that played in the most recent completed round.
+ */
+export class RecentPoolResponseDto extends PoolResponseDto {
+  @ApiProperty({
+    description: "Matchday this pool played in the most recent round",
+    example: 4,
+    type: Number,
+  })
+  matchday!: number;
+
+  @ApiProperty({
+    description:
+      "Tip-off instant of the most recent round, as an ISO 8601 UTC timestamp",
+    example: "2026-10-17T20:00:00Z",
+    type: String,
+  })
+  playedAt!: Date;
+}
