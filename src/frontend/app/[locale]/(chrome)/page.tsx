@@ -121,17 +121,22 @@ async function Home({ params }: LocalePageProps) {
     desc: t(`explore.${card.key}.desc`),
   }));
 
-  const levelCards = LEVEL_ROWS.map((row) => ({
-    dot: row.dot,
-    name: t(`levels.${row.level}.name`),
-    detail: t(`levels.${row.level}.detail`),
-    // One message, three counts — ICU picks the plural form, and the key is
-    // named once rather than at each call site.
-    count: t("levels.championshipCount", {
-      count: stats.championshipsByLevel[row.level],
-    }),
-    href: `/championships?tab=${row.level}`,
-  }));
+  // A level with no championships yet is listed last and not linked — there is
+  // nothing behind the link. The sort is stable, so covered levels keep their
+  // LEVEL_ROWS order and an uncovered one moves back once it has data.
+  const levelCards = LEVEL_ROWS.map((row) => {
+    const championshipCount = stats.championshipsByLevel[row.level];
+    return {
+      dot: row.dot,
+      name: t(`levels.${row.level}.name`),
+      detail: t(`levels.${row.level}.detail`),
+      // One message, three counts — ICU picks the plural form, and the key is
+      // named once rather than at each call site.
+      count: t("levels.championshipCount", { count: championshipCount }),
+      href:
+        championshipCount > 0 ? `/championships?tab=${row.level}` : undefined,
+    };
+  }).sort((a, b) => Number(!a.href) - Number(!b.href));
 
   return (
     <PageLayout edgeToEdge>
