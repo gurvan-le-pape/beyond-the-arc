@@ -34,7 +34,7 @@ export function LevelRow({ href, dot, name, detail, count }: LevelRowProps) {
         {detail}
       </Text>
 
-      <Text variant="caption" as="span" className="hidden md:block font-bold">
+      <Text variant="caption" as="span" className="font-bold">
         {count}
       </Text>
     </>

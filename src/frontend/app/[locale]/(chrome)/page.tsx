@@ -164,9 +164,15 @@ async function Home({ params }: LocalePageProps) {
         </Text>
       </section>
 
-      <div className="grid grid-cols-3 md:grid-cols-6 border-b border-divide">
-        {statsBand.map((s, i) => (
-          <div key={s.label} className={i < 5 ? "border-r border-divide" : ""}>
+      {/* Every cell draws its right and bottom rule, pulled 1px outward and
+          clipped by the container, so the outer edges carry none — whatever
+          the column count at this breakpoint. */}
+      <div className="grid grid-cols-3 md:grid-cols-6 border-b border-divide overflow-hidden">
+        {statsBand.map((s) => (
+          <div
+            key={s.label}
+            className="border-r border-b border-divide -mr-px -mb-px"
+          >
             <StatCell value={s.value} label={s.label} />
           </div>
         ))}
