@@ -4,7 +4,10 @@
     "titleStart": "La référence complète du",
     "titleEmphasis": "basketball français",
     "subtitle": "Stats, classements, profils de joueurs et données de clubs — des championnats nationaux jusqu'aux compétitions départementales.",
-    "metaTitle": "Beyond The Arc — La référence complète du basketball français"
+    "metaTitle": "Beyond The Arc — La référence complète du basketball français",
+    "searchLabel": "Rechercher des joueurs par nom",
+    "searchPlaceholder": "Rechercher un joueur…",
+    "searchSubmit": "Rechercher"
   },
   "stats": {
     "clubs": "Clubs",

@@ -4,5 +4,6 @@
  */
 
 export * from "./ExploreCard";
+export * from "./HeroSearch";
 export * from "./LatestRoundSection";
 export * from "./LevelRow";
