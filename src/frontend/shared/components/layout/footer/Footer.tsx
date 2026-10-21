@@ -1,7 +1,7 @@
 // src/frontend/shared/components/layout/footer/Footer.tsx
 "use client";
 
-import { ExternalLink, Gitlab, Linkedin, Mail, MapPin } from "lucide-react";
+import { ExternalLink, Gitlab, Linkedin, Mail } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Link } from "@/navigation";
@@ -15,7 +15,7 @@ import {
 import { Text } from "../../typography";
 
 /**
- * The site footer: brand blurb, social links, three link groups, and the
+ * The site footer: brand blurb, social links, two link groups, and the
  * copyright line.
  *
  * **`"use client"` is here for the copyright year.** `new Date()` in a server
@@ -32,7 +32,6 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   const footerLinks = {
-    features: [{ href: "/map", label: t("footer.clubsMap"), icon: MapPin }],
     project: [
       { href: "/about", label: t("footer.about") },
       { href: "/product", label: t("footer.product") },
@@ -116,35 +115,13 @@ export function Footer() {
             </div>
           </div>
 
-          {/* The three link groups are one navigation region. `contents` keeps
+          {/* The link groups are one navigation region. `contents` keeps
               them as direct flex children of the row above, so the landmark is
               added without moving anything. */}
           <nav
             aria-label={t("footer.navigationAriaLabel")}
             className="contents"
           >
-            <div>
-              <Text variant="overline" className="mb-4 block">
-                {t("footer.featuredWork")}
-              </Text>
-              <ul className="space-y-2">
-                {footerLinks.features.map((link) => {
-                  const Icon = link.icon;
-                  return (
-                    <li key={link.href}>
-                      <Link
-                        href={link.href}
-                        className={`text-sm inline-flex items-center min-h-6 gap-2 group ${navLinkClass}`}
-                      >
-                        <Icon className="w-4 h-4 transition-transform duration-200 group-hover:scale-110" />
-                        {link.label}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-
             <div>
               <Text variant="overline" className="mb-4 block">
                 {t("footer.project")}
