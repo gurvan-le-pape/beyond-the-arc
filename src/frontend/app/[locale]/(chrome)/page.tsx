@@ -2,7 +2,16 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
-import { ExploreCard, LevelRow } from "@/features/site/home/components";
+import { serverChampionshipsService } from "@/features/competitions/championships/api/championships.server";
+import { buildChampionshipTitle } from "@/features/competitions/championships/utils";
+import { serverLeaderboardsService } from "@/features/competitions/leaderboards/api/leaderboards.server";
+import { serverPoolsService } from "@/features/competitions/pools/api/pools.server";
+import { serverMatchesService } from "@/features/matches/api/matches.server";
+import {
+  ExploreCard,
+  LatestRoundSection,
+  LevelRow,
+} from "@/features/site/home/components";
 import {
   EXPLORE_CARDS,
   LEVEL_ROWS,
@@ -57,9 +66,46 @@ export async function generateMetadata({
 
 async function Home({ params }: LocalePageProps) {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "home" });
+  const [t, tCommon, tCompetitions] = await Promise.all([
+    getTranslations({ locale, namespace: "home" }),
+    getTranslations({ locale, namespace: "common" }),
+    getTranslations({ locale, namespace: "competitions" }),
+  ]);
 
-  const stats = await serverStatsService.getStats().catch(handleServerError);
+  const [stats, [featuredPool]] = await Promise.all([
+    serverStatsService.getStats(),
+    serverPoolsService.getRecent(),
+  ]).catch(handleServerError);
+
+  // The latest round band: the backend ranks the pools that played most
+  // recently, and the first is the one featured. None yet (season start) means
+  // no band, not an error.
+  const latestRound = featuredPool
+    ? await Promise.all([
+        serverChampionshipsService.getById(featuredPool.championshipId),
+        serverLeaderboardsService.getAll({ poolId: featuredPool.id }),
+        serverMatchesService.getByPoolId(featuredPool.id),
+      ])
+        .then(([championship, leaderboard, poolMatches]) => ({
+          championshipTitle: buildChampionshipTitle(championship, {
+            gender: tCommon(`gender.${championship.gender}`),
+            division: tCompetitions("divisionWithValue", {
+              value: championship.division,
+            }),
+          }),
+          championshipHref: `/championships/${championship.id}?pool=${featuredPool.id}`,
+          matchday: featuredPool.matchday,
+          // The round may still be mid-simulation: show what has a score.
+          matches: poolMatches.filter(
+            (match) =>
+              match.matchday === featuredPool.matchday &&
+              match.homeTeamScore !== null &&
+              match.awayTeamScore !== null,
+          ),
+          leaderboard,
+        }))
+        .catch(handleServerError)
+    : null;
 
   const formatCount = (n: number): string => n.toLocaleString(locale);
 
@@ -128,6 +174,8 @@ async function Home({ params }: LocalePageProps) {
           </div>
         ))}
       </div>
+
+      {latestRound && <LatestRoundSection {...latestRound} />}
 
       <div className="px-6 pt-7 pb-2 border-b border-divide">
         <Text variant="overline" as="h2">

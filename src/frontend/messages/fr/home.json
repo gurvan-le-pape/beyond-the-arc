@@ -16,6 +16,11 @@
     "departments": "Départements",
     "regions": "Régions"
   },
+  "latestRound": {
+    "eyebrow": "Dernière journée · Journée {matchday}",
+    "resultsTitle": "Résultats",
+    "cta": "Voir le championnat"
+  },
   "explore": {
     "sectionTitle": "Rechercher & explorer",
     "players": {

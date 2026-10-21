@@ -5,3 +5,4 @@
 
 export * from "./Pool";
 export * from "./PoolFilters";
+export * from "./RecentPool";

@@ -4,4 +4,5 @@
  */
 
 export * from "./ExploreCard";
+export * from "./LatestRoundSection";
 export * from "./LevelRow";

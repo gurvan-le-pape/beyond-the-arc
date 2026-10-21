@@ -109,9 +109,11 @@ export function LeaderboardTable({
 
   return (
     <Section title={tCompetitions("leaderboardTitle")}>
-      <div className="flex justify-end mb-2">
-        <div className="min-w-[200px]">{dropdown}</div>
-      </div>
+      {dropdown && (
+        <div className="flex justify-end mb-2">
+          <div className="min-w-[200px]">{dropdown}</div>
+        </div>
+      )}
       <DataTable
         columns={columns}
         rows={leaderboards}
