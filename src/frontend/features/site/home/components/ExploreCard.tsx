@@ -12,16 +12,12 @@ interface ExploreCardProps {
   readonly badge: string;
   readonly title: string;
   readonly desc: string;
-  readonly count: string;
-  readonly countLabel: string;
 }
 
 /**
- * A destination tile on the home page: badge, title, blurb, and a count.
+ * A destination tile on the home page: badge, title and blurb.
  *
- * `count` and `countLabel` are **pre-formatted strings**, not a number and a
- * noun. Thousands separators and the plural rule both belong to the locale, so
- * the caller resolves them and this only places them.
+ * No count: the page's stats band is the one place each figure appears.
  */
 export function ExploreCard({
   href,
@@ -29,8 +25,6 @@ export function ExploreCard({
   badge,
   title,
   desc,
-  count,
-  countLabel,
 }: ExploreCardProps) {
   return (
     <Link
@@ -49,10 +43,6 @@ export function ExploreCard({
 
       <Text variant="h3">{title}</Text>
       <Text variant="caption">{desc}</Text>
-
-      <p className="text-[12px] font-bold text-text-secondary pt-3 border-t border-divide mt-auto">
-        <span className="text-text-heading">{count}</span> {countLabel}
-      </p>
     </Link>
   );
 }

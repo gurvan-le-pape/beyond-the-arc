@@ -12,9 +12,7 @@
     "players": "Joueurs",
     "matches": "Matchs",
     "leagues": "Ligues",
-    "committees": "Comités",
-    "departments": "Départements",
-    "regions": "Régions"
+    "committees": "Comités"
   },
   "latestRound": {
     "eyebrow": "Dernière journée · Journée {matchday}",
@@ -26,20 +24,17 @@
     "players": {
       "badge": "Joueurs",
       "title": "Profils joueurs",
-      "desc": "Stats de carrière, historique de matchs, cartes de tirs et comparaisons.",
-      "count": "joueurs suivis"
+      "desc": "Stats de carrière, historique de matchs, cartes de tirs et comparaisons."
     },
     "teams": {
       "badge": "Équipes",
       "title": "Équipes",
-      "desc": "Effectifs, stats de saison, historique de matchs et cartes de tirs.",
-      "count": "équipes"
+      "desc": "Effectifs, stats de saison, historique de matchs et cartes de tirs."
     },
     "matches": {
       "badge": "Matchs",
       "title": "Historique des matchs",
-      "desc": "Timelines d'événements, feuilles de match et stats d'équipe pour chaque rencontre.",
-      "count": "matchs enregistrés"
+      "desc": "Timelines d'événements, feuilles de match et stats d'équipe pour chaque rencontre."
     }
   },
   "map": {

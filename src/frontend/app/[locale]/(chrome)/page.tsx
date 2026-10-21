@@ -15,7 +15,6 @@ import {
 import {
   EXPLORE_CARDS,
   LEVEL_ROWS,
-  MAP_STATS,
   STATS_BAND_KEYS,
 } from "@/features/site/home/constants";
 import { serverStatsService } from "@/features/stats/api/stats.server";
@@ -120,8 +119,6 @@ async function Home({ params }: LocalePageProps) {
     badge: t(`explore.${card.key}.badge`),
     title: t(`explore.${card.key}.title`),
     desc: t(`explore.${card.key}.desc`),
-    count: formatCount(stats[card.key]),
-    countLabel: t(`explore.${card.key}.count`),
   }));
 
   const levelCards = LEVEL_ROWS.map((row) => ({
@@ -134,11 +131,6 @@ async function Home({ params }: LocalePageProps) {
       count: stats.championshipsByLevel[row.level],
     }),
     href: `/championships?tab=${row.level}`,
-  }));
-
-  const mapStats = MAP_STATS.map((stat) => ({
-    value: formatCount(stats[stat.statKey]),
-    label: t(`stats.${stat.labelKey}`),
   }));
 
   return (
@@ -199,11 +191,6 @@ async function Home({ params }: LocalePageProps) {
         <Text variant="caption" className="max-w-sm mt-2">
           {t("map.desc")}
         </Text>
-        <div className="flex gap-8 pt-4 mt-4 border-t border-divide">
-          {mapStats.map((s) => (
-            <StatCell key={s.label} value={s.value} label={s.label} compact />
-          ))}
-        </div>
         <Link
           href="/map"
           className={buttonVariants({ variant: "clubs", size: "sm" }) + " mt-5"}
