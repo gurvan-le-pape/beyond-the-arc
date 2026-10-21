@@ -9,6 +9,7 @@ import { serverPoolsService } from "@/features/competitions/pools/api/pools.serv
 import { serverMatchesService } from "@/features/matches/api/matches.server";
 import {
   ExploreCard,
+  HeroSearch,
   LatestRoundSection,
   LevelRow,
 } from "@/features/site/home/components";
@@ -18,7 +19,7 @@ import {
   STATS_BAND_KEYS,
 } from "@/features/site/home/constants";
 import { serverStatsService } from "@/features/stats/api/stats.server";
-import { Link } from "@/navigation";
+import { getPathname, Link } from "@/navigation";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { buttonVariants } from "@/shared/components/primitives";
@@ -162,6 +163,15 @@ async function Home({ params }: LocalePageProps) {
         <Text variant="lead" className="max-w-lg">
           {t("hero.subtitle")}
         </Text>
+
+        <div className="mt-8 flex w-full justify-center">
+          <HeroSearch
+            action={getPathname({ href: "/search", locale })}
+            label={t("hero.searchLabel")}
+            placeholder={t("hero.searchPlaceholder")}
+            submit={t("hero.searchSubmit")}
+          />
+        </div>
       </section>
 
       {/* Every cell draws its right and bottom rule, pulled 1px outward and
