@@ -300,6 +300,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/pools/recent": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get pools that played the most recent round
+         * @description Retrieves up to 10 pools with a completed match at the latest tip-off instant, ordered by level (national, regional, departmental), then category (Seniors, then U21 down to U11), then division, then pool ID. Returns an empty array before any match is completed. Results are cached for 1 minute.
+         */
+        get: operations["PoolsController_getRecentPools"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/pools/{id}": {
         parameters: {
             query?: never;
@@ -1317,6 +1337,43 @@ export interface components {
              * @example 10
              */
             nbMatchdays: number;
+        };
+        RecentPoolResponseDto: {
+            /**
+             * @description Unique pool identifier
+             * @example 1
+             */
+            id: number;
+            /**
+             * @description Pool letter designation
+             * @example A
+             */
+            letter: string;
+            /**
+             * @description Pool name
+             * @example Pool A - Seniors
+             */
+            name: string;
+            /**
+             * @description Associated championship ID
+             * @example 1
+             */
+            championshipId: number;
+            /**
+             * @description Number of matchdays in this pool
+             * @example 10
+             */
+            nbMatchdays: number;
+            /**
+             * @description Matchday this pool played in the most recent round
+             * @example 4
+             */
+            matchday: number;
+            /**
+             * @description Tip-off instant of the most recent round, as an ISO 8601 UTC timestamp
+             * @example 2026-10-17T20:00:00Z
+             */
+            playedAt: string;
         };
         MatchChampionshipRefDto: {
             /**
@@ -3487,6 +3544,29 @@ export interface operations {
                      *     }
                      */
                     "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+        };
+    };
+    PoolsController_getRecentPools: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of recent pools successfully retrieved (may be empty) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["RecentPoolResponseDto"][];
+                        meta: components["schemas"]["ApiListMetaDto"];
+                    };
                 };
             };
         };

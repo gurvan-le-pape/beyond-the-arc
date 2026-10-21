@@ -6,7 +6,10 @@ import type { TestingModule } from "@nestjs/testing";
 import { Test } from "@nestjs/testing";
 import { LoggerModule } from "nestjs-pino";
 
-import type { PoolResponseDto } from "./dto/pools.response.dto";
+import type {
+  PoolResponseDto,
+  RecentPoolResponseDto,
+} from "./dto/pools.response.dto";
 import { PoolsController } from "./pools.controller";
 import { PoolsService } from "./pools.service";
 
@@ -27,6 +30,7 @@ describe("PoolsController", () => {
   const mockPoolsService = {
     findPoolsByChampionshipId: jest.fn(),
     findPoolById: jest.fn(),
+    findRecentPools: jest.fn(),
   };
 
   // Mock cache manager
@@ -130,6 +134,28 @@ describe("PoolsController", () => {
       await expect(
         controller.getPoolsByChampionshipId({ championshipId: 1 }),
       ).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe("getRecentPools", () => {
+    it("returns the service's recent pools unchanged", async () => {
+      const recent: RecentPoolResponseDto[] = [
+        {
+          id: 5985,
+          letter: "C",
+          name: "Pool C",
+          championshipId: 2038,
+          nbMatchdays: 22,
+          matchday: 4,
+          playedAt: new Date("2026-10-17T20:00:00Z"),
+        },
+      ];
+      mockPoolsService.findRecentPools.mockResolvedValue(recent);
+
+      const result = await controller.getRecentPools();
+
+      expect(result).toEqual(recent);
+      expect(service.findRecentPools).toHaveBeenCalledTimes(1);
     });
   });
 
