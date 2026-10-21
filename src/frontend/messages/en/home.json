@@ -44,7 +44,8 @@
     "eyebrow": "Clubs & map",
     "title": "Find clubs near you",
     "desc": "Browse all clubs across France on an interactive map. Filter by region, department or competition level.",
-    "cta": "Open map"
+    "cta": "Open map",
+    "attribution": "© OpenStreetMap contributors"
   },
   "levels": {
     "championships": "championships",

@@ -12,6 +12,7 @@ import {
   HeroSearch,
   LatestRoundSection,
   LevelRow,
+  MapBand,
 } from "@/features/site/home/components";
 import {
   EXPLORE_CARDS,
@@ -19,10 +20,9 @@ import {
   STATS_BAND_KEYS,
 } from "@/features/site/home/constants";
 import { serverStatsService } from "@/features/stats/api/stats.server";
-import { getPathname, Link } from "@/navigation";
+import { getPathname } from "@/navigation";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
-import { buttonVariants } from "@/shared/components/primitives";
 import { StatCell } from "@/shared/components/stats";
 import { Text } from "@/shared/components/typography";
 import type { LocalePageProps } from "@/shared/types";
@@ -202,23 +202,7 @@ async function Home({ params }: LocalePageProps) {
         ))}
       </div>
 
-      <div className="border-b border-divide px-8 py-16 flex flex-col items-center text-center">
-        <Text variant="overline" className="text-ink-clubs">
-          {t("map.eyebrow")}
-        </Text>
-        <Text variant="h2" className="mt-3 max-w-sm">
-          {t("map.title")}
-        </Text>
-        <Text variant="caption" className="max-w-sm mt-2">
-          {t("map.desc")}
-        </Text>
-        <Link
-          href="/map"
-          className={buttonVariants({ variant: "clubs", size: "sm" }) + " mt-5"}
-        >
-          {t("map.cta")}
-        </Link>
-      </div>
+      <MapBand />
 
       <div className="px-6 pt-7 pb-2">
         <Text variant="overline" as="h2">
