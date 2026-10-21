@@ -11,14 +11,14 @@ import {
 } from "@/lib/services/server/server-api-client";
 
 import type { Pool } from "../types/Pool";
+import type { RecentPool } from "../types/RecentPool";
 
 /**
  * Server-side pools service: the groups a championship's teams are split into.
  *
  * Server components only — this half of the dual service layer uses native
  * fetch against the backend's internal address, so it must never be imported
- * from client code. Cached for {@link ServerRevalidate.DEFAULT}, since a pool
- * only changes when the static data is refreshed.
+ * from client code.
  */
 export const serverPoolsService = {
   /**
@@ -34,8 +34,29 @@ export const serverPoolsService = {
    */
   async getByChampionshipId(championshipId: number): Promise<Pool[]> {
     const queryString = buildQueryString({ championshipId });
+    // A pool only changes when the static data is refreshed.
     return fetchApi<Pool[]>(`/pools${queryString}`, {
       revalidate: ServerRevalidate.DEFAULT,
+    });
+  },
+
+  /**
+   * The pools that played the most recent completed round, most prominent
+   * first — the backend's order is deterministic, so the first is the one to
+   * feature.
+   *
+   * Cached for {@link ServerRevalidate.LIVE}, since the answer moves each time
+   * the scheduler completes a round.
+   *
+   * @example
+   * const [featured] = await serverPoolsService.getRecent();
+   *
+   * @returns up to 10 pools with the matchday each played, or `[]` before any
+   * match of the season is completed
+   */
+  async getRecent(): Promise<RecentPool[]> {
+    return fetchApi<RecentPool[]>("/pools/recent", {
+      revalidate: ServerRevalidate.LIVE,
     });
   },
 };

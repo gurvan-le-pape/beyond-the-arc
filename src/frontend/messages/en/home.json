@@ -16,6 +16,11 @@
     "departments": "Departments",
     "regions": "Regions"
   },
+  "latestRound": {
+    "eyebrow": "Latest round · Matchday {matchday}",
+    "resultsTitle": "Results",
+    "cta": "See the championship"
+  },
   "explore": {
     "sectionTitle": "Search & explore",
     "players": {
