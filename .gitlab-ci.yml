@@ -381,8 +381,15 @@ deploy:
         -t "$CI_REGISTRY_IMAGE/frontend:$CI_COMMIT_SHA" -t "$CI_REGISTRY_IMAGE/frontend:latest" .
       rm -f /tmp/sentry_auth_token
 
+    # Push this commit's two tags by name, never --all-tags: the daemon is
+    # long-lived, so --all-tags re-sends every SHA tag it has ever built — one
+    # registry round trip per tag per image. The SHA tag is then dropped
+    # locally; :latest keeps the image, and BuildKit's cache is not tied to tags.
+    # A failed untag is housekeeping, so it must not fail the deploy.
     - for n in backend backend-migrate scheduler frontend; do
-        docker push --all-tags "$CI_REGISTRY_IMAGE/$n";
+        docker push "$CI_REGISTRY_IMAGE/$n:$CI_COMMIT_SHA" &&
+        docker push "$CI_REGISTRY_IMAGE/$n:latest" || exit 1;
+        docker image rm "$CI_REGISTRY_IMAGE/$n:$CI_COMMIT_SHA" || true;
       done
 
     # Plain ssh rather than a third-party integration: the deploy is simple
