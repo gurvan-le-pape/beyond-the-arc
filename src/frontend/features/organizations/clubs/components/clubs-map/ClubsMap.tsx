@@ -3,11 +3,17 @@
 
 import "maplibre-gl/dist/maplibre-gl.css";
 
+import type { GeoJSONSource } from "maplibre-gl";
 import { useTranslations } from "next-intl";
 import { useCallback, useMemo, useState } from "react";
-import { Map as MapGL, Popup } from "react-map-gl/maplibre";
+import {
+  Map as MapGL,
+  type MapLayerMouseEvent,
+  Popup,
+} from "react-map-gl/maplibre";
 
 import { normalizeDepartmentCode } from "@/features/organizations/utils";
+import { logger } from "@/shared/utils";
 
 import type { ClubBasic } from "../../types/ClubBasic";
 import type { ClubStatsByDepartment } from "../../types/ClubStatsByDepartment";
@@ -164,35 +170,32 @@ export function ClubsMap({
 
   // Handle map clicks (cluster expansion and club selection)
   const onClick = useCallback(
-    (e: any) => {
+    (e: MapLayerMouseEvent) => {
       const f = e.features?.[0];
-      if (!f) return;
+      if (f?.source !== "clubs" || f.geometry.type !== "Point") return;
+      const [longitude, latitude] = f.geometry.coordinates;
 
-      if (f.source === "clubs") {
-        if (f.properties.cluster) {
-          // Zoom into cluster
-          const clusterId = f.properties.cluster_id;
-          const mapRef = e.target;
-          const source = mapRef.getSource("clubs");
-
-          source.getClusterExpansionZoom(
-            clusterId,
-            (err: any, zoom: number) => {
-              if (err) return;
-
-              setViewState((prev) => ({
-                ...prev,
-                longitude: f.geometry.coordinates[0],
-                latitude: f.geometry.coordinates[1],
-                zoom: zoom + 0.5,
-              }));
-            },
+      if (f.properties.cluster) {
+        // Zoom far enough for the cluster to split. MapLibre 5 returns the
+        // zoom as a Promise and takes no callback.
+        const source = e.target.getSource<GeoJSONSource>("clubs");
+        source
+          ?.getClusterExpansionZoom(f.properties.cluster_id)
+          .then((zoom) => {
+            setViewState((prev) => ({
+              ...prev,
+              longitude,
+              latitude,
+              zoom: zoom + 0.5,
+            }));
+          })
+          .catch((error: unknown) =>
+            logger.error(error, "cluster expansion zoom"),
           );
-        } else {
-          // Show individual club popup
-          const club = clubs.find((c) => c.id === f.properties.id);
-          if (club) setSelectedClub(club);
-        }
+      } else {
+        // Show individual club popup
+        const club = clubs.find((c) => c.id === f.properties.id);
+        if (club) setSelectedClub(club);
       }
     },
     [clubs],
