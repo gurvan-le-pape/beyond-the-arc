@@ -20,8 +20,10 @@ const STANDINGS_PREVIEW_ROWS = 5;
 const PHONE_RESULTS = 3;
 
 interface LatestRoundSectionProps {
-  /** The championship's one-line title, already translated. */
-  readonly championshipTitle: string;
+  /** Who runs the championship: its committee or league, already formatted. */
+  readonly championshipName: string;
+  /** Category, gender, division and season, already translated and joined. */
+  readonly championshipDetails: string;
   readonly championshipHref: string;
   readonly matchday: number;
   /** The pool's matches on `matchday`, in the order to show them. */
@@ -38,7 +40,8 @@ interface LatestRoundSectionProps {
  * and this only lays it out. A server component: nothing here is interactive.
  */
 export function LatestRoundSection({
-  championshipTitle,
+  championshipName,
+  championshipDetails,
   championshipHref,
   matchday,
   matches,
@@ -55,8 +58,15 @@ export function LatestRoundSection({
       <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2 mb-6">
         <div className="min-w-0">
           <Text variant="overline">{t("eyebrow", { matchday })}</Text>
-          <Text variant="h2" id="latest-round-title" className="mt-2">
-            {championshipTitle}
+          <Text
+            variant="h2"
+            id="latest-round-title"
+            className="mt-2 text-2xl md:text-3xl font-bold"
+          >
+            {championshipName}
+          </Text>
+          <Text variant="body" className="mt-1">
+            {championshipDetails}
           </Text>
         </div>
         <TextLink href={championshipHref}>{t("cta")}</TextLink>

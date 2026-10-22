@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
 import { serverChampionshipsService } from "@/features/competitions/championships/api/championships.server";
-import { buildChampionshipTitle } from "@/features/competitions/championships/utils";
 import { serverLeaderboardsService } from "@/features/competitions/leaderboards/api/leaderboards.server";
 import { serverPoolsService } from "@/features/competitions/pools/api/pools.server";
 import { serverMatchesService } from "@/features/matches/api/matches.server";
@@ -26,7 +25,11 @@ import { PageLayout } from "@/shared/components/layout";
 import { StatCell } from "@/shared/components/stats";
 import { Text } from "@/shared/components/typography";
 import type { LocalePageProps } from "@/shared/types";
-import { handleServerError } from "@/shared/utils";
+import {
+  formatCommitteeName,
+  formatLeagueName,
+  handleServerError,
+} from "@/shared/utils";
 
 // Rendered per request: the image build has no backend to fetch stats from.
 //
@@ -87,12 +90,25 @@ async function Home({ params }: LocalePageProps) {
         serverMatchesService.getByPoolId(featuredPool.id),
       ])
         .then(([championship, leaderboard, poolMatches]) => ({
-          championshipTitle: buildChampionshipTitle(championship, {
-            gender: tCommon(`gender.${championship.gender}`),
-            division: tCompetitions("divisionWithValue", {
+          // The organisation is the name and the rest of the title is detail
+          // under it. A national championship has no organisation above it,
+          // so its level stands in.
+          championshipName:
+            (championship.committeeName &&
+              formatCommitteeName(championship.committeeName)) ||
+            (championship.leagueName &&
+              formatLeagueName(championship.leagueName)) ||
+            t(`levels.${championship.level}.name`),
+          championshipDetails: [
+            championship.category,
+            tCommon(`gender.${championship.gender}`),
+            tCompetitions("divisionWithValue", {
               value: championship.division,
             }),
-          }),
+            championship.seasonYear,
+          ]
+            .filter(Boolean)
+            .join(" · "),
           championshipHref: `/championships/${championship.id}?pool=${featuredPool.id}`,
           matchday: featuredPool.matchday,
           // The round may still be mid-simulation: show what has a score.
