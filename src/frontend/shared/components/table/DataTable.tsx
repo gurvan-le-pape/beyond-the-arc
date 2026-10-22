@@ -50,8 +50,11 @@ export interface TableColumn<T> {
   readonly divider?: "left" | "right" | "both";
   /** Bold, heading-toned cells, for the one column a table is *about*. */
   readonly emphasis?: boolean;
-  /** `icon` sizes the column to a single icon button. */
-  readonly width?: "auto" | "icon";
+  /**
+   * `icon` sizes the column to a single icon button. `fit` shrinks it to its
+   * content on one line, leaving the spare width to the columns that wrap.
+   */
+  readonly width?: "auto" | "icon" | "fit";
   /** `sm` shows the column from the `sm` breakpoint up only, not on phones. */
   readonly from?: "sm";
   /**

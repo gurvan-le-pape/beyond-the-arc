@@ -37,9 +37,11 @@ export function useTeamMatchHistoryColumns(
 
   return useMemo<TableColumn<TeamMatchHistory>[]>(() => {
     const columns: TableColumn<TeamMatchHistory>[] = [
+      // A fixture's start time is still worth knowing; a result's is not.
       buildMatchDateColumn<TeamMatchHistory>(
         tCommon("matchHistory.date"),
         locale,
+        { withTime: !withResult },
       ),
       buildOpponentColumn<TeamMatchHistory>(
         tCommon("matchHistory.opponent"),

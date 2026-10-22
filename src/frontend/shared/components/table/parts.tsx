@@ -15,7 +15,7 @@ import {
 
 type Alignment = "left" | "center" | "right";
 type Density = "comfortable" | "cozy" | "compact";
-type Width = "auto" | "icon";
+type Width = "auto" | "icon" | "fit";
 type Divider = "none" | "left" | "right" | "both";
 type Frame = "none" | "outline";
 

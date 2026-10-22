@@ -18,6 +18,13 @@ const DATE_PARTS = {
   year: "numeric",
 } as const;
 
+/** Weekday, day and month in words; the year goes without saying. */
+const DAY_PARTS = {
+  weekday: "short",
+  day: "numeric",
+  month: "short",
+} as const;
+
 /** Hour and minute; the locale decides 12- vs 24-hour. */
 const TIME_PARTS = {
   hour: "2-digit",
@@ -82,11 +89,39 @@ export function formatMatchDate(date: Date | string, locale: string): string {
  * @returns the short day, in the competition's zone
  */
 export function formatMatchDay(date: Date | string, locale: string): string {
-  return formatIn(date, locale, {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-  });
+  return formatIn(date, locale, DAY_PARTS);
+}
+
+/**
+ * Day and month in words, such as "17 Oct", in the competition's zone and the
+ * viewer's locale. For a match in a season's history, where neither the year
+ * nor the weekday tells one match from another.
+ *
+ * @param date - the instant, as a `Date` or an ISO string
+ * @param locale - BCP 47 tag, from `useLocale()` or the route params
+ * @returns the day and month, in the competition's zone
+ */
+export function formatMatchDayMonth(
+  date: Date | string,
+  locale: string,
+): string {
+  return formatIn(date, locale, { day: "numeric", month: "short" });
+}
+
+/**
+ * A match day in words with its start time, such as "Sat 24 Oct, 19:00", in
+ * the competition's zone and the viewer's locale. For a fixture, whose time is
+ * still worth knowing.
+ *
+ * @param date - the instant, as a `Date` or an ISO string
+ * @param locale - BCP 47 tag, from `useLocale()` or the route params
+ * @returns the short day and the time, in the competition's zone
+ */
+export function formatMatchDayTime(
+  date: Date | string,
+  locale: string,
+): string {
+  return formatIn(date, locale, { ...DAY_PARTS, ...TIME_PARTS });
 }
 
 /** Just the time, in the competition's zone and the viewer's locale. *

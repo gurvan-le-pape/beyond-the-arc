@@ -16,7 +16,8 @@ import type { PlayerMatchHistory } from "../types/PlayerMatchHistory";
 
 /**
  * Column definitions for a player's match-history table: date, opponent, then
- * the per-game stat line.
+ * the per-game stat line. On a phone the line keeps only points, so the table
+ * fits the screen instead of scrolling past the other six.
  *
  * `player` is read only for its team id, which the opponent column needs to
  * tell the other side, and the venue, from this player's point of view. **A
@@ -66,6 +67,7 @@ export function usePlayerMatchHistoryColumns(
       },
       {
         key: "reb",
+        from: "sm",
         header: t("stats.rebounds.abbr"),
         render: (match: PlayerMatchHistory) =>
           match.player.stats.rebounds.total,
@@ -73,30 +75,35 @@ export function usePlayerMatchHistoryColumns(
       },
       {
         key: "ast",
+        from: "sm",
         header: t("stats.assists.abbr"),
         render: (match: PlayerMatchHistory) => match.player.stats.assists,
         numeric: true,
       },
       {
         key: "stl",
+        from: "sm",
         header: t("stats.steals.abbr"),
         render: (match: PlayerMatchHistory) => match.player.stats.steals,
         numeric: true,
       },
       {
         key: "blk",
+        from: "sm",
         header: t("stats.blocks.abbr"),
         render: (match: PlayerMatchHistory) => match.player.stats.blocks,
         numeric: true,
       },
       {
         key: "to",
+        from: "sm",
         header: t("stats.turnovers.abbr"),
         render: (match: PlayerMatchHistory) => match.player.stats.turnovers,
         numeric: true,
       },
       {
         key: "fl",
+        from: "sm",
         header: t("stats.fouls.abbr"),
         render: (match: PlayerMatchHistory) => match.player.stats.fouls,
         numeric: true,
