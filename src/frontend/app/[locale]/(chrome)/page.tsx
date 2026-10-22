@@ -26,6 +26,7 @@ import { StatCell } from "@/shared/components/stats";
 import { Text } from "@/shared/components/typography";
 import type { LocalePageProps } from "@/shared/types";
 import {
+  cn,
   formatCommitteeName,
   formatLeagueName,
   formatMatchDay,
@@ -46,6 +47,19 @@ import {
 // a reader auditing "which pages skip setRequestLocale" should find four,
 // two of which are the ones this invariant is about.
 export const dynamic = "force-dynamic";
+
+/**
+ * The stats band's inner rules, one entry per `STATS_BAND_KEYS` cell: a right
+ * rule unless the cell ends its row, a bottom rule on the phone's first row.
+ */
+const STATS_BAND_CELL_RULES = [
+  "border-r border-b md:border-b-0",
+  "border-r border-b md:border-b-0",
+  "border-b md:border-b-0 md:border-r",
+  "border-r",
+  "border-r",
+  "",
+] as const;
 
 /**
  * Metadata for the home page.
@@ -192,14 +206,16 @@ async function Home({ params }: LocalePageProps) {
         </div>
       </section>
 
-      {/* Every cell draws its right and bottom rule, pulled 1px outward and
-          clipped by the container, so the outer edges carry none — whatever
-          the column count at this breakpoint. */}
-      <div className="grid grid-cols-3 md:grid-cols-6 border-b border-divide overflow-hidden">
-        {statsBand.map((s) => (
+      {/* Rules only between cells, never on the outer edges: three columns
+          over two rows on a phone, six in one row from md. Each cell draws
+          the rules it has a neighbour on, so nothing relies on clipping —
+          a rule pushed outside the band and clipped still shows when the
+          band's edge lands on a half pixel. */}
+      <div className="grid grid-cols-3 md:grid-cols-6 border-b border-divide">
+        {statsBand.map((s, index) => (
           <div
             key={s.label}
-            className="border-r border-b border-divide -mr-px -mb-px"
+            className={cn("border-divide", STATS_BAND_CELL_RULES[index])}
           >
             <StatCell value={s.value} label={s.label} />
           </div>
