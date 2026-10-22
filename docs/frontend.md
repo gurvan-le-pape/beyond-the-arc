@@ -380,13 +380,12 @@ const buttonVariants = cva(BASE, {
 });
 ```
 
-Components that share a base style but differ in layout context are split into separate exports in the same file rather than added as variants to a single component. `Button.tsx` exports three components:
+Components that share a base style but differ in layout context are split into separate exports in the same file rather than added as variants to a single component. `Button.tsx` exports two components:
 
 - `Button` — universal action primitive (form submits, modal triggers, mutations). No layout knowledge.
-- `NavButton` — navigation and list-item patterns. These variants know they live in a sidebar or a categorised list (`listItem`, `categoryHeader`). A row of links between sibling pages is drawn like a `SegmentedControl`, from `segmentedStyles.ts`.
 - `PillButton` — round-selector and carousel patterns. Non-standard sizes and visual treatments (`pillActive`, `pillInactive`, `carouselArrow`) that don't belong in a general-purpose button.
 
-The split is justified by layout context: `NavButton` variants know they are inside a navigation structure; `PillButton` variants know they have `rounded-full` treatment. Keeping them separate prevents `Button` from accumulating layout-specific knowledge it should not have.
+The split is justified by layout context: `PillButton` variants know they have `rounded-full` treatment. A row of links between sibling pages is drawn like a `SegmentedControl`, from `segmentedStyles.ts`. Keeping them separate prevents `Button` from accumulating layout-specific knowledge it should not have.
 
 **Navigation is a link, everywhere, and the primitives enforce it.** A `<button>` that calls `router.push` looks identical and behaves worse: no `href`, so no status-bar URL, no middle-click, no open-in-new-tab, no prefetch, and nothing for a crawler to follow. `Card` therefore takes `href` (renders a `Link`, gets the clickable styling for free) or `clickable` + `onClick` (renders a `<button>`), and its props type is a union so the two cannot be mixed. Where a primitive has no link mode, wrap the `Link` in the variant classes instead — `buttonVariants({ variant, size })` on a `Link` is the established form, used by the home page CTA and the club map popup. For links inside a table cell, see `TableCellLink` in the DataTable section.
 

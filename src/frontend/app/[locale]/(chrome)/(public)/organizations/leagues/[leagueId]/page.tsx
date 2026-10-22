@@ -8,6 +8,7 @@ import {
 } from "next-intl/server";
 
 import { serverChampionshipsService } from "@/features/competitions/championships/api/championships.server";
+import { ChampionshipGrid } from "@/features/competitions/championships/components";
 import { serverCommitteesService } from "@/features/organizations/committees/api/committees.server";
 import { serverLeaguesService } from "@/features/organizations/leagues/api/leagues.server";
 import { OrganizationDetailView } from "@/features/organizations/shared/components";
@@ -139,17 +140,20 @@ async function LeaguePage({ params }: LocalePageProps<{ leagueId: string }>) {
           basePath: "/organizations/committees",
           showSearch: false,
         }}
-        section={{
-          items: championships.map((c) => ({ type: "championship", data: c })),
-          title: tCompetitions("championshipsSectionTitle"),
-          emptyState: (
-            <EmptyState
-              icon={<Trophy className="w-16 h-16" />}
-              title={tCompetitions("noChampionships")}
-            />
-          ),
-        }}
-      />
+      >
+        {championships.length > 0 ? (
+          <ChampionshipGrid
+            championships={championships}
+            title={tCompetitions("championshipsSectionTitle")}
+            emptyMessage={tCompetitions("noChampionships")}
+          />
+        ) : (
+          <EmptyState
+            icon={<Trophy className="w-16 h-16" />}
+            title={tCompetitions("noChampionships")}
+          />
+        )}
+      </OrganizationDetailView>
     </PageLayout>
   );
 }
