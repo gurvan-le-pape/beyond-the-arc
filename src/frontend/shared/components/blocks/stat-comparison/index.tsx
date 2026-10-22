@@ -5,8 +5,8 @@
 //   - PlayerComparison     (players feature) → variant="mirrored"
 //
 // variant="dual"
-//   A single bar splits left (primary) and right (secondary).
-//   Winner receives a bottom border underline.
+//   Values and label on one line, a thin split bar beneath.
+//   The leading value is set in heading weight, the other one quieter.
 //
 // variant="mirrored"
 //   Two bars grow inward from a centre dot.
@@ -29,9 +29,11 @@ import type { StatComparisonProps } from "./types";
 /**
  * Two stat lines compared row by row, with the winner of each marked.
  *
- * Two presentations, and they are not interchangeable. **`dual`** puts one
- * split bar per row and underlines the winning value — used where the two sides
- * are halves of one whole, like the teams in a match. **`mirrored`** (the
+ * Two presentations, and they are not interchangeable. **`dual`** puts both
+ * values on one line around the label, over one thin split bar, and sets the
+ * leading value in heading weight — used where the two sides are halves of one
+ * whole, like the teams in a match. Its rows are capped at a reading width,
+ * since a split bar stretched across a wide page shows nothing more. **`mirrored`** (the
  * default) grows two bars inward from a centre dot and colours the winner —
  * used where the sides are independent, like two players' careers.
  *
@@ -63,7 +65,7 @@ export function StatComparison({
   const resolvedPercentageMap = isDual ? percentageMap : undefined;
 
   return (
-    <div className="w-full">
+    <div className={cn("w-full", isDual && "max-w-2xl mx-auto")}>
       <div className="grid grid-cols-[1fr_auto_1fr] gap-3 items-center mb-5 px-1">
         <span
           className={cn(
@@ -115,52 +117,67 @@ export function StatComparison({
 
           return (
             <div key={key}>
-              <Text variant="overline" className="mb-2 block text-center">
-                {label}
-              </Text>
-
-              <div
-                className={cn(
-                  "grid items-center gap-2",
-                  isDual
-                    ? "grid-cols-[auto_1fr_auto]"
-                    : "grid-cols-[auto_1fr_auto_1fr_auto]",
-                )}
-              >
-                <StatValue
-                  value={displayA}
-                  winner={winner}
-                  side="A"
-                  isDual={isDual}
-                  delayMs={delayMs}
-                  align="right"
-                />
-
-                {isDual ? (
+              {isDual ? (
+                <>
+                  <div className="grid grid-cols-[1fr_auto_1fr] items-baseline gap-3 mb-1.5">
+                    <StatValue
+                      value={displayA}
+                      winner={winner}
+                      side="A"
+                      isDual
+                      delayMs={delayMs}
+                      align="left"
+                    />
+                    <Text variant="overline" className="text-center">
+                      {label}
+                    </Text>
+                    <StatValue
+                      value={displayB}
+                      winner={winner}
+                      side="B"
+                      isDual
+                      delayMs={delayMs}
+                      align="right"
+                    />
+                  </div>
                   <DualBar
                     fillA={fillA}
                     fillB={fillB}
                     delayMs={delayMs}
                     mounted={mounted}
                   />
-                ) : (
-                  <MirroredBars
-                    fillA={fillA}
-                    fillB={fillB}
-                    delayMs={delayMs}
-                    mounted={mounted}
-                  />
-                )}
-
-                <StatValue
-                  value={displayB}
-                  winner={winner}
-                  side="B"
-                  isDual={isDual}
-                  delayMs={delayMs}
-                  align="left"
-                />
-              </div>
+                </>
+              ) : (
+                <>
+                  <Text variant="overline" className="mb-2 block text-center">
+                    {label}
+                  </Text>
+                  <div className="grid grid-cols-[auto_1fr_auto_1fr_auto] items-center gap-2">
+                    <StatValue
+                      value={displayA}
+                      winner={winner}
+                      side="A"
+                      isDual={false}
+                      delayMs={delayMs}
+                      align="right"
+                    />
+                    <MirroredBars
+                      fillA={fillA}
+                      fillB={fillB}
+                      delayMs={delayMs}
+                      mounted={mounted}
+                    />
+                    <StatValue
+                      value={displayB}
+                      winner={winner}
+                      side="B"
+                      isDual={false}
+                      delayMs={delayMs}
+                      align="left"
+                    />
+                  </div>
+                </>
+              )}
             </div>
           );
         })}

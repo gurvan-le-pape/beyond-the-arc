@@ -37,8 +37,9 @@ interface DualBarProps {
 }
 
 /**
- * One track split between the two sides, A filling from the left and B from the
- * right so the pair always totals the track width.
+ * One thin track split between the two sides, A filling from the left and B
+ * from the right so the pair always totals the track width, with a hairline
+ * gap where they meet.
  *
  * Both halves share `delayMs`, so they animate as one bar rather than in
  * sequence. Widths apply only once `mounted` is true — see `StatComparison`,
@@ -46,7 +47,7 @@ interface DualBarProps {
  */
 export function DualBar({ fillA, fillB, delayMs, mounted }: DualBarProps) {
   return (
-    <div className="h-2.5 w-full bg-surface-inset rounded-button overflow-hidden flex">
+    <div className="h-1.5 w-full bg-surface-inset rounded-full overflow-hidden flex gap-0.5">
       <BarFill
         fill={fillA}
         mounted={mounted}

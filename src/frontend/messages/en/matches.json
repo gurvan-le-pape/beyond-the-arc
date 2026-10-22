@@ -108,7 +108,6 @@
   },
   "matchSummary": {
     "title": "Match Summary",
-    "teamMatchStatsTitle": "Team Statistics",
     "tabs": {
       "teamStats": "Team Stats",
       "matchEvents": "Match Events",
