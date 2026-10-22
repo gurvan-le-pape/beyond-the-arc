@@ -15,7 +15,6 @@ interface TeamStatsComparisonProps {
   readonly homeStats: TeamStats;
   readonly awayStats: TeamStats;
   readonly categories: StatCategory[];
-  readonly title?: string;
 }
 
 const PERCENTAGE_MAP: Record<string, string> = {
@@ -39,12 +38,11 @@ export function TeamStatsComparison({
   homeStats,
   awayStats,
   categories,
-  title,
 }: TeamStatsComparisonProps) {
   const tMatches = useTranslations("matches");
 
   return (
-    <Section title={title} className="text-center">
+    <Section>
       <StatComparison
         variant="dual"
         sideA={homeStats}

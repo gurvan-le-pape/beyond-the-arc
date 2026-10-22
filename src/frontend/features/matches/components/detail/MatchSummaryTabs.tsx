@@ -84,7 +84,6 @@ export function MatchSummaryTabs({
           homeStats={homeTeam.stats}
           awayStats={awayTeam.stats}
           categories={statCategories}
-          title={tMatches("matchSummary.teamMatchStatsTitle")}
         />
       </TabsContent>
 

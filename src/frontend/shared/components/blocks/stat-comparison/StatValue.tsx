@@ -18,8 +18,9 @@ interface StatValueProps {
  * One side's value in a comparison row, styled by whether it won.
  *
  * The two variants mark the winner differently and that is the whole of the
- * difference: **dual** underlines the winning value and draws no bar here,
- * while **mirrored** colours it and grows a full-width pill beneath it. Passing
+ * difference: **dual** sets the leading value in heading weight and the other
+ * in secondary text (both heading on a tie), and draws no bar here, while
+ * **mirrored** colours it and grows a full-width pill beneath it. Passing
  * `isDual` therefore changes what renders, not just how it looks.
  *
  * The pill starts 300ms after `delayMs`, so a row's value settles before its
@@ -37,15 +38,19 @@ export function StatValue({
   const classes = SIDE_CLASSES[side];
 
   const mirroredValueClass = isWinner ? classes.text : "text-text-body";
+  const isLeading = isWinner || winner === "tie";
+  const dualValueClass = isLeading
+    ? "text-text-heading font-bold"
+    : "text-text-secondary font-medium";
   const valueClass = isDual
-    ? cn("text-text-heading", isWinner && `border-b-2 pb-0.5 ${classes.border}`)
-    : cn(mirroredValueClass);
+    ? dualValueClass
+    : cn(mirroredValueClass, "font-bold");
 
   return (
     <div className={align === "right" ? "text-right" : "text-left"}>
       <span
         className={cn(
-          "inline-block text-sm font-bold tabular-nums transition-colors duration-300",
+          "inline-block text-sm tabular-nums transition-colors duration-300",
           valueClass,
         )}
       >

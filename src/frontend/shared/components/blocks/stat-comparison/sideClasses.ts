@@ -7,13 +7,11 @@
 export const SIDE_CLASSES = {
   A: {
     text: "text-ink-home",
-    border: "border-solid-home",
     bg: "bg-solid-home",
     label: "text-ink-home",
   },
   B: {
     text: "text-ink-away",
-    border: "border-solid-away",
     bg: "bg-solid-away",
     label: "text-ink-away",
   },
