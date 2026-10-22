@@ -26,7 +26,12 @@
     "searchLabel": "Nom du club",
     "searchPlaceholder": "Rechercher un club ...",
     "tryAdjustingFilters": "Essayez d'ajuster vos filtres pour trouver plus de clubs.",
-    "itemLabel": "{count, plural, one {club} other {clubs}}"
+    "itemLabel": "{count, plural, one {club} other {clubs}}",
+    "columns": {
+      "name": "Club",
+      "city": "Ville",
+      "zipCode": "Code postal"
+    }
   },
   "info": {
     "title": "Informations",
