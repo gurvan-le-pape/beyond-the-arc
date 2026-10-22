@@ -1,41 +1,54 @@
 // src/frontend/shared/components/layout/header/Logo.tsx
-"use client";
-
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
 
 import { Link } from "@/navigation";
 
 /**
- * The wordmark, linking home, in the variant that suits the active theme.
- *
- * **Renders the light logo until mounted**, whatever the theme. The theme is
- * only knowable on the client, so drawing the dark variant during SSR would
- * mismatch on hydration; the cost is a brief flash of the light logo on a dark
- * first paint, taken deliberately over a hydration error.
+ * The mark for each theme. Both are rendered and CSS shows the one that suits
+ * the theme class, so the server's HTML is already right and nothing waits for
+ * the client to learn the theme. Literal class strings, so Tailwind sees the
+ * arbitrary high-contrast variant; high contrast's ground is black, so it takes
+ * the dark mark.
+ */
+const MARKS = [
+  {
+    src: "/BeyondTheArcMark.png",
+    className: "block dark:hidden [.high-contrast_&]:hidden",
+  },
+  {
+    src: "/BeyondTheArcMark-dark.png",
+    className: "hidden dark:block [.high-contrast_&]:block",
+  },
+] as const;
+
+/**
+ * The site's name, linking home: the ball-and-arc mark beside the name set in
+ * text, which stays legible at header size where the name inside the full logo
+ * image does not. The mark is decorative, so the link is named by the text.
  */
 export function Logo() {
   const t = useTranslations("navigation");
-  const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
-
-  const src =
-    mounted && resolvedTheme === "dark"
-      ? "/BeyondTheArcLogo-dark.png"
-      : "/BeyondTheArcLogo.png";
 
   return (
     <Link
       href="/"
-      className="flex items-center group rounded-button focus-ring"
+      className="flex items-center gap-2.5 rounded-button focus-ring group"
     >
-      <div className="relative h-16 w-auto overflow-hidden flex items-center justify-center transition-all duration-300 group-hover:scale-105">
-        <Image src={src} alt={t("logo.alt")} width={72} height={45} priority />
-      </div>
+      {MARKS.map((mark) => (
+        <Image
+          key={mark.src}
+          src={mark.src}
+          alt=""
+          width={55}
+          height={24}
+          priority
+          className={`${mark.className} transition-transform duration-300 group-hover:scale-105`}
+        />
+      ))}
+      <span className="text-lg font-extrabold tracking-tight text-text-heading">
+        {t("footer.projectName")}
+      </span>
     </Link>
   );
 }
