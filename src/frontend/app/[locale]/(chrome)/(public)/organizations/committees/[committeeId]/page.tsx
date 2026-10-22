@@ -136,7 +136,7 @@ async function CommitteePage({
           address: committee.address,
           ffbbUrl: committee.ffbbUrl,
         }}
-        chipList={{
+        linkList={{
           items: clubs,
           title: tCommon("sectionTitles.clubs"),
           searchPlaceholder: tCommon("searchPlaceholder"),

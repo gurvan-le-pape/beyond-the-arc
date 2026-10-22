@@ -133,7 +133,7 @@ async function LeaguePage({ params }: LocalePageProps<{ leagueId: string }>) {
           address: league.address,
           ffbbUrl: league.ffbbUrl,
         }}
-        chipList={{
+        linkList={{
           items: committees,
           title: tCommon("sectionTitles.departmentalCommittees"),
           searchPlaceholder: tCommon("searchPlaceholder"),

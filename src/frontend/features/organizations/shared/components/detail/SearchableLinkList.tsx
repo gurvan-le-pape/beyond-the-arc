@@ -1,20 +1,20 @@
-// src/frontend/features/organizations/shared/components/detail/SearchableChipList.tsx
+// src/frontend/features/organizations/shared/components/detail/SearchableLinkList.tsx
 "use client";
 
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
-import { Link } from "@/navigation";
 import { Section } from "@/shared/components/blocks";
 import { Input } from "@/shared/components/forms";
+import { TextLink } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 
-interface SearchableChipListItem {
+interface SearchableLinkListItem {
   id: number;
   name: string;
 }
 
-interface SearchableChipListProps<T extends SearchableChipListItem> {
+interface SearchableLinkListProps<T extends SearchableLinkListItem> {
   readonly items: T[];
   readonly title: string;
   readonly searchPlaceholder: string;
@@ -23,8 +23,9 @@ interface SearchableChipListProps<T extends SearchableChipListItem> {
 }
 
 /**
- * A filterable list of links, used for the championships and clubs under an
- * organisation.
+ * A filterable list of links, used for the committees and clubs under an
+ * organisation. The names flow down one to four columns, so a committee's
+ * fifty clubs read as an index rather than a wall of buttons.
  *
  * Filtering is **client-side over the whole list** — everything is already
  * loaded, so there is no query behind the box and the list is expected to stay
@@ -35,13 +36,13 @@ interface SearchableChipListProps<T extends SearchableChipListItem> {
  *
  * @typeParam T - the item shape, which must expose `id` and `name`
  */
-export function SearchableChipList<T extends SearchableChipListItem>({
+export function SearchableLinkList<T extends SearchableLinkListItem>({
   items,
   title,
   searchPlaceholder,
   basePath,
   showSearch = true,
-}: SearchableChipListProps<T>) {
+}: SearchableLinkListProps<T>) {
   const tCompetitions = useTranslations("competitions");
   const tCommon = useTranslations("common");
 
@@ -76,23 +77,21 @@ export function SearchableChipList<T extends SearchableChipListItem>({
           />
         </div>
       )}
-      <div className="flex flex-wrap gap-2">
-        {filteredItems.length === 0 ? (
-          <Text variant="caption" as="span">
-            {tCompetitions("noSearchResults", { search })}
-          </Text>
-        ) : (
-          filteredItems.map((item) => (
-            <Link
-              key={item.id}
-              href={`${basePath}/${item.id}`}
-              className="px-3 py-2 rounded-lg text-sm font-medium border border-divide bg-surface-inset text-text-emphasis hover:border-solid-primary hover:text-ink-primary transition-colors duration-150"
-            >
-              {item.name}
-            </Link>
-          ))
-        )}
-      </div>
+      {filteredItems.length === 0 ? (
+        <Text variant="caption" as="p">
+          {tCompetitions("noSearchResults", { search })}
+        </Text>
+      ) : (
+        <ul className="columns-1 gap-x-8 sm:columns-2 lg:columns-3 xl:columns-4">
+          {filteredItems.map((item) => (
+            <li key={item.id} className="break-inside-avoid py-1.5 text-sm">
+              <TextLink href={`${basePath}/${item.id}`} variant="plain">
+                {item.name}
+              </TextLink>
+            </li>
+          ))}
+        </ul>
+      )}
     </Section>
   );
 }
