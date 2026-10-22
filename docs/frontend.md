@@ -296,6 +296,10 @@ Feature components are usually the first kind — they are tied to one namespace
 
 Pages resolve translations for their own JSX and for anything they pass down as content — breadcrumb `items`, `PageHero` copy, config arrays mapped to string props. A page calling `setRequestLocale(locale)` is what lets its server children use the request-scoped short form `await getTranslations("namespace")` instead of the `{ locale, namespace }` object form.
 
+### Capitalisation
+
+French copy is in sentence case, headings and buttons included: "Historique des matchs", "Voir le produit". Only the first word and proper nouns take a capital, and `&` is written "et". English copy may use title case for headings; the two catalogues are not copies of each other's casing.
+
 ---
 
 ## Design system
