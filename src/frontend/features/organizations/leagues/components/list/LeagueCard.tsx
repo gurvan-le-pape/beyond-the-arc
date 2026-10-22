@@ -1,7 +1,8 @@
 // src/frontend/features/organizations/leagues/components/list/LeagueCard.tsx
-import { Badge, Card, ImageWithFallback } from "@/shared/components/primitives";
+import { namesMatch } from "@/features/organizations/utils";
+import { Card, ImageWithFallback } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
-import { cn, formatLeagueName, formatNameToFileName } from "@/shared/utils";
+import { formatLeagueName, formatNameToFileName } from "@/shared/utils";
 
 import type { League } from "../../types";
 
@@ -11,77 +12,52 @@ interface LeagueCardProps {
 }
 
 /**
- * A league as a card, with its club count.
+ * A league as a card: its region's name, the region code, and its club count.
+ * The federation's own capitalised name is shown only where it says something
+ * the region name does not ("SUD").
  *
  * `clubLabel` arrives already pluralised — the count and its noun are resolved
  * by the caller, because the plural rule belongs to the locale rather than to
  * this component.
  */
 export function LeagueCard({ league, clubLabel }: LeagueCardProps) {
+  const officialName = formatLeagueName(league.name);
+
   return (
     <Card
       padding="none"
       href={`/organizations/leagues/${league.id}`}
-      className={cn(
-        "group relative overflow-hidden",
-        "border-line-regional hover:border-solid-regional",
-        "flex",
-      )}
+      className="group flex items-center gap-4 p-4 border-line-regional hover:border-solid-regional"
     >
-      <div
-        className={cn(
-          "flex-shrink-0 w-20 flex items-center justify-center",
-          "bg-gradient-to-br from-[var(--surface-inset)] to-[var(--surface-bg)]",
-          "border-r border-white/5",
-        )}
-      >
-        <ImageWithFallback
-          src={`/images/leagues/${formatNameToFileName(league.name)}.webp`}
-          alt={league.name}
-          fallback="/images/leagues/defaultLogo.30cc7520.svg"
-          className="w-12 h-12 object-contain transition-transform duration-200 group-hover:scale-105"
-        />
+      <ImageWithFallback
+        src={`/images/leagues/${formatNameToFileName(league.name)}.webp`}
+        alt=""
+        fallback="/images/leagues/defaultLogo.30cc7520.svg"
+        className="w-12 h-12 flex-shrink-0 object-contain transition-transform duration-200 group-hover:scale-105"
+      />
+
+      <div className="flex-1 min-w-0">
+        <Text
+          variant="h3"
+          as="h2"
+          className="leading-snug truncate text-base md:text-lg"
+        >
+          {league.region.name}
+        </Text>
+        <Text variant="caption" className="mt-0.5 truncate">
+          {namesMatch(officialName, league.region.name)
+            ? league.region.code
+            : `${league.region.code} · ${officialName}`}
+        </Text>
       </div>
 
-      <div className="flex-1 min-w-0 flex flex-col">
-        <div
-          className={cn(
-            "flex items-center justify-between gap-3",
-            "px-4 py-3 border-b border-white/5",
-            "bg-tint-regional",
-          )}
-        >
-          <div className="flex items-center gap-2 min-w-0">
-            <span className="w-2 h-2 rounded-full flex-shrink-0 bg-solid-regional" />
-            <Text
-              variant="label"
-              className="font-semibold text-ink-regional truncate"
-            >
-              {league.region.name}
-            </Text>
-          </div>
-          <Badge variant="info" size="sm">
-            {league.region.code}
-          </Badge>
-        </div>
-
-        <div className="px-4 py-3 flex items-center justify-between gap-3 flex-1">
-          <Text
-            variant="h3"
-            as="h2"
-            className="leading-snug line-clamp-2 text-base md:text-lg"
-          >
-            {formatLeagueName(league.name)}
-          </Text>
-          <div className="flex-shrink-0 text-right">
-            <p className="text-2xl font-bold text-ink-regional leading-none">
-              {league.clubCount}
-            </p>
-            <Text variant="caption" className="mt-0.5">
-              {clubLabel}
-            </Text>
-          </div>
-        </div>
+      <div className="flex-shrink-0 text-right">
+        <p className="text-2xl font-bold text-ink-regional leading-none">
+          {league.clubCount}
+        </p>
+        <Text variant="caption" className="mt-0.5">
+          {clubLabel}
+        </Text>
       </div>
     </Card>
   );
