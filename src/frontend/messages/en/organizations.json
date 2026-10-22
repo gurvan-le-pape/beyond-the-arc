@@ -11,7 +11,14 @@
   },
   "committees": {
     "label": "Committees",
-    "description": "Departmental committees managing local clubs."
+    "description": "Departmental committees managing local clubs.",
+    "columns": {
+      "code": "No.",
+      "department": "Department",
+      "league": "League",
+      "clubs": "Clubs"
+    },
+    "empty": "No committees."
   },
   "clubs": {
     "label": "Clubs",
