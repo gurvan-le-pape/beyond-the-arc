@@ -18,8 +18,9 @@ interface NavLinksProps {
  * The site navigation links, marking the current section.
  *
  * **`asList` changes semantics, not just layout.** As a list it renders
- * `<ul>`/`<li>` with `role="menuitem"` links for the mobile menu; otherwise it
- * renders them inline for the desktop bar. Pick it to match the surrounding
+ * `<ul>`/`<li>` for the mobile menu; otherwise it renders them inline for the
+ * desktop bar. Neither uses ARIA menu roles: these are page links inside a
+ * `<nav>`, not an application menu. Pick it to match the surrounding
  * structure, not the appearance you want.
  *
  * A link is active on an exact path match **or** on a path beneath it, so a
@@ -62,14 +63,12 @@ export function NavLinks({
 
       const linkProps: React.ComponentProps<typeof Link> & {
         "aria-current"?: string;
-        role?: string;
         "data-testid"?: string;
         onClick?: () => void;
       } = {
         href: item.href,
         className: asList ? mobileStyles : desktopStyles,
         "aria-current": isActive ? "page" : undefined,
-        role: asList ? "menuitem" : undefined,
         "data-testid": `nav-link-${item.href.replace("/", "-") || "home"}`,
       };
 
@@ -82,9 +81,7 @@ export function NavLinks({
 
   const links = navItems.map((item) =>
     asList ? (
-      <li key={item.href} role="none">
-        {renderLink(item)}
-      </li>
+      <li key={item.href}>{renderLink(item)}</li>
     ) : (
       <React.Fragment key={item.href}>{renderLink(item)}</React.Fragment>
     ),
