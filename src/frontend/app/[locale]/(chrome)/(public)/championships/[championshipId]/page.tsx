@@ -13,6 +13,7 @@ import {
 } from "@/features/competitions/championships/components";
 import {
   buildCategoryNavigation,
+  buildChampionshipHeading,
   buildChampionshipTitle,
   buildDivisionNavigation,
   resolveOrganizationId,
@@ -53,8 +54,8 @@ async function buildMetadata({
     .getById(championshipId)
     .catch(handleServerError);
 
-  // The same one-liner the page uses as its heading — a championship has no
-  // name of its own.
+  // A championship has no name of its own; the document title names it in
+  // full, organiser and season included.
   const name = buildChampionshipTitle(championship, {
     gender: tCommon(`gender.${championship.gender}`),
     division: tCompetitions("divisionWithValue", {
@@ -127,7 +128,7 @@ async function ChampionshipsDetailPage({
       <div className="flex flex-col xl:flex-row gap-6">
         <div className="w-full xl:flex-1 space-y-6">
           <ChampionshipBreadcrumb
-            name={buildChampionshipTitle(championship, {
+            name={buildChampionshipHeading(championship, {
               gender: tCommon(`gender.${championship.gender}`),
               division: tCompetitions("divisionWithValue", {
                 value: championship.division,
