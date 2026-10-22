@@ -118,6 +118,7 @@ export function LeaderboardTable({
         columns={columns}
         rows={leaderboards}
         getRowKey={(row) => row.id}
+        getRowHref={(row) => `/teams/${row.teamId}`}
         density="cozy"
         emptyMessage={tCompetitions("leaderboardEmpty")}
       />
