@@ -9,16 +9,12 @@ import { EmptyState } from "@/shared/components/feedback";
 
 import { useClubs } from "../../api";
 import type { ClubBasic } from "../../types/ClubBasic";
-import { ClubCard } from "./ClubCard";
 import { ClubsFilters } from "./ClubsFilters";
+import { ClubsTable } from "./ClubsTable";
 import { useClubsFilterState } from "./useClubsFilterState";
 
-// `ClubCard` is a wide horizontal card, so it pairs up from `md` rather than
-// from `xl` — hence a local grid instead of `LIST_ENTITY_CARD_GRID`.
-const CLUBS_GRID = "grid grid-cols-1 md:grid-cols-2 gap-4";
-
 /**
- * The clubs list page: filters, results grid and pagination.
+ * The clubs list page: filters, results table and pagination.
  *
  * Takes no props and owns everything, including its own data — which is why the
  * clubs route needs no server fetch and prerenders as a static shell.
@@ -78,11 +74,7 @@ export function ClubsView() {
           count: pagination?.total ?? 0,
         })}
       >
-        <div className={CLUBS_GRID}>
-          {clubs.map((club) => (
-            <ClubCard key={club.id} club={club} />
-          ))}
-        </div>
+        <ClubsTable clubs={clubs} />
       </SearchTabShell>
     </div>
   );

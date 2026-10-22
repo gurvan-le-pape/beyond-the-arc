@@ -26,7 +26,12 @@
     "searchLabel": "Club name",
     "searchPlaceholder": "Search for a club ...",
     "tryAdjustingFilters": "Try adjusting your filters to find more clubs.",
-    "itemLabel": "{count, plural, one {club} other {clubs}}"
+    "itemLabel": "{count, plural, one {club} other {clubs}}",
+    "columns": {
+      "name": "Club",
+      "city": "City",
+      "zipCode": "Postcode"
+    }
   },
   "info": {
     "title": "Information",
