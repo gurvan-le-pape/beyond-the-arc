@@ -18,11 +18,10 @@
     "committees": "Comités"
   },
   "latestRound": {
-    "eyebrow": "Dernière journée · Journée {matchday}",
+    "eyebrow": "Dernière journée · Journée {matchday} · {date}",
     "resultsTitle": "Résultats",
-    "cta": "Voir le championnat",
-    "fullStandings": "Classement complet · {count} équipes",
-    "allResults": "Les {count} résultats"
+    "allResults": "Tous les résultats",
+    "fullStandings": "Classement complet"
   },
   "explore": {
     "sectionTitle": "Rechercher & explorer",

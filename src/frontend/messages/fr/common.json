@@ -92,8 +92,10 @@
     "pointDifference": "Différence de points",
     "abbr": {
       "gamesPlayed": "J",
-      "pointDifference": "Diff"
-    }
+      "pointDifference": "Diff",
+      "record": "V–D"
+    },
+    "record": "Victoires–défaites"
   },
   "matchHistory": {
     "date": "Date",

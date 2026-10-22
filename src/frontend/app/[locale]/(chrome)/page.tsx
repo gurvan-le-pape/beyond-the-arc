@@ -28,6 +28,7 @@ import type { LocalePageProps } from "@/shared/types";
 import {
   formatCommitteeName,
   formatLeagueName,
+  formatMatchDay,
   handleServerError,
 } from "@/shared/utils";
 
@@ -111,6 +112,7 @@ async function Home({ params }: LocalePageProps) {
             .join(" · "),
           championshipHref: `/championships/${championship.id}?pool=${featuredPool.id}`,
           matchday: featuredPool.matchday,
+          playedOn: formatMatchDay(featuredPool.playedAt, locale),
           // The round may still be mid-simulation: show what has a score.
           matches: poolMatches.filter(
             (match) =>

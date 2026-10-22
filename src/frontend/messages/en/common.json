@@ -92,8 +92,10 @@
     "pointDifference": "Point difference",
     "abbr": {
       "gamesPlayed": "GP",
-      "pointDifference": "Diff"
-    }
+      "pointDifference": "Diff",
+      "record": "W–L"
+    },
+    "record": "Wins–losses"
   },
   "matchHistory": {
     "date": "Date",

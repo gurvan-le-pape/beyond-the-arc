@@ -21,6 +21,8 @@ function SectionTitle({ title, className }: SectionTitleProps) {
 
 interface SectionProps {
   readonly title?: ReactNode;
+  /** Beside the title, at the far end: a link onward, such as "Full table". */
+  readonly action?: ReactNode;
   readonly children: ReactNode;
   readonly className?: string;
 }
@@ -34,10 +36,17 @@ interface SectionProps {
  * a panel that needs a fill (InfoBox, Input) takes `bg-surface-inset`, which
  * resolves one step above it.
  */
-export function Section({ title, children, className }: SectionProps) {
+export function Section({ title, action, children, className }: SectionProps) {
   return (
     <section className={className}>
-      {title && <SectionTitle title={title} />}
+      {title && action ? (
+        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 mb-6">
+          <SectionTitle title={title} className="mb-0" />
+          {action}
+        </div>
+      ) : (
+        title && <SectionTitle title={title} />
+      )}
       {children}
     </section>
   );
