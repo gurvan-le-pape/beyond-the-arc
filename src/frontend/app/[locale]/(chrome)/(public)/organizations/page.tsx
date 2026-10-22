@@ -5,13 +5,11 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import {
   OrganizationsGrid,
   OrganizationsHeader,
-  OrganizationsStats,
 } from "@/features/organizations/components";
 import type { OrganizationCounts } from "@/features/organizations/types";
 import { serverStatsService } from "@/features/stats/api/stats.server";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
-import { Divide } from "@/shared/components/primitives";
 import type { LocalePageProps } from "@/shared/types";
 import { handleServerError } from "@/shared/utils";
 
@@ -38,9 +36,6 @@ async function OrganizationsPage({ params }: LocalePageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  // One fetch for both render sites: the stats band and the three cards show
-  // the same three numbers, and a second source is a second chance for them
-  // to disagree.
   const stats = await serverStatsService.getStats().catch(handleServerError);
   const counts: OrganizationCounts = {
     leagues: stats.leagues,
@@ -51,8 +46,6 @@ async function OrganizationsPage({ params }: LocalePageProps) {
   return (
     <PageLayout centered contentClassName="max-w-4xl">
       <OrganizationsHeader />
-      <OrganizationsStats counts={counts} />
-      <Divide />
       <OrganizationsGrid counts={counts} />
     </PageLayout>
   );
