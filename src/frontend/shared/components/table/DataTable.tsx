@@ -54,6 +54,12 @@ export interface TableColumn<T> {
   readonly width?: "auto" | "icon";
   /** `sm` shows the column from the `sm` breakpoint up only, not on phones. */
   readonly from?: "sm";
+  /**
+   * The column's sort state, for a table its caller sorts. Set as `aria-sort`
+   * on the header cell; the sorting itself, and the control that changes it,
+   * belong to the caller's `header`.
+   */
+  readonly sort?: "ascending" | "descending" | "none";
 }
 
 interface DataTableBaseProps<T> {
@@ -182,6 +188,7 @@ export function DataTable<T>({
               stickyLead={stickyLead && columnIndex === 0}
               from={column.from}
               tooltip={column.tooltip}
+              aria-sort={column.sort}
             >
               {column.header}
             </TableHead>

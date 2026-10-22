@@ -6,10 +6,11 @@ import React, { useState } from "react";
 
 import type { TeamPlayerRef } from "@/features/teams/types";
 import { Section } from "@/shared/components/blocks";
-import { Text } from "@/shared/components/typography";
+import { Badge } from "@/shared/components/primitives";
+import { DataTable, type TableColumn } from "@/shared/components/table";
+import { positionVariant } from "@/shared/utils";
 
-import { PlayerCard } from "./PlayerCard";
-import { SortControls } from "./SortControls";
+import { SortHeader } from "./SortHeader";
 import type { SortConfig, SortKey } from "./types";
 
 // ---------------------------------------------------------------------------
@@ -21,7 +22,8 @@ interface TeamRosterProps {
 }
 
 /**
- * The team's players, sortable by number, name, or a per-game stat.
+ * The team's players as a table, sortable by number, name, or a per-game stat
+ * from the column headings. Each row links to the player.
  *
  * **Sorting is client-side over the whole roster** — there is no pagination and
  * no server round trip, so the list is expected to stay small. The input array
@@ -44,6 +46,7 @@ export function TeamRoster({ players }: TeamRosterProps) {
   );
 
   const tTeams = useTranslations("teams");
+  const tCommon = useTranslations("common");
 
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     key: "number",
@@ -86,26 +89,100 @@ export function TeamRoster({ players }: TeamRosterProps) {
     });
   }, [safePlayers, sortConfig]);
 
+  const ariaSort = (key: SortKey) => {
+    if (sortConfig.key !== key) return "none";
+    return sortConfig.direction === "asc" ? "ascending" : "descending";
+  };
+
+  const sortHeader = (key: SortKey, label: string, fullLabel?: string) => (
+    <SortHeader
+      sortKey={key}
+      label={label}
+      fullLabel={fullLabel}
+      sortConfig={sortConfig}
+      onSort={handleSort}
+    />
+  );
+
+  const columns: TableColumn<TeamPlayerRef>[] = [
+    {
+      key: "number",
+      header: sortHeader("number", tTeams("teamDetail.numberShort")),
+      sort: ariaSort("number"),
+      numeric: true,
+      align: "left",
+      width: "icon",
+      render: (player) => player.number,
+    },
+    {
+      key: "name",
+      header: sortHeader("name", tTeams("teamDetail.player")),
+      sort: ariaSort("name"),
+      emphasis: true,
+      render: (player) => player.name,
+    },
+    {
+      key: "position",
+      from: "sm",
+      render: (player) => (
+        <Badge variant={positionVariant(player.position)} size="sm">
+          {tCommon(`positions.${player.position}`)}
+        </Badge>
+      ),
+    },
+    {
+      key: "gamesPlayed",
+      from: "sm",
+      header: tCommon("stats.gamesPlayedShort"),
+      tooltip: tCommon("stats.gamesPlayed"),
+      numeric: true,
+      render: (player) => player.seasonStats.gamesPlayed,
+    },
+    {
+      key: "ppg",
+      header: sortHeader(
+        "ppg",
+        tCommon("stats.points.abbr"),
+        tCommon("stats.pointsPerGame"),
+      ),
+      sort: ariaSort("ppg"),
+      numeric: true,
+      render: (player) => player.seasonStats.pointsPerGame.toFixed(1),
+    },
+    {
+      key: "rpg",
+      header: sortHeader(
+        "rpg",
+        tCommon("stats.rebounds.abbr"),
+        tCommon("stats.reboundsPerGame"),
+      ),
+      sort: ariaSort("rpg"),
+      numeric: true,
+      render: (player) => player.seasonStats.reboundsPerGame.toFixed(1),
+    },
+    {
+      key: "apg",
+      header: sortHeader(
+        "apg",
+        tCommon("stats.assists.abbr"),
+        tCommon("stats.assistsPerGame"),
+      ),
+      sort: ariaSort("apg"),
+      numeric: true,
+      render: (player) => player.seasonStats.assistsPerGame.toFixed(1),
+    },
+  ];
+
   return (
     <Section title={tTeams("teamDetail.rosterTitle")}>
-      {safePlayers.length === 0 ? (
-        <Text variant="caption" className="text-center py-8">
-          {tTeams("teamDetail.noPlayers")}
-        </Text>
-      ) : (
-        <>
-          <SortControls sortConfig={sortConfig} onSort={handleSort} />
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-            {sortedPlayers.map((player) => (
-              <PlayerCard
-                key={player.id}
-                player={player}
-                href={`/players/${player.id}`}
-              />
-            ))}
-          </div>
-        </>
-      )}
+      <DataTable
+        columns={columns}
+        rows={sortedPlayers}
+        getRowKey={(player) => player.id}
+        getRowHref={(player) => `/players/${player.id}`}
+        getRowLabel={(player) => player.name}
+        emptyMessage={tTeams("teamDetail.noPlayers")}
+      />
     </Section>
   );
 }
