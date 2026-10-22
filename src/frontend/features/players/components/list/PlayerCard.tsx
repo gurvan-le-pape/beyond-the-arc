@@ -62,7 +62,6 @@ export function PlayerCard({ player }: PlayerCardProps) {
       }
     >
       <EntityCardBody
-        clubName={clubName}
         title={player.name}
         committee={committee}
         number={player.number}

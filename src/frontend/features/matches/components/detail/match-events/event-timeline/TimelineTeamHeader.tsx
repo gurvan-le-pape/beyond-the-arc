@@ -1,7 +1,6 @@
 // src/frontend/features/matches/components/detail/match-events/event-timeline/TimelineTeamHeader.tsx
 
 import type { TeamInfo } from "@/features/teams/types";
-import { ClubMark } from "@/shared/components/domain";
 
 import { TimelineRow } from "./TimelineRow";
 
@@ -29,18 +28,14 @@ export function TimelineTeamHeader({
       aria-hidden="true"
       className="mb-4 pb-3 border-b-2 border-divide"
     >
-      <div className="flex items-center gap-2">
-        <ClubMark clubName={homeTeam.clubName} size="sm" />
-        <span className="font-bold text-text-heading">{homeTeam.name}</span>
-      </div>
+      <span className="font-bold text-text-heading">{homeTeam.name}</span>
 
       {/* Centre spacer (matches the 80px score-pill column) */}
       <div />
 
-      <div className="flex items-center gap-2 justify-end">
-        <span className="font-bold text-text-heading">{awayTeam.name}</span>
-        <ClubMark clubName={awayTeam.clubName} size="sm" />
-      </div>
+      <span className="font-bold text-text-heading text-right">
+        {awayTeam.name}
+      </span>
     </TimelineRow>
   );
 }

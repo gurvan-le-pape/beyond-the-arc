@@ -5,7 +5,6 @@ import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
-import { ClubMark } from "@/shared/components/domain";
 import { ErrorMessage } from "@/shared/components/feedback";
 import { DebouncedInput } from "@/shared/components/forms";
 import { Button } from "@/shared/components/primitives";
@@ -79,7 +78,6 @@ function DropdownContent({
           i !== 0 && "border-t border-divide",
         )}
       >
-        <ClubMark clubName={clubName} size="xs" />
         <div className="min-w-0 flex flex-col">
           <Text variant="label" as="span" className="text-text-heading">
             #{player.number} {player.name}

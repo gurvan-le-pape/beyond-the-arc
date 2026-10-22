@@ -26,7 +26,8 @@ interface MatchupBaseProps {
   readonly home: MatchupSide;
   readonly away: MatchupSide;
   /**
-   * Link each side's club mark to its club and its name to its team. Off when
+   * Link each side's club mark (at `hero` size) to its club and its name to its
+   * team. Off when
    * the matchup sits inside a link of its own, such as a list card.
    */
   readonly linked?: boolean;
@@ -54,8 +55,11 @@ interface LineMatchupProps {
 
 type MatchupProps = MatchupBaseProps & (FacingMatchupProps | LineMatchupProps);
 
-// `centre` is the mark's height, so the score lines up with the two marks
-// however many lines each team's name wraps onto.
+// Only `hero` draws club marks: it heads the match page, where each mark is
+// also the link to its club. In a list the mark repeated the name beside it,
+// and initials do not tell clubs apart, many clubs sharing each pair. `centre` is
+// the mark's height, so the score lines up with the two marks however many
+// lines each team's name wraps onto; with no mark it lines up with the names.
 const SIZES = {
   hero: {
     mark: "xl",
@@ -65,18 +69,18 @@ const SIZES = {
     centre: "min-h-16",
   },
   card: {
-    mark: "lg",
+    mark: null,
     score: "list",
     side: "gap-3",
     name: "text-sm md:text-lg",
-    centre: "min-h-14",
+    centre: "",
   },
   row: {
-    mark: "sm",
+    mark: null,
     score: "compact",
     side: "gap-1",
     name: "text-sm line-clamp-2",
-    centre: "min-h-8",
+    centre: "",
   },
 } as const;
 
@@ -90,7 +94,9 @@ interface SideProps {
 function Side({ side, size, isWinner, linked }: SideProps) {
   const tCommon = useTranslations("common");
   const config = SIZES[size];
-  const mark = <ClubMark clubName={side.clubName} size={config.mark} />;
+  const mark = config.mark && (
+    <ClubMark clubName={side.clubName} size={config.mark} />
+  );
 
   return (
     <div
@@ -99,7 +105,7 @@ function Side({ side, size, isWinner, linked }: SideProps) {
         config.side,
       )}
     >
-      {linked && side.clubId !== null ? (
+      {mark && linked && side.clubId !== null ? (
         <Link
           href={`/organizations/clubs/${side.clubId}`}
           aria-label={tCommon("club.seeClub", { name: side.clubName ?? "" })}
@@ -163,7 +169,8 @@ function Line({ side, isWinner, linked }: LineProps) {
 }
 
 /**
- * A match: its two sides — club mark and team name, home on the left — and
+ * A match: its two sides — team name, with its club mark at `hero` size, home
+ * on the left — and
  * the score between them, or "upcoming" before it is played; or, at `line`
  * size, home above away with each side's score beside its name.
  *

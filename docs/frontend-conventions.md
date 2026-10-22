@@ -56,7 +56,7 @@ Clubs, teams, matches and their parts are drawn the same way everywhere, so each
 
 | Concept | One implementation of |
 | --- | --- |
-| A club | its mark (logo or monogram), at every size |
+| A club | its mark (monogram), drawn only in a page's header; lists and tables name the club in text, since the monogram's initials do not tell clubs apart |
 | A team | its display name (club + number) and its label with link and winning state |
 | A match | the two sides and the score, in hero, list and row sizes, with one rule for who won |
 | Home and away | one colour each, from the theme |

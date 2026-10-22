@@ -68,7 +68,6 @@ export function TeamCard({ team }: TeamCardProps) {
       }
     >
       <EntityCardBody
-        clubName={clubName}
         title={formatTeamName(clubName, team.number) || tCommon("notAvailable")}
         committee={team.club?.committee}
         level={level}
