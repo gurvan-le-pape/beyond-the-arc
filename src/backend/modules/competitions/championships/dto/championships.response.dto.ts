@@ -88,6 +88,24 @@ export class ChampionshipResponseDto {
   leagueName!: string | null;
 
   @ApiProperty({
+    description:
+      "Name of the organising league's region, as written in the reference data",
+    example: "Auvergne-Rhône-Alpes",
+    type: String,
+    nullable: true,
+  })
+  regionName!: string | null;
+
+  @ApiProperty({
+    description:
+      "Name of the organising committee's department, as written in the reference data",
+    example: "Ain",
+    type: String,
+    nullable: true,
+  })
+  departmentName!: string | null;
+
+  @ApiProperty({
     description: "Pools in this championship",
     type: [ChampionshipPoolDto],
   })

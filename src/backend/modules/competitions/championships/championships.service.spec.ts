@@ -61,7 +61,10 @@ describe("ChampionshipsService", () => {
         division: 1,
         leagueId: 1,
         committeeId: null,
-        league: { name: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL" },
+        league: {
+          name: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
+          region: { name: "Bretagne" },
+        },
         committee: null,
         pools: [
           {
@@ -93,6 +96,8 @@ describe("ChampionshipsService", () => {
         committeeId: null,
         committeeName: null,
         leagueName: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
+        regionName: "Bretagne",
+        departmentName: null,
         pools: [{ id: 1, letter: "A", name: "Pool A", nbMatchdays: 2 }],
       });
 
@@ -127,7 +132,10 @@ describe("ChampionshipsService", () => {
       division: 1,
       leagueId: 1,
       committeeId: null,
-      league: { name: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL" },
+      league: {
+        name: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
+        region: { name: "Bretagne" },
+      },
       committee: null,
       pools: [],
     };
@@ -193,7 +201,10 @@ describe("ChampionshipsService", () => {
         leagueId: null,
         committeeId: 5,
         league: null,
-        committee: { name: "COMITE D''ILLE-ET-VILAINE DE BASKET-BALL" },
+        committee: {
+          name: "COMITE D''ILLE-ET-VILAINE DE BASKET-BALL",
+          department: { name: "Ille-et-Vilaine" },
+        },
       };
 
       mockPrismaService.client.championships.findMany.mockResolvedValue([

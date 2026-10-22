@@ -10,8 +10,8 @@ interface ChampionshipBreadcrumbProps {
 /**
  * The trail above a championship detail page.
  *
- * Takes the finished name rather than the championship, because the caller has
- * already assembled it for the heading and the document title — deriving it a
+ * Takes the finished name rather than the championship: the trail ends on the
+ * page's heading, which the caller has already assembled, and deriving it a
  * second time here would let the two disagree.
  */
 export function ChampionshipBreadcrumb({ name }: ChampionshipBreadcrumbProps) {

@@ -3878,6 +3878,18 @@
             "type": "string",
             "nullable": true
           },
+          "regionName": {
+            "type": "string",
+            "nullable": true,
+            "description": "Name of the organising league's region, as written in the reference data",
+            "example": "Auvergne-Rhône-Alpes"
+          },
+          "departmentName": {
+            "type": "string",
+            "nullable": true,
+            "description": "Name of the organising committee's department, as written in the reference data",
+            "example": "Ain"
+          },
           "pools": {
             "description": "Pools in this championship",
             "type": "array",
@@ -3898,6 +3910,8 @@
           "committeeId",
           "committeeName",
           "leagueName",
+          "regionName",
+          "departmentName",
           "pools"
         ]
       },

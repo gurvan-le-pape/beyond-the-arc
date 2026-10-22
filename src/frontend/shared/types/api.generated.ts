@@ -1241,6 +1241,16 @@ export interface components {
             committeeId: number | null;
             committeeName: string | null;
             leagueName: string | null;
+            /**
+             * @description Name of the organising league's region, as written in the reference data
+             * @example Auvergne-Rhône-Alpes
+             */
+            regionName: string | null;
+            /**
+             * @description Name of the organising committee's department, as written in the reference data
+             * @example Ain
+             */
+            departmentName: string | null;
             /** @description Pools in this championship */
             pools: components["schemas"]["ChampionshipPoolDto"][];
         };
