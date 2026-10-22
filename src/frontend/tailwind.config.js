@@ -303,15 +303,18 @@ module.exports = {
         // scroll *with* the content, so at either extreme the cover sits on
         // top of that side's shadow and hides it. The two `scroll` shadows
         // stay pinned to the container. Scroll away from an edge and its cover
-        // travels off, revealing the shadow.
+        // travels off, revealing the shadow. Each cover is solid across its
+        // first 14px, the shadow's whole width, and fades only past it: a
+        // cover that faded from its edge let part of the shadow through at
+        // rest, so every table showed both shadows with nothing to scroll.
         //
         // Reads --surface-bg from the nearest .surface-* ancestor, so it is
         // correct at any elevation, and --color-scroll-shadow, which flips per
         // theme — a black shadow is invisible on high-contrast's pure black.
         ".scroll-shadow-x": {
           "background-image": [
-            "linear-gradient(to right, var(--surface-bg), transparent)",
-            "linear-gradient(to left, var(--surface-bg), transparent)",
+            "linear-gradient(to right, var(--surface-bg) 50%, transparent)",
+            "linear-gradient(to left, var(--surface-bg) 50%, transparent)",
             "linear-gradient(to right, var(--color-scroll-shadow), transparent)",
             "linear-gradient(to left, var(--color-scroll-shadow), transparent)",
           ].join(", "),
