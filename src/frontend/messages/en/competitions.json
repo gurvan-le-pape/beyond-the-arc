@@ -38,5 +38,14 @@
     "email": "Email",
     "phone": "Phone"
   },
-  "itemLabel": "{count, plural, one {championship} other {championships}}"
+  "itemLabel": "{count, plural, one {championship} other {championships}}",
+  "listColumns": {
+    "league": "League",
+    "committee": "Committee",
+    "category": "Category",
+    "gender": "Gender",
+    "division": "Division",
+    "divisionAbbr": "Div.",
+    "pools": "Pools"
+  }
 }
