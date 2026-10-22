@@ -16,6 +16,7 @@
   "map": {
     "description": "Every French basketball club on an interactive map.",
     "pageTitle": "Clubs map",
+    "clubsHere": "{count} clubs at this spot",
     "viewClub": "View club",
     "website": "Website",
     "retry": "Retry",
