@@ -16,7 +16,9 @@
       "light": "Light",
       "dark": "Dark",
       "highContrast": "High contrast"
-    }
+    },
+    "language": "Language",
+    "languageAriaLabel": "Language"
   },
   "footer": {
     "projectName": "Beyond The Arc",

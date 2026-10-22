@@ -6,6 +6,7 @@
 export * from "./footer/Footer";
 export * from "./header/HamburgerButton";
 export * from "./header/Header";
+export * from "./header/LocaleSwitcher";
 export * from "./header/Logo";
 export * from "./header/NavLinks";
 export * from "./header/ThemeToggle";
