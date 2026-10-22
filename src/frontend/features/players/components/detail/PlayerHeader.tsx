@@ -19,7 +19,7 @@ interface PlayerHeaderProps {
 
 /**
  * Identity block at the top of a player detail page: avatar, name, the team's
- * badges and the player's position, links to the team and its championship,
+ * badges and the player's position, links to the team and its pool's standings,
  * the club mark, and a band with age, height and weight.
  *
  * **Requires a fully hydrated player.** It reads `player.team.club` without
@@ -81,7 +81,7 @@ export async function PlayerHeader({ player }: PlayerHeaderProps) {
       title={name}
       category={team.category}
       gender={team.gender}
-      championship={team.pool?.championship}
+      pool={team.pool}
       extraBadges={
         <Badge variant={positionVariant(position)} size="sm">
           {tCommon(`positions.${position}`)}
