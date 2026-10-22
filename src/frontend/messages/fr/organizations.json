@@ -11,7 +11,14 @@
   },
   "committees": {
     "label": "Comités",
-    "description": "Comités départementaux gérant les clubs locaux."
+    "description": "Comités départementaux gérant les clubs locaux.",
+    "columns": {
+      "code": "N°",
+      "department": "Département",
+      "league": "Ligue",
+      "clubs": "Clubs"
+    },
+    "empty": "Aucun comité."
   },
   "clubs": {
     "label": "Clubs",
