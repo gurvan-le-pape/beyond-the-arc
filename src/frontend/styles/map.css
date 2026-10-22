@@ -4,10 +4,26 @@
   padding: 0 !important;
   background: transparent !important;
   box-shadow: none !important;
-  border-radius: 0.75rem !important;
-  overflow: hidden !important;
 }
 
-.maplibregl-popup-close-button {
-  display: none;
+/* The tip is a CSS triangle MapLibre colours white on whichever side faces the
+   card; match it to the card's surface so it holds in every theme. */
+.maplibregl-popup.maplibregl-popup-anchor-top .maplibregl-popup-tip,
+.maplibregl-popup.maplibregl-popup-anchor-top-left .maplibregl-popup-tip,
+.maplibregl-popup.maplibregl-popup-anchor-top-right .maplibregl-popup-tip {
+  border-bottom-color: rgb(var(--color-surface-subtle));
+}
+
+.maplibregl-popup.maplibregl-popup-anchor-bottom .maplibregl-popup-tip,
+.maplibregl-popup.maplibregl-popup-anchor-bottom-left .maplibregl-popup-tip,
+.maplibregl-popup.maplibregl-popup-anchor-bottom-right .maplibregl-popup-tip {
+  border-top-color: rgb(var(--color-surface-subtle));
+}
+
+.maplibregl-popup.maplibregl-popup-anchor-left .maplibregl-popup-tip {
+  border-right-color: rgb(var(--color-surface-subtle));
+}
+
+.maplibregl-popup.maplibregl-popup-anchor-right .maplibregl-popup-tip {
+  border-left-color: rgb(var(--color-surface-subtle));
 }

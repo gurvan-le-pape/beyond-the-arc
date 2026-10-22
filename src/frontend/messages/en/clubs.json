@@ -11,13 +11,13 @@
   "errorLoadingBoundaries": "Failed to load map boundaries",
   "detail": {
     "meta": "{name} — teams and location.",
-    "visitWebsite": "Visit",
     "teamsTitle": "Teams"
   },
   "map": {
     "description": "Every French basketball club on an interactive map.",
     "pageTitle": "Clubs map",
-    "seeDetails": "See details",
+    "viewClub": "View club",
+    "website": "Website",
     "retry": "Retry",
     "openPanel": "Club list",
     "closePanel": "Close panel",

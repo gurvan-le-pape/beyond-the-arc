@@ -149,6 +149,13 @@ export function ClubsMap({
     showDepartments,
   ]);
 
+  // A club's department, through the committee it belongs to: the popup's
+  // second line. Departments come already loaded for the department layer.
+  const departmentNameByCommittee = useMemo(
+    () => new Map(departments.map((d) => [d.id, d.department.name])),
+    [departments],
+  );
+
   // Generate club points for clustering
   const clubPoints = useMemo(() => {
     if (!showClubs) return null;
@@ -248,9 +255,16 @@ export function ClubsMap({
             longitude={selectedClub.longitude!}
             latitude={selectedClub.latitude!}
             onClose={() => setSelectedClub(null)}
+            // The card brings its own close button and width; MapLibre's
+            // default caps every popup at 240px.
+            closeButton={false}
+            maxWidth="320px"
           >
             <ClubPopupContent
               club={selectedClub}
+              departmentName={
+                departmentNameByCommittee.get(selectedClub.committeeId) ?? null
+              }
               onClose={() => setSelectedClub(null)}
             />
           </Popup>
