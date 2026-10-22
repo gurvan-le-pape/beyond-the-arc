@@ -72,6 +72,23 @@ export function formatMatchDate(date: Date | string, locale: string): string {
   return formatIn(date, locale, DATE_PARTS);
 }
 
+/**
+ * A match day in words — weekday, day and month, such as "Sat 17 Oct" — in the
+ * competition's zone and the viewer's locale. For a date close enough to now
+ * that the year goes without saying.
+ *
+ * @param date - the instant, as a `Date` or an ISO string
+ * @param locale - BCP 47 tag, from `useLocale()` or the route params
+ * @returns the short day, in the competition's zone
+ */
+export function formatMatchDay(date: Date | string, locale: string): string {
+  return formatIn(date, locale, {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+  });
+}
+
 /** Just the time, in the competition's zone and the viewer's locale. *
  * @param date - the instant, as a `Date` or an ISO string
  * @param locale - BCP 47 tag, from `useLocale()` or the route params

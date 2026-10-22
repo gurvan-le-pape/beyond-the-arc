@@ -1,5 +1,5 @@
 // src/frontend/shared/components/domain/LeaderboardTable.tsx
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 import type { Leaderboard } from "@/shared/types";
 import { formatTeamName } from "@/shared/utils";
@@ -10,7 +10,15 @@ import { ClubMark } from "./ClubMark";
 
 interface LeaderboardTableProps {
   readonly leaderboards: Leaderboard[];
+  /**
+   * `full` is the pool's table, every column. `summary` is a glance at it
+   * beside other content: rank, team, record, point difference and points,
+   * points last.
+   */
+  readonly variant?: "full" | "summary";
   readonly dropdown?: React.ReactNode;
+  /** Beside the title: a link onward, such as to the full table. */
+  readonly action?: React.ReactNode;
 }
 
 /**
@@ -24,10 +32,13 @@ interface LeaderboardTableProps {
  */
 export function LeaderboardTable({
   leaderboards,
+  variant = "full",
   dropdown,
+  action,
 }: LeaderboardTableProps) {
   const tCommon = useTranslations("common");
   const tCompetitions = useTranslations("competitions");
+  const locale = useLocale();
 
   // On a phone the table keeps rank, team, points, games played and point
   // difference — wins and losses follow from those — with abbreviated
@@ -43,27 +54,85 @@ export function LeaderboardTable({
     </>
   );
 
-  const columns: TableColumn<Leaderboard>[] = [
-    {
-      key: "rank",
-      header: tCommon("table.rank"),
-      numeric: true,
-      render: (row) => row.rank,
-      emphasis: true,
-    },
+  // A summary's columns are few and narrow, so its headings stay abbreviated
+  // at every width, and never break at the dash in "W–L".
+  const abbreviation = (abbr: string, full: string) => (
+    <abbr title={full} className="no-underline whitespace-nowrap">
+      {abbr}
+    </abbr>
+  );
+
+  const signed = new Intl.NumberFormat(locale, { signDisplay: "exceptZero" });
+
+  const rankColumn: TableColumn<Leaderboard> = {
+    key: "rank",
+    header: tCommon("table.rank"),
+    numeric: true,
+    render: (row) => row.rank,
+    emphasis: true,
+  };
+
+  const teamColumn: TableColumn<Leaderboard> = {
+    key: "team",
+    header: tCommon("table.team"),
+    align: "left",
+    render: (row) => (
+      <div className="flex items-center gap-2">
+        <span className="hidden sm:block">
+          <ClubMark clubName={row.clubName} size="sm" />
+        </span>
+        <span>{formatTeamName(row.clubName, row.teamNumber)}</span>
+      </div>
+    ),
+  };
+
+  // The summary leaves the club mark out: its narrow table gives the name the
+  // room instead.
+  const summaryColumns: TableColumn<Leaderboard>[] = [
+    rankColumn,
     {
       key: "team",
       header: tCommon("table.team"),
       align: "left",
+      render: (row) => formatTeamName(row.clubName, row.teamNumber),
+    },
+    {
+      key: "record",
+      header: abbreviation(
+        tCommon("table.abbr.record"),
+        tCommon("table.record"),
+      ),
+      numeric: true,
       render: (row) => (
-        <div className="flex items-center gap-2">
-          <span className="hidden sm:block">
-            <ClubMark clubName={row.clubName} size="sm" />
-          </span>
-          <span>{formatTeamName(row.clubName, row.teamNumber)}</span>
-        </div>
+        <span className="whitespace-nowrap">
+          {row.gamesWon}–{row.gamesLost}
+        </span>
       ),
     },
+    {
+      key: "pointDifference",
+      header: abbreviation(
+        tCommon("table.abbr.pointDifference"),
+        tCommon("table.pointDifference"),
+      ),
+      numeric: true,
+      render: (row) => signed.format(row.pointDifference),
+    },
+    {
+      key: "points",
+      header: abbreviation(
+        tCommon("stats.points.abbr"),
+        tCommon("stats.points.full"),
+      ),
+      numeric: true,
+      render: (row) => row.points,
+      emphasis: true,
+    },
+  ];
+
+  const fullColumns: TableColumn<Leaderboard>[] = [
+    rankColumn,
+    teamColumn,
     {
       key: "points",
       header: heading(
@@ -108,17 +177,16 @@ export function LeaderboardTable({
   ];
 
   return (
-    <Section title={tCompetitions("leaderboardTitle")}>
+    <Section title={tCompetitions("leaderboardTitle")} action={action}>
       {dropdown && (
         <div className="flex justify-end mb-2">
           <div className="min-w-[200px]">{dropdown}</div>
         </div>
       )}
       <DataTable
-        columns={columns}
+        columns={variant === "summary" ? summaryColumns : fullColumns}
         rows={leaderboards}
         getRowKey={(row) => row.id}
-        getRowHref={(row) => `/teams/${row.teamId}`}
         density="cozy"
         emptyMessage={tCompetitions("leaderboardEmpty")}
       />

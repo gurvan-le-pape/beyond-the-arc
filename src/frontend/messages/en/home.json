@@ -18,11 +18,10 @@
     "committees": "Committees"
   },
   "latestRound": {
-    "eyebrow": "Latest round · Matchday {matchday}",
+    "eyebrow": "Latest round · Matchday {matchday} · {date}",
     "resultsTitle": "Results",
-    "cta": "See the championship",
-    "fullStandings": "Full standings · {count} teams",
-    "allResults": "All {count} results"
+    "allResults": "All results",
+    "fullStandings": "Full table"
   },
   "explore": {
     "sectionTitle": "Search & explore",

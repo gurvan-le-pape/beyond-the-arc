@@ -22,22 +22,37 @@ export interface MatchupSide {
 
 type MatchupSize = "hero" | "card" | "row";
 
-interface MatchupProps {
+interface MatchupBaseProps {
   readonly home: MatchupSide;
   readonly away: MatchupSide;
-  /**
-   * `hero` heads the match page, `card` is a match in a list of matches, `row`
-   * a fixture among many in a championship's matchday.
-   */
-  readonly size: MatchupSize;
   /**
    * Link each side's club mark to its club and its name to its team. Off when
    * the matchup sits inside a link of its own, such as a list card.
    */
   readonly linked?: boolean;
+}
+
+interface FacingMatchupProps {
+  /**
+   * `hero` heads the match page, `card` is a match in a list of matches, `row`
+   * a fixture among many in a championship's matchday.
+   */
+  readonly size: MatchupSize;
   /** Shown under the score, such as a link to the match. */
   readonly belowScore?: ReactNode;
 }
+
+interface LineMatchupProps {
+  /**
+   * `line` stacks the two sides as two lines, each a name and its own score,
+   * for a short list of results. It has no score in the middle, so nothing
+   * goes under one.
+   */
+  readonly size: "line";
+  readonly belowScore?: never;
+}
+
+type MatchupProps = MatchupBaseProps & (FacingMatchupProps | LineMatchupProps);
 
 // `centre` is the mark's height, so the score lines up with the two marks
 // however many lines each team's name wraps onto.
@@ -117,11 +132,42 @@ function Side({ side, size, isWinner, linked }: SideProps) {
   );
 }
 
+interface LineProps {
+  readonly side: MatchupSide;
+  readonly isWinner: boolean;
+  readonly linked: boolean;
+}
+
+/** One side at `line` size: the team's name, then its score at the far end. */
+function Line({ side, isWinner, linked }: LineProps) {
+  const weight = isWinner
+    ? "font-bold text-text-heading"
+    : "font-normal text-text-body";
+
+  return (
+    <div className="flex items-baseline justify-between gap-3">
+      <span title={side.teamName} className={cn("min-w-0 truncate", weight)}>
+        {linked ? (
+          <TextLink href={`/teams/${side.teamId}`} variant="plain">
+            {side.teamName}
+          </TextLink>
+        ) : (
+          side.teamName
+        )}
+      </span>
+      <span className={cn("shrink-0 tabular-nums", weight)}>
+        {side.score ?? "–"}
+      </span>
+    </div>
+  );
+}
+
 /**
  * A match: its two sides — club mark and team name, home on the left — and
- * the score between them, or "upcoming" before it is played.
+ * the score between them, or "upcoming" before it is played; or, at `line`
+ * size, home above away with each side's score beside its name.
  *
- * The one way the app draws a match, at three sizes. The winner, from
+ * The one way the app draws a match, at four sizes. The winner, from
  * `matchWinner`, is shown the same way at every size: its name and its score
  * in bold heading text, the other side's in body text.
  */
@@ -133,6 +179,15 @@ export function Matchup({
   belowScore,
 }: MatchupProps) {
   const winner: MatchSide | null = matchWinner(home.score, away.score);
+
+  if (size === "line") {
+    return (
+      <div className="flex flex-col gap-1.5 text-sm">
+        <Line side={home} isWinner={winner === "home"} linked={linked} />
+        <Line side={away} isWinner={winner === "away"} linked={linked} />
+      </div>
+    );
+  }
 
   return (
     <div
