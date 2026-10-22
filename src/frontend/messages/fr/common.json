@@ -127,8 +127,8 @@
     }
   },
   "gender": {
-    "male": "Homme",
-    "female": "Femme"
+    "male": "Masculin",
+    "female": "Féminin"
   },
   "category": {
     "U11": "U11",
