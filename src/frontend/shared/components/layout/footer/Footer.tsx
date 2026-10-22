@@ -15,8 +15,8 @@ import {
 import { Text } from "../../typography";
 
 /**
- * The site footer: brand blurb, social links, two link groups, and the
- * copyright line.
+ * The site footer: brand blurb, social links, two link groups, and a closing
+ * line — copyright on one side, where the data comes from on the other.
  *
  * **`"use client"` is here for the copyright year.** `new Date()` in a server
  * component is evaluated when the page renders — which, for a statically
@@ -66,7 +66,7 @@ export function Footer() {
   return (
     <footer className="surface-base border-t border-divide mt-auto">
       <div className="px-4 sm:px-6 lg:px-8 py-6">
-        <div className="flex flex-col items-center text-center lg:items-stretch lg:text-left lg:flex-row lg:justify-between lg:flex-wrap gap-8 mb-4">
+        <div className="flex flex-col lg:flex-row lg:justify-between gap-8 mb-6">
           <div className="space-y-2 max-w-sm">
             <div>
               {/* Styled as a heading, but not one: the footer is not a section
@@ -75,15 +75,14 @@ export function Footer() {
               <Text variant="h3" as="p" className="mb-2">
                 {t("footer.projectName")}
               </Text>
-              <Text variant="body" as="p" className="leading-relaxed mb-3">
+              <Text variant="body" as="p" className="leading-relaxed">
                 {t("footer.tagline")}
-              </Text>
-              <Text variant="caption" as="p">
-                {t("footer.portfolioNote")}
               </Text>
             </div>
 
-            <div className="flex gap-2 pt-1 justify-center lg:justify-start">
+            {/* Pulled left by the icon buttons' padding, so the icons line up
+                with the text above. */}
+            <div className="flex gap-2 -ml-2">
               <a
                 href={GITLAB_PROFILE_URL}
                 target="_blank"
@@ -115,12 +114,11 @@ export function Footer() {
             </div>
           </div>
 
-          {/* The link groups are one navigation region. `contents` keeps
-              them as direct flex children of the row above, so the landmark is
-              added without moving anything. */}
+          {/* The link groups are one navigation region: side by side from a
+              phone up, so the footer does not stack into a long column. */}
           <nav
             aria-label={t("footer.navigationAriaLabel")}
-            className="contents"
+            className="grid grid-cols-2 gap-8 sm:flex sm:gap-24 lg:gap-40"
           >
             <div>
               <Text variant="overline" className="mb-4 block">
@@ -172,37 +170,18 @@ export function Footer() {
           </nav>
         </div>
 
-        <div className="pt-4 border-t border-divide">
-          <div className="flex flex-col gap-2">
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-1">
-              <Text variant="body" as="p" className="text-center sm:text-left">
-                {t("footer.copyright", {
-                  year: currentYear,
-                  name: "Gurvan LE PAPE",
-                })}
-              </Text>
-              <Text variant="caption" as="p">
-                {t("footer.madeWith")}
-              </Text>
-            </div>
-
-            <div className="flex flex-col sm:flex-row justify-center items-center gap-1">
-              <Text variant="caption" as="span">
-                {t("footer.nonCommercial")}
-              </Text>
-              <Text
-                variant="caption"
-                as="span"
-                className="hidden sm:inline"
-                aria-hidden="true"
-              >
-                •
-              </Text>
-              <Text variant="caption" as="span">
-                {t("footer.dataDisclaimer")}
-              </Text>
-            </div>
-          </div>
+        <div className="pt-4 border-t border-divide flex flex-col sm:flex-row sm:justify-between gap-x-8 gap-y-1">
+          <Text variant="caption" as="p">
+            {t("footer.copyright", {
+              year: currentYear,
+              name: "Gurvan LE PAPE",
+            })}
+            <span aria-hidden="true"> · </span>
+            {t("footer.nonCommercial")}
+          </Text>
+          <Text variant="caption" as="p">
+            {t("footer.dataDisclaimer")}
+          </Text>
         </div>
       </div>
     </footer>
