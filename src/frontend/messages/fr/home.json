@@ -21,7 +21,8 @@
     "eyebrow": "Dernière journée · Journée {matchday}",
     "resultsTitle": "Résultats",
     "cta": "Voir le championnat",
-    "fullStandings": "Classement complet · {count} équipes"
+    "fullStandings": "Classement complet · {count} équipes",
+    "allResults": "Les {count} résultats"
   },
   "explore": {
     "sectionTitle": "Rechercher & explorer",

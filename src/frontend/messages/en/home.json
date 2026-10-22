@@ -21,7 +21,8 @@
     "eyebrow": "Latest round · Matchday {matchday}",
     "resultsTitle": "Results",
     "cta": "See the championship",
-    "fullStandings": "Full standings · {count} teams"
+    "fullStandings": "Full standings · {count} teams",
+    "allResults": "All {count} results"
   },
   "explore": {
     "sectionTitle": "Search & explore",

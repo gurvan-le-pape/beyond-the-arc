@@ -8,9 +8,16 @@ import { LeaderboardTable, Matchup } from "@/shared/components/domain";
 import { Card, TextLink } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import type { Leaderboard } from "@/shared/types";
+import { cn } from "@/shared/utils";
 
 /** Standings rows shown before the link to the full table. */
 const STANDINGS_PREVIEW_ROWS = 5;
+
+/**
+ * Results shown on a phone, where the cards stack one per row; wider screens
+ * lay out the whole round in two or three columns.
+ */
+const PHONE_RESULTS = 3;
 
 interface LatestRoundSectionProps {
   /** The championship's one-line title, already translated. */
@@ -58,8 +65,11 @@ export function LatestRoundSection({
       <div className="flex flex-col gap-8">
         <Section title={t("resultsTitle")}>
           <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-            {matches.map((match) => (
-              <li key={match.id}>
+            {matches.map((match, index) => (
+              <li
+                key={match.id}
+                className={cn(index >= PHONE_RESULTS && "max-sm:hidden")}
+              >
                 <Card padding="sm">
                   <Matchup
                     home={matchupSide(match.homeTeam, match.homeTeamScore)}
@@ -78,6 +88,13 @@ export function LatestRoundSection({
               </li>
             ))}
           </ul>
+          {matches.length > PHONE_RESULTS && (
+            <span className="mt-3 block text-sm sm:hidden">
+              <TextLink href={championshipHref}>
+                {t("allResults", { count: matches.length })}
+              </TextLink>
+            </span>
+          )}
         </Section>
 
         <div className="flex flex-col gap-3">
