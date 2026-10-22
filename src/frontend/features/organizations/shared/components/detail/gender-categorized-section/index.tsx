@@ -5,8 +5,6 @@ import { useTranslations } from "next-intl";
 
 import { ChampionshipListItem } from "@/features/competitions/championships/components";
 import type { Championship } from "@/features/competitions/championships/types";
-import type { ClubTeamInfo } from "@/features/organizations/clubs/types";
-import { TeamListItem } from "@/features/teams/components";
 import { Section } from "@/shared/components/blocks";
 import type { Category } from "@/shared/constants";
 import { Gender } from "@/shared/constants";
@@ -15,9 +13,10 @@ import { groupBy } from "@/shared/utils";
 import { GenderCategorizedList } from "./GenderCategorizedList";
 import { useToggleCategory } from "./useToggleCategory";
 
-type SectionItem =
-  | { type: "championship"; data: Championship }
-  | { type: "team"; data: ClubTeamInfo; clubName: string };
+interface SectionItem {
+  type: "championship";
+  data: Championship;
+}
 
 function getGender(item: SectionItem): Gender {
   return item.data.gender;
@@ -32,12 +31,7 @@ function getId(item: SectionItem): number | string {
 }
 
 function renderItem(item: SectionItem) {
-  switch (item.type) {
-    case "championship":
-      return <ChampionshipListItem championship={item.data} />;
-    case "team":
-      return <TeamListItem team={item.data} clubName={item.clubName} />;
-  }
+  return <ChampionshipListItem championship={item.data} />;
 }
 
 interface GenderCategorizedSectionProps {

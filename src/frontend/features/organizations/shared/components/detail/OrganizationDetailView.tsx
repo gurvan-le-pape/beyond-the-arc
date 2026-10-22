@@ -1,5 +1,5 @@
 // src/frontend/features/organizations/shared/components/detail/OrganizationDetailView.tsx
-import type { ComponentProps } from "react";
+import type { ComponentProps, ReactNode } from "react";
 
 import {
   Breadcrumb,
@@ -23,13 +23,16 @@ interface OrganizationDetailViewProps {
     basePath: string;
     showSearch?: boolean;
   };
-  readonly section: ComponentProps<typeof GenderCategorizedSection>;
+  /** Items grouped by gender, then category, under the chip list. */
+  readonly section?: ComponentProps<typeof GenderCategorizedSection>;
+  /** The page's own content in place of `section`, such as a club's teams. */
+  readonly children?: ReactNode;
 }
 
 /**
  * Shared body of the three organization detail pages (committee, league,
  * club): breadcrumb, header, info panel, an optional searchable chip list,
- * and a gender-categorized section. The page owns `<PageLayout>` (PageLayout
+ * and then either a gender-categorized section or the page's own children. The page owns `<PageLayout>` (PageLayout
  * must not be imported into feature components) and shapes `section.items`.
  */
 export function OrganizationDetailView({
@@ -38,6 +41,7 @@ export function OrganizationDetailView({
   info,
   chipList,
   section,
+  children,
 }: OrganizationDetailViewProps) {
   return (
     <>
@@ -45,7 +49,8 @@ export function OrganizationDetailView({
       <OrganizationHeader {...header} />
       <OrganizationInfo {...info} />
       {chipList ? <SearchableChipList {...chipList} /> : null}
-      <GenderCategorizedSection {...section} />
+      {section ? <GenderCategorizedSection {...section} /> : null}
+      {children}
     </>
   );
 }

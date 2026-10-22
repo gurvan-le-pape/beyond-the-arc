@@ -11,7 +11,16 @@
   "errorLoadingBoundaries": "Failed to load map boundaries",
   "detail": {
     "meta": "{name} — teams and location.",
-    "teamsTitle": "Teams"
+    "teamsTitle": "Teams",
+    "teamColumns": {
+      "category": "Category",
+      "gender": "Gender",
+      "number": "No.",
+      "numberFull": "Team number within the club",
+      "championship": "Championship",
+      "rank": "Rank",
+      "record": "Record (W–L)"
+    }
   },
   "map": {
     "description": "Every French basketball club on an interactive map.",

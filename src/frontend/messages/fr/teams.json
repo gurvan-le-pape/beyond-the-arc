@@ -14,9 +14,7 @@
     "matchHistoryTitle": "Historique des matchs",
     "upcomingMatchesTitle": "Prochains matchs",
     "shotchartTitle": "Carte des tirs",
-    "shotchartDescription": "Où l'équipe a tiré cette saison, et combien de fois depuis chaque endroit.",
-    "won": "V",
-    "lost": "D"
+    "shotchartDescription": "Où l'équipe a tiré cette saison, et combien de fois depuis chaque endroit."
   },
   "itemLabel": "{count, plural, one {équipe} other {équipes}}"
 }
