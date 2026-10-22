@@ -6,7 +6,6 @@ import { formatTeamName } from "@/shared/utils";
 
 import { Section } from "../blocks";
 import { DataTable, type TableColumn } from "../table";
-import { ClubMark } from "./ClubMark";
 
 interface LeaderboardTableProps {
   readonly leaderboards: Leaderboard[];
@@ -76,18 +75,9 @@ export function LeaderboardTable({
     key: "team",
     header: tCommon("table.team"),
     align: "left",
-    render: (row) => (
-      <div className="flex items-center gap-2">
-        <span className="hidden sm:block">
-          <ClubMark clubName={row.clubName} size="sm" />
-        </span>
-        <span>{formatTeamName(row.clubName, row.teamNumber)}</span>
-      </div>
-    ),
+    render: (row) => formatTeamName(row.clubName, row.teamNumber),
   };
 
-  // The summary leaves the club mark out: its narrow table gives the name the
-  // room instead.
   const summaryColumns: TableColumn<Leaderboard>[] = [
     rankColumn,
     {

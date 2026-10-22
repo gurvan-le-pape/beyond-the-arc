@@ -20,9 +20,11 @@ interface ClubMarkProps {
 /**
  * A club, drawn as its monogram on a colour of its own.
  *
- * The one way the app draws a club: there are no club logos to show, and a
- * monogram in a stable colour tells clubs apart where one generic logo did
- * not. The colours per theme live in `globals.css` (`.club-mark`), keyed on
+ * The visual of a page that heads with a club or a team — the club, team,
+ * player and match headers — where there are no club logos to show. It is
+ * not drawn in lists or tables: thousands of clubs share a few hundred pairs
+ * of initials, so beside a written name it adds nothing that tells clubs
+ * apart. The colours per theme live in `globals.css` (`.club-mark`), keyed on
  * the `--club-hue` set here, and are contrast-tested for every hue.
  *
  * Decorative: the club's name is always written next to it or on the link

@@ -3,7 +3,6 @@ import { Text } from "@/shared/components/typography";
 import type { CompetitionLevel } from "@/shared/constants";
 import { cn } from "@/shared/utils";
 
-import { ClubMark } from "./ClubMark";
 import { getLevelConfig } from "./ListEntityCard";
 
 interface EntityCardCommittee {
@@ -12,8 +11,6 @@ interface EntityCardCommittee {
 }
 
 interface EntityCardBodyProps {
-  /** Club name used to resolve the logo. */
-  readonly clubName: string | null | undefined;
   /** Primary line (club name for teams, player name for players). */
   readonly title: string;
   readonly committee?: EntityCardCommittee | null;
@@ -24,11 +21,10 @@ interface EntityCardBodyProps {
 }
 
 /**
- * The single-entity body of the teams and players list cards: logo, identity
- * (title + number + committee/league), and the tinted number block.
+ * The single-entity body of the teams and players list cards: identity
+ * (title + number + committee/league) and the tinted number block.
  */
 export function EntityCardBody({
-  clubName,
   title,
   committee,
   number,
@@ -39,8 +35,6 @@ export function EntityCardBody({
   return (
     <div className="px-5 py-4 flex flex-col sm:flex-row gap-4">
       <div className="flex items-center gap-4 flex-1 min-w-0">
-        <ClubMark clubName={clubName} size="lg" />
-
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 min-w-0">
             <p className="text-lg font-bold text-text-heading truncate">
