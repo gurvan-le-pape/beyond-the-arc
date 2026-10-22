@@ -1,7 +1,9 @@
 // src/frontend/shared/components/domain/PerGameStatsPanel.tsx
 import { useTranslations } from "next-intl";
 
-import { InfoBox, Section } from "@/shared/components/blocks";
+import { Section } from "@/shared/components/blocks";
+import { Card } from "@/shared/components/primitives";
+import { StatCell } from "@/shared/components/stats";
 import type { PlayerCareerStats } from "@/shared/types";
 
 interface PerGameStatsPanelProps {
@@ -10,22 +12,56 @@ interface PerGameStatsPanelProps {
 }
 
 const STAT_FIELDS = [
-  { key: "gamesPlayed", value: (s) => s.gamesPlayed },
-  { key: "pointsPerGame", value: (s) => s.pointsPerGame.toFixed(1) },
-  { key: "reboundsPerGame", value: (s) => s.reboundsPerGame.toFixed(1) },
-  { key: "assistsPerGame", value: (s) => s.assistsPerGame.toFixed(1) },
-  { key: "stealsPerGame", value: (s) => s.stealsPerGame.toFixed(1) },
-  { key: "blocksPerGame", value: (s) => s.blocksPerGame.toFixed(1) },
-  { key: "turnoversPerGame", value: (s) => s.turnoversPerGame.toFixed(1) },
-  { key: "foulsPerGame", value: (s) => s.foulsPerGame.toFixed(1) },
+  {
+    abbr: "gamesPlayedShort",
+    full: "gamesPlayed",
+    value: (s) => String(s.gamesPlayed),
+  },
+  {
+    abbr: "points.abbr",
+    full: "pointsPerGame",
+    value: (s) => s.pointsPerGame.toFixed(1),
+  },
+  {
+    abbr: "rebounds.abbr",
+    full: "reboundsPerGame",
+    value: (s) => s.reboundsPerGame.toFixed(1),
+  },
+  {
+    abbr: "assists.abbr",
+    full: "assistsPerGame",
+    value: (s) => s.assistsPerGame.toFixed(1),
+  },
+  {
+    abbr: "steals.abbr",
+    full: "stealsPerGame",
+    value: (s) => s.stealsPerGame.toFixed(1),
+  },
+  {
+    abbr: "blocks.abbr",
+    full: "blocksPerGame",
+    value: (s) => s.blocksPerGame.toFixed(1),
+  },
+  {
+    abbr: "turnovers.abbr",
+    full: "turnoversPerGame",
+    value: (s) => s.turnoversPerGame.toFixed(1),
+  },
+  {
+    abbr: "fouls.abbr",
+    full: "foulsPerGame",
+    value: (s) => s.foulsPerGame.toFixed(1),
+  },
 ] as const satisfies readonly {
-  key: string;
-  value: (s: PlayerCareerStats) => string | number;
+  abbr: string;
+  full: string;
+  value: (s: PlayerCareerStats) => string;
 }[];
 
 /**
  * A season or career per-game panel: games played, then the seven per-game
- * averages.
+ * averages, as one strip of numbers under abbreviated labels. Each
+ * abbreviation carries its full label as its title.
  *
  * Shared verbatim by player detail (career) and team detail (season) — both
  * consume the same aggregate shape, so there is one panel, one field list and
@@ -40,15 +76,16 @@ export function PerGameStatsPanel({ stats }: PerGameStatsPanelProps) {
 
   return (
     <Section title={tCommon("stats.seasonStatsTitle")}>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <Card padding="none" className="grid grid-cols-4 lg:grid-cols-8">
         {STAT_FIELDS.map((field) => (
-          <InfoBox
-            key={field.key}
-            label={tCommon(`stats.${field.key}`)}
+          <StatCell
+            key={field.full}
+            label={tCommon(`stats.${field.abbr}`)}
+            fullLabel={tCommon(`stats.${field.full}`)}
             value={field.value(stats)}
           />
         ))}
-      </div>
+      </Card>
     </Section>
   );
 }
