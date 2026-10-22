@@ -11,13 +11,13 @@
   "errorLoadingBoundaries": "Impossible de charger les contours de la carte",
   "detail": {
     "meta": "{name} — équipes et localisation.",
-    "visitWebsite": "Visiter",
     "teamsTitle": "Équipes"
   },
   "map": {
     "description": "Tous les clubs de basket français sur une carte interactive.",
     "pageTitle": "Carte des clubs",
-    "seeDetails": "Voir détails",
+    "viewClub": "Voir le club",
+    "website": "Site web",
     "retry": "Réessayer",
     "openPanel": "Liste des clubs",
     "closePanel": "Réduire le panneau",
