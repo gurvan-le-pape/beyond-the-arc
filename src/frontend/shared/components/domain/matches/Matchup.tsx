@@ -113,7 +113,7 @@ function Side({ side, size, isWinner, linked }: SideProps) {
       <span
         title={side.teamName}
         className={cn(
-          "w-full leading-snug break-words [hyphens:auto]",
+          "w-full leading-snug break-words",
           config.name,
           isWinner
             ? "font-bold text-text-heading"
