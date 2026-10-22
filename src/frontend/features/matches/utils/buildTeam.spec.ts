@@ -26,7 +26,7 @@ describe("buildTeam", () => {
     const side = buildTeam(home, null, [], stats);
 
     expect(side.id).toBe(10);
-    expect(side.name).toBe("Garonne Avenir - 1");
+    expect(side.name).toBe("Garonne Avenir\u00a0-\u2060\u00a01");
     expect(side.clubId).toBe(100);
     expect(side.score).toBeNull();
     expect(side.players).toEqual([]);
