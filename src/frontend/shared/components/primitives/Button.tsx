@@ -1,9 +1,8 @@
 // src/frontend/shared/components/primitives/Button.tsx
 //
-// THREE exports live here, split by concern:
+// TWO exports live here, split by concern:
 //
 //   Button      — universal primitive. No layout knowledge.
-//   NavButton   — navigation and list-item patterns.
 //   PillButton  — round-selector and carousel patterns.
 //
 
@@ -130,85 +129,6 @@ export const Button = ({
     // Before the spread: callers can still opt into "submit"/"reset".
     type="button"
     className={cn(buttonVariants({ variant, size, className }))}
-    disabled={disabled || isLoading}
-    aria-busy={isLoading || undefined}
-    {...props}
-  >
-    {isLoading ? <LoadingSpinner size="sm" /> : children}
-  </button>
-);
-
-// ---------------------------------------------------------------------------
-// NavButton — navigation and list-item patterns
-//
-// Kept separate because these variants know about layout context
-// (a sidebar, a nav bar, a categorised list). Button shouldn't know that.
-// ---------------------------------------------------------------------------
-
-const navButtonVariants = cva(BASE, {
-  variants: {
-    variant: {
-      // List item variants
-      listItem:
-        "w-full justify-start text-left rounded-none border-l-4 border-l-transparent " +
-        "hover:bg-tint-primary hover:border-l-solid-primary " +
-        "focus-ring-inset active:scale-100",
-
-      // Expandable section headers
-      categoryHeader:
-        "w-full justify-start gap-2 text-left rounded " +
-        "hover:bg-transparent active:scale-100",
-    },
-
-    size: {
-      md: "h-10 px-4 text-base",
-      lg: "h-12 px-6 text-lg",
-      // List items and category headers control their own height
-      auto: "h-auto",
-    },
-  },
-  defaultVariants: {
-    variant: "listItem",
-    size: "md",
-  },
-});
-
-export interface NavButtonProps
-  extends
-    ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof navButtonVariants> {
-  isLoading?: boolean;
-  ref?: React.Ref<HTMLButtonElement>;
-}
-
-/**
- * NavButton — navigation and list-item buttons.
- *
- * Use for: sidebar nav, expandable section headers, categorised list rows.
- * Links between sibling pages wear `segmentOptionVariants` instead.
- * These variants know about their layout context — that's why they're separate
- * from the universal Button.
- *
- * @example
- * <NavButton variant="listItem" size="auto">Club name</NavButton>
- * <NavButton variant="categoryHeader" size="auto">
- *   <ChevronDownIcon /> Departmental
- * </NavButton>
- */
-export const NavButton = ({
-  className,
-  variant,
-  size,
-  isLoading,
-  children,
-  disabled,
-  ref,
-  ...props
-}: NavButtonProps) => (
-  <button
-    ref={ref}
-    type="button"
-    className={cn(navButtonVariants({ variant, size, className }))}
     disabled={disabled || isLoading}
     aria-busy={isLoading || undefined}
     {...props}

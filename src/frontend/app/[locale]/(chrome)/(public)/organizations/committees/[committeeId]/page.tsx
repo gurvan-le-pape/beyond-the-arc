@@ -8,6 +8,7 @@ import {
 } from "next-intl/server";
 
 import { serverChampionshipsService } from "@/features/competitions/championships/api/championships.server";
+import { ChampionshipGrid } from "@/features/competitions/championships/components";
 import { serverClubsService } from "@/features/organizations/clubs/api/clubs.server";
 import { serverCommitteesService } from "@/features/organizations/committees/api/committees.server";
 import { OrganizationDetailView } from "@/features/organizations/shared/components";
@@ -141,17 +142,20 @@ async function CommitteePage({
           searchPlaceholder: tCommon("searchPlaceholder"),
           basePath: "/organizations/clubs",
         }}
-        section={{
-          items: championships.map((c) => ({ type: "championship", data: c })),
-          title: tCompetitions("championshipsSectionTitle"),
-          emptyState: (
-            <EmptyState
-              icon={<Trophy className="w-16 h-16" />}
-              title={tCompetitions("noChampionships")}
-            />
-          ),
-        }}
-      />
+      >
+        {championships.length > 0 ? (
+          <ChampionshipGrid
+            championships={championships}
+            title={tCompetitions("championshipsSectionTitle")}
+            emptyMessage={tCompetitions("noChampionships")}
+          />
+        ) : (
+          <EmptyState
+            icon={<Trophy className="w-16 h-16" />}
+            title={tCompetitions("noChampionships")}
+          />
+        )}
+      </OrganizationDetailView>
     </PageLayout>
   );
 }
