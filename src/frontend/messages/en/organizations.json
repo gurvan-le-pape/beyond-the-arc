@@ -33,5 +33,14 @@
     "league": "League",
     "committee": "Committee",
     "visitWebsite": "Visit website"
+  },
+  "header": {
+    "leagueKind": "Regional league",
+    "committeeKind": "Departmental committee",
+    "committees": "{count, plural, one {committee} other {committees}}",
+    "clubs": "{count, plural, one {club} other {clubs}}",
+    "championships": "{count, plural, one {championship} other {championships}}",
+    "teams": "{count, plural, one {team} other {teams}}",
+    "record": "Record (W–L)"
   }
 }

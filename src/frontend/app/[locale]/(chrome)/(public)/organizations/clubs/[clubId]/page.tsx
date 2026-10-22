@@ -1,7 +1,11 @@
 // src/frontend/app/[locale]/(chrome)/(public)/organizations/clubs/[clubId]/page.tsx
 import { Users } from "lucide-react";
 import type { Metadata } from "next";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import {
+  getFormatter,
+  getTranslations,
+  setRequestLocale,
+} from "next-intl/server";
 
 import { serverClubsService } from "@/features/organizations/clubs/api/clubs.server";
 import { OrganizationDetailView } from "@/features/organizations/shared/components";
@@ -61,6 +65,21 @@ async function ClubPage({ params }: LocalePageProps<{ clubId: string }>) {
     .getById(clubId)
     .catch(handleServerError);
 
+  const format = await getFormatter({ locale });
+  const championshipCount = new Set(
+    club.teams.flatMap((team) =>
+      team.pool ? [team.pool.championship.id] : [],
+    ),
+  ).size;
+  const won = club.teams.reduce(
+    (sum, team) => sum + (team.leaderboard?.gamesWon ?? 0),
+    0,
+  );
+  const lost = club.teams.reduce(
+    (sum, team) => sum + (team.leaderboard?.gamesLost ?? 0),
+    0,
+  );
+
   return (
     <PageLayout>
       <OrganizationDetailView
@@ -85,6 +104,24 @@ async function ClubPage({ params }: LocalePageProps<{ clubId: string }>) {
               {club.zipCode}
             </>
           ),
+          stats: [
+            {
+              value: format.number(club.teams.length),
+              label: tOrganizations("header.teams", {
+                count: club.teams.length,
+              }),
+            },
+            {
+              value: format.number(championshipCount),
+              label: tOrganizations("header.championships", {
+                count: championshipCount,
+              }),
+            },
+            {
+              value: `${format.number(won)}–${format.number(lost)}`,
+              label: tOrganizations("header.record"),
+            },
+          ],
         }}
         info={{
           address: club.address,
