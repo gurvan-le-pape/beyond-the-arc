@@ -119,7 +119,7 @@ export function FiltersShell({
       </div>
 
       <div className="hidden md:block">
-        <Card variant="highlighted" padding="lg">
+        <Card padding="lg">
           <div className="space-y-5">
             {children}
             {hasActiveFilters && (

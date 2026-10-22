@@ -36,7 +36,7 @@ export function ChampionshipHeader({ championship }: ChampionshipHeaderProps) {
   });
 
   return (
-    <Card variant="highlighted" padding="none">
+    <Card padding="none">
       <Text variant="pageTitle" className="sr-only">
         {documentTitle}
       </Text>
