@@ -2,13 +2,12 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { TitleSection } from "@/features/organizations/components";
 import { serverLeaguesService } from "@/features/organizations/leagues/api/leagues.server";
 import { LeaguesGrid } from "@/features/organizations/leagues/components";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
-import { ViewLevel } from "@/shared/constants";
+import { Text } from "@/shared/components/typography";
 import type { LocalePageProps } from "@/shared/types";
 import { handleServerError } from "@/shared/utils";
 
@@ -37,7 +36,10 @@ export async function generateMetadata({
 async function LeaguesPage({ params }: LocalePageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations({ locale, namespace: "organizations" });
+  const [t, tCommon] = await Promise.all([
+    getTranslations({ locale, namespace: "organizations" }),
+    getTranslations({ locale, namespace: "common" }),
+  ]);
 
   const leagues = await serverLeaguesService.getAll().catch(handleServerError);
 
@@ -49,7 +51,9 @@ async function LeaguesPage({ params }: LocalePageProps) {
           { label: t("leagues.label"), current: true },
         ]}
       />
-      <TitleSection viewLevel={ViewLevel.REGION} />
+      <Text variant="pageTitle">
+        {tCommon("sectionTitles.regionalLeagues")}
+      </Text>
       <LeaguesGrid leagues={leagues} />
     </PageLayout>
   );

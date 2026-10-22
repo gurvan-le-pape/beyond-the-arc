@@ -4,11 +4,10 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { serverCommitteesService } from "@/features/organizations/committees/api/committees.server";
 import { CommitteesGrid } from "@/features/organizations/committees/components";
-import { TitleSection } from "@/features/organizations/components";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
-import { ViewLevel } from "@/shared/constants";
+import { Text } from "@/shared/components/typography";
 import type { LocalePageProps } from "@/shared/types";
 import { handleServerError } from "@/shared/utils";
 
@@ -37,7 +36,10 @@ export async function generateMetadata({
 async function CommitteesPage({ params }: LocalePageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations({ locale, namespace: "organizations" });
+  const [t, tCommon] = await Promise.all([
+    getTranslations({ locale, namespace: "organizations" }),
+    getTranslations({ locale, namespace: "common" }),
+  ]);
 
   const committees = await serverCommitteesService
     .getAll()
@@ -51,7 +53,9 @@ async function CommitteesPage({ params }: LocalePageProps) {
           { label: t("committees.label"), current: true },
         ]}
       />
-      <TitleSection viewLevel={ViewLevel.DEPARTMENT} />
+      <Text variant="pageTitle">
+        {tCommon("sectionTitles.departmentalCommittees")}
+      </Text>
       <CommitteesGrid committees={committees} />
     </PageLayout>
   );

@@ -15,4 +15,3 @@ export * from "./organization-types";
 export * from "./positions";
 export * from "./request-id-header";
 export * from "./roles";
-export * from "./view-levels";
