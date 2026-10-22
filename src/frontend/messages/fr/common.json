@@ -21,7 +21,7 @@
     "subtitle": "Découvrez les compétitions, clubs, équipes et statistiques des joueurs. Plongez au cœur du basket avec des données en temps réel, des fonctionnalités interactives et une expérience moderne et intuitive."
   },
   "stats": {
-    "seasonStatsTitle": "Statistiques Saison",
+    "seasonStatsTitle": "Statistiques de la saison",
     "points": {
       "abbr": "PTS",
       "full": "Points"
@@ -113,8 +113,8 @@
     "viewMatch": "Voir le match {home} contre {away}"
   },
   "sectionTitles": {
-    "regionalLeagues": "Ligues Régionales",
-    "departmentalCommittees": "Comités Départementaux",
+    "regionalLeagues": "Ligues régionales",
+    "departmentalCommittees": "Comités départementaux",
     "clubs": "Clubs"
   },
   "competition": {

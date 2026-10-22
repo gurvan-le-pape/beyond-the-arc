@@ -5,18 +5,18 @@
     "email": "Email",
     "gitlab": "GitLab",
     "linkedin": "LinkedIn",
-    "aboutProject": "À propos du Projet",
+    "aboutProject": "À propos du projet",
     "projectDescription": "Ceci est un projet portfolio présentant des compétences en développement full-stack avec des technologies web modernes. Conçu pour démontrer une architecture propre, un design évolutif et une attention aux détails."
   },
   "about": {
-    "title": "À propos du Projet",
+    "title": "À propos du projet",
     "intro": "Une démonstration complète d'ingénierie full-stack moderne avec un accent sur la maintenabilité, la clarté et l'évolutivité.",
     "modular": {
-      "title": "Architecture Modulaire",
+      "title": "Architecture modulaire",
       "description": "Les fonctionnalités sont décomposées en petits composants et services ciblés, rendant le code facile à naviguer et à étendre."
     },
     "separation": {
-      "title": "Séparation des Préoccupations",
+      "title": "Séparation des préoccupations",
       "description": "L'interface utilisateur, la logique métier, la configuration et l'accès aux données sont clairement séparés, suivant les meilleures pratiques."
     },
     "reusability": {
@@ -28,7 +28,7 @@
       "description": "La structure permet d'ajouter de nouvelles fonctionnalités, modules ou endpoints avec un minimum de friction, adapté à la croissance à long terme."
     },
     "readability": {
-      "title": "Lisibilité & Intégration",
+      "title": "Lisibilité et intégration",
       "description": "Des modèles cohérents et une organisation claire facilitent la compréhension et le travail avec le code pour les nouveaux contributeurs."
     },
     "i18n": {
@@ -36,21 +36,21 @@
       "description": "Les chaînes de caractères sont externalisées pour faciliter la traduction et la localisation dans plusieurs langues."
     },
     "tooling": {
-      "title": "Outillage Moderne",
+      "title": "Outillage moderne",
       "description": "Utilise TypeScript, le formatage automatisé, le linting et un système de build robuste pour la fiabilité et la productivité."
     },
-    "exploreTitle": "Explorez le Projet",
+    "exploreTitle": "Explorez le projet",
     "explore": "Découvrez les fonctionnalités, l'architecture et la documentation pour en savoir plus sur ce projet et mon approche de l'ingénierie logicielle.",
-    "viewProduct": "Voir le Produit",
+    "viewProduct": "Voir le produit",
     "viewArchitecture": "Voir l'Architecture"
   },
   "architecture": {
-    "title": "Architecture & Stack Technique",
+    "title": "Architecture et stack technique",
     "subtitle": "Une application full-stack moderne et évolutive construite avec des technologies de pointe",
     "frontendTitle": "Frontend",
     "backendTitle": "Backend",
-    "devopsTitle": "DevOps & Outillage",
-    "systemArchitecture": "Architecture Système",
+    "devopsTitle": "DevOps et outillage",
+    "systemArchitecture": "Architecture système",
     "frontend": {
       "nextjsDesc": "Framework React avec SSR/SSG",
       "tsDesc": "Développement type-safe",
@@ -79,15 +79,15 @@
     },
     "features": {
       "modular": {
-        "title": "Architecture Modulaire",
+        "title": "Architecture modulaire",
         "description": "Séparation claire des préoccupations avec composants réutilisables"
       },
       "typeSafety": {
-        "title": "Sécurité des Types",
+        "title": "Sécurité des types",
         "description": "TypeScript end-to-end pour la fiabilité et l'expérience développeur"
       },
       "scalable": {
-        "title": "Design Évolutif",
+        "title": "Design évolutif",
         "description": "Conçu pour évoluer avec conteneurisation et DevOps moderne"
       }
     }
@@ -100,58 +100,58 @@
       "description": "Classements pour tous les niveaux de compétition, mis à jour au fil des résultats."
     },
     "matchSummary": {
-      "title": "Résumé de Match Détaillé",
+      "title": "Résumé de match détaillé",
       "description": "Analyses complètes des matchs avec statistiques des joueurs, comparaisons des équipes, cartes de tirs et chronologie des événements."
     },
     "shotCharts": {
-      "title": "Cartes de Tirs Interactives",
+      "title": "Cartes de tirs interactives",
       "description": "Représentation visuelle des emplacements de tirs des joueurs avec cartes thermiques, taux de réussite et analyse détaillée des positions."
     },
     "playerComparison": {
-      "title": "Comparaison de Joueurs",
+      "title": "Comparaison de joueurs",
       "description": "Comparaison côte à côte des statistiques de joueurs sur plusieurs métriques incluant les points, rebonds, passes et efficacité."
     },
     "clubsMap": {
-      "title": "Carte Interactive des Clubs",
+      "title": "Carte interactive des clubs",
       "description": "Visualisation géographique des clubs à travers la France. Zoomez pour naviguer des ligues régionales jusqu'aux clubs individuels."
     },
     "teamRosters": {
-      "title": "Effectifs des Équipes",
+      "title": "Effectifs des équipes",
       "description": "Effectifs complets avec profils de joueurs, postes et statistiques détaillées pour chaque membre de l'équipe."
     },
     "matchSchedule": {
-      "title": "Calendriers des Matchs",
+      "title": "Calendriers des matchs",
       "description": "Résultats passés et matchs à venir, organisés par journée au sein d'une poule."
     },
     "liveStats": {
-      "title": "Statistiques en Direct",
+      "title": "Statistiques en direct",
       "description": "Statistiques de match en temps réel avec suivi de possession, analyse du momentum et mises à jour action par action."
     },
     "liveUpdates": {
-      "title": "Scores en Direct",
+      "title": "Scores en direct",
       "description": "Mises à jour des scores en temps réel via WebSocket et événements de match au fur et à mesure qu'ils se produisent."
     },
     "userAccounts": {
-      "title": "Comptes Utilisateurs & Favoris",
+      "title": "Comptes utilisateurs et favoris",
       "description": "Expérience personnalisée avec équipes sauvegardées, joueurs suivis et notifications personnalisées."
     },
     "status": {
-      "live": "En Ligne",
+      "live": "En ligne",
       "coming-soon": "Bientôt",
       "planned": "Planifié"
     },
-    "highlightsTitle": "Points Forts Supplémentaires",
+    "highlightsTitle": "Points forts supplémentaires",
     "highlights": {
       "i18n": {
-        "title": "Support Multilingue",
+        "title": "Support multilingue",
         "description": "Traductions complètes en français et anglais pour un public mondial"
       },
       "search": {
-        "title": "Recherche & Filtres Avancés",
+        "title": "Recherche et filtres avancés",
         "description": "Filtrage et recherche puissants sur les équipes, joueurs et compétitions"
       },
       "responsive": {
-        "title": "Entièrement Responsive",
+        "title": "Entièrement responsive",
         "description": "Expérience optimisée sur ordinateur, tablette et mobile"
       }
     }
@@ -163,7 +163,7 @@
     "quickLinks": {
       "gitlab": "Dépôt GitLab",
       "viewSource": "Voir le code source",
-      "dataModel": "Modèle de Données",
+      "dataModel": "Modèle de données",
       "apiDocs": "Documentation API",
       "contact": "Obtenir de l'Aide",
       "getHelp": "Questions ?",
@@ -176,22 +176,22 @@
         "content": "Apprenez à configurer et exécuter le projet localement pour le développement."
       },
       "database": {
-        "title": "Schéma de Base de Données",
+        "title": "Schéma de base de données",
         "content": "Explorez le schéma complet de la base de données avec les relations entre entités, structures de tables et flux de données."
       },
       "structure": {
-        "title": "Structure du Projet",
+        "title": "Structure du projet",
         "content": "Comprenez l'organisation du code avec une séparation claire entre les modules frontend et backend."
       },
       "bestPractices": {
-        "title": "Bonnes Pratiques",
+        "title": "Bonnes pratiques",
         "content": "Principes et modèles d'ingénierie clés mis en œuvre dans ce projet."
       }
     },
     "database": {
-      "diagramTitle": "Diagramme de Relations entre Entités",
+      "diagramTitle": "Diagramme des relations entre entités",
       "diagramAlt": "Diagramme du schéma de base de données montrant toutes les entités et leurs relations",
-      "keyTables": "Tables Principales de la Base de Données",
+      "keyTables": "Tables principales de la base de données",
       "zoomIn": "Zoomer",
       "zoomOut": "Dézoomer",
       "tables": {
@@ -204,12 +204,12 @@
       }
     },
     "structure": {
-      "backend": "Structure Backend (NestJS)",
+      "backend": "Structure du backend (NestJS)",
       "backendCode": "modules/\n  competitions/\n    championships/\n    leaderboards/\n    pools/\n  health/\n  matches/\n  organizations/\n    clubs/\n    committees/\n    leagues/\n  players/\n  stats/\n  teams/\ncommon/              # Shared utilities, interceptors, decorators\nprisma/              # Prisma service, schema, migrations\n",
       "backendModulesExplanation": "Modules de fonctionnalités (competitions, geography, matches, organizations, players, stats, teams) chacun avec son propre contrôleur, service et DTOs.",
       "backendCommonExplanation": "Utilitaires partagés incluant constantes, décorateurs, filtres, intercepteurs, pipes et DTOs utilisés dans tous les modules.",
       "backendPrismaExplanation": "Service Prisma, schéma et migrations de base de données.",
-      "frontend": "Structure Frontend (Next.js)",
+      "frontend": "Structure du frontend (Next.js)",
       "frontendCode": "app/                    # Next.js App Router (routing, layouts, pages)\n  [locale]/\n    (chrome)/             # Pages with the site header and footer\n      (public)/\n        championships/\n        matches/\n        organizations/\n          clubs/\n          committees/\n          leagues/\n        players/\n        search/\n        teams/\n      about/\n      architecture/\n      contact/\n      docs/\n      features/\n    (fullscreen)/         # Pages without the chrome\n      map/\nfeatures/               # Feature modules\n  charts/\n  competitions/\n    championships/\n    leaderboards/\n    pools/\n  geography/\n  matches/\n  organizations/\n    clubs/\n    committees/\n    leagues/\n  players/\n  search/\n  site/\n    architecture/\n    contact/\n    docs/\n  stats/\n  teams/\nshared/                 # Shared components, hooks, utils, types\nlib/                    # External integrations, providers, API clients\nstyles/                 # Global styles and themes\npublic/                 # Static assets\n",
       "routingExplanation": "Tout le routage est géré dans app/ en utilisant les conventions Next.js App Router.",
       "featurePrinciple": "Chaque fonctionnalité (ex : 'clubs') possède ses propres components, hooks, api, utils, constants, types et index.ts pour la modularité.",
