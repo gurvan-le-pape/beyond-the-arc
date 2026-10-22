@@ -48,6 +48,19 @@ export function generateLabelFeatures(
 /**
  * Convert club data to GeoJSON point features for map display
  */
+/**
+ * A key equal for two clubs exactly when they sit on the same coordinates.
+ *
+ * @param club - a club with coordinates; one without gets the key `null,null`
+ * @returns the club's longitude and latitude, joined
+ */
+export function pointKey(club: Pick<ClubBasic, "latitude" | "longitude">) {
+  return `${club.longitude},${club.latitude}`;
+}
+
+/**
+ *
+ */
 export function clubsToGeoJSON(clubs: ClubBasic[]): any {
   return {
     type: "FeatureCollection",

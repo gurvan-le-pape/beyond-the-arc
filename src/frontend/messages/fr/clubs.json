@@ -16,6 +16,7 @@
   "map": {
     "description": "Tous les clubs de basket français sur une carte interactive.",
     "pageTitle": "Carte des clubs",
+    "clubsHere": "{count} clubs à cet endroit",
     "viewClub": "Voir le club",
     "website": "Site web",
     "retry": "Réessayer",

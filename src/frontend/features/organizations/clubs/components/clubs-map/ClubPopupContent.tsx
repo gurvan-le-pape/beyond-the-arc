@@ -1,11 +1,12 @@
 // src/frontend/features/organizations/clubs/components/clubs-map/ClubPopupContent.tsx
-import { ArrowRight, ExternalLink, X } from "lucide-react";
+import { ArrowRight, ExternalLink } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-import { Button, TextLink } from "@/shared/components/primitives";
+import { TextLink } from "@/shared/components/primitives";
 import { toSafeExternalUrl } from "@/shared/utils";
 
 import type { ClubBasic } from "../../types/ClubBasic";
+import { MapPopupCard } from "./MapPopupCard";
 
 interface ClubPopupContentProps {
   readonly club: ClubBasic;
@@ -30,7 +31,6 @@ export function ClubPopupContent({
   onClose,
 }: ClubPopupContentProps) {
   const t = useTranslations("clubs");
-  const tCommon = useTranslations("common");
 
   // Scraped, therefore untrusted input reaching an href. Anything that is not
   // an absolute http(s) URL is treated as no website at all.
@@ -38,32 +38,20 @@ export function ClubPopupContent({
   const place = [club.city, club.zipCode].filter(Boolean).join(" · ");
 
   return (
-    <div className="w-[300px] max-w-full surface-subtle border border-divide rounded-xl shadow-lg">
-      <div className="flex items-start justify-between gap-2 pt-3.5 pr-2 pb-3 pl-4">
-        <div className="min-w-0">
-          <p className="text-base font-semibold leading-snug text-text-heading">
-            {club.name}
-          </p>
-          {(place || departmentName) && (
-            <p className="mt-1 text-[13px] leading-snug text-text-secondary">
-              {place}
-              {place && departmentName && <br />}
-              {departmentName}
-            </p>
-          )}
-        </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          aria-label={tCommon("close")}
-          onClick={onClose}
-          className="shrink-0 h-8 w-8 text-text-secondary"
-        >
-          <X className="w-4 h-4" aria-hidden="true" />
-        </Button>
-      </div>
-
-      <div className="flex items-center justify-between gap-4 h-11 px-4 border-t border-divide text-sm">
+    <MapPopupCard
+      title={club.name}
+      details={
+        (place || departmentName) && (
+          <>
+            {place}
+            {place && departmentName && <br />}
+            {departmentName}
+          </>
+        )
+      }
+      onClose={onClose}
+    >
+      <div className="flex items-center justify-between gap-4 h-11 px-4 text-sm">
         {safeWebsite ? (
           <TextLink href={safeWebsite} variant="plain" external>
             {t("map.website")}
@@ -82,6 +70,6 @@ export function ClubPopupContent({
           </TextLink>
         </span>
       </div>
-    </div>
+    </MapPopupCard>
   );
 }

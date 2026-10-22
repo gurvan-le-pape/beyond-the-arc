@@ -18,6 +18,7 @@ import { logger } from "@/shared/utils";
 import type { ClubBasic } from "../../types/ClubBasic";
 import type { ClubStatsByDepartment } from "../../types/ClubStatsByDepartment";
 import type { ClubStatsByRegion } from "../../types/ClubStatsByRegion";
+import { ClubGroupPopupContent } from "./ClubGroupPopupContent";
 import { ClubPopupContent } from "./ClubPopupContent";
 import { ClubsLayer } from "./layers/ClubsLayer";
 import { DepartmentsLayer } from "./layers/DepartmentsLayer";
@@ -26,9 +27,10 @@ import {
   BASEMAP_PAINT,
   GEOJSON_TO_DB_REGION_CODE,
   INITIAL_VIEW,
+  MAP_COLORS,
   ZOOM_THRESHOLDS,
 } from "./mapConstants";
-import { clubsToGeoJSON, generateLabelFeatures } from "./mapHelpers";
+import { clubsToGeoJSON, generateLabelFeatures, pointKey } from "./mapHelpers";
 import { SidePanel } from "./side-panel";
 import { useMapColours } from "./useMapColours";
 import { useMapData } from "./useMapData";
@@ -54,7 +56,8 @@ export function ClubsMap({
   initialClubs,
 }: ClubsMapProps) {
   const t = useTranslations("clubs");
-  const [selectedClub, setSelectedClub] = useState<ClubBasic | null>(null);
+  // The clubs whose popup is open: one, or several sharing exact coordinates.
+  const [selectedClubs, setSelectedClubs] = useState<ClubBasic[]>([]);
   const [viewState, setViewState] = useState(INITIAL_VIEW);
 
   const {
@@ -91,7 +94,7 @@ export function ClubsMap({
         latitude: club.latitude!,
         zoom: 12,
       }));
-      setTimeout(() => setSelectedClub(club), 300);
+      setTimeout(() => setSelectedClubs([club]), 300);
     }
   }, []);
 
@@ -162,11 +165,54 @@ export function ClubsMap({
     [departments],
   );
 
+  // Clubs on the map grouped by exact coordinates. Many were geocoded to their
+  // town's centre and share one point no zoom level separates, so a click on
+  // that point has to offer all of them.
+  const clubsByPoint = useMemo(() => {
+    const groups = new Map<string, ClubBasic[]>();
+    for (const club of displayClubs) {
+      if (club.latitude === null || club.longitude === null) continue;
+      const key = pointKey(club);
+      groups.set(key, [...(groups.get(key) ?? []), club]);
+    }
+    return groups;
+  }, [displayClubs]);
+
   // Generate club points for clustering
   const clubPoints = useMemo(() => {
     if (!showClubs) return null;
     return clubsToGeoJSON(displayClubs);
   }, [displayClubs, showClubs]);
+
+  // A cluster whose clubs all share one point never splits, so it opens their
+  // list; any other cluster zooms in until it does. MapLibre 5 answers both
+  // queries with a Promise and takes no callback.
+  const openOrExpandCluster = useCallback(
+    async (
+      source: GeoJSONSource,
+      clusterId: number,
+      pointCount: number,
+      longitude: number,
+      latitude: number,
+    ) => {
+      const leaves = await source.getClusterLeaves(clusterId, pointCount, 0);
+      const leafIds = new Set(leaves.map((leaf) => leaf.properties?.id));
+      const leafClubs = clubs.filter((c) => leafIds.has(c.id));
+      const keys = new Set(leafClubs.map(pointKey));
+      if (keys.size === 1) {
+        setSelectedClubs(leafClubs);
+        return;
+      }
+      const zoom = await source.getClusterExpansionZoom(clusterId);
+      setViewState((prev) => ({
+        ...prev,
+        longitude,
+        latitude,
+        zoom: zoom + 0.5,
+      }));
+    },
+    [clubs],
+  );
 
   // Handle map clicks (cluster expansion and club selection)
   const onClick = useCallback(
@@ -176,29 +222,23 @@ export function ClubsMap({
       const [longitude, latitude] = f.geometry.coordinates;
 
       if (f.properties.cluster) {
-        // Zoom far enough for the cluster to split. MapLibre 5 returns the
-        // zoom as a Promise and takes no callback.
         const source = e.target.getSource<GeoJSONSource>("clubs");
-        source
-          ?.getClusterExpansionZoom(f.properties.cluster_id)
-          .then((zoom) => {
-            setViewState((prev) => ({
-              ...prev,
-              longitude,
-              latitude,
-              zoom: zoom + 0.5,
-            }));
-          })
-          .catch((error: unknown) =>
-            logger.error(error, "cluster expansion zoom"),
-          );
+        if (!source) return;
+        openOrExpandCluster(
+          source,
+          f.properties.cluster_id,
+          f.properties.point_count,
+          longitude,
+          latitude,
+        ).catch((error: unknown) => logger.error(error, "cluster click"));
       } else {
-        // Show individual club popup
+        // Feature coordinates come back tile-quantised, so the group is
+        // looked up from the club's own coordinates rather than the click's.
         const club = clubs.find((c) => c.id === f.properties.id);
-        if (club) setSelectedClub(club);
+        if (club) setSelectedClubs(clubsByPoint.get(pointKey(club)) ?? [club]);
       }
     },
-    [clubs],
+    [clubs, clubsByPoint, openOrExpandCluster],
   );
 
   // Error state
@@ -253,23 +293,42 @@ export function ClubsMap({
           <ClubsLayer geoJson={clubPoints} colours={colours} />
         )}
 
-        {selectedClub && (
+        {selectedClubs.length > 0 && (
           <Popup
-            longitude={selectedClub.longitude!}
-            latitude={selectedClub.latitude!}
-            onClose={() => setSelectedClub(null)}
+            longitude={selectedClubs[0].longitude!}
+            latitude={selectedClubs[0].latitude!}
+            onClose={() => setSelectedClubs([])}
             // The card brings its own close button and width; MapLibre's
             // default caps every popup at 240px.
             closeButton={false}
             maxWidth="320px"
+            // Clear the marker underneath: a shared point is usually drawn as
+            // a cluster bubble, a single club as a dot.
+            offset={
+              selectedClubs.length > 1
+                ? MAP_COLORS.CLUBS.CLUSTER_SIZES[2] + 4
+                : MAP_COLORS.CLUBS.POINT_RADIUS + 4
+            }
           >
-            <ClubPopupContent
-              club={selectedClub}
-              departmentName={
-                departmentNameByCommittee.get(selectedClub.committeeId) ?? null
-              }
-              onClose={() => setSelectedClub(null)}
-            />
+            {selectedClubs.length === 1 ? (
+              <ClubPopupContent
+                club={selectedClubs[0]}
+                departmentName={
+                  departmentNameByCommittee.get(selectedClubs[0].committeeId) ??
+                  null
+                }
+                onClose={() => setSelectedClubs([])}
+              />
+            ) : (
+              <ClubGroupPopupContent
+                clubs={selectedClubs}
+                departmentName={
+                  departmentNameByCommittee.get(selectedClubs[0].committeeId) ??
+                  null
+                }
+                onClose={() => setSelectedClubs([])}
+              />
+            )}
           </Popup>
         )}
       </MapGL>
