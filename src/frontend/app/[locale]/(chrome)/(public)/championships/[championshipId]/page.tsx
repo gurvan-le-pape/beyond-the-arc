@@ -136,12 +136,12 @@ async function ChampionshipsDetailPage({
             })}
           />
 
-          <ChampionshipHeader championship={championship} />
-
-          <ChampionshipNavigation
-            categoryLinks={categoryLinks}
-            divisionLinks={divisionLinks}
-          />
+          <ChampionshipHeader championship={championship}>
+            <ChampionshipNavigation
+              categoryLinks={categoryLinks}
+              divisionLinks={divisionLinks}
+            />
+          </ChampionshipHeader>
 
           <LeaderboardTable
             leaderboards={leaderboard}

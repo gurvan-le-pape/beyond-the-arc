@@ -383,7 +383,7 @@ const buttonVariants = cva(BASE, {
 Components that share a base style but differ in layout context are split into separate exports in the same file rather than added as variants to a single component. `Button.tsx` exports three components:
 
 - `Button` — universal action primitive (form submits, modal triggers, mutations). No layout knowledge.
-- `NavButton` — navigation and list-item patterns. These variants know they live in a sidebar or tab bar (`navActive`, `navInactive`, `listItem`, `categoryHeader`).
+- `NavButton` — navigation and list-item patterns. These variants know they live in a sidebar or a categorised list (`listItem`, `categoryHeader`). A row of links between sibling pages is drawn like a `SegmentedControl`, from `segmentedStyles.ts`.
 - `PillButton` — round-selector and carousel patterns. Non-standard sizes and visual treatments (`pillActive`, `pillInactive`, `carouselArrow`) that don't belong in a general-purpose button.
 
 The split is justified by layout context: `NavButton` variants know they are inside a navigation structure; `PillButton` variants know they have `rounded-full` treatment. Keeping them separate prevents `Button` from accumulating layout-specific knowledge it should not have.
