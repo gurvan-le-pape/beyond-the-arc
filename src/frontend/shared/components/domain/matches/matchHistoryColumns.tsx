@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 import { Badge } from "@/shared/components/primitives";
 import type { TableColumn } from "@/shared/components/table";
-import { formatMatchDateTime } from "@/shared/utils";
+import { formatMatchDayMonth, formatMatchDayTime } from "@/shared/utils";
 
 interface MatchWithTeams {
   startsAt: Date | string;
@@ -13,17 +13,24 @@ interface MatchWithTeams {
 
 /**
  * Shared "starts at" column for match-history tables, built the same way across
- * teams/players/matches features.
+ * teams/players/matches features: the day and month, "17 oct.", on one line
+ * and only as wide as it. `withTime` gives a fixture its weekday and start
+ * time instead, "sam. 24 oct., 19:00", which are still worth knowing.
  */
 export function buildMatchDateColumn<T extends MatchWithTeams>(
   header: ReactNode,
   locale: string,
+  { withTime = false }: { withTime?: boolean } = {},
 ): TableColumn<T> {
   return {
     key: "startsAt",
     header,
-    render: (match: T) => formatMatchDateTime(match.startsAt, locale),
-    align: "center",
+    render: (match: T) =>
+      withTime
+        ? formatMatchDayTime(match.startsAt, locale)
+        : formatMatchDayMonth(match.startsAt, locale),
+    align: "left",
+    width: "fit",
   };
 }
 
@@ -100,11 +107,12 @@ export function buildResultColumn<T extends MatchWithScore>(
             <span className="sr-only">{won ? labels.win : labels.loss}</span>
           </Badge>
           <span className="tabular-nums">
-            {own} - {opponent}
+            {own}–{opponent}
           </span>
         </span>
       );
     },
-    align: "center",
+    align: "left",
+    width: "fit",
   };
 }

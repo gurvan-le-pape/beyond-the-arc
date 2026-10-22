@@ -50,6 +50,7 @@ const wrap = {
 const width = {
   auto: "",
   icon: "w-8",
+  fit: "w-px whitespace-nowrap",
 } as const;
 
 /**
