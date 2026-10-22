@@ -55,7 +55,7 @@ export function MapBand() {
           <Link
             href="/map"
             className={
-              buttonVariants({ variant: "clubs", size: "sm" }) + " mt-5"
+              buttonVariants({ variant: "primary", size: "sm" }) + " mt-5"
             }
           >
             {t("cta")}
