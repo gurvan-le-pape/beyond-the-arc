@@ -21,13 +21,14 @@ interface LeaderboardTableProps {
 }
 
 /**
- * A pool's standings — rank, team, and the season record.
+ * A pool's standings — rank, team, and the season record. Each row links to
+ * its team.
  *
  * Stays a **server component**. The `dropdown` slot is what keeps it that way:
  * a client-side pool picker is passed in as an element rather than rendered
- * here, so choosing a pool does not pull the table, its columns and the crests
- * into the browser bundle. Marking this `"use client"` to add interactivity
- * would undo that.
+ * here, so choosing a pool does not pull the table and its columns into the
+ * browser bundle. Marking this `"use client"` to add interactivity would undo
+ * that.
  */
 export function LeaderboardTable({
   leaderboards,
@@ -41,9 +42,8 @@ export function LeaderboardTable({
 
   // On a phone the table keeps rank, team, points, games played and point
   // difference — wins and losses follow from those — with abbreviated
-  // headings whose full label stays on the abbreviation, and the club mark
-  // steps aside for the name. All seven at full width made the table more
-  // than twice the phone's width.
+  // headings whose full label stays on the abbreviation. All seven at full
+  // width made the table more than twice the phone's width.
   const heading = (abbr: string, full: string) => (
     <>
       <abbr title={full} className="no-underline sm:hidden">
@@ -177,6 +177,8 @@ export function LeaderboardTable({
         columns={variant === "summary" ? summaryColumns : fullColumns}
         rows={leaderboards}
         getRowKey={(row) => row.id}
+        getRowHref={(row) => `/teams/${row.teamId}`}
+        getRowLabel={(row) => formatTeamName(row.clubName, row.teamNumber)}
         density="cozy"
         emptyMessage={tCompetitions("leaderboardEmpty")}
       />
