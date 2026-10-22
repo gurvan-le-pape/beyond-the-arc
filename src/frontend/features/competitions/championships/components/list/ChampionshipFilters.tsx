@@ -6,6 +6,7 @@ import { FiltersShell } from "@/shared/components/filters";
 import { Select } from "@/shared/components/forms";
 import type { Category, Gender } from "@/shared/constants";
 import { CATEGORY_LIST, GENDER_LIST } from "@/shared/constants";
+import { cn } from "@/shared/utils";
 
 /**
  * Optional scope dropdown (league for regional, committee for departmental).
@@ -47,8 +48,7 @@ interface ChampionshipFiltersProps {
  *
  * **`scope` is what varies by level**: regional filters by league, departmental
  * by committee, and national omits it because there is nothing above a national
- * championship to scope by. The scoped variants lead with that select and push
- * gender onto its own row.
+ * championship to scope by. The selects share one row, the scope first.
  *
  * Error copy for a failed scope lookup is passed in already translated, so an
  * empty dropdown is never mistaken for "this level has no leagues".
@@ -141,17 +141,17 @@ export function ChampionshipFilters({
         <ErrorMessage message={scopeError} onRetry={onScopeRetry} />
       )}
 
-      {/* Scoped variants lead with the scope select and push gender to its own row. */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {scopeSelect ?? categorySelect}
-        {scopeSelect ? categorySelect : genderSelect}
+      {/* One row: the scope select, where there is one, then category and gender. */}
+      <div
+        className={cn(
+          "grid grid-cols-1 gap-4",
+          scopeSelect ? "md:grid-cols-3" : "md:grid-cols-2",
+        )}
+      >
+        {scopeSelect}
+        {categorySelect}
+        {genderSelect}
       </div>
-
-      {scopeSelect && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {genderSelect}
-        </div>
-      )}
     </FiltersShell>
   );
 }
