@@ -49,6 +49,18 @@ export const SidePanel = memo(function SidePanel({
     setIsOpen((prev) => !prev);
   }, []);
 
+  // Below `lg` the panel hides the map, so a pick that opened the club's popup
+  // behind it would show nothing. Close it to reveal the club on the map.
+  const handleClubClick = useCallback(
+    (club: ClubBasic) => {
+      if (!window.matchMedia(PANEL_OPEN_BY_DEFAULT_QUERY).matches) {
+        setIsOpen(false);
+      }
+      onClubClick(club);
+    },
+    [onClubClick],
+  );
+
   return (
     <>
       {/* Toggle button when closed - separate from panel */}
@@ -77,7 +89,11 @@ export const SidePanel = memo(function SidePanel({
               />
             </div>
 
-            <ClubList clubs={clubs} query={query} onClubClick={onClubClick} />
+            <ClubList
+              clubs={clubs}
+              query={query}
+              onClubClick={handleClubClick}
+            />
           </div>
         </div>
       </div>
