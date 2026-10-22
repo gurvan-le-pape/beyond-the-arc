@@ -14,9 +14,7 @@
     "matchHistoryTitle": "Match History",
     "upcomingMatchesTitle": "Upcoming Matches",
     "shotchartTitle": "Shot chart",
-    "shotchartDescription": "Where the team shot from this season, and how often from each spot.",
-    "won": "W",
-    "lost": "L"
+    "shotchartDescription": "Where the team shot from this season, and how often from each spot."
   },
   "itemLabel": "{count, plural, one {team} other {teams}}"
 }

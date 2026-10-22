@@ -11,7 +11,16 @@
   "errorLoadingBoundaries": "Impossible de charger les contours de la carte",
   "detail": {
     "meta": "{name} — équipes et localisation.",
-    "teamsTitle": "Équipes"
+    "teamsTitle": "Équipes",
+    "teamColumns": {
+      "category": "Catégorie",
+      "gender": "Genre",
+      "number": "N°",
+      "numberFull": "Numéro de l'équipe dans le club",
+      "championship": "Championnat",
+      "rank": "Classement",
+      "record": "Bilan (V–D)"
+    }
   },
   "map": {
     "description": "Tous les clubs de basket français sur une carte interactive.",

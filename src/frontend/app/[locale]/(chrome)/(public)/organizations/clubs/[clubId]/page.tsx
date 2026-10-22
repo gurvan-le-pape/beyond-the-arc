@@ -8,6 +8,7 @@ import {
 } from "next-intl/server";
 
 import { serverClubsService } from "@/features/organizations/clubs/api/clubs.server";
+import { ClubTeamsTable } from "@/features/organizations/clubs/components";
 import { OrganizationDetailView } from "@/features/organizations/shared/components";
 import { EmptyState, withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
@@ -128,22 +129,21 @@ async function ClubPage({ params }: LocalePageProps<{ clubId: string }>) {
           website: club.website,
           ffbbUrl: club.ffbbUrl,
         }}
-        section={{
-          items: club.teams.map((team) => ({
-            type: "team",
-            data: team,
-            clubName: club.name,
-          })),
-          title: t("detail.teamsTitle"),
-          defaultExpanded: true,
-          emptyState: (
-            <EmptyState
-              icon={<Users className="w-16 h-16" />}
-              title={t("noTeams")}
-            />
-          ),
-        }}
-      />
+      >
+        {club.teams.length > 0 ? (
+          <ClubTeamsTable
+            clubName={club.name}
+            teams={club.teams}
+            title={t("detail.teamsTitle")}
+            emptyMessage={t("noTeams")}
+          />
+        ) : (
+          <EmptyState
+            icon={<Users className="w-16 h-16" />}
+            title={t("noTeams")}
+          />
+        )}
+      </OrganizationDetailView>
     </PageLayout>
   );
 }

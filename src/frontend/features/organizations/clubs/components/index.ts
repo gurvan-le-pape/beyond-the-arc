@@ -6,3 +6,4 @@
 export * from "./ClubComboBoxFilter";
 export * from "./clubs-map/index";
 export * from "./clubs-view/index";
+export * from "./ClubTeamsTable";
