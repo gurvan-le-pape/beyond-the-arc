@@ -73,11 +73,6 @@ export const buttonVariants = cva(BASE, {
         "rounded-button bg-solid-female text-on-solid-female shadow-sm " +
         "hover:bg-solid-female-hover",
 
-      // Domain entity-specific
-      clubs:
-        "rounded-button bg-solid-clubs text-on-solid-clubs shadow-sm " +
-        "hover:bg-solid-clubs-hover",
-
       // Control buttons (filter dropdowns, sort toggles, toolbar actions)
       control:
         "rounded-button border border-divide surface-subtle text-text-emphasis font-medium " +
@@ -119,7 +114,6 @@ export interface ButtonProps
  * <Button size="icon" aria-label="Close"><XIcon /></Button>
  * <Button variant="link" size="sm">Reset all</Button>
  * <Button variant="control">Filters</Button>
- * <Button variant="clubs">Find a club</Button>
  */
 export const Button = ({
   className,
