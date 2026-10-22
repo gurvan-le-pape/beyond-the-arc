@@ -14,8 +14,6 @@ const cardVariants = cva(
     variants: {
       variant: {
         default: "surface-subtle border-divide shadow-card",
-        highlighted:
-          "surface-subtle border-solid-primary border-2 shadow-card-hover",
         ghost: "bg-transparent border-transparent",
         // Empty — allows full custom styling via className
         custom: "",
@@ -85,7 +83,7 @@ export type CardProps = CardBaseProps & (CardLinkProps | CardPlainProps);
  * two apart.
  *
  * @example
- * <Card variant="highlighted" padding="lg">…</Card>
+ * <Card padding="lg">…</Card>
  * <Card href={`/players/${id}`}>…</Card>
  * <Card clickable onClick={() => setExpanded(true)}>…</Card>
  */

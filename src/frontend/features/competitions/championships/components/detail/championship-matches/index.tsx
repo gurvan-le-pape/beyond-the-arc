@@ -48,11 +48,7 @@ export function ChampionshipMatches({ matches }: ChampionshipMatchesProps) {
   const currentMatches = selectedRound ? groupedMatches[selectedRound] : [];
 
   return (
-    <Card
-      variant="highlighted"
-      padding="sm"
-      className="sticky top-20 lg:top-24"
-    >
+    <Card padding="sm" className="sticky top-20 lg:top-24">
       <div className="space-y-4">
         <RoundsSection
           groupedMatches={groupedMatches}

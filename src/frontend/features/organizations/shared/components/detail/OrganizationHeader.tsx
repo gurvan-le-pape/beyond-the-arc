@@ -52,7 +52,7 @@ export function OrganizationHeader({
   const FALLBACK_LOGO = `/images/${imageFolder}/defaultLogo.30cc7520.svg`;
 
   return (
-    <Card variant="highlighted" padding="lg">
+    <Card padding="lg">
       <div className="flex items-center gap-6">
         {imageFolder === "clubs" ? (
           <ClubMark clubName={name} size="2xl" />

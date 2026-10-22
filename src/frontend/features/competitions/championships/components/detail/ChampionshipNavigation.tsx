@@ -28,7 +28,7 @@ export function ChampionshipNavigation({
   if (categoryLinks.length === 0 && divisionLinks.length === 0) return null;
 
   return (
-    <Card variant="highlighted" padding="md">
+    <Card padding="md">
       <div className="space-y-4">
         <NavLinkRow
           links={categoryLinks}

@@ -44,9 +44,6 @@ interface EntityHeaderProps {
  * The identity block at the top of a player or team page: a visual, the
  * name, the team's badges, a link into its championship, and optionally a
  * band of figures.
- *
- * The border is the team's gender colour, a two-way split: anything that is
- * not `"female"`, a missing value included, takes the male border.
  */
 export function EntityHeader({
   visual,
@@ -61,16 +58,9 @@ export function EntityHeader({
 }: EntityHeaderProps) {
   const tCommon = useTranslations("common");
   const tCompetitions = useTranslations("competitions");
-  const isFemale = gender?.toLowerCase() === "female";
 
   return (
-    <Card
-      padding="none"
-      className={cn(
-        "overflow-hidden border-2",
-        isFemale ? "border-solid-female" : "border-solid-male",
-      )}
-    >
+    <Card padding="none" className="overflow-hidden">
       <div className="flex items-center gap-3 p-4 sm:gap-5 sm:p-6">
         {visual}
 

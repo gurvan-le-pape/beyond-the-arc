@@ -130,7 +130,7 @@ async function MatchSummaryPage({
         })}
       </Text>
 
-      <Card variant="highlighted" padding="lg" className="space-y-4">
+      <Card padding="lg" className="space-y-4">
         <MatchMeta
           startsAt={match.startsAt}
           matchday={match.matchday}
