@@ -10,7 +10,7 @@ interface TeamHeaderProps {
 
 /**
  * Identity block at the top of a team detail page: club mark, team name, the
- * team's badges, and a link into its championship.
+ * team's badges, and a link to its pool's standings.
  */
 export function TeamHeader({ team }: TeamHeaderProps) {
   const club = team.club;
@@ -21,7 +21,7 @@ export function TeamHeader({ team }: TeamHeaderProps) {
       title={formatTeamName(club.name, team.number)}
       category={team.category}
       gender={team.gender}
-      championship={team.pool?.championship}
+      pool={team.pool}
     />
   );
 }

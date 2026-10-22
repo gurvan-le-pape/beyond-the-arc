@@ -5,7 +5,7 @@
   "breadcrumb": "Championships",
   "noChampionships": "No championships available",
   "tryAdjustingFilters": "Try adjusting filters to find more championships.",
-  "championship": "Championship",
+  "poolStandings": "Pool {letter} standings",
   "categoryAriaLabel": "Category",
   "divisionAriaLabel": "Division",
   "divisionWithValue": "Division {value}",

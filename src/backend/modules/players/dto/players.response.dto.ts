@@ -97,6 +97,9 @@ export class PlayerPoolRefDto {
   @ApiProperty({ description: "Pool name", example: "Poule A", type: String })
   name!: string;
 
+  @ApiProperty({ description: "Pool letter", example: "A", type: String })
+  letter!: string;
+
   @ApiProperty({
     description: "Championship the pool belongs to",
     type: PlayerChampionshipRefDto,

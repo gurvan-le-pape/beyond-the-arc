@@ -5225,6 +5225,11 @@
             "description": "Pool name",
             "example": "Poule A"
           },
+          "letter": {
+            "type": "string",
+            "description": "Pool letter",
+            "example": "A"
+          },
           "championship": {
             "description": "Championship the pool belongs to",
             "allOf": [
@@ -5237,6 +5242,7 @@
         "required": [
           "id",
           "name",
+          "letter",
           "championship"
         ]
       },

@@ -22,10 +22,19 @@ interface EntityHeaderProps {
   /** The team's category and gender, the player's for a player. */
   readonly category: string;
   readonly gender: Gender;
-  readonly championship?: {
+  /**
+   * The team's pool, with its championship. The championship's level and
+   * division become badges, and the line under them links to this pool's
+   * standings.
+   */
+  readonly pool?: {
     readonly id: number;
-    readonly level?: CompetitionLevel;
-    readonly division?: number;
+    readonly letter: string;
+    readonly championship: {
+      readonly id: number;
+      readonly level?: CompetitionLevel;
+      readonly division?: number;
+    };
   } | null;
   /** Badges after the team's, such as a player's position. */
   readonly extraBadges?: ReactNode;
@@ -42,7 +51,7 @@ interface EntityHeaderProps {
 
 /**
  * The identity block at the top of a player or team page: a visual, the
- * name, the team's badges, a link into its championship, and optionally a
+ * name, the team's badges, a link to its pool's standings, and optionally a
  * band of figures.
  */
 export function EntityHeader({
@@ -50,13 +59,12 @@ export function EntityHeader({
   title,
   category,
   gender,
-  championship,
+  pool,
   extraBadges,
   subtitle,
   aside,
   stats = [],
 }: EntityHeaderProps) {
-  const tCommon = useTranslations("common");
   const tCompetitions = useTranslations("competitions");
 
   return (
@@ -72,7 +80,7 @@ export function EntityHeader({
           <EntityHeaderBadges
             category={category}
             gender={gender}
-            championship={championship}
+            championship={pool?.championship}
           >
             {extraBadges}
           </EntityHeaderBadges>
@@ -83,7 +91,7 @@ export function EntityHeader({
             </span>
           )}
 
-          {championship && (
+          {pool && (
             <span
               className={cn(
                 "block text-sm text-text-secondary",
@@ -91,11 +99,10 @@ export function EntityHeader({
               )}
             >
               <TextLink
-                href={`/championships/${championship.id}`}
+                href={`/championships/${pool.championship.id}?pool=${pool.id}`}
                 variant="plain"
-                ariaLabel={tCommon("competition.seeCompetition")}
               >
-                {tCompetitions("championship")}
+                {tCompetitions("poolStandings", { letter: pool.letter })}
               </TextLink>
             </span>
           )}
