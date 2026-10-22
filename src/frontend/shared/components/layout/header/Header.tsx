@@ -8,13 +8,14 @@ import { usePathname } from "@/navigation";
 
 import { useMobileMenu } from "../hooks/useMobileMenu";
 import HamburgerButton from "./HamburgerButton";
+import { LocaleSwitcher } from "./LocaleSwitcher";
 import { Logo } from "./Logo";
 import NavLinks from "./NavLinks";
 import { ThemeToggle } from "./ThemeToggle";
 
 /**
- * The sticky site header: wordmark, navigation, theme toggle, and the mobile
- * menu.
+ * The sticky site header: wordmark, navigation, language and theme switches,
+ * and the mobile menu.
  *
  * **Closes the mobile menu on every route change.** Next keeps this component
  * mounted across navigations, so without that the menu would stay open over the
@@ -55,6 +56,7 @@ export function Header() {
         </div>
 
         <div className="hidden md:flex items-center gap-2">
+          <LocaleSwitcher variant="compact" />
           <ThemeToggle />
         </div>
 
@@ -89,6 +91,10 @@ export function Header() {
         >
           <div className="flex flex-col py-4 px-4 space-y-1 max-h-[calc(100vh-4rem)] overflow-y-auto scrollbar-hide">
             <NavLinks asList onClick={() => setMenuOpen(false)} />
+            <div className="flex items-center justify-between gap-4 border-t border-divide mt-3 pt-4 px-4">
+              <span className="text-text-body">{t("header.language")}</span>
+              <LocaleSwitcher variant="full" />
+            </div>
           </div>
         </div>
       </div>
