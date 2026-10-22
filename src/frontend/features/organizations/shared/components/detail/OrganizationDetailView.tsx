@@ -8,35 +8,35 @@ import {
 
 import { OrganizationHeader } from "./OrganizationHeader";
 import { OrganizationInfo } from "./OrganizationInfo";
-import { SearchableChipList } from "./SearchableChipList";
+import { SearchableLinkList } from "./SearchableLinkList";
 
 interface OrganizationDetailViewProps {
   readonly breadcrumb: BreadcrumbItem[];
   readonly header: ComponentProps<typeof OrganizationHeader>;
   readonly info: ComponentProps<typeof OrganizationInfo>;
-  /** Optional chip list rendered between the info panel and the sections. */
-  readonly chipList?: {
+  /** Optional list of links under the info panel: a league's committees or a committee's clubs. */
+  readonly linkList?: {
     items: { id: number; name: string }[];
     title: string;
     searchPlaceholder: string;
     basePath: string;
     showSearch?: boolean;
   };
-  /** The page's own content under the chip list: its teams or championships. */
+  /** The page's own content under the link list: its teams or championships. */
   readonly children: ReactNode;
 }
 
 /**
  * Shared body of the three organization detail pages (committee, league,
- * club): breadcrumb, header, info panel, an optional searchable chip list,
+ * club): breadcrumb, header, info panel, an optional searchable link list,
  * and then the page's own content. The page owns `<PageLayout>` (PageLayout
- * must not be imported into feature components) and shapes `section.items`.
+ * must not be imported into feature components).
  */
 export function OrganizationDetailView({
   breadcrumb,
   header,
   info,
-  chipList,
+  linkList,
   children,
 }: OrganizationDetailViewProps) {
   return (
@@ -44,7 +44,7 @@ export function OrganizationDetailView({
       <Breadcrumb items={breadcrumb} />
       <OrganizationHeader {...header} />
       <OrganizationInfo {...info} />
-      {chipList ? <SearchableChipList {...chipList} /> : null}
+      {linkList ? <SearchableLinkList {...linkList} /> : null}
       {children}
     </>
   );
