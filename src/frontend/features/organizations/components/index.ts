@@ -5,5 +5,4 @@
 
 export * from "./OrganizationsGrid";
 export * from "./OrganizationsHeader";
-export * from "./OrganizationsStats";
 export * from "./OrganizationTypeCard";
