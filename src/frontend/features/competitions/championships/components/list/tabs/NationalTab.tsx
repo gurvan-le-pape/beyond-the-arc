@@ -38,6 +38,7 @@ export function NationalTab() {
 
   return (
     <ChampionshipTab
+      level={CompetitionLevel.NATIONAL}
       data={data}
       error={error}
       isLoading={isLoading}

@@ -50,6 +50,7 @@ export function DepartmentalTab() {
 
   return (
     <ChampionshipTab
+      level={CompetitionLevel.DEPARTMENTAL}
       data={data}
       error={error}
       isLoading={isLoading}

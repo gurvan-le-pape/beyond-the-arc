@@ -50,6 +50,7 @@ export function RegionalTab() {
 
   return (
     <ChampionshipTab
+      level={CompetitionLevel.REGIONAL}
       data={data}
       error={error}
       isLoading={isLoading}

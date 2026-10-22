@@ -7,12 +7,15 @@ import React from "react";
 
 import { SearchTabShell } from "@/shared/components/domain";
 import { EmptyState } from "@/shared/components/feedback";
+import type { CompetitionLevel } from "@/shared/constants";
 import type { ApiError, PaginatedResponse } from "@/shared/types";
 
 import type { Championship } from "../../../types";
-import { ChampionshipCard } from "../ChampionshipCard";
+import { ChampionshipTable } from "../ChampionshipTable";
 
 interface ChampionshipTabProps {
+  /** The tab's level, which decides the table's organiser column. */
+  level: CompetitionLevel;
   /** The level-specific `<ChampionshipFilters>` element. */
   filters: React.ReactNode;
   data: PaginatedResponse<Championship> | undefined;
@@ -32,6 +35,7 @@ interface ChampionshipTabProps {
  * be unconditional), then delegates the identical results shell here.
  */
 export function ChampionshipTab({
+  level,
   filters,
   data,
   error,
@@ -78,11 +82,11 @@ export function ChampionshipTab({
           count: pagination?.total ?? 0,
         })}
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {championships.map((c) => (
-            <ChampionshipCard key={c.id} championship={c} />
-          ))}
-        </div>
+        <ChampionshipTable
+          level={level}
+          championships={championships}
+          emptyMessage={tCommon("emptyState.championships")}
+        />
       </SearchTabShell>
     </div>
   );
