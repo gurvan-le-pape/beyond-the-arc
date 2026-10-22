@@ -75,10 +75,14 @@ export function Header() {
           </button>
         </div>
 
+        {/* Opaque, not the header's translucent fill: the header's own
+            backdrop-filter makes it the backdrop root for anything inside it,
+            so a blur here would see only the header, not the page, and the
+            page's text would read through the links. */}
         <div
           id="mobile-menu"
           ref={mobileMenuRef}
-          className={`md:hidden absolute top-full left-0 right-0 bg-header backdrop-blur-lg border-b border-divide shadow-card-hover transition-all duration-300 ${
+          className={`md:hidden absolute top-full left-0 right-0 bg-surface-base border-b border-divide shadow-card-hover transition-all duration-300 ${
             menuOpen
               ? "opacity-100 translate-y-0 pointer-events-auto"
               : "opacity-0 -translate-y-2 pointer-events-none"
