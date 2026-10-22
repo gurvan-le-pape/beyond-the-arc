@@ -124,9 +124,9 @@ async function ChampionshipsDetailPage({
   );
 
   return (
-    <PageLayout contentClassName="max-w-[1800px]">
-      <div className="flex flex-col xl:flex-row gap-6">
-        <div className="w-full xl:flex-1 space-y-6">
+    <PageLayout>
+      <div className="flex flex-col xl:flex-row xl:items-start gap-6">
+        <div className="w-full xl:flex-1 min-w-0 space-y-6">
           <ChampionshipBreadcrumb
             name={buildChampionshipHeading(championship, {
               gender: tCommon(`gender.${championship.gender}`),
@@ -151,7 +151,7 @@ async function ChampionshipsDetailPage({
           />
         </div>
 
-        <div className="w-full xl:w-[500px] 2xl:w-[600px]">
+        <div className="w-full xl:w-[480px] xl:flex-shrink-0">
           <ChampionshipMatches key={poolId} matches={matches} />
         </div>
       </div>

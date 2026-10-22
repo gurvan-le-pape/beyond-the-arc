@@ -39,7 +39,7 @@ export function MatchesSection({
           </Badge>
         )}
       </div>
-      <div className="space-y-3 max-h-[calc(100vh-22rem)] overflow-y-auto pr-1 scrollbar-thin">
+      <div className="space-y-3">
         {currentMatches.length > 0 ? (
           currentMatches.map((match) => (
             <MatchCard
