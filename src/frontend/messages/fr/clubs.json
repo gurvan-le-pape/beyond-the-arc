@@ -1,8 +1,5 @@
 {
   "noTeams": "Aucune équipe disponible",
-  "selectRegion": "Sélectionnez une région pour voir les départements",
-  "selectDepartment": "Sélectionnez un département pour voir les clubs",
-  "selectClub": "Sélectionnez un club pour voir les détails",
   "club": "club",
   "clubs": "clubs",
   "errorLoadingRegions": "Impossible de charger les régions",

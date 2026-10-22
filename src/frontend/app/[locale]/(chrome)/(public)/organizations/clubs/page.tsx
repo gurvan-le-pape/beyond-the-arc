@@ -3,10 +3,9 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { ClubsView } from "@/features/organizations/clubs/components";
-import { TitleSection } from "@/features/organizations/components";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
-import { ViewLevel } from "@/shared/constants";
+import { Text } from "@/shared/components/typography";
 import type { LocalePageProps } from "@/shared/types";
 
 /**
@@ -35,7 +34,10 @@ export async function generateMetadata({
 export default async function ClubsPage({ params }: LocalePageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations({ locale, namespace: "organizations" });
+  const [t, tCommon] = await Promise.all([
+    getTranslations({ locale, namespace: "organizations" }),
+    getTranslations({ locale, namespace: "common" }),
+  ]);
 
   return (
     <PageLayout>
@@ -45,7 +47,7 @@ export default async function ClubsPage({ params }: LocalePageProps) {
           { label: t("clubs.label"), current: true },
         ]}
       />
-      <TitleSection viewLevel={ViewLevel.CLUBS} />
+      <Text variant="pageTitle">{tCommon("sectionTitles.clubs")}</Text>
       <ClubsView />
     </PageLayout>
   );

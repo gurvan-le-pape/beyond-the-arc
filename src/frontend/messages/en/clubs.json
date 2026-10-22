@@ -1,8 +1,5 @@
 {
   "noTeams": "No teams available",
-  "selectRegion": "Select a region to see departments",
-  "selectDepartment": "Select a department to see clubs",
-  "selectClub": "Select a club to see details",
   "club": "club",
   "clubs": "clubs",
   "errorLoadingRegions": "Failed to load regions",
