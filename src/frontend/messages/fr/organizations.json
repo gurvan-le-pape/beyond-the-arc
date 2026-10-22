@@ -33,5 +33,14 @@
     "league": "Ligue",
     "committee": "Comité",
     "visitWebsite": "Visiter le site"
+  },
+  "header": {
+    "leagueKind": "Ligue régionale",
+    "committeeKind": "Comité départemental",
+    "committees": "{count, plural, one {comité} other {comités}}",
+    "clubs": "{count, plural, one {club} other {clubs}}",
+    "championships": "{count, plural, one {championnat} other {championnats}}",
+    "teams": "{count, plural, one {équipe} other {équipes}}",
+    "record": "Bilan (V–D)"
   }
 }

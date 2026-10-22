@@ -1,17 +1,26 @@
 // src/frontend/app/[locale]/(chrome)/(public)/organizations/committees/[committeeId]/page.tsx
 import { Trophy } from "lucide-react";
 import type { Metadata } from "next";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import {
+  getFormatter,
+  getTranslations,
+  setRequestLocale,
+} from "next-intl/server";
 
 import { serverChampionshipsService } from "@/features/competitions/championships/api/championships.server";
 import { serverClubsService } from "@/features/organizations/clubs/api/clubs.server";
 import { serverCommitteesService } from "@/features/organizations/committees/api/committees.server";
 import { OrganizationDetailView } from "@/features/organizations/shared/components";
+import {
+  namesMatch,
+  normalizeDepartmentCode,
+} from "@/features/organizations/utils";
 import { EmptyState, withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { CompetitionLevel } from "@/shared/constants";
 import type { LocalePageProps } from "@/shared/types";
 import {
+  formatCommitteeName,
   handleServerError,
   parseRouteId,
   withServerErrorMetadata,
@@ -81,6 +90,10 @@ async function CommitteePage({
       }),
     ]).catch(handleServerError);
 
+  const format = await getFormatter({ locale });
+  const placeName = committee.department.name;
+  const officialName = formatCommitteeName(committee.name);
+
   return (
     <PageLayout>
       <OrganizationDetailView
@@ -90,9 +103,34 @@ async function CommitteePage({
             label: tOrganizations("committees.label"),
             href: "/organizations/committees",
           },
-          { label: committee.name, current: true },
+          { label: placeName, current: true },
         ]}
-        header={{ name: committee.name, imageFolder: "committees" }}
+        header={{
+          name: placeName,
+          logoName: committee.name,
+          imageFolder: "committees",
+          subtitle: [
+            tOrganizations("header.committeeKind"),
+            normalizeDepartmentCode(committee.department.code),
+            namesMatch(officialName, placeName) ? null : officialName,
+          ]
+            .filter(Boolean)
+            .join(" · "),
+          stats: [
+            {
+              value: format.number(committee.clubCount),
+              label: tOrganizations("header.clubs", {
+                count: committee.clubCount,
+              }),
+            },
+            {
+              value: format.number(championships.length),
+              label: tOrganizations("header.championships", {
+                count: championships.length,
+              }),
+            },
+          ],
+        }}
         info={{
           address: committee.address,
           ffbbUrl: committee.ffbbUrl,

@@ -6,30 +6,41 @@ import { type ReactNode, useState } from "react";
 
 import { ClubMark } from "@/shared/components/domain";
 import { Card } from "@/shared/components/primitives";
+import { StatCell } from "@/shared/components/stats";
 import { Text } from "@/shared/components/typography";
 import { formatNameToFileName } from "@/shared/utils";
 
 type OrganizationImageFolder = "clubs" | "leagues" | "committees";
 
+interface OrganizationHeaderStat {
+  readonly value: string;
+  readonly label: string;
+}
+
 interface OrganizationHeaderProps {
-  /**
-   * Displayed as the heading **and** used as the logo lookup key, via
-   * `formatNameToFileName`. A name that does not match a shipped file falls
-   * back to the default crest rather than erroring.
-   */
+  /** The heading, and the logo's alt text. */
   readonly name: string;
+  /**
+   * The logo lookup key, via `formatNameToFileName`: the federation's name,
+   * which is what the shipped files are named after. Defaults to `name`. A key
+   * that matches no file falls back to the default crest rather than erroring.
+   */
+  readonly logoName?: string;
   /** Which `public/images/*` directory the logo is looked up in. */
   readonly imageFolder: OrganizationImageFolder;
-  /** Secondary line under the heading — city, department, or similar. */
+  /** Secondary line under the heading — what the organisation is, where it is. */
   readonly subtitle?: ReactNode;
+  /** A band of figures under the identity, such as its club count. */
+  readonly stats?: readonly OrganizationHeaderStat[];
 }
 
 /**
- * Card heading for a league, committee or club detail page: logo, name, and an
- * optional subtitle line.
+ * Card heading for a league, committee or club detail page: logo, name, an
+ * optional subtitle line, and an optional band of figures laid out like the
+ * team and player headers'.
  *
  * The logo is resolved from the props, not passed in:
- * `/images/{imageFolder}/{formatNameToFileName(name)}.webp`. Renaming an
+ * `/images/{imageFolder}/{formatNameToFileName(logoName ?? name)}.webp`. Renaming an
  * organisation upstream therefore swaps its logo for the default silently, and
  * the two stay in step only if the asset is renamed alongside it.
  *
@@ -42,18 +53,20 @@ interface OrganizationHeaderProps {
  */
 export function OrganizationHeader({
   name,
+  logoName,
   imageFolder,
   subtitle,
+  stats = [],
 }: OrganizationHeaderProps) {
   const [logoSrc, setLogoSrc] = useState(
-    `/images/${imageFolder}/${formatNameToFileName(name)}.webp`,
+    `/images/${imageFolder}/${formatNameToFileName(logoName ?? name)}.webp`,
   );
 
   const FALLBACK_LOGO = `/images/${imageFolder}/defaultLogo.30cc7520.svg`;
 
   return (
-    <Card padding="lg">
-      <div className="flex items-center gap-6">
+    <Card padding="none" className="overflow-hidden">
+      <div className="flex items-center gap-4 p-4 sm:gap-6 sm:p-6">
         {imageFolder === "clubs" ? (
           <ClubMark clubName={name} size="2xl" />
         ) : (
@@ -68,7 +81,7 @@ export function OrganizationHeader({
               breakpoints, so the image is never upscaled. */}
             <Image
               src={logoSrc}
-              alt={`${name} logo`}
+              alt=""
               width={96}
               height={96}
               className="w-full h-full object-contain"
@@ -77,13 +90,33 @@ export function OrganizationHeader({
             />
           </div>
         )}
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           <Text variant="h1" className="text-xl md:text-2xl">
             {name}
           </Text>
-          {subtitle && <Text variant="body">{subtitle}</Text>}
+          {subtitle && (
+            <Text variant="body" className="mt-1 text-text-secondary">
+              {subtitle}
+            </Text>
+          )}
         </div>
       </div>
+
+      {stats.length > 0 && (
+        <div
+          className="grid border-t border-divide"
+          style={{ gridTemplateColumns: `repeat(${stats.length}, 1fr)` }}
+        >
+          {stats.map((stat, i) => (
+            <div
+              key={stat.label}
+              className={i < stats.length - 1 ? "border-r border-divide" : ""}
+            >
+              <StatCell value={stat.value} label={stat.label} />
+            </div>
+          ))}
+        </div>
+      )}
     </Card>
   );
 }
