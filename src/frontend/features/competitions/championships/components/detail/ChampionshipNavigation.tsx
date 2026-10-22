@@ -3,7 +3,10 @@ import { useTranslations } from "next-intl";
 
 import type { ChampionshipNavLink } from "@/features/competitions/championships/types";
 import { Link } from "@/navigation";
-import { Card, navButtonVariants } from "@/shared/components/primitives";
+import {
+  segmentGroupClass,
+  segmentOptionVariants,
+} from "@/shared/components/primitives";
 
 interface ChampionshipNavigationProps {
   readonly categoryLinks: ChampionshipNavLink[];
@@ -12,7 +15,9 @@ interface ChampionshipNavigationProps {
 
 /**
  * Sideways navigation between sibling championships: same competition, other
- * category, or same category, other division.
+ * category, or same category, other division. Two rows drawn like a
+ * `SegmentedControl`, side by side where they fit, for the championship header
+ * to place under its heading.
  *
  * Every entry is a real page, so every entry is a real link — which is what
  * keeps this a server component. Rendering them as buttons and calling the
@@ -28,18 +33,16 @@ export function ChampionshipNavigation({
   if (categoryLinks.length === 0 && divisionLinks.length === 0) return null;
 
   return (
-    <Card padding="md">
-      <div className="space-y-4">
-        <NavLinkRow
-          links={categoryLinks}
-          ariaLabel={tCompetitions("categoryAriaLabel")}
-        />
-        <NavLinkRow
-          links={divisionLinks}
-          ariaLabel={tCompetitions("divisionAriaLabel")}
-        />
-      </div>
-    </Card>
+    <div className="flex flex-wrap gap-2">
+      <NavLinkRow
+        links={categoryLinks}
+        ariaLabel={tCompetitions("categoryAriaLabel")}
+      />
+      <NavLinkRow
+        links={divisionLinks}
+        ariaLabel={tCompetitions("divisionAriaLabel")}
+      />
+    </div>
   );
 }
 
@@ -52,15 +55,13 @@ function NavLinkRow({ links, ariaLabel }: NavLinkRowProps) {
   if (links.length === 0) return null;
 
   return (
-    <nav aria-label={ariaLabel} className="flex flex-wrap gap-2">
+    <nav aria-label={ariaLabel} className={segmentGroupClass}>
       {links.map((link) => (
         <Link
           key={link.href}
           href={link.href}
           aria-current={link.isCurrent ? "page" : undefined}
-          className={navButtonVariants({
-            variant: link.isCurrent ? "navActive" : "navInactive",
-          })}
+          className={segmentOptionVariants({ selected: link.isCurrent })}
         >
           {link.label}
         </Link>

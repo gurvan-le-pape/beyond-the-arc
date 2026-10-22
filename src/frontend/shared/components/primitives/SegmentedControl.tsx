@@ -3,7 +3,7 @@
 
 import { type KeyboardEvent, type ReactNode, useRef } from "react";
 
-import { cn } from "@/shared/utils";
+import { segmentGroupClass, segmentOptionVariants } from "./segmentedStyles";
 
 export interface SegmentedControlOption<TValue extends string> {
   readonly value: TValue;
@@ -67,11 +67,7 @@ export function SegmentedControl<TValue extends string>({
   };
 
   return (
-    <div
-      role="radiogroup"
-      aria-label={label}
-      className="inline-flex flex-wrap gap-1 rounded-button border border-divide p-1"
-    >
+    <div role="radiogroup" aria-label={label} className={segmentGroupClass}>
       {options.map((option, index) => {
         const isSelected = option.value === value;
         return (
@@ -88,13 +84,7 @@ export function SegmentedControl<TValue extends string>({
             tabIndex={isSelected || (!hasSelection && index === 0) ? 0 : -1}
             onClick={() => onChange(option.value)}
             onKeyDown={(event) => handleKeyDown(event, index)}
-            className={cn(
-              "rounded-button transition-colors duration-150 focus-ring",
-              size === "sm" ? "px-2.5 py-1 text-xs" : "px-3 py-1.5 text-sm",
-              isSelected
-                ? "bg-tint-primary text-ink-primary font-semibold"
-                : "text-text-body font-medium hover:text-text-heading",
-            )}
+            className={segmentOptionVariants({ size, selected: isSelected })}
           >
             {option.label}
           </button>

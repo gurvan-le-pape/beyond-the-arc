@@ -1,14 +1,17 @@
 // src/frontend/features/competitions/championships/components/detail/ChampionshipHeader.tsx
 import { useTranslations } from "next-intl";
+import type { ReactNode } from "react";
 
 import type { Championship } from "@/features/competitions/championships/types";
 import { buildChampionshipHeading } from "@/features/competitions/championships/utils";
-import { Card, TextLink } from "@/shared/components/primitives";
+import { Card, Divide, TextLink } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { CompetitionLevel } from "@/shared/constants";
 
 interface ChampionshipHeaderProps {
   readonly championship: Championship;
+  /** Under a rule beneath the heading: the links to sibling championships. */
+  readonly children?: ReactNode;
 }
 
 /**
@@ -20,7 +23,10 @@ interface ChampionshipHeaderProps {
  * otherwise, named after its department or region. It is left out when neither
  * is set — national championships have no organisation above them.
  */
-export function ChampionshipHeader({ championship }: ChampionshipHeaderProps) {
+export function ChampionshipHeader({
+  championship,
+  children,
+}: ChampionshipHeaderProps) {
   const tCommon = useTranslations("common");
   const tCompetitions = useTranslations("competitions");
   const tOrganizations = useTranslations("organizations");
@@ -70,6 +76,12 @@ export function ChampionshipHeader({ championship }: ChampionshipHeaderProps) {
           {championship.seasonYear}
         </Text>
       </div>
+      {children && (
+        <>
+          <Divide />
+          <div className="px-4 py-3 sm:px-6">{children}</div>
+        </>
+      )}
     </Card>
   );
 }

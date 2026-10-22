@@ -145,20 +145,9 @@ export const Button = ({
 // (a sidebar, a nav bar, a categorised list). Button shouldn't know that.
 // ---------------------------------------------------------------------------
 
-// Exported like buttonVariants, so a real `<a>`/`<Link>` can wear the nav-item
-// look without being rebuilt as a button — see ChampionshipNavigation.
-export const navButtonVariants = cva(BASE, {
+const navButtonVariants = cva(BASE, {
   variants: {
     variant: {
-      // Segmented nav / tab bar
-      navActive:
-        "rounded-button bg-solid-primary text-on-solid-primary border-2 border-solid-primary shadow-md " +
-        "hover:bg-solid-primary-hover",
-
-      navInactive:
-        "rounded-button surface-raised text-ink-primary border-2 border-line-primary shadow-sm " +
-        "hover:bg-tint-primary hover:border-solid-primary",
-
       // List item variants
       listItem:
         "w-full justify-start text-left rounded-none border-l-4 border-l-transparent " +
@@ -179,7 +168,7 @@ export const navButtonVariants = cva(BASE, {
     },
   },
   defaultVariants: {
-    variant: "navActive",
+    variant: "listItem",
     size: "md",
   },
 });
@@ -195,13 +184,12 @@ export interface NavButtonProps
 /**
  * NavButton — navigation and list-item buttons.
  *
- * Use for: tab bars, sidebar nav, expandable section headers, categorised list rows.
+ * Use for: sidebar nav, expandable section headers, categorised list rows.
+ * Links between sibling pages wear `segmentOptionVariants` instead.
  * These variants know about their layout context — that's why they're separate
  * from the universal Button.
  *
  * @example
- * <NavButton variant="navActive">Résultats</NavButton>
- * <NavButton variant="navInactive">Classement</NavButton>
  * <NavButton variant="listItem" size="auto">Club name</NavButton>
  * <NavButton variant="categoryHeader" size="auto">
  *   <ChevronDownIcon /> Departmental
