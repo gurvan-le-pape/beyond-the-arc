@@ -8,7 +8,7 @@
 //
 // Use for short, static option lists (≤ ~8 items).
 // For long/searchable lists use ComboBox directly.
-// For multi-select use MultiSelectDropdown.
+// For multi-select use MultiSelect.
 //
 // @example
 // <Select

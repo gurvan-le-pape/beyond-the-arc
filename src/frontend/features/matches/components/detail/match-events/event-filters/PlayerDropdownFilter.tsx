@@ -4,7 +4,7 @@
 import { useTranslations } from "next-intl";
 
 import type { TeamInfoExtended } from "@/features/teams/types";
-import { MultiSelectDropdown } from "@/shared/components/primitives";
+import { MultiSelect } from "@/shared/components/primitives";
 
 interface PlayerDropdownFilterProps {
   readonly homeTeam: TeamInfoExtended;
@@ -19,9 +19,9 @@ interface PlayerDropdownFilterProps {
 /**
  * Player multi-select filter.
  *
- * Thin wrapper around MultiSelectDropdown — maps team players into the
+ * Thin wrapper around MultiSelect — maps team players into the
  * generic column/item shape. All popover, animation, and clear logic
- * lives in MultiSelectDropdown.
+ * lives in MultiSelect.
  */
 export function PlayerDropdownFilter({
   homeTeam,
@@ -47,7 +47,7 @@ export function PlayerDropdownFilter({
   });
 
   return (
-    <MultiSelectDropdown
+    <MultiSelect
       label={t("matchEvents.players")}
       selectedCount={selectedPlayerIds.size}
       onClear={() => setSelectedPlayerIds(new Set())}
