@@ -1,7 +1,7 @@
 // src/frontend/shared/components/primitives/dropdownTriggerBase.ts
 //
 // Single source of truth for the visual contract shared by ALL dropdown-style
-// controls: Select, ComboBox, MultiSelectDropdown.
+// controls: Select, ComboBox, MultiSelect.
 //
 // Every control that looks like a "picker" must use these classes on its
 // trigger element so they are pixel-identical across the UI.

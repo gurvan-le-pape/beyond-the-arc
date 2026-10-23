@@ -1,6 +1,6 @@
-// src/frontend/shared/components/primitives/MultiSelectDropdown.tsx
+// src/frontend/shared/components/primitives/MultiSelect.tsx
 //
-// MultiSelectDropdown — multi-value picker with N columns of checkboxes.
+// MultiSelect — multi-value picker with N columns of checkboxes.
 //
 // The shell handles: trigger, badge count, open/close, click-outside,
 // popover animation, header, dividers between columns, and clear button.
@@ -33,7 +33,7 @@ export interface MultiSelectItem {
   onToggle: () => void;
 }
 
-export interface MultiSelectDropdownProps {
+export interface MultiSelectProps {
   /** Label shown in the trigger button. */
   readonly label: string;
   /** Number of currently selected items — drives the badge. */
@@ -47,11 +47,11 @@ export interface MultiSelectDropdownProps {
 }
 
 /**
- * MultiSelectDropdown — generic multi-value column picker.
+ * MultiSelect — generic multi-value column picker.
  *
  * @example
  * // Single column
- * <MultiSelectDropdown
+ * <MultiSelect
  *   label="Status"
  *   selectedCount={selected.size}
  *   onClear={() => setSelected(new Set())}
@@ -69,7 +69,7 @@ export interface MultiSelectDropdownProps {
  * />
  *
  * // Two columns (e.g. home/away teams)
- * <MultiSelectDropdown
+ * <MultiSelect
  *   label="Players"
  *   selectedCount={selectedPlayerIds.size}
  *   onClear={() => setSelectedPlayerIds(new Set())}
@@ -78,7 +78,7 @@ export interface MultiSelectDropdownProps {
  *   columns={[homeColumn, awayColumn]}
  * />
  */
-export function MultiSelectDropdown({
+export function MultiSelect({
   label,
   selectedCount,
   onClear,
@@ -86,7 +86,7 @@ export function MultiSelectDropdown({
   setIsOpen,
   columns,
   className,
-}: MultiSelectDropdownProps) {
+}: MultiSelectProps) {
   const t = useTranslations("common");
   const dropdownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -247,4 +247,4 @@ function ColumnList({ column }: ColumnListProps) {
   );
 }
 
-export default MultiSelectDropdown;
+export default MultiSelect;
