@@ -10,6 +10,7 @@ import {
   ChampionshipMatches,
   ChampionshipNavigation,
   ChampionshipPoolSelect,
+  ChampionshipSections,
 } from "@/features/competitions/championships/components";
 import {
   buildCategoryNavigation,
@@ -125,36 +126,41 @@ async function ChampionshipsDetailPage({
 
   return (
     <PageLayout>
-      <div className="flex flex-col xl:flex-row xl:items-start gap-6">
-        <div className="w-full xl:flex-1 min-w-0 space-y-6">
-          <ChampionshipBreadcrumb
-            name={buildChampionshipHeading(championship, {
-              gender: tCommon(`gender.${championship.gender}`),
-              division: tCompetitions("divisionWithValue", {
-                value: championship.division,
-              }),
-            })}
-          />
-
-          <ChampionshipHeader championship={championship}>
-            <ChampionshipNavigation
-              categoryLinks={categoryLinks}
-              divisionLinks={divisionLinks}
+      <ChampionshipSections
+        header={
+          <>
+            <ChampionshipBreadcrumb
+              name={buildChampionshipHeading(championship, {
+                gender: tCommon(`gender.${championship.gender}`),
+                division: tCompetitions("divisionWithValue", {
+                  value: championship.division,
+                }),
+              })}
             />
-          </ChampionshipHeader>
 
+            <ChampionshipHeader championship={championship}>
+              <ChampionshipNavigation
+                categoryLinks={categoryLinks}
+                divisionLinks={divisionLinks}
+              />
+            </ChampionshipHeader>
+          </>
+        }
+        standings={
           <LeaderboardTable
             leaderboards={leaderboard}
             dropdown={
-              <ChampionshipPoolSelect pools={pools} selectedPoolId={poolId} />
+              <div className="hidden xl:block">
+                <ChampionshipPoolSelect pools={pools} selectedPoolId={poolId} />
+              </div>
             }
           />
-        </div>
-
-        <div className="w-full xl:w-[480px] xl:flex-shrink-0">
-          <ChampionshipMatches key={poolId} matches={matches} />
-        </div>
-      </div>
+        }
+        matches={<ChampionshipMatches key={poolId} matches={matches} />}
+        poolSelect={
+          <ChampionshipPoolSelect pools={pools} selectedPoolId={poolId} />
+        }
+      />
     </PageLayout>
   );
 }

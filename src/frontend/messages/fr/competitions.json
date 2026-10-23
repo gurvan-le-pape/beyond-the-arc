@@ -47,5 +47,10 @@
     "division": "Division",
     "divisionAbbr": "Div.",
     "pools": "Poules"
+  },
+  "detailSections": {
+    "label": "Afficher",
+    "standings": "Classement",
+    "matches": "Matchs"
   }
 }
