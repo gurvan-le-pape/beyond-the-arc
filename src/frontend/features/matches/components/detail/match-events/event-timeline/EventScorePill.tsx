@@ -27,7 +27,7 @@ export function EventScorePill({
           : "bg-tint-error text-ink-error",
       )}
     >
-      {homeScore} - {awayScore}
+      {homeScore}–{awayScore}
     </div>
   );
 }
