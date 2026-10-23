@@ -61,7 +61,7 @@ const width = {
  * shifting a pixel or two per row. `tabular-nums` fixes every digit to the
  * same advance width, which is what makes a stat column read as a column.
  * The design system already relies on this in MatchScore, StatValue and
- * StatCell; the tables were the gap.
+ * Stat; the tables were the gap.
  */
 const numeric = {
   true: "tabular-nums",
