@@ -148,8 +148,6 @@
     "seeTeam": "See team {number}"
   },
   "shotChart": {
-    "shots": "Shots",
-    "all": "All",
     "made": "Made",
     "missed": "Missed",
     "madeLabel": "Made",
@@ -163,7 +161,6 @@
     "download": "Download chart",
     "close": "Close",
     "scatterChartLabel": "Shot chart: every shot plotted on the court",
-    "heatmapChartLabel": "Shot chart: shot density across the court",
     "hotspotsChartLabel": "Shot chart: shooting by court zone",
     "chartSummary": "{total, plural, =0 {{total} shots recorded.} other {{total} shots, {made} made and {missed} missed ({percent}% shooting).}}",
     "colorMeaning": "Colour shows the number of shots attempted"

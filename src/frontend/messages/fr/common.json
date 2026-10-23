@@ -148,8 +148,6 @@
     "seeTeam": "Voir l'équipe {number}"
   },
   "shotChart": {
-    "shots": "Tirs",
-    "all": "Tous",
     "made": "Réussis",
     "missed": "Manqués",
     "madeLabel": "Panier marqué",
@@ -163,7 +161,6 @@
     "download": "Télécharger le graphique",
     "close": "Fermer",
     "scatterChartLabel": "Carte des tirs : chaque tir placé sur le terrain",
-    "heatmapChartLabel": "Carte des tirs : densité des tirs sur le terrain",
     "hotspotsChartLabel": "Carte des tirs : tirs par zone du terrain",
     "chartSummary": "{total, plural, =0 {{total} tir enregistré.} one {{total} tir, {made} réussi et {missed} manqué ({percent} % de réussite).} other {{total} tirs, {made} réussis et {missed} manqués ({percent} % de réussite).}}",
     "colorMeaning": "La couleur indique le nombre de tirs tentés"

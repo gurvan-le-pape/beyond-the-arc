@@ -11,7 +11,7 @@ interface HotspotsHeaderProps {
  */
 export function HotspotsHeader({ maxValue }: HotspotsHeaderProps) {
   return (
-    <div className="w-full mb-2 rounded-xl px-4 py-3 bg-surface-inset border border-divide shadow-sm">
+    <div className="w-full mb-3">
       <HeatmapLegend maxValue={maxValue} compact />
     </div>
   );

@@ -1,9 +1,6 @@
 // src/frontend/features/charts/utils/shotSummary.ts
 import type { ShotEvent } from "@/shared/types";
 
-import { ShotFilter } from "../constants";
-import type { ZoneStats } from "../types";
-
 /** How many shots were taken and made, for the chart's text description. */
 export interface ShotSummary {
   readonly total: number;
@@ -28,26 +25,4 @@ export function summarizeShots(shots: readonly ShotEvent[]): ShotSummary {
     missed: total - made,
     percent: total > 0 ? Math.round((made / total) * 100) : 0,
   };
-}
-
-/**
- * The highest count in any heatmap cell for the shots the filter shows: the
- * top of the colour scale.
- *
- * @param bins - the heatmap grid
- * @param filter - made, missed or all shots
- * @returns the highest count, never below 1 so the scale never divides by 0
- */
-export function maxCellValue(
-  bins: readonly (readonly ZoneStats[])[],
-  filter: ShotFilter,
-): number {
-  let key: keyof ZoneStats = "total";
-  if (filter === ShotFilter.MADE) key = "made";
-  else if (filter === ShotFilter.MISSED) key = "missed";
-
-  let max = 1;
-  for (const row of bins)
-    for (const cell of row) max = Math.max(max, cell[key]);
-  return max;
 }

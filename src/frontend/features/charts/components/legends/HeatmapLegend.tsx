@@ -20,8 +20,8 @@ function buildGradient(interpolate: (t: number) => string): string {
 }
 
 /**
- * The colour legend of the heatmap and hotspots charts: the gradient from no
- * shot to the busiest cell or zone.
+ * The colour legend of the hotspots chart: the gradient from no shot to the
+ * busiest zone.
  *
  * Only the two ends are labelled. A middle tick would be a rounded count
  * printed at an exact midpoint: with a maximum of 3, "2" where the colour

@@ -13,7 +13,7 @@ interface TeamShotChartProps {
   readonly description?: string;
 }
 
-/** The team detail's shot chart — pins `ShotChart` to the heatmap variant so team pages do not choose a chart type. */
+/** The team detail's shot chart — pins `ShotChart` to the hotspots variant so team pages do not choose a chart type. */
 export function TeamShotChart({
   shots,
   title,
@@ -21,8 +21,8 @@ export function TeamShotChart({
 }: TeamShotChartProps) {
   return (
     <Section title={title}>
-      <div className="w-full max-w-3xl mx-auto">
-        <ShotChart chartType={ChartType.HEATMAP} shots={shots} />
+      <div className="w-full max-w-md mx-auto">
+        <ShotChart chartType={ChartType.HOTSPOTS} shots={shots} />
         {description && (
           <Text variant="caption" className="mt-4 text-center">
             {description}

@@ -21,7 +21,7 @@ export function PlayerShotChart({
 }: PlayerShotChartProps) {
   return (
     <Section title={title}>
-      <div className="w-full max-w-3xl mx-auto">
+      <div className="w-full max-w-md mx-auto">
         <ShotChart chartType={ChartType.HOTSPOTS} shots={shots} />
         {description && (
           <Text variant="caption" className="mt-4 text-center">
