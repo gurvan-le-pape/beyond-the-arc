@@ -8,10 +8,8 @@ import { usePlayerMatches } from "@/features/players/api";
 import type { Player, PlayerCareerStats } from "@/features/players/types";
 import { Section, StatComparison } from "@/shared/components/blocks";
 import { ErrorMessage } from "@/shared/components/feedback";
-import { Badge } from "@/shared/components/primitives";
 import { cn } from "@/shared/utils";
 
-import { PlayerIdentity } from "./PlayerIdentity";
 import { PlayerSearchDropdown } from "./PlayerSearchDropdown";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -53,8 +51,12 @@ interface PlayerComparisonProps {
 }
 
 /**
- * Side-by-side career comparison between the page's player and one the reader
- * picks.
+ * Career comparison between the page's player and one the reader picks: a
+ * search box, then the two players' per-game averages bar against bar.
+ *
+ * The page's player is already named by the page header, and both players are
+ * named in the comparison's own legend, so the widget does not introduce
+ * either one again.
  *
  * **The two sides are loaded differently, deliberately.** The subject's stats
  * arrive as a prop from the page that already fetched them; the opponent's are
@@ -109,40 +111,15 @@ export function PlayerComparison({
 
   return (
     <Section title={tPlayers("playerDetail.compareTitle")}>
-      <div className="relative rounded-2xl min-h-[140px]">
-        <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
-          <div className="absolute inset-0 bg-gradient-to-r from-tint-primary via-transparent to-tint-secondary opacity-50" />
-          <div className="hidden sm:block absolute left-1/2 top-4 bottom-4 w-px -translate-x-1/2 bg-divide opacity-25" />
-        </div>
-
-        {/* Side by side from sm up; stacked on phones, where the search box
-            would otherwise shrink to its icon beside the player card. */}
-        <div className="relative z-raised flex flex-col sm:flex-row items-stretch sm:items-center justify-between px-4 py-4 sm:px-6 sm:py-6 gap-4">
-          <PlayerIdentity
-            player={player}
-            side="left"
-            className="flex-1 animate-slide-up"
-          />
-
-          <Badge
-            variant="vs"
-            size="lg"
-            className="w-12 h-12 rounded-full justify-center shadow-lg self-center sm:mx-2"
-          >
-            VS
-          </Badge>
-
-          <div className="sm:flex-1 flex justify-end">
-            <PlayerSearchDropdown
-              excludeId={player.id}
-              gender={player.team.gender}
-              category={player.team.category}
-              selectedPlayer={opponent}
-              onSelect={setOpponent}
-              onClear={() => setOpponent(null)}
-            />
-          </div>
-        </div>
+      <div className="max-w-sm">
+        <PlayerSearchDropdown
+          excludeId={player.id}
+          gender={player.team.gender}
+          category={player.team.category}
+          selectedPlayer={opponent}
+          onSelect={setOpponent}
+          onClear={() => setOpponent(null)}
+        />
       </div>
 
       <div className="mt-5">
@@ -158,7 +135,7 @@ export function PlayerComparison({
         )}
 
         {statsA && statsB && !isLoadingOpponent && (
-          <div className="animate-slide-up">
+          <div className="max-w-2xl mx-auto animate-slide-up">
             <StatComparison
               variant="mirrored"
               sideA={statsA}

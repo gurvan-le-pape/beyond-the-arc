@@ -14,7 +14,6 @@ import { cn } from "@/shared/utils";
 
 import { usePlayerSearch } from "../../../api";
 import type { Player } from "../../../types/Player";
-import { PlayerIdentity } from "./PlayerIdentity";
 
 // ─── Dropdown content ─────────────────────────────────────────────────────────
 
@@ -145,19 +144,27 @@ export function PlayerSearchDropdown({
   // ─── Selected state ───────────────────────────────────────────────────
   if (selectedPlayer) {
     return (
-      <div className="relative flex flex-col items-end text-right">
+      <div className="flex items-center gap-2">
+        <div className="min-w-0 flex flex-col">
+          <Text variant="label" as="span" className="text-text-heading">
+            #{selectedPlayer.number} {selectedPlayer.name}
+          </Text>
+          {selectedPlayer.team?.club?.name && (
+            <Text variant="caption" as="span" className="truncate">
+              {selectedPlayer.team.club.name}
+            </Text>
+          )}
+        </div>
         <Button
           variant="ghost"
           size="icon"
           type="button"
           onClick={onClear}
           aria-label={tCommon("clear")}
-          className="absolute -top-3 -right-3 w-6 h-6 rounded-full border border-divide bg-surface-inset"
+          className="shrink-0"
         >
-          <X className="w-3 h-3" aria-hidden="true" />
+          <X className="w-4 h-4" aria-hidden="true" />
         </Button>
-
-        <PlayerIdentity player={selectedPlayer} side="right" />
       </div>
     );
   }
