@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
 
-import { IconButton } from "@/shared/components/primitives";
+import { IconButton, Popover } from "@/shared/components/primitives";
 import { cn } from "@/shared/utils";
 
 /**
@@ -78,21 +78,11 @@ export function ThemeToggle() {
         <ActiveIcon />
       </IconButton>
 
-      <div
+      <Popover
         role="menu"
         aria-label={t("header.selectTheme")}
-        // Without this the three theme buttons stay tabbable and the menu
-        // stays in the accessibility tree while closed — on every page, since
-        // this lives in the header.
-        inert={!isOpen}
-        className={cn(
-          "absolute right-0 mt-1 w-44 z-dropdown",
-          "bg-surface-raised border border-divide rounded-input shadow-card-hover",
-          "transition-all duration-200 origin-top-right",
-          isOpen
-            ? "opacity-100 scale-100 pointer-events-auto"
-            : "opacity-0 scale-95 pointer-events-none",
-        )}
+        open={isOpen}
+        align="end"
       >
         {THEMES.map(({ id, labelKey, Icon }) => {
           const isActive = theme === id;
@@ -108,7 +98,6 @@ export function ThemeToggle() {
               }}
               className={cn(
                 "w-full flex items-center gap-3 px-3 py-2 text-sm transition-colors duration-150",
-                "first:rounded-t-input last:rounded-b-input",
                 isActive
                   ? "bg-solid-primary text-on-solid-primary"
                   : "text-text-body hover:bg-surface-subtle hover:text-text-heading",
@@ -119,7 +108,7 @@ export function ThemeToggle() {
             </button>
           );
         })}
-      </div>
+      </Popover>
     </div>
   );
 }

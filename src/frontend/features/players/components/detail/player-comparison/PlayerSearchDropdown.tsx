@@ -7,7 +7,7 @@ import { useState } from "react";
 
 import { ErrorMessage } from "@/shared/components/feedback";
 import { DebouncedInput } from "@/shared/components/forms";
-import { IconButton } from "@/shared/components/primitives";
+import { IconButton, Popover } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import type { Category, Gender } from "@/shared/constants";
 import { cn } from "@/shared/utils";
@@ -73,7 +73,7 @@ function DropdownContent({
         onClick={() => onSelect(player)}
         className={cn(
           "w-full flex items-center gap-2.5 px-3 py-2 text-left",
-          "hover:bg-surface-inset transition-colors",
+          "hover:bg-surface-subtle transition-colors",
           i !== 0 && "border-t border-divide",
         )}
       >
@@ -174,15 +174,8 @@ export function PlayerSearchDropdown({
         clearAriaLabel={tCommon("clearSearch")}
       />
 
-      {showDropdown && (
-        <div
-          className={cn(
-            "absolute top-full left-0 right-0 mt-1 z-dropdown",
-            "max-h-64 overflow-y-auto scrollbar-hide",
-            "rounded-lg border border-divide",
-            "surface-subtle shadow-card-hover",
-          )}
-        >
+      <Popover open={showDropdown} align="stretch">
+        <div className="max-h-64 overflow-y-auto scrollbar-hide">
           <DropdownContent
             isLoading={isLoading}
             isError={isError}
@@ -194,7 +187,7 @@ export function PlayerSearchDropdown({
             onRetry={refetch}
           />
         </div>
-      )}
+      </Popover>
     </div>
   );
 }

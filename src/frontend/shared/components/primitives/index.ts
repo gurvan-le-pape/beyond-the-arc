@@ -14,6 +14,7 @@ export * from "./Grid";
 export * from "./IconButton";
 export * from "./ImageWithFallback";
 export * from "./MultiSelect";
+export * from "./Popover";
 export * from "./SegmentedControl";
 export * from "./segmentedStyles";
 export * from "./SelectChevron";
