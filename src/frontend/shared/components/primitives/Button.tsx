@@ -1,10 +1,4 @@
 // src/frontend/shared/components/primitives/Button.tsx
-//
-// TWO exports live here, split by concern:
-//
-//   Button      — universal primitive. No layout knowledge.
-//   PillButton  — round-selector and carousel patterns.
-//
 
 import { cva, type VariantProps } from "class-variance-authority";
 import { type ButtonHTMLAttributes } from "react";
@@ -18,18 +12,10 @@ import { cn } from "@/shared/utils";
 // the narrow form in the other direction.
 import { LoadingSpinner } from "../feedback/LoadingSpinner";
 
-// ---------------------------------------------------------------------------
-// Shared base styles
-// ---------------------------------------------------------------------------
-
 const BASE =
   "inline-flex items-center justify-center font-medium transition-all duration-200 " +
   "focus-ring " +
   "disabled:pointer-events-none disabled:opacity-50 active:scale-95";
-
-// ---------------------------------------------------------------------------
-// Button — universal primitive
-// ---------------------------------------------------------------------------
 
 export const buttonVariants = cva(BASE, {
   variants: {
@@ -129,87 +115,6 @@ export const Button = ({
     // Before the spread: callers can still opt into "submit"/"reset".
     type="button"
     className={cn(buttonVariants({ variant, size, className }))}
-    disabled={disabled || isLoading}
-    aria-busy={isLoading || undefined}
-    {...props}
-  >
-    {isLoading ? <LoadingSpinner size="sm" /> : children}
-  </button>
-);
-
-// ---------------------------------------------------------------------------
-// PillButton — round-selector and carousel patterns
-//
-// Kept separate because these have non-standard sizes (pill, icon-sm) and
-// visual treatments (ring overlay, rounded-full) that don't belong in a
-// general-purpose button.
-// ---------------------------------------------------------------------------
-
-const pillButtonVariants = cva(BASE, {
-  variants: {
-    variant: {
-      // RoundSelector active pill
-      pillActive:
-        "rounded-full bg-solid-primary text-on-solid-primary font-bold shadow-md " +
-        "ring-2 ring-line-primary border border-solid-primary z-raised",
-
-      // RoundSelector inactive pill
-      pillInactive:
-        "rounded-full surface-raised text-text-emphasis border border-divide " +
-        "hover:bg-tint-primary hover:text-ink-primary hover:border-line-primary",
-
-      // Carousel prev/next arrows
-      carouselArrow:
-        "rounded-full p-2 border border-divide surface-raised text-text-muted " +
-        "hover:bg-tint-primary hover:text-ink-primary " +
-        "disabled:opacity-30 disabled:cursor-not-allowed",
-    },
-
-    size: {
-      // Standard pill (RoundSelector)
-      pill: "px-4 py-2 text-lg",
-      // Square icon (carousel arrow — padding already in variant)
-      icon: "h-9 w-9",
-    },
-  },
-  defaultVariants: {
-    variant: "pillInactive",
-    size: "pill",
-  },
-});
-
-export interface PillButtonProps
-  extends
-    ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof pillButtonVariants> {
-  isLoading?: boolean;
-  ref?: React.Ref<HTMLButtonElement>;
-}
-
-/**
- * PillButton — round-selector and carousel arrow buttons.
- *
- * @example
- * <PillButton variant="pillActive" size="pill">Round 1</PillButton>
- * <PillButton variant="pillInactive" size="pill">Round 2</PillButton>
- * <PillButton variant="carouselArrow" size="icon" aria-label="Previous">
- *   <ChevronLeftIcon className="h-5 w-5" />
- * </PillButton>
- */
-export const PillButton = ({
-  className,
-  variant,
-  size,
-  isLoading,
-  children,
-  disabled,
-  ref,
-  ...props
-}: PillButtonProps) => (
-  <button
-    ref={ref}
-    type="button"
-    className={cn(pillButtonVariants({ variant, size, className }))}
     disabled={disabled || isLoading}
     aria-busy={isLoading || undefined}
     {...props}
