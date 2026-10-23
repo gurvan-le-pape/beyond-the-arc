@@ -47,49 +47,54 @@
   },
   "architecture": {
     "title": "Architecture et stack technique",
-    "subtitle": "Une application full-stack moderne et évolutive construite avec des technologies de pointe",
+    "subtitle": "Comment une page vous parvient, d'où viennent ses données, et ce qui fait tourner l'ensemble.",
     "frontendTitle": "Frontend",
-    "backendTitle": "Backend",
-    "devopsTitle": "DevOps et outillage",
-    "systemArchitecture": "Architecture système",
+    "backendTitle": "Backend et données",
+    "devopsTitle": "Infrastructure",
+    "systemArchitecture": "Comment tout s'articule",
     "frontend": {
-      "nextjsDesc": "Framework React avec SSR/SSG",
-      "tsDesc": "Développement type-safe",
-      "tailwindDesc": "Styling utility-first",
-      "reactQueryDesc": "Gestion d'état serveur",
-      "i18nDesc": "Internationalisation"
+      "nextjsDesc": "Pages rendues côté serveur, App Router",
+      "tsDesc": "Mode strict, côté client comme serveur",
+      "tailwindDesc": "Styles sur des jetons de couleur sémantiques, trois thèmes",
+      "reactQueryDesc": "Requêtes et cache dans le navigateur",
+      "i18nDesc": "Français et anglais, les mêmes clés dans les deux"
     },
     "backend": {
-      "nestjsDesc": "Framework Node.js",
-      "prismaDesc": "ORM moderne",
-      "pgDesc": "Base de données relationnelle",
-      "tsDesc": "Type safety end-to-end",
-      "restDesc": "Architecture API"
+      "nestjsDesc": "API REST en lecture seule, paramètres validés par des DTO",
+      "prismaDesc": "Schéma, migrations et requêtes typées",
+      "pgDesc": "L'unique base de données",
+      "pythonDesc": "Le planificateur : saisons générées, matchs simulés",
+      "openapiDesc": "Schéma tiré des DTO, types du frontend tirés du schéma"
     },
     "devops": {
-      "dockerDesc": "Conteneurisation",
-      "composeDesc": "Orchestration multi-conteneurs",
-      "jestDesc": "Framework de test",
-      "lintDesc": "Outils de qualité de code",
-      "cicdDesc": "Pipeline CI/CD"
+      "composeDesc": "Tous les services, en développement comme en production",
+      "edgeDesc": "TLS et filtrage des robots en bordure, Nginx en proxy",
+      "cicdDesc": "Lint, types, Jest, Vitest et pytest à chaque merge request ; main se déploie",
+      "sentryDesc": "Erreurs du navigateur et du serveur",
+      "grafanaDesc": "Logs via Loki, métriques via Prometheus"
     },
     "diagram": {
-      "client": "Client",
-      "server": "Serveur API",
-      "database": "Base de données"
+      "requestLane": "Une requête de page",
+      "dataLane": "Les données de match",
+      "browser": "Navigateur",
+      "proxy": "Proxy",
+      "webServer": "Serveur web",
+      "api": "API",
+      "database": "Base de données",
+      "scheduler": "Planificateur"
     },
     "features": {
-      "modular": {
-        "title": "Architecture modulaire",
-        "description": "Séparation claire des préoccupations avec composants réutilisables"
+      "contract": {
+        "title": "Un seul contrat",
+        "description": "Le schéma OpenAPI de l'API est versionné, les types du frontend en sont générés, et la CI échoue si l'un des deux n'est plus à jour."
       },
-      "typeSafety": {
-        "title": "Sécurité des types",
-        "description": "TypeScript end-to-end pour la fiabilité et l'expérience développeur"
+      "readOnly": {
+        "title": "Public et en lecture seule",
+        "description": "Ni comptes ni écritures : chaque endpoint est un GET, chaque paramètre est validé, et les listes paginées s'arrêtent à 100 lignes."
       },
-      "scalable": {
-        "title": "Design évolutif",
-        "description": "Conçu pour évoluer avec conteneurisation et DevOps moderne"
+      "oneServer": {
+        "title": "Un seul serveur",
+        "description": "Tout tourne sur un seul VPS, sans réplique ni préproduction : une fusion sur main qui passe la CI part directement en production."
       }
     }
   },

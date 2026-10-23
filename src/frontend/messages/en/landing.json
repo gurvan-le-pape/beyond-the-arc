@@ -47,49 +47,54 @@
   },
   "architecture": {
     "title": "Architecture & Tech Stack",
-    "subtitle": "A modern, scalable full-stack application built with industry-leading technologies",
+    "subtitle": "How a page reaches you, where its data comes from, and what runs it all.",
     "frontendTitle": "Frontend",
-    "backendTitle": "Backend",
-    "devopsTitle": "DevOps & Tooling",
-    "systemArchitecture": "System Architecture",
+    "backendTitle": "Backend & data",
+    "devopsTitle": "Infrastructure",
+    "systemArchitecture": "How it fits together",
     "frontend": {
-      "nextjsDesc": "React framework with SSR/SSG",
-      "tsDesc": "Type-safe development",
-      "tailwindDesc": "Utility-first styling",
-      "reactQueryDesc": "Server state management",
-      "i18nDesc": "Internationalization"
+      "nextjsDesc": "Pages rendered on the server, App Router",
+      "tsDesc": "Strict mode, front and back",
+      "tailwindDesc": "Styling on semantic colour tokens, three themes",
+      "reactQueryDesc": "Fetching and caching in the browser",
+      "i18nDesc": "French and English, the same keys in both"
     },
     "backend": {
-      "nestjsDesc": "Node.js framework",
-      "prismaDesc": "Modern ORM",
-      "pgDesc": "Relational database",
-      "tsDesc": "End-to-end type safety",
-      "restDesc": "API architecture"
+      "nestjsDesc": "Read-only REST API, query parameters validated by DTOs",
+      "prismaDesc": "Schema, migrations and typed queries",
+      "pgDesc": "The single database",
+      "pythonDesc": "The scheduler: seasons generated, matches simulated",
+      "openapiDesc": "Schema from the DTOs, frontend types from the schema"
     },
     "devops": {
-      "dockerDesc": "Containerization",
-      "composeDesc": "Multi-container orchestration",
-      "jestDesc": "Testing framework",
-      "lintDesc": "Code quality tools",
-      "cicdDesc": "CI/CD pipeline"
+      "composeDesc": "Every service, in development and in production",
+      "edgeDesc": "TLS and bot challenges at the edge, Nginx as the proxy",
+      "cicdDesc": "Lint, types, Jest, Vitest and pytest on every merge request; main deploys",
+      "sentryDesc": "Errors from the browser and the server",
+      "grafanaDesc": "Logs from Loki, metrics from Prometheus"
     },
     "diagram": {
-      "client": "Client",
-      "server": "API Server",
-      "database": "Database"
+      "requestLane": "A page request",
+      "dataLane": "The match data",
+      "browser": "Browser",
+      "proxy": "Proxy",
+      "webServer": "Web server",
+      "api": "API",
+      "database": "Database",
+      "scheduler": "Scheduler"
     },
     "features": {
-      "modular": {
-        "title": "Modular Architecture",
-        "description": "Clean separation of concerns with reusable components"
+      "contract": {
+        "title": "One contract",
+        "description": "The API's OpenAPI schema is committed, the frontend's types are generated from it, and CI fails if either is out of date."
       },
-      "typeSafety": {
-        "title": "Type Safety",
-        "description": "End-to-end TypeScript for reliability and developer experience"
+      "readOnly": {
+        "title": "Public and read-only",
+        "description": "No accounts and no writes: every endpoint is a GET, every query parameter is validated, and paginated lists stop at 100 rows."
       },
-      "scalable": {
-        "title": "Scalable Design",
-        "description": "Built to grow with containerization and modern DevOps"
+      "oneServer": {
+        "title": "One server",
+        "description": "Everything runs on a single VPS, with no replica and no staging: a merge to main that passes CI goes straight to production."
       }
     }
   },
