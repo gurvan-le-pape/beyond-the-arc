@@ -42,10 +42,6 @@ const badgeVariants = cva(
           "border-transparent bg-ink-regional text-tint-regional",
         "departmental-on-header":
           "border-transparent bg-ink-departmental text-tint-departmental",
-        // Player comparison. Transparent fill, so its ink is the one role
-        // guaranteed on every surface.
-        vs: "border-2 border-ink-primary text-ink-primary font-black tracking-widest",
-
         category: "border-transparent bg-tint-category text-ink-category",
         division: "border-transparent bg-tint-division text-ink-division",
         pool: "border-transparent bg-tint-pool text-ink-pool",

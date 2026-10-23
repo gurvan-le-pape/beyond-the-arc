@@ -323,17 +323,6 @@ module.exports = {
           "background-size": "28px 100%, 28px 100%, 14px 100%, 14px 100%",
           "background-attachment": "local, local, scroll, scroll",
         },
-
-        // ── Ghost number stroke — no Tailwind utility exists for -webkit-text-stroke;
-        // color: transparent is co-located here to avoid class-order conflicts
-        ".text-stroke-home": {
-          color: "transparent",
-          "-webkit-text-stroke": "2px rgb(var(--color-solid-home))",
-        },
-        ".text-stroke-away": {
-          color: "transparent",
-          "-webkit-text-stroke": "2px rgb(var(--color-solid-away))",
-        },
       });
     },
   ],
