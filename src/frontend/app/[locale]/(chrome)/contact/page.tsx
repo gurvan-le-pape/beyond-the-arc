@@ -3,10 +3,7 @@ import { Send } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import {
-  ContactAboutSection,
-  ContactMethodCard,
-} from "@/features/site/contact/components";
+import { ContactMethodCard } from "@/features/site/contact/components";
 import { CONTACT_METHODS } from "@/features/site/contact/constants";
 import { PageHero, PageLayout } from "@/shared/components/layout";
 import type { LocalePageProps } from "@/shared/types";
@@ -26,7 +23,7 @@ export async function generateMetadata({
 }
 
 /**
- * The contact page: the ways to get in touch, and a short about section.
+ * The contact page: the ways to get in touch.
  *
  * `params` is a Promise in Next 15 and is awaited here, so the feature
  * components below receive plain values.
@@ -49,16 +46,11 @@ export default async function ContactPage({ params }: LocalePageProps) {
         icon={Send}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {contactMethods.map((method) => (
           <ContactMethodCard key={method.href} {...method} />
         ))}
       </div>
-
-      <ContactAboutSection
-        title={t("contact.aboutProject")}
-        description={t("contact.projectDescription")}
-      />
     </PageLayout>
   );
 }
