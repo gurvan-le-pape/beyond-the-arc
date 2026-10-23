@@ -55,7 +55,6 @@
     "src/frontend/features/stats/types",
 
     "src/frontend/features/site/about/components",
-    "src/frontend/features/site/about/constants",
     "src/frontend/features/site/architecture/components",
     "src/frontend/features/site/architecture/constants",
     "src/frontend/features/site/contact/components",

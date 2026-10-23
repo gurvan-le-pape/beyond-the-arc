@@ -4,12 +4,25 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import {
-  AboutCtaSection,
-  PrincipleCard,
+  type AboutLink,
+  AboutLinks,
+  AboutSection,
 } from "@/features/site/about/components";
-import { PRINCIPLES } from "@/features/site/about/constants";
+import { serverStatsService } from "@/features/stats/api/stats.server";
+import { withServerErrorState } from "@/shared/components/feedback";
 import { PageHero, PageLayout } from "@/shared/components/layout";
+import { TextLink } from "@/shared/components/primitives";
+import { Text } from "@/shared/components/typography";
+import { GITLAB_REPO_URL } from "@/shared/constants";
 import type { LocalePageProps } from "@/shared/types";
+import { handleServerError } from "@/shared/utils";
+
+// Fetches server-side, so it stays out of the prerender pass - the image build
+// has no backend. The counts are cached by fetchApi, so a render here is a
+// cache read, not a query.
+export const dynamic = "force-dynamic";
+
+type LinkKey = "product" | "architecture" | "docs" | "source" | "contact";
 
 /**
  * Metadata for the about page.
@@ -26,42 +39,76 @@ export async function generateMetadata({
 }
 
 /**
- * The about page: project background and engineering principles.
+ * The about page: what the project is, which of its data is real and which is
+ * simulated, how it is built, and where to read more.
  *
- * `params` is a Promise in Next 15 and is awaited here, so the feature
- * components below receive plain values.
+ * The counts come from `/stats`, so they follow the data rather than going
+ * stale in the copy.
  */
-export default async function AboutPage({ params }: LocalePageProps) {
+async function AboutPage({ params }: LocalePageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "landing" });
 
-  const principles = PRINCIPLES.map((p) => ({
-    icon: p.icon,
-    title: t(`about.${p.principleKey}.title`),
-    description: t(`about.${p.principleKey}.description`),
-  }));
+  const stats = await serverStatsService.getStats().catch(handleServerError);
+  const { national, regional, departmental } = stats.championshipsByLevel;
+
+  const linkCopy = (key: LinkKey) => ({
+    label: t(`about.links.${key}.label`),
+    description: t(`about.links.${key}.description`),
+  });
+
+  const links: AboutLink[] = [
+    { href: "/product", ...linkCopy("product") },
+    { href: "/architecture", ...linkCopy("architecture") },
+    { href: "/docs", ...linkCopy("docs") },
+    { href: GITLAB_REPO_URL, external: true, ...linkCopy("source") },
+    { href: "/contact", ...linkCopy("contact") },
+  ];
 
   return (
-    <PageLayout>
+    <PageLayout contentClassName="max-w-3xl">
       <PageHero
         title={t("about.title")}
         lead={t("about.intro")}
         icon={Target}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-        {principles.map((principle) => (
-          <PrincipleCard key={principle.title} {...principle} />
-        ))}
-      </div>
+      <div className="space-y-6">
+        <AboutSection title={t("about.data.title")}>
+          <Text>
+            {t("about.data.real", {
+              leagues: stats.leagues,
+              committees: stats.committees,
+              clubs: stats.clubs,
+            })}
+          </Text>
+          <Text>
+            {t("about.data.simulated", {
+              championships: national + regional + departmental,
+              teams: stats.teams,
+              players: stats.players,
+            })}
+          </Text>
+        </AboutSection>
 
-      <AboutCtaSection
-        title={t("about.exploreTitle")}
-        description={t("about.explore")}
-        productLabel={t("about.viewProduct")}
-        architectureLabel={t("about.viewArchitecture")}
-      />
+        <AboutSection title={t("about.stack.title")}>
+          <Text>{t("about.stack.body")}</Text>
+          <Text>
+            {t.rich("about.stack.more", {
+              link: (chunks) => (
+                <TextLink href="/architecture">{chunks}</TextLink>
+              ),
+            })}
+          </Text>
+        </AboutSection>
+
+        <AboutSection title={t("about.links.title")}>
+          <AboutLinks links={links} />
+        </AboutSection>
+      </div>
     </PageLayout>
   );
 }
+
+export default withServerErrorState(AboutPage);
