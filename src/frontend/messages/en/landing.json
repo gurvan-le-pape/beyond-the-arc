@@ -94,66 +94,57 @@
   },
   "product": {
     "title": "Product",
-    "subtitle": "Explore the powerful features that make this basketball platform comprehensive and user-friendly",
+    "subtitle": "What you can look up on the site, for every championship from regional to departmental level.",
     "leaderboards": {
-      "title": "Championship Leaderboards",
-      "description": "Standings for every competition level, updated as results come in."
+      "title": "Standings",
+      "description": "A standings table for every pool, updated as each result comes in."
     },
     "matchSummary": {
-      "title": "Detailed Match Summary",
-      "description": "Comprehensive match breakdowns with player statistics, team comparisons, shot charts, and chronological event timeline."
+      "title": "Match pages",
+      "description": "The two teams' stats side by side, each player's box score, shot charts and the event timeline, filtered by quarter."
     },
     "shotCharts": {
-      "title": "Interactive Shot Charts",
-      "description": "Visual representation of player shot locations with heatmaps, success rates, and detailed position analysis."
+      "title": "Shot charts",
+      "description": "Every shot a player took, made or missed, where it was taken; and a team's shooting zone by zone, with its percentage."
     },
     "playerComparison": {
-      "title": "Player Comparison",
-      "description": "Side-by-side player statistics comparison across multiple metrics including points, rebounds, assists, and efficiency."
+      "title": "Player comparison",
+      "description": "Two players' per-game averages side by side: points, rebounds, assists, steals, blocks, turnovers and fouls."
     },
     "clubsMap": {
-      "title": "Interactive Clubs Map",
-      "description": "Geographic visualization of clubs across France. Zoom in to navigate from regional leagues down to individual clubs."
+      "title": "Clubs map",
+      "description": "Every club in metropolitan France, placed from its address. Zoom in from regions to departments to the clubs themselves."
     },
     "teamRosters": {
-      "title": "Team Rosters",
-      "description": "Complete team rosters with player profiles, positions, and detailed statistics for each team member."
+      "title": "Rosters",
+      "description": "Each team's players, with their position and per-game averages."
     },
     "matchSchedule": {
-      "title": "Match Schedules",
-      "description": "Past results and upcoming matches, organized by matchday within a pool."
+      "title": "Fixtures and results",
+      "description": "Every pool's matches, played and upcoming, round by round."
     },
-    "liveStats": {
-      "title": "Live Match Statistics",
-      "description": "Real-time match statistics with possession tracking, momentum analysis, and live play-by-play updates."
-    },
-    "liveUpdates": {
-      "title": "Live Score Updates",
-      "description": "WebSocket-powered real-time score updates and match events as they happen on the court."
-    },
-    "userAccounts": {
-      "title": "User Accounts & Favorites",
-      "description": "Personalized experience with saved teams, followed players, and customized notifications."
-    },
-    "status": {
-      "live": "Live",
-      "coming-soon": "Coming Soon",
-      "planned": "Planned"
-    },
-    "highlightsTitle": "Additional Highlights",
+    "highlightsTitle": "Also on the site",
     "highlights": {
       "i18n": {
-        "title": "Multi-language Support",
-        "description": "Full French and English translations for a global audience"
+        "title": "French and English",
+        "description": "Every page in both languages, switched from the header."
       },
-      "search": {
-        "title": "Advanced Search & Filters",
-        "description": "Powerful filtering and search across teams, players, and competitions"
+      "themes": {
+        "title": "Light, dark and high contrast",
+        "description": "Three themes, chosen from the header."
       },
       "responsive": {
-        "title": "Fully Responsive",
-        "description": "Optimized experience across desktop, tablet, and mobile devices"
+        "title": "Phone to desktop",
+        "description": "Every page laid out for a 360px phone up to a wide screen."
       }
+    },
+    "organizations": {
+      "title": "Leagues, committees and clubs",
+      "description": "Every regional league with its committees, every departmental committee with its clubs, and every club with its teams."
+    },
+    "search": {
+      "title": "Search",
+      "description": "Find a player, team or match, and narrow the results by category, gender, level and location."
     }
   },
   "docs": {

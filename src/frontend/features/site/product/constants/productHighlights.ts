@@ -1,5 +1,5 @@
 // src/frontend/features/site/product/constants/productHighlights.ts
-import { Globe2, Search, Sparkles } from "lucide-react";
+import { Globe2, MonitorSmartphone, SunMoon } from "lucide-react";
 
 /**
  * The cross-cutting qualities shown below the capability grid, in display
@@ -7,6 +7,6 @@ import { Globe2, Search, Sparkles } from "lucide-react";
  */
 export const PRODUCT_HIGHLIGHTS = [
   { icon: Globe2, highlightKey: "i18n" },
-  { icon: Search, highlightKey: "search" },
-  { icon: Sparkles, highlightKey: "responsive" },
+  { icon: SunMoon, highlightKey: "themes" },
+  { icon: MonitorSmartphone, highlightKey: "responsive" },
 ] as const;
