@@ -1,7 +1,7 @@
 // src/frontend/shared/components/domain/ListEntityCard.tsx
 import type { ReactNode } from "react";
 
-import { Card } from "@/shared/components/primitives";
+import { Card, Dot } from "@/shared/components/primitives";
 import type { CompetitionLevel } from "@/shared/constants";
 import { LEVEL_CONFIG } from "@/shared/constants";
 import { cn } from "@/shared/utils";
@@ -72,7 +72,7 @@ export function ListEntityCard({
         )}
       >
         <div className="flex items-center gap-2 min-w-0">
-          <span className="w-2.5 h-2.5 rounded-full flex-shrink-0 bg-text-heading" />
+          <Dot size="lg" tone="heading" />
           {headerLeft}
         </div>
 
