@@ -1,7 +1,7 @@
 // src/frontend/shared/components/domain/search/SearchTabShell.tsx
 "use client";
 
-import { ErrorMessage, LoadingSpinner } from "@/shared/components/feedback";
+import { ErrorMessage, Spinner } from "@/shared/components/feedback";
 import { Pagination } from "@/shared/components/navigation";
 import { Card } from "@/shared/components/primitives";
 import type { Pagination as PaginationType } from "@/shared/types";
@@ -54,7 +54,7 @@ export function SearchTabShell({
   if (isLoading) {
     return (
       <div className="flex justify-center items-center py-20">
-        <LoadingSpinner size="lg" />
+        <Spinner size="lg" />
       </div>
     );
   }

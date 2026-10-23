@@ -1,9 +1,9 @@
-// src/frontend/shared/components/feedback/LoadingSpinner.tsx
+// src/frontend/shared/components/feedback/Spinner.tsx
 import { useTranslations } from "next-intl";
 
 import { cn } from "@/shared/utils";
 
-interface LoadingSpinnerProps {
+interface SpinnerProps {
   readonly size?: "sm" | "md" | "lg";
   readonly className?: string;
 }
@@ -18,10 +18,7 @@ interface LoadingSpinnerProps {
  * Colour comes from `text-ink-primary`; `size` picks one of three fixed dimensions
  * and `className` positions the wrapper.
  */
-export function LoadingSpinner({
-  size = "md",
-  className,
-}: LoadingSpinnerProps) {
+export function Spinner({ size = "md", className }: SpinnerProps) {
   const tCommon = useTranslations("common");
 
   const sizeClasses = {
