@@ -80,9 +80,7 @@ export function MatchScore({
   if (variant === "table") {
     return (
       <span className={className}>
-        {homeSpan}
-        {" - "}
-        {awaySpan}
+        {homeSpan}–{awaySpan}
       </span>
     );
   }
@@ -90,7 +88,7 @@ export function MatchScore({
   return (
     <div className={cn(CONTAINER_CLASSES[variant], className)}>
       {homeSpan}
-      <span className={DASH_CLASSES[variant]}>-</span>
+      <span className={DASH_CLASSES[variant]}>–</span>
       {awaySpan}
     </div>
   );
