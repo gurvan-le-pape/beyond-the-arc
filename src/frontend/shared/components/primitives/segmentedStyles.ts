@@ -21,6 +21,7 @@ export const segmentOptionVariants = cva(
       size: {
         sm: "px-2.5 py-1 text-xs",
         md: "px-3 py-1.5 text-sm",
+        lg: "px-4 py-2.5 text-base",
       },
       selected: {
         true: "bg-tint-primary text-ink-primary font-semibold",

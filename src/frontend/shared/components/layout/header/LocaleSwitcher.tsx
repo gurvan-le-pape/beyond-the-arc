@@ -6,7 +6,10 @@ import type { MouseEvent } from "react";
 
 import { type Locale, LOCALES } from "@/locales";
 import { Link, usePathname, useRouter } from "@/navigation";
-import { cn } from "@/shared/utils";
+import {
+  segmentGroupClass,
+  segmentOptionVariants,
+} from "@/shared/components/primitives";
 
 /**
  * Each language named in itself — "Français" to an English reader too — so a
@@ -61,7 +64,7 @@ export function LocaleSwitcher({ variant }: LocaleSwitcherProps) {
   return (
     <nav
       aria-label={t("header.languageAriaLabel")}
-      className="flex items-center rounded-button border border-divide p-0.5"
+      className={segmentGroupClass}
     >
       {LOCALES.map((locale) => {
         const isActive = locale === activeLocale;
@@ -75,15 +78,10 @@ export function LocaleSwitcher({ variant }: LocaleSwitcherProps) {
             hrefLang={locale}
             aria-current={isActive ? "true" : undefined}
             onClick={switchTo(locale)}
-            className={cn(
-              "rounded-[6px] font-semibold transition-colors duration-200 focus-ring",
-              variant === "compact"
-                ? "px-2.5 py-1.5 text-sm"
-                : "px-4 py-2.5 text-base",
-              isActive
-                ? "bg-tint-primary text-ink-primary font-bold"
-                : "text-text-body hover:bg-surface-inset hover:text-text-heading",
-            )}
+            className={segmentOptionVariants({
+              size: variant === "compact" ? "md" : "lg",
+              selected: isActive,
+            })}
           >
             {variant === "compact" ? (
               <abbr title={name.full} className="no-underline">
