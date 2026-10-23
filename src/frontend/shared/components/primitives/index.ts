@@ -8,7 +8,7 @@ export * from "./BottomSheet";
 export * from "./Button";
 export * from "./Card";
 export * from "./ComboBox";
-export * from "./Divide";
+export * from "./Divider";
 export * from "./dropdownTriggerBase";
 export * from "./ImageWithFallback";
 export * from "./MultiSelectDropdown";

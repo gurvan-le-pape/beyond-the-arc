@@ -1,4 +1,4 @@
-// src/frontend/shared/components/primitives/Divide.tsx
+// src/frontend/shared/components/primitives/Divider.tsx
 /**
  * A hairline rule filling its container's width.
  *
@@ -8,6 +8,6 @@
  *
  * Takes no props, `className` included: its one job has one appearance.
  */
-export function Divide() {
+export function Divider() {
   return <div className="w-full h-px bg-divide" aria-hidden />;
 }
