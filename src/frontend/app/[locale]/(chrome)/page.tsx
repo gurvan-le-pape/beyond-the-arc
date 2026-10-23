@@ -22,7 +22,7 @@ import { serverStatsService } from "@/features/stats/api/stats.server";
 import { getPathname } from "@/navigation";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
-import { StatCell } from "@/shared/components/stats";
+import { Stat } from "@/shared/components/stats";
 import { Text } from "@/shared/components/typography";
 import type { LocalePageProps } from "@/shared/types";
 import {
@@ -217,7 +217,7 @@ async function Home({ params }: LocalePageProps) {
             key={s.label}
             className={cn("border-divide", STATS_BAND_CELL_RULES[index])}
           >
-            <StatCell value={s.value} label={s.label} />
+            <Stat value={s.value} label={s.label} />
           </div>
         ))}
       </div>

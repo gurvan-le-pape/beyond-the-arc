@@ -6,7 +6,7 @@ import { type ReactNode, useState } from "react";
 
 import { ClubMark } from "@/shared/components/domain";
 import { Card } from "@/shared/components/primitives";
-import { StatCell } from "@/shared/components/stats";
+import { Stat } from "@/shared/components/stats";
 import { Text } from "@/shared/components/typography";
 import { formatNameToFileName } from "@/shared/utils";
 
@@ -112,7 +112,7 @@ export function OrganizationHeader({
               key={stat.label}
               className={i < stats.length - 1 ? "border-r border-divide" : ""}
             >
-              <StatCell value={stat.value} label={stat.label} />
+              <Stat value={stat.value} label={stat.label} />
             </div>
           ))}
         </div>

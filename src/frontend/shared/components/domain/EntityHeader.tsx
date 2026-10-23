@@ -3,7 +3,7 @@ import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 
 import { Card, TextLink } from "@/shared/components/primitives";
-import { StatCell } from "@/shared/components/stats";
+import { Stat } from "@/shared/components/stats";
 import { Text } from "@/shared/components/typography";
 import type { CompetitionLevel, Gender } from "@/shared/constants";
 import { cn } from "@/shared/utils";
@@ -125,7 +125,7 @@ export function EntityHeader({
               key={stat.label}
               className={i < stats.length - 1 ? "border-r border-divide" : ""}
             >
-              <StatCell value={stat.value} label={stat.label} />
+              <Stat value={stat.value} label={stat.label} />
             </div>
           ))}
         </div>

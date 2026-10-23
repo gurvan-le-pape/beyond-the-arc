@@ -1,7 +1,7 @@
-// src/frontend/shared/components/stats/StatCell.tsx
+// src/frontend/shared/components/stats/Stat.tsx
 import { Text } from "@/shared/components/typography";
 
-interface StatCellProps {
+interface StatProps {
   readonly value: string;
   readonly label: string;
   /**
@@ -28,12 +28,7 @@ interface StatCellProps {
  * **not** apply `tabular-nums`, which the default layout does, so a compact row
  * of changing numbers can shift by a pixel between renders.
  */
-export function StatCell({
-  value,
-  label,
-  fullLabel,
-  compact = false,
-}: StatCellProps) {
+export function Stat({ value, label, fullLabel, compact = false }: StatProps) {
   const labelText = fullLabel ? (
     <abbr title={fullLabel} className="no-underline">
       {label}
