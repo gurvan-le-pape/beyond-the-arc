@@ -18,6 +18,7 @@ import { cn } from "@/shared/utils";
 
 import { Text } from "../typography";
 import { DROPDOWN_TRIGGER_BASE } from "./dropdownTriggerBase";
+import { Popover } from "./Popover";
 import { SelectChevron } from "./SelectChevron";
 
 export interface MultiSelectColumn {
@@ -136,73 +137,61 @@ export function MultiSelect({
         </span>
       </div>
 
-      {/* Popover — always mounted, toggled via opacity/scale for smooth animation */}
-      <div
-        ref={dropdownRef}
-        inert={!isOpen}
-        className={cn(
-          "absolute top-full left-0 mt-1 z-dropdown p-4 w-max max-w-[90vw]",
-          "surface-raised",
-          "border border-divide",
-          "rounded-input shadow-card-hover",
-          "transition-all duration-200 origin-top-left",
-          isOpen
-            ? "opacity-100 scale-100 pointer-events-auto"
-            : "opacity-0 scale-95 pointer-events-none",
-        )}
-      >
-        <div className="flex items-center justify-between mb-3">
-          <Text variant="label">{label}</Text>
-          <button
-            type="button"
-            onClick={() => setIsOpen(false)}
-            aria-label={t("close")}
-            className={cn(
-              "h-6 w-6 flex items-center justify-center rounded",
-              "text-text-muted",
-              "hover:text-text-heading",
-              "hover:bg-surface-subtle",
-              "transition-colors duration-150",
-            )}
-          >
-            <X className="w-3.5 h-3.5" />
-          </button>
-        </div>
-
-        <div className="border-t border-divide mb-3" />
-
-        {/* N columns with N-1 dividers between them */}
-        <div className="flex">
-          {columns.map((column, index) => (
-            <React.Fragment key={column.title}>
-              {index > 0 && (
-                <div className="self-stretch border-l border-divide mx-4" />
-              )}
-              <ColumnList column={column} />
-            </React.Fragment>
-          ))}
-        </div>
-
-        {/* Clear all — only shown when something is selected */}
-        {selectedCount > 0 && (
-          <>
-            <div className="border-t border-divide mt-3" />
+      <Popover ref={dropdownRef} open={isOpen}>
+        <div className="p-4">
+          <div className="flex items-center justify-between mb-3">
+            <Text variant="label">{label}</Text>
             <button
               type="button"
-              onClick={onClear}
+              onClick={() => setIsOpen(false)}
+              aria-label={t("close")}
               className={cn(
-                "mt-3 w-full px-3 py-1.5 text-sm rounded-input",
-                "text-ink-error",
-                "hover:bg-tint-error",
-                "focus-ring",
+                "h-6 w-6 flex items-center justify-center rounded",
+                "text-text-muted",
+                "hover:text-text-heading",
+                "hover:bg-surface-subtle",
                 "transition-colors duration-150",
               )}
             >
-              {t("clearSelection")}
+              <X className="w-3.5 h-3.5" />
             </button>
-          </>
-        )}
-      </div>
+          </div>
+
+          <div className="border-t border-divide mb-3" />
+
+          {/* N columns with N-1 dividers between them */}
+          <div className="flex">
+            {columns.map((column, index) => (
+              <React.Fragment key={column.title}>
+                {index > 0 && (
+                  <div className="self-stretch border-l border-divide mx-4" />
+                )}
+                <ColumnList column={column} />
+              </React.Fragment>
+            ))}
+          </div>
+
+          {/* Clear all — only shown when something is selected */}
+          {selectedCount > 0 && (
+            <>
+              <div className="border-t border-divide mt-3" />
+              <button
+                type="button"
+                onClick={onClear}
+                className={cn(
+                  "mt-3 w-full px-3 py-1.5 text-sm rounded-input",
+                  "text-ink-error",
+                  "hover:bg-tint-error",
+                  "focus-ring",
+                  "transition-colors duration-150",
+                )}
+              >
+                {t("clearSelection")}
+              </button>
+            </>
+          )}
+        </div>
+      </Popover>
     </div>
   );
 }

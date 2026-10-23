@@ -15,6 +15,7 @@ import { cn } from "@/shared/utils";
 
 import { Text } from "../typography";
 import { DROPDOWN_TRIGGER_BASE } from "./dropdownTriggerBase";
+import { Popover } from "./Popover";
 import { SelectChevron } from "./SelectChevron";
 
 export interface ComboBoxOption {
@@ -209,25 +210,7 @@ export function ComboBox({
         </span>
       </div>
 
-      {/* Popover — always mounted, toggled via opacity/scale.
-          `inert` is what makes "closed" mean closed: opacity and
-          pointer-events hide it from sight and from the mouse, but the search
-          input and every option stay in the tab order and in the
-          accessibility tree without it. */}
-      <div
-        id={`${inputId}-listbox`}
-        inert={!open}
-        className={cn(
-          "absolute z-dropdown mt-1 w-full",
-          "surface-raised",
-          "border border-divide",
-          "rounded-input shadow-card-hover overflow-hidden",
-          "transition-all duration-150 origin-top",
-          open
-            ? "opacity-100 scale-100 pointer-events-auto"
-            : "opacity-0 scale-95 pointer-events-none",
-        )}
-      >
+      <Popover id={`${inputId}-listbox`} open={open} align="stretch">
         {searchable && (
           <input
             ref={searchRef}
@@ -245,7 +228,7 @@ export function ComboBox({
         <ul className="max-h-60 overflow-y-auto scrollbar-hide py-1">
           {renderOptions()}
         </ul>
-      </div>
+      </Popover>
 
       {error && (
         <Text
