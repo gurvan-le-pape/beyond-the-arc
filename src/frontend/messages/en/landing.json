@@ -9,40 +9,41 @@
     "projectDescription": "This is a portfolio project showcasing full-stack development skills with modern web technologies. Built to demonstrate clean architecture, scalable design, and attention to detail."
   },
   "about": {
-    "title": "About This Project",
-    "intro": "A comprehensive showcase of modern full-stack engineering with emphasis on maintainability, clarity, and scalability.",
-    "modular": {
-      "title": "Modular Architecture",
-      "description": "Features are broken down into small, focused components and services, making the codebase easy to navigate and extend."
+    "title": "About the project",
+    "intro": "Beyond The Arc is a portfolio project by Gurvan Le Pape: French basketball, from regional to departmental level, as a site you can browse.",
+    "data": {
+      "title": "The data",
+      "real": "The competition structure is real: {leagues, number} leagues, {committees, number} departmental committees and {clubs, number} clubs in metropolitan France, scraped from the FFBB's public site and placed on the map from their addresses with the French government's address API (BAN).",
+      "simulated": "Everything inside it is simulated: {championships, number} championships, {teams, number} teams and {players, number} players with generated names. A scheduler plays each match at its scheduled time, event by event, and that gives every result, box score and shot chart on the site."
     },
-    "separation": {
-      "title": "Separation of Concerns",
-      "description": "UI, business logic, configuration, and data access are clearly separated, following best practices for both React and backend frameworks."
+    "stack": {
+      "title": "How it's built",
+      "body": "A Next.js 15 frontend, rendered on the server, reads a public, read-only REST API written with NestJS 11 and Prisma over PostgreSQL. The scheduler is a Python service. It all runs in Docker Compose on a single server, deployed by GitLab CI on every merge, with errors reported to Sentry and logs and metrics in Grafana.",
+      "more": "The <link>architecture page</link> has the diagram and the full stack."
     },
-    "reusability": {
-      "title": "Reusability",
-      "description": "Components, hooks, and utility functions are designed to be reused throughout the application, reducing duplication."
-    },
-    "scalability": {
-      "title": "Scalability",
-      "description": "The structure supports adding new features, modules, or endpoints with minimal friction, suitable for long-term growth."
-    },
-    "readability": {
-      "title": "Readability & Onboarding",
-      "description": "Consistent patterns and clear organization make it easy for new contributors to understand and work with the code."
-    },
-    "i18n": {
-      "title": "Internationalization",
-      "description": "User-facing strings are externalized for easy translation and localization across multiple languages."
-    },
-    "tooling": {
-      "title": "Modern Tooling",
-      "description": "Leverages TypeScript, automated formatting, linting, and a robust build system for reliability and productivity."
-    },
-    "exploreTitle": "Explore the Project",
-    "explore": "Discover the features, architecture, and documentation to learn more about this project and my approach to software engineering.",
-    "viewProduct": "View Product",
-    "viewArchitecture": "View Architecture"
+    "links": {
+      "title": "See also",
+      "product": {
+        "label": "Product",
+        "description": "What the site shows."
+      },
+      "architecture": {
+        "label": "Architecture",
+        "description": "The services and how they fit together."
+      },
+      "docs": {
+        "label": "Documentation",
+        "description": "Setup, the data model, project structure and the API reference."
+      },
+      "source": {
+        "label": "Source code",
+        "description": "The repository on GitLab."
+      },
+      "contact": {
+        "label": "Contact",
+        "description": "Email, LinkedIn or GitLab."
+      }
+    }
   },
   "architecture": {
     "title": "Architecture & Tech Stack",

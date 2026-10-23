@@ -10,39 +10,40 @@
   },
   "about": {
     "title": "À propos du projet",
-    "intro": "Une démonstration complète d'ingénierie full-stack moderne avec un accent sur la maintenabilité, la clarté et l'évolutivité.",
-    "modular": {
-      "title": "Architecture modulaire",
-      "description": "Les fonctionnalités sont décomposées en petits composants et services ciblés, rendant le code facile à naviguer et à étendre."
+    "intro": "Beyond The Arc est un projet de portfolio de Gurvan Le Pape : le basket français, du régional au départemental, sous la forme d'un site à parcourir.",
+    "data": {
+      "title": "Les données",
+      "real": "La structure des compétitions est réelle : {leagues, number} ligues, {committees, number} comités départementaux et {clubs, number} clubs de France métropolitaine, récupérés sur le site public de la FFBB et placés sur la carte d'après leur adresse grâce à la Base Adresse Nationale (BAN).",
+      "simulated": "Tout ce qu'elle contient est simulé : {championships, number} championnats, {teams, number} équipes et {players, number} joueurs aux noms générés. Un planificateur joue chaque match à l'heure prévue, action par action, et en tire chaque résultat, feuille de stats et carte de tirs du site."
     },
-    "separation": {
-      "title": "Séparation des préoccupations",
-      "description": "L'interface utilisateur, la logique métier, la configuration et l'accès aux données sont clairement séparés, suivant les meilleures pratiques."
+    "stack": {
+      "title": "Comment il est construit",
+      "body": "Un frontend Next.js 15, rendu côté serveur, lit une API REST publique en lecture seule écrite avec NestJS 11 et Prisma sur PostgreSQL. Le planificateur est un service Python. L'ensemble tourne dans Docker Compose sur un seul serveur, déployé par la CI GitLab à chaque fusion, avec les erreurs remontées dans Sentry et les logs et métriques dans Grafana.",
+      "more": "La <link>page architecture</link> présente le schéma et la stack complète."
     },
-    "reusability": {
-      "title": "Réutilisabilité",
-      "description": "Les composants, hooks et fonctions utilitaires sont conçus pour être réutilisés dans toute l'application, réduisant la duplication."
-    },
-    "scalability": {
-      "title": "Évolutivité",
-      "description": "La structure permet d'ajouter de nouvelles fonctionnalités, modules ou endpoints avec un minimum de friction, adapté à la croissance à long terme."
-    },
-    "readability": {
-      "title": "Lisibilité et intégration",
-      "description": "Des modèles cohérents et une organisation claire facilitent la compréhension et le travail avec le code pour les nouveaux contributeurs."
-    },
-    "i18n": {
-      "title": "Internationalisation",
-      "description": "Les chaînes de caractères sont externalisées pour faciliter la traduction et la localisation dans plusieurs langues."
-    },
-    "tooling": {
-      "title": "Outillage moderne",
-      "description": "Utilise TypeScript, le formatage automatisé, le linting et un système de build robuste pour la fiabilité et la productivité."
-    },
-    "exploreTitle": "Explorez le projet",
-    "explore": "Découvrez les fonctionnalités, l'architecture et la documentation pour en savoir plus sur ce projet et mon approche de l'ingénierie logicielle.",
-    "viewProduct": "Voir le produit",
-    "viewArchitecture": "Voir l'Architecture"
+    "links": {
+      "title": "Pour aller plus loin",
+      "product": {
+        "label": "Produit",
+        "description": "Ce que montre le site."
+      },
+      "architecture": {
+        "label": "Architecture",
+        "description": "Les services et la façon dont ils s'articulent."
+      },
+      "docs": {
+        "label": "Documentation",
+        "description": "Installation, modèle de données, structure du projet et référence de l'API."
+      },
+      "source": {
+        "label": "Code source",
+        "description": "Le dépôt sur GitLab."
+      },
+      "contact": {
+        "label": "Contact",
+        "description": "E-mail, LinkedIn ou GitLab."
+      }
+    }
   },
   "architecture": {
     "title": "Architecture et stack technique",
