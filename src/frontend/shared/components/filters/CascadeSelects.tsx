@@ -15,12 +15,12 @@ export interface CascadeStep {
 
 interface CascadeSelectsProps {
   readonly steps: CascadeStep[];
-  readonly cols?: 2 | 3;
 }
 
 /**
- * A row of dependent selects, where each step only becomes usable once the one
- * before it has a value — division → pool → matchday, and similar chains.
+ * A chain of dependent selects, where each step only becomes usable once the
+ * one before it has a value — division → pool → matchday, and similar chains.
+ * They render bare, as a fragment: the panel's own grid places them.
  *
  * `steps` is ordered: the array *is* the cascade, so the caller decides the
  * dependency chain by ordering it, not by declaring links between steps. A step
@@ -32,13 +32,9 @@ interface CascadeSelectsProps {
  * about what cascades into what — so a call site naming the chain in a comment
  * is expected rather than redundant.
  */
-export function CascadeSelects({ steps, cols = 3 }: CascadeSelectsProps) {
+export function CascadeSelects({ steps }: CascadeSelectsProps) {
   return (
-    <div
-      className={`grid grid-cols-1 ${
-        cols === 2 ? "md:grid-cols-2" : "md:grid-cols-3"
-      } gap-4`}
-    >
+    <>
       {steps.map(
         ({
           id,
@@ -67,6 +63,6 @@ export function CascadeSelects({ steps, cols = 3 }: CascadeSelectsProps) {
           </div>
         ),
       )}
-    </div>
+    </>
   );
 }

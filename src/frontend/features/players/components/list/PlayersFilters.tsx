@@ -171,7 +171,7 @@ export function PlayersFilters({
         />
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <DebouncedInput
           variant="search"
           label={tPlayers("filters.searchName")}
@@ -188,16 +188,14 @@ export function PlayersFilters({
           setClubId={setClubId}
           setSelectedClubName={setSelectedClubName}
         />
-      </div>
 
-      <CategoryGenderSelects
-        category={category}
-        setCategory={setCategory}
-        gender={gender}
-        setGender={setGender}
-      />
+        <CategoryGenderSelects
+          category={category}
+          setCategory={setCategory}
+          gender={gender}
+          setGender={setGender}
+        />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Select
           label={tCommon("filters.playerNumbers")}
           options={playerNumberOptions}
@@ -212,20 +210,18 @@ export function PlayersFilters({
           onChange={(val) => setTeamNumber(Number(val) || undefined)}
           placeholder={tCommon("filters.allTeamNumbers")}
         />
+
+        <LevelLocationFilters
+          level={level}
+          setLevel={setLevel}
+          committeeId={committeeId}
+          setCommitteeId={setCommitteeId}
+          leagueId={leagueId}
+          setLeagueId={setLeagueId}
+          committees={committees}
+          leagues={leagues}
+        />
       </div>
-
-      <div className="border-t border-divide" />
-
-      <LevelLocationFilters
-        level={level}
-        setLevel={setLevel}
-        committeeId={committeeId}
-        setCommitteeId={setCommitteeId}
-        leagueId={leagueId}
-        setLeagueId={setLeagueId}
-        committees={committees}
-        leagues={leagues}
-      />
     </FiltersShell>
   );
 }

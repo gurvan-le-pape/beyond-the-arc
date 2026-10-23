@@ -15,8 +15,9 @@ interface CategoryGenderSelectsProps {
 
 /**
  * The category + gender pair rendered by the teams, matches and players filter
- * panels — the same two `Select`s, the same two-column grid, the same "all"
- * option lists, written out three times.
+ * panels — the same two `Select`s and the same "all" option lists, written
+ * out three times. It renders the two bare, as a fragment: the panel's own grid
+ * places them.
  *
  * It resolves its own labels from the `common` namespace rather than taking a
  * `t`: these strings belong to no feature, which is why `useCategoryGenderOptions`
@@ -42,7 +43,7 @@ export function CategoryGenderSelects({
   const { categoryOptions, genderOptions } = useCategoryGenderOptions();
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <>
       <Select
         label={tCommon("filters.categories")}
         options={categoryOptions}
@@ -58,6 +59,6 @@ export function CategoryGenderSelects({
         onChange={(val) => setGender((val as Gender) || undefined)}
         placeholder={tCommon("filters.allGenders")}
       />
-    </div>
+    </>
   );
 }

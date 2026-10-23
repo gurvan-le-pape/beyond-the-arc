@@ -125,13 +125,6 @@ export function FiltersShell({
             {hasActiveFilters && (
               <ActiveFilterChips chips={chips} onReset={onReset} />
             )}
-            {!hasActiveFilters && (
-              <div className="pt-1 border-t border-divide">
-                <span className="text-xs text-text-secondary">
-                  {tFilters("filters.noActiveFilters")}
-                </span>
-              </div>
-            )}
           </div>
         </Card>
       </div>
