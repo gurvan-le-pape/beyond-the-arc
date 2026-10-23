@@ -1,11 +1,22 @@
 // src/frontend/app/[locale]/(chrome)/architecture/page.tsx
-import { Code2, Database, Globe, Layers, Package, Server } from "lucide-react";
+import {
+  CalendarClock,
+  Database,
+  Eye,
+  FileCode2,
+  Globe,
+  Layers,
+  Monitor,
+  Server,
+  Shield,
+} from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import {
   ArchitectureArrow,
   ArchitectureDiagramNode,
+  DiagramLane,
   FeatureBadge,
   TechStackCard,
 } from "@/features/site/architecture/components";
@@ -33,7 +44,8 @@ export async function generateMetadata({
 }
 
 /**
- * The architecture page: the stack, the request diagram, and the key properties.
+ * The architecture page: the stack, the diagram of a page request and of the
+ * match data, and three facts about how it runs.
  *
  * `params` is a Promise in Next 15 and is awaited here, so the feature
  * components below receive plain values.
@@ -80,52 +92,79 @@ export default async function ArchitecturePage({ params }: LocalePageProps) {
         <Text variant="h2" className="mb-6 text-center text-xl">
           {t("architecture.systemArchitecture")}
         </Text>
-        <div className="flex flex-col md:flex-row items-center justify-center gap-8">
-          <ArchitectureDiagramNode
-            icon={Globe}
-            title={t("architecture.diagram.client")}
-            subtitle="Next.js + React"
-            tone="primary"
-          />
+        <div className="space-y-8">
+          <DiagramLane label={t("architecture.diagram.requestLane")}>
+            <ArchitectureDiagramNode
+              icon={Monitor}
+              title={t("architecture.diagram.browser")}
+              subtitle="beyondthearc.app"
+              tone="neutral"
+            />
+            <ArchitectureArrow />
+            <ArchitectureDiagramNode
+              icon={Shield}
+              title={t("architecture.diagram.proxy")}
+              subtitle="Cloudflare + Nginx"
+              tone="category"
+            />
+            <ArchitectureArrow />
+            <ArchitectureDiagramNode
+              icon={Globe}
+              title={t("architecture.diagram.webServer")}
+              subtitle="Next.js"
+              tone="primary"
+            />
+            <ArchitectureArrow />
+            <ArchitectureDiagramNode
+              icon={Server}
+              title={t("architecture.diagram.api")}
+              subtitle="NestJS + Prisma"
+              tone="secondary"
+            />
+            <ArchitectureArrow />
+            <ArchitectureDiagramNode
+              icon={Database}
+              title={t("architecture.diagram.database")}
+              subtitle="PostgreSQL"
+              tone="secondary"
+            />
+          </DiagramLane>
 
-          <ArchitectureArrow />
-
-          <ArchitectureDiagramNode
-            icon={Server}
-            title={t("architecture.diagram.server")}
-            subtitle="NestJS + REST"
-            tone="secondary"
-          />
-
-          <ArchitectureArrow />
-
-          <ArchitectureDiagramNode
-            icon={Database}
-            title={t("architecture.diagram.database")}
-            subtitle="PostgreSQL"
-            tone="category"
-          />
+          <DiagramLane label={t("architecture.diagram.dataLane")}>
+            <ArchitectureDiagramNode
+              icon={CalendarClock}
+              title={t("architecture.diagram.scheduler")}
+              subtitle="Python"
+              tone="secondary"
+            />
+            <ArchitectureArrow />
+            <ArchitectureDiagramNode
+              icon={Database}
+              title={t("architecture.diagram.database")}
+              subtitle="PostgreSQL"
+              tone="secondary"
+            />
+          </DiagramLane>
         </div>
 
-        {/* Key Features — icon badges use bg-surface-inset, resolves to surface-raised */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
           <FeatureBadge
-            icon={Package}
+            icon={FileCode2}
             iconClassName="bg-tint-primary text-ink-primary"
-            title={t("architecture.features.modular.title")}
-            description={t("architecture.features.modular.description")}
+            title={t("architecture.features.contract.title")}
+            description={t("architecture.features.contract.description")}
           />
           <FeatureBadge
-            icon={Code2}
+            icon={Eye}
             iconClassName="bg-tint-success text-ink-success"
-            title={t("architecture.features.typeSafety.title")}
-            description={t("architecture.features.typeSafety.description")}
+            title={t("architecture.features.readOnly.title")}
+            description={t("architecture.features.readOnly.description")}
           />
           <FeatureBadge
-            icon={Layers}
+            icon={Server}
             iconClassName="bg-tint-clubs text-ink-clubs"
-            title={t("architecture.features.scalable.title")}
-            description={t("architecture.features.scalable.description")}
+            title={t("architecture.features.oneServer.title")}
+            description={t("architecture.features.oneServer.description")}
           />
         </div>
       </Card>

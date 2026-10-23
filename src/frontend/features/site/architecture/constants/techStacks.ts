@@ -1,14 +1,21 @@
 // src/frontend/features/site/architecture/constants/techStacks.ts
 import type { LucideIcon } from "lucide-react";
 import {
+  Activity,
+  Bug,
+  CalendarClock,
   Code2,
   Container,
   Database,
+  FileCode2,
   GitBranch,
   Globe,
+  Languages,
   Layers,
+  Palette,
+  RefreshCw,
   Server,
-  TestTube,
+  Shield,
   Wrench,
 } from "lucide-react";
 
@@ -39,8 +46,9 @@ interface TechStackSpec {
  *
  * Product names (`Next.js 15`, `Prisma 7`) are deliberately untranslated — they
  * are proper nouns, not copy, so they live here rather than in the catalogue.
- * The versions are the ones the manifests lock; bump them here when a major
- * lands, since nothing checks this against `package.json`.
+ * The versions are the ones the manifests and images lock; bump them here when
+ * a major lands, since nothing checks this against `package.json` or the
+ * compose file.
  */
 export const TECH_STACKS = [
   {
@@ -60,17 +68,17 @@ export const TECH_STACKS = [
       },
       {
         name: "Tailwind CSS 3",
-        icon: Wrench,
+        icon: Palette,
         descriptionKey: "architecture.frontend.tailwindDesc",
       },
       {
-        name: "React Query",
-        icon: Database,
+        name: "TanStack Query 5",
+        icon: RefreshCw,
         descriptionKey: "architecture.frontend.reactQueryDesc",
       },
       {
-        name: "next-intl",
-        icon: Globe,
+        name: "next-intl 4",
+        icon: Languages,
         descriptionKey: "architecture.frontend.i18nDesc",
       },
     ],
@@ -87,23 +95,23 @@ export const TECH_STACKS = [
       },
       {
         name: "Prisma 7",
-        icon: Database,
+        icon: Layers,
         descriptionKey: "architecture.backend.prismaDesc",
       },
       {
-        name: "PostgreSQL",
+        name: "PostgreSQL 18",
         icon: Database,
         descriptionKey: "architecture.backend.pgDesc",
       },
       {
-        name: "TypeScript 6",
-        icon: Code2,
-        descriptionKey: "architecture.backend.tsDesc",
+        name: "Python 3.14",
+        icon: CalendarClock,
+        descriptionKey: "architecture.backend.pythonDesc",
       },
       {
-        name: "RESTful API",
-        icon: GitBranch,
-        descriptionKey: "architecture.backend.restDesc",
+        name: "OpenAPI",
+        icon: FileCode2,
+        descriptionKey: "architecture.backend.openapiDesc",
       },
     ],
   },
@@ -113,29 +121,29 @@ export const TECH_STACKS = [
     tone: "category",
     items: [
       {
-        name: "Docker",
-        icon: Container,
-        descriptionKey: "architecture.devops.dockerDesc",
-      },
-      {
         name: "Docker Compose",
-        icon: Layers,
+        icon: Container,
         descriptionKey: "architecture.devops.composeDesc",
       },
       {
-        name: "Jest",
-        icon: TestTube,
-        descriptionKey: "architecture.devops.jestDesc",
-      },
-      {
-        name: "ESLint & Prettier",
-        icon: Wrench,
-        descriptionKey: "architecture.devops.lintDesc",
+        name: "Cloudflare & Nginx",
+        icon: Shield,
+        descriptionKey: "architecture.devops.edgeDesc",
       },
       {
         name: "GitLab CI",
         icon: GitBranch,
         descriptionKey: "architecture.devops.cicdDesc",
+      },
+      {
+        name: "Sentry",
+        icon: Bug,
+        descriptionKey: "architecture.devops.sentryDesc",
+      },
+      {
+        name: "Grafana",
+        icon: Activity,
+        descriptionKey: "architecture.devops.grafanaDesc",
       },
     ],
   },
