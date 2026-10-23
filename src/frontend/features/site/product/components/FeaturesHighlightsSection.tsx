@@ -2,7 +2,6 @@
 import type { LucideIcon } from "lucide-react";
 
 import { Card } from "@/shared/components/primitives";
-import { Text } from "@/shared/components/typography";
 
 import { FeatureHighlightItem } from "./FeatureHighlightItem";
 
@@ -30,10 +29,7 @@ export function FeaturesHighlightsSection({
 }: FeaturesHighlightsSectionProps) {
   return (
     // Highlights Section — sits on surface-base, establishes surface-subtle context
-    <Card padding="lg">
-      <Text variant="h2" className="mb-6 text-center text-xl">
-        {title}
-      </Text>
+    <Card padding="lg" heading={title}>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {highlights.map((highlight) => (
           <FeatureHighlightItem

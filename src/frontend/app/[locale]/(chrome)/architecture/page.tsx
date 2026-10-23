@@ -23,7 +23,6 @@ import {
 import { TECH_STACKS } from "@/features/site/architecture/constants";
 import { PageHero, PageLayout } from "@/shared/components/layout";
 import { Card } from "@/shared/components/primitives";
-import { Text } from "@/shared/components/typography";
 import type { LocalePageProps } from "@/shared/types";
 
 /**
@@ -88,10 +87,7 @@ export default async function ArchitecturePage({ params }: LocalePageProps) {
       </div>
 
       {/* Architecture Diagram — sits on surface-base, establishes surface-subtle context */}
-      <Card padding="lg">
-        <Text variant="h2" className="mb-6 text-center text-xl">
-          {t("architecture.systemArchitecture")}
-        </Text>
+      <Card padding="lg" heading={t("architecture.systemArchitecture")}>
         <div className="space-y-8">
           <DiagramLane label={t("architecture.diagram.requestLane")}>
             <ArchitectureDiagramNode
