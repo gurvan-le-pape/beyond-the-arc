@@ -1,9 +1,11 @@
 // src/frontend/features/organizations/clubs/components/clubs-map/SearchBar.tsx
 "use client";
 
+import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
 
+import { IconButton } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 
 interface SearchBarProps {
@@ -84,26 +86,14 @@ export function SearchBar({
           )}
 
           {query && (
-            <button
-              type="button"
+            <IconButton
+              size="sm"
+              shape="circle"
               onClick={onClear}
-              className="p-1.5 hover:bg-surface-inset rounded-full transition-colors"
-              aria-label={t("map.clearSearch")}
+              label={t("map.clearSearch")}
             >
-              <svg
-                className="w-4 h-4 text-text-secondary"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
+              <X />
+            </IconButton>
           )}
         </div>
       </div>

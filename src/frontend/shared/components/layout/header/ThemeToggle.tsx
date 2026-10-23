@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
 
+import { IconButton } from "@/shared/components/primitives";
 import { cn } from "@/shared/utils";
 
 /**
@@ -55,14 +56,9 @@ export function ThemeToggle() {
   // Placeholder — prevents hydration mismatch and layout shift
   if (!mounted) {
     return (
-      <button
-        type="button"
-        className="p-2 rounded-button hover:bg-surface-subtle transition-colors"
-        aria-label={t("header.toggleTheme")}
-        disabled
-      >
-        <div className="w-5 h-5" />
-      </button>
+      <IconButton label={t("header.toggleTheme")} disabled>
+        <span className="w-5 h-5" />
+      </IconButton>
     );
   }
 
@@ -73,21 +69,14 @@ export function ThemeToggle() {
 
   return (
     <div ref={containerRef} className="relative">
-      <button
-        type="button"
+      <IconButton
         onClick={() => setIsOpen((o) => !o)}
-        className={cn(
-          "p-2 rounded-button transition-all duration-200",
-          "hover:bg-surface-subtle",
-          "focus-ring",
-          isOpen && "bg-surface-subtle",
-        )}
-        aria-label={t("header.toggleTheme")}
+        label={t("header.toggleTheme")}
         aria-expanded={isOpen}
         aria-haspopup="menu"
       >
-        <ActiveIcon className="w-5 h-5 text-text-emphasis" />
-      </button>
+        <ActiveIcon />
+      </IconButton>
 
       <div
         role="menu"

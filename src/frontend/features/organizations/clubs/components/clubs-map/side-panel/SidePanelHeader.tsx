@@ -1,8 +1,10 @@
 // src/frontend/features/organizations/clubs/components/clubs-map/side-panel/SidePanelHeader.tsx
 "use client";
 
+import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 
+import { IconButton } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 
 interface SidePanelHeaderProps {
@@ -25,27 +27,13 @@ export function SidePanelHeader({ clubCount, onClose }: SidePanelHeaderProps) {
         </Text>
       </div>
       <div className="flex items-center gap-1">
-        <button
-          type="button"
+        <IconButton
           onClick={onClose}
-          className="p-2 hover:bg-surface-inset rounded-lg transition-colors"
-          aria-label={t("map.closePanel")}
+          label={t("map.closePanel")}
           title={t("map.closePanel")}
         >
-          <svg
-            className="w-5 h-5 text-text-body"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
+          <X />
+        </IconButton>
       </div>
     </div>
   );

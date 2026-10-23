@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 
-import { Button } from "@/shared/components/primitives";
+import { IconButton } from "@/shared/components/primitives";
 
 interface MapPopupCardProps {
   readonly title: string;
@@ -42,15 +42,9 @@ export function MapPopupCard({
             </p>
           )}
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          aria-label={tCommon("close")}
-          onClick={onClose}
-          className="shrink-0 h-8 w-8 text-text-secondary"
-        >
-          <X className="w-4 h-4" aria-hidden="true" />
-        </Button>
+        <IconButton size="sm" label={tCommon("close")} onClick={onClose}>
+          <X aria-hidden="true" />
+        </IconButton>
       </div>
       <div className="border-t border-divide">{children}</div>
     </div>

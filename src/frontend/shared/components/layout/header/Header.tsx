@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
 
 import { usePathname } from "@/navigation";
+import { IconButton } from "@/shared/components/primitives";
 
 import { useMobileMenu } from "../hooks/useMobileMenu";
 import HamburgerButton from "./HamburgerButton";
@@ -62,17 +63,16 @@ export function Header() {
 
         <div className="md:hidden flex items-center gap-2">
           <ThemeToggle />
-          <button
+          <IconButton
             ref={hamburgerRef}
-            type="button"
-            aria-label={menuOpen ? t("header.closeMenu") : t("header.openMenu")}
+            size="lg"
+            label={menuOpen ? t("header.closeMenu") : t("header.openMenu")}
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
             onClick={() => setMenuOpen((v) => !v)}
-            className="flex items-center justify-center w-10 h-10 rounded-button focus-ring hover:bg-surface-inset transition-all duration-200"
           >
             <HamburgerButton open={menuOpen} />
-          </button>
+          </IconButton>
         </div>
 
         {/* Opaque, not the header's translucent fill: the header's own
