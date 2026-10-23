@@ -1,6 +1,8 @@
 // src/frontend/features/organizations/clubs/components/clubs-map/side-panel/ClubList.tsx
 "use client";
 
+import { List } from "@/shared/components/primitives";
+
 import type { ClubBasic } from "../../../types/ClubBasic";
 import { ClubListItem } from "./ClubListItem";
 import { PanelEmptyState } from "./PanelEmptyState";
@@ -24,11 +26,11 @@ export function ClubList({ clubs, query, onClubClick }: ClubListProps) {
       {clubs.length === 0 ? (
         <PanelEmptyState query={query} />
       ) : (
-        <div className="divide-y divide-divide">
+        <List>
           {clubs.map((club) => (
             <ClubListItem key={club.id} club={club} onClick={onClubClick} />
           ))}
-        </div>
+        </List>
       )}
     </div>
   );

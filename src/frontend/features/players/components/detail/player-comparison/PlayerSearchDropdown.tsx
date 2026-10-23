@@ -7,10 +7,14 @@ import { useState } from "react";
 
 import { ErrorMessage } from "@/shared/components/feedback";
 import { DebouncedInput } from "@/shared/components/forms";
-import { IconButton, Popover } from "@/shared/components/primitives";
+import {
+  IconButton,
+  List,
+  ListItem,
+  Popover,
+} from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import type { Category, Gender } from "@/shared/constants";
-import { cn } from "@/shared/utils";
 
 import { usePlayerSearch } from "../../../api";
 import type { Player } from "../../../types/Player";
@@ -63,31 +67,19 @@ function DropdownContent({
     );
   }
 
-  return results.map((player, i) => {
-    const clubName = player.team?.club?.name ?? "";
-
-    return (
-      <button
-        key={player.id}
-        type="button"
-        onClick={() => onSelect(player)}
-        className={cn(
-          "w-full flex items-center gap-2.5 px-3 py-2 text-left",
-          "hover:bg-surface-subtle transition-colors",
-          i !== 0 && "border-t border-divide",
-        )}
-      >
-        <div className="min-w-0 flex flex-col">
-          <Text variant="label" as="span" className="text-text-heading">
-            #{player.number} {player.name}
-          </Text>
-          <Text variant="caption" as="span">
-            {clubName}
-          </Text>
-        </div>
-      </button>
-    );
-  });
+  return (
+    <List>
+      {results.map((player) => (
+        <ListItem
+          key={player.id}
+          size="sm"
+          onClick={() => onSelect(player)}
+          title={`#${player.number} ${player.name}`}
+          description={player.team?.club?.name}
+        />
+      ))}
+    </List>
+  );
 }
 
 // ─── Main component ───────────────────────────────────────────────────────────
