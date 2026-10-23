@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 
 import type { Championship } from "@/features/competitions/championships/types";
 import { buildChampionshipHeading } from "@/features/competitions/championships/utils";
-import { Card, Divide, TextLink } from "@/shared/components/primitives";
+import { Card, Divider, TextLink } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { CompetitionLevel } from "@/shared/constants";
 
@@ -78,7 +78,7 @@ export function ChampionshipHeader({
       </div>
       {children && (
         <>
-          <Divide />
+          <Divider />
           <div className="px-4 py-3 sm:px-6">{children}</div>
         </>
       )}
