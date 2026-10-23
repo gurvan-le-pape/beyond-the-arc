@@ -1,9 +1,11 @@
 // src/frontend/shared/components/primitives/Card.tsx
 import { cva, type VariantProps } from "class-variance-authority";
-import { type HTMLAttributes } from "react";
+import { type HTMLAttributes, type ReactNode } from "react";
 
 import { Link } from "@/navigation";
 import { cn } from "@/shared/utils";
+
+import { Text } from "../typography";
 
 /**
  * Card variants
@@ -57,17 +59,33 @@ interface CardLinkProps {
   readonly download?: boolean;
   readonly clickable?: never;
   readonly onClick?: never;
+  readonly heading?: never;
 }
 
-/** A card that either does nothing or runs an action in place. */
-interface CardPlainProps {
+/** A card that runs an action in place. */
+interface CardActionProps {
   readonly href?: undefined;
   readonly external?: never;
   readonly download?: never;
-  readonly clickable?: boolean;
+  readonly clickable: true;
+  readonly heading?: never;
 }
 
-export type CardProps = CardBaseProps & (CardLinkProps | CardPlainProps);
+/** A card that does nothing: a block of content, optionally headed. */
+interface CardStaticProps {
+  readonly href?: undefined;
+  readonly external?: never;
+  readonly download?: never;
+  readonly clickable?: false;
+  /**
+   * The card's title, drawn as an `h2` above the content. Every headed card
+   * takes its heading from here, so they share one look.
+   */
+  readonly heading?: ReactNode;
+}
+
+export type CardProps = CardBaseProps &
+  (CardLinkProps | CardActionProps | CardStaticProps);
 
 /**
  * Card — the surface-subtle container layer.
@@ -84,6 +102,7 @@ export type CardProps = CardBaseProps & (CardLinkProps | CardPlainProps);
  *
  * @example
  * <Card padding="lg">…</Card>
+ * <Card padding="lg" heading={t("title")}>…</Card>
  * <Card href={`/players/${id}`}>…</Card>
  * <Card clickable onClick={() => setExpanded(true)}>…</Card>
  */
@@ -96,6 +115,7 @@ export const Card = ({
   external,
   download,
   ref,
+  heading,
   children,
   ...props
 }: CardProps) => {
@@ -159,6 +179,11 @@ export const Card = ({
       className={cn(cardVariants({ variant, padding, clickable, className }))}
       {...(props as HTMLAttributes<HTMLDivElement>)}
     >
+      {heading && (
+        <Text variant="h2" className="mb-6 text-center text-xl">
+          {heading}
+        </Text>
+      )}
       {children}
     </div>
   );
