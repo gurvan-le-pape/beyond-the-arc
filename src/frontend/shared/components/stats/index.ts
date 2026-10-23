@@ -4,3 +4,4 @@
  */
 
 export * from "./Stat";
+export * from "./StatGroup";
