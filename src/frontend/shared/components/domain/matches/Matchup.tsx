@@ -64,7 +64,7 @@ const SIZES = {
   hero: {
     mark: "xl",
     score: "hero",
-    side: "gap-3 md:gap-4",
+    side: "contents md:flex md:gap-4",
     name: "text-xs md:text-base",
     centre: "min-h-16",
   },
@@ -84,16 +84,34 @@ const SIZES = {
   },
 } as const;
 
+// Below `md`, a side is too narrow for a name beside the score: it gets 80px
+// at 390, and a long one wraps onto four lines. So there the hero is a grid,
+// each side's `contents` laid into it: the marks at either edge with the score
+// centred between them, and under them the names, each in half the width and
+// aligned to its mark's edge.
+const HERO_GRID = {
+  home: {
+    mark: "col-start-1 row-start-1 justify-self-start",
+    name: "col-start-1 row-start-2 text-left md:text-center",
+  },
+  away: {
+    mark: "col-start-2 row-start-1 justify-self-end",
+    name: "col-start-2 row-start-2 text-right md:text-center",
+  },
+} as const;
+
 interface SideProps {
   readonly side: MatchupSide;
+  readonly position: MatchSide;
   readonly size: MatchupSize;
   readonly isWinner: boolean;
   readonly linked: boolean;
 }
 
-function Side({ side, size, isWinner, linked }: SideProps) {
+function Side({ side, position, size, isWinner, linked }: SideProps) {
   const tCommon = useTranslations("common");
   const config = SIZES[size];
+  const grid = size === "hero" ? HERO_GRID[position] : null;
   const mark = config.mark && (
     <ClubMark clubName={side.clubName} size={config.mark} />
   );
@@ -105,22 +123,29 @@ function Side({ side, size, isWinner, linked }: SideProps) {
         config.side,
       )}
     >
-      {mark && linked && side.clubId !== null ? (
-        <Link
-          href={`/organizations/clubs/${side.clubId}`}
-          aria-label={tCommon("club.seeClub", { name: side.clubName ?? "" })}
-          className="rounded-button focus-ring"
-        >
-          {mark}
-        </Link>
-      ) : (
-        mark
+      {mark && (
+        <div className={grid?.mark}>
+          {linked && side.clubId !== null ? (
+            <Link
+              href={`/organizations/clubs/${side.clubId}`}
+              aria-label={tCommon("club.seeClub", {
+                name: side.clubName ?? "",
+              })}
+              className="block rounded-button focus-ring"
+            >
+              {mark}
+            </Link>
+          ) : (
+            mark
+          )}
+        </div>
       )}
       <span
         title={side.teamName}
         className={cn(
           "w-full leading-snug break-words",
           config.name,
+          grid?.name,
           isWinner
             ? "font-bold text-text-heading"
             : "font-medium text-text-body",
@@ -201,10 +226,12 @@ export function Matchup({
       className={cn(
         "flex items-start justify-between",
         size === "row" ? "gap-2" : "gap-3 md:gap-6",
+        size === "hero" && "grid grid-cols-2 md:flex",
       )}
     >
       <Side
         side={home}
+        position="home"
         size={size}
         isWinner={winner === "home"}
         linked={linked}
@@ -213,6 +240,8 @@ export function Matchup({
         className={cn(
           "flex shrink-0 flex-col items-center justify-center gap-1",
           SIZES[size].centre,
+          size === "hero" &&
+            "col-span-2 col-start-1 row-start-1 justify-self-center",
         )}
       >
         <MatchScore
@@ -224,6 +253,7 @@ export function Matchup({
       </div>
       <Side
         side={away}
+        position="away"
         size={size}
         isWinner={winner === "away"}
         linked={linked}
