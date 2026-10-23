@@ -2,12 +2,14 @@
 import { ArrowRight } from "lucide-react";
 
 import { Link } from "@/navigation";
+import { Dot } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
+import type { CompetitionLevel } from "@/shared/constants";
 
 interface LevelRowProps {
   /** The level's listing; absent when the level has nothing to list yet. */
   readonly href?: string;
-  readonly dot: string;
+  readonly level: CompetitionLevel;
   readonly name: string;
   readonly detail: string;
   readonly count: string;
@@ -17,16 +19,15 @@ interface LevelRowProps {
  * One competition level in the home page's list, linking to its listing — or,
  * with no `href`, a muted row with no arrow for a level not covered yet.
  *
- * `dot` is the level's colour class, applied to the leading marker — a literal
- * Tailwind class, since a constructed one would generate nothing.
+ * The leading dot is drawn in the level's colour.
  *
  * `count` is a pre-formatted string: separators and plurals are the locale's
  * business, not this component's.
  */
-export function LevelRow({ href, dot, name, detail, count }: LevelRowProps) {
+export function LevelRow({ href, level, name, detail, count }: LevelRowProps) {
   const content = (
     <>
-      <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${dot}`} />
+      <Dot size="lg" tone={level} />
 
       <span className="text-sm font-bold flex-1 text-text-heading">{name}</span>
 

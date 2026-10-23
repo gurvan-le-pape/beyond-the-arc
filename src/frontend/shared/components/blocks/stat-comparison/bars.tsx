@@ -1,6 +1,7 @@
 // src/frontend/shared/components/blocks/stat-comparison/bars.tsx
 "use client";
 
+import { Dot } from "@/shared/components/primitives";
 import { cn } from "@/shared/utils";
 
 import { SIDE_CLASSES } from "./sideClasses";
@@ -101,7 +102,7 @@ export function MirroredBars({
         />
       </div>
       <div className="flex items-center justify-center">
-        <span className="w-1.5 h-1.5 rounded-full bg-text-muted" />
+        <Dot size="sm" tone="muted" />
       </div>
       <div className="h-2.5 bg-surface-inset rounded-r-full overflow-hidden flex justify-start">
         <BarFill

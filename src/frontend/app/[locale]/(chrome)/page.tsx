@@ -22,6 +22,7 @@ import { serverStatsService } from "@/features/stats/api/stats.server";
 import { getPathname } from "@/navigation";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
+import { Dot } from "@/shared/components/primitives";
 import { Grid } from "@/shared/components/primitives";
 import { StatGroup } from "@/shared/components/stats";
 import { Text } from "@/shared/components/typography";
@@ -147,7 +148,7 @@ async function Home({ params }: LocalePageProps) {
   const levelCards = LEVEL_ROWS.map((row) => {
     const championshipCount = stats.championshipsByLevel[row.level];
     return {
-      dot: row.dot,
+      level: row.level,
       name: t(`levels.${row.level}.name`),
       detail: t(`levels.${row.level}.detail`),
       // One message, three counts — ICU picks the plural form, and the key is
@@ -165,7 +166,7 @@ async function Home({ params }: LocalePageProps) {
           variant="overline"
           className="inline-flex items-center gap-1.5 text-ink-primary bg-tint-primary px-3 py-1 rounded mb-6"
         >
-          <span className="w-1.5 h-1.5 rounded-full bg-solid-primary" />
+          <Dot size="sm" />
           {t("hero.eyebrow")}
         </Text>
 

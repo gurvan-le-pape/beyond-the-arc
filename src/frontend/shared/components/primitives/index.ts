@@ -9,6 +9,7 @@ export * from "./Button";
 export * from "./Card";
 export * from "./ComboBox";
 export * from "./Divider";
+export * from "./Dot";
 export * from "./dropdownTriggerBase";
 export * from "./Grid";
 export * from "./IconButton";

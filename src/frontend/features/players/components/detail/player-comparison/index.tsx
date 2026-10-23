@@ -8,6 +8,7 @@ import { usePlayerMatches } from "@/features/players/api";
 import type { Player, PlayerCareerStats } from "@/features/players/types";
 import { Section, StatComparison } from "@/shared/components/blocks";
 import { ErrorMessage } from "@/shared/components/feedback";
+import { Dot } from "@/shared/components/primitives";
 import { cn } from "@/shared/utils";
 
 import { PlayerSearchDropdown } from "./PlayerSearchDropdown";
@@ -27,11 +28,13 @@ function LoadingDots() {
         <span
           key={i}
           className={cn(
-            "inline-block w-2 h-2 rounded-full bg-solid-primary animate-pulse",
+            "flex animate-pulse",
             i === 1 && "[animation-delay:200ms]",
             i === 2 && "[animation-delay:400ms]",
           )}
-        />
+        >
+          <Dot />
+        </span>
       ))}
     </div>
   );

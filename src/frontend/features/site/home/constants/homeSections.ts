@@ -28,10 +28,9 @@ export const EXPLORE_CARDS = [
 /**
  * The competition levels, national first, then narrowing — the display order
  * among covered levels; the page moves a level with no championships last.
- * `dot` is a complete literal class so Tailwind can see it.
  */
 export const LEVEL_ROWS = [
-  { level: "national", dot: "bg-solid-national" },
-  { level: "regional", dot: "bg-solid-regional" },
-  { level: "departmental", dot: "bg-solid-departmental" },
+  { level: "national" },
+  { level: "regional" },
+  { level: "departmental" },
 ] as const;
