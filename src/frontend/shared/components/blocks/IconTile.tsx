@@ -9,6 +9,7 @@ const tileVariants = cva(
   {
     variants: {
       size: {
+        sm: "w-10 h-10 [&>svg]:w-5 [&>svg]:h-5",
         md: "w-12 h-12 [&>svg]:w-6 [&>svg]:h-6",
         lg: "w-16 h-16 [&>svg]:w-8 [&>svg]:h-8",
       },
@@ -19,8 +20,8 @@ const tileVariants = cva(
 
 interface IconTileProps {
   readonly icon: LucideIcon;
-  /** `md` heads a card, `lg` a page. */
-  readonly size?: "md" | "lg";
+  /** `sm` heads a row, `md` a card, `lg` a page. */
+  readonly size?: "sm" | "md" | "lg";
 }
 
 /**

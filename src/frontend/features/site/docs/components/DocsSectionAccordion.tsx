@@ -2,6 +2,7 @@
 import type { LucideIcon } from "lucide-react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 
+import { IconTile } from "@/shared/components/blocks";
 import { Card } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 
@@ -26,7 +27,7 @@ interface DocsSectionAccordionProps {
  */
 export function DocsSectionAccordion({
   id,
-  icon: Icon,
+  icon,
   title,
   isActive,
   onToggle,
@@ -42,9 +43,7 @@ export function DocsSectionAccordion({
         aria-expanded={isActive}
         aria-controls={`docs-section-${id}`}
       >
-        <div className="flex-shrink-0 w-10 h-10 rounded-button bg-tint-primary flex items-center justify-center">
-          <Icon className="w-5 h-5 text-ink-primary" aria-hidden />
-        </div>
+        <IconTile icon={icon} size="sm" />
         <Text
           variant="label"
           as="span"

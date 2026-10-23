@@ -1,6 +1,7 @@
 // src/frontend/features/site/product/components/FeatureHighlightItem.tsx
 import type { LucideIcon } from "lucide-react";
 
+import { IconTile } from "@/shared/components/blocks";
 import { Text } from "@/shared/components/typography";
 
 interface FeatureHighlightItemProps {
@@ -16,14 +17,14 @@ interface FeatureHighlightItemProps {
  * serves any highlight the caller assembles.
  */
 export function FeatureHighlightItem({
-  icon: Icon,
+  icon,
   title,
   description,
 }: FeatureHighlightItemProps) {
   return (
     <div className="text-center">
-      <div className="inline-flex items-center justify-center w-12 h-12 rounded-button bg-tint-primary text-ink-primary mb-3">
-        <Icon className="w-6 h-6" aria-hidden />
+      <div className="mb-3 flex justify-center">
+        <IconTile icon={icon} />
       </div>
       <Text variant="h3" className="mb-2 text-base">
         {title}
