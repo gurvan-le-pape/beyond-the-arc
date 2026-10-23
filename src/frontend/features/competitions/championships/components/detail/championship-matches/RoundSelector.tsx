@@ -6,12 +6,13 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Select } from "@/shared/components/forms";
+import { IconButton } from "@/shared/components/primitives";
 import { cn } from "@/shared/utils";
 
 import { ROUND_PILL_MIN_WIDTH } from "./roundWindow";
 import { useRoundWindow } from "./useRoundWindow";
 
-// The carousel's round pills and the arrows either side of them.
+// The carousel's round pills.
 const roundButtonVariants = cva(
   "inline-flex items-center justify-center font-medium transition-all duration-200 " +
     "focus-ring disabled:pointer-events-none disabled:opacity-50 active:scale-95 rounded-full",
@@ -24,10 +25,6 @@ const roundButtonVariants = cva(
         unselected:
           "px-4 py-2 text-lg surface-raised text-text-emphasis border border-divide " +
           "hover:bg-tint-primary hover:text-ink-primary hover:border-line-primary",
-        arrow:
-          "h-9 w-9 p-2 border border-divide surface-raised text-text-muted " +
-          "hover:bg-tint-primary hover:text-ink-primary " +
-          "disabled:opacity-30 disabled:cursor-not-allowed",
       },
     },
   },
@@ -87,15 +84,15 @@ export function RoundSelector({
         className="hidden md:flex items-center justify-center space-x-2 px-0 py-2"
         ref={containerRef}
       >
-        <button
-          type="button"
-          className={cn(roundButtonVariants({ variant: "arrow" }))}
+        <IconButton
+          variant="outline"
+          shape="circle"
           onClick={scrollLeft}
           disabled={!canScrollLeft}
-          aria-label={t("roundSelector.scrollLeft")}
+          label={t("roundSelector.scrollLeft")}
         >
-          <ChevronLeft className="w-5 h-5" />
-        </button>
+          <ChevronLeft />
+        </IconButton>
 
         <div className="flex space-x-2">
           {visibleRounds.map((round) => {
@@ -120,15 +117,15 @@ export function RoundSelector({
           })}
         </div>
 
-        <button
-          type="button"
-          className={cn(roundButtonVariants({ variant: "arrow" }))}
+        <IconButton
+          variant="outline"
+          shape="circle"
           onClick={scrollRight}
           disabled={!canScrollRight}
-          aria-label={t("roundSelector.scrollRight")}
+          label={t("roundSelector.scrollRight")}
         >
-          <ChevronRight className="w-5 h-5" />
-        </button>
+          <ChevronRight />
+        </IconButton>
       </div>
     </div>
   );

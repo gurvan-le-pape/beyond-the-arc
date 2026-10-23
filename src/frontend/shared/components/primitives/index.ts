@@ -11,6 +11,7 @@ export * from "./ComboBox";
 export * from "./Divider";
 export * from "./dropdownTriggerBase";
 export * from "./Grid";
+export * from "./IconButton";
 export * from "./ImageWithFallback";
 export * from "./MultiSelect";
 export * from "./SegmentedControl";

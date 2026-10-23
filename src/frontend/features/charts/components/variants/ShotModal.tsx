@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { useRef } from "react";
 
 import type { Shot } from "@/features/matches/types";
-import { Button } from "@/shared/components/primitives";
+import { Button, IconButton } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { useModalDialog } from "@/shared/hooks";
 import type { NamedEntity } from "@/shared/types";
@@ -114,15 +114,17 @@ export function ShotModal({
                 </span>
               </div>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute top-2 right-2 text-on-solid-primary bg-on-solid-primary/10 hover:bg-on-solid-primary/20 rounded-full"
-              onClick={onClose}
-              aria-label={t("shotChart.close")}
-            >
-              <X className="w-5 h-5" />
-            </Button>
+            <div className="absolute top-2 right-2">
+              <IconButton
+                variant="onSolid"
+                size="lg"
+                shape="circle"
+                onClick={onClose}
+                label={t("shotChart.close")}
+              >
+                <X />
+              </IconButton>
+            </div>
           </div>
 
           {/* Chart content — ref used for png capture */}

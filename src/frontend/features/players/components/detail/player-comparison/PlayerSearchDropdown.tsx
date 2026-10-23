@@ -7,7 +7,7 @@ import { useState } from "react";
 
 import { ErrorMessage } from "@/shared/components/feedback";
 import { DebouncedInput } from "@/shared/components/forms";
-import { Button } from "@/shared/components/primitives";
+import { IconButton } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import type { Category, Gender } from "@/shared/constants";
 import { cn } from "@/shared/utils";
@@ -155,16 +155,9 @@ export function PlayerSearchDropdown({
             </Text>
           )}
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          type="button"
-          onClick={onClear}
-          aria-label={tCommon("clear")}
-          className="shrink-0"
-        >
-          <X className="w-4 h-4" aria-hidden="true" />
-        </Button>
+        <IconButton size="lg" onClick={onClear} label={tCommon("clear")}>
+          <X aria-hidden="true" />
+        </IconButton>
       </div>
     );
   }

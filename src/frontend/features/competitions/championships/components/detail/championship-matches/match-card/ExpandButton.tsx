@@ -2,6 +2,8 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useTranslations } from "next-intl";
 
+import { IconButton } from "@/shared/components/primitives";
+
 interface ExpandButtonProps {
   readonly expanded: boolean;
   readonly onToggle: () => void;
@@ -24,21 +26,16 @@ export function ExpandButton({
   const tMatches = useTranslations("matches");
 
   return (
-    <button
-      type="button"
+    <IconButton
+      size="sm"
       onClick={onToggle}
       onMouseEnter={onMouseEnter}
       aria-expanded={expanded}
-      aria-label={
+      label={
         expanded ? tMatches("hideMatchDetails") : tMatches("viewMatchDetails")
       }
-      className="flex-shrink-0 p-1 rounded-button hover:bg-surface-inset transition-colors duration-200 focus-ring"
     >
-      {expanded ? (
-        <ChevronUp className="h-5 w-5 text-text-body" />
-      ) : (
-        <ChevronDown className="h-5 w-5 text-text-body" />
-      )}
-    </button>
+      {expanded ? <ChevronUp /> : <ChevronDown />}
+    </IconButton>
   );
 }

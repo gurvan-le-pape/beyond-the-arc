@@ -68,8 +68,6 @@ export const buttonVariants = cva(BASE, {
       sm: "h-9 px-3 text-sm",
       md: "h-10 px-4 text-base",
       lg: "h-12 px-6 text-lg",
-      // Icon-only: square, no padding. Always pair with an aria-label.
-      icon: "h-10 w-10",
     },
   },
   defaultVariants: {
@@ -91,12 +89,12 @@ export interface ButtonProps
  *
  * Use for any clickable action: form submits, modal triggers, data mutations.
  * Do NOT use for navigation links — use <a> or your router's <Link>.
- * Do NOT add layout-specific variants here (carousel, pill, nav).
+ * Do NOT add layout-specific variants here (carousel, pill, nav). For a
+ * button whose only content is an icon, use `IconButton`.
  *
  * @example
  * <Button variant="primary" size="lg">Save</Button>
  * <Button variant="danger" isLoading={isDeleting}>Delete</Button>
- * <Button size="icon" aria-label="Close"><XIcon /></Button>
  * <Button variant="link" size="sm">Reset all</Button>
  * <Button variant="control">Filters</Button>
  */
