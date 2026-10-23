@@ -1,7 +1,7 @@
 // src/frontend/features/organizations/clubs/components/clubs-map/ClubGroupPopupContent.tsx
 import { useTranslations } from "next-intl";
 
-import { Link } from "@/navigation";
+import { List, ListItem } from "@/shared/components/primitives";
 
 import type { ClubBasic } from "../../types/ClubBasic";
 import { MapPopupCard } from "./MapPopupCard";
@@ -36,23 +36,19 @@ export function ClubGroupPopupContent({
       details={departmentName}
       onClose={onClose}
     >
-      <ul className="max-h-[198px] overflow-y-auto divide-y divide-divide">
-        {clubs.map((club) => (
-          <li key={club.id}>
-            <Link
+      <div className="max-h-[198px] overflow-y-auto">
+        <List>
+          {clubs.map((club) => (
+            <ListItem
+              key={club.id}
+              size="sm"
               href={`/organizations/clubs/${club.id}`}
-              className="flex min-h-11 items-center justify-between gap-3 px-4 py-2 text-sm text-text-emphasis hover:bg-surface-inset hover:text-text-heading focus-ring"
-            >
-              <span className="min-w-0">{club.name}</span>
-              {club.zipCode && (
-                <span className="shrink-0 text-xs text-text-secondary">
-                  {club.zipCode}
-                </span>
-              )}
-            </Link>
-          </li>
-        ))}
-      </ul>
+              title={club.name}
+              trailing={club.zipCode}
+            />
+          ))}
+        </List>
+      </div>
     </MapPopupCard>
   );
 }

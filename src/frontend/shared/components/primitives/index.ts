@@ -14,6 +14,8 @@ export * from "./dropdownTriggerBase";
 export * from "./Grid";
 export * from "./IconButton";
 export * from "./ImageWithFallback";
+export * from "./List";
+export * from "./ListItem";
 export * from "./MultiSelect";
 export * from "./Popover";
 export * from "./SegmentedControl";
