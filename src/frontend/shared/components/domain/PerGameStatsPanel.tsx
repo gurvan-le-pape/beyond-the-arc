@@ -3,7 +3,7 @@ import { useTranslations } from "next-intl";
 
 import { Section } from "@/shared/components/blocks";
 import { Card } from "@/shared/components/primitives";
-import { Stat } from "@/shared/components/stats";
+import { StatGroup } from "@/shared/components/stats";
 import type { PlayerCareerStats } from "@/shared/types";
 
 interface PerGameStatsPanelProps {
@@ -76,15 +76,15 @@ export function PerGameStatsPanel({ stats }: PerGameStatsPanelProps) {
 
   return (
     <Section title={tCommon("stats.seasonStatsTitle")}>
-      <Card padding="none" className="grid grid-cols-4 lg:grid-cols-8">
-        {STAT_FIELDS.map((field) => (
-          <Stat
-            key={field.full}
-            label={tCommon(`stats.${field.abbr}`)}
-            fullLabel={tCommon(`stats.${field.full}`)}
-            value={field.value(stats)}
-          />
-        ))}
+      <Card padding="none">
+        <StatGroup
+          columns={{ base: 4, lg: 8 }}
+          stats={STAT_FIELDS.map((field) => ({
+            label: tCommon(`stats.${field.abbr}`),
+            fullLabel: tCommon(`stats.${field.full}`),
+            value: field.value(stats),
+          }))}
+        />
       </Card>
     </Section>
   );

@@ -22,11 +22,11 @@ import { serverStatsService } from "@/features/stats/api/stats.server";
 import { getPathname } from "@/navigation";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
-import { Stat } from "@/shared/components/stats";
+import { Grid } from "@/shared/components/primitives";
+import { StatGroup } from "@/shared/components/stats";
 import { Text } from "@/shared/components/typography";
 import type { LocalePageProps } from "@/shared/types";
 import {
-  cn,
   formatCommitteeName,
   formatLeagueName,
   formatMatchDay,
@@ -47,19 +47,6 @@ import {
 // a reader auditing "which pages skip setRequestLocale" should find four,
 // two of which are the ones this invariant is about.
 export const dynamic = "force-dynamic";
-
-/**
- * The stats band's inner rules, one entry per `STATS_BAND_KEYS` cell: a right
- * rule unless the cell ends its row, a bottom rule on the phone's first row.
- */
-const STATS_BAND_CELL_RULES = [
-  "border-r border-b md:border-b-0",
-  "border-r border-b md:border-b-0",
-  "border-b md:border-b-0 md:border-r",
-  "border-r",
-  "border-r",
-  "",
-] as const;
 
 /**
  * Metadata for the home page.
@@ -206,20 +193,9 @@ async function Home({ params }: LocalePageProps) {
         </div>
       </section>
 
-      {/* Rules only between cells, never on the outer edges: three columns
-          over two rows on a phone, six in one row from md. Each cell draws
-          the rules it has a neighbour on, so nothing relies on clipping —
-          a rule pushed outside the band and clipped still shows when the
-          band's edge lands on a half pixel. */}
-      <div className="grid grid-cols-3 md:grid-cols-6 border-b border-divide">
-        {statsBand.map((s, index) => (
-          <div
-            key={s.label}
-            className={cn("border-divide", STATS_BAND_CELL_RULES[index])}
-          >
-            <Stat value={s.value} label={s.label} />
-          </div>
-        ))}
+      {/* Three columns over two rows on a phone, six in one row from md. */}
+      <div className="border-b border-divide">
+        <StatGroup stats={statsBand} columns={{ base: 3, md: 6 }} />
       </div>
 
       {latestRound && <LatestRoundSection {...latestRound} />}
@@ -230,10 +206,12 @@ async function Home({ params }: LocalePageProps) {
         </Text>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 border-b border-divide divide-y md:divide-y-0 md:divide-x divide-divide">
-        {exploreCards.map((card) => (
-          <ExploreCard key={card.href} {...card} />
-        ))}
+      <div className="border-b border-divide">
+        <Grid columns={{ base: 1, md: 3 }} divided>
+          {exploreCards.map((card) => (
+            <ExploreCard key={card.href} {...card} />
+          ))}
+        </Grid>
       </div>
 
       <MapBand />

@@ -3,7 +3,7 @@ import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 
 import { Card, TextLink } from "@/shared/components/primitives";
-import { Stat } from "@/shared/components/stats";
+import { StatGroup } from "@/shared/components/stats";
 import { Text } from "@/shared/components/typography";
 import type { CompetitionLevel, Gender } from "@/shared/constants";
 import { cn } from "@/shared/utils";
@@ -116,18 +116,8 @@ export function EntityHeader({
       </div>
 
       {stats.length > 0 && (
-        <div
-          className="grid border-t border-divide"
-          style={{ gridTemplateColumns: `repeat(${stats.length}, 1fr)` }}
-        >
-          {stats.map((stat, i) => (
-            <div
-              key={stat.label}
-              className={i < stats.length - 1 ? "border-r border-divide" : ""}
-            >
-              <Stat value={stat.value} label={stat.label} />
-            </div>
-          ))}
+        <div className="border-t border-divide">
+          <StatGroup stats={stats} />
         </div>
       )}
     </Card>

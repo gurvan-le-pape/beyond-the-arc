@@ -10,6 +10,7 @@ export * from "./Card";
 export * from "./ComboBox";
 export * from "./Divider";
 export * from "./dropdownTriggerBase";
+export * from "./Grid";
 export * from "./ImageWithFallback";
 export * from "./MultiSelect";
 export * from "./SegmentedControl";
