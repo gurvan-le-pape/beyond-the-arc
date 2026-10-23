@@ -45,10 +45,8 @@ export default async function ProductPage({ params }: LocalePageProps) {
 
   const features = PRODUCT_FEATURES.map((f) => ({
     icon: f.icon,
-    status: f.statusKey,
     title: t(`product.${f.featureKey}.title`),
     description: t(`product.${f.featureKey}.description`),
-    statusLabel: t(`product.status.${f.statusKey}`),
   }));
 
   const highlights: HighlightItem[] = PRODUCT_HIGHLIGHTS.map((h) => ({
