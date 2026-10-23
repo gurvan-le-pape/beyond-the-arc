@@ -1,12 +1,10 @@
 {
   "contact": {
     "title": "Get in Touch",
-    "intro": "Interested in discussing this project or exploring collaboration opportunities?",
+    "intro": "Questions about this project, or want to talk about working together?",
     "email": "Email",
     "gitlab": "GitLab",
-    "linkedin": "LinkedIn",
-    "aboutProject": "About This Project",
-    "projectDescription": "This is a portfolio project showcasing full-stack development skills with modern web technologies. Built to demonstrate clean architecture, scalable design, and attention to detail."
+    "linkedin": "LinkedIn"
   },
   "about": {
     "title": "About the project",
