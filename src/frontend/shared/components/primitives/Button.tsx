@@ -10,7 +10,7 @@ import { cn } from "@/shared/utils";
 // import cycle (Button → feedback/index → EmptyState → Button) and drags the
 // whole feedback + layout graph in behind it. `EmptyState.tsx` already writes
 // the narrow form in the other direction.
-import { LoadingSpinner } from "../feedback/LoadingSpinner";
+import { Spinner } from "../feedback/Spinner";
 
 const BASE =
   "inline-flex items-center justify-center font-medium transition-all duration-200 " +
@@ -119,6 +119,6 @@ export const Button = ({
     aria-busy={isLoading || undefined}
     {...props}
   >
-    {isLoading ? <LoadingSpinner size="sm" /> : children}
+    {isLoading ? <Spinner size="sm" /> : children}
   </button>
 );
