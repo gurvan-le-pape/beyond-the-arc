@@ -481,19 +481,18 @@ The court is built from a set of atomic SVG components, each responsible for a s
 
 All coordinates are defined in real-world metres and converted to SVG pixel space via `xScale` and `yScale` functions passed as props. Stroke widths scale proportionally with SVG width (`(LINE_WIDTH * svgWidth) / COURT_WIDTH`) so the court renders correctly at any size without fixed pixel values.
 
-The court follows the theme. Floor, markings and zone figures take the `court-floor` / `court-line` / `court-label` tokens (a dark parquet with cream lines in dark, white on black in high contrast), and the shot marks take the `event-made` / `event-miss` label colours. Static markings use the Tailwind classes (`stroke-court-line`); an element given a colour as a value — the zone outlines in `PolygonZone` and `RectZone`, a highlighted heatmap cell — sets it through `style` with `COURT_COLOURS`, because an SVG presentation attribute does not resolve `var()`. Zone figures carry a floor-coloured halo (`paint-order: stroke`) so they read over any heat colour.
+The court follows the theme. Floor, markings and zone figures take the `court-floor` / `court-line` / `court-label` tokens (a dark parquet with cream lines in dark, white on black in high contrast), and the shot marks take the `event-made` / `event-miss` label colours. Static markings use the Tailwind classes (`stroke-court-line`); an element given a colour as a value — the zone outlines in `PolygonZone` and `RectZone` — sets it through `style` with `COURT_COLOURS`, because an SVG presentation attribute does not resolve `var()`. Zone figures carry a floor-coloured halo (`paint-order: stroke`) so they read over any heat colour.
 
 Court geometry constants (`BASKET_X`, `BASKET_Y`, `COURT_WIDTH`, `PAINT_HEIGHT`, `THREE_PT_RADIUS`, etc.) are defined in `shared/constants` and shared across both the court renderer and the zone system.
 
 ### Display modes
 
-Three overlay variants are implemented, each with its own header, overlay component, and where relevant, legend:
+Two overlay variants are implemented, each with its own header and overlay component:
 
 - **Scatter** — plots individual shot attempts as points, colour-coded by make/miss. `ScatterOverlay` renders one SVG element per shot event.
-- **Heatmap** — divides the court into a grid of cells and colour-codes each cell by shot volume or efficiency. `HeatmapOverlay` renders `HeatmapCell` elements. `HeatmapFilterBar` lets the user switch the metric being visualised. `HeatmapLegend` explains the colour scale.
-- **Hotspots** — aggregates shots into named court zones and renders `ZoneStatLabel` elements showing make rate or volume per zone. `HotspotsOverlay` composes eight zone group components (`PaintZones`, `Corner3Zones`, `WingZones`, `AboveWingZones`, `TopKeyZones`, `ArcZones`, `ApexStripeZones`, `ArcApexSidelineZones`).
+- **Hotspots** — aggregates shots into named court zones and shades each zone by attempts and renders `ZoneStatLabel` elements printing its make rate; `HeatmapLegend` explains the shading. `HotspotsOverlay` composes eight zone group components (`PaintZones`, `Corner3Zones`, `WingZones`, `AboveWingZones`, `TopKeyZones`, `ArcZones`, `ApexStripeZones`, `ArcApexSidelineZones`).
 
-The two entry points are `PlayerShotChart` and `TeamShotChart` in `variants/`, which select the appropriate overlay and header for their context.
+`PlayerShotChart` and `TeamShotChart` in `variants/` both draw hotspots, at most 448px wide; scatter is the per-match view in `ShotModal`. A grid heatmap is deliberately absent: a team's season is a few hundred shots, so a fine grid is mostly empty cells with a busiest cell of three, while zones aggregate enough attempts for each colour and percentage to mean something.
 
 ### Zone system
 

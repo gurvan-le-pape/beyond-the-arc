@@ -10,19 +10,16 @@ import {
   COURT_WIDTH,
   HALF_COURT_HEIGHT,
   SHOT_COLOR_SCALE,
-  ShotFilter,
 } from "@/features/charts/constants";
-import { maxCellValue, summarizeShots } from "@/features/charts/utils";
+import { summarizeShots } from "@/features/charts/utils";
 import type { Shot } from "@/features/matches/types";
+import { transformToShotEvents } from "@/features/players/utils";
 
 import { CourtMarkings } from "../court/CourtMarkings";
-import HeatmapHeader from "../headers/HeatmapHeader";
 import HotspotsHeader from "../headers/HotspotsHeader";
 import ScatterHeader from "../headers/ScatterHeader";
-import HeatmapOverlay from "../overlays/HeatmapOverlay";
 import HotspotsOverlay from "../overlays/HotspotsOverlay";
 import ScatterOverlay from "../overlays/ScatterOverlay";
-import { useBinnedShots } from "./useBinnedShots";
 import { useCourtSize } from "./useCourtSize";
 
 interface ShotChartProps {
@@ -35,12 +32,6 @@ const ASPECT = COURT_WIDTH / HALF_COURT_HEIGHT;
 
 // Minimum width below which the chart becomes unusable on mobile
 const MIN_CHART_WIDTH = 320;
-
-// The heatmap's grid over the half court.
-const HEATMAP_ROWS = 56;
-const HEATMAP_COLS = 60;
-const CELL_WIDTH = COURT_WIDTH / HEATMAP_COLS;
-const CELL_HEIGHT = HALF_COURT_HEIGHT / HEATMAP_ROWS;
 
 /**
  * The shot chart for a set of match events, in the variant `chartType` picks.
@@ -58,10 +49,7 @@ export function ShotChart({
     MIN_CHART_WIDTH,
   );
 
-  const [shotFilter, setShotFilter] = useState<ShotFilter>(ShotFilter.ALL);
-
-  // Separate max value for hotspots — fed back from HotspotsOverlay's zone binning,
-  // which is more accurate than the heatmap grid binning used for maxValue below.
+  // The busiest zone's count, fed back from HotspotsOverlay's zone binning.
   const [hotspotsMaxValue, setHotspotsMaxValue] = useState<number>(1);
 
   const svgWidth = containerSize?.width ?? 0;
@@ -76,13 +64,7 @@ export function ShotChart({
     [svgHeight],
   );
 
-  const { bins: heatmapData, shotEvents } = useBinnedShots(
-    shots,
-    HEATMAP_ROWS,
-    HEATMAP_COLS,
-    CELL_WIDTH,
-    CELL_HEIGHT,
-  );
+  const shotEvents = useMemo(() => transformToShotEvents(shots), [shots]);
 
   const t = useTranslations("common");
 
@@ -94,21 +76,12 @@ export function ShotChart({
   // Literal keys per branch: next-intl types `t` against the catalogue, so a
   // key held in a `string` variable does not type-check.
   const chartLabel = (() => {
-    switch (chartType) {
-      case ChartType.HEATMAP:
-        return t("shotChart.heatmapChartLabel");
-      case ChartType.HOTSPOTS:
-        return t("shotChart.hotspotsChartLabel");
-      default:
-        return t("shotChart.scatterChartLabel");
-    }
+    return chartType === ChartType.HOTSPOTS
+      ? t("shotChart.hotspotsChartLabel")
+      : t("shotChart.scatterChartLabel");
   })();
 
   const summary = useMemo(() => summarizeShots(shotEvents), [shotEvents]);
-  const maxValue = useMemo(
-    () => maxCellValue(heatmapData, shotFilter),
-    [heatmapData, shotFilter],
-  );
 
   return (
     <div
@@ -118,13 +91,6 @@ export function ShotChart({
       {containerSize && (
         <>
           {chartType === ChartType.SCATTER && <ScatterHeader />}
-          {chartType === ChartType.HEATMAP && (
-            <HeatmapHeader
-              shotFilter={shotFilter}
-              setShotFilter={setShotFilter}
-              maxValue={maxValue}
-            />
-          )}
           {chartType === ChartType.HOTSPOTS && (
             <HotspotsHeader maxValue={hotspotsMaxValue} />
           )}
@@ -144,18 +110,6 @@ export function ShotChart({
               {t("shotChart.chartSummary", { ...summary })}
             </desc>
             {/* --- Overlays (between background and lines) --- */}
-            {chartType === ChartType.HEATMAP && (
-              <HeatmapOverlay
-                heatmapData={heatmapData}
-                shotFilter={shotFilter}
-                xScale={xScale}
-                yScale={yScale}
-                cellWidth={CELL_WIDTH}
-                cellHeight={CELL_HEIGHT}
-                maxValue={maxValue}
-                colorScale={SHOT_COLOR_SCALE}
-              />
-            )}
             {chartType === ChartType.SCATTER && (
               <ScatterOverlay
                 shots={shotEvents}

@@ -22,8 +22,9 @@ export function ZoneStatLabel({
   total,
   svgWidth,
 }: ZoneStatLabelProps) {
-  // Scale font size with container — tuned so labels fit at all widths
-  const statFontSize = Math.max(9, svgWidth / 55);
+  // Scales with the court; 11px is the floor for legibility, and at that size
+  // "100%" still fits inside the narrow corner-three zones.
+  const statFontSize = Math.max(11, svgWidth / 40);
   const statLineHeight = statFontSize * 1.4;
 
   return (
@@ -39,7 +40,6 @@ export function ZoneStatLabel({
           strokeWidth={3}
           paintOrder="stroke"
           strokeLinejoin="round"
-          opacity={0.7}
           pointerEvents="none"
         >
           {label}
@@ -55,7 +55,6 @@ export function ZoneStatLabel({
         strokeWidth={3}
         paintOrder="stroke"
         strokeLinejoin="round"
-        opacity={0.85}
         pointerEvents="none"
       >
         {total > 0 ? `${fg ?? 0}%` : ""}
