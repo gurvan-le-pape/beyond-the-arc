@@ -2,6 +2,8 @@
 import { Text } from "@/shared/components/typography";
 import { GITLAB_CLONE_URL } from "@/shared/constants";
 
+import { CodeBlock } from "../CodeBlock";
+
 const GETTING_STARTED_COMMANDS = `# Clone the repository
 git clone ${GITLAB_CLONE_URL}
 
@@ -25,9 +27,7 @@ interface DocsGettingStartedSectionProps {
  *
  * `content` supplies only the prose. The commands are literals in this file —
  * they are not user-facing copy and must not be translated, so they sit outside
- * the message catalogue deliberately. Their dark code block is a raw colour
- * rather than a surface token, because a code sample reads the same in both
- * themes.
+ * the message catalogue deliberately.
  */
 export function DocsGettingStartedSection({
   content,
@@ -35,12 +35,7 @@ export function DocsGettingStartedSection({
   return (
     <div className="space-y-4">
       <Text variant="body">{content}</Text>
-      {/* Code block — intentional dark bg for readability */}
-      <div className="bg-gray-900 text-gray-100 p-6 rounded-button">
-        <pre className="text-sm overflow-x-auto">
-          {GETTING_STARTED_COMMANDS}
-        </pre>
-      </div>
+      <CodeBlock>{GETTING_STARTED_COMMANDS}</CodeBlock>
     </div>
   );
 }
