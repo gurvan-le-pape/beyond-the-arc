@@ -15,7 +15,6 @@ export * from "./MultiSelectDropdown";
 export * from "./SegmentedControl";
 export * from "./segmentedStyles";
 export * from "./SelectChevron";
-export * from "./StatPill";
 export * from "./Switch";
 export * from "./Tabs";
 export * from "./TextLink";
