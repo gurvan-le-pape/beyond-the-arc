@@ -10,6 +10,7 @@ export * from "./detail/ChampionshipBreadcrumb";
 export * from "./detail/ChampionshipHeader";
 export * from "./detail/ChampionshipNavigation";
 export * from "./detail/ChampionshipPoolSelect";
+export * from "./detail/ChampionshipSections";
 export * from "./list/ChampionshipFilters";
 export * from "./list/ChampionshipTable";
 export * from "./list/tabs/ChampionshipTab";

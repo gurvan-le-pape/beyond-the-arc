@@ -47,5 +47,10 @@
     "division": "Division",
     "divisionAbbr": "Div.",
     "pools": "Pools"
+  },
+  "detailSections": {
+    "label": "Show",
+    "standings": "Standings",
+    "matches": "Matches"
   }
 }
