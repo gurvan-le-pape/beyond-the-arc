@@ -213,7 +213,7 @@ export function MatchesFilters({
         />
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <DebouncedInput
           variant="search"
           label={tMatches("searchClub")}
@@ -232,30 +232,28 @@ export function MatchesFilters({
           onChange={(e) => setDateFilter(e.target.value)}
           leftIcon={<Calendar className="w-5 h-5" />}
         />
+
+        <CategoryGenderSelects
+          category={category}
+          setCategory={setCategory}
+          gender={gender}
+          setGender={setGender}
+        />
+
+        <LevelLocationFilters
+          level={level}
+          setLevel={setLevel}
+          committeeId={committeeId}
+          setCommitteeId={setCommitteeId}
+          leagueId={leagueId}
+          setLeagueId={setLeagueId}
+          committees={committees}
+          leagues={leagues}
+        />
+
+        {/* Division → Pool → Matchday */}
+        <CascadeSelects steps={cascadeSteps} />
       </div>
-
-      <CategoryGenderSelects
-        category={category}
-        setCategory={setCategory}
-        gender={gender}
-        setGender={setGender}
-      />
-
-      <div className="border-t border-divide" />
-
-      <LevelLocationFilters
-        level={level}
-        setLevel={setLevel}
-        committeeId={committeeId}
-        setCommitteeId={setCommitteeId}
-        leagueId={leagueId}
-        setLeagueId={setLeagueId}
-        committees={committees}
-        leagues={leagues}
-      />
-
-      {/* Division → Pool → Matchday */}
-      <CascadeSelects steps={cascadeSteps} cols={3} />
     </FiltersShell>
   );
 }

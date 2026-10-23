@@ -172,7 +172,7 @@ readonly tickYs: number[];
 <PlayerHeader player={player} />
 
 {/* Division → Pool → Matchday */}    // keep — `cascadeSteps` hides the chain
-<CascadeSelects steps={cascadeSteps} cols={3} />
+<CascadeSelects steps={cascadeSteps} />
 
 {/* Free-throw semi-circle */}        // keep — nothing else says what this path draws
 <path d={arc()({ startAngle: -Math.PI / 2, … })} />

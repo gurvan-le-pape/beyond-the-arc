@@ -16,8 +16,8 @@ interface LevelLocationFiltersProps {
 }
 
 /**
- * The competition-level select and, beneath it, the location select that level
- * implies.
+ * The competition-level select and, after it, the location select that level
+ * implies. Both render bare, as a fragment: the panel's own grid places them.
  *
  * **The second select appears only for departmental and regional.** Those levels
  * are scoped by a committee and a league respectively; national competitions
@@ -72,7 +72,7 @@ export function LevelLocationFilters({
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <>
       <Select
         label={tCommon("filters.levels")}
         options={levelOptions}
@@ -115,7 +115,7 @@ export function LevelLocationFilters({
           />
         </div>
       )}
-    </div>
+    </>
   );
 }
 
