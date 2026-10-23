@@ -150,19 +150,16 @@ export default async function ArchitecturePage({ params }: LocalePageProps) {
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
           <FeatureBadge
             icon={FileCode2}
-            iconClassName="bg-tint-primary text-ink-primary"
             title={t("architecture.features.contract.title")}
             description={t("architecture.features.contract.description")}
           />
           <FeatureBadge
             icon={Eye}
-            iconClassName="bg-tint-success text-ink-success"
             title={t("architecture.features.readOnly.title")}
             description={t("architecture.features.readOnly.description")}
           />
           <FeatureBadge
             icon={Server}
-            iconClassName="bg-tint-clubs text-ink-clubs"
             title={t("architecture.features.oneServer.title")}
             description={t("architecture.features.oneServer.description")}
           />
