@@ -72,7 +72,7 @@ The same holds one layer down: an interface piece that can be described without 
 
 - The first level under `components/` may be **section folders** (`detail/`, `list/`, `map/`) grouping components by the page area they serve. Section folders contain component files and composite folders; they have no `index.tsx` of their own.
 - **Maximum depth: 3 folder levels below `components/`** (section → composite → sub-composite). Deeper trees flatten into siblings, with ownership expressed by name prefix (`MatchStatusBadge` beside `MatchStatus`, not a `match-status/` folder).
-- **Role grouping** (charts style: `court/`, `overlays/`, `headers/`) is permitted for a feature that is essentially one component with many small parts — the same depth cap applies.
+- **Role grouping** (`shot-chart` style: `court/`, `overlays/`, `headers/`) is permitted for a feature that is essentially one component with many small parts — the same depth cap applies.
 - No `utils/`, `types/`, or `hooks/` *directories* inside `components/`. Component-private helpers live as files inside their composite folder; anything else belongs in the feature-level directories.
 
 ### Focus
@@ -112,7 +112,7 @@ Features are ranked in layers, and **a feature imports only from features on a l
 | 4 | `matches` | the pools and championships a match is played in |
 | 3 | `competitions` | the leagues and committees that run them |
 | 2 | `organizations` | regions, departments, site-wide counts |
-| 1 | `geography`, `stats`, `charts` | `shared/` only |
+| 1 | `geography`, `stats`, `shot-chart` | `shared/` only |
 
 Pages (`app/`) sit above every layer and compose sections from any feature. When two features need to appear together, the page puts them side by side; neither feature imports the other.
 

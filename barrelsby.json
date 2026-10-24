@@ -1,9 +1,9 @@
 {
   "directory": [
-    "src/frontend/features/charts/components",
-    "src/frontend/features/charts/constants",
-    "src/frontend/features/charts/types",
-    "src/frontend/features/charts/utils",
+    "src/frontend/features/shot-chart/components",
+    "src/frontend/features/shot-chart/constants",
+    "src/frontend/features/shot-chart/types",
+    "src/frontend/features/shot-chart/utils",
 
     "src/frontend/features/competitions/championships/api",
     "src/frontend/features/competitions/championships/components",
@@ -129,7 +129,7 @@
     ".*/shared/types/api\\.generated\\.ts$",
     ".*/matches-by-round/(?!index\\.tsx$).*",
     ".*/match-events/(?!index\\.tsx$).*",
-    ".*/shot-chart/(?!index\\.tsx$).*",
+    ".*/components/shot-chart/(?!index\\.tsx$).*",
     ".*/matches-filters/(?!index\\.tsx$).*",
     ".*/team-roster/(?!index\\.tsx$).*",
     ".*/player-comparison/(?!index\\.tsx$).*",

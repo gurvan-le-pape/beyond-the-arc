@@ -2,7 +2,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { PlayerShotChart } from "@/features/charts/components";
 import { serverMatchesService } from "@/features/matches/api/matches.server";
 import { transformToShotEvents } from "@/features/matches/utils";
 import { serverPlayersService } from "@/features/players/api/players.server";
@@ -11,6 +10,7 @@ import {
   PlayerHeader,
   PlayerMatchHistoryTable,
 } from "@/features/players/components";
+import { PlayerShotChart } from "@/features/shot-chart/components";
 import { PerGameStatsPanel } from "@/features/stats/components";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
