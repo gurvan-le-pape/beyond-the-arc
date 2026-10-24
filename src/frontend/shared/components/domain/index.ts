@@ -9,7 +9,6 @@ export * from "./EntityCardBadges";
 export * from "./EntityCardBody";
 export * from "./EntityHeader";
 export * from "./EntityHeaderBadges";
-export * from "./LeaderboardTable";
 export * from "./ListEntityCard";
 export * from "./matches/matchHistoryColumns";
 export * from "./matches/MatchScore";

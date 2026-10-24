@@ -2,13 +2,14 @@
 import { ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 
+import { LeaderboardTable } from "@/features/competitions/leaderboards/components";
+import type { Leaderboard } from "@/features/competitions/leaderboards/types";
 import type { Match } from "@/features/matches/types";
 import { matchupSide } from "@/features/matches/utils";
 import { Section } from "@/shared/components/blocks";
-import { LeaderboardTable, Matchup } from "@/shared/components/domain";
+import { Matchup } from "@/shared/components/domain";
 import { Card, TextLink } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
-import type { Leaderboard } from "@/shared/types";
 import { cn } from "@/shared/utils";
 
 /** Standings rows shown before the link to the full table. */

@@ -20,10 +20,10 @@ import {
   resolvePoolId,
 } from "@/features/competitions/championships/utils";
 import { serverLeaderboardsService } from "@/features/competitions/leaderboards/api/leaderboards.server";
+import { LeaderboardTable } from "@/features/competitions/leaderboards/components";
 import { serverPoolsService } from "@/features/competitions/pools/api/pools.server";
 import { serverMatchesService } from "@/features/matches/api/matches.server";
 import { MatchesByRound } from "@/features/matches/components";
-import { LeaderboardTable } from "@/shared/components/domain";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { CompetitionLevel } from "@/shared/constants";

@@ -11,6 +11,7 @@
     "src/frontend/features/competitions/championships/types",
     "src/frontend/features/competitions/championships/utils",
 
+    "src/frontend/features/competitions/leaderboards/components",
     "src/frontend/features/competitions/leaderboards/types",
 
     "src/frontend/features/competitions/pools/types",

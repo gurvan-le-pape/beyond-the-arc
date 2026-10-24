@@ -1,11 +1,10 @@
-// src/frontend/shared/components/domain/LeaderboardTable.tsx
+// src/frontend/features/competitions/leaderboards/components/LeaderboardTable.tsx
 import { useLocale, useTranslations } from "next-intl";
 
-import type { Leaderboard } from "@/shared/types";
+import type { Leaderboard } from "@/features/competitions/leaderboards/types";
+import { Section } from "@/shared/components/blocks";
+import { DataTable, type TableColumn } from "@/shared/components/table";
 import { formatTeamName } from "@/shared/utils";
-
-import { Section } from "../blocks";
-import { DataTable, type TableColumn } from "../table";
 
 interface LeaderboardTableProps {
   readonly leaderboards: Leaderboard[];
