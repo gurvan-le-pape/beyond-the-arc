@@ -2,7 +2,7 @@
 import { useLocale, useTranslations } from "next-intl";
 
 import type { Stats } from "@/features/stats/types";
-import { StatGroup } from "@/shared/components/stats";
+import { StatGroup } from "@/shared/components/blocks";
 
 import { STATS_BAND_KEYS } from "../constants/homeSections";
 

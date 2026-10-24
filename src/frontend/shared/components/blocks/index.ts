@@ -6,4 +6,6 @@
 export * from "./IconTile";
 export * from "./InfoBox";
 export * from "./Section";
+export * from "./Stat";
 export * from "./stat-comparison/index";
+export * from "./StatGroup";

@@ -82,7 +82,6 @@
     "src/frontend/shared/components/filters",
     "src/frontend/shared/components/forms",
     "src/frontend/shared/components/primitives",
-    "src/frontend/shared/components/stats",
     "src/frontend/shared/components/typography",
     "src/frontend/shared/constants",
     "src/frontend/shared/hooks",
