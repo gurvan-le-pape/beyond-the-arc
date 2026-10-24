@@ -11,7 +11,7 @@ import {
   PlayerHeader,
   PlayerMatchHistoryTable,
 } from "@/features/players/components";
-import { PerGameStatsPanel } from "@/shared/components/domain";
+import { PerGameStatsPanel } from "@/features/stats/components";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import type { LocalePageProps } from "@/shared/types";

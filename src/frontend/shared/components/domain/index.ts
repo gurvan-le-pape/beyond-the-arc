@@ -13,5 +13,4 @@ export * from "./ListEntityCard";
 export * from "./matches/matchHistoryColumns";
 export * from "./matches/MatchScore";
 export * from "./matches/Matchup";
-export * from "./PerGameStatsPanel";
 export * from "./search/SearchTabShell";
