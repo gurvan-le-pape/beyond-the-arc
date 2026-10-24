@@ -5,8 +5,8 @@ import { Trophy } from "lucide-react";
 import { useTranslations } from "next-intl";
 import React from "react";
 
-import { SearchTabShell } from "@/shared/components/domain";
 import { EmptyState } from "@/shared/components/feedback";
+import { SearchTabShell } from "@/shared/components/navigation";
 import type { CompetitionLevel } from "@/shared/constants";
 import type { ApiError, PaginatedResponse } from "@/shared/types";
 

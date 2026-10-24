@@ -8,11 +8,9 @@ import { useMatches } from "@/features/matches/api";
 import { MatchesCard, MatchesFilters } from "@/features/matches/components";
 import { useMatchesFilterState } from "@/features/matches/hooks";
 import type { Match } from "@/features/matches/types";
-import {
-  LIST_ENTITY_CARD_GRID,
-  SearchTabShell,
-} from "@/shared/components/domain";
+import { LIST_ENTITY_CARD_GRID } from "@/shared/components/domain";
 import { EmptyState } from "@/shared/components/feedback";
+import { SearchTabShell } from "@/shared/components/navigation";
 import { hasCriteria } from "@/shared/utils";
 
 /**
