@@ -8,11 +8,9 @@ import { usePlayers } from "@/features/players/api";
 import { PlayerCard, PlayersFilters } from "@/features/players/components";
 import { usePlayersFilterState } from "@/features/players/hooks";
 import type { Player } from "@/features/players/types";
-import {
-  LIST_ENTITY_CARD_GRID,
-  SearchTabShell,
-} from "@/shared/components/domain";
+import { LIST_ENTITY_CARD_GRID } from "@/shared/components/domain";
 import { EmptyState } from "@/shared/components/feedback";
+import { SearchTabShell } from "@/shared/components/navigation";
 import { hasCriteria } from "@/shared/utils";
 
 /**

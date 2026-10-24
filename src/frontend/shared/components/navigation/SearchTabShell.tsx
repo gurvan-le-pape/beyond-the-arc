@@ -1,10 +1,11 @@
-// src/frontend/shared/components/domain/search/SearchTabShell.tsx
+// src/frontend/shared/components/navigation/SearchTabShell.tsx
 "use client";
 
 import { ErrorMessage, Spinner } from "@/shared/components/feedback";
-import { Pagination } from "@/shared/components/navigation";
 import { Card } from "@/shared/components/primitives";
 import type { Pagination as PaginationType } from "@/shared/types";
+
+import { Pagination } from "./Pagination";
 
 interface SearchTabShellProps {
   readonly isLoading: boolean;

@@ -12,4 +12,3 @@ export * from "./EntityHeaderBadges";
 export * from "./ListEntityCard";
 export * from "./matches/MatchScore";
 export * from "./matches/Matchup";
-export * from "./search/SearchTabShell";

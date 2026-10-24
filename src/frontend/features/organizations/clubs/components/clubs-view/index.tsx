@@ -4,8 +4,8 @@
 import { Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-import { SearchTabShell } from "@/shared/components/domain";
 import { EmptyState } from "@/shared/components/feedback";
+import { SearchTabShell } from "@/shared/components/navigation";
 
 import { useClubs } from "../../api";
 import type { ClubBasic } from "../../types/ClubBasic";

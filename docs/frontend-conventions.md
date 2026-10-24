@@ -64,6 +64,8 @@ Clubs, teams, matches and their parts are drawn the same way everywhere, so each
 
 A feature composes these; it never redraws one (no `<img src="/images/clubs/…">`, no hand-written `club - number`, no local winner comparison). When a feature needs a variant the shared component lacks, the variant is added there.
 
+The folder holds that vocabulary and nothing larger. A section that draws one feature's data — a pool's standings, a season stat line, a match-history column — belongs to that feature, and other features reach it through the [feature layers](#feature-layers), never by parking it in `shared/`.
+
 The same holds one layer down: an interface piece that can be described without naming a feature — a segmented control, a text link, a card — lives in `shared/components/primitives/`, even if only one feature uses it today.
 
 ### Sections and depth

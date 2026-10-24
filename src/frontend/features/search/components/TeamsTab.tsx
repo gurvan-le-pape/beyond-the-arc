@@ -8,11 +8,9 @@ import { useTeams } from "@/features/teams/api";
 import { TeamCard, TeamsFilters } from "@/features/teams/components";
 import { useTeamsFilterState } from "@/features/teams/hooks";
 import type { Team } from "@/features/teams/types";
-import {
-  LIST_ENTITY_CARD_GRID,
-  SearchTabShell,
-} from "@/shared/components/domain";
+import { LIST_ENTITY_CARD_GRID } from "@/shared/components/domain";
 import { EmptyState } from "@/shared/components/feedback";
+import { SearchTabShell } from "@/shared/components/navigation";
 import { hasCriteria } from "@/shared/utils";
 
 /**
