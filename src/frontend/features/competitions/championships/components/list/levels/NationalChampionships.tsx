@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/components/list/tabs/NationalTab.tsx
+// src/frontend/features/competitions/championships/components/list/levels/NationalChampionships.tsx
 "use client";
 
 import { useChampionships } from "@/features/competitions/championships/api";
@@ -6,25 +6,25 @@ import { useNationalFilterState } from "@/features/competitions/championships/ho
 import { CompetitionLevel } from "@/shared/constants";
 
 import { ChampionshipFilters } from "../ChampionshipFilters";
-import { ChampionshipTab } from "./ChampionshipTab";
+import { ChampionshipList } from "./ChampionshipList";
 
 /**
- * The national tab of the championships page.
+ * The national championships, listed under their tab of the championships page.
  *
  * Takes no props and owns everything — filter state, the query, and the list,
- * error and pagination states through `ChampionshipTab`.
+ * error and pagination states through `ChampionshipList`.
  *
  * Unlike its siblings it fetches no scope list, because a national championship
  * has no league or committee above it to filter by.
  *
- * **Pagination indices are converted here** — `ChampionshipTab` reports a
+ * **Pagination indices are converted here** — `ChampionshipList` reports a
  * zero-based page index while the API counts from one, so `onPageChange` adds
  * the offset, as in the search tabs.
  *
- * The three level tabs hold independent filter state, so switching tabs does
+ * The three level lists hold independent filter state, so switching tabs does
  * not carry one level's category or gender into another.
  */
-export function NationalTab() {
+export function NationalChampionships() {
   const { filters, setters, setCurrentPage, setPageSize, resetFilters } =
     useNationalFilterState();
 
@@ -37,7 +37,7 @@ export function NationalTab() {
   });
 
   return (
-    <ChampionshipTab
+    <ChampionshipList
       level={CompetitionLevel.NATIONAL}
       data={data}
       error={error}
