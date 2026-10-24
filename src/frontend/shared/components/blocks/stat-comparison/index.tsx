@@ -20,7 +20,8 @@ import { useEffect, useState } from "react";
 import { Text } from "@/shared/components/typography";
 import { cn } from "@/shared/utils";
 
-import { DualBar, MirroredBars } from "./bars";
+import { DualBar } from "./DualBar";
+import { MirroredBars } from "./MirroredBars";
 import { getWinner, resolveValue } from "./resolveValue";
 import { SIDE_CLASSES } from "./sideClasses";
 import { StatValue } from "./StatValue";
