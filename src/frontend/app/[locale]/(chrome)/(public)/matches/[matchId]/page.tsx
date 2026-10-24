@@ -7,20 +7,16 @@ import { buildChampionshipTitle } from "@/features/competitions/championships/ut
 import { serverMatchesService } from "@/features/matches/api/matches.server";
 import {
   MatchBreadcrumb,
-  MatchMeta,
+  MatchHero,
   MatchSummaryTabs,
   UpcomingMatchNotice,
 } from "@/features/matches/components";
 import {
   buildMatchTeam,
   groupShotEventsByPlayer,
-  matchTeamMatchupSide,
 } from "@/features/matches/utils";
-import { Matchup } from "@/shared/components/domain";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
-import { Card } from "@/shared/components/primitives";
-import { Text } from "@/shared/components/typography";
 import type { LocalePageProps } from "@/shared/types";
 import {
   handleServerError,
@@ -74,8 +70,7 @@ async function MatchSummaryPage({
   const { locale } = routeParams;
   const matchId = parseRouteId(routeParams.matchId);
   setRequestLocale(locale);
-  const [tMatches, tCommon, tCompetitions] = await Promise.all([
-    getTranslations({ locale, namespace: "matches" }),
+  const [tCommon, tCompetitions] = await Promise.all([
     getTranslations({ locale, namespace: "common" }),
     getTranslations({ locale, namespace: "competitions" }),
   ]);
@@ -122,27 +117,13 @@ async function MatchSummaryPage({
         matchName={`${homeTeam.name} – ${awayTeam.name}`}
       />
 
-      {/* The score card is the visible title; this is the document's heading. */}
-      <Text variant="pageTitle" className="sr-only">
-        {tMatches("matchTitle", {
-          homeTeam: homeTeam.name,
-          awayTeam: awayTeam.name,
-        })}
-      </Text>
-
-      <Card padding="lg" className="space-y-4">
-        <MatchMeta
-          startsAt={match.startsAt}
-          matchday={match.matchday}
-          poolLetter={match.pool.letter}
-        />
-        <Matchup
-          home={matchTeamMatchupSide(homeTeam)}
-          away={matchTeamMatchupSide(awayTeam)}
-          size="hero"
-          linked
-        />
-      </Card>
+      <MatchHero
+        homeTeam={homeTeam}
+        awayTeam={awayTeam}
+        startsAt={match.startsAt}
+        matchday={match.matchday}
+        poolLetter={match.pool.letter}
+      />
 
       {isPlayed ? (
         <MatchSummaryTabs
