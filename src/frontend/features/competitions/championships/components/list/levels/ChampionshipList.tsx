@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/components/list/tabs/ChampionshipTab.tsx
+// src/frontend/features/competitions/championships/components/list/levels/ChampionshipList.tsx
 "use client";
 
 import { Trophy } from "lucide-react";
@@ -13,8 +13,8 @@ import type { ApiError, PaginatedResponse } from "@/shared/types";
 import type { Championship } from "../../../types";
 import { ChampionshipTable } from "../ChampionshipTable";
 
-interface ChampionshipTabProps {
-  /** The tab's level, which decides the table's organiser column. */
+interface ChampionshipListProps {
+  /** The level listed, which decides the table's organiser column. */
   level: CompetitionLevel;
   /** The level-specific `<ChampionshipFilters>` element. */
   filters: React.ReactNode;
@@ -30,11 +30,12 @@ interface ChampionshipTabProps {
 }
 
 /**
- * Shared body for the National/Regional/Departmental championship tabs.
- * Each level tab owns its own filter-state and scope-data hooks (hooks must
+ * The filtered, paginated list of one level's championships, shared by the
+ * national, regional and departmental lists.
+ * Each level list owns its own filter-state and scope-data hooks (hooks must
  * be unconditional), then delegates the identical results shell here.
  */
-export function ChampionshipTab({
+export function ChampionshipList({
   level,
   filters,
   data,
@@ -44,7 +45,7 @@ export function ChampionshipTab({
   pageSize,
   onPageSizeChange,
   onPageChange,
-}: Readonly<ChampionshipTabProps>) {
+}: Readonly<ChampionshipListProps>) {
   const tCommon = useTranslations("common");
   const tCompetitions = useTranslations("competitions");
 
