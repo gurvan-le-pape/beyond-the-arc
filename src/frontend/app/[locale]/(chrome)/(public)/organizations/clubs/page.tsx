@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { ClubsView } from "@/features/organizations/clubs/components";
+import { ClubDirectory } from "@/features/organizations/clubs/components";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
 import { Text } from "@/shared/components/typography";
@@ -29,7 +29,7 @@ export async function generateMetadata({
  * The clubs listing.
  *
  * `params` is a Promise in Next 15 and is awaited here, so the feature
- * components below receive plain values. Fetches nothing server-side — `ClubsView` is a client component on TanStack Query — so this shell prerenders as static.
+ * components below receive plain values. Fetches nothing server-side — `ClubDirectory` is a client component on TanStack Query — so this shell prerenders as static.
  */
 export default async function ClubsPage({ params }: LocalePageProps) {
   const { locale } = await params;
@@ -48,7 +48,7 @@ export default async function ClubsPage({ params }: LocalePageProps) {
         ]}
       />
       <Text variant="pageTitle">{tCommon("sectionTitles.clubs")}</Text>
-      <ClubsView />
+      <ClubDirectory />
     </PageLayout>
   );
 }
