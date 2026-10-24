@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/shared/components/detail/OrganizationInfo.tsx
+// src/frontend/features/organizations/components/detail/OrganizationInfo.tsx
 "use client";
 
 import { ExternalLink, Globe, MapPin } from "lucide-react";

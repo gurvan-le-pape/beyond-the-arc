@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/shared/components/detail/SearchableLinkList.tsx
+// src/frontend/features/organizations/components/detail/SearchableLinkList.tsx
 "use client";
 
 import { useTranslations } from "next-intl";

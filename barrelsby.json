@@ -43,7 +43,6 @@
     "src/frontend/features/organizations/leagues/components",
     "src/frontend/features/organizations/leagues/types",
 
-    "src/frontend/features/organizations/shared/components",
 
     "src/frontend/features/players/api",
     "src/frontend/features/players/components",

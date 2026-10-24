@@ -2,7 +2,7 @@
 import { useFormatter, useTranslations } from "next-intl";
 
 import type { Committee } from "@/features/organizations/committees/types";
-import { OrganizationHeader } from "@/features/organizations/shared/components";
+import { OrganizationHeader } from "@/features/organizations/components";
 import {
   namesMatch,
   normalizeDepartmentCode,

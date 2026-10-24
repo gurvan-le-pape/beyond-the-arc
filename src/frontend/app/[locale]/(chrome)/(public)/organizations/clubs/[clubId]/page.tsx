@@ -8,7 +8,7 @@ import {
   ClubHeader,
   ClubTeamsTable,
 } from "@/features/organizations/clubs/components";
-import { OrganizationInfo } from "@/features/organizations/shared/components";
+import { OrganizationInfo } from "@/features/organizations/components";
 import { EmptyState, withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";

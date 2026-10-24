@@ -1,8 +1,8 @@
 // src/frontend/features/organizations/leagues/components/detail/LeagueHeader.tsx
 import { useFormatter, useTranslations } from "next-intl";
 
+import { OrganizationHeader } from "@/features/organizations/components";
 import type { League } from "@/features/organizations/leagues/types";
-import { OrganizationHeader } from "@/features/organizations/shared/components";
 import { namesMatch } from "@/features/organizations/utils";
 import { formatLeagueName } from "@/shared/utils";
 
