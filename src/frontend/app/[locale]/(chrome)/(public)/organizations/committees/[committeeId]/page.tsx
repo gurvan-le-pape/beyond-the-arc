@@ -1,27 +1,23 @@
 // src/frontend/app/[locale]/(chrome)/(public)/organizations/committees/[committeeId]/page.tsx
 import { Trophy } from "lucide-react";
 import type { Metadata } from "next";
-import {
-  getFormatter,
-  getTranslations,
-  setRequestLocale,
-} from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { serverChampionshipsService } from "@/features/competitions/championships/api/championships.server";
 import { ChampionshipGrid } from "@/features/competitions/championships/components";
 import { serverClubsService } from "@/features/organizations/clubs/api/clubs.server";
 import { serverCommitteesService } from "@/features/organizations/committees/api/committees.server";
-import { OrganizationDetailView } from "@/features/organizations/shared/components";
+import { CommitteeHeader } from "@/features/organizations/committees/components";
 import {
-  namesMatch,
-  normalizeDepartmentCode,
-} from "@/features/organizations/utils";
+  OrganizationInfo,
+  SearchableLinkList,
+} from "@/features/organizations/shared/components";
 import { EmptyState, withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
+import { Breadcrumb } from "@/shared/components/navigation";
 import { CompetitionLevel } from "@/shared/constants";
 import type { LocalePageProps } from "@/shared/types";
 import {
-  formatCommitteeName,
   handleServerError,
   parseRouteId,
   withServerErrorMetadata,
@@ -91,14 +87,12 @@ async function CommitteePage({
       }),
     ]).catch(handleServerError);
 
-  const format = await getFormatter({ locale });
   const placeName = committee.department.name;
-  const officialName = formatCommitteeName(committee.name);
 
   return (
     <PageLayout>
-      <OrganizationDetailView
-        breadcrumb={[
+      <Breadcrumb
+        items={[
           { label: tOrganizations("breadcrumb"), href: "/organizations" },
           {
             label: tOrganizations("committees.label"),
@@ -106,56 +100,33 @@ async function CommitteePage({
           },
           { label: placeName, current: true },
         ]}
-        header={{
-          name: placeName,
-          logoName: committee.name,
-          imageFolder: "committees",
-          subtitle: [
-            tOrganizations("header.committeeKind"),
-            normalizeDepartmentCode(committee.department.code),
-            namesMatch(officialName, placeName) ? null : officialName,
-          ]
-            .filter(Boolean)
-            .join(" · "),
-          stats: [
-            {
-              value: format.number(committee.clubCount),
-              label: tOrganizations("header.clubs", {
-                count: committee.clubCount,
-              }),
-            },
-            {
-              value: format.number(championships.length),
-              label: tOrganizations("header.championships", {
-                count: championships.length,
-              }),
-            },
-          ],
-        }}
-        info={{
-          address: committee.address,
-          ffbbUrl: committee.ffbbUrl,
-        }}
-        linkList={{
-          items: clubs,
-          title: tCommon("sectionTitles.clubs"),
-          searchPlaceholder: tCommon("searchPlaceholder"),
-          basePath: "/organizations/clubs",
-        }}
-      >
-        {championships.length > 0 ? (
-          <ChampionshipGrid
-            championships={championships}
-            title={tCompetitions("championshipsSectionTitle")}
-            emptyMessage={tCompetitions("noChampionships")}
-          />
-        ) : (
-          <EmptyState
-            icon={<Trophy className="w-16 h-16" />}
-            title={tCompetitions("noChampionships")}
-          />
-        )}
-      </OrganizationDetailView>
+      />
+      <CommitteeHeader
+        committee={committee}
+        championshipCount={championships.length}
+      />
+      <OrganizationInfo
+        address={committee.address}
+        ffbbUrl={committee.ffbbUrl}
+      />
+      <SearchableLinkList
+        items={clubs}
+        title={tCommon("sectionTitles.clubs")}
+        searchPlaceholder={tCommon("searchPlaceholder")}
+        basePath="/organizations/clubs"
+      />
+      {championships.length > 0 ? (
+        <ChampionshipGrid
+          championships={championships}
+          title={tCompetitions("championshipsSectionTitle")}
+          emptyMessage={tCompetitions("noChampionships")}
+        />
+      ) : (
+        <EmptyState
+          icon={<Trophy className="w-16 h-16" />}
+          title={tCompetitions("noChampionships")}
+        />
+      )}
     </PageLayout>
   );
 }

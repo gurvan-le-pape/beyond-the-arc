@@ -1,17 +1,17 @@
 // src/frontend/app/[locale]/(chrome)/(public)/organizations/clubs/[clubId]/page.tsx
 import { Users } from "lucide-react";
 import type { Metadata } from "next";
-import {
-  getFormatter,
-  getTranslations,
-  setRequestLocale,
-} from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { serverClubsService } from "@/features/organizations/clubs/api/clubs.server";
-import { ClubTeamsTable } from "@/features/organizations/clubs/components";
-import { OrganizationDetailView } from "@/features/organizations/shared/components";
+import {
+  ClubHeader,
+  ClubTeamsTable,
+} from "@/features/organizations/clubs/components";
+import { OrganizationInfo } from "@/features/organizations/shared/components";
 import { EmptyState, withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
+import { Breadcrumb } from "@/shared/components/navigation";
 import type { LocalePageProps } from "@/shared/types";
 import {
   handleServerError,
@@ -66,25 +66,10 @@ async function ClubPage({ params }: LocalePageProps<{ clubId: string }>) {
     .getById(clubId)
     .catch(handleServerError);
 
-  const format = await getFormatter({ locale });
-  const championshipCount = new Set(
-    club.teams.flatMap((team) =>
-      team.pool ? [team.pool.championship.id] : [],
-    ),
-  ).size;
-  const won = club.teams.reduce(
-    (sum, team) => sum + (team.leaderboard?.gamesWon ?? 0),
-    0,
-  );
-  const lost = club.teams.reduce(
-    (sum, team) => sum + (team.leaderboard?.gamesLost ?? 0),
-    0,
-  );
-
   return (
     <PageLayout>
-      <OrganizationDetailView
-        breadcrumb={[
+      <Breadcrumb
+        items={[
           { label: tOrganizations("breadcrumb"), href: "/organizations" },
           {
             label: tOrganizations("clubs.label"),
@@ -92,58 +77,26 @@ async function ClubPage({ params }: LocalePageProps<{ clubId: string }>) {
           },
           { label: club.name, current: true },
         ]}
-        header={{
-          name: club.name,
-          imageFolder: "clubs",
-          // The bullet is punctuation, not content — joining it into the
-          // string would have a screen reader read "Saint-Etienne, bullet,
-          // 42000".
-          subtitle: (
-            <>
-              {club.city}
-              {club.city && club.zipCode && <span aria-hidden="true"> • </span>}
-              {club.zipCode}
-            </>
-          ),
-          stats: [
-            {
-              value: format.number(club.teams.length),
-              label: tOrganizations("header.teams", {
-                count: club.teams.length,
-              }),
-            },
-            {
-              value: format.number(championshipCount),
-              label: tOrganizations("header.championships", {
-                count: championshipCount,
-              }),
-            },
-            {
-              value: `${format.number(won)}–${format.number(lost)}`,
-              label: tOrganizations("header.record"),
-            },
-          ],
-        }}
-        info={{
-          address: club.address,
-          website: club.website,
-          ffbbUrl: club.ffbbUrl,
-        }}
-      >
-        {club.teams.length > 0 ? (
-          <ClubTeamsTable
-            clubName={club.name}
-            teams={club.teams}
-            title={t("detail.teamsTitle")}
-            emptyMessage={t("noTeams")}
-          />
-        ) : (
-          <EmptyState
-            icon={<Users className="w-16 h-16" />}
-            title={t("noTeams")}
-          />
-        )}
-      </OrganizationDetailView>
+      />
+      <ClubHeader club={club} />
+      <OrganizationInfo
+        address={club.address}
+        website={club.website}
+        ffbbUrl={club.ffbbUrl}
+      />
+      {club.teams.length > 0 ? (
+        <ClubTeamsTable
+          clubName={club.name}
+          teams={club.teams}
+          title={t("detail.teamsTitle")}
+          emptyMessage={t("noTeams")}
+        />
+      ) : (
+        <EmptyState
+          icon={<Users className="w-16 h-16" />}
+          title={t("noTeams")}
+        />
+      )}
     </PageLayout>
   );
 }
