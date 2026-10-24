@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
 import { serverClubsService } from "@/features/organizations/clubs/api/clubs.server";
-import { ClubsMapClient } from "@/features/organizations/clubs/components";
+import { ClubsMap } from "@/features/organizations/clubs/components";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { Text } from "@/shared/components/typography";
 import type { LocalePageProps } from "@/shared/types";
@@ -48,7 +48,7 @@ async function MapPage({ params }: LocalePageProps) {
         {t("map.pageTitle")}
       </Text>
 
-      <ClubsMapClient
+      <ClubsMap
         initialRegions={initialRegions}
         initialDepartments={initialDepartments}
         initialClubs={initialClubs}

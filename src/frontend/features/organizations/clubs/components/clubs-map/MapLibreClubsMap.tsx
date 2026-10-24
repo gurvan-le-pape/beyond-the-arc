@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/clubs/components/clubs-map/ClubsMap.tsx
+// src/frontend/features/organizations/clubs/components/clubs-map/MapLibreClubsMap.tsx
 "use client";
 
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -36,7 +36,7 @@ import { useMapColours } from "./useMapColours";
 import { useMapData } from "./useMapData";
 import { useSearch } from "./useSearch";
 
-interface ClubsMapProps {
+interface MapLibreClubsMapProps {
   readonly initialRegions: ClubStatsByRegion[];
   readonly initialDepartments: ClubStatsByDepartment[];
   readonly initialClubs: ClubBasic[];
@@ -50,11 +50,11 @@ interface ClubsMapProps {
  * - Search and filter functionality via side panel
  * - Interactive popups with club details
  */
-export function ClubsMap({
+export function MapLibreClubsMap({
   initialRegions,
   initialDepartments,
   initialClubs,
-}: ClubsMapProps) {
+}: MapLibreClubsMapProps) {
   const t = useTranslations("clubs");
   // The clubs whose popup is open: one, or several sharing exact coordinates.
   const [selectedClubs, setSelectedClubs] = useState<ClubBasic[]>([]);

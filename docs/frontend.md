@@ -441,13 +441,13 @@ The interactive France map is built with **react-map-gl** (v8), which wraps **Ma
 
 ### Data loading
 
-All map data — region stats, department stats, and the full club list — is fetched server-side in the map page's `Promise.all` call and passed as props to `ClubsMapClient`. There is no lazy loading by zoom level or viewport; the full dataset arrives with the initial server render. The map page uses a 24-hour ISR revalidation window, reflecting that club geography changes rarely.
+All map data — region stats, department stats, and the full club list — is fetched server-side in the map page's `Promise.all` call and passed as props to `ClubsMap`. There is no lazy loading by zoom level or viewport; the full dataset arrives with the initial server render. The map page uses a 24-hour ISR revalidation window, reflecting that club geography changes rarely.
 
 GeoJSON boundary data for regions and departments is served as static assets bundled with the frontend, keeping the backend and database free from geometry concerns.
 
 ### SSR exclusion
 
-`ClubsMap` is loaded via `next/dynamic` with `ssr: false`. MapLibre GL requires browser APIs that are not available in the Node.js server environment, so the component is excluded from SSR entirely. `ClubsMapClient` wraps the dynamic import and shows a `LoadingMap` skeleton while the bundle loads on the client. The server-fetched data is passed through `ClubsMapClient` as props so it is available immediately when `ClubsMap` mounts — the map renders with data on first paint rather than waiting for a client-side fetch.
+`MapLibreClubsMap` is loaded via `next/dynamic` with `ssr: false`. MapLibre GL requires browser APIs that are not available in the Node.js server environment, so the component is excluded from SSR entirely. `ClubsMap` wraps the dynamic import and shows a `LoadingMap` skeleton while the bundle loads on the client. The server-fetched data is passed through `ClubsMap` as props so it is available immediately when `MapLibreClubsMap` mounts — the map renders with data on first paint rather than waiting for a client-side fetch.
 
 ### Zoom-based layer switching
 
