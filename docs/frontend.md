@@ -45,14 +45,14 @@ Used by: club detail, committees list, leagues list, and other organisation page
 **`Promise.all` server fetch** — for pages that need multiple independent data sources fetched in parallel before rendering. All results are passed as props to child components, which are pure presentational server components.
 
 ```
-const [player, matches, matchEvents] = await Promise.all([
+const [player, matchHistory, shots] = await Promise.all([
   serverPlayersService.getById(playerId),
   serverPlayersService.getMatches(playerId),
-  serverMatchesService.getEventsByPlayerId(playerId),
+  serverMatchesService.getShotsByPlayerId(playerId),
 ]).catch(handleServerError);
 ```
 
-Shot charts (`PlayerShotChart`, `TeamShotChart`) receive their `matchEvents` as props this way — they are presentational components, not client-side fetchers. `isLoading={false}` and `error={null}` are passed directly because the data is already resolved on the server.
+Shot charts (`PlayerShotChart`, `TeamShotChart`) receive their points as props this way: the page maps `shots` through `transformToShotEvents` and passes the result as `shots`. They are presentational components, not client-side fetchers, and take no loading or error state because the data is already resolved on the server.
 
 Used by: player detail, team detail, match detail, map page, league detail, committee detail.
 
