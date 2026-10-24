@@ -18,12 +18,7 @@ import { serverStatsService } from "@/features/stats/api/stats.server";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import type { LocalePageProps } from "@/shared/types";
-import {
-  formatCommitteeName,
-  formatLeagueName,
-  formatMatchDay,
-  handleServerError,
-} from "@/shared/utils";
+import { handleServerError } from "@/shared/utils";
 
 // Rendered per request: the image build has no backend to fetch stats from.
 //
@@ -61,14 +56,7 @@ export async function generateMetadata({
   };
 }
 
-async function Home({ params }: LocalePageProps) {
-  const { locale } = await params;
-  const [t, tCommon, tCompetitions] = await Promise.all([
-    getTranslations({ locale, namespace: "home" }),
-    getTranslations({ locale, namespace: "common" }),
-    getTranslations({ locale, namespace: "competitions" }),
-  ]);
-
+async function Home() {
   const [stats, [featuredPool]] = await Promise.all([
     serverStatsService.getStats(),
     serverPoolsService.getRecent(),
@@ -83,36 +71,10 @@ async function Home({ params }: LocalePageProps) {
         serverLeaderboardsService.getAll({ poolId: featuredPool.id }),
         serverMatchesService.getByPoolId(featuredPool.id),
       ])
-        .then(([championship, leaderboard, poolMatches]) => ({
-          // The organisation is the name and the rest of the title is detail
-          // under it. A national championship has no organisation above it,
-          // so its level stands in.
-          championshipName:
-            (championship.committeeName &&
-              formatCommitteeName(championship.committeeName)) ||
-            (championship.leagueName &&
-              formatLeagueName(championship.leagueName)) ||
-            t(`levels.${championship.level}.name`),
-          championshipDetails: [
-            championship.category,
-            tCommon(`gender.${championship.gender}`),
-            tCompetitions("divisionWithValue", {
-              value: championship.division,
-            }),
-            championship.seasonYear,
-          ]
-            .filter(Boolean)
-            .join(" · "),
-          championshipHref: `/championships/${championship.id}?pool=${featuredPool.id}`,
-          matchday: featuredPool.matchday,
-          playedOn: formatMatchDay(featuredPool.playedAt, locale),
-          // The round may still be mid-simulation: show what has a score.
-          matches: poolMatches.filter(
-            (match) =>
-              match.matchday === featuredPool.matchday &&
-              match.homeTeamScore !== null &&
-              match.awayTeamScore !== null,
-          ),
+        .then(([championship, leaderboard, matches]) => ({
+          championship,
+          pool: featuredPool,
+          matches,
           leaderboard,
         }))
         .catch(handleServerError)
