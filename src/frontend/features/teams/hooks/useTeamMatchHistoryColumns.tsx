@@ -6,7 +6,7 @@ import {
   buildMatchDateColumn,
   buildOpponentColumn,
   buildResultColumn,
-} from "@/shared/components/domain";
+} from "@/features/matches/utils";
 import type { TableColumn } from "@/shared/components/table";
 
 import type { Team } from "../types/Team";

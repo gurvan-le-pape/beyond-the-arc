@@ -1,4 +1,4 @@
-// src/frontend/shared/components/domain/matches/matchHistoryColumns.tsx
+// src/frontend/features/matches/utils/matchHistoryColumns.tsx
 import type { ReactNode } from "react";
 
 import { Badge } from "@/shared/components/primitives";

@@ -10,5 +10,6 @@ export * from "./formatPlaytime";
 export * from "./getCurrentRound";
 export * from "./getSortedRounds";
 export * from "./groupShotEventsByPlayer";
+export * from "./matchHistoryColumns";
 export * from "./matchupSide";
 export * from "./transformShotEvents";
