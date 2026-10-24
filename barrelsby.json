@@ -125,7 +125,7 @@
     ".*\\.d\\.ts$",
     ".*\\.server\\.ts$",
     ".*/shared/types/api\\.generated\\.ts$",
-    ".*/championship-matches/(?!index\\.tsx$).*",
+    ".*/matches-by-round/(?!index\\.tsx$).*",
     ".*/match-events/(?!index\\.tsx$).*",
     ".*/shot-chart/(?!index\\.tsx$).*",
     ".*/matches-filters/(?!index\\.tsx$).*",

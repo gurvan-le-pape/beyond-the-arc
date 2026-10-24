@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/components/detail/championship-matches/RoundsSection.tsx
+// src/frontend/features/matches/components/list/matches-by-round/RoundsSection.tsx
 import { useTranslations } from "next-intl";
 
 import type { Match } from "@/features/matches/types";

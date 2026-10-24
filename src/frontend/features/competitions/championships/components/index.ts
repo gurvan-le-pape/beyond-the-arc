@@ -5,7 +5,6 @@
 
 export * from "./ChampionshipGrid";
 export * from "./ChampionshipLevelTabs";
-export * from "./detail/championship-matches/index";
 export * from "./detail/ChampionshipBreadcrumb";
 export * from "./detail/ChampionshipHeader";
 export * from "./detail/ChampionshipNavigation";

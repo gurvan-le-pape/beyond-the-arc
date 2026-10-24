@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/components/detail/championship-matches/roundWindow.spec.ts
+// src/frontend/features/matches/components/list/matches-by-round/roundWindow.spec.ts
 import { describe, expect, it } from "vitest";
 
 import { visibleRoundCount, windowStartShowing } from "./roundWindow";

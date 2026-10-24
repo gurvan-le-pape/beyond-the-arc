@@ -7,7 +7,6 @@ import { serverChampionshipsService } from "@/features/competitions/championship
 import {
   ChampionshipBreadcrumb,
   ChampionshipHeader,
-  ChampionshipMatches,
   ChampionshipNavigation,
   ChampionshipPoolSelect,
   ChampionshipSections,
@@ -23,6 +22,7 @@ import {
 import { serverLeaderboardsService } from "@/features/competitions/leaderboards/api/leaderboards.server";
 import { serverPoolsService } from "@/features/competitions/pools/api/pools.server";
 import { serverMatchesService } from "@/features/matches/api/matches.server";
+import { MatchesByRound } from "@/features/matches/components";
 import { LeaderboardTable } from "@/shared/components/domain";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
@@ -156,7 +156,7 @@ async function ChampionshipsDetailPage({
             }
           />
         }
-        matches={<ChampionshipMatches key={poolId} matches={matches} />}
+        matches={<MatchesByRound key={poolId} matches={matches} />}
         poolSelect={
           <ChampionshipPoolSelect pools={pools} selectedPoolId={poolId} />
         }
