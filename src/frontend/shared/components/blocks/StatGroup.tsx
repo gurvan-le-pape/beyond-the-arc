@@ -1,4 +1,4 @@
-// src/frontend/shared/components/stats/StatGroup.tsx
+// src/frontend/shared/components/blocks/StatGroup.tsx
 import {
   Grid,
   type GridColumnCount,

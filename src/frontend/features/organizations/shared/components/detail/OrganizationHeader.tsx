@@ -4,9 +4,9 @@
 import Image from "next/image";
 import { type ReactNode, useState } from "react";
 
+import { StatGroup } from "@/shared/components/blocks";
 import { ClubMark } from "@/shared/components/domain";
 import { Card } from "@/shared/components/primitives";
-import { StatGroup } from "@/shared/components/stats";
 import { Text } from "@/shared/components/typography";
 import { formatNameToFileName } from "@/shared/utils";
 

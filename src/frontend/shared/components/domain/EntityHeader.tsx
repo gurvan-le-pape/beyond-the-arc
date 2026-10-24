@@ -2,8 +2,8 @@
 import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 
+import { StatGroup } from "@/shared/components/blocks";
 import { Card, TextLink } from "@/shared/components/primitives";
-import { StatGroup } from "@/shared/components/stats";
 import { Text } from "@/shared/components/typography";
 import type { CompetitionLevel, Gender } from "@/shared/constants";
 import { cn } from "@/shared/utils";

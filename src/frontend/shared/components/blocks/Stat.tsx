@@ -1,4 +1,4 @@
-// src/frontend/shared/components/stats/Stat.tsx
+// src/frontend/shared/components/blocks/Stat.tsx
 import { Text } from "@/shared/components/typography";
 
 interface StatProps {
