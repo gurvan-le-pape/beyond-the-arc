@@ -1,21 +1,21 @@
-// src/frontend/features/search/components/TeamsTab.tsx
+// src/frontend/features/search/components/MatchSearchResults.tsx
 "use client";
 
-import { Search, Users } from "lucide-react";
+import { Search } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-import { useTeams } from "@/features/teams/api";
-import { TeamCard, TeamsFilters } from "@/features/teams/components";
-import { useTeamsFilterState } from "@/features/teams/hooks";
-import type { Team } from "@/features/teams/types";
+import { useMatches } from "@/features/matches/api";
+import { MatchesCard, MatchesFilters } from "@/features/matches/components";
+import { useMatchesFilterState } from "@/features/matches/hooks";
+import type { Match } from "@/features/matches/types";
 import { LIST_ENTITY_CARD_GRID } from "@/shared/components/domain";
 import { EmptyState } from "@/shared/components/feedback";
 import { SearchTabShell } from "@/shared/components/navigation";
 import { hasCriteria } from "@/shared/utils";
 
 /**
- * The teams tab of the search page: its own filter panel, results grid, and
- * pagination.
+ * The matches found by the search page, under their tab: its own filter panel,
+ * results grid, and pagination.
  *
  * Takes no props and owns everything — filter state, the query, and the
  * loading, error, empty and paginated states via `SearchTabShell`.
@@ -23,37 +23,39 @@ import { hasCriteria } from "@/shared/utils";
  * **Pagination indices are converted here**, as in the sibling tabs: the shell
  * is zero-based, the API is one-based, and `onPageChange` bridges them.
  *
- * The three tabs are deliberately independent — each holds its own filter state,
- * so switching tabs does not carry one tab's filters into another.
+ * Carries the deepest filter set of the three — division, pool and matchday on
+ * top of the shared level and location cascade — so its query has the most
+ * parameters that must stay in step with `useMatchesFilterState`.
  */
-export function TeamsTab() {
-  const tTeams = useTranslations("teams");
+export function MatchSearchResults() {
+  const tMatches = useTranslations("matches");
   const tCommon = useTranslations("common");
   const tSearch = useTranslations("search");
 
   const { filters, setters, setCurrentPage, setPageSize, resetFilters } =
-    useTeamsFilterState();
+    useMatchesFilterState();
 
   const criteria = {
-    clubId: filters.clubId,
-    number: filters.number,
+    search: filters.search || undefined,
+    date: filters.dateFilter || undefined,
     category: filters.category,
     gender: filters.gender,
     level: filters.level,
+    division: filters.division,
     committeeId: filters.committeeId,
     leagueId: filters.leagueId,
-    division: filters.division,
-    poolLetter: filters.pool,
+    poolId: filters.poolId,
+    matchday: filters.matchday,
   };
-  // Nothing is listed until a filter narrows the 60k teams.
+  // Nothing is listed until something narrows the 600k matches.
   const searching = hasCriteria(criteria);
 
-  const { data, error, isLoading, refetch } = useTeams(
+  const { data, error, isLoading, refetch } = useMatches(
     { ...criteria, page: filters.currentPage, limit: filters.pageSize },
     { enabled: searching },
   );
 
-  const teams: Team[] = data?.items ?? [];
+  const matches: Match[] = data?.items ?? [];
   const pagination = data
     ? {
         total: data.total,
@@ -65,7 +67,7 @@ export function TeamsTab() {
 
   return (
     <div className="space-y-6">
-      <TeamsFilters
+      <MatchesFilters
         filters={filters}
         setters={setters}
         onReset={resetFilters}
@@ -74,21 +76,21 @@ export function TeamsTab() {
       <SearchTabShell
         isLoading={isLoading}
         error={error}
-        errorMessage={tCommon("errors.fetchTeams")}
+        errorMessage={tCommon("errors.fetchMatches")}
         onRetry={refetch}
-        isEmpty={teams.length === 0}
+        isEmpty={matches.length === 0}
         emptyState={
           searching ? (
             <EmptyState
-              icon={<Users className="w-16 h-16" />}
-              title={tCommon("emptyState.teams")}
-              description={tTeams("tryAdjustingFilters")}
+              icon={<Search className="w-16 h-16" />}
+              title={tMatches("noResults")}
+              description={tMatches("tryAdjustingFilters")}
             />
           ) : (
             <EmptyState
               icon={<Search className="w-16 h-16" />}
               title={tSearch("prompt.title")}
-              description={tSearch("prompt.teams")}
+              description={tSearch("prompt.matches")}
             />
           )
         }
@@ -96,11 +98,11 @@ export function TeamsTab() {
         pageSize={filters.pageSize}
         onPageSizeChange={setPageSize}
         onPageChange={(index) => setCurrentPage(index + 1)}
-        itemLabel={tTeams("itemLabel", { count: pagination?.total ?? 0 })}
+        itemLabel={tMatches("itemLabel", { count: pagination?.total ?? 0 })}
       >
         <div className={LIST_ENTITY_CARD_GRID}>
-          {teams.map((team) => (
-            <TeamCard key={team.id} team={team} />
+          {matches.map((match) => (
+            <MatchesCard key={match.id} match={match} />
           ))}
         </div>
       </SearchTabShell>
