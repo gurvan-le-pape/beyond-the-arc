@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/components/detail/championship-matches/index.tsx
+// src/frontend/features/matches/components/list/matches-by-round/index.tsx
 "use client";
 
 import { useMemo, useState } from "react";
@@ -11,7 +11,7 @@ import { groupBy } from "@/shared/utils";
 import { MatchesSection } from "./MatchesSection";
 import { RoundsSection } from "./RoundsSection";
 
-interface ChampionshipMatchesProps {
+interface MatchesByRoundProps {
   readonly matches: Match[];
 }
 
@@ -26,7 +26,7 @@ interface ChampionshipMatchesProps {
  * Mounted with `key={poolId}` by the page, so that switch remounts this and the
  * selected round falls back to the current round of the new pool.
  */
-export function ChampionshipMatches({ matches }: ChampionshipMatchesProps) {
+export function MatchesByRound({ matches }: MatchesByRoundProps) {
   const groupedMatches = useMemo(
     () => groupBy(matches, (match) => match.matchday),
     [matches],
@@ -66,4 +66,4 @@ export function ChampionshipMatches({ matches }: ChampionshipMatchesProps) {
   );
 }
 
-export default ChampionshipMatches;
+export default MatchesByRound;

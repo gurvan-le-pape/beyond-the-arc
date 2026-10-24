@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/components/detail/championship-matches/useRoundWindow.ts
+// src/frontend/features/matches/components/list/matches-by-round/useRoundWindow.ts
 import { useEffect, useRef, useState } from "react";
 
 import { visibleRoundCount, windowStartShowing } from "./roundWindow";

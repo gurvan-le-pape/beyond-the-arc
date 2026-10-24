@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/components/detail/championship-matches/match-card/index.tsx
+// src/frontend/features/matches/components/list/matches-by-round/match-card/index.tsx
 "use client";
 
 import { useTranslations } from "next-intl";

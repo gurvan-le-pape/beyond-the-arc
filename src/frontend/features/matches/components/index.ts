@@ -10,6 +10,7 @@ export * from "./detail/MatchSummaryTabs";
 export * from "./detail/player-match-stats/index";
 export * from "./detail/TeamStatsComparison";
 export * from "./detail/UpcomingMatchNotice";
+export * from "./list/matches-by-round/index";
 export * from "./list/matches-filters/index";
 export * from "./list/MatchesCard";
 export * from "./MatchHistoryTable";

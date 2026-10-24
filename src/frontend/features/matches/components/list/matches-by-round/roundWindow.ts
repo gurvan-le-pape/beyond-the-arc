@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/components/detail/championship-matches/roundWindow.ts
+// src/frontend/features/matches/components/list/matches-by-round/roundWindow.ts
 
 /** A round pill's narrowest width, in pixels. */
 export const ROUND_PILL_MIN_WIDTH = 48;

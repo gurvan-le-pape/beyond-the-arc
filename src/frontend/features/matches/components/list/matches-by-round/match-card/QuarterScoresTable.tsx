@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/components/detail/championship-matches/match-card/QuarterScoresTable.tsx
+// src/frontend/features/matches/components/list/matches-by-round/match-card/QuarterScoresTable.tsx
 import { useTranslations } from "next-intl";
 
 import type { Match, MatchEvent } from "@/features/matches/types";

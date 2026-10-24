@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/components/detail/championship-matches/RoundSelector.tsx
+// src/frontend/features/matches/components/list/matches-by-round/RoundSelector.tsx
 "use client";
 
 import { cva } from "class-variance-authority";
