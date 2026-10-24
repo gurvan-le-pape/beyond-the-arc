@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/clubs/types/Map.ts
+// src/frontend/features/geography/types/GeoJson.ts
 export interface GeoJsonFeature {
   type: "Feature";
   properties: {

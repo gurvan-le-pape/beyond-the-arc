@@ -5,6 +5,7 @@ import {
   useDepartmentsGeoJson,
   useRegionsGeoJson,
 } from "@/features/geography/api";
+import type { GeoJsonData } from "@/features/geography/types";
 
 import {
   useAllClubs,
@@ -14,7 +15,6 @@ import {
 import type { ClubBasic } from "../../types/ClubBasic";
 import type { ClubStatsByDepartment } from "../../types/ClubStatsByDepartment";
 import type { ClubStatsByRegion } from "../../types/ClubStatsByRegion";
-import type { GeoJsonData } from "../../types/Map";
 
 interface UseMapDataReturn {
   regions: ClubStatsByRegion[];
