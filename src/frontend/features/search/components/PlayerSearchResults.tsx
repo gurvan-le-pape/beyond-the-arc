@@ -1,4 +1,4 @@
-// src/frontend/features/search/components/PlayersTab.tsx
+// src/frontend/features/search/components/PlayerSearchResults.tsx
 "use client";
 
 import { Search, User } from "lucide-react";
@@ -14,8 +14,8 @@ import { SearchTabShell } from "@/shared/components/navigation";
 import { hasCriteria } from "@/shared/utils";
 
 /**
- * The players tab of the search page: its own filter panel, results grid, and
- * pagination.
+ * The players found by the search page, under their tab: its own filter panel,
+ * results grid, and pagination.
  *
  * Takes no props and owns everything — filter state, the query, and the
  * loading, error, empty and paginated states via `SearchTabShell`. Mounting it
@@ -29,7 +29,7 @@ import { hasCriteria } from "@/shared/utils";
  * An empty search box is sent as `undefined` rather than an empty string, so the
  * parameter is omitted from the request instead of filtering on nothing.
  */
-export function PlayersTab() {
+export function PlayerSearchResults() {
   const tPlayers = useTranslations("players");
   const tCommon = useTranslations("common");
   const tSearch = useTranslations("search");

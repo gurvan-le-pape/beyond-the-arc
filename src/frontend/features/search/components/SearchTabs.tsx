@@ -6,9 +6,9 @@ import { useTranslations } from "next-intl";
 import { QueryTabs } from "@/shared/components/navigation";
 import { TabsContent } from "@/shared/components/primitives";
 
-import { MatchesTab } from "./MatchesTab";
-import { PlayersTab } from "./PlayersTab";
-import { TeamsTab } from "./TeamsTab";
+import { MatchSearchResults } from "./MatchSearchResults";
+import { PlayerSearchResults } from "./PlayerSearchResults";
+import { TeamSearchResults } from "./TeamSearchResults";
 
 const TABS = {
   PLAYERS: "players",
@@ -33,13 +33,13 @@ export function SearchTabs() {
   return (
     <QueryTabs tabs={tabs}>
       <TabsContent value={TABS.PLAYERS}>
-        <PlayersTab />
+        <PlayerSearchResults />
       </TabsContent>
       <TabsContent value={TABS.TEAMS}>
-        <TeamsTab />
+        <TeamSearchResults />
       </TabsContent>
       <TabsContent value={TABS.MATCHES}>
-        <MatchesTab />
+        <MatchSearchResults />
       </TabsContent>
     </QueryTabs>
   );
