@@ -48,7 +48,6 @@
     "src/frontend/features/players/components",
     "src/frontend/features/players/hooks",
     "src/frontend/features/players/types",
-    "src/frontend/features/players/utils",
 
     "src/frontend/features/search/components",
 

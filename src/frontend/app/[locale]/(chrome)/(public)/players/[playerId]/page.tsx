@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { PlayerShotChart } from "@/features/charts/components";
 import { serverMatchesService } from "@/features/matches/api/matches.server";
+import { transformToShotEvents } from "@/features/matches/utils";
 import { serverPlayersService } from "@/features/players/api/players.server";
 import {
   PlayerComparison,
@@ -84,7 +85,7 @@ async function PlayerDetailPage({
       <PlayerComparison player={player} careerStats={career} />
 
       <PlayerShotChart
-        shots={shots}
+        shots={transformToShotEvents(shots)}
         title={tPlayers("playerDetail.shotchartTitle")}
         description={tPlayers("playerDetail.shotchartDescription")}
       />

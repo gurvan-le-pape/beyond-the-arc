@@ -10,6 +10,7 @@ import type {
   MatchTeamWithStats,
   Shot,
 } from "@/features/matches/types";
+import { transformToShotEvents } from "@/features/matches/utils";
 import { Link } from "@/navigation";
 import { Section } from "@/shared/components/blocks";
 import { DataTable } from "@/shared/components/table";
@@ -40,7 +41,8 @@ export function PlayerMatchStats({
   const tCommon = useTranslations("common");
   const tMatches = useTranslations("matches");
 
-  const getPlayerShots = (playerId: number) => playerShots[playerId] ?? [];
+  const getPlayerShots = (playerId: number) =>
+    transformToShotEvents(playerShots[playerId] ?? []);
 
   const columns = usePlayerStatColumns(setModalPlayer);
 

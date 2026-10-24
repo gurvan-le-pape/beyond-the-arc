@@ -1,14 +1,14 @@
 // src/frontend/features/charts/components/variants/TeamShotChart.tsx
 
-import type { Shot } from "@/features/matches/types";
 import { Section } from "@/shared/components/blocks";
 import { Text } from "@/shared/components/typography";
+import type { ShotEvent } from "@/shared/types";
 
 import { ChartType } from "../../constants";
 import ShotChart from "../shot-chart";
 
 interface TeamShotChartProps {
-  readonly shots: Shot[];
+  readonly shots: ShotEvent[];
   readonly title?: string;
   readonly description?: string;
 }

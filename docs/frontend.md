@@ -508,7 +508,7 @@ Zones with curved boundaries (anything adjacent to the three-point arc) use a `g
 
 ### Rendering context
 
-The shot chart is always a client component — SVG rendering and D3 scaling require DOM dimensions. Shot event data arrives from the API and is transformed by `transformShotEvents.ts` in the relevant feature's `utils/` folder before being passed to the chart. This keeps the API-to-chart transformation testable independently of the SVG rendering. Tooltip positioning is handled by `getTooltipPosition.ts`, which keeps the tooltip within the SVG bounds regardless of where on the court the user hovers.
+The shot chart is always a client component — SVG rendering and D3 scaling require DOM dimensions. The chart takes plain `ShotEvent` points (`x`, `y`, `made`, from `shared/types`) and knows nothing about match events, so `charts` imports from no other feature. Callers turn the API's shots into points with `transformToShotEvents` from `features/matches/utils`, which reads made-or-missed from the event taxonomy; that keeps the transformation testable independently of the SVG rendering. Tooltip positioning is handled by `getTooltipPosition.ts`, which keeps the tooltip within the SVG bounds regardless of where on the court the user hovers.
 
 ---
 

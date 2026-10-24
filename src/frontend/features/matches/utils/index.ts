@@ -11,3 +11,4 @@ export * from "./getCurrentRound";
 export * from "./getSortedRounds";
 export * from "./groupShotEventsByPlayer";
 export * from "./matchupSide";
+export * from "./transformShotEvents";
