@@ -4,4 +4,5 @@
  */
 
 export * from "./Department";
+export * from "./GeoJson";
 export * from "./Region";

@@ -9,4 +9,3 @@ export * from "./ClubFilters";
 export * from "./ClubsPaginatedResponse";
 export * from "./ClubStatsByDepartment";
 export * from "./ClubStatsByRegion";
-export * from "./Map";
