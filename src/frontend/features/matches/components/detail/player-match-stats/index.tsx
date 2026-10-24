@@ -4,13 +4,13 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
-import { ShotModal } from "@/features/charts/components";
 import type {
   MatchTeam,
   MatchTeamWithStats,
   Shot,
 } from "@/features/matches/types";
 import { transformToShotEvents } from "@/features/matches/utils";
+import { ShotModal } from "@/features/shot-chart/components";
 import { Link } from "@/navigation";
 import { Section } from "@/shared/components/blocks";
 import { DataTable } from "@/shared/components/table";

@@ -26,7 +26,7 @@ const LEGACY_FEATURES = [];
 const FEATURE_LAYERS = {
   geography: 1,
   stats: 1,
-  charts: 1,
+  "shot-chart": 1,
   organizations: 2,
   competitions: 3,
   matches: 4,
