@@ -4,3 +4,4 @@
  */
 
 export * from "./useMatchesFilterState";
+export * from "./useMatchHistoryColumns";

@@ -1,5 +1,6 @@
-// src/frontend/shared/components/domain/matches/matchHistoryColumns.tsx
-import type { ReactNode } from "react";
+// src/frontend/features/matches/hooks/useMatchHistoryColumns.tsx
+import { useLocale, useTranslations } from "next-intl";
+import { type ReactNode, useMemo } from "react";
 
 import { Badge } from "@/shared/components/primitives";
 import type { TableColumn } from "@/shared/components/table";
@@ -17,7 +18,7 @@ interface MatchWithTeams {
  * and only as wide as it. `withTime` gives a fixture its weekday and start
  * time instead, "sam. 24 oct., 19:00", which are still worth knowing.
  */
-export function buildMatchDateColumn<T extends MatchWithTeams>(
+function buildMatchDateColumn<T extends MatchWithTeams>(
   header: ReactNode,
   locale: string,
   { withTime = false }: { withTime?: boolean } = {},
@@ -43,7 +44,7 @@ export function buildMatchDateColumn<T extends MatchWithTeams>(
  * side hosted: `describe` is the caller's translator, since "vs"/"at" (or
  * "contre"/"chez") is user-facing text.
  */
-export function buildOpponentColumn<T extends MatchWithTeams>(
+function buildOpponentColumn<T extends MatchWithTeams>(
   header: ReactNode,
   currentTeamId: number,
   describe: (opponent: string, venue: "home" | "away") => string,
@@ -65,7 +66,7 @@ interface MatchWithScore extends MatchWithTeams {
 }
 
 /** The words the result column shows: a one-letter badge and its full name. */
-export interface ResultLabels {
+interface ResultLabels {
   readonly win: string;
   readonly winShort: string;
   readonly loss: string;
@@ -81,7 +82,7 @@ export interface ResultLabels {
  * The badge shows one letter; its full word is what a screen reader hears.
  * Basketball has no draws, so a level score cannot occur in a played match.
  */
-export function buildResultColumn<T extends MatchWithScore>(
+function buildResultColumn<T extends MatchWithScore>(
   header: ReactNode,
   currentTeamId: number,
   labels: ResultLabels,
@@ -116,3 +117,56 @@ export function buildResultColumn<T extends MatchWithScore>(
     width: "fit",
   };
 }
+
+/**
+ * The columns every match-history table scoped to one team opens with: date,
+ * opponent, and the result from that team's side — a team's own history, or a
+ * player's. Callers append their own columns after these.
+ *
+ * Memoised on the team id, options and locale, so the returned array keeps its
+ * identity between unrelated parent renders.
+ *
+ * @typeParam T - the caller's row type
+ * @param currentTeamId - the team every row is read from; an id that matches
+ *   nothing renders every match as an away game
+ * @param options - `withTime` gives the date column a weekday and start time;
+ *   `withResult: false` drops the result column, for fixtures
+ * @returns column definitions, stable between renders
+ */
+export function useMatchHistoryColumns<T extends MatchWithScore>(
+  currentTeamId: number,
+  {
+    withTime = false,
+    withResult = true,
+  }: { withTime?: boolean; withResult?: boolean } = {},
+): TableColumn<T>[] {
+  const t = useTranslations("common");
+  const locale = useLocale();
+
+  return useMemo<TableColumn<T>[]>(() => {
+    const columns: TableColumn<T>[] = [
+      buildMatchDateColumn<T>(t("matchHistory.date"), locale, { withTime }),
+      buildOpponentColumn<T>(
+        t("matchHistory.opponent"),
+        currentTeamId,
+        (opponent, venue) =>
+          venue === "home"
+            ? t("matchHistory.opponentHome", { opponent })
+            : t("matchHistory.opponentAway", { opponent }),
+      ),
+    ];
+    if (!withResult) return columns;
+
+    return [
+      ...columns,
+      buildResultColumn<T>(t("matchHistory.result"), currentTeamId, {
+        win: t("matchHistory.win"),
+        winShort: t("matchHistory.winShort"),
+        loss: t("matchHistory.loss"),
+        lossShort: t("matchHistory.lossShort"),
+      }),
+    ];
+  }, [t, locale, currentTeamId, withTime, withResult]);
+}
+
+export default useMatchHistoryColumns;
