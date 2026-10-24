@@ -1,5 +1,5 @@
 // src/frontend/features/matches/utils/matchupSide.ts
-import type { TeamInfo } from "@/features/teams/types";
+import type { MatchTeam } from "@/features/matches/types";
 import type { MatchupSide } from "@/shared/components/domain";
 import { formatTeamName } from "@/shared/utils";
 
@@ -26,12 +26,12 @@ export function matchupSide(
 }
 
 /**
- * One side of a match already assembled by `buildTeam`, as `Matchup` draws it.
+ * One side of a match already assembled by `buildMatchTeam`, as `Matchup` draws it.
  *
  * @param team - the assembled side, whose `name` is already the team's name
  * @returns the side for `Matchup`
  */
-export function teamInfoMatchupSide(team: TeamInfo): MatchupSide {
+export function matchTeamMatchupSide(team: MatchTeam): MatchupSide {
   return {
     teamId: team.id,
     teamName: team.name,

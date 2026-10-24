@@ -5,8 +5,11 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { ShotModal } from "@/features/charts/components";
-import type { Shot } from "@/features/matches/types";
-import type { TeamInfo, TeamInfoExtended } from "@/features/teams/types";
+import type {
+  MatchTeam,
+  MatchTeamWithStats,
+  Shot,
+} from "@/features/matches/types";
 import { Link } from "@/navigation";
 import { Section } from "@/shared/components/blocks";
 import { DataTable } from "@/shared/components/table";
@@ -16,9 +19,9 @@ import type { NamedEntity } from "@/shared/types";
 import { usePlayerStatColumns } from "./usePlayerStatColumns";
 
 interface PlayerMatchStatsProps {
-  readonly team: TeamInfoExtended;
+  readonly team: MatchTeamWithStats;
   readonly isHomeTeam: boolean;
-  readonly opponent: TeamInfo;
+  readonly opponent: MatchTeam;
   readonly playerShots: Record<number, Shot[]>;
 }
 

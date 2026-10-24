@@ -2,7 +2,7 @@
 import { useTranslations } from "next-intl";
 
 import type { Quarter } from "@/features/matches/constants";
-import type { TeamInfoExtended } from "@/features/teams/types";
+import type { MatchTeamWithStats } from "@/features/matches/types";
 import type { EventCategory } from "@/shared/constants";
 
 import { EventCategorySelect } from "./EventCategorySelect";
@@ -11,8 +11,8 @@ import { QuarterSelector } from "./QuarterSelector";
 import { TimelineOrderToggle } from "./TimelineOrderToggle";
 
 interface EventFiltersProps {
-  readonly homeTeam: TeamInfoExtended;
-  readonly awayTeam: TeamInfoExtended;
+  readonly homeTeam: MatchTeamWithStats;
+  readonly awayTeam: MatchTeamWithStats;
   /** Offers the overtime choice in the quarter selector. */
   readonly hasOvertime: boolean;
   readonly selectedQuarter: Quarter;

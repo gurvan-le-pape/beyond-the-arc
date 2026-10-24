@@ -3,7 +3,7 @@
 
 import { useTranslations } from "next-intl";
 
-import type { TeamStats } from "@/features/teams/types";
+import type { MatchTeamStats } from "@/features/matches/types";
 import { Section, StatComparison } from "@/shared/components/blocks";
 
 interface StatCategory {
@@ -12,8 +12,8 @@ interface StatCategory {
 }
 
 interface TeamStatsComparisonProps {
-  readonly homeStats: TeamStats;
-  readonly awayStats: TeamStats;
+  readonly homeStats: MatchTeamStats;
+  readonly awayStats: MatchTeamStats;
   readonly categories: StatCategory[];
 }
 

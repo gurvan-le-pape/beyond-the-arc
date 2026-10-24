@@ -1,6 +1,9 @@
-// src/frontend/features/matches/utils/buildTeam.ts
-import type { MatchPlayerWithStats } from "@/features/matches/types";
-import type { TeamInfoExtended, TeamStats } from "@/features/teams/types";
+// src/frontend/features/matches/utils/buildMatchTeam.ts
+import type {
+  MatchPlayerWithStats,
+  MatchTeamStats,
+  MatchTeamWithStats,
+} from "@/features/matches/types";
 import { formatTeamName } from "@/shared/utils";
 
 import type { MatchTeamRef } from "../types";
@@ -21,12 +24,12 @@ import type { MatchTeamRef } from "../types";
  * @param stats - the team-level stat line, passed through untouched
  * @returns the assembled side; `players` is empty for an upcoming match
  */
-export function buildTeam(
+export function buildMatchTeam(
   team: MatchTeamRef,
   score: number | null,
   allPlayers: MatchPlayerWithStats[],
-  stats: TeamStats,
-): TeamInfoExtended {
+  stats: MatchTeamStats,
+): MatchTeamWithStats {
   return {
     id: team.id,
     name: formatTeamName(team.club.name, team.number),

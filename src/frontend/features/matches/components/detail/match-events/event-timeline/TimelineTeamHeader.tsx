@@ -1,12 +1,12 @@
 // src/frontend/features/matches/components/detail/match-events/event-timeline/TimelineTeamHeader.tsx
 
-import type { TeamInfo } from "@/features/teams/types";
+import type { MatchTeam } from "@/features/matches/types";
 
 import { TimelineRow } from "./TimelineRow";
 
 interface TimelineTeamHeaderProps {
-  readonly homeTeam: TeamInfo;
-  readonly awayTeam: TeamInfo;
+  readonly homeTeam: MatchTeam;
+  readonly awayTeam: MatchTeam;
 }
 
 /**

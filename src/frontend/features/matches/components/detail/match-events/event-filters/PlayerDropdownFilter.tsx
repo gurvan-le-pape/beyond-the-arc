@@ -3,12 +3,12 @@
 
 import { useTranslations } from "next-intl";
 
-import type { TeamInfoExtended } from "@/features/teams/types";
+import type { MatchTeamWithStats } from "@/features/matches/types";
 import { MultiSelect } from "@/shared/components/primitives";
 
 interface PlayerDropdownFilterProps {
-  readonly homeTeam: TeamInfoExtended;
-  readonly awayTeam: TeamInfoExtended;
+  readonly homeTeam: MatchTeamWithStats;
+  readonly awayTeam: MatchTeamWithStats;
   readonly selectedPlayerIds: Set<number>;
   readonly setSelectedPlayerIds: (ids: Set<number>) => void;
   readonly togglePlayer: (id: number) => void;
@@ -34,7 +34,7 @@ export function PlayerDropdownFilter({
 }: PlayerDropdownFilterProps) {
   const t = useTranslations("matches");
 
-  const toColumn = (team: TeamInfoExtended) => ({
+  const toColumn = (team: MatchTeamWithStats) => ({
     title: team.name,
     items: [...team.players]
       .sort((a, b) => a.player.number - b.player.number)
