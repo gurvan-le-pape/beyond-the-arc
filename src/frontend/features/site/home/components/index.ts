@@ -4,7 +4,11 @@
  */
 
 export * from "./ExploreCard";
+export * from "./ExploreSection";
 export * from "./HeroSearch";
+export * from "./HomeHero";
 export * from "./LatestRoundSection";
 export * from "./LevelRow";
+export * from "./LevelsSection";
 export * from "./MapBand";
+export * from "./StatsBand";

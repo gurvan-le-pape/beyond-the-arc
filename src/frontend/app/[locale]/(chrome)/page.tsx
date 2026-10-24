@@ -7,25 +7,16 @@ import { serverLeaderboardsService } from "@/features/competitions/leaderboards/
 import { serverPoolsService } from "@/features/competitions/pools/api/pools.server";
 import { serverMatchesService } from "@/features/matches/api/matches.server";
 import {
-  ExploreCard,
-  HeroSearch,
+  ExploreSection,
+  HomeHero,
   LatestRoundSection,
-  LevelRow,
+  LevelsSection,
   MapBand,
+  StatsBand,
 } from "@/features/site/home/components";
-import {
-  EXPLORE_CARDS,
-  LEVEL_ROWS,
-  STATS_BAND_KEYS,
-} from "@/features/site/home/constants";
 import { serverStatsService } from "@/features/stats/api/stats.server";
-import { getPathname } from "@/navigation";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
-import { Dot } from "@/shared/components/primitives";
-import { Grid } from "@/shared/components/primitives";
-import { StatGroup } from "@/shared/components/stats";
-import { Text } from "@/shared/components/typography";
 import type { LocalePageProps } from "@/shared/types";
 import {
   formatCommitteeName,
@@ -127,107 +118,14 @@ async function Home({ params }: LocalePageProps) {
         .catch(handleServerError)
     : null;
 
-  const formatCount = (n: number): string => n.toLocaleString(locale);
-
-  const statsBand = STATS_BAND_KEYS.map((key) => ({
-    value: formatCount(stats[key]),
-    label: t(`stats.${key}`),
-  }));
-
-  const exploreCards = EXPLORE_CARDS.map((card) => ({
-    href: card.href,
-    badgeVariant: card.badgeVariant,
-    badge: t(`explore.${card.key}.badge`),
-    title: t(`explore.${card.key}.title`),
-    desc: t(`explore.${card.key}.desc`),
-  }));
-
-  // A level with no championships yet is listed last and not linked — there is
-  // nothing behind the link. The sort is stable, so covered levels keep their
-  // LEVEL_ROWS order and an uncovered one moves back once it has data.
-  const levelCards = LEVEL_ROWS.map((row) => {
-    const championshipCount = stats.championshipsByLevel[row.level];
-    return {
-      level: row.level,
-      name: t(`levels.${row.level}.name`),
-      detail: t(`levels.${row.level}.detail`),
-      // One message, three counts — ICU picks the plural form, and the key is
-      // named once rather than at each call site.
-      count: t("levels.championshipCount", { count: championshipCount }),
-      href:
-        championshipCount > 0 ? `/championships?tab=${row.level}` : undefined,
-    };
-  }).sort((a, b) => Number(!a.href) - Number(!b.href));
-
   return (
     <PageLayout edgeToEdge>
-      <section className="flex flex-col items-center text-center px-6 py-16 border-b border-divide">
-        <Text
-          variant="overline"
-          className="inline-flex items-center gap-1.5 text-ink-primary bg-tint-primary px-3 py-1 rounded mb-6"
-        >
-          <Dot size="sm" />
-          {t("hero.eyebrow")}
-        </Text>
-
-        <Text
-          variant="h1"
-          className="font-extrabold leading-none tracking-tight mb-5"
-        >
-          {t("hero.titleStart")}{" "}
-          <em className="not-italic text-ink-primary">
-            {t("hero.titleEmphasis")}
-          </em>
-        </Text>
-
-        <Text variant="lead" className="max-w-lg">
-          {t("hero.subtitle")}
-        </Text>
-
-        <div className="mt-8 flex w-full justify-center">
-          <HeroSearch
-            action={getPathname({ href: "/search", locale })}
-            label={t("hero.searchLabel")}
-            placeholder={t("hero.searchPlaceholder")}
-            submit={t("hero.searchSubmit")}
-          />
-        </div>
-      </section>
-
-      {/* Three columns over two rows on a phone, six in one row from md. */}
-      <div className="border-b border-divide">
-        <StatGroup stats={statsBand} columns={{ base: 3, md: 6 }} />
-      </div>
-
+      <HomeHero />
+      <StatsBand stats={stats} />
       {latestRound && <LatestRoundSection {...latestRound} />}
-
-      <div className="px-6 pt-7 pb-2 border-b border-divide">
-        <Text variant="overline" as="h2">
-          {t("explore.sectionTitle")}
-        </Text>
-      </div>
-
-      <div className="border-b border-divide">
-        <Grid columns={{ base: 1, md: 3 }} divided>
-          {exploreCards.map((card) => (
-            <ExploreCard key={card.href} {...card} />
-          ))}
-        </Grid>
-      </div>
-
+      <ExploreSection />
       <MapBand />
-
-      <div className="px-6 pt-7 pb-2">
-        <Text variant="overline" as="h2">
-          {t("levels.sectionTitle")}
-        </Text>
-      </div>
-
-      <div className="flex flex-col gap-2 px-6 pb-10">
-        {levelCards.map((level) => (
-          <LevelRow key={level.name} {...level} />
-        ))}
-      </div>
+      <LevelsSection championshipsByLevel={stats.championshipsByLevel} />
     </PageLayout>
   );
 }
