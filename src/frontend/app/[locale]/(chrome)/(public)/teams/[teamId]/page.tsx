@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { TeamShotChart } from "@/features/charts/components";
 import { serverMatchesService } from "@/features/matches/api/matches.server";
+import { transformToShotEvents } from "@/features/matches/utils";
 import { serverTeamsService } from "@/features/teams/api/teams.server";
 import {
   TeamHeader,
@@ -93,7 +94,7 @@ async function TeamDetailPage({ params }: LocalePageProps<{ teamId: string }>) {
       <TeamUpcomingMatchesTable team={team} matches={upcoming} />
 
       <TeamShotChart
-        shots={shots}
+        shots={transformToShotEvents(shots)}
         title={t("teamDetail.shotchartTitle")}
         description={t("teamDetail.shotchartDescription")}
       />

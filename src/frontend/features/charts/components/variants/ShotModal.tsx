@@ -5,11 +5,10 @@ import { Download, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRef } from "react";
 
-import type { Shot } from "@/features/matches/types";
 import { Button, IconButton } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { useModalDialog } from "@/shared/hooks";
-import type { NamedEntity } from "@/shared/types";
+import type { NamedEntity, ShotEvent } from "@/shared/types";
 import { logger } from "@/shared/utils";
 
 import { ChartType } from "../../constants";
@@ -24,7 +23,7 @@ interface ShotModalProps {
   readonly opponentTeamName: string;
   readonly teamScore: number | null;
   readonly opponentScore: number | null;
-  readonly getPlayerShots: (playerId: number) => Shot[];
+  readonly getPlayerShots: (playerId: number) => ShotEvent[];
 }
 
 /**

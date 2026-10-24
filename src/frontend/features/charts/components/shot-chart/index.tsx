@@ -12,8 +12,7 @@ import {
   SHOT_COLOR_SCALE,
 } from "@/features/charts/constants";
 import { summarizeShots } from "@/features/charts/utils";
-import type { Shot } from "@/features/matches/types";
-import { transformToShotEvents } from "@/features/players/utils";
+import type { ShotEvent } from "@/shared/types";
 
 import { CourtMarkings } from "../court/CourtMarkings";
 import HotspotsHeader from "../headers/HotspotsHeader";
@@ -23,7 +22,7 @@ import ScatterOverlay from "../overlays/ScatterOverlay";
 import { useCourtSize } from "./useCourtSize";
 
 interface ShotChartProps {
-  readonly shots: Shot[];
+  readonly shots: ShotEvent[];
   readonly chartType?: ChartType;
 }
 
@@ -34,7 +33,7 @@ const ASPECT = COURT_WIDTH / HALF_COURT_HEIGHT;
 const MIN_CHART_WIDTH = 320;
 
 /**
- * The shot chart for a set of match events, in the variant `chartType` picks.
+ * The shot chart for a set of plotted shots, in the variant `chartType` picks.
  *
  * Court markings are painted *after* the overlay data — SVG paints in document
  * order, so overlays first and the lines on top is what keeps shots from
@@ -64,8 +63,6 @@ export function ShotChart({
     [svgHeight],
   );
 
-  const shotEvents = useMemo(() => transformToShotEvents(shots), [shots]);
-
   const t = useTranslations("common");
 
   // `role="img"` needs a name and a description that carry the same information
@@ -81,7 +78,7 @@ export function ShotChart({
       : t("shotChart.scatterChartLabel");
   })();
 
-  const summary = useMemo(() => summarizeShots(shotEvents), [shotEvents]);
+  const summary = useMemo(() => summarizeShots(shots), [shots]);
 
   return (
     <div
@@ -111,15 +108,11 @@ export function ShotChart({
             </desc>
             {/* --- Overlays (between background and lines) --- */}
             {chartType === ChartType.SCATTER && (
-              <ScatterOverlay
-                shots={shotEvents}
-                xScale={xScale}
-                yScale={yScale}
-              />
+              <ScatterOverlay shots={shots} xScale={xScale} yScale={yScale} />
             )}
             {chartType === ChartType.HOTSPOTS && (
               <HotspotsOverlay
-                shots={shotEvents}
+                shots={shots}
                 xScale={xScale}
                 yScale={yScale}
                 colorScale={SHOT_COLOR_SCALE}

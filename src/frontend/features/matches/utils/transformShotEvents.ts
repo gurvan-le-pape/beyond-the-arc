@@ -1,8 +1,9 @@
-// src/frontend/features/players/utils/transformShotEvents.ts
-import { eventConfig } from "@/features/matches/constants";
-import type { Shot } from "@/features/matches/types";
+// src/frontend/features/matches/utils/transformShotEvents.ts
 import { EventCategory } from "@/shared/constants";
 import type { ShotEvent } from "@/shared/types";
+
+import { eventConfig } from "../constants";
+import type { Shot } from "../types";
 
 /**
  * Turns shots into the plain made/missed points a chart plots.

@@ -1,8 +1,7 @@
-// src/frontend/features/players/utils/transformShotEvents.spec.ts
+// src/frontend/features/matches/utils/transformShotEvents.spec.ts
 import { describe, expect, it } from "vitest";
 
-import type { Shot } from "@/features/matches/types";
-
+import type { Shot } from "../types";
 import { transformToShotEvents } from "./transformShotEvents";
 
 /** Builds a shot of the given type at the given spot. */
