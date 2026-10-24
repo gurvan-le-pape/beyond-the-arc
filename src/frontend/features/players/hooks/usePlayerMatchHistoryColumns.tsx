@@ -1,14 +1,10 @@
 // src/frontend/features/players/hooks/usePlayerMatchHistoryColumns.tsx
 "use client";
 
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useMemo } from "react";
 
-import {
-  buildMatchDateColumn,
-  buildOpponentColumn,
-  buildResultColumn,
-} from "@/features/matches/utils";
+import { useMatchHistoryColumns } from "@/features/matches/hooks";
 import type { TableColumn } from "@/shared/components/table";
 
 import type { Player } from "../types/Player";
@@ -36,29 +32,13 @@ export function usePlayerMatchHistoryColumns(
   player: Player,
 ): TableColumn<PlayerMatchHistory>[] {
   const t = useTranslations("common");
-  const locale = useLocale();
+  const matchColumns = useMatchHistoryColumns<PlayerMatchHistory>(
+    player.team?.id ?? -1,
+  );
 
   return useMemo<TableColumn<PlayerMatchHistory>[]>(
     () => [
-      buildMatchDateColumn<PlayerMatchHistory>(t("matchHistory.date"), locale),
-      buildOpponentColumn<PlayerMatchHistory>(
-        t("matchHistory.opponent"),
-        player.team?.id ?? -1,
-        (opponent, venue) =>
-          venue === "home"
-            ? t("matchHistory.opponentHome", { opponent })
-            : t("matchHistory.opponentAway", { opponent }),
-      ),
-      buildResultColumn<PlayerMatchHistory>(
-        t("matchHistory.result"),
-        player.team?.id ?? -1,
-        {
-          win: t("matchHistory.win"),
-          winShort: t("matchHistory.winShort"),
-          loss: t("matchHistory.loss"),
-          lossShort: t("matchHistory.lossShort"),
-        },
-      ),
+      ...matchColumns,
       {
         key: "pts",
         header: t("stats.points.abbr"),
@@ -109,7 +89,7 @@ export function usePlayerMatchHistoryColumns(
         numeric: true,
       },
     ],
-    [t, locale, player.team?.id],
+    [t, matchColumns],
   );
 }
 
