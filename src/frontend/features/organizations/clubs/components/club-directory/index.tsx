@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/clubs/components/clubs-view/index.tsx
+// src/frontend/features/organizations/clubs/components/club-directory/index.tsx
 "use client";
 
 import { Users } from "lucide-react";
@@ -14,12 +14,12 @@ import { ClubsTable } from "./ClubsTable";
 import { useClubsFilterState } from "./useClubsFilterState";
 
 /**
- * The clubs list page: filters, results table and pagination.
+ * The directory of clubs: filters, results table and pagination.
  *
  * Takes no props and owns everything, including its own data — which is why the
  * clubs route needs no server fetch and prerenders as a static shell.
  */
-export function ClubsView() {
+export function ClubDirectory() {
   const tCommon = useTranslations("common");
   const tOrganizations = useTranslations("organizations");
 

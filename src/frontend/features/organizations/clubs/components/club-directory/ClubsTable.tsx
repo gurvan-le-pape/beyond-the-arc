@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/clubs/components/clubs-view/ClubsTable.tsx
+// src/frontend/features/organizations/clubs/components/club-directory/ClubsTable.tsx
 import { useTranslations } from "next-intl";
 
 import { DataTable, type TableColumn } from "@/shared/components/table";

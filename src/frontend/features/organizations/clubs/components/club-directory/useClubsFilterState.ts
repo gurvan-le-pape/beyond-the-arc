@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/clubs/components/clubs-view/useClubsFilterState.ts
+// src/frontend/features/organizations/clubs/components/club-directory/useClubsFilterState.ts
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
