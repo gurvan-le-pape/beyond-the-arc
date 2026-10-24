@@ -5,6 +5,7 @@
 
 export * from "./buildCategoryNavigation";
 export * from "./buildChampionshipHeading";
+export * from "./buildChampionshipOrganizer";
 export * from "./buildChampionshipTitle";
 export * from "./buildDivisionNavigation";
 export * from "./resolveOrganizationId";
