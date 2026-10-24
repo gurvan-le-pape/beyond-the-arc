@@ -2,7 +2,7 @@
 import { useFormatter, useTranslations } from "next-intl";
 
 import type { ClubDetailed } from "@/features/organizations/clubs/types";
-import { OrganizationHeader } from "@/features/organizations/shared/components";
+import { OrganizationHeader } from "@/features/organizations/components";
 
 interface ClubHeaderProps {
   readonly club: ClubDetailed;

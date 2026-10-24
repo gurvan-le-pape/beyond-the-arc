@@ -11,7 +11,7 @@ import { CommitteeHeader } from "@/features/organizations/committees/components"
 import {
   OrganizationInfo,
   SearchableLinkList,
-} from "@/features/organizations/shared/components";
+} from "@/features/organizations/components";
 import { EmptyState, withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";

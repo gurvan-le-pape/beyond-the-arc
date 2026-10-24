@@ -6,12 +6,12 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { serverChampionshipsService } from "@/features/competitions/championships/api/championships.server";
 import { ChampionshipGrid } from "@/features/competitions/championships/components";
 import { serverCommitteesService } from "@/features/organizations/committees/api/committees.server";
-import { serverLeaguesService } from "@/features/organizations/leagues/api/leagues.server";
-import { LeagueHeader } from "@/features/organizations/leagues/components";
 import {
   OrganizationInfo,
   SearchableLinkList,
-} from "@/features/organizations/shared/components";
+} from "@/features/organizations/components";
+import { serverLeaguesService } from "@/features/organizations/leagues/api/leagues.server";
+import { LeagueHeader } from "@/features/organizations/leagues/components";
 import { EmptyState, withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
