@@ -1,10 +1,10 @@
-// src/frontend/shared/components/domain/PerGameStatsPanel.tsx
+// src/frontend/features/stats/components/PerGameStatsPanel.tsx
 import { useTranslations } from "next-intl";
 
+import type { PlayerCareerStats } from "@/features/stats/types";
 import { Section } from "@/shared/components/blocks";
 import { Card } from "@/shared/components/primitives";
 import { StatGroup } from "@/shared/components/stats";
-import type { PlayerCareerStats } from "@/shared/types";
 
 interface PerGameStatsPanelProps {
   /** Season/career aggregate. A team's season stats are a superset of this. */

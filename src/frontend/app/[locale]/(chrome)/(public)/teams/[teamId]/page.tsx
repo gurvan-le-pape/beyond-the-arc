@@ -5,6 +5,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { TeamShotChart } from "@/features/charts/components";
 import { serverMatchesService } from "@/features/matches/api/matches.server";
 import { transformToShotEvents } from "@/features/matches/utils";
+import { PerGameStatsPanel } from "@/features/stats/components";
 import { serverTeamsService } from "@/features/teams/api/teams.server";
 import {
   TeamHeader,
@@ -13,7 +14,6 @@ import {
   TeamUpcomingMatchesTable,
 } from "@/features/teams/components";
 import { splitMatchHistory } from "@/features/teams/utils";
-import { PerGameStatsPanel } from "@/shared/components/domain";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import type { LocalePageProps } from "@/shared/types";

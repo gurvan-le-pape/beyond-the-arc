@@ -8,6 +8,5 @@ export * from "./NamedEntity";
 export * from "./NavItem";
 export * from "./PageProps";
 export * from "./Pagination";
-export * from "./PlayerCareerStats";
 export * from "./PlayerMatchStats";
 export * from "./ShotEvent";

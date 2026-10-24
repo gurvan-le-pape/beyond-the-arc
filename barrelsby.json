@@ -52,6 +52,7 @@
 
     "src/frontend/features/search/components",
 
+    "src/frontend/features/stats/components",
     "src/frontend/features/stats/types",
 
     "src/frontend/features/site/about/components",
