@@ -1,7 +1,7 @@
-// src/frontend/features/teams/types/TeamInfo.ts
-import type { MatchPlayerWithStats } from "@/features/matches/types";
+// src/frontend/features/matches/types/MatchTeam.ts
+import type { MatchPlayerWithStats } from "./MatchPlayerStats";
 
-export interface TeamInfo {
+export interface MatchTeam {
   id: number;
   name: string;
   clubId: number | null;
@@ -12,12 +12,12 @@ export interface TeamInfo {
   score: number | null;
 }
 
-export interface TeamInfoExtended extends TeamInfo {
+export interface MatchTeamWithStats extends MatchTeam {
   players: MatchPlayerWithStats[];
-  stats: TeamStats;
+  stats: MatchTeamStats;
 }
 
-export interface TeamStats {
+export interface MatchTeamStats {
   [key: string]: string | number | null;
   fieldGoals: string;
   /** Out of 100, or null when there were no attempts. The API sends a number

@@ -12,5 +12,6 @@ export * from "./MatchFilters";
 export * from "./MatchParticipant";
 export * from "./MatchPlayerStats";
 export * from "./MatchPoolRef";
+export * from "./MatchTeam";
 export * from "./MatchTeamRef";
 export * from "./Shot";

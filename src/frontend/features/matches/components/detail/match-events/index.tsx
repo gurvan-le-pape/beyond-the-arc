@@ -3,9 +3,8 @@
 
 import { useTranslations } from "next-intl";
 
-import type { MatchEvent } from "@/features/matches/types";
+import type { MatchEvent, MatchTeamWithStats } from "@/features/matches/types";
 import { getEventStyle } from "@/features/matches/utils";
-import type { TeamInfoExtended } from "@/features/teams/types";
 import { Section } from "@/shared/components/blocks";
 import { EmptyState } from "@/shared/components/feedback";
 
@@ -15,8 +14,8 @@ import { useMatchEvents } from "./useMatchEvents";
 
 interface MatchEventsProps {
   readonly events: MatchEvent[];
-  readonly homeTeam: TeamInfoExtended;
-  readonly awayTeam: TeamInfoExtended;
+  readonly homeTeam: MatchTeamWithStats;
+  readonly awayTeam: MatchTeamWithStats;
   readonly matchDate: Date | string;
 }
 

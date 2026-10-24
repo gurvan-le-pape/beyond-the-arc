@@ -3,12 +3,15 @@
 
 import { useTranslations } from "next-intl";
 
-import type { EventStyle, EventWithScore } from "@/features/matches/types";
+import type {
+  EventStyle,
+  EventWithScore,
+  MatchTeam,
+} from "@/features/matches/types";
 import {
   describeEvent,
   tokenizeEventDescription,
 } from "@/features/matches/utils";
-import type { TeamInfo } from "@/features/teams/types";
 import { EventCategory } from "@/shared/constants";
 
 import { EventScorePill } from "./EventScorePill";
@@ -18,8 +21,8 @@ import { TimelineTeamHeader } from "./TimelineTeamHeader";
 
 interface EventTimelineProps {
   readonly events: EventWithScore[];
-  readonly homeTeam: TeamInfo;
-  readonly awayTeam: TeamInfo;
+  readonly homeTeam: MatchTeam;
+  readonly awayTeam: MatchTeam;
   readonly getEventStyle: (eventType: string) => EventStyle;
   readonly matchDate: Date | string;
 }

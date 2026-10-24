@@ -12,9 +12,9 @@ import {
   UpcomingMatchNotice,
 } from "@/features/matches/components";
 import {
-  buildTeam,
+  buildMatchTeam,
   groupShotEventsByPlayer,
-  teamInfoMatchupSide,
+  matchTeamMatchupSide,
 } from "@/features/matches/utils";
 import { Matchup } from "@/shared/components/domain";
 import { withServerErrorState } from "@/shared/components/feedback";
@@ -92,13 +92,13 @@ async function MatchSummaryPage({
     .catch(handleServerError);
 
   const { stats, homeTeamStats, awayTeamStats } = playerMatchStats;
-  const homeTeam = buildTeam(
+  const homeTeam = buildMatchTeam(
     match.homeTeam,
     match.homeTeamScore,
     stats,
     homeTeamStats,
   );
-  const awayTeam = buildTeam(
+  const awayTeam = buildMatchTeam(
     match.awayTeam,
     match.awayTeamScore,
     stats,
@@ -137,8 +137,8 @@ async function MatchSummaryPage({
           poolLetter={match.pool.letter}
         />
         <Matchup
-          home={teamInfoMatchupSide(homeTeam)}
-          away={teamInfoMatchupSide(awayTeam)}
+          home={matchTeamMatchupSide(homeTeam)}
+          away={matchTeamMatchupSide(awayTeam)}
           size="hero"
           linked
         />

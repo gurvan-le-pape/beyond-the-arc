@@ -3,8 +3,11 @@
 
 import { useTranslations } from "next-intl";
 
-import type { MatchEvent, Shot } from "@/features/matches/types";
-import type { TeamInfoExtended } from "@/features/teams/types";
+import type {
+  MatchEvent,
+  MatchTeamWithStats,
+  Shot,
+} from "@/features/matches/types";
 import {
   Tabs,
   TabsContent,
@@ -17,8 +20,8 @@ import { PlayerMatchStats } from "./player-match-stats";
 import { TeamStatsComparison } from "./TeamStatsComparison";
 
 interface MatchSummaryTabsProps {
-  readonly homeTeam: TeamInfoExtended;
-  readonly awayTeam: TeamInfoExtended;
+  readonly homeTeam: MatchTeamWithStats;
+  readonly awayTeam: MatchTeamWithStats;
   readonly matchEvents: MatchEvent[];
   readonly matchDate: Date | string;
   readonly playerShots: Record<number, Shot[]>;
