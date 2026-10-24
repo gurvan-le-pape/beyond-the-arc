@@ -14,11 +14,27 @@ import noCrossCompositeImport from "./eslint-rules/no-cross-composite-import.js"
 import noMixedTypeFile from "./eslint-rules/no-mixed-type-file.js";
 import noTranslatorProp from "./eslint-rules/no-translator-prop.js";
 import enforceNamedProps from "./eslint-rules/enforce-named-props.js";
+import featureLayers from "./eslint-rules/enforce-feature-layers.js";
 
 // Migration ratchet for docs/frontend-conventions.md: features not yet
 // restructured to the component conventions. Each migration PR restructures
 // one feature and removes its entry here. Never add entries.
 const LEGACY_FEATURES = [];
+
+// The feature layers of docs/frontend-conventions.md#feature-layers. A feature
+// imports only from features on a lower layer; shared/ sits below all of them.
+const FEATURE_LAYERS = {
+  geography: 1,
+  stats: 1,
+  charts: 1,
+  organizations: 2,
+  competitions: 3,
+  matches: 4,
+  teams: 5,
+  players: 5,
+  search: 6,
+  site: 6,
+};
 
 export default [
   // Config for all TS files
@@ -50,6 +66,7 @@ export default [
           "no-mixed-type-file": noMixedTypeFile,
           "no-translator-prop": noTranslatorProp,
           "enforce-named-props": enforceNamedProps,
+          "enforce-feature-layers": featureLayers,
         },
       },
     },
@@ -159,6 +176,10 @@ export default [
       "local-rules/no-mixed-type-file": "error",
       "local-rules/no-translator-prop": "error",
       "local-rules/enforce-named-props": "error",
+      "local-rules/enforce-feature-layers": [
+        "error",
+        { layers: FEATURE_LAYERS },
+      ],
     },
   },
   // `@param`/`@returns` are required for ordinary functions but not for

@@ -99,6 +99,26 @@ The feature-level directories (`hooks/`, `types/`, `utils/`, `constants/`) hold 
 
 A file must not mix the two: a file importing the generated `components` type may only contain type-alias declarations. Component-private view types don't live in `types/` at all — they go in a `types.ts` inside their composite folder (see Placement).
 
+## Feature layers
+
+Features are ranked in layers, and **a feature imports only from features on a lower layer**. Features on the same layer never import each other, and `shared/` imports no feature at all. So the import graph can't contain a cycle, and reading a feature never requires reading one above it.
+
+| Layer | Features | Built from |
+| --- | --- | --- |
+| 6 | `search`, `site` | anything below: they aggregate |
+| 5 | `teams`, `players` | the matches a profile is made of |
+| 4 | `matches` | the pools and championships a match is played in |
+| 3 | `competitions` | the leagues and committees that run them |
+| 2 | `organizations` | regions, departments, site-wide counts |
+| 1 | `geography`, `stats`, `charts` | `shared/` only |
+
+Pages (`app/`) sit above every layer and compose sections from any feature. When two features need to appear together, the page puts them side by side; neither feature imports the other.
+
+- **Placement follows the data.** A component belongs to the feature whose data it draws. A list of a pool's matches is `matches` even when the championship page shows it; a team's match history, fetched from `/teams/:id/matches`, is `teams` even though it reuses `matches`' history table.
+- **An upward import is a misplacement, not an exception.** It usually means a type or component lives in the wrong feature (`TeamInfo` described a match side and sat in `teams`) or that a component takes domain data where plain data would do (the shot chart takes `{ x, y, made }` points, not match events).
+- Sub-features (`competitions/championships`, `organizations/clubs`) belong to their parent and import each other freely.
+- A new feature gets a layer in `FEATURE_LAYERS` in `eslint.config.mjs`. Until it has one, every import from or into it fails lint.
+
 ## Barrels
 
 - Barrel directories are defined once in the root `barrelsby.json`; the `enforce-barrel-import` ESLint rule derives its directory list from it, so the two can't drift. Regenerate barrels with `make barrels` / `npm run barrels` after adding files.
@@ -260,6 +280,7 @@ Custom ESLint rules in `src/frontend/eslint-rules/`, wired in `eslint.config.mjs
 | `enforce-file-path-comment` | Every file starts with its own path comment (autofixable) |
 | `no-translator-prop` | The next-intl translator is never typed as a value or passed as a prop |
 | `enforce-named-props` | Component props are a named interface, not an inline object type |
+| `enforce-feature-layers` | A feature imports only from lower [feature layers](#feature-layers); `shared/` imports no feature |
 
 Two upstream rules carry conventions of their own: `@typescript-eslint/consistent-type-definitions` (`interface` over `type`, see [Props](#props)) and the `jsdoc/*` set described under [Docstrings](#docstrings) — `require-jsdoc`, `require-param`, `require-returns`, their `-description` variants, `check-param-names`, `check-tag-names` and `no-types`, all at **error**.
 
