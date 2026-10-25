@@ -20,6 +20,7 @@ import {
   useCommonFilterChips,
 } from "@/shared/components/filters";
 import { Select } from "@/shared/components/forms";
+import { Grid } from "@/shared/components/primitives";
 
 import type { TeamsFilterSetters, TeamsFilterState } from "../../hooks";
 
@@ -200,7 +201,7 @@ export function TeamsFilters({ filters, setters, onReset }: TeamsFiltersProps) {
         />
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <Grid columns={{ base: 1, md: 2, lg: 4 }} gap={4}>
         <ClubComboBoxFilter
           committeeId={committeeId}
           leagueId={leagueId}
@@ -236,7 +237,7 @@ export function TeamsFilters({ filters, setters, onReset }: TeamsFiltersProps) {
 
         {/* Division → Pool */}
         <CascadeSelects steps={cascadeSteps} />
-      </div>
+      </Grid>
     </FiltersShell>
   );
 }

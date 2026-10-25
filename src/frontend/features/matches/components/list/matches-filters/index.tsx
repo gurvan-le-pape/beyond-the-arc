@@ -23,6 +23,7 @@ import {
   useCommonFilterChips,
 } from "@/shared/components/filters";
 import { DebouncedInput, Input } from "@/shared/components/forms";
+import { Grid } from "@/shared/components/primitives";
 
 import { useMatchesCascadeOptions } from "./useMatchesCascadeOptions";
 
@@ -213,7 +214,7 @@ export function MatchesFilters({
         />
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <Grid columns={{ base: 1, md: 2, lg: 4 }} gap={4}>
         <DebouncedInput
           variant="search"
           label={tMatches("searchClub")}
@@ -253,7 +254,7 @@ export function MatchesFilters({
 
         {/* Division → Pool → Matchday */}
         <CascadeSelects steps={cascadeSteps} />
-      </div>
+      </Grid>
     </FiltersShell>
   );
 }

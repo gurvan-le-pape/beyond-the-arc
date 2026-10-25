@@ -5,7 +5,7 @@ import { Download } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
 
-import { Button } from "@/shared/components/primitives";
+import { Button, Grid } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 
 const DATABASE_TABLES = [
@@ -125,7 +125,7 @@ export function DocsDatabaseSection({ content }: DocsDatabaseSectionProps) {
         <Text variant="h3" as="h2" className="mb-3">
           {t("docs.database.keyTables")}
         </Text>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <Grid columns={{ base: 1, md: 2 }} gap={3}>
           {DATABASE_TABLES.map((table) => (
             <div
               key={table.name}
@@ -139,7 +139,7 @@ export function DocsDatabaseSection({ content }: DocsDatabaseSectionProps) {
               </Text>
             </div>
           ))}
-        </div>
+        </Grid>
       </div>
     </div>
   );

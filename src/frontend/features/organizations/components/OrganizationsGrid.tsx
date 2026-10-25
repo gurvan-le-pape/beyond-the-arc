@@ -3,6 +3,7 @@ import { Building2, MapPin, Users } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
 import type { OrganizationCounts } from "@/features/organizations/types";
+import { Grid } from "@/shared/components/primitives";
 import { OrganizationType } from "@/shared/constants";
 
 import type { OrgType } from "./OrganizationTypeCard";
@@ -59,10 +60,10 @@ export async function OrganizationsGrid({ counts }: OrganizationsGridProps) {
   return (
     // Three columns, unlike the entity-result grids' two: these are the three
     // fixed navigation cards (leagues / committees / clubs), not a result list.
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+    <Grid columns={{ base: 1, sm: 2, lg: 3 }} gap={4}>
       {types.map((org) => (
         <OrganizationTypeCard key={org.id} org={org} />
       ))}
-    </div>
+    </Grid>
   );
 }

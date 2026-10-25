@@ -13,6 +13,7 @@ import {
   PRODUCT_HIGHLIGHTS,
 } from "@/features/site/product/constants";
 import { PageHero, PageLayout } from "@/shared/components/layout";
+import { Grid } from "@/shared/components/primitives";
 import type { LocalePageProps } from "@/shared/types";
 
 /**
@@ -64,10 +65,12 @@ export default async function ProductPage({ params }: LocalePageProps) {
       />
 
       {/* Features Grid — cards sit on surface-base, establish surface-subtle context */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-        {features.map((feature) => (
-          <FeatureCard key={feature.title} {...feature} />
-        ))}
+      <div className="mb-12">
+        <Grid columns={{ base: 1, md: 2, lg: 3 }} gap={6}>
+          {features.map((feature) => (
+            <FeatureCard key={feature.title} {...feature} />
+          ))}
+        </Grid>
       </div>
 
       <FeaturesHighlightsSection

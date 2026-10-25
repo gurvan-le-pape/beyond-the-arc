@@ -6,6 +6,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ContactMethodCard } from "@/features/site/contact/components";
 import { CONTACT_METHODS } from "@/features/site/contact/constants";
 import { PageHero, PageLayout } from "@/shared/components/layout";
+import { Grid } from "@/shared/components/primitives";
 import type { LocalePageProps } from "@/shared/types";
 
 /**
@@ -46,11 +47,11 @@ export default async function ContactPage({ params }: LocalePageProps) {
         icon={Send}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <Grid columns={{ base: 1, md: 3 }} gap={6}>
         {contactMethods.map((method) => (
           <ContactMethodCard key={method.href} {...method} />
         ))}
-      </div>
+      </Grid>
     </PageLayout>
   );
 }
