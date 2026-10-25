@@ -1,6 +1,8 @@
 // src/frontend/shared/components/navigation/SearchTabShell.tsx
 "use client";
 
+import { useEffect } from "react";
+
 import { ErrorMessage, Spinner } from "@/shared/components/feedback";
 import { Card } from "@/shared/components/primitives";
 import type { Pagination as PaginationType } from "@/shared/types";
@@ -37,6 +39,11 @@ interface SearchTabShellProps {
  *
  * Pagination renders only when there is more than one page, and `children`
  * render only in the success path.
+ *
+ * A page past the last one, from a stale or hand-edited link, goes back to the
+ * first page rather than rendering the empty state: the API answers it with no
+ * items, and "nothing found" with no pagination is a dead end over a list that
+ * is not empty.
  */
 export function SearchTabShell({
   isLoading,
@@ -52,7 +59,16 @@ export function SearchTabShell({
   itemLabel,
   children,
 }: SearchTabShellProps) {
-  if (isLoading) {
+  const isPastLastPage =
+    pagination !== null &&
+    pagination.totalPages > 0 &&
+    pagination.page > pagination.totalPages;
+
+  useEffect(() => {
+    if (isPastLastPage) onPageChange(0);
+  }, [isPastLastPage, onPageChange]);
+
+  if (isLoading || isPastLastPage) {
     return (
       <div className="flex justify-center items-center py-20">
         <Spinner size="lg" />
