@@ -15,6 +15,7 @@
   "clear": "Clear",
   "clearSearch": "Clear search",
   "clearSelection": "Clear selection",
+  "multiSelectSummary": "{label}, {count, plural, =0 {none selected} other {# selected}}",
   "homepage": {
     "title": "Welcome to Beyond The Arc",
     "subtitle": "Explore competitions, clubs, teams, and player stats. Dive into the heart of basketball with real-time data, interactive features, and a modern, user-friendly experience."
