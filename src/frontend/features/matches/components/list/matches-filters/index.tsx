@@ -8,7 +8,10 @@ import type {
   MatchesFilterSetters,
   MatchesFilterState,
 } from "@/features/matches/hooks";
-import { useLocationOptions } from "@/features/organizations/hooks";
+import {
+  useDropUnknownLocation,
+  useLocationOptions,
+} from "@/features/organizations/hooks";
 import { ErrorMessage } from "@/shared/components/feedback";
 import type {
   ActiveFilterChip,
@@ -63,12 +66,13 @@ export function MatchesFilters({
   const tCommon = useTranslations("common");
   const tFilters = useTranslations("filters");
 
+  const locationOptions = useLocationOptions();
   const {
     committees,
     leagues,
     error: locationError,
     retry: retryLocation,
-  } = useLocationOptions();
+  } = locationOptions;
   const {
     divisions,
     pools,
@@ -100,6 +104,13 @@ export function MatchesFilters({
     setPoolId,
     setMatchday,
   } = setters;
+
+  useDropUnknownLocation(locationOptions, {
+    leagueId,
+    setLeagueId,
+    committeeId,
+    setCommitteeId,
+  });
 
   const matchdaysCount = poolId
     ? (pools.find((p) => String(p.id) === String(poolId))?.nbMatchdays ?? 30)
