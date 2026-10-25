@@ -58,6 +58,20 @@ function getFilteredOptions(
 /**
  * ComboBox — single-value picker with optional search.
  *
+ * Follows the WAI-ARIA combobox pattern: the trigger is a `combobox` whose
+ * accessible name is the label and whose value is the selected option, and the
+ * popup is a `listbox` of `option`s with `aria-selected`. Focus never enters
+ * the list — it stays on the trigger, or on the filter input when searchable —
+ * and `aria-activedescendant` points at the highlighted option.
+ *
+ * Keyboard: ↓/↑/Enter/Space open; inside, ↓/↑ move, Home/End jump (not
+ * searchable — in the filter input they move the caret), Enter (and Space when
+ * not searchable) picks, Escape closes, Tab closes and moves on. Picking or
+ * Escape returns focus to the trigger.
+ *
+ * Without a `label`, the trigger is named by its own value, which is what
+ * screen readers announced before it was a combobox.
+ *
  * @example
  * // Searchable (default) — long/dynamic lists
  * <ComboBox options={clubOptions} value={clubId} onChange={setClubId} />
@@ -83,13 +97,19 @@ export function ComboBox({
   const t = useTranslations("common");
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
   const containerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const generatedId = useId();
 
   const inputId = label
     ? `combobox-${label.toLowerCase().replaceAll(/\s+/g, "-")}`
     : `combobox-${generatedId}`;
+  const labelId = `${inputId}-label`;
+  const valueId = `${inputId}-value`;
+  const listboxId = `${inputId}-listbox`;
+  const optionId = (index: number) => `${inputId}-option-${index}`;
 
   const filteredOptions = getFilteredOptions(
     options,
@@ -97,6 +117,9 @@ export function ComboBox({
     searchable,
     onSearchChange,
   );
+  const activeOption = isLoading ? undefined : filteredOptions[activeIndex];
+  const activeDescendant =
+    open && activeOption ? optionId(activeIndex) : undefined;
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -121,12 +144,88 @@ export function ComboBox({
     }
   }, [open, searchable, onSearchChange]);
 
+  useEffect(() => {
+    if (activeDescendant) {
+      document
+        .getElementById(activeDescendant)
+        ?.scrollIntoView({ block: "nearest" });
+    }
+  }, [activeDescendant]);
+
   const selectedOption = options.find((opt) => opt.value === value);
+
+  const openList = () => {
+    const selectedIndex = filteredOptions.findIndex(
+      (opt) => opt.value === value,
+    );
+    setActiveIndex(Math.max(selectedIndex, 0));
+    setOpen(true);
+  };
+
+  const close = (returnFocus: boolean) => {
+    setOpen(false);
+    setActiveIndex(-1);
+    if (returnFocus) triggerRef.current?.focus();
+  };
+
+  const pick = (opt: ComboBoxOption) => {
+    onChange(opt.value);
+    close(true);
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (!open) {
+      if (["ArrowDown", "ArrowUp", "Enter", " "].includes(event.key)) {
+        event.preventDefault();
+        openList();
+      }
+      return;
+    }
+
+    const lastIndex = filteredOptions.length - 1;
+    switch (event.key) {
+      case "ArrowDown":
+        event.preventDefault();
+        setActiveIndex((index) => Math.min(index + 1, lastIndex));
+        break;
+      case "ArrowUp":
+        event.preventDefault();
+        setActiveIndex((index) => Math.max(index - 1, 0));
+        break;
+      case "Home":
+      case "End":
+        if (searchable) break;
+        event.preventDefault();
+        setActiveIndex(event.key === "Home" ? 0 : lastIndex);
+        break;
+      case " ":
+        if (searchable) break;
+        event.preventDefault();
+        if (activeOption) pick(activeOption);
+        break;
+      case "Enter":
+        event.preventDefault();
+        if (activeOption) pick(activeOption);
+        break;
+      case "Escape":
+        event.preventDefault();
+        close(true);
+        break;
+      case "Tab":
+        close(false);
+        break;
+    }
+  };
 
   const renderOptions = () => {
     if (isLoading) {
       return (
-        <li className="px-4 py-2 text-sm text-text-secondary">
+        <li
+          role="option"
+          aria-disabled="true"
+          aria-selected="false"
+          className="px-4 py-2 text-sm text-text-secondary"
+        >
           {t("loading")}
         </li>
       );
@@ -134,28 +233,37 @@ export function ComboBox({
 
     if (filteredOptions.length === 0) {
       return (
-        <li className="px-4 py-2 text-sm text-text-secondary">{t("empty")}</li>
+        <li
+          role="option"
+          aria-disabled="true"
+          aria-selected="false"
+          className="px-4 py-2 text-sm text-text-secondary"
+        >
+          {t("empty")}
+        </li>
       );
     }
 
-    return filteredOptions.map((opt) => (
-      <li key={opt.value}>
-        <button
-          type="button"
-          className={cn(
-            "w-full text-left px-4 py-2 text-sm transition-colors duration-150",
-            value === opt.value
-              ? "bg-tint-primary font-semibold text-ink-primary border-l-2 border-solid-primary"
-              : "text-text-heading hover:bg-tint-primary hover:text-ink-primary",
-          )}
-          onClick={() => {
-            onChange(opt.value);
-            setOpen(false);
-          }}
-          aria-current={value === opt.value ? "true" : undefined}
-        >
-          {opt.label}
-        </button>
+    return filteredOptions.map((opt, index) => (
+      // Keyboard interaction lives on the combobox, which owns focus;
+      // an option only takes the pointer.
+      // eslint-disable-next-line jsx-a11y/click-events-have-key-events
+      <li
+        key={opt.value}
+        id={optionId(index)}
+        role="option"
+        aria-selected={value === opt.value}
+        className={cn(
+          "cursor-pointer px-4 py-2 text-sm transition-colors duration-150",
+          value === opt.value
+            ? "bg-tint-primary font-semibold text-ink-primary border-l-2 border-solid-primary"
+            : "text-text-heading",
+          index === activeIndex && "bg-tint-primary text-ink-primary",
+        )}
+        onClick={() => pick(opt)}
+        onMouseMove={() => setActiveIndex(index)}
+      >
+        {opt.label}
       </li>
     ));
   };
@@ -170,6 +278,7 @@ export function ComboBox({
         <Text
           variant="label"
           as="label"
+          id={labelId}
           htmlFor={inputId}
           className="mb-2 block"
         >
@@ -179,22 +288,27 @@ export function ComboBox({
 
       <div className="relative">
         <button
+          ref={triggerRef}
           id={inputId}
           type="button"
+          role="combobox"
           className={cn(
             DROPDOWN_TRIGGER_BASE,
             "text-left",
             selectedOption && value !== "" && "border-solid-primary",
             error && "border-solid-error focus-ring focus:border-solid-error",
           )}
-          onClick={() => setOpen((o) => !o)}
+          onClick={() => (open ? close(false) : openList())}
+          onKeyDown={handleKeyDown}
           disabled={disabled}
+          aria-labelledby={label ? labelId : valueId}
           aria-describedby={error ? `${inputId}-error` : undefined}
           aria-expanded={open}
-          aria-haspopup="true"
-          aria-controls={`${inputId}-listbox`}
+          aria-haspopup="listbox"
+          aria-controls={listboxId}
+          aria-activedescendant={searchable ? undefined : activeDescendant}
         >
-          <span className="truncate block">
+          <span id={valueId} className="truncate block">
             {selectedOption ? (
               selectedOption.label
             ) : (
@@ -210,22 +324,33 @@ export function ComboBox({
         </span>
       </div>
 
-      <Popover id={`${inputId}-listbox`} open={open} align="stretch">
+      <Popover open={open} align="stretch">
         {searchable && (
           <input
             ref={searchRef}
             type="text"
             className="w-full px-3 py-2 border-b border-divide bg-surface-subtle text-text-heading placeholder:text-text-secondary text-sm focus-ring-inset"
             placeholder={t("table.filter")}
+            aria-label={t("table.filter")}
+            aria-controls={listboxId}
+            aria-activedescendant={activeDescendant}
+            aria-autocomplete="list"
             value={search}
+            onKeyDown={handleKeyDown}
             onChange={(e) => {
               setSearch(e.target.value);
+              setActiveIndex(0);
               onSearchChange?.(e.target.value);
             }}
           />
         )}
 
-        <ul className="max-h-60 overflow-y-auto scrollbar-hide py-1">
+        <ul
+          id={listboxId}
+          role="listbox"
+          aria-labelledby={label ? labelId : valueId}
+          className="max-h-60 overflow-y-auto scrollbar-hide py-1"
+        >
           {renderOptions()}
         </ul>
       </Popover>
