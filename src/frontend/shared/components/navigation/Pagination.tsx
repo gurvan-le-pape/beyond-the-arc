@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 
+import { PAGE_SIZES } from "@/shared/constants";
 import type { Pagination as PaginationType } from "@/shared/types";
 
 import { Text } from "../typography";
@@ -25,8 +26,6 @@ interface PaginationProps {
   readonly label: string;
 }
 
-const PAGE_SIZES = [25, 50, 100];
-
 const navButtonBase = "p-2 rounded-button transition-colors";
 const navButtonEnabled =
   "surface-subtle text-text-emphasis hover:bg-surface-inset border border-divide";
@@ -43,9 +42,9 @@ const navButtonDisabled =
  * the single most common place for an off-by-one here, and it is silent: page
  * one looks right and everything after it is wrong.
  *
- * Page sizes are a fixed set (25/50/100), capped by the API's 100-row limit;
- * changing them is a change here, not a prop. On narrow screens the numbered
- * pages collapse to a current-page indicator, keeping first/previous/next/last
+ * Page sizes come from `PAGE_SIZES`, not a prop, so the select and the `size`
+ * query parameter accept the same set. On narrow screens the numbered pages
+ * collapse to a current-page indicator, keeping first/previous/next/last
  * reachable.
  */
 export function Pagination({
