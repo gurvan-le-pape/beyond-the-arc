@@ -1,10 +1,10 @@
 // src/frontend/features/organizations/clubs/components/club-directory/useClubsFilterState.ts
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useMemo } from "react";
 
-import { useLocationFilterState } from "@/features/organizations/hooks";
-import { usePaginationState } from "@/shared/hooks";
+import { useUrlState } from "@/shared/hooks";
+import { intParam, pageSizeParam, textParam } from "@/shared/utils";
 
 export interface ClubsFilterState {
   search: string;
@@ -22,66 +22,75 @@ export interface ClubsFilterSetters {
 
 const DEFAULT_PAGE_SIZE = 50;
 
+/** The clubs list's query parameters, one codec each. */
+const CODECS = {
+  q: textParam,
+  league: intParam,
+  committee: intParam,
+  page: intParam,
+  size: pageSizeParam,
+};
+
+/** Merged into every filter change: a new filter starts again from page 1. */
+const FIRST_PAGE = { page: undefined } as const;
+
 /**
- * Owns the clubs list's filters and pagination.
+ * Owns the clubs list's filters and pagination in the query string, so a
+ * filtered list survives a reload and the back button, and can be shared as a
+ * link.
  *
- * Any filter change resets to page 1, and the location half is delegated to
- * `useLocationFilterState` so the level → committee/league cascade behaves the
- * same here as on the other lists. Page size defaults to 50.
+ * **Changing any filter resets to page 1**, in the same URL update. A new
+ * league clears the committee: committees are offered scoped to the selected
+ * league, so one chosen under another league is meaningless. Page size
+ * defaults to 50.
  *
  * @returns the filter values, their setters, and pagination state
  */
 export function useClubsFilterState() {
-  const {
-    committeeId,
-    setCommitteeId,
-    leagueId,
-    setLeagueId,
-    resetFilters: resetLocationFilters,
-  } = useLocationFilterState();
-
-  const [search, setSearch] = useState("");
-  const {
-    currentPage,
-    setCurrentPage,
-    pageSize,
-    setPageSize,
-    resetToFirstPage,
-  } = usePaginationState(DEFAULT_PAGE_SIZE);
-
-  useEffect(() => {
-    resetToFirstPage();
-  }, [search, leagueId, committeeId, resetToFirstPage]);
-
-  // Committees are offered scoped to the selected league, so a committee
-  // chosen under one league is meaningless under another.
-  const handleSetLeagueId = useCallback(
-    (value: number | undefined) => {
-      setLeagueId(value);
-      setCommitteeId(undefined);
-    },
-    [setLeagueId, setCommitteeId],
-  );
-
-  const resetFilters = useCallback(() => {
-    setSearch("");
-    setCurrentPage(1);
-    resetLocationFilters();
-  }, [resetLocationFilters, setCurrentPage]);
+  const { state, update } = useUrlState(CODECS);
 
   const filters: ClubsFilterState = {
-    search,
-    leagueId,
-    committeeId,
-    currentPage,
-    pageSize,
+    search: state.q ?? "",
+    leagueId: state.league,
+    committeeId: state.committee,
+    currentPage: state.page ?? 1,
+    pageSize: state.size ?? DEFAULT_PAGE_SIZE,
   };
 
-  const setters: ClubsFilterSetters = {
-    setSearch,
-    setLeagueId: handleSetLeagueId,
-    setCommitteeId,
-  };
+  const setters: ClubsFilterSetters = useMemo(
+    () => ({
+      setSearch: (value) => update({ q: value, ...FIRST_PAGE }),
+      setLeagueId: (value) =>
+        update({ league: value, committee: undefined, ...FIRST_PAGE }),
+      setCommitteeId: (value) => update({ committee: value, ...FIRST_PAGE }),
+    }),
+    [update],
+  );
+
+  const setCurrentPage = useCallback(
+    (page: number) => update({ page: page > 1 ? page : undefined }),
+    [update],
+  );
+
+  const setPageSize = useCallback(
+    (size: number) =>
+      update({
+        size: size === DEFAULT_PAGE_SIZE ? undefined : size,
+        ...FIRST_PAGE,
+      }),
+    [update],
+  );
+
+  const resetFilters = useCallback(
+    () =>
+      update({
+        q: undefined,
+        league: undefined,
+        committee: undefined,
+        ...FIRST_PAGE,
+      }),
+    [update],
+  );
 
   return {
     filters,
