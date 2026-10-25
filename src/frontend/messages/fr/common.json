@@ -84,7 +84,6 @@
   },
   "table": {
     "filter": "Filtrer ...",
-    "filterName": "Filtrer nom ...",
     "rank": "#",
     "team": "Équipe",
     "gamesWon": "Gagnés",
