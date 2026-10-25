@@ -3,8 +3,9 @@
 
 import { Users } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { Suspense } from "react";
 
-import { EmptyState } from "@/shared/components/feedback";
+import { EmptyState, Spinner } from "@/shared/components/feedback";
 import { SearchTabShell } from "@/shared/components/navigation";
 
 import { useClubs } from "../../api";
@@ -17,9 +18,26 @@ import { useClubsFilterState } from "./useClubsFilterState";
  * The directory of clubs: filters, results table and pagination.
  *
  * Takes no props and owns everything, including its own data — which is why the
- * clubs route needs no server fetch and prerenders as a static shell.
+ * clubs route needs no server fetch and prerenders as a static shell. The
+ * filters live in the query string, and reading it needs a Suspense boundary to
+ * keep the route prerendered: the shell carries the loading spinner, and the
+ * directory swaps in once the search params are available.
  */
 export function ClubDirectory() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex justify-center items-center py-20">
+          <Spinner size="lg" />
+        </div>
+      }
+    >
+      <ClubDirectoryContent />
+    </Suspense>
+  );
+}
+
+function ClubDirectoryContent() {
   const tCommon = useTranslations("common");
   const tOrganizations = useTranslations("organizations");
 

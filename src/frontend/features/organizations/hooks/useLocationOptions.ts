@@ -8,7 +8,7 @@ import { useLeagues } from "@/features/organizations/leagues/api";
  * The league and committee lists a location filter offers, plus the first
  * error either lookup produced and a `retry` that re-runs it.
  *
- * Data only — the selection itself lives in `useLocationFilterState`.
+ * Data only — the selection itself lives in the caller's filter state.
  *
  * Pass `leagueId` to narrow the committees to that league, which is what a
  * league → committee cascade needs. Left off, both queries are
