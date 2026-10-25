@@ -9,18 +9,15 @@
   "categoryAriaLabel": "Catégorie",
   "divisionAriaLabel": "Division",
   "divisionWithValue": "Division {value}",
-  "roundsLabel": "Journées",
   "matchesLabel": "Matchs",
   "noSearchResults": "Aucun résultat pour « {search} »",
   "noItemsAvailable": "Aucun élément disponible",
   "noResults": "Aucun résultat",
   "poolCount": "{count, plural, one {# poule} other {# poules}}",
   "roundSelector": {
-    "dropdownLabel": "Journée {round}",
-    "pillLabel": "J{round}",
-    "scrollLeft": "Défiler à gauche",
-    "scrollRight": "Défiler à droite",
-    "label": "Journée"
+    "current": "Journée {round}",
+    "previous": "Journée précédente",
+    "next": "Journée suivante"
   },
   "leaderboardTitle": "Classement",
   "leaderboardEmpty": "Aucun classement disponible pour le moment",

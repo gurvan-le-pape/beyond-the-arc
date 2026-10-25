@@ -260,7 +260,7 @@ And a constraint documented in `docs/` but not on the component is documented wh
 
 ## Tests
 
-Tests are **Vitest**, run by `npm run test` and by the `frontend-test` CI job. Each is a `*.spec.ts` colocated with the module it tests, mirroring the backend, and runs in the `node` environment (`vitest.config.ts`): there is no DOM and no JSX transform, so what gets tested is **pure TypeScript** — the data derivations, geometry and rules that components call (`matchWinner`, `roundWindow`, `shotSummary`, the shot-zone predicates). That is one more reason to split along [When to split](#when-to-split): logic moved out of a component into a `.ts` module becomes testable.
+Tests are **Vitest**, run by `npm run test` and by the `frontend-test` CI job. Each is a `*.spec.ts` colocated with the module it tests, mirroring the backend, and runs in the `node` environment (`vitest.config.ts`): there is no DOM and no JSX transform, so what gets tested is **pure TypeScript** — the data derivations, geometry and rules that components call (`matchWinner`, `shotSummary`, the shot-zone predicates). That is one more reason to split along [When to split](#when-to-split): logic moved out of a component into a `.ts` module becomes testable.
 
 `styles/contrast.spec.ts` is the one test over the stylesheet rather than code: it reads every colour token in the three themes and fails CI on any promised text/background pair below its WCAG floor. See the design system section of [`frontend.md`](./frontend.md#design-system).
 

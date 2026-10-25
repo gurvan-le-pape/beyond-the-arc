@@ -9,18 +9,15 @@
   "categoryAriaLabel": "Category",
   "divisionAriaLabel": "Division",
   "divisionWithValue": "Division {value}",
-  "roundsLabel": "Rounds",
   "matchesLabel": "Matches",
   "noSearchResults": "No results for « {search} »",
   "noItemsAvailable": "No items available",
   "noResults": "No results",
   "poolCount": "{count, plural, one {# pool} other {# pools}}",
   "roundSelector": {
-    "dropdownLabel": "Round {round}",
-    "pillLabel": "R{round}",
-    "scrollLeft": "Scroll left",
-    "scrollRight": "Scroll right",
-    "label": "Round"
+    "current": "Round {round}",
+    "previous": "Previous round",
+    "next": "Next round"
   },
   "leaderboardTitle": "Leaderboard",
   "leaderboardEmpty": "No standings available yet",
