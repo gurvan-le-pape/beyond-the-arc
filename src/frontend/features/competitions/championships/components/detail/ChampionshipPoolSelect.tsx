@@ -39,6 +39,8 @@ export function ChampionshipPoolSelect({
 
   return (
     <Select
+      label={tTeams("pool")}
+      hideLabel
       value={selectedPoolId}
       onChange={handlePoolChange}
       options={pools.map((pool) => ({

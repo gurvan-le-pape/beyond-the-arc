@@ -104,7 +104,8 @@
       "tipOff": "{winner} remporte l'entre-deux.",
       "quarterEnd": "Fin du quart-temps.",
       "shotClock": "Violation des 24 secondes."
-    }
+    },
+    "categoryLabel": "Type d'événement"
   },
   "matchSummary": {
     "title": "Résumé du match",

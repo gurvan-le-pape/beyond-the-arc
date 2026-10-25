@@ -28,6 +28,11 @@ export interface ComboBoxProps {
   readonly value: string | number | undefined;
   readonly onChange: (value: string | number | undefined) => void;
   readonly label?: string;
+  /**
+   * Keep the label for screen readers but hide it visually, for a picker whose
+   * purpose is plain from its surroundings. Default: false.
+   */
+  readonly hideLabel?: boolean;
   readonly placeholder?: string;
   readonly disabled?: boolean;
   readonly className?: string;
@@ -97,6 +102,7 @@ export function ComboBox({
   value,
   onChange,
   label,
+  hideLabel = false,
   placeholder,
   disabled = false,
   className,
@@ -116,9 +122,9 @@ export function ComboBox({
   const searchRef = useRef<HTMLInputElement>(null);
   const generatedId = useId();
 
-  const inputId = label
-    ? `combobox-${label.toLowerCase().replaceAll(/\s+/g, "-")}`
-    : `combobox-${generatedId}`;
+  // From useId, never from the label: the same labelled picker can be mounted
+  // twice (one per breakpoint), and a label-derived id is then duplicated.
+  const inputId = `combobox-${generatedId}`;
   const labelId = `${inputId}-label`;
   const valueId = `${inputId}-value`;
   const listboxId = `${inputId}-listbox`;
@@ -293,7 +299,7 @@ export function ComboBox({
           as="label"
           id={labelId}
           htmlFor={inputId}
-          className="mb-2 block"
+          className={hideLabel ? "sr-only" : "mb-2 block"}
         >
           {label}
         </Text>

@@ -19,7 +19,8 @@
     "dropdownLabel": "Round {round}",
     "pillLabel": "R{round}",
     "scrollLeft": "Scroll left",
-    "scrollRight": "Scroll right"
+    "scrollRight": "Scroll right",
+    "label": "Round"
   },
   "leaderboardTitle": "Leaderboard",
   "leaderboardEmpty": "No standings available yet",
