@@ -12,6 +12,16 @@ const textVariants = cva("", {
       h3: "text-lg md:text-xl font-semibold text-text-heading",
       h4: "text-base md:text-lg font-medium text-text-heading",
 
+      // The heading of a compact box — a card in a grid, a diagram node, a
+      // row in a list. One size at every breakpoint: the box does not grow
+      // with the viewport, so its title should not either.
+      //
+      // The heading variants above are responsive, so a size passed in
+      // `className` replaces only their base size and the `md:` one returns
+      // from `md` up. A heading that needs another size takes the variant
+      // that has it, not an override.
+      title: "text-base font-semibold text-text-heading",
+
       // Page title — use for route-level list pages (appears after a Breadcrumb,
       // before a grid or table). One step smaller than h1 — intentional.
       // For hero headings with a lead subtitle, use h1 instead.
@@ -62,6 +72,7 @@ const variantTagMap: Record<string, ElementType> = {
   h2: "h2",
   h3: "h3",
   h4: "h4",
+  title: "h3",
   pageTitle: "h1",
   body: "p",
   lead: "p",

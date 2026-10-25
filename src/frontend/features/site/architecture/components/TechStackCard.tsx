@@ -36,7 +36,7 @@ export function TechStackCard({
       <div className={`${STACK_TONE_CLASSES[tone]} p-6`}>
         <div className="flex items-center gap-3">
           <Icon className="w-8 h-8" />
-          <Text variant="h2" className="text-inherit text-xl">
+          <Text variant="h2" className="text-inherit">
             {title}
           </Text>
         </div>
