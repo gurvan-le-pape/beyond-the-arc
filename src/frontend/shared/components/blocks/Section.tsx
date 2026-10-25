@@ -34,7 +34,8 @@ interface SectionProps {
  * structure from their title and the space between them, so their content
  * gets the full width of the page. Content inside sits on the page surface;
  * a panel that needs a fill (InfoBox, Input) takes `bg-surface-inset`, which
- * resolves one step above it.
+ * resolves one step above it. A table inside still draws its own frame: that
+ * bounds the table, not the section.
  */
 export function Section({ title, action, children, className }: SectionProps) {
   return (

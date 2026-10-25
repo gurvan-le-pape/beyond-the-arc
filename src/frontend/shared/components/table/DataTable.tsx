@@ -70,12 +70,6 @@ interface DataTableBaseProps<T> {
   readonly rows: T[];
   readonly getRowKey: (row: T) => React.Key;
   /**
-   * The table's outer treatment. `outline` is for a table that stands on its
-   * own; a table inside a Section stays `none`, because the Section is already
-   * a bordered Card.
-   */
-  readonly frame?: "none" | "outline";
-  /**
    * Cell padding. Says nothing about wrapping — see `wrap`. Pick by column
    * count: `comfortable` up to a handful, `cozy` around eight to ten,
    * `compact` for a full stat line.
@@ -167,7 +161,6 @@ export function DataTable<T>({
   columns,
   rows,
   getRowKey,
-  frame = "none",
   density = "comfortable",
   wrap = true,
   emptyMessage,
@@ -176,7 +169,7 @@ export function DataTable<T>({
   stickyLead = false,
 }: DataTableProps<T>) {
   return (
-    <Table frame={frame}>
+    <Table>
       <TableHeader>
         <TableRow>
           {columns.map((column, columnIndex) => (

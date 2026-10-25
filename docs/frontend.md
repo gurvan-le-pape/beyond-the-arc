@@ -401,11 +401,12 @@ Every table in the app is `DataTable` (`shared/components/table`), driven by a `
 
 **Presentation is a closed set of typed variants — there are no `className` props**, on the table, the header, the cells or the rows. This is the CVA rule above applied strictly, and it is load-bearing rather than stylistic: when the props were `variant`/`size` plus four class-string hatches, four tables accumulated three different framings and two different stripe recipes, and the box score had already reached past the `variant` enum to hand-write its own border. A look `DataTable` cannot express is a request for a new named variant, reviewed once in `variants.ts`.
 
+**Every table draws the same frame** — `border border-divide rounded-card`, `TABLE_FRAME` in `variants.ts`. It is drawn on the **scroll container**, not the `<table>`: a border radius on a `<table>` does not clip the rows inside it, so anything painted to the edge squares the corners back off, and a border on the table would scroll away with the content. There is deliberately no prop: whether a table "stands alone" is a judgement call, and leaving it to each call site is how sibling list pages end up framed differently.
+
 Table-level axes:
 
 | Prop | Values | Meaning |
 | --- | --- | --- |
-| `frame` | `none` \| `outline` | Whether the table draws its own border. `none` inside a `Section`, which lays its content flat under the section title — the table's rules and header are frame enough there. `outline` for a table that stands alone. Drawn on the **scroll container**, not the `<table>`: a border radius on a `<table>` does not clip the rows inside it, so anything painted to the edge squares the corners back off, and a border on the table would scroll away with the content. |
 | `density` | `comfortable` \| `cozy` \| `compact` | Cell padding only. Pick by column count — `comfortable` (`px-4 py-3.5`) up to a handful, `cozy` (`px-3 py-2.5`) around eight to ten, `compact` (`px-2 py-1.5`) for a full stat line. |
 | `wrap` | boolean | Whether cells may wrap. Separate from `density` so a table can be dense without being forced onto one line. |
 | `stickyLead` | boolean | Pins the first column while the rest scrolls sideways. Only worth setting when the lead column identifies the row — the box score's `name` column was moved to the front for exactly this reason, because pinning its jersey number would have kept a bare digit on screen while the player left. |

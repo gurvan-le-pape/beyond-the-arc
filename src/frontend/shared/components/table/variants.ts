@@ -111,9 +111,9 @@ const from = {
 // ---------------------------------------------------------------------------
 
 /**
- * The table's outer treatment. `outline` is for a table that stands on its
- * own; a table inside a Section uses `none`, because the Section is already a
- * bordered Card and a second border inside it reads as a boxed-in box.
+ * One frame for every table — no variants, hence no cva. A border marks where
+ * the table ends whatever sits around it: a heading, filters, a card, or
+ * nothing, and on a phone it shows where the horizontal scroller stops.
  *
  * Applied to the scroll container, not the `<table>`. Two reasons: the
  * container is what actually bounds the table once the content is wider than
@@ -122,18 +122,9 @@ const from = {
  * filled last row squares the bottom corners straight off.
  *
  * `rounded-card` rather than `rounded-button`: 12px is the radius of the
- * `Card` this table sits beside, and the table is a card-scale block. 8px is
- * the button radius and was never the right token here.
+ * `Card` this table sits beside, and the table is a card-scale block.
  */
-export const frameVariants = cva("", {
-  variants: {
-    frame: {
-      none: "",
-      outline: "border border-divide rounded-card",
-    },
-  },
-  defaultVariants: { frame: "none" },
-});
+export const TABLE_FRAME = "border border-divide rounded-card";
 
 /**
  * One header treatment for every table — no variants, hence no cva.
