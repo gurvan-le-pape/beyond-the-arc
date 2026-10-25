@@ -7,9 +7,7 @@ import { useMemo, useState } from "react";
 import { usePlayerMatches } from "@/features/players/api";
 import type { Player, PlayerCareerStats } from "@/features/players/types";
 import { Section, StatComparison } from "@/shared/components/blocks";
-import { ErrorMessage } from "@/shared/components/feedback";
-import { Dot } from "@/shared/components/primitives";
-import { cn } from "@/shared/utils";
+import { ErrorMessage, Spinner } from "@/shared/components/feedback";
 
 import { PlayerSearchDropdown } from "./PlayerSearchDropdown";
 
@@ -17,27 +15,6 @@ import { PlayerSearchDropdown } from "./PlayerSearchDropdown";
 
 function labelForPlayer(p: Player) {
   return `#${p.number} ${p.name}`;
-}
-
-// ─── Loading indicator ────────────────────────────────────────────────────────
-
-function LoadingDots() {
-  return (
-    <div className="flex items-center justify-center gap-2 py-6">
-      {[0, 1, 2].map((i) => (
-        <span
-          key={i}
-          className={cn(
-            "flex animate-pulse",
-            i === 1 && "[animation-delay:200ms]",
-            i === 2 && "[animation-delay:400ms]",
-          )}
-        >
-          <Dot />
-        </span>
-      ))}
-    </div>
-  );
 }
 
 // ─── Main component ───────────────────────────────────────────────────────────
@@ -126,7 +103,7 @@ export function PlayerComparison({
       </div>
 
       <div className="mt-5">
-        {isLoadingOpponent && <LoadingDots />}
+        {isLoadingOpponent && <Spinner className="py-6" />}
 
         {/* A failed opponent lookup leaves statsB null, which renders exactly
             like "no opponent picked yet" — silence where a failure happened. */}
