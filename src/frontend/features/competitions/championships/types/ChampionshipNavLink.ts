@@ -2,7 +2,7 @@
 
 /**
  * One destination in the championship detail nav — a sibling championship
- * reachable by changing a single facet (its category, or its division).
+ * reachable by changing a single facet: its category, gender or division.
  *
  * The builders in `utils/` resolve the facet to a concrete championship id and
  * hand back links, so the component that renders them needs no lookup table and

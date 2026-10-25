@@ -7,7 +7,6 @@ import { serverChampionshipsService } from "@/features/competitions/championship
 import {
   ChampionshipBreadcrumb,
   ChampionshipHeader,
-  ChampionshipNavigation,
   ChampionshipPoolSelect,
   ChampionshipSections,
 } from "@/features/competitions/championships/components";
@@ -16,6 +15,7 @@ import {
   buildChampionshipHeading,
   buildChampionshipTitle,
   buildDivisionNavigation,
+  buildGenderNavigation,
   resolveOrganizationId,
   resolvePoolId,
 } from "@/features/competitions/championships/utils";
@@ -118,6 +118,12 @@ async function ChampionshipsDetailPage({
 
   const categoryLinks = buildCategoryNavigation(championships, championship);
 
+  const genderLinks = buildGenderNavigation(
+    championships,
+    championship,
+    (gender) => tCommon(`gender.${gender}`),
+  );
+
   const divisionLinks = buildDivisionNavigation(
     championships,
     championship,
@@ -138,12 +144,12 @@ async function ChampionshipsDetailPage({
               })}
             />
 
-            <ChampionshipHeader championship={championship}>
-              <ChampionshipNavigation
-                categoryLinks={categoryLinks}
-                divisionLinks={divisionLinks}
-              />
-            </ChampionshipHeader>
+            <ChampionshipHeader
+              championship={championship}
+              categoryLinks={categoryLinks}
+              genderLinks={genderLinks}
+              divisionLinks={divisionLinks}
+            />
           </>
         }
         standings={

@@ -1,17 +1,22 @@
 // src/frontend/features/competitions/championships/components/detail/ChampionshipHeader.tsx
 import { useTranslations } from "next-intl";
-import type { ReactNode } from "react";
+import { Fragment } from "react";
 
-import type { Championship } from "@/features/competitions/championships/types";
+import type {
+  Championship,
+  ChampionshipNavLink,
+} from "@/features/competitions/championships/types";
 import { buildChampionshipHeading } from "@/features/competitions/championships/utils";
-import { Card, Divider, TextLink } from "@/shared/components/primitives";
+import { Card, LinkMenu, TextLink } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { CompetitionLevel } from "@/shared/constants";
 
 interface ChampionshipHeaderProps {
   readonly championship: Championship;
-  /** Under a rule beneath the heading: the links to sibling championships. */
-  readonly children?: ReactNode;
+  /** The sibling championships one facet away, from the `build*Navigation` utils. */
+  readonly categoryLinks: ChampionshipNavLink[];
+  readonly genderLinks: ChampionshipNavLink[];
+  readonly divisionLinks: ChampionshipNavLink[];
 }
 
 /**
@@ -19,24 +24,47 @@ interface ChampionshipHeaderProps {
  * division as the page's heading, and under it the organiser, linked to its
  * page, and the season.
  *
+ * Each facet of the heading is also the way to its siblings: one with
+ * somewhere else to go opens a {@link LinkMenu} of them, one without stays
+ * plain text, so a championship that is its organiser's only division shows
+ * no division control at all.
+ *
  * The organiser is the committee at departmental level and the league
  * otherwise, named after its department or region. It is left out when neither
  * is set — national championships have no organisation above them.
  */
 export function ChampionshipHeader({
   championship,
-  children,
+  categoryLinks,
+  genderLinks,
+  divisionLinks,
 }: ChampionshipHeaderProps) {
   const tCommon = useTranslations("common");
   const tCompetitions = useTranslations("competitions");
   const tOrganizations = useTranslations("organizations");
 
-  const heading = buildChampionshipHeading(championship, {
-    gender: tCommon(`gender.${championship.gender}`),
-    division: tCompetitions("divisionWithValue", {
-      value: championship.division,
-    }),
+  const genderLabel = tCommon(`gender.${championship.gender}`);
+  const divisionLabel = tCompetitions("divisionWithValue", {
+    value: championship.division,
   });
+
+  const facets = [
+    {
+      label: championship.category,
+      ariaLabel: tCompetitions("categoryAriaLabel"),
+      links: categoryLinks,
+    },
+    {
+      label: genderLabel,
+      ariaLabel: tCompetitions("genderAriaLabel"),
+      links: genderLinks,
+    },
+    {
+      label: divisionLabel,
+      ariaLabel: tCompetitions("divisionAriaLabel"),
+      links: divisionLinks,
+    },
+  ];
 
   const isDepartmental = championship.level === CompetitionLevel.DEPARTMENTAL;
   const organizer = isDepartmental
@@ -56,8 +84,30 @@ export function ChampionshipHeader({
   return (
     <Card padding="none">
       <div className="p-4 sm:p-6">
-        <Text variant="h1" className="text-xl md:text-2xl">
-          {heading}
+        {/* Named outright: computed from its content, the name would take in
+            each menu's own label too ("Seniors Category · Men Gender …"). */}
+        <Text
+          variant="h1"
+          className="text-xl md:text-2xl"
+          aria-label={buildChampionshipHeading(championship, {
+            gender: genderLabel,
+            division: divisionLabel,
+          })}
+        >
+          {facets.map((facet, index) => (
+            <Fragment key={facet.ariaLabel}>
+              {index > 0 && " · "}
+              {facet.links.length > 1 ? (
+                <LinkMenu
+                  label={facet.label}
+                  ariaLabel={facet.ariaLabel}
+                  items={facet.links}
+                />
+              ) : (
+                facet.label
+              )}
+            </Fragment>
+          ))}
         </Text>
         <Text variant="body" className="mt-1 text-text-secondary">
           {organizer.place && organizer.id !== null && (
@@ -76,12 +126,6 @@ export function ChampionshipHeader({
           {championship.seasonYear}
         </Text>
       </div>
-      {children && (
-        <>
-          <Divider />
-          <div className="px-4 py-3 sm:px-6">{children}</div>
-        </>
-      )}
     </Card>
   );
 }
