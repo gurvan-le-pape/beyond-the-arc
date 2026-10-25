@@ -20,12 +20,16 @@ interface ChampionshipHeaderProps {
   readonly divisionLinks: ChampionshipNavLink[];
   /** The championship this one's champion moves up into, when there is one. */
   readonly levelAboveHref?: string;
+  /** The departments below a regional championship, each to its top division. */
+  readonly levelBelowLinks?: ChampionshipNavLink[];
 }
 
 /**
  * The identity block on a championship detail page: the category, gender and
  * division as the page's heading, and under it the organiser, linked to its
- * page, the season and, at departmental level, a link one level up.
+ * page, the season and the way to the other level of the league: a link up
+ * to the regional championship from a departmental one, a menu of
+ * departments down from a regional one.
  *
  * Each facet of the heading is also the way to its siblings: one with
  * somewhere else to go opens a {@link LinkMenu} of them, one without stays
@@ -42,6 +46,7 @@ export function ChampionshipHeader({
   genderLinks,
   divisionLinks,
   levelAboveHref,
+  levelBelowLinks = [],
 }: ChampionshipHeaderProps) {
   const tCommon = useTranslations("common");
   const tCompetitions = useTranslations("competitions");
@@ -113,7 +118,8 @@ export function ChampionshipHeader({
             </Fragment>
           ))}
         </Text>
-        <Text variant="body" className="mt-1 text-text-secondary">
+        {/* A div, not the variant's p: a LinkMenu's panel is a div. */}
+        <Text variant="body" as="div" className="mt-1 text-text-secondary">
           {organizer.place && organizer.id !== null && (
             <>
               {organizer.kind}
@@ -138,6 +144,16 @@ export function ChampionshipHeader({
                 />
                 {tCompetitions("regionalLevel")}
               </TextLink>
+            </>
+          )}
+          {levelBelowLinks.length > 0 && (
+            <>
+              {" · "}
+              <LinkMenu
+                label={tCompetitions("departmentalLevel")}
+                ariaLabel={tCompetitions("departmentsAriaLabel")}
+                items={levelBelowLinks}
+              />
             </>
           )}
         </Text>

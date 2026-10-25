@@ -16,6 +16,7 @@ import {
   buildChampionshipTitle,
   buildDivisionNavigation,
   buildGenderNavigation,
+  buildLevelBelowNavigation,
   findLevelAbove,
   resolveOrganizationId,
   resolvePoolId,
@@ -96,7 +97,7 @@ async function ChampionshipsDetailPage({
 
   const isDepartmental = championship.level === CompetitionLevel.DEPARTMENTAL;
 
-  const [pools, { items: championships }, { items: regionals }] =
+  const [pools, { items: championships }, { items: otherLevel }] =
     await Promise.all([
       serverPoolsService.getByChampionshipId(championshipId),
       // Its siblings: same organiser, same level.
@@ -107,10 +108,15 @@ async function ChampionshipsDetailPage({
           : { leagueId: organizationId }),
         limit: 100,
       }),
-      // The same category and gender one level up, in the committee's league.
-      isDepartmental && championship.leagueId !== null
+      // The same category and gender at the other level of the same league:
+      // regional from a departmental championship, departmental from a
+      // regional one. National championships belong to no league.
+      championship.level !== CompetitionLevel.NATIONAL &&
+      championship.leagueId !== null
         ? serverChampionshipsService.getAll({
-            level: CompetitionLevel.REGIONAL,
+            level: isDepartmental
+              ? CompetitionLevel.REGIONAL
+              : CompetitionLevel.DEPARTMENTAL,
             leagueId: championship.leagueId,
             category: championship.category,
             gender: championship.gender,
@@ -138,7 +144,10 @@ async function ChampionshipsDetailPage({
     (gender) => tCommon(`gender.${gender}`),
   );
 
-  const levelAbove = findLevelAbove(regionals);
+  const levelAbove = isDepartmental ? findLevelAbove(otherLevel) : undefined;
+  const levelBelowLinks = isDepartmental
+    ? []
+    : buildLevelBelowNavigation(otherLevel, locale);
 
   const divisionLinks = buildDivisionNavigation(
     championships,
@@ -166,6 +175,7 @@ async function ChampionshipsDetailPage({
               genderLinks={genderLinks}
               divisionLinks={divisionLinks}
               levelAboveHref={levelAbove && `/championships/${levelAbove.id}`}
+              levelBelowLinks={levelBelowLinks}
             />
           </>
         }

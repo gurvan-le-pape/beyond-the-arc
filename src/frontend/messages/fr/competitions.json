@@ -9,6 +9,8 @@
   "categoryAriaLabel": "Catégorie",
   "genderAriaLabel": "Genre",
   "divisionAriaLabel": "Division",
+  "departmentalLevel": "Niveau départemental",
+  "departmentsAriaLabel": "Départements",
   "regionalLevel": "Niveau régional",
   "divisionWithValue": "Division {value}",
   "matchesLabel": "Matchs",
