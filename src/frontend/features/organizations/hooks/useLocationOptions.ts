@@ -15,11 +15,12 @@ import { useLeagues } from "@/features/organizations/leagues/api";
  * unparameterised and every caller shares one cache entry per list.
  *
  * @param params - `leagueId` narrows the committees to that league; omitted, both lists are unparameterised and shared across callers
- * @returns the two option lists, the first error either lookup produced, and a `retry` for it
+ * @returns the two option lists, whether each has loaded, the first error either lookup produced, and a `retry` for it
  */
 export function useLocationOptions(params?: { leagueId?: number }) {
   const {
     data: committees = [],
+    isSuccess: committeesLoaded,
     error: committeesError,
     refetch: refetchCommittees,
   } = useCommittees(
@@ -27,6 +28,7 @@ export function useLocationOptions(params?: { leagueId?: number }) {
   );
   const {
     data: leagues = [],
+    isSuccess: leaguesLoaded,
     error: leaguesError,
     refetch: refetchLeagues,
   } = useLeagues();
@@ -34,6 +36,8 @@ export function useLocationOptions(params?: { leagueId?: number }) {
   return {
     committees,
     leagues,
+    committeesLoaded,
+    leaguesLoaded,
     error: committeesError ?? leaguesError ?? null,
     // Re-runs only the lookup that failed: the other one's list is already on
     // screen, and refetching it would be a request nobody asked for.

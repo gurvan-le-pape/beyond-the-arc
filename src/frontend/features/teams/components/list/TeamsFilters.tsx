@@ -4,7 +4,10 @@
 import { useTranslations } from "next-intl";
 
 import { ClubComboBoxFilter } from "@/features/organizations/clubs/components";
-import { useLocationOptions } from "@/features/organizations/hooks";
+import {
+  useDropUnknownLocation,
+  useLocationOptions,
+} from "@/features/organizations/hooks";
 import { useTeamFilterValues } from "@/features/teams/api";
 import { ErrorMessage } from "@/shared/components/feedback";
 import type {
@@ -56,12 +59,13 @@ export function TeamsFilters({ filters, setters, onReset }: TeamsFiltersProps) {
   const tMatches = useTranslations("matches");
   const tFilters = useTranslations("filters");
 
+  const locationOptions = useLocationOptions();
   const {
     committees,
     leagues,
     error: locationError,
     retry: retryLocation,
-  } = useLocationOptions();
+  } = locationOptions;
 
   const {
     clubId,
@@ -88,6 +92,13 @@ export function TeamsFilters({ filters, setters, onReset }: TeamsFiltersProps) {
     setDivision,
     setPool,
   } = setters;
+
+  useDropUnknownLocation(locationOptions, {
+    leagueId,
+    setLeagueId,
+    committeeId,
+    setCommitteeId,
+  });
 
   const {
     data: teamFilterValues,

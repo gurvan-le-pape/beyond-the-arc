@@ -3,7 +3,10 @@
 
 import { useTranslations } from "next-intl";
 
-import { useLocationOptions } from "@/features/organizations/hooks";
+import {
+  useDropUnknownLocation,
+  useLocationOptions,
+} from "@/features/organizations/hooks";
 import { ErrorMessage } from "@/shared/components/feedback";
 import type { ActiveFilterChip } from "@/shared/components/filters";
 import { FiltersShell } from "@/shared/components/filters";
@@ -36,12 +39,20 @@ export function ClubsFilters({ filters, setters, onReset }: ClubsFiltersProps) {
   const { search, leagueId, committeeId } = filters;
   const { setSearch, setLeagueId, setCommitteeId } = setters;
 
+  const locationOptions = useLocationOptions({ leagueId });
   const {
     leagues,
     committees,
     error: locationError,
     retry: retryLocation,
-  } = useLocationOptions({ leagueId });
+  } = locationOptions;
+
+  useDropUnknownLocation(locationOptions, {
+    leagueId,
+    setLeagueId,
+    committeeId,
+    setCommitteeId,
+  });
 
   const leagueOptions = [
     { value: "", label: tCommon("filters.allLeagues") },
