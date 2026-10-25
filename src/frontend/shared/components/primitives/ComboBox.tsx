@@ -56,6 +56,19 @@ function getFilteredOptions(
 }
 
 /**
+ * Whether `option` is the selected one. Compared as strings, as a native
+ * `<select>` does: callers hold ids as numbers while building options from
+ * `String(id)`, and a strict comparison then never matches, leaving the trigger
+ * on its placeholder and no option selected.
+ */
+function isSelected(
+  option: ComboBoxOption,
+  value: string | number | undefined,
+) {
+  return value !== undefined && String(option.value) === String(value);
+}
+
+/**
  * ComboBox — single-value picker with optional search.
  *
  * Follows the WAI-ARIA combobox pattern: the trigger is a `combobox` whose
@@ -152,11 +165,11 @@ export function ComboBox({
     }
   }, [activeDescendant]);
 
-  const selectedOption = options.find((opt) => opt.value === value);
+  const selectedOption = options.find((opt) => isSelected(opt, value));
 
   const openList = () => {
-    const selectedIndex = filteredOptions.findIndex(
-      (opt) => opt.value === value,
+    const selectedIndex = filteredOptions.findIndex((opt) =>
+      isSelected(opt, value),
     );
     setActiveIndex(Math.max(selectedIndex, 0));
     setOpen(true);
@@ -252,10 +265,10 @@ export function ComboBox({
         key={opt.value}
         id={optionId(index)}
         role="option"
-        aria-selected={value === opt.value}
+        aria-selected={isSelected(opt, value)}
         className={cn(
           "cursor-pointer px-4 py-2 text-sm transition-colors duration-150",
-          value === opt.value
+          isSelected(opt, value)
             ? "bg-tint-primary font-semibold text-ink-primary border-l-2 border-solid-primary"
             : "text-text-heading",
           index === activeIndex && "bg-tint-primary text-ink-primary",
