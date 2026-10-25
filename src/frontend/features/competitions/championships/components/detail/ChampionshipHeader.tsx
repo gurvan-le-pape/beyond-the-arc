@@ -1,5 +1,5 @@
 // src/frontend/features/competitions/championships/components/detail/ChampionshipHeader.tsx
-import { ArrowUp } from "lucide-react";
+import { ArrowDown, ArrowUp } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Fragment } from "react";
 
@@ -140,7 +140,7 @@ export function ChampionshipHeader({
               <TextLink href={levelAboveHref}>
                 <ArrowUp
                   aria-hidden
-                  className="inline size-[1em] align-[-0.125em]"
+                  className="mr-1 inline size-[1em] align-[-0.125em]"
                 />
                 {tCompetitions("regionalLevel")}
               </TextLink>
@@ -149,11 +149,15 @@ export function ChampionshipHeader({
           {levelBelowLinks.length > 0 && (
             <>
               {" · "}
-              <LinkMenu
-                label={tCompetitions("departmentalLevel")}
-                ariaLabel={tCompetitions("departmentsAriaLabel")}
-                items={levelBelowLinks}
-              />
+              {/* Coloured as the link up is: both leave for the other level. */}
+              <span className="text-ink-primary">
+                <LinkMenu
+                  label={tCompetitions("departmentalLevel")}
+                  icon={<ArrowDown aria-hidden className="size-[1em]" />}
+                  ariaLabel={tCompetitions("departmentsAriaLabel")}
+                  items={levelBelowLinks}
+                />
+              </span>
             </>
           )}
         </Text>
