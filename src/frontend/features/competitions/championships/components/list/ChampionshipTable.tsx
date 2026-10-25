@@ -107,7 +107,6 @@ export function ChampionshipTable({
       getRowKey={(row) => row.id}
       getRowHref={(row) => `/championships/${row.id}`}
       getRowLabel={(row) => buildChampionshipTitle(row, labelsFor(row))}
-      frame="outline"
       density="cozy"
       emptyMessage={emptyMessage}
     />

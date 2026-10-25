@@ -99,7 +99,6 @@ export function QuarterScoresTable({
       getRowKey={(row) => row.side}
       emptyMessage={tCommon("noData")}
       density="cozy"
-      frame="outline"
     />
   );
 }

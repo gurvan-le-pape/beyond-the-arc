@@ -6,10 +6,10 @@ import { cn } from "@/shared/utils";
 import { Text } from "../typography";
 import {
   cellVariants,
-  frameVariants,
   headInnerVariants,
   headVariants,
   rowVariants,
+  TABLE_FRAME,
   TABLE_HEADER,
 } from "./variants";
 
@@ -17,7 +17,6 @@ type Alignment = "left" | "center" | "right";
 type Density = "comfortable" | "cozy" | "compact";
 type Width = "auto" | "icon" | "fit";
 type Divider = "none" | "left" | "right" | "both";
-type Frame = "none" | "outline";
 
 // ---------------------------------------------------------------------------
 // Table
@@ -25,7 +24,6 @@ type Frame = "none" | "outline";
 
 interface TableProps extends HTMLAttributes<HTMLTableElement> {
   children: ReactNode;
-  frame?: Frame;
   ref?: React.Ref<HTMLTableElement>;
 }
 
@@ -41,19 +39,8 @@ interface TableProps extends HTMLAttributes<HTMLTableElement> {
  * whose variant API is deliberately closed; reach for these only where a table
  * cannot be expressed through it.
  */
-export const Table = ({
-  className,
-  children,
-  frame = "none",
-  ref,
-  ...props
-}: TableProps) => (
-  <div
-    className={cn(
-      "w-full overflow-x-auto scroll-shadow-x",
-      frameVariants({ frame }),
-    )}
-  >
+export const Table = ({ className, children, ref, ...props }: TableProps) => (
+  <div className={cn("w-full overflow-x-auto scroll-shadow-x", TABLE_FRAME)}>
     <table ref={ref} className={cn("min-w-full", className)} {...props}>
       {children}
     </table>
