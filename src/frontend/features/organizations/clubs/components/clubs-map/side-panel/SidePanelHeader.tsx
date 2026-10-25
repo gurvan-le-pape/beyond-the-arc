@@ -19,7 +19,7 @@ export function SidePanelHeader({ clubCount, onClose }: SidePanelHeaderProps) {
   return (
     <div className="flex items-center justify-between p-4 border-b border-divide bg-surface-inset flex-shrink-0">
       <div>
-        <Text variant="h2" className="text-lg">
+        <Text variant="h3" as="h2">
           {t("map.title")}
         </Text>
         <Text variant="caption">

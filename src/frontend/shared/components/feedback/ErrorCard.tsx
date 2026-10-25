@@ -74,9 +74,7 @@ export const ErrorCard = ({
       </div>
 
       <div className="space-y-2">
-        <Text variant="h1" className="text-xl">
-          {title}
-        </Text>
+        <Text variant="pageTitle">{title}</Text>
         {description ? <Text variant="caption">{description}</Text> : null}
       </div>
 

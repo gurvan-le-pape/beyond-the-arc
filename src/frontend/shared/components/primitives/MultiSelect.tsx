@@ -207,7 +207,7 @@ interface ColumnListProps {
 function ColumnList({ column }: ColumnListProps) {
   return (
     <div className="min-w-0">
-      <Text variant="h4" className="text-sm mb-2">
+      <Text variant="label" as="h4" className="mb-2">
         {column.title}
       </Text>
 

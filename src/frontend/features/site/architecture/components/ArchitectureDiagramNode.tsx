@@ -27,7 +27,7 @@ export function ArchitectureDiagramNode({
       className={`${STACK_TONE_CLASSES[tone]} flex w-32 shrink-0 flex-col items-center justify-center rounded-button p-4 text-center shadow-card`}
     >
       <Icon aria-hidden="true" className="mb-2 h-8 w-8" />
-      <Text variant="h3" as="p" className="text-base text-inherit">
+      <Text variant="title" as="p" className="text-inherit">
         {title}
       </Text>
       <p className="mt-1 text-xs">{subtitle}</p>

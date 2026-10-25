@@ -26,7 +26,7 @@ export function FeatureHighlightItem({
       <div className="mb-3 flex justify-center">
         <IconTile icon={icon} />
       </div>
-      <Text variant="h3" className="mb-2 text-base">
+      <Text variant="title" className="mb-2">
         {title}
       </Text>
       <Text variant="caption">{description}</Text>
