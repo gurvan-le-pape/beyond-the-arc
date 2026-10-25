@@ -320,7 +320,6 @@ export function ComboBox({
           className={cn(
             DROPDOWN_TRIGGER_BASE,
             "text-left",
-            selectedOption && value !== "" && "border-solid-primary",
             error && "border-solid-error focus-ring focus:border-solid-error",
           )}
           onClick={() => (open ? close(false) : openList())}
