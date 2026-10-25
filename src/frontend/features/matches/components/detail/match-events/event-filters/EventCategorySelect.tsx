@@ -42,6 +42,8 @@ export function EventCategorySelect({
 
   return (
     <Select
+      label={t("matchEvents.categoryLabel")}
+      hideLabel
       value={value ?? ""}
       onChange={(val) => onChange((val as EventCategory) || undefined)}
       options={options}

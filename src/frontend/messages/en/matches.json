@@ -104,7 +104,8 @@
       "tipOff": "{winner} wins the tip-off.",
       "quarterEnd": "End of the quarter.",
       "shotClock": "Shot clock violation."
-    }
+    },
+    "categoryLabel": "Event type"
   },
   "matchSummary": {
     "title": "Match Summary",

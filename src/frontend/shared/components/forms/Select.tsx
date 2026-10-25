@@ -27,6 +27,8 @@ export interface SelectProps {
   readonly value: string | number | undefined;
   readonly onChange: (value: string | number | undefined) => void;
   readonly label?: string;
+  /** See `ComboBox`'s `hideLabel`. */
+  readonly hideLabel?: boolean;
   readonly placeholder?: string;
   readonly disabled?: boolean;
   readonly className?: string;

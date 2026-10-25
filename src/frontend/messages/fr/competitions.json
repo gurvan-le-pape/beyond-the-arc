@@ -19,7 +19,8 @@
     "dropdownLabel": "Journée {round}",
     "pillLabel": "J{round}",
     "scrollLeft": "Défiler à gauche",
-    "scrollRight": "Défiler à droite"
+    "scrollRight": "Défiler à droite",
+    "label": "Journée"
   },
   "leaderboardTitle": "Classement",
   "leaderboardEmpty": "Aucun classement disponible pour le moment",

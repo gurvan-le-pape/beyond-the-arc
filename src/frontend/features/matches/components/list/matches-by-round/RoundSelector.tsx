@@ -70,6 +70,8 @@ export function RoundSelector({
     <div className={cn("mb-4", className)}>
       <div className="block md:hidden w-full">
         <Select
+          label={t("roundSelector.label")}
+          hideLabel
           value={selectedRound ?? ""}
           onChange={(val) => onSelect(Number(val))}
           className="w-full"
