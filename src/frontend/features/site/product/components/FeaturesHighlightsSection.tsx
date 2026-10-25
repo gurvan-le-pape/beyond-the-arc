@@ -1,7 +1,7 @@
 // src/frontend/features/site/product/components/FeaturesHighlightsSection.tsx
 import type { LucideIcon } from "lucide-react";
 
-import { Card } from "@/shared/components/primitives";
+import { Card, Grid } from "@/shared/components/primitives";
 
 import { FeatureHighlightItem } from "./FeatureHighlightItem";
 
@@ -30,7 +30,7 @@ export function FeaturesHighlightsSection({
   return (
     // Highlights Section — sits on surface-base, establishes surface-subtle context
     <Card padding="lg" heading={title}>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <Grid columns={{ base: 1, md: 3 }} gap={6}>
         {highlights.map((highlight) => (
           <FeatureHighlightItem
             key={highlight.title}
@@ -39,7 +39,7 @@ export function FeaturesHighlightsSection({
             description={highlight.description}
           />
         ))}
-      </div>
+      </Grid>
     </Card>
   );
 }

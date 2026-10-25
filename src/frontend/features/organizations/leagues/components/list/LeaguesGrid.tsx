@@ -3,6 +3,8 @@
 
 import { useTranslations } from "next-intl";
 
+import { Grid } from "@/shared/components/primitives";
+
 import type { League } from "../../types";
 import { LeagueCard } from "./LeagueCard";
 
@@ -24,7 +26,7 @@ export function LeaguesGrid({ leagues }: LeaguesGridProps) {
   );
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <Grid columns={{ base: 1, md: 2 }} gap={4}>
       {sorted.map((league) => (
         <LeagueCard
           key={league.id}
@@ -32,6 +34,6 @@ export function LeaguesGrid({ leagues }: LeaguesGridProps) {
           clubLabel={league.clubCount === 1 ? t("club") : t("clubs")}
         />
       ))}
-    </div>
+    </Grid>
   );
 }

@@ -15,6 +15,7 @@ import {
 import { DOCS_SECTIONS, QUICK_LINKS } from "@/features/site/docs/constants";
 import { useAccordion } from "@/features/site/docs/hooks";
 import { PageHero, PageLayout } from "@/shared/components/layout";
+import { Grid } from "@/shared/components/primitives";
 
 /**
  * The documentation page: quick links and the collapsible chapters.
@@ -48,10 +49,12 @@ export default function DocsPage() {
       />
 
       {/* Quick Links — sit on surface-base, establish surface-subtle context */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
-        {quickLinks.map((link) => (
-          <DocsQuickLinkCard key={link.href} {...link} />
-        ))}
+      <div className="mb-12">
+        <Grid columns={{ base: 1, md: 2, lg: 4 }} gap={4}>
+          {quickLinks.map((link) => (
+            <DocsQuickLinkCard key={link.href} {...link} />
+          ))}
+        </Grid>
       </div>
 
       <div className="space-y-4 mb-12">

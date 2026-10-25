@@ -18,6 +18,16 @@ export type GridColumns = { readonly base: GridColumnCount } & Partial<
 
 const BREAKPOINTS: readonly Breakpoint[] = ["base", "sm", "md", "lg"];
 
+/** The space between cells, on Tailwind's spacing scale. */
+export type GridGap = 3 | 4 | 6 | 8;
+
+const GAP_CLASSES: Record<GridGap, string> = {
+  3: "gap-3",
+  4: "gap-4",
+  6: "gap-6",
+  8: "gap-8",
+};
+
 // Whole class names, so Tailwind's scanner sees every one it must generate.
 const COLUMN_CLASSES: Record<Breakpoint, Record<GridColumnCount, string>> = {
   base: {
@@ -110,12 +120,21 @@ function cellRules(index: number, count: number, columns: GridColumns) {
   });
 }
 
-interface GridProps {
+type GridProps = {
   readonly columns: GridColumns;
-  /** Hairline rules between cells, never on the grid's outer edges. */
-  readonly divided?: boolean;
   readonly children: ReactNode;
-}
+} & (
+  | {
+      /** Hairline rules between cells, never on the grid's outer edges. */
+      readonly divided: true;
+      readonly gap?: never;
+    }
+  | {
+      readonly divided?: false;
+      /** Space between cells. Cells that touch are what `divided` rules. */
+      readonly gap?: GridGap;
+    }
+);
 
 /**
  * Equal-width columns, responsive by breakpoint.
@@ -127,9 +146,10 @@ interface GridProps {
  * the surroundings need — a band's bottom border, a card's top rule — belongs
  * to the element around the grid.
  *
- * Takes no `className`: the grid's look is its columns and its rules.
+ * Takes no `className`: the grid's look is its columns, its gap and its rules.
+ * Margin around the grid belongs to its parent, or to a wrapper.
  */
-export function Grid({ columns, divided = false, children }: GridProps) {
+export function Grid({ columns, divided = false, gap, children }: GridProps) {
   const cells = Children.toArray(children);
   const columnClasses = BREAKPOINTS.flatMap((breakpoint) => {
     const perRow = columns[breakpoint];
@@ -137,7 +157,7 @@ export function Grid({ columns, divided = false, children }: GridProps) {
   });
 
   return (
-    <div className={cn("grid", columnClasses)}>
+    <div className={cn("grid", columnClasses, gap && GAP_CLASSES[gap])}>
       {divided
         ? cells.map((cell, index) => (
             <div

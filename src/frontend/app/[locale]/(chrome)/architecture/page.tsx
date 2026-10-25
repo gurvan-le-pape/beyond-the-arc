@@ -22,7 +22,7 @@ import {
 } from "@/features/site/architecture/components";
 import { TECH_STACKS } from "@/features/site/architecture/constants";
 import { PageHero, PageLayout } from "@/shared/components/layout";
-import { Card } from "@/shared/components/primitives";
+import { Card, Grid } from "@/shared/components/primitives";
 import type { LocalePageProps } from "@/shared/types";
 
 /**
@@ -74,16 +74,18 @@ export default async function ArchitecturePage({ params }: LocalePageProps) {
       />
 
       {/* Tech Stack Cards — sit on surface-base, establish surface-subtle context */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-        {techStacks.map((stack) => (
-          <TechStackCard
-            key={stack.title}
-            title={stack.title}
-            icon={stack.icon}
-            tone={stack.tone}
-            items={stack.items}
-          />
-        ))}
+      <div className="mb-12">
+        <Grid columns={{ base: 1, lg: 3 }} gap={8}>
+          {techStacks.map((stack) => (
+            <TechStackCard
+              key={stack.title}
+              title={stack.title}
+              icon={stack.icon}
+              tone={stack.tone}
+              items={stack.items}
+            />
+          ))}
+        </Grid>
       </div>
 
       {/* Architecture Diagram — sits on surface-base, establishes surface-subtle context */}
@@ -143,22 +145,24 @@ export default async function ArchitecturePage({ params }: LocalePageProps) {
           </DiagramLane>
         </div>
 
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <FeatureBadge
-            icon={FileCode2}
-            title={t("architecture.features.contract.title")}
-            description={t("architecture.features.contract.description")}
-          />
-          <FeatureBadge
-            icon={Eye}
-            title={t("architecture.features.readOnly.title")}
-            description={t("architecture.features.readOnly.description")}
-          />
-          <FeatureBadge
-            icon={Server}
-            title={t("architecture.features.oneServer.title")}
-            description={t("architecture.features.oneServer.description")}
-          />
+        <div className="mt-12">
+          <Grid columns={{ base: 1, md: 3 }} gap={6}>
+            <FeatureBadge
+              icon={FileCode2}
+              title={t("architecture.features.contract.title")}
+              description={t("architecture.features.contract.description")}
+            />
+            <FeatureBadge
+              icon={Eye}
+              title={t("architecture.features.readOnly.title")}
+              description={t("architecture.features.readOnly.description")}
+            />
+            <FeatureBadge
+              icon={Server}
+              title={t("architecture.features.oneServer.title")}
+              description={t("architecture.features.oneServer.description")}
+            />
+          </Grid>
         </div>
       </Card>
     </PageLayout>

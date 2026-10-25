@@ -8,6 +8,7 @@ import { ErrorMessage } from "@/shared/components/feedback";
 import type { ActiveFilterChip } from "@/shared/components/filters";
 import { FiltersShell } from "@/shared/components/filters";
 import { DebouncedInput, Select } from "@/shared/components/forms";
+import { Grid } from "@/shared/components/primitives";
 
 import type {
   ClubsFilterSetters,
@@ -105,7 +106,7 @@ export function ClubsFilters({ filters, setters, onReset }: ClubsFiltersProps) {
         clearAriaLabel={tCommon("clearSearch")}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <Grid columns={{ base: 1, md: 2 }} gap={4}>
         <Select
           label={tCommon("filters.leagues")}
           options={leagueOptions}
@@ -122,7 +123,7 @@ export function ClubsFilters({ filters, setters, onReset }: ClubsFiltersProps) {
             onChange={(val) => setCommitteeId(Number(val) || undefined)}
           />
         )}
-      </div>
+      </Grid>
     </FiltersShell>
   );
 }

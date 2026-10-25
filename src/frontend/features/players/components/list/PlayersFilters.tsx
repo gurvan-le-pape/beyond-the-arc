@@ -14,6 +14,7 @@ import {
   useCommonFilterChips,
 } from "@/shared/components/filters";
 import { DebouncedInput, Select } from "@/shared/components/forms";
+import { Grid } from "@/shared/components/primitives";
 
 import { usePlayerFilterValues } from "../../api";
 import type {
@@ -171,7 +172,7 @@ export function PlayersFilters({
         />
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <Grid columns={{ base: 1, md: 2, lg: 4 }} gap={4}>
         <DebouncedInput
           variant="search"
           label={tPlayers("filters.searchName")}
@@ -221,7 +222,7 @@ export function PlayersFilters({
           committees={committees}
           leagues={leagues}
         />
-      </div>
+      </Grid>
     </FiltersShell>
   );
 }

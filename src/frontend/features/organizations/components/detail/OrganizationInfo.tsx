@@ -5,6 +5,7 @@ import { ExternalLink, Globe, MapPin } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { InfoBox, Section } from "@/shared/components/blocks";
+import { Grid } from "@/shared/components/primitives";
 import { toSafeExternalUrl } from "@/shared/utils";
 
 interface OrganizationInfoProps {
@@ -39,7 +40,7 @@ export function OrganizationInfo({
 
   return (
     <Section title={t("info.title")}>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <Grid columns={{ base: 1, md: 2, lg: 3 }} gap={4}>
         <InfoBox
           label={t("info.address")}
           value={address}
@@ -62,7 +63,7 @@ export function OrganizationInfo({
             icon={<Globe className="w-4 h-4" />}
           />
         )}
-      </div>
+      </Grid>
     </Section>
   );
 }
