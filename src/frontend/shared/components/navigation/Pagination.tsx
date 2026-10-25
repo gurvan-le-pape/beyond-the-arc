@@ -25,7 +25,7 @@ interface PaginationProps {
   readonly label: string;
 }
 
-const PAGE_SIZES = [25, 50, 100, 200];
+const PAGE_SIZES = [25, 50, 100];
 
 const navButtonBase = "p-2 rounded-button transition-colors";
 const navButtonEnabled =
@@ -43,9 +43,10 @@ const navButtonDisabled =
  * the single most common place for an off-by-one here, and it is silent: page
  * one looks right and everything after it is wrong.
  *
- * Page sizes are a fixed set (25/50/100/200); changing them is a change here,
- * not a prop. On narrow screens the numbered pages collapse to a current-page
- * indicator, keeping first/previous/next/last reachable.
+ * Page sizes are a fixed set (25/50/100), capped by the API's 100-row limit;
+ * changing them is a change here, not a prop. On narrow screens the numbered
+ * pages collapse to a current-page indicator, keeping first/previous/next/last
+ * reachable.
  */
 export function Pagination({
   pagination,
