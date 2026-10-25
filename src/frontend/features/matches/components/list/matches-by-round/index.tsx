@@ -1,15 +1,17 @@
 // src/frontend/features/matches/components/list/matches-by-round/index.tsx
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 
 import type { Match } from "@/features/matches/types";
-import { getCurrentRound } from "@/features/matches/utils";
+import { getCurrentRound, getSortedRounds } from "@/features/matches/utils";
 import { Card } from "@/shared/components/primitives";
+import { Text } from "@/shared/components/typography";
 import { groupBy } from "@/shared/utils";
 
 import { MatchesSection } from "./MatchesSection";
-import { RoundsSection } from "./RoundsSection";
+import { RoundSelector } from "./RoundSelector";
 
 interface MatchesByRoundProps {
   readonly matches: Match[];
@@ -27,6 +29,7 @@ interface MatchesByRoundProps {
  * selected round falls back to the current round of the new pool.
  */
 export function MatchesByRound({ matches }: MatchesByRoundProps) {
+  const t = useTranslations("competitions");
   const groupedMatches = useMemo(
     () => groupBy(matches, (match) => match.matchday),
     [matches],
@@ -50,11 +53,14 @@ export function MatchesByRound({ matches }: MatchesByRoundProps) {
   return (
     <Card padding="sm">
       <div className="space-y-4">
-        <RoundsSection
-          groupedMatches={groupedMatches}
-          selectedRound={selectedRound}
-          onSelectRound={setRound}
-        />
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <Text variant="h3">{t("matchesLabel")}</Text>
+          <RoundSelector
+            rounds={getSortedRounds(groupedMatches)}
+            selectedRound={selectedRound}
+            onSelect={setRound}
+          />
+        </div>
 
         <MatchesSection
           currentMatches={currentMatches}

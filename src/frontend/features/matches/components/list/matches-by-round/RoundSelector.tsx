@@ -1,134 +1,69 @@
 // src/frontend/features/matches/components/list/matches-by-round/RoundSelector.tsx
 "use client";
 
-import { cva } from "class-variance-authority";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-import { Select } from "@/shared/components/forms";
 import { IconButton } from "@/shared/components/primitives";
-import { cn } from "@/shared/utils";
-
-import { ROUND_PILL_MIN_WIDTH } from "./roundWindow";
-import { useRoundWindow } from "./useRoundWindow";
-
-// The carousel's round pills.
-const roundButtonVariants = cva(
-  "inline-flex items-center justify-center font-medium transition-all duration-200 " +
-    "focus-ring disabled:pointer-events-none disabled:opacity-50 active:scale-95 rounded-full",
-  {
-    variants: {
-      variant: {
-        selected:
-          "px-4 py-2 text-lg bg-solid-primary text-on-solid-primary font-bold shadow-md " +
-          "ring-2 ring-line-primary border border-solid-primary z-raised",
-        unselected:
-          "px-4 py-2 text-lg surface-raised text-text-emphasis border border-divide " +
-          "hover:bg-tint-primary hover:text-ink-primary hover:border-line-primary",
-      },
-    },
-  },
-);
 
 interface RoundSelectorProps {
   readonly rounds: number[];
   readonly selectedRound: number | null;
   readonly onSelect: (round: number) => void;
-  readonly className?: string;
 }
 
 /**
- * The matchday picker above a championship's fixtures.
+ * The matchday picker above a championship's fixtures: previous and next
+ * arrows around the selected round and how many there are.
  *
- * `rounds` arrives already sorted numerically — the keys come out of a grouped
- * object as strings, so the caller converts and sorts before passing them here.
- * A `selectedRound` of `null` means none is chosen yet, not round zero.
+ * The arrows step the selection one round at a time; there is no jump, since
+ * the page opens on the latest played round and readers move from there.
  *
- * Renders a dropdown below `md` and a scrollable pill carousel above it; the
- * arrows exist only in the carousel, where the list can overflow.
+ * `rounds` arrives already sorted numerically. A `selectedRound` of `null`
+ * means none is chosen yet, not round zero, and both arrows stay disabled.
  */
 export function RoundSelector({
   rounds,
   selectedRound,
   onSelect,
-  className = "",
 }: RoundSelectorProps) {
-  const t = useTranslations("competitions");
-
-  const {
-    containerRef,
-    visibleRounds,
-    canScrollLeft,
-    canScrollRight,
-    scrollLeft,
-    scrollRight,
-  } = useRoundWindow(rounds, selectedRound);
+  const t = useTranslations("competitions.roundSelector");
 
   if (rounds.length === 0) return null;
 
+  const index = selectedRound === null ? -1 : rounds.indexOf(selectedRound);
+  const previous = index > 0 ? rounds[index - 1] : undefined;
+  const next =
+    index !== -1 && index < rounds.length - 1 ? rounds[index + 1] : undefined;
+
   return (
-    <div className={cn("mb-4", className)}>
-      <div className="block md:hidden w-full">
-        <Select
-          label={t("roundSelector.label")}
-          hideLabel
-          value={selectedRound ?? ""}
-          onChange={(val) => onSelect(Number(val))}
-          className="w-full"
-          options={rounds.map((round) => ({
-            value: round,
-            label: t("roundSelector.dropdownLabel", { round }),
-          }))}
-        />
-      </div>
-
-      <div
-        className="hidden md:flex items-center justify-center space-x-2 px-0 py-2"
-        ref={containerRef}
+    <div className="flex items-center gap-2">
+      <IconButton
+        variant="outline"
+        onClick={() => previous !== undefined && onSelect(previous)}
+        disabled={previous === undefined}
+        label={t("previous")}
       >
-        <IconButton
-          variant="outline"
-          shape="circle"
-          onClick={scrollLeft}
-          disabled={!canScrollLeft}
-          label={t("roundSelector.scrollLeft")}
-        >
-          <ChevronLeft />
-        </IconButton>
+        <ChevronLeft />
+      </IconButton>
 
-        <div className="flex space-x-2">
-          {visibleRounds.map((round) => {
-            const isActive = selectedRound === round;
-            return (
-              <button
-                key={round}
-                type="button"
-                className={cn(
-                  roundButtonVariants({
-                    variant: isActive ? "selected" : "unselected",
-                  }),
-                )}
-                onClick={() => onSelect(round)}
-                style={{ minWidth: ROUND_PILL_MIN_WIDTH }}
-                aria-pressed={isActive}
-                aria-label={t("roundSelector.pillLabel", { round })}
-              >
-                {t("roundSelector.pillLabel", { round })}
-              </button>
-            );
-          })}
-        </div>
+      {/* Announced on each step, since the arrows' own names stay the same. */}
+      <p
+        aria-live="polite"
+        className="min-w-32 text-center text-sm font-semibold text-text-heading tabular-nums"
+      >
+        {selectedRound !== null && t("current", { round: selectedRound })}{" "}
+        <span className="font-normal text-text-body">/ {rounds.length}</span>
+      </p>
 
-        <IconButton
-          variant="outline"
-          shape="circle"
-          onClick={scrollRight}
-          disabled={!canScrollRight}
-          label={t("roundSelector.scrollRight")}
-        >
-          <ChevronRight />
-        </IconButton>
-      </div>
+      <IconButton
+        variant="outline"
+        onClick={() => next !== undefined && onSelect(next)}
+        disabled={next === undefined}
+        label={t("next")}
+      >
+        <ChevronRight />
+      </IconButton>
     </div>
   );
 }

@@ -2,7 +2,6 @@
 import { useTranslations } from "next-intl";
 
 import type { Match } from "@/features/matches/types";
-import { Badge } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 
 import { MatchCard } from "./match-card";
@@ -26,35 +25,24 @@ export function MatchesSection({
   expandedMatchIds,
   onToggleExpand,
 }: MatchesSectionProps) {
-  const tCompetitions = useTranslations("competitions");
   const tCommon = useTranslations("common");
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-3">
-        <Text variant="h3">{tCompetitions("matchesLabel")}</Text>
-        {currentMatches.length > 0 && (
-          <Badge variant="primary" size="sm">
-            {currentMatches.length}
-          </Badge>
-        )}
-      </div>
-      <div className="space-y-3">
-        {currentMatches.length > 0 ? (
-          currentMatches.map((match) => (
-            <MatchCard
-              key={match.id}
-              match={match}
-              expanded={expandedMatchIds.includes(match.id)}
-              onToggleExpand={onToggleExpand}
-            />
-          ))
-        ) : (
-          <Text variant="caption" className="text-center py-8">
-            {tCommon("matchHistory.noMatches")}
-          </Text>
-        )}
-      </div>
+    <div className="space-y-3">
+      {currentMatches.length > 0 ? (
+        currentMatches.map((match) => (
+          <MatchCard
+            key={match.id}
+            match={match}
+            expanded={expandedMatchIds.includes(match.id)}
+            onToggleExpand={onToggleExpand}
+          />
+        ))
+      ) : (
+        <Text variant="caption" className="text-center py-8">
+          {tCommon("matchHistory.noMatches")}
+        </Text>
+      )}
     </div>
   );
 }
