@@ -1320,6 +1320,17 @@ export interface components {
              * @example 65
              */
             pointDifference: number;
+            /**
+             * @description The team's last 5 results in the pool, oldest first: W for a win, L for a loss. Shorter early in the season, empty before the team's first game.
+             * @example [
+             *       "L",
+             *       "W",
+             *       "W",
+             *       "W",
+             *       "W"
+             *     ]
+             */
+            form: ("W" | "L")[];
         };
         PoolResponseDto: {
             /**

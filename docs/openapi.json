@@ -3982,6 +3982,24 @@
             "type": "number",
             "description": "Goal difference (pointsFor - pointsAgainst)",
             "example": 65
+          },
+          "form": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "W",
+                "L"
+              ]
+            },
+            "description": "The team's last 5 results in the pool, oldest first: W for a win, L for a loss. Shorter early in the season, empty before the team's first game.",
+            "example": [
+              "L",
+              "W",
+              "W",
+              "W",
+              "W"
+            ]
           }
         },
         "required": [
@@ -3997,7 +4015,8 @@
           "gamesForfeited",
           "pointsFor",
           "pointsAgainst",
-          "pointDifference"
+          "pointDifference",
+          "form"
         ]
       },
       "PoolResponseDto": {

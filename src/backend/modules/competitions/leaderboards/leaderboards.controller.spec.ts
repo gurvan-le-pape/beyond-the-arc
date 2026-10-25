@@ -29,6 +29,7 @@ describe("LeaderboardsController", () => {
     pointsFor: 645,
     pointsAgainst: 580,
     pointDifference: 65,
+    form: ["W", "W", "L", "W", "W"],
   };
 
   const mockLeaderboardsService = {

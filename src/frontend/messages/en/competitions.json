@@ -23,6 +23,15 @@
     "previous": "Previous round",
     "next": "Next round"
   },
+  "form": {
+    "title": "Form",
+    "description": "Last five games, oldest first",
+    "win": "Won",
+    "loss": "Lost",
+    "winAbbr": "W",
+    "lossAbbr": "L",
+    "none": "No games yet"
+  },
   "leaderboardTitle": "Leaderboard",
   "leaderboardEmpty": "No standings available yet",
   "championshipsSectionTitle": "Championships",
