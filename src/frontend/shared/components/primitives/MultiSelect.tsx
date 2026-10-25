@@ -12,7 +12,7 @@
 
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useId, useRef } from "react";
 
 import { cn } from "@/shared/utils";
 
@@ -49,6 +49,11 @@ export interface MultiSelectProps {
 
 /**
  * MultiSelect — generic multi-value column picker.
+ *
+ * A disclosure: the trigger is a button with `aria-expanded`, named with the
+ * selection count ("Players, 2 selected"), and the panel holds native
+ * checkboxes, one labelled group per column. Escape anywhere in it, or the
+ * close button, closes it and returns focus to the trigger.
  *
  * @example
  * // Single column
@@ -91,6 +96,19 @@ export function MultiSelect({
   const t = useTranslations("common");
   const dropdownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const panelId = useId();
+
+  const closeAndRefocus = () => {
+    setIsOpen(false);
+    buttonRef.current?.focus();
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (isOpen && event.key === "Escape") {
+      event.preventDefault();
+      closeAndRefocus();
+    }
+  };
 
   useEffect(() => {
     if (!isOpen) return;
@@ -117,6 +135,10 @@ export function MultiSelect({
           ref={buttonRef}
           type="button"
           onClick={() => setIsOpen(!isOpen)}
+          onKeyDown={handleKeyDown}
+          aria-expanded={isOpen}
+          aria-controls={panelId}
+          aria-label={t("multiSelectSummary", { label, count: selectedCount })}
           className={cn(
             DROPDOWN_TRIGGER_BASE,
             "text-left flex items-center gap-2",
@@ -126,7 +148,10 @@ export function MultiSelect({
           <span>{label}</span>
 
           {selectedCount > 0 && (
-            <span className="bg-solid-primary text-on-solid-primary text-xs rounded-button px-2 py-0.5 leading-none">
+            <span
+              aria-hidden="true"
+              className="bg-solid-primary text-on-solid-primary text-xs rounded-button px-2 py-0.5 leading-none"
+            >
               {selectedCount}
             </span>
           )}
@@ -137,13 +162,18 @@ export function MultiSelect({
         </span>
       </div>
 
-      <Popover ref={dropdownRef} open={isOpen}>
+      <Popover
+        ref={dropdownRef}
+        id={panelId}
+        open={isOpen}
+        onKeyDown={handleKeyDown}
+      >
         <div className="p-4">
           <div className="flex items-center justify-between mb-3">
             <Text variant="label">{label}</Text>
             <button
               type="button"
-              onClick={() => setIsOpen(false)}
+              onClick={closeAndRefocus}
               aria-label={t("close")}
               className={cn(
                 "h-6 w-6 flex items-center justify-center rounded",
@@ -205,13 +235,19 @@ interface ColumnListProps {
 }
 
 function ColumnList({ column }: ColumnListProps) {
+  const titleId = useId();
+
   return (
     <div className="min-w-0">
-      <Text variant="label" as="h4" className="mb-2">
+      <Text variant="label" as="h4" id={titleId} className="mb-2">
         {column.title}
       </Text>
 
-      <div className="space-y-1 max-h-64 overflow-y-auto scrollbar-hide">
+      <div
+        role="group"
+        aria-labelledby={titleId}
+        className="space-y-1 max-h-64 overflow-y-auto scrollbar-hide"
+      >
         {column.items.map((item) => (
           <label
             key={item.id}
