@@ -11,8 +11,8 @@ import type {
 } from "@/features/matches/types";
 import { transformToShotEvents } from "@/features/matches/utils";
 import { ShotModal } from "@/features/shot-chart/components";
-import { Link } from "@/navigation";
 import { Section } from "@/shared/components/blocks";
+import { TextLink } from "@/shared/components/primitives";
 import { DataTable } from "@/shared/components/table";
 import { Text } from "@/shared/components/typography";
 import type { NamedEntity } from "@/shared/types";
@@ -56,15 +56,15 @@ export function PlayerMatchStats({
         <span>
           {/* A link, not a button with router.push — the team page is a place,
               so it gets an href, a status-bar URL and open-in-new-tab. */}
-          <Link
+          <TextLink
             href={`/teams/${team.id}`}
-            className="text-text-heading hover:text-ink-primary transition-colors duration-200 rounded focus-ring"
-            aria-label={tMatches("playerMatchStats.viewTeam", {
+            variant="plain"
+            ariaLabel={tMatches("playerMatchStats.viewTeam", {
               team: team.name,
             })}
           >
             {team.name}
-          </Link>{" "}
+          </TextLink>{" "}
           <Text variant="body" as="span">
             (
             {isHomeTeam
