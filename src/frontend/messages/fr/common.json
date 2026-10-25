@@ -14,7 +14,7 @@
   "notAvailable": "Non disponible",
   "clear": "Effacer",
   "clearSearch": "Effacer la recherche",
-  "clearSelection": "Effacer la séléction",
+  "clearSelection": "Effacer la sélection",
   "multiSelectSummary": "{label}, {count, plural, =0 {aucune sélection} one {# sélectionné} other {# sélectionnés}}",
   "homepage": {
     "title": "Bienvenue à Beyond The Arc",
