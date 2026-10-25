@@ -27,6 +27,7 @@ const badgeVariants = cva(
         players: "border-transparent bg-tint-players text-ink-players",
         teams: "border-transparent bg-tint-teams text-ink-teams",
         matches: "border-transparent bg-tint-matches text-ink-matches",
+        clubs: "border-transparent bg-tint-clubs text-ink-clubs",
         // Competition level-specific (standalone, on neutral surface)
         national: "border-transparent bg-tint-national text-ink-national",
         regional: "border-transparent bg-tint-regional text-ink-regional",

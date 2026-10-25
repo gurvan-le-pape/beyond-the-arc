@@ -3,7 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 import React from "react";
 
-import { Link } from "@/navigation";
+import { Badge, type BadgeProps, Card } from "@/shared/components/primitives";
 import { OrganizationType } from "@/shared/constants";
 
 const STYLES: Record<
@@ -13,9 +13,9 @@ const STYLES: Record<
     border: string;
     iconRing: string;
     iconBg: string;
-    /** Text in the tone: the icon, label, count pill and arrow. */
+    /** Text in the tone: the icon, label and arrow. */
     ink: string;
-    pill: string;
+    badge: NonNullable<BadgeProps["variant"]>;
   }
 > = {
   [OrganizationType.LEAGUES]: {
@@ -24,7 +24,7 @@ const STYLES: Record<
     iconRing: "ring-line-regional",
     iconBg: "bg-tint-regional",
     ink: "text-ink-regional",
-    pill: "bg-tint-regional",
+    badge: "regional",
   },
   [OrganizationType.COMMITTEES]: {
     gradient: "from-tint-departmental/60 via-surface-subtle to-surface-subtle",
@@ -32,7 +32,7 @@ const STYLES: Record<
     iconRing: "ring-line-departmental",
     iconBg: "bg-tint-departmental",
     ink: "text-ink-departmental",
-    pill: "bg-tint-departmental",
+    badge: "departmental",
   },
   [OrganizationType.CLUBS]: {
     gradient: "from-tint-clubs/60 via-surface-subtle to-surface-subtle",
@@ -40,7 +40,7 @@ const STYLES: Record<
     iconRing: "ring-line-clubs",
     iconBg: "bg-tint-clubs",
     ink: "text-ink-clubs",
-    pill: "bg-tint-clubs",
+    badge: "clubs",
   },
 };
 
@@ -72,18 +72,10 @@ export async function OrganizationTypeCard({ org }: OrganizationTypeCardProps) {
   const s = STYLES[id];
 
   return (
-    <Link
+    <Card
       href={href}
       aria-label={label}
-      className={`
-        group relative flex flex-col gap-5 p-6 rounded-card
-        bg-gradient-to-br ${s.gradient}
-        border ${s.border}
-        shadow-card hover:shadow-card-hover
-        transition-all duration-300 ease-out
-        hover:-translate-y-1
-        focus-ring
-      `}
+      className={`group relative flex flex-col gap-5 bg-gradient-to-br ${s.gradient} ${s.border}`}
     >
       <div className="flex items-start justify-between">
         <div
@@ -100,14 +92,7 @@ export async function OrganizationTypeCard({ org }: OrganizationTypeCardProps) {
         </div>
 
         {count !== undefined && (
-          <span
-            className={`
-              text-xs font-semibold px-2.5 py-1 rounded-full
-              ${s.pill} ${s.ink}
-            `}
-          >
-            {count.toLocaleString(locale)}
-          </span>
+          <Badge variant={s.badge}>{count.toLocaleString(locale)}</Badge>
         )}
       </div>
 
@@ -129,6 +114,6 @@ export async function OrganizationTypeCard({ org }: OrganizationTypeCardProps) {
           className={`w-3.5 h-3.5 transition-all duration-200 group-hover:translate-x-0.5 ${s.ink}`}
         />
       </div>
-    </Link>
+    </Card>
   );
 }
