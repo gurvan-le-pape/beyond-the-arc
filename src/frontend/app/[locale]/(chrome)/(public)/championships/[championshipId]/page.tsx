@@ -16,6 +16,7 @@ import {
   buildChampionshipTitle,
   buildDivisionNavigation,
   buildGenderNavigation,
+  findLevelAbove,
   resolveOrganizationId,
   resolvePoolId,
 } from "@/features/competitions/championships/utils";
@@ -93,17 +94,30 @@ async function ChampionshipsDetailPage({
   const organizationId = resolveOrganizationId(championship);
   if (!organizationId) notFound();
 
-  const [pools, { items: championships }] = await Promise.all([
-    serverPoolsService.getByChampionshipId(championshipId),
-    // Its siblings: same organiser, same level.
-    serverChampionshipsService.getAll({
-      level: championship.level,
-      ...(championship.level === CompetitionLevel.DEPARTMENTAL
-        ? { committeeId: organizationId }
-        : { leagueId: organizationId }),
-      limit: 100,
-    }),
-  ]).catch(handleServerError);
+  const isDepartmental = championship.level === CompetitionLevel.DEPARTMENTAL;
+
+  const [pools, { items: championships }, { items: regionals }] =
+    await Promise.all([
+      serverPoolsService.getByChampionshipId(championshipId),
+      // Its siblings: same organiser, same level.
+      serverChampionshipsService.getAll({
+        level: championship.level,
+        ...(isDepartmental
+          ? { committeeId: organizationId }
+          : { leagueId: organizationId }),
+        limit: 100,
+      }),
+      // The same category and gender one level up, in the committee's league.
+      isDepartmental && championship.leagueId !== null
+        ? serverChampionshipsService.getAll({
+            level: CompetitionLevel.REGIONAL,
+            leagueId: championship.leagueId,
+            category: championship.category,
+            gender: championship.gender,
+            limit: 100,
+          })
+        : { items: [] },
+    ]).catch(handleServerError);
 
   if (pools.length === 0) notFound();
 
@@ -123,6 +137,8 @@ async function ChampionshipsDetailPage({
     championship,
     (gender) => tCommon(`gender.${gender}`),
   );
+
+  const levelAbove = findLevelAbove(regionals);
 
   const divisionLinks = buildDivisionNavigation(
     championships,
@@ -149,6 +165,7 @@ async function ChampionshipsDetailPage({
               categoryLinks={categoryLinks}
               genderLinks={genderLinks}
               divisionLinks={divisionLinks}
+              levelAboveHref={levelAbove && `/championships/${levelAbove.id}`}
             />
           </>
         }

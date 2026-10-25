@@ -1,4 +1,5 @@
 // src/frontend/features/competitions/championships/components/detail/ChampionshipHeader.tsx
+import { ArrowUp } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Fragment } from "react";
 
@@ -17,12 +18,14 @@ interface ChampionshipHeaderProps {
   readonly categoryLinks: ChampionshipNavLink[];
   readonly genderLinks: ChampionshipNavLink[];
   readonly divisionLinks: ChampionshipNavLink[];
+  /** The championship this one's champion moves up into, when there is one. */
+  readonly levelAboveHref?: string;
 }
 
 /**
  * The identity block on a championship detail page: the category, gender and
  * division as the page's heading, and under it the organiser, linked to its
- * page, and the season.
+ * page, the season and, at departmental level, a link one level up.
  *
  * Each facet of the heading is also the way to its siblings: one with
  * somewhere else to go opens a {@link LinkMenu} of them, one without stays
@@ -38,6 +41,7 @@ export function ChampionshipHeader({
   categoryLinks,
   genderLinks,
   divisionLinks,
+  levelAboveHref,
 }: ChampionshipHeaderProps) {
   const tCommon = useTranslations("common");
   const tCompetitions = useTranslations("competitions");
@@ -124,6 +128,18 @@ export function ChampionshipHeader({
             </>
           )}
           {championship.seasonYear}
+          {levelAboveHref && (
+            <>
+              {" · "}
+              <TextLink href={levelAboveHref}>
+                <ArrowUp
+                  aria-hidden
+                  className="inline size-[1em] align-[-0.125em]"
+                />
+                {tCompetitions("regionalLevel")}
+              </TextLink>
+            </>
+          )}
         </Text>
       </div>
     </Card>

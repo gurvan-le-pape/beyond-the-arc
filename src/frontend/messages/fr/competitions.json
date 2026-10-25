@@ -9,6 +9,7 @@
   "categoryAriaLabel": "Catégorie",
   "genderAriaLabel": "Genre",
   "divisionAriaLabel": "Division",
+  "regionalLevel": "Niveau régional",
   "divisionWithValue": "Division {value}",
   "matchesLabel": "Matchs",
   "noSearchResults": "Aucun résultat pour « {search} »",

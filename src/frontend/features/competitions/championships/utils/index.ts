@@ -9,5 +9,6 @@ export * from "./buildChampionshipOrganizer";
 export * from "./buildChampionshipTitle";
 export * from "./buildDivisionNavigation";
 export * from "./buildGenderNavigation";
+export * from "./findLevelAbove";
 export * from "./resolveOrganizationId";
 export * from "./resolvePoolId";
