@@ -7,6 +7,7 @@
   "tryAdjustingFilters": "Essayez d'ajuster les filtres pour trouver plus de championnats.",
   "poolStandings": "Classement de la poule {letter}",
   "categoryAriaLabel": "Catégorie",
+  "genderAriaLabel": "Genre",
   "divisionAriaLabel": "Division",
   "divisionWithValue": "Division {value}",
   "matchesLabel": "Matchs",

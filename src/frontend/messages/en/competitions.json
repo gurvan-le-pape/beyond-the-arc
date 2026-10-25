@@ -7,6 +7,7 @@
   "tryAdjustingFilters": "Try adjusting filters to find more championships.",
   "poolStandings": "Pool {letter} standings",
   "categoryAriaLabel": "Category",
+  "genderAriaLabel": "Gender",
   "divisionAriaLabel": "Division",
   "divisionWithValue": "Division {value}",
   "matchesLabel": "Matches",
