@@ -1,4 +1,5 @@
 // src/frontend/features/competitions/championships/components/detail/ChampionshipHeader.tsx
+import { ArrowDown, ArrowUp } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Fragment } from "react";
 
@@ -17,12 +18,18 @@ interface ChampionshipHeaderProps {
   readonly categoryLinks: ChampionshipNavLink[];
   readonly genderLinks: ChampionshipNavLink[];
   readonly divisionLinks: ChampionshipNavLink[];
+  /** The championship this one's champion moves up into, when there is one. */
+  readonly levelAboveHref?: string;
+  /** The departments below a regional championship, each to its top division. */
+  readonly levelBelowLinks?: ChampionshipNavLink[];
 }
 
 /**
  * The identity block on a championship detail page: the category, gender and
  * division as the page's heading, and under it the organiser, linked to its
- * page, and the season.
+ * page, the season and the way to the other level of the league: a link up
+ * to the regional championship from a departmental one, a menu of
+ * departments down from a regional one.
  *
  * Each facet of the heading is also the way to its siblings: one with
  * somewhere else to go opens a {@link LinkMenu} of them, one without stays
@@ -38,6 +45,8 @@ export function ChampionshipHeader({
   categoryLinks,
   genderLinks,
   divisionLinks,
+  levelAboveHref,
+  levelBelowLinks = [],
 }: ChampionshipHeaderProps) {
   const tCommon = useTranslations("common");
   const tCompetitions = useTranslations("competitions");
@@ -109,7 +118,8 @@ export function ChampionshipHeader({
             </Fragment>
           ))}
         </Text>
-        <Text variant="body" className="mt-1 text-text-secondary">
+        {/* A div, not the variant's p: a LinkMenu's panel is a div. */}
+        <Text variant="body" as="div" className="mt-1 text-text-secondary">
           {organizer.place && organizer.id !== null && (
             <>
               {organizer.kind}
@@ -124,6 +134,32 @@ export function ChampionshipHeader({
             </>
           )}
           {championship.seasonYear}
+          {levelAboveHref && (
+            <>
+              {" · "}
+              <TextLink href={levelAboveHref}>
+                <ArrowUp
+                  aria-hidden
+                  className="mr-1 inline size-[1em] align-[-0.125em]"
+                />
+                {tCompetitions("regionalLevel")}
+              </TextLink>
+            </>
+          )}
+          {levelBelowLinks.length > 0 && (
+            <>
+              {" · "}
+              {/* Coloured as the link up is: both leave for the other level. */}
+              <span className="text-ink-primary">
+                <LinkMenu
+                  label={tCompetitions("departmentalLevel")}
+                  icon={<ArrowDown aria-hidden className="size-[1em]" />}
+                  ariaLabel={tCompetitions("departmentsAriaLabel")}
+                  items={levelBelowLinks}
+                />
+              </span>
+            </>
+          )}
         </Text>
       </div>
     </Card>

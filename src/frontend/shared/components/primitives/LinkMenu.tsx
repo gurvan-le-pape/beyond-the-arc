@@ -2,7 +2,7 @@
 "use client";
 
 import { ChevronDown } from "lucide-react";
-import { useEffect, useId, useRef, useState } from "react";
+import { type ReactNode, useEffect, useId, useRef, useState } from "react";
 
 import { Link } from "@/navigation";
 import { cn } from "@/shared/utils";
@@ -18,6 +18,8 @@ export interface LinkMenuItem {
 interface LinkMenuProps {
   /** The trigger's text: the current item, as it reads in the line around it. */
   readonly label: string;
+  /** Before the label, sized to the text: an `aria-hidden` icon. */
+  readonly icon?: ReactNode;
   /** Names the list of links, e.g. "Category". */
   readonly ariaLabel: string;
   readonly items: readonly LinkMenuItem[];
@@ -36,7 +38,7 @@ interface LinkMenuProps {
  * Size and weight come from the text around it, so it sits in a heading as
  * easily as in a sentence. Takes no `className`.
  */
-export function LinkMenu({ label, ariaLabel, items }: LinkMenuProps) {
+export function LinkMenu({ label, icon, ariaLabel, items }: LinkMenuProps) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLSpanElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -81,6 +83,7 @@ export function LinkMenu({ label, ariaLabel, items }: LinkMenuProps) {
             : "hover:bg-surface-subtle hover:text-ink-primary",
         )}
       >
+        {icon}
         {label}
         <ChevronDown
           aria-hidden

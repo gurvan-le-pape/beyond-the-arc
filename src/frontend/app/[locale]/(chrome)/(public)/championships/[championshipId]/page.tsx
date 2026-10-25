@@ -16,6 +16,8 @@ import {
   buildChampionshipTitle,
   buildDivisionNavigation,
   buildGenderNavigation,
+  buildLevelBelowNavigation,
+  findLevelAbove,
   resolveOrganizationId,
   resolvePoolId,
 } from "@/features/competitions/championships/utils";
@@ -93,17 +95,35 @@ async function ChampionshipsDetailPage({
   const organizationId = resolveOrganizationId(championship);
   if (!organizationId) notFound();
 
-  const [pools, { items: championships }] = await Promise.all([
-    serverPoolsService.getByChampionshipId(championshipId),
-    // Its siblings: same organiser, same level.
-    serverChampionshipsService.getAll({
-      level: championship.level,
-      ...(championship.level === CompetitionLevel.DEPARTMENTAL
-        ? { committeeId: organizationId }
-        : { leagueId: organizationId }),
-      limit: 100,
-    }),
-  ]).catch(handleServerError);
+  const isDepartmental = championship.level === CompetitionLevel.DEPARTMENTAL;
+
+  const [pools, { items: championships }, { items: otherLevel }] =
+    await Promise.all([
+      serverPoolsService.getByChampionshipId(championshipId),
+      // Its siblings: same organiser, same level.
+      serverChampionshipsService.getAll({
+        level: championship.level,
+        ...(isDepartmental
+          ? { committeeId: organizationId }
+          : { leagueId: organizationId }),
+        limit: 100,
+      }),
+      // The same category and gender at the other level of the same league:
+      // regional from a departmental championship, departmental from a
+      // regional one. National championships belong to no league.
+      championship.level !== CompetitionLevel.NATIONAL &&
+      championship.leagueId !== null
+        ? serverChampionshipsService.getAll({
+            level: isDepartmental
+              ? CompetitionLevel.REGIONAL
+              : CompetitionLevel.DEPARTMENTAL,
+            leagueId: championship.leagueId,
+            category: championship.category,
+            gender: championship.gender,
+            limit: 100,
+          })
+        : { items: [] },
+    ]).catch(handleServerError);
 
   if (pools.length === 0) notFound();
 
@@ -123,6 +143,11 @@ async function ChampionshipsDetailPage({
     championship,
     (gender) => tCommon(`gender.${gender}`),
   );
+
+  const levelAbove = isDepartmental ? findLevelAbove(otherLevel) : undefined;
+  const levelBelowLinks = isDepartmental
+    ? []
+    : buildLevelBelowNavigation(otherLevel, locale);
 
   const divisionLinks = buildDivisionNavigation(
     championships,
@@ -149,6 +174,8 @@ async function ChampionshipsDetailPage({
               categoryLinks={categoryLinks}
               genderLinks={genderLinks}
               divisionLinks={divisionLinks}
+              levelAboveHref={levelAbove && `/championships/${levelAbove.id}`}
+              levelBelowLinks={levelBelowLinks}
             />
           </>
         }
