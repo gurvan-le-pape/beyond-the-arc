@@ -12,6 +12,7 @@ export * from "./genders";
 export * from "./levelConfig";
 export * from "./navConfig";
 export * from "./organization-types";
+export * from "./pagination";
 export * from "./positions";
 export * from "./request-id-header";
 export * from "./roles";

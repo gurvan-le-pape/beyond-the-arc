@@ -7,6 +7,7 @@ import {
   encodeUrlState,
   enumParam,
   intParam,
+  pageSizeParam,
   textParam,
 } from "./urlStateCodec";
 
@@ -69,5 +70,15 @@ describe("dateParam", () => {
   it("accepts a YYYY-MM-DD day and rejects anything else", () => {
     expect(dateParam.parse("2026-10-10")).toBe("2026-10-10");
     expect(dateParam.parse("10/10/2026")).toBeUndefined();
+  });
+});
+
+describe("pageSizeParam", () => {
+  it("accepts an offered page size and rejects anything else", () => {
+    expect(pageSizeParam.parse("25")).toBe(25);
+    expect(pageSizeParam.parse("100")).toBe(100);
+    expect(pageSizeParam.parse("200")).toBeUndefined();
+    expect(pageSizeParam.parse("30")).toBeUndefined();
+    expect(pageSizeParam.parse("abc")).toBeUndefined();
   });
 });

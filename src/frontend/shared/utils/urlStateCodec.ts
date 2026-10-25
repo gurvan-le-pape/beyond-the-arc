@@ -1,5 +1,7 @@
 // src/frontend/shared/utils/urlStateCodec.ts
 
+import { PAGE_SIZES } from "@/shared/constants";
+
 /**
  * How one piece of page state is written to and read from a query parameter.
  * `parse` returns `undefined` for a value it does not accept, so a hand-edited
@@ -22,6 +24,21 @@ export const intParam: UrlCodec<number> = {
     if (!/^\d+$/.test(raw)) return undefined;
     const value = Number(raw);
     return value >= 1 ? value : undefined;
+  },
+  serialize: String,
+};
+
+/**
+ * A page size, accepted only from `PAGE_SIZES`: a stale or hand-edited
+ * `size=200` would otherwise reach the API and be rejected there.
+ */
+export const pageSizeParam: UrlCodec<number> = {
+  parse: (raw) => {
+    const value = intParam.parse(raw);
+    return value !== undefined &&
+      (PAGE_SIZES as readonly number[]).includes(value)
+      ? value
+      : undefined;
   },
   serialize: String,
 };

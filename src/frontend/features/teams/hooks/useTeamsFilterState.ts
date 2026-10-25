@@ -12,7 +12,7 @@ import {
   GENDER_LIST,
 } from "@/shared/constants";
 import { useUrlState } from "@/shared/hooks";
-import { enumParam, intParam, textParam } from "@/shared/utils";
+import { enumParam, intParam, pageSizeParam, textParam } from "@/shared/utils";
 
 export interface TeamsFilterState {
   clubId: number | undefined;
@@ -57,7 +57,7 @@ const CODECS = {
   division: intParam,
   pool: textParam,
   page: intParam,
-  size: intParam,
+  size: pageSizeParam,
 };
 
 /** Merged into every filter change: a new filter starts again from page 1. */
