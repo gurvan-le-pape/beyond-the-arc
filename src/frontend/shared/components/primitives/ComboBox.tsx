@@ -33,6 +33,12 @@ export interface ComboBoxProps {
    * purpose is plain from its surroundings. Default: false.
    */
   readonly hideLabel?: boolean;
+  /**
+   * Shown when no option matches `value` — while the options load, or for a
+   * value that is not among them. Without one the trigger is blank, as a
+   * native `<select>` is; there is no generic default, because no wording
+   * fits every picker.
+   */
   readonly placeholder?: string;
   readonly disabled?: boolean;
   readonly className?: string;
@@ -328,13 +334,11 @@ export function ComboBox({
           aria-activedescendant={searchable ? undefined : activeDescendant}
         >
           <span id={valueId} className="truncate block">
-            {selectedOption ? (
-              selectedOption.label
-            ) : (
-              <span className="text-text-secondary">
-                {placeholder || t("table.filterName")}
-              </span>
-            )}
+            {selectedOption
+              ? selectedOption.label
+              : placeholder && (
+                  <span className="text-text-secondary">{placeholder}</span>
+                )}
           </span>
         </button>
 

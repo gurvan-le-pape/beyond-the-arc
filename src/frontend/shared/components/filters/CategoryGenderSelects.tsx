@@ -28,10 +28,9 @@ interface CategoryGenderSelectsProps {
  * so `ComboBox` always finds a matching option and renders *its* label. The
  * placeholder is therefore unreachable on the normal path — it surfaces only
  * if a value arrives that is in neither list, which is possible because these
- * values come from the URL. Two of the three call sites passed none and fell
- * through to `common.table.filterName` ("Filter name…") in that case, which
- * says nothing useful about a category filter. Naming it here makes the
- * fallback correct everywhere without changing anything a user normally sees.
+ * values come from the URL. Without one, `ComboBox` would show a blank trigger
+ * in that case. Naming it here makes the fallback correct everywhere without
+ * changing anything a user normally sees.
  */
 export function CategoryGenderSelects({
   category,
