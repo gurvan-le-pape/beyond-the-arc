@@ -67,7 +67,7 @@
       "inbound": "Remise en jeu",
       "substitution": "Remplacement"
     },
-    "title": "Événements du match",
+    "title": "Déroulé du match",
     "noEvents": "Aucun événement disponible pour ce match.",
     "allQuarters": "Tous",
     "overtime": "Prol.",
@@ -134,7 +134,7 @@
     "title": "Résumé du match",
     "tabs": {
       "teamStats": "Stats d'équipe",
-      "matchEvents": "Événements",
+      "matchEvents": "Déroulé",
       "homeTeam": "Locaux",
       "awayTeam": "Visiteurs"
     }

@@ -67,7 +67,7 @@
       "inbound": "Inbound",
       "substitution": "Substitution"
     },
-    "title": "Match Events",
+    "title": "Play-by-play",
     "noEvents": "No events available for this match.",
     "allQuarters": "All",
     "overtime": "OT",
@@ -134,7 +134,7 @@
     "title": "Match Summary",
     "tabs": {
       "teamStats": "Team Stats",
-      "matchEvents": "Match Events",
+      "matchEvents": "Play-by-play",
       "homeTeam": "Home Team",
       "awayTeam": "Away Team"
     }
