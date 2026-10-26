@@ -128,7 +128,8 @@
     "flowTitle": "Écart au score",
     "flowLegend": "<h>{home}</h> devant au-dessus de la ligne, <a>{away}</a> en dessous",
     "flowPoint": "{period} {clock} · {home}–{away}{who, select, none {} other { · {who}}}",
-    "flowHelp": "Survolez le graphique, ou utilisez les flèches une fois le focus dessus, pour lire le score à chaque panier. Cliquez ou appuyez sur Entrée pour aller à cette action."
+    "flowHelp": "Cliquez sur un point pour choisir un panier, puis passez aux autres avec les flèches. « Voir l'action » ou Entrée vous y amène dans la liste.",
+    "goToPlay": "Voir l'action"
   },
   "matchSummary": {
     "title": "Résumé du match",

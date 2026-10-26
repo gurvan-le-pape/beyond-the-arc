@@ -128,7 +128,8 @@
     "flowTitle": "Score margin",
     "flowLegend": "<h>{home}</h> ahead above the line, <a>{away}</a> below",
     "flowPoint": "{period} {clock} · {home}–{away}{who, select, none {} other { · {who}}}",
-    "flowHelp": "Point at the chart, or focus it and use the arrow keys, to read the score at each basket. Click or press Enter to go to that play."
+    "flowHelp": "Click a point to pick a basket, then step through the others with the arrow keys. “Go to play” or Enter takes you to it in the list.",
+    "goToPlay": "Go to play"
   },
   "matchSummary": {
     "title": "Match Summary",

@@ -4,6 +4,7 @@ import { type KeyboardEvent, type MouseEvent, useId, useState } from "react";
 
 import type { MatchTeam } from "@/features/matches/types";
 import { getEventStyle } from "@/features/matches/utils";
+import { Button } from "@/shared/components/primitives";
 import { EventCategory, Role } from "@/shared/constants";
 import { cn } from "@/shared/utils";
 
@@ -31,8 +32,8 @@ interface FlowChartProps {
   readonly awayTeam: MatchTeam;
   /** Match tip-off, from which each play's clock is derived. */
   readonly matchDate: Date | string;
-  /** Called with the play the reader chose to go to. */
-  readonly onSelect: (play: Play) => void;
+  /** Called with the play the reader asked to go to. */
+  readonly onGoTo: (play: Play) => void;
 }
 
 /**
@@ -54,10 +55,15 @@ function scorerName(play: Play): string | undefined {
  * the home side leads, below while the away side does, each half filled in
  * its side's tone. Dashed lines split the periods.
  *
- * The plot is one slider over the match's baskets. Pointing at it, or the
- * arrow keys once it has focus, pick the nearest basket and write its clock,
- * score and scorer under the chart; a click, Enter or Space goes to that play
- * in the list below.
+ * The plot is one slider over the match's baskets. Picking a basket and going
+ * to it are two steps, so the chart stays in view while the reader looks for
+ * the right one:
+ *
+ * - pointing at the plot previews the nearest basket with a guide line, and
+ *   writes it under the chart while none is picked;
+ * - a click or tap picks the nearest basket and focuses the plot, and the
+ *   arrow keys, Home and End then step from it;
+ * - "Go to play", Enter or Space scroll to the picked play in the list below.
  */
 export function FlowChart({
   points,
@@ -65,13 +71,14 @@ export function FlowChart({
   homeTeam,
   awayTeam,
   matchDate,
-  onSelect,
+  onGoTo,
 }: FlowChartProps) {
   const t = useTranslations("matches.matchEvents");
   const periodAbbr = usePeriodAbbr();
   const clipId = useId();
   const helpId = useId();
-  const [active, setActive] = useState<number | null>(null);
+  const [picked, setPicked] = useState<number | null>(null);
+  const [hovered, setHovered] = useState<number | null>(null);
 
   const total = periodEndSeconds(lastPeriod);
   const maxAbs =
@@ -132,10 +139,10 @@ export function FlowChart({
     switch (key) {
       case "ArrowRight":
       case "ArrowUp":
-        return active === null ? 0 : Math.min(last, active + 1);
+        return picked === null ? 0 : Math.min(last, picked + 1);
       case "ArrowLeft":
       case "ArrowDown":
-        return active === null ? last : Math.max(0, active - 1);
+        return picked === null ? last : Math.max(0, picked - 1);
       case "Home":
         return 0;
       case "End":
@@ -149,20 +156,22 @@ export function FlowChart({
     const move = moveFor(event.key);
     if (move !== null) {
       event.preventDefault();
-      setActive(move);
+      setPicked(move);
     } else if (
       (event.key === "Enter" || event.key === " ") &&
-      active !== null
+      picked !== null
     ) {
       event.preventDefault();
-      onSelect(points[active].play);
+      onGoTo(points[picked].play);
     }
   };
 
   if (points.length === 0) return null;
-  const activePoint = active === null ? null : points[active];
-  const activeSide =
-    activePoint?.play.scoringTeamId === homeTeam.id ? "home" : "away";
+  const pickedPoint = picked === null ? null : points[picked];
+  const pickedSide =
+    pickedPoint?.play.scoringTeamId === homeTeam.id ? "home" : "away";
+  const hoveredPoint = hovered === null ? null : points[hovered];
+  const readout = picked ?? hovered;
 
   return (
     <figure className="rounded-card border border-divide surface-raised px-3 pt-3 pb-2">
@@ -290,22 +299,30 @@ export function FlowChart({
             />
           </svg>
 
-          {activePoint && (
+          {hoveredPoint && hovered !== picked && (
+            <span
+              aria-hidden="true"
+              className="absolute inset-y-0 w-px bg-text-secondary/50"
+              style={{ left: `${x(hoveredPoint.seconds)}%` }}
+            />
+          )}
+
+          {pickedPoint && (
             <span aria-hidden="true">
               <span
                 className="absolute inset-y-0 w-px bg-text-secondary"
-                style={{ left: `${x(activePoint.seconds)}%` }}
+                style={{ left: `${x(pickedPoint.seconds)}%` }}
               />
               <span
                 className={cn(
                   "absolute size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 surface-raised",
-                  activeSide === "home"
+                  pickedSide === "home"
                     ? "border-solid-home"
                     : "border-solid-away",
                 )}
                 style={{
-                  left: `${x(activePoint.seconds)}%`,
-                  top: `${y(activePoint.margin)}%`,
+                  left: `${x(pickedPoint.seconds)}%`,
+                  top: `${y(pickedPoint.margin)}%`,
                 }}
               />
             </span>
@@ -319,27 +336,36 @@ export function FlowChart({
             aria-describedby={helpId}
             aria-valuemin={1}
             aria-valuemax={points.length}
-            aria-valuenow={(active ?? points.length - 1) + 1}
-            aria-valuetext={describe(active ?? points.length - 1)}
-            onPointerMove={(event) => setActive(nearest(event))}
-            onPointerLeave={(event) => {
-              if (document.activeElement !== event.currentTarget)
-                setActive(null);
-            }}
-            onClick={(event) => onSelect(points[nearest(event)].play)}
+            aria-valuenow={(picked ?? points.length - 1) + 1}
+            aria-valuetext={describe(picked ?? points.length - 1)}
+            onPointerMove={(event) => setHovered(nearest(event))}
+            onPointerLeave={() => setHovered(null)}
+            onClick={(event) => setPicked(nearest(event))}
             onKeyDown={onKeyDown}
-            onBlur={() => setActive(null)}
             className="absolute inset-0 cursor-crosshair touch-pan-y rounded-input focus-ring"
           />
         </div>
       </div>
 
-      <p
-        aria-hidden="true"
-        className="min-h-5 mt-1 text-xs font-medium text-text-emphasis tabular-nums truncate"
-      >
-        {active !== null && describe(active)}
-      </p>
+      <div className="flex min-h-7 items-center justify-between gap-3 mt-1">
+        <p
+          aria-hidden="true"
+          className="min-w-0 text-xs font-medium text-text-emphasis tabular-nums truncate"
+        >
+          {readout !== null && describe(readout)}
+        </p>
+        {pickedPoint && (
+          <Button
+            variant="link"
+            size="sm"
+            className="shrink-0"
+            onClick={() => onGoTo(pickedPoint.play)}
+          >
+            {t("goToPlay")}
+            <span aria-hidden="true"> ↓</span>
+          </Button>
+        )}
+      </div>
       <p id={helpId} className="text-xs text-text-secondary">
         {t("flowHelp")}
       </p>
