@@ -91,6 +91,8 @@
     "pointDifference": "Différence de points",
     "abbr": {
       "gamesPlayed": "J",
+      "gamesWon": "V",
+      "gamesLost": "D",
       "pointDifference": "Diff",
       "record": "V–D"
     },

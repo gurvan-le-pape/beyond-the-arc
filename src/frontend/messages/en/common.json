@@ -91,6 +91,8 @@
     "pointDifference": "Point difference",
     "abbr": {
       "gamesPlayed": "GP",
+      "gamesWon": "W",
+      "gamesLost": "L",
       "pointDifference": "Diff",
       "record": "W–L"
     },

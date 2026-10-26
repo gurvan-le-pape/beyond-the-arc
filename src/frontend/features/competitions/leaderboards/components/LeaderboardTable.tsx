@@ -41,21 +41,11 @@ export function LeaderboardTable({
   const tCompetitions = useTranslations("competitions");
   const locale = useLocale();
 
-  // On a phone the table keeps rank, team, points, games played and point
-  // difference — wins and losses follow from those — with abbreviated
-  // headings whose full label stays on the abbreviation. All seven at full
-  // width made the table more than twice the phone's width.
-  const heading = (abbr: string, full: string) => (
-    <>
-      <abbr title={full} className="no-underline sm:hidden">
-        {abbr}
-      </abbr>
-      <span className="hidden sm:inline">{full}</span>
-    </>
-  );
-
-  // A summary's columns are few and narrow, so its headings stay abbreviated
-  // at every width, and never break at the dash in "W–L".
+  // Number headings are abbreviated at every width, with the full label on
+  // the abbreviation, and never break at the dash in "W–L": the width goes to
+  // the team names, in a table about 700px wide beside the matches. On a
+  // phone, wins and losses are left out — they follow from games played and
+  // points.
   const abbreviation = (abbr: string, full: string) => (
     <abbr title={full} className="no-underline whitespace-nowrap">
       {abbr}
@@ -126,7 +116,7 @@ export function LeaderboardTable({
     teamColumn,
     {
       key: "points",
-      header: heading(
+      header: abbreviation(
         tCommon("stats.points.abbr"),
         tCommon("stats.points.full"),
       ),
@@ -135,7 +125,7 @@ export function LeaderboardTable({
     },
     {
       key: "gamesPlayed",
-      header: heading(
+      header: abbreviation(
         tCommon("table.abbr.gamesPlayed"),
         tCommon("stats.gamesPlayed"),
       ),
@@ -144,26 +134,32 @@ export function LeaderboardTable({
     },
     {
       key: "gamesWon",
-      header: tCommon("table.gamesWon"),
+      header: abbreviation(
+        tCommon("table.abbr.gamesWon"),
+        tCommon("table.gamesWon"),
+      ),
       from: "sm",
       numeric: true,
       render: (row) => row.gamesWon,
     },
     {
       key: "gamesLost",
-      header: tCommon("table.gamesLost"),
+      header: abbreviation(
+        tCommon("table.abbr.gamesLost"),
+        tCommon("table.gamesLost"),
+      ),
       from: "sm",
       numeric: true,
       render: (row) => row.gamesLost,
     },
     {
       key: "pointDifference",
-      header: heading(
+      header: abbreviation(
         tCommon("table.abbr.pointDifference"),
         tCommon("table.pointDifference"),
       ),
       numeric: true,
-      render: (row) => row.pointDifference,
+      render: (row) => signed.format(row.pointDifference),
     },
     {
       key: "form",
