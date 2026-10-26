@@ -63,6 +63,7 @@ export function getTeamIdFromEvent(event: MatchEvent): number | undefined {
         Role.REBOUNDER,
         Role.ASSISTER,
         Role.STEALER,
+        Role.BLOCKER,
         Role.WINNER,
       ] as Role[]
     ).includes(p.role),
