@@ -5,7 +5,7 @@ import type { EventStyle, MatchTeam } from "@/features/matches/types";
 import { TextLink } from "@/shared/components/primitives";
 import { cn } from "@/shared/utils";
 
-import { periodClock, type Play } from "../matchEventsView";
+import { periodClock, type Play, playRowId } from "../matchEventsView";
 import { EventScore } from "./EventScore";
 import { usePlayDescription } from "./usePlayDescription";
 
@@ -22,6 +22,8 @@ interface TimelineEventRowProps {
   readonly style: EventStyle;
   /** Match tip-off, from which the play's game clock is derived. */
   readonly matchDate: Date | string;
+  /** The reader just jumped to this play: it is tinted for a moment. */
+  readonly highlighted: boolean;
 }
 
 /**
@@ -32,6 +34,9 @@ interface TimelineEventRowProps {
  * is also written out for screen readers. A play with no team (no player in a
  * qualifying role) gets a neutral stripe and no name. The icon is dropped
  * below `sm`, where the sentence needs the width.
+ *
+ * The row carries an id and takes focus from script only (`tabIndex={-1}`),
+ * so a jump from the flow chart can land on it.
  */
 export function TimelineEventRow({
   play,
@@ -39,6 +44,7 @@ export function TimelineEventRow({
   awayTeam,
   style,
   matchDate,
+  highlighted,
 }: TimelineEventRowProps) {
   const tMatches = useTranslations("matches");
   const { label, freeThrows, tokens } = usePlayDescription(play, style);
@@ -53,7 +59,14 @@ export function TimelineEventRow({
   const scoredBy = sideOf(play.scoringTeamId);
 
   return (
-    <li className="grid grid-cols-[2.75rem_3px_minmax(0,1fr)_auto] sm:grid-cols-[3rem_3px_1.25rem_minmax(0,1fr)_auto] gap-x-3 items-start px-3 sm:px-4 py-2.5 border-b border-divide/60 last:border-b-0">
+    <li
+      id={playRowId(play.lead.id)}
+      tabIndex={-1}
+      className={cn(
+        "grid grid-cols-[2.75rem_3px_minmax(0,1fr)_auto] sm:grid-cols-[3rem_3px_1.25rem_minmax(0,1fr)_auto] gap-x-3 items-start px-3 sm:px-4 py-2.5 border-b border-divide/60 last:border-b-0 outline-none transition-colors duration-700",
+        highlighted && "bg-tint-primary",
+      )}
+    >
       <span className="font-mono text-xs text-text-secondary tabular-nums pt-0.5">
         {periodClock(play.lead.occurredAt, matchDate, play.period)}
       </span>

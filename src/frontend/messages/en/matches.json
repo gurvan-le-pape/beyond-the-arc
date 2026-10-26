@@ -117,7 +117,18 @@
     "showAllCategories": "Show every event type",
     "leadChange": "Lead change",
     "tie": "Tie",
-    "run": "{points}–0 run · {team}"
+    "run": "{points}–0 run · {team}",
+    "overtimeAbbr": "{n, plural, =1 {OT} other {OT#}}",
+    "leadChanges": "Lead changes",
+    "ties": "{count, plural, =0 {No tie} one {# tie} other {# ties}}",
+    "biggestLead": "Biggest lead",
+    "homeAway": "Home / away",
+    "bestRun": "Best run",
+    "ledForGood": "Ahead for good",
+    "flowTitle": "Score margin",
+    "flowLegend": "<h>{home}</h> ahead above the line, <a>{away}</a> below",
+    "flowPoint": "{period} {clock} · {home}–{away}{who, select, none {} other { · {who}}}",
+    "flowHelp": "Point at the chart, or focus it and use the arrow keys, to read the score at each basket. Click or press Enter to go to that play."
   },
   "matchSummary": {
     "title": "Match Summary",

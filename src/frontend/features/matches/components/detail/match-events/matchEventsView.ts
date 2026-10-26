@@ -39,11 +39,27 @@ export function overtimeNumber(period: number): number | null {
  * @param period - 1-based period; 5 and above are overtimes
  * @returns the buzzer's offset from tip-off, in seconds
  */
-function periodEndSeconds(period: number): number {
+export function periodEndSeconds(period: number): number {
   if (period <= REGULATION_QUARTERS) return period * QUARTER_SECONDS;
   return (
     REGULATION_QUARTERS * QUARTER_SECONDS +
     (period - REGULATION_QUARTERS) * OVERTIME_SECONDS
+  );
+}
+
+/**
+ * Whole seconds of game time from tip-off to an event.
+ *
+ * @param occurredAt - when the event happened
+ * @param tipOff - when the match started; the API's event times are game time counted from it
+ * @returns the seconds elapsed, rounded down
+ */
+export function gameSeconds(
+  occurredAt: Date | string,
+  tipOff: Date | string,
+): number {
+  return Math.floor(
+    (new Date(occurredAt).getTime() - new Date(tipOff).getTime()) / 1000,
   );
 }
 
@@ -61,10 +77,10 @@ export function periodClock(
   tipOff: Date | string,
   period: number,
 ): string {
-  const elapsed = Math.floor(
-    (new Date(occurredAt).getTime() - new Date(tipOff).getTime()) / 1000,
+  const left = Math.max(
+    0,
+    periodEndSeconds(period) - gameSeconds(occurredAt, tipOff),
   );
-  const left = Math.max(0, periodEndSeconds(period) - elapsed);
   const seconds = (left % 60).toString().padStart(2, "0");
   return `${Math.floor(left / 60)}:${seconds}`;
 }
@@ -314,63 +330,186 @@ export function groupPlays(events: readonly ScoredMatchEvent[]): Play[] {
   return markSwingsAndRuns(plays);
 }
 
-/** A run still being scored, and the play of its latest basket. */
-interface OpenRun {
-  teamId: number;
-  points: number;
-  last: Play;
+/** A streak of points by one side, and the play of its last basket. */
+interface ScoringStreak extends Run {
+  readonly last: Play;
 }
 
 /**
- * Fills in each play's `swing` and `runEnded`, walking the match in order.
+ * Every streak of the match, however short: the points one side scored
+ * before the other scored again. A basket and its free throws in one play
+ * add up, and the last streak is closed by the end of the match.
  *
- * Runs count points, so a basket and its free throws in one play add up, and
- * a run is closed by the other side's next score or by the end of the match.
- *
- * @param plays - the match's plays, in match order, with neither field set
- * @returns the same plays, in the same order, with both fields set
+ * @param plays - the match's plays, in match order
+ * @returns the streaks, in match order
  */
-function markSwingsAndRuns(plays: readonly Play[]): Play[] {
-  const swings = new Map<Play, Play["swing"]>();
-  const runs = new Map<Play, Run>();
-
-  const closeRun = (open: OpenRun | null) => {
-    if (open && open.points >= RUN_MIN_POINTS) {
-      runs.set(open.last, { teamId: open.teamId, points: open.points });
-    }
-  };
-
-  let leader = 0;
+function scoringStreaks(plays: readonly Play[]): ScoringStreak[] {
+  const streaks: { teamId: number; points: number; last: Play }[] = [];
   let total = 0;
-  // Cast, not annotated: an annotated `null` start narrows `run` to `null`
-  // for the whole loop, which only reassigns it inside a branch.
-  let run = null as OpenRun | null;
-
   for (const play of plays) {
     const after = play.homeScore + play.awayScore;
     const points = after - total;
     total = after;
     if (play.scoringTeamId === undefined) continue;
 
+    const open = streaks[streaks.length - 1];
+    if (open?.teamId === play.scoringTeamId) {
+      open.points += points;
+      open.last = play;
+    } else {
+      streaks.push({ teamId: play.scoringTeamId, points, last: play });
+    }
+  }
+  return streaks;
+}
+
+/**
+ * Fills in each play's `swing` and `runEnded`, walking the match in order.
+ *
+ * @param plays - the match's plays, in match order, with neither field set
+ * @returns the same plays, in the same order, with both fields set
+ */
+function markSwingsAndRuns(plays: readonly Play[]): Play[] {
+  const swings = new Map<Play, Play["swing"]>();
+  let leader = 0;
+  for (const play of plays) {
+    if (play.scoringTeamId === undefined) continue;
     const now = Math.sign(play.homeScore - play.awayScore);
     if (now === 0) swings.set(play, "tie");
     else if (leader !== 0 && now !== leader) swings.set(play, "leadChange");
     if (now !== 0) leader = now;
-
-    if (run?.teamId !== play.scoringTeamId) {
-      closeRun(run);
-      run = { teamId: play.scoringTeamId, points: 0, last: play };
-    }
-    run.points += points;
-    run.last = play;
   }
-  closeRun(run);
+
+  const runs = new Map<Play, Run>();
+  for (const { teamId, points, last } of scoringStreaks(plays)) {
+    if (points >= RUN_MIN_POINTS) runs.set(last, { teamId, points });
+  }
 
   return plays.map((play) => ({
     ...play,
     swing: swings.get(play) ?? null,
     runEnded: runs.get(play) ?? null,
   }));
+}
+
+/** The widest a side's lead got, and the play that took it there. */
+export interface BiggestLead {
+  readonly margin: number;
+  readonly play: Play;
+}
+
+/** The shape of the match, in the figures above the timeline. */
+export interface MatchSummary {
+  /** The plays that took the lead from the side that had it. */
+  readonly leadChanges: number;
+  /** The plays that levelled the score, the 0–0 start not included. */
+  readonly ties: number;
+  /** Each side's biggest lead; `null` for a side that never led. */
+  readonly biggestLead: {
+    readonly home: BiggestLead | null;
+    readonly away: BiggestLead | null;
+  };
+  /**
+   * The most points either side scored in a row, the earliest when two
+   * streaks tie, whether or not it reaches `RUN_MIN_POINTS`; `null` in a
+   * match without a point.
+   */
+  readonly bestRun: Run | null;
+  /**
+   * The play after which the winner led for good: its first basket for a
+   * wire-to-wire win. `null` when the match ended level.
+   */
+  readonly decidingPlay: Play | null;
+}
+
+/**
+ * Each side's biggest lead over the match.
+ *
+ * @param plays - the match's plays, in match order
+ * @returns the widest lead per side and the first play to reach it
+ */
+function biggestLeads(plays: readonly Play[]): MatchSummary["biggestLead"] {
+  let home: BiggestLead | null = null;
+  let away: BiggestLead | null = null;
+  for (const play of plays) {
+    const margin = play.homeScore - play.awayScore;
+    if (margin > (home?.margin ?? 0)) home = { margin, play };
+    if (-margin > (away?.margin ?? 0)) away = { margin: -margin, play };
+  }
+  return { home, away };
+}
+
+/**
+ * The play after which the winner led for good.
+ *
+ * @param plays - the match's plays, in match order
+ * @returns the last play that put the winner ahead; `null` when the match ended level
+ */
+function findDecidingPlay(plays: readonly Play[]): Play | null {
+  const last = plays[plays.length - 1];
+  const winner = last ? Math.sign(last.homeScore - last.awayScore) : 0;
+  if (winner === 0) return null;
+
+  let deciding: Play | null = null;
+  let before = 0;
+  for (const play of plays) {
+    if (play.scoringTeamId === undefined) continue;
+    const now = Math.sign(play.homeScore - play.awayScore);
+    if (now === winner && before !== winner) deciding = play;
+    before = now;
+  }
+  return deciding;
+}
+
+/**
+ * Sums up the match from its plays.
+ *
+ * @param plays - the match's plays, in match order, as `groupPlays` returns them
+ * @returns the match's figures
+ */
+export function summarizeMatch(plays: readonly Play[]): MatchSummary {
+  const bestRun = scoringStreaks(plays).reduce<Run | null>(
+    (best, { teamId, points }) =>
+      points > (best?.points ?? 0) ? { teamId, points } : best,
+    null,
+  );
+
+  return {
+    leadChanges: plays.filter((play) => play.swing === "leadChange").length,
+    ties: plays.filter((play) => play.swing === "tie").length,
+    biggestLead: biggestLeads(plays),
+    bestRun,
+    decidingPlay: findDecidingPlay(plays),
+  };
+}
+
+/** One step of the score-margin chart: a scoring play and where it falls. */
+export interface MarginPoint {
+  readonly play: Play;
+  /** Game seconds from tip-off to the play. */
+  readonly seconds: number;
+  /** Home score minus away score once the play is over. */
+  readonly margin: number;
+}
+
+/**
+ * The score margin after each scoring play, against game time.
+ *
+ * @param plays - the match's plays, in match order
+ * @param tipOff - when the match started
+ * @returns one point per scoring play, in match order
+ */
+export function marginPoints(
+  plays: readonly Play[],
+  tipOff: Date | string,
+): MarginPoint[] {
+  return plays
+    .filter((play) => play.scoringTeamId !== undefined)
+    .map((play) => ({
+      play,
+      seconds: gameSeconds(play.lead.occurredAt, tipOff),
+      margin: play.homeScore - play.awayScore,
+    }));
 }
 
 /**
@@ -490,4 +629,14 @@ export function countCategories(
     if (count !== undefined) counts.set(category, count + 1);
   }
   return counts;
+}
+
+/**
+ * The DOM id of a play's row, by which `revealPlay` finds it.
+ *
+ * @param leadEventId - the id of the play's lead event
+ * @returns the row's id
+ */
+export function playRowId(leadEventId: number): string {
+  return `play-${leadEventId}`;
 }
