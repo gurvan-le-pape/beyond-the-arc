@@ -10,6 +10,7 @@ import { EmptyState } from "@/shared/components/feedback";
 
 import { EventFilters } from "./event-filters";
 import { EventTimeline } from "./event-timeline";
+import { MatchFlow } from "./match-flow";
 import { useMatchEvents } from "./useMatchEvents";
 
 interface MatchEventsProps {
@@ -20,8 +21,9 @@ interface MatchEventsProps {
 }
 
 /**
- * The match's play-by-play: filters over a timeline. The state and the event
- * list live in `useMatchEvents`; this lays out the two halves.
+ * The match's play-by-play: the match's shape (figures and the score-margin
+ * chart), then filters over a timeline. The state and the event list live in
+ * `useMatchEvents`; this lays out the three parts.
  */
 export function MatchEvents({
   events,
@@ -32,11 +34,15 @@ export function MatchEvents({
   const tMatches = useTranslations("matches");
   const tCommon = useTranslations("common");
 
-  const { periods, periodScores, filters } = useMatchEvents(
-    events,
-    homeTeam.id,
-    awayTeam.id,
-  );
+  const {
+    periods,
+    periodScores,
+    summary,
+    margins,
+    revealedPlayId,
+    revealPlay,
+    filters,
+  } = useMatchEvents(events, homeTeam.id, awayTeam.id, matchDate);
 
   if (!events || events.length === 0) {
     return (
@@ -52,6 +58,18 @@ export function MatchEvents({
   return (
     <Section title={tMatches("matchEvents.title")}>
       <div className="mb-6">
+        <MatchFlow
+          summary={summary}
+          margins={margins}
+          lastPeriod={Math.max(...periodScores.keys())}
+          homeTeam={homeTeam}
+          awayTeam={awayTeam}
+          matchDate={matchDate}
+          onSelectPlay={revealPlay}
+        />
+      </div>
+
+      <div className="mb-6">
         <EventFilters homeTeam={homeTeam} awayTeam={awayTeam} {...filters} />
       </div>
 
@@ -63,6 +81,7 @@ export function MatchEvents({
         awayTeam={awayTeam}
         getEventStyle={getEventStyle}
         matchDate={matchDate}
+        highlightedPlayId={revealedPlayId}
       />
     </Section>
   );

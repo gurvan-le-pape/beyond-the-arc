@@ -27,6 +27,8 @@ interface PeriodSectionProps {
   readonly awayTeam: MatchTeam;
   readonly getEventStyle: (eventType: string) => EventStyle;
   readonly matchDate: Date | string;
+  /** The lead event id of the play the reader just jumped to, if any. */
+  readonly highlightedPlayId: number | null;
 }
 
 /**
@@ -47,6 +49,7 @@ export function PeriodSection({
   awayTeam,
   getEventStyle,
   matchDate,
+  highlightedPlayId,
 }: PeriodSectionProps) {
   const t = useTranslations("matches.matchEvents");
   const headingId = useId();
@@ -96,6 +99,7 @@ export function PeriodSection({
               awayTeam={awayTeam}
               style={getEventStyle(play.lead.eventType)}
               matchDate={matchDate}
+              highlighted={play.lead.id === highlightedPlayId}
             />
           );
           const run = play.runEnded;

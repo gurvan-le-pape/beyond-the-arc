@@ -117,7 +117,18 @@
     "showAllCategories": "Afficher tous les types",
     "leadChange": "Changement de leader",
     "tie": "Égalité",
-    "run": "Série de {points}–0 · {team}"
+    "run": "Série de {points}–0 · {team}",
+    "overtimeAbbr": "{n, plural, =1 {Prol.} other {Prol. #}}",
+    "leadChanges": "Changements de leader",
+    "ties": "{count, plural, =0 {Aucune égalité} one {# égalité} other {# égalités}}",
+    "biggestLead": "Plus gros écart",
+    "homeAway": "Domicile / extérieur",
+    "bestRun": "Meilleure série",
+    "ledForGood": "Devant pour de bon",
+    "flowTitle": "Écart au score",
+    "flowLegend": "<h>{home}</h> devant au-dessus de la ligne, <a>{away}</a> en dessous",
+    "flowPoint": "{period} {clock} · {home}–{away}{who, select, none {} other { · {who}}}",
+    "flowHelp": "Survolez le graphique, ou utilisez les flèches une fois le focus dessus, pour lire le score à chaque panier. Cliquez ou appuyez sur Entrée pour aller à cette action."
   },
   "matchSummary": {
     "title": "Résumé du match",

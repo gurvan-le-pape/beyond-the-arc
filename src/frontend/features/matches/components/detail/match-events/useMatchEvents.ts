@@ -1,11 +1,12 @@
 // src/frontend/features/matches/components/detail/match-events/useMatchEvents.ts
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Quarter } from "@/features/matches/constants";
 import type { MatchEvent } from "@/features/matches/types";
 import type { EventCategory } from "@/shared/constants";
 
 import {
+  categoryOf,
   countCategories,
   DEFAULT_CATEGORIES,
   FILTERABLE_CATEGORIES,
@@ -13,10 +14,17 @@ import {
   groupByPeriod,
   groupPlays,
   hasOvertime,
+  marginPoints,
   type PeriodPlays,
+  type Play,
+  playRowId,
   scoreEvents,
   scorePeriods,
+  summarizeMatch,
 } from "./matchEventsView";
+
+// How long a play the reader jumped to stays highlighted.
+const HIGHLIGHT_MS = 2000;
 
 /**
  * How many rows the timeline draws for the given periods.
@@ -35,17 +43,24 @@ function countRows(periods: readonly PeriodPlays[]): number {
  * change of filter, over the already scored plays, so the running score is
  * the match's and not the filtered subset's.
  *
+ * `revealPlay` jumps to a play from outside the list, such as the flow chart:
+ * it widens the filters to show the play if they hide it, then scrolls the
+ * play's row into view, moves focus to it and highlights it for a moment.
+ *
  * @param events - the match's events, in order
  * @param homeTeamId - the home side's team id
  * @param awayTeamId - the away side's team id
+ * @param tipOff - when the match started, to place plays in game time
  * @returns the plays to show, one run per period; each period's score, from
- *   the whole match; and the filter values and setters for the panel, with
- *   how many rows are shown out of how many the match has
+ *   the whole match; the match's summary and score margins; the play to
+ *   highlight and how to reveal one; and the filter values and setters for
+ *   the panel, with how many rows are shown out of how many the match has
  */
 export function useMatchEvents(
   events: readonly MatchEvent[],
   homeTeamId: number,
   awayTeamId: number,
+  tipOff: Date | string,
 ) {
   const [selectedQuarter, setSelectedQuarter] = useState<Quarter>(Quarter.ALL);
   const [latestFirst, setLatestFirst] = useState(false);
@@ -114,9 +129,49 @@ export function useMatchEvents(
     [scoredEvents],
   );
 
+  const summary = useMemo(() => summarizeMatch(plays), [plays]);
+  const margins = useMemo(() => marginPoints(plays, tipOff), [plays, tipOff]);
+
+  const [revealedPlayId, setRevealedPlayId] = useState<number | null>(null);
+
+  const revealPlay = useCallback(
+    (play: Play) => {
+      if (!shownPlays.includes(play)) {
+        setSelectedQuarter(Quarter.ALL);
+        setSelectedPlayerIds(new Set());
+        // The lead's category is enough: a play shows when any event matches.
+        setSelectedCategories((prev) =>
+          new Set(prev).add(categoryOf(play.lead)),
+        );
+      }
+      setRevealedPlayId(play.lead.id);
+    },
+    [shownPlays],
+  );
+
+  // Runs after the render that shows the play, so its row exists by then.
+  useEffect(() => {
+    if (revealedPlayId === null) return;
+    const row = document.getElementById(playRowId(revealedPlayId));
+    const reduceMotion = globalThis.matchMedia?.(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    row?.scrollIntoView({
+      block: "center",
+      behavior: reduceMotion ? "auto" : "smooth",
+    });
+    row?.focus({ preventScroll: true });
+    const timer = setTimeout(() => setRevealedPlayId(null), HIGHLIGHT_MS);
+    return () => clearTimeout(timer);
+  }, [revealedPlayId]);
+
   return {
     periods,
     periodScores,
+    summary,
+    margins,
+    revealedPlayId,
+    revealPlay,
     filters: {
       hasOvertime: hasOvertime(events),
       selectedQuarter,
