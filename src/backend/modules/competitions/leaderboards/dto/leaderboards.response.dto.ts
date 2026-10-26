@@ -1,6 +1,21 @@
 // src/backend/modules/competitions/leaderboards/dto/leaderboards.response.dto.ts
 import { ApiProperty } from "@nestjs/swagger";
 
+import { FORM_LENGTH, FormResult } from "../recent-form";
+
+/** One game of a team's recent form. */
+export class FormGameDto {
+  @ApiProperty({ description: "The match", example: 4021, type: Number })
+  matchId!: number;
+
+  @ApiProperty({
+    description: "How it went for the team: W for a win, L for a loss",
+    enum: Object.values(FormResult),
+    example: "W",
+  })
+  result!: FormResult;
+}
+
 /**
  * Response DTO for a leaderboard entry.
  * Provides a stable API contract independent of database schema.
@@ -96,4 +111,10 @@ export class LeaderboardResponseDto {
     type: Number,
   })
   pointDifference!: number;
+
+  @ApiProperty({
+    description: `The team's last ${FORM_LENGTH} games in the pool, oldest first. Shorter early in the season, empty before the team's first game.`,
+    type: [FormGameDto],
+  })
+  form!: FormGameDto[];
 }

@@ -23,6 +23,15 @@
     "previous": "Journée précédente",
     "next": "Journée suivante"
   },
+  "form": {
+    "title": "Forme",
+    "description": "Cinq derniers matchs, du plus ancien au plus récent",
+    "win": "Victoire",
+    "loss": "Défaite",
+    "winAbbr": "V",
+    "lossAbbr": "D",
+    "none": "Aucun match joué"
+  },
   "leaderboardTitle": "Classement",
   "leaderboardEmpty": "Aucun classement disponible pour le moment",
   "championshipsSectionTitle": "Championnats",

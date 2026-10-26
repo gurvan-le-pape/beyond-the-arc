@@ -39,6 +39,9 @@ describe("LeaderboardsService", () => {
         findUnique: jest.fn(),
         count: jest.fn(),
       },
+      matches: {
+        findMany: jest.fn().mockResolvedValue([]),
+      },
     },
   };
   beforeEach(async () => {
@@ -104,6 +107,50 @@ describe("LeaderboardsService", () => {
       const result = await service.findLeaderboardsByPoolId(1);
 
       expect(result.map((entry) => entry.rank)).toEqual([1, 1, 3]);
+    });
+
+    it("should give each entry its team's form from the pool's completed matches", async () => {
+      mockPrismaService.client.leaderboards.findMany.mockResolvedValue([
+        mockPrismaLeaderboard,
+        { ...mockPrismaLeaderboard, id: 2, teamId: 6, points: 8 },
+        { ...mockPrismaLeaderboard, id: 3, teamId: 7, points: 0 },
+      ]);
+      // Newest first: team 5 beat team 6, after losing to it.
+      mockPrismaService.client.matches.findMany.mockResolvedValueOnce([
+        {
+          id: 2,
+          homeTeamId: 5,
+          awayTeamId: 6,
+          homeTeamScore: 80,
+          awayTeamScore: 70,
+        },
+        {
+          id: 1,
+          homeTeamId: 6,
+          awayTeamId: 5,
+          homeTeamScore: 75,
+          awayTeamScore: 74,
+        },
+      ]);
+
+      const result = await service.findLeaderboardsByPoolId(10);
+
+      expect(result.map((entry) => entry.form)).toEqual([
+        [
+          { matchId: 1, result: "L" },
+          { matchId: 2, result: "W" },
+        ],
+        [
+          { matchId: 1, result: "W" },
+          { matchId: 2, result: "L" },
+        ],
+        [],
+      ]);
+      expect(prisma.client.matches.findMany).toHaveBeenCalledWith({
+        where: { poolId: 10, status: "completed" },
+        select: expect.any(Object),
+        orderBy: { startsAt: "desc" },
+      });
     });
 
     it("should return an empty array when no leaderboards found", async () => {

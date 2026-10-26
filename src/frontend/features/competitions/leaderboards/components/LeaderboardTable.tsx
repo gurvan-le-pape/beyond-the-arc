@@ -6,6 +6,8 @@ import { Section } from "@/shared/components/blocks";
 import { DataTable, type TableColumn } from "@/shared/components/table";
 import { formatTeamName } from "@/shared/utils";
 
+import { FormGuide } from "./FormGuide";
+
 interface LeaderboardTableProps {
   readonly leaderboards: Leaderboard[];
   /**
@@ -20,8 +22,8 @@ interface LeaderboardTableProps {
 }
 
 /**
- * A pool's standings — rank, team, and the season record. Each row links to
- * its team.
+ * A pool's standings — rank, team, the season record and, in the full
+ * table, recent form. Each row links to its team.
  *
  * Stays a **server component**. The `dropdown` slot is what keeps it that way:
  * a client-side pool picker is passed in as an element rather than rendered
@@ -162,6 +164,15 @@ export function LeaderboardTable({
       ),
       numeric: true,
       render: (row) => row.pointDifference,
+    },
+    {
+      key: "form",
+      header: tCompetitions("form.title"),
+      tooltip: tCompetitions("form.description"),
+      from: "sm",
+      align: "left",
+      width: "fit",
+      render: (row) => <FormGuide games={row.form} />,
     },
   ];
 

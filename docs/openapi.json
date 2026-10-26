@@ -3915,6 +3915,29 @@
           "pools"
         ]
       },
+      "FormGameDto": {
+        "type": "object",
+        "properties": {
+          "matchId": {
+            "type": "number",
+            "description": "The match",
+            "example": 4021
+          },
+          "result": {
+            "enum": [
+              "W",
+              "L"
+            ],
+            "type": "string",
+            "description": "How it went for the team: W for a win, L for a loss",
+            "example": "W"
+          }
+        },
+        "required": [
+          "matchId",
+          "result"
+        ]
+      },
       "LeaderboardResponseDto": {
         "type": "object",
         "properties": {
@@ -3982,6 +4005,13 @@
             "type": "number",
             "description": "Goal difference (pointsFor - pointsAgainst)",
             "example": 65
+          },
+          "form": {
+            "description": "The team's last 5 games in the pool, oldest first. Shorter early in the season, empty before the team's first game.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FormGameDto"
+            }
           }
         },
         "required": [
@@ -3997,7 +4027,8 @@
           "gamesForfeited",
           "pointsFor",
           "pointsAgainst",
-          "pointDifference"
+          "pointDifference",
+          "form"
         ]
       },
       "PoolResponseDto": {
