@@ -7,6 +7,8 @@ import { TextLink } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { cn } from "@/shared/utils";
 
+import { periodClock, periodLabel } from "../matchEventsView";
+
 interface TimelineEventBlockProps {
   /** Which side of the timeline this block sits on. */
   readonly align: "left" | "right";
@@ -18,20 +20,6 @@ interface TimelineEventBlockProps {
   readonly descriptionTokens: readonly EventDescriptionToken[];
   /** Match kick-off time, used to derive the game-clock display. */
   readonly matchDate: Date | string;
-}
-
-function formatGameClock(
-  occurredAt: Date | string,
-  matchDate: Date | string,
-): string {
-  const elapsedSeconds = Math.floor(
-    (new Date(occurredAt).getTime() - new Date(matchDate).getTime()) / 1000,
-  );
-  const minutes = Math.floor(elapsedSeconds / 60)
-    .toString()
-    .padStart(2, "0");
-  const seconds = (elapsedSeconds % 60).toString().padStart(2, "0");
-  return `${minutes}:${seconds}`;
 }
 
 /**
@@ -116,7 +104,8 @@ export function TimelineEventBlock({
         )}
 
         <Text variant="caption" as="span" className="font-mono">
-          {formatGameClock(event.occurredAt, matchDate)}
+          {periodLabel(event.period, tMatches("matchEvents.overtime"))}{" "}
+          {periodClock(event.occurredAt, matchDate, event.period)}
         </Text>
       </div>
     </div>

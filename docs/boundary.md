@@ -21,9 +21,9 @@ The simulator writes every event at `starts_at + game seconds`, with no stoppage
 | reader | what it derives | file |
 | --- | --- | --- |
 | backend | the event's `period` (1–4, then 5, 6, … for overtime) | `src/backend/modules/matches/match-period.ts` |
-| frontend | the `mm:ss` clock shown on each timeline event | `formatGameClock` in `src/frontend/features/matches/components/detail/match-events/event-timeline/TimelineEventBlock.tsx` |
+| frontend | the clock shown on each timeline event, as time left in its period | `periodClock` in `src/frontend/features/matches/components/detail/match-events/matchEventsView.ts` |
 
-The period lengths are mirrored, not shared: `QUARTER_LENGTH` and `OVERTIME_LENGTH` in `src/backend/db/python/simulation/match_simulator.py`, `QUARTER_SECONDS` and `OVERTIME_SECONDS` in `match-period.ts`. Each side pins its own copy — `src/backend/db/python/tests/test_quarters.py` asserts the buzzers, `match-period.spec.ts` the boundaries — but nothing compares the two.
+The period lengths are mirrored, not shared: `QUARTER_LENGTH` and `OVERTIME_LENGTH` in `src/backend/db/python/simulation/match_simulator.py`, and `QUARTER_SECONDS` and `OVERTIME_SECONDS` in both `match-period.ts` and `matchEventsView.ts`. Each copy is pinned by its own tests — `src/backend/db/python/tests/test_quarters.py` asserts the buzzers, `match-period.spec.ts` the period boundaries, `matchEventsView.spec.ts` the clock at them — but nothing compares the three.
 
 **Breaks when:** the simulator changes a period's length, or starts modelling stoppages (timeouts, breaks between quarters). At that point the period must be stored by the simulator rather than derived.
 
