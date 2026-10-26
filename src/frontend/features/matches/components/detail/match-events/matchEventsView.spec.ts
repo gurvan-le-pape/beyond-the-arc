@@ -6,6 +6,8 @@ import type { MatchEvent } from "@/features/matches/types";
 import { EventCategory, EventType, Role } from "@/shared/constants";
 
 import {
+  countCategories,
+  FILTERABLE_CATEGORIES,
   filterPlays,
   groupByPeriod,
   groupPlays,
@@ -49,7 +51,7 @@ const EVENTS = [
 
 const NO_FILTER: MatchEventsFilter = {
   quarter: Quarter.ALL,
-  category: undefined,
+  categories: new Set(FILTERABLE_CATEGORIES),
   playerIds: new Set(),
   latestFirst: false,
 };
@@ -87,15 +89,38 @@ describe("filterPlays", () => {
 
   it("narrows to a quarter, a category and players", () => {
     expect(ids({ quarter: Quarter.Q2 })).toEqual([3, 4]);
-    expect(ids({ category: EventCategory.MADE })).toEqual([1, 2, 5]);
+    expect(ids({ categories: new Set([EventCategory.MADE]) })).toEqual([
+      1, 2, 5,
+    ]);
     expect(ids({ playerIds: new Set([10, 11]) })).toEqual([1, 3, 5]);
     expect(
       ids({
         quarter: Quarter.Q1,
-        category: EventCategory.MADE,
+        categories: new Set([EventCategory.MADE]),
         playerIds: new Set([20]),
       }),
     ).toEqual([2]);
+  });
+
+  it("shows several categories at once, and none when none is chosen", () => {
+    expect(
+      ids({
+        categories: new Set([EventCategory.MISS, EventCategory.DEFENSIVE]),
+      }),
+    ).toEqual([3, 4]);
+    expect(ids({ categories: new Set() })).toEqual([]);
+  });
+
+  it("always shows an event outside the filterable categories", () => {
+    const withTipOff = playsOf([
+      event(0, EventType.TIP_OFF, Role.WINNER, 20, AWAY, 1),
+      ...EVENTS,
+    ]);
+    const shown = filterPlays(withTipOff, {
+      ...NO_FILTER,
+      categories: new Set([EventCategory.MISS]),
+    });
+    expect(shown.map((p) => p.lead.id)).toEqual([0, 3]);
   });
 
   it("puts the latest first when asked, keeping the match's score", () => {
@@ -316,5 +341,25 @@ describe("groupPlays", () => {
     ]);
     expect(foul.scoringTeamId).toBe(undefined);
     expect(foul.teamId).toBe(HOME);
+  });
+});
+
+describe("countCategories", () => {
+  it("counts the match's events per filterable category", () => {
+    const counts = countCategories([
+      ...EVENTS,
+      event(6, EventType.INBOUND, Role.SHOOTER, 20, AWAY, 3),
+      event(7, EventType.TIP_OFF, Role.WINNER, 20, AWAY, 1),
+    ]);
+    expect(Object.fromEntries(counts)).toEqual({
+      [EventCategory.MADE]: 3,
+      [EventCategory.MISS]: 1,
+      [EventCategory.FOUL]: 0,
+      [EventCategory.TURNOVER]: 0,
+      [EventCategory.DEFENSIVE]: 1,
+      [EventCategory.REBOUND]: 0,
+      [EventCategory.SUBSTITUTION]: 0,
+      [EventCategory.INBOUND]: 1,
+    });
   });
 });

@@ -71,7 +71,6 @@
     "noEvents": "Aucun événement disponible pour ce match.",
     "allQuarters": "Tous",
     "overtime": "Prol.",
-    "allEvents": "Tous les événements",
     "made": "Tirs marqués",
     "miss": "Tirs manqués",
     "defensive": "Interceptions et blocs",
@@ -112,7 +111,10 @@
     "finalScore": "Score final {home}–{away}",
     "noMatchingEvents": "Aucun événement ne correspond à ces filtres.",
     "freeThrows": "{attempted, plural, one {Lancer franc} other {Lancers francs}} : {made} sur {attempted}.",
-    "freeThrowsShort": "LF {made}/{attempted}"
+    "freeThrowsShort": "LF {made}/{attempted}",
+    "inbounds": "Remises en jeu",
+    "shownRows": "{shown, plural, one {# action affichée} other {# actions affichées}} sur {total}",
+    "showAllCategories": "Afficher tous les types"
   },
   "matchSummary": {
     "title": "Résumé du match",

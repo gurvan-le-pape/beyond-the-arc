@@ -1,5 +1,5 @@
 // src/frontend/features/matches/components/detail/match-events/matchEventsView.ts
-import { eventCategories, Quarter } from "@/features/matches/constants";
+import { Quarter } from "@/features/matches/constants";
 import type { MatchEvent } from "@/features/matches/types";
 import {
   getEventStyle,
@@ -97,10 +97,51 @@ function isInQuarter(quarter: Quarter, period: number): boolean {
   }
 }
 
+/**
+ * The kinds of event the reader can show or hide, in the order the filter
+ * offers them. A category left out of this list is always shown, never
+ * unreachable: `filterPlays` only hides what is listed here.
+ */
+export const FILTERABLE_CATEGORIES = [
+  EventCategory.MADE,
+  EventCategory.MISS,
+  EventCategory.FOUL,
+  EventCategory.TURNOVER,
+  EventCategory.DEFENSIVE,
+  EventCategory.REBOUND,
+  EventCategory.SUBSTITUTION,
+  EventCategory.INBOUND,
+] as const satisfies readonly EventCategory[];
+
+/**
+ * The categories the timeline opens with. Rebounds, substitutions and
+ * inbounds make up about two events in five and are rarely what a reader
+ * looks for, so they start hidden.
+ */
+export const DEFAULT_CATEGORIES: ReadonlySet<EventCategory> = new Set(
+  FILTERABLE_CATEGORIES.filter(
+    (category) =>
+      category !== EventCategory.REBOUND &&
+      category !== EventCategory.SUBSTITUTION &&
+      category !== EventCategory.INBOUND,
+  ),
+);
+
+/**
+ * The category an event is filtered under.
+ *
+ * @param event - the event to classify
+ * @returns its category; `OTHER` for a type the frontend does not know
+ */
+export function categoryOf(event: MatchEvent): EventCategory {
+  return getEventStyle(event.eventType).eventCategory;
+}
+
 /** What the reader has narrowed the timeline to. */
 export interface MatchEventsFilter {
   readonly quarter: Quarter;
-  readonly category: EventCategory | undefined;
+  /** The filterable categories to show; any other category always shows. */
+  readonly categories: ReadonlySet<EventCategory>;
   readonly playerIds: ReadonlySet<number>;
   readonly latestFirst: boolean;
 }
@@ -248,8 +289,10 @@ export function groupPlays(events: readonly ScoredMatchEvent[]): Play[] {
 }
 
 /**
- * The plays the timeline shows: those of the chosen quarter, with an event of
- * the chosen category or by one of the chosen players, newest first if asked.
+ * The plays the timeline shows: those of the chosen quarter with an event of a
+ * chosen category by one of the chosen players, newest first if asked. Events
+ * outside the filterable categories (the tip-off, an unknown type) pass the
+ * category test whatever is chosen.
  * A play matches on any of its events, so a shooting foul whose free throws
  * went in shows under made shots as well as under fouls.
  *
@@ -261,15 +304,15 @@ export function filterPlays(
   plays: readonly Play[],
   filter: MatchEventsFilter,
 ): Play[] {
-  const allowedTypes =
-    filter.category === undefined
-      ? undefined
-      : (eventCategories[filter.category] ?? []);
-
-  const matches = (event: ScoredMatchEvent) =>
-    (allowedTypes === undefined || allowedTypes.includes(event.eventType)) &&
-    (filter.playerIds.size === 0 ||
-      (event.players ?? []).some((p) => filter.playerIds.has(p.player.id)));
+  const filterable: readonly EventCategory[] = FILTERABLE_CATEGORIES;
+  const matches = (event: ScoredMatchEvent) => {
+    const category = categoryOf(event);
+    return (
+      (!filterable.includes(category) || filter.categories.has(category)) &&
+      (filter.playerIds.size === 0 ||
+        (event.players ?? []).some((p) => filter.playerIds.has(p.player.id)))
+    );
+  };
 
   const result = plays.filter(
     (play) =>
@@ -340,4 +383,25 @@ export function scorePeriods(
     previous = last;
   }
   return scores;
+}
+
+/**
+ * How many of the match's events fall in each filterable category, whatever
+ * else is filtered: the counts the filter shows beside each choice.
+ *
+ * @param events - every event of the match
+ * @returns the count per filterable category; 0 for one with no event
+ */
+export function countCategories(
+  events: readonly MatchEvent[],
+): Map<EventCategory, number> {
+  const counts = new Map<EventCategory, number>(
+    FILTERABLE_CATEGORIES.map((category) => [category, 0]),
+  );
+  for (const event of events) {
+    const category = categoryOf(event);
+    const count = counts.get(category);
+    if (count !== undefined) counts.set(category, count + 1);
+  }
+  return counts;
 }

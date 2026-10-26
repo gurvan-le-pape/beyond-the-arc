@@ -133,7 +133,7 @@ Pages (`app/`) sit above every layer and compose sections from any feature. When
 | Component files | PascalCase `.tsx` | `MatchStatus.tsx` |
 | Composite/section folders | kebab-case | `match-card/` |
 | Hook files (everywhere, `api/` included) | camelCase `useX.ts(x)` | `useMatchesFilterState.ts`, `useTeams.ts` |
-| Constants files | camelCase `.ts` | `eventCategories.ts` |
+| Constants files | camelCase `.ts` | `eventColors.ts` |
 | Utils files | camelCase `.ts` (`.tsx` allowed for JSX helpers) | `eventHelpers.ts` |
 | Shared view types / API alias files | PascalCase `.ts` in `types/` | `MatchFilters.ts` |
 | Component-private types | `types.ts` in the composite folder | `match-card/types.ts` |

@@ -25,3 +25,4 @@ export * from "./SelectChevron";
 export * from "./Switch";
 export * from "./Tabs";
 export * from "./TextLink";
+export * from "./ToggleChips";

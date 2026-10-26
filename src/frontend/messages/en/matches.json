@@ -71,7 +71,6 @@
     "noEvents": "No events available for this match.",
     "allQuarters": "All",
     "overtime": "OT",
-    "allEvents": "All events",
     "made": "Made shots",
     "miss": "Missed shots",
     "defensive": "Steals and blocks",
@@ -112,7 +111,10 @@
     "finalScore": "Final {home}–{away}",
     "noMatchingEvents": "No events match these filters.",
     "freeThrows": "{attempted, plural, one {Free throw} other {Free throws}}: {made} of {attempted}.",
-    "freeThrowsShort": "FT {made}/{attempted}"
+    "freeThrowsShort": "FT {made}/{attempted}",
+    "inbounds": "Inbounds",
+    "shownRows": "Showing {shown} of {total} plays",
+    "showAllCategories": "Show every event type"
   },
   "matchSummary": {
     "title": "Match Summary",
