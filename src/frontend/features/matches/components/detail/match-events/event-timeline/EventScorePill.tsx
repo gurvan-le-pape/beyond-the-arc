@@ -10,8 +10,9 @@ interface EventScorePillProps {
 }
 
 /**
- * Coloured pill that displays the running score after a scoring event.
- * Blue-tinted when the home team scored, red-tinted when the away team scored.
+ * Coloured pill that displays the running score after a scoring event, in
+ * the tone of the side that scored: the home and away roles, the same pair the
+ * team stats comparison uses, so a team keeps one colour across the match tabs.
  */
 export function EventScorePill({
   homeScore,
@@ -23,8 +24,8 @@ export function EventScorePill({
       className={cn(
         "px-3 py-1 rounded-button text-sm font-bold",
         isHomeTeam
-          ? "bg-tint-primary text-ink-primary"
-          : "bg-tint-error text-ink-error",
+          ? "bg-tint-home text-ink-home"
+          : "bg-tint-away text-ink-away",
       )}
     >
       {homeScore}–{awayScore}
