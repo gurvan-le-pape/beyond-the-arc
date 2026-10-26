@@ -5,7 +5,13 @@ import { Quarter } from "@/features/matches/constants";
 import type { MatchEvent } from "@/features/matches/types";
 import type { EventCategory } from "@/shared/constants";
 
-import { filterEvents, hasOvertime, scoreEvents } from "./matchEventsView";
+import {
+  filterEvents,
+  groupByPeriod,
+  hasOvertime,
+  scoreEvents,
+  scorePeriods,
+} from "./matchEventsView";
 
 /**
  * The timeline's filter state and the events it selects.
@@ -17,7 +23,8 @@ import { filterEvents, hasOvertime, scoreEvents } from "./matchEventsView";
  * @param events - the match's events, in order
  * @param homeTeamId - the home side's team id
  * @param awayTeamId - the away side's team id
- * @returns the events to show, and the filter values and setters for the panel
+ * @returns the events to show, one run per period; each period's score, from
+ *   the whole match; and the filter values and setters for the panel
  */
 export function useMatchEvents(
   events: readonly MatchEvent[],
@@ -65,8 +72,18 @@ export function useMatchEvents(
     ],
   );
 
+  const periods = useMemo(
+    () => groupByPeriod(filteredEvents),
+    [filteredEvents],
+  );
+  const periodScores = useMemo(
+    () => scorePeriods(scoredEvents),
+    [scoredEvents],
+  );
+
   return {
-    filteredEvents,
+    periods,
+    periodScores,
     filters: {
       hasOvertime: hasOvertime(events),
       selectedQuarter,

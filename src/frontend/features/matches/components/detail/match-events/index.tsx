@@ -32,7 +32,7 @@ export function MatchEvents({
   const tMatches = useTranslations("matches");
   const tCommon = useTranslations("common");
 
-  const { filteredEvents, filters } = useMatchEvents(
+  const { periods, periodScores, filters } = useMatchEvents(
     events,
     homeTeam.id,
     awayTeam.id,
@@ -56,7 +56,8 @@ export function MatchEvents({
       </div>
 
       <EventTimeline
-        events={filteredEvents}
+        periods={periods}
+        periodScores={periodScores}
         homeTeam={homeTeam}
         awayTeam={awayTeam}
         getEventStyle={getEventStyle}

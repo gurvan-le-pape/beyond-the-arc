@@ -69,7 +69,6 @@
     },
     "title": "Événements du match",
     "noEvents": "Aucun événement disponible pour ce match.",
-    "timelineLabel": "Chronologie des événements du match",
     "allQuarters": "Tous",
     "overtime": "Prol.",
     "allEvents": "Tous les événements",
@@ -104,7 +103,13 @@
       "quarterEnd": "Fin du quart-temps.",
       "shotClock": "Violation des 24 secondes."
     },
-    "categoryLabel": "Type d'événement"
+    "categoryLabel": "Type d'événement",
+    "quarterName": "Quart-temps {n}",
+    "overtimeName": "{n, plural, =1 {Prolongation} other {Prolongation #}}",
+    "periodPoints": "<h>{home}</h>–<a>{away}</a> sur la période",
+    "periodEndScore": "Fin {home}–{away}",
+    "finalScore": "Score final {home}–{away}",
+    "noMatchingEvents": "Aucun événement ne correspond à ces filtres."
   },
   "matchSummary": {
     "title": "Résumé du match",

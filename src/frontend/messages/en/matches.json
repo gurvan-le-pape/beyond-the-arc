@@ -69,7 +69,6 @@
     },
     "title": "Match Events",
     "noEvents": "No events available for this match.",
-    "timelineLabel": "Match events timeline",
     "allQuarters": "All",
     "overtime": "OT",
     "allEvents": "All events",
@@ -104,7 +103,13 @@
       "quarterEnd": "End of the quarter.",
       "shotClock": "Shot clock violation."
     },
-    "categoryLabel": "Event type"
+    "categoryLabel": "Event type",
+    "quarterName": "Quarter {n}",
+    "overtimeName": "{n, plural, =1 {Overtime} other {Overtime #}}",
+    "periodPoints": "<h>{home}</h>–<a>{away}</a> in the period",
+    "periodEndScore": "End {home}–{away}",
+    "finalScore": "Final {home}–{away}",
+    "noMatchingEvents": "No events match these filters."
   },
   "matchSummary": {
     "title": "Match Summary",

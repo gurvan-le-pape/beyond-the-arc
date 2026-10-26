@@ -6,7 +6,7 @@ import {
   getTeamIdFromEvent,
   pointsForEvent,
 } from "@/features/matches/utils";
-import { EventCategory } from "@/shared/constants";
+import { EventCategory, EventType } from "@/shared/constants";
 
 /** An event with the running score after it and its team. */
 export type ScoredMatchEvent = MatchEvent & {
@@ -24,6 +24,16 @@ const QUARTER_SECONDS = 600;
 const OVERTIME_SECONDS = 300;
 
 /**
+ * Which overtime a period is.
+ *
+ * @param period - 1-based period
+ * @returns 1 for the first overtime, 2 for the second…; `null` for a regulation quarter
+ */
+export function overtimeNumber(period: number): number | null {
+  return period > REGULATION_QUARTERS ? period - REGULATION_QUARTERS : null;
+}
+
+/**
  * Seconds of game time elapsed when the given period's buzzer sounds.
  *
  * @param period - 1-based period; 5 and above are overtimes
@@ -35,20 +45,6 @@ function periodEndSeconds(period: number): number {
     REGULATION_QUARTERS * QUARTER_SECONDS +
     (period - REGULATION_QUARTERS) * OVERTIME_SECONDS
   );
-}
-
-/**
- * A period's short name: `Q1`–`Q4`, then the overtime label, numbered from the
- * second overtime on (`OT`, `OT 2`).
- *
- * @param period - 1-based period
- * @param overtime - the translated overtime abbreviation
- * @returns the label to show beside the clock
- */
-export function periodLabel(period: number, overtime: string): string {
-  if (period <= REGULATION_QUARTERS) return `Q${period}`;
-  const nth = period - REGULATION_QUARTERS;
-  return nth === 1 ? overtime : `${overtime} ${nth}`;
 }
 
 /**
@@ -166,4 +162,68 @@ export function filterEvents(
   );
 
   return filter.latestFirst ? result.reverse() : result;
+}
+
+/** One period's run of the events the timeline shows, in display order. */
+export interface PeriodEvents<E extends MatchEvent> {
+  readonly period: number;
+  readonly events: E[];
+}
+
+/**
+ * Splits the events the timeline shows into one run per period.
+ *
+ * Works on the filtered, possibly reversed list: a period's events are
+ * contiguous either way, so the runs come out in display order. End-of-period
+ * events are dropped, since each period's header already says where it ends.
+ *
+ * @param events - the events to show, in display order
+ * @returns one entry per period that has an event left to show; empty when none does
+ */
+export function groupByPeriod<E extends MatchEvent>(
+  events: readonly E[],
+): PeriodEvents<E>[] {
+  const groups: PeriodEvents<E>[] = [];
+  for (const event of events) {
+    if (event.eventType === EventType.QUARTER_END) continue;
+    const last = groups[groups.length - 1];
+    if (last?.period === event.period) last.events.push(event);
+    else groups.push({ period: event.period, events: [event] });
+  }
+  return groups;
+}
+
+/** A period's own points per side, and the match score at its buzzer. */
+export interface PeriodScore {
+  readonly home: number;
+  readonly away: number;
+  readonly homeTotal: number;
+  readonly awayTotal: number;
+}
+
+/**
+ * Each period's score, from the whole match rather than a filtered subset.
+ *
+ * @param events - every scored event of the match, in match order
+ * @returns the score of each period that has an event, keyed by its 1-based number
+ */
+export function scorePeriods(
+  events: readonly ScoredMatchEvent[],
+): Map<number, PeriodScore> {
+  // The last event of a period carries the score at its buzzer.
+  const totals = new Map<number, ScoredMatchEvent>();
+  for (const event of events) totals.set(event.period, event);
+
+  const scores = new Map<number, PeriodScore>();
+  let previous = { homeScore: 0, awayScore: 0 };
+  for (const [period, last] of [...totals].sort(([a], [b]) => a - b)) {
+    scores.set(period, {
+      home: last.homeScore - previous.homeScore,
+      away: last.awayScore - previous.awayScore,
+      homeTotal: last.homeScore,
+      awayTotal: last.awayScore,
+    });
+    previous = last;
+  }
+  return scores;
 }

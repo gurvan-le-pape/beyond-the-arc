@@ -7,11 +7,13 @@ import { EventCategory, EventType, Role } from "@/shared/constants";
 
 import {
   filterEvents,
+  groupByPeriod,
   hasOvertime,
   type MatchEventsFilter,
+  overtimeNumber,
   periodClock,
-  periodLabel,
   scoreEvents,
+  scorePeriods,
 } from "./matchEventsView";
 
 const TIP_OFF = "2026-10-01T18:00:00.000Z";
@@ -161,13 +163,60 @@ describe("periodClock", () => {
   });
 });
 
-describe("periodLabel", () => {
-  it("names quarters, then overtimes numbered from the second", () => {
-    expect([1, 4, 5, 6].map((p) => periodLabel(p, "OT"))).toEqual([
-      "Q1",
-      "Q4",
-      "OT",
-      "OT 2",
+describe("groupByPeriod", () => {
+  const withQuarterEnds = scoreEvents(
+    [
+      EVENTS[0],
+      EVENTS[1],
+      event(90, EventType.QUARTER_END, Role.SHOOTER, 0, 0, 1),
+      EVENTS[2],
+      EVENTS[3],
+      event(91, EventType.QUARTER_END, Role.SHOOTER, 0, 0, 2),
+      EVENTS[4],
+    ],
+    HOME,
+    AWAY,
+  );
+  const shape = (events: typeof withQuarterEnds) =>
+    groupByPeriod(events).map((g) => [g.period, g.events.map((e) => e.id)]);
+
+  it("runs the periods in order and drops their end markers", () => {
+    expect(shape(withQuarterEnds)).toEqual([
+      [1, [1, 2]],
+      [2, [3, 4]],
+      [3, [5]],
     ]);
+  });
+
+  it("keeps the display order of a reversed list", () => {
+    expect(shape([...withQuarterEnds].reverse())).toEqual([
+      [3, [5]],
+      [2, [4, 3]],
+      [1, [2, 1]],
+    ]);
+  });
+
+  it("leaves out a period with nothing to show", () => {
+    expect(shape(withQuarterEnds.filter((e) => e.period !== 2))).toEqual([
+      [1, [1, 2]],
+      [3, [5]],
+    ]);
+  });
+});
+
+describe("scorePeriods", () => {
+  it("gives each period its own points and the score at its end", () => {
+    const scores = scorePeriods(scoreEvents(EVENTS, HOME, AWAY));
+    expect(Object.fromEntries(scores)).toEqual({
+      1: { home: 2, away: 3, homeTotal: 2, awayTotal: 3 },
+      2: { home: 0, away: 0, homeTotal: 2, awayTotal: 3 },
+      3: { home: 2, away: 0, homeTotal: 4, awayTotal: 3 },
+    });
+  });
+});
+
+describe("overtimeNumber", () => {
+  it("numbers the overtimes and leaves the quarters out", () => {
+    expect([1, 4, 5, 6].map(overtimeNumber)).toEqual([null, null, 1, 2]);
   });
 });
