@@ -176,23 +176,19 @@ async function ChampionshipsDetailPage({
               divisionLinks={divisionLinks}
               levelAboveHref={levelAbove && `/championships/${levelAbove.id}`}
               levelBelowLinks={levelBelowLinks}
+              poolSelect={
+                pools.length > 1 && (
+                  <ChampionshipPoolSelect
+                    pools={pools}
+                    selectedPoolId={poolId}
+                  />
+                )
+              }
             />
           </>
         }
-        standings={
-          <LeaderboardTable
-            leaderboards={leaderboard}
-            dropdown={
-              <div className="hidden xl:block">
-                <ChampionshipPoolSelect pools={pools} selectedPoolId={poolId} />
-              </div>
-            }
-          />
-        }
+        standings={<LeaderboardTable leaderboards={leaderboard} />}
         matches={<MatchesByRound key={poolId} matches={matches} />}
-        poolSelect={
-          <ChampionshipPoolSelect pools={pools} selectedPoolId={poolId} />
-        }
       />
     </PageLayout>
   );
