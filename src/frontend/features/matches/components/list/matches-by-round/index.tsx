@@ -18,9 +18,9 @@ interface MatchesByRoundProps {
 }
 
 /**
- * Match panel for one pool: the round selector and the cards of the round.
+ * Match panel for one pool: the round selector and the matches of the round.
  *
- * Client-side for its own state — which round is selected, which cards are
+ * Client-side for its own state — which round is selected, which rows are
  * expanded — but not for its data. The page already knows the pool, so it
  * fetches the matches on the server and passes them in; a pool switch is a
  * `?pool=` navigation that re-renders the page with a new list.
@@ -51,23 +51,23 @@ export function MatchesByRound({ matches }: MatchesByRoundProps) {
   const currentMatches = selectedRound ? groupedMatches[selectedRound] : [];
 
   return (
-    <Card padding="sm">
-      <div className="space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <Text variant="h3">{t("matchesLabel")}</Text>
-          <RoundSelector
-            rounds={getSortedRounds(groupedMatches)}
-            selectedRound={selectedRound}
-            onSelect={setRound}
-          />
-        </div>
-
-        <MatchesSection
-          currentMatches={currentMatches}
-          expandedMatchIds={expandedMatchIds}
-          onToggleExpand={toggleExpand}
+    // No padding of its own: the list runs edge to edge, its rules and date
+    // headings across the card's full width.
+    <Card padding="none" className="overflow-hidden">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-4">
+        <Text variant="h3">{t("matchesLabel")}</Text>
+        <RoundSelector
+          rounds={getSortedRounds(groupedMatches)}
+          selectedRound={selectedRound}
+          onSelect={setRound}
         />
       </div>
+
+      <MatchesSection
+        currentMatches={currentMatches}
+        expandedMatchIds={expandedMatchIds}
+        onToggleExpand={toggleExpand}
+      />
     </Card>
   );
 }

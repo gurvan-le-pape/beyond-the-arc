@@ -1,4 +1,4 @@
-// src/frontend/features/matches/components/list/matches-by-round/match-card/index.tsx
+// src/frontend/features/matches/components/list/matches-by-round/match-row/index.tsx
 "use client";
 
 import { useTranslations } from "next-intl";
@@ -6,34 +6,36 @@ import { useTranslations } from "next-intl";
 import { useMatchesPrefetch, useMatchEvents } from "@/features/matches/api";
 import type { Match } from "@/features/matches/types";
 import { matchupSide } from "@/features/matches/utils";
+import { Link } from "@/navigation";
 import { Matchup } from "@/shared/components/domain";
 import { ErrorMessage } from "@/shared/components/feedback";
-import { Card, TextLink } from "@/shared/components/primitives";
+import { Badge } from "@/shared/components/primitives";
 
 import { ExpandButton } from "./ExpandButton";
-import { MatchStatus } from "./MatchStatus";
 import { QuarterScoresTable } from "./QuarterScoresTable";
 
-interface MatchCardProps {
+interface MatchRowProps {
   readonly match: Match;
   readonly expanded: boolean;
   readonly onToggleExpand: (matchId: number) => void;
 }
 
 /**
- * One fixture: teams, score, status, and an expandable box score.
+ * One fixture in a matchday's list: home above away, each with its score, and
+ * an expandable box score. The list around it gives the date and time, once
+ * for every match that starts then.
  *
  * Controlled expansion — `expanded` and `onToggleExpand` belong to the parent,
- * which is what lets several cards stay open together.
+ * which is what lets several rows stay open together.
  *
  * The events behind the expanded view are fetched lazily and prefetched on
- * hover, so opening a card that has already been pointed at is instant while a
- * page of collapsed cards costs nothing.
+ * hover, so opening a row that has already been pointed at is instant while a
+ * list of collapsed rows costs nothing.
  *
- * The link to the match page appears only once the match is played: before
+ * The matchup links to the match page only once the match is played: before
  * that, the page has nothing to show.
  */
-export function MatchCard({ match, expanded, onToggleExpand }: MatchCardProps) {
+export function MatchRow({ match, expanded, onToggleExpand }: MatchRowProps) {
   const {
     data: matchEvents,
     isLoading: isLoadingEvents,
@@ -46,28 +48,34 @@ export function MatchCard({ match, expanded, onToggleExpand }: MatchCardProps) {
   const tCommon = useTranslations("common");
 
   const { homeTeamScore, awayTeamScore } = match;
-  const hasScore = homeTeamScore !== null && awayTeamScore !== null;
+  const isPlayed = homeTeamScore !== null && awayTeamScore !== null;
+
+  const matchup = (
+    <Matchup
+      home={matchupSide(match.homeTeam, homeTeamScore)}
+      away={matchupSide(match.awayTeam, awayTeamScore)}
+      size="line"
+    />
+  );
 
   return (
-    <Card padding="sm" className="overflow-hidden">
-      <MatchStatus date={match.startsAt} overtime={match.overtime} />
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex-1 min-w-0">
-          <Matchup
-            home={matchupSide(match.homeTeam, homeTeamScore)}
-            away={matchupSide(match.awayTeam, awayTeamScore)}
-            size="row"
-            belowScore={
-              hasScore && (
-                <span className="text-sm">
-                  <TextLink href={`/matches/${match.id}`}>
-                    {tMatches("summary")}
-                  </TextLink>
-                </span>
-              )
-            }
-          />
-        </div>
+    <li className="px-4 py-3">
+      <div className="flex items-center gap-3">
+        {isPlayed ? (
+          <Link
+            href={`/matches/${match.id}`}
+            className="min-w-0 flex-1 rounded-button hover:text-ink-primary"
+          >
+            {matchup}
+          </Link>
+        ) : (
+          <div className="min-w-0 flex-1">{matchup}</div>
+        )}
+        {match.overtime && (
+          <Badge variant="warning" size="sm">
+            {tMatches("overtimeShort")}
+          </Badge>
+        )}
         <ExpandButton
           expanded={expanded}
           onToggle={() => onToggleExpand(match.id)}
@@ -75,7 +83,7 @@ export function MatchCard({ match, expanded, onToggleExpand }: MatchCardProps) {
         />
       </div>
       {expanded && (
-        <div className="mt-3 pt-3 border-t border-divide animate-slide-down">
+        <div className="mt-3 animate-slide-down">
           {matchEventsError ? (
             <ErrorMessage
               message={tCommon("errors.fetchMatchEvents")}
@@ -90,6 +98,8 @@ export function MatchCard({ match, expanded, onToggleExpand }: MatchCardProps) {
           )}
         </div>
       )}
-    </Card>
+    </li>
   );
 }
+
+export default MatchRow;

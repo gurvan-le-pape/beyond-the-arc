@@ -20,8 +20,7 @@
     "body": "Coup d'envoi le {date} à {time}. Les statistiques et le déroulé du match apparaîtront une fois la rencontre jouée."
   },
   "tryAdjustingFilters": "Essayez d'ajuster vos filtres pour trouver plus de matchs.",
-  "final": "Terminé",
-  "finalOT": "Terminé/Prol.",
+  "overtimeShort": "Prol.",
   "viewMatchDetails": "Afficher les détails du match",
   "hideMatchDetails": "Réduire les détails du match",
   "summary": "Résumé",

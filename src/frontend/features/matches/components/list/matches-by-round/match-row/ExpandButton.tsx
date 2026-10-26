@@ -1,4 +1,4 @@
-// src/frontend/features/matches/components/list/matches-by-round/match-card/ExpandButton.tsx
+// src/frontend/features/matches/components/list/matches-by-round/match-row/ExpandButton.tsx
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useTranslations } from "next-intl";
 
@@ -11,7 +11,7 @@ interface ExpandButtonProps {
 }
 
 /**
- * The chevron that opens a match card's box score.
+ * The chevron that opens a match row's box score.
  *
  * `onMouseEnter` is separate from `onToggle` on purpose — it is the prefetch
  * trigger, warming the events query before the click. Wiring both to the same
