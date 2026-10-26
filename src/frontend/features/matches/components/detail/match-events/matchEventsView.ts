@@ -136,59 +136,173 @@ export function scoreEvents(
   });
 }
 
+// The fouls whose free throws are shot at the same instant, and so belong in
+// the same row.
+const FOULS_WITH_FREE_THROWS: readonly string[] = [
+  EventType.THREE_POINT_SHOOTING_FOUL,
+  EventType.TWO_POINT_EXT_SHOOTING_FOUL,
+  EventType.TWO_POINT_INT_SHOOTING_FOUL,
+  EventType.THREE_POINT_AND_1,
+  EventType.TWO_POINT_EXT_AND_1,
+  EventType.TWO_POINT_INT_AND_1,
+];
+const FREE_THROWS: readonly string[] = [
+  EventType.FREE_THROW_MADE,
+  EventType.FREE_THROW_MISSED,
+];
+
 /**
- * The events the timeline shows: those of the chosen quarter, category and
- * players, newest first if asked.
- *
- * @param events - the scored events, in match order
- * @param filter - the reader's choices; an empty player set keeps every player
- * @returns the events to show
+ * One row of the timeline: an event, and the events at the same instant that
+ * only complete it.
  */
-export function filterEvents(
-  events: readonly ScoredMatchEvent[],
+export interface Play {
+  /** The event the row is about: its type gives the row's label and icon. */
+  readonly lead: ScoredMatchEvent;
+  /**
+   * The free throws after a shooting foul or an and-one, or the other
+   * substitutions one team made at once. Empty for an event on its own.
+   */
+  readonly followers: readonly ScoredMatchEvent[];
+  readonly period: number;
+  /** The score once the whole play is over. */
+  readonly homeScore: number;
+  readonly awayScore: number;
+  /**
+   * The side the play belongs to: the free-throw shooter's after a foul, so a
+   * shooting foul sits with the team it scored for.
+   */
+  readonly teamId: number | undefined;
+  /** The side that scored in the play; `undefined` when nobody did. */
+  readonly scoringTeamId: number | undefined;
+}
+
+/**
+ * The game second an event happened in.
+ *
+ * @param event - the event to place
+ * @returns whole seconds since the epoch
+ */
+function secondOf(event: MatchEvent): number {
+  return Math.floor(new Date(event.occurredAt).getTime() / 1000);
+}
+
+/**
+ * Whether `next` completes the play `lead` opens: a free throw after a foul
+ * that awards them, or another substitution by the same team, in the same
+ * second. The simulator stamps a whole trip to the line with one game second,
+ * each event a millisecond after the last to keep their order, so the
+ * comparison is by second, never by exact time.
+ *
+ * @param lead - the event opening the play
+ * @param next - the event right after the play so far
+ * @returns true when `next` belongs in the same row
+ */
+function completes(lead: ScoredMatchEvent, next: ScoredMatchEvent): boolean {
+  if (secondOf(next) !== secondOf(lead)) return false;
+  if (FOULS_WITH_FREE_THROWS.includes(lead.eventType)) {
+    return FREE_THROWS.includes(next.eventType);
+  }
+  return (
+    lead.eventType === EventType.SUBSTITUTION &&
+    next.eventType === EventType.SUBSTITUTION &&
+    next.teamId === lead.teamId
+  );
+}
+
+/**
+ * Folds the scored events into the timeline's rows: a shooting foul or an
+ * and-one with its free throws, simultaneous substitutions by one team, and
+ * every other event on its own.
+ *
+ * @param events - every scored event of the match, in match order
+ * @returns the plays, in match order; every event is in exactly one
+ */
+export function groupPlays(events: readonly ScoredMatchEvent[]): Play[] {
+  const plays: Play[] = [];
+  let index = 0;
+  while (index < events.length) {
+    const lead = events[index];
+    const followers: ScoredMatchEvent[] = [];
+    index += 1;
+    while (index < events.length && completes(lead, events[index])) {
+      followers.push(events[index]);
+      index += 1;
+    }
+
+    const last = followers.length > 0 ? followers[followers.length - 1] : lead;
+    const scorer = [lead, ...followers].find(
+      (event) =>
+        getEventStyle(event.eventType).eventCategory === EventCategory.MADE,
+    );
+    plays.push({
+      lead,
+      followers,
+      period: lead.period,
+      homeScore: last.homeScore,
+      awayScore: last.awayScore,
+      teamId: followers[0]?.teamId ?? lead.teamId,
+      scoringTeamId: scorer?.teamId,
+    });
+  }
+  return plays;
+}
+
+/**
+ * The plays the timeline shows: those of the chosen quarter, with an event of
+ * the chosen category or by one of the chosen players, newest first if asked.
+ * A play matches on any of its events, so a shooting foul whose free throws
+ * went in shows under made shots as well as under fouls.
+ *
+ * @param plays - the match's plays, in match order
+ * @param filter - the reader's choices; an empty player set keeps every player
+ * @returns the plays to show
+ */
+export function filterPlays(
+  plays: readonly Play[],
   filter: MatchEventsFilter,
-): ScoredMatchEvent[] {
+): Play[] {
   const allowedTypes =
     filter.category === undefined
       ? undefined
       : (eventCategories[filter.category] ?? []);
 
-  const result = events.filter(
-    (event) =>
-      isInQuarter(filter.quarter, event.period) &&
-      (allowedTypes === undefined || allowedTypes.includes(event.eventType)) &&
-      (filter.playerIds.size === 0 ||
-        (event.players ?? []).some((p) => filter.playerIds.has(p.player.id))),
+  const matches = (event: ScoredMatchEvent) =>
+    (allowedTypes === undefined || allowedTypes.includes(event.eventType)) &&
+    (filter.playerIds.size === 0 ||
+      (event.players ?? []).some((p) => filter.playerIds.has(p.player.id)));
+
+  const result = plays.filter(
+    (play) =>
+      isInQuarter(filter.quarter, play.period) &&
+      [play.lead, ...play.followers].some(matches),
   );
 
   return filter.latestFirst ? result.reverse() : result;
 }
 
-/** One period's run of the events the timeline shows, in display order. */
-export interface PeriodEvents<E extends MatchEvent> {
+/** One period's run of the plays the timeline shows, in display order. */
+export interface PeriodPlays {
   readonly period: number;
-  readonly events: E[];
+  readonly plays: Play[];
 }
 
 /**
- * Splits the events the timeline shows into one run per period.
+ * Splits the plays the timeline shows into one run per period.
  *
- * Works on the filtered, possibly reversed list: a period's events are
+ * Works on the filtered, possibly reversed list: a period's plays are
  * contiguous either way, so the runs come out in display order. End-of-period
  * events are dropped, since each period's header already says where it ends.
  *
- * @param events - the events to show, in display order
- * @returns one entry per period that has an event left to show; empty when none does
+ * @param plays - the plays to show, in display order
+ * @returns one entry per period that has a play left to show; empty when none does
  */
-export function groupByPeriod<E extends MatchEvent>(
-  events: readonly E[],
-): PeriodEvents<E>[] {
-  const groups: PeriodEvents<E>[] = [];
-  for (const event of events) {
-    if (event.eventType === EventType.QUARTER_END) continue;
+export function groupByPeriod(plays: readonly Play[]): PeriodPlays[] {
+  const groups: PeriodPlays[] = [];
+  for (const play of plays) {
+    if (play.lead.eventType === EventType.QUARTER_END) continue;
     const last = groups[groups.length - 1];
-    if (last?.period === event.period) last.events.push(event);
-    else groups.push({ period: event.period, events: [event] });
+    if (last?.period === play.period) last.plays.push(play);
+    else groups.push({ period: play.period, plays: [play] });
   }
   return groups;
 }

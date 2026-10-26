@@ -6,8 +6,9 @@ import type { MatchEvent } from "@/features/matches/types";
 import { EventCategory, EventType, Role } from "@/shared/constants";
 
 import {
-  filterEvents,
+  filterPlays,
   groupByPeriod,
+  groupPlays,
   hasOvertime,
   type MatchEventsFilter,
   overtimeNumber,
@@ -71,10 +72,14 @@ describe("scoreEvents", () => {
   });
 });
 
-describe("filterEvents", () => {
-  const scored = scoreEvents(EVENTS, HOME, AWAY);
+// The match's plays, from its events.
+const playsOf = (events: readonly MatchEvent[]) =>
+  groupPlays(scoreEvents(events, HOME, AWAY));
+
+describe("filterPlays", () => {
+  const plays = playsOf(EVENTS);
   const ids = (filter: Partial<MatchEventsFilter>) =>
-    filterEvents(scored, { ...NO_FILTER, ...filter }).map((e) => e.id);
+    filterPlays(plays, { ...NO_FILTER, ...filter }).map((p) => p.lead.id);
 
   it("keeps everything without a filter", () => {
     expect(ids({})).toEqual([1, 2, 3, 4, 5]);
@@ -94,31 +99,27 @@ describe("filterEvents", () => {
   });
 
   it("puts the latest first when asked, keeping the match's score", () => {
-    const latest = filterEvents(scored, { ...NO_FILTER, latestFirst: true });
-    expect(latest.map((e) => e.id)).toEqual([5, 4, 3, 2, 1]);
+    const latest = filterPlays(plays, { ...NO_FILTER, latestFirst: true });
+    expect(latest.map((p) => p.lead.id)).toEqual([5, 4, 3, 2, 1]);
     expect(latest[0].homeScore).toBe(4);
   });
 
   it("narrows to every overtime period at once", () => {
-    const withOvertime = scoreEvents(
-      [
-        ...EVENTS,
-        event(6, EventType.MADE_LAYUP, Role.SHOOTER, 10, HOME, 5),
-        event(7, EventType.MADE_LAYUP, Role.SHOOTER, 20, AWAY, 6),
-      ],
-      HOME,
-      AWAY,
-    );
-    const shown = filterEvents(withOvertime, {
+    const withOvertime = playsOf([
+      ...EVENTS,
+      event(6, EventType.MADE_LAYUP, Role.SHOOTER, 10, HOME, 5),
+      event(7, EventType.MADE_LAYUP, Role.SHOOTER, 20, AWAY, 6),
+    ]);
+    const shown = filterPlays(withOvertime, {
       ...NO_FILTER,
       quarter: Quarter.OT,
     });
-    expect(shown.map((e) => e.id)).toEqual([6, 7]);
+    expect(shown.map((p) => p.lead.id)).toEqual([6, 7]);
   });
 
   it("does not reorder the list it was given", () => {
-    filterEvents(scored, { ...NO_FILTER, latestFirst: true });
-    expect(scored.map((e) => e.id)).toEqual([1, 2, 3, 4, 5]);
+    filterPlays(plays, { ...NO_FILTER, latestFirst: true });
+    expect(plays.map((p) => p.lead.id)).toEqual([1, 2, 3, 4, 5]);
   });
 });
 
@@ -164,21 +165,17 @@ describe("periodClock", () => {
 });
 
 describe("groupByPeriod", () => {
-  const withQuarterEnds = scoreEvents(
-    [
-      EVENTS[0],
-      EVENTS[1],
-      event(90, EventType.QUARTER_END, Role.SHOOTER, 0, 0, 1),
-      EVENTS[2],
-      EVENTS[3],
-      event(91, EventType.QUARTER_END, Role.SHOOTER, 0, 0, 2),
-      EVENTS[4],
-    ],
-    HOME,
-    AWAY,
-  );
-  const shape = (events: typeof withQuarterEnds) =>
-    groupByPeriod(events).map((g) => [g.period, g.events.map((e) => e.id)]);
+  const withQuarterEnds = playsOf([
+    EVENTS[0],
+    EVENTS[1],
+    event(90, EventType.QUARTER_END, Role.SHOOTER, 0, 0, 1),
+    EVENTS[2],
+    EVENTS[3],
+    event(91, EventType.QUARTER_END, Role.SHOOTER, 0, 0, 2),
+    EVENTS[4],
+  ]);
+  const shape = (plays: typeof withQuarterEnds) =>
+    groupByPeriod(plays).map((g) => [g.period, g.plays.map((p) => p.lead.id)]);
 
   it("runs the periods in order and drops their end markers", () => {
     expect(shape(withQuarterEnds)).toEqual([
@@ -218,5 +215,106 @@ describe("scorePeriods", () => {
 describe("overtimeNumber", () => {
   it("numbers the overtimes and leaves the quarters out", () => {
     expect([1, 4, 5, 6].map(overtimeNumber)).toEqual([null, null, 1, 2]);
+  });
+});
+
+describe("groupPlays", () => {
+  // An event with several players, `seconds` of game time after tip-off.
+  function play(
+    id: number,
+    eventType: string,
+    seconds: number,
+    players: [string, number, number][],
+  ): MatchEvent {
+    return {
+      id,
+      eventType,
+      occurredAt: new Date(Date.parse(TIP_OFF) + seconds * 1000).toISOString(),
+      period: 4,
+      players: players.map(([role, playerId, teamId]) => ({
+        role,
+        player: { id: playerId, team: { id: teamId } },
+      })),
+    } as unknown as MatchEvent;
+  }
+  const shape = (events: MatchEvent[]) =>
+    playsOf(events).map((p) => [p.lead.id, p.followers.map((f) => f.id)]);
+
+  // Taken from match 604265: a shooting foul by the away side, two free
+  // throws by the home shooter, then the inbound, in one second and a
+  // millisecond apart, as the simulator stamps them.
+  const tripToTheLine = [
+    play(1, EventType.TWO_POINT_EXT_SHOOTING_FOUL, 2196, [
+      [Role.SHOOTER, 6, HOME],
+      [Role.FOULER, 5, AWAY],
+    ]),
+    play(2, EventType.FREE_THROW_MADE, 2196.001, [[Role.SHOOTER, 6, HOME]]),
+    play(3, EventType.FREE_THROW_MISSED, 2196.002, [[Role.SHOOTER, 6, HOME]]),
+    play(4, EventType.INBOUND, 2196.003, [[Role.SHOOTER, 2, AWAY]]),
+  ];
+
+  it("folds a shooting foul's free throws into it, but not the inbound", () => {
+    expect(shape(tripToTheLine)).toEqual([
+      [1, [2, 3]],
+      [4, []],
+    ]);
+  });
+
+  it("gives the play the score after its last free throw, and to the shooter", () => {
+    const [foul] = playsOf(tripToTheLine);
+    expect([foul.homeScore, foul.awayScore]).toEqual([1, 0]);
+    expect(foul.teamId).toBe(HOME);
+    expect(foul.scoringTeamId).toBe(HOME);
+  });
+
+  it("folds an and-one's free throw into it", () => {
+    expect(
+      shape([
+        play(1, EventType.TWO_POINT_EXT_AND_1, 2372, [
+          [Role.SHOOTER, 2, HOME],
+          [Role.FOULER, 3, AWAY],
+        ]),
+        play(2, EventType.FREE_THROW_MADE, 2372.001, [[Role.SHOOTER, 2, HOME]]),
+      ]),
+    ).toEqual([[1, [2]]]);
+  });
+
+  it("folds one team's simultaneous substitutions, not the other team's", () => {
+    const sub = (id: number, teamId: number, seconds = 2190) =>
+      play(id, EventType.SUBSTITUTION, seconds, [
+        [Role.EXITING_PLAYER, id * 10, teamId],
+        [Role.ENTERING_PLAYER, id * 10 + 1, teamId],
+      ]);
+    expect(
+      shape([sub(1, AWAY), sub(2, AWAY), sub(3, HOME), sub(4, HOME, 2200)]),
+    ).toEqual([
+      [1, [2]],
+      [3, []],
+      [4, []],
+    ]);
+  });
+
+  it("leaves a free throw at another instant on its own", () => {
+    expect(
+      shape([
+        play(1, EventType.THREE_POINT_SHOOTING_FOUL, 2600, [
+          [Role.SHOOTER, 5, AWAY],
+          [Role.FOULER, 9, HOME],
+        ]),
+        play(2, EventType.FREE_THROW_MADE, 2601, [[Role.SHOOTER, 5, AWAY]]),
+      ]),
+    ).toEqual([
+      [1, []],
+      [2, []],
+    ]);
+  });
+
+  it("has no scoring side when every free throw missed", () => {
+    const [foul] = playsOf([
+      tripToTheLine[0],
+      play(2, EventType.FREE_THROW_MISSED, 2196.001, [[Role.SHOOTER, 6, HOME]]),
+    ]);
+    expect(foul.scoringTeamId).toBe(undefined);
+    expect(foul.teamId).toBe(HOME);
   });
 });

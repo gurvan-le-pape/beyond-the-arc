@@ -8,7 +8,7 @@ import { Text } from "@/shared/components/typography";
 import {
   overtimeNumber,
   type PeriodScore,
-  type ScoredMatchEvent,
+  type Play,
 } from "../matchEventsView";
 import { TimelineEventRow } from "./TimelineEventRow";
 
@@ -19,7 +19,7 @@ interface PeriodSectionProps {
   readonly score: PeriodScore | undefined;
   /** The last period played: its header shows the final score. */
   readonly isLast: boolean;
-  readonly events: readonly ScoredMatchEvent[];
+  readonly plays: readonly Play[];
   readonly homeTeam: MatchTeam;
   readonly awayTeam: MatchTeam;
   readonly getEventStyle: (eventType: string) => EventStyle;
@@ -28,7 +28,7 @@ interface PeriodSectionProps {
 
 /**
  * One period of the play-by-play: a header with the period's own points and
- * the score at its end, over the list of its events.
+ * the score at its end, over the list of its plays.
  *
  * The header sticks under the site header (`top-16`, the header's height)
  * while its period scrolls past, so a reader deep in a quarter still sees
@@ -38,7 +38,7 @@ export function PeriodSection({
   period,
   score,
   isLast,
-  events,
+  plays,
   homeTeam,
   awayTeam,
   getEventStyle,
@@ -84,13 +84,13 @@ export function PeriodSection({
       </div>
 
       <ul aria-labelledby={headingId}>
-        {events.map((event) => (
+        {plays.map((play) => (
           <TimelineEventRow
-            key={event.id}
-            event={event}
+            key={play.lead.id}
+            play={play}
             homeTeam={homeTeam}
             awayTeam={awayTeam}
-            style={getEventStyle(event.eventType)}
+            style={getEventStyle(play.lead.eventType)}
             matchDate={matchDate}
           />
         ))}

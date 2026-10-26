@@ -6,17 +6,13 @@ import { useTranslations } from "next-intl";
 import type { EventStyle, MatchTeam } from "@/features/matches/types";
 import { Text } from "@/shared/components/typography";
 
-import type {
-  PeriodEvents,
-  PeriodScore,
-  ScoredMatchEvent,
-} from "../matchEventsView";
+import type { PeriodPlays, PeriodScore } from "../matchEventsView";
 import { PeriodSection } from "./PeriodSection";
 import { TimelineLegend } from "./TimelineLegend";
 
 interface EventTimelineProps {
-  /** The events to show, one run per period, in display order. */
-  readonly periods: readonly PeriodEvents<ScoredMatchEvent>[];
+  /** The plays to show, one run per period, in display order. */
+  readonly periods: readonly PeriodPlays[];
   /** Every period's score, from the whole match, whatever is filtered out. */
   readonly periodScores: ReadonlyMap<number, PeriodScore>;
   readonly homeTeam: MatchTeam;
@@ -27,7 +23,7 @@ interface EventTimelineProps {
 
 /**
  * The match's play-by-play: one section per period, each headed by the
- * period's score, its events in a single column below.
+ * period's score, its plays in a single column below.
  *
  * The team of an event is carried by colour (the home and away roles) in a
  * stripe on every row, so the legend above is what ties a colour to a team.
@@ -59,13 +55,13 @@ export function EventTimeline({
         // without becoming a scroll container, which would pin the sticky
         // period headers to this box instead of the page.
         <div className="rounded-card border border-divide surface-subtle shadow-card overflow-clip">
-          {periods.map(({ period, events }) => (
+          {periods.map(({ period, plays }) => (
             <PeriodSection
               key={period}
               period={period}
               score={periodScores.get(period)}
               isLast={period === lastPeriod}
-              events={events}
+              plays={plays}
               homeTeam={homeTeam}
               awayTeam={awayTeam}
               getEventStyle={getEventStyle}

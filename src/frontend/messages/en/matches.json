@@ -101,7 +101,8 @@
       "substitution": "{entering} comes in for {exiting}.",
       "tipOff": "{winner} wins the tip-off.",
       "quarterEnd": "End of the quarter.",
-      "shotClock": "Shot clock violation."
+      "shotClock": "Shot clock violation.",
+      "substitutionGroup": "{entering} come in for {exiting}."
     },
     "categoryLabel": "Event type",
     "quarterName": "Quarter {n}",
@@ -109,7 +110,9 @@
     "periodPoints": "<h>{home}</h>–<a>{away}</a> in the period",
     "periodEndScore": "End {home}–{away}",
     "finalScore": "Final {home}–{away}",
-    "noMatchingEvents": "No events match these filters."
+    "noMatchingEvents": "No events match these filters.",
+    "freeThrows": "{attempted, plural, one {Free throw} other {Free throws}}: {made} of {attempted}.",
+    "freeThrowsShort": "FT {made}/{attempted}"
   },
   "matchSummary": {
     "title": "Match Summary",
