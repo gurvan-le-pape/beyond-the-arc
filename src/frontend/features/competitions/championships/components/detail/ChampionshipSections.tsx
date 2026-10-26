@@ -14,8 +14,6 @@ interface ChampionshipSectionsProps {
   readonly header: ReactNode;
   readonly standings: ReactNode;
   readonly matches: ReactNode;
-  /** The pool picker, beside the switch below `xl`. */
-  readonly poolSelect: ReactNode;
 }
 
 /**
@@ -23,15 +21,14 @@ interface ChampionshipSectionsProps {
  * from `xl`.
  *
  * Below `xl` the two would stack, and the matches start after the whole
- * standings table. There a switch shows one at a time, standings first, with
- * the pool picker beside it, since the pool scopes both. The hidden section
+ * standings table. There a switch shows one at a time, standings first. The
+ * hidden section
  * stays mounted, so the selected round and expanded matches survive a switch.
  */
 export function ChampionshipSections({
   header,
   standings,
   matches,
-  poolSelect,
 }: ChampionshipSectionsProps) {
   const t = useTranslations("competitions.detailSections");
   const [section, setSection] = useState<Section>("standings");
@@ -41,7 +38,7 @@ export function ChampionshipSections({
       <div className="w-full xl:flex-1 min-w-0 space-y-6">
         {header}
 
-        <div className="flex flex-wrap items-center justify-between gap-3 xl:hidden">
+        <div className="xl:hidden">
           <SegmentedControl
             label={t("label")}
             options={[
@@ -51,9 +48,6 @@ export function ChampionshipSections({
             value={section}
             onChange={setSection}
           />
-          <div className="min-w-36 flex-1 sm:w-[200px] sm:flex-none">
-            {poolSelect}
-          </div>
         </div>
 
         <div className={cn(section !== "standings" && "hidden xl:block")}>

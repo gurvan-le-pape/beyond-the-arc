@@ -16,7 +16,6 @@ interface LeaderboardTableProps {
    * points last.
    */
   readonly variant?: "full" | "summary";
-  readonly dropdown?: React.ReactNode;
   /** Beside the title: a link onward, such as to the full table. */
   readonly action?: React.ReactNode;
 }
@@ -25,16 +24,14 @@ interface LeaderboardTableProps {
  * A pool's standings — rank, team, the season record and, in the full
  * table, recent form. Each row links to its team.
  *
- * Stays a **server component**. The `dropdown` slot is what keeps it that way:
- * a client-side pool picker is passed in as an element rather than rendered
- * here, so choosing a pool does not pull the table and its columns into the
- * browser bundle. Marking this `"use client"` to add interactivity would undo
- * that.
+ * Stays a **server component**, so the table and its columns never reach the
+ * browser bundle. Controls that change what it shows, such as a pool picker,
+ * belong to the page around it; marking this `"use client"` to hold one would
+ * undo that.
  */
 export function LeaderboardTable({
   leaderboards,
   variant = "full",
-  dropdown,
   action,
 }: LeaderboardTableProps) {
   const tCommon = useTranslations("common");
@@ -174,11 +171,6 @@ export function LeaderboardTable({
 
   return (
     <Section title={tCompetitions("leaderboardTitle")} action={action}>
-      {dropdown && (
-        <div className="flex justify-end mb-2">
-          <div className="min-w-[200px]">{dropdown}</div>
-        </div>
-      )}
       <DataTable
         columns={variant === "summary" ? summaryColumns : fullColumns}
         rows={leaderboards}
