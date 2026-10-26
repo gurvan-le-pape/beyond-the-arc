@@ -2,16 +2,12 @@
 import { useTranslations } from "next-intl";
 
 import type { EventStyle, MatchTeam } from "@/features/matches/types";
-import {
-  describeEvent,
-  tokenizeEventDescription,
-} from "@/features/matches/utils";
 import { TextLink } from "@/shared/components/primitives";
-import { EventCategory } from "@/shared/constants";
 import { cn } from "@/shared/utils";
 
-import { periodClock, type ScoredMatchEvent } from "../matchEventsView";
+import { periodClock, type Play } from "../matchEventsView";
 import { EventScore } from "./EventScore";
+import { usePlayDescription } from "./usePlayDescription";
 
 const STRIPE = {
   home: "bg-solid-home",
@@ -19,54 +15,47 @@ const STRIPE = {
 } as const;
 
 interface TimelineEventRowProps {
-  readonly event: ScoredMatchEvent;
+  readonly play: Play;
   readonly homeTeam: MatchTeam;
   readonly awayTeam: MatchTeam;
-  /** Resolved display config for this event's type. */
+  /** Resolved display config for the play's lead event. */
   readonly style: EventStyle;
-  /** Match tip-off, from which the event's game clock is derived. */
+  /** Match tip-off, from which the play's game clock is derived. */
   readonly matchDate: Date | string;
 }
 
 /**
- * One event of the play-by-play, as a list item: clock, team stripe, icon,
- * label and sentence, and the score when the event scored.
+ * One play of the play-by-play, as a list item: clock, team stripe, icon,
+ * label and sentence, and the score when the play scored.
  *
  * The stripe's colour is the only visual sign of the team, so the team's name
- * is also written out for screen readers. An event with no team (none in a
+ * is also written out for screen readers. A play with no team (no player in a
  * qualifying role) gets a neutral stripe and no name. The icon is dropped
  * below `sm`, where the sentence needs the width.
  */
 export function TimelineEventRow({
-  event,
+  play,
   homeTeam,
   awayTeam,
   style,
   matchDate,
 }: TimelineEventRowProps) {
   const tMatches = useTranslations("matches");
+  const { label, freeThrows, tokens } = usePlayDescription(play, style);
   const Icon = style.icon;
 
-  let side: "home" | "away" | undefined;
-  if (event.teamId === homeTeam.id) side = "home";
-  else if (event.teamId === awayTeam.id) side = "away";
-  const team = side === "home" ? homeTeam : awayTeam;
-
-  const description = describeEvent(event);
-  const descriptionTokens = description
-    ? tokenizeEventDescription(
-        tMatches(
-          `matchEvents.descriptions.${description.key}`,
-          description.values,
-        ),
-        event.players,
-      )
-    : [];
+  const sideOf = (teamId: number | undefined) => {
+    if (teamId === homeTeam.id) return "home";
+    if (teamId === awayTeam.id) return "away";
+    return undefined;
+  };
+  const side = sideOf(play.teamId);
+  const scoredBy = sideOf(play.scoringTeamId);
 
   return (
     <li className="grid grid-cols-[2.75rem_3px_minmax(0,1fr)_auto] sm:grid-cols-[3rem_3px_1.25rem_minmax(0,1fr)_auto] gap-x-3 items-start px-3 sm:px-4 py-2.5 border-b border-divide/60 last:border-b-0">
       <span className="font-mono text-xs text-text-secondary tabular-nums pt-0.5">
-        {periodClock(event.occurredAt, matchDate, event.period)}
+        {periodClock(play.lead.occurredAt, matchDate, play.period)}
       </span>
 
       <span
@@ -83,16 +72,25 @@ export function TimelineEventRow({
       />
 
       <div className="min-w-0">
-        {side && <span className="sr-only">{team.name}</span>}
+        {side && (
+          <span className="sr-only">
+            {side === "home" ? homeTeam.name : awayTeam.name}
+          </span>
+        )}
         <p className={cn("font-semibold text-sm", style.color)}>
-          {style.labelKey ? tMatches(style.labelKey) : event.eventType}
+          {label}
+          {freeThrows && (
+            <span className="ml-2 px-1.5 rounded-input bg-surface-inset font-mono font-medium text-xs text-text-emphasis">
+              {tMatches("matchEvents.freeThrowsShort", freeThrows)}
+            </span>
+          )}
         </p>
         {/* The player names are real anchors rendered by React, not an HTML
             string handed to dangerouslySetInnerHTML, so nothing here depends
             on the description being tag-free. */}
-        {descriptionTokens.length > 0 && (
+        {tokens.length > 0 && (
           <p className="text-sm text-text-body break-words">
-            {descriptionTokens.map((token, index) =>
+            {tokens.map((token, index) =>
               token.kind === "player" ? (
                 <TextLink
                   // The tokens are positional runs of one string, so the index
@@ -111,11 +109,11 @@ export function TimelineEventRow({
         )}
       </div>
 
-      {style.eventCategory === EventCategory.MADE && side ? (
+      {scoredBy ? (
         <EventScore
-          homeScore={event.homeScore}
-          awayScore={event.awayScore}
-          scoredBy={side}
+          homeScore={play.homeScore}
+          awayScore={play.awayScore}
+          scoredBy={scoredBy}
         />
       ) : (
         <span />

@@ -6,24 +6,25 @@ import type { MatchEvent } from "@/features/matches/types";
 import type { EventCategory } from "@/shared/constants";
 
 import {
-  filterEvents,
+  filterPlays,
   groupByPeriod,
+  groupPlays,
   hasOvertime,
   scoreEvents,
   scorePeriods,
 } from "./matchEventsView";
 
 /**
- * The timeline's filter state and the events it selects.
+ * The timeline's filter state and the plays it selects.
  *
- * Scoring runs once per match; filtering runs on every change of filter, over
- * the already scored list, so the running score is the match's and not the
- * filtered subset's.
+ * Scoring and folding into plays run once per match; filtering runs on every
+ * change of filter, over the already scored plays, so the running score is
+ * the match's and not the filtered subset's.
  *
  * @param events - the match's events, in order
  * @param homeTeamId - the home side's team id
  * @param awayTeamId - the away side's team id
- * @returns the events to show, one run per period; each period's score, from
+ * @returns the plays to show, one run per period; each period's score, from
  *   the whole match; and the filter values and setters for the panel
  */
 export function useMatchEvents(
@@ -55,16 +56,18 @@ export function useMatchEvents(
     [events, homeTeamId, awayTeamId],
   );
 
-  const filteredEvents = useMemo(
+  const plays = useMemo(() => groupPlays(scoredEvents), [scoredEvents]);
+
+  const shownPlays = useMemo(
     () =>
-      filterEvents(scoredEvents, {
+      filterPlays(plays, {
         quarter: selectedQuarter,
         category: selectedEventCategory,
         playerIds: selectedPlayerIds,
         latestFirst,
       }),
     [
-      scoredEvents,
+      plays,
       selectedQuarter,
       selectedEventCategory,
       selectedPlayerIds,
@@ -72,10 +75,7 @@ export function useMatchEvents(
     ],
   );
 
-  const periods = useMemo(
-    () => groupByPeriod(filteredEvents),
-    [filteredEvents],
-  );
+  const periods = useMemo(() => groupByPeriod(shownPlays), [shownPlays]);
   const periodScores = useMemo(
     () => scorePeriods(scoredEvents),
     [scoredEvents],

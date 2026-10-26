@@ -101,7 +101,8 @@
       "substitution": "{entering} remplace {exiting}.",
       "tipOff": "{winner} remporte l'entre-deux.",
       "quarterEnd": "Fin du quart-temps.",
-      "shotClock": "Violation des 24 secondes."
+      "shotClock": "Violation des 24 secondes.",
+      "substitutionGroup": "{entering} remplacent {exiting}."
     },
     "categoryLabel": "Type d'événement",
     "quarterName": "Quart-temps {n}",
@@ -109,7 +110,9 @@
     "periodPoints": "<h>{home}</h>–<a>{away}</a> sur la période",
     "periodEndScore": "Fin {home}–{away}",
     "finalScore": "Score final {home}–{away}",
-    "noMatchingEvents": "Aucun événement ne correspond à ces filtres."
+    "noMatchingEvents": "Aucun événement ne correspond à ces filtres.",
+    "freeThrows": "{attempted, plural, one {Lancer franc} other {Lancers francs}} : {made} sur {attempted}.",
+    "freeThrowsShort": "LF {made}/{attempted}"
   },
   "matchSummary": {
     "title": "Résumé du match",
