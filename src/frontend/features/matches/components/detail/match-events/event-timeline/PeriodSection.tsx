@@ -1,6 +1,6 @@
 // src/frontend/features/matches/components/detail/match-events/event-timeline/PeriodSection.tsx
 import { useTranslations } from "next-intl";
-import { useId } from "react";
+import { Fragment, useId } from "react";
 
 import type { EventStyle, MatchTeam } from "@/features/matches/types";
 import { Text } from "@/shared/components/typography";
@@ -10,6 +10,7 @@ import {
   type PeriodScore,
   type Play,
 } from "../matchEventsView";
+import { RunDivider } from "./RunDivider";
 import { TimelineEventRow } from "./TimelineEventRow";
 
 interface PeriodSectionProps {
@@ -20,6 +21,8 @@ interface PeriodSectionProps {
   /** The last period played: its header shows the final score. */
   readonly isLast: boolean;
   readonly plays: readonly Play[];
+  /** The plays run newest first: a run's band then goes above its last basket. */
+  readonly latestFirst: boolean;
   readonly homeTeam: MatchTeam;
   readonly awayTeam: MatchTeam;
   readonly getEventStyle: (eventType: string) => EventStyle;
@@ -39,6 +42,7 @@ export function PeriodSection({
   score,
   isLast,
   plays,
+  latestFirst,
   homeTeam,
   awayTeam,
   getEventStyle,
@@ -84,16 +88,35 @@ export function PeriodSection({
       </div>
 
       <ul aria-labelledby={headingId}>
-        {plays.map((play) => (
-          <TimelineEventRow
-            key={play.lead.id}
-            play={play}
-            homeTeam={homeTeam}
-            awayTeam={awayTeam}
-            style={getEventStyle(play.lead.eventType)}
-            matchDate={matchDate}
-          />
-        ))}
+        {plays.map((play) => {
+          const row = (
+            <TimelineEventRow
+              play={play}
+              homeTeam={homeTeam}
+              awayTeam={awayTeam}
+              style={getEventStyle(play.lead.eventType)}
+              matchDate={matchDate}
+            />
+          );
+          const run = play.runEnded;
+          if (!run) return <Fragment key={play.lead.id}>{row}</Fragment>;
+
+          const divider = (
+            <RunDivider
+              points={run.points}
+              side={run.teamId === homeTeam.id ? "home" : "away"}
+              teamName={
+                run.teamId === homeTeam.id ? homeTeam.name : awayTeam.name
+              }
+            />
+          );
+          return (
+            <Fragment key={play.lead.id}>
+              {latestFirst ? divider : row}
+              {latestFirst ? row : divider}
+            </Fragment>
+          );
+        })}
       </ul>
     </section>
   );

@@ -114,7 +114,10 @@
     "freeThrowsShort": "FT {made}/{attempted}",
     "inbounds": "Inbounds",
     "shownRows": "Showing {shown} of {total} plays",
-    "showAllCategories": "Show every event type"
+    "showAllCategories": "Show every event type",
+    "leadChange": "Lead change",
+    "tie": "Tie",
+    "run": "{points}–0 run · {team}"
   },
   "matchSummary": {
     "title": "Match Summary",

@@ -58,6 +58,7 @@ export function MatchEvents({
       <EventTimeline
         periods={periods}
         periodScores={periodScores}
+        latestFirst={filters.latestFirst}
         homeTeam={homeTeam}
         awayTeam={awayTeam}
         getEventStyle={getEventStyle}
