@@ -21,6 +21,9 @@ import { EventCategory } from "@/shared/constants";
  * light surface, and dark yellow is olive. It is amber in both dark themes,
  * where it has room to be.
  */
+// The clock events' colour, which the categories that are not an action share.
+const NEUTRAL = "text-event-game";
+
 export const EVENT_CATEGORY_COLOR: Record<EventCategory, string> = {
   [EventCategory.MADE]: "text-event-made",
   [EventCategory.MISS]: "text-event-miss",
@@ -29,7 +32,9 @@ export const EVENT_CATEGORY_COLOR: Record<EventCategory, string> = {
   [EventCategory.DEFENSIVE]: "text-event-defensive",
   [EventCategory.REBOUND]: "text-event-rebound",
   [EventCategory.SUBSTITUTION]: "text-event-substitution",
-  [EventCategory.GAME]: "text-event-game",
-  // Unconfigured event types fall back to the same neutral as clock events.
-  [EventCategory.OTHER]: "text-event-game",
+  [EventCategory.GAME]: NEUTRAL,
+  // A restart, not an action.
+  [EventCategory.INBOUND]: NEUTRAL,
+  // Unconfigured event types.
+  [EventCategory.OTHER]: NEUTRAL,
 };

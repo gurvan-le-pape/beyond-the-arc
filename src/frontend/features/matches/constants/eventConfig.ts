@@ -233,7 +233,7 @@ export const eventConfig = {
   inbound: {
     icon: ArrowRightToLine,
     labelKey: "matchEvents.eventLabels.inbound",
-    eventCategory: EventCategory.GAME,
+    eventCategory: EventCategory.INBOUND,
   },
 
   // Substitution

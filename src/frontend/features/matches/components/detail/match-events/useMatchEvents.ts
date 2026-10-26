@@ -6,13 +6,27 @@ import type { MatchEvent } from "@/features/matches/types";
 import type { EventCategory } from "@/shared/constants";
 
 import {
+  countCategories,
+  DEFAULT_CATEGORIES,
+  FILTERABLE_CATEGORIES,
   filterPlays,
   groupByPeriod,
   groupPlays,
   hasOvertime,
+  type PeriodPlays,
   scoreEvents,
   scorePeriods,
 } from "./matchEventsView";
+
+/**
+ * How many rows the timeline draws for the given periods.
+ *
+ * @param periods - the periods to draw
+ * @returns the number of plays across them
+ */
+function countRows(periods: readonly PeriodPlays[]): number {
+  return periods.reduce((sum, period) => sum + period.plays.length, 0);
+}
 
 /**
  * The timeline's filter state and the plays it selects.
@@ -25,7 +39,8 @@ import {
  * @param homeTeamId - the home side's team id
  * @param awayTeamId - the away side's team id
  * @returns the plays to show, one run per period; each period's score, from
- *   the whole match; and the filter values and setters for the panel
+ *   the whole match; and the filter values and setters for the panel, with
+ *   how many rows are shown out of how many the match has
  */
 export function useMatchEvents(
   events: readonly MatchEvent[],
@@ -34,9 +49,8 @@ export function useMatchEvents(
 ) {
   const [selectedQuarter, setSelectedQuarter] = useState<Quarter>(Quarter.ALL);
   const [latestFirst, setLatestFirst] = useState(false);
-  const [selectedEventCategory, setSelectedEventCategory] = useState<
-    EventCategory | undefined
-  >(undefined);
+  const [selectedCategories, setSelectedCategories] =
+    useState<ReadonlySet<EventCategory>>(DEFAULT_CATEGORIES);
   const [selectedPlayerIds, setSelectedPlayerIds] = useState<Set<number>>(
     new Set(),
   );
@@ -51,6 +65,20 @@ export function useMatchEvents(
     });
   }, []);
 
+  const toggleCategory = useCallback((category: EventCategory) => {
+    setSelectedCategories((prev) => {
+      const next = new Set(prev);
+      if (next.has(category)) next.delete(category);
+      else next.add(category);
+      return next;
+    });
+  }, []);
+
+  const showAllCategories = useCallback(
+    () => setSelectedCategories(new Set(FILTERABLE_CATEGORIES)),
+    [],
+  );
+
   const scoredEvents = useMemo(
     () => scoreEvents(events, homeTeamId, awayTeamId),
     [events, homeTeamId, awayTeamId],
@@ -62,20 +90,25 @@ export function useMatchEvents(
     () =>
       filterPlays(plays, {
         quarter: selectedQuarter,
-        category: selectedEventCategory,
+        categories: selectedCategories,
         playerIds: selectedPlayerIds,
         latestFirst,
       }),
     [
       plays,
       selectedQuarter,
-      selectedEventCategory,
+      selectedCategories,
       selectedPlayerIds,
       latestFirst,
     ],
   );
 
   const periods = useMemo(() => groupByPeriod(shownPlays), [shownPlays]);
+  const categoryCounts = useMemo(() => countCategories(events), [events]);
+  // Counted through `groupByPeriod`, so the rows it drops (the period ends)
+  // are left out of the total the same way they are left out of the list.
+  const totalRows = useMemo(() => countRows(groupByPeriod(plays)), [plays]);
+
   const periodScores = useMemo(
     () => scorePeriods(scoredEvents),
     [scoredEvents],
@@ -88,8 +121,12 @@ export function useMatchEvents(
       hasOvertime: hasOvertime(events),
       selectedQuarter,
       setSelectedQuarter,
-      selectedEventCategory,
-      setSelectedEventCategory,
+      selectedCategories,
+      toggleCategory,
+      showAllCategories,
+      categoryCounts,
+      shownRows: countRows(periods),
+      totalRows,
       selectedPlayerIds,
       setSelectedPlayerIds,
       togglePlayer,

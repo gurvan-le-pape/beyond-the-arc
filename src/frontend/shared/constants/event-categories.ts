@@ -9,6 +9,7 @@ export const EventCategory = {
   REBOUND: "rebound",
   GAME: "game",
   SUBSTITUTION: "substitution",
+  INBOUND: "inbound",
 } as const;
 
 export const EVENT_CATEGORY_LIST = Object.values(EventCategory);
