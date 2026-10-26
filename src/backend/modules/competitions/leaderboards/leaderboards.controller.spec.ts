@@ -29,7 +29,10 @@ describe("LeaderboardsController", () => {
     pointsFor: 645,
     pointsAgainst: 580,
     pointDifference: 65,
-    form: ["W", "W", "L", "W", "W"],
+    form: [
+      { matchId: 11, result: "W" },
+      { matchId: 12, result: "L" },
+    ],
   };
 
   const mockLeaderboardsService = {

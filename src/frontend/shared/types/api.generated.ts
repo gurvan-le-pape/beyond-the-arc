@@ -1254,6 +1254,19 @@ export interface components {
             /** @description Pools in this championship */
             pools: components["schemas"]["ChampionshipPoolDto"][];
         };
+        FormGameDto: {
+            /**
+             * @description The match
+             * @example 4021
+             */
+            matchId: number;
+            /**
+             * @description How it went for the team: W for a win, L for a loss
+             * @example W
+             * @enum {string}
+             */
+            result: "W" | "L";
+        };
         LeaderboardResponseDto: {
             /**
              * @description Unique leaderboard entry identifier
@@ -1320,17 +1333,8 @@ export interface components {
              * @example 65
              */
             pointDifference: number;
-            /**
-             * @description The team's last 5 results in the pool, oldest first: W for a win, L for a loss. Shorter early in the season, empty before the team's first game.
-             * @example [
-             *       "L",
-             *       "W",
-             *       "W",
-             *       "W",
-             *       "W"
-             *     ]
-             */
-            form: ("W" | "L")[];
+            /** @description The team's last 5 games in the pool, oldest first. Shorter early in the season, empty before the team's first game. */
+            form: components["schemas"]["FormGameDto"][];
         };
         PoolResponseDto: {
             /**

@@ -6,7 +6,7 @@ import { cn } from "@/shared/utils";
 
 interface FormGuideProps {
   /** Oldest first, as the API sends it. */
-  readonly results: Leaderboard["form"];
+  readonly games: Leaderboard["form"];
 }
 
 /**
@@ -14,10 +14,10 @@ interface FormGuideProps {
  * a loss outlined, so the two differ in more than colour. A screen reader
  * hears the full word for each instead of the letter.
  */
-export function FormGuide({ results }: FormGuideProps) {
+export function FormGuide({ games }: FormGuideProps) {
   const t = useTranslations("competitions.form");
 
-  if (results.length === 0) {
+  if (games.length === 0) {
     return (
       <>
         <span aria-hidden>–</span>
@@ -28,12 +28,11 @@ export function FormGuide({ results }: FormGuideProps) {
 
   return (
     <ol className="inline-flex gap-1">
-      {results.map((result, index) => {
+      {games.map(({ matchId, result }) => {
         const isWin = result === "W";
         return (
-          // A team's results repeat, so their position is their identity.
           <li
-            key={index}
+            key={matchId}
             className={cn(
               "inline-flex size-5 items-center justify-center rounded-sm text-xs font-bold",
               isWin

@@ -3,6 +3,19 @@ import { ApiProperty } from "@nestjs/swagger";
 
 import { FORM_LENGTH, FormResult } from "../recent-form";
 
+/** One game of a team's recent form. */
+export class FormGameDto {
+  @ApiProperty({ description: "The match", example: 4021, type: Number })
+  matchId!: number;
+
+  @ApiProperty({
+    description: "How it went for the team: W for a win, L for a loss",
+    enum: Object.values(FormResult),
+    example: "W",
+  })
+  result!: FormResult;
+}
+
 /**
  * Response DTO for a leaderboard entry.
  * Provides a stable API contract independent of database schema.
@@ -100,10 +113,8 @@ export class LeaderboardResponseDto {
   pointDifference!: number;
 
   @ApiProperty({
-    description: `The team's last ${FORM_LENGTH} results in the pool, oldest first: W for a win, L for a loss. Shorter early in the season, empty before the team's first game.`,
-    enum: Object.values(FormResult),
-    isArray: true,
-    example: ["L", "W", "W", "W", "W"],
+    description: `The team's last ${FORM_LENGTH} games in the pool, oldest first. Shorter early in the season, empty before the team's first game.`,
+    type: [FormGameDto],
   })
-  form!: FormResult[];
+  form!: FormGameDto[];
 }

@@ -5,7 +5,7 @@ import { PrismaService } from "prisma/prisma.service";
 
 import { Prisma } from "../../../prisma/generated/prisma/client";
 import { LeaderboardResponseDto } from "./dto/leaderboards.response.dto";
-import { buildRecentForm, FORM_LENGTH, type FormResult } from "./recent-form";
+import { buildRecentForm, FORM_LENGTH, type FormGame } from "./recent-form";
 
 /**
  * Fields to select from the leaderboards table.
@@ -45,6 +45,7 @@ type LeaderboardSelectResult = Prisma.LeaderboardsGetPayload<{
 
 /** The fields of a match that decide its result, for each team's form. */
 const FORM_MATCH_SELECT = {
+  id: true,
   homeTeamId: true,
   awayTeamId: true,
   homeTeamScore: true,
@@ -142,13 +143,13 @@ export class LeaderboardsService {
    *
    * @param leaderboard - Prisma leaderboard select result
    * @param rank - its position in the pool
-   * @param form - its last results, oldest first
+   * @param form - its last games, oldest first
    * @returns LeaderboardResponseDto
    */
   private mapToDto(
     leaderboard: LeaderboardSelectResult,
     rank: number,
-    form: FormResult[],
+    form: FormGame[],
   ): LeaderboardResponseDto {
     return {
       id: leaderboard.id,

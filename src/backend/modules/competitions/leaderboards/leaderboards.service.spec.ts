@@ -117,15 +117,33 @@ describe("LeaderboardsService", () => {
       ]);
       // Newest first: team 5 beat team 6, after losing to it.
       mockPrismaService.client.matches.findMany.mockResolvedValueOnce([
-        { homeTeamId: 5, awayTeamId: 6, homeTeamScore: 80, awayTeamScore: 70 },
-        { homeTeamId: 6, awayTeamId: 5, homeTeamScore: 75, awayTeamScore: 74 },
+        {
+          id: 2,
+          homeTeamId: 5,
+          awayTeamId: 6,
+          homeTeamScore: 80,
+          awayTeamScore: 70,
+        },
+        {
+          id: 1,
+          homeTeamId: 6,
+          awayTeamId: 5,
+          homeTeamScore: 75,
+          awayTeamScore: 74,
+        },
       ]);
 
       const result = await service.findLeaderboardsByPoolId(10);
 
       expect(result.map((entry) => entry.form)).toEqual([
-        ["L", "W"],
-        ["W", "L"],
+        [
+          { matchId: 1, result: "L" },
+          { matchId: 2, result: "W" },
+        ],
+        [
+          { matchId: 1, result: "W" },
+          { matchId: 2, result: "L" },
+        ],
         [],
       ]);
       expect(prisma.client.matches.findMany).toHaveBeenCalledWith({

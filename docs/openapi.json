@@ -3915,6 +3915,29 @@
           "pools"
         ]
       },
+      "FormGameDto": {
+        "type": "object",
+        "properties": {
+          "matchId": {
+            "type": "number",
+            "description": "The match",
+            "example": 4021
+          },
+          "result": {
+            "enum": [
+              "W",
+              "L"
+            ],
+            "type": "string",
+            "description": "How it went for the team: W for a win, L for a loss",
+            "example": "W"
+          }
+        },
+        "required": [
+          "matchId",
+          "result"
+        ]
+      },
       "LeaderboardResponseDto": {
         "type": "object",
         "properties": {
@@ -3984,22 +4007,11 @@
             "example": 65
           },
           "form": {
+            "description": "The team's last 5 games in the pool, oldest first. Shorter early in the season, empty before the team's first game.",
             "type": "array",
             "items": {
-              "type": "string",
-              "enum": [
-                "W",
-                "L"
-              ]
-            },
-            "description": "The team's last 5 results in the pool, oldest first: W for a win, L for a loss. Shorter early in the season, empty before the team's first game.",
-            "example": [
-              "L",
-              "W",
-              "W",
-              "W",
-              "W"
-            ]
+              "$ref": "#/components/schemas/FormGameDto"
+            }
           }
         },
         "required": [

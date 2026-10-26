@@ -172,7 +172,7 @@ export function LeaderboardTable({
       from: "sm",
       align: "left",
       width: "fit",
-      render: (row) => <FormGuide results={row.form} />,
+      render: (row) => <FormGuide games={row.form} />,
     },
   ];
 
