@@ -15,6 +15,7 @@ import {
   type MatchEventsFilter,
   overtimeNumber,
   periodClock,
+  RUN_MIN_POINTS,
   scoreEvents,
   scorePeriods,
 } from "./matchEventsView";
@@ -360,6 +361,86 @@ describe("countCategories", () => {
       [EventCategory.REBOUND]: 0,
       [EventCategory.SUBSTITUTION]: 0,
       [EventCategory.INBOUND]: 1,
+    });
+  });
+});
+
+describe("lead changes, ties and runs", () => {
+  // Baskets in a row, as [team, points] pairs, one second apart in Q4.
+  function baskets(...scores: [number, 2 | 3][]) {
+    return playsOf(
+      scores.map(([teamId, points], index) =>
+        event(
+          index + 1,
+          points === 3 ? EventType.MADE_STEP_BACK_THREE : EventType.MADE_LAYUP,
+          Role.SHOOTER,
+          teamId * 10,
+          teamId,
+          4,
+        ),
+      ),
+    );
+  }
+
+  it("marks the basket that takes the lead from the other side, and a tie", () => {
+    const plays = baskets([HOME, 2], [AWAY, 2], [AWAY, 3], [HOME, 3]);
+    expect(plays.map((p) => p.swing)).toEqual([
+      null, // 2–0 takes a lead nobody had
+      "tie", // 2–2
+      "leadChange", // 2–5
+      "tie", // 5–5
+    ]);
+  });
+
+  it("does not mark a basket that only stretches a lead", () => {
+    expect(baskets([HOME, 2], [HOME, 2]).map((p) => p.swing)).toEqual([
+      null,
+      null,
+    ]);
+  });
+
+  // Taken from match 604265, late in Q4: the away side scores four baskets
+  // in a row, 64–59 to 64–67, before the home side answers.
+  it("marks the last basket of a run, once the other side scores", () => {
+    const plays = baskets(
+      [AWAY, 2],
+      [AWAY, 2],
+      [AWAY, 2],
+      [AWAY, 2],
+      [HOME, 2],
+    );
+    expect(plays.map((p) => p.runEnded)).toEqual([
+      null,
+      null,
+      null,
+      { teamId: AWAY, points: 8 },
+      null,
+    ]);
+  });
+
+  it("closes a run at the end of the match", () => {
+    const plays = baskets([HOME, 2], [AWAY, 3], [AWAY, 2], [AWAY, 2]);
+    expect(plays[plays.length - 1].runEnded).toEqual({
+      teamId: AWAY,
+      points: 7,
+    });
+  });
+
+  it(`does not call fewer than ${RUN_MIN_POINTS} points in a row a run`, () => {
+    const plays = baskets([AWAY, 3], [AWAY, 3], [HOME, 2]);
+    expect(plays.every((p) => p.runEnded === null)).toBe(true);
+  });
+
+  it("is not broken by a play that scores nothing", () => {
+    const plays = playsOf([
+      event(1, EventType.MADE_STEP_BACK_THREE, Role.SHOOTER, 20, AWAY, 4),
+      event(2, EventType.MISSED_LAYUP, Role.SHOOTER, 10, HOME, 4),
+      event(3, EventType.MADE_STEP_BACK_THREE, Role.SHOOTER, 20, AWAY, 4),
+      event(4, EventType.MADE_LAYUP, Role.SHOOTER, 20, AWAY, 4),
+    ]);
+    expect(plays[plays.length - 1].runEnded).toEqual({
+      teamId: AWAY,
+      points: 8,
     });
   });
 });

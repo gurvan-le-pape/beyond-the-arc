@@ -15,6 +15,8 @@ interface EventTimelineProps {
   readonly periods: readonly PeriodPlays[];
   /** Every period's score, from the whole match, whatever is filtered out. */
   readonly periodScores: ReadonlyMap<number, PeriodScore>;
+  /** The plays run newest first. */
+  readonly latestFirst: boolean;
   readonly homeTeam: MatchTeam;
   readonly awayTeam: MatchTeam;
   readonly getEventStyle: (eventType: string) => EventStyle;
@@ -34,6 +36,7 @@ interface EventTimelineProps {
 export function EventTimeline({
   periods,
   periodScores,
+  latestFirst,
   homeTeam,
   awayTeam,
   getEventStyle,
@@ -62,6 +65,7 @@ export function EventTimeline({
               score={periodScores.get(period)}
               isLast={period === lastPeriod}
               plays={plays}
+              latestFirst={latestFirst}
               homeTeam={homeTeam}
               awayTeam={awayTeam}
               getEventStyle={getEventStyle}

@@ -114,6 +114,7 @@ export function TimelineEventRow({
           homeScore={play.homeScore}
           awayScore={play.awayScore}
           scoredBy={scoredBy}
+          swing={play.swing}
         />
       ) : (
         <span />

@@ -215,7 +215,31 @@ export interface Play {
   readonly teamId: number | undefined;
   /** The side that scored in the play; `undefined` when nobody did. */
   readonly scoringTeamId: number | undefined;
+  /**
+   * What the play did to the lead: took it from the side that had it, or
+   * levelled the score. `null` for a play that did neither, including the
+   * first basket of the match, which takes a lead nobody had.
+   */
+  readonly swing: "leadChange" | "tie" | null;
+  /**
+   * The run this play's basket closed, when it is the last basket of one:
+   * `RUN_MIN_POINTS` or more points in a row by one side. `null` otherwise.
+   */
+  readonly runEnded: Run | null;
 }
+
+/** Points scored in a row by one side, with nothing scored by the other. */
+export interface Run {
+  readonly teamId: number;
+  readonly points: number;
+}
+
+/**
+ * The shortest scoring streak the timeline calls a run. Commentary starts
+ * naming one around 7–0; below that, a few baskets in a row are just the
+ * game going back and forth.
+ */
+export const RUN_MIN_POINTS = 7;
 
 /**
  * The game second an event happened in.
@@ -283,9 +307,70 @@ export function groupPlays(events: readonly ScoredMatchEvent[]): Play[] {
       awayScore: last.awayScore,
       teamId: followers[0]?.teamId ?? lead.teamId,
       scoringTeamId: scorer?.teamId,
+      swing: null,
+      runEnded: null,
     });
   }
-  return plays;
+  return markSwingsAndRuns(plays);
+}
+
+/** A run still being scored, and the play of its latest basket. */
+interface OpenRun {
+  teamId: number;
+  points: number;
+  last: Play;
+}
+
+/**
+ * Fills in each play's `swing` and `runEnded`, walking the match in order.
+ *
+ * Runs count points, so a basket and its free throws in one play add up, and
+ * a run is closed by the other side's next score or by the end of the match.
+ *
+ * @param plays - the match's plays, in match order, with neither field set
+ * @returns the same plays, in the same order, with both fields set
+ */
+function markSwingsAndRuns(plays: readonly Play[]): Play[] {
+  const swings = new Map<Play, Play["swing"]>();
+  const runs = new Map<Play, Run>();
+
+  const closeRun = (open: OpenRun | null) => {
+    if (open && open.points >= RUN_MIN_POINTS) {
+      runs.set(open.last, { teamId: open.teamId, points: open.points });
+    }
+  };
+
+  let leader = 0;
+  let total = 0;
+  // Cast, not annotated: an annotated `null` start narrows `run` to `null`
+  // for the whole loop, which only reassigns it inside a branch.
+  let run = null as OpenRun | null;
+
+  for (const play of plays) {
+    const after = play.homeScore + play.awayScore;
+    const points = after - total;
+    total = after;
+    if (play.scoringTeamId === undefined) continue;
+
+    const now = Math.sign(play.homeScore - play.awayScore);
+    if (now === 0) swings.set(play, "tie");
+    else if (leader !== 0 && now !== leader) swings.set(play, "leadChange");
+    if (now !== 0) leader = now;
+
+    if (run?.teamId !== play.scoringTeamId) {
+      closeRun(run);
+      run = { teamId: play.scoringTeamId, points: 0, last: play };
+    }
+    run.points += points;
+    run.last = play;
+  }
+  closeRun(run);
+
+  return plays.map((play) => ({
+    ...play,
+    swing: swings.get(play) ?? null,
+    runEnded: runs.get(play) ?? null,
+  }));
 }
 
 /**
@@ -293,6 +378,7 @@ export function groupPlays(events: readonly ScoredMatchEvent[]): Play[] {
  * chosen category by one of the chosen players, newest first if asked. Events
  * outside the filterable categories (the tip-off, an unknown type) pass the
  * category test whatever is chosen.
+ *
  * A play matches on any of its events, so a shooting foul whose free throws
  * went in shows under made shots as well as under fouls.
  *

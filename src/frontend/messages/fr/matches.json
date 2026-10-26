@@ -114,7 +114,10 @@
     "freeThrowsShort": "LF {made}/{attempted}",
     "inbounds": "Remises en jeu",
     "shownRows": "{shown, plural, one {# action affichée} other {# actions affichées}} sur {total}",
-    "showAllCategories": "Afficher tous les types"
+    "showAllCategories": "Afficher tous les types",
+    "leadChange": "Changement de leader",
+    "tie": "Égalité",
+    "run": "Série de {points}–0 · {team}"
   },
   "matchSummary": {
     "title": "Résumé du match",
