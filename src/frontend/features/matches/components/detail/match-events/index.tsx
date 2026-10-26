@@ -65,7 +65,7 @@ export function MatchEvents({
           homeTeam={homeTeam}
           awayTeam={awayTeam}
           matchDate={matchDate}
-          onSelectPlay={revealPlay}
+          onGoToPlay={revealPlay}
         />
       </div>
 

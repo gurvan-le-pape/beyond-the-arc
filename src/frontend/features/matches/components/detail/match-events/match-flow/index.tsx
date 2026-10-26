@@ -13,8 +13,8 @@ interface MatchFlowProps {
   readonly homeTeam: MatchTeam;
   readonly awayTeam: MatchTeam;
   readonly matchDate: Date | string;
-  /** Called with the play the reader chose to go to from the chart. */
-  readonly onSelectPlay: (play: Play) => void;
+  /** Called with the play the reader asked to go to from the chart. */
+  readonly onGoToPlay: (play: Play) => void;
 }
 
 /**
@@ -28,7 +28,7 @@ export function MatchFlow({
   homeTeam,
   awayTeam,
   matchDate,
-  onSelectPlay,
+  onGoToPlay,
 }: MatchFlowProps) {
   return (
     <div className="flex flex-col gap-2">
@@ -44,7 +44,7 @@ export function MatchFlow({
         homeTeam={homeTeam}
         awayTeam={awayTeam}
         matchDate={matchDate}
-        onSelect={onSelectPlay}
+        onGoTo={onGoToPlay}
       />
     </div>
   );
