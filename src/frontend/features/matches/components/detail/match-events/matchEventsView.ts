@@ -17,6 +17,62 @@ export type ScoredMatchEvent = MatchEvent & {
 
 const REGULATION_QUARTERS = 4;
 
+// The simulator's period lengths (QUARTER_LENGTH and OVERTIME_LENGTH in
+// db/python/simulation/match_simulator.py). The API carries no clock, only
+// when each event happened, so a change there must be mirrored here.
+const QUARTER_SECONDS = 600;
+const OVERTIME_SECONDS = 300;
+
+/**
+ * Seconds of game time elapsed when the given period's buzzer sounds.
+ *
+ * @param period - 1-based period; 5 and above are overtimes
+ * @returns the buzzer's offset from tip-off, in seconds
+ */
+function periodEndSeconds(period: number): number {
+  if (period <= REGULATION_QUARTERS) return period * QUARTER_SECONDS;
+  return (
+    REGULATION_QUARTERS * QUARTER_SECONDS +
+    (period - REGULATION_QUARTERS) * OVERTIME_SECONDS
+  );
+}
+
+/**
+ * A period's short name: `Q1`–`Q4`, then the overtime label, numbered from the
+ * second overtime on (`OT`, `OT 2`).
+ *
+ * @param period - 1-based period
+ * @param overtime - the translated overtime abbreviation
+ * @returns the label to show beside the clock
+ */
+export function periodLabel(period: number, overtime: string): string {
+  if (period <= REGULATION_QUARTERS) return `Q${period}`;
+  const nth = period - REGULATION_QUARTERS;
+  return nth === 1 ? overtime : `${overtime} ${nth}`;
+}
+
+/**
+ * The game clock at an event, as a scoreboard shows it: the time left in the
+ * event's period, counting down.
+ *
+ * @param occurredAt - when the event happened
+ * @param tipOff - when the match started; the API's event times are game time counted from it
+ * @param period - the event's 1-based period
+ * @returns `m:ss`, never negative: an event stamped past its buzzer reads `0:00`
+ */
+export function periodClock(
+  occurredAt: Date | string,
+  tipOff: Date | string,
+  period: number,
+): string {
+  const elapsed = Math.floor(
+    (new Date(occurredAt).getTime() - new Date(tipOff).getTime()) / 1000,
+  );
+  const left = Math.max(0, periodEndSeconds(period) - elapsed);
+  const seconds = (left % 60).toString().padStart(2, "0");
+  return `${Math.floor(left / 60)}:${seconds}`;
+}
+
 /**
  * Whether the match went past regulation.
  *
