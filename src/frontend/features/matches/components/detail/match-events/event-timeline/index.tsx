@@ -3,24 +3,22 @@
 
 import { useTranslations } from "next-intl";
 
-import type {
-  EventStyle,
-  EventWithScore,
-  MatchTeam,
-} from "@/features/matches/types";
-import {
-  describeEvent,
-  tokenizeEventDescription,
-} from "@/features/matches/utils";
-import { EventCategory } from "@/shared/constants";
+import type { EventStyle, MatchTeam } from "@/features/matches/types";
+import { Text } from "@/shared/components/typography";
 
-import { EventScorePill } from "./EventScorePill";
-import { TimelineEventBlock } from "./TimelineEventBlock";
-import { TimelineRow } from "./TimelineRow";
-import { TimelineTeamHeader } from "./TimelineTeamHeader";
+import type {
+  PeriodEvents,
+  PeriodScore,
+  ScoredMatchEvent,
+} from "../matchEventsView";
+import { PeriodSection } from "./PeriodSection";
+import { TimelineLegend } from "./TimelineLegend";
 
 interface EventTimelineProps {
-  readonly events: EventWithScore[];
+  /** The events to show, one run per period, in display order. */
+  readonly periods: readonly PeriodEvents<ScoredMatchEvent>[];
+  /** Every period's score, from the whole match, whatever is filtered out. */
+  readonly periodScores: ReadonlyMap<number, PeriodScore>;
   readonly homeTeam: MatchTeam;
   readonly awayTeam: MatchTeam;
   readonly getEventStyle: (eventType: string) => EventStyle;
@@ -28,125 +26,54 @@ interface EventTimelineProps {
 }
 
 /**
- * Match events timeline.
- * Renders events along a centred vertical line – home team on the left,
- * away team on the right.  Scoring events show a running-score pill in the
- * centre column; non-scoring events show a small dot.
+ * The match's play-by-play: one section per period, each headed by the
+ * period's score, its events in a single column below.
+ *
+ * The team of an event is carried by colour (the home and away roles) in a
+ * stripe on every row, so the legend above is what ties a colour to a team.
+ * The last period played is the one whose header shows the final score; it
+ * is read from `periodScores`, not from `periods`, so filtering the last
+ * period out does not promote another one to "final".
  */
 export function EventTimeline({
-  events,
+  periods,
+  periodScores,
   homeTeam,
   awayTeam,
   getEventStyle,
   matchDate,
 }: EventTimelineProps) {
   const tMatches = useTranslations("matches");
+  const lastPeriod = Math.max(...periodScores.keys());
 
   return (
     <div>
-      <TimelineTeamHeader homeTeam={homeTeam} awayTeam={awayTeam} />
+      <TimelineLegend homeTeam={homeTeam} awayTeam={awayTeam} />
 
-      <div className="relative">
-        {/* Centre vertical rule – purely decorative */}
-        <div
-          aria-hidden="true"
-          className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-divide transform -translate-x-1/2"
-        />
-
-        {/*
-          A list rather than a table: every event belongs to exactly one team,
-          so a three-column table would announce a blank cell on every single
-          row. The `ul` is the direct parent of the `li` rows, so nothing
-          breaks the list relationship.
-        */}
-        <ul
-          aria-label={tMatches("matchEvents.timelineLabel")}
-          className="space-y-3"
-        >
-          {events.map((event) => {
-            const style = getEventStyle(event.eventType);
-            const isHomeTeam = event.teamId === homeTeam.id;
-            const isAwayTeam = event.teamId === awayTeam.id;
-            const isScoring = style.eventCategory === EventCategory.MADE;
-
-            const eventKey = `${event.id}`;
-
-            // Pre-computed here rather than in the block because only one of
-            // the two branches below renders, and the tokens are the same
-            // either way.
-            const description = describeEvent(event);
-            const descriptionTokens = description
-              ? tokenizeEventDescription(
-                  tMatches(
-                    `matchEvents.descriptions.${description.key}`,
-                    description.values,
-                  ),
-                  event.players,
-                )
-              : [];
-
-            let eventTeamName: string | null = null;
-            if (isHomeTeam) {
-              eventTeamName = homeTeam.name;
-            } else if (isAwayTeam) {
-              eventTeamName = awayTeam.name;
-            }
-
-            return (
-              <TimelineRow as="li" key={eventKey} className="items-center">
-                {/*
-                  Left/right placement is what conveys the team visually, and
-                  that is invisible to a screen reader. Naming the team here
-                  makes each item self-contained. `sr-only` is absolutely
-                  positioned, so this span never becomes a grid item.
-                */}
-                {eventTeamName && (
-                  <span className="sr-only">{eventTeamName}</span>
-                )}
-
-                {/* Left column – home team event or spacer */}
-                {isHomeTeam ? (
-                  <TimelineEventBlock
-                    align="right"
-                    style={style}
-                    event={event}
-                    descriptionTokens={descriptionTokens}
-                    matchDate={matchDate}
-                  />
-                ) : (
-                  <div />
-                )}
-
-                {/* Centre column – score pill or dot */}
-                <div className="flex items-center justify-center">
-                  {isScoring ? (
-                    <EventScorePill
-                      homeScore={event.homeScore}
-                      awayScore={event.awayScore}
-                      isHomeTeam={isHomeTeam}
-                    />
-                  ) : (
-                    <div className="w-2 h-2 rounded-button bg-divide" />
-                  )}
-                </div>
-
-                {/* Right column – away team event or spacer */}
-                {isAwayTeam ? (
-                  <TimelineEventBlock
-                    align="left"
-                    style={style}
-                    event={event}
-                    descriptionTokens={descriptionTokens}
-                    matchDate={matchDate}
-                  />
-                ) : (
-                  <div />
-                )}
-              </TimelineRow>
-            );
-          })}
-        </ul>
-      </div>
+      {periods.length === 0 ? (
+        <Text variant="caption" className="py-8 text-center">
+          {tMatches("matchEvents.noMatchingEvents")}
+        </Text>
+      ) : (
+        // `overflow-clip`, not `overflow-hidden`: it rounds the corners
+        // without becoming a scroll container, which would pin the sticky
+        // period headers to this box instead of the page.
+        <div className="rounded-card border border-divide surface-subtle shadow-card overflow-clip">
+          {periods.map(({ period, events }) => (
+            <PeriodSection
+              key={period}
+              period={period}
+              score={periodScores.get(period)}
+              isLast={period === lastPeriod}
+              events={events}
+              homeTeam={homeTeam}
+              awayTeam={awayTeam}
+              getEventStyle={getEventStyle}
+              matchDate={matchDate}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
