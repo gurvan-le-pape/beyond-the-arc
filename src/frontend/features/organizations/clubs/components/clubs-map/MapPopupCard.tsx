@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 
 import { IconButton } from "@/shared/components/primitives";
+import { Text } from "@/shared/components/typography";
 
 interface MapPopupCardProps {
   readonly title: string;
@@ -33,13 +34,13 @@ export function MapPopupCard({
     <div className="w-[300px] max-w-full surface-subtle border border-divide rounded-xl shadow-lg">
       <div className="flex items-start justify-between gap-2 pt-3.5 pr-2 pb-3 pl-4">
         <div className="min-w-0">
-          <p className="text-base font-semibold leading-snug text-text-heading">
+          <Text variant="title" as="p" className="leading-snug">
             {title}
-          </p>
+          </Text>
           {details && (
-            <p className="mt-1 text-[13px] leading-snug text-text-secondary">
+            <Text variant="caption" as="p" className="mt-1 leading-snug">
               {details}
-            </p>
+            </Text>
           )}
         </div>
         <IconButton size="sm" label={tCommon("close")} onClick={onClose}>

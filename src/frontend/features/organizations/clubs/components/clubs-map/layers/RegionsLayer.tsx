@@ -1,14 +1,15 @@
 // src/frontend/features/organizations/clubs/components/clubs-map/layers/RegionsLayer.tsx
 "use client";
 
+import type { FeatureCollection } from "geojson";
 import { Layer, Source } from "react-map-gl/maplibre";
 
 import { MAP_COLORS } from "../mapConstants";
 import type { MapColours } from "../useMapColours";
 
 interface RegionsLayerProps {
-  readonly geoJson: any;
-  readonly labels?: any;
+  readonly geoJson: FeatureCollection;
+  readonly labels: FeatureCollection | null;
   readonly colours: MapColours;
 }
 

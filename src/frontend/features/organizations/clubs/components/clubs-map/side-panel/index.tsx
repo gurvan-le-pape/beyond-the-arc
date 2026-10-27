@@ -1,7 +1,6 @@
 // src/frontend/features/organizations/clubs/components/clubs-map/side-panel/index.tsx
 "use client";
 
-import { useTranslations } from "next-intl";
 import { memo, useCallback, useState } from "react";
 
 import type { ClubBasic } from "../../../types/ClubBasic";
@@ -17,7 +16,6 @@ interface SidePanelProps {
   query: string;
   onQueryChange: (query: string) => void;
   onClearSearch: () => void;
-  resultCount: number;
 }
 
 /** Matches Tailwind's `lg`, the breakpoint where the mobile backdrop stops. */
@@ -34,9 +32,7 @@ export const SidePanel = memo(function SidePanel({
   query,
   onQueryChange,
   onClearSearch,
-  resultCount,
 }: SidePanelProps) {
-  const t = useTranslations("clubs");
   // Open on wide screens only. Below `lg` the panel covers the map (full width
   // under `sm`, behind a backdrop up to `lg`), so a phone landed on a list with
   // no map in sight. The map is client-only (`ssr: false`), so `window` exists
@@ -84,8 +80,6 @@ export const SidePanel = memo(function SidePanel({
                 query={query}
                 onQueryChange={onQueryChange}
                 onClear={onClearSearch}
-                resultCount={resultCount}
-                placeholder={t("map.searchPlaceholder")}
               />
             </div>
 

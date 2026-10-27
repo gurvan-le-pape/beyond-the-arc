@@ -1,53 +1,54 @@
 // src/frontend/features/organizations/clubs/components/clubs-map/mapHelpers.tsx
 import centroid from "@turf/centroid";
+import type { FeatureCollection, Point } from "geojson";
 
+import type {
+  BoundaryProperties,
+  GeoJsonData,
+} from "@/features/geography/types";
 import { logger } from "@/shared/utils";
 
 import type { ClubBasic } from "../../types/ClubBasic";
 
 /**
- * Generate label features with club counts from GeoJSON features
- * Only includes features with non-zero club counts
+ * One point per boundary with clubs in it, at the boundary's centroid,
+ * carrying the count the layer prints there. Boundaries with no clubs get no
+ * point, so no "0" is drawn.
+ *
+ * @param features - the region or department boundaries
+ * @param getClubCount - the club count for one boundary
+ * @returns the label points, as a source for a symbol layer
  */
 export function generateLabelFeatures(
-  features: any[],
-  getClubCount: (properties: any) => number,
-): any {
-  const labelFeatures = features
-    .map((feature: any) => {
+  features: GeoJsonData["features"],
+  getClubCount: (properties: BoundaryProperties) => number,
+): FeatureCollection<Point, { name: string; clubCount: number }> {
+  return {
+    type: "FeatureCollection",
+    features: features.flatMap((feature) => {
       const clubCount = getClubCount(feature.properties);
-
-      if (clubCount === 0) return null;
+      if (clubCount === 0) return [];
 
       try {
         const center = centroid(feature);
-        return {
-          type: "Feature",
-          geometry: {
-            type: "Point",
-            coordinates: center.geometry.coordinates,
+        return [
+          {
+            type: "Feature" as const,
+            geometry: center.geometry,
+            properties: {
+              name: feature.properties.nom || feature.properties.code,
+              clubCount,
+            },
           },
-          properties: {
-            name: feature.properties.nom || feature.properties.code,
-            clubCount,
-          },
-        };
+        ];
       } catch (error) {
         logger.warn("Failed to calculate centroid for feature:", error);
-        return null;
+        return [];
       }
-    })
-    .filter(Boolean);
-
-  return {
-    type: "FeatureCollection",
-    features: labelFeatures,
+    }),
   };
 }
 
-/**
- * Convert club data to GeoJSON point features for map display
- */
 /**
  * A key equal for two clubs exactly when they sit on the same coordinates.
  *
@@ -59,9 +60,15 @@ export function pointKey(club: Pick<ClubBasic, "latitude" | "longitude">) {
 }
 
 /**
+ * The clubs as GeoJSON points for the clustered clubs source. Clubs without
+ * coordinates are left out.
  *
+ * @param clubs - the clubs to place
+ * @returns one point per located club, carrying its id and name
  */
-export function clubsToGeoJSON(clubs: ClubBasic[]): any {
+export function clubsToGeoJSON(
+  clubs: ClubBasic[],
+): FeatureCollection<Point, { id: number; name: string }> {
   return {
     type: "FeatureCollection",
     features: clubs
@@ -78,9 +85,9 @@ export function clubsToGeoJSON(clubs: ClubBasic[]): any {
           c.latitude !== null && c.longitude !== null,
       )
       .map((c) => ({
-        type: "Feature",
+        type: "Feature" as const,
         geometry: {
-          type: "Point",
+          type: "Point" as const,
           // [lng, lat] — GeoJSON's order, which is the reverse of how
           // coordinates are spoken and of `ClubBasic`'s own field order.
           coordinates: [c.longitude, c.latitude],

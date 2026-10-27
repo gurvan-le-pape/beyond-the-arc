@@ -22,8 +22,9 @@ export function SidePanelHeader({ clubCount, onClose }: SidePanelHeaderProps) {
         <Text variant="h3" as="h2">
           {t("map.title")}
         </Text>
-        <Text variant="caption">
-          {clubCount} {clubCount === 1 ? t("club") : t("clubs")}
+        {/* Follows the search as it narrows the list, so it is announced. */}
+        <Text variant="caption" aria-live="polite">
+          {t("map.clubCount", { count: clubCount })}
         </Text>
       </div>
       <div className="flex items-center gap-1">
