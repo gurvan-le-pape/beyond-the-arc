@@ -15,6 +15,7 @@
   "clear": "Clear",
   "clearSearch": "Clear search",
   "clearSelection": "Clear selection",
+  "withColon": "{label}:",
   "multiSelectSummary": "{label}, {count, plural, =0 {none selected} other {# selected}}",
   "homepage": {
     "title": "Welcome to Beyond The Arc",

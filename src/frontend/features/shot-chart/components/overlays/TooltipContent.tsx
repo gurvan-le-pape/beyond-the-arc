@@ -40,8 +40,8 @@ function TooltipContent({ tooltip, shotFilter }: TooltipContentProps) {
         : null;
     filterContent = (
       <div>
-        <b>{t("shotChart.madeLabel")}:</b> {tooltip.made} (
-        {pct === null ? "-" : percent(pct)})
+        <b>{t("withColon", { label: t("shotChart.madeLabel") })}</b>{" "}
+        {tooltip.made} ({pct === null ? "-" : percent(pct)})
       </div>
     );
   } else if (shotFilter === ShotFilter.MISSED) {
@@ -51,8 +51,8 @@ function TooltipContent({ tooltip, shotFilter }: TooltipContentProps) {
         : null;
     filterContent = (
       <div>
-        <b>{t("shotChart.missedLabel")}:</b> {tooltip.missed} (
-        {pct === null ? "-" : percent(pct)})
+        <b>{t("withColon", { label: t("shotChart.missedLabel") })}</b>{" "}
+        {tooltip.missed} ({pct === null ? "-" : percent(pct)})
       </div>
     );
   }
@@ -79,23 +79,26 @@ function TooltipContent({ tooltip, shotFilter }: TooltipContentProps) {
       {/* Only show cell coordinates when available (grid/heatmap charts) */}
       {tooltip.cellRow !== undefined && tooltip.cellCol !== undefined && (
         <div>
-          <b>{t("shotChart.cell")}:</b> ({tooltip.cellRow}, {tooltip.cellCol})
+          <b>{t("withColon", { label: t("shotChart.cell") })}</b> (
+          {tooltip.cellRow}, {tooltip.cellCol})
         </div>
       )}
       <div>
-        <b>{t("shotChart.total")}:</b> {tooltip.total}
+        <b>{t("withColon", { label: t("shotChart.total") })}</b> {tooltip.total}
       </div>
       {/* Show all stats if filter is 'all' */}
       {shotFilter === ShotFilter.ALL && (
         <>
           <div>
-            <b>{t("shotChart.madeLabel")}:</b> {tooltip.made}
+            <b>{t("withColon", { label: t("shotChart.madeLabel") })}</b>{" "}
+            {tooltip.made}
           </div>
           <div>
-            <b>{t("shotChart.missedLabel")}:</b> {tooltip.missed}
+            <b>{t("withColon", { label: t("shotChart.missedLabel") })}</b>{" "}
+            {tooltip.missed}
           </div>
           <div>
-            <b>{t("shotChart.fgPercent")}:</b>{" "}
+            <b>{t("withColon", { label: t("shotChart.fgPercent") })}</b>{" "}
             {tooltip.fg === null ? "-" : percent(tooltip.fg)}
           </div>
         </>

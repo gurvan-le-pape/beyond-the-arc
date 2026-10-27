@@ -55,6 +55,7 @@ export function Pagination({
   label,
 }: PaginationProps) {
   const t = useTranslations("filters");
+  const tCommon = useTranslations("common");
 
   if (!pagination) return null;
 
@@ -114,7 +115,7 @@ export function Pagination({
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
         <div className="flex items-center gap-2">
           <Text variant="label" as="span" className="whitespace-nowrap">
-            {t("pagination.resultsPerPage")}
+            {tCommon("withColon", { label: t("pagination.resultsPerPage") })}
           </Text>
           <select
             value={pageSize}

@@ -11,7 +11,7 @@
   },
   "pagination": {
     "pageInfo": "Page {page} of {totalPages} ({total} {label})",
-    "resultsPerPage": "Results per page:",
+    "resultsPerPage": "Results per page",
     "firstPage": "First page",
     "previousPage": "Previous page",
     "nextPage": "Next page",

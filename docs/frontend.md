@@ -300,6 +300,8 @@ Pages resolve translations for their own JSX and for anything they pass down as 
 
 French copy is in sentence case, headings and buttons included: "Historique des matchs", "Voir le produit". Only the first word and proper nouns take a capital, and `&` is written "et". English copy may use title case for headings; the two catalogues are not copies of each other's casing.
 
+A label followed by a colon goes through `common.withColon` (`t("withColon", { label })`) rather than a `:` written after it in JSX or inside the label itself: French puts a non-breaking space before the colon, English does not. The label stays colon-free, so it also works as an `aria-label`.
+
 ### Numbers
 
 Every number on screen goes through next-intl's formatter, so the locale picks the decimal separator, the grouping and where a percent sign sits: `12.5` and `46%` in English, `12,5` and `46 %` in French.
