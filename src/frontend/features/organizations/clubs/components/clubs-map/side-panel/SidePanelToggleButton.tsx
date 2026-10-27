@@ -4,6 +4,8 @@
 import { List } from "lucide-react";
 import { useTranslations } from "next-intl";
 
+import { Button } from "@/shared/components/primitives";
+
 interface SidePanelToggleButtonProps {
   readonly onOpen: () => void;
 }
@@ -16,14 +18,14 @@ export function SidePanelToggleButton({ onOpen }: SidePanelToggleButtonProps) {
   // hamburger sits right above this button, and two identical icons read as
   // one control.
   return (
-    <button
-      type="button"
+    <Button
+      variant="control"
       onClick={onOpen}
-      className="fixed top-20 right-4 z-drawer inline-flex items-center gap-2 px-3 py-2.5 surface-subtle rounded-lg shadow-lg hover:bg-surface-inset transition-colors border border-divide text-sm font-semibold text-text-heading"
+      className="fixed top-20 right-4 z-drawer gap-2 shadow-lg"
     >
-      <List className="w-5 h-5 text-text-body" aria-hidden="true" />
+      <List className="w-5 h-5" aria-hidden="true" />
       {t("map.openPanel")}
-    </button>
+    </Button>
   );
 }
 

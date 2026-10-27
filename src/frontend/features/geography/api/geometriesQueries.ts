@@ -41,8 +41,8 @@ const FRANCE_LAT_RANGE = [41, 51.5] as const;
 /**
  * Assert that a GeoJSON asset is in `[lng, lat]` order, and reject it if not.
  *
- * `GeoJsonData` types `coordinates` as `any`, so nothing else in the app can
- * tell a correct file from a transposed one — and the two static assets carry
+ * `GeoJsonData` types each coordinate as a bare `number[]`, so nothing else in
+ * the app can tell a correct file from a transposed one — and the two static assets carry
  * **255,709 coordinate pairs** between them (75,961 in regions, 179,748 in
  * departments), consumed raw by `@turf/centroid`. A transposed file does not
  * throw anywhere; it draws France somewhere off the coast of Somalia.

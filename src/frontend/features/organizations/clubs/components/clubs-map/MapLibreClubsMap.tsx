@@ -13,6 +13,7 @@ import {
 } from "react-map-gl/maplibre";
 
 import { normalizeDepartmentCode } from "@/features/organizations/utils";
+import { ErrorMessage } from "@/shared/components/feedback";
 import { logger } from "@/shared/utils";
 
 import type { ClubBasic } from "../../types/ClubBasic";
@@ -69,6 +70,7 @@ export function MapLibreClubsMap({
     getRegionClubCount,
     getDepartmentClubCount,
     error,
+    retry,
   } = useMapData(initialRegions, initialDepartments, initialClubs);
 
   // Determine which layers to show based on zoom level
@@ -245,16 +247,11 @@ export function MapLibreClubsMap({
   if (error) {
     return (
       <div className="absolute inset-0 flex items-center justify-center surface-subtle">
-        <div className="text-center">
-          <p className="text-ink-error font-semibold">{t(error)}</p>
-          <button
-            type="button"
-            onClick={() => globalThis.location.reload()}
-            className="mt-4 px-4 py-2 bg-solid-primary text-on-solid-primary rounded-lg hover:bg-solid-primary-hover"
-          >
-            {t("map.retry")}
-          </button>
-        </div>
+        <ErrorMessage
+          message={t(error)}
+          onRetry={retry}
+          className="text-center"
+        />
       </div>
     );
   }
@@ -339,7 +336,6 @@ export function MapLibreClubsMap({
         query={query}
         onQueryChange={setQuery}
         onClearSearch={clearSearch}
-        resultCount={displayClubs.length}
       />
     </div>
   );

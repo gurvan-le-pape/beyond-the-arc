@@ -1,18 +1,19 @@
 // src/frontend/features/geography/types/GeoJson.ts
-export interface GeoJsonFeature {
-  type: "Feature";
-  properties: {
-    code: string;
-    nom: string;
-    [key: string]: any;
-  };
-  geometry: {
-    type: string;
-    coordinates: any;
-  };
+import type { FeatureCollection, MultiPolygon, Polygon } from "geojson";
+
+/** What each boundary feature in `public/geojson/*.json` carries. */
+export interface BoundaryProperties {
+  /** INSEE code: `"11"` for a region, `"2A"` or `"75"` for a department. */
+  code: string;
+  /** Name in French, e.g. `"Île-de-France"`. */
+  nom: string;
 }
 
-export interface GeoJsonData {
-  type: "FeatureCollection";
-  features: GeoJsonFeature[];
-}
+/**
+ * A boundary asset: the regions or the departments of metropolitan France.
+ * Both files hold only polygons and multipolygons.
+ */
+export type GeoJsonData = FeatureCollection<
+  Polygon | MultiPolygon,
+  BoundaryProperties
+>;

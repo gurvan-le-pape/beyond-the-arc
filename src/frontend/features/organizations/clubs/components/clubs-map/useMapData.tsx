@@ -29,6 +29,11 @@ interface UseMapDataReturn {
     | "errorLoadingClubs"
     | "errorLoadingBoundaries"
     | null;
+  /**
+   * Re-runs every query that failed, and only those. Resolves once they have
+   * all settled, which is what drives the retry button's pending state.
+   */
+  retry: () => Promise<unknown>;
   getRegionClubCount: (regionId: number) => number;
   getDepartmentClubCount: (departmentId: string | number) => number;
 }
@@ -44,23 +49,39 @@ export function useMapData(
   initialClubs: ClubBasic[],
 ): UseMapDataReturn {
   // Fetch regions
-  const { data: regions = initialRegions, error: regionsError } =
-    useClubStatsByRegion({ initialData: initialRegions });
+  const regionsQuery = useClubStatsByRegion({ initialData: initialRegions });
+  const { data: regions = initialRegions, error: regionsError } = regionsQuery;
 
   // Fetch all departments
+  const departmentsQuery = useClubStatsByDepartment({
+    initialData: initialDepartments,
+  });
   const { data: allDepartments = [], error: departmentsError } =
-    useClubStatsByDepartment({ initialData: initialDepartments });
+    departmentsQuery;
 
   // Fetch all clubs
-  const { data: allClubs = [], error: clubsError } = useAllClubs({
-    initialData: initialClubs,
-  });
+  const clubsQuery = useAllClubs({ initialData: initialClubs });
+  const { data: allClubs = [], error: clubsError } = clubsQuery;
 
   // Fetch GeoJSON data
+  const regionsGeoJsonQuery = useRegionsGeoJson();
   const { data: regionsGeoJson = null, error: regionsGeoJsonError } =
-    useRegionsGeoJson();
+    regionsGeoJsonQuery;
+  const departmentsGeoJsonQuery = useDepartmentsGeoJson();
   const { data: departmentsGeoJson = null, error: departmentsGeoJsonError } =
-    useDepartmentsGeoJson();
+    departmentsGeoJsonQuery;
+
+  const queries = [
+    regionsQuery,
+    departmentsQuery,
+    clubsQuery,
+    regionsGeoJsonQuery,
+    departmentsGeoJsonQuery,
+  ];
+  const retry = () =>
+    Promise.all(
+      queries.filter((query) => query.isError).map((query) => query.refetch()),
+    );
 
   const error = useMemo(() => {
     if (regionsError) return "errorLoadingRegions";
@@ -134,6 +155,7 @@ export function useMapData(
     regionsGeoJson,
     departmentsGeoJson,
     error,
+    retry,
     getRegionClubCount,
     getDepartmentClubCount,
   };
