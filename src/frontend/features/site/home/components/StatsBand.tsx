@@ -1,5 +1,5 @@
 // src/frontend/features/site/home/components/StatsBand.tsx
-import { useLocale, useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 
 import type { Stats } from "@/features/stats/types";
 import { StatGroup } from "@/shared/components/blocks";
@@ -16,13 +16,13 @@ interface StatsBandProps {
  */
 export function StatsBand({ stats }: StatsBandProps) {
   const t = useTranslations("home.stats");
-  const locale = useLocale();
+  const format = useFormatter();
 
   return (
     <div className="border-b border-divide">
       <StatGroup
         stats={STATS_BAND_KEYS.map((key) => ({
-          value: stats[key].toLocaleString(locale),
+          value: format.number(stats[key]),
           label: t(key),
         }))}
         columns={{ base: 3, md: 6 }}

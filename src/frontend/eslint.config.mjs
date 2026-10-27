@@ -198,6 +198,35 @@ export default [
       "jsdoc/require-returns-description": "error",
     },
   },
+  // One way to put a number on screen: next-intl's formatter, or
+  // `createStatFormat` over it for per-game averages and percentages.
+  // `toFixed` ignores the locale; `toLocaleString` and `Intl.NumberFormat`
+  // bypass the one the request already resolved. See docs/frontend.md.
+  {
+    files: ["app/**", "features/**", "shared/**"],
+    ignores: ["**/*.spec.ts", "**/*.test.ts"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "CallExpression[callee.property.name='toFixed']",
+          message:
+            "Format through createStatFormat(useFormatter()).perGame or useFormatter().number — toFixed ignores the locale.",
+        },
+        {
+          selector: "CallExpression[callee.property.name='toLocaleString']",
+          message:
+            "Format through useFormatter()/getFormatter() — it already knows the request's locale.",
+        },
+        {
+          selector:
+            "NewExpression[callee.object.name='Intl'][callee.property.name='NumberFormat']",
+          message:
+            "Format through useFormatter()/getFormatter() — it already knows the request's locale.",
+        },
+      ],
+    },
+  },
   // Migration ratchet: legacy features keep the old structure until their
   // migration PR lands (see docs/frontend-conventions.md).
   ...(LEGACY_FEATURES.length > 0

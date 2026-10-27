@@ -14,11 +14,11 @@
 //
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 import { Text } from "@/shared/components/typography";
-import { cn } from "@/shared/utils";
+import { cn, createStatFormat } from "@/shared/utils";
 
 import { DualBar } from "./DualBar";
 import { MirroredBars } from "./MirroredBars";
@@ -43,7 +43,8 @@ import type { StatComparisonProps } from "./types";
  *
  * Bars are held at zero width for one frame after mount, so the first paint
  * animates instead of appearing already filled. Which stats appear, their
- * labels, and which direction wins are entirely the caller's `config`.
+ * labels, how their numbers read, and which direction wins are entirely the
+ * caller's `config`.
  */
 export function StatComparison({
   sideA,
@@ -55,6 +56,8 @@ export function StatComparison({
   percentageMap,
 }: StatComparisonProps) {
   const tCommon = useTranslations("common");
+  const formatter = useFormatter();
+  const { percent } = createStatFormat(formatter);
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     const id = requestAnimationFrame(() => setMounted(true));
@@ -88,20 +91,23 @@ export function StatComparison({
       </div>
 
       <div className="space-y-4">
-        {config.map(({ key, label, value: valueFn, lowerIsBetter }, index) => {
+        {config.map(({ key, label, format, lowerIsBetter }, index) => {
+          const options = {
+            formatNumber:
+              format ?? ((value: number) => formatter.number(value)),
+            formatPercent: percent,
+            percentageMap: resolvedPercentageMap,
+            missingLabel: tCommon("notAvailable"),
+          };
           const { display: displayA, numeric: numA } = resolveValue(
             sideA,
             key,
-            valueFn,
-            resolvedPercentageMap,
-            tCommon("notAvailable"),
+            options,
           );
           const { display: displayB, numeric: numB } = resolveValue(
             sideB,
             key,
-            valueFn,
-            resolvedPercentageMap,
-            tCommon("notAvailable"),
+            options,
           );
           const winner = getWinner(numA, numB, lowerIsBetter);
           const delayMs = Math.min(index * 60, 400);

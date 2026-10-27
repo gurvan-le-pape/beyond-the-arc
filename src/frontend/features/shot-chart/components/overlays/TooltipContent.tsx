@@ -1,8 +1,9 @@
 // src/frontend/features/shot-chart/components/overlays/TooltipContent.tsx
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { createPortal } from "react-dom";
 
 import { getTooltipPosition } from "@/features/shot-chart/utils";
+import { createStatFormat } from "@/shared/utils";
 
 import { ShotFilter } from "../../constants";
 
@@ -28,6 +29,7 @@ interface TooltipContentProps {
  */
 function TooltipContent({ tooltip, shotFilter }: TooltipContentProps) {
   const t = useTranslations("common");
+  const { percent } = createStatFormat(useFormatter());
   const { left, top } = getTooltipPosition(tooltip.x, tooltip.y);
 
   let filterContent = null;
@@ -39,7 +41,7 @@ function TooltipContent({ tooltip, shotFilter }: TooltipContentProps) {
     filterContent = (
       <div>
         <b>{t("shotChart.madeLabel")}:</b> {tooltip.made} (
-        {pct === null ? "-" : pct + "%"})
+        {pct === null ? "-" : percent(pct)})
       </div>
     );
   } else if (shotFilter === ShotFilter.MISSED) {
@@ -50,7 +52,7 @@ function TooltipContent({ tooltip, shotFilter }: TooltipContentProps) {
     filterContent = (
       <div>
         <b>{t("shotChart.missedLabel")}:</b> {tooltip.missed} (
-        {pct === null ? "-" : pct + "%"})
+        {pct === null ? "-" : percent(pct)})
       </div>
     );
   }
@@ -94,7 +96,7 @@ function TooltipContent({ tooltip, shotFilter }: TooltipContentProps) {
           </div>
           <div>
             <b>{t("shotChart.fgPercent")}:</b>{" "}
-            {tooltip.fg === null ? "-" : tooltip.fg + "%"}
+            {tooltip.fg === null ? "-" : percent(tooltip.fg)}
           </div>
         </>
       )}

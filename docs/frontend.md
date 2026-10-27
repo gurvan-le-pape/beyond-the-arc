@@ -300,6 +300,16 @@ Pages resolve translations for their own JSX and for anything they pass down as 
 
 French copy is in sentence case, headings and buttons included: "Historique des matchs", "Voir le produit". Only the first word and proper nouns take a capital, and `&` is written "et". English copy may use title case for headings; the two catalogues are not copies of each other's casing.
 
+### Numbers
+
+Every number on screen goes through next-intl's formatter, so the locale picks the decimal separator, the grouping and where a percent sign sits: `12.5` and `46%` in English, `12,5` and `46 %` in French.
+
+- **Counts and signed values**: `useFormatter().number(…)` in a component, `(await getFormatter()).number(…)` in an async server component. `LeaderboardTable` passes `{ signDisplay: "exceptZero" }` for the point difference.
+- **Per-game averages and percentages**: `createStatFormat(useFormatter())` from `@/shared/utils` (`await getFormatter()` in an async server component). `perGame` always shows one decimal; `percent` takes the API's 0–100 value, not a 0–1 fraction. It takes the formatter instead of being a hook because the `@/shared/hooks` barrel is client-only — `useDebounce` alone keeps a server component from importing it.
+- **Inside a message**: pass the formatted string as the argument, and leave the unit out of the catalogue. `chartSummary` takes `{percent}` already formatted, because a `%` written into each locale's string puts the spacing in the wrong hands.
+
+`toFixed`, `toLocaleString` and `new Intl.NumberFormat` are banned under `app/`, `features/` and `shared/` by `no-restricted-syntax` in `eslint.config.mjs`: the first ignores the locale, and the other two bypass the one the request already resolved. Percentages used as CSS positions (`left: ${x}%`) are layout, not text, and are unaffected.
+
 ---
 
 ## Design system

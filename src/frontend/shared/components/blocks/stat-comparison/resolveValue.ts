@@ -32,64 +32,65 @@ function toNumber(value: StatValue): number {
   return Number.NaN;
 }
 
+/** How `resolveValue` turns numbers into text, and what it shows for a gap. */
+export interface ResolveValueOptions {
+  /** A raw numeric stat, e.g. the locale's plain number or a per-game average. */
+  readonly formatNumber: (value: number) => string;
+  /** A percentage out of 100, shown in parentheses after its paired stat. */
+  readonly formatPercent: (value: number) => string;
+  /** Stat key to percentage-field key. */
+  readonly percentageMap?: Record<string, string>;
+  /**
+   * What to render when the stat is absent; a locale-neutral dash by default,
+   * callers that have a translator in scope pass a translated string.
+   */
+  readonly missingLabel?: string;
+}
+
 /**
  * Produces the two things a comparison row needs from one stat: the string to
  * show, and the number to compare.
  *
- * The pair is deliberately not the same value. In the key-lookup path a stat
- * paired with a percentage **compares on that percentage**: its raw value is a
- * made/attempted string like `"27/54"`, which is not a number, and shooting is
- * judged on accuracy rather than on volume. An unpaired stat compares on its raw
- * value. Either way, formatting the display never affects who wins.
- *
- * **The custom-resolver path does not have that separation** — with `valueFn`
- * the number is parsed back out of whatever it returned. A resolver that
- * formats its output (`"12 (45%)"`, a thousands separator, a unit) yields `NaN`
- * and therefore a permanent tie. Return a bare number from `valueFn` and let
- * this add the presentation.
+ * The pair is deliberately not the same value. A stat paired with a percentage
+ * **compares on that percentage**: its raw value is a made/attempted string
+ * like `"27/54"`, which is not a number, and shooting is judged on accuracy
+ * rather than on volume. An unpaired stat compares on its raw value. The number
+ * is always read from the stat itself and never parsed back out of the display,
+ * so formatting — a French decimal comma, a percent sign — never affects who
+ * wins.
  *
  * A missing stat displays `missingLabel` and compares as `NaN`.
  *
  * @param stats - the side's stat object
  * @param key - which stat to read
- * @param valueFn - custom resolver; must return an unformatted value
- * @param percentageMap - stat key to percentage-field key, appended in parentheses
- * @param missingLabel - what to render when the stat is absent; a locale-neutral dash by
- *   default, callers that have a translator in scope pass a translated string
+ * @param options - the formatters, the percentage pairing and the gap label
  * @returns the display value and the number to compare on
  */
 export function resolveValue(
   stats: Stats,
   key: string,
-  valueFn?: (s: Stats) => string | number,
-  percentageMap?: Record<string, string>,
-  missingLabel = "–",
-): { display: string | number; numeric: number } {
-  // Custom resolver path
-  if (valueFn) {
-    const display = valueFn(stats);
-    return {
-      display,
-      numeric: toNumber(display),
-    };
-  }
-
+  {
+    formatNumber,
+    formatPercent,
+    percentageMap,
+    missingLabel = "–",
+  }: ResolveValueOptions,
+): { display: string; numeric: number } {
   const raw = stats[key];
   const pctKey = percentageMap?.[key];
   const pct = pctKey ? stats[pctKey] : undefined;
 
-  // The "%" belongs here, not in the value. The API sends a number or null, so
-  // the unit is added at the point of display and the absent case simply drops
-  // the parenthetical rather than printing an English sentinel like "N/A" into
-  // a bilingual UI.
-  let display: string | number;
+  // The API sends a percentage as a number or null, so its unit is added here,
+  // and the absent case simply drops the parenthetical rather than printing an
+  // English sentinel like "N/A" into a bilingual UI.
+  let display: string;
 
   if (raw === null || raw === undefined) {
     display = missingLabel;
-  } else if (typeof pct === "number") {
-    display = `${raw} (${pct}%)`;
   } else {
-    display = raw;
+    const value = typeof raw === "number" ? formatNumber(raw) : raw;
+    display =
+      typeof pct === "number" ? `${value} (${formatPercent(pct)})` : value;
   }
 
   return {

@@ -1,4 +1,7 @@
 // src/frontend/features/shot-chart/components/overlays/ZoneStatLabel.tsx
+import { useFormatter } from "next-intl";
+
+import { createStatFormat } from "@/shared/utils";
 
 interface ZoneStatLabelProps {
   readonly x: number;
@@ -22,6 +25,7 @@ export function ZoneStatLabel({
   total,
   svgWidth,
 }: ZoneStatLabelProps) {
+  const { percent } = createStatFormat(useFormatter());
   // Scales with the court; 11px is the floor for legibility, and at that size
   // "100%" still fits inside the narrow corner-three zones.
   const statFontSize = Math.max(11, svgWidth / 40);
@@ -57,7 +61,7 @@ export function ZoneStatLabel({
         strokeLinejoin="round"
         pointerEvents="none"
       >
-        {total > 0 ? `${fg ?? 0}%` : ""}
+        {total > 0 ? percent(fg ?? 0) : ""}
       </text>
     </>
   );
