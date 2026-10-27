@@ -1613,6 +1613,11 @@ export interface components {
              */
             period: number;
             /**
+             * @description Game-clock time left in the event's period, in whole seconds, as a scoreboard counts it down: 600 at tip-off, 0 on the buzzer. Quarters last 600 s and overtimes 300 s.
+             * @example 412
+             */
+            secondsLeft: number;
+            /**
              * @description Event description
              * @example 3-pointer
              */

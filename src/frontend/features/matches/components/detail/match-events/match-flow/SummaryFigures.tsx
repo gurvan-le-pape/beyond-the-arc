@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import type { MatchTeam } from "@/features/matches/types";
 import { cn } from "@/shared/utils";
 
-import { type MatchSummary, periodClock } from "../matchEventsView";
+import { formatClock, type MatchSummary } from "../matchEventsView";
 import { usePeriodAbbr } from "./usePeriodAbbr";
 
 const INK = {
@@ -17,8 +17,6 @@ interface SummaryFiguresProps {
   readonly summary: MatchSummary;
   readonly homeTeam: MatchTeam;
   readonly awayTeam: MatchTeam;
-  /** Match tip-off, from which the deciding play's clock is derived. */
-  readonly matchDate: Date | string;
 }
 
 interface FigureProps {
@@ -54,7 +52,6 @@ export function SummaryFigures({
   summary,
   homeTeam,
   awayTeam,
-  matchDate,
 }: SummaryFiguresProps) {
   const t = useTranslations("matches.matchEvents");
   const periodAbbr = usePeriodAbbr();
@@ -97,11 +94,7 @@ export function SummaryFigures({
       {decidingPlay?.scoringTeamId !== undefined && (
         <Figure
           label={t("ledForGood")}
-          value={`${periodAbbr(decidingPlay.period)} ${periodClock(
-            decidingPlay.lead.occurredAt,
-            matchDate,
-            decidingPlay.period,
-          )}`}
+          value={`${periodAbbr(decidingPlay.period)} ${formatClock(decidingPlay.lead.secondsLeft)}`}
           detail={
             <span
               className={cn(

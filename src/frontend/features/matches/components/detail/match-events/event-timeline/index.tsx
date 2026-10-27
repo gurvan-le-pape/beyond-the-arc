@@ -20,7 +20,6 @@ interface EventTimelineProps {
   readonly homeTeam: MatchTeam;
   readonly awayTeam: MatchTeam;
   readonly getEventStyle: (eventType: string) => EventStyle;
-  readonly matchDate: Date | string;
   /** The lead event id of the play the reader just jumped to, if any. */
   readonly highlightedPlayId: number | null;
 }
@@ -42,7 +41,6 @@ export function EventTimeline({
   homeTeam,
   awayTeam,
   getEventStyle,
-  matchDate,
   highlightedPlayId,
 }: EventTimelineProps) {
   const tMatches = useTranslations("matches");
@@ -72,7 +70,6 @@ export function EventTimeline({
               homeTeam={homeTeam}
               awayTeam={awayTeam}
               getEventStyle={getEventStyle}
-              matchDate={matchDate}
               highlightedPlayId={highlightedPlayId}
             />
           ))}
