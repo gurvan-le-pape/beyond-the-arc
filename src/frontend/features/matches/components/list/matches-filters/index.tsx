@@ -63,6 +63,7 @@ export function MatchesFilters({
   onReset,
 }: MatchesFiltersProps) {
   const tMatches = useTranslations("matches");
+  const tCompetitions = useTranslations("competitions");
   const tCommon = useTranslations("common");
   const tFilters = useTranslations("filters");
 
@@ -148,7 +149,7 @@ export function MatchesFilters({
     ...levelLocationChips,
     division && {
       key: "division",
-      label: tMatches("divisionLabel", { div: division }),
+      label: tCompetitions("divisionWithValue", { value: division }),
       onRemove: () => setDivision(undefined),
     },
     poolId && {
@@ -172,7 +173,7 @@ export function MatchesFilters({
       enabled: isLocationSelected(level, committeeId, leagueId),
       options: divisions.map((div) => ({
         value: div,
-        label: tMatches("divisionLabel", { div }),
+        label: tCompetitions("divisionWithValue", { value: div }),
       })),
       allLabel: tMatches("selectDivision"),
       waitLabel: tFilters("filters.selectLevelFirst"),

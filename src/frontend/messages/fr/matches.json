@@ -6,7 +6,6 @@
   "searchClubPlaceholder": "Nom du club...",
   "date": "Date",
   "selectDivision": "Sélectionner une division",
-  "divisionLabel": "Division {div}",
   "matchday": "Journée",
   "allMatchdays": "Toutes les journées",
   "matchdayLabel": "J{matchday}",
