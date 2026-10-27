@@ -16,8 +16,10 @@ import {
 import { splitMatchHistory } from "@/features/teams/utils";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
+import { Breadcrumb } from "@/shared/components/navigation";
 import type { LocalePageProps } from "@/shared/types";
 import {
+  formatTeamName,
   handleServerError,
   parseRouteId,
   withServerErrorMetadata,
@@ -70,7 +72,10 @@ async function TeamDetailPage({ params }: LocalePageProps<{ teamId: string }>) {
   const { locale } = routeParams;
   const teamId = parseRouteId(routeParams.teamId);
   setRequestLocale(locale);
-  const t = await getTranslations({ locale, namespace: "teams" });
+  const [t, tOrganizations] = await Promise.all([
+    getTranslations({ locale, namespace: "teams" }),
+    getTranslations({ locale, namespace: "organizations" }),
+  ]);
 
   const [team, matchHistory, shots] = await Promise.all([
     serverTeamsService.getById(teamId),
@@ -83,6 +88,24 @@ async function TeamDetailPage({ params }: LocalePageProps<{ teamId: string }>) {
 
   return (
     <PageLayout>
+      {/* A team belongs to its club, so its trail continues the club's. */}
+      <Breadcrumb
+        items={[
+          { label: tOrganizations("breadcrumb"), href: "/organizations" },
+          {
+            label: tOrganizations("clubs.label"),
+            href: "/organizations/clubs",
+          },
+          {
+            label: team.club.name,
+            href: `/organizations/clubs/${team.club.id}`,
+          },
+          {
+            label: formatTeamName(team.club.name, team.number),
+            current: true,
+          },
+        ]}
+      />
       <TeamHeader team={team} />
 
       <PerGameStatsPanel stats={seasonStats} />

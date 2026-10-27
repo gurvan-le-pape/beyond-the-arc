@@ -58,7 +58,12 @@ export function Breadcrumb({
           const isCurrent = item.current || isLast;
 
           return (
-            <li key={item.label} className="flex items-center gap-2">
+            // Keyed by link where there is one: a team without a number is
+            // named exactly like its club, so two labels can repeat.
+            <li
+              key={item.href ?? item.label}
+              className="flex items-center gap-2"
+            >
               {isCurrent || !item.href ? (
                 <span
                   className={
