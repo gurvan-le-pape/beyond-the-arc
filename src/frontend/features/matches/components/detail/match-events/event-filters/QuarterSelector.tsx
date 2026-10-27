@@ -24,7 +24,7 @@ export function QuarterSelector({
 
   const label = (quarter: Quarter) => {
     if (quarter === Quarter.ALL) return t("matchEvents.allQuarters");
-    if (quarter === Quarter.OT) return t("matchEvents.overtime");
+    if (quarter === Quarter.OT) return t("overtimeShort");
     return quarter;
   };
 

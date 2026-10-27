@@ -41,6 +41,7 @@ export function QuarterScoresTable({
 }: QuarterScoresTableProps) {
   const t = useTranslations("competitions");
   const tCommon = useTranslations("common");
+  const tMatches = useTranslations("matches");
 
   const quarterScores = computeQuarterScores(
     matchEvents,
@@ -78,8 +79,7 @@ export function QuarterScoresTable({
     },
     ...quarterIndexes.map<TableColumn<TeamScoreRow>>((index) => ({
       key: `q${index}`,
-      header:
-        index === 4 ? t("matchDetails.overtimeHeader") : String(index + 1),
+      header: index === 4 ? tMatches("overtimeShort") : `Q${index + 1}`,
       numeric: true,
       render: (row) => display(row.quarters[index]),
     })),
