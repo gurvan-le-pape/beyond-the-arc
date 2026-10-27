@@ -1,18 +1,22 @@
 // src/frontend/features/matches/components/detail/match-events/match-flow/index.tsx
 import type { MatchTeam } from "@/features/matches/types";
 
-import type { MarginPoint, MatchSummary, Play } from "../matchEventsView";
+import type {
+  MarginPoint,
+  MatchSummary,
+  PeriodEnd,
+  Play,
+} from "../matchEventsView";
 import { FlowChart } from "./FlowChart";
 import { SummaryFigures } from "./SummaryFigures";
 
 interface MatchFlowProps {
   readonly summary: MatchSummary;
   readonly margins: readonly MarginPoint[];
-  /** The last period played, which sets where the chart's time axis ends. */
-  readonly lastPeriod: number;
+  /** Each period's buzzer, which lays out the chart's time axis. */
+  readonly periodEnds: readonly PeriodEnd[];
   readonly homeTeam: MatchTeam;
   readonly awayTeam: MatchTeam;
-  readonly matchDate: Date | string;
   /** Called with the play the reader asked to go to from the chart. */
   readonly onGoToPlay: (play: Play) => void;
 }
@@ -24,10 +28,9 @@ interface MatchFlowProps {
 export function MatchFlow({
   summary,
   margins,
-  lastPeriod,
+  periodEnds,
   homeTeam,
   awayTeam,
-  matchDate,
   onGoToPlay,
 }: MatchFlowProps) {
   return (
@@ -36,14 +39,12 @@ export function MatchFlow({
         summary={summary}
         homeTeam={homeTeam}
         awayTeam={awayTeam}
-        matchDate={matchDate}
       />
       <FlowChart
         points={margins}
-        lastPeriod={lastPeriod}
+        periodEnds={periodEnds}
         homeTeam={homeTeam}
         awayTeam={awayTeam}
-        matchDate={matchDate}
         onGoTo={onGoToPlay}
       />
     </div>

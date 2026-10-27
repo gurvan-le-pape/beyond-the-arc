@@ -9,9 +9,9 @@ import { EventCategory, Role } from "@/shared/constants";
 import { cn } from "@/shared/utils";
 
 import {
+  formatClock,
   type MarginPoint,
-  periodClock,
-  periodEndSeconds,
+  type PeriodEnd,
   type Play,
 } from "../matchEventsView";
 import { usePeriodAbbr } from "./usePeriodAbbr";
@@ -26,12 +26,10 @@ const VIEW_HEIGHT = 100;
 interface FlowChartProps {
   /** The margin after each scoring play, in match order. */
   readonly points: readonly MarginPoint[];
-  /** The last period played, which sets where the time axis ends. */
-  readonly lastPeriod: number;
+  /** Each period's buzzer, in period order; the last one ends the time axis. */
+  readonly periodEnds: readonly PeriodEnd[];
   readonly homeTeam: MatchTeam;
   readonly awayTeam: MatchTeam;
-  /** Match tip-off, from which each play's clock is derived. */
-  readonly matchDate: Date | string;
   /** Called with the play the reader asked to go to. */
   readonly onGoTo: (play: Play) => void;
 }
@@ -67,10 +65,9 @@ function scorerName(play: Play): string | undefined {
  */
 export function FlowChart({
   points,
-  lastPeriod,
+  periodEnds,
   homeTeam,
   awayTeam,
-  matchDate,
   onGoTo,
 }: FlowChartProps) {
   const t = useTranslations("matches.matchEvents");
@@ -80,7 +77,7 @@ export function FlowChart({
   const [picked, setPicked] = useState<number | null>(null);
   const [hovered, setHovered] = useState<number | null>(null);
 
-  const total = periodEndSeconds(lastPeriod);
+  const total = periodEnds[periodEnds.length - 1]?.seconds ?? 1;
   const maxAbs =
     Math.max(4, ...points.map((point) => Math.abs(point.margin))) + 1;
   const x = (seconds: number) => (Math.min(seconds, total) / total) * 100;
@@ -89,9 +86,11 @@ export function FlowChart({
   const ticks: number[] = [];
   for (let tick = tickStep; tick < maxAbs; tick += tickStep) ticks.push(tick);
 
-  const periods = Array.from({ length: lastPeriod }, (_, index) => index + 1);
-  const periodStart = (period: number) =>
-    period === 1 ? 0 : periodEndSeconds(period - 1);
+  const periods = periodEnds.map((end, index) => ({
+    period: end.period,
+    start: index === 0 ? 0 : periodEnds[index - 1].seconds,
+    end: end.seconds,
+  }));
 
   const vx = (seconds: number) => (x(seconds) / 100) * VIEW_WIDTH;
   let line = `M0,${y(0)}`;
@@ -103,7 +102,7 @@ export function FlowChart({
 
   const describe = (index: number) => {
     const { play } = points[index];
-    const clock = periodClock(play.lead.occurredAt, matchDate, play.period);
+    const clock = formatClock(play.lead.secondsLeft);
     return t("flowPoint", {
       period: periodAbbr(play.period),
       clock,
@@ -196,12 +195,12 @@ export function FlowChart({
       <div className="grid grid-cols-[1.75rem_minmax(0,1fr)] grid-rows-[1.25rem_9rem] sm:grid-rows-[1.25rem_11rem] mt-2 text-[11px] text-text-secondary tabular-nums">
         <span />
         <div aria-hidden="true" className="relative">
-          {periods.map((period) => (
+          {periods.map(({ period, start, end }) => (
             <span
               key={period}
               className="absolute top-0 -translate-x-1/2"
               style={{
-                left: `${(x(periodStart(period)) + x(periodEndSeconds(period))) / 2}%`,
+                left: `${(x(start) + x(end)) / 2}%`,
               }}
             >
               {periodAbbr(period)}
@@ -256,8 +255,8 @@ export function FlowChart({
                 />
               )),
             )}
-            {periods.slice(1).map((period) => {
-              const at = vx(periodStart(period));
+            {periods.slice(1).map(({ period, start }) => {
+              const at = vx(start);
               return (
                 <line
                   key={period}

@@ -39,6 +39,7 @@ export function MatchEvents({
     periodScores,
     summary,
     margins,
+    periodEnds,
     revealedPlayId,
     revealPlay,
     filters,
@@ -61,10 +62,9 @@ export function MatchEvents({
         <MatchFlow
           summary={summary}
           margins={margins}
-          lastPeriod={Math.max(...periodScores.keys())}
+          periodEnds={periodEnds}
           homeTeam={homeTeam}
           awayTeam={awayTeam}
-          matchDate={matchDate}
           onGoToPlay={revealPlay}
         />
       </div>
@@ -80,7 +80,6 @@ export function MatchEvents({
         homeTeam={homeTeam}
         awayTeam={awayTeam}
         getEventStyle={getEventStyle}
-        matchDate={matchDate}
         highlightedPlayId={revealedPlayId}
       />
     </Section>

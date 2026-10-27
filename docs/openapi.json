@@ -4537,6 +4537,11 @@
             "description": "Period the event belongs to: 1–4 for the quarters, 5 for the first overtime, 6 for the second, and so on. A `quarter_end` event belongs to the period it closes.",
             "example": 2
           },
+          "secondsLeft": {
+            "type": "number",
+            "description": "Game-clock time left in the event's period, in whole seconds, as a scoreboard counts it down: 600 at tip-off, 0 on the buzzer. Quarters last 600 s and overtimes 300 s.",
+            "example": 412
+          },
           "description": {
             "type": "string",
             "nullable": true,
@@ -4566,6 +4571,7 @@
           "eventType",
           "occurredAt",
           "period",
+          "secondsLeft",
           "description",
           "players",
           "shotLocation"

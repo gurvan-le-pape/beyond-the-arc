@@ -5,7 +5,7 @@ import type { EventStyle, MatchTeam } from "@/features/matches/types";
 import { TextLink } from "@/shared/components/primitives";
 import { cn } from "@/shared/utils";
 
-import { periodClock, type Play, playRowId } from "../matchEventsView";
+import { formatClock, type Play, playRowId } from "../matchEventsView";
 import { EventScore } from "./EventScore";
 import { usePlayDescription } from "./usePlayDescription";
 
@@ -20,8 +20,6 @@ interface TimelineEventRowProps {
   readonly awayTeam: MatchTeam;
   /** Resolved display config for the play's lead event. */
   readonly style: EventStyle;
-  /** Match tip-off, from which the play's game clock is derived. */
-  readonly matchDate: Date | string;
   /** The reader just jumped to this play: it is tinted for a moment. */
   readonly highlighted: boolean;
 }
@@ -43,7 +41,6 @@ export function TimelineEventRow({
   homeTeam,
   awayTeam,
   style,
-  matchDate,
   highlighted,
 }: TimelineEventRowProps) {
   const tMatches = useTranslations("matches");
@@ -68,7 +65,7 @@ export function TimelineEventRow({
       )}
     >
       <span className="font-mono text-xs text-text-secondary tabular-nums pt-0.5">
-        {periodClock(play.lead.occurredAt, matchDate, play.period)}
+        {formatClock(play.lead.secondsLeft)}
       </span>
 
       <span

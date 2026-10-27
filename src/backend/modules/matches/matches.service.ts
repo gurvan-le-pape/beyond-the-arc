@@ -31,7 +31,7 @@ import type {
   PlayerWithStatsDto,
   ShotDto,
 } from "./dto/matches.response.dto";
-import { matchPeriod } from "./match-period";
+import { matchClock } from "./match-period";
 
 export interface MatchFilters {
   level?: CompetitionLevel;
@@ -453,11 +453,13 @@ export class MatchesService {
     event: MatchEventResult,
     startsAt: Date,
   ): MatchEventDto {
+    const { period, secondsLeft } = matchClock(event.occurredAt, startsAt);
     return {
       id: event.id,
       eventType: event.eventType as EventType,
       occurredAt: event.occurredAt,
-      period: matchPeriod(event.occurredAt, startsAt),
+      period,
+      secondsLeft,
       description: event.description,
       players: event.players.map((p) => ({
         role: p.role as Role,

@@ -15,6 +15,7 @@ import {
   groupPlays,
   hasOvertime,
   marginPoints,
+  periodEnds,
   type PeriodPlays,
   type Play,
   playRowId,
@@ -52,9 +53,10 @@ function countRows(periods: readonly PeriodPlays[]): number {
  * @param awayTeamId - the away side's team id
  * @param tipOff - when the match started, to place plays in game time
  * @returns the plays to show, one run per period; each period's score, from
- *   the whole match; the match's summary and score margins; the play to
- *   highlight and how to reveal one; and the filter values and setters for
- *   the panel, with how many rows are shown out of how many the match has
+ *   the whole match; the match's summary, score margins and period ends; the
+ *   play to highlight and how to reveal one; and the filter values and
+ *   setters for the panel, with how many rows are shown out of how many the
+ *   match has
  */
 export function useMatchEvents(
   events: readonly MatchEvent[],
@@ -131,6 +133,7 @@ export function useMatchEvents(
 
   const summary = useMemo(() => summarizeMatch(plays), [plays]);
   const margins = useMemo(() => marginPoints(plays, tipOff), [plays, tipOff]);
+  const ends = useMemo(() => periodEnds(events, tipOff), [events, tipOff]);
 
   const [revealedPlayId, setRevealedPlayId] = useState<number | null>(null);
 
@@ -170,6 +173,7 @@ export function useMatchEvents(
     periodScores,
     summary,
     margins,
+    periodEnds: ends,
     revealedPlayId,
     revealPlay,
     filters: {

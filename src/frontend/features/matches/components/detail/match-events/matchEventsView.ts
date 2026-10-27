@@ -17,12 +17,6 @@ export type ScoredMatchEvent = MatchEvent & {
 
 const REGULATION_QUARTERS = 4;
 
-// The simulator's period lengths (QUARTER_LENGTH and OVERTIME_LENGTH in
-// db/python/simulation/match_simulator.py). The API carries no clock, only
-// when each event happened, so a change there must be mirrored here.
-const QUARTER_SECONDS = 600;
-const OVERTIME_SECONDS = 300;
-
 /**
  * Which overtime a period is.
  *
@@ -31,20 +25,6 @@ const OVERTIME_SECONDS = 300;
  */
 export function overtimeNumber(period: number): number | null {
   return period > REGULATION_QUARTERS ? period - REGULATION_QUARTERS : null;
-}
-
-/**
- * Seconds of game time elapsed when the given period's buzzer sounds.
- *
- * @param period - 1-based period; 5 and above are overtimes
- * @returns the buzzer's offset from tip-off, in seconds
- */
-export function periodEndSeconds(period: number): number {
-  if (period <= REGULATION_QUARTERS) return period * QUARTER_SECONDS;
-  return (
-    REGULATION_QUARTERS * QUARTER_SECONDS +
-    (period - REGULATION_QUARTERS) * OVERTIME_SECONDS
-  );
 }
 
 /**
@@ -64,25 +44,47 @@ export function gameSeconds(
 }
 
 /**
- * The game clock at an event, as a scoreboard shows it: the time left in the
- * event's period, counting down.
+ * The game clock as a scoreboard shows it.
  *
- * @param occurredAt - when the event happened
- * @param tipOff - when the match started; the API's event times are game time counted from it
- * @param period - the event's 1-based period
- * @returns `m:ss`, never negative: an event stamped past its buzzer reads `0:00`
+ * @param secondsLeft - whole seconds left in the period, from the event's `secondsLeft`
+ * @returns `m:ss`
  */
-export function periodClock(
-  occurredAt: Date | string,
+export function formatClock(secondsLeft: number): string {
+  const seconds = (secondsLeft % 60).toString().padStart(2, "0");
+  return `${Math.floor(secondsLeft / 60)}:${seconds}`;
+}
+
+/** Where a period ends on the match's time axis. */
+export interface PeriodEnd {
+  readonly period: number;
+  /** Game seconds from tip-off to the period's buzzer. */
+  readonly seconds: number;
+}
+
+/**
+ * When each period's buzzer sounds, read off the events rather than off
+ * period lengths the frontend would have to know: an event's elapsed time
+ * plus the time left on its clock lands on its period's buzzer.
+ *
+ * @param events - the match's events
+ * @param tipOff - when the match started
+ * @returns one entry per period with an event, in period order
+ */
+export function periodEnds(
+  events: readonly MatchEvent[],
   tipOff: Date | string,
-  period: number,
-): string {
-  const left = Math.max(
-    0,
-    periodEndSeconds(period) - gameSeconds(occurredAt, tipOff),
-  );
-  const seconds = (left % 60).toString().padStart(2, "0");
-  return `${Math.floor(left / 60)}:${seconds}`;
+): PeriodEnd[] {
+  const ends = new Map<number, number>();
+  for (const event of events) {
+    if (ends.has(event.period)) continue;
+    ends.set(
+      event.period,
+      gameSeconds(event.occurredAt, tipOff) + event.secondsLeft,
+    );
+  }
+  return [...ends]
+    .sort(([a], [b]) => a - b)
+    .map(([period, seconds]) => ({ period, seconds }));
 }
 
 /**
