@@ -1,13 +1,14 @@
 // src/frontend/features/players/components/detail/player-comparison/index.tsx
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 
 import { usePlayerMatches } from "@/features/players/api";
 import type { Player, PlayerCareerStats } from "@/features/players/types";
 import { Section, StatComparison } from "@/shared/components/blocks";
 import { ErrorMessage, Spinner } from "@/shared/components/feedback";
+import { createStatFormat } from "@/shared/utils";
 
 import { PlayerSearchDropdown } from "./PlayerSearchDropdown";
 
@@ -54,6 +55,7 @@ export function PlayerComparison({
 }: PlayerComparisonProps) {
   const tPlayers = useTranslations("players");
   const tCommon = useTranslations("common");
+  const format = useFormatter();
 
   const [opponent, setOpponent] = useState<Player | null>(null);
 
@@ -67,27 +69,49 @@ export function PlayerComparison({
   const statsA = careerStats;
   const statsB = opponent ? (opponentData?.career ?? null) : null;
 
-  const statCategories = useMemo(
-    () => [
+  const statCategories = useMemo(() => {
+    const { perGame } = createStatFormat(format);
+    return [
       { key: "gamesPlayed", label: tCommon("stats.gamesPlayed") },
-      { key: "pointsPerGame", label: tCommon("stats.pointsPerGame") },
-      { key: "reboundsPerGame", label: tCommon("stats.reboundsPerGame") },
-      { key: "assistsPerGame", label: tCommon("stats.assistsPerGame") },
-      { key: "stealsPerGame", label: tCommon("stats.stealsPerGame") },
-      { key: "blocksPerGame", label: tCommon("stats.blocksPerGame") },
+      {
+        key: "pointsPerGame",
+        label: tCommon("stats.pointsPerGame"),
+        format: perGame,
+      },
+      {
+        key: "reboundsPerGame",
+        label: tCommon("stats.reboundsPerGame"),
+        format: perGame,
+      },
+      {
+        key: "assistsPerGame",
+        label: tCommon("stats.assistsPerGame"),
+        format: perGame,
+      },
+      {
+        key: "stealsPerGame",
+        label: tCommon("stats.stealsPerGame"),
+        format: perGame,
+      },
+      {
+        key: "blocksPerGame",
+        label: tCommon("stats.blocksPerGame"),
+        format: perGame,
+      },
       {
         key: "turnoversPerGame",
         label: tCommon("stats.turnoversPerGame"),
+        format: perGame,
         lowerIsBetter: true,
       },
       {
         key: "foulsPerGame",
         label: tCommon("stats.foulsPerGame"),
+        format: perGame,
         lowerIsBetter: true,
       },
-    ],
-    [tCommon],
-  );
+    ];
+  }, [tCommon, format]);
 
   return (
     <Section title={tPlayers("playerDetail.compareTitle")}>

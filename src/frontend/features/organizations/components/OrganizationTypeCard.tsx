@@ -1,6 +1,6 @@
 // src/frontend/features/organizations/components/OrganizationTypeCard.tsx
 import { ArrowRight } from "lucide-react";
-import { getLocale, getTranslations } from "next-intl/server";
+import { getFormatter, getTranslations } from "next-intl/server";
 import React from "react";
 
 import { Badge, type BadgeProps, Card } from "@/shared/components/primitives";
@@ -60,14 +60,14 @@ interface OrganizationTypeCardProps {
 /**
  * One of the three organisation types on the landing page, with its count.
  *
- * An **async server component**: it awaits its own translations and locale, so
- * it cannot be rendered inside a client boundary. The count is formatted with
- * the request's locale rather than passed pre-formatted, which is why the
- * locale is needed here at all.
+ * An **async server component**: it awaits its own translations and formatter,
+ * so it cannot be rendered inside a client boundary. The count is formatted
+ * for the request's locale rather than passed pre-formatted, which is why the
+ * formatter is needed here at all.
  */
 export async function OrganizationTypeCard({ org }: OrganizationTypeCardProps) {
   const t = await getTranslations("organizations");
-  const locale = await getLocale();
+  const format = await getFormatter();
   const { label, description, icon, href, id, count } = org;
   const s = STYLES[id];
 
@@ -92,7 +92,7 @@ export async function OrganizationTypeCard({ org }: OrganizationTypeCardProps) {
         </div>
 
         {count !== undefined && (
-          <Badge variant={s.badge}>{count.toLocaleString(locale)}</Badge>
+          <Badge variant={s.badge}>{format.number(count)}</Badge>
         )}
       </div>
 

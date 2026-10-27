@@ -1,5 +1,5 @@
 // src/frontend/features/competitions/leaderboards/components/LeaderboardTable.tsx
-import { useLocale, useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 
 import type { Leaderboard } from "@/features/competitions/leaderboards/types";
 import { Section } from "@/shared/components/blocks";
@@ -36,7 +36,7 @@ export function LeaderboardTable({
 }: LeaderboardTableProps) {
   const tCommon = useTranslations("common");
   const tCompetitions = useTranslations("competitions");
-  const locale = useLocale();
+  const format = useFormatter();
 
   // Number headings are abbreviated at every width, with the full label on
   // the abbreviation, and never break at the dash in "W–L": the width goes to
@@ -49,7 +49,8 @@ export function LeaderboardTable({
     </abbr>
   );
 
-  const signed = new Intl.NumberFormat(locale, { signDisplay: "exceptZero" });
+  const signed = (value: number) =>
+    format.number(value, { signDisplay: "exceptZero" });
 
   const rankColumn: TableColumn<Leaderboard> = {
     key: "rank",
@@ -94,7 +95,7 @@ export function LeaderboardTable({
         tCommon("table.pointDifference"),
       ),
       numeric: true,
-      render: (row) => signed.format(row.pointDifference),
+      render: (row) => signed(row.pointDifference),
     },
     {
       key: "points",
@@ -156,7 +157,7 @@ export function LeaderboardTable({
         tCommon("table.pointDifference"),
       ),
       numeric: true,
-      render: (row) => signed.format(row.pointDifference),
+      render: (row) => signed(row.pointDifference),
     },
     {
       key: "form",

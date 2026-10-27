@@ -2,7 +2,7 @@
 "use client";
 
 import { scaleLinear } from "d3-scale";
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { useId, useMemo, useState } from "react";
 
 import {
@@ -13,6 +13,7 @@ import {
 } from "@/features/shot-chart/constants";
 import { summarizeShots } from "@/features/shot-chart/utils";
 import type { ShotEvent } from "@/shared/types";
+import { createStatFormat } from "@/shared/utils";
 
 import { CourtMarkings } from "../court/CourtMarkings";
 import HotspotsHeader from "../headers/HotspotsHeader";
@@ -64,6 +65,7 @@ export function ShotChart({
   );
 
   const t = useTranslations("common");
+  const { percent } = createStatFormat(useFormatter());
 
   // `role="img"` needs a name and a description that carry the same information
   // the colours do, since none of it survives for a screen reader otherwise.
@@ -104,7 +106,10 @@ export function ShotChart({
           >
             <title id={titleId}>{chartLabel}</title>
             <desc id={descId}>
-              {t("shotChart.chartSummary", { ...summary })}
+              {t("shotChart.chartSummary", {
+                ...summary,
+                percent: percent(summary.percent),
+              })}
             </desc>
             {/* --- Overlays (between background and lines) --- */}
             {chartType === ChartType.SCATTER && (

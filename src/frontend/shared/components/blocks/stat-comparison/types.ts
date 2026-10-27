@@ -8,8 +8,11 @@ export interface Stats {
 export interface StatConfig {
   key: string;
   label: string;
-  /** Extracts the displayable value. Defaults to stats[key]. */
-  value?: (stats: Stats) => string | number;
+  /**
+   * How a numeric value reads. Defaults to the locale's plain number; pass
+   * `perGame` from `createStatFormat` for an average.
+   */
+  format?: (value: number) => string;
   /** When true, lower values win. Defaults to false (higher wins). */
   lowerIsBetter?: boolean;
 }
@@ -28,8 +31,8 @@ export interface StatComparisonProps {
   /**
    * Percentage key map, only applied in the "dual" variant.
    * e.g. { fieldGoals: "fieldGoalPercentage" }
-   * Renders as "made (pct%)" — the mapped value is a number, and the "%" is
-   * added here. A null percentage renders the made/attempted value alone.
+   * Renders as "made (pct %)" — the mapped value is a number out of 100, and
+   * the percent sign is placed by the locale. A null percentage renders the made/attempted value alone.
    */
   readonly percentageMap?: Record<string, string>;
 }

@@ -1,14 +1,14 @@
 // src/frontend/features/teams/components/detail/team-roster/index.tsx
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import React, { useState } from "react";
 
 import type { TeamPlayerRef } from "@/features/teams/types";
 import { Section } from "@/shared/components/blocks";
 import { Badge } from "@/shared/components/primitives";
 import { DataTable, type TableColumn } from "@/shared/components/table";
-import { positionVariant } from "@/shared/utils";
+import { createStatFormat, positionVariant } from "@/shared/utils";
 
 import { SortHeader } from "./SortHeader";
 import type { SortConfig, SortKey } from "./types";
@@ -47,6 +47,7 @@ export function TeamRoster({ players }: TeamRosterProps) {
 
   const tTeams = useTranslations("teams");
   const tCommon = useTranslations("common");
+  const { perGame } = createStatFormat(useFormatter());
 
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     key: "number",
@@ -147,7 +148,7 @@ export function TeamRoster({ players }: TeamRosterProps) {
       ),
       sort: ariaSort("ppg"),
       numeric: true,
-      render: (player) => player.seasonStats.pointsPerGame.toFixed(1),
+      render: (player) => perGame(player.seasonStats.pointsPerGame),
     },
     {
       key: "rpg",
@@ -158,7 +159,7 @@ export function TeamRoster({ players }: TeamRosterProps) {
       ),
       sort: ariaSort("rpg"),
       numeric: true,
-      render: (player) => player.seasonStats.reboundsPerGame.toFixed(1),
+      render: (player) => perGame(player.seasonStats.reboundsPerGame),
     },
     {
       key: "apg",
@@ -169,7 +170,7 @@ export function TeamRoster({ players }: TeamRosterProps) {
       ),
       sort: ariaSort("apg"),
       numeric: true,
-      render: (player) => player.seasonStats.assistsPerGame.toFixed(1),
+      render: (player) => perGame(player.seasonStats.assistsPerGame),
     },
   ];
 
