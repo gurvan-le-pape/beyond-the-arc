@@ -549,7 +549,7 @@ The root `global-error.tsx` catches errors that escape the entire React tree —
 
 **Route-level errors — `[locale]/(chrome)/error.tsx`**
 
-Errors thrown by a page are caught here, with a closer boundary at `(chrome)/(public)/error.tsx` for the data pages and one at `(fullscreen)/error.tsx` for the map. Each has access to next-intl and renders inside its group's layout — the chrome survives the error — so the result is a styled error card with a translated message and a retry button (`unstable_retry`), captured to Sentry via a `useEffect`.
+Errors thrown by a page are caught here, with a closer boundary at `(chrome)/(public)/error.tsx` for the data pages and one at `(fullscreen)/error.tsx` for the map. Each has access to next-intl and renders inside its group's layout — the chrome survives the error — so the result is a styled error card with a translated message and a retry button (Next's `reset` prop), captured to Sentry via a `useEffect`.
 
 **Server-side 404s — `handleServerError`**
 
@@ -564,8 +564,6 @@ Client-side Axios errors are normalised to a typed `ApiError` class by `parseApi
 ## Known limitations
 
 **Design token inconsistency.** The `(public)` data pages use the semantic token system consistently. Some informational pages (`about`, `architecture`) use raw Tailwind colour values for decorative gradient elements. This is called out in comments as intentional for one-off decorative use, but it means those pages are not fully covered by the token system.
-
-**`unstable_retry` in the error boundary.** The retry callback passed to `error.tsx` uses the `unstable_` prefix, signalling it is an experimental Next.js API that may change or be removed in a future release.
 
 **No client-side error boundary below the route level.** Errors in client components are caught at the nearest route boundary, which covers the entire route. There are no finer-grained error boundaries around individual sections of a page, so a rendering error in one widget takes down the whole page rather than degrading gracefully.
 

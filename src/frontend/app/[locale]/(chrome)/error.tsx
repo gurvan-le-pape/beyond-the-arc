@@ -18,10 +18,10 @@ import { RouteErrorBoundary } from "@/shared/components/feedback";
  */
 export default function ChromeError({
   error,
-  unstable_retry,
+  reset,
 }: Readonly<{
   error: Error & { digest?: string };
-  unstable_retry: () => void;
+  reset: () => void;
 }>) {
-  return <RouteErrorBoundary error={error} retry={unstable_retry} />;
+  return <RouteErrorBoundary error={error} retry={reset} />;
 }
