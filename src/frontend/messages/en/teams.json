@@ -6,7 +6,6 @@
   "pool": "Pool",
   "poolLabel": "Pool {letter}",
   "teamDetail": {
-    "position": "Position",
     "rosterTitle": "Roster",
     "numberShort": "No.",
     "player": "Player",

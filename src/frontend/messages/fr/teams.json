@@ -6,7 +6,6 @@
   "pool": "Poule",
   "poolLabel": "Poule {letter}",
   "teamDetail": {
-    "position": "Poste",
     "rosterTitle": "Effectif",
     "numberShort": "N°",
     "player": "Joueur",

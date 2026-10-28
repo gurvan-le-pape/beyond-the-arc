@@ -151,8 +151,6 @@
     "seeTeam": "Voir l'équipe {number}"
   },
   "shotChart": {
-    "made": "Réussis",
-    "missed": "Manqués",
     "madeLabel": "Panier marqué",
     "missedLabel": "Tir manqué",
     "low": "Bas",
@@ -187,7 +185,6 @@
     "players": "Aucun joueur trouvé",
     "teams": "Aucune équipe trouvée",
     "clubs": "Aucun club trouvé",
-    "matches": "Aucun match trouvé",
     "championships": "Aucun championnat trouvé"
   },
   "filters": {
@@ -209,12 +206,7 @@
     "playerNumbers": "Numéros de joueur",
     "allPlayerNumbers": "Tous les numéros de joueur",
     "teamNumbers": "Numéros d'équipe",
-    "allTeamNumbers": "Tous les numéros d'équipe",
-    "reset": "Réinitialiser les filtres"
-  },
-  "sortDirection": {
-    "asc": "croissant",
-    "desc": "décroissant"
+    "allTeamNumbers": "Tous les numéros d'équipe"
   },
   "positions": {
     "PG": "Meneur",
