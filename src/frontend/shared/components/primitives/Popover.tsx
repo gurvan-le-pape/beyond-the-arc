@@ -82,7 +82,9 @@ function overflowShift(panel: HTMLDivElement, align: "start" | "end"): number {
  * the trigger, aligned to the parent's start or end edge or stretched across
  * it. A `start` or `end` panel that would cross the far edge of the viewport
  * is shifted back inside it, as far as its own edge allows, and placed again
- * when the window resizes while it is open. It stays mounted and fades and
+ * when the window resizes. That holds while it is closed too: a closed panel
+ * is still in the layout, so one left past the edge widens the page and lets
+ * it scroll sideways on a phone. It stays mounted and fades and
  * scales between states, and `inert` is what makes closed mean closed:
  * without it the panel's controls stay in the tab order and the accessibility
  * tree while invisible.
@@ -105,7 +107,7 @@ export function Popover({
 
   useLayoutEffect(() => {
     const panel = panelRef.current;
-    if (!open || edge === "stretch" || !panel) return;
+    if (edge === "stretch" || !panel) return;
     const place = () => setShift(overflowShift(panel, edge));
     place();
     window.addEventListener("resize", place);
