@@ -15,6 +15,7 @@
     "matchHistoryTitle": "Historique des matchs",
     "compareTitle": "Comparer avec un autre joueur",
     "compareSearch": "Rechercher un joueur à comparer ...",
+    "compareSearchLabel": "Joueur à comparer",
     "compareNoResults": "Aucun joueur trouvé pour votre recherche."
   },
   "filters": {
