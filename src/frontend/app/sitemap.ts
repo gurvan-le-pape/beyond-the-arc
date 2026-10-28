@@ -53,12 +53,13 @@ function localizedUrls(
 // ---------------------------------------------------------------------------
 
 /**
- * The sitemap Next generates, covering the static routes in every locale.
+ * The sitemap Next generates: the static routes and the club, league and
+ * committee pages, in every locale.
  *
- * **Static routes only.** The detail pages are omitted deliberately: there are
- * hundreds of thousands of them, they are generated on first request rather
- * than pre-built, and enumerating them would need the backend the build does
- * not have.
+ * **Championship, team, player and match pages are omitted** deliberately:
+ * players and matches alone number in the hundreds of thousands, and all four
+ * are generated on first request rather than pre-built. Organisations number
+ * a few thousand and change once a season, so they are listed.
  *
  * Each entry carries `alternates.languages` for both locales, so a crawler
  * treats the two as translations of one page rather than as duplicates.
