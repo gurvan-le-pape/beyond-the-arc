@@ -47,11 +47,11 @@ export function MatchesSection({
     <div className="divide-y divide-divide border-t border-divide">
       {byStart.map(([startsAt, matches]) => (
         <section key={startsAt}>
-          <h4 className="border-b border-divide bg-surface-subtle px-4 py-2 text-sm font-semibold text-text-secondary">
+          <h3 className="border-b border-divide bg-surface-subtle px-4 py-2 text-sm font-semibold text-text-secondary">
             <time dateTime={startsAt}>
               {formatMatchDayTime(startsAt, locale)}
             </time>
-          </h4>
+          </h3>
           <ul className="divide-y divide-divide">
             {matches.map((match) => (
               <MatchRow
