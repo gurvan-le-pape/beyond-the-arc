@@ -253,8 +253,8 @@ module.exports = {
         // where in the elevation hierarchy they are placed.
         //
         // .bg-surface-inset      — background one step above the current surface
-        //                          use for: inputs, infoboxes, skeleton fills,
-        //                          modals, hover states
+        //                          use for: inputs, infoboxes, modals,
+        //                          hover states
         //
         // .bg-surface-own        — this element's own background value
         //                          use for: scrollable containers that need to
