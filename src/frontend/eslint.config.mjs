@@ -255,6 +255,13 @@ export default [
       "no-console": "off",
     },
   },
+  // The logger is the one sanctioned console sink: everything else calls it
+  {
+    files: ["shared/utils/logger.ts"],
+    rules: {
+      "no-console": "off",
+    },
+  },
   {
     ignores: [
       ".next",
