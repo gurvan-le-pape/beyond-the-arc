@@ -125,6 +125,9 @@ export function TeamRoster({ players }: TeamRosterProps) {
     {
       key: "position",
       from: "sm",
+      // The badges say what the column is, so the name is for screen
+      // readers only: an empty header cell leaves the column unnamed.
+      header: <span className="sr-only">{tTeams("teamDetail.position")}</span>,
       render: (player) => (
         <Badge variant={positionVariant(player.position)} size="sm">
           {tCommon(`positions.${player.position}`)}
