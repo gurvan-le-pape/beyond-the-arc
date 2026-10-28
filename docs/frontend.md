@@ -462,7 +462,7 @@ GeoJSON boundary data for regions and departments is served as static assets bun
 
 ### SSR exclusion
 
-`MapLibreClubsMap` is loaded via `next/dynamic` with `ssr: false`. MapLibre GL requires browser APIs that are not available in the Node.js server environment, so the component is excluded from SSR entirely. `ClubsMap` wraps the dynamic import and shows a `LoadingMap` skeleton while the bundle loads on the client. The server-fetched data is passed through `ClubsMap` as props so it is available immediately when `MapLibreClubsMap` mounts — the map renders with data on first paint rather than waiting for a client-side fetch.
+`MapLibreClubsMap` is loaded via `next/dynamic` with `ssr: false`. MapLibre GL requires browser APIs that are not available in the Node.js server environment, so the component is excluded from SSR entirely. `ClubsMap` wraps the dynamic import and shows `LoadingMap`, a spinner filling the box the map will occupy, while the bundle loads on the client. The server-fetched data is passed through `ClubsMap` as props so it is available immediately when `MapLibreClubsMap` mounts — the map renders with data on first paint rather than waiting for a client-side fetch.
 
 ### Zoom-based layer switching
 

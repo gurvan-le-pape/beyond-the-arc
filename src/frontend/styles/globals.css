@@ -93,7 +93,7 @@ body {
      Elevation order (never skip or reverse): base → subtle → raised
      base   = outermost page background (PageLayout only)
      subtle = cards, panels, section containers
-     raised = inputs, modals, infoboxes, skeleton fills              */
+     raised = inputs, modals, infoboxes                              */
   --color-surface-base: 249 250 251;
   --color-surface-subtle: 243 244 246;
   --color-surface-raised: 229 231 235;
@@ -299,8 +299,8 @@ body {
                            consumed by: .bg-surface-own
 
      --surface-inset       the correct background for the next elevation step up
-                           used by: inputs, infoboxes, skeleton fills,
-                                    modals, hover fills on interactive elements
+                           used by: inputs, infoboxes, modals,
+                                    hover fills on interactive elements
                            consumed by: .bg-surface-inset, .hover:bg-surface-inset
 
      --surface-ring-offset the ring-offset color matching this surface
