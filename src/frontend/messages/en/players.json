@@ -15,6 +15,7 @@
     "matchHistoryTitle": "Match History",
     "compareTitle": "Compare with another player",
     "compareSearch": "Search for a player to compare...",
+    "compareSearchLabel": "Player to compare",
     "compareNoResults": "No players found for your search."
   },
   "filters": {

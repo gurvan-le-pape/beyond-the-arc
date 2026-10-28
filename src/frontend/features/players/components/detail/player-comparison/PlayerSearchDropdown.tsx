@@ -162,6 +162,7 @@ export function PlayerSearchDropdown({
         value={query}
         onChange={setQuery}
         onClear={() => setQuery("")}
+        aria-label={tPlayers("playerDetail.compareSearchLabel")}
         placeholder={tPlayers("playerDetail.compareSearch")}
         clearAriaLabel={tCommon("clearSearch")}
       />
