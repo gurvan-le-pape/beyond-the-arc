@@ -26,7 +26,7 @@ import { ErrorCard } from "./ErrorCard";
  * down with it. `"use client"` marks the hydration boundary; the HTML is still
  * produced on the server, which is the entire point here.
  *
- * The retry reloads rather than calling Next's `unstable_retry`: the failure
+ * The retry reloads rather than calling the boundary's `reset`: the failure
  * happened during the server render, so re-running it is a fresh request. It is
  * the one part of this that needs JavaScript, and it degrades to a card with no
  * button rather than to a blank page.
