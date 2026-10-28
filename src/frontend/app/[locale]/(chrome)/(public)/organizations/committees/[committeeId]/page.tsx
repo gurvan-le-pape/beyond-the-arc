@@ -49,9 +49,13 @@ async function buildMetadata({
     .getById(committeeId)
     .catch(handleServerError);
 
+  // The place name, as the page's heading and breadcrumb give it; the
+  // federation's own name is the scraped upper-case form ("ISERE").
+  const placeName = committee.department.name;
+
   return {
-    title: committee.name,
-    description: tMeta("committeeMeta", { name: committee.name }),
+    title: placeName,
+    description: tMeta("committeeMeta", { name: placeName }),
   };
 }
 
