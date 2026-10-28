@@ -13,7 +13,6 @@ import matches from "./messages/en/matches.json";
 import navigation from "./messages/en/navigation.json";
 import organizations from "./messages/en/organizations.json";
 import players from "./messages/en/players.json";
-import pool from "./messages/en/pool.json";
 import search from "./messages/en/search.json";
 import teams from "./messages/en/teams.json";
 
@@ -39,7 +38,6 @@ const referenceMessages = {
   navigation,
   organizations,
   players,
-  pool,
   search,
   teams,
 };

@@ -151,8 +151,6 @@
     "seeTeam": "See team {number}"
   },
   "shotChart": {
-    "made": "Made",
-    "missed": "Missed",
     "madeLabel": "Made",
     "missedLabel": "Missed",
     "low": "Low",
@@ -187,7 +185,6 @@
     "players": "No players found",
     "teams": "No teams found",
     "clubs": "No clubs found",
-    "matches": "No matches found",
     "championships": "No championships found"
   },
   "filters": {
@@ -209,12 +206,7 @@
     "playerNumbers": "Player numbers",
     "allPlayerNumbers": "All player numbers",
     "teamNumbers": "Team numbers",
-    "allTeamNumbers": "All team numbers",
-    "reset": "Reset filters"
-  },
-  "sortDirection": {
-    "asc": "ascending",
-    "desc": "descending"
+    "allTeamNumbers": "All team numbers"
   },
   "positions": {
     "PG": "PG",

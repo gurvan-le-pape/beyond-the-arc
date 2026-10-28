@@ -15,9 +15,7 @@
   "divisionWithValue": "Division {value}",
   "matchesLabel": "Matchs",
   "noSearchResults": "Aucun résultat pour « {search} »",
-  "noItemsAvailable": "Aucun élément disponible",
   "noResults": "Aucun résultat",
-  "poolCount": "{count, plural, one {# poule} other {# poules}}",
   "roundSelector": {
     "current": "Journée {round}",
     "previous": "Journée précédente",
@@ -35,18 +33,9 @@
   "leaderboardTitle": "Classement",
   "leaderboardEmpty": "Aucun classement disponible pour le moment",
   "championshipsSectionTitle": "Championnats",
-  "letterFilter": {
-    "all": "Tous"
-  },
   "matchDetails": {
     "teamHeader": "Équipe",
     "totalHeader": "T"
-  },
-  "info": {
-    "title": "Informations",
-    "address": "Adresse",
-    "email": "Email",
-    "phone": "Téléphone"
   },
   "itemLabel": "{count, plural, one {championnat} other {championnats}}",
   "listColumns": {

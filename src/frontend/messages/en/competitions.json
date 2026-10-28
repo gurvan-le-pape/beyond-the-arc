@@ -15,9 +15,7 @@
   "divisionWithValue": "Division {value}",
   "matchesLabel": "Matches",
   "noSearchResults": "No results for « {search} »",
-  "noItemsAvailable": "No items available",
   "noResults": "No results",
-  "poolCount": "{count, plural, one {# pool} other {# pools}}",
   "roundSelector": {
     "current": "Round {round}",
     "previous": "Previous round",
@@ -35,18 +33,9 @@
   "leaderboardTitle": "Leaderboard",
   "leaderboardEmpty": "No standings available yet",
   "championshipsSectionTitle": "Championships",
-  "letterFilter": {
-    "all": "All"
-  },
   "matchDetails": {
     "teamHeader": "Team",
     "totalHeader": "T"
-  },
-  "info": {
-    "title": "Information",
-    "address": "Address",
-    "email": "Email",
-    "phone": "Phone"
   },
   "itemLabel": "{count, plural, one {championship} other {championships}}",
   "listColumns": {
