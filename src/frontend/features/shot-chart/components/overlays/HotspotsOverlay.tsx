@@ -119,10 +119,12 @@ export function HotspotsOverlay({
       <ArcZones {...sharedProps} />
       <ArcApexSidelineZones {...sharedProps} />
       <AboveWingZones {...sharedProps} />
-      <Corner3Zones {...sharedProps} />
       <WingZones {...sharedProps} />
       <ApexStripeZones {...sharedProps} />
       <TopKeyZones {...sharedProps} />
+      {/* Last: a corner zone is narrower than its label, which runs into the
+          wing beside it and would sit under the wing's fill if drawn earlier. */}
+      <Corner3Zones {...sharedProps} />
 
       {tooltip &&
         typeof globalThis.window === "object" &&
