@@ -10,6 +10,8 @@ interface ZoneStatLabelProps {
   readonly fg: number | null;
   readonly total: number;
   readonly svgWidth: number;
+  /** Which end of the text sits at `x`; centred unless the zone pins it. */
+  readonly anchor?: "start" | "middle" | "end";
 }
 
 /**
@@ -24,10 +26,10 @@ export function ZoneStatLabel({
   fg,
   total,
   svgWidth,
+  anchor = "middle",
 }: ZoneStatLabelProps) {
   const { percent } = createStatFormat(useFormatter());
-  // Scales with the court; 11px is the floor for legibility, and at that size
-  // "100%" still fits inside the narrow corner-three zones.
+  // Scales with the court; 11px is the floor for legibility.
   const statFontSize = Math.max(11, svgWidth / 40);
   const statLineHeight = statFontSize * 1.4;
 
@@ -37,7 +39,7 @@ export function ZoneStatLabel({
         <text
           x={x}
           y={y - statLineHeight / 2}
-          textAnchor="middle"
+          textAnchor={anchor}
           dominantBaseline="middle"
           style={{ fontSize: `${statFontSize}px` }}
           className="fill-court-label stroke-court-floor"
@@ -52,7 +54,7 @@ export function ZoneStatLabel({
       <text
         x={x}
         y={y + statLineHeight / 2}
-        textAnchor="middle"
+        textAnchor={anchor}
         dominantBaseline="middle"
         style={{ fontSize: `${statFontSize}px` }}
         className="fill-court-label stroke-court-floor"
