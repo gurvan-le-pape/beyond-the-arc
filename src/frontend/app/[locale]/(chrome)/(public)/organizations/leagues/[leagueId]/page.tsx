@@ -49,9 +49,13 @@ async function buildMetadata({
     .getById(leagueId)
     .catch(handleServerError);
 
+  // The place name, as the page's heading and breadcrumb give it; the
+  // federation's own name is the scraped upper-case form ("ISERE").
+  const placeName = league.region.name;
+
   return {
-    title: league.name,
-    description: tMeta("leagueMeta", { name: league.name }),
+    title: placeName,
+    description: tMeta("leagueMeta", { name: placeName }),
   };
 }
 
