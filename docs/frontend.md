@@ -537,6 +537,14 @@ The maintenance rule this creates: **a module that genuinely runs work when impo
 
 `import "server-only"` is unaffected: it resolves into the `next` package, whose own manifest makes no such claim, and the guard is a loader error raised while the module is built — long before anything is shaken out.
 
+### Barrels at the server/client boundary
+
+`sideEffects` only governs the client bundle. It does nothing for the step before it: when a **server** component imports a barrel, Next collects every `"use client"` module reachable through that barrel as a client reference of the page — before any tree shaking, so the ones the page never renders count too. `/contact` renders one server-side `Grid` from `@/shared/components/primitives`, and shipped `Tabs` and `MultiSelect` to the browser for it.
+
+`next.config.js` therefore lists every generated barrel in `experimental.optimizePackageImports`, which rewrites `import { Grid } from "@/shared/components/primitives"` to the file that defines `Grid` at build time. The list comes from `barrels.js`, which reads the root `barrelsby.json` — the same source `enforce-barrel-import` uses — so a new barrel directory is covered the moment it is generated. Turning it on removed **696 kB of First Load JS across 19 routes**: 51–64 kB on the map and on the club, committee, league, team, match and championship detail pages, 17–33 kB on the others. `/docs`, a client page that imports no barrel from the server, is within 1 kB of before.
+
+Source code keeps importing from barrels; the rewrite is invisible to it. It relies on two things the codebase already guarantees: barrelsby barrels are pure `export *` lists, and `sideEffects` declares that importing a module does nothing.
+
 ---
 
 ## Error handling
