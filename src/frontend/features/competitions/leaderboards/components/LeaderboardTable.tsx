@@ -184,5 +184,3 @@ export function LeaderboardTable({
     </Section>
   );
 }
-
-export default LeaderboardTable;

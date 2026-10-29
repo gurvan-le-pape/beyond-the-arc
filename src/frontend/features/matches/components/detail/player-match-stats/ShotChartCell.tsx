@@ -25,5 +25,3 @@ export function ShotChartCell({ player, onSelect, label }: ShotChartCellProps) {
     </button>
   );
 }
-
-export default ShotChartCell;

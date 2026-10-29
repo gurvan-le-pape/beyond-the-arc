@@ -67,5 +67,3 @@ export function RoundSelector({
     </div>
   );
 }
-
-export default RoundSelector;

@@ -122,5 +122,3 @@ export function PeriodSection({
     </section>
   );
 }
-
-export default PeriodSection;

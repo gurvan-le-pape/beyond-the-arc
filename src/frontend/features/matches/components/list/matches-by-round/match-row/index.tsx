@@ -101,5 +101,3 @@ export function MatchRow({ match, expanded, onToggleExpand }: MatchRowProps) {
     </li>
   );
 }
-
-export default MatchRow;

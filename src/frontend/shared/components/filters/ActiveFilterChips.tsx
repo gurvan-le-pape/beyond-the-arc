@@ -66,5 +66,3 @@ export function ActiveFilterChips({ chips, onReset }: ActiveFilterChipsProps) {
     </div>
   );
 }
-
-export default ActiveFilterChips;

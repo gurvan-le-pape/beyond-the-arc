@@ -5,7 +5,7 @@ import { Text } from "@/shared/components/typography";
 import type { ShotEvent } from "@/shared/types";
 
 import { ChartType } from "../../constants";
-import ShotChart from "../shot-chart";
+import { ShotChart } from "../shot-chart";
 
 interface TeamShotChartProps {
   readonly shots: ShotEvent[];
@@ -32,5 +32,3 @@ export function TeamShotChart({
     </Section>
   );
 }
-
-export default TeamShotChart;

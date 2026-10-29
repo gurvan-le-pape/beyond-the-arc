@@ -266,5 +266,3 @@ export function TableCellLink({
     </Link>
   );
 }
-
-export default DataTable;

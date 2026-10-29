@@ -35,5 +35,3 @@ export const ClubListItem = memo(function ClubListItem({
     />
   );
 });
-
-export default ClubListItem;

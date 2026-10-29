@@ -8,7 +8,7 @@ import {
 } from "@/features/shot-chart/utils";
 import type { ShotEvent } from "@/shared/types";
 
-import PolygonZone from "./zones/PolygonZone";
+import { PolygonZone } from "./zones/PolygonZone";
 
 interface ApexStripeZonesProps {
   readonly shots: ShotEvent[];
@@ -32,7 +32,7 @@ interface ApexStripeZonesProps {
  * no shots still renders, at a fainter opacity, so the court's zone map stays
  * whole rather than developing holes.
  */
-function ApexStripeZones({
+export function ApexStripeZones({
   shots,
   xScale,
   yScale,
@@ -75,5 +75,3 @@ function ApexStripeZones({
     </g>
   );
 }
-
-export default ApexStripeZones;

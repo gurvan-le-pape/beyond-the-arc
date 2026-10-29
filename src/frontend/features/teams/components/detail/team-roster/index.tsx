@@ -190,5 +190,3 @@ export function TeamRoster({ players }: TeamRosterProps) {
     </Section>
   );
 }
-
-export default TeamRoster;

@@ -33,5 +33,3 @@ export function TimelineOrderToggle({
     </div>
   );
 }
-
-export default TimelineOrderToggle;

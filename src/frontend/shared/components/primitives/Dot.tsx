@@ -34,5 +34,3 @@ type DotProps = VariantProps<typeof dotVariants>;
 export function Dot({ size, tone }: Readonly<DotProps>) {
   return <span aria-hidden="true" className={dotVariants({ size, tone })} />;
 }
-
-export default Dot;

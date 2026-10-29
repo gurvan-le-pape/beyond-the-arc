@@ -270,5 +270,3 @@ export function MatchesFilters({
     </FiltersShell>
   );
 }
-
-export default MatchesFilters;

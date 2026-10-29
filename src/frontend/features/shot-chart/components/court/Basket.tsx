@@ -1,8 +1,8 @@
 // src/frontend/features/shot-chart/components/court/Basket.tsx
 
-import Backboard from "./basket/Backboard";
-import Block from "./basket/Block";
-import Rim from "./basket/Rim";
+import { Backboard } from "./basket/Backboard";
+import { Block } from "./basket/Block";
+import { Rim } from "./basket/Rim";
 
 interface BasketProps {
   readonly centerX: number;
@@ -35,5 +35,3 @@ export function Basket({
     </g>
   );
 }
-
-export default Basket;

@@ -237,5 +237,3 @@ export function PlayersFilters({
     </FiltersShell>
   );
 }
-
-export default PlayersFilters;

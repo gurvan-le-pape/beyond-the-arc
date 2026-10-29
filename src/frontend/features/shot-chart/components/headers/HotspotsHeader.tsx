@@ -1,6 +1,6 @@
 // src/frontend/features/shot-chart/components/headers/HotspotsHeader.tsx
 
-import HeatmapLegend from "../legends/HeatmapLegend";
+import { HeatmapLegend } from "../legends/HeatmapLegend";
 
 interface HotspotsHeaderProps {
   readonly maxValue: number;
@@ -16,5 +16,3 @@ export function HotspotsHeader({ maxValue }: HotspotsHeaderProps) {
     </div>
   );
 }
-
-export default HotspotsHeader;

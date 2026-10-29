@@ -62,5 +62,3 @@ export function EventCategoryChips({
     />
   );
 }
-
-export default EventCategoryChips;

@@ -175,5 +175,3 @@ export function Grid({ columns, divided = false, gap, children }: GridProps) {
     </div>
   );
 }
-
-export default Grid;

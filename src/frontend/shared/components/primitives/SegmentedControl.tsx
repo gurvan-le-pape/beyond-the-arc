@@ -93,5 +93,3 @@ export function SegmentedControl<TValue extends string>({
     </div>
   );
 }
-
-export default SegmentedControl;

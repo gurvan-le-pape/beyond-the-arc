@@ -80,5 +80,3 @@ export function MatchesCard({ match }: MatchesCardProps) {
     </ListEntityCard>
   );
 }
-
-export default MatchesCard;

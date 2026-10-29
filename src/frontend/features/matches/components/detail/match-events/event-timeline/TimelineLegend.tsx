@@ -33,5 +33,3 @@ export function TimelineLegend({ homeTeam, awayTeam }: TimelineLegendProps) {
     </div>
   );
 }
-
-export default TimelineLegend;

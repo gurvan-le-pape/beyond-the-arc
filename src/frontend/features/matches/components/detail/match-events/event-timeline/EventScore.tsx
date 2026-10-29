@@ -48,5 +48,3 @@ export function EventScore({
     </span>
   );
 }
-
-export default EventScore;

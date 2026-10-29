@@ -34,5 +34,3 @@ export function Backboard({ xScale, yScale, svgWidth }: BackboardProps) {
     />
   );
 }
-
-export default Backboard;

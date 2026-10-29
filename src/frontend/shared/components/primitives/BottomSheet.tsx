@@ -145,5 +145,3 @@ export function BottomSheet({
     </dialog>
   );
 }
-
-export default BottomSheet;

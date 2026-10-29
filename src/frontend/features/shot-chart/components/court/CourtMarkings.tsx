@@ -12,14 +12,14 @@ import {
   THREE_PT_LINE_DIST,
   THREE_PT_RADIUS,
 } from "../../constants";
-import Basket from "./Basket";
-import CentreCircle from "./CentreCircle";
-import CourtBoundary from "./CourtBoundary";
-import FreeThrow from "./FreeThrow";
-import NoCharge from "./NoCharge";
-import Paint from "./Paint";
-import PaintTicks from "./PaintTicks";
-import ThreePointArc from "./ThreePointArc";
+import { Basket } from "./Basket";
+import { CentreCircle } from "./CentreCircle";
+import { CourtBoundary } from "./CourtBoundary";
+import { FreeThrow } from "./FreeThrow";
+import { NoCharge } from "./NoCharge";
+import { Paint } from "./Paint";
+import { PaintTicks } from "./PaintTicks";
+import { ThreePointArc } from "./ThreePointArc";
 
 // The lane's tick marks and block, in metres from the baseline (FIBA).
 const TICK_LENGTH = 0.1;
@@ -112,5 +112,3 @@ export function CourtMarkings({
     </>
   );
 }
-
-export default CourtMarkings;

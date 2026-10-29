@@ -132,5 +132,3 @@ export function TimelineEventRow({
     </li>
   );
 }
-
-export default TimelineEventRow;

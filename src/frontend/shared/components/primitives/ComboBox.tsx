@@ -397,5 +397,3 @@ export function ComboBox({
     </div>
   );
 }
-
-export default ComboBox;

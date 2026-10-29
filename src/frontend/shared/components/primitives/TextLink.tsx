@@ -64,5 +64,3 @@ export function TextLink({
     </Link>
   );
 }
-
-export default TextLink;

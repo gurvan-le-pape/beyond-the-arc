@@ -8,7 +8,7 @@ import {
 } from "@/features/shot-chart/utils";
 import type { ShotEvent } from "@/shared/types";
 
-import PolygonZone from "./zones/PolygonZone";
+import { PolygonZone } from "./zones/PolygonZone";
 
 interface AboveWingZonesProps {
   readonly shots: ShotEvent[];
@@ -32,7 +32,7 @@ interface AboveWingZonesProps {
  * no shots still renders, at a fainter opacity, so the court's zone map stays
  * whole rather than developing holes.
  */
-function AboveWingZones({
+export function AboveWingZones({
   shots,
   xScale,
   yScale,
@@ -76,5 +76,3 @@ function AboveWingZones({
     </g>
   );
 }
-
-export default AboveWingZones;

@@ -24,5 +24,3 @@ export function CenterLine({ svgWidth, y }: CenterLineProps) {
     />
   );
 }
-
-export default CenterLine;

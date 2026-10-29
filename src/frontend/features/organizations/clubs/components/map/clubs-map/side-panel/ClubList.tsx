@@ -35,5 +35,3 @@ export function ClubList({ clubs, query, onClubClick }: ClubListProps) {
     </div>
   );
 }
-
-export default ClubList;

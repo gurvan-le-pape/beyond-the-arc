@@ -56,5 +56,3 @@ export function CommitteeHeader({
     />
   );
 }
-
-export default CommitteeHeader;

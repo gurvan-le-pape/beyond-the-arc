@@ -119,5 +119,3 @@ export function LinkMenu({ label, icon, ariaLabel, items }: LinkMenuProps) {
     </span>
   );
 }
-
-export default LinkMenu;

@@ -51,5 +51,3 @@ export function withServerErrorState<P extends object>(
     }
   };
 }
-
-export default withServerErrorState;

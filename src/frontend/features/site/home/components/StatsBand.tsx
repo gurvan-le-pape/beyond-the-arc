@@ -30,5 +30,3 @@ export function StatsBand({ stats }: StatsBandProps) {
     </div>
   );
 }
-
-export default StatsBand;

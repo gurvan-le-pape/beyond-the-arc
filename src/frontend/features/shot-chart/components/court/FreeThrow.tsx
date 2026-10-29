@@ -55,5 +55,3 @@ export function FreeThrow({
     </g>
   );
 }
-
-export default FreeThrow;

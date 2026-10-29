@@ -13,7 +13,7 @@ import { logger } from "@/shared/utils";
 
 import { ChartType } from "../../constants";
 import { downloadPng, shotChartFileName } from "../../utils";
-import ShotChart from "../shot-chart";
+import { ShotChart } from "../shot-chart";
 
 interface ShotModalProps {
   readonly open: boolean;
@@ -161,5 +161,3 @@ export function ShotModal({
     </dialog>
   );
 }
-
-export default ShotModal;

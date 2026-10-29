@@ -26,5 +26,3 @@ export function ClubMarkLink({ clubId, clubName }: ClubMarkLinkProps) {
     </Link>
   );
 }
-
-export default ClubMarkLink;

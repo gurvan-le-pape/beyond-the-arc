@@ -110,5 +110,3 @@ export function MatchHistoryTable<T extends MatchHistoryRow>({
     </Section>
   );
 }
-
-export default MatchHistoryTable;

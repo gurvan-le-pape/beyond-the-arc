@@ -85,5 +85,3 @@ export function MatchEvents({
     </Section>
   );
 }
-
-export default MatchEvents;

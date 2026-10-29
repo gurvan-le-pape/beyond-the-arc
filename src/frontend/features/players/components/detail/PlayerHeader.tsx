@@ -101,5 +101,3 @@ export async function PlayerHeader({ player }: PlayerHeaderProps) {
     />
   );
 }
-
-export default PlayerHeader;

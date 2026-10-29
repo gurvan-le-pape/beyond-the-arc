@@ -60,5 +60,3 @@ export function LeagueHeader({
     />
   );
 }
-
-export default LeagueHeader;

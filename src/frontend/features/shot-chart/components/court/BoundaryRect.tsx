@@ -25,5 +25,3 @@ export function BoundaryRect({ svgWidth, svgHeight }: BoundaryRectProps) {
     />
   );
 }
-
-export default BoundaryRect;

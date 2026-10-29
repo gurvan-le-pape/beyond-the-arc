@@ -168,5 +168,3 @@ export function useMatchHistoryColumns<T extends MatchWithScore>(
     ];
   }, [t, locale, currentTeamId, withTime, withResult]);
 }
-
-export default useMatchHistoryColumns;

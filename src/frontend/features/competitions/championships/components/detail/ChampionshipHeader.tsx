@@ -179,5 +179,3 @@ export function ChampionshipHeader({
     </Card>
   );
 }
-
-export default ChampionshipHeader;

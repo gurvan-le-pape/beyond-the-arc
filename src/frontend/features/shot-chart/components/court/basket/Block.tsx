@@ -25,5 +25,3 @@ export function Block({ centerX, yScale, svgWidth }: BlockProps) {
     />
   );
 }
-
-export default Block;

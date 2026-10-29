@@ -5,7 +5,7 @@ import type { ZoneStats } from "@/features/shot-chart/types";
 import { binShotsByZones, getCorner3Zones } from "@/features/shot-chart/utils";
 import type { ShotEvent } from "@/shared/types";
 
-import RectZone from "./zones/RectZone";
+import { RectZone } from "./zones/RectZone";
 
 interface Corner3ZonesProps {
   readonly shots: ShotEvent[];
@@ -29,7 +29,7 @@ interface Corner3ZonesProps {
  * no shots still renders, at a fainter opacity, so the court's zone map stays
  * whole rather than developing holes.
  */
-function Corner3Zones({
+export function Corner3Zones({
   shots,
   xScale,
   yScale,
@@ -73,5 +73,3 @@ function Corner3Zones({
     </g>
   );
 }
-
-export default Corner3Zones;

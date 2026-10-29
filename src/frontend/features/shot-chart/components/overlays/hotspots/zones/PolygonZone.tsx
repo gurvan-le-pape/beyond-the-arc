@@ -3,7 +3,7 @@ import React from "react";
 
 import { COURT_COLOURS } from "@/features/shot-chart/constants";
 
-import ZoneStatLabel from "../../ZoneStatLabel";
+import { ZoneStatLabel } from "../../ZoneStatLabel";
 
 /**
  * Computes the true area-weighted centroid of a polygon using the shoelace formula.
@@ -93,5 +93,3 @@ export function PolygonZone({
     </g>
   );
 }
-
-export default PolygonZone;

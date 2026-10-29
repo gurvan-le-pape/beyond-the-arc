@@ -35,5 +35,3 @@ export function RouteNotFound() {
     </PageLayout>
   );
 }
-
-export default RouteNotFound;

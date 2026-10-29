@@ -92,5 +92,3 @@ export function usePlayerMatchHistoryColumns(
     [t, matchColumns],
   );
 }
-
-export default usePlayerMatchHistoryColumns;

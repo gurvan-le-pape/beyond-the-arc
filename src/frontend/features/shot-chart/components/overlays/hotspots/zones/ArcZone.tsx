@@ -1,7 +1,7 @@
 // src/frontend/features/shot-chart/components/overlays/hotspots/zones/ArcZone.tsx
 import React from "react";
 
-import ZoneStatLabel from "../../ZoneStatLabel";
+import { ZoneStatLabel } from "../../ZoneStatLabel";
 
 interface ArcZoneProps {
   readonly zone: any;
@@ -116,5 +116,3 @@ export function ArcZone({
     </g>
   );
 }
-
-export default ArcZone;

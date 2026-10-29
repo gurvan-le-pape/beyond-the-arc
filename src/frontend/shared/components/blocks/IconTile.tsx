@@ -38,5 +38,3 @@ export function IconTile({ icon: Icon, size = "md" }: IconTileProps) {
     </div>
   );
 }
-
-export default IconTile;

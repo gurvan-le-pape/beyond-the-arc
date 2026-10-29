@@ -84,5 +84,3 @@ export function PaintTicks({
     </g>
   );
 }
-
-export default PaintTicks;

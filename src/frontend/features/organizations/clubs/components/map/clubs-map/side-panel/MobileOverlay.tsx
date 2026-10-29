@@ -20,5 +20,3 @@ export function MobileOverlay({ onClose }: MobileOverlayProps) {
     />
   );
 }
-
-export default MobileOverlay;

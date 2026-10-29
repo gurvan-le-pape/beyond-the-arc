@@ -72,5 +72,3 @@ export function ChampionshipSections({
     </div>
   );
 }
-
-export default ChampionshipSections;

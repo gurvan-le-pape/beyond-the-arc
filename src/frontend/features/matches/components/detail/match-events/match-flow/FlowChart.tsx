@@ -371,5 +371,3 @@ export function FlowChart({
     </figure>
   );
 }
-
-export default FlowChart;

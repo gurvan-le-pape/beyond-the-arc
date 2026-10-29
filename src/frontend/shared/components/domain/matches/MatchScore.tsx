@@ -93,5 +93,3 @@ export function MatchScore({
     </div>
   );
 }
-
-export default MatchScore;

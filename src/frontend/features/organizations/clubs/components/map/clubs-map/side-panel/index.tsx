@@ -97,5 +97,3 @@ export const SidePanel = memo(function SidePanel({
     </>
   );
 });
-
-export default SidePanel;

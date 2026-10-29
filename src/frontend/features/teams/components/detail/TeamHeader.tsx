@@ -25,5 +25,3 @@ export function TeamHeader({ team }: TeamHeaderProps) {
     />
   );
 }
-
-export default TeamHeader;

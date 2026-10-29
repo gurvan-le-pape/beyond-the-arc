@@ -83,5 +83,3 @@ export const ErrorMessage = ({
     </div>
   );
 };
-
-export default ErrorMessage;

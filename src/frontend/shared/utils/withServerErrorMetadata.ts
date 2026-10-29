@@ -41,5 +41,3 @@ export function withServerErrorMetadata<P extends object>(
     }
   };
 }
-
-export default withServerErrorMetadata;

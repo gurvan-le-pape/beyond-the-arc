@@ -110,5 +110,3 @@ export function SummaryFigures({
     </dl>
   );
 }
-
-export default SummaryFigures;

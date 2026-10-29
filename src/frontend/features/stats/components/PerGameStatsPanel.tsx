@@ -90,5 +90,3 @@ export function PerGameStatsPanel({ stats }: PerGameStatsPanelProps) {
     </Section>
   );
 }
-
-export default PerGameStatsPanel;

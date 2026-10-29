@@ -57,5 +57,3 @@ export function PlayerDropdownFilter({
     />
   );
 }
-
-export default PlayerDropdownFilter;

@@ -39,5 +39,3 @@ export function SidePanelHeader({ clubCount, onClose }: SidePanelHeaderProps) {
     </div>
   );
 }
-
-export default SidePanelHeader;

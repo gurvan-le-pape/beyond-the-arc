@@ -62,5 +62,3 @@ export function EntityCardBadges({
     </>
   );
 }
-
-export default EntityCardBadges;

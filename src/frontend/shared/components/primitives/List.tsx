@@ -5,5 +5,3 @@ import type { ReactNode } from "react";
 export function List({ children }: Readonly<{ children: ReactNode }>) {
   return <ul className="divide-y divide-divide">{children}</ul>;
 }
-
-export default List;

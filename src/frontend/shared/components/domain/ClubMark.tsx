@@ -47,5 +47,3 @@ export function ClubMark({ clubName, size = "md" }: ClubMarkProps) {
     </span>
   );
 }
-
-export default ClubMark;

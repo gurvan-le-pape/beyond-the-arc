@@ -50,5 +50,3 @@ export function ChampionshipLevelTabs() {
     </QueryTabs>
   );
 }
-
-export default ChampionshipLevelTabs;
