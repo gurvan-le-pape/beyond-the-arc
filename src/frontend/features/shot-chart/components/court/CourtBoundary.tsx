@@ -1,9 +1,9 @@
 // src/frontend/features/shot-chart/components/court/CourtBoundary.tsx
 
 import { HALF_COURT_HEIGHT } from "../../constants";
-import Baseline from "./Baseline";
-import BoundaryRect from "./BoundaryRect";
-import CenterLine from "./CenterLine";
+import { Baseline } from "./Baseline";
+import { BoundaryRect } from "./BoundaryRect";
+import { CenterLine } from "./CenterLine";
 
 /**
  * Props for CourtBoundary
@@ -33,5 +33,3 @@ export function CourtBoundary({
     </g>
   );
 }
-
-export default CourtBoundary;

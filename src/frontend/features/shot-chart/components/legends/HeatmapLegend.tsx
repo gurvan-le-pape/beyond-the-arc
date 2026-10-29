@@ -61,5 +61,3 @@ export function HeatmapLegend({ maxValue, compact }: HeatmapLegendProps) {
     </div>
   );
 }
-
-export default HeatmapLegend;

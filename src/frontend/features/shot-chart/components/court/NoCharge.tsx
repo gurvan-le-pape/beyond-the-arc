@@ -64,5 +64,3 @@ export function NoCharge({
     </g>
   );
 }
-
-export default NoCharge;

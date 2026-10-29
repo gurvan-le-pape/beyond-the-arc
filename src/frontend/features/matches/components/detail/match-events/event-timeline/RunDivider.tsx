@@ -31,5 +31,3 @@ export function RunDivider({ points, side, teamName }: RunDividerProps) {
     </li>
   );
 }
-
-export default RunDivider;

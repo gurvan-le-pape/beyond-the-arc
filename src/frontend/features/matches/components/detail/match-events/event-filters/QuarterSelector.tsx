@@ -39,5 +39,3 @@ export function QuarterSelector({
     />
   );
 }
-
-export default QuarterSelector;

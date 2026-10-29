@@ -29,5 +29,3 @@ export function Rim({ centerX, rimY, xScale, svgWidth }: RimProps) {
     />
   );
 }
-
-export default Rim;

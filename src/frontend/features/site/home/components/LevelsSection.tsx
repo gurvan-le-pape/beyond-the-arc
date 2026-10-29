@@ -51,5 +51,3 @@ export function LevelsSection({ championshipsByLevel }: LevelsSectionProps) {
     </>
   );
 }
-
-export default LevelsSection;

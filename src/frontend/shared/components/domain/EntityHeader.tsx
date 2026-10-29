@@ -123,5 +123,3 @@ export function EntityHeader({
     </Card>
   );
 }
-
-export default EntityHeader;

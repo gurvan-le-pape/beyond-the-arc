@@ -5,7 +5,7 @@ import type { ZoneStats } from "@/features/shot-chart/types";
 import { binShotsByZones, getArcZones } from "@/features/shot-chart/utils";
 import type { ShotEvent } from "@/shared/types";
 
-import PolygonZone from "./zones/PolygonZone";
+import { PolygonZone } from "./zones/PolygonZone";
 
 interface ArcZonesProps {
   readonly shots: ShotEvent[];
@@ -29,7 +29,7 @@ interface ArcZonesProps {
  * no shots still renders, at a fainter opacity, so the court's zone map stays
  * whole rather than developing holes.
  */
-function ArcZones({
+export function ArcZones({
   shots,
   xScale,
   yScale,
@@ -73,5 +73,3 @@ function ArcZones({
     </g>
   );
 }
-
-export default ArcZones;

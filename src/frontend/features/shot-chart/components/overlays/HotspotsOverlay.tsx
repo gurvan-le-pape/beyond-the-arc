@@ -20,15 +20,15 @@ import {
   getWingZones,
   type Zone,
 } from "../../utils";
-import AboveWingZones from "./hotspots/AboveWingZones";
-import ApexStripeZones from "./hotspots/ApexStripeZones";
-import ArcApexSidelineZones from "./hotspots/ArcApexSidelineZones";
-import ArcZones from "./hotspots/ArcZones";
-import Corner3Zones from "./hotspots/Corner3Zones";
-import PaintZones from "./hotspots/PaintZones";
-import TopKeyZones from "./hotspots/TopKeyZones";
-import WingZones from "./hotspots/WingZones";
-import TooltipContent from "./TooltipContent";
+import { AboveWingZones } from "./hotspots/AboveWingZones";
+import { ApexStripeZones } from "./hotspots/ApexStripeZones";
+import { ArcApexSidelineZones } from "./hotspots/ArcApexSidelineZones";
+import { ArcZones } from "./hotspots/ArcZones";
+import { Corner3Zones } from "./hotspots/Corner3Zones";
+import { PaintZones } from "./hotspots/PaintZones";
+import { TopKeyZones } from "./hotspots/TopKeyZones";
+import { WingZones } from "./hotspots/WingZones";
+import { TooltipContent } from "./TooltipContent";
 
 // All zone getter functions collected for computing maxTotal across all zones
 const ALL_ZONE_GETTERS: (() => Zone[])[] = [
@@ -136,5 +136,3 @@ export function HotspotsOverlay({
     </g>
   );
 }
-
-export default HotspotsOverlay;

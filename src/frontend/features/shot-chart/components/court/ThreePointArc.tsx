@@ -67,5 +67,3 @@ export function ThreePointArc({
     </>
   );
 }
-
-export default ThreePointArc;

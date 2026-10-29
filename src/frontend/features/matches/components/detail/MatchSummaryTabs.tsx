@@ -119,5 +119,3 @@ export function MatchSummaryTabs({
     </Tabs>
   );
 }
-
-export default MatchSummaryTabs;

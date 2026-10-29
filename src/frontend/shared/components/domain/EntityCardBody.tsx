@@ -86,5 +86,3 @@ export function EntityCardBody({
     </div>
   );
 }
-
-export default EntityCardBody;

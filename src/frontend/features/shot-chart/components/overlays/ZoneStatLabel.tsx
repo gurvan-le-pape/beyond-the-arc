@@ -68,5 +68,3 @@ export function ZoneStatLabel({
     </>
   );
 }
-
-export default ZoneStatLabel;

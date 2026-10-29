@@ -50,5 +50,3 @@ export function ChampionshipPoolSelect({
     />
   );
 }
-
-export default ChampionshipPoolSelect;

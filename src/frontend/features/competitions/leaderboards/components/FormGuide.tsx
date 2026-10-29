@@ -48,5 +48,3 @@ export function FormGuide({ games }: FormGuideProps) {
     </ol>
   );
 }
-
-export default FormGuide;

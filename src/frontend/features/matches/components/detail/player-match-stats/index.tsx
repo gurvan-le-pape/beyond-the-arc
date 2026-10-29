@@ -98,5 +98,3 @@ export function PlayerMatchStats({
     </Section>
   );
 }
-
-export default PlayerMatchStats;

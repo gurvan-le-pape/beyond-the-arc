@@ -44,5 +44,3 @@ export function SearchTabs() {
     </QueryTabs>
   );
 }
-
-export default SearchTabs;

@@ -39,5 +39,3 @@ export function RouteErrorBoundary({ error, retry }: RouteErrorBoundaryProps) {
     </PageLayout>
   );
 }
-
-export default RouteErrorBoundary;

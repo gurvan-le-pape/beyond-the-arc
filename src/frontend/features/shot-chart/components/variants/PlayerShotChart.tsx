@@ -5,7 +5,7 @@ import { Text } from "@/shared/components/typography";
 import type { ShotEvent } from "@/shared/types";
 
 import { ChartType } from "../../constants";
-import ShotChart from "../shot-chart";
+import { ShotChart } from "../shot-chart";
 
 interface PlayerShotChartProps {
   readonly shots: ShotEvent[];
@@ -32,5 +32,3 @@ export function PlayerShotChart({
     </Section>
   );
 }
-
-export default PlayerShotChart;

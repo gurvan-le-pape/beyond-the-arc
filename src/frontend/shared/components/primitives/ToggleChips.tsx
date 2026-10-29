@@ -84,5 +84,3 @@ export function ToggleChips<TValue extends string>({
     </div>
   );
 }
-
-export default ToggleChips;

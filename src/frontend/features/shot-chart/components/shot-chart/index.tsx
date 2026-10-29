@@ -16,10 +16,10 @@ import type { ShotEvent } from "@/shared/types";
 import { createStatFormat } from "@/shared/utils";
 
 import { CourtMarkings } from "../court/CourtMarkings";
-import HotspotsHeader from "../headers/HotspotsHeader";
-import ScatterHeader from "../headers/ScatterHeader";
-import HotspotsOverlay from "../overlays/HotspotsOverlay";
-import ScatterOverlay from "../overlays/ScatterOverlay";
+import { HotspotsHeader } from "../headers/HotspotsHeader";
+import { ScatterHeader } from "../headers/ScatterHeader";
+import { HotspotsOverlay } from "../overlays/HotspotsOverlay";
+import { ScatterOverlay } from "../overlays/ScatterOverlay";
 import { useCourtSize } from "./useCourtSize";
 
 // Derived from actual FIBA constants — not hardcoded magic numbers
@@ -139,5 +139,3 @@ export function ShotChart({
     </div>
   );
 }
-
-export default ShotChart;

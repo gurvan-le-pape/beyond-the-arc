@@ -33,5 +33,3 @@ export function HamburgerButton({ open }: HamburgerButtonProps) {
     </span>
   );
 }
-
-export default HamburgerButton;

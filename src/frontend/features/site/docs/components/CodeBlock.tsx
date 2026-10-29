@@ -19,5 +19,3 @@ export function CodeBlock({ children }: Readonly<CodeBlockProps>) {
     </pre>
   );
 }
-
-export default CodeBlock;

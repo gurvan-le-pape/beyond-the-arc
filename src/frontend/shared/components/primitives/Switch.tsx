@@ -86,5 +86,3 @@ export const Switch = ({
     </button>
   );
 };
-
-export default Switch;

@@ -135,5 +135,3 @@ export function Popover({
     </div>
   );
 }
-
-export default Popover;

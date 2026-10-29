@@ -8,7 +8,7 @@ import {
 } from "@/features/shot-chart/utils";
 import type { ShotEvent } from "@/shared/types";
 
-import PolygonZone from "./zones/PolygonZone";
+import { PolygonZone } from "./zones/PolygonZone";
 
 interface ArcApexSidelineZonesProps {
   readonly shots: ShotEvent[];
@@ -32,7 +32,7 @@ interface ArcApexSidelineZonesProps {
  * no shots still renders, at a fainter opacity, so the court's zone map stays
  * whole rather than developing holes.
  */
-function ArcApexSidelineZones({
+export function ArcApexSidelineZones({
   shots,
   xScale,
   yScale,
@@ -76,5 +76,3 @@ function ArcApexSidelineZones({
     </g>
   );
 }
-
-export default ArcApexSidelineZones;

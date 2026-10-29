@@ -68,5 +68,3 @@ export function MatchHero({
     </>
   );
 }
-
-export default MatchHero;

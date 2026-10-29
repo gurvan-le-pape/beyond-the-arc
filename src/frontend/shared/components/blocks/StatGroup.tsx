@@ -46,5 +46,3 @@ export function StatGroup({ stats, columns }: StatGroupProps) {
     </Grid>
   );
 }
-
-export default StatGroup;

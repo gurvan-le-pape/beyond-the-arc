@@ -57,5 +57,3 @@ export function ScatterHeader() {
     </div>
   );
 }
-
-export default ScatterHeader;

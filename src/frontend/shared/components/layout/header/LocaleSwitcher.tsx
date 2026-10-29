@@ -96,5 +96,3 @@ export function LocaleSwitcher({ variant }: LocaleSwitcherProps) {
     </nav>
   );
 }
-
-export default LocaleSwitcher;

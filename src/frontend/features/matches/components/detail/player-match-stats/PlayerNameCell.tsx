@@ -20,5 +20,3 @@ export function PlayerNameCell({ playerId, playerName }: PlayerNameCellProps) {
     <TableCellLink href={`/players/${playerId}`}>{playerName}</TableCellLink>
   );
 }
-
-export default PlayerNameCell;

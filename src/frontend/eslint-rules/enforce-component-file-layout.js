@@ -10,7 +10,7 @@
  *   function formatX(…) { … }         helpers (camelCase functions)
  *   interface XProps { … }            components, each props interface
  *   export function X(…) { … }        directly above its component
- *   export default X                  trailing exports
+ *   export { Y } from "./y"           trailing exports (re-exports)
  *
  * A `*Props` type with no component of that name in the file is an ordinary
  * type and goes in the types section.

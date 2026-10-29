@@ -75,5 +75,3 @@ export function MatchesByRound({ matches }: MatchesByRoundProps) {
     </Section>
   );
 }
-
-export default MatchesByRound;

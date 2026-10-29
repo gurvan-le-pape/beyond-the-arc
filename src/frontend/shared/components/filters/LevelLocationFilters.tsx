@@ -118,5 +118,3 @@ export function LevelLocationFilters({
     </>
   );
 }
-
-export default LevelLocationFilters;

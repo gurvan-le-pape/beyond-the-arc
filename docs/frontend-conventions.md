@@ -141,6 +141,8 @@ Pages (`app/`) sit above every layer and compose sections from any feature. When
 
 Hooks that return JSX (e.g. table column factories) are `.tsx` but still follow `useX` naming and the placement rules above.
 
+**Named exports only.** A module under `features/` or `shared/` exports `function X` by name and is imported as `{ X }` — never `export default`. One symbol then has one name at every import site, and the barrels (`export *`, which carries no default) publish everything a module exports. `app/` is the exception: Next requires a default export from a page, layout or route boundary. Enforced by a `no-restricted-syntax` selector in `eslint.config.mjs`.
+
 ## File layout
 
 Every `.tsx` module under `features/` and `shared/` lays out its top-level statements in the same order, so a component opened at random reads the same way as any other:
@@ -159,7 +161,7 @@ function toOption(…): ChipOption { … }     // 5. helpers (camelCase function
 interface CategoryChipsProps { … }         // 6. components, each props interface
 export function CategoryChips(…) { … }     //    directly above its component
 
-export default CategoryChips;              // 7. trailing exports
+export { ChipLegend } from "./ChipLegend"; // 7. trailing exports (re-exports)
 ```
 
 Every section is optional. Each one holds what the sections below it use, so a file reads top to bottom from its vocabulary to the component built from it.
@@ -314,7 +316,7 @@ Custom ESLint rules in `src/frontend/eslint-rules/`, wired in `eslint.config.mjs
 | `enforce-component-file-layout` | A `.tsx` module's top-level statements follow the [file layout](#file-layout); each `XProps` sits directly above `X` |
 | `enforce-feature-layers` | A feature imports only from lower [feature layers](#feature-layers); `shared/` imports no feature |
 
-Two upstream rules carry conventions of their own: `@typescript-eslint/consistent-type-definitions` (`interface` over `type`, see [Props](#props)) and the `jsdoc/*` set described under [Docstrings](#docstrings) — `require-jsdoc`, `require-param`, `require-returns`, their `-description` variants, `check-param-names`, `check-tag-names` and `no-types`, all at **error**.
+Three upstream rules carry conventions of their own: `no-restricted-syntax` (no `export default` outside `app/`, see [Naming](#naming)), `@typescript-eslint/consistent-type-definitions` (`interface` over `type`, see [Props](#props)) and the `jsdoc/*` set described under [Docstrings](#docstrings) — `require-jsdoc`, `require-param`, `require-returns`, their `-description` variants, `check-param-names`, `check-tag-names` and `no-types`, all at **error**.
 
 **[Comments](#comments) is review-enforced**, and so is the ban on `@param` tags sitting on a props interface. No rule covers either. Review it by reading each comment against the line beneath it — a review that reads comments as a *list* will pass restatements, because a label only looks redundant next to the thing it labels.
 

@@ -88,5 +88,3 @@ export const ErrorCard = ({
     </Card>
   );
 };
-
-export default ErrorCard;

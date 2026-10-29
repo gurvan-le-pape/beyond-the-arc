@@ -261,5 +261,3 @@ export function Matchup({
     </div>
   );
 }
-
-export default Matchup;

@@ -55,5 +55,3 @@ export function TeamStatsComparison({
     </Section>
   );
 }
-
-export default TeamStatsComparison;

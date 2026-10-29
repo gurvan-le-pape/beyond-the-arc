@@ -27,5 +27,3 @@ export function Baseline({ svgWidth, y }: BaselineProps) {
     />
   );
 }
-
-export default Baseline;

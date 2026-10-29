@@ -28,5 +28,3 @@ export function SidePanelToggleButton({ onOpen }: SidePanelToggleButtonProps) {
     </Button>
   );
 }
-
-export default SidePanelToggleButton;

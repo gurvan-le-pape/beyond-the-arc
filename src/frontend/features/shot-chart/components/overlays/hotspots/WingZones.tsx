@@ -5,7 +5,7 @@ import type { ZoneStats } from "@/features/shot-chart/types";
 import { binShotsByZones, getWingZones } from "@/features/shot-chart/utils";
 import type { ShotEvent } from "@/shared/types";
 
-import RectZone from "./zones/RectZone";
+import { RectZone } from "./zones/RectZone";
 
 interface WingZonesProps {
   readonly shots: ShotEvent[];
@@ -29,7 +29,7 @@ interface WingZonesProps {
  * no shots still renders, at a fainter opacity, so the court's zone map stays
  * whole rather than developing holes.
  */
-function WingZones({
+export function WingZones({
   shots,
   xScale,
   yScale,
@@ -72,5 +72,3 @@ function WingZones({
     </g>
   );
 }
-
-export default WingZones;

@@ -37,6 +37,32 @@ const FEATURE_LAYERS = {
   site: 6,
 };
 
+// One way to put a number on screen: next-intl's formatter, or
+// `createStatFormat` over it for per-game averages and percentages.
+// `toFixed` ignores the locale; `toLocaleString` and `Intl.NumberFormat`
+// bypass the one the request already resolved. See docs/frontend.md.
+//
+// A later `no-restricted-syntax` replaces an earlier one rather than merging,
+// so every file scope that sets the rule spreads these in.
+const LOCALE_FORMAT_RESTRICTIONS = [
+  {
+    selector: "CallExpression[callee.property.name='toFixed']",
+    message:
+      "Format through createStatFormat(useFormatter()).perGame or useFormatter().number — toFixed ignores the locale.",
+  },
+  {
+    selector: "CallExpression[callee.property.name='toLocaleString']",
+    message:
+      "Format through useFormatter()/getFormatter() — it already knows the request's locale.",
+  },
+  {
+    selector:
+      "NewExpression[callee.object.name='Intl'][callee.property.name='NumberFormat']",
+    message:
+      "Format through useFormatter()/getFormatter() — it already knows the request's locale.",
+  },
+];
+
 export default [
   // Config for all TS files
   {
@@ -200,31 +226,28 @@ export default [
       "jsdoc/require-returns-description": "error",
     },
   },
-  // One way to put a number on screen: next-intl's formatter, or
-  // `createStatFormat` over it for per-game averages and percentages.
-  // `toFixed` ignores the locale; `toLocaleString` and `Intl.NumberFormat`
-  // bypass the one the request already resolved. See docs/frontend.md.
+  // Route modules: locale-safe number formatting only.
   {
-    files: ["app/**", "features/**", "shared/**"],
+    files: ["app/**"],
+    ignores: ["**/*.spec.ts", "**/*.test.ts"],
+    rules: {
+      "no-restricted-syntax": ["error", ...LOCALE_FORMAT_RESTRICTIONS],
+    },
+  },
+  // Everywhere else, also named exports only: app/ is exempt because Next
+  // requires a default export from its pages and layouts
+  // (docs/frontend-conventions.md#naming).
+  {
+    files: ["features/**", "shared/**"],
     ignores: ["**/*.spec.ts", "**/*.test.ts"],
     rules: {
       "no-restricted-syntax": [
         "error",
+        ...LOCALE_FORMAT_RESTRICTIONS,
         {
-          selector: "CallExpression[callee.property.name='toFixed']",
+          selector: "ExportDefaultDeclaration",
           message:
-            "Format through createStatFormat(useFormatter()).perGame or useFormatter().number — toFixed ignores the locale.",
-        },
-        {
-          selector: "CallExpression[callee.property.name='toLocaleString']",
-          message:
-            "Format through useFormatter()/getFormatter() — it already knows the request's locale.",
-        },
-        {
-          selector:
-            "NewExpression[callee.object.name='Intl'][callee.property.name='NumberFormat']",
-          message:
-            "Format through useFormatter()/getFormatter() — it already knows the request's locale.",
+            "Export by name only: `export function X`, imported as `{ X }`. See docs/frontend-conventions.md#naming.",
         },
       ],
     },

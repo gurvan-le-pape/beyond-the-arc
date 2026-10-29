@@ -62,5 +62,3 @@ export function ScatterOverlay({ shots, xScale, yScale }: ScatterOverlayProps) {
     </g>
   );
 }
-
-export default ScatterOverlay;

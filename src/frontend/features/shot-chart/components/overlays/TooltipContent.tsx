@@ -27,7 +27,7 @@ interface TooltipContentProps {
  * The hover tooltip for a chart cell or zone, portaled to `document.body` so
  * it escapes the SVG — fixed at the cursor and non-interactive.
  */
-function TooltipContent({ tooltip, shotFilter }: TooltipContentProps) {
+export function TooltipContent({ tooltip, shotFilter }: TooltipContentProps) {
   const t = useTranslations("common");
   const { percent } = createStatFormat(useFormatter());
   const { left, top } = getTooltipPosition(tooltip.x, tooltip.y);
@@ -109,5 +109,3 @@ function TooltipContent({ tooltip, shotFilter }: TooltipContentProps) {
     globalThis.document.body,
   );
 }
-
-export default TooltipContent;

@@ -71,5 +71,3 @@ export function StatValue({
     </div>
   );
 }
-
-export default StatValue;

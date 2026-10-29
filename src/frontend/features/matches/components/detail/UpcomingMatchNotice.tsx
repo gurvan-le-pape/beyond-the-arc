@@ -35,5 +35,3 @@ export function UpcomingMatchNotice({ startsAt }: UpcomingMatchNoticeProps) {
     </Section>
   );
 }
-
-export default UpcomingMatchNotice;

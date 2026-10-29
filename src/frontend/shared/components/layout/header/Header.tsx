@@ -8,10 +8,10 @@ import { usePathname } from "@/navigation";
 import { IconButton } from "@/shared/components/primitives";
 
 import { useMobileMenu } from "../hooks/useMobileMenu";
-import HamburgerButton from "./HamburgerButton";
+import { HamburgerButton } from "./HamburgerButton";
 import { LocaleSwitcher } from "./LocaleSwitcher";
 import { Logo } from "./Logo";
-import NavLinks from "./NavLinks";
+import { NavLinks } from "./NavLinks";
 import { ThemeToggle } from "./ThemeToggle";
 
 /**
@@ -105,5 +105,3 @@ export function Header() {
     </header>
   );
 }
-
-export default Header;

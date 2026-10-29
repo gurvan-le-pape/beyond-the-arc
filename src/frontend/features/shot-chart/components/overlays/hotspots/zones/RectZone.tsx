@@ -3,7 +3,7 @@ import React from "react";
 
 import { COURT_COLOURS, COURT_WIDTH } from "@/features/shot-chart/constants";
 
-import ZoneStatLabel from "../../ZoneStatLabel";
+import { ZoneStatLabel } from "../../ZoneStatLabel";
 
 /** Gap between a sideline and a label pinned to it, in pixels. */
 const LABEL_SIDELINE_INSET = 4;
@@ -91,5 +91,3 @@ export function RectZone({
     </g>
   );
 }
-
-export default RectZone;

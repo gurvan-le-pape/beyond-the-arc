@@ -73,5 +73,3 @@ export function ClubComboBoxFilter({
     />
   );
 }
-
-export default ClubComboBoxFilter;

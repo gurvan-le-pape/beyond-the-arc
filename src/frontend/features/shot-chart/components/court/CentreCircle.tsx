@@ -33,5 +33,3 @@ export function CentreCircle({ centerX, xScale, svgWidth }: CentreCircleProps) {
     />
   );
 }
-
-export default CentreCircle;

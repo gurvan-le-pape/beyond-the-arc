@@ -5,7 +5,7 @@ import type { ZoneStats } from "@/features/shot-chart/types";
 import { binShotsByZones, getPaintZones } from "@/features/shot-chart/utils";
 import type { ShotEvent } from "@/shared/types";
 
-import RectZone from "./zones/RectZone";
+import { RectZone } from "./zones/RectZone";
 
 interface PaintZonesProps {
   readonly shots: ShotEvent[];
@@ -29,7 +29,7 @@ interface PaintZonesProps {
  * no shots still renders, at a fainter opacity, so the court's zone map stays
  * whole rather than developing holes.
  */
-function PaintZones({
+export function PaintZones({
   shots,
   xScale,
   yScale,
@@ -73,5 +73,3 @@ function PaintZones({
     </g>
   );
 }
-
-export default PaintZones;

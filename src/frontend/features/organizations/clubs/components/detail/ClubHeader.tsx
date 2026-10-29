@@ -61,5 +61,3 @@ export function ClubHeader({ club }: ClubHeaderProps) {
     />
   );
 }
-
-export default ClubHeader;

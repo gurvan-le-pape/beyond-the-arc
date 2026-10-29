@@ -28,5 +28,3 @@ export function useTeamMatchHistoryColumns(
     withResult,
   });
 }
-
-export default useTeamMatchHistoryColumns;

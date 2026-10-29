@@ -131,5 +131,3 @@ export function FiltersShell({
     </>
   );
 }
-
-export default FiltersShell;

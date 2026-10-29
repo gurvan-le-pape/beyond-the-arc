@@ -30,5 +30,3 @@ export function PanelEmptyState({ query }: PanelEmptyStateProps) {
     />
   );
 }
-
-export default PanelEmptyState;

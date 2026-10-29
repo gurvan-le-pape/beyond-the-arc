@@ -253,5 +253,3 @@ export function TeamsFilters({ filters, setters, onReset }: TeamsFiltersProps) {
     </FiltersShell>
   );
 }
-
-export default TeamsFilters;

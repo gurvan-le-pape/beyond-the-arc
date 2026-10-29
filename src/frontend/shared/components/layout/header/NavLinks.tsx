@@ -101,5 +101,3 @@ export function NavLinks({
     </nav>
   );
 }
-
-export default NavLinks;
