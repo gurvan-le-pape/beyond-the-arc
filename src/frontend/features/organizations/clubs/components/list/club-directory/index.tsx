@@ -18,15 +18,13 @@ function ClubDirectoryContent() {
   const tCommon = useTranslations("common");
   const tOrganizations = useTranslations("organizations");
 
-  const { filters, setters, setCurrentPage, setPageSize, resetFilters } =
+  const { filters, set, page, pageSize, setPage, setPageSize, reset } =
     useClubsFilterState();
-  const { search, leagueId, committeeId, currentPage, pageSize } = filters;
-
   const { data, error, isLoading, refetch } = useClubs({
-    leagueId,
-    committeeId,
-    search: search || undefined,
-    page: currentPage,
+    leagueId: filters.league,
+    committeeId: filters.committee,
+    search: filters.q,
+    page,
     limit: pageSize,
   });
 
@@ -42,11 +40,7 @@ function ClubDirectoryContent() {
 
   return (
     <div className="space-y-6">
-      <ClubsFilters
-        filters={filters}
-        setters={setters}
-        onReset={resetFilters}
-      />
+      <ClubsFilters filters={filters} set={set} onReset={reset} />
 
       <SearchTabShell
         isLoading={isLoading}
@@ -64,7 +58,7 @@ function ClubDirectoryContent() {
         pagination={pagination}
         pageSize={pageSize}
         onPageSizeChange={setPageSize}
-        onPageChange={(index) => setCurrentPage(index + 1)}
+        onPageChange={(index) => setPage(index + 1)}
         itemLabel={tOrganizations("clubs.itemLabel", {
           count: pagination?.total ?? 0,
         })}

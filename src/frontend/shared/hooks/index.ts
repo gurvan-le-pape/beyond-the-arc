@@ -5,6 +5,7 @@
 
 export * from "./useDebounce";
 export * from "./useDropUnknownValue";
+export * from "./useFilterState";
 export * from "./useModalDialog";
 export * from "./usePaginationState";
 export * from "./useUrlState";

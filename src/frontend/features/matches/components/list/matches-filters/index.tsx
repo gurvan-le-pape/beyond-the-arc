@@ -4,10 +4,7 @@
 import { Calendar } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-import type {
-  MatchesFilterSetters,
-  MatchesFilterState,
-} from "@/features/matches/hooks";
+import type { MatchesFilterValues } from "@/features/matches/hooks";
 import {
   useDropUnknownLocation,
   useLocationOptions,
@@ -27,12 +24,11 @@ import {
 } from "@/shared/components/filters";
 import { DebouncedInput, Input } from "@/shared/components/forms";
 import { Grid } from "@/shared/components/primitives";
+import type { FilterProps } from "@/shared/hooks";
 
 import { useMatchesCascadeOptions } from "./useMatchesCascadeOptions";
 
-interface MatchesFiltersProps {
-  readonly filters: MatchesFilterState;
-  readonly setters: MatchesFilterSetters;
+interface MatchesFiltersProps extends FilterProps<MatchesFilterValues> {
   readonly onReset: () => void;
 }
 
@@ -41,7 +37,7 @@ interface MatchesFiltersProps {
  * the level → committee/league cascade, and the division → pool → matchday
  * cascade.
  *
- * Holds no state: `filters` and `setters` come from `useMatchesFilterState`,
+ * Holds no state: `filters` and `set` come from `useMatchesFilterState`,
  * which owns the cascade clearing and the reset to page 1.
  *
  * **The three-step cascade is gated twice over.** `isLocationSelected` keeps
@@ -57,11 +53,7 @@ interface MatchesFiltersProps {
  * Rendered inside `FiltersShell`, so this subtree exists **twice** in the DOM —
  * mobile sheet and desktop card. Nothing here may rely on a unique `id`.
  */
-export function MatchesFilters({
-  filters,
-  setters,
-  onReset,
-}: MatchesFiltersProps) {
+export function MatchesFilters({ filters, set, onReset }: MatchesFiltersProps) {
   const tMatches = useTranslations("matches");
   const tCompetitions = useTranslations("competitions");
   const tCommon = useTranslations("common");
@@ -81,86 +73,51 @@ export function MatchesFilters({
     retry: retryCascade,
   } = useMatchesCascadeOptions(filters);
 
-  const {
-    search,
-    dateFilter,
-    category,
-    gender,
-    level,
-    committeeId,
-    leagueId,
-    division,
-    poolId,
-    matchday,
-  } = filters;
-  const {
-    setSearch,
-    setDateFilter,
-    setCategory,
-    setGender,
-    setLevel,
-    setCommitteeId,
-    setLeagueId,
-    setDivision,
-    setPoolId,
-    setMatchday,
-  } = setters;
+  const { q, date, level, committee, league, division, pool, matchday } =
+    filters;
 
-  useDropUnknownLocation(locationOptions, {
-    leagueId,
-    setLeagueId,
-    committeeId,
-    setCommitteeId,
-  });
+  useDropUnknownLocation(locationOptions, { filters, set });
 
-  const matchdaysCount = poolId
-    ? (pools.find((p) => String(p.id) === String(poolId))?.nbMatchdays ?? 30)
+  const matchdaysCount = pool
+    ? (pools.find((p) => String(p.id) === String(pool))?.nbMatchdays ?? 30)
     : 30;
 
-  const selectedPool = pools.find((p) => p.id === poolId);
+  const selectedPool = pools.find((p) => p.id === pool);
 
   const { categoryGenderChips, levelLocationChips } = useCommonFilterChips({
-    category,
-    gender,
-    level,
-    committeeId,
-    leagueId,
+    filters,
+    set,
     committees,
     leagues,
-    setCategory,
-    setGender,
-    setLevel,
-    setCommitteeId,
-    setLeagueId,
   });
 
   const chips = [
-    search && {
+    q && {
       key: "search",
-      label: `"${search}"`,
-      onRemove: () => setSearch(""),
+      label: `"${q}"`,
+      onRemove: () => set({ q: undefined }),
     },
-    dateFilter && {
+    date && {
       key: "date",
-      label: dateFilter,
-      onRemove: () => setDateFilter(""),
+      label: date,
+      onRemove: () => set({ date: undefined }),
     },
     ...categoryGenderChips,
     ...levelLocationChips,
     division && {
       key: "division",
       label: tCompetitions("divisionWithValue", { value: division }),
-      onRemove: () => setDivision(undefined),
+      onRemove: () => set({ division: undefined }),
     },
-    poolId && {
+    pool && {
       key: "pool",
-      label: selectedPool?.name ?? String(poolId),
-      onRemove: () => setPoolId(undefined),
+      label: selectedPool?.name ?? String(pool),
+      onRemove: () => set({ pool: undefined }),
     },
     matchday && {
       key: "matchday",
       label: tMatches("matchdayLabel", { matchday }),
-      onRemove: () => setMatchday(undefined),
+      onRemove: () => set({ matchday: undefined }),
     },
   ].filter(Boolean) as ActiveFilterChip[];
 
@@ -169,8 +126,8 @@ export function MatchesFilters({
       id: "division-filter",
       label: tCommon("filters.divisions"),
       value: division ?? "",
-      onChange: (val) => setDivision(Number(val) || undefined),
-      enabled: isLocationSelected(level, committeeId, leagueId),
+      onChange: (val) => set({ division: Number(val) || undefined }),
+      enabled: isLocationSelected(level, committee, league),
       options: divisions.map((div) => ({
         value: div,
         label: tCompetitions("divisionWithValue", { value: div }),
@@ -181,8 +138,8 @@ export function MatchesFilters({
     {
       id: "pool-filter",
       label: tCommon("filters.pools"),
-      value: poolId ?? "",
-      onChange: (val) => setPoolId(Number(val) || undefined),
+      value: pool ?? "",
+      onChange: (val) => set({ pool: Number(val) || undefined }),
       enabled: !!division,
       options: pools.map((p) => ({ value: p.id, label: p.name })),
       allLabel: tCommon("filters.allPools"),
@@ -192,8 +149,8 @@ export function MatchesFilters({
       id: "matchday-filter",
       label: tMatches("matchday"),
       value: matchday ?? "",
-      onChange: (val) => setMatchday(Number(val) || undefined),
-      enabled: !!poolId,
+      onChange: (val) => set({ matchday: Number(val) || undefined }),
+      enabled: !!pool,
       options: Array.from({ length: matchdaysCount }, (_, i) => ({
         value: i + 1,
         label: tMatches("matchdayLabel", { matchday: i + 1 }),
@@ -230,10 +187,10 @@ export function MatchesFilters({
         <DebouncedInput
           variant="search"
           label={tMatches("searchClub")}
-          value={search}
+          value={q ?? ""}
           placeholder={tMatches("searchClubPlaceholder")}
-          onChange={setSearch}
-          onClear={() => setSearch("")}
+          onChange={(value) => set({ q: value })}
+          onClear={() => set({ q: undefined })}
           clearAriaLabel={tCommon("clearSearch")}
         />
 
@@ -241,25 +198,16 @@ export function MatchesFilters({
           id="date-filter"
           type="date"
           label={tMatches("date")}
-          value={dateFilter}
-          onChange={(e) => setDateFilter(e.target.value)}
+          value={date ?? ""}
+          onChange={(e) => set({ date: e.target.value || undefined })}
           leftIcon={<Calendar className="w-5 h-5" />}
         />
 
-        <CategoryGenderSelects
-          category={category}
-          setCategory={setCategory}
-          gender={gender}
-          setGender={setGender}
-        />
+        <CategoryGenderSelects filters={filters} set={set} />
 
         <LevelLocationFilters
-          level={level}
-          setLevel={setLevel}
-          committeeId={committeeId}
-          setCommitteeId={setCommitteeId}
-          leagueId={leagueId}
-          setLeagueId={setLeagueId}
+          filters={filters}
+          set={set}
           committees={committees}
           leagues={leagues}
         />

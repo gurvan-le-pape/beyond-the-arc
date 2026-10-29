@@ -13,8 +13,11 @@ interface ClubComboBoxFilterProps {
   readonly committeeId: number | undefined;
   readonly leagueId: number | undefined;
   readonly clubId: number | undefined;
-  readonly setClubId: (value: number | undefined) => void;
-  readonly setSelectedClubName: (value: string) => void;
+  /** Called with the chosen club's id and name, or with neither when cleared. */
+  readonly onChange: (
+    clubId: number | undefined,
+    clubName: string | undefined,
+  ) => void;
 }
 
 /**
@@ -26,8 +29,7 @@ export function ClubComboBoxFilter({
   committeeId,
   leagueId,
   clubId,
-  setClubId,
-  setSelectedClubName,
+  onChange,
 }: ClubComboBoxFilterProps) {
   const tCommon = useTranslations("common");
 
@@ -61,13 +63,12 @@ export function ClubComboBoxFilter({
       placeholder={tCommon("filters.allClubs")}
       options={clubOptions}
       value={clubId ? String(clubId) : undefined}
-      onChange={(val) => {
-        const parsed = Number(val) || undefined;
-        setClubId(parsed);
-        setSelectedClubName(
-          clubOptions.find((c) => c.value === String(val ?? ""))?.label ?? "",
-        );
-      }}
+      onChange={(val) =>
+        onChange(
+          Number(val) || undefined,
+          clubOptions.find((c) => c.value === String(val ?? ""))?.label,
+        )
+      }
       onSearchChange={setClubSearch}
       isLoading={clubsLoading}
     />

@@ -3,14 +3,16 @@ import { useTranslations } from "next-intl";
 
 import { Select } from "@/shared/components/forms";
 import { CompetitionLevel } from "@/shared/constants";
+import type { FilterProps } from "@/shared/hooks";
 
-interface LevelLocationFiltersProps {
-  readonly level: CompetitionLevel | undefined;
-  readonly setLevel: (value: CompetitionLevel | undefined) => void;
-  readonly committeeId: number | undefined;
-  readonly setCommitteeId: (value: number | undefined) => void;
-  readonly leagueId: number | undefined;
-  readonly setLeagueId: (value: number | undefined) => void;
+/** The competition level and the committee or league it is scoped by. */
+export interface LevelLocationValues {
+  level: CompetitionLevel | undefined;
+  committee: number | undefined;
+  league: number | undefined;
+}
+
+interface LevelLocationFiltersProps extends FilterProps<LevelLocationValues> {
   readonly committees: { id: number; name: string }[];
   readonly leagues: { id: number; name: string }[];
 }
@@ -29,12 +31,8 @@ interface LevelLocationFiltersProps {
  * whatever it is given.
  */
 export function LevelLocationFilters({
-  level,
-  setLevel,
-  committeeId,
-  setCommitteeId,
-  leagueId,
-  setLeagueId,
+  filters: { level, committee, league },
+  set,
   committees,
   leagues,
 }: LevelLocationFiltersProps) {
@@ -77,19 +75,17 @@ export function LevelLocationFilters({
         label={tCommon("filters.levels")}
         options={levelOptions}
         value={level ?? ""}
-        onChange={(val) => {
-          setLevel((val as CompetitionLevel) || undefined);
-          setCommitteeId(undefined);
-          setLeagueId(undefined);
-        }}
+        onChange={(val) =>
+          set({ level: (val as CompetitionLevel) || undefined })
+        }
       />
 
       {showCommittee && (
         <Select
           label={tCommon("filters.committees")}
           options={committeeOptions}
-          value={committeeId ? String(committeeId) : ""}
-          onChange={(val) => setCommitteeId(val ? Number(val) : undefined)}
+          value={committee ? String(committee) : ""}
+          onChange={(val) => set({ committee: val ? Number(val) : undefined })}
         />
       )}
 
@@ -97,8 +93,8 @@ export function LevelLocationFilters({
         <Select
           label={tCommon("filters.leagues")}
           options={leagueOptions}
-          value={leagueId ? String(leagueId) : ""}
-          onChange={(val) => setLeagueId(val ? Number(val) : undefined)}
+          value={league ? String(league) : ""}
+          onChange={(val) => set({ league: val ? Number(val) : undefined })}
         />
       )}
 

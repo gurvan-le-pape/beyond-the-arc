@@ -31,17 +31,17 @@ export function TeamSearchResults() {
   const tCommon = useTranslations("common");
   const tSearch = useTranslations("search");
 
-  const { filters, setters, setCurrentPage, setPageSize, resetFilters } =
+  const { filters, set, page, pageSize, setPage, setPageSize, reset } =
     useTeamsFilterState();
 
   const criteria = {
-    clubId: filters.clubId,
+    clubId: filters.club,
     number: filters.number,
     category: filters.category,
     gender: filters.gender,
     level: filters.level,
-    committeeId: filters.committeeId,
-    leagueId: filters.leagueId,
+    committeeId: filters.committee,
+    leagueId: filters.league,
     division: filters.division,
     poolLetter: filters.pool,
   };
@@ -49,7 +49,7 @@ export function TeamSearchResults() {
   const searching = hasCriteria(criteria);
 
   const { data, error, isLoading, refetch } = useTeams(
-    { ...criteria, page: filters.currentPage, limit: filters.pageSize },
+    { ...criteria, page, limit: pageSize },
     { enabled: searching },
   );
 
@@ -65,11 +65,7 @@ export function TeamSearchResults() {
 
   return (
     <div className="space-y-6">
-      <TeamsFilters
-        filters={filters}
-        setters={setters}
-        onReset={resetFilters}
-      />
+      <TeamsFilters filters={filters} set={set} onReset={reset} />
 
       <SearchTabShell
         isLoading={isLoading}
@@ -93,9 +89,9 @@ export function TeamSearchResults() {
           )
         }
         pagination={pagination}
-        pageSize={filters.pageSize}
+        pageSize={pageSize}
         onPageSizeChange={setPageSize}
-        onPageChange={(index) => setCurrentPage(index + 1)}
+        onPageChange={(index) => setPage(index + 1)}
         itemLabel={tTeams("itemLabel", { count: pagination?.total ?? 0 })}
       >
         <div className={LIST_ENTITY_CARD_GRID}>

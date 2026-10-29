@@ -3,14 +3,13 @@ import { useTranslations } from "next-intl";
 
 import { Select } from "@/shared/components/forms";
 import type { Category, Gender } from "@/shared/constants";
+import type { FilterProps } from "@/shared/hooks";
 
 import { useCategoryGenderOptions } from "./useCategoryGenderOptions";
 
-interface CategoryGenderSelectsProps {
-  readonly category: Category | undefined;
-  readonly setCategory: (value: Category | undefined) => void;
-  readonly gender: Gender | undefined;
-  readonly setGender: (value: Gender | undefined) => void;
+interface CategoryGenderFilters {
+  category: Category | undefined;
+  gender: Gender | undefined;
 }
 
 /**
@@ -33,11 +32,9 @@ interface CategoryGenderSelectsProps {
  * changing anything a user normally sees.
  */
 export function CategoryGenderSelects({
-  category,
-  setCategory,
-  gender,
-  setGender,
-}: CategoryGenderSelectsProps) {
+  filters: { category, gender },
+  set,
+}: FilterProps<CategoryGenderFilters>) {
   const tCommon = useTranslations("common");
   const { categoryOptions, genderOptions } = useCategoryGenderOptions();
 
@@ -47,7 +44,7 @@ export function CategoryGenderSelects({
         label={tCommon("filters.categories")}
         options={categoryOptions}
         value={category ?? ""}
-        onChange={(val) => setCategory((val as Category) || undefined)}
+        onChange={(val) => set({ category: (val as Category) || undefined })}
         placeholder={tCommon("filters.allCategories")}
       />
 
@@ -55,7 +52,7 @@ export function CategoryGenderSelects({
         label={tCommon("filters.genders")}
         options={genderOptions}
         value={gender ?? ""}
-        onChange={(val) => setGender((val as Gender) || undefined)}
+        onChange={(val) => set({ gender: (val as Gender) || undefined })}
         placeholder={tCommon("filters.allGenders")}
       />
     </>
