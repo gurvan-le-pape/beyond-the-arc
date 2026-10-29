@@ -10,12 +10,9 @@ import {
 } from "@/features/organizations/hooks";
 import { useTeamFilterValues } from "@/features/teams/api";
 import { ErrorMessage } from "@/shared/components/feedback";
-import type {
-  ActiveFilterChip,
-  CascadeStep,
-} from "@/shared/components/filters";
+import type { ActiveFilterChip } from "@/shared/components/filters";
 import {
-  CascadeSelects,
+  CascadeSelect,
   CategoryGenderSelects,
   FiltersShell,
   isLocationSelected,
@@ -114,37 +111,8 @@ export function TeamsFilters({ filters, set, onReset }: TeamsFiltersProps) {
   ].filter(Boolean) as ActiveFilterChip[];
 
   const teamNumberOptions = [
-    { value: "", label: tCommon("filters.allTeamNumbers") },
-    ...teamNumbers.map((n) => ({ value: String(n), label: String(n) })),
-  ];
-
-  const cascadeSteps: CascadeStep[] = [
-    {
-      id: "division-filter",
-      label: tCommon("filters.divisions"),
-      value: division ?? "",
-      onChange: (val) => set({ division: Number(val) || undefined }),
-      enabled: isLocationSelected(level, committee, league),
-      options: divisions.map((div) => ({
-        value: div,
-        label: tCompetitions("divisionWithValue", { value: div }),
-      })),
-      allLabel: tMatches("selectDivision"),
-      waitLabel: tFilters("filters.selectLevelFirst"),
-    },
-    {
-      id: "pool-filter",
-      label: tCommon("filters.pools"),
-      value: pool ?? "",
-      onChange: (val) => set({ pool: String(val) || undefined }),
-      enabled: !!division,
-      options: poolLetters.map((letter) => ({
-        value: letter,
-        label: tTeams("poolLabel", { letter }),
-      })),
-      allLabel: tCommon("filters.allPools"),
-      waitLabel: tFilters("filters.selectDivisionFirst"),
-    },
+    { value: undefined, label: tCommon("filters.allTeamNumbers") },
+    ...teamNumbers.map((n) => ({ value: n, label: String(n) })),
   ];
 
   return (
@@ -181,8 +149,8 @@ export function TeamsFilters({ filters, set, onReset }: TeamsFiltersProps) {
         <Select
           label={tCommon("filters.teamNumbers")}
           options={teamNumberOptions}
-          value={number ?? ""}
-          onChange={(val) => set({ number: Number(val) || undefined })}
+          value={number}
+          onChange={(number) => set({ number })}
         />
 
         <CategoryGenderSelects filters={filters} set={set} />
@@ -194,8 +162,30 @@ export function TeamsFilters({ filters, set, onReset }: TeamsFiltersProps) {
           leagues={leagues}
         />
 
-        {/* Division → Pool */}
-        <CascadeSelects steps={cascadeSteps} />
+        <CascadeSelect
+          label={tCommon("filters.divisions")}
+          value={division}
+          onChange={(division) => set({ division })}
+          enabled={isLocationSelected(level, committee, league)}
+          options={divisions.map((div) => ({
+            value: div,
+            label: tCompetitions("divisionWithValue", { value: div }),
+          }))}
+          allLabel={tMatches("selectDivision")}
+          waitLabel={tFilters("filters.selectLevelFirst")}
+        />
+        <CascadeSelect
+          label={tCommon("filters.pools")}
+          value={pool}
+          onChange={(pool) => set({ pool })}
+          enabled={!!division}
+          options={poolLetters.map((letter) => ({
+            value: letter,
+            label: tTeams("poolLabel", { letter }),
+          }))}
+          allLabel={tCommon("filters.allPools")}
+          waitLabel={tFilters("filters.selectDivisionFirst")}
+        />
       </Grid>
     </FiltersShell>
   );

@@ -44,7 +44,7 @@ export function LevelLocationFilters({
   const showLocation = showCommittee || showLeague;
 
   const levelOptions = [
-    { value: "", label: tCommon("filters.allLevels") },
+    { value: undefined, label: tCommon("filters.allLevels") },
     {
       value: CompetitionLevel.DEPARTMENTAL,
       label: tCommon("competition.levels.departmental"),
@@ -60,13 +60,13 @@ export function LevelLocationFilters({
   ];
 
   const committeeOptions = [
-    { value: "", label: tCommon("filters.allCommittees") },
-    ...committees.map((c) => ({ value: String(c.id), label: c.name })),
+    { value: undefined, label: tCommon("filters.allCommittees") },
+    ...committees.map((c) => ({ value: c.id, label: c.name })),
   ];
 
   const leagueOptions = [
-    { value: "", label: tCommon("filters.allLeagues") },
-    ...leagues.map((l) => ({ value: String(l.id), label: l.name })),
+    { value: undefined, label: tCommon("filters.allLeagues") },
+    ...leagues.map((l) => ({ value: l.id, label: l.name })),
   ];
 
   return (
@@ -74,18 +74,16 @@ export function LevelLocationFilters({
       <Select
         label={tCommon("filters.levels")}
         options={levelOptions}
-        value={level ?? ""}
-        onChange={(val) =>
-          set({ level: (val as CompetitionLevel) || undefined })
-        }
+        value={level}
+        onChange={(level) => set({ level })}
       />
 
       {showCommittee && (
         <Select
           label={tCommon("filters.committees")}
           options={committeeOptions}
-          value={committee ? String(committee) : ""}
-          onChange={(val) => set({ committee: val ? Number(val) : undefined })}
+          value={committee}
+          onChange={(committee) => set({ committee })}
         />
       )}
 
@@ -93,8 +91,8 @@ export function LevelLocationFilters({
         <Select
           label={tCommon("filters.leagues")}
           options={leagueOptions}
-          value={league ? String(league) : ""}
-          onChange={(val) => set({ league: val ? Number(val) : undefined })}
+          value={league}
+          onChange={(league) => set({ league })}
         />
       )}
 
@@ -103,9 +101,9 @@ export function LevelLocationFilters({
           <Select
             label={tFilters("filters.committeeOrLeague")}
             options={[
-              { value: "", label: tFilters("filters.selectLevelFirst") },
+              { value: undefined, label: tFilters("filters.selectLevelFirst") },
             ]}
-            value=""
+            value={undefined}
             onChange={() => {}}
             disabled
           />

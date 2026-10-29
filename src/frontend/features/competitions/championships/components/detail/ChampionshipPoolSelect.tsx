@@ -31,9 +31,10 @@ export function ChampionshipPoolSelect({
   const searchParams = useSearchParams();
   const tTeams = useTranslations("teams");
 
-  const handlePoolChange = (val: string | number | undefined) => {
+  const handlePoolChange = (poolId: number | undefined) => {
+    if (poolId === undefined) return;
     const next = new URLSearchParams(searchParams.toString());
-    next.set("pool", String(Number(val)));
+    next.set("pool", String(poolId));
     router.replace(`${pathname}?${next.toString()}`, { scroll: false });
   };
 

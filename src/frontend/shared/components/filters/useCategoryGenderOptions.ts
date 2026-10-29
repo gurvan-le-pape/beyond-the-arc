@@ -14,7 +14,7 @@ export function useCategoryGenderOptions() {
   const tCommon = useTranslations("common");
 
   const categoryOptions = [
-    { value: "", label: tCommon("filters.allCategories") },
+    { value: undefined, label: tCommon("filters.allCategories") },
     ...CATEGORY_LIST.map((cat) => ({
       value: cat,
       label: tCommon(`category.${cat}`),
@@ -22,7 +22,7 @@ export function useCategoryGenderOptions() {
   ];
 
   const genderOptions = [
-    { value: "", label: tCommon("filters.allGenders") },
+    { value: undefined, label: tCommon("filters.allGenders") },
     ...GENDER_LIST.map((g) => ({
       value: g,
       label: tCommon(`gender.${g}`),

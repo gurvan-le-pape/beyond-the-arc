@@ -18,17 +18,24 @@ import { DROPDOWN_TRIGGER_BASE } from "./dropdownTriggerBase";
 import { Popover } from "./Popover";
 import { SelectChevron } from "./SelectChevron";
 
-export interface ComboBoxOption {
-  value: string | number;
+/** A picker's value: an id, a code, or an enum member. */
+export type OptionValue = string | number;
+
+/**
+ * One choice in a picker. `value: undefined` is the "all"/"none" choice, which
+ * is selected while the picker's own value is `undefined`.
+ */
+export interface ComboBoxOption<V extends OptionValue = OptionValue> {
+  value: V | undefined;
   label: string;
 }
 
-function getFilteredOptions(
-  options: ComboBoxOption[],
+function getFilteredOptions<V extends OptionValue>(
+  options: ComboBoxOption<V>[],
   search: string,
   searchable: boolean,
   onSearchChange: ((value: string) => void) | undefined,
-): ComboBoxOption[] {
+): ComboBoxOption<V>[] {
   if (!searchable || onSearchChange) return options;
   if (search)
     return options.filter((opt) =>
@@ -37,23 +44,10 @@ function getFilteredOptions(
   return options;
 }
 
-/**
- * Whether `option` is the selected one. Compared as strings, as a native
- * `<select>` does: callers hold ids as numbers while building options from
- * `String(id)`, and a strict comparison then never matches, leaving the trigger
- * on its placeholder and no option selected.
- */
-function isSelected(
-  option: ComboBoxOption,
-  value: string | number | undefined,
-) {
-  return value !== undefined && String(option.value) === String(value);
-}
-
-export interface ComboBoxProps {
-  readonly options?: ComboBoxOption[];
-  readonly value: string | number | undefined;
-  readonly onChange: (value: string | number | undefined) => void;
+export interface ComboBoxProps<V extends OptionValue = OptionValue> {
+  readonly options?: ComboBoxOption<NoInfer<V>>[];
+  readonly value: V | undefined;
+  readonly onChange: (value: V | undefined) => void;
   readonly label?: string;
   /**
    * Keep the label for screen readers but hide it visually, for a picker whose
@@ -61,10 +55,10 @@ export interface ComboBoxProps {
    */
   readonly hideLabel?: boolean;
   /**
-   * Shown when no option matches `value` — while the options load, or for a
-   * value that is not among them. Without one the trigger is blank, as a
-   * native `<select>` is; there is no generic default, because no wording
-   * fits every picker.
+   * Shown when no option matches `value` — while the options load, for a value
+   * that is not among them, or for `undefined` when no option stands for it.
+   * Without one the trigger is blank, as a native `<select>` is; there is no
+   * generic default, because no wording fits every picker.
    */
   readonly placeholder?: string;
   readonly disabled?: boolean;
@@ -103,7 +97,7 @@ export interface ComboBoxProps {
  * // Not searchable — short static lists (used internally by Select)
  * <ComboBox searchable={false} options={categoryOptions} value={category} onChange={setCategory} />
  */
-export function ComboBox({
+export function ComboBox<V extends OptionValue>({
   options = [],
   value,
   onChange,
@@ -118,7 +112,7 @@ export function ComboBox({
   isLoading = false,
   error,
   helperText,
-}: ComboBoxProps) {
+}: ComboBoxProps<V>) {
   const t = useTranslations("common");
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
@@ -177,12 +171,11 @@ export function ComboBox({
     }
   }, [activeDescendant]);
 
-  const selectedOption = options.find((opt) => isSelected(opt, value));
+  const isSelected = (option: ComboBoxOption<V>) => option.value === value;
+  const selectedOption = options.find(isSelected);
 
   const openList = () => {
-    const selectedIndex = filteredOptions.findIndex((opt) =>
-      isSelected(opt, value),
-    );
+    const selectedIndex = filteredOptions.findIndex(isSelected);
     setActiveIndex(Math.max(selectedIndex, 0));
     setOpen(true);
   };
@@ -193,7 +186,7 @@ export function ComboBox({
     if (returnFocus) triggerRef.current?.focus();
   };
 
-  const pick = (opt: ComboBoxOption) => {
+  const pick = (opt: ComboBoxOption<V>) => {
     onChange(opt.value);
     close(true);
   };
@@ -274,13 +267,13 @@ export function ComboBox({
       // an option only takes the pointer.
       // eslint-disable-next-line jsx-a11y/click-events-have-key-events
       <li
-        key={opt.value}
+        key={opt.value ?? ""}
         id={optionId(index)}
         role="option"
-        aria-selected={isSelected(opt, value)}
+        aria-selected={isSelected(opt)}
         className={cn(
           "cursor-pointer px-4 py-2 text-sm transition-colors duration-150",
-          isSelected(opt, value)
+          isSelected(opt)
             ? "bg-tint-primary font-semibold text-ink-primary border-l-2 border-solid-primary"
             : "text-text-heading",
           index === activeIndex && "bg-tint-primary text-ink-primary",

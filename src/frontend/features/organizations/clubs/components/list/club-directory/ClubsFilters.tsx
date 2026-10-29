@@ -45,19 +45,13 @@ export function ClubsFilters({ filters, set, onReset }: ClubsFiltersProps) {
   useDropUnknownLocation(locationOptions, { filters, set });
 
   const leagueOptions = [
-    { value: "", label: tCommon("filters.allLeagues") },
-    ...leagues.map((league) => ({
-      value: String(league.id),
-      label: league.name,
-    })),
+    { value: undefined, label: tCommon("filters.allLeagues") },
+    ...leagues.map((option) => ({ value: option.id, label: option.name })),
   ];
 
   const committeeOptions = [
-    { value: "", label: tCommon("filters.allCommittees") },
-    ...committees.map((committee) => ({
-      value: String(committee.id),
-      label: committee.name,
-    })),
+    { value: undefined, label: tCommon("filters.allCommittees") },
+    ...committees.map((option) => ({ value: option.id, label: option.name })),
   ];
 
   const selectedLeague = leagues.find((option) => option.id === league);
@@ -111,8 +105,8 @@ export function ClubsFilters({ filters, set, onReset }: ClubsFiltersProps) {
         <Select
           label={tCommon("filters.leagues")}
           options={leagueOptions}
-          value={league ?? ""}
-          onChange={(val) => set({ league: Number(val) || undefined })}
+          value={league}
+          onChange={(league) => set({ league })}
         />
 
         {/* Committees are only meaningful once a league scopes them. */}
@@ -120,8 +114,8 @@ export function ClubsFilters({ filters, set, onReset }: ClubsFiltersProps) {
           <Select
             label={tCommon("filters.committees")}
             options={committeeOptions}
-            value={committee ?? ""}
-            onChange={(val) => set({ committee: Number(val) || undefined })}
+            value={committee}
+            onChange={(committee) => set({ committee })}
           />
         )}
       </Grid>

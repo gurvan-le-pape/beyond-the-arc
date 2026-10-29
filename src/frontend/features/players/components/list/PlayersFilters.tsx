@@ -104,13 +104,13 @@ export function PlayersFilters({ filters, set, onReset }: PlayersFiltersProps) {
   ].filter(Boolean) as ActiveFilterChip[];
 
   const playerNumberOptions = [
-    { value: "", label: tCommon("filters.allPlayerNumbers") },
-    ...playerNumbers.map((n) => ({ value: String(n), label: String(n) })),
+    { value: undefined, label: tCommon("filters.allPlayerNumbers") },
+    ...playerNumbers.map((n) => ({ value: n, label: String(n) })),
   ];
 
   const teamNumberOptions = [
-    { value: "", label: tCommon("filters.allTeamNumbers") },
-    ...teamNumbers.map((n) => ({ value: String(n), label: String(n) })),
+    { value: undefined, label: tCommon("filters.allTeamNumbers") },
+    ...teamNumbers.map((n) => ({ value: n, label: String(n) })),
   ];
 
   return (
@@ -158,15 +158,15 @@ export function PlayersFilters({ filters, set, onReset }: PlayersFiltersProps) {
         <Select
           label={tCommon("filters.playerNumbers")}
           options={playerNumberOptions}
-          value={number ?? ""}
-          onChange={(val) => set({ number: Number(val) || undefined })}
+          value={number}
+          onChange={(number) => set({ number })}
           placeholder={tCommon("filters.allPlayerNumbers")}
         />
         <Select
           label={tCommon("filters.teamNumbers")}
           options={teamNumberOptions}
-          value={teamNumber ?? ""}
-          onChange={(val) => set({ teamNumber: Number(val) || undefined })}
+          value={teamNumber}
+          onChange={(teamNumber) => set({ teamNumber })}
           placeholder={tCommon("filters.allTeamNumbers")}
         />
 

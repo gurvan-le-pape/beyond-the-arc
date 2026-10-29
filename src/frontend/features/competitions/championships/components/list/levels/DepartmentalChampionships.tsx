@@ -41,7 +41,7 @@ export function DepartmentalChampionships() {
 
   const { data, error, isLoading, refetch } = useChampionships({
     level: CompetitionLevel.DEPARTMENTAL,
-    committeeId: Number(filters.committeeId) || undefined,
+    committeeId: filters.committeeId,
     category: filters.category,
     gender: filters.gender,
     page: filters.currentPage,
