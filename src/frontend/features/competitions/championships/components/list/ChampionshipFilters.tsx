@@ -2,10 +2,12 @@
 import { useTranslations } from "next-intl";
 
 import { ErrorMessage } from "@/shared/components/feedback";
-import { FiltersShell } from "@/shared/components/filters";
+import {
+  FiltersShell,
+  useCategoryGenderOptions,
+} from "@/shared/components/filters";
 import { Select } from "@/shared/components/forms";
 import type { Category, Gender } from "@/shared/constants";
-import { CATEGORY_LIST, GENDER_LIST } from "@/shared/constants";
 import { cn } from "@/shared/utils";
 
 /**
@@ -17,9 +19,9 @@ export interface ChampionshipScope {
   label: string;
   /** "All" option label, e.g. "All leagues". */
   allLabel: string;
-  /** Currently selected id as a string; "" means none. */
-  value: string;
-  onChange: (value: string) => void;
+  /** The selected id; `undefined` means all. */
+  value: number | undefined;
+  onChange: (value: number | undefined) => void;
   options: { id: number; name: string }[];
 }
 
@@ -65,16 +67,15 @@ export function ChampionshipFilters({
   onScopeRetry,
 }: ChampionshipFiltersProps) {
   const tCommon = useTranslations("common");
+  const { categoryOptions, genderOptions } = useCategoryGenderOptions();
 
-  const scopeName = scope?.options.find(
-    (o) => String(o.id) === scope.value,
-  )?.name;
+  const scopeName = scope?.options.find((o) => o.id === scope.value)?.name;
 
   const chips = [
     scopeName && {
       key: "scope",
       label: scopeName,
-      onRemove: () => scope?.onChange(""),
+      onRemove: () => scope?.onChange(undefined),
     },
     category && {
       key: "category",
@@ -92,10 +93,10 @@ export function ChampionshipFilters({
     <Select
       label={scope.label}
       value={scope.value}
-      onChange={(val) => scope.onChange(String(val ?? ""))}
+      onChange={scope.onChange}
       options={[
-        { value: "", label: scope.allLabel },
-        ...scope.options.map((o) => ({ value: String(o.id), label: o.name })),
+        { value: undefined, label: scope.allLabel },
+        ...scope.options.map((o) => ({ value: o.id, label: o.name })),
       ]}
     />
   );
@@ -103,30 +104,18 @@ export function ChampionshipFilters({
   const categorySelect = (
     <Select
       label={tCommon("filters.categories")}
-      value={category ?? ""}
-      onChange={(val) => onCategoryChange((val as Category) || undefined)}
-      options={[
-        { value: "", label: tCommon("filters.allCategories") },
-        ...CATEGORY_LIST.map((cat) => ({
-          value: cat,
-          label: tCommon(`category.${cat}`),
-        })),
-      ]}
+      value={category}
+      onChange={onCategoryChange}
+      options={categoryOptions}
     />
   );
 
   const genderSelect = (
     <Select
       label={tCommon("filters.genders")}
-      value={gender ?? ""}
-      onChange={(val) => onGenderChange((val as Gender) || undefined)}
-      options={[
-        { value: "", label: tCommon("filters.allGenders") },
-        ...GENDER_LIST.map((g) => ({
-          value: g,
-          label: tCommon(`gender.${g}`),
-        })),
-      ]}
+      value={gender}
+      onChange={onGenderChange}
+      options={genderOptions}
     />
   );
 

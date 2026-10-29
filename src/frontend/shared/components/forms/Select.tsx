@@ -19,13 +19,16 @@
 //   placeholder="All categories"
 // />
 
-import type { ComboBoxOption } from "@/shared/components/primitives";
+import type {
+  ComboBoxOption,
+  OptionValue,
+} from "@/shared/components/primitives";
 import { ComboBox } from "@/shared/components/primitives";
 
-export interface SelectProps {
-  readonly options: ComboBoxOption[];
-  readonly value: string | number | undefined;
-  readonly onChange: (value: string | number | undefined) => void;
+export interface SelectProps<V extends OptionValue = OptionValue> {
+  readonly options: ComboBoxOption<NoInfer<V>>[];
+  readonly value: V | undefined;
+  readonly onChange: (value: V | undefined) => void;
   readonly label?: string;
   /** See `ComboBox`'s `hideLabel`. */
   readonly hideLabel?: boolean;
@@ -43,6 +46,6 @@ export interface SelectProps {
  * Identical visually to ComboBox but without the search input.
  * Both open with the same custom popover — fully consistent UI.
  */
-export function Select(props: SelectProps) {
+export function Select<V extends OptionValue>(props: SelectProps<V>) {
   return <ComboBox {...props} searchable={false} />;
 }

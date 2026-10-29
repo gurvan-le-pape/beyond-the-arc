@@ -42,7 +42,7 @@ export function ClubComboBoxFilter({
     refetch: retryClubSearch,
   } = useClubSearch(debouncedClubSearch, { committeeId, leagueId });
   const clubOptions = (clubData?.items ?? []).map((c) => ({
-    value: String(c.id),
+    value: c.id,
     label: c.name,
   }));
 
@@ -62,12 +62,9 @@ export function ClubComboBoxFilter({
       label={tCommon("filters.clubs")}
       placeholder={tCommon("filters.allClubs")}
       options={clubOptions}
-      value={clubId ? String(clubId) : undefined}
-      onChange={(val) =>
-        onChange(
-          Number(val) || undefined,
-          clubOptions.find((c) => c.value === String(val ?? ""))?.label,
-        )
+      value={clubId}
+      onChange={(id) =>
+        onChange(id, clubOptions.find((c) => c.value === id)?.label)
       }
       onSearchChange={setClubSearch}
       isLoading={clubsLoading}

@@ -4,7 +4,7 @@
  */
 
 export * from "./ActiveFilterChips";
-export * from "./CascadeSelects";
+export * from "./CascadeSelect";
 export * from "./CategoryGenderSelects";
 export * from "./FiltersShell";
 export * from "./isLocationSelected";

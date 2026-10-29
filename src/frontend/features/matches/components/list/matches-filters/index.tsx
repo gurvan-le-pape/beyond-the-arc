@@ -10,12 +10,9 @@ import {
   useLocationOptions,
 } from "@/features/organizations/hooks";
 import { ErrorMessage } from "@/shared/components/feedback";
-import type {
-  ActiveFilterChip,
-  CascadeStep,
-} from "@/shared/components/filters";
+import type { ActiveFilterChip } from "@/shared/components/filters";
 import {
-  CascadeSelects,
+  CascadeSelect,
   CategoryGenderSelects,
   FiltersShell,
   isLocationSelected,
@@ -78,11 +75,8 @@ export function MatchesFilters({ filters, set, onReset }: MatchesFiltersProps) {
 
   useDropUnknownLocation(locationOptions, { filters, set });
 
-  const matchdaysCount = pool
-    ? (pools.find((p) => String(p.id) === String(pool))?.nbMatchdays ?? 30)
-    : 30;
-
   const selectedPool = pools.find((p) => p.id === pool);
+  const matchdaysCount = selectedPool?.nbMatchdays ?? 30;
 
   const { categoryGenderChips, levelLocationChips } = useCommonFilterChips({
     filters,
@@ -120,45 +114,6 @@ export function MatchesFilters({ filters, set, onReset }: MatchesFiltersProps) {
       onRemove: () => set({ matchday: undefined }),
     },
   ].filter(Boolean) as ActiveFilterChip[];
-
-  const cascadeSteps: CascadeStep[] = [
-    {
-      id: "division-filter",
-      label: tCommon("filters.divisions"),
-      value: division ?? "",
-      onChange: (val) => set({ division: Number(val) || undefined }),
-      enabled: isLocationSelected(level, committee, league),
-      options: divisions.map((div) => ({
-        value: div,
-        label: tCompetitions("divisionWithValue", { value: div }),
-      })),
-      allLabel: tMatches("selectDivision"),
-      waitLabel: tFilters("filters.selectLevelFirst"),
-    },
-    {
-      id: "pool-filter",
-      label: tCommon("filters.pools"),
-      value: pool ?? "",
-      onChange: (val) => set({ pool: Number(val) || undefined }),
-      enabled: !!division,
-      options: pools.map((p) => ({ value: p.id, label: p.name })),
-      allLabel: tCommon("filters.allPools"),
-      waitLabel: tFilters("filters.selectDivisionFirst"),
-    },
-    {
-      id: "matchday-filter",
-      label: tMatches("matchday"),
-      value: matchday ?? "",
-      onChange: (val) => set({ matchday: Number(val) || undefined }),
-      enabled: !!pool,
-      options: Array.from({ length: matchdaysCount }, (_, i) => ({
-        value: i + 1,
-        label: tMatches("matchdayLabel", { matchday: i + 1 }),
-      })),
-      allLabel: tMatches("allMatchdays"),
-      waitLabel: tFilters("filters.selectPoolFirst"),
-    },
-  ];
 
   return (
     <FiltersShell
@@ -212,8 +167,39 @@ export function MatchesFilters({ filters, set, onReset }: MatchesFiltersProps) {
           leagues={leagues}
         />
 
-        {/* Division → Pool → Matchday */}
-        <CascadeSelects steps={cascadeSteps} />
+        <CascadeSelect
+          label={tCommon("filters.divisions")}
+          value={division}
+          onChange={(division) => set({ division })}
+          enabled={isLocationSelected(level, committee, league)}
+          options={divisions.map((div) => ({
+            value: div,
+            label: tCompetitions("divisionWithValue", { value: div }),
+          }))}
+          allLabel={tMatches("selectDivision")}
+          waitLabel={tFilters("filters.selectLevelFirst")}
+        />
+        <CascadeSelect
+          label={tCommon("filters.pools")}
+          value={pool}
+          onChange={(pool) => set({ pool })}
+          enabled={!!division}
+          options={pools.map((p) => ({ value: p.id, label: p.name }))}
+          allLabel={tCommon("filters.allPools")}
+          waitLabel={tFilters("filters.selectDivisionFirst")}
+        />
+        <CascadeSelect
+          label={tMatches("matchday")}
+          value={matchday}
+          onChange={(matchday) => set({ matchday })}
+          enabled={!!pool}
+          options={Array.from({ length: matchdaysCount }, (_, i) => ({
+            value: i + 1,
+            label: tMatches("matchdayLabel", { matchday: i + 1 }),
+          }))}
+          allLabel={tMatches("allMatchdays")}
+          waitLabel={tFilters("filters.selectPoolFirst")}
+        />
       </Grid>
     </FiltersShell>
   );

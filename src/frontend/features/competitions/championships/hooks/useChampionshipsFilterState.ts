@@ -63,7 +63,7 @@ export function useNationalFilterState() {
  */
 export function useRegionalFilterState() {
   const { filters, setters } = useSharedFilterState();
-  const [leagueId, setLeagueId] = useState("");
+  const [leagueId, setLeagueId] = useState<number>();
 
   // Depend on the setter itself, not on `setters` — that object is a fresh
   // literal every render, so depending on it would reset the page on every
@@ -75,7 +75,7 @@ export function useRegionalFilterState() {
   }, [leagueId, setCurrentPage]);
 
   const resetFilters = () => {
-    setLeagueId("");
+    setLeagueId(undefined);
     setters.setCategory(undefined);
     setters.setGender(undefined);
   };
@@ -100,7 +100,7 @@ export function useRegionalFilterState() {
  */
 export function useDepartmentalFilterState() {
   const { filters, setters } = useSharedFilterState();
-  const [committeeId, setCommitteeId] = useState("");
+  const [committeeId, setCommitteeId] = useState<number>();
 
   // See useRegionalFilterState: depend on the stable setter, not on `setters`.
   const { setCurrentPage } = setters;
@@ -109,7 +109,7 @@ export function useDepartmentalFilterState() {
   }, [committeeId, setCurrentPage]);
 
   const resetFilters = () => {
-    setCommitteeId("");
+    setCommitteeId(undefined);
     setters.setCategory(undefined);
     setters.setGender(undefined);
   };

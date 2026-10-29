@@ -41,7 +41,7 @@ export function RegionalChampionships() {
 
   const { data, error, isLoading, refetch } = useChampionships({
     level: CompetitionLevel.REGIONAL,
-    leagueId: Number(filters.leagueId) || undefined,
+    leagueId: filters.leagueId,
     category: filters.category,
     gender: filters.gender,
     page: filters.currentPage,

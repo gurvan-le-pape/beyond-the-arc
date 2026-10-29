@@ -19,9 +19,6 @@ import { CompetitionLevel } from "@/shared/constants";
  * matchdays** — several championships in one scope can share a letter, and the
  * longest is taken as representative.
  *
- * Division matching compares stringified values, because the selected division
- * and the championship's own can arrive as different primitive types.
- *
  * @param filters - the level, location and division currently selected
  * @returns championships, divisions, pools, and the error/retry pair
  */
@@ -58,7 +55,7 @@ export function useMatchesCascadeOptions({
   ).sort((a, b) => a - b);
 
   const poolsByLetter = championships
-    .filter((c) => String(c.division) === String(division))
+    .filter((c) => c.division === division)
     .flatMap((c) => c.pools)
     .reduce<
       Map<
