@@ -6,12 +6,6 @@ import { computeQuarterScores } from "@/features/matches/utils";
 import { DataTable, type TableColumn } from "@/shared/components/table";
 import { formatTeamName } from "@/shared/utils";
 
-interface QuarterScoresTableProps {
-  readonly match: Match;
-  readonly matchEvents: MatchEvent[];
-  readonly isLoadingEvents: boolean;
-}
-
 /** One team's line in the quarter-by-quarter box score. */
 interface TeamScoreRow {
   side: "home" | "away";
@@ -23,6 +17,12 @@ interface TeamScoreRow {
 
 /** Regulation quarters, plus overtime when the match went to OT. */
 const REGULATION_QUARTERS = [0, 1, 2, 3];
+
+interface QuarterScoresTableProps {
+  readonly match: Match;
+  readonly matchEvents: MatchEvent[];
+  readonly isLoadingEvents: boolean;
+}
 
 /**
  * The per-quarter score table for one fixture.

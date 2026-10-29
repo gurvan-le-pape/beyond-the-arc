@@ -15,6 +15,7 @@ import noMixedTypeFile from "./eslint-rules/no-mixed-type-file.js";
 import noTranslatorProp from "./eslint-rules/no-translator-prop.js";
 import enforceNamedProps from "./eslint-rules/enforce-named-props.js";
 import featureLayers from "./eslint-rules/enforce-feature-layers.js";
+import componentFileLayout from "./eslint-rules/enforce-component-file-layout.js";
 
 // Migration ratchet for docs/frontend-conventions.md: features not yet
 // restructured to the component conventions. Each migration PR restructures
@@ -67,6 +68,7 @@ export default [
           "no-translator-prop": noTranslatorProp,
           "enforce-named-props": enforceNamedProps,
           "enforce-feature-layers": featureLayers,
+          "enforce-component-file-layout": componentFileLayout,
         },
       },
     },
@@ -225,6 +227,14 @@ export default [
             "Format through useFormatter()/getFormatter() — it already knows the request's locale.",
         },
       ],
+    },
+  },
+  // Route modules under app/ are shaped by Next's segment exports
+  // (`revalidate`, `generateMetadata`), not by the component layout.
+  {
+    files: ["features/**/*.tsx", "shared/**/*.tsx"],
+    rules: {
+      "local-rules/enforce-component-file-layout": "error",
     },
   },
   // Migration ratchet: legacy features keep the old structure until their

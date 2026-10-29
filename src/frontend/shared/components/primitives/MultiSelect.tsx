@@ -34,6 +34,48 @@ export interface MultiSelectItem {
   onToggle: () => void;
 }
 
+interface ColumnListProps {
+  readonly column: MultiSelectColumn;
+}
+
+function ColumnList({ column }: ColumnListProps) {
+  const titleId = useId();
+
+  return (
+    <div className="min-w-0">
+      <Text variant="label" as="h4" id={titleId} className="mb-2">
+        {column.title}
+      </Text>
+
+      <div
+        role="group"
+        aria-labelledby={titleId}
+        className="space-y-1 max-h-64 overflow-y-auto scrollbar-hide"
+      >
+        {column.items.map((item) => (
+          <label
+            key={item.id}
+            className={cn(
+              "flex items-center gap-2 text-sm p-1 rounded transition-colors duration-150 cursor-pointer",
+              "hover:bg-surface-subtle",
+            )}
+          >
+            <input
+              type="checkbox"
+              checked={item.checked}
+              onChange={item.onToggle}
+              className="w-4 h-4 text-solid-primary rounded focus-ring"
+            />
+            <Text variant="label" as="span">
+              {item.label}
+            </Text>
+          </label>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export interface MultiSelectProps {
   /** Label shown in the trigger button. */
   readonly label: string;
@@ -222,52 +264,6 @@ export function MultiSelect({
           )}
         </div>
       </Popover>
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Internal — column of labelled checkboxes
-// ---------------------------------------------------------------------------
-
-interface ColumnListProps {
-  readonly column: MultiSelectColumn;
-}
-
-function ColumnList({ column }: ColumnListProps) {
-  const titleId = useId();
-
-  return (
-    <div className="min-w-0">
-      <Text variant="label" as="h4" id={titleId} className="mb-2">
-        {column.title}
-      </Text>
-
-      <div
-        role="group"
-        aria-labelledby={titleId}
-        className="space-y-1 max-h-64 overflow-y-auto scrollbar-hide"
-      >
-        {column.items.map((item) => (
-          <label
-            key={item.id}
-            className={cn(
-              "flex items-center gap-2 text-sm p-1 rounded transition-colors duration-150 cursor-pointer",
-              "hover:bg-surface-subtle",
-            )}
-          >
-            <input
-              type="checkbox"
-              checked={item.checked}
-              onChange={item.onToggle}
-              className="w-4 h-4 text-solid-primary rounded focus-ring"
-            />
-            <Text variant="label" as="span">
-              {item.label}
-            </Text>
-          </label>
-        ))}
-      </div>
     </div>
   );
 }

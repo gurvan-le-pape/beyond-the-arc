@@ -22,16 +22,16 @@ import HotspotsOverlay from "../overlays/HotspotsOverlay";
 import ScatterOverlay from "../overlays/ScatterOverlay";
 import { useCourtSize } from "./useCourtSize";
 
-interface ShotChartProps {
-  readonly shots: ShotEvent[];
-  readonly chartType?: ChartType;
-}
-
 // Derived from actual FIBA constants — not hardcoded magic numbers
 const ASPECT = COURT_WIDTH / HALF_COURT_HEIGHT;
 
 // Minimum width below which the chart becomes unusable on mobile
 const MIN_CHART_WIDTH = 320;
+
+interface ShotChartProps {
+  readonly shots: ShotEvent[];
+  readonly chartType?: ChartType;
+}
 
 /**
  * The shot chart for a set of plotted shots, in the variant `chartType` picks.

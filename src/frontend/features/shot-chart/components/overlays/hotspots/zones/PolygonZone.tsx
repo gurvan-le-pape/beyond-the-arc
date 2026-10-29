@@ -5,21 +5,6 @@ import { COURT_COLOURS } from "@/features/shot-chart/constants";
 
 import ZoneStatLabel from "../../ZoneStatLabel";
 
-interface PolygonZoneProps {
-  readonly zone: any;
-  readonly stats: { made: number; missed: number; total: number };
-  readonly xScale: (x: number) => number;
-  readonly yScale: (y: number) => number;
-  readonly fill: string;
-  readonly fillOpacity: number;
-  readonly strokeWidth: number;
-  readonly svgWidth: number;
-  readonly onMouseMove: (
-    e: React.MouseEvent<SVGPolygonElement, MouseEvent>,
-  ) => void;
-  readonly onMouseLeave: () => void;
-}
-
 /**
  * Computes the true area-weighted centroid of a polygon using the shoelace formula.
  * Correctly handles irregular polygons with many arc-sampled points.
@@ -41,6 +26,21 @@ function polygonCentroid(polygon: [number, number][]): [number, number] {
   cx /= 6 * area;
   cy /= 6 * area;
   return [cx, cy];
+}
+
+interface PolygonZoneProps {
+  readonly zone: any;
+  readonly stats: { made: number; missed: number; total: number };
+  readonly xScale: (x: number) => number;
+  readonly yScale: (y: number) => number;
+  readonly fill: string;
+  readonly fillOpacity: number;
+  readonly strokeWidth: number;
+  readonly svgWidth: number;
+  readonly onMouseMove: (
+    e: React.MouseEvent<SVGPolygonElement, MouseEvent>,
+  ) => void;
+  readonly onMouseLeave: () => void;
 }
 
 /**

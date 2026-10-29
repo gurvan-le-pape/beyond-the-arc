@@ -6,17 +6,17 @@ import { Text } from "@/shared/components/typography";
 
 import { SHOT_COLOR_SCALE } from "../../constants";
 
-interface HeatmapLegendProps {
-  readonly maxValue: number;
-  readonly compact?: boolean;
-}
-
 const GRADIENT_STEPS = 32;
 
 function buildGradient(interpolate: (t: number) => string): string {
   return Array.from({ length: GRADIENT_STEPS }, (_, i) =>
     interpolate(i / (GRADIENT_STEPS - 1)),
   ).join(",");
+}
+
+interface HeatmapLegendProps {
+  readonly maxValue: number;
+  readonly compact?: boolean;
 }
 
 /**

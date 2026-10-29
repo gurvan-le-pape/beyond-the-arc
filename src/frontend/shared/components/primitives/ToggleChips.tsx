@@ -2,6 +2,18 @@
 import { cva } from "class-variance-authority";
 import type { ReactNode } from "react";
 
+export interface ToggleChipOption<TValue extends string> {
+  readonly value: TValue;
+  readonly label: ReactNode;
+  /** How many items the chip stands for, shown after the label. */
+  readonly count?: number;
+  /**
+   * A decorative mark before the label, such as a coloured dot keyed to the
+   * items. Dimmed while the chip is off; hide it from assistive tech yourself.
+   */
+  readonly marker?: ReactNode;
+}
+
 const chipVariants = cva(
   "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm transition-colors duration-150 focus-ring",
   {
@@ -15,18 +27,6 @@ const chipVariants = cva(
     defaultVariants: { selected: false },
   },
 );
-
-export interface ToggleChipOption<TValue extends string> {
-  readonly value: TValue;
-  readonly label: ReactNode;
-  /** How many items the chip stands for, shown after the label. */
-  readonly count?: number;
-  /**
-   * A decorative mark before the label, such as a coloured dot keyed to the
-   * items. Dimmed while the chip is off; hide it from assistive tech yourself.
-   */
-  readonly marker?: ReactNode;
-}
 
 interface ToggleChipsProps<TValue extends string> {
   /** What the chips choose among — the group's accessible name. */

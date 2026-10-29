@@ -11,16 +11,16 @@ import {
 } from "@/shared/components/table";
 import { type Category, CATEGORY_LIST, Gender } from "@/shared/constants";
 
+interface CategoryRow {
+  readonly category: Category;
+  readonly byGender: Record<string, Championship[]>;
+}
+
 interface ChampionshipGridProps {
   /** One organiser's championships. */
   readonly championships: Championship[];
   readonly title: string;
   readonly emptyMessage: string;
-}
-
-interface CategoryRow {
-  readonly category: Category;
-  readonly byGender: Record<string, Championship[]>;
 }
 
 /**

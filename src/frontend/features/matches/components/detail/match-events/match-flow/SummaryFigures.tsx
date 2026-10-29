@@ -13,12 +13,6 @@ const INK = {
   away: "text-ink-away",
 } as const;
 
-interface SummaryFiguresProps {
-  readonly summary: MatchSummary;
-  readonly homeTeam: MatchTeam;
-  readonly awayTeam: MatchTeam;
-}
-
 interface FigureProps {
   readonly label: string;
   readonly value: ReactNode;
@@ -41,6 +35,12 @@ function Figure({ label, value, detail }: FigureProps) {
       <dd className="truncate text-xs text-text-secondary">{detail}</dd>
     </div>
   );
+}
+
+interface SummaryFiguresProps {
+  readonly summary: MatchSummary;
+  readonly homeTeam: MatchTeam;
+  readonly awayTeam: MatchTeam;
 }
 
 /**

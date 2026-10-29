@@ -7,13 +7,6 @@ import { DataTable, type TableColumn } from "@/shared/components/table";
 import { CATEGORY_LIST, Gender } from "@/shared/constants";
 import { formatTeamName } from "@/shared/utils";
 
-interface ClubTeamsTableProps {
-  readonly clubName: string;
-  readonly teams: ClubTeamInfo[];
-  readonly title: string;
-  readonly emptyMessage: string;
-}
-
 const CATEGORY_ORDER: readonly string[] = CATEGORY_LIST;
 const GENDER_ORDER: readonly string[] = [Gender.FEMALE, Gender.MALE];
 
@@ -25,6 +18,13 @@ function compareTeams(a: ClubTeamInfo, b: ClubTeamInfo): number {
     GENDER_ORDER.indexOf(a.gender) - GENDER_ORDER.indexOf(b.gender) ||
     a.number - b.number
   );
+}
+
+interface ClubTeamsTableProps {
+  readonly clubName: string;
+  readonly teams: ClubTeamInfo[];
+  readonly title: string;
+  readonly emptyMessage: string;
 }
 
 /**

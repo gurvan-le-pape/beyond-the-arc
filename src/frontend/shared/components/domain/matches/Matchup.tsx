@@ -53,8 +53,6 @@ interface LineMatchupProps {
   readonly belowScore?: never;
 }
 
-type MatchupProps = MatchupBaseProps & (FacingMatchupProps | LineMatchupProps);
-
 // Only `hero` draws club marks: it heads the match page, where each mark is
 // also the link to its club. In a list the mark repeated the name beside it,
 // and initials do not tell clubs apart, many clubs sharing each pair. `centre` is
@@ -192,6 +190,8 @@ function Line({ side, isWinner, linked }: LineProps) {
     </div>
   );
 }
+
+type MatchupProps = MatchupBaseProps & (FacingMatchupProps | LineMatchupProps);
 
 /**
  * A match: its two sides — team name, with its club mark at `hero` size, home

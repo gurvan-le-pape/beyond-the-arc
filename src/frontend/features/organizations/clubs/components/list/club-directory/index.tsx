@@ -14,29 +14,6 @@ import { ClubsFilters } from "./ClubsFilters";
 import { ClubsTable } from "./ClubsTable";
 import { useClubsFilterState } from "./useClubsFilterState";
 
-/**
- * The directory of clubs: filters, results table and pagination.
- *
- * Takes no props and owns everything, including its own data — which is why the
- * clubs route needs no server fetch and prerenders as a static shell. The
- * filters live in the query string, and reading it needs a Suspense boundary to
- * keep the route prerendered: the shell carries the loading spinner, and the
- * directory swaps in once the search params are available.
- */
-export function ClubDirectory() {
-  return (
-    <Suspense
-      fallback={
-        <div className="flex justify-center items-center py-20">
-          <Spinner size="lg" />
-        </div>
-      }
-    >
-      <ClubDirectoryContent />
-    </Suspense>
-  );
-}
-
 function ClubDirectoryContent() {
   const tCommon = useTranslations("common");
   const tOrganizations = useTranslations("organizations");
@@ -95,5 +72,28 @@ function ClubDirectoryContent() {
         <ClubsTable clubs={clubs} />
       </SearchTabShell>
     </div>
+  );
+}
+
+/**
+ * The directory of clubs: filters, results table and pagination.
+ *
+ * Takes no props and owns everything, including its own data — which is why the
+ * clubs route needs no server fetch and prerenders as a static shell. The
+ * filters live in the query string, and reading it needs a Suspense boundary to
+ * keep the route prerendered: the shell carries the loading spinner, and the
+ * directory swaps in once the search params are available.
+ */
+export function ClubDirectory() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex justify-center items-center py-20">
+          <Spinner size="lg" />
+        </div>
+      }
+    >
+      <ClubDirectoryContent />
+    </Suspense>
   );
 }

@@ -16,10 +16,10 @@ export type GridColumns = { readonly base: GridColumnCount } & Partial<
   Record<Exclude<Breakpoint, "base">, GridColumnCount>
 >;
 
-const BREAKPOINTS: readonly Breakpoint[] = ["base", "sm", "md", "lg"];
-
 /** The space between cells, on Tailwind's spacing scale. */
 export type GridGap = 3 | 4 | 6 | 8;
+
+const BREAKPOINTS: readonly Breakpoint[] = ["base", "sm", "md", "lg"];
 
 const GAP_CLASSES: Record<GridGap, string> = {
   3: "gap-3",

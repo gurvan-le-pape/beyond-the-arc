@@ -6,6 +6,15 @@ import React from "react";
 import { Badge, type BadgeProps, Card } from "@/shared/components/primitives";
 import { OrganizationType } from "@/shared/constants";
 
+export interface OrgType {
+  id: OrganizationType;
+  label: string;
+  description: string;
+  icon: React.ReactElement<React.SVGProps<SVGSVGElement>>;
+  href: string;
+  count?: number;
+}
+
 const STYLES: Record<
   OrganizationType,
   {
@@ -43,15 +52,6 @@ const STYLES: Record<
     badge: "clubs",
   },
 };
-
-export interface OrgType {
-  id: OrganizationType;
-  label: string;
-  description: string;
-  icon: React.ReactElement<React.SVGProps<SVGSVGElement>>;
-  href: string;
-  count?: number;
-}
 
 interface OrganizationTypeCardProps {
   readonly org: OrgType;

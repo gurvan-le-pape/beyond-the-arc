@@ -5,6 +5,9 @@ import { COURT_COLOURS, COURT_WIDTH } from "@/features/shot-chart/constants";
 
 import ZoneStatLabel from "../../ZoneStatLabel";
 
+/** Gap between a sideline and a label pinned to it, in pixels. */
+const LABEL_SIDELINE_INSET = 4;
+
 interface RectZoneProps {
   readonly zone: any;
   readonly stats: { made: number; missed: number; total: number };
@@ -19,9 +22,6 @@ interface RectZoneProps {
   ) => void;
   readonly onMouseLeave: () => void;
 }
-
-/** Gap between a sideline and a label pinned to it, in pixels. */
-const LABEL_SIDELINE_INSET = 4;
 
 /**
  * One rectangular hotspot zone: the shaded box plus its made/missed label.
