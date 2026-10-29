@@ -1,14 +1,7 @@
 // src/frontend/shared/components/primitives/Tabs.tsx
 "use client";
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useId,
-  useMemo,
-  useState,
-} from "react";
+import { createContext, useContext, useId, useMemo } from "react";
 
 import { cn } from "@/shared/utils";
 
@@ -35,44 +28,33 @@ const panelId = (baseId: string, value: string) => `${baseId}-panel-${value}`;
 
 // Main Tabs Container
 interface TabsProps {
-  readonly defaultValue: string;
+  readonly value: string;
+  readonly onValueChange: (value: string) => void;
   readonly children: React.ReactNode;
   readonly className?: string;
-  readonly onValueChange?: (value: string) => void; // optional external handler
 }
 
 /**
- * The root of a tab set: owns which tab is selected and publishes it, plus a
- * unique id base, through context.
+ * The root of a tab set: publishes the selected tab, and a unique id base,
+ * through context.
  *
- * **Uncontrolled by design.** There is no `value` prop — `defaultValue` sets the
- * initial tab and the state lives here. `onValueChange` observes changes but
- * cannot drive them, so a consumer that needs the tab to follow the URL wraps
- * this rather than controlling it; `QueryTabs` is that wrapper.
+ * **Controlled.** The caller holds the selected tab — in state, or in the URL
+ * as `QueryTabs` does — and `onValueChange` asks it to change.
  *
  * The id base comes from `useId`, so two tab sets on one page cannot collide in
  * their `aria-controls` and `aria-labelledby` wiring.
  */
 export function Tabs({
-  defaultValue,
+  value,
+  onValueChange,
   children,
   className = "",
-  onValueChange,
 }: TabsProps) {
-  const [value, setValue] = useState(defaultValue);
   const baseId = useId();
 
-  const handleChange = useCallback(
-    (newValue: string) => {
-      setValue(newValue);
-      onValueChange?.(newValue);
-    },
-    [onValueChange],
-  );
-
   const contextValue = useMemo(
-    () => ({ value, onValueChange: handleChange, baseId }),
-    [value, handleChange, baseId],
+    () => ({ value, onValueChange, baseId }),
+    [value, onValueChange, baseId],
   );
 
   return (

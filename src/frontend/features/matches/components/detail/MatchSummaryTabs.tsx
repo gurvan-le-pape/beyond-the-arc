@@ -2,6 +2,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useState } from "react";
 
 import type {
   MatchEvent,
@@ -41,6 +42,7 @@ export function MatchSummaryTabs({
 }: MatchSummaryTabsProps) {
   const tMatches = useTranslations("matches");
   const tCommon = useTranslations("common");
+  const [tab, setTab] = useState("stats");
 
   const statCategories = [
     { key: "fieldGoals", label: tCommon("stats.fieldGoals") },
@@ -66,7 +68,7 @@ export function MatchSummaryTabs({
   ];
 
   return (
-    <Tabs defaultValue="stats">
+    <Tabs value={tab} onValueChange={setTab}>
       <TabsList>
         <TabsTrigger value="stats">
           {tMatches("matchSummary.tabs.teamStats")}
