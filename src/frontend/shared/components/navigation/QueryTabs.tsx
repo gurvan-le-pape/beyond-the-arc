@@ -2,9 +2,8 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { Suspense, useCallback } from "react";
+import { Suspense } from "react";
 
-import { usePathname, useRouter } from "@/navigation";
 import { Tabs, TabsList, TabsTrigger } from "@/shared/components/primitives";
 
 interface Tab {
@@ -12,19 +11,38 @@ interface Tab {
   label: string;
 }
 
-interface QueryTabsFallbackProps {
-  readonly tabs: Tab[];
-  readonly defaultTab: string;
+/**
+ * Writes `?tab=`, dropping every other parameter: those are the previous tab's
+ * filters, and tabs reuse names with other meanings (`number` is a jersey on
+ * the players tab and a team number on the teams tab).
+ *
+ * Through the History API rather than the router: Next keeps
+ * `useSearchParams` in sync with it, and a router navigation would fetch the
+ * page from the server for a change only the client reads.
+ */
+function selectTab(value: string) {
+  globalThis.history.replaceState(
+    null,
+    "",
+    `?${new URLSearchParams({ tab: value })}`,
+  );
 }
 
-/**
- * Prerendered shell: the tab bar with the default tab selected. The real
- * component swaps in once search params are available, so a visitor landing on
- * `?tab=` sees the bar in place rather than a gap.
- */
-function QueryTabsFallback({ tabs, defaultTab }: QueryTabsFallbackProps) {
+interface QueryTabsViewProps {
+  readonly tabs: Tab[];
+  readonly value: string;
+  readonly onValueChange: (value: string) => void;
+  readonly children?: React.ReactNode;
+}
+
+function QueryTabsView({
+  tabs,
+  value,
+  onValueChange,
+  children,
+}: QueryTabsViewProps) {
   return (
-    <Tabs defaultValue={defaultTab}>
+    <Tabs value={value} onValueChange={onValueChange}>
       <TabsList>
         {tabs.map((tab) => (
           <TabsTrigger key={tab.value} value={tab.value}>
@@ -32,6 +50,7 @@ function QueryTabsFallback({ tabs, defaultTab }: QueryTabsFallbackProps) {
           </TabsTrigger>
         ))}
       </TabsList>
+      {children}
     </Tabs>
   );
 }
@@ -47,40 +66,14 @@ function QueryTabsContent({
   defaultTab,
   children,
 }: QueryTabsContentProps) {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const router = useRouter();
-
-  const tabParam = searchParams.get("tab");
-  const activeTab = tabs.some((tab) => tab.value === tabParam)
-    ? (tabParam as string)
-    : defaultTab;
-
-  // A tab change keeps only `tab`: the other parameters are the previous
-  // tab's filters, and tabs reuse names with other meanings (`number` is a
-  // jersey on the players tab and a team number on the teams tab).
-  const handleTabChange = useCallback(
-    (value: string) => {
-      router.replace(`${pathname}?${new URLSearchParams({ tab: value })}`);
-    },
-    [pathname, router],
-  );
+  const tabParam = useSearchParams().get("tab");
+  const activeTab =
+    tabs.find((tab) => tab.value === tabParam)?.value ?? defaultTab;
 
   return (
-    <Tabs
-      key={activeTab}
-      defaultValue={activeTab}
-      onValueChange={handleTabChange}
-    >
-      <TabsList>
-        {tabs.map((tab) => (
-          <TabsTrigger key={tab.value} value={tab.value}>
-            {tab.label}
-          </TabsTrigger>
-        ))}
-      </TabsList>
+    <QueryTabsView tabs={tabs} value={activeTab} onValueChange={selectTab}>
       {children}
-    </Tabs>
+    </QueryTabsView>
   );
 }
 
@@ -102,14 +95,21 @@ interface QueryTabsProps {
  * route is excluded from prerendering, and once the locale layout calls
  * `setRequestLocale` that becomes a build failure rather than a silent opt-out.
  * Keeping it inside the component means a future page cannot use these tabs and
- * forget.
+ * forget. Its fallback is the prerendered tab bar on the default tab, so a
+ * visitor landing on `?tab=` sees the bar in place rather than a gap.
  */
 export function QueryTabs({ tabs, defaultTab, children }: QueryTabsProps) {
   const fallbackTab = defaultTab ?? tabs[0].value;
 
   return (
     <Suspense
-      fallback={<QueryTabsFallback tabs={tabs} defaultTab={fallbackTab} />}
+      fallback={
+        <QueryTabsView
+          tabs={tabs}
+          value={fallbackTab}
+          onValueChange={selectTab}
+        />
+      }
     >
       <QueryTabsContent tabs={tabs} defaultTab={fallbackTab}>
         {children}
