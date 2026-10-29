@@ -30,15 +30,6 @@ import TopKeyZones from "./hotspots/TopKeyZones";
 import WingZones from "./hotspots/WingZones";
 import TooltipContent from "./TooltipContent";
 
-interface HotspotsOverlayProps {
-  readonly shots: ShotEvent[];
-  readonly xScale: (x: number) => number;
-  readonly yScale: (y: number) => number;
-  readonly colorScale?: (t: number) => string;
-  readonly svgWidth: number;
-  readonly onMaxTotalChange?: (maxTotal: number) => void;
-}
-
 // All zone getter functions collected for computing maxTotal across all zones
 const ALL_ZONE_GETTERS: (() => Zone[])[] = [
   getPaintZones,
@@ -50,6 +41,15 @@ const ALL_ZONE_GETTERS: (() => Zone[])[] = [
   getApexStripeZone,
   getTopKeyZone,
 ];
+
+interface HotspotsOverlayProps {
+  readonly shots: ShotEvent[];
+  readonly xScale: (x: number) => number;
+  readonly yScale: (y: number) => number;
+  readonly colorScale?: (t: number) => string;
+  readonly svgWidth: number;
+  readonly onMaxTotalChange?: (maxTotal: number) => void;
+}
 
 /**
  * The hotspots view: every zone group on the court, coloured by shots made.

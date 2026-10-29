@@ -12,38 +12,9 @@ interface Tab {
   label: string;
 }
 
-interface QueryTabsProps {
+interface QueryTabsFallbackProps {
   readonly tabs: Tab[];
-  /** The tab shown when `?tab=` is absent or unrecognised. Defaults to the first tab. */
-  readonly defaultTab?: string;
-  readonly children: React.ReactNode;
-}
-
-/**
- * Generic tab container that syncs the active tab with the URL ?tab= param.
- *
- * The active tab is derived from `?tab=` against `tabs`; an absent or
- * unrecognised value falls back to `defaultTab`, or to the first tab.
- *
- * The Suspense boundary is here rather than at each call site because
- * `useSearchParams` is what needs it: without a boundary above it, the whole
- * route is excluded from prerendering, and once the locale layout calls
- * `setRequestLocale` that becomes a build failure rather than a silent opt-out.
- * Keeping it inside the component means a future page cannot use these tabs and
- * forget.
- */
-export function QueryTabs({ tabs, defaultTab, children }: QueryTabsProps) {
-  const fallbackTab = defaultTab ?? tabs[0].value;
-
-  return (
-    <Suspense
-      fallback={<QueryTabsFallback tabs={tabs} defaultTab={fallbackTab} />}
-    >
-      <QueryTabsContent tabs={tabs} defaultTab={fallbackTab}>
-        {children}
-      </QueryTabsContent>
-    </Suspense>
-  );
+  readonly defaultTab: string;
 }
 
 /**
@@ -51,11 +22,6 @@ export function QueryTabs({ tabs, defaultTab, children }: QueryTabsProps) {
  * component swaps in once search params are available, so a visitor landing on
  * `?tab=` sees the bar in place rather than a gap.
  */
-interface QueryTabsFallbackProps {
-  readonly tabs: Tab[];
-  readonly defaultTab: string;
-}
-
 function QueryTabsFallback({ tabs, defaultTab }: QueryTabsFallbackProps) {
   return (
     <Tabs defaultValue={defaultTab}>
@@ -115,5 +81,39 @@ function QueryTabsContent({
       </TabsList>
       {children}
     </Tabs>
+  );
+}
+
+interface QueryTabsProps {
+  readonly tabs: Tab[];
+  /** The tab shown when `?tab=` is absent or unrecognised. Defaults to the first tab. */
+  readonly defaultTab?: string;
+  readonly children: React.ReactNode;
+}
+
+/**
+ * Generic tab container that syncs the active tab with the URL ?tab= param.
+ *
+ * The active tab is derived from `?tab=` against `tabs`; an absent or
+ * unrecognised value falls back to `defaultTab`, or to the first tab.
+ *
+ * The Suspense boundary is here rather than at each call site because
+ * `useSearchParams` is what needs it: without a boundary above it, the whole
+ * route is excluded from prerendering, and once the locale layout calls
+ * `setRequestLocale` that becomes a build failure rather than a silent opt-out.
+ * Keeping it inside the component means a future page cannot use these tabs and
+ * forget.
+ */
+export function QueryTabs({ tabs, defaultTab, children }: QueryTabsProps) {
+  const fallbackTab = defaultTab ?? tabs[0].value;
+
+  return (
+    <Suspense
+      fallback={<QueryTabsFallback tabs={tabs} defaultTab={fallbackTab} />}
+    >
+      <QueryTabsContent tabs={tabs} defaultTab={fallbackTab}>
+        {children}
+      </QueryTabsContent>
+    </Suspense>
   );
 }

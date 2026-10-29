@@ -8,12 +8,6 @@ import type { ClubStatsByDepartment } from "../../../types/ClubStatsByDepartment
 import type { ClubStatsByRegion } from "../../../types/ClubStatsByRegion";
 import { LoadingMap } from "./LoadingMap";
 
-interface ClubsMapProps {
-  readonly initialRegions: ClubStatsByRegion[];
-  readonly initialDepartments: ClubStatsByDepartment[];
-  readonly initialClubs: ClubBasic[];
-}
-
 // Dynamic import with ssr: false
 const MapLibreClubsMap = dynamic(
   () => import("./MapLibreClubsMap").then((mod) => mod.MapLibreClubsMap),
@@ -22,6 +16,12 @@ const MapLibreClubsMap = dynamic(
     loading: () => <LoadingMap />,
   },
 );
+
+interface ClubsMapProps {
+  readonly initialRegions: ClubStatsByRegion[];
+  readonly initialDepartments: ClubStatsByDepartment[];
+  readonly initialClubs: ClubBasic[];
+}
 
 /**
  * The clubs map of France, behind the boundary that keeps MapLibre out of the

@@ -3,23 +3,6 @@ import { type HTMLAttributes } from "react";
 
 import { cn } from "@/shared/utils";
 
-function getInitials(name: string): string {
-  return name
-    .split(" ")
-    .map((w) => w[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
-}
-
-export interface PlayerAvatarProps extends HTMLAttributes<HTMLDivElement> {
-  name: string;
-  number?: number;
-  /** @default "md" */
-  size?: "sm" | "md" | "lg";
-  ref?: React.Ref<HTMLDivElement>;
-}
-
 const sizeConfig = {
   sm: {
     avatar: "w-9 h-9",
@@ -37,6 +20,23 @@ const sizeConfig = {
     badge: "text-xs px-2 py-0.5",
   },
 };
+
+function getInitials(name: string): string {
+  return name
+    .split(" ")
+    .map((w) => w[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+}
+
+export interface PlayerAvatarProps extends HTMLAttributes<HTMLDivElement> {
+  name: string;
+  number?: number;
+  /** @default "md" */
+  size?: "sm" | "md" | "lg";
+  ref?: React.Ref<HTMLDivElement>;
+}
 
 /**
  * PlayerAvatar — initials circle with an optional jersey number badge.

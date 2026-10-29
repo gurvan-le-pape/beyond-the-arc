@@ -12,6 +12,12 @@ import type { Pagination as PaginationType } from "@/shared/types";
 
 import { Text } from "../typography";
 
+const navButtonBase = "p-2 rounded-button transition-colors";
+const navButtonEnabled =
+  "surface-subtle text-text-emphasis hover:bg-surface-inset border border-divide";
+const navButtonDisabled =
+  "bg-surface-subtle text-text-muted cursor-not-allowed";
+
 interface PaginationProps {
   readonly pagination: PaginationType | null;
   readonly pageSize: number;
@@ -25,12 +31,6 @@ interface PaginationProps {
    */
   readonly label: string;
 }
-
-const navButtonBase = "p-2 rounded-button transition-colors";
-const navButtonEnabled =
-  "surface-subtle text-text-emphasis hover:bg-surface-inset border border-divide";
-const navButtonDisabled =
-  "bg-surface-subtle text-text-muted cursor-not-allowed";
 
 /**
  * The page control beneath a paginated list: item count, page-size select, and

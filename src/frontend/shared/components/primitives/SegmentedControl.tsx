@@ -10,15 +10,6 @@ export interface SegmentedControlOption<TValue extends string> {
   readonly label: ReactNode;
 }
 
-interface SegmentedControlProps<TValue extends string> {
-  /** What is being chosen — the group's accessible name ("Quarter", "Shots"). */
-  readonly label: string;
-  readonly options: readonly SegmentedControlOption<TValue>[];
-  readonly value: TValue;
-  readonly onChange: (value: TValue) => void;
-  readonly size?: "sm" | "md";
-}
-
 // Arrow keys move to the next or previous option, wrapping; Home and End jump
 // to the ends. Both axes, since the group wraps onto several lines when narrow.
 function nextIndex(key: string, index: number, count: number) {
@@ -37,6 +28,15 @@ function nextIndex(key: string, index: number, count: number) {
     default:
       return undefined;
   }
+}
+
+interface SegmentedControlProps<TValue extends string> {
+  /** What is being chosen — the group's accessible name ("Quarter", "Shots"). */
+  readonly label: string;
+  readonly options: readonly SegmentedControlOption<TValue>[];
+  readonly value: TValue;
+  readonly onChange: (value: TValue) => void;
+  readonly size?: "sm" | "md";
 }
 
 /**

@@ -11,17 +11,17 @@ interface StatCategory {
   label: string;
 }
 
-interface TeamStatsComparisonProps {
-  readonly homeStats: MatchTeamStats;
-  readonly awayStats: MatchTeamStats;
-  readonly categories: StatCategory[];
-}
-
 const PERCENTAGE_MAP: Record<string, string> = {
   fieldGoals: "fieldGoalPercentage",
   threePointers: "threePointPercentage",
   freeThrows: "freeThrowPercentage",
 };
+
+interface TeamStatsComparisonProps {
+  readonly homeStats: MatchTeamStats;
+  readonly awayStats: MatchTeamStats;
+  readonly categories: StatCategory[];
+}
 
 /**
  * The two teams' stat lines side by side, one row per category the caller asks

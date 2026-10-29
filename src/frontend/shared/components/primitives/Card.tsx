@@ -7,40 +7,6 @@ import { cn } from "@/shared/utils";
 
 import { Text } from "../typography";
 
-/**
- * Card variants
- */
-const cardVariants = cva(
-  "rounded-card border transition-all duration-200 focus-ring",
-  {
-    variants: {
-      variant: {
-        default: "surface-subtle border-divide shadow-card",
-        ghost: "bg-transparent border-transparent",
-        // Empty — allows full custom styling via className
-        custom: "",
-      },
-      padding: {
-        none: "p-0",
-        sm: "p-4",
-        md: "p-6",
-        lg: "p-8",
-      },
-      // A card that goes or does something lifts on hover. `motion-safe`: no
-      // movement for a reader who asked the system for less.
-      clickable: {
-        true: "hover:shadow-card-hover motion-safe:hover:-translate-y-0.5 cursor-pointer",
-        false: "",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-      padding: "md",
-      clickable: false,
-    },
-  },
-);
-
 interface CardBaseProps
   extends HTMLAttributes<HTMLElement>, VariantProps<typeof cardVariants> {
   ref?: React.Ref<HTMLElement>;
@@ -83,6 +49,40 @@ interface CardStaticProps {
    */
   readonly heading?: ReactNode;
 }
+
+/**
+ * Card variants
+ */
+const cardVariants = cva(
+  "rounded-card border transition-all duration-200 focus-ring",
+  {
+    variants: {
+      variant: {
+        default: "surface-subtle border-divide shadow-card",
+        ghost: "bg-transparent border-transparent",
+        // Empty — allows full custom styling via className
+        custom: "",
+      },
+      padding: {
+        none: "p-0",
+        sm: "p-4",
+        md: "p-6",
+        lg: "p-8",
+      },
+      // A card that goes or does something lifts on hover. `motion-safe`: no
+      // movement for a reader who asked the system for less.
+      clickable: {
+        true: "hover:shadow-card-hover motion-safe:hover:-translate-y-0.5 cursor-pointer",
+        false: "",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      padding: "md",
+      clickable: false,
+    },
+  },
+);
 
 export type CardProps = CardBaseProps &
   (CardLinkProps | CardActionProps | CardStaticProps);

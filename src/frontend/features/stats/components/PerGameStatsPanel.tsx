@@ -6,11 +6,6 @@ import { Section, StatGroup } from "@/shared/components/blocks";
 import { Card } from "@/shared/components/primitives";
 import { createStatFormat, type StatFormat } from "@/shared/utils";
 
-interface PerGameStatsPanelProps {
-  /** Season/career aggregate. A team's season stats are a superset of this. */
-  readonly stats: PlayerCareerStats;
-}
-
 const STAT_FIELDS = [
   {
     abbr: "gamesPlayedShort",
@@ -57,6 +52,11 @@ const STAT_FIELDS = [
   full: string;
   value: (s: PlayerCareerStats, format: StatFormat) => string;
 }[];
+
+interface PerGameStatsPanelProps {
+  /** Season/career aggregate. A team's season stats are a superset of this. */
+  readonly stats: PlayerCareerStats;
+}
 
 /**
  * A season or career per-game panel: games played, then the seven per-game

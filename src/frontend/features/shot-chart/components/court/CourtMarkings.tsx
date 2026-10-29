@@ -21,6 +21,14 @@ import Paint from "./Paint";
 import PaintTicks from "./PaintTicks";
 import ThreePointArc from "./ThreePointArc";
 
+// The lane's tick marks and block, in metres from the baseline (FIBA).
+const TICK_LENGTH = 0.1;
+const TICK_1_Y = 1.75;
+const BLOCK_Y = TICK_1_Y + 0.85;
+const BLOCK_HEIGHT = 0.4;
+const TICK_2_Y = BLOCK_Y + BLOCK_HEIGHT + 0.85;
+const TICK_3_Y = TICK_2_Y + 0.85;
+
 interface CourtMarkingsProps {
   /** Court metres across to pixels. */
   readonly xScale: ScaleLinear<number, number>;
@@ -29,14 +37,6 @@ interface CourtMarkingsProps {
   readonly svgWidth: number;
   readonly svgHeight: number;
 }
-
-// The lane's tick marks and block, in metres from the baseline (FIBA).
-const TICK_LENGTH = 0.1;
-const TICK_1_Y = 1.75;
-const BLOCK_Y = TICK_1_Y + 0.85;
-const BLOCK_HEIGHT = 0.4;
-const TICK_2_Y = BLOCK_Y + BLOCK_HEIGHT + 0.85;
-const TICK_3_Y = TICK_2_Y + 0.85;
 
 /**
  * The lines of a FIBA half court: boundary, paint and its ticks, basket, free

@@ -4,6 +4,10 @@ import type { ReactNode } from "react";
 
 import { Link } from "@/navigation";
 
+type ListItemAction =
+  | { readonly href: string; readonly onClick?: never }
+  | { readonly onClick: () => void; readonly href?: never };
+
 const listItemVariants = cva(
   "group flex w-full items-center gap-3 text-left transition-colors duration-150 " +
     "hover:bg-tint-primary focus-ring-inset",
@@ -22,10 +26,6 @@ const TEXT_CLASSES = {
   sm: { title: "text-sm font-medium", description: "text-xs" },
   md: { title: "text-base font-semibold", description: "text-sm" },
 } as const;
-
-type ListItemAction =
-  | { readonly href: string; readonly onClick?: never }
-  | { readonly onClick: () => void; readonly href?: never };
 
 type ListItemProps = ListItemAction &
   VariantProps<typeof listItemVariants> & {

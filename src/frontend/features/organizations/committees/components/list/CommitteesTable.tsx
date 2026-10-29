@@ -10,12 +10,6 @@ import { formatCommitteeName } from "@/shared/utils";
 
 import type { Committee } from "../../types";
 
-interface CommitteesTableProps {
-  readonly committees: Committee[];
-  /** Each league's region name by league id, for the league column. */
-  readonly regionNames: Record<number, string>;
-}
-
 // Department order: 1, 2, 2A, 2B, 3 … 95. The number decides, then the
 // Corsican letter.
 function compareCommittees(a: Committee, b: Committee): number {
@@ -25,6 +19,12 @@ function compareCommittees(a: Committee, b: Committee): number {
     Number.parseInt(codeA, 10) - Number.parseInt(codeB, 10) ||
     codeA.localeCompare(codeB)
   );
+}
+
+interface CommitteesTableProps {
+  readonly committees: Committee[];
+  /** Each league's region name by league id, for the league column. */
+  readonly regionNames: Record<number, string>;
 }
 
 /**

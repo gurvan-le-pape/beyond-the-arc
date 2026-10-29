@@ -132,9 +132,6 @@ interface PlainRowProps {
   readonly stickyLead?: boolean;
 }
 
-type DataTableProps<T> = DataTableBaseProps<T> &
-  (RowLinkProps<T> | PlainRowProps);
-
 /**
  * Where a column sits. Numbers go right, so their units, tens and hundreds
  * stack in the same places; everything else goes left. An explicit `align`
@@ -142,6 +139,9 @@ type DataTableProps<T> = DataTableBaseProps<T> &
  */
 const alignFor = <T,>(column: TableColumn<T>) =>
   column.align ?? (column.numeric ? "right" : "left");
+
+type DataTableProps<T> = DataTableBaseProps<T> &
+  (RowLinkProps<T> | PlainRowProps);
 
 /**
  * Column-driven table.

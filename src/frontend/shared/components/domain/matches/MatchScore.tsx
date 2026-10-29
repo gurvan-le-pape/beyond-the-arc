@@ -6,13 +6,6 @@ import { cn, matchWinner } from "@/shared/utils";
 
 type MatchScoreVariant = "list" | "compact" | "hero" | "table";
 
-interface MatchScoreProps {
-  readonly homeScore: number | null;
-  readonly awayScore: number | null;
-  readonly variant: MatchScoreVariant;
-  readonly className?: string;
-}
-
 type BoxVariant = Exclude<MatchScoreVariant, "table">;
 
 const CONTAINER_CLASSES: Record<BoxVariant, string> = {
@@ -43,6 +36,13 @@ function scoreClasses(variant: MatchScoreVariant, isWinner: boolean): string {
     case "table":
       return isWinner ? "font-bold" : "font-normal";
   }
+}
+
+interface MatchScoreProps {
+  readonly homeScore: number | null;
+  readonly awayScore: number | null;
+  readonly variant: MatchScoreVariant;
+  readonly className?: string;
 }
 
 /**

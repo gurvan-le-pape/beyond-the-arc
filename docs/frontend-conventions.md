@@ -141,6 +141,35 @@ Pages (`app/`) sit above every layer and compose sections from any feature. When
 
 Hooks that return JSX (e.g. table column factories) are `.tsx` but still follow `useX` naming and the placement rules above.
 
+## File layout
+
+Every `.tsx` module under `features/` and `shared/` lays out its top-level statements in the same order, so a component opened at random reads the same way as any other:
+
+```tsx
+"use client";                              // 1. directive
+
+import { useTranslations } from "next-intl"; // 2. imports
+
+interface ChipOption { … }                 // 3. types other than props
+
+const LABEL_KEYS = { … } as const;         // 4. constants
+
+function toOption(…): ChipOption { … }     // 5. helpers (camelCase functions)
+
+interface CategoryChipsProps { … }         // 6. components, each props interface
+export function CategoryChips(…) { … }     //    directly above its component
+
+export default CategoryChips;              // 7. trailing exports
+```
+
+Every section is optional. Each one holds what the sections below it use, so a file reads top to bottom from its vocabulary to the component built from it.
+
+- **Props sit against their component.** `XProps` is immediately followed by `X`, so the contract is next to the function that destructures it, and a file with several components pairs each one with its props. A `*Props` type with no component of that name in the file — a building block of another props type, like `MatchupBaseProps` — is an ordinary type and goes in section 3.
+- **Sub-components above the component that renders them.** A private component comes before the exported one, in the same dependency order as the sections.
+- **Single-consumer constants stay here.** A lookup table only this component reads — `LABEL_KEYS` in `EventCategoryChips` — lives in the component's file, in section 4; see [Placement](#placement-shared-vs-component-private) for when it moves up.
+
+Route modules under `app/` are out of scope: their shape comes from Next's segment exports (`revalidate`, `generateMetadata`), not from this layout. Enforced by `enforce-component-file-layout`.
+
 ## Props
 
 A component's props are a **named, local `interface`**, one per component, called `<Component>Props`.
@@ -282,6 +311,7 @@ Custom ESLint rules in `src/frontend/eslint-rules/`, wired in `eslint.config.mjs
 | `enforce-file-path-comment` | Every file starts with its own path comment (autofixable) |
 | `no-translator-prop` | The next-intl translator is never typed as a value or passed as a prop |
 | `enforce-named-props` | Component props are a named interface, not an inline object type |
+| `enforce-component-file-layout` | A `.tsx` module's top-level statements follow the [file layout](#file-layout); each `XProps` sits directly above `X` |
 | `enforce-feature-layers` | A feature imports only from lower [feature layers](#feature-layers); `shared/` imports no feature |
 
 Two upstream rules carry conventions of their own: `@typescript-eslint/consistent-type-definitions` (`interface` over `type`, see [Props](#props)) and the `jsdoc/*` set described under [Docstrings](#docstrings) — `require-jsdoc`, `require-param`, `require-returns`, their `-description` variants, `check-param-names`, `check-tag-names` and `no-types`, all at **error**.
@@ -299,5 +329,6 @@ Two upstream rules carry conventions of their own: `@typescript-eslint/consisten
 5. New barrel-worthy directory? Add it to `barrelsby.json` (the ESLint barrel rule follows automatically); composite internals get an exclusion pattern.
 6. Strings: resolve the component's own vocabulary inside it (`useTranslations` / `await getTranslations`), and take the caller's content as plain `string` props. Never accept the translator itself as a prop — `no-translator-prop` enforces that half; which side a given string falls on is a judgement call, described under [Internationalisation](./frontend.md#internationalisation) in `frontend.md`.
 7. Props: a local `interface <Component>Props`, members `readonly` and documented where they carry a unit, a coordinate space or a sentinel. See [Props](#props).
-8. Comments: read each one against the line below it, not on its own. Delete restatements; keep constraints. If a comment names a section, extract the section instead. See [Comments](#comments).
-9. Run `npm run lint` — the rules above catch the rest.
+8. Layout: directive, imports, types, constants, helpers, then each component under its props, then trailing exports. See [File layout](#file-layout).
+9. Comments: read each one against the line below it, not on its own. Delete restatements; keep constraints. If a comment names a section, extract the section instead. See [Comments](#comments).
+10. Run `npm run lint` — the rules above catch the rest.

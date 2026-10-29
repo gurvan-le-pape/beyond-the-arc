@@ -34,15 +34,6 @@ const popoverVariants = cva(
 // The least room kept between an open panel and the edge of the viewport.
 const VIEWPORT_MARGIN = 16;
 
-interface PopoverProps
-  extends
-    Omit<HTMLAttributes<HTMLDivElement>, "className" | "style" | "inert">,
-    Omit<VariantProps<typeof popoverVariants>, "open"> {
-  readonly open: boolean;
-  readonly children: ReactNode;
-  readonly ref?: Ref<HTMLDivElement>;
-}
-
 /**
  * How far a panel has to move back toward the viewport to stay inside it.
  *
@@ -72,6 +63,15 @@ function overflowShift(panel: HTMLDivElement, align: "start" | "end"): number {
     0,
     Math.min(overflow, viewport - VIEWPORT_MARGIN - parent.right),
   );
+}
+
+interface PopoverProps
+  extends
+    Omit<HTMLAttributes<HTMLDivElement>, "className" | "style" | "inert">,
+    Omit<VariantProps<typeof popoverVariants>, "open"> {
+  readonly open: boolean;
+  readonly children: ReactNode;
+  readonly ref?: Ref<HTMLDivElement>;
 }
 
 /**

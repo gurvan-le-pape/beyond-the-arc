@@ -4,6 +4,11 @@ import type { ReactNode } from "react";
 import { Link } from "@/navigation";
 import { cn } from "@/shared/utils";
 
+const VARIANT_CLASSES = {
+  accent: "text-ink-primary hover:underline",
+  plain: "hover:text-ink-primary hover:underline",
+} as const;
+
 interface TextLinkProps {
   readonly href: string;
   readonly children: ReactNode;
@@ -22,11 +27,6 @@ interface TextLinkProps {
   readonly external?: boolean;
   readonly ariaLabel?: string;
 }
-
-const VARIANT_CLASSES = {
-  accent: "text-ink-primary hover:underline",
-  plain: "hover:text-ink-primary hover:underline",
-} as const;
 
 /**
  * A link inside text. It sets colour, underline and focus only: size, weight

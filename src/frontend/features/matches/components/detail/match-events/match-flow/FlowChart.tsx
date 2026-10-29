@@ -23,17 +23,6 @@ import { usePeriodAbbr } from "./usePeriodAbbr";
 const VIEW_WIDTH = 1000;
 const VIEW_HEIGHT = 100;
 
-interface FlowChartProps {
-  /** The margin after each scoring play, in match order. */
-  readonly points: readonly MarginPoint[];
-  /** Each period's buzzer, in period order; the last one ends the time axis. */
-  readonly periodEnds: readonly PeriodEnd[];
-  readonly homeTeam: MatchTeam;
-  readonly awayTeam: MatchTeam;
-  /** Called with the play the reader asked to go to. */
-  readonly onGoTo: (play: Play) => void;
-}
-
 /**
  * The name of the player whose basket scored the play.
  *
@@ -46,6 +35,17 @@ function scorerName(play: Play): string | undefined {
       getEventStyle(event.eventType).eventCategory === EventCategory.MADE,
   );
   return made?.players?.find((p) => p.role === Role.SHOOTER)?.player.name;
+}
+
+interface FlowChartProps {
+  /** The margin after each scoring play, in match order. */
+  readonly points: readonly MarginPoint[];
+  /** Each period's buzzer, in period order; the last one ends the time axis. */
+  readonly periodEnds: readonly PeriodEnd[];
+  readonly homeTeam: MatchTeam;
+  readonly awayTeam: MatchTeam;
+  /** Called with the play the reader asked to go to. */
+  readonly onGoTo: (play: Play) => void;
 }
 
 /**

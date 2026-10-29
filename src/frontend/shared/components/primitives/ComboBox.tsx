@@ -23,6 +23,33 @@ export interface ComboBoxOption {
   label: string;
 }
 
+function getFilteredOptions(
+  options: ComboBoxOption[],
+  search: string,
+  searchable: boolean,
+  onSearchChange: ((value: string) => void) | undefined,
+): ComboBoxOption[] {
+  if (!searchable || onSearchChange) return options;
+  if (search)
+    return options.filter((opt) =>
+      opt.label.toLowerCase().includes(search.toLowerCase()),
+    );
+  return options;
+}
+
+/**
+ * Whether `option` is the selected one. Compared as strings, as a native
+ * `<select>` does: callers hold ids as numbers while building options from
+ * `String(id)`, and a strict comparison then never matches, leaving the trigger
+ * on its placeholder and no option selected.
+ */
+function isSelected(
+  option: ComboBoxOption,
+  value: string | number | undefined,
+) {
+  return value !== undefined && String(option.value) === String(value);
+}
+
 export interface ComboBoxProps {
   readonly options?: ComboBoxOption[];
   readonly value: string | number | undefined;
@@ -50,33 +77,6 @@ export interface ComboBoxProps {
   readonly isLoading?: boolean;
   readonly error?: string;
   readonly helperText?: string;
-}
-
-function getFilteredOptions(
-  options: ComboBoxOption[],
-  search: string,
-  searchable: boolean,
-  onSearchChange: ((value: string) => void) | undefined,
-): ComboBoxOption[] {
-  if (!searchable || onSearchChange) return options;
-  if (search)
-    return options.filter((opt) =>
-      opt.label.toLowerCase().includes(search.toLowerCase()),
-    );
-  return options;
-}
-
-/**
- * Whether `option` is the selected one. Compared as strings, as a native
- * `<select>` does: callers hold ids as numbers while building options from
- * `String(id)`, and a strict comparison then never matches, leaving the trigger
- * on its placeholder and no option selected.
- */
-function isSelected(
-  option: ComboBoxOption,
-  value: string | number | undefined,
-) {
-  return value !== undefined && String(option.value) === String(value);
 }
 
 /**

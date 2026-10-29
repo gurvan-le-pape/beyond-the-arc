@@ -10,6 +10,9 @@ import { MobileOverlay } from "./MobileOverlay";
 import { SidePanelHeader } from "./SidePanelHeader";
 import { SidePanelToggleButton } from "./SidePanelToggleButton";
 
+/** Matches Tailwind's `lg`, the breakpoint where the mobile backdrop stops. */
+const PANEL_OPEN_BY_DEFAULT_QUERY = "(min-width: 1024px)";
+
 interface SidePanelProps {
   clubs: ClubBasic[];
   onClubClick: (club: ClubBasic) => void;
@@ -17,9 +20,6 @@ interface SidePanelProps {
   onQueryChange: (query: string) => void;
   onClearSearch: () => void;
 }
-
-/** Matches Tailwind's `lg`, the breakpoint where the mobile backdrop stops. */
-const PANEL_OPEN_BY_DEFAULT_QUERY = "(min-width: 1024px)";
 
 /**
  * Sliding side panel over the clubs map. Owns only its open/closed state; all

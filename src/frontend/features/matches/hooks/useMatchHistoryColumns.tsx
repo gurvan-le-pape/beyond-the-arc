@@ -12,6 +12,19 @@ interface MatchWithTeams {
   awayTeam: { id: number; club: { name: string } };
 }
 
+interface MatchWithScore extends MatchWithTeams {
+  homeTeamScore: number | null;
+  awayTeamScore: number | null;
+}
+
+/** The words the result column shows: a one-letter badge and its full name. */
+interface ResultLabels {
+  readonly win: string;
+  readonly winShort: string;
+  readonly loss: string;
+  readonly lossShort: string;
+}
+
 /**
  * Shared "starts at" column for match-history tables, built the same way across
  * teams/players/matches features: the day and month, "17 oct.", on one line
@@ -58,19 +71,6 @@ function buildOpponentColumn<T extends MatchWithTeams>(
         : describe(match.homeTeam.club.name, "away"),
     align: "left",
   };
-}
-
-interface MatchWithScore extends MatchWithTeams {
-  homeTeamScore: number | null;
-  awayTeamScore: number | null;
-}
-
-/** The words the result column shows: a one-letter badge and its full name. */
-interface ResultLabels {
-  readonly win: string;
-  readonly winShort: string;
-  readonly loss: string;
-  readonly lossShort: string;
 }
 
 /**
