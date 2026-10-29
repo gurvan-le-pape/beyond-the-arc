@@ -2,11 +2,12 @@
 import "@/styles/globals.css";
 import "@/styles/map.css";
 
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 
-import { LOCALES } from "@/locales";
+import { type Locale, LOCALES } from "@/locales";
 
 import { Providers } from "../providers";
 
@@ -21,6 +22,38 @@ import { Providers } from "../providers";
  */
 export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }));
+}
+
+const FRONTEND_URL = process.env.FRONTEND_URL;
+
+// Open Graph wants language_TERRITORY, not the bare tag the routes use.
+const OG_LOCALES: Record<Locale, string> = { en: "en_US", fr: "fr_FR" };
+
+/**
+ * The link-preview metadata every localised route inherits.
+ *
+ * Next fills `og:title` and `og:description` from each page's own `title` and
+ * `description` once an `openGraph` object exists, so pages set neither here.
+ * The image is `opengraph-image.tsx` beside this layout. `metadataBase` is what
+ * makes that image's URL absolute, as crawlers require.
+ *
+ * @param props - the layout's params
+ * @param props.params - the locale segment
+ * @returns the Open Graph and Twitter card defaults
+ */
+export async function generateMetadata({
+  params,
+}: Readonly<{ params: Promise<{ locale: string }> }>): Promise<Metadata> {
+  const { locale } = await params;
+  return {
+    metadataBase: FRONTEND_URL ? new URL(FRONTEND_URL) : undefined,
+    openGraph: {
+      type: "website",
+      siteName: "Beyond The Arc",
+      locale: OG_LOCALES[locale as Locale],
+    },
+    twitter: { card: "summary_large_image" },
+  };
 }
 
 interface LocaleLayoutProps {
