@@ -1,24 +1,21 @@
 // src/frontend/shared/components/filters/useCommonFilterChips.ts
 import { useTranslations } from "next-intl";
 
-import type { Category, CompetitionLevel, Gender } from "@/shared/constants";
+import type { Category, Gender } from "@/shared/constants";
 import { CompetitionLevel as Level } from "@/shared/constants";
+import type { FilterProps } from "@/shared/hooks";
 
 import type { ActiveFilterChip } from "./ActiveFilterChips";
+import type { LevelLocationValues } from "./LevelLocationFilters";
 
-interface CommonFilterChipsArgs {
-  readonly category: Category | undefined;
-  readonly gender: Gender | undefined;
-  readonly level: CompetitionLevel | undefined;
-  readonly committeeId: number | undefined;
-  readonly leagueId: number | undefined;
+interface CommonFilterValues extends LevelLocationValues {
+  category: Category | undefined;
+  gender: Gender | undefined;
+}
+
+interface CommonFilterChipsArgs extends FilterProps<CommonFilterValues> {
   readonly committees: { id: number; name: string }[];
   readonly leagues: { id: number; name: string }[];
-  readonly setCategory: (value: Category | undefined) => void;
-  readonly setGender: (value: Gender | undefined) => void;
-  readonly setLevel: (value: CompetitionLevel | undefined) => void;
-  readonly setCommitteeId: (value: number | undefined) => void;
-  readonly setLeagueId: (value: number | undefined) => void;
 }
 
 /**
@@ -26,22 +23,14 @@ interface CommonFilterChipsArgs {
  * panels. Returned as two groups (category+gender, level+location) so each
  * panel can slot them among its own feature-specific chips in the right order.
  *
- * @param root0 - the filter values, their setters, and the committee and league lists the labels are resolved from
+ * @param root0 - the filter values, `set`, and the committee and league lists the labels are resolved from
  * @returns two chip groups — category+gender and level+location — for the panel to interleave with its own
  */
 export function useCommonFilterChips({
-  category,
-  gender,
-  level,
-  committeeId,
-  leagueId,
+  filters: { category, gender, level, committee, league },
+  set,
   committees,
   leagues,
-  setCategory,
-  setGender,
-  setLevel,
-  setCommitteeId,
-  setLeagueId,
 }: CommonFilterChipsArgs): {
   categoryGenderChips: ActiveFilterChip[];
   levelLocationChips: ActiveFilterChip[];
@@ -50,19 +39,19 @@ export function useCommonFilterChips({
 
   const locationLabel =
     level === Level.DEPARTMENTAL
-      ? committees.find((c) => c.id === committeeId)?.name
-      : leagues.find((l) => l.id === leagueId)?.name;
+      ? committees.find((c) => c.id === committee)?.name
+      : leagues.find((l) => l.id === league)?.name;
 
   const categoryGenderChips = [
     category && {
       key: "category",
       label: tCommon(`category.${category}`),
-      onRemove: () => setCategory(undefined),
+      onRemove: () => set({ category: undefined }),
     },
     gender && {
       key: "gender",
       label: tCommon(`gender.${gender}`),
-      onRemove: () => setGender(undefined),
+      onRemove: () => set({ gender: undefined }),
     },
   ].filter(Boolean) as ActiveFilterChip[];
 
@@ -70,15 +59,12 @@ export function useCommonFilterChips({
     level && {
       key: "level",
       label: tCommon(`competition.levels.${level}`),
-      onRemove: () => setLevel(undefined),
+      onRemove: () => set({ level: undefined }),
     },
     locationLabel && {
       key: "location",
       label: locationLabel,
-      onRemove: () => {
-        setCommitteeId(undefined);
-        setLeagueId(undefined);
-      },
+      onRemove: () => set({ committee: undefined, league: undefined }),
     },
   ].filter(Boolean) as ActiveFilterChip[];
 

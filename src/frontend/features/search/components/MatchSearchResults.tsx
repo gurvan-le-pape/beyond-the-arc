@@ -32,26 +32,26 @@ export function MatchSearchResults() {
   const tCommon = useTranslations("common");
   const tSearch = useTranslations("search");
 
-  const { filters, setters, setCurrentPage, setPageSize, resetFilters } =
+  const { filters, set, page, pageSize, setPage, setPageSize, reset } =
     useMatchesFilterState();
 
   const criteria = {
-    search: filters.search || undefined,
-    date: filters.dateFilter || undefined,
+    search: filters.q,
+    date: filters.date,
     category: filters.category,
     gender: filters.gender,
     level: filters.level,
     division: filters.division,
-    committeeId: filters.committeeId,
-    leagueId: filters.leagueId,
-    poolId: filters.poolId,
+    committeeId: filters.committee,
+    leagueId: filters.league,
+    poolId: filters.pool,
     matchday: filters.matchday,
   };
   // Nothing is listed until something narrows the 600k matches.
   const searching = hasCriteria(criteria);
 
   const { data, error, isLoading, refetch } = useMatches(
-    { ...criteria, page: filters.currentPage, limit: filters.pageSize },
+    { ...criteria, page, limit: pageSize },
     { enabled: searching },
   );
 
@@ -67,11 +67,7 @@ export function MatchSearchResults() {
 
   return (
     <div className="space-y-6">
-      <MatchesFilters
-        filters={filters}
-        setters={setters}
-        onReset={resetFilters}
-      />
+      <MatchesFilters filters={filters} set={set} onReset={reset} />
 
       <SearchTabShell
         isLoading={isLoading}
@@ -95,9 +91,9 @@ export function MatchSearchResults() {
           )
         }
         pagination={pagination}
-        pageSize={filters.pageSize}
+        pageSize={pageSize}
         onPageSizeChange={setPageSize}
-        onPageChange={(index) => setCurrentPage(index + 1)}
+        onPageChange={(index) => setPage(index + 1)}
         itemLabel={tMatches("itemLabel", { count: pagination?.total ?? 0 })}
       >
         <div className={LIST_ENTITY_CARD_GRID}>

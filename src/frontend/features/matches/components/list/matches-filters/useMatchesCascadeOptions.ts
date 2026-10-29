@@ -1,7 +1,7 @@
 // src/frontend/features/matches/components/list/matches-filters/useMatchesCascadeOptions.ts
 import { useChampionships } from "@/features/competitions/championships/api";
 import type { ChampionshipFilters } from "@/features/competitions/championships/types";
-import type { MatchesFilterState } from "@/features/matches/hooks";
+import type { MatchesFilterValues } from "@/features/matches/hooks";
 import { CompetitionLevel } from "@/shared/constants";
 
 /**
@@ -27,13 +27,10 @@ import { CompetitionLevel } from "@/shared/constants";
  */
 export function useMatchesCascadeOptions({
   level,
-  committeeId,
-  leagueId,
+  committee: committeeId,
+  league: leagueId,
   division,
-}: Pick<
-  MatchesFilterState,
-  "level" | "committeeId" | "leagueId" | "division"
->) {
+}: Pick<MatchesFilterValues, "level" | "committee" | "league" | "division">) {
   const isDepartmental =
     level === CompetitionLevel.DEPARTMENTAL && committeeId !== undefined;
   const isRegional =

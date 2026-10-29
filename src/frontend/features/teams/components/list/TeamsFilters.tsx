@@ -24,12 +24,11 @@ import {
 } from "@/shared/components/filters";
 import { Select } from "@/shared/components/forms";
 import { Grid } from "@/shared/components/primitives";
+import type { FilterProps } from "@/shared/hooks";
 
-import type { TeamsFilterSetters, TeamsFilterState } from "../../hooks";
+import type { TeamsFilterValues } from "../../hooks";
 
-interface TeamsFiltersProps {
-  readonly filters: TeamsFilterState;
-  readonly setters: TeamsFilterSetters;
+interface TeamsFiltersProps extends FilterProps<TeamsFilterValues> {
   readonly onReset: () => void;
 }
 
@@ -37,7 +36,7 @@ interface TeamsFiltersProps {
  * The filter panel for the teams list — club, team number, category, gender,
  * the level → committee/league cascade, and the division → pool cascade.
  *
- * Holds no state: `filters` and `setters` come from `useTeamsFilterState`, which
+ * Holds no state: `filters` and `set` come from `useTeamsFilterState`, which
  * also owns the reset-to-page-1 behaviour and the cascade clearing.
  *
  * **The division → pool cascade stays disabled until a location is chosen.**
@@ -53,7 +52,7 @@ interface TeamsFiltersProps {
  * Rendered inside `FiltersShell`, so this subtree exists **twice** in the DOM —
  * mobile sheet and desktop card. Nothing here may rely on a unique `id`.
  */
-export function TeamsFilters({ filters, setters, onReset }: TeamsFiltersProps) {
+export function TeamsFilters({ filters, set, onReset }: TeamsFiltersProps) {
   const tTeams = useTranslations("teams");
   const tCommon = useTranslations("common");
   const tMatches = useTranslations("matches");
@@ -68,91 +67,49 @@ export function TeamsFilters({ filters, setters, onReset }: TeamsFiltersProps) {
     retry: retryLocation,
   } = locationOptions;
 
-  const {
-    clubId,
-    selectedClubName,
-    number,
-    category,
-    gender,
-    level,
-    committeeId,
-    leagueId,
-    division,
-    pool,
-  } = filters;
+  const { club, clubName, number, level, committee, league, division, pool } =
+    filters;
 
-  const {
-    setClubId,
-    setSelectedClubName,
-    setNumber,
-    setCategory,
-    setGender,
-    setLevel,
-    setCommitteeId,
-    setLeagueId,
-    setDivision,
-    setPool,
-  } = setters;
-
-  useDropUnknownLocation(locationOptions, {
-    leagueId,
-    setLeagueId,
-    committeeId,
-    setCommitteeId,
-  });
+  useDropUnknownLocation(locationOptions, { filters, set });
 
   const {
     data: teamFilterValues,
     isError: filterValuesFailed,
     refetch: retryFilterValues,
-  } = useTeamFilterValues({
-    committeeId,
-    leagueId,
-  });
+  } = useTeamFilterValues({ committeeId: committee, leagueId: league });
   const teamNumbers = teamFilterValues?.numbers ?? [];
   const divisions = teamFilterValues?.divisions ?? [];
   const poolLetters = teamFilterValues?.poolLetters ?? [];
 
   const { categoryGenderChips, levelLocationChips } = useCommonFilterChips({
-    category,
-    gender,
-    level,
-    committeeId,
-    leagueId,
+    filters,
+    set,
     committees,
     leagues,
-    setCategory,
-    setGender,
-    setLevel,
-    setCommitteeId,
-    setLeagueId,
   });
 
   const chips = [
-    clubId && {
+    club && {
       key: "club",
-      label: selectedClubName || String(clubId),
-      onRemove: () => {
-        setClubId(undefined);
-        setSelectedClubName("");
-      },
+      label: clubName || String(club),
+      onRemove: () => set({ club: undefined, clubName: undefined }),
     },
     number && {
       key: "number",
       label: tTeams("teamNumber", { number }),
-      onRemove: () => setNumber(undefined),
+      onRemove: () => set({ number: undefined }),
     },
     ...categoryGenderChips,
     ...levelLocationChips,
     division && {
       key: "division",
       label: tCompetitions("divisionWithValue", { value: division }),
-      onRemove: () => setDivision(undefined),
+      onRemove: () => set({ division: undefined }),
     },
     pool && {
       key: "pool",
       label: tTeams("poolLabel", { letter: pool }),
-      onRemove: () => setPool(undefined),
+      onRemove: () => set({ pool: undefined }),
     },
   ].filter(Boolean) as ActiveFilterChip[];
 
@@ -166,8 +123,8 @@ export function TeamsFilters({ filters, setters, onReset }: TeamsFiltersProps) {
       id: "division-filter",
       label: tCommon("filters.divisions"),
       value: division ?? "",
-      onChange: (val) => setDivision(Number(val) || undefined),
-      enabled: isLocationSelected(level, committeeId, leagueId),
+      onChange: (val) => set({ division: Number(val) || undefined }),
+      enabled: isLocationSelected(level, committee, league),
       options: divisions.map((div) => ({
         value: div,
         label: tCompetitions("divisionWithValue", { value: div }),
@@ -179,7 +136,7 @@ export function TeamsFilters({ filters, setters, onReset }: TeamsFiltersProps) {
       id: "pool-filter",
       label: tCommon("filters.pools"),
       value: pool ?? "",
-      onChange: (val) => setPool(String(val) || undefined),
+      onChange: (val) => set({ pool: String(val) || undefined }),
       enabled: !!division,
       options: poolLetters.map((letter) => ({
         value: letter,
@@ -215,34 +172,24 @@ export function TeamsFilters({ filters, setters, onReset }: TeamsFiltersProps) {
 
       <Grid columns={{ base: 1, md: 2, lg: 4 }} gap={4}>
         <ClubComboBoxFilter
-          committeeId={committeeId}
-          leagueId={leagueId}
-          clubId={clubId}
-          setClubId={setClubId}
-          setSelectedClubName={setSelectedClubName}
+          committeeId={committee}
+          leagueId={league}
+          clubId={club}
+          onChange={(club, clubName) => set({ club, clubName })}
         />
 
         <Select
           label={tCommon("filters.teamNumbers")}
           options={teamNumberOptions}
           value={number ?? ""}
-          onChange={(val) => setNumber(Number(val) || undefined)}
+          onChange={(val) => set({ number: Number(val) || undefined })}
         />
 
-        <CategoryGenderSelects
-          category={category}
-          setCategory={setCategory}
-          gender={gender}
-          setGender={setGender}
-        />
+        <CategoryGenderSelects filters={filters} set={set} />
 
         <LevelLocationFilters
-          level={level}
-          setLevel={setLevel}
-          committeeId={committeeId}
-          setCommitteeId={setCommitteeId}
-          leagueId={leagueId}
-          setLeagueId={setLeagueId}
+          filters={filters}
+          set={set}
           committees={committees}
           leagues={leagues}
         />

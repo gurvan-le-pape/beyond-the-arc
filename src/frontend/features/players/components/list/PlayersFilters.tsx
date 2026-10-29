@@ -18,16 +18,12 @@ import {
 } from "@/shared/components/filters";
 import { DebouncedInput, Select } from "@/shared/components/forms";
 import { Grid } from "@/shared/components/primitives";
+import type { FilterProps } from "@/shared/hooks";
 
 import { usePlayerFilterValues } from "../../api";
-import type {
-  PlayersFilterSetters,
-  PlayersFilterState,
-} from "../../hooks/usePlayersFilterState";
+import type { PlayersFilterValues } from "../../hooks/usePlayersFilterState";
 
-interface PlayersFiltersProps {
-  readonly filters: PlayersFilterState;
-  readonly setters: PlayersFilterSetters;
+interface PlayersFiltersProps extends FilterProps<PlayersFilterValues> {
   readonly onReset: () => void;
 }
 
@@ -35,7 +31,7 @@ interface PlayersFiltersProps {
  * The filter panel for the players list — name search, club, category, gender,
  * jersey and team number, and the level → committee/league cascade.
  *
- * Holds no state of its own: `filters` and `setters` come from
+ * Holds no state of its own: `filters` and `set` come from
  * `usePlayersFilterState`, which also owns the reset-to-page-1 behaviour. Wiring
  * it to hand-rolled state instead loses that.
  *
@@ -50,11 +46,7 @@ interface PlayersFiltersProps {
  * once in the mobile sheet, once in the desktop card. Nothing here may rely on a
  * unique `id` or on being mounted once.
  */
-export function PlayersFilters({
-  filters,
-  setters,
-  onReset,
-}: PlayersFiltersProps) {
+export function PlayersFilters({ filters, set, onReset }: PlayersFiltersProps) {
   const tPlayers = useTranslations("players");
   const tCommon = useTranslations("common");
   const tTeams = useTranslations("teams");
@@ -67,85 +59,46 @@ export function PlayersFilters({
     retry: retryLocation,
   } = locationOptions;
 
-  const {
-    name,
-    clubId,
-    selectedClubName,
-    category,
-    gender,
-    number,
-    teamNumber,
-    level,
-    committeeId,
-    leagueId,
-  } = filters;
+  const { q, club, clubName, number, teamNumber, committee, league } = filters;
 
-  const {
-    setName,
-    setClubId,
-    setSelectedClubName,
-    setCategory,
-    setGender,
-    setNumber,
-    setTeamNumber,
-    setLevel,
-    setCommitteeId,
-    setLeagueId,
-  } = setters;
-
-  useDropUnknownLocation(locationOptions, {
-    leagueId,
-    setLeagueId,
-    committeeId,
-    setCommitteeId,
-  });
+  useDropUnknownLocation(locationOptions, { filters, set });
 
   const {
     data: playerFilterValues,
     isError: filterValuesFailed,
     refetch: retryFilterValues,
-  } = usePlayerFilterValues({
-    committeeId,
-    leagueId,
-  });
+  } = usePlayerFilterValues({ committeeId: committee, leagueId: league });
   const playerNumbers = playerFilterValues?.numbers ?? [];
   const teamNumbers = playerFilterValues?.teamNumbers ?? [];
 
   const { categoryGenderChips, levelLocationChips } = useCommonFilterChips({
-    category,
-    gender,
-    level,
-    committeeId,
-    leagueId,
+    filters,
+    set,
     committees,
     leagues,
-    setCategory,
-    setGender,
-    setLevel,
-    setCommitteeId,
-    setLeagueId,
   });
 
   const chips = [
-    name && { key: "name", label: `"${name}"`, onRemove: () => setName("") },
-    clubId && {
+    q && {
+      key: "name",
+      label: `"${q}"`,
+      onRemove: () => set({ q: undefined }),
+    },
+    club && {
       key: "club",
-      label: selectedClubName || String(clubId),
-      onRemove: () => {
-        setClubId(undefined);
-        setSelectedClubName("");
-      },
+      label: clubName || String(club),
+      onRemove: () => set({ club: undefined, clubName: undefined }),
     },
     ...categoryGenderChips,
     number && {
       key: "number",
       label: `#${number}`,
-      onRemove: () => setNumber(undefined),
+      onRemove: () => set({ number: undefined }),
     },
     teamNumber && {
       key: "teamNumber",
       label: tTeams("teamNumber", { number: teamNumber }),
-      onRemove: () => setTeamNumber(undefined),
+      onRemove: () => set({ teamNumber: undefined }),
     },
     ...levelLocationChips,
   ].filter(Boolean) as ActiveFilterChip[];
@@ -187,49 +140,39 @@ export function PlayersFilters({
         <DebouncedInput
           variant="search"
           label={tPlayers("filters.searchName")}
-          value={name}
+          value={q ?? ""}
           placeholder={tPlayers("filters.searchNamePlaceholder")}
-          onChange={setName}
-          onClear={() => setName("")}
+          onChange={(value) => set({ q: value })}
+          onClear={() => set({ q: undefined })}
           clearAriaLabel={tCommon("clearSearch")}
         />
         <ClubComboBoxFilter
-          committeeId={committeeId}
-          leagueId={leagueId}
-          clubId={clubId}
-          setClubId={setClubId}
-          setSelectedClubName={setSelectedClubName}
+          committeeId={committee}
+          leagueId={league}
+          clubId={club}
+          onChange={(club, clubName) => set({ club, clubName })}
         />
 
-        <CategoryGenderSelects
-          category={category}
-          setCategory={setCategory}
-          gender={gender}
-          setGender={setGender}
-        />
+        <CategoryGenderSelects filters={filters} set={set} />
 
         <Select
           label={tCommon("filters.playerNumbers")}
           options={playerNumberOptions}
           value={number ?? ""}
-          onChange={(val) => setNumber(Number(val) || undefined)}
+          onChange={(val) => set({ number: Number(val) || undefined })}
           placeholder={tCommon("filters.allPlayerNumbers")}
         />
         <Select
           label={tCommon("filters.teamNumbers")}
           options={teamNumberOptions}
           value={teamNumber ?? ""}
-          onChange={(val) => setTeamNumber(Number(val) || undefined)}
+          onChange={(val) => set({ teamNumber: Number(val) || undefined })}
           placeholder={tCommon("filters.allTeamNumbers")}
         />
 
         <LevelLocationFilters
-          level={level}
-          setLevel={setLevel}
-          committeeId={committeeId}
-          setCommitteeId={setCommitteeId}
-          leagueId={leagueId}
-          setLeagueId={setLeagueId}
+          filters={filters}
+          set={set}
           committees={committees}
           leagues={leagues}
         />

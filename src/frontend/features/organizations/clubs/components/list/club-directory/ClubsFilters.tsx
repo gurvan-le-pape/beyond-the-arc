@@ -12,15 +12,11 @@ import type { ActiveFilterChip } from "@/shared/components/filters";
 import { FiltersShell } from "@/shared/components/filters";
 import { DebouncedInput, Select } from "@/shared/components/forms";
 import { Grid } from "@/shared/components/primitives";
+import type { FilterProps } from "@/shared/hooks";
 
-import type {
-  ClubsFilterSetters,
-  ClubsFilterState,
-} from "./useClubsFilterState";
+import type { ClubsFilterValues } from "./useClubsFilterState";
 
-interface ClubsFiltersProps {
-  readonly filters: ClubsFilterState;
-  readonly setters: ClubsFilterSetters;
+interface ClubsFiltersProps extends FilterProps<ClubsFilterValues> {
   readonly onReset: () => void;
 }
 
@@ -28,18 +24,17 @@ interface ClubsFiltersProps {
  * The filter panel for the clubs list — name search, and the level →
  * committee/league cascade.
  *
- * Holds no state: values and setters come from the caller's filter hook. The
+ * Holds no state: values and `set` come from the caller's filter hook. The
  * committee select is gated on a league being chosen, because committees are
  * only meaningful once a league scopes them.
  */
-export function ClubsFilters({ filters, setters, onReset }: ClubsFiltersProps) {
+export function ClubsFilters({ filters, set, onReset }: ClubsFiltersProps) {
   const tCommon = useTranslations("common");
   const tOrganizations = useTranslations("organizations");
 
-  const { search, leagueId, committeeId } = filters;
-  const { setSearch, setLeagueId, setCommitteeId } = setters;
+  const { q, league, committee } = filters;
 
-  const locationOptions = useLocationOptions({ leagueId });
+  const locationOptions = useLocationOptions({ leagueId: league });
   const {
     leagues,
     committees,
@@ -47,12 +42,7 @@ export function ClubsFilters({ filters, setters, onReset }: ClubsFiltersProps) {
     retry: retryLocation,
   } = locationOptions;
 
-  useDropUnknownLocation(locationOptions, {
-    leagueId,
-    setLeagueId,
-    committeeId,
-    setCommitteeId,
-  });
+  useDropUnknownLocation(locationOptions, { filters, set });
 
   const leagueOptions = [
     { value: "", label: tCommon("filters.allLeagues") },
@@ -70,26 +60,26 @@ export function ClubsFilters({ filters, setters, onReset }: ClubsFiltersProps) {
     })),
   ];
 
-  const selectedLeague = leagues.find((league) => league.id === leagueId);
+  const selectedLeague = leagues.find((option) => option.id === league);
   const selectedCommittee = committees.find(
-    (committee) => committee.id === committeeId,
+    (option) => option.id === committee,
   );
 
   const chips = [
-    search && {
+    q && {
       key: "search",
-      label: `"${search}"`,
-      onRemove: () => setSearch(""),
+      label: `"${q}"`,
+      onRemove: () => set({ q: undefined }),
     },
-    leagueId && {
+    league && {
       key: "league",
-      label: selectedLeague?.name ?? String(leagueId),
-      onRemove: () => setLeagueId(undefined),
+      label: selectedLeague?.name ?? String(league),
+      onRemove: () => set({ league: undefined }),
     },
-    committeeId && {
+    committee && {
       key: "committee",
-      label: selectedCommittee?.name ?? String(committeeId),
-      onRemove: () => setCommitteeId(undefined),
+      label: selectedCommittee?.name ?? String(committee),
+      onRemove: () => set({ committee: undefined }),
     },
   ].filter(Boolean) as ActiveFilterChip[];
 
@@ -110,9 +100,9 @@ export function ClubsFilters({ filters, setters, onReset }: ClubsFiltersProps) {
       <DebouncedInput
         variant="search"
         label={tOrganizations("clubs.searchLabel")}
-        value={search}
-        onChange={setSearch}
-        onClear={() => setSearch("")}
+        value={q ?? ""}
+        onChange={(value) => set({ q: value })}
+        onClear={() => set({ q: undefined })}
         placeholder={tOrganizations("clubs.searchPlaceholder")}
         clearAriaLabel={tCommon("clearSearch")}
       />
@@ -121,17 +111,17 @@ export function ClubsFilters({ filters, setters, onReset }: ClubsFiltersProps) {
         <Select
           label={tCommon("filters.leagues")}
           options={leagueOptions}
-          value={leagueId ?? ""}
-          onChange={(val) => setLeagueId(Number(val) || undefined)}
+          value={league ?? ""}
+          onChange={(val) => set({ league: Number(val) || undefined })}
         />
 
         {/* Committees are only meaningful once a league scopes them. */}
-        {leagueId && (
+        {league && (
           <Select
             label={tCommon("filters.committees")}
             options={committeeOptions}
-            value={committeeId ?? ""}
-            onChange={(val) => setCommitteeId(Number(val) || undefined)}
+            value={committee ?? ""}
+            onChange={(val) => set({ committee: Number(val) || undefined })}
           />
         )}
       </Grid>

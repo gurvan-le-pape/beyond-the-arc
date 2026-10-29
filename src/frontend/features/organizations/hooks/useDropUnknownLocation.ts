@@ -1,15 +1,13 @@
 // src/frontend/features/organizations/hooks/useDropUnknownLocation.ts
 "use client";
 
-import { useDropUnknownValue } from "@/shared/hooks";
+import { type FilterProps, useDropUnknownValue } from "@/shared/hooks";
 
 import type { useLocationOptions } from "./useLocationOptions";
 
-interface LocationSelection {
-  leagueId: number | undefined;
-  setLeagueId: (value: number | undefined) => void;
-  committeeId: number | undefined;
-  setCommitteeId: (value: number | undefined) => void;
+interface LocationValues {
+  league: number | undefined;
+  committee: number | undefined;
 }
 
 /**
@@ -21,22 +19,22 @@ interface LocationSelection {
  * committee from another league is dropped too.
  *
  * @param options - the result of that `useLocationOptions` call
- * @param selection - the current ids and their setters
+ * @param selection - the current ids and `set`
  */
 export function useDropUnknownLocation(
   options: ReturnType<typeof useLocationOptions>,
-  { leagueId, setLeagueId, committeeId, setCommitteeId }: LocationSelection,
+  { filters: { league, committee }, set }: FilterProps<LocationValues>,
 ) {
   useDropUnknownValue(
-    leagueId,
-    options.leagues.map((league) => league.id),
+    league,
+    options.leagues.map((option) => option.id),
     options.leaguesLoaded,
-    () => setLeagueId(undefined),
+    () => set({ league: undefined }),
   );
   useDropUnknownValue(
-    committeeId,
-    options.committees.map((committee) => committee.id),
+    committee,
+    options.committees.map((option) => option.id),
     options.committeesLoaded,
-    () => setCommitteeId(undefined),
+    () => set({ committee: undefined }),
   );
 }
