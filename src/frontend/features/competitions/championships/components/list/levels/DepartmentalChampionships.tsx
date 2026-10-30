@@ -4,7 +4,7 @@
 import { useTranslations } from "next-intl";
 
 import { useChampionships } from "@/features/competitions/championships/api";
-import { useDepartmentalFilterState } from "@/features/competitions/championships/hooks";
+import { useChampionshipsFilterState } from "@/features/competitions/championships/hooks";
 import { useCommittees } from "@/features/organizations/committees/api";
 import { CompetitionLevel } from "@/shared/constants";
 
@@ -24,14 +24,14 @@ import { ChampionshipList } from "./ChampionshipList";
  * zero-based page index while the API counts from one, so `onPageChange` adds
  * the offset, as in the search tabs.
  *
- * The three level lists hold independent filter state, so switching tabs does
- * not carry one level's category or gender into another.
+ * The filters live in the query string, so a filtered list survives a reload
+ * and the back button; switching tabs clears them.
  */
 export function DepartmentalChampionships() {
   const tCommon = useTranslations("common");
 
-  const { filters, setters, setCurrentPage, setPageSize, resetFilters } =
-    useDepartmentalFilterState();
+  const { filters, set, page, pageSize, setPage, setPageSize, reset } =
+    useChampionshipsFilterState();
 
   const {
     data: committees = [],
@@ -41,11 +41,11 @@ export function DepartmentalChampionships() {
 
   const { data, error, isLoading, refetch } = useChampionships({
     level: CompetitionLevel.DEPARTMENTAL,
-    committeeId: filters.committeeId,
+    committeeId: filters.committee,
     category: filters.category,
     gender: filters.gender,
-    page: filters.currentPage,
-    limit: filters.pageSize,
+    page,
+    limit: pageSize,
   });
 
   return (
@@ -55,17 +55,17 @@ export function DepartmentalChampionships() {
       error={error}
       isLoading={isLoading}
       onRetry={refetch}
-      pageSize={filters.pageSize}
+      pageSize={pageSize}
       onPageSizeChange={setPageSize}
-      onPageChange={(index) => setCurrentPage(index + 1)}
+      onPageChange={(index) => setPage(index + 1)}
       filters={
         <ChampionshipFilters
           level="departmental"
           category={filters.category}
           gender={filters.gender}
-          onCategoryChange={setters.setCategory}
-          onGenderChange={setters.setGender}
-          onReset={resetFilters}
+          onCategoryChange={(category) => set({ category })}
+          onGenderChange={(gender) => set({ gender })}
+          onReset={reset}
           scopeError={
             committeesError ? tCommon("errors.fetchCommittees") : undefined
           }
@@ -73,8 +73,8 @@ export function DepartmentalChampionships() {
           scope={{
             label: tCommon("filters.committees"),
             allLabel: tCommon("filters.allCommittees"),
-            value: filters.committeeId,
-            onChange: setters.setCommitteeId,
+            value: filters.committee,
+            onChange: (committee) => set({ committee }),
             options: committees,
           }}
         />
