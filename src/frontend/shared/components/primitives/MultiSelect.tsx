@@ -12,7 +12,7 @@
 
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import React, { useId, useState } from "react";
+import React, { useId, useRef, useState } from "react";
 
 import { cn } from "@/shared/utils";
 
@@ -135,6 +135,7 @@ export function MultiSelect({
 }: MultiSelectProps) {
   const t = useTranslations("common");
   const [isOpen, setIsOpen] = useState(false);
+  const closeRef = useRef<HTMLButtonElement>(null);
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -178,6 +179,7 @@ export function MultiSelect({
               <div className="flex items-center justify-between mb-3">
                 <Text variant="label">{label}</Text>
                 <button
+                  ref={closeRef}
                   type="button"
                   onClick={() => setIsOpen(false)}
                   aria-label={t("close")}
@@ -207,13 +209,18 @@ export function MultiSelect({
                 ))}
               </div>
 
-              {/* Clear all — only shown when something is selected */}
+              {/* Clear all — only shown when something is selected, so it
+                  unmounts once clicked; focus moves to the close button
+                  rather than falling out of the panel. */}
               {selectedCount > 0 && (
                 <>
                   <div className="border-t border-divide mt-3" />
                   <button
                     type="button"
-                    onClick={onClear}
+                    onClick={() => {
+                      onClear();
+                      closeRef.current?.focus();
+                    }}
                     className={cn(
                       "mt-3 w-full px-3 py-1.5 text-sm rounded-input",
                       "text-ink-error",
