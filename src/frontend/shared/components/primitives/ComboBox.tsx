@@ -15,7 +15,7 @@ import { cn } from "@/shared/utils";
 
 import { Text } from "../typography";
 import { DROPDOWN_TRIGGER_BASE } from "./dropdownTriggerBase";
-import { Popover } from "./Popover";
+import { Popover, PopoverAnchor, PopoverContent } from "./Popover";
 import { SelectChevron } from "./SelectChevron";
 
 /** A picker's value: an id, a code, or an enum member. */
@@ -119,7 +119,6 @@ export function ComboBox<V extends OptionValue>({
   const [activeIndex, setActiveIndex] = useState(-1);
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const searchRef = useRef<HTMLInputElement>(null);
   const generatedId = useId();
 
   // From useId, never from the label: the same labelled picker can be mounted
@@ -141,27 +140,11 @@ export function ComboBox<V extends OptionValue>({
     open && activeOption ? optionId(activeIndex) : undefined;
 
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
-        setOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  useEffect(() => {
-    if (open && searchable) {
-      searchRef.current?.focus();
-    }
     if (!open) {
       setSearch("");
       onSearchChange?.("");
     }
-  }, [open, searchable, onSearchChange]);
+  }, [open, onSearchChange]);
 
   useEffect(() => {
     if (activeDescendant) {
@@ -224,10 +207,6 @@ export function ComboBox<V extends OptionValue>({
       case "Enter":
         event.preventDefault();
         if (activeOption) pick(activeOption);
-        break;
-      case "Escape":
-        event.preventDefault();
-        close(true);
         break;
       case "Tab":
         close(false);
@@ -304,70 +283,100 @@ export function ComboBox<V extends OptionValue>({
         </Text>
       )}
 
-      <div className="relative">
-        <button
-          ref={triggerRef}
-          id={inputId}
-          type="button"
-          role="combobox"
-          className={cn(
-            DROPDOWN_TRIGGER_BASE,
-            "text-left",
-            error && "border-solid-error focus-ring focus:border-solid-error",
+      <Popover
+        open={open}
+        onOpenChange={(next) => {
+          if (!next) close(false);
+        }}
+      >
+        <PopoverAnchor asChild>
+          <div className="relative">
+            <button
+              ref={triggerRef}
+              id={inputId}
+              type="button"
+              role="combobox"
+              className={cn(
+                DROPDOWN_TRIGGER_BASE,
+                "text-left",
+                error &&
+                  "border-solid-error focus-ring focus:border-solid-error",
+              )}
+              onClick={() => (open ? close(false) : openList())}
+              onKeyDown={handleKeyDown}
+              disabled={disabled}
+              aria-labelledby={label ? labelId : valueId}
+              aria-describedby={error ? `${inputId}-error` : undefined}
+              aria-expanded={open}
+              aria-haspopup="listbox"
+              aria-controls={open ? listboxId : undefined}
+              aria-activedescendant={searchable ? undefined : activeDescendant}
+            >
+              <span id={valueId} className="truncate block">
+                {selectedOption
+                  ? selectedOption.label
+                  : placeholder && (
+                      <span className="text-text-secondary">{placeholder}</span>
+                    )}
+              </span>
+            </button>
+
+            <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+              <SelectChevron open={open} />
+            </span>
+          </div>
+        </PopoverAnchor>
+
+        <PopoverContent
+          align="stretch"
+          // A combobox's popup is the listbox inside, not a dialog.
+          role={undefined}
+          // Focus stays on the trigger, or lands in the filter input, which
+          // is the first thing in the panel.
+          onOpenAutoFocus={(event) => {
+            if (!searchable) event.preventDefault();
+          }}
+          // Radix hears Escape first, on the document, and would unmount the
+          // filter input before its own handler could return focus.
+          onEscapeKeyDown={(event) => {
+            event.preventDefault();
+            close(true);
+          }}
+          // The label and the trigger toggle the list themselves.
+          onInteractOutside={(event) => {
+            if (containerRef.current?.contains(event.target as Node)) {
+              event.preventDefault();
+            }
+          }}
+        >
+          {searchable && (
+            <input
+              type="text"
+              className="w-full px-3 py-2 border-b border-divide bg-surface-subtle text-text-heading placeholder:text-text-secondary text-sm focus-ring-inset"
+              placeholder={t("table.filter")}
+              aria-label={t("table.filter")}
+              aria-controls={listboxId}
+              aria-activedescendant={activeDescendant}
+              aria-autocomplete="list"
+              value={search}
+              onKeyDown={handleKeyDown}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setActiveIndex(0);
+                onSearchChange?.(e.target.value);
+              }}
+            />
           )}
-          onClick={() => (open ? close(false) : openList())}
-          onKeyDown={handleKeyDown}
-          disabled={disabled}
-          aria-labelledby={label ? labelId : valueId}
-          aria-describedby={error ? `${inputId}-error` : undefined}
-          aria-expanded={open}
-          aria-haspopup="listbox"
-          aria-controls={listboxId}
-          aria-activedescendant={searchable ? undefined : activeDescendant}
-        >
-          <span id={valueId} className="truncate block">
-            {selectedOption
-              ? selectedOption.label
-              : placeholder && (
-                  <span className="text-text-secondary">{placeholder}</span>
-                )}
-          </span>
-        </button>
 
-        <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-          <SelectChevron open={open} />
-        </span>
-      </div>
-
-      <Popover open={open} align="stretch">
-        {searchable && (
-          <input
-            ref={searchRef}
-            type="text"
-            className="w-full px-3 py-2 border-b border-divide bg-surface-subtle text-text-heading placeholder:text-text-secondary text-sm focus-ring-inset"
-            placeholder={t("table.filter")}
-            aria-label={t("table.filter")}
-            aria-controls={listboxId}
-            aria-activedescendant={activeDescendant}
-            aria-autocomplete="list"
-            value={search}
-            onKeyDown={handleKeyDown}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setActiveIndex(0);
-              onSearchChange?.(e.target.value);
-            }}
-          />
-        )}
-
-        <ul
-          id={listboxId}
-          role="listbox"
-          aria-labelledby={label ? labelId : valueId}
-          className="max-h-60 overflow-y-auto scrollbar-hide py-1"
-        >
-          {renderOptions()}
-        </ul>
+          <ul
+            id={listboxId}
+            role="listbox"
+            aria-labelledby={label ? labelId : valueId}
+            className="max-h-60 overflow-y-auto scrollbar-hide py-1"
+          >
+            {renderOptions()}
+          </ul>
+        </PopoverContent>
       </Popover>
 
       {error && (

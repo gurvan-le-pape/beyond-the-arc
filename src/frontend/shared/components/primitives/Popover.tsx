@@ -1,137 +1,88 @@
 // src/frontend/shared/components/primitives/Popover.tsx
 "use client";
 
+import * as RadixPopover from "@radix-ui/react-popover";
 import { cva, type VariantProps } from "class-variance-authority";
-import {
-  type HTMLAttributes,
-  type ReactNode,
-  type Ref,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import type { ComponentProps } from "react";
 
-const popoverVariants = cva(
-  "absolute z-dropdown mt-1 overflow-hidden surface-raised border border-divide rounded-input shadow-card-hover " +
-    "transition-[opacity,transform] duration-200",
+const popoverContentVariants = cva(
+  "z-dropdown overflow-hidden surface-raised border border-divide rounded-input shadow-card-hover " +
+    "origin-[--radix-popover-content-transform-origin] " +
+    "data-[state=open]:animate-popover-in data-[state=closed]:animate-popover-out",
   {
     variants: {
       align: {
-        start: "left-0 w-max min-w-44 max-w-[90vw] origin-top-left",
-        end: "right-0 w-max min-w-44 max-w-[90vw] origin-top-right",
-        // As wide as the positioned parent, as a select's list is.
-        stretch: "inset-x-0 origin-top",
-      },
-      open: {
-        true: "opacity-100 scale-100",
-        false: "pointer-events-none opacity-0 scale-95",
+        start: "w-max min-w-44 max-w-[90vw]",
+        end: "w-max min-w-44 max-w-[90vw]",
+        // As wide as the anchor, as a select's list is.
+        stretch: "w-[--radix-popover-trigger-width]",
       },
     },
     defaultVariants: { align: "start" },
   },
 );
 
-// The least room kept between an open panel and the edge of the viewport.
-const VIEWPORT_MARGIN = 16;
-
 /**
- * How far a panel has to move back toward the viewport to stay inside it.
- *
- * Measured from the parent's box and the panel's own width, neither of which
- * the panel's scale animation or a previous shift changes, so it gives the
- * same answer on every call.
- *
- * @param panel - the mounted panel
- * @param align - which edge of the parent the panel is aligned to
- * @returns the pixels to shift it by, toward the start for `start` and toward the end for `end`; 0 when it fits
+ * The root of a floating panel, on Radix Popover. Controlled by its caller
+ * through `open` and `onOpenChange`; Radix asks to close on Escape, on a click
+ * outside, and when focus leaves.
  */
-function overflowShift(panel: HTMLDivElement, align: "start" | "end"): number {
-  const parent = panel.offsetParent?.getBoundingClientRect();
-  if (!parent) return 0;
-  // The body, not the root: `scrollbar-gutter: stable` on the root keeps the
-  // scrollbar's room out of the body's width but not out of the root's
-  // `clientWidth`, which would let a panel end under the scrollbar.
-  const viewport = document.body.clientWidth;
-  const width = panel.offsetWidth;
-
-  if (align === "start") {
-    const overflow = parent.left + width - (viewport - VIEWPORT_MARGIN);
-    return Math.max(0, Math.min(overflow, parent.left - VIEWPORT_MARGIN));
-  }
-  const overflow = VIEWPORT_MARGIN - (parent.right - width);
-  return Math.max(
-    0,
-    Math.min(overflow, viewport - VIEWPORT_MARGIN - parent.right),
-  );
-}
-
-interface PopoverProps
-  extends
-    Omit<HTMLAttributes<HTMLDivElement>, "className" | "style" | "inert">,
-    Omit<VariantProps<typeof popoverVariants>, "open"> {
-  readonly open: boolean;
-  readonly children: ReactNode;
-  readonly ref?: Ref<HTMLDivElement>;
-}
+export const Popover = RadixPopover.Root;
 
 /**
- * The floating panel under a trigger: a select's list, a menu, a search's
- * results.
+ * The button that opens the panel. Radix gives it `aria-expanded`,
+ * `aria-controls` and `aria-haspopup="dialog"`, toggles the panel on click,
+ * and returns focus to it when the panel closes.
+ */
+export const PopoverTrigger = RadixPopover.Trigger;
+
+/**
+ * What the panel is placed against, when that is not the trigger: a combobox
+ * with its own keyboard handling, an input, or a box wider than the button.
+ */
+export const PopoverAnchor = RadixPopover.Anchor;
+
+interface PopoverContentProps
+  extends
+    Omit<
+      ComponentProps<typeof RadixPopover.Content>,
+      "className" | "style" | "align" | "side" | "sideOffset"
+    >,
+    VariantProps<typeof popoverContentVariants> {}
+
+/**
+ * The floating panel under a trigger: a select's list, a set of checkboxes, a
+ * list of links, a search's results.
  *
- * Place it right after the trigger inside a `relative` parent; it opens below
- * the trigger, aligned to the parent's start or end edge or stretched across
- * it. A `start` or `end` panel that would cross the far edge of the viewport
- * is shifted back inside it, as far as its own edge allows, and placed again
- * when the window resizes. That holds while it is closed too: a closed panel
- * is still in the layout, so one left past the edge widens the page and lets
- * it scroll sideways on a phone. It stays mounted and fades and
- * scales between states, and `inert` is what makes closed mean closed:
- * without it the panel's controls stay in the tab order and the accessibility
- * tree while invisible.
+ * It opens below its anchor, aligned to the anchor's start or end edge or
+ * stretched across it, and Radix keeps it 16 px inside the viewport, flipping
+ * above the anchor when there is no room below. Rendered in place, not
+ * portalled: it follows the trigger in the tab order, and stays inside the
+ * stacking context of whatever holds it. It is unmounted while closed.
+ *
+ * `role` defaults to `dialog`. A caller whose panel is something else — a
+ * combobox's listbox, a disclosure of links — passes `role={undefined}`.
  *
  * The panel has no padding and clips its content to its corners. A scrolling
  * list caps its own height inside it.
  *
  * Takes no `className`: the variants are the whole of its look.
  */
-export function Popover({
-  open,
+export function PopoverContent({
   align,
   children,
-  ref,
   ...props
-}: Readonly<PopoverProps>) {
-  const panelRef = useRef<HTMLDivElement | null>(null);
-  const [shift, setShift] = useState(0);
-  const edge = align ?? "start";
-
-  useLayoutEffect(() => {
-    const panel = panelRef.current;
-    if (edge === "stretch" || !panel) return;
-    const place = () => setShift(overflowShift(panel, edge));
-    place();
-    window.addEventListener("resize", place);
-    return () => window.removeEventListener("resize", place);
-  }, [open, edge]);
-
-  const setRefs = (node: HTMLDivElement | null) => {
-    panelRef.current = node;
-    if (typeof ref === "function") ref(node);
-    else if (ref) ref.current = node;
-  };
-
-  let offset: { left: number } | { right: number } | undefined;
-  if (shift > 0) offset = edge === "end" ? { right: -shift } : { left: -shift };
-
+}: Readonly<PopoverContentProps>) {
   return (
-    <div
-      ref={setRefs}
-      inert={!open}
-      className={popoverVariants({ align, open })}
-      style={offset}
+    <RadixPopover.Content
+      align={align === "end" ? "end" : "start"}
+      side="bottom"
+      sideOffset={4}
+      collisionPadding={16}
+      className={popoverContentVariants({ align })}
       {...props}
     >
       {children}
-    </div>
+    </RadixPopover.Content>
   );
 }

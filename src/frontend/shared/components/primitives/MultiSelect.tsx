@@ -2,8 +2,8 @@
 //
 // MultiSelect — multi-value picker with N columns of checkboxes.
 //
-// The shell handles: trigger, badge count, open/close, click-outside,
-// popover animation, header, dividers between columns, and clear button.
+// The shell handles: trigger, badge count, the popover, header, dividers
+// between columns, and clear button.
 //
 // Pass 1 column → no divider.
 // Pass 2 columns → one divider.
@@ -12,13 +12,18 @@
 
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import React, { useEffect, useId, useRef } from "react";
+import React, { useId } from "react";
 
 import { cn } from "@/shared/utils";
 
 import { Text } from "../typography";
 import { DROPDOWN_TRIGGER_BASE } from "./dropdownTriggerBase";
-import { Popover } from "./Popover";
+import {
+  Popover,
+  PopoverAnchor,
+  PopoverContent,
+  PopoverTrigger,
+} from "./Popover";
 import { SelectChevron } from "./SelectChevron";
 
 export interface MultiSelectColumn {
@@ -92,10 +97,10 @@ export interface MultiSelectProps {
 /**
  * MultiSelect — generic multi-value column picker.
  *
- * A disclosure: the trigger is a button with `aria-expanded`, named with the
- * selection count ("Players, 2 selected"), and the panel holds native
- * checkboxes, one labelled group per column. Escape anywhere in it, or the
- * close button, closes it and returns focus to the trigger.
+ * A popover dialog: the trigger is named with the selection count ("Players,
+ * 2 selected") and opens a panel of native checkboxes, one labelled group per
+ * column, moving focus into it. Escape, a click outside, or the close button
+ * closes it and returns focus to the trigger.
  *
  * @example
  * // Single column
@@ -136,134 +141,101 @@ export function MultiSelect({
   className,
 }: MultiSelectProps) {
   const t = useTranslations("common");
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const panelId = useId();
-
-  const closeAndRefocus = () => {
-    setIsOpen(false);
-    buttonRef.current?.focus();
-  };
-
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (isOpen && event.key === "Escape") {
-      event.preventDefault();
-      closeAndRefocus();
-    }
-  };
-
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Node;
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(target) &&
-        buttonRef.current &&
-        !buttonRef.current.contains(target)
-      ) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isOpen, setIsOpen]);
 
   return (
-    <div className={cn("relative", className)}>
-      {/* Trigger — same visual contract as Select and ComboBox */}
-      <div className="relative w-fit">
-        <button
-          ref={buttonRef}
-          type="button"
-          onClick={() => setIsOpen(!isOpen)}
-          onKeyDown={handleKeyDown}
-          aria-expanded={isOpen}
-          aria-controls={panelId}
-          aria-label={t("multiSelectSummary", { label, count: selectedCount })}
-          className={cn(
-            DROPDOWN_TRIGGER_BASE,
-            "text-left flex items-center gap-2",
-            isOpen && "ring-2 ring-solid-primary border-transparent",
-          )}
-        >
-          <span>{label}</span>
-
-          {selectedCount > 0 && (
-            <span
-              aria-hidden="true"
-              className="bg-solid-primary text-on-solid-primary text-xs rounded-button px-2 py-0.5 leading-none"
-            >
-              {selectedCount}
-            </span>
-          )}
-        </button>
-
-        <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-          <SelectChevron open={isOpen} />
-        </span>
-      </div>
-
-      <Popover
-        ref={dropdownRef}
-        id={panelId}
-        open={isOpen}
-        onKeyDown={handleKeyDown}
-      >
-        <div className="p-4">
-          <div className="flex items-center justify-between mb-3">
-            <Text variant="label">{label}</Text>
-            <button
-              type="button"
-              onClick={closeAndRefocus}
-              aria-label={t("close")}
-              className={cn(
-                "h-6 w-6 flex items-center justify-center rounded",
-                "text-text-muted",
-                "hover:text-text-heading",
-                "hover:bg-surface-subtle",
-                "transition-colors duration-150",
-              )}
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-          <div className="border-t border-divide mb-3" />
-
-          {/* N columns with N-1 dividers between them */}
-          <div className="flex">
-            {columns.map((column, index) => (
-              <React.Fragment key={column.title}>
-                {index > 0 && (
-                  <div className="self-stretch border-l border-divide mx-4" />
-                )}
-                <ColumnList column={column} />
-              </React.Fragment>
-            ))}
-          </div>
-
-          {/* Clear all — only shown when something is selected */}
-          {selectedCount > 0 && (
-            <>
-              <div className="border-t border-divide mt-3" />
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
+      <PopoverAnchor asChild>
+        <div className={cn("relative", className)}>
+          {/* Trigger — same visual contract as Select and ComboBox */}
+          <div className="relative w-fit">
+            <PopoverTrigger asChild>
               <button
                 type="button"
-                onClick={onClear}
+                aria-label={t("multiSelectSummary", {
+                  label,
+                  count: selectedCount,
+                })}
                 className={cn(
-                  "mt-3 w-full px-3 py-1.5 text-sm rounded-input",
-                  "text-ink-error",
-                  "hover:bg-tint-error",
-                  "focus-ring",
-                  "transition-colors duration-150",
+                  DROPDOWN_TRIGGER_BASE,
+                  "text-left flex items-center gap-2",
+                  isOpen && "ring-2 ring-solid-primary border-transparent",
                 )}
               >
-                {t("clearSelection")}
+                <span>{label}</span>
+
+                {selectedCount > 0 && (
+                  <span
+                    aria-hidden="true"
+                    className="bg-solid-primary text-on-solid-primary text-xs rounded-button px-2 py-0.5 leading-none"
+                  >
+                    {selectedCount}
+                  </span>
+                )}
               </button>
-            </>
-          )}
+            </PopoverTrigger>
+
+            <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+              <SelectChevron open={isOpen} />
+            </span>
+          </div>
+
+          <PopoverContent aria-label={label}>
+            <div className="p-4">
+              <div className="flex items-center justify-between mb-3">
+                <Text variant="label">{label}</Text>
+                <button
+                  type="button"
+                  onClick={() => setIsOpen(false)}
+                  aria-label={t("close")}
+                  className={cn(
+                    "h-6 w-6 flex items-center justify-center rounded",
+                    "text-text-muted",
+                    "hover:text-text-heading",
+                    "hover:bg-surface-subtle",
+                    "transition-colors duration-150",
+                  )}
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              <div className="border-t border-divide mb-3" />
+
+              {/* N columns with N-1 dividers between them */}
+              <div className="flex">
+                {columns.map((column, index) => (
+                  <React.Fragment key={column.title}>
+                    {index > 0 && (
+                      <div className="self-stretch border-l border-divide mx-4" />
+                    )}
+                    <ColumnList column={column} />
+                  </React.Fragment>
+                ))}
+              </div>
+
+              {/* Clear all — only shown when something is selected */}
+              {selectedCount > 0 && (
+                <>
+                  <div className="border-t border-divide mt-3" />
+                  <button
+                    type="button"
+                    onClick={onClear}
+                    className={cn(
+                      "mt-3 w-full px-3 py-1.5 text-sm rounded-input",
+                      "text-ink-error",
+                      "hover:bg-tint-error",
+                      "focus-ring",
+                      "transition-colors duration-150",
+                    )}
+                  >
+                    {t("clearSelection")}
+                  </button>
+                </>
+              )}
+            </div>
+          </PopoverContent>
         </div>
-      </Popover>
-    </div>
+      </PopoverAnchor>
+    </Popover>
   );
 }

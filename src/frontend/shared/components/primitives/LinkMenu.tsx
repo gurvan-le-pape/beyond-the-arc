@@ -2,12 +2,17 @@
 "use client";
 
 import { ChevronDown } from "lucide-react";
-import { type ReactNode, useEffect, useId, useRef, useState } from "react";
+import { type ReactNode, useState } from "react";
 
 import { Link } from "@/navigation";
 import { cn } from "@/shared/utils";
 
-import { Popover } from "./Popover";
+import {
+  Popover,
+  PopoverAnchor,
+  PopoverContent,
+  PopoverTrigger,
+} from "./Popover";
 
 export interface LinkMenuItem {
   readonly label: string;
@@ -40,82 +45,63 @@ interface LinkMenuProps {
  */
 export function LinkMenu({ label, icon, ariaLabel, items }: LinkMenuProps) {
   const [open, setOpen] = useState(false);
-  const containerRef = useRef<HTMLSpanElement>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const listId = useId();
-
-  useEffect(() => {
-    if (!open) return;
-    // A click or focus landing outside closes; so does Escape, from anywhere.
-    const onOutside = (e: Event) => {
-      if (!containerRef.current?.contains(e.target as Node)) setOpen(false);
-    };
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key !== "Escape") return;
-      setOpen(false);
-      triggerRef.current?.focus();
-    };
-    document.addEventListener("mousedown", onOutside);
-    document.addEventListener("focusin", onOutside);
-    document.addEventListener("keydown", onKeyDown);
-    return () => {
-      document.removeEventListener("mousedown", onOutside);
-      document.removeEventListener("focusin", onOutside);
-      document.removeEventListener("keydown", onKeyDown);
-    };
-  }, [open]);
 
   return (
-    // inline-block around a block-level button: the panel, placed by flow,
-    // starts under the trigger rather than beside it.
-    <span ref={containerRef} className="relative inline-block">
-      <button
-        ref={triggerRef}
-        type="button"
-        aria-expanded={open}
-        aria-controls={listId}
-        onClick={() => setOpen((o) => !o)}
-        className={cn(
-          "-mx-1 flex items-center gap-1 rounded-button px-1 transition-colors duration-150",
-          "underline decoration-dotted decoration-from-font underline-offset-4",
-          open
-            ? "bg-surface-subtle text-ink-primary"
-            : "hover:bg-surface-subtle hover:text-ink-primary",
-        )}
-      >
-        {icon}
-        {label}
-        <ChevronDown
-          aria-hidden
-          className={cn(
-            "size-[0.7em] shrink-0 transition-transform duration-200",
-            open && "rotate-180",
-          )}
-        />
-      </button>
-      <Popover id={listId} open={open}>
-        <nav aria-label={ariaLabel}>
-          <ul className="py-1">
-            {items.map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  aria-current={item.isCurrent ? "page" : undefined}
-                  onClick={() => setOpen(false)}
-                  className={cn(
-                    "block px-3 py-2 text-sm font-normal tracking-normal transition-colors duration-150",
-                    item.isCurrent
-                      ? "bg-solid-primary text-on-solid-primary"
-                      : "text-text-body hover:bg-surface-subtle hover:text-text-heading",
-                  )}
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </Popover>
-    </span>
+    <Popover open={open} onOpenChange={setOpen}>
+      {/* The anchor, so the panel lines up with the text rather than with the
+          button's negative margin; inline-block around a block-level button. */}
+      <PopoverAnchor asChild>
+        <span className="inline-block">
+          <PopoverTrigger
+            // A disclosure of links, not a dialog.
+            aria-haspopup={undefined}
+            className={cn(
+              "-mx-1 flex items-center gap-1 rounded-button px-1 transition-colors duration-150",
+              "underline decoration-dotted decoration-from-font underline-offset-4",
+              open
+                ? "bg-surface-subtle text-ink-primary"
+                : "hover:bg-surface-subtle hover:text-ink-primary",
+            )}
+          >
+            {icon}
+            {label}
+            <ChevronDown
+              aria-hidden
+              className={cn(
+                "size-[0.7em] shrink-0 transition-transform duration-200",
+                open && "rotate-180",
+              )}
+            />
+          </PopoverTrigger>
+          <PopoverContent
+            role={undefined}
+            // Focus stays on the trigger; Tab moves on into the links.
+            onOpenAutoFocus={(event) => event.preventDefault()}
+          >
+            <nav aria-label={ariaLabel}>
+              <ul className="py-1">
+                {items.map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      aria-current={item.isCurrent ? "page" : undefined}
+                      onClick={() => setOpen(false)}
+                      className={cn(
+                        "block px-3 py-2 text-sm font-normal tracking-normal transition-colors duration-150",
+                        item.isCurrent
+                          ? "bg-solid-primary text-on-solid-primary"
+                          : "text-text-body hover:bg-surface-subtle hover:text-text-heading",
+                      )}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </PopoverContent>
+        </span>
+      </PopoverAnchor>
+    </Popover>
   );
 }
