@@ -12,6 +12,8 @@ import {
   List,
   ListItem,
   Popover,
+  PopoverAnchor,
+  PopoverContent,
 } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import type { Category, Gender } from "@/shared/constants";
@@ -155,32 +157,43 @@ export function PlayerSearchDropdown({
   }
 
   // ─── Empty / searching state ──────────────────────────────────────────
+  // Open exactly while the query is long enough: Escape and a click outside
+  // do not close it, so no `onOpenChange`.
   return (
-    <div className="relative w-full">
-      <DebouncedInput
-        variant="search"
-        value={query}
-        onChange={setQuery}
-        onClear={() => setQuery("")}
-        aria-label={tPlayers("playerDetail.compareSearchLabel")}
-        placeholder={tPlayers("playerDetail.compareSearch")}
-        clearAriaLabel={tCommon("clearSearch")}
-      />
-
-      <Popover open={showDropdown} align="stretch">
-        <div className="max-h-64 overflow-y-auto scrollbar-hide">
-          <DropdownContent
-            isLoading={isLoading}
-            isError={isError}
-            results={results}
-            onSelect={(player) => {
-              onSelect(player);
-              setQuery("");
-            }}
-            onRetry={refetch}
+    <Popover open={showDropdown}>
+      <PopoverAnchor asChild>
+        <div className="w-full">
+          <DebouncedInput
+            variant="search"
+            value={query}
+            onChange={setQuery}
+            onClear={() => setQuery("")}
+            aria-label={tPlayers("playerDetail.compareSearchLabel")}
+            placeholder={tPlayers("playerDetail.compareSearch")}
+            clearAriaLabel={tCommon("clearSearch")}
           />
+
+          <PopoverContent
+            align="stretch"
+            role={undefined}
+            // Typing goes on in the input.
+            onOpenAutoFocus={(event) => event.preventDefault()}
+          >
+            <div className="max-h-64 overflow-y-auto scrollbar-hide">
+              <DropdownContent
+                isLoading={isLoading}
+                isError={isError}
+                results={results}
+                onSelect={(player) => {
+                  onSelect(player);
+                  setQuery("");
+                }}
+                onRetry={refetch}
+              />
+            </div>
+          </PopoverContent>
         </div>
-      </Popover>
-    </div>
+      </PopoverAnchor>
+    </Popover>
   );
 }
