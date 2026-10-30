@@ -12,8 +12,6 @@ interface PlayerDropdownFilterProps {
   readonly selectedPlayerIds: Set<number>;
   readonly setSelectedPlayerIds: (ids: Set<number>) => void;
   readonly togglePlayer: (id: number) => void;
-  readonly isOpen: boolean;
-  readonly setIsOpen: (open: boolean) => void;
 }
 
 /**
@@ -29,8 +27,6 @@ export function PlayerDropdownFilter({
   selectedPlayerIds,
   setSelectedPlayerIds,
   togglePlayer,
-  isOpen,
-  setIsOpen,
 }: PlayerDropdownFilterProps) {
   const t = useTranslations("matches");
 
@@ -51,8 +47,6 @@ export function PlayerDropdownFilter({
       label={t("matchEvents.players")}
       selectedCount={selectedPlayerIds.size}
       onClear={() => setSelectedPlayerIds(new Set())}
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
       columns={[toColumn(homeTeam), toColumn(awayTeam)]}
     />
   );

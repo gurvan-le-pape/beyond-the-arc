@@ -71,7 +71,6 @@ export function useMatchEvents(
   const [selectedPlayerIds, setSelectedPlayerIds] = useState<Set<number>>(
     new Set(),
   );
-  const [showPlayerDropdown, setShowPlayerDropdown] = useState(false);
 
   const togglePlayer = useCallback((playerId: number) => {
     setSelectedPlayerIds((prev) => {
@@ -189,8 +188,6 @@ export function useMatchEvents(
       selectedPlayerIds,
       setSelectedPlayerIds,
       togglePlayer,
-      showPlayerDropdown,
-      setShowPlayerDropdown,
       latestFirst,
       setLatestFirst,
     },
