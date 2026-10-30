@@ -5,8 +5,8 @@ import { BookOpen, Database, FolderTree, Lightbulb } from "lucide-react";
  * The accordion sections, in display order.
  *
  * `id` is not decoration: the page switches on it to choose which section
- * component renders the body, and `useAccordion` opens `"database"` by
- * default. Renaming one means changing both.
+ * component renders the body, and opens `"database"` by default. Renaming
+ * one means changing both.
  */
 export const DOCS_SECTIONS = [
   {
