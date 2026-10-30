@@ -40,7 +40,9 @@ interface MatchesFiltersProps extends FilterProps<MatchesFilterValues> {
  * **The three-step cascade is gated twice over.** `isLocationSelected` keeps
  * divisions and pools inert until a committee or league is chosen, and the
  * matchday step depends on the selected pool, since the number of matchdays is
- * a property of that pool rather than of the championship.
+ * a property of that pool rather than of the championship. The pool step also
+ * waits for a category and gender: only with both does the division name one
+ * championship, whose pools are the options.
  *
  * Options are fetched here rather than passed in — `useLocationOptions` for
  * committees and leagues, `useMatchesCascadeOptions` for divisions and pools.
@@ -70,8 +72,18 @@ export function MatchesFilters({ filters, set, onReset }: MatchesFiltersProps) {
     retry: retryCascade,
   } = useMatchesCascadeOptions(filters);
 
-  const { q, date, level, committee, league, division, pool, matchday } =
-    filters;
+  const {
+    q,
+    date,
+    category,
+    gender,
+    level,
+    committee,
+    league,
+    division,
+    pool,
+    matchday,
+  } = filters;
 
   useDropUnknownLocation(locationOptions, { filters, set });
 
@@ -183,10 +195,14 @@ export function MatchesFilters({ filters, set, onReset }: MatchesFiltersProps) {
           label={tCommon("filters.pools")}
           value={pool}
           onChange={(pool) => set({ pool })}
-          enabled={!!division}
+          enabled={!!division && !!category && !!gender}
           options={pools.map((p) => ({ value: p.id, label: p.name }))}
           allLabel={tCommon("filters.allPools")}
-          waitLabel={tFilters("filters.selectDivisionFirst")}
+          waitLabel={
+            division
+              ? tFilters("filters.selectCategoryGenderFirst")
+              : tFilters("filters.selectDivisionFirst")
+          }
         />
         <CascadeSelect
           label={tMatches("matchday")}

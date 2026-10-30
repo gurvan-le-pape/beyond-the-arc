@@ -24,6 +24,8 @@ const CODECS = {
 };
 
 const CASCADES = {
+  category: ["pool"],
+  gender: ["pool"],
   level: ["committee", "league"],
   committee: ["division"],
   league: ["division"],
@@ -36,7 +38,8 @@ const CASCADES = {
  *
  * The competition filters cascade top-down — level, then committee or league,
  * then division, pool and matchday — and a new value clears everything below
- * it, whose options depended on it.
+ * it, whose options depended on it. A pool belongs to one championship, so
+ * changing the category or gender clears it too.
  *
  * @returns the filters, `set`, pagination and `reset`; see `useFilterState`
  */
