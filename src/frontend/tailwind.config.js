@@ -171,6 +171,9 @@ module.exports = {
         "fade-in": "fadeIn 0.3s ease-in-out",
         "slide-up": "slideUp 0.3s ease-out",
         "slide-down": "slideDown 0.3s ease-out",
+        // A floating panel opening under its trigger, and closing again.
+        "popover-in": "popoverIn 0.2s ease-out",
+        "popover-out": "popoverIn 0.2s ease-in reverse forwards",
       },
 
       keyframes: {
@@ -185,6 +188,10 @@ module.exports = {
         slideDown: {
           "0%": { transform: "translateY(-10px)", opacity: "0" },
           "100%": { transform: "translateY(0)", opacity: "1" },
+        },
+        popoverIn: {
+          "0%": { transform: "scale(0.95)", opacity: "0" },
+          "100%": { transform: "scale(1)", opacity: "1" },
         },
       },
     },
