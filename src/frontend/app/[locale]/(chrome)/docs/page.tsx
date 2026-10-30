@@ -1,6 +1,7 @@
 // src/frontend/app/[locale]/(chrome)/docs/page.tsx
 "use client";
 
+import * as Accordion from "@radix-ui/react-accordion";
 import { BookOpen } from "lucide-react";
 import { useTranslations } from "next-intl";
 
@@ -13,20 +14,19 @@ import {
   DocsStructureSection,
 } from "@/features/site/docs/components";
 import { DOCS_SECTIONS, QUICK_LINKS } from "@/features/site/docs/constants";
-import { useAccordion } from "@/features/site/docs/hooks";
 import { PageHero, PageLayout } from "@/shared/components/layout";
 import { Grid } from "@/shared/components/primitives";
 
 /**
  * The documentation page: quick links and the collapsible chapters.
  *
- * A **client component** — the whole page is an accordion, so it holds the open
- * section in state. That is why its metadata lives in the sibling `layout.tsx`
- * instead: a client component cannot export `generateMetadata`.
+ * A **client component**, so its metadata lives in the sibling `layout.tsx`: a
+ * client component cannot export `generateMetadata`.
+ *
+ * One chapter is open at a time, and clicking the open one closes it.
  */
 export default function DocsPage() {
   const t = useTranslations("landing");
-  const { toggle, isActive } = useAccordion("database");
 
   const quickLinks = QUICK_LINKS.map((link) => ({
     ...link,
@@ -57,15 +57,18 @@ export default function DocsPage() {
         </Grid>
       </div>
 
-      <div className="space-y-4 mb-12">
+      <Accordion.Root
+        type="single"
+        collapsible
+        defaultValue="database"
+        className="space-y-4 mb-12"
+      >
         {sections.map((section) => (
           <DocsSectionAccordion
             key={section.id}
             id={section.id}
             icon={section.icon}
             title={section.title}
-            isActive={isActive(section.id)}
-            onToggle={toggle}
           >
             {section.id === "getting-started" && (
               <DocsGettingStartedSection content={section.content} />
@@ -81,7 +84,7 @@ export default function DocsPage() {
             )}
           </DocsSectionAccordion>
         ))}
-      </div>
+      </Accordion.Root>
     </PageLayout>
   );
 }

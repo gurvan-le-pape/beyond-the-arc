@@ -61,7 +61,6 @@
     "src/frontend/features/site/contact/constants",
     "src/frontend/features/site/docs/components",
     "src/frontend/features/site/docs/constants",
-    "src/frontend/features/site/docs/hooks",
     "src/frontend/features/site/home/components",
     "src/frontend/features/site/home/constants",
     "src/frontend/features/site/product/components",
