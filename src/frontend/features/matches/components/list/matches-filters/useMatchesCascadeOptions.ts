@@ -13,21 +13,26 @@ import { CompetitionLevel } from "@/shared/constants";
  * nothing and yield empty lists, which is why the caller must gate those steps
  * rather than treat empty as "none exist".
  *
- * Two details shape the result. Championships are fetched with a **hard limit of
- * 100**, so a scope larger than that silently offers incomplete divisions. And
- * pools are **deduplicated by letter, keeping whichever has the most
- * matchdays** — several championships in one scope can share a letter, and the
- * longest is taken as representative.
+ * Divisions span every championship in the scope. Pools are those of the one
+ * championship the division, category and gender name together, and are empty
+ * until all three are chosen: championships in one division share pool
+ * letters, so a pool option is only meaningful inside its championship.
  *
- * @param filters - the level, location and division currently selected
+ * @param filters - the category, gender, level, location and division
+ *   currently selected
  * @returns championships, divisions, pools, and the error/retry pair
  */
 export function useMatchesCascadeOptions({
+  category,
+  gender,
   level,
   committee: committeeId,
   league: leagueId,
   division,
-}: Pick<MatchesFilterValues, "level" | "committee" | "league" | "division">) {
+}: Pick<
+  MatchesFilterValues,
+  "category" | "gender" | "level" | "committee" | "league" | "division"
+>) {
   const isDepartmental =
     level === CompetitionLevel.DEPARTMENTAL && committeeId !== undefined;
   const isRegional =
@@ -54,23 +59,11 @@ export function useMatchesCascadeOptions({
     ),
   ).sort((a, b) => a - b);
 
-  const poolsByLetter = championships
-    .filter((c) => c.division === division)
-    .flatMap((c) => c.pools)
-    .reduce<
-      Map<
-        string,
-        { id: number; letter: string; name: string; nbMatchdays: number }
-      >
-    >((acc, p) => {
-      const existing = acc.get(p.letter);
-      if (!existing || p.nbMatchdays > existing.nbMatchdays) {
-        acc.set(p.letter, p);
-      }
-      return acc;
-    }, new Map());
-
-  const pools = Array.from(poolsByLetter.values()).sort((a, b) =>
+  const championship = championships.find(
+    (c) =>
+      c.division === division && c.category === category && c.gender === gender,
+  );
+  const pools = [...(championship?.pools ?? [])].sort((a, b) =>
     a.letter.localeCompare(b.letter),
   );
 

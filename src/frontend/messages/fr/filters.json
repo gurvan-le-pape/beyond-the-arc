@@ -7,6 +7,7 @@
     "selectLevelFirst": "Sélectionnez un niveau d'abord",
     "selectDivisionFirst": "Sélectionnez une division d'abord",
     "selectPoolFirst": "Sélectionnez une poule d'abord",
+    "selectCategoryGenderFirst": "Sélectionnez une catégorie et un genre d'abord",
     "removeFilter": "Retirer le filtre {label}"
   },
   "pagination": {
