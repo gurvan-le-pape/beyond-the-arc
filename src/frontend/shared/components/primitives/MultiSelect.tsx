@@ -12,7 +12,7 @@
 
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import React, { useId } from "react";
+import React, { useId, useState } from "react";
 
 import { cn } from "@/shared/utils";
 
@@ -88,8 +88,6 @@ export interface MultiSelectProps {
   readonly selectedCount: number;
   /** Called when the user clicks "Clear all". Only rendered when selectedCount > 0. */
   readonly onClear: () => void;
-  readonly isOpen: boolean;
-  readonly setIsOpen: (open: boolean) => void;
   readonly columns: MultiSelectColumn[];
   readonly className?: string;
 }
@@ -100,7 +98,8 @@ export interface MultiSelectProps {
  * A popover dialog: the trigger is named with the selection count ("Players,
  * 2 selected") and opens a panel of native checkboxes, one labelled group per
  * column, moving focus into it. Escape, a click outside, or the close button
- * closes it and returns focus to the trigger.
+ * closes it and returns focus to the trigger. Whether it is open is its own
+ * state: nothing outside it needs to know.
  *
  * @example
  * // Single column
@@ -108,8 +107,6 @@ export interface MultiSelectProps {
  *   label="Status"
  *   selectedCount={selected.size}
  *   onClear={() => setSelected(new Set())}
- *   isOpen={isOpen}
- *   setIsOpen={setIsOpen}
  *   columns={[{
  *     title: "Statuses",
  *     items: statuses.map(s => ({
@@ -126,8 +123,6 @@ export interface MultiSelectProps {
  *   label="Players"
  *   selectedCount={selectedPlayerIds.size}
  *   onClear={() => setSelectedPlayerIds(new Set())}
- *   isOpen={isOpen}
- *   setIsOpen={setIsOpen}
  *   columns={[homeColumn, awayColumn]}
  * />
  */
@@ -135,12 +130,11 @@ export function MultiSelect({
   label,
   selectedCount,
   onClear,
-  isOpen,
-  setIsOpen,
   columns,
   className,
 }: MultiSelectProps) {
   const t = useTranslations("common");
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>

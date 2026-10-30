@@ -30,8 +30,6 @@ interface EventFiltersProps {
   readonly selectedPlayerIds: Set<number>;
   readonly setSelectedPlayerIds: (ids: Set<number>) => void;
   readonly togglePlayer: (id: number) => void;
-  readonly showPlayerDropdown: boolean;
-  readonly setShowPlayerDropdown: (show: boolean) => void;
   readonly latestFirst: boolean;
   readonly setLatestFirst: (b: boolean) => void;
 }
@@ -56,8 +54,6 @@ export function EventFilters({
   selectedPlayerIds,
   setSelectedPlayerIds,
   togglePlayer,
-  showPlayerDropdown,
-  setShowPlayerDropdown,
   latestFirst,
   setLatestFirst,
 }: EventFiltersProps) {
@@ -78,8 +74,6 @@ export function EventFilters({
           selectedPlayerIds={selectedPlayerIds}
           setSelectedPlayerIds={setSelectedPlayerIds}
           togglePlayer={togglePlayer}
-          isOpen={showPlayerDropdown}
-          setIsOpen={setShowPlayerDropdown}
         />
 
         <TimelineOrderToggle
