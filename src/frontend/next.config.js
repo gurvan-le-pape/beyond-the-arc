@@ -10,7 +10,6 @@ const nextConfig = {
   // Emit a self-contained server (server.js + traced node_modules subset) so
   // the production image ships without the build toolchain.
   output: "standalone",
-  reactStrictMode: false,
   // No `X-Powered-By: Next.js` on every response: a hint about the stack for
   // anyone probing it, and no use to a visitor.
   poweredByHeader: false,
