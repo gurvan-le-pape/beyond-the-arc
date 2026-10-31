@@ -1,15 +1,14 @@
 // src/frontend/features/organizations/clubs/api/useClubs.ts
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 import type { ApiError } from "@/shared/types";
 
 import type { ClubBasic } from "../types/ClubBasic";
-import type { ClubDetailed } from "../types/ClubDetailed";
 import type { ClubFilters } from "../types/ClubFilters";
 import type { ClubsPaginatedResponse } from "../types/ClubsPaginatedResponse";
 import type { ClubStatsByDepartment } from "../types/ClubStatsByDepartment";
 import type { ClubStatsByRegion } from "../types/ClubStatsByRegion";
-import { clubsPrefetch, clubsQueries } from "./clubsQueries";
+import { clubsQueries } from "./clubsQueries";
 
 /**
  * Hook to fetch all clubs with optional filters and pagination.
@@ -33,23 +32,6 @@ export function useClubs(
   return useQuery<ClubsPaginatedResponse, ApiError>({
     ...clubsQueries.list(filters),
     enabled: options?.enabled ?? true,
-  });
-}
-
-/**
- * Hook to fetch detailed information for a single club.
- *
- * @param id - The club ID
- * @param options - Additional query options
- * @returns React Query result with club details
- *
- * @example
- * const { data: club, isLoading } = useClub(123);
- */
-export function useClub(id: number, options?: { enabled?: boolean }) {
-  return useQuery<ClubDetailed, ApiError>({
-    ...clubsQueries.detail(id),
-    enabled: options?.enabled ?? !!id,
   });
 }
 
@@ -115,35 +97,6 @@ export function useAllClubs(options?: { initialData?: ClubBasic[] }) {
     ...clubsQueries.allClubs(),
     initialData: options?.initialData,
   });
-}
-
-/**
- * Hook returning prefetch utilities for optimistic loading.
- *
- * Returns an object with prefetch functions for different data types.
- * Call these on hover, route changes, or predicted navigation to warm
- * the cache before the user lands on the target view.
- *
- * @returns Object with prefetch functions
- *
- * @example
- * const prefetch = useClubsPrefetch();
- * <tr onMouseEnter={() => prefetch.detail(club.id)} />
- *
- * @example
- * // Warm the full list before a filter panel opens
- * <FilterPanel onOpen={() => prefetch.list({ committeeId: 5 })} />
- */
-export function useClubsPrefetch() {
-  const queryClient = useQueryClient();
-
-  return {
-    detail: clubsPrefetch.detail(queryClient),
-    list: clubsPrefetch.list(queryClient),
-    statsByRegion: clubsPrefetch.statsByRegion(queryClient),
-    statsByDepartment: clubsPrefetch.statsByDepartment(queryClient),
-    allClubs: clubsPrefetch.allClubs(queryClient),
-  };
 }
 
 /**

@@ -1,5 +1,5 @@
 // src/frontend/features/players/api/usePlayers.ts
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 import type { ApiError, PaginatedResponse } from "@/shared/types";
 
@@ -8,7 +8,7 @@ import type { PlayerFilters } from "../types/PlayerFilters";
 import type { PlayerFilterValues } from "../types/PlayerFilterValues";
 import type { PlayerMatchHistoryResponse } from "../types/PlayerMatchHistory";
 import type { PlayerSearchFilters } from "../types/PlayerSearchFilters";
-import { playersPrefetch, playersQueries } from "./playersQueries";
+import { playersQueries } from "./playersQueries";
 
 /**
  * Hook to fetch all players with optional filters and pagination.
@@ -32,23 +32,6 @@ export function usePlayers(
   return useQuery<PaginatedResponse<Player>, ApiError>({
     ...playersQueries.list(filters),
     enabled: options?.enabled ?? true,
-  });
-}
-
-/**
- * Hook to fetch a single player by ID.
- *
- * @param id - The player ID
- * @param options - Additional query options
- * @returns React Query result with player data
- *
- * @example
- * const { data: player, isLoading } = usePlayer(123);
- */
-export function usePlayer(id: number, options?: { enabled?: boolean }) {
-  return useQuery<Player, ApiError>({
-    ...playersQueries.detail(id),
-    enabled: options?.enabled ?? !!id,
   });
 }
 
@@ -124,26 +107,4 @@ export function usePlayerSearch(
         ? players
         : players.filter((player) => player.id !== excludeId),
   });
-}
-
-/**
- * Hook returning prefetch utilities for optimistic loading.
- *
- * Returns an object with prefetch functions for different data types.
- * Call these on hover, route changes, or predicted navigation to warm
- * the cache before the user lands on the target view.
- *
- * @returns Object with prefetch functions
- *
- * @example
- * const prefetch = usePlayersPrefetch();
- * <tr onMouseEnter={() => prefetch.detail(player.id)} />
- */
-export function usePlayersPrefetch() {
-  const queryClient = useQueryClient();
-
-  return {
-    detail: playersPrefetch.detail(queryClient),
-    matches: playersPrefetch.matches(queryClient),
-  };
 }

@@ -1,5 +1,5 @@
 // src/frontend/features/competitions/championships/api/championshipsQueries.ts
-import type { QueryClient, QueryFunctionContext } from "@tanstack/react-query";
+import type { QueryFunctionContext } from "@tanstack/react-query";
 
 import type { ChampionshipFilters } from "../types/ChampionshipFilters";
 import { championshipsService } from "./championships.service";
@@ -53,60 +53,4 @@ export const championshipsQueries = {
       championshipsService.getAll(filters, signal),
     ...CHAMPIONSHIPS_CONFIG,
   }),
-
-  /**
-   * Query options for fetching a single championship by ID.
-   *
-   * @example
-   * useQuery(championshipsQueries.detail(123))
-   *
-   * @param id - the championship's id
-   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
-   */
-  detail: (id: number) => ({
-    queryKey: championshipsKeys.detail(id),
-    queryFn: ({ signal }: QueryFunctionContext) =>
-      championshipsService.getById(id, signal),
-    ...CHAMPIONSHIPS_CONFIG,
-  }),
-} as const;
-
-/**
- * Prefetch utilities for optimistic data loading.
- * Call these on hover/route changes to warm the cache.
- */
-export const championshipsPrefetch = {
-  /**
-   * Prefetch championship detail (e.g., on list-row hover).
-   *
-   * @example
-   * const prefetch = championshipsPrefetch.detail(queryClient);
-   * <tr onMouseEnter={() => prefetch(championship.id)} />
-   *
-   * @param queryClient - the client to warm
-   * @returns a prefetcher taking a championship id — call it on hover or focus, before navigation
-   */
-  detail: (queryClient: QueryClient) => (championshipId: number) => {
-    queryClient
-      .prefetchQuery(championshipsQueries.detail(championshipId))
-      .catch(() => {
-        // Silently fail - prefetch is opportunistic
-      });
-  },
-
-  /**
-   * Prefetch championships list with given filters (e.g., before a filter panel opens).
-   *
-   * @example
-   * const prefetch = championshipsPrefetch.list(queryClient);
-   * <FilterPanel onOpen={() => prefetch({ level: 'regional' })} />
-   *
-   * @param queryClient - the client to warm
-   * @returns a prefetcher taking filters — warms the same key the list query will read
-   */
-  list: (queryClient: QueryClient) => (filters?: ChampionshipFilters) => {
-    queryClient
-      .prefetchQuery(championshipsQueries.list(filters))
-      .catch(() => {});
-  },
 } as const;

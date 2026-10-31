@@ -1,5 +1,5 @@
 // src/frontend/features/teams/api/teamsQueries.ts
-import type { QueryClient, QueryFunctionContext } from "@tanstack/react-query";
+import type { QueryFunctionContext } from "@tanstack/react-query";
 
 import type { TeamFilters } from "../types/TeamFilters";
 import { teamsService } from "./teams.service";
@@ -54,42 +54,6 @@ export const teamsQueries = {
   }),
 
   /**
-   * Query options for fetching a single team by ID.
-   *
-   * @example
-   * useQuery(teamsQueries.detail(123))
-   *
-   * @param id - the team's id
-   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
-   */
-  detail: (id: number) => ({
-    queryKey: teamsKeys.detail(id),
-    queryFn: ({ signal }: QueryFunctionContext) =>
-      teamsService.getById(id, signal),
-    ...TEAMS_CONFIG,
-  }),
-
-  /**
-   * Query options for fetching match history for a specific team.
-   * Uses a shorter staleTime than base config — match results update
-   * throughout the week as fixtures are played.
-   *
-   * @example
-   * useQuery(teamsQueries.matches(123))
-   *
-   * @param id - the team whose matches to fetch
-   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
-   */
-  matches: (id: number) => ({
-    queryKey: teamsKeys.matches(id),
-    queryFn: ({ signal }: QueryFunctionContext) =>
-      teamsService.getMatches(id, signal),
-    ...TEAMS_CONFIG,
-    // Match results update regularly — refresh more aggressively than team metadata
-    staleTime: 2 * 60 * 1000,
-  }),
-
-  /**
    * Query options for fetching available filter values for teams.
    * Returns pool numbers, letters, and divisions scoped to an optional
    * committee or league. Very short staleTime — values shift as pools
@@ -109,54 +73,4 @@ export const teamsQueries = {
     // Filter values reflect live admin changes — keep very fresh
     staleTime: 30 * 1000,
   }),
-} as const;
-
-/**
- * Prefetch utilities for optimistic data loading.
- * Call these on hover/route changes to warm the cache.
- */
-export const teamsPrefetch = {
-  /**
-   * Prefetch team detail (e.g., on list-row hover).
-   *
-   * @example
-   * const prefetch = teamsPrefetch.detail(queryClient);
-   * <tr onMouseEnter={() => prefetch(team.id)} />
-   *
-   * @param queryClient - the client to warm
-   * @returns a prefetcher taking a team id — call it on hover or focus, before navigation
-   */
-  detail: (queryClient: QueryClient) => (teamId: number) => {
-    queryClient.prefetchQuery(teamsQueries.detail(teamId)).catch(() => {
-      // Silently fail - prefetch is opportunistic
-    });
-  },
-
-  /**
-   * Prefetch team match history (e.g., on team-card hover or tab navigation).
-   *
-   * @example
-   * const prefetch = teamsPrefetch.matches(queryClient);
-   * <TeamCard onMouseEnter={() => prefetch(team.id)} />
-   *
-   * @param queryClient - the client to warm
-   * @returns a prefetcher taking a team id — call it on hover or focus, before navigation
-   */
-  matches: (queryClient: QueryClient) => (teamId: number) => {
-    queryClient.prefetchQuery(teamsQueries.matches(teamId)).catch(() => {});
-  },
-
-  /**
-   * Prefetch teams list with given filters (e.g., before a filter panel opens).
-   *
-   * @example
-   * const prefetch = teamsPrefetch.list(queryClient);
-   * <FilterPanel onOpen={() => prefetch({ clubId: 1 })} />
-   *
-   * @param queryClient - the client to warm
-   * @returns a prefetcher taking filters — warms the same key the list query will read
-   */
-  list: (queryClient: QueryClient) => (filters?: TeamFilters) => {
-    queryClient.prefetchQuery(teamsQueries.list(filters)).catch(() => {});
-  },
 } as const;
