@@ -1,5 +1,5 @@
 // src/frontend/features/organizations/clubs/api/clubsQueries.ts
-import type { QueryClient, QueryFunctionContext } from "@tanstack/react-query";
+import type { QueryFunctionContext } from "@tanstack/react-query";
 
 import type { ClubFilters } from "../types/ClubFilters";
 import { clubsService } from "./clubs.service";
@@ -71,22 +71,6 @@ export const clubsQueries = {
     queryKey: clubsKeys.list(filters),
     queryFn: ({ signal }: QueryFunctionContext) =>
       clubsService.getAll(filters, signal),
-    ...CLUBS_CONFIG,
-  }),
-
-  /**
-   * Query options for fetching detailed information for a single club.
-   *
-   * @example
-   * useQuery(clubsQueries.detail(123))
-   *
-   * @param id - the club's id
-   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
-   */
-  detail: (id: number) => ({
-    queryKey: clubsKeys.detail(id),
-    queryFn: ({ signal }: QueryFunctionContext) =>
-      clubsService.getById(id, signal),
     ...CLUBS_CONFIG,
   }),
 
@@ -173,74 +157,4 @@ export const clubsQueries = {
     staleTime: 60 * 1000, // 1 min — search results change more than static lists
     gcTime: 2 * 60 * 1000,
   }),
-} as const;
-
-/**
- * Prefetch utilities for optimistic data loading.
- * Call these on hover/route changes to warm the cache.
- */
-export const clubsPrefetch = {
-  /**
-   * Prefetch club detail (e.g., on list-item hover or link hover).
-   *
-   * @example
-   * const prefetch = clubsPrefetch.detail(queryClient);
-   * <tr onMouseEnter={() => prefetch(club.id)} />
-   *
-   * @param queryClient - the client to warm
-   * @returns a prefetcher taking a club id — call it on hover or focus, before navigation
-   */
-  detail: (queryClient: QueryClient) => (clubId: number) => {
-    queryClient.prefetchQuery(clubsQueries.detail(clubId)).catch(() => {
-      // Silently fail - prefetch is opportunistic
-    });
-  },
-
-  /**
-   * Prefetch clubs list with given filters (e.g., on tab/panel hover).
-   *
-   * @example
-   * const prefetch = clubsPrefetch.list(queryClient);
-   * <Tab onMouseEnter={() => prefetch({ committeeId: 5 })} />
-   *
-   * @param queryClient - the client to warm
-   * @returns a prefetcher taking filters — warms the same key the list query will read
-   */
-  list: (queryClient: QueryClient) => (filters?: ClubFilters) => {
-    queryClient.prefetchQuery(clubsQueries.list(filters)).catch(() => {});
-  },
-
-  /**
-   * Prefetch region stats (e.g., on map section hover).
-   *
-   * @example
-   * const prefetch = clubsPrefetch.statsByRegion(queryClient);
-   * <MapSection onMouseEnter={() => prefetch()} />
-   *
-   * @param queryClient - the client to warm
-   * @returns a prefetcher taking no arguments — the aggregate has one cache entry
-   */
-  statsByRegion: (queryClient: QueryClient) => () => {
-    queryClient.prefetchQuery(clubsQueries.statsByRegion()).catch(() => {});
-  },
-
-  /**
-   * Prefetch department stats (e.g., on drill-down navigation).
-   *
-   * @param queryClient - the client to warm
-   * @returns a prefetcher taking no arguments — the aggregate has one cache entry
-   */
-  statsByDepartment: (queryClient: QueryClient) => () => {
-    queryClient.prefetchQuery(clubsQueries.statsByDepartment()).catch(() => {});
-  },
-
-  /**
-   * Prefetch all clubs list (e.g., before a select/autocomplete mounts).
-   *
-   * @param queryClient - the client to warm
-   * @returns a prefetcher taking no arguments — the full list has one cache entry
-   */
-  allClubs: (queryClient: QueryClient) => () => {
-    queryClient.prefetchQuery(clubsQueries.allClubs()).catch(() => {});
-  },
 } as const;

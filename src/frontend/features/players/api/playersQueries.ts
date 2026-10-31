@@ -1,5 +1,5 @@
 // src/frontend/features/players/api/playersQueries.ts
-import type { QueryClient, QueryFunctionContext } from "@tanstack/react-query";
+import type { QueryFunctionContext } from "@tanstack/react-query";
 
 import type { PlayerFilters } from "../types/PlayerFilters";
 import type { PlayerSearchFilters } from "../types/PlayerSearchFilters";
@@ -51,22 +51,6 @@ export const playersQueries = {
     queryKey: playersKeys.list(filters),
     queryFn: ({ signal }: QueryFunctionContext) =>
       playersService.getAll(filters, signal),
-    ...PLAYERS_CONFIG,
-  }),
-
-  /**
-   * Query options for fetching a single player by ID.
-   *
-   * @example
-   * useQuery(playersQueries.detail(123))
-   *
-   * @param id - the player's id
-   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
-   */
-  detail: (id: number) => ({
-    queryKey: playersKeys.detail(id),
-    queryFn: ({ signal }: QueryFunctionContext) =>
-      playersService.getById(id, signal),
     ...PLAYERS_CONFIG,
   }),
 
@@ -127,40 +111,4 @@ export const playersQueries = {
     staleTime: 60 * 1000, // 1 min — search results change more than static lists
     gcTime: 2 * 60 * 1000,
   }),
-} as const;
-
-/**
- * Prefetch utilities for optimistic data loading.
- * Call these on hover/route changes to warm the cache.
- */
-export const playersPrefetch = {
-  /**
-   * Prefetch player detail (e.g., on search-result hover).
-   *
-   * @example
-   * const prefetch = playersPrefetch.detail(queryClient);
-   * <tr onMouseEnter={() => prefetch(player.id)} />
-   *
-   * @param queryClient - the client to warm
-   * @returns a prefetcher taking a player id — call it on hover or focus, before navigation
-   */
-  detail: (queryClient: QueryClient) => (playerId: number) => {
-    queryClient.prefetchQuery(playersQueries.detail(playerId)).catch(() => {
-      // Silently fail - prefetch is opportunistic
-    });
-  },
-
-  /**
-   * Prefetch player match history (e.g., on profile hover or tab navigation).
-   *
-   * @example
-   * const prefetch = playersPrefetch.matches(queryClient);
-   * <PlayerCard onMouseEnter={() => prefetch(player.id)} />
-   *
-   * @param queryClient - the client to warm
-   * @returns a prefetcher taking a player id — call it on hover or focus, before navigation
-   */
-  matches: (queryClient: QueryClient) => (playerId: number) => {
-    queryClient.prefetchQuery(playersQueries.matches(playerId)).catch(() => {});
-  },
 } as const;

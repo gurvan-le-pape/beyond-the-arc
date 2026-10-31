@@ -7,12 +7,5 @@ export const matchesKeys = {
   list: (filters?: MatchFilters) => [...matchesKeys.lists(), filters] as const,
   details: () => [...matchesKeys.all, "detail"] as const,
   detail: (id: number) => [...matchesKeys.details(), id] as const,
-  playerStats: (id: number) =>
-    [...matchesKeys.detail(id), "player-stats"] as const,
   events: (id: number) => [...matchesKeys.detail(id), "events"] as const,
-  teamEvents: (teamId: number) =>
-    [...matchesKeys.all, "team-events", teamId] as const,
-  byPool: (poolId: number) => [...matchesKeys.all, "pool", poolId] as const,
-  byChampionship: (championshipId: number) =>
-    [...matchesKeys.all, "championship", championshipId] as const,
 };

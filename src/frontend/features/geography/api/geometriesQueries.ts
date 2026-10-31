@@ -1,5 +1,5 @@
 // src/frontend/features/geography/api/geometriesQueries.ts
-import type { QueryClient, QueryFunctionContext } from "@tanstack/react-query";
+import type { QueryFunctionContext } from "@tanstack/react-query";
 
 import type { GeoJsonData } from "@/features/geography/types";
 import { safeFetch } from "@/shared/utils";
@@ -122,41 +122,4 @@ export const geometriesQueries = {
       ),
     ...GEOMETRIES_CONFIG,
   }),
-} as const;
-
-/**
- * Prefetch utilities for optimistic data loading.
- * GeoJSON files are large — prefetching before the map mounts
- * eliminates the loading flash on first render.
- */
-export const geometriesPrefetch = {
-  /**
-   * Prefetch regions GeoJSON (e.g., before a map component mounts).
-   *
-   * @example
-   * const prefetch = geometriesPrefetch.regions(queryClient);
-   * <MapSection onMouseEnter={() => prefetch()} />
-   *
-   * @param queryClient - the client to warm
-   * @returns a prefetcher taking no arguments — the asset has one cache entry
-   */
-  regions: (queryClient: QueryClient) => () => {
-    queryClient.prefetchQuery(geometriesQueries.regions()).catch(() => {
-      // Silently fail - prefetch is opportunistic
-    });
-  },
-
-  /**
-   * Prefetch départements GeoJSON (e.g., on drill-down navigation to department map).
-   *
-   * @example
-   * const prefetch = geometriesPrefetch.departments(queryClient);
-   * <RegionCard onMouseEnter={() => prefetch()} />
-   *
-   * @param queryClient - the client to warm
-   * @returns a prefetcher taking no arguments — the asset has one cache entry
-   */
-  departments: (queryClient: QueryClient) => () => {
-    queryClient.prefetchQuery(geometriesQueries.departments()).catch(() => {});
-  },
 } as const;

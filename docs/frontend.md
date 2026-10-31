@@ -81,8 +81,6 @@ export default async function ChampionshipsDetailPage({ params, searchParams }) 
 
 Used by: championship detail. The selected pool lives in `?pool=`; `ChampionshipPoolSelect` only calls `router.replace`, and `LeaderboardTable` stays a server component that receives the client picker through its `dropdown` slot. Because the URL holds the state, sibling islands do not need a common client parent to share it — the match panel beside the leaderboard receives its `matches` as a prop, server-fetched by the page alongside the leaderboard's own data.
 
-`useMatchesByPool` and `matchesPrefetch.byPool` still exist but have no call sites. Do not reintroduce a client fetch here on the strength of the prefetch hook being there.
-
 Passing a client component into a server component's slot is what keeps the boundary small here. Marking the parent `"use client"` instead would pull the whole subtree — table, header, breadcrumb — into the bundle to be hydrated for nothing.
 
 There is no `HydrationBoundary` prefetching in the app: server-owned data reaches components as props, not through a dehydrated cache.
@@ -156,23 +154,24 @@ The hierarchy matters: invalidating `playersKeys.all` cascades to every players-
 
 ```typescript
 export const playersQueries = {
-  detail: (id: number) => ({
-    queryKey: playersKeys.detail(id),
-    queryFn: () => playersService.getById(id),
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
+  matches: (id: number) => ({
+    queryKey: playersKeys.matches(id),
+    queryFn: ({ signal }: QueryFunctionContext) =>
+      playersService.getMatches(id, signal),
+    ...PLAYERS_CONFIG,
+    staleTime: 2 * 60 * 1000,
   }),
 };
 ```
 
 This is the single source of truth for each query. `useQuery`, `prefetchQuery`, and any future `useSuspenseQuery` calls all spread the same options object — there is no risk of key or config drift between call sites.
 
-**`use-players.ts`** — thin hooks that spread query options and expose a clean API to components:
+**`usePlayers.ts`** — thin hooks that spread query options and expose a clean API to components:
 
 ```typescript
-export function usePlayer(id: number, options?: { enabled?: boolean }) {
-  return useQuery<Player, ApiError>({
-    ...playersQueries.detail(id),
+export function usePlayerMatches(id: number, options?: { enabled?: boolean }) {
+  return useQuery<PlayerMatchHistoryResponse, ApiError>({
+    ...playersQueries.matches(id),
     enabled: options?.enabled ?? !!id,
   });
 }
@@ -180,21 +179,19 @@ export function usePlayer(id: number, options?: { enabled?: boolean }) {
 
 Components import hooks, never query options or services directly.
 
-**Prefetch utilities** — `playersQueries.ts` also exports a `playersPrefetch` object with functions that can be attached to hover or focus events to warm the cache before the user navigates:
+**Prefetch utilities** — a feature's queries file can also export an `xPrefetch` object of functions that warm the cache from a hover or focus handler, before the user asks for the data. `matchesQueries.ts` has the one in use:
 
 ```typescript
-export const playersPrefetch = {
-  detail: (queryClient: QueryClient) => (playerId: number) => {
-    queryClient.prefetchQuery(playersQueries.detail(playerId)).catch(() => {});
+export const matchesPrefetch = {
+  events: (queryClient: QueryClient) => (matchId: number) => {
+    queryClient.prefetchQuery(matchesQueries.events(matchId)).catch(() => {});
   },
 };
 ```
 
-The `usePlayersPrefetch` hook composes these with `useQueryClient` so components get a stable, queryClient-bound prefetch function without touching the query infrastructure directly.
+`useMatchesPrefetch` binds it to the `QueryClient` for the match card's expand button, so the box score is usually cached by the time the row opens.
 
-**The prefetch surface is complete per feature, and almost none of it is called. That is deliberate, and worth stating plainly so nobody reads it as dead code to delete.** Counted on `main`: 8 `*Prefetch` objects, 8 `use*Prefetch` hooks, and exactly **one** call site — `useMatchesPrefetch`, on the match card's expand button. A feature whose prefetch object is missing the one function a future hover handler wants is a feature someone has to go and extend first, and the symmetry is what makes that unnecessary; the cost is a few dozen lines that tree-shake out. If you are auditing unused exports, this is the answer for these.
-
-**The same applies to the detail hooks**, for a different reason. 19 of 39 exported query hooks have no consumer outside their own file — 7 of those are the prefetch hooks above, and most of the rest are `useX(id)` detail hooks (`usePlayer`, `useTeam`, `useMatch`, `useLeague`, `useCommittee`, `useChampionship`). They are unused because **every detail page fetches server-side**, calling the same service method bare, not because the hook is wrong.
+**Hooks and prefetchers exist where a client component calls them.** A detail page fetches on the server by calling the service method bare, so it needs no `useX(id)` hook, and a feature carries no prefetcher until a handler wants one. Adding either later is a few lines over a service method that is already there.
 
 ### Cache timing policy
 

@@ -1,5 +1,5 @@
 // src/frontend/features/organizations/leagues/api/leaguesQueries.ts
-import type { QueryClient, QueryFunctionContext } from "@tanstack/react-query";
+import type { QueryFunctionContext } from "@tanstack/react-query";
 
 import { leaguesService } from "./leagues.service";
 import { leaguesKeys } from "./leaguesKeys";
@@ -44,8 +44,7 @@ export const leaguesQueries = {
    * Keyed on the `lists()` rung even though the list takes no filters. Keying
    * it on `all` — the tempting reading of "there are no filters" — puts it
    * *above* the rung, so `invalidateQueries({ queryKey: leaguesKeys.lists() })`
-   * misses the full list while still matching `byIds`. Measured: 1 match
-   * without the list, against 2 with it. Every feature keys its list this way.
+   * would miss it. Every feature keys its list this way.
    *
    * @example
    * useQuery(leaguesQueries.list())
@@ -58,73 +57,4 @@ export const leaguesQueries = {
       leaguesService.getAll(signal),
     ...LEAGUES_CONFIG,
   }),
-
-  /**
-   * Query options for fetching a single league by ID.
-   *
-   * @example
-   * useQuery(leaguesQueries.detail(1))
-   *
-   * @param id - the league's id
-   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
-   */
-  detail: (id: number) => ({
-    queryKey: leaguesKeys.detail(id),
-    queryFn: ({ signal }: QueryFunctionContext) =>
-      leaguesService.getById(id, signal),
-    ...LEAGUES_CONFIG,
-  }),
-
-  /**
-   * Query options for fetching multiple leagues by their IDs.
-   * Useful when a view needs a specific subset without loading all leagues.
-   *
-   * @example
-   * useQuery(leaguesQueries.byIds([1, 2, 3]))
-   *
-   * @param ids - the leagues to fetch together; the key is order-sensitive, so sort before calling if callers may differ
-   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
-   */
-  byIds: (ids: number[]) => ({
-    queryKey: leaguesKeys.byIds(ids),
-    queryFn: ({ signal }: QueryFunctionContext) =>
-      leaguesService.getByIds(ids, signal),
-    ...LEAGUES_CONFIG,
-  }),
-} as const;
-
-/**
- * Prefetch utilities for optimistic data loading.
- * Call these on hover/route changes to warm the cache.
- */
-export const leaguesPrefetch = {
-  /**
-   * Prefetch the full leagues list (e.g., before a league-selector mounts).
-   *
-   * @example
-   * const prefetch = leaguesPrefetch.list(queryClient);
-   * <LeagueSelector onOpen={() => prefetch()} />
-   *
-   * @param queryClient - the client to warm
-   * @returns a prefetcher taking no arguments — the list has one cache entry
-   */
-  list: (queryClient: QueryClient) => () => {
-    queryClient.prefetchQuery(leaguesQueries.list()).catch(() => {
-      // Silently fail - prefetch is opportunistic
-    });
-  },
-
-  /**
-   * Prefetch league detail (e.g., on list-item hover).
-   *
-   * @example
-   * const prefetch = leaguesPrefetch.detail(queryClient);
-   * <tr onMouseEnter={() => prefetch(league.id)} />
-   *
-   * @param queryClient - the client to warm
-   * @returns a prefetcher taking a league id — call it on hover or focus, before navigation
-   */
-  detail: (queryClient: QueryClient) => (leagueId: number) => {
-    queryClient.prefetchQuery(leaguesQueries.detail(leagueId)).catch(() => {});
-  },
 } as const;

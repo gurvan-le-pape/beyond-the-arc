@@ -40,15 +40,4 @@ export const committeesService = {
   getById(id: number, signal?: AbortSignal): Promise<Committee> {
     return request(`/committees/${id}`, { revalidate, signal });
   },
-
-  /**
-   * Several committees in one request.
-   *
-   * @param ids - the committees' ids
-   * @param signal - TanStack Query's `queryFn` signal
-   * @returns the committees found
-   */
-  getByIds(ids: number[], signal?: AbortSignal): Promise<Committee[]> {
-    return request(`/committees/${ids.join(",")}`, { revalidate, signal });
-  },
 };

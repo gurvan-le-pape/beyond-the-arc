@@ -35,15 +35,4 @@ export const leaguesService = {
   getById(id: number, signal?: AbortSignal): Promise<League> {
     return request(`/leagues/${id}`, { revalidate, signal });
   },
-
-  /**
-   * Several leagues in one request.
-   *
-   * @param ids - the leagues' ids
-   * @param signal - TanStack Query's `queryFn` signal
-   * @returns the leagues found
-   */
-  getByIds(ids: number[], signal?: AbortSignal): Promise<League[]> {
-    return request(`/leagues/${ids.join(",")}`, { revalidate, signal });
-  },
 };
