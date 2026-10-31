@@ -1,7 +1,7 @@
 // src/frontend/features/matches/api/matches.service.ts
+import { request, ServerRevalidate } from "@/lib/services/api";
 import type { PaginatedResponse } from "@/shared/types";
 
-import apiClient from "../../../lib/services/client/api-client";
 import type { Match } from "../types/Match";
 import type { MatchDetail } from "../types/MatchDetail";
 import type { MatchEvent } from "../types/MatchEvent";
@@ -9,103 +9,71 @@ import type { MatchFilters } from "../types/MatchFilters";
 import type { MatchPlayerStatsResponse } from "../types/MatchPlayerStats";
 import type { Shot } from "../types/Shot";
 
+/** Everything here is written by the match scheduler. */
+const revalidate = ServerRevalidate.LIVE;
+
 /**
- * Service for interacting with the matches API.
+ * The matches endpoints, callable from a server component or from a query
+ * function alike.
  *
- * Architecture:
- * - Uses apiClient (axios) for HTTP requests
- * - Backend responses are unwrapped by axios interceptor
- * - Services work directly with typed data
- * - Errors are handled globally by interceptor
- *
- * Usage:
- * - Import this service in React Query hooks
- * - Never call directly from components
+ * Server components call a method bare; query functions pass TanStack's
+ * `signal` so a superseded request is aborted. Failures throw an `ApiError` —
+ * see `request`.
  *
  * @example
- * import { matchesService } from "@/features/matches/api";
- * const matches = await matchesService.getAll({ championshipId: 1 });
+ * const match = await matchesService.getById(12345);
  */
 export const matchesService = {
   /**
-   * Get all matches with optional filters and pagination.
+   * One page of matches matching the filters.
    *
-   * @param filters - Optional filter criteria (championshipId, poolId, page, limit, etc.)
-   * @returns Paginated response with matches
-   * @throws {AxiosError} 400 if validation fails
-   *
-   * @example
-   * const response = await matchesService.getAll({
-   *   championshipId: 1,
-   *   page: 1,
-   *   limit: 20,
-   * });
-   *
-   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
+   * @param filters - filter and pagination criteria
+   * @param signal - TanStack Query's `queryFn` signal
+   * @returns the page, with its pagination
    */
-  async getAll(
+  getAll(
     filters?: MatchFilters,
     signal?: AbortSignal,
   ): Promise<PaginatedResponse<Match>> {
-    const { data } = await apiClient.get<PaginatedResponse<Match>>("/matches", {
-      params: filters,
-      signal,
-    });
-    return data;
+    return request("/matches", { params: filters, revalidate, signal });
   },
 
   /**
-   * Get detailed information for a single match.
+   * One match, with its teams, venue and score by period.
    *
-   * @param id - The match ID
-   * @returns Detailed match information including teams, scores, and events
-   * @throws {AxiosError} 404 if not found, 400 if invalid ID
-   *
-   * @example
-   * const match = await matchesService.getById(12345);
-   *
-   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
+   * @param id - the match's id
+   * @param signal - TanStack Query's `queryFn` signal
+   * @returns the match — a 404 throws an `ApiError`
    */
-  async getById(id: number, signal?: AbortSignal): Promise<MatchDetail> {
-    const { data } = await apiClient.get<MatchDetail>(`/matches/${id}`, {
-      signal,
-    });
-    return data;
+  getById(id: number, signal?: AbortSignal): Promise<MatchDetail> {
+    return request(`/matches/${id}`, { revalidate, signal });
   },
 
   /**
-   * Get all matches for a specific pool.
-   * Uses a dedicated endpoint that returns all matches without pagination.
+   * Every match of a pool, unpaginated.
    *
-   * @param poolId - The pool ID
-   * @returns Array of all matches in the pool
-   * @throws {AxiosError} 404 if pool not found
+   * Uses the dedicated `/matches/pool/:id` endpoint, which returns a bare
+   * array. The paginated `/matches?poolId=` returns `{ items, total, … }`,
+   * which does not match this signature.
    *
-   * @example
-   * const matches = await matchesService.getByPoolId(10);
-   *
-   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
+   * @param poolId - the pool whose fixtures to fetch
+   * @param signal - TanStack Query's `queryFn` signal
+   * @returns every match in the pool — the caller slices for display
    */
-  async getByPoolId(poolId: number, signal?: AbortSignal): Promise<Match[]> {
-    const { data } = await apiClient.get<Match[]>(`/matches/pool/${poolId}`, {
-      signal,
-    });
-    return data;
+  getByPoolId(poolId: number, signal?: AbortSignal): Promise<Match[]> {
+    return request(`/matches/pool/${poolId}`, { revalidate, signal });
   },
 
   /**
-   * Get all matches for a specific championship.
-   * Pages through /matches (max limit 100 per request) until every
-   * page is fetched, then returns the combined list.
+   * Every match of a championship, unpaginated.
    *
-   * @param championshipId - The championship ID
-   * @returns Array of all matches in the championship
-   * @throws {AxiosError} 400 if validation fails
+   * Pages through `/matches` at the API's maximum page size until every page
+   * is fetched. A bare `GET /matches?championshipId=` would only return the
+   * first page, inside a paginated envelope.
    *
-   * @example
-   * const matches = await matchesService.getByChampionshipId(5);
-   *
-   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
+   * @param championshipId - the championship whose matches to fetch
+   * @param signal - TanStack Query's `queryFn` signal
+   * @returns every match in the championship
    */
   async getByChampionshipId(
     championshipId: number,
@@ -117,115 +85,68 @@ export const matchesService = {
     let totalPages = 1;
 
     do {
-      const { data } = await apiClient.get<PaginatedResponse<Match>>(
-        "/matches",
-        {
-          params: { championshipId, page, limit },
-          signal,
-        },
-      );
-      matches.push(...data.items);
-      totalPages = data.totalPages;
+      const { items, totalPages: pages } = await request<
+        PaginatedResponse<Match>
+      >("/matches", {
+        params: { championshipId, page, limit },
+        revalidate,
+        signal,
+      });
+      matches.push(...items);
+      totalPages = pages;
       page += 1;
     } while (page <= totalPages);
 
     return matches;
   },
 
-  // ============================================================================
-  // Match Events
-  // ============================================================================
-
   /**
-   * Get all events for a specific match.
+   * Every event of a match, in game order.
    *
-   * @param matchId - The match ID
-   * @returns Array of match events
-   * @throws {AxiosError} 404 if match not found
-   *
-   * @example
-   * const events = await matchesService.getEventsByMatchId(12345);
-   * // [{ type: 'point', minute: 23, playerId: 789, ... }, ...]
-   *
-   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
+   * @param matchId - the match whose events to fetch
+   * @param signal - TanStack Query's `queryFn` signal
+   * @returns the match's events — a 404 throws an `ApiError`
    */
-  async getEventsByMatchId(
+  getEventsByMatchId(
     matchId: number,
     signal?: AbortSignal,
   ): Promise<MatchEvent[]> {
-    const { data } = await apiClient.get<MatchEvent[]>(
-      `/matches/${matchId}/events`,
-      { signal },
-    );
-    return data;
+    return request(`/matches/${matchId}/events`, { revalidate, signal });
   },
 
   /**
-   * Get every shot a team took this season, for its shot chart.
+   * Every shot a team took this season, for its shot chart.
    *
-   * @param teamId - The team ID
-   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
-   * @returns The team's shots: location and event type
-   *
-   * @example
-   * const shots = await matchesService.getShotsByTeamId(456);
+   * @param teamId - the team whose shots to fetch
+   * @param signal - TanStack Query's `queryFn` signal
+   * @returns the team's shots: location and event type
    */
-  async getShotsByTeamId(
-    teamId: number,
-    signal?: AbortSignal,
-  ): Promise<Shot[]> {
-    const { data } = await apiClient.get<Shot[]>(
-      `/matches/team/${teamId}/shots`,
-      { signal },
-    );
-    return data;
+  getShotsByTeamId(teamId: number, signal?: AbortSignal): Promise<Shot[]> {
+    return request(`/matches/team/${teamId}/shots`, { revalidate, signal });
   },
 
   /**
-   * Get every shot a player took this season, for their shot chart.
+   * Every shot a player took this season, for their shot chart.
    *
-   * @param playerId - The player ID
-   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
-   * @returns The player's shots: location and event type
-   *
-   * @example
-   * const shots = await matchesService.getShotsByPlayerId(789);
+   * @param playerId - the player whose shots to fetch
+   * @param signal - TanStack Query's `queryFn` signal
+   * @returns the player's shots: location and event type
    */
-  async getShotsByPlayerId(
-    playerId: number,
-    signal?: AbortSignal,
-  ): Promise<Shot[]> {
-    const { data } = await apiClient.get<Shot[]>(
-      `/matches/player/${playerId}/shots`,
-      { signal },
-    );
-    return data;
+  getShotsByPlayerId(playerId: number, signal?: AbortSignal): Promise<Shot[]> {
+    return request(`/matches/player/${playerId}/shots`, { revalidate, signal });
   },
 
-  // ============================================================================
-  // Match Player Statistics
-  // ============================================================================
-
   /**
-   * Get detailed player statistics for a specific match.
+   * Both teams' per-player box-score lines for one match.
    *
-   * @param matchId - The match ID
-   * @returns Both teams' per-player box-score lines
-   * @throws {AxiosError} 404 if match not found
-   *
-   * @example
-   * const stats = await matchesService.getPlayerStatsByMatchId(12345);
-   *
-   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
+   * @param matchId - the match whose box score to fetch
+   * @param signal - TanStack Query's `queryFn` signal
+   * @returns the box score — a 404 throws an `ApiError`
    */
-  async getPlayerStatsByMatchId(
+  getPlayerStatsByMatchId(
     matchId: number,
     signal?: AbortSignal,
   ): Promise<MatchPlayerStatsResponse> {
-    const { data } = await apiClient.get<MatchPlayerStatsResponse>(
-      `/matches/${matchId}/player-stats`,
-      { signal },
-    );
-    return data;
+    return request(`/matches/${matchId}/player-stats`, { revalidate, signal });
   },
 };

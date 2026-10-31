@@ -5,7 +5,7 @@ import { getTranslations } from "next-intl/server";
 import { serverChampionshipsService } from "@/features/competitions/championships/api/championships.server";
 import { serverLeaderboardsService } from "@/features/competitions/leaderboards/api/leaderboards.server";
 import { serverPoolsService } from "@/features/competitions/pools/api/pools.server";
-import { serverMatchesService } from "@/features/matches/api/matches.server";
+import { matchesService } from "@/features/matches/api";
 import {
   ExploreSection,
   HomeHero,
@@ -69,7 +69,7 @@ async function Home() {
     ? await Promise.all([
         serverChampionshipsService.getById(featuredPool.championshipId),
         serverLeaderboardsService.getAll({ poolId: featuredPool.id }),
-        serverMatchesService.getByPoolId(featuredPool.id),
+        matchesService.getByPoolId(featuredPool.id),
       ])
         .then(([championship, leaderboard, matches]) => ({
           championship,

@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { serverMatchesService } from "@/features/matches/api/matches.server";
+import { matchesService } from "@/features/matches/api";
 import { transformToShotEvents } from "@/features/matches/utils";
 import { serverPlayersService } from "@/features/players/api/players.server";
 import {
@@ -72,7 +72,7 @@ async function PlayerDetailPage({
   const [player, matchHistory, shots] = await Promise.all([
     serverPlayersService.getById(playerId),
     serverPlayersService.getMatches(playerId),
-    serverMatchesService.getShotsByPlayerId(playerId),
+    matchesService.getShotsByPlayerId(playerId),
   ]).catch(handleServerError);
 
   const { matches, career } = matchHistory;
