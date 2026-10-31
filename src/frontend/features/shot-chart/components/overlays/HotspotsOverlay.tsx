@@ -3,23 +3,12 @@
 
 import { scaleSequential } from "d3-scale";
 import { interpolateYlOrRd } from "d3-scale-chromatic";
-import React, { useMemo, useState } from "react";
+import type React from "react";
+import { useMemo, useState } from "react";
 
 import type { ShotEvent } from "@/shared/types";
 
 import { ShotFilter } from "../../constants";
-import {
-  binShotsByZones,
-  getAboveWingZones,
-  getApexStripeZone,
-  getArcApexSidelineZones,
-  getArcZones,
-  getCorner3Zones,
-  getPaintZones,
-  getTopKeyZone,
-  getWingZones,
-  type Zone,
-} from "../../utils";
 import { AboveWingZones } from "./hotspots/AboveWingZones";
 import { ApexStripeZones } from "./hotspots/ApexStripeZones";
 import { ArcApexSidelineZones } from "./hotspots/ArcApexSidelineZones";
@@ -30,33 +19,21 @@ import { TopKeyZones } from "./hotspots/TopKeyZones";
 import { WingZones } from "./hotspots/WingZones";
 import { TooltipContent } from "./TooltipContent";
 
-// All zone getter functions collected for computing maxTotal across all zones
-const ALL_ZONE_GETTERS: (() => Zone[])[] = [
-  getPaintZones,
-  getArcZones,
-  getArcApexSidelineZones,
-  getAboveWingZones,
-  getCorner3Zones,
-  getWingZones,
-  getApexStripeZone,
-  getTopKeyZone,
-];
-
 interface HotspotsOverlayProps {
   readonly shots: ShotEvent[];
   readonly xScale: (x: number) => number;
   readonly yScale: (y: number) => number;
   readonly colorScale?: (t: number) => string;
   readonly svgWidth: number;
-  readonly onMaxTotalChange?: (maxTotal: number) => void;
+  /** The busiest zone's shot count — the top of the colour domain (`hotspotsMaxTotal`). */
+  readonly maxTotal: number;
 }
 
 /**
  * The hotspots view: every zone group on the court, coloured by shots made.
  *
- * The colour domain is computed here from every zone (see `ALL_ZONE_GETTERS`)
- * and reported through `onMaxTotalChange`, so the legend outside the SVG can
- * match — adding a zone group means adding it to that list.
+ * The colour domain's top, `maxTotal`, comes from the parent, which hands the
+ * same value to the legend outside the SVG.
  */
 export function HotspotsOverlay({
   shots,
@@ -64,20 +41,9 @@ export function HotspotsOverlay({
   yScale,
   colorScale,
   svgWidth,
-  onMaxTotalChange,
+  maxTotal,
 }: HotspotsOverlayProps) {
   const colorFn = colorScale || interpolateYlOrRd;
-
-  const maxTotal = useMemo(() => {
-    const allZones = ALL_ZONE_GETTERS.flatMap((getter) => getter());
-    const stats = binShotsByZones(shots, allZones);
-    return Math.max(1, ...Object.values(stats).map((s) => s.total));
-  }, [shots]);
-
-  // Bubble up the correct maxTotal so the header legend stays in sync
-  React.useEffect(() => {
-    onMaxTotalChange?.(maxTotal);
-  }, [maxTotal, onMaxTotalChange]);
 
   const zoneColorScale = useMemo(
     () => scaleSequential(colorFn).domain([0, maxTotal]),
