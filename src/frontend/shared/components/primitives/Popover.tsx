@@ -5,17 +5,26 @@ import * as RadixPopover from "@radix-ui/react-popover";
 import { cva, type VariantProps } from "class-variance-authority";
 import type { ComponentProps } from "react";
 
+/** A card floating clear of its anchor. */
+const FLOATING =
+  "overflow-hidden surface-raised border border-divide rounded-input shadow-card-hover";
+
 const popoverContentVariants = cva(
-  "z-dropdown overflow-hidden surface-raised border border-divide rounded-input shadow-card-hover " +
-    "origin-[--radix-popover-content-transform-origin] " +
+  "z-dropdown origin-[--radix-popover-content-transform-origin] " +
     "data-[state=open]:animate-popover-in data-[state=closed]:animate-popover-out",
   {
     variants: {
       align: {
-        start: "w-max min-w-44 max-w-[90vw]",
-        end: "w-max min-w-44 max-w-[90vw]",
+        start: `${FLOATING} w-max min-w-44 max-w-[90vw]`,
+        end: `${FLOATING} w-max min-w-44 max-w-[90vw]`,
         // As wide as the anchor, as a select's list is.
-        stretch: "w-[--radix-popover-trigger-width]",
+        stretch: `${FLOATING} w-[--radix-popover-trigger-width]`,
+        // As wide as the anchor and flush against it, edge to edge: a panel
+        // that drops out of a bar rather than floating under a button.
+        // Opaque — a bar with a backdrop-filter is the backdrop root for what
+        // it holds, so a translucent fill would show the bar, not the page.
+        sheet:
+          "w-[--radix-popover-trigger-width] bg-surface-base border-b border-divide shadow-card-hover",
       },
     },
     defaultVariants: { align: "start" },
@@ -56,7 +65,9 @@ interface PopoverContentProps
  *
  * It opens below its anchor, aligned to the anchor's start or end edge or
  * stretched across it, and Radix keeps it 16 px inside the viewport, flipping
- * above the anchor when there is no room below. Rendered in place, not
+ * above the anchor when there is no room below. `sheet` is the exception: it
+ * spans its anchor with no gap and no inset, for a panel that drops out of a
+ * bar, such as the header's mobile menu. Rendered in place, not
  * portalled: it follows the trigger in the tab order, and stays inside the
  * stacking context of whatever holds it. It is unmounted while closed.
  *
@@ -77,8 +88,8 @@ export function PopoverContent({
     <RadixPopover.Content
       align={align === "end" ? "end" : "start"}
       side="bottom"
-      sideOffset={4}
-      collisionPadding={16}
+      sideOffset={align === "sheet" ? 0 : 4}
+      collisionPadding={align === "sheet" ? 0 : 16}
       className={popoverContentVariants({ align })}
       {...props}
     >

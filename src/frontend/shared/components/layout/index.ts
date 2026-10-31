@@ -10,7 +10,6 @@ export * from "./header/LocaleSwitcher";
 export * from "./header/Logo";
 export * from "./header/NavLinks";
 export * from "./header/ThemeToggle";
-export * from "./hooks/useMobileMenu";
 export * from "./PageHero";
 export * from "./PageLayout";
 export * from "./SkipLink";
