@@ -27,7 +27,7 @@ export function handleServerError(error: unknown): never {
 /**
  * The id goes in the *message*, not just on the error object.
  *
- * `logger.error` is a `console.error` wrapper, so an own property of the error
+ * `logger.error` writes the console line with `console.error`, so an own property of the error
  * would only appear in the trailing block `util.inspect` prints after the
  * stack — and Promtail ships each of those as its own log line, unattached to
  * anything searchable. Putting it in the first line is what makes
