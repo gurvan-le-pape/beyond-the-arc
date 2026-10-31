@@ -36,7 +36,7 @@ const apiClient = axios.create({
  */
 apiClient.interceptors.response.use(
   (response) => {
-    // Unwrap the `data` field from ApiResponse
+    // Unwrap the `data` field from the envelope
     if (response.data && "data" in response.data) {
       return {
         ...response,
