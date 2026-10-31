@@ -1,5 +1,6 @@
 // src/frontend/i18n.ts
 import { notFound } from "next/navigation";
+import { hasLocale } from "next-intl";
 import { getRequestConfig } from "next-intl/server";
 
 import { LOCALES } from "./locales";
@@ -51,18 +52,11 @@ export type Messages = typeof referenceMessages;
  */
 const namespaces = Object.keys(referenceMessages) as (keyof Messages)[];
 
-// Read from the shared list rather than `routing`: importing routing here
-// narrows the request config's `locale` to the routing union, which pulls in
-// ~35 call sites. Widening to `string` keeps that boundary where it was while
-// still having one definition of which locales exist.
-const locales = new Set<string>(LOCALES);
-
 export default getRequestConfig(async ({ requestLocale }) => {
   // This typically corresponds to the `[locale]` segment
   const locale = await requestLocale;
 
-  // Ensure that a valid locale is used
-  if (!locale || !locales.has(locale)) {
+  if (!hasLocale(LOCALES, locale)) {
     notFound(); // This will trigger Next.js 404 page
   }
 
