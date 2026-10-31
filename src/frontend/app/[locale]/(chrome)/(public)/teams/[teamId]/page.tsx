@@ -6,7 +6,7 @@ import { matchesService } from "@/features/matches/api";
 import { transformToShotEvents } from "@/features/matches/utils";
 import { TeamShotChart } from "@/features/shot-chart/components";
 import { PerGameStatsPanel } from "@/features/stats/components";
-import { serverTeamsService } from "@/features/teams/api/teams.server";
+import { teamsService } from "@/features/teams/api";
 import {
   TeamHeader,
   TeamMatchHistoryTable,
@@ -52,9 +52,7 @@ async function buildMetadata({
     getTranslations({ locale, namespace: "teams" }),
   ]);
 
-  const team = await serverTeamsService
-    .getById(teamId)
-    .catch(handleServerError);
+  const team = await teamsService.getById(teamId).catch(handleServerError);
 
   // A team has no name of its own — the page titles it by club, and the badges
   // beside that are what distinguish one team of a club from the next.
@@ -78,8 +76,8 @@ async function TeamDetailPage({ params }: LocalePageProps<{ teamId: string }>) {
   ]);
 
   const [team, matchHistory, shots] = await Promise.all([
-    serverTeamsService.getById(teamId),
-    serverTeamsService.getMatches(teamId),
+    teamsService.getById(teamId),
+    teamsService.getMatches(teamId),
     matchesService.getShotsByTeamId(teamId),
   ]).catch(handleServerError);
 

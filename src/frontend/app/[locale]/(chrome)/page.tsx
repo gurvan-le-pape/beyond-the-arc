@@ -2,9 +2,9 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
-import { serverChampionshipsService } from "@/features/competitions/championships/api/championships.server";
-import { serverLeaderboardsService } from "@/features/competitions/leaderboards/api/leaderboards.server";
-import { serverPoolsService } from "@/features/competitions/pools/api/pools.server";
+import { championshipsService } from "@/features/competitions/championships/api";
+import { leaderboardsService } from "@/features/competitions/leaderboards/api";
+import { poolsService } from "@/features/competitions/pools/api";
 import { matchesService } from "@/features/matches/api";
 import {
   ExploreSection,
@@ -14,7 +14,7 @@ import {
   MapBand,
   StatsBand,
 } from "@/features/site/home/components";
-import { serverStatsService } from "@/features/stats/api/stats.server";
+import { statsService } from "@/features/stats/api";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import type { LocalePageProps } from "@/shared/types";
@@ -58,8 +58,8 @@ export async function generateMetadata({
 
 async function Home() {
   const [stats, [featuredPool]] = await Promise.all([
-    serverStatsService.getStats(),
-    serverPoolsService.getRecent(),
+    statsService.getStats(),
+    poolsService.getRecent(),
   ]).catch(handleServerError);
 
   // The latest round band: the backend ranks the pools that played most
@@ -67,8 +67,8 @@ async function Home() {
   // no band, not an error.
   const latestRound = featuredPool
     ? await Promise.all([
-        serverChampionshipsService.getById(featuredPool.championshipId),
-        serverLeaderboardsService.getAll({ poolId: featuredPool.id }),
+        championshipsService.getById(featuredPool.championshipId),
+        leaderboardsService.getAll({ poolId: featuredPool.id }),
         matchesService.getByPoolId(featuredPool.id),
       ])
         .then(([championship, leaderboard, matches]) => ({

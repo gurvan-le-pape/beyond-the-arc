@@ -1,7 +1,7 @@
 // src/frontend/features/teams/api/teams.service.ts
+import { request, ServerRevalidate } from "@/lib/services/api";
 import type { PaginatedResponse } from "@/shared/types";
 
-import apiClient from "../../../lib/services/client/api-client";
 import type { Team } from "../types/Team";
 import type { TeamDetail } from "../types/TeamDetail";
 import type { TeamFilters } from "../types/TeamFilters";
@@ -9,112 +9,80 @@ import type { TeamFilterValues } from "../types/TeamFilterValues";
 import type { TeamMatchHistoryResponse } from "../types/TeamMatchHistory";
 
 /**
- * Service for interacting with the teams API.
- *
- * Architecture:
- * - Uses apiClient (axios) for HTTP requests
- * - Backend responses are unwrapped by axios interceptor
- * - Services work directly with typed data
- * - Errors are handled globally by interceptor
- *
- * Usage:
- * - Import this service in React Query hooks
- * - Never call directly from components
+ * The teams endpoints, callable from a server component or from a query
+ * function alike — server components call a method bare, query functions pass
+ * TanStack's `signal`. Failures throw an `ApiError`; see `request`.
  *
  * @example
- * import { teamsService } from "@/features/teams/api";
- * const teams = await teamsService.getAll({ clubId: 1 });
+ * const team = await teamsService.getById(456);
  */
 export const teamsService = {
   /**
-   * Get all teams with optional filters.
+   * One page of teams matching the filters.
    *
-   * @param filters - Optional filter criteria (clubId, championshipId, etc.)
-   * @returns Paginated or filtered team data
-   * @throws {AxiosError} 400 if validation fails
-   *
-   * @example
-   * const teams = await teamsService.getAll({ clubId: 1 });
-   *
-   * @example
-   * const teams = await teamsService.getAll({ championshipId: 5 });
-   *
-   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
+   * @param filters - filter and pagination criteria
+   * @param signal - TanStack Query's `queryFn` signal
+   * @returns the page, with its pagination
    */
-  async getAll(
+  getAll(
     filters?: TeamFilters,
     signal?: AbortSignal,
   ): Promise<PaginatedResponse<Team>> {
-    const { data } = await apiClient.get<PaginatedResponse<Team>>("/teams", {
+    return request("/teams", {
       params: filters,
+      revalidate: ServerRevalidate.DEFAULT,
       signal,
     });
-    return data;
   },
 
   /**
-   * Get detailed information for a single team.
+   * One team, with its roster and current standing — both of which move as
+   * matches are played.
    *
-   * @param teamId - The team ID
-   * @returns Detailed team information
-   * @throws {AxiosError} 404 if not found, 400 if invalid ID
-   *
-   * @example
-   * const team = await teamsService.getById(123);
-   *
-   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
+   * @param teamId - the team's id
+   * @param signal - TanStack Query's `queryFn` signal
+   * @returns the team — a 404 throws an `ApiError`
    */
-  async getById(teamId: number, signal?: AbortSignal): Promise<TeamDetail> {
-    const { data } = await apiClient.get<TeamDetail>(`/teams/${teamId}`, {
+  getById(teamId: number, signal?: AbortSignal): Promise<TeamDetail> {
+    return request(`/teams/${teamId}`, {
+      revalidate: ServerRevalidate.LIVE,
       signal,
     });
-    return data;
   },
 
   /**
-   * Get all matches for a specific team.
+   * The team's match history this season.
    *
-   * @param teamId - The team ID
-   * @returns Array of matches involving the team
-   * @throws {AxiosError} 404 if team not found
-   *
-   * @example
-   * const matches = await teamsService.getMatches(123);
-   *
-   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
+   * @param teamId - the team whose history to fetch
+   * @param signal - TanStack Query's `queryFn` signal
+   * @returns the history and its season totals
    */
-  async getMatches(
+  getMatches(
     teamId: number,
     signal?: AbortSignal,
   ): Promise<TeamMatchHistoryResponse> {
-    const { data } = await apiClient.get<TeamMatchHistoryResponse>(
-      `/teams/${teamId}/matches`,
-      { signal },
-    );
-    return data;
+    return request(`/teams/${teamId}/matches`, {
+      revalidate: ServerRevalidate.LIVE,
+      signal,
+    });
   },
 
   /**
-   * Get available filter values for teams (numbers, pool letters, divisions).
+   * The categories, genders and levels that occur among teams in a league or
+   * committee, for the teams filters to offer.
    *
-   * @returns Filter values for teams
-   * @example
-   * const filterValues = await teamsService.getFilterValues();
-   *
-   * @param params - optional committee or league to scope the values to; omitted, they span every team
-   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
+   * @param params - the league or committee to narrow to
+   * @param signal - TanStack Query's `queryFn` signal
+   * @returns the values present
    */
-  async getFilterValues(
-    params?: {
-      committeeId?: number;
-      leagueId?: number;
-    },
+  getFilterValues(
+    params?: { committeeId?: number; leagueId?: number },
     signal?: AbortSignal,
   ): Promise<TeamFilterValues> {
-    const { data } = await apiClient.get<TeamFilterValues>(
-      "/teams/filter-values",
-      { params, signal },
-    );
-    return data;
+    return request("/teams/filter-values", {
+      params,
+      revalidate: ServerRevalidate.DEFAULT,
+      signal,
+    });
   },
 };

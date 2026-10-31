@@ -1,5 +1,5 @@
 // src/frontend/shared/utils/safeFetch.ts
-import { parseApiError } from "./parseApiError";
+import { toApiError } from "./toApiError";
 
 /**
  * Fetches JSON, normalising a non-2xx into an ApiError.
@@ -18,7 +18,6 @@ export async function safeFetch<T>(
   signal?: AbortSignal,
 ): Promise<T> {
   const response = await fetch(url, { signal });
-  if (!response.ok)
-    throw parseApiError(new Error(`${response.status} ${response.statusText}`));
+  if (!response.ok) throw await toApiError(response);
   return response.json() as Promise<T>;
 }

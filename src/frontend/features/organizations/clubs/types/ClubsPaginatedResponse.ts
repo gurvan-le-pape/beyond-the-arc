@@ -9,9 +9,9 @@ import type { paths } from "@/shared/types/api.generated";
  * api.generated.ts drift.
  *
  * The `["data"]` on the end is not an implementation detail to tidy away: it
- * is where the unwrapping both HTTP clients perform becomes visible in the
- * types. `api-client.ts` and `server-api-client.ts` each strip the response
- * envelope before a service method sees the payload, so what a caller receives
+ * is where the unwrapping `request` performs becomes visible in the types.
+ * `lib/services/api.ts` strips the response envelope before a service method
+ * sees the payload, so what a caller receives
  * is the `data` half, not the whole body. The document describes the envelope,
  * so indexing explicitly is what keeps this alias correct rather than
  * accidentally correct.

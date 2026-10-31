@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
-import { serverClubsService } from "@/features/organizations/clubs/api/clubs.server";
+import { clubsService } from "@/features/organizations/clubs/api";
 import { ClubsMap } from "@/features/organizations/clubs/components";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { Text } from "@/shared/components/typography";
@@ -34,9 +34,9 @@ async function MapPage({ params }: LocalePageProps) {
 
   // Pre-fetch initial regions data server-side
   const [initialRegions, initialDepartments, initialClubs] = await Promise.all([
-    serverClubsService.getStatsByRegion(),
-    serverClubsService.getStatsByDepartment(),
-    serverClubsService.getAllClubs(),
+    clubsService.getStatsByRegion(),
+    clubsService.getStatsByDepartment(),
+    clubsService.getAllClubs(),
   ]).catch(handleServerError);
 
   // The header and the viewport-height shell come from `(fullscreen)/layout.tsx`;
@@ -58,7 +58,7 @@ async function MapPage({ params }: LocalePageProps) {
 }
 
 // Rendered per request: the image build has no backend to prerender against.
-// The three club datasets behind it are cached for 24h by fetchApi — including
+// The three club datasets behind it are cached for 24h by `request` — including
 // the 990 KB /clubs/all payload — so a render here is a cache read, not three
 // queries.
 export const dynamic = "force-dynamic";

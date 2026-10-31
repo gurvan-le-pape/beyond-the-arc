@@ -4,7 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { matchesService } from "@/features/matches/api";
 import { transformToShotEvents } from "@/features/matches/utils";
-import { serverPlayersService } from "@/features/players/api/players.server";
+import { playersService } from "@/features/players/api";
 import {
   PlayerComparison,
   PlayerHeader,
@@ -47,7 +47,7 @@ async function buildMetadata({
   const playerId = parseRouteId(routeParams.playerId);
   const tMeta = await getTranslations({ locale, namespace: "players" });
 
-  const player = await serverPlayersService
+  const player = await playersService
     .getById(playerId)
     .catch(handleServerError);
 
@@ -70,8 +70,8 @@ async function PlayerDetailPage({
   ]);
 
   const [player, matchHistory, shots] = await Promise.all([
-    serverPlayersService.getById(playerId),
-    serverPlayersService.getMatches(playerId),
+    playersService.getById(playerId),
+    playersService.getMatches(playerId),
     matchesService.getShotsByPlayerId(playerId),
   ]).catch(handleServerError);
 

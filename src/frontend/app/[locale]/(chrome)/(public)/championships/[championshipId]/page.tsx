@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { serverChampionshipsService } from "@/features/competitions/championships/api/championships.server";
+import { championshipsService } from "@/features/competitions/championships/api";
 import {
   ChampionshipBreadcrumb,
   ChampionshipHeader,
@@ -21,9 +21,9 @@ import {
   resolveOrganizationId,
   resolvePoolId,
 } from "@/features/competitions/championships/utils";
-import { serverLeaderboardsService } from "@/features/competitions/leaderboards/api/leaderboards.server";
+import { leaderboardsService } from "@/features/competitions/leaderboards/api";
 import { LeaderboardTable } from "@/features/competitions/leaderboards/components";
-import { serverPoolsService } from "@/features/competitions/pools/api/pools.server";
+import { poolsService } from "@/features/competitions/pools/api";
 import { matchesService } from "@/features/matches/api";
 import { MatchesByRound } from "@/features/matches/components";
 import { withServerErrorState } from "@/shared/components/feedback";
@@ -40,7 +40,7 @@ import {
 // which already renders this route per request and already keeps it out of the
 // prerender pass. A `force-dynamic` alongside that says nothing extra, and a
 // `generateStaticParams` returning [] is never called on a route that is always
-// dynamic. Caching stays where it belongs, on `fetchApi`.
+// dynamic. Caching stays where it belongs, on `request`.
 
 async function buildMetadata({
   params,
@@ -53,7 +53,7 @@ async function buildMetadata({
     getTranslations({ locale, namespace: "competitions" }),
   ]);
 
-  const championship = await serverChampionshipsService
+  const championship = await championshipsService
     .getById(championshipId)
     .catch(handleServerError);
 
@@ -88,7 +88,7 @@ async function ChampionshipsDetailPage({
     getTranslations({ locale, namespace: "competitions" }),
   ]);
 
-  const championship = await serverChampionshipsService
+  const championship = await championshipsService
     .getById(championshipId)
     .catch(handleServerError);
 
@@ -99,9 +99,9 @@ async function ChampionshipsDetailPage({
 
   const [pools, { items: championships }, { items: otherLevel }] =
     await Promise.all([
-      serverPoolsService.getByChampionshipId(championshipId),
+      poolsService.getByChampionshipId(championshipId),
       // Its siblings: same organiser, same level.
-      serverChampionshipsService.getAll({
+      championshipsService.getAll({
         level: championship.level,
         ...(isDepartmental
           ? { committeeId: organizationId }
@@ -113,7 +113,7 @@ async function ChampionshipsDetailPage({
       // regional one. National championships belong to no league.
       championship.level !== CompetitionLevel.NATIONAL &&
       championship.leagueId !== null
-        ? serverChampionshipsService.getAll({
+        ? championshipsService.getAll({
             level: isDepartmental
               ? CompetitionLevel.REGIONAL
               : CompetitionLevel.DEPARTMENTAL,
@@ -132,7 +132,7 @@ async function ChampionshipsDetailPage({
   // Both halves of the page are scoped to the selected pool, so they resolve
   // together once it is known.
   const [leaderboard, matches] = await Promise.all([
-    serverLeaderboardsService.getAll({ poolId }),
+    leaderboardsService.getAll({ poolId }),
     matchesService.getByPoolId(poolId),
   ]).catch(handleServerError);
 

@@ -31,9 +31,9 @@ const CLUBS_CONFIG = {
  * this app declares no Route Handlers and no rewrites, so nothing sits between
  * the browser and the API to cache on the way past.
  *
- * The server-side window is on the other half of the dual service layer.
- * `clubs.server.ts` passes `ServerRevalidate.REFERENCE` (24 h) to `fetchApi`
- * for all three, and `/map` renders from that — which is also why the client
+ * The server-side window is set on the endpoints themselves: `clubsService`
+ * passes `ServerRevalidate.REFERENCE` (24 h) for all three, and `/map` renders
+ * from that — which is also why the client
  * `queryFn`s below do not run there: `useMapData` seeds every one of them with
  * `initialData` from that server fetch, and seeded data counts as fresh.
  *

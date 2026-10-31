@@ -1,139 +1,85 @@
 // src/frontend/features/organizations/clubs/api/clubs.service.ts
-import type { ClubStatsByRegion } from "@/features/organizations/clubs/types";
-import apiClient from "@/lib/services/client/api-client";
+import { request, ServerRevalidate } from "@/lib/services/api";
 
 import type { ClubBasic } from "../types/ClubBasic";
 import type { ClubDetailed } from "../types/ClubDetailed";
 import type { ClubFilters } from "../types/ClubFilters";
 import type { ClubsPaginatedResponse } from "../types/ClubsPaginatedResponse";
 import type { ClubStatsByDepartment } from "../types/ClubStatsByDepartment";
+import type { ClubStatsByRegion } from "../types/ClubStatsByRegion";
+
+/** Clubs and their geography are static reference data. */
+const revalidate = ServerRevalidate.REFERENCE;
 
 /**
- * Service for interacting with the clubs API.
- *
- * Architecture:
- * - Uses apiClient (axios) for HTTP requests
- * - Backend responses are unwrapped by axios interceptor
- * - Services work directly with typed data
- * - Errors are handled globally by interceptor
- *
- * Usage:
- * - Import this service in React Query hooks
- * - Never call directly from components
+ * The clubs endpoints, callable from a server component or from a query
+ * function alike — server components call a method bare, query functions pass
+ * TanStack's `signal`. Failures throw an `ApiError`; see `request`.
  *
  * @example
- * import { clubsService } from "@/features/organizations/clubs/api";
- * const clubs = await clubsService.getAll({ leagueId: 1 });
+ * const club = await clubsService.getById(42);
  */
 export const clubsService = {
   /**
-   * Get all clubs with optional filters.
+   * One page of clubs matching the filters.
    *
-   * @param filters - Optional filter criteria
-   * @returns Array of clubs
-   * @throws {AxiosError} 400 if validation fails
-   *
-   * @example
-   * const clubs = await clubsService.getAll({ leagueId: 1 });
-   *
-   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
+   * @param filters - filter and pagination criteria
+   * @param signal - TanStack Query's `queryFn` signal
+   * @returns the page, with its pagination
    */
-  async getAll(
+  getAll(
     filters?: ClubFilters,
     signal?: AbortSignal,
   ): Promise<ClubsPaginatedResponse> {
-    const { data } = await apiClient.get<ClubsPaginatedResponse>("/clubs", {
-      params: filters,
-      signal,
-    });
-    return data;
+    return request("/clubs", { params: filters, revalidate, signal });
   },
 
   /**
-   * Get a single club by ID.
+   * One club, with its teams and their championships.
    *
-   * @param id - The club ID
-   * @returns The club details
-   * @throws {AxiosError} 404 if not found, 400 if invalid ID
-   *
-   * @example
-   * const club = await clubsService.getById(123);
-   *
-   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
+   * @param id - the club's id
+   * @param signal - TanStack Query's `queryFn` signal
+   * @returns the club — a 404 throws an `ApiError`
    */
-  async getById(id: number, signal?: AbortSignal): Promise<ClubDetailed> {
-    const { data } = await apiClient.get<ClubDetailed>(`/clubs/${id}`, {
-      signal,
-    });
-    return data;
+  getById(id: number, signal?: AbortSignal): Promise<ClubDetailed> {
+    return request(`/clubs/${id}`, { revalidate, signal });
   },
 
   /**
-   * Get club statistics aggregated by region.
+   * How many clubs each region has, for the map's region layer.
    *
-   * @returns Statistics grouped by region
-   * @throws {AxiosError} 500 if server error
-   *
-   * @example
-   * const stats = await clubsService.getStatsByRegion();
-   * // [{ regionId: 1, regionName: 'Bretagne', clubCount: 45 }, ...]
-   *
-   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
+   * @param signal - TanStack Query's `queryFn` signal
+   * @returns one count per region
    */
-  async getStatsByRegion(signal?: AbortSignal): Promise<ClubStatsByRegion[]> {
-    const { data } = await apiClient.get<ClubStatsByRegion[]>(
-      "/clubs/stats/by-region",
-      { signal },
-    );
-    return data;
+  getStatsByRegion(signal?: AbortSignal): Promise<ClubStatsByRegion[]> {
+    return request("/clubs/stats/by-region", { revalidate, signal });
   },
 
   /**
-   * Get club statistics aggregated by département.
-   * Optionally filter by a specific regional league.
+   * How many clubs each department has, for the map's department layer.
    *
-   * @param leagueId - Optional regional league ID to filter by
-   * @returns Statistics grouped by département
-   * @throws {AxiosError} 500 if server error
-   *
-   * @example
-   * // All départements
-   * const stats = await clubsService.getStatsByDepartment();
-   *
-   * @example
-   * // Filter by regional league
-   * const stats = await clubsService.getStatsByDepartment(1);
-   *
-   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
+   * @param leagueId - narrows to one league's departments
+   * @param signal - TanStack Query's `queryFn` signal
+   * @returns one count per department
    */
-  async getStatsByDepartment(
+  getStatsByDepartment(
     leagueId?: number,
     signal?: AbortSignal,
   ): Promise<ClubStatsByDepartment[]> {
-    const { data } = await apiClient.get<ClubStatsByDepartment[]>(
-      "/clubs/stats/by-department",
-      {
-        params: leagueId ? { leagueId } : undefined,
-        signal,
-      },
-    );
-    return data;
+    return request("/clubs/stats/by-department", {
+      params: { leagueId },
+      revalidate,
+      signal,
+    });
   },
 
   /**
-   * Get all clubs without any filtering.
-   * Used for map initial load, typeaheads, and autocomplete widgets.
+   * Every club, unpaginated and with coordinates, for the map's markers.
    *
-   * @returns Array of all clubs
-   * @throws {AxiosError} 500 if server error
-   *
-   * @example
-   * const clubs = await clubsService.getAllClubs();
-   *
-   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
+   * @param signal - TanStack Query's `queryFn` signal
+   * @returns every club
    */
-  async getAllClubs(signal?: AbortSignal): Promise<ClubBasic[]> {
-    const { data } = await apiClient.get<ClubBasic[]>("/clubs/all", { signal });
-    return data;
+  getAllClubs(signal?: AbortSignal): Promise<ClubBasic[]> {
+    return request("/clubs/all", { revalidate, signal });
   },
 };

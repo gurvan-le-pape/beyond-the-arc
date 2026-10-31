@@ -30,7 +30,7 @@ The period lengths are mirrored, not shared: `QUARTER_LENGTH` and `OVERTIME_LENG
 
 ## 2. The response envelope
 
-`TransformInterceptor` (`src/backend/common/interceptors/transform.interceptor.ts`) wraps every response in `{ data, timestamp, path, statusCode }`, and paginated results nest `items` inside `data`. Both frontend clients unwrap `data` by hand — `src/frontend/lib/services/server/server-api-client.ts` and `src/frontend/lib/services/client/api-client.ts` — and the generated types describe the unwrapped payload.
+`TransformInterceptor` (`src/backend/common/interceptors/transform.interceptor.ts`) wraps every response in `{ data, timestamp, path, statusCode }`, and paginated results nest `items` inside `data`. The frontend unwraps `data` in one place — `request` in `src/frontend/lib/services/api.ts`, which every request from the server or the browser goes through — and the generated types describe the unwrapped payload.
 
 **Breaks when:** the envelope changes shape. Every fetch fails at runtime with no type error.
 
@@ -56,7 +56,7 @@ How stale a page can be is the combination of:
 | layer | setting | file |
 | --- | --- | --- |
 | backend | `CACHE_TTL`, applied by the cache interceptor | `src/backend/common/constants/cache-ttls.ts` |
-| frontend server | `ServerRevalidate` on `fetchApi` | `src/frontend/lib/services/server/server-api-client.ts` |
+| frontend server | `ServerRevalidate` on `request` | `src/frontend/lib/services/api.ts` |
 | frontend client | `staleTime` / `gcTime` per query | the table in [`frontend.md`](./frontend.md) |
 
 **Breaks when:** one layer changes alone. A shorter client `staleTime` does nothing if the backend serves a cached response for longer.

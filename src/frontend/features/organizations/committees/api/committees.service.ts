@@ -1,86 +1,54 @@
 // src/frontend/features/organizations/committees/api/committees.service.ts
-import apiClient from "../../../../lib/services/client/api-client";
+import { request, ServerRevalidate } from "@/lib/services/api";
+
 import type { Committee } from "../types/Committees";
 import type { CommitteeFilters } from "../types/CommitteesFilters";
 
+/** Committees are static reference data. */
+const revalidate = ServerRevalidate.REFERENCE;
+
 /**
- * Service for interacting with the committees API.
- *
- * Architecture:
- * - Uses apiClient (axios) for HTTP requests
- * - Backend responses are unwrapped by axios interceptor
- * - Services work directly with typed data
- * - Errors are handled globally by interceptor
- *
- * Usage:
- * - Import this service in React Query hooks
- * - Never call directly from components
+ * The committees endpoints, callable from a server component or from a query
+ * function alike — server components call a method bare, query functions pass
+ * TanStack's `signal`. Failures throw an `ApiError`; see `request`.
  *
  * @example
- * import { committeesService } from "@/features/organizations/committees/api";
- * const committees = await committeesService.getAll({ leagueId: 1 });
+ * const committees = await committeesService.getAll({ leagueId: 3 });
  */
 export const committeesService = {
   /**
-   * Get all committees with optional filters.
+   * Every committee matching the filters, unpaginated.
    *
-   * @param filters - Optional filter criteria
-   * @returns Array of committees
-   * @throws {AxiosError} 400 if validation fails
-   *
-   * @example
-   * const committees = await committeesService.getAll({ leagueId: 1 });
-   *
-   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
+   * @param filters - the league to narrow to
+   * @param signal - TanStack Query's `queryFn` signal
+   * @returns the committees, or `[]`
    */
-  async getAll(
+  getAll(
     filters?: CommitteeFilters,
     signal?: AbortSignal,
   ): Promise<Committee[]> {
-    const { data } = await apiClient.get<Committee[]>("/committees", {
-      params: filters,
-      signal,
-    });
-    return data;
+    return request("/committees", { params: filters, revalidate, signal });
   },
 
   /**
-   * Get a single committee by ID.
+   * One committee.
    *
-   * @param id - The committee ID
-   * @returns The committee details
-   * @throws {AxiosError} 404 if not found, 400 if invalid ID
-   *
-   * @example
-   * const committee = await committeesService.getById(123);
-   *
-   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
+   * @param id - the committee's id
+   * @param signal - TanStack Query's `queryFn` signal
+   * @returns the committee — a 404 throws an `ApiError`
    */
-  async getById(id: number, signal?: AbortSignal): Promise<Committee> {
-    const { data } = await apiClient.get<Committee>(`/committees/${id}`, {
-      signal,
-    });
-    return data;
+  getById(id: number, signal?: AbortSignal): Promise<Committee> {
+    return request(`/committees/${id}`, { revalidate, signal });
   },
 
   /**
-   * Get multiple committees by their IDs.
-   * Efficient bulk fetch for multiple committees.
+   * Several committees in one request.
    *
-   * @param ids - Array of committee IDs
-   * @returns Array of committees
-   * @throws {AxiosError} 400 if validation fails
-   *
-   * @example
-   * const committees = await committeesService.getByIds([1, 2, 3]);
-   *
-   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
+   * @param ids - the committees' ids
+   * @param signal - TanStack Query's `queryFn` signal
+   * @returns the committees found
    */
-  async getByIds(ids: number[], signal?: AbortSignal): Promise<Committee[]> {
-    const { data } = await apiClient.get<Committee[]>(
-      `/committees/${ids.join(",")}`,
-      { signal },
-    );
-    return data;
+  getByIds(ids: number[], signal?: AbortSignal): Promise<Committee[]> {
+    return request(`/committees/${ids.join(",")}`, { revalidate, signal });
   },
 };

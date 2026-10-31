@@ -3,14 +3,14 @@ import { Trophy } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { serverChampionshipsService } from "@/features/competitions/championships/api/championships.server";
+import { championshipsService } from "@/features/competitions/championships/api";
 import { ChampionshipGrid } from "@/features/competitions/championships/components";
-import { serverCommitteesService } from "@/features/organizations/committees/api/committees.server";
+import { committeesService } from "@/features/organizations/committees/api";
 import {
   OrganizationInfo,
   SearchableLinkList,
 } from "@/features/organizations/components";
-import { serverLeaguesService } from "@/features/organizations/leagues/api/leagues.server";
+import { leaguesService } from "@/features/organizations/leagues/api";
 import { LeagueHeader } from "@/features/organizations/leagues/components";
 import { EmptyState, withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
@@ -45,7 +45,7 @@ async function buildMetadata({
   const leagueId = parseRouteId(routeParams.leagueId);
   const tMeta = await getTranslations({ locale, namespace: "organizations" });
 
-  const league = await serverLeaguesService
+  const league = await leaguesService
     .getById(leagueId)
     .catch(handleServerError);
 
@@ -76,13 +76,13 @@ async function LeaguePage({ params }: LocalePageProps<{ leagueId: string }>) {
   });
 
   const [league, { items: championships }, committees] = await Promise.all([
-    serverLeaguesService.getById(leagueId),
-    serverChampionshipsService.getAll({
+    leaguesService.getById(leagueId),
+    championshipsService.getAll({
       level: CompetitionLevel.REGIONAL,
       leagueId,
       limit: 100,
     }),
-    serverCommitteesService.getAll({ leagueId }),
+    committeesService.getAll({ leagueId }),
   ]).catch(handleServerError);
 
   const placeName = league.region.name;

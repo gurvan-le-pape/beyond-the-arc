@@ -1,7 +1,6 @@
 // src/frontend/lib/services/api.ts
-import { REQUEST_ID_HEADER } from "@/shared/constants";
-import type { ApiErrorResponse } from "@/shared/types";
 import { ApiError } from "@/shared/types";
+import { toApiError } from "@/shared/utils";
 
 const isServer = typeof window === "undefined";
 
@@ -127,28 +126,4 @@ function toQueryString(params?: object): string {
   }
   const query = search.toString();
   return query ? `?${query}` : "";
-}
-
-/**
- * Builds the `ApiError` from the response itself — its status, the backend's
- * error envelope when the body is one, and the correlation id, which comes off
- * the header because the backend never puts it in the body.
- *
- * @param response - a non-2xx response, body not yet read
- * @returns the error to throw
- */
-async function toApiError(response: Response): Promise<ApiError> {
-  const body = (await response
-    .json()
-    .catch(() => null)) as Partial<ApiErrorResponse> | null;
-  return new ApiError({
-    statusCode: response.status,
-    message: Array.isArray(body?.message)
-      ? body.message.join(", ")
-      : (body?.message ?? response.statusText),
-    error: body?.error ?? response.statusText,
-    path: body?.path,
-    timestamp: body?.timestamp,
-    requestId: response.headers.get(REQUEST_ID_HEADER) ?? undefined,
-  });
 }

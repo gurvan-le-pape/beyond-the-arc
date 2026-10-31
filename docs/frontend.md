@@ -29,13 +29,13 @@ The boundary between server and client is drawn around interactivity, not data. 
 
 Four patterns are in use, chosen per page based on data volatility and interactivity needs.
 
-**ISR with server-fetched props** — the server component fetches data using the server-side service, passes it directly as props to child components, and exports a `revalidate` constant. No TanStack Query is involved.
+**ISR with server-fetched props** — the server component fetches data through the feature's service module, passes it directly as props to child components, and exports a `revalidate` constant. No TanStack Query is involved.
 
 ```
 export const revalidate = 3600;
 
 export default async function ClubPage({ params }) {
-  const club = await serverClubsService.getById(clubId);
+  const club = await clubsService.getById(clubId);
   return <ClubDetail club={club} />;
 }
 ```
@@ -46,8 +46,8 @@ Used by: club detail, committees list, leagues list, and other organisation page
 
 ```
 const [player, matchHistory, shots] = await Promise.all([
-  serverPlayersService.getById(playerId),
-  serverPlayersService.getMatches(playerId),
+  playersService.getById(playerId),
+  playersService.getMatches(playerId),
   matchesService.getShotsByPlayerId(playerId),
 ]).catch(handleServerError);
 ```
@@ -68,7 +68,7 @@ export const dynamic = "force-dynamic";
 export default async function ChampionshipsDetailPage({ params, searchParams }) {
   const { pool: poolParam } = await searchParams;
   const poolId = resolvePoolId(pools, poolParam);
-  const leaderboard = await serverLeaderboardsService.getAll({ poolId });
+  const leaderboard = await leaderboardsService.getAll({ poolId });
 
   return (
     <LeaderboardTable
@@ -105,26 +105,33 @@ That gives three cases, and every page is one of them:
 - **`dynamic = "force-dynamic"`** — the page fetches server-side, so it must stay out of the prerender pass. Rendering per request is cheap: the backend call underneath is served from the Data Cache (see [Cache timing policy](#cache-timing-policy)), so a render is a cache read rather than a query. Used by: home, map, committees list, leagues list. Championship detail is also here, but for the ordinary reason — it reads `?pool=`.
 - **`dynamicParams = true` + `revalidate`** — dynamic routes with far too many IDs to enumerate. Nothing is pre-built; each page is generated on first request and the rendered HTML is then cached for the window. Used by: the six detail pages — **club, committee and league at 1 hour; match, player and team at 60 seconds**, because every `fetch` on those three is `ServerRevalidate.LIVE` and **the lowest `revalidate` anywhere in a route sets the frequency for the whole route**. A segment `revalidate` is a default, not a ceiling: it "does not override the `revalidate` value set by individual `fetch` requests". Measured on a production build — at t+70s the three LIVE routes answer `x-nextjs-cache: STALE` while the other three still answer `HIT`.
 
-**`revalidate` and `force-dynamic` are not complementary — never pair them.** `force-dynamic` opts the route out of the Full Route Cache entirely, which is what `revalidate` writes to, so a `revalidate` beside it is inert. Caching belongs on `fetchApi`, where it applies regardless of how the route renders.
+**`revalidate` and `force-dynamic` are not complementary — never pair them.** `force-dynamic` opts the route out of the Full Route Cache entirely, which is what `revalidate` writes to, so a `revalidate` beside it is inert. Caching belongs on the fetch — `request`'s `revalidate` option — where it applies regardless of how the route renders.
 
 ---
 
 ## Data fetching architecture
 
-### Dual service layer
+### One service module per feature
 
-Every feature has two service modules:
+Every feature has one service module, `x.service.ts`, that declares each backend endpoint it uses once. Every method goes through `request` in `lib/services/api.ts`, a GET over native `fetch` that runs unchanged on the server and in the browser:
 
-- `*.service.ts` — a client-side service using an Axios instance (`api-client`). Used by TanStack Query hooks in client components.
-- `*.server.ts` — a server-side service using a `fetchApi` wrapper around the native `fetch` API. Used by server components during SSR.
+```typescript
+getById(id: number, signal?: AbortSignal): Promise<Player> {
+  return request(`/players/${id}`, { revalidate, signal });
+}
+```
 
-Both modules expose the same method signatures against the same backend endpoints, so switching from server to client fetching is a mechanical change with no business logic to re-implement.
+A server component calls the method bare; a query function passes TanStack's `signal`, which is what lets query-core abort a superseded request. Both import the same `playersService` from `@/features/players/api`, so moving a call site between server and client fetching changes the call site and nothing else.
 
-**Only the client half is published through the `api/` barrel.** `barrelsby.json` excludes `*.server.ts`, so server components import it by path — `import { serverPlayersService } from "@/features/players/api/players.server"` — and `enforce-barrel-import` derives that exemption from the same `exclude` list rather than carrying a hardcoded one. Each `*.server.ts` also imports `server-only`, which makes a client module reaching one a build error naming both files. Both halves are needed: a barrel that exported the server module put `fetchApi` and its `INTERNAL_API_URL` base into the browser bundle of 11 of the 35 route entries, because a single client component importing a hook from that barrel pulls everything the barrel re-exports. Symmetrically, `*.service.ts` stays in the barrel — the client half is what client components are supposed to reach.
+`request` handles what differs between the two runtimes:
 
-**`fetchApi`** uses `INTERNAL_API_URL` as its base, falling back to `http://backend:4000/api` — the Docker service name — if the env var is absent. This means SSR requests go directly to the backend container over the internal Docker network without going through Nginx or the public domain. It handles one backend-specific detail: the standard API response envelope (`{ data: ... }`) is unwrapped automatically, so server services work with typed data directly rather than needing to extract `.data` at every call site. Errors are normalised through `parseApiError` and re-thrown as `ApiError` instances, consistent with what client-side Axios interceptors produce. `buildQueryString` is a utility exported alongside `fetchApi` that serialises a params object to a query string, used by server services that need filter or pagination parameters.
+- **Base URL.** On the server it is `INTERNAL_API_URL`, falling back to `http://backend:4000/api` — the Docker service name — so SSR requests reach the backend container over the internal network without going through Nginx or the public domain. In the browser it is `NEXT_PUBLIC_API_URL`. `INTERNAL_API_URL` is not `NEXT_PUBLIC_`, so it never reaches the browser bundle.
+- **Caching.** The `revalidate` option sets how long the response lives in Next's Data Cache, defaulting to one hour — see [Cache timing policy](#cache-timing-policy). The browser ignores it; there, freshness is the query's `staleTime`.
+- **Failures.** A non-2xx response throws an `ApiError` built by `toApiError` from the response's status, the backend's error envelope and its `x-request-id`. In the browser, a request that got no response at all throws an `ApiError` with `statusCode: 0`. On the server such a failure is rethrown untouched, because Next signals its own render control flow by throwing out of `fetch`.
 
-`fetchApi` also decides how long its response lives in Next's Data Cache, via a `revalidate` option defaulting to one hour — see [Cache timing policy](#cache-timing-policy). This is the layer that caching belongs on. A `revalidate` exported from a page caches rendered HTML, cannot apply to a `force-dynamic` route, and does nothing at all unless the fetch underneath is cacheable; in Next 15 a fetch that passes neither `cache` nor `next.revalidate` is `no-store`, so before this option existed every server-rendered page issued a fresh backend query on every request regardless of what the page declared.
+It also unwraps the standard response envelope (`{ data: ... }`), so services return typed data rather than extracting `.data` at every call site, and serialises `params` to a query string, leaving out `undefined` and `null` values. Every request carries a 30-second timeout, since native `fetch` has none.
+
+**Caching belongs on the fetch.** A `revalidate` exported from a page caches rendered HTML, cannot apply to a `force-dynamic` route, and does nothing at all unless the fetch underneath is cacheable; in Next 15 a fetch that passes neither `cache` nor `next.revalidate` is `no-store`, so an uncached fetch means one backend query per request per page regardless of what the page declares.
 
 ### Query Options pattern
 
@@ -187,7 +194,7 @@ The `usePlayersPrefetch` hook composes these with `useQueryClient` so components
 
 **The prefetch surface is complete per feature, and almost none of it is called. That is deliberate, and worth stating plainly so nobody reads it as dead code to delete.** Counted on `main`: 8 `*Prefetch` objects, 8 `use*Prefetch` hooks, and exactly **one** call site — `useMatchesPrefetch`, on the match card's expand button. A feature whose prefetch object is missing the one function a future hover handler wants is a feature someone has to go and extend first, and the symmetry is what makes that unnecessary; the cost is a few dozen lines that tree-shake out. If you are auditing unused exports, this is the answer for these.
 
-**The same applies to the detail hooks**, for a different reason. 19 of 39 exported query hooks have no consumer outside their own file — 7 of those are the prefetch hooks above, and most of the rest are `useX(id)` detail hooks (`usePlayer`, `useTeam`, `useMatch`, `useLeague`, `useCommittee`, `useChampionship`). They are unused because **every detail page fetches server-side** through the `*.server.ts` half of the dual service layer, not because the hook is wrong. They are the client-side half of a pair, and switching a page between server and client fetching is meant to be a call-site change — which only works if both halves exist.
+**The same applies to the detail hooks**, for a different reason. 19 of 39 exported query hooks have no consumer outside their own file — 7 of those are the prefetch hooks above, and most of the rest are `useX(id)` detail hooks (`usePlayer`, `useTeam`, `useMatch`, `useLeague`, `useCommittee`, `useChampionship`). They are unused because **every detail page fetches server-side**, calling the same service method bare, not because the hook is wrong.
 
 ### Cache timing policy
 
@@ -224,18 +231,19 @@ on the `QueryClient`, and no query overrides it. `refetchOnMount` is `true`, so 
 stale query refetches when a component mounts and not before. That is the only
 automatic refetch in the client half; nothing polls.
 
-The server half of the dual service layer answers the same question with its own
-tiers, declared as `ServerRevalidate` in `server-api-client.ts` and passed
-through `fetchApi`'s `revalidate` option:
+On the server, the same question is answered by the Data Cache, with tiers
+declared as `ServerRevalidate` in `lib/services/api.ts` and passed through
+`request`'s `revalidate` option. Each service module picks one tier for its
+endpoints:
 
 | Tier        | Window | Endpoints                                              |
 | ----------- | ------ | ------------------------------------------------------ |
 | `REFERENCE` | 24 h   | `/clubs*`, `/committees*`, `/leagues*`                 |
 | `DEFAULT`   | 1 h    | `/players`, `/teams`, `/championships`, `/pools`       |
-| `LIVE`      | 60 s   | `/matches*`, `/stats`, `/leaderboards`, `*/matches`    |
+| `LIVE`      | 60 s   | `/matches*`, `/stats`, `/leaderboards`, `/pools/recent`, `*/matches` |
 
 `DEFAULT` applies to any call that does not ask for something else, so a new
-server service is cached whether or not its author thought about it.
+endpoint is cached whether or not its author thought about it.
 
 #### Where the server cache lives
 
@@ -533,9 +541,7 @@ The shot chart is always a client component — SVG rendering and D3 scaling req
 
 Without it, webpack falls back to analysing each module's source and treats any top-level call it cannot prove pure as a side effect — `cva(...)`, `createContext(...)`, a module-scope `new` — which describes most of the design system. Those modules were then kept in every bundle that reached them through a barrel, used or not. Declaring the field removed **448 kB of First Load JS across 23 routes**; the club, committee and league detail pages lost 100 kB each, which was the whole Axios client stack, `html-to-image`, and the shot-chart court constants on three routes that render entirely on the server.
 
-The maintenance rule this creates: **a module that genuinely runs work when imported must be listed in the array**, or it will be dropped from any bundle that does not use one of its exports. Today the only such module is `lib/services/client/api-client.ts`, which registers Axios response interceptors at module scope — safe unlisted, because inclusion is per module, so every route that uses the `apiClient` export gets the registration with it. A polyfill, an analytics registration, or anything imported as a bare `import "./x"` for its effect alone is not safe, and adding one means adding it here.
-
-`import "server-only"` is unaffected: it resolves into the `next` package, whose own manifest makes no such claim, and the guard is a loader error raised while the module is built — long before anything is shaken out.
+The maintenance rule this creates: **a module that genuinely runs work when imported must be listed in the array**, or it will be dropped from any bundle that does not use one of its exports. Today no module does. A polyfill, an analytics registration, or anything imported as a bare `import "./x"` for its effect alone is not safe, and adding one means adding it here.
 
 ### Barrels at the server/client boundary
 
@@ -563,9 +569,9 @@ Errors thrown by a page are caught here, with a closer boundary at `(chrome)/(pu
 
 Server components call `handleServerError(error)` in their catch blocks. If the error is an `ApiError` with `statusCode === 404`, it calls Next.js's `notFound()`, which triggers the nearest `not-found.tsx` boundary. Any other error is re-thrown, bubbling up to `error.tsx`. This means 404s produce proper not-found pages rather than generic error screens.
 
-**API error normalisation — `parseApiError`**
+**API error normalisation — `ApiError`**
 
-Client-side Axios errors are normalised to a typed `ApiError` class by `parseApiError`. It handles three cases: Axios errors with a structured backend response body, Axios network errors (no response), and unexpected non-Axios errors. The result is a consistent `ApiError` instance with `statusCode`, `message`, and `error` fields regardless of what the underlying failure was. TanStack Query hooks type their error generics as `ApiError`, so components can inspect `error.statusCode` directly without defensive casting.
+Every failed request throws an `ApiError`, on the server and in the browser alike: `request` builds one with `toApiError` from a non-2xx response — its status, the backend's error envelope when the body is one, and the `x-request-id` header — and in the browser a request that got no response becomes one with `statusCode: 0`. `safeFetch`, used for the static GeoJSON assets, builds its errors the same way. TanStack Query hooks type their error generics as `ApiError`, so components can inspect `error.statusCode` directly without defensive casting.
 
 ---
 

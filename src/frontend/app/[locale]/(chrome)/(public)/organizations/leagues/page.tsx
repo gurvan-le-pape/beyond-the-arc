@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { serverLeaguesService } from "@/features/organizations/leagues/api/leagues.server";
+import { leaguesService } from "@/features/organizations/leagues/api";
 import { LeaguesGrid } from "@/features/organizations/leagues/components";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
@@ -12,7 +12,7 @@ import type { LocalePageProps } from "@/shared/types";
 import { handleServerError } from "@/shared/utils";
 
 // Fetches server-side, so it stays out of the prerender pass - the image build
-// has no backend. The league list is cached for 24h by fetchApi, so a render
+// has no backend. The league list is cached for 24h by `request`, so a render
 // here is a cache read, not a query.
 export const dynamic = "force-dynamic";
 
@@ -41,7 +41,7 @@ async function LeaguesPage({ params }: LocalePageProps) {
     getTranslations({ locale, namespace: "common" }),
   ]);
 
-  const leagues = await serverLeaguesService.getAll().catch(handleServerError);
+  const leagues = await leaguesService.getAll().catch(handleServerError);
 
   return (
     <PageLayout>
