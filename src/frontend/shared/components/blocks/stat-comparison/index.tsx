@@ -15,7 +15,6 @@
 "use client";
 
 import { useFormatter, useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
 
 import { Text } from "@/shared/components/typography";
 import { cn, createStatFormat } from "@/shared/utils";
@@ -41,8 +40,7 @@ import type { StatComparisonProps } from "./types";
  * **`percentageMap` applies to `dual` only** and is silently dropped otherwise;
  * a mirrored comparison shows bare values.
  *
- * Bars are held at zero width for one frame after mount, so the first paint
- * animates instead of appearing already filled. Which stats appear, their
+ * Bars grow from empty on first paint, row by row. Which stats appear, their
  * labels, how their numbers read, and which direction wins are entirely the
  * caller's `config`.
  */
@@ -58,11 +56,6 @@ export function StatComparison({
   const tCommon = useTranslations("common");
   const formatter = useFormatter();
   const { percent } = createStatFormat(formatter);
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    const id = requestAnimationFrame(() => setMounted(true));
-    return () => cancelAnimationFrame(id);
-  }, []);
 
   const isDual = variant === "dual";
   // percentageMap is only meaningful for the dual variant.
@@ -147,12 +140,7 @@ export function StatComparison({
                       align="right"
                     />
                   </div>
-                  <DualBar
-                    fillA={fillA}
-                    fillB={fillB}
-                    delayMs={delayMs}
-                    mounted={mounted}
-                  />
+                  <DualBar fillA={fillA} fillB={fillB} delayMs={delayMs} />
                 </>
               ) : (
                 <>
@@ -172,7 +160,6 @@ export function StatComparison({
                       fillA={fillA}
                       fillB={fillB}
                       delayMs={delayMs}
-                      mounted={mounted}
                     />
                     <StatValue
                       value={displayB}

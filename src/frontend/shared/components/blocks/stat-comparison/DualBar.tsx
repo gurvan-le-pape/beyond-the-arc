@@ -7,7 +7,6 @@ interface DualBarProps {
   readonly fillA: number;
   readonly fillB: number;
   readonly delayMs: number;
-  readonly mounted: boolean;
 }
 
 /**
@@ -16,26 +15,13 @@ interface DualBarProps {
  * gap where they meet.
  *
  * Both halves share `delayMs`, so they animate as one bar rather than in
- * sequence. Widths apply only once `mounted` is true — see `StatComparison`,
- * which withholds it for a frame so the growth is visible.
+ * sequence.
  */
-export function DualBar({ fillA, fillB, delayMs, mounted }: DualBarProps) {
+export function DualBar({ fillA, fillB, delayMs }: DualBarProps) {
   return (
     <div className="h-1.5 w-full bg-surface-inset rounded-full overflow-hidden flex gap-0.5">
-      <BarFill
-        fill={fillA}
-        mounted={mounted}
-        delayMs={delayMs}
-        side="A"
-        roundedSide="left"
-      />
-      <BarFill
-        fill={fillB}
-        mounted={mounted}
-        delayMs={delayMs}
-        side="B"
-        roundedSide="right"
-      />
+      <BarFill fill={fillA} delayMs={delayMs} side="A" roundedSide="left" />
+      <BarFill fill={fillB} delayMs={delayMs} side="B" roundedSide="right" />
     </div>
   );
 }

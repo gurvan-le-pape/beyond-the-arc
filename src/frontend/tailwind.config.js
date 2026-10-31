@@ -174,6 +174,9 @@ module.exports = {
         // A floating panel opening under its trigger, and closing again.
         "popover-in": "popoverIn 0.2s ease-out",
         "popover-out": "popoverIn 0.2s ease-in reverse forwards",
+        // A bar growing from empty to the width set on it; `backwards` holds
+        // it empty through an animation-delay.
+        "bar-grow": "barGrow 600ms ease-out backwards",
       },
 
       keyframes: {
@@ -192,6 +195,9 @@ module.exports = {
         popoverIn: {
           "0%": { transform: "scale(0.95)", opacity: "0" },
           "100%": { transform: "scale(1)", opacity: "1" },
+        },
+        barGrow: {
+          "0%": { width: "0%" },
         },
       },
     },
