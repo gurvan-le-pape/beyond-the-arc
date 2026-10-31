@@ -24,7 +24,7 @@ import {
 import { serverLeaderboardsService } from "@/features/competitions/leaderboards/api/leaderboards.server";
 import { LeaderboardTable } from "@/features/competitions/leaderboards/components";
 import { serverPoolsService } from "@/features/competitions/pools/api/pools.server";
-import { serverMatchesService } from "@/features/matches/api/matches.server";
+import { matchesService } from "@/features/matches/api";
 import { MatchesByRound } from "@/features/matches/components";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
@@ -133,7 +133,7 @@ async function ChampionshipsDetailPage({
   // together once it is known.
   const [leaderboard, matches] = await Promise.all([
     serverLeaderboardsService.getAll({ poolId }),
-    serverMatchesService.getByPoolId(poolId),
+    matchesService.getByPoolId(poolId),
   ]).catch(handleServerError);
 
   const categoryLinks = buildCategoryNavigation(championships, championship);

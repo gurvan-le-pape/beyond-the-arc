@@ -4,7 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { serverChampionshipsService } from "@/features/competitions/championships/api/championships.server";
 import { buildChampionshipTitle } from "@/features/competitions/championships/utils";
-import { serverMatchesService } from "@/features/matches/api/matches.server";
+import { matchesService } from "@/features/matches/api";
 import {
   MatchBreadcrumb,
   MatchHero,
@@ -48,9 +48,7 @@ async function buildMetadata({
   const matchId = parseRouteId(routeParams.matchId);
   const tMeta = await getTranslations({ locale, namespace: "matches" });
 
-  const match = await serverMatchesService
-    .getById(matchId)
-    .catch(handleServerError);
+  const match = await matchesService.getById(matchId).catch(handleServerError);
 
   const teams = {
     homeTeam: match.homeTeam.club.name,
@@ -76,8 +74,8 @@ async function MatchSummaryPage({
   ]);
 
   const [match, playerMatchStats] = await Promise.all([
-    serverMatchesService.getById(matchId),
-    serverMatchesService.getPlayerStatsByMatchId(matchId),
+    matchesService.getById(matchId),
+    matchesService.getPlayerStatsByMatchId(matchId),
   ]).catch(handleServerError);
 
   // The match names its championship by id only; the organisation and season

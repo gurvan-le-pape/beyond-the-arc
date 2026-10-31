@@ -48,7 +48,7 @@ Used by: club detail, committees list, leagues list, and other organisation page
 const [player, matchHistory, shots] = await Promise.all([
   serverPlayersService.getById(playerId),
   serverPlayersService.getMatches(playerId),
-  serverMatchesService.getShotsByPlayerId(playerId),
+  matchesService.getShotsByPlayerId(playerId),
 ]).catch(handleServerError);
 ```
 

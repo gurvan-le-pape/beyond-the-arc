@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { serverMatchesService } from "@/features/matches/api/matches.server";
+import { matchesService } from "@/features/matches/api";
 import { transformToShotEvents } from "@/features/matches/utils";
 import { TeamShotChart } from "@/features/shot-chart/components";
 import { PerGameStatsPanel } from "@/features/stats/components";
@@ -80,7 +80,7 @@ async function TeamDetailPage({ params }: LocalePageProps<{ teamId: string }>) {
   const [team, matchHistory, shots] = await Promise.all([
     serverTeamsService.getById(teamId),
     serverTeamsService.getMatches(teamId),
-    serverMatchesService.getShotsByTeamId(teamId),
+    matchesService.getShotsByTeamId(teamId),
   ]).catch(handleServerError);
 
   const { matches, seasonStats } = matchHistory;
