@@ -4,7 +4,7 @@ import "@/styles/map.css";
 
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { NextIntlClientProvider } from "next-intl";
+import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 
 import { type Locale, LOCALES } from "@/locales";
@@ -76,8 +76,7 @@ export default async function LocaleLayout({
 }: LocaleLayoutProps) {
   const { locale } = await params;
 
-  // Validate locale
-  if (!(LOCALES as readonly string[]).includes(locale)) {
+  if (!hasLocale(LOCALES, locale)) {
     notFound();
   }
 
