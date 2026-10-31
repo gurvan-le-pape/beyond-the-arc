@@ -88,33 +88,75 @@ export async function request<T>(
     signal,
   }: RequestOptions = {},
 ): Promise<T> {
-  const timeout = AbortSignal.timeout(REQUEST_TIMEOUT_MS);
-
-  let response: Response;
+  const { signal: combined, release } = withTimeout(signal);
   try {
-    // No Content-Type: a GET carries no body, and in the browser the header
-    // would turn every request into a CORS preflight plus the request.
-    response = await fetch(`${BASE_URL}${path}${toQueryString(params)}`, {
-      next: { revalidate },
-      signal: signal ? AbortSignal.any([signal, timeout]) : timeout,
-    });
-  } catch (error) {
-    if (isServer) throw error;
-    throw new ApiError({
-      statusCode: 0,
-      message: error instanceof Error ? error.message : String(error),
-      error: error instanceof Error ? error.name : "NetworkError",
-    });
+    let response: Response;
+    try {
+      // No Content-Type: a GET carries no body, and in the browser the header
+      // would turn every request into a CORS preflight plus the request.
+      response = await fetch(`${BASE_URL}${path}${toQueryString(params)}`, {
+        next: { revalidate },
+        signal: combined,
+      });
+    } catch (error) {
+      if (isServer) throw error;
+      throw new ApiError({
+        statusCode: 0,
+        message: error instanceof Error ? error.message : String(error),
+        error: error instanceof Error ? error.name : "NetworkError",
+      });
+    }
+
+    if (!response.ok) throw await toApiError(response);
+
+    const body: unknown = await response.json();
+    return (
+      body !== null && typeof body === "object" && "data" in body
+        ? body.data
+        : body
+    ) as T;
+  } finally {
+    release();
   }
+}
 
-  if (!response.ok) throw await toApiError(response);
+/**
+ * One signal that aborts when the caller's does or when the timeout elapses,
+ * whichever comes first; the timeout covers reading the body too.
+ *
+ * Built on `AbortController` and `setTimeout` rather than `AbortSignal.any`
+ * and `AbortSignal.timeout`: this runs in the browser, and those two are
+ * Safari 17.4 and 16 — a missing one throws before the request is sent, so
+ * every query fails on an older iPhone. The `dom` lib types them regardless
+ * of the ES2021 target, so the compiler does not catch it.
+ *
+ * @param signal - the caller's signal, if any
+ * @returns the signal to fetch with, and `release` to clear the timer and
+ * listener once the request is done
+ */
+function withTimeout(signal?: AbortSignal): {
+  signal: AbortSignal;
+  release: () => void;
+} {
+  const controller = new AbortController();
+  const timer = setTimeout(
+    () =>
+      controller.abort(
+        new DOMException("The request timed out.", "TimeoutError"),
+      ),
+    REQUEST_TIMEOUT_MS,
+  );
+  const forward = () => controller.abort(signal?.reason);
+  if (signal?.aborted) forward();
+  else signal?.addEventListener("abort", forward, { once: true });
 
-  const body: unknown = await response.json();
-  return (
-    body !== null && typeof body === "object" && "data" in body
-      ? body.data
-      : body
-  ) as T;
+  return {
+    signal: controller.signal,
+    release: () => {
+      clearTimeout(timer);
+      signal?.removeEventListener("abort", forward);
+    },
+  };
 }
 
 function toQueryString(params?: object): string {

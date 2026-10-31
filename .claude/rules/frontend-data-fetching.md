@@ -69,7 +69,8 @@ const { data, isPending, error } = useQuery({
 - The generated OpenAPI types are the source of truth for request and response shapes. Annotate explicitly — `response.json()` returns `Promise<any>`, and `openapi-fetch` is **not** installed, so nothing checks the annotation for you. See `api-contract.md`. `[manifest]`+`[upstream]`
 - Put base URL, timeout and error handling in **one** wrapper and call it everywhere. Scattered `fetch` calls with ad-hoc base URLs cannot be changed centrally. `[principle]`
 - `fetch` **resolves** on a 4xx or 5xx response and rejects only when no response arrived (network failure, abort). Check `response.ok` and throw, or every HTTP error reaches the caller as success. `[upstream]`
-- `fetch` has **no default timeout**. Bound it with `AbortSignal.timeout(ms)`, and combine that with the `AbortSignal` TanStack Query gives the `queryFn` through `AbortSignal.any([...])`, so cancelled queries actually cancel their requests. `[upstream]`+`[principle]`
+- `fetch` has **no default timeout**. Bound it, and pass the `AbortSignal` TanStack Query gives the `queryFn` through too, so cancelled queries actually cancel their requests. `[upstream]`+`[principle]`
+- In code that runs in the browser, combine the two with an `AbortController` and `setTimeout`, not `AbortSignal.any` and `AbortSignal.timeout`: those reached Safari in 17.4 and 16, and a missing one throws before the request is sent. TypeScript does not catch it — the `dom` lib declares current browser APIs whatever the `target`. `[upstream]`
 - Normalise errors in the wrapper into one error shape, then let query error states and `error.tsx` boundaries render it. `[principle]`
 - On the server, Next.js extends `fetch` with `next: { revalidate }` for its Data Cache; see `frontend-nextjs.md`. The browser's `fetch` has no such option, so client-side freshness is the query's `staleTime`. `[upstream]`
 
