@@ -56,20 +56,6 @@ function formatIn(
   }).format(toDate(date));
 }
 
-/**
- * Date and time of a match, in the competition's zone and the viewer's locale.
- *
- * @param date - Match instant (ISO string in UTC)
- * @param locale - Active locale, from `useLocale()` or the route's `params`
- * @returns date and time together, in the competition's zone
- */
-export function formatMatchDateTime(
-  date: Date | string,
-  locale: string,
-): string {
-  return formatIn(date, locale, { ...DATE_PARTS, ...TIME_PARTS });
-}
-
 /** Just the date, in the competition's zone and the viewer's locale. *
  * @param date - the instant, as a `Date` or an ISO string
  * @param locale - BCP 47 tag, from `useLocale()` or the route params
