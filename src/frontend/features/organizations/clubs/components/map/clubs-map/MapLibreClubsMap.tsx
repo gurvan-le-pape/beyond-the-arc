@@ -96,7 +96,7 @@ export function MapLibreClubsMap({
         latitude: club.latitude!,
         zoom: 12,
       }));
-      setTimeout(() => setSelectedClubs([club]), 300);
+      setSelectedClubs([club]);
     }
   }, []);
 
