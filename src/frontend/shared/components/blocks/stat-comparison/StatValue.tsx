@@ -23,8 +23,8 @@ interface StatValueProps {
  * **mirrored** colours it and grows a full-width pill beneath it. Passing
  * `isDual` therefore changes what renders, not just how it looks.
  *
- * The pill starts 300ms after `delayMs`, so a row's value settles before its
- * bar moves.
+ * The pill grows in on first paint, 300ms after `delayMs`, so a row's value
+ * settles before its bar moves.
  */
 export function StatValue({
   value,
@@ -60,10 +60,13 @@ export function StatValue({
         <div
           className={cn(
             "h-1.5 rounded-full mt-1 transition-all duration-500",
+            "animate-bar-grow motion-reduce:animate-none",
             isWinner ? classes.bg : "bg-transparent",
           )}
           style={{
             width: isWinner ? "100%" : "0%",
+            animationDuration: "500ms",
+            animationDelay: `${delayMs + 300}ms`,
             transitionDelay: `${delayMs + 300}ms`,
           }}
         />
