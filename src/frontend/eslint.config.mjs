@@ -2,6 +2,7 @@ import nextPlugin from "@next/eslint-plugin-next";
 import jsdoc from "eslint-plugin-jsdoc";
 import tsPlugin from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
+import compat from "eslint-plugin-compat";
 import a11y from "eslint-plugin-jsx-a11y";
 import reactHooks from "eslint-plugin-react-hooks";
 import importSort from "eslint-plugin-simple-import-sort";
@@ -82,6 +83,7 @@ export default [
       "jsx-a11y": a11y,
       "react-hooks": reactHooks,
       "@next/next": nextPlugin,
+      compat,
       jsdoc,
       "local-rules": {
         rules: {
@@ -274,6 +276,32 @@ export default [
         },
       ]
     : []),
+  // Browser support: every web API checked against `browserslist` in
+  // package.json. compat's data has gaps — it does not know the static
+  // methods below, which TypeScript also lets through because the `dom` lib
+  // declares current browsers whatever the target — so those are named here.
+  {
+    files: ["**/*.ts", "**/*.mts", "**/*.tsx"],
+    ignores: ["**/*.spec.ts", "**/*.test.ts", "**/*.spec.tsx", "**/*.test.tsx"],
+    rules: {
+      "compat/compat": "error",
+      "no-restricted-properties": [
+        "error",
+        {
+          object: "AbortSignal",
+          property: "any",
+          message:
+            "Safari 17.4+. Combine signals with an AbortController instead — see withTimeout in lib/services/api.ts.",
+        },
+        {
+          object: "AbortSignal",
+          property: "timeout",
+          message:
+            "Safari 16+. Use an AbortController and setTimeout — see withTimeout in lib/services/api.ts.",
+        },
+      ],
+    },
+  },
   // Override for test files
   {
     files: ["**/*.spec.ts", "**/*.test.ts", "**/*.spec.tsx", "**/*.test.tsx"],

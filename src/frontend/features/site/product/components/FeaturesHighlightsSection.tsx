@@ -31,12 +31,12 @@ export function FeaturesHighlightsSection({
     // Highlights Section — sits on surface-base, establishes surface-subtle context
     <Card padding="lg" heading={title}>
       <Grid columns={{ base: 1, md: 3 }} gap={6}>
-        {highlights.map((highlight) => (
+        {highlights.map((item) => (
           <FeatureHighlightItem
-            key={highlight.title}
-            icon={highlight.icon}
-            title={highlight.title}
-            description={highlight.description}
+            key={item.title}
+            icon={item.icon}
+            title={item.title}
+            description={item.description}
           />
         ))}
       </Grid>
