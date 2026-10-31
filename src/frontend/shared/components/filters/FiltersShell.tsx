@@ -11,10 +11,14 @@ import {
   Button,
   Card,
 } from "@/shared/components/primitives";
+import { useMediaQuery } from "@/shared/hooks";
 import { cn } from "@/shared/utils";
 
 import type { ActiveFilterChip } from "./ActiveFilterChips";
 import { ActiveFilterChips } from "./ActiveFilterChips";
+
+// Tailwind's `md` breakpoint.
+const DESKTOP_QUERY = "(min-width: 768px)";
 
 interface FiltersShellProps {
   readonly children: React.ReactNode;
@@ -28,13 +32,11 @@ interface FiltersShellProps {
  * The responsive chrome around a set of filter controls: a trigger button and
  * `BottomSheet` below `md`, an inline `Card` above it.
  *
- * **`children` is rendered twice** — once in the sheet, once in the card — and
- * both copies are in the DOM at all times, with only `md:hidden` /
- * `hidden md:block` deciding which is visible. Anything inside must therefore
- * tolerate being duplicated: no bare `id`/`htmlFor` pairs, no `autoFocus`, and
- * no uncontrolled inputs, or the two copies will collide or drift apart. Filter
- * state belongs to the caller and is passed down, which is what keeps the two
- * copies agreeing.
+ * `children` renders in one place at a time once hydrated: the card on wide
+ * screens, the sheet while it is open on narrow ones. The server cannot see
+ * the viewport, so it renders the card, which `hidden md:block` keeps out of
+ * sight on a phone until hydration removes it. Filter state belongs to the
+ * caller and is passed down, so moving between the two loses nothing.
  */
 export function FiltersShell({
   children,
@@ -44,6 +46,7 @@ export function FiltersShell({
   title,
 }: FiltersShellProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const isDesktop = useMediaQuery(DESKTOP_QUERY, true);
   const tFilters = useTranslations("filters");
 
   const hasActiveFilters = activeFilterCount > 0;
@@ -85,7 +88,8 @@ export function FiltersShell({
         </Button>
 
         <BottomSheet
-          isOpen={isOpen}
+          // Widening the window past `md` hands the filters to the card.
+          isOpen={isOpen && !isDesktop}
           onClose={() => setIsOpen(false)}
           title={title}
           footer={
@@ -118,16 +122,18 @@ export function FiltersShell({
         </BottomSheet>
       </div>
 
-      <div className="hidden md:block">
-        <Card padding="lg">
-          <div className="space-y-5">
-            {children}
-            {hasActiveFilters && (
-              <ActiveFilterChips chips={chips} onReset={onReset} />
-            )}
-          </div>
-        </Card>
-      </div>
+      {isDesktop && (
+        <div className="hidden md:block">
+          <Card padding="lg">
+            <div className="space-y-5">
+              {children}
+              {hasActiveFilters && (
+                <ActiveFilterChips chips={chips} onReset={onReset} />
+              )}
+            </div>
+          </Card>
+        </div>
+      )}
     </>
   );
 }

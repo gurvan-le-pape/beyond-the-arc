@@ -6,5 +6,6 @@
 export * from "./useDebounce";
 export * from "./useDropUnknownValue";
 export * from "./useFilterState";
+export * from "./useMediaQuery";
 export * from "./useModalDialog";
 export * from "./useUrlState";
