@@ -550,6 +550,18 @@ Source code keeps importing from barrels; the rewrite is invisible to it. It rel
 
 ---
 
+## Supported browsers
+
+`browserslist` in `src/frontend/package.json` is the support floor: Chrome and Edge 109 (the last release on Windows 7 and 8.1), Firefox 115 (its extended-support release for older systems), Safari and iOS Safari 15. Next compiles to it, and lint checks against it.
+
+**TypeScript does not check browser APIs.** The ES2021 target blocks newer *language* APIs — `Object.groupBy` fails typecheck — but the `dom` lib declares every API current browsers have, whatever the target. `AbortSignal.any` passed typecheck and broke every client-side query on Safari before 17.4.
+
+Lint covers it in two layers. `compat/compat` (eslint-plugin-compat) flags web APIs the floor lacks, from MDN and caniuse data. That data has gaps — it does not know `AbortSignal.any` or `AbortSignal.timeout` — so `no-restricted-properties` names those explicitly in `eslint.config.mjs`. When compat misses an API that bites, it goes on that list.
+
+Spec files are exempt: they run in Node, and `lib/services/api.spec.ts` deletes the two `AbortSignal` statics to prove `request()` works without them.
+
+---
+
 ## Error handling
 
 Error handling is layered across three levels, matching the boundary at which the error can be meaningfully caught and recovered from.
