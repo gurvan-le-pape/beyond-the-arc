@@ -7,5 +7,4 @@ export const Position = {
   C: "C", // Center
 } as const;
 
-export const POSITION_LIST = Object.values(Position);
 export type Position = (typeof Position)[keyof typeof Position];

@@ -34,10 +34,7 @@ export function overtimeNumber(period: number): number | null {
  * @param tipOff - when the match started; the API's event times are game time counted from it
  * @returns the seconds elapsed, rounded down
  */
-export function gameSeconds(
-  occurredAt: Date | string,
-  tipOff: Date | string,
-): number {
+function gameSeconds(occurredAt: Date | string, tipOff: Date | string): number {
   return Math.floor(
     (new Date(occurredAt).getTime() - new Date(tipOff).getTime()) / 1000,
   );

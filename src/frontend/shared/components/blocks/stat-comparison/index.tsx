@@ -192,6 +192,3 @@ export function StatComparison({
     </div>
   );
 }
-
-export { resolveValue } from "./resolveValue";
-export type { StatComparisonProps, StatConfig } from "./types";

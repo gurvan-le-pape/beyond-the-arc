@@ -5,12 +5,5 @@ export const CompetitionLevel = {
   NATIONAL: "national",
 } as const;
 
-export const LocalCompetitionLevel = {
-  DEPARTMENTAL: CompetitionLevel.DEPARTMENTAL,
-  REGIONAL: CompetitionLevel.REGIONAL,
-} as const;
-
 export const COMPETITION_LEVEL_LIST = Object.values(CompetitionLevel);
 export type CompetitionLevel = (typeof COMPETITION_LEVEL_LIST)[number];
-export type LocalCompetitionLevel =
-  (typeof LocalCompetitionLevel)[keyof typeof LocalCompetitionLevel];

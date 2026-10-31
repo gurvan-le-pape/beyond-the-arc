@@ -2,7 +2,7 @@
 import type { ScaleLinear } from "d3-scale";
 
 import {
-  BASELINE_TO_RIM,
+  BASKET_Y,
   COURT_WIDTH,
   FREE_THROW_LINE_DIST,
   NO_CHARGE_LINE_DIST,
@@ -53,7 +53,7 @@ export function CourtMarkings({
   const centerX = xScale(COURT_WIDTH / 2);
   const paintLeft = xScale((COURT_WIDTH - PAINT_WIDTH) / 2);
   const paintRight = xScale((COURT_WIDTH + PAINT_WIDTH) / 2);
-  const rimY = yScale(BASELINE_TO_RIM);
+  const rimY = yScale(BASKET_Y);
 
   return (
     <>
