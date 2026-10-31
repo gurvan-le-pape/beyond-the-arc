@@ -4,8 +4,6 @@
 import {
   type DefaultedQueryObserverOptions,
   type DefaultError,
-  type DehydratedState,
-  HydrationBoundary,
   isServer,
   QueryClient,
   type QueryClientConfig,
@@ -21,7 +19,6 @@ import { logger } from "@/shared/utils";
 
 interface Props {
   readonly children: React.ReactNode;
-  readonly dehydratedState?: DehydratedState | null;
 }
 
 /**
@@ -97,11 +94,8 @@ class ServerQueryClient extends QueryClient {
  * Every query error is logged **once, here**, through a cache subscription.
  * Hooks and components must not log failures again; they choose UI from
  * `isError` instead.
- *
- * `dehydratedState` exists for server prefetching but no route currently passes
- * one — server-owned data reaches components as props.
  */
-export function QueryProvider({ children, dehydratedState }: Props) {
+export function QueryProvider({ children }: Props) {
   const [queryClient] = useState(() => {
     const config: QueryClientConfig = {
       defaultOptions: {
@@ -141,7 +135,7 @@ export function QueryProvider({ children, dehydratedState }: Props) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <HydrationBoundary state={dehydratedState}>{children}</HydrationBoundary>
+      {children}
       {process.env.NODE_ENV === "development" && (
         <ReactQueryDevtools initialIsOpen={false} />
       )}
