@@ -85,7 +85,7 @@ Used by: championship detail. The selected pool lives in `?pool=`; `Championship
 
 Passing a client component into a server component's slot is what keeps the boundary small here. Marking the parent `"use client"` instead would pull the whole subtree — table, header, breadcrumb — into the bundle to be hydrated for nothing.
 
-There is no `HydrationBoundary` prefetching in the app. `QueryProvider` accepts an optional `dehydratedState`, but no route passes one; server-owned data reaches components as props, not through a dehydrated cache.
+There is no `HydrationBoundary` prefetching in the app: server-owned data reaches components as props, not through a dehydrated cache.
 
 **Pure client — filter/search/tab state** — pages that are inherently interactive from the first render. They use TanStack Query hooks for data, local state for filters, and `useSearchParams` for URL-synced tabs.
 
