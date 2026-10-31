@@ -3,7 +3,7 @@
 
 import { scaleLinear } from "d3-scale";
 import { useFormatter, useTranslations } from "next-intl";
-import { useId, useMemo, useState } from "react";
+import { useId, useMemo } from "react";
 
 import {
   ChartType,
@@ -11,7 +11,7 @@ import {
   HALF_COURT_HEIGHT,
   SHOT_COLOR_SCALE,
 } from "@/features/shot-chart/constants";
-import { summarizeShots } from "@/features/shot-chart/utils";
+import { hotspotsMaxTotal, summarizeShots } from "@/features/shot-chart/utils";
 import type { ShotEvent } from "@/shared/types";
 import { createStatFormat } from "@/shared/utils";
 
@@ -49,9 +49,6 @@ export function ShotChart({
     MIN_CHART_WIDTH,
   );
 
-  // The busiest zone's count, fed back from HotspotsOverlay's zone binning.
-  const [hotspotsMaxValue, setHotspotsMaxValue] = useState<number>(1);
-
   const svgWidth = containerSize?.width ?? 0;
   const svgHeight = containerSize?.height ?? 0;
 
@@ -81,6 +78,8 @@ export function ShotChart({
   })();
 
   const summary = useMemo(() => summarizeShots(shots), [shots]);
+  // One colour domain for the zones on the court and the legend above it.
+  const maxTotal = useMemo(() => hotspotsMaxTotal(shots), [shots]);
 
   return (
     <div
@@ -91,7 +90,7 @@ export function ShotChart({
         <>
           {chartType === ChartType.SCATTER && <ScatterHeader />}
           {chartType === ChartType.HOTSPOTS && (
-            <HotspotsHeader maxValue={hotspotsMaxValue} />
+            <HotspotsHeader maxValue={maxTotal} />
           )}
 
           <svg
@@ -122,7 +121,7 @@ export function ShotChart({
                 yScale={yScale}
                 colorScale={SHOT_COLOR_SCALE}
                 svgWidth={svgWidth}
-                onMaxTotalChange={setHotspotsMaxValue}
+                maxTotal={maxTotal}
               />
             )}
 

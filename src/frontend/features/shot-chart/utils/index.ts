@@ -6,6 +6,7 @@
 export * from "./downloadPng";
 export * from "./getTooltipPosition";
 export * from "./overlays/hotspots/binShotsByZones";
+export * from "./overlays/hotspots/hotspotsMaxTotal";
 export * from "./overlays/hotspots/zones/shotZonesAboveWing";
 export * from "./overlays/hotspots/zones/shotZonesApexStripe";
 export * from "./overlays/hotspots/zones/shotZonesArc";
