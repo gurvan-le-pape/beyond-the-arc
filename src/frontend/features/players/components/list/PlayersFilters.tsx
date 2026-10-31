@@ -41,10 +41,6 @@ interface PlayersFiltersProps extends FilterProps<PlayersFilterValues> {
  * dropdowns render empty, which reads as "no players match" rather than as a
  * failure. Location errors surface inline with a retry; the rest of the panel
  * stays usable.
- *
- * Rendered inside `FiltersShell`, so this subtree exists **twice** in the DOM —
- * once in the mobile sheet, once in the desktop card. Nothing here may rely on a
- * unique `id` or on being mounted once.
  */
 export function PlayersFilters({ filters, set, onReset }: PlayersFiltersProps) {
   const tPlayers = useTranslations("players");

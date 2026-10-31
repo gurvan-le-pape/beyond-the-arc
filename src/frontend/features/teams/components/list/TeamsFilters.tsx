@@ -45,9 +45,6 @@ interface TeamsFiltersProps extends FilterProps<TeamsFilterValues> {
  * for committees and leagues, `useTeamFilterValues` for the numbers, divisions
  * and pools that actually occur. Without the latter those dropdowns render
  * empty, which reads as "no teams match" rather than as a failure.
- *
- * Rendered inside `FiltersShell`, so this subtree exists **twice** in the DOM —
- * mobile sheet and desktop card. Nothing here may rely on a unique `id`.
  */
 export function TeamsFilters({ filters, set, onReset }: TeamsFiltersProps) {
   const tTeams = useTranslations("teams");

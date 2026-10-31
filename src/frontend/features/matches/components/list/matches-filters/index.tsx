@@ -48,9 +48,6 @@ interface MatchesFiltersProps extends FilterProps<MatchesFilterValues> {
  * committees and leagues, `useMatchesCascadeOptions` for divisions and pools.
  * Both surface their own error and retry, so a failed lookup reads as a failure
  * instead of as an empty dropdown.
- *
- * Rendered inside `FiltersShell`, so this subtree exists **twice** in the DOM —
- * mobile sheet and desktop card. Nothing here may rely on a unique `id`.
  */
 export function MatchesFilters({ filters, set, onReset }: MatchesFiltersProps) {
   const tMatches = useTranslations("matches");
