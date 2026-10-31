@@ -29,7 +29,6 @@ export * from "./overlays/hotspots/Corner3Zones";
 export * from "./overlays/hotspots/PaintZones";
 export * from "./overlays/hotspots/TopKeyZones";
 export * from "./overlays/hotspots/WingZones";
-export * from "./overlays/hotspots/zones/ArcZone";
 export * from "./overlays/hotspots/zones/PolygonZone";
 export * from "./overlays/hotspots/zones/RectZone";
 export * from "./overlays/HotspotsOverlay";

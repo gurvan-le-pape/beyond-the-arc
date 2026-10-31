@@ -1,9 +1,8 @@
 // src/frontend/features/shot-chart/constants/courtConstants.ts
 // FIBA court measurements (meters)
-export const COURT_LENGTH = 28;
 export const COURT_WIDTH = 15;
 export const HALF_COURT_HEIGHT = 14;
-export const BASELINE_TO_RIM = 1.575;
+const BASELINE_TO_RIM = 1.575;
 export const BASELINE_TO_BACKBOARD = 1.2;
 export const RIM_RADIUS = 0.225;
 export const BACKBOARD_WIDTH = 1.8;

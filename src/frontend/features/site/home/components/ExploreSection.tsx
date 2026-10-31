@@ -1,10 +1,10 @@
 // src/frontend/features/site/home/components/ExploreSection.tsx
 import { useTranslations } from "next-intl";
 
+import { EXPLORE_CARDS } from "@/features/site/home/constants";
 import { Grid } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 
-import { EXPLORE_CARDS } from "../constants/homeSections";
 import { ExploreCard } from "./ExploreCard";
 
 /** The three ways into the data — players, teams, matches — as linked cards. */

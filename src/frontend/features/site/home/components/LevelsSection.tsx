@@ -1,10 +1,10 @@
 // src/frontend/features/site/home/components/LevelsSection.tsx
 import { useTranslations } from "next-intl";
 
+import { LEVEL_ROWS } from "@/features/site/home/constants";
 import type { Stats } from "@/features/stats/types";
 import { Text } from "@/shared/components/typography";
 
-import { LEVEL_ROWS } from "../constants/homeSections";
 import { LevelRow } from "./LevelRow";
 
 interface LevelsSectionProps {

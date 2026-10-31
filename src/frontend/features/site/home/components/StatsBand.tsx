@@ -1,10 +1,9 @@
 // src/frontend/features/site/home/components/StatsBand.tsx
 import { useFormatter, useTranslations } from "next-intl";
 
+import { STATS_BAND_KEYS } from "@/features/site/home/constants";
 import type { Stats } from "@/features/stats/types";
 import { StatGroup } from "@/shared/components/blocks";
-
-import { STATS_BAND_KEYS } from "../constants/homeSections";
 
 interface StatsBandProps {
   readonly stats: Stats;
