@@ -55,11 +55,11 @@ CI enforces this. A dedicated job re-runs both and fails if `docs/openapi.json` 
 
 ## HTTP client
 
-- The frontend's HTTP client is `axios@1.16.0`. `openapi-fetch` — the companion client `openapi-typescript` recommends — is **not** installed. `[manifest]`+`[upstream]`
-- So the type safety is not automatic: axios will happily accept any generic parameter you give it. Annotate every request and response with the generated types explicitly, at a single wrapper layer rather than at each call site: `[manifest]`+`[principle]`
+- The frontend has no HTTP client library: requests use the platform `fetch`. `openapi-fetch` — the companion client `openapi-typescript` recommends — is **not** installed. `[manifest]`+`[upstream]`
+- So the type safety is not automatic: `response.json()` returns `Promise<any>`, which accepts any type you assign it. Annotate every request and response with the generated types explicitly, at a single wrapper layer rather than at each call site: `[manifest]`+`[principle]`
 
   ```ts
-  const { data } = await http.get<components['schemas']['Widget']>(`/widgets/${id}`);
+  const widget = await http<components['schemas']['Widget']>(`/widgets/${id}`);
   ```
 - Because the annotation is a claim rather than a check, it is only as good as the generated types are fresh. That is the strongest reason to regenerate on every contract change. `[principle]`
 

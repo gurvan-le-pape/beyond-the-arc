@@ -1,5 +1,5 @@
 ---
-description: TanStack Query v5 and axios — which fetching mechanism to use where.
+description: TanStack Query v5 and native fetch — which fetching mechanism to use where.
 paths:
   - "src/frontend/**"
 ---
@@ -8,12 +8,12 @@ paths:
 
 > Source tags: `[manifest]` = this repo's `package.json` / `package-lock.json` · `[upstream]` = official docs for the exact locked version · `[principle]` = general engineering practice.
 
-**Applies to:** `src/frontend`. **Locked:** `@tanstack/react-query@5.100.10`, `@tanstack/react-query-devtools@5.100.10`, `axios@1.16.0`. `[manifest]`
+**Applies to:** `src/frontend`. **Locked:** `@tanstack/react-query@5.100.10`, `@tanstack/react-query-devtools@5.100.10`. No HTTP client library is installed — requests go through the platform `fetch`. `[manifest]`
 
 ## Three ways to fetch — pick deliberately
 
 - **Server Component `fetch`** for data needed to render the page. Remember Next.js 15 does not cache `fetch` by default. See `frontend-nextjs.md`. `[upstream]`
-- **TanStack Query + axios** for client-side data: anything refetched, polled, paginated, invalidated after a mutation, or dependent on client state. `[manifest]`+`[principle]`
+- **TanStack Query over `fetch`** for client-side data: anything refetched, polled, paginated, invalidated after a mutation, or dependent on client state. `[manifest]`+`[principle]`
 - **Route Handlers** only when the browser must not talk to the backend directly (secrets, CORS, response shaping). `[principle]`
 
 Do not fetch the same resource both ways on one page. Two caches with different invalidation rules produce UI that disagrees with itself. `[principle]`
@@ -64,12 +64,14 @@ const { data, isPending, error } = useQuery({
 - After a successful mutation, invalidate the affected keys — do not hand-patch unrelated caches. `[principle]`
 - Keep optimistic updates to cases where the rollback is genuinely simple; every optimistic update needs an `onError` that restores the prior state. `[principle]`
 
-## axios
+## fetch
 
-- The generated OpenAPI types are the source of truth for request and response shapes. Annotate explicitly — axios does not verify anything at runtime, and `openapi-fetch` is **not** installed, so nothing checks the annotation for you. See `api-contract.md`. `[manifest]`+`[upstream]`
-- Configure **one** axios instance (base URL, auth, interceptors) and import it everywhere. Scattered `axios.get` calls with ad-hoc base URLs cannot be changed centrally. `[principle]`
-- Pass the `AbortSignal` that TanStack Query gives the `queryFn` through to axios, so cancelled queries actually cancel their requests. `[principle]`
-- Normalise errors in a response interceptor into one error shape, then let query error states and `error.tsx` boundaries render it. `[principle]`
+- The generated OpenAPI types are the source of truth for request and response shapes. Annotate explicitly — `response.json()` returns `Promise<any>`, and `openapi-fetch` is **not** installed, so nothing checks the annotation for you. See `api-contract.md`. `[manifest]`+`[upstream]`
+- Put base URL, timeout and error handling in **one** wrapper and call it everywhere. Scattered `fetch` calls with ad-hoc base URLs cannot be changed centrally. `[principle]`
+- `fetch` **resolves** on a 4xx or 5xx response and rejects only when no response arrived (network failure, abort). Check `response.ok` and throw, or every HTTP error reaches the caller as success. `[upstream]`
+- `fetch` has **no default timeout**. Bound it with `AbortSignal.timeout(ms)`, and combine that with the `AbortSignal` TanStack Query gives the `queryFn` through `AbortSignal.any([...])`, so cancelled queries actually cancel their requests. `[upstream]`+`[principle]`
+- Normalise errors in the wrapper into one error shape, then let query error states and `error.tsx` boundaries render it. `[principle]`
+- On the server, Next.js extends `fetch` with `next: { revalidate }` for its Data Cache; see `frontend-nextjs.md`. The browser's `fetch` has no such option, so client-side freshness is the query's `staleTime`. `[upstream]`
 
 ## SSR and hydration
 
