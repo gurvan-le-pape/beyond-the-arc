@@ -5,7 +5,6 @@ import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { Eye, Moon, Sun } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
 
 import { IconButton } from "@/shared/components/primitives";
 import { cn } from "@/shared/utils";
@@ -28,6 +27,17 @@ const THEMES = [
 ] as const;
 
 /**
+ * The trigger's icon for each theme, shown by the theme class next-themes
+ * puts on `<html>` before first paint — so the server's markup is the same
+ * for every theme and the right icon shows before hydration.
+ */
+const TRIGGER_ICON_CLASSES = {
+  light: "[.dark_&]:hidden [.high-contrast_&]:hidden",
+  dark: "hidden [.dark_&]:block",
+  "high-contrast": "hidden [.high-contrast_&]:block",
+} as const;
+
+/**
  * Theme picker: a menu of the three themes, on Radix DropdownMenu, whose
  * trigger icon is the active theme.
  *
@@ -37,36 +47,20 @@ const THEMES = [
  * scrolling and stays clickable while it is open, as a header menu should.
  *
  * Rendered in place rather than portalled, so it stays inside the header's
- * stacking context and paints above the page under it.
+ * stacking context and paints above the page under it. The menu itself only
+ * renders once opened, which is after hydration, so it can read `theme`.
  */
 export function ThemeToggle() {
-  const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
   const t = useTranslations("navigation");
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Placeholder — prevents hydration mismatch and layout shift
-  if (!mounted) {
-    return (
-      <IconButton label={t("header.toggleTheme")} disabled>
-        <span className="w-5 h-5" />
-      </IconButton>
-    );
-  }
-
-  // Not `(t) =>`: that would shadow the translation function the labels
-  // below resolve their messages with.
-  const active = THEMES.find((entry) => entry.id === theme) ?? THEMES[0];
-  const ActiveIcon = active.Icon;
 
   return (
     <DropdownMenu.Root modal={false}>
       <DropdownMenu.Trigger asChild>
         <IconButton label={t("header.toggleTheme")}>
-          <ActiveIcon />
+          {THEMES.map(({ id, Icon }) => (
+            <Icon key={id} className={TRIGGER_ICON_CLASSES[id]} />
+          ))}
         </IconButton>
       </DropdownMenu.Trigger>
 
