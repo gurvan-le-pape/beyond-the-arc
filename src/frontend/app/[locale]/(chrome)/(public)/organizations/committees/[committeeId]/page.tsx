@@ -3,10 +3,10 @@ import { Trophy } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { serverChampionshipsService } from "@/features/competitions/championships/api/championships.server";
+import { championshipsService } from "@/features/competitions/championships/api";
 import { ChampionshipGrid } from "@/features/competitions/championships/components";
-import { serverClubsService } from "@/features/organizations/clubs/api/clubs.server";
-import { serverCommitteesService } from "@/features/organizations/committees/api/committees.server";
+import { clubsService } from "@/features/organizations/clubs/api";
+import { committeesService } from "@/features/organizations/committees/api";
 import { CommitteeHeader } from "@/features/organizations/committees/components";
 import {
   OrganizationInfo,
@@ -45,7 +45,7 @@ async function buildMetadata({
   const committeeId = parseRouteId(routeParams.committeeId);
   const tMeta = await getTranslations({ locale, namespace: "organizations" });
 
-  const committee = await serverCommitteesService
+  const committee = await committeesService
     .getById(committeeId)
     .catch(handleServerError);
 
@@ -79,13 +79,13 @@ async function CommitteePage({
 
   const [committee, { items: championships }, { items: clubs }] =
     await Promise.all([
-      serverCommitteesService.getById(committeeId),
-      serverChampionshipsService.getAll({
+      committeesService.getById(committeeId),
+      championshipsService.getAll({
         level: CompetitionLevel.DEPARTMENTAL,
         committeeId,
         limit: 100,
       }),
-      serverClubsService.getAll({
+      clubsService.getAll({
         level: CompetitionLevel.DEPARTMENTAL,
         committeeId,
       }),

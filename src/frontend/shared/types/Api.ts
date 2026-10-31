@@ -8,8 +8,8 @@ import type { components } from "./api.generated";
  * Hand-writing this interface puts the one payload with no generated type out
  * of reach of the contract, and nothing then checks it: a claim like
  * `error: "NotFoundException"` can sit here while the API sends the HTTP status
- * name, `"Not Found"`. The two `as Partial<ApiErrorResponse>` casts — below and
- * in `server-api-client.ts` — would be asserting against a local belief.
+ * name, `"Not Found"`. The `as Partial<ApiErrorResponse>` cast in
+ * `lib/services/api.ts` would be asserting against a local belief.
  * Aliasing the generated schema makes them assertions against the document the
  * backend emits.
  */

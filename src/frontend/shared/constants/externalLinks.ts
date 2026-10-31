@@ -17,8 +17,8 @@ export const LINKEDIN_URL = "https://linkedin.com/in/gurvan-le-pape";
 
 /**
  * Swagger UI, which the backend serves at `/docs` — a sibling of the `/api`
- * base path, not a child of it. The fallback mirrors the client API base in
- * `lib/services/client/api-client.ts`: without one, an unset
+ * base path, not a child of it. The fallback mirrors the browser's API base in
+ * `lib/services/api.ts`: without one, an unset
  * `NEXT_PUBLIC_API_URL` inlines as the literal string "undefined" at build
  * time and renders a broken `undefined/docs` link.
  */

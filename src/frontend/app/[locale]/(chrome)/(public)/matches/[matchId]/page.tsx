@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { serverChampionshipsService } from "@/features/competitions/championships/api/championships.server";
+import { championshipsService } from "@/features/competitions/championships/api";
 import { buildChampionshipTitle } from "@/features/competitions/championships/utils";
 import { matchesService } from "@/features/matches/api";
 import {
@@ -80,7 +80,7 @@ async function MatchSummaryPage({
 
   // The match names its championship by id only; the organisation and season
   // that make up the championship's display name come from this second fetch.
-  const championship = await serverChampionshipsService
+  const championship = await championshipsService
     .getById(match.pool.championship.id)
     .catch(handleServerError);
 

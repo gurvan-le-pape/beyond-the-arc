@@ -1,76 +1,49 @@
 // src/frontend/features/organizations/leagues/api/leagues.service.ts
-import apiClient from "../../../../lib/services/client/api-client";
+import { request, ServerRevalidate } from "@/lib/services/api";
+
 import type { League } from "../types/League";
 
+/** Leagues are static reference data. */
+const revalidate = ServerRevalidate.REFERENCE;
+
 /**
- * Service for interacting with the leagues (regional leagues) API.
- *
- * Architecture:
- * - Uses apiClient (axios) for HTTP requests
- * - Backend responses are unwrapped by axios interceptor
- * - Services work directly with typed data
- * - Errors are handled globally by interceptor
- *
- * Usage:
- * - Import this service in React Query hooks
- * - Never call directly from components
+ * The leagues endpoints, callable from a server component or from a query
+ * function alike — server components call a method bare, query functions pass
+ * TanStack's `signal`. Failures throw an `ApiError`; see `request`.
  *
  * @example
- * import { leaguesService } from "@/features/organizations/leagues/api";
  * const leagues = await leaguesService.getAll();
  */
 export const leaguesService = {
   /**
-   * Get all regional leagues.
+   * Every league, unpaginated.
    *
-   * @returns Array of all leagues
-   * @throws {AxiosError} 500 if server error
-   *
-   * @example
-   * const leagues = await leaguesService.getAll();
-   *
-   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
+   * @param signal - TanStack Query's `queryFn` signal
+   * @returns the leagues
    */
-  async getAll(signal?: AbortSignal): Promise<League[]> {
-    const { data } = await apiClient.get<League[]>("/leagues", { signal });
-    return data;
+  getAll(signal?: AbortSignal): Promise<League[]> {
+    return request("/leagues", { revalidate, signal });
   },
 
   /**
-   * Get a single league by ID.
+   * One league.
    *
-   * @param id - The league ID
-   * @returns The league details
-   * @throws {AxiosError} 404 if not found, 400 if invalid ID
-   *
-   * @example
-   * const league = await leaguesService.getById(1);
-   *
-   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
+   * @param id - the league's id
+   * @param signal - TanStack Query's `queryFn` signal
+   * @returns the league — a 404 throws an `ApiError`
    */
-  async getById(id: number, signal?: AbortSignal): Promise<League> {
-    const { data } = await apiClient.get<League>(`/leagues/${id}`, { signal });
-    return data;
+  getById(id: number, signal?: AbortSignal): Promise<League> {
+    return request(`/leagues/${id}`, { revalidate, signal });
   },
 
   /**
-   * Get multiple leagues by their IDs.
-   * Efficient bulk fetch for multiple leagues.
+   * Several leagues in one request.
    *
-   * @param ids - Array of league IDs
-   * @returns Array of leagues
-   * @throws {AxiosError} 400 if validation fails
-   *
-   * @example
-   * const leagues = await leaguesService.getByIds([1, 2, 3]);
-   *
-   * @param signal - TanStack Query's `queryFn` signal; without it a superseded request runs to completion
+   * @param ids - the leagues' ids
+   * @param signal - TanStack Query's `queryFn` signal
+   * @returns the leagues found
    */
-  async getByIds(ids: number[], signal?: AbortSignal): Promise<League[]> {
-    const { data } = await apiClient.get<League[]>(
-      `/leagues/${ids.join(",")}`,
-      { signal },
-    );
-    return data;
+  getByIds(ids: number[], signal?: AbortSignal): Promise<League[]> {
+    return request(`/leagues/${ids.join(",")}`, { revalidate, signal });
   },
 };

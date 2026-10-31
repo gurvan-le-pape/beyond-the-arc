@@ -8,7 +8,7 @@ import {
   AboutLinks,
   AboutSection,
 } from "@/features/site/about/components";
-import { serverStatsService } from "@/features/stats/api/stats.server";
+import { statsService } from "@/features/stats/api";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageHero, PageLayout } from "@/shared/components/layout";
 import { TextLink } from "@/shared/components/primitives";
@@ -18,7 +18,7 @@ import type { LocalePageProps } from "@/shared/types";
 import { handleServerError } from "@/shared/utils";
 
 // Fetches server-side, so it stays out of the prerender pass - the image build
-// has no backend. The counts are cached by fetchApi, so a render here is a
+// has no backend. The counts are cached by `request`, so a render here is a
 // cache read, not a query.
 export const dynamic = "force-dynamic";
 
@@ -50,7 +50,7 @@ async function AboutPage({ params }: LocalePageProps) {
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "landing" });
 
-  const stats = await serverStatsService.getStats().catch(handleServerError);
+  const stats = await statsService.getStats().catch(handleServerError);
   const { national, regional, departmental } = stats.championshipsByLevel;
 
   const linkCopy = (key: LinkKey) => ({

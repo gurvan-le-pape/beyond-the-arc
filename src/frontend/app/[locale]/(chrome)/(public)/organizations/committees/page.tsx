@@ -2,9 +2,9 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { serverCommitteesService } from "@/features/organizations/committees/api/committees.server";
+import { committeesService } from "@/features/organizations/committees/api";
 import { CommitteesTable } from "@/features/organizations/committees/components";
-import { serverLeaguesService } from "@/features/organizations/leagues/api/leagues.server";
+import { leaguesService } from "@/features/organizations/leagues/api";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
@@ -14,7 +14,7 @@ import { handleServerError } from "@/shared/utils";
 
 // Fetches server-side, so it stays out of the prerender pass - the image build
 // has no backend. The committee and league lists are cached for 24h by
-// fetchApi, so a render here is a cache read, not a query.
+// `request`, so a render here is a cache read, not a query.
 export const dynamic = "force-dynamic";
 
 /**
@@ -43,8 +43,8 @@ async function CommitteesPage({ params }: LocalePageProps) {
   ]);
 
   const [committees, leagues] = await Promise.all([
-    serverCommitteesService.getAll(),
-    serverLeaguesService.getAll(),
+    committeesService.getAll(),
+    leaguesService.getAll(),
   ]).catch(handleServerError);
   const regionNames = Object.fromEntries(
     leagues.map((league) => [league.id, league.region.name]),

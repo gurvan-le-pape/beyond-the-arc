@@ -1,9 +1,9 @@
 // src/frontend/app/sitemap.ts
 import type { MetadataRoute } from "next";
 
-import { serverClubsService } from "@/features/organizations/clubs/api/clubs.server";
-import { serverCommitteesService } from "@/features/organizations/committees/api/committees.server";
-import { serverLeaguesService } from "@/features/organizations/leagues/api/leagues.server";
+import { clubsService } from "@/features/organizations/clubs/api";
+import { committeesService } from "@/features/organizations/committees/api";
+import { leaguesService } from "@/features/organizations/leagues/api";
 
 import { LOCALES } from "../locales";
 
@@ -101,9 +101,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Each list degrades to [] on its own: one unavailable endpoint costs its own
   // entity's URLs, never the whole sitemap.
   const [clubs, leagues, committees] = await Promise.all([
-    serverClubsService.getAllClubs().catch(() => []),
-    serverLeaguesService.getAll().catch(() => []),
-    serverCommitteesService.getAll().catch(() => []),
+    clubsService.getAllClubs().catch(() => []),
+    leaguesService.getAll().catch(() => []),
+    committeesService.getAll().catch(() => []),
   ]);
 
   const dynamicRoutes: MetadataRoute.Sitemap = [

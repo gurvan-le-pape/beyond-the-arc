@@ -3,7 +3,7 @@ import { Users } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { serverClubsService } from "@/features/organizations/clubs/api/clubs.server";
+import { clubsService } from "@/features/organizations/clubs/api";
 import {
   ClubHeader,
   ClubTeamsTable,
@@ -41,9 +41,7 @@ async function buildMetadata({
   const clubId = parseRouteId(routeParams.clubId);
   const tMeta = await getTranslations({ locale, namespace: "clubs" });
 
-  const club = await serverClubsService
-    .getById(clubId)
-    .catch(handleServerError);
+  const club = await clubsService.getById(clubId).catch(handleServerError);
 
   return {
     title: club.name,
@@ -62,9 +60,7 @@ async function ClubPage({ params }: LocalePageProps<{ clubId: string }>) {
     namespace: "organizations",
   });
 
-  const club = await serverClubsService
-    .getById(clubId)
-    .catch(handleServerError);
+  const club = await clubsService.getById(clubId).catch(handleServerError);
 
   return (
     <PageLayout>

@@ -7,14 +7,14 @@ import {
   OrganizationsHeader,
 } from "@/features/organizations/components";
 import type { OrganizationCounts } from "@/features/organizations/types";
-import { serverStatsService } from "@/features/stats/api/stats.server";
+import { statsService } from "@/features/stats/api";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import type { LocalePageProps } from "@/shared/types";
 import { handleServerError } from "@/shared/utils";
 
 // Fetches server-side, so it stays out of the prerender pass - the image build
-// has no backend. The counts are cached by fetchApi, so a render here is a
+// has no backend. The counts are cached by `request`, so a render here is a
 // cache read, not a query.
 export const dynamic = "force-dynamic";
 
@@ -36,7 +36,7 @@ async function OrganizationsPage({ params }: LocalePageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  const stats = await serverStatsService.getStats().catch(handleServerError);
+  const stats = await statsService.getStats().catch(handleServerError);
   const counts: OrganizationCounts = {
     leagues: stats.leagues,
     committees: stats.committees,
