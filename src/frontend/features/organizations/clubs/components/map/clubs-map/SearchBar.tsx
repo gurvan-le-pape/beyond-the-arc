@@ -6,6 +6,21 @@ import { useEffect, useRef } from "react";
 
 import { Input } from "@/shared/components/forms";
 
+/**
+ * Whether a keypress aimed at `target` is typing: a text field, a select, or
+ * anything content-editable.
+ *
+ * @param target - the keydown's target
+ * @returns true when the key belongs to the field rather than to a shortcut
+ */
+function isEditable(target: EventTarget | null): boolean {
+  return (
+    target instanceof HTMLElement &&
+    (target.isContentEditable ||
+      target.closest("input, textarea, select") !== null)
+  );
+}
+
 interface SearchBarProps {
   readonly query: string;
   readonly onQueryChange: (query: string) => void;
@@ -30,10 +45,12 @@ export function SearchBar({ query, onQueryChange, onClear }: SearchBarProps) {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "/" && !e.metaKey && !e.ctrlKey) {
-        e.preventDefault();
-        inputRef.current?.focus();
-      }
+      if (e.key !== "/" || e.metaKey || e.ctrlKey || e.altKey) return;
+      // A "/" typed into a field is text, this one included: only a keypress
+      // that would otherwise do nothing moves focus here.
+      if (isEditable(e.target)) return;
+      e.preventDefault();
+      inputRef.current?.focus();
     };
 
     globalThis.addEventListener("keydown", handleKeyDown);
