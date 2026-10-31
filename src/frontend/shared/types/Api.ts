@@ -16,23 +16,6 @@ import type { components } from "./api.generated";
 export type ApiErrorResponse = components["schemas"]["ApiErrorResponseDto"];
 
 /**
- * Standard API success response from backend.
- * Matches the format returned by TransformInterceptor.
- */
-export interface ApiResponse<T> {
-  data: T;
-  meta?: {
-    count?: number;
-    page?: number;
-    limit?: number;
-    totalPages?: number;
-  };
-  timestamp: string;
-  path: string;
-  statusCode: number;
-}
-
-/**
  * Simplified error object after interceptor processing.
  * Array messages are joined into a single string.
  */
