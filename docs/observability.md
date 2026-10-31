@@ -72,7 +72,7 @@ A real line (`res`/`responseTime` also appear on the completion line and are tri
 
 There is no `traceId` and no `userId`: the correlation id is `req.id` and the API has no authenticated users.
 
-**Joining a frontend failure to the backend line that caused it.** A server-side fetch failure is logged once, by `handleServerError` (`src/frontend/shared/utils`), and that line carries the backend's id — `[Server fetch failed x-request-id=…]`. The id goes in the message rather than only on the error object because the frontend logger is a `console.error` wrapper: an own property of the error prints in the block `util.inspect` writes after the stack, which Promtail ships as its own unattached line. So the pair is:
+**Joining a frontend failure to the backend line that caused it.** A server-side fetch failure is logged once, by `handleServerError` (`src/frontend/shared/utils`), and that line carries the backend's id — `[Server fetch failed x-request-id=…]`. The id goes in the message rather than only on the error object because the frontend logger writes it with `console.error`: an own property of the error prints in the block `util.inspect` writes after the stack, which Promtail ships as its own unattached line. So the pair is:
 
 ```
 {service="frontend"} |= "<id>"
@@ -134,6 +134,8 @@ Backend source maps are emitted by `tsconfig.build.json` and ship next to `dist/
 ### Frontend
 
 The frontend uses `@sentry/nextjs` in its v10 multi-runtime layout: `instrumentation-client.ts` (browser), `sentry.server.config.ts` (Node) and `sentry.edge.config.ts` (edge), registered by `instrumentation.ts`. There is deliberately **no `sentry.client.config.ts`** — that is the pre-v10 location and v10 does not read it. A `global-error.tsx` component wraps the root layout as an error boundary, capturing React rendering errors that would otherwise be swallowed before reaching Next.js's error handling.
+
+Failures that the app catches itself reach Sentry through `logger.error` (`shared/utils/logger.ts`), which writes the console line and captures the exception. In the browser that is the only route: every failed query is reported once, after its retries, by the `QueryCache` subscriber in `QueryProvider`. An `ApiError` carries the backend's `x-request-id`, which becomes the event's `request_id` tag — the same id as `req_id` in the backend's Loki lines. Paths that capture as well, like `withServerErrorState`, do not double-report: Sentry marks an exception object once sent and skips it after.
 
 The frontend DSN is a literal in each of the three init files. A DSN identifies a project and is not a credential; anything in a browser bundle is public by construction. Source maps are handled by `withSentryConfig`'s build plugin, which injects debug IDs, so the frontend needs no `release` of its own. `environment` is set from `NODE_ENV` in all three, for the same reason as the backend.
 

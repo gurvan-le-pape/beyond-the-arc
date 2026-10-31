@@ -29,9 +29,10 @@ import { ServerErrorState } from "./ServerErrorState";
  *
  * Sentry is captured here because catching the error means Next's
  * `onRequestError` hook (wired to `Sentry.captureRequestError` in
- * `instrumentation.ts`) never sees it. `handleServerError` has already logged
- * it once on the way past, so this is the one capture — the client boundary
- * does not run, so there is no second.
+ * `instrumentation.ts`) never sees it. A fetch failure has usually been
+ * captured already, by `logger.error` in `handleServerError`; Sentry skips an
+ * exception it has sent, so this capture only adds events for errors that did
+ * not pass through there.
  *
  * Pair with `withServerErrorMetadata` on the same page: `generateMetadata`
  * runs as its own function and its throw is not caught by this.
