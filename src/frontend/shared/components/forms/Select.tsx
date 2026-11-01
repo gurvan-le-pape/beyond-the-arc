@@ -16,6 +16,10 @@ import type {
   OptionValue,
 } from "@/shared/components/primitives";
 import {
+  DROPDOWN_LABEL,
+  DROPDOWN_LIST,
+  DROPDOWN_OPTION,
+  DROPDOWN_POPUP,
   DROPDOWN_TRIGGER_BASE,
   SelectChevron,
 } from "@/shared/components/primitives";
@@ -100,7 +104,7 @@ export function Select<V extends OptionValue>({
           {label && (
             <Label
               className={cn(
-                "text-sm font-medium text-text-emphasis",
+                DROPDOWN_LABEL,
                 hideLabel ? "sr-only" : "mb-2 block",
               )}
             >
@@ -124,22 +128,15 @@ export function Select<V extends OptionValue>({
             placement="bottom start"
             offset={4}
             containerPadding={16}
-            className={cn(
-              "z-dropdown w-[--trigger-width] overflow-hidden surface-raised border border-divide rounded-input shadow-card-hover",
-              "origin-top data-[entering]:animate-popover-in data-[exiting]:animate-popover-out",
-            )}
+            className={DROPDOWN_POPUP}
           >
-            <ListBox className="max-h-60 overflow-y-auto scrollbar-hide py-1 focus-visible:outline-none">
+            <ListBox className={DROPDOWN_LIST}>
               {options.map((option) => (
                 <ListBoxItem
                   key={keyOf(option.value)}
                   id={keyOf(option.value)}
                   textValue={option.label}
-                  className={cn(
-                    "cursor-pointer px-4 py-2 text-sm text-text-heading transition-colors duration-150 focus-visible:outline-none",
-                    "data-[selected]:border-l-2 data-[selected]:border-solid-primary data-[selected]:bg-tint-primary data-[selected]:font-semibold data-[selected]:text-ink-primary",
-                    "data-[focused]:bg-tint-primary data-[focused]:text-ink-primary",
-                  )}
+                  className={DROPDOWN_OPTION}
                 >
                   {option.label}
                 </ListBoxItem>
