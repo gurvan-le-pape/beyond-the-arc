@@ -26,6 +26,16 @@ export const DROPDOWN_POPUP = [
 ].join(" ");
 
 /**
+ * A floating panel sized by its content rather than its trigger, such as a
+ * MultiSelect's columns of checkboxes, kept inside the viewport's width.
+ */
+export const DROPDOWN_PANEL = [
+  "z-dropdown w-max min-w-44 max-w-[90vw] overflow-hidden",
+  "surface-raised border border-divide rounded-input shadow-card-hover",
+  "origin-top data-[entering]:animate-popover-in data-[exiting]:animate-popover-out",
+].join(" ");
+
+/**
  * The listbox inside the panel. Focus, real or virtual, sits on an option, so
  * the list draws no outline of its own.
  */
