@@ -1,6 +1,12 @@
 // src/frontend/shared/components/primitives/IconButton.tsx
+"use client";
+
 import { cva, type VariantProps } from "class-variance-authority";
-import type { ButtonHTMLAttributes, ReactNode, Ref } from "react";
+import type { ReactNode, Ref } from "react";
+import {
+  Button as AriaButton,
+  type ButtonProps as AriaButtonProps,
+} from "react-aria-components";
 
 const iconButtonVariants = cva(
   "inline-flex shrink-0 items-center justify-center transition-colors duration-200 focus-ring " +
@@ -32,10 +38,7 @@ const iconButtonVariants = cva(
 
 interface IconButtonProps
   extends
-    Omit<
-      ButtonHTMLAttributes<HTMLButtonElement>,
-      "className" | "style" | "children" | "aria-label"
-    >,
+    Omit<AriaButtonProps, "className" | "style" | "children" | "aria-label">,
     VariantProps<typeof iconButtonVariants> {
   /** The accessible name — the icon says nothing to a screen reader. */
   readonly label: string;
@@ -45,7 +48,8 @@ interface IconButtonProps
 }
 
 /**
- * A button whose only content is an icon: close, clear, expand, scroll.
+ * A button whose only content is an icon: close, clear, expand, scroll. On
+ * React Aria's Button, so it takes `onPress` and `isDisabled`.
  *
  * `label` is required and becomes the accessible name, since the icon carries
  * none. An `aria-expanded` button shows its open state with the hover fill.
@@ -58,20 +62,13 @@ export function IconButton({
   variant,
   size,
   shape,
-  children,
-  ref,
   ...props
 }: Readonly<IconButtonProps>) {
   return (
-    <button
-      ref={ref}
-      // Before the spread: a caller can still opt into "submit".
-      type="button"
+    <AriaButton
+      {...props}
       aria-label={label}
       className={iconButtonVariants({ variant, size, shape })}
-      {...props}
-    >
-      {children}
-    </button>
+    />
   );
 }

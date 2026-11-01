@@ -40,8 +40,8 @@ export function RoundSelector({
     <div className="flex items-center gap-2">
       <IconButton
         variant="outline"
-        onClick={() => previous !== undefined && onSelect(previous)}
-        disabled={previous === undefined}
+        onPress={() => previous !== undefined && onSelect(previous)}
+        isDisabled={previous === undefined}
         label={t("previous")}
       >
         <ChevronLeft />
@@ -58,8 +58,8 @@ export function RoundSelector({
 
       <IconButton
         variant="outline"
-        onClick={() => next !== undefined && onSelect(next)}
-        disabled={next === undefined}
+        onPress={() => next !== undefined && onSelect(next)}
+        isDisabled={next === undefined}
         label={t("next")}
       >
         <ChevronRight />

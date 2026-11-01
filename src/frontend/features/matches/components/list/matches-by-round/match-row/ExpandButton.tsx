@@ -28,8 +28,8 @@ export function ExpandButton({
   return (
     <IconButton
       size="sm"
-      onClick={onToggle}
-      onMouseEnter={onMouseEnter}
+      onPress={onToggle}
+      onHoverStart={onMouseEnter}
       aria-expanded={expanded}
       label={
         expanded ? tMatches("hideMatchDetails") : tMatches("viewMatchDetails")

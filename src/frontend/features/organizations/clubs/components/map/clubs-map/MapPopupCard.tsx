@@ -43,7 +43,7 @@ export function MapPopupCard({
             </Text>
           )}
         </div>
-        <IconButton size="sm" label={tCommon("close")} onClick={onClose}>
+        <IconButton size="sm" label={tCommon("close")} onPress={onClose}>
           <X aria-hidden="true" />
         </IconButton>
       </div>

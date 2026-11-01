@@ -48,7 +48,7 @@ export const ErrorMessage = ({
   const tCommon = useTranslations("common");
   const [isRetrying, setIsRetrying] = useState(false);
 
-  // Not an `async` handler: `onClick` expects a void return, and the lint
+  // Not an `async` handler: `onPress` expects a void return, and the lint
   // config forbids both a promise-returning attribute and a `void` operator.
   // `.catch` last is what makes the chain non-floating — a TanStack `refetch`
   // resolves with the error rather than rejecting, so it is only ever reached
@@ -74,8 +74,8 @@ export const ErrorMessage = ({
         <Button
           variant="outline"
           size="sm"
-          isLoading={isRetrying}
-          onClick={handleRetry}
+          isPending={isRetrying}
+          onPress={handleRetry}
         >
           {tCommon("retry")}
         </Button>

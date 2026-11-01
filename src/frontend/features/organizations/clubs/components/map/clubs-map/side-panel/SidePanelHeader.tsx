@@ -28,11 +28,7 @@ export function SidePanelHeader({ clubCount, onClose }: SidePanelHeaderProps) {
         </Text>
       </div>
       <div className="flex items-center gap-1">
-        <IconButton
-          onClick={onClose}
-          label={t("map.closePanel")}
-          title={t("map.closePanel")}
-        >
+        <IconButton onPress={onClose} label={t("map.closePanel")}>
           <X />
         </IconButton>
       </div>

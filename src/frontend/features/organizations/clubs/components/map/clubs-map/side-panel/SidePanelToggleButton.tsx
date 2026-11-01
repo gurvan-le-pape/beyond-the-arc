@@ -20,7 +20,7 @@ export function SidePanelToggleButton({ onOpen }: SidePanelToggleButtonProps) {
   return (
     <Button
       variant="control"
-      onClick={onOpen}
+      onPress={onOpen}
       className="fixed top-20 right-4 z-drawer gap-2 shadow-lg"
     >
       <List className="w-5 h-5" aria-hidden="true" />

@@ -118,7 +118,7 @@ export function ShotModal({
                 variant="onSolid"
                 size="lg"
                 shape="circle"
-                onClick={onClose}
+                onPress={onClose}
                 label={t("shotChart.close")}
               >
                 <X />
@@ -150,7 +150,7 @@ export function ShotModal({
               variant="download"
               size="lg"
               className="rounded-full gap-2"
-              onClick={handleDownload}
+              onPress={handleDownload}
             >
               <Download className="w-5 h-5" aria-hidden="true" />
               {t("shotChart.download")}

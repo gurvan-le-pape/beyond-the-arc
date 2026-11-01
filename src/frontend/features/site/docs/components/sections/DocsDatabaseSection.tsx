@@ -76,7 +76,7 @@ export function DocsDatabaseSection({ content }: DocsDatabaseSectionProps) {
                   <Button
                     variant="primary"
                     size="sm"
-                    onClick={() => zoomIn(0.1)}
+                    onPress={() => zoomIn(0.1)}
                     aria-label={t("docs.database.zoomIn")}
                   >
                     +
@@ -84,7 +84,7 @@ export function DocsDatabaseSection({ content }: DocsDatabaseSectionProps) {
                   <Button
                     variant="primary"
                     size="sm"
-                    onClick={() => zoomOut(0.1)}
+                    onPress={() => zoomOut(0.1)}
                     aria-label={t("docs.database.zoomOut")}
                   >
                     -
@@ -92,7 +92,7 @@ export function DocsDatabaseSection({ content }: DocsDatabaseSectionProps) {
                   <Button
                     variant="primary"
                     size="sm"
-                    onClick={() => resetTransform()}
+                    onPress={() => resetTransform()}
                     aria-label={t("docs.reset")}
                   >
                     {t("docs.reset")}
