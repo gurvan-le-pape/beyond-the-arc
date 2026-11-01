@@ -57,7 +57,7 @@ export const EmptyState = ({
       )}
 
       {action && (
-        <Button onClick={action.onClick} variant="outline">
+        <Button onPress={action.onClick} variant="outline">
           {action.label}
         </Button>
       )}

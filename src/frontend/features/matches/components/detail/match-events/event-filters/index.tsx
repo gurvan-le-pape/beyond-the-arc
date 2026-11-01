@@ -94,7 +94,7 @@ export function EventFilters({
           {t("matchEvents.shownRows", { shown: shownRows, total: totalRows })}
         </Text>
         {selectedCategories.size < categoryCounts.size && (
-          <Button variant="link" size="sm" onClick={showAllCategories}>
+          <Button variant="link" size="sm" onPress={showAllCategories}>
             {t("matchEvents.showAllCategories")}
           </Button>
         )}

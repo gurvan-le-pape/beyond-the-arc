@@ -96,7 +96,7 @@ export function MatchHistoryTable<T extends MatchHistoryRow>({
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setShowAll(!showAll)}
+            onPress={() => setShowAll(!showAll)}
           >
             {showAll ? showLessLabel : showAllLabel}
             {showAll ? (

@@ -58,7 +58,7 @@ export function ActiveFilterChips({ chips, onReset }: ActiveFilterChipsProps) {
         type="button"
         variant="link"
         size="sm"
-        onClick={onReset}
+        onPress={onReset}
         className="shrink-0 text-xs"
       >
         {tFilters("filters.resetAll")}

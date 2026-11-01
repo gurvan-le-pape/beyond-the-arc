@@ -78,7 +78,7 @@ export const ErrorCard = ({
         {description ? <Text variant="caption">{description}</Text> : null}
       </div>
 
-      {action ? <Button onClick={action.onClick}>{action.label}</Button> : null}
+      {action ? <Button onPress={action.onClick}>{action.label}</Button> : null}
 
       {link ? (
         <Link href={link.href} className={buttonVariants()}>

@@ -6,6 +6,7 @@
 export * from "./Badge";
 export * from "./BottomSheet";
 export * from "./Button";
+export * from "./buttonStyles";
 export * from "./Card";
 export * from "./ComboBox";
 export * from "./Dot";

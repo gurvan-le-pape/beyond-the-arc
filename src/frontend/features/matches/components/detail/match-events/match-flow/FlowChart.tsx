@@ -306,7 +306,7 @@ export function FlowChart({
             variant="link"
             size="sm"
             className="shrink-0"
-            onClick={() => onGoTo(pickedPoint.play)}
+            onPress={() => onGoTo(pickedPoint.play)}
           >
             {t("goToPlay")}
             <span aria-hidden="true"> ↓</span>

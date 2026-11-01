@@ -49,7 +49,7 @@ function FiltersSheet({
         type="button"
         variant="control"
         size="md"
-        onClick={() => setIsOpen(true)}
+        onPress={() => setIsOpen(true)}
         className={cn(
           "w-full justify-between",
           hasActiveFilters && "border-solid-primary bg-tint-primary",
@@ -89,7 +89,7 @@ function FiltersSheet({
                 variant="outline"
                 size="md"
                 className="flex-1"
-                onClick={() => {
+                onPress={() => {
                   onReset();
                   setIsOpen(false);
                 }}
@@ -101,7 +101,7 @@ function FiltersSheet({
               variant="primary"
               size="md"
               className="flex-1"
-              onClick={() => setIsOpen(false)}
+              onPress={() => setIsOpen(false)}
             >
               {tFilters("filters.apply")}
             </Button>
