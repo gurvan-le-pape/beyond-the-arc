@@ -1,11 +1,4 @@
 // src/frontend/shared/components/primitives/ComboBox.tsx
-//
-// ComboBox — single-value picker, optionally searchable.
-//
-// searchable=true  (default) — shows a filter input in the popover.
-//                              Use for long/dynamic lists (clubs, players…).
-// searchable=false            — no filter input, pure custom dropdown.
-//                              Use via <Select> for short static lists.
 "use client";
 
 import { useTranslations } from "next-intl";
@@ -33,10 +26,9 @@ export interface ComboBoxOption<V extends OptionValue = OptionValue> {
 function getFilteredOptions<V extends OptionValue>(
   options: ComboBoxOption<V>[],
   search: string,
-  searchable: boolean,
   onSearchChange: ((value: string) => void) | undefined,
 ): ComboBoxOption<V>[] {
-  if (!searchable || onSearchChange) return options;
+  if (onSearchChange) return options;
   if (search)
     return options.filter((opt) =>
       opt.label.toLowerCase().includes(search.toLowerCase()),
@@ -71,8 +63,6 @@ export interface ComboBoxProps<V extends OptionValue = OptionValue> {
   readonly disabled?: boolean;
   readonly className?: string;
   readonly testId?: string;
-  /** Show a search/filter input inside the popover. Default: true. */
-  readonly searchable?: boolean;
   /** Provide to handle search externally (e.g. server-side). */
   readonly onSearchChange?: (value: string) => void;
   readonly isLoading?: boolean;
@@ -86,23 +76,18 @@ export interface ComboBoxProps<V extends OptionValue = OptionValue> {
  * Follows the WAI-ARIA combobox pattern: the trigger is a `combobox` whose
  * accessible name is the label and whose value is the selected option, and the
  * popup is a `listbox` of `option`s with `aria-selected`. Focus never enters
- * the list — it stays on the trigger, or on the filter input when searchable —
+ * the list — it stays in the filter input, the first thing in the popup —
  * and `aria-activedescendant` points at the highlighted option.
  *
- * Keyboard: ↓/↑/Enter/Space open; inside, ↓/↑ move, Home/End jump (not
- * searchable — in the filter input they move the caret), Enter (and Space when
- * not searchable) picks, Escape closes, Tab closes and moves on. Picking or
- * Escape returns focus to the trigger.
+ * Keyboard: ↓/↑/Enter/Space open; inside, ↓/↑ move, Enter picks, Escape
+ * closes, Tab closes and moves on. Picking or Escape returns focus to the
+ * trigger.
  *
  * Without a `label`, the trigger is named by its own value, which is what
  * screen readers announced before it was a combobox.
  *
  * @example
- * // Searchable (default) — long/dynamic lists
  * <ComboBox options={clubOptions} value={clubId} onChange={setClubId} />
- *
- * // Not searchable — short static lists (used internally by Select)
- * <ComboBox searchable={false} options={categoryOptions} value={category} onChange={setCategory} />
  */
 export function ComboBox<V extends OptionValue>({
   options = [],
@@ -115,7 +100,6 @@ export function ComboBox<V extends OptionValue>({
   disabled = false,
   className,
   testId,
-  searchable = true,
   onSearchChange,
   isLoading = false,
   error,
@@ -137,12 +121,7 @@ export function ComboBox<V extends OptionValue>({
   const listboxId = `${inputId}-listbox`;
   const optionId = (index: number) => `${inputId}-option-${index}`;
 
-  const filteredOptions = getFilteredOptions(
-    options,
-    search,
-    searchable,
-    onSearchChange,
-  );
+  const filteredOptions = getFilteredOptions(options, search, onSearchChange);
   const activeOption = isLoading ? undefined : filteredOptions[activeIndex];
   const activeDescendant =
     open && activeOption ? optionId(activeIndex) : undefined;
@@ -202,17 +181,6 @@ export function ComboBox<V extends OptionValue>({
       case "ArrowUp":
         event.preventDefault();
         setActiveIndex((index) => Math.max(index - 1, 0));
-        break;
-      case "Home":
-      case "End":
-        if (searchable) break;
-        event.preventDefault();
-        setActiveIndex(event.key === "Home" ? 0 : lastIndex);
-        break;
-      case " ":
-        if (searchable) break;
-        event.preventDefault();
-        if (activeOption) pick(activeOption);
         break;
       case "Enter":
         event.preventDefault();
@@ -320,7 +288,6 @@ export function ComboBox<V extends OptionValue>({
               aria-expanded={open}
               aria-haspopup="listbox"
               aria-controls={open ? listboxId : undefined}
-              aria-activedescendant={searchable ? undefined : activeDescendant}
             >
               <span id={valueId} className="truncate block">
                 {shownLabel ??
@@ -340,11 +307,7 @@ export function ComboBox<V extends OptionValue>({
           align="stretch"
           // A combobox's popup is the listbox inside, not a dialog.
           role={undefined}
-          // Focus stays on the trigger, or lands in the filter input, which
-          // is the first thing in the panel.
-          onOpenAutoFocus={(event) => {
-            if (!searchable) event.preventDefault();
-          }}
+          // Focus lands in the filter input, the first thing in the panel.
           // Radix hears Escape first, on the document, and would unmount the
           // filter input before its own handler could return focus.
           onEscapeKeyDown={(event) => {
@@ -358,24 +321,22 @@ export function ComboBox<V extends OptionValue>({
             }
           }}
         >
-          {searchable && (
-            <input
-              type="text"
-              className="w-full px-3 py-2 border-b border-divide bg-surface-subtle text-text-heading placeholder:text-text-secondary text-sm focus-ring-inset"
-              placeholder={t("table.filter")}
-              aria-label={t("table.filter")}
-              aria-controls={listboxId}
-              aria-activedescendant={activeDescendant}
-              aria-autocomplete="list"
-              value={search}
-              onKeyDown={handleKeyDown}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setActiveIndex(0);
-                onSearchChange?.(e.target.value);
-              }}
-            />
-          )}
+          <input
+            type="text"
+            className="w-full px-3 py-2 border-b border-divide bg-surface-subtle text-text-heading placeholder:text-text-secondary text-sm focus-ring-inset"
+            placeholder={t("table.filter")}
+            aria-label={t("table.filter")}
+            aria-controls={listboxId}
+            aria-activedescendant={activeDescendant}
+            aria-autocomplete="list"
+            value={search}
+            onKeyDown={handleKeyDown}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setActiveIndex(0);
+              onSearchChange?.(e.target.value);
+            }}
+          />
 
           <ul
             id={listboxId}

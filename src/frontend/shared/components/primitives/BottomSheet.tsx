@@ -4,6 +4,7 @@
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { UNSAFE_PortalProvider } from "react-aria";
 
 import { useModalDialog } from "@/shared/hooks";
 import { cn } from "@/shared/utils";
@@ -137,7 +138,13 @@ export function BottomSheet({
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-5 py-4">{children}</div>
+      <div className="flex-1 overflow-y-auto px-5 py-4">
+        {/* The dialog is in the top layer: a popup portalled to <body> would
+            open behind it. */}
+        <UNSAFE_PortalProvider getContainer={() => dialogRef.current}>
+          {children}
+        </UNSAFE_PortalProvider>
+      </div>
 
       {footer && (
         <div className="px-5 py-4 border-t border-divide">{footer}</div>
