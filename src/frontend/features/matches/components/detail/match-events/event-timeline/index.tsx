@@ -2,19 +2,21 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useMemo } from "react";
 
 import type { EventStyle, MatchTeam } from "@/features/matches/types";
 import { Text } from "@/shared/components/typography";
 
-import type { PeriodPlays, PeriodScore } from "../timeline";
+import type { Play } from "../plays";
+import { groupByPeriod, scorePeriods } from "./periods";
 import { PeriodSection } from "./PeriodSection";
 import { TimelineLegend } from "./TimelineLegend";
 
 interface EventTimelineProps {
-  /** The plays to show, one run per period, in display order. */
-  readonly periods: readonly PeriodPlays[];
-  /** Every period's score, from the whole match, whatever is filtered out. */
-  readonly periodScores: ReadonlyMap<number, PeriodScore>;
+  /** Every play of the match, in match order, whatever is filtered out. */
+  readonly plays: readonly Play[];
+  /** The plays the filters keep, in display order. */
+  readonly shownPlays: readonly Play[];
   /** The plays run newest first. */
   readonly latestFirst: boolean;
   readonly homeTeam: MatchTeam;
@@ -30,13 +32,13 @@ interface EventTimelineProps {
  *
  * The team of an event is carried by colour (the home and away roles) in a
  * stripe on every row, so the legend above is what ties a colour to a team.
- * The last period played is the one whose header shows the final score; it
- * is read from `periodScores`, not from `periods`, so filtering the last
- * period out does not promote another one to "final".
+ * The period scores come from every play, not from the shown ones, so a
+ * header keeps the period's real score whatever is filtered out, and
+ * filtering the last period out does not promote another one to "final".
  */
 export function EventTimeline({
-  periods,
-  periodScores,
+  plays,
+  shownPlays,
   latestFirst,
   homeTeam,
   awayTeam,
@@ -44,6 +46,8 @@ export function EventTimeline({
   highlightedPlayId,
 }: EventTimelineProps) {
   const tMatches = useTranslations("matches");
+  const periods = useMemo(() => groupByPeriod(shownPlays), [shownPlays]);
+  const periodScores = useMemo(() => scorePeriods(plays), [plays]);
   const lastPeriod = Math.max(...periodScores.keys());
 
   return (

@@ -1,19 +1,17 @@
-// src/frontend/features/matches/components/detail/match-events/timeline.spec.ts
+// src/frontend/features/matches/components/detail/match-events/playFilters.spec.ts
 import { describe, expect, it } from "vitest";
 
 import { Quarter } from "@/features/matches/constants";
 import { EventCategory, EventType, Role } from "@/shared/constants";
 
 import { AWAY, event, EVENTS, HOME, playsOf } from "./matchEventsFixtures";
-import { scoreEvents } from "./plays";
 import {
   countCategories,
+  countRows,
   FILTERABLE_CATEGORIES,
   filterPlays,
-  groupByPeriod,
   type MatchEventsFilter,
-  scorePeriods,
-} from "./timeline";
+} from "./playFilters";
 
 const NO_FILTER: MatchEventsFilter = {
   quarter: Quarter.ALL,
@@ -86,57 +84,20 @@ describe("filterPlays", () => {
     expect(shown.map((p) => p.lead.id)).toEqual([6, 7]);
   });
 
+  it("leaves out the end of each period", () => {
+    const withQuarterEnd = playsOf([
+      EVENTS[0],
+      event(90, EventType.QUARTER_END, Role.SHOOTER, 0, 0, 1),
+      EVENTS[2],
+    ]);
+    expect(
+      filterPlays(withQuarterEnd, NO_FILTER).map((p) => p.lead.id),
+    ).toEqual([1, 3]);
+  });
+
   it("does not reorder the list it was given", () => {
     filterPlays(plays, { ...NO_FILTER, latestFirst: true });
     expect(plays.map((p) => p.lead.id)).toEqual([1, 2, 3, 4, 5]);
-  });
-});
-
-describe("groupByPeriod", () => {
-  const withQuarterEnds = playsOf([
-    EVENTS[0],
-    EVENTS[1],
-    event(90, EventType.QUARTER_END, Role.SHOOTER, 0, 0, 1),
-    EVENTS[2],
-    EVENTS[3],
-    event(91, EventType.QUARTER_END, Role.SHOOTER, 0, 0, 2),
-    EVENTS[4],
-  ]);
-  const shape = (plays: typeof withQuarterEnds) =>
-    groupByPeriod(plays).map((g) => [g.period, g.plays.map((p) => p.lead.id)]);
-
-  it("runs the periods in order and drops their end markers", () => {
-    expect(shape(withQuarterEnds)).toEqual([
-      [1, [1, 2]],
-      [2, [3, 4]],
-      [3, [5]],
-    ]);
-  });
-
-  it("keeps the display order of a reversed list", () => {
-    expect(shape([...withQuarterEnds].reverse())).toEqual([
-      [3, [5]],
-      [2, [4, 3]],
-      [1, [2, 1]],
-    ]);
-  });
-
-  it("leaves out a period with nothing to show", () => {
-    expect(shape(withQuarterEnds.filter((e) => e.period !== 2))).toEqual([
-      [1, [1, 2]],
-      [3, [5]],
-    ]);
-  });
-});
-
-describe("scorePeriods", () => {
-  it("gives each period its own points and the score at its end", () => {
-    const scores = scorePeriods(scoreEvents(EVENTS, HOME, AWAY));
-    expect(Object.fromEntries(scores)).toEqual({
-      1: { home: 2, away: 3, homeTotal: 2, awayTotal: 3 },
-      2: { home: 0, away: 0, homeTotal: 2, awayTotal: 3 },
-      3: { home: 2, away: 0, homeTotal: 4, awayTotal: 3 },
-    });
   });
 });
 
@@ -157,5 +118,18 @@ describe("countCategories", () => {
       [EventCategory.SUBSTITUTION]: 0,
       [EventCategory.INBOUND]: 1,
     });
+  });
+});
+
+describe("countRows", () => {
+  it("counts every play but the ends of periods", () => {
+    expect(
+      countRows(
+        playsOf([
+          ...EVENTS,
+          event(90, EventType.QUARTER_END, Role.SHOOTER, 0, 0, 3),
+        ]),
+      ),
+    ).toBe(5);
   });
 });

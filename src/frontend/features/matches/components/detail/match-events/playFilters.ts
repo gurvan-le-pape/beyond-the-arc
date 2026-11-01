@@ -1,11 +1,11 @@
-// src/frontend/features/matches/components/detail/match-events/timeline.ts
+// src/frontend/features/matches/components/detail/match-events/playFilters.ts
 import { Quarter } from "@/features/matches/constants";
 import type { MatchEvent } from "@/features/matches/types";
 import { getEventStyle } from "@/features/matches/utils";
 import { EventCategory, EventType } from "@/shared/constants";
 
-import { REGULATION_QUARTERS } from "./gameClock";
 import type { Play, ScoredMatchEvent } from "./plays";
+import { REGULATION_QUARTERS } from "./plays";
 
 /**
  * Whether an event's period belongs to the chosen quarter.
@@ -75,13 +75,35 @@ export interface MatchEventsFilter {
 }
 
 /**
+ * Whether a play gets a row in the timeline: every play but a period's end.
+ *
+ * @param play - the play to test
+ * @returns false for an end-of-period event
+ */
+function isRow(play: Play): boolean {
+  return play.lead.eventType !== EventType.QUARTER_END;
+}
+
+/**
+ * How many rows the timeline has for the whole match, whatever is filtered:
+ * the total the filter's "shown" count is out of.
+ *
+ * @param plays - the match's plays
+ * @returns the number of plays that get a row
+ */
+export function countRows(plays: readonly Play[]): number {
+  return plays.filter(isRow).length;
+}
+
+/**
  * The plays the timeline shows: those of the chosen quarter with an event of a
  * chosen category by one of the chosen players, newest first if asked. Events
  * outside the filterable categories (the tip-off, an unknown type) pass the
  * category test whatever is chosen.
  *
  * A play matches on any of its events, so a shooting foul whose free throws
- * went in shows under made shots as well as under fouls.
+ * went in shows under made shots as well as under fouls. End-of-period events
+ * never show, since each period's header already says where it ends.
  *
  * @param plays - the match's plays, in match order
  * @param filter - the reader's choices; an empty player set keeps every player
@@ -103,73 +125,12 @@ export function filterPlays(
 
   const result = plays.filter(
     (play) =>
+      isRow(play) &&
       isInQuarter(filter.quarter, play.period) &&
       [play.lead, ...play.followers].some(matches),
   );
 
   return filter.latestFirst ? result.reverse() : result;
-}
-
-/** One period's run of the plays the timeline shows, in display order. */
-export interface PeriodPlays {
-  readonly period: number;
-  readonly plays: Play[];
-}
-
-/**
- * Splits the plays the timeline shows into one run per period.
- *
- * Works on the filtered, possibly reversed list: a period's plays are
- * contiguous either way, so the runs come out in display order. End-of-period
- * events are dropped, since each period's header already says where it ends.
- *
- * @param plays - the plays to show, in display order
- * @returns one entry per period that has a play left to show; empty when none does
- */
-export function groupByPeriod(plays: readonly Play[]): PeriodPlays[] {
-  const groups: PeriodPlays[] = [];
-  for (const play of plays) {
-    if (play.lead.eventType === EventType.QUARTER_END) continue;
-    const last = groups[groups.length - 1];
-    if (last?.period === play.period) last.plays.push(play);
-    else groups.push({ period: play.period, plays: [play] });
-  }
-  return groups;
-}
-
-/** A period's own points per side, and the match score at its buzzer. */
-export interface PeriodScore {
-  readonly home: number;
-  readonly away: number;
-  readonly homeTotal: number;
-  readonly awayTotal: number;
-}
-
-/**
- * Each period's score, from the whole match rather than a filtered subset.
- *
- * @param events - every scored event of the match, in match order
- * @returns the score of each period that has an event, keyed by its 1-based number
- */
-export function scorePeriods(
-  events: readonly ScoredMatchEvent[],
-): Map<number, PeriodScore> {
-  // The last event of a period carries the score at its buzzer.
-  const totals = new Map<number, ScoredMatchEvent>();
-  for (const event of events) totals.set(event.period, event);
-
-  const scores = new Map<number, PeriodScore>();
-  let previous = { homeScore: 0, awayScore: 0 };
-  for (const [period, last] of [...totals].sort(([a], [b]) => a - b)) {
-    scores.set(period, {
-      home: last.homeScore - previous.homeScore,
-      away: last.awayScore - previous.awayScore,
-      homeTotal: last.homeScore,
-      awayTotal: last.awayScore,
-    });
-    previous = last;
-  }
-  return scores;
 }
 
 /**
@@ -191,14 +152,4 @@ export function countCategories(
     if (count !== undefined) counts.set(category, count + 1);
   }
   return counts;
-}
-
-/**
- * The DOM id of a play's row, by which `revealPlay` finds it.
- *
- * @param leadEventId - the id of the play's lead event
- * @returns the row's id
- */
-export function playRowId(leadEventId: number): string {
-  return `play-${leadEventId}`;
 }

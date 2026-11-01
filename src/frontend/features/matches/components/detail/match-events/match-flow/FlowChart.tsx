@@ -8,8 +8,8 @@ import { Button } from "@/shared/components/primitives";
 import { EventCategory, Role } from "@/shared/constants";
 import { cn } from "@/shared/utils";
 
-import { formatClock } from "../gameClock";
 import type { Play } from "../plays";
+import { formatClock } from "../plays";
 import type { MarginPoint, PeriodEnd } from "./matchFlow";
 import { usePeriodAbbr } from "./usePeriodAbbr";
 
