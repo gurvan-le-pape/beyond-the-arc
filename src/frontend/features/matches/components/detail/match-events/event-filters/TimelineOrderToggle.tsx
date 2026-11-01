@@ -1,7 +1,6 @@
 // src/frontend/features/matches/components/detail/match-events/event-filters/TimelineOrderToggle.tsx
 
 import { Switch } from "@/shared/components/primitives";
-import { Text } from "@/shared/components/typography";
 
 interface TimelineOrderToggleProps {
   readonly checked: boolean;
@@ -10,7 +9,7 @@ interface TimelineOrderToggleProps {
 }
 
 /**
- * Label plus switch for flipping the event timeline's order.
+ * The switch that flips the event timeline's order.
  *
  * **Right-aligns itself** with `ml-auto`, so it expects to be the last child of
  * a flex row and will push away from whatever precedes it. Dropped into a
@@ -25,11 +24,13 @@ export function TimelineOrderToggle({
   label,
 }: TimelineOrderToggleProps) {
   return (
-    <div className="flex items-center gap-2 ml-auto">
-      <Text variant="caption" as="span">
-        {label}
-      </Text>
-      <Switch checked={checked} onCheckedChange={onChange} size="sm" />
+    <div className="ml-auto">
+      <Switch
+        checked={checked}
+        onCheckedChange={onChange}
+        label={label}
+        size="sm"
+      />
     </div>
   );
 }
