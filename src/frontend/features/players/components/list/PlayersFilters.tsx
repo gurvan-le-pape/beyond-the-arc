@@ -146,6 +146,7 @@ export function PlayersFilters({ filters, set, onReset }: PlayersFiltersProps) {
           committeeId={committee}
           leagueId={league}
           clubId={club}
+          clubName={clubName}
           onChange={(club, clubName) => set({ club, clubName })}
         />
 

@@ -13,6 +13,12 @@ interface ClubComboBoxFilterProps {
   readonly committeeId: number | undefined;
   readonly leagueId: number | undefined;
   readonly clubId: number | undefined;
+  /**
+   * The chosen club's name, kept beside its id: the search's results seldom
+   * include the chosen club once the search is cleared, so the box cannot
+   * read the name from them.
+   */
+  readonly clubName: string | undefined;
   /** Called with the chosen club's id and name, or with neither when cleared. */
   readonly onChange: (
     clubId: number | undefined,
@@ -29,6 +35,7 @@ export function ClubComboBoxFilter({
   committeeId,
   leagueId,
   clubId,
+  clubName,
   onChange,
 }: ClubComboBoxFilterProps) {
   const tCommon = useTranslations("common");
@@ -63,6 +70,9 @@ export function ClubComboBoxFilter({
       placeholder={tCommon("filters.allClubs")}
       options={clubOptions}
       value={clubId}
+      // A link may carry the id without the name; the filter's chip falls
+      // back the same way.
+      selectedLabel={clubName || String(clubId)}
       onChange={(id) =>
         onChange(id, clubOptions.find((c) => c.value === id)?.label)
       }
