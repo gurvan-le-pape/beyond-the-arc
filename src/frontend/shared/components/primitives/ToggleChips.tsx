@@ -1,6 +1,9 @@
 // src/frontend/shared/components/primitives/ToggleChips.tsx
+"use client";
+
 import { cva } from "class-variance-authority";
 import type { ReactNode } from "react";
+import { ToggleButton, ToggleButtonGroup } from "react-aria-components";
 
 export interface ToggleChipOption<TValue extends string> {
   readonly value: TValue;
@@ -15,7 +18,7 @@ export interface ToggleChipOption<TValue extends string> {
 }
 
 const chipVariants = cva(
-  "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm transition-colors duration-150 focus-ring",
+  "inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1 text-sm transition-colors duration-150 focus-ring",
   {
     variants: {
       selected: {
@@ -38,12 +41,13 @@ interface ToggleChipsProps<TValue extends string> {
 
 /**
  * Several independent on/off choices, all visible at once — the kinds of item
- * a list shows, for instance.
+ * a list shows, for instance. On React Aria's ToggleButtonGroup.
  *
- * Each chip is a toggle button (`aria-pressed`) and its own tab stop, since
- * turning one on does not turn another off: for one choice among a few, use
- * `SegmentedControl`. Every combination is allowed, none included; what an
- * empty selection means is the caller's to say.
+ * Each chip is a toggle button (`aria-pressed`) in a toolbar: the group is one
+ * tab stop and the arrow keys move between chips. Turning one on does not turn
+ * another off; for one choice among a few, use `SegmentedControl`. Every
+ * combination is allowed, none included; what an empty selection means is the
+ * caller's to say.
  */
 export function ToggleChips<TValue extends string>({
   label,
@@ -52,35 +56,46 @@ export function ToggleChips<TValue extends string>({
   onToggle,
 }: ToggleChipsProps<TValue>) {
   return (
-    <div role="group" aria-label={label} className="flex flex-wrap gap-2">
-      {options.map((option) => {
-        const isSelected = selected.has(option.value);
-        return (
-          <button
-            key={option.value}
-            type="button"
-            aria-pressed={isSelected}
-            onClick={() => onToggle(option.value)}
-            className={chipVariants({ selected: isSelected })}
-          >
-            {option.marker && (
-              <span
-                className={
-                  isSelected ? "inline-flex" : "inline-flex opacity-40"
-                }
-              >
-                {option.marker}
-              </span>
-            )}
-            {option.label}
-            {option.count !== undefined && (
-              <span className="text-xs font-normal tabular-nums">
-                {option.count}
-              </span>
-            )}
-          </button>
+    <ToggleButtonGroup
+      aria-label={label}
+      selectionMode="multiple"
+      selectedKeys={selected}
+      onSelectionChange={(keys) => {
+        // The group reports the whole new set; callers toggle one value.
+        const changed = options.find(
+          (option) => keys.has(option.value) !== selected.has(option.value),
         );
-      })}
-    </div>
+        if (changed) onToggle(changed.value);
+      }}
+      className="flex flex-wrap gap-2"
+    >
+      {options.map((option) => (
+        <ToggleButton
+          key={option.value}
+          id={option.value}
+          className={({ isSelected }) => chipVariants({ selected: isSelected })}
+        >
+          {({ isSelected }) => (
+            <>
+              {option.marker && (
+                <span
+                  className={
+                    isSelected ? "inline-flex" : "inline-flex opacity-40"
+                  }
+                >
+                  {option.marker}
+                </span>
+              )}
+              {option.label}
+              {option.count !== undefined && (
+                <span className="text-xs font-normal tabular-nums">
+                  {option.count}
+                </span>
+              )}
+            </>
+          )}
+        </ToggleButton>
+      ))}
+    </ToggleButtonGroup>
   );
 }
