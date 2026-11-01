@@ -1,12 +1,12 @@
 // src/frontend/shared/components/layout/header/ThemeToggle.tsx
 "use client";
 
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { Eye, Moon, Sun } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
+import { Menu, MenuItem, MenuTrigger, Popover } from "react-aria-components";
 
-import { IconButton } from "@/shared/components/primitives";
+import { DROPDOWN_PANEL, IconButton } from "@/shared/components/primitives";
 import { cn } from "@/shared/utils";
 
 /**
@@ -38,63 +38,65 @@ const TRIGGER_ICON_CLASSES = {
 } as const;
 
 /**
- * Theme picker: a menu of the three themes, on Radix DropdownMenu, whose
- * trigger icon is the active theme.
+ * Theme picker: a menu of the three themes, on React Aria's MenuTrigger and
+ * Menu, whose trigger icon is the active theme.
  *
- * Radix supplies the menu pattern: arrow keys and Home/End move through the
- * items, Enter or Space picks one, Escape closes and returns focus to the
- * trigger, and a click outside closes. Not modal, so the page keeps
- * scrolling and stays clickable while it is open, as a header menu should.
- *
- * Rendered in place rather than portalled, so it stays inside the header's
- * stacking context and paints above the page under it. The menu itself only
- * renders once opened, which is after hydration, so it can read `theme`.
+ * React Aria supplies the menu pattern: the menu is named by its trigger, the
+ * items are `menuitemradio`s, arrow keys and Home/End move through them, Enter
+ * or Space picks one, and Escape or a click outside closes and returns focus to
+ * the trigger. The menu only renders once opened, which is after hydration, so
+ * it can read `theme`.
  */
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
   const t = useTranslations("navigation");
 
   return (
-    <DropdownMenu.Root modal={false}>
-      <DropdownMenu.Trigger asChild>
-        <IconButton label={t("header.toggleTheme")}>
-          {THEMES.map(({ id, Icon }) => (
-            <Icon key={id} className={TRIGGER_ICON_CLASSES[id]} />
-          ))}
-        </IconButton>
-      </DropdownMenu.Trigger>
+    <MenuTrigger>
+      <IconButton label={t("header.toggleTheme")}>
+        {THEMES.map(({ id, Icon }) => (
+          <Icon key={id} className={TRIGGER_ICON_CLASSES[id]} />
+        ))}
+      </IconButton>
 
-      <DropdownMenu.Content
-        aria-label={t("header.selectTheme")}
-        align="end"
-        sideOffset={4}
-        collisionPadding={16}
-        className={cn(
-          "z-dropdown w-max min-w-44 max-w-[90vw] overflow-hidden surface-raised border border-divide rounded-input shadow-card-hover",
-          "origin-[--radix-dropdown-menu-content-transform-origin] data-[state=open]:animate-popover-in data-[state=closed]:animate-popover-out",
-        )}
+      <Popover
+        placement="bottom end"
+        offset={4}
+        containerPadding={16}
+        className={DROPDOWN_PANEL}
       >
-        <DropdownMenu.RadioGroup value={theme} onValueChange={setTheme}>
+        <Menu
+          selectionMode="single"
+          disallowEmptySelection
+          selectedKeys={theme ? [theme] : []}
+          onSelectionChange={(keys) => {
+            const [picked] = keys === "all" ? [] : keys;
+            if (typeof picked === "string") setTheme(picked);
+          }}
+          className="focus-visible:outline-none"
+        >
           {THEMES.map(({ id, labelKey, Icon }) => (
-            <DropdownMenu.RadioItem
+            <MenuItem
               key={id}
-              value={id}
-              // The highlight is the focus indicator, not an outline: Radix
-              // focuses the item under the pointer, so `:focus-visible` would
+              id={id}
+              // The highlight is the focus indicator, not an outline: the
+              // item under the pointer takes focus, so `:focus-visible` would
               // ring every item a mouse passes over.
-              className={cn(
-                "w-full flex items-center gap-3 px-3 py-2 text-sm cursor-pointer focus-visible:outline-none transition-colors duration-150",
-                theme === id
-                  ? "bg-solid-primary text-on-solid-primary data-[highlighted]:ring-2 data-[highlighted]:ring-inset data-[highlighted]:ring-on-solid-primary"
-                  : "text-text-body data-[highlighted]:bg-tint-primary data-[highlighted]:text-ink-primary",
-              )}
+              className={({ isSelected }) =>
+                cn(
+                  "w-full flex items-center gap-3 px-3 py-2 text-sm cursor-pointer focus-visible:outline-none transition-colors duration-150",
+                  isSelected
+                    ? "bg-solid-primary text-on-solid-primary data-[focus-visible]:ring-2 data-[focus-visible]:ring-inset data-[focus-visible]:ring-on-solid-primary"
+                    : "text-text-body data-[focused]:bg-tint-primary data-[focused]:text-ink-primary",
+                )
+              }
             >
               <Icon className="w-4 h-4 shrink-0" />
               {t(labelKey)}
-            </DropdownMenu.RadioItem>
+            </MenuItem>
           ))}
-        </DropdownMenu.RadioGroup>
-      </DropdownMenu.Content>
-    </DropdownMenu.Root>
+        </Menu>
+      </Popover>
+    </MenuTrigger>
   );
 }
