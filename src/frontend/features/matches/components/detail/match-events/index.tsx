@@ -34,16 +34,8 @@ export function MatchEvents({
   const tMatches = useTranslations("matches");
   const tCommon = useTranslations("common");
 
-  const {
-    periods,
-    periodScores,
-    summary,
-    margins,
-    periodEnds,
-    revealedPlayId,
-    revealPlay,
-    filters,
-  } = useMatchEvents(events, homeTeam.id, awayTeam.id, matchDate);
+  const { plays, periods, periodScores, revealedPlayId, revealPlay, filters } =
+    useMatchEvents(events, homeTeam.id, awayTeam.id);
 
   if (!events || events.length === 0) {
     return (
@@ -60,9 +52,9 @@ export function MatchEvents({
     <Section title={tMatches("matchEvents.title")}>
       <div className="mb-6">
         <MatchFlow
-          summary={summary}
-          margins={margins}
-          periodEnds={periodEnds}
+          plays={plays}
+          events={events}
+          tipOff={matchDate}
           homeTeam={homeTeam}
           awayTeam={awayTeam}
           onGoToPlay={revealPlay}

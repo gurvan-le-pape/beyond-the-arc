@@ -1,6 +1,41 @@
-// src/frontend/features/matches/components/detail/match-events/matchFlow.ts
-import { gameSeconds } from "./gameClock";
-import { type Play, type Run, scoringStreaks } from "./plays";
+// src/frontend/features/matches/components/detail/match-events/match-flow/matchFlow.ts
+import type { MatchEvent } from "@/features/matches/types";
+
+import { gameSeconds } from "../gameClock";
+import { type Play, type Run, scoringStreaks } from "../plays";
+
+/** Where a period ends on the match's time axis. */
+export interface PeriodEnd {
+  readonly period: number;
+  /** Game seconds from tip-off to the period's buzzer. */
+  readonly seconds: number;
+}
+
+/**
+ * When each period's buzzer sounds, read off the events rather than off
+ * period lengths the frontend would have to know: an event's elapsed time
+ * plus the time left on its clock lands on its period's buzzer.
+ *
+ * @param events - the match's events
+ * @param tipOff - when the match started
+ * @returns one entry per period with an event, in period order
+ */
+export function periodEnds(
+  events: readonly MatchEvent[],
+  tipOff: Date | string,
+): PeriodEnd[] {
+  const ends = new Map<number, number>();
+  for (const event of events) {
+    if (ends.has(event.period)) continue;
+    ends.set(
+      event.period,
+      gameSeconds(event.occurredAt, tipOff) + event.secondsLeft,
+    );
+  }
+  return [...ends]
+    .sort(([a], [b]) => a - b)
+    .map(([period, seconds]) => ({ period, seconds }));
+}
 
 /** The widest a side's lead got, and the play that took it there. */
 export interface BiggestLead {

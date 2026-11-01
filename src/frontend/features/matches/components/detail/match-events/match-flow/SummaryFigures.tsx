@@ -6,7 +6,7 @@ import type { MatchTeam } from "@/features/matches/types";
 import { cn } from "@/shared/utils";
 
 import { formatClock } from "../gameClock";
-import type { MatchSummary } from "../matchFlow";
+import type { MatchSummary } from "./matchFlow";
 import { usePeriodAbbr } from "./usePeriodAbbr";
 
 const INK = {

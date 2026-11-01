@@ -1,6 +1,7 @@
-// src/frontend/features/matches/components/detail/match-events/matchFlow.spec.ts
+// src/frontend/features/matches/components/detail/match-events/match-flow/matchFlow.spec.ts
 import { describe, expect, it } from "vitest";
 
+import type { MatchEvent } from "@/features/matches/types";
 import { EventType, Role } from "@/shared/constants";
 
 import {
@@ -10,8 +11,47 @@ import {
   HOME,
   playsOf,
   TIP_OFF,
-} from "./matchEventsFixtures";
-import { marginPoints, summarizeMatch } from "./matchFlow";
+} from "../matchEventsFixtures";
+import { marginPoints, periodEnds, summarizeMatch } from "./matchFlow";
+
+describe("periodEnds", () => {
+  // An event the given number of seconds after tip-off, with its clock.
+  const clocked = (
+    id: number,
+    period: number,
+    seconds: number,
+    secondsLeft: number,
+  ): MatchEvent => ({
+    ...event(id, EventType.MADE_LAYUP, Role.SHOOTER, 10, HOME, period),
+    occurredAt: new Date(Date.parse(TIP_OFF) + seconds * 1000).toISOString(),
+    secondsLeft,
+  });
+
+  it("puts each buzzer at an event's elapsed time plus its clock", () => {
+    expect(
+      periodEnds(
+        [
+          clocked(1, 1, 5, 595),
+          clocked(2, 2, 601, 599),
+          clocked(3, 5, 2405, 295),
+        ],
+        TIP_OFF,
+      ),
+    ).toEqual([
+      { period: 1, seconds: 600 },
+      { period: 2, seconds: 1200 },
+      { period: 5, seconds: 2700 },
+    ]);
+  });
+
+  it("lists the periods in order, whatever order the events come in", () => {
+    expect(
+      periodEnds([clocked(1, 2, 601, 599), clocked(2, 1, 5, 595)], TIP_OFF).map(
+        (end) => end.period,
+      ),
+    ).toEqual([1, 2]);
+  });
+});
 
 describe("summarizeMatch", () => {
   it("counts the lead changes and ties the timeline marks", () => {

@@ -5,8 +5,7 @@ import { Quarter } from "@/features/matches/constants";
 import type { MatchEvent } from "@/features/matches/types";
 import type { EventCategory } from "@/shared/constants";
 
-import { hasOvertime, periodEnds } from "./gameClock";
-import { marginPoints, summarizeMatch } from "./matchFlow";
+import { hasOvertime } from "./gameClock";
 import { groupPlays, type Play, scoreEvents } from "./plays";
 import {
   categoryOf,
@@ -47,18 +46,16 @@ function countRows(periods: readonly PeriodPlays[]): number {
  * @param events - the match's events, in order
  * @param homeTeamId - the home side's team id
  * @param awayTeamId - the away side's team id
- * @param tipOff - when the match started, to place plays in game time
- * @returns the plays to show, one run per period; each period's score, from
- *   the whole match; the match's summary, score margins and period ends; the
- *   play to highlight and how to reveal one; and the filter values and
- *   setters for the panel, with how many rows are shown out of how many the
- *   match has
+ * @returns every play of the match, for the flow above the timeline; the
+ *   plays to show, one run per period; each period's score, from the whole
+ *   match; the play to highlight and how to reveal one; and the filter values
+ *   and setters for the panel, with how many rows are shown out of how many
+ *   the match has
  */
 export function useMatchEvents(
   events: readonly MatchEvent[],
   homeTeamId: number,
   awayTeamId: number,
-  tipOff: Date | string,
 ) {
   const [selectedQuarter, setSelectedQuarter] = useState<Quarter>(Quarter.ALL);
   const [latestFirst, setLatestFirst] = useState(false);
@@ -126,10 +123,6 @@ export function useMatchEvents(
     [scoredEvents],
   );
 
-  const summary = useMemo(() => summarizeMatch(plays), [plays]);
-  const margins = useMemo(() => marginPoints(plays, tipOff), [plays, tipOff]);
-  const ends = useMemo(() => periodEnds(events, tipOff), [events, tipOff]);
-
   const [revealedPlayId, setRevealedPlayId] = useState<number | null>(null);
 
   const revealPlay = useCallback(
@@ -164,11 +157,9 @@ export function useMatchEvents(
   }, [revealedPlayId]);
 
   return {
+    plays,
     periods,
     periodScores,
-    summary,
-    margins,
-    periodEnds: ends,
     revealedPlayId,
     revealPlay,
     filters: {
