@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import type { EventStyle, MatchTeam } from "@/features/matches/types";
 import { Text } from "@/shared/components/typography";
 
-import type { PeriodPlays, PeriodScore } from "../matchEventsView";
+import type { PeriodPlays, PeriodScore } from "../timeline";
 import { PeriodSection } from "./PeriodSection";
 import { TimelineLegend } from "./TimelineLegend";
 

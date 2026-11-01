@@ -9,7 +9,7 @@ import {
 } from "@/features/matches/utils";
 import { EventType, Role } from "@/shared/constants";
 
-import type { Play, ScoredMatchEvent } from "../matchEventsView";
+import type { Play, ScoredMatchEvent } from "../plays";
 
 /** What a play's row says: its label, its free throws, and its sentence. */
 export interface PlayDescription {

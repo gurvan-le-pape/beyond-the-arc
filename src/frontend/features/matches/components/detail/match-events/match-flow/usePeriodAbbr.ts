@@ -2,7 +2,7 @@
 import { useTranslations } from "next-intl";
 import { useCallback } from "react";
 
-import { overtimeNumber } from "../matchEventsView";
+import { overtimeNumber } from "../gameClock";
 
 /**
  * The short name of a period, as the quarter filter writes it: `Q3`, or the
