@@ -140,6 +140,7 @@ export function TeamsFilters({ filters, set, onReset }: TeamsFiltersProps) {
           committeeId={committee}
           leagueId={league}
           clubId={club}
+          clubName={clubName}
           onChange={(club, clubName) => set({ club, clubName })}
         />
 

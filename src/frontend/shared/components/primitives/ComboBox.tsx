@@ -48,6 +48,13 @@ export interface ComboBoxProps<V extends OptionValue = OptionValue> {
   readonly options?: ComboBoxOption<NoInfer<V>>[];
   readonly value: V | undefined;
   readonly onChange: (value: V | undefined) => void;
+  /**
+   * What the trigger shows for `value` when `options` may not include it, as
+   * with a server-side search, whose options are the results of the latest
+   * query rather than every choice. Ignored while `value` is `undefined`, and
+   * an option standing for `value` wins over it.
+   */
+  readonly selectedLabel?: string;
   readonly label?: string;
   /**
    * Keep the label for screen readers but hide it visually, for a picker whose
@@ -101,6 +108,7 @@ export function ComboBox<V extends OptionValue>({
   options = [],
   value,
   onChange,
+  selectedLabel,
   label,
   hideLabel = false,
   placeholder,
@@ -156,6 +164,8 @@ export function ComboBox<V extends OptionValue>({
 
   const isSelected = (option: ComboBoxOption<V>) => option.value === value;
   const selectedOption = options.find(isSelected);
+  const shownLabel =
+    selectedOption?.label ?? (value === undefined ? undefined : selectedLabel);
 
   const openList = () => {
     const selectedIndex = filteredOptions.findIndex(isSelected);
@@ -313,11 +323,10 @@ export function ComboBox<V extends OptionValue>({
               aria-activedescendant={searchable ? undefined : activeDescendant}
             >
               <span id={valueId} className="truncate block">
-                {selectedOption
-                  ? selectedOption.label
-                  : placeholder && (
-                      <span className="text-text-secondary">{placeholder}</span>
-                    )}
+                {shownLabel ??
+                  (placeholder && (
+                    <span className="text-text-secondary">{placeholder}</span>
+                  ))}
               </span>
             </button>
 
