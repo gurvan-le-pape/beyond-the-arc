@@ -1,12 +1,9 @@
 // src/frontend/features/matches/components/detail/match-events/match-flow/index.tsx
 import type { MatchTeam } from "@/features/matches/types";
 
-import type {
-  MarginPoint,
-  MatchSummary,
-  PeriodEnd,
-  Play,
-} from "../matchEventsView";
+import type { PeriodEnd } from "../gameClock";
+import type { MarginPoint, MatchSummary } from "../matchFlow";
+import type { Play } from "../plays";
 import { FlowChart } from "./FlowChart";
 import { SummaryFigures } from "./SummaryFigures";
 

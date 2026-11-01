@@ -5,6 +5,9 @@ import { Quarter } from "@/features/matches/constants";
 import type { MatchEvent } from "@/features/matches/types";
 import type { EventCategory } from "@/shared/constants";
 
+import { hasOvertime, periodEnds } from "./gameClock";
+import { marginPoints, summarizeMatch } from "./matchFlow";
+import { groupPlays, type Play, scoreEvents } from "./plays";
 import {
   categoryOf,
   countCategories,
@@ -12,17 +15,10 @@ import {
   FILTERABLE_CATEGORIES,
   filterPlays,
   groupByPeriod,
-  groupPlays,
-  hasOvertime,
-  marginPoints,
-  periodEnds,
   type PeriodPlays,
-  type Play,
   playRowId,
-  scoreEvents,
   scorePeriods,
-  summarizeMatch,
-} from "./matchEventsView";
+} from "./timeline";
 
 // How long a play the reader jumped to stays highlighted.
 const HIGHLIGHT_MS = 2000;

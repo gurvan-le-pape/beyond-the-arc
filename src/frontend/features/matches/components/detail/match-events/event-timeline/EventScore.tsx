@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { Badge } from "@/shared/components/primitives";
 import { cn } from "@/shared/utils";
 
-import type { Play } from "../matchEventsView";
+import type { Play } from "../plays";
 
 interface EventScoreProps {
   readonly homeScore: number;

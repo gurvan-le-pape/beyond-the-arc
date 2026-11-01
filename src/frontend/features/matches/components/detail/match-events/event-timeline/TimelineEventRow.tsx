@@ -5,7 +5,9 @@ import type { EventStyle, MatchTeam } from "@/features/matches/types";
 import { TextLink } from "@/shared/components/primitives";
 import { cn } from "@/shared/utils";
 
-import { formatClock, type Play, playRowId } from "../matchEventsView";
+import { formatClock } from "../gameClock";
+import type { Play } from "../plays";
+import { playRowId } from "../timeline";
 import { EventScore } from "./EventScore";
 import { usePlayDescription } from "./usePlayDescription";
 

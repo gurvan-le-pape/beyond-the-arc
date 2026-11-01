@@ -5,7 +5,8 @@ import type { ReactNode } from "react";
 import type { MatchTeam } from "@/features/matches/types";
 import { cn } from "@/shared/utils";
 
-import { formatClock, type MatchSummary } from "../matchEventsView";
+import { formatClock } from "../gameClock";
+import type { MatchSummary } from "../matchFlow";
 import { usePeriodAbbr } from "./usePeriodAbbr";
 
 const INK = {

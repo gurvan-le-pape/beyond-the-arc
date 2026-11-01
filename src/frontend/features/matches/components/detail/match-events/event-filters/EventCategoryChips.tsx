@@ -6,7 +6,7 @@ import { ToggleChips } from "@/shared/components/primitives";
 import { EventCategory } from "@/shared/constants";
 import { cn } from "@/shared/utils";
 
-import { FILTERABLE_CATEGORIES } from "../matchEventsView";
+import { FILTERABLE_CATEGORIES } from "../timeline";
 
 const LABEL_KEYS = {
   [EventCategory.MADE]: "made",

@@ -8,12 +8,9 @@ import { Button } from "@/shared/components/primitives";
 import { EventCategory, Role } from "@/shared/constants";
 import { cn } from "@/shared/utils";
 
-import {
-  formatClock,
-  type MarginPoint,
-  type PeriodEnd,
-  type Play,
-} from "../matchEventsView";
+import { formatClock, type PeriodEnd } from "../gameClock";
+import type { MarginPoint } from "../matchFlow";
+import type { Play } from "../plays";
 import { usePeriodAbbr } from "./usePeriodAbbr";
 
 // The SVG's own units. It is stretched to its box (`preserveAspectRatio`
