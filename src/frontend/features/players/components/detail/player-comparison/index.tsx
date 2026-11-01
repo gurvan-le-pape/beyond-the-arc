@@ -10,7 +10,7 @@ import { Section, StatComparison } from "@/shared/components/blocks";
 import { ErrorMessage, Spinner } from "@/shared/components/feedback";
 import { createStatFormat } from "@/shared/utils";
 
-import { PlayerSearchDropdown } from "./PlayerSearchDropdown";
+import { OpponentPicker } from "./OpponentPicker";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -116,7 +116,7 @@ export function PlayerComparison({
   return (
     <Section title={tPlayers("playerDetail.compareTitle")}>
       <div className="max-w-sm">
-        <PlayerSearchDropdown
+        <OpponentPicker
           excludeId={player.id}
           gender={player.team.gender}
           category={player.team.category}
