@@ -17,7 +17,7 @@ import React, { useId, useRef, useState } from "react";
 import { cn } from "@/shared/utils";
 
 import { Text } from "../typography";
-import { DROPDOWN_TRIGGER_BASE } from "./dropdownTriggerBase";
+import { DROPDOWN_TRIGGER_BASE } from "./dropdownStyles";
 import {
   Popover,
   PopoverAnchor,

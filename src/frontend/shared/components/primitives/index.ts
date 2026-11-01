@@ -9,7 +9,7 @@ export * from "./Button";
 export * from "./Card";
 export * from "./ComboBox";
 export * from "./Dot";
-export * from "./dropdownTriggerBase";
+export * from "./dropdownStyles";
 export * from "./Grid";
 export * from "./IconButton";
 export * from "./ImageWithFallback";
