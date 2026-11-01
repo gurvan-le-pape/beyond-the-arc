@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { Section } from "@/shared/components/blocks";
-import { SearchInput } from "@/shared/components/forms";
+import { SearchField } from "@/shared/components/forms";
 import { TextLink } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 
@@ -66,7 +66,7 @@ export function SearchableLinkList<T extends SearchableLinkListItem>({
     >
       {showSearch && (
         <div className="mb-4 max-w-xs">
-          <SearchInput
+          <SearchField
             aria-label={title}
             value={search}
             placeholder={searchPlaceholder}

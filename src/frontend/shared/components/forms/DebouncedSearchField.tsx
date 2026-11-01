@@ -1,16 +1,16 @@
-// src/frontend/shared/components/forms/DebouncedSearchInput.tsx
+// src/frontend/shared/components/forms/DebouncedSearchField.tsx
 "use client";
 
 import { useEffect, useRef, useState } from "react";
 
 import {
-  SearchInput,
-  type SearchInputName,
-  type SearchInputProps,
-} from "./SearchInput";
+  SearchField,
+  type SearchFieldName,
+  type SearchFieldProps,
+} from "./SearchField";
 
-export type DebouncedSearchInputProps = SearchInputName &
-  Omit<SearchInputProps, "value" | "onChange" | keyof SearchInputName> & {
+export type DebouncedSearchFieldProps = SearchFieldName &
+  Omit<SearchFieldProps, "value" | "onChange" | keyof SearchFieldName> & {
     readonly value: string;
     /** The text, once typing has settled for `debounceMs` (400 by default). */
     readonly onChange: (value: string) => void;
@@ -18,7 +18,7 @@ export type DebouncedSearchInputProps = SearchInputName &
   };
 
 /**
- * A `SearchInput` that reports its text only once typing settles, for a search
+ * A `SearchField` that reports its text only once typing settles, for a search
  * that sends a request.
  *
  * Changing `value` from outside **cancels any pending callback**. That is what
@@ -28,13 +28,13 @@ export type DebouncedSearchInputProps = SearchInputName &
  * Clearing, by the button or Escape, reports `""` at once, so it feels instant
  * while typing stays cheap.
  */
-export function DebouncedSearchInput({
+export function DebouncedSearchField({
   value: externalValue,
   onChange,
   onClear,
   debounceMs = 400,
   ...props
-}: DebouncedSearchInputProps) {
+}: DebouncedSearchFieldProps) {
   const [localValue, setLocalValue] = useState(externalValue);
   const [lastExternalValue, setLastExternalValue] = useState(externalValue);
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -64,7 +64,7 @@ export function DebouncedSearchInput({
   };
 
   return (
-    <SearchInput
+    <SearchField
       {...props}
       value={localValue}
       onChange={handleChange}

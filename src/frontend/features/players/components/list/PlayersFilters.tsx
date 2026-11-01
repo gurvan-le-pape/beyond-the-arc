@@ -16,7 +16,7 @@ import {
   LevelLocationFilters,
   useCommonFilterChips,
 } from "@/shared/components/filters";
-import { DebouncedSearchInput, Select } from "@/shared/components/forms";
+import { DebouncedSearchField, Select } from "@/shared/components/forms";
 import { Grid } from "@/shared/components/primitives";
 import type { FilterProps } from "@/shared/hooks";
 
@@ -133,7 +133,7 @@ export function PlayersFilters({ filters, set, onReset }: PlayersFiltersProps) {
       )}
 
       <Grid columns={{ base: 1, md: 2, lg: 4 }} gap={4}>
-        <DebouncedSearchInput
+        <DebouncedSearchField
           label={tPlayers("filters.searchName")}
           value={q ?? ""}
           placeholder={tPlayers("filters.searchNamePlaceholder")}

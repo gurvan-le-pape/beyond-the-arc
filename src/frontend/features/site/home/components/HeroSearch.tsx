@@ -1,5 +1,5 @@
 // src/frontend/features/site/home/components/HeroSearch.tsx
-import { SearchInput } from "@/shared/components/forms";
+import { SearchField } from "@/shared/components/forms";
 import { Button } from "@/shared/components/primitives";
 
 interface HeroSearchProps {
@@ -32,7 +32,7 @@ export function HeroSearch({
     >
       <input type="hidden" name="tab" value="players" />
       <div className="flex-1">
-        <SearchInput
+        <SearchField
           name="q"
           required
           aria-label={label}

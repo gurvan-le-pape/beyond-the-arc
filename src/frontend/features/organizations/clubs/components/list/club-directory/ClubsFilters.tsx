@@ -10,7 +10,7 @@ import {
 import { ErrorMessage } from "@/shared/components/feedback";
 import type { ActiveFilterChip } from "@/shared/components/filters";
 import { FiltersShell } from "@/shared/components/filters";
-import { DebouncedSearchInput, Select } from "@/shared/components/forms";
+import { DebouncedSearchField, Select } from "@/shared/components/forms";
 import { Grid } from "@/shared/components/primitives";
 import type { FilterProps } from "@/shared/hooks";
 
@@ -91,7 +91,7 @@ export function ClubsFilters({ filters, set, onReset }: ClubsFiltersProps) {
         />
       )}
 
-      <DebouncedSearchInput
+      <DebouncedSearchField
         label={tOrganizations("clubs.searchLabel")}
         value={q ?? ""}
         onChange={(value) => set({ q: value })}

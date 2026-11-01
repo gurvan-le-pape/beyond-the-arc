@@ -1,6 +1,6 @@
 // src/frontend/shared/components/forms/fieldStyles.ts
 
-/** The box of a text field: an `Input` or a `SearchInput`. */
+/** The box of a text field: a `TextField` or a `SearchField`. */
 export const FIELD_INPUT =
   "h-9 w-full rounded-input border border-divide bg-surface-inset px-4 text-sm text-text-heading " +
   "placeholder:text-text-secondary focus-ring focus:border-solid-primary " +

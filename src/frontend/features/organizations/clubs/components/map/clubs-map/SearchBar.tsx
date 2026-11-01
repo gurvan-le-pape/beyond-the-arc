@@ -4,7 +4,7 @@
 import { useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
 
-import { SearchInput } from "@/shared/components/forms";
+import { SearchField } from "@/shared/components/forms";
 
 /**
  * Whether a keypress aimed at `target` is typing: a text field, a select, or
@@ -57,7 +57,7 @@ export function SearchBar({ query, onQueryChange, onClear }: SearchBarProps) {
   }, []);
 
   return (
-    <SearchInput
+    <SearchField
       ref={inputRef}
       value={query}
       onChange={onQueryChange}

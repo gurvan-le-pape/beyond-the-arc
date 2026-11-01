@@ -1,18 +1,22 @@
-// src/frontend/shared/components/forms/Input.tsx
+// src/frontend/shared/components/forms/TextField.tsx
 "use client";
 
 import type { ReactNode } from "react";
-import { Input as AriaInput, Label, TextField } from "react-aria-components";
+import {
+  Input as AriaInput,
+  Label,
+  TextField as AriaTextField,
+} from "react-aria-components";
 
 import { cn } from "@/shared/utils";
 
 import { FIELD_ICON, FIELD_INPUT, FIELD_LABEL } from "./fieldStyles";
 
-export interface InputProps {
+export interface TextFieldProps {
   readonly label: string;
   readonly value: string;
   readonly onChange: (value: string) => void;
-  /** The native input type; a search box is a `SearchInput`. */
+  /** The native input type; a search box is a `SearchField`. */
   readonly type?: "text" | "date" | "email" | "number" | "tel" | "url";
   /** Before the text: a decorative icon, sized `w-5 h-5`. */
   readonly icon?: ReactNode;
@@ -22,25 +26,30 @@ export interface InputProps {
  * A labelled text field, on React Aria's TextField: the label is tied to the
  * input, and `onChange` receives the string.
  *
- * For searching, use `SearchInput`, which adds the clear button and Escape.
+ * For searching, use `SearchField`, which adds the clear button and Escape.
  *
  * @example
- * <Input type="date" label="Date" value={date} onChange={setDate} icon={<Calendar className="w-5 h-5" />} />
+ * <TextField type="date" label="Date" value={date} onChange={setDate} icon={<Calendar className="w-5 h-5" />} />
  */
-export function Input({
+export function TextField({
   label,
   value,
   onChange,
   type = "text",
   icon,
-}: InputProps) {
+}: TextFieldProps) {
   return (
-    <TextField value={value} onChange={onChange} type={type} className="w-full">
+    <AriaTextField
+      value={value}
+      onChange={onChange}
+      type={type}
+      className="w-full"
+    >
       <Label className={FIELD_LABEL}>{label}</Label>
       <div className="relative">
         {icon && <div className={FIELD_ICON}>{icon}</div>}
         <AriaInput className={cn(FIELD_INPUT, icon && "pl-10")} />
       </div>
-    </TextField>
+    </AriaTextField>
   );
 }

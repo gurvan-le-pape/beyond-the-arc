@@ -1,4 +1,4 @@
-// src/frontend/shared/components/forms/SearchInput.tsx
+// src/frontend/shared/components/forms/SearchField.tsx
 "use client";
 
 import { useTranslations } from "next-intl";
@@ -7,7 +7,7 @@ import {
   Button,
   Input as AriaInput,
   Label,
-  SearchField,
+  SearchField as AriaSearchField,
 } from "react-aria-components";
 
 import { cn } from "@/shared/utils";
@@ -15,11 +15,11 @@ import { cn } from "@/shared/utils";
 import { FIELD_ICON, FIELD_INPUT, FIELD_LABEL } from "./fieldStyles";
 
 /** A search box is named by a visible label, or failing that an `aria-label`. */
-export type SearchInputName =
+export type SearchFieldName =
   | { readonly label: string; readonly "aria-label"?: never }
   | { readonly label?: never; readonly "aria-label": string };
 
-interface SearchInputFields {
+interface SearchFieldOptions {
   /** Controlled text; leave it out for a field a `<form>` submits by `name`. */
   readonly value?: string;
   readonly onChange?: (value: string) => void;
@@ -76,7 +76,7 @@ function ClearIcon() {
   );
 }
 
-export type SearchInputProps = SearchInputName & SearchInputFields;
+export type SearchFieldProps = SearchFieldName & SearchFieldOptions;
 
 /**
  * A search box, on React Aria's SearchField: a search icon, and a clear button
@@ -84,12 +84,12 @@ export type SearchInputProps = SearchInputName & SearchInputFields;
  * clear button out of the tab order.
  *
  * `onChange` receives the string. For a search that sends a request, use
- * `DebouncedSearchInput`.
+ * `DebouncedSearchField`.
  *
  * @example
- * <SearchInput aria-label="Search clubs" value={query} onChange={setQuery} placeholder="Club or city" />
+ * <SearchField aria-label="Search clubs" value={query} onChange={setQuery} placeholder="Club or city" />
  */
-export function SearchInput({
+export function SearchField({
   label,
   "aria-label": ariaLabel,
   value,
@@ -101,11 +101,11 @@ export function SearchInput({
   size = "md",
   emptyHint,
   ref,
-}: SearchInputProps) {
+}: SearchFieldProps) {
   const t = useTranslations("common");
 
   return (
-    <SearchField
+    <AriaSearchField
       aria-label={ariaLabel}
       value={value}
       onChange={onChange}
@@ -143,6 +143,6 @@ export function SearchInput({
           )}
         </div>
       </div>
-    </SearchField>
+    </AriaSearchField>
   );
 }

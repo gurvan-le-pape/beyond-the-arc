@@ -19,7 +19,7 @@ import {
   LevelLocationFilters,
   useCommonFilterChips,
 } from "@/shared/components/filters";
-import { DebouncedSearchInput, Input } from "@/shared/components/forms";
+import { DebouncedSearchField, TextField } from "@/shared/components/forms";
 import { Grid } from "@/shared/components/primitives";
 import type { FilterProps } from "@/shared/hooks";
 
@@ -148,7 +148,7 @@ export function MatchesFilters({ filters, set, onReset }: MatchesFiltersProps) {
       )}
 
       <Grid columns={{ base: 1, md: 2, lg: 4 }} gap={4}>
-        <DebouncedSearchInput
+        <DebouncedSearchField
           label={tMatches("searchClub")}
           value={q ?? ""}
           placeholder={tMatches("searchClubPlaceholder")}
@@ -156,7 +156,7 @@ export function MatchesFilters({ filters, set, onReset }: MatchesFiltersProps) {
           onClear={() => set({ q: undefined })}
         />
 
-        <Input
+        <TextField
           type="date"
           label={tMatches("date")}
           value={date ?? ""}
