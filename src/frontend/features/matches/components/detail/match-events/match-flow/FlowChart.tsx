@@ -10,15 +10,15 @@ import { cn } from "@/shared/utils";
 
 import type { Play } from "../plays";
 import { formatClock } from "../plays";
+import {
+  flowGeometry,
+  nearestPoint,
+  stepPicked,
+  VIEW_HEIGHT,
+  VIEW_WIDTH,
+} from "./flowGeometry";
 import type { MarginPoint, PeriodEnd } from "./matchFlow";
 import { usePeriodAbbr } from "./usePeriodAbbr";
-
-// The SVG's own units. It is stretched to its box (`preserveAspectRatio`
-// none), so everything drawn in it is a line or a fill that tolerates the
-// stretch; text and dots are HTML laid over it, placed by percentage. The
-// height is 100, so a percentage of it is also a y coordinate.
-const VIEW_WIDTH = 1000;
-const VIEW_HEIGHT = 100;
 
 /**
  * The name of the player whose basket scored the play.
@@ -74,28 +74,10 @@ export function FlowChart({
   const [picked, setPicked] = useState<number | null>(null);
   const [hovered, setHovered] = useState<number | null>(null);
 
-  const total = periodEnds[periodEnds.length - 1]?.seconds ?? 1;
-  const maxAbs =
-    Math.max(4, ...points.map((point) => Math.abs(point.margin))) + 1;
-  const x = (seconds: number) => (Math.min(seconds, total) / total) * 100;
-  const y = (margin: number) => ((maxAbs - margin) / (2 * maxAbs)) * 100;
-  const tickStep = maxAbs > 16 ? 10 : 5;
-  const ticks: number[] = [];
-  for (let tick = tickStep; tick < maxAbs; tick += tickStep) ticks.push(tick);
-
-  const periods = periodEnds.map((end, index) => ({
-    period: end.period,
-    start: index === 0 ? 0 : periodEnds[index - 1].seconds,
-    end: end.seconds,
-  }));
-
-  const vx = (seconds: number) => (x(seconds) / 100) * VIEW_WIDTH;
-  let line = `M0,${y(0)}`;
-  for (const point of points) {
-    line += ` H${vx(point.seconds)} V${y(point.margin)}`;
-  }
-  line += ` H${VIEW_WIDTH}`;
-  const area = `${line} V${y(0)} H0 Z`;
+  const { duration, x, y, vx, ticks, periods, line, area } = flowGeometry(
+    points,
+    periodEnds,
+  );
 
   const describe = (index: number) => {
     const { play } = points[index];
@@ -111,45 +93,14 @@ export function FlowChart({
 
   const nearest = (event: MouseEvent<HTMLDivElement>) => {
     const box = event.currentTarget.getBoundingClientRect();
-    const seconds = ((event.clientX - box.left) / box.width) * total;
-    let best = 0;
-    points.forEach((point, index) => {
-      if (
-        Math.abs(point.seconds - seconds) <
-        Math.abs(points[best].seconds - seconds)
-      ) {
-        best = index;
-      }
-    });
-    return best;
-  };
-
-  /**
-   * The basket a key moves the cursor to.
-   *
-   * @param key - the key pressed
-   * @returns the index of the basket; `null` for a key that does not move it
-   */
-  const moveFor = (key: string): number | null => {
-    const last = points.length - 1;
-    switch (key) {
-      case "ArrowRight":
-      case "ArrowUp":
-        return picked === null ? 0 : Math.min(last, picked + 1);
-      case "ArrowLeft":
-      case "ArrowDown":
-        return picked === null ? last : Math.max(0, picked - 1);
-      case "Home":
-        return 0;
-      case "End":
-        return last;
-      default:
-        return null;
-    }
+    return nearestPoint(
+      points,
+      ((event.clientX - box.left) / box.width) * duration,
+    );
   };
 
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    const move = moveFor(event.key);
+    const move = stepPicked(event.key, picked, points.length);
     if (move !== null) {
       event.preventDefault();
       setPicked(move);
