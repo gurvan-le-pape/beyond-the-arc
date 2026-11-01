@@ -4,7 +4,7 @@
 import { useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
 
-import { Input } from "@/shared/components/forms";
+import { SearchField } from "@/shared/components/forms";
 
 /**
  * Whether a keypress aimed at `target` is typing: a text field, a select, or
@@ -40,7 +40,6 @@ interface SearchBarProps {
  */
 export function SearchBar({ query, onQueryChange, onClear }: SearchBarProps) {
   const t = useTranslations("clubs");
-  const tCommon = useTranslations("common");
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -58,26 +57,20 @@ export function SearchBar({ query, onQueryChange, onClear }: SearchBarProps) {
   }, []);
 
   return (
-    <Input
+    <SearchField
       ref={inputRef}
-      variant="search"
       value={query}
-      onChange={(e) => onQueryChange(e.target.value)}
+      onChange={onQueryChange}
       onClear={onClear}
-      clearAriaLabel={tCommon("clearSearch")}
       aria-label={t("map.searchLabel")}
       placeholder={t("map.searchPlaceholder")}
-      // The shortcut hint while the field is empty; once there is a query the
-      // search variant puts its clear button in this slot instead.
-      rightIcon={
-        query ? undefined : (
-          <kbd
-            aria-hidden="true"
-            className="pointer-events-none hidden sm:inline-block px-1.5 text-xs text-text-secondary border border-divide rounded-input"
-          >
-            /
-          </kbd>
-        )
+      emptyHint={
+        <kbd
+          aria-hidden="true"
+          className="pointer-events-none hidden sm:inline-block px-1.5 text-xs text-text-secondary border border-divide rounded-input"
+        >
+          /
+        </kbd>
       }
     />
   );

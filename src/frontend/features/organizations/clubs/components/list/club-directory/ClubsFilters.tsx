@@ -10,7 +10,7 @@ import {
 import { ErrorMessage } from "@/shared/components/feedback";
 import type { ActiveFilterChip } from "@/shared/components/filters";
 import { FiltersShell } from "@/shared/components/filters";
-import { DebouncedInput, Select } from "@/shared/components/forms";
+import { DebouncedSearchField, Select } from "@/shared/components/forms";
 import { Grid } from "@/shared/components/primitives";
 import type { FilterProps } from "@/shared/hooks";
 
@@ -91,14 +91,12 @@ export function ClubsFilters({ filters, set, onReset }: ClubsFiltersProps) {
         />
       )}
 
-      <DebouncedInput
-        variant="search"
+      <DebouncedSearchField
         label={tOrganizations("clubs.searchLabel")}
         value={q ?? ""}
         onChange={(value) => set({ q: value })}
         onClear={() => set({ q: undefined })}
         placeholder={tOrganizations("clubs.searchPlaceholder")}
-        clearAriaLabel={tCommon("clearSearch")}
       />
 
       <Grid columns={{ base: 1, md: 2 }} gap={4}>
