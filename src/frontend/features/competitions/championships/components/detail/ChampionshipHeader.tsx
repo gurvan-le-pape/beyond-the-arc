@@ -127,8 +127,7 @@ export function ChampionshipHeader({
               </Fragment>
             ))}
           </Text>
-          {/* A div, not the variant's p: a LinkMenu's panel is a div. */}
-          <Text variant="body" as="div" className="mt-1 text-text-secondary">
+          <Text variant="body" className="mt-1 text-text-secondary">
             {organizer.place && organizer.id !== null && (
               <>
                 {organizer.kind}
