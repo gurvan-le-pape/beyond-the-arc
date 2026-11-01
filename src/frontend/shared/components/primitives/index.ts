@@ -18,7 +18,6 @@ export * from "./LinkMenu";
 export * from "./List";
 export * from "./ListItem";
 export * from "./MultiSelect";
-export * from "./Popover";
 export * from "./SegmentedControl";
 export * from "./segmentedStyles";
 export * from "./SelectChevron";

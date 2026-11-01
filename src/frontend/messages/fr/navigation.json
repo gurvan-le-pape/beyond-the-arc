@@ -10,6 +10,7 @@
     "mainNavAriaLabel": "Navigation principale",
     "openMenu": "Ouvrir le menu",
     "closeMenu": "Fermer le menu",
+    "menu": "Menu",
     "toggleTheme": "Changer le thème",
     "selectTheme": "Choisir le thème",
     "themes": {
