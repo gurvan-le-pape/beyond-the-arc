@@ -228,20 +228,25 @@ module.exports = {
         // ink-primary: a focus indicator needs 3:1 against the surface, and the
         // ink role clears 4.5:1 on every surface in every theme.
         //
+        // [data-focus-visible] is React Aria's mark of keyboard focus. A radio,
+        // checkbox or switch keeps the real focus on a hidden input inside the
+        // <label> it renders, so :focus-visible never reaches the box people
+        // see; the attribute does.
+        //
         // .focus-ring-inset draws inside the box, for elements whose container
         // clips overflow (table cells, tab strips, list rows).
         //
         // On a coloured panel, where ink-primary does not stand out, set
         // --focus-ring-color on the panel ([--focus-ring-color:white]).
         ".focus-ring": {
-          "&:focus-visible": {
+          "&:focus-visible, &[data-focus-visible]": {
             outline:
               "2px solid var(--focus-ring-color, rgb(var(--color-ink-primary)))",
             "outline-offset": "2px",
           },
         },
         ".focus-ring-inset": {
-          "&:focus-visible": {
+          "&:focus-visible, &[data-focus-visible]": {
             outline:
               "2px solid var(--focus-ring-color, rgb(var(--color-ink-primary)))",
             "outline-offset": "-2px",
