@@ -16,7 +16,7 @@ import {
   LevelLocationFilters,
   useCommonFilterChips,
 } from "@/shared/components/filters";
-import { DebouncedInput, Select } from "@/shared/components/forms";
+import { DebouncedSearchInput, Select } from "@/shared/components/forms";
 import { Grid } from "@/shared/components/primitives";
 import type { FilterProps } from "@/shared/hooks";
 
@@ -133,14 +133,12 @@ export function PlayersFilters({ filters, set, onReset }: PlayersFiltersProps) {
       )}
 
       <Grid columns={{ base: 1, md: 2, lg: 4 }} gap={4}>
-        <DebouncedInput
-          variant="search"
+        <DebouncedSearchInput
           label={tPlayers("filters.searchName")}
           value={q ?? ""}
           placeholder={tPlayers("filters.searchNamePlaceholder")}
           onChange={(value) => set({ q: value })}
           onClear={() => set({ q: undefined })}
-          clearAriaLabel={tCommon("clearSearch")}
         />
         <ClubComboBoxFilter
           committeeId={committee}

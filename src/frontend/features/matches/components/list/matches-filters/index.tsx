@@ -19,7 +19,7 @@ import {
   LevelLocationFilters,
   useCommonFilterChips,
 } from "@/shared/components/filters";
-import { DebouncedInput, Input } from "@/shared/components/forms";
+import { DebouncedSearchInput, Input } from "@/shared/components/forms";
 import { Grid } from "@/shared/components/primitives";
 import type { FilterProps } from "@/shared/hooks";
 
@@ -148,23 +148,20 @@ export function MatchesFilters({ filters, set, onReset }: MatchesFiltersProps) {
       )}
 
       <Grid columns={{ base: 1, md: 2, lg: 4 }} gap={4}>
-        <DebouncedInput
-          variant="search"
+        <DebouncedSearchInput
           label={tMatches("searchClub")}
           value={q ?? ""}
           placeholder={tMatches("searchClubPlaceholder")}
           onChange={(value) => set({ q: value })}
           onClear={() => set({ q: undefined })}
-          clearAriaLabel={tCommon("clearSearch")}
         />
 
         <Input
-          id="date-filter"
           type="date"
           label={tMatches("date")}
           value={date ?? ""}
-          onChange={(e) => set({ date: e.target.value || undefined })}
-          leftIcon={<Calendar className="w-5 h-5" />}
+          onChange={(value) => set({ date: value || undefined })}
+          icon={<Calendar aria-hidden className="w-5 h-5" />}
         />
 
         <CategoryGenderSelects filters={filters} set={set} />

@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { Section } from "@/shared/components/blocks";
-import { Input } from "@/shared/components/forms";
+import { SearchInput } from "@/shared/components/forms";
 import { TextLink } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 
@@ -44,7 +44,6 @@ export function SearchableLinkList<T extends SearchableLinkListItem>({
   showSearch = true,
 }: SearchableLinkListProps<T>) {
   const tCompetitions = useTranslations("competitions");
-  const tCommon = useTranslations("common");
 
   const [search, setSearch] = useState("");
 
@@ -67,13 +66,11 @@ export function SearchableLinkList<T extends SearchableLinkListItem>({
     >
       {showSearch && (
         <div className="mb-4 max-w-xs">
-          <Input
-            variant="search"
+          <SearchInput
+            aria-label={title}
             value={search}
             placeholder={searchPlaceholder}
-            onChange={(e) => setSearch(e.target.value)}
-            onClear={() => setSearch("")}
-            clearAriaLabel={tCommon("clearSearch")}
+            onChange={setSearch}
           />
         </div>
       )}
