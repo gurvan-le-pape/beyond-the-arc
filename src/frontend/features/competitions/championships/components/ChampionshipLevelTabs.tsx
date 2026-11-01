@@ -4,7 +4,7 @@
 import { useTranslations } from "next-intl";
 
 import { QueryTabs } from "@/shared/components/navigation";
-import { TabsContent } from "@/shared/components/primitives";
+import { TabPanel } from "@/shared/components/primitives";
 import { CompetitionLevel } from "@/shared/constants";
 
 import { DepartmentalChampionships } from "./list/levels/DepartmentalChampionships";
@@ -38,15 +38,15 @@ export function ChampionshipLevelTabs() {
     // Opens on regional: the import holds no national championships, so the
     // national tab is empty and stays only to show where that level sits.
     <QueryTabs tabs={tabs} defaultTab={TABS.REGIONAL}>
-      <TabsContent value={TABS.NATIONAL}>
+      <TabPanel id={TABS.NATIONAL}>
         <NationalChampionships />
-      </TabsContent>
-      <TabsContent value={TABS.REGIONAL}>
+      </TabPanel>
+      <TabPanel id={TABS.REGIONAL}>
         <RegionalChampionships />
-      </TabsContent>
-      <TabsContent value={TABS.DEPARTMENTAL}>
+      </TabPanel>
+      <TabPanel id={TABS.DEPARTMENTAL}>
         <DepartmentalChampionships />
-      </TabsContent>
+      </TabPanel>
     </QueryTabs>
   );
 }

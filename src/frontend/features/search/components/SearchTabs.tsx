@@ -4,7 +4,7 @@
 import { useTranslations } from "next-intl";
 
 import { QueryTabs } from "@/shared/components/navigation";
-import { TabsContent } from "@/shared/components/primitives";
+import { TabPanel } from "@/shared/components/primitives";
 
 import { MatchSearchResults } from "./MatchSearchResults";
 import { PlayerSearchResults } from "./PlayerSearchResults";
@@ -32,15 +32,15 @@ export function SearchTabs() {
 
   return (
     <QueryTabs tabs={tabs}>
-      <TabsContent value={TABS.PLAYERS}>
+      <TabPanel id={TABS.PLAYERS}>
         <PlayerSearchResults />
-      </TabsContent>
-      <TabsContent value={TABS.TEAMS}>
+      </TabPanel>
+      <TabPanel id={TABS.TEAMS}>
         <TeamSearchResults />
-      </TabsContent>
-      <TabsContent value={TABS.MATCHES}>
+      </TabPanel>
+      <TabPanel id={TABS.MATCHES}>
         <MatchSearchResults />
-      </TabsContent>
+      </TabPanel>
     </QueryTabs>
   );
 }

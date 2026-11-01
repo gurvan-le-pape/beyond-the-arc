@@ -9,12 +9,7 @@ import type {
   MatchTeamWithStats,
   Shot,
 } from "@/features/matches/types";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/shared/components/primitives";
+import { Tab, TabList, TabPanel, Tabs } from "@/shared/components/primitives";
 
 import { MatchEvents } from "./match-events";
 import { PlayerMatchStats } from "./player-match-stats";
@@ -68,56 +63,48 @@ export function MatchSummaryTabs({
   ];
 
   return (
-    <Tabs value={tab} onValueChange={setTab}>
-      <TabsList>
-        <TabsTrigger value="stats">
-          {tMatches("matchSummary.tabs.teamStats")}
-        </TabsTrigger>
-        <TabsTrigger value="home">
-          {tMatches("matchSummary.tabs.homeTeam")}
-        </TabsTrigger>
-        <TabsTrigger value="away">
-          {tMatches("matchSummary.tabs.awayTeam")}
-        </TabsTrigger>
-        <TabsTrigger value="events">
-          {tMatches("matchSummary.tabs.matchEvents")}
-        </TabsTrigger>
-      </TabsList>
+    <Tabs selectedKey={tab} onSelectionChange={setTab}>
+      <TabList>
+        <Tab id="stats">{tMatches("matchSummary.tabs.teamStats")}</Tab>
+        <Tab id="home">{tMatches("matchSummary.tabs.homeTeam")}</Tab>
+        <Tab id="away">{tMatches("matchSummary.tabs.awayTeam")}</Tab>
+        <Tab id="events">{tMatches("matchSummary.tabs.matchEvents")}</Tab>
+      </TabList>
 
-      <TabsContent value="stats">
+      <TabPanel id="stats">
         <TeamStatsComparison
           homeStats={homeTeam.stats}
           awayStats={awayTeam.stats}
           categories={statCategories}
         />
-      </TabsContent>
+      </TabPanel>
 
-      <TabsContent value="home">
+      <TabPanel id="home">
         <PlayerMatchStats
           team={homeTeam}
           isHomeTeam={true}
           opponent={awayTeam}
           playerShots={playerShots}
         />
-      </TabsContent>
+      </TabPanel>
 
-      <TabsContent value="away">
+      <TabPanel id="away">
         <PlayerMatchStats
           team={awayTeam}
           isHomeTeam={false}
           opponent={homeTeam}
           playerShots={playerShots}
         />
-      </TabsContent>
+      </TabPanel>
 
-      <TabsContent value="events">
+      <TabPanel id="events">
         <MatchEvents
           events={matchEvents}
           homeTeam={homeTeam}
           awayTeam={awayTeam}
           matchDate={matchDate}
         />
-      </TabsContent>
+      </TabPanel>
     </Tabs>
   );
 }

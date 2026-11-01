@@ -4,9 +4,9 @@
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
-import { Tabs, TabsList, TabsTrigger } from "@/shared/components/primitives";
+import { Tab, TabList, Tabs } from "@/shared/components/primitives";
 
-interface Tab {
+interface QueryTab {
   value: string;
   label: string;
 }
@@ -29,7 +29,7 @@ function selectTab(value: string) {
 }
 
 interface QueryTabsViewProps {
-  readonly tabs: Tab[];
+  readonly tabs: QueryTab[];
   readonly value: string;
   readonly onValueChange: (value: string) => void;
   readonly children?: React.ReactNode;
@@ -42,21 +42,21 @@ function QueryTabsView({
   children,
 }: QueryTabsViewProps) {
   return (
-    <Tabs value={value} onValueChange={onValueChange}>
-      <TabsList>
+    <Tabs selectedKey={value} onSelectionChange={onValueChange}>
+      <TabList>
         {tabs.map((tab) => (
-          <TabsTrigger key={tab.value} value={tab.value}>
+          <Tab key={tab.value} id={tab.value}>
             {tab.label}
-          </TabsTrigger>
+          </Tab>
         ))}
-      </TabsList>
+      </TabList>
       {children}
     </Tabs>
   );
 }
 
 interface QueryTabsContentProps {
-  readonly tabs: Tab[];
+  readonly tabs: QueryTab[];
   readonly defaultTab: string;
   readonly children: React.ReactNode;
 }
@@ -78,7 +78,7 @@ function QueryTabsContent({
 }
 
 interface QueryTabsProps {
-  readonly tabs: Tab[];
+  readonly tabs: QueryTab[];
   /** The tab shown when `?tab=` is absent or unrecognised. Defaults to the first tab. */
   readonly defaultTab?: string;
   readonly children: React.ReactNode;
