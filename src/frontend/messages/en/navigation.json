@@ -12,7 +12,6 @@
     "closeMenu": "Close menu",
     "menu": "Menu",
     "toggleTheme": "Toggle theme",
-    "selectTheme": "Select theme",
     "themes": {
       "light": "Light",
       "dark": "Dark",
