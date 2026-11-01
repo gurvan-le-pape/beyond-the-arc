@@ -12,6 +12,7 @@ import {
   ListBox,
   ListBoxItem,
   Popover,
+  Text as AriaText,
 } from "react-aria-components";
 
 import { cn } from "@/shared/utils";
@@ -36,10 +37,22 @@ export type OptionValue = string | number;
 export interface ComboBoxOption<V extends OptionValue = OptionValue> {
   value: V | undefined;
   label: string;
+  /** A quieter second line under the label, in a ComboBox's list. */
+  description?: string;
 }
 
 export interface ComboBoxProps<V extends OptionValue = OptionValue> {
   readonly label: string;
+  /**
+   * Keep the label for screen readers but hide it visually, for a field whose
+   * purpose is plain from its surroundings. Default: false.
+   */
+  readonly hideLabel?: boolean;
+  /**
+   * Offer the chevron, which opens the results of the empty search. False for
+   * a search with nothing to show before something is typed. Default: true.
+   */
+  readonly browsable?: boolean;
   /** Shown in the empty field. */
   readonly placeholder?: string;
   /** The results of the latest search. */
@@ -56,12 +69,17 @@ export interface ComboBoxProps<V extends OptionValue = OptionValue> {
   readonly onSearchChange: (search: string) => void;
   /** The latest search is in flight. */
   readonly isLoading?: boolean;
+  /**
+   * Why the latest search failed. The list says so instead of reporting no
+   * results; offering a retry is the caller's.
+   */
+  readonly error?: string;
 }
 
 /**
  * An autocomplete over a server-side search, on React Aria's ComboBox: the
  * field is the search, and its results open below it as you type, or from the
- * chevron.
+ * chevron when `browsable`.
  *
  * Picking an option reports it and shows `selectedLabel` in the field. Leaving
  * the field without picking puts `selectedLabel` back, and the search with it;
@@ -83,6 +101,8 @@ export interface ComboBoxProps<V extends OptionValue = OptionValue> {
  */
 export function ComboBox<V extends OptionValue>({
   label,
+  hideLabel = false,
+  browsable = true,
   placeholder,
   options,
   value,
@@ -90,6 +110,7 @@ export function ComboBox<V extends OptionValue>({
   onChange,
   onSearchChange,
   isLoading = false,
+  error,
 }: ComboBoxProps<V>) {
   const t = useTranslations("common");
   // What is typed, or null while the field shows the chosen option.
@@ -109,6 +130,13 @@ export function ComboBox<V extends OptionValue>({
   const pick = (picked: V | undefined) => {
     settle();
     onChange(picked);
+  };
+
+  const emptyStateText = () => {
+    if (isLoading) return t("loading");
+    if (error) return error;
+    if (!browsable && shownText.trim() === "") return t("typeToSearch");
+    return t("empty");
   };
 
   return (
@@ -133,14 +161,18 @@ export function ComboBox<V extends OptionValue>({
     >
       {({ isOpen }) => (
         <>
-          <Label className={cn(DROPDOWN_LABEL, "mb-2 block")}>{label}</Label>
+          <Label
+            className={cn(DROPDOWN_LABEL, hideLabel ? "sr-only" : "mb-2 block")}
+          >
+            {label}
+          </Label>
 
           <div className="relative">
             <Input
               placeholder={placeholder}
               className={cn(
                 DROPDOWN_TRIGGER_BASE,
-                value !== undefined && "pr-16",
+                browsable && value !== undefined && "pr-16",
                 "truncate placeholder:text-text-secondary",
               )}
               onChange={(event) => type(event.target.value)}
@@ -164,9 +196,11 @@ export function ComboBox<V extends OptionValue>({
                   <X className="h-3.5 w-3.5" aria-hidden="true" />
                 </button>
               )}
-              <Button className="rounded p-1 focus-ring">
-                <SelectChevron open={isOpen} />
-              </Button>
+              {browsable && (
+                <Button className="rounded p-1 focus-ring">
+                  <SelectChevron open={isOpen} />
+                </Button>
+              )}
             </span>
           </div>
 
@@ -179,9 +213,7 @@ export function ComboBox<V extends OptionValue>({
             <ListBox
               className={DROPDOWN_LIST}
               renderEmptyState={() => (
-                <p className={DROPDOWN_EMPTY}>
-                  {isLoading ? t("loading") : t("empty")}
-                </p>
+                <p className={DROPDOWN_EMPTY}>{emptyStateText()}</p>
               )}
             >
               {(option: ComboBoxOption<V>) => (
@@ -190,7 +222,17 @@ export function ComboBox<V extends OptionValue>({
                   textValue={option.label}
                   className={DROPDOWN_OPTION}
                 >
-                  {option.label}
+                  <AriaText slot="label" className="block">
+                    {option.label}
+                  </AriaText>
+                  {option.description && (
+                    <AriaText
+                      slot="description"
+                      className="block text-xs font-normal text-text-secondary"
+                    >
+                      {option.description}
+                    </AriaText>
+                  )}
                 </ListBoxItem>
               )}
             </ListBox>
