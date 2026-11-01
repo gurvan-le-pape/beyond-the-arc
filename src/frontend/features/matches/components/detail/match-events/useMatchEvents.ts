@@ -5,32 +5,18 @@ import { Quarter } from "@/features/matches/constants";
 import type { MatchEvent } from "@/features/matches/types";
 import type { EventCategory } from "@/shared/constants";
 
-import { hasOvertime } from "./gameClock";
-import { groupPlays, type Play, scoreEvents } from "./plays";
 import {
   categoryOf,
   countCategories,
+  countRows,
   DEFAULT_CATEGORIES,
   FILTERABLE_CATEGORIES,
   filterPlays,
-  groupByPeriod,
-  type PeriodPlays,
-  playRowId,
-  scorePeriods,
-} from "./timeline";
+} from "./playFilters";
+import { groupPlays, hasOvertime, type Play, scoreEvents } from "./plays";
 
 // How long a play the reader jumped to stays highlighted.
 const HIGHLIGHT_MS = 2000;
-
-/**
- * How many rows the timeline draws for the given periods.
- *
- * @param periods - the periods to draw
- * @returns the number of plays across them
- */
-function countRows(periods: readonly PeriodPlays[]): number {
-  return periods.reduce((sum, period) => sum + period.plays.length, 0);
-}
 
 /**
  * The timeline's filter state and the plays it selects.
@@ -40,17 +26,16 @@ function countRows(periods: readonly PeriodPlays[]): number {
  * the match's and not the filtered subset's.
  *
  * `revealPlay` jumps to a play from outside the list, such as the flow chart:
- * it widens the filters to show the play if they hide it, then scrolls the
- * play's row into view, moves focus to it and highlights it for a moment.
+ * it widens the filters to show the play if they hide it and highlights it
+ * for a moment; the play's row brings itself into view when highlighted.
  *
  * @param events - the match's events, in order
  * @param homeTeamId - the home side's team id
  * @param awayTeamId - the away side's team id
- * @returns every play of the match, for the flow above the timeline; the
- *   plays to show, one run per period; each period's score, from the whole
- *   match; the play to highlight and how to reveal one; and the filter values
- *   and setters for the panel, with how many rows are shown out of how many
- *   the match has
+ * @returns every play of the match, in match order; the plays to show, in
+ *   display order; the play to highlight and how to reveal one; and the
+ *   filter values and setters for the panel, with how many rows are shown out
+ *   of how many the match has
  */
 export function useMatchEvents(
   events: readonly MatchEvent[],
@@ -112,16 +97,8 @@ export function useMatchEvents(
     ],
   );
 
-  const periods = useMemo(() => groupByPeriod(shownPlays), [shownPlays]);
   const categoryCounts = useMemo(() => countCategories(events), [events]);
-  // Counted through `groupByPeriod`, so the rows it drops (the period ends)
-  // are left out of the total the same way they are left out of the list.
-  const totalRows = useMemo(() => countRows(groupByPeriod(plays)), [plays]);
-
-  const periodScores = useMemo(
-    () => scorePeriods(scoredEvents),
-    [scoredEvents],
-  );
+  const totalRows = useMemo(() => countRows(plays), [plays]);
 
   const [revealedPlayId, setRevealedPlayId] = useState<number | null>(null);
 
@@ -140,26 +117,15 @@ export function useMatchEvents(
     [shownPlays],
   );
 
-  // Runs after the render that shows the play, so its row exists by then.
   useEffect(() => {
     if (revealedPlayId === null) return;
-    const row = document.getElementById(playRowId(revealedPlayId));
-    const reduceMotion = globalThis.matchMedia?.(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    row?.scrollIntoView({
-      block: "center",
-      behavior: reduceMotion ? "auto" : "smooth",
-    });
-    row?.focus({ preventScroll: true });
     const timer = setTimeout(() => setRevealedPlayId(null), HIGHLIGHT_MS);
     return () => clearTimeout(timer);
   }, [revealedPlayId]);
 
   return {
     plays,
-    periods,
-    periodScores,
+    shownPlays,
     revealedPlayId,
     revealPlay,
     filters: {
@@ -170,7 +136,7 @@ export function useMatchEvents(
       toggleCategory,
       showAllCategories,
       categoryCounts,
-      shownRows: countRows(periods),
+      shownRows: shownPlays.length,
       totalRows,
       selectedPlayerIds,
       setSelectedPlayerIds,

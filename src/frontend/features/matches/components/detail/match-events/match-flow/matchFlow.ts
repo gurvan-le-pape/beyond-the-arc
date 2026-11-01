@@ -1,7 +1,7 @@
 // src/frontend/features/matches/components/detail/match-events/match-flow/matchFlow.ts
 import type { MatchEvent } from "@/features/matches/types";
 
-import { gameSeconds } from "../gameClock";
+import { gameSeconds } from "../plays";
 import { type Play, type Run, scoringStreaks } from "../plays";
 
 /** Where a period ends on the match's time axis. */

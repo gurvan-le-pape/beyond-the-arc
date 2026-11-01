@@ -5,9 +5,9 @@ import { Fragment, useId } from "react";
 import type { EventStyle, MatchTeam } from "@/features/matches/types";
 import { Text } from "@/shared/components/typography";
 
-import { overtimeNumber } from "../gameClock";
 import type { Play } from "../plays";
-import type { PeriodScore } from "../timeline";
+import { overtimeNumber } from "../plays";
+import type { PeriodScore } from "./periods";
 import { RunDivider } from "./RunDivider";
 import { TimelineEventRow } from "./TimelineEventRow";
 

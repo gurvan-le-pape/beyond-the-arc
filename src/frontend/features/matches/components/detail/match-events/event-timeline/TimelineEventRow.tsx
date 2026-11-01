@@ -1,13 +1,13 @@
 // src/frontend/features/matches/components/detail/match-events/event-timeline/TimelineEventRow.tsx
 import { useTranslations } from "next-intl";
+import { useEffect, useRef } from "react";
 
 import type { EventStyle, MatchTeam } from "@/features/matches/types";
 import { TextLink } from "@/shared/components/primitives";
 import { cn } from "@/shared/utils";
 
-import { formatClock } from "../gameClock";
 import type { Play } from "../plays";
-import { playRowId } from "../timeline";
+import { formatClock } from "../plays";
 import { EventScore } from "./EventScore";
 import { usePlayDescription } from "./usePlayDescription";
 
@@ -22,7 +22,10 @@ interface TimelineEventRowProps {
   readonly awayTeam: MatchTeam;
   /** Resolved display config for the play's lead event. */
   readonly style: EventStyle;
-  /** The reader just jumped to this play: it is tinted for a moment. */
+  /**
+   * The reader just jumped to this play: the row scrolls into view, takes
+   * focus and is tinted for a moment.
+   */
   readonly highlighted: boolean;
 }
 
@@ -35,8 +38,8 @@ interface TimelineEventRowProps {
  * qualifying role) gets a neutral stripe and no name. The icon is dropped
  * below `sm`, where the sentence needs the width.
  *
- * The row carries an id and takes focus from script only (`tabIndex={-1}`),
- * so a jump from the flow chart can land on it.
+ * The row takes focus from script only (`tabIndex={-1}`), so a jump from the
+ * flow chart can land on it.
  */
 export function TimelineEventRow({
   play,
@@ -48,6 +51,21 @@ export function TimelineEventRow({
   const tMatches = useTranslations("matches");
   const { label, freeThrows, tokens } = usePlayDescription(play, style);
   const Icon = style.icon;
+  const row = useRef<HTMLLIElement>(null);
+
+  // Runs after the render that shows the row, which is also the one that
+  // widens the filters to include it when they hid it.
+  useEffect(() => {
+    if (!highlighted) return;
+    const reduceMotion = globalThis.matchMedia?.(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    row.current?.scrollIntoView({
+      block: "center",
+      behavior: reduceMotion ? "auto" : "smooth",
+    });
+    row.current?.focus({ preventScroll: true });
+  }, [highlighted]);
 
   const sideOf = (teamId: number | undefined) => {
     if (teamId === homeTeam.id) return "home";
@@ -59,7 +77,7 @@ export function TimelineEventRow({
 
   return (
     <li
-      id={playRowId(play.lead.id)}
+      ref={row}
       tabIndex={-1}
       className={cn(
         "grid grid-cols-[2.75rem_3px_minmax(0,1fr)_auto] sm:grid-cols-[3rem_3px_1.25rem_minmax(0,1fr)_auto] gap-x-3 items-start px-3 sm:px-4 py-2.5 border-b border-divide/60 last:border-b-0 outline-none transition-colors duration-700",

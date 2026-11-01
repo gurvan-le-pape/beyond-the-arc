@@ -34,7 +34,7 @@ export function MatchEvents({
   const tMatches = useTranslations("matches");
   const tCommon = useTranslations("common");
 
-  const { plays, periods, periodScores, revealedPlayId, revealPlay, filters } =
+  const { plays, shownPlays, revealedPlayId, revealPlay, filters } =
     useMatchEvents(events, homeTeam.id, awayTeam.id);
 
   if (!events || events.length === 0) {
@@ -66,8 +66,8 @@ export function MatchEvents({
       </div>
 
       <EventTimeline
-        periods={periods}
-        periodScores={periodScores}
+        plays={plays}
+        shownPlays={shownPlays}
         latestFirst={filters.latestFirst}
         homeTeam={homeTeam}
         awayTeam={awayTeam}
