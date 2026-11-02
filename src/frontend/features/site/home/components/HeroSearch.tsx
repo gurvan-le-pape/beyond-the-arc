@@ -8,6 +8,8 @@ interface HeroSearchProps {
   readonly label: string;
   readonly placeholder: string;
   readonly submit: string;
+  /** The clear button's accessible name. */
+  readonly clearLabel: string;
 }
 
 /**
@@ -22,6 +24,7 @@ export function HeroSearch({
   label,
   placeholder,
   submit,
+  clearLabel,
 }: HeroSearchProps) {
   return (
     <form
@@ -38,6 +41,7 @@ export function HeroSearch({
           aria-label={label}
           placeholder={placeholder}
           size="lg"
+          labels={{ clear: clearLabel }}
         />
       </div>
       <Button type="submit" size="lg">

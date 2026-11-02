@@ -63,6 +63,12 @@ export function OpponentPicker({
   return (
     <div className="flex flex-col gap-2">
       <ComboBox
+        labels={{
+          clear: tCommon("clearSelection"),
+          loading: tCommon("loading"),
+          empty: tCommon("empty"),
+          typeToSearch: tCommon("typeToSearch"),
+        }}
         label={tPlayers("playerDetail.compareSearchLabel")}
         hideLabel
         browsable={false}

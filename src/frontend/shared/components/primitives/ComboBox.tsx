@@ -2,7 +2,6 @@
 "use client";
 
 import { X } from "lucide-react";
-import { useTranslations } from "next-intl";
 import { useState } from "react";
 import {
   Button,
@@ -74,6 +73,17 @@ export interface ComboBoxProps<V extends OptionValue = OptionValue> {
    * results; offering a retry is the caller's.
    */
   readonly error?: string;
+  /**
+   * Copy the field cannot know: the clear button's name and what the list
+   * says while loading, when nothing matches, and — for a field that is not
+   * `browsable` — before anything is typed.
+   */
+  readonly labels: {
+    readonly clear: string;
+    readonly loading: string;
+    readonly empty: string;
+    readonly typeToSearch?: string;
+  };
 }
 
 /**
@@ -111,8 +121,8 @@ export function ComboBox<V extends OptionValue>({
   onSearchChange,
   isLoading = false,
   error,
+  labels,
 }: ComboBoxProps<V>) {
-  const t = useTranslations("common");
   // What is typed, or null while the field shows the chosen option.
   const [draft, setDraft] = useState<string | null>(null);
   const shownText = draft ?? (value === undefined ? "" : (selectedLabel ?? ""));
@@ -133,10 +143,11 @@ export function ComboBox<V extends OptionValue>({
   };
 
   const emptyStateText = () => {
-    if (isLoading) return t("loading");
+    if (isLoading) return labels.loading;
     if (error) return error;
-    if (!browsable && shownText.trim() === "") return t("typeToSearch");
-    return t("empty");
+    if (!browsable && shownText.trim() === "" && labels.typeToSearch)
+      return labels.typeToSearch;
+    return labels.empty;
   };
 
   return (
@@ -190,7 +201,7 @@ export function ComboBox<V extends OptionValue>({
                 <button
                   type="button"
                   className="rounded p-1 text-text-muted hover:text-text-heading focus-ring"
-                  aria-label={t("clearSelection")}
+                  aria-label={labels.clear}
                   onClick={() => pick(undefined)}
                 >
                   <X className="h-3.5 w-3.5" aria-hidden="true" />

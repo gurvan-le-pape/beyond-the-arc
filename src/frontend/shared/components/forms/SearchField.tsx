@@ -1,7 +1,6 @@
 // src/frontend/shared/components/forms/SearchField.tsx
 "use client";
 
-import { useTranslations } from "next-intl";
 import type { ReactNode, Ref } from "react";
 import {
   Button,
@@ -36,6 +35,8 @@ interface SearchFieldOptions {
    */
   readonly emptyHint?: ReactNode;
   readonly ref?: Ref<HTMLInputElement>;
+  /** Copy the field cannot know: the clear button's accessible name. */
+  readonly labels: { readonly clear: string };
 }
 
 function SearchIcon() {
@@ -101,9 +102,8 @@ export function SearchField({
   size = "md",
   emptyHint,
   ref,
+  labels,
 }: SearchFieldProps) {
-  const t = useTranslations("common");
-
   return (
     <AriaSearchField
       aria-label={ariaLabel}
@@ -131,7 +131,7 @@ export function SearchField({
         />
         <div className="absolute inset-y-0 right-0 flex items-center pr-3 text-text-muted">
           <Button
-            aria-label={t("clearSearch")}
+            aria-label={labels.clear}
             className="cursor-pointer rounded-sm transition-colors hover:text-text-body group-data-[empty]:hidden"
           >
             <ClearIcon />

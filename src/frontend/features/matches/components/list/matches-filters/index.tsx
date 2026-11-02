@@ -149,6 +149,7 @@ export function MatchesFilters({ filters, set, onReset }: MatchesFiltersProps) {
 
       <Grid columns={{ base: 1, md: 2, lg: 4 }} gap={4}>
         <DebouncedSearchField
+          labels={{ clear: tCommon("clearSearch") }}
           label={tMatches("searchClub")}
           value={q ?? ""}
           placeholder={tMatches("searchClubPlaceholder")}

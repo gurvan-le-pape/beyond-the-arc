@@ -40,6 +40,7 @@ interface SearchBarProps {
  */
 export function SearchBar({ query, onQueryChange, onClear }: SearchBarProps) {
   const t = useTranslations("clubs");
+  const tCommon = useTranslations("common");
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -58,6 +59,7 @@ export function SearchBar({ query, onQueryChange, onClear }: SearchBarProps) {
 
   return (
     <SearchField
+      labels={{ clear: tCommon("clearSearch") }}
       ref={inputRef}
       value={query}
       onChange={onQueryChange}

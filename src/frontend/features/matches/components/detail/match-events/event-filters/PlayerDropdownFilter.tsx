@@ -29,6 +29,7 @@ export function PlayerDropdownFilter({
   togglePlayer,
 }: PlayerDropdownFilterProps) {
   const t = useTranslations("matches");
+  const tCommon = useTranslations("common");
 
   const toColumn = (team: MatchTeamWithStats) => ({
     title: team.name,
@@ -44,6 +45,15 @@ export function PlayerDropdownFilter({
 
   return (
     <MultiSelect
+      labels={{
+        summary: (count) =>
+          tCommon("multiSelectSummary", {
+            label: t("matchEvents.players"),
+            count,
+          }),
+        close: tCommon("close"),
+        clear: tCommon("clearSelection"),
+      }}
       label={t("matchEvents.players")}
       selectedCount={selectedPlayerIds.size}
       onClear={() => setSelectedPlayerIds(new Set())}

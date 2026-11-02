@@ -92,6 +92,7 @@ export function ClubsFilters({ filters, set, onReset }: ClubsFiltersProps) {
       )}
 
       <DebouncedSearchField
+        labels={{ clear: tCommon("clearSearch") }}
         label={tOrganizations("clubs.searchLabel")}
         value={q ?? ""}
         onChange={(value) => set({ q: value })}
