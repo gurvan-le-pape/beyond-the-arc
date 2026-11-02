@@ -1,0 +1,5 @@
+# Labels of the self-hosted runners (see docs/ci-cd.md), so actionlint accepts
+# `runs-on: [self-hosted, wsl]`.
+self-hosted-runner:
+  labels:
+    - wsl

@@ -8,28 +8,44 @@
 
 CI/CD is handled entirely by a single GitHub Actions workflow (`.github/workflows/ci.yml`). It runs on every push and pull request, executes all checks in parallel, and — on a successful push to `main` — builds production Docker images, pushes them to GitHub Container Registry (GHCR), and deploys them to the VPS over SSH.
 
+Every job runs on four self-hosted runners on the developer's machine (see [Runners](#runners)); none uses GitHub's hosted runners.
+
 There is no separate staging environment. A push to `main` that passes CI goes straight to production.
+
+---
+
+## Runners
+
+The runners are four containers, `wsl-1` to `wsl-4`, from GitHub's official `ghcr.io/actions/actions-runner` image, run by a Compose project in `~/github-runner/` inside WSL — outside this repository, like any machine's runner config. Jobs select them with `runs-on: [self-hosted, wsl]`; `.github/actionlint.yaml` declares the `wsl` label. A runner takes one job at a time, so four containers is four jobs in parallel.
+
+- **Start them with `./start.sh`**, not a bare `docker compose up`: it fetches a one-hour registration token through `gh` and passes the host Docker socket's group id. A runner registers only on its first start; the registration lives in its `/home/runner` volume, so restarts and WSL reboots (`restart: unless-stopped`) need no token. To add a fifth, add a `wsl-5` service and run `./start.sh` again.
+- **Persistent, not ephemeral.** The home directory survives between jobs, which keeps `~/.npm`, the setup-node/setup-python tool cache and the Docker layer cache warm — hence no `cache:` on `setup-node`. It also means a secret written under `~` would outlive the job, so the deploy writes its SSH key, `known_hosts`, Docker credentials and the Sentry token under `$RUNNER_TEMP`, which the runner empties after every job.
+- **The host Docker socket is mounted**, so `deploy` builds against the host daemon and its layer cache, with plain `docker build` — no buildx builder, no cache export. The socket is root-equivalent on the host, so the runners must never run code from strangers: the repository requires approval for every workflow run from an outside contributor's fork, and the default `GITHUB_TOKEN` is read-only.
+- **They only run while WSL is up.** A job queued while it is down waits for a runner, for up to 24 hours. That includes `audit.yml`'s Monday cron.
+- **They update themselves** when GitHub publishes a new runner version; the image tag in `compose.yml` is only what a new volume starts from.
 
 ---
 
 ## Workflow structure
 
-There are two workflows. `ci.yml` is composed of twelve jobs — eleven checks and the deploy:
+There are two workflows. `ci.yml` is composed of fourteen jobs — thirteen checks and the deploy:
 
 ```
 backend-lint ──────────┐
 backend-test ──────────┼── sonarcloud
 backend-build ─────────┤
 frontend-lint ─────────┤
-frontend-typecheck ────┼────────────── deploy (main only)
-frontend-messages ─────┤
+frontend-typecheck ────┤
+frontend-messages ─────┼────────────── deploy (main only)
+frontend-test ─────────┤
 frontend-build ────────┤
+python-test ───────────┤
 openapi-drift ─────────┤
 barrels-drift ─────────┘
 migration-immutability   (PRs only, not a deploy gate)
 ```
 
-All check jobs run in parallel. `sonarcloud` depends on `backend-test` to consume the coverage report; it is **not** a deploy gate, and neither is `migration-immutability`. `deploy` depends on the nine jobs shown feeding into it and only runs on a push to `main`.
+All check jobs run in parallel, four at a time. `sonarcloud` depends on `backend-test` to consume the coverage report; it is **not** a deploy gate (`continue-on-error`), and neither is `migration-immutability`. `deploy` depends on the eleven jobs shown feeding into it and only runs on a push to `main`.
 
 `audit.yml` is the second workflow and holds one job, `npm-audit`. It is separate for the sake of its `schedule` trigger: a newly published advisory needs no push to become true, and putting a `schedule` on `ci.yml` would run all eleven of its jobs weekly to reach this one.
 
@@ -79,13 +95,12 @@ The job is **advisory**: it is in a different workflow from `deploy`, so it cann
 
 ### deploy
 
-Runs only on push to `main`, after the nine check jobs in its `needs:` list pass. It has five steps:
+Runs only on push to `main` (or a manual `workflow_dispatch` on `main`), after the eleven check jobs in its `needs:` list pass. It has four steps:
 
-1. **Log in to GHCR** — authenticates using `GITHUB_TOKEN` (automatically available, no manual secret needed).
-2. **Build and push backend image** — builds the `prod` target of `docker/backend/Dockerfile` and pushes `ghcr.io/<repository>/backend:latest` plus a `:<git sha>` tag. A second step builds the `migrate` target (shares the cached base layers) and pushes `backend-migrate` with the same tags.
-3. **Build and push scheduler image** — builds `docker/python-script/Dockerfile` and pushes `ghcr.io/<repository>/scheduler:latest` plus a `:<git sha>` tag. Without a build step and an `image:` the VPS runs whatever it last built locally, so a scheduler change reaches the repository and stops there, with no tag to roll back to either.
-4. **Build and push frontend image** — builds the `prod` target of `docker/frontend/Dockerfile` with two build args from repository secrets (`NEXT_PUBLIC_API_URL`, `FRONTEND_URL`) and `SENTRY_AUTH_TOKEN` passed as a BuildKit secret, and pushes `ghcr.io/<repository>/frontend:latest` plus a `:<git sha>` tag.
-5. **Deploy via SSH** — plain `ssh` from the runner (no third-party action holds the key): the runner writes the deploy key, pins the host key from the `VPS_HOST_KEY` secret (it is not discovered with `ssh-keyscan` — see *The deploy account* below), and pipes the deploy script to `bash -s` on the VPS as the `deploy` user (10-minute timeout). Secrets are passed as env vars, never expanded into the script text; the GHCR token travels as the first line of stdin.
+1. **Log in to GHCR** — with `GITHUB_TOKEN` (`packages: write`), its credentials kept under `$RUNNER_TEMP` rather than the runner's persistent `~/.docker`.
+2. **Build images** — plain `docker build` against the host daemon: the `prod` and `migrate` targets of `docker/backend/Dockerfile` (the second shares the first's cached layers), `docker/python-script/Dockerfile` for the scheduler, and the `prod` target of `docker/frontend/Dockerfile` with `NEXT_PUBLIC_API_URL` and `FRONTEND_URL` as build args and `SENTRY_AUTH_TOKEN` as a BuildKit secret. Each is tagged `ghcr.io/<repository>/<image>:latest` and `:<git sha>`. Without a build and an `image:` for the scheduler the VPS would run whatever it last built locally, with no tag to roll back to.
+3. **Push images** — this commit's two tags of each image, by name, never `--all-tags`: the daemon is long-lived, so `--all-tags` would re-send every SHA tag it has ever built. The SHA tag is then removed locally; `:latest` keeps the image.
+4. **Deploy via SSH** — plain `ssh` from the runner (no third-party action holds the key): the step normalises the deploy key (CRLF, missing final newline) and fails early if `ssh-keygen` cannot read it, pins the host key from the `VPS_HOST_KEY` secret (it is not discovered with `ssh-keyscan` — see *The deploy account* below), and pipes the deploy script to `bash -s` on the VPS as the `deploy` user (10-minute timeout). Secrets are passed as env vars, never expanded into the script text; the registry token travels as the first line of stdin.
 
 ---
 
@@ -96,18 +111,19 @@ The SSH deploy step runs the following sequence on the VPS:
 ```bash
 cd /opt/beyondthearc
 git pull
-echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+echo "$DEPLOY_REGISTRY_TOKEN" | docker login ghcr.io -u "$DEPLOY_REGISTRY_USER" --password-stdin
 # pin this commit's images (IMAGE_TAG is read by docker-compose.prod.yml)
 sed -i 's/^IMAGE_TAG=.*/IMAGE_TAG=<git sha>/' .env   # appended if absent
-docker image prune -af   # drop previous deploys' :SHA-tagged images
 docker compose --env-file .env \
   -f docker/docker-compose.yml \
   -f docker/docker-compose.prod.yml \
-  pull frontend backend
+  pull frontend backend migrate scheduler
 docker compose --env-file .env \
   -f docker/docker-compose.yml \
   -f docker/docker-compose.prod.yml \
   up -d
+docker image prune -af   # drop previous deploys' :SHA-tagged images
+# restart Prometheus/blackbox, then Grafana, if this deploy changed their config
 # poll backend /api/health/ready (up to 60s) and check the frontend
 # renders /en — exit 1 (failing the pipeline) if either is unhealthy
 docker system prune -f   # only after the health checks pass
@@ -123,7 +139,7 @@ The script above runs as **`deploy`**, an unprivileged account that owns `/opt/b
 
 One property of this worth knowing before relying on it: **`docker` group membership is root-equivalent.** Anyone who can talk to the Docker socket can start a container that bind-mounts `/`. So `deploy` is an audit-trail and accident-blast-radius boundary — a stray `rm` in the script hits only files it owns — and **not** a containment boundary against a leaked `VPS_SSH_KEY`. Bounding what a stolen key can *do* needs an `authorized_keys` forced command restricting it to a fixed script.
 
-Two prunes with different jobs: `docker image prune -af` (before the pull) removes images not referenced by any container — necessary because every deploy pins `:SHA`-tagged images, which are never *dangling* and would otherwise accumulate one pair per merge until the disk fills (this is what tripped the 90% disk health threshold in July 2026). Images used by running or stopped containers are kept, and every tag remains in GHCR, so rollback via `IMAGE_TAG` still re-pulls fine. `docker system prune -f` (after the health checks) clears dangling images and build cache produced by the deploy itself.
+Two prunes with different jobs: `docker image prune -af` (after the pull and `up -d`) removes images not referenced by any container — necessary because every deploy pins `:SHA`-tagged images, which are never *dangling* and would otherwise accumulate one pair per merge until the disk fills (this is what tripped the 90% disk health threshold in July 2026). Images used by running or stopped containers are kept, and every tag remains in GHCR, so rollback via `IMAGE_TAG` still re-pulls fine. It runs after the pull, not before: pruning first means a registry that refuses the login, or a tag that was never pushed, lands on a host whose previous images are already gone — production down with nothing local to roll back to. `docker system prune -f` (after the health checks) clears dangling images and build cache produced by the deploy itself.
 
 ### The VPS `.env`
 
@@ -141,7 +157,9 @@ The default `644` is not merely untidy here. `node-exporter` mounts `/:/rootfs:r
 
 | Secret                | Used by    | Purpose                                                                   |
 | --------------------- | ---------- | ------------------------------------------------------------------------- |
-| `GITHUB_TOKEN`        | deploy     | Authenticate with GHCR to push and pull images (auto-provided by Actions) |
+| `GITHUB_TOKEN`        | deploy     | Push images to GHCR from the runner (auto-provided by Actions)            |
+| `DEPLOY_REGISTRY_USER`  | deploy   | GitHub username the VPS logs in to GHCR with                              |
+| `DEPLOY_REGISTRY_TOKEN` | deploy   | Classic PAT with `read:packages` only, for the VPS's GHCR login           |
 | `SONAR_TOKEN`         | sonarcloud | Authenticate with SonarCloud                                              |
 | `SENTRY_AUTH_TOKEN`   | deploy     | Upload source maps to Sentry during frontend image build                  |
 | `NEXT_PUBLIC_API_URL` | deploy     | Public API URL baked into the frontend bundle at build time               |
@@ -149,8 +167,9 @@ The default `644` is not merely untidy here. `node-exporter` mounts `/:/rootfs:r
 | `VPS_HOST`            | deploy     | IP address or hostname of the VPS                                         |
 | `VPS_USER`            | deploy     | SSH username on the VPS — the unprivileged `deploy` account               |
 | `VPS_SSH_KEY`         | deploy     | Private SSH key for VPS access                                            |
+| `VPS_HOST_KEY`        | deploy     | Pinned host key material (`ssh-ed25519 AAAA…`), not a `known_hosts` line  |
 
-`GITHUB_TOKEN` is automatically provided by GitHub Actions and does not need to be created manually. All other secrets are configured in the repository settings under Actions secrets.
+`GITHUB_TOKEN` is automatically provided by GitHub Actions and does not need to be created manually. It is not what the VPS logs in with: it expires with the job, and the VPS keeps its login, so a later manual `docker compose pull` there needs a token that is still valid — hence the separate `DEPLOY_REGISTRY_TOKEN`. All other secrets are configured in the repository settings under Actions secrets.
 
 ---
 

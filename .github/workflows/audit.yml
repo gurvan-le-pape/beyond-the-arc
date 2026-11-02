@@ -21,7 +21,7 @@ concurrency:
 jobs:
   npm-audit:
     name: Dependencies – Advisory audit
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, wsl]
 
     steps:
       - name: Checkout
