@@ -1,9 +1,9 @@
 // src/frontend/app/[locale]/(chrome)/docs/page.tsx
 "use client";
 
-import * as Accordion from "@radix-ui/react-accordion";
 import { BookOpen } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { DisclosureGroup } from "react-aria-components";
 
 import {
   DocsBestPracticesSection,
@@ -57,10 +57,8 @@ export default function DocsPage() {
         </Grid>
       </div>
 
-      <Accordion.Root
-        type="single"
-        collapsible
-        defaultValue="database"
+      <DisclosureGroup
+        defaultExpandedKeys={["database"]}
         className="space-y-4 mb-12"
       >
         {sections.map((section) => (
@@ -84,7 +82,7 @@ export default function DocsPage() {
             )}
           </DocsSectionAccordion>
         ))}
-      </Accordion.Root>
+      </DisclosureGroup>
     </PageLayout>
   );
 }
