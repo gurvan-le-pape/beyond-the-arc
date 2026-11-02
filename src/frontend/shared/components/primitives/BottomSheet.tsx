@@ -2,7 +2,6 @@
 "use client";
 
 import { X } from "lucide-react";
-import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { UNSAFE_PortalProvider } from "react-aria";
 
@@ -15,6 +14,8 @@ interface BottomSheetProps {
   readonly title: string;
   readonly children: React.ReactNode;
   readonly footer?: React.ReactNode;
+  /** Copy the sheet cannot know: the names of its drag handle and close button. */
+  readonly labels: { readonly close: string; readonly dragToClose: string };
 }
 
 /**
@@ -39,8 +40,8 @@ export function BottomSheet({
   title,
   children,
   footer,
+  labels,
 }: BottomSheetProps) {
-  const tCommon = useTranslations("common");
   const dialogRef = useModalDialog(isOpen);
   const dragStartY = useRef<number | null>(null);
   // The offset is read from a ref in `handleDragEnd` so that callback can be
@@ -106,7 +107,7 @@ export function BottomSheet({
     >
       <button
         type="button"
-        aria-label={tCommon("dragToClose")}
+        aria-label={labels.dragToClose}
         className="flex justify-center pt-3 pb-1 cursor-grab active:cursor-grabbing touch-none w-full"
         onTouchStart={(e) => handleDragStart(e.touches[0].clientY)}
         onTouchMove={(e) => handleDragMove(e.touches[0].clientY)}
@@ -132,7 +133,7 @@ export function BottomSheet({
           type="button"
           onClick={onClose}
           className="p-1.5 rounded-button text-text-muted hover:bg-surface-subtle transition-colors"
-          aria-label={tCommon("close")}
+          aria-label={labels.close}
         >
           <X className="w-5 h-5" />
         </button>

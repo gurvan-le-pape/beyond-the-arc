@@ -66,6 +66,11 @@ export function ClubComboBoxFilter({
 
   return (
     <ComboBox
+      labels={{
+        clear: tCommon("clearSelection"),
+        loading: tCommon("loading"),
+        empty: tCommon("empty"),
+      }}
       label={tCommon("filters.clubs")}
       placeholder={tCommon("filters.allClubs")}
       options={clubOptions}

@@ -2,7 +2,6 @@
 "use client";
 
 import { X } from "lucide-react";
-import { useTranslations } from "next-intl";
 import React, { useId, useRef, useState } from "react";
 import { Button, Dialog, DialogTrigger, Popover } from "react-aria-components";
 
@@ -77,6 +76,15 @@ export interface MultiSelectProps {
   /** One labelled group of checkboxes each, side by side, divided by rules. */
   readonly columns: MultiSelectColumn[];
   readonly className?: string;
+  /**
+   * Copy the panel cannot know: the trigger's name for a given number of
+   * picks, the close button's name, and the clear button's text.
+   */
+  readonly labels: {
+    readonly summary: (selectedCount: number) => string;
+    readonly close: string;
+    readonly clear: string;
+  };
 }
 
 /**
@@ -103,8 +111,8 @@ export function MultiSelect({
   onClear,
   columns,
   className,
+  labels,
 }: MultiSelectProps) {
-  const t = useTranslations("common");
   const [isOpen, setIsOpen] = useState(false);
   const closeRef = useRef<HTMLButtonElement>(null);
 
@@ -113,10 +121,7 @@ export function MultiSelect({
       <DialogTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
         <div className="relative w-fit">
           <Button
-            aria-label={t("multiSelectSummary", {
-              label,
-              count: selectedCount,
-            })}
+            aria-label={labels.summary(selectedCount)}
             className={cn(
               DROPDOWN_TRIGGER_BASE,
               "text-left flex items-center gap-2",
@@ -153,7 +158,7 @@ export function MultiSelect({
                 ref={closeRef}
                 type="button"
                 onClick={() => setIsOpen(false)}
-                aria-label={t("close")}
+                aria-label={labels.close}
                 className={cn(
                   "h-6 w-6 flex items-center justify-center rounded",
                   "text-text-muted",
@@ -199,7 +204,7 @@ export function MultiSelect({
                     "transition-colors duration-150",
                   )}
                 >
-                  {t("clearSelection")}
+                  {labels.clear}
                 </button>
               </>
             )}

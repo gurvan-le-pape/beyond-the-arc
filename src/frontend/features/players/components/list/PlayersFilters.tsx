@@ -134,6 +134,7 @@ export function PlayersFilters({ filters, set, onReset }: PlayersFiltersProps) {
 
       <Grid columns={{ base: 1, md: 2, lg: 4 }} gap={4}>
         <DebouncedSearchField
+          labels={{ clear: tCommon("clearSearch") }}
           label={tPlayers("filters.searchName")}
           value={q ?? ""}
           placeholder={tPlayers("filters.searchNamePlaceholder")}

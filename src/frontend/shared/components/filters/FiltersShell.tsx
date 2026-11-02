@@ -40,6 +40,7 @@ function FiltersSheet({
 }: FiltersSheetProps) {
   const [isOpen, setIsOpen] = useState(false);
   const tFilters = useTranslations("filters");
+  const tCommon = useTranslations("common");
 
   const hasActiveFilters = activeFilterCount > 0;
 
@@ -79,6 +80,10 @@ function FiltersSheet({
       </Button>
 
       <BottomSheet
+        labels={{
+          close: tCommon("close"),
+          dragToClose: tCommon("dragToClose"),
+        }}
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         title={title}

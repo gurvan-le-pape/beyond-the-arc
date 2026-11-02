@@ -13,6 +13,7 @@ import { HeroSearch } from "./HeroSearch";
  */
 export function HomeHero() {
   const t = useTranslations("home.hero");
+  const tCommon = useTranslations("common");
   const locale = useLocale();
 
   return (
@@ -43,6 +44,7 @@ export function HomeHero() {
           label={t("searchLabel")}
           placeholder={t("searchPlaceholder")}
           submit={t("searchSubmit")}
+          clearLabel={tCommon("clearSearch")}
         />
       </div>
     </section>

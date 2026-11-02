@@ -44,6 +44,7 @@ export function SearchableLinkList<T extends SearchableLinkListItem>({
   showSearch = true,
 }: SearchableLinkListProps<T>) {
   const tCompetitions = useTranslations("competitions");
+  const tCommon = useTranslations("common");
 
   const [search, setSearch] = useState("");
 
@@ -67,6 +68,7 @@ export function SearchableLinkList<T extends SearchableLinkListItem>({
       {showSearch && (
         <div className="mb-4 max-w-xs">
           <SearchField
+            labels={{ clear: tCommon("clearSearch") }}
             aria-label={title}
             value={search}
             placeholder={searchPlaceholder}
