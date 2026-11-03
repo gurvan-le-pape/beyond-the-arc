@@ -37,7 +37,7 @@
     "date-fns": "^4.1.0",
     "html-to-image": "^1.11.13",
     "lucide-react": "^0.563.0",
-    "maplibre-gl": "^5.18.0",
+    "maplibre-gl": "^6.16.0",
     "next": "^15.5.29",
     "next-intl": "^4.8.2",
     "next-themes": "^0.4.6",
@@ -45,7 +45,7 @@
     "react-aria": "^3.53.1",
     "react-aria-components": "^1.22.1",
     "react-dom": "^19.2.0",
-    "react-map-gl": "^8.1.0",
+    "react-map-gl": "^8.1.3",
     "react-zoom-pan-pinch": "^4.0.3",
     "tailwind-merge": "^3.4.0"
   },
