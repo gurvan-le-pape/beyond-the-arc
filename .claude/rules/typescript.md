@@ -66,7 +66,7 @@ TypeScript 6.0 is a transition release toward the 7.0 native rewrite. It **chang
 
 ## Command line
 
-- Running `tsc someFile.ts` now **errors** (`TS5112`) when a `tsconfig.json` is present, because the config would be ignored. Use `tsc --noEmit` to check the project (`src/frontend` exposes a `typecheck` script; `src/backend` has **none** and is type-checked only through `build` and `test`) or `tsc --ignoreConfig someFile.ts` for a genuine one-off. `[upstream]`+`[manifest]`
+- Running `tsc someFile.ts` now **errors** (`TS5112`) when a `tsconfig.json` is present, because the config would be ignored. Use `tsc --noEmit` to check the project (both applications expose a `typecheck` script; the backend's is `tsc --noEmit -p tsconfig.json`, which covers the specs and needs no `prisma generate`) or `tsc --ignoreConfig someFile.ts` for a genuine one-off. `[upstream]`+`[manifest]`
 - `--stableTypeOrdering` makes 6.0 match 7.0's deterministic type ordering. It is a compatibility-testing tool and costs up to ~25% type-check time — do not enable it in the normal `typecheck` script. `[upstream]`
 
 ## Writing code

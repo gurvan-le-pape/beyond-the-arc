@@ -127,7 +127,7 @@ Validation errors return an array of messages:
     "level must be either \"regional\" or \"departmental\"",
     "clubId must be a valid number"
   ],
-  "error": "BadRequestException",
+  "error": "Bad Request",
   "path": "/api/players?level=invalid&clubId=abc",
   "timestamp": "2024-02-05T10:00:00Z"
 }
@@ -137,13 +137,13 @@ Validation errors return an array of messages:
 
 ## Caching
 
-Response caching is applied at the route level using a custom `CacheInterceptor` backed by NestJS's global `CacheModule` (in-memory, max 100 entries). Three TTL tiers are defined:
+Response caching is applied at the route level using a custom `CacheInterceptor` backed by NestJS's global `CacheModule` (in-memory, bounded at `CACHE_MAX_ENTRIES` = 500 entries). Three TTL tiers are in use:
 
-| Tier            | TTL        | Applied to                                               |
-| --------------- | ---------- | -------------------------------------------------------- |
-| `STATIC_DATA`   | 10 minutes | Leagues, club stats by region — rarely changes           |
-| `MODERATE_DATA` | 5 minutes  | Pools, leaderboards, matches list, clubs, teams, players |
-| `DYNAMIC_DATA`  | 60 seconds | Platform stats — match counts change on weekends         |
+| Tier            | TTL        | Applied to                                                          |
+| --------------- | ---------- | ------------------------------------------------------------------- |
+| `STATIC_DATA`   | 10 minutes | Leagues, club stats by region — rarely changes                      |
+| `MODERATE_DATA` | 5 minutes  | List endpoints, filter values, pool matches, player shots           |
+| `DYNAMIC_DATA`  | 60 seconds | Platform stats and recent pools — they move with every simulated round |
 
 Endpoints that return a single resource by ID (e.g. `GET /clubs/:id`, `GET /matches/:matchId`) are generally not cached, as they are accessed less frequently and may reflect recent changes.
 
@@ -218,7 +218,6 @@ Leagues are the top level of the French basketball hierarchy. The list is stable
 | GET    | `/clubs/all`                 | All clubs unfiltered (for map initialisation)         | 5 min  |
 | GET    | `/clubs/stats/by-region`     | Club counts grouped by league/region                  | 10 min |
 | GET    | `/clubs/stats/by-department` | Club counts grouped by committee, optional `leagueId` | 5 min  |
-| GET    | `/clubs/departments`         | All departments with club counts and region info      | 5 min  |
 | GET    | `/clubs/:id`                 | Single club with full team detail                     | No     |
 
 `GET /clubs` supports filtering by `level`, `committeeId`, `leagueId`, `category`, `gender`, and `search` (club name, case-insensitive), with `page` and `limit` for pagination.
@@ -227,21 +226,18 @@ Leagues are the top level of the French basketball hierarchy. The list is stable
 
 `GET /clubs/:id` returns full detail including all of the club's teams, their pool assignment, championship, and current leaderboard position.
 
-**Note:** the `/clubs/stats/*` and `/clubs/departments` routes must be registered before `/:id` in the controller to avoid NestJS interpreting `stats` and `departments` as ID parameters. They are.
+**Note:** the `/clubs/stats/*` and `/clubs/all` routes must be registered before `/:id` in the controller to avoid NestJS interpreting `stats` and `all` as ID parameters. They are.
 
 ---
 
 ### Championships — `/api/championships`
 
-| Method | Path                       | Description                                        | Cached |
-| ------ | -------------------------- | -------------------------------------------------- | ------ |
-| GET    | `/championships`           | Championships, optionally filtered by level and ID | 5 min  |
-| GET    | `/championships/divisions` | Distinct list of all division numbers              | 10 min |
-| GET    | `/championships/:id`       | Single championship by ID                          | No     |
+| Method | Path                 | Description                     | Cached |
+| ------ | -------------------- | ------------------------------- | ------ |
+| GET    | `/championships`     | Paginated championships         | 5 min  |
+| GET    | `/championships/:id` | Single championship by ID       | No     |
 
-`GET /championships` accepts two optional query parameters: `level` (`regional` or `departmental`) and `id` (league ID for regional, committee ID for departmental). Both must be provided together — omitting both returns all championships. The `id` parameter doubles as either a `leagueId` or `committeeId` depending on the `level` value, resolved in the service layer.
-
-`GET /championships/divisions` returns a flat array of distinct division numbers (e.g. `[1, 2, 3]`). This is used to populate division filter dropdowns and is cached at 10 minutes as the set of divisions is stable within a season.
+`GET /championships` supports filtering by `level`, `leagueId`, `committeeId`, `category`, and `gender`, with `page` and `limit` for pagination.
 
 ---
 
@@ -250,6 +246,7 @@ Leagues are the top level of the French basketball hierarchy. The list is stable
 | Method | Path         | Description                                              | Cached |
 | ------ | ------------ | -------------------------------------------------------- | ------ |
 | GET    | `/pools`     | All pools for a championship (`championshipId` required) | 5 min  |
+| GET    | `/pools/recent` | Up to 10 pools that played the most recent round      | 60 sec |
 | GET    | `/pools/:id` | Single pool by ID                                        | No     |
 
 `championshipId` is a required query parameter on `GET /pools` — passing an invalid value returns a `400`.
@@ -272,16 +269,16 @@ Results are sorted by competition points and point difference. Leaderboard rows 
 | Method | Path                               | Description                                         | Cached |
 | ------ | ---------------------------------- | --------------------------------------------------- | ------ |
 | GET    | `/matches`                         | Paginated matches with filters                      | 5 min  |
-| GET    | `/matches/all`                     | All match IDs unfiltered (for sitemap generation)   | 5 min  |
+| GET    | `/matches/pool/:poolId`            | All matches of a pool, unpaginated, by date         | 5 min  |
 | GET    | `/matches/:matchId`                | Single match with full detail                       | No     |
 | GET    | `/matches/:matchId/player-stats`   | Player statistics for a match, grouped by team      | No     |
 | GET    | `/matches/:matchId/events`         | All events for a match, ordered by `occurredAt`     | No     |
-| GET    | `/matches/team/:teamId/events`     | All shot events for a team across all their matches | No     |
-| GET    | `/matches/player/:playerId/events` | All shot events for a player across all matches     | No     |
+| GET    | `/matches/team/:teamId/shots`      | Every shot a team took across its matches           | No     |
+| GET    | `/matches/player/:playerId/shots`  | Every shot a player took across their matches       | 5 min  |
 
 `GET /matches` supports the most extensive filter set in the API: `level`, `division`, `committeeId`, `leagueId`, `category`, `gender`, `poolId`, `championshipId`, `matchday`, `date` (YYYY-MM-DD), and `search` (club name). Default pagination: `page: 1`, `limit: 50`, max `limit: 100`.
 
-The two shot event endpoints (`/team/:teamId/events`, `/player/:playerId/events`) return all shot events with coordinates and are used to populate shot charts on team and player profile pages.
+The two shot endpoints (`/team/:teamId/shots`, `/player/:playerId/shots`) return every shot with its coordinates and event type, and feed the shot charts on team and player pages. The team one is uncached on purpose: a season of team shots (~60 KB) exceeds the per-entry size the bounded cache was sized for.
 
 ---
 
@@ -290,7 +287,6 @@ The two shot event endpoints (`/team/:teamId/events`, `/player/:playerId/events`
 | Method | Path                   | Description                                             | Cached |
 | ------ | ---------------------- | ------------------------------------------------------- | ------ |
 | GET    | `/teams`               | Paginated teams with filters                            | 5 min  |
-| GET    | `/teams/all`           | All team IDs unfiltered (for sitemap generation)        | 5 min  |
 | GET    | `/teams/filter-values` | Available filter values scoped to a committee or league | 5 min  |
 | GET    | `/teams/:id`           | Single team with players and recent matches             | No     |
 | GET    | `/teams/:id/matches`   | Match history for a team, most recent first             | No     |
@@ -304,11 +300,11 @@ The two shot event endpoints (`/team/:teamId/events`, `/player/:playerId/events`
 | Method | Path                   | Description                                           | Cached |
 | ------ | ---------------------- | ----------------------------------------------------- | ------ |
 | GET    | `/players`             | Paginated players with filters                        | 5 min  |
-| GET    | `/players/all`         | All player IDs unfiltered (for sitemap generation)    | 5 min  |
+| GET    | `/players/filter-values` | Available jersey and team numbers, optionally scoped | 5 min  |
 | GET    | `/players/:id`         | Single player with team detail                        | No     |
 | GET    | `/players/:id/matches` | Match history with per-match stats, most recent first | No     |
 
-`GET /players` supports filtering by `level`, `clubId`, `teamId`, `teamNumber`, `number` (jersey), `committeeId`, `leagueId`, `category`, `gender`, and `name` (case-insensitive search).
+`GET /players` supports filtering by `level`, `clubId`, `teamId`, `teamNumber`, `number` (jersey), `committeeId`, `leagueId`, `category`, `gender`, and `search` (player name, case-insensitive).
 
 `GET /players/:id/matches` returns each match the player appeared in, with their full stat line: points, rebounds (total, offensive, defensive), assists, steals, blocks, turnovers, fouls, three-point shooting, and `playtimeIntervals` — an array of `[start_sec, end_sec]` pairs representing their on-court stints.
 
@@ -320,7 +316,7 @@ The two shot event endpoints (`/team/:teamId/events`, `/player/:playerId/events`
 | ------ | -------- | --------------------------- | ------ |
 | GET    | `/stats` | Platform-wide entity counts | 60 sec |
 
-Returns aggregate counts for clubs, teams, players, matches, leagues, and committees. Used on the homepage. Cached at 60 seconds rather than 5 minutes because match counts change continuously on weekends.
+Returns aggregate counts for clubs, teams, players, matches, leagues, and committees. Used on the homepage, the about page and the organizations landing. Cached at 60 seconds rather than 5 minutes because match counts move with every simulated round.
 
 ---
 
@@ -346,6 +342,6 @@ Exposed at `/metrics` (outside the `/api` prefix) for Prometheus scraping. Retur
 
 Sharper than it reads, now that the envelope is described in the contract rather than only in prose: a paginated endpoint sends the pagination numbers **twice**, once inside `data` and once in `meta`, and they are not the same numbers — `data.total` is the size of the result set while `meta.count` is the length of the page. `page`, `limit` and `totalPages` are straight duplicates. Unifying them is a breaking wire change and is not scheduled; until then, `ApiPageMetaDto`'s property descriptions say which is which.
 
-**`/matches/team/:teamId/events` and `/matches/player/:playerId/events` are under `/matches`.** These endpoints are scoped to a team or player but live under the matches controller. This is a pragmatic grouping — they return match event data — but it is not immediately obvious from the URL that `/matches/team/:teamId/events` and `/teams/:id/matches` are different resources serving different purposes.
+**`/matches/team/:teamId/shots` and `/matches/player/:playerId/shots` are under `/matches`.** These endpoints are scoped to a team or player but live under the matches controller. This is a pragmatic grouping — they return match event data — but it is not immediately obvious from the URL that `/matches/team/:teamId/shots` and `/teams/:id/matches` are different resources serving different purposes.
 
 **No search endpoint.** Global search across teams, players, and matches (as used by the frontend search page) is handled by multiple parallel requests to the filtered list endpoints rather than a dedicated search endpoint. This works at the current scale but is not efficient.

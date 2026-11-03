@@ -10,7 +10,7 @@ The API is read-only and fully public — no auth.
 
 ## Commands
 
-The **services** run in Docker Compose — dev servers, database, scheduler, migrations — and `make` targets wrap `docker compose` (see `Makefile`). The **static checks do not**: after an `npm ci` in the project, lint, format, typecheck, `check:messages` and both builds run bare-metal. That is what CI does — nine jobs install through `.github/actions/setup-app` with a `working-directory` of `src/backend`, `src/frontend` or the repo root, on a runner with no compose stack.
+The **services** run in Docker Compose — dev servers, database, scheduler, migrations — and `make` targets wrap `docker compose` (see `Makefile`). The **static checks do not**: after an `npm ci` in the project, lint, format, typecheck, `check:messages` and both builds run bare-metal. That is what CI does — the check jobs run `npm ci` in `src/backend`, `src/frontend` or the repo root, on a runner with no compose stack.
 
 Run them from inside the owning project, not the repo root: ESLint walks up from the cwd for its flat config, so from the root it exits **2** — a configuration error, not a lint failure — and Prettier reads `.prettierignore` relative to the cwd, so the root and each project carry separate ignore lists that have to agree. The one local exception is the backend's `npm run test` and `npm run build`: both begin with `prisma generate`, which fails `EACCES` on a machine that has run the containers, since `src/backend/prisma/generated/` is then owned by root. Run those two in the container.
 

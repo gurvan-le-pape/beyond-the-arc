@@ -300,6 +300,51 @@ migration-immutability:
       exit 1
 
 # ==============================================================================
+# DEPENDENCY AUDIT
+# ==============================================================================
+# Advisory, like sonarcloud: not in `deploy`'s `needs`, so a new advisory reports
+# without blocking a release. It fails only on a critical one. High and moderate
+# advisories are common in transitive devDependencies and mostly unreachable
+# here, and failing on them would turn the job red every week until the colour
+# meant nothing.
+#
+# No `npm ci`: `npm audit` resolves against the lockfile and the registry, not an
+# installed tree. Three runs because there are no workspaces — the root, the
+# backend and the frontend each own a lockfile.
+npm-audit:
+  stage: check
+  script:
+    - |
+      set -u
+      criticals=0
+      for dir in . src/backend src/frontend; do
+        # `npm audit` exits non-zero whenever it finds anything, so its status
+        # says nothing useful. The counts are the signal.
+        report=$(cd "$dir" && npm audit --json 2>/dev/null || true)
+        # A parse failure means the audit did not run (network, broken
+        # lockfile). Fail rather than report zeros, which would read as clean.
+        counts=$(printf '%s' "$report" | node -e '
+          let raw = "";
+          process.stdin.on("data", (d) => (raw += d));
+          process.stdin.on("end", () => {
+            const v = JSON.parse(raw).metadata.vulnerabilities;
+            process.stdout.write([v.critical, v.high, v.moderate, v.low, v.total].join(" "));
+          });
+        ') || { echo "ERROR: npm audit produced no parseable report in $dir"; exit 1; }
+        set -- $counts
+        echo "$dir: critical=$1 high=$2 moderate=$3 low=$4 total=$5"
+        criticals=$((criticals + $1))
+      done
+      if [ "$criticals" -gt 0 ]; then
+        echo "ERROR: $criticals critical advisory/advisories across the three lockfiles. Run 'npm audit' in each project."
+        exit 1
+      fi
+      echo "No critical advisories."
+  # A red check, not a red pipeline: without this a new advisory would fail
+  # every pipeline and block every merge request until it was fixed.
+  allow_failure: true
+
+# ==============================================================================
 # SONARCLOUD
 # ==============================================================================
 # Advisory: `deploy` deliberately does not list it in `needs`, so a failed

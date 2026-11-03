@@ -1,7 +1,7 @@
 # GitLab migration — runner, variables, VPS
 
-Operational companion to `.gitlab-ci.yml`. `docs/ci-cd.md` still describes the
-GitHub Actions pipeline and is stale until it is rewritten.
+Operational companion to `.gitlab-ci.yml`. The pipeline itself is described in
+`docs/ci-cd.md`.
 
 ## Why a self-hosted runner
 
@@ -50,9 +50,10 @@ raise it only if that proves slow.
 
 WSL note: the runner only executes while WSL is up. `ci.yml`'s triggers are
 pushes and merge requests, which only happen while you are working, so this
-costs nothing — except `audit.yml`'s weekly cron, which has no equivalent here
-yet. Port it as a scheduled pipeline and let it run on GitLab's shared runners:
-it is a few minutes a week and fits the free quota.
+costs nothing. `npm-audit` runs with every pipeline rather than on
+`audit.yml`'s weekly cron; a scheduled run would have to execute on GitLab's
+shared runners (a few minutes a week, within the free quota) and needs every
+other job excluded from `schedule` pipelines first.
 
 ## CI/CD variables
 
@@ -126,8 +127,7 @@ analysis's 34k and 4 — and SonarCloud refuses a CI analysis while it is on.
 
 ## Still to do
 
-- Rewrite `docs/ci-cd.md`, which documents the GitHub pipeline.
-- Port `.github/workflows/audit.yml` as a scheduled pipeline.
+- Run `npm-audit` on a weekly schedule as well (see the WSL note above).
 - Replace Dependabot, which has no GitLab equivalent, with Renovate.
 - Give the disk alert an off-host heartbeat. When the Next.js cache filled the
   VPS disk (27.4 GB in the frontend container's layer, 38 GB total; the cache is
