@@ -47,7 +47,7 @@ pools ──< teams (pool assignment)
 
 ### Championships
 
-Championships carry a `level` (`departmental`, `regional`, or `national`), a `category` (U11 through Seniors), a `gender`, a `division` number, and a `season_year`. A check constraint enforces organisational consistency: departmental championships must reference both a committee and a league, regional and national championships reference only a league.
+Championships carry a `level` (`departmental`, `regional`, or `national`), a `category` (U11 through Seniors), a `gender`, a `division` number, and a `season_year`. A check constraint enforces organisational consistency: departmental championships must reference both a committee and a league, regional and national championships reference only a league. For the same reason both foreign keys are `ON DELETE RESTRICT`: a committee or league that runs a championship cannot be deleted, since nulling the reference would break this rule.
 
 A unique constraint across `(season_year, category, gender, level, division, committee_id, league_id)` prevents duplicate championships from being created, which is particularly important given the idempotent season generation process.
 
@@ -69,14 +69,21 @@ Players belong to a team and carry a jersey `number`, which is unique per team. 
 
 Each team assigned to a pool gets a leaderboard row tracking wins, losses, forfeits, points scored and conceded, point difference, and competition points (2 for a win, 1 for a loss, 0 for a forfeit). Leaderboard rows are maintained automatically by database triggers — see [Leaderboard triggers](#leaderboard-triggers) below.
 
+Because only the triggers write these rows, CHECK constraints guard what they write: every counter is non-negative (`leaderboards_counters_non_negative`), games played are wins plus losses plus forfeits (`leaderboards_games_add_up`), and the point difference is points for minus points against (`leaderboards_difference_matches`). A trigger that miscounts fails the match write instead of storing a wrong standing.
+
 ### Matches
 
 Matches belong to a pool and reference home and away teams. Scores are nullable — a match starts with no result and is filled in by the Python pipeline when simulated. The `status` field tracks the match through its lifecycle (`scheduled → generating → completed`, or `failed`).
 
-Two constraints are worth noting:
+The rules a match row obeys are CHECK constraints, so a scheduler bug is rejected at the write rather than stored:
 
-- `no_draws_allowed` — a check constraint prevents equal scores from being persisted. Draws do not exist in basketball, and the pipeline enforces this at the application level too, but the constraint provides a hard guarantee at the database level.
-- `forfeit` and `overtime` are boolean flags handled separately from the score, since a forfeit still has a score (0–20 by convention) and overtime affects how statistics are interpreted.
+- `matches_status_check` — `status` is one of `scheduled`, `generating`, `completed`, `failed`. The leaderboard triggers compare against `'completed'`, so any other spelling would leave the standings untouched without an error.
+- `matches_scores_paired` and `matches_result_iff_completed` — a result is both scores, and a match has one exactly when it is `completed`.
+- `matches_scores_non_negative`, `matches_distinct_teams` — no negative score, no team playing itself.
+- `matches_flags_need_result` — `forfeit` and `overtime` are set only on a completed match. They are flags beside the score, not part of it: a forfeit still has a score (0–20 by convention), and overtime changes how the statistics read.
+- `no_draws_allowed` — the two scores differ. Draws do not exist in basketball.
+
+All but `no_draws_allowed` are in `20261103120000_match_integrity_checks`, added `NOT VALID` and validated by the next migration so that neither step holds an exclusive lock on `matches` during a scan.
 
 ---
 
@@ -166,4 +173,4 @@ The `seeding_checkpoints` table is used exclusively by the Python pipeline to tr
 
 **No cross-check between a team's organisational lineage and its competition lineage** — a team belongs to a club, which belongs to a committee (a permanent, org-side fact); a team is also assigned to a pool, which belongs to a championship run by a committee or league (a seasonal, competition-side fact). Both facts are real and both are needed, but nothing enforces that they agree — a team could in principle be pool-assigned into a championship run by a different committee than its own club's. In practice this can't happen because pools are only ever populated from a committee's/league's own team list in the first place, so it's a structural gap rather than an observed bug.
 
-**Leaderboard counters can go negative** — the delete trigger decrements counters directly with no floor check. Deleting a match that was never properly counted would produce negative values.
+**A completed match's result cannot be corrected in place** — the update trigger acts only on the transition to `completed`, so changing the score of a match that is already completed leaves the standings on the old score. Deleting that match afterwards subtracts the new score from counters that hold the old one; the leaderboard CHECK constraints reject that delete rather than store inconsistent counters. A correction therefore means resetting the match (scores to NULL, status back to `scheduled`) through a path that also reverses its standing, which no trigger provides today.
