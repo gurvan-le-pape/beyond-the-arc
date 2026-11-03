@@ -83,4 +83,4 @@ This layout is in place: `instrumentation.ts`, `instrumentation-client.ts`, `sen
 
 ## Before opening a PR
 
-From `src/frontend`: `npm run typecheck`, `npm run lint`, `npm run format:check`. There is no test script — see `testing.md`. `[manifest]`
+From `src/frontend`: `npm run typecheck`, `npm run lint`, `npm run format:check`. `npm run test` (`vitest run`) — see `testing.md`. `[manifest]`

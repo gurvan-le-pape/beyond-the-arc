@@ -88,8 +88,7 @@ Both applications: `@typescript-eslint/eslint-plugin` + `parser` (`8.59.3`), `es
 - Do **not** add `prettier-plugin-organize-imports` to an application's `plugins` array — it belongs to the root project and resolves a different TypeScript. See `imports-and-barrels.md`. `[manifest]`+`[upstream]`
 - Never set `parser` at the top level of a Prettier config; it belongs only inside `overrides`, so automatic parser inference keeps working for every other file type. `[upstream]`
 - Config file precedence is `package.json` `"prettier"` key → `.prettierrc` → `.prettierrc.json`/`.yml`/`.yaml`/`.json5` → `.js`/`.ts` → `.mjs`/`.mts` → `.cjs`/`.cts` → `.prettierrc.toml`. Keep exactly one per project. `[upstream]`
-- Both applications expose `format` (`prettier --write .`) and the frontend also exposes `format:check` (`prettier --check .`). Use `--check` in CI; it is non-mutating and exits non-zero on drift. `[manifest]`+`[principle]`
-- The backend has **no `format:check` script**. Add one if you gate formatting in CI for the backend. `[manifest]`
+- Both applications expose `format` (`prettier --write .`) and `format:check` (`prettier --check .`). Use `--check` in CI; it is non-mutating and exits non-zero on drift. `[manifest]`+`[principle]`
 - Formatting is never a code-review topic. If people are arguing about it, the config is wrong — fix the config, not the diff. `[principle]`
 
 ## Division of labour

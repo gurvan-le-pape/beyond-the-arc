@@ -60,7 +60,7 @@ The stack uses a base-plus-override pattern across four Compose files:
 | -------------------------- | ------------------------------------------------------------------------------- |
 | `docker-compose.yml`       | Base definitions: all services, ports, environment variables, networks, volumes |
 | `docker-compose.dev.yml`   | Dev overrides: source-mounted volumes, dev build targets, hot reload            |
-| `docker-compose.prod.yml`  | Prod overrides: prebuilt GHCR images, `NODE_ENV=production`, external volume    |
+| `docker-compose.prod.yml`  | Prod overrides: prebuilt registry images, `NODE_ENV=production`, external volume |
 | `docker-compose.sonar.yml` | Standalone SonarQube instance for local code quality analysis                   |
 
 In development, the base and dev files are merged:
@@ -69,7 +69,7 @@ In development, the base and dev files are merged:
 docker-compose -f docker/docker-compose.yml -f docker/docker-compose.dev.yml --env-file .env up -d --build
 ```
 
-In production, the base and prod files are merged instead. The prod override replaces the `build` directives with prebuilt images pulled from GHCR, so no build step runs on the VPS.
+In production, the base and prod files are merged instead. The prod override replaces the `build` directives with prebuilt images pulled from the container registry (`REGISTRY_IMAGE` in the VPS `.env`), so no build step runs on the VPS.
 
 A `Makefile` wraps these commands for convenience — `make up-dev`, `make up-prod`, `make down`, and so on.
 
@@ -81,7 +81,7 @@ A `Makefile` wraps these commands for convenience — `make up-dev`, `make up-pr
 
 A Next.js 15 application served on port 3000.
 
-In development, the source directory is bind-mounted into the container and the dev server runs with hot reload. In production, the image is built in CI, pushed to GHCR, and pulled onto the VPS — no build happens on the server.
+In development, the source directory is bind-mounted into the container and the dev server runs with hot reload. In production, the image is built in CI, pushed to the container registry, and pulled onto the VPS — no build happens on the server.
 
 Three environment variables are passed as both build args and runtime env vars: `NEXT_PUBLIC_API_URL`, `INTERNAL_API_URL`, and `FRONTEND_URL`. The `NEXT_PUBLIC_` prefix makes the API URL available in the browser bundle. `INTERNAL_API_URL` is used for server-side rendering inside the Docker network, where the frontend container reaches the backend directly by service name rather than going through Nginx. `SENTRY_AUTH_TOKEN` is passed as a BuildKit secret mount, exposed only to the `npm run build` step — it is needed at build time for Sentry source map upload and never enters the image config or its layers (a build arg would persist in the image metadata on GHCR).
 
@@ -89,7 +89,7 @@ Three environment variables are passed as both build args and runtime env vars: 
 
 A NestJS 11 application served on port 4000.
 
-In development, the source directory is bind-mounted and the NestJS dev server runs with watch mode. In production, the prebuilt image from GHCR is used.
+In development, the source directory is bind-mounted and the NestJS dev server runs with watch mode. In production, the prebuilt image from the container registry is used.
 
 The backend depends on `database` and receives `DATABASE_URL`, `FRONTEND_URL`, and `SENTRY_DSN` at runtime. `FRONTEND_URL` is the CORS allowlist and is **required in production** — it is the only origin allowed there, so the backend throws at boot when it is missing instead of starting with an allowlist no browser can match.
 
@@ -170,7 +170,7 @@ The `base` stage installs dependencies (`npm ci`) so they are cached separately 
 - **backend** — copies `dist/` from the build stage and installs production dependencies only. `tsc-alias` rewrites the TypeScript path aliases at build time, so the app runs under plain `node dist/main` with no Nest CLI in the image. Prisma 7's CLI toolchain (declared as a production dependency of `@prisma/client` but unused at runtime) is stripped from `node_modules`, along with the WASM query compilers of databases other than PostgreSQL.
 - **frontend** — uses Next.js `output: "standalone"`: the image contains the self-contained `server.js`, the traced subset of `node_modules`, `.next/static`, and `public/`, and runs `node server.js`.
 
-The Compose dev override sets `build.target: dev` to select the dev stage. The prod override bypasses the build entirely by substituting a prebuilt GHCR image.
+The Compose dev override sets `build.target: dev` to select the dev stage. The prod override bypasses the build entirely by substituting a prebuilt registry image.
 
 The backend Dockerfile additionally runs `npx prisma generate` in the base stage so the Prisma client is generated as part of the dependency installation layer.
 
