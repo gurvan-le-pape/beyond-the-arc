@@ -37,6 +37,16 @@ import { useMapColours } from "./useMapColours";
 import { useMapData } from "./useMapData";
 import { useSearch } from "./useSearch";
 
+// MapLibre 6 ships its worker as a separate module and no longer finds it on
+// its own: without this the basemap still draws, but every GeoJSON source —
+// regions, departments, clubs — is parsed in the worker and silently never
+// appears. `new URL(…, import.meta.url)` is the form the bundler recognises
+// and emits as an asset with a hashed URL.
+const MAPLIBRE_WORKER_URL = new URL(
+  "maplibre-gl/dist/maplibre-gl-worker.mjs",
+  import.meta.url,
+).toString();
+
 interface MapLibreClubsMapProps {
   readonly initialRegions: ClubStatsByRegion[];
   readonly initialDepartments: ClubStatsByDepartment[];
@@ -262,6 +272,7 @@ export function MapLibreClubsMap({
         {...viewState}
         onMove={(e) => setViewState(e.viewState)}
         mapStyle={mapStyle}
+        workerUrl={MAPLIBRE_WORKER_URL}
         // MapLibre labels its own canvas `role="region"` with the untranslated
         // string "Map"; `locale` patches that table, so the region is named for
         // what it shows and is named in the reader's language.
