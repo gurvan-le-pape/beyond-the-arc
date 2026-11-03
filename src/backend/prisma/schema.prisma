@@ -112,9 +112,12 @@ model Championships {
   level       String      @db.VarChar(50)
   division    Int
   gender      String      @db.VarChar(10)
-  committee   Committees? @relation(fields: [committeeId], references: [id], onDelete: SetNull)
+  // Restrict, not SetNull: `check_level` requires these ids at their level, so
+  // nulling one would violate it — the delete fails either way, and Restrict
+  // says why.
+  committee   Committees? @relation(fields: [committeeId], references: [id], onDelete: Restrict)
   committeeId Int?        @map("committee_id")
-  league      Leagues?    @relation(fields: [leagueId], references: [id], onDelete: SetNull)
+  league      Leagues?    @relation(fields: [leagueId], references: [id], onDelete: Restrict)
   leagueId    Int?        @map("league_id")
   pools       Pools[]
 
@@ -183,6 +186,9 @@ model Matches {
   // scheduler's polling query. Prisma cannot express partial indexes, so it is
   // defined only in migration SQL — created in `0_init`, renamed with its column
   // in `20260815120000_rename_match_time_columns`.
+  //
+  // CHECK constraints on status, scores and teams live in migration SQL too:
+  // `no_draws_allowed` in `0_init`, the rest in `20261103120000_match_integrity_checks`.
 
   @@index([poolId, startsAt], map: "idx_matches_pool_id_starts_at")
   @@index([homeTeamId], map: "idx_matches_home_team_id")
@@ -206,6 +212,9 @@ model Leaderboards {
   pointsAgainst   Int   @default(0) @map("points_against")
   pointDifference Int   @default(0) @map("point_difference")
 
+  // Written only by the triggers in `0_init`. CHECK constraints on the counters
+  // (non-negative, games and points add up) are in
+  // `20261103120000_match_integrity_checks`.
   @@unique([poolId, teamId])
   @@map("leaderboards")
 }
