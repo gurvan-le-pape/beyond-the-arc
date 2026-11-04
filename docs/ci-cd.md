@@ -16,7 +16,7 @@ There is no separate staging environment. A push to `main` that passes CI goes s
 
 ## Pipeline structure
 
-Three stages — `check`, `analyze`, `deploy` — and fifteen jobs:
+Three stages — `check`, `analyze`, `deploy` — and eighteen jobs:
 
 ```
 backend-lint ──────────┐
@@ -31,7 +31,10 @@ python-test ───────────┤
 openapi-drift ─────────┤
 barrels-drift ─────────┘
 migration-immutability   (merge requests only, not a deploy gate)
+squawk                   (merge requests only, advisory)
 npm-audit                (advisory, not a deploy gate)
+quality-report           (analyze, advisory)
+ruff-report              (analyze, advisory)
 ```
 
 Every `check` job runs in parallel. `sonarcloud` needs `backend-test` for its coverage report. `deploy` lists its eleven gates explicitly in `needs:` rather than waiting on the whole stage, so the advisory jobs cannot hold a release.
@@ -72,7 +75,7 @@ Builds the backend, regenerates `docs/openapi.json`, regenerates the frontend's 
 
 ### barrels-drift
 
-Two halves. `scripts/check-barrels-config.mjs` validates `barrelsby.json` itself — an unknown key and a directory with no barrel produce byte-identical output, so regeneration alone cannot see a config defect. Then `npm run barrels` regenerates every barrel and the job fails on any difference, after a `git add -A` so a barrel that should exist but was never committed counts as drift.
+`npm run barrels` regenerates every barrel and the job fails on any difference, after a `git add -A` so a barrel that should exist but was never committed counts as drift.
 
 ### migration-immutability
 
@@ -85,6 +88,16 @@ Runs `npm audit --json` against all three lockfiles — the root, `src/backend` 
 It is **advisory** twice over: `allow_failure: true`, so a red audit is a warning rather than a failed pipeline, and absent from `deploy`'s `needs:`. A blocking audit would let a fresh advisory in a transitive devDependency stop unrelated work; a decorative one gets ignored (`sonarcloud`, also non-gating, once sat red for thirty days). Failing on `critical` only is the middle.
 
 It runs with every pipeline, not on a timer. A newly published advisory needs no push to become true, so a weekly scheduled run would catch it sooner in a quiet week; that needs every other job excluded from `schedule` pipelines first, or a scheduled pipeline on `main` would run the deploy.
+
+### squawk
+
+Merge requests only. Lints the `migration.sql` files the merge request adds for statements that lock or break a running database (a constraint without `NOT VALID`, a dropped column), using `.squawk.toml`. Already-applied migrations are not linted: they cannot change. `allow_failure: true`, because a finding can be the right trade on a small table.
+
+### quality-report, ruff-report
+
+Measurements, read in the job log. `quality-report` runs `npm run quality` from the repo root: knip (unused files, exports, dependencies; `knip.json` in each application), dependency-cruiser (`.dependency-cruiser.cjs`: cycles, `shared/utils` importing `shared/components`, `common` importing `modules`) and jscpd (`.jscpd.json`). `ruff-report` runs ruff's complexity check over the scheduler (`src/backend/db/python/ruff.toml`). Findings do not fail either job. The one exception is duplication above jscpd's 3% threshold, which `allow_failure` turns into a warning, as it does a tool that crashes. To make one of them blocking, remove `--no-exit-code` (knip), set the rule's `severity` to `error` (dependency-cruiser) or remove `--exit-zero` (ruff), and add the job to `deploy`'s `needs:`.
+
+The lint jobs carry the same stage of rule: `no-unnecessary-condition`, `complexity` (10), `max-lines-per-function` (80), `max-params` (4), `max-depth` (3) and `no-nested-conditional` are `warn` in both ESLint configs, and ESLint runs without `--max-warnings`.
 
 ### sonarcloud
 

@@ -18,11 +18,6 @@ import enforceNamedProps from "./eslint-rules/enforce-named-props.js";
 import featureLayers from "./eslint-rules/enforce-feature-layers.js";
 import componentFileLayout from "./eslint-rules/enforce-component-file-layout.js";
 
-// Migration ratchet for docs/frontend-conventions.md: features not yet
-// restructured to the component conventions. Each migration PR restructures
-// one feature and removes its entry here. Never add entries.
-const LEGACY_FEATURES = [];
-
 // The feature layers of docs/frontend-conventions.md#feature-layers. A feature
 // imports only from features on a lower layer; shared/ sits below all of them.
 const FEATURE_LAYERS = {
@@ -262,20 +257,29 @@ export default [
       "local-rules/enforce-component-file-layout": "error",
     },
   },
-  // Migration ratchet: legacy features keep the old structure until their
-  // migration PR lands (see docs/frontend-conventions.md).
-  ...(LEGACY_FEATURES.length > 0
-    ? [
-        {
-          files: LEGACY_FEATURES,
-          rules: {
-            "local-rules/enforce-component-folder-structure": "off",
-            "local-rules/enforce-file-naming": "off",
-            "local-rules/no-mixed-type-file": "off",
-          },
-        },
-      ]
-    : []),
+  // Measuring, not gating: CI runs eslint without --max-warnings, so these
+  // report in every lint run and block nothing. Application code only.
+  {
+    files: ["**/*.ts", "**/*.mts", "**/*.tsx"],
+    ignores: [
+      "**/*.spec.ts",
+      "**/*.test.ts",
+      "**/*.spec.tsx",
+      "**/*.test.tsx",
+      "scripts/**",
+    ],
+    rules: {
+      "@typescript-eslint/no-unnecessary-condition": "warn",
+      complexity: ["warn", 10],
+      "max-lines-per-function": [
+        "warn",
+        { max: 80, skipBlankLines: true, skipComments: true },
+      ],
+      "max-params": ["warn", 4],
+      "max-depth": ["warn", 3],
+      "sonarjs/no-nested-conditional": "warn",
+    },
+  },
   // Browser support: every web API checked against `browserslist` in
   // package.json. compat's data has gaps — it does not know the static
   // methods below, which TypeScript also lets through because the `dom` lib

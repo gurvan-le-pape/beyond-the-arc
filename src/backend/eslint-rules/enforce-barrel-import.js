@@ -20,16 +20,12 @@ const path = require("node:path");
 const BACKEND_ROOT = path.join(__dirname, "..");
 
 // Directory -> path alias, from tsconfig.json's `paths`.
-const ALIASED_ROOTS = [
-  ["common", "@common"],
-  ["modules", "@modules"],
-];
+const ALIASED_ROOTS = [["common", "@common"]];
 
 /**
  * Every directory below `root` that holds an `index.ts`, as an aliased path.
- * The aliased root itself is skipped: `common/index.ts` and `modules/index.ts`
- * exist, but treating `@common` as a barrel would rewrite every `@common/x/y`
- * import to `"@common"`.
+ * The aliased root itself is skipped: treating `@common` as a barrel would
+ * rewrite every `@common/x/y` import to `"@common"`.
  */
 function barrelDirsUnder(root, alias) {
   const found = [];

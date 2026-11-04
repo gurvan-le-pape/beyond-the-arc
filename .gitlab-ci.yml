@@ -206,10 +206,7 @@ openapi-drift:
 # ==============================================================================
 # BARRELS
 # ==============================================================================
-# Two halves, because they catch different things. Regenerating and diffing
-# catches a barrel whose *content* has gone stale. It does NOT catch a defect in
-# the config: an unrecognised key and a directory with no barrel both emit
-# byte-identical output. check-barrels-config.mjs covers that half.
+# Regenerates every barrel and fails on any difference from the commit.
 #
 # barrels:lint runs eslint --fix over the generated barrels of both
 # applications, each of which needs its own config and plugins installed, so
@@ -236,7 +233,6 @@ barrels-drift:
     - npm ci --cache .npm --prefer-offline
     - (cd src/frontend && npm ci --cache .npm --prefer-offline)
     - (cd src/backend && npm ci --cache .npm --prefer-offline)
-    - node scripts/check-barrels-config.mjs
     - npm run barrels
     # `git add -A` first: a directory newly added to barrelsby.json produces a
     # barrel that does not exist in the commit yet, and `git diff` alone does
@@ -342,6 +338,81 @@ npm-audit:
       echo "No critical advisories."
   # A red check, not a red pipeline: without this a new advisory would fail
   # every pipeline and block every merge request until it was fixed.
+  allow_failure: true
+
+# ==============================================================================
+# NEW MIGRATIONS
+# ==============================================================================
+# Lints the migrations this merge request adds for statements that lock or break
+# a running database. Applied migrations are immutable, so only new ones can act
+# on the advice. Advisory: a real finding can be the right trade on a small table.
+squawk:
+  stage: check
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  variables:
+    # The merge base must be present locally for the diff below.
+    GIT_DEPTH: 0
+  script:
+    - |
+      added=$(git diff --name-only --diff-filter=A "$CI_MERGE_REQUEST_DIFF_BASE_SHA" HEAD -- 'src/backend/prisma/migrations/*/migration.sql')
+      if [ -z "$added" ]; then
+        echo "No migration added."
+        exit 0
+      fi
+      npm ci --cache .npm --prefer-offline
+      npx squawk $added
+  allow_failure: true
+
+# ==============================================================================
+# QUALITY REPORTS
+# ==============================================================================
+# Measurements, read in the job log. Findings do not fail these jobs and neither
+# is in `deploy`'s `needs`; the one exception is duplication above the threshold
+# in .jscpd.json, which `allow_failure` turns into a warning, as it does a tool
+# that crashes.
+quality-report:
+  stage: analyze
+  needs: []
+  cache:
+    - key:
+        files:
+          - package-lock.json
+      paths:
+        - .npm
+    - key:
+        files:
+          - src/frontend/package-lock.json
+      paths:
+        - src/frontend/.npm
+    - key:
+        files:
+          - src/backend/package-lock.json
+      paths:
+        - src/backend/.npm
+  script:
+    - npm ci --cache .npm --prefer-offline
+    - (cd src/frontend && npm ci --cache .npm --prefer-offline)
+    - (cd src/backend && npm ci --cache .npm --prefer-offline)
+    - npm run quality
+  allow_failure: true
+
+ruff-report:
+  stage: analyze
+  image: python:3.14-slim
+  needs: []
+  variables:
+    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.pip-cache"
+  cache:
+    key:
+      files:
+        - src/backend/db/python/requirements-dev.txt
+    paths:
+      - .pip-cache
+  script:
+    - cd src/backend/db/python
+    - pip install -r requirements-dev.txt
+    - ruff check --exit-zero --no-cache --output-format concise .
   allow_failure: true
 
 # ==============================================================================

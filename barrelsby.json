@@ -98,24 +98,7 @@
     "src/backend/common/filters",
     "src/backend/common/interceptors",
     "src/backend/common/pipes",
-    "src/backend/common/utils",
-
-    "src/backend/modules/competitions/championships/dto",
-    "src/backend/modules/competitions/leaderboards/dto",
-    "src/backend/modules/competitions/pools/dto",
-
-    "src/backend/modules/health/dto",
-
-    "src/backend/modules/matches/dto",
-
-    "src/backend/modules/organizations/clubs/dto",
-    "src/backend/modules/organizations/committees/dto",
-    "src/backend/modules/organizations/leagues/dto",
-
-    "src/backend/modules/players/dto",
-    "src/backend/modules/teams/dto",
-
-    "src/backend/modules/stats/dto"
+    "src/backend/common/utils"
   ],
   "delete": true,
   "location": "top",
