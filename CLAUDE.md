@@ -47,7 +47,7 @@ docker run --rm -v "$PWD/src/backend/db/python":/app -w /app -e PYTHONDONTWRITEB
   sh -c 'pip install -q -r requirements-dev.txt && python -m pytest && python -m tests.season_sample'
 ```
 
-Root-level `npm run quality` prints the knip, dependency-cruiser and jscpd reports (`quality:knip`, `quality:deps`, `quality:dup` run one). They are measurements, as are the `warn`-level complexity and `no-unnecessary-condition` rules in both ESLint configs: nothing fails on them yet. See `docs/ci-cd.md`.
+Root-level `npm run quality` prints the knip and jscpd reports (`quality:knip`, `quality:dup` run one). They are measurements, as are the `warn`-level complexity and `no-unnecessary-condition` rules in both ESLint configs: nothing fails on them yet. `npm run quality:deps` runs dependency-cruiser, whose module-boundary rules do fail the build. See `docs/ci-cd.md`.
 
 Root-level `npm run barrels` (or `make barrels`) regenerates barrel `index.ts` files via barrelsby — needed after adding new files to directories listed in the barrel-enforcing eslint rule (see below). It chains `barrels:lint` (`eslint --fix` over the frontend barrels) because barrelsby writes its own `@file` banner and drops the `// src/frontend/...` path comment. Regeneration is one-shot: barrelsby 2.8.1 ships no watch mode.
 

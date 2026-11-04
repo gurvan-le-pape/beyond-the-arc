@@ -276,8 +276,9 @@ export default [
         { max: 80, skipBlankLines: true, skipComments: true },
       ],
       "max-params": ["warn", 4],
-      "max-depth": ["warn", 3],
-      "sonarjs/no-nested-conditional": "warn",
+      // Already at zero, so a new violation fails the build.
+      "max-depth": ["error", 3],
+      "sonarjs/no-nested-conditional": "error",
     },
   },
   // A fixture builder takes one positional argument per field of its row.

@@ -1,8 +1,6 @@
 // src/frontend/shared/utils/positionVariant.ts
 import { Position } from "@/shared/constants";
 
-import type { BadgeProps } from "../components/primitives";
-
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -26,7 +24,7 @@ import type { BadgeProps } from "../components/primitives";
  */
 export function positionVariant(
   position: string | undefined,
-): BadgeProps["variant"] {
+): "position-g" | "position-f" | "position-c" | "default" {
   switch (position) {
     case Position.PG:
     case Position.SG:
