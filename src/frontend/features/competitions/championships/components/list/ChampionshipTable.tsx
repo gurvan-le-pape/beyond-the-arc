@@ -37,24 +37,25 @@ export function ChampionshipTable({
     }),
   });
 
-  const organizerColumn: TableColumn<Championship> | null =
-    level === CompetitionLevel.REGIONAL
-      ? {
-          key: "league",
-          header: tCompetitions("listColumns.league"),
-          align: "left",
-          emphasis: true,
-          render: (row) => row.regionName,
-        }
-      : level === CompetitionLevel.DEPARTMENTAL
-        ? {
-            key: "committee",
-            header: tCompetitions("listColumns.committee"),
-            align: "left",
-            emphasis: true,
-            render: (row) => row.departmentName,
-          }
-        : null;
+  const organizerColumns: Partial<
+    Record<CompetitionLevel, TableColumn<Championship>>
+  > = {
+    [CompetitionLevel.REGIONAL]: {
+      key: "league",
+      header: tCompetitions("listColumns.league"),
+      align: "left",
+      emphasis: true,
+      render: (row) => row.regionName,
+    },
+    [CompetitionLevel.DEPARTMENTAL]: {
+      key: "committee",
+      header: tCompetitions("listColumns.committee"),
+      align: "left",
+      emphasis: true,
+      render: (row) => row.departmentName,
+    },
+  };
+  const organizerColumn = organizerColumns[level];
 
   const columns: TableColumn<Championship>[] = [
     ...(organizerColumn ? [organizerColumn] : []),
