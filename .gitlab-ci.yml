@@ -364,6 +364,18 @@ squawk:
       npx squawk $added
   allow_failure: true
 
+dependency-rules:
+  stage: check
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - .npm
+  script:
+    - npm ci --cache .npm --prefer-offline
+    - npm run quality:deps
+
 # ==============================================================================
 # QUALITY REPORTS
 # ==============================================================================
@@ -461,6 +473,7 @@ deploy:
     - frontend-build
     - openapi-drift
     - barrels-drift
+    - dependency-rules
     - python-test
   variables:
     # The runner mounts the host Docker socket, so builds hit a long-lived

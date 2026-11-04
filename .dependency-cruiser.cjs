@@ -1,12 +1,11 @@
-// Module-boundary rules, run once per application (see `quality-report` in
-// .gitlab-ci.yml). Every rule is `warn`: depcruise then exits 0 and the findings
-// are read in the job log. Type-only imports count, so a cycle that only exists
-// at the type level is reported too.
+// Module-boundary rules, run once per application by the `dependency-rules` job
+// in .gitlab-ci.yml, which `deploy` waits on. Type-only imports count, so a cycle
+// that only exists at the type level fails too.
 module.exports = {
   forbidden: [
     {
       name: "no-circular",
-      severity: "warn",
+      severity: "error",
       from: {},
       to: { circular: true },
     },
@@ -14,7 +13,7 @@ module.exports = {
       name: "shared-utils-not-to-components",
       comment:
         "Utilities sit below the UI; a util importing a component inverts that.",
-      severity: "warn",
+      severity: "error",
       from: { path: "^src/frontend/shared/utils" },
       to: { path: "^src/frontend/shared/components" },
     },
@@ -22,7 +21,7 @@ module.exports = {
       name: "common-not-to-modules",
       comment:
         "common/ is shared by every feature module and depends on none of them.",
-      severity: "warn",
+      severity: "error",
       from: { path: "^src/backend/common" },
       to: { path: "^src/backend/modules" },
     },

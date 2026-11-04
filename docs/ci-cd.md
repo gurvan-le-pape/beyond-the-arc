@@ -29,7 +29,8 @@ frontend-test ─────────┤
 frontend-build ────────┤
 python-test ───────────┤
 openapi-drift ─────────┤
-barrels-drift ─────────┘
+barrels-drift ─────────┤
+dependency-rules ──────┘
 migration-immutability   (merge requests only, not a deploy gate)
 squawk                   (merge requests only, advisory)
 npm-audit                (advisory, not a deploy gate)
@@ -37,7 +38,7 @@ quality-report           (analyze, advisory)
 ruff-report              (analyze, advisory)
 ```
 
-Every `check` job runs in parallel. `sonarcloud` needs `backend-test` for its coverage report. `deploy` lists its eleven gates explicitly in `needs:` rather than waiting on the whole stage, so the advisory jobs cannot hold a release.
+Every `check` job runs in parallel. `sonarcloud` needs `backend-test` for its coverage report. `deploy` lists its twelve gates explicitly in `needs:` rather than waiting on the whole stage, so the advisory jobs cannot hold a release.
 
 Workflow rules accept three sources — `merge_request_event`, a push to `main`, and `web` — and end in `when: never`, which stops a branch with an open merge request from producing two pipelines per commit. Every job is `interruptible` so a superseded pipeline can be cancelled, except `deploy`: cancelling a compose `up` mid-flight could leave the VPS half-deployed.
 
@@ -93,11 +94,15 @@ It runs with every pipeline, not on a timer. A newly published advisory needs no
 
 Merge requests only. Lints the `migration.sql` files the merge request adds for statements that lock or break a running database (a constraint without `NOT VALID`, a dropped column), using `.squawk.toml`. Already-applied migrations are not linted: they cannot change. `allow_failure: true`, because a finding can be the right trade on a small table.
 
+### dependency-rules
+
+Runs `npm run quality:deps` from the repo root: dependency-cruiser (`.dependency-cruiser.cjs`) over each application, failing on a cycle, on `shared/utils` importing `shared/components`, or on `common` importing `modules`. Type-only imports count. Needs only the root install.
+
 ### quality-report, ruff-report
 
-Measurements, read in the job log. `quality-report` runs `npm run quality` from the repo root: knip (unused files, exports, dependencies; `knip.json` in each application), dependency-cruiser (`.dependency-cruiser.cjs`: cycles, `shared/utils` importing `shared/components`, `common` importing `modules`) and jscpd (`.jscpd.json`). `ruff-report` runs ruff's pyflakes and complexity checks over the scheduler (`src/backend/db/python/ruff.toml`). Findings do not fail either job. The one exception is duplication above jscpd's 3% threshold, which `allow_failure` turns into a warning, as it does a tool that crashes. To make one of them blocking, remove `--no-exit-code` (knip), set the rule's `severity` to `error` (dependency-cruiser) or remove `--exit-zero` (ruff), and add the job to `deploy`'s `needs:`.
+Measurements, read in the job log. `quality-report` runs `npm run quality` from the repo root: knip (unused files, exports, dependencies; `knip.json` in each application) and jscpd (`.jscpd.json`). `ruff-report` runs ruff's pyflakes and complexity checks over the scheduler (`src/backend/db/python/ruff.toml`). Findings do not fail either job. The one exception is duplication above jscpd's 3% threshold, which `allow_failure` turns into a warning, as it does a tool that crashes. To make one of them blocking, remove `--no-exit-code` (knip) or `--exit-zero` (ruff), and add the job to `deploy`'s `needs:`.
 
-The lint jobs carry the same stage of rule: `no-unnecessary-condition`, `complexity` (10), `max-lines-per-function` (80), `max-params` (4), `max-depth` (3) and `no-nested-conditional` are `warn` in both ESLint configs, and ESLint runs without `--max-warnings`.
+The lint jobs carry the same stage of rule: `no-unnecessary-condition`, `complexity` (10), `max-lines-per-function` (80) and `max-params` (4) are `warn` in both ESLint configs, and ESLint runs without `--max-warnings`. `max-depth` (3) and `no-nested-conditional` are `error`.
 
 ### sonarcloud
 
