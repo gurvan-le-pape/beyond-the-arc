@@ -1,5 +1,9 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
   "entry": ["main.ts", "scripts/*.ts", "**/*.spec.ts"],
-  "ignoreDependencies": ["pg", "pino-pretty"]
+  "ignoreDependencies": ["pg", "pino-pretty"],
+  "ignoreExportsUsedInFile": {
+    "interface": true,
+    "type": true
+  }
 }

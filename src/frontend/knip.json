@@ -1,5 +1,10 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
   "entry": ["i18n.ts", "global.ts"],
-  "ignoreDependencies": ["openapi-typescript"]
+  "ignoreDependencies": ["openapi-typescript"],
+  "ignore": ["shared/types/api.generated.ts"],
+  "ignoreExportsUsedInFile": {
+    "interface": true,
+    "type": true
+  }
 }
