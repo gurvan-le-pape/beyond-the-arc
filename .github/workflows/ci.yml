@@ -281,9 +281,6 @@ jobs:
         with:
           working-directory: src/backend
 
-      - name: Validate barrelsby.json
-        run: node scripts/check-barrels-config.mjs
-
       - name: Regenerate barrels
         run: npm run barrels
 

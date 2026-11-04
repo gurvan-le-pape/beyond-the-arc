@@ -179,7 +179,7 @@ Response DTO rules that keep the generated types truthful:
 2. Response: real DTO classes for every nested shape; enums and nullability per the rules above.
 3. List endpoints return `[]` when empty; only by-id endpoints throw `NotFoundException`.
 4. Paginated: the `orderBy` ends with `{ id: "asc" }`.
-5. Barrel imports (`@common/dto`, `@modules/<feature>/dto`) and the file-path header comment — both lint-enforced.
+5. Barrel imports for `@common/*` (`@common/dto`) and the file-path header comment — both lint-enforced. A feature's own DTOs are imported by file, `./dto/x.dto`.
 6. Pick the cache TTL tier that matches the data (see Caching above).
 7. Regenerate `docs/openapi.json` and run `npm run typegen` in `src/frontend`; commit both (CI fails otherwise).
 8. `app.conventions.spec.ts` and `app.swagger.spec.ts` pick the new route up automatically — if they fail, the message names the offending property.

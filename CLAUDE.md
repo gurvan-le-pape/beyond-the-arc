@@ -47,6 +47,8 @@ docker run --rm -v "$PWD/src/backend/db/python":/app -w /app -e PYTHONDONTWRITEB
   sh -c 'pip install -q -r requirements-dev.txt && python -m pytest && python -m tests.season_sample'
 ```
 
+Root-level `npm run quality` prints the knip, dependency-cruiser and jscpd reports (`quality:knip`, `quality:deps`, `quality:dup` run one). They are measurements, as are the `warn`-level complexity and `no-unnecessary-condition` rules in both ESLint configs: nothing fails on them yet. See `docs/ci-cd.md`.
+
 Root-level `npm run barrels` (or `make barrels`) regenerates barrel `index.ts` files via barrelsby — needed after adding new files to directories listed in the barrel-enforcing eslint rule (see below). It chains `barrels:lint` (`eslint --fix` over the frontend barrels) because barrelsby writes its own `@file` banner and drops the `// src/frontend/...` path comment. Regeneration is one-shot: barrelsby 2.8.1 ships no watch mode.
 
 Composite component folders (an `index.tsx` root plus internal files) must be added to `exclude` in `barrelsby.json`, or barrelsby flattens them into the parent barrel and re-exports their internals — which is how a duplicate export can break the build.
@@ -68,8 +70,8 @@ A conflict between 2 and 3 is a signal, not noise: either this file is stale or 
 These are enforced by custom ESLint rules in `src/backend/eslint-rules/` and `src/frontend/eslint-rules/`, so violations fail lint/CI, not just style review:
 
 - **File path header comment**: every `.ts`/`.tsx` file must start with a comment giving its own path relative to `src/backend` or `src/frontend`, e.g. `// src/backend/modules/teams/teams.service.ts`. Autofixable via `lint:fix`.
-- **Barrel imports required**: import from the barrel (`@modules/teams/dto`) rather than a direct file path. Autofixable. The backend rule keeps a fixed list in `enforce-barrel-import.js`; the frontend rule derives its list from the root `barrelsby.json` — including that file's `exclude` patterns, so a file barrelsby is told to skip has no barrel form and is imported by path.
-- **Frontend component organization** (structure of `features/*` — composite folders with `index.tsx` roots, hooks/types placement, depth cap, naming): defined in `docs/frontend-conventions.md`, enforced by the structure rules in `src/frontend/eslint-rules/`. Features not yet migrated are allowlisted in `LEGACY_FEATURES` in `eslint.config.mjs` — never add entries.
+- **Barrel imports required**: import from the barrel (`@common/dto`) rather than a direct file path. Autofixable. The backend rule covers the barrels under `common/`, read from disk; a module's own DTOs have no barrel and are imported by file. The frontend rule derives its list from the root `barrelsby.json` — including that file's `exclude` patterns, so a file barrelsby is told to skip has no barrel form and is imported by path.
+- **Frontend component organization** (structure of `features/*` — composite folders with `index.tsx` roots, hooks/types placement, depth cap, naming): defined in `docs/frontend-conventions.md`, enforced by the structure rules in `src/frontend/eslint-rules/`.
 
 ## Backend architecture
 
@@ -99,7 +101,7 @@ Several dependencies sit at or past the model's training cutoff, so recalled API
 - Prisma 7.x (client API, `@prisma/adapter-pg`, migrations) — `https://www.prisma.io/docs/llms.txt`, and check `https://www.prisma.io/changelog.md` for breaking changes first, as that index itself instructs
 - NestJS 11 — `https://docs.nestjs.com/llms.txt`
 
-**2. Context7** (`/context7:docs <library> <query>`, or its auto-triggering skill) — for the libraries with no `llms.txt`: **next-intl 4.x**, **TanStack Query 5.x**, **MapLibre 5.x**, **Sentry 10.x**, **TypeScript 6.x**.
+**2. Context7** (`/context7:docs <library> <query>`, or its auto-triggering skill) — for the libraries with no `llms.txt`: **next-intl 4.x**, **TanStack Query 5.x**, **MapLibre 6.x**, **Sentry 10.x**, **TypeScript 6.x**.
 
 Don't look up this repo's own conventions — the barrel rules, the one-service-per-feature layer, the Query Options pattern, and the API conventions are settled here and in `docs/`, not upstream. Upstream docs describe the library, not how this project uses it; when the two disagree, this file wins.
 

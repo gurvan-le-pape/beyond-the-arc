@@ -74,6 +74,28 @@ export default [
       "local-rules/enforce-barrel-import": "error",
     },
   },
+  // Measuring, not gating: CI runs eslint without --max-warnings, so these
+  // report in every lint run and block nothing. Application code only.
+  {
+    files: ["**/*.ts"],
+    ignores: ["**/*.spec.ts", "**/*.test.ts", "scripts/**"],
+    rules: {
+      "@typescript-eslint/no-unnecessary-condition": "warn",
+      complexity: ["warn", 10],
+      "max-lines-per-function": [
+        "warn",
+        { max: 80, skipBlankLines: true, skipComments: true },
+      ],
+      "max-params": ["warn", 4],
+      "max-depth": ["warn", 3],
+      "sonarjs/no-nested-conditional": "warn",
+    },
+  },
+  // Terminus's indicators are injected one constructor parameter each.
+  {
+    files: ["modules/health/health.controller.ts"],
+    rules: { "max-params": "off" },
+  },
   // Override for test files
   {
     files: ["**/*.spec.ts", "**/*.test.ts"],

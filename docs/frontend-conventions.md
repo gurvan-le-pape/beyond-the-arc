@@ -316,8 +316,6 @@ Three upstream rules carry conventions of their own: `no-restricted-syntax` (no 
 
 **[Comments](#comments) is review-enforced**, and so is the ban on `@param` tags sitting on a props interface. No rule covers either. Review it by reading each comment against the line beneath it — a review that reads comments as a *list* will pass restatements, because a label only looks redundant next to the thing it labels.
 
-**Migration ratchet**: features that predate these conventions are listed in the `LEGACY_FEATURES` allowlist in `eslint.config.mjs`, which disables the structure rules for them. Each migration PR restructures one feature and removes it from the list; an empty list means the migration is complete. Do not add new entries.
-
 ### New-component checklist
 
 1. Single file or composite? Split by responsibility (see [When to split](#when-to-split)); only create a folder if the component has private sub-parts; root is `index.tsx`.

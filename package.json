@@ -1,10 +1,18 @@
 {
   "scripts": {
     "barrels": "barrelsby --config ./barrelsby.json && npm run barrels:lint",
-    "barrels:lint": "(cd src/frontend && npx eslint --fix '**/index.ts') && (cd src/backend && npx eslint --fix '**/index.ts')"
+    "barrels:lint": "(cd src/frontend && npx eslint --fix '**/index.ts') && (cd src/backend && npx eslint --fix '**/index.ts')",
+    "quality": "npm run quality:knip && npm run quality:deps && npm run quality:dup",
+    "quality:knip": "(cd src/frontend && ../../node_modules/.bin/knip --no-exit-code --no-progress) && (cd src/backend && ../../node_modules/.bin/knip --no-exit-code --no-progress)",
+    "quality:deps": "depcruise src/frontend/app src/frontend/features src/frontend/shared src/frontend/lib --config .dependency-cruiser.cjs --ts-config src/frontend/tsconfig.json --output-type err-long && depcruise src/backend/common src/backend/modules --config .dependency-cruiser.cjs --ts-config src/backend/tsconfig.json --output-type err-long",
+    "quality:dup": "jscpd src/backend/common src/backend/modules src/frontend/app src/frontend/features src/frontend/shared src/frontend/lib"
   },
   "devDependencies": {
     "barrelsby": "^2.8.1",
-    "prettier": "3.7.4"
+    "dependency-cruiser": "^18.7.2",
+    "jscpd": "^4.0.5",
+    "knip": "^5.66.0",
+    "prettier": "3.7.4",
+    "squawk-cli": "^2.21.0"
   }
 }

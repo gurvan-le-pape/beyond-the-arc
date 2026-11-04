@@ -1,7 +1,7 @@
 // src/backend/modules/teams/aggregate-team-season-stats.ts
 import type { PlayerSummaryDto } from "@common/dto";
 import { aggregateCareerStats } from "@common/utils";
-import type { PlayerMatchStatsDto } from "@modules/players/dto";
+import type { PlayerMatchStatsDto } from "@modules/players/dto/players.response.dto";
 
 import type { TeamSeasonStatsDto } from "./dto/teams.response.dto";
 

@@ -1,0 +1,17 @@
+{
+  "threshold": 3,
+  "reporters": ["console"],
+  "silent": true,
+  "ignore": [
+    "**/node_modules/**",
+    "**/.next/**",
+    "**/dist/**",
+    "**/prisma/generated/**",
+    "**/prisma/migrations/**",
+    "**/shared/types/api.generated.ts",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ]
+}
