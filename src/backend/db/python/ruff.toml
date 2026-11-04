@@ -1,9 +1,9 @@
-# Complexity only, and reported rather than enforced: CI runs `ruff check
+# Pyflakes and complexity, reported rather than enforced: CI runs `ruff check
 # --exit-zero` (see `ruff-report` in .gitlab-ci.yml).
 target-version = "py314"
 
 [lint]
-select = ["C901"]
+select = ["F", "C901"]
 
 [lint.mccabe]
 max-complexity = 10

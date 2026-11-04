@@ -7,7 +7,7 @@ The exact slot (day + time) is picked randomly from a fixed set of options.
 """
 
 import random
-from datetime import datetime, time
+from datetime import datetime
 from zoneinfo import ZoneInfo
 
 PARIS = ZoneInfo("Europe/Paris")
