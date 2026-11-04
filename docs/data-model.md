@@ -14,6 +14,14 @@ The schema models the French basketball competition hierarchy from top to bottom
 
 The schema is owned by `prisma/schema.prisma` and applied through Prisma Migrate: the `0_init` baseline migration carries the full schema (including a hand-maintained section for what Prisma's schema language cannot express — CHECK constraints, the leaderboard triggers, and partial indexes), and every later change is a new migration: generated from a `schema.prisma` edit via `prisma migrate dev`, or written by hand when it is one of those inexpressible objects.
 
+A migration file is not a transaction. `prisma migrate deploy` commits each statement on its own (measured on Prisma 7.9.1 against `postgres:18`), which has three consequences:
+
+- A statement that fails leaves the earlier ones applied, and the migration is recorded as failed until someone recovers it by hand. A file that must be all-or-nothing says `BEGIN` and `COMMIT` itself.
+- A lock ends with the statement that took it, so a later statement in the same file does not extend it.
+- `CREATE INDEX CONCURRENTLY` can run in a migration, alongside other statements, as long as the file has no `BEGIN`.
+
+The comments in `20261016140000_players_name_trigram_index` and `20261103120000_match_integrity_checks` assume the opposite. Those files are applied and cannot change, so this section is the one to trust.
+
 Every string column that the API reads as a closed set carries a CHECK constraint listing its values, matching the constant in `common/constants`: `level`, `gender` and `category` on championships, `gender` and `category` on teams, `position` on players, `event_type` on match events and `role` on match event players. The `as Category`-style casts in the services rely on it.
 
 ---
