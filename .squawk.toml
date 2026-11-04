@@ -1,3 +1,8 @@
 # prisma migrate runs each file once and records it, so "safe to re-run" is not
 # a property a migration here needs.
 excluded_rules = ["prefer-robust-stmts"]
+# Matches the postgres image in docker-compose.
+pg_version = "18.0"
+# assume_in_transaction stays off, because that is not how these files run:
+# `prisma migrate deploy` commits each statement on its own unless the file says
+# BEGIN. A lock ends with its statement, and a failure partway keeps what ran.
