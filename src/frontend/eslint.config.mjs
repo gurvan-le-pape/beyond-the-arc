@@ -280,6 +280,11 @@ export default [
       "sonarjs/no-nested-conditional": "warn",
     },
   },
+  // A fixture builder takes one positional argument per field of its row.
+  {
+    files: ["**/*Fixtures.ts"],
+    rules: { "max-params": "off" },
+  },
   // Browser support: every web API checked against `browserslist` in
   // package.json. compat's data has gaps — it does not know the static
   // methods below, which TypeScript also lets through because the `dom` lib

@@ -96,6 +96,17 @@ export default [
     files: ["modules/health/health.controller.ts"],
     rules: { "max-params": "off" },
   },
+  // Swagger descriptions and examples repeat because the endpoints they document
+  // repeat; a constant would hide the text from the decorator that shows it.
+  {
+    files: ["**/*.controller.ts", "**/dto/**"],
+    rules: { "sonarjs/no-duplicate-string": "off" },
+  },
+  // CLIs: stdout is their output.
+  {
+    files: ["scripts/**"],
+    rules: { "no-console": "off" },
+  },
   // Override for test files
   {
     files: ["**/*.spec.ts", "**/*.test.ts"],
