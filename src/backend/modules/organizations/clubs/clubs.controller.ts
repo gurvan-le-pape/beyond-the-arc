@@ -239,16 +239,7 @@ export class ClubsController {
   async getClubs(
     @Query() query: GetClubsQueryDto,
   ): Promise<PaginatedResponseDto<ClubBasicResponseDto>> {
-    return this.clubsService.findClubsByFilters({
-      level: query.level,
-      committeeId: query.committeeId,
-      leagueId: query.leagueId,
-      category: query.category,
-      gender: query.gender,
-      search: query.search,
-      page: query.page,
-      limit: query.limit,
-    });
+    return this.clubsService.findClubsByFilters(query);
   }
 
   /**

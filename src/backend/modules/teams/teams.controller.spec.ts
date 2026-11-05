@@ -164,7 +164,7 @@ describe("TeamsController", () => {
       });
     });
 
-    it("should pass undefined page and limit through when not provided", async () => {
+    it("should pass an empty query through when no params are provided", async () => {
       // Arrange
       const mockResponse: PaginatedResponseDto<TeamResponseDto> = {
         items: [],
@@ -180,12 +180,7 @@ describe("TeamsController", () => {
       await controller.getTeams({});
 
       // Assert
-      expect(service.findAllTeams).toHaveBeenCalledWith(
-        expect.objectContaining({
-          page: undefined,
-          limit: undefined,
-        }),
-      );
+      expect(service.findAllTeams).toHaveBeenCalledWith({});
     });
 
     it("should propagate service errors", async () => {

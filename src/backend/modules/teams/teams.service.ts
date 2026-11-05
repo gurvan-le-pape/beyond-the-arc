@@ -3,6 +3,7 @@ import { Category, CompetitionLevel, Gender } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
 import {
   aggregateCareerStats,
+  buildChampionshipWhere,
   buildClubOrganizationWhere,
   mapPlayerMatchStats,
   mapPlayerSummary,
@@ -15,6 +16,7 @@ import { PrismaService } from "prisma/prisma.service";
 
 import { Prisma } from "../../prisma/generated/prisma/client";
 import { aggregateTeamSeasonStats } from "./aggregate-team-season-stats";
+import type { GetTeamsQueryDto } from "./dto/teams.query.dto";
 import type {
   FilterValuesTeamsResponseDto,
   TeamDetailResponseDto,
@@ -215,24 +217,6 @@ type TeamMatchPlayerStatsResult = Prisma.PlayerMatchStatsGetPayload<{
 }>;
 
 /**
- * Filters for querying teams.
- */
-type TeamFilters = {
-  clubId?: number;
-  level?: CompetitionLevel;
-  division?: number;
-  committeeId?: number;
-  leagueId?: number;
-  number?: number;
-  category?: Category;
-  gender?: Gender;
-  search?: string;
-  poolLetter?: string;
-  page?: number;
-  limit?: number;
-};
-
-/**
  * Service handling business logic for teams.
  * Encapsulates database access and domain logic.
  */
@@ -247,9 +231,9 @@ export class TeamsService {
    * @returns Paginated list of teams
    */
   async findAllTeams(
-    filters?: TeamFilters,
+    filters: GetTeamsQueryDto = {},
   ): Promise<PaginatedResponseDto<TeamResponseDto>> {
-    const { page, limit, skip } = resolvePagination(filters ?? {});
+    const { page, limit, skip } = resolvePagination(filters);
     const where = this.buildWhereClause(filters);
 
     const [teams, total] = await Promise.all([
@@ -481,31 +465,30 @@ export class TeamsService {
   }
 
   private buildPoolFilter(
-    filters?: TeamFilters,
+    filters: GetTeamsQueryDto,
   ): Prisma.PoolsWhereInput | undefined {
-    if (!filters?.level && !filters?.division && !filters?.poolLetter)
-      return undefined;
+    const { level, division, poolLetter } = filters;
+    // Category and gender are the team's own columns, not its championship's.
+    const championship = buildChampionshipWhere({ level, division });
 
-    const championship: Prisma.ChampionshipsWhereInput = {};
-    if (filters?.level) championship.level = filters.level;
-    if (filters?.division) championship.division = filters.division;
+    if (!championship && !poolLetter) return undefined;
 
     return {
-      championship,
-      ...(filters?.poolLetter ? { letter: filters.poolLetter } : {}),
+      ...(championship ? { championship } : {}),
+      ...(poolLetter ? { letter: poolLetter } : {}),
     };
   }
 
   private buildClubFilter(
-    filters?: TeamFilters,
+    filters: GetTeamsQueryDto,
   ): Prisma.ClubsWhereInput | undefined {
     const clubWhere: Prisma.ClubsWhereInput = {
       ...buildClubOrganizationWhere(filters),
     };
 
-    if (filters?.clubId) clubWhere.id = filters.clubId;
+    if (filters.clubId) clubWhere.id = filters.clubId;
 
-    if (filters?.search) {
+    if (filters.search) {
       clubWhere.name = nameContains(filters.search);
     }
 
@@ -518,7 +501,7 @@ export class TeamsService {
    * @param filters - Team filters
    * @returns Prisma where clause
    */
-  private buildWhereClause(filters?: TeamFilters): Prisma.TeamsWhereInput {
+  private buildWhereClause(filters: GetTeamsQueryDto): Prisma.TeamsWhereInput {
     const where: Prisma.TeamsWhereInput = {};
 
     const poolFilter = this.buildPoolFilter(filters);
@@ -527,9 +510,9 @@ export class TeamsService {
     const clubFilter = this.buildClubFilter(filters);
     if (clubFilter) where.club = clubFilter;
 
-    if (filters?.number !== undefined) where.number = filters.number;
-    if (filters?.category) where.category = filters.category;
-    if (filters?.gender) where.gender = filters.gender;
+    if (filters.number !== undefined) where.number = filters.number;
+    if (filters.category) where.category = filters.category;
+    if (filters.gender) where.gender = filters.gender;
 
     return where;
   }

@@ -3667,8 +3667,6 @@ export interface operations {
                 limit?: number;
                 /** @description Competition level filter */
                 level?: "departmental" | "regional" | "national";
-                /** @description Division number to filter matches */
-                division?: number;
                 /** @description Committee ID (for departmental level) */
                 committeeId?: number;
                 /** @description League ID (for regional level) */
@@ -3677,6 +3675,8 @@ export interface operations {
                 category?: "U11" | "U13" | "U15" | "U18" | "U21" | "Seniors";
                 /** @description Gender filter */
                 gender?: "male" | "female";
+                /** @description Division number to filter matches */
+                division?: number;
                 /** @description Pool ID to filter matches */
                 poolId?: number;
                 /** @description Championship ID to filter matches */
@@ -3954,14 +3954,6 @@ export interface operations {
                 limit?: number;
                 /** @description Competition level filter */
                 level?: "departmental" | "regional" | "national";
-                /** @description Club ID to filter players by club */
-                clubId?: number;
-                /** @description Team ID to filter players by team */
-                teamId?: number;
-                /** @description Team number to filter players */
-                teamNumber?: number;
-                /** @description Player number to filter by jersey number */
-                number?: number;
                 /** @description Committee ID (for departmental level) */
                 committeeId?: number;
                 /** @description League ID (for regional level) */
@@ -3970,6 +3962,14 @@ export interface operations {
                 category?: "U11" | "U13" | "U15" | "U18" | "U21" | "Seniors";
                 /** @description Gender filter */
                 gender?: "male" | "female";
+                /** @description Club ID to filter players by club */
+                clubId?: number;
+                /** @description Team ID to filter players by team */
+                teamId?: number;
+                /** @description Team number to filter players */
+                teamNumber?: number;
+                /** @description Player number to filter by jersey number */
+                number?: number;
                 /** @description Search by player name (case-insensitive partial match) */
                 search?: string;
             };
@@ -4154,22 +4154,22 @@ export interface operations {
                 page?: number;
                 /** @description Items per page */
                 limit?: number;
-                /** @description Club ID to filter teams by club */
-                clubId?: number;
                 /** @description Competition level filter */
                 level?: "departmental" | "regional" | "national";
-                /** @description Division number to filter teams */
-                division?: number;
                 /** @description Committee ID (for departmental level) */
                 committeeId?: number;
                 /** @description League ID (for regional level) */
                 leagueId?: number;
-                /** @description Team number */
-                number?: number;
                 /** @description Age category filter */
                 category?: "U11" | "U13" | "U15" | "U18" | "U21" | "Seniors";
                 /** @description Gender filter */
                 gender?: "male" | "female";
+                /** @description Club ID to filter teams by club */
+                clubId?: number;
+                /** @description Division number to filter teams */
+                division?: number;
+                /** @description Team number */
+                number?: number;
                 /** @description Search by club name (case-insensitive partial match) */
                 search?: string;
                 /** @description Filter by pool letter */

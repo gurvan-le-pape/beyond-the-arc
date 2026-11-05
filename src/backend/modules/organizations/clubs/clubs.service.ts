@@ -12,6 +12,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 
 import { Prisma } from "../../../prisma/generated/prisma/client";
+import type { GetClubsQueryDto } from "./dto/clubs.query.dto";
 import {
   ClubBasicResponseDto,
   ClubDetailedResponseDto,
@@ -247,16 +248,9 @@ export class ClubsService {
    * @param filters - Filter criteria
    * @returns Array of clubs matching the filters
    */
-  async findClubsByFilters(filters: {
-    level?: CompetitionLevel;
-    committeeId?: number;
-    leagueId?: number;
-    category?: Category;
-    gender?: Gender;
-    search?: string;
-    page?: number;
-    limit?: number;
-  }): Promise<PaginatedResponseDto<ClubBasicResponseDto>> {
+  async findClubsByFilters(
+    filters: GetClubsQueryDto,
+  ): Promise<PaginatedResponseDto<ClubBasicResponseDto>> {
     const { page, limit, skip } = resolvePagination(filters);
 
     // Build where clause for clubs

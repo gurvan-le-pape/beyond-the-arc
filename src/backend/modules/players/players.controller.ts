@@ -96,20 +96,7 @@ export class PlayersController {
   async getPlayers(
     @Query() query: GetPlayersQueryDto,
   ): Promise<PaginatedResponseDto<PlayerResponseDto>> {
-    return this.playersService.findAllPlayers({
-      level: query.level,
-      clubId: query.clubId,
-      teamId: query.teamId,
-      teamNumber: query.teamNumber,
-      number: query.number,
-      committeeId: query.committeeId,
-      leagueId: query.leagueId,
-      category: query.category,
-      gender: query.gender,
-      search: query.search,
-      page: query.page,
-      limit: query.limit,
-    });
+    return this.playersService.findAllPlayers(query);
   }
 
   @Get("filter-values")
