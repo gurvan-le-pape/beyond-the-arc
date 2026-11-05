@@ -127,8 +127,8 @@ export function LatestRoundSection({
                   href={`/matches/${match.id}`}
                   padding="sm"
                   aria-label={tMatches("ariaLabelMatch", {
-                    home: match.homeTeam?.club?.name || "",
-                    away: match.awayTeam?.club?.name || "",
+                    home: match.homeTeam.club.name,
+                    away: match.awayTeam.club.name,
                   })}
                 >
                   <Matchup

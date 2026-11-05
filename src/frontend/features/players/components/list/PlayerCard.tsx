@@ -33,16 +33,16 @@ interface PlayerCardProps {
 export function PlayerCard({ player }: PlayerCardProps) {
   const tCommon = useTranslations("common");
 
-  const clubName = player.team?.club?.name ?? null;
-  const category = player.team?.category ?? null;
-  const gender = player.team?.gender ?? null;
-  const level = player.team?.pool?.championship?.level;
-  const committee = player.team?.club?.committee ?? null;
+  const clubName = player.team.club.name;
+  const category = player.team.category;
+  const gender = player.team.gender;
+  const level = player.team.pool?.championship.level;
+  const committee = player.team.club.committee;
 
   const config = getLevelConfig(level);
 
   const clubTeamLabel =
-    formatTeamName(clubName, player.team?.number) || tCommon("notAvailable");
+    formatTeamName(clubName, player.team.number) || tCommon("notAvailable");
 
   return (
     <ListEntityCard

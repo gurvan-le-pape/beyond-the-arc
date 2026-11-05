@@ -58,7 +58,7 @@ export function OpponentPicker({
     minLength: 1,
   });
 
-  const selectedClub = selectedPlayer?.team?.club?.name;
+  const selectedClub = selectedPlayer?.team.club.name;
 
   return (
     <div className="flex flex-col gap-2">
@@ -76,7 +76,7 @@ export function OpponentPicker({
         options={results.map((player) => ({
           value: player.id,
           label: playerName(player),
-          description: player.team?.club?.name,
+          description: player.team.club.name,
         }))}
         value={selectedPlayer?.id}
         selectedLabel={
