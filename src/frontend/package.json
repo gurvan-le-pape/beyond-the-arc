@@ -16,6 +16,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint '**/*.{ts,mts,tsx}'",
+    "lint:prune": "eslint '**/*.{ts,mts,tsx}' --prune-suppressions",
     "lint:fix": "organize-imports-cli './**/*.ts' './**/*.tsx' && eslint '**/*.{ts,mts,tsx}' --fix && npm run format",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

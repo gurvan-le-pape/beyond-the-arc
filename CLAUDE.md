@@ -47,7 +47,9 @@ docker run --rm -v "$PWD/src/backend/db/python":/app -w /app -e PYTHONDONTWRITEB
   sh -c 'pip install -q -r requirements-dev.txt && python -m pytest && python -m tests.season_sample'
 ```
 
-Root-level `npm run quality` prints the knip and jscpd reports (`quality:knip`, `quality:dup` run one). They are measurements, as are the `warn`-level complexity and `no-unnecessary-condition` rules in both ESLint configs: nothing fails on them yet. `npm run quality:deps` runs dependency-cruiser, whose module-boundary rules do fail the build. See `docs/ci-cd.md`.
+Root-level `npm run quality` prints the knip and jscpd reports (`quality:knip`, `quality:dup` run one). They are measurements: nothing fails on them. `npm run quality:deps` runs dependency-cruiser, whose module-boundary rules do fail the build. See `docs/ci-cd.md`.
+
+`no-unnecessary-condition`, `complexity`, `max-lines-per-function` and `max-params` are `error` in both ESLint configs, with the violations that predate them counted per file and rule in each project's `eslint-suppressions.json`. A new violation fails lint, in a file listed there or not. Fixing a listed one makes lint exit **2** until `npm run lint:prune` lowers the count and the file is committed; here that exit code is not a broken config. Never add to the baseline to get a change through. `noUncheckedIndexedAccess` is off, so `no-unnecessary-condition` calls a guard on a value read from an array unnecessary: keep a guard that is real and give it an inline disable saying why.
 
 Root-level `npm run barrels` (or `make barrels`) regenerates barrel `index.ts` files via barrelsby — needed after adding new files to directories listed in the barrel-enforcing eslint rule (see below). It chains `barrels:lint` (`eslint --fix` over the frontend barrels) because barrelsby writes its own `@file` banner and drops the `// src/frontend/...` path comment. Regeneration is one-shot: barrelsby 2.8.1 ships no watch mode.
 

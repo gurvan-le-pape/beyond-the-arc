@@ -102,7 +102,17 @@ Runs `npm run quality:deps` from the repo root: dependency-cruiser (`.dependency
 
 Measurements, read in the job log. `quality-report` runs `npm run quality` from the repo root: knip (unused files, exports, dependencies; `knip.json` in each application) and jscpd (`.jscpd.json`). `ruff-report` runs ruff's pyflakes and complexity checks over the scheduler (`src/backend/db/python/ruff.toml`). Findings do not fail either job. The one exception is duplication above jscpd's 3% threshold, which `allow_failure` turns into a warning, as it does a tool that crashes. To make one of them blocking, remove `--no-exit-code` (knip) or `--exit-zero` (ruff), and add the job to `deploy`'s `needs:`.
 
-The lint jobs carry the same stage of rule: `no-unnecessary-condition`, `complexity` (10), `max-lines-per-function` (80) and `max-params` (4) are `warn` in both ESLint configs, and ESLint runs without `--max-warnings`. `max-depth` (3) and `no-nested-conditional` are `error`.
+### The lint baseline
+
+`no-unnecessary-condition`, `complexity` (10), `max-lines-per-function` (80), `max-params` (4), `max-depth` (3) and `no-nested-conditional` are `error` in both ESLint configs, for application code. The violations that predate them are recorded in `eslint-suppressions.json` in each application, as a count per file and rule, and ESLint reads that file by default, so the lint jobs need no flag. The file is written by ESLint and ignored by Prettier.
+
+- **More violations than the count**, in a listed file or a new one, fail lint and report every occurrence in that file for that rule.
+- **Fewer violations than the count** make lint exit 2, until `npm run lint:prune` lowers the count and the file is committed. The baseline can only shrink.
+- **Renaming a listed file** moves it out of the baseline: its violations are reported under the new path. Fix them, or record them again with `npx eslint <path> --suppress-rule <rule>` from the application directory. `lint:prune` then drops the entry for the old path, which lint does not report on its own.
+
+Lint output no longer shows baselined violations. `eslint-suppressions.json` is where to read them.
+
+`next build` does not read that file, so `next.config.js` turns its own ESLint pass off with `eslint.ignoreDuringBuilds`. It still type-checks. Linting belongs to `frontend-lint`, which `deploy` waits on.
 
 ### sonarcloud
 
