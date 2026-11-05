@@ -33,12 +33,12 @@ export function TeamCard({ team }: TeamCardProps) {
   const tCommon = useTranslations("common");
   const tTeams = useTranslations("teams");
 
-  const clubName = team.club?.name ?? null;
-  const level = team.pool?.championship?.level;
-  const division = team.pool?.championship?.division ?? null;
+  const clubName = team.club.name;
+  const level = team.pool?.championship.level;
+  const division = team.pool?.championship.division ?? null;
   const poolLetter = team.pool?.letter ?? null;
-  const category = team.category ?? null;
-  const gender = team.gender ?? null;
+  const category = team.category;
+  const gender = team.gender;
 
   const config = getLevelConfig(level);
 
@@ -52,7 +52,7 @@ export function TeamCard({ team }: TeamCardProps) {
           variant="label"
           className={cn("truncate font-semibold", config.text)}
         >
-          {clubName ?? tCommon("notAvailable")}
+          {clubName}
         </Text>
       }
       badges={
@@ -69,7 +69,7 @@ export function TeamCard({ team }: TeamCardProps) {
     >
       <EntityCardBody
         title={formatTeamName(clubName, team.number) || tCommon("notAvailable")}
-        committee={team.club?.committee}
+        committee={team.club.committee}
         level={level}
       />
     </ListEntityCard>

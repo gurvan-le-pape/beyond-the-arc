@@ -31,15 +31,15 @@ export function MatchesCard({ match }: MatchesCardProps) {
   const tTeams = useTranslations("teams");
   const locale = useLocale();
 
-  const level = match.pool?.championship?.level;
+  const level = match.pool.championship.level;
   const config = getLevelConfig(level);
 
   return (
     <ListEntityCard
       href={`/matches/${match.id}`}
       ariaLabel={tMatches("ariaLabelMatch", {
-        home: match.homeTeam?.club?.name || "",
-        away: match.awayTeam?.club?.name || "",
+        home: match.homeTeam.club.name,
+        away: match.awayTeam.club.name,
       })}
       level={level}
       headerLeft={
@@ -58,14 +58,10 @@ export function MatchesCard({ match }: MatchesCardProps) {
       }
       badges={
         <EntityCardBadges
-          category={match.pool?.championship?.category}
-          gender={match.pool?.championship?.gender}
-          division={match.pool?.championship?.division}
-          poolLabel={
-            match.pool
-              ? tTeams("poolLabel", { letter: match.pool.letter })
-              : null
-          }
+          category={match.pool.championship.category}
+          gender={match.pool.championship.gender}
+          division={match.pool.championship.division}
+          poolLabel={tTeams("poolLabel", { letter: match.pool.letter })}
           level={level}
         />
       }
