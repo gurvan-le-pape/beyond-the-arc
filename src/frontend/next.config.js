@@ -13,6 +13,12 @@ const nextConfig = {
   // No `X-Powered-By: Next.js` on every response: a hint about the stack for
   // anyone probing it, and no use to a visitor.
   poweredByHeader: false,
+  eslint: {
+    // `next build` runs ESLint without reading eslint-suppressions.json, so it
+    // would report every baselined violation as an error. `frontend-lint` is
+    // the lint gate, and `deploy` waits on it.
+    ignoreDuringBuilds: true,
+  },
   experimental: {
     // Keep the Data Cache and ISR pages in memory only. With the default
     // `true`, every cached fetch and every ISR render is also written under

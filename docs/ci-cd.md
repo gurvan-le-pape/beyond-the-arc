@@ -112,6 +112,8 @@ Measurements, read in the job log. `quality-report` runs `npm run quality` from 
 
 Lint output no longer shows baselined violations. `eslint-suppressions.json` is where to read them.
 
+`next build` does not read that file, so `next.config.js` turns its own ESLint pass off with `eslint.ignoreDuringBuilds`. It still type-checks. Linting belongs to `frontend-lint`, which `deploy` waits on.
+
 ### sonarcloud
 
 `sonar-scanner` (`sonarsource/sonar-scanner-cli:11`) with full git history (`GIT_DEPTH: 0`) and the backend coverage artifact. Configuration lives in `sonar-project.properties`. `allow_failure: true` and absent from `deploy`'s `needs:` — a failed quality gate reports without blocking a release.
