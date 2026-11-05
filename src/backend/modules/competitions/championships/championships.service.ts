@@ -1,11 +1,12 @@
 // src/backend/modules/competitions/championships/championships.service.ts
 import { Category, CompetitionLevel, Gender } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
-import { resolvePagination } from "@common/utils";
+import { buildChampionshipWhere, resolvePagination } from "@common/utils";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 
 import { Prisma } from "../../../prisma/generated/prisma/client";
+import type { GetChampionshipsQueryDto } from "./dto/championships.query.dto";
 import { ChampionshipResponseDto } from "./dto/championships.response.dto";
 
 /**
@@ -48,19 +49,6 @@ type ChampionshipSelectResult = Prisma.ChampionshipsGetPayload<{
 }>;
 
 /**
- * Filters for querying championships.
- */
-type ChampionshipFilters = {
-  level?: CompetitionLevel;
-  leagueId?: number;
-  committeeId?: number;
-  category?: Category;
-  gender?: Gender;
-  page?: number;
-  limit?: number;
-};
-
-/**
  * Service handling business logic for championships.
  * Encapsulates database access and domain logic.
  */
@@ -75,9 +63,9 @@ export class ChampionshipsService {
    * @returns Paginated list of championship DTOs
    */
   async findChampionships(
-    filters?: ChampionshipFilters,
+    filters: GetChampionshipsQueryDto = {},
   ): Promise<PaginatedResponseDto<ChampionshipResponseDto>> {
-    const { page, limit, skip } = resolvePagination(filters ?? {});
+    const { page, limit, skip } = resolvePagination(filters);
     const where = this.buildWhereClause(filters);
 
     const [championships, total] = await Promise.all([
@@ -133,15 +121,14 @@ export class ChampionshipsService {
    * @returns Prisma where clause
    */
   private buildWhereClause(
-    filters?: ChampionshipFilters,
+    filters: GetChampionshipsQueryDto,
   ): Prisma.ChampionshipsWhereInput {
-    const where: Prisma.ChampionshipsWhereInput = {};
+    const where: Prisma.ChampionshipsWhereInput = {
+      ...buildChampionshipWhere(filters),
+    };
 
-    if (filters?.level) where.level = filters.level;
-    if (filters?.category) where.category = filters.category;
-    if (filters?.gender) where.gender = filters.gender;
-    if (filters?.leagueId) where.leagueId = filters.leagueId;
-    if (filters?.committeeId) where.committeeId = filters.committeeId;
+    if (filters.leagueId) where.leagueId = filters.leagueId;
+    if (filters.committeeId) where.committeeId = filters.committeeId;
 
     return where;
   }
@@ -163,8 +150,8 @@ export class ChampionshipsService {
       seasonYear: entity.seasonYear,
       level: entity.level as CompetitionLevel,
       division: entity.division,
-      leagueId: entity.leagueId ?? null,
-      committeeId: entity.committeeId ?? null,
+      leagueId: entity.leagueId,
+      committeeId: entity.committeeId,
       committeeName: entity.committee?.name ?? null,
       leagueName: entity.league?.name ?? null,
       regionName: entity.league?.region.name ?? null,

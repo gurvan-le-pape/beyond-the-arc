@@ -175,7 +175,7 @@ Response DTO rules that keep the generated types truthful:
 
 ### New-endpoint checklist
 
-1. Query params: one DTO class in `dto/`, extending `PaginationQueryDto` if paginated; `@IsInt` for integers, `@IsEnum` for enum values, `search` for name search. No inline pipes on `@Query()`.
+1. Query params: one DTO class in `dto/`, extending `PaginationQueryDto` if paginated, or `CompetitionScopeQueryDto` if it also takes level, committee, league, category and gender with their standard descriptions. The controller passes it to the service as is, and the service takes that DTO as its parameter type, so there is no parallel filter type where a field could be dropped; `@IsInt` for integers, `@IsEnum` for enum values, `search` for name search. No inline pipes on `@Query()`.
 2. Response: real DTO classes for every nested shape; enums and nullability per the rules above.
 3. List endpoints return `[]` when empty; only by-id endpoints throw `NotFoundException`.
 4. Paginated: the `orderBy` ends with `{ id: "asc" }`.

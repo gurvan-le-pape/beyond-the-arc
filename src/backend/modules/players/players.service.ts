@@ -20,6 +20,7 @@ import { formatInTimeZone } from "date-fns-tz";
 import { PrismaService } from "prisma/prisma.service";
 
 import { Prisma } from "../../prisma/generated/prisma/client";
+import type { GetPlayersQueryDto } from "./dto/players.query.dto";
 import type {
   FilterValuesPlayersResponseDto,
   MatchHistoryDto,
@@ -146,24 +147,6 @@ type PlayerMatchHistorySelectResult = Prisma.PlayerMatchStatsGetPayload<{
 }>;
 
 /**
- * Filters for querying players.
- */
-type PlayerFilters = {
-  level?: CompetitionLevel;
-  clubId?: number;
-  teamId?: number;
-  teamNumber?: number;
-  number?: number;
-  committeeId?: number;
-  leagueId?: number;
-  category?: Category;
-  gender?: Gender;
-  search?: string;
-  page?: number;
-  limit?: number;
-};
-
-/**
  * Service handling business logic for players.
  * Encapsulates database access and domain logic.
  */
@@ -178,9 +161,9 @@ export class PlayersService {
    * @returns Paginated list of players
    */
   async findAllPlayers(
-    filters?: PlayerFilters,
+    filters: GetPlayersQueryDto = {},
   ): Promise<PaginatedResponseDto<PlayerResponseDto>> {
-    const { page, limit, skip } = resolvePagination(filters ?? {});
+    const { page, limit, skip } = resolvePagination(filters);
 
     const where = this.buildWhereClause(filters);
 
@@ -385,21 +368,21 @@ export class PlayersService {
     } satisfies MatchHistoryDto;
   }
 
-  private buildTeamFilter(filters?: PlayerFilters): Prisma.TeamsWhereInput {
+  private buildTeamFilter(filters: GetPlayersQueryDto): Prisma.TeamsWhereInput {
     const teamWhere: Prisma.TeamsWhereInput = {};
 
-    if (filters?.level) {
+    if (filters.level) {
       teamWhere.pool = { championship: { level: filters.level } };
     }
 
     const clubWhere = buildClubOrganizationWhere(filters);
     if (clubWhere) teamWhere.club = clubWhere;
 
-    if (filters?.teamId) teamWhere.id = filters.teamId;
-    if (filters?.teamNumber) teamWhere.number = filters.teamNumber;
-    if (filters?.clubId) teamWhere.clubId = filters.clubId;
-    if (filters?.category) teamWhere.category = filters.category;
-    if (filters?.gender) teamWhere.gender = filters.gender;
+    if (filters.teamId) teamWhere.id = filters.teamId;
+    if (filters.teamNumber) teamWhere.number = filters.teamNumber;
+    if (filters.clubId) teamWhere.clubId = filters.clubId;
+    if (filters.category) teamWhere.category = filters.category;
+    if (filters.gender) teamWhere.gender = filters.gender;
 
     return teamWhere;
   }
@@ -410,11 +393,13 @@ export class PlayersService {
    * @param filters - Player filters
    * @returns Prisma where clause
    */
-  private buildWhereClause(filters?: PlayerFilters): Prisma.PlayersWhereInput {
+  private buildWhereClause(
+    filters: GetPlayersQueryDto,
+  ): Prisma.PlayersWhereInput {
     const where: Prisma.PlayersWhereInput = {};
 
-    if (filters?.search) where.name = nameContains(filters.search);
-    if (filters?.number) where.number = filters.number;
+    if (filters.search) where.name = nameContains(filters.search);
+    if (filters.number) where.number = filters.number;
 
     const teamWhere = this.buildTeamFilter(filters);
     if (Object.keys(teamWhere).length > 0) where.team = teamWhere;

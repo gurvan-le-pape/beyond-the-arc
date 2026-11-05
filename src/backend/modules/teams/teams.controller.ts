@@ -45,20 +45,7 @@ export class TeamsController {
   async getTeams(
     @Query() query: GetTeamsQueryDto,
   ): Promise<PaginatedResponseDto<TeamResponseDto>> {
-    return this.teamsService.findAllTeams({
-      clubId: query.clubId,
-      level: query.level,
-      division: query.division,
-      committeeId: query.committeeId,
-      leagueId: query.leagueId,
-      number: query.number,
-      category: query.category,
-      gender: query.gender,
-      search: query.search,
-      poolLetter: query.poolLetter,
-      page: query.page,
-      limit: query.limit,
-    });
+    return this.teamsService.findAllTeams(query);
   }
 
   @Get("filter-values")

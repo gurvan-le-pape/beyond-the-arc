@@ -182,7 +182,7 @@ describe("PlayersController", () => {
       });
     });
 
-    it("should pass undefined page and limit through when not provided", async () => {
+    it("should pass an empty query through when no params are provided", async () => {
       // Arrange
       const mockResponse: PaginatedResponseDto<PlayerResponseDto> = {
         items: [],
@@ -198,12 +198,7 @@ describe("PlayersController", () => {
       await controller.getPlayers({});
 
       // Assert
-      expect(service.findAllPlayers).toHaveBeenCalledWith(
-        expect.objectContaining({
-          page: undefined,
-          limit: undefined,
-        }),
-      );
+      expect(service.findAllPlayers).toHaveBeenCalledWith({});
     });
 
     it("should propagate service errors", async () => {

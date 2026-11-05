@@ -158,7 +158,7 @@ describe("ChampionshipsController", () => {
       });
     });
 
-    it("should pass undefined page and limit through when not provided", async () => {
+    it("should pass an empty query through when no params are provided", async () => {
       // Arrange
       mockChampionshipsService.findChampionships.mockResolvedValue({
         ...mockPaginatedResponse,
@@ -169,9 +169,7 @@ describe("ChampionshipsController", () => {
 
       await controller.getChampionships({});
 
-      expect(service.findChampionships).toHaveBeenCalledWith(
-        expect.objectContaining({ page: undefined, limit: undefined }),
-      );
+      expect(service.findChampionships).toHaveBeenCalledWith({});
     });
 
     it("should return empty paginated response when no results", async () => {

@@ -5,6 +5,7 @@
 
 export * from "./api-envelope.dto";
 export * from "./api-error-response.dto";
+export * from "./competition-scope.query.dto";
 export * from "./organization-scope.query.dto";
 export * from "./paginated-response.dto";
 export * from "./pagination.query.dto";

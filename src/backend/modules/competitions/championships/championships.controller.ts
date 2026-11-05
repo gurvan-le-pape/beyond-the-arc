@@ -141,14 +141,6 @@ export class ChampionshipsController {
   async getChampionships(
     @Query() query: GetChampionshipsQueryDto,
   ): Promise<PaginatedResponseDto<ChampionshipResponseDto>> {
-    return this.championshipsService.findChampionships({
-      level: query.level,
-      leagueId: query.leagueId,
-      committeeId: query.committeeId,
-      category: query.category,
-      gender: query.gender,
-      page: query.page,
-      limit: query.limit,
-    });
+    return this.championshipsService.findChampionships(query);
   }
 }

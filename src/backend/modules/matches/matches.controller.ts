@@ -75,21 +75,7 @@ export class MatchesController {
   async getMatches(
     @Query() query: GetMatchesQueryDto,
   ): Promise<PaginatedResponseDto<MatchResponseDto>> {
-    return this.matchesService.findAllMatches({
-      level: query.level,
-      division: query.division,
-      committeeId: query.committeeId,
-      leagueId: query.leagueId,
-      category: query.category,
-      gender: query.gender,
-      poolId: query.poolId,
-      championshipId: query.championshipId,
-      matchday: query.matchday,
-      date: query.date,
-      search: query.search,
-      page: query.page,
-      limit: query.limit,
-    });
+    return this.matchesService.findAllMatches(query);
   }
 
   @Get("pool/:poolId")

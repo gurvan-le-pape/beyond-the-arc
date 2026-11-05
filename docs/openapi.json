@@ -1415,17 +1415,6 @@
             }
           },
           {
-            "name": "division",
-            "required": false,
-            "in": "query",
-            "description": "Division number to filter matches",
-            "schema": {
-              "minimum": 1,
-              "example": 1,
-              "type": "number"
-            }
-          },
-          {
             "name": "committeeId",
             "required": false,
             "in": "query",
@@ -1477,6 +1466,17 @@
                 "male",
                 "female"
               ]
+            }
+          },
+          {
+            "name": "division",
+            "required": false,
+            "in": "query",
+            "description": "Division number to filter matches",
+            "schema": {
+              "minimum": 1,
+              "example": 1,
+              "type": "number"
             }
           },
           {
@@ -2039,50 +2039,6 @@
             }
           },
           {
-            "name": "clubId",
-            "required": false,
-            "in": "query",
-            "description": "Club ID to filter players by club",
-            "schema": {
-              "minimum": 1,
-              "example": 1,
-              "type": "number"
-            }
-          },
-          {
-            "name": "teamId",
-            "required": false,
-            "in": "query",
-            "description": "Team ID to filter players by team",
-            "schema": {
-              "minimum": 1,
-              "example": 1,
-              "type": "number"
-            }
-          },
-          {
-            "name": "teamNumber",
-            "required": false,
-            "in": "query",
-            "description": "Team number to filter players",
-            "schema": {
-              "minimum": 1,
-              "example": 1,
-              "type": "number"
-            }
-          },
-          {
-            "name": "number",
-            "required": false,
-            "in": "query",
-            "description": "Player number to filter by jersey number",
-            "schema": {
-              "minimum": 1,
-              "example": 10,
-              "type": "number"
-            }
-          },
-          {
             "name": "committeeId",
             "required": false,
             "in": "query",
@@ -2134,6 +2090,50 @@
                 "male",
                 "female"
               ]
+            }
+          },
+          {
+            "name": "clubId",
+            "required": false,
+            "in": "query",
+            "description": "Club ID to filter players by club",
+            "schema": {
+              "minimum": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "teamId",
+            "required": false,
+            "in": "query",
+            "description": "Team ID to filter players by team",
+            "schema": {
+              "minimum": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "teamNumber",
+            "required": false,
+            "in": "query",
+            "description": "Team number to filter players",
+            "schema": {
+              "minimum": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "number",
+            "required": false,
+            "in": "query",
+            "description": "Player number to filter by jersey number",
+            "schema": {
+              "minimum": 1,
+              "example": 10,
+              "type": "number"
             }
           },
           {
@@ -2461,17 +2461,6 @@
             }
           },
           {
-            "name": "clubId",
-            "required": false,
-            "in": "query",
-            "description": "Club ID to filter teams by club",
-            "schema": {
-              "minimum": 1,
-              "example": 1,
-              "type": "number"
-            }
-          },
-          {
             "name": "level",
             "required": false,
             "in": "query",
@@ -2484,17 +2473,6 @@
                 "regional",
                 "national"
               ]
-            }
-          },
-          {
-            "name": "division",
-            "required": false,
-            "in": "query",
-            "description": "Division number to filter teams",
-            "schema": {
-              "minimum": 1,
-              "example": 1,
-              "type": "number"
             }
           },
           {
@@ -2513,17 +2491,6 @@
             "required": false,
             "in": "query",
             "description": "League ID (for regional level)",
-            "schema": {
-              "minimum": 1,
-              "example": 1,
-              "type": "number"
-            }
-          },
-          {
-            "name": "number",
-            "required": false,
-            "in": "query",
-            "description": "Team number",
             "schema": {
               "minimum": 1,
               "example": 1,
@@ -2560,6 +2527,39 @@
                 "male",
                 "female"
               ]
+            }
+          },
+          {
+            "name": "clubId",
+            "required": false,
+            "in": "query",
+            "description": "Club ID to filter teams by club",
+            "schema": {
+              "minimum": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "division",
+            "required": false,
+            "in": "query",
+            "description": "Division number to filter teams",
+            "schema": {
+              "minimum": 1,
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "number",
+            "required": false,
+            "in": "query",
+            "description": "Team number",
+            "schema": {
+              "minimum": 1,
+              "example": 1,
+              "type": "number"
             }
           },
           {

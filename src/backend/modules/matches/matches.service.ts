@@ -10,6 +10,7 @@ import {
 import { PaginatedResponseDto } from "@common/dto";
 import {
   andWhere,
+  buildChampionshipWhere,
   buildClubOrganizationWhere,
   mapPlayerMatchStats,
   mapPlayerSummary,
@@ -23,6 +24,7 @@ import { PrismaService } from "prisma/prisma.service";
 
 import { Prisma } from "../../prisma/generated/prisma/client";
 import { aggregateTeamMatchStats } from "./aggregate-team-match-stats";
+import type { GetMatchesQueryDto } from "./dto/matches.query.dto";
 import type {
   MatchDetailResponseDto,
   MatchEventDto,
@@ -32,22 +34,6 @@ import type {
   ShotDto,
 } from "./dto/matches.response.dto";
 import { matchClock } from "./match-period";
-
-export interface MatchFilters {
-  level?: CompetitionLevel;
-  division?: number;
-  committeeId?: number;
-  leagueId?: number;
-  category?: Category;
-  gender?: Gender;
-  poolId?: number;
-  championshipId?: number;
-  matchday?: number;
-  date?: string;
-  search?: string;
-  page?: number;
-  limit?: number;
-}
 
 const MATCH_LIST_SELECT = {
   id: true,
@@ -217,10 +203,10 @@ export class MatchesService {
   constructor(private readonly prisma: PrismaService) {}
 
   async findAllMatches(
-    filters?: MatchFilters,
+    filters: GetMatchesQueryDto = {},
   ): Promise<PaginatedResponseDto<MatchResponseDto>> {
-    const { page, limit, skip } = resolvePagination(filters ?? {});
-    const searchClubIds = filters?.search
+    const { page, limit, skip } = resolvePagination(filters);
+    const searchClubIds = filters.search
       ? await this.findClubIdsByName(filters.search)
       : undefined;
     const where = this.buildWhereClause(filters, searchClubIds);
@@ -509,28 +495,24 @@ export class MatchesService {
   }
 
   private buildPoolFilter(
-    filters?: MatchFilters,
+    filters: GetMatchesQueryDto,
   ): Prisma.PoolsWhereInput | undefined {
-    if (filters?.poolId) return undefined;
-    if (
-      !filters?.level &&
-      !filters?.division &&
-      !filters?.category &&
-      !filters?.gender
-    )
-      return undefined;
+    const { championshipId } = filters;
+    // A pool id already fixes the championship.
+    const championship = filters.poolId
+      ? undefined
+      : buildChampionshipWhere(filters);
 
-    const championship: Prisma.ChampionshipsWhereInput = {};
-    if (filters?.level) championship.level = filters.level;
-    if (filters?.division) championship.division = filters.division;
-    if (filters?.category) championship.category = filters.category;
-    if (filters?.gender) championship.gender = filters.gender;
+    if (!championshipId && !championship) return undefined;
 
-    return { championship };
+    return {
+      ...(championshipId ? { championshipId } : {}),
+      ...(championship ? { championship } : {}),
+    };
   }
 
   private buildOrganizationFilter(
-    filters?: MatchFilters,
+    filters: GetMatchesQueryDto,
   ): Prisma.MatchesWhereInput[] | undefined {
     const club = buildClubOrganizationWhere(filters);
     if (!club) return undefined;
@@ -573,21 +555,15 @@ export class MatchesService {
    * @returns Prisma where clause
    */
   private buildWhereClause(
-    filters?: MatchFilters,
+    filters: GetMatchesQueryDto,
     searchClubIds?: number[],
   ): Prisma.MatchesWhereInput {
     const where: Prisma.MatchesWhereInput = {};
 
-    if (filters?.poolId) where.poolId = filters.poolId;
+    if (filters.poolId) where.poolId = filters.poolId;
 
     const poolFilter = this.buildPoolFilter(filters);
-    if (filters?.championshipId && poolFilter) {
-      where.pool = { championshipId: filters.championshipId, ...poolFilter };
-    } else if (filters?.championshipId) {
-      where.pool = { championshipId: filters.championshipId };
-    } else if (poolFilter) {
-      where.pool = poolFilter;
-    }
+    if (poolFilter) where.pool = poolFilter;
 
     const orgFilter = this.buildOrganizationFilter(filters);
     const searchFilter = searchClubIds
@@ -604,9 +580,9 @@ export class MatchesService {
       ),
     );
 
-    if (filters?.matchday) where.matchday = filters.matchday;
+    if (filters.matchday) where.matchday = filters.matchday;
 
-    if (filters?.date) {
+    if (filters.date) {
       // Half-open [start of day, start of next day), both bounds built from
       // the *string* overload of `fromZonedTime`, which never consults the
       // process's ambient time zone. `new Date("2024-02-05T00:00:00")` would:

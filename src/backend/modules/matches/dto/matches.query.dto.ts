@@ -1,15 +1,9 @@
 // src/backend/modules/matches/dto/matches.query.dto.ts
-import {
-  Category,
-  CompetitionLevel,
-  Gender,
-  MAX_SEARCH_LENGTH,
-} from "@common/constants";
-import { PaginationQueryDto } from "@common/dto";
+import { MAX_SEARCH_LENGTH } from "@common/constants";
+import { CompetitionScopeQueryDto } from "@common/dto";
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import {
-  IsEnum,
   IsInt,
   IsISO8601,
   IsOptional,
@@ -22,16 +16,7 @@ import {
 /**
  * Query parameters for filtering and paginating matches.
  */
-export class GetMatchesQueryDto extends PaginationQueryDto {
-  @ApiPropertyOptional({
-    description: "Competition level filter",
-    enum: CompetitionLevel,
-    example: CompetitionLevel.REGIONAL,
-  })
-  @IsOptional()
-  @IsEnum(CompetitionLevel)
-  level?: CompetitionLevel;
-
+export class GetMatchesQueryDto extends CompetitionScopeQueryDto {
   @ApiPropertyOptional({
     description: "Division number to filter matches",
     example: 1,
@@ -42,46 +27,6 @@ export class GetMatchesQueryDto extends PaginationQueryDto {
   @IsInt()
   @Min(1)
   division?: number;
-
-  @ApiPropertyOptional({
-    description: "Committee ID (for departmental level)",
-    example: 1,
-    type: Number,
-  })
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  committeeId?: number;
-
-  @ApiPropertyOptional({
-    description: "League ID (for regional level)",
-    example: 1,
-    type: Number,
-  })
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  leagueId?: number;
-
-  @ApiPropertyOptional({
-    description: "Age category filter",
-    example: "U18",
-    enum: Category,
-  })
-  @IsOptional()
-  @IsEnum(Category)
-  category?: Category;
-
-  @ApiPropertyOptional({
-    description: "Gender filter",
-    example: Gender.MALE,
-    enum: Gender,
-  })
-  @IsOptional()
-  @IsEnum(Gender)
-  gender?: Gender;
 
   @ApiPropertyOptional({
     description: "Pool ID to filter matches",
