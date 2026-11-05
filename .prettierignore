@@ -39,3 +39,7 @@ src/frontend/public/
 # themselves and the agent rules, so reflowing a paragraph silently
 # invalidates references rather than tidying anything.
 *.md
+
+# Written by ESLint (--suppress-rule, --prune-suppressions), in its own format.
+src/backend/eslint-suppressions.json
+src/frontend/eslint-suppressions.json

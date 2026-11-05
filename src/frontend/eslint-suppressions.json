@@ -1,0 +1,344 @@
+{
+  "app/[locale]/(chrome)/(public)/championships/[championshipId]/page.tsx": {
+    "complexity": {
+      "count": 1
+    },
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "app/[locale]/(chrome)/architecture/page.tsx": {
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "app/[locale]/(chrome)/page.tsx": {
+    "@typescript-eslint/no-unnecessary-condition": {
+      "count": 1
+    }
+  },
+  "features/competitions/championships/components/detail/ChampionshipHeader.tsx": {
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "features/competitions/championships/components/list/ChampionshipFilters.tsx": {
+    "@typescript-eslint/no-unnecessary-condition": {
+      "count": 1
+    },
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "features/competitions/championships/components/list/ChampionshipTable.tsx": {
+    "@typescript-eslint/no-unnecessary-condition": {
+      "count": 1
+    },
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "features/competitions/championships/utils/buildDivisionNavigation.ts": {
+    "@typescript-eslint/no-unnecessary-condition": {
+      "count": 2
+    }
+  },
+  "features/competitions/leaderboards/components/LeaderboardTable.tsx": {
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "features/geography/api/geometriesQueries.ts": {
+    "@typescript-eslint/no-unnecessary-condition": {
+      "count": 3
+    },
+    "complexity": {
+      "count": 1
+    }
+  },
+  "features/matches/components/detail/match-events/event-timeline/TimelineEventRow.tsx": {
+    "@typescript-eslint/no-unnecessary-condition": {
+      "count": 1
+    },
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "features/matches/components/detail/match-events/event-timeline/periods.ts": {
+    "@typescript-eslint/no-unnecessary-condition": {
+      "count": 1
+    }
+  },
+  "features/matches/components/detail/match-events/event-timeline/usePlayDescription.ts": {
+    "@typescript-eslint/no-unnecessary-condition": {
+      "count": 2
+    }
+  },
+  "features/matches/components/detail/match-events/index.tsx": {
+    "@typescript-eslint/no-unnecessary-condition": {
+      "count": 1
+    }
+  },
+  "features/matches/components/detail/match-events/match-flow/FlowChart.tsx": {
+    "@typescript-eslint/no-unnecessary-condition": {
+      "count": 1
+    },
+    "complexity": {
+      "count": 1
+    },
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "features/matches/components/detail/match-events/match-flow/matchFlow.ts": {
+    "@typescript-eslint/no-unnecessary-condition": {
+      "count": 1
+    }
+  },
+  "features/matches/components/detail/match-events/playFilters.ts": {
+    "@typescript-eslint/no-unnecessary-condition": {
+      "count": 1
+    }
+  },
+  "features/matches/components/detail/match-events/plays.ts": {
+    "@typescript-eslint/no-unnecessary-condition": {
+      "count": 1
+    }
+  },
+  "features/matches/components/detail/match-events/useMatchEvents.ts": {
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "features/matches/components/detail/player-match-stats/usePlayerStatColumns.tsx": {
+    "max-lines-per-function": {
+      "count": 2
+    }
+  },
+  "features/matches/components/list/matches-filters/index.tsx": {
+    "complexity": {
+      "count": 1
+    },
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "features/matches/components/list/matches-filters/useMatchesCascadeOptions.ts": {
+    "@typescript-eslint/no-unnecessary-condition": {
+      "count": 2
+    }
+  },
+  "features/matches/utils/buildMatchTeam.ts": {
+    "@typescript-eslint/no-unnecessary-condition": {
+      "count": 1
+    }
+  },
+  "features/matches/utils/eventDescription.ts": {
+    "@typescript-eslint/no-unnecessary-condition": {
+      "count": 1
+    }
+  },
+  "features/matches/utils/eventHelpers.ts": {
+    "@typescript-eslint/no-unnecessary-condition": {
+      "count": 2
+    }
+  },
+  "features/matches/utils/getCurrentRound.ts": {
+    "@typescript-eslint/no-unnecessary-condition": {
+      "count": 1
+    }
+  },
+  "features/matches/utils/groupShotEventsByPlayer.ts": {
+    "@typescript-eslint/no-unnecessary-condition": {
+      "count": 1
+    }
+  },
+  "features/matches/utils/transformShotEvents.ts": {
+    "@typescript-eslint/no-unnecessary-condition": {
+      "count": 1
+    }
+  },
+  "features/organizations/clubs/components/detail/ClubTeamsTable.tsx": {
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "features/organizations/clubs/components/list/club-directory/ClubsFilters.tsx": {
+    "complexity": {
+      "count": 1
+    },
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "features/organizations/clubs/components/map/clubs-map/MapLibreClubsMap.tsx": {
+    "@typescript-eslint/no-unnecessary-condition": {
+      "count": 1
+    },
+    "complexity": {
+      "count": 1
+    },
+    "max-lines-per-function": {
+      "count": 1
+    },
+    "max-params": {
+      "count": 1
+    }
+  },
+  "features/organizations/clubs/components/map/clubs-map/useMapData.tsx": {
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "features/players/components/detail/player-comparison/index.tsx": {
+    "@typescript-eslint/no-unnecessary-condition": {
+      "count": 1
+    },
+    "complexity": {
+      "count": 1
+    },
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "features/players/components/list/PlayersFilters.tsx": {
+    "complexity": {
+      "count": 1
+    },
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "features/players/hooks/usePlayerMatchHistoryColumns.tsx": {
+    "@typescript-eslint/no-unnecessary-condition": {
+      "count": 2
+    }
+  },
+  "features/shot-chart/components/overlays/HotspotsOverlay.tsx": {
+    "@typescript-eslint/no-unnecessary-condition": {
+      "count": 2
+    }
+  },
+  "features/shot-chart/components/overlays/TooltipContent.tsx": {
+    "complexity": {
+      "count": 1
+    }
+  },
+  "features/shot-chart/components/shot-chart/index.tsx": {
+    "complexity": {
+      "count": 1
+    },
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "features/shot-chart/components/shot-chart/useCourtSize.ts": {
+    "@typescript-eslint/no-unnecessary-condition": {
+      "count": 1
+    }
+  },
+  "features/shot-chart/components/variants/ShotModal.tsx": {
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "features/shot-chart/utils/getTooltipPosition.ts": {
+    "@typescript-eslint/no-unnecessary-condition": {
+      "count": 2
+    },
+    "complexity": {
+      "count": 1
+    },
+    "max-params": {
+      "count": 1
+    }
+  },
+  "features/site/docs/components/sections/DocsDatabaseSection.tsx": {
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "features/site/home/components/LatestRoundSection.tsx": {
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "features/teams/components/detail/team-roster/index.tsx": {
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "features/teams/components/list/TeamsFilters.tsx": {
+    "complexity": {
+      "count": 1
+    },
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "lib/services/api.ts": {
+    "complexity": {
+      "count": 1
+    }
+  },
+  "shared/components/blocks/stat-comparison/index.tsx": {
+    "max-lines-per-function": {
+      "count": 2
+    }
+  },
+  "shared/components/domain/ListEntityCard.tsx": {
+    "@typescript-eslint/no-unnecessary-condition": {
+      "count": 1
+    }
+  },
+  "shared/components/domain/matches/Matchup.tsx": {
+    "complexity": {
+      "count": 1
+    }
+  },
+  "shared/components/filters/FiltersShell.tsx": {
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "shared/components/layout/footer/Footer.tsx": {
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "shared/components/navigation/Pagination.tsx": {
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "shared/components/primitives/BottomSheet.tsx": {
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "shared/components/primitives/Card.tsx": {
+    "complexity": {
+      "count": 1
+    }
+  },
+  "shared/components/primitives/ComboBox.tsx": {
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "shared/components/primitives/MultiSelect.tsx": {
+    "max-lines-per-function": {
+      "count": 1
+    }
+  },
+  "shared/components/typography/Text.tsx": {
+    "@typescript-eslint/no-unnecessary-condition": {
+      "count": 1
+    }
+  },
+  "shared/utils/grouping.ts": {
+    "@typescript-eslint/no-unnecessary-condition": {
+      "count": 1
+    }
+  }
+}

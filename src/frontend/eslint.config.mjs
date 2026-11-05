@@ -257,8 +257,8 @@ export default [
       "local-rules/enforce-component-file-layout": "error",
     },
   },
-  // Measuring, not gating: CI runs eslint without --max-warnings, so these
-  // report in every lint run and block nothing. Application code only.
+  // Application code only. Violations that predate these rules are recorded in
+  // eslint-suppressions.json; anything beyond those counts fails the build.
   {
     files: ["**/*.ts", "**/*.mts", "**/*.tsx"],
     ignores: [
@@ -269,14 +269,13 @@ export default [
       "scripts/**",
     ],
     rules: {
-      "@typescript-eslint/no-unnecessary-condition": "warn",
-      complexity: ["warn", 10],
+      "@typescript-eslint/no-unnecessary-condition": "error",
+      complexity: ["error", 10],
       "max-lines-per-function": [
-        "warn",
+        "error",
         { max: 80, skipBlankLines: true, skipComments: true },
       ],
-      "max-params": ["warn", 4],
-      // Already at zero, so a new violation fails the build.
+      "max-params": ["error", 4],
       "max-depth": ["error", 3],
       "sonarjs/no-nested-conditional": "error",
     },

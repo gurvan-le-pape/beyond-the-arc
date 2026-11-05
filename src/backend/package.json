@@ -12,6 +12,7 @@
     "test": "prisma generate && jest",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "lint": "eslint '**/*.ts'",
+    "lint:prune": "eslint '**/*.ts' --prune-suppressions",
     "lint:fix": "organize-imports-cli './*.ts' './common/**/*.ts' './modules/**/*.ts' './prisma/*.ts' './scripts/**/*.ts' && eslint '**/*.{ts,tsx}' --fix && npm run format",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
