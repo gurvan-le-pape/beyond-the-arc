@@ -2,6 +2,7 @@
 import { useTranslations } from "next-intl";
 
 import { Badge } from "@/shared/components/primitives";
+import { MatchStatus } from "@/shared/constants";
 import { cn, matchWinner } from "@/shared/utils";
 
 type MatchScoreVariant = "list" | "compact" | "hero" | "table";
@@ -41,6 +42,7 @@ function scoreClasses(variant: MatchScoreVariant, isWinner: boolean): string {
 interface MatchScoreProps {
   readonly homeScore: number | null;
   readonly awayScore: number | null;
+  readonly status: MatchStatus;
   readonly variant: MatchScoreVariant;
   readonly className?: string;
 }
@@ -48,21 +50,24 @@ interface MatchScoreProps {
 /**
  * Shared home/away score pair, used across match lists, cards, tables, and
  * the match detail hero. `variant` reproduces each call site's existing look
- * (size + winner emphasis); the "upcoming" fallback badge is shared as-is.
+ * (size + winner emphasis). A match that is not completed has no score to show,
+ * so it shows a badge saying why, at every variant.
  */
 export function MatchScore({
   homeScore,
   awayScore,
+  status,
   variant,
   className,
 }: MatchScoreProps) {
   const tMatches = useTranslations("matches");
-  const hasScore = homeScore !== null && awayScore !== null;
 
-  if (!hasScore) {
+  if (status !== MatchStatus.COMPLETED) {
     return (
       <Badge variant="outline" size="md">
-        {tMatches("upcoming")}
+        {tMatches(
+          status === MatchStatus.FAILED ? "resultUnavailable" : "upcoming",
+        )}
       </Badge>
     );
   }

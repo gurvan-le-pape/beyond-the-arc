@@ -4,6 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Matchup } from "@/shared/components/domain";
 import { Card } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
+import type { MatchStatus } from "@/shared/constants";
 import { formatMatchDate, formatMatchTime } from "@/shared/utils";
 
 import type { MatchTeam } from "../../types/MatchTeam";
@@ -12,6 +13,7 @@ import { matchTeamMatchupSide } from "../../utils/matchupSide";
 interface MatchHeroProps {
   readonly homeTeam: MatchTeam;
   readonly awayTeam: MatchTeam;
+  readonly status: MatchStatus;
   readonly startsAt: Date | string;
   readonly matchday: number;
   readonly poolLetter: string;
@@ -29,6 +31,7 @@ interface MatchHeroProps {
 export function MatchHero({
   homeTeam,
   awayTeam,
+  status,
   startsAt,
   matchday,
   poolLetter,
@@ -61,6 +64,7 @@ export function MatchHero({
         <Matchup
           home={matchTeamMatchupSide(homeTeam)}
           away={matchTeamMatchupSide(awayTeam)}
+          status={status}
           size="hero"
           linked
         />

@@ -18,6 +18,11 @@
     "title": "Match à venir",
     "body": "Coup d'envoi le {date} à {time}. Les statistiques et le déroulé du match apparaîtront une fois la rencontre jouée."
   },
+  "resultUnavailable": "Résultat indisponible",
+  "resultUnavailableNotice": {
+    "title": "Résultat indisponible",
+    "body": "Le résultat de ce match n'est pas disponible."
+  },
   "tryAdjustingFilters": "Essayez d'ajuster vos filtres pour trouver plus de matchs.",
   "overtimeShort": "Prol.",
   "viewMatchDetails": "Afficher les détails du match",

@@ -97,7 +97,7 @@ interface RowLinkProps<T> {
    * over the whole row, so rows are focusable and keyboard-activable — which
    * `onRowClick` on a `<tr>` never was.
    */
-  readonly getRowHref: (row: T) => string;
+  readonly getRowHref: (row: T) => string | undefined;
   /**
    * Accessible name for the row link. Supply it whenever the lead cell alone
    * does not identify the row — a date does not.

@@ -1,5 +1,6 @@
 // src/frontend/features/matches/utils/getCurrentRound.ts
 import type { Match } from "@/features/matches/types";
+import { MatchStatus } from "@/shared/constants";
 
 import { getSortedRounds } from "./getSortedRounds";
 
@@ -9,7 +10,7 @@ import { getSortedRounds } from "./getSortedRounds";
  * together. Before the first result it is the first round, and with no rounds
  * at all it is `null`.
  *
- * Played-ness comes from the scores, not from the clock, so the server and the
+ * Played-ness comes from the status, not from the clock, so the server and the
  * browser pick the same round.
  *
  * @param groupedMatches - The pool's matches keyed by matchday
@@ -20,7 +21,9 @@ export function getCurrentRound(
 ): number | null {
   const rounds = getSortedRounds(groupedMatches);
   const played = rounds.filter((round) =>
-    groupedMatches[round].some((match) => match.homeTeamScore !== null),
+    groupedMatches[round].some(
+      (match) => match.status === MatchStatus.COMPLETED,
+    ),
   );
 
   return played[played.length - 1] ?? rounds[0] ?? null;

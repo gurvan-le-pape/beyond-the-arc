@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 
 import { Link } from "@/navigation";
 import { TextLink } from "@/shared/components/primitives";
+import type { MatchStatus } from "@/shared/constants";
 import { cn, type MatchSide, matchWinner } from "@/shared/utils";
 
 import { ClubMark } from "../ClubMark";
@@ -16,7 +17,7 @@ export interface MatchupSide {
   readonly teamName: string;
   readonly clubId: number | null;
   readonly clubName: string | null;
-  /** The final score, `null` until the match is played. */
+  /** The final score, `null` unless the match is completed. */
   readonly score: number | null;
 }
 
@@ -25,6 +26,7 @@ type MatchupSize = "hero" | "card" | "row";
 interface MatchupBaseProps {
   readonly home: MatchupSide;
   readonly away: MatchupSide;
+  readonly status: MatchStatus;
   /**
    * Link each side's club mark (at `hero` size) to its club and its name to its
    * team. Off when
@@ -196,8 +198,9 @@ type MatchupProps = MatchupBaseProps & (FacingMatchupProps | LineMatchupProps);
 /**
  * A match: its two sides — team name, with its club mark at `hero` size, home
  * on the left — and
- * the score between them, or "upcoming" before it is played; or, at `line`
- * size, home above away with each side's score beside its name.
+ * the score between them, or what `MatchScore` says instead when the match is
+ * not completed; or, at `line` size, home above away with each side's score
+ * beside its name. A `line` has no middle to say that in, so its caller does.
  *
  * The one way the app draws a match, at four sizes. The winner, from
  * `matchWinner`, is shown the same way at every size: its name and its score
@@ -206,6 +209,7 @@ type MatchupProps = MatchupBaseProps & (FacingMatchupProps | LineMatchupProps);
 export function Matchup({
   home,
   away,
+  status,
   size,
   linked = false,
   belowScore,
@@ -247,6 +251,7 @@ export function Matchup({
         <MatchScore
           homeScore={home.score}
           awayScore={away.score}
+          status={status}
           variant={SIZES[size].score}
         />
         {belowScore}

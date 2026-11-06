@@ -6,11 +6,11 @@ export type MatchSide = "home" | "away";
 /**
  * The one rule for who won a match: the side with the higher score.
  *
- * `null` when there is no winner to show — the match has not been played (a
- * score is missing) or the scores are level.
+ * `null` when there is no winner to name: a score is missing or the scores are
+ * level. Whether a match has been played is its `status`, not this.
  *
- * @param homeScore - the home side's final score, `null` until played
- * @param awayScore - the away side's final score, `null` until played
+ * @param homeScore - the home side's final score, if any
+ * @param awayScore - the away side's final score, if any
  * @returns the winning side, or `null`
  */
 export function matchWinner(

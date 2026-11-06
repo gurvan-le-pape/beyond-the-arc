@@ -8,6 +8,7 @@ import { useState } from "react";
 import { Section } from "@/shared/components/blocks";
 import { Button } from "@/shared/components/primitives";
 import { DataTable, type TableColumn } from "@/shared/components/table";
+import { MatchStatus } from "@/shared/constants";
 
 /**
  * Props for MatchHistoryTable.
@@ -20,6 +21,7 @@ import { DataTable, type TableColumn } from "@/shared/components/table";
  */
 interface MatchHistoryRow {
   readonly id: number;
+  readonly status: MatchStatus;
   readonly homeTeam: { readonly club: { readonly name: string } };
   readonly awayTeam: { readonly club: { readonly name: string } };
 }
@@ -82,7 +84,11 @@ export function MatchHistoryTable<T extends MatchHistoryRow>({
         getRowKey={(match) => match.id}
         density={density}
         emptyMessage={emptyMessage}
-        getRowHref={(match) => `/matches/${match.id}`}
+        getRowHref={(match) =>
+          match.status === MatchStatus.FAILED
+            ? undefined
+            : `/matches/${match.id}`
+        }
         getRowLabel={(match) =>
           tCommon("matchHistory.viewMatch", {
             home: match.homeTeam.club.name,

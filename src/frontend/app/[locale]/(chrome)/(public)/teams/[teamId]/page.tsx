@@ -82,7 +82,7 @@ async function TeamDetailPage({ params }: LocalePageProps<{ teamId: string }>) {
   ]).catch(handleServerError);
 
   const { matches, seasonStats } = matchHistory;
-  const { played, upcoming } = splitMatchHistory(matches);
+  const { past, upcoming } = splitMatchHistory(matches);
 
   return (
     <PageLayout>
@@ -110,7 +110,7 @@ async function TeamDetailPage({ params }: LocalePageProps<{ teamId: string }>) {
 
       <TeamRoster players={team.players} />
 
-      <TeamMatchHistoryTable team={team} matches={played} maxRows={5} />
+      <TeamMatchHistoryTable team={team} matches={past} maxRows={5} />
 
       <TeamUpcomingMatchesTable team={team} matches={upcoming} />
 

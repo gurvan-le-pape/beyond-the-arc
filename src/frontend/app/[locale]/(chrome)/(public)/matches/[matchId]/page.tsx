@@ -9,6 +9,7 @@ import {
   MatchBreadcrumb,
   MatchHero,
   MatchSummaryTabs,
+  ResultUnavailableNotice,
   UpcomingMatchNotice,
 } from "@/features/matches/components";
 import {
@@ -17,6 +18,7 @@ import {
 } from "@/features/matches/utils";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
+import { MatchStatus } from "@/shared/constants";
 import type { LocalePageProps } from "@/shared/types";
 import {
   handleServerError,
@@ -97,8 +99,6 @@ async function MatchSummaryPage({
     stats,
     awayTeamStats,
   );
-  const isPlayed = match.homeTeamScore !== null && match.awayTeamScore !== null;
-
   const shotEventsByPlayer = groupShotEventsByPlayer(match.matchEvents);
 
   return (
@@ -118,12 +118,13 @@ async function MatchSummaryPage({
       <MatchHero
         homeTeam={homeTeam}
         awayTeam={awayTeam}
+        status={match.status}
         startsAt={match.startsAt}
         matchday={match.matchday}
         poolLetter={match.pool.letter}
       />
 
-      {isPlayed ? (
+      {match.status === MatchStatus.COMPLETED && (
         <MatchSummaryTabs
           homeTeam={homeTeam}
           awayTeam={awayTeam}
@@ -131,7 +132,10 @@ async function MatchSummaryPage({
           matchDate={match.startsAt}
           playerShots={shotEventsByPlayer}
         />
-      ) : (
+      )}
+      {match.status === MatchStatus.FAILED && <ResultUnavailableNotice />}
+      {(match.status === MatchStatus.SCHEDULED ||
+        match.status === MatchStatus.GENERATING) && (
         <UpcomingMatchNotice startsAt={match.startsAt} />
       )}
     </PageLayout>

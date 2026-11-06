@@ -111,6 +111,7 @@
     "winShort": "V",
     "loss": "Défaite",
     "lossShort": "D",
+    "resultUnavailable": "Résultat indisponible",
     "noMatches": "Aucun match joué cette saison",
     "seeAllMatches": "Voir tous les matchs ({count})",
     "viewMatch": "Voir le match {home} contre {away}"

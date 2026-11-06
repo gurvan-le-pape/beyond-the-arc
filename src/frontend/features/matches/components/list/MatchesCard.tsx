@@ -9,6 +9,7 @@ import {
 } from "@/shared/components/domain";
 import { Badge } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
+import { MatchStatus } from "@/shared/constants";
 import { cn, formatMatchDate, formatMatchTime } from "@/shared/utils";
 
 import type { Match } from "../../types";
@@ -20,7 +21,8 @@ interface MatchesCardProps {
 
 /**
  * One match in a list: date and time, matchday badge, the two clubs, and the
- * score once there is one.
+ * score once it has finished. A failed match has nothing to open, so its card is
+ * not a link.
  *
  * Championship data is optional-chained throughout, since list responses do not
  * always carry the pool and its championship; the badges and the level accent
@@ -36,7 +38,9 @@ export function MatchesCard({ match }: MatchesCardProps) {
 
   return (
     <ListEntityCard
-      href={`/matches/${match.id}`}
+      href={
+        match.status === MatchStatus.FAILED ? undefined : `/matches/${match.id}`
+      }
       ariaLabel={tMatches("ariaLabelMatch", {
         home: match.homeTeam.club.name,
         away: match.awayTeam.club.name,
@@ -70,6 +74,7 @@ export function MatchesCard({ match }: MatchesCardProps) {
         <Matchup
           home={matchupSide(match.homeTeam, match.homeTeamScore)}
           away={matchupSide(match.awayTeam, match.awayTeamScore)}
+          status={match.status}
           size="card"
         />
       </div>
