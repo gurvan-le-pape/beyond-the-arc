@@ -74,6 +74,8 @@ class MatchSimulator:
         self.player_names = player_names
         self.event_generator.positions = player_positions or {}
         match = _Match(match_datetime)
+        # A worker reuses this simulator, and its state manager, for every match.
+        self.state_manager.current_state = "possession"
 
         # Build incremental substitution queues — O(n log n) once, not O(n) per tick
         home_sub = SubQueue(home_team_playtimes)
