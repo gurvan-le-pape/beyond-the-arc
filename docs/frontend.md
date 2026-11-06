@@ -511,7 +511,7 @@ Court geometry constants (`BASKET_X`, `BASKET_Y`, `COURT_WIDTH`, `PAINT_HEIGHT`,
 Two overlay variants are implemented, each with its own header and overlay component:
 
 - **Scatter** — plots individual shot attempts as points, colour-coded by make/miss. `ScatterOverlay` renders one SVG element per shot event.
-- **Hotspots** — aggregates shots into named court zones and shades each zone by attempts and renders `ZoneStatLabel` elements printing its make rate; `HeatmapLegend` explains the shading. `HotspotsOverlay` composes eight zone group components (`PaintZones`, `Corner3Zones`, `WingZones`, `AboveWingZones`, `TopKeyZones`, `ArcZones`, `ApexStripeZones`, `ArcApexSidelineZones`).
+- **Hotspots** — aggregates shots into named court zones and shades each zone by attempts and renders `ZoneStatLabel` elements printing its make rate; `HeatmapLegend` explains the shading. `HotspotsOverlay` draws eight zone groups through one `ZoneGroup` component, from a table that gives each group its geometry getter and its shape (`RectZone` or `PolygonZone`) and sets the draw order.
 
 `PlayerShotChart` and `TeamShotChart` in `variants/` both draw hotspots, at most 448px wide; scatter is the per-match view in `ShotModal`. A grid heatmap is deliberately absent: a team's season is a few hundred shots, so a fine grid is mostly empty cells with a busiest cell of three, while zones aggregate enough attempts for each colour and percentage to mean something.
 

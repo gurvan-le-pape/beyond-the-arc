@@ -1,13 +1,17 @@
-// src/frontend/features/shot-chart/components/overlays/hotspots/WingZones.tsx
+// src/frontend/features/shot-chart/components/overlays/hotspots/ZoneGroup.tsx
 import React from "react";
 
 import type { ZoneStats } from "@/features/shot-chart/types";
-import { binShotsByZones, getWingZones } from "@/features/shot-chart/utils";
+import { binShotsByZones, type Zone } from "@/features/shot-chart/utils";
 import type { ShotEvent } from "@/shared/types";
 
-import { RectZone } from "./zones/RectZone";
+import type { PolygonZone } from "./zones/PolygonZone";
+import type { RectZone } from "./zones/RectZone";
 
-interface WingZonesProps {
+interface ZoneGroupProps {
+  /** The group's geometry. Must be stable between renders: a module-level getter. */
+  readonly getZones: () => Zone[];
+  readonly ZoneShape: typeof RectZone | typeof PolygonZone;
   readonly shots: ShotEvent[];
   readonly xScale: (x: number) => number;
   readonly yScale: (y: number) => number;
@@ -22,14 +26,16 @@ interface WingZonesProps {
 }
 
 /**
- * The wing zones, between the corners and the top of the key.
+ * One group of hotspot zones: bins the shots into its zones and draws each one.
  *
  * Colour encodes **volume, not accuracy** — `colorScale` is fed the zone's
  * total attempts, so ten makes and ten misses shade identically. A zone with
  * no shots still renders, at a fainter opacity, so the court's zone map stays
  * whole rather than developing holes.
  */
-export function WingZones({
+export function ZoneGroup({
+  getZones,
+  ZoneShape,
   shots,
   xScale,
   yScale,
@@ -37,11 +43,9 @@ export function WingZones({
   svgWidth,
   onZoneHover,
   onZoneLeave,
-}: WingZonesProps) {
-  // Retrieve wing zones geometry
-  const zones = React.useMemo(() => getWingZones(), []);
+}: ZoneGroupProps) {
+  const zones = React.useMemo(() => getZones(), [getZones]);
 
-  // Bin shots into zones
   const zoneStats = React.useMemo(
     () => binShotsByZones(shots, zones),
     [shots, zones],
@@ -51,17 +55,15 @@ export function WingZones({
     <g>
       {zones.map((zone) => {
         const stats = zoneStats[zone.key];
-        const fill = colorScale(stats.total);
-        const fillOpacity = stats.total > 0 ? 0.7 : 0.18;
         return (
-          <RectZone
+          <ZoneShape
             key={zone.key}
             zone={zone}
             stats={stats}
             xScale={xScale}
             yScale={yScale}
-            fill={fill}
-            fillOpacity={fillOpacity}
+            fill={colorScale(stats.total)}
+            fillOpacity={stats.total > 0 ? 0.7 : 0.18}
             strokeWidth={1}
             svgWidth={svgWidth}
             onMouseMove={(e) => onZoneHover(zone.key, stats, e)}

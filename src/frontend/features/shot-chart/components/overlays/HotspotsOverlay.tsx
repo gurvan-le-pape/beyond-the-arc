@@ -6,18 +6,44 @@ import { interpolateYlOrRd } from "d3-scale-chromatic";
 import type React from "react";
 import { useMemo, useState } from "react";
 
+import {
+  getAboveWingZones,
+  getApexStripeZone,
+  getArcApexSidelineZones,
+  getArcZones,
+  getCorner3Zones,
+  getPaintZones,
+  getTopKeyZone,
+  getWingZones,
+} from "@/features/shot-chart/utils";
 import type { ShotEvent } from "@/shared/types";
 
 import { ShotFilter } from "../../constants";
-import { AboveWingZones } from "./hotspots/AboveWingZones";
-import { ApexStripeZones } from "./hotspots/ApexStripeZones";
-import { ArcApexSidelineZones } from "./hotspots/ArcApexSidelineZones";
-import { ArcZones } from "./hotspots/ArcZones";
-import { Corner3Zones } from "./hotspots/Corner3Zones";
-import { PaintZones } from "./hotspots/PaintZones";
-import { TopKeyZones } from "./hotspots/TopKeyZones";
-import { WingZones } from "./hotspots/WingZones";
+import { ZoneGroup } from "./hotspots/ZoneGroup";
+import { PolygonZone } from "./hotspots/zones/PolygonZone";
+import { RectZone } from "./hotspots/zones/RectZone";
 import { TooltipContent } from "./TooltipContent";
+
+/**
+ * Every zone group on the court, in draw order: later groups paint over earlier ones.
+ *
+ * Corner threes come last: a corner zone is narrower than its label, which runs
+ * into the wing beside it and would sit under the wing's fill if drawn earlier.
+ */
+const ZONE_GROUPS = [
+  { id: "paint", getZones: getPaintZones, ZoneShape: RectZone },
+  { id: "arc", getZones: getArcZones, ZoneShape: PolygonZone },
+  {
+    id: "arcApexSideline",
+    getZones: getArcApexSidelineZones,
+    ZoneShape: PolygonZone,
+  },
+  { id: "aboveWing", getZones: getAboveWingZones, ZoneShape: PolygonZone },
+  { id: "wing", getZones: getWingZones, ZoneShape: RectZone },
+  { id: "apexStripe", getZones: getApexStripeZone, ZoneShape: PolygonZone },
+  { id: "topKey", getZones: getTopKeyZone, ZoneShape: PolygonZone },
+  { id: "corner3", getZones: getCorner3Zones, ZoneShape: RectZone },
+];
 
 interface HotspotsOverlayProps {
   readonly shots: ShotEvent[];
@@ -68,29 +94,22 @@ export function HotspotsOverlay({
     });
   };
 
-  const sharedProps = {
-    shots,
-    xScale,
-    yScale,
-    colorScale: zoneColorScale,
-    maxTotal,
-    svgWidth,
-    onZoneHover: handleZoneHover,
-    onZoneLeave: () => setTooltip(null),
-  };
-
   return (
     <g>
-      <PaintZones {...sharedProps} />
-      <ArcZones {...sharedProps} />
-      <ArcApexSidelineZones {...sharedProps} />
-      <AboveWingZones {...sharedProps} />
-      <WingZones {...sharedProps} />
-      <ApexStripeZones {...sharedProps} />
-      <TopKeyZones {...sharedProps} />
-      {/* Last: a corner zone is narrower than its label, which runs into the
-          wing beside it and would sit under the wing's fill if drawn earlier. */}
-      <Corner3Zones {...sharedProps} />
+      {ZONE_GROUPS.map(({ id, getZones, ZoneShape }) => (
+        <ZoneGroup
+          key={id}
+          getZones={getZones}
+          ZoneShape={ZoneShape}
+          shots={shots}
+          xScale={xScale}
+          yScale={yScale}
+          colorScale={zoneColorScale}
+          svgWidth={svgWidth}
+          onZoneHover={handleZoneHover}
+          onZoneLeave={() => setTooltip(null)}
+        />
+      ))}
 
       {tooltip &&
         typeof globalThis.window === "object" &&
