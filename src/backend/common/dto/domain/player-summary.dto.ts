@@ -1,4 +1,4 @@
-// src/backend/common/dto/player-summary.dto.ts
+// src/backend/common/dto/domain/player-summary.dto.ts
 import { Position } from "@common/constants";
 import { ApiProperty } from "@nestjs/swagger";
 

@@ -1,4 +1,4 @@
-// src/backend/common/dto/organization-scope.query.dto.ts
+// src/backend/common/dto/domain/organization-scope.query.dto.ts
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsInt, IsOptional, Min } from "class-validator";

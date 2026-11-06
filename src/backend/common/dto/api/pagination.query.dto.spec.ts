@@ -1,4 +1,4 @@
-// src/backend/common/dto/pagination.query.dto.spec.ts
+// src/backend/common/dto/api/pagination.query.dto.spec.ts
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
 

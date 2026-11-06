@@ -1,4 +1,4 @@
-// src/backend/common/dto/club-ref.dto.ts
+// src/backend/common/dto/domain/club-ref.dto.ts
 import { ApiProperty } from "@nestjs/swagger";
 
 import { CommitteeRefDto } from "./committee-ref.dto";

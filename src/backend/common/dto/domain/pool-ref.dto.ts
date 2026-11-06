@@ -1,4 +1,4 @@
-// src/backend/common/dto/pool-ref.dto.ts
+// src/backend/common/dto/domain/pool-ref.dto.ts
 import { ApiProperty } from "@nestjs/swagger";
 
 import { ChampionshipRefDto } from "./championship-ref.dto";
