@@ -1,5 +1,5 @@
 // src/backend/modules/teams/dto/teams.response.dto.ts
-import { Category, Gender } from "@common/constants";
+import { Category, Gender, MatchStatus } from "@common/constants";
 import { ClubRefDto, PlayerSummaryDto, PoolRefDto } from "@common/dto";
 import {
   HistoryTeamRefDto,
@@ -153,6 +153,13 @@ export class TeamMatchHistoryDto {
     type: HistoryTeamRefDto,
   })
   awayTeam!: HistoryTeamRefDto;
+
+  @ApiProperty({
+    description: "Where the match is in its lifecycle",
+    example: MatchStatus.COMPLETED,
+    enum: MatchStatus,
+  })
+  status!: MatchStatus;
 
   @ApiProperty({
     description: "Home team score",

@@ -4306,6 +4306,17 @@
               }
             ]
           },
+          "status": {
+            "enum": [
+              "scheduled",
+              "generating",
+              "completed",
+              "failed"
+            ],
+            "type": "string",
+            "description": "Where the match is in its lifecycle",
+            "example": "completed"
+          },
           "homeTeamScore": {
             "type": "number",
             "nullable": true,
@@ -4336,6 +4347,7 @@
           "pool",
           "homeTeam",
           "awayTeam",
+          "status",
           "homeTeamScore",
           "awayTeamScore",
           "forfeit",
@@ -4619,6 +4631,17 @@
               }
             ]
           },
+          "status": {
+            "enum": [
+              "scheduled",
+              "generating",
+              "completed",
+              "failed"
+            ],
+            "type": "string",
+            "description": "Where the match is in its lifecycle",
+            "example": "completed"
+          },
           "homeTeamScore": {
             "type": "number",
             "nullable": true,
@@ -4656,6 +4679,7 @@
           "pool",
           "homeTeam",
           "awayTeam",
+          "status",
           "homeTeamScore",
           "awayTeamScore",
           "forfeit",
@@ -5725,6 +5749,17 @@
               }
             ]
           },
+          "status": {
+            "enum": [
+              "scheduled",
+              "generating",
+              "completed",
+              "failed"
+            ],
+            "type": "string",
+            "description": "Where the match is in its lifecycle",
+            "example": "completed"
+          },
           "homeTeamScore": {
             "type": "number",
             "nullable": true,
@@ -5751,6 +5786,7 @@
           "startsAt",
           "homeTeam",
           "awayTeam",
+          "status",
           "homeTeamScore",
           "awayTeamScore",
           "player"
@@ -6221,6 +6257,17 @@
               }
             ]
           },
+          "status": {
+            "enum": [
+              "scheduled",
+              "generating",
+              "completed",
+              "failed"
+            ],
+            "type": "string",
+            "description": "Where the match is in its lifecycle",
+            "example": "completed"
+          },
           "homeTeamScore": {
             "type": "number",
             "nullable": true,
@@ -6239,6 +6286,7 @@
           "startsAt",
           "homeTeam",
           "awayTeam",
+          "status",
           "homeTeamScore",
           "awayTeamScore"
         ]

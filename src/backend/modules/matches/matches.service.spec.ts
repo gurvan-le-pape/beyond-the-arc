@@ -83,6 +83,7 @@ describe("MatchesService", () => {
     id: 1,
     date: new Date("2024-01-01"),
     matchday: 1,
+    status: "completed",
     homeTeamScore: 85,
     awayTeamScore: 72,
     forfeit: false,
@@ -152,6 +153,7 @@ describe("MatchesService", () => {
     id: 1,
     startsAt: new Date("2024-02-05T19:00:00Z"),
     matchday: 1,
+    status: "completed",
     homeTeamScore: 85,
     awayTeamScore: 72,
     forfeit: false,
@@ -246,6 +248,7 @@ describe("MatchesService", () => {
 
       expect(result.items).toHaveLength(1);
       expect(result.items[0].id).toBe(1);
+      expect(result.items[0].status).toBe("completed");
       expect(result.items[0].homeTeam.number).toBe(1);
       expect(result.total).toBe(1);
       expect(result.page).toBe(1);

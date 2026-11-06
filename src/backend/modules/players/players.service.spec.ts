@@ -280,6 +280,7 @@ describe("PlayersService", () => {
             date: new Date("2024-02-05"),
             homeTeam: { id: 1, number: 1, club: { id: 1, name: "Club A" } },
             awayTeam: { id: 2, number: 1, club: { id: 2, name: "Club B" } },
+            status: "completed",
             homeTeamScore: 85,
             awayTeamScore: 72,
           },
@@ -321,6 +322,7 @@ describe("PlayersService", () => {
       // Assert
       expect(result.matches).toHaveLength(1);
       expect(result.matches[0].id).toBe(1);
+      expect(result.matches[0].status).toBe("completed");
       expect(result.matches[0].player.player.id).toBe(1);
       expect(result.matches[0].player.stats.points).toBe(15);
       expect(result.matches[0].player.stats.rebounds.total).toBe(8); // 3 + 5

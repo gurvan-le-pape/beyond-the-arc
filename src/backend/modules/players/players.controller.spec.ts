@@ -342,6 +342,7 @@ describe("PlayersController", () => {
               number: 1,
               club: { id: 2, name: "Club B" },
             },
+            status: "completed",
             homeTeamScore: 85,
             awayTeamScore: 72,
             player: {
