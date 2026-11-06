@@ -16,13 +16,14 @@ There is no separate staging environment. A push to `main` that passes CI goes s
 
 ## Pipeline structure
 
-Three stages — `check`, `analyze`, `deploy` — and twenty jobs:
+Three stages — `check`, `analyze`, `deploy` — and twenty-one jobs:
 
 ```
 backend-lint ──────────┐
 backend-test ──────────┼── sonarcloud     (analyze, advisory)
 backend-integration ───┤
 backend-build ─────────┤
+backend-boot ──────────┤
 frontend-lint ─────────┤
 frontend-typecheck ────┤
 frontend-messages ─────┼────────────── deploy (main only)
@@ -39,7 +40,7 @@ quality-report           (analyze, advisory)
 ruff-report              (analyze, advisory)
 ```
 
-Every `check` job runs in parallel. `sonarcloud` needs `backend-test` for its coverage report. `deploy` lists its thirteen gates explicitly in `needs:` rather than waiting on the whole stage, so the advisory jobs cannot hold a release.
+Every `check` job runs in parallel. `sonarcloud` needs `backend-test` for its coverage report. `deploy` lists its fourteen gates explicitly in `needs:` rather than waiting on the whole stage, so the advisory jobs cannot hold a release.
 
 Workflow rules accept three sources — `merge_request_event`, a push to `main`, and `web` — and end in `when: never`, which stops a branch with an open merge request from producing two pipelines per commit. Every job is `interruptible` so a superseded pipeline can be cancelled, except `deploy`: cancelling a compose `up` mid-flight could leave the VPS half-deployed.
 
@@ -112,6 +113,15 @@ npx prisma migrate deploy && npm run test:integration
 
 The harness refuses a database whose name does not end in `_test`, so a stray `DATABASE_URL` cannot reach the dev or production data.
 
+
+### backend-boot
+
+Builds the `prod` and `migrate` targets of `docker/backend/Dockerfile` on the host Docker daemon, migrates a throwaway `postgres:18`, starts the production image and requests `/api/health/live` and `/api/leagues` (`scripts/ci/backend-boot-check.sh`). A container that exits or doesn't answer within 60 s fails the job, which prints its logs.
+
+This is the only check that runs what ships. Every other job has dev dependencies installed and none starts the app, so they miss a crash at startup, a package missing from the production dependencies and a file the `prod` stage strips by hand.
+
+It uses `/api/health/live` rather than `/api/health` because the full check includes a disk threshold, which would make the job depend on free space on the runner. To run it locally, from the repo root: `sh scripts/ci/backend-boot-check.sh`.
+
 ### dependency-rules
 
 Runs `npm run quality:deps` from the repo root: dependency-cruiser (`.dependency-cruiser.cjs`) over each application, failing on a cycle, on `shared/utils` importing `shared/components`, or on `common` importing `modules`. Type-only imports count. Needs only the root install.
@@ -140,7 +150,7 @@ Lint output no longer shows baselined violations. `eslint-suppressions.json` is 
 
 ### deploy
 
-`main` only, on `docker:28-cli`, after the eleven gates pass. The runner's host Docker socket means builds reuse a long-lived daemon's layer cache — no buildx, no dind, no cache export.
+`main` only, on `docker:28-cli`, after its fourteen gates pass. The runner's host Docker socket means builds reuse a long-lived daemon's layer cache — no buildx, no dind, no cache export.
 
 1. **Log in** to `$CI_REGISTRY` with the job's own `CI_REGISTRY_USER` / `CI_REGISTRY_PASSWORD`.
 2. **Build four images**, each tagged `:$CI_COMMIT_SHA` and `:latest` under `$CI_REGISTRY_IMAGE`: `backend` (`prod` target of `docker/backend/Dockerfile`), `backend-migrate` (`migrate` target of the same file, sharing its cached layers), `scheduler` (`docker/python-script/Dockerfile`) and `frontend` (`prod` target, with `NEXT_PUBLIC_API_URL` and `FRONTEND_URL` as build args and `SENTRY_AUTH_TOKEN` as a BuildKit secret — never a build arg, which would persist in the pushed image config).

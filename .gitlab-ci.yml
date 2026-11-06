@@ -116,6 +116,19 @@ backend-build:
     - cd src/backend
     - npm run build
 
+# Starts the production image for real, on the runner's host Docker daemon.
+backend-boot:
+  stage: check
+  image: docker:28-cli
+  # Cancelling mid-run would skip the script's cleanup and leave its containers
+  # on the long-lived daemon.
+  interruptible: false
+  variables:
+    DOCKER_HOST: unix:///var/run/docker.sock
+    DOCKER_BUILDKIT: "1"
+  script:
+    - sh scripts/ci/backend-boot-check.sh
+
 # ==============================================================================
 # FRONTEND
 # ==============================================================================
@@ -484,6 +497,7 @@ deploy:
     - backend-test
     - backend-integration
     - backend-build
+    - backend-boot
     - frontend-lint
     - frontend-typecheck
     - frontend-messages
