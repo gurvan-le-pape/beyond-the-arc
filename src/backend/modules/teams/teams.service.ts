@@ -1,5 +1,10 @@
 // src/backend/modules/teams/teams.service.ts
-import { Category, CompetitionLevel, Gender, MatchStatus } from "@common/constants";
+import {
+  Category,
+  CompetitionLevel,
+  Gender,
+  MatchStatus,
+} from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
 import {
   aggregateCareerStats,
