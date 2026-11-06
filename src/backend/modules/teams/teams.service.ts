@@ -82,52 +82,7 @@ const TEAM_SELECT = {
  * Fields to select for team details with their roster.
  */
 const TEAM_DETAIL_SELECT = {
-  id: true,
-  number: true,
-  clubId: true,
-  seasonYear: true,
-  category: true,
-  gender: true,
-  color: true,
-  poolId: true,
-  club: {
-    select: {
-      id: true,
-      name: true,
-      committee: {
-        select: {
-          id: true,
-          name: true,
-          league: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
-        },
-      },
-    },
-  },
-  pool: {
-    select: {
-      id: true,
-      name: true,
-      letter: true,
-      championship: {
-        select: {
-          id: true,
-          name: true,
-          level: true,
-          division: true,
-        },
-      },
-    },
-  },
-  _count: {
-    select: {
-      players: true,
-    },
-  },
+  ...TEAM_SELECT,
   players: {
     select: {
       id: true,
