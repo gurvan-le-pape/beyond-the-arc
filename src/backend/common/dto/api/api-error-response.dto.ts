@@ -1,4 +1,4 @@
-// src/backend/common/dto/api-error-response.dto.ts
+// src/backend/common/dto/api/api-error-response.dto.ts
 import { ApiProperty } from "@nestjs/swagger";
 
 /**

@@ -1,4 +1,4 @@
-// src/backend/common/dto/league-ref.dto.ts
+// src/backend/common/dto/domain/league-ref.dto.ts
 import { ApiProperty } from "@nestjs/swagger";
 
 /**

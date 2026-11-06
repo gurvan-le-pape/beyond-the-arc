@@ -1,4 +1,4 @@
-// src/backend/common/dto/championship-ref.dto.ts
+// src/backend/common/dto/domain/championship-ref.dto.ts
 import { CompetitionLevel } from "@common/constants";
 import { ApiProperty } from "@nestjs/swagger";
 

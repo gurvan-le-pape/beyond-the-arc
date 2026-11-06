@@ -1,4 +1,4 @@
-// src/backend/common/dto/rebounds.dto.ts
+// src/backend/common/dto/domain/rebounds.dto.ts
 import { ApiProperty } from "@nestjs/swagger";
 
 /**

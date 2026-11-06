@@ -1,4 +1,4 @@
-// src/backend/common/dto/paginated-response.dto.ts
+// src/backend/common/dto/api/paginated-response.dto.ts
 import { ApiProperty } from "@nestjs/swagger";
 
 /**

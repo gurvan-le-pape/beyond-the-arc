@@ -1,10 +1,10 @@
-// src/backend/common/dto/competition-scope.query.dto.ts
+// src/backend/common/dto/domain/competition-scope.query.dto.ts
 import { Category, CompetitionLevel, Gender } from "@common/constants";
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsEnum, IsInt, IsOptional, Min } from "class-validator";
 
-import { PaginationQueryDto } from "./pagination.query.dto";
+import { PaginationQueryDto } from "../api/pagination.query.dto";
 
 /**
  * Paginated query parameters scoping a list to a competition and an

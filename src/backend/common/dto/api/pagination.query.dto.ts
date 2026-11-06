@@ -1,4 +1,4 @@
-// src/backend/common/dto/pagination.query.dto.ts
+// src/backend/common/dto/api/pagination.query.dto.ts
 import {
   DEFAULT_PAGE_LIMIT,
   MAX_PAGE_LIMIT,
