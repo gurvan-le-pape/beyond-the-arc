@@ -27,6 +27,7 @@ Backend (`src/backend`):
 ```bash
 npm run test                        # prisma generate && jest
 npx jest path/to/file.spec.ts       # run a single test file
+npm run test:integration            # test/integration against a real PostgreSQL; setup in docs/ci-cd.md
 npm run typecheck                   # tsc --noEmit -p tsconfig.json — covers specs, ~2s, no prisma generate
 npm run lint                        # eslint '**/*.ts'
 npm run lint:fix                    # organize-imports-cli + eslint --fix + prettier --write

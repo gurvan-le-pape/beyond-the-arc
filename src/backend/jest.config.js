@@ -15,7 +15,7 @@ module.exports = {
   testEnvironment: "node",
   moduleFileExtensions: ["ts", "js", "json"],
   testMatch: ["**/*.spec.ts"],
-  testPathIgnorePatterns: ["/node_modules/", "/dist/"],
+  testPathIgnorePatterns: ["/node_modules/", "/dist/", "/test/integration/"],
   rootDir: ".",
   globalSetup: "<rootDir>/jest.globalSetup.js",
   moduleNameMapper: {
