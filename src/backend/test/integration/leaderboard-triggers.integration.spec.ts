@@ -263,7 +263,7 @@ describe("leaderboard triggers", () => {
   });
 
   describe("changing a recorded result", () => {
-    it.failing("applies a corrected score", async () => {
+    it("applies a corrected score", async () => {
       const match = await insertScheduledMatch(client, pool.poolId, home, away);
       await completeMatch(client, match, 80, 70);
 
@@ -284,49 +284,64 @@ describe("leaderboard triggers", () => {
       });
     });
 
-    it.failing(
-      "takes back the result of a match reset to scheduled",
-      async () => {
-        const match = await insertScheduledMatch(
-          client,
-          pool.poolId,
-          home,
-          away,
-        );
-        await completeMatch(client, match, 80, 70);
+    it("takes back a forfeit the correction removes", async () => {
+      const match = await insertScheduledMatch(client, pool.poolId, home, away);
+      await completeMatch(client, match, 0, 20, true);
 
-        await client.query(
-          `UPDATE matches
+      await client.query(
+        "UPDATE matches SET home_team_score = 80, away_team_score = 70, forfeit = false WHERE id = $1",
+        [match],
+      );
+
+      expect(await standing(home)).toEqual(homeWin);
+      expect(await standing(away)).toEqual(awayLoss);
+    });
+
+    it("moves the result when the match changes pool", async () => {
+      const match = await insertScheduledMatch(client, pool.poolId, home, away);
+      await completeMatch(client, match, 80, 70);
+      const other = await createPool(client, { division: 2 });
+
+      await client.query("UPDATE matches SET pool_id = $1 WHERE id = $2", [
+        other.poolId,
+        match,
+      ]);
+
+      expect(await standing(home)).toEqual(ZERO);
+      const moved = await client.query(
+        "SELECT points FROM leaderboards WHERE pool_id = $1 AND team_id = $2",
+        [other.poolId, home],
+      );
+      expect(moved.rows).toEqual([{ points: 2 }]);
+    });
+
+    it("takes back the result of a match reset to scheduled", async () => {
+      const match = await insertScheduledMatch(client, pool.poolId, home, away);
+      await completeMatch(client, match, 80, 70);
+
+      await client.query(
+        `UPDATE matches
             SET home_team_score = NULL, away_team_score = NULL, status = 'scheduled'
           WHERE id = $1`,
-          [match],
-        );
+        [match],
+      );
 
-        expect(await standing(home)).toEqual(ZERO);
-        expect(await standing(away)).toEqual(ZERO);
-      },
-    );
+      expect(await standing(home)).toEqual(ZERO);
+      expect(await standing(away)).toEqual(ZERO);
+    });
 
-    it.failing(
-      "allows deleting a match whose score was corrected",
-      async () => {
-        const match = await insertScheduledMatch(
-          client,
-          pool.poolId,
-          home,
-          away,
-        );
-        await completeMatch(client, match, 80, 70);
-        await client.query(
-          "UPDATE matches SET home_team_score = 85, away_team_score = 90 WHERE id = $1",
-          [match],
-        );
+    it("allows deleting a match whose score was corrected", async () => {
+      const match = await insertScheduledMatch(client, pool.poolId, home, away);
+      await completeMatch(client, match, 80, 70);
+      await client.query(
+        "UPDATE matches SET home_team_score = 85, away_team_score = 90 WHERE id = $1",
+        [match],
+      );
 
-        await client.query("DELETE FROM matches WHERE id = $1", [match]);
+      await client.query("DELETE FROM matches WHERE id = $1", [match]);
 
-        expect(await standing(home)).toEqual(ZERO);
-      },
-    );
+      expect(await standing(home)).toEqual(ZERO);
+    });
   });
 
   describe("constraints", () => {

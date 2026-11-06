@@ -123,25 +123,19 @@ The `playtime_intervals` column on this table is a JSONB field holding each play
 
 ## Leaderboard triggers
 
-Leaderboard rows are maintained by four PostgreSQL triggers rather than application code. This keeps the leaderboard consistent regardless of how matches are written to the database, and removes the need for the NestJS API to perform any write operations on leaderboards.
+Leaderboard rows are maintained by two PostgreSQL triggers rather than application code. This keeps the leaderboard consistent regardless of how matches are written to the database, and removes the need for the NestJS API to perform any write operations on leaderboards.
 
 ### Initialisation trigger
 
 `team_pool_assignment_trigger` fires after a team's `pool_id` is set. It inserts a zero-initialised leaderboard row for that team in the corresponding pool. `ON CONFLICT DO NOTHING` ensures existing rows with match results are never overwritten on re-assignment.
 
-### Insert trigger
+### Match trigger
 
-`match_insert_trigger` fires after a match row is inserted with scores already set. It upserts leaderboard entries for both the home and away team, applying the correct win/loss/forfeit logic and competition points (2 for a win, 1 for a loss, 0 for a forfeit by the home team; the away team receives 2 points on a home forfeit).
+`match_leaderboard_trigger` fires after every insert, update and delete on `matches`. If the old row was completed, it takes that result back; if the new row is completed, it adds that result. Every change follows from those two steps: completing a match adds its result, correcting a score or moving a match to another pool swaps the old result for the new one, and resetting or deleting a match takes its result back.
 
-### Update trigger
+A result gives 2 competition points for a win and 1 for a loss. A forfeit is always the home team's: it gets 0 points and a forfeit, and the away team gets the win and 2 points whatever the score. The `no_draws_allowed` CHECK on `matches` rules out a draw.
 
-`match_update_trigger` fires after a match row is updated, but only acts when the status transitions to `completed` from a non-completed state. The `OLD.status = 'completed'` guard prevents double-counting if the trigger fires again on an already-completed match.
-
-This is the trigger used in practice by the pipeline — matches are inserted with `status = 'scheduled'` and no scores, then updated to `completed` once simulation finishes. The insert trigger would fire on insertion but skip the leaderboard update because scores are null at that point.
-
-### Delete trigger
-
-`match_delete_trigger` fires after a match row is deleted and reverses the leaderboard contributions of that match, decrementing all affected counters by the same amounts the insert trigger would have added.
+Adding a result creates the team's row if it is missing. Taking one back creates nothing, because a deleted pool may already have cascaded to its rows. Taking back a result from counters that don't hold it fails the leaderboard CHECK constraints, so the trigger relies on the counters being correct; `update_leaderboards_on_match_change` is the only code that should change them.
 
 ---
 
@@ -177,8 +171,5 @@ The `seeding_checkpoints` table is used exclusively by the Python pipeline to tr
 
 ## Known limitations
 
-**Leaderboard insert trigger is effectively dead code** — matches are always inserted without scores, so the null check causes it to exit immediately every time. Only the update trigger actually fires meaningfully.
-
 **No cross-check between a team's organisational lineage and its competition lineage** — a team belongs to a club, which belongs to a committee (a permanent, org-side fact); a team is also assigned to a pool, which belongs to a championship run by a committee or league (a seasonal, competition-side fact). Both facts are real and both are needed, but nothing enforces that they agree — a team could in principle be pool-assigned into a championship run by a different committee than its own club's. In practice this can't happen because pools are only ever populated from a committee's/league's own team list in the first place, so it's a structural gap rather than an observed bug.
 
-**A completed match's result cannot be corrected in place** — the update trigger acts only on the transition to `completed`, so changing the score of a match that is already completed leaves the standings on the old score. Deleting that match afterwards subtracts the new score from counters that hold the old one; the leaderboard CHECK constraints reject that delete rather than store inconsistent counters. A correction therefore means resetting the match (scores to NULL, status back to `scheduled`) through a path that also reverses its standing, which no trigger provides today.

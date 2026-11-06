@@ -212,7 +212,7 @@ model Leaderboards {
   pointsAgainst   Int   @default(0) @map("points_against")
   pointDifference Int   @default(0) @map("point_difference")
 
-  // Written only by the triggers in `0_init`. CHECK constraints on the counters
+  // Written only by the triggers on `matches` and `teams`. CHECK constraints on the counters
   // (non-negative, games and points add up) are in
   // `20261103120000_match_integrity_checks`.
   @@unique([poolId, teamId])
