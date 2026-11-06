@@ -10,6 +10,7 @@ export * from "./event-types";
 export * from "./externalLinks";
 export * from "./genders";
 export * from "./levelConfig";
+export * from "./match-statuses";
 export * from "./navConfig";
 export * from "./organization-types";
 export * from "./pagination";

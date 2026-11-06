@@ -4,7 +4,12 @@ import { type ReactNode, useMemo } from "react";
 
 import { Badge } from "@/shared/components/primitives";
 import type { TableColumn } from "@/shared/components/table";
-import { formatMatchDayMonth, formatMatchDayTime } from "@/shared/utils";
+import { MatchStatus } from "@/shared/constants";
+import {
+  formatMatchDayMonth,
+  formatMatchDayTime,
+  matchWinner,
+} from "@/shared/utils";
 
 interface MatchWithTeams {
   startsAt: Date | string;
@@ -13,6 +18,7 @@ interface MatchWithTeams {
 }
 
 interface MatchWithScore extends MatchWithTeams {
+  status: MatchStatus;
   homeTeamScore: number | null;
   awayTeamScore: number | null;
 }
@@ -23,6 +29,7 @@ interface ResultLabels {
   readonly winShort: string;
   readonly loss: string;
   readonly lossShort: string;
+  readonly unavailable: string;
 }
 
 /**
@@ -80,7 +87,7 @@ function buildOpponentColumn<T extends MatchWithTeams>(
  * leave the reader to work out which number is theirs.
  *
  * The badge shows one letter; its full word is what a screen reader hears.
- * Basketball has no draws, so a level score cannot occur in a played match.
+ * Basketball has no draws, so a level score cannot occur in a completed match.
  */
 function buildResultColumn<T extends MatchWithScore>(
   header: ReactNode,
@@ -91,13 +98,15 @@ function buildResultColumn<T extends MatchWithScore>(
     key: "result",
     header,
     render: (match: T) => {
-      if (match.homeTeamScore === null || match.awayTeamScore === null) {
-        return "—";
-      }
+      if (match.status === MatchStatus.FAILED) return labels.unavailable;
+      if (match.status !== MatchStatus.COMPLETED) return "—";
+
       const isHome = match.homeTeam.id === currentTeamId;
       const own = isHome ? match.homeTeamScore : match.awayTeamScore;
       const opponent = isHome ? match.awayTeamScore : match.homeTeamScore;
-      const won = own > opponent;
+      const won =
+        matchWinner(match.homeTeamScore, match.awayTeamScore) ===
+        (isHome ? "home" : "away");
 
       return (
         <span className="inline-flex items-center gap-2 whitespace-nowrap">
@@ -164,6 +173,7 @@ export function useMatchHistoryColumns<T extends MatchWithScore>(
         winShort: t("matchHistory.winShort"),
         loss: t("matchHistory.loss"),
         lossShort: t("matchHistory.lossShort"),
+        unavailable: t("matchHistory.resultUnavailable"),
       }),
     ];
   }, [t, locale, currentTeamId, withTime, withResult]);

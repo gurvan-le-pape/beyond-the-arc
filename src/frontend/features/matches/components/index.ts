@@ -8,6 +8,7 @@ export * from "./detail/MatchBreadcrumb";
 export * from "./detail/MatchHero";
 export * from "./detail/MatchSummaryTabs";
 export * from "./detail/player-match-stats/index";
+export * from "./detail/ResultUnavailableNotice";
 export * from "./detail/TeamStatsComparison";
 export * from "./detail/UpcomingMatchNotice";
 export * from "./list/matches-by-round/index";

@@ -25,7 +25,9 @@ export function getLevelConfig(level: CompetitionLevel | undefined) {
 }
 
 interface ListEntityCardProps {
-  readonly href: string;
+  /** Where the card goes. Without one it is not a link. */
+  readonly href?: string;
+  /** The link's name; a card with no link is read from its own text. */
   readonly ariaLabel: string;
   /** Competition level, used for the level-tinted card chrome. */
   readonly level: CompetitionLevel | undefined;
@@ -52,17 +54,13 @@ export function ListEntityCard({
 }: ListEntityCardProps) {
   const config = getLevelConfig(level);
 
-  return (
-    <Card
-      href={href}
-      aria-label={ariaLabel}
-      padding="none"
-      className={cn(
-        "group relative overflow-hidden",
-        config.border,
-        config.hover,
-      )}
-    >
+  const className = cn(
+    "group relative overflow-hidden",
+    config.border,
+    href !== undefined && config.hover,
+  );
+  const body = (
+    <>
       <div
         className={cn(
           "flex items-center justify-between gap-3 flex-wrap",
@@ -80,6 +78,21 @@ export function ListEntityCard({
       </div>
 
       {children}
+    </>
+  );
+
+  return href === undefined ? (
+    <Card padding="none" className={className}>
+      {body}
+    </Card>
+  ) : (
+    <Card
+      href={href}
+      aria-label={ariaLabel}
+      padding="none"
+      className={className}
+    >
+      {body}
     </Card>
   );
 }

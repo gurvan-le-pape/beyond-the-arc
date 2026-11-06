@@ -16,6 +16,7 @@ import { Section } from "@/shared/components/blocks";
 import { Matchup } from "@/shared/components/domain";
 import { Card, TextLink } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
+import { MatchStatus } from "@/shared/constants";
 import { cn, formatMatchDay } from "@/shared/utils";
 
 /** Standings rows shown before the link to the full table. */
@@ -77,12 +78,10 @@ export function LatestRoundSection({
   ]
     .filter(Boolean)
     .join(" · ");
-  // The round may still be mid-simulation: show what has a score.
+  // The round may still be mid-simulation: show what has finished.
   const roundResults = matches.filter(
     (match) =>
-      match.matchday === matchday &&
-      match.homeTeamScore !== null &&
-      match.awayTeamScore !== null,
+      match.matchday === matchday && match.status === MatchStatus.COMPLETED,
   );
 
   const onward = (label: string) => (
@@ -134,6 +133,7 @@ export function LatestRoundSection({
                   <Matchup
                     home={matchupSide(match.homeTeam, match.homeTeamScore)}
                     away={matchupSide(match.awayTeam, match.awayTeamScore)}
+                    status={match.status}
                     size="line"
                   />
                 </Card>

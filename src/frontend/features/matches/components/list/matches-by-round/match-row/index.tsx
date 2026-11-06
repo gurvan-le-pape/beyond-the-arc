@@ -10,6 +10,7 @@ import { Link } from "@/navigation";
 import { Matchup } from "@/shared/components/domain";
 import { ErrorMessage } from "@/shared/components/feedback";
 import { Badge } from "@/shared/components/primitives";
+import { MatchStatus } from "@/shared/constants";
 
 import { ExpandButton } from "./ExpandButton";
 import { QuarterScoresTable } from "./QuarterScoresTable";
@@ -48,12 +49,13 @@ export function MatchRow({ match, expanded, onToggleExpand }: MatchRowProps) {
   const tCommon = useTranslations("common");
 
   const { homeTeamScore, awayTeamScore } = match;
-  const isPlayed = homeTeamScore !== null && awayTeamScore !== null;
+  const isPlayed = match.status === MatchStatus.COMPLETED;
 
   const matchup = (
     <Matchup
       home={matchupSide(match.homeTeam, homeTeamScore)}
       away={matchupSide(match.awayTeam, awayTeamScore)}
+      status={match.status}
       size="line"
     />
   );
@@ -70,6 +72,11 @@ export function MatchRow({ match, expanded, onToggleExpand }: MatchRowProps) {
           </Link>
         ) : (
           <div className="min-w-0 flex-1">{matchup}</div>
+        )}
+        {match.status === MatchStatus.FAILED && (
+          <Badge variant="outline" size="sm">
+            {tMatches("resultUnavailable")}
+          </Badge>
         )}
         {match.overtime && (
           <Badge variant="warning" size="sm">

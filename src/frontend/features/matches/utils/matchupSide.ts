@@ -9,7 +9,7 @@ import type { MatchTeamRef } from "../types";
  * One side of a match record, as `Matchup` draws it.
  *
  * @param team - the side as the match record references it
- * @param score - its final score, `null` until the match is played
+ * @param score - its final score, `null` unless the match is completed
  * @returns the side for `Matchup`
  */
 export function matchupSide(
