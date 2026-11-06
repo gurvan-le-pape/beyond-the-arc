@@ -63,11 +63,21 @@ def fetch_due_matches(cursor: psycopg.Cursor) -> list[ScheduledMatch]:
     ]
 
 
-def set_match_status(cursor: psycopg.Cursor, match_id: int, status: str) -> None:
+def transition_match_status(
+    cursor: psycopg.Cursor,
+    match_id: int,
+    expected: str,
+    new: str,
+) -> bool:
+    """
+    Move a match from `expected` to `new`. Returns False, changing nothing, if
+    the match is no longer in `expected`.
+    """
     cursor.execute(
-        "UPDATE matches SET status = %s WHERE id = %s;",
-        (status, match_id),
+        "UPDATE matches SET status = %s WHERE id = %s AND status = %s;",
+        (new, match_id, expected),
     )
+    return cursor.rowcount == 1
 
 
 def reset_stuck_matches(cursor: psycopg.Cursor) -> int:
@@ -94,6 +104,11 @@ def update_match_result(
     overtime: bool,
     forfeit: bool,
 ) -> None:
+    """
+    Complete a match that is being generated. Raises if it no longer is, so the
+    caller's transaction rolls back rather than replacing a result and adding a
+    second set of events to it.
+    """
     cursor.execute(
         """
         UPDATE matches
@@ -102,10 +117,12 @@ def update_match_result(
             overtime = %s,
             forfeit = %s,
             status = 'completed'
-        WHERE id = %s;
+        WHERE id = %s AND status = 'generating';
         """,
         (home_score, away_score, overtime, forfeit, match_id),
     )
+    if cursor.rowcount != 1:
+        raise RuntimeError(f"Match {match_id} is not generating; its result was not saved.")
 
 
 # ---------------------------------------------------------------------------

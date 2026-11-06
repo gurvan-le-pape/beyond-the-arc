@@ -59,9 +59,8 @@ def _worker_init() -> None:
 def _generate_worker(match: ScheduledMatch) -> None:
     """Runs inside a worker process.
 
-    update_match_result() already sets status = 'completed' as part of its
-    UPDATE, so there is no separate set_match_status call needed on the
-    happy path.
+    update_match_result() sets status = 'completed' as part of its UPDATE, so
+    only the failure path has a status change of its own.
     """
     if _match_generator is None:
         raise RuntimeError("_match_generator not initialised — was _worker_init called?")
@@ -77,8 +76,14 @@ def _generate_worker(match: ScheduledMatch) -> None:
             try:
                 conn.rollback()
                 with conn.cursor() as cursor:
-                    match_repository.set_match_status(cursor, match.id, "failed")
+                    marked = match_repository.transition_match_status(
+                        cursor, match.id, "generating", "failed"
+                    )
                 conn.commit()
+                if not marked:
+                    logging.getLogger(__name__).warning(
+                        f"Match {match.id}: no longer generating, not marked failed."
+                    )
             except Exception:
                 logging.getLogger(__name__).exception(
                     f"Match {match.id}: failed to update status to 'failed'."
@@ -126,9 +131,13 @@ class Scheduler:
         due = []
         with connection.get_pool().connection() as conn:
             with conn.cursor() as cursor:
-                due = match_repository.fetch_due_matches(cursor)
-                for match in due:
-                    match_repository.set_match_status(cursor, match.id, "generating")
+                due = [
+                    match
+                    for match in match_repository.fetch_due_matches(cursor)
+                    if match_repository.transition_match_status(
+                        cursor, match.id, "scheduled", "generating"
+                    )
+                ]
             conn.commit()
 
         for match in due:
