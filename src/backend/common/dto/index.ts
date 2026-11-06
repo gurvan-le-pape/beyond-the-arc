@@ -5,9 +5,14 @@
 
 export * from "./api-envelope.dto";
 export * from "./api-error-response.dto";
+export * from "./championship-ref.dto";
+export * from "./club-ref.dto";
+export * from "./committee-ref.dto";
 export * from "./competition-scope.query.dto";
+export * from "./league-ref.dto";
 export * from "./organization-scope.query.dto";
 export * from "./paginated-response.dto";
 export * from "./pagination.query.dto";
 export * from "./player-summary.dto";
+export * from "./pool-ref.dto";
 export * from "./rebounds.dto";

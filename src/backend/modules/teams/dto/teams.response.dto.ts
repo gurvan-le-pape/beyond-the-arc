@@ -1,110 +1,11 @@
 // src/backend/modules/teams/dto/teams.response.dto.ts
-import { Category, CompetitionLevel, Gender } from "@common/constants";
-import { PlayerSummaryDto } from "@common/dto";
+import { Category, Gender } from "@common/constants";
+import { ClubRefDto, PlayerSummaryDto, PoolRefDto } from "@common/dto";
 import {
   HistoryTeamRefDto,
   PlayerCareerStatsDto,
 } from "@modules/players/dto/players.response.dto";
 import { ApiProperty } from "@nestjs/swagger";
-
-/**
- * League reference embedded in a team's club committee.
- */
-export class TeamLeagueRefDto {
-  @ApiProperty({ description: "League ID", example: 1, type: Number })
-  id!: number;
-
-  @ApiProperty({
-    description: "League name",
-    example: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
-    type: String,
-  })
-  name!: string;
-}
-
-/**
- * Committee reference embedded in a team's club.
- */
-export class TeamCommitteeRefDto {
-  @ApiProperty({ description: "Committee ID", example: 1, type: Number })
-  id!: number;
-
-  @ApiProperty({
-    description: "Committee name",
-    example: "Comité Départemental de l'Ain",
-    type: String,
-  })
-  name!: string;
-
-  @ApiProperty({ description: "League information", type: TeamLeagueRefDto })
-  league!: TeamLeagueRefDto;
-}
-
-/**
- * Club reference embedded in a team response.
- */
-export class TeamClubRefDto {
-  @ApiProperty({ description: "Club ID", example: 1, type: Number })
-  id!: number;
-
-  @ApiProperty({
-    description: "Club name",
-    example: "AS Monaco Basket",
-    type: String,
-  })
-  name!: string;
-
-  @ApiProperty({
-    description: "Committee information",
-    type: TeamCommitteeRefDto,
-  })
-  committee!: TeamCommitteeRefDto;
-}
-
-/**
- * Championship reference embedded in a team's pool.
- */
-export class TeamChampionshipRefDto {
-  @ApiProperty({ description: "Championship ID", example: 1, type: Number })
-  id!: number;
-
-  @ApiProperty({
-    description: "Championship name",
-    example: "Championship Régional U18 male",
-    type: String,
-  })
-  name!: string;
-
-  @ApiProperty({
-    description: "Competition level",
-    example: CompetitionLevel.REGIONAL,
-    enum: CompetitionLevel,
-  })
-  level!: CompetitionLevel;
-
-  @ApiProperty({ description: "Division number", example: 1, type: Number })
-  division!: number;
-}
-
-/**
- * Pool reference embedded in a team response.
- */
-export class TeamPoolRefDto {
-  @ApiProperty({ description: "Pool ID", example: 1, type: Number })
-  id!: number;
-
-  @ApiProperty({ description: "Pool name", example: "Poule A", type: String })
-  name!: string;
-
-  @ApiProperty({ description: "Pool letter", example: "A", type: String })
-  letter!: string;
-
-  @ApiProperty({
-    description: "Championship the pool belongs to",
-    type: TeamChampionshipRefDto,
-  })
-  championship!: TeamChampionshipRefDto;
-}
 
 /**
  * Relation counts embedded in a team response.
@@ -178,16 +79,16 @@ export class TeamResponseDto {
 
   @ApiProperty({
     description: "Club information",
-    type: TeamClubRefDto,
+    type: ClubRefDto,
   })
-  club!: TeamClubRefDto;
+  club!: ClubRefDto;
 
   @ApiProperty({
     description: "Pool information, or null when the team has none",
-    type: TeamPoolRefDto,
+    type: PoolRefDto,
     nullable: true,
   })
-  pool!: TeamPoolRefDto | null;
+  pool!: PoolRefDto | null;
 
   @ApiProperty({
     description: "Relation counts",
