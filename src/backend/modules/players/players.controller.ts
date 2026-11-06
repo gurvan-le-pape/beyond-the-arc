@@ -199,6 +199,7 @@ export class PlayersController {
    *       "startsAt": "2024-02-05T19:00:00Z",
    *       "homeTeam": { ... },
    *       "awayTeam": { ... },
+   *       "status": "completed",
    *       "homeTeamScore": 85,
    *       "awayTeamScore": 72,
    *       "player": {

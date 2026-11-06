@@ -4,6 +4,7 @@ import {
   CompetitionLevel,
   EventType,
   Gender,
+  MatchStatus,
   Role,
 } from "@common/constants";
 import { PlayerSummaryDto, ReboundsDto } from "@common/dto";
@@ -130,6 +131,13 @@ export class MatchResponseDto {
     type: MatchTeamRefDto,
   })
   awayTeam!: MatchTeamRefDto;
+
+  @ApiProperty({
+    description: "Where the match is in its lifecycle",
+    example: MatchStatus.COMPLETED,
+    enum: MatchStatus,
+  })
+  status!: MatchStatus;
 
   @ApiProperty({
     description: "Home team score",

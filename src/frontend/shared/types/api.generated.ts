@@ -1508,6 +1508,12 @@ export interface components {
             /** @description Away team information */
             awayTeam: components["schemas"]["MatchTeamRefDto"];
             /**
+             * @description Where the match is in its lifecycle
+             * @example completed
+             * @enum {string}
+             */
+            status: "scheduled" | "generating" | "completed" | "failed";
+            /**
              * @description Home team score
              * @example 85
              */
@@ -1649,6 +1655,12 @@ export interface components {
             homeTeam: components["schemas"]["MatchTeamRefDto"];
             /** @description Away team information */
             awayTeam: components["schemas"]["MatchTeamRefDto"];
+            /**
+             * @description Where the match is in its lifecycle
+             * @example completed
+             * @enum {string}
+             */
+            status: "scheduled" | "generating" | "completed" | "failed";
             /**
              * @description Home team score
              * @example 85
@@ -2286,6 +2298,12 @@ export interface components {
             /** @description Away team information */
             awayTeam: components["schemas"]["HistoryTeamRefDto"];
             /**
+             * @description Where the match is in its lifecycle
+             * @example completed
+             * @enum {string}
+             */
+            status: "scheduled" | "generating" | "completed" | "failed";
+            /**
              * @description Home team score
              * @example 85
              */
@@ -2563,6 +2581,12 @@ export interface components {
             homeTeam: components["schemas"]["HistoryTeamRefDto"];
             /** @description Away team information */
             awayTeam: components["schemas"]["HistoryTeamRefDto"];
+            /**
+             * @description Where the match is in its lifecycle
+             * @example completed
+             * @enum {string}
+             */
+            status: "scheduled" | "generating" | "completed" | "failed";
             /**
              * @description Home team score
              * @example 85

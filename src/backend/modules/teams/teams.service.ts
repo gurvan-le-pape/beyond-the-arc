@@ -1,5 +1,5 @@
 // src/backend/modules/teams/teams.service.ts
-import { Category, CompetitionLevel, Gender } from "@common/constants";
+import { Category, CompetitionLevel, Gender, MatchStatus } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
 import {
   aggregateCareerStats,
@@ -106,6 +106,7 @@ const TEAM_DETAIL_SELECT = {
 const TEAM_MATCH_HISTORY_SELECT = {
   id: true,
   startsAt: true,
+  status: true,
   homeTeamScore: true,
   awayTeamScore: true,
   homeTeam: {
@@ -403,6 +404,7 @@ export class TeamsService {
           name: match.awayTeam.club.name,
         },
       },
+      status: match.status as MatchStatus,
       homeTeamScore: match.homeTeamScore,
       awayTeamScore: match.awayTeamScore,
     } satisfies TeamMatchHistoryDto;

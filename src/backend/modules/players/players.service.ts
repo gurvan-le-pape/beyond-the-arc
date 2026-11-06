@@ -3,6 +3,7 @@ import {
   Category,
   CompetitionLevel,
   Gender,
+  MatchStatus,
   Position,
 } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
@@ -94,6 +95,7 @@ const PLAYER_MATCH_HISTORY_SELECT = {
     select: {
       id: true,
       startsAt: true,
+      status: true,
       homeTeamScore: true,
       awayTeamScore: true,
       homeTeam: {
@@ -359,6 +361,7 @@ export class PlayersService {
           name: stat.match.awayTeam.club.name,
         },
       },
+      status: stat.match.status as MatchStatus,
       homeTeamScore: stat.match.homeTeamScore,
       awayTeamScore: stat.match.awayTeamScore,
       player: {

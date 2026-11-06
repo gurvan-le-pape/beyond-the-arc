@@ -5,6 +5,7 @@ import {
   CompetitionLevel,
   EventType,
   Gender,
+  MatchStatus,
   Role,
 } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
@@ -87,6 +88,7 @@ const MATCH_LIST_SELECT = {
       },
     },
   },
+  status: true,
   homeTeamScore: true,
   awayTeamScore: true,
   forfeit: true,
@@ -382,6 +384,7 @@ export class MatchesService {
       id: match.id,
       startsAt: match.startsAt,
       matchday: match.matchday,
+      status: match.status as MatchStatus,
       homeTeamScore: match.homeTeamScore,
       awayTeamScore: match.awayTeamScore,
       forfeit: match.forfeit,

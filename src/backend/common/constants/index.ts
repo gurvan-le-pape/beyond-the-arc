@@ -10,6 +10,7 @@ export * from "./competition-levels";
 export * from "./competition-time-zone";
 export * from "./event-types";
 export * from "./genders";
+export * from "./match-statuses";
 export * from "./metrics-path";
 export * from "./positions";
 export * from "./request-id-header";
