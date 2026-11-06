@@ -54,24 +54,16 @@ class SeasonGenerator:
     # ------------------------------------------------------------------
 
     def _setup_league(self, league_id: int, checkpoint_type: str) -> None:
-        # get_pool().connection() is a context manager that:
-        #   - commits automatically on clean exit (if autocommit=False, the default)
-        #   - rolls back on exception
-        #   - returns the connection cleanly with no open transaction
-        # We manage commits manually here so we get two discrete checkpoints.
+        # One transaction for the whole league, checkpoint included: a retry inserts
+        # the same teams again, so an interrupted setup must leave nothing behind.
         with connection.get_pool().connection() as conn:
             conn.autocommit = False
             try:
-                # Step 1: teams + players
                 with conn.cursor() as cursor:
                     committee_ids = team_repository.fetch_committee_ids_for_league(cursor, league_id)
                     for committee_id in committee_ids:
                         self._generate_teams_and_players(cursor, committee_id)
-                conn.commit()
-                logger.info(f"League {league_id}: teams and players committed.")
 
-                # Step 2: championships, pools, schedule
-                with conn.cursor() as cursor:
                     for gender in GENDERS:
                         for category in CATEGORIES:
                             all_league_level_teams: list[int] = []
@@ -86,7 +78,7 @@ class SeasonGenerator:
                     self._build_match_schedule(cursor, league_id)
                     checkpoints.mark_done(cursor, checkpoint_type, league_id)
                 conn.commit()
-                logger.info(f"League {league_id}: championships, pools, and schedule committed.")
+                logger.info(f"League {league_id}: teams, championships, pools and schedule committed.")
 
             except Exception:
                 conn.rollback()
