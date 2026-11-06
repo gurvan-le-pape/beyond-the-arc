@@ -1957,7 +1957,7 @@ export interface components {
              */
             eventType: "tip_off" | "traveling" | "carrying" | "double_dribble" | "bad_pass" | "steal" | "shot_clock_violation" | "offensive_foul" | "quarter_end" | "blocking_foul" | "pushing_foul" | "reaching_foul" | "charging_foul" | "illegal_screen" | "technical_foul" | "made_layup" | "made_dunk" | "made_fadeaway" | "made_pull_up_jump_shot" | "made_catch_and_shoot_three" | "made_step_back_three" | "missed_layup" | "missed_dunk" | "missed_fadeaway" | "missed_pull_up_jump_shot" | "missed_catch_and_shoot_three" | "missed_step_back_three" | "blocked_shot" | "offensive_rebound" | "defensive_rebound" | "free_throw_made" | "free_throw_missed" | "3_point_shooting_foul" | "2_point_ext_shooting_foul" | "2_point_int_shooting_foul" | "3_point_and_1" | "2_point_ext_and_1" | "2_point_int_and_1" | "inbound" | "substitution";
         };
-        PlayerLeagueRefDto: {
+        LeagueRefDto: {
             /**
              * @description League ID
              * @example 1
@@ -1969,7 +1969,7 @@ export interface components {
              */
             name: string;
         };
-        PlayerCommitteeRefDto: {
+        CommitteeRefDto: {
             /**
              * @description Committee ID
              * @example 1
@@ -1981,9 +1981,9 @@ export interface components {
              */
             name: string;
             /** @description League information */
-            league: components["schemas"]["PlayerLeagueRefDto"];
+            league: components["schemas"]["LeagueRefDto"];
         };
-        PlayerClubRefDto: {
+        ClubRefDto: {
             /**
              * @description Club ID
              * @example 1
@@ -1995,9 +1995,9 @@ export interface components {
              */
             name: string;
             /** @description Committee information */
-            committee: components["schemas"]["PlayerCommitteeRefDto"];
+            committee: components["schemas"]["CommitteeRefDto"];
         };
-        PlayerChampionshipRefDto: {
+        ChampionshipRefDto: {
             /**
              * @description Championship ID
              * @example 1
@@ -2020,7 +2020,7 @@ export interface components {
              */
             division: number;
         };
-        PlayerPoolRefDto: {
+        PoolRefDto: {
             /**
              * @description Pool ID
              * @example 1
@@ -2037,7 +2037,7 @@ export interface components {
              */
             letter: string;
             /** @description Championship the pool belongs to */
-            championship: components["schemas"]["PlayerChampionshipRefDto"];
+            championship: components["schemas"]["ChampionshipRefDto"];
         };
         PlayerTeamDto: {
             /**
@@ -2068,9 +2068,9 @@ export interface components {
              */
             gender: "male" | "female";
             /** @description Club information */
-            club: components["schemas"]["PlayerClubRefDto"];
+            club: components["schemas"]["ClubRefDto"];
             /** @description Current pool, or null when the team has none */
-            pool: components["schemas"]["PlayerPoolRefDto"] | null;
+            pool: components["schemas"]["PoolRefDto"] | null;
         };
         PlayerResponseDto: {
             /**
@@ -2381,88 +2381,6 @@ export interface components {
             /** @description Aggregated career totals and per-game averages */
             career: components["schemas"]["PlayerCareerStatsDto"];
         };
-        TeamLeagueRefDto: {
-            /**
-             * @description League ID
-             * @example 1
-             */
-            id: number;
-            /**
-             * @description League name
-             * @example LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL
-             */
-            name: string;
-        };
-        TeamCommitteeRefDto: {
-            /**
-             * @description Committee ID
-             * @example 1
-             */
-            id: number;
-            /**
-             * @description Committee name
-             * @example Comité Départemental de l'Ain
-             */
-            name: string;
-            /** @description League information */
-            league: components["schemas"]["TeamLeagueRefDto"];
-        };
-        TeamClubRefDto: {
-            /**
-             * @description Club ID
-             * @example 1
-             */
-            id: number;
-            /**
-             * @description Club name
-             * @example AS Monaco Basket
-             */
-            name: string;
-            /** @description Committee information */
-            committee: components["schemas"]["TeamCommitteeRefDto"];
-        };
-        TeamChampionshipRefDto: {
-            /**
-             * @description Championship ID
-             * @example 1
-             */
-            id: number;
-            /**
-             * @description Championship name
-             * @example Championship Régional U18 male
-             */
-            name: string;
-            /**
-             * @description Competition level
-             * @example regional
-             * @enum {string}
-             */
-            level: "departmental" | "regional" | "national";
-            /**
-             * @description Division number
-             * @example 1
-             */
-            division: number;
-        };
-        TeamPoolRefDto: {
-            /**
-             * @description Pool ID
-             * @example 1
-             */
-            id: number;
-            /**
-             * @description Pool name
-             * @example Poule A
-             */
-            name: string;
-            /**
-             * @description Pool letter
-             * @example A
-             */
-            letter: string;
-            /** @description Championship the pool belongs to */
-            championship: components["schemas"]["TeamChampionshipRefDto"];
-        };
         TeamCountDto: {
             /**
              * @description Player count
@@ -2514,9 +2432,9 @@ export interface components {
              */
             poolId: number | null;
             /** @description Club information */
-            club: components["schemas"]["TeamClubRefDto"];
+            club: components["schemas"]["ClubRefDto"];
             /** @description Pool information, or null when the team has none */
-            pool: components["schemas"]["TeamPoolRefDto"] | null;
+            pool: components["schemas"]["PoolRefDto"] | null;
             /** @description Relation counts */
             _count: components["schemas"]["TeamCountDto"];
         };
@@ -2622,9 +2540,9 @@ export interface components {
              */
             poolId: number | null;
             /** @description Club information */
-            club: components["schemas"]["TeamClubRefDto"];
+            club: components["schemas"]["ClubRefDto"];
             /** @description Pool information, or null when the team has none */
-            pool: components["schemas"]["TeamPoolRefDto"] | null;
+            pool: components["schemas"]["PoolRefDto"] | null;
             /** @description Relation counts */
             _count: components["schemas"]["TeamCountDto"];
             /** @description Team players */
