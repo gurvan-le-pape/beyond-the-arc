@@ -16,11 +16,12 @@ There is no separate staging environment. A push to `main` that passes CI goes s
 
 ## Pipeline structure
 
-Three stages — `check`, `analyze`, `deploy` — and eighteen jobs:
+Three stages — `check`, `analyze`, `deploy` — and twenty jobs:
 
 ```
 backend-lint ──────────┐
 backend-test ──────────┼── sonarcloud     (analyze, advisory)
+backend-integration ───┤
 backend-build ─────────┤
 frontend-lint ─────────┤
 frontend-typecheck ────┤
@@ -38,7 +39,7 @@ quality-report           (analyze, advisory)
 ruff-report              (analyze, advisory)
 ```
 
-Every `check` job runs in parallel. `sonarcloud` needs `backend-test` for its coverage report. `deploy` lists its twelve gates explicitly in `needs:` rather than waiting on the whole stage, so the advisory jobs cannot hold a release.
+Every `check` job runs in parallel. `sonarcloud` needs `backend-test` for its coverage report. `deploy` lists its thirteen gates explicitly in `needs:` rather than waiting on the whole stage, so the advisory jobs cannot hold a release.
 
 Workflow rules accept three sources — `merge_request_event`, a push to `main`, and `web` — and end in `when: never`, which stops a branch with an open merge request from producing two pipelines per commit. Every job is `interruptible` so a superseded pipeline can be cancelled, except `deploy`: cancelling a compose `up` mid-flight could leave the VPS half-deployed.
 
@@ -93,6 +94,23 @@ It runs with every pipeline, not on a timer. A newly published advisory needs no
 ### squawk
 
 Merge requests only. Lints the `migration.sql` files the merge request adds for statements that lock or break a running database (a constraint without `NOT VALID`, a dropped column), using `.squawk.toml`. Already-applied migrations are not linted: they cannot change. `allow_failure: true`, because a finding can be the right trade on a small table.
+
+### backend-integration
+
+Runs the suites under `src/backend/test/integration` against a `postgres:18` service: `prisma migrate deploy` builds the schema from the migrations, so the triggers and CHECK constraints under test are the ones production runs. The unit run excludes these suites and needs no database.
+
+`leaderboard-triggers` drives the triggers and constraints with SQL, each test in a transaction it rolls back. `list-queries` runs the list services through real Prisma, on fixtures it commits and removes. `it.failing` marks known bugs: such a test fails the suite once the behaviour is fixed, so it has to become a plain `it`.
+
+To run them locally, against a throwaway database:
+
+```bash
+docker run -d --rm --name integ-pg -e POSTGRES_PASSWORD=test -e POSTGRES_DB=beyondthearc_test -p 55434:5432 postgres:18
+cd src/backend
+export DATABASE_URL=postgres://postgres:test@localhost:55434/beyondthearc_test
+npx prisma migrate deploy && npm run test:integration
+```
+
+The harness refuses a database whose name does not end in `_test`, so a stray `DATABASE_URL` cannot reach the dev or production data.
 
 ### dependency-rules
 

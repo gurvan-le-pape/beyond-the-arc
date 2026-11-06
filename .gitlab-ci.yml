@@ -90,6 +90,23 @@ backend-test:
       - src/backend/coverage/lcov.info
     expire_in: 1 week
 
+backend-integration:
+  stage: check
+  extends: .setup-app
+  services:
+    - name: postgres:18
+      alias: postgres
+  variables:
+    APP_DIR: src/backend
+    POSTGRES_DB: beyondthearc_test
+    POSTGRES_PASSWORD: test
+    # The harness refuses any database whose name does not end in _test.
+    DATABASE_URL: postgres://postgres:test@postgres:5432/beyondthearc_test
+  script:
+    - cd src/backend
+    - npx prisma migrate deploy
+    - npm run test:integration
+
 backend-build:
   stage: check
   extends: .setup-app
@@ -465,6 +482,7 @@ deploy:
   needs:
     - backend-lint
     - backend-test
+    - backend-integration
     - backend-build
     - frontend-lint
     - frontend-typecheck

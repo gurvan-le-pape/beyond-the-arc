@@ -78,7 +78,7 @@ export default [
   // eslint-suppressions.json; anything beyond those counts fails the build.
   {
     files: ["**/*.ts"],
-    ignores: ["**/*.spec.ts", "**/*.test.ts", "scripts/**"],
+    ignores: ["**/*.spec.ts", "**/*.test.ts", "scripts/**", "test/**"],
     rules: {
       "@typescript-eslint/no-unnecessary-condition": "error",
       complexity: ["error", 10],

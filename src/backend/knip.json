@@ -1,6 +1,11 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
-  "entry": ["main.ts", "scripts/*.ts", "**/*.spec.ts"],
+  "entry": [
+    "main.ts",
+    "scripts/*.ts",
+    "**/*.spec.ts",
+    "jest.integration.config.js"
+  ],
   "ignoreDependencies": ["pg", "pino-pretty"],
   "ignoreExportsUsedInFile": {
     "interface": true,
