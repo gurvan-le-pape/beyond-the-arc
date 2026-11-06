@@ -90,8 +90,11 @@ After startup, it polls the database every 60 seconds for matches whose `schedul
 
 ```
 scheduled → generating → completed
-                       ↘ failed
+    ↑           │        ↘ failed
+    └───────────┘ on restart
 ```
+
+Every write names the status it expects, so a match that has moved on is left alone. A second run of a match, from a worker still going when a restart handed the match back, cannot replace its result: `update_match_result` raises and that run's transaction rolls back.
 
 `failed` matches are not retried automatically — they require manual inspection. This is intentional: a failed match most likely indicates a data integrity issue rather than a transient error.
 
