@@ -473,8 +473,6 @@ describe("ClubsService", () => {
               id: 1,
               level: "regional",
               division: 1,
-              committeeId: null,
-              leagueId: 1,
             },
           },
         },

@@ -69,11 +69,11 @@ class SeasonGenerator:
                             all_league_level_teams: list[int] = []
                             for committee_id in committee_ids:
                                 league_level = self._setup_committee_championships(
-                                    cursor, committee_id, gender, category, league_id
+                                    cursor, committee_id, gender, category
                                 )
                                 all_league_level_teams.extend(league_level)
                             self._setup_league_championships(
-                                cursor, all_league_level_teams, gender, category, league_id
+                                cursor, all_league_level_teams, gender, category
                             )
                     self._build_match_schedule(cursor, league_id)
                     checkpoints.mark_done(cursor, checkpoint_type, league_id)
@@ -145,7 +145,6 @@ class SeasonGenerator:
         committee_id: int,
         gender: str,
         category: str,
-        league_id: int,
     ) -> list[int]:
         """
         Split committee teams 80/20, create committee-level championships,
@@ -164,8 +163,6 @@ class SeasonGenerator:
                 category=category,
                 gender=gender,
                 level="departmental",
-                committee_id=committee_id,
-                league_id=league_id,
             )
 
         return league_team_ids
@@ -176,7 +173,6 @@ class SeasonGenerator:
         team_ids: list[int],
         gender: str,
         category: str,
-        league_id: int,
     ) -> None:
         if not team_ids:
             return
@@ -186,7 +182,6 @@ class SeasonGenerator:
             category=category,
             gender=gender,
             level="regional",
-            league_id=league_id,
         )
 
     def _create_championships_and_pools(
@@ -196,8 +191,6 @@ class SeasonGenerator:
         category: str,
         gender: str,
         level: str,
-        committee_id: int | None = None,
-        league_id: int | None = None,
     ) -> None:
         pools_per_division, teams_per_pool_per_division = compute_divisions_and_pools(len(team_ids))
         random.shuffle(team_ids)  # noqa: S2245
@@ -213,8 +206,6 @@ class SeasonGenerator:
                 level=level,
                 season_year=SEASON_YEAR,
                 division=division_index,
-                committee_id=committee_id,
-                league_id=league_id,
             )
 
             # pool_cursor tracks position within team_ids for this division
@@ -254,18 +245,17 @@ class SeasonGenerator:
         # seasons, using their old (fully played) teams.
         cursor.execute(
             """
-            SELECT pools.id
+            SELECT DISTINCT pools.id
             FROM pools
             JOIN championships ON pools.championship_id = championships.id
+            JOIN teams ON teams.pool_id = pools.id
+            JOIN clubs ON clubs.id = teams.club_id
+            JOIN committees ON committees.id = clubs.committee_id
             WHERE championships.season_year = %s
-              AND (
-                championships.league_id = %s
-                OR championships.committee_id IN (
-                    SELECT id FROM committees WHERE league_id = %s
-                )
-              );
+              AND committees.league_id = %s
+            ORDER BY pools.id;
             """,
-            (SEASON_YEAR, league_id, league_id),
+            (SEASON_YEAR, league_id),
         )
         pools = cursor.fetchall()
 

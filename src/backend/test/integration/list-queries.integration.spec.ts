@@ -1,5 +1,6 @@
 // src/backend/test/integration/list-queries.integration.spec.ts
 import { Category, CompetitionLevel, Gender } from "@common/constants";
+import { ChampionshipsService } from "@modules/competitions/championships/championships.service";
 import { LeaderboardsService } from "@modules/competitions/leaderboards/leaderboards.service";
 import { MatchesService } from "@modules/matches/matches.service";
 import { ClubsService } from "@modules/organizations/clubs/clubs.service";
@@ -235,6 +236,57 @@ describe("list queries", () => {
       });
 
       expect(ids({ items })).toEqual(departmental.clubIds);
+    });
+  });
+
+  describe("ChampionshipsService.findChampionships", () => {
+    // Both fixtures draw their teams from the same clubs, so the regional pool
+    // has teams from the committee that organises the departmental one.
+    const found = async (filters: {
+      committeeId?: number;
+      leagueId?: number;
+    }) => {
+      const service = new ChampionshipsService(prisma);
+      const { items } = await service.findChampionships({
+        ...filters,
+        limit: 100,
+      });
+      return items.map((item) => item.id);
+    };
+
+    it("keeps a committee's filter to the championships it organises", async () => {
+      const ids = await found({ committeeId: departmental.committeeId });
+
+      expect(ids).toContain(departmental.championshipId);
+      expect(ids).not.toContain(regional.championshipId);
+    });
+
+    it("finds a league's regional and departmental championships", async () => {
+      const ids = await found({ leagueId: regional.leagueId });
+
+      expect(ids).toEqual(
+        expect.arrayContaining([
+          regional.championshipId,
+          departmental.championshipId,
+        ]),
+      );
+    });
+
+    it("reads the organiser off the championship's teams", async () => {
+      const service = new ChampionshipsService(prisma);
+
+      await expect(
+        service.findChampionshipById(departmental.championshipId),
+      ).resolves.toMatchObject({
+        committeeId: departmental.committeeId,
+        leagueId: departmental.leagueId,
+      });
+      await expect(
+        service.findChampionshipById(regional.championshipId),
+      ).resolves.toMatchObject({
+        committeeId: null,
+        leagueId: regional.leagueId,
+      });
     });
   });
 

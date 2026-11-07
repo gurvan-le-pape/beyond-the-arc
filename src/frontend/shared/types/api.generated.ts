@@ -909,16 +909,6 @@ export interface components {
              * @example 1
              */
             division: number;
-            /**
-             * @description Committee ID
-             * @example 1
-             */
-            committeeId: number | null;
-            /**
-             * @description League regionale ID
-             * @example 1
-             */
-            leagueId: number | null;
         };
         PoolInfoDto: {
             /**
