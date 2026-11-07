@@ -38,9 +38,6 @@ const TEAM_SELECT = {
   id: true,
   number: true,
   clubId: true,
-  seasonYear: true,
-  category: true,
-  gender: true,
   poolId: true,
   club: {
     select: {
@@ -67,6 +64,9 @@ const TEAM_SELECT = {
       championship: {
         select: {
           id: true,
+          seasonYear: true,
+          category: true,
+          gender: true,
           level: true,
           division: true,
         },
@@ -337,26 +337,24 @@ export class TeamsService {
       id: entity.id,
       number: entity.number,
       clubId: entity.clubId,
-      seasonYear: entity.seasonYear,
-      category: entity.category as Category,
-      gender: entity.gender as Gender,
+      seasonYear: entity.pool.championship.seasonYear,
+      category: entity.pool.championship.category as Category,
+      gender: entity.pool.championship.gender as Gender,
       poolId: entity.poolId,
       club: {
         id: entity.club.id,
         name: entity.club.name,
         committee: entity.club.committee,
       },
-      pool: entity.pool
-        ? {
-            id: entity.pool.id,
-            letter: entity.pool.letter,
-            championship: {
-              id: entity.pool.championship.id,
-              level: entity.pool.championship.level as CompetitionLevel,
-              division: entity.pool.championship.division,
-            },
-          }
-        : null,
+      pool: {
+        id: entity.pool.id,
+        letter: entity.pool.letter,
+        championship: {
+          id: entity.pool.championship.id,
+          level: entity.pool.championship.level as CompetitionLevel,
+          division: entity.pool.championship.division,
+        },
+      },
       _count: {
         players: entity._count.players,
       },
@@ -423,9 +421,8 @@ export class TeamsService {
   private buildPoolFilter(
     filters: GetTeamsQueryDto,
   ): Prisma.PoolsWhereInput | undefined {
-    const { level, division, poolLetter } = filters;
-    // Category and gender are the team's own columns, not its championship's.
-    const championship = buildChampionshipWhere({ level, division });
+    const { poolLetter } = filters;
+    const championship = buildChampionshipWhere(filters);
 
     if (!championship && !poolLetter) return undefined;
 
@@ -467,8 +464,6 @@ export class TeamsService {
     if (clubFilter) where.club = clubFilter;
 
     if (filters.number !== undefined) where.number = filters.number;
-    if (filters.category) where.category = filters.category;
-    if (filters.gender) where.gender = filters.gender;
 
     return where;
   }

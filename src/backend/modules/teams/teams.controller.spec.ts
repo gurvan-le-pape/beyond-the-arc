@@ -82,7 +82,11 @@ describe("TeamsController", () => {
                 },
               },
             },
-            pool: null,
+            pool: {
+              id: 1,
+              letter: "A",
+              championship: { id: 1, level: "departmental", division: 1 },
+            },
             _count: { players: 12 },
           },
         ],
@@ -247,7 +251,11 @@ describe("TeamsController", () => {
             },
           },
         },
-        pool: null,
+        pool: {
+          id: 1,
+          letter: "A",
+          championship: { id: 1, level: "departmental", division: 1 },
+        },
         _count: { players: 12 },
         players: [],
       };
@@ -283,9 +291,13 @@ describe("TeamsController", () => {
         seasonYear: "2025-2026",
         category: "U11",
         gender: "male",
-        poolId: null,
+        poolId: 1,
         club: {} as any,
-        pool: null,
+        pool: {
+          id: 1,
+          letter: "A",
+          championship: { id: 1, level: "departmental", division: 1 },
+        },
         _count: { players: 0 },
         players: [],
       };

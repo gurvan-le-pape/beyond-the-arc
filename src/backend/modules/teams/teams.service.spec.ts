@@ -58,9 +58,7 @@ describe("TeamsService", () => {
           id: 1,
           number: 1,
           clubId: 1,
-          category: "U18",
-          gender: "M",
-          poolId: null,
+          poolId: 1,
           club: {
             id: 1,
             name: "Club 1",
@@ -73,7 +71,18 @@ describe("TeamsService", () => {
               },
             },
           },
-          pool: null,
+          pool: {
+            id: 1,
+            letter: "A",
+            championship: {
+              id: 1,
+              seasonYear: "2025-2026",
+              category: "U18",
+              gender: "M",
+              level: "departmental",
+              division: 1,
+            },
+          },
           _count: { players: 12 },
         },
       ];
@@ -184,9 +193,7 @@ describe("TeamsService", () => {
         id: 1,
         number: 1,
         clubId: 1,
-        category: "U18",
-        gender: "M",
-        poolId: null,
+        poolId: 1,
         club: {
           id: 1,
           name: "Club 1",
@@ -199,7 +206,18 @@ describe("TeamsService", () => {
             },
           },
         },
-        pool: null,
+        pool: {
+          id: 1,
+          letter: "A",
+          championship: {
+            id: 1,
+            seasonYear: "2025-2026",
+            category: "U18",
+            gender: "M",
+            level: "departmental",
+            division: 1,
+          },
+        },
         _count: { players: 12 },
         players: [],
       };
@@ -380,7 +398,9 @@ describe("TeamsService", () => {
 
       expect(mockPrismaService.client.teams.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: expect.objectContaining({ category: "U18" }),
+          where: expect.objectContaining({
+            pool: { championship: { category: "U18" } },
+          }),
         }),
       );
     });
@@ -390,7 +410,9 @@ describe("TeamsService", () => {
 
       expect(mockPrismaService.client.teams.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: expect.objectContaining({ gender: "male" }),
+          where: expect.objectContaining({
+            pool: { championship: { gender: "male" } },
+          }),
         }),
       );
     });
@@ -499,8 +521,6 @@ describe("TeamsService", () => {
           id: 1,
           number: 1,
           clubId: 1,
-          category: "U18",
-          gender: "male",
           poolId: 1,
           club: {
             id: 1,
@@ -516,6 +536,9 @@ describe("TeamsService", () => {
             letter: "A",
             championship: {
               id: 1,
+              seasonYear: "2025-2026",
+              category: "U18",
+              gender: "male",
               name: "Champ A",
               level: "regional",
               division: 1,

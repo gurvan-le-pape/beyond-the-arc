@@ -54,8 +54,8 @@ export interface PoolOptions {
 let nextTeamNumber = 1;
 
 /**
- * Creates a championship and a pool, with teams from the seeded clubs assigned
- * to it the way the scheduler assigns them, through an update of `pool_id`.
+ * Creates a championship and a pool, with teams from the seeded clubs created
+ * in it, as the scheduler creates them.
  *
  * @param client - the connection to write on
  * @param options - the championship and pool to create
@@ -111,14 +111,10 @@ export async function createPool(
     const {
       rows: [{ id }],
     } = await client.query<{ id: number }>(
-      `INSERT INTO teams (club_id, season_year, number, category, gender)
-       VALUES ($1, '2099-2100', $2, $3, $4) RETURNING id`,
-      [club.id, nextTeamNumber++, category, gender],
+      `INSERT INTO teams (pool_id, club_id, number)
+       VALUES ($1, $2, $3) RETURNING id`,
+      [poolId, club.id, nextTeamNumber++],
     );
-    await client.query("UPDATE teams SET pool_id = $1 WHERE id = $2", [
-      poolId,
-      id,
-    ]);
     teamIds.push(id);
   }
 

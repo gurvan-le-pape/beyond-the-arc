@@ -169,16 +169,14 @@ export class TeamInfoDto {
   @ApiProperty({
     description: "Pool information",
     type: PoolInfoDto,
-    nullable: true,
   })
-  pool!: PoolInfoDto | null;
+  pool!: PoolInfoDto;
 
   @ApiProperty({
     description: "Team leaderboard stats",
     type: TeamLeaderboardDto,
-    nullable: true,
   })
-  leaderboard!: TeamLeaderboardDto | null;
+  leaderboard!: TeamLeaderboardDto;
 }
 
 /**

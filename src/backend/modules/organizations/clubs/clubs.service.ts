@@ -2,6 +2,7 @@
 import { Category, CompetitionLevel, Gender } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
 import {
+  buildChampionshipWhere,
   buildClubOrganizationWhere,
   computeStandings,
   ffbbClubUrl,
@@ -57,8 +58,6 @@ const CLUB_DETAILED_SELECT = {
     select: {
       id: true,
       number: true,
-      category: true,
-      gender: true,
       poolId: true,
       pool: {
         select: {
@@ -67,6 +66,8 @@ const CLUB_DETAILED_SELECT = {
           championship: {
             select: {
               id: true,
+              category: true,
+              gender: true,
               level: true,
               division: true,
             },
@@ -234,16 +235,9 @@ export class ClubsService {
       where.name = nameContains(filters.search);
     }
 
-    // Build teams filter if category, gender, or level specified
-    const teamsWhere: Prisma.TeamsWhereInput = {};
-    if (filters.category) teamsWhere.category = filters.category;
-    if (filters.gender) teamsWhere.gender = filters.gender;
-    if (filters.level)
-      teamsWhere.pool = { championship: { level: filters.level } };
-
-    if (Object.keys(teamsWhere).length > 0) {
-      where.teams = { some: teamsWhere };
-    }
+    const { level, category, gender } = filters;
+    const championship = buildChampionshipWhere({ level, category, gender });
+    if (championship) where.teams = { some: { pool: { championship } } };
 
     const [clubs, total] = await Promise.all([
       this.prisma.client.clubs.findMany({
@@ -295,13 +289,12 @@ export class ClubsService {
 
   /**
    * Computes the standings of every pool the given teams play in, and returns
-   * each of those teams' ranked row, keyed by team id. A team without a pool is
-   * absent from the map.
+   * each of those teams' ranked row, keyed by team id.
    */
   private async findRankedStandings(
-    teams: { id: number; poolId: number | null }[],
+    teams: { id: number; poolId: number }[],
   ): Promise<Map<number, RankedStanding>> {
-    const poolIds = [...new Set(teams.flatMap((team) => team.poolId ?? []))];
+    const poolIds = [...new Set(teams.map((team) => team.poolId))];
     if (poolIds.length === 0) return new Map();
 
     const [poolTeams, poolMatches] = await Promise.all([
@@ -382,27 +375,24 @@ export class ClubsService {
       teams: club.teams.map((team) => ({
         id: team.id,
         number: team.number,
-        category: team.category as Category,
-        gender: team.gender as Gender,
-        pool: team.pool
-          ? {
-              id: team.pool.id,
-              letter: team.pool.letter,
-              championship: {
-                id: team.pool.championship.id,
-                level: team.pool.championship.level as CompetitionLevel,
-                division: team.pool.championship.division,
-              },
-            }
-          : null,
-        leaderboard: this.mapStanding(standings.get(team.id)),
+        category: team.pool.championship.category as Category,
+        gender: team.pool.championship.gender as Gender,
+        pool: {
+          id: team.pool.id,
+          letter: team.pool.letter,
+          championship: {
+            id: team.pool.championship.id,
+            level: team.pool.championship.level as CompetitionLevel,
+            division: team.pool.championship.division,
+          },
+        },
+        // Every team of a pool has a row in its standings.
+        leaderboard: this.mapStanding(standings.get(team.id)!),
       })),
     };
   }
 
-  private mapStanding(standing: RankedStanding | undefined) {
-    if (!standing) return null;
-
+  private mapStanding(standing: RankedStanding) {
     return {
       rank: standing.rank,
       poolSize: standing.poolSize,

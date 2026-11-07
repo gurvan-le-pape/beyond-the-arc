@@ -36,7 +36,7 @@ export function PlayerCard({ player }: PlayerCardProps) {
   const clubName = player.team.club.name;
   const category = player.team.category;
   const gender = player.team.gender;
-  const level = player.team.pool?.championship.level;
+  const level = player.team.pool.championship.level;
   const committee = player.team.club.committee;
 
   const config = getLevelConfig(level);

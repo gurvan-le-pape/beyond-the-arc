@@ -79,25 +79,22 @@ export function ClubTeamsTable({
       header: t("detail.teamColumns.championship"),
       align: "left",
       from: "sm",
-      render: (team) => {
-        const championship = team.pool?.championship;
-        if (!team.pool || !championship) return "—";
-        return [
-          tCommon(`competition.levels.${championship.level}`),
-          tCompetitions("divisionWithValue", { value: championship.division }),
-          tTeams("poolLabel", { letter: team.pool.letter }),
-        ].join(" · ");
-      },
+      render: ({ pool }) =>
+        [
+          tCommon(`competition.levels.${pool.championship.level}`),
+          tCompetitions("divisionWithValue", {
+            value: pool.championship.division,
+          }),
+          tTeams("poolLabel", { letter: pool.letter }),
+        ].join(" · "),
     },
     {
       key: "rank",
       header: t("detail.teamColumns.rank"),
       numeric: true,
       width: "fit",
-      render: (team) =>
-        team.leaderboard
-          ? `${team.leaderboard.rank} / ${team.leaderboard.poolSize}`
-          : "—",
+      render: ({ leaderboard }) =>
+        `${leaderboard.rank} / ${leaderboard.poolSize}`,
     },
     {
       key: "record",
@@ -105,10 +102,8 @@ export function ClubTeamsTable({
       numeric: true,
       width: "fit",
       from: "sm",
-      render: (team) =>
-        team.leaderboard
-          ? `${team.leaderboard.gamesWon}–${team.leaderboard.gamesLost}`
-          : "—",
+      render: ({ leaderboard }) =>
+        `${leaderboard.gamesWon}–${leaderboard.gamesLost}`,
     },
   ];
 

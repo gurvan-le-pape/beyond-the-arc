@@ -1,15 +1,17 @@
 """
 SeasonGenerator
 
-Runs once at the start of a season. Idempotent — safe to restart if interrupted.
-Checkpointed at the league level: if a league was fully committed, it is skipped on retry.
+Runs once at the start of a season, one transaction per league, and skips a
+league that already has teams in this season's championships.
 
-Responsibilities:
-  1. For each league → committee → club: generate teams and players
-  2. Split teams 80/20 between committee-level and league-level championships
-  3. Create championships, divisions, pools
-  4. Assign teams to pools
-  5. Build the round-robin match schedule (empty match shells with starts_at)
+For each league, gender and category:
+  1. Draw each committee's entries: which clubs field teams, and their numbers
+  2. Split each committee's entries ~80/20 between its departmental
+     championships and the league's regional ones
+  3. Create the championships and pools, then each pool's teams, their players
+     and the pool's round-robin schedule (match shells with starts_at)
+
+A team is created in its pool, so every team has one.
 """
 
 import logging
@@ -17,7 +19,7 @@ import math
 import random
 
 from config import CATEGORIES, GENDERS, SEASON_YEAR, SEASON_START_WEEK, SEASON_START_YEAR
-from db import checkpoints, connection
+from db import connection
 from db.repositories import championship_repository, match_repository, team_repository
 from utils.division_utils import compute_divisions_and_pools
 from utils.player_utils import (
@@ -32,6 +34,8 @@ from utils.schedule_utils import build_round_robin_schedule, compute_matchday_da
 
 logger = logging.getLogger(__name__)
 
+# A club's entry in one championship: (club_id, team number within the club).
+Entry = tuple[int, int]
 
 class SeasonGenerator:
     def run(self) -> None:
@@ -40,12 +44,14 @@ class SeasonGenerator:
             with conn.cursor() as cursor:
                 league_ids = team_repository.fetch_league_ids(cursor)
 
-        checkpoint_type = f"league_setup_{SEASON_YEAR}"
         for league_id in league_ids:
-            if checkpoints.is_done(checkpoint_type, league_id):
+            with connection.get_pool().connection() as conn:
+                with conn.cursor() as cursor:
+                    done = team_repository.league_has_teams(cursor, league_id, SEASON_YEAR)
+            if done:
                 logger.info(f"League {league_id}: already set up for {SEASON_YEAR}, skipping.")
                 continue
-            self._setup_league(league_id, checkpoint_type)
+            self._setup_league(league_id)
 
         logger.info("Season setup complete.")
 
@@ -53,32 +59,30 @@ class SeasonGenerator:
     # League
     # ------------------------------------------------------------------
 
-    def _setup_league(self, league_id: int, checkpoint_type: str) -> None:
-        # One transaction for the whole league, checkpoint included: a retry inserts
-        # the same teams again, so an interrupted setup must leave nothing behind.
+    def _setup_league(self, league_id: int) -> None:
+        # One transaction for the whole league: a league with any team is skipped
+        # on restart, so an interrupted setup must leave nothing behind.
         with connection.get_pool().connection() as conn:
             conn.autocommit = False
             try:
                 with conn.cursor() as cursor:
-                    committee_ids = team_repository.fetch_committee_ids_for_league(cursor, league_id)
-                    for committee_id in committee_ids:
-                        self._generate_teams_and_players(cursor, committee_id)
-
+                    clubs_by_committee = {
+                        committee_id: team_repository.fetch_club_ids_for_committee(cursor, committee_id)
+                        for committee_id in team_repository.fetch_committee_ids_for_league(cursor, league_id)
+                    }
                     for gender in GENDERS:
                         for category in CATEGORIES:
-                            all_league_level_teams: list[int] = []
-                            for committee_id in committee_ids:
-                                league_level = self._setup_committee_championships(
-                                    cursor, committee_id, gender, category
-                                )
-                                all_league_level_teams.extend(league_level)
-                            self._setup_league_championships(
-                                cursor, all_league_level_teams, gender, category
-                            )
-                    self._build_match_schedule(cursor, league_id)
-                    checkpoints.mark_done(cursor, checkpoint_type, league_id)
+                            regional: list[Entry] = []
+                            for committee_id, club_ids in clubs_by_committee.items():
+                                if not club_ids:
+                                    logger.warning(f"Committee {committee_id}: no clubs found, skipping.")
+                                    continue
+                                departmental, promoted = self._split_80_20(self._draw_entries(club_ids))
+                                self._create_championships(cursor, departmental, category, gender, "departmental")
+                                regional.extend(promoted)
+                            self._create_championships(cursor, regional, category, gender, "regional")
                 conn.commit()
-                logger.info(f"League {league_id}: teams, championships, pools and schedule committed.")
+                logger.info(f"League {league_id}: championships, teams and schedule committed.")
 
             except Exception:
                 conn.rollback()
@@ -86,41 +90,69 @@ class SeasonGenerator:
                 raise
 
     # ------------------------------------------------------------------
-    # Teams and players
+    # Entries
     # ------------------------------------------------------------------
 
-    def _generate_teams_and_players(self, cursor, committee_id: int) -> None:
-        club_ids = team_repository.fetch_club_ids_for_committee(cursor, committee_id)
-        if not club_ids:
-            logger.warning(f"Committee {committee_id}: no clubs found, skipping.")
-            return
+    def _draw_entries(self, club_ids: list[int]) -> list[Entry]:
+        """
+        Draws a committee's entries for one gender and category: slightly more
+        than one per club, so some clubs field several teams, numbered from 1.
+        """
+        num_entries = math.ceil(len(club_ids) + math.sqrt(len(club_ids)))
+        club_team_count: dict[int, int] = dict.fromkeys(club_ids, 0)
+        entries: list[Entry] = []
+        for _ in range(num_entries):
+            club_id = random.choice(club_ids)  # noqa: S2245
+            club_team_count[club_id] += 1
+            entries.append((club_id, club_team_count[club_id]))
+        return entries
 
-        num_teams_per_gender_category = math.ceil(len(club_ids) + math.sqrt(len(club_ids)))
-        team_rows = []
+    # ------------------------------------------------------------------
+    # Championships, pools, teams
+    # ------------------------------------------------------------------
 
-        for gender in GENDERS:
-            for category in CATEGORIES:
-                club_team_count: dict[int, int] = dict.fromkeys(club_ids, 0)
-                for _ in range(num_teams_per_gender_category):
-                    club_id = random.choice(club_ids)  # noqa: S2245
-                    club_team_count[club_id] += 1
-                    team_rows.append((club_id, SEASON_YEAR, category, gender, club_team_count[club_id]))
+    def _create_championships(
+        self,
+        cursor,
+        entries: list[Entry],
+        category: str,
+        gender: str,
+        level: str,
+    ) -> None:
+        pools_per_division, teams_per_pool_per_division = compute_divisions_and_pools(len(entries))
+        entries = list(entries)
+        random.shuffle(entries)  # noqa: S2245
 
-        team_repository.insert_teams(cursor, team_rows)
-
-        teams = team_repository.fetch_teams_for_clubs(cursor, club_ids, SEASON_YEAR)
-        self._generate_players(cursor, teams)
-
-        logger.debug(f"Committee {committee_id}: inserted teams and players for {len(club_ids)} clubs.")
+        position = 0
+        for division, teams_per_pool in enumerate(teams_per_pool_per_division, start=1):
+            championship_id = championship_repository.insert_championship(
+                cursor,
+                category=category,
+                gender=gender,
+                level=level,
+                season_year=SEASON_YEAR,
+                division=division,
+            )
+            for index, count in enumerate(teams_per_pool):
+                pool_entries = entries[position : position + count]
+                position += count
+                pool_id = championship_repository.insert_pool(cursor, championship_id, chr(65 + index))
+                team_ids = team_repository.insert_teams(
+                    cursor, [(pool_id, club_id, number) for club_id, number in pool_entries]
+                )
+                self._generate_players(cursor, team_ids, gender, category)
+                self._schedule_pool(cursor, pool_id, team_ids)
 
     def _generate_players(
         self,
         cursor,
-        teams: list[tuple[int, str, str]],
+        team_ids: list[int],
+        gender: str,
+        category: str,
         players_per_team: int = 12,
     ) -> None:
         rows = []
-        for team_id, gender, category in teams:
+        for team_id in team_ids:
             positions = generate_roster_positions(players_per_team)
             for number, position in enumerate(positions, start=1):
                 build = generate_player_build(position)
@@ -136,171 +168,40 @@ class SeasonGenerator:
         team_repository.insert_players(cursor, rows)
 
     # ------------------------------------------------------------------
-    # Championships and pools
-    # ------------------------------------------------------------------
-
-    def _setup_committee_championships(
-        self,
-        cursor,
-        committee_id: int,
-        gender: str,
-        category: str,
-    ) -> list[int]:
-        """
-        Split committee teams 80/20, create committee-level championships,
-        and return the team IDs that go up to league level.
-        """
-        teams = team_repository.fetch_teams_for_committee(cursor, committee_id, gender, category, SEASON_YEAR)
-        if not teams:
-            return []
-
-        committee_team_ids, league_team_ids = self._split_80_20(teams)
-
-        if committee_team_ids:
-            self._create_championships_and_pools(
-                cursor=cursor,
-                team_ids=committee_team_ids,
-                category=category,
-                gender=gender,
-                level="departmental",
-            )
-
-        return league_team_ids
-
-    def _setup_league_championships(
-        self,
-        cursor,
-        team_ids: list[int],
-        gender: str,
-        category: str,
-    ) -> None:
-        if not team_ids:
-            return
-        self._create_championships_and_pools(
-            cursor=cursor,
-            team_ids=team_ids,
-            category=category,
-            gender=gender,
-            level="regional",
-        )
-
-    def _create_championships_and_pools(
-        self,
-        cursor,
-        team_ids: list[int],
-        category: str,
-        gender: str,
-        level: str,
-    ) -> None:
-        pools_per_division, teams_per_pool_per_division = compute_divisions_and_pools(len(team_ids))
-        random.shuffle(team_ids)  # noqa: S2245
-
-        team_cursor = 0
-        for division_index, (num_pools, teams_per_pool_list) in enumerate(
-            zip(pools_per_division, teams_per_pool_per_division), start=1
-        ):
-            championship_id = championship_repository.insert_championship(
-                cursor,
-                category=category,
-                gender=gender,
-                level=level,
-                season_year=SEASON_YEAR,
-                division=division_index,
-            )
-
-            # pool_cursor tracks position within team_ids for this division
-            pool_cursor = team_cursor
-            all_assignments: list[tuple[int, int]] = []
-
-            for i in range(num_pools):
-                pool_id = championship_repository.insert_pool(
-                    cursor, championship_id, chr(65 + i)
-                )
-                count = teams_per_pool_list[i]
-                assignments = [
-                    (pool_id, team_ids[pool_cursor + j])
-                    for j in range(count)
-                    if pool_cursor + j < len(team_ids)
-                ]
-                all_assignments.extend(assignments)
-                pool_cursor += count
-
-            # One bulk UPDATE for all pools in this division
-            team_repository.assign_teams_to_pool(cursor, all_assignments)
-
-            # Advance the outer cursor past all teams consumed by this division
-            team_cursor = pool_cursor
-
-    # ------------------------------------------------------------------
     # Match schedule
     # ------------------------------------------------------------------
 
-    def _build_match_schedule(self, cursor, league_id: int) -> None:
-        """
-        For every pool in this league, generate the full round-robin schedule
-        and bulk-insert all match shells in a single call per pool.
-        """
-        # Scoped to this season only — without it, re-running setup for a new
-        # season would also re-schedule already-completed pools from prior
-        # seasons, using their old (fully played) teams.
-        cursor.execute(
-            """
-            SELECT DISTINCT pools.id
-            FROM pools
-            JOIN championships ON pools.championship_id = championships.id
-            JOIN teams ON teams.pool_id = pools.id
-            JOIN clubs ON clubs.id = teams.club_id
-            JOIN committees ON committees.id = clubs.committee_id
-            WHERE championships.season_year = %s
-              AND committees.league_id = %s
-            ORDER BY pools.id;
-            """,
-            (SEASON_YEAR, league_id),
-        )
-        pools = cursor.fetchall()
+    def _schedule_pool(self, cursor, pool_id: int, team_ids: list[int]) -> None:
+        """Inserts the pool's full round-robin schedule as match shells."""
+        if len(team_ids) < 2:
+            logger.warning(f"Pool {pool_id} has fewer than 2 teams, skipping schedule.")
+            return
 
-        for (pool_id,) in pools:
-            team_ids = team_repository.fetch_teams_for_pool(cursor, pool_id)
-            if len(team_ids) < 2:
-                logger.warning(f"Pool {pool_id} has fewer than 2 teams, skipping schedule.")
-                continue
+        match_rows: list[tuple] = []
+        for matchday, pairs in enumerate(build_round_robin_schedule(team_ids), start=1):
+            starts_at = compute_matchday_datetime(SEASON_START_WEEK, SEASON_START_YEAR, matchday, pool_id)
+            for home_id, away_id in pairs:
+                match_rows.append((matchday, starts_at, home_id, away_id))
 
-            schedule = build_round_robin_schedule(team_ids)
-
-            match_rows: list[tuple] = []
-            for matchday, pairs in enumerate(schedule, start=1):
-                starts_at = compute_matchday_datetime(
-                    SEASON_START_WEEK, SEASON_START_YEAR, matchday, pool_id
-                )
-                for home_id, away_id in pairs:
-                    match_rows.append((matchday, starts_at, home_id, away_id))
-
-            if match_rows:
-                match_repository.insert_scheduled_matches_bulk(cursor, match_rows)
+        match_repository.insert_scheduled_matches_bulk(cursor, match_rows)
 
     # ------------------------------------------------------------------
     # Helpers
     # ------------------------------------------------------------------
 
-    def _split_80_20(
-        self,
-        teams: list[tuple[int, int, int]],
-    ) -> tuple[list[int], list[int]]:
+    def _split_80_20(self, entries: list[Entry]) -> tuple[list[Entry], list[Entry]]:
         """
-        Split teams into ~80% committee-level and ~20% league-level.
-        Teams with number > 1 always stay at committee level.
-        Only first-team entries (number == 1) are eligible for league level.
+        Split entries into ~80% departmental and ~20% regional.
+        Only a club's first team (number 1) can go up to regional level.
         """
-        always_committee = [t[0] for t in teams if t[2] > 1]
-        candidates = [t for t in teams if t[2] == 1]
+        always_departmental = [e for e in entries if e[1] > 1]
+        candidates = [e for e in entries if e[1] == 1]
 
-        total = len(teams)
-        num_league = math.ceil(0.2 * total)
-        num_committee = total - num_league
+        num_regional = math.ceil(0.2 * len(entries))
+        remaining_slots = len(entries) - num_regional - len(always_departmental)
 
         random.shuffle(candidates)  # noqa: S2245
-        remaining_slots = num_committee - len(always_committee)
-        committee_ids = always_committee + [t[0] for t in candidates[:remaining_slots]]
-        league_ids = [t[0] for t in candidates[remaining_slots:]]
+        departmental = always_departmental + candidates[:remaining_slots]
+        regional = candidates[remaining_slots:]
 
-        return committee_ids, league_ids
+        return departmental, regional
