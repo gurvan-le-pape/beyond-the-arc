@@ -112,7 +112,7 @@ Don't look up this repo's own conventions — the barrel rules, the one-service-
 
 Two distinct data sources, handled differently:
 - **Static** (competition structure, geography) — real French basketball data for metropolitan France, scraped from FFBB's public site (`scripts/ffbb-import/`) and geocoded via the French government's BAN API, seeded by the `1_seed_static_data` Prisma migration and applied with the schema by `prisma migrate deploy`. Re-run with `make refresh-static-data` when it needs refreshing; see `docs/data-pipeline.md`.
-- **Dynamic** (match results, stats, shot charts) — generated continuously by the Python scheduler (`src/backend/db/python`, run as the `scheduler` Docker service), organized into `generation/` (season/match/playtime generation), `simulation/` (match simulator + game state manager), and `db/` (repository layer). The scheduler uses checkpoints to avoid reprocessing already-handled matches.
+- **Dynamic** (match results, stats, shot charts) — generated continuously by the Python scheduler (`src/backend/db/python`, run as the `scheduler` Docker service), organized into `generation/` (season/match/playtime generation), `simulation/` (match simulator + game state manager), and `db/` (repository layer). `matches.status` is what stops a match being generated twice; the scheduler's checkpoints cover season setup, one per league.
 
 ## Known limitations (intentional, not oversights)
 
