@@ -17,17 +17,9 @@ export class FormGameDto {
 }
 
 /**
- * Response DTO for a leaderboard entry.
- * Provides a stable API contract independent of database schema.
+ * Response DTO for a team's row in its pool's standings.
  */
 export class LeaderboardResponseDto {
-  @ApiProperty({
-    description: "Unique leaderboard entry identifier",
-    example: 1,
-    type: Number,
-  })
-  id!: number;
-
   @ApiProperty({
     description: "Team ID",
     example: 5,

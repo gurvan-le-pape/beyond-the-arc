@@ -99,7 +99,6 @@ model Pools {
   championshipId Int            @map("championship_id")
   letter         String         @db.VarChar(1)
   matches        Matches[]
-  leaderboards   Leaderboards[]
   teams          Teams[]        @relation("PoolsToTeams")
 
   @@unique([championshipId, letter])
@@ -118,7 +117,6 @@ model Teams {
   poolId       Int?           @map("pool_id")
   homeMatches  Matches[]      @relation("HomeTeam")
   awayMatches  Matches[]      @relation("AwayTeam")
-  leaderboards Leaderboards[]
   players      Players[]
 
   @@unique([clubId, category, gender, number, seasonYear])
@@ -156,28 +154,6 @@ model Matches {
   @@index([awayTeamId], map: "idx_matches_away_team_id")
   @@index([startsAt], map: "idx_matches_starts_at")
   @@map("matches")
-}
-
-model Leaderboards {
-  id              Int   @id @default(autoincrement())
-  pool            Pools @relation(fields: [poolId], references: [id], onDelete: Cascade)
-  poolId          Int   @map("pool_id")
-  team            Teams @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  teamId          Int   @map("team_id")
-  points          Int   @default(0)
-  gamesPlayed     Int   @default(0) @map("games_played")
-  gamesWon        Int   @default(0) @map("games_won")
-  gamesLost       Int   @default(0) @map("games_lost")
-  gamesForfeited  Int   @default(0) @map("games_forfeited")
-  pointsFor       Int   @default(0) @map("points_for")
-  pointsAgainst   Int   @default(0) @map("points_against")
-  pointDifference Int   @default(0) @map("point_difference")
-
-  // Written only by the triggers on `matches` and `teams`. CHECK constraints on the counters
-  // (non-negative, games and points add up) are in
-  // `20261103120000_match_integrity_checks`.
-  @@unique([poolId, teamId])
-  @@map("leaderboards")
 }
 
 model Players {

@@ -175,7 +175,7 @@ export function LeaderboardTable({
       <DataTable
         columns={variant === "summary" ? summaryColumns : fullColumns}
         rows={leaderboards}
-        getRowKey={(row) => row.id}
+        getRowKey={(row) => row.teamId}
         getRowHref={(row) => `/teams/${row.teamId}`}
         getRowLabel={(row) => formatTeamName(row.clubName, row.teamNumber)}
         density="cozy"

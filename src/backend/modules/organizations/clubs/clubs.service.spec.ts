@@ -27,7 +27,10 @@ type MockedPrismaService = {
     leagues: {
       findMany: jest.Mock;
     };
-    leaderboards: {
+    teams: {
+      findMany: jest.Mock;
+    };
+    matches: {
       findMany: jest.Mock;
     };
   };
@@ -52,7 +55,10 @@ describe("ClubsService", () => {
         leagues: {
           findMany: jest.fn(),
         },
-        leaderboards: {
+        teams: {
+          findMany: jest.fn(),
+        },
+        matches: {
           findMany: jest.fn(),
         },
       },
@@ -475,24 +481,33 @@ describe("ClubsService", () => {
       ],
     };
 
-    /** A standings row of pool 10, as STANDING_SELECT returns it. */
-    const row = (teamId: number, points: number, pointDifference: number) => ({
-      teamId,
+    /** The teams of pool 10, as the standings query reads them. */
+    const poolTeams = (...ids: number[]) =>
+      ids.map((id) => ({ id, poolId: 10 }));
+
+    /** A completed match of pool 10. */
+    const poolMatch = (
+      homeTeamId: number,
+      awayTeamId: number,
+      homeTeamScore: number,
+      awayTeamScore: number,
+    ) => ({
       poolId: 10,
-      points,
-      gamesPlayed: 10,
-      gamesWon: 7,
-      gamesLost: 3,
-      pointDifference,
+      homeTeamId,
+      awayTeamId,
+      homeTeamScore,
+      awayTeamScore,
+      forfeit: false,
     });
 
     it("should rank the team within its pool and report the pool size", async () => {
       prisma.client.clubs.findUnique.mockResolvedValue(mockPrismaClub);
-      prisma.client.leaderboards.findMany.mockResolvedValue([
-        row(1, 15, 25),
-        row(2, 17, 0),
-        row(3, 15, 10),
-        row(4, 12, 5),
+      prisma.client.teams.findMany.mockResolvedValue(poolTeams(1, 2, 3, 4));
+      prisma.client.matches.findMany.mockResolvedValue([
+        poolMatch(2, 3, 90, 60),
+        poolMatch(2, 4, 90, 60),
+        poolMatch(1, 4, 80, 70),
+        poolMatch(3, 1, 75, 70),
       ]);
 
       const result = await service.findClubById(1);
@@ -507,21 +522,21 @@ describe("ClubsService", () => {
       expect(result.teams[0].leaderboard).toEqual({
         rank: 2,
         poolSize: 4,
-        points: 15,
-        gamesPlayed: 10,
-        gamesWon: 7,
-        gamesLost: 3,
-        pointDifference: 25,
+        points: 3,
+        gamesPlayed: 2,
+        gamesWon: 1,
+        gamesLost: 1,
+        pointDifference: 5,
         poolId: 10,
       });
     });
 
     it("should share a rank between tied teams, like the pool standings", async () => {
       prisma.client.clubs.findUnique.mockResolvedValue(mockPrismaClub);
-      prisma.client.leaderboards.findMany.mockResolvedValue([
-        row(2, 15, 25),
-        row(1, 15, 25),
-        row(3, 9, 0),
+      prisma.client.teams.findMany.mockResolvedValue(poolTeams(1, 2, 3, 4));
+      prisma.client.matches.findMany.mockResolvedValue([
+        poolMatch(2, 3, 80, 70),
+        poolMatch(1, 4, 80, 70),
       ]);
 
       const result = await service.findClubById(1);
@@ -529,7 +544,7 @@ describe("ClubsService", () => {
       expect(result.teams[0].leaderboard?.rank).toBe(1);
     });
 
-    it("should read every pool of the club in one query", async () => {
+    it("should read every pool of the club in one query each", async () => {
       prisma.client.clubs.findUnique.mockResolvedValue({
         ...mockPrismaClub,
         teams: [
@@ -538,24 +553,38 @@ describe("ClubsService", () => {
           { ...mockPrismaClub.teams[0], id: 3, poolId: 10 },
         ],
       });
-      prisma.client.leaderboards.findMany.mockResolvedValue([]);
+      prisma.client.teams.findMany.mockResolvedValue([]);
+      prisma.client.matches.findMany.mockResolvedValue([]);
 
       await service.findClubById(1);
 
-      expect(prisma.client.leaderboards.findMany).toHaveBeenCalledTimes(1);
-      expect(prisma.client.leaderboards.findMany).toHaveBeenCalledWith({
+      expect(prisma.client.teams.findMany).toHaveBeenCalledTimes(1);
+      expect(prisma.client.teams.findMany).toHaveBeenCalledWith({
         where: { poolId: { in: [10, 11] } },
+        select: expect.any(Object),
+      });
+      expect(prisma.client.matches.findMany).toHaveBeenCalledTimes(1);
+      expect(prisma.client.matches.findMany).toHaveBeenCalledWith({
+        where: { poolId: { in: [10, 11] }, status: "completed" },
         select: expect.any(Object),
       });
     });
 
-    it("should return null leaderboard when team has no standings row", async () => {
+    it("should keep only the club's teams and not count another pool's matches", async () => {
       prisma.client.clubs.findUnique.mockResolvedValue(mockPrismaClub);
-      prisma.client.leaderboards.findMany.mockResolvedValue([row(2, 15, 25)]);
+      prisma.client.teams.findMany.mockResolvedValue([
+        { id: 1, poolId: 10 },
+        { id: 2, poolId: 10 },
+      ]);
+      prisma.client.matches.findMany.mockResolvedValue([
+        poolMatch(1, 2, 80, 70),
+        { ...poolMatch(1, 2, 80, 70), poolId: 11 },
+      ]);
 
       const result = await service.findClubById(1);
 
-      expect(result.teams[0].leaderboard).toBeNull();
+      expect(result.teams).toHaveLength(1);
+      expect(result.teams[0].leaderboard?.gamesPlayed).toBe(1);
     });
 
     it("should return null leaderboard without querying when team has no pool", async () => {
@@ -567,7 +596,8 @@ describe("ClubsService", () => {
       const result = await service.findClubById(1);
 
       expect(result.teams[0].leaderboard).toBeNull();
-      expect(prisma.client.leaderboards.findMany).not.toHaveBeenCalled();
+      expect(prisma.client.teams.findMany).not.toHaveBeenCalled();
+      expect(prisma.client.matches.findMany).not.toHaveBeenCalled();
     });
 
     it("should handle club with no teams", async () => {
@@ -579,7 +609,7 @@ describe("ClubsService", () => {
       const result = await service.findClubById(1);
 
       expect(result.teams).toHaveLength(0);
-      expect(prisma.client.leaderboards.findMany).not.toHaveBeenCalled();
+      expect(prisma.client.teams.findMany).not.toHaveBeenCalled();
     });
 
     it("should handle club with null fields", async () => {

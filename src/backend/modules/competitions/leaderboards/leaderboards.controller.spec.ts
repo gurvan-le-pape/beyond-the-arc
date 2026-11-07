@@ -2,7 +2,6 @@
 // leaderboards.controller.spec.ts
 import { CacheDedupService } from "@common/services/cache-dedup.service";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
-import { NotFoundException } from "@nestjs/common";
 import type { TestingModule } from "@nestjs/testing";
 import { Test } from "@nestjs/testing";
 import { LoggerModule } from "nestjs-pino";
@@ -16,7 +15,6 @@ describe("LeaderboardsController", () => {
   let service: LeaderboardsService;
 
   const mockLeaderboard: LeaderboardResponseDto = {
-    id: 1,
     teamId: 5,
     rank: 1,
     teamNumber: 1,
@@ -37,7 +35,6 @@ describe("LeaderboardsController", () => {
 
   const mockLeaderboardsService = {
     findLeaderboardsByPoolId: jest.fn(),
-    findLeaderboardById: jest.fn(),
   };
 
   const mockCacheManager = {
@@ -94,35 +91,6 @@ describe("LeaderboardsController", () => {
         controller.getLeaderboardsByPoolId({ poolId: 999 }),
       ).resolves.toEqual([]);
       expect(service.findLeaderboardsByPoolId).toHaveBeenCalledWith(999);
-    });
-  });
-
-  describe("getLeaderboardById", () => {
-    it("should return a leaderboard entry for a valid ID", async () => {
-      const id = 1;
-
-      mockLeaderboardsService.findLeaderboardById.mockResolvedValue(
-        mockLeaderboard,
-      );
-
-      const result = await controller.getLeaderboardById(id);
-
-      expect(result).toEqual(mockLeaderboard);
-      expect(service.findLeaderboardById).toHaveBeenCalledWith(id);
-      expect(service.findLeaderboardById).toHaveBeenCalledTimes(1);
-    });
-
-    it("should throw NotFoundException for non-existent ID", async () => {
-      const id = 999;
-
-      mockLeaderboardsService.findLeaderboardById.mockRejectedValue(
-        new NotFoundException("Leaderboard entry with ID 999 not found"),
-      );
-
-      await expect(controller.getLeaderboardById(id)).rejects.toThrow(
-        NotFoundException,
-      );
-      expect(service.findLeaderboardById).toHaveBeenCalledWith(id);
     });
   });
 });
