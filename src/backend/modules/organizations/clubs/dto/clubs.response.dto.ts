@@ -48,14 +48,6 @@ export class ClubBasicResponseDto {
   longitude!: number | null;
 
   @ApiProperty({
-    description: "Website",
-    example: "https://club.com",
-    type: String,
-    nullable: true,
-  })
-  website!: string | null;
-
-  @ApiProperty({
     description: "Committee ID",
     example: 1,
   })
@@ -260,14 +252,6 @@ export class ClubDetailedResponseDto {
     nullable: true,
   })
   address!: string | null;
-
-  @ApiProperty({
-    description: "Website URL",
-    example: "https://club.com",
-    type: String,
-    nullable: true,
-  })
-  website!: string | null;
 
   @ApiProperty({
     description:

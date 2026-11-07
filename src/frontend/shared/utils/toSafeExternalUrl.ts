@@ -13,11 +13,8 @@ const SAFE_PROTOCOLS = new Set(["http:", "https:"]);
 /**
  * Returns `url` if it is an absolute http(s) URL, otherwise `undefined`.
  *
- * Use this for any URL the application did not construct itself. Today that
- * means `club.website`, a `VarChar(255)` filled by the FFBB scraper — every
- * club is `null` in production because the scraper does not populate it yet,
- * which is exactly why the check belongs here *before* a scrape refresh starts
- * filling the column rather than after.
+ * Use this for any URL the application did not construct itself, such as a
+ * value that comes from the API.
  *
  * A value with no scheme (`www.example.com`) is rejected rather than repaired.
  * Prefixing `https://` would be guessing at what a scraped string meant, and

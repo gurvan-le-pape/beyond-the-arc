@@ -32,7 +32,6 @@ const CLUB_BASIC_SELECT = {
   zipCode: true,
   latitude: true,
   longitude: true,
-  website: true,
   committeeId: true,
   committee: { select: { leagueId: true } },
 } satisfies Prisma.ClubsDefaultArgs["select"];
@@ -52,7 +51,6 @@ const CLUB_DETAILED_SELECT = {
   city: true,
   zipCode: true,
   address: true,
-  website: true,
   code: true,
   teams: {
     select: {
@@ -368,7 +366,6 @@ export class ClubsService {
       zipCode: club.zipCode,
       latitude: club.latitude ? club.latitude.toNumber() : null,
       longitude: club.longitude ? club.longitude.toNumber() : null,
-      website: club.website,
       committeeId: club.committeeId,
       leagueId: club.committee.leagueId,
     };
@@ -392,7 +389,6 @@ export class ClubsService {
       city: club.city,
       zipCode: club.zipCode,
       address: club.address,
-      website: club.website,
       ffbbUrl: ffbbClubUrl(club.code),
       teams: club.teams.map((team) => ({
         id: team.id,

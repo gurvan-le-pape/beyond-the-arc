@@ -69,7 +69,6 @@ describe("TeamsController", () => {
             seasonYear: "2025-2026",
             category: "U18",
             gender: "male",
-            color: "Blue",
             poolId: 1,
             club: {
               id: 1,
@@ -235,7 +234,6 @@ describe("TeamsController", () => {
         seasonYear: "2025-2026",
         category: "U18",
         gender: "male",
-        color: "Blue",
         poolId: 1,
         club: {
           id: 1,
@@ -285,7 +283,6 @@ describe("TeamsController", () => {
         seasonYear: "2025-2026",
         category: "U11",
         gender: "male",
-        color: null,
         poolId: null,
         club: {} as any,
         pool: null,

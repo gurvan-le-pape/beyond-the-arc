@@ -192,7 +192,6 @@ describe("ClubsController", () => {
           zipCode: "98000",
           latitude: 43.7384,
           longitude: 7.4246,
-          website: "https://monaco.com",
           committeeId: 1,
           leagueId: 2,
         },
@@ -277,7 +276,6 @@ describe("ClubsController", () => {
         city: "Monaco",
         zipCode: "98000",
         address: "1 Avenue des Papalins",
-        website: "https://monaco.com",
         ffbbUrl: null,
         teams: [
           {
@@ -328,7 +326,6 @@ describe("ClubsController", () => {
         city: "Monaco",
         zipCode: "98000",
         address: null,
-        website: null,
         ffbbUrl: null,
         teams: [
           {
@@ -369,7 +366,6 @@ describe("ClubsController", () => {
         city: "Paris",
         zipCode: "75001",
         address: null,
-        website: null,
         ffbbUrl: null,
         teams: [],
       };

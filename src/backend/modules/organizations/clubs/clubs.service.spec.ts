@@ -300,7 +300,6 @@ describe("ClubsService", () => {
       zipCode: "98000",
       latitude: { toNumber: () => 43.7384 } as any,
       longitude: { toNumber: () => 7.4246 } as any,
-      website: "https://monaco.com",
       committeeId: 1,
       committee: { leagueId: 5 },
     };
@@ -323,7 +322,6 @@ describe("ClubsService", () => {
             zipCode: "98000",
             latitude: 43.7384,
             longitude: 7.4246,
-            website: "https://monaco.com",
             committeeId: 1,
             leagueId: 5,
           },
@@ -466,7 +464,6 @@ describe("ClubsService", () => {
       city: "Monaco",
       zipCode: "98000",
       address: "1 Avenue des Papalins",
-      website: "https://monaco.com",
       code: "SUD0013011",
       teams: [
         {
@@ -603,7 +600,6 @@ describe("ClubsService", () => {
       prisma.client.clubs.findUnique.mockResolvedValue({
         ...mockPrismaClub,
         address: null,
-        website: null,
         code: null,
         teams: [],
       });
@@ -611,7 +607,6 @@ describe("ClubsService", () => {
       const result = await service.findClubById(1);
 
       expect(result.address).toBeNull();
-      expect(result.website).toBeNull();
       expect(result.ffbbUrl).toBeNull();
     });
 

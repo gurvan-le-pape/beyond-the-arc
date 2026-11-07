@@ -62,14 +62,6 @@ export class TeamResponseDto {
   gender!: Gender;
 
   @ApiProperty({
-    description: "Team color",
-    example: "Blue",
-    type: String,
-    nullable: true,
-  })
-  color!: string | null;
-
-  @ApiProperty({
     description: "Pool ID",
     example: 1,
     type: Number,

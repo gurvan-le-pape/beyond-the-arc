@@ -60,7 +60,6 @@ describe("TeamsService", () => {
           clubId: 1,
           category: "U18",
           gender: "M",
-          color: "Blue",
           poolId: null,
           club: {
             id: 1,
@@ -187,7 +186,6 @@ describe("TeamsService", () => {
         clubId: 1,
         category: "U18",
         gender: "M",
-        color: "Blue",
         poolId: null,
         club: {
           id: 1,
@@ -503,7 +501,6 @@ describe("TeamsService", () => {
           clubId: 1,
           category: "U18",
           gender: "male",
-          color: "Blue",
           poolId: 1,
           club: {
             id: 1,
