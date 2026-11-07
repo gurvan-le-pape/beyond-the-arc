@@ -45,7 +45,6 @@ const rankIn = (order: readonly string[], value: string): number => {
 const POOL_SELECT = {
   id: true,
   letter: true,
-  name: true,
   championshipId: true,
   matches: {
     select: { matchday: true },
@@ -201,7 +200,6 @@ export class PoolsService {
     return {
       id: pool.id,
       letter: pool.letter,
-      name: pool.name,
       championshipId: pool.championshipId,
       nbMatchdays: pool.matches.length,
     } satisfies PoolResponseDto; // TypeScript validates this matches

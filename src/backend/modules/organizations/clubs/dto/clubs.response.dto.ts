@@ -107,13 +107,6 @@ export class ChampionshipInfoDto {
   id!: number;
 
   @ApiProperty({
-    description: "Championship name",
-    example: "Regional U18",
-    type: String,
-  })
-  name!: string;
-
-  @ApiProperty({
     description: "Competition level",
     example: CompetitionLevel.REGIONAL,
     enum: CompetitionLevel,
@@ -150,13 +143,6 @@ export class ChampionshipInfoDto {
 export class PoolInfoDto {
   @ApiProperty({ description: "Pool ID", example: 1, type: Number })
   id!: number;
-
-  @ApiProperty({
-    description: "Pool name",
-    example: "Pool A",
-    type: String,
-  })
-  name!: string;
 
   @ApiProperty({ description: "Pool letter", example: "A", type: String })
   letter!: string;

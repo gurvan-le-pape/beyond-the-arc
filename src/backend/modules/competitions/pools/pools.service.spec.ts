@@ -63,14 +63,12 @@ describe("PoolsService", () => {
         {
           id: 1,
           letter: "A",
-          name: "Pool A - Seniors",
           championshipId: 1,
           matches: [{ matchday: 1 }, { matchday: 2 }],
         },
         {
           id: 2,
           letter: "B",
-          name: "Pool B - Seniors",
           championshipId: 1,
           matches: [],
         },
@@ -86,7 +84,6 @@ describe("PoolsService", () => {
       expect(result[0]).toEqual({
         id: 1,
         letter: "A",
-        name: "Pool A - Seniors",
         championshipId: 1,
         nbMatchdays: 2,
       });
@@ -97,7 +94,6 @@ describe("PoolsService", () => {
         select: {
           id: true,
           letter: true,
-          name: true,
           championshipId: true,
           matches: {
             select: { matchday: true },
@@ -139,7 +135,6 @@ describe("PoolsService", () => {
         {
           id: 1,
           letter: "A",
-          name: "Pool A",
           championshipId: 1,
           matches: [],
         },
@@ -164,7 +159,6 @@ describe("PoolsService", () => {
       const mockPool = {
         id: 1,
         letter: "A",
-        name: "Pool A - Seniors",
         championshipId: 1,
         matches: [{ matchday: 1 }, { matchday: 2 }],
       };
@@ -178,7 +172,6 @@ describe("PoolsService", () => {
       expect(result).toEqual({
         id: 1,
         letter: "A",
-        name: "Pool A - Seniors",
         championshipId: 1,
         nbMatchdays: 2,
       });
@@ -188,7 +181,6 @@ describe("PoolsService", () => {
         select: {
           id: true,
           letter: true,
-          name: true,
           championshipId: true,
           matches: {
             select: { matchday: true },
@@ -217,7 +209,6 @@ describe("PoolsService", () => {
       mockPrismaService.client.pools.findUnique.mockResolvedValue({
         id: 1,
         letter: "A",
-        name: "Test",
         championshipId: 1,
         matches: [],
       });
@@ -231,7 +222,6 @@ describe("PoolsService", () => {
         select: {
           id: true,
           letter: true,
-          name: true,
           championshipId: true,
           matches: {
             select: { matchday: true },
@@ -254,7 +244,6 @@ describe("PoolsService", () => {
     const fullPool = (id: number) => ({
       id,
       letter: "A",
-      name: "Pool A",
       championshipId: 1,
       matches: [{ matchday: 1 }, { matchday: 2 }],
     });
@@ -348,7 +337,6 @@ describe("PoolsService", () => {
         {
           id: 5985,
           letter: "A",
-          name: "Pool A",
           championshipId: 1,
           nbMatchdays: 2,
           matchday: 4,

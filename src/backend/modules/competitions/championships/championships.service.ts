@@ -15,7 +15,6 @@ import { ChampionshipResponseDto } from "./dto/championships.response.dto";
  */
 const CHAMPIONSHIP_SELECT = {
   id: true,
-  name: true,
   category: true,
   gender: true,
   seasonYear: true,
@@ -31,7 +30,6 @@ const CHAMPIONSHIP_SELECT = {
     select: {
       id: true,
       letter: true,
-      name: true,
       matches: {
         select: { matchday: true },
         distinct: ["matchday"] as ["matchday"],
@@ -144,7 +142,6 @@ export class ChampionshipsService {
   private mapToDto(entity: ChampionshipSelectResult): ChampionshipResponseDto {
     return {
       id: entity.id,
-      name: entity.name,
       category: entity.category as Category,
       gender: entity.gender as Gender,
       seasonYear: entity.seasonYear,
@@ -159,7 +156,6 @@ export class ChampionshipsService {
       pools: entity.pools.map((p) => ({
         id: p.id,
         letter: p.letter,
-        name: p.name,
         nbMatchdays: p.matches.length,
       })),
     } satisfies ChampionshipResponseDto; // TypeScript validates this matches

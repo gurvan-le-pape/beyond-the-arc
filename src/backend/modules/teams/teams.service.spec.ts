@@ -513,7 +513,6 @@ describe("TeamsService", () => {
           },
           pool: {
             id: 1,
-            name: "Pool A",
             letter: "A",
             championship: {
               id: 1,

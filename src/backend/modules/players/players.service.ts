@@ -70,12 +70,10 @@ const PLAYER_SELECT = {
       pool: {
         select: {
           id: true,
-          name: true,
           letter: true,
           championship: {
             select: {
               id: true,
-              name: true,
               level: true,
               division: true,
             },
@@ -319,11 +317,9 @@ export class PlayersService {
         pool: entity.team.pool
           ? {
               id: entity.team.pool.id,
-              name: entity.team.pool.name,
               letter: entity.team.pool.letter,
               championship: {
                 id: entity.team.pool.championship.id,
-                name: entity.team.pool.championship.name,
                 level: entity.team.pool.championship.level as CompetitionLevel,
                 division: entity.team.pool.championship.division,
               },

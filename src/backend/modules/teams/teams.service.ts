@@ -63,12 +63,10 @@ const TEAM_SELECT = {
   pool: {
     select: {
       id: true,
-      name: true,
       letter: true,
       championship: {
         select: {
           id: true,
-          name: true,
           level: true,
           division: true,
         },
@@ -351,11 +349,9 @@ export class TeamsService {
       pool: entity.pool
         ? {
             id: entity.pool.id,
-            name: entity.pool.name,
             letter: entity.pool.letter,
             championship: {
               id: entity.pool.championship.id,
-              name: entity.pool.championship.name,
               level: entity.pool.championship.level as CompetitionLevel,
               division: entity.pool.championship.division,
             },

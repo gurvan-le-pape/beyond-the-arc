@@ -285,11 +285,9 @@ describe("ClubsController", () => {
             gender: "male",
             pool: {
               id: 1,
-              name: "Pool A",
               letter: "A",
               championship: {
                 id: 1,
-                name: "Championship Régional U18",
                 level: "regional",
                 division: 1,
                 committeeId: null,
@@ -335,11 +333,9 @@ describe("ClubsController", () => {
             gender: "male",
             pool: {
               id: 2,
-              name: "Pool B",
               letter: "B",
               championship: {
                 id: 2,
-                name: "Championship Départemental U11",
                 level: "departmental",
                 division: 1,
                 committeeId: 1,

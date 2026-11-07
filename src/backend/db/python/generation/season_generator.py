@@ -161,7 +161,6 @@ class SeasonGenerator:
             self._create_championships_and_pools(
                 cursor=cursor,
                 team_ids=committee_team_ids,
-                championship_name=f"Committee {gender} {category}",
                 category=category,
                 gender=gender,
                 level="departmental",
@@ -184,7 +183,6 @@ class SeasonGenerator:
         self._create_championships_and_pools(
             cursor=cursor,
             team_ids=team_ids,
-            championship_name=f"League {gender} {category}",
             category=category,
             gender=gender,
             level="regional",
@@ -195,7 +193,6 @@ class SeasonGenerator:
         self,
         cursor,
         team_ids: list[int],
-        championship_name: str,
         category: str,
         gender: str,
         level: str,
@@ -211,7 +208,6 @@ class SeasonGenerator:
         ):
             championship_id = championship_repository.insert_championship(
                 cursor,
-                name=f"{championship_name} - Division {division_index}",
                 category=category,
                 gender=gender,
                 level=level,
@@ -227,7 +223,7 @@ class SeasonGenerator:
 
             for i in range(num_pools):
                 pool_id = championship_repository.insert_pool(
-                    cursor, championship_id, chr(65 + i), f"Pool {chr(65 + i)}"
+                    cursor, championship_id, chr(65 + i)
                 )
                 count = teams_per_pool_list[i]
                 assignments = [
@@ -258,7 +254,7 @@ class SeasonGenerator:
         # seasons, using their old (fully played) teams.
         cursor.execute(
             """
-            SELECT pools.id, pools.name
+            SELECT pools.id
             FROM pools
             JOIN championships ON pools.championship_id = championships.id
             WHERE championships.season_year = %s
@@ -273,10 +269,10 @@ class SeasonGenerator:
         )
         pools = cursor.fetchall()
 
-        for pool_id, pool_name in pools:
+        for (pool_id,) in pools:
             team_ids = team_repository.fetch_teams_for_pool(cursor, pool_id)
             if len(team_ids) < 2:
-                logger.warning(f"Pool '{pool_name}' has fewer than 2 teams, skipping schedule.")
+                logger.warning(f"Pool {pool_id} has fewer than 2 teams, skipping schedule.")
                 continue
 
             schedule = build_round_robin_schedule(team_ids)

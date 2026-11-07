@@ -71,14 +71,12 @@ describe("PoolsController", () => {
         {
           id: 1,
           letter: "A",
-          name: "Pool A - Seniors",
           championshipId: 1,
           nbMatchdays: 10,
         },
         {
           id: 2,
           letter: "B",
-          name: "Pool B - Seniors",
           championshipId: 1,
           nbMatchdays: 8,
         },
@@ -143,7 +141,6 @@ describe("PoolsController", () => {
         {
           id: 5985,
           letter: "C",
-          name: "Pool C",
           championshipId: 2038,
           nbMatchdays: 22,
           matchday: 4,
@@ -165,7 +162,6 @@ describe("PoolsController", () => {
       const mockPool: PoolResponseDto = {
         id: 1,
         letter: "A",
-        name: "Pool A - Seniors",
         championshipId: 1,
         nbMatchdays: 10,
       };
@@ -202,7 +198,6 @@ describe("PoolsController", () => {
       const mockPool: PoolResponseDto = {
         id: 42,
         letter: "C",
-        name: "Pool C",
         championshipId: 5,
         nbMatchdays: 6,
       };
