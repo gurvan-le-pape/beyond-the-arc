@@ -12,7 +12,6 @@ import psycopg
 @dataclass
 class ScheduledMatch:
     id: int
-    pool_id: int
     matchday: int
     home_team_id: int
     away_team_id: int
@@ -29,12 +28,12 @@ def insert_scheduled_matches_bulk(
 ) -> None:
     """
     Bulk insert scheduled matches.
-    Each row: (pool_id, matchday, starts_at, home_team_id, away_team_id)
+    Each row: (matchday, starts_at, home_team_id, away_team_id)
     """
     cursor.executemany(
         """
-        INSERT INTO matches (pool_id, matchday, starts_at, home_team_id, away_team_id, status)
-        VALUES (%s, %s, %s, %s, %s, 'scheduled')
+        INSERT INTO matches (matchday, starts_at, home_team_id, away_team_id, status)
+        VALUES (%s, %s, %s, %s, 'scheduled')
         """,
         rows,
     )
@@ -44,7 +43,7 @@ def fetch_due_matches(cursor: psycopg.Cursor) -> list[ScheduledMatch]:
     """Fetch all matches that are due but not yet generated."""
     cursor.execute(
         """
-        SELECT id, pool_id, matchday, home_team_id, away_team_id, starts_at
+        SELECT id, matchday, home_team_id, away_team_id, starts_at
         FROM matches
         WHERE starts_at <= NOW() AND status = 'scheduled'
         ORDER BY starts_at ASC;
@@ -53,11 +52,10 @@ def fetch_due_matches(cursor: psycopg.Cursor) -> list[ScheduledMatch]:
     return [
         ScheduledMatch(
             id=row[0],
-            pool_id=row[1],
-            matchday=row[2],
-            home_team_id=row[3],
-            away_team_id=row[4],
-            starts_at=row[5],
+            matchday=row[1],
+            home_team_id=row[2],
+            away_team_id=row[3],
+            starts_at=row[4],
         )
         for row in cursor.fetchall()
     ]

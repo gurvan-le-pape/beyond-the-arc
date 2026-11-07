@@ -273,7 +273,7 @@ class SeasonGenerator:
                     SEASON_START_WEEK, SEASON_START_YEAR, matchday, pool_id
                 )
                 for home_id, away_id in pairs:
-                    match_rows.append((pool_id, matchday, starts_at, home_id, away_id))
+                    match_rows.append((matchday, starts_at, home_id, away_id))
 
             if match_rows:
                 match_repository.insert_scheduled_matches_bulk(cursor, match_rows)

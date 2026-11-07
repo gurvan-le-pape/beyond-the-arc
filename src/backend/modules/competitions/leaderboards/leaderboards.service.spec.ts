@@ -50,7 +50,7 @@ describe("LeaderboardsService", () => {
         select: expect.any(Object),
       });
       expect(prisma.client.matches.findMany).toHaveBeenCalledWith({
-        where: { poolId: 10, status: "completed" },
+        where: { homeTeam: { poolId: 10 }, status: "completed" },
         select: expect.any(Object),
         orderBy: { startsAt: "desc" },
       });

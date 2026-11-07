@@ -60,28 +60,24 @@ describe("list queries", () => {
     // clocks change that night: 22:00 UTC on the 29th is midnight on the 30th.
     matches.earlyOn29 = await insertScheduledMatch(
       client,
-      regional.poolId,
       first,
       second,
       "2026-03-28T23:30:00Z",
     );
     matches.lateOn29 = await insertScheduledMatch(
       client,
-      regional.poolId,
       second,
       third,
       "2026-03-29T21:59:00Z",
     );
     matches.on30 = await insertScheduledMatch(
       client,
-      regional.poolId,
       third,
       first,
       "2026-03-29T22:00:00Z",
     );
     matches.departmental = await insertScheduledMatch(
       client,
-      departmental.poolId,
       departmental.teamIds[0],
       departmental.teamIds[1],
       "2026-04-01T12:00:00Z",
@@ -104,12 +100,15 @@ describe("list queries", () => {
   });
 
   afterAll(async () => {
-    const pools = fixturePools.flatMap((pool) => pool.teamIds);
+    const teams = fixturePools.flatMap((pool) => pool.teamIds);
     const championships = fixturePools.map((pool) => pool.championshipId);
+    await client.query("DELETE FROM matches WHERE home_team_id = ANY($1)", [
+      teams,
+    ]);
+    await client.query("DELETE FROM teams WHERE id = ANY($1)", [teams]);
     await client.query("DELETE FROM championships WHERE id = ANY($1)", [
       championships,
     ]);
-    await client.query("DELETE FROM teams WHERE id = ANY($1)", [pools]);
     await prisma.onModuleDestroy();
     await client.end();
   });
@@ -321,7 +320,7 @@ describe("list queries", () => {
       fixturePools.push(standings);
       const [first, second, third] = standings.teamIds;
       const insert = (home: number, away: number) =>
-        insertScheduledMatch(client, standings.poolId, home, away);
+        insertScheduledMatch(client, home, away);
 
       await insert(first, second);
       for (const status of ["generating", "failed"]) {

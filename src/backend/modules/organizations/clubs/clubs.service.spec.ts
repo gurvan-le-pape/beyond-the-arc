@@ -490,7 +490,7 @@ describe("ClubsService", () => {
       homeTeamScore: number,
       awayTeamScore: number,
     ) => ({
-      poolId: 10,
+      homeTeam: { poolId: 10 },
       homeTeamId,
       awayTeamId,
       homeTeamScore,
@@ -563,7 +563,7 @@ describe("ClubsService", () => {
       });
       expect(prisma.client.matches.findMany).toHaveBeenCalledTimes(1);
       expect(prisma.client.matches.findMany).toHaveBeenCalledWith({
-        where: { poolId: { in: [10, 11] }, status: "completed" },
+        where: { homeTeam: { poolId: { in: [10, 11] } }, status: "completed" },
         select: expect.any(Object),
       });
     });
@@ -576,7 +576,7 @@ describe("ClubsService", () => {
       ]);
       prisma.client.matches.findMany.mockResolvedValue([
         poolMatch(1, 2, 80, 70),
-        { ...poolMatch(1, 2, 80, 70), poolId: 11 },
+        { ...poolMatch(1, 2, 80, 70), homeTeam: { poolId: 11 } },
       ]);
 
       const result = await service.findClubById(1);

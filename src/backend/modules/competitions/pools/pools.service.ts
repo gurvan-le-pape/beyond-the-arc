@@ -1,5 +1,6 @@
 // src/backend/modules/competitions/pools/pools.service.ts
 import { Category, CompetitionLevel } from "@common/constants";
+import { countMatchdays, TEAM_MATCHDAYS_SELECT } from "@common/utils";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 
@@ -46,10 +47,7 @@ const POOL_SELECT = {
   id: true,
   letter: true,
   championshipId: true,
-  matches: {
-    select: { matchday: true },
-    distinct: ["matchday"] as ["matchday"],
-  },
+  teams: { select: TEAM_MATCHDAYS_SELECT },
 } as const;
 
 /**
@@ -135,7 +133,7 @@ export class PoolsService {
     const playedInRound = { status: "completed", startsAt: playedAt };
 
     const candidates = await this.prisma.client.pools.findMany({
-      where: { matches: { some: playedInRound } },
+      where: { teams: { some: { homeMatches: { some: playedInRound } } } },
       select: {
         id: true,
         championship: {
@@ -169,14 +167,13 @@ export class PoolsService {
         select: POOL_SELECT,
       }),
       this.prisma.client.matches.findMany({
-        where: { ...playedInRound, poolId: { in: recentIds } },
-        distinct: ["poolId"],
-        select: { poolId: true, matchday: true },
+        where: { ...playedInRound, homeTeam: { poolId: { in: recentIds } } },
+        select: { matchday: true, homeTeam: { select: { poolId: true } } },
       }),
     ]);
     const poolById = new Map(pools.map((pool) => [pool.id, pool]));
     const matchdayByPool = new Map(
-      roundMatches.map((match) => [match.poolId, match.matchday]),
+      roundMatches.map((match) => [match.homeTeam.poolId, match.matchday]),
     );
 
     // Every id here came from a pool with a completed match at playedAt —
@@ -201,7 +198,7 @@ export class PoolsService {
       id: pool.id,
       letter: pool.letter,
       championshipId: pool.championshipId,
-      nbMatchdays: pool.matches.length,
+      nbMatchdays: countMatchdays(pool.teams),
     } satisfies PoolResponseDto; // TypeScript validates this matches
   }
 }
