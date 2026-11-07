@@ -1,7 +1,12 @@
 // src/backend/modules/competitions/championships/championships.service.ts
 import { Category, CompetitionLevel, Gender } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
-import { buildChampionshipWhere, resolvePagination } from "@common/utils";
+import {
+  andWhere,
+  buildChampionshipWhere,
+  buildClubOrganizationWhere,
+  resolvePagination,
+} from "@common/utils";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 
@@ -20,16 +25,31 @@ const CHAMPIONSHIP_SELECT = {
   seasonYear: true,
   level: true,
   division: true,
-  leagueId: true,
-  committeeId: true,
-  league: { select: { name: true, regionName: true } },
-  committee: {
-    select: { name: true, departmentName: true },
-  },
   pools: {
     select: {
       id: true,
       letter: true,
+      // One team is enough: every team in a departmental championship belongs
+      // to the same committee, and in a regional one to the same league.
+      teams: {
+        take: 1,
+        select: {
+          club: {
+            select: {
+              committee: {
+                select: {
+                  id: true,
+                  name: true,
+                  departmentName: true,
+                  league: {
+                    select: { id: true, name: true, regionName: true },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
       matches: {
         select: { matchday: true },
         distinct: ["matchday"] as ["matchday"],
@@ -45,6 +65,60 @@ const CHAMPIONSHIP_SELECT = {
 type ChampionshipSelectResult = Prisma.ChampionshipsGetPayload<{
   select: typeof CHAMPIONSHIP_SELECT;
 }>;
+
+/** The organising committee of a team's club, with its league. */
+type TeamCommittee =
+  ChampionshipSelectResult["pools"][number]["teams"][number]["club"]["committee"];
+
+/**
+ * Who organises a championship, read off one of its teams. A league organises
+ * a regional championship, and a committee, within its league, a departmental
+ * one. A national championship has no organiser.
+ *
+ * @param level - the championship's level
+ * @param committee - the committee of one of its teams, if it has any
+ * @returns the organiser fields of the response, null where they do not apply
+ */
+function resolveOrganiser(
+  level: string,
+  committee: TeamCommittee | undefined,
+): Pick<
+  ChampionshipResponseDto,
+  | "leagueId"
+  | "committeeId"
+  | "leagueName"
+  | "committeeName"
+  | "regionName"
+  | "departmentName"
+> {
+  const noCommittee = {
+    committeeId: null,
+    committeeName: null,
+    departmentName: null,
+  };
+  if (!committee || level === CompetitionLevel.NATIONAL) {
+    return {
+      ...noCommittee,
+      leagueId: null,
+      leagueName: null,
+      regionName: null,
+    };
+  }
+
+  const league = {
+    leagueId: committee.league.id,
+    leagueName: committee.league.name,
+    regionName: committee.league.regionName,
+  };
+  if (level === CompetitionLevel.REGIONAL) return { ...noCommittee, ...league };
+
+  return {
+    ...league,
+    committeeId: committee.id,
+    committeeName: committee.name,
+    departmentName: committee.departmentName,
+  };
+}
 
 /**
  * Service handling business logic for championships.
@@ -111,9 +185,13 @@ export class ChampionshipsService {
   }
 
   /**
-   * Builds the Prisma where clause from filters. Each filter applies on its
-   * own: `leagueId` and `committeeId` name the organiser directly rather than
-   * through the level.
+   * Builds the Prisma where clause from filters. `leagueId` and `committeeId`
+   * name the organiser, which is found through the championship's teams.
+   *
+   * A regional championship has teams from several committees without being
+   * organised by any of them, so `committeeId` also keeps to the departmental
+   * level. A national one has teams from several leagues, so `leagueId` leaves
+   * it out.
    *
    * @param filters - Championship filters
    * @returns Prisma where clause
@@ -121,14 +199,21 @@ export class ChampionshipsService {
   private buildWhereClause(
     filters: GetChampionshipsQueryDto,
   ): Prisma.ChampionshipsWhereInput {
-    const where: Prisma.ChampionshipsWhereInput = {
+    const scope: Prisma.ChampionshipsWhereInput = {
       ...buildChampionshipWhere(filters),
     };
+    const club = buildClubOrganizationWhere(filters);
+    if (!club) return scope;
 
-    if (filters.leagueId) where.leagueId = filters.leagueId;
-    if (filters.committeeId) where.committeeId = filters.committeeId;
-
-    return where;
+    return (
+      andWhere<Prisma.ChampionshipsWhereInput>(
+        scope,
+        filters.committeeId
+          ? { level: CompetitionLevel.DEPARTMENTAL }
+          : { level: { not: CompetitionLevel.NATIONAL } },
+        { pools: { some: { teams: { some: { club } } } } },
+      ) ?? {}
+    );
   }
 
   /**
@@ -147,12 +232,10 @@ export class ChampionshipsService {
       seasonYear: entity.seasonYear,
       level: entity.level as CompetitionLevel,
       division: entity.division,
-      leagueId: entity.leagueId,
-      committeeId: entity.committeeId,
-      committeeName: entity.committee?.name ?? null,
-      leagueName: entity.league?.name ?? null,
-      regionName: entity.league?.regionName ?? null,
-      departmentName: entity.committee?.departmentName ?? null,
+      ...resolveOrganiser(
+        entity.level,
+        entity.pools.flatMap((pool) => pool.teams).at(0)?.club.committee,
+      ),
       pools: entity.pools.map((p) => ({
         id: p.id,
         letter: p.letter,

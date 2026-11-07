@@ -3289,26 +3289,12 @@
             "type": "number",
             "description": "Division",
             "example": 1
-          },
-          "committeeId": {
-            "type": "number",
-            "nullable": true,
-            "description": "Committee ID",
-            "example": 1
-          },
-          "leagueId": {
-            "type": "number",
-            "nullable": true,
-            "description": "League regionale ID",
-            "example": 1
           }
         },
         "required": [
           "id",
           "level",
-          "division",
-          "committeeId",
-          "leagueId"
+          "division"
         ]
       },
       "PoolInfoDto": {

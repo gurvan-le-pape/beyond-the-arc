@@ -119,22 +119,6 @@ export class ChampionshipInfoDto {
     type: Number,
   })
   division!: number;
-
-  @ApiProperty({
-    description: "Committee ID",
-    example: 1,
-    type: Number,
-    nullable: true,
-  })
-  committeeId!: number | null;
-
-  @ApiProperty({
-    description: "League regionale ID",
-    example: 1,
-    type: Number,
-    nullable: true,
-  })
-  leagueId!: number | null;
 }
 
 /**

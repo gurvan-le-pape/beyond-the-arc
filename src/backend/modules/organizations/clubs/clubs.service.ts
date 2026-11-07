@@ -69,8 +69,6 @@ const CLUB_DETAILED_SELECT = {
               id: true,
               level: true,
               division: true,
-              committeeId: true,
-              leagueId: true,
             },
           },
         },
@@ -389,8 +387,6 @@ export class ClubsService {
                 id: team.pool.championship.id,
                 level: team.pool.championship.level as CompetitionLevel,
                 division: team.pool.championship.division,
-                committeeId: team.pool.championship.committeeId,
-                leagueId: team.pool.championship.leagueId,
               },
             }
           : null,

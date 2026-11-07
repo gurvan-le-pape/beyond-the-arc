@@ -288,8 +288,6 @@ describe("ClubsController", () => {
                 id: 1,
                 level: "regional",
                 division: 1,
-                committeeId: null,
-                leagueId: 1,
               },
             },
             leaderboard: {
@@ -336,8 +334,6 @@ describe("ClubsController", () => {
                 id: 2,
                 level: "departmental",
                 division: 1,
-                committeeId: 1,
-                leagueId: null,
               },
             },
             leaderboard: null, // no games played yet

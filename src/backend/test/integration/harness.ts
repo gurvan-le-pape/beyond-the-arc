@@ -81,6 +81,10 @@ export async function createPool(
   }>(
     `SELECT c.id, c.committee_id, m.league_id
        FROM clubs c JOIN committees m ON m.id = c.committee_id
+      WHERE c.committee_id = (
+        SELECT committee_id FROM clubs
+         GROUP BY committee_id ORDER BY count(*) DESC, committee_id LIMIT 1
+      )
       ORDER BY c.id LIMIT $1`,
     [teamCount],
   );
@@ -90,16 +94,9 @@ export async function createPool(
     rows: [{ id: championshipId }],
   } = await client.query<{ id: number }>(
     `INSERT INTO championships
-       (category, season_year, level, division, gender, committee_id, league_id)
-     VALUES ($1, '2099-2100', $2, $3, $4, $5, $6) RETURNING id`,
-    [
-      category,
-      level,
-      division,
-      gender,
-      level === "departmental" ? committeeId : null,
-      leagueId,
-    ],
+       (category, season_year, level, division, gender)
+     VALUES ($1, '2099-2100', $2, $3, $4) RETURNING id`,
+    [category, level, division, gender],
   );
   const {
     rows: [{ id: poolId }],

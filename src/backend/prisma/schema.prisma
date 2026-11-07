@@ -24,27 +24,25 @@ generator client {
 }
 
 model Leagues {
-  id            Int             @id @default(autoincrement())
-  name          String          @db.VarChar(255)
-  address       String?         @db.VarChar(255)
-  regionCode    String          @unique @map("region_code") @db.VarChar(10)
-  regionName    String          @map("region_name") @db.VarChar(255)
-  committees    Committees[]
-  championships Championships[]
+  id         Int          @id @default(autoincrement())
+  name       String       @db.VarChar(255)
+  address    String?      @db.VarChar(255)
+  regionCode String       @unique @map("region_code") @db.VarChar(10)
+  regionName String       @map("region_name") @db.VarChar(255)
+  committees Committees[]
 
   @@map("leagues")
 }
 
 model Committees {
-  id             Int             @id @default(autoincrement())
-  name           String          @db.VarChar(255)
-  address        String?         @db.VarChar(255)
-  departmentCode String          @unique @map("department_code") @db.VarChar(10)
-  departmentName String          @map("department_name") @db.VarChar(255)
-  league         Leagues         @relation(fields: [leagueId], references: [id], onDelete: Cascade)
-  leagueId       Int             @map("league_id")
+  id             Int     @id @default(autoincrement())
+  name           String  @db.VarChar(255)
+  address        String? @db.VarChar(255)
+  departmentCode String  @unique @map("department_code") @db.VarChar(10)
+  departmentName String  @map("department_name") @db.VarChar(255)
+  league         Leagues @relation(fields: [leagueId], references: [id], onDelete: Cascade)
+  leagueId       Int     @map("league_id")
   clubs          Clubs[]
-  championships  Championships[]
 
   @@map("committees")
 }
@@ -69,55 +67,42 @@ model Clubs {
 }
 
 model Championships {
-  id          Int         @id @default(autoincrement())
-  category    String      @db.VarChar(100)
-  seasonYear  String      @map("season_year") @db.VarChar(9)
-  level       String      @db.VarChar(50)
-  division    Int
-  gender      String      @db.VarChar(10)
-  // Restrict, not SetNull: `check_level` requires these ids at their level, so
-  // nulling one would violate it — the delete fails either way, and Restrict
-  // says why.
-  committee   Committees? @relation(fields: [committeeId], references: [id], onDelete: Restrict)
-  committeeId Int?        @map("committee_id")
-  league      Leagues?    @relation(fields: [leagueId], references: [id], onDelete: Restrict)
-  leagueId    Int?        @map("league_id")
-  pools       Pools[]
+  id         Int     @id @default(autoincrement())
+  category   String  @db.VarChar(100)
+  seasonYear String  @map("season_year") @db.VarChar(9)
+  level      String  @db.VarChar(50)
+  division   Int
+  gender     String  @db.VarChar(10)
+  pools      Pools[]
 
-  // committeeId is NULL at regional/national level, and NULLs never collide
-  // in a unique constraint — so this alone cannot prevent duplicate
-  // regional/national championships. The baseline migration adds a partial
-  // unique index (WHERE committee_id IS NULL) covering that case; PSL cannot
-  // express partial indexes, so it lives only in the migration SQL.
-  @@unique([seasonYear, category, gender, level, division, committeeId, leagueId])
   @@map("championships")
 }
 
 model Pools {
-  id             Int            @id @default(autoincrement())
-  championship   Championships  @relation(fields: [championshipId], references: [id], onDelete: Cascade)
-  championshipId Int            @map("championship_id")
-  letter         String         @db.VarChar(1)
+  id             Int           @id @default(autoincrement())
+  championship   Championships @relation(fields: [championshipId], references: [id], onDelete: Cascade)
+  championshipId Int           @map("championship_id")
+  letter         String        @db.VarChar(1)
   matches        Matches[]
-  teams          Teams[]        @relation("PoolsToTeams")
+  teams          Teams[]       @relation("PoolsToTeams")
 
   @@unique([championshipId, letter])
   @@map("pools")
 }
 
 model Teams {
-  id           Int            @id @default(autoincrement())
-  club         Clubs          @relation(fields: [clubId], references: [id], onDelete: Cascade)
-  clubId       Int            @map("club_id")
-  seasonYear   String         @map("season_year") @db.VarChar(9)
-  number       Int
-  category     String         @db.VarChar(100)
-  gender       String         @db.VarChar(10)
-  pool         Pools?         @relation("PoolsToTeams", fields: [poolId], references: [id], onDelete: SetNull)
-  poolId       Int?           @map("pool_id")
-  homeMatches  Matches[]      @relation("HomeTeam")
-  awayMatches  Matches[]      @relation("AwayTeam")
-  players      Players[]
+  id          Int       @id @default(autoincrement())
+  club        Clubs     @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  clubId      Int       @map("club_id")
+  seasonYear  String    @map("season_year") @db.VarChar(9)
+  number      Int
+  category    String    @db.VarChar(100)
+  gender      String    @db.VarChar(10)
+  pool        Pools?    @relation("PoolsToTeams", fields: [poolId], references: [id], onDelete: SetNull)
+  poolId      Int?      @map("pool_id")
+  homeMatches Matches[] @relation("HomeTeam")
+  awayMatches Matches[] @relation("AwayTeam")
+  players     Players[]
 
   @@unique([clubId, category, gender, number, seasonYear])
   @@index([poolId], map: "idx_teams_pool_id")

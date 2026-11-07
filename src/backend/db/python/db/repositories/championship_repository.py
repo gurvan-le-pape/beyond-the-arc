@@ -13,16 +13,14 @@ def insert_championship(
     level: str,
     season_year: str,
     division: int,
-    committee_id: int | None = None,
-    league_id: int | None = None,
 ) -> int:
     cursor.execute(
         """
-        INSERT INTO championships (category, gender, level, season_year, division, committee_id, league_id)
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO championships (category, gender, level, season_year, division)
+        VALUES (%s, %s, %s, %s, %s)
         RETURNING id;
         """,
-        (category, gender, level, season_year, division, committee_id, league_id),
+        (category, gender, level, season_year, division),
     )
     return cursor.fetchone()[0]
 
