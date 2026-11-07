@@ -749,7 +749,7 @@ export interface components {
              * @description Region code — the FFBB's alphabetic league code, not the INSEE numeric region code
              * @example ARA
              */
-            code: string | null;
+            code: string;
             /**
              * @description League name
              * @example AUVERGNE-RHÔNE-ALPES
@@ -789,11 +789,6 @@ export interface components {
             timestamp: string;
         };
         DepartmentInfoDto: {
-            /**
-             * @description Department ID
-             * @example 1
-             */
-            id: number;
             /**
              * @description Department name
              * @example Ain
@@ -1065,11 +1060,6 @@ export interface components {
         };
         DepartmentResponseDto: {
             /**
-             * @description Department unique identifier
-             * @example 1
-             */
-            id: number;
-            /**
              * @description Department name
              * @example Ain
              */
@@ -1115,11 +1105,6 @@ export interface components {
             ffbbUrl: string | null;
         };
         RegionDto: {
-            /**
-             * @description Region unique identifier
-             * @example 1
-             */
-            id: number;
             /**
              * @description Region code
              * @example BRE

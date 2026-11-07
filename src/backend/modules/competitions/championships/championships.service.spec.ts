@@ -62,7 +62,7 @@ describe("ChampionshipsService", () => {
         committeeId: null,
         league: {
           name: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
-          region: { name: "Bretagne" },
+          regionName: "Bretagne",
         },
         committee: null,
         pools: [
@@ -130,7 +130,7 @@ describe("ChampionshipsService", () => {
       committeeId: null,
       league: {
         name: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
-        region: { name: "Bretagne" },
+        regionName: "Bretagne",
       },
       committee: null,
       pools: [],
@@ -199,7 +199,7 @@ describe("ChampionshipsService", () => {
         league: null,
         committee: {
           name: "COMITE D''ILLE-ET-VILAINE DE BASKET-BALL",
-          department: { name: "Ille-et-Vilaine" },
+          departmentName: "Ille-et-Vilaine",
         },
       };
 

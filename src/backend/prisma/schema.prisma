@@ -23,35 +23,12 @@ generator client {
   importFileExtension = ""
 }
 
-model Regions {
-  id          Int           @id @default(autoincrement())
-  code        String        @unique @db.VarChar(10)
-  name        String        @db.VarChar(255)
-  departments Departments[]
-  leagues     Leagues[]
-
-  @@map("regions")
-}
-
-model Departments {
-  id         Int          @id @default(autoincrement())
-  code       String       @unique @db.VarChar(10)
-  name       String       @db.VarChar(255)
-  regionId   Int          @map("region_id")
-  // Restrict: regions are reference data — deleting one must not silently
-  // cascade through departments → committees → clubs → teams.
-  region     Regions      @relation(fields: [regionId], references: [id], onDelete: Restrict)
-  committees Committees[]
-
-  @@map("departments")
-}
-
 model Leagues {
   id            Int             @id @default(autoincrement())
   name          String          @db.VarChar(255)
   address       String?         @db.VarChar(255)
-  regionId      Int             @map("region_id")
-  region        Regions         @relation(fields: [regionId], references: [id], onDelete: Cascade)
+  regionCode    String          @unique @map("region_code") @db.VarChar(10)
+  regionName    String          @map("region_name") @db.VarChar(255)
   committees    Committees[]
   championships Championships[]
 
@@ -59,15 +36,15 @@ model Leagues {
 }
 
 model Committees {
-  id            Int             @id @default(autoincrement())
-  name          String          @db.VarChar(255)
-  address       String?         @db.VarChar(255)
-  departmentId  Int             @map("department_id")
-  department    Departments     @relation(fields: [departmentId], references: [id], onDelete: Cascade)
-  league        Leagues         @relation(fields: [leagueId], references: [id], onDelete: Cascade)
-  leagueId      Int             @map("league_id")
-  clubs         Clubs[]
-  championships Championships[]
+  id             Int             @id @default(autoincrement())
+  name           String          @db.VarChar(255)
+  address        String?         @db.VarChar(255)
+  departmentCode String          @unique @map("department_code") @db.VarChar(10)
+  departmentName String          @map("department_name") @db.VarChar(255)
+  league         Leagues         @relation(fields: [leagueId], references: [id], onDelete: Cascade)
+  leagueId       Int             @map("league_id")
+  clubs          Clubs[]
+  championships  Championships[]
 
   @@map("committees")
 }

@@ -66,7 +66,7 @@ describe("CommitteesController", () => {
   ): CommitteeResponseDto =>
     ({
       address: null,
-      department: { id: 1, name: "Ain", code: "01" },
+      department: { name: "Ain", code: "01" },
       leagueId: 1,
       ...overrides,
     }) as CommitteeResponseDto;
@@ -78,12 +78,12 @@ describe("CommitteesController", () => {
         mockCommitteeDto({
           id: 1,
           name: "Comité Departmental de l'Ain",
-          department: { id: 1, name: "Ain", code: "01" },
+          department: { name: "Ain", code: "01" },
         }),
         mockCommitteeDto({
           id: 2,
           name: "Comité Departmental de l'Aisne",
-          department: { id: 2, name: "Aisne", code: "02" },
+          department: { name: "Aisne", code: "02" },
         }),
       ];
 

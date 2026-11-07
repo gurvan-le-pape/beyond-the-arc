@@ -45,9 +45,8 @@ describe("CommitteesService", () => {
     name: true,
     address: true,
     leagueId: true,
-    department: {
-      select: { id: true, name: true, code: true },
-    },
+    departmentCode: true,
+    departmentName: true,
     _count: { select: { clubs: true } },
     clubs: {
       select: { code: true },
@@ -70,13 +69,15 @@ describe("CommitteesService", () => {
           id: 1,
           name: "Comité Departmental de l'Ain",
           leagueId: 1,
-          department: { id: 1, name: "Ain", code: "01" },
+          departmentName: "Ain",
+          departmentCode: "01",
         }),
         mockCommitteeData({
           id: 2,
           name: "Comité Departmental de l'Aisne",
           leagueId: 1,
-          department: { id: 2, name: "Aisne", code: "02" },
+          departmentName: "Aisne",
+          departmentCode: "02",
         }),
       ];
 
@@ -88,7 +89,7 @@ describe("CommitteesService", () => {
 
       expect(result).toHaveLength(2);
       expect(result[0].name).toBe("Comité Departmental de l'Ain");
-      expect(result[0].department).toEqual({ id: 1, name: "Ain", code: "01" });
+      expect(result[0].department).toEqual({ name: "Ain", code: "01" });
 
       expect(mockPrismaService.client.committees.findMany).toHaveBeenCalledWith(
         {
@@ -123,13 +124,15 @@ describe("CommitteesService", () => {
           id: 1,
           name: "Comité Departmental de l'Ain",
           leagueId: 1,
-          department: { id: 1, name: "Ain", code: "01" },
+          departmentName: "Ain",
+          departmentCode: "01",
         }),
         mockCommitteeData({
           id: 2,
           name: "Comité Departmental de l'Aisne",
           leagueId: 1,
-          department: { id: 2, name: "Aisne", code: "02" },
+          departmentName: "Aisne",
+          departmentCode: "02",
         }),
       ];
 
@@ -164,7 +167,8 @@ describe("CommitteesService", () => {
         id: 1,
         name: "Comité Departmental de l'Ain",
         leagueId: 1,
-        department: { id: 1, name: "Ain", code: "01" },
+        departmentName: "Ain",
+        departmentCode: "01",
         _count: { clubs: 5 },
         clubs: [{ code: "ARA0001042" }],
       });
@@ -178,7 +182,7 @@ describe("CommitteesService", () => {
       expect(result.id).toBe(1);
       expect(result.name).toBe("Comité Departmental de l'Ain");
       expect(result.clubCount).toBe(5);
-      expect(result.department).toEqual({ id: 1, name: "Ain", code: "01" });
+      expect(result.department).toEqual({ name: "Ain", code: "01" });
       expect(result.ffbbUrl).toBe(
         "https://competitions.ffbb.com/ligues/ara/comites/0001",
       );

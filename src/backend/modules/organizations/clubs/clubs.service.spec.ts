@@ -86,9 +86,9 @@ describe("ClubsService", () => {
         {
           id: 10,
           name: "League Auvergne-Rhône-Alpes",
-          region: { code: "84" },
+          regionCode: "84",
         },
-        { id: 20, name: "League Île-de-France", region: { code: "11" } },
+        { id: 20, name: "League Île-de-France", regionCode: "11" },
       ]);
 
       const result = await service.getClubCountsByRegion();
@@ -118,7 +118,7 @@ describe("ClubsService", () => {
       prisma.client.clubs.groupBy.mockResolvedValue([]);
       prisma.client.committees.findMany.mockResolvedValue([]);
       prisma.client.leagues.findMany.mockResolvedValue([
-        { id: 10, name: "League Sans Clubs", region: { code: "99" } },
+        { id: 10, name: "League Sans Clubs", regionCode: "99" },
       ]);
 
       const result = await service.getClubCountsByRegion();
@@ -126,22 +126,6 @@ describe("ClubsService", () => {
       expect(result).toEqual([
         { id: 10, code: "99", name: "League Sans Clubs", clubCount: 0 },
       ]);
-    });
-
-    it("should handle leagues without region codes", async () => {
-      prisma.client.clubs.groupBy.mockResolvedValue([
-        { committeeId: 1, _count: { id: 5 } },
-      ]);
-      prisma.client.committees.findMany.mockResolvedValue([
-        { id: 1, leagueId: 10 },
-      ]);
-      prisma.client.leagues.findMany.mockResolvedValue([
-        { id: 10, name: "League X", region: null },
-      ]);
-
-      const result = await service.getClubCountsByRegion();
-
-      expect(result[0].code).toBeNull();
     });
 
     it("should ignore committees with null leagueId", async () => {
@@ -154,7 +138,7 @@ describe("ClubsService", () => {
         { id: 2, leagueId: null },
       ]);
       prisma.client.leagues.findMany.mockResolvedValue([
-        { id: 10, name: "League X", region: { code: "01" } },
+        { id: 10, name: "League X", regionCode: "01" },
       ]);
 
       const result = await service.getClubCountsByRegion();
@@ -171,7 +155,7 @@ describe("ClubsService", () => {
         { id: 1, leagueId: 10 },
       ]);
       prisma.client.leagues.findMany.mockResolvedValue([
-        { id: 10, name: "League X", region: { code: "01" } },
+        { id: 10, name: "League X", regionCode: "01" },
       ]);
 
       const result = await service.getClubCountsByRegion();
@@ -196,14 +180,16 @@ describe("ClubsService", () => {
         {
           id: 1,
           name: "Comité de l'Ain",
-          department: { id: 1, name: "Ain", code: "01" },
+          departmentName: "Ain",
+          departmentCode: "01",
           leagueId: 10,
           _count: { clubs: 15 },
         },
         {
           id: 2,
           name: "Comité du Rhône",
-          department: { id: 2, name: "Rhône", code: "69" },
+          departmentName: "Rhône",
+          departmentCode: "69",
           leagueId: 10,
           _count: { clubs: 25 },
         },
@@ -215,14 +201,14 @@ describe("ClubsService", () => {
         {
           id: 1,
           name: "Comité de l'Ain",
-          department: { id: 1, name: "Ain", code: "01" },
+          department: { name: "Ain", code: "01" },
           leagueId: 10,
           clubCount: 15,
         },
         {
           id: 2,
           name: "Comité du Rhône",
-          department: { id: 2, name: "Rhône", code: "69" },
+          department: { name: "Rhône", code: "69" },
           leagueId: 10,
           clubCount: 25,
         },
@@ -240,7 +226,8 @@ describe("ClubsService", () => {
         {
           id: 1,
           name: "Comité de l'Ain",
-          department: { id: 1, name: "Ain", code: "01" },
+          departmentName: "Ain",
+          departmentCode: "01",
           leagueId: 10,
           _count: { clubs: 15 },
         },
@@ -268,7 +255,8 @@ describe("ClubsService", () => {
         {
           id: 1,
           name: "Comité Vide",
-          department: { id: 1, name: "Test", code: "00" },
+          departmentName: "Test",
+          departmentCode: "00",
           leagueId: 10,
           _count: { clubs: 0 },
         },

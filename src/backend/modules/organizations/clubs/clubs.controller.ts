@@ -111,7 +111,6 @@ export class ClubsController {
    *       "id": 1,
    *       "name": "Comité de l'Ain",
    *       "department": {
-   *         "id": 1,
    *         "name": "Ain",
    *         "code": "01"
    *       },

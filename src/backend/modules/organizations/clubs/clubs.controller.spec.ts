@@ -120,7 +120,6 @@ describe("ClubsController", () => {
           id: 1,
           name: "Comité de l'Ain",
           department: {
-            id: 1,
             name: "Ain",
             code: "01",
           },
@@ -149,7 +148,6 @@ describe("ClubsController", () => {
           id: 2,
           name: "Comité du Rhône",
           department: {
-            id: 2,
             name: "Rhône",
             code: "69",
           },
