@@ -260,26 +260,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/leaderboards/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get leaderboard entry by ID
-         * @description Retrieves detailed information about a specific leaderboard entry
-         */
-        get: operations["LeaderboardsController_getLeaderboardById"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/pools": {
         parameters: {
             query?: never;
@@ -1226,11 +1206,6 @@ export interface components {
             result: "W" | "L";
         };
         LeaderboardResponseDto: {
-            /**
-             * @description Unique leaderboard entry identifier
-             * @example 1
-             */
-            id: number;
             /**
              * @description Team ID
              * @example 5
@@ -3342,58 +3317,6 @@ export interface operations {
                      *       ],
                      *       "error": "Bad Request",
                      *       "path": "/api/leaderboards?poolId=abc",
-                     *       "timestamp": "2024-02-05T10:00:00Z"
-                     *     }
-                     */
-                    "application/json": components["schemas"]["ApiErrorResponseDto"];
-                };
-            };
-        };
-    };
-    LeaderboardsController_getLeaderboardById: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Leaderboard entry ID */
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Leaderboard entry successfully retrieved */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
-                        data: components["schemas"]["LeaderboardResponseDto"];
-                    };
-                };
-            };
-            /** @description Invalid ID format */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponseDto"];
-                };
-            };
-            /** @description Leaderboard entry not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    /**
-                     * @example {
-                     *       "statusCode": 404,
-                     *       "message": "Leaderboard entry with ID 999 not found",
-                     *       "error": "Not Found",
-                     *       "path": "/api/leaderboards/999",
                      *       "timestamp": "2024-02-05T10:00:00Z"
                      *     }
                      */

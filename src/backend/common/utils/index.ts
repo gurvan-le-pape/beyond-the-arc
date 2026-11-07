@@ -18,4 +18,5 @@ export * from "./player-summary.mapper";
 export * from "./ranking.util";
 export * from "./request-id.util";
 export * from "./request-log.util";
+export * from "./standings.util";
 export * from "./sum-player-stats";

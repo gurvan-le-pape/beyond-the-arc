@@ -1101,81 +1101,6 @@
         ]
       }
     },
-    "/api/leaderboards/{id}": {
-      "get": {
-        "description": "Retrieves detailed information about a specific leaderboard entry",
-        "operationId": "LeaderboardsController_getLeaderboardById",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "description": "Leaderboard entry ID",
-            "schema": {
-              "example": 1,
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Leaderboard entry successfully retrieved",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiEnvelopeDto"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "$ref": "#/components/schemas/LeaderboardResponseDto"
-                        }
-                      },
-                      "required": [
-                        "data"
-                      ]
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid ID format",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponseDto"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Leaderboard entry not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponseDto"
-                },
-                "example": {
-                  "statusCode": 404,
-                  "message": "Leaderboard entry with ID 999 not found",
-                  "error": "Not Found",
-                  "path": "/api/leaderboards/999",
-                  "timestamp": "2024-02-05T10:00:00Z"
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get leaderboard entry by ID",
-        "tags": [
-          "leaderboards"
-        ]
-      }
-    },
     "/api/pools": {
       "get": {
         "description": "Retrieves all pools for a specific championship. Results are cached for 5 minutes.",
@@ -3885,11 +3810,6 @@
       "LeaderboardResponseDto": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "number",
-            "description": "Unique leaderboard entry identifier",
-            "example": 1
-          },
           "teamId": {
             "type": "number",
             "description": "Team ID",
@@ -3959,7 +3879,6 @@
           }
         },
         "required": [
-          "id",
           "teamId",
           "rank",
           "teamNumber",

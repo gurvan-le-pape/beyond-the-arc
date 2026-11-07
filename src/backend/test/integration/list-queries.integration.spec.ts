@@ -239,7 +239,7 @@ describe("list queries", () => {
   });
 
   describe("LeaderboardsService.findLeaderboardsByPoolId", () => {
-    it("ranks the standings the triggers wrote, with each team's form", async () => {
+    it("ranks the pool's teams from its matches, with each team's form", async () => {
       const service = new LeaderboardsService(prisma);
       const [first, second, third] = regional.teamIds;
 
@@ -254,6 +254,47 @@ describe("list queries", () => {
       ]);
       const firstEntry = entries.find((entry) => entry.teamId === first);
       expect(firstEntry?.form.map((game) => game.result)).toEqual(["W"]);
+    });
+
+    it("counts only completed matches, and a forfeit as the loser's", async () => {
+      const service = new LeaderboardsService(prisma);
+      const standings = await createPool(client, {
+        level: "regional",
+        category: "U13",
+        gender: "female",
+        division: 3,
+        letter: "C",
+        teamCount: 3,
+      });
+      fixturePools.push(standings);
+      const [first, second, third] = standings.teamIds;
+      const insert = (home: number, away: number) =>
+        insertScheduledMatch(client, standings.poolId, home, away);
+
+      await insert(first, second);
+      for (const status of ["generating", "failed"]) {
+        const match = await insert(first, third);
+        await client.query("UPDATE matches SET status = $1 WHERE id = $2", [
+          status,
+          match,
+        ]);
+      }
+      await completeMatch(client, await insert(second, first), 0, 20, true);
+
+      const entries = await service.findLeaderboardsByPoolId(standings.poolId);
+
+      expect(
+        entries.map(({ teamId, gamesPlayed, gamesForfeited, points }) => ({
+          teamId,
+          gamesPlayed,
+          gamesForfeited,
+          points,
+        })),
+      ).toEqual([
+        { teamId: first, gamesPlayed: 1, gamesForfeited: 0, points: 2 },
+        { teamId: third, gamesPlayed: 0, gamesForfeited: 0, points: 0 },
+        { teamId: second, gamesPlayed: 1, gamesForfeited: 1, points: 0 },
+      ]);
     });
   });
 });
