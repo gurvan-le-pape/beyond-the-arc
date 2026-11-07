@@ -7,7 +7,7 @@ import { useMemo } from "react";
 import type { EventStyle, MatchTeam } from "@/features/matches/types";
 import { Text } from "@/shared/components/typography";
 
-import type { Play } from "../plays";
+import type { Play, PlayReveal } from "../plays";
 import { groupByPeriod, scorePeriods } from "./periods";
 import { PeriodSection } from "./PeriodSection";
 import { TimelineLegend } from "./TimelineLegend";
@@ -22,8 +22,8 @@ interface EventTimelineProps {
   readonly homeTeam: MatchTeam;
   readonly awayTeam: MatchTeam;
   readonly getEventStyle: (eventType: string) => EventStyle;
-  /** The lead event id of the play the reader just jumped to, if any. */
-  readonly highlightedPlayId: number | null;
+  /** The jump the reader just made to a play, if any. */
+  readonly reveal: PlayReveal | null;
 }
 
 /**
@@ -43,7 +43,7 @@ export function EventTimeline({
   homeTeam,
   awayTeam,
   getEventStyle,
-  highlightedPlayId,
+  reveal,
 }: EventTimelineProps) {
   const tMatches = useTranslations("matches");
   const periods = useMemo(() => groupByPeriod(shownPlays), [shownPlays]);
@@ -74,7 +74,7 @@ export function EventTimeline({
               homeTeam={homeTeam}
               awayTeam={awayTeam}
               getEventStyle={getEventStyle}
-              highlightedPlayId={highlightedPlayId}
+              reveal={reveal}
             />
           ))}
         </div>

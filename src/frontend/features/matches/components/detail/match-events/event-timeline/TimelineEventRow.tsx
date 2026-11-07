@@ -6,7 +6,7 @@ import type { EventStyle, MatchTeam } from "@/features/matches/types";
 import { TextLink } from "@/shared/components/primitives";
 import { cn } from "@/shared/utils";
 
-import type { Play } from "../plays";
+import type { Play, PlayReveal } from "../plays";
 import { formatClock } from "../plays";
 import { EventScore } from "./EventScore";
 import { usePlayDescription } from "./usePlayDescription";
@@ -23,10 +23,10 @@ interface TimelineEventRowProps {
   /** Resolved display config for the play's lead event. */
   readonly style: EventStyle;
   /**
-   * The reader just jumped to this play: the row scrolls into view, takes
-   * focus and is tinted for a moment.
+   * The reader's jump to this play, while it lasts: on each one the row scrolls
+   * into view and takes focus, and it stays tinted while this is set.
    */
-  readonly highlighted: boolean;
+  readonly reveal: PlayReveal | null;
 }
 
 /**
@@ -46,7 +46,7 @@ export function TimelineEventRow({
   homeTeam,
   awayTeam,
   style,
-  highlighted,
+  reveal,
 }: TimelineEventRowProps) {
   const tMatches = useTranslations("matches");
   const { label, freeThrows, tokens } = usePlayDescription(play, style);
@@ -56,7 +56,7 @@ export function TimelineEventRow({
   // Runs after the render that shows the row, which is also the one that
   // widens the filters to include it when they hid it.
   useEffect(() => {
-    if (!highlighted) return;
+    if (reveal === null) return;
     const reduceMotion = globalThis.matchMedia?.(
       "(prefers-reduced-motion: reduce)",
     ).matches;
@@ -65,7 +65,7 @@ export function TimelineEventRow({
       behavior: reduceMotion ? "auto" : "smooth",
     });
     row.current?.focus({ preventScroll: true });
-  }, [highlighted]);
+  }, [reveal]);
 
   const sideOf = (teamId: number | undefined) => {
     if (teamId === homeTeam.id) return "home";
@@ -81,7 +81,7 @@ export function TimelineEventRow({
       tabIndex={-1}
       className={cn(
         "grid grid-cols-[2.75rem_3px_minmax(0,1fr)_auto] sm:grid-cols-[3rem_3px_1.25rem_minmax(0,1fr)_auto] gap-x-3 items-start px-3 sm:px-4 py-2.5 border-b border-divide/60 last:border-b-0 outline-none transition-colors duration-700",
-        highlighted && "bg-tint-primary",
+        reveal !== null && "bg-tint-primary",
       )}
     >
       <span className="font-mono text-xs text-text-secondary tabular-nums pt-0.5">

@@ -114,6 +114,15 @@ const FREE_THROWS: readonly string[] = [
  * One row of the timeline: an event, and the events at the same instant that
  * only complete it.
  */
+/**
+ * One jump to a play. Each jump is a new object, so jumping to the same play
+ * again still scrolls to it and restarts its highlight.
+ */
+export interface PlayReveal {
+  /** The lead event id of the play jumped to. */
+  readonly playId: number;
+}
+
 export interface Play {
   /** The event the row is about: its type gives the row's label and icon. */
   readonly lead: ScoredMatchEvent;

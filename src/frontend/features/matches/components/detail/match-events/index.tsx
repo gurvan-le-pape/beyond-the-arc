@@ -34,8 +34,11 @@ export function MatchEvents({
   const tMatches = useTranslations("matches");
   const tCommon = useTranslations("common");
 
-  const { plays, shownPlays, revealedPlayId, revealPlay, filters } =
-    useMatchEvents(events, homeTeam.id, awayTeam.id);
+  const { plays, shownPlays, reveal, revealPlay, filters } = useMatchEvents(
+    events,
+    homeTeam.id,
+    awayTeam.id,
+  );
 
   if (!events || events.length === 0) {
     return (
@@ -72,7 +75,7 @@ export function MatchEvents({
         homeTeam={homeTeam}
         awayTeam={awayTeam}
         getEventStyle={getEventStyle}
-        highlightedPlayId={revealedPlayId}
+        reveal={reveal}
       />
     </Section>
   );
