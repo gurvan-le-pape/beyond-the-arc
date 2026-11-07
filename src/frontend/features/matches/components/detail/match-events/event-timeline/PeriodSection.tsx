@@ -5,7 +5,7 @@ import { Fragment, useId } from "react";
 import type { EventStyle, MatchTeam } from "@/features/matches/types";
 import { Text } from "@/shared/components/typography";
 
-import type { Play } from "../plays";
+import type { Play, PlayReveal } from "../plays";
 import { overtimeNumber } from "../plays";
 import type { PeriodScore } from "./periods";
 import { RunDivider } from "./RunDivider";
@@ -24,8 +24,8 @@ interface PeriodSectionProps {
   readonly homeTeam: MatchTeam;
   readonly awayTeam: MatchTeam;
   readonly getEventStyle: (eventType: string) => EventStyle;
-  /** The lead event id of the play the reader just jumped to, if any. */
-  readonly highlightedPlayId: number | null;
+  /** The jump the reader just made to a play, if any. */
+  readonly reveal: PlayReveal | null;
 }
 
 /**
@@ -45,7 +45,7 @@ export function PeriodSection({
   homeTeam,
   awayTeam,
   getEventStyle,
-  highlightedPlayId,
+  reveal,
 }: PeriodSectionProps) {
   const t = useTranslations("matches.matchEvents");
   const headingId = useId();
@@ -94,7 +94,7 @@ export function PeriodSection({
               homeTeam={homeTeam}
               awayTeam={awayTeam}
               style={getEventStyle(play.lead.eventType)}
-              highlighted={play.lead.id === highlightedPlayId}
+              reveal={play.lead.id === reveal?.playId ? reveal : null}
             />
           );
           const run = play.runEnded;

@@ -13,7 +13,13 @@ import {
   FILTERABLE_CATEGORIES,
   filterPlays,
 } from "./playFilters";
-import { groupPlays, hasOvertime, type Play, scoreEvents } from "./plays";
+import {
+  groupPlays,
+  hasOvertime,
+  type Play,
+  type PlayReveal,
+  scoreEvents,
+} from "./plays";
 
 // How long a play the reader jumped to stays highlighted.
 const HIGHLIGHT_MS = 2000;
@@ -27,13 +33,13 @@ const HIGHLIGHT_MS = 2000;
  *
  * `revealPlay` jumps to a play from outside the list, such as the flow chart:
  * it widens the filters to show the play if they hide it and highlights it
- * for a moment; the play's row brings itself into view when highlighted.
+ * for a moment; the play's row brings itself into view on each reveal.
  *
  * @param events - the match's events, in order
  * @param homeTeamId - the home side's team id
  * @param awayTeamId - the away side's team id
  * @returns every play of the match, in match order; the plays to show, in
- *   display order; the play to highlight and how to reveal one; and the
+ *   display order; the current reveal and how to start one; and the
  *   filter values and setters for the panel, with how many rows are shown out
  *   of how many the match has
  */
@@ -100,7 +106,7 @@ export function useMatchEvents(
   const categoryCounts = useMemo(() => countCategories(events), [events]);
   const totalRows = useMemo(() => countRows(plays), [plays]);
 
-  const [revealedPlayId, setRevealedPlayId] = useState<number | null>(null);
+  const [reveal, setReveal] = useState<PlayReveal | null>(null);
 
   const revealPlay = useCallback(
     (play: Play) => {
@@ -112,21 +118,21 @@ export function useMatchEvents(
           new Set(prev).add(categoryOf(play.lead)),
         );
       }
-      setRevealedPlayId(play.lead.id);
+      setReveal({ playId: play.lead.id });
     },
     [shownPlays],
   );
 
   useEffect(() => {
-    if (revealedPlayId === null) return;
-    const timer = setTimeout(() => setRevealedPlayId(null), HIGHLIGHT_MS);
+    if (reveal === null) return;
+    const timer = setTimeout(() => setReveal(null), HIGHLIGHT_MS);
     return () => clearTimeout(timer);
-  }, [revealedPlayId]);
+  }, [reveal]);
 
   return {
     plays,
     shownPlays,
-    revealedPlayId,
+    reveal,
     revealPlay,
     filters: {
       hasOvertime: hasOvertime(events),
