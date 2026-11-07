@@ -24,7 +24,6 @@
         { "type": "double_dribble", "odds": 0.03 },
         { "type": "bad_pass", "odds": 0.12 },
         { "type": "steal", "odds": 0.33 },
-        { "type": "shot_clock_violation", "odds": 0.02 },
         { "type": "offensive_foul", "odds": 0.02 },
         { "type": "blocking_foul", "odds": 0.12 },
         { "type": "pushing_foul", "odds": 0.12 },

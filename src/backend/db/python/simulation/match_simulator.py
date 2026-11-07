@@ -170,17 +170,10 @@ class MatchSimulator:
     def _play_tick(self, match, home_list, away_list):
         """Move the game from its current state to the next, emitting that transition's event."""
         if match.shot_clock == 0:
-            violator = self.event_generator.pick(
-                home_list if match.possession == "home" else away_list, "turnover"
+            violation = self.event_generator.generate_event(
+                {"type": "shot_clock_violation"}, home_list, away_list, match.possession, self.player_names
             )
-            match.add_event({
-                "occurred_at": None,
-                "event_type": "shot_clock_violation",
-                "player_roles": {"shooter": violator},
-                "description": "Shot clock violation.",
-            }, match.time)
-            self.state_manager.current_state = "possession"
-            match.turn_over()
+            self.state_manager.current_state = self._apply_event(match, violation, "dead_ball")
             return
 
         next_state = self.state_manager.get_next_state()
@@ -277,8 +270,8 @@ class MatchSimulator:
         A possession takes 10–15 s on a full clock. With less left, the offence
         plays to the clock and keeps 6 s: the shot attempt that follows takes
         2–5 s, and the shot itself is only emitted on the tick after it, so the
-        clock must still be running then. Running the clock out is the `shot_clock_violation` event in
-        game_config.json, not a side effect of this timing.
+        clock must still be running then. A clock that does reach 0 is the only
+        source of a `shot_clock_violation`, in `_play_tick`.
         """
         if next_state == "possession":
             latest = max(1, possession_clock - 6)
