@@ -23,10 +23,7 @@ interface OrganizationInfoProps {
  * ones are omitted, so the panel shrinks to what is known. The URL goes
  * through the safe-URL check.
  */
-export function OrganizationInfo({
-  address,
-  ffbbUrl,
-}: OrganizationInfoProps) {
+export function OrganizationInfo({ address, ffbbUrl }: OrganizationInfoProps) {
   const t = useTranslations("organizations");
 
   const safeFfbbUrl = toSafeExternalUrl(ffbbUrl);
