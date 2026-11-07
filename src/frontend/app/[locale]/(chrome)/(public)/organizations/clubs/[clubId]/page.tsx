@@ -75,11 +75,7 @@ async function ClubPage({ params }: LocalePageProps<{ clubId: string }>) {
         ]}
       />
       <ClubHeader club={club} />
-      <OrganizationInfo
-        address={club.address}
-        website={club.website}
-        ffbbUrl={club.ffbbUrl}
-      />
+      <OrganizationInfo address={club.address} ffbbUrl={club.ffbbUrl} />
       {club.teams.length > 0 ? (
         <ClubTeamsTable
           clubName={club.name}

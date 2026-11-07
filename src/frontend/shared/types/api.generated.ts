@@ -861,11 +861,6 @@ export interface components {
              */
             longitude: number | null;
             /**
-             * @description Website
-             * @example https://club.com
-             */
-            website: string | null;
-            /**
              * @description Committee ID
              * @example 1
              */
@@ -1070,11 +1065,6 @@ export interface components {
              * @example 1 Avenue des Papalins
              */
             address: string | null;
-            /**
-             * @description Website URL
-             * @example https://club.com
-             */
-            website: string | null;
             /**
              * @description The club's page on the FFBB competitions site, where its contact details are kept up to date
              * @example https://competitions.ffbb.com/ligues/sud/comites/0013/clubs/sud0013011
@@ -2440,11 +2430,6 @@ export interface components {
              */
             gender: "male" | "female";
             /**
-             * @description Team color
-             * @example Blue
-             */
-            color: string | null;
-            /**
              * @description Pool ID
              * @example 1
              */
@@ -2547,11 +2532,6 @@ export interface components {
              * @enum {string}
              */
             gender: "male" | "female";
-            /**
-             * @description Team color
-             * @example Blue
-             */
-            color: string | null;
             /**
              * @description Pool ID
              * @example 1

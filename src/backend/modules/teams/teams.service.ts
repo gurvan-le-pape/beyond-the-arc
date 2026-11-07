@@ -41,7 +41,6 @@ const TEAM_SELECT = {
   seasonYear: true,
   category: true,
   gender: true,
-  color: true,
   poolId: true,
   club: {
     select: {
@@ -343,7 +342,6 @@ export class TeamsService {
       seasonYear: entity.seasonYear,
       category: entity.category as Category,
       gender: entity.gender as Gender,
-      color: entity.color,
       poolId: entity.poolId,
       club: {
         id: entity.club.id,

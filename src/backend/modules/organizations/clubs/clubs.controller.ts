@@ -261,7 +261,6 @@ export class ClubsController {
    *     "city": "Monaco",
    *     "zipCode": "98000",
    *     "address": "1 Avenue des Papalins",
-   *     "website": "https://club.com",
    *     "ffbbUrl": "https://competitions.ffbb.com/ligues/sud/comites/0013/clubs/sud0013011",
    *     "teams": [...]
    *   },

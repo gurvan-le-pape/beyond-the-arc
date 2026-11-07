@@ -3256,12 +3256,6 @@
             "description": "Longitude",
             "example": 7.4246
           },
-          "website": {
-            "type": "string",
-            "nullable": true,
-            "description": "Website",
-            "example": "https://club.com"
-          },
           "committeeId": {
             "type": "number",
             "description": "Committee ID",
@@ -3280,7 +3274,6 @@
           "zipCode",
           "latitude",
           "longitude",
-          "website",
           "committeeId",
           "leagueId"
         ]
@@ -3593,12 +3586,6 @@
             "description": "Street address",
             "example": "1 Avenue des Papalins"
           },
-          "website": {
-            "type": "string",
-            "nullable": true,
-            "description": "Website URL",
-            "example": "https://club.com"
-          },
           "ffbbUrl": {
             "type": "string",
             "nullable": true,
@@ -3619,7 +3606,6 @@
           "city",
           "zipCode",
           "address",
-          "website",
           "ffbbUrl",
           "teams"
         ]
@@ -5971,12 +5957,6 @@
             "description": "Gender category",
             "example": "male"
           },
-          "color": {
-            "type": "string",
-            "nullable": true,
-            "description": "Team color",
-            "example": "Blue"
-          },
           "poolId": {
             "type": "number",
             "nullable": true,
@@ -6017,7 +5997,6 @@
           "seasonYear",
           "category",
           "gender",
-          "color",
           "poolId",
           "club",
           "pool",
@@ -6167,12 +6146,6 @@
             "description": "Gender category",
             "example": "male"
           },
-          "color": {
-            "type": "string",
-            "nullable": true,
-            "description": "Team color",
-            "example": "Blue"
-          },
           "poolId": {
             "type": "number",
             "nullable": true,
@@ -6220,7 +6193,6 @@
           "seasonYear",
           "category",
           "gender",
-          "color",
           "poolId",
           "club",
           "pool",

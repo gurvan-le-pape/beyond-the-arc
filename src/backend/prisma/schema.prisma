@@ -77,9 +77,6 @@ model Clubs {
   code        String?    @db.VarChar(50)
   name        String     @db.VarChar(255)
   address     String?    @db.VarChar(255)
-  website     String?    @db.VarChar(255)
-  gymId       Int?       @map("gym_id")
-  gym         Gyms?      @relation(fields: [gymId], references: [id], onDelete: SetNull)
   committeeId Int        @map("committee_id")
   // Restrict: a club cannot exist unaffiliated (committeeId is required), so
   // deleting a committee with clubs must be an explicit, ordered operation.
@@ -92,16 +89,6 @@ model Clubs {
 
   @@index([committeeId], map: "idx_clubs_committee_id")
   @@map("clubs")
-}
-
-model Gyms {
-  id      Int     @id @default(autoincrement())
-  name    String  @db.VarChar(255)
-  address String? @db.VarChar(255)
-  code    String? @db.VarChar(50)
-  clubs   Clubs[]
-
-  @@map("gyms")
 }
 
 model Championships {
@@ -152,7 +139,6 @@ model Teams {
   number       Int
   category     String         @db.VarChar(100)
   gender       String         @db.VarChar(10)
-  color        String?        @db.VarChar(50)
   pool         Pools?         @relation("PoolsToTeams", fields: [poolId], references: [id], onDelete: SetNull)
   poolId       Int?           @map("pool_id")
   homeMatches  Matches[]      @relation("HomeTeam")
