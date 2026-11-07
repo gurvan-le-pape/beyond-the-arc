@@ -5,7 +5,8 @@ numbers, emails and the people named on a page (president, correspondent)
 are not collected — the site links to each organisation's FFBB page instead.
 
 Respects robots.txt (crawl-delay: 1s, no relevant Disallow). Writes JSON
-Lines checkpoints under ffbb_data/ so it can resume after interruption.
+Lines checkpoints under ffbb_data/ so an interrupted crawl resumes. A crawl
+that finished is not resumed: the next run fetches everything again.
 
 Usage: make refresh-static-data (from the repo root), or directly:
        python3 scrape.py && python3 build_migration.py
@@ -29,6 +30,9 @@ METRO_LEAGUE_CODES = [
 
 OUT_DIR = Path(__file__).parent / "ffbb_data"
 OUT_DIR.mkdir(exist_ok=True)
+# Present from the start of a crawl to its end, so finding it means the last
+# crawl was interrupted.
+CRAWL_IN_PROGRESS = OUT_DIR / ".crawl_in_progress"
 
 session = requests.Session()
 session.headers.update({"User-Agent": UA})
@@ -146,6 +150,18 @@ def scrape_urls(name: str, urls: list[str]) -> None:
     print(f"[{name}] done: {len(todo)} fetched this run", flush=True)
 
 
+def start_crawl() -> None:
+    """Resume an interrupted crawl, or clear the last crawl's results for a new one."""
+    if CRAWL_IN_PROGRESS.exists():
+        print("Resuming the interrupted crawl.", flush=True)
+        return
+    for path in OUT_DIR.glob("*.jsonl"):
+        path.unlink()
+    # Geocoded from the clubs' addresses, which the new crawl may change.
+    (OUT_DIR / "geocode_cache.json").unlink(missing_ok=True)
+    CRAWL_IN_PROGRESS.touch()
+
+
 def main():
     league_urls = [f"/ligues/{code}" for code in METRO_LEAGUE_CODES]
 
@@ -166,9 +182,15 @@ def main():
     )
     print(f"Unique metro committees: {len(committee_paths)}")
 
+    # `fetch` returns "" when the site is down. Stop before clearing anything.
+    if not metro_club_paths:
+        sys.exit("The clubs sitemap listed no metro club: nothing was changed.")
+
+    start_crawl()
     scrape_urls("leagues", league_urls)
     scrape_urls("committees", committee_paths)
     scrape_urls("clubs", metro_club_paths)
+    CRAWL_IN_PROGRESS.unlink()
 
 
 if __name__ == "__main__":
