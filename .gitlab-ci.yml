@@ -606,17 +606,20 @@ deploy:
       pre_pull_head=$(git rev-parse HEAD)
       git pull
       echo "$REGISTRY_TOKEN" | docker login "$REGISTRY_HOST" -u "$DEPLOY_REGISTRY_USER" --password-stdin
-      # Pin the deployed images to this commit's tag. Persisted in .env so any
-      # later manual `compose up` keeps running the same images instead of
-      # silently jumping to whatever :latest points at.
+      # Pin the deployed images to this commit's tag. The exported value beats
+      # .env for the pull, so a failed pull leaves .env naming the images that
+      # are still running. Persisted in .env once pulled, so any later manual
+      # `compose up` keeps running the same images instead of silently jumping
+      # to whatever :latest points at.
       # Rollback = set IMAGE_TAG to a previous SHA and rerun pull + up.
+      export IMAGE_TAG="$DEPLOY_TAG"
+      echo "Disk before pull:" && df -h / | tail -1
+      docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml pull frontend backend migrate scheduler
       if grep -q '^IMAGE_TAG=' .env; then
         sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=$DEPLOY_TAG/" .env
       else
         echo "IMAGE_TAG=$DEPLOY_TAG" >> .env
       fi
-      echo "Disk before pull:" && df -h / | tail -1
-      docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml pull frontend backend migrate scheduler
       docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml up -d
       # Pull first, prune second. Every deploy pins :SHA tags, so old tagged
       # images accumulate until the disk health indicator trips (>90% of /) —

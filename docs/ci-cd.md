@@ -168,9 +168,9 @@ cd /opt/beyondthearc
 pre_pull_head=$(git rev-parse HEAD)
 git pull
 echo "$REGISTRY_TOKEN" | docker login "$REGISTRY_HOST" -u "$DEPLOY_REGISTRY_USER" --password-stdin
-# pin this commit's images (IMAGE_TAG is read by docker-compose.prod.yml)
-sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=$DEPLOY_TAG/" .env   # appended if absent
+export IMAGE_TAG="$DEPLOY_TAG"   # read by docker-compose.prod.yml; beats .env
 docker compose … pull frontend backend migrate scheduler
+sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=$DEPLOY_TAG/" .env   # appended if absent; only after a good pull
 docker compose … up -d
 docker image prune -af   # after the pull, never before
 # restart prometheus + blackbox-exporter if their config changed in this pull,
