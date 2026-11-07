@@ -40,25 +40,25 @@ const MATCH_LIST_SELECT = {
   id: true,
   startsAt: true,
   matchday: true,
-  pool: {
-    select: {
-      id: true,
-      letter: true,
-      championship: {
-        select: {
-          id: true,
-          category: true,
-          gender: true,
-          level: true,
-          division: true,
-        },
-      },
-    },
-  },
   homeTeam: {
     select: {
       id: true,
       number: true,
+      pool: {
+        select: {
+          id: true,
+          letter: true,
+          championship: {
+            select: {
+              id: true,
+              category: true,
+              gender: true,
+              level: true,
+              division: true,
+            },
+          },
+        },
+      },
       club: {
         select: {
           id: true,
@@ -247,9 +247,9 @@ export class MatchesService {
 
   async findMatchesByPoolId(poolId: number): Promise<MatchResponseDto[]> {
     const matches = await this.prisma.client.matches.findMany({
-      where: { poolId },
+      where: { homeTeam: { poolId } },
       select: MATCH_LIST_SELECT,
-      orderBy: { startsAt: "asc" },
+      orderBy: [{ startsAt: "asc" }, { id: "asc" }],
     });
 
     return matches.map((m) => this.mapMatchToDto(m));
@@ -379,6 +379,9 @@ export class MatchesService {
    * Maps a list query result to MatchResponseDto (no events).
    */
   private mapMatchToDto(match: MatchListResult): MatchResponseDto {
+    // A team with matches was scheduled in a pool.
+    const pool = match.homeTeam.pool!;
+
     return {
       id: match.id,
       startsAt: match.startsAt,
@@ -389,14 +392,14 @@ export class MatchesService {
       forfeit: match.forfeit,
       overtime: match.overtime,
       pool: {
-        id: match.pool.id,
-        letter: match.pool.letter,
+        id: pool.id,
+        letter: pool.letter,
         championship: {
-          id: match.pool.championship.id,
-          category: match.pool.championship.category as Category,
-          gender: match.pool.championship.gender as Gender,
-          level: match.pool.championship.level as CompetitionLevel,
-          division: match.pool.championship.division,
+          id: pool.championship.id,
+          category: pool.championship.category as Category,
+          gender: pool.championship.gender as Gender,
+          level: pool.championship.level as CompetitionLevel,
+          division: pool.championship.division,
         },
       },
       homeTeam: {
@@ -512,6 +515,22 @@ export class MatchesService {
     };
   }
 
+  /**
+   * A match's pool is its home team's, so every pool or championship filter
+   * goes through the home team.
+   */
+  private buildHomeTeamFilter(
+    filters: GetMatchesQueryDto,
+  ): Prisma.TeamsWhereInput | undefined {
+    const pool = this.buildPoolFilter(filters);
+    if (!filters.poolId && !pool) return undefined;
+
+    return {
+      ...(filters.poolId ? { poolId: filters.poolId } : {}),
+      ...(pool ? { pool } : {}),
+    };
+  }
+
   private buildOrganizationFilter(
     filters: GetMatchesQueryDto,
   ): Prisma.MatchesWhereInput[] | undefined {
@@ -561,10 +580,8 @@ export class MatchesService {
   ): Prisma.MatchesWhereInput {
     const where: Prisma.MatchesWhereInput = {};
 
-    if (filters.poolId) where.poolId = filters.poolId;
-
-    const poolFilter = this.buildPoolFilter(filters);
-    if (poolFilter) where.pool = poolFilter;
+    const homeTeamFilter = this.buildHomeTeamFilter(filters);
+    if (homeTeamFilter) where.homeTeam = homeTeamFilter;
 
     const orgFilter = this.buildOrganizationFilter(filters);
     const searchFilter = searchClubIds

@@ -9,6 +9,7 @@ export * from "./bounded-memory-store";
 export * from "./championship-filter.util";
 export * from "./cors-origins.util";
 export * from "./ffbb-links.util";
+export * from "./matchdays.util";
 export * from "./name-search.util";
 export * from "./openapi.util";
 export * from "./organization-filter.util";

@@ -36,7 +36,7 @@ export class LeaderboardsService {
         select: TEAM_SELECT,
       }),
       this.prisma.client.matches.findMany({
-        where: { poolId, status: "completed" },
+        where: { homeTeam: { poolId }, status: "completed" },
         select: { id: true, ...STANDING_MATCH_SELECT },
         orderBy: { startsAt: "desc" },
       }),

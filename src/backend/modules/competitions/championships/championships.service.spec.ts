@@ -109,8 +109,7 @@ describe("ChampionshipsService", () => {
           {
             id: 1,
             letter: "A",
-            teams: [{ club: { committee: ILLE_ET_VILAINE } }],
-            matches: [],
+            teams: [{ club: { committee: ILLE_ET_VILAINE }, homeMatches: [] }],
           },
         ],
       });
@@ -128,7 +127,7 @@ describe("ChampionshipsService", () => {
         seasonYear: "2024-2025",
         level: CompetitionLevel.REGIONAL,
         division: 1,
-        pools: [{ id: 1, letter: "A", teams: [], matches: [] }],
+        pools: [{ id: 1, letter: "A", teams: [] }],
       });
 
       await expect(service.findChampionshipById(1)).resolves.toMatchObject({
@@ -150,8 +149,12 @@ describe("ChampionshipsService", () => {
           {
             id: 1,
             letter: "A",
-            teams: [{ club: { committee: ILLE_ET_VILAINE } }],
-            matches: [{ matchday: 1 }, { matchday: 2 }],
+            teams: [
+              {
+                club: { committee: ILLE_ET_VILAINE },
+                homeMatches: [{ matchday: 1 }, { matchday: 2 }],
+              },
+            ],
           },
         ],
       };

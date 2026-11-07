@@ -27,7 +27,7 @@ describe("match constraints", () => {
     await client.query("BEGIN");
     pool = await createPool(client);
     [home, away] = pool.teamIds;
-    match = await insertScheduledMatch(client, pool.poolId, home, away);
+    match = await insertScheduledMatch(client, home, away);
   });
 
   afterEach(async () => {
@@ -70,8 +70,8 @@ describe("match constraints", () => {
   });
 
   it("rejects a team playing itself", async () => {
-    await expect(
-      insertScheduledMatch(client, pool.poolId, home, home),
-    ).rejects.toThrow("matches_distinct_teams");
+    await expect(insertScheduledMatch(client, home, home)).rejects.toThrow(
+      "matches_distinct_teams",
+    );
   });
 });

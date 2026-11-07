@@ -310,8 +310,11 @@ export class ClubsService {
         select: { id: true, poolId: true },
       }),
       this.prisma.client.matches.findMany({
-        where: { poolId: { in: poolIds }, status: "completed" },
-        select: { poolId: true, ...STANDING_MATCH_SELECT },
+        where: { homeTeam: { poolId: { in: poolIds } }, status: "completed" },
+        select: {
+          homeTeam: { select: { poolId: true } },
+          ...STANDING_MATCH_SELECT,
+        },
       }),
     ]);
 
@@ -321,7 +324,9 @@ export class ClubsService {
       const teamIds = poolTeams
         .filter((team) => team.poolId === poolId)
         .map((team) => team.id);
-      const matches = poolMatches.filter((match) => match.poolId === poolId);
+      const matches = poolMatches.filter(
+        (match) => match.homeTeam.poolId === poolId,
+      );
       for (const standing of computeStandings(teamIds, matches)) {
         if (clubTeamIds.has(standing.teamId)) {
           ranked.set(standing.teamId, {

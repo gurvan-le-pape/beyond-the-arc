@@ -87,20 +87,20 @@ describe("MatchesService", () => {
     homeTeamScore: 85,
     awayTeamScore: 72,
     forfeit: false,
-    pool: {
-      id: 1,
-      letter: "A",
-      championship: {
-        id: 1,
-        category: "Senior",
-        gender: "M",
-        level: "regional",
-        division: "Régionale 1",
-      },
-    },
     homeTeam: {
       id: 1,
       number: 1,
+      pool: {
+        id: 1,
+        letter: "A",
+        championship: {
+          id: 1,
+          category: "Senior",
+          gender: "M",
+          level: "regional",
+          division: "Régionale 1",
+        },
+      },
       club: {
         id: 1,
         name: "Club Home",
@@ -159,6 +159,17 @@ describe("MatchesService", () => {
     homeTeam: {
       id: 1,
       number: 1,
+      pool: {
+        id: 1,
+        letter: "A",
+        championship: {
+          id: 1,
+          category: "Senior",
+          gender: "M",
+          level: "regional",
+          division: "Régionale 1",
+        },
+      },
       club: {
         id: 1,
         name: "Club Home",
@@ -174,17 +185,6 @@ describe("MatchesService", () => {
         name: "Club Away",
         committeeId: 2,
         committee: { leagueId: 1 },
-      },
-    },
-    pool: {
-      id: 1,
-      letter: "A",
-      championship: {
-        id: 1,
-        category: "Senior",
-        gender: "M",
-        level: "regional",
-        division: "Régionale 1",
       },
     },
     matchEvents: [
@@ -331,7 +331,7 @@ describe("MatchesService", () => {
       expect(result).toHaveLength(1);
       expect(result[0].id).toBe(1);
       expect(mockPrismaService.client.matches.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({ where: { poolId: 1 } }),
+        expect.objectContaining({ where: { homeTeam: { poolId: 1 } } }),
       );
     });
   });
@@ -633,7 +633,7 @@ describe("MatchesService", () => {
 
       expect(mockPrismaService.client.matches.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: expect.objectContaining({ poolId: 5 }),
+          where: expect.objectContaining({ homeTeam: { poolId: 5 } }),
         }),
       );
     });
@@ -644,7 +644,9 @@ describe("MatchesService", () => {
       expect(mockPrismaService.client.matches.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
-            pool: expect.objectContaining({ championshipId: 3 }),
+            homeTeam: {
+              pool: expect.objectContaining({ championshipId: 3 }),
+            },
           }),
         }),
       );
@@ -660,10 +662,12 @@ describe("MatchesService", () => {
       expect(mockPrismaService.client.matches.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
-            pool: expect.objectContaining({
-              championshipId: 3,
-              championship: expect.objectContaining({ level: "regional" }),
-            }),
+            homeTeam: {
+              pool: expect.objectContaining({
+                championshipId: 3,
+                championship: expect.objectContaining({ level: "regional" }),
+              }),
+            },
           }),
         }),
       );
@@ -675,9 +679,11 @@ describe("MatchesService", () => {
       expect(mockPrismaService.client.matches.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
-            pool: expect.objectContaining({
-              championship: expect.objectContaining({ level: "regional" }),
-            }),
+            homeTeam: {
+              pool: expect.objectContaining({
+                championship: expect.objectContaining({ level: "regional" }),
+              }),
+            },
           }),
         }),
       );

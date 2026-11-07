@@ -136,7 +136,6 @@ export async function createPool(
  * Inserts a scheduled match, as the season generator does.
  *
  * @param client - the connection to write on
- * @param poolId - the match's pool
  * @param homeTeamId - the home team
  * @param awayTeamId - the away team
  * @param startsAt - tip-off, an ISO 8601 instant
@@ -144,7 +143,6 @@ export async function createPool(
  */
 export async function insertScheduledMatch(
   client: Client,
-  poolId: number,
   homeTeamId: number,
   awayTeamId: number,
   startsAt = "2099-01-01T12:00:00Z",
@@ -152,9 +150,9 @@ export async function insertScheduledMatch(
   const {
     rows: [{ id }],
   } = await client.query<{ id: number }>(
-    `INSERT INTO matches (pool_id, matchday, starts_at, home_team_id, away_team_id)
-     VALUES ($1, 1, $2, $3, $4) RETURNING id`,
-    [poolId, startsAt, homeTeamId, awayTeamId],
+    `INSERT INTO matches (matchday, starts_at, home_team_id, away_team_id)
+     VALUES (1, $1, $2, $3) RETURNING id`,
+    [startsAt, homeTeamId, awayTeamId],
   );
   return id;
 }

@@ -5,7 +5,9 @@ import {
   andWhere,
   buildChampionshipWhere,
   buildClubOrganizationWhere,
+  countMatchdays,
   resolvePagination,
+  TEAM_MATCHDAYS_SELECT,
 } from "@common/utils";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
@@ -29,11 +31,12 @@ const CHAMPIONSHIP_SELECT = {
     select: {
       id: true,
       letter: true,
-      // One team is enough: every team in a departmental championship belongs
-      // to the same committee, and in a regional one to the same league.
+      // The first team gives the organiser: every team in a departmental
+      // championship belongs to the same committee, and in a regional one to
+      // the same league.
       teams: {
-        take: 1,
         select: {
+          ...TEAM_MATCHDAYS_SELECT,
           club: {
             select: {
               committee: {
@@ -49,10 +52,6 @@ const CHAMPIONSHIP_SELECT = {
             },
           },
         },
-      },
-      matches: {
-        select: { matchday: true },
-        distinct: ["matchday"] as ["matchday"],
       },
     },
   },
@@ -239,7 +238,7 @@ export class ChampionshipsService {
       pools: entity.pools.map((p) => ({
         id: p.id,
         letter: p.letter,
-        nbMatchdays: p.matches.length,
+        nbMatchdays: countMatchdays(p.teams),
       })),
     } satisfies ChampionshipResponseDto; // TypeScript validates this matches
   }
