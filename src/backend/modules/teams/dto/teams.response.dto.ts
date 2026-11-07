@@ -65,9 +65,8 @@ export class TeamResponseDto {
     description: "Pool ID",
     example: 1,
     type: Number,
-    nullable: true,
   })
-  poolId!: number | null;
+  poolId!: number;
 
   @ApiProperty({
     description: "Club information",
@@ -76,11 +75,10 @@ export class TeamResponseDto {
   club!: ClubRefDto;
 
   @ApiProperty({
-    description: "Pool information, or null when the team has none",
+    description: "Pool information",
     type: PoolRefDto,
-    nullable: true,
   })
-  pool!: PoolRefDto | null;
+  pool!: PoolRefDto;
 
   @ApiProperty({
     description: "Relation counts",

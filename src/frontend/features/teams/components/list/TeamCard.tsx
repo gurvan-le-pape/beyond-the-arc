@@ -24,19 +24,17 @@ interface TeamCardProps {
  * division, pool). Dropping a badge makes sibling teams indistinguishable
  * rather than merely plainer.
  *
- * Every path through `club` and `pool` is optional-chained and falls back to a
- * translated "not available" label, because list responses do not always carry
- * the nested championship. `TeamHeader` reads the same `Team` type without
- * chaining and needs the hydrated detail shape — the two disagree deliberately.
+ * Every team plays in a pool, so the level, division and pool letter are always
+ * there.
  */
 export function TeamCard({ team }: TeamCardProps) {
   const tCommon = useTranslations("common");
   const tTeams = useTranslations("teams");
 
   const clubName = team.club.name;
-  const level = team.pool?.championship.level;
-  const division = team.pool?.championship.division ?? null;
-  const poolLetter = team.pool?.letter ?? null;
+  const level = team.pool.championship.level;
+  const division = team.pool.championship.division;
+  const poolLetter = team.pool.letter;
   const category = team.category;
   const gender = team.gender;
 
@@ -60,9 +58,7 @@ export function TeamCard({ team }: TeamCardProps) {
           category={category}
           gender={gender}
           division={division}
-          poolLabel={
-            poolLetter ? tTeams("poolLabel", { letter: poolLetter }) : null
-          }
+          poolLabel={tTeams("poolLabel", { letter: poolLetter })}
           level={level}
         />
       }

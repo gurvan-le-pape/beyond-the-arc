@@ -93,18 +93,14 @@ model Teams {
   id          Int       @id @default(autoincrement())
   club        Clubs     @relation(fields: [clubId], references: [id], onDelete: Cascade)
   clubId      Int       @map("club_id")
-  seasonYear  String    @map("season_year") @db.VarChar(9)
   number      Int
-  category    String    @db.VarChar(100)
-  gender      String    @db.VarChar(10)
-  pool        Pools?    @relation("PoolsToTeams", fields: [poolId], references: [id], onDelete: SetNull)
-  poolId      Int?      @map("pool_id")
+  pool        Pools     @relation("PoolsToTeams", fields: [poolId], references: [id], onDelete: Restrict)
+  poolId      Int       @map("pool_id")
   homeMatches Matches[] @relation("HomeTeam")
   awayMatches Matches[] @relation("AwayTeam")
   players     Players[]
 
-  @@unique([clubId, category, gender, number, seasonYear])
-  @@index([poolId], map: "idx_teams_pool_id")
+  @@unique([poolId, clubId, number])
   @@map("teams")
 }
 
@@ -222,12 +218,3 @@ model MatchEventPlayers {
   @@map("match_event_players")
 }
 
-model SeedingCheckpoints {
-  entityType  String   @map("entity_type") @db.VarChar(50)
-  entityId    Int      @map("entity_id")
-  status      String   @default("completed") @db.VarChar(20)
-  completedAt DateTime @default(now()) @map("completed_at") @db.Timestamptz
-
-  @@id([entityType, entityId])
-  @@map("seeding_checkpoints")
-}

@@ -75,8 +75,6 @@ describe("PlayersService", () => {
             id: 1,
             number: 1,
             clubId: 1,
-            category: "U18",
-            gender: "M",
             club: {
               id: 1,
               name: "Club 1",
@@ -89,7 +87,17 @@ describe("PlayersService", () => {
                 },
               },
             },
-            pool: null,
+            pool: {
+              id: 1,
+              letter: "A",
+              championship: {
+                id: 1,
+                category: "U18",
+                gender: "M",
+                level: "departmental",
+                division: 1,
+              },
+            },
           },
         },
       ];
@@ -221,8 +229,6 @@ describe("PlayersService", () => {
           id: 1,
           number: 1,
           clubId: 1,
-          category: "U18",
-          gender: "M",
           club: {
             id: 1,
             name: "Club 1",
@@ -235,7 +241,17 @@ describe("PlayersService", () => {
               },
             },
           },
-          pool: null,
+          pool: {
+            id: 1,
+            letter: "A",
+            championship: {
+              id: 1,
+              category: "U18",
+              gender: "M",
+              level: "departmental",
+              division: 1,
+            },
+          },
         },
       };
 
@@ -247,7 +263,19 @@ describe("PlayersService", () => {
       // Assert
       // Not toEqual(mockPlayer): the entity carries a Date and the DTO
       // carries a calendar date string, so they are deliberately not equal.
-      expect(result).toEqual({ ...mockPlayer, birthdate: "2000-06-15" });
+      // Category and gender are the championship's, returned on the team.
+      const { category, gender, ...championship } =
+        mockPlayer.team.pool.championship;
+      expect(result).toEqual({
+        ...mockPlayer,
+        birthdate: "2000-06-15",
+        team: {
+          ...mockPlayer.team,
+          category,
+          gender,
+          pool: { ...mockPlayer.team.pool, championship },
+        },
+      });
       expect(result.birthdate).toBe("2000-06-15");
       expect(mockPrismaService.client.players.findUnique).toHaveBeenCalledWith({
         where: { id: 1 },
@@ -434,7 +462,9 @@ describe("PlayersService", () => {
       expect(mockPrismaService.client.players.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
-            team: expect.objectContaining({ category: "U18" }),
+            team: expect.objectContaining({
+              pool: { championship: { category: "U18" } },
+            }),
           }),
         }),
       );
@@ -446,7 +476,9 @@ describe("PlayersService", () => {
       expect(mockPrismaService.client.players.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
-            team: expect.objectContaining({ gender: "male" }),
+            team: expect.objectContaining({
+              pool: { championship: { gender: "male" } },
+            }),
           }),
         }),
       );
@@ -548,8 +580,6 @@ describe("PlayersService", () => {
             id: 1,
             number: 1,
             clubId: 1,
-            category: "U18",
-            gender: "male",
             club: {
               id: 1,
               name: "Club A",
@@ -564,6 +594,8 @@ describe("PlayersService", () => {
               letter: "A",
               championship: {
                 id: 1,
+                category: "U18",
+                gender: "male",
                 name: "Champ A",
                 level: "regional",
                 division: 1,

@@ -9,6 +9,7 @@ import {
 import { PaginatedResponseDto } from "@common/dto";
 import {
   aggregateCareerStats,
+  buildChampionshipWhere,
   buildClubOrganizationWhere,
   mapPlayerMatchStats,
   mapPlayerSummary,
@@ -47,8 +48,6 @@ const PLAYER_SELECT = {
       id: true,
       number: true,
       clubId: true,
-      category: true,
-      gender: true,
       club: {
         select: {
           id: true,
@@ -74,6 +73,8 @@ const PLAYER_SELECT = {
           championship: {
             select: {
               id: true,
+              category: true,
+              gender: true,
               level: true,
               division: true,
             },
@@ -300,8 +301,8 @@ export class PlayersService {
         id: entity.team.id,
         number: entity.team.number,
         clubId: entity.team.clubId,
-        category: entity.team.category as Category,
-        gender: entity.team.gender as Gender,
+        category: entity.team.pool.championship.category as Category,
+        gender: entity.team.pool.championship.gender as Gender,
         club: {
           id: entity.team.club.id,
           name: entity.team.club.name,
@@ -314,17 +315,15 @@ export class PlayersService {
             },
           },
         },
-        pool: entity.team.pool
-          ? {
-              id: entity.team.pool.id,
-              letter: entity.team.pool.letter,
-              championship: {
-                id: entity.team.pool.championship.id,
-                level: entity.team.pool.championship.level as CompetitionLevel,
-                division: entity.team.pool.championship.division,
-              },
-            }
-          : null,
+        pool: {
+          id: entity.team.pool.id,
+          letter: entity.team.pool.letter,
+          championship: {
+            id: entity.team.pool.championship.id,
+            level: entity.team.pool.championship.level as CompetitionLevel,
+            division: entity.team.pool.championship.division,
+          },
+        },
       },
     } satisfies PlayerResponseDto;
   }
@@ -370,9 +369,9 @@ export class PlayersService {
   private buildTeamFilter(filters: GetPlayersQueryDto): Prisma.TeamsWhereInput {
     const teamWhere: Prisma.TeamsWhereInput = {};
 
-    if (filters.level) {
-      teamWhere.pool = { championship: { level: filters.level } };
-    }
+    const { level, category, gender } = filters;
+    const championship = buildChampionshipWhere({ level, category, gender });
+    if (championship) teamWhere.pool = { championship };
 
     const clubWhere = buildClubOrganizationWhere(filters);
     if (clubWhere) teamWhere.club = clubWhere;
@@ -380,8 +379,6 @@ export class PlayersService {
     if (filters.teamId) teamWhere.id = filters.teamId;
     if (filters.teamNumber) teamWhere.number = filters.teamNumber;
     if (filters.clubId) teamWhere.clubId = filters.clubId;
-    if (filters.category) teamWhere.category = filters.category;
-    if (filters.gender) teamWhere.gender = filters.gender;
 
     return teamWhere;
   }

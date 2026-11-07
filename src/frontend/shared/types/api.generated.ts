@@ -990,9 +990,9 @@ export interface components {
              */
             gender: "male" | "female";
             /** @description Pool information */
-            pool: components["schemas"]["PoolInfoDto"] | null;
+            pool: components["schemas"]["PoolInfoDto"];
             /** @description Team leaderboard stats */
-            leaderboard: components["schemas"]["TeamLeaderboardDto"] | null;
+            leaderboard: components["schemas"]["TeamLeaderboardDto"];
         };
         ClubDetailedResponseDto: {
             /**
@@ -1979,8 +1979,8 @@ export interface components {
             gender: "male" | "female";
             /** @description Club information */
             club: components["schemas"]["ClubRefDto"];
-            /** @description Current pool, or null when the team has none */
-            pool: components["schemas"]["PoolRefDto"] | null;
+            /** @description Current pool */
+            pool: components["schemas"]["PoolRefDto"];
         };
         PlayerResponseDto: {
             /**
@@ -2341,11 +2341,11 @@ export interface components {
              * @description Pool ID
              * @example 1
              */
-            poolId: number | null;
+            poolId: number;
             /** @description Club information */
             club: components["schemas"]["ClubRefDto"];
-            /** @description Pool information, or null when the team has none */
-            pool: components["schemas"]["PoolRefDto"] | null;
+            /** @description Pool information */
+            pool: components["schemas"]["PoolRefDto"];
             /** @description Relation counts */
             _count: components["schemas"]["TeamCountDto"];
         };
@@ -2444,11 +2444,11 @@ export interface components {
              * @description Pool ID
              * @example 1
              */
-            poolId: number | null;
+            poolId: number;
             /** @description Club information */
             club: components["schemas"]["ClubRefDto"];
-            /** @description Pool information, or null when the team has none */
-            pool: components["schemas"]["PoolRefDto"] | null;
+            /** @description Pool information */
+            pool: components["schemas"]["PoolRefDto"];
             /** @description Relation counts */
             _count: components["schemas"]["TeamCountDto"];
             /** @description Team players */

@@ -362,7 +362,11 @@ describe("ClubsService", () => {
 
       expect(prisma.client.clubs.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { teams: { some: { category: Category.U18 } } },
+          where: {
+            teams: {
+              some: { pool: { championship: { category: Category.U18 } } },
+            },
+          },
         }),
       );
     });
@@ -372,7 +376,11 @@ describe("ClubsService", () => {
 
       expect(prisma.client.clubs.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { teams: { some: { gender: Gender.FEMALE } } },
+          where: {
+            teams: {
+              some: { pool: { championship: { gender: Gender.FEMALE } } },
+            },
+          },
         }),
       );
     });
@@ -390,7 +398,16 @@ describe("ClubsService", () => {
           where: {
             committeeId: 1,
             committee: { leagueId: 2 },
-            teams: { some: { category: Category.U18, gender: Gender.MALE } },
+            teams: {
+              some: {
+                pool: {
+                  championship: {
+                    category: Category.U18,
+                    gender: Gender.MALE,
+                  },
+                },
+              },
+            },
           },
         }),
       );
@@ -463,14 +480,14 @@ describe("ClubsService", () => {
         {
           id: 1,
           number: 1,
-          category: "U18",
-          gender: "male",
           poolId: 10,
           pool: {
             id: 10,
             letter: "A",
             championship: {
               id: 1,
+              category: "U18",
+              gender: "male",
               level: "regional",
               division: 1,
             },
@@ -551,7 +568,11 @@ describe("ClubsService", () => {
           { ...mockPrismaClub.teams[0], id: 3, poolId: 10 },
         ],
       });
-      prisma.client.teams.findMany.mockResolvedValue([]);
+      prisma.client.teams.findMany.mockResolvedValue([
+        { id: 1, poolId: 10 },
+        { id: 2, poolId: 11 },
+        { id: 3, poolId: 10 },
+      ]);
       prisma.client.matches.findMany.mockResolvedValue([]);
 
       await service.findClubById(1);
@@ -583,19 +604,6 @@ describe("ClubsService", () => {
 
       expect(result.teams).toHaveLength(1);
       expect(result.teams[0].leaderboard?.gamesPlayed).toBe(1);
-    });
-
-    it("should return null leaderboard without querying when team has no pool", async () => {
-      prisma.client.clubs.findUnique.mockResolvedValue({
-        ...mockPrismaClub,
-        teams: [{ ...mockPrismaClub.teams[0], pool: null, poolId: null }],
-      });
-
-      const result = await service.findClubById(1);
-
-      expect(result.teams[0].leaderboard).toBeNull();
-      expect(prisma.client.teams.findMany).not.toHaveBeenCalled();
-      expect(prisma.client.matches.findMany).not.toHaveBeenCalled();
     });
 
     it("should handle club with no teams", async () => {

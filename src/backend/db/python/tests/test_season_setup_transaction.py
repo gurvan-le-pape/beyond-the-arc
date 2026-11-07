@@ -1,9 +1,10 @@
 """
-A league's season setup is one transaction, its checkpoint included.
+A league's season setup is one transaction.
 
-A retry inserts the league's teams again, and `teams` has a unique constraint,
-so anything committed before the checkpoint would fail every later restart. And
-setup runs before the scheduler starts polling, so no match would be generated.
+A league that has any team in this season's championships is skipped on
+restart, so anything committed before the end would leave that league half set
+up for good. And setup runs before the scheduler starts polling, so no match
+would be generated.
 """
 
 from unittest.mock import MagicMock
@@ -27,32 +28,36 @@ def steps(season_generator, monkeypatch):
     pool = MagicMock()
     pool.connection.return_value.__enter__.return_value = calls.conn
     monkeypatch.setattr(season_generator.connection, "get_pool", lambda: pool)
-    monkeypatch.setattr(season_generator.checkpoints, "mark_done", calls.mark_done)
-    monkeypatch.setattr(
-        season_generator.team_repository, "fetch_committee_ids_for_league", lambda _cursor, _league: [1]
-    )
-    generator = season_generator.SeasonGenerator
-    for name in ("_generate_teams_and_players", "_setup_league_championships", "_build_match_schedule"):
-        monkeypatch.setattr(generator, name, getattr(calls, name))
-    calls._setup_committee_championships.return_value = []
-    monkeypatch.setattr(generator, "_setup_committee_championships", calls._setup_committee_championships)
+    repository = season_generator.team_repository
+    monkeypatch.setattr(repository, "fetch_committee_ids_for_league", lambda _cursor, _league: [1])
+    monkeypatch.setattr(repository, "fetch_club_ids_for_committee", lambda _cursor, _committee: [1, 2, 3])
+    monkeypatch.setattr(season_generator.SeasonGenerator, "_create_championships", calls._create_championships)
     return calls
 
 
-def test_the_only_commit_comes_after_the_checkpoint(season_generator, steps):
-    season_generator.SeasonGenerator()._setup_league(1, "league_setup")
+def test_the_only_commit_comes_after_the_last_championship(season_generator, steps):
+    season_generator.SeasonGenerator()._setup_league(1)
 
     names = [call[0] for call in steps.mock_calls]
     assert names.count("conn.commit") == 1
-    assert names.index("mark_done") < names.index("conn.commit")
+    last_championship = len(names) - 1 - names[::-1].index("_create_championships")
+    assert last_championship < names.index("conn.commit")
 
 
-@pytest.mark.parametrize("failing_step", ["_setup_league_championships", "_build_match_schedule", "mark_done"])
-def test_a_failure_anywhere_commits_nothing(season_generator, steps, failing_step):
-    getattr(steps, failing_step).side_effect = RuntimeError("interrupted")
+@pytest.mark.parametrize("failing_call", [1, 20])
+def test_a_failure_anywhere_commits_nothing(season_generator, steps, failing_call):
+    calls = 0
+
+    def create(*_args):
+        nonlocal calls
+        calls += 1
+        if calls == failing_call:
+            raise RuntimeError("interrupted")
+
+    steps._create_championships.side_effect = create
 
     with pytest.raises(RuntimeError):
-        season_generator.SeasonGenerator()._setup_league(1, "league_setup")
+        season_generator.SeasonGenerator()._setup_league(1)
 
     steps.conn.commit.assert_not_called()
     steps.conn.rollback.assert_called_once()

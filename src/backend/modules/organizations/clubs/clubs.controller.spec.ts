@@ -313,7 +313,7 @@ describe("ClubsController", () => {
       expect(mockClubsService.findClubById).toHaveBeenCalledWith(1);
     });
 
-    it("should return club with null leaderboard when team has no games", async () => {
+    it("should return club with an empty leaderboard row before any game", async () => {
       const mockClub: ClubDetailedResponseDto = {
         id: 1,
         name: "AS Monaco Basket",
@@ -336,7 +336,16 @@ describe("ClubsController", () => {
                 division: 1,
               },
             },
-            leaderboard: null, // no games played yet
+            leaderboard: {
+              rank: 1,
+              poolSize: 2,
+              points: 0,
+              gamesPlayed: 0, // no games played yet
+              gamesWon: 0,
+              gamesLost: 0,
+              pointDifference: 0,
+              poolId: 2,
+            },
           },
         ],
       };
@@ -346,7 +355,7 @@ describe("ClubsController", () => {
       const result = await controller.getClubById(1);
 
       expect(result).toEqual(mockClub);
-      expect(result.teams[0].leaderboard).toBeNull();
+      expect(result.teams[0].leaderboard.gamesPlayed).toBe(0);
     });
 
     it("should handle club with no teams", async () => {

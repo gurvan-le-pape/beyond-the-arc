@@ -3418,9 +3418,7 @@
             "example": "male"
           },
           "pool": {
-            "nullable": true,
             "description": "Pool information",
-            "type": "object",
             "allOf": [
               {
                 "$ref": "#/components/schemas/PoolInfoDto"
@@ -3428,9 +3426,7 @@
             ]
           },
           "leaderboard": {
-            "nullable": true,
             "description": "Team leaderboard stats",
-            "type": "object",
             "allOf": [
               {
                 "$ref": "#/components/schemas/TeamLeaderboardDto"
@@ -5189,9 +5185,7 @@
             ]
           },
           "pool": {
-            "nullable": true,
-            "description": "Current pool, or null when the team has none",
-            "type": "object",
+            "description": "Current pool",
             "allOf": [
               {
                 "$ref": "#/components/schemas/PoolRefDto"
@@ -5792,7 +5786,6 @@
           },
           "poolId": {
             "type": "number",
-            "nullable": true,
             "description": "Pool ID",
             "example": 1
           },
@@ -5805,9 +5798,7 @@
             ]
           },
           "pool": {
-            "nullable": true,
-            "description": "Pool information, or null when the team has none",
-            "type": "object",
+            "description": "Pool information",
             "allOf": [
               {
                 "$ref": "#/components/schemas/PoolRefDto"
@@ -5981,7 +5972,6 @@
           },
           "poolId": {
             "type": "number",
-            "nullable": true,
             "description": "Pool ID",
             "example": 1
           },
@@ -5994,9 +5984,7 @@
             ]
           },
           "pool": {
-            "nullable": true,
-            "description": "Pool information, or null when the team has none",
-            "type": "object",
+            "description": "Pool information",
             "allOf": [
               {
                 "$ref": "#/components/schemas/PoolRefDto"

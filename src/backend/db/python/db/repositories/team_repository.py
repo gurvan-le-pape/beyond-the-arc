@@ -7,44 +7,37 @@ import psycopg
 
 
 def fetch_club_ids_for_committee(cursor: psycopg.Cursor, committee_id: int) -> list[int]:
-    cursor.execute("SELECT id FROM clubs WHERE committee_id = %s;", (committee_id,))
+    cursor.execute("SELECT id FROM clubs WHERE committee_id = %s ORDER BY id;", (committee_id,))
     return [row[0] for row in cursor.fetchall()]
 
 
 def fetch_committee_ids_for_league(cursor: psycopg.Cursor, league_id: int) -> list[int]:
-    cursor.execute("SELECT id FROM committees WHERE league_id = %s;", (league_id,))
+    cursor.execute("SELECT id FROM committees WHERE league_id = %s ORDER BY id;", (league_id,))
     return [row[0] for row in cursor.fetchall()]
 
 
 def fetch_league_ids(cursor: psycopg.Cursor) -> list[int]:
-    cursor.execute("SELECT id FROM leagues;")
+    cursor.execute("SELECT id FROM leagues ORDER BY id;")
     return [row[0] for row in cursor.fetchall()]
 
 
-def fetch_teams_for_committee(
-    cursor: psycopg.Cursor,
-    committee_id: int,
-    gender: str,
-    category: str,
-    season_year: str,
-) -> list[tuple[int, int, int]]:
-    """Returns list of (team_id, club_id, team_number)."""
+def league_has_teams(cursor: psycopg.Cursor, league_id: int, season_year: str) -> bool:
+    """Whether any of the league's clubs has a team in this season's championships."""
     cursor.execute(
         """
-        SELECT teams.id, teams.club_id, teams.number
-        FROM teams
-        JOIN clubs ON teams.club_id = clubs.id
-        WHERE clubs.committee_id = %s AND teams.gender = %s AND teams.category = %s
-          AND teams.season_year = %s;
+        SELECT EXISTS (
+            SELECT 1
+            FROM teams
+            JOIN pools ON pools.id = teams.pool_id
+            JOIN championships ON championships.id = pools.championship_id
+            JOIN clubs ON clubs.id = teams.club_id
+            JOIN committees ON committees.id = clubs.committee_id
+            WHERE championships.season_year = %s AND committees.league_id = %s
+        );
         """,
-        (committee_id, gender, category, season_year),
+        (season_year, league_id),
     )
-    return cursor.fetchall()
-
-
-def fetch_teams_for_pool(cursor: psycopg.Cursor, pool_id: int) -> list[int]:
-    cursor.execute("SELECT id FROM teams WHERE pool_id = %s;", (pool_id,))
-    return [row[0] for row in cursor.fetchall()]
+    return cursor.fetchone()[0]
 
 
 def fetch_players_for_team(cursor: psycopg.Cursor, team_id: int) -> list[tuple[int, str, str]]:
@@ -53,31 +46,23 @@ def fetch_players_for_team(cursor: psycopg.Cursor, team_id: int) -> list[tuple[i
     return cursor.fetchall()
 
 
-def insert_teams(cursor: psycopg.Cursor, rows: list[tuple]) -> None:
+def insert_teams(cursor: psycopg.Cursor, rows: list[tuple[int, int, int]]) -> list[int]:
     """
-    Bulk insert teams — one row per club's entry into one season.
-    Each row: (club_id, season_year, category, gender, number)
+    Inserts one pool's teams and returns their ids, in the order of `rows`.
+    Each row: (pool_id, club_id, number)
     """
+    if not rows:
+        return []
     cursor.executemany(
-        """
-        INSERT INTO teams (club_id, season_year, category, gender, number, pool_id)
-        VALUES (%s, %s, %s, %s, %s, NULL);
-        """,
+        "INSERT INTO teams (pool_id, club_id, number) VALUES (%s, %s, %s) RETURNING id;",
         rows,
+        returning=True,
     )
-
-
-def fetch_teams_for_clubs(
-    cursor: psycopg.Cursor,
-    club_ids: list[int],
-    season_year: str,
-) -> list[tuple[int, str, str]]:
-    """Returns list of (team_id, gender, category) for this season's teams belonging to given clubs."""
-    cursor.execute(
-        "SELECT id, gender, category FROM teams WHERE club_id = ANY(%s) AND season_year = %s;",
-        (club_ids, season_year),
-    )
-    return cursor.fetchall()
+    ids = []
+    while True:
+        ids.append(cursor.fetchone()[0])
+        if not cursor.nextset():
+            return ids
 
 
 def insert_players(cursor: psycopg.Cursor, rows: list[tuple]) -> None:
@@ -92,35 +77,4 @@ def insert_players(cursor: psycopg.Cursor, rows: list[tuple]) -> None:
         ON CONFLICT (team_id, number) DO NOTHING;
         """,
         rows,
-    )
-
-
-def assign_teams_to_pool(
-    cursor: psycopg.Cursor,
-    assignments: list[tuple[int, int]],
-) -> None:
-    """
-    Bulk update teams with their pool assignment.
-    Each tuple: (pool_id, team_id)
-
-    Uses a single UPDATE ... FROM (VALUES ...) instead of one round-trip per row.
-    """
-    if not assignments:
-        return
-
-    # Build a VALUES list: UPDATE teams SET pool_id = v.pool_id FROM (VALUES (...)) ...
-    pool_ids = [a[0] for a in assignments]
-    team_ids = [a[1] for a in assignments]
-
-    cursor.execute(
-        """
-        UPDATE teams
-        SET pool_id = data.pool_id
-        FROM (
-            SELECT unnest(%s::int[]) AS pool_id,
-                   unnest(%s::int[]) AS team_id
-        ) AS data
-        WHERE teams.id = data.team_id;
-        """,
-        (pool_ids, team_ids),
     )

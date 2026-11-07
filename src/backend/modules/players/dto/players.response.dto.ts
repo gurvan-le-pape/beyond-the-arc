@@ -31,11 +31,10 @@ export class PlayerTeamDto {
   club!: ClubRefDto;
 
   @ApiProperty({
-    description: "Current pool, or null when the team has none",
+    description: "Current pool",
     type: PoolRefDto,
-    nullable: true,
   })
-  pool!: PoolRefDto | null;
+  pool!: PoolRefDto;
 }
 
 /**

@@ -18,16 +18,14 @@ export function ClubHeader({ club }: ClubHeaderProps) {
   const format = useFormatter();
 
   const championshipCount = new Set(
-    club.teams.flatMap((team) =>
-      team.pool ? [team.pool.championship.id] : [],
-    ),
+    club.teams.map((team) => team.pool.championship.id),
   ).size;
   const won = club.teams.reduce(
-    (sum, team) => sum + (team.leaderboard?.gamesWon ?? 0),
+    (sum, team) => sum + team.leaderboard.gamesWon,
     0,
   );
   const lost = club.teams.reduce(
-    (sum, team) => sum + (team.leaderboard?.gamesLost ?? 0),
+    (sum, team) => sum + team.leaderboard.gamesLost,
     0,
   );
 

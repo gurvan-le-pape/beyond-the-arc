@@ -379,8 +379,7 @@ export class MatchesService {
    * Maps a list query result to MatchResponseDto (no events).
    */
   private mapMatchToDto(match: MatchListResult): MatchResponseDto {
-    // A team with matches was scheduled in a pool.
-    const pool = match.homeTeam.pool!;
+    const pool = match.homeTeam.pool;
 
     return {
       id: match.id,
