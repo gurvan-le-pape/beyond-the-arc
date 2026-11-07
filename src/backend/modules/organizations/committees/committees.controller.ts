@@ -56,7 +56,6 @@ export class CommitteesController {
    *       "name": "Comité Departmental de l'Ain",
    *       "leagueId": 1,
    *       "department": {
-   *         "id": 1,
    *         "name": "Ain",
    *         "code": "01"
    *       }
@@ -119,7 +118,6 @@ export class CommitteesController {
    *     "name": "Comité Departmental de l'Ain",
    *     "leagueId": 1,
    *     "department": {
-   *       "id": 1,
    *       "name": "Ain",
    *       "code": "01"
    *     }

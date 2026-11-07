@@ -149,16 +149,11 @@ export class ClubsService {
       }
     }
 
-    // Get league details with region codes
     const leagues = await this.prisma.client.leagues.findMany({
       select: {
         id: true,
         name: true,
-        region: {
-          select: {
-            code: true,
-          },
-        },
+        regionCode: true,
       },
       orderBy: {
         name: "asc",
@@ -167,7 +162,7 @@ export class ClubsService {
 
     return leagues.map((league) => ({
       id: league.id,
-      code: league.region?.code ?? null,
+      code: league.regionCode,
       name: league.name,
       clubCount: leaguesCounts.get(league.id) || 0,
     }));
@@ -190,13 +185,8 @@ export class ClubsService {
       select: {
         id: true,
         name: true,
-        department: {
-          select: {
-            id: true,
-            name: true,
-            code: true,
-          },
-        },
+        departmentCode: true,
+        departmentName: true,
         leagueId: true,
         _count: {
           select: {
@@ -213,9 +203,8 @@ export class ClubsService {
       id: committee.id,
       name: committee.name,
       department: {
-        id: committee.department.id,
-        name: committee.department.name,
-        code: committee.department.code,
+        name: committee.departmentName,
+        code: committee.departmentCode,
       },
       leagueId: committee.leagueId,
       clubCount: committee._count.clubs,

@@ -15,13 +15,8 @@ const COMMITTEE_SELECT = {
   name: true,
   address: true,
   leagueId: true,
-  department: {
-    select: {
-      id: true,
-      name: true,
-      code: true,
-    },
-  },
+  departmentCode: true,
+  departmentName: true,
   _count: { select: { clubs: true } },
   // One club is enough: its code carries the committee's FFBB code.
   clubs: {
@@ -117,9 +112,8 @@ export class CommitteesService {
       address: committee.address,
       leagueId: committee.leagueId,
       department: {
-        id: committee.department.id,
-        name: committee.department.name,
-        code: committee.department.code,
+        name: committee.departmentName,
+        code: committee.departmentCode,
       },
       clubCount: committee._count.clubs,
       ffbbUrl: ffbbCommitteeUrl(committee.clubs[0]?.code ?? null),

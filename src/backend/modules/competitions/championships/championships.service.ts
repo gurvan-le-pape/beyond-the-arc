@@ -22,9 +22,9 @@ const CHAMPIONSHIP_SELECT = {
   division: true,
   leagueId: true,
   committeeId: true,
-  league: { select: { name: true, region: { select: { name: true } } } },
+  league: { select: { name: true, regionName: true } },
   committee: {
-    select: { name: true, department: { select: { name: true } } },
+    select: { name: true, departmentName: true },
   },
   pools: {
     select: {
@@ -151,8 +151,8 @@ export class ChampionshipsService {
       committeeId: entity.committeeId,
       committeeName: entity.committee?.name ?? null,
       leagueName: entity.league?.name ?? null,
-      regionName: entity.league?.region.name ?? null,
-      departmentName: entity.committee?.department.name ?? null,
+      regionName: entity.league?.regionName ?? null,
+      departmentName: entity.committee?.departmentName ?? null,
       pools: entity.pools.map((p) => ({
         id: p.id,
         letter: p.letter,

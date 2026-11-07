@@ -2,16 +2,9 @@
 import { ApiProperty } from "@nestjs/swagger";
 
 /**
- * Response DTO for a region entity nested in league.
+ * A league's region, nested in the league response.
  */
 export class RegionDto {
-  @ApiProperty({
-    description: "Region unique identifier",
-    example: 1,
-    type: Number,
-  })
-  id!: number;
-
   @ApiProperty({
     description: "Region code",
     example: "BRE",
