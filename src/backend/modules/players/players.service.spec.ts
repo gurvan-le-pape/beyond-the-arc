@@ -561,7 +561,6 @@ describe("PlayersService", () => {
             },
             pool: {
               id: 1,
-              name: "Pool A",
               letter: "A",
               championship: {
                 id: 1,
@@ -578,7 +577,7 @@ describe("PlayersService", () => {
       const result = await service.findAllPlayers({});
 
       expect(result.items[0].team.pool).not.toBeNull();
-      expect(result.items[0].team.pool?.name).toBe("Pool A");
+      expect(result.items[0].team.pool?.letter).toBe("A");
       expect(result.items[0].team.pool?.championship.level).toBe("regional");
     });
   });

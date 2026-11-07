@@ -62,12 +62,10 @@ const CLUB_DETAILED_SELECT = {
       pool: {
         select: {
           id: true,
-          name: true,
           letter: true,
           championship: {
             select: {
               id: true,
-              name: true,
               level: true,
               division: true,
               committeeId: true,
@@ -398,11 +396,9 @@ export class ClubsService {
         pool: team.pool
           ? {
               id: team.pool.id,
-              name: team.pool.name,
               letter: team.pool.letter,
               championship: {
                 id: team.pool.championship.id,
-                name: team.pool.championship.name,
                 level: team.pool.championship.level as CompetitionLevel,
                 division: team.pool.championship.division,
                 committeeId: team.pool.championship.committeeId,

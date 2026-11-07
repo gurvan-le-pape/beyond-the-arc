@@ -53,7 +53,6 @@ describe("ChampionshipsService", () => {
       // Arrange — Prisma relation shape (input to mapToDto)
       const mockPrismaChampionship = {
         id: 1,
-        name: "Championship Régional U18",
         category: "U18",
         gender: "male",
         seasonYear: "2024-2025",
@@ -70,7 +69,6 @@ describe("ChampionshipsService", () => {
           {
             id: 1,
             letter: "A",
-            name: "Pool A",
             matches: [{ matchday: 1 }, { matchday: 2 }],
           },
         ],
@@ -86,7 +84,6 @@ describe("ChampionshipsService", () => {
       // Assert — DTO shape (output of mapToDto)
       expect(result).toEqual({
         id: 1,
-        name: "Championship Régional U18",
         category: "U18",
         gender: "male",
         seasonYear: "2024-2025",
@@ -98,14 +95,14 @@ describe("ChampionshipsService", () => {
         leagueName: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
         regionName: "Bretagne",
         departmentName: null,
-        pools: [{ id: 1, letter: "A", name: "Pool A", nbMatchdays: 2 }],
+        pools: [{ id: 1, letter: "A", nbMatchdays: 2 }],
       });
 
       expect(
         mockPrismaService.client.championships.findUnique,
       ).toHaveBeenCalledWith({
         where: { id: 1 },
-        select: expect.objectContaining({ id: true, name: true }),
+        select: expect.objectContaining({ id: true, category: true }),
       });
     });
 
@@ -124,7 +121,6 @@ describe("ChampionshipsService", () => {
     // Arrange — Prisma relation shape (input to mapToDto)
     const mockChampionship = {
       id: 1,
-      name: "Championship Régional U18",
       category: "U18",
       gender: "male",
       seasonYear: "2024-2025",
@@ -150,7 +146,7 @@ describe("ChampionshipsService", () => {
 
       expect(result).toEqual({
         items: expect.arrayContaining([
-          expect.objectContaining({ id: 1, name: "Championship Régional U18" }),
+          expect.objectContaining({ id: 1, category: "U18" }),
         ]),
         total: 1,
         page: 1,

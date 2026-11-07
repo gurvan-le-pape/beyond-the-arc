@@ -89,7 +89,6 @@ describe("MatchesService", () => {
     forfeit: false,
     pool: {
       id: 1,
-      name: "Pool A",
       letter: "A",
       championship: {
         id: 1,
@@ -179,7 +178,6 @@ describe("MatchesService", () => {
     },
     pool: {
       id: 1,
-      name: "Pool A",
       letter: "A",
       championship: {
         id: 1,

@@ -924,11 +924,6 @@ export interface components {
              */
             id: number;
             /**
-             * @description Championship name
-             * @example Regional U18
-             */
-            name: string;
-            /**
              * @description Competition level
              * @example regional
              * @enum {string}
@@ -956,11 +951,6 @@ export interface components {
              * @example 1
              */
             id: number;
-            /**
-             * @description Pool name
-             * @example Pool A
-             */
-            name: string;
             /**
              * @description Pool letter
              * @example A
@@ -1175,8 +1165,6 @@ export interface components {
             id: number;
             /** @example A */
             letter: string;
-            /** @example Pool A */
-            name: string;
             /** @example 10 */
             nbMatchdays: number;
         };
@@ -1186,11 +1174,6 @@ export interface components {
              * @example 1
              */
             id: number;
-            /**
-             * @description Championship name
-             * @example Championship Régional U18 male
-             */
-            name: string;
             /**
              * @description Age category
              * @example U18
@@ -1338,11 +1321,6 @@ export interface components {
              */
             letter: string;
             /**
-             * @description Pool name
-             * @example Pool A - Seniors
-             */
-            name: string;
-            /**
              * @description Associated championship ID
              * @example 1
              */
@@ -1364,11 +1342,6 @@ export interface components {
              * @example A
              */
             letter: string;
-            /**
-             * @description Pool name
-             * @example Pool A - Seniors
-             */
-            name: string;
             /**
              * @description Associated championship ID
              * @example 1
@@ -1426,11 +1399,6 @@ export interface components {
              * @example 1
              */
             id: number;
-            /**
-             * @description Pool name
-             * @example Poule A
-             */
-            name: string;
             /**
              * @description Pool letter
              * @example A
@@ -2006,11 +1974,6 @@ export interface components {
              */
             id: number;
             /**
-             * @description Championship name
-             * @example Championship Régional U18 male
-             */
-            name: string;
-            /**
              * @description Competition level
              * @example regional
              * @enum {string}
@@ -2028,11 +1991,6 @@ export interface components {
              * @example 1
              */
             id: number;
-            /**
-             * @description Pool name
-             * @example Poule A
-             */
-            name: string;
             /**
              * @description Pool letter
              * @example A

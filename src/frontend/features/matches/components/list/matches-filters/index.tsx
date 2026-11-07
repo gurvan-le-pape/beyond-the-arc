@@ -114,7 +114,9 @@ export function MatchesFilters({ filters, set, onReset }: MatchesFiltersProps) {
     },
     pool && {
       key: "pool",
-      label: selectedPool?.name ?? String(pool),
+      label: selectedPool
+        ? tMatches("poolWithLetter", { letter: selectedPool.letter })
+        : String(pool),
       onRemove: () => set({ pool: undefined }),
     },
     matchday && {
@@ -191,7 +193,10 @@ export function MatchesFilters({ filters, set, onReset }: MatchesFiltersProps) {
           value={pool}
           onChange={(pool) => set({ pool })}
           enabled={!!division && !!category && !!gender}
-          options={pools.map((p) => ({ value: p.id, label: p.name }))}
+          options={pools.map((p) => ({
+            value: p.id,
+            label: tMatches("poolWithLetter", { letter: p.letter }),
+          }))}
           allLabel={tCommon("filters.allPools")}
           waitLabel={
             division

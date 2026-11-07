@@ -41,9 +41,6 @@ export class MatchPoolRefDto {
   @ApiProperty({ description: "Pool ID", example: 1, type: Number })
   id!: number;
 
-  @ApiProperty({ description: "Pool name", example: "Poule A", type: String })
-  name!: string;
-
   @ApiProperty({ description: "Pool letter", example: "A", type: String })
   letter!: string;
 

@@ -474,11 +474,9 @@ describe("ClubsService", () => {
           poolId: 10,
           pool: {
             id: 10,
-            name: "Pool A",
             letter: "A",
             championship: {
               id: 1,
-              name: "Championship Régional U18",
               level: "regional",
               division: 1,
               committeeId: null,

@@ -90,10 +90,9 @@ export async function createPool(
     rows: [{ id: championshipId }],
   } = await client.query<{ id: number }>(
     `INSERT INTO championships
-       (name, category, season_year, level, division, gender, committee_id, league_id)
-     VALUES ($1, $2, '2099-2100', $3, $4, $5, $6, $7) RETURNING id`,
+       (category, season_year, level, division, gender, committee_id, league_id)
+     VALUES ($1, '2099-2100', $2, $3, $4, $5, $6) RETURNING id`,
     [
-      `Fixture ${nextTeamNumber}`,
       category,
       level,
       division,
@@ -105,9 +104,9 @@ export async function createPool(
   const {
     rows: [{ id: poolId }],
   } = await client.query<{ id: number }>(
-    `INSERT INTO pools (championship_id, letter, name)
-     VALUES ($1, $2, $3) RETURNING id`,
-    [championshipId, letter, `Pool ${letter}`],
+    `INSERT INTO pools (championship_id, letter)
+     VALUES ($1, $2) RETURNING id`,
+    [championshipId, letter],
   );
 
   const teamIds: number[] = [];

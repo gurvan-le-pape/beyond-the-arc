@@ -12,9 +12,6 @@ export class ChampionshipPoolDto {
   @ApiProperty({ example: "A", type: String })
   letter!: string;
 
-  @ApiProperty({ example: "Pool A", type: String })
-  name!: string;
-
   @ApiProperty({ example: 10, type: Number })
   nbMatchdays!: number;
 }
@@ -26,13 +23,6 @@ export class ChampionshipResponseDto {
     type: Number,
   })
   id!: number;
-
-  @ApiProperty({
-    description: "Championship name",
-    example: "Championship Régional U18 male",
-    type: String,
-  })
-  name!: string;
 
   @ApiProperty({
     description: "Age category",
