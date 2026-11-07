@@ -63,14 +63,18 @@ export function BottomSheet({
     setDragOffset(offset);
   }, []);
 
-  const handleDragEnd = useCallback(() => {
-    const sheetHeight = dialogRef.current?.offsetHeight ?? 300;
-    if (dragOffsetRef.current > sheetHeight * 0.35) onClose();
+  const resetDrag = useCallback(() => {
     dragStartY.current = null;
     dragOffsetRef.current = 0;
     setDragOffset(0);
     setIsDragging(false);
-  }, [onClose, dialogRef]);
+  }, []);
+
+  const handleDragEnd = useCallback(() => {
+    const sheetHeight = dialogRef.current?.offsetHeight ?? 300;
+    if (dragOffsetRef.current > sheetHeight * 0.35) onClose();
+    resetDrag();
+  }, [onClose, dialogRef, resetDrag]);
 
   useEffect(() => {
     if (!isDragging) return;
@@ -112,6 +116,8 @@ export function BottomSheet({
         onTouchStart={(e) => handleDragStart(e.touches[0].clientY)}
         onTouchMove={(e) => handleDragMove(e.touches[0].clientY)}
         onTouchEnd={handleDragEnd}
+        // The system took the touch: the reader never let go, so nothing closes.
+        onTouchCancel={resetDrag}
         onMouseDown={(e) => handleDragStart(e.clientY)}
         onKeyDown={(e) => {
           // Enter and Space both close, matching native button activation;
