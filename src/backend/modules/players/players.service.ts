@@ -375,7 +375,6 @@ export class PlayersService {
     const clubWhere = buildClubOrganizationWhere(filters);
     if (clubWhere) teamWhere.club = clubWhere;
 
-    if (filters.teamId) teamWhere.id = filters.teamId;
     if (filters.teamNumber) teamWhere.number = filters.teamNumber;
     if (filters.clubId) teamWhere.clubId = filters.clubId;
 

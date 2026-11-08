@@ -3742,8 +3742,6 @@ export interface operations {
                 gender?: "male" | "female";
                 /** @description Club ID to filter players by club */
                 clubId?: number;
-                /** @description Team ID to filter players by team */
-                teamId?: number;
                 /** @description Team number to filter players */
                 teamNumber?: number;
                 /** @description Player number to filter by jersey number */

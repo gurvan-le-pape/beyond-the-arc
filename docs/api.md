@@ -303,7 +303,7 @@ The two shot endpoints (`/team/:teamId/shots`, `/player/:playerId/shots`) return
 | GET    | `/players/:id`         | Single player with team detail                        | No     |
 | GET    | `/players/:id/matches` | Match history with per-match stats, most recent first | No     |
 
-`GET /players` supports filtering by `level`, `clubId`, `teamId`, `teamNumber`, `number` (jersey), `committeeId`, `leagueId`, `category`, `gender`, and `search` (player name, case-insensitive).
+`GET /players` supports filtering by `level`, `clubId`, `teamNumber`, `number` (jersey), `committeeId`, `leagueId`, `category`, `gender`, and `search` (player name, case-insensitive).
 
 `GET /players/:id/matches` returns each match the player appeared in, with their full stat line: points, rebounds (total, offensive, defensive), assists, steals, blocks, turnovers, fouls, three-point shooting, and `playtimeIntervals` — an array of `[start_sec, end_sec]` pairs representing their on-court stints.
 

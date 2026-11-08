@@ -449,18 +449,6 @@ describe("PlayersService", () => {
       );
     });
 
-    it("should apply teamId filter", async () => {
-      await service.findAllPlayers({ teamId: 3 });
-
-      expect(mockPrismaService.client.players.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: expect.objectContaining({
-            team: expect.objectContaining({ id: 3 }),
-          }),
-        }),
-      );
-    });
-
     it("should apply teamNumber filter", async () => {
       await service.findAllPlayers({ teamNumber: 2 });
 

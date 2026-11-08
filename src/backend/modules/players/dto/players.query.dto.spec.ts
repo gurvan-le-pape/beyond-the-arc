@@ -16,7 +16,6 @@ describe("GetPlayersQueryDto", () => {
     const dto = plainToInstance(GetPlayersQueryDto, {
       level: CompetitionLevel.REGIONAL,
       clubId: 1,
-      teamId: 1,
       teamNumber: 1,
       number: 10,
       committeeId: 1,
@@ -52,7 +51,6 @@ describe("GetPlayersQueryDto", () => {
   describe("numeric fields", () => {
     const numericFields = [
       "clubId",
-      "teamId",
       "teamNumber",
       "number",
       "committeeId",
@@ -64,7 +62,6 @@ describe("GetPlayersQueryDto", () => {
     it("should transform string values to numbers", async () => {
       const dto = plainToInstance(GetPlayersQueryDto, {
         clubId: "1",
-        teamId: "2",
         teamNumber: "3",
         number: "10",
         committeeId: "4",
@@ -73,7 +70,6 @@ describe("GetPlayersQueryDto", () => {
         limit: "25",
       });
       expect(dto.clubId).toBe(1);
-      expect(dto.teamId).toBe(2);
       expect(dto.teamNumber).toBe(3);
       expect(dto.number).toBe(10);
       expect(dto.committeeId).toBe(4);
