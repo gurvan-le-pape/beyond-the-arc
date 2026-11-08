@@ -125,7 +125,8 @@ describe("MatchesService", () => {
     id: 1,
     eventType: "made_layup",
     occurredAt: new Date("2024-02-05T19:02:00Z"),
-    description: "3-pointer",
+    shotX: new Prisma.Decimal("5.50"),
+    shotY: new Prisma.Decimal("3.20"),
     players: [
       {
         role: "shooter",
@@ -140,11 +141,6 @@ describe("MatchesService", () => {
         },
       },
     ],
-    shotLocation: {
-      id: 1,
-      x: new Prisma.Decimal("5.50"),
-      y: new Prisma.Decimal("3.20"),
-    },
   };
 
   // Reusable mock shape matching MATCH_DETAIL_SELECT
@@ -192,7 +188,8 @@ describe("MatchesService", () => {
         id: 1,
         eventType: "made_layup",
         occurredAt: new Date("2024-02-05T19:02:00Z"),
-        description: "3-pointer",
+        shotX: new Prisma.Decimal("5.50"),
+        shotY: new Prisma.Decimal("3.20"),
         players: [
           {
             role: "shooter",
@@ -207,11 +204,6 @@ describe("MatchesService", () => {
             },
           },
         ],
-        shotLocation: {
-          id: 1,
-          x: new Prisma.Decimal("5.50"),
-          y: new Prisma.Decimal("3.20"),
-        },
       },
     ],
   };
@@ -468,7 +460,7 @@ describe("MatchesService", () => {
 
     it("should handle events with no shot location", async () => {
       mockPrismaService.client.matchEvents.findMany.mockResolvedValue([
-        { ...mockMatchEventResult, shotLocation: null },
+        { ...mockMatchEventResult, shotX: null, shotY: null },
       ]);
 
       const result = await service.findMatchEventsByMatchId(1);
@@ -504,7 +496,8 @@ describe("MatchesService", () => {
   // What the shot queries' select returns: type and location only.
   const mockShotResult = {
     eventType: "made_layup",
-    shotLocation: { x: new Prisma.Decimal(5.5), y: new Prisma.Decimal(3.2) },
+    shotX: new Prisma.Decimal(5.5),
+    shotY: new Prisma.Decimal(3.2),
   };
 
   describe("findShotsByTeamId", () => {

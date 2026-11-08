@@ -98,7 +98,8 @@ const MATCH_EVENT_SELECT = {
   id: true,
   eventType: true,
   occurredAt: true,
-  description: true,
+  shotX: true,
+  shotY: true,
   players: {
     select: {
       role: true,
@@ -121,14 +122,17 @@ const MATCH_EVENT_SELECT = {
       },
     },
   },
-  shotLocation: {
-    select: {
-      id: true,
-      x: true,
-      y: true,
-    },
-  },
 } as const;
+
+/**
+ * Chronological, with events that share an instant (a foul, its free throws,
+ * the substitutions after them) in the simulator's order, which is the order
+ * they were inserted in.
+ */
+const EVENT_ORDER: Prisma.MatchEventsOrderByWithRelationInput[] = [
+  { occurredAt: "asc" },
+  { id: "asc" },
+];
 
 /**
  * Extended select for match detail — includes events.
@@ -137,7 +141,7 @@ const MATCH_DETAIL_SELECT = {
   ...MATCH_LIST_SELECT,
   matchEvents: {
     select: MATCH_EVENT_SELECT,
-    orderBy: { occurredAt: "asc" as const },
+    orderBy: EVENT_ORDER,
   },
 } as const;
 
@@ -176,7 +180,8 @@ const SHOT_TAKER_ROLES: Role[] = [Role.SHOOTER, Role.BLOCKED];
 /** What a shot chart reads of a shot event: its type and location. */
 const SHOT_SELECT = {
   eventType: true,
-  shotLocation: { select: { x: true, y: true } },
+  shotX: true,
+  shotY: true,
 } as const;
 
 type MatchListResult = Prisma.MatchesGetPayload<{
@@ -298,7 +303,7 @@ export class MatchesService {
       this.prisma.client.matchEvents.findMany({
         where: { matchId },
         select: MATCH_EVENT_SELECT,
-        orderBy: { occurredAt: "asc" },
+        orderBy: EVENT_ORDER,
       }),
     ]);
     if (!match) return [];
@@ -327,13 +332,13 @@ export class MatchesService {
     const events = await this.prisma.client.matchEvents.findMany({
       where: {
         match: { OR: [{ homeTeamId: teamId }, { awayTeamId: teamId }] },
-        shotLocation: { isNot: null },
+        shotX: { not: null },
         players: {
           some: { player: { teamId }, role: { in: SHOT_TAKER_ROLES } },
         },
       },
       select: SHOT_SELECT,
-      orderBy: { occurredAt: "asc" },
+      orderBy: EVENT_ORDER,
     });
 
     return events.flatMap((e) => this.mapShotToDto(e));
@@ -349,11 +354,11 @@ export class MatchesService {
   async findShotsByPlayerId(playerId: number): Promise<ShotDto[]> {
     const events = await this.prisma.client.matchEvents.findMany({
       where: {
-        shotLocation: { isNot: null },
+        shotX: { not: null },
         players: { some: { playerId, role: { in: SHOT_TAKER_ROLES } } },
       },
       select: SHOT_SELECT,
-      orderBy: { occurredAt: "asc" },
+      orderBy: EVENT_ORDER,
     });
 
     return events.flatMap((e) => this.mapShotToDto(e));
@@ -364,12 +369,12 @@ export class MatchesService {
    * location, so the empty branch only satisfies the type.
    */
   private mapShotToDto(event: ShotResult): ShotDto[] {
-    if (!event.shotLocation) return [];
+    if (event.shotX === null || event.shotY === null) return [];
 
     return [
       {
-        x: event.shotLocation.x.toNumber(),
-        y: event.shotLocation.y.toNumber(),
+        x: event.shotX.toNumber(),
+        y: event.shotY.toNumber(),
         eventType: event.eventType as EventType,
       },
     ];
@@ -449,7 +454,6 @@ export class MatchesService {
       occurredAt: event.occurredAt,
       period,
       secondsLeft,
-      description: event.description,
       players: event.players.map((p) => ({
         role: p.role as Role,
         player: {
@@ -462,13 +466,11 @@ export class MatchesService {
           },
         },
       })),
-      shotLocation: event.shotLocation
-        ? {
-            id: event.shotLocation.id,
-            x: event.shotLocation.x.toNumber(),
-            y: event.shotLocation.y.toNumber(),
-          }
-        : null,
+      // A CHECK constraint sets both coordinates or neither.
+      shotLocation:
+        event.shotX !== null && event.shotY !== null
+          ? { x: event.shotX.toNumber(), y: event.shotY.toNumber() }
+          : null,
     };
   }
 

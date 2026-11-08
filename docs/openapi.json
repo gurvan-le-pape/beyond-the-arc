@@ -4289,11 +4289,6 @@
       "ShotLocationDto": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "number",
-            "description": "Shot location ID",
-            "example": 1
-          },
           "x": {
             "type": "number",
             "description": "Metres across the court from the baseline corner (0–15)",
@@ -4306,7 +4301,6 @@
           }
         },
         "required": [
-          "id",
           "x",
           "y"
         ]
@@ -4381,12 +4375,6 @@
             "description": "Game-clock time left in the event's period, in whole seconds, as a scoreboard counts it down: 600 at tip-off, 0 on the buzzer. Quarters last 600 s and overtimes 300 s.",
             "example": 412
           },
-          "description": {
-            "type": "string",
-            "nullable": true,
-            "description": "Event description",
-            "example": "3-pointer"
-          },
           "players": {
             "description": "Players involved in the event",
             "type": "array",
@@ -4411,7 +4399,6 @@
           "occurredAt",
           "period",
           "secondsLeft",
-          "description",
           "players",
           "shotLocation"
         ]

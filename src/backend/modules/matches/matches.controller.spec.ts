@@ -295,7 +295,6 @@ describe("MatchesController", () => {
           period: 1,
           secondsLeft: 480,
           occurredAt: new Date("2024-02-05T19:02:00Z"),
-          description: null,
           players: [],
           shotLocation: null,
         },

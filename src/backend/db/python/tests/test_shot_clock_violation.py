@@ -46,9 +46,9 @@ def test_a_violation_only_happens_when_the_clock_has_run_out(clocks_and_matches)
 
 def test_a_violation_names_the_player_who_committed_it(clocks_and_matches):
     _, matches = clocks_and_matches
-    names = {name for _, name, _ in HOME + AWAY}
+    ids = {player_id for player_id, _, _ in HOME + AWAY}
     for event, _ in violations(matches):
-        assert event["description"].removesuffix(" committed a shot clock violation.") in names
+        assert event["player_roles"]["shooter"] in ids
 
 
 def test_play_restarts_from_an_inbound_unless_the_period_ended(clocks_and_matches):

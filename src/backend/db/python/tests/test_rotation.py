@@ -16,7 +16,7 @@ def rotations(count: int):
     random.seed(21)
     for index in range(count):
         players = roster(index * 100)
-        playtimes, _, substitutions = generate(players)
+        playtimes, substitutions = generate(players)
         yield players, playtimes, substitutions
 
 

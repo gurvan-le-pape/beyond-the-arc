@@ -1489,11 +1489,6 @@ export interface components {
         };
         ShotLocationDto: {
             /**
-             * @description Shot location ID
-             * @example 1
-             */
-            id: number;
-            /**
              * @description Metres across the court from the baseline corner (0–15)
              * @example 5.5
              */
@@ -1531,11 +1526,6 @@ export interface components {
              * @example 412
              */
             secondsLeft: number;
-            /**
-             * @description Event description
-             * @example 3-pointer
-             */
-            description: string | null;
             /** @description Players involved in the event */
             players: components["schemas"]["MatchEventPlayerDto"][];
             /** @description Shot location (if applicable) */

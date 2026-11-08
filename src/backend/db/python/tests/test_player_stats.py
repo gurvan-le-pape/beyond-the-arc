@@ -20,7 +20,7 @@ def turnovers_by_player(*events: dict) -> dict[int, int]:
 
 def generate(event_type: str) -> dict:
     return EventGenerator(state_manager=None).generate_event(
-        {"type": event_type}, [ATTACKER], [DEFENDER], "home", {}
+        {"type": event_type}, [ATTACKER], [DEFENDER], "home"
     )
 
 
