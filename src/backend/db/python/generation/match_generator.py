@@ -63,16 +63,8 @@ class MatchGenerator:
             cursor, match.id, result.home_score, result.away_score, result.overtime, forfeit=False
         )
 
-        # Shot locations
-        shot_coords = list({
-            (e["shot_location"]["x"], e["shot_location"]["y"])
-            for e in result.events
-            if e.get("shot_location")
-        })
-        shot_cache = match_repository.insert_shot_locations_bulk(cursor, shot_coords)
-
         # Events
-        event_ids = match_repository.insert_match_events_bulk(cursor, match.id, result.events, shot_cache)
+        event_ids = match_repository.insert_match_events_bulk(cursor, match.id, result.events)
         match_repository.insert_match_event_players_bulk(cursor, event_ids, result.events)
 
         # Stats (including playtime, both derived from the events above)
@@ -90,15 +82,14 @@ class MatchGenerator:
         Simulate one match without touching the database: rotations, events,
         final score and the per-player stat rows derived from those events.
         """
-        home_playtimes, home_names, home_subs = generate_playtime(home_players)
-        away_playtimes, away_names, away_subs = generate_playtime(away_players)
+        home_playtimes, home_subs = generate_playtime(home_players)
+        away_playtimes, away_subs = generate_playtime(away_players)
 
-        all_names = {**home_names, **away_names}
         all_subs = home_subs + away_subs
 
         positions = {player_id: position for player_id, _, position in home_players + away_players}
         match_events, home_score, away_score, final_buzzer = self.simulator.simulate_match(
-            home_playtimes, away_playtimes, all_names, starts_at, positions
+            home_playtimes, away_playtimes, starts_at, positions
         )
         overtime = final_buzzer > GAME_DURATION
         if overtime:
@@ -107,8 +98,6 @@ class MatchGenerator:
 
         # Append substitution events before sorting
         for sub in all_subs:
-            exiting_name = all_names.get(sub["exiting_player"], f"Player {sub['exiting_player']}")
-            entering_name = all_names.get(sub["entering_player"], f"Player {sub['entering_player']}")
             match_events.append({
                 "occurred_at": starts_at + timedelta(seconds=sub["time"]),
                 "event_type": "substitution",
@@ -116,7 +105,6 @@ class MatchGenerator:
                     "exiting_player": sub["exiting_player"],
                     "entering_player": sub["entering_player"],
                 },
-                "description": f"{entering_name} substitutes in for {exiting_name}.",
             })
 
         match_events.sort(key=lambda e: e["occurred_at"])

@@ -46,7 +46,7 @@ def test_an_and_one_is_placed_in_its_own_zone(event_type):
     category = MADE_SHOTS[event_type][0]
     for _ in range(50):
         event = EventGenerator(state_manager=None).generate_event(
-            {"type": event_type}, [1], [2], "home", {}
+            {"type": event_type}, [1], [2], "home"
         )
         distance = distance_from_rim(event["shot_location"])
 

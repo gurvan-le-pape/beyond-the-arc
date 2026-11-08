@@ -536,9 +536,6 @@ export class MatchEventPlayerDto {
  * without its origin, and no suffix can carry that.
  */
 export class ShotLocationDto {
-  @ApiProperty({ description: "Shot location ID", example: 1, type: Number })
-  id!: number;
-
   @ApiProperty({
     description: "Metres across the court from the baseline corner (0–15)",
     example: 5.5,
@@ -557,8 +554,8 @@ export class ShotLocationDto {
 /**
  * One shot on a team's or player's season shot chart: where it was taken and
  * what kind of attempt it was. The chart needs nothing else, so this carries
- * nothing else — not the event's players, clubs or description, which made the
- * full event ~470 bytes against ~55 for this.
+ * nothing else — not the event's players or clubs, which made the full event
+ * ~470 bytes against ~55 for this.
  *
  * Coordinates are the same as `ShotLocationDto`'s.
  */
@@ -622,14 +619,6 @@ export class MatchEventDto {
     type: Number,
   })
   secondsLeft!: number;
-
-  @ApiProperty({
-    description: "Event description",
-    example: "3-pointer",
-    type: String,
-    nullable: true,
-  })
-  description!: string | null;
 
   @ApiProperty({
     description: "Players involved in the event",

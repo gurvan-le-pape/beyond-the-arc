@@ -124,37 +124,6 @@ def update_match_result(
 
 
 # ---------------------------------------------------------------------------
-# Shot locations
-# ---------------------------------------------------------------------------
-
-def insert_shot_locations_bulk(
-    cursor: psycopg.Cursor,
-    coords: list[tuple[float, float]],
-) -> dict[tuple[float, float], int]:
-    """
-    Insert one shot_location row per coordinate and return a map of (x, y) → id.
-
-    No deduplication: two events at the same spot get two rows, which is fine —
-    there's no business rule requiring shared location rows, and the saving is
-    negligible for two-decimal coordinates.
-    """
-    if not coords:
-        return {}
-
-    placeholders = ",".join(["(%s,%s)"] * len(coords))
-    flat = [val for coord in coords for val in coord]
-    cursor.execute(
-        f"INSERT INTO shot_locations (x, y) VALUES {placeholders} RETURNING id, x, y",
-        flat,
-    )
-
-    return {
-        (float(row[1]), float(row[2])): row[0]
-        for row in cursor.fetchall()
-    }
-
-
-# ---------------------------------------------------------------------------
 # Match events
 # ---------------------------------------------------------------------------
 
@@ -162,24 +131,21 @@ def insert_match_events_bulk(
     cursor: psycopg.Cursor,
     match_id: int,
     events: list[dict],
-    shot_location_cache: dict[tuple[float, float], int],
 ) -> list[int]:
     """
     Insert all match events and return their IDs in insertion order.
     Uses a single INSERT ... VALUES (...) RETURNING for deterministic ID ordering.
+    A shot carries its location; any other event has neither coordinate.
     """
     rows = []
     for event in events:
-        shot_location_id = None
-        if loc := event.get("shot_location"):
-            shot_location_id = shot_location_cache.get((loc["x"], loc["y"]))
-
+        location = event.get("shot_location")
         rows.append((
             match_id,
             event["event_type"],
             event["occurred_at"],
-            event.get("description"),
-            shot_location_id,
+            location["x"] if location else None,
+            location["y"] if location else None,
         ))
 
     if not rows:
@@ -188,7 +154,7 @@ def insert_match_events_bulk(
     placeholders = ",".join(["(%s,%s,%s,%s,%s)"] * len(rows))
     flat = [val for row in rows for val in row]
     cursor.execute(
-        f"INSERT INTO match_events (match_id, event_type, occurred_at, description, shot_location_id) VALUES {placeholders} RETURNING id",
+        f"INSERT INTO match_events (match_id, event_type, occurred_at, shot_x, shot_y) VALUES {placeholders} RETURNING id",
         flat,
     )
 

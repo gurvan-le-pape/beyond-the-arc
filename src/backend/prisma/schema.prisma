@@ -187,22 +187,14 @@ model MatchEvents {
   matchId        Int                 @map("match_id")
   eventType      String              @map("event_type") @db.VarChar(50)
   occurredAt     DateTime            @map("occurred_at") @db.Timestamptz
-  description    String?
-  shotLocationId Int?                @map("shot_location_id")
-  shotLocation   ShotLocations?      @relation(fields: [shotLocationId], references: [id], onDelete: SetNull)
+  // A shot's location, in metres on the half-court. The CHECK
+  // match_events_shot_paired (migration SQL) sets both or neither.
+  shotX          Decimal?            @map("shot_x") @db.Decimal(5, 2)
+  shotY          Decimal?            @map("shot_y") @db.Decimal(5, 2)
   players        MatchEventPlayers[]
 
   @@index([matchId], map: "idx_match_events_match_id")
   @@map("match_events")
-}
-
-model ShotLocations {
-  id     Int           @id @default(autoincrement())
-  x      Decimal       @db.Decimal(5, 2)
-  y      Decimal       @db.Decimal(5, 2)
-  events MatchEvents[]
-
-  @@map("shot_locations")
 }
 
 model MatchEventPlayers {

@@ -74,4 +74,17 @@ describe("match constraints", () => {
       "matches_distinct_teams",
     );
   });
+
+  it.each([
+    ["only x", "5.5", null],
+    ["only y", null, "3.2"],
+  ])("rejects a shot event with %s", async (_name, x, y) => {
+    await expect(
+      client.query(
+        `INSERT INTO match_events (match_id, event_type, occurred_at, shot_x, shot_y)
+         VALUES ($1, 'made_layup', now(), $2, $3)`,
+        [match, x, y],
+      ),
+    ).rejects.toThrow("match_events_shot_paired");
+  });
 });
