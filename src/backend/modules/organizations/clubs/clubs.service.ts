@@ -400,6 +400,7 @@ export class ClubsService {
       gamesPlayed: standing.gamesPlayed,
       gamesWon: standing.gamesWon,
       gamesLost: standing.gamesLost,
+      gamesForfeited: standing.gamesForfeited,
       pointDifference: standing.pointDifference,
       poolId: standing.poolId,
     };

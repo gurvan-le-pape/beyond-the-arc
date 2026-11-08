@@ -297,6 +297,7 @@ describe("ClubsController", () => {
               gamesPlayed: 10,
               gamesWon: 7,
               gamesLost: 3,
+              gamesForfeited: 0,
               pointDifference: 25,
               poolId: 1,
             },
@@ -343,6 +344,7 @@ describe("ClubsController", () => {
               gamesPlayed: 0, // no games played yet
               gamesWon: 0,
               gamesLost: 0,
+              gamesForfeited: 0,
               pointDifference: 0,
               poolId: 2,
             },

@@ -1,7 +1,7 @@
 // src/backend/modules/competitions/leaderboards/recent-form.ts
 
 /** One game's outcome for one team. */
-export const FormResult = { WIN: "W", LOSS: "L" } as const;
+export const FormResult = { WIN: "W", LOSS: "L", FORFEIT: "F" } as const;
 export type FormResult = (typeof FormResult)[keyof typeof FormResult];
 
 /** How many games a team's form covers. */
@@ -14,6 +14,7 @@ export interface FormMatch {
   awayTeamId: number;
   homeTeamScore: number | null;
   awayTeamScore: number | null;
+  forfeit: boolean;
 }
 
 /** One game of a team's form: the match, and how it went for that team. */
@@ -27,8 +28,8 @@ export interface FormGame {
  * left to right as the season went.
  *
  * A match without both scores decides nothing and is skipped; basketball has
- * no draws, so every scored match is a win for one side and a loss for the
- * other.
+ * no draws, so every scored match is a win for one side and, for the other, a
+ * loss, or a forfeit when that side forfeited it.
  *
  * @param matches - completed matches, newest first
  * @returns games by team id; a team with no scored match is absent
@@ -48,13 +49,14 @@ export function buildRecentForm(
   for (const match of matches) {
     if (match.homeTeamScore === null || match.awayTeamScore === null) continue;
     const homeWon = match.homeTeamScore > match.awayTeamScore;
+    const lost = match.forfeit ? FormResult.FORFEIT : FormResult.LOSS;
     record(match.homeTeamId, {
       matchId: match.id,
-      result: homeWon ? FormResult.WIN : FormResult.LOSS,
+      result: homeWon ? FormResult.WIN : lost,
     });
     record(match.awayTeamId, {
       matchId: match.id,
-      result: homeWon ? FormResult.LOSS : FormResult.WIN,
+      result: homeWon ? lost : FormResult.WIN,
     });
   }
 

@@ -84,7 +84,7 @@ export function LeaderboardTable({
       numeric: true,
       render: (row) => (
         <span className="whitespace-nowrap">
-          {row.gamesWon}–{row.gamesLost}
+          {row.gamesWon}–{row.gamesLost}–{row.gamesForfeited}
         </span>
       ),
     },

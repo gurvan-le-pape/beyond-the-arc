@@ -3360,6 +3360,11 @@
             "description": "Games lost",
             "example": 2
           },
+          "gamesForfeited": {
+            "type": "number",
+            "description": "Games forfeited: lost by not playing, for no points",
+            "example": 0
+          },
           "pointDifference": {
             "type": "number",
             "description": "Goal difference",
@@ -3378,6 +3383,7 @@
           "gamesPlayed",
           "gamesWon",
           "gamesLost",
+          "gamesForfeited",
           "pointDifference",
           "poolId"
         ]
@@ -3777,10 +3783,11 @@
           "result": {
             "enum": [
               "W",
-              "L"
+              "L",
+              "F"
             ],
             "type": "string",
-            "description": "How it went for the team: W for a win, L for a loss",
+            "description": "How it went for the team: W for a win, L for a loss, F for a forfeit",
             "example": "W"
           }
         },

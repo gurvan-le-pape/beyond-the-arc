@@ -103,7 +103,7 @@ export function ClubTeamsTable({
       width: "fit",
       from: "sm",
       render: ({ leaderboard }) =>
-        `${leaderboard.gamesWon}–${leaderboard.gamesLost}`,
+        `${leaderboard.gamesWon}–${leaderboard.gamesLost}–${leaderboard.gamesForfeited}`,
     },
   ];
 

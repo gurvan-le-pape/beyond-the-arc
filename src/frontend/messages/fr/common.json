@@ -98,9 +98,9 @@
       "gamesLost": "D",
       "gamesForfeited": "F",
       "pointDifference": "Diff",
-      "record": "V–D"
+      "record": "V–D–F"
     },
-    "record": "Victoires–défaites"
+    "record": "Victoires–défaites–forfaits"
   },
   "matchHistory": {
     "date": "Date",

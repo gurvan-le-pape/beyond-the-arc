@@ -28,6 +28,8 @@
     "loss": "Défaite",
     "winAbbr": "V",
     "lossAbbr": "D",
+    "forfeit": "Forfait",
+    "forfeitAbbr": "F",
     "none": "Aucun match joué"
   },
   "leaderboardTitle": "Classement",
