@@ -24,6 +24,7 @@
     "body": "Le résultat de ce match n'est pas disponible."
   },
   "forfeit": "Forfait",
+  "forfeitShort": "F",
   "forfeitNotice": {
     "title": "Forfait",
     "body": "{team} a déclaré forfait\u00a0: le match n'a pas été joué. Il est enregistré {score} pour {winner}, sans statistiques ni actions de jeu."

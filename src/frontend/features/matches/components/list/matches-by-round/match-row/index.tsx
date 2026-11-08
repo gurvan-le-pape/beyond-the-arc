@@ -36,7 +36,8 @@ interface MatchRowProps {
  *
  * The matchup links to the match page only once the match is played: before
  * that, the page has nothing to show. A forfeit was never played, so it has no
- * quarters to expand into; a spacer the button's size keeps its row aligned.
+ * quarters to expand into: its F badge takes the button's place, which keeps
+ * its scores in line with the other rows'.
  */
 export function MatchRow({ match, expanded, onToggleExpand }: MatchRowProps) {
   const {
@@ -85,9 +86,10 @@ export function MatchRow({ match, expanded, onToggleExpand }: MatchRowProps) {
             {tMatches("overtimeShort")}
           </Badge>
         )}
-        {match.forfeit && <ForfeitBadge />}
         {match.forfeit ? (
-          <div className="h-8 w-8 shrink-0" aria-hidden="true" />
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center">
+            <ForfeitBadge short />
+          </div>
         ) : (
           <ExpandButton
             expanded={expanded}
