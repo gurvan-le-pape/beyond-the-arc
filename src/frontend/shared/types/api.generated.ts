@@ -3385,8 +3385,6 @@ export interface operations {
                 division?: number;
                 /** @description Pool ID to filter matches */
                 poolId?: number;
-                /** @description Championship ID to filter matches */
-                championshipId?: number;
                 /** @description Matchday number */
                 matchday?: number;
                 /** @description Date filter (YYYY-MM-DD format) */

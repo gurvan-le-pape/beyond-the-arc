@@ -65,42 +65,6 @@ export const matchesService = {
   },
 
   /**
-   * Every match of a championship, unpaginated.
-   *
-   * Pages through `/matches` at the API's maximum page size until every page
-   * is fetched. A bare `GET /matches?championshipId=` would only return the
-   * first page, inside a paginated envelope.
-   *
-   * @param championshipId - the championship whose matches to fetch
-   * @param signal - TanStack Query's `queryFn` signal
-   * @returns every match in the championship
-   */
-  async getByChampionshipId(
-    championshipId: number,
-    signal?: AbortSignal,
-  ): Promise<Match[]> {
-    const limit = 100;
-    const matches: Match[] = [];
-    let page = 1;
-    let totalPages = 1;
-
-    do {
-      const { items, totalPages: pages } = await request<
-        PaginatedResponse<Match>
-      >("/matches", {
-        params: { championshipId, page, limit },
-        revalidate,
-        signal,
-      });
-      matches.push(...items);
-      totalPages = pages;
-      page += 1;
-    } while (page <= totalPages);
-
-    return matches;
-  },
-
-  /**
    * Every event of a match, in game order.
    *
    * @param matchId - the match whose events to fetch

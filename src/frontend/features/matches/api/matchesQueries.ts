@@ -40,7 +40,7 @@ export const matchesQueries = {
    * Query options for fetching all matches with filters and pagination.
    *
    * @example
-   * useQuery(matchesQueries.list({ championshipId: 1 }))
+   * useQuery(matchesQueries.list({ poolId: 1 }))
    *
    * @param filters - filter and pagination criteria; part of the cache key, so each combination caches separately
    * @returns query options to spread into `useQuery` — key, fetcher and cache policy together

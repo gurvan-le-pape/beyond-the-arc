@@ -274,7 +274,7 @@ Each row is a team's record in the pool — games played, won, lost and forfeite
 | GET    | `/matches/team/:teamId/shots`      | Every shot a team took across its matches           | No     |
 | GET    | `/matches/player/:playerId/shots`  | Every shot a player took across their matches       | 5 min  |
 
-`GET /matches` supports the most extensive filter set in the API: `level`, `division`, `committeeId`, `leagueId`, `category`, `gender`, `poolId`, `championshipId`, `matchday`, `date` (YYYY-MM-DD), and `search` (club name). Default pagination: `page: 1`, `limit: 50`, max `limit: 100`.
+`GET /matches` supports the most extensive filter set in the API: `level`, `division`, `committeeId`, `leagueId`, `category`, `gender`, `poolId`, `matchday`, `date` (YYYY-MM-DD), and `search` (club name). Default pagination: `page: 1`, `limit: 50`, max `limit: 100`.
 
 The two shot endpoints (`/team/:teamId/shots`, `/player/:playerId/shots`) return every shot with its coordinates and event type, and feed the shot charts on team and player pages. The team one is uncached on purpose: a season of team shots (~60 KB) exceeds the per-entry size the bounded cache was sized for.
 

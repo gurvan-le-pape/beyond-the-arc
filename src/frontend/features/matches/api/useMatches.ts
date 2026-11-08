@@ -22,7 +22,7 @@ import { matchesPrefetch, matchesQueries } from "./matchesQueries";
  *
  * @example
  * const { data, isLoading } = useMatches({
- *   championshipId: 1,
+ *   poolId: 1,
  *   page: 1,
  *   limit: 20,
  * });

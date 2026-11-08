@@ -40,17 +40,6 @@ export class GetMatchesQueryDto extends CompetitionScopeQueryDto {
   poolId?: number;
 
   @ApiPropertyOptional({
-    description: "Championship ID to filter matches",
-    example: 1,
-    type: Number,
-  })
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  championshipId?: number;
-
-  @ApiPropertyOptional({
     description: "Matchday number",
     example: 1,
     type: Number,

@@ -1341,17 +1341,6 @@
             }
           },
           {
-            "name": "championshipId",
-            "required": false,
-            "in": "query",
-            "description": "Championship ID to filter matches",
-            "schema": {
-              "minimum": 1,
-              "example": 1,
-              "type": "number"
-            }
-          },
-          {
             "name": "matchday",
             "required": false,
             "in": "query",

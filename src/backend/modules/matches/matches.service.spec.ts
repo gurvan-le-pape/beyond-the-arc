@@ -622,42 +622,7 @@ describe("MatchesService", () => {
       );
     });
 
-    it("should apply championshipId filter", async () => {
-      await service.findAllMatches({ championshipId: 3 });
-
-      expect(mockPrismaService.client.matches.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: expect.objectContaining({
-            homeTeam: {
-              pool: expect.objectContaining({ championshipId: 3 }),
-            },
-          }),
-        }),
-      );
-    });
-
-    it("should apply championshipId and pool filters together", async () => {
-      await service.findAllMatches({
-        championshipId: 3,
-        level: "regional",
-        division: 1,
-      });
-
-      expect(mockPrismaService.client.matches.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: expect.objectContaining({
-            homeTeam: {
-              pool: expect.objectContaining({
-                championshipId: 3,
-                championship: expect.objectContaining({ level: "regional" }),
-              }),
-            },
-          }),
-        }),
-      );
-    });
-
-    it("should apply pool filter without championshipId", async () => {
+    it("should apply the championship filters through the pool", async () => {
       await service.findAllMatches({ level: "regional", division: 1 });
 
       expect(mockPrismaService.client.matches.findMany).toHaveBeenCalledWith(
