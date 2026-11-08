@@ -1,7 +1,7 @@
 // src/frontend/features/organizations/committees/api/committees.service.ts
 import { request, ServerRevalidate } from "@/lib/services/api";
 
-import type { Committee } from "../types/Committees";
+import type { Committee, CommitteeDetail } from "../types/Committees";
 import type { CommitteeFilters } from "../types/CommitteesFilters";
 
 /** Committees are static reference data. */
@@ -31,13 +31,13 @@ export const committeesService = {
   },
 
   /**
-   * One committee.
+   * One committee, with every one of its clubs.
    *
    * @param id - the committee's id
    * @param signal - TanStack Query's `queryFn` signal
-   * @returns the committee — a 404 throws an `ApiError`
+   * @returns the committee and its clubs — a 404 throws an `ApiError`
    */
-  getById(id: number, signal?: AbortSignal): Promise<Committee> {
+  getById(id: number, signal?: AbortSignal): Promise<CommitteeDetail> {
     return request(`/committees/${id}`, { revalidate, signal });
   },
 };

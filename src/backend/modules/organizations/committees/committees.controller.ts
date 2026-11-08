@@ -17,7 +17,10 @@ import { ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 
 import { CommitteesService } from "./committees.service";
 import { GetCommitteesQueryDto } from "./dto/committees.query.dto";
-import { CommitteeResponseDto } from "./dto/committees.response.dto";
+import {
+  CommitteeDetailResponseDto,
+  CommitteeResponseDto,
+} from "./dto/committees.response.dto";
 
 /**
  * Controller handling committee-related endpoints.
@@ -107,7 +110,7 @@ export class CommitteesController {
    * No caching on this endpoint to ensure fresh data.
    *
    * @param id - The committee ID
-   * @returns The committee details
+   * @returns The committee and every one of its clubs
    *
    * @example
    * GET /committees/1
@@ -139,7 +142,7 @@ export class CommitteesController {
     type: Number,
     example: 1,
   })
-  @ApiEnvelope(CommitteeResponseDto, "Committee successfully retrieved")
+  @ApiEnvelope(CommitteeDetailResponseDto, "Committee successfully retrieved")
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: "Committee not found",
@@ -159,7 +162,7 @@ export class CommitteesController {
   })
   async getCommitteeById(
     @Param("id", ParseEntityIdPipe) id: number,
-  ): Promise<CommitteeResponseDto> {
+  ): Promise<CommitteeDetailResponseDto> {
     return this.committeesService.findCommitteeById(id);
   }
 }

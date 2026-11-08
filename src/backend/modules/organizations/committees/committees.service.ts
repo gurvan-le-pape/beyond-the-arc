@@ -4,7 +4,10 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 
 import { Prisma } from "../../../prisma/generated/prisma/client";
-import { CommitteeResponseDto } from "./dto/committees.response.dto";
+import {
+  CommitteeDetailResponseDto,
+  CommitteeResponseDto,
+} from "./dto/committees.response.dto";
 
 /**
  * Fields to select from the committees table.
@@ -78,23 +81,32 @@ export class CommitteesService {
   }
 
   /**
-   * Finds a committee by its ID.
+   * Finds a committee by its ID, with every one of its clubs.
    *
    * @param committeeId - The committee ID
-   * @returns Committee DTO
+   * @returns The committee and its clubs, by name
    * @throws NotFoundException if committee doesn't exist
    */
-  async findCommitteeById(committeeId: number): Promise<CommitteeResponseDto> {
-    const committee = await this.prisma.client.committees.findUnique({
-      where: { id: committeeId },
-      select: COMMITTEE_SELECT,
-    });
+  async findCommitteeById(
+    committeeId: number,
+  ): Promise<CommitteeDetailResponseDto> {
+    const [committee, clubs] = await Promise.all([
+      this.prisma.client.committees.findUnique({
+        where: { id: committeeId },
+        select: COMMITTEE_SELECT,
+      }),
+      this.prisma.client.clubs.findMany({
+        where: { committeeId },
+        select: { id: true, name: true },
+        orderBy: [{ name: "asc" }, { id: "asc" }],
+      }),
+    ]);
 
     if (!committee) {
       throw new NotFoundException(`Committee with ID ${committeeId} not found`);
     }
 
-    return this.mapToDto(committee);
+    return { ...this.mapToDto(committee), clubs };
   }
 
   /**

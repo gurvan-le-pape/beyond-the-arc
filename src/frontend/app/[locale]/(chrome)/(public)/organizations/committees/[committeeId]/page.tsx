@@ -5,7 +5,6 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { championshipsService } from "@/features/competitions/championships/api";
 import { ChampionshipGrid } from "@/features/competitions/championships/components";
-import { clubsService } from "@/features/organizations/clubs/api";
 import { committeesService } from "@/features/organizations/committees/api";
 import { CommitteeHeader } from "@/features/organizations/committees/components";
 import {
@@ -77,19 +76,14 @@ async function CommitteePage({
     namespace: "organizations",
   });
 
-  const [committee, { items: championships }, { items: clubs }] =
-    await Promise.all([
-      committeesService.getById(committeeId),
-      championshipsService.getAll({
-        level: CompetitionLevel.DEPARTMENTAL,
-        committeeId,
-        limit: 100,
-      }),
-      clubsService.getAll({
-        level: CompetitionLevel.DEPARTMENTAL,
-        committeeId,
-      }),
-    ]).catch(handleServerError);
+  const [committee, { items: championships }] = await Promise.all([
+    committeesService.getById(committeeId),
+    championshipsService.getAll({
+      level: CompetitionLevel.DEPARTMENTAL,
+      committeeId,
+      limit: 100,
+    }),
+  ]).catch(handleServerError);
 
   const placeName = committee.department.name;
 
@@ -114,7 +108,7 @@ async function CommitteePage({
         ffbbUrl={committee.ffbbUrl}
       />
       <SearchableLinkList
-        items={clubs}
+        items={committee.clubs}
         title={tCommon("sectionTitles.clubs")}
         searchPlaceholder={tCommon("searchPlaceholder")}
         basePath="/organizations/clubs"

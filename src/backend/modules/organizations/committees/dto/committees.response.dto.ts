@@ -75,3 +75,27 @@ export class CommitteeResponseDto {
   })
   ffbbUrl!: string | null;
 }
+
+/** A club of the committee, as its page lists it. */
+export class CommitteeClubDto {
+  @ApiProperty({ description: "Club ID", example: 1, type: Number })
+  id!: number;
+
+  @ApiProperty({
+    description: "Club name",
+    example: "BOURG BASKET",
+    type: String,
+  })
+  name!: string;
+}
+
+/**
+ * Returned by GET /committees/:id: the committee and every one of its clubs.
+ */
+export class CommitteeDetailResponseDto extends CommitteeResponseDto {
+  @ApiProperty({
+    description: "Every club of the committee, by name",
+    type: [CommitteeClubDto],
+  })
+  clubs!: CommitteeClubDto[];
+}
