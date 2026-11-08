@@ -96,6 +96,7 @@
     "src/backend/common/decorators",
     "src/backend/common/dto",
     "src/backend/common/filters",
+    "src/backend/common/guards",
     "src/backend/common/interceptors",
     "src/backend/common/pipes",
     "src/backend/common/utils"

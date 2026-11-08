@@ -172,6 +172,22 @@ describe("HTTP pipeline (composed)", () => {
     });
   });
 
+  describe("undeclared query parameters", () => {
+    it("rejects a parameter on a route with no query DTO, before cache and handler", async () => {
+      // The cache key is the full URL, so a route that answered `?a=1` with
+      // 200 would store one copy of its body per junk parameter.
+      const res = await request(server).get("/api/leagues?a=1").expect(400);
+
+      expect(res.body).toMatchObject({
+        statusCode: 400,
+        error: "Bad Request",
+        message: ["property a should not exist"],
+      });
+      expect(prisma.client.leagues.findMany).not.toHaveBeenCalled();
+      expect(await cache.get("cache:/api/leagues?a=1")).toBeUndefined();
+    });
+  });
+
   describe("errors", () => {
     it("rejects a non-numeric id with 400 in the error shape", async () => {
       const res = await request(server).get("/api/teams/abc").expect(400);
