@@ -1942,66 +1942,6 @@
         ]
       }
     },
-    "/api/players/filter-values": {
-      "get": {
-        "description": "Returns available player numbers and team numbers. Optionally scoped to a committee or league.",
-        "operationId": "PlayersController_getPlayerFilterValues",
-        "parameters": [
-          {
-            "name": "committeeId",
-            "required": false,
-            "in": "query",
-            "description": "Filter by committee ID",
-            "schema": {
-              "minimum": 1,
-              "example": 1,
-              "type": "number"
-            }
-          },
-          {
-            "name": "leagueId",
-            "required": false,
-            "in": "query",
-            "description": "Filter by league ID",
-            "schema": {
-              "minimum": 1,
-              "example": 1,
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Filter values successfully retrieved",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiEnvelopeDto"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "$ref": "#/components/schemas/FilterValuesPlayersResponseDto"
-                        }
-                      },
-                      "required": [
-                        "data"
-                      ]
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get available filter values for players",
-        "tags": [
-          "players"
-        ]
-      }
-    },
     "/api/players/{id}": {
       "get": {
         "description": "Retrieves detailed information about a specific player including team information",
@@ -2354,66 +2294,6 @@
           }
         },
         "summary": "Get all teams with filters",
-        "tags": [
-          "teams"
-        ]
-      }
-    },
-    "/api/teams/filter-values": {
-      "get": {
-        "description": "Returns available team numbers, pool letters, and divisions. Optionally scoped to a committee or league.",
-        "operationId": "TeamsController_getTeamFilterValues",
-        "parameters": [
-          {
-            "name": "committeeId",
-            "required": false,
-            "in": "query",
-            "description": "Filter by committee ID",
-            "schema": {
-              "minimum": 1,
-              "example": 1,
-              "type": "number"
-            }
-          },
-          {
-            "name": "leagueId",
-            "required": false,
-            "in": "query",
-            "description": "Filter by league ID",
-            "schema": {
-              "minimum": 1,
-              "example": 1,
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Filter values successfully retrieved",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiEnvelopeDto"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "$ref": "#/components/schemas/FilterValuesTeamsResponseDto"
-                        }
-                      },
-                      "required": [
-                        "data"
-                      ]
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get available filter values for teams",
         "tags": [
           "teams"
         ]
@@ -5115,27 +4995,6 @@
           "team"
         ]
       },
-      "FilterValuesPlayersResponseDto": {
-        "type": "object",
-        "properties": {
-          "numbers": {
-            "type": "array",
-            "items": {
-              "type": "number"
-            }
-          },
-          "teamNumbers": {
-            "type": "array",
-            "items": {
-              "type": "number"
-            }
-          }
-        },
-        "required": [
-          "numbers",
-          "teamNumbers"
-        ]
-      },
       "HistoryClubRefDto": {
         "type": "object",
         "properties": {
@@ -5665,26 +5524,6 @@
           "club",
           "pool",
           "_count"
-        ]
-      },
-      "FilterValuesTeamsResponseDto": {
-        "type": "object",
-        "properties": {
-          "numbers": {
-            "description": "Available team numbers",
-            "example": [
-              1,
-              2,
-              3
-            ],
-            "type": "array",
-            "items": {
-              "type": "number"
-            }
-          }
-        },
-        "required": [
-          "numbers"
         ]
       },
       "TeamRosterPlayerDto": {

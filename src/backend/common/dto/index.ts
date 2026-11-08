@@ -12,7 +12,6 @@ export * from "./domain/club-ref.dto";
 export * from "./domain/committee-ref.dto";
 export * from "./domain/competition-scope.query.dto";
 export * from "./domain/league-ref.dto";
-export * from "./domain/organization-scope.query.dto";
 export * from "./domain/player-summary.dto";
 export * from "./domain/pool-ref.dto";
 export * from "./domain/rebounds.dto";

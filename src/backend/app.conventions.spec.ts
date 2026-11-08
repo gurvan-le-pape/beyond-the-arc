@@ -609,9 +609,8 @@ describe("API conventions", () => {
 
     // The converse: a single-object route addressed by id must say it can
     // 404, since that is the one shape where an unknown id has no empty
-    // answer to give. Routes with no path param (`/api/stats`,
-    // `/api/players/filter-values`, the health probes) are excluded — there
-    // is no id to miss.
+    // answer to give. Routes with no path param (`/api/stats`, the health
+    // probes) are excluded — there is no id to miss.
     const byIdWithout404 = successResponses()
       .filter(({ schema }) => {
         const text = JSON.stringify(schema);

@@ -106,18 +106,6 @@ export class PlayerResponseDto {
 }
 
 /**
- * Available filter values for player queries.
- * Returned by GET /players/filter-values.
- */
-export class FilterValuesPlayersResponseDto {
-  @ApiProperty({ type: [Number] })
-  numbers!: number[];
-
-  @ApiProperty({ type: [Number] })
-  teamNumbers!: number[];
-}
-
-/**
  * Player statistics for a match.
  * All stat fields are non-nullable: parseBoxScoreLine rejects a stored line
  * missing any of them.

@@ -123,11 +123,6 @@
       "count": 1
     }
   },
-  "features/matches/components/list/matches-filters/useMatchesCascadeOptions.ts": {
-    "@typescript-eslint/no-unnecessary-condition": {
-      "count": 2
-    }
-  },
   "features/matches/utils/buildMatchTeam.ts": {
     "@typescript-eslint/no-unnecessary-condition": {
       "count": 1
@@ -202,9 +197,6 @@
     }
   },
   "features/players/components/list/PlayersFilters.tsx": {
-    "complexity": {
-      "count": 1
-    },
     "max-lines-per-function": {
       "count": 1
     }

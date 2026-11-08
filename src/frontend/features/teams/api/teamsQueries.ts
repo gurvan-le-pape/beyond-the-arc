@@ -52,25 +52,4 @@ export const teamsQueries = {
       teamsService.getAll(filters, signal),
     ...TEAMS_CONFIG,
   }),
-
-  /**
-   * Query options for fetching available filter values for teams.
-   * Returns pool numbers, letters, and divisions scoped to an optional
-   * committee or league. Very short staleTime — values shift as pools
-   * are created/updated by admins and must stay current for filter UIs.
-   *
-   * @example
-   * useQuery(teamsQueries.filterValues({ committeeId: 1 }))
-   *
-   * @param params - optional committee or league scope for the available values
-   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
-   */
-  filterValues: (params?: { committeeId?: number; leagueId?: number }) => ({
-    queryKey: teamsKeys.filterValues(params),
-    queryFn: ({ signal }: QueryFunctionContext) =>
-      teamsService.getFilterValues(params, signal),
-    ...TEAMS_CONFIG,
-    // Filter values reflect live admin changes — keep very fresh
-    staleTime: 30 * 1000,
-  }),
 } as const;

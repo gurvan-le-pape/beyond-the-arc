@@ -88,19 +88,6 @@ export class TeamResponseDto {
 }
 
 /**
- * Available filter values for team queries.
- * Returned by GET /teams/filter-values.
- */
-export class FilterValuesTeamsResponseDto {
-  @ApiProperty({
-    description: "Available team numbers",
-    example: [1, 2, 3],
-    type: [Number],
-  })
-  numbers!: number[];
-}
-
-/**
  * Match history entry for a team.
  */
 export class TeamMatchHistoryDto {

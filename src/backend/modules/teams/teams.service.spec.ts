@@ -183,22 +183,6 @@ describe("TeamsService", () => {
     });
   });
 
-  describe("findTeamFilterValues", () => {
-    it("should return available filter values", async () => {
-      // Arrange
-      mockPrismaService.client.teams.findMany.mockResolvedValueOnce([
-        { number: 1 },
-        { number: 2 },
-      ]);
-
-      // Act
-      const result = await service.findTeamFilterValues();
-
-      // Assert
-      expect(result).toEqual({ numbers: [1, 2] });
-    });
-  });
-
   describe("findTeamById", () => {
     it("should return team when found", async () => {
       // Arrange
@@ -390,36 +374,6 @@ describe("TeamsService", () => {
       );
       await expect(service.findTeamMatchHistory(999)).rejects.toThrow(
         "Team with ID 999 not found",
-      );
-    });
-  });
-
-  describe("findTeamFilterValues", () => {
-    it("should apply committeeId filter when provided", async () => {
-      mockPrismaService.client.teams.findMany.mockResolvedValue([]);
-      mockPrismaService.client.pools.findMany.mockResolvedValue([]);
-      mockPrismaService.client.championships.findMany.mockResolvedValue([]);
-
-      await service.findTeamFilterValues({ committeeId: 2 });
-
-      expect(mockPrismaService.client.teams.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: { club: { committeeId: 2 } },
-        }),
-      );
-    });
-
-    it("should apply leagueId filter when provided", async () => {
-      mockPrismaService.client.teams.findMany.mockResolvedValue([]);
-      mockPrismaService.client.pools.findMany.mockResolvedValue([]);
-      mockPrismaService.client.championships.findMany.mockResolvedValue([]);
-
-      await service.findTeamFilterValues({ leagueId: 3 });
-
-      expect(mockPrismaService.client.teams.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: { club: { committee: { leagueId: 3 } } },
-        }),
       );
     });
   });

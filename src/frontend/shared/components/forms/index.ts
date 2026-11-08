@@ -5,6 +5,7 @@
 
 export * from "./DebouncedSearchField";
 export * from "./fieldStyles";
+export * from "./NumberField";
 export * from "./SearchField";
 export * from "./Select";
 export * from "./TextField";

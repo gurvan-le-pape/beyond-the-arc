@@ -88,10 +88,10 @@ Paginated endpoints (clubs, championships, teams, players, matches) nest the pag
 
 All three shapes are described in `docs/openapi.json`, and therefore in the generated frontend types. They come from `ApiEnvelopeDto` + `ApiListMetaDto` / `ApiPageMetaDto` in `@common/dto`, composed onto a concrete `data` schema by the three decorators in `@common/decorators`:
 
-| decorator | `data` | `meta` |
-|---|---|---|
-| `@ApiEnvelope(Dto, description)` | one object | absent |
-| `@ApiEnvelopeList(Dto, description)` | array | `{ count }` |
+| decorator                                | `data`                                    | `meta`                               |
+| ---------------------------------------- | ----------------------------------------- | ------------------------------------ |
+| `@ApiEnvelope(Dto, description)`         | one object                                | absent                               |
+| `@ApiEnvelopeList(Dto, description)`     | array                                     | `{ count }`                          |
 | `@ApiEnvelopePage(ItemDto, description)` | `PaginatedResponseDto` with typed `items` | `{ count, page, limit, totalPages }` |
 
 **A new 200 on an `/api` route uses one of these, not a bare `@ApiResponse`.** `@SkipTransform` is applied in exactly one place — `/metrics`, which is outside the global prefix and serves Prometheus text — so every other route is enveloped, and a hand-written `@ApiResponse({ type: Dto })` documents a body the API does not send. That was true of all 34 of them before this was introduced: the document described the unwrapped payload while the API had never sent one.
@@ -114,7 +114,7 @@ Errors are handled by a global `AllExceptionsFilter` (which also forwards to Sen
 }
 ```
 
-`error` is the HTTP status name, derived from the status code — never the exception class name. The health routes are the exception to the exception: their 503 goes through `HealthCheckExceptionFilter` and *is* enveloped, carrying the Terminus result under `data`.
+`error` is the HTTP status name, derived from the status code — never the exception class name. The health routes are the exception to the exception: their 503 goes through `HealthCheckExceptionFilter` and _is_ enveloped, carrying the Terminus result under `data`.
 
 **Every response carries an `x-request-id` header** — success and error alike — and it is the same id the backend logs that request under. It is the value to quote in a bug report, and the one thing that ties a failure seen by a caller to the server-side line that explains it (`{service="backend"} | json | req_id="…"`). It is not part of the error body above; it is a header, and a well-formed inbound `x-request-id` is reused rather than replaced so an id can be propagated from further upstream. See `docs/observability.md`.
 
@@ -139,10 +139,10 @@ Validation errors return an array of messages:
 
 Response caching is applied at the route level using a custom `CacheInterceptor` backed by NestJS's global `CacheModule` (in-memory, bounded at `CACHE_MAX_ENTRIES` = 500 entries). Three TTL tiers are in use:
 
-| Tier            | TTL        | Applied to                                                          |
-| --------------- | ---------- | ------------------------------------------------------------------- |
-| `STATIC_DATA`   | 10 minutes | Leagues, club stats by region — rarely changes                      |
-| `MODERATE_DATA` | 5 minutes  | List endpoints, filter values, pool matches, player shots           |
+| Tier            | TTL        | Applied to                                                             |
+| --------------- | ---------- | ---------------------------------------------------------------------- |
+| `STATIC_DATA`   | 10 minutes | Leagues, club stats by region — rarely changes                         |
+| `MODERATE_DATA` | 5 minutes  | List endpoints, filter values, pool matches, player shots              |
 | `DYNAMIC_DATA`  | 60 seconds | Platform stats and recent pools — they move with every simulated round |
 
 Endpoints that return a single resource by ID (e.g. `GET /clubs/:id`, `GET /matches/:matchId`) are generally not cached, as they are accessed less frequently and may reflect recent changes.
@@ -201,9 +201,9 @@ Leagues are the top level of the French basketball hierarchy. The list is stable
 
 ### Committees — `/api/committees`
 
-| Method | Path              | Description                                       | Cached |
-| ------ | ----------------- | ------------------------------------------------- | ------ |
-| GET    | `/committees`     | All committees, optionally filtered by `leagueId` | 5 min  |
+| Method | Path              | Description                                         | Cached |
+| ------ | ----------------- | --------------------------------------------------- | ------ |
+| GET    | `/committees`     | All committees, optionally filtered by `leagueId`   | 5 min  |
 | GET    | `/committees/:id` | Single committee by ID, with every one of its clubs | No     |
 
 `GET /committees` without a `leagueId` returns all departmental committees. With `leagueId`, it returns only committees belonging to that league.
@@ -232,10 +232,10 @@ Leagues are the top level of the French basketball hierarchy. The list is stable
 
 ### Championships — `/api/championships`
 
-| Method | Path                 | Description                     | Cached |
-| ------ | -------------------- | ------------------------------- | ------ |
-| GET    | `/championships`     | Paginated championships         | 5 min  |
-| GET    | `/championships/:id` | Single championship by ID       | No     |
+| Method | Path                 | Description               | Cached |
+| ------ | -------------------- | ------------------------- | ------ |
+| GET    | `/championships`     | Paginated championships   | 5 min  |
+| GET    | `/championships/:id` | Single championship by ID | No     |
 
 `GET /championships` supports filtering by `level`, `leagueId`, `committeeId`, `category`, and `gender`, with `page` and `limit` for pagination.
 
@@ -253,9 +253,9 @@ A championship's pools come with it: `GET /championships/:id` lists each one's `
 
 ### Leaderboards — `/api/leaderboards`
 
-| Method | Path            | Description                               | Cached |
-| ------ | --------------- | ----------------------------------------- | ------ |
-| GET    | `/leaderboards` | A pool's standings (`poolId` required)    | 5 min  |
+| Method | Path            | Description                            | Cached |
+| ------ | --------------- | -------------------------------------- | ------ |
+| GET    | `/leaderboards` | A pool's standings (`poolId` required) | 5 min  |
 
 Each row is a team's record in the pool — games played, won, lost and forfeited, points for and against, and competition points (2 for a win, 1 for a loss, 0 for a forfeit) — with its rank and recent form. Nothing stores the standings: `computeStandings` (`common/utils/standings.util.ts`) builds them from the pool's teams and completed matches on each request, sorted by competition points, then point difference. Tied teams share a rank. A club's detail ranks its teams with the same function.
 
@@ -263,15 +263,15 @@ Each row is a team's record in the pool — games played, won, lost and forfeite
 
 ### Matches — `/api/matches`
 
-| Method | Path                               | Description                                         | Cached |
-| ------ | ---------------------------------- | --------------------------------------------------- | ------ |
-| GET    | `/matches`                         | Paginated matches with filters                      | 5 min  |
-| GET    | `/matches/pool/:poolId`            | All matches of a pool, unpaginated, by date         | 5 min  |
-| GET    | `/matches/:matchId`                | Single match with full detail                       | No     |
-| GET    | `/matches/:matchId/player-stats`   | Player statistics for a match, grouped by team      | No     |
-| GET    | `/matches/:matchId/events`         | All events for a match, ordered by `occurredAt`     | No     |
-| GET    | `/matches/team/:teamId/shots`      | Every shot a team took across its matches           | No     |
-| GET    | `/matches/player/:playerId/shots`  | Every shot a player took across their matches       | 5 min  |
+| Method | Path                              | Description                                     | Cached |
+| ------ | --------------------------------- | ----------------------------------------------- | ------ |
+| GET    | `/matches`                        | Paginated matches with filters                  | 5 min  |
+| GET    | `/matches/pool/:poolId`           | All matches of a pool, unpaginated, by date     | 5 min  |
+| GET    | `/matches/:matchId`               | Single match with full detail                   | No     |
+| GET    | `/matches/:matchId/player-stats`  | Player statistics for a match, grouped by team  | No     |
+| GET    | `/matches/:matchId/events`        | All events for a match, ordered by `occurredAt` | No     |
+| GET    | `/matches/team/:teamId/shots`     | Every shot a team took across its matches       | No     |
+| GET    | `/matches/player/:playerId/shots` | Every shot a player took across their matches   | 5 min  |
 
 `GET /matches` supports the most extensive filter set in the API: `level`, `division`, `committeeId`, `leagueId`, `category`, `gender`, `poolId`, `matchday`, `date` (YYYY-MM-DD), and `search` (club name). Default pagination: `page: 1`, `limit: 50`, max `limit: 100`.
 
@@ -281,14 +281,13 @@ The two shot endpoints (`/team/:teamId/shots`, `/player/:playerId/shots`) return
 
 ### Teams — `/api/teams`
 
-| Method | Path                   | Description                                             | Cached |
-| ------ | ---------------------- | ------------------------------------------------------- | ------ |
-| GET    | `/teams`               | Paginated teams with filters                            | 5 min  |
-| GET    | `/teams/filter-values` | Available filter values scoped to a committee or league | 5 min  |
-| GET    | `/teams/:id`           | Single team with players and recent matches             | No     |
-| GET    | `/teams/:id/matches`   | Match history for a team, most recent first             | No     |
+| Method | Path                 | Description                                 | Cached |
+| ------ | -------------------- | ------------------------------------------- | ------ |
+| GET    | `/teams`             | Paginated teams with filters                | 5 min  |
+| GET    | `/teams/:id`         | Single team with players and recent matches | No     |
+| GET    | `/teams/:id/matches` | Match history for a team, most recent first | No     |
 
-`GET /teams/filter-values` returns the distinct team numbers that exist within a given scope (optional `committeeId` or `leagueId`), for the team-number dropdown. The division and pool dropdowns take their options from `GET /championships`, like the matches filters, and `GET /teams` filters by `poolId`.
+`GET /teams` filters by `poolId`; the teams filters take their division and pool options from `GET /championships`, like the matches filters. The team number is typed, so it has no options endpoint.
 
 ---
 
@@ -297,7 +296,6 @@ The two shot endpoints (`/team/:teamId/shots`, `/player/:playerId/shots`) return
 | Method | Path                   | Description                                           | Cached |
 | ------ | ---------------------- | ----------------------------------------------------- | ------ |
 | GET    | `/players`             | Paginated players with filters                        | 5 min  |
-| GET    | `/players/filter-values` | Available jersey and team numbers, optionally scoped | 5 min  |
 | GET    | `/players/:id`         | Single player with team detail                        | No     |
 | GET    | `/players/:id/matches` | Match history with per-match stats, most recent first | No     |
 

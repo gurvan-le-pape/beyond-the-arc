@@ -5,7 +5,6 @@ import type { ApiError, PaginatedResponse } from "@/shared/types";
 
 import type { Player } from "../types/Player";
 import type { PlayerFilters } from "../types/PlayerFilters";
-import type { PlayerFilterValues } from "../types/PlayerFilterValues";
 import type { PlayerMatchHistoryResponse } from "../types/PlayerMatchHistory";
 import type { PlayerSearchFilters } from "../types/PlayerSearchFilters";
 import { playersQueries } from "./playersQueries";
@@ -52,26 +51,6 @@ export function usePlayerMatches(id: number, options?: { enabled?: boolean }) {
     ...playersQueries.matches(id),
     enabled: options?.enabled ?? !!id,
   });
-}
-
-/**
- * Hook to fetch available filter values for players.
- * Returns player numbers and team numbers scoped to an optional
- * committee or league.
- *
- * @param params - Optional scoping parameters (committeeId, leagueId)
- * @returns React Query result with filter values
- *
- * @example
- * const { data: filterValues } = usePlayerFilterValues({ committeeId: 1 });
- */
-export function usePlayerFilterValues(params?: {
-  committeeId?: number;
-  leagueId?: number;
-}) {
-  return useQuery<PlayerFilterValues, ApiError>(
-    playersQueries.filterValues(params),
-  );
 }
 
 /**

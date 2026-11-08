@@ -23,7 +23,6 @@ import { PrismaService } from "prisma/prisma.service";
 import { Prisma } from "../../prisma/generated/prisma/client";
 import type { GetPlayersQueryDto } from "./dto/players.query.dto";
 import type {
-  FilterValuesPlayersResponseDto,
   MatchHistoryDto,
   PlayerMatchHistoryResponseDto,
   PlayerResponseDto,
@@ -160,42 +159,6 @@ export class PlayersService {
       page,
       limit,
       totalPages: Math.ceil(total / limit),
-    };
-  }
-
-  /**
-   * Retrieves available filter values for player queries.
-   * Intended for populating filter dropdowns on the frontend.
-   *
-   * @returns Available player numbers and team numbers
-   */
-  async findPlayerFilterValues(filters?: {
-    committeeId?: number;
-    leagueId?: number;
-  }): Promise<FilterValuesPlayersResponseDto> {
-    const clubWhere = buildClubOrganizationWhere(filters);
-    const teamWhere: Prisma.TeamsWhereInput = clubWhere
-      ? { club: clubWhere }
-      : {};
-
-    const [numbers, teamNumbers] = await Promise.all([
-      this.prisma.client.players.findMany({
-        where: { team: teamWhere },
-        select: { number: true },
-        distinct: ["number"],
-        orderBy: { number: "asc" },
-      }),
-      this.prisma.client.teams.findMany({
-        where: teamWhere,
-        select: { number: true },
-        distinct: ["number"],
-        orderBy: { number: "asc" },
-      }),
-    ]);
-
-    return {
-      numbers: numbers.map((p) => p.number),
-      teamNumbers: teamNumbers.map((t) => t.number),
     };
   }
 

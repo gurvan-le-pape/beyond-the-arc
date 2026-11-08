@@ -1,11 +1,7 @@
 // src/backend/modules/players/players.controller.ts
 import { CACHE_TTL } from "@common/constants";
 import { ApiEnvelope, ApiEnvelopePage } from "@common/decorators";
-import {
-  ApiErrorResponseDto,
-  OrganizationScopeQueryDto,
-  PaginatedResponseDto,
-} from "@common/dto";
+import { ApiErrorResponseDto, PaginatedResponseDto } from "@common/dto";
 import { CacheInterceptor } from "@common/interceptors";
 import { ParseEntityIdPipe } from "@common/pipes";
 import {
@@ -21,7 +17,6 @@ import { ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 
 import { GetPlayersQueryDto } from "./dto/players.query.dto";
 import {
-  FilterValuesPlayersResponseDto,
   PlayerMatchHistoryResponseDto,
   PlayerResponseDto,
 } from "./dto/players.response.dto";
@@ -97,24 +92,6 @@ export class PlayersController {
     @Query() query: GetPlayersQueryDto,
   ): Promise<PaginatedResponseDto<PlayerResponseDto>> {
     return this.playersService.findAllPlayers(query);
-  }
-
-  @Get("filter-values")
-  @HttpCode(HttpStatus.OK)
-  @UseInterceptors(CacheInterceptor({ ttl: CACHE_TTL.MODERATE_DATA }))
-  @ApiOperation({
-    summary: "Get available filter values for players",
-    description:
-      "Returns available player numbers and team numbers. Optionally scoped to a committee or league.",
-  })
-  @ApiEnvelope(
-    FilterValuesPlayersResponseDto,
-    "Filter values successfully retrieved",
-  )
-  async getPlayerFilterValues(
-    @Query() query: OrganizationScopeQueryDto,
-  ): Promise<FilterValuesPlayersResponseDto> {
-    return this.playersService.findPlayerFilterValues(query);
   }
 
   /**
