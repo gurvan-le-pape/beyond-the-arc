@@ -126,7 +126,9 @@ async function MatchSummaryPage({
         forfeit={match.forfeit}
       />
 
-      {match.forfeit && <ForfeitNotice homeTeam={homeTeam} awayTeam={awayTeam} />}
+      {match.forfeit && (
+        <ForfeitNotice homeTeam={homeTeam} awayTeam={awayTeam} />
+      )}
       {match.status === MatchStatus.COMPLETED && !match.forfeit && (
         <MatchSummaryTabs
           homeTeam={homeTeam}
