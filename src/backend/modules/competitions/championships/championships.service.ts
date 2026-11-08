@@ -5,9 +5,7 @@ import {
   andWhere,
   buildChampionshipWhere,
   buildClubOrganizationWhere,
-  countMatchdays,
   resolvePagination,
-  TEAM_MATCHDAYS_SELECT,
 } from "@common/utils";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
@@ -32,12 +30,12 @@ const CHAMPIONSHIP_SELECT = {
     select: {
       id: true,
       letter: true,
-      // The first team gives the organiser: every team in a departmental
+      // One team gives the organiser: every team in a departmental
       // championship belongs to the same committee, and in a regional one to
-      // the same league.
+      // the same league. The matchday counts come from `countMatchdaysByPool`.
       teams: {
+        take: 1,
         select: {
-          ...TEAM_MATCHDAYS_SELECT,
           club: {
             select: {
               committee: {
@@ -151,8 +149,10 @@ export class ChampionshipsService {
       this.prisma.client.championships.count({ where }),
     ]);
 
+    const matchdays = await this.countMatchdaysByPool(championships);
+
     return {
-      items: championships.map((c) => this.mapToDto(c)),
+      items: championships.map((c) => this.mapToDto(c, matchdays)),
       total,
       page,
       limit,
@@ -181,7 +181,36 @@ export class ChampionshipsService {
       );
     }
 
-    return this.mapToDto(championship);
+    const matchdays = await this.countMatchdaysByPool([championship]);
+
+    return this.mapToDto(championship, matchdays);
+  }
+
+  /**
+   * Counts each pool's matchdays in one grouped query. Every match has exactly
+   * one home team, and a team plays in one pool, so a pool's matches are those
+   * its teams host.
+   *
+   * @param championships - the championships whose pools to count
+   * @returns the number of distinct matchdays by pool id; a pool with no
+   *   schedule is absent
+   */
+  private async countMatchdaysByPool(
+    championships: readonly ChampionshipSelectResult[],
+  ): Promise<Map<number, number>> {
+    const poolIds = championships.flatMap((c) => c.pools.map((p) => p.id));
+    if (poolIds.length === 0) return new Map();
+
+    const rows = await this.prisma.client.$queryRaw<
+      { poolId: number; matchdays: number }[]
+    >`
+      SELECT t.pool_id AS "poolId", COUNT(DISTINCT m.matchday)::int AS matchdays
+      FROM matches m
+      JOIN teams t ON t.id = m.home_team_id
+      WHERE t.pool_id = ANY(${poolIds})
+      GROUP BY t.pool_id
+    `;
+    return new Map(rows.map((row) => [row.poolId, row.matchdays]));
   }
 
   /**
@@ -222,9 +251,13 @@ export class ChampionshipsService {
    * The `satisfies` operator ensures compile-time type checking.
    *
    * @param entity - Prisma championship select result
+   * @param matchdays - each pool's matchday count, by pool id
    * @returns ChampionshipResponseDto
    */
-  private mapToDto(entity: ChampionshipSelectResult): ChampionshipResponseDto {
+  private mapToDto(
+    entity: ChampionshipSelectResult,
+    matchdays: ReadonlyMap<number, number>,
+  ): ChampionshipResponseDto {
     return {
       id: entity.id,
       category: entity.category as Category,
@@ -239,7 +272,7 @@ export class ChampionshipsService {
       pools: entity.pools.map((p) => ({
         id: p.id,
         letter: p.letter,
-        nbMatchdays: countMatchdays(p.teams),
+        nbMatchdays: matchdays.get(p.id) ?? 0,
       })),
     } satisfies ChampionshipResponseDto; // TypeScript validates this matches
   }
