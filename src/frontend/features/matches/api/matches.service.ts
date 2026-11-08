@@ -52,16 +52,16 @@ export const matchesService = {
   /**
    * Every match of a pool, unpaginated.
    *
-   * Uses the dedicated `/matches/pool/:id` endpoint, which returns a bare
-   * array. The paginated `/matches?poolId=` returns `{ items, total, … }`,
-   * which does not match this signature.
+   * Uses `/pools/:id/matches`, which returns a bare array. The paginated
+   * `/matches?poolId=` returns `{ items, total, … }`, which does not match this
+   * signature.
    *
    * @param poolId - the pool whose fixtures to fetch
    * @param signal - TanStack Query's `queryFn` signal
    * @returns every match in the pool — the caller slices for display
    */
   getByPoolId(poolId: number, signal?: AbortSignal): Promise<Match[]> {
-    return request(`/matches/pool/${poolId}`, { revalidate, signal });
+    return request(`/pools/${poolId}/matches`, { revalidate, signal });
   },
 
   /**

@@ -77,7 +77,7 @@ describe("LeaderboardsController", () => {
         mockLeaderboards,
       );
 
-      const result = await controller.getLeaderboardsByPoolId({ poolId: 1 });
+      const result = await controller.getLeaderboardsByPoolId(1);
 
       expect(result).toEqual(mockLeaderboards);
       expect(service.findLeaderboardsByPoolId).toHaveBeenCalledWith(1);
@@ -87,9 +87,9 @@ describe("LeaderboardsController", () => {
     it("should return an empty array when no leaderboards found", async () => {
       mockLeaderboardsService.findLeaderboardsByPoolId.mockResolvedValue([]);
 
-      await expect(
-        controller.getLeaderboardsByPoolId({ poolId: 999 }),
-      ).resolves.toEqual([]);
+      await expect(controller.getLeaderboardsByPoolId(999)).resolves.toEqual(
+        [],
+      );
       expect(service.findLeaderboardsByPoolId).toHaveBeenCalledWith(999);
     });
   });

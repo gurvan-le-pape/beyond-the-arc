@@ -241,19 +241,19 @@ Leagues are the top level of the French basketball hierarchy. The list is stable
 
 ### Pools — `/api/pools`
 
-| Method | Path            | Description                                      | Cached |
-| ------ | --------------- | ------------------------------------------------ | ------ |
-| GET    | `/pools/recent` | Up to 10 pools that played the most recent round | 60 sec |
+| Method | Path                         | Description                                      | Cached |
+| ------ | ---------------------------- | ------------------------------------------------ | ------ |
+| GET    | `/pools/recent`              | Up to 10 pools that played the most recent round | 60 sec |
+| GET    | `/pools/:poolId/leaderboard` | A pool's standings                               | 5 min  |
+| GET    | `/pools/:poolId/matches`     | All matches of a pool, unpaginated, by date      | 5 min  |
 
 A championship's pools come with it: `GET /championships/:id` lists each one's `id`, `letter` and `nbMatchdays`, by letter.
 
+A pool's standings and matches sit under it. Their handlers live in the leaderboards and matches modules, which own the queries; only the URL is under `pools`. An unknown pool returns an empty list for both. The paginated, filterable list of matches stays `GET /matches?poolId=`.
+
 ---
 
-### Leaderboards — `/api/leaderboards`
-
-| Method | Path            | Description                            | Cached |
-| ------ | --------------- | -------------------------------------- | ------ |
-| GET    | `/leaderboards` | A pool's standings (`poolId` required) | 5 min  |
+### Standings — `/api/pools/:poolId/leaderboard`
 
 Each row is a team's record in the pool — games played, won, lost and forfeited, points for and against, and competition points (2 for a win, 1 for a loss, 0 for a forfeit) — with its rank and recent form. Nothing stores the standings: `computeStandings` (`common/utils/standings.util.ts`) builds them from the pool's teams and completed matches on each request, sorted by competition points, then point difference. Tied teams share a rank. A club's detail ranks its teams with the same function.
 
@@ -264,7 +264,6 @@ Each row is a team's record in the pool — games played, won, lost and forfeite
 | Method | Path                              | Description                                     | Cached |
 | ------ | --------------------------------- | ----------------------------------------------- | ------ |
 | GET    | `/matches`                        | Paginated matches with filters                  | 5 min  |
-| GET    | `/matches/pool/:poolId`           | All matches of a pool, unpaginated, by date     | 5 min  |
 | GET    | `/matches/:matchId`               | Single match with full detail                   | No     |
 | GET    | `/matches/:matchId/player-stats`  | Player statistics for a match, grouped by team  | No     |
 | GET    | `/matches/:matchId/events`        | All events for a match, ordered by `occurredAt` | No     |

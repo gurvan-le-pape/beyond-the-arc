@@ -4,4 +4,3 @@
  */
 
 export * from "./Leaderboard";
-export * from "./LeaderboardFilters";

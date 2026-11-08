@@ -10,8 +10,7 @@ import { LeaderboardsService } from "./leaderboards.service";
  * Leaderboards module providing endpoints for pool standings and rankings.
  *
  * Features:
- * - Leaderboard retrieval by pool ID
- * - Individual leaderboard entry lookup
+ * - A pool's standings at /pools/:poolId/leaderboard
  * - Automatic sorting by points and point difference
  *
  * Architecture:
