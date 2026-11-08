@@ -47,7 +47,7 @@ All responses are wrapped by a global `TransformInterceptor` that produces a con
 {
   "data": <payload>,
   "timestamp": "2024-02-05T10:00:00Z",
-  "path": "/api/pools?championshipId=1",
+  "path": "/api/committees?leagueId=1",
   "statusCode": 200
 }
 ```
@@ -243,12 +243,11 @@ Leagues are the top level of the French basketball hierarchy. The list is stable
 
 ### Pools — `/api/pools`
 
-| Method | Path         | Description                                              | Cached |
-| ------ | ------------ | -------------------------------------------------------- | ------ |
-| GET    | `/pools`     | All pools for a championship (`championshipId` required) | 5 min  |
-| GET    | `/pools/recent` | Up to 10 pools that played the most recent round      | 60 sec |
+| Method | Path            | Description                                      | Cached |
+| ------ | --------------- | ------------------------------------------------ | ------ |
+| GET    | `/pools/recent` | Up to 10 pools that played the most recent round | 60 sec |
 
-`championshipId` is a required query parameter on `GET /pools` — passing an invalid value returns a `400`.
+A championship's pools come with it: `GET /championships/:id` lists each one's `id`, `letter` and `nbMatchdays`, by letter.
 
 ---
 

@@ -237,7 +237,7 @@ endpoints:
 | Tier        | Window | Endpoints                                              |
 | ----------- | ------ | ------------------------------------------------------ |
 | `REFERENCE` | 24 h   | `/clubs*`, `/committees*`, `/leagues*`                 |
-| `DEFAULT`   | 1 h    | `/players`, `/teams`, `/championships`, `/pools`       |
+| `DEFAULT`   | 1 h    | `/players`, `/teams`, `/championships`                 |
 | `LIVE`      | 60 s   | `/matches*`, `/stats`, `/leaderboards`, `/pools/recent`, `*/matches` |
 
 `DEFAULT` applies to any call that does not ask for something else, so a new

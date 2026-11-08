@@ -1069,81 +1069,6 @@
         ]
       }
     },
-    "/api/pools": {
-      "get": {
-        "description": "Retrieves all pools for a specific championship. Results are cached for 5 minutes.",
-        "operationId": "PoolsController_getPoolsByChampionshipId",
-        "parameters": [
-          {
-            "name": "championshipId",
-            "required": true,
-            "in": "query",
-            "description": "Championship ID",
-            "schema": {
-              "minimum": 1,
-              "example": 1,
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "List of pools successfully retrieved (may be empty)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiEnvelopeDto"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "type": "array",
-                          "items": {
-                            "$ref": "#/components/schemas/PoolResponseDto"
-                          }
-                        },
-                        "meta": {
-                          "$ref": "#/components/schemas/ApiListMetaDto"
-                        }
-                      },
-                      "required": [
-                        "data",
-                        "meta"
-                      ]
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid query parameters",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponseDto"
-                },
-                "example": {
-                  "statusCode": 400,
-                  "message": [
-                    "championshipId must be a valid number string"
-                  ],
-                  "error": "Bad Request",
-                  "path": "/api/pools?championshipId=abc",
-                  "timestamp": "2024-02-05T10:00:00Z"
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get pools by championship ID",
-        "tags": [
-          "pools"
-        ]
-      }
-    },
     "/api/pools/recent": {
       "get": {
         "description": "Retrieves up to 10 pools with a completed match at the latest tip-off instant, ordered by level (national, regional, departmental), then category (Seniors, then U21 down to U11), then division, then pool ID. Returns an empty array before any match is completed. Results are cached for 1 minute.",
@@ -3833,37 +3758,6 @@
           "pointsAgainst",
           "pointDifference",
           "form"
-        ]
-      },
-      "PoolResponseDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "number",
-            "description": "Unique pool identifier",
-            "example": 1
-          },
-          "letter": {
-            "type": "string",
-            "description": "Pool letter designation",
-            "example": "A"
-          },
-          "championshipId": {
-            "type": "number",
-            "description": "Associated championship ID",
-            "example": 1
-          },
-          "nbMatchdays": {
-            "type": "number",
-            "description": "Number of matchdays in this pool",
-            "example": 10
-          }
-        },
-        "required": [
-          "id",
-          "letter",
-          "championshipId",
-          "nbMatchdays"
         ]
       },
       "RecentPoolResponseDto": {

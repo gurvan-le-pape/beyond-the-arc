@@ -23,7 +23,6 @@ import {
 } from "@/features/competitions/championships/utils";
 import { leaderboardsService } from "@/features/competitions/leaderboards/api";
 import { LeaderboardTable } from "@/features/competitions/leaderboards/components";
-import { poolsService } from "@/features/competitions/pools/api";
 import { matchesService } from "@/features/matches/api";
 import { MatchesByRound } from "@/features/matches/components";
 import { withServerErrorState } from "@/shared/components/feedback";
@@ -97,35 +96,34 @@ async function ChampionshipsDetailPage({
 
   const isDepartmental = championship.level === CompetitionLevel.DEPARTMENTAL;
 
-  const [pools, { items: championships }, { items: otherLevel }] =
-    await Promise.all([
-      poolsService.getByChampionshipId(championshipId),
-      // Its siblings: same organiser, same level.
-      championshipsService.getAll({
-        level: championship.level,
-        ...(isDepartmental
-          ? { committeeId: organizationId }
-          : { leagueId: organizationId }),
-        limit: 100,
-      }),
-      // The same category and gender at the other level of the same league:
-      // regional from a departmental championship, departmental from a
-      // regional one. National championships belong to no league.
-      championship.level !== CompetitionLevel.NATIONAL &&
-      championship.leagueId !== null
-        ? championshipsService.getAll({
-            level: isDepartmental
-              ? CompetitionLevel.REGIONAL
-              : CompetitionLevel.DEPARTMENTAL,
-            leagueId: championship.leagueId,
-            category: championship.category,
-            gender: championship.gender,
-            limit: 100,
-          })
-        : { items: [] },
-    ]).catch(handleServerError);
-
+  const { pools } = championship;
   if (pools.length === 0) notFound();
+
+  const [{ items: championships }, { items: otherLevel }] = await Promise.all([
+    // Its siblings: same organiser, same level.
+    championshipsService.getAll({
+      level: championship.level,
+      ...(isDepartmental
+        ? { committeeId: organizationId }
+        : { leagueId: organizationId }),
+      limit: 100,
+    }),
+    // The same category and gender at the other level of the same league:
+    // regional from a departmental championship, departmental from a
+    // regional one. National championships belong to no league.
+    championship.level !== CompetitionLevel.NATIONAL &&
+    championship.leagueId !== null
+      ? championshipsService.getAll({
+          level: isDepartmental
+            ? CompetitionLevel.REGIONAL
+            : CompetitionLevel.DEPARTMENTAL,
+          leagueId: championship.leagueId,
+          category: championship.category,
+          gender: championship.gender,
+          limit: 100,
+        })
+      : { items: [] },
+  ]).catch(handleServerError);
 
   const poolId = resolvePoolId(pools, poolParam);
 

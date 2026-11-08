@@ -67,24 +67,6 @@ export class PoolsService {
   constructor(private readonly prisma: PrismaService) {}
 
   /**
-   * Finds all pools for a specific championship.
-   *
-   * @param championshipId - The championship ID
-   * @returns Array of pool DTOs
-   */
-  async findPoolsByChampionshipId(
-    championshipId: number,
-  ): Promise<PoolResponseDto[]> {
-    const pools = await this.prisma.client.pools.findMany({
-      where: { championshipId },
-      select: POOL_SELECT,
-      orderBy: { letter: "asc" },
-    });
-
-    return pools.map((pool) => this.mapToDto(pool));
-  }
-
-  /**
    * Finds the pools that played the most recent completed round.
    *
    * @remarks
