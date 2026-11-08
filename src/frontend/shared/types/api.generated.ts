@@ -320,46 +320,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/matches/team/{teamId}/shots": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get shots by team ID
-         * @description Retrieves every shot a specific team took, with its location and event type, across all their matches, blocked attempts included. Shots its players blocked or fouled are excluded.
-         */
-        get: operations["MatchesController_getShotsByTeamId"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/matches/player/{playerId}/shots": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get shots by player ID
-         * @description Retrieves every shot a specific player took, with its location and event type, across all their matches, blocked attempts included. Shots the player only assisted on are excluded. Results are cached for 5 minutes.
-         */
-        get: operations["MatchesController_getShotsByPlayerId"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/pools/{poolId}/matches": {
         parameters: {
             query?: never;
@@ -372,6 +332,46 @@ export interface paths {
          * @description Retrieves all matches of a pool without pagination, ordered by date ascending. An unknown pool returns an empty list.
          */
         get: operations["PoolMatchesController_getMatchesByPoolId"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/teams/{teamId}/shots": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get a team's shots
+         * @description Retrieves every shot a specific team took, with its location and event type, across all their matches, blocked attempts included. Shots its players blocked or fouled are excluded.
+         */
+        get: operations["TeamShotsController_getShotsByTeamId"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/players/{playerId}/shots": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get a player's shots
+         * @description Retrieves every shot a specific player took, with its location and event type, across all their matches, blocked attempts included. Shots the player only assisted on are excluded. Results are cached for 5 minutes.
+         */
+        get: operations["PlayerShotsController_getShotsByPlayerId"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3232,7 +3232,42 @@ export interface operations {
             };
         };
     };
-    MatchesController_getShotsByTeamId: {
+    PoolMatchesController_getMatchesByPoolId: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Pool ID */
+                poolId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Matches successfully retrieved */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["MatchResponseDto"][];
+                        meta: components["schemas"]["ApiListMetaDto"];
+                    };
+                };
+            };
+            /** @description Invalid ID format */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+        };
+    };
+    TeamShotsController_getShotsByTeamId: {
         parameters: {
             query?: never;
             header?: never;
@@ -3267,7 +3302,7 @@ export interface operations {
             };
         };
     };
-    MatchesController_getShotsByPlayerId: {
+    PlayerShotsController_getShotsByPlayerId: {
         parameters: {
             query?: never;
             header?: never;
@@ -3287,41 +3322,6 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["ApiEnvelopeDto"] & {
                         data: components["schemas"]["ShotDto"][];
-                        meta: components["schemas"]["ApiListMetaDto"];
-                    };
-                };
-            };
-            /** @description Invalid ID format */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponseDto"];
-                };
-            };
-        };
-    };
-    PoolMatchesController_getMatchesByPoolId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Pool ID */
-                poolId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Matches successfully retrieved */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
-                        data: components["schemas"]["MatchResponseDto"][];
                         meta: components["schemas"]["ApiListMetaDto"];
                     };
                 };

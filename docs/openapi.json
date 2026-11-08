@@ -1382,136 +1382,6 @@
         ]
       }
     },
-    "/api/matches/team/{teamId}/shots": {
-      "get": {
-        "description": "Retrieves every shot a specific team took, with its location and event type, across all their matches, blocked attempts included. Shots its players blocked or fouled are excluded.",
-        "operationId": "MatchesController_getShotsByTeamId",
-        "parameters": [
-          {
-            "name": "teamId",
-            "required": true,
-            "in": "path",
-            "description": "Team ID",
-            "schema": {
-              "example": 1,
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Shots successfully retrieved",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiEnvelopeDto"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "type": "array",
-                          "items": {
-                            "$ref": "#/components/schemas/ShotDto"
-                          }
-                        },
-                        "meta": {
-                          "$ref": "#/components/schemas/ApiListMetaDto"
-                        }
-                      },
-                      "required": [
-                        "data",
-                        "meta"
-                      ]
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid ID format",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponseDto"
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get shots by team ID",
-        "tags": [
-          "matches"
-        ]
-      }
-    },
-    "/api/matches/player/{playerId}/shots": {
-      "get": {
-        "description": "Retrieves every shot a specific player took, with its location and event type, across all their matches, blocked attempts included. Shots the player only assisted on are excluded. Results are cached for 5 minutes.",
-        "operationId": "MatchesController_getShotsByPlayerId",
-        "parameters": [
-          {
-            "name": "playerId",
-            "required": true,
-            "in": "path",
-            "description": "Player ID",
-            "schema": {
-              "example": 1,
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Shots successfully retrieved",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiEnvelopeDto"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "type": "array",
-                          "items": {
-                            "$ref": "#/components/schemas/ShotDto"
-                          }
-                        },
-                        "meta": {
-                          "$ref": "#/components/schemas/ApiListMetaDto"
-                        }
-                      },
-                      "required": [
-                        "data",
-                        "meta"
-                      ]
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid ID format",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponseDto"
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get shots by player ID",
-        "tags": [
-          "matches"
-        ]
-      }
-    },
     "/api/pools/{poolId}/matches": {
       "get": {
         "description": "Retrieves all matches of a pool without pagination, ordered by date ascending. An unknown pool returns an empty list.",
@@ -1574,6 +1444,136 @@
         "summary": "Get a pool's matches",
         "tags": [
           "pools"
+        ]
+      }
+    },
+    "/api/teams/{teamId}/shots": {
+      "get": {
+        "description": "Retrieves every shot a specific team took, with its location and event type, across all their matches, blocked attempts included. Shots its players blocked or fouled are excluded.",
+        "operationId": "TeamShotsController_getShotsByTeamId",
+        "parameters": [
+          {
+            "name": "teamId",
+            "required": true,
+            "in": "path",
+            "description": "Team ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Shots successfully retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/ShotDto"
+                          }
+                        },
+                        "meta": {
+                          "$ref": "#/components/schemas/ApiListMetaDto"
+                        }
+                      },
+                      "required": [
+                        "data",
+                        "meta"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get a team's shots",
+        "tags": [
+          "teams"
+        ]
+      }
+    },
+    "/api/players/{playerId}/shots": {
+      "get": {
+        "description": "Retrieves every shot a specific player took, with its location and event type, across all their matches, blocked attempts included. Shots the player only assisted on are excluded. Results are cached for 5 minutes.",
+        "operationId": "PlayerShotsController_getShotsByPlayerId",
+        "parameters": [
+          {
+            "name": "playerId",
+            "required": true,
+            "in": "path",
+            "description": "Player ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Shots successfully retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/ShotDto"
+                          }
+                        },
+                        "meta": {
+                          "$ref": "#/components/schemas/ApiListMetaDto"
+                        }
+                      },
+                      "required": [
+                        "data",
+                        "meta"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get a player's shots",
+        "tags": [
+          "players"
         ]
       }
     },
