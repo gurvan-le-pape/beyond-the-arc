@@ -288,6 +288,35 @@ describe("list queries", () => {
         leagueId: regional.leagueId,
       });
     });
+
+    it("counts each pool's distinct matchdays from the matches its teams host", async () => {
+      const service = new ChampionshipsService(prisma);
+      // Two of the regional pool's three matches stay on matchday 1.
+      await client.query("UPDATE matches SET matchday = 2 WHERE id = $1", [
+        matches.on30,
+      ]);
+      try {
+        const { items } = await service.findChampionships({
+          leagueId: regional.leagueId,
+          limit: 100,
+        });
+        const pools = items.flatMap((item) => item.pools);
+
+        expect(pools).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({ id: regional.poolId, nbMatchdays: 2 }),
+            expect.objectContaining({
+              id: departmental.poolId,
+              nbMatchdays: 1,
+            }),
+          ]),
+        );
+      } finally {
+        await client.query("UPDATE matches SET matchday = 1 WHERE id = $1", [
+          matches.on30,
+        ]);
+      }
+    });
   });
 
   describe("LeaderboardsService.findLeaderboardsByPoolId", () => {
