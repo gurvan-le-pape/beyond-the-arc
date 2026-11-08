@@ -86,7 +86,7 @@ export const matchesService = {
    * @returns the team's shots: location and event type
    */
   getShotsByTeamId(teamId: number, signal?: AbortSignal): Promise<Shot[]> {
-    return request(`/matches/team/${teamId}/shots`, { revalidate, signal });
+    return request(`/teams/${teamId}/shots`, { revalidate, signal });
   },
 
   /**
@@ -97,7 +97,7 @@ export const matchesService = {
    * @returns the player's shots: location and event type
    */
   getShotsByPlayerId(playerId: number, signal?: AbortSignal): Promise<Shot[]> {
-    return request(`/matches/player/${playerId}/shots`, { revalidate, signal });
+    return request(`/players/${playerId}/shots`, { revalidate, signal });
   },
 
   /**

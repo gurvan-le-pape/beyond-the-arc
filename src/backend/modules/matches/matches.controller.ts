@@ -25,7 +25,6 @@ import {
   MatchEventDto,
   MatchPlayerStatsResponseDto,
   MatchResponseDto,
-  ShotDto,
 } from "./dto/matches.response.dto";
 import { MatchesService } from "./matches.service";
 
@@ -191,79 +190,5 @@ export class MatchesController {
     @Param("matchId", ParseEntityIdPipe) matchId: number,
   ): Promise<MatchEventDto[]> {
     return this.matchesService.findMatchEventsByMatchId(matchId);
-  }
-
-  /**
-   * Retrieve every shot a team took, for its season shot chart.
-   *
-   * Uncached, for size rather than freshness — a finished match's shots never
-   * change. A team takes ~50 shots a game, so a full season is ~1,100 shots,
-   * ~60 KB serialized: above the ~50 KB per-entry body CACHE_MAX_ENTRIES was
-   * sized against, and keyed by one of 60,168 teams, all reachable
-   * unauthenticated. See `common/constants/cache-max-entries.ts`.
-   *
-   * @param teamId - The team ID
-   * @returns The team's shots, location and type
-   */
-  @Get("team/:teamId/shots")
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({
-    summary: "Get shots by team ID",
-    description:
-      "Retrieves every shot a specific team took, with its location and event type, across all their matches, blocked attempts included. Shots its players blocked or fouled are excluded.",
-  })
-  @ApiParam({
-    name: "teamId",
-    description: "Team ID",
-    type: Number,
-    example: 1,
-  })
-  @ApiEnvelopeList(ShotDto, "Shots successfully retrieved")
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: "Invalid ID format",
-    type: ApiErrorResponseDto,
-  })
-  async getShotsByTeamId(
-    @Param("teamId", ParseEntityIdPipe) teamId: number,
-  ): Promise<ShotDto[]> {
-    return this.matchesService.findShotsByTeamId(teamId);
-  }
-
-  /**
-   * Retrieve every shot a player took, for their season shot chart.
-   *
-   * Moderate caching (5 minutes): a finished match's shots never change, so the
-   * only staleness is a just-generated match reaching the chart up to 5 minutes
-   * late. A player's season is a few hundred shots at ~55 bytes each, well
-   * within the per-entry body CACHE_MAX_ENTRIES was sized against.
-   *
-   * @param playerId - The player ID
-   * @returns The player's shots, location and type
-   */
-  @Get("player/:playerId/shots")
-  @HttpCode(HttpStatus.OK)
-  @UseInterceptors(CacheInterceptor({ ttl: CACHE_TTL.MODERATE_DATA }))
-  @ApiOperation({
-    summary: "Get shots by player ID",
-    description:
-      "Retrieves every shot a specific player took, with its location and event type, across all their matches, blocked attempts included. Shots the player only assisted on are excluded. Results are cached for 5 minutes.",
-  })
-  @ApiParam({
-    name: "playerId",
-    description: "Player ID",
-    type: Number,
-    example: 1,
-  })
-  @ApiEnvelopeList(ShotDto, "Shots successfully retrieved")
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: "Invalid ID format",
-    type: ApiErrorResponseDto,
-  })
-  async getShotsByPlayerId(
-    @Param("playerId", ParseEntityIdPipe) playerId: number,
-  ): Promise<ShotDto[]> {
-    return this.matchesService.findShotsByPlayerId(playerId);
   }
 }

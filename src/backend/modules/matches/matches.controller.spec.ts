@@ -12,7 +12,6 @@ import type {
   MatchDetailResponseDto,
   MatchEventDto,
   MatchPlayerStatsResponseDto,
-  ShotDto,
 } from "./dto/matches.response.dto";
 import { MatchesController } from "./matches.controller";
 import { MatchesService } from "./matches.service";
@@ -35,8 +34,6 @@ describe("MatchesController", () => {
     findMatchById: jest.fn(),
     findPlayerMatchStatsByMatchId: jest.fn(),
     findMatchEventsByMatchId: jest.fn(),
-    findShotsByTeamId: jest.fn(),
-    findShotsByPlayerId: jest.fn(),
   };
 
   const mockCacheManager = {
@@ -256,32 +253,6 @@ describe("MatchesController", () => {
 
       expect(result).toBe(mockEvents);
       expect(service.findMatchEventsByMatchId).toHaveBeenCalledWith(1);
-    });
-  });
-
-  describe("getShotsByTeamId", () => {
-    it("should return the team's shots", async () => {
-      const mockShots: ShotDto[] = [];
-
-      mockMatchesService.findShotsByTeamId.mockResolvedValue(mockShots);
-
-      const result = await controller.getShotsByTeamId(1);
-
-      expect(result).toBe(mockShots);
-      expect(service.findShotsByTeamId).toHaveBeenCalledWith(1);
-    });
-  });
-
-  describe("getShotsByPlayerId", () => {
-    it("should return the player's shots", async () => {
-      const mockShots: ShotDto[] = [];
-
-      mockMatchesService.findShotsByPlayerId.mockResolvedValue(mockShots);
-
-      const result = await controller.getShotsByPlayerId(1);
-
-      expect(result).toBe(mockShots);
-      expect(service.findShotsByPlayerId).toHaveBeenCalledWith(1);
     });
   });
 

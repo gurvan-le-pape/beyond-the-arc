@@ -142,7 +142,7 @@ Response caching is applied at the route level using a custom `CacheInterceptor`
 | Tier            | TTL        | Applied to                                                             |
 | --------------- | ---------- | ---------------------------------------------------------------------- |
 | `STATIC_DATA`   | 10 minutes | Leagues, club stats by region — rarely changes                         |
-| `MODERATE_DATA` | 5 minutes  | List endpoints, filter values, pool matches, player shots              |
+| `MODERATE_DATA` | 5 minutes  | List endpoints, pool matches, player shots                             |
 | `DYNAMIC_DATA`  | 60 seconds | Platform stats and recent pools — they move with every simulated round |
 
 Endpoints that return a single resource by ID (e.g. `GET /clubs/:id`, `GET /matches/:matchId`) are generally not cached, as they are accessed less frequently and may reflect recent changes.
@@ -261,18 +261,14 @@ Each row is a team's record in the pool — games played, won, lost and forfeite
 
 ### Matches — `/api/matches`
 
-| Method | Path                              | Description                                     | Cached |
-| ------ | --------------------------------- | ----------------------------------------------- | ------ |
-| GET    | `/matches`                        | Paginated matches with filters                  | 5 min  |
-| GET    | `/matches/:matchId`               | Single match with full detail                   | No     |
-| GET    | `/matches/:matchId/player-stats`  | Player statistics for a match, grouped by team  | No     |
-| GET    | `/matches/:matchId/events`        | All events for a match, ordered by `occurredAt` | No     |
-| GET    | `/matches/team/:teamId/shots`     | Every shot a team took across its matches       | No     |
-| GET    | `/matches/player/:playerId/shots` | Every shot a player took across their matches   | 5 min  |
+| Method | Path                             | Description                                     | Cached |
+| ------ | -------------------------------- | ----------------------------------------------- | ------ |
+| GET    | `/matches`                       | Paginated matches with filters                  | 5 min  |
+| GET    | `/matches/:matchId`              | Single match with full detail                   | No     |
+| GET    | `/matches/:matchId/player-stats` | Player statistics for a match, grouped by team  | No     |
+| GET    | `/matches/:matchId/events`       | All events for a match, ordered by `occurredAt` | No     |
 
 `GET /matches` supports the most extensive filter set in the API: `level`, `division`, `committeeId`, `leagueId`, `category`, `gender`, `poolId`, `matchday`, `date` (YYYY-MM-DD), and `search` (club name). Default pagination: `page: 1`, `limit: 50`, max `limit: 100`.
-
-The two shot endpoints (`/team/:teamId/shots`, `/player/:playerId/shots`) return every shot with its coordinates and event type, and feed the shot charts on team and player pages. The team one is uncached on purpose: a season of team shots (~60 KB) exceeds the per-entry size the bounded cache was sized for.
 
 ---
 
@@ -283,10 +279,13 @@ The two shot endpoints (`/team/:teamId/shots`, `/player/:playerId/shots`) return
 | GET    | `/teams`             | Paginated teams with filters                 | 5 min  |
 | GET    | `/teams/:id`         | Single team with its roster and season stats | No     |
 | GET    | `/teams/:id/matches` | Match history for a team, most recent first  | No     |
+| GET    | `/teams/:id/shots`   | Every shot the team took across its matches  | No     |
 
 `GET /teams/:id` reads the team's completed box scores once and returns both each roster player's `seasonStats` and the team's own `seasonStats`. `GET /teams/:id/matches` returns the schedule and results only and reads no box score.
 
 `GET /teams` filters by `poolId`; the teams filters take their division and pool options from `GET /championships`, like the matches filters. The team number is typed, so it has no options endpoint.
+
+The shot endpoints (`/teams/:id/shots`, `/players/:id/shots`) return every shot with its coordinates and event type, and feed the shot charts on team and player pages. Their handlers live in the matches module, which owns the event query. The team one is uncached on purpose: a season of team shots (~60 KB) exceeds the per-entry size the bounded cache was sized for.
 
 ---
 
@@ -297,6 +296,7 @@ The two shot endpoints (`/team/:teamId/shots`, `/player/:playerId/shots`) return
 | GET    | `/players`             | Paginated players with filters                        | 5 min  |
 | GET    | `/players/:id`         | Single player with team detail                        | No     |
 | GET    | `/players/:id/matches` | Match history with per-match stats, most recent first | No     |
+| GET    | `/players/:id/shots`   | Every shot the player took across their matches       | 5 min  |
 
 `GET /players` supports filtering by `level`, `clubId`, `teamNumber`, `number` (jersey), `committeeId`, `leagueId`, `category`, `gender`, and `search` (player name, case-insensitive).
 
@@ -335,7 +335,5 @@ Exposed at `/metrics` (outside the `/api` prefix) for Prometheus scraping. Retur
 **Inconsistent pagination envelope.** List endpoints return `meta.count` while paginated endpoints return `data.items`, `data.total`, `data.page`, etc. The two patterns are not unified, which means frontend consumers need to handle both shapes.
 
 Sharper than it reads, now that the envelope is described in the contract rather than only in prose: a paginated endpoint sends the pagination numbers **twice**, once inside `data` and once in `meta`, and they are not the same numbers — `data.total` is the size of the result set while `meta.count` is the length of the page. `page`, `limit` and `totalPages` are straight duplicates. Unifying them is a breaking wire change and is not scheduled; until then, `ApiPageMetaDto`'s property descriptions say which is which.
-
-**`/matches/team/:teamId/shots` and `/matches/player/:playerId/shots` are under `/matches`.** These endpoints are scoped to a team or player but live under the matches controller. This is a pragmatic grouping — they return match event data — but it is not immediately obvious from the URL that `/matches/team/:teamId/shots` and `/teams/:id/matches` are different resources serving different purposes.
 
 **No search endpoint.** Global search across teams, players, and matches (as used by the frontend search page) is handled by multiple parallel requests to the filtered list endpoints rather than a dedicated search endpoint. This works at the current scale but is not efficient.

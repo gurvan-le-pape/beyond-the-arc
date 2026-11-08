@@ -5,7 +5,9 @@ import { PrismaModule } from "prisma/prisma.module";
 
 import { MatchesController } from "./matches.controller";
 import { MatchesService } from "./matches.service";
+import { PlayerShotsController } from "./player-shots.controller";
 import { PoolMatchesController } from "./pool-matches.controller";
+import { TeamShotsController } from "./team-shots.controller";
 
 /**
  * Matches module providing endpoints for match data.
@@ -16,8 +18,8 @@ import { PoolMatchesController } from "./pool-matches.controller";
  * - A pool's matches, unpaginated, at /pools/:poolId/matches
  * - Player statistics per match
  * - Match events (shots, fouls, etc.)
- * - Team-specific shot events
- * - Player-specific shot events
+ * - A team's shots at /teams/:teamId/shots
+ * - A player's shots at /players/:playerId/shots
  * - Pagination support
  *
  * Architecture:
@@ -27,7 +29,12 @@ import { PoolMatchesController } from "./pool-matches.controller";
  */
 @Module({
   imports: [PrismaModule, CommonModule],
-  controllers: [MatchesController, PoolMatchesController],
+  controllers: [
+    MatchesController,
+    PoolMatchesController,
+    TeamShotsController,
+    PlayerShotsController,
+  ],
   providers: [MatchesService],
 })
 export class MatchesModule {}
