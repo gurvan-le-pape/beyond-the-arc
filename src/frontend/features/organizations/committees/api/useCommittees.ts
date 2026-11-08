@@ -15,7 +15,7 @@ import { committeesQueries } from "./committeesQueries";
  * - Background refetch on mount when stale (window-focus refetching is off)
  *
  * @param filters - Optional filter criteria
- * @param options - Additional query options
+ * @param options - `enabled` gates the request; `initialData` seeds the cache from a server render
  * @returns React Query result with committees data
  *
  * @example
@@ -23,10 +23,11 @@ import { committeesQueries } from "./committeesQueries";
  */
 export function useCommittees(
   filters?: CommitteeFilters,
-  options?: { enabled?: boolean },
+  options?: { enabled?: boolean; initialData?: Committee[] },
 ) {
   return useQuery<Committee[], ApiError>({
     ...committeesQueries.list(filters),
     enabled: options?.enabled ?? true,
+    initialData: options?.initialData,
   });
 }

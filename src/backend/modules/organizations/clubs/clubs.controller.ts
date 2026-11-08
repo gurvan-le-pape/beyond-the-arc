@@ -20,15 +20,10 @@ import {
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 
 import { ClubsService } from "./clubs.service";
-import {
-  GetClubsQueryDto,
-  GetClubStatsByDepartmentQueryDto,
-} from "./dto/clubs.query.dto";
+import { GetClubsQueryDto } from "./dto/clubs.query.dto";
 import {
   ClubBasicResponseDto,
   ClubDetailedResponseDto,
-  ClubStatsByDepartmentDto,
-  ClubStatsByRegionDto,
 } from "./dto/clubs.response.dto";
 
 /**
@@ -48,116 +43,6 @@ import {
 @Controller("clubs")
 export class ClubsController {
   constructor(private readonly clubsService: ClubsService) {}
-
-  /**
-   * Retrieve club statistics grouped by region (league).
-   *
-   * This endpoint is CACHED because regional statistics change rarely.
-   * Cache TTL: 10 minutes (600 seconds)
-   *
-   * @returns Array of club statistics by region
-   *
-   * @example
-   * GET /clubs/stats/by-region
-   * Response (after TransformInterceptor):
-   * {
-   *   "data": [
-   *     {
-   *       "id": 1,
-   *       "code": "84",
-   *       "name": "League Auvergne-Rhône-Alpes",
-   *       "clubCount": 42
-   *     }
-   *   ],
-   *   "meta": { "count": 1 },
-   *   "timestamp": "2024-02-05T10:00:00Z",
-   *   "path": "/clubs/stats/by-region",
-   *   "statusCode": 200
-   * }
-   */
-  @Get("stats/by-region")
-  @HttpCode(HttpStatus.OK)
-  @UseInterceptors(CacheInterceptor({ ttl: CACHE_TTL.STATIC_DATA })) // Cache for 10 minutes
-  @ApiOperation({
-    summary: "Get club statistics by region",
-    description:
-      "Retrieves club counts aggregated by league. Results are cached for 10 minutes.",
-  })
-  @ApiEnvelopeList(ClubStatsByRegionDto, "List of club statistics by region")
-  @ApiResponse({
-    status: HttpStatus.INTERNAL_SERVER_ERROR,
-    description: "Internal server error",
-    type: ApiErrorResponseDto,
-  })
-  async getClubStatsByRegion(): Promise<ClubStatsByRegionDto[]> {
-    return this.clubsService.getClubCountsByRegion();
-  }
-
-  /**
-   * Retrieve club statistics grouped by department (committee).
-   *
-   * Optionally filter by league ID.
-   * Cached for 5 minutes as department stats change occasionally.
-   *
-   * @param query - Query parameters with optional leagueId
-   * @returns Array of club statistics by department
-   *
-   * @example
-   * GET /clubs/stats/by-department?leagueId=1
-   * Response (after TransformInterceptor):
-   * {
-   *   "data": [
-   *     {
-   *       "id": 1,
-   *       "name": "Comité de l'Ain",
-   *       "department": {
-   *         "name": "Ain",
-   *         "code": "01"
-   *       },
-   *       "leagueId": 1,
-   *       "clubCount": 15
-   *     }
-   *   ],
-   *   "meta": { "count": 1 },
-   *   "timestamp": "2024-02-05T10:00:00Z",
-   *   "path": "/clubs/stats/by-department",
-   *   "statusCode": 200
-   * }
-   */
-  @Get("stats/by-department")
-  @HttpCode(HttpStatus.OK)
-  @UseInterceptors(CacheInterceptor({ ttl: CACHE_TTL.MODERATE_DATA })) // Cache for 5 minutes
-  @ApiOperation({
-    summary: "Get club statistics by department",
-    description:
-      "Retrieves club counts aggregated by committee. Optionally filter by league. Results are cached for 5 minutes.",
-  })
-  @ApiEnvelopeList(
-    ClubStatsByDepartmentDto,
-    "List of club statistics by department",
-  )
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: "Invalid query parameters",
-    type: ApiErrorResponseDto,
-    example: {
-      statusCode: 400,
-      message: ["League regionale ID must be a valid number string"],
-      error: "Bad Request",
-      path: "/api/clubs/stats/by-department?leagueId=abc",
-      timestamp: "2024-02-05T10:00:00Z",
-    },
-  })
-  @ApiResponse({
-    status: HttpStatus.INTERNAL_SERVER_ERROR,
-    description: "Internal server error",
-    type: ApiErrorResponseDto,
-  })
-  async getClubStatsByDepartment(
-    @Query() query: GetClubStatsByDepartmentQueryDto,
-  ): Promise<ClubStatsByDepartmentDto[]> {
-    return this.clubsService.getClubCountsByDepartment(query.leagueId);
-  }
 
   /**
    * Retrieve all clubs without any filtering.

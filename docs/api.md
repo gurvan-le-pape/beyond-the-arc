@@ -206,19 +206,17 @@ Leagues are the top level of the French basketball hierarchy. The list is stable
 | GET    | `/committees`     | All committees, optionally filtered by `leagueId`   | 5 min  |
 | GET    | `/committees/:id` | Single committee by ID, with every one of its clubs | No     |
 
-`GET /committees` without a `leagueId` returns all departmental committees. With `leagueId`, it returns only committees belonging to that league.
+`GET /committees` without a `leagueId` returns all departmental committees. Leagues and committees each carry a `clubCount`, which is what the map's region and department labels show. With `leagueId`, it returns only committees belonging to that league.
 
 ---
 
 ### Clubs — `/api/clubs`
 
-| Method | Path                         | Description                                           | Cached |
-| ------ | ---------------------------- | ----------------------------------------------------- | ------ |
-| GET    | `/clubs`                     | Paginated clubs with filters                          | 5 min  |
-| GET    | `/clubs/all`                 | All clubs unfiltered (for map initialisation)         | 5 min  |
-| GET    | `/clubs/stats/by-region`     | Club counts grouped by league/region                  | 10 min |
-| GET    | `/clubs/stats/by-department` | Club counts grouped by committee, optional `leagueId` | 5 min  |
-| GET    | `/clubs/:id`                 | Single club with full team detail                     | No     |
+| Method | Path         | Description                                   | Cached |
+| ------ | ------------ | --------------------------------------------- | ------ |
+| GET    | `/clubs`     | Paginated clubs with filters                  | 5 min  |
+| GET    | `/clubs/all` | All clubs unfiltered (for map initialisation) | 5 min  |
+| GET    | `/clubs/:id` | Single club with full team detail             | No     |
 
 `GET /clubs` supports filtering by `level` (clubs with a team at that level), `committeeId`, `leagueId`, and `search` (club name, case-insensitive), with `page` and `limit` for pagination.
 
@@ -226,7 +224,7 @@ Leagues are the top level of the French basketball hierarchy. The list is stable
 
 `GET /clubs/:id` returns full detail including all of the club's teams, their pool, championship, and current rank and record in that pool.
 
-**Note:** the `/clubs/stats/*` and `/clubs/all` routes must be registered before `/:id` in the controller to avoid NestJS interpreting `stats` and `all` as ID parameters. They are.
+**Note:** the `/clubs/all` route must be registered before `/:id` in the controller to avoid NestJS interpreting `all` as an ID parameter. It is.
 
 ---
 

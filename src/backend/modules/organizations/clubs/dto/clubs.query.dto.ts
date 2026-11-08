@@ -62,19 +62,3 @@ export class GetClubsQueryDto extends PaginationQueryDto {
   @MaxLength(MAX_SEARCH_LENGTH)
   search?: string;
 }
-
-/**
- * Query parameters for filtering club statistics by department.
- */
-export class GetClubStatsByDepartmentQueryDto {
-  @ApiPropertyOptional({
-    description: "Filter by league ID",
-    example: 1,
-    type: Number,
-  })
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  leagueId?: number;
-}

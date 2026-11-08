@@ -21,7 +21,7 @@ Two route groups under `app/[locale]/` split the app by the shell it needs. Grou
 - **`(chrome)/`** — everything with the standard shell. Its layout renders the header, footer and page background; a page contributes only its `<main>`, through `PageLayout`. Inside it, `(public)/` groups the basketball data pages (championships, matches, players, teams, organisations, search) and scopes the error boundary they share; the informational pages (`about`, `architecture`, `contact`, `docs`, `features`) and the home page sit beside it, under the group's own `error.tsx`.
 - **`(fullscreen)/`** — the clubs map, and only the map. Header, no footer, pinned to the viewport height so the map fills what is left. It is a map application rather than a document, and a footer under it would either be unreachable or shrink the map.
 
-**The chrome is a layout, not part of `PageLayout`, because Next renders `error.tsx` and `not-found.tsx` *instead of* the page.** While the header and footer lived inside `PageLayout`, an error boundary had to rebuild the entire shell to keep it, a 404 lost it completely — `notFound()` fell through to Next's built-in page — and a `loading.tsx` could not be added at all without blanking the chrome during navigation. The home page still uses `PageLayout`'s `edgeToEdge` variant for its bento sections.
+**The chrome is a layout, not part of `PageLayout`, because Next renders `error.tsx` and `not-found.tsx` _instead of_ the page.** While the header and footer lived inside `PageLayout`, an error boundary had to rebuild the entire shell to keep it, a 404 lost it completely — `notFound()` fell through to Next's built-in page — and a `loading.tsx` could not be added at all without blanking the chrome during navigation. The home page still uses `PageLayout`'s `edgeToEdge` variant for its bento sections.
 
 The boundary between server and client is drawn around interactivity, not data. If a component renders once and never changes in response to user input, it is a server component. If it needs to filter, paginate, or update reactively, it becomes a client component backed by a TanStack Query hook.
 
@@ -58,7 +58,7 @@ Used by: player detail, team detail, match detail, map page, league detail, comm
 
 None of these pre-build: the image build has no backend to enumerate IDs against, and `next dev` never prerenders either.
 
-**The empty array is still required.** `generateStaticParams` returning `[]` is exactly what opts a route into ISR without pre-building anything — upstream: *"You must always return an array from `generateStaticParams`, even if it's empty. Otherwise, the route will be dynamically rendered."* Without the export, `dynamicParams = true` and the `revalidate` beside it are dead config and every request runs a full server render. All six detail routes carry the trio — `generateStaticParams` returning `[]`, `dynamicParams = true`, and a `revalidate` — and sit together in `.next/prerender-manifest.json` → `dynamicRoutes`, which is the only place this is actually observable. Each page is generated on first request, and the rendered HTML then cached.
+**The empty array is still required.** `generateStaticParams` returning `[]` is exactly what opts a route into ISR without pre-building anything — upstream: _"You must always return an array from `generateStaticParams`, even if it's empty. Otherwise, the route will be dynamically rendered."_ Without the export, `dynamicParams = true` and the `revalidate` beside it are dead config and every request runs a full server render. All six detail routes carry the trio — `generateStaticParams` returning `[]`, `dynamicParams = true`, and a `revalidate` — and sit together in `.next/prerender-manifest.json` → `dynamicRoutes`, which is the only place this is actually observable. Each page is generated on first request, and the rendered HTML then cached.
 
 **Dynamic server fetch with client islands** — for a page whose data depends on a search param. The route is `force-dynamic`, reads the param, fetches on the server and passes the result down as props. The interactive parts are small client components that do nothing but write the URL; the server re-render that navigation triggers is what refreshes the data.
 
@@ -201,18 +201,18 @@ changes. Every tier the client sets is listed here — a new query picks one of
 these rows rather than a fresh number, and adding a row is the way to introduce
 a genuinely new answer to "how often does this change?":
 
-| Data                                                               | `staleTime` | `gcTime` | Rationale                                                      |
-| ------------------------------------------------------------------ | ----------- | -------- | -------------------------------------------------------------- |
-| Anything that sets neither (`QueryClient` default)                 | 1 min       | 5 min    | A floor, not a policy — every tier below states its own        |
-| Team filter values                                                 | 30 s        | 10 min   | Pool numbers and letters shift as admins edit them             |
-| Name-search results (players, clubs)                               | 1 min       | 2 min    | A result set is consulted once and rarely returned to          |
-| Matches — list, detail, by pool, by championship                   | 2 min       | 5 min    | The scheduler writes results continuously                      |
-| Match history of one player or team                                | 2 min       | 10 min   | Same volatility; `gcTime` inherited from the feature base      |
-| Match events and player stats                                      | 5 min       | 5 min    | Immutable once the match has ended                             |
-| Entity metadata — championships, players, teams, clubs, committees | 5 min       | 10 min   | Changes rarely within a session                                |
-| Leagues                                                            | 5 min       | 15 min   | Reference data, loaded early and reused across features        |
+| Data                                                               | `staleTime` | `gcTime` | Rationale                                                                                                                    |
+| ------------------------------------------------------------------ | ----------- | -------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Anything that sets neither (`QueryClient` default)                 | 1 min       | 5 min    | A floor, not a policy — every tier below states its own                                                                      |
+| Team filter values                                                 | 30 s        | 10 min   | Pool numbers and letters shift as admins edit them                                                                           |
+| Name-search results (players, clubs)                               | 1 min       | 2 min    | A result set is consulted once and rarely returned to                                                                        |
+| Matches — list, detail, by pool, by championship                   | 2 min       | 5 min    | The scheduler writes results continuously                                                                                    |
+| Match history of one player or team                                | 2 min       | 10 min   | Same volatility; `gcTime` inherited from the feature base                                                                    |
+| Match events and player stats                                      | 5 min       | 5 min    | Immutable once the match has ended                                                                                           |
+| Entity metadata — championships, players, teams, clubs, committees | 5 min       | 10 min   | Changes rarely within a session                                                                                              |
+| Leagues                                                            | 5 min       | 15 min   | Reference data, loaded early and reused across features                                                                      |
 | Club aggregates (by region, by département) and the full club list | 24 h        | 10 min   | Only a static-data refresh moves them, and the server half caches all three for the same 24 h (`ServerRevalidate.REFERENCE`) |
-| GeoJSON boundaries                                                 | ∞           | ∞        | Static assets — French administrative boundaries do not change |
+| GeoJSON boundaries                                                 | ∞           | ∞        | Static assets — French administrative boundaries do not change                                                               |
 
 Every one of these pairs is set in a `features/*/api/*Queries.ts` options
 factory; the hooks spread those options and never set a lifetime of their own,
@@ -234,10 +234,10 @@ declared as `ServerRevalidate` in `lib/services/api.ts` and passed through
 `request`'s `revalidate` option. Each service module picks one tier for its
 endpoints:
 
-| Tier        | Window | Endpoints                                              |
-| ----------- | ------ | ------------------------------------------------------ |
-| `REFERENCE` | 24 h   | `/clubs*`, `/committees*`, `/leagues*`                 |
-| `DEFAULT`   | 1 h    | `/players`, `/teams`, `/championships`                 |
+| Tier        | Window | Endpoints                                                            |
+| ----------- | ------ | -------------------------------------------------------------------- |
+| `REFERENCE` | 24 h   | `/clubs*`, `/committees*`, `/leagues*`                               |
+| `DEFAULT`   | 1 h    | `/players`, `/teams`, `/championships`                               |
 | `LIVE`      | 60 s   | `/matches*`, `/stats`, `/leaderboards`, `/pools/recent`, `*/matches` |
 
 `DEFAULT` applies to any call that does not ask for something else, so a new
@@ -326,20 +326,20 @@ Every number on screen goes through next-intl's formatter, so the locale picks t
 
 Components never name a colour. They name a **role** — what the colour is for — and the role resolves per theme. There are three layers, each in its own file:
 
-| Layer | File | What it holds |
-| --- | --- | --- |
-| Palette | `styles/palette.css` (generated) | The Radix Colors scales the app draws from, twelve steps each, light and dark, as `R G B` channel triplets. Nothing references it directly. |
-| Roles | `styles/roles.css` (generated) | For every **tone** of `styles/tones.json` — brand (`primary`, `secondary`), status (`success`, `error`, `warning`, `info`), gender (`male`, `female`), level (`national`, `regional`, `departmental`), entities (`clubs`, `players`, `teams`, `matches`, `category`, `division`, `pool`, `position-g/f/c`) and sides (`home`, `away`) — seven roles per theme. |
-| Neutrals and fixed sets | `styles/globals.css` | Surfaces, `divide`, the text scale, the shot-chart court, and the match-event label colours. |
+| Layer                   | File                             | What it holds                                                                                                                                                                                                                                                                                                                                                  |
+| ----------------------- | -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Palette                 | `styles/palette.css` (generated) | The Radix Colors scales the app draws from, twelve steps each, light and dark, as `R G B` channel triplets. Nothing references it directly.                                                                                                                                                                                                                    |
+| Roles                   | `styles/roles.css` (generated)   | For every **tone** of `styles/tones.json` — brand (`primary`, `secondary`), status (`success`, `error`, `warning`, `info`), gender (`male`, `female`), level (`national`, `regional`, `departmental`), entities (`clubs`, `players`, `teams`, `matches`, `category`, `division`, `pool`, `position-g/f/c`) and sides (`home`, `away`) — seven roles per theme. |
+| Neutrals and fixed sets | `styles/globals.css`             | Surfaces, `divide`, the text scale, the shot-chart court, and the match-event label colours.                                                                                                                                                                                                                                                                   |
 
 **The roles come in pairs, and a pair is what a component uses:**
 
-| Role | Tailwind | For |
-| --- | --- | --- |
-| `solid` / `solid-hover` with `on-solid` | `bg-solid-error hover:bg-solid-error-hover text-on-solid-error` | A filled control or panel, and the text on it |
-| `tint` / `tint-hover` with `ink` | `bg-tint-clubs text-ink-clubs` | A low-emphasis fill — a badge, a chip, a selected option — and the text on it |
-| `ink` | `text-ink-primary` | Text or an icon in the tone, on any surface (links included) |
-| `line` | `border-line-regional` | A border in the tone |
+| Role                                    | Tailwind                                                        | For                                                                           |
+| --------------------------------------- | --------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `solid` / `solid-hover` with `on-solid` | `bg-solid-error hover:bg-solid-error-hover text-on-solid-error` | A filled control or panel, and the text on it                                 |
+| `tint` / `tint-hover` with `ink`        | `bg-tint-clubs text-ink-clubs`                                  | A low-emphasis fill — a badge, a chip, a selected option — and the text on it |
+| `ink`                                   | `text-ink-primary`                                              | Text or an icon in the tone, on any surface (links included)                  |
+| `line`                                  | `border-line-regional`                                          | A border in the tone                                                          |
 
 **The steps are solved, not picked.** Radix tunes its scales for APCA rather than WCAG 2, so a fixed step per role does not hold 4.5:1 — white on blue step 9 is 3.3:1, on amber step 9 1.6:1. `scripts/generate-palette.mts` (`npm run palette`) therefore chooses each tone's steps per theme by one rule: `solid` is the first step from 9 up that carries white at 4.5:1 with a hover step beside it that does too, else the same search with dark ink; `ink` is the lightest OKLab mix of steps 11 and 12 that clears 4.5:1 on the three surfaces and on the tone's tint (step 12 alone is near-black and drops the hue). In light, that makes most fills a step 11 with white text; in dark, the vivid scales keep step 9 and take dark text. The high-contrast theme runs the same rule at **7:1**, and a tone may name another scale for that theme alone — the brand is yellow there, the secondary cyan. Regenerate after changing `tones.json`, a surface colour, or the Radix version; the output is Prettier-clean, so a regeneration diff is a real change.
 
@@ -364,7 +364,7 @@ So the rules for a component are short. **Pair the role with its partner**: `on-
 
 **There are three themes, not two, and no component knows which one is active.** Every colour in `tailwind.config.js` is `rgb(var(--color-…) / <alpha-value>)`; the values live in custom-property blocks — `:root` (light), `.dark`, `.high-contrast` — in `globals.css` and `roles.css`. `next-themes` puts the class on `<html>` and the variables re-resolve, so `text-ink-primary` or `border-divide` is correct in all three with no theme variant at the call site. Exactly one `dark:` remains in the app — `dark:prose-invert` in the docs accordion, which styles the Tailwind typography plugin rather than a token of ours. **A `dark:` prefix on a themed token is a bug**: it pins the value and breaks high contrast. **A token is an `R G B` triplet, never a colour**: write `rgb(var(--color-divide))` wherever one is used outside a Tailwind colour utility (an arbitrary shadow, an inline style). A bare `var(--color-divide)` is an invalid colour and the declaration silently does nothing — that left the pinned table column with no edge and the level cards with no hover outline. And a value MapLibre or an SVG presentation attribute needs is resolved first: `useMapColours` reads the roles off the document, and the court sets SVG colours through `style`, since an attribute does not resolve `var()`.
 
-On top of the tokens sits a **surface context system**, which is runtime and does live partly in the Tailwind config. The structural classes `.surface-base` / `.surface-subtle` / `.surface-raised` each set their own background *and* publish `--surface-bg`, `--surface-inset` and `--surface-ring-offset`. Utilities defined in `tailwind.config.js` read those — `.bg-surface-own`, `.bg-surface-inset`, `.ring-offset-surface`, `.scroll-shadow-x` — so a component can say "one step above whatever I am sitting on" without knowing where it was mounted. Elevation runs base → subtle → raised and must not be skipped or reversed. **`raised` is the ceiling**: it publishes `--surface-inset` as *itself*, so `bg-surface-inset` inside a `surface-raised` ancestor is a no-op — which is how the old table body made both its zebra striping and its row hover invisible at once.
+On top of the tokens sits a **surface context system**, which is runtime and does live partly in the Tailwind config. The structural classes `.surface-base` / `.surface-subtle` / `.surface-raised` each set their own background _and_ publish `--surface-bg`, `--surface-inset` and `--surface-ring-offset`. Utilities defined in `tailwind.config.js` read those — `.bg-surface-own`, `.bg-surface-inset`, `.ring-offset-surface`, `.scroll-shadow-x` — so a component can say "one step above whatever I am sitting on" without knowing where it was mounted. Elevation runs base → subtle → raised and must not be skipped or reversed. **`raised` is the ceiling**: it publishes `--surface-inset` as _itself_, so `bg-surface-inset` inside a `surface-raised` ancestor is a no-op — which is how the old table body made both its zebra striping and its row hover invisible at once.
 
 `ThemeProvider` (`lib/providers/theme-provider.tsx`) is mounted in `app/providers.tsx`, defaults to `light`, registers `["light", "dark", "high-contrast"]` and respects the OS preference (`enableSystem: true`). Adding a fourth theme means a new class block in `globals.css` overriding only what differs, plus its name in that array. `suppressHydrationWarning` is set on `<html>` to suppress the inevitable mismatch between the server-rendered class and the client-resolved theme. Components that depend on the resolved theme — such as `Logo`, which switches between light and dark image assets — use `useTheme()` with a `mounted` guard, rendering a neutral placeholder until after hydration to avoid visual flicker. `ThemeToggle` in the header follows the same pattern.
 
@@ -423,12 +423,12 @@ Every table in the app is `DataTable` (`shared/components/table`), driven by a `
 
 Table-level axes:
 
-| Prop | Values | Meaning |
-| --- | --- | --- |
-| `density` | `comfortable` \| `cozy` \| `compact` | Cell padding only. Pick by column count — `comfortable` (`px-4 py-3.5`) up to a handful, `cozy` (`px-3 py-2.5`) around eight to ten, `compact` (`px-2 py-1.5`) for a full stat line. |
-| `wrap` | boolean | Whether cells may wrap. Separate from `density` so a table can be dense without being forced onto one line. |
-| `stickyLead` | boolean | Pins the first column while the rest scrolls sideways. Only worth setting when the lead column identifies the row — the box score's `name` column was moved to the front for exactly this reason, because pinning its jersey number would have kept a bare digit on screen while the player left. |
-| `emptyMessage` | string, **required** | A header with nothing under it and no explanation is never right, and while this was optional three of the four tables shipped without one. |
+| Prop           | Values                               | Meaning                                                                                                                                                                                                                                                                                           |
+| -------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `density`      | `comfortable` \| `cozy` \| `compact` | Cell padding only. Pick by column count — `comfortable` (`px-4 py-3.5`) up to a handful, `cozy` (`px-3 py-2.5`) around eight to ten, `compact` (`px-2 py-1.5`) for a full stat line.                                                                                                              |
+| `wrap`         | boolean                              | Whether cells may wrap. Separate from `density` so a table can be dense without being forced onto one line.                                                                                                                                                                                       |
+| `stickyLead`   | boolean                              | Pins the first column while the rest scrolls sideways. Only worth setting when the lead column identifies the row — the box score's `name` column was moved to the front for exactly this reason, because pinning its jersey number would have kept a bare digit on screen while the player left. |
+| `emptyMessage` | string, **required**                 | A header with nothing under it and no explanation is never right, and while this was optional three of the four tables shipped without one.                                                                                                                                                       |
 
 There is no zebra axis. A `striped` prop existed and three of the four tables set it, but it was close to a no-op: its odd band was `bg-surface-inset`, which resolves `--surface-inset` from the nearest surface ancestor — `TableBody`'s own `surface-raised` — and `surface-raised` publishes `--surface-inset: --color-surface-raised`, the body colour. So odd rows matched the body and only the even rows tinted, in a blue drawn from the brand ramp rather than the neutral one. Row separation is the `divide-y` on `TableBody`, and only that.
 
@@ -450,7 +450,7 @@ Column-level axes on `TableColumn<T>` — `numeric`, `divider`, `emphasis`, `wid
 
 **Wide tables get a scroll affordance and a pinned lead column, but no sticky header.** The affordance is the `.scroll-shadow-x` utility (`tailwind.config.js`): edge shadows that appear only while there is content past that edge, built from `background-attachment: local, local, scroll, scroll` — two covers painted in the container's background that scroll with the content and hide the shadow beneath them at either extreme. It is pure CSS on purpose, because `DataTable` renders inside server components and a JS overflow observer would push a `"use client"` boundary onto every table in the app.
 
-A sticky `<thead>` was considered and **rejected**. It cannot stick to the viewport from inside the scroll container: setting `overflow-x: auto` forces the used value of `overflow-y` to `auto` as well, so the header positions against that container's scrollport — which, its height being content-driven, never scrolls vertically, so the header never engages. Making it work means giving the table a `max-height` and turning it into a bounded scroll region, and at present row counts (leaderboard ~14, box score ~12) a `70vh` cap never engages on a desktop window either. That is an axis that does nothing, permanently coupling a `max-height` into the API, which is the opposite of the closed-variant discipline above. Revisit if row counts grow; the sticky *lead column* is what makes the box score usable narrow.
+A sticky `<thead>` was considered and **rejected**. It cannot stick to the viewport from inside the scroll container: setting `overflow-x: auto` forces the used value of `overflow-y` to `auto` as well, so the header positions against that container's scrollport — which, its height being content-driven, never scrolls vertically, so the header never engages. Making it work means giving the table a `max-height` and turning it into a bounded scroll region, and at present row counts (leaderboard ~14, box score ~12) a `70vh` cap never engages on a desktop window either. That is an axis that does nothing, permanently coupling a `max-height` into the API, which is the opposite of the closed-variant discipline above. Revisit if row counts grow; the sticky _lead column_ is what makes the box score usable narrow.
 
 The empty row deliberately does **not** use `feedback/EmptyState`. That component renders its title as `<Text variant="h3">`, and every table already sits inside a `Section` with an `<h2>`; nesting a heading that describes an absence inside the section's own table would pollute the document outline, and its icon/description/action slots are dead weight in a `<td>`.
 
@@ -462,7 +462,7 @@ The interactive France map is built with **react-map-gl** (v8), which wraps **Ma
 
 ### Data loading
 
-All map data — region stats, department stats, and the full club list — is fetched server-side in the map page's `Promise.all` call and passed as props to `ClubsMap`. There is no lazy loading by zoom level or viewport; the full dataset arrives with the initial server render. The map page uses a 24-hour ISR revalidation window, reflecting that club geography changes rarely.
+All map data — the leagues (one per region), the committees (one per department), both with their club counts, and the full club list — is fetched server-side in the map page's `Promise.all` call and passed as props to `ClubsMap`. There is no lazy loading by zoom level or viewport; the full dataset arrives with the initial server render. The map page uses a 24-hour ISR revalidation window, reflecting that club geography changes rarely.
 
 GeoJSON boundary data for regions and departments is served as static assets bundled with the frontend, keeping the backend and database free from geometry concerns.
 
@@ -555,7 +555,7 @@ Source code keeps importing from barrels; the rewrite is invisible to it. It rel
 
 `browserslist` in `src/frontend/package.json` is the support floor: Chrome and Edge 109 (the last release on Windows 7 and 8.1), Firefox 115 (its extended-support release for older systems), Safari and iOS Safari 15. Next compiles to it, and lint checks against it.
 
-**TypeScript does not check browser APIs.** The ES2021 target blocks newer *language* APIs — `Object.groupBy` fails typecheck — but the `dom` lib declares every API current browsers have, whatever the target. `AbortSignal.any` passed typecheck and broke every client-side query on Safari before 17.4.
+**TypeScript does not check browser APIs.** The ES2021 target blocks newer _language_ APIs — `Object.groupBy` fails typecheck — but the `dom` lib declares every API current browsers have, whatever the target. `AbortSignal.any` passed typecheck and broke every client-side query on Safari before 17.4.
 
 Lint covers it in two layers. `compat/compat` (eslint-plugin-compat) flags web APIs the floor lacks, from MDN and caniuse data. That data has gaps — it does not know `AbortSignal.any` or `AbortSignal.timeout` — so `no-restricted-properties` names those explicitly in `eslint.config.mjs`. When compat misses an API that bites, it goes on that list.
 

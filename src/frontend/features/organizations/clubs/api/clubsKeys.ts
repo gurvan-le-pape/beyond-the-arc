@@ -5,9 +5,6 @@ export const clubsKeys = {
   all: ["clubs"] as const,
   lists: () => [...clubsKeys.all, "list"] as const,
   list: (filters?: ClubFilters) => [...clubsKeys.lists(), filters] as const,
-  statsByRegion: () => [...clubsKeys.all, "stats", "by-region"] as const,
-  statsByDepartment: () =>
-    [...clubsKeys.all, "stats", "by-department"] as const,
   allClubs: () => [...clubsKeys.all, "all"] as const,
   search: (
     search: string,

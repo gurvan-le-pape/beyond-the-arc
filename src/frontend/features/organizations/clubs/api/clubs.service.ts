@@ -5,8 +5,6 @@ import type { ClubBasic } from "../types/ClubBasic";
 import type { ClubDetailed } from "../types/ClubDetailed";
 import type { ClubFilters } from "../types/ClubFilters";
 import type { ClubsPaginatedResponse } from "../types/ClubsPaginatedResponse";
-import type { ClubStatsByDepartment } from "../types/ClubStatsByDepartment";
-import type { ClubStatsByRegion } from "../types/ClubStatsByRegion";
 
 /** Clubs and their geography are static reference data. */
 const revalidate = ServerRevalidate.REFERENCE;
@@ -43,34 +41,6 @@ export const clubsService = {
    */
   getById(id: number, signal?: AbortSignal): Promise<ClubDetailed> {
     return request(`/clubs/${id}`, { revalidate, signal });
-  },
-
-  /**
-   * How many clubs each region has, for the map's region layer.
-   *
-   * @param signal - TanStack Query's `queryFn` signal
-   * @returns one count per region
-   */
-  getStatsByRegion(signal?: AbortSignal): Promise<ClubStatsByRegion[]> {
-    return request("/clubs/stats/by-region", { revalidate, signal });
-  },
-
-  /**
-   * How many clubs each department has, for the map's department layer.
-   *
-   * @param leagueId - narrows to one league's departments
-   * @param signal - TanStack Query's `queryFn` signal
-   * @returns one count per department
-   */
-  getStatsByDepartment(
-    leagueId?: number,
-    signal?: AbortSignal,
-  ): Promise<ClubStatsByDepartment[]> {
-    return request("/clubs/stats/by-department", {
-      params: { leagueId },
-      revalidate,
-      signal,
-    });
   },
 
   /**

@@ -20,46 +20,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/clubs/stats/by-region": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get club statistics by region
-         * @description Retrieves club counts aggregated by league. Results are cached for 10 minutes.
-         */
-        get: operations["ClubsController_getClubStatsByRegion"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/clubs/stats/by-department": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get club statistics by department
-         * @description Retrieves club counts aggregated by committee. Optionally filter by league. Results are cached for 5 minutes.
-         */
-        get: operations["ClubsController_getClubStatsByDepartment"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/clubs/all": {
         parameters: {
             query?: never;
@@ -639,91 +599,6 @@ export interface components {
              */
             count: number;
         };
-        ClubStatsByRegionDto: {
-            /**
-             * @description League regionale ID
-             * @example 1
-             */
-            id: number;
-            /**
-             * @description Region code — the FFBB's alphabetic league code, not the INSEE numeric region code
-             * @example ARA
-             */
-            code: string;
-            /**
-             * @description League name
-             * @example AUVERGNE-RHÔNE-ALPES
-             */
-            name: string;
-            /**
-             * @description Number of clubs in this region
-             * @example 42
-             */
-            clubCount: number;
-        };
-        ApiErrorResponseDto: {
-            /**
-             * @description HTTP status code, repeated in the body for convenience
-             * @example 404
-             */
-            statusCode: number;
-            /**
-             * @description What went wrong, for a developer reading logs — never user-facing copy. An array when it carries per-field validation failures.
-             * @example Player with ID 999999999 not found
-             */
-            message: string | string[];
-            /**
-             * @description The HTTP status name, e.g. "Not Found" or "Bad Request" — derived from the status code, never the exception class name
-             * @example Not Found
-             */
-            error: string;
-            /**
-             * @description The request path, including the /api prefix
-             * @example /api/players/999999999
-             */
-            path: string;
-            /**
-             * @description When the error was produced, as an ISO 8601 UTC instant
-             * @example 2026-02-05T10:00:00.000Z
-             */
-            timestamp: string;
-        };
-        DepartmentInfoDto: {
-            /**
-             * @description Department name
-             * @example Ain
-             */
-            name: string;
-            /**
-             * @description Department code
-             * @example 01
-             */
-            code: string;
-        };
-        ClubStatsByDepartmentDto: {
-            /**
-             * @description Committee ID
-             * @example 1
-             */
-            id: number;
-            /**
-             * @description Committee name
-             * @example Comité de l'Ain
-             */
-            name: string;
-            /** @description Department information */
-            department: components["schemas"]["DepartmentInfoDto"];
-            /**
-             * @description League regionale ID
-             * @example 1
-             */
-            leagueId: number;
-            /**
-             * @description Number of clubs in this department
-             * @example 15
-             */
-            clubCount: number;
-        };
         ClubBasicResponseDto: {
             /**
              * @description Club ID
@@ -765,6 +640,33 @@ export interface components {
              * @example 1
              */
             leagueId: number;
+        };
+        ApiErrorResponseDto: {
+            /**
+             * @description HTTP status code, repeated in the body for convenience
+             * @example 404
+             */
+            statusCode: number;
+            /**
+             * @description What went wrong, for a developer reading logs — never user-facing copy. An array when it carries per-field validation failures.
+             * @example Player with ID 999999999 not found
+             */
+            message: string | string[];
+            /**
+             * @description The HTTP status name, e.g. "Not Found" or "Bad Request" — derived from the status code, never the exception class name
+             * @example Not Found
+             */
+            error: string;
+            /**
+             * @description The request path, including the /api prefix
+             * @example /api/players/999999999
+             */
+            path: string;
+            /**
+             * @description When the error was produced, as an ISO 8601 UTC instant
+             * @example 2026-02-05T10:00:00.000Z
+             */
+            timestamp: string;
         };
         ApiPageMetaDto: {
             /**
@@ -2623,93 +2525,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": string;
-                };
-            };
-        };
-    };
-    ClubsController_getClubStatsByRegion: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List of club statistics by region */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
-                        data: components["schemas"]["ClubStatsByRegionDto"][];
-                        meta: components["schemas"]["ApiListMetaDto"];
-                    };
-                };
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponseDto"];
-                };
-            };
-        };
-    };
-    ClubsController_getClubStatsByDepartment: {
-        parameters: {
-            query?: {
-                /** @description Filter by league ID */
-                leagueId?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List of club statistics by department */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
-                        data: components["schemas"]["ClubStatsByDepartmentDto"][];
-                        meta: components["schemas"]["ApiListMetaDto"];
-                    };
-                };
-            };
-            /** @description Invalid query parameters */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    /**
-                     * @example {
-                     *       "statusCode": 400,
-                     *       "message": [
-                     *         "League regionale ID must be a valid number string"
-                     *       ],
-                     *       "error": "Bad Request",
-                     *       "path": "/api/clubs/stats/by-department?leagueId=abc",
-                     *       "timestamp": "2024-02-05T10:00:00Z"
-                     *     }
-                     */
-                    "application/json": components["schemas"]["ApiErrorResponseDto"];
-                };
-            };
-            /** @description Internal server error */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
         };

@@ -3,9 +3,10 @@
 
 import dynamic from "next/dynamic";
 
+import type { Committee } from "@/features/organizations/committees/types";
+import type { League } from "@/features/organizations/leagues/types";
+
 import type { ClubBasic } from "../../../types/ClubBasic";
-import type { ClubStatsByDepartment } from "../../../types/ClubStatsByDepartment";
-import type { ClubStatsByRegion } from "../../../types/ClubStatsByRegion";
 import { LoadingMap } from "./LoadingMap";
 
 // Dynamic import with ssr: false
@@ -18,8 +19,8 @@ const MapLibreClubsMap = dynamic(
 );
 
 interface ClubsMapProps {
-  readonly initialRegions: ClubStatsByRegion[];
-  readonly initialDepartments: ClubStatsByDepartment[];
+  readonly initialRegions: League[];
+  readonly initialDepartments: Committee[];
   readonly initialClubs: ClubBasic[];
 }
 

@@ -18,8 +18,6 @@ import type { GetClubsQueryDto } from "./dto/clubs.query.dto";
 import {
   ClubBasicResponseDto,
   ClubDetailedResponseDto,
-  ClubStatsByDepartmentDto,
-  ClubStatsByRegionDto,
 } from "./dto/clubs.response.dto";
 
 /**
@@ -96,108 +94,6 @@ type RankedStanding = ReturnType<typeof computeStandings>[number] & {
 @Injectable()
 export class ClubsService {
   constructor(private readonly prisma: PrismaService) {}
-
-  /**
-   * Retrieves club statistics grouped by region (league).
-   * Aggregates club counts from committees up to leagues.
-   *
-   * @returns Array of club statistics by region
-   */
-  async getClubCountsByRegion(): Promise<ClubStatsByRegionDto[]> {
-    // Get club counts grouped by committee
-    const clubCountsByCommittee = await this.prisma.client.clubs.groupBy({
-      by: ["committeeId"],
-      _count: {
-        id: true,
-      },
-    });
-
-    // Get committee to league mapping
-    const committees = await this.prisma.client.committees.findMany({
-      select: {
-        id: true,
-        leagueId: true,
-      },
-    });
-
-    const committeeToLeague = new Map<number, number | null>(
-      committees.map((c) => [c.id, c.leagueId]),
-    );
-
-    // Aggregate counts by league
-    const leaguesCounts = new Map<number, number>();
-    for (const item of clubCountsByCommittee) {
-      if (typeof item.committeeId !== "number") continue;
-      const leagueId = committeeToLeague.get(item.committeeId);
-      if (typeof leagueId === "number") {
-        leaguesCounts.set(
-          leagueId,
-          (leaguesCounts.get(leagueId) || 0) + item._count.id,
-        );
-      }
-    }
-
-    const leagues = await this.prisma.client.leagues.findMany({
-      select: {
-        id: true,
-        name: true,
-        regionCode: true,
-      },
-      orderBy: {
-        name: "asc",
-      },
-    });
-
-    return leagues.map((league) => ({
-      id: league.id,
-      code: league.regionCode,
-      name: league.name,
-      clubCount: leaguesCounts.get(league.id) || 0,
-    }));
-  }
-
-  /**
-   * Retrieves club statistics grouped by department (committee).
-   * Optionally filters by league.
-   *
-   * @param leagueId - Optional league ID to filter by
-   * @returns Array of club statistics by department
-   */
-  async getClubCountsByDepartment(
-    leagueId?: number,
-  ): Promise<ClubStatsByDepartmentDto[]> {
-    const where: Prisma.CommitteesWhereInput = leagueId ? { leagueId } : {};
-
-    const committees = await this.prisma.client.committees.findMany({
-      where,
-      select: {
-        id: true,
-        name: true,
-        departmentCode: true,
-        departmentName: true,
-        leagueId: true,
-        _count: {
-          select: {
-            clubs: true,
-          },
-        },
-      },
-      orderBy: {
-        name: "asc",
-      },
-    });
-
-    return committees.map((committee) => ({
-      id: committee.id,
-      name: committee.name,
-      department: {
-        name: committee.departmentName,
-        code: committee.departmentCode,
-      },
-      leagueId: committee.leagueId,
-      clubCount: committee._count.clubs,
-    }));
-  }
 
   /**
    * Retrieves all clubs without filtering.

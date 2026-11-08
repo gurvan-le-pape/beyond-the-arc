@@ -18,15 +18,10 @@ import { LoggerModule } from "nestjs-pino";
 
 import { ClubsController } from "./clubs.controller";
 import { ClubsService } from "./clubs.service";
-import {
-  GetClubsQueryDto,
-  GetClubStatsByDepartmentQueryDto,
-} from "./dto/clubs.query.dto";
+import { GetClubsQueryDto } from "./dto/clubs.query.dto";
 import type {
   ClubBasicResponseDto,
   ClubDetailedResponseDto,
-  ClubStatsByDepartmentDto,
-  ClubStatsByRegionDto,
 } from "./dto/clubs.response.dto";
 
 describe("ClubsController", () => {
@@ -34,8 +29,6 @@ describe("ClubsController", () => {
   let service: ClubsService;
 
   const mockClubsService = {
-    getClubCountsByRegion: jest.fn(),
-    getClubCountsByDepartment: jest.fn(),
     findClubsByFilters: jest.fn(),
     findClubById: jest.fn(),
   };
@@ -68,116 +61,6 @@ describe("ClubsController", () => {
     service = module.get<ClubsService>(ClubsService);
 
     jest.clearAllMocks();
-  });
-
-  describe("getClubStatsByRegion", () => {
-    it("should return club stats by region", async () => {
-      const mockStats: ClubStatsByRegionDto[] = [
-        {
-          id: 1,
-          code: "84",
-          name: "League Auvergne-Rhône-Alpes",
-          clubCount: 42,
-        },
-        {
-          id: 2,
-          code: "75",
-          name: "League Île-de-France",
-          clubCount: 38,
-        },
-      ];
-
-      mockClubsService.getClubCountsByRegion.mockResolvedValue(mockStats);
-
-      const result = await controller.getClubStatsByRegion();
-
-      expect(result).toEqual(mockStats);
-      expect(mockClubsService.getClubCountsByRegion).toHaveBeenCalledTimes(1);
-      expect(mockClubsService.getClubCountsByRegion).toHaveBeenCalledWith();
-    });
-
-    it("should handle empty results", async () => {
-      mockClubsService.getClubCountsByRegion.mockResolvedValue([]);
-
-      const result = await controller.getClubStatsByRegion();
-
-      expect(result).toEqual([]);
-      expect(mockClubsService.getClubCountsByRegion).toHaveBeenCalledTimes(1);
-    });
-
-    it("should propagate service errors", async () => {
-      const error = new Error("Database error");
-      mockClubsService.getClubCountsByRegion.mockRejectedValue(error);
-
-      await expect(controller.getClubStatsByRegion()).rejects.toThrow(error);
-    });
-  });
-
-  describe("getClubStatsByDepartment", () => {
-    it("should return club stats by department without filter", async () => {
-      const mockStats: ClubStatsByDepartmentDto[] = [
-        {
-          id: 1,
-          name: "Comité de l'Ain",
-          department: {
-            name: "Ain",
-            code: "01",
-          },
-          leagueId: 1,
-          clubCount: 15,
-        },
-      ];
-
-      mockClubsService.getClubCountsByDepartment.mockResolvedValue(mockStats);
-
-      const dto: GetClubStatsByDepartmentQueryDto = {};
-      const result = await controller.getClubStatsByDepartment(dto);
-
-      expect(result).toEqual(mockStats);
-      expect(mockClubsService.getClubCountsByDepartment).toHaveBeenCalledTimes(
-        1,
-      );
-      expect(mockClubsService.getClubCountsByDepartment).toHaveBeenCalledWith(
-        undefined,
-      );
-    });
-
-    it("should return club stats by department with leagueId filter", async () => {
-      const mockStats: ClubStatsByDepartmentDto[] = [
-        {
-          id: 2,
-          name: "Comité du Rhône",
-          department: {
-            name: "Rhône",
-            code: "69",
-          },
-          leagueId: 1,
-          clubCount: 25,
-        },
-      ];
-
-      mockClubsService.getClubCountsByDepartment.mockResolvedValue(mockStats);
-
-      const dto: GetClubStatsByDepartmentQueryDto = { leagueId: 1 };
-      const result = await controller.getClubStatsByDepartment(dto);
-
-      expect(result).toEqual(mockStats);
-      expect(mockClubsService.getClubCountsByDepartment).toHaveBeenCalledTimes(
-        1,
-      );
-      expect(mockClubsService.getClubCountsByDepartment).toHaveBeenCalledWith(
-        1,
-      );
-    });
-
-    it("should handle empty results", async () => {
-      mockClubsService.getClubCountsByDepartment.mockResolvedValue([]);
-
-      const dto: GetClubStatsByDepartmentQueryDto = {};
-      const result = await controller.getClubStatsByDepartment(dto);
-
-      expect(result).toEqual([]);
-    });
   });
 
   describe("getClubs", () => {
@@ -445,48 +328,6 @@ describe("ClubsController", () => {
       expect(errors.length).toBeGreaterThan(0);
       expect(errors[0].property).toBe("leagueId");
       expect(errors[0].constraints).toHaveProperty("isInt");
-    });
-  });
-
-  describe("GetClubStatsByDepartmentQueryDto validation", () => {
-    it("should validate a correct DTO with leagueId", async () => {
-      const dto = plainToInstance(GetClubStatsByDepartmentQueryDto, {
-        leagueId: "1",
-      });
-
-      const errors = await validate(dto);
-
-      expect(errors.length).toBe(0);
-    });
-
-    it("should validate an empty DTO", async () => {
-      const dto = plainToInstance(GetClubStatsByDepartmentQueryDto, {});
-
-      const errors = await validate(dto);
-
-      expect(errors.length).toBe(0);
-    });
-
-    it("should fail for non-numeric leagueId", async () => {
-      const dto = plainToInstance(GetClubStatsByDepartmentQueryDto, {
-        leagueId: "abc",
-      });
-
-      const errors = await validate(dto);
-
-      expect(errors.length).toBeGreaterThan(0);
-      expect(errors[0].property).toBe("leagueId");
-      expect(errors[0].constraints).toHaveProperty("isInt");
-    });
-
-    it("should accept numeric strings", async () => {
-      const dto = plainToInstance(GetClubStatsByDepartmentQueryDto, {
-        leagueId: "7",
-      });
-
-      const errors = await validate(dto);
-
-      expect(errors.length).toBe(0);
     });
   });
 });

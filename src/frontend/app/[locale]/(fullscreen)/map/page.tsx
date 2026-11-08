@@ -4,6 +4,8 @@ import { getTranslations } from "next-intl/server";
 
 import { clubsService } from "@/features/organizations/clubs/api";
 import { ClubsMap } from "@/features/organizations/clubs/components";
+import { committeesService } from "@/features/organizations/committees/api";
+import { leaguesService } from "@/features/organizations/leagues/api";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { Text } from "@/shared/components/typography";
 import type { LocalePageProps } from "@/shared/types";
@@ -32,10 +34,11 @@ async function MapPage({ params }: LocalePageProps) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "clubs" });
 
-  // Pre-fetch initial regions data server-side
+  // Regions are the leagues, departments the committees; each carries its
+  // club count for the map's labels.
   const [initialRegions, initialDepartments, initialClubs] = await Promise.all([
-    clubsService.getStatsByRegion(),
-    clubsService.getStatsByDepartment(),
+    leaguesService.getAll(),
+    committeesService.getAll(),
     clubsService.getAllClubs(),
   ]).catch(handleServerError);
 
@@ -58,7 +61,7 @@ async function MapPage({ params }: LocalePageProps) {
 }
 
 // Rendered per request: the image build has no backend to prerender against.
-// The three club datasets behind it are cached for 24h by `request` — including
+// The three datasets behind it are cached for 24h by `request` — including
 // the 990 KB /clubs/all payload — so a render here is a cache read, not three
 // queries.
 export const dynamic = "force-dynamic";
