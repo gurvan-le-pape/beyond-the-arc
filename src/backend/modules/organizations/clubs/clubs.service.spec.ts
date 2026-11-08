@@ -7,7 +7,7 @@
  * Mocks PrismaService to isolate service logic.
  */
 
-import { Category, Gender } from "@common/constants";
+import { CompetitionLevel } from "@common/constants";
 import { NotFoundException } from "@nestjs/common";
 import type { PrismaService } from "prisma/prisma.service";
 
@@ -357,28 +357,20 @@ describe("ClubsService", () => {
       );
     });
 
-    it("should filter by category via teams", async () => {
-      await service.findClubsByFilters({ category: Category.U18 });
+    it("should filter by level via teams", async () => {
+      await service.findClubsByFilters({
+        level: CompetitionLevel.DEPARTMENTAL,
+      });
 
       expect(prisma.client.clubs.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: {
             teams: {
-              some: { pool: { championship: { category: Category.U18 } } },
-            },
-          },
-        }),
-      );
-    });
-
-    it("should filter by gender via teams", async () => {
-      await service.findClubsByFilters({ gender: Gender.FEMALE });
-
-      expect(prisma.client.clubs.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: {
-            teams: {
-              some: { pool: { championship: { gender: Gender.FEMALE } } },
+              some: {
+                pool: {
+                  championship: { level: CompetitionLevel.DEPARTMENTAL },
+                },
+              },
             },
           },
         }),
@@ -389,8 +381,7 @@ describe("ClubsService", () => {
       await service.findClubsByFilters({
         committeeId: 1,
         leagueId: 2,
-        category: Category.U18,
-        gender: Gender.MALE,
+        level: CompetitionLevel.DEPARTMENTAL,
       });
 
       expect(prisma.client.clubs.findMany).toHaveBeenCalledWith(
@@ -401,10 +392,7 @@ describe("ClubsService", () => {
             teams: {
               some: {
                 pool: {
-                  championship: {
-                    category: Category.U18,
-                    gender: Gender.MALE,
-                  },
+                  championship: { level: CompetitionLevel.DEPARTMENTAL },
                 },
               },
             },
@@ -436,7 +424,7 @@ describe("ClubsService", () => {
       prisma.client.clubs.count.mockResolvedValue(0);
 
       const result = await service.findClubsByFilters({
-        category: Category.U18,
+        level: CompetitionLevel.NATIONAL,
       });
 
       expect(result.items).toEqual([]);

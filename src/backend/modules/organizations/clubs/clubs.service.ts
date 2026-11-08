@@ -235,8 +235,7 @@ export class ClubsService {
       where.name = nameContains(filters.search);
     }
 
-    const { level, category, gender } = filters;
-    const championship = buildChampionshipWhere({ level, category, gender });
+    const championship = buildChampionshipWhere({ level: filters.level });
     if (championship) where.teams = { some: { pool: { championship } } };
 
     const [clubs, total] = await Promise.all([

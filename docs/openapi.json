@@ -282,38 +282,6 @@
             }
           },
           {
-            "name": "category",
-            "required": false,
-            "in": "query",
-            "description": "Filter by category",
-            "schema": {
-              "example": "U18",
-              "type": "string",
-              "enum": [
-                "U11",
-                "U13",
-                "U15",
-                "U18",
-                "U21",
-                "Seniors"
-              ]
-            }
-          },
-          {
-            "name": "gender",
-            "required": false,
-            "in": "query",
-            "description": "Filter by gender",
-            "schema": {
-              "example": "male",
-              "type": "string",
-              "enum": [
-                "male",
-                "female"
-              ]
-            }
-          },
-          {
             "name": "search",
             "required": false,
             "in": "query",

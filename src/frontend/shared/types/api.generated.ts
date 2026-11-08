@@ -2845,10 +2845,6 @@ export interface operations {
                 committeeId?: number;
                 /** @description Filter by league ID */
                 leagueId?: number;
-                /** @description Filter by category */
-                category?: "U11" | "U13" | "U15" | "U18" | "U21" | "Seniors";
-                /** @description Filter by gender */
-                gender?: "male" | "female";
                 /** @description Search by club name */
                 search?: string;
             };

@@ -1,5 +1,5 @@
 // src/backend/modules/organizations/clubs/dto/clubs.query.dto.spec.ts
-import { Category, CompetitionLevel, Gender } from "@common/constants";
+import { CompetitionLevel } from "@common/constants";
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
 
@@ -20,8 +20,6 @@ describe("GetClubsQueryDto", () => {
       level: CompetitionLevel.REGIONAL,
       committeeId: 1,
       leagueId: 1,
-      category: Category.U18,
-      gender: Gender.MALE,
     });
     const errors = await validate(dto);
     expect(errors).toHaveLength(0);
@@ -58,42 +56,6 @@ describe("GetClubsQueryDto", () => {
       const dto = plainToInstance(GetClubsQueryDto, { committeeId: "abc" });
       const errors = await validate(dto);
       expect(errors.some((e) => e.property === "committeeId")).toBe(true);
-    });
-  });
-
-  describe("category", () => {
-    it("should pass for all valid categories", async () => {
-      for (const category of Object.values(Category)) {
-        const dto = plainToInstance(GetClubsQueryDto, { category });
-        const errors = await validate(dto);
-        expect(errors.some((e) => e.property === "category")).toBe(false);
-      }
-    });
-
-    it("should fail for invalid category", async () => {
-      const dto = plainToInstance(GetClubsQueryDto, { category: "U99" });
-      const errors = await validate(dto);
-      expect(errors.some((e) => e.property === "category")).toBe(true);
-    });
-  });
-
-  describe("gender", () => {
-    it("should pass for male gender", async () => {
-      const dto = plainToInstance(GetClubsQueryDto, { gender: Gender.MALE });
-      const errors = await validate(dto);
-      expect(errors.some((e) => e.property === "gender")).toBe(false);
-    });
-
-    it("should pass for female gender", async () => {
-      const dto = plainToInstance(GetClubsQueryDto, { gender: Gender.FEMALE });
-      const errors = await validate(dto);
-      expect(errors.some((e) => e.property === "gender")).toBe(false);
-    });
-
-    it("should fail for invalid gender", async () => {
-      const dto = plainToInstance(GetClubsQueryDto, { gender: "other" });
-      const errors = await validate(dto);
-      expect(errors.some((e) => e.property === "gender")).toBe(true);
     });
   });
 });
