@@ -513,18 +513,11 @@ export class MatchesService {
   private buildPoolFilter(
     filters: GetMatchesQueryDto,
   ): Prisma.PoolsWhereInput | undefined {
-    const { championshipId } = filters;
     // A pool id already fixes the championship.
-    const championship = filters.poolId
-      ? undefined
-      : buildChampionshipWhere(filters);
+    if (filters.poolId) return undefined;
 
-    if (!championshipId && !championship) return undefined;
-
-    return {
-      ...(championshipId ? { championshipId } : {}),
-      ...(championship ? { championship } : {}),
-    };
+    const championship = buildChampionshipWhere(filters);
+    return championship ? { championship } : undefined;
   }
 
   /**

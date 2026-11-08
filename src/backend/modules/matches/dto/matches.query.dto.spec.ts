@@ -21,7 +21,6 @@ describe("GetMatchesQueryDto", () => {
       category: "U18",
       gender: "male",
       poolId: 1,
-      championshipId: 1,
       matchday: 1,
       date: "2024-02-05",
       search: "Paris",
@@ -57,7 +56,6 @@ describe("GetMatchesQueryDto", () => {
         committeeId: "5",
         leagueId: "3",
         poolId: "10",
-        championshipId: "7",
         matchday: "4",
         page: "2",
         limit: "25",
@@ -66,7 +64,6 @@ describe("GetMatchesQueryDto", () => {
       expect(dto.committeeId).toBe(5);
       expect(dto.leagueId).toBe(3);
       expect(dto.poolId).toBe(10);
-      expect(dto.championshipId).toBe(7);
       expect(dto.matchday).toBe(4);
       expect(dto.page).toBe(2);
       expect(dto.limit).toBe(25);

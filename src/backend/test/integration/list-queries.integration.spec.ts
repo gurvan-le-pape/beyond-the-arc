@@ -164,7 +164,7 @@ describe("list queries", () => {
       const inLeague = await service().findAllMatches({
         search,
         leagueId: regional.leagueId,
-        championshipId: regional.championshipId,
+        poolId: regional.poolId,
       });
       const elsewhere = await service().findAllMatches({
         search,

@@ -12,7 +12,6 @@ export interface MatchFilters {
   committeeId?: number;
   leagueId?: number;
   poolId?: number;
-  championshipId?: number;
   matchday?: number;
   page?: number;
   limit?: number;

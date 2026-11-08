@@ -105,7 +105,6 @@ describe("MatchesController", () => {
         category: "U18" as Category,
         gender: "female" as Gender,
         poolId: 9,
-        championshipId: 10,
         matchday: 11,
         date: "2026-02-06",
         search: "croix",
@@ -117,7 +116,7 @@ describe("MatchesController", () => {
 
       expect(result).toBe(mockResponse);
       // The full mapped object, as players/teams/clubs/championships already
-      // assert. Every one of these 13 fields is a filter a caller can set, and
+      // assert. Every one of these 12 fields is a filter a caller can set, and
       // dropping one from the controller is silent otherwise: the endpoint just
       // ignores that filter.
       expect(service.findAllMatches).toHaveBeenCalledWith({
@@ -128,7 +127,6 @@ describe("MatchesController", () => {
         category: "U18",
         gender: "female",
         poolId: 9,
-        championshipId: 10,
         matchday: 11,
         date: "2026-02-06",
         search: "croix",
@@ -156,7 +154,6 @@ describe("MatchesController", () => {
         category: undefined,
         gender: undefined,
         poolId: undefined,
-        championshipId: undefined,
         matchday: undefined,
         date: undefined,
         search: undefined,
