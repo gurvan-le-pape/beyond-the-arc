@@ -2218,90 +2218,6 @@ export interface components {
             /** @description Season totals and per-game averages */
             seasonStats: components["schemas"]["PlayerCareerStatsDto"];
         };
-        TeamDetailResponseDto: {
-            /**
-             * @description Unique team identifier
-             * @example 1
-             */
-            id: number;
-            /**
-             * @description Team number
-             * @example 1
-             */
-            number: number;
-            /**
-             * @description Club ID this team belongs to
-             * @example 1
-             */
-            clubId: number;
-            /**
-             * @description Season this team's entry belongs to
-             * @example 2025-2026
-             */
-            seasonYear: string;
-            /**
-             * @description Age category
-             * @example U18
-             * @enum {string}
-             */
-            category: "U11" | "U13" | "U15" | "U18" | "U21" | "Seniors";
-            /**
-             * @description Gender category
-             * @example male
-             * @enum {string}
-             */
-            gender: "male" | "female";
-            /**
-             * @description Pool ID
-             * @example 1
-             */
-            poolId: number;
-            /** @description Club information */
-            club: components["schemas"]["ClubRefDto"];
-            /** @description Pool information */
-            pool: components["schemas"]["PoolRefDto"];
-            /** @description Relation counts */
-            _count: components["schemas"]["TeamCountDto"];
-            /** @description Team players */
-            players: components["schemas"]["TeamRosterPlayerDto"][];
-        };
-        TeamMatchHistoryDto: {
-            /**
-             * @description Match ID
-             * @example 1
-             */
-            id: number;
-            /**
-             * @description Tip-off instant, as an ISO 8601 UTC timestamp
-             * @example 2024-02-05T19:00:00Z
-             */
-            startsAt: string;
-            /** @description Home team information */
-            homeTeam: components["schemas"]["HistoryTeamRefDto"];
-            /** @description Away team information */
-            awayTeam: components["schemas"]["HistoryTeamRefDto"];
-            /**
-             * @description Where the match is in its lifecycle
-             * @example completed
-             * @enum {string}
-             */
-            status: "scheduled" | "generating" | "completed" | "failed";
-            /**
-             * @description Home team score
-             * @example 85
-             */
-            homeTeamScore: number | null;
-            /**
-             * @description Away team score
-             * @example 72
-             */
-            awayTeamScore: number | null;
-            /**
-             * @description Whether the match was forfeited; the side that forfeited scored 0
-             * @example false
-             */
-            forfeit: boolean;
-        };
         TeamSeasonStatsDto: {
             /**
              * @description Games played
@@ -2384,11 +2300,95 @@ export interface components {
              */
             players: number;
         };
+        TeamDetailResponseDto: {
+            /**
+             * @description Unique team identifier
+             * @example 1
+             */
+            id: number;
+            /**
+             * @description Team number
+             * @example 1
+             */
+            number: number;
+            /**
+             * @description Club ID this team belongs to
+             * @example 1
+             */
+            clubId: number;
+            /**
+             * @description Season this team's entry belongs to
+             * @example 2025-2026
+             */
+            seasonYear: string;
+            /**
+             * @description Age category
+             * @example U18
+             * @enum {string}
+             */
+            category: "U11" | "U13" | "U15" | "U18" | "U21" | "Seniors";
+            /**
+             * @description Gender category
+             * @example male
+             * @enum {string}
+             */
+            gender: "male" | "female";
+            /**
+             * @description Pool ID
+             * @example 1
+             */
+            poolId: number;
+            /** @description Club information */
+            club: components["schemas"]["ClubRefDto"];
+            /** @description Pool information */
+            pool: components["schemas"]["PoolRefDto"];
+            /** @description Relation counts */
+            _count: components["schemas"]["TeamCountDto"];
+            /** @description Team players */
+            players: components["schemas"]["TeamRosterPlayerDto"][];
+            /** @description Aggregated season totals and per-game averages */
+            seasonStats: components["schemas"]["TeamSeasonStatsDto"];
+        };
+        TeamMatchHistoryDto: {
+            /**
+             * @description Match ID
+             * @example 1
+             */
+            id: number;
+            /**
+             * @description Tip-off instant, as an ISO 8601 UTC timestamp
+             * @example 2024-02-05T19:00:00Z
+             */
+            startsAt: string;
+            /** @description Home team information */
+            homeTeam: components["schemas"]["HistoryTeamRefDto"];
+            /** @description Away team information */
+            awayTeam: components["schemas"]["HistoryTeamRefDto"];
+            /**
+             * @description Where the match is in its lifecycle
+             * @example completed
+             * @enum {string}
+             */
+            status: "scheduled" | "generating" | "completed" | "failed";
+            /**
+             * @description Home team score
+             * @example 85
+             */
+            homeTeamScore: number | null;
+            /**
+             * @description Away team score
+             * @example 72
+             */
+            awayTeamScore: number | null;
+            /**
+             * @description Whether the match was forfeited; the side that forfeited scored 0
+             * @example false
+             */
+            forfeit: boolean;
+        };
         TeamMatchHistoryResponseDto: {
             /** @description Match history entries, ordered by date (most recent first) */
             matches: components["schemas"]["TeamMatchHistoryDto"][];
-            /** @description Aggregated season totals and per-game averages */
-            seasonStats: components["schemas"]["TeamSeasonStatsDto"];
         };
         ChampionshipsByLevelDto: {
             /**

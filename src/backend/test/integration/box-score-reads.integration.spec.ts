@@ -173,7 +173,6 @@ describe("box score reads", () => {
   it("sums a team's lines into its players' and its season stats", async () => {
     const teams = new TeamsService(prisma);
     const detail = await teams.findTeamById(home);
-    const history = await teams.findTeamMatchHistory(home);
 
     expect(
       detail.players.map((p) => [
@@ -185,7 +184,7 @@ describe("box score reads", () => {
       [starter, 2, 20],
       [benched, 1, 3],
     ]);
-    expect(history.seasonStats).toMatchObject({
+    expect(detail.seasonStats).toMatchObject({
       gamesPlayed: 2,
       points: 23,
       players: 2,

@@ -164,7 +164,7 @@ export class TeamSeasonStatsDto extends PlayerCareerStatsDto {
 }
 
 /**
- * Team match history with aggregated season stats.
+ * A team's matches. The season stats are on the team itself.
  */
 export class TeamMatchHistoryResponseDto {
   @ApiProperty({
@@ -172,12 +172,6 @@ export class TeamMatchHistoryResponseDto {
     type: [TeamMatchHistoryDto],
   })
   matches!: TeamMatchHistoryDto[];
-
-  @ApiProperty({
-    description: "Aggregated season totals and per-game averages",
-    type: TeamSeasonStatsDto,
-  })
-  seasonStats!: TeamSeasonStatsDto;
 }
 
 /**
@@ -194,9 +188,15 @@ export class TeamRosterPlayerDto extends PlayerSummaryDto {
 }
 
 /**
- * Detailed team response with its roster.
+ * Detailed team response with its roster and season stats.
  */
 export class TeamDetailResponseDto extends TeamResponseDto {
   @ApiProperty({ description: "Team players", type: [TeamRosterPlayerDto] })
   players!: TeamRosterPlayerDto[];
+
+  @ApiProperty({
+    description: "Aggregated season totals and per-game averages",
+    type: TeamSeasonStatsDto,
+  })
+  seasonStats!: TeamSeasonStatsDto;
 }
