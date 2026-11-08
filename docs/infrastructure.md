@@ -16,6 +16,8 @@ All services share a single Docker bridge network (`my_network`) and communicate
 
 The server is a **Hetzner CX23** (2 vCPU, 4GB RAM, 40GB local disk) located in Nuremberg, Germany (eu-central). It runs Ubuntu and hosts all application and observability containers.
 
+Docker's named volumes live on a separate **89 GB Hetzner volume** mounted at `/var/lib/docker/volumes`, so the database, logs and metrics grow on that disk, not on the root one. The root disk holds the OS, the images and the containers' writable layers; image buildup is what filled it before (see the deploy prune in [`ci-cd.md`](./ci-cd.md)). Check both with `df -h / /var/lib/docker/volumes`.
+
 Two independent controls keep the Docker service ports (3000, 4000, 5432, 9090, 3001) off the internet, and it takes both:
 
 - **The compose file binds them to loopback.** Every published port in `docker/docker-compose.yml` carries a `127.0.0.1:` / `[::1]:` host address, so the listener exists only on the VPS itself. Both loopback families are published because Nginx proxies to `localhost`, which `/etc/hosts` resolves to `127.0.0.1` *and* `::1` — an IPv4-only bind would leave half of that resolution without a listener.
@@ -222,7 +224,7 @@ TLS certificates for `beyondthearc.app` and `grafana.beyondthearc.app` are issue
 
 | Volume            | Service    | Notes                                                              |
 | ----------------- | ---------- | ------------------------------------------------------------------ |
-| `postgres_data`   | database   | Declared `external: true` in prod to prevent accidental recreation |
+| `postgres_data`   | database   | Declared `external: true` in prod to prevent accidental recreation; one season of generated data is its bulk |
 | `prometheus_data` | prometheus | Metric storage, 15-day retention                                   |
 | `loki_data`       | loki       | Log storage                                                        |
 | `grafana_data`    | grafana    | Dashboard state and provisioning                                   |

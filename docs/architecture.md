@@ -115,12 +115,12 @@ The API is documented via Swagger (`@nestjs/swagger`), available at `/api/docs` 
 
 The domain models the French basketball competition hierarchy:
 
-- **Organisations**: leagues (national), committees (regional/departmental), clubs
-- **Teams**: belong to clubs, participate in championships
-- **Championships**: have divisions, pools, leaderboards, and match schedules
-- **Players**: belong to teams, have per-match and aggregate statistics
-- **Matches**: have events (shots, fouls, substitutions) used for shot charts and stats
-- **Geography**: regions and departments with GeoJSON boundaries for the map
+- **Organisations**: leagues (one per region), committees (one per department), clubs
+- **Championships**: one season of one competition, divided into divisions and pools
+- **Teams**: a club's entry in one pool; standings are computed from the pool's results
+- **Players**: belong to teams; a match's box score holds each player's stat line
+- **Matches**: have events (shots, fouls, substitutions) used for shot charts, and may be forfeited
+- **Geography**: a league carries its region and a committee its department; their GeoJSON boundaries ship with the frontend for the map
 
 Full schema and modelling decisions are in → [`data-model.md`](./data-model.md)
 
@@ -160,7 +160,7 @@ Match results, player statistics, and shot chart data are generated and updated 
 - `simulation/` — match simulator with a game state manager and event generator
 - `db/repositories/` — database access layer for the pipeline
 
-The scheduler runs continuously (`restart: unless-stopped`) and uses checkpoints to avoid reprocessing already-handled matches.
+The scheduler runs continuously (`restart: unless-stopped`). `matches.status` keeps a match from being generated twice, and season setup skips a league that already has teams this season.
 
 More detail in → [`data-pipeline.md`](./data-pipeline.md)
 

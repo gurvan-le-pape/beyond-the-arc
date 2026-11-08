@@ -98,9 +98,9 @@ Merge requests only. Lints the `migration.sql` files the merge request adds for 
 
 ### backend-integration
 
-Runs the suites under `src/backend/test/integration` against a `postgres:18` service: `prisma migrate deploy` builds the schema from the migrations, so the triggers and CHECK constraints under test are the ones production runs. The unit run excludes these suites and needs no database.
+Runs the suites under `src/backend/test/integration` against a `postgres:18` service: `prisma migrate deploy` builds the schema from the migrations, so the CHECK constraints and indexes under test are the ones production runs. The unit run excludes these suites and needs no database.
 
-`leaderboard-triggers` drives the triggers and constraints with SQL, each test in a transaction it rolls back. `list-queries` runs the list services through real Prisma, on fixtures it commits and removes. `it.failing` marks known bugs: such a test fails the suite once the behaviour is fixed, so it has to become a plain `it`.
+`match-constraints` and `team-constraints` drive the CHECK constraints and keys with SQL, each test in a transaction it rolls back. `list-queries` runs the list services through real Prisma, and `box-score-reads` the services that read box scores, on fixtures they commit and remove. `it.failing` marks known bugs: such a test fails the suite once the behaviour is fixed, so it has to become a plain `it`.
 
 To run them locally, against a throwaway database:
 

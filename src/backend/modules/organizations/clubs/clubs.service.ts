@@ -263,11 +263,10 @@ export class ClubsService {
    * Finds a club by its ID with detailed information including teams, each
    * with its rank and record in its pool.
    *
-   * The standings of every pool the club plays in are read in one query and
-   * ranked in memory with the same rule as the pool standings endpoint
-   * (`assignRankByCount`), so a team's rank here and in its pool's table
-   * cannot disagree. Pools hold about ten teams, so this is a few hundred rows
-   * at most, against two count queries per team before.
+   * The teams and completed matches of every pool the club plays in are read
+   * in two queries and ranked by `computeStandings`, the function behind the
+   * pool standings endpoint, so a team's rank here and in its pool's table
+   * cannot disagree. A pool holds at most twelve teams and 132 matches.
    *
    * @param clubId - The club ID
    * @returns Detailed club information
