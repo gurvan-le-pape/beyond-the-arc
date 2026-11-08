@@ -65,7 +65,7 @@ describe("LeaguesController", () => {
   ): LeagueResponseDto =>
     ({
       address: null,
-      region: { id: 1, name: "Region", code: "REG" },
+      region: { name: "Region", code: "REG" },
       ...overrides,
     }) as LeagueResponseDto;
 
@@ -76,17 +76,17 @@ describe("LeaguesController", () => {
         mockLeagueDto({
           id: 1,
           name: "LIGUE REGIONALE AUVERGNE-RHONE-ALPES DE BASKET-BALL",
-          region: { id: 1, name: "Auvergne-Rhône-Alpes", code: "ARA" },
+          region: { name: "Auvergne-Rhône-Alpes", code: "ARA" },
         }),
         mockLeagueDto({
           id: 2,
           name: "LIGUE REGIONALE BOURGOGNE-FRANCHE-COMTE DE BASKET-BALL",
-          region: { id: 2, name: "Bourgogne-Franche-Comté", code: "BFC" },
+          region: { name: "Bourgogne-Franche-Comté", code: "BFC" },
         }),
         mockLeagueDto({
           id: 3,
           name: "LIGUE REGIONALE BRETAGNE DE BASKET-BALL",
-          region: { id: 3, name: "Bretagne", code: "BRE" },
+          region: { name: "Bretagne", code: "BRE" },
         }),
       ];
 
@@ -129,7 +129,7 @@ describe("LeaguesController", () => {
       const mockLeague = mockLeagueDto({
         id: 1,
         name: "LIGUE REGIONALE BRETAGNE DE BASKET-BALL",
-        region: { id: 3, name: "Bretagne", code: "BRE" },
+        region: { name: "Bretagne", code: "BRE" },
       });
 
       mockLeaguesService.findLeagueById.mockResolvedValue(mockLeague);
@@ -159,7 +159,7 @@ describe("LeaguesController", () => {
       const mockLeague = mockLeagueDto({
         id: 42,
         name: "LIGUE REGIONALE TEST DE BASKET-BALL",
-        region: { id: 9, name: "Test Region", code: "TST" },
+        region: { name: "Test Region", code: "TST" },
       });
 
       mockLeaguesService.findLeagueById.mockResolvedValue(mockLeague);

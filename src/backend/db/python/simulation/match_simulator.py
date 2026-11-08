@@ -69,9 +69,7 @@ class MatchSimulator:
         self.state_manager = GameStateManager(game_states, transition_events)
         self.event_generator = EventGenerator(self.state_manager)
 
-    def simulate_match(self, home_team_playtimes, away_team_playtimes, player_names, match_datetime,
-                       player_positions=None):
-        self.player_names = player_names
+    def simulate_match(self, home_team_playtimes, away_team_playtimes, match_datetime, player_positions=None):
         self.event_generator.positions = player_positions or {}
         match = _Match(match_datetime)
         # A worker reuses this simulator, and its state manager, for every match.
@@ -128,11 +126,7 @@ class MatchSimulator:
         match.add_event({
             "occurred_at": None,
             "event_type": "tip_off",
-            "player_roles": {
-                "winner": tip_off_player,
-                "starter": list(home_sub.active) + list(away_sub.active),
-            },
-            "description": f"Tip-off won by {tip_off_winner} team.",
+            "player_roles": {"winner": tip_off_player},
         }, 0)
         match.time += 1
 
@@ -149,7 +143,6 @@ class MatchSimulator:
             "occurred_at": None,
             "event_type": "quarter_end",
             "player_roles": {},
-            "description": "End of overtime." if buzzer > GAME_DURATION else "End of the quarter.",
         }, buzzer)
         match.time = buzzer + 1
 
@@ -171,7 +164,7 @@ class MatchSimulator:
         """Move the game from its current state to the next, emitting that transition's event."""
         if match.shot_clock == 0:
             violation = self.event_generator.generate_event(
-                {"type": "shot_clock_violation"}, home_list, away_list, match.possession, self.player_names
+                {"type": "shot_clock_violation"}, home_list, away_list, match.possession
             )
             self.state_manager.current_state = self._apply_event(match, violation, "dead_ball")
             return
@@ -184,7 +177,7 @@ class MatchSimulator:
                 self.state_manager.current_state = next_state
                 return
             generated_event = self.event_generator.generate_event(
-                event, home_list, away_list, match.possession, self.player_names
+                event, home_list, away_list, match.possession
             )
             if generated_event:
                 next_state = self._apply_event(match, generated_event, next_state)
@@ -255,7 +248,6 @@ class MatchSimulator:
                 "occurred_at": None,
                 "event_type": "free_throw_made" if made else "free_throw_missed",
                 "player_roles": {"shooter": shooter_id},
-                "description": f"{self.player_names.get(shooter_id, f'Player {shooter_id}')} {'made' if made else 'missed'} free throw {i + 1} of {num_free_throws}.",
             }, current_time)
             if made:
                 points += 1

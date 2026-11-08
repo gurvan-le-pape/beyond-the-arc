@@ -18,16 +18,18 @@ export function ClubHeader({ club }: ClubHeaderProps) {
   const format = useFormatter();
 
   const championshipCount = new Set(
-    club.teams.flatMap((team) =>
-      team.pool ? [team.pool.championship.id] : [],
-    ),
+    club.teams.map((team) => team.pool.championship.id),
   ).size;
   const won = club.teams.reduce(
-    (sum, team) => sum + (team.leaderboard?.gamesWon ?? 0),
+    (sum, team) => sum + team.leaderboard.gamesWon,
     0,
   );
   const lost = club.teams.reduce(
-    (sum, team) => sum + (team.leaderboard?.gamesLost ?? 0),
+    (sum, team) => sum + team.leaderboard.gamesLost,
+    0,
+  );
+  const forfeited = club.teams.reduce(
+    (sum, team) => sum + team.leaderboard.gamesForfeited,
     0,
   );
 
@@ -54,7 +56,7 @@ export function ClubHeader({ club }: ClubHeaderProps) {
           label: t("header.championships", { count: championshipCount }),
         },
         {
-          value: `${format.number(won)}–${format.number(lost)}`,
+          value: `${format.number(won)}–${format.number(lost)}–${format.number(forfeited)}`,
           label: t("header.record"),
         },
       ]}

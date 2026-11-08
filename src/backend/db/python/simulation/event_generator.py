@@ -24,12 +24,12 @@ class EventGenerator:
         """The player among `players` who performs `action` — see player_picker."""
         return player_picker.pick(players, action, self.positions)
 
-    def generate_event(self, event, active_home_players, active_away_players, current_possession, player_names):
+    def generate_event(self, event, active_home_players, active_away_players, current_possession):
         """Generate the details of an event based on the event type."""
         if not active_home_players or not active_away_players:
             self.logger.warning("No active players available for event generation.")
             return None
-        return self._generate_event_details(event, active_home_players, active_away_players, current_possession, player_names)
+        return self._generate_event_details(event, active_home_players, active_away_players, current_possession)
 
     def generate_shot_location(self, category):
         """
@@ -78,14 +78,11 @@ class EventGenerator:
 
         return {"x": round(x, 2), "y": round(y, 2)}
     
-    def _generate_event_details(self, event, active_home_players, active_away_players, current_possession, player_names):
+    def _generate_event_details(self, event, active_home_players, active_away_players, current_possession):
         """Generate the full event dict for a given event type."""
         event_type = event["type"]
         offensive = active_home_players if current_possession == "home" else active_away_players
         defensive = active_away_players if current_possession == "home" else active_home_players
-
-        def name(pid):
-            return player_names.get(pid, f"Player {pid}")
 
         if event_type in ["3_point_and_1", "2_point_ext_and_1", "2_point_int_and_1"]:
             shooter = self.pick(offensive, MADE_SHOTS[event_type][0])
@@ -94,7 +91,6 @@ class EventGenerator:
                 "occurred_at": None,
                 "event_type": event_type,
                 "player_roles": {"shooter": shooter, "fouler": fouler},
-                "description": f"{name(shooter)} scored and was fouled by {name(fouler)} ({event_type.replace('_', ' ')}).",
                 "shot_location": self.generate_shot_location(MADE_SHOTS[event_type][0]),
             }
 
@@ -105,7 +101,6 @@ class EventGenerator:
                 "occurred_at": None,
                 "event_type": event_type,
                 "player_roles": {"shooter": shooter, "fouler": fouler},
-                "description": f"{name(fouler)} committed a {event_type.replace('_', ' ')} on {name(shooter)}.",
             }
 
         elif event_type == "steal":
@@ -115,7 +110,6 @@ class EventGenerator:
                 "occurred_at": None,
                 "event_type": event_type,
                 "player_roles": {"stealer": stealer, "victim": victim},
-                "description": f"{name(stealer)} stole the ball from {name(victim)}.",
             }
 
         elif event_type == "blocked_shot":
@@ -129,7 +123,6 @@ class EventGenerator:
                 "occurred_at": None,
                 "event_type": event_type,
                 "player_roles": {"blocked": shooter, "blocker": blocker},
-                "description": f"{name(blocker)} blocked {name(shooter)}'s shot.",
                 "shot_location": self.generate_shot_location(category),
                 # Not persisted: the stat line needs it to count the attempt in
                 # the right column, and the event type alone does not say.
@@ -143,7 +136,6 @@ class EventGenerator:
                 "occurred_at": None,
                 "event_type": event_type,
                 "player_roles": {"fouler": fouler, "victim": victim},
-                "description": f"{name(fouler)} committed a {event_type.replace('_', ' ')} on {name(victim)}.",
             }
 
         elif event_type in ["blocking_foul", "pushing_foul", "reaching_foul"]:
@@ -153,7 +145,6 @@ class EventGenerator:
                 "occurred_at": None,
                 "event_type": event_type,
                 "player_roles": {"fouler": fouler, "victim": victim},
-                "description": f"{name(fouler)} committed a {event_type.replace('_', ' ')} on {name(victim)}.",
             }
 
         elif event_type == "technical_foul":
@@ -162,7 +153,6 @@ class EventGenerator:
                 "occurred_at": None,
                 "event_type": event_type,
                 "player_roles": {"fouler": player},
-                "description": f"{name(player)} received a technical foul.",
             }
 
         elif event_type == "inbound":
@@ -171,7 +161,6 @@ class EventGenerator:
                 "occurred_at": None,
                 "event_type": event_type,
                 "player_roles": {"shooter": player},
-                "description": f"{name(player)} inbounded the ball.",
             }
 
         elif event_type in ["offensive_rebound", "defensive_rebound"]:
@@ -181,7 +170,6 @@ class EventGenerator:
                 "occurred_at": None,
                 "event_type": event_type,
                 "player_roles": {"rebounder": rebounder},
-                "description": f"{name(rebounder)} grabbed a {event_type.replace('_', ' ')}.",
             }
 
         elif event_type in ["free_throw_made", "free_throw_missed"]:
@@ -190,7 +178,6 @@ class EventGenerator:
                 "occurred_at": None,
                 "event_type": event_type,
                 "player_roles": {"shooter": shooter},
-                "description": f"{name(shooter)} {'made' if event_type == 'free_throw_made' else 'missed'} a free throw.",
             }
 
         elif event_type in BALL_HANDLER_TURNOVERS:
@@ -199,26 +186,22 @@ class EventGenerator:
                 "occurred_at": None,
                 "event_type": event_type,
                 "player_roles": {"shooter": player},
-                "description": f"{name(player)} committed a {event_type.replace('_', ' ')}.",
             }
 
         elif event_type.startswith("made_"):
             shooter = self.pick(offensive, MADE_SHOTS[event_type][0])
             roles = {"shooter": shooter}
-            desc = f"{name(shooter)} made a {event_type.replace('made_', '').replace('_', ' ')}."
 
             if random.random() < 0.6:  # noqa: S2245
                 candidates = [p for p in offensive if p != shooter]
                 if candidates:
                     assister = self.pick(candidates, "assist")
                     roles["assister"] = assister
-                    desc = f"{name(shooter)} made a {event_type.replace('made_', '').replace('_', ' ')} (assisted by {name(assister)})."
 
             return {
                 "occurred_at": None,
                 "event_type": event_type,
                 "player_roles": roles,
-                "description": desc,
                 "shot_location": self.generate_shot_location(MADE_SHOTS[event_type][0]),
             }
 
@@ -228,7 +211,6 @@ class EventGenerator:
                 "occurred_at": None,
                 "event_type": event_type,
                 "player_roles": {"shooter": player},
-                "description": f"{name(player)} missed a {event_type.replace('missed_', '').replace('_', ' ')}.",
                 "shot_location": self.generate_shot_location(MISSED_SHOTS[event_type]),
             }
 

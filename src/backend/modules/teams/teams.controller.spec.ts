@@ -69,7 +69,6 @@ describe("TeamsController", () => {
             seasonYear: "2025-2026",
             category: "U18",
             gender: "male",
-            color: "Blue",
             poolId: 1,
             club: {
               id: 1,
@@ -83,7 +82,11 @@ describe("TeamsController", () => {
                 },
               },
             },
-            pool: null,
+            pool: {
+              id: 1,
+              letter: "A",
+              championship: { id: 1, level: "departmental", division: 1 },
+            },
             _count: { players: 12 },
           },
         ],
@@ -235,7 +238,6 @@ describe("TeamsController", () => {
         seasonYear: "2025-2026",
         category: "U18",
         gender: "male",
-        color: "Blue",
         poolId: 1,
         club: {
           id: 1,
@@ -249,7 +251,11 @@ describe("TeamsController", () => {
             },
           },
         },
-        pool: null,
+        pool: {
+          id: 1,
+          letter: "A",
+          championship: { id: 1, level: "departmental", division: 1 },
+        },
         _count: { players: 12 },
         players: [],
       };
@@ -285,10 +291,13 @@ describe("TeamsController", () => {
         seasonYear: "2025-2026",
         category: "U11",
         gender: "male",
-        color: null,
-        poolId: null,
+        poolId: 1,
         club: {} as any,
-        pool: null,
+        pool: {
+          id: 1,
+          letter: "A",
+          championship: { id: 1, level: "departmental", division: 1 },
+        },
         _count: { players: 0 },
         players: [],
       };
@@ -324,6 +333,7 @@ describe("TeamsController", () => {
             status: "completed",
             homeTeamScore: 85,
             awayTeamScore: 72,
+            forfeit: false,
           },
         ],
         seasonStats: {

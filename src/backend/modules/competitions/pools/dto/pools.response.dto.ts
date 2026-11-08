@@ -20,13 +20,6 @@ export class PoolResponseDto {
   letter!: string;
 
   @ApiProperty({
-    description: "Pool name",
-    example: "Pool A - Seniors",
-    type: String,
-  })
-  name!: string;
-
-  @ApiProperty({
     description: "Associated championship ID",
     example: 1,
     type: Number,

@@ -120,7 +120,6 @@ describe("ClubsController", () => {
           id: 1,
           name: "Comité de l'Ain",
           department: {
-            id: 1,
             name: "Ain",
             code: "01",
           },
@@ -149,7 +148,6 @@ describe("ClubsController", () => {
           id: 2,
           name: "Comité du Rhône",
           department: {
-            id: 2,
             name: "Rhône",
             code: "69",
           },
@@ -192,7 +190,6 @@ describe("ClubsController", () => {
           zipCode: "98000",
           latitude: 43.7384,
           longitude: 7.4246,
-          website: "https://monaco.com",
           committeeId: 1,
           leagueId: 2,
         },
@@ -277,7 +274,6 @@ describe("ClubsController", () => {
         city: "Monaco",
         zipCode: "98000",
         address: "1 Avenue des Papalins",
-        website: "https://monaco.com",
         ffbbUrl: null,
         teams: [
           {
@@ -287,15 +283,11 @@ describe("ClubsController", () => {
             gender: "male",
             pool: {
               id: 1,
-              name: "Pool A",
               letter: "A",
               championship: {
                 id: 1,
-                name: "Championship Régional U18",
                 level: "regional",
                 division: 1,
-                committeeId: null,
-                leagueId: 1,
               },
             },
             leaderboard: {
@@ -305,6 +297,7 @@ describe("ClubsController", () => {
               gamesPlayed: 10,
               gamesWon: 7,
               gamesLost: 3,
+              gamesForfeited: 0,
               pointDifference: 25,
               poolId: 1,
             },
@@ -321,14 +314,13 @@ describe("ClubsController", () => {
       expect(mockClubsService.findClubById).toHaveBeenCalledWith(1);
     });
 
-    it("should return club with null leaderboard when team has no games", async () => {
+    it("should return club with an empty leaderboard row before any game", async () => {
       const mockClub: ClubDetailedResponseDto = {
         id: 1,
         name: "AS Monaco Basket",
         city: "Monaco",
         zipCode: "98000",
         address: null,
-        website: null,
         ffbbUrl: null,
         teams: [
           {
@@ -338,18 +330,24 @@ describe("ClubsController", () => {
             gender: "male",
             pool: {
               id: 2,
-              name: "Pool B",
               letter: "B",
               championship: {
                 id: 2,
-                name: "Championship Départemental U11",
                 level: "departmental",
                 division: 1,
-                committeeId: 1,
-                leagueId: null,
               },
             },
-            leaderboard: null, // no games played yet
+            leaderboard: {
+              rank: 1,
+              poolSize: 2,
+              points: 0,
+              gamesPlayed: 0, // no games played yet
+              gamesWon: 0,
+              gamesLost: 0,
+              gamesForfeited: 0,
+              pointDifference: 0,
+              poolId: 2,
+            },
           },
         ],
       };
@@ -359,7 +357,7 @@ describe("ClubsController", () => {
       const result = await controller.getClubById(1);
 
       expect(result).toEqual(mockClub);
-      expect(result.teams[0].leaderboard).toBeNull();
+      expect(result.teams[0].leaderboard.gamesPlayed).toBe(0);
     });
 
     it("should handle club with no teams", async () => {
@@ -369,7 +367,6 @@ describe("ClubsController", () => {
         city: "Paris",
         zipCode: "75001",
         address: null,
-        website: null,
         ffbbUrl: null,
         teams: [],
       };

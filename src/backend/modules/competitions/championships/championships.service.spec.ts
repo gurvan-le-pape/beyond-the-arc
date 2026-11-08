@@ -18,6 +18,17 @@ import { ChampionshipsService } from "./championships.service";
  * - Edge cases
  * - Data transformation
  */
+const ILLE_ET_VILAINE = {
+  id: 5,
+  name: "COMITE D'ILLE-ET-VILAINE DE BASKET-BALL",
+  departmentName: "Ille-et-Vilaine",
+  league: {
+    id: 1,
+    name: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
+    regionName: "Bretagne",
+  },
+};
+
 describe("ChampionshipsService", () => {
   let service: ChampionshipsService;
   let prismaService: PrismaService;
@@ -49,29 +60,101 @@ describe("ChampionshipsService", () => {
   });
 
   describe("findChampionshipById", () => {
-    it("should return championship when found", async () => {
-      // Arrange — Prisma relation shape (input to mapToDto)
-      const mockPrismaChampionship = {
+    it.each([
+      [
+        "a departmental championship names its committee and league",
+        CompetitionLevel.DEPARTMENTAL,
+        {
+          leagueId: 1,
+          committeeId: 5,
+          leagueName: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
+          committeeName: "COMITE D'ILLE-ET-VILAINE DE BASKET-BALL",
+          regionName: "Bretagne",
+          departmentName: "Ille-et-Vilaine",
+        },
+      ],
+      [
+        "a regional championship names its league only",
+        CompetitionLevel.REGIONAL,
+        {
+          leagueId: 1,
+          committeeId: null,
+          leagueName: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
+          committeeName: null,
+          regionName: "Bretagne",
+          departmentName: null,
+        },
+      ],
+      [
+        "a national championship has no organiser",
+        CompetitionLevel.NATIONAL,
+        {
+          leagueId: null,
+          committeeId: null,
+          leagueName: null,
+          committeeName: null,
+          regionName: null,
+          departmentName: null,
+        },
+      ],
+    ])("%s", async (_name, level, organiser) => {
+      mockPrismaService.client.championships.findUnique.mockResolvedValue({
         id: 1,
-        name: "Championship Régional U18",
+        category: "U18",
+        gender: "male",
+        seasonYear: "2024-2025",
+        level,
+        division: 1,
+        pools: [
+          {
+            id: 1,
+            letter: "A",
+            teams: [{ club: { committee: ILLE_ET_VILAINE }, homeMatches: [] }],
+          },
+        ],
+      });
+
+      await expect(service.findChampionshipById(1)).resolves.toMatchObject(
+        organiser,
+      );
+    });
+
+    it("has no organiser when no pool has a team yet", async () => {
+      mockPrismaService.client.championships.findUnique.mockResolvedValue({
+        id: 1,
         category: "U18",
         gender: "male",
         seasonYear: "2024-2025",
         level: CompetitionLevel.REGIONAL,
         division: 1,
-        leagueId: 1,
-        committeeId: null,
-        league: {
-          name: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
-          region: { name: "Bretagne" },
-        },
-        committee: null,
+        pools: [{ id: 1, letter: "A", teams: [] }],
+      });
+
+      await expect(service.findChampionshipById(1)).resolves.toMatchObject({
+        leagueId: null,
+        leagueName: null,
+      });
+    });
+
+    it("should return championship when found", async () => {
+      // Arrange — Prisma relation shape (input to mapToDto)
+      const mockPrismaChampionship = {
+        id: 1,
+        category: "U18",
+        gender: "male",
+        seasonYear: "2024-2025",
+        level: CompetitionLevel.REGIONAL,
+        division: 1,
         pools: [
           {
             id: 1,
             letter: "A",
-            name: "Pool A",
-            matches: [{ matchday: 1 }, { matchday: 2 }],
+            teams: [
+              {
+                club: { committee: ILLE_ET_VILAINE },
+                homeMatches: [{ matchday: 1 }, { matchday: 2 }],
+              },
+            ],
           },
         ],
       };
@@ -86,7 +169,6 @@ describe("ChampionshipsService", () => {
       // Assert — DTO shape (output of mapToDto)
       expect(result).toEqual({
         id: 1,
-        name: "Championship Régional U18",
         category: "U18",
         gender: "male",
         seasonYear: "2024-2025",
@@ -98,14 +180,14 @@ describe("ChampionshipsService", () => {
         leagueName: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
         regionName: "Bretagne",
         departmentName: null,
-        pools: [{ id: 1, letter: "A", name: "Pool A", nbMatchdays: 2 }],
+        pools: [{ id: 1, letter: "A", nbMatchdays: 2 }],
       });
 
       expect(
         mockPrismaService.client.championships.findUnique,
       ).toHaveBeenCalledWith({
         where: { id: 1 },
-        select: expect.objectContaining({ id: true, name: true }),
+        select: expect.objectContaining({ id: true, category: true }),
       });
     });
 
@@ -124,19 +206,11 @@ describe("ChampionshipsService", () => {
     // Arrange — Prisma relation shape (input to mapToDto)
     const mockChampionship = {
       id: 1,
-      name: "Championship Régional U18",
       category: "U18",
       gender: "male",
       seasonYear: "2024-2025",
       level: CompetitionLevel.REGIONAL,
       division: 1,
-      leagueId: 1,
-      committeeId: null,
-      league: {
-        name: "LIGUE REGIONALE DE BRETAGNE DE BASKET-BALL",
-        region: { name: "Bretagne" },
-      },
-      committee: null,
       pools: [],
     };
 
@@ -150,7 +224,7 @@ describe("ChampionshipsService", () => {
 
       expect(result).toEqual({
         items: expect.arrayContaining([
-          expect.objectContaining({ id: 1, name: "Championship Régional U18" }),
+          expect.objectContaining({ id: 1, category: "U18" }),
         ]),
         total: 1,
         page: 1,
@@ -185,31 +259,28 @@ describe("ChampionshipsService", () => {
         mockPrismaService.client.championships.findMany,
       ).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: expect.objectContaining({
-            level: CompetitionLevel.REGIONAL,
-            leagueId: 1,
-          }),
+          where: {
+            AND: [
+              { level: CompetitionLevel.REGIONAL },
+              { level: { not: CompetitionLevel.NATIONAL } },
+              {
+                pools: {
+                  some: {
+                    teams: {
+                      some: { club: { committee: { leagueId: 1 } } },
+                    },
+                  },
+                },
+              },
+            ],
+          },
         }),
       );
     });
 
     it("should filter by departmental level and committeeId", async () => {
       // Arrange
-      const departmentalChampionship = {
-        ...mockChampionship,
-        level: CompetitionLevel.DEPARTMENTAL,
-        leagueId: null,
-        committeeId: 5,
-        league: null,
-        committee: {
-          name: "COMITE D''ILLE-ET-VILAINE DE BASKET-BALL",
-          department: { name: "Ille-et-Vilaine" },
-        },
-      };
-
-      mockPrismaService.client.championships.findMany.mockResolvedValue([
-        departmentalChampionship,
-      ]);
+      mockPrismaService.client.championships.findMany.mockResolvedValue([]);
       mockPrismaService.client.championships.count.mockResolvedValue(1);
 
       // Act
@@ -223,10 +294,17 @@ describe("ChampionshipsService", () => {
         mockPrismaService.client.championships.findMany,
       ).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: expect.objectContaining({
-            level: CompetitionLevel.DEPARTMENTAL,
-            committeeId: 5,
-          }),
+          where: {
+            AND: [
+              { level: CompetitionLevel.DEPARTMENTAL },
+              { level: CompetitionLevel.DEPARTMENTAL },
+              {
+                pools: {
+                  some: { teams: { some: { club: { committeeId: 5 } } } },
+                },
+              },
+            ],
+          },
         }),
       );
     });
@@ -278,7 +356,16 @@ describe("ChampionshipsService", () => {
 
       expect(
         mockPrismaService.client.championships.findMany.mock.calls[0][0].where,
-      ).toEqual({ committeeId: 5 });
+      ).toEqual({
+        AND: [
+          { level: CompetitionLevel.DEPARTMENTAL },
+          {
+            pools: {
+              some: { teams: { some: { club: { committeeId: 5 } } } },
+            },
+          },
+        ],
+      });
     });
 
     it("should apply pagination correctly", async () => {

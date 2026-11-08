@@ -29,9 +29,7 @@ describe("PlayersService", () => {
         findUnique: jest.fn(),
         count: jest.fn(),
       },
-      playerMatchStats: {
-        findMany: jest.fn(),
-      },
+      $queryRaw: jest.fn(),
       teams: {
         findMany: jest.fn(),
       },
@@ -75,8 +73,6 @@ describe("PlayersService", () => {
             id: 1,
             number: 1,
             clubId: 1,
-            category: "U18",
-            gender: "M",
             club: {
               id: 1,
               name: "Club 1",
@@ -89,7 +85,17 @@ describe("PlayersService", () => {
                 },
               },
             },
-            pool: null,
+            pool: {
+              id: 1,
+              letter: "A",
+              championship: {
+                id: 1,
+                category: "U18",
+                gender: "M",
+                level: "departmental",
+                division: 1,
+              },
+            },
           },
         },
       ];
@@ -221,8 +227,6 @@ describe("PlayersService", () => {
           id: 1,
           number: 1,
           clubId: 1,
-          category: "U18",
-          gender: "M",
           club: {
             id: 1,
             name: "Club 1",
@@ -235,7 +239,17 @@ describe("PlayersService", () => {
               },
             },
           },
-          pool: null,
+          pool: {
+            id: 1,
+            letter: "A",
+            championship: {
+              id: 1,
+              category: "U18",
+              gender: "M",
+              level: "departmental",
+              division: 1,
+            },
+          },
         },
       };
 
@@ -247,7 +261,19 @@ describe("PlayersService", () => {
       // Assert
       // Not toEqual(mockPlayer): the entity carries a Date and the DTO
       // carries a calendar date string, so they are deliberately not equal.
-      expect(result).toEqual({ ...mockPlayer, birthdate: "2000-06-15" });
+      // Category and gender are the championship's, returned on the team.
+      const { category, gender, ...championship } =
+        mockPlayer.team.pool.championship;
+      expect(result).toEqual({
+        ...mockPlayer,
+        birthdate: "2000-06-15",
+        team: {
+          ...mockPlayer.team,
+          category,
+          gender,
+          pool: { ...mockPlayer.team.pool, championship },
+        },
+      });
       expect(result.birthdate).toBe("2000-06-15");
       expect(mockPrismaService.client.players.findUnique).toHaveBeenCalledWith({
         where: { id: 1 },
@@ -273,48 +299,54 @@ describe("PlayersService", () => {
   describe("findPlayerMatchHistory", () => {
     it("should return match history for a player", async () => {
       // Arrange
-      const mockStats = [
+      const player = {
+        id: 1,
+        name: "Player 1",
+        number: 10,
+        position: "PG",
+        teamId: 1,
+      };
+      // A row of the history query: the match, with the player's line as
+      // stored.
+      const rows = [
         {
-          match: {
-            id: 1,
-            date: new Date("2024-02-05"),
-            homeTeam: { id: 1, number: 1, club: { id: 1, name: "Club A" } },
-            awayTeam: { id: 2, number: 1, club: { id: 2, name: "Club B" } },
-            status: "completed",
-            homeTeamScore: 85,
-            awayTeamScore: 72,
+          id: 1,
+          startsAt: new Date("2024-02-05T19:00:00Z"),
+          status: "completed",
+          homeTeamScore: 85,
+          awayTeamScore: 72,
+          homeTeamId: 1,
+          homeTeamNumber: 1,
+          homeClubId: 1,
+          homeClubName: "Club A",
+          awayTeamId: 2,
+          awayTeamNumber: 1,
+          awayClubId: 2,
+          awayClubName: "Club B",
+          line: {
+            points: 15,
+            fouls: 2,
+            three_points_made: 2,
+            three_points_attempted: 5,
+            two_points_int_made: 3,
+            two_points_int_attempted: 6,
+            two_points_ext_made: 1,
+            two_points_ext_attempted: 3,
+            free_throws_made: 4,
+            free_throws_attempted: 5,
+            assists: 7,
+            turnovers: 3,
+            rebounds_offensive: 3,
+            rebounds_defensive: 5,
+            steals: 2,
+            blocks: 1,
+            playtime_intervals: [[0, 600]],
           },
-          player: {
-            id: 1,
-            name: "Player 1",
-            number: 10,
-            position: "PG",
-            teamId: 1,
-          },
-          points: 15,
-          fouls: 2,
-          threePointsMade: 2,
-          threePointsAttempted: 5,
-          twoPointsIntMade: 3,
-          twoPointsIntAttempted: 6,
-          twoPointsExtMade: 1,
-          twoPointsExtAttempted: 3,
-          freeThrowsMade: 4,
-          freeThrowsAttempted: 5,
-          assists: 7,
-          turnovers: 3,
-          reboundsOffensive: 3,
-          reboundsDefensive: 5,
-          steals: 2,
-          blocks: 1,
-          playtimeIntervals: [[0, 600]],
         },
       ];
 
-      mockPrismaService.client.players.findUnique.mockResolvedValue({ id: 1 });
-      mockPrismaService.client.playerMatchStats.findMany.mockResolvedValue(
-        mockStats,
-      );
+      mockPrismaService.client.players.findUnique.mockResolvedValue(player);
+      mockPrismaService.client.$queryRaw.mockResolvedValue(rows);
 
       // Act
       const result = await service.findPlayerMatchHistory(1);
@@ -323,7 +355,12 @@ describe("PlayersService", () => {
       expect(result.matches).toHaveLength(1);
       expect(result.matches[0].id).toBe(1);
       expect(result.matches[0].status).toBe("completed");
-      expect(result.matches[0].player.player.id).toBe(1);
+      expect(result.matches[0].homeTeam).toEqual({
+        id: 1,
+        number: 1,
+        club: { id: 1, name: "Club A" },
+      });
+      expect(result.matches[0].player.player).toEqual(player);
       expect(result.matches[0].player.stats.points).toBe(15);
       expect(result.matches[0].player.stats.rebounds.total).toBe(8); // 3 + 5
       expect(result.matches[0].player.stats.rebounds.offensive).toBe(3);
@@ -335,10 +372,30 @@ describe("PlayersService", () => {
       expect(result.career.pointsPerGame).toBe(15);
     });
 
+    it("fails loudly on a malformed line", async () => {
+      mockPrismaService.client.players.findUnique.mockResolvedValue({
+        id: 1,
+        name: "Player 1",
+        number: 10,
+        position: "PG",
+        teamId: 1,
+      });
+      mockPrismaService.client.$queryRaw.mockResolvedValue([
+        { id: 7, line: { points: "15" } },
+      ]);
+
+      await expect(service.findPlayerMatchHistory(1)).rejects.toThrow(
+        "match 7, player 1",
+      );
+    });
+
     it("should return an empty history with zeroed career stats when no matches found", async () => {
       // Arrange
-      mockPrismaService.client.players.findUnique.mockResolvedValue({ id: 1 });
-      mockPrismaService.client.playerMatchStats.findMany.mockResolvedValue([]);
+      mockPrismaService.client.players.findUnique.mockResolvedValue({
+        id: 1,
+        teamId: 1,
+      });
+      mockPrismaService.client.$queryRaw.mockResolvedValue([]);
 
       // Act
       const result = await service.findPlayerMatchHistory(1);
@@ -434,7 +491,9 @@ describe("PlayersService", () => {
       expect(mockPrismaService.client.players.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
-            team: expect.objectContaining({ category: "U18" }),
+            team: expect.objectContaining({
+              pool: { championship: { category: "U18" } },
+            }),
           }),
         }),
       );
@@ -446,7 +505,9 @@ describe("PlayersService", () => {
       expect(mockPrismaService.client.players.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
-            team: expect.objectContaining({ gender: "male" }),
+            team: expect.objectContaining({
+              pool: { championship: { gender: "male" } },
+            }),
           }),
         }),
       );
@@ -548,8 +609,6 @@ describe("PlayersService", () => {
             id: 1,
             number: 1,
             clubId: 1,
-            category: "U18",
-            gender: "male",
             club: {
               id: 1,
               name: "Club A",
@@ -561,10 +620,11 @@ describe("PlayersService", () => {
             },
             pool: {
               id: 1,
-              name: "Pool A",
               letter: "A",
               championship: {
                 id: 1,
+                category: "U18",
+                gender: "male",
                 name: "Champ A",
                 level: "regional",
                 division: 1,
@@ -578,7 +638,7 @@ describe("PlayersService", () => {
       const result = await service.findAllPlayers({});
 
       expect(result.items[0].team.pool).not.toBeNull();
-      expect(result.items[0].team.pool?.name).toBe("Pool A");
+      expect(result.items[0].team.pool?.letter).toBe("A");
       expect(result.items[0].team.pool?.championship.level).toBe("regional");
     });
   });

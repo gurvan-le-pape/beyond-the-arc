@@ -38,9 +38,7 @@
     "address": "Adresse",
     "contact": "Contact",
     "ffbbPage": "Fiche officielle sur ffbb.com",
-    "ffbbPageHint": "Téléphone, email et dirigeants, tenus à jour par la fédération.",
-    "website": "Site web",
-    "visitWebsite": "Visiter le site"
+    "ffbbPageHint": "Téléphone, email et dirigeants, tenus à jour par la fédération."
   },
   "header": {
     "leagueKind": "Ligue régionale",
@@ -49,6 +47,6 @@
     "clubs": "{count, plural, one {club} other {clubs}}",
     "championships": "{count, plural, one {championnat} other {championnats}}",
     "teams": "{count, plural, one {équipe} other {équipes}}",
-    "record": "Bilan (V–D)"
+    "record": "Bilan (V–D–F)"
   }
 }

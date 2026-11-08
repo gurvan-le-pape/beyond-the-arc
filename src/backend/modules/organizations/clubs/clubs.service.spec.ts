@@ -27,7 +27,10 @@ type MockedPrismaService = {
     leagues: {
       findMany: jest.Mock;
     };
-    leaderboards: {
+    teams: {
+      findMany: jest.Mock;
+    };
+    matches: {
       findMany: jest.Mock;
     };
   };
@@ -52,7 +55,10 @@ describe("ClubsService", () => {
         leagues: {
           findMany: jest.fn(),
         },
-        leaderboards: {
+        teams: {
+          findMany: jest.fn(),
+        },
+        matches: {
           findMany: jest.fn(),
         },
       },
@@ -86,9 +92,9 @@ describe("ClubsService", () => {
         {
           id: 10,
           name: "League Auvergne-Rhône-Alpes",
-          region: { code: "84" },
+          regionCode: "84",
         },
-        { id: 20, name: "League Île-de-France", region: { code: "11" } },
+        { id: 20, name: "League Île-de-France", regionCode: "11" },
       ]);
 
       const result = await service.getClubCountsByRegion();
@@ -118,7 +124,7 @@ describe("ClubsService", () => {
       prisma.client.clubs.groupBy.mockResolvedValue([]);
       prisma.client.committees.findMany.mockResolvedValue([]);
       prisma.client.leagues.findMany.mockResolvedValue([
-        { id: 10, name: "League Sans Clubs", region: { code: "99" } },
+        { id: 10, name: "League Sans Clubs", regionCode: "99" },
       ]);
 
       const result = await service.getClubCountsByRegion();
@@ -126,22 +132,6 @@ describe("ClubsService", () => {
       expect(result).toEqual([
         { id: 10, code: "99", name: "League Sans Clubs", clubCount: 0 },
       ]);
-    });
-
-    it("should handle leagues without region codes", async () => {
-      prisma.client.clubs.groupBy.mockResolvedValue([
-        { committeeId: 1, _count: { id: 5 } },
-      ]);
-      prisma.client.committees.findMany.mockResolvedValue([
-        { id: 1, leagueId: 10 },
-      ]);
-      prisma.client.leagues.findMany.mockResolvedValue([
-        { id: 10, name: "League X", region: null },
-      ]);
-
-      const result = await service.getClubCountsByRegion();
-
-      expect(result[0].code).toBeNull();
     });
 
     it("should ignore committees with null leagueId", async () => {
@@ -154,7 +144,7 @@ describe("ClubsService", () => {
         { id: 2, leagueId: null },
       ]);
       prisma.client.leagues.findMany.mockResolvedValue([
-        { id: 10, name: "League X", region: { code: "01" } },
+        { id: 10, name: "League X", regionCode: "01" },
       ]);
 
       const result = await service.getClubCountsByRegion();
@@ -171,7 +161,7 @@ describe("ClubsService", () => {
         { id: 1, leagueId: 10 },
       ]);
       prisma.client.leagues.findMany.mockResolvedValue([
-        { id: 10, name: "League X", region: { code: "01" } },
+        { id: 10, name: "League X", regionCode: "01" },
       ]);
 
       const result = await service.getClubCountsByRegion();
@@ -196,14 +186,16 @@ describe("ClubsService", () => {
         {
           id: 1,
           name: "Comité de l'Ain",
-          department: { id: 1, name: "Ain", code: "01" },
+          departmentName: "Ain",
+          departmentCode: "01",
           leagueId: 10,
           _count: { clubs: 15 },
         },
         {
           id: 2,
           name: "Comité du Rhône",
-          department: { id: 2, name: "Rhône", code: "69" },
+          departmentName: "Rhône",
+          departmentCode: "69",
           leagueId: 10,
           _count: { clubs: 25 },
         },
@@ -215,14 +207,14 @@ describe("ClubsService", () => {
         {
           id: 1,
           name: "Comité de l'Ain",
-          department: { id: 1, name: "Ain", code: "01" },
+          department: { name: "Ain", code: "01" },
           leagueId: 10,
           clubCount: 15,
         },
         {
           id: 2,
           name: "Comité du Rhône",
-          department: { id: 2, name: "Rhône", code: "69" },
+          department: { name: "Rhône", code: "69" },
           leagueId: 10,
           clubCount: 25,
         },
@@ -240,7 +232,8 @@ describe("ClubsService", () => {
         {
           id: 1,
           name: "Comité de l'Ain",
-          department: { id: 1, name: "Ain", code: "01" },
+          departmentName: "Ain",
+          departmentCode: "01",
           leagueId: 10,
           _count: { clubs: 15 },
         },
@@ -268,7 +261,8 @@ describe("ClubsService", () => {
         {
           id: 1,
           name: "Comité Vide",
-          department: { id: 1, name: "Test", code: "00" },
+          departmentName: "Test",
+          departmentCode: "00",
           leagueId: 10,
           _count: { clubs: 0 },
         },
@@ -300,7 +294,6 @@ describe("ClubsService", () => {
       zipCode: "98000",
       latitude: { toNumber: () => 43.7384 } as any,
       longitude: { toNumber: () => 7.4246 } as any,
-      website: "https://monaco.com",
       committeeId: 1,
       committee: { leagueId: 5 },
     };
@@ -323,7 +316,6 @@ describe("ClubsService", () => {
             zipCode: "98000",
             latitude: 43.7384,
             longitude: 7.4246,
-            website: "https://monaco.com",
             committeeId: 1,
             leagueId: 5,
           },
@@ -370,7 +362,11 @@ describe("ClubsService", () => {
 
       expect(prisma.client.clubs.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { teams: { some: { category: Category.U18 } } },
+          where: {
+            teams: {
+              some: { pool: { championship: { category: Category.U18 } } },
+            },
+          },
         }),
       );
     });
@@ -380,7 +376,11 @@ describe("ClubsService", () => {
 
       expect(prisma.client.clubs.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { teams: { some: { gender: Gender.FEMALE } } },
+          where: {
+            teams: {
+              some: { pool: { championship: { gender: Gender.FEMALE } } },
+            },
+          },
         }),
       );
     });
@@ -398,7 +398,16 @@ describe("ClubsService", () => {
           where: {
             committeeId: 1,
             committee: { leagueId: 2 },
-            teams: { some: { category: Category.U18, gender: Gender.MALE } },
+            teams: {
+              some: {
+                pool: {
+                  championship: {
+                    category: Category.U18,
+                    gender: Gender.MALE,
+                  },
+                },
+              },
+            },
           },
         }),
       );
@@ -466,50 +475,54 @@ describe("ClubsService", () => {
       city: "Monaco",
       zipCode: "98000",
       address: "1 Avenue des Papalins",
-      website: "https://monaco.com",
       code: "SUD0013011",
       teams: [
         {
           id: 1,
           number: 1,
-          category: "U18",
-          gender: "male",
           poolId: 10,
           pool: {
             id: 10,
-            name: "Pool A",
             letter: "A",
             championship: {
               id: 1,
-              name: "Championship Régional U18",
+              category: "U18",
+              gender: "male",
               level: "regional",
               division: 1,
-              committeeId: null,
-              leagueId: 1,
             },
           },
         },
       ],
     };
 
-    /** A standings row of pool 10, as STANDING_SELECT returns it. */
-    const row = (teamId: number, points: number, pointDifference: number) => ({
-      teamId,
-      poolId: 10,
-      points,
-      gamesPlayed: 10,
-      gamesWon: 7,
-      gamesLost: 3,
-      pointDifference,
+    /** The teams of pool 10, as the standings query reads them. */
+    const poolTeams = (...ids: number[]) =>
+      ids.map((id) => ({ id, poolId: 10 }));
+
+    /** A completed match of pool 10. */
+    const poolMatch = (
+      homeTeamId: number,
+      awayTeamId: number,
+      homeTeamScore: number,
+      awayTeamScore: number,
+    ) => ({
+      homeTeam: { poolId: 10 },
+      homeTeamId,
+      awayTeamId,
+      homeTeamScore,
+      awayTeamScore,
+      forfeit: false,
     });
 
     it("should rank the team within its pool and report the pool size", async () => {
       prisma.client.clubs.findUnique.mockResolvedValue(mockPrismaClub);
-      prisma.client.leaderboards.findMany.mockResolvedValue([
-        row(1, 15, 25),
-        row(2, 17, 0),
-        row(3, 15, 10),
-        row(4, 12, 5),
+      prisma.client.teams.findMany.mockResolvedValue(poolTeams(1, 2, 3, 4));
+      prisma.client.matches.findMany.mockResolvedValue([
+        poolMatch(2, 3, 90, 60),
+        poolMatch(2, 4, 90, 60),
+        poolMatch(1, 4, 80, 70),
+        poolMatch(3, 1, 75, 70),
       ]);
 
       const result = await service.findClubById(1);
@@ -524,21 +537,22 @@ describe("ClubsService", () => {
       expect(result.teams[0].leaderboard).toEqual({
         rank: 2,
         poolSize: 4,
-        points: 15,
-        gamesPlayed: 10,
-        gamesWon: 7,
-        gamesLost: 3,
-        pointDifference: 25,
+        points: 3,
+        gamesPlayed: 2,
+        gamesWon: 1,
+        gamesLost: 1,
+        gamesForfeited: 0,
+        pointDifference: 5,
         poolId: 10,
       });
     });
 
     it("should share a rank between tied teams, like the pool standings", async () => {
       prisma.client.clubs.findUnique.mockResolvedValue(mockPrismaClub);
-      prisma.client.leaderboards.findMany.mockResolvedValue([
-        row(2, 15, 25),
-        row(1, 15, 25),
-        row(3, 9, 0),
+      prisma.client.teams.findMany.mockResolvedValue(poolTeams(1, 2, 3, 4));
+      prisma.client.matches.findMany.mockResolvedValue([
+        poolMatch(2, 3, 80, 70),
+        poolMatch(1, 4, 80, 70),
       ]);
 
       const result = await service.findClubById(1);
@@ -546,7 +560,7 @@ describe("ClubsService", () => {
       expect(result.teams[0].leaderboard?.rank).toBe(1);
     });
 
-    it("should read every pool of the club in one query", async () => {
+    it("should read every pool of the club in one query each", async () => {
       prisma.client.clubs.findUnique.mockResolvedValue({
         ...mockPrismaClub,
         teams: [
@@ -555,36 +569,42 @@ describe("ClubsService", () => {
           { ...mockPrismaClub.teams[0], id: 3, poolId: 10 },
         ],
       });
-      prisma.client.leaderboards.findMany.mockResolvedValue([]);
+      prisma.client.teams.findMany.mockResolvedValue([
+        { id: 1, poolId: 10 },
+        { id: 2, poolId: 11 },
+        { id: 3, poolId: 10 },
+      ]);
+      prisma.client.matches.findMany.mockResolvedValue([]);
 
       await service.findClubById(1);
 
-      expect(prisma.client.leaderboards.findMany).toHaveBeenCalledTimes(1);
-      expect(prisma.client.leaderboards.findMany).toHaveBeenCalledWith({
+      expect(prisma.client.teams.findMany).toHaveBeenCalledTimes(1);
+      expect(prisma.client.teams.findMany).toHaveBeenCalledWith({
         where: { poolId: { in: [10, 11] } },
+        select: expect.any(Object),
+      });
+      expect(prisma.client.matches.findMany).toHaveBeenCalledTimes(1);
+      expect(prisma.client.matches.findMany).toHaveBeenCalledWith({
+        where: { homeTeam: { poolId: { in: [10, 11] } }, status: "completed" },
         select: expect.any(Object),
       });
     });
 
-    it("should return null leaderboard when team has no standings row", async () => {
+    it("should keep only the club's teams and not count another pool's matches", async () => {
       prisma.client.clubs.findUnique.mockResolvedValue(mockPrismaClub);
-      prisma.client.leaderboards.findMany.mockResolvedValue([row(2, 15, 25)]);
+      prisma.client.teams.findMany.mockResolvedValue([
+        { id: 1, poolId: 10 },
+        { id: 2, poolId: 10 },
+      ]);
+      prisma.client.matches.findMany.mockResolvedValue([
+        poolMatch(1, 2, 80, 70),
+        { ...poolMatch(1, 2, 80, 70), homeTeam: { poolId: 11 } },
+      ]);
 
       const result = await service.findClubById(1);
 
-      expect(result.teams[0].leaderboard).toBeNull();
-    });
-
-    it("should return null leaderboard without querying when team has no pool", async () => {
-      prisma.client.clubs.findUnique.mockResolvedValue({
-        ...mockPrismaClub,
-        teams: [{ ...mockPrismaClub.teams[0], pool: null, poolId: null }],
-      });
-
-      const result = await service.findClubById(1);
-
-      expect(result.teams[0].leaderboard).toBeNull();
-      expect(prisma.client.leaderboards.findMany).not.toHaveBeenCalled();
+      expect(result.teams).toHaveLength(1);
+      expect(result.teams[0].leaderboard?.gamesPlayed).toBe(1);
     });
 
     it("should handle club with no teams", async () => {
@@ -596,14 +616,13 @@ describe("ClubsService", () => {
       const result = await service.findClubById(1);
 
       expect(result.teams).toHaveLength(0);
-      expect(prisma.client.leaderboards.findMany).not.toHaveBeenCalled();
+      expect(prisma.client.teams.findMany).not.toHaveBeenCalled();
     });
 
     it("should handle club with null fields", async () => {
       prisma.client.clubs.findUnique.mockResolvedValue({
         ...mockPrismaClub,
         address: null,
-        website: null,
         code: null,
         teams: [],
       });
@@ -611,7 +630,6 @@ describe("ClubsService", () => {
       const result = await service.findClubById(1);
 
       expect(result.address).toBeNull();
-      expect(result.website).toBeNull();
       expect(result.ffbbUrl).toBeNull();
     });
 

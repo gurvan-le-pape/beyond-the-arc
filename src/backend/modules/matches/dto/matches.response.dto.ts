@@ -41,9 +41,6 @@ export class MatchPoolRefDto {
   @ApiProperty({ description: "Pool ID", example: 1, type: Number })
   id!: number;
 
-  @ApiProperty({ description: "Pool name", example: "Poule A", type: String })
-  name!: string;
-
   @ApiProperty({ description: "Pool letter", example: "A", type: String })
   letter!: string;
 
@@ -255,8 +252,8 @@ export class PlayerStatsDto {
 
   @ApiProperty({
     // `playtimeIntervals` keeps its name rather than gaining a `Seconds`
-    // suffix like the field above: it is a stored column
-    // (`player_match_stats.playtime_intervals`), and renaming only the DTO
+    // suffix like the field above: it is a stored field (each box-score
+    // line's `playtime_intervals`), and renaming only the DTO
     // would put a different name on each side of the same value — the drift
     // `naming.md` exists to prevent. `playtimeSeconds` has no such
     // counterpart; it is computed from these intervals and stored nowhere.
@@ -539,9 +536,6 @@ export class MatchEventPlayerDto {
  * without its origin, and no suffix can carry that.
  */
 export class ShotLocationDto {
-  @ApiProperty({ description: "Shot location ID", example: 1, type: Number })
-  id!: number;
-
   @ApiProperty({
     description: "Metres across the court from the baseline corner (0–15)",
     example: 5.5,
@@ -560,8 +554,8 @@ export class ShotLocationDto {
 /**
  * One shot on a team's or player's season shot chart: where it was taken and
  * what kind of attempt it was. The chart needs nothing else, so this carries
- * nothing else — not the event's players, clubs or description, which made the
- * full event ~470 bytes against ~55 for this.
+ * nothing else — not the event's players or clubs, which made the full event
+ * ~470 bytes against ~55 for this.
  *
  * Coordinates are the same as `ShotLocationDto`'s.
  */
@@ -625,14 +619,6 @@ export class MatchEventDto {
     type: Number,
   })
   secondsLeft!: number;
-
-  @ApiProperty({
-    description: "Event description",
-    example: "3-pointer",
-    type: String,
-    nullable: true,
-  })
-  description!: string | null;
 
   @ApiProperty({
     description: "Players involved in the event",

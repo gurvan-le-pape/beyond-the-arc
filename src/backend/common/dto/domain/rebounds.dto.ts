@@ -3,7 +3,7 @@ import { ApiProperty } from "@nestjs/swagger";
 
 /**
  * Rebounds breakdown within player match stats. Mirrors the shape
- * produced by mapPlayerMatchStats in common/utils.
+ * produced by parseBoxScoreLine in common/utils.
  */
 export class ReboundsDto {
   @ApiProperty({ description: "Total rebounds", example: 8, type: Number })

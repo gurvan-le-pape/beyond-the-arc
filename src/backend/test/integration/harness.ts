@@ -54,8 +54,8 @@ export interface PoolOptions {
 let nextTeamNumber = 1;
 
 /**
- * Creates a championship and a pool, with teams from the seeded clubs assigned
- * to it the way the scheduler assigns them, through an update of `pool_id`.
+ * Creates a championship and a pool, with teams from the seeded clubs created
+ * in it, as the scheduler creates them.
  *
  * @param client - the connection to write on
  * @param options - the championship and pool to create
@@ -81,6 +81,10 @@ export async function createPool(
   }>(
     `SELECT c.id, c.committee_id, m.league_id
        FROM clubs c JOIN committees m ON m.id = c.committee_id
+      WHERE c.committee_id = (
+        SELECT committee_id FROM clubs
+         GROUP BY committee_id ORDER BY count(*) DESC, committee_id LIMIT 1
+      )
       ORDER BY c.id LIMIT $1`,
     [teamCount],
   );
@@ -90,24 +94,16 @@ export async function createPool(
     rows: [{ id: championshipId }],
   } = await client.query<{ id: number }>(
     `INSERT INTO championships
-       (name, category, season_year, level, division, gender, committee_id, league_id)
-     VALUES ($1, $2, '2099-2100', $3, $4, $5, $6, $7) RETURNING id`,
-    [
-      `Fixture ${nextTeamNumber}`,
-      category,
-      level,
-      division,
-      gender,
-      level === "departmental" ? committeeId : null,
-      leagueId,
-    ],
+       (category, season_year, level, division, gender)
+     VALUES ($1, '2099-2100', $2, $3, $4) RETURNING id`,
+    [category, level, division, gender],
   );
   const {
     rows: [{ id: poolId }],
   } = await client.query<{ id: number }>(
-    `INSERT INTO pools (championship_id, letter, name)
-     VALUES ($1, $2, $3) RETURNING id`,
-    [championshipId, letter, `Pool ${letter}`],
+    `INSERT INTO pools (championship_id, letter)
+     VALUES ($1, $2) RETURNING id`,
+    [championshipId, letter],
   );
 
   const teamIds: number[] = [];
@@ -115,14 +111,10 @@ export async function createPool(
     const {
       rows: [{ id }],
     } = await client.query<{ id: number }>(
-      `INSERT INTO teams (club_id, season_year, number, category, gender)
-       VALUES ($1, '2099-2100', $2, $3, $4) RETURNING id`,
-      [club.id, nextTeamNumber++, category, gender],
+      `INSERT INTO teams (pool_id, club_id, number)
+       VALUES ($1, $2, $3) RETURNING id`,
+      [poolId, club.id, nextTeamNumber++],
     );
-    await client.query("UPDATE teams SET pool_id = $1 WHERE id = $2", [
-      poolId,
-      id,
-    ]);
     teamIds.push(id);
   }
 
@@ -140,7 +132,6 @@ export async function createPool(
  * Inserts a scheduled match, as the season generator does.
  *
  * @param client - the connection to write on
- * @param poolId - the match's pool
  * @param homeTeamId - the home team
  * @param awayTeamId - the away team
  * @param startsAt - tip-off, an ISO 8601 instant
@@ -148,7 +139,6 @@ export async function createPool(
  */
 export async function insertScheduledMatch(
   client: Client,
-  poolId: number,
   homeTeamId: number,
   awayTeamId: number,
   startsAt = "2099-01-01T12:00:00Z",
@@ -156,9 +146,9 @@ export async function insertScheduledMatch(
   const {
     rows: [{ id }],
   } = await client.query<{ id: number }>(
-    `INSERT INTO matches (pool_id, matchday, starts_at, home_team_id, away_team_id)
-     VALUES ($1, 1, $2, $3, $4) RETURNING id`,
-    [poolId, startsAt, homeTeamId, awayTeamId],
+    `INSERT INTO matches (matchday, starts_at, home_team_id, away_team_id)
+     VALUES (1, $1, $2, $3) RETURNING id`,
+    [startsAt, homeTeamId, awayTeamId],
   );
   return id;
 }
@@ -171,7 +161,8 @@ export async function insertScheduledMatch(
  * @param matchId - the match
  * @param homeScore - the home team's score
  * @param awayScore - the away team's score
- * @param forfeit - whether the home team forfeited
+ * @param forfeit - whether the match was forfeited, by the side scoring 0
+ * @param boxScore - the stat lines by player id, as compute_box_score writes them
  */
 export async function completeMatch(
   client: Client,
@@ -179,12 +170,13 @@ export async function completeMatch(
   homeScore: number,
   awayScore: number,
   forfeit = false,
+  boxScore: Record<string, unknown> = {},
 ): Promise<void> {
   await client.query(
     `UPDATE matches
         SET home_team_score = $1, away_team_score = $2, overtime = false,
-            forfeit = $3, status = 'completed'
-      WHERE id = $4`,
-    [homeScore, awayScore, forfeit, matchId],
+            forfeit = $3, box_score = $4, status = 'completed'
+      WHERE id = $5`,
+    [homeScore, awayScore, forfeit, JSON.stringify(boxScore), matchId],
   );
 }

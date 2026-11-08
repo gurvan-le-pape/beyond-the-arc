@@ -1,5 +1,6 @@
 // src/backend/test/integration/list-queries.integration.spec.ts
 import { Category, CompetitionLevel, Gender } from "@common/constants";
+import { ChampionshipsService } from "@modules/competitions/championships/championships.service";
 import { LeaderboardsService } from "@modules/competitions/leaderboards/leaderboards.service";
 import { MatchesService } from "@modules/matches/matches.service";
 import { ClubsService } from "@modules/organizations/clubs/clubs.service";
@@ -59,28 +60,24 @@ describe("list queries", () => {
     // clocks change that night: 22:00 UTC on the 29th is midnight on the 30th.
     matches.earlyOn29 = await insertScheduledMatch(
       client,
-      regional.poolId,
       first,
       second,
       "2026-03-28T23:30:00Z",
     );
     matches.lateOn29 = await insertScheduledMatch(
       client,
-      regional.poolId,
       second,
       third,
       "2026-03-29T21:59:00Z",
     );
     matches.on30 = await insertScheduledMatch(
       client,
-      regional.poolId,
       third,
       first,
       "2026-03-29T22:00:00Z",
     );
     matches.departmental = await insertScheduledMatch(
       client,
-      departmental.poolId,
       departmental.teamIds[0],
       departmental.teamIds[1],
       "2026-04-01T12:00:00Z",
@@ -103,12 +100,15 @@ describe("list queries", () => {
   });
 
   afterAll(async () => {
-    const pools = fixturePools.flatMap((pool) => pool.teamIds);
+    const teams = fixturePools.flatMap((pool) => pool.teamIds);
     const championships = fixturePools.map((pool) => pool.championshipId);
+    await client.query("DELETE FROM matches WHERE home_team_id = ANY($1)", [
+      teams,
+    ]);
+    await client.query("DELETE FROM teams WHERE id = ANY($1)", [teams]);
     await client.query("DELETE FROM championships WHERE id = ANY($1)", [
       championships,
     ]);
-    await client.query("DELETE FROM teams WHERE id = ANY($1)", [pools]);
     await prisma.onModuleDestroy();
     await client.end();
   });
@@ -238,8 +238,59 @@ describe("list queries", () => {
     });
   });
 
+  describe("ChampionshipsService.findChampionships", () => {
+    // Both fixtures draw their teams from the same clubs, so the regional pool
+    // has teams from the committee that organises the departmental one.
+    const found = async (filters: {
+      committeeId?: number;
+      leagueId?: number;
+    }) => {
+      const service = new ChampionshipsService(prisma);
+      const { items } = await service.findChampionships({
+        ...filters,
+        limit: 100,
+      });
+      return items.map((item) => item.id);
+    };
+
+    it("keeps a committee's filter to the championships it organises", async () => {
+      const ids = await found({ committeeId: departmental.committeeId });
+
+      expect(ids).toContain(departmental.championshipId);
+      expect(ids).not.toContain(regional.championshipId);
+    });
+
+    it("finds a league's regional and departmental championships", async () => {
+      const ids = await found({ leagueId: regional.leagueId });
+
+      expect(ids).toEqual(
+        expect.arrayContaining([
+          regional.championshipId,
+          departmental.championshipId,
+        ]),
+      );
+    });
+
+    it("reads the organiser off the championship's teams", async () => {
+      const service = new ChampionshipsService(prisma);
+
+      await expect(
+        service.findChampionshipById(departmental.championshipId),
+      ).resolves.toMatchObject({
+        committeeId: departmental.committeeId,
+        leagueId: departmental.leagueId,
+      });
+      await expect(
+        service.findChampionshipById(regional.championshipId),
+      ).resolves.toMatchObject({
+        committeeId: null,
+        leagueId: regional.leagueId,
+      });
+    });
+  });
+
   describe("LeaderboardsService.findLeaderboardsByPoolId", () => {
-    it("ranks the standings the triggers wrote, with each team's form", async () => {
+    it("ranks the pool's teams from its matches, with each team's form", async () => {
       const service = new LeaderboardsService(prisma);
       const [first, second, third] = regional.teamIds;
 
@@ -254,6 +305,47 @@ describe("list queries", () => {
       ]);
       const firstEntry = entries.find((entry) => entry.teamId === first);
       expect(firstEntry?.form.map((game) => game.result)).toEqual(["W"]);
+    });
+
+    it("counts only completed matches, and a forfeit as the loser's", async () => {
+      const service = new LeaderboardsService(prisma);
+      const standings = await createPool(client, {
+        level: "regional",
+        category: "U13",
+        gender: "female",
+        division: 3,
+        letter: "C",
+        teamCount: 3,
+      });
+      fixturePools.push(standings);
+      const [first, second, third] = standings.teamIds;
+      const insert = (home: number, away: number) =>
+        insertScheduledMatch(client, home, away);
+
+      await insert(first, second);
+      for (const status of ["generating", "failed"]) {
+        const match = await insert(first, third);
+        await client.query("UPDATE matches SET status = $1 WHERE id = $2", [
+          status,
+          match,
+        ]);
+      }
+      await completeMatch(client, await insert(second, first), 0, 20, true);
+
+      const entries = await service.findLeaderboardsByPoolId(standings.poolId);
+
+      expect(
+        entries.map(({ teamId, gamesPlayed, gamesForfeited, points }) => ({
+          teamId,
+          gamesPlayed,
+          gamesForfeited,
+          points,
+        })),
+      ).toEqual([
+        { teamId: first, gamesPlayed: 1, gamesForfeited: 0, points: 2 },
+        { teamId: third, gamesPlayed: 0, gamesForfeited: 0, points: 0 },
+        { teamId: second, gamesPlayed: 1, gamesForfeited: 1, points: 0 },
+      ]);
     });
   });
 });

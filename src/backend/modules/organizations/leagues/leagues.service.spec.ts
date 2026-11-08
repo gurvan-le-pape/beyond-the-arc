@@ -56,13 +56,8 @@ describe("LeaguesService", () => {
     id: true,
     name: true,
     address: true,
-    region: {
-      select: {
-        id: true,
-        name: true,
-        code: true,
-      },
-    },
+    regionCode: true,
+    regionName: true,
     committees: {
       select: {
         _count: { select: { clubs: true } },
@@ -88,17 +83,20 @@ describe("LeaguesService", () => {
         mockLeagueData({
           id: 1,
           name: "LIGUE REGIONALE AUVERGNE-RHONE-ALPES DE BASKET-BALL",
-          region: { id: 1, name: "Auvergne-Rhône-Alpes", code: "ARA" },
+          regionName: "Auvergne-Rhône-Alpes",
+          regionCode: "ARA",
         }),
         mockLeagueData({
           id: 2,
           name: "LIGUE REGIONALE BOURGOGNE-FRANCHE-COMTE DE BASKET-BALL",
-          region: { id: 2, name: "Bourgogne-Franche-Comté", code: "BFC" },
+          regionName: "Bourgogne-Franche-Comté",
+          regionCode: "BFC",
         }),
         mockLeagueData({
           id: 3,
           name: "LIGUE REGIONALE BRETAGNE DE BASKET-BALL",
-          region: { id: 3, name: "Bretagne", code: "BRE" },
+          regionName: "Bretagne",
+          regionCode: "BRE",
         }),
       ];
 
@@ -114,7 +112,6 @@ describe("LeaguesService", () => {
       );
       expect(result[0].clubCount).toBe(0);
       expect(result[0].region).toEqual({
-        id: 1,
         name: "Auvergne-Rhône-Alpes",
         code: "ARA",
       });
@@ -155,7 +152,8 @@ describe("LeaguesService", () => {
       const mockLeague = mockLeagueData({
         id: 1,
         name: "LIGUE REGIONALE BRETAGNE DE BASKET-BALL",
-        region: { id: 3, name: "Bretagne", code: "BRE" },
+        regionName: "Bretagne",
+        regionCode: "BRE",
         committees: [
           { _count: { clubs: 0 }, clubs: [] },
           { _count: { clubs: 10 }, clubs: [{ code: "BRE0029001" }] },
@@ -172,7 +170,7 @@ describe("LeaguesService", () => {
       expect(result.id).toBe(1);
       expect(result.name).toBe("LIGUE REGIONALE BRETAGNE DE BASKET-BALL");
       expect(result.clubCount).toBe(15);
-      expect(result.region).toEqual({ id: 3, name: "Bretagne", code: "BRE" });
+      expect(result.region).toEqual({ name: "Bretagne", code: "BRE" });
       expect(result.ffbbUrl).toBe("https://competitions.ffbb.com/ligues/bre");
 
       expect(mockPrismaService.client.leagues.findUnique).toHaveBeenCalledWith({

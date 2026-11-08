@@ -60,7 +60,6 @@ describe("ChampionshipsController", () => {
       // Arrange
       const mockChampionship: ChampionshipResponseDto = {
         id: 1,
-        name: "Championship Régional U18",
         category: "U18",
         gender: "male",
         seasonYear: "2024-2025",
@@ -106,7 +105,6 @@ describe("ChampionshipsController", () => {
       items: [
         {
           id: 1,
-          name: "Championship Régional U18",
           category: "U18",
           gender: "male",
           seasonYear: "2024-2025",

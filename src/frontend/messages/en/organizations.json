@@ -38,9 +38,7 @@
     "address": "Address",
     "contact": "Contact",
     "ffbbPage": "Official page on ffbb.com",
-    "ffbbPageHint": "Phone, email and officers, kept up to date by the federation.",
-    "website": "Website",
-    "visitWebsite": "Visit website"
+    "ffbbPageHint": "Phone, email and officers, kept up to date by the federation."
   },
   "header": {
     "leagueKind": "Regional league",
@@ -49,6 +47,6 @@
     "clubs": "{count, plural, one {club} other {clubs}}",
     "championships": "{count, plural, one {championship} other {championships}}",
     "teams": "{count, plural, one {team} other {teams}}",
-    "record": "Record (W–L)"
+    "record": "Record (W–L–F)"
   }
 }

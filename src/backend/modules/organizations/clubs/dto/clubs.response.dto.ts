@@ -48,14 +48,6 @@ export class ClubBasicResponseDto {
   longitude!: number | null;
 
   @ApiProperty({
-    description: "Website",
-    example: "https://club.com",
-    type: String,
-    nullable: true,
-  })
-  website!: string | null;
-
-  @ApiProperty({
     description: "Committee ID",
     example: 1,
   })
@@ -100,6 +92,13 @@ export class TeamLeaderboardDto {
   @ApiProperty({ description: "Games lost", example: 2, type: Number })
   gamesLost!: number;
 
+  @ApiProperty({
+    description: "Games forfeited: lost by not playing, for no points",
+    example: 0,
+    type: Number,
+  })
+  gamesForfeited!: number;
+
   @ApiProperty({ description: "Goal difference", example: 45, type: Number })
   pointDifference!: number;
 
@@ -115,13 +114,6 @@ export class ChampionshipInfoDto {
   id!: number;
 
   @ApiProperty({
-    description: "Championship name",
-    example: "Regional U18",
-    type: String,
-  })
-  name!: string;
-
-  @ApiProperty({
     description: "Competition level",
     example: CompetitionLevel.REGIONAL,
     enum: CompetitionLevel,
@@ -134,22 +126,6 @@ export class ChampionshipInfoDto {
     type: Number,
   })
   division!: number;
-
-  @ApiProperty({
-    description: "Committee ID",
-    example: 1,
-    type: Number,
-    nullable: true,
-  })
-  committeeId!: number | null;
-
-  @ApiProperty({
-    description: "League regionale ID",
-    example: 1,
-    type: Number,
-    nullable: true,
-  })
-  leagueId!: number | null;
 }
 
 /**
@@ -158,13 +134,6 @@ export class ChampionshipInfoDto {
 export class PoolInfoDto {
   @ApiProperty({ description: "Pool ID", example: 1, type: Number })
   id!: number;
-
-  @ApiProperty({
-    description: "Pool name",
-    example: "Pool A",
-    type: String,
-  })
-  name!: string;
 
   @ApiProperty({ description: "Pool letter", example: "A", type: String })
   letter!: string;
@@ -207,16 +176,14 @@ export class TeamInfoDto {
   @ApiProperty({
     description: "Pool information",
     type: PoolInfoDto,
-    nullable: true,
   })
-  pool!: PoolInfoDto | null;
+  pool!: PoolInfoDto;
 
   @ApiProperty({
     description: "Team leaderboard stats",
     type: TeamLeaderboardDto,
-    nullable: true,
   })
-  leaderboard!: TeamLeaderboardDto | null;
+  leaderboard!: TeamLeaderboardDto;
 }
 
 /**
@@ -262,14 +229,6 @@ export class ClubDetailedResponseDto {
   address!: string | null;
 
   @ApiProperty({
-    description: "Website URL",
-    example: "https://club.com",
-    type: String,
-    nullable: true,
-  })
-  website!: string | null;
-
-  @ApiProperty({
     description:
       "The club's page on the FFBB competitions site, where its contact details are kept up to date",
     example:
@@ -298,9 +257,8 @@ export class ClubStatsByRegionDto {
       "Region code — the FFBB's alphabetic league code, not the INSEE numeric region code",
     example: "ARA",
     type: String,
-    nullable: true,
   })
-  code!: string | null;
+  code!: string;
 
   @ApiProperty({
     description: "League name",
@@ -321,9 +279,6 @@ export class ClubStatsByRegionDto {
  * Department information.
  */
 export class DepartmentInfoDto {
-  @ApiProperty({ description: "Department ID", example: 1, type: Number })
-  id!: number;
-
   @ApiProperty({
     description: "Department name",
     example: "Ain",
@@ -355,11 +310,7 @@ export class ClubStatsByDepartmentDto {
     description: "Department information",
     type: () => DepartmentInfoDto,
   })
-  department!: {
-    id: number;
-    name: string;
-    code: string;
-  };
+  department!: DepartmentInfoDto;
 
   @ApiProperty({
     description: "League regionale ID",

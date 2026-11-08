@@ -21,6 +21,8 @@ interface MatchWithScore extends MatchWithTeams {
   status: MatchStatus;
   homeTeamScore: number | null;
   awayTeamScore: number | null;
+  /** Absent from a player's history, which only lists matches played. */
+  forfeit?: boolean;
 }
 
 /** The words the result column shows: a one-letter badge and its full name. */
@@ -29,6 +31,7 @@ interface ResultLabels {
   readonly winShort: string;
   readonly loss: string;
   readonly lossShort: string;
+  readonly forfeit: string;
   readonly unavailable: string;
 }
 
@@ -88,6 +91,7 @@ function buildOpponentColumn<T extends MatchWithTeams>(
  *
  * The badge shows one letter; its full word is what a screen reader hears.
  * Basketball has no draws, so a level score cannot occur in a completed match.
+ * A forfeit's score is followed by the word, since 20–0 reads as played.
  */
 function buildResultColumn<T extends MatchWithScore>(
   header: ReactNode,
@@ -119,6 +123,9 @@ function buildResultColumn<T extends MatchWithScore>(
           <span className="tabular-nums">
             {own}–{opponent}
           </span>
+          {match.forfeit && (
+            <span className="text-text-secondary">{labels.forfeit}</span>
+          )}
         </span>
       );
     },
@@ -173,6 +180,7 @@ export function useMatchHistoryColumns<T extends MatchWithScore>(
         winShort: t("matchHistory.winShort"),
         loss: t("matchHistory.loss"),
         lossShort: t("matchHistory.lossShort"),
+        forfeit: t("matchHistory.forfeit"),
         unavailable: t("matchHistory.resultUnavailable"),
       }),
     ];

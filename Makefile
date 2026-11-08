@@ -85,7 +85,7 @@ sonar-logs:
 barrels:
 	npm run barrels
 
-# Refresh static reference data (presidents/gyms/coordinates) from FFBB's
+# Refresh static reference data (leagues, committees, clubs, coordinates) from FFBB's
 # public site and regenerate prisma/migrations/1_seed_static_data/migration.sql.
 # Host-side (not Docker) - hits competitions.ffbb.com directly and takes
 # ~1h20 (4480 pages at the 1s crawl-delay their robots.txt asks for).
@@ -128,10 +128,10 @@ reset-failed-matches:
 	docker compose -f $(DOCKER_COMPOSE) $(ENV_FILE) exec database psql -U $(DATABASE_USER) -d $(DATABASE_NAME) \
 		-c "UPDATE matches SET status = 'scheduled' WHERE status = 'failed';"
 
-# Show seeding progress
+# Show season setup progress: leagues with teams in each season's championships
 season-progress:
 	docker compose -f $(DOCKER_COMPOSE) $(ENV_FILE) exec database psql -U $(DATABASE_USER) -d $(DATABASE_NAME) -c \
-		"SELECT entity_type, COUNT(*) as completed FROM seeding_checkpoints GROUP BY entity_type;"
+		"SELECT ch.season_year, COUNT(DISTINCT co.league_id) AS leagues_set_up FROM teams t JOIN pools p ON p.id = t.pool_id JOIN championships ch ON ch.id = p.championship_id JOIN clubs c ON c.id = t.club_id JOIN committees co ON co.id = c.committee_id GROUP BY ch.season_year ORDER BY ch.season_year;"
 
 # Show match generation progress
 match-progress:

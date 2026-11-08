@@ -99,7 +99,11 @@ describe("PlayersController", () => {
                   },
                 },
               },
-              pool: null,
+              pool: {
+                id: 1,
+                letter: "A",
+                championship: { id: 1, level: "departmental", division: 1 },
+              },
             },
           },
         ],
@@ -274,7 +278,11 @@ describe("PlayersController", () => {
               },
             },
           },
-          pool: null,
+          pool: {
+            id: 1,
+            letter: "A",
+            championship: { id: 1, level: "departmental", division: 1 },
+          },
         },
       };
 

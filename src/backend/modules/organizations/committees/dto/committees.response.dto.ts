@@ -2,16 +2,9 @@
 import { ApiProperty } from "@nestjs/swagger";
 
 /**
- * Response DTO for department entity nested in committee.
+ * A committee's department, nested in the committee response.
  */
 export class DepartmentResponseDto {
-  @ApiProperty({
-    description: "Department unique identifier",
-    example: 1,
-    type: Number,
-  })
-  id!: number;
-
   @ApiProperty({
     description: "Department name",
     example: "Ain",

@@ -1,6 +1,6 @@
 """Foul and turnover attribution, one event at a time."""
 
-from generation.match_generator import STAT_COLUMNS, compute_player_stats
+from generation.match_generator import compute_box_score
 from simulation.event_generator import EventGenerator
 
 ATTACKER = 1
@@ -9,9 +9,8 @@ PLAYTIMES = {ATTACKER: [(0, 2400)]}, {DEFENDER: [(0, 2400)]}
 
 
 def column_by_player(column: str, *events: dict) -> dict[int, int]:
-    rows = compute_player_stats(*PLAYTIMES, list(events))
-    index = 1 + STAT_COLUMNS.index(column)  # the row starts with the player id
-    return {row[0]: row[index] for row in rows}
+    box_score = compute_box_score(*PLAYTIMES, list(events))
+    return {int(player_id): entry[column] for player_id, entry in box_score.items()}
 
 
 def turnovers_by_player(*events: dict) -> dict[int, int]:
@@ -20,7 +19,7 @@ def turnovers_by_player(*events: dict) -> dict[int, int]:
 
 def generate(event_type: str) -> dict:
     return EventGenerator(state_manager=None).generate_event(
-        {"type": event_type}, [ATTACKER], [DEFENDER], "home", {}
+        {"type": event_type}, [ATTACKER], [DEFENDER], "home"
     )
 
 

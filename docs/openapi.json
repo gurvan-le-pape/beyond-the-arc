@@ -1101,81 +1101,6 @@
         ]
       }
     },
-    "/api/leaderboards/{id}": {
-      "get": {
-        "description": "Retrieves detailed information about a specific leaderboard entry",
-        "operationId": "LeaderboardsController_getLeaderboardById",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "description": "Leaderboard entry ID",
-            "schema": {
-              "example": 1,
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Leaderboard entry successfully retrieved",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiEnvelopeDto"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "$ref": "#/components/schemas/LeaderboardResponseDto"
-                        }
-                      },
-                      "required": [
-                        "data"
-                      ]
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid ID format",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponseDto"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Leaderboard entry not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponseDto"
-                },
-                "example": {
-                  "statusCode": 404,
-                  "message": "Leaderboard entry with ID 999 not found",
-                  "error": "Not Found",
-                  "path": "/api/leaderboards/999",
-                  "timestamp": "2024-02-05T10:00:00Z"
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get leaderboard entry by ID",
-        "tags": [
-          "leaderboards"
-        ]
-      }
-    },
     "/api/pools": {
       "get": {
         "description": "Retrieves all pools for a specific championship. Results are cached for 5 minutes.",
@@ -3085,7 +3010,6 @@
           },
           "code": {
             "type": "string",
-            "nullable": true,
             "description": "Region code — the FFBB's alphabetic league code, not the INSEE numeric region code",
             "example": "ARA"
           },
@@ -3157,11 +3081,6 @@
       "DepartmentInfoDto": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "number",
-            "description": "Department ID",
-            "example": 1
-          },
           "name": {
             "type": "string",
             "description": "Department name",
@@ -3174,7 +3093,6 @@
           }
         },
         "required": [
-          "id",
           "name",
           "code"
         ]
@@ -3256,12 +3174,6 @@
             "description": "Longitude",
             "example": 7.4246
           },
-          "website": {
-            "type": "string",
-            "nullable": true,
-            "description": "Website",
-            "example": "https://club.com"
-          },
           "committeeId": {
             "type": "number",
             "description": "Committee ID",
@@ -3280,7 +3192,6 @@
           "zipCode",
           "latitude",
           "longitude",
-          "website",
           "committeeId",
           "leagueId"
         ]
@@ -3364,11 +3275,6 @@
             "description": "Championship ID",
             "example": 1
           },
-          "name": {
-            "type": "string",
-            "description": "Championship name",
-            "example": "Regional U18"
-          },
           "level": {
             "enum": [
               "departmental",
@@ -3383,27 +3289,12 @@
             "type": "number",
             "description": "Division",
             "example": 1
-          },
-          "committeeId": {
-            "type": "number",
-            "nullable": true,
-            "description": "Committee ID",
-            "example": 1
-          },
-          "leagueId": {
-            "type": "number",
-            "nullable": true,
-            "description": "League regionale ID",
-            "example": 1
           }
         },
         "required": [
           "id",
-          "name",
           "level",
-          "division",
-          "committeeId",
-          "leagueId"
+          "division"
         ]
       },
       "PoolInfoDto": {
@@ -3413,11 +3304,6 @@
             "type": "number",
             "description": "Pool ID",
             "example": 1
-          },
-          "name": {
-            "type": "string",
-            "description": "Pool name",
-            "example": "Pool A"
           },
           "letter": {
             "type": "string",
@@ -3435,7 +3321,6 @@
         },
         "required": [
           "id",
-          "name",
           "letter",
           "championship"
         ]
@@ -3475,6 +3360,11 @@
             "description": "Games lost",
             "example": 2
           },
+          "gamesForfeited": {
+            "type": "number",
+            "description": "Games forfeited: lost by not playing, for no points",
+            "example": 0
+          },
           "pointDifference": {
             "type": "number",
             "description": "Goal difference",
@@ -3493,6 +3383,7 @@
           "gamesPlayed",
           "gamesWon",
           "gamesLost",
+          "gamesForfeited",
           "pointDifference",
           "poolId"
         ]
@@ -3533,9 +3424,7 @@
             "example": "male"
           },
           "pool": {
-            "nullable": true,
             "description": "Pool information",
-            "type": "object",
             "allOf": [
               {
                 "$ref": "#/components/schemas/PoolInfoDto"
@@ -3543,9 +3432,7 @@
             ]
           },
           "leaderboard": {
-            "nullable": true,
             "description": "Team leaderboard stats",
-            "type": "object",
             "allOf": [
               {
                 "$ref": "#/components/schemas/TeamLeaderboardDto"
@@ -3593,12 +3480,6 @@
             "description": "Street address",
             "example": "1 Avenue des Papalins"
           },
-          "website": {
-            "type": "string",
-            "nullable": true,
-            "description": "Website URL",
-            "example": "https://club.com"
-          },
           "ffbbUrl": {
             "type": "string",
             "nullable": true,
@@ -3619,7 +3500,6 @@
           "city",
           "zipCode",
           "address",
-          "website",
           "ffbbUrl",
           "teams"
         ]
@@ -3627,11 +3507,6 @@
       "DepartmentResponseDto": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "number",
-            "description": "Department unique identifier",
-            "example": 1
-          },
           "name": {
             "type": "string",
             "description": "Department name",
@@ -3644,7 +3519,6 @@
           }
         },
         "required": [
-          "id",
           "name",
           "code"
         ]
@@ -3706,11 +3580,6 @@
       "RegionDto": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "number",
-            "description": "Region unique identifier",
-            "example": 1
-          },
           "code": {
             "type": "string",
             "description": "Region code",
@@ -3723,7 +3592,6 @@
           }
         },
         "required": [
-          "id",
           "code",
           "name"
         ]
@@ -3787,10 +3655,6 @@
             "type": "string",
             "example": "A"
           },
-          "name": {
-            "type": "string",
-            "example": "Pool A"
-          },
           "nbMatchdays": {
             "type": "number",
             "example": 10
@@ -3799,7 +3663,6 @@
         "required": [
           "id",
           "letter",
-          "name",
           "nbMatchdays"
         ]
       },
@@ -3810,11 +3673,6 @@
             "type": "number",
             "description": "Unique championship identifier",
             "example": 1
-          },
-          "name": {
-            "type": "string",
-            "description": "Championship name",
-            "example": "Championship Régional U18 male"
           },
           "category": {
             "enum": [
@@ -3900,7 +3758,6 @@
         },
         "required": [
           "id",
-          "name",
           "category",
           "gender",
           "seasonYear",
@@ -3926,10 +3783,11 @@
           "result": {
             "enum": [
               "W",
-              "L"
+              "L",
+              "F"
             ],
             "type": "string",
-            "description": "How it went for the team: W for a win, L for a loss",
+            "description": "How it went for the team: W for a win, L for a loss, F for a forfeit",
             "example": "W"
           }
         },
@@ -3941,11 +3799,6 @@
       "LeaderboardResponseDto": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "number",
-            "description": "Unique leaderboard entry identifier",
-            "example": 1
-          },
           "teamId": {
             "type": "number",
             "description": "Team ID",
@@ -4015,7 +3868,6 @@
           }
         },
         "required": [
-          "id",
           "teamId",
           "rank",
           "teamNumber",
@@ -4044,11 +3896,6 @@
             "description": "Pool letter designation",
             "example": "A"
           },
-          "name": {
-            "type": "string",
-            "description": "Pool name",
-            "example": "Pool A - Seniors"
-          },
           "championshipId": {
             "type": "number",
             "description": "Associated championship ID",
@@ -4063,7 +3910,6 @@
         "required": [
           "id",
           "letter",
-          "name",
           "championshipId",
           "nbMatchdays"
         ]
@@ -4080,11 +3926,6 @@
             "type": "string",
             "description": "Pool letter designation",
             "example": "A"
-          },
-          "name": {
-            "type": "string",
-            "description": "Pool name",
-            "example": "Pool A - Seniors"
           },
           "championshipId": {
             "type": "number",
@@ -4110,7 +3951,6 @@
         "required": [
           "id",
           "letter",
-          "name",
           "championshipId",
           "nbMatchdays",
           "matchday",
@@ -4179,11 +4019,6 @@
             "description": "Pool ID",
             "example": 1
           },
-          "name": {
-            "type": "string",
-            "description": "Pool name",
-            "example": "Poule A"
-          },
           "letter": {
             "type": "string",
             "description": "Pool letter",
@@ -4200,7 +4035,6 @@
         },
         "required": [
           "id",
-          "name",
           "letter",
           "championship"
         ]
@@ -4438,8 +4272,7 @@
               "blocked",
               "winner",
               "exiting_player",
-              "entering_player",
-              "starter"
+              "entering_player"
             ],
             "type": "string",
             "description": "Player role in the event",
@@ -4462,11 +4295,6 @@
       "ShotLocationDto": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "number",
-            "description": "Shot location ID",
-            "example": 1
-          },
           "x": {
             "type": "number",
             "description": "Metres across the court from the baseline corner (0–15)",
@@ -4479,7 +4307,6 @@
           }
         },
         "required": [
-          "id",
           "x",
           "y"
         ]
@@ -4554,12 +4381,6 @@
             "description": "Game-clock time left in the event's period, in whole seconds, as a scoreboard counts it down: 600 at tip-off, 0 on the buzzer. Quarters last 600 s and overtimes 300 s.",
             "example": 412
           },
-          "description": {
-            "type": "string",
-            "nullable": true,
-            "description": "Event description",
-            "example": "3-pointer"
-          },
           "players": {
             "description": "Players involved in the event",
             "type": "array",
@@ -4584,7 +4405,6 @@
           "occurredAt",
           "period",
           "secondsLeft",
-          "description",
           "players",
           "shotLocation"
         ]
@@ -5259,11 +5079,6 @@
             "description": "Championship ID",
             "example": 1
           },
-          "name": {
-            "type": "string",
-            "description": "Championship name",
-            "example": "Championship Régional U18 male"
-          },
           "level": {
             "enum": [
               "departmental",
@@ -5282,7 +5097,6 @@
         },
         "required": [
           "id",
-          "name",
           "level",
           "division"
         ]
@@ -5294,11 +5108,6 @@
             "type": "number",
             "description": "Pool ID",
             "example": 1
-          },
-          "name": {
-            "type": "string",
-            "description": "Pool name",
-            "example": "Poule A"
           },
           "letter": {
             "type": "string",
@@ -5316,7 +5125,6 @@
         },
         "required": [
           "id",
-          "name",
           "letter",
           "championship"
         ]
@@ -5370,9 +5178,7 @@
             ]
           },
           "pool": {
-            "nullable": true,
-            "description": "Current pool, or null when the team has none",
-            "type": "object",
+            "description": "Current pool",
             "allOf": [
               {
                 "$ref": "#/components/schemas/PoolRefDto"
@@ -5971,15 +5777,8 @@
             "description": "Gender category",
             "example": "male"
           },
-          "color": {
-            "type": "string",
-            "nullable": true,
-            "description": "Team color",
-            "example": "Blue"
-          },
           "poolId": {
             "type": "number",
-            "nullable": true,
             "description": "Pool ID",
             "example": 1
           },
@@ -5992,9 +5791,7 @@
             ]
           },
           "pool": {
-            "nullable": true,
-            "description": "Pool information, or null when the team has none",
-            "type": "object",
+            "description": "Pool information",
             "allOf": [
               {
                 "$ref": "#/components/schemas/PoolRefDto"
@@ -6017,7 +5814,6 @@
           "seasonYear",
           "category",
           "gender",
-          "color",
           "poolId",
           "club",
           "pool",
@@ -6167,15 +5963,8 @@
             "description": "Gender category",
             "example": "male"
           },
-          "color": {
-            "type": "string",
-            "nullable": true,
-            "description": "Team color",
-            "example": "Blue"
-          },
           "poolId": {
             "type": "number",
-            "nullable": true,
             "description": "Pool ID",
             "example": 1
           },
@@ -6188,9 +5977,7 @@
             ]
           },
           "pool": {
-            "nullable": true,
-            "description": "Pool information, or null when the team has none",
-            "type": "object",
+            "description": "Pool information",
             "allOf": [
               {
                 "$ref": "#/components/schemas/PoolRefDto"
@@ -6220,7 +6007,6 @@
           "seasonYear",
           "category",
           "gender",
-          "color",
           "poolId",
           "club",
           "pool",
@@ -6279,6 +6065,11 @@
             "nullable": true,
             "description": "Away team score",
             "example": 72
+          },
+          "forfeit": {
+            "type": "boolean",
+            "description": "Whether the match was forfeited; the side that forfeited scored 0",
+            "example": false
           }
         },
         "required": [
@@ -6288,7 +6079,8 @@
           "awayTeam",
           "status",
           "homeTeamScore",
-          "awayTeamScore"
+          "awayTeamScore",
+          "forfeit"
         ]
       },
       "TeamSeasonStatsDto": {

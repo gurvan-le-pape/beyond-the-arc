@@ -57,7 +57,6 @@ export class PoolsController {
    *     {
    *       "id": 1,
    *       "letter": "A",
-   *       "name": "Pool A - Seniors",
    *       "championshipId": 1
    *     },
    *     {
@@ -144,7 +143,6 @@ export class PoolsController {
    *   "data": {
    *     "id": 123,
    *     "letter": "A",
-   *     "name": "Pool A - Seniors",
    *     "championshipId": 1
    *   },
    *   "timestamp": "2024-02-05T10:00:00Z",

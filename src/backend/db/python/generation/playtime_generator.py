@@ -58,7 +58,7 @@ def _target_seconds(order: list[int]) -> dict[int, float]:
 
 def generate(
     players: list[tuple],
-) -> tuple[dict[int, list[tuple[int, int]]], dict[int, str], list[dict]]:
+) -> tuple[dict[int, list[tuple[int, int]]], list[dict]]:
     """
     Simulate playtime rotations and substitutions for one team.
 
@@ -67,13 +67,11 @@ def generate(
 
     Returns:
         playtimes: dict of player_id → list of (start_sec, end_sec) intervals
-        player_names: dict of player_id → name
         substitutions: list of {time, exiting_player, entering_player}
     """
     if not players:
-        return {}, {}, []
+        return {}, []
 
-    player_names = {p[0]: p[1] for p in players}
     order = _rotation_order(players)
     target = _target_seconds(order)
 
@@ -112,4 +110,4 @@ def generate(
     for pid in active:
         playtimes[pid].append((stint_start[pid], GAME_DURATION))
 
-    return playtimes, player_names, substitutions
+    return playtimes, substitutions

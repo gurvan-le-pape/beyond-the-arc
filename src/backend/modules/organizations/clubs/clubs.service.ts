@@ -2,11 +2,13 @@
 import { Category, CompetitionLevel, Gender } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
 import {
-  assignRankByCount,
+  buildChampionshipWhere,
   buildClubOrganizationWhere,
+  computeStandings,
   ffbbClubUrl,
   nameContains,
   resolvePagination,
+  STANDING_MATCH_SELECT,
 } from "@common/utils";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
@@ -32,7 +34,6 @@ const CLUB_BASIC_SELECT = {
   zipCode: true,
   latitude: true,
   longitude: true,
-  website: true,
   committeeId: true,
   committee: { select: { leagueId: true } },
 } satisfies Prisma.ClubsDefaultArgs["select"];
@@ -52,28 +53,23 @@ const CLUB_DETAILED_SELECT = {
   city: true,
   zipCode: true,
   address: true,
-  website: true,
   code: true,
   teams: {
     select: {
       id: true,
       number: true,
-      category: true,
-      gender: true,
       poolId: true,
       pool: {
         select: {
           id: true,
-          name: true,
           letter: true,
           championship: {
             select: {
               id: true,
-              name: true,
+              category: true,
+              gender: true,
               level: true,
               division: true,
-              committeeId: true,
-              leagueId: true,
             },
           },
         },
@@ -87,23 +83,11 @@ type ClubDetailedSelectResult = Prisma.ClubsGetPayload<{
   select: typeof CLUB_DETAILED_SELECT;
 }>;
 
-/** A team's standings row, as the club page shows it. */
-const STANDING_SELECT = {
-  teamId: true,
-  poolId: true,
-  points: true,
-  gamesPlayed: true,
-  gamesWon: true,
-  gamesLost: true,
-  pointDifference: true,
-} satisfies Prisma.LeaderboardsDefaultArgs["select"];
-
-type Standing = Prisma.LeaderboardsGetPayload<{
-  select: typeof STANDING_SELECT;
-}>;
-
-/** A standings row with its rank in the pool and the pool's size. */
-type RankedStanding = Standing & { rank: number; poolSize: number };
+/** A team's standings row, with its rank, its pool and the pool's size. */
+type RankedStanding = ReturnType<typeof computeStandings>[number] & {
+  poolId: number;
+  poolSize: number;
+};
 
 /**
  * Service handling business logic for clubs.
@@ -153,16 +137,11 @@ export class ClubsService {
       }
     }
 
-    // Get league details with region codes
     const leagues = await this.prisma.client.leagues.findMany({
       select: {
         id: true,
         name: true,
-        region: {
-          select: {
-            code: true,
-          },
-        },
+        regionCode: true,
       },
       orderBy: {
         name: "asc",
@@ -171,7 +150,7 @@ export class ClubsService {
 
     return leagues.map((league) => ({
       id: league.id,
-      code: league.region?.code ?? null,
+      code: league.regionCode,
       name: league.name,
       clubCount: leaguesCounts.get(league.id) || 0,
     }));
@@ -194,13 +173,8 @@ export class ClubsService {
       select: {
         id: true,
         name: true,
-        department: {
-          select: {
-            id: true,
-            name: true,
-            code: true,
-          },
-        },
+        departmentCode: true,
+        departmentName: true,
         leagueId: true,
         _count: {
           select: {
@@ -217,9 +191,8 @@ export class ClubsService {
       id: committee.id,
       name: committee.name,
       department: {
-        id: committee.department.id,
-        name: committee.department.name,
-        code: committee.department.code,
+        name: committee.departmentName,
+        code: committee.departmentCode,
       },
       leagueId: committee.leagueId,
       clubCount: committee._count.clubs,
@@ -262,16 +235,9 @@ export class ClubsService {
       where.name = nameContains(filters.search);
     }
 
-    // Build teams filter if category, gender, or level specified
-    const teamsWhere: Prisma.TeamsWhereInput = {};
-    if (filters.category) teamsWhere.category = filters.category;
-    if (filters.gender) teamsWhere.gender = filters.gender;
-    if (filters.level)
-      teamsWhere.pool = { championship: { level: filters.level } };
-
-    if (Object.keys(teamsWhere).length > 0) {
-      where.teams = { some: teamsWhere };
-    }
+    const { level, category, gender } = filters;
+    const championship = buildChampionshipWhere({ level, category, gender });
+    if (championship) where.teams = { some: { pool: { championship } } };
 
     const [clubs, total] = await Promise.all([
       this.prisma.client.clubs.findMany({
@@ -297,11 +263,10 @@ export class ClubsService {
    * Finds a club by its ID with detailed information including teams, each
    * with its rank and record in its pool.
    *
-   * The standings of every pool the club plays in are read in one query and
-   * ranked in memory with the same rule as the pool standings endpoint
-   * (`assignRankByCount`), so a team's rank here and in its pool's table
-   * cannot disagree. Pools hold about ten teams, so this is a few hundred rows
-   * at most, against two count queries per team before.
+   * The teams and completed matches of every pool the club plays in are read
+   * in two queries and ranked by `computeStandings`, the function behind the
+   * pool standings endpoint, so a team's rank here and in its pool's table
+   * cannot disagree. A pool holds at most twelve teams and 132 matches.
    *
    * @param clubId - The club ID
    * @returns Detailed club information
@@ -322,35 +287,49 @@ export class ClubsService {
   }
 
   /**
-   * Ranks every pool the given teams play in, and returns each of those teams'
-   * ranked row, keyed by team id. A team without a pool or without a row is
-   * absent from the map.
+   * Computes the standings of every pool the given teams play in, and returns
+   * each of those teams' ranked row, keyed by team id.
    */
   private async findRankedStandings(
-    teams: { id: number; poolId: number | null }[],
+    teams: { id: number; poolId: number }[],
   ): Promise<Map<number, RankedStanding>> {
-    const poolIds = [...new Set(teams.flatMap((team) => team.poolId ?? []))];
+    const poolIds = [...new Set(teams.map((team) => team.poolId))];
     if (poolIds.length === 0) return new Map();
 
-    const rows = await this.prisma.client.leaderboards.findMany({
-      where: { poolId: { in: poolIds } },
-      select: STANDING_SELECT,
-    });
+    const [poolTeams, poolMatches] = await Promise.all([
+      this.prisma.client.teams.findMany({
+        where: { poolId: { in: poolIds } },
+        select: { id: true, poolId: true },
+      }),
+      this.prisma.client.matches.findMany({
+        where: { homeTeam: { poolId: { in: poolIds } }, status: "completed" },
+        select: {
+          homeTeam: { select: { poolId: true } },
+          ...STANDING_MATCH_SELECT,
+        },
+      }),
+    ]);
 
-    const byPool = new Map<number, Standing[]>();
-    for (const row of rows) {
-      byPool.set(row.poolId, [...(byPool.get(row.poolId) ?? []), row]);
-    }
-
+    const clubTeamIds = new Set(teams.map((team) => team.id));
     const ranked = new Map<number, RankedStanding>();
-    for (const poolRows of byPool.values()) {
-      for (const row of assignRankByCount(poolRows)) {
-        ranked.set(row.teamId, { ...row, poolSize: poolRows.length });
+    for (const poolId of poolIds) {
+      const teamIds = poolTeams
+        .filter((team) => team.poolId === poolId)
+        .map((team) => team.id);
+      const matches = poolMatches.filter(
+        (match) => match.homeTeam.poolId === poolId,
+      );
+      for (const standing of computeStandings(teamIds, matches)) {
+        if (clubTeamIds.has(standing.teamId)) {
+          ranked.set(standing.teamId, {
+            ...standing,
+            poolId,
+            poolSize: teamIds.length,
+          });
+        }
       }
     }
-
-    const teamIds = new Set(teams.map((team) => team.id));
-    return new Map([...ranked].filter(([teamId]) => teamIds.has(teamId)));
+    return ranked;
   }
 
   /**
@@ -368,7 +347,6 @@ export class ClubsService {
       zipCode: club.zipCode,
       latitude: club.latitude ? club.latitude.toNumber() : null,
       longitude: club.longitude ? club.longitude.toNumber() : null,
-      website: club.website,
       committeeId: club.committeeId,
       leagueId: club.committee.leagueId,
     };
@@ -392,36 +370,28 @@ export class ClubsService {
       city: club.city,
       zipCode: club.zipCode,
       address: club.address,
-      website: club.website,
       ffbbUrl: ffbbClubUrl(club.code),
       teams: club.teams.map((team) => ({
         id: team.id,
         number: team.number,
-        category: team.category as Category,
-        gender: team.gender as Gender,
-        pool: team.pool
-          ? {
-              id: team.pool.id,
-              name: team.pool.name,
-              letter: team.pool.letter,
-              championship: {
-                id: team.pool.championship.id,
-                name: team.pool.championship.name,
-                level: team.pool.championship.level as CompetitionLevel,
-                division: team.pool.championship.division,
-                committeeId: team.pool.championship.committeeId,
-                leagueId: team.pool.championship.leagueId,
-              },
-            }
-          : null,
-        leaderboard: this.mapStanding(standings.get(team.id)),
+        category: team.pool.championship.category as Category,
+        gender: team.pool.championship.gender as Gender,
+        pool: {
+          id: team.pool.id,
+          letter: team.pool.letter,
+          championship: {
+            id: team.pool.championship.id,
+            level: team.pool.championship.level as CompetitionLevel,
+            division: team.pool.championship.division,
+          },
+        },
+        // Every team of a pool has a row in its standings.
+        leaderboard: this.mapStanding(standings.get(team.id)!),
       })),
     };
   }
 
-  private mapStanding(standing: RankedStanding | undefined) {
-    if (!standing) return null;
-
+  private mapStanding(standing: RankedStanding) {
     return {
       rank: standing.rank,
       poolSize: standing.poolSize,
@@ -429,6 +399,7 @@ export class ClubsService {
       gamesPlayed: standing.gamesPlayed,
       gamesWon: standing.gamesWon,
       gamesLost: standing.gamesLost,
+      gamesForfeited: standing.gamesForfeited,
       pointDifference: standing.pointDifference,
       poolId: standing.poolId,
     };

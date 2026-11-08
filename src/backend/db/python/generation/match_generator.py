@@ -5,19 +5,21 @@ Simulates and persists a single match that has reached its starts_at time.
 Called by the Scheduler for each due match.
 
 Responsibilities:
+  0. Draw whether one of the teams forfeits, and if so record only that
   1. Load players for both teams
   2. Generate playtime rotations and substitutions
   3. Run MatchSimulator
-  4. Persist all results: score, events (including substitutions and
-     starters), and per-player stats (including playtime, derived from
-     those same events)
+  4. Persist all results: score and box score (per-player stats and
+     playtime, derived from the events), then the events themselves
+     (including substitutions and their players)
 """
 
-import json
 import logging
+import random
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 
+from config import FORFEIT_ODDS, FORFEIT_SCORE
 from db.repositories import match_repository, team_repository
 from db.repositories.match_repository import ScheduledMatch
 from event_rules import (
@@ -35,13 +37,25 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class SimulatedMatch:
-    """One simulated match, ready to persist. `stat_rows` follows insert_player_stats_bulk's row shape."""
+    """One simulated match, ready to persist. `box_score` is compute_box_score's shape."""
 
     events: list[dict]
     home_score: int
     away_score: int
     overtime: bool
-    stat_rows: list[tuple]
+    box_score: dict[str, dict]
+
+
+def draw_forfeit(level: str, rng: random.Random | None = None) -> str | None:
+    """
+    Whether a match at this level is forfeited, and by which side: "home",
+    "away", or None when it is played. Each side is as likely to forfeit as the
+    other. Fails on a level FORFEIT_ODDS does not name.
+    """
+    rng = rng or random
+    if rng.random() >= FORFEIT_ODDS[level]:
+        return None
+    return rng.choice(("home", "away"))
 
 
 class MatchGenerator:
@@ -53,32 +67,46 @@ class MatchGenerator:
         Simulate and persist a single match.
         Must be called within an open transaction — caller commits.
         """
+        forfeiter = draw_forfeit(match.level)
+        if forfeiter:
+            self._record_forfeit(cursor, match, forfeiter)
+            return
+
         home_players = team_repository.fetch_players_for_team(cursor, match.home_team_id)
         away_players = team_repository.fetch_players_for_team(cursor, match.away_team_id)
 
         result = self.simulate(home_players, away_players, match.starts_at)
 
-        # Persist result
         match_repository.update_match_result(
-            cursor, match.id, result.home_score, result.away_score, result.overtime, forfeit=False
+            cursor,
+            match.id,
+            result.home_score,
+            result.away_score,
+            result.overtime,
+            forfeit=False,
+            box_score=result.box_score,
         )
-
-        # Shot locations
-        shot_coords = list({
-            (e["shot_location"]["x"], e["shot_location"]["y"])
-            for e in result.events
-            if e.get("shot_location")
-        })
-        shot_cache = match_repository.insert_shot_locations_bulk(cursor, shot_coords)
-
-        # Events
-        event_ids = match_repository.insert_match_events_bulk(cursor, match.id, result.events, shot_cache)
-        match_repository.insert_match_event_players_bulk(cursor, event_ids, result.events)
-
-        # Stats (including playtime, both derived from the events above)
-        match_repository.insert_player_stats_bulk(cursor, match.id, result.stat_rows)
+        match_repository.insert_match_events_bulk(cursor, match.id, result.events)
 
         logger.info(f"Match {match.id}: generated ({result.home_score}–{result.away_score}).")
+
+    @staticmethod
+    def _record_forfeit(cursor, match: ScheduledMatch, forfeiter: str) -> None:
+        """
+        A forfeited match is not played: FORFEIT_SCORE to 0 for the side that
+        showed up, no events, and a box score with no lines.
+        """
+        home_score, away_score = (0, FORFEIT_SCORE) if forfeiter == "home" else (FORFEIT_SCORE, 0)
+        match_repository.update_match_result(
+            cursor,
+            match.id,
+            home_score,
+            away_score,
+            overtime=False,
+            forfeit=True,
+            box_score={},
+        )
+        logger.info(f"Match {match.id}: forfeited by the {forfeiter} team ({home_score}–{away_score}).")
 
     def simulate(
         self,
@@ -88,17 +116,16 @@ class MatchGenerator:
     ) -> SimulatedMatch:
         """
         Simulate one match without touching the database: rotations, events,
-        final score and the per-player stat rows derived from those events.
+        final score and the box score derived from those events.
         """
-        home_playtimes, home_names, home_subs = generate_playtime(home_players)
-        away_playtimes, away_names, away_subs = generate_playtime(away_players)
+        home_playtimes, home_subs = generate_playtime(home_players)
+        away_playtimes, away_subs = generate_playtime(away_players)
 
-        all_names = {**home_names, **away_names}
         all_subs = home_subs + away_subs
 
         positions = {player_id: position for player_id, _, position in home_players + away_players}
         match_events, home_score, away_score, final_buzzer = self.simulator.simulate_match(
-            home_playtimes, away_playtimes, all_names, starts_at, positions
+            home_playtimes, away_playtimes, starts_at, positions
         )
         overtime = final_buzzer > GAME_DURATION
         if overtime:
@@ -107,8 +134,6 @@ class MatchGenerator:
 
         # Append substitution events before sorting
         for sub in all_subs:
-            exiting_name = all_names.get(sub["exiting_player"], f"Player {sub['exiting_player']}")
-            entering_name = all_names.get(sub["entering_player"], f"Player {sub['entering_player']}")
             match_events.append({
                 "occurred_at": starts_at + timedelta(seconds=sub["time"]),
                 "event_type": "substitution",
@@ -116,7 +141,6 @@ class MatchGenerator:
                     "exiting_player": sub["exiting_player"],
                     "entering_player": sub["entering_player"],
                 },
-                "description": f"{entering_name} substitutes in for {exiting_name}.",
             })
 
         match_events.sort(key=lambda e: e["occurred_at"])
@@ -126,7 +150,7 @@ class MatchGenerator:
             home_score=home_score,
             away_score=away_score,
             overtime=overtime,
-            stat_rows=compute_player_stats(home_playtimes, away_playtimes, match_events),
+            box_score=compute_box_score(home_playtimes, away_playtimes, match_events),
         )
 
 
@@ -147,8 +171,8 @@ def _play_on_through_overtime(playtimes: dict, final_buzzer: int) -> None:
 # Stats aggregation
 # ------------------------------------------------------------------
 
-# Column order of a stat row, between the leading player id and the trailing
-# playtime intervals — insert_player_stats_bulk's row shape.
+# The counters of a player's box-score entry, beside its `playtime_intervals`.
+# The API reads the same names (common/utils/box-score.mapper.ts).
 STAT_COLUMNS = (
     "points", "fouls",
     "three_points_made", "three_points_attempted",
@@ -229,34 +253,33 @@ _ROLE_TALLIES = {
 }
 
 
-def compute_player_stats(
+def compute_box_score(
     home_playtimes: dict,
     away_playtimes: dict,
     match_events: list[dict],
-) -> list[tuple]:
+) -> dict[str, dict]:
     """
-    Aggregate stats from match events into per-player rows ready for DB insert.
-    Returns list of tuples matching insert_player_stats_bulk's expected shape.
+    Aggregate the match events into the box score: one entry per player named
+    by an event, keyed by player id as a string (a JSON object's keys are
+    strings), holding the STAT_COLUMNS counters and the player's
+    `playtime_intervals` as [start, end] second pairs.
     """
     all_playtimes = {**home_playtimes, **away_playtimes}
     stats: dict[int, dict[str, int]] = {}
 
     for event in match_events:
         for role, player_id in event.get("player_roles", {}).items():
-            # `starter` only marks who was on court at tip-off; playtime comes
-            # from the intervals, not from the events.
-            if role == "starter" or player_id is None:
+            if player_id is None:
                 continue
             player_stats = stats.setdefault(player_id, dict.fromkeys(STAT_COLUMNS, 0))
             tally = _ROLE_TALLIES.get(role)
             if tally:
                 tally(player_stats, event)
 
-    return [
-        (
-            player_id,
-            *(player_stats[column] for column in STAT_COLUMNS),
-            json.dumps(all_playtimes.get(player_id, [])),
-        )
+    return {
+        str(player_id): {
+            **player_stats,
+            "playtime_intervals": [list(interval) for interval in all_playtimes.get(player_id, [])],
+        }
         for player_id, player_stats in stats.items()
-    ]
+    }

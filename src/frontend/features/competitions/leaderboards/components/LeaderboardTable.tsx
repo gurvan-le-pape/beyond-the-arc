@@ -84,7 +84,7 @@ export function LeaderboardTable({
       numeric: true,
       render: (row) => (
         <span className="whitespace-nowrap">
-          {row.gamesWon}–{row.gamesLost}
+          {row.gamesWon}–{row.gamesLost}–{row.gamesForfeited}
         </span>
       ),
     },
@@ -151,6 +151,16 @@ export function LeaderboardTable({
       render: (row) => row.gamesLost,
     },
     {
+      key: "gamesForfeited",
+      header: abbreviation(
+        tCommon("table.abbr.gamesForfeited"),
+        tCommon("table.gamesForfeited"),
+      ),
+      from: "sm",
+      numeric: true,
+      render: (row) => row.gamesForfeited,
+    },
+    {
       key: "pointDifference",
       header: abbreviation(
         tCommon("table.abbr.pointDifference"),
@@ -175,7 +185,7 @@ export function LeaderboardTable({
       <DataTable
         columns={variant === "summary" ? summaryColumns : fullColumns}
         rows={leaderboards}
-        getRowKey={(row) => row.id}
+        getRowKey={(row) => row.teamId}
         getRowHref={(row) => `/teams/${row.teamId}`}
         getRowLabel={(row) => formatTeamName(row.clubName, row.teamNumber)}
         density="cozy"

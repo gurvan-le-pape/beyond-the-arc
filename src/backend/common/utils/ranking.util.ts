@@ -32,25 +32,3 @@ export function assignRankByCount<T extends RankableEntry>(
     rank: 1 + entries.filter((other) => isBetterRanked(other, entry)).length,
   }));
 }
-
-/**
- * Prisma where fragment counting the strictly better rows in the same pool.
- * `count(...) + 1` yields the same competition rank as assignRankByCount.
- */
-export function buildRankCountWhere(
-  entry: RankableEntry & { poolId: number },
-): {
-  poolId: number;
-  OR: [
-    { points: { gt: number } },
-    { points: number; pointDifference: { gt: number } },
-  ];
-} {
-  return {
-    poolId: entry.poolId,
-    OR: [
-      { points: { gt: entry.points } },
-      { points: entry.points, pointDifference: { gt: entry.pointDifference } },
-    ],
-  };
-}

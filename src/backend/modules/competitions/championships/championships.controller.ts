@@ -52,7 +52,6 @@ export class ChampionshipsController {
    * {
    *   "data": {
    *     "id": 123,
-   *     "name": "Championship Régional U18",
    *     "category": "U18",
    *     "gender": "male",
    *     "seasonYear": "2024-2025",

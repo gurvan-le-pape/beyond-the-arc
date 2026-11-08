@@ -55,6 +55,8 @@ describe("HTTP pipeline (composed)", () => {
     client: {
       leagues: { findMany: jest.fn() },
       teams: { findUnique: jest.fn() },
+      // A team's detail reads its box scores beside the team itself.
+      matches: { findMany: jest.fn().mockResolvedValue([]) },
     },
   };
 

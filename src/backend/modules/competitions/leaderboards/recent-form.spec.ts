@@ -14,6 +14,7 @@ const game = (homeScore: number, awayScore: number): FormMatch => ({
   awayTeamId: 2,
   homeTeamScore: homeScore,
   awayTeamScore: awayScore,
+  forfeit: false,
 });
 
 describe("buildRecentForm", () => {
@@ -39,6 +40,15 @@ describe("buildRecentForm", () => {
       "W",
       "L",
     ]);
+  });
+
+  it("gives the side that forfeited an F, not an L", () => {
+    const forfeitedByHome: FormMatch = { ...game(0, 20), forfeit: true };
+    const forfeitedByAway: FormMatch = { ...game(20, 0), forfeit: true };
+    const form = buildRecentForm([forfeitedByAway, forfeitedByHome]);
+
+    expect(results(form, 1)).toEqual(["F", "W"]);
+    expect(results(form, 2)).toEqual(["W", "F"]);
   });
 
   it("skips a match missing a score", () => {

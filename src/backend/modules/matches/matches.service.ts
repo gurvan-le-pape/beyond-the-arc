@@ -3,20 +3,20 @@ import {
   Category,
   COMPETITION_TIME_ZONE,
   CompetitionLevel,
+  EVENT_PLAYER_ROLES,
   EventType,
   Gender,
   MatchStatus,
-  Role,
 } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
 import {
   andWhere,
+  type BoxScoreLine,
   buildChampionshipWhere,
   buildClubOrganizationWhere,
-  mapPlayerMatchStats,
   mapPlayerSummary,
   nameContains,
-  PLAYER_MATCH_STAT_FIELDS_SELECT,
+  parseBoxScore,
   resolvePagination,
 } from "@common/utils";
 import { Injectable, NotFoundException } from "@nestjs/common";
@@ -40,26 +40,25 @@ const MATCH_LIST_SELECT = {
   id: true,
   startsAt: true,
   matchday: true,
-  pool: {
-    select: {
-      id: true,
-      name: true,
-      letter: true,
-      championship: {
-        select: {
-          id: true,
-          category: true,
-          gender: true,
-          level: true,
-          division: true,
-        },
-      },
-    },
-  },
   homeTeam: {
     select: {
       id: true,
       number: true,
+      pool: {
+        select: {
+          id: true,
+          letter: true,
+          championship: {
+            select: {
+              id: true,
+              category: true,
+              gender: true,
+              level: true,
+              division: true,
+            },
+          },
+        },
+      },
       club: {
         select: {
           id: true,
@@ -95,41 +94,42 @@ const MATCH_LIST_SELECT = {
   overtime: true,
 } as const;
 
-const MATCH_EVENT_SELECT = {
+/** What an event's `players` entry shows of a player. */
+const EVENT_PLAYER_SELECT = {
   id: true,
-  eventType: true,
-  occurredAt: true,
-  description: true,
-  players: {
+  name: true,
+  number: true,
+  team: {
     select: {
-      role: true,
-      player: {
+      id: true,
+      club: {
         select: {
-          id: true,
           name: true,
-          number: true,
-          team: {
-            select: {
-              id: true,
-              club: {
-                select: {
-                  name: true,
-                },
-              },
-            },
-          },
         },
       },
     },
   },
-  shotLocation: {
-    select: {
-      id: true,
-      x: true,
-      y: true,
-    },
-  },
 } as const;
+
+const MATCH_EVENT_SELECT = {
+  id: true,
+  eventType: true,
+  occurredAt: true,
+  shotX: true,
+  shotY: true,
+  player: { select: EVENT_PLAYER_SELECT },
+  otherPlayer: { select: EVENT_PLAYER_SELECT },
+} as const;
+
+/**
+ * Chronological, with events that share an instant (a foul, its free throws,
+ * the substitutions after them) in the simulator's order, which is the order
+ * they were inserted in.
+ */
+const EVENT_ORDER: Prisma.MatchEventsOrderByWithRelationInput[] = [
+  { occurredAt: "asc" },
+  { id: "asc" },
+];
 
 /**
  * Extended select for match detail — includes events.
@@ -138,46 +138,36 @@ const MATCH_DETAIL_SELECT = {
   ...MATCH_LIST_SELECT,
   matchEvents: {
     select: MATCH_EVENT_SELECT,
-    orderBy: { occurredAt: "asc" as const },
+    orderBy: EVENT_ORDER,
   },
 } as const;
 
-const PLAYER_MATCH_STATS_SELECT = {
-  player: {
+/** What a box score shows of each player. */
+const BOX_SCORE_PLAYER_SELECT = {
+  id: true,
+  name: true,
+  number: true,
+  position: true,
+  teamId: true,
+  team: {
     select: {
       id: true,
-      name: true,
       number: true,
-      position: true,
-      teamId: true,
-      team: {
+      club: {
         select: {
           id: true,
-          number: true,
-          club: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
+          name: true,
         },
       },
     },
   },
-  ...PLAYER_MATCH_STAT_FIELDS_SELECT,
 } as const;
-
-/**
- * The roles of the player who took a shot: `shooter` on a made or missed shot,
- * `blocked` on a blocked one. Every other role on a shot event (assister,
- * blocker, fouler) belongs to someone who did not shoot.
- */
-const SHOT_TAKER_ROLES: Role[] = [Role.SHOOTER, Role.BLOCKED];
 
 /** What a shot chart reads of a shot event: its type and location. */
 const SHOT_SELECT = {
   eventType: true,
-  shotLocation: { select: { x: true, y: true } },
+  shotX: true,
+  shotY: true,
 } as const;
 
 type MatchListResult = Prisma.MatchesGetPayload<{
@@ -196,8 +186,8 @@ type ShotResult = Prisma.MatchEventsGetPayload<{
   select: typeof SHOT_SELECT;
 }>;
 
-type PlayerMatchStatsResult = Prisma.PlayerMatchStatsGetPayload<{
-  select: typeof PLAYER_MATCH_STATS_SELECT;
+type BoxScorePlayerResult = Prisma.PlayersGetPayload<{
+  select: typeof BOX_SCORE_PLAYER_SELECT;
 }>;
 
 @Injectable()
@@ -248,9 +238,9 @@ export class MatchesService {
 
   async findMatchesByPoolId(poolId: number): Promise<MatchResponseDto[]> {
     const matches = await this.prisma.client.matches.findMany({
-      where: { poolId },
+      where: { homeTeam: { poolId } },
       select: MATCH_LIST_SELECT,
-      orderBy: { startsAt: "asc" },
+      orderBy: [{ startsAt: "asc" }, { id: "asc" }],
     });
 
     return matches.map((m) => this.mapMatchToDto(m));
@@ -261,19 +251,22 @@ export class MatchesService {
   ): Promise<MatchPlayerStatsResponseDto> {
     const match = await this.prisma.client.matches.findUnique({
       where: { id: matchId },
-      select: { homeTeamId: true, awayTeamId: true },
+      select: { homeTeamId: true, awayTeamId: true, boxScore: true },
     });
 
     if (!match) {
       throw new NotFoundException(`Match with ID ${matchId} not found`);
     }
 
-    const stats = await this.prisma.client.playerMatchStats.findMany({
-      where: { matchId },
-      select: PLAYER_MATCH_STATS_SELECT,
+    // Only a completed match has a box score.
+    const lines =
+      match.boxScore === null ? [] : parseBoxScore(match.boxScore, matchId);
+    const players = await this.prisma.client.players.findMany({
+      where: { id: { in: lines.map((line) => line.playerId) } },
+      select: BOX_SCORE_PLAYER_SELECT,
     });
 
-    const mappedStats = this.mapToPlayerStats(stats);
+    const mappedStats = this.mapToPlayerStats(matchId, lines, players);
     const homeRows = mappedStats.filter(
       (s) => s.player.teamId === match.homeTeamId,
     );
@@ -299,7 +292,7 @@ export class MatchesService {
       this.prisma.client.matchEvents.findMany({
         where: { matchId },
         select: MATCH_EVENT_SELECT,
-        orderBy: { occurredAt: "asc" },
+        orderBy: EVENT_ORDER,
       }),
     ]);
     if (!match) return [];
@@ -316,25 +309,25 @@ export class MatchesService {
    * something the database does in one statement.
    *
    * Only the team's own attempts count: one of its players must have taken the
-   * shot (see `SHOT_TAKER_ROLES`). Matching any role would also pull in the
-   * opponent's shots this team's defenders blocked or fouled.
+   * shot, which makes them the event's main player (`EVENT_PLAYER_ROLES`). The
+   * other player of a shot event (assister, blocker, fouler) did not shoot, so
+   * matching either would also pull in the opponent's shots this team's
+   * defenders blocked or fouled.
    *
-   * The match filter is kept although `players: { some: … }` already implies
-   * it (a player belongs to exactly one team, so every such event is in a
-   * match that team played): it is the clause that states the intent, and it
-   * costs nothing.
+   * The match filter is kept although the player filter already implies it (a
+   * player belongs to exactly one team, so every such event is in a match that
+   * team played): it is the clause that states the intent, and it costs
+   * nothing.
    */
   async findShotsByTeamId(teamId: number): Promise<ShotDto[]> {
     const events = await this.prisma.client.matchEvents.findMany({
       where: {
         match: { OR: [{ homeTeamId: teamId }, { awayTeamId: teamId }] },
-        shotLocation: { isNot: null },
-        players: {
-          some: { player: { teamId }, role: { in: SHOT_TAKER_ROLES } },
-        },
+        shotX: { not: null },
+        player: { teamId },
       },
       select: SHOT_SELECT,
-      orderBy: { occurredAt: "asc" },
+      orderBy: EVENT_ORDER,
     });
 
     return events.flatMap((e) => this.mapShotToDto(e));
@@ -343,18 +336,19 @@ export class MatchesService {
   /**
    * Every shot a player took, across their season, as their chart reads it.
    *
-   * The player must have taken the shot (see `SHOT_TAKER_ROLES`). A made shot
-   * also carries an `assister`, so matching the player in any role would put
-   * the shots they assisted on their own chart, as made baskets.
+   * The player must have taken the shot, which makes them the event's main
+   * player (`EVENT_PLAYER_ROLES`). A made shot's other player is its
+   * `assister`, so matching either would put the shots they assisted on their
+   * own chart, as made baskets.
    */
   async findShotsByPlayerId(playerId: number): Promise<ShotDto[]> {
     const events = await this.prisma.client.matchEvents.findMany({
       where: {
-        shotLocation: { isNot: null },
-        players: { some: { playerId, role: { in: SHOT_TAKER_ROLES } } },
+        shotX: { not: null },
+        playerId,
       },
       select: SHOT_SELECT,
-      orderBy: { occurredAt: "asc" },
+      orderBy: EVENT_ORDER,
     });
 
     return events.flatMap((e) => this.mapShotToDto(e));
@@ -365,12 +359,12 @@ export class MatchesService {
    * location, so the empty branch only satisfies the type.
    */
   private mapShotToDto(event: ShotResult): ShotDto[] {
-    if (!event.shotLocation) return [];
+    if (event.shotX === null || event.shotY === null) return [];
 
     return [
       {
-        x: event.shotLocation.x.toNumber(),
-        y: event.shotLocation.y.toNumber(),
+        x: event.shotX.toNumber(),
+        y: event.shotY.toNumber(),
         eventType: event.eventType as EventType,
       },
     ];
@@ -380,6 +374,8 @@ export class MatchesService {
    * Maps a list query result to MatchResponseDto (no events).
    */
   private mapMatchToDto(match: MatchListResult): MatchResponseDto {
+    const pool = match.homeTeam.pool;
+
     return {
       id: match.id,
       startsAt: match.startsAt,
@@ -390,15 +386,14 @@ export class MatchesService {
       forfeit: match.forfeit,
       overtime: match.overtime,
       pool: {
-        id: match.pool.id,
-        name: match.pool.name,
-        letter: match.pool.letter,
+        id: pool.id,
+        letter: pool.letter,
         championship: {
-          id: match.pool.championship.id,
-          category: match.pool.championship.category as Category,
-          gender: match.pool.championship.gender as Gender,
-          level: match.pool.championship.level as CompetitionLevel,
-          division: match.pool.championship.division,
+          id: pool.championship.id,
+          category: pool.championship.category as Category,
+          gender: pool.championship.gender as Gender,
+          level: pool.championship.level as CompetitionLevel,
+          division: pool.championship.division,
         },
       },
       homeTeam: {
@@ -443,58 +438,76 @@ export class MatchesService {
     startsAt: Date,
   ): MatchEventDto {
     const { period, secondsLeft } = matchClock(event.occurredAt, startsAt);
+    const eventType = event.eventType as EventType;
+    const [mainRole, otherRole] = EVENT_PLAYER_ROLES[eventType];
+    const named = [
+      { role: mainRole, player: event.player },
+      { role: otherRole, player: event.otherPlayer },
+    ];
+
     return {
       id: event.id,
-      eventType: event.eventType as EventType,
+      eventType,
       occurredAt: event.occurredAt,
       period,
       secondsLeft,
-      description: event.description,
-      players: event.players.map((p) => ({
-        role: p.role as Role,
-        player: {
-          id: p.player.id,
-          name: p.player.name,
-          number: p.player.number,
-          team: {
-            id: p.player.team.id,
-            club: { name: p.player.team.club.name },
-          },
-        },
-      })),
-      shotLocation: event.shotLocation
-        ? {
-            id: event.shotLocation.id,
-            x: event.shotLocation.x.toNumber(),
-            y: event.shotLocation.y.toNumber(),
-          }
-        : null,
+      players: named.flatMap(({ role, player }) =>
+        role && player
+          ? [
+              {
+                role,
+                player: {
+                  id: player.id,
+                  name: player.name,
+                  number: player.number,
+                  team: {
+                    id: player.team.id,
+                    club: { name: player.team.club.name },
+                  },
+                },
+              },
+            ]
+          : [],
+      ),
+      // A CHECK constraint sets both coordinates or neither.
+      shotLocation:
+        event.shotX !== null && event.shotY !== null
+          ? { x: event.shotX.toNumber(), y: event.shotY.toNumber() }
+          : null,
     };
   }
 
+  /**
+   * Pairs each box-score line with its player. A line naming a player who no
+   * longer exists is an error: the JSON has no foreign key to prevent it.
+   */
   private mapToPlayerStats(
-    stats: PlayerMatchStatsResult[],
+    matchId: number,
+    lines: BoxScoreLine[],
+    players: BoxScorePlayerResult[],
   ): PlayerWithStatsDto[] {
-    return stats.map((stat) => ({
-      player: {
-        ...mapPlayerSummary(stat.player),
-        team: stat.player.team,
-      },
-      stats: {
-        ...mapPlayerMatchStats(stat),
-        playtimeSeconds: this.calculatePlaytime(
-          stat.playtimeIntervals as number[][] | null,
-        ),
-      },
-    }));
-  }
-
-  private calculatePlaytime(intervals: number[][] | null): number {
-    if (!intervals || intervals.length === 0) return 0;
-    return intervals.reduce(
-      (total, interval) => total + (interval[1] - interval[0]),
-      0,
-    );
+    const playersById = new Map(players.map((p) => [p.id, p]));
+    return lines.map(({ playerId, stats }) => {
+      const player = playersById.get(playerId);
+      if (!player) {
+        throw new Error(
+          `match ${matchId}: box score names unknown player ${playerId}`,
+        );
+      }
+      return {
+        player: {
+          ...mapPlayerSummary(player),
+          team: player.team,
+        },
+        stats: {
+          ...stats,
+          playtimeSeconds: stats.playtimeIntervals.reduce(
+            (total, [start, end]) => total + (end - start),
+            0,
+          ),
+        },
+      };
+    });
   }
 
   private buildPoolFilter(
@@ -511,6 +524,22 @@ export class MatchesService {
     return {
       ...(championshipId ? { championshipId } : {}),
       ...(championship ? { championship } : {}),
+    };
+  }
+
+  /**
+   * A match's pool is its home team's, so every pool or championship filter
+   * goes through the home team.
+   */
+  private buildHomeTeamFilter(
+    filters: GetMatchesQueryDto,
+  ): Prisma.TeamsWhereInput | undefined {
+    const pool = this.buildPoolFilter(filters);
+    if (!filters.poolId && !pool) return undefined;
+
+    return {
+      ...(filters.poolId ? { poolId: filters.poolId } : {}),
+      ...(pool ? { pool } : {}),
     };
   }
 
@@ -563,10 +592,8 @@ export class MatchesService {
   ): Prisma.MatchesWhereInput {
     const where: Prisma.MatchesWhereInput = {};
 
-    if (filters.poolId) where.poolId = filters.poolId;
-
-    const poolFilter = this.buildPoolFilter(filters);
-    if (poolFilter) where.pool = poolFilter;
+    const homeTeamFilter = this.buildHomeTeamFilter(filters);
+    if (homeTeamFilter) where.homeTeam = homeTeamFilter;
 
     const orgFilter = this.buildOrganizationFilter(filters);
     const searchFilter = searchClubIds

@@ -90,15 +90,17 @@
     "team": "Équipe",
     "gamesWon": "Gagnés",
     "gamesLost": "Perdus",
+    "gamesForfeited": "Forfaits",
     "pointDifference": "Différence de points",
     "abbr": {
       "gamesPlayed": "J",
       "gamesWon": "V",
       "gamesLost": "D",
+      "gamesForfeited": "F",
       "pointDifference": "Diff",
-      "record": "V–D"
+      "record": "V–D–F"
     },
-    "record": "Victoires–défaites"
+    "record": "Victoires–défaites–forfaits"
   },
   "matchHistory": {
     "date": "Date",
@@ -111,6 +113,7 @@
     "winShort": "V",
     "loss": "Défaite",
     "lossShort": "D",
+    "forfeit": "forfait",
     "resultUnavailable": "Résultat indisponible",
     "noMatches": "Aucun match joué cette saison",
     "seeAllMatches": "Voir tous les matchs ({count})",

@@ -9,6 +9,7 @@ import { formatMatchDate, formatMatchTime } from "@/shared/utils";
 
 import type { MatchTeam } from "../../types/MatchTeam";
 import { matchTeamMatchupSide } from "../../utils/matchupSide";
+import { ForfeitBadge } from "../ForfeitBadge";
 
 interface MatchHeroProps {
   readonly homeTeam: MatchTeam;
@@ -17,6 +18,8 @@ interface MatchHeroProps {
   readonly startsAt: Date | string;
   readonly matchday: number;
   readonly poolLetter: string;
+  /** Marks the score as a forfeit's rather than a played result. */
+  readonly forfeit: boolean;
 }
 
 /**
@@ -35,6 +38,7 @@ export function MatchHero({
   startsAt,
   matchday,
   poolLetter,
+  forfeit,
 }: MatchHeroProps) {
   const tMatches = useTranslations("matches");
   const locale = useLocale();
@@ -67,6 +71,7 @@ export function MatchHero({
           status={status}
           size="hero"
           linked
+          belowScore={forfeit && <ForfeitBadge />}
         />
       </Card>
     </>

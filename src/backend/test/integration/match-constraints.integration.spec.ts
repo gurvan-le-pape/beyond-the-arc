@@ -1,0 +1,128 @@
+// src/backend/test/integration/match-constraints.integration.spec.ts
+import type { Client } from "pg";
+
+import {
+  connect,
+  createPool,
+  insertScheduledMatch,
+  type PoolFixture,
+} from "./harness";
+
+describe("match constraints", () => {
+  let client: Client;
+  let pool: PoolFixture;
+  let home: number;
+  let away: number;
+  let match: number;
+
+  beforeAll(async () => {
+    client = await connect();
+  });
+
+  afterAll(async () => {
+    await client.end();
+  });
+
+  beforeEach(async () => {
+    await client.query("BEGIN");
+    pool = await createPool(client);
+    [home, away] = pool.teamIds;
+    match = await insertScheduledMatch(client, home, away);
+  });
+
+  afterEach(async () => {
+    await client.query("ROLLBACK");
+  });
+
+  it.each([
+    ["an unknown status", "status = 'done'", "matches_status_check"],
+    [
+      "one score alone",
+      "home_team_score = 80, status = 'completed', box_score = '{}'",
+      "matches_scores_paired",
+    ],
+    [
+      "a result on a match that is not completed",
+      "home_team_score = 80, away_team_score = 70",
+      "matches_result_iff_completed",
+    ],
+    [
+      "a completed match with no result",
+      "status = 'completed', box_score = '{}'",
+      "matches_result_iff_completed",
+    ],
+    [
+      "a completed match with no box score",
+      "home_team_score = 80, away_team_score = 70, status = 'completed'",
+      "matches_result_iff_completed",
+    ],
+    [
+      "a box score on a match that is not completed",
+      "box_score = '{}'",
+      "matches_result_iff_completed",
+    ],
+    [
+      "a box score that is not an object",
+      "home_team_score = 80, away_team_score = 70, status = 'completed', box_score = '[]'",
+      "matches_box_score_is_object",
+    ],
+    [
+      "a negative score",
+      "home_team_score = -1, away_team_score = 70, status = 'completed', box_score = '{}'",
+      "matches_scores_non_negative",
+    ],
+    [
+      "a draw",
+      "home_team_score = 70, away_team_score = 70, status = 'completed', box_score = '{}'",
+      "no_draws_allowed",
+    ],
+    ["a forfeit with no result", "forfeit = true", "matches_flags_need_result"],
+    [
+      "a forfeit with a played score",
+      "home_team_score = 20, away_team_score = 5, forfeit = true, status = 'completed', box_score = '{}'",
+      "matches_forfeit_result",
+    ],
+    [
+      "a forfeit with box-score lines",
+      `home_team_score = 0, away_team_score = 20, forfeit = true, status = 'completed', box_score = '{"1": {}}'`,
+      "matches_forfeit_result",
+    ],
+    ["overtime with no result", "overtime = true", "matches_flags_need_result"],
+  ])("rejects %s on a match", async (_name, assignment, constraint) => {
+    await expect(
+      client.query(`UPDATE matches SET ${assignment} WHERE id = $1`, [match]),
+    ).rejects.toThrow(constraint);
+  });
+
+  it.each([
+    [20, 0],
+    [0, 20],
+  ])("accepts a forfeit recorded %i-%i", async (homeScore, awayScore) => {
+    await client.query(
+      `UPDATE matches
+          SET home_team_score = $1, away_team_score = $2, forfeit = true,
+              status = 'completed', box_score = '{}'
+        WHERE id = $3`,
+      [homeScore, awayScore, match],
+    );
+  });
+
+  it("rejects a team playing itself", async () => {
+    await expect(insertScheduledMatch(client, home, home)).rejects.toThrow(
+      "matches_distinct_teams",
+    );
+  });
+
+  it.each([
+    ["only x", "5.5", null],
+    ["only y", null, "3.2"],
+  ])("rejects a shot event with %s", async (_name, x, y) => {
+    await expect(
+      client.query(
+        `INSERT INTO match_events (match_id, event_type, occurred_at, shot_x, shot_y)
+         VALUES ($1, 'made_layup', now(), $2, $3)`,
+        [match, x, y],
+      ),
+    ).rejects.toThrow("match_events_shot_paired");
+  });
+});

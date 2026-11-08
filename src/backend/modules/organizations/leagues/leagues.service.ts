@@ -14,13 +14,8 @@ const LEAGUE_SELECT = {
   id: true,
   name: true,
   address: true,
-  region: {
-    select: {
-      id: true,
-      name: true,
-      code: true,
-    },
-  },
+  regionCode: true,
+  regionName: true,
   committees: {
     select: {
       _count: { select: { clubs: true } },
@@ -102,7 +97,7 @@ export class LeaguesService {
       id: league.id,
       name: league.name,
       address: league.address,
-      region: league.region,
+      region: { code: league.regionCode, name: league.regionName },
       clubCount,
       ffbbUrl: ffbbLeagueUrl(
         league.committees.find((c) => c.clubs.length)?.clubs[0].code ?? null,

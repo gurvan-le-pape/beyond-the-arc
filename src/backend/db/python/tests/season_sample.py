@@ -13,8 +13,8 @@ from collections import Counter
 from dataclasses import dataclass
 from datetime import datetime, timezone
 
-from config import GAME_CONFIG_PATH
-from generation.match_generator import STAT_COLUMNS, MatchGenerator
+from config import FORFEIT_ODDS, GAME_CONFIG_PATH
+from generation.match_generator import STAT_COLUMNS, MatchGenerator, draw_forfeit
 from simulation.match_simulator import MatchSimulator
 
 ROSTER_SIZE = 12
@@ -61,12 +61,12 @@ def simulate_sample(matches: int, seed: int) -> SampleReport:
         home, away = roster(base), roster(base + ROSTER_SIZE)
         positions = {player_id: position for player_id, _, position in home + away}
         result = generator.simulate(home, away, starts_at)
-        for row in result.stat_rows:
-            position = positions[row[0]]
+        for player_id, entry in result.box_score.items():
+            position = positions[int(player_id)]
             position_games[position] += 1
-            for column, value in zip(STAT_COLUMNS, row[1:-1]):
-                stat_totals[column] += value
-                position_totals.setdefault(position, Counter())[column] += value
+            for column in STAT_COLUMNS:
+                stat_totals[column] += entry[column]
+                position_totals.setdefault(position, Counter())[column] += entry[column]
         event_totals.update(e["event_type"] for e in result.events)
 
     team_games = matches * 2
@@ -79,6 +79,15 @@ def simulate_sample(matches: int, seed: int) -> SampleReport:
             for position, totals in position_totals.items()
         },
     )
+
+
+def forfeit_rates(draws: int, seed: int) -> dict[str, float]:
+    """The share of matches forfeited at each level, over `draws` draws each."""
+    rng = random.Random(seed)
+    return {
+        level: sum(draw_forfeit(level, rng) is not None for _ in range(draws)) / draws
+        for level in FORFEIT_ODDS
+    }
 
 
 if __name__ == "__main__":
@@ -95,3 +104,7 @@ if __name__ == "__main__":
     for name in shown:
         values = "".join(f"{report.per_position_player_game[p].get(name, 0):7.2f}" for p in ROSTER_POSITIONS[:5])
         print(f"{name:28}{values}")
+    print()
+    print("forfeit rate            drawn    odds")
+    for level, rate in forfeit_rates(draws=100_000, seed=1).items():
+        print(f"{level:20} {rate:8.4f} {FORFEIT_ODDS[level]:7.4f}")

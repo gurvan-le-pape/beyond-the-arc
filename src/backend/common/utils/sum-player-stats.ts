@@ -1,5 +1,5 @@
 // src/backend/common/utils/sum-player-stats.ts
-import type { MappedPlayerMatchStats } from "./player-match-stats.mapper";
+import type { MappedPlayerMatchStats } from "./box-score.mapper";
 
 /**
  * Raw box-score totals summed over a set of player-match stat rows. The single

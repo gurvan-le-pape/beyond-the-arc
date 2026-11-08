@@ -119,8 +119,7 @@ function sentenceFor(
 
 /**
  * The message and names that describe a match event, built from its type and
- * its players' roles rather than read from the API's `description`, which is
- * English prose the simulator writes.
+ * its players' roles.
  *
  * The event's label (`eventLabels`) already names the action — "Layup réussi"
  * — so the sentence says who did it and to whom: "X marque sur une passe de

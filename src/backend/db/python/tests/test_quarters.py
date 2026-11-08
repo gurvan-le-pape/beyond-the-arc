@@ -5,7 +5,6 @@ The frontend splits a match into periods by elapsed time, so the
 `quarter_end` events must sit exactly on the buzzers and nowhere else.
 """
 
-import json
 import random
 from datetime import datetime, timedelta, timezone
 
@@ -68,9 +67,9 @@ def test_each_side_fields_five_for_the_whole_game(matches):
         length = (buzzers(match)[-1] - STARTS_AT).total_seconds()
         home_ids = range(home_first_id, home_first_id + ROSTER_SIZE)
         on_court = {"home": 0, "away": 0}
-        for row in match.stat_rows:
-            side = "home" if row[0] in home_ids else "away"
-            on_court[side] += sum(end - start for start, end in json.loads(row[-1]))
+        for player_id, entry in match.box_score.items():
+            side = "home" if int(player_id) in home_ids else "away"
+            on_court[side] += sum(end - start for start, end in entry["playtime_intervals"])
 
         assert on_court == {"home": ON_COURT * length, "away": ON_COURT * length}
         assert length >= GAME_DURATION

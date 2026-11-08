@@ -16,7 +16,7 @@
       "numberFull": "Team number within the club",
       "championship": "Championship",
       "rank": "Rank",
-      "record": "Record (W–L)"
+      "record": "Record (W–L–F)"
     }
   },
   "map": {
@@ -24,7 +24,6 @@
     "pageTitle": "Clubs map",
     "clubsHere": "{count} clubs at this spot",
     "viewClub": "View club",
-    "website": "Website",
     "openPanel": "Club list",
     "closePanel": "Close panel",
     "title": "Clubs",

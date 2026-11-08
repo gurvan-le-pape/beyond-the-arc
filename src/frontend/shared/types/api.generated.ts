@@ -260,26 +260,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/leaderboards/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get leaderboard entry by ID
-         * @description Retrieves detailed information about a specific leaderboard entry
-         */
-        get: operations["LeaderboardsController_getLeaderboardById"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/pools": {
         parameters: {
             query?: never;
@@ -749,7 +729,7 @@ export interface components {
              * @description Region code — the FFBB's alphabetic league code, not the INSEE numeric region code
              * @example ARA
              */
-            code: string | null;
+            code: string;
             /**
              * @description League name
              * @example AUVERGNE-RHÔNE-ALPES
@@ -789,11 +769,6 @@ export interface components {
             timestamp: string;
         };
         DepartmentInfoDto: {
-            /**
-             * @description Department ID
-             * @example 1
-             */
-            id: number;
             /**
              * @description Department name
              * @example Ain
@@ -861,11 +836,6 @@ export interface components {
              */
             longitude: number | null;
             /**
-             * @description Website
-             * @example https://club.com
-             */
-            website: string | null;
-            /**
              * @description Committee ID
              * @example 1
              */
@@ -929,11 +899,6 @@ export interface components {
              */
             id: number;
             /**
-             * @description Championship name
-             * @example Regional U18
-             */
-            name: string;
-            /**
              * @description Competition level
              * @example regional
              * @enum {string}
@@ -944,16 +909,6 @@ export interface components {
              * @example 1
              */
             division: number;
-            /**
-             * @description Committee ID
-             * @example 1
-             */
-            committeeId: number | null;
-            /**
-             * @description League regionale ID
-             * @example 1
-             */
-            leagueId: number | null;
         };
         PoolInfoDto: {
             /**
@@ -961,11 +916,6 @@ export interface components {
              * @example 1
              */
             id: number;
-            /**
-             * @description Pool name
-             * @example Pool A
-             */
-            name: string;
             /**
              * @description Pool letter
              * @example A
@@ -1006,6 +956,11 @@ export interface components {
              */
             gamesLost: number;
             /**
+             * @description Games forfeited: lost by not playing, for no points
+             * @example 0
+             */
+            gamesForfeited: number;
+            /**
              * @description Goal difference
              * @example 45
              */
@@ -1040,9 +995,9 @@ export interface components {
              */
             gender: "male" | "female";
             /** @description Pool information */
-            pool: components["schemas"]["PoolInfoDto"] | null;
+            pool: components["schemas"]["PoolInfoDto"];
             /** @description Team leaderboard stats */
-            leaderboard: components["schemas"]["TeamLeaderboardDto"] | null;
+            leaderboard: components["schemas"]["TeamLeaderboardDto"];
         };
         ClubDetailedResponseDto: {
             /**
@@ -1071,11 +1026,6 @@ export interface components {
              */
             address: string | null;
             /**
-             * @description Website URL
-             * @example https://club.com
-             */
-            website: string | null;
-            /**
              * @description The club's page on the FFBB competitions site, where its contact details are kept up to date
              * @example https://competitions.ffbb.com/ligues/sud/comites/0013/clubs/sud0013011
              */
@@ -1084,11 +1034,6 @@ export interface components {
             teams: components["schemas"]["TeamInfoDto"][];
         };
         DepartmentResponseDto: {
-            /**
-             * @description Department unique identifier
-             * @example 1
-             */
-            id: number;
             /**
              * @description Department name
              * @example Ain
@@ -1136,11 +1081,6 @@ export interface components {
         };
         RegionDto: {
             /**
-             * @description Region unique identifier
-             * @example 1
-             */
-            id: number;
-            /**
              * @description Region code
              * @example BRE
              */
@@ -1185,8 +1125,6 @@ export interface components {
             id: number;
             /** @example A */
             letter: string;
-            /** @example Pool A */
-            name: string;
             /** @example 10 */
             nbMatchdays: number;
         };
@@ -1196,11 +1134,6 @@ export interface components {
              * @example 1
              */
             id: number;
-            /**
-             * @description Championship name
-             * @example Championship Régional U18 male
-             */
-            name: string;
             /**
              * @description Age category
              * @example U18
@@ -1261,18 +1194,13 @@ export interface components {
              */
             matchId: number;
             /**
-             * @description How it went for the team: W for a win, L for a loss
+             * @description How it went for the team: W for a win, L for a loss, F for a forfeit
              * @example W
              * @enum {string}
              */
-            result: "W" | "L";
+            result: "W" | "L" | "F";
         };
         LeaderboardResponseDto: {
-            /**
-             * @description Unique leaderboard entry identifier
-             * @example 1
-             */
-            id: number;
             /**
              * @description Team ID
              * @example 5
@@ -1348,11 +1276,6 @@ export interface components {
              */
             letter: string;
             /**
-             * @description Pool name
-             * @example Pool A - Seniors
-             */
-            name: string;
-            /**
              * @description Associated championship ID
              * @example 1
              */
@@ -1374,11 +1297,6 @@ export interface components {
              * @example A
              */
             letter: string;
-            /**
-             * @description Pool name
-             * @example Pool A - Seniors
-             */
-            name: string;
             /**
              * @description Associated championship ID
              * @example 1
@@ -1436,11 +1354,6 @@ export interface components {
              * @example 1
              */
             id: number;
-            /**
-             * @description Pool name
-             * @example Poule A
-             */
-            name: string;
             /**
              * @description Pool letter
              * @example A
@@ -1575,16 +1488,11 @@ export interface components {
              * @example shooter
              * @enum {string}
              */
-            role: "shooter" | "fouler" | "stealer" | "victim" | "rebounder" | "assister" | "blocker" | "blocked" | "winner" | "exiting_player" | "entering_player" | "starter";
+            role: "shooter" | "fouler" | "stealer" | "victim" | "rebounder" | "assister" | "blocker" | "blocked" | "winner" | "exiting_player" | "entering_player";
             /** @description Player information */
             player: components["schemas"]["EventPlayerDto"];
         };
         ShotLocationDto: {
-            /**
-             * @description Shot location ID
-             * @example 1
-             */
-            id: number;
             /**
              * @description Metres across the court from the baseline corner (0–15)
              * @example 5.5
@@ -1623,11 +1531,6 @@ export interface components {
              * @example 412
              */
             secondsLeft: number;
-            /**
-             * @description Event description
-             * @example 3-pointer
-             */
-            description: string | null;
             /** @description Players involved in the event */
             players: components["schemas"]["MatchEventPlayerDto"][];
             /** @description Shot location (if applicable) */
@@ -2016,11 +1919,6 @@ export interface components {
              */
             id: number;
             /**
-             * @description Championship name
-             * @example Championship Régional U18 male
-             */
-            name: string;
-            /**
              * @description Competition level
              * @example regional
              * @enum {string}
@@ -2038,11 +1936,6 @@ export interface components {
              * @example 1
              */
             id: number;
-            /**
-             * @description Pool name
-             * @example Poule A
-             */
-            name: string;
             /**
              * @description Pool letter
              * @example A
@@ -2081,8 +1974,8 @@ export interface components {
             gender: "male" | "female";
             /** @description Club information */
             club: components["schemas"]["ClubRefDto"];
-            /** @description Current pool, or null when the team has none */
-            pool: components["schemas"]["PoolRefDto"] | null;
+            /** @description Current pool */
+            pool: components["schemas"]["PoolRefDto"];
         };
         PlayerResponseDto: {
             /**
@@ -2440,19 +2333,14 @@ export interface components {
              */
             gender: "male" | "female";
             /**
-             * @description Team color
-             * @example Blue
-             */
-            color: string | null;
-            /**
              * @description Pool ID
              * @example 1
              */
-            poolId: number | null;
+            poolId: number;
             /** @description Club information */
             club: components["schemas"]["ClubRefDto"];
-            /** @description Pool information, or null when the team has none */
-            pool: components["schemas"]["PoolRefDto"] | null;
+            /** @description Pool information */
+            pool: components["schemas"]["PoolRefDto"];
             /** @description Relation counts */
             _count: components["schemas"]["TeamCountDto"];
         };
@@ -2548,19 +2436,14 @@ export interface components {
              */
             gender: "male" | "female";
             /**
-             * @description Team color
-             * @example Blue
-             */
-            color: string | null;
-            /**
              * @description Pool ID
              * @example 1
              */
-            poolId: number | null;
+            poolId: number;
             /** @description Club information */
             club: components["schemas"]["ClubRefDto"];
-            /** @description Pool information, or null when the team has none */
-            pool: components["schemas"]["PoolRefDto"] | null;
+            /** @description Pool information */
+            pool: components["schemas"]["PoolRefDto"];
             /** @description Relation counts */
             _count: components["schemas"]["TeamCountDto"];
             /** @description Team players */
@@ -2597,6 +2480,11 @@ export interface components {
              * @example 72
              */
             awayTeamScore: number | null;
+            /**
+             * @description Whether the match was forfeited; the side that forfeited scored 0
+             * @example false
+             */
+            forfeit: boolean;
         };
         TeamSeasonStatsDto: {
             /**
@@ -3419,58 +3307,6 @@ export interface operations {
                      *       ],
                      *       "error": "Bad Request",
                      *       "path": "/api/leaderboards?poolId=abc",
-                     *       "timestamp": "2024-02-05T10:00:00Z"
-                     *     }
-                     */
-                    "application/json": components["schemas"]["ApiErrorResponseDto"];
-                };
-            };
-        };
-    };
-    LeaderboardsController_getLeaderboardById: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Leaderboard entry ID */
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Leaderboard entry successfully retrieved */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
-                        data: components["schemas"]["LeaderboardResponseDto"];
-                    };
-                };
-            };
-            /** @description Invalid ID format */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponseDto"];
-                };
-            };
-            /** @description Leaderboard entry not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    /**
-                     * @example {
-                     *       "statusCode": 404,
-                     *       "message": "Leaderboard entry with ID 999 not found",
-                     *       "error": "Not Found",
-                     *       "path": "/api/leaderboards/999",
                      *       "timestamp": "2024-02-05T10:00:00Z"
                      *     }
                      */

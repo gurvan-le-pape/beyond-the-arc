@@ -63,16 +63,14 @@ describe("PoolsService", () => {
         {
           id: 1,
           letter: "A",
-          name: "Pool A - Seniors",
           championshipId: 1,
-          matches: [{ matchday: 1 }, { matchday: 2 }],
+          teams: [{ homeMatches: [{ matchday: 1 }, { matchday: 2 }] }],
         },
         {
           id: 2,
           letter: "B",
-          name: "Pool B - Seniors",
           championshipId: 1,
-          matches: [],
+          teams: [],
         },
       ];
 
@@ -86,7 +84,6 @@ describe("PoolsService", () => {
       expect(result[0]).toEqual({
         id: 1,
         letter: "A",
-        name: "Pool A - Seniors",
         championshipId: 1,
         nbMatchdays: 2,
       });
@@ -97,11 +94,14 @@ describe("PoolsService", () => {
         select: {
           id: true,
           letter: true,
-          name: true,
           championshipId: true,
-          matches: {
-            select: { matchday: true },
-            distinct: ["matchday"],
+          teams: {
+            select: {
+              homeMatches: {
+                select: { matchday: true },
+                distinct: ["matchday"],
+              },
+            },
           },
         },
         orderBy: { letter: "asc" },
@@ -139,9 +139,8 @@ describe("PoolsService", () => {
         {
           id: 1,
           letter: "A",
-          name: "Pool A",
           championshipId: 1,
-          matches: [],
+          teams: [],
         },
       ]);
 
@@ -164,9 +163,8 @@ describe("PoolsService", () => {
       const mockPool = {
         id: 1,
         letter: "A",
-        name: "Pool A - Seniors",
         championshipId: 1,
-        matches: [{ matchday: 1 }, { matchday: 2 }],
+        teams: [{ homeMatches: [{ matchday: 1 }, { matchday: 2 }] }],
       };
 
       mockPrismaService.client.pools.findUnique.mockResolvedValue(mockPool);
@@ -178,7 +176,6 @@ describe("PoolsService", () => {
       expect(result).toEqual({
         id: 1,
         letter: "A",
-        name: "Pool A - Seniors",
         championshipId: 1,
         nbMatchdays: 2,
       });
@@ -188,11 +185,14 @@ describe("PoolsService", () => {
         select: {
           id: true,
           letter: true,
-          name: true,
           championshipId: true,
-          matches: {
-            select: { matchday: true },
-            distinct: ["matchday"],
+          teams: {
+            select: {
+              homeMatches: {
+                select: { matchday: true },
+                distinct: ["matchday"],
+              },
+            },
           },
         },
       });
@@ -217,9 +217,8 @@ describe("PoolsService", () => {
       mockPrismaService.client.pools.findUnique.mockResolvedValue({
         id: 1,
         letter: "A",
-        name: "Test",
         championshipId: 1,
-        matches: [],
+        teams: [],
       });
 
       // Act
@@ -231,11 +230,14 @@ describe("PoolsService", () => {
         select: {
           id: true,
           letter: true,
-          name: true,
           championshipId: true,
-          matches: {
-            select: { matchday: true },
-            distinct: ["matchday"],
+          teams: {
+            select: {
+              homeMatches: {
+                select: { matchday: true },
+                distinct: ["matchday"],
+              },
+            },
           },
         },
       });
@@ -254,9 +256,8 @@ describe("PoolsService", () => {
     const fullPool = (id: number) => ({
       id,
       letter: "A",
-      name: "Pool A",
       championshipId: 1,
-      matches: [{ matchday: 1 }, { matchday: 2 }],
+      teams: [{ homeMatches: [{ matchday: 1 }, { matchday: 2 }] }],
     });
 
     /** Stubs the round, its candidates, and full rows for whichever ids are asked for. */
@@ -274,9 +275,12 @@ describe("PoolsService", () => {
           ),
       );
       mockPrismaService.client.matches.findMany.mockImplementation(
-        (args: { where: { poolId: { in: number[] } } }) =>
+        (args: { where: { homeTeam: { poolId: { in: number[] } } } }) =>
           Promise.resolve(
-            args.where.poolId.in.map((poolId) => ({ poolId, matchday: 4 })),
+            args.where.homeTeam.poolId.in.map((poolId) => ({
+              homeTeam: { poolId },
+              matchday: 4,
+            })),
           ),
       );
     };
@@ -302,7 +306,7 @@ describe("PoolsService", () => {
       });
       expect(
         mockPrismaService.client.pools.findMany.mock.calls[0][0].where,
-      ).toEqual({ matches: { some: round } });
+      ).toEqual({ teams: { some: { homeMatches: { some: round } } } });
     });
 
     it("orders by level, then category with seniors first, then division, then pool id", async () => {
@@ -340,15 +344,13 @@ describe("PoolsService", () => {
       const result = await service.findRecentPools();
 
       expect(mockPrismaService.client.matches.findMany).toHaveBeenCalledWith({
-        where: { ...round, poolId: { in: [5985] } },
-        distinct: ["poolId"],
-        select: { poolId: true, matchday: true },
+        where: { ...round, homeTeam: { poolId: { in: [5985] } } },
+        select: { matchday: true, homeTeam: { select: { poolId: true } } },
       });
       expect(result).toEqual([
         {
           id: 5985,
           letter: "A",
-          name: "Pool A",
           championshipId: 1,
           nbMatchdays: 2,
           matchday: 4,

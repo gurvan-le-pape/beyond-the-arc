@@ -10,13 +10,6 @@ export class ChampionshipRefDto {
   id!: number;
 
   @ApiProperty({
-    description: "Championship name",
-    example: "Championship Régional U18 male",
-    type: String,
-  })
-  name!: string;
-
-  @ApiProperty({
     description: "Competition level",
     example: CompetitionLevel.REGIONAL,
     enum: CompetitionLevel,

@@ -62,20 +62,11 @@ export class TeamResponseDto {
   gender!: Gender;
 
   @ApiProperty({
-    description: "Team color",
-    example: "Blue",
-    type: String,
-    nullable: true,
-  })
-  color!: string | null;
-
-  @ApiProperty({
     description: "Pool ID",
     example: 1,
     type: Number,
-    nullable: true,
   })
-  poolId!: number | null;
+  poolId!: number;
 
   @ApiProperty({
     description: "Club information",
@@ -84,11 +75,10 @@ export class TeamResponseDto {
   club!: ClubRefDto;
 
   @ApiProperty({
-    description: "Pool information, or null when the team has none",
+    description: "Pool information",
     type: PoolRefDto,
-    nullable: true,
   })
-  pool!: PoolRefDto | null;
+  pool!: PoolRefDto;
 
   @ApiProperty({
     description: "Relation counts",
@@ -176,6 +166,14 @@ export class TeamMatchHistoryDto {
     nullable: true,
   })
   awayTeamScore!: number | null;
+
+  @ApiProperty({
+    description:
+      "Whether the match was forfeited; the side that forfeited scored 0",
+    example: false,
+    type: Boolean,
+  })
+  forfeit!: boolean;
 }
 
 /**

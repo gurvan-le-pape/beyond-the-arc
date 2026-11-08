@@ -1,9 +1,5 @@
 // src/backend/common/utils/ranking.util.spec.ts
-import {
-  assignRankByCount,
-  buildRankCountWhere,
-  isBetterRanked,
-} from "./ranking.util";
+import { assignRankByCount, isBetterRanked } from "./ranking.util";
 
 describe("isBetterRanked", () => {
   it("should rank higher points better regardless of point difference", () => {
@@ -92,16 +88,5 @@ describe("assignRankByCount", () => {
 
   it("should return an empty array for no entries", () => {
     expect(assignRankByCount([])).toEqual([]);
-  });
-});
-
-describe("buildRankCountWhere", () => {
-  it("should count strictly better rows in the same pool", () => {
-    expect(
-      buildRankCountWhere({ poolId: 3, points: 10, pointDifference: 5 }),
-    ).toEqual({
-      poolId: 3,
-      OR: [{ points: { gt: 10 } }, { points: 10, pointDifference: { gt: 5 } }],
-    });
   });
 });
