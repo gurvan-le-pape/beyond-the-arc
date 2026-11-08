@@ -5350,171 +5350,6 @@
           "seasonStats"
         ]
       },
-      "TeamDetailResponseDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "number",
-            "description": "Unique team identifier",
-            "example": 1
-          },
-          "number": {
-            "type": "number",
-            "description": "Team number",
-            "example": 1
-          },
-          "clubId": {
-            "type": "number",
-            "description": "Club ID this team belongs to",
-            "example": 1
-          },
-          "seasonYear": {
-            "type": "string",
-            "description": "Season this team's entry belongs to",
-            "example": "2025-2026"
-          },
-          "category": {
-            "enum": [
-              "U11",
-              "U13",
-              "U15",
-              "U18",
-              "U21",
-              "Seniors"
-            ],
-            "type": "string",
-            "description": "Age category",
-            "example": "U18"
-          },
-          "gender": {
-            "enum": [
-              "male",
-              "female"
-            ],
-            "type": "string",
-            "description": "Gender category",
-            "example": "male"
-          },
-          "poolId": {
-            "type": "number",
-            "description": "Pool ID",
-            "example": 1
-          },
-          "club": {
-            "description": "Club information",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/ClubRefDto"
-              }
-            ]
-          },
-          "pool": {
-            "description": "Pool information",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/PoolRefDto"
-              }
-            ]
-          },
-          "_count": {
-            "description": "Relation counts",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/TeamCountDto"
-              }
-            ]
-          },
-          "players": {
-            "description": "Team players",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TeamRosterPlayerDto"
-            }
-          }
-        },
-        "required": [
-          "id",
-          "number",
-          "clubId",
-          "seasonYear",
-          "category",
-          "gender",
-          "poolId",
-          "club",
-          "pool",
-          "_count",
-          "players"
-        ]
-      },
-      "TeamMatchHistoryDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "number",
-            "description": "Match ID",
-            "example": 1
-          },
-          "startsAt": {
-            "type": "string",
-            "description": "Tip-off instant, as an ISO 8601 UTC timestamp",
-            "example": "2024-02-05T19:00:00Z"
-          },
-          "homeTeam": {
-            "description": "Home team information",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/HistoryTeamRefDto"
-              }
-            ]
-          },
-          "awayTeam": {
-            "description": "Away team information",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/HistoryTeamRefDto"
-              }
-            ]
-          },
-          "status": {
-            "enum": [
-              "scheduled",
-              "generating",
-              "completed",
-              "failed"
-            ],
-            "type": "string",
-            "description": "Where the match is in its lifecycle",
-            "example": "completed"
-          },
-          "homeTeamScore": {
-            "type": "number",
-            "nullable": true,
-            "description": "Home team score",
-            "example": 85
-          },
-          "awayTeamScore": {
-            "type": "number",
-            "nullable": true,
-            "description": "Away team score",
-            "example": 72
-          },
-          "forfeit": {
-            "type": "boolean",
-            "description": "Whether the match was forfeited; the side that forfeited scored 0",
-            "example": false
-          }
-        },
-        "required": [
-          "id",
-          "startsAt",
-          "homeTeam",
-          "awayTeam",
-          "status",
-          "homeTeamScore",
-          "awayTeamScore",
-          "forfeit"
-        ]
-      },
       "TeamSeasonStatsDto": {
         "type": "object",
         "properties": {
@@ -5618,14 +5453,85 @@
           "players"
         ]
       },
-      "TeamMatchHistoryResponseDto": {
+      "TeamDetailResponseDto": {
         "type": "object",
         "properties": {
-          "matches": {
-            "description": "Match history entries, ordered by date (most recent first)",
+          "id": {
+            "type": "number",
+            "description": "Unique team identifier",
+            "example": 1
+          },
+          "number": {
+            "type": "number",
+            "description": "Team number",
+            "example": 1
+          },
+          "clubId": {
+            "type": "number",
+            "description": "Club ID this team belongs to",
+            "example": 1
+          },
+          "seasonYear": {
+            "type": "string",
+            "description": "Season this team's entry belongs to",
+            "example": "2025-2026"
+          },
+          "category": {
+            "enum": [
+              "U11",
+              "U13",
+              "U15",
+              "U18",
+              "U21",
+              "Seniors"
+            ],
+            "type": "string",
+            "description": "Age category",
+            "example": "U18"
+          },
+          "gender": {
+            "enum": [
+              "male",
+              "female"
+            ],
+            "type": "string",
+            "description": "Gender category",
+            "example": "male"
+          },
+          "poolId": {
+            "type": "number",
+            "description": "Pool ID",
+            "example": 1
+          },
+          "club": {
+            "description": "Club information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ClubRefDto"
+              }
+            ]
+          },
+          "pool": {
+            "description": "Pool information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PoolRefDto"
+              }
+            ]
+          },
+          "_count": {
+            "description": "Relation counts",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TeamCountDto"
+              }
+            ]
+          },
+          "players": {
+            "description": "Team players",
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/TeamMatchHistoryDto"
+              "$ref": "#/components/schemas/TeamRosterPlayerDto"
             }
           },
           "seasonStats": {
@@ -5638,8 +5544,102 @@
           }
         },
         "required": [
-          "matches",
+          "id",
+          "number",
+          "clubId",
+          "seasonYear",
+          "category",
+          "gender",
+          "poolId",
+          "club",
+          "pool",
+          "_count",
+          "players",
           "seasonStats"
+        ]
+      },
+      "TeamMatchHistoryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Match ID",
+            "example": 1
+          },
+          "startsAt": {
+            "type": "string",
+            "description": "Tip-off instant, as an ISO 8601 UTC timestamp",
+            "example": "2024-02-05T19:00:00Z"
+          },
+          "homeTeam": {
+            "description": "Home team information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/HistoryTeamRefDto"
+              }
+            ]
+          },
+          "awayTeam": {
+            "description": "Away team information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/HistoryTeamRefDto"
+              }
+            ]
+          },
+          "status": {
+            "enum": [
+              "scheduled",
+              "generating",
+              "completed",
+              "failed"
+            ],
+            "type": "string",
+            "description": "Where the match is in its lifecycle",
+            "example": "completed"
+          },
+          "homeTeamScore": {
+            "type": "number",
+            "nullable": true,
+            "description": "Home team score",
+            "example": 85
+          },
+          "awayTeamScore": {
+            "type": "number",
+            "nullable": true,
+            "description": "Away team score",
+            "example": 72
+          },
+          "forfeit": {
+            "type": "boolean",
+            "description": "Whether the match was forfeited; the side that forfeited scored 0",
+            "example": false
+          }
+        },
+        "required": [
+          "id",
+          "startsAt",
+          "homeTeam",
+          "awayTeam",
+          "status",
+          "homeTeamScore",
+          "awayTeamScore",
+          "forfeit"
+        ]
+      },
+      "TeamMatchHistoryResponseDto": {
+        "type": "object",
+        "properties": {
+          "matches": {
+            "description": "Match history entries, ordered by date (most recent first)",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TeamMatchHistoryDto"
+            }
+          }
+        },
+        "required": [
+          "matches"
         ]
       },
       "ChampionshipsByLevelDto": {

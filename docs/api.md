@@ -279,11 +279,13 @@ The two shot endpoints (`/team/:teamId/shots`, `/player/:playerId/shots`) return
 
 ### Teams — `/api/teams`
 
-| Method | Path                 | Description                                 | Cached |
-| ------ | -------------------- | ------------------------------------------- | ------ |
-| GET    | `/teams`             | Paginated teams with filters                | 5 min  |
-| GET    | `/teams/:id`         | Single team with players and recent matches | No     |
-| GET    | `/teams/:id/matches` | Match history for a team, most recent first | No     |
+| Method | Path                 | Description                                  | Cached |
+| ------ | -------------------- | -------------------------------------------- | ------ |
+| GET    | `/teams`             | Paginated teams with filters                 | 5 min  |
+| GET    | `/teams/:id`         | Single team with its roster and season stats | No     |
+| GET    | `/teams/:id/matches` | Match history for a team, most recent first  | No     |
+
+`GET /teams/:id` reads the team's completed box scores once and returns both each roster player's `seasonStats` and the team's own `seasonStats`. `GET /teams/:id/matches` returns the schedule and results only and reads no box score.
 
 `GET /teams` filters by `poolId`; the teams filters take their division and pool options from `GET /championships`, like the matches filters. The team number is typed, so it has no options endpoint.
 

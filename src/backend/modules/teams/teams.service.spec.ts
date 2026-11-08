@@ -278,6 +278,13 @@ describe("TeamsService", () => {
         [1, 2, 20],
         [2, 0, 0],
       ]);
+      // The team's season comes from the same lines, without the opponent's.
+      expect(result.seasonStats).toMatchObject({
+        gamesPlayed: 2,
+        points: 20,
+        pointsPerGame: 10,
+        players: 1,
+      });
     });
 
     it("fails loudly on a malformed box score", async () => {
@@ -321,16 +328,11 @@ describe("TeamsService", () => {
           homeTeamScore: 85,
           awayTeamScore: 72,
           forfeit: false,
-          // Player 9 plays for the opponent.
-          boxScore: { "1": storedLine(15), "9": storedLine(40) },
         },
       ];
 
       mockPrismaService.client.teams.findUnique.mockResolvedValue({ id: 1 });
       mockPrismaService.client.matches.findMany.mockResolvedValue(mockMatches);
-      mockPrismaService.client.players.findMany.mockResolvedValue([
-        { id: 1, name: "Player 1", number: 10, position: "PG", teamId: 1 },
-      ]);
 
       // Act
       const result = await service.findTeamMatchHistory(1);
@@ -340,17 +342,10 @@ describe("TeamsService", () => {
       expect(result.matches[0].id).toBe(1);
       expect(result.matches[0].status).toBe("completed");
       expect(result.matches[0].forfeit).toBe(false);
-      // The box scores feed the season stats but are not returned.
-      expect(result.matches[0]).not.toHaveProperty("players");
-      expect(result.seasonStats.rebounds).toBe(8);
-      // Season aggregate over the single team player.
-      expect(result.seasonStats.gamesPlayed).toBe(1);
-      expect(result.seasonStats.points).toBe(15);
-      expect(result.seasonStats.pointsPerGame).toBe(15);
-      expect(result.seasonStats.players).toBe(1);
+      expect(result).not.toHaveProperty("seasonStats");
     });
 
-    it("should return an empty history with zeroed season stats when no matches found", async () => {
+    it("should return an empty history when no matches found", async () => {
       // Arrange
       mockPrismaService.client.teams.findUnique.mockResolvedValue({ id: 1 });
       mockPrismaService.client.matches.findMany.mockResolvedValue([]);
@@ -360,8 +355,6 @@ describe("TeamsService", () => {
 
       // Assert
       expect(result.matches).toEqual([]);
-      expect(result.seasonStats.gamesPlayed).toBe(0);
-      expect(result.seasonStats.players).toBe(0);
     });
 
     it("should throw NotFoundException when team not found", async () => {

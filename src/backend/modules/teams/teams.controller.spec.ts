@@ -224,6 +224,24 @@ describe("TeamsController", () => {
         },
         _count: { players: 12 },
         players: [],
+        seasonStats: {
+          gamesPlayed: 0,
+          points: 0,
+          rebounds: 0,
+          assists: 0,
+          steals: 0,
+          blocks: 0,
+          turnovers: 0,
+          fouls: 0,
+          pointsPerGame: 0,
+          reboundsPerGame: 0,
+          assistsPerGame: 0,
+          stealsPerGame: 0,
+          blocksPerGame: 0,
+          turnoversPerGame: 0,
+          foulsPerGame: 0,
+          players: 0,
+        },
       };
 
       mockTeamsService.findTeamById.mockResolvedValue(mockTeam);
@@ -266,6 +284,24 @@ describe("TeamsController", () => {
         },
         _count: { players: 0 },
         players: [],
+        seasonStats: {
+          gamesPlayed: 0,
+          points: 0,
+          rebounds: 0,
+          assists: 0,
+          steals: 0,
+          blocks: 0,
+          turnovers: 0,
+          fouls: 0,
+          pointsPerGame: 0,
+          reboundsPerGame: 0,
+          assistsPerGame: 0,
+          stealsPerGame: 0,
+          blocksPerGame: 0,
+          turnoversPerGame: 0,
+          foulsPerGame: 0,
+          players: 0,
+        },
       };
 
       mockTeamsService.findTeamById.mockResolvedValue(mockTeam);
@@ -302,24 +338,6 @@ describe("TeamsController", () => {
             forfeit: false,
           },
         ],
-        seasonStats: {
-          gamesPlayed: 1,
-          points: 15,
-          rebounds: 8,
-          assists: 7,
-          steals: 2,
-          blocks: 1,
-          turnovers: 3,
-          fouls: 2,
-          pointsPerGame: 15,
-          reboundsPerGame: 8,
-          assistsPerGame: 7,
-          stealsPerGame: 2,
-          blocksPerGame: 1,
-          turnoversPerGame: 3,
-          foulsPerGame: 2,
-          players: 1,
-        },
       };
 
       mockTeamsService.findTeamMatchHistory.mockResolvedValue(mockHistory);
@@ -332,28 +350,10 @@ describe("TeamsController", () => {
       expect(service.findTeamMatchHistory).toHaveBeenCalledWith(1);
     });
 
-    it("should return an empty history with zeroed season stats", async () => {
+    it("should return an empty history", async () => {
       // Arrange
       const emptyHistory: TeamMatchHistoryResponseDto = {
         matches: [],
-        seasonStats: {
-          gamesPlayed: 0,
-          points: 0,
-          rebounds: 0,
-          assists: 0,
-          steals: 0,
-          blocks: 0,
-          turnovers: 0,
-          fouls: 0,
-          pointsPerGame: 0,
-          reboundsPerGame: 0,
-          assistsPerGame: 0,
-          stealsPerGame: 0,
-          blocksPerGame: 0,
-          turnoversPerGame: 0,
-          foulsPerGame: 0,
-          players: 0,
-        },
       };
       mockTeamsService.findTeamMatchHistory.mockResolvedValue(emptyHistory);
 
