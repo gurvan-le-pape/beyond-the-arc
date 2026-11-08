@@ -7,10 +7,10 @@ import { useTranslations } from "next-intl";
 import { usePathname, useRouter } from "@/navigation";
 import { Select } from "@/shared/components/forms";
 
-import type { Pool } from "../../../pools/types";
+import type { ChampionshipPool } from "../../types/Championship";
 
 interface ChampionshipPoolSelectProps {
-  readonly pools: Pool[];
+  readonly pools: ChampionshipPool[];
   readonly selectedPoolId: number;
 }
 

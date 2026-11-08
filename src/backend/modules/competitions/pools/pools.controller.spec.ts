@@ -1,15 +1,11 @@
 // src/backend/modules/competitions/pools/pools.controller.spec.ts
 import { CacheDedupService } from "@common/services/cache-dedup.service";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
-import { NotFoundException } from "@nestjs/common";
 import type { TestingModule } from "@nestjs/testing";
 import { Test } from "@nestjs/testing";
 import { LoggerModule } from "nestjs-pino";
 
-import type {
-  PoolResponseDto,
-  RecentPoolResponseDto,
-} from "./dto/pools.response.dto";
+import type { RecentPoolResponseDto } from "./dto/pools.response.dto";
 import { PoolsController } from "./pools.controller";
 import { PoolsService } from "./pools.service";
 
@@ -28,7 +24,6 @@ describe("PoolsController", () => {
 
   // Mock service
   const mockPoolsService = {
-    findPoolsByChampionshipId: jest.fn(),
     findRecentPools: jest.fn(),
   };
 
@@ -61,77 +56,6 @@ describe("PoolsController", () => {
     service = module.get<PoolsService>(PoolsService);
 
     jest.clearAllMocks();
-  });
-
-  describe("getPoolsByChampionshipId", () => {
-    it("should return array of pools for valid championship ID", async () => {
-      // Arrange
-      const mockPools: PoolResponseDto[] = [
-        {
-          id: 1,
-          letter: "A",
-          championshipId: 1,
-          nbMatchdays: 10,
-        },
-        {
-          id: 2,
-          letter: "B",
-          championshipId: 1,
-          nbMatchdays: 8,
-        },
-      ];
-
-      mockPoolsService.findPoolsByChampionshipId.mockResolvedValue(mockPools);
-
-      // Act
-      const result = await controller.getPoolsByChampionshipId({
-        championshipId: 1,
-      });
-
-      // Assert
-      expect(result).toEqual(mockPools);
-      expect(service.findPoolsByChampionshipId).toHaveBeenCalledWith(1);
-      expect(service.findPoolsByChampionshipId).toHaveBeenCalledTimes(1);
-    });
-
-    it("should throw NotFoundException when no pools found", async () => {
-      // Arrange
-      mockPoolsService.findPoolsByChampionshipId.mockRejectedValue(
-        new NotFoundException("No pools found for championship ID 999"),
-      );
-
-      // Act & Assert
-      await expect(
-        controller.getPoolsByChampionshipId({ championshipId: 999 }),
-      ).rejects.toThrow(NotFoundException);
-
-      await expect(
-        controller.getPoolsByChampionshipId({ championshipId: 999 }),
-      ).rejects.toThrow("No pools found for championship ID 999");
-    });
-
-    it("should propagate service errors", async () => {
-      // Arrange
-      const error = new Error("Database error");
-      mockPoolsService.findPoolsByChampionshipId.mockRejectedValue(error);
-
-      // Act & Assert
-      await expect(
-        controller.getPoolsByChampionshipId({ championshipId: 1 }),
-      ).rejects.toThrow("Database error");
-    });
-
-    it("should handle empty result arrays", async () => {
-      // Arrange
-      mockPoolsService.findPoolsByChampionshipId.mockRejectedValue(
-        new NotFoundException("No pools found for championship ID 1"),
-      );
-
-      // Act & Assert
-      await expect(
-        controller.getPoolsByChampionshipId({ championshipId: 1 }),
-      ).rejects.toThrow(NotFoundException);
-    });
   });
 
   describe("getRecentPools", () => {

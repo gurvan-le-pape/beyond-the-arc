@@ -260,26 +260,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/pools": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get pools by championship ID
-         * @description Retrieves all pools for a specific championship. Results are cached for 5 minutes.
-         */
-        get: operations["PoolsController_getPoolsByChampionshipId"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/pools/recent": {
         parameters: {
             query?: never;
@@ -1291,28 +1271,6 @@ export interface components {
             pointDifference: number;
             /** @description The team's last 5 games in the pool, oldest first. Shorter early in the season, empty before the team's first game. */
             form: components["schemas"]["FormGameDto"][];
-        };
-        PoolResponseDto: {
-            /**
-             * @description Unique pool identifier
-             * @example 1
-             */
-            id: number;
-            /**
-             * @description Pool letter designation
-             * @example A
-             */
-            letter: string;
-            /**
-             * @description Associated championship ID
-             * @example 1
-             */
-            championshipId: number;
-            /**
-             * @description Number of matchdays in this pool
-             * @example 10
-             */
-            nbMatchdays: number;
         };
         RecentPoolResponseDto: {
             /**
@@ -3331,52 +3289,6 @@ export interface operations {
                      *       ],
                      *       "error": "Bad Request",
                      *       "path": "/api/leaderboards?poolId=abc",
-                     *       "timestamp": "2024-02-05T10:00:00Z"
-                     *     }
-                     */
-                    "application/json": components["schemas"]["ApiErrorResponseDto"];
-                };
-            };
-        };
-    };
-    PoolsController_getPoolsByChampionshipId: {
-        parameters: {
-            query: {
-                /** @description Championship ID */
-                championshipId: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description List of pools successfully retrieved (may be empty) */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
-                        data: components["schemas"]["PoolResponseDto"][];
-                        meta: components["schemas"]["ApiListMetaDto"];
-                    };
-                };
-            };
-            /** @description Invalid query parameters */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    /**
-                     * @example {
-                     *       "statusCode": 400,
-                     *       "message": [
-                     *         "championshipId must be a valid number string"
-                     *       ],
-                     *       "error": "Bad Request",
-                     *       "path": "/api/pools?championshipId=abc",
                      *       "timestamp": "2024-02-05T10:00:00Z"
                      *     }
                      */

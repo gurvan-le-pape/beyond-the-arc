@@ -28,6 +28,7 @@ const CHAMPIONSHIP_SELECT = {
   level: true,
   division: true,
   pools: {
+    orderBy: { letter: "asc" },
     select: {
       id: true,
       letter: true,

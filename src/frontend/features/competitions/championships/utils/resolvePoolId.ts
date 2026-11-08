@@ -1,5 +1,5 @@
 // src/frontend/features/competitions/championships/utils/resolvePoolId.ts
-import type { Pool } from "@/features/competitions/pools/types";
+import type { ChampionshipPool } from "../types/Championship";
 
 /**
  * The selected pool for a request: the one named by the `pool` query param
@@ -10,7 +10,7 @@ import type { Pool } from "@/features/competitions/pools/types";
  * @returns the matching pool's id, or the first pool's — an unknown or absent param never yields nothing
  */
 export function resolvePoolId(
-  pools: Pool[],
+  pools: ChampionshipPool[],
   poolParam: string | undefined,
 ): number {
   if (!poolParam) return pools[0].id;

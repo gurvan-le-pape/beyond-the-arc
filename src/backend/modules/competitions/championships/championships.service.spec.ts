@@ -187,7 +187,12 @@ describe("ChampionshipsService", () => {
         mockPrismaService.client.championships.findUnique,
       ).toHaveBeenCalledWith({
         where: { id: 1 },
-        select: expect.objectContaining({ id: true, category: true }),
+        select: expect.objectContaining({
+          id: true,
+          category: true,
+          // The page's pool picker shows them in this order.
+          pools: expect.objectContaining({ orderBy: { letter: "asc" } }),
+        }),
       });
     });
 
