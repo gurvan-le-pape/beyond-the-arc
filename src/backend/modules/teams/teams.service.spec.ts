@@ -28,8 +28,32 @@ describe("TeamsService", () => {
       matches: {
         findMany: jest.fn(),
       },
+      players: {
+        findMany: jest.fn(),
+      },
     },
   };
+
+  /** A box-score line as the scheduler stores it. */
+  const storedLine = (points: number) => ({
+    points,
+    fouls: 2,
+    three_points_made: 2,
+    three_points_attempted: 5,
+    two_points_int_made: 3,
+    two_points_int_attempted: 6,
+    two_points_ext_made: 1,
+    two_points_ext_attempted: 3,
+    free_throws_made: 4,
+    free_throws_attempted: 5,
+    assists: 7,
+    turnovers: 3,
+    rebounds_offensive: 3,
+    rebounds_defensive: 5,
+    steals: 2,
+    blocks: 1,
+    playtime_intervals: [[0, 600]],
+  });
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -223,6 +247,7 @@ describe("TeamsService", () => {
       };
 
       mockPrismaService.client.teams.findUnique.mockResolvedValue(mockTeam);
+      mockPrismaService.client.matches.findMany.mockResolvedValue([]);
 
       // Act
       const result = await service.findTeamById(1);
@@ -235,6 +260,65 @@ describe("TeamsService", () => {
         where: { id: 1 },
         select: expect.any(Object),
       });
+    });
+
+    it("sums each player's box-score lines into their season stats", async () => {
+      mockPrismaService.client.teams.findUnique.mockResolvedValue({
+        id: 1,
+        number: 1,
+        clubId: 1,
+        poolId: 1,
+        club: { id: 1, name: "Club 1", committee: { id: 1, name: "C" } },
+        pool: {
+          id: 1,
+          letter: "A",
+          championship: {
+            id: 1,
+            seasonYear: "2025-2026",
+            category: "U18",
+            gender: "M",
+            level: "departmental",
+            division: 1,
+          },
+        },
+        _count: { players: 2 },
+        players: [
+          { id: 1, name: "Scorer", number: 4, position: "PG", teamId: 1 },
+          { id: 2, name: "Bench", number: 5, position: "C", teamId: 1 },
+        ],
+      });
+      // Player 9 is an opponent: their line is in the box score too.
+      mockPrismaService.client.matches.findMany.mockResolvedValue([
+        { id: 10, boxScore: { "1": storedLine(12), "9": storedLine(30) } },
+        { id: 11, boxScore: { "1": storedLine(8) } },
+      ]);
+
+      const result = await service.findTeamById(1);
+
+      expect(
+        result.players.map((p) => [
+          p.id,
+          p.seasonStats.gamesPlayed,
+          p.seasonStats.points,
+        ]),
+      ).toEqual([
+        [1, 2, 20],
+        [2, 0, 0],
+      ]);
+    });
+
+    it("fails loudly on a malformed box score", async () => {
+      mockPrismaService.client.teams.findUnique.mockResolvedValue({
+        id: 1,
+        players: [],
+      });
+      mockPrismaService.client.matches.findMany.mockResolvedValue([
+        { id: 10, boxScore: { "1": { points: 3 } } },
+      ]);
+
+      await expect(service.findTeamById(1)).rejects.toThrow(
+        "match 10, player 1",
+      );
     });
 
     it("should throw NotFoundException when team not found", async () => {
@@ -263,49 +347,21 @@ describe("TeamsService", () => {
           status: "completed",
           homeTeamScore: 85,
           awayTeamScore: 72,
-          playerMatchStats: [
-            {
-              player: {
-                id: 1,
-                name: "Player 1",
-                number: 10,
-                position: "PG",
-                teamId: 1,
-              },
-              points: 15,
-              fouls: 2,
-              threePointsMade: 2,
-              threePointsAttempted: 5,
-              twoPointsIntMade: 3,
-              twoPointsIntAttempted: 6,
-              twoPointsExtMade: 1,
-              twoPointsExtAttempted: 3,
-              freeThrowsMade: 4,
-              freeThrowsAttempted: 5,
-              assists: 7,
-              turnovers: 3,
-              reboundsOffensive: 3,
-              reboundsDefensive: 5,
-              steals: 2,
-              blocks: 1,
-              playtimeIntervals: [[0, 600]],
-            },
-          ],
+          // Player 9 plays for the opponent.
+          boxScore: { "1": storedLine(15), "9": storedLine(40) },
         },
       ];
 
       mockPrismaService.client.teams.findUnique.mockResolvedValue({ id: 1 });
       mockPrismaService.client.matches.findMany.mockResolvedValue(mockMatches);
+      mockPrismaService.client.players.findMany.mockResolvedValue([
+        { id: 1, name: "Player 1", number: 10, position: "PG", teamId: 1 },
+      ]);
 
       // Act
       const result = await service.findTeamMatchHistory(1);
 
       // Assert
-      // Only this team's box-score rows are read.
-      expect(
-        mockPrismaService.client.matches.findMany.mock.calls[0][0].select
-          .playerMatchStats.where,
-      ).toEqual({ player: { teamId: 1 } });
       expect(result.matches).toHaveLength(1);
       expect(result.matches[0].id).toBe(1);
       expect(result.matches[0].status).toBe("completed");

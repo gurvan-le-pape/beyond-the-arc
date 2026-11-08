@@ -1,5 +1,5 @@
 """
-All database operations for matches, events, stats, and scheduling.
+All database operations for matches, their results, events, and scheduling.
 No business logic — pure SQL in, data out.
 """
 
@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from datetime import datetime
 
 import psycopg
+from psycopg.types.json import Jsonb
 
 from event_rules import EVENT_PLAYER_ROLES
 
@@ -103,11 +104,13 @@ def update_match_result(
     away_score: int,
     overtime: bool,
     forfeit: bool,
+    box_score: dict[str, dict],
 ) -> None:
     """
-    Complete a match that is being generated. Raises if it no longer is, so the
-    caller's transaction rolls back rather than replacing a result and adding a
-    second set of events to it.
+    Complete a match that is being generated, with its box score (see
+    compute_box_score). Raises if it no longer is, so the caller's transaction
+    rolls back rather than replacing a result and adding a second set of events
+    to it.
     """
     cursor.execute(
         """
@@ -116,10 +119,11 @@ def update_match_result(
             away_team_score = %s,
             overtime = %s,
             forfeit = %s,
+            box_score = %s,
             status = 'completed'
         WHERE id = %s AND status = 'generating';
         """,
-        (home_score, away_score, overtime, forfeit, match_id),
+        (home_score, away_score, overtime, forfeit, Jsonb(box_score), match_id),
     )
     if cursor.rowcount != 1:
         raise RuntimeError(f"Match {match_id} is not generating; its result was not saved.")
@@ -180,54 +184,3 @@ def insert_match_events_bulk(
     )
 
     return [row[0] for row in cursor.fetchall()]
-
-
-# ---------------------------------------------------------------------------
-# Player stats
-# ---------------------------------------------------------------------------
-
-def insert_player_stats_bulk(
-    cursor: psycopg.Cursor,
-    match_id: int,
-    rows: list[tuple],
-) -> None:
-    """
-    Each row: (player_id, points, fouls, three_points_made, three_points_attempted,
-               two_points_int_made, two_points_int_attempted, two_points_ext_made,
-               two_points_ext_attempted, free_throws_made, free_throws_attempted,
-               assists, turnovers, rebounds_offensive, rebounds_defensive,
-               steals, blocks, playtime_intervals_json)
-    """
-    cursor.executemany(
-        """
-        INSERT INTO player_match_stats (
-            match_id, player_id, points, fouls,
-            three_points_made, three_points_attempted,
-            two_points_int_made, two_points_int_attempted,
-            two_points_ext_made, two_points_ext_attempted,
-            free_throws_made, free_throws_attempted,
-            assists, turnovers, rebounds_offensive, rebounds_defensive,
-            steals, blocks, playtime_intervals
-        )
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        ON CONFLICT (match_id, player_id) DO UPDATE SET
-            points = EXCLUDED.points,
-            fouls = EXCLUDED.fouls,
-            three_points_made = EXCLUDED.three_points_made,
-            three_points_attempted = EXCLUDED.three_points_attempted,
-            two_points_int_made = EXCLUDED.two_points_int_made,
-            two_points_int_attempted = EXCLUDED.two_points_int_attempted,
-            two_points_ext_made = EXCLUDED.two_points_ext_made,
-            two_points_ext_attempted = EXCLUDED.two_points_ext_attempted,
-            free_throws_made = EXCLUDED.free_throws_made,
-            free_throws_attempted = EXCLUDED.free_throws_attempted,
-            assists = EXCLUDED.assists,
-            turnovers = EXCLUDED.turnovers,
-            rebounds_offensive = EXCLUDED.rebounds_offensive,
-            rebounds_defensive = EXCLUDED.rebounds_defensive,
-            steals = EXCLUDED.steals,
-            blocks = EXCLUDED.blocks,
-            playtime_intervals = EXCLUDED.playtime_intervals;
-        """,
-        [(match_id, *row) for row in rows],
-    )

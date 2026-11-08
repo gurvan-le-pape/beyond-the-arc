@@ -11,12 +11,12 @@ import {
 import { PaginatedResponseDto } from "@common/dto";
 import {
   andWhere,
+  type BoxScoreLine,
   buildChampionshipWhere,
   buildClubOrganizationWhere,
-  mapPlayerMatchStats,
   mapPlayerSummary,
   nameContains,
-  PLAYER_MATCH_STAT_FIELDS_SELECT,
+  parseBoxScore,
   resolvePagination,
 } from "@common/utils";
 import { Injectable, NotFoundException } from "@nestjs/common";
@@ -142,29 +142,25 @@ const MATCH_DETAIL_SELECT = {
   },
 } as const;
 
-const PLAYER_MATCH_STATS_SELECT = {
-  player: {
+/** What a box score shows of each player. */
+const BOX_SCORE_PLAYER_SELECT = {
+  id: true,
+  name: true,
+  number: true,
+  position: true,
+  teamId: true,
+  team: {
     select: {
       id: true,
-      name: true,
       number: true,
-      position: true,
-      teamId: true,
-      team: {
+      club: {
         select: {
           id: true,
-          number: true,
-          club: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
+          name: true,
         },
       },
     },
   },
-  ...PLAYER_MATCH_STAT_FIELDS_SELECT,
 } as const;
 
 /** What a shot chart reads of a shot event: its type and location. */
@@ -190,8 +186,8 @@ type ShotResult = Prisma.MatchEventsGetPayload<{
   select: typeof SHOT_SELECT;
 }>;
 
-type PlayerMatchStatsResult = Prisma.PlayerMatchStatsGetPayload<{
-  select: typeof PLAYER_MATCH_STATS_SELECT;
+type BoxScorePlayerResult = Prisma.PlayersGetPayload<{
+  select: typeof BOX_SCORE_PLAYER_SELECT;
 }>;
 
 @Injectable()
@@ -255,19 +251,22 @@ export class MatchesService {
   ): Promise<MatchPlayerStatsResponseDto> {
     const match = await this.prisma.client.matches.findUnique({
       where: { id: matchId },
-      select: { homeTeamId: true, awayTeamId: true },
+      select: { homeTeamId: true, awayTeamId: true, boxScore: true },
     });
 
     if (!match) {
       throw new NotFoundException(`Match with ID ${matchId} not found`);
     }
 
-    const stats = await this.prisma.client.playerMatchStats.findMany({
-      where: { matchId },
-      select: PLAYER_MATCH_STATS_SELECT,
+    // Only a completed match has a box score.
+    const lines =
+      match.boxScore === null ? [] : parseBoxScore(match.boxScore, matchId);
+    const players = await this.prisma.client.players.findMany({
+      where: { id: { in: lines.map((line) => line.playerId) } },
+      select: BOX_SCORE_PLAYER_SELECT,
     });
 
-    const mappedStats = this.mapToPlayerStats(stats);
+    const mappedStats = this.mapToPlayerStats(matchId, lines, players);
     const homeRows = mappedStats.filter(
       (s) => s.player.teamId === match.homeTeamId,
     );
@@ -478,29 +477,37 @@ export class MatchesService {
     };
   }
 
+  /**
+   * Pairs each box-score line with its player. A line naming a player who no
+   * longer exists is an error: the JSON has no foreign key to prevent it.
+   */
   private mapToPlayerStats(
-    stats: PlayerMatchStatsResult[],
+    matchId: number,
+    lines: BoxScoreLine[],
+    players: BoxScorePlayerResult[],
   ): PlayerWithStatsDto[] {
-    return stats.map((stat) => ({
-      player: {
-        ...mapPlayerSummary(stat.player),
-        team: stat.player.team,
-      },
-      stats: {
-        ...mapPlayerMatchStats(stat),
-        playtimeSeconds: this.calculatePlaytime(
-          stat.playtimeIntervals as number[][] | null,
-        ),
-      },
-    }));
-  }
-
-  private calculatePlaytime(intervals: number[][] | null): number {
-    if (!intervals || intervals.length === 0) return 0;
-    return intervals.reduce(
-      (total, interval) => total + (interval[1] - interval[0]),
-      0,
-    );
+    const playersById = new Map(players.map((p) => [p.id, p]));
+    return lines.map(({ playerId, stats }) => {
+      const player = playersById.get(playerId);
+      if (!player) {
+        throw new Error(
+          `match ${matchId}: box score names unknown player ${playerId}`,
+        );
+      }
+      return {
+        player: {
+          ...mapPlayerSummary(player),
+          team: player.team,
+        },
+        stats: {
+          ...stats,
+          playtimeSeconds: stats.playtimeIntervals.reduce(
+            (total, [start, end]) => total + (end - start),
+            0,
+          ),
+        },
+      };
+    });
   }
 
   private buildPoolFilter(

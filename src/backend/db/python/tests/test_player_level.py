@@ -5,7 +5,6 @@ from collections import Counter
 from datetime import datetime, timezone
 from statistics import mean
 
-from generation.match_generator import STAT_COLUMNS
 from simulation.player_picker import PLAYER_LEVEL_RANGE, pick, player_level
 from tests.season_sample import build_generator, roster
 
@@ -35,15 +34,14 @@ def test_better_players_score_more():
     random.seed(13)
     generator = build_generator()
     starts_at = datetime(2026, 1, 10, 20, 0, tzinfo=timezone.utc)
-    points = STAT_COLUMNS.index("points") + 1
     top, bottom = [], []
     for index in range(150):
         result = generator.simulate(roster(index * 100), roster(index * 100 + 12), starts_at)
-        for row in result.stat_rows:
-            level = player_level(row[0])
+        for player_id, entry in result.box_score.items():
+            level = player_level(int(player_id))
             if level > 1.15:
-                top.append(row[points])
+                top.append(entry["points"])
             elif level < 0.85:
-                bottom.append(row[points])
+                bottom.append(entry["points"])
 
     assert mean(top) > 1.3 * mean(bottom)

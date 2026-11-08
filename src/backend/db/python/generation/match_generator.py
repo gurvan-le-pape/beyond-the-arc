@@ -8,12 +8,11 @@ Responsibilities:
   1. Load players for both teams
   2. Generate playtime rotations and substitutions
   3. Run MatchSimulator
-  4. Persist all results: score, events (including substitutions and
-     their players), and per-player stats (including playtime, derived from
-     those same events)
+  4. Persist all results: score and box score (per-player stats and
+     playtime, derived from the events), then the events themselves
+     (including substitutions and their players)
 """
 
-import json
 import logging
 from dataclasses import dataclass
 from datetime import datetime, timedelta
@@ -35,13 +34,13 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class SimulatedMatch:
-    """One simulated match, ready to persist. `stat_rows` follows insert_player_stats_bulk's row shape."""
+    """One simulated match, ready to persist. `box_score` is compute_box_score's shape."""
 
     events: list[dict]
     home_score: int
     away_score: int
     overtime: bool
-    stat_rows: list[tuple]
+    box_score: dict[str, dict]
 
 
 class MatchGenerator:
@@ -58,16 +57,16 @@ class MatchGenerator:
 
         result = self.simulate(home_players, away_players, match.starts_at)
 
-        # Persist result
         match_repository.update_match_result(
-            cursor, match.id, result.home_score, result.away_score, result.overtime, forfeit=False
+            cursor,
+            match.id,
+            result.home_score,
+            result.away_score,
+            result.overtime,
+            forfeit=False,
+            box_score=result.box_score,
         )
-
-        # Events
         match_repository.insert_match_events_bulk(cursor, match.id, result.events)
-
-        # Stats (including playtime, both derived from the events above)
-        match_repository.insert_player_stats_bulk(cursor, match.id, result.stat_rows)
 
         logger.info(f"Match {match.id}: generated ({result.home_score}–{result.away_score}).")
 
@@ -79,7 +78,7 @@ class MatchGenerator:
     ) -> SimulatedMatch:
         """
         Simulate one match without touching the database: rotations, events,
-        final score and the per-player stat rows derived from those events.
+        final score and the box score derived from those events.
         """
         home_playtimes, home_subs = generate_playtime(home_players)
         away_playtimes, away_subs = generate_playtime(away_players)
@@ -113,7 +112,7 @@ class MatchGenerator:
             home_score=home_score,
             away_score=away_score,
             overtime=overtime,
-            stat_rows=compute_player_stats(home_playtimes, away_playtimes, match_events),
+            box_score=compute_box_score(home_playtimes, away_playtimes, match_events),
         )
 
 
@@ -134,8 +133,8 @@ def _play_on_through_overtime(playtimes: dict, final_buzzer: int) -> None:
 # Stats aggregation
 # ------------------------------------------------------------------
 
-# Column order of a stat row, between the leading player id and the trailing
-# playtime intervals — insert_player_stats_bulk's row shape.
+# The counters of a player's box-score entry, beside its `playtime_intervals`.
+# The API reads the same names (common/utils/box-score.mapper.ts).
 STAT_COLUMNS = (
     "points", "fouls",
     "three_points_made", "three_points_attempted",
@@ -216,14 +215,16 @@ _ROLE_TALLIES = {
 }
 
 
-def compute_player_stats(
+def compute_box_score(
     home_playtimes: dict,
     away_playtimes: dict,
     match_events: list[dict],
-) -> list[tuple]:
+) -> dict[str, dict]:
     """
-    Aggregate stats from match events into per-player rows ready for DB insert.
-    Returns list of tuples matching insert_player_stats_bulk's expected shape.
+    Aggregate the match events into the box score: one entry per player named
+    by an event, keyed by player id as a string (a JSON object's keys are
+    strings), holding the STAT_COLUMNS counters and the player's
+    `playtime_intervals` as [start, end] second pairs.
     """
     all_playtimes = {**home_playtimes, **away_playtimes}
     stats: dict[int, dict[str, int]] = {}
@@ -237,11 +238,10 @@ def compute_player_stats(
             if tally:
                 tally(player_stats, event)
 
-    return [
-        (
-            player_id,
-            *(player_stats[column] for column in STAT_COLUMNS),
-            json.dumps(all_playtimes.get(player_id, [])),
-        )
+    return {
+        str(player_id): {
+            **player_stats,
+            "playtime_intervals": [list(interval) for interval in all_playtimes.get(player_id, [])],
+        }
         for player_id, player_stats in stats.items()
-    ]
+    }

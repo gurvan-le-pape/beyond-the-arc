@@ -162,6 +162,7 @@ export async function insertScheduledMatch(
  * @param homeScore - the home team's score
  * @param awayScore - the away team's score
  * @param forfeit - whether the home team forfeited
+ * @param boxScore - the stat lines by player id, as compute_box_score writes them
  */
 export async function completeMatch(
   client: Client,
@@ -169,12 +170,13 @@ export async function completeMatch(
   homeScore: number,
   awayScore: number,
   forfeit = false,
+  boxScore: Record<string, unknown> = {},
 ): Promise<void> {
   await client.query(
     `UPDATE matches
         SET home_team_score = $1, away_team_score = $2, overtime = false,
-            forfeit = $3, status = 'completed'
-      WHERE id = $4`,
-    [homeScore, awayScore, forfeit, matchId],
+            forfeit = $3, box_score = $4, status = 'completed'
+      WHERE id = $5`,
+    [homeScore, awayScore, forfeit, JSON.stringify(boxScore), matchId],
   );
 }

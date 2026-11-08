@@ -61,12 +61,12 @@ def simulate_sample(matches: int, seed: int) -> SampleReport:
         home, away = roster(base), roster(base + ROSTER_SIZE)
         positions = {player_id: position for player_id, _, position in home + away}
         result = generator.simulate(home, away, starts_at)
-        for row in result.stat_rows:
-            position = positions[row[0]]
+        for player_id, entry in result.box_score.items():
+            position = positions[int(player_id)]
             position_games[position] += 1
-            for column, value in zip(STAT_COLUMNS, row[1:-1]):
-                stat_totals[column] += value
-                position_totals.setdefault(position, Counter())[column] += value
+            for column in STAT_COLUMNS:
+                stat_totals[column] += entry[column]
+                position_totals.setdefault(position, Counter())[column] += entry[column]
         event_totals.update(e["event_type"] for e in result.events)
 
     team_games = matches * 2

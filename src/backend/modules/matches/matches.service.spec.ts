@@ -31,7 +31,7 @@ describe("MatchesService", () => {
         findUnique: jest.fn(),
         count: jest.fn(),
       },
-      playerMatchStats: {
+      players: {
         findMany: jest.fn(),
       },
       matchEvents: {
@@ -57,26 +57,27 @@ describe("MatchesService", () => {
     },
   };
 
-  // Reusable mock player stats shape
-  const mockPlayerStats = {
-    points: 0,
-    fouls: 0,
-    threePointsMade: 0,
-    threePointsAttempted: 0,
-    twoPointsIntMade: 0,
-    twoPointsIntAttempted: 0,
-    twoPointsExtMade: 0,
-    twoPointsExtAttempted: 0,
-    freeThrowsMade: 0,
-    freeThrowsAttempted: 0,
-    assists: 0,
-    turnovers: 0,
-    reboundsOffensive: 0,
-    reboundsDefensive: 0,
-    steals: 0,
+  /** A box-score line as the scheduler stores it. */
+  const storedLine = (overrides: Record<string, unknown> = {}) => ({
+    points: 20,
+    fouls: 2,
+    three_points_made: 1,
+    three_points_attempted: 2,
+    two_points_int_made: 3,
+    two_points_int_attempted: 4,
+    two_points_ext_made: 0,
+    two_points_ext_attempted: 1,
+    free_throws_made: 2,
+    free_throws_attempted: 2,
+    assists: 5,
+    turnovers: 1,
+    rebounds_offensive: 2,
+    rebounds_defensive: 3,
+    steals: 1,
     blocks: 0,
-    playtimeIntervals: null,
-  };
+    playtime_intervals: [],
+    ...overrides,
+  });
 
   // Reusable mock shapes matching MATCH_LIST_SELECT
   const mockMatchListResult = {
@@ -325,43 +326,22 @@ describe("MatchesService", () => {
       mockPrismaService.client.matches.findUnique.mockResolvedValue({
         homeTeamId: 1,
         awayTeamId: 2,
-      });
-      mockPrismaService.client.playerMatchStats.findMany.mockResolvedValue([
-        {
-          player: {
-            ...mockPlayer,
-            teamId: 1,
-            team: {
-              id: 100,
-              number: 5,
-              club: { id: 200, name: "Club A" },
-            },
-          },
-          points: 20,
-          fouls: 2,
-          threePointsMade: 1,
-          threePointsAttempted: 2,
-          twoPointsIntMade: 3,
-          twoPointsIntAttempted: 4,
-          twoPointsExtMade: 0,
-          twoPointsExtAttempted: 1,
-          freeThrowsMade: 2,
-          freeThrowsAttempted: 2,
-          assists: 5,
-          turnovers: 1,
-          reboundsOffensive: 2,
-          reboundsDefensive: 3,
-          steals: 1,
-          blocks: 0,
-          playtimeIntervals: [
-            [0, 10],
-            [15, 25],
-          ],
+        boxScore: {
+          "1": storedLine({
+            playtime_intervals: [
+              [0, 10],
+              [15, 25],
+            ],
+          }),
         },
-      ]);
+      });
+      mockPrismaService.client.players.findMany.mockResolvedValue([mockPlayer]);
 
       const result = await service.findPlayerMatchStatsByMatchId(1);
 
+      expect(mockPrismaService.client.players.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { id: { in: [1] } } }),
+      );
       expect(result.homeTeamId).toBe(1);
       expect(result.awayTeamId).toBe(2);
       expect(result.stats[0].player.name).toBe("Player One");
@@ -377,33 +357,9 @@ describe("MatchesService", () => {
       mockPrismaService.client.matches.findUnique.mockResolvedValue({
         homeTeamId: 1,
         awayTeamId: 2,
+        boxScore: { "1": storedLine() },
       });
-      mockPrismaService.client.playerMatchStats.findMany.mockResolvedValue([
-        {
-          player: {
-            ...mockPlayer,
-            teamId: 1,
-            team: { id: 100, number: 5, club: { id: 200, name: "Club A" } },
-          },
-          points: 20,
-          fouls: 2,
-          threePointsMade: 1,
-          threePointsAttempted: 2,
-          twoPointsIntMade: 3,
-          twoPointsIntAttempted: 4,
-          twoPointsExtMade: 0,
-          twoPointsExtAttempted: 1,
-          freeThrowsMade: 2,
-          freeThrowsAttempted: 2,
-          assists: 5,
-          turnovers: 1,
-          reboundsOffensive: 2,
-          reboundsDefensive: 3,
-          steals: 1,
-          blocks: 0,
-          playtimeIntervals: [],
-        },
-      ]);
+      mockPrismaService.client.players.findMany.mockResolvedValue([mockPlayer]);
 
       const result = await service.findPlayerMatchStatsByMatchId(1);
 
@@ -414,6 +370,48 @@ describe("MatchesService", () => {
       // No away-team rows -> zeroed totals.
       expect(result.awayTeamStats.assists).toBe(0);
       expect(result.awayTeamStats.fieldGoalPercentage).toBeNull();
+    });
+
+    it("lists the lines in player id order", async () => {
+      mockPrismaService.client.matches.findUnique.mockResolvedValue({
+        homeTeamId: 1,
+        awayTeamId: 2,
+        boxScore: { "12": storedLine(), "3": storedLine() },
+      });
+      mockPrismaService.client.players.findMany.mockResolvedValue([
+        { ...mockPlayer, id: 12 },
+        { ...mockPlayer, id: 3 },
+      ]);
+
+      const result = await service.findPlayerMatchStatsByMatchId(1);
+
+      expect(result.stats.map((s) => s.player.id)).toEqual([3, 12]);
+    });
+
+    it("returns no lines for a match without a box score", async () => {
+      mockPrismaService.client.matches.findUnique.mockResolvedValue({
+        homeTeamId: 1,
+        awayTeamId: 2,
+        boxScore: null,
+      });
+      mockPrismaService.client.players.findMany.mockResolvedValue([]);
+
+      const result = await service.findPlayerMatchStatsByMatchId(1);
+
+      expect(result.stats).toEqual([]);
+    });
+
+    it("fails loudly on a line naming an unknown player", async () => {
+      mockPrismaService.client.matches.findUnique.mockResolvedValue({
+        homeTeamId: 1,
+        awayTeamId: 2,
+        boxScore: { "77": storedLine() },
+      });
+      mockPrismaService.client.players.findMany.mockResolvedValue([]);
+
+      await expect(service.findPlayerMatchStatsByMatchId(5)).rejects.toThrow(
+        "match 5: box score names unknown player 77",
+      );
     });
 
     it("should throw NotFoundException if match not found", async () => {
@@ -605,43 +603,6 @@ describe("MatchesService", () => {
           }),
         }),
       );
-    });
-  });
-
-  describe("calculatePlaytime", () => {
-    it("should return 0 when playtimeIntervals is null", async () => {
-      mockPrismaService.client.matches.findUnique.mockResolvedValue({
-        homeTeamId: 1,
-        awayTeamId: 2,
-      });
-      mockPrismaService.client.playerMatchStats.findMany.mockResolvedValue([
-        {
-          player: mockPlayer,
-          ...mockPlayerStats,
-          playtimeIntervals: null,
-        },
-      ]);
-
-      const result = await service.findPlayerMatchStatsByMatchId(1);
-      expect(result.stats[0].stats.playtimeSeconds).toBe(0);
-      expect(result.stats[0].stats.playtimeIntervals).toBeNull();
-    });
-
-    it("should return 0 when playtimeIntervals is empty array", async () => {
-      mockPrismaService.client.matches.findUnique.mockResolvedValue({
-        homeTeamId: 1,
-        awayTeamId: 2,
-      });
-      mockPrismaService.client.playerMatchStats.findMany.mockResolvedValue([
-        {
-          player: mockPlayer,
-          ...mockPlayerStats,
-          playtimeIntervals: [],
-        },
-      ]);
-
-      const result = await service.findPlayerMatchStatsByMatchId(1);
-      expect(result.stats[0].stats.playtimeSeconds).toBe(0);
     });
   });
 

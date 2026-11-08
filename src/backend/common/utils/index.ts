@@ -6,6 +6,7 @@
 export * from "./aggregate-career-stats";
 export * from "./app-bootstrap.util";
 export * from "./bounded-memory-store";
+export * from "./box-score.mapper";
 export * from "./championship-filter.util";
 export * from "./cors-origins.util";
 export * from "./ffbb-links.util";
@@ -14,7 +15,6 @@ export * from "./name-search.util";
 export * from "./openapi.util";
 export * from "./organization-filter.util";
 export * from "./pagination.util";
-export * from "./player-match-stats.mapper";
 export * from "./player-summary.mapper";
 export * from "./ranking.util";
 export * from "./request-id.util";

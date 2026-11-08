@@ -5,7 +5,7 @@ import math
 import pytest
 
 from event_rules import MADE_SHOTS, MISSED_SHOTS, SHOT_CATEGORY_STAT_PREFIX
-from generation.match_generator import STAT_COLUMNS, compute_player_stats
+from generation.match_generator import STAT_COLUMNS, compute_box_score
 from simulation.event_generator import EventGenerator
 from tests.season_sample import build_generator, roster
 
@@ -63,13 +63,8 @@ def test_a_blocked_shot_counts_as_an_attempt_in_its_category():
             "player_roles": {"blocked": 1, "blocker": 2},
             "shot_category": category,
         }
-        rows = compute_player_stats({1: [(0, 2400)]}, {2: [(0, 2400)]}, [blocked])
-        shooter_row = next(row for row in rows if row[0] == 1)
-        attempts = {
-            column: shooter_row[1 + STAT_COLUMNS.index(column)]
-            for column in STAT_COLUMNS
-            if column.endswith("_attempted")
-        }
+        shooter = compute_box_score({1: [(0, 2400)]}, {2: [(0, 2400)]}, [blocked])["1"]
+        attempts = {column: shooter[column] for column in STAT_COLUMNS if column.endswith("_attempted")}
 
         assert attempts[f"{prefix}_attempted"] == 1, category
         assert sum(attempts.values()) == 1, category

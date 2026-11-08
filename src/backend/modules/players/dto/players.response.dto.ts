@@ -119,7 +119,8 @@ export class FilterValuesPlayersResponseDto {
 
 /**
  * Player statistics for a match.
- * All stat fields are non-nullable: PlayerMatchStats uses Int @default(0).
+ * All stat fields are non-nullable: parseBoxScoreLine rejects a stored line
+ * missing any of them.
  */
 export class PlayerMatchStatsDto {
   @ApiProperty({
