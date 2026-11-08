@@ -598,7 +598,7 @@
                     {
                       "properties": {
                         "data": {
-                          "$ref": "#/components/schemas/CommitteeResponseDto"
+                          "$ref": "#/components/schemas/CommitteeDetailResponseDto"
                         }
                       },
                       "required": [
@@ -3500,6 +3500,87 @@
           "department",
           "clubCount",
           "ffbbUrl"
+        ]
+      },
+      "CommitteeClubDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Club ID",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Club name",
+            "example": "BOURG BASKET"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "CommitteeDetailResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "Committee unique identifier",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Committee name",
+            "example": "COMITE DE L'AIN DE BASKET-BALL"
+          },
+          "address": {
+            "type": "string",
+            "nullable": true,
+            "description": "Committee address",
+            "example": "1 rue du Comité, 35000 Rennes"
+          },
+          "leagueId": {
+            "type": "number",
+            "description": "Associated league ID",
+            "example": 10
+          },
+          "department": {
+            "description": "Associated department information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DepartmentResponseDto"
+              }
+            ]
+          },
+          "clubCount": {
+            "type": "number",
+            "description": "Number of clubs in this committee",
+            "example": 15
+          },
+          "ffbbUrl": {
+            "type": "string",
+            "nullable": true,
+            "description": "The committee's page on the FFBB competitions site, where its contact details are kept up to date",
+            "example": "https://competitions.ffbb.com/ligues/sud/comites/0013"
+          },
+          "clubs": {
+            "description": "Every club of the committee, by name",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CommitteeClubDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "address",
+          "leagueId",
+          "department",
+          "clubCount",
+          "ffbbUrl",
+          "clubs"
         ]
       },
       "RegionDto": {

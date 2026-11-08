@@ -1059,6 +1059,54 @@ export interface components {
              */
             ffbbUrl: string | null;
         };
+        CommitteeClubDto: {
+            /**
+             * @description Club ID
+             * @example 1
+             */
+            id: number;
+            /**
+             * @description Club name
+             * @example BOURG BASKET
+             */
+            name: string;
+        };
+        CommitteeDetailResponseDto: {
+            /**
+             * @description Committee unique identifier
+             * @example 1
+             */
+            id: number;
+            /**
+             * @description Committee name
+             * @example COMITE DE L'AIN DE BASKET-BALL
+             */
+            name: string;
+            /**
+             * @description Committee address
+             * @example 1 rue du Comité, 35000 Rennes
+             */
+            address: string | null;
+            /**
+             * @description Associated league ID
+             * @example 10
+             */
+            leagueId: number;
+            /** @description Associated department information */
+            department: components["schemas"]["DepartmentResponseDto"];
+            /**
+             * @description Number of clubs in this committee
+             * @example 15
+             */
+            clubCount: number;
+            /**
+             * @description The committee's page on the FFBB competitions site, where its contact details are kept up to date
+             * @example https://competitions.ffbb.com/ligues/sud/comites/0013
+             */
+            ffbbUrl: string | null;
+            /** @description Every club of the committee, by name */
+            clubs: components["schemas"]["CommitteeClubDto"][];
+        };
         RegionDto: {
             /**
              * @description Region code
@@ -3011,7 +3059,7 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiEnvelopeDto"] & {
-                        data: components["schemas"]["CommitteeResponseDto"];
+                        data: components["schemas"]["CommitteeDetailResponseDto"];
                     };
                 };
             };

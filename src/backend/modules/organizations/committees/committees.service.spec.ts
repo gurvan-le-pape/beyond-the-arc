@@ -18,6 +18,9 @@ describe("CommitteesService", () => {
         findMany: jest.fn(),
         findUnique: jest.fn(),
       },
+      clubs: {
+        findMany: jest.fn(),
+      },
     },
   };
 
@@ -176,6 +179,11 @@ describe("CommitteesService", () => {
       mockPrismaService.client.committees.findUnique.mockResolvedValue(
         mockCommittee,
       );
+      const clubs = [
+        { id: 7, name: "AIN BASKET" },
+        { id: 3, name: "BOURG BASKET" },
+      ];
+      mockPrismaService.client.clubs.findMany.mockResolvedValue(clubs);
 
       const result = await service.findCommitteeById(1);
 
@@ -193,10 +201,18 @@ describe("CommitteesService", () => {
         where: { id: 1 },
         select: EXPECTED_SELECT,
       });
+      // Every club, unpaginated: the committee page lists them all.
+      expect(result.clubs).toEqual(clubs);
+      expect(mockPrismaService.client.clubs.findMany).toHaveBeenCalledWith({
+        where: { committeeId: 1 },
+        select: { id: true, name: true },
+        orderBy: [{ name: "asc" }, { id: "asc" }],
+      });
     });
 
     it("should throw NotFoundException when committee not found", async () => {
       mockPrismaService.client.committees.findUnique.mockResolvedValue(null);
+      mockPrismaService.client.clubs.findMany.mockResolvedValue([]);
 
       await expect(service.findCommitteeById(999)).rejects.toThrow(
         NotFoundException,

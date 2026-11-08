@@ -204,7 +204,7 @@ Leagues are the top level of the French basketball hierarchy. The list is stable
 | Method | Path              | Description                                       | Cached |
 | ------ | ----------------- | ------------------------------------------------- | ------ |
 | GET    | `/committees`     | All committees, optionally filtered by `leagueId` | 5 min  |
-| GET    | `/committees/:id` | Single committee by ID                            | No     |
+| GET    | `/committees/:id` | Single committee by ID, with every one of its clubs | No     |
 
 `GET /committees` without a `leagueId` returns all departmental committees. With `leagueId`, it returns only committees belonging to that league.
 

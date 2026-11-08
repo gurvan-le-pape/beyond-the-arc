@@ -7,3 +7,7 @@ import type { components } from "@/shared/types/api.generated";
  * CI fails when docs/openapi.json and api.generated.ts drift.
  */
 export type Committee = components["schemas"]["CommitteeResponseDto"];
+
+/** A committee with every one of its clubs, as `GET /committees/:id` returns it. */
+export type CommitteeDetail =
+  components["schemas"]["CommitteeDetailResponseDto"];
