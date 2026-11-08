@@ -6,19 +6,19 @@ import {
   useRegionsGeoJson,
 } from "@/features/geography/api";
 import type { GeoJsonData } from "@/features/geography/types";
+import { useCommittees } from "@/features/organizations/committees/api";
+import type { Committee } from "@/features/organizations/committees/types";
+import { useLeagues } from "@/features/organizations/leagues/api";
+import type { League } from "@/features/organizations/leagues/types";
 
-import {
-  useAllClubs,
-  useClubStatsByDepartment,
-  useClubStatsByRegion,
-} from "../../../api";
+import { useAllClubs } from "../../../api";
 import type { ClubBasic } from "../../../types/ClubBasic";
-import type { ClubStatsByDepartment } from "../../../types/ClubStatsByDepartment";
-import type { ClubStatsByRegion } from "../../../types/ClubStatsByRegion";
 
 interface UseMapDataReturn {
-  regions: ClubStatsByRegion[];
-  departments: ClubStatsByDepartment[];
+  /** The leagues, one per region, each with its club count. */
+  regions: League[];
+  /** The committees, one per department, each with its club count. */
+  departments: Committee[];
   clubs: ClubBasic[];
   regionsGeoJson: GeoJsonData | null;
   departmentsGeoJson: GeoJsonData | null;
@@ -34,26 +34,23 @@ interface UseMapDataReturn {
    * all settled, which is what drives the retry button's pending state.
    */
   retry: () => Promise<unknown>;
-  getRegionClubCount: (regionId: number) => number;
-  getDepartmentClubCount: (departmentId: string | number) => number;
 }
 
 /**
- * Custom hook to fetch and manage all map-related data.
- * Fetches: regions, departments, clubs, and GeoJSON boundaries.
- * Provides: club counting helpers for regions and departments.
+ * Fetches everything the map shows: leagues for the regions, committees for
+ * the departments, every club, and the GeoJSON boundaries. Each league and
+ * committee carries its own `clubCount`, which the region and department
+ * labels show.
  */
 export function useMapData(
-  initialRegions: ClubStatsByRegion[],
-  initialDepartments: ClubStatsByDepartment[],
+  initialRegions: League[],
+  initialDepartments: Committee[],
   initialClubs: ClubBasic[],
 ): UseMapDataReturn {
-  // Fetch regions
-  const regionsQuery = useClubStatsByRegion({ initialData: initialRegions });
+  const regionsQuery = useLeagues({ initialData: initialRegions });
   const { data: regions = initialRegions, error: regionsError } = regionsQuery;
 
-  // Fetch all departments
-  const departmentsQuery = useClubStatsByDepartment({
+  const departmentsQuery = useCommittees(undefined, {
     initialData: initialDepartments,
   });
   const { data: allDepartments = [], error: departmentsError } =
@@ -100,54 +97,6 @@ export function useMapData(
     departmentsGeoJsonError,
   ]);
 
-  /**
-   * Get club count for a specific region
-   * Aggregates clubs across all departments in the region
-   */
-  const getRegionClubCount = useMemo(() => {
-    if (allDepartments.length === 0 || allClubs.length === 0) {
-      return (_regionId: number) => 0;
-    }
-
-    const countsByRegion = new Map<number, number>();
-
-    allDepartments.forEach((dept) => {
-      const leagueId = dept.leagueId;
-      if (!leagueId) return;
-
-      const clubsInDept = allClubs.filter(
-        (club) => club.committeeId === dept.id,
-      );
-
-      countsByRegion.set(
-        leagueId,
-        (countsByRegion.get(leagueId) ?? 0) + clubsInDept.length,
-      );
-    });
-
-    return (regionId: number) => countsByRegion.get(regionId) ?? 0;
-  }, [allDepartments, allClubs]);
-
-  /**
-   * Get club count for a specific department
-   */
-  const getDepartmentClubCount = useMemo(() => {
-    if (allClubs.length === 0) {
-      return (_departmentId: string | number) => 0;
-    }
-
-    const countsByDept = new Map<string | number, number>();
-
-    allClubs.forEach((club) => {
-      const deptId = club.committeeId;
-      if (!deptId) return;
-      countsByDept.set(deptId, (countsByDept.get(deptId) ?? 0) + 1);
-    });
-
-    return (departmentId: string | number) =>
-      countsByDept.get(departmentId) ?? 0;
-  }, [allClubs]);
-
   return {
     regions,
     departments: allDepartments,
@@ -156,7 +105,5 @@ export function useMapData(
     departmentsGeoJson,
     error,
     retry,
-    getRegionClubCount,
-    getDepartmentClubCount,
   };
 }

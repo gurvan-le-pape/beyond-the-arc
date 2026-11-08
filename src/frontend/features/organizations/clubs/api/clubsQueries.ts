@@ -75,46 +75,10 @@ export const clubsQueries = {
   }),
 
   /**
-   * Query options for fetching club statistics aggregated by region.
-   * `GET /clubs/stats/by-region`, 24 h `staleTime` — matching the 24 h
-   * `ServerRevalidate.REFERENCE` window the server half uses for it.
-   *
-   * @example
-   * useQuery(clubsQueries.statsByRegion())
-   *
-   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
-   */
-  statsByRegion: () => ({
-    queryKey: clubsKeys.statsByRegion(),
-    queryFn: ({ signal }: QueryFunctionContext) =>
-      clubsService.getStatsByRegion(signal),
-    ...CLUBS_STATIC_CONFIG,
-    staleTime: 24 * 60 * 60 * 1000,
-  }),
-
-  /**
-   * Query options for fetching club statistics aggregated by département.
-   * `GET /clubs/stats/by-department`, 24 h `staleTime` — the same window the
-   * server half uses (`ServerRevalidate.REFERENCE`) and the same as
-   * `statsByRegion`, because all three move only when the static-data refresh
-   * runs.
-   *
-   * @example
-   * useQuery(clubsQueries.statsByDepartment())
-   *
-   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
-   */
-  statsByDepartment: () => ({
-    queryKey: clubsKeys.statsByDepartment(),
-    queryFn: ({ signal }: QueryFunctionContext) =>
-      clubsService.getStatsByDepartment(undefined, signal),
-    ...CLUBS_STATIC_CONFIG,
-    staleTime: 24 * 60 * 60 * 1000,
-  }),
-
-  /**
    * Query options for fetching all clubs without filtering.
-   * `GET /clubs/all`, 24 h `staleTime` — see `statsByDepartment` above.
+   * `GET /clubs/all`, 24 h `staleTime` — the same window the server half uses
+   * (`ServerRevalidate.REFERENCE`), since clubs move only when the static-data
+   * refresh runs.
    *
    * @example
    * useQuery(clubsQueries.allClubs())

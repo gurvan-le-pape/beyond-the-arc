@@ -7,5 +7,3 @@ export * from "./ClubBasic";
 export * from "./ClubDetailed";
 export * from "./ClubFilters";
 export * from "./ClubsPaginatedResponse";
-export * from "./ClubStatsByDepartment";
-export * from "./ClubStatsByRegion";

@@ -13,11 +13,15 @@ import { leaguesQueries } from "./leaguesQueries";
  * - Automatic caching (5 minutes stale, 15 minutes GC)
  * - Background refetch on mount when stale (window-focus refetching is off)
  *
+ * @param options - `initialData` seeds the cache from a server render, so the first paint has no loading state
  * @returns React Query result with leagues data
  *
  * @example
  * const { data: leagues, isLoading } = useLeagues();
  */
-export function useLeagues() {
-  return useQuery<League[], ApiError>(leaguesQueries.list());
+export function useLeagues(options?: { initialData?: League[] }) {
+  return useQuery<League[], ApiError>({
+    ...leaguesQueries.list(),
+    initialData: options?.initialData,
+  });
 }

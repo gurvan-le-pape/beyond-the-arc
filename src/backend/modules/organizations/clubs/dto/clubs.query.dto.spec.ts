@@ -3,10 +3,7 @@ import { CompetitionLevel } from "@common/constants";
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
 
-import {
-  GetClubsQueryDto,
-  GetClubStatsByDepartmentQueryDto,
-} from "./clubs.query.dto";
+import { GetClubsQueryDto } from "./clubs.query.dto";
 
 describe("GetClubsQueryDto", () => {
   it("should pass validation with no fields (all optional)", async () => {
@@ -57,28 +54,5 @@ describe("GetClubsQueryDto", () => {
       const errors = await validate(dto);
       expect(errors.some((e) => e.property === "committeeId")).toBe(true);
     });
-  });
-});
-
-describe("GetClubStatsByDepartmentQueryDto", () => {
-  it("should pass validation with no fields (all optional)", async () => {
-    const dto = plainToInstance(GetClubStatsByDepartmentQueryDto, {});
-    const errors = await validate(dto);
-    expect(errors).toHaveLength(0);
-  });
-
-  it("should transform string leagueId to number", async () => {
-    const dto = plainToInstance(GetClubStatsByDepartmentQueryDto, {
-      leagueId: "3",
-    });
-    expect(dto.leagueId).toBe(3);
-  });
-
-  it("should fail validation when leagueId is not a number", async () => {
-    const dto = plainToInstance(GetClubStatsByDepartmentQueryDto, {
-      leagueId: "abc",
-    });
-    const errors = await validate(dto);
-    expect(errors.some((e) => e.property === "leagueId")).toBe(true);
   });
 });

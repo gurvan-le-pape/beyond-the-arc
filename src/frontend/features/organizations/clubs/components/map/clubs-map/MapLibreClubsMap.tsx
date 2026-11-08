@@ -12,13 +12,13 @@ import {
   Popup,
 } from "react-map-gl/maplibre";
 
+import type { Committee } from "@/features/organizations/committees/types";
+import type { League } from "@/features/organizations/leagues/types";
 import { normalizeDepartmentCode } from "@/features/organizations/utils";
 import { ErrorMessage } from "@/shared/components/feedback";
 import { logger } from "@/shared/utils";
 
 import type { ClubBasic } from "../../../types/ClubBasic";
-import type { ClubStatsByDepartment } from "../../../types/ClubStatsByDepartment";
-import type { ClubStatsByRegion } from "../../../types/ClubStatsByRegion";
 import { ClubGroupPopupContent } from "./ClubGroupPopupContent";
 import { ClubPopupContent } from "./ClubPopupContent";
 import { ClubsLayer } from "./layers/ClubsLayer";
@@ -48,8 +48,8 @@ const MAPLIBRE_WORKER_URL = new URL(
 ).toString();
 
 interface MapLibreClubsMapProps {
-  readonly initialRegions: ClubStatsByRegion[];
-  readonly initialDepartments: ClubStatsByDepartment[];
+  readonly initialRegions: League[];
+  readonly initialDepartments: Committee[];
   readonly initialClubs: ClubBasic[];
 }
 
@@ -77,8 +77,6 @@ export function MapLibreClubsMap({
     clubs,
     regionsGeoJson,
     departmentsGeoJson,
-    getRegionClubCount,
-    getDepartmentClubCount,
     error,
     retry,
   } = useMapData(initialRegions, initialDepartments, initialClubs);
@@ -142,10 +140,10 @@ export function MapLibreClubsMap({
     return generateLabelFeatures(regionsGeoJson.features, (properties) => {
       const geoJsonCode = properties.code;
       const dbRegionCode = GEOJSON_TO_DB_REGION_CODE[geoJsonCode];
-      const region = regions.find((r) => r.code === dbRegionCode);
-      return region ? getRegionClubCount(region.id) : 0;
+      const region = regions.find((r) => r.region.code === dbRegionCode);
+      return region?.clubCount ?? 0;
     });
-  }, [regionsGeoJson, regions, getRegionClubCount, showRegions]);
+  }, [regionsGeoJson, regions, showRegions]);
 
   // Generate department labels with club counts
   const departmentLabels = useMemo(() => {
@@ -161,14 +159,9 @@ export function MapLibreClubsMap({
         return normalizeDepartmentCode(dbCode) === normalizedGeoCode;
       });
 
-      return dept ? getDepartmentClubCount(dept.id) : 0;
+      return dept?.clubCount ?? 0;
     });
-  }, [
-    departmentsGeoJson,
-    departments,
-    getDepartmentClubCount,
-    showDepartments,
-  ]);
+  }, [departmentsGeoJson, departments, showDepartments]);
 
   // A club's department, through the committee it belongs to: the popup's
   // second line. Departments come already loaded for the department layer.

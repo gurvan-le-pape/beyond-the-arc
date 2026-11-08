@@ -22,145 +22,6 @@
         ]
       }
     },
-    "/api/clubs/stats/by-region": {
-      "get": {
-        "description": "Retrieves club counts aggregated by league. Results are cached for 10 minutes.",
-        "operationId": "ClubsController_getClubStatsByRegion",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "List of club statistics by region",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiEnvelopeDto"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "type": "array",
-                          "items": {
-                            "$ref": "#/components/schemas/ClubStatsByRegionDto"
-                          }
-                        },
-                        "meta": {
-                          "$ref": "#/components/schemas/ApiListMetaDto"
-                        }
-                      },
-                      "required": [
-                        "data",
-                        "meta"
-                      ]
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponseDto"
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get club statistics by region",
-        "tags": [
-          "clubs"
-        ]
-      }
-    },
-    "/api/clubs/stats/by-department": {
-      "get": {
-        "description": "Retrieves club counts aggregated by committee. Optionally filter by league. Results are cached for 5 minutes.",
-        "operationId": "ClubsController_getClubStatsByDepartment",
-        "parameters": [
-          {
-            "name": "leagueId",
-            "required": false,
-            "in": "query",
-            "description": "Filter by league ID",
-            "schema": {
-              "minimum": 1,
-              "example": 1,
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "List of club statistics by department",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiEnvelopeDto"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "type": "array",
-                          "items": {
-                            "$ref": "#/components/schemas/ClubStatsByDepartmentDto"
-                          }
-                        },
-                        "meta": {
-                          "$ref": "#/components/schemas/ApiListMetaDto"
-                        }
-                      },
-                      "required": [
-                        "data",
-                        "meta"
-                      ]
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid query parameters",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponseDto"
-                },
-                "example": {
-                  "statusCode": 400,
-                  "message": [
-                    "League regionale ID must be a valid number string"
-                  ],
-                  "error": "Bad Request",
-                  "path": "/api/clubs/stats/by-department?leagueId=abc",
-                  "timestamp": "2024-02-05T10:00:00Z"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponseDto"
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get club statistics by department",
-        "tags": [
-          "clubs"
-        ]
-      }
-    },
     "/api/clubs/all": {
       "get": {
         "description": "Retrieves all clubs without any filtering or pagination. Intended for map initialization where all club coordinates are needed at once. Results are cached for 5 minutes.",
@@ -2677,143 +2538,6 @@
           "count"
         ]
       },
-      "ClubStatsByRegionDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "number",
-            "description": "League regionale ID",
-            "example": 1
-          },
-          "code": {
-            "type": "string",
-            "description": "Region code — the FFBB's alphabetic league code, not the INSEE numeric region code",
-            "example": "ARA"
-          },
-          "name": {
-            "type": "string",
-            "description": "League name",
-            "example": "AUVERGNE-RHÔNE-ALPES"
-          },
-          "clubCount": {
-            "type": "number",
-            "description": "Number of clubs in this region",
-            "example": 42
-          }
-        },
-        "required": [
-          "id",
-          "code",
-          "name",
-          "clubCount"
-        ]
-      },
-      "ApiErrorResponseDto": {
-        "type": "object",
-        "properties": {
-          "statusCode": {
-            "type": "number",
-            "description": "HTTP status code, repeated in the body for convenience",
-            "example": 404
-          },
-          "message": {
-            "description": "What went wrong, for a developer reading logs — never user-facing copy. An array when it carries per-field validation failures.",
-            "example": "Player with ID 999999999 not found",
-            "oneOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              }
-            ]
-          },
-          "error": {
-            "type": "string",
-            "description": "The HTTP status name, e.g. \"Not Found\" or \"Bad Request\" — derived from the status code, never the exception class name",
-            "example": "Not Found"
-          },
-          "path": {
-            "type": "string",
-            "description": "The request path, including the /api prefix",
-            "example": "/api/players/999999999"
-          },
-          "timestamp": {
-            "type": "string",
-            "description": "When the error was produced, as an ISO 8601 UTC instant",
-            "example": "2026-02-05T10:00:00.000Z"
-          }
-        },
-        "required": [
-          "statusCode",
-          "message",
-          "error",
-          "path",
-          "timestamp"
-        ]
-      },
-      "DepartmentInfoDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "Department name",
-            "example": "Ain"
-          },
-          "code": {
-            "type": "string",
-            "description": "Department code",
-            "example": "01"
-          }
-        },
-        "required": [
-          "name",
-          "code"
-        ]
-      },
-      "ClubStatsByDepartmentDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "number",
-            "description": "Committee ID",
-            "example": 1
-          },
-          "name": {
-            "type": "string",
-            "description": "Committee name",
-            "example": "Comité de l'Ain"
-          },
-          "department": {
-            "description": "Department information",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/DepartmentInfoDto"
-              }
-            ]
-          },
-          "leagueId": {
-            "type": "number",
-            "description": "League regionale ID",
-            "example": 1
-          },
-          "clubCount": {
-            "type": "number",
-            "description": "Number of clubs in this department",
-            "example": 15
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "department",
-          "leagueId",
-          "clubCount"
-        ]
-      },
       "ClubBasicResponseDto": {
         "type": "object",
         "properties": {
@@ -2871,6 +2595,53 @@
           "longitude",
           "committeeId",
           "leagueId"
+        ]
+      },
+      "ApiErrorResponseDto": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number",
+            "description": "HTTP status code, repeated in the body for convenience",
+            "example": 404
+          },
+          "message": {
+            "description": "What went wrong, for a developer reading logs — never user-facing copy. An array when it carries per-field validation failures.",
+            "example": "Player with ID 999999999 not found",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ]
+          },
+          "error": {
+            "type": "string",
+            "description": "The HTTP status name, e.g. \"Not Found\" or \"Bad Request\" — derived from the status code, never the exception class name",
+            "example": "Not Found"
+          },
+          "path": {
+            "type": "string",
+            "description": "The request path, including the /api prefix",
+            "example": "/api/players/999999999"
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "When the error was produced, as an ISO 8601 UTC instant",
+            "example": "2026-02-05T10:00:00.000Z"
+          }
+        },
+        "required": [
+          "statusCode",
+          "message",
+          "error",
+          "path",
+          "timestamp"
         ]
       },
       "ApiPageMetaDto": {

@@ -6,8 +6,6 @@ import type { ApiError } from "@/shared/types";
 import type { ClubBasic } from "../types/ClubBasic";
 import type { ClubFilters } from "../types/ClubFilters";
 import type { ClubsPaginatedResponse } from "../types/ClubsPaginatedResponse";
-import type { ClubStatsByDepartment } from "../types/ClubStatsByDepartment";
-import type { ClubStatsByRegion } from "../types/ClubStatsByRegion";
 import { clubsQueries } from "./clubsQueries";
 
 /**
@@ -32,51 +30,6 @@ export function useClubs(
   return useQuery<ClubsPaginatedResponse, ApiError>({
     ...clubsQueries.list(filters),
     enabled: options?.enabled ?? true,
-  });
-}
-
-/**
- * Hook to fetch club statistics aggregated by region.
- * Reads `/clubs/stats/by-region` from the backend directly; 24 h `staleTime`.
- * See `CLUBS_STATIC_CONFIG` in `clubsQueries.ts` for how that relates to the
- * server half's window, and why `initialData` keeps this from fetching.
- *
- * @param options - Additional query options including optional initialData for SSR
- * @returns React Query result with region stats
- *
- * @example
- * const { data: regions = [] } = useClubStatsByRegion();
- *
- * @example
- * // With SSR initial data
- * const { data: regions } = useClubStatsByRegion({ initialData: serverRegions });
- */
-export function useClubStatsByRegion(options?: {
-  initialData?: ClubStatsByRegion[];
-}) {
-  return useQuery<ClubStatsByRegion[], ApiError>({
-    ...clubsQueries.statsByRegion(),
-    initialData: options?.initialData,
-  });
-}
-
-/**
- * Hook to fetch club statistics aggregated by département.
- * Reads `/clubs/stats/by-department` from the backend directly; 24 h `staleTime`.
- *
- * @returns React Query result with department stats
- *
- * @example
- * const { data: departments = [] } = useClubStatsByDepartment();
- *
- * @param options - `initialData` seeds the cache from a server render, so the first paint has no loading state
- */
-export function useClubStatsByDepartment(options?: {
-  initialData?: ClubStatsByDepartment[];
-}) {
-  return useQuery<ClubStatsByDepartment[], ApiError>({
-    ...clubsQueries.statsByDepartment(),
-    initialData: options?.initialData,
   });
 }
 
