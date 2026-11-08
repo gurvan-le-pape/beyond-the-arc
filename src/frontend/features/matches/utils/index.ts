@@ -6,6 +6,7 @@
 export * from "./buildMatchTeam";
 export * from "./eventDescription";
 export * from "./eventHelpers";
+export * from "./forfeitSides";
 export * from "./formatPlaytime";
 export * from "./getCurrentRound";
 export * from "./getSortedRounds";

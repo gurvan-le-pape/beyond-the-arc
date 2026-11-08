@@ -956,6 +956,11 @@ export interface components {
              */
             gamesLost: number;
             /**
+             * @description Games forfeited: lost by not playing, for no points
+             * @example 0
+             */
+            gamesForfeited: number;
+            /**
              * @description Goal difference
              * @example 45
              */
@@ -1189,11 +1194,11 @@ export interface components {
              */
             matchId: number;
             /**
-             * @description How it went for the team: W for a win, L for a loss
+             * @description How it went for the team: W for a win, L for a loss, F for a forfeit
              * @example W
              * @enum {string}
              */
-            result: "W" | "L";
+            result: "W" | "L" | "F";
         };
         LeaderboardResponseDto: {
             /**
@@ -2475,6 +2480,11 @@ export interface components {
              * @example 72
              */
             awayTeamScore: number | null;
+            /**
+             * @description Whether the match was forfeited; the side that forfeited scored 0
+             * @example false
+             */
+            forfeit: boolean;
         };
         TeamSeasonStatsDto: {
             /**

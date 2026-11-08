@@ -10,6 +10,7 @@ import {
 import { LeaderboardTable } from "@/features/competitions/leaderboards/components";
 import type { Leaderboard } from "@/features/competitions/leaderboards/types";
 import type { RecentPool } from "@/features/competitions/pools/types";
+import { ForfeitBadge } from "@/features/matches/components";
 import type { Match } from "@/features/matches/types";
 import { matchupSide } from "@/features/matches/utils";
 import { Section } from "@/shared/components/blocks";
@@ -136,6 +137,7 @@ export function LatestRoundSection({
                     status={match.status}
                     size="line"
                   />
+                  {match.forfeit && <ForfeitBadge className="mt-2" />}
                 </Card>
               </li>
             ))}

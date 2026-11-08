@@ -347,6 +347,7 @@ describe("TeamsService", () => {
           status: "completed",
           homeTeamScore: 85,
           awayTeamScore: 72,
+          forfeit: false,
           // Player 9 plays for the opponent.
           boxScore: { "1": storedLine(15), "9": storedLine(40) },
         },
@@ -365,6 +366,7 @@ describe("TeamsService", () => {
       expect(result.matches).toHaveLength(1);
       expect(result.matches[0].id).toBe(1);
       expect(result.matches[0].status).toBe("completed");
+      expect(result.matches[0].forfeit).toBe(false);
       // The box scores feed the season stats but are not returned.
       expect(result.matches[0]).not.toHaveProperty("players");
       expect(result.seasonStats.rebounds).toBe(8);

@@ -84,7 +84,7 @@ export function LeaderboardTable({
       numeric: true,
       render: (row) => (
         <span className="whitespace-nowrap">
-          {row.gamesWon}–{row.gamesLost}
+          {row.gamesWon}–{row.gamesLost}–{row.gamesForfeited}
         </span>
       ),
     },
@@ -149,6 +149,16 @@ export function LeaderboardTable({
       from: "sm",
       numeric: true,
       render: (row) => row.gamesLost,
+    },
+    {
+      key: "gamesForfeited",
+      header: abbreviation(
+        tCommon("table.abbr.gamesForfeited"),
+        tCommon("table.gamesForfeited"),
+      ),
+      from: "sm",
+      numeric: true,
+      render: (row) => row.gamesForfeited,
     },
     {
       key: "pointDifference",

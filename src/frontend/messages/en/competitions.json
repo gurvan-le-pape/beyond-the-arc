@@ -28,6 +28,8 @@
     "loss": "Lost",
     "winAbbr": "W",
     "lossAbbr": "L",
+    "forfeit": "Forfeited",
+    "forfeitAbbr": "F",
     "none": "No games yet"
   },
   "leaderboardTitle": "Leaderboard",

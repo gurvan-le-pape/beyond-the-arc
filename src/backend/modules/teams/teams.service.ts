@@ -108,6 +108,7 @@ const TEAM_MATCH_HISTORY_SELECT = {
   status: true,
   homeTeamScore: true,
   awayTeamScore: true,
+  forfeit: true,
   homeTeam: {
     select: {
       id: true,
@@ -422,6 +423,7 @@ export class TeamsService {
       status: match.status as MatchStatus,
       homeTeamScore: match.homeTeamScore,
       awayTeamScore: match.awayTeamScore,
+      forfeit: match.forfeit,
     } satisfies TeamMatchHistoryDto;
   }
 

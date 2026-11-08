@@ -92,6 +92,13 @@ export class TeamLeaderboardDto {
   @ApiProperty({ description: "Games lost", example: 2, type: Number })
   gamesLost!: number;
 
+  @ApiProperty({
+    description: "Games forfeited: lost by not playing, for no points",
+    example: 0,
+    type: Number,
+  })
+  gamesForfeited!: number;
+
   @ApiProperty({ description: "Goal difference", example: 45, type: Number })
   pointDifference!: number;
 

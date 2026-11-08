@@ -541,6 +541,7 @@ describe("ClubsService", () => {
         gamesPlayed: 2,
         gamesWon: 1,
         gamesLost: 1,
+        gamesForfeited: 0,
         pointDifference: 5,
         poolId: 10,
       });

@@ -47,6 +47,6 @@
     "clubs": "{count, plural, one {club} other {clubs}}",
     "championships": "{count, plural, one {championship} other {championships}}",
     "teams": "{count, plural, one {team} other {teams}}",
-    "record": "Record (W–L)"
+    "record": "Record (W–L–F)"
   }
 }

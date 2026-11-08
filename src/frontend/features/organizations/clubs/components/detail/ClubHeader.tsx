@@ -28,6 +28,10 @@ export function ClubHeader({ club }: ClubHeaderProps) {
     (sum, team) => sum + team.leaderboard.gamesLost,
     0,
   );
+  const forfeited = club.teams.reduce(
+    (sum, team) => sum + team.leaderboard.gamesForfeited,
+    0,
+  );
 
   return (
     <OrganizationHeader
@@ -52,7 +56,7 @@ export function ClubHeader({ club }: ClubHeaderProps) {
           label: t("header.championships", { count: championshipCount }),
         },
         {
-          value: `${format.number(won)}–${format.number(lost)}`,
+          value: `${format.number(won)}–${format.number(lost)}–${format.number(forfeited)}`,
           label: t("header.record"),
         },
       ]}

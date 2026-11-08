@@ -9,7 +9,8 @@ export class FormGameDto {
   matchId!: number;
 
   @ApiProperty({
-    description: "How it went for the team: W for a win, L for a loss",
+    description:
+      "How it went for the team: W for a win, L for a loss, F for a forfeit",
     enum: Object.values(FormResult),
     example: "W",
   })
