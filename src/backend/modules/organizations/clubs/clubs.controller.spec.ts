@@ -7,7 +7,7 @@
  * Uses NestJS TestingModule and mocks ClubsService.
  */
 
-import { Category, CompetitionLevel, Gender } from "@common/constants";
+import { CompetitionLevel } from "@common/constants";
 import { CacheDedupService } from "@common/services/cache-dedup.service";
 import { CACHE_MANAGER } from "@nestjs/cache-manager";
 import type { TestingModule } from "@nestjs/testing";
@@ -201,8 +201,6 @@ describe("ClubsController", () => {
         level: CompetitionLevel.REGIONAL,
         committeeId: 1,
         leagueId: 2,
-        category: Category.U18,
-        gender: Gender.MALE,
       };
 
       const result = await controller.getClubs(dto);
@@ -213,8 +211,6 @@ describe("ClubsController", () => {
         level: CompetitionLevel.REGIONAL,
         committeeId: 1,
         leagueId: 2,
-        category: Category.U18,
-        gender: Gender.MALE,
       });
     });
 
@@ -222,7 +218,7 @@ describe("ClubsController", () => {
       mockClubsService.findClubsByFilters.mockResolvedValue([]);
 
       const dto: GetClubsQueryDto = {
-        category: Category.U18,
+        leagueId: 2,
       };
 
       await controller.getClubs(dto);
@@ -230,9 +226,7 @@ describe("ClubsController", () => {
       expect(mockClubsService.findClubsByFilters).toHaveBeenCalledWith({
         level: undefined,
         committeeId: undefined,
-        leagueId: undefined,
-        category: Category.U18,
-        gender: undefined,
+        leagueId: 2,
       });
     });
 
@@ -248,8 +242,6 @@ describe("ClubsController", () => {
         level: undefined,
         committeeId: undefined,
         leagueId: undefined,
-        category: undefined,
-        gender: undefined,
       });
     });
 
@@ -394,8 +386,6 @@ describe("ClubsController", () => {
         level: CompetitionLevel.REGIONAL,
         committeeId: "1",
         leagueId: "2",
-        category: Category.U18,
-        gender: Gender.MALE,
       });
 
       const errors = await validate(dto);
@@ -405,7 +395,7 @@ describe("ClubsController", () => {
 
     it("should validate a correct DTO with partial fields", async () => {
       const dto = plainToInstance(GetClubsQueryDto, {
-        category: Category.U18,
+        leagueId: "2",
       });
 
       const errors = await validate(dto);
@@ -455,30 +445,6 @@ describe("ClubsController", () => {
       expect(errors.length).toBeGreaterThan(0);
       expect(errors[0].property).toBe("leagueId");
       expect(errors[0].constraints).toHaveProperty("isInt");
-    });
-
-    it("should fail for invalid category", async () => {
-      const dto = plainToInstance(GetClubsQueryDto, {
-        category: "InvalidCategory",
-      });
-
-      const errors = await validate(dto);
-
-      expect(errors.length).toBeGreaterThan(0);
-      expect(errors[0].property).toBe("category");
-      expect(errors[0].constraints).toHaveProperty("isEnum");
-    });
-
-    it("should fail for invalid gender", async () => {
-      const dto = plainToInstance(GetClubsQueryDto, {
-        gender: "InvalidGender",
-      });
-
-      const errors = await validate(dto);
-
-      expect(errors.length).toBeGreaterThan(0);
-      expect(errors[0].property).toBe("gender");
-      expect(errors[0].constraints).toHaveProperty("isEnum");
     });
   });
 

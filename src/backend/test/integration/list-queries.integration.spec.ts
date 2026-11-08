@@ -231,7 +231,6 @@ describe("list queries", () => {
 
       const { items } = await service.findClubsByFilters({
         level: CompetitionLevel.DEPARTMENTAL,
-        gender: Gender.FEMALE,
       });
 
       expect(ids({ items })).toEqual(departmental.clubIds);

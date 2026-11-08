@@ -1,10 +1,5 @@
 // src/backend/modules/organizations/clubs/dto/clubs.query.dto.ts
-import {
-  Category,
-  CompetitionLevel,
-  Gender,
-  MAX_SEARCH_LENGTH,
-} from "@common/constants";
+import { CompetitionLevel, MAX_SEARCH_LENGTH } from "@common/constants";
 import { PaginationQueryDto } from "@common/dto";
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
@@ -55,28 +50,6 @@ export class GetClubsQueryDto extends PaginationQueryDto {
   @IsInt()
   @Min(1)
   leagueId?: number;
-
-  @ApiPropertyOptional({
-    description: "Filter by category",
-    enum: Category,
-    example: Category.U18,
-  })
-  @IsOptional()
-  @IsEnum(Category, {
-    message: `Category must be one of: ${Object.values(Category).join(", ")}`,
-  })
-  category?: Category;
-
-  @ApiPropertyOptional({
-    description: "Filter by gender",
-    enum: Gender,
-    example: Gender.MALE,
-  })
-  @IsOptional()
-  @IsEnum(Gender, {
-    message: `Gender must be one of: ${Object.values(Gender).join(", ")}`,
-  })
-  gender?: Gender;
 
   @ApiPropertyOptional({
     description: "Search by club name",

@@ -220,7 +220,7 @@ Leagues are the top level of the French basketball hierarchy. The list is stable
 | GET    | `/clubs/stats/by-department` | Club counts grouped by committee, optional `leagueId` | 5 min  |
 | GET    | `/clubs/:id`                 | Single club with full team detail                     | No     |
 
-`GET /clubs` supports filtering by `level`, `committeeId`, `leagueId`, `category`, `gender`, and `search` (club name, case-insensitive), with `page` and `limit` for pagination.
+`GET /clubs` supports filtering by `level` (clubs with a team at that level), `committeeId`, `leagueId`, and `search` (club name, case-insensitive), with `page` and `limit` for pagination.
 
 `GET /clubs/all` returns every club without filtering or pagination. It exists specifically for the interactive map, which needs all club coordinates in a single request to render pins on load.
 
