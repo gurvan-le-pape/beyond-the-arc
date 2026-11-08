@@ -19,6 +19,7 @@ class ScheduledMatch:
     home_team_id: int
     away_team_id: int
     starts_at: datetime
+    level: str
 
 
 # ---------------------------------------------------------------------------
@@ -43,13 +44,16 @@ def insert_scheduled_matches_bulk(
 
 
 def fetch_due_matches(cursor: psycopg.Cursor) -> list[ScheduledMatch]:
-    """Fetch all matches that are due but not yet generated."""
+    """Fetch all matches that are due but not yet generated, with their championship's level."""
     cursor.execute(
         """
-        SELECT id, matchday, home_team_id, away_team_id, starts_at
-        FROM matches
-        WHERE starts_at <= NOW() AND status = 'scheduled'
-        ORDER BY starts_at ASC;
+        SELECT m.id, m.matchday, m.home_team_id, m.away_team_id, m.starts_at, c.level
+        FROM matches m
+        JOIN teams t ON t.id = m.home_team_id
+        JOIN pools p ON p.id = t.pool_id
+        JOIN championships c ON c.id = p.championship_id
+        WHERE m.starts_at <= NOW() AND m.status = 'scheduled'
+        ORDER BY m.starts_at ASC;
         """
     )
     return [
@@ -59,6 +63,7 @@ def fetch_due_matches(cursor: psycopg.Cursor) -> list[ScheduledMatch]:
             home_team_id=row[2],
             away_team_id=row[3],
             starts_at=row[4],
+            level=row[5],
         )
         for row in cursor.fetchall()
     ]

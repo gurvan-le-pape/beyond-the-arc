@@ -5,6 +5,7 @@ Simulates and persists a single match that has reached its starts_at time.
 Called by the Scheduler for each due match.
 
 Responsibilities:
+  0. Draw whether one of the teams forfeits, and if so record only that
   1. Load players for both teams
   2. Generate playtime rotations and substitutions
   3. Run MatchSimulator
@@ -14,9 +15,11 @@ Responsibilities:
 """
 
 import logging
+import random
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 
+from config import FORFEIT_ODDS, FORFEIT_SCORE
 from db.repositories import match_repository, team_repository
 from db.repositories.match_repository import ScheduledMatch
 from event_rules import (
@@ -43,6 +46,18 @@ class SimulatedMatch:
     box_score: dict[str, dict]
 
 
+def draw_forfeit(level: str, rng: random.Random | None = None) -> str | None:
+    """
+    Whether a match at this level is forfeited, and by which side: "home",
+    "away", or None when it is played. Each side is as likely to forfeit as the
+    other. Fails on a level FORFEIT_ODDS does not name.
+    """
+    rng = rng or random
+    if rng.random() >= FORFEIT_ODDS[level]:
+        return None
+    return rng.choice(("home", "away"))
+
+
 class MatchGenerator:
     def __init__(self, simulator: MatchSimulator) -> None:
         self.simulator = simulator
@@ -52,6 +67,11 @@ class MatchGenerator:
         Simulate and persist a single match.
         Must be called within an open transaction — caller commits.
         """
+        forfeiter = draw_forfeit(match.level)
+        if forfeiter:
+            self._record_forfeit(cursor, match, forfeiter)
+            return
+
         home_players = team_repository.fetch_players_for_team(cursor, match.home_team_id)
         away_players = team_repository.fetch_players_for_team(cursor, match.away_team_id)
 
@@ -69,6 +89,24 @@ class MatchGenerator:
         match_repository.insert_match_events_bulk(cursor, match.id, result.events)
 
         logger.info(f"Match {match.id}: generated ({result.home_score}–{result.away_score}).")
+
+    @staticmethod
+    def _record_forfeit(cursor, match: ScheduledMatch, forfeiter: str) -> None:
+        """
+        A forfeited match is not played: FORFEIT_SCORE to 0 for the side that
+        showed up, no events, and a box score with no lines.
+        """
+        home_score, away_score = (0, FORFEIT_SCORE) if forfeiter == "home" else (FORFEIT_SCORE, 0)
+        match_repository.update_match_result(
+            cursor,
+            match.id,
+            home_score,
+            away_score,
+            overtime=False,
+            forfeit=True,
+            box_score={},
+        )
+        logger.info(f"Match {match.id}: forfeited by the {forfeiter} team ({home_score}–{away_score}).")
 
     def simulate(
         self,

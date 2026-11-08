@@ -13,8 +13,8 @@ from collections import Counter
 from dataclasses import dataclass
 from datetime import datetime, timezone
 
-from config import GAME_CONFIG_PATH
-from generation.match_generator import STAT_COLUMNS, MatchGenerator
+from config import FORFEIT_ODDS, GAME_CONFIG_PATH
+from generation.match_generator import STAT_COLUMNS, MatchGenerator, draw_forfeit
 from simulation.match_simulator import MatchSimulator
 
 ROSTER_SIZE = 12
@@ -81,6 +81,15 @@ def simulate_sample(matches: int, seed: int) -> SampleReport:
     )
 
 
+def forfeit_rates(draws: int, seed: int) -> dict[str, float]:
+    """The share of matches forfeited at each level, over `draws` draws each."""
+    rng = random.Random(seed)
+    return {
+        level: sum(draw_forfeit(level, rng) is not None for _ in range(draws)) / draws
+        for level in FORFEIT_ODDS
+    }
+
+
 if __name__ == "__main__":
     report = simulate_sample(matches=300, seed=1)
     for name, value in sorted(report.per_team_game.items()):
@@ -95,3 +104,7 @@ if __name__ == "__main__":
     for name in shown:
         values = "".join(f"{report.per_position_player_game[p].get(name, 0):7.2f}" for p in ROSTER_POSITIONS[:5])
         print(f"{name:28}{values}")
+    print()
+    print("forfeit rate            drawn    odds")
+    for level, rate in forfeit_rates(draws=100_000, seed=1).items():
+        print(f"{level:20} {rate:8.4f} {FORFEIT_ODDS[level]:7.4f}")

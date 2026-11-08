@@ -22,7 +22,7 @@ def cursor_updating(rows: int) -> MagicMock:
 
 
 def match(match_id: int = 7) -> ScheduledMatch:
-    return ScheduledMatch(match_id, 1, 1, 2, datetime(2026, 11, 6, tzinfo=UTC))
+    return ScheduledMatch(match_id, 1, 1, 2, datetime(2026, 11, 6, tzinfo=UTC), "regional")
 
 
 def test_a_transition_only_applies_from_the_expected_status():
