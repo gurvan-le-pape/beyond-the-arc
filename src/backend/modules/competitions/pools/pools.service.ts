@@ -1,7 +1,7 @@
 // src/backend/modules/competitions/pools/pools.service.ts
 import { Category, CompetitionLevel } from "@common/constants";
 import { countMatchdays, TEAM_MATCHDAYS_SELECT } from "@common/utils";
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 
 import { Prisma } from "../../../prisma/generated/prisma/client";
@@ -82,26 +82,6 @@ export class PoolsService {
     });
 
     return pools.map((pool) => this.mapToDto(pool));
-  }
-
-  /**
-   * Finds a pool by its ID.
-   *
-   * @param poolId - The pool ID
-   * @returns Pool DTO
-   * @throws NotFoundException if pool doesn't exist
-   */
-  async findPoolById(poolId: number): Promise<PoolResponseDto> {
-    const pool = await this.prisma.client.pools.findUnique({
-      where: { id: poolId },
-      select: POOL_SELECT,
-    });
-
-    if (!pool) {
-      throw new NotFoundException(`Pool with ID ${poolId} not found`);
-    }
-
-    return this.mapToDto(pool);
   }
 
   /**

@@ -29,7 +29,6 @@ describe("PoolsController", () => {
   // Mock service
   const mockPoolsService = {
     findPoolsByChampionshipId: jest.fn(),
-    findPoolById: jest.fn(),
     findRecentPools: jest.fn(),
   };
 
@@ -153,71 +152,6 @@ describe("PoolsController", () => {
 
       expect(result).toEqual(recent);
       expect(service.findRecentPools).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  describe("getPoolById", () => {
-    it("should return pool for valid ID", async () => {
-      // Arrange
-      const mockPool: PoolResponseDto = {
-        id: 1,
-        letter: "A",
-        championshipId: 1,
-        nbMatchdays: 10,
-      };
-
-      mockPoolsService.findPoolById.mockResolvedValue(mockPool);
-
-      // Act
-      const result = await controller.getPoolById(1);
-
-      // Assert
-      expect(result).toEqual(mockPool);
-      expect(service.findPoolById).toHaveBeenCalledWith(1);
-      expect(service.findPoolById).toHaveBeenCalledTimes(1);
-    });
-
-    it("should throw NotFoundException for non-existent ID", async () => {
-      // Arrange
-      mockPoolsService.findPoolById.mockRejectedValue(
-        new NotFoundException("Pool with ID 999 not found"),
-      );
-
-      // Act & Assert
-      await expect(controller.getPoolById(999)).rejects.toThrow(
-        NotFoundException,
-      );
-
-      await expect(controller.getPoolById(999)).rejects.toThrow(
-        "Pool with ID 999 not found",
-      );
-    });
-
-    it("should accept ID as number parameter", async () => {
-      // Arrange
-      const mockPool: PoolResponseDto = {
-        id: 42,
-        letter: "C",
-        championshipId: 5,
-        nbMatchdays: 6,
-      };
-
-      mockPoolsService.findPoolById.mockResolvedValue(mockPool);
-
-      // Act
-      await controller.getPoolById(42);
-
-      // Assert
-      expect(service.findPoolById).toHaveBeenCalledWith(42);
-    });
-
-    it("should propagate service errors", async () => {
-      // Arrange
-      const error = new Error("Database error");
-      mockPoolsService.findPoolById.mockRejectedValue(error);
-
-      // Act & Assert
-      await expect(controller.getPoolById(1)).rejects.toThrow("Database error");
     });
   });
 

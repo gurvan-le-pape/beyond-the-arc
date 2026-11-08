@@ -1,19 +1,17 @@
 // src/backend/modules/competitions/pools/pools.controller.ts
 import { CACHE_TTL } from "@common/constants";
-import { ApiEnvelope, ApiEnvelopeList } from "@common/decorators";
+import { ApiEnvelopeList } from "@common/decorators";
 import { ApiErrorResponseDto } from "@common/dto";
 import { CacheInterceptor } from "@common/interceptors";
-import { ParseEntityIdPipe } from "@common/pipes";
 import {
   Controller,
   Get,
   HttpCode,
   HttpStatus,
-  Param,
   Query,
   UseInterceptors,
 } from "@nestjs/common";
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 
 import { GetPoolsByChampionshipIdQueryDto } from "./dto/pools.query.dto";
 import {
@@ -24,7 +22,7 @@ import { PoolsService } from "./pools.service";
 
 /**
  * Controller handling pool-related endpoints.
- * Provides access to pool data by championship and by ID.
+ * Provides access to pool data by championship and to the most recent round.
  *
  * Global interceptors (registered in app.module.ts):
  * - TransformInterceptor: Wraps responses in standard format
@@ -125,64 +123,5 @@ export class PoolsController {
   )
   async getRecentPools(): Promise<RecentPoolResponseDto[]> {
     return this.poolsService.findRecentPools();
-  }
-
-  /**
-   * Retrieve a single pool by its ID.
-   *
-   * No caching on this endpoint because individual pool data
-   * is rarely accessed and may change.
-   *
-   * @param id - The pool ID
-   * @returns The pool details
-   *
-   * @example
-   * GET /pools/123
-   * Response (after TransformInterceptor):
-   * {
-   *   "data": {
-   *     "id": 123,
-   *     "letter": "A",
-   *     "championshipId": 1
-   *   },
-   *   "timestamp": "2024-02-05T10:00:00Z",
-   *   "path": "/pools/123",
-   *   "statusCode": 200
-   * }
-   */
-  @Get(":id")
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({
-    summary: "Get pool by ID",
-    description: "Retrieves detailed information about a specific pool",
-  })
-  @ApiParam({
-    name: "id",
-    description: "Pool ID",
-    type: Number,
-    example: 1,
-  })
-  @ApiEnvelope(PoolResponseDto, "Pool successfully retrieved")
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: "Pool not found",
-    type: ApiErrorResponseDto,
-    example: {
-      statusCode: 404,
-      message: "Pool with ID 999 not found",
-      error: "Not Found",
-      path: "/api/pools/999",
-      timestamp: "2024-02-05T10:00:00Z",
-    },
-  })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: "Invalid ID format",
-    type: ApiErrorResponseDto,
-  })
-  async getPoolById(
-    @Param("id", ParseEntityIdPipe) id: number,
-  ): Promise<PoolResponseDto> {
-    return this.poolsService.findPoolById(id);
   }
 }

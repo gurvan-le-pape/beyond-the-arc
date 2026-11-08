@@ -247,7 +247,6 @@ Leagues are the top level of the French basketball hierarchy. The list is stable
 | ------ | ------------ | -------------------------------------------------------- | ------ |
 | GET    | `/pools`     | All pools for a championship (`championshipId` required) | 5 min  |
 | GET    | `/pools/recent` | Up to 10 pools that played the most recent round      | 60 sec |
-| GET    | `/pools/:id` | Single pool by ID                                        | No     |
 
 `championshipId` is a required query parameter on `GET /pools` — passing an invalid value returns a `400`.
 

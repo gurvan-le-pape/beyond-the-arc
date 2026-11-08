@@ -300,26 +300,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/pools/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get pool by ID
-         * @description Retrieves detailed information about a specific pool
-         */
-        get: operations["PoolsController_getPoolById"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/matches": {
         parameters: {
             query?: never;
@@ -3380,58 +3360,6 @@ export interface operations {
                         data: components["schemas"]["RecentPoolResponseDto"][];
                         meta: components["schemas"]["ApiListMetaDto"];
                     };
-                };
-            };
-        };
-    };
-    PoolsController_getPoolById: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Pool ID */
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Pool successfully retrieved */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
-                        data: components["schemas"]["PoolResponseDto"];
-                    };
-                };
-            };
-            /** @description Invalid ID format */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponseDto"];
-                };
-            };
-            /** @description Pool not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    /**
-                     * @example {
-                     *       "statusCode": 404,
-                     *       "message": "Pool with ID 999 not found",
-                     *       "error": "Not Found",
-                     *       "path": "/api/pools/999",
-                     *       "timestamp": "2024-02-05T10:00:00Z"
-                     *     }
-                     */
-                    "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
         };
