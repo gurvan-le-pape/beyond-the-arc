@@ -184,19 +184,21 @@ describe("list queries", () => {
         category: Category.U15,
         gender: Gender.FEMALE,
       });
-      const byLetter = await service().findAllTeams({ poolLetter: "A" });
+      const byPool = await service().findAllTeams({ poolId: regional.poolId });
       const byLevel = await service().findAllTeams({
         level: CompetitionLevel.DEPARTMENTAL,
         division: 2,
       });
 
       expect(ids(byCategory)).toEqual(departmental.teamIds);
-      expect(ids(byLetter)).toEqual(regional.teamIds);
+      expect(ids(byPool)).toEqual(regional.teamIds);
       expect(ids(byLevel)).toEqual(departmental.teamIds);
     });
 
     it("returns the relations the team cards read", async () => {
-      const { items } = await service().findAllTeams({ poolLetter: "A" });
+      const { items } = await service().findAllTeams({
+        poolId: regional.poolId,
+      });
 
       for (const team of items) {
         expect(team.club.name).toEqual(expect.any(String));

@@ -2340,23 +2340,6 @@ export interface components {
              *     ]
              */
             numbers: number[];
-            /**
-             * @description Available pool letters
-             * @example [
-             *       "A",
-             *       "B",
-             *       "C"
-             *     ]
-             */
-            poolLetters: string[];
-            /**
-             * @description Available divisions
-             * @example [
-             *       1,
-             *       2
-             *     ]
-             */
-            divisions: number[];
         };
         TeamRosterPlayerDto: {
             /**
@@ -3830,8 +3813,8 @@ export interface operations {
                 number?: number;
                 /** @description Search by club name (case-insensitive partial match) */
                 search?: string;
-                /** @description Filter by pool letter */
-                poolLetter?: string;
+                /** @description Pool ID; it fixes the championship, so the competition filters are ignored with it */
+                poolId?: number;
             };
             header?: never;
             path?: never;

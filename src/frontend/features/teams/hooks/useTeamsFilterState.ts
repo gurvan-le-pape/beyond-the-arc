@@ -20,10 +20,12 @@ const CODECS = {
   committee: intParam,
   league: intParam,
   division: intParam,
-  pool: textParam,
+  pool: intParam,
 };
 
 const CASCADES = {
+  category: ["pool"],
+  gender: ["pool"],
   level: ["committee", "league"],
   committee: ["number", "division"],
   league: ["number", "division"],
@@ -34,7 +36,8 @@ const CASCADES = {
  * The teams list's filters and pagination, in the query string.
  *
  * Team numbers and divisions are offered per committee or league, and pools
- * per division, so a new scope clears them.
+ * per division, so a new scope clears them. A pool belongs to one
+ * championship, so changing the category or gender clears it too.
  *
  * @returns the filters, `set`, pagination and `reset`; see `useFilterState`
  */

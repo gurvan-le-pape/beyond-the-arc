@@ -120,7 +120,7 @@ describe("TeamsController", () => {
         category: undefined,
         gender: undefined,
         search: undefined,
-        poolLetter: undefined,
+        poolId: undefined,
         page: 1,
         limit: 50,
       });
@@ -161,7 +161,7 @@ describe("TeamsController", () => {
         category: undefined,
         gender: undefined,
         search: undefined,
-        poolLetter: undefined,
+        poolId: undefined,
         page: 2,
         limit: 20,
       });
@@ -201,8 +201,6 @@ describe("TeamsController", () => {
       // Arrange
       const mockFilterValues: FilterValuesTeamsResponseDto = {
         numbers: [1, 2, 3],
-        poolLetters: ["A", "B"],
-        divisions: [1, 2],
       };
 
       mockTeamsService.findTeamFilterValues.mockResolvedValue(mockFilterValues);

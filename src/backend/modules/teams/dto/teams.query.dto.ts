@@ -54,11 +54,14 @@ export class GetTeamsQueryDto extends CompetitionScopeQueryDto {
   search?: string;
 
   @ApiPropertyOptional({
-    description: "Filter by pool letter",
-    example: "A",
-    type: String,
+    description:
+      "Pool ID; it fixes the championship, so the competition filters are ignored with it",
+    example: 1,
+    type: Number,
   })
   @IsOptional()
-  @IsString()
-  poolLetter?: string;
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  poolId?: number;
 }

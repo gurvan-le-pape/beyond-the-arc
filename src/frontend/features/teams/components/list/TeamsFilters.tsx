@@ -3,6 +3,7 @@
 
 import { useTranslations } from "next-intl";
 
+import { useChampionshipCascadeOptions } from "@/features/competitions/championships/hooks";
 import { ClubComboBoxFilter } from "@/features/organizations/clubs/components";
 import {
   useDropUnknownLocation,
@@ -41,10 +42,14 @@ interface TeamsFiltersProps extends FilterProps<TeamsFilterValues> {
  * committee or league; the steps render dimmed rather than hidden so the panel
  * does not change shape as filters are filled in.
  *
+ * The pool step also waits for a category and gender: only with both does the
+ * division name one championship, whose pools are the options.
+ *
  * Option sources are fetched here rather than passed in — `useLocationOptions`
- * for committees and leagues, `useTeamFilterValues` for the numbers, divisions
- * and pools that actually occur. Without the latter those dropdowns render
- * empty, which reads as "no teams match" rather than as a failure.
+ * for committees and leagues, `useChampionshipCascadeOptions` for divisions and
+ * pools (the matches filters use the same), `useTeamFilterValues` for the team
+ * numbers that occur. Each surfaces its own error and retry, so a failed
+ * lookup reads as a failure instead of as an empty dropdown.
  */
 export function TeamsFilters({ filters, set, onReset }: TeamsFiltersProps) {
   const tTeams = useTranslations("teams");
@@ -61,8 +66,18 @@ export function TeamsFilters({ filters, set, onReset }: TeamsFiltersProps) {
     retry: retryLocation,
   } = locationOptions;
 
-  const { club, clubName, number, level, committee, league, division, pool } =
-    filters;
+  const {
+    club,
+    clubName,
+    number,
+    category,
+    gender,
+    level,
+    committee,
+    league,
+    division,
+    pool,
+  } = filters;
 
   useDropUnknownLocation(locationOptions, { filters, set });
 
@@ -72,8 +87,14 @@ export function TeamsFilters({ filters, set, onReset }: TeamsFiltersProps) {
     refetch: retryFilterValues,
   } = useTeamFilterValues({ committeeId: committee, leagueId: league });
   const teamNumbers = teamFilterValues?.numbers ?? [];
-  const divisions = teamFilterValues?.divisions ?? [];
-  const poolLetters = teamFilterValues?.poolLetters ?? [];
+
+  const {
+    divisions,
+    pools,
+    isError: cascadeFailed,
+    retry: retryCascade,
+  } = useChampionshipCascadeOptions(filters);
+  const selectedPool = pools.find((p) => p.id === pool);
 
   const { categoryGenderChips, levelLocationChips } = useCommonFilterChips({
     filters,
@@ -102,7 +123,9 @@ export function TeamsFilters({ filters, set, onReset }: TeamsFiltersProps) {
     },
     pool && {
       key: "pool",
-      label: tTeams("poolLabel", { letter: pool }),
+      label: selectedPool
+        ? tTeams("poolLabel", { letter: selectedPool.letter })
+        : String(pool),
       onRemove: () => set({ pool: undefined }),
     },
   ].filter(Boolean) as ActiveFilterChip[];
@@ -126,12 +149,18 @@ export function TeamsFilters({ filters, set, onReset }: TeamsFiltersProps) {
         />
       )}
 
-      {/* Without this the number/division/pool dropdowns render empty, which
-          reads as "this scope has no teams" rather than a failed request. */}
+      {/* Without these the dropdowns render empty, which reads as "this scope
+          has none" rather than a failed request. */}
       {filterValuesFailed && (
         <ErrorMessage
           message={tCommon("errors.fetchTeams")}
           onRetry={retryFilterValues}
+        />
+      )}
+      {cascadeFailed && (
+        <ErrorMessage
+          message={tCommon("errors.fetchChampionships")}
+          onRetry={retryCascade}
         />
       )}
 
@@ -176,13 +205,17 @@ export function TeamsFilters({ filters, set, onReset }: TeamsFiltersProps) {
           label={tCommon("filters.pools")}
           value={pool}
           onChange={(pool) => set({ pool })}
-          enabled={!!division}
-          options={poolLetters.map((letter) => ({
-            value: letter,
-            label: tTeams("poolLabel", { letter }),
+          enabled={!!division && !!category && !!gender}
+          options={pools.map((p) => ({
+            value: p.id,
+            label: tTeams("poolLabel", { letter: p.letter }),
           }))}
           allLabel={tCommon("filters.allPools")}
-          waitLabel={tFilters("filters.selectDivisionFirst")}
+          waitLabel={
+            division
+              ? tFilters("filters.selectCategoryGenderFirst")
+              : tFilters("filters.selectDivisionFirst")
+          }
         />
       </Grid>
     </FiltersShell>

@@ -11,7 +11,7 @@ export interface TeamFilters {
   committeeId?: number;
   leagueId?: number;
   division?: number;
-  poolLetter?: string;
+  poolId?: number;
   page?: number;
   limit?: number;
 }

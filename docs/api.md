@@ -288,7 +288,7 @@ The two shot endpoints (`/team/:teamId/shots`, `/player/:playerId/shots`) return
 | GET    | `/teams/:id`           | Single team with players and recent matches             | No     |
 | GET    | `/teams/:id/matches`   | Match history for a team, most recent first             | No     |
 
-`GET /teams/filter-values` returns the distinct values for `teamNumber`, `poolLetter`, and `division` that exist within a given scope (optional `committeeId` or `leagueId`). This is used to populate filter dropdowns in the frontend without hardcoding values.
+`GET /teams/filter-values` returns the distinct team numbers that exist within a given scope (optional `committeeId` or `leagueId`), for the team-number dropdown. The division and pool dropdowns take their options from `GET /championships`, like the matches filters, and `GET /teams` filters by `poolId`.
 
 ---
 

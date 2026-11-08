@@ -209,7 +209,7 @@ export class TeamsService {
    * Retrieves available filter values for team queries.
    * Intended for populating filter dropdowns on the frontend.
    *
-   * @returns Available numbers, pool letters, and divisions
+   * @returns The team numbers that occur in the scope
    */
   async findTeamFilterValues(filters?: {
     committeeId?: number;
@@ -220,36 +220,14 @@ export class TeamsService {
       ? { club: clubWhere }
       : {};
 
-    const [numbers, pools, championships] = await Promise.all([
-      this.prisma.client.teams.findMany({
-        where: teamWhere,
-        select: { number: true },
-        distinct: ["number"],
-        orderBy: { number: "asc" },
-      }),
-      this.prisma.client.pools.findMany({
-        where: clubWhere ? { teams: { some: teamWhere } } : {},
-        select: { letter: true },
-        distinct: ["letter"],
-        orderBy: { letter: "asc" },
-      }),
-      this.prisma.client.championships.findMany({
-        where: clubWhere
-          ? { pools: { some: { teams: { some: teamWhere } } } }
-          : {},
-        select: { division: true },
-        distinct: ["division"],
-        orderBy: { division: "asc" },
-      }),
-    ]);
+    const numbers = await this.prisma.client.teams.findMany({
+      where: teamWhere,
+      select: { number: true },
+      distinct: ["number"],
+      orderBy: { number: "asc" },
+    });
 
-    return {
-      numbers: numbers.map((t) => t.number),
-      poolLetters: pools.map((p) => p.letter),
-      divisions: championships
-        .map((c) => c.division)
-        .filter((d): d is number => d !== null),
-    };
+    return { numbers: numbers.map((t) => t.number) };
   }
 
   /**
@@ -430,15 +408,11 @@ export class TeamsService {
   private buildPoolFilter(
     filters: GetTeamsQueryDto,
   ): Prisma.PoolsWhereInput | undefined {
-    const { poolLetter } = filters;
+    // A pool id already fixes the championship.
+    if (filters.poolId) return undefined;
+
     const championship = buildChampionshipWhere(filters);
-
-    if (!championship && !poolLetter) return undefined;
-
-    return {
-      ...(championship ? { championship } : {}),
-      ...(poolLetter ? { letter: poolLetter } : {}),
-    };
+    return championship ? { championship } : undefined;
   }
 
   private buildClubFilter(
@@ -465,6 +439,8 @@ export class TeamsService {
    */
   private buildWhereClause(filters: GetTeamsQueryDto): Prisma.TeamsWhereInput {
     const where: Prisma.TeamsWhereInput = {};
+
+    if (filters.poolId) where.poolId = filters.poolId;
 
     const poolFilter = this.buildPoolFilter(filters);
     if (poolFilter) where.pool = poolFilter;

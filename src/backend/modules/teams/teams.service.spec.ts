@@ -190,23 +190,12 @@ describe("TeamsService", () => {
         { number: 1 },
         { number: 2 },
       ]);
-      mockPrismaService.client.pools.findMany.mockResolvedValueOnce([
-        { letter: "A" },
-        { letter: "B" },
-      ]);
-      mockPrismaService.client.championships.findMany.mockResolvedValueOnce([
-        { division: "D1" },
-        { division: null },
-        { division: "D2" },
-      ]);
 
       // Act
       const result = await service.findTeamFilterValues();
 
       // Assert
-      expect(result.numbers).toEqual([1, 2]);
-      expect(result.poolLetters).toEqual(["A", "B"]);
-      expect(result.divisions).toEqual(["D1", "D2"]); // null filtered out
+      expect(result).toEqual({ numbers: [1, 2] });
     });
   });
 
@@ -492,15 +481,11 @@ describe("TeamsService", () => {
       );
     });
 
-    it("should apply pool filter with poolLetter", async () => {
-      await service.findAllTeams({ poolLetter: "A" });
+    it("should filter by poolId and ignore the championship filters", async () => {
+      await service.findAllTeams({ poolId: 7, level: "regional", division: 1 });
 
       expect(mockPrismaService.client.teams.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: expect.objectContaining({
-            pool: expect.objectContaining({ letter: "A" }),
-          }),
-        }),
+        expect.objectContaining({ where: { poolId: 7 } }),
       );
     });
 
