@@ -1,6 +1,5 @@
 // src/backend/modules/competitions/pools/pools.service.spec.ts
 import { CacheDedupService } from "@common/services/cache-dedup.service";
-import { NotFoundException } from "@nestjs/common";
 import type { TestingModule } from "@nestjs/testing";
 import { Test } from "@nestjs/testing";
 import { LoggerModule } from "nestjs-pino";
@@ -26,7 +25,6 @@ describe("PoolsService", () => {
     client: {
       pools: {
         findMany: jest.fn(),
-        findUnique: jest.fn(),
       },
       matches: {
         findFirst: jest.fn(),
@@ -153,94 +151,6 @@ describe("PoolsService", () => {
           orderBy: { letter: "asc" },
         }),
       );
-    });
-  });
-
-  describe("findPoolById", () => {
-    it("should return pool when found", async () => {
-      // Arrange
-      const id = 1;
-      const mockPool = {
-        id: 1,
-        letter: "A",
-        championshipId: 1,
-        teams: [{ homeMatches: [{ matchday: 1 }, { matchday: 2 }] }],
-      };
-
-      mockPrismaService.client.pools.findUnique.mockResolvedValue(mockPool);
-
-      // Act
-      const result = await service.findPoolById(id);
-
-      // Assert
-      expect(result).toEqual({
-        id: 1,
-        letter: "A",
-        championshipId: 1,
-        nbMatchdays: 2,
-      });
-
-      expect(mockPrismaService.client.pools.findUnique).toHaveBeenCalledWith({
-        where: { id },
-        select: {
-          id: true,
-          letter: true,
-          championshipId: true,
-          teams: {
-            select: {
-              homeMatches: {
-                select: { matchday: true },
-                distinct: ["matchday"],
-              },
-            },
-          },
-        },
-      });
-    });
-
-    it("should throw NotFoundException when pool not found", async () => {
-      // Arrange
-      const id = 999;
-      mockPrismaService.client.pools.findUnique.mockResolvedValue(null);
-
-      // Act & Assert
-      await expect(service.findPoolById(id)).rejects.toThrow(NotFoundException);
-
-      await expect(service.findPoolById(id)).rejects.toThrow(
-        "Pool with ID 999 not found",
-      );
-    });
-
-    it("should use POOL_SELECT constant for consistent queries", async () => {
-      // Arrange
-      const id = 1;
-      mockPrismaService.client.pools.findUnique.mockResolvedValue({
-        id: 1,
-        letter: "A",
-        championshipId: 1,
-        teams: [],
-      });
-
-      // Act
-      await service.findPoolById(id);
-
-      // Assert
-      expect(mockPrismaService.client.pools.findUnique).toHaveBeenCalledWith({
-        where: { id },
-        select: {
-          id: true,
-          letter: true,
-          championshipId: true,
-          teams: {
-            select: {
-              homeMatches: {
-                select: { matchday: true },
-                distinct: ["matchday"],
-              },
-            },
-          },
-        },
-      });
     });
   });
 
