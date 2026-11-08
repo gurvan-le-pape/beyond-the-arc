@@ -161,7 +161,7 @@ export async function insertScheduledMatch(
  * @param matchId - the match
  * @param homeScore - the home team's score
  * @param awayScore - the away team's score
- * @param forfeit - whether the home team forfeited
+ * @param forfeit - whether the match was forfeited, by the side scoring 0
  * @param boxScore - the stat lines by player id, as compute_box_score writes them
  */
 export async function completeMatch(

@@ -7,6 +7,16 @@ SEASON_START_YEAR = 2026
 CATEGORIES = ["U11", "U13", "U15", "U18", "U21", "Seniors"]
 GENDERS = ["male", "female"]
 
+# Chance that a match is forfeited, by its championship's level: one of the two
+# teams, drawn at random, fails to field a side.
+FORFEIT_ODDS = {
+    "departmental": 0.015,
+    "regional": 0.005,
+    "national": 0.001,
+}
+# A forfeit is recorded as this score for the team that showed up, to 0.
+FORFEIT_SCORE = 20
+
 GAME_CONFIG_PATH = os.path.join(os.path.dirname(__file__), "simulation", "game_config.json")
 
 POSITIONS = ["PG", "SG", "SF", "PF", "C"]

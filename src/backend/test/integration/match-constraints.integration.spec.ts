@@ -77,11 +77,34 @@ describe("match constraints", () => {
       "no_draws_allowed",
     ],
     ["a forfeit with no result", "forfeit = true", "matches_flags_need_result"],
+    [
+      "a forfeit with a played score",
+      "home_team_score = 20, away_team_score = 5, forfeit = true, status = 'completed', box_score = '{}'",
+      "matches_forfeit_result",
+    ],
+    [
+      "a forfeit with box-score lines",
+      `home_team_score = 0, away_team_score = 20, forfeit = true, status = 'completed', box_score = '{"1": {}}'`,
+      "matches_forfeit_result",
+    ],
     ["overtime with no result", "overtime = true", "matches_flags_need_result"],
   ])("rejects %s on a match", async (_name, assignment, constraint) => {
     await expect(
       client.query(`UPDATE matches SET ${assignment} WHERE id = $1`, [match]),
     ).rejects.toThrow(constraint);
+  });
+
+  it.each([
+    [20, 0],
+    [0, 20],
+  ])("accepts a forfeit recorded %i-%i", async (homeScore, awayScore) => {
+    await client.query(
+      `UPDATE matches
+          SET home_team_score = $1, away_team_score = $2, forfeit = true,
+              status = 'completed', box_score = '{}'
+        WHERE id = $3`,
+      [homeScore, awayScore, match],
+    );
   });
 
   it("rejects a team playing itself", async () => {

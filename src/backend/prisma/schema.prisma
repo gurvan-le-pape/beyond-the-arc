@@ -128,7 +128,8 @@ model Matches {
   //
   // CHECK constraints on status, scores, box score and teams live in migration
   // SQL too: `no_draws_allowed` in `0_init`, the box score's in
-  // `20261108140000_box_score_on_matches`, the rest in
+  // `20261108140000_box_score_on_matches`, a forfeit's in
+  // `20261108150000_forfeit_result`, the rest in
   // `20261103120000_match_integrity_checks`.
 
   @@index([homeTeamId], map: "idx_matches_home_team_id")
