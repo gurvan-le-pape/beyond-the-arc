@@ -48,7 +48,9 @@ The pipeline is entirely self-contained: it connects directly to PostgreSQL via 
 
 ## Static data — SQL seeding
 
-The organisational hierarchy (regions, departments, leagues, committees, clubs, gyms) is loaded by the `1_seed_static_data` Prisma migration, applied together with the schema by `prisma migrate deploy`. It covers metropolitan France only.
+The organisational hierarchy (leagues, committees, clubs) is loaded by the `1_seed_static_data` Prisma migration, applied together with the schema by `prisma migrate deploy`. It covers metropolitan France only.
+
+The seed was written for the schema of its time, so it also inserts regions, departments and gyms. On a fresh database the migrations after it fold each region into its league and each department into its committee, and drop the gyms (see [History](./data-model.md#history)). `build_migration.py` still writes that shape: `1_seed_static_data` has to stay valid against the schema that precedes it.
 
 **Provenance**
 
@@ -65,7 +67,7 @@ Pinning the scheduler's half is not housekeeping: that image generates every mat
 
 **A refresh only reaches a database that has never applied `1_seed_static_data`.** `build_migration.py` regenerates that migration in place, and `prisma migrate deploy` doesn't checksum migrations it has already applied — it branches on the pending count, finds nothing pending, prints "No pending migrations to apply." and exits 0. So a fresh environment (a new dev box, a rebuilt VPS, a restore) picks the new data up and every existing one, production included, silently keeps the old. Nothing reports the divergence, which is why the `migration-immutability` CI job blocks the edit by default. Landing a refresh takes two deliberate steps: `[refresh-static-data]` in the PR title, and the catch-up SQL in the PR body so the same change can be applied to production by hand.
 
-Fill rates reflect what FFBB itself publishes, not scraper gaps (the crawl has zero parse errors across all pages): ~83% of clubs have a gym and ~97% real coordinates. A small number of committees genuinely cover two departments where club counts are too low to justify a standalone one (e.g. Aube/Haute-Marne) — since `committees.department_id` is a single required FK (see [`data-model.md`](./data-model.md)), these are split into one committee row per department rather than collapsed into one, each keeping the shared address.
+Fill rates reflect what FFBB itself publishes, not scraper gaps (the crawl has zero parse errors across all pages): ~97% of clubs have real coordinates. A small number of committees genuinely cover two departments where club counts are too low to justify a standalone one (e.g. Aube/Haute-Marne) — since a committee carries exactly one department (see [`data-model.md`](./data-model.md#organisations)), these are split into one committee row per department rather than collapsed into one, each keeping the shared address.
 
 The generated `clubs` INSERT resolves `gym_id`/`committee_id` via a single set-based join against `gyms`/`departments`/`committees` (matching by business key: code or name), not a correlated subquery per row. That distinction matters: an earlier per-row-subquery version of this same statement (~4368 rows × 3 lookups each) caused a real production incident applying this migration — sustained CPU/disk load severe enough to require a hard power-cycle. Adding indexes on the looked-up columns didn't fix it; the per-row execution pattern itself was the problem. Don't reintroduce correlated subqueries here for a "simpler-looking" diff.
 
@@ -84,7 +86,7 @@ The database schema and modelling decisions are covered in → [`data-model.md`]
 1. **Recover stuck matches** — any match left in `generating` status from a previous crash is reset to `scheduled` so it will be retried. This makes the service safe to restart at any time.
 2. **Ensure season setup** — delegates to `SeasonGenerator`, which is idempotent (see below).
 
-After startup, it polls the database every 60 seconds for matches whose `scheduled_at` has passed and dispatches them for generation via a `ProcessPoolExecutor` (8 workers by default) — separate processes, not threads, since match simulation is CPU-bound and would otherwise be serialised by the GIL.
+After startup, it polls the database every 60 seconds for matches whose `starts_at` has passed and dispatches them for generation via a `ProcessPoolExecutor` (8 workers by default) — separate processes, not threads, since match simulation is CPU-bound and would otherwise be serialised by the GIL.
 
 ### Match status lifecycle
 
@@ -102,38 +104,34 @@ Every write names the status it expects, so a match that has moved on is left al
 
 ## Season generator
 
-`SeasonGenerator` runs once per season and builds the entire competition structure from scratch. It is **idempotent**: each league is checkpointed in a `seeding_checkpoints` table, so if the process is interrupted and restarted, already-completed leagues are skipped.
+`SeasonGenerator` runs once per season and builds the entire competition structure from scratch. It is **idempotent**: each league is set up in one transaction, and a league that already has teams in this season's championships is skipped, so an interrupted run resumes at the first league it had not committed.
 
-The sequence for each league:
+For each league, then each gender and category:
 
-### 1. Teams and players
+### 1. Entries
 
-For each committee in the league, clubs are fetched from the database (seeded via SQL). A number of teams proportional to the club count is generated and distributed randomly across clubs, tagged with the current `SEASON_YEAR`. Each team gets 12 players with French names generated via `Faker("fr_FR")`, using gender-appropriate first names.
-
-Because a team row belongs to one season, running the generator again for a new season inserts a fresh set of team rows rather than reusing or overwriting last season's — see [Teams](./data-model.md#teams) in the data model doc.
+For each committee in the league, clubs are fetched from the database (seeded via SQL) and drawn into slightly more entries than there are clubs, so some clubs field several teams, numbered from 1 within the club.
 
 ### 2. Championships, divisions, and pools
 
-Teams are split **80/20** per gender and category:
+Entries are split **80/20**:
 
 - ~80% compete at **committee level** (departmental championships)
 - ~20% are promoted to **league level** (regional championships)
 
 Only first teams (`number == 1`) are eligible for league level — reserve teams always stay at committee level.
 
-The `compute_divisions_and_pools` utility then determines how many divisions and pools are needed given the team count, capping at 12 teams per pool and 4 pools per division.
+The `compute_divisions_and_pools` utility then determines how many divisions and pools are needed given the entry count, capping at 12 teams per pool and 4 pools per division. Championships and pools are inserted, then each pool's teams: a team is created in its pool, so it takes its category, gender and season from the championship — see [Teams](./data-model.md#teams) in the data model doc. Each team gets 12 players with French names generated via `Faker("fr_FR")`, using gender-appropriate first names, and a roster that covers every position.
 
 ### 3. Match schedule
 
-For every pool, a full **round-robin schedule** is generated — one home leg and one return leg. Each matchday is assigned a datetime: a Saturday or Sunday slot (14:00, 19:00, or 22:00 Paris time) chosen randomly from a fixed set of options, starting from the configured season start week.
+For every pool, a full **round-robin schedule** is generated — one home leg and one return leg. Each matchday is assigned a datetime: a Saturday or Sunday slot (14:00, 19:00 or 22:00 Paris time), fixed per pool and matchday so a rerun produces the same schedule, starting from the configured season start week.
 
 Match shells are inserted into the database with `status = 'scheduled'` and a `starts_at` tip-off instant. They have no result yet — the scheduler will fill them in as their tip-off arrives.
 
-### Checkpointing
+### Idempotence
 
-Each league's setup is wrapped in a single database transaction. The checkpoint is written inside that transaction and committed atomically with the data. If the process crashes mid-league, the partial data is rolled back and the league will be re-processed on the next run.
-
-The checkpoint's entity type is `league_setup_{SEASON_YEAR}`, not a bare `league_setup` — scoping it to the season is what makes running the generator again for a new season actually work: a new `SEASON_YEAR` produces a new checkpoint type, so leagues aren't skipped just because a *previous* season already set them up.
+The database does not reject a duplicate championship (see [Championships](./data-model.md#championships)), so the generator is what keeps a league from being set up twice. Its check is the league's own teams: if any team of the league's clubs sits in a championship of the current `SEASON_YEAR`, the league is done. Because the whole league commits at once, a league either has all its teams or none, and a crash mid-league leaves nothing to skip over. A new `SEASON_YEAR` finds no teams in its championships, so every league is set up again for the new season.
 
 ---
 
@@ -143,12 +141,13 @@ The checkpoint's entity type is `league_setup_{SEASON_YEAR}`, not a bare `league
 
 ### Sequence
 
-1. **Load players** — fetch home and away players from the database.
-2. **Generate playtime** — `PlaytimeGenerator` assigns each player a sequence of on-court intervals (5 players active at a time, rotated via substitutions throughout the 40-minute game).
-3. **Simulate** — `MatchSimulator` runs the full match event by event. The starting five for each team (from the playtime generator's initial rotation) are tagged with role `starter` on the opening `tip_off` event, and every substitution becomes its own `substitution` event with `exiting_player`/`entering_player` roles — this is what lets playtime be reconstructed from events alone later.
-4. **Prevent draws** — if the score is tied at the end of regulation, two points are added to the home team and a deciding basket event is appended. Draws do not exist in basketball.
-5. **Detect overtime** — any event timestamped beyond the 2400-second mark (40 minutes) marks the match as overtime.
-6. **Persist** — all results are written in a specific order: match result → shot locations → events (including substitutions and starters) → event players → player stats (including playtime, computed from those same events).
+1. **Draw a forfeit** — before anything else, `draw_forfeit` decides whether one side forfeits, at the rate `FORFEIT_ODDS` sets for the championship's level. A forfeited match is not played: it is written as 20–0 to the side that turned up (`FORFEIT_SCORE`), with `forfeit = true`, no events and an empty box score, and generation stops there.
+2. **Load players** — fetch home and away players from the database.
+3. **Generate playtime** — `PlaytimeGenerator` assigns each player a sequence of on-court intervals (5 players active at a time, rotated via substitutions throughout the 40-minute game).
+4. **Simulate** — `MatchSimulator` runs the full match event by event, in four quarters. Every substitution becomes its own `substitution` event naming the player leaving and the player coming on.
+5. **Overtime** — if the score is level at the final buzzer, the fives on court play five-minute overtime periods until it is not. Draws do not exist in basketball, and `no_draws_allowed` rejects one.
+6. **Box score** — `compute_box_score` tallies each player's counters from the events and adds their playtime intervals, into one object keyed by player id.
+7. **Persist** — the result (scores, overtime, forfeit flag, box score) in one `UPDATE` of the match, then the events in one batched insert, each with its shot location and its players.
 
 The entire persist step runs within a single transaction. The caller (`Scheduler`) commits on success or rolls back and marks the match `failed` on error.
 
@@ -182,9 +181,10 @@ Some event categories have sub-events with their own weighted selection — for 
 
 `EventGenerator` resolves each event type into a full event dict with:
 
-- **Player roles** — shooter, assister, rebounder, fouler, stealer, blocker, victim — drawn randomly from the players currently on court at that moment.
-- **Shot location** — for all shot events, a `(x, y)` coordinate is generated on a FIBA half-court (15m × 14m). The location is constrained by shot type: interior shots land in the paint, three-pointers are sampled along the arc radius with a small variance, mid-range shots fall between the paint and the three-point line.
-- **Description** — a human-readable string describing the event.
+- **Players** — at most two, by the roles its type names in `EVENT_PLAYER_ROLES` (`event_rules.py`): the main player (shooter, fouler, rebounder, stealer, the player leaving on a substitution) and the other (assister, victim, blocker, the player coming on), drawn from the players on court at that moment, weighted by position and level. They are written to `player_id` and `other_player_id`.
+- **Shot location** — for all shot events, a `(x, y)` coordinate is generated on a FIBA half-court (15m × 14m), written to `shot_x` and `shot_y`. The location is constrained by shot type: interior shots land in the paint, three-pointers are sampled along the arc radius with a small variance, mid-range shots fall between the paint and the three-point line.
+
+An event has no text: the frontend writes its own sentence, in the reader's language, from the event type and its players.
 
 ### Game clock
 
@@ -201,9 +201,9 @@ A 24-second shot clock is tracked separately and resets appropriately on turnove
 
 ## Playtime generator
 
-`PlaytimeGenerator` simulates rotations for one team before the simulator runs. It maintains exactly 5 active players at all times and rotates them through the bench in order. Each stint lasts 300–480 seconds (5–8 minutes).
+`PlaytimeGenerator` simulates rotations for one team before the simulator runs. The coach starts the best player at each position (by player level) and gives the rest of the roster target minutes in order of level, from 29 for a starter down to 2 for the twelfth man. Every two to four minutes they take off whoever is furthest ahead of their target and send on whoever is furthest behind, keeping exactly 5 players on court.
 
-The result is a dict of `player_id → [(start_sec, end_sec), ...]` intervals, plus a list of substitution events. The simulator uses these intervals at each clock tick to determine which players are on court when assigning roles, and reads the initial (`t=0`) rotation to tag the starting five per team with role `starter` on the match's opening `tip_off` event.
+The result is a dict of `player_id → [(start_sec, end_sec), ...]` intervals, plus a list of substitution events. The simulator uses these intervals at each clock tick to determine which players are on court when assigning roles, and the intervals become each player's `playtime_intervals` in the box score, extended to the final buzzer for the fives that play overtime.
 
 ---
 
@@ -213,7 +213,7 @@ All database access in the pipeline is handled by three repository modules (`mat
 
 A connection pool (`psycopg.pool.ConnectionPool`) is initialised once per worker process at startup. Each worker process manages its own pool — no sharing across processes.
 
-Bulk inserts that need returned IDs (shot locations, match events) use a single batched `INSERT INTO ... VALUES (...), (...) RETURNING` with `fetchall()` for deterministic ordering. Other bulk inserts use `executemany`. Shot locations have no deduplication — two events at the same coordinate get two rows, which is intentional.
+A match's events go in as a single batched `INSERT INTO ... VALUES (...), (...) RETURNING` with `fetchall()` for deterministic ordering. Other bulk inserts use `executemany` — with `returning=True` for teams, whose ids the players and the schedule need. The box score goes in as one JSONB value (`psycopg.types.json.Jsonb`) on the match's result update.
 
 ---
 
@@ -226,8 +226,10 @@ Bulk inserts that need returned IDs (shot locations, match events) use a single 
 | Categories         | `config.py`                   | U11, U13, U15, U18, U21, Seniors |
 | Genders            | `config.py`                   | male, female                     |
 | Game state machine | `simulation/game_config.json` | Weights and event lists          |
+| Forfeit odds       | `config.py`                   | 1.5% departmental, 0.5% regional, 0.1% national |
+| Forfeit score      | `config.py`                   | 20–0                             |
 | Poll interval      | `scheduler.py`                | 60 seconds                       |
-| Worker threads     | `scheduler.py`                | 8                                |
+| Worker processes   | `scheduler.py`                | 8                                |
 
 ---
 
@@ -235,10 +237,8 @@ Bulk inserts that need returned IDs (shot locations, match events) use a single 
 
 **Data is simulated, not real.** All match results, player statistics, and shot charts are produced by the simulator. The competition structure (leagues, committees, clubs) reflects the real French basketball hierarchy, but the gameplay data is synthetic. This is intentional for a portfolio project — it allows the full platform to function with realistic-looking data without requiring a live data feed.
 
-**Static data covers metropolitan France only.** Overseas regions/departments/clubs (DROM, COM, TAAF, Nouvelle-Calédonie, Polynésie) aren't seeded — the platform doesn't model them. Within metro France, a small residual gap remains (~17% of clubs have no gym, ~11 clubs out of 4379 were dropped entirely for lacking any address to place them) — this reflects gaps in what FFBB itself publishes rather than scraper failures, and isn't expected to reach 100%.
+**Static data covers metropolitan France only.** Overseas regions/departments/clubs (DROM, COM, TAAF, Nouvelle-Calédonie, Polynésie) aren't seeded — the platform doesn't model them. Within metro France, a small residual gap remains (~11 clubs out of 4379 were dropped entirely for lacking any address to place them) — this reflects gaps in what FFBB itself publishes rather than scraper failures, and isn't expected to reach 100%.
 
 **No retry for failed matches.** Matches that fail generation are marked `failed` and left for manual inspection. An automatic retry with backoff would be a reasonable improvement.
-
-**Players have no individual skill ratings.** Every player is equally likely to shoot, assist, or rebound. A skill model (e.g. a shooting percentage per player) would make statistics more realistic and less uniformly distributed.
 
 **Shot clock precision.** The shot clock implementation is an approximation — it advances with the game clock rather than independently. This is sufficient for generating plausible data but does not accurately model real shot clock mechanics.

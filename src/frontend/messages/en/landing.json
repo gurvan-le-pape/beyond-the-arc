@@ -193,9 +193,9 @@
         "championships": "Championships and tournament structures",
         "teams": "Team information and rosters",
         "players": "Player profiles and details",
-        "matches": "Match data and results",
-        "clubs": "Club organizations and venues",
-        "stats": "Player and team statistics"
+        "matches": "Match results and box scores",
+        "clubs": "Clubs, their committees and locations",
+        "matchEvents": "Play-by-play events and shot locations"
       }
     },
     "structure": {

@@ -193,9 +193,9 @@
         "championships": "Championships et structures de tournois",
         "teams": "Informations et effectifs des équipes",
         "players": "Profils et détails des joueurs",
-        "matches": "Données et résultats des matchs",
-        "clubs": "Organisations et salles des clubs",
-        "stats": "Statistiques des joueurs et équipes"
+        "matches": "Résultats et feuilles de match",
+        "clubs": "Clubs, leurs comités et leur localisation",
+        "matchEvents": "Actions de jeu et positions des tirs"
       }
     },
     "structure": {

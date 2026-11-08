@@ -14,7 +14,7 @@ const DATABASE_TABLES = [
   { name: "Players", descKey: "docs.database.tables.players" },
   { name: "Matches", descKey: "docs.database.tables.matches" },
   { name: "Clubs", descKey: "docs.database.tables.clubs" },
-  { name: "Stats", descKey: "docs.database.tables.stats" },
+  { name: "MatchEvents", descKey: "docs.database.tables.matchEvents" },
 ] as const;
 
 interface DocsDatabaseSectionProps {

@@ -85,7 +85,7 @@ sonar-logs:
 barrels:
 	npm run barrels
 
-# Refresh static reference data (presidents/gyms/coordinates) from FFBB's
+# Refresh static reference data (leagues, committees, clubs, coordinates) from FFBB's
 # public site and regenerate prisma/migrations/1_seed_static_data/migration.sql.
 # Host-side (not Docker) - hits competitions.ffbb.com directly and takes
 # ~1h20 (4480 pages at the 1s crawl-delay their robots.txt asks for).

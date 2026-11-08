@@ -224,7 +224,7 @@ Leagues are the top level of the French basketball hierarchy. The list is stable
 
 `GET /clubs/all` returns every club without filtering or pagination. It exists specifically for the interactive map, which needs all club coordinates in a single request to render pins on load.
 
-`GET /clubs/:id` returns full detail including all of the club's teams, their pool assignment, championship, and current leaderboard position.
+`GET /clubs/:id` returns full detail including all of the club's teams, their pool, championship, and current rank and record in that pool.
 
 **Note:** the `/clubs/stats/*` and `/clubs/all` routes must be registered before `/:id` in the controller to avoid NestJS interpreting `stats` and `all` as ID parameters. They are.
 
@@ -255,12 +255,11 @@ Leagues are the top level of the French basketball hierarchy. The list is stable
 
 ### Leaderboards — `/api/leaderboards`
 
-| Method | Path                | Description                                            | Cached |
-| ------ | ------------------- | ------------------------------------------------------ | ------ |
-| GET    | `/leaderboards`     | All leaderboard entries for a pool (`poolId` required) | 5 min  |
-| GET    | `/leaderboards/:id` | Single leaderboard entry by ID                         | No     |
+| Method | Path            | Description                               | Cached |
+| ------ | --------------- | ----------------------------------------- | ------ |
+| GET    | `/leaderboards` | A pool's standings (`poolId` required)    | 5 min  |
 
-Results are sorted by competition points and point difference. Leaderboard rows are maintained by database triggers — the API only reads them, never writes.
+Each row is a team's record in the pool — games played, won, lost and forfeited, points for and against, and competition points (2 for a win, 1 for a loss, 0 for a forfeit) — with its rank and recent form. Nothing stores the standings: `computeStandings` (`common/utils/standings.util.ts`) builds them from the pool's teams and completed matches on each request, sorted by competition points, then point difference. Tied teams share a rank. A club's detail ranks its teams with the same function.
 
 ---
 
