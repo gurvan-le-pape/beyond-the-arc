@@ -130,7 +130,6 @@ describe("PlayersController", () => {
       expect(service.findAllPlayers).toHaveBeenCalledWith({
         level: "regional",
         clubId: 1,
-        teamId: undefined,
         teamNumber: undefined,
         number: undefined,
         committeeId: undefined,
@@ -157,7 +156,6 @@ describe("PlayersController", () => {
 
       const query = {
         clubId: 123,
-        teamId: 456,
         teamNumber: 789,
         number: 10,
         committeeId: 111,
@@ -173,7 +171,6 @@ describe("PlayersController", () => {
       expect(service.findAllPlayers).toHaveBeenCalledWith({
         level: undefined,
         clubId: 123,
-        teamId: 456,
         teamNumber: 789,
         number: 10,
         committeeId: 111,

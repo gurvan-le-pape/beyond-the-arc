@@ -21,17 +21,6 @@ export class GetPlayersQueryDto extends CompetitionScopeQueryDto {
   clubId?: number;
 
   @ApiPropertyOptional({
-    description: "Team ID to filter players by team",
-    example: 1,
-    type: Number,
-  })
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  teamId?: number;
-
-  @ApiPropertyOptional({
     description: "Team number to filter players",
     example: 1,
     type: Number,

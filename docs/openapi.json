@@ -1943,17 +1943,6 @@
             }
           },
           {
-            "name": "teamId",
-            "required": false,
-            "in": "query",
-            "description": "Team ID to filter players by team",
-            "schema": {
-              "minimum": 1,
-              "example": 1,
-              "type": "number"
-            }
-          },
-          {
             "name": "teamNumber",
             "required": false,
             "in": "query",
