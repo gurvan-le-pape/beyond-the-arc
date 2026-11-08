@@ -7,6 +7,5 @@ export * from "./Team";
 export * from "./TeamClubRef";
 export * from "./TeamDetail";
 export * from "./TeamFilters";
-export * from "./TeamFilterValues";
 export * from "./TeamMatchHistory";
 export * from "./TeamPoolRef";

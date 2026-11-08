@@ -9,7 +9,6 @@ import {
   useDropUnknownLocation,
   useLocationOptions,
 } from "@/features/organizations/hooks";
-import { useTeamFilterValues } from "@/features/teams/api";
 import { ErrorMessage } from "@/shared/components/feedback";
 import type { ActiveFilterChip } from "@/shared/components/filters";
 import {
@@ -20,7 +19,7 @@ import {
   LevelLocationFilters,
   useCommonFilterChips,
 } from "@/shared/components/filters";
-import { Select } from "@/shared/components/forms";
+import { NumberField } from "@/shared/components/forms";
 import { Grid } from "@/shared/components/primitives";
 import type { FilterProps } from "@/shared/hooks";
 
@@ -47,9 +46,9 @@ interface TeamsFiltersProps extends FilterProps<TeamsFilterValues> {
  *
  * Option sources are fetched here rather than passed in — `useLocationOptions`
  * for committees and leagues, `useChampionshipCascadeOptions` for divisions and
- * pools (the matches filters use the same), `useTeamFilterValues` for the team
- * numbers that occur. Each surfaces its own error and retry, so a failed
- * lookup reads as a failure instead of as an empty dropdown.
+ * pools (the matches filters use the same). Each surfaces its own error and
+ * retry, so a failed lookup reads as a failure instead of as an empty dropdown.
+ * The team number is typed, so it needs no options.
  */
 export function TeamsFilters({ filters, set, onReset }: TeamsFiltersProps) {
   const tTeams = useTranslations("teams");
@@ -80,13 +79,6 @@ export function TeamsFilters({ filters, set, onReset }: TeamsFiltersProps) {
   } = filters;
 
   useDropUnknownLocation(locationOptions, { filters, set });
-
-  const {
-    data: teamFilterValues,
-    isError: filterValuesFailed,
-    refetch: retryFilterValues,
-  } = useTeamFilterValues({ committeeId: committee, leagueId: league });
-  const teamNumbers = teamFilterValues?.numbers ?? [];
 
   const {
     divisions,
@@ -130,11 +122,6 @@ export function TeamsFilters({ filters, set, onReset }: TeamsFiltersProps) {
     },
   ].filter(Boolean) as ActiveFilterChip[];
 
-  const teamNumberOptions = [
-    { value: undefined, label: tCommon("filters.allTeamNumbers") },
-    ...teamNumbers.map((n) => ({ value: n, label: String(n) })),
-  ];
-
   return (
     <FiltersShell
       activeFilterCount={chips.length}
@@ -149,14 +136,8 @@ export function TeamsFilters({ filters, set, onReset }: TeamsFiltersProps) {
         />
       )}
 
-      {/* Without these the dropdowns render empty, which reads as "this scope
-          has none" rather than a failed request. */}
-      {filterValuesFailed && (
-        <ErrorMessage
-          message={tCommon("errors.fetchTeams")}
-          onRetry={retryFilterValues}
-        />
-      )}
+      {/* Without this the division and pool dropdowns render empty, which
+          reads as "this scope has none" rather than a failed request. */}
       {cascadeFailed && (
         <ErrorMessage
           message={tCommon("errors.fetchChampionships")}
@@ -173,11 +154,12 @@ export function TeamsFilters({ filters, set, onReset }: TeamsFiltersProps) {
           onChange={(club, clubName) => set({ club, clubName })}
         />
 
-        <Select
+        <NumberField
           label={tCommon("filters.teamNumbers")}
-          options={teamNumberOptions}
           value={number}
           onChange={(number) => set({ number })}
+          minValue={1}
+          placeholder={tCommon("filters.allTeamNumbers")}
         />
 
         <CategoryGenderSelects filters={filters} set={set} />

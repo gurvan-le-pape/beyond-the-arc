@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import type { ApiError, PaginatedResponse } from "@/shared/types";
 
-import type { Team, TeamFilterValues } from "../types";
+import type { Team } from "../types";
 import type { TeamFilters } from "../types/TeamFilters";
 import { teamsQueries } from "./teamsQueries";
 
@@ -30,25 +30,4 @@ export function useTeams(
     ...teamsQueries.list(filters),
     enabled: options?.enabled ?? true,
   });
-}
-
-/**
- * Hook to fetch available filter values for teams.
- * Returns pool numbers, letters, and divisions scoped to an optional
- * committee or league. Stays very fresh (30 seconds) to reflect live
- * admin changes in filter UIs.
- *
- * @param params - Optional scoping parameters (committeeId, leagueId)
- * @returns React Query result with filter values
- *
- * @example
- * const { data: filterValues } = useTeamFilterValues({ committeeId: 1 });
- */
-export function useTeamFilterValues(params?: {
-  committeeId?: number;
-  leagueId?: number;
-}) {
-  return useQuery<TeamFilterValues, ApiError>(
-    teamsQueries.filterValues(params),
-  );
 }

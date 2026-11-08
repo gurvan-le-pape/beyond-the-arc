@@ -75,24 +75,6 @@ export const playersQueries = {
   }),
 
   /**
-   * Query options for fetching available filter values for players.
-   * Returns player numbers and team numbers scoped to an optional
-   * committee or league.
-   *
-   * @example
-   * useQuery(playersQueries.filterValues({ committeeId: 1 }))
-   *
-   * @param params - optional committee or league scope for the available values
-   * @returns query options to spread into `useQuery` — key, fetcher and cache policy together
-   */
-  filterValues: (params?: { committeeId?: number; leagueId?: number }) => ({
-    queryKey: playersKeys.filterValues(params),
-    queryFn: ({ signal }: QueryFunctionContext) =>
-      playersService.getFilterValues(params, signal),
-    ...PLAYERS_CONFIG,
-  }),
-
-  /**
    * Query options for the name-search autocomplete.
    * Shorter cache window than the base config — a search result set is
    * consulted once and rarely returned to, mirroring the clubs equivalent.

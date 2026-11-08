@@ -5,7 +5,6 @@ import type { PaginatedResponse } from "@/shared/types";
 import type { Team } from "../types/Team";
 import type { TeamDetail } from "../types/TeamDetail";
 import type { TeamFilters } from "../types/TeamFilters";
-import type { TeamFilterValues } from "../types/TeamFilterValues";
 import type { TeamMatchHistoryResponse } from "../types/TeamMatchHistory";
 
 /**
@@ -63,25 +62,6 @@ export const teamsService = {
   ): Promise<TeamMatchHistoryResponse> {
     return request(`/teams/${teamId}/matches`, {
       revalidate: ServerRevalidate.LIVE,
-      signal,
-    });
-  },
-
-  /**
-   * The categories, genders and levels that occur among teams in a league or
-   * committee, for the teams filters to offer.
-   *
-   * @param params - the league or committee to narrow to
-   * @param signal - TanStack Query's `queryFn` signal
-   * @returns the values present
-   */
-  getFilterValues(
-    params?: { committeeId?: number; leagueId?: number },
-    signal?: AbortSignal,
-  ): Promise<TeamFilterValues> {
-    return request("/teams/filter-values", {
-      params,
-      revalidate: ServerRevalidate.DEFAULT,
       signal,
     });
   },

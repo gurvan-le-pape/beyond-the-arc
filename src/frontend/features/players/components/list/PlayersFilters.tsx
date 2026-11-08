@@ -16,11 +16,10 @@ import {
   LevelLocationFilters,
   useCommonFilterChips,
 } from "@/shared/components/filters";
-import { DebouncedSearchField, Select } from "@/shared/components/forms";
+import { DebouncedSearchField, NumberField } from "@/shared/components/forms";
 import { Grid } from "@/shared/components/primitives";
 import type { FilterProps } from "@/shared/hooks";
 
-import { usePlayerFilterValues } from "../../api";
 import type { PlayersFilterValues } from "../../hooks/usePlayersFilterState";
 
 interface PlayersFiltersProps extends FilterProps<PlayersFilterValues> {
@@ -35,12 +34,9 @@ interface PlayersFiltersProps extends FilterProps<PlayersFilterValues> {
  * `usePlayersFilterState`, which also owns the reset-to-page-1 behaviour. Wiring
  * it to hand-rolled state instead loses that.
  *
- * Two option sources are fetched here rather than passed in — `useLocationOptions`
- * for committees and leagues, `usePlayerFilterValues` for the jersey and team
- * numbers that actually occur. The latter is not optional: without it those
- * dropdowns render empty, which reads as "no players match" rather than as a
- * failure. Location errors surface inline with a retry; the rest of the panel
- * stays usable.
+ * Committees and leagues are fetched here by `useLocationOptions`; a failure
+ * surfaces inline with a retry and the rest of the panel stays usable. Jersey
+ * and team numbers are typed, so they need no options.
  */
 export function PlayersFilters({ filters, set, onReset }: PlayersFiltersProps) {
   const tPlayers = useTranslations("players");
@@ -58,14 +54,6 @@ export function PlayersFilters({ filters, set, onReset }: PlayersFiltersProps) {
   const { q, club, clubName, number, teamNumber, committee, league } = filters;
 
   useDropUnknownLocation(locationOptions, { filters, set });
-
-  const {
-    data: playerFilterValues,
-    isError: filterValuesFailed,
-    refetch: retryFilterValues,
-  } = usePlayerFilterValues({ committeeId: committee, leagueId: league });
-  const playerNumbers = playerFilterValues?.numbers ?? [];
-  const teamNumbers = playerFilterValues?.teamNumbers ?? [];
 
   const { categoryGenderChips, levelLocationChips } = useCommonFilterChips({
     filters,
@@ -99,16 +87,6 @@ export function PlayersFilters({ filters, set, onReset }: PlayersFiltersProps) {
     ...levelLocationChips,
   ].filter(Boolean) as ActiveFilterChip[];
 
-  const playerNumberOptions = [
-    { value: undefined, label: tCommon("filters.allPlayerNumbers") },
-    ...playerNumbers.map((n) => ({ value: n, label: String(n) })),
-  ];
-
-  const teamNumberOptions = [
-    { value: undefined, label: tCommon("filters.allTeamNumbers") },
-    ...teamNumbers.map((n) => ({ value: n, label: String(n) })),
-  ];
-
   return (
     <FiltersShell
       activeFilterCount={chips.length}
@@ -120,15 +98,6 @@ export function PlayersFilters({ filters, set, onReset }: PlayersFiltersProps) {
         <ErrorMessage
           message={tCommon("errors.fetchLeagueOrCommittee")}
           onRetry={retryLocation}
-        />
-      )}
-
-      {/* Without this the number dropdowns render empty, which reads as "this
-          scope has no players" rather than a failed request. */}
-      {filterValuesFailed && (
-        <ErrorMessage
-          message={tCommon("errors.fetchPlayers")}
-          onRetry={retryFilterValues}
         />
       )}
 
@@ -151,18 +120,18 @@ export function PlayersFilters({ filters, set, onReset }: PlayersFiltersProps) {
 
         <CategoryGenderSelects filters={filters} set={set} />
 
-        <Select
+        <NumberField
           label={tCommon("filters.playerNumbers")}
-          options={playerNumberOptions}
           value={number}
           onChange={(number) => set({ number })}
+          minValue={1}
           placeholder={tCommon("filters.allPlayerNumbers")}
         />
-        <Select
+        <NumberField
           label={tCommon("filters.teamNumbers")}
-          options={teamNumberOptions}
           value={teamNumber}
           onChange={(teamNumber) => set({ teamNumber })}
+          minValue={1}
           placeholder={tCommon("filters.allTeamNumbers")}
         />
 

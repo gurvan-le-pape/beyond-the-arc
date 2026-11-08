@@ -8,7 +8,6 @@ import { Test } from "@nestjs/testing";
 import { LoggerModule } from "nestjs-pino";
 
 import type {
-  FilterValuesTeamsResponseDto,
   TeamDetailResponseDto,
   TeamMatchHistoryResponseDto,
   TeamResponseDto,
@@ -22,7 +21,6 @@ describe("TeamsController", () => {
 
   const mockTeamsService = {
     findAllTeams: jest.fn(),
-    findTeamFilterValues: jest.fn(),
     findTeamById: jest.fn(),
     findTeamMatchHistory: jest.fn(),
   };
@@ -193,36 +191,6 @@ describe("TeamsController", () => {
 
       // Act & Assert
       await expect(controller.getTeams({})).rejects.toThrow("Database error");
-    });
-  });
-
-  describe("getTeamFilterValues", () => {
-    it("should return available filter values", async () => {
-      // Arrange
-      const mockFilterValues: FilterValuesTeamsResponseDto = {
-        numbers: [1, 2, 3],
-      };
-
-      mockTeamsService.findTeamFilterValues.mockResolvedValue(mockFilterValues);
-
-      // Act
-      const result = await controller.getTeamFilterValues({});
-
-      // Assert
-      expect(result).toEqual(mockFilterValues);
-      expect(service.findTeamFilterValues).toHaveBeenCalled();
-    });
-
-    it("should propagate service errors", async () => {
-      // Arrange
-      mockTeamsService.findTeamFilterValues.mockRejectedValue(
-        new Error("Database error"),
-      );
-
-      // Act & Assert
-      await expect(controller.getTeamFilterValues({})).rejects.toThrow(
-        "Database error",
-      );
     });
   });
 

@@ -4,7 +4,6 @@ import type { PaginatedResponse } from "@/shared/types";
 
 import type { Player } from "../types/Player";
 import type { PlayerFilters } from "../types/PlayerFilters";
-import type { PlayerFilterValues } from "../types/PlayerFilterValues";
 import type { PlayerMatchHistoryResponse } from "../types/PlayerMatchHistory";
 import type { PlayerSearchFilters } from "../types/PlayerSearchFilters";
 
@@ -62,25 +61,6 @@ export const playersService = {
   ): Promise<PlayerMatchHistoryResponse> {
     return request(`/players/${playerId}/matches`, {
       revalidate: ServerRevalidate.LIVE,
-      signal,
-    });
-  },
-
-  /**
-   * The categories, genders and levels that occur among players in a league
-   * or committee, for the players filters to offer.
-   *
-   * @param params - the league or committee to narrow to
-   * @param signal - TanStack Query's `queryFn` signal
-   * @returns the values present
-   */
-  getFilterValues(
-    params?: { committeeId?: number; leagueId?: number },
-    signal?: AbortSignal,
-  ): Promise<PlayerFilterValues> {
-    return request("/players/filter-values", {
-      params,
-      revalidate: ServerRevalidate.DEFAULT,
       signal,
     });
   },

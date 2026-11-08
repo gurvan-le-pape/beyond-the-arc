@@ -440,26 +440,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/players/filter-values": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get available filter values for players
-         * @description Returns available player numbers and team numbers. Optionally scoped to a committee or league.
-         */
-        get: operations["PlayersController_getPlayerFilterValues"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/players/{id}": {
         parameters: {
             query?: never;
@@ -512,26 +492,6 @@ export interface paths {
          * @description Retrieves a paginated list of teams with optional filtering. Results are cached for 5 minutes.
          */
         get: operations["TeamsController_getTeams"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/teams/filter-values": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get available filter values for teams
-         * @description Returns available team numbers, pool letters, and divisions. Optionally scoped to a committee or league.
-         */
-        get: operations["TeamsController_getTeamFilterValues"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2009,10 +1969,6 @@ export interface components {
             /** @description Team information */
             team: components["schemas"]["PlayerTeamDto"];
         };
-        FilterValuesPlayersResponseDto: {
-            numbers: number[];
-            teamNumbers: number[];
-        };
         HistoryClubRefDto: {
             /**
              * @description Club ID
@@ -2329,17 +2285,6 @@ export interface components {
             pool: components["schemas"]["PoolRefDto"];
             /** @description Relation counts */
             _count: components["schemas"]["TeamCountDto"];
-        };
-        FilterValuesTeamsResponseDto: {
-            /**
-             * @description Available team numbers
-             * @example [
-             *       1,
-             *       2,
-             *       3
-             *     ]
-             */
-            numbers: number[];
         };
         TeamRosterPlayerDto: {
             /**
@@ -3657,33 +3602,6 @@ export interface operations {
             };
         };
     };
-    PlayersController_getPlayerFilterValues: {
-        parameters: {
-            query?: {
-                /** @description Filter by committee ID */
-                committeeId?: number;
-                /** @description Filter by league ID */
-                leagueId?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Filter values successfully retrieved */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
-                        data: components["schemas"]["FilterValuesPlayersResponseDto"];
-                    };
-                };
-            };
-        };
-    };
     PlayersController_getPlayerById: {
         parameters: {
             query?: never;
@@ -3833,33 +3751,6 @@ export interface operations {
                             items: components["schemas"]["TeamResponseDto"][];
                         };
                         meta: components["schemas"]["ApiPageMetaDto"];
-                    };
-                };
-            };
-        };
-    };
-    TeamsController_getTeamFilterValues: {
-        parameters: {
-            query?: {
-                /** @description Filter by committee ID */
-                committeeId?: number;
-                /** @description Filter by league ID */
-                leagueId?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Filter values successfully retrieved */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
-                        data: components["schemas"]["FilterValuesTeamsResponseDto"];
                     };
                 };
             };
