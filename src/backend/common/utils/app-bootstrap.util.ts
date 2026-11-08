@@ -1,4 +1,5 @@
 // src/backend/common/utils/app-bootstrap.util.ts
+import { UndeclaredQueryGuard } from "@common/guards";
 import { type INestApplication, ValidationPipe } from "@nestjs/common";
 
 import { applyApiPrefix } from "./openapi.util";
@@ -23,6 +24,9 @@ import { applyApiPrefix } from "./openapi.util";
 export function configureApp(app: INestApplication): void {
   applyApiPrefix(app);
 
+  // The ValidationPipe below rejects parameters a query DTO does not declare;
+  // the guard rejects any parameter on a handler that has no query DTO.
+  app.useGlobalGuards(new UndeclaredQueryGuard());
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
