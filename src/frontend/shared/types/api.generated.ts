@@ -200,7 +200,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/leaderboards": {
+    "/api/pools/{poolId}/leaderboard": {
         parameters: {
             query?: never;
             header?: never;
@@ -208,8 +208,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get leaderboards by pool ID
-         * @description Retrieves all leaderboard entries for a specific pool, sorted by points and point difference. Results are cached for 5 minutes.
+         * Get a pool's standings
+         * @description Retrieves all leaderboard entries for a pool, sorted by points and point difference. An unknown pool returns an empty list. Results are cached for 5 minutes.
          */
         get: operations["LeaderboardsController_getLeaderboardsByPoolId"];
         put?: never;
@@ -252,26 +252,6 @@ export interface paths {
          * @description Retrieves a paginated list of matches with optional filtering by level, division, category, gender, and more. Results are cached for 5 minutes.
          */
         get: operations["MatchesController_getMatches"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/matches/pool/{poolId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get matches by pool ID
-         * @description Retrieves all matches for a specific pool without pagination, ordered by date ascending.
-         */
-        get: operations["MatchesController_getMatchesByPoolId"];
         put?: never;
         post?: never;
         delete?: never;
@@ -372,6 +352,26 @@ export interface paths {
          * @description Retrieves every shot a specific player took, with its location and event type, across all their matches, blocked attempts included. Shots the player only assisted on are excluded. Results are cached for 5 minutes.
          */
         get: operations["MatchesController_getShotsByPlayerId"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/pools/{poolId}/matches": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get a pool's matches
+         * @description Retrieves all matches of a pool without pagination, ordered by date ascending. An unknown pool returns an empty list.
+         */
+        get: operations["PoolMatchesController_getMatchesByPoolId"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2996,12 +2996,12 @@ export interface operations {
     };
     LeaderboardsController_getLeaderboardsByPoolId: {
         parameters: {
-            query: {
+            query?: never;
+            header?: never;
+            path: {
                 /** @description Pool ID */
                 poolId: number;
             };
-            header?: never;
-            path?: never;
             cookie?: never;
         };
         requestBody?: never;
@@ -3018,23 +3018,12 @@ export interface operations {
                     };
                 };
             };
-            /** @description Invalid query parameters */
+            /** @description Invalid ID format */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    /**
-                     * @example {
-                     *       "statusCode": 400,
-                     *       "message": [
-                     *         "poolId must be a valid number string"
-                     *       ],
-                     *       "error": "Bad Request",
-                     *       "path": "/api/leaderboards?poolId=abc",
-                     *       "timestamp": "2024-02-05T10:00:00Z"
-                     *     }
-                     */
                     "application/json": components["schemas"]["ApiErrorResponseDto"];
                 };
             };
@@ -3112,41 +3101,6 @@ export interface operations {
                 };
             };
             /** @description Invalid query parameters */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponseDto"];
-                };
-            };
-        };
-    };
-    MatchesController_getMatchesByPoolId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Pool ID */
-                poolId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Matches successfully retrieved */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
-                        data: components["schemas"]["MatchResponseDto"][];
-                        meta: components["schemas"]["ApiListMetaDto"];
-                    };
-                };
-            };
-            /** @description Invalid ID format */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -3333,6 +3287,41 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["ApiEnvelopeDto"] & {
                         data: components["schemas"]["ShotDto"][];
+                        meta: components["schemas"]["ApiListMetaDto"];
+                    };
+                };
+            };
+            /** @description Invalid ID format */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+        };
+    };
+    PoolMatchesController_getMatchesByPoolId: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Pool ID */
+                poolId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Matches successfully retrieved */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelopeDto"] & {
+                        data: components["schemas"]["MatchResponseDto"][];
                         meta: components["schemas"]["ApiListMetaDto"];
                     };
                 };

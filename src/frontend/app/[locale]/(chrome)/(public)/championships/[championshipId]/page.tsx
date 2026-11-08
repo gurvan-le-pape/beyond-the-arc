@@ -130,7 +130,7 @@ async function ChampionshipsDetailPage({
   // Both halves of the page are scoped to the selected pool, so they resolve
   // together once it is known.
   const [leaderboard, matches] = await Promise.all([
-    leaderboardsService.getAll({ poolId }),
+    leaderboardsService.getByPoolId(poolId),
     matchesService.getByPoolId(poolId),
   ]).catch(handleServerError);
 

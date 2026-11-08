@@ -591,10 +591,9 @@ describe("API conventions", () => {
     // list has nothing to 404 on: an unknown id yields the same empty array
     // as a real id with no rows.
     //
-    // `/api/matches/pool/{poolId}` declared one and could never send it
-    // (prod: `pool/999999999` → 200 `{"data":[],"meta":{"count":0}}`). Note
-    // that "has a path param" is *not* the discriminator — that route has one
-    // and is still a list.
+    // "Has a path param" is *not* the discriminator: `/api/pools/{poolId}/matches`
+    // has one and is still a list — an unknown pool returns 200 with
+    // `{"data":[],"meta":{"count":0}}`, never a 404.
     const listsWith404 = successResponses()
       .filter(({ schema }) => {
         const text = JSON.stringify(schema);

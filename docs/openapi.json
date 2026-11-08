@@ -855,18 +855,17 @@
         ]
       }
     },
-    "/api/leaderboards": {
+    "/api/pools/{poolId}/leaderboard": {
       "get": {
-        "description": "Retrieves all leaderboard entries for a specific pool, sorted by points and point difference. Results are cached for 5 minutes.",
+        "description": "Retrieves all leaderboard entries for a pool, sorted by points and point difference. An unknown pool returns an empty list. Results are cached for 5 minutes.",
         "operationId": "LeaderboardsController_getLeaderboardsByPoolId",
         "parameters": [
           {
             "name": "poolId",
             "required": true,
-            "in": "query",
+            "in": "path",
             "description": "Pool ID",
             "schema": {
-              "minimum": 1,
               "example": 1,
               "type": "number"
             }
@@ -905,28 +904,19 @@
             }
           },
           "400": {
-            "description": "Invalid query parameters",
+            "description": "Invalid ID format",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ApiErrorResponseDto"
-                },
-                "example": {
-                  "statusCode": 400,
-                  "message": [
-                    "poolId must be a valid number string"
-                  ],
-                  "error": "Bad Request",
-                  "path": "/api/leaderboards?poolId=abc",
-                  "timestamp": "2024-02-05T10:00:00Z"
                 }
               }
             }
           }
         },
-        "summary": "Get leaderboards by pool ID",
+        "summary": "Get a pool's standings",
         "tags": [
-          "leaderboards"
+          "pools"
         ]
       }
     },
@@ -1186,71 +1176,6 @@
           }
         },
         "summary": "Get all matches with filters",
-        "tags": [
-          "matches"
-        ]
-      }
-    },
-    "/api/matches/pool/{poolId}": {
-      "get": {
-        "description": "Retrieves all matches for a specific pool without pagination, ordered by date ascending.",
-        "operationId": "MatchesController_getMatchesByPoolId",
-        "parameters": [
-          {
-            "name": "poolId",
-            "required": true,
-            "in": "path",
-            "description": "Pool ID",
-            "schema": {
-              "example": 1,
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Matches successfully retrieved",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiEnvelopeDto"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "type": "array",
-                          "items": {
-                            "$ref": "#/components/schemas/MatchResponseDto"
-                          }
-                        },
-                        "meta": {
-                          "$ref": "#/components/schemas/ApiListMetaDto"
-                        }
-                      },
-                      "required": [
-                        "data",
-                        "meta"
-                      ]
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid ID format",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponseDto"
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get matches by pool ID",
         "tags": [
           "matches"
         ]
@@ -1584,6 +1509,71 @@
         "summary": "Get shots by player ID",
         "tags": [
           "matches"
+        ]
+      }
+    },
+    "/api/pools/{poolId}/matches": {
+      "get": {
+        "description": "Retrieves all matches of a pool without pagination, ordered by date ascending. An unknown pool returns an empty list.",
+        "operationId": "PoolMatchesController_getMatchesByPoolId",
+        "parameters": [
+          {
+            "name": "poolId",
+            "required": true,
+            "in": "path",
+            "description": "Pool ID",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Matches successfully retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiEnvelopeDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/MatchResponseDto"
+                          }
+                        },
+                        "meta": {
+                          "$ref": "#/components/schemas/ApiListMetaDto"
+                        }
+                      },
+                      "required": [
+                        "data",
+                        "meta"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get a pool's matches",
+        "tags": [
+          "pools"
         ]
       }
     },

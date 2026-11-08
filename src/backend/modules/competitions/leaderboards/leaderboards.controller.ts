@@ -3,23 +3,24 @@ import { CACHE_TTL } from "@common/constants";
 import { ApiEnvelopeList } from "@common/decorators";
 import { ApiErrorResponseDto } from "@common/dto";
 import { CacheInterceptor } from "@common/interceptors";
+import { ParseEntityIdPipe } from "@common/pipes";
 import {
   Controller,
   Get,
   HttpCode,
   HttpStatus,
-  Query,
+  Param,
   UseInterceptors,
 } from "@nestjs/common";
-import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 
-import { GetLeaderboardsQueryDto } from "./dto/leaderboards.query.dto";
 import { LeaderboardResponseDto } from "./dto/leaderboards.response.dto";
 import { LeaderboardsService } from "./leaderboards.service";
 
 /**
- * Controller handling leaderboard-related endpoints.
- * Provides access to pool standings and rankings.
+ * A pool's standings, served under the pool as `/pools/:poolId/leaderboard`.
+ * The route lives in this module because the leaderboards service owns the
+ * ranking; only its URL sits under `pools`.
  *
  * Global interceptors (registered in app.module.ts):
  * - TransformInterceptor: Wraps responses in standard format
@@ -30,8 +31,8 @@ import { LeaderboardsService } from "./leaderboards.service";
  * Route-specific interceptors:
  * - CacheInterceptor: Applied to leaderboard endpoints (standings change moderately)
  */
-@ApiTags("leaderboards")
-@Controller("leaderboards")
+@ApiTags("pools")
+@Controller("pools")
 export class LeaderboardsController {
   constructor(private readonly leaderboardsService: LeaderboardsService) {}
 
@@ -40,11 +41,11 @@ export class LeaderboardsController {
    *
    * Moderate caching (5 minutes) because standings can change with each match.
    *
-   * @param query - Query parameters containing poolId
+   * @param poolId - The pool whose standings to return
    * @returns Array of leaderboard entries sorted by points and point difference
    *
    * @example
-   * GET /leaderboards?poolId=1
+   * GET /pools/1/leaderboard
    * Response (after TransformInterceptor):
    * {
    *   "data": [
@@ -64,17 +65,23 @@ export class LeaderboardsController {
    *   ],
    *   "meta": { "count": 10 },
    *   "timestamp": "2024-02-05T10:00:00Z",
-   *   "path": "/leaderboards?poolId=1",
+   *   "path": "/pools/1/leaderboard",
    *   "statusCode": 200
    * }
    */
-  @Get()
+  @Get(":poolId/leaderboard")
   @HttpCode(HttpStatus.OK)
   @UseInterceptors(CacheInterceptor({ ttl: CACHE_TTL.MODERATE_DATA })) // Cache for 5 minutes
   @ApiOperation({
-    summary: "Get leaderboards by pool ID",
+    summary: "Get a pool's standings",
     description:
-      "Retrieves all leaderboard entries for a specific pool, sorted by points and point difference. Results are cached for 5 minutes.",
+      "Retrieves all leaderboard entries for a pool, sorted by points and point difference. An unknown pool returns an empty list. Results are cached for 5 minutes.",
+  })
+  @ApiParam({
+    name: "poolId",
+    description: "Pool ID",
+    type: Number,
+    example: 1,
   })
   @ApiEnvelopeList(
     LeaderboardResponseDto,
@@ -82,19 +89,12 @@ export class LeaderboardsController {
   )
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: "Invalid query parameters",
+    description: "Invalid ID format",
     type: ApiErrorResponseDto,
-    example: {
-      statusCode: 400,
-      message: ["poolId must be a valid number string"],
-      error: "Bad Request",
-      path: "/api/leaderboards?poolId=abc",
-      timestamp: "2024-02-05T10:00:00Z",
-    },
   })
   async getLeaderboardsByPoolId(
-    @Query() query: GetLeaderboardsQueryDto,
+    @Param("poolId", ParseEntityIdPipe) poolId: number,
   ): Promise<LeaderboardResponseDto[]> {
-    return this.leaderboardsService.findLeaderboardsByPoolId(query.poolId);
+    return this.leaderboardsService.findLeaderboardsByPoolId(poolId);
   }
 }

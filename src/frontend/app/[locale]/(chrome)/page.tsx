@@ -68,7 +68,7 @@ async function Home() {
   const latestRound = featuredPool
     ? await Promise.all([
         championshipsService.getById(featuredPool.championshipId),
-        leaderboardsService.getAll({ poolId: featuredPool.id }),
+        leaderboardsService.getByPoolId(featuredPool.id),
         matchesService.getByPoolId(featuredPool.id),
       ])
         .then(([championship, leaderboard, matches]) => ({
