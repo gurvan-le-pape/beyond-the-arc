@@ -23,7 +23,7 @@ describe("GetTeamsQueryDto", () => {
       category: "U18",
       gender: "male",
       search: "Paris",
-      poolLetter: "A",
+      poolId: 1,
       page: 1,
       limit: 50,
     });
@@ -106,10 +106,17 @@ describe("GetTeamsQueryDto", () => {
       expect(errors.some((e) => e.property === "search")).toBe(false);
     });
 
-    it("should pass for valid poolLetter string", async () => {
-      const dto = plainToInstance(GetTeamsQueryDto, { poolLetter: "A" });
+    it("should turn a poolId string into a number", async () => {
+      const dto = plainToInstance(GetTeamsQueryDto, { poolId: "7" });
       const errors = await validate(dto);
-      expect(errors.some((e) => e.property === "poolLetter")).toBe(false);
+      expect(errors.some((e) => e.property === "poolId")).toBe(false);
+      expect(dto.poolId).toBe(7);
+    });
+
+    it("should reject a pool letter where the id goes", async () => {
+      const dto = plainToInstance(GetTeamsQueryDto, { poolId: "A" });
+      const errors = await validate(dto);
+      expect(errors.some((e) => e.property === "poolId")).toBe(true);
     });
   });
 });

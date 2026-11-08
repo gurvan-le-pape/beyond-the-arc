@@ -4,6 +4,7 @@
 import { Calendar } from "lucide-react";
 import { useTranslations } from "next-intl";
 
+import { useChampionshipCascadeOptions } from "@/features/competitions/championships/hooks";
 import type { MatchesFilterValues } from "@/features/matches/hooks";
 import {
   useDropUnknownLocation,
@@ -22,8 +23,6 @@ import {
 import { DebouncedSearchField, TextField } from "@/shared/components/forms";
 import { Grid } from "@/shared/components/primitives";
 import type { FilterProps } from "@/shared/hooks";
-
-import { useMatchesCascadeOptions } from "./useMatchesCascadeOptions";
 
 interface MatchesFiltersProps extends FilterProps<MatchesFilterValues> {
   readonly onReset: () => void;
@@ -45,7 +44,7 @@ interface MatchesFiltersProps extends FilterProps<MatchesFilterValues> {
  * championship, whose pools are the options.
  *
  * Options are fetched here rather than passed in — `useLocationOptions` for
- * committees and leagues, `useMatchesCascadeOptions` for divisions and pools.
+ * committees and leagues, `useChampionshipCascadeOptions` for divisions and pools.
  * Both surface their own error and retry, so a failed lookup reads as a failure
  * instead of as an empty dropdown.
  */
@@ -67,7 +66,7 @@ export function MatchesFilters({ filters, set, onReset }: MatchesFiltersProps) {
     pools,
     isError: cascadeFailed,
     retry: retryCascade,
-  } = useMatchesCascadeOptions(filters);
+  } = useChampionshipCascadeOptions(filters);
 
   const {
     q,

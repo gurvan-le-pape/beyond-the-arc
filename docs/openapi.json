@@ -2295,13 +2295,14 @@
             }
           },
           {
-            "name": "poolLetter",
+            "name": "poolId",
             "required": false,
             "in": "query",
-            "description": "Filter by pool letter",
+            "description": "Pool ID; it fixes the championship, so the competition filters are ignored with it",
             "schema": {
-              "example": "A",
-              "type": "string"
+              "minimum": 1,
+              "example": 1,
+              "type": "number"
             }
           }
         ],
@@ -5680,35 +5681,10 @@
             "items": {
               "type": "number"
             }
-          },
-          "poolLetters": {
-            "description": "Available pool letters",
-            "example": [
-              "A",
-              "B",
-              "C"
-            ],
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "divisions": {
-            "description": "Available divisions",
-            "example": [
-              1,
-              2
-            ],
-            "type": "array",
-            "items": {
-              "type": "number"
-            }
           }
         },
         "required": [
-          "numbers",
-          "poolLetters",
-          "divisions"
+          "numbers"
         ]
       },
       "TeamRosterPlayerDto": {

@@ -3,10 +3,5 @@
     "@typescript-eslint/no-unnecessary-condition": {
       "count": 1
     }
-  },
-  "modules/teams/teams.service.ts": {
-    "@typescript-eslint/no-unnecessary-condition": {
-      "count": 1
-    }
   }
 }

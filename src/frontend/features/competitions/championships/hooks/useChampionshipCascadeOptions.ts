@@ -1,12 +1,23 @@
-// src/frontend/features/matches/components/list/matches-filters/useMatchesCascadeOptions.ts
-import { useChampionships } from "@/features/competitions/championships/api";
-import type { ChampionshipFilters } from "@/features/competitions/championships/types";
-import type { MatchesFilterValues } from "@/features/matches/hooks";
+// src/frontend/features/competitions/championships/hooks/useChampionshipCascadeOptions.ts
+import type { Category, Gender } from "@/shared/constants";
 import { CompetitionLevel } from "@/shared/constants";
 
+import { useChampionships } from "../api/useChampionships";
+import type { ChampionshipFilters } from "../types/ChampionshipFilters";
+
+/** The competition filters a search tab's division and pool steps depend on. */
+interface CascadeScope {
+  readonly category?: Category;
+  readonly gender?: Gender;
+  readonly level?: CompetitionLevel;
+  readonly committee?: number;
+  readonly league?: number;
+  readonly division?: number;
+}
+
 /**
- * Supplies the division and pool options for the matches filter cascade, based
- * on the level and location already chosen.
+ * Supplies the division and pool options for a search tab's filter cascade
+ * (matches, teams), based on the level and location already chosen.
  *
  * **No query runs until the scope is complete** — departmental with a committee,
  * or regional with a league. National level and half-filled scopes fetch
@@ -22,17 +33,14 @@ import { CompetitionLevel } from "@/shared/constants";
  *   currently selected
  * @returns championships, divisions, pools, and the error/retry pair
  */
-export function useMatchesCascadeOptions({
+export function useChampionshipCascadeOptions({
   category,
   gender,
   level,
   committee: committeeId,
   league: leagueId,
   division,
-}: Pick<
-  MatchesFilterValues,
-  "category" | "gender" | "level" | "committee" | "league" | "division"
->) {
+}: CascadeScope) {
   const isDepartmental =
     level === CompetitionLevel.DEPARTMENTAL && committeeId !== undefined;
   const isRegional =
@@ -52,11 +60,7 @@ export function useMatchesCascadeOptions({
   const championships = data?.items ?? [];
 
   const divisions = Array.from(
-    new Set(
-      championships
-        .map((c) => c.division)
-        .filter((d) => d !== null && d !== undefined),
-    ),
+    new Set(championships.map((c) => c.division)),
   ).sort((a, b) => a - b);
 
   const championship = championships.find(

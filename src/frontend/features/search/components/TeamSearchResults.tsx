@@ -43,7 +43,7 @@ export function TeamSearchResults() {
     committeeId: filters.committee,
     leagueId: filters.league,
     division: filters.division,
-    poolLetter: filters.pool,
+    poolId: filters.pool,
   };
   // Nothing is listed until a filter narrows the 60k teams.
   const searching = hasCriteria(criteria);

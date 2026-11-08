@@ -98,20 +98,6 @@ export class FilterValuesTeamsResponseDto {
     type: [Number],
   })
   numbers!: number[];
-
-  @ApiProperty({
-    description: "Available pool letters",
-    example: ["A", "B", "C"],
-    type: [String],
-  })
-  poolLetters!: string[];
-
-  @ApiProperty({
-    description: "Available divisions",
-    example: [1, 2],
-    type: [Number],
-  })
-  divisions!: number[];
 }
 
 /**
