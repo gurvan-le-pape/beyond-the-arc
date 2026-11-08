@@ -4265,8 +4265,7 @@
               "blocked",
               "winner",
               "exiting_player",
-              "entering_player",
-              "starter"
+              "entering_player"
             ],
             "type": "string",
             "description": "Player role in the event",

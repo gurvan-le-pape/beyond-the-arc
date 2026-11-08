@@ -84,3 +84,51 @@ BLOCKED_SHOT_CATEGORY_WEIGHTS = {
     "two_ext": 0.2,
     "three": 0.1,
 }
+
+# The players an event names: (main, other), by role. An event stores its main
+# player in `match_events.player_id` and the other in `other_player_id`; a None
+# role is never set. The main player of a shot is the one who took it, so a
+# blocked shot's is the blocked shooter. The backend reads these columns through
+# the same table, in `common/constants/event-player-roles.ts`.
+EVENT_PLAYER_ROLES = {
+    "tip_off": ("winner", None),
+    "traveling": ("shooter", None),
+    "carrying": ("shooter", None),
+    "double_dribble": ("shooter", None),
+    "bad_pass": ("shooter", None),
+    "steal": ("stealer", "victim"),
+    "shot_clock_violation": ("shooter", None),
+    "offensive_foul": ("fouler", "victim"),
+    "quarter_end": (None, None),
+    "blocking_foul": ("fouler", "victim"),
+    "pushing_foul": ("fouler", "victim"),
+    "reaching_foul": ("fouler", "victim"),
+    "charging_foul": ("fouler", "victim"),
+    "illegal_screen": ("fouler", "victim"),
+    "technical_foul": ("fouler", None),
+    "made_layup": ("shooter", "assister"),
+    "made_dunk": ("shooter", "assister"),
+    "made_fadeaway": ("shooter", "assister"),
+    "made_pull_up_jump_shot": ("shooter", "assister"),
+    "made_catch_and_shoot_three": ("shooter", "assister"),
+    "made_step_back_three": ("shooter", "assister"),
+    "missed_layup": ("shooter", None),
+    "missed_dunk": ("shooter", None),
+    "missed_fadeaway": ("shooter", None),
+    "missed_pull_up_jump_shot": ("shooter", None),
+    "missed_catch_and_shoot_three": ("shooter", None),
+    "missed_step_back_three": ("shooter", None),
+    "blocked_shot": ("blocked", "blocker"),
+    "offensive_rebound": ("rebounder", None),
+    "defensive_rebound": ("rebounder", None),
+    "free_throw_made": ("shooter", None),
+    "free_throw_missed": ("shooter", None),
+    "3_point_shooting_foul": ("shooter", "fouler"),
+    "2_point_ext_shooting_foul": ("shooter", "fouler"),
+    "2_point_int_shooting_foul": ("shooter", "fouler"),
+    "3_point_and_1": ("shooter", "fouler"),
+    "2_point_ext_and_1": ("shooter", "fouler"),
+    "2_point_int_and_1": ("shooter", "fouler"),
+    "inbound": ("shooter", None),
+    "substitution": ("exiting_player", "entering_player"),
+}

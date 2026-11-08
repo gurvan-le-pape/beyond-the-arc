@@ -3,10 +3,10 @@ import {
   Category,
   COMPETITION_TIME_ZONE,
   CompetitionLevel,
+  EVENT_PLAYER_ROLES,
   EventType,
   Gender,
   MatchStatus,
-  Role,
 } from "@common/constants";
 import { PaginatedResponseDto } from "@common/dto";
 import {
@@ -94,34 +94,31 @@ const MATCH_LIST_SELECT = {
   overtime: true,
 } as const;
 
+/** What an event's `players` entry shows of a player. */
+const EVENT_PLAYER_SELECT = {
+  id: true,
+  name: true,
+  number: true,
+  team: {
+    select: {
+      id: true,
+      club: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  },
+} as const;
+
 const MATCH_EVENT_SELECT = {
   id: true,
   eventType: true,
   occurredAt: true,
   shotX: true,
   shotY: true,
-  players: {
-    select: {
-      role: true,
-      player: {
-        select: {
-          id: true,
-          name: true,
-          number: true,
-          team: {
-            select: {
-              id: true,
-              club: {
-                select: {
-                  name: true,
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  },
+  player: { select: EVENT_PLAYER_SELECT },
+  otherPlayer: { select: EVENT_PLAYER_SELECT },
 } as const;
 
 /**
@@ -169,13 +166,6 @@ const PLAYER_MATCH_STATS_SELECT = {
   },
   ...PLAYER_MATCH_STAT_FIELDS_SELECT,
 } as const;
-
-/**
- * The roles of the player who took a shot: `shooter` on a made or missed shot,
- * `blocked` on a blocked one. Every other role on a shot event (assister,
- * blocker, fouler) belongs to someone who did not shoot.
- */
-const SHOT_TAKER_ROLES: Role[] = [Role.SHOOTER, Role.BLOCKED];
 
 /** What a shot chart reads of a shot event: its type and location. */
 const SHOT_SELECT = {
@@ -320,22 +310,22 @@ export class MatchesService {
    * something the database does in one statement.
    *
    * Only the team's own attempts count: one of its players must have taken the
-   * shot (see `SHOT_TAKER_ROLES`). Matching any role would also pull in the
-   * opponent's shots this team's defenders blocked or fouled.
+   * shot, which makes them the event's main player (`EVENT_PLAYER_ROLES`). The
+   * other player of a shot event (assister, blocker, fouler) did not shoot, so
+   * matching either would also pull in the opponent's shots this team's
+   * defenders blocked or fouled.
    *
-   * The match filter is kept although `players: { some: … }` already implies
-   * it (a player belongs to exactly one team, so every such event is in a
-   * match that team played): it is the clause that states the intent, and it
-   * costs nothing.
+   * The match filter is kept although the player filter already implies it (a
+   * player belongs to exactly one team, so every such event is in a match that
+   * team played): it is the clause that states the intent, and it costs
+   * nothing.
    */
   async findShotsByTeamId(teamId: number): Promise<ShotDto[]> {
     const events = await this.prisma.client.matchEvents.findMany({
       where: {
         match: { OR: [{ homeTeamId: teamId }, { awayTeamId: teamId }] },
         shotX: { not: null },
-        players: {
-          some: { player: { teamId }, role: { in: SHOT_TAKER_ROLES } },
-        },
+        player: { teamId },
       },
       select: SHOT_SELECT,
       orderBy: EVENT_ORDER,
@@ -347,15 +337,16 @@ export class MatchesService {
   /**
    * Every shot a player took, across their season, as their chart reads it.
    *
-   * The player must have taken the shot (see `SHOT_TAKER_ROLES`). A made shot
-   * also carries an `assister`, so matching the player in any role would put
-   * the shots they assisted on their own chart, as made baskets.
+   * The player must have taken the shot, which makes them the event's main
+   * player (`EVENT_PLAYER_ROLES`). A made shot's other player is its
+   * `assister`, so matching either would put the shots they assisted on their
+   * own chart, as made baskets.
    */
   async findShotsByPlayerId(playerId: number): Promise<ShotDto[]> {
     const events = await this.prisma.client.matchEvents.findMany({
       where: {
         shotX: { not: null },
-        players: { some: { playerId, role: { in: SHOT_TAKER_ROLES } } },
+        playerId,
       },
       select: SHOT_SELECT,
       orderBy: EVENT_ORDER,
@@ -448,24 +439,37 @@ export class MatchesService {
     startsAt: Date,
   ): MatchEventDto {
     const { period, secondsLeft } = matchClock(event.occurredAt, startsAt);
+    const eventType = event.eventType as EventType;
+    const [mainRole, otherRole] = EVENT_PLAYER_ROLES[eventType];
+    const named = [
+      { role: mainRole, player: event.player },
+      { role: otherRole, player: event.otherPlayer },
+    ];
+
     return {
       id: event.id,
-      eventType: event.eventType as EventType,
+      eventType,
       occurredAt: event.occurredAt,
       period,
       secondsLeft,
-      players: event.players.map((p) => ({
-        role: p.role as Role,
-        player: {
-          id: p.player.id,
-          name: p.player.name,
-          number: p.player.number,
-          team: {
-            id: p.player.team.id,
-            club: { name: p.player.team.club.name },
-          },
-        },
-      })),
+      players: named.flatMap(({ role, player }) =>
+        role && player
+          ? [
+              {
+                role,
+                player: {
+                  id: player.id,
+                  name: player.name,
+                  number: player.number,
+                  team: {
+                    id: player.team.id,
+                    club: { name: player.team.club.name },
+                  },
+                },
+              },
+            ]
+          : [],
+      ),
       // A CHECK constraint sets both coordinates or neither.
       shotLocation:
         event.shotX !== null && event.shotY !== null

@@ -144,7 +144,8 @@ model Players {
   team                Teams               @relation(fields: [teamId], references: [id], onDelete: Cascade)
   teamId              Int                 @map("team_id")
   stats               PlayerMatchStats[]
-  eventParticipations MatchEventPlayers[]
+  events              MatchEvents[]       @relation("EventPlayer")
+  otherEvents         MatchEvents[]       @relation("EventOtherPlayer")
 
   @@unique([teamId, number])
   // Trigram index for the name search; pg_trgm is created by its migration.
@@ -191,22 +192,16 @@ model MatchEvents {
   // match_events_shot_paired (migration SQL) sets both or neither.
   shotX          Decimal?            @map("shot_x") @db.Decimal(5, 2)
   shotY          Decimal?            @map("shot_y") @db.Decimal(5, 2)
-  players        MatchEventPlayers[]
+  // The players the event names, by the roles EVENT_PLAYER_ROLES gives its
+  // type (common/constants). The CHECK match_events_other_needs_player and the
+  // partial index idx_match_events_player_id_shots (player_id WHERE shot_x IS
+  // NOT NULL, for shot charts) live in migration SQL.
+  player         Players?            @relation("EventPlayer", fields: [playerId], references: [id], onDelete: Restrict)
+  playerId       Int?                @map("player_id")
+  otherPlayer    Players?            @relation("EventOtherPlayer", fields: [otherPlayerId], references: [id], onDelete: Restrict)
+  otherPlayerId  Int?                @map("other_player_id")
 
   @@index([matchId], map: "idx_match_events_match_id")
   @@map("match_events")
-}
-
-model MatchEventPlayers {
-  id       Int         @id @default(autoincrement())
-  event    MatchEvents @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  eventId  Int         @map("event_id")
-  player   Players     @relation(fields: [playerId], references: [id], onDelete: Cascade)
-  playerId Int         @map("player_id")
-  role     String      @db.VarChar(50)
-
-  @@index([eventId], map: "idx_match_event_players_event_id")
-  @@index([playerId], map: "idx_match_event_players_player_id")
-  @@map("match_event_players")
 }
 
