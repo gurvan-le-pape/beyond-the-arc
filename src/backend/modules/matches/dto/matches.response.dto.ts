@@ -252,8 +252,8 @@ export class PlayerStatsDto {
 
   @ApiProperty({
     // `playtimeIntervals` keeps its name rather than gaining a `Seconds`
-    // suffix like the field above: it is a stored column
-    // (`player_match_stats.playtime_intervals`), and renaming only the DTO
+    // suffix like the field above: it is a stored field (each box-score
+    // line's `playtime_intervals`), and renaming only the DTO
     // would put a different name on each side of the same value — the drift
     // `naming.md` exists to prevent. `playtimeSeconds` has no such
     // counterpart; it is computed from these intervals and stored nowhere.

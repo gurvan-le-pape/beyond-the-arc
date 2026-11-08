@@ -11,10 +11,9 @@ import {
   aggregateCareerStats,
   buildChampionshipWhere,
   buildClubOrganizationWhere,
-  mapPlayerMatchStats,
   mapPlayerSummary,
   nameContains,
-  PLAYER_MATCH_STAT_FIELDS_SELECT,
+  parseBoxScoreLine,
   resolvePagination,
 } from "@common/utils";
 import { Injectable, NotFoundException } from "@nestjs/common";
@@ -85,55 +84,35 @@ const PLAYER_SELECT = {
   },
 } as const;
 
-/**
- * Fields to select for match history queries.
- * Single source of truth for match history data.
- */
-const PLAYER_MATCH_HISTORY_SELECT = {
-  match: {
-    select: {
-      id: true,
-      startsAt: true,
-      status: true,
-      homeTeamScore: true,
-      awayTeamScore: true,
-      homeTeam: {
-        select: {
-          id: true,
-          number: true,
-          club: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
-        },
-      },
-      awayTeam: {
-        select: {
-          id: true,
-          number: true,
-          club: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
-        },
-      },
-    },
-  },
-  player: {
-    select: {
-      id: true,
-      name: true,
-      number: true,
-      position: true,
-      teamId: true,
-    },
-  },
-  ...PLAYER_MATCH_STAT_FIELDS_SELECT,
+/** What a match history entry shows of the player. */
+const PLAYER_SUMMARY_SELECT = {
+  id: true,
+  name: true,
+  number: true,
+  position: true,
+  teamId: true,
 } as const;
+
+/**
+ * One row of `findPlayerMatchHistory`'s query: a match the player has a
+ * box-score line in, with that line as stored.
+ */
+interface PlayerMatchHistoryRow {
+  id: number;
+  startsAt: Date;
+  status: string;
+  homeTeamScore: number | null;
+  awayTeamScore: number | null;
+  homeTeamId: number;
+  homeTeamNumber: number;
+  homeClubId: number;
+  homeClubName: string;
+  awayTeamId: number;
+  awayTeamNumber: number;
+  awayClubId: number;
+  awayClubName: string;
+  line: unknown;
+}
 
 /**
  * Types derived from Prisma select objects.
@@ -141,10 +120,6 @@ const PLAYER_MATCH_HISTORY_SELECT = {
  */
 type PlayerSelectResult = Prisma.PlayersGetPayload<{
   select: typeof PLAYER_SELECT;
-}>;
-
-type PlayerMatchHistorySelectResult = Prisma.PlayerMatchStatsGetPayload<{
-  select: typeof PLAYER_MATCH_HISTORY_SELECT;
 }>;
 
 /**
@@ -255,22 +230,47 @@ export class PlayersService {
   async findPlayerMatchHistory(
     playerId: number,
   ): Promise<PlayerMatchHistoryResponseDto> {
-    const playerExists = await this.prisma.client.players.findUnique({
+    const player = await this.prisma.client.players.findUnique({
       where: { id: playerId },
-      select: { id: true },
+      select: PLAYER_SUMMARY_SELECT,
     });
 
-    if (!playerExists) {
+    if (!player) {
       throw new NotFoundException(`Player with ID ${playerId} not found`);
     }
 
-    const stats = await this.prisma.client.playerMatchStats.findMany({
-      where: { playerId },
-      select: PLAYER_MATCH_HISTORY_SELECT,
-      orderBy: { match: { startsAt: "desc" } },
-    });
+    // A player only ever plays for their team, so its matches are the ones to
+    // look in; only those the player has a line in come back, with that line
+    // alone rather than the whole box score.
+    const key = String(playerId);
+    const rows = await this.prisma.client.$queryRaw<PlayerMatchHistoryRow[]>`
+      SELECT m.id,
+             m.starts_at AS "startsAt",
+             m.status,
+             m.home_team_score AS "homeTeamScore",
+             m.away_team_score AS "awayTeamScore",
+             ht.id AS "homeTeamId",
+             ht.number AS "homeTeamNumber",
+             hc.id AS "homeClubId",
+             hc.name AS "homeClubName",
+             at.id AS "awayTeamId",
+             at.number AS "awayTeamNumber",
+             ac.id AS "awayClubId",
+             ac.name AS "awayClubName",
+             m.box_score -> ${key}::text AS line
+      FROM matches m
+      JOIN teams ht ON ht.id = m.home_team_id
+      JOIN clubs hc ON hc.id = ht.club_id
+      JOIN teams at ON at.id = m.away_team_id
+      JOIN clubs ac ON ac.id = at.club_id
+      WHERE (m.home_team_id = ${player.teamId}::int
+             OR m.away_team_id = ${player.teamId}::int)
+        AND m.box_score -> ${key}::text IS NOT NULL
+      ORDER BY m.starts_at DESC, m.id
+    `;
 
-    const matches = stats.map((stat) => this.mapToMatchHistoryDto(stat));
+    const summary = mapPlayerSummary(player);
+    const matches = rows.map((row) => this.mapToMatchHistoryDto(row, summary));
 
     return {
       matches,
@@ -329,39 +329,38 @@ export class PlayersService {
   }
 
   /**
-   * Maps a Prisma player match stats entity to a match history DTO.
+   * Maps a row of the match history query to a match history DTO.
    *
-   * @param stat - Prisma player match stats select result
+   * @param row - One match, with the player's box-score line as stored
+   * @param player - The player the history is for
    * @returns MatchHistoryDto
    */
   private mapToMatchHistoryDto(
-    stat: PlayerMatchHistorySelectResult,
+    row: PlayerMatchHistoryRow,
+    player: ReturnType<typeof mapPlayerSummary>,
   ): MatchHistoryDto {
     return {
-      id: stat.match.id,
-      startsAt: stat.match.startsAt,
+      id: row.id,
+      startsAt: row.startsAt,
       homeTeam: {
-        id: stat.match.homeTeam.id,
-        number: stat.match.homeTeam.number,
-        club: {
-          id: stat.match.homeTeam.club.id,
-          name: stat.match.homeTeam.club.name,
-        },
+        id: row.homeTeamId,
+        number: row.homeTeamNumber,
+        club: { id: row.homeClubId, name: row.homeClubName },
       },
       awayTeam: {
-        id: stat.match.awayTeam.id,
-        number: stat.match.awayTeam.number,
-        club: {
-          id: stat.match.awayTeam.club.id,
-          name: stat.match.awayTeam.club.name,
-        },
+        id: row.awayTeamId,
+        number: row.awayTeamNumber,
+        club: { id: row.awayClubId, name: row.awayClubName },
       },
-      status: stat.match.status as MatchStatus,
-      homeTeamScore: stat.match.homeTeamScore,
-      awayTeamScore: stat.match.awayTeamScore,
+      status: row.status as MatchStatus,
+      homeTeamScore: row.homeTeamScore,
+      awayTeamScore: row.awayTeamScore,
       player: {
-        player: mapPlayerSummary(stat.player),
-        stats: mapPlayerMatchStats(stat),
+        player,
+        stats: parseBoxScoreLine(
+          row.line,
+          `match ${row.id}, player ${player.id}`,
+        ),
       },
     } satisfies MatchHistoryDto;
   }

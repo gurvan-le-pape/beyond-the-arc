@@ -1,5 +1,5 @@
 // src/backend/common/utils/aggregate-career-stats.ts
-import type { MappedPlayerMatchStats } from "./player-match-stats.mapper";
+import type { MappedPlayerMatchStats } from "./box-score.mapper";
 import { sumPlayerStats } from "./sum-player-stats";
 
 /**

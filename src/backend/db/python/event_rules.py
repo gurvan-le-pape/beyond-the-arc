@@ -1,7 +1,7 @@
 """
 Shared match-event scoring/stat rules — single source of truth for "what does
 this event type mean", used by both MatchSimulator (live score) and
-MatchGenerator._compute_player_stats (persisted per-player stats). Keeping
+compute_box_score in generation/match_generator.py (the persisted box score). Keeping
 these in one place avoids the two having to be updated in lockstep whenever a
 shot/foul event type is added or changed.
 """

@@ -38,7 +38,7 @@ describe("match constraints", () => {
     ["an unknown status", "status = 'done'", "matches_status_check"],
     [
       "one score alone",
-      "home_team_score = 80, status = 'completed'",
+      "home_team_score = 80, status = 'completed', box_score = '{}'",
       "matches_scores_paired",
     ],
     [
@@ -48,17 +48,32 @@ describe("match constraints", () => {
     ],
     [
       "a completed match with no result",
-      "status = 'completed'",
+      "status = 'completed', box_score = '{}'",
       "matches_result_iff_completed",
     ],
     [
+      "a completed match with no box score",
+      "home_team_score = 80, away_team_score = 70, status = 'completed'",
+      "matches_result_iff_completed",
+    ],
+    [
+      "a box score on a match that is not completed",
+      "box_score = '{}'",
+      "matches_result_iff_completed",
+    ],
+    [
+      "a box score that is not an object",
+      "home_team_score = 80, away_team_score = 70, status = 'completed', box_score = '[]'",
+      "matches_box_score_is_object",
+    ],
+    [
       "a negative score",
-      "home_team_score = -1, away_team_score = 70, status = 'completed'",
+      "home_team_score = -1, away_team_score = 70, status = 'completed', box_score = '{}'",
       "matches_scores_non_negative",
     ],
     [
       "a draw",
-      "home_team_score = 70, away_team_score = 70, status = 'completed'",
+      "home_team_score = 70, away_team_score = 70, status = 'completed', box_score = '{}'",
       "no_draws_allowed",
     ],
     ["a forfeit with no result", "forfeit = true", "matches_flags_need_result"],

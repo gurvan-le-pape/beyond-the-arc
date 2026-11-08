@@ -105,27 +105,31 @@ model Teams {
 }
 
 model Matches {
-  id               Int                @id @default(autoincrement())
-  matchday         Int
-  startsAt         DateTime           @map("starts_at") @db.Timestamptz
-  homeTeam         Teams              @relation("HomeTeam", fields: [homeTeamId], references: [id], onDelete: Restrict)
-  homeTeamId       Int                @map("home_team_id")
-  awayTeam         Teams              @relation("AwayTeam", fields: [awayTeamId], references: [id], onDelete: Restrict)
-  awayTeamId       Int                @map("away_team_id")
-  homeTeamScore    Int?               @map("home_team_score")
-  awayTeamScore    Int?               @map("away_team_score")
-  forfeit          Boolean            @default(false)
-  overtime         Boolean            @default(false)
-  status           String             @default("scheduled") @db.VarChar(20)
-  playerMatchStats PlayerMatchStats[]
-  matchEvents      MatchEvents[]
+  id            Int           @id @default(autoincrement())
+  matchday      Int
+  startsAt      DateTime      @map("starts_at") @db.Timestamptz
+  homeTeam      Teams         @relation("HomeTeam", fields: [homeTeamId], references: [id], onDelete: Restrict)
+  homeTeamId    Int           @map("home_team_id")
+  awayTeam      Teams         @relation("AwayTeam", fields: [awayTeamId], references: [id], onDelete: Restrict)
+  awayTeamId    Int           @map("away_team_id")
+  homeTeamScore Int?          @map("home_team_score")
+  awayTeamScore Int?          @map("away_team_score")
+  forfeit       Boolean       @default(false)
+  overtime      Boolean       @default(false)
+  status        String        @default("scheduled") @db.VarChar(20)
+  // Per-player stat lines, written with the result: an object keyed by player
+  // id, read through `parseBoxScore` (common/utils/box-score.mapper.ts).
+  boxScore      Json?         @map("box_score")
+  matchEvents   MatchEvents[]
   // idx_matches_status_starts_at — partial index (WHERE status = 'scheduled') for the
   // scheduler's polling query. Prisma cannot express partial indexes, so it is
   // defined only in migration SQL — created in `0_init`, renamed with its column
   // in `20260815120000_rename_match_time_columns`.
   //
-  // CHECK constraints on status, scores and teams live in migration SQL too:
-  // `no_draws_allowed` in `0_init`, the rest in `20261103120000_match_integrity_checks`.
+  // CHECK constraints on status, scores, box score and teams live in migration
+  // SQL too: `no_draws_allowed` in `0_init`, the box score's in
+  // `20261108140000_box_score_on_matches`, the rest in
+  // `20261103120000_match_integrity_checks`.
 
   @@index([homeTeamId], map: "idx_matches_home_team_id")
   @@index([awayTeamId], map: "idx_matches_away_team_id")
@@ -134,18 +138,17 @@ model Matches {
 }
 
 model Players {
-  id                  Int                 @id @default(autoincrement())
-  name                String              @db.VarChar(255)
-  number              Int
-  position            String              @db.VarChar(2)
-  heightCm            Int                 @map("height_cm")
-  weightKg            Int                 @map("weight_kg")
-  birthdate           DateTime            @db.Date
-  team                Teams               @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  teamId              Int                 @map("team_id")
-  stats               PlayerMatchStats[]
-  events              MatchEvents[]       @relation("EventPlayer")
-  otherEvents         MatchEvents[]       @relation("EventOtherPlayer")
+  id          Int           @id @default(autoincrement())
+  name        String        @db.VarChar(255)
+  number      Int
+  position    String        @db.VarChar(2)
+  heightCm    Int           @map("height_cm")
+  weightKg    Int           @map("weight_kg")
+  birthdate   DateTime      @db.Date
+  team        Teams         @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId      Int           @map("team_id")
+  events      MatchEvents[] @relation("EventPlayer")
+  otherEvents MatchEvents[] @relation("EventOtherPlayer")
 
   @@unique([teamId, number])
   // Trigram index for the name search; pg_trgm is created by its migration.
@@ -153,55 +156,25 @@ model Players {
   @@map("players")
 }
 
-model PlayerMatchStats {
-  id                    Int     @id @default(autoincrement())
-  match                 Matches @relation(fields: [matchId], references: [id], onDelete: Cascade)
-  matchId               Int     @map("match_id")
-  player                Players @relation(fields: [playerId], references: [id], onDelete: Cascade)
-  playerId              Int     @map("player_id")
-  points                Int     @default(0) @map("points")
-  fouls                 Int     @default(0) @map("fouls")
-  threePointsMade       Int     @default(0) @map("three_points_made")
-  threePointsAttempted  Int     @default(0) @map("three_points_attempted")
-  twoPointsIntMade      Int     @default(0) @map("two_points_int_made")
-  twoPointsIntAttempted Int     @default(0) @map("two_points_int_attempted")
-  twoPointsExtMade      Int     @default(0) @map("two_points_ext_made")
-  twoPointsExtAttempted Int     @default(0) @map("two_points_ext_attempted")
-  freeThrowsMade        Int     @default(0) @map("free_throws_made")
-  freeThrowsAttempted   Int     @default(0) @map("free_throws_attempted")
-  assists               Int     @default(0) @map("assists")
-  turnovers             Int     @default(0) @map("turnovers")
-  reboundsOffensive     Int     @default(0) @map("rebounds_offensive")
-  reboundsDefensive     Int     @default(0) @map("rebounds_defensive")
-  steals                Int     @default(0) @map("steals")
-  blocks                Int     @default(0) @map("blocks")
-  playtimeIntervals     Json    @default("[]") @map("playtime_intervals")
-
-  @@unique([matchId, playerId])
-  @@index([playerId], map: "idx_player_match_stats_player_id")
-  @@map("player_match_stats")
-}
-
 model MatchEvents {
-  id             Int                 @id @default(autoincrement())
-  match          Matches             @relation(fields: [matchId], references: [id], onDelete: Cascade)
-  matchId        Int                 @map("match_id")
-  eventType      String              @map("event_type") @db.VarChar(50)
-  occurredAt     DateTime            @map("occurred_at") @db.Timestamptz
+  id            Int      @id @default(autoincrement())
+  match         Matches  @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  matchId       Int      @map("match_id")
+  eventType     String   @map("event_type") @db.VarChar(50)
+  occurredAt    DateTime @map("occurred_at") @db.Timestamptz
   // A shot's location, in metres on the half-court. The CHECK
   // match_events_shot_paired (migration SQL) sets both or neither.
-  shotX          Decimal?            @map("shot_x") @db.Decimal(5, 2)
-  shotY          Decimal?            @map("shot_y") @db.Decimal(5, 2)
+  shotX         Decimal? @map("shot_x") @db.Decimal(5, 2)
+  shotY         Decimal? @map("shot_y") @db.Decimal(5, 2)
   // The players the event names, by the roles EVENT_PLAYER_ROLES gives its
   // type (common/constants). The CHECK match_events_other_needs_player and the
   // partial index idx_match_events_player_id_shots (player_id WHERE shot_x IS
   // NOT NULL, for shot charts) live in migration SQL.
-  player         Players?            @relation("EventPlayer", fields: [playerId], references: [id], onDelete: Restrict)
-  playerId       Int?                @map("player_id")
-  otherPlayer    Players?            @relation("EventOtherPlayer", fields: [otherPlayerId], references: [id], onDelete: Restrict)
-  otherPlayerId  Int?                @map("other_player_id")
+  player        Players? @relation("EventPlayer", fields: [playerId], references: [id], onDelete: Restrict)
+  playerId      Int?     @map("player_id")
+  otherPlayer   Players? @relation("EventOtherPlayer", fields: [otherPlayerId], references: [id], onDelete: Restrict)
+  otherPlayerId Int?     @map("other_player_id")
 
   @@index([matchId], map: "idx_match_events_match_id")
   @@map("match_events")
 }
-
