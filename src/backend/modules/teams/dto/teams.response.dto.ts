@@ -166,6 +166,14 @@ export class TeamMatchHistoryDto {
     nullable: true,
   })
   awayTeamScore!: number | null;
+
+  @ApiProperty({
+    description:
+      "Whether the match was forfeited; the side that forfeited scored 0",
+    example: false,
+    type: Boolean,
+  })
+  forfeit!: boolean;
 }
 
 /**

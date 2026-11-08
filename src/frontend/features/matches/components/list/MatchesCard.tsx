@@ -14,6 +14,7 @@ import { cn, formatMatchDate, formatMatchTime } from "@/shared/utils";
 
 import type { Match } from "../../types";
 import { matchupSide } from "../../utils";
+import { ForfeitBadge } from "../ForfeitBadge";
 
 interface MatchesCardProps {
   readonly match: Match;
@@ -76,6 +77,7 @@ export function MatchesCard({ match }: MatchesCardProps) {
           away={matchupSide(match.awayTeam, match.awayTeamScore)}
           status={match.status}
           size="card"
+          belowScore={match.forfeit && <ForfeitBadge />}
         />
       </div>
     </ListEntityCard>

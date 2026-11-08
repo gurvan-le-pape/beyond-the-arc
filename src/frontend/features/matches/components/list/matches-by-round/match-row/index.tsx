@@ -12,6 +12,7 @@ import { ErrorMessage } from "@/shared/components/feedback";
 import { Badge } from "@/shared/components/primitives";
 import { MatchStatus } from "@/shared/constants";
 
+import { ForfeitBadge } from "../../../ForfeitBadge";
 import { ExpandButton } from "./ExpandButton";
 import { QuarterScoresTable } from "./QuarterScoresTable";
 
@@ -34,7 +35,8 @@ interface MatchRowProps {
  * list of collapsed rows costs nothing.
  *
  * The matchup links to the match page only once the match is played: before
- * that, the page has nothing to show.
+ * that, the page has nothing to show. A forfeit was never played, so it has no
+ * quarters to expand into; a spacer the button's size keeps its row aligned.
  */
 export function MatchRow({ match, expanded, onToggleExpand }: MatchRowProps) {
   const {
@@ -83,13 +85,18 @@ export function MatchRow({ match, expanded, onToggleExpand }: MatchRowProps) {
             {tMatches("overtimeShort")}
           </Badge>
         )}
-        <ExpandButton
-          expanded={expanded}
-          onToggle={() => onToggleExpand(match.id)}
-          onMouseEnter={() => prefetch.events(match.id)}
-        />
+        {match.forfeit && <ForfeitBadge />}
+        {match.forfeit ? (
+          <div className="h-8 w-8 shrink-0" aria-hidden="true" />
+        ) : (
+          <ExpandButton
+            expanded={expanded}
+            onToggle={() => onToggleExpand(match.id)}
+            onMouseEnter={() => prefetch.events(match.id)}
+          />
+        )}
       </div>
-      {expanded && (
+      {expanded && !match.forfeit && (
         <div className="mt-3 animate-slide-down">
           {matchEventsError ? (
             <ErrorMessage

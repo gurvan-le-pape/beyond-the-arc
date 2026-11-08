@@ -6,6 +6,7 @@ import { championshipsService } from "@/features/competitions/championships/api"
 import { buildChampionshipTitle } from "@/features/competitions/championships/utils";
 import { matchesService } from "@/features/matches/api";
 import {
+  ForfeitNotice,
   MatchBreadcrumb,
   MatchHero,
   MatchSummaryTabs,
@@ -122,9 +123,11 @@ async function MatchSummaryPage({
         startsAt={match.startsAt}
         matchday={match.matchday}
         poolLetter={match.pool.letter}
+        forfeit={match.forfeit}
       />
 
-      {match.status === MatchStatus.COMPLETED && (
+      {match.forfeit && <ForfeitNotice homeTeam={homeTeam} awayTeam={awayTeam} />}
+      {match.status === MatchStatus.COMPLETED && !match.forfeit && (
         <MatchSummaryTabs
           homeTeam={homeTeam}
           awayTeam={awayTeam}

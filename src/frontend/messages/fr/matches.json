@@ -23,6 +23,11 @@
     "title": "Résultat indisponible",
     "body": "Le résultat de ce match n'est pas disponible."
   },
+  "forfeit": "Forfait",
+  "forfeitNotice": {
+    "title": "Forfait",
+    "body": "{team} a déclaré forfait\u00a0: le match n'a pas été joué. Il est enregistré {score} pour {winner}, sans statistiques ni actions de jeu."
+  },
   "tryAdjustingFilters": "Essayez d'ajuster vos filtres pour trouver plus de matchs.",
   "overtimeShort": "Prol.",
   "viewMatchDetails": "Afficher les détails du match",

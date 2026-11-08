@@ -23,6 +23,11 @@
     "title": "Result unavailable",
     "body": "This match's result isn't available."
   },
+  "forfeit": "Forfeit",
+  "forfeitNotice": {
+    "title": "Forfeit",
+    "body": "{team} forfeited, so the match was not played. It is recorded {score} for {winner}, with no stats and no play-by-play."
+  },
   "tryAdjustingFilters": "Try adjusting your filters to find more matches.",
   "overtimeShort": "OT",
   "viewMatchDetails": "View match details",

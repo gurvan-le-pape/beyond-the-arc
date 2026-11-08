@@ -151,6 +151,16 @@ export function LeaderboardTable({
       render: (row) => row.gamesLost,
     },
     {
+      key: "gamesForfeited",
+      header: abbreviation(
+        tCommon("table.abbr.gamesForfeited"),
+        tCommon("table.gamesForfeited"),
+      ),
+      from: "sm",
+      numeric: true,
+      render: (row) => row.gamesForfeited,
+    },
+    {
       key: "pointDifference",
       header: abbreviation(
         tCommon("table.abbr.pointDifference"),

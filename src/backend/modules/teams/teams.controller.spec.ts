@@ -333,6 +333,7 @@ describe("TeamsController", () => {
             status: "completed",
             homeTeamScore: 85,
             awayTeamScore: 72,
+            forfeit: false,
           },
         ],
         seasonStats: {

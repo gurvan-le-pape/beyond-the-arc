@@ -2475,6 +2475,11 @@ export interface components {
              * @example 72
              */
             awayTeamScore: number | null;
+            /**
+             * @description Whether the match was forfeited; the side that forfeited scored 0
+             * @example false
+             */
+            forfeit: boolean;
         };
         TeamSeasonStatsDto: {
             /**

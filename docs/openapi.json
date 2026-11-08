@@ -6058,6 +6058,11 @@
             "nullable": true,
             "description": "Away team score",
             "example": 72
+          },
+          "forfeit": {
+            "type": "boolean",
+            "description": "Whether the match was forfeited; the side that forfeited scored 0",
+            "example": false
           }
         },
         "required": [
@@ -6067,7 +6072,8 @@
           "awayTeam",
           "status",
           "homeTeamScore",
-          "awayTeamScore"
+          "awayTeamScore",
+          "forfeit"
         ]
       },
       "TeamSeasonStatsDto": {
