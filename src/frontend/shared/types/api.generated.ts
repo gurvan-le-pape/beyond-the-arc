@@ -1483,7 +1483,7 @@ export interface components {
              * @example shooter
              * @enum {string}
              */
-            role: "shooter" | "fouler" | "stealer" | "victim" | "rebounder" | "assister" | "blocker" | "blocked" | "winner" | "exiting_player" | "entering_player" | "starter";
+            role: "shooter" | "fouler" | "stealer" | "victim" | "rebounder" | "assister" | "blocker" | "blocked" | "winner" | "exiting_player" | "entering_player";
             /** @description Player information */
             player: components["schemas"]["EventPlayerDto"];
         };

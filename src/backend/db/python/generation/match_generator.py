@@ -9,7 +9,7 @@ Responsibilities:
   2. Generate playtime rotations and substitutions
   3. Run MatchSimulator
   4. Persist all results: score, events (including substitutions and
-     starters), and per-player stats (including playtime, derived from
+     their players), and per-player stats (including playtime, derived from
      those same events)
 """
 
@@ -64,8 +64,7 @@ class MatchGenerator:
         )
 
         # Events
-        event_ids = match_repository.insert_match_events_bulk(cursor, match.id, result.events)
-        match_repository.insert_match_event_players_bulk(cursor, event_ids, result.events)
+        match_repository.insert_match_events_bulk(cursor, match.id, result.events)
 
         # Stats (including playtime, both derived from the events above)
         match_repository.insert_player_stats_bulk(cursor, match.id, result.stat_rows)
@@ -231,9 +230,7 @@ def compute_player_stats(
 
     for event in match_events:
         for role, player_id in event.get("player_roles", {}).items():
-            # `starter` only marks who was on court at tip-off; playtime comes
-            # from the intervals, not from the events.
-            if role == "starter" or player_id is None:
+            if player_id is None:
                 continue
             player_stats = stats.setdefault(player_id, dict.fromkeys(STAT_COLUMNS, 0))
             tally = _ROLE_TALLIES.get(role)

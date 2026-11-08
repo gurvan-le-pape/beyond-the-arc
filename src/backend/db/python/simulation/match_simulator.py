@@ -126,10 +126,7 @@ class MatchSimulator:
         match.add_event({
             "occurred_at": None,
             "event_type": "tip_off",
-            "player_roles": {
-                "winner": tip_off_player,
-                "starter": list(home_sub.active) + list(away_sub.active),
-            },
+            "player_roles": {"winner": tip_off_player},
         }, 0)
         match.time += 1
 

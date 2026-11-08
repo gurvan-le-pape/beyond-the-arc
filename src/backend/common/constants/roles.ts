@@ -11,7 +11,6 @@ export const Role = {
   WINNER: "winner",
   EXITING_PLAYER: "exiting_player",
   ENTERING_PLAYER: "entering_player",
-  STARTER: "starter",
 } as const;
 
 export const ROLE_LIST = Object.values(Role);

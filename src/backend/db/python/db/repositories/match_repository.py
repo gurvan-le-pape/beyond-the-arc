@@ -8,6 +8,8 @@ from datetime import datetime
 
 import psycopg
 
+from event_rules import EVENT_PLAYER_ROLES
+
 
 @dataclass
 class ScheduledMatch:
@@ -127,6 +129,19 @@ def update_match_result(
 # Match events
 # ---------------------------------------------------------------------------
 
+def event_players(event: dict) -> tuple[int | None, int | None]:
+    """
+    The event's (main, other) player ids, by EVENT_PLAYER_ROLES. Fails on a role
+    the table does not name for the event's type, which would otherwise be lost.
+    """
+    main_role, other_role = EVENT_PLAYER_ROLES[event["event_type"]]
+    roles = event.get("player_roles", {})
+    unexpected = set(roles) - {main_role, other_role}
+    if unexpected:
+        raise ValueError(f"{event['event_type']}: unexpected roles {sorted(unexpected)}")
+    return roles.get(main_role), roles.get(other_role)
+
+
 def insert_match_events_bulk(
     cursor: psycopg.Cursor,
     match_id: int,
@@ -135,58 +150,36 @@ def insert_match_events_bulk(
     """
     Insert all match events and return their IDs in insertion order.
     Uses a single INSERT ... VALUES (...) RETURNING for deterministic ID ordering.
-    A shot carries its location; any other event has neither coordinate.
+    A shot carries its location; any other event has neither coordinate. An
+    event's players go in the columns EVENT_PLAYER_ROLES names for its type.
     """
     rows = []
     for event in events:
         location = event.get("shot_location")
+        player_id, other_player_id = event_players(event)
         rows.append((
             match_id,
             event["event_type"],
             event["occurred_at"],
             location["x"] if location else None,
             location["y"] if location else None,
+            player_id,
+            other_player_id,
         ))
 
     if not rows:
         return []
 
-    placeholders = ",".join(["(%s,%s,%s,%s,%s)"] * len(rows))
+    placeholders = ",".join(["(%s,%s,%s,%s,%s,%s,%s)"] * len(rows))
     flat = [val for row in rows for val in row]
     cursor.execute(
-        f"INSERT INTO match_events (match_id, event_type, occurred_at, shot_x, shot_y) VALUES {placeholders} RETURNING id",
+        "INSERT INTO match_events "
+        "(match_id, event_type, occurred_at, shot_x, shot_y, player_id, other_player_id) "
+        f"VALUES {placeholders} RETURNING id",
         flat,
     )
 
     return [row[0] for row in cursor.fetchall()]
-
-
-# ---------------------------------------------------------------------------
-# Match event players
-# ---------------------------------------------------------------------------
-
-def insert_match_event_players_bulk(
-    cursor: psycopg.Cursor,
-    event_ids: list[int],
-    events: list[dict],
-) -> None:
-    rows = []
-    for event_id, event in zip(event_ids, events):
-        for role, player_id_or_ids in event.get("player_roles", {}).items():
-            # Most roles (shooter, fouler, ...) attach a single player; 'starter'
-            # attaches all ten players on court at tip-off, as a list.
-            player_ids = (
-                player_id_or_ids if isinstance(player_id_or_ids, list) else [player_id_or_ids]
-            )
-            for player_id in player_ids:
-                if player_id is not None:
-                    rows.append((event_id, player_id, role))
-
-    if rows:
-        cursor.executemany(
-            "INSERT INTO match_event_players (event_id, player_id, role) VALUES (%s, %s, %s);",
-            rows,
-        )
 
 
 # ---------------------------------------------------------------------------

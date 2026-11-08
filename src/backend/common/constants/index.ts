@@ -8,6 +8,7 @@ export * from "./cache-ttls";
 export * from "./categories";
 export * from "./competition-levels";
 export * from "./competition-time-zone";
+export * from "./event-player-roles";
 export * from "./event-types";
 export * from "./genders";
 export * from "./match-statuses";

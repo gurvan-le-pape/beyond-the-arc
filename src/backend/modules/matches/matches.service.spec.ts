@@ -127,20 +127,16 @@ describe("MatchesService", () => {
     occurredAt: new Date("2024-02-05T19:02:00Z"),
     shotX: new Prisma.Decimal("5.50"),
     shotY: new Prisma.Decimal("3.20"),
-    players: [
-      {
-        role: "shooter",
-        player: {
-          id: 1,
-          name: "Player One",
-          number: 10,
-          team: {
-            id: 1,
-            club: { name: "Club Home" },
-          },
-        },
+    player: {
+      id: 1,
+      name: "Player One",
+      number: 10,
+      team: {
+        id: 1,
+        club: { name: "Club Home" },
       },
-    ],
+    },
+    otherPlayer: null,
   };
 
   // Reusable mock shape matching MATCH_DETAIL_SELECT
@@ -190,20 +186,16 @@ describe("MatchesService", () => {
         occurredAt: new Date("2024-02-05T19:02:00Z"),
         shotX: new Prisma.Decimal("5.50"),
         shotY: new Prisma.Decimal("3.20"),
-        players: [
-          {
-            role: "shooter",
-            player: {
-              id: 1,
-              name: "Player One",
-              number: 10,
-              team: {
-                id: 1,
-                club: { name: "Club Home" },
-              },
-            },
+        player: {
+          id: 1,
+          name: "Player One",
+          number: 10,
+          team: {
+            id: 1,
+            club: { name: "Club Home" },
           },
-        ],
+        },
+        otherPlayer: null,
       },
     ],
   };
@@ -458,6 +450,54 @@ describe("MatchesService", () => {
       expect(result[0].players[0].role).toBe("shooter");
     });
 
+    it("names each player by the role their column holds for the event type", async () => {
+      const assister = {
+        ...mockMatchEventResult.player,
+        id: 2,
+        name: "Player Two",
+      };
+      mockPrismaService.client.matchEvents.findMany.mockResolvedValue([
+        { ...mockMatchEventResult, otherPlayer: assister },
+        {
+          ...mockMatchEventResult,
+          eventType: "blocked_shot",
+          otherPlayer: assister,
+        },
+      ]);
+
+      const result = await service.findMatchEventsByMatchId(1);
+
+      expect(
+        result.map((e) => e.players.map((p) => [p.role, p.player.id])),
+      ).toEqual([
+        [
+          [Role.SHOOTER, 1],
+          [Role.ASSISTER, 2],
+        ],
+        [
+          [Role.BLOCKED, 1],
+          [Role.BLOCKER, 2],
+        ],
+      ]);
+    });
+
+    it("lists only the players an event has", async () => {
+      mockPrismaService.client.matchEvents.findMany.mockResolvedValue([
+        mockMatchEventResult,
+        {
+          ...mockMatchEventResult,
+          eventType: "quarter_end",
+          shotX: null,
+          shotY: null,
+          player: null,
+        },
+      ]);
+
+      const result = await service.findMatchEventsByMatchId(1);
+
+      expect(result.map((e) => e.players.length)).toEqual([1, 0]);
+    });
+
     it("should handle events with no shot location", async () => {
       mockPrismaService.client.matchEvents.findMany.mockResolvedValue([
         { ...mockMatchEventResult, shotX: null, shotY: null },
@@ -517,19 +557,14 @@ describe("MatchesService", () => {
       await service.findShotsByTeamId(7);
 
       // The match clause is what states the intent, so it is asserted rather
-      // than left to `players: { some: … }` to imply. One query, not two.
+      // than left to the player filter to imply. One query, not two.
       expect(
         mockPrismaService.client.matchEvents.findMany,
       ).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
             match: { OR: [{ homeTeamId: 7 }, { awayTeamId: 7 }] },
-            players: {
-              some: {
-                player: { teamId: 7 },
-                role: { in: [Role.SHOOTER, Role.BLOCKED] },
-              },
-            },
+            player: { teamId: 7 },
           }),
         }),
       );
@@ -566,12 +601,7 @@ describe("MatchesService", () => {
       ).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
-            players: {
-              some: {
-                playerId: 7,
-                role: { in: [Role.SHOOTER, Role.BLOCKED] },
-              },
-            },
+            playerId: 7,
           }),
         }),
       );
