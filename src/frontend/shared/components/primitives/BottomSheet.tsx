@@ -3,7 +3,7 @@
 
 import { X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { UNSAFE_PortalProvider } from "react-aria";
+import { UNSAFE_PortalProvider as AriaPortalProvider } from "react-aria";
 
 import { useModalDialog } from "@/shared/hooks";
 import { cn } from "@/shared/utils";
@@ -148,9 +148,9 @@ export function BottomSheet({
       <div className="flex-1 overflow-y-auto px-5 py-4">
         {/* The dialog is in the top layer: a popup portalled to <body> would
             open behind it. */}
-        <UNSAFE_PortalProvider getContainer={() => dialogRef.current}>
+        <AriaPortalProvider getContainer={() => dialogRef.current}>
           {children}
-        </UNSAFE_PortalProvider>
+        </AriaPortalProvider>
       </div>
 
       {footer && (
