@@ -8,9 +8,12 @@ const isServer = typeof window === "undefined";
  * Where the backend is, from wherever this runs. A server render reaches it
  * over the Docker network; the browser goes through its public URL.
  * `INTERNAL_API_URL` is not `NEXT_PUBLIC_`, so the browser bundle never sees it.
+ *
+ * The server URL has no default: the compose file sets it from `.env`, and a
+ * hard-coded copy here would only hide a deployment that forgot to.
  */
 const BASE_URL = isServer
-  ? process.env.INTERNAL_API_URL || "http://backend:4000/api"
+  ? process.env.INTERNAL_API_URL
   : process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
 
 /**
