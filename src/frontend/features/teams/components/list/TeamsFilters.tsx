@@ -33,6 +33,9 @@ interface TeamsFiltersProps extends FilterProps<TeamsFilterValues> {
  * The filter panel for the teams list — club, team number, category, gender,
  * the level → committee/league cascade, and the division → pool cascade.
  *
+ * The club picker is the panel's `lead`, so it stays in view on a phone, where
+ * the other filters fold into a sheet: teams are found by their club.
+ *
  * Holds no state: `filters` and `set` come from `useTeamsFilterState`, which
  * also owns the reset-to-page-1 behaviour and the cascade clearing.
  *
@@ -124,6 +127,15 @@ export function TeamsFilters({ filters, set, onReset }: TeamsFiltersProps) {
 
   return (
     <FiltersShell
+      lead={
+        <ClubComboBoxFilter
+          committeeId={committee}
+          leagueId={league}
+          clubId={club}
+          clubName={clubName}
+          onChange={(club, clubName) => set({ club, clubName })}
+        />
+      }
       activeFilterCount={chips.length}
       chips={chips}
       onReset={onReset}
@@ -146,14 +158,6 @@ export function TeamsFilters({ filters, set, onReset }: TeamsFiltersProps) {
       )}
 
       <Grid columns={{ base: 1, md: 2, lg: 4 }} gap={4}>
-        <ClubComboBoxFilter
-          committeeId={committee}
-          leagueId={league}
-          clubId={club}
-          clubName={clubName}
-          onChange={(club, clubName) => set({ club, clubName })}
-        />
-
         <NumberField
           label={tCommon("filters.teamNumbers")}
           value={number}

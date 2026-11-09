@@ -152,6 +152,10 @@ export function FiltersShell({
   title,
 }: FiltersShellProps) {
   const isDesktop = useMediaQuery(DESKTOP_QUERY, true);
+  // Boxed so the stack's spacing measures from the box: a control may render a
+  // hidden sibling first (React Aria's ComboBox does, a <template>), which
+  // would otherwise take the stack's first slot and push the control down.
+  const leadSlot = lead && <div>{lead}</div>;
 
   if (!isDesktop) {
     const sheet = (
@@ -165,7 +169,7 @@ export function FiltersShell({
     );
     return lead ? (
       <div className="space-y-4">
-        {lead}
+        {leadSlot}
         {sheet}
       </div>
     ) : (
@@ -177,7 +181,7 @@ export function FiltersShell({
     <div className="hidden md:block">
       <Card padding="lg">
         <div className="space-y-5">
-          {lead}
+          {leadSlot}
           {children}
           {activeFilterCount > 0 && (
             <ActiveFilterChips chips={chips} onReset={onReset} />
