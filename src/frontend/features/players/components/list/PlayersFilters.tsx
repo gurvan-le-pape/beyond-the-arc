@@ -30,6 +30,9 @@ interface PlayersFiltersProps extends FilterProps<PlayersFilterValues> {
  * The filter panel for the players list — name search, club, category, gender,
  * jersey and team number, and the level → committee/league cascade.
  *
+ * The name search is the panel's `lead`, so it stays in view on a phone, where
+ * the other filters fold into a sheet.
+ *
  * Holds no state of its own: `filters` and `set` come from
  * `usePlayersFilterState`, which also owns the reset-to-page-1 behaviour. Wiring
  * it to hand-rolled state instead loses that.
@@ -89,6 +92,16 @@ export function PlayersFilters({ filters, set, onReset }: PlayersFiltersProps) {
 
   return (
     <FiltersShell
+      lead={
+        <DebouncedSearchField
+          labels={{ clear: tCommon("clearSearch") }}
+          label={tPlayers("filters.searchName")}
+          value={q ?? ""}
+          placeholder={tPlayers("filters.searchNamePlaceholder")}
+          onChange={(value) => set({ q: value })}
+          onClear={() => set({ q: undefined })}
+        />
+      }
       activeFilterCount={chips.length}
       chips={chips}
       onReset={onReset}
@@ -102,14 +115,6 @@ export function PlayersFilters({ filters, set, onReset }: PlayersFiltersProps) {
       )}
 
       <Grid columns={{ base: 1, md: 2, lg: 4 }} gap={4}>
-        <DebouncedSearchField
-          labels={{ clear: tCommon("clearSearch") }}
-          label={tPlayers("filters.searchName")}
-          value={q ?? ""}
-          placeholder={tPlayers("filters.searchNamePlaceholder")}
-          onChange={(value) => set({ q: value })}
-          onClear={() => set({ q: undefined })}
-        />
         <ClubComboBoxFilter
           committeeId={committee}
           leagueId={league}
