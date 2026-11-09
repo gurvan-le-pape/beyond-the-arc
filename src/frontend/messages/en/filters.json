@@ -11,7 +11,7 @@
     "removeFilter": "Remove {label} filter"
   },
   "pagination": {
-    "pageInfo": "Page {page} of {totalPages} ({total} {label})",
+    "pageInfo": "Page {page, number} of {totalPages, number} ({total, number} {label})",
     "resultsPerPage": "Results per page",
     "firstPage": "First page",
     "previousPage": "Previous page",
