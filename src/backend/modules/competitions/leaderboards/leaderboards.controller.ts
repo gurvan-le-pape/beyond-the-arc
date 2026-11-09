@@ -21,15 +21,6 @@ import { LeaderboardsService } from "./leaderboards.service";
  * A pool's standings, served under the pool as `/pools/:poolId/leaderboard`.
  * The route lives in this module because the leaderboards service owns the
  * ranking; only its URL sits under `pools`.
- *
- * Global interceptors (registered in app.module.ts):
- * - TransformInterceptor: Wraps responses in standard format
- * - HttpMetricsInterceptor: Records the Prometheus request metrics
- *
- * Request logging is not an interceptor — nestjs-pino's autoLogging produces it.
- *
- * Route-specific interceptors:
- * - CacheInterceptor: Applied to leaderboard endpoints (standings change moderately)
  */
 @ApiTags("pools")
 @Controller("pools")
