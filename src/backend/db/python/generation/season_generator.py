@@ -117,7 +117,7 @@ class SeasonGenerator:
         gender: str,
         level: str,
     ) -> None:
-        pools_per_division, teams_per_pool_per_division = compute_divisions_and_pools(len(entries))
+        teams_per_pool_per_division = compute_divisions_and_pools(len(entries))
         entries = list(entries)
         random.shuffle(entries)  # noqa: S2245
 
