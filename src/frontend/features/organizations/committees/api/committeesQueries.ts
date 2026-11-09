@@ -21,16 +21,10 @@ const COMMITTEES_CONFIG = {
 } as const;
 
 /**
- * Query options factory for committees.
- *
- * Implements the Query Options pattern for:
- * - Single source of truth (queryKey + queryFn + config)
- * - Type-safe options spreading
- * - Consistency between useQuery, prefetchQuery, and mutations
- * - Easy testing (export options, test queryFn directly)
- *
- * @see https://tkdodo.eu/blog/effective-react-query-keys#use-query-key-factories
- * @see https://tkdodo.eu/blog/leveraging-the-query-function-context
+ * Query options for every committees request: key, fetcher and cache policy in
+ * one object, spread by the hooks in `useCommittees.ts`, so call sites cannot
+ * disagree on any of the three. The pattern is described in
+ * `docs/frontend.md`.
  */
 export const committeesQueries = {
   /**

@@ -20,16 +20,10 @@ const MATCHES_CONFIG = {
 } as const;
 
 /**
- * Query options factory for matches.
- *
- * Implements the Query Options pattern for:
- * - Single source of truth (queryKey + queryFn + config)
- * - Type-safe options spreading
- * - Consistency between useQuery, prefetchQuery, and mutations
- * - Easy testing (export options, test queryFn directly)
- *
- * @see https://tkdodo.eu/blog/effective-react-query-keys#use-query-key-factories
- * @see https://tkdodo.eu/blog/leveraging-the-query-function-context
+ * Query options for every matches request: key, fetcher and cache policy in
+ * one object, spread by the hooks in `useMatches.ts` and the prefetch helpers
+ * below, so call sites cannot disagree on any of the three. The pattern is
+ * described in `docs/frontend.md`.
  */
 export const matchesQueries = {
   /**
