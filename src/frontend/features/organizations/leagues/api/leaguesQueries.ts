@@ -10,14 +10,12 @@ import { leaguesKeys } from "./leaguesKeys";
  */
 const LEAGUES_CONFIG = {
   /**
-   * Data remains fresh for 5 minutes.
    * League data (names, regions) is among the most stable in the app —
    * changes are rare and administrative, not match-driven.
    */
   staleTime: 5 * 60 * 1000,
 
   /**
-   * Cached data garbage collected after 15 minutes of no usage.
    * Leagues are reference data loaded early and reused across many
    * features (committees, clubs, championships), so a generous gcTime
    * avoids redundant fetches during deep navigation sessions.

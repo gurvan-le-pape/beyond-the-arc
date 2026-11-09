@@ -11,15 +11,11 @@ import { matchesKeys } from "./matchesKeys";
  */
 const MATCHES_CONFIG = {
   /**
-   * Data remains fresh for 2 minutes.
-   * After this, background refetch occurs on next mount/focus.
+   * The shortest window of the feature caches: scores and statuses change
+   * while matches are played. Window-focus refetching is off app-wide, so a
+   * stale entry refetches on the next mount, not when the tab regains focus.
    */
   staleTime: 2 * 60 * 1000,
-
-  /**
-   * Cached data garbage collected after 5 minutes of no usage.
-   * Prevents memory leaks from abandoned queries.
-   */
   gcTime: 5 * 60 * 1000,
 } as const;
 

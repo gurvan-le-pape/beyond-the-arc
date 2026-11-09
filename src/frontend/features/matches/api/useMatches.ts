@@ -11,11 +11,6 @@ import { matchesPrefetch, matchesQueries } from "./matchesQueries";
 /**
  * Hook to fetch all matches with optional filters and pagination.
  *
- * Features:
- * - Automatic caching (2 minutes stale, 5 minutes GC)
- * - Background refetch on mount when stale (window-focus refetching is off)
- * - Pagination support
- *
  * @param filters - Optional filter criteria
  * @param options - Additional query options
  * @returns React Query result with paginated matches

@@ -12,13 +12,11 @@ import { playersKeys } from "./playersKeys";
  */
 const PLAYERS_CONFIG = {
   /**
-   * Data remains fresh for 5 minutes.
    * Player profiles and metadata change infrequently within a session.
    */
   staleTime: 5 * 60 * 1000,
 
   /**
-   * Cached data garbage collected after 10 minutes of no usage.
    * Players are browsed heavily within a session (search → profile → matches),
    * so a generous gcTime avoids redundant fetches during navigation.
    */
