@@ -30,7 +30,8 @@
     "columns": {
       "name": "Club",
       "city": "Ville",
-      "zipCode": "Code postal"
+      "committee": "Comité",
+      "league": "Ligue"
     }
   },
   "info": {

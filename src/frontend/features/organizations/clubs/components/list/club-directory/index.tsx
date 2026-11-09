@@ -34,13 +34,13 @@ function ClubDirectoryContent() {
   const { data: committees = [] } = useCommittees();
   const { data: leagues = [] } = useLeagues();
   const places: ClubPlaces = {
-    departments: Object.fromEntries(
+    committees: Object.fromEntries(
       committees.map((c) => [
         c.id,
         `${normalizeDepartmentCode(c.department.code)} · ${c.department.name}`,
       ]),
     ),
-    regions: Object.fromEntries(leagues.map((l) => [l.id, l.region.name])),
+    leagues: Object.fromEntries(leagues.map((l) => [l.id, l.region.name])),
   };
 
   const clubs: ClubBasic[] = data?.items ?? [];
