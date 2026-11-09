@@ -106,17 +106,17 @@ export async function createPool(
     [championshipId, letter],
   );
 
-  const teamIds: number[] = [];
-  for (const club of clubs) {
-    const {
-      rows: [{ id }],
-    } = await client.query<{ id: number }>(
-      `INSERT INTO teams (pool_id, club_id, number)
-       VALUES ($1, $2, $3) RETURNING id`,
-      [poolId, club.id, nextTeamNumber++],
-    );
-    teamIds.push(id);
-  }
+  // RETURNING carries no order guarantee, so the ids are put back in the
+  // clubs' order, which is ascending club id.
+  const { rows: teams } = await client.query<{ id: number; club_id: number }>(
+    `INSERT INTO teams (pool_id, club_id, number)
+     SELECT $1, club_id, number
+       FROM unnest($2::int[], $3::int[]) AS t(club_id, number)
+     RETURNING id, club_id`,
+    [poolId, clubs.map((club) => club.id), clubs.map(() => nextTeamNumber++)],
+  );
+  teams.sort((a, b) => a.club_id - b.club_id);
+  const teamIds = teams.map((team) => team.id);
 
   return {
     championshipId,
