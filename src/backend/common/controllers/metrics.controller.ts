@@ -7,7 +7,7 @@ import { PrometheusController } from "@willsoto/nestjs-prometheus";
 @SkipTransform()
 export class MetricsController extends PrometheusController {
   @Get()
-  async index(@Res() response: unknown): Promise<string> {
+  index(@Res() response: unknown): Promise<string> {
     return super.index(response);
   }
 }
