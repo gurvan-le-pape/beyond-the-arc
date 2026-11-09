@@ -97,18 +97,18 @@ export function scoreEvents(
 
 // The fouls whose free throws are shot at the same instant, and so belong in
 // the same row.
-const FOULS_WITH_FREE_THROWS: readonly string[] = [
+const FOULS_WITH_FREE_THROWS: ReadonlySet<string> = new Set([
   EventType.THREE_POINT_SHOOTING_FOUL,
   EventType.TWO_POINT_EXT_SHOOTING_FOUL,
   EventType.TWO_POINT_INT_SHOOTING_FOUL,
   EventType.THREE_POINT_AND_1,
   EventType.TWO_POINT_EXT_AND_1,
   EventType.TWO_POINT_INT_AND_1,
-];
-const FREE_THROWS: readonly string[] = [
+]);
+const FREE_THROWS: ReadonlySet<string> = new Set([
   EventType.FREE_THROW_MADE,
   EventType.FREE_THROW_MISSED,
-];
+]);
 
 /**
  * One row of the timeline: an event, and the events at the same instant that
@@ -191,8 +191,8 @@ function secondOf(event: MatchEvent): number {
  */
 function completes(lead: ScoredMatchEvent, next: ScoredMatchEvent): boolean {
   if (secondOf(next) !== secondOf(lead)) return false;
-  if (FOULS_WITH_FREE_THROWS.includes(lead.eventType)) {
-    return FREE_THROWS.includes(next.eventType);
+  if (FOULS_WITH_FREE_THROWS.has(lead.eventType)) {
+    return FREE_THROWS.has(next.eventType);
   }
   return (
     lead.eventType === EventType.SUBSTITUTION &&
