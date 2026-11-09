@@ -147,4 +147,5 @@ def test_every_team_has_a_roster_of_twelve(db):
 def test_a_rerun_creates_nothing(season_generator, db):
     before = (len(db.championships), len(db.teams), len(db.matches))
     season_generator.SeasonGenerator().run()
-    assert (len(db.championships), len(db.teams), len(db.matches)) == before
+    after = (len(db.championships), len(db.teams), len(db.matches))
+    assert after == before
