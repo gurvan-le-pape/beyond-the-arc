@@ -7,7 +7,9 @@
   "breadcrumb": "Organisations",
   "leagues": {
     "label": "Ligues",
-    "description": "Ligues régionales supervisant les comités départementaux."
+    "description": "Ligues régionales supervisant les comités départementaux.",
+    "mapCaption": "Teinte selon le nombre de clubs. Sélectionnez une région pour ouvrir sa ligue.",
+    "summary": "{leagues, plural, one {# ligue régionale} other {# ligues régionales}} pour {clubs, plural, one {# club} other {# clubs}}."
   },
   "committees": {
     "label": "Comités",

@@ -4,5 +4,4 @@
  */
 
 export * from "./detail/LeagueHeader";
-export * from "./list/LeagueCard";
-export * from "./list/LeaguesGrid";
+export * from "./list/leagues-overview/index";

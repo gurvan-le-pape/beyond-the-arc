@@ -5,4 +5,5 @@
 
 export * from "./Department";
 export * from "./GeoJson";
+export * from "./MapShape";
 export * from "./Region";
