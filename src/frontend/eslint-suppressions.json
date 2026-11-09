@@ -158,14 +158,6 @@
       "count": 1
     }
   },
-  "features/organizations/clubs/components/list/club-directory/ClubsFilters.tsx": {
-    "complexity": {
-      "count": 1
-    },
-    "max-lines-per-function": {
-      "count": 1
-    }
-  },
   "features/organizations/clubs/components/map/clubs-map/MapLibreClubsMap.tsx": {
     "@typescript-eslint/no-unnecessary-condition": {
       "count": 1

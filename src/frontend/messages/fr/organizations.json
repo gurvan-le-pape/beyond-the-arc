@@ -32,7 +32,10 @@
       "city": "Ville",
       "committee": "Comité",
       "league": "Ligue"
-    }
+    },
+    "resultCount": "{count, plural, =0 {Aucun club} one {# club} other {# clubs}}",
+    "mapCaption": "Cliquez sur un département pour lister ses clubs, puis à nouveau pour l’effacer.",
+    "locationFilters": "Ligue et comité"
   },
   "info": {
     "title": "Informations",

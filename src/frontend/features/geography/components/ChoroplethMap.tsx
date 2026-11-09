@@ -23,6 +23,10 @@ const TONES = {
     base: "fill-tint-departmental",
     fill: "fill-solid-departmental",
   },
+  clubs: {
+    base: "fill-tint-clubs",
+    fill: "fill-solid-clubs",
+  },
 } as const;
 
 // Each shape is the tone's tint with its solid laid over at an opacity, so the
@@ -36,6 +40,15 @@ function opacityFor(value: number, max: number): number {
   return MIN_OPACITY + (1 - MIN_OPACITY) * Math.sqrt(value / max);
 }
 
+// A plain click selects in place; a modified one still opens the link.
+function selectOnPlainClick(onSelect: (code: string) => void, code: string) {
+  return (event: React.MouseEvent) => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey) return;
+    event.preventDefault();
+    onSelect(code);
+  };
+}
+
 interface ChoroplethMapProps {
   readonly shapes: readonly MapShape[];
   readonly frame: { readonly width: number; readonly height: number };
@@ -45,6 +58,11 @@ interface ChoroplethMapProps {
   /** The shape to outline, from the map's own hover or the caller's. */
   readonly highlighted?: string | null;
   readonly onHighlight?: (code: string | null) => void;
+  /**
+   * Called on a plain click instead of following the shape's link, for a map
+   * that filters the page it sits on. A modified click still opens the link.
+   */
+  readonly onSelect?: (code: string) => void;
   /** Shapes to fade, e.g. those a search filtered out. */
   readonly muted?: ReadonlySet<string>;
   readonly className?: string;
@@ -65,6 +83,7 @@ export function ChoroplethMap({
   tone,
   highlighted,
   onHighlight,
+  onSelect,
   muted,
   className,
 }: ChoroplethMapProps) {
@@ -110,7 +129,10 @@ export function ChoroplethMap({
             key={shape.code}
             href={datum.href}
             tabIndex={-1}
+            // Out of the tab order, so only a click focuses it: no ring.
+            className="outline-none"
             onMouseEnter={() => onHighlight?.(shape.code)}
+            onClick={onSelect && selectOnPlainClick(onSelect, shape.code)}
           >
             {path}
           </Link>

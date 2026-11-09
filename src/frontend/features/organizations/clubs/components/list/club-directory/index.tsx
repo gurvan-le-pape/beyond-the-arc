@@ -14,6 +14,7 @@ import { SearchTabShell } from "@/shared/components/navigation";
 import { useClubs } from "../../../api";
 import type { ClubBasic } from "../../../types/ClubBasic";
 import { ClubsFilters } from "./ClubsFilters";
+import { ClubsMap } from "./ClubsMap";
 import { type ClubPlaces, ClubsTable } from "./ClubsTable";
 import { useClubsFilterState } from "./useClubsFilterState";
 
@@ -21,7 +22,7 @@ function ClubDirectoryContent() {
   const tCommon = useTranslations("common");
   const tOrganizations = useTranslations("organizations");
 
-  const { filters, set, page, pageSize, setPage, setPageSize, reset } =
+  const { filters, set, page, pageSize, setPage, setPageSize } =
     useClubsFilterState();
   const { data, error, isLoading, refetch } = useClubs({
     leagueId: filters.league,
@@ -54,32 +55,48 @@ function ClubDirectoryContent() {
     : null;
 
   return (
-    <div className="space-y-6">
-      <ClubsFilters filters={filters} set={set} onReset={reset} />
+    <div className="grid gap-6 lg:gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] items-start">
+      {/* The finding column: search, location filters and the map that
+          drives them, kept in view while the results scroll. */}
+      <div className="lg:sticky lg:top-24 space-y-6">
+        <ClubsFilters filters={filters} set={set} />
+        <ClubsMap committees={committees} filters={filters} set={set} />
+      </div>
 
-      <SearchTabShell
-        isLoading={isLoading}
-        error={error}
-        errorMessage={tCommon("errors.fetchClubs")}
-        onRetry={refetch}
-        isEmpty={clubs.length === 0}
-        emptyState={
-          <EmptyState
-            icon={<Users className="w-16 h-16" />}
-            title={tCommon("emptyState.clubs")}
-            description={tOrganizations("clubs.tryAdjustingFilters")}
-          />
-        }
-        pagination={pagination}
-        pageSize={pageSize}
-        onPageSizeChange={setPageSize}
-        onPageChange={(index) => setPage(index + 1)}
-        itemLabel={tOrganizations("clubs.itemLabel", {
-          count: pagination?.total ?? 0,
-        })}
-      >
-        <ClubsTable clubs={clubs} places={places} />
-      </SearchTabShell>
+      <div className="space-y-4">
+        {/* Polite: a new count is read once typing settles, not per keystroke. */}
+        <p
+          className="text-sm font-medium text-text-secondary min-h-5"
+          aria-live="polite"
+        >
+          {pagination &&
+            tOrganizations("clubs.resultCount", { count: pagination.total })}
+        </p>
+
+        <SearchTabShell
+          isLoading={isLoading}
+          error={error}
+          errorMessage={tCommon("errors.fetchClubs")}
+          onRetry={refetch}
+          isEmpty={clubs.length === 0}
+          emptyState={
+            <EmptyState
+              icon={<Users className="w-16 h-16" />}
+              title={tCommon("emptyState.clubs")}
+              description={tOrganizations("clubs.tryAdjustingFilters")}
+            />
+          }
+          pagination={pagination}
+          pageSize={pageSize}
+          onPageSizeChange={setPageSize}
+          onPageChange={(index) => setPage(index + 1)}
+          itemLabel={tOrganizations("clubs.itemLabel", {
+            count: pagination?.total ?? 0,
+          })}
+        >
+          <ClubsTable clubs={clubs} places={places} />
+        </SearchTabShell>
+      </div>
     </div>
   );
 }

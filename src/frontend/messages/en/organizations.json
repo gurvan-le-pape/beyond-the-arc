@@ -32,7 +32,10 @@
       "city": "City",
       "committee": "Committee",
       "league": "League"
-    }
+    },
+    "resultCount": "{count, plural, =0 {No clubs} one {# club} other {# clubs}}",
+    "mapCaption": "Click a department to list its clubs, and again to clear it.",
+    "locationFilters": "League and committee"
   },
   "info": {
     "title": "Information",
