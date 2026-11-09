@@ -5,22 +5,13 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { ChoroplethMap } from "@/features/geography/components";
-import {
-  FRANCE_DEPARTMENTS,
-  FRANCE_FRAME,
-} from "@/features/geography/constants";
-import { normalizeDepartmentCode } from "@/features/organizations/utils";
+import { FRANCE_FRAME } from "@/features/geography/constants";
+import { DEPARTMENT_SHAPES } from "@/features/organizations/utils";
 import { SearchField } from "@/shared/components/forms";
 
 import type { Committee } from "../../../types";
 import { CommitteeGroup } from "./CommitteeGroup";
 import { useCommitteesOverview } from "./useCommitteesOverview";
-
-// The shapes carry INSEE codes ("01"); the rows show and highlight "1".
-const DEPARTMENT_SHAPES = FRANCE_DEPARTMENTS.map((shape) => ({
-  ...shape,
-  code: normalizeDepartmentCode(shape.code),
-}));
 
 interface CommitteesOverviewProps {
   readonly committees: Committee[];

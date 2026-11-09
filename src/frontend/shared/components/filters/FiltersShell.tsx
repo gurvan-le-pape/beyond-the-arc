@@ -121,6 +121,12 @@ function FiltersSheet({
 
 interface FiltersShellProps {
   readonly children: React.ReactNode;
+  /**
+   * The one control that must never fold away, such as a page's name search:
+   * first in the card, and above the sheet's trigger on a phone instead of
+   * inside the sheet.
+   */
+  readonly lead?: React.ReactNode;
   readonly activeFilterCount: number;
   readonly chips: ActiveFilterChip[];
   readonly onReset: () => void;
@@ -130,7 +136,7 @@ interface FiltersShellProps {
 /**
  * The responsive chrome around a set of filter controls: `FiltersSheet` below
  * `md`, an inline `Card` at `md` and up — exactly one of the two, so
- * `children` is never mounted twice.
+ * `children` and `lead` are never mounted twice.
  *
  * The server cannot see the viewport and renders the card; `hidden md:block`
  * keeps it out of sight on a phone until hydration swaps in the sheet. Filter
@@ -139,6 +145,7 @@ interface FiltersShellProps {
  */
 export function FiltersShell({
   children,
+  lead,
   activeFilterCount,
   chips,
   onReset,
@@ -147,7 +154,7 @@ export function FiltersShell({
   const isDesktop = useMediaQuery(DESKTOP_QUERY, true);
 
   if (!isDesktop) {
-    return (
+    const sheet = (
       <FiltersSheet
         activeFilterCount={activeFilterCount}
         onReset={onReset}
@@ -156,12 +163,21 @@ export function FiltersShell({
         {children}
       </FiltersSheet>
     );
+    return lead ? (
+      <div className="space-y-4">
+        {lead}
+        {sheet}
+      </div>
+    ) : (
+      sheet
+    );
   }
 
   return (
     <div className="hidden md:block">
       <Card padding="lg">
         <div className="space-y-5">
+          {lead}
           {children}
           {activeFilterCount > 0 && (
             <ActiveFilterChips chips={chips} onReset={onReset} />

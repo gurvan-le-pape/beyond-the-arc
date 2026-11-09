@@ -20,8 +20,9 @@ interface ClubsTableProps {
 
 /**
  * One page of the clubs listing, a row per club: its name, city, committee
- * and league. Each row links to the club. On a phone the committee and league
- * step aside.
+ * and league. Each row links to the club. On a phone the table keeps one
+ * column: the city and committee move under the name, and the league steps
+ * aside.
  *
  * A committee is named by its department and a league by its region, as on
  * their own pages.
@@ -39,12 +40,22 @@ export function ClubsTable({ clubs, places }: ClubsTableProps) {
       header: t("clubs.columns.name"),
       align: "left",
       emphasis: true,
-      render: (club) => club.name,
+      render: (club) => (
+        <>
+          {club.name}
+          <span className="block sm:hidden text-xs font-normal text-text-secondary">
+            {[club.city, places.committees[club.committeeId]]
+              .filter(Boolean)
+              .join(" · ")}
+          </span>
+        </>
+      ),
     },
     {
       key: "city",
       header: t("clubs.columns.city"),
       align: "left",
+      from: "sm",
       render: (club) => club.city || "—",
     },
     {

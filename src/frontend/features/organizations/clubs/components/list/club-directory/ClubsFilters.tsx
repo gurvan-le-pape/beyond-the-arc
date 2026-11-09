@@ -16,19 +16,20 @@ import type { FilterProps } from "@/shared/hooks";
 
 import type { ClubsFilterValues } from "./useClubsFilterState";
 
-interface ClubsFiltersProps extends FilterProps<ClubsFilterValues> {
-  readonly onReset: () => void;
-}
-
 /**
- * The filter panel for the clubs list — name search, and the level →
- * committee/league cascade.
+ * The clubs list's controls: the name search, then the league → committee
+ * cascade.
+ *
+ * The search is the panel's `lead`, so it stays in view on a phone, where the
+ * location filters fold into a sheet: finding a club by name is what the page
+ * is for. Resetting clears the location filters, the ones the chips list; the
+ * search has its own clear button.
  *
  * Holds no state: values and `set` come from the caller's filter hook. The
  * committee select is gated on a league being chosen, because committees are
  * only meaningful once a league scopes them.
  */
-export function ClubsFilters({ filters, set, onReset }: ClubsFiltersProps) {
+export function ClubsFilters({ filters, set }: FilterProps<ClubsFilterValues>) {
   const tCommon = useTranslations("common");
   const tOrganizations = useTranslations("organizations");
 
@@ -60,11 +61,6 @@ export function ClubsFilters({ filters, set, onReset }: ClubsFiltersProps) {
   );
 
   const chips = [
-    q && {
-      key: "search",
-      label: `"${q}"`,
-      onRemove: () => set({ q: undefined }),
-    },
     league && {
       key: "league",
       label: selectedLeague?.name ?? String(league),
@@ -79,10 +75,20 @@ export function ClubsFilters({ filters, set, onReset }: ClubsFiltersProps) {
 
   return (
     <FiltersShell
+      lead={
+        <DebouncedSearchField
+          labels={{ clear: tCommon("clearSearch") }}
+          label={tOrganizations("clubs.searchLabel")}
+          value={q ?? ""}
+          onChange={(value) => set({ q: value })}
+          onClear={() => set({ q: undefined })}
+          placeholder={tOrganizations("clubs.searchPlaceholder")}
+        />
+      }
       activeFilterCount={chips.length}
       chips={chips}
-      onReset={onReset}
-      title={tOrganizations("clubs.label")}
+      onReset={() => set({ league: undefined, committee: undefined })}
+      title={tOrganizations("clubs.locationFilters")}
     >
       {locationError && (
         <ErrorMessage
@@ -91,16 +97,8 @@ export function ClubsFilters({ filters, set, onReset }: ClubsFiltersProps) {
         />
       )}
 
-      <DebouncedSearchField
-        labels={{ clear: tCommon("clearSearch") }}
-        label={tOrganizations("clubs.searchLabel")}
-        value={q ?? ""}
-        onChange={(value) => set({ q: value })}
-        onClear={() => set({ q: undefined })}
-        placeholder={tOrganizations("clubs.searchPlaceholder")}
-      />
-
-      <Grid columns={{ base: 1, md: 2 }} gap={4}>
+      {/* One column beside the results at lg; two on a tablet. */}
+      <Grid columns={{ base: 1, md: 2, lg: 1 }} gap={4}>
         <Select
           label={tCommon("filters.leagues")}
           options={leagueOptions}
