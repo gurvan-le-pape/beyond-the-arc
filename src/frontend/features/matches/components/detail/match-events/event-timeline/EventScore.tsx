@@ -35,7 +35,7 @@ export function EventScore({
         <span className={cn(scoredBy === "home" && "font-bold text-ink-home")}>
           {homeScore}
         </span>
-        –
+        {"–"}
         <span className={cn(scoredBy === "away" && "font-bold text-ink-away")}>
           {awayScore}
         </span>
