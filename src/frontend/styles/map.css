@@ -1,9 +1,11 @@
 /* MapLibre GL CSS overrides */
 
-.maplibregl-popup-content {
-  padding: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
+/* Two classes, not one: maplibre-gl.css loads with the map's lazy chunk, after
+   this file, so an equal-specificity rule here would lose on source order. */
+.maplibregl-popup .maplibregl-popup-content {
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 /* The tip is a CSS triangle MapLibre colours white on whichever side faces the
