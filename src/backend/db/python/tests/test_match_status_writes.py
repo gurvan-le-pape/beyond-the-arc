@@ -48,8 +48,9 @@ def test_a_result_is_only_saved_on_a_generating_match():
 
 
 def test_saving_a_result_on_a_match_that_has_moved_on_raises():
+    cursor = cursor_updating(0)
     with pytest.raises(RuntimeError, match="Match 7"):
-        match_repository.update_match_result(cursor_updating(0), 7, 80, 70, False, False, {})
+        match_repository.update_match_result(cursor, 7, 80, 70, False, False, {})
 
 
 @pytest.fixture

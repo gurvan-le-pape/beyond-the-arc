@@ -38,8 +38,9 @@ def test_either_team_can_forfeit_equally_often():
 
 
 def test_an_unknown_level_is_an_error():
+    rng = random.Random(0)
     with pytest.raises(KeyError):
-        draw_forfeit("international", random.Random(0))
+        draw_forfeit("international", rng)
 
 
 @pytest.mark.parametrize(("forfeiter", "score"), [("home", (0, FORFEIT_SCORE)), ("away", (FORFEIT_SCORE, 0))])
