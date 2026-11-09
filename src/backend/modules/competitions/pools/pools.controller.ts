@@ -27,7 +27,7 @@ export class PoolsController {
   /**
    * Retrieve the pools that played the most recent completed round.
    *
-   * Short caching (1 minute): the answer moves whenever the scheduler
+   * Short caching: the answer moves whenever the scheduler
    * completes a new round.
    *
    * @returns Up to 10 pools with the matchday they played, most prominent first

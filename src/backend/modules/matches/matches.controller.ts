@@ -43,7 +43,7 @@ export class MatchesController {
    * This endpoint supports extensive filtering by level, division, category,
    * gender, pool, championship, matchday, date, and club name search.
    *
-   * Moderate caching (5 minutes) because match data changes occasionally.
+   * Moderate caching because match data changes occasionally.
    *
    * @param query - Query parameters for filtering and pagination
    * @returns Paginated list of matches

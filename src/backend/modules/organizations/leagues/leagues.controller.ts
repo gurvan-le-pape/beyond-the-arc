@@ -30,7 +30,6 @@ export class LeaguesController {
    * Retrieve all regional leagues.
    *
    * This endpoint is CACHED because leagues rarely change.
-   * Cache TTL: 10 minutes (600 seconds)
    *
    * @returns Array of league objects with id and name
    *
@@ -39,7 +38,7 @@ export class LeaguesController {
    */
   @Get()
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(CacheInterceptor({ ttl: CACHE_TTL.STATIC_DATA })) // Cache for 10 minutes
+  @UseInterceptors(CacheInterceptor({ ttl: CACHE_TTL.STATIC_DATA }))
   @ApiOperation({
     summary: "Get all regional leagues",
     description:
