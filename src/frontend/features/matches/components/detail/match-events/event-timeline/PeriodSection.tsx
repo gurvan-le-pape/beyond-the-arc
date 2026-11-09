@@ -1,6 +1,6 @@
 // src/frontend/features/matches/components/detail/match-events/event-timeline/PeriodSection.tsx
 import { useTranslations } from "next-intl";
-import { Fragment, useId } from "react";
+import { Fragment, type ReactNode, useId } from "react";
 
 import type { EventStyle, MatchTeam } from "@/features/matches/types";
 import { Text } from "@/shared/components/typography";
@@ -10,6 +10,16 @@ import { overtimeNumber } from "../plays";
 import type { PeriodScore } from "./periods";
 import { RunDivider } from "./RunDivider";
 import { TimelineEventRow } from "./TimelineEventRow";
+
+/** `t.rich` renderer for the home team's share of a two-team message. */
+function homeChunk(chunks: ReactNode) {
+  return <span className="font-semibold text-ink-home">{chunks}</span>;
+}
+
+/** `t.rich` renderer for the away team's share of a two-team message. */
+function awayChunk(chunks: ReactNode) {
+  return <span className="font-semibold text-ink-away">{chunks}</span>;
+}
 
 interface PeriodSectionProps {
   /** 1-based; 5 and above are overtimes. */
@@ -68,12 +78,8 @@ export function PeriodSection({
               {t.rich("periodPoints", {
                 home: score.home,
                 away: score.away,
-                h: (chunks) => (
-                  <span className="font-semibold text-ink-home">{chunks}</span>
-                ),
-                a: (chunks) => (
-                  <span className="font-semibold text-ink-away">{chunks}</span>
-                ),
+                h: homeChunk,
+                a: awayChunk,
               })}
             </Text>
             <Text variant="caption" as="span" className="ml-auto">
