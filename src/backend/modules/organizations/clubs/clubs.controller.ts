@@ -137,21 +137,6 @@ export class ClubsController {
    *
    * @example
    * GET /clubs/1
-   * Response (after TransformInterceptor):
-   * {
-   *   "data": {
-   *     "id": 1,
-   *     "name": "AS Monaco Basket",
-   *     "city": "Monaco",
-   *     "zipCode": "98000",
-   *     "address": "1 Avenue des Papalins",
-   *     "ffbbUrl": "https://competitions.ffbb.com/ligues/sud/comites/0013/clubs/sud0013011",
-   *     "teams": [...]
-   *   },
-   *   "timestamp": "2024-02-05T10:00:00Z",
-   *   "path": "/clubs/1",
-   *   "statusCode": 200
-   * }
    */
   @Get(":id")
   @HttpCode(HttpStatus.OK)

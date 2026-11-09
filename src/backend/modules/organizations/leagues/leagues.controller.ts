@@ -45,17 +45,6 @@ export class LeaguesController {
    *
    * @example
    * GET /leagues
-   * Response (after TransformInterceptor):
-   * {
-   *   "data": [
-   *     { "id": 1, "name": "League Auvergne-Rhône-Alpes" },
-   *     { "id": 2, "name": "League Bourgogne-Franche-Comté" }
-   *   ],
-   *   "meta": { "count": 2 },
-   *   "timestamp": "2024-02-05T10:00:00Z",
-   *   "path": "/leagues",
-   *   "statusCode": 200
-   * }
    */
   @Get()
   @HttpCode(HttpStatus.OK)
@@ -95,16 +84,6 @@ export class LeaguesController {
    *
    * @example
    * GET /leagues/1
-   * Response (after TransformInterceptor):
-   * {
-   *   "data": {
-   *     "id": 1,
-   *     "name": "League Auvergne-Rhône-Alpes"
-   *   },
-   *   "timestamp": "2024-02-05T10:00:00Z",
-   *   "path": "/leagues/1",
-   *   "statusCode": 200
-   * }
    */
   @Get(":id")
   @HttpCode(HttpStatus.OK)

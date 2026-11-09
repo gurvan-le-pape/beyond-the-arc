@@ -51,24 +51,6 @@ export class CommitteesController {
    *
    * @example
    * GET /committees?leagueId=1
-   * Response (after TransformInterceptor):
-   * {
-   *   "data": [
-   *     {
-   *       "id": 1,
-   *       "name": "Comité Departmental de l'Ain",
-   *       "leagueId": 1,
-   *       "department": {
-   *         "name": "Ain",
-   *         "code": "01"
-   *       }
-   *     }
-   *   ],
-   *   "meta": { "count": 1 },
-   *   "timestamp": "2024-02-05T10:00:00Z",
-   *   "path": "/committees?leagueId=1",
-   *   "statusCode": 200
-   * }
    */
   @Get()
   @HttpCode(HttpStatus.OK)
@@ -114,21 +96,6 @@ export class CommitteesController {
    *
    * @example
    * GET /committees/1
-   * Response (after TransformInterceptor):
-   * {
-   *   "data": {
-   *     "id": 1,
-   *     "name": "Comité Departmental de l'Ain",
-   *     "leagueId": 1,
-   *     "department": {
-   *       "name": "Ain",
-   *       "code": "01"
-   *     }
-   *   },
-   *   "timestamp": "2024-02-05T10:00:00Z",
-   *   "path": "/committees/1",
-   *   "statusCode": 200
-   * }
    */
   @Get(":id")
   @HttpCode(HttpStatus.OK)
