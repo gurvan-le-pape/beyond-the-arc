@@ -37,10 +37,9 @@ function ColumnList({ column }: ColumnListProps) {
         {column.title}
       </Text>
 
-      <div
-        role="group"
+      <fieldset
         aria-labelledby={titleId}
-        className="space-y-1 max-h-64 overflow-y-auto scrollbar-hide"
+        className="min-w-0 space-y-1 max-h-64 overflow-y-auto scrollbar-hide"
       >
         {column.items.map((item) => (
           <label
@@ -61,7 +60,7 @@ function ColumnList({ column }: ColumnListProps) {
             </Text>
           </label>
         ))}
-      </div>
+      </fieldset>
     </div>
   );
 }
