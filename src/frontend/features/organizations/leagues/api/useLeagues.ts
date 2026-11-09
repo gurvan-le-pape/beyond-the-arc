@@ -9,10 +9,6 @@ import { leaguesQueries } from "./leaguesQueries";
 /**
  * Hook to fetch all leagues (regional leagues).
  *
- * Features:
- * - Automatic caching (5 minutes stale, 15 minutes GC)
- * - Background refetch on mount when stale (window-focus refetching is off)
- *
  * @param options - `initialData` seeds the cache from a server render, so the first paint has no loading state
  * @returns React Query result with leagues data
  *

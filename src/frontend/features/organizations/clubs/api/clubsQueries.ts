@@ -10,18 +10,10 @@ import { clubsKeys } from "./clubsKeys";
  * Centralizes cache timing and behavior policies.
  */
 const CLUBS_CONFIG = {
-  /**
-   * Data remains fresh for 5 minutes.
-   * Club data changes infrequently (roster updates, address changes),
-   * so a longer staleTime than matches (2 min) is appropriate.
-   */
+  /** Club records change only when the static data is refreshed. */
   staleTime: 5 * 60 * 1000,
 
-  /**
-   * Cached data garbage collected after 10 minutes of no usage.
-   * Longer than matches (5 min) because club data is cheap to hold
-   * and users navigate between clubs frequently within a session.
-   */
+  /** Club data is cheap to hold, and users move between clubs often within a session. */
   gcTime: 10 * 60 * 1000,
 } as const;
 

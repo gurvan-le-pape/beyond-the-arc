@@ -12,11 +12,6 @@ import { playersQueries } from "./playersQueries";
 /**
  * Hook to fetch all players with optional filters and pagination.
  *
- * Features:
- * - Automatic caching (5 minutes stale, 10 minutes GC)
- * - Background refetch on mount when stale (window-focus refetching is off)
- * - Pagination support
- *
  * @param filters - Optional filter criteria (name, category, gender, etc.)
  * @param options - Additional query options
  * @returns React Query result with paginated players data
@@ -36,7 +31,7 @@ export function usePlayers(
 
 /**
  * Hook to fetch match history for a specific player.
- * Refreshes more aggressively (2 minutes) than other player data
+ * Refreshes more aggressively than other player data
  * since results update throughout the week as fixtures are played.
  *
  * @param id - The player ID

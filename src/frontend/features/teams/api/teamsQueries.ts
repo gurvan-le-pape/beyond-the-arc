@@ -11,13 +11,11 @@ import { teamsKeys } from "./teamsKeys";
  */
 const TEAMS_CONFIG = {
   /**
-   * Data remains fresh for 5 minutes.
    * Team rosters and metadata change infrequently within a session.
    */
   staleTime: 5 * 60 * 1000,
 
   /**
-   * Cached data garbage collected after 10 minutes of no usage.
    * Teams are browsed heavily within a session (club → team → match),
    * so a generous gcTime avoids redundant fetches during navigation.
    */

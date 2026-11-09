@@ -10,11 +10,6 @@ import { teamsQueries } from "./teamsQueries";
 /**
  * Hook to fetch all teams with optional filters and pagination.
  *
- * Features:
- * - Automatic caching (5 minutes stale, 10 minutes GC)
- * - Background refetch on mount when stale (window-focus refetching is off)
- * - Pagination support
- *
  * @param filters - Optional filter criteria (clubId, level, category, etc.)
  * @param options - Additional query options
  * @returns React Query result with paginated teams data

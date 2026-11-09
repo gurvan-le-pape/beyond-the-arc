@@ -11,11 +11,6 @@ import { clubsQueries } from "./clubsQueries";
 /**
  * Hook to fetch all clubs with optional filters and pagination.
  *
- * Features:
- * - Automatic caching (5 minutes stale, 10 minutes GC)
- * - Background refetch on mount when stale (window-focus refetching is off)
- * - Pagination support
- *
  * @param filters - Optional filter criteria
  * @param options - Additional query options
  * @returns React Query result with paginated clubs
@@ -35,7 +30,7 @@ export function useClubs(
 
 /**
  * Hook to fetch all clubs without filtering.
- * Reads `/clubs/all` from the backend directly; 24 h `staleTime`.
+ * Reads `/clubs/all` from the backend directly.
  * Useful for typeaheads, selects, and autocomplete widgets.
  *
  * @returns React Query result with all clubs
@@ -59,10 +54,6 @@ export function useAllClubs(options?: { initialData?: ClubBasic[] }) {
  * results on demand as the user types, rather than loading all clubs upfront.
  * Results are scoped to committeeId or leagueId when provided, so the list
  * stays relevant to any active location filter.
- *
- * Cache behaviour:
- * - staleTime: 1 minute (search results change more frequently than static lists)
- * - gcTime: 2 minutes
  *
  * **Runs on an empty search**, unlike `usePlayerSearch`, which gates at two
  * characters. That is the intended behaviour for the only consumer: a filter

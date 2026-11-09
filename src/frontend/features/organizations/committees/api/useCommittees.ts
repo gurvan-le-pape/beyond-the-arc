@@ -10,10 +10,6 @@ import { committeesQueries } from "./committeesQueries";
 /**
  * Hook to fetch all committees with optional filters.
  *
- * Features:
- * - Automatic caching (5 minutes stale, 10 minutes GC)
- * - Background refetch on mount when stale (window-focus refetching is off)
- *
  * @param filters - Optional filter criteria
  * @param options - `enabled` gates the request; `initialData` seeds the cache from a server render
  * @returns React Query result with committees data

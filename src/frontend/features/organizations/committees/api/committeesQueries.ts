@@ -10,15 +10,10 @@ import { committeesKeys } from "./committeesKeys";
  * Centralizes cache timing and behavior policies.
  */
 const COMMITTEES_CONFIG = {
-  /**
-   * Data remains fresh for 5 minutes.
-   * Committee data (names, regions, contacts) changes rarely —
-   * longer staleTime than matches is appropriate.
-   */
+  /** Committees change only when the static data is refreshed. */
   staleTime: 5 * 60 * 1000,
 
   /**
-   * Cached data garbage collected after 10 minutes of no usage.
    * Users navigate between committees within a session frequently,
    * so keeping the cache warm longer reduces redundant fetches.
    */

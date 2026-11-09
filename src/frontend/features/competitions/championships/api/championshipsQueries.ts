@@ -11,14 +11,11 @@ import { championshipsKeys } from "./championshipsKeys";
  */
 const CHAMPIONSHIPS_CONFIG = {
   /**
-   * Data remains fresh for 5 minutes.
-   * Championship metadata (name, dates, level) is stable within a session
-   * but can be updated by admins between visits.
+   * Championship metadata (name, dates, level) is stable within a session.
    */
   staleTime: 5 * 60 * 1000,
 
   /**
-   * Cached data garbage collected after 10 minutes of no usage.
    * Championships are a top-level navigation entry point, browsed
    * heavily within a session across pools, leaderboards, and matches.
    */
