@@ -39,7 +39,7 @@ export class LeaderboardsController {
   /**
    * Retrieve leaderboard entries for a specific pool.
    *
-   * Moderate caching (5 minutes) because standings can change with each match.
+   * Moderate caching because standings can change with each match.
    *
    * @param poolId - The pool whose standings to return
    * @returns Array of leaderboard entries sorted by points and point difference
@@ -71,7 +71,7 @@ export class LeaderboardsController {
    */
   @Get(":poolId/leaderboard")
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(CacheInterceptor({ ttl: CACHE_TTL.MODERATE_DATA })) // Cache for 5 minutes
+  @UseInterceptors(CacheInterceptor({ ttl: CACHE_TTL.MODERATE_DATA }))
   @ApiOperation({
     summary: "Get a pool's standings",
     description:

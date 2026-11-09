@@ -49,7 +49,7 @@ export interface paths {
         };
         /**
          * Get clubs with filters and pagination
-         * @description Retrieves clubs filtered by competition level, committee, league, category, gender, and name search. Supports pagination via page and limit parameters. Results are cached for 3 minutes.
+         * @description Retrieves clubs filtered by competition level, committee, league, category, gender, and name search. Supports pagination via page and limit parameters. Results are cached for 5 minutes.
          */
         get: operations["ClubsController_getClubs"];
         put?: never;

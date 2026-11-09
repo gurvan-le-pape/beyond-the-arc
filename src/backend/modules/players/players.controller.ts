@@ -43,7 +43,7 @@ export class PlayersController {
   /**
    * Retrieve all players with optional filters and pagination.
    *
-   * Moderate caching (5 minutes) because player rosters change occasionally.
+   * Moderate caching because player rosters change occasionally.
    *
    * @param query - Query parameters for filtering and pagination
    * @returns Paginated list of players

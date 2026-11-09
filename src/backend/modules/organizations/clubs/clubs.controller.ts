@@ -48,7 +48,7 @@ export class ClubsController {
    * Retrieve all clubs without any filtering.
    * Used for map initialization where all club coordinates are needed at once.
    *
-   * Cached for 5 minutes as club data changes occasionally.
+   * Cached, as club data changes occasionally.
    *
    * @returns Flat array of all clubs
    *
@@ -78,7 +78,7 @@ export class ClubsController {
    *
    * Supports filtering by competition level, committee, league, category, gender,
    * and name search. Results are paginated (default: page 1, limit 50).
-   * Cached for 3 minutes as club lists change occasionally.
+   * Cached, as club lists change occasionally.
    *
    * @param query - Query parameters for filtering and pagination
    * @returns Paginated list of clubs matching the filters
@@ -89,11 +89,11 @@ export class ClubsController {
    */
   @Get()
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(CacheInterceptor({ ttl: CACHE_TTL.MODERATE_DATA })) // Cache for 5 minutes
+  @UseInterceptors(CacheInterceptor({ ttl: CACHE_TTL.MODERATE_DATA }))
   @ApiOperation({
     summary: "Get clubs with filters and pagination",
     description:
-      "Retrieves clubs filtered by competition level, committee, league, category, gender, and name search. Supports pagination via page and limit parameters. Results are cached for 3 minutes.",
+      "Retrieves clubs filtered by competition level, committee, league, category, gender, and name search. Supports pagination via page and limit parameters. Results are cached for 5 minutes.",
   })
   @ApiEnvelopePage(
     ClubBasicResponseDto,

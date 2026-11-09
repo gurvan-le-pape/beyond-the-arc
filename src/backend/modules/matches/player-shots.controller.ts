@@ -30,9 +30,8 @@ export class PlayerShotsController {
   /**
    * Retrieve every shot a player took, for their season shot chart.
    *
-   * Moderate caching (5 minutes): a finished match's shots never change, so the
-   * only staleness is a just-generated match reaching the chart up to 5 minutes
-   * late. A player's season is a few hundred shots at ~55 bytes each, well
+   * Moderate caching: a finished match's shots never change, so the only
+   * staleness is a just-generated match reaching the chart up to one TTL late. A player's season is a few hundred shots at ~55 bytes each, well
    * within the per-entry body CACHE_MAX_ENTRIES was sized against.
    *
    * @param playerId - The player ID

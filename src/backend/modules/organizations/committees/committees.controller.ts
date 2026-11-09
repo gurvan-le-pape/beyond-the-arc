@@ -43,7 +43,7 @@ export class CommitteesController {
   /**
    * Retrieve committees, optionally filtered by league.
    *
-   * Moderate caching (5 minutes) because committees lists change
+   * Moderate caching because committees lists change
    * occasionally but not frequently.
    *
    * @param query - Query parameters containing optional leagueId
@@ -72,7 +72,7 @@ export class CommitteesController {
    */
   @Get()
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(CacheInterceptor({ ttl: CACHE_TTL.MODERATE_DATA })) // Cache for 5 minutes
+  @UseInterceptors(CacheInterceptor({ ttl: CACHE_TTL.MODERATE_DATA }))
   @ApiOperation({
     summary: "Get committees (departmental committees)",
     description:

@@ -27,8 +27,8 @@ export class StatsController {
   /**
    * Retrieve platform-wide entity counts.
    *
-   * Cached for 60 seconds — matches change frequently on weekends
-   * but the query is cheap enough to recompute often.
+   * Short caching: matches change frequently on weekends, but the query is
+   * cheap enough to recompute often.
    *
    * @returns Counts for clubs, teams, players, matches, leagues, committees
    *
