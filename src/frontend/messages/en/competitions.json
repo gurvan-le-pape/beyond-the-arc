@@ -4,7 +4,6 @@
   "title": "Championships",
   "breadcrumb": "Championships",
   "noChampionships": "No championships available",
-  "tryAdjustingFilters": "Try adjusting filters to find more championships.",
   "poolStandings": "Pool {letter} standings",
   "categoryAriaLabel": "Category",
   "genderAriaLabel": "Gender",
@@ -39,19 +38,22 @@
     "teamHeader": "Team",
     "totalHeader": "T"
   },
-  "itemLabel": "{count, plural, one {championship} other {championships}}",
-  "listColumns": {
-    "league": "League",
-    "committee": "Committee",
-    "category": "Category",
-    "gender": "Gender",
-    "division": "Division",
-    "divisionAbbr": "Div.",
-    "pools": "Pools"
-  },
   "detailSections": {
     "label": "Show",
     "standings": "Standings",
     "matches": "Matches"
-  }
+  },
+  "poolCount": "{count, plural, one {# pool} other {# pools}}",
+  "organiserSummary": "{championships, plural, one {# championship} other {# championships}} · {pools, plural, one {# pool} other {# pools}}",
+  "matrixCaption": "{name} championships, by category and gender",
+  "pickLeague": "Choose a league to see its championships.",
+  "pickCommittee": "Choose a committee to see its championships.",
+  "mapCaptionRegional": "Click a region to see its league's championships.",
+  "mapCaptionDepartmental": "Click a department to see its committee's championships.",
+  "listColumns": {
+    "category": "Category"
+  },
+  "searchLabel": "Find a department",
+  "searchPlaceholder": "Name or number",
+  "noMatch": "No department matches “{query}”."
 }

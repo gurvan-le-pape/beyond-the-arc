@@ -6,17 +6,10 @@ import { useState } from "react";
 
 import { ChoroplethMap } from "@/features/geography/components";
 import { FRANCE_FRAME, FRANCE_REGIONS } from "@/features/geography/constants";
-import { namesMatch } from "@/features/organizations/utils";
+import { regionShapeCode } from "@/features/organizations/utils";
 
 import type { League } from "../../../types";
 import { LeagueRow } from "./LeagueRow";
-
-/** The region shape a league covers, matched by name. */
-function regionCodeOf(league: League): string | undefined {
-  return FRANCE_REGIONS.find((shape) =>
-    namesMatch(shape.name, league.region.name),
-  )?.code;
-}
 
 interface LeaguesOverviewProps {
   readonly leagues: League[];
@@ -41,7 +34,7 @@ export function LeaguesOverview({
   const [highlighted, setHighlighted] = useState<string | null>(null);
 
   const rows = leagues
-    .map((league) => ({ league, code: regionCodeOf(league) }))
+    .map((league) => ({ league, code: regionShapeCode(league.region.name) }))
     .sort((a, b) => b.league.clubCount - a.league.clubCount);
   const maxClubs = Math.max(0, ...leagues.map((league) => league.clubCount));
 
