@@ -26,7 +26,7 @@ import {
  * opts the route into ISR, and without it `dynamicParams` and `revalidate`
  * below are inert. See docs/frontend.md, "What each route directive is for".
  */
-export async function generateStaticParams() {
+export function generateStaticParams() {
   return [];
 }
 
