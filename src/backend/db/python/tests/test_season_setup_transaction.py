@@ -56,8 +56,9 @@ def test_a_failure_anywhere_commits_nothing(season_generator, steps, failing_cal
 
     steps._create_championships.side_effect = create
 
+    generator = season_generator.SeasonGenerator()
     with pytest.raises(RuntimeError):
-        season_generator.SeasonGenerator()._setup_league(1)
+        generator._setup_league(1)
 
     steps.conn.commit.assert_not_called()
     steps.conn.rollback.assert_called_once()
