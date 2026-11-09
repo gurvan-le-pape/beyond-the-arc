@@ -5,18 +5,31 @@ import { DataTable, type TableColumn } from "@/shared/components/table";
 
 import type { ClubBasic } from "../../../types/ClubBasic";
 
+/** Where a club sits, by the ids its list row carries. */
+export interface ClubPlaces {
+  /** Each committee by id, named by its department: "69 · Rhône". */
+  readonly committees: Readonly<Record<number, string>>;
+  /** Each league by id, named by its region. */
+  readonly leagues: Readonly<Record<number, string>>;
+}
+
 interface ClubsTableProps {
   readonly clubs: ClubBasic[];
+  readonly places: ClubPlaces;
 }
 
 /**
- * One page of the clubs listing, a row per club: its name, city and postcode.
- * Each row links to the club. On a phone the postcode steps aside.
+ * One page of the clubs listing, a row per club: its name, city, committee
+ * and league. Each row links to the club. On a phone the committee and league
+ * step aside.
  *
- * City and postcode are each optional in the list response, and an absent one
- * reads as a dash.
+ * A committee is named by its department and a league by its region, as on
+ * their own pages.
+ *
+ * The city is optional in the list response, and an absent one reads as a
+ * dash; so does a committee or league the lookups have not loaded yet.
  */
-export function ClubsTable({ clubs }: ClubsTableProps) {
+export function ClubsTable({ clubs, places }: ClubsTableProps) {
   const t = useTranslations("organizations");
   const tCommon = useTranslations("common");
 
@@ -35,12 +48,18 @@ export function ClubsTable({ clubs }: ClubsTableProps) {
       render: (club) => club.city || "—",
     },
     {
-      key: "zipCode",
-      header: t("clubs.columns.zipCode"),
+      key: "committee",
+      header: t("clubs.columns.committee"),
       align: "left",
-      width: "fit",
       from: "sm",
-      render: (club) => club.zipCode || "—",
+      render: (club) => places.committees[club.committeeId] ?? "—",
+    },
+    {
+      key: "league",
+      header: t("clubs.columns.league"),
+      align: "left",
+      from: "sm",
+      render: (club) => places.leagues[club.leagueId] ?? "—",
     },
   ];
 

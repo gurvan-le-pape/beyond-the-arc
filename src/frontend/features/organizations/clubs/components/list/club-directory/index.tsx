@@ -5,13 +5,16 @@ import { Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Suspense } from "react";
 
+import { useCommittees } from "@/features/organizations/committees/api";
+import { useLeagues } from "@/features/organizations/leagues/api";
+import { normalizeDepartmentCode } from "@/features/organizations/utils";
 import { EmptyState, Spinner } from "@/shared/components/feedback";
 import { SearchTabShell } from "@/shared/components/navigation";
 
 import { useClubs } from "../../../api";
 import type { ClubBasic } from "../../../types/ClubBasic";
 import { ClubsFilters } from "./ClubsFilters";
-import { ClubsTable } from "./ClubsTable";
+import { type ClubPlaces, ClubsTable } from "./ClubsTable";
 import { useClubsFilterState } from "./useClubsFilterState";
 
 function ClubDirectoryContent() {
@@ -27,6 +30,18 @@ function ClubDirectoryContent() {
     page,
     limit: pageSize,
   });
+
+  const { data: committees = [] } = useCommittees();
+  const { data: leagues = [] } = useLeagues();
+  const places: ClubPlaces = {
+    committees: Object.fromEntries(
+      committees.map((c) => [
+        c.id,
+        `${normalizeDepartmentCode(c.department.code)} · ${c.department.name}`,
+      ]),
+    ),
+    leagues: Object.fromEntries(leagues.map((l) => [l.id, l.region.name])),
+  };
 
   const clubs: ClubBasic[] = data?.items ?? [];
   const pagination = data
@@ -63,7 +78,7 @@ function ClubDirectoryContent() {
           count: pagination?.total ?? 0,
         })}
       >
-        <ClubsTable clubs={clubs} />
+        <ClubsTable clubs={clubs} places={places} />
       </SearchTabShell>
     </div>
   );
