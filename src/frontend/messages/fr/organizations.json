@@ -14,13 +14,11 @@
   "committees": {
     "label": "Comités",
     "description": "Comités départementaux gérant les clubs locaux.",
-    "columns": {
-      "code": "N°",
-      "department": "Département",
-      "league": "Ligue",
-      "clubs": "Clubs"
-    },
-    "empty": "Aucun comité."
+    "mapCaption": "Teinte selon le nombre de clubs. Sélectionnez un département pour ouvrir son comité.",
+    "searchLabel": "Rechercher un département",
+    "searchPlaceholder": "Nom ou numéro",
+    "noMatch": "Aucun département ne correspond à « {query} ».",
+    "summary": "{committees, plural, one {# comité départemental} other {# comités départementaux}} répartis dans {leagues, plural, one {# ligue} other {# ligues}}."
   },
   "clubs": {
     "label": "Clubs",

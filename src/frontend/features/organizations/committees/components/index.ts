@@ -4,4 +4,4 @@
  */
 
 export * from "./detail/CommitteeHeader";
-export * from "./list/CommitteesTable";
+export * from "./list/committees-overview/index";

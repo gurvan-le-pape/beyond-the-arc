@@ -121,6 +121,7 @@
     ".*/clubs-map/(?!index\\.tsx$).*",
     ".*/club-directory/(?!index\\.tsx$).*",
     ".*/leagues-overview/(?!index\\.tsx$).*",
+    ".*/committees-overview/(?!index\\.tsx$).*",
     ".*/stat-comparison/(?!index\\.tsx$).*",
     ".*/player-match-stats/(?!index\\.tsx$).*",
     ".*/shared/components/table/(parts\\.tsx|variants\\.ts)$"
