@@ -19,6 +19,7 @@ class EventGenerator:
         self.logger = logging.getLogger(__name__)
         # player_id -> position, set by the simulator for each match.
         self.positions: dict[int, str] = {}
+        self._builders = self._detail_builders()
 
     def pick(self, players, action):
         """The player among `players` who performs `action` — see player_picker."""
@@ -84,136 +85,129 @@ class EventGenerator:
         offensive = active_home_players if current_possession == "home" else active_away_players
         defensive = active_away_players if current_possession == "home" else active_home_players
 
-        if event_type in ["3_point_and_1", "2_point_ext_and_1", "2_point_int_and_1"]:
-            shooter = self.pick(offensive, MADE_SHOTS[event_type][0])
-            fouler = self.pick(defensive, "foul")
-            return {
-                "occurred_at": None,
-                "event_type": event_type,
-                "player_roles": {"shooter": shooter, "fouler": fouler},
-                "shot_location": self.generate_shot_location(MADE_SHOTS[event_type][0]),
-            }
-
-        elif event_type in ["3_point_shooting_foul", "2_point_ext_shooting_foul", "2_point_int_shooting_foul"]:
-            shooter = self.pick(offensive, SHOOTING_FOUL_CATEGORY[event_type])
-            fouler = self.pick(defensive, "foul")
-            return {
-                "occurred_at": None,
-                "event_type": event_type,
-                "player_roles": {"shooter": shooter, "fouler": fouler},
-            }
-
-        elif event_type == "steal":
-            stealer = self.pick(defensive, "steal")
-            victim = self.pick(offensive, "turnover")
-            return {
-                "occurred_at": None,
-                "event_type": event_type,
-                "player_roles": {"stealer": stealer, "victim": victim},
-            }
-
-        elif event_type == "blocked_shot":
-            category = random.choices(  # noqa: S2245
-                list(BLOCKED_SHOT_CATEGORY_WEIGHTS),
-                weights=list(BLOCKED_SHOT_CATEGORY_WEIGHTS.values()),
-            )[0]
-            shooter = self.pick(offensive, category)
-            blocker = self.pick(defensive, "block")
-            return {
-                "occurred_at": None,
-                "event_type": event_type,
-                "player_roles": {"blocked": shooter, "blocker": blocker},
-                "shot_location": self.generate_shot_location(category),
-                # Not persisted: the stat line needs it to count the attempt in
-                # the right column, and the event type alone does not say.
-                "shot_category": category,
-            }
-
-        elif event_type in OFFENSIVE_FOULS:
-            fouler = self.pick(offensive, "foul")
-            victim = random.choice(defensive)  # noqa: S2245
-            return {
-                "occurred_at": None,
-                "event_type": event_type,
-                "player_roles": {"fouler": fouler, "victim": victim},
-            }
-
-        elif event_type in ["blocking_foul", "pushing_foul", "reaching_foul"]:
-            fouler = self.pick(defensive, "foul")
-            victim = random.choice(offensive)  # noqa: S2245
-            return {
-                "occurred_at": None,
-                "event_type": event_type,
-                "player_roles": {"fouler": fouler, "victim": victim},
-            }
-
-        elif event_type == "technical_foul":
-            player = random.choice(offensive + defensive)  # noqa: S2245
-            return {
-                "occurred_at": None,
-                "event_type": event_type,
-                "player_roles": {"fouler": player},
-            }
-
-        elif event_type == "inbound":
-            player = random.choice(offensive)  # noqa: S2245
-            return {
-                "occurred_at": None,
-                "event_type": event_type,
-                "player_roles": {"shooter": player},
-            }
-
-        elif event_type in ["offensive_rebound", "defensive_rebound"]:
-            pool = offensive if event_type == "offensive_rebound" else defensive
-            rebounder = self.pick(pool, "rebound")
-            return {
-                "occurred_at": None,
-                "event_type": event_type,
-                "player_roles": {"rebounder": rebounder},
-            }
-
-        elif event_type in ["free_throw_made", "free_throw_missed"]:
-            shooter = random.choice(offensive)  # noqa: S2245
-            return {
-                "occurred_at": None,
-                "event_type": event_type,
-                "player_roles": {"shooter": shooter},
-            }
-
-        elif event_type in BALL_HANDLER_TURNOVERS:
-            player = self.pick(offensive, "turnover")
-            return {
-                "occurred_at": None,
-                "event_type": event_type,
-                "player_roles": {"shooter": player},
-            }
-
-        elif event_type.startswith("made_"):
-            shooter = self.pick(offensive, MADE_SHOTS[event_type][0])
-            roles = {"shooter": shooter}
-
-            if random.random() < 0.6:  # noqa: S2245
-                candidates = [p for p in offensive if p != shooter]
-                if candidates:
-                    assister = self.pick(candidates, "assist")
-                    roles["assister"] = assister
-
-            return {
-                "occurred_at": None,
-                "event_type": event_type,
-                "player_roles": roles,
-                "shot_location": self.generate_shot_location(MADE_SHOTS[event_type][0]),
-            }
-
-        elif event_type.startswith("missed_"):
-            player = self.pick(offensive, MISSED_SHOTS[event_type])
-            return {
-                "occurred_at": None,
-                "event_type": event_type,
-                "player_roles": {"shooter": player},
-                "shot_location": self.generate_shot_location(MISSED_SHOTS[event_type]),
-            }
-
-        else:
+        build = self._builders.get(event_type)
+        if build is None:
             self.logger.warning(f"Unhandled event type: {event_type}")
             return None
+        return build(event_type, offensive, defensive)
+
+    def _detail_builders(self):
+        """Event type -> the method that builds its details.
+
+        Listed in precedence order: an and-one is also a key of MADE_SHOTS, and
+        the first entry naming a type is the one that handles it.
+        """
+        groups = [
+            (["3_point_and_1", "2_point_ext_and_1", "2_point_int_and_1"], self._and_one),
+            (SHOOTING_FOUL_CATEGORY, self._shooting_foul),
+            (["steal"], self._steal),
+            (["blocked_shot"], self._blocked_shot),
+            (OFFENSIVE_FOULS, self._offensive_foul),
+            (["blocking_foul", "pushing_foul", "reaching_foul"], self._defensive_foul),
+            (["technical_foul"], self._technical_foul),
+            (["inbound"], self._inbound),
+            (["offensive_rebound", "defensive_rebound"], self._rebound),
+            (["free_throw_made", "free_throw_missed"], self._free_throw),
+            (BALL_HANDLER_TURNOVERS, self._ball_handler_turnover),
+            ([t for t in MADE_SHOTS if t.startswith("made_")], self._made_shot),
+            ([t for t in MISSED_SHOTS if t.startswith("missed_")], self._missed_shot),
+        ]
+        builders = {}
+        for event_types, build in groups:
+            for event_type in event_types:
+                builders.setdefault(event_type, build)
+        return builders
+
+    @staticmethod
+    def _details(event_type, player_roles, **extra):
+        return {"occurred_at": None, "event_type": event_type, "player_roles": player_roles, **extra}
+
+    def _and_one(self, event_type, offensive, defensive):
+        shooter = self.pick(offensive, MADE_SHOTS[event_type][0])
+        fouler = self.pick(defensive, "foul")
+        return self._details(
+            event_type,
+            {"shooter": shooter, "fouler": fouler},
+            shot_location=self.generate_shot_location(MADE_SHOTS[event_type][0]),
+        )
+
+    def _shooting_foul(self, event_type, offensive, defensive):
+        shooter = self.pick(offensive, SHOOTING_FOUL_CATEGORY[event_type])
+        fouler = self.pick(defensive, "foul")
+        return self._details(event_type, {"shooter": shooter, "fouler": fouler})
+
+    def _steal(self, event_type, offensive, defensive):
+        stealer = self.pick(defensive, "steal")
+        victim = self.pick(offensive, "turnover")
+        return self._details(event_type, {"stealer": stealer, "victim": victim})
+
+    def _blocked_shot(self, event_type, offensive, defensive):
+        category = random.choices(  # noqa: S2245
+            list(BLOCKED_SHOT_CATEGORY_WEIGHTS),
+            weights=list(BLOCKED_SHOT_CATEGORY_WEIGHTS.values()),
+        )[0]
+        shooter = self.pick(offensive, category)
+        blocker = self.pick(defensive, "block")
+        return self._details(
+            event_type,
+            {"blocked": shooter, "blocker": blocker},
+            shot_location=self.generate_shot_location(category),
+            # Not persisted: the stat line needs it to count the attempt in
+            # the right column, and the event type alone does not say.
+            shot_category=category,
+        )
+
+    def _offensive_foul(self, event_type, offensive, defensive):
+        fouler = self.pick(offensive, "foul")
+        victim = random.choice(defensive)  # noqa: S2245
+        return self._details(event_type, {"fouler": fouler, "victim": victim})
+
+    def _defensive_foul(self, event_type, offensive, defensive):
+        fouler = self.pick(defensive, "foul")
+        victim = random.choice(offensive)  # noqa: S2245
+        return self._details(event_type, {"fouler": fouler, "victim": victim})
+
+    def _technical_foul(self, event_type, offensive, defensive):
+        player = random.choice(offensive + defensive)  # noqa: S2245
+        return self._details(event_type, {"fouler": player})
+
+    def _inbound(self, event_type, offensive, _defensive):
+        player = random.choice(offensive)  # noqa: S2245
+        return self._details(event_type, {"shooter": player})
+
+    def _rebound(self, event_type, offensive, defensive):
+        pool = offensive if event_type == "offensive_rebound" else defensive
+        rebounder = self.pick(pool, "rebound")
+        return self._details(event_type, {"rebounder": rebounder})
+
+    def _free_throw(self, event_type, offensive, _defensive):
+        shooter = random.choice(offensive)  # noqa: S2245
+        return self._details(event_type, {"shooter": shooter})
+
+    def _ball_handler_turnover(self, event_type, offensive, _defensive):
+        player = self.pick(offensive, "turnover")
+        return self._details(event_type, {"shooter": player})
+
+    def _made_shot(self, event_type, offensive, _defensive):
+        shooter = self.pick(offensive, MADE_SHOTS[event_type][0])
+        roles = {"shooter": shooter}
+
+        if random.random() < 0.6:  # noqa: S2245
+            candidates = [p for p in offensive if p != shooter]
+            if candidates:
+                assister = self.pick(candidates, "assist")
+                roles["assister"] = assister
+
+        return self._details(
+            event_type,
+            roles,
+            shot_location=self.generate_shot_location(MADE_SHOTS[event_type][0]),
+        )
+
+    def _missed_shot(self, event_type, offensive, _defensive):
+        player = self.pick(offensive, MISSED_SHOTS[event_type])
+        return self._details(
+            event_type,
+            {"shooter": player},
+            shot_location=self.generate_shot_location(MISSED_SHOTS[event_type]),
+        )
