@@ -2,6 +2,7 @@
 import { Target } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import type { ReactNode } from "react";
 
 import {
   type AboutLink,
@@ -23,6 +24,11 @@ import { handleServerError } from "@/shared/utils";
 export const dynamic = "force-dynamic";
 
 type LinkKey = "product" | "architecture" | "docs" | "source" | "contact";
+
+/** `t.rich` renderer linking a message's chunk to the architecture page. */
+function architectureLink(chunks: ReactNode) {
+  return <TextLink href="/architecture">{chunks}</TextLink>;
+}
 
 /**
  * Metadata for the about page.
@@ -96,9 +102,7 @@ async function AboutPage({ params }: LocalePageProps) {
           <Text>{t("about.stack.body")}</Text>
           <Text>
             {t.rich("about.stack.more", {
-              link: (chunks) => (
-                <TextLink href="/architecture">{chunks}</TextLink>
-              ),
+              link: architectureLink,
             })}
           </Text>
         </AboutSection>

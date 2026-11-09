@@ -1,6 +1,12 @@
 // src/frontend/features/matches/components/detail/match-events/match-flow/FlowChart.tsx
 import { useTranslations } from "next-intl";
-import { type KeyboardEvent, type MouseEvent, useId, useState } from "react";
+import {
+  type KeyboardEvent,
+  type MouseEvent,
+  type ReactNode,
+  useId,
+  useState,
+} from "react";
 
 import type { MatchTeam } from "@/features/matches/types";
 import { getEventStyle } from "@/features/matches/utils";
@@ -32,6 +38,16 @@ function scorerName(play: Play): string | undefined {
       getEventStyle(event.eventType).eventCategory === EventCategory.MADE,
   );
   return made?.players?.find((p) => p.role === Role.SHOOTER)?.player.name;
+}
+
+/** `t.rich` renderer for the home team's share of a two-team message. */
+function homeChunk(chunks: ReactNode) {
+  return <span className="font-semibold text-ink-home">{chunks}</span>;
+}
+
+/** `t.rich` renderer for the away team's share of a two-team message. */
+function awayChunk(chunks: ReactNode) {
+  return <span className="font-semibold text-ink-away">{chunks}</span>;
 }
 
 interface FlowChartProps {
@@ -130,12 +146,8 @@ export function FlowChart({
           {t.rich("flowLegend", {
             home: homeTeam.name,
             away: awayTeam.name,
-            h: (chunks) => (
-              <span className="font-semibold text-ink-home">{chunks}</span>
-            ),
-            a: (chunks) => (
-              <span className="font-semibold text-ink-away">{chunks}</span>
-            ),
+            h: homeChunk,
+            a: awayChunk,
           })}
         </p>
       </figcaption>
