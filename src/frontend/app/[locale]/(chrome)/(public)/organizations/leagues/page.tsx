@@ -2,8 +2,9 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { committeesService } from "@/features/organizations/committees/api";
 import { leaguesService } from "@/features/organizations/leagues/api";
-import { LeaguesGrid } from "@/features/organizations/leagues/components";
+import { LeaguesOverview } from "@/features/organizations/leagues/components";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
@@ -13,7 +14,8 @@ import { handleServerError } from "@/shared/utils";
 
 // Fetches server-side, so it stays out of the prerender pass - the image build
 // has no backend. The league list is cached for 24h by `request`, so a render
-// here is a cache read, not a query.
+// here is a cache read, not a query. So is the committee list, read only to
+// count each league's committees.
 export const dynamic = "force-dynamic";
 
 /**
@@ -41,7 +43,16 @@ async function LeaguesPage({ params }: LocalePageProps) {
     getTranslations({ locale, namespace: "common" }),
   ]);
 
-  const leagues = await leaguesService.getAll().catch(handleServerError);
+  const [leagues, committees] = await Promise.all([
+    leaguesService.getAll(),
+    committeesService.getAll(),
+  ]).catch(handleServerError);
+  const committeeCounts: Record<number, number> = {};
+  for (const committee of committees) {
+    committeeCounts[committee.leagueId] =
+      (committeeCounts[committee.leagueId] ?? 0) + 1;
+  }
+  const clubCount = leagues.reduce((sum, league) => sum + league.clubCount, 0);
 
   return (
     <PageLayout>
@@ -51,10 +62,18 @@ async function LeaguesPage({ params }: LocalePageProps) {
           { label: t("leagues.label"), current: true },
         ]}
       />
-      <Text variant="pageTitle">
-        {tCommon("sectionTitles.regionalLeagues")}
-      </Text>
-      <LeaguesGrid leagues={leagues} />
+      <div className="space-y-1">
+        <Text variant="pageTitle">
+          {tCommon("sectionTitles.regionalLeagues")}
+        </Text>
+        <Text variant="caption" as="p">
+          {t("leagues.summary", {
+            leagues: leagues.length,
+            clubs: clubCount,
+          })}
+        </Text>
+      </div>
+      <LeaguesOverview leagues={leagues} committeeCounts={committeeCounts} />
     </PageLayout>
   );
 }

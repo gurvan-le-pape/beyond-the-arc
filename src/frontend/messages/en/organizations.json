@@ -7,7 +7,9 @@
   "breadcrumb": "Organizations",
   "leagues": {
     "label": "Leagues",
-    "description": "Regional leagues overseeing departmental committees."
+    "description": "Regional leagues overseeing departmental committees.",
+    "mapCaption": "Shaded by number of clubs. Select a region to open its league.",
+    "summary": "{leagues, plural, one {# regional league} other {# regional leagues}} overseeing {clubs, plural, one {# club} other {# clubs}}."
   },
   "committees": {
     "label": "Committees",

@@ -19,6 +19,8 @@
     "src/frontend/features/competitions/pools/types",
 
     "src/frontend/features/geography/api",
+    "src/frontend/features/geography/components",
+    "src/frontend/features/geography/constants",
     "src/frontend/features/geography/types",
 
     "src/frontend/features/matches/api",
@@ -118,6 +120,7 @@
     ".*/player-comparison/(?!index\\.tsx$).*",
     ".*/clubs-map/(?!index\\.tsx$).*",
     ".*/club-directory/(?!index\\.tsx$).*",
+    ".*/leagues-overview/(?!index\\.tsx$).*",
     ".*/stat-comparison/(?!index\\.tsx$).*",
     ".*/player-match-stats/(?!index\\.tsx$).*",
     ".*/shared/components/table/(parts\\.tsx|variants\\.ts)$"
