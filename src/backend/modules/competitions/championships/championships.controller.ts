@@ -39,20 +39,6 @@ export class ChampionshipsController {
    *
    * @example
    * GET /championships/123
-   * Response (after TransformInterceptor):
-   * {
-   *   "data": {
-   *     "id": 123,
-   *     "category": "U18",
-   *     "gender": "male",
-   *     "seasonYear": "2024-2025",
-   *     "level": "regional",
-   *     "division": "Régionale 1"
-   *   },
-   *   "timestamp": "2024-02-05T10:00:00Z",
-   *   "path": "/championships/123",
-   *   "statusCode": 200
-   * }
    */
   @Get(":id")
   @HttpCode(HttpStatus.OK)

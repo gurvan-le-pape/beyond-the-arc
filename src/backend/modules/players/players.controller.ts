@@ -41,19 +41,6 @@ export class PlayersController {
    *
    * @example
    * GET /players?level=regional&leagueId=1&category=U18&page=1&limit=20
-   * Response (after TransformInterceptor):
-   * {
-   *   "data": {
-   *     "items": [...],
-   *     "total": 150,
-   *     "page": 1,
-   *     "limit": 20,
-   *     "totalPages": 8
-   *   },
-   *   "timestamp": "2024-02-05T10:00:00Z",
-   *   "path": "/players",
-   *   "statusCode": 200
-   * }
    */
   @Get()
   @HttpCode(HttpStatus.OK)
@@ -95,19 +82,6 @@ export class PlayersController {
    *
    * @example
    * GET /players/123
-   * Response (after TransformInterceptor):
-   * {
-   *   "data": {
-   *     "id": 123,
-   *     "name": "John Doe",
-   *     "number": 10,
-   *     "teamId": 1,
-   *     "team": { ... }
-   *   },
-   *   "timestamp": "2024-02-05T10:00:00Z",
-   *   "path": "/players/123",
-   *   "statusCode": 200
-   * }
    */
   @Get(":id")
   @HttpCode(HttpStatus.OK)
@@ -159,27 +133,6 @@ export class PlayersController {
    *
    * @example
    * GET /players/123/matches
-   * Response (after TransformInterceptor):
-   * {
-   *   "data": [
-   *     {
-   *       "id": 1,
-   *       "startsAt": "2024-02-05T19:00:00Z",
-   *       "homeTeam": { ... },
-   *       "awayTeam": { ... },
-   *       "status": "completed",
-   *       "homeTeamScore": 85,
-   *       "awayTeamScore": 72,
-   *       "player": {
-   *         "player": { "id": 123, "name": "John Doe", ... },
-   *         "stats": { "points": 15, "rebounds": { ... }, ... }
-   *       }
-   *     }
-   *   ],
-   *   "timestamp": "2024-02-05T10:00:00Z",
-   *   "path": "/players/123/matches",
-   *   "statusCode": 200
-   * }
    */
   @Get(":id/matches")
   @HttpCode(HttpStatus.OK)

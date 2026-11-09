@@ -37,28 +37,6 @@ export class LeaderboardsController {
    *
    * @example
    * GET /pools/1/leaderboard
-   * Response (after TransformInterceptor):
-   * {
-   *   "data": [
-   *     {
-   *       "teamId": 5,
-   *       "teamNumber": 1,
-   *       "clubName": "AS Monaco Basket",
-   *       "points": 12,
-   *       "gamesPlayed": 8,
-   *       "gamesWon": 6,
-   *       "gamesLost": 2,
-   *       "gamesForfeited": 0,
-   *       "pointsFor": 645,
-   *       "pointsAgainst": 580,
-   *       "pointDifference": 65
-   *     }
-   *   ],
-   *   "meta": { "count": 10 },
-   *   "timestamp": "2024-02-05T10:00:00Z",
-   *   "path": "/pools/1/leaderboard",
-   *   "statusCode": 200
-   * }
    */
   @Get(":poolId/leaderboard")
   @HttpCode(HttpStatus.OK)
