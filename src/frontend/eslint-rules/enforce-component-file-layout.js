@@ -110,6 +110,78 @@ const classify = (statement) => {
   }
 };
 
+/**
+ * A props type with no component of its name here (a building block of
+ * another props type, or one exported for a sibling to extend) is an
+ * ordinary type; reclassify it as one, in place.
+ */
+function demoteOrphanProps(entries) {
+  const componentNames = new Set(
+    entries
+      .filter((e) => e.info.section === "component" && !e.info.props)
+      .map((e) => e.info.name),
+  );
+  for (const { info } of entries) {
+    if (info.props && !componentNames.has(info.name.slice(0, -5))) {
+      info.section = "type";
+      info.props = false;
+    }
+  }
+}
+
+/** Reports each statement whose section comes before one already seen. */
+function reportSectionOrder(context, entries) {
+  let furthest = 0;
+  for (const { statement, info } of entries) {
+    const rank = SECTIONS.indexOf(info.section);
+    if (rank < furthest) {
+      context.report({
+        node: statement,
+        messageId: "outOfOrder",
+        data: {
+          what: info.name ? `\`${info.name}\`` : "This statement",
+          section: info.section,
+          previous: SECTIONS[furthest],
+        },
+      });
+    } else {
+      furthest = rank;
+    }
+  }
+}
+
+/** Reports each props interface not directly followed by its component. */
+function reportDetachedProps(context, components) {
+  components.forEach(({ statement, info }, index) => {
+    if (!info.props) return;
+    const component = info.name.slice(0, -"Props".length);
+    if (components[index + 1]?.info.name !== component) {
+      context.report({
+        node: statement,
+        messageId: "propsNotAdjacent",
+        data: { props: info.name, component },
+      });
+    }
+  });
+}
+
+/** Reports each private component declared below an exported one. */
+function reportPrivateAfterExported(context, components) {
+  let firstExported = null;
+  for (const { statement, info } of components) {
+    if (info.props) continue;
+    if (info.exported) {
+      firstExported ??= info.name;
+    } else if (firstExported) {
+      context.report({
+        node: statement,
+        messageId: "privateAfterExported",
+        data: { name: info.name, exported: firstExported },
+      });
+    }
+  }
+}
+
 module.exports = {
   meta: {
     type: "suggestion",
@@ -135,68 +207,14 @@ module.exports = {
         const entries = program.body
           .map((statement) => ({ statement, info: classify(statement) }))
           .filter((entry) => entry.info !== null);
-
-        // A props type with no component of its name here (a building block of
-        // another props type, or one exported for a sibling to extend) is an
-        // ordinary type.
-        const componentNames = new Set(
-          entries
-            .filter((e) => e.info.section === "component" && !e.info.props)
-            .map((e) => e.info.name),
-        );
-        for (const { info } of entries) {
-          if (info.props && !componentNames.has(info.name.slice(0, -5))) {
-            info.section = "type";
-            info.props = false;
-          }
-        }
-
-        let furthest = 0;
-        for (const { statement, info } of entries) {
-          const rank = SECTIONS.indexOf(info.section);
-          if (rank < furthest) {
-            context.report({
-              node: statement,
-              messageId: "outOfOrder",
-              data: {
-                what: info.name ? `\`${info.name}\`` : "This statement",
-                section: info.section,
-                previous: SECTIONS[furthest],
-              },
-            });
-          } else {
-            furthest = rank;
-          }
-        }
+        demoteOrphanProps(entries);
+        reportSectionOrder(context, entries);
 
         const components = entries.filter(
           (entry) => entry.info.section === "component",
         );
-        components.forEach(({ statement, info }, index) => {
-          if (!info.props) return;
-          const component = info.name.slice(0, -"Props".length);
-          if (components[index + 1]?.info.name !== component) {
-            context.report({
-              node: statement,
-              messageId: "propsNotAdjacent",
-              data: { props: info.name, component },
-            });
-          }
-        });
-
-        let firstExported = null;
-        for (const { statement, info } of components) {
-          if (info.props) continue;
-          if (info.exported) {
-            firstExported ??= info.name;
-          } else if (firstExported) {
-            context.report({
-              node: statement,
-              messageId: "privateAfterExported",
-              data: { name: info.name, exported: firstExported },
-            });
-          }
-        }
+        reportDetachedProps(context, components);
+        reportPrivateAfterExported(context, components);
       },
     };
   },
