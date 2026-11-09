@@ -2,7 +2,7 @@
 "use client";
 
 import { Link } from "@/navigation";
-import { cn } from "@/shared/utils";
+import { cn, onPlainClick } from "@/shared/utils";
 
 import type { MapShape } from "../types";
 
@@ -38,15 +38,6 @@ const MIN_OPACITY = 0.08;
 function opacityFor(value: number, max: number): number {
   if (max <= 0) return MIN_OPACITY;
   return MIN_OPACITY + (1 - MIN_OPACITY) * Math.sqrt(value / max);
-}
-
-// A plain click selects in place; a modified one still opens the link.
-function selectOnPlainClick(onSelect: (code: string) => void, code: string) {
-  return (event: React.MouseEvent) => {
-    if (event.metaKey || event.ctrlKey || event.shiftKey) return;
-    event.preventDefault();
-    onSelect(code);
-  };
 }
 
 interface ChoroplethMapProps {
@@ -132,7 +123,7 @@ export function ChoroplethMap({
             // Out of the tab order, so only a click focuses it: no ring.
             className="outline-none"
             onMouseEnter={() => onHighlight?.(shape.code)}
-            onClick={onSelect && selectOnPlainClick(onSelect, shape.code)}
+            onClick={onSelect && onPlainClick(() => onSelect(shape.code))}
           >
             {path}
           </Link>

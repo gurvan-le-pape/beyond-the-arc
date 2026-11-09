@@ -4,7 +4,6 @@
   "title": "Championnats",
   "breadcrumb": "Championnats",
   "noChampionships": "Aucun championnat disponible",
-  "tryAdjustingFilters": "Essayez d'ajuster les filtres pour trouver plus de championnats.",
   "poolStandings": "Classement de la poule {letter}",
   "categoryAriaLabel": "Catégorie",
   "genderAriaLabel": "Genre",
@@ -39,19 +38,22 @@
     "teamHeader": "Équipe",
     "totalHeader": "T"
   },
-  "itemLabel": "{count, plural, one {championnat} other {championnats}}",
-  "listColumns": {
-    "league": "Ligue",
-    "committee": "Comité",
-    "category": "Catégorie",
-    "gender": "Genre",
-    "division": "Division",
-    "divisionAbbr": "Div.",
-    "pools": "Poules"
-  },
   "detailSections": {
     "label": "Afficher",
     "standings": "Classement",
     "matches": "Matchs"
-  }
+  },
+  "poolCount": "{count, plural, one {# poule} other {# poules}}",
+  "organiserSummary": "{championships, plural, one {# championnat} other {# championnats}} · {pools, plural, one {# poule} other {# poules}}",
+  "matrixCaption": "Championnats {name}, par catégorie et genre",
+  "pickLeague": "Choisissez une ligue pour voir ses championnats.",
+  "pickCommittee": "Choisissez un comité pour voir ses championnats.",
+  "mapCaptionRegional": "Cliquez sur une région pour voir les championnats de sa ligue.",
+  "mapCaptionDepartmental": "Cliquez sur un département pour voir les championnats de son comité.",
+  "listColumns": {
+    "category": "Catégorie"
+  },
+  "searchLabel": "Rechercher un département",
+  "searchPlaceholder": "Nom ou numéro",
+  "noMatch": "Aucun département ne correspond à « {query} »."
 }

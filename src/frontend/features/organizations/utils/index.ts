@@ -6,3 +6,4 @@
 export * from "./departmentShapes";
 export * from "./namesMatch";
 export * from "./normalizeDepartmentCode";
+export * from "./regionShapeCode";

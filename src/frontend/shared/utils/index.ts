@@ -15,6 +15,7 @@ export * from "./helpers/date-helpers";
 export * from "./logger";
 export * from "./matchWinner";
 export * from "./normalizeString";
+export * from "./onPlainClick";
 export * from "./parseRouteId";
 export * from "./positionVariant";
 export * from "./safeFetch";

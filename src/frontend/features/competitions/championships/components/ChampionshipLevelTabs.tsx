@@ -7,9 +7,8 @@ import { QueryTabs } from "@/shared/components/navigation";
 import { TabPanel } from "@/shared/components/primitives";
 import { CompetitionLevel } from "@/shared/constants";
 
-import { DepartmentalChampionships } from "./list/levels/DepartmentalChampionships";
-import { NationalChampionships } from "./list/levels/NationalChampionships";
-import { RegionalChampionships } from "./list/levels/RegionalChampionships";
+import { ChampionshipsOverview } from "./list/championships-overview";
+import { NationalChampionships } from "./list/NationalChampionships";
 
 const TABS = {
   NATIONAL: CompetitionLevel.NATIONAL,
@@ -42,10 +41,10 @@ export function ChampionshipLevelTabs() {
         <NationalChampionships />
       </TabPanel>
       <TabPanel id={TABS.REGIONAL}>
-        <RegionalChampionships />
+        <ChampionshipsOverview level={TABS.REGIONAL} />
       </TabPanel>
       <TabPanel id={TABS.DEPARTMENTAL}>
-        <DepartmentalChampionships />
+        <ChampionshipsOverview level={TABS.DEPARTMENTAL} />
       </TabPanel>
     </QueryTabs>
   );

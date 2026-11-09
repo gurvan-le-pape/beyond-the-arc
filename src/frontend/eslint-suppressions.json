@@ -22,22 +22,6 @@
       "count": 1
     }
   },
-  "features/competitions/championships/components/list/ChampionshipFilters.tsx": {
-    "@typescript-eslint/no-unnecessary-condition": {
-      "count": 1
-    },
-    "max-lines-per-function": {
-      "count": 1
-    }
-  },
-  "features/competitions/championships/components/list/ChampionshipTable.tsx": {
-    "@typescript-eslint/no-unnecessary-condition": {
-      "count": 1
-    },
-    "max-lines-per-function": {
-      "count": 1
-    }
-  },
   "features/competitions/championships/utils/buildDivisionNavigation.ts": {
     "@typescript-eslint/no-unnecessary-condition": {
       "count": 2
