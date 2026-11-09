@@ -18,15 +18,6 @@ import { PoolsService } from "./pools.service";
  * Controller handling pool-related endpoints.
  * Serves the pools that played the most recent round. A championship's own
  * pools come with it, from GET /championships/:id.
- *
- * Global interceptors (registered in app.module.ts):
- * - TransformInterceptor: Wraps responses in standard format
- * - HttpMetricsInterceptor: Records the Prometheus request metrics
- *
- * Request logging is not an interceptor — nestjs-pino's autoLogging produces it.
- *
- * Route-specific interceptors:
- * - CacheInterceptor: Applied to the recent pools endpoint (short caching)
  */
 @ApiTags("pools")
 @Controller("pools")

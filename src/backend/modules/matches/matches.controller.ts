@@ -31,15 +31,6 @@ import { MatchesService } from "./matches.service";
 /**
  * Controller handling match-related endpoints.
  * Provides access to match data, player statistics, and match events.
- *
- * Global interceptors (registered in app.module.ts):
- * - TransformInterceptor: Wraps responses in standard format
- * - HttpMetricsInterceptor: Records the Prometheus request metrics
- *
- * Request logging is not an interceptor — nestjs-pino's autoLogging produces it.
- *
- * Route-specific interceptors:
- * - CacheInterceptor: Applied to list endpoint (moderate caching)
  */
 @ApiTags("matches")
 @Controller("matches")

@@ -25,15 +25,6 @@ import {
 /**
  * Controller handling committee-related endpoints.
  * Provides access to departmental committees and their information.
- *
- * Global interceptors (registered in app.module.ts):
- * - TransformInterceptor: Wraps responses in standard format
- * - HttpMetricsInterceptor: Records the Prometheus request metrics
- *
- * Request logging is not an interceptor — nestjs-pino's autoLogging produces it.
- *
- * Route-specific interceptors:
- * - CacheInterceptor: Applied to list endpoints
  */
 @ApiTags("committees")
 @Controller("committees")
