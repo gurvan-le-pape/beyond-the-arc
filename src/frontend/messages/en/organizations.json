@@ -14,13 +14,11 @@
   "committees": {
     "label": "Committees",
     "description": "Departmental committees managing local clubs.",
-    "columns": {
-      "code": "No.",
-      "department": "Department",
-      "league": "League",
-      "clubs": "Clubs"
-    },
-    "empty": "No committees."
+    "mapCaption": "Shaded by number of clubs. Select a department to open its committee.",
+    "searchLabel": "Find a department",
+    "searchPlaceholder": "Name or number",
+    "noMatch": "No department matches “{query}”.",
+    "summary": "{committees, plural, one {# departmental committee} other {# departmental committees}} across {leagues, plural, one {# league} other {# leagues}}."
   },
   "clubs": {
     "label": "Clubs",

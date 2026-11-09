@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { committeesService } from "@/features/organizations/committees/api";
-import { CommitteesTable } from "@/features/organizations/committees/components";
+import { CommitteesOverview } from "@/features/organizations/committees/components";
 import { leaguesService } from "@/features/organizations/leagues/api";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
@@ -58,10 +58,18 @@ async function CommitteesPage({ params }: LocalePageProps) {
           { label: t("committees.label"), current: true },
         ]}
       />
-      <Text variant="pageTitle">
-        {tCommon("sectionTitles.departmentalCommittees")}
-      </Text>
-      <CommitteesTable committees={committees} regionNames={regionNames} />
+      <div className="space-y-1">
+        <Text variant="pageTitle">
+          {tCommon("sectionTitles.departmentalCommittees")}
+        </Text>
+        <Text variant="caption" as="p">
+          {t("committees.summary", {
+            committees: committees.length,
+            leagues: leagues.length,
+          })}
+        </Text>
+      </div>
+      <CommitteesOverview committees={committees} regionNames={regionNames} />
     </PageLayout>
   );
 }
