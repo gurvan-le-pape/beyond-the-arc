@@ -118,7 +118,8 @@ def test_only_first_teams_play_at_regional_level(db):
     regional = [
         number for team_id, (_, _, number) in db.teams.items() if championship_of(db, team_id)["level"] == "regional"
     ]
-    assert regional and set(regional) == {1}
+    assert regional
+    assert set(regional) == {1}
 
 
 def test_pools_hold_at_most_twelve_teams_and_letters_are_unique(db):
