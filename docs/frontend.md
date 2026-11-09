@@ -124,7 +124,7 @@ A server component calls the method bare; a query function passes TanStack's `si
 
 `request` handles what differs between the two runtimes:
 
-- **Base URL.** On the server it is `INTERNAL_API_URL`, falling back to `http://backend:4000/api` — the Docker service name — so SSR requests reach the backend container over the internal network without going through Nginx or the public domain. In the browser it is `NEXT_PUBLIC_API_URL`. `INTERNAL_API_URL` is not `NEXT_PUBLIC_`, so it never reaches the browser bundle.
+- **Base URL.** On the server it is `INTERNAL_API_URL`, which the compose file sets to `http://backend:4000/api` — the Docker service name — so SSR requests reach the backend container over the internal network without going through Nginx or the public domain. In the browser it is `NEXT_PUBLIC_API_URL`. `INTERNAL_API_URL` is not `NEXT_PUBLIC_`, so it never reaches the browser bundle.
 - **Caching.** The `revalidate` option sets how long the response lives in Next's Data Cache, defaulting to one hour — see [Cache timing policy](#cache-timing-policy). The browser ignores it; there, freshness is the query's `staleTime`.
 - **Failures.** A non-2xx response throws an `ApiError` built by `toApiError` from the response's status, the backend's error envelope and its `x-request-id`. In the browser, a request that got no response at all throws an `ApiError` with `statusCode: 0`. On the server such a failure is rethrown untouched, because Next signals its own render control flow by throwing out of `fetch`.
 
