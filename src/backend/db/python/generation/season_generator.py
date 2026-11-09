@@ -40,14 +40,12 @@ Entry = tuple[int, int]
 class SeasonGenerator:
     def run(self) -> None:
         logger.info("Starting season setup.")
-        with connection.get_pool().connection() as conn:
-            with conn.cursor() as cursor:
-                league_ids = team_repository.fetch_league_ids(cursor)
+        with connection.get_pool().connection() as conn, conn.cursor() as cursor:
+            league_ids = team_repository.fetch_league_ids(cursor)
 
         for league_id in league_ids:
-            with connection.get_pool().connection() as conn:
-                with conn.cursor() as cursor:
-                    done = team_repository.league_has_teams(cursor, league_id, SEASON_YEAR)
+            with connection.get_pool().connection() as conn, conn.cursor() as cursor:
+                done = team_repository.league_has_teams(cursor, league_id, SEASON_YEAR)
             if done:
                 logger.info(f"League {league_id}: already set up for {SEASON_YEAR}, skipping.")
                 continue
