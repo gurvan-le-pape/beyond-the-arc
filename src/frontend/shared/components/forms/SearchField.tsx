@@ -35,6 +35,12 @@ interface SearchFieldOptions {
    */
   readonly emptyHint?: ReactNode;
   readonly ref?: Ref<HTMLInputElement>;
+  /**
+   * Take focus on mount — for a field that is the reason its dialog opened.
+   * A field on a page should not: it would pull the reader away from wherever
+   * they were.
+   */
+  readonly autoFocus?: boolean;
   /** Copy the field cannot know: the clear button's accessible name. */
   readonly labels: { readonly clear: string };
 }
@@ -102,6 +108,7 @@ export function SearchField({
   size = "md",
   emptyHint,
   ref,
+  autoFocus,
   labels,
 }: SearchFieldProps) {
   return (
@@ -112,6 +119,9 @@ export function SearchField({
       onClear={onClear}
       name={name}
       isRequired={required}
+      // Opt-in, for a field that is the reason its dialog opened; see the prop.
+      // eslint-disable-next-line jsx-a11y/no-autofocus
+      autoFocus={autoFocus}
       className="group w-full"
     >
       {label && <Label className={FIELD_LABEL}>{label}</Label>}

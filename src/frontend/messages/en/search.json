@@ -11,5 +11,21 @@
     "players": "Type a name or pick a filter to list players.",
     "teams": "Pick a club or a filter to list teams.",
     "matches": "Type a club, a date or pick a filter to list matches."
+  },
+  "quick": {
+    "open": "Find by name",
+    "title": "Quick search",
+    "placeholder": "Club, team or player",
+    "results": "Results",
+    "clubs": "Clubs",
+    "teams": "Teams",
+    "players": "Players",
+    "seeAll": "See all results for “{query}”",
+    "seeAllHint": "in Explore",
+    "prompt": "Type at least two letters of a club, team or player name.",
+    "searching": "Searching…",
+    "empty": "No club, team or player matches “{query}”.",
+    "error": "Search is unavailable right now. Try again in a moment.",
+    "teamDetail": "{category} · {gender}"
   }
 }

@@ -1,8 +1,15 @@
 // src/frontend/shared/components/layout/header/Header.tsx
+import type { ReactNode } from "react";
+
 import { Logo } from "./Logo";
 import { MobileMenu } from "./MobileMenu";
 import { NavLinks } from "./NavLinks";
 import { SettingsMenu } from "./SettingsMenu";
+
+interface HeaderProps {
+  /** The quick search, from the search feature; see below. */
+  readonly search: ReactNode;
+}
 
 /**
  * The sticky site header: a frosted capsule floating just below the top edge,
@@ -16,10 +23,15 @@ import { SettingsMenu } from "./SettingsMenu";
  * so content scrolling up under the header dissolves instead of showing a
  * hard-cut line of text above the capsule.
  *
- * Rendered by the `(chrome)` layout, so pages never mount it; a page that wants
+ * **`search` is a slot** because the quick search fetches clubs, teams and
+ * players, which `shared/` may not import: each layout that renders the header
+ * passes the search feature's component in. It sits beside the settings, or beside the ☰
+ * on a phone.
+ *
+ * Rendered by the `(chrome)` and `(fullscreen)` layouts, so pages never mount it; a page that wants
  * no header belongs in a different route group.
  */
-export function Header() {
+export function Header({ search }: HeaderProps) {
   return (
     <header className="sticky top-0 z-header h-16 px-2 sm:px-4 lg:px-6 py-2 pointer-events-none bg-gradient-to-b from-surface-base from-25% to-surface-base/0">
       {/* A plain row, not a landmark: NavLinks renders the labelled <nav>;
@@ -33,12 +45,14 @@ export function Header() {
           <NavLinks />
         </div>
 
-        <div className="hidden md:flex items-center">
-          <SettingsMenu />
-        </div>
-
-        <div className="md:hidden flex items-center">
-          <MobileMenu />
+        <div className="flex items-center gap-1">
+          {search}
+          <div className="hidden md:flex">
+            <SettingsMenu />
+          </div>
+          <div className="flex md:hidden">
+            <MobileMenu />
+          </div>
         </div>
       </div>
     </header>
