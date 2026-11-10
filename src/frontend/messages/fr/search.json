@@ -1,6 +1,6 @@
 {
-  "description": "Recherchez joueurs, équipes et matchs du basket français.",
-  "title": "Recherche",
+  "description": "Parcourez joueurs, équipes et matchs du basket français, avec des filtres.",
+  "title": "Explorer",
   "tabs": {
     "players": "Joueurs",
     "teams": "Équipes",

@@ -1,6 +1,6 @@
 {
-  "description": "Search players, teams and matches across French basketball.",
-  "title": "Search",
+  "description": "Browse players, teams and matches across French basketball, with filters.",
+  "title": "Explore",
   "tabs": {
     "players": "Players",
     "teams": "Teams",
