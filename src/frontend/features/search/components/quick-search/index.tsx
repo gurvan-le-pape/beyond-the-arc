@@ -70,10 +70,10 @@ export function QuickSearch() {
     <DialogTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
       <AriaButton
         aria-label={t("open")}
-        className="flex h-10 items-center gap-2.5 rounded-full px-2.5 text-sm text-text-secondary transition-colors hover:text-text-heading focus-ring xl:w-56 xl:border xl:border-divide xl:bg-surface-base xl:pl-3.5 xl:pr-2"
+        className="flex h-10 items-center gap-2.5 rounded-full px-2.5 text-sm text-text-secondary transition-colors hover:text-text-heading focus-ring xl:min-w-56 xl:border xl:border-divide xl:bg-surface-base xl:pl-3.5 xl:pr-2"
       >
         <Search aria-hidden="true" className="h-5 w-5 shrink-0 xl:h-4 xl:w-4" />
-        <span className="hidden flex-1 text-left xl:inline">{t("open")}…</span>
+        <span className="hidden flex-1 whitespace-nowrap text-left xl:inline">{t("open")}…</span>
         {shortcut && (
           <kbd
             aria-hidden="true"
