@@ -1,4 +1,5 @@
 // src/frontend/app/[locale]/(fullscreen)/layout.tsx
+import { QuickSearch } from "@/features/search/components";
 import { Header, SkipLink } from "@/shared/components/layout";
 
 interface FullscreenLayoutProps {
@@ -17,7 +18,7 @@ export default function FullscreenLayout({ children }: FullscreenLayoutProps) {
   return (
     <div className="flex flex-col h-screen overflow-hidden surface-base">
       <SkipLink />
-      <Header />
+      <Header search={<QuickSearch />} />
       {children}
     </div>
   );

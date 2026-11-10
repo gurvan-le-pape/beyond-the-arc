@@ -123,6 +123,7 @@
     ".*/leagues-overview/(?!index\\.tsx$).*",
     ".*/committees-overview/(?!index\\.tsx$).*",
     ".*/championships-overview/(?!index\\.tsx$).*",
+    ".*/quick-search/(?!index\\.tsx$).*",
     ".*/stat-comparison/(?!index\\.tsx$).*",
     ".*/player-match-stats/(?!index\\.tsx$).*",
     ".*/shared/components/table/(parts\\.tsx|variants\\.ts)$"

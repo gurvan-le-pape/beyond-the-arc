@@ -1,4 +1,5 @@
 // src/frontend/app/[locale]/(chrome)/layout.tsx
+import { QuickSearch } from "@/features/search/components";
 import { Footer, Header, SkipLink } from "@/shared/components/layout";
 
 interface ChromeLayoutProps {
@@ -18,7 +19,7 @@ export default function ChromeLayout({ children }: ChromeLayoutProps) {
   return (
     <div className="flex flex-col min-h-screen surface-base">
       <SkipLink />
-      <Header />
+      <Header search={<QuickSearch />} />
       {children}
       <Footer />
     </div>

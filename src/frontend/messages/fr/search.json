@@ -11,5 +11,21 @@
     "players": "Saisissez un nom ou choisissez un filtre pour afficher des joueurs.",
     "teams": "Choisissez un club ou un filtre pour afficher des équipes.",
     "matches": "Saisissez un club, une date ou choisissez un filtre pour afficher des matchs."
+  },
+  "quick": {
+    "open": "Chercher par nom",
+    "title": "Recherche rapide",
+    "placeholder": "Club, équipe ou joueur",
+    "results": "Résultats",
+    "clubs": "Clubs",
+    "teams": "Équipes",
+    "players": "Joueurs",
+    "seeAll": "Voir tous les résultats pour « {query} »",
+    "seeAllHint": "dans Explorer",
+    "prompt": "Tapez au moins deux lettres d’un club, d’une équipe ou d’un joueur.",
+    "searching": "Recherche…",
+    "empty": "Aucun club, équipe ou joueur ne correspond à « {query} ».",
+    "error": "La recherche est indisponible pour le moment. Réessayez dans un instant.",
+    "teamDetail": "{category} · {gender}"
   }
 }

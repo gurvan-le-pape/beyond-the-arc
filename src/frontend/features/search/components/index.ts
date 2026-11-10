@@ -5,5 +5,6 @@
 
 export * from "./MatchSearchResults";
 export * from "./PlayerSearchResults";
+export * from "./quick-search/index";
 export * from "./SearchTabs";
 export * from "./TeamSearchResults";
