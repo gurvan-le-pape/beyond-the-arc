@@ -32,9 +32,10 @@ function useShortcutLabel(): string | null {
 
 /**
  * Find a club, team or player by name from any page: a field in the header
- * (an icon on a phone) and ⌘K / Ctrl+K anywhere open a dialog that searches
- * the three at once and jumps straight to the picked page. Browsing with
- * filters is Explore's job; the dialog's last row hands the term over to it.
+ * (an icon below `xl`, where the header has no room for the field) and ⌘K /
+ * Ctrl+K anywhere open a dialog that searches the three at once and jumps
+ * straight to the picked page. Browsing with filters is Explore's job; the
+ * dialog's last row hands the term over to it.
  *
  * React Aria's modal supplies the dialog: focus moves into the field, Tab
  * stays inside, Escape or a click outside closes it and returns focus to the
@@ -69,14 +70,16 @@ export function QuickSearch() {
     <DialogTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
       <AriaButton
         aria-label={t("open")}
-        className="flex h-10 items-center gap-2.5 rounded-full px-2.5 text-sm text-text-secondary transition-colors hover:text-text-heading focus-ring md:w-56 md:border md:border-divide md:bg-surface-base md:pl-3.5 md:pr-2"
+        className="flex h-10 items-center gap-2.5 rounded-full px-2.5 text-sm text-text-secondary transition-colors hover:text-text-heading focus-ring xl:min-w-56 xl:border xl:border-divide xl:bg-surface-base xl:pl-3.5 xl:pr-2"
       >
-        <Search aria-hidden="true" className="h-5 w-5 shrink-0 md:h-4 md:w-4" />
-        <span className="hidden flex-1 text-left md:inline">{t("open")}…</span>
+        <Search aria-hidden="true" className="h-5 w-5 shrink-0 xl:h-4 xl:w-4" />
+        <span className="hidden flex-1 whitespace-nowrap text-left xl:inline">
+          {t("open")}…
+        </span>
         {shortcut && (
           <kbd
             aria-hidden="true"
-            className="hidden rounded-md border border-divide px-1.5 py-0.5 font-sans text-xs text-text-secondary md:inline"
+            className="hidden rounded-md border border-divide px-1.5 py-0.5 font-sans text-xs text-text-secondary xl:inline"
           >
             {shortcut}
           </kbd>

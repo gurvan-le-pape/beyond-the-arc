@@ -65,7 +65,7 @@ export function NavLinks() {
               aria-current={isActive ? "page" : undefined}
               data-testid={`nav-link-${href.replace("/", "-")}`}
               className={cn(
-                "relative flex items-center gap-2 h-10 px-4 rounded-full text-sm font-medium transition-colors duration-200 focus-ring",
+                "relative flex items-center gap-2 h-10 px-4 rounded-full whitespace-nowrap text-sm font-medium transition-colors duration-200 focus-ring",
                 isActive
                   ? "text-ink-primary"
                   : "text-text-emphasis hover:text-text-heading hover:bg-surface-raised",
