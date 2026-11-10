@@ -17,21 +17,10 @@ import {
  * these are not catalogue strings: a catalogue entry is translated, and these
  * must not be.
  */
-const LOCALE_NAMES: Record<
-  Locale,
-  { readonly short: string; readonly full: string }
-> = {
-  en: { short: "EN", full: "English" },
-  fr: { short: "FR", full: "Français" },
+const LOCALE_NAMES: Record<Locale, string> = {
+  en: "English",
+  fr: "Français",
 };
-
-interface LocaleSwitcherProps {
-  /**
-   * `compact` is the header bar's two-letter pair; `full` names each language
-   * in words, for the mobile menu where there is room.
-   */
-  readonly variant: "compact" | "full";
-}
 
 /**
  * Links to the current page in each locale, the active one marked.
@@ -42,7 +31,7 @@ interface LocaleSwitcherProps {
  * `useSearchParams`, which would opt every page under the header out of static
  * rendering.
  */
-export function LocaleSwitcher({ variant }: LocaleSwitcherProps) {
+export function LocaleSwitcher() {
   const t = useTranslations("navigation");
   const activeLocale = useLocale();
   const pathname = usePathname();
@@ -68,7 +57,6 @@ export function LocaleSwitcher({ variant }: LocaleSwitcherProps) {
     >
       {LOCALES.map((locale) => {
         const isActive = locale === activeLocale;
-        const name = LOCALE_NAMES[locale];
         return (
           <Link
             key={locale}
@@ -78,18 +66,9 @@ export function LocaleSwitcher({ variant }: LocaleSwitcherProps) {
             hrefLang={locale}
             aria-current={isActive ? "true" : undefined}
             onClick={switchTo(locale)}
-            className={segmentOptionVariants({
-              size: variant === "compact" ? "md" : "lg",
-              selected: isActive,
-            })}
+            className={segmentOptionVariants({ selected: isActive })}
           >
-            {variant === "compact" ? (
-              <abbr title={name.full} className="no-underline">
-                {name.short}
-              </abbr>
-            ) : (
-              name.full
-            )}
+            {LOCALE_NAMES[locale]}
           </Link>
         );
       })}

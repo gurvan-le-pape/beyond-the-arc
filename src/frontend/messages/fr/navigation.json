@@ -2,8 +2,14 @@
   "nav": {
     "championships": "Championnats",
     "organizations": "Organisations",
-    "search": "Recherche",
+    "explore": "Explorer",
     "map": "Carte"
+  },
+  "navHints": {
+    "championships": "Du national au départemental",
+    "organizations": "Ligues, comités, clubs",
+    "explore": "Joueurs, équipes, matchs",
+    "map": "Les clubs sur la carte"
   },
   "header": {
     "skipToContent": "Aller au contenu",
@@ -11,7 +17,8 @@
     "openMenu": "Ouvrir le menu",
     "closeMenu": "Fermer le menu",
     "menu": "Menu",
-    "toggleTheme": "Changer le thème",
+    "settings": "Réglages",
+    "theme": "Thème",
     "themes": {
       "light": "Clair",
       "dark": "Sombre",

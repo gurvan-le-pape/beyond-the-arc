@@ -2,8 +2,14 @@
   "nav": {
     "championships": "Championships",
     "organizations": "Organizations",
-    "search": "Search",
+    "explore": "Explore",
     "map": "Map"
+  },
+  "navHints": {
+    "championships": "National to departmental",
+    "organizations": "Leagues, committees, clubs",
+    "explore": "Players, teams, matches",
+    "map": "Clubs across France"
   },
   "header": {
     "skipToContent": "Skip to content",
@@ -11,7 +17,8 @@
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
     "menu": "Menu",
-    "toggleTheme": "Toggle theme",
+    "settings": "Settings",
+    "theme": "Theme",
     "themes": {
       "light": "Light",
       "dark": "Dark",
