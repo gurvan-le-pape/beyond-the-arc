@@ -26,6 +26,11 @@ const MARKS = [
  * The site's name, linking home: the ball-and-arc mark beside the name set in
  * text, which stays legible at header size where the name inside the full logo
  * image does not. The mark is decorative, so the link is named by the text.
+ *
+ * **Between `md` and `lg` the name is visually hidden, not removed.** The
+ * desktop header switches on at `md`, and below `lg` the mark, the four
+ * section links and the controls leave no room for it: it would wrap and spill
+ * out of the capsule. `sr-only` keeps it as the link's accessible name.
  */
 export function Logo() {
   const t = useTranslations("navigation");
@@ -46,7 +51,7 @@ export function Logo() {
           className={`${mark.className} transition-transform duration-300 group-hover:scale-105`}
         />
       ))}
-      <span className="text-lg font-extrabold tracking-tight text-text-heading">
+      <span className="whitespace-nowrap text-lg font-extrabold tracking-tight text-text-heading md:max-lg:sr-only">
         {t("footer.projectName")}
       </span>
     </Link>
