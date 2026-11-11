@@ -10,7 +10,6 @@ import { Badge } from "@/shared/components/primitives";
 import { DataTable, type TableColumn } from "@/shared/components/table";
 import { createStatFormat, positionVariant } from "@/shared/utils";
 
-import { SortHeader } from "./SortHeader";
 import type { SortConfig, SortKey } from "./types";
 
 // ---------------------------------------------------------------------------
@@ -95,21 +94,18 @@ export function TeamRoster({ players }: TeamRosterProps) {
     return sortConfig.direction === "asc" ? "ascending" : "descending";
   };
 
-  const sortHeader = (key: SortKey, label: string, fullLabel?: string) => (
-    <SortHeader
-      sortKey={key}
-      label={label}
-      fullLabel={fullLabel}
-      sortConfig={sortConfig}
-      onSort={handleSort}
-    />
-  );
+  const sortable = (
+    key: SortKey,
+  ): Pick<TableColumn<TeamPlayerRef>, "sort" | "onSort"> => ({
+    sort: ariaSort(key),
+    onSort: () => handleSort(key),
+  });
 
   const columns: TableColumn<TeamPlayerRef>[] = [
     {
       key: "number",
-      header: sortHeader("number", tTeams("teamDetail.numberShort")),
-      sort: ariaSort("number"),
+      header: tTeams("teamDetail.numberShort"),
+      ...sortable("number"),
       numeric: true,
       align: "left",
       width: "icon",
@@ -117,8 +113,8 @@ export function TeamRoster({ players }: TeamRosterProps) {
     },
     {
       key: "name",
-      header: sortHeader("name", tTeams("teamDetail.player")),
-      sort: ariaSort("name"),
+      header: tTeams("teamDetail.player"),
+      ...sortable("name"),
       emphasis: true,
       render: (player) => player.name,
     },
@@ -144,34 +140,25 @@ export function TeamRoster({ players }: TeamRosterProps) {
     },
     {
       key: "ppg",
-      header: sortHeader(
-        "ppg",
-        tCommon("stats.points.abbr"),
-        tCommon("stats.pointsPerGame"),
-      ),
-      sort: ariaSort("ppg"),
+      header: tCommon("stats.points.abbr"),
+      tooltip: tCommon("stats.pointsPerGame"),
+      ...sortable("ppg"),
       numeric: true,
       render: (player) => perGame(player.seasonStats.pointsPerGame),
     },
     {
       key: "rpg",
-      header: sortHeader(
-        "rpg",
-        tCommon("stats.rebounds.abbr"),
-        tCommon("stats.reboundsPerGame"),
-      ),
-      sort: ariaSort("rpg"),
+      header: tCommon("stats.rebounds.abbr"),
+      tooltip: tCommon("stats.reboundsPerGame"),
+      ...sortable("rpg"),
       numeric: true,
       render: (player) => perGame(player.seasonStats.reboundsPerGame),
     },
     {
       key: "apg",
-      header: sortHeader(
-        "apg",
-        tCommon("stats.assists.abbr"),
-        tCommon("stats.assistsPerGame"),
-      ),
-      sort: ariaSort("apg"),
+      header: tCommon("stats.assists.abbr"),
+      tooltip: tCommon("stats.assistsPerGame"),
+      ...sortable("apg"),
       numeric: true,
       render: (player) => perGame(player.seasonStats.assistsPerGame),
     },

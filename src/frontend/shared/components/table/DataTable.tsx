@@ -12,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "./parts";
+import { SortButton } from "./SortButton";
 import { CELL_LINK, ROW_LINK } from "./variants";
 
 /**
@@ -59,10 +60,15 @@ export interface TableColumn<T> {
   readonly from?: "sm";
   /**
    * The column's sort state, for a table its caller sorts. Set as `aria-sort`
-   * on the header cell; the sorting itself, and the control that changes it,
-   * belong to the caller's `header`.
+   * on the header cell. With `onSort` it also makes the header a button that
+   * shows the state as an arrow; the sorting itself stays with the caller.
    */
   readonly sort?: "ascending" | "descending" | "none";
+  /**
+   * Called when the header is pressed. Needs `sort`. When `tooltip` is set it
+   * also names the button, since it is the abbreviated label written out.
+   */
+  readonly onSort?: () => void;
 }
 
 interface DataTableBaseProps<T> {
@@ -140,6 +146,20 @@ interface PlainRowProps {
 const alignFor = <T,>(column: TableColumn<T>) =>
   column.align ?? (column.numeric ? "right" : "left");
 
+/** A column's header, as the sort control when the caller sorts by it. */
+const headerContent = <T,>(column: TableColumn<T>) =>
+  column.onSort && column.sort ? (
+    <SortButton
+      sort={column.sort}
+      onSort={column.onSort}
+      label={column.tooltip}
+    >
+      {column.header}
+    </SortButton>
+  ) : (
+    column.header
+  );
+
 type DataTableProps<T> = DataTableBaseProps<T> &
   (RowLinkProps<T> | PlainRowProps);
 
@@ -186,7 +206,7 @@ export function DataTable<T>({
               tooltip={column.tooltip}
               aria-sort={column.sort}
             >
-              {column.header}
+              {headerContent(column)}
             </TableHead>
           ))}
         </TableRow>
