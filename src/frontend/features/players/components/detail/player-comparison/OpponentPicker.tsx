@@ -4,7 +4,6 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
-import { ErrorMessage } from "@/shared/components/feedback";
 import { ComboBox } from "@/shared/components/primitives";
 import type { Category, Gender } from "@/shared/constants";
 import { useDebounce } from "@/shared/hooks";
@@ -31,7 +30,10 @@ interface OpponentPickerProps {
  * their own comparison. All three are required for that reason — widening the
  * search means passing different values, never omitting them.
  *
- * A failed search shows its error under the field, so what was typed stays.
+ * **A failed search is reported in the list**, so what was typed stays, and
+ * editing the text searches again. There is no separate retry button: reaching
+ * one means leaving the field, and leaving it resets the text, which drops the
+ * failed search anyway.
  */
 export function OpponentPicker({
   excludeId,
@@ -50,7 +52,6 @@ export function OpponentPicker({
     data: results = [],
     isLoading,
     isError,
-    refetch,
   } = usePlayerSearch(debouncedSearch, {
     excludeId,
     gender,
@@ -61,48 +62,39 @@ export function OpponentPicker({
   const selectedClub = selectedPlayer?.team.club.name;
 
   return (
-    <div className="flex flex-col gap-2">
-      <ComboBox
-        labels={{
-          clear: tCommon("clearSelection"),
-          loading: tCommon("loading"),
-          empty: tCommon("empty"),
-          typeToSearch: tCommon("typeToSearch"),
-        }}
-        label={tPlayers("playerDetail.compareSearchLabel")}
-        hideLabel
-        browsable={false}
-        placeholder={tPlayers("playerDetail.compareSearch")}
-        options={results.map((player) => ({
-          value: player.id,
-          label: playerName(player),
-          description: player.team.club.name,
-        }))}
-        value={selectedPlayer?.id}
-        selectedLabel={
-          selectedPlayer
-            ? [playerName(selectedPlayer), selectedClub]
-                .filter(Boolean)
-                .join(" · ")
-            : undefined
-        }
-        onChange={(id) => {
-          if (id === undefined) return onClear();
-          // Picked from the results on show, so it is among them.
-          const picked = results.find((player) => player.id === id);
-          if (picked) onSelect(picked);
-        }}
-        onSearchChange={setSearch}
-        isLoading={isLoading}
-        error={isError ? tCommon("errors.fetchPlayers") : undefined}
-      />
-
-      {isError && (
-        <ErrorMessage
-          message={tCommon("errors.fetchPlayers")}
-          onRetry={refetch}
-        />
-      )}
-    </div>
+    <ComboBox
+      labels={{
+        clear: tCommon("clearSelection"),
+        loading: tCommon("loading"),
+        empty: tCommon("empty"),
+        typeToSearch: tCommon("typeToSearch"),
+      }}
+      label={tPlayers("playerDetail.compareSearchLabel")}
+      hideLabel
+      browsable={false}
+      placeholder={tPlayers("playerDetail.compareSearch")}
+      options={results.map((player) => ({
+        value: player.id,
+        label: playerName(player),
+        description: player.team.club.name,
+      }))}
+      value={selectedPlayer?.id}
+      selectedLabel={
+        selectedPlayer
+          ? [playerName(selectedPlayer), selectedClub]
+              .filter(Boolean)
+              .join(" · ")
+          : undefined
+      }
+      onChange={(id) => {
+        if (id === undefined) return onClear();
+        // Picked from the results on show, so it is among them.
+        const picked = results.find((player) => player.id === id);
+        if (picked) onSelect(picked);
+      }}
+      onSearchChange={setSearch}
+      isLoading={isLoading}
+      error={isError ? tCommon("errors.fetchPlayers") : undefined}
+    />
   );
 }
