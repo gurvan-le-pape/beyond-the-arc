@@ -11,3 +11,4 @@ export * from "./HomeHero";
 export * from "./HomeStats";
 export * from "./LatestRound";
 export * from "./LevelRow";
+export * from "./RoundResults";
