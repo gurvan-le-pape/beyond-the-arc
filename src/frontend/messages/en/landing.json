@@ -1,11 +1,4 @@
 {
-  "contact": {
-    "title": "Get in Touch",
-    "intro": "Questions about this project, or want to talk about working together?",
-    "email": "Email",
-    "gitlab": "GitLab",
-    "linkedin": "LinkedIn"
-  },
   "about": {
     "title": "About the project",
     "intro": "Beyond The Arc is a portfolio project by Gurvan Le Pape: French basketball, from regional to departmental level, as a site you can browse.",
@@ -36,10 +29,6 @@
       "source": {
         "label": "Source code",
         "description": "The repository on GitLab."
-      },
-      "contact": {
-        "label": "Contact",
-        "description": "Email, LinkedIn or GitLab."
       }
     }
   },

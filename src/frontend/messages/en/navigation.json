@@ -35,7 +35,6 @@
     "product": "Product",
     "architecture": "Architecture",
     "documentation": "Documentation",
-    "contact": "Contact",
     "copyright": "© {year} {name}",
     "project": "Project",
     "resources": "Resources",

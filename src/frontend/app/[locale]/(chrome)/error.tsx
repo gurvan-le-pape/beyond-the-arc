@@ -4,7 +4,7 @@
 import { RouteErrorBoundary } from "@/shared/components/feedback";
 
 /**
- * Catch-all boundary for the chrome routes — home, about, contact, features,
+ * Catch-all boundary for the chrome routes — home, about, features,
  * architecture, docs, and anything under `(public)` that has no closer
  * boundary of its own. It renders inside `(chrome)/layout.tsx`, so the header,
  * footer and page background survive the error.

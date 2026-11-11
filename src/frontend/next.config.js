@@ -31,8 +31,8 @@ const nextConfig = {
     // Rewrite `import { Grid } from "@/shared/components/primitives"` to the
     // file that defines `Grid`, for every generated barrel. Without it, a
     // server component importing a barrel makes every "use client" module the
-    // barrel re-exports a client reference of that page, used or not: /contact
-    // shipped Tabs and MultiSelect for one server-rendered Grid, and every
+    // barrel re-exports a client reference of that page, used or not: one
+    // server-rendered Grid shipped Tabs and MultiSelect, and every
     // page with shared components carried 7–26 kB of client code it never
     // runs. Safe because barrelsby barrels are pure `export *` lists and
     // `sideEffects` in package.json declares that importing a module does
