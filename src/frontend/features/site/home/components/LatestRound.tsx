@@ -1,4 +1,4 @@
-// src/frontend/features/site/home/components/LatestRoundSection.tsx
+// src/frontend/features/site/home/components/LatestRound.tsx
 import { ArrowRight } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 
@@ -29,7 +29,7 @@ const STANDINGS_PREVIEW_ROWS = 5;
  */
 const PHONE_RESULTS = 3;
 
-interface LatestRoundSectionProps {
+interface LatestRoundProps {
   readonly championship: Championship;
   /** The pool to feature, and the matchday it last played. */
   readonly pool: RecentPool;
@@ -47,12 +47,12 @@ interface LatestRoundSectionProps {
  * This names its championship, keeps the round's played matches and lays them
  * out. A server component: nothing here is interactive.
  */
-export function LatestRoundSection({
+export function LatestRound({
   championship,
   pool,
   matches,
   leaderboard,
-}: LatestRoundSectionProps) {
+}: LatestRoundProps) {
   const t = useTranslations("home.latestRound");
   const tHome = useTranslations("home");
   const tMatches = useTranslations("matches");

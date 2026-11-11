@@ -7,12 +7,12 @@ import { leaderboardsService } from "@/features/competitions/leaderboards/api";
 import { poolsService } from "@/features/competitions/pools/api";
 import { matchesService } from "@/features/matches/api";
 import {
-  ExploreSection,
+  ClubsMapTeaser,
+  CompetitionLevels,
+  ExploreShortcuts,
   HomeHero,
-  LatestRoundSection,
-  LevelsSection,
-  MapBand,
-  StatsBand,
+  HomeStats,
+  LatestRound,
 } from "@/features/site/home/components";
 import { statsService } from "@/features/stats/api";
 import { withServerErrorState } from "@/shared/components/feedback";
@@ -83,11 +83,11 @@ async function Home() {
   return (
     <PageLayout edgeToEdge>
       <HomeHero />
-      <StatsBand stats={stats} />
-      {latestRound && <LatestRoundSection {...latestRound} />}
-      <ExploreSection />
-      <MapBand />
-      <LevelsSection championshipsByLevel={stats.championshipsByLevel} />
+      <HomeStats stats={stats} />
+      {latestRound && <LatestRound {...latestRound} />}
+      <ExploreShortcuts />
+      <ClubsMapTeaser />
+      <CompetitionLevels championshipsByLevel={stats.championshipsByLevel} />
     </PageLayout>
   );
 }

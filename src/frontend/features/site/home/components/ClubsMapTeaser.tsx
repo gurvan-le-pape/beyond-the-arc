@@ -1,4 +1,4 @@
-// src/frontend/features/site/home/components/MapBand.tsx
+// src/frontend/features/site/home/components/ClubsMapTeaser.tsx
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 
@@ -33,12 +33,12 @@ const PREVIEWS = [
  *
  * The still shows OpenStreetMap tiles, so it carries their attribution.
  */
-export function MapBand() {
+export function ClubsMapTeaser() {
   const t = useTranslations("home.map");
 
   return (
     <section
-      aria-labelledby="map-band-title"
+      aria-labelledby="clubs-map-teaser-title"
       className="border-b border-divide px-6 py-12 md:px-8"
     >
       <div className="grid items-center gap-8 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
@@ -46,7 +46,7 @@ export function MapBand() {
           <Text variant="overline" className="text-ink-clubs">
             {t("eyebrow")}
           </Text>
-          <Text variant="h2" id="map-band-title" className="mt-3">
+          <Text variant="h2" id="clubs-map-teaser-title" className="mt-3">
             {t("title")}
           </Text>
           <Text variant="caption" className="mt-2 max-w-sm">
