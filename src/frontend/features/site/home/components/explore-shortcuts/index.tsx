@@ -1,11 +1,17 @@
 // src/frontend/features/site/home/components/explore-shortcuts/index.tsx
 import { useTranslations } from "next-intl";
 
-import { EXPLORE_CARDS } from "@/features/site/home/constants";
 import { Grid } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 
 import { ExploreCard } from "./ExploreCard";
+
+/** The three search entry points, in display order. */
+const EXPLORE_CARDS = [
+  { key: "players", href: "/search?tab=players", badgeVariant: "players" },
+  { key: "teams", href: "/search?tab=teams", badgeVariant: "teams" },
+  { key: "matches", href: "/search?tab=matches", badgeVariant: "matches" },
+] as const;
 
 /** The three ways into the data — players, teams, matches — as linked cards. */
 export function ExploreShortcuts() {
