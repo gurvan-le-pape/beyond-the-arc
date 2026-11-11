@@ -44,7 +44,6 @@ export function Footer() {
         label: t("footer.sourceCode"),
         external: true,
       },
-      { href: "/contact", label: t("footer.contact") },
       {
         href: "https://www.ffbb.com/",
         label: t("footer.officialSite"),

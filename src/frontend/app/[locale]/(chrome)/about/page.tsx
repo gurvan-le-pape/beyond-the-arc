@@ -23,7 +23,7 @@ import { handleServerError } from "@/shared/utils";
 // cache read, not a query.
 export const dynamic = "force-dynamic";
 
-type LinkKey = "product" | "architecture" | "docs" | "source" | "contact";
+type LinkKey = "product" | "architecture" | "docs" | "source";
 
 /** `t.rich` renderer linking a message's chunk to the architecture page. */
 function architectureLink(chunks: ReactNode) {
@@ -69,7 +69,6 @@ async function AboutPage({ params }: LocalePageProps) {
     { href: "/architecture", ...linkCopy("architecture") },
     { href: "/docs", ...linkCopy("docs") },
     { href: GITLAB_REPO_URL, external: true, ...linkCopy("source") },
-    { href: "/contact", ...linkCopy("contact") },
   ];
 
   return (

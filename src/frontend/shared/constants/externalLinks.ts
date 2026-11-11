@@ -2,8 +2,8 @@
 
 /**
  * Off-site destinations — the author's contact details and the project's own
- * public URLs. Kept in one place because they appear in the footer, the
- * contact page and the docs page, and drifting copies are hard to spot.
+ * public URLs. Kept in one place because they appear in the footer and the
+ * docs page, and drifting copies are hard to spot.
  */
 
 export const CONTACT_EMAIL = "gurvan.lepape@hotmail.fr";
