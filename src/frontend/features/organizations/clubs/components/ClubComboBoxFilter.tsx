@@ -5,7 +5,6 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { useClubSearch } from "@/features/organizations/clubs/api";
-import { ErrorMessage } from "@/shared/components/feedback";
 import { ComboBox } from "@/shared/components/primitives";
 import { useDebounce } from "@/shared/hooks";
 
@@ -30,6 +29,12 @@ interface ClubComboBoxFilterProps {
  * Debounced club search combo box for the filter panels: searches clubs scoped
  * to the selected committee/league and reports the chosen club id + name back.
  * Owns its own search input state.
+ *
+ * **A failed search is reported in the list, not in place of the field**, so
+ * what was typed and the club already chosen both stay. Editing the text runs
+ * the search again. There is no separate retry button: reaching one means
+ * leaving the field, and leaving it resets the text, which drops the failed
+ * search anyway.
  */
 export function ClubComboBoxFilter({
   committeeId,
@@ -46,23 +51,11 @@ export function ClubComboBoxFilter({
     data: clubData,
     isLoading: clubsLoading,
     isError: clubsFailed,
-    refetch: retryClubSearch,
   } = useClubSearch(debouncedClubSearch, { committeeId, leagueId });
   const clubOptions = (clubData?.items ?? []).map((c) => ({
     value: c.id,
     label: c.name,
   }));
-
-  // A failed search also produces an empty option list, so without this the
-  // combo box reports a broken request as "no clubs match".
-  if (clubsFailed) {
-    return (
-      <ErrorMessage
-        message={tCommon("errors.fetchClubs")}
-        onRetry={retryClubSearch}
-      />
-    );
-  }
 
   return (
     <ComboBox
@@ -83,6 +76,9 @@ export function ClubComboBoxFilter({
       }
       onSearchChange={setClubSearch}
       isLoading={clubsLoading}
+      // A failed search also produces an empty option list, so without this
+      // the list reports a broken request as "no clubs match".
+      error={clubsFailed ? tCommon("errors.fetchClubs") : undefined}
     />
   );
 }
