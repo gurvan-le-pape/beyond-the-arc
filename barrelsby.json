@@ -123,6 +123,9 @@
     ".*/quick-search/(?!index\\.tsx$).*",
     ".*/stat-comparison/(?!index\\.tsx$).*",
     ".*/player-match-stats/(?!index\\.tsx$).*",
+    ".*/latest-round/(?!index\\.tsx$).*",
+    ".*/explore-shortcuts/(?!index\\.tsx$).*",
+    ".*/competition-levels/(?!index\\.tsx$).*",
     ".*/shared/components/table/(parts\\.tsx|SortButton\\.tsx|variants\\.ts)$"
   ]
 }

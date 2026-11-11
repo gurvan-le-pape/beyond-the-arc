@@ -1,4 +1,4 @@
-// src/frontend/features/site/home/components/RoundResults.tsx
+// src/frontend/features/site/home/components/latest-round/RoundResults.tsx
 import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 

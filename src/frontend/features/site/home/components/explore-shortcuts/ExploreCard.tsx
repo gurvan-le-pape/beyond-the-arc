@@ -1,4 +1,4 @@
-// src/frontend/features/site/home/components/ExploreCard.tsx
+// src/frontend/features/site/home/components/explore-shortcuts/ExploreCard.tsx
 import { ArrowRight } from "lucide-react";
 
 import { Link } from "@/navigation";
