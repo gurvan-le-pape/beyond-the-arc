@@ -1,9 +1,21 @@
 // src/frontend/features/site/home/components/HomeStats.tsx
 import { useFormatter, useTranslations } from "next-intl";
 
-import { STATS_BAND_KEYS } from "@/features/site/home/constants";
 import type { Stats } from "@/features/stats/types";
 import { StatGroup } from "@/shared/components/blocks";
+
+/**
+ * Keys into the stats payload, in display order; also the `home.stats.*`
+ * label keys.
+ */
+const STATS_BAND_KEYS = [
+  "clubs",
+  "teams",
+  "players",
+  "matches",
+  "leagues",
+  "committees",
+] as const;
 
 interface HomeStatsProps {
   readonly stats: Stats;

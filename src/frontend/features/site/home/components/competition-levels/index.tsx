@@ -1,11 +1,21 @@
 // src/frontend/features/site/home/components/competition-levels/index.tsx
 import { useTranslations } from "next-intl";
 
-import { LEVEL_ROWS } from "@/features/site/home/constants";
 import type { Stats } from "@/features/stats/types";
 import { Text } from "@/shared/components/typography";
 
 import { LevelRow } from "./LevelRow";
+
+/**
+ * The competition levels, national first, then narrowing — the display order
+ * among covered levels; the component moves a level with no championships
+ * last.
+ */
+const LEVEL_ROWS = [
+  { level: "national" },
+  { level: "regional" },
+  { level: "departmental" },
+] as const;
 
 interface CompetitionLevelsProps {
   readonly championshipsByLevel: Stats["championshipsByLevel"];
