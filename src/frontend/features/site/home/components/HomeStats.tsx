@@ -1,11 +1,11 @@
-// src/frontend/features/site/home/components/StatsBand.tsx
+// src/frontend/features/site/home/components/HomeStats.tsx
 import { useFormatter, useTranslations } from "next-intl";
 
 import { STATS_BAND_KEYS } from "@/features/site/home/constants";
 import type { Stats } from "@/features/stats/types";
 import { StatGroup } from "@/shared/components/blocks";
 
-interface StatsBandProps {
+interface HomeStatsProps {
   readonly stats: Stats;
 }
 
@@ -13,7 +13,7 @@ interface StatsBandProps {
  * The site's totals in one band — clubs, teams, players, matches, leagues and
  * committees. Three columns over two rows on a phone, six in one row from md.
  */
-export function StatsBand({ stats }: StatsBandProps) {
+export function HomeStats({ stats }: HomeStatsProps) {
   const t = useTranslations("home.stats");
   const format = useFormatter();
 

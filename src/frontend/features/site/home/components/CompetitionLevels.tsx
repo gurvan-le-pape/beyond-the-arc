@@ -1,4 +1,4 @@
-// src/frontend/features/site/home/components/LevelsSection.tsx
+// src/frontend/features/site/home/components/CompetitionLevels.tsx
 import { useTranslations } from "next-intl";
 
 import { LEVEL_ROWS } from "@/features/site/home/constants";
@@ -7,7 +7,7 @@ import { Text } from "@/shared/components/typography";
 
 import { LevelRow } from "./LevelRow";
 
-interface LevelsSectionProps {
+interface CompetitionLevelsProps {
   readonly championshipsByLevel: Stats["championshipsByLevel"];
 }
 
@@ -19,7 +19,9 @@ interface LevelsSectionProps {
  * nothing behind the link. The sort is stable, so covered levels keep their
  * `LEVEL_ROWS` order and an uncovered one moves back once it has data.
  */
-export function LevelsSection({ championshipsByLevel }: LevelsSectionProps) {
+export function CompetitionLevels({
+  championshipsByLevel,
+}: CompetitionLevelsProps) {
   const t = useTranslations("home.levels");
 
   const levels = LEVEL_ROWS.map((row) => {
@@ -36,9 +38,9 @@ export function LevelsSection({ championshipsByLevel }: LevelsSectionProps) {
   }).sort((a, b) => Number(!a.href) - Number(!b.href));
 
   return (
-    <>
+    <section aria-labelledby="competition-levels-title">
       <div className="px-6 pt-7 pb-2">
-        <Text variant="overline" as="h2">
+        <Text variant="overline" as="h2" id="competition-levels-title">
           {t("sectionTitle")}
         </Text>
       </div>
@@ -48,6 +50,6 @@ export function LevelsSection({ championshipsByLevel }: LevelsSectionProps) {
           <LevelRow key={level.name} {...level} />
         ))}
       </div>
-    </>
+    </section>
   );
 }

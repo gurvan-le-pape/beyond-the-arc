@@ -221,7 +221,7 @@
       "count": 1
     }
   },
-  "features/site/home/components/LatestRoundSection.tsx": {
+  "features/site/home/components/LatestRound.tsx": {
     "max-lines-per-function": {
       "count": 1
     }
