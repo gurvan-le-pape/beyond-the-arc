@@ -4,11 +4,8 @@
  */
 
 export * from "./ClubsMapTeaser";
-export * from "./CompetitionLevels";
-export * from "./ExploreCard";
-export * from "./ExploreShortcuts";
+export * from "./competition-levels/index";
+export * from "./explore-shortcuts/index";
 export * from "./HomeHero";
 export * from "./HomeStats";
-export * from "./LatestRound";
-export * from "./LevelRow";
-export * from "./RoundResults";
+export * from "./latest-round/index";

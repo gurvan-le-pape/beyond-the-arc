@@ -1,4 +1,4 @@
-// src/frontend/features/site/home/components/LatestRound.tsx
+// src/frontend/features/site/home/components/latest-round/index.tsx
 import { ArrowRight } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 

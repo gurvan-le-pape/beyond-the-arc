@@ -1,4 +1,4 @@
-// src/frontend/features/site/home/components/ExploreShortcuts.tsx
+// src/frontend/features/site/home/components/explore-shortcuts/index.tsx
 import { useTranslations } from "next-intl";
 
 import { EXPLORE_CARDS } from "@/features/site/home/constants";

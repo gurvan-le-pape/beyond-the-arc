@@ -1,4 +1,4 @@
-// src/frontend/features/site/home/components/CompetitionLevels.tsx
+// src/frontend/features/site/home/components/competition-levels/index.tsx
 import { useTranslations } from "next-intl";
 
 import { LEVEL_ROWS } from "@/features/site/home/constants";

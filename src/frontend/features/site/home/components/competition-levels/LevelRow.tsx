@@ -1,4 +1,4 @@
-// src/frontend/features/site/home/components/LevelRow.tsx
+// src/frontend/features/site/home/components/competition-levels/LevelRow.tsx
 import { ArrowRight } from "lucide-react";
 
 import { Link } from "@/navigation";
