@@ -10,24 +10,16 @@ import {
 import { LeaderboardTable } from "@/features/competitions/leaderboards/components";
 import type { Leaderboard } from "@/features/competitions/leaderboards/types";
 import type { RecentPool } from "@/features/competitions/pools/types";
-import { ForfeitBadge } from "@/features/matches/components";
 import type { Match } from "@/features/matches/types";
-import { matchupSide } from "@/features/matches/utils";
-import { Section } from "@/shared/components/blocks";
-import { Matchup } from "@/shared/components/domain";
-import { Card, TextLink } from "@/shared/components/primitives";
+import { TextLink } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 import { MatchStatus } from "@/shared/constants";
-import { cn, formatMatchDay } from "@/shared/utils";
+import { formatMatchDay } from "@/shared/utils";
+
+import { RoundResults } from "./RoundResults";
 
 /** Standings rows shown before the link to the full table. */
 const STANDINGS_PREVIEW_ROWS = 5;
-
-/**
- * Results shown on a phone, where the cards stack one per row; wider screens
- * show the whole round.
- */
-const PHONE_RESULTS = 3;
 
 interface LatestRoundProps {
   readonly championship: Championship;
@@ -55,7 +47,6 @@ export function LatestRound({
 }: LatestRoundProps) {
   const t = useTranslations("home.latestRound");
   const tHome = useTranslations("home");
-  const tMatches = useTranslations("matches");
   const tCommon = useTranslations("common");
   const tCompetitions = useTranslations("competitions");
   const locale = useLocale();
@@ -116,33 +107,7 @@ export function LatestRound({
       </div>
 
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
-        <Section title={t("resultsTitle")} action={onward(t("allResults"))}>
-          <ul className="grid gap-3 sm:grid-cols-2">
-            {roundResults.map((match, index) => (
-              <li
-                key={match.id}
-                className={cn(index >= PHONE_RESULTS && "max-sm:hidden")}
-              >
-                <Card
-                  href={`/matches/${match.id}`}
-                  padding="sm"
-                  aria-label={tMatches("ariaLabelMatch", {
-                    home: match.homeTeam.club.name,
-                    away: match.awayTeam.club.name,
-                  })}
-                >
-                  <Matchup
-                    home={matchupSide(match.homeTeam, match.homeTeamScore)}
-                    away={matchupSide(match.awayTeam, match.awayTeamScore)}
-                    status={match.status}
-                    size="line"
-                  />
-                  {match.forfeit && <ForfeitBadge className="mt-2" />}
-                </Card>
-              </li>
-            ))}
-          </ul>
-        </Section>
+        <RoundResults matches={roundResults} action={onward(t("allResults"))} />
 
         <LeaderboardTable
           leaderboards={leaderboard.slice(0, STANDINGS_PREVIEW_ROWS)}

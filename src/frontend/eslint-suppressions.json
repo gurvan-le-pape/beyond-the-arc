@@ -221,11 +221,6 @@
       "count": 1
     }
   },
-  "features/site/home/components/LatestRound.tsx": {
-    "max-lines-per-function": {
-      "count": 1
-    }
-  },
   "features/teams/components/detail/team-roster/index.tsx": {
     "max-lines-per-function": {
       "count": 1
