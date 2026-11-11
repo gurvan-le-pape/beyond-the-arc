@@ -8,6 +8,7 @@ import { ChoroplethMap } from "@/features/geography/components";
 import { FRANCE_FRAME } from "@/features/geography/constants";
 import { DEPARTMENT_SHAPES } from "@/features/organizations/utils";
 import { SearchField } from "@/shared/components/forms";
+import { MapListLayout } from "@/shared/components/layout";
 
 import type { Committee } from "../../../types";
 import { CommitteeGroup } from "./CommitteeGroup";
@@ -43,37 +44,39 @@ export function CommitteesOverview({
   );
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] items-start">
-      <div className="lg:sticky lg:top-24 space-y-4 max-w-md mx-auto w-full">
-        <SearchField
-          label={t("committees.searchLabel")}
-          placeholder={t("committees.searchPlaceholder")}
-          value={query}
-          onChange={(value) => {
-            // A row the search removes never fires its mouse-leave.
-            setHighlighted(null);
-            setQuery(value);
-          }}
-          onClear={() => setQuery("")}
-          labels={{ clear: tCommon("clearSearch") }}
-        />
-        {/* Below md, 96 departments are too small to tap: the search and the
+    <MapListLayout
+      map={
+        <div className="space-y-4">
+          <SearchField
+            label={t("committees.searchLabel")}
+            placeholder={t("committees.searchPlaceholder")}
+            value={query}
+            onChange={(value) => {
+              // A row the search removes never fires its mouse-leave.
+              setHighlighted(null);
+              setQuery(value);
+            }}
+            onClear={() => setQuery("")}
+            labels={{ clear: tCommon("clearSearch") }}
+          />
+          {/* Below md, 96 departments are too small to tap: the search and the
             list do the job there. */}
-        <ChoroplethMap
-          className="hidden md:block"
-          shapes={DEPARTMENT_SHAPES}
-          frame={FRANCE_FRAME}
-          data={data}
-          tone="departmental"
-          highlighted={highlighted}
-          onHighlight={setHighlighted}
-          muted={muted}
-        />
-        <p className="hidden md:block text-center text-sm text-text-secondary">
-          {t("committees.mapCaption")}
-        </p>
-      </div>
-
+          <ChoroplethMap
+            className="hidden md:block"
+            shapes={DEPARTMENT_SHAPES}
+            frame={FRANCE_FRAME}
+            data={data}
+            tone="departmental"
+            highlighted={highlighted}
+            onHighlight={setHighlighted}
+            muted={muted}
+          />
+          <p className="hidden md:block text-center text-sm text-text-secondary">
+            {t("committees.mapCaption")}
+          </p>
+        </div>
+      }
+    >
       {groups.length > 0 ? (
         <div className="columns-1 md:columns-2 gap-6">
           {groups.map((group) => (
@@ -91,6 +94,6 @@ export function CommitteesOverview({
           {t("committees.noMatch", { query: query.trim() })}
         </p>
       )}
-    </div>
+    </MapListLayout>
   );
 }

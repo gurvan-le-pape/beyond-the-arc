@@ -6,6 +6,7 @@ import { useState } from "react";
 
 import { useChampionshipsFilterState } from "@/features/competitions/championships/hooks";
 import { ErrorMessage } from "@/shared/components/feedback";
+import { MapListLayout } from "@/shared/components/layout";
 
 import { LEVEL_CONFIG } from "./levelConfig";
 import { OrganiserChampionships } from "./OrganiserChampionships";
@@ -43,8 +44,9 @@ export function ChampionshipsOverview({ level }: ChampionshipsOverviewProps) {
     `/championships?tab=${level}&${config.param}=${id}`;
 
   return (
-    <div className="grid gap-6 lg:gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] items-start">
-      <div className="hidden lg:block lg:sticky lg:top-24">
+    <MapListLayout
+      hideMapBelowLg
+      map={
         <OrganiserMap
           level={level}
           organisers={organisers}
@@ -54,9 +56,9 @@ export function ChampionshipsOverview({ level }: ChampionshipsOverviewProps) {
           hrefFor={hrefFor}
           onSelect={select}
         />
-      </div>
-
-      <div className="min-w-0 space-y-4">
+      }
+    >
+      <div className="space-y-4">
         {error && (
           <ErrorMessage message={tCommon(config.fetchError)} onRetry={retry} />
         )}
@@ -79,6 +81,6 @@ export function ChampionshipsOverview({ level }: ChampionshipsOverviewProps) {
           />
         )}
       </div>
-    </div>
+    </MapListLayout>
   );
 }

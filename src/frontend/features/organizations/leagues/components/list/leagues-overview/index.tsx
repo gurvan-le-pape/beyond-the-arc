@@ -7,6 +7,7 @@ import { useState } from "react";
 import { ChoroplethMap } from "@/features/geography/components";
 import { FRANCE_FRAME, FRANCE_REGIONS } from "@/features/geography/constants";
 import { regionShapeCode } from "@/features/organizations/utils";
+import { MapListLayout } from "@/shared/components/layout";
 
 import type { League } from "../../../types";
 import { LeagueRow } from "./LeagueRow";
@@ -56,21 +57,23 @@ export function LeaguesOverview({
   );
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] items-start">
-      <div className="lg:sticky lg:top-24 max-w-md mx-auto w-full">
-        <ChoroplethMap
-          shapes={FRANCE_REGIONS}
-          frame={FRANCE_FRAME}
-          data={data}
-          tone="regional"
-          highlighted={highlighted}
-          onHighlight={setHighlighted}
-        />
-        <p className="mt-3 text-center text-sm text-text-secondary">
-          {t("leagues.mapCaption")}
-        </p>
-      </div>
-
+    <MapListLayout
+      map={
+        <>
+          <ChoroplethMap
+            shapes={FRANCE_REGIONS}
+            frame={FRANCE_FRAME}
+            data={data}
+            tone="regional"
+            highlighted={highlighted}
+            onHighlight={setHighlighted}
+          />
+          <p className="mt-3 text-center text-sm text-text-secondary">
+            {t("leagues.mapCaption")}
+          </p>
+        </>
+      }
+    >
       <ol className="surface-subtle border border-divide rounded-card overflow-hidden divide-y divide-divide">
         {rows.map(({ league, code }) => (
           <LeagueRow
@@ -85,6 +88,6 @@ export function LeaguesOverview({
           />
         ))}
       </ol>
-    </div>
+    </MapListLayout>
   );
 }
