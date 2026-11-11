@@ -47,7 +47,6 @@
     "src/frontend/features/organizations/leagues/components",
     "src/frontend/features/organizations/leagues/types",
 
-
     "src/frontend/features/players/api",
     "src/frontend/features/players/components",
     "src/frontend/features/players/hooks",
@@ -126,6 +125,6 @@
     ".*/quick-search/(?!index\\.tsx$).*",
     ".*/stat-comparison/(?!index\\.tsx$).*",
     ".*/player-match-stats/(?!index\\.tsx$).*",
-    ".*/shared/components/table/(parts\\.tsx|variants\\.ts)$"
+    ".*/shared/components/table/(parts\\.tsx|SortButton\\.tsx|variants\\.ts)$"
   ]
 }
