@@ -125,6 +125,7 @@
     ".*/latest-round/(?!index\\.tsx$).*",
     ".*/explore-shortcuts/(?!index\\.tsx$).*",
     ".*/competition-levels/(?!index\\.tsx$).*",
+    ".*/clubs-map-teaser/(?!index\\.tsx$).*",
     ".*/shared/components/table/(parts\\.tsx|SortButton\\.tsx|variants\\.ts)$"
   ]
 }
