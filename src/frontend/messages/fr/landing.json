@@ -9,7 +9,7 @@
     },
     "stack": {
       "title": "Comment il est construit",
-      "body": "Un frontend Next.js 15, rendu côté serveur, lit une API REST publique en lecture seule écrite avec NestJS 11 et Prisma sur PostgreSQL. Le planificateur est un service Python. L'ensemble tourne dans Docker Compose sur un seul serveur, déployé par la CI GitLab à chaque fusion, avec les erreurs remontées dans Sentry et les logs et métriques dans Grafana.",
+      "body": "Un frontend Next.js, rendu côté serveur, lit une API REST publique en lecture seule écrite avec NestJS et Prisma sur PostgreSQL. Le planificateur est un service Python. L'ensemble tourne dans Docker Compose sur un seul serveur, déployé par la CI GitLab à chaque fusion, avec les erreurs remontées dans Sentry et les logs et métriques dans Grafana.",
       "more": "La <link>page architecture</link> présente le schéma et la stack complète."
     },
     "links": {
