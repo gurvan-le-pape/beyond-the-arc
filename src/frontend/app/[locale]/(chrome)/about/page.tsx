@@ -3,11 +3,7 @@ import { Target } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import {
-  AboutData,
-  AboutLinks,
-  AboutStack,
-} from "@/features/site/about/components";
+import { AboutData, AboutStack } from "@/features/site/about/components";
 import { statsService } from "@/features/stats/api";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageHero, PageLayout } from "@/shared/components/layout";
@@ -35,7 +31,7 @@ export async function generateMetadata({
 
 /**
  * The about page: what the project is, which of its data is real and which is
- * simulated, how it is built, and where to read more.
+ * simulated, and how it is built.
  *
  * The counts come from `/stats`, so they follow the data rather than going
  * stale in the copy.
@@ -58,7 +54,6 @@ async function AboutPage({ params }: LocalePageProps) {
       <div className="space-y-6">
         <AboutData stats={stats} />
         <AboutStack />
-        <AboutLinks />
       </div>
     </PageLayout>
   );

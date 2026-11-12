@@ -4,5 +4,4 @@
  */
 
 export * from "./AboutData";
-export * from "./AboutLinks";
 export * from "./AboutStack";
