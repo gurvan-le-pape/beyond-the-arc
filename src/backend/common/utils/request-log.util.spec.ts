@@ -5,6 +5,7 @@ import {
   LOGGED_REQUEST_HEADERS,
   requestLogLevel,
   serializeRequestLog,
+  serializeResponseLog,
 } from "./request-log.util";
 
 // The header block a real visitor's request carries by the time it reaches the
@@ -161,5 +162,19 @@ describe("attachFailureLog / failureLogProps", () => {
     attachFailureLog(res, { message: "raw" }, "raw");
     expect(res.err).toBeInstanceOf(Error);
     expect((res.err as Error).message).toBe("raw");
+  });
+});
+
+describe("serializeResponseLog", () => {
+  it("keeps the status and drops every header", () => {
+    const res = {
+      statusCode: 404,
+      getHeaders: () => ({
+        vary: "Origin",
+        "x-request-id": "4431e8a0-0000-4000-8000-000000000000",
+        etag: 'W/"9c-abc"',
+      }),
+    };
+    expect(serializeResponseLog(res)).toEqual({ statusCode: 404 });
   });
 });

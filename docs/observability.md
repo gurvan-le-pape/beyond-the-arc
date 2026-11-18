@@ -46,7 +46,7 @@ In production, every log line is a JSON object on stdout. Docker captures this a
 
 The one field Loki does interpret on its own is the level: it derives `detected_level` from a level *string*, which is why the logger emits `"level": "warn"` rather than pino's numeric `40`. With the numeric default every line arrived as `detected_level="unknown"` and the log panel rendered them uncoloured.
 
-A real line (`res`/`responseTime` also appear on the completion line and are trimmed here). `req` is now short enough to print whole — that is the header allowlist above, and it is most of why a request line went from ~920 bytes to ~500:
+A real line, whole. `req` keeps an allowlist of four headers (above) and `res` keeps the status only (`serializeResponseLog`): pino-http's default response serializer adds every response header — `vary`, the CORS header, `x-request-id` a second time, `content-type`, `content-length`, `etag` — about half the line, none of which answers a question asked of these logs:
 
 ```json
 {
@@ -64,6 +64,8 @@ A real line (`res`/`responseTime` also appear on the completion line and are tri
       "accept": "application/json"
     }
   },
+  "res": { "statusCode": 200 },
+  "responseTime": 12,
   "msg": "request completed"
 }
 ```
