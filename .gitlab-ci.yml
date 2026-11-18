@@ -650,14 +650,14 @@ deploy:
         echo "Prometheus or blackbox config changed in this deploy — restarting both to load it"
         docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml restart blackbox-exporter prometheus
       fi
-      # Grafana reads provisioning/alerting/*.yml only at startup, and the same
-      # configuration-hash rule applies. Conditional rather than unconditional
+      # Grafana reads provisioning/alerting/*.yml and provisioning/datasources/
+      # only at startup, and the same configuration-hash rule applies. Conditional rather than unconditional
       # because a restart restarts the `for:` clocks, which run 2-10 minutes
       # here — an unrelated deploy should not delay a pending Disk Full by ten
       # minutes. Dashboards need no equivalent: their provider sets no
       # updateIntervalSeconds, so Grafana's own poll picks them up.
-      if ! git diff --quiet "$pre_pull_head" HEAD -- docker/config/grafana/provisioning/alerting/; then
-        echo "Alerting provisioning changed in this deploy — restarting Grafana to load it"
+      if ! git diff --quiet "$pre_pull_head" HEAD -- docker/config/grafana/provisioning/alerting/ docker/config/grafana/provisioning/datasources/; then
+        echo "Alerting or datasource provisioning changed in this deploy — restarting Grafana to load it"
         docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml restart grafana
       fi
       # Fail the deploy if the new containers don't come up healthy — a
