@@ -86,7 +86,7 @@ The deploy logs `deploy` into the GitLab registry on every run, so no registry l
 
 ```bash
 install -d -o deploy -g deploy /opt/beyondthearc
-su deploy -c 'git clone --sparse <repository-url> /opt/beyondthearc && cd /opt/beyondthearc && git sparse-checkout set --cone docker'
+su deploy -c 'git clone --sparse https://gitlab.com/gurvan-le-pape/beyond-the-arc.git /opt/beyondthearc && cd /opt/beyondthearc && git sparse-checkout set --cone docker'
 ```
 
 `/opt/beyondthearc/.env` is not in git: start from `.env.example` and fill in each value. `SENTRY_AUTH_TOKEN` stays out of it — only the CI build uses that token, and no running container does.
