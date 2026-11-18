@@ -94,7 +94,7 @@ backend-integration:
   stage: check
   extends: .setup-app
   services:
-    - name: postgres:18
+    - name: postgres:18.4
       alias: postgres
   variables:
     APP_DIR: src/backend

@@ -38,7 +38,7 @@ docker build -q -f docker/backend/Dockerfile --target migrate -t "$migrate_image
 
 docker network create "$network" >/dev/null
 docker run -d --name "$database" --network "$network" \
-  -e POSTGRES_PASSWORD=boot -e POSTGRES_DB=boot postgres:18 >/dev/null
+  -e POSTGRES_PASSWORD=boot -e POSTGRES_DB=boot postgres:18.4 >/dev/null
 
 # Over TCP: during initialisation the server listens on its Unix socket only.
 elapsed=0
