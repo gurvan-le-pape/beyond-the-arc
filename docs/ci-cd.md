@@ -150,7 +150,7 @@ Lint output no longer shows baselined violations. `eslint-suppressions.json` is 
 
 ### deploy
 
-`main` only, on `docker:28-cli`, after its fourteen gates pass. The runner's host Docker socket means builds reuse a long-lived daemon's layer cache — no buildx, no dind, no cache export.
+`main` only, on `docker:28-cli`, after its fourteen gates pass. It deploys to the GitLab environment `production`, so each run is recorded as a deployment, and it holds the `production` resource group (process mode `oldest_first`, set through the API): one deploy at a time, queued ones in pipeline order — the runner takes six jobs at once, so without it two quick merges could deploy concurrently or the older finish last. The runner's host Docker socket means builds reuse a long-lived daemon's layer cache — no buildx, no dind, no cache export.
 
 1. **Log in** to `$CI_REGISTRY` with the job's own `CI_REGISTRY_USER` / `CI_REGISTRY_PASSWORD`.
 2. **Build four images**, each tagged `:$CI_COMMIT_SHA` and `:latest` under `$CI_REGISTRY_IMAGE`: `backend` (`prod` target of `docker/backend/Dockerfile`), `backend-migrate` (`migrate` target of the same file, sharing its cached layers), `scheduler` (`docker/python-script/Dockerfile`) and `frontend` (`prod` target, with `NEXT_PUBLIC_API_URL` and `FRONTEND_URL` as build args and `SENTRY_AUTH_TOKEN` as a BuildKit secret — never a build arg, which would persist in the pushed image config).
@@ -166,8 +166,8 @@ Lint output no longer shows baselined violations. `eslint-suppressions.json` is 
 ```bash
 deploy.sh <commit-sha> <registry-host> <registry-user>   # token, if any, on stdin
 pre_pull_head=$(git rev-parse HEAD)
-git pull
-exec bash docker/deploy.sh "$@"   # the rest runs from the copy just pulled
+git fetch origin && git reset --hard "$COMMIT_SHA"   # exactly this commit, never the branch tip
+exec bash docker/deploy.sh "$@"   # the rest runs from that commit's copy
 echo "$REGISTRY_TOKEN" | docker login "$REGISTRY_HOST" -u "$REGISTRY_USER" --password-stdin
 export IMAGE_TAG="$COMMIT_SHA"   # read by docker-compose.prod.yml; beats .env
 docker compose … pull frontend backend migrate scheduler
@@ -183,9 +183,11 @@ docker system prune -f   # only after both health checks pass
 
 (`…` is `--env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml`.)
 
-The script lives in the `docker/` directory because that is all the server's sparse clone holds. It pulls the clone, then re-runs the copy it just pulled, so a deploy that changes the script is carried out by the new version; the whole body sits in one `main` function, which bash parses before running any of it, so the pull rewriting the file mid-run cannot change what the old copy does. The commit SHA must be 40 hex characters, or the script exits `2` before touching anything. Run by hand with nothing piped in, it skips the registry login and reuses the one the last deploy stored.
+The script lives in the `docker/` directory because that is all the server's sparse clone holds. It moves the clone to the deployed commit, then re-runs that commit's copy of itself, so a deploy that changes the script is carried out by the new version; the whole body sits in one `main` function, which bash parses before running any of it, so the checkout rewriting the file mid-run cannot change what the old copy does.
 
-`git pull` updates the Compose files and config before the images, so the running configuration always matches the repository. The registry login uses a **deploy token** (`DEPLOY_REGISTRY_TOKEN`, `read_registry`) rather than the job token, which dies with the job and would break a later manual `pull`. The `database` service runs the official `postgres` image and is untouched by the pull. `up -d` runs the one-shot `migrate` service (`prisma migrate deploy`) before `backend` and `scheduler` start, and recreates only containers whose image or configuration changed.
+**A reset to the SHA, not a pull.** `git pull` follows the branch: a deploy started for one commit could pick up the configs of a later one, so the images and the files on disk came from different commits. It also refuses to run on a detached `HEAD` or over a local edit to a file the incoming commit touches — exactly the state a hand rollback leaves — which turned the next deploy into a second outage. `git fetch` then `git reset --hard <sha>` lands on the requested commit whatever the clone looked like, discards local edits to tracked files, and leaves `.env` alone (untracked and ignored). A SHA missing from `origin` fails before anything changes. The commit SHA must be 40 hex characters, or the script exits `2` before touching anything. Run by hand with nothing piped in, it skips the registry login and reuses the one the last deploy stored.
+
+The checkout updates the Compose files and config before the images, so the running configuration always matches the deployed commit. The registry login uses a **deploy token** (`DEPLOY_REGISTRY_TOKEN`, `read_registry`) rather than the job token, which dies with the job and would break a later manual `pull`. The `database` service runs the official `postgres` image and is untouched by the pull. `up -d` runs the one-shot `migrate` service (`prisma migrate deploy`) before `backend` and `scheduler` start, and recreates only containers whose image or configuration changed.
 
 **Pull first, prune second.** Every deploy pins `:SHA` tags, which are never dangling, so old images accumulate until the disk fills (this tripped the 90% disk threshold in July 2026) and `docker image prune -af` has to run. Run before the pull, a refused login or a missing tag would land on a host whose previous images are already gone — production down with nothing local to roll back to. After a successful pull, the same failure is a red pipeline on an untouched host. Every tag stays in the registry, so rollback re-pulls by `IMAGE_TAG`.
 
@@ -221,16 +223,17 @@ The pipeline's CI/CD variables — VPS access, the pinned host key, the registry
 
 Every deploy pushes each image with two tags: `latest` and the git commit SHA. `docker-compose.prod.yml` references `${IMAGE_TAG:-latest}`, and the deploy script persists `IMAGE_TAG=<git sha>` into the VPS `.env` — so production always runs a pinned, recorded image, and a later manual `compose up` cannot silently jump to a newer `latest`.
 
-**Rollback** — on the VPS, set `IMAGE_TAG` in `/opt/beyondthearc/.env` to any previous commit SHA, then:
+**Rollback** — GitLab → **Operate → Environments → production**, then **Rollback** on the deployment to return to. That re-runs the deploy job of that commit's pipeline (`ci_forward_deployment_rollback_allowed`, on by default), and because the script resets the server's clone to the job's SHA, the commit's **images, Compose files and configs come back together**; the conditional restarts compare against the commit being left, so a config the rollback reverts is reloaded. Returning to the latest is the same button on the newest deployment.
+
+The job rebuilds that commit's four images before deploying them. The runner's long-lived layer cache usually makes that quick, but it is a pipeline job, not an instant switch. When minutes matter, the same rollback runs directly on the VPS — the images are still in the registry, and the stored login is reused:
 
 ```bash
-docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml pull frontend backend migrate scheduler
-docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml up -d
+bash /opt/beyondthearc/docker/deploy.sh <previous-sha> registry.gitlab.com <deploy-token-user>
 ```
 
-This rolls back the **images** only. The other two things a bad deploy can change need separate handling, and they are not alike:
+Two things a rollback does not undo:
 
-- **Compose files and anything else in the repo** — the VPS holds a clone at `/opt/beyondthearc` that the deploy script `git pull`s, so `git checkout <sha> -- docker/` restores them. **Undo it before the next deploy**, which starts with that `git pull`: the pull exits 1 both on a detached `HEAD` (`git checkout <sha>` with no path — "You are not currently on a branch") and on uncommitted local changes to a file the incoming commit touches. Either way the rollback becomes a second outage, in the deploy meant to end the first one.
+- **Database migrations.** `prisma migrate deploy` only moves forward. Rolling the images back past a migration runs the old code against the new schema; a migration that drops or renames something the old code reads needs its own revert migration, shipped forward.
 - **Nginx** — not in this repository at all, so there is no committed previous version to return to and `git checkout` cannot reach it. It runs on the host from `/etc/nginx/sites-available/beyondthearc`; reverting means editing that file directly, then `nginx -t && systemctl reload nginx` as root. See [*Nginx config is not version-controlled*](./infrastructure.md#known-limitations).
 
 ---
@@ -241,7 +244,7 @@ This rolls back the **images** only. The other two things a bad deploy can chang
 
 **The database image is not pushed to the registry.** It is the official `postgres` image, pulled from Docker Hub by the base Compose file, so it needs no build step here. The other four — frontend, backend, migrate and scheduler — are all published and pinned.
 
-**Health check, not rollback.** The deploy script fails the pipeline if the new containers don't come up healthy (backend readiness endpoint polled for 60s, frontend page render checked), and prints the rollback instruction — but the rollback itself is manual (set `IMAGE_TAG` in `.env` to the previous SHA and rerun pull + up). Automatic rollback on health-check failure would be the next step if manual proves too slow in practice.
+**Health check, not automatic rollback.** The deploy script fails the pipeline if the new containers don't come up healthy (backend readiness endpoint polled for 60s, frontend page render checked) and says where to roll back from, but someone has to press the button. Rolling back automatically on a failed check would be the next step if that proves too slow in practice.
 
 **Frontend build in CI does not use production build args.** The `frontend-build` job builds without `NEXT_PUBLIC_API_URL` and related vars. If a build failure is caused by a missing env var rather than a code error, it would only surface in the `deploy` job rather than the earlier `frontend-build` check.
 

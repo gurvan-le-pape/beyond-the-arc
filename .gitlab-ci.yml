@@ -488,6 +488,19 @@ deploy:
   stage: deploy
   image: docker:28-cli
   interruptible: false
+  # GitLab records each run as a deployment to `production`: its
+  # Environments page lists them, and "Rollback" on an earlier one re-runs that
+  # commit's deploy job, which brings back its images and configs together
+  # (docker/deploy.sh resets the server's clone to the job's SHA).
+  environment:
+    name: production
+    url: https://beyondthearc.app
+  # One deploy at a time. The runner takes six jobs at once, so without this two
+  # merges in quick succession could deploy concurrently, or the older finish
+  # last. The group's process_mode is `oldest_first` (set through the API,
+  # since .gitlab-ci.yml cannot express it), so queued deploys also run in
+  # pipeline order.
+  resource_group: production
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
   # Explicit, and deliberately not the whole `check` stage: sonarcloud is
@@ -595,9 +608,8 @@ deploy:
       fi
       printf '%s %s\n' "$VPS_HOST" "$VPS_HOST_KEY" > ~/.ssh/known_hosts
       chmod 600 ~/.ssh/known_hosts
-      # The deploy itself is docker/deploy.sh, in the server's clone — it pulls
-      # the clone, then runs the updated copy of itself. A clone older than the
-      # script has nothing to run yet, so it is pulled here first.
+      # The deploy itself is docker/deploy.sh, in the server's clone — it
+      # moves the clone to this commit, then runs that commit's copy of itself.
       #
       # VPS_USER is `deploy`, an unprivileged account that owns
       # /opt/beyondthearc and belongs to the `docker` group. The group is what
@@ -607,4 +619,4 @@ deploy:
       # stolen VPS_SSH_KEY can do needs an authorized_keys forced command.
       printf '%s\n' "$DEPLOY_REGISTRY_TOKEN" |
         ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes "$VPS_USER@$VPS_HOST" \
-          "cd /opt/beyondthearc && { [ -f docker/deploy.sh ] || git pull -q; } && bash docker/deploy.sh '$CI_COMMIT_SHA' '$CI_REGISTRY' '$DEPLOY_REGISTRY_USER'"
+          "bash /opt/beyondthearc/docker/deploy.sh '$CI_COMMIT_SHA' '$CI_REGISTRY' '$DEPLOY_REGISTRY_USER'"

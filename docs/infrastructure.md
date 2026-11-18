@@ -82,7 +82,7 @@ install -d -m 700 -o deploy -g deploy /home/deploy/.ssh
 
 The deploy logs `deploy` into the GitLab registry on every run, so no registry login is set up by hand.
 
-**The deploy clone — `docker/` only.** The images come from the registry; the server needs the compose files and the configs they mount, and nothing else. A sparse checkout keeps `git pull` and the deploy's `git diff` working while writing only `docker/` (plus the repository's root-level files, which cone mode always keeps) to disk:
+**The deploy clone — `docker/` only.** The images come from the registry; the server needs the compose files and the configs they mount, and nothing else. A sparse checkout keeps the deploy's `git fetch`, `git reset` and `git diff` working while writing only `docker/` (plus the repository's root-level files, which cone mode always keeps) to disk:
 
 ```bash
 install -d -o deploy -g deploy /opt/beyondthearc

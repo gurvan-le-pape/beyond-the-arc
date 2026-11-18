@@ -9,10 +9,16 @@
 # show in `ps` and in the SSH log. Run by hand with nothing piped in, no token
 # is read and the login stored by the last deploy is reused.
 #
-# The script updates the clone itself, then runs the updated copy of itself:
-# a deploy that changes this file is carried out by the new version. Every
-# step is inside `main`, which bash parses whole before running a line of it,
-# so `git pull` rewriting the file mid-run cannot change what this run does.
+# The script moves the clone to exactly <commit-sha> — not to the tip of a
+# branch — then runs that commit's copy of itself: a deploy that changes this
+# file is carried out by the new version, and the images and every config file
+# on disk always come from the same commit. Every step is inside `main`, which
+# bash parses whole before running a line of it, so the checkout rewriting the
+# file mid-run cannot change what this run does.
+#
+# Rollback is the same call with an older SHA (GitLab's Environments page
+# re-runs that commit's deploy job): its images, compose files and configs
+# come back together.
 
 main() {
   set -e
@@ -32,11 +38,24 @@ main() {
       read -r REGISTRY_TOKEN || true
       export REGISTRY_TOKEN
     fi
-    # Remembered across the pull so the conditional restarts below can tell
-    # whether this deploy changed any config they load.
+    # Remembered across the checkout so the conditional restarts below can
+    # tell whether this deploy changed any config they load — in either
+    # direction, so a rollback reloads what it reverts.
     DEPLOY_PRE_PULL_HEAD=$(git rev-parse HEAD)
     export DEPLOY_PRE_PULL_HEAD
-    git pull
+    # Fetch, then reset to the SHA, rather than `git pull`: a pull follows the
+    # branch, so a deploy started for one commit could pick up the configs of
+    # a later one, and it refuses to run on a detached HEAD or over a local
+    # edit — the state a hand rollback leaves behind. A reset lands on the
+    # requested commit whatever the clone looked like, discarding local edits
+    # to tracked files. `.env` is untracked and ignored, so it is untouched.
+    git fetch --quiet origin
+    if ! git cat-file -e "$tag^{commit}" 2>/dev/null; then
+      echo "ERROR: commit $tag is not in the repository after fetching origin — nothing changed." >&2
+      exit 1
+    fi
+    git reset --hard --quiet "$tag"
+    echo "Clone at $(git log -1 --format='%h %s')"
     exec bash docker/deploy.sh "$@"
   fi
   local pre_pull_head="$DEPLOY_PRE_PULL_HEAD"
@@ -50,7 +69,7 @@ main() {
   # still running. Persisted in .env once pulled, so any later manual
   # `compose up` keeps running the same images instead of silently jumping to
   # whatever :latest points at.
-  # Rollback = set IMAGE_TAG to a previous SHA and rerun pull + up.
+  # Rollback = this script with an older SHA (see the header).
   export IMAGE_TAG="$tag"
   echo "Disk before pull:" && df -h / | tail -1
   compose pull frontend backend migrate scheduler
@@ -121,7 +140,7 @@ main() {
     sleep 5
   done
   if [ -z "$backend_ok" ]; then
-    echo "ERROR: Backend failed health check after 60s — deploy failed, prod may be degraded. Roll back via IMAGE_TAG in .env."
+    echo "ERROR: Backend failed health check after 60s — deploy failed, prod may be degraded. Roll back from GitLab: Operate → Environments → production."
     compose logs --tail 50 backend
     exit 1
   fi
@@ -145,7 +164,7 @@ main() {
     sleep 5
   done
   if [ -z "$frontend_ok" ]; then
-    echo "ERROR: Frontend failed health check after 60s (last HTTP '$frontend_code') — deploy failed, prod may be degraded. Roll back via IMAGE_TAG in .env."
+    echo "ERROR: Frontend failed health check after 60s (last HTTP '$frontend_code') — deploy failed, prod may be degraded. Roll back from GitLab: Operate → Environments → production."
     compose logs --tail 50 frontend
     exit 1
   fi
