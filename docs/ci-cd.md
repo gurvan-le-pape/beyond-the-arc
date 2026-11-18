@@ -155,22 +155,23 @@ Lint output no longer shows baselined violations. `eslint-suppressions.json` is 
 1. **Log in** to `$CI_REGISTRY` with the job's own `CI_REGISTRY_USER` / `CI_REGISTRY_PASSWORD`.
 2. **Build four images**, each tagged `:$CI_COMMIT_SHA` and `:latest` under `$CI_REGISTRY_IMAGE`: `backend` (`prod` target of `docker/backend/Dockerfile`), `backend-migrate` (`migrate` target of the same file, sharing its cached layers), `scheduler` (`docker/python-script/Dockerfile`) and `frontend` (`prod` target, with `NEXT_PUBLIC_API_URL` and `FRONTEND_URL` as build args and `SENTRY_AUTH_TOKEN` as a BuildKit secret — never a build arg, which would persist in the pushed image config).
 3. **Push** this commit's two tags by name, never `--all-tags` (the long-lived daemon would re-send every SHA it has ever built), then drop the local SHA tag.
-4. **Deploy over SSH** — plain `ssh`, no third-party integration. `VPS_SSH_KEY` is a File variable; the job strips CRLF and restores a missing final newline before use, because OpenSSH rejects both with the same unhelpful `error in libcrypto`, and fails early with a readable message if the key is still unusable. The host key is pinned from `VPS_HOST_KEY`, never learned with `ssh-keyscan`. Secrets are never expanded into script text: the registry token is the first line of stdin, the non-secrets ride an env prefix on the ssh command.
+4. **Deploy over SSH** — plain `ssh`, no third-party integration. `VPS_SSH_KEY` is a File variable; the job strips CRLF and restores a missing final newline before use, because OpenSSH rejects both with the same unhelpful `error in libcrypto`, and fails early with a readable message if the key is still unusable. The host key is pinned from `VPS_HOST_KEY`, never learned with `ssh-keyscan`. The job then runs `docker/deploy.sh` in the server's clone, with the commit SHA, registry host and registry user as arguments and the registry token as the first line of stdin — never an argument, which would show in `ps` on the server.
 
 ---
 
 ## Deploy script
 
-On the VPS, as `deploy`, under `set -e`:
+`docker/deploy.sh`, run on the VPS as `deploy` from the clone at `/opt/beyondthearc`, under `set -e`:
 
 ```bash
-cd /opt/beyondthearc
+deploy.sh <commit-sha> <registry-host> <registry-user>   # token, if any, on stdin
 pre_pull_head=$(git rev-parse HEAD)
 git pull
-echo "$REGISTRY_TOKEN" | docker login "$REGISTRY_HOST" -u "$DEPLOY_REGISTRY_USER" --password-stdin
-export IMAGE_TAG="$DEPLOY_TAG"   # read by docker-compose.prod.yml; beats .env
+exec bash docker/deploy.sh "$@"   # the rest runs from the copy just pulled
+echo "$REGISTRY_TOKEN" | docker login "$REGISTRY_HOST" -u "$REGISTRY_USER" --password-stdin
+export IMAGE_TAG="$COMMIT_SHA"   # read by docker-compose.prod.yml; beats .env
 docker compose … pull frontend backend migrate scheduler
-sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=$DEPLOY_TAG/" .env   # appended if absent; only after a good pull
+sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=$COMMIT_SHA/" .env   # appended if absent; only after a good pull
 docker compose … up -d
 docker image prune -af   # after the pull, never before
 # restart prometheus + blackbox-exporter if their config changed in this pull,
@@ -181,6 +182,8 @@ docker system prune -f   # only after both health checks pass
 ```
 
 (`…` is `--env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml`.)
+
+The script lives in the `docker/` directory because that is all the server's sparse clone holds. It pulls the clone, then re-runs the copy it just pulled, so a deploy that changes the script is carried out by the new version; the whole body sits in one `main` function, which bash parses before running any of it, so the pull rewriting the file mid-run cannot change what the old copy does. The commit SHA must be 40 hex characters, or the script exits `2` before touching anything. Run by hand with nothing piped in, it skips the registry login and reuses the one the last deploy stored.
 
 `git pull` updates the Compose files and config before the images, so the running configuration always matches the repository. The registry login uses a **deploy token** (`DEPLOY_REGISTRY_TOKEN`, `read_registry`) rather than the job token, which dies with the job and would break a later manual `pull`. The `database` service runs the official `postgres` image and is untouched by the pull. `up -d` runs the one-shot `migrate` service (`prisma migrate deploy`) before `backend` and `scheduler` start, and recreates only containers whose image or configuration changed.
 
