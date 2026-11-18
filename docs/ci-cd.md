@@ -175,7 +175,7 @@ sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=$COMMIT_SHA/" .env   # appended if absent; onl
 docker compose … up -d
 docker image prune -af   # after the pull, never before
 # restart prometheus + blackbox-exporter if their config changed in this pull,
-# then grafana if its alerting provisioning changed
+# then loki + promtail, then grafana if its alerting or datasource provisioning changed
 # poll backend /api/health/ready and frontend /en, 12 × 5 s each —
 # exit 1 (failing the pipeline) and print the last 50 log lines if either never answers
 docker system prune -f   # only after both health checks pass
@@ -189,7 +189,7 @@ The script lives in the `docker/` directory because that is all the server's spa
 
 **Pull first, prune second.** Every deploy pins `:SHA` tags, which are never dangling, so old images accumulate until the disk fills (this tripped the 90% disk threshold in July 2026) and `docker image prune -af` has to run. Run before the pull, a refused login or a missing tag would land on a host whose previous images are already gone — production down with nothing local to roll back to. After a successful pull, the same failure is a red pipeline on an untouched host. Every tag stays in the registry, so rollback re-pulls by `IMAGE_TAG`.
 
-**Conditional restarts.** Prometheus, the blackbox exporter and Grafana's alerting provisioning read bind-mounted files only at startup, and `up -d` does not hash a mounted file's contents, so a changed scrape job or alert rule would land on disk and never load. The script diffs those paths between `pre_pull_head` and the new `HEAD` and restarts only what changed — Prometheus first, because an alert whose series does not exist yet reads NoData and the availability rules treat NoData as alerting. Unconditional restarts would also reset the alert `for:` clocks on every unrelated deploy.
+**Conditional restarts.** Prometheus, the blackbox exporter, Loki, Promtail and Grafana's alerting and datasource provisioning read bind-mounted files only at startup, and `up -d` does not hash a mounted file's contents, so a changed scrape job or alert rule would land on disk and never load. The script diffs those paths between `pre_pull_head` and the new `HEAD` and restarts only what changed — Prometheus first, because an alert whose series does not exist yet reads NoData and the availability rules treat NoData as alerting. Unconditional restarts would also reset the alert `for:` clocks on every unrelated deploy.
 
 **Retried health checks.** The frontend check is a retry loop like the backend's, and has to be: `frontend` waits for the backend to be healthy, so it starts *after* the first loop succeeds, and a single curl against a socket not yet listening would kill the script under `set -e` before it could report anything.
 
