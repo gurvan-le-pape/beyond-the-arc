@@ -40,6 +40,74 @@ KbdInteractiveAuthentication no
 
 Two mechanics make this easy to get wrong. `sshd_config` is **first-value-wins**, the opposite of most config systems, and `Include /etc/ssh/sshd_config.d/*.conf` sits at the top of the main file — so drop-ins beat it, and among drop-ins the lexically *first* one wins. A file named to sort after an existing one that sets the same keyword is silently inert. And `sshd_config` is not the effective config: read it with `sshd -T`, which resolves drop-ins and defaults. Validate with `sshd -t` and apply with `systemctl reload ssh` — never `restart` — so a rejected config leaves the running daemon serving the old one.
 
+The root password is the way back in when SSH is unusable — a bad sshd drop-in, a firewall rule, a lost key — so it belongs in a password manager, and a login through the Hetzner console is the only proof it works. The console types as a **US QWERTY** keyboard whatever the local layout is: a password with symbols, or letters that move between layouts (`a`/`q`, `z`/`w`, `m`), fails there while being correct.
+
+### Host setup
+
+Everything below lives on the VPS, outside the deploy clone, and nothing re-applies it: a rebuilt server needs each step by hand. All commands run as root.
+
+**Data volume, mounted by its stable name.** The kernel's `sdX` names follow discovery order and are not guaranteed across boots; Hetzner's `by-id` name is. `nofail` keeps the server bootable and reachable over SSH when the volume is missing — without it a missing volume drops the boot into emergency mode, reachable from the console only.
+
+```
+# /etc/fstab
+/dev/disk/by-id/scsi-0HC_Volume_<volume-id> /var/lib/docker/volumes ext4 defaults,nofail 0 2
+```
+
+`nofail` alone would let Docker start on the empty `/var/lib/docker/volumes` directory of the root disk, and Postgres initialise a fresh database there. A drop-in makes Docker refuse to start until the volume is mounted:
+
+```bash
+mkdir -p /etc/systemd/system/docker.service.d
+printf '[Unit]\nRequiresMountsFor=/var/lib/docker/volumes\n' > /etc/systemd/system/docker.service.d/require-volumes.conf
+systemctl daemon-reload
+```
+
+Check with `findmnt --verify` and `systemctl show docker -p RequiresMountsFor`. A reboot is the only end-to-end test.
+
+**Swap.** 2 GB, so a memory spike slows the box down instead of sending the OOM killer after Postgres; `vm.swappiness=10` keeps the kernel from paging out while RAM is still free.
+
+```bash
+fallocate -l 2G /swapfile && chmod 600 /swapfile && mkswap /swapfile && swapon /swapfile
+echo '/swapfile none swap sw 0 0' >> /etc/fstab
+echo 'vm.swappiness=10' > /etc/sysctl.d/99-swappiness.conf && sysctl --system
+```
+
+**The `deploy` user.** The CI deploys as `deploy`, never as root: an unprivileged account that owns the clone and is in the `docker` group. That group is root-equivalent, so the account bounds accidents and gives an audit trail, not containment. Its `authorized_keys` holds one key, commented `gitlab-ci-deploy`, whose private half is the `VPS_SSH_KEY` CI variable.
+
+```bash
+adduser --disabled-password --gecos '' deploy
+usermod -aG docker deploy
+install -d -m 700 -o deploy -g deploy /home/deploy/.ssh
+# append the public key, comment gitlab-ci-deploy, to /home/deploy/.ssh/authorized_keys (mode 600, owned by deploy)
+```
+
+The deploy logs `deploy` into the GitLab registry on every run, so no registry login is set up by hand.
+
+**The deploy clone — `docker/` only.** The images come from the registry; the server needs the compose files and the configs they mount, and nothing else. A sparse checkout keeps `git pull` and the deploy's `git diff` working while writing only `docker/` (plus the repository's root-level files, which cone mode always keeps) to disk:
+
+```bash
+install -d -o deploy -g deploy /opt/beyondthearc
+su deploy -c 'git clone --sparse https://gitlab.com/gurvan-le-pape/beyond-the-arc.git /opt/beyondthearc && cd /opt/beyondthearc && git sparse-checkout set --cone docker'
+```
+
+`/opt/beyondthearc/.env` is not in git: start from `.env.example` and fill in each value. `SENTRY_AUTH_TOKEN` stays out of it — only the CI build uses that token, and no running container does.
+
+**The database volume.** `postgres_data` is `external: true` in the prod overlay, so `docker compose down -v` cannot delete it — and so compose will not create it either. Create it once, before the first `up`:
+
+```bash
+docker volume create postgres_data
+```
+
+**Nginx version.** `server_tokens off;` in `/etc/nginx/nginx.conf` (Ubuntu ships the line commented out). Without it, every response from the DNS-only Grafana subdomain announces the exact Nginx and distribution version. Apply with `nginx -t && systemctl reload nginx`.
+
+**SSH host key.** The deploy pins the server's ed25519 host key in the `VPS_HOST_KEY` CI variable (see the comment in `.gitlab-ci.yml`). A key copied from a first SSH connection is only as trustworthy as that connection, so compare it over a channel that is not SSH — the Hetzner console:
+
+```bash
+ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub          # on the server, from the console
+glab variable get VPS_HOST_KEY | ssh-keygen -lf -          # locally
+```
+
+The two `SHA256:` fingerprints must match. A rebuilt server has a new host key, so `VPS_HOST_KEY` has to be replaced, and checked this way, before the first deploy.
+
 ---
 
 ## DNS and TLS
@@ -249,7 +317,9 @@ The Makefile exposes several utility targets beyond the core up/down/build cycle
 
 **No staging environment.** The dev environment is local and there is no hosted environment between it and production. Infrastructure changes (Compose config, Nginx, Prometheus rules) cannot be tested before going live on the VPS. See [`architecture.md`](./architecture.md) for more on this constraint.
 
-**External volume requires manual creation.** The `postgres_data` volume must exist on the VPS before first deployment. This is documented but not automated — a bootstrap script would reduce the risk of a failed first deployment.
+**External volume requires manual creation.** The `postgres_data` volume must exist on the VPS before first deployment. Its one-line creation is in *Host setup* above, but nothing automates it — a bootstrap script would reduce the risk of a failed first deployment.
+
+**Host setup is manual.** Every step in *Host setup* above is a command someone runs on the VPS; nothing in this repository applies them or detects drift from them, so a rebuilt server is only as complete as that section.
 
 **Nginx config is not version-controlled.** The reverse proxy configuration lives on the VPS host outside of the repository. Changes are applied manually and are not tracked alongside the application code.
 
