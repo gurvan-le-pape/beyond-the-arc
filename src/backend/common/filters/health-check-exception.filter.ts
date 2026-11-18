@@ -1,4 +1,5 @@
 // src/backend/common/filters/health-check-exception.filter.ts
+import { attachFailureLog } from "@common/utils";
 import {
   ArgumentsHost,
   Catch,
@@ -6,7 +7,6 @@ import {
   ServiceUnavailableException,
 } from "@nestjs/common";
 import { Request, Response } from "express";
-import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 
 /**
  * A failed health check is a diagnosis, not an application error.
@@ -28,28 +28,15 @@ import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
  * so every poll while one holds would be a separate captured event. The failure
  * is already a 503 on a monitored endpoint and an `error`-level log line.
  *
+ * That line is the request's own completion line: like AllExceptionsFilter,
+ * this filter writes none of its own, and attaches the health result to it as
+ * `health` — see attachFailureLog in request-log.util.ts.
+ *
  * Only ServiceUnavailableException is caught. A genuine bug in the controller
  * still falls through to AllExceptionsFilter and still reaches Sentry.
  */
-/**
- * The log message for every failed poll this filter records.
- *
- * Constant for the same reason `AllExceptionsFilter`'s is: `msg` is what Loki
- * groups on, so everything that varies per request — method, url, statusCode,
- * the health result — is a field on the log object instead. Interpolating them
- * into the message makes `msg` unique per route, which leaves "which health
- * check is failing, and how often" unanswerable by grouping while the same
- * values sit in fields on the same line.
- */
-const LOG_MESSAGE = "health check failed";
-
 @Catch(ServiceUnavailableException)
 export class HealthCheckExceptionFilter implements ExceptionFilter {
-  constructor(
-    @InjectPinoLogger(HealthCheckExceptionFilter.name)
-    private readonly logger: PinoLogger,
-  ) {}
-
   catch(exception: ServiceUnavailableException, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
@@ -58,20 +45,11 @@ export class HealthCheckExceptionFilter implements ExceptionFilter {
     const statusCode = exception.getStatus();
     const data = exception.getResponse();
 
-    // No request id is added here on purpose — the same reason
-    // AllExceptionsFilter gives. nestjs-pino binds the id from genReqId to the
-    // request's logger, so this line already carries it as `req.id`; a second
-    // name for the same value means a Loki query on one name finds the failure
-    // and misses the request record.
-    this.logger.error(
-      {
-        method: request.method,
-        url: request.url,
-        statusCode,
-        health: data,
-      },
-      LOG_MESSAGE,
-    );
+    // No exception attached: its serialized form would repeat `data` as
+    // `err.response`, doubling the line for no new information. pino-http's
+    // own `failed with status code 503` is accurate here — that is what
+    // happened, and `health` says why.
+    attachFailureLog(response, { health: data });
 
     response.status(statusCode).json({
       data,

@@ -1,5 +1,6 @@
 // src/backend/common/filters/all-exceptions.filter.ts
 import { ApiErrorResponseDto } from "@common/dto";
+import { attachFailureLog } from "@common/utils";
 import {
   ArgumentsHost,
   Catch,
@@ -9,7 +10,6 @@ import {
 } from "@nestjs/common";
 import * as Sentry from "@sentry/nestjs";
 import { Request, Response } from "express";
-import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 
 interface DevErrorDetails {
   stack: string | undefined;
@@ -38,26 +38,10 @@ interface ErrorResponse extends ApiErrorResponseDto {
 }
 
 /**
- * The log message for every failure this filter records.
- *
- * It is deliberately a constant. Everything that varies per request — method,
- * url, statusCode, the exception message — is a field on the log object, so the
- * message stays something you can group and count by in Loki. Interpolating
- * those values here instead would make `msg` unique per request: every 404 from
- * a bot scanning ids becomes its own message string, and "which failure is
- * spiking" stops being answerable.
- *
- * Level and `statusCode` distinguish the branches below; `programmerError`
- * marks the subset that indicates a bug rather than an operational failure.
- */
-const LOG_MESSAGE = "request failed";
-
-/**
  * Programmer errors: exceptions that indicate a bug in application code, not
- * an expected operational failure. These are logged at `error` level even when
- * they surface as 5xx responses, and should ideally trigger a separate alert
- * path (e.g. PagerDuty, Sentry) rather than being treated as ordinary runtime
- * errors.
+ * an expected operational failure. Their 5xx log line carries
+ * `programmerError: true`, the only field that separates them from an
+ * operational 5xx such as a database timeout.
  *
  * This set is intentionally conservative. Add to it only when you are certain
  * that the exception type unambiguously indicates a programming mistake:
@@ -82,13 +66,6 @@ function isProgrammerError(exception: unknown): boolean {
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
-  constructor(
-    // Named logger so filter logs are scoped to this class in Loki/Datadog,
-    // rather than sharing the root logger context with every other component.
-    @InjectPinoLogger(AllExceptionsFilter.name)
-    private readonly logger: PinoLogger,
-  ) {}
-
   catch(exception: unknown, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
@@ -103,7 +80,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       Sentry.captureException(exception);
     }
 
-    this.logError(exception, request, errorResponse);
+    this.attachLog(exception, response, errorResponse);
 
     response.status(errorResponse.statusCode).json(errorResponse);
   }
@@ -247,68 +224,54 @@ export class AllExceptionsFilter implements ExceptionFilter {
     return errorResponse.message;
   }
 
-  private logError(
+  /**
+   * Hands this failure's fields to the request's own completion line rather
+   * than writing a line of its own.
+   *
+   * pino-http already logs every request — method, url, status, response time,
+   * `req.id` — so a line from here as well would record each failure twice.
+   * What only this filter knows is added to that line instead:
+   *
+   * - `message`, the exception's message. Never interpolated into `msg`, which
+   *   has to stay a constant to be groupable: every 404 from a bot scanning ids
+   *   would otherwise be its own message string.
+   * - for a 5xx, the exception itself, as `err` with its stack — replacing the
+   *   `failed with status code 500` error pino-http invents when it has none —
+   *   and `programmerError: true` when it is a bug (see
+   *   {@link PROGRAMMER_ERROR_TYPES}).
+   *
+   * `programmerError` is read at **query time**, not by an alert. Nothing
+   * routes on it: every Grafana rule queries Prometheus, and Promtail attaches
+   * no pipeline stage, so it is not a Loki label. It does not need to be one —
+   * `| json` parses the line and filters on any field, label or not:
+   *
+   *   {service="backend"} | json | programmerError="true"
+   *
+   * That query is written down in docs/observability.md § "Separating bugs
+   * from operational failures"; keep the two in step if this field is renamed.
+   *
+   * No `ip`: Express is not configured with `trust proxy`, so behind Cloudflare
+   * and Nginx `request.ip` is the Docker gateway, identical on every line, and
+   * would silently become a visitor's address the day that setting changed.
+   */
+  private attachLog(
     exception: unknown,
-    request: Request,
+    response: Response,
     errorResponse: ErrorResponse,
   ): void {
-    const { method, url, headers } = request;
-
     const message = this.toLogMessage(exception, errorResponse);
 
-    // No request id is added here on purpose. nestjs-pino binds the id from
-    // genReqId to the request's logger, so every line it emits — this one and
-    // pinoHttp's own completion line — already carries it as `req.id`. Adding a
-    // second name for the same value means a Loki query on one name finds the
-    // error and misses the request record. One name:
-    // `{service="backend"} | json | req_id="…"` returns both.
-    // No `ip`. Express is not configured with `trust proxy`, so `request.ip` is
-    // not the visitor's address — behind Cloudflare and Nginx it is the Docker
-    // gateway, identical on every line. Logging it spends 31 days of Loki
-    // retention recording which proxy spoke to us, and would silently become a
-    // real IP the day `trust proxy` is turned on.
-    const logContext = {
-      method,
-      url,
-      userAgent: headers["user-agent"] ?? "unknown",
-      statusCode: errorResponse.statusCode,
-      // Carried as a field, never interpolated into the message below: the
-      // message has to stay a constant to be groupable, and this is the part
-      // that varies per request.
-      message,
-    };
-
-    if (errorResponse.statusCode >= 500) {
-      if (isProgrammerError(exception)) {
-        // Programmer errors (TypeError, RangeError, etc.) indicate a bug in
-        // application code. This flag is what separates them from expected
-        // operational failures (DB timeout, third-party 5xx), which otherwise
-        // produce a byte-identical log line — same level, same `msg`, same
-        // 5xx `statusCode`.
-        //
-        // It is read at **query time**, not by an alert. Nothing routes on it:
-        // every Grafana rule queries Prometheus, and Promtail attaches no
-        // pipeline stage, so `programmerError` is not a Loki label. It does
-        // not need to be one — `| json` parses the line and filters on any
-        // field, label or not:
-        //
-        //   {service="backend"} | json | programmerError="true"
-        //
-        // Verified against Loki with the three-line control in
-        // docs/observability.md § "Separating bugs from operational failures",
-        // which is also where that query is written down. Keep the two in step
-        // if this field is renamed.
-        this.logger.error(
-          { err: exception, ...logContext, programmerError: true },
-          LOG_MESSAGE,
-        );
-      } else {
-        this.logger.error({ err: exception, ...logContext }, LOG_MESSAGE);
-      }
-    } else if (errorResponse.statusCode >= 400) {
-      this.logger.warn(logContext, LOG_MESSAGE);
+    if (errorResponse.statusCode < 500) {
+      attachFailureLog(response, { message });
+      return;
     }
-    // Intentionally not logging 1xx/2xx/3xx — those are success/redirect
-    // paths and should never reach this filter under normal circumstances.
+
+    attachFailureLog(
+      response,
+      isProgrammerError(exception)
+        ? { message, programmerError: true }
+        : { message },
+      exception,
+    );
   }
 }

@@ -42,7 +42,7 @@ HTTP request logging (method, path, status, duration) is handled automatically b
 
 In production, every log line is a JSON object on stdout. Docker captures this and Promtail ships it to Loki.
 
-**Loki indexes labels, not fields.** The only labels on these streams are `container`, `service` and `service_name` (set by Promtail's `relabel_configs`); every other field is read at query time by parsing the line, e.g. `{service="backend"} | json | statusCode=500`. That is a filter over the matched streams, not an index lookup, so narrow by label first.
+**Loki indexes labels, not fields.** The only labels on these streams are `container`, `service` and `service_name` (set by Promtail's `relabel_configs`); every other field is read at query time by parsing the line, e.g. `{service="backend"} | json | res_statusCode=500` (`| json` flattens nested keys with `_`). That is a filter over the matched streams, not an index lookup, so narrow by label first.
 
 The one field Loki does interpret on its own is the level: it derives `detected_level` from a level *string*, which is why the logger emits `"level": "warn"` rather than pino's numeric `40`. With the numeric default every line arrived as `detected_level="unknown"` and the log panel rendered them uncoloured.
 
@@ -72,6 +72,16 @@ A real line (`res`/`responseTime` also appear on the completion line and are tri
 
 There is no `traceId` and no `userId`: the correlation id is `req.id` and the API has no authenticated users.
 
+**One line per request, failed or not.** That completion line is the only line a request produces. The exception filters write none of their own: they attach what only they know to the response (`attachFailureLog` in `common/utils/request-log.util.ts`), and pino-http's `customProps` puts it on the completion line. `customLogLevel` sets the level from the status — `info` below 400, `warn` for a 4xx, `error` for a 5xx — so a failed request is still found by level. What a failure adds:
+
+| Failure | Added to the line |
+|---|---|
+| 4xx (`AllExceptionsFilter`) | `message` — the exception's message, e.g. `"Player with ID 999999999 not found"` or the validation errors |
+| 5xx (`AllExceptionsFilter`) | `message`, `err` — the real exception, with its type and stack — and `programmerError: true` when it is a bug (below); `msg` is `"request errored"` |
+| failed health poll (`HealthCheckExceptionFilter`) | `health` — the Terminus result naming the failing indicator; `err` is pino-http's own `failed with status code 503` |
+
+A filter that logged a line of its own would record every failure twice, and counting `error` lines would count each 5xx twice — the more so because pino-http, finding no `res.err`, logs an error it invents (`failed with status code 500`) in place of the real one. Terminus's own `Health Check has failed!` line is switched off (`TerminusModule.forRoot({ logger: false })`) for the same reason.
+
 **Joining a frontend failure to the backend line that caused it.** A server-side fetch failure is logged once, by `handleServerError` (`src/frontend/shared/utils`), and that line carries the backend's id — `[Server fetch failed x-request-id=…]`. The id goes in the message rather than only on the error object because the frontend logger writes it with `console.error`: an own property of the error prints in the block `util.inspect` writes after the stack, which Promtail ships as its own unattached line. So the pair is:
 
 ```
@@ -83,7 +93,7 @@ The id is absent when the request never reached the backend — a network error 
 
 ### Separating bugs from operational failures
 
-Two very different 5xx failures produce otherwise identical log lines. A `TypeError` reading a property of `undefined` is a bug in application code; a Prisma connection timeout is the database being slow. Both are logged by `AllExceptionsFilter` at `error`, both carry `msg: "request failed"` — which is deliberately a constant, see above — and both carry a 5xx `statusCode`. Nothing in the line distinguishes them except the serialized `err`.
+Two very different 5xx failures produce otherwise identical log lines. A `TypeError` reading a property of `undefined` is a bug in application code; a Prisma connection timeout is the database being slow. Both are logged at `error`, both carry `msg: "request errored"` — a constant, so lines group — and both carry a 5xx `res.statusCode`. Nothing in the line distinguishes them except the serialized `err`.
 
 So the filter adds one field to the first kind:
 

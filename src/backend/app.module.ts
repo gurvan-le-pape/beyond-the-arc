@@ -9,6 +9,8 @@ import {
 } from "@common/interceptors";
 import {
   BoundedMemoryStore,
+  failureLogProps,
+  requestLogLevel,
   resolveRequestId,
   serializeRequestLog,
 } from "@common/utils";
@@ -71,6 +73,12 @@ import { PrismaModule } from "prisma/prisma.module";
         // resolveRequestId for why it hangs off genReqId rather than an
         // interceptor.
         genReqId: (req, res) => resolveRequestId(req, res),
+        // One line per request, failed or not. The exception filters do not
+        // log: they attach their fields (and a 5xx's real exception) to the
+        // response, and these two put them on this completion line at the
+        // right level — see attachFailureLog in request-log.util.ts.
+        customLogLevel: requestLogLevel,
+        customProps: failureLogProps,
       },
     }),
     PrometheusModule.register({
