@@ -97,7 +97,7 @@ su deploy -c 'git clone --sparse https://gitlab.com/gurvan-le-pape/beyond-the-ar
 docker volume create postgres_data
 ```
 
-**Nginx version.** `server_tokens off;` in `/etc/nginx/nginx.conf` (Ubuntu ships the line commented out). Without it, every response from the DNS-only Grafana subdomain announces the exact Nginx and distribution version. Apply with `nginx -t && systemctl reload nginx`.
+**Nginx version.** `server_tokens off;` in `/etc/nginx/nginx.conf` (Ubuntu ships the line commented out). Without it, every response that reaches Nginx directly — any request to the server's IP — announces the exact Nginx and distribution version. Apply with `nginx -t && systemctl reload nginx`.
 
 **SSH host key.** The deploy pins the server's ed25519 host key in the `VPS_HOST_KEY` CI variable (see the comment in `.gitlab-ci.yml`). A key copied from a first SSH connection is only as trustworthy as that connection, so compare it over a channel that is not SSH — the Hetzner console:
 
@@ -114,11 +114,9 @@ The two `SHA256:` fingerprints must match. A rebuilt server has a new host key, 
 
 DNS is managed through Cloudflare, which also acts as the nameserver authority for `beyondthearc.app`. The TLS setup is split depending on the subdomain:
 
-**Main app (`beyondthearc.app`, `www.beyondthearc.app`)** — DNS records are proxied through Cloudflare (orange cloud). Cloudflare terminates TLS on its edge and forwards traffic to the VPS over HTTP. The server's real IP is hidden behind Cloudflare's proxy IPs.
+**Every record is proxied through Cloudflare (orange cloud)** — `beyondthearc.app`, `www.beyondthearc.app` and `grafana.beyondthearc.app`. The zone's SSL/TLS mode is **Full (strict)**: Cloudflare terminates the visitor's TLS on its edge, then opens a second TLS connection to Nginx and verifies the origin's Let's Encrypt certificate, so an expired or wrongly-named origin certificate takes the site down. Cloudflare talks HTTP/1.1 to the origin; Nginx has HTTP/2 off.
 
-**Grafana (`grafana.beyondthearc.app`)** — DNS record is DNS-only (grey cloud). TLS is terminated directly by Nginx on the VPS using a Let's Encrypt certificate managed by Certbot. The server's IP is publicly visible for this subdomain.
-
-This split means two different certificate authorities are in play: Cloudflare for the main app, Let's Encrypt for Grafana. Cloudflare also provides DDoS protection and caching for the main app as a side effect of proxying.
+**Grafana sits behind Cloudflare Access.** A Zero Trust self-hosted application (`Grafana`, team `tiny-tree-2362`, Free plan) covers `grafana.beyondthearc.app`: a visitor must first prove an allowed email address with a one-time PIN on `tiny-tree-2362.cloudflareaccess.com`, then still logs in to Grafana itself. A second application, `Grafana ACME`, covers only the path `/.well-known/acme-challenge/` with a **Bypass / Everyone** policy, and has to stay: the one Let's Encrypt certificate covers all three names, Certbot's `nginx` authenticator answers the HTTP-01 challenge on each, and an Access login page in front of that path would fail the renewal for the main site too. Checked with `certbot renew --dry-run --cert-name beyondthearc.app` after Access was enabled. Both applications live in the Cloudflare dashboard (Zero Trust → Access controls → Applications), not in this repository.
 
 ---
 
@@ -286,7 +284,7 @@ The external origins are the OpenStreetMap tile server the clubs map draws from 
 
 The Grafana block additionally sets `Upgrade` and `Connection` headers to support WebSocket connections, which Grafana uses for live dashboard updates.
 
-TLS certificates for `beyondthearc.app` and `grafana.beyondthearc.app` are issued by Let's Encrypt and stored under `/etc/letsencrypt/live/beyondthearc.app/`. For the main app, these certificates are only used when traffic arrives directly at the server (bypassing Cloudflare) — in normal operation Cloudflare terminates TLS on its edge before the request reaches Nginx.
+TLS certificates for `beyondthearc.app` and `grafana.beyondthearc.app` are issued by Let's Encrypt and stored under `/etc/letsencrypt/live/beyondthearc.app/`. Every request uses them: in Full (strict) mode Cloudflare connects to Nginx over TLS and verifies this certificate. Certbot renews it with its `nginx` authenticator; see the Access bypass above for why the challenge path must stay reachable.
 
 ---
 
@@ -327,4 +325,4 @@ The Makefile exposes several utility targets beyond the core up/down/build cycle
 
 **No resource limits on application containers.** Only the observability services (Prometheus, Loki, Grafana) have CPU and memory limits defined. The application services (frontend, backend, scheduler) do not, which means a runaway process could starve the observability stack on the constrained CX23.
 
-**Grafana subdomain leaks the server IP.** Because `grafana.beyondthearc.app` is DNS-only (not proxied through Cloudflare), the VPS IP is publicly resolvable via that record. Proxying it through Cloudflare would hide the IP consistently across all subdomains.
+**The origin answers anyone who knows its IP.** Every record is proxied now, but the IP was published by a DNS-only Grafana record until 2026-11-18 and stays in DNS-history services. Nothing on the server restricts 80/443 to Cloudflare's ranges, so a request sent straight to the IP skips Cloudflare entirely — its crawler blocks and Access in front of Grafana included (Grafana's own login still applies).
