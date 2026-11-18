@@ -69,6 +69,29 @@ export function serializeRequestLog(
   return { id: req.id, method: req.method, url: req.url, headers };
 }
 
+export interface SerializedResponseLog {
+  statusCode: number;
+}
+
+/**
+ * Builds the `res` object on every completion line: the status, nothing else.
+ *
+ * pino-http's default `res` serializer adds every response header — `vary`,
+ * `access-control-expose-headers`, `x-request-id`, `content-type`,
+ * `content-length`, `etag` — about half of each line. None earns its place:
+ * `x-request-id` repeats `req.id` on the same line, `vary` and the CORS header
+ * are the same on every response, and an etag or a content type answers no
+ * question asked of these logs. Response time is already `responseTime`.
+ *
+ * @param res - the finished response
+ * @returns the `res` object for the log line
+ */
+export function serializeResponseLog(res: {
+  statusCode: number;
+}): SerializedResponseLog {
+  return { statusCode: res.statusCode };
+}
+
 /**
  * Where an exception filter leaves what it knows about a failed request, for
  * the request's own completion line to carry.

@@ -13,6 +13,7 @@ import {
   requestLogLevel,
   resolveRequestId,
   serializeRequestLog,
+  serializeResponseLog,
 } from "@common/utils";
 import { ChampionshipsModule } from "@modules/competitions/championships/championships.module";
 import { LeaderboardsModule } from "@modules/competitions/leaderboards/leaderboards.module";
@@ -53,7 +54,8 @@ import { PrismaModule } from "prisma/prisma.module";
         // which behind Cloudflare + Nginx means the visitor's IP in every line
         // for Loki's 31-day retention — see request-log.util.ts for why the
         // allowlist replaces `redact` rather than extending it.
-        serializers: { req: serializeRequestLog },
+        // `res` keeps the status only — see serializeResponseLog.
+        serializers: { req: serializeRequestLog, res: serializeResponseLog },
         // Emit the level as its label ("warn") rather than pino's numeric code
         // (40). Loki's level detection only recognises a level *string*, so
         // with the numeric default every backend line arrives as
