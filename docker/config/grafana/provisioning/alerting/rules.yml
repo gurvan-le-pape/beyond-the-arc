@@ -304,6 +304,66 @@ groups:
         isPaused: false
         notification_settings:
           receiver: email-admin
+      - uid: cpusaturated7k2m
+        title: CPU Saturated
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: PBFA97CFB590B2093
+            model:
+              editorMode: code
+              # The Host CPU Usage panel's expression, as a fraction: the
+              # panel and the alert cannot disagree about the same number,
+              # and the panel's dashed 80 % line is this threshold.
+              expr: clamp_min(1 - avg(rate(node_cpu_seconds_total{mode="idle"}[5m])), 0)
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: C
+            queryType: expression
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0.8
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: C
+              type: threshold
+        # Missing node-exporter series are Disk Full's to report (it alerts on
+        # NoData); raising it here as well would send two mails for one cause.
+        noDataState: OK
+        execErrState: Error
+        # Long on purpose: a burst of simulation or a deploy's restarts is not
+        # the condition. What this catches is the host pinned for good — AI
+        # crawlers held it at ~95 % for days in 2026-11 with no rule firing.
+        for: 30m
+        annotations:
+          summary: Host CPU above 80% for 30 minutes
+        isPaused: false
+        notification_settings:
+          receiver: email-admin
       - uid: bfk1x7prb2s0wa
         title: Endpoint Unreachable
         condition: C
