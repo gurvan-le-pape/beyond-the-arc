@@ -264,7 +264,15 @@ All containers share a single Docker bridge network (`my_network`). Services com
 
 Nginx runs on the VPS host (not as a Docker container) and reverse-proxies inbound traffic to the appropriate container. The backend is not on a separate subdomain — it is proxied under the `/api/` path on the main domain.
 
-The config lives at `/etc/nginx/sites-available/beyondthearc`, symlinked into `sites-enabled`, root-owned and edited in place — it is outside the deploy clone, so `git pull` never updates it and no rollback in this repository can revert it (see *Known limitations* below).
+The config is **`docker/nginx/beyondthearc.conf`** in this repository. `/etc/nginx/sites-enabled/beyondthearc` is a symlink to the deploy clone's copy, so a deploy puts the new file in place with everything else, and a rollback reverts it with everything else. When a deploy changes it, `docker/deploy.sh` runs `nginx -t` and then `systemctl reload nginx`; a file `nginx -t` rejects fails the deploy, and the running Nginx keeps serving the previous config. Edit it in the repository, never on the server: the next deploy resets the clone to the deployed commit and discards the edit. The `planetcurio` site on the same Nginx belongs to another project and is not in this repository.
+
+The deploy runs as `deploy`, not root, so the reload needs one sudoers rule, in `/etc/sudoers.d/deploy-nginx`:
+
+```
+deploy ALL=(root) NOPASSWD: /usr/sbin/nginx -t, /usr/bin/systemctl reload nginx
+```
+
+Those two commands exactly, nothing else. It grants nothing `deploy` lacks — the account is already root-equivalent through the `docker` group — but it keeps the deploy from needing a root shell. The script reloads only while the symlink points into the clone, so a server set up without it keeps working, untouched.
 
 | Request                     | Proxied to                      |
 | --------------------------- | ------------------------------- |
@@ -321,7 +329,6 @@ The Makefile exposes several utility targets beyond the core up/down/build cycle
 
 **Host setup is manual.** Every step in *Host setup* above is a command someone runs on the VPS; nothing in this repository applies them or detects drift from them, so a rebuilt server is only as complete as that section.
 
-**Nginx config is not version-controlled.** The reverse proxy configuration lives on the VPS host outside of the repository. Changes are applied manually and are not tracked alongside the application code.
 
 **No resource limits on application containers.** Only the observability services (Prometheus, Loki, Grafana) have CPU and memory limits defined. The application services (frontend, backend, scheduler) do not, which means a runaway process could starve the observability stack on the constrained CX23.
 

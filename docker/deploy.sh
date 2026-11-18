@@ -129,6 +129,21 @@ main() {
     compose restart grafana
   fi
 
+  # Nginx runs on the host, not in Compose, and serves docker/nginx/beyondthearc.conf
+  # through the symlink below. Reloaded only when that symlink points at this
+  # clone — a host still serving a copy of its own is left alone — and only
+  # after `nginx -t` accepts the new file: a config it rejects fails the deploy
+  # while the running Nginx keeps the previous one in memory. The file is
+  # already on disk by then, so a red deploy here needs a fix or a rollback
+  # before anything else reloads Nginx. `sudo -n` never prompts: the deploy
+  # user may run exactly these two commands as root (docs/infrastructure.md).
+  if [ "$(readlink -f /etc/nginx/sites-enabled/beyondthearc)" = "$PWD/docker/nginx/beyondthearc.conf" ] &&
+     ! git diff --quiet "$pre_pull_head" HEAD -- docker/nginx/; then
+    echo "Nginx config changed in this deploy — testing and reloading it"
+    sudo -n /usr/sbin/nginx -t
+    sudo -n /usr/bin/systemctl reload nginx
+  fi
+
   # Fail the deploy if the new containers don't come up healthy — a
   # crash-looping container should be a red pipeline, not a Grafana alert.
   local backend_ok=""
