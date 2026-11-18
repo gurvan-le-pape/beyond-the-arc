@@ -7,3 +7,9 @@ datasources:
   - name: Loki
     type: loki
     url: http://loki:3100
+    # Every alert rule is Grafana-managed (provisioning/alerting/). Loki runs
+    # no ruler (docker/config/loki.yml has no `ruler:` block), so letting
+    # Grafana query it for data-source-managed rules only produces an "Error"
+    # badge on the Alert rules page.
+    jsonData:
+      manageAlerts: false
