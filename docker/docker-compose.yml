@@ -28,8 +28,7 @@ services:
     # Postgres superuser port and an unauthenticated Prometheus one console rule
     # away from the internet — Docker's published-port iptables rules sit in
     # front of host firewalls, so that rule was the *only* control, it lives
-    # outside this repository, and the origin IP is a DNS lookup away
-    # (grafana.beyondthearc.app is deliberately DNS-only).
+    # outside this repository, and the origin IP is in public DNS history.
     #
     # Both loopback addresses, not just 127.0.0.1: /etc/hosts on the VPS maps
     # `localhost` to 127.0.0.1 *and* ::1, and the Nginx config proxies to

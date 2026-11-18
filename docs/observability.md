@@ -216,7 +216,7 @@ Loki runs as user `10001:10001` as required by the official Grafana image and ha
 
 ## Dashboards — Grafana
 
-Grafana is available at `grafana.beyondthearc.app` and serves as the single interface for logs and metrics. Both datasources — Prometheus and Loki — are provisioned automatically from `docker/config/grafana/provisioning/datasources/datasources.yml` on container start, so no manual setup is required after deployment.
+Grafana is available at `grafana.beyondthearc.app`, behind Cloudflare Access (an email one-time PIN before Grafana's own login — see `docs/infrastructure.md`), and serves as the single interface for logs and metrics. Both datasources — Prometheus and Loki — are provisioned automatically from `docker/config/grafana/provisioning/datasources/datasources.yml` on container start, so no manual setup is required after deployment.
 
 ### Dashboards
 
@@ -304,8 +304,6 @@ Verified end to end: stopping the database moves the backend to `unhealthy` afte
 **No distributed tracing.** There is no OpenTelemetry or Tempo integration. For a single-node, single-process backend this is an acceptable omission, but it means there is no unified view of a request crossing the frontend SSR layer and the backend API — only the two log streams and the `x-request-id` that joins them, one query each way.
 
 **The correlation id stops at the API boundary.** It is minted per *backend* request, so the document request the browser made has no id of its own and one page render fans out into several unrelated ids. Nginx has a built-in `$request_id` that could be generated at the edge and passed both upstream and back to the client, which would also give a user something quotable when an SSR render fails — the error boundary never sees the backend's id, since a production build replaces a server-thrown error with a generic message plus a `digest` before the client receives it. That is a change to the Nginx config, which is not version-controlled (see `docs/infrastructure.md`).
-
-**Grafana subdomain leaks the VPS IP.** Because `grafana.beyondthearc.app` is DNS-only (not proxied through Cloudflare), the VPS IP is publicly resolvable via that record. This is a deliberate tradeoff — Cloudflare proxying of WebSocket-heavy Grafana traffic adds latency and complexity — but it means the server IP is not fully hidden.
 
 **Availability now covers the frontend, the backend and the database; the scheduler, Loki, Promtail and Grafana are still unwatched.** `up` covers only what instruments itself (`backend`, `node`, `prometheus`, and the exporter jobs), which is why the healthchecks alone never closed this: a Docker health status is not a metric and nothing read it. The `blackbox-http`/`blackbox-tcp` probes are what closed it, for the three services a user notices first — verified by stopping the frontend container, which took `probe_success` to 0 while every `up` series stayed at 1. The scheduler remains deliberate (`docs/data-pipeline.md`); Grafana's `:3001/metrics` is the obvious next target.
 
