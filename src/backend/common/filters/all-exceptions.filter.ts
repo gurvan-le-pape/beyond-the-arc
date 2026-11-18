@@ -287,7 +287,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
         // 5xx `statusCode`.
         //
         // It is read at **query time**, not by an alert. Nothing routes on it:
-        // all six Grafana rules query Prometheus, and Promtail attaches no
+        // every Grafana rule queries Prometheus, and Promtail attaches no
         // pipeline stage, so `programmerError` is not a Loki label. It does
         // not need to be one — `| json` parses the line and filters on any
         // field, label or not:
