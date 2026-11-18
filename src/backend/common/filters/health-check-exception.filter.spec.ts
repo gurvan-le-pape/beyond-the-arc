@@ -8,19 +8,16 @@ jest.mock("@sentry/nestjs", () => ({
   captureException: jest.fn(),
 }));
 
-function makeLogger() {
-  return {
-    error: jest.fn(),
-    warn: jest.fn(),
-    debug: jest.fn(),
-    info: jest.fn(),
-  };
-}
-
 function makeHost(url = "/api/health") {
-  const mockResponse = {
+  const mockResponse: {
+    status: jest.Mock;
+    json: jest.Mock;
+    locals: Record<string, unknown>;
+    err?: unknown;
+  } = {
     status: jest.fn().mockReturnThis(),
     json: jest.fn(),
+    locals: {},
   };
   const mockRequest = {
     url,
@@ -51,12 +48,10 @@ const TERMINUS_PAYLOAD = {
 
 describe("HealthCheckExceptionFilter", () => {
   let filter: HealthCheckExceptionFilter;
-  let logger: ReturnType<typeof makeLogger>;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    logger = makeLogger();
-    filter = new HealthCheckExceptionFilter(logger as any);
+    filter = new HealthCheckExceptionFilter();
   });
 
   it("responds 503 with the full Terminus result, not a flattened body", () => {
@@ -114,51 +109,42 @@ describe("HealthCheckExceptionFilter", () => {
     expect(Sentry.captureException).not.toHaveBeenCalled();
   });
 
-  it("logs the failure at error level with the health result attached", () => {
+  // The filter writes no line of its own: pino-http's completion line for the
+  // 503 is the record, at `error` from the status, and gains these.
+  it("attaches the health result to the request's own log line", () => {
+    const host = makeHost();
     filter.catch(
       new ServiceUnavailableException(TERMINUS_PAYLOAD),
-      makeHost() as any,
+      host as any,
     );
 
-    expect(logger.error).toHaveBeenCalledTimes(1);
-    const [context, message] = logger.error.mock.calls[0];
-    expect(context).toMatchObject({
-      method: "GET",
-      url: "/api/health",
-      statusCode: 503,
+    expect(host.response.locals.failureLog).toEqual({
       health: TERMINUS_PAYLOAD,
     });
-    expect(message).toContain("health check failed");
   });
 
-  it("logs a constant message and puts the request detail in fields", () => {
-    // `msg` is what Loki groups on, so it must be identical for every poll.
-    // The previous message interpolated method, url and statusCode — all three
-    // already fields on the same object — which made it unique per route and
-    // stopped "which health check is failing" being answerable by grouping.
-    // `toContain` above passes either way; this asserts the whole string.
+  // Serialized, the exception would repeat the health result as
+  // `err.response` on the same line.
+  it("attaches no exception — the health result is the whole story", () => {
+    const host = makeHost();
     filter.catch(
       new ServiceUnavailableException(TERMINUS_PAYLOAD),
-      makeHost("/api/health/ready") as any,
+      host as any,
     );
 
-    expect(logger.error.mock.calls[0][1]).toBe("health check failed");
-    expect(logger.error.mock.calls[0][0]).toMatchObject({
-      url: "/api/health/ready",
-    });
+    expect(host.response.err).toBeUndefined();
   });
 
   it("does not give the request id a second name", () => {
-    // nestjs-pino already binds the id to the request's logger as `req.id`
-    // (`makeHost` sets one). A `traceId` field here would be the same value
-    // under a second name, so a Loki query on either would miss half the
-    // request's lines — the defect #441 removed from AllExceptionsFilter,
-    // which this filter carried because it was written three days earlier.
+    // pino-http already puts the id on the line as `req.id` (`makeHost` sets
+    // one). A `traceId` field would be the same value under a second name, so
+    // a Loki query on either would miss the other.
+    const host = makeHost();
     filter.catch(
       new ServiceUnavailableException(TERMINUS_PAYLOAD),
-      makeHost() as any,
+      host as any,
     );
 
-    expect(logger.error.mock.calls[0][0].traceId).toBeUndefined();
+    expect(host.response.locals.failureLog).not.toHaveProperty("traceId");
   });
 });

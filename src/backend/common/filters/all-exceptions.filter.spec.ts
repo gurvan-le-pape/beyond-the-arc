@@ -12,19 +12,16 @@ jest.mock("@sentry/nestjs", () => ({
 // Helpers
 // ---------------------------------------------------------------------------
 
-function makeLogger() {
-  return {
-    error: jest.fn(),
-    warn: jest.fn(),
-    debug: jest.fn(),
-    info: jest.fn(),
-  };
-}
-
 function makeHost(url = "/test", method = "GET") {
-  const mockResponse = {
+  const mockResponse: {
+    status: jest.Mock;
+    json: jest.Mock;
+    locals: Record<string, unknown>;
+    err?: unknown;
+  } = {
     status: jest.fn().mockReturnThis(),
     json: jest.fn(),
+    locals: {},
   };
   const mockRequest = {
     url,
@@ -43,20 +40,22 @@ function makeHost(url = "/test", method = "GET") {
   };
 }
 
+/** What the filter left for pino-http's completion line to log. */
+function attached(host: ReturnType<typeof makeHost>) {
+  return host.response.locals.failureLog as Record<string, unknown>;
+}
+
 // ---------------------------------------------------------------------------
 // Suite
 // ---------------------------------------------------------------------------
 
 describe("AllExceptionsFilter", () => {
   let filter: AllExceptionsFilter;
-  let logger: ReturnType<typeof makeLogger>;
   const originalEnv = process.env.NODE_ENV;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    logger = makeLogger();
-
-    filter = new AllExceptionsFilter(logger as any);
+    filter = new AllExceptionsFilter();
   });
 
   afterEach(() => {
@@ -116,41 +115,38 @@ describe("AllExceptionsFilter", () => {
       ]);
     });
 
-    it("warns (not errors) for 4xx responses", () => {
+    // A 4xx is not a failure of this service: pino-http logs its line at
+    // `warn` from the status alone, and has no error to report.
+    it("attaches no exception for a 4xx", () => {
       const host = makeHost();
       filter.catch(
         new HttpException("Unauthorized", HttpStatus.UNAUTHORIZED),
         host as never,
       );
-      expect(logger.warn).toHaveBeenCalledTimes(1);
-      expect(logger.error).not.toHaveBeenCalled();
+      expect(host.response.err).toBeUndefined();
     });
 
-    it("errors for 5xx HttpException", () => {
+    it("attaches the exception itself for a 5xx HttpException", () => {
       const host = makeHost();
-      filter.catch(
-        new HttpException("Gateway timeout", HttpStatus.GATEWAY_TIMEOUT),
-        host as never,
+      const exception = new HttpException(
+        "Gateway timeout",
+        HttpStatus.GATEWAY_TIMEOUT,
       );
-      expect(logger.error).toHaveBeenCalledTimes(1);
-      expect(logger.warn).not.toHaveBeenCalled();
+      filter.catch(exception, host as never);
+      // pino-http logs `res.err` in place of the `failed with status code`
+      // error it invents when the response carries none.
+      expect(host.response.err).toBe(exception);
     });
 
-    it("logs a constant message and puts the request detail in fields", () => {
+    it("attaches only the exception message — the request is already on the line", () => {
       const host = makeHost();
       filter.catch(
         new HttpException("Player with ID 999999999 not found", 404),
         host as never,
       );
-
-      // The msg is what Loki groups on, so it must be identical for every
-      // request. Two 404s for different ids must produce the same string.
-      expect(logger.warn.mock.calls[0][1]).toBe("request failed");
-
-      const loggedContext = logger.warn.mock.calls[0][0];
-      expect(loggedContext).toMatchObject({
-        method: "GET",
-        statusCode: 404,
+      // method, url, status and user agent are on pino-http's line already
+      // (`req`, `res`); repeating them here would log a failure twice.
+      expect(attached(host)).toEqual({
         message: "Player with ID 999999999 not found",
       });
     });
@@ -166,9 +162,8 @@ describe("AllExceptionsFilter", () => {
         host as never,
       );
 
-      const loggedContext = logger.warn.mock.calls[0][0];
-      expect(loggedContext).not.toHaveProperty("ip");
-      expect(JSON.stringify(loggedContext)).not.toContain("127.0.0.1");
+      expect(attached(host)).not.toHaveProperty("ip");
+      expect(JSON.stringify(attached(host))).not.toContain("127.0.0.1");
     });
   });
 
@@ -208,11 +203,9 @@ describe("AllExceptionsFilter", () => {
       process.env.NODE_ENV = "production";
       const host = makeHost();
       filter.catch(new Error("secret internal detail"), host as never);
-      // Carried as a field now, not interpolated into msg — the client must not
+      // Carried as a field, not interpolated into msg — the client must not
       // see it, the logs must.
-      const loggedContext = logger.error.mock.calls[0][0];
-      expect(loggedContext.message).toBe("secret internal detail");
-      expect(logger.error.mock.calls[0][1]).toBe("request failed");
+      expect(attached(host).message).toBe("secret internal detail");
     });
   });
 
@@ -236,6 +229,15 @@ describe("AllExceptionsFilter", () => {
       filter.catch("raw string error", host as never);
       const body = host.response.json.mock.calls[0][0];
       expect(body.message).toBe("raw string error");
+    });
+
+    // pino's `err` serializer expects an Error; a bare string would serialize
+    // as nothing useful.
+    it("attaches a thrown string wrapped in an Error", () => {
+      const host = makeHost();
+      filter.catch("raw string error", host as never);
+      expect(host.response.err).toBeInstanceOf(Error);
+      expect((host.response.err as Error).message).toBe("raw string error");
     });
   });
 
@@ -287,30 +289,23 @@ describe("AllExceptionsFilter", () => {
       (_, exception) => {
         const host = makeHost();
         filter.catch(exception, host as never);
-        expect(logger.error).toHaveBeenCalledTimes(1);
-        const loggedContext = logger.error.mock.calls[0][0];
-        expect(loggedContext.programmerError).toBe(true);
+        expect(attached(host).programmerError).toBe(true);
       },
     );
 
     it.each(programmerErrors)(
-      "%s is logged under the constant message, with the detail in fields",
+      "%s is attached itself, so the line carries its stack",
       (_, exception) => {
         const host = makeHost();
         filter.catch(exception, host as never);
-        // The message must not vary per request — see LOG_MESSAGE. What
-        // distinguishes a programmer error is the field, not a msg prefix.
-        expect(logger.error.mock.calls[0][1]).toBe("request failed");
-        expect(logger.error.mock.calls[0][0].programmerError).toBe(true);
+        expect(host.response.err).toBe(exception);
       },
     );
 
     it("does NOT mark a plain Error as a programmer error", () => {
       const host = makeHost();
       filter.catch(new Error("db timeout"), host as never);
-      expect(logger.error).toHaveBeenCalledTimes(1);
-      const loggedContext = logger.error.mock.calls[0][0];
-      expect(loggedContext.programmerError).toBeUndefined();
+      expect(attached(host).programmerError).toBeUndefined();
     });
 
     it("does NOT mark a 5xx HttpException as a programmer error", () => {
@@ -322,8 +317,7 @@ describe("AllExceptionsFilter", () => {
         ),
         host as never,
       );
-      const loggedContext = logger.error.mock.calls[0][0];
-      expect(loggedContext.programmerError).toBeUndefined();
+      expect(attached(host).programmerError).toBeUndefined();
     });
 
     it("does NOT mark SyntaxError as a programmer error (may originate from user input via JSON.parse)", () => {
@@ -332,19 +326,16 @@ describe("AllExceptionsFilter", () => {
         new SyntaxError("Unexpected token u in JSON"),
         host as never,
       );
-      expect(logger.error).toHaveBeenCalledTimes(1);
-      const loggedContext = logger.error.mock.calls[0][0];
-      expect(loggedContext.programmerError).toBeUndefined();
+      expect(attached(host).programmerError).toBeUndefined();
     });
 
     it("does not add a second name for the request id", () => {
       const host = makeHost();
       filter.catch(new Error("boom"), host as never);
-      const loggedContext = logger.error.mock.calls[0][0];
-      // nestjs-pino already binds the id to the request's logger as `req.id`.
-      // A `traceId` field here would be the same value under a second name, so
-      // a Loki query on either one would miss half the request's lines.
-      expect(loggedContext.traceId).toBeUndefined();
+      // pino-http already puts the id on the line as `req.id`. A `traceId`
+      // field would be the same value under a second name, so a Loki query on
+      // either one would miss the other.
+      expect(attached(host).traceId).toBeUndefined();
     });
   });
 

@@ -1,6 +1,9 @@
 // src/backend/common/utils/request-log.util.spec.ts
 import {
+  attachFailureLog,
+  failureLogProps,
   LOGGED_REQUEST_HEADERS,
+  requestLogLevel,
   serializeRequestLog,
 } from "./request-log.util";
 
@@ -107,5 +110,56 @@ describe("serializeRequestLog", () => {
       "content-type",
       "accept",
     ]);
+  });
+});
+
+describe("requestLogLevel", () => {
+  it.each([
+    [200, "info"],
+    [304, "info"],
+    [404, "warn"],
+    [499, "warn"],
+    [500, "error"],
+    [503, "error"],
+  ])("logs a %i at %s", (statusCode, level) => {
+    expect(requestLogLevel({}, { statusCode })).toBe(level);
+  });
+
+  it("logs at error when pino-http saw an error, whatever the status", () => {
+    expect(requestLogLevel({}, { statusCode: 200 }, new Error("x"))).toBe(
+      "error",
+    );
+  });
+});
+
+describe("attachFailureLog / failureLogProps", () => {
+  it("hands the attached fields to the completion line", () => {
+    const res: { locals?: Record<string, unknown>; err?: unknown } = {
+      locals: {},
+    };
+    attachFailureLog(res, { message: "not found" });
+    expect(failureLogProps({}, res)).toEqual({ message: "not found" });
+    expect(res.err).toBeUndefined();
+  });
+
+  // pino-http calls customProps when the request arrives too, before any
+  // filter has attached anything — and before Express has always set `locals`.
+  it("adds nothing to a request no filter touched", () => {
+    expect(failureLogProps({}, { locals: {} })).toEqual({});
+    expect(failureLogProps({}, {})).toEqual({});
+  });
+
+  it("puts the exception on res.err for pino-http to log", () => {
+    const res: { locals?: Record<string, unknown>; err?: unknown } = {};
+    const error = new TypeError("boom");
+    attachFailureLog(res, { message: "boom" }, error);
+    expect(res.err).toBe(error);
+  });
+
+  it("wraps a non-Error throw, which pino's err serializer cannot render", () => {
+    const res: { locals?: Record<string, unknown>; err?: unknown } = {};
+    attachFailureLog(res, { message: "raw" }, "raw");
+    expect(res.err).toBeInstanceOf(Error);
+    expect((res.err as Error).message).toBe("raw");
   });
 });

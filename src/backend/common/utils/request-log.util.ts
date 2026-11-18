@@ -68,3 +68,90 @@ export function serializeRequestLog(
 
   return { id: req.id, method: req.method, url: req.url, headers };
 }
+
+/**
+ * Where an exception filter leaves what it knows about a failed request, for
+ * the request's own completion line to carry.
+ *
+ * A failed request gets **one** log line: pino-http's completion line, which
+ * already holds the method, url, status, response time and request id. The
+ * filters do not log; they attach. A filter's own line would record each
+ * failure twice, and for a 5xx pino-http — finding no `res.err` — would put an
+ * invented `failed with status code 500` error on its line in place of the
+ * real one, so counting error lines would count every failure twice.
+ */
+const FAILURE_LOG_KEY = "failureLog";
+
+interface FailureCarrier {
+  locals?: Record<string, unknown>;
+  err?: unknown;
+}
+
+/**
+ * Attaches a failure's fields — and, for a server error, the exception itself —
+ * to the response, for {@link failureLogProps} and pino-http to log.
+ *
+ * `err` goes on `res.err`, which pino-http reads in place of the synthetic
+ * error it otherwise builds for a 5xx, so the line carries the real type,
+ * message and stack. A non-Error throw (a string) is wrapped, because pino's
+ * `err` serializer expects an Error.
+ *
+ * @param res - the response the failure is being written to
+ * @param fields - the fields the completion line should gain
+ * @param err - the exception, for 5xx failures only
+ */
+export function attachFailureLog(
+  res: FailureCarrier,
+  fields: Record<string, unknown>,
+  err?: unknown,
+): void {
+  res.locals ??= {};
+  res.locals[FAILURE_LOG_KEY] = fields;
+  if (err !== undefined) {
+    res.err = err instanceof Error ? err : new Error(String(err));
+  }
+}
+
+/**
+ * pino-http's `customProps`: the fields a filter attached, or none.
+ *
+ * pino-http calls it twice per request — when the request arrives, before any
+ * filter has run, and when the response finishes. Only the second call finds
+ * anything, so only the completion line gains the fields.
+ *
+ * @param _req - unused; required by pino-http's signature
+ * @param res - the response, possibly carrying a filter's fields
+ * @returns the fields to merge into the log line
+ */
+export function failureLogProps(
+  _req: unknown,
+  res: FailureCarrier,
+): Record<string, unknown> {
+  const fields = res.locals?.[FAILURE_LOG_KEY];
+  return typeof fields === "object" && fields !== null
+    ? (fields as Record<string, unknown>)
+    : {};
+}
+
+/**
+ * pino-http's `customLogLevel`: `error` for a 5xx or an errored response,
+ * `warn` for a 4xx, `info` otherwise.
+ *
+ * pino-http's default logs a 4xx at `info`, indistinguishable by level from a
+ * 200. The completion line is the only line a 4xx produces, so it has to carry
+ * the `warn` that marks it as a failure.
+ *
+ * @param _req - unused; required by pino-http's signature
+ * @param res - the finished response
+ * @param err - an error pino-http observed on the response, if any
+ * @returns the pino level for the completion line
+ */
+export function requestLogLevel(
+  _req: unknown,
+  res: { statusCode: number },
+  err?: unknown,
+): "error" | "warn" | "info" {
+  if (err !== undefined || res.statusCode >= 500) return "error";
+  if (res.statusCode >= 400) return "warn";
+  return "info";
+}

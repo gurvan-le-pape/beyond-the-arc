@@ -6,7 +6,14 @@ import { PrismaModule } from "prisma/prisma.module";
 import { HealthController } from "./health.controller";
 
 @Module({
-  imports: [TerminusModule, PrismaModule],
+  imports: [
+    // `logger: false`: Terminus otherwise writes its own "Health Check has
+    // failed!" line for every failed poll, beside the request's completion
+    // line that already carries the full result as `health` (see
+    // HealthCheckExceptionFilter). One failed poll, one line.
+    TerminusModule.forRoot({ logger: false }),
+    PrismaModule,
+  ],
   controllers: [HealthController],
 })
 export class HealthModule {}
