@@ -1,5 +1,20 @@
+# Every service's stdout/stderr, capped. Docker's default `json-file` driver
+# keeps one file per container with no size limit, under
+# /var/lib/docker/containers — on the root disk, not on the volume that holds
+# /var/lib/docker/volumes. A file only goes away with its container, so a
+# service the deploy never recreates (Loki, Prometheus, Grafana…) grows for as
+# long as it runs. `local` rotates and compresses; 5 × 20 MB per service.
+# Nothing reads these files directly: Promtail tails through the Docker API,
+# which `local` supports, and Loki holds the 31-day history.
+x-logging: &logging
+  driver: local
+  options:
+    max-size: 20m
+    max-file: "5"
+
 services:
   frontend:
+    logging: *logging
     build:
       context: ../
       dockerfile: docker/frontend/Dockerfile
@@ -75,6 +90,7 @@ services:
       - my_network
 
   backend:
+    logging: *logging
     build:
       context: ../
       dockerfile: docker/backend/Dockerfile
@@ -133,6 +149,7 @@ services:
   # scheduler only start after it succeeds, so they never run against a
   # database whose schema is behind the code.
   migrate:
+    logging: *logging
     build:
       context: ../
       dockerfile: docker/backend/Dockerfile
@@ -147,6 +164,7 @@ services:
       - my_network
 
   database:
+    logging: *logging
     image: postgres:18
     environment:
       POSTGRES_USER: ${DATABASE_USER}
@@ -174,6 +192,7 @@ services:
       - my_network
 
   scheduler:
+    logging: *logging
     build:
       context: ../
       dockerfile: docker/python-script/Dockerfile
@@ -187,6 +206,7 @@ services:
       - my_network
 
   prometheus:
+    logging: *logging
     image: prom/prometheus:latest
     # Loopback only — see the frontend service. Prometheus has no authentication
     # of any kind, and it scrapes over my_network rather than through this port.
@@ -209,6 +229,7 @@ services:
           memory: 512M
 
   loki:
+    logging: *logging
     image: grafana/loki:latest
     user: "10001:10001"
     volumes:
@@ -225,6 +246,7 @@ services:
           memory: 512M
 
   promtail:
+    logging: *logging
     image: grafana/promtail:latest
     volumes:
       - /var/log:/var/log:ro
@@ -238,6 +260,7 @@ services:
       - loki
 
   grafana:
+    logging: *logging
     image: grafana/grafana:latest
     # Loopback only — see the frontend service. Nginx terminates TLS for
     # grafana.beyondthearc.app and proxies here.
@@ -279,6 +302,7 @@ services:
           memory: 512M
 
   node-exporter:
+    logging: *logging
     image: prom/node-exporter:latest
     volumes:
       - /proc:/host/proc:ro
@@ -301,6 +325,7 @@ services:
   # No port published. It is scraped by Prometheus over my_network, like every
   # other exporter here, and it has no authentication.
   blackbox-exporter:
+    logging: *logging
     image: prom/blackbox-exporter:latest
     volumes:
       - ./config/blackbox.yml:/etc/blackboxexporter/config.yml:ro

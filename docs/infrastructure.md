@@ -16,7 +16,7 @@ All services share a single Docker bridge network (`my_network`) and communicate
 
 The server is a **Hetzner CX23** (2 vCPU, 4GB RAM, 40GB local disk) located in Nuremberg, Germany (eu-central). It runs Ubuntu and hosts all application and observability containers.
 
-Docker's named volumes live on a separate **89 GB Hetzner volume** mounted at `/var/lib/docker/volumes`, so the database, logs and metrics grow on that disk, not on the root one. The root disk holds the OS, the images and the containers' writable layers; image buildup is what filled it before (see the deploy prune in [`ci-cd.md`](./ci-cd.md)). Check both with `df -h / /var/lib/docker/volumes`.
+Docker's named volumes live on a separate **89 GB Hetzner volume** mounted at `/var/lib/docker/volumes`, so the database, Loki's log store and metrics grow on that disk, not on the root one. The root disk holds the OS, the images, the containers' writable layers and the containers' own stdout/stderr logs (`/var/lib/docker/containers`); image buildup is what filled it before (see the deploy prune in [`ci-cd.md`](./ci-cd.md)). Those stdout logs are capped per service by the `x-logging` block in `docker/docker-compose.yml` (`local` driver, 5 × 20 MB): Docker's default keeps them unbounded until the container is removed, and the deploy never recreates the observability services. Check both disks with `df -h / /var/lib/docker/volumes`.
 
 Two independent controls keep the Docker service ports (3000, 4000, 5432, 9090, 3001) off the internet, and it takes both:
 
