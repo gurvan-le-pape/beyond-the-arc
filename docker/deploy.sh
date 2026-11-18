@@ -91,6 +91,14 @@ main() {
     echo "Prometheus or blackbox config changed in this deploy — restarting both to load it"
     compose restart blackbox-exporter prometheus
   fi
+  # Loki and Promtail likewise read their config only at startup. Loki first:
+  # a Promtail restarted against a Loki that is going down retries until it
+  # is back, and loses nothing — Docker still holds the lines, and Loki drops
+  # entries it already stored.
+  if ! git diff --quiet "$pre_pull_head" HEAD -- docker/config/loki.yml docker/config/promtail.yml; then
+    echo "Loki or Promtail config changed in this deploy — restarting both to load it"
+    compose restart loki promtail
+  fi
   # Grafana reads provisioning/alerting/*.yml and provisioning/datasources/
   # only at startup, and the same configuration-hash rule applies. Conditional
   # rather than unconditional because a restart restarts the `for:` clocks,
