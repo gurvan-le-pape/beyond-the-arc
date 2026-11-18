@@ -98,14 +98,14 @@ Merge requests only. Lints the `migration.sql` files the merge request adds for 
 
 ### backend-integration
 
-Runs the suites under `src/backend/test/integration` against a `postgres:18` service: `prisma migrate deploy` builds the schema from the migrations, so the CHECK constraints and indexes under test are the ones production runs. The unit run excludes these suites and needs no database.
+Runs the suites under `src/backend/test/integration` against a `postgres:18.4` service, the version production runs. `prisma migrate deploy` builds the schema from the migrations, so the CHECK constraints and indexes under test are the ones production runs. The unit run excludes these suites and needs no database.
 
 `match-constraints` and `team-constraints` drive the CHECK constraints and keys with SQL, each test in a transaction it rolls back. `list-queries` runs the list services through real Prisma, and `box-score-reads` the services that read box scores, on fixtures they commit and remove. `it.failing` marks known bugs: such a test fails the suite once the behaviour is fixed, so it has to become a plain `it`.
 
 To run them locally, against a throwaway database:
 
 ```bash
-docker run -d --rm --name integ-pg -e POSTGRES_PASSWORD=test -e POSTGRES_DB=beyondthearc_test -p 55434:5432 postgres:18
+docker run -d --rm --name integ-pg -e POSTGRES_PASSWORD=test -e POSTGRES_DB=beyondthearc_test -p 55434:5432 postgres:18.4
 cd src/backend
 export DATABASE_URL=postgres://postgres:test@localhost:55434/beyondthearc_test
 npx prisma migrate deploy && npm run test:integration
@@ -116,7 +116,7 @@ The harness refuses a database whose name does not end in `_test`, so a stray `D
 
 ### backend-boot
 
-Builds the `prod` and `migrate` targets of `docker/backend/Dockerfile` on the host Docker daemon, migrates a throwaway `postgres:18`, starts the production image and requests `/api/health/live` and `/api/leagues` (`scripts/ci/backend-boot-check.sh`). A container that exits or doesn't answer within 60 s fails the job, which prints its logs.
+Builds the `prod` and `migrate` targets of `docker/backend/Dockerfile` on the host Docker daemon, migrates a throwaway `postgres:18.4`, starts the production image and requests `/api/health/live` and `/api/leagues` (`scripts/ci/backend-boot-check.sh`). A container that exits or doesn't answer within 60 s fails the job, which prints its logs.
 
 This is the only check that runs what ships. Every other job has dev dependencies installed and none starts the app, so they miss a crash at startup, a package missing from the production dependencies and a file the `prod` stage strips by hand.
 

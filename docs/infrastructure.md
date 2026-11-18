@@ -143,6 +143,8 @@ In production, the base and prod files are merged instead. The prod override rep
 
 A `Makefile` wraps these commands for convenience — `make up-dev`, `make up-prod`, `make down`, and so on.
 
+Every third-party image in the base file names an exact version (`postgres:18.4`, `grafana/grafana:13.0.13`, `prom/prometheus:v3.11.2`…), never `latest` or a bare major. The deploy pulls only the four application images, so a floating tag is not upgraded by deploys but by whichever later `pull` or server rebuild happens to run — a version nobody chose, at a time nobody picked. An upgrade is an MR that changes the tag; the deploy's `up -d` recreates the service on it. The CI's integration and boot-check Postgres use the same `postgres:18.4`, so tests run the version production does. Promtail is end-of-life upstream (superseded by Grafana Alloy) and stays pinned at its last 3.6 release until it is replaced.
+
 ---
 
 ## Services
@@ -165,7 +167,7 @@ The backend depends on `database` and receives `DATABASE_URL`, `FRONTEND_URL`, a
 
 ### database
 
-The official `postgres:18` image, unmodified. Schema and static reference data are applied by the `migrate` service (below), not by the database container — standing up the stack for the first time still produces a fully seeded database with no additional steps, but the mechanism is Prisma Migrate rather than init scripts, so it also works against an *existing* database.
+The official `postgres:18.4` image, unmodified. Schema and static reference data are applied by the `migrate` service (below), not by the database container — standing up the stack for the first time still produces a fully seeded database with no additional steps, but the mechanism is Prisma Migrate rather than init scripts, so it also works against an *existing* database.
 
 Data is persisted in a `postgres_data` named volume. In production this volume is declared `external: true`, which prevents `docker-compose down` or `docker-compose up --build` from recreating it. The volume must be created manually on the VPS before first deployment — this is a deliberate safeguard against accidental data loss.
 

@@ -165,7 +165,7 @@ services:
 
   database:
     logging: *logging
-    image: postgres:18
+    image: postgres:18.4
     environment:
       POSTGRES_USER: ${DATABASE_USER}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
@@ -207,7 +207,7 @@ services:
 
   prometheus:
     logging: *logging
-    image: prom/prometheus:latest
+    image: prom/prometheus:v3.11.2
     # Loopback only — see the frontend service. Prometheus has no authentication
     # of any kind, and it scrapes over my_network rather than through this port.
     ports:
@@ -230,7 +230,7 @@ services:
 
   loki:
     logging: *logging
-    image: grafana/loki:latest
+    image: grafana/loki:3.7.1
     user: "10001:10001"
     volumes:
       - ./config/loki.yml:/etc/loki/config.yml
@@ -247,7 +247,7 @@ services:
 
   promtail:
     logging: *logging
-    image: grafana/promtail:latest
+    image: grafana/promtail:3.6.8
     volumes:
       - /var/log:/var/log:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -261,7 +261,7 @@ services:
 
   grafana:
     logging: *logging
-    image: grafana/grafana:latest
+    image: grafana/grafana:13.0.13
     # Loopback only — see the frontend service. Nginx terminates TLS for
     # grafana.beyondthearc.app and proxies here.
     ports:
@@ -303,7 +303,7 @@ services:
 
   node-exporter:
     logging: *logging
-    image: prom/node-exporter:latest
+    image: prom/node-exporter:v1.11.1
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
@@ -326,7 +326,7 @@ services:
   # other exporter here, and it has no authentication.
   blackbox-exporter:
     logging: *logging
-    image: prom/blackbox-exporter:latest
+    image: prom/blackbox-exporter:v0.28.0
     volumes:
       - ./config/blackbox.yml:/etc/blackboxexporter/config.yml:ro
     command:
