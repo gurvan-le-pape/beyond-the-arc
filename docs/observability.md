@@ -12,7 +12,7 @@ The observability stack is built from five tools that cover different concerns:
 | --------------- | ------------------ | ----------------------------------- |
 | Structured logs | Pino + nestjs-pino | Backend only                        |
 | Error tracking  | Sentry             | Frontend and backend, independently |
-| Metrics         | Prometheus         | Backend + host (node-exporter)      |
+| Metrics         | Prometheus         | Backend + host (node-exporter) + containers (cAdvisor) |
 | Log aggregation | Loki + Promtail    | All containers                      |
 | Dashboards      | Grafana            | Metrics and logs unified            |
 | Alerting        | Grafana Alerting   | Email via Gmail SMTP                |
@@ -155,7 +155,7 @@ The frontend DSN is a literal in each of the three init files. A DSN identifies 
 
 ## Metrics — Prometheus
 
-Prometheus scrapes every 15 seconds and retains data for 15 days (`--storage.tsdb.retention.time=15d`). It scrapes the backend, `node-exporter` for host-level metrics, and itself, and it probes the frontend, the backend's health route and Postgres through `blackbox-exporter`.
+Prometheus scrapes every 15 seconds and retains data for 15 days (`--storage.tsdb.retention.time=15d`). It scrapes the backend, `node-exporter` for host-level metrics, `cadvisor` for per-container metrics, and itself, and it probes the frontend, the backend's health route and Postgres through `blackbox-exporter`.
 
 ### Backend metrics
 
@@ -167,14 +167,23 @@ The route sits outside the `/api` global prefix and is not published by Nginx, s
 
 `node-exporter` runs as a sidecar service and exposes CPU, memory, disk, and network metrics from the host. It mounts `/proc`, `/sys`, and the root filesystem read-only. It has no exposed port — Prometheus reaches it internally by service name.
 
+### Container metrics — cAdvisor
+
+`cadvisor` exposes CPU and memory **per container**, which nothing else measures: `node-exporter` sees the host as a whole and the backend reports only its own process. It is what container limits are sized from — the *Max* of each service's working set over several days, not a one-off `docker stats` — and its `container_oom_events_total` is the only record of a process killed for exceeding its limit.
+
+Every series carries the Compose service as `container_label_com_docker_compose_service` (`backend`, `database`, …); filter on it rather than on `name`, which changes when Compose recreates a container. Containers without that label — the cAdvisor root cgroup `id="/"`, anything started outside Compose — carry it empty, and every panel excludes them with `!=""`.
+
+Its defaults are trimmed for a two-core host: housekeeping every 15 s instead of every second, Docker containers only, one container label kept instead of all of them, and every metric group but CPU, memory and OOM events switched off (`--disable_metrics` in `docker-compose.yml`). Measured locally with exactly those flags: ~19 MB of memory and ~280 series in total. It runs unprivileged — `/dev/kmsg` is passed as a device for the OOM events — under a 128 MB / 0.25 CPU limit, and mounts the Docker socket through `/var/run` like Promtail: a read-only bind does not make a socket read-only. It logs `Failed to get system UUID: open /etc/machine-id` at startup; that only fills the `machine_id` label nothing here reads.
+
 ### Prometheus config
 
-`docker/config/prometheus.yml` defines five scrape jobs, all on the global 15-second interval:
+`docker/config/prometheus.yml` defines six scrape jobs, all on the global 15-second interval:
 
 | job             | target                                              | notes                                         |
 | --------------- | --------------------------------------------------- | --------------------------------------------- |
 | `backend`       | `backend:4000/metrics`                              | the application's own counters and histograms  |
 | `node`          | `node-exporter:9100`                                | host CPU, memory, disk, network                |
+| `cadvisor`      | `cadvisor:8080`                                     | per-container CPU, memory, OOM kills           |
 | `prometheus`    | `localhost:9090`                                    | Prometheus scraping itself                     |
 | `blackbox-http` | `frontend:3000/`, `backend:4000/api/health`         | availability probes, via `blackbox-exporter`   |
 | `blackbox-tcp`  | `database:5432`                                     | TCP handshake only — Postgres speaks no HTTP   |
@@ -222,7 +231,7 @@ Grafana is available at `grafana.beyondthearc.app`, behind Cloudflare Access (an
 
 Dashboards are provisioned as code from `docker/config/grafana/provisioning/dashboards/`. They are committed to the repository and loaded automatically, meaning they survive container recreation without manual export or re-import.
 
-There is **one** dashboard, `backend-overview.json`, titled *Backend Overview*. It holds nine panels:
+There are **two** dashboards. `backend-overview.json`, titled *Backend Overview*, holds nine panels:
 
 | Panel             | Source     | Query                                                                                                                                          |
 | ----------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -237,6 +246,18 @@ There is **one** dashboard, `backend-overview.json`, titled *Backend Overview*. 
 | Host Disk Usage   | Prometheus | `(node_filesystem_size_bytes{mountpoint="/"} - node_filesystem_avail_bytes{mountpoint="/"}) / node_filesystem_size_bytes{mountpoint="/"} * 100` |
 
 Two things about that table are load-bearing rather than incidental. **The Backend Logs panel carries no line filter.** It streams every backend line and leans on `detected_level` (see Log format above) to distinguish them. A `|= "error"` would not do what it looks like it does on JSON output: it matches any line containing that word anywhere — a URL, a message, a header — while matching no pino error line by virtue of its level, since the level is a field rather than the literal text. And **Host Disk Usage is the *Disk Full* alert's own expression and selector, scaled to a percentage**, so the panel and the alert cannot report different numbers for the same filesystem; each host panel also draws its alert threshold as a dashed line.
+
+`containers.json`, titled *Containers*, reads cAdvisor, one line per Compose service:
+
+| Panel                           | Query (`S` = `container_label_com_docker_compose_service`)                                        |
+| ------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Memory (working set) by service | `sum by (S) (container_memory_working_set_bytes)`                                                 |
+| Memory as % of limit            | working set ÷ `container_spec_memory_limit_bytes > 0` — services with a memory limit only           |
+| CPU by service (cores)          | `sum by (S) (rate(container_cpu_usage_seconds_total[5m]))`                                        |
+| CPU throttling                  | throttled ÷ total `container_cpu_cfs_*periods_total` rates — services with a CPU limit only         |
+| OOM kills                       | `sum by (S) (increase(container_oom_events_total[15m]))`                                          |
+
+Its legend shows *last* and *max* per service, so the peak a limit has to fit is read straight off the memory panel. Unlike Backend Overview it is a classic-schema dashboard (`panels` at the top level), which file provisioning still loads in Grafana 13. Checked end to end against a local cAdvisor, Prometheus and `grafana/grafana:13.0.13`: the dashboard loaded and every panel query returned data, the two limit panels confirmed with a container capped at 64 MB / 0.1 CPU (45% of limit, 100% throttled).
 
 `backend-overview.json` is a **schema v2 document** (`apiVersion: dashboard.grafana.app/v2`): panels live in `spec.elements` and their placement in a separate `spec.layout`. Adding a panel means writing both — an element with no `GridLayoutItem` does not render, and an invalid document is dropped silently at provisioning time. Load an edit into a running Grafana and read it back before trusting it.
 

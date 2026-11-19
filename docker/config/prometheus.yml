@@ -15,7 +15,13 @@ scrape_configs:
     static_configs:
       - targets: ["node-exporter:9100"]
 
-  # Availability probes. The three jobs above scrape services that instrument
+  # Per-container CPU and memory, labelled by Compose service
+  # (container_label_com_docker_compose_service).
+  - job_name: "cadvisor"
+    static_configs:
+      - targets: ["cadvisor:8080"]
+
+  # Availability probes. The four jobs above scrape services that instrument
   # themselves; these two ask a service that does not whether it answers at all.
   #
   # The relabel dance is how blackbox works and is not optional: the scrape
