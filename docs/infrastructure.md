@@ -209,6 +209,10 @@ Resource limit: 0.5 CPU / 512MB RAM, with `GOMEMLIMIT=400MiB`. **The two belong 
 
 Exposes host-level metrics (CPU, memory, disk, network) to Prometheus. Mounts `/proc`, `/sys`, and the root filesystem read-only. Has no exposed port — Prometheus scrapes it internally by service name.
 
+### cadvisor
+
+Exposes per-container CPU, memory and OOM-kill metrics to Prometheus, labelled by Compose service. Runs unprivileged with `/dev/kmsg` passed as a device, mounts `/`, `/sys`, `/var/lib/docker` and `/var/run` (the Docker socket) read-only, and is capped at 128 MB / 0.25 CPU. No exposed port. See `docs/observability.md` for what it measures and how it is trimmed.
+
 ### blackbox-exporter
 
 Probes services that expose no metrics of their own, which is the only way they can be monitored at all: the frontend, the database and (were it ever added) the scheduler. Prometheus hands it a target per scrape and it reports `probe_success` — an HTTP GET for the frontend and the backend's `/api/health`, a TCP handshake for Postgres. Configuration is mounted from `docker/config/blackbox.yml`; no exposed port, scraped internally by service name.
@@ -332,6 +336,6 @@ The Makefile exposes several utility targets beyond the core up/down/build cycle
 **Host setup is manual.** Every step in *Host setup* above is a command someone runs on the VPS; nothing in this repository applies them or detects drift from them, so a rebuilt server is only as complete as that section.
 
 
-**No resource limits on application containers.** Only the observability services (Prometheus, Loki, Grafana) have CPU and memory limits defined. The application services (frontend, backend, scheduler) do not, which means a runaway process could starve the observability stack on the constrained CX23.
+**No resource limits on application containers.** Only the observability services (Prometheus, Loki, Grafana, cAdvisor) have CPU and memory limits defined. The application services (frontend, backend, scheduler) do not, which means a runaway process could starve the observability stack on the constrained CX23.
 
 **Cloudflare's ranges are two hand-kept copies.** The firewall's 80/443 rules and `docker/nginx/cloudflare-realip.conf` both list Cloudflare's IP ranges as they stood on 2026-11-18, and nothing checks either against https://www.cloudflare.com/ips/. A range Cloudflare adds later would see its traffic to the origin refused by the firewall — a partial outage with no error on our side — and, once the firewall is updated, logged under the edge's address until the Nginx file is too.

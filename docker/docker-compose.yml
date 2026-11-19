@@ -316,6 +316,44 @@ services:
     networks:
       - my_network
 
+  # Per-container CPU and memory, which nothing else measures: node-exporter
+  # sees the host as a whole and the backend reports only its own process. It
+  # is what sizes container limits from observed peaks rather than a guess, and
+  # its container_oom_events_total is how an OOM kill becomes visible.
+  #
+  # Trimmed hard, because its defaults cost more than this host should pay:
+  # housekeeping every 15s (the default is 1s, scraped every 15s anyway), Docker
+  # containers only, the metric groups below switched off, and one label kept —
+  # the Compose service name — instead of every container label.
+  #
+  # Reads the Docker socket through /var/run, like promtail: a read-only bind
+  # does not make a socket read-only, so this container can drive the Docker
+  # API. No port published; Prometheus scrapes it over my_network.
+  cadvisor:
+    logging: *logging
+    image: ghcr.io/google/cadvisor:v0.60.6
+    command:
+      - "--docker_only=true"
+      - "--housekeeping_interval=15s"
+      - "--store_container_labels=false"
+      - "--whitelisted_container_labels=com.docker.compose.service"
+      - "--disable_metrics=advtcp,app,cpuLoad,cpu_topology,cpuset,disk,diskIO,hugetlb,memory_numa,network,percpu,perf_event,pressure,process,referenced_memory,resctrl,sched,tcp,udp"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    devices:
+      - /dev/kmsg
+    restart: unless-stopped
+    networks:
+      - my_network
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 128M
+
   # Availability probing for the services that expose no metrics of their own —
   # the frontend, the database, the scheduler. `up` only ever covered the three
   # scraped targets, so until now a dead frontend produced no series change and
