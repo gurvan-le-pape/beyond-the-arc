@@ -40,6 +40,12 @@ services:
   grafana:
     environment:
       - GF_SERVER_ROOT_URL=${GRAFANA_ROOT_URL}
+      # Production only: Grafana is served over HTTPS here, and a Secure session
+      # cookie would break the login over plain HTTP locally.
+      - GF_SECURITY_COOKIE_SECURE=true
+      # The legacy XSS filter is off on the main site too (X-XSS-Protection: 0);
+      # Grafana sends "1; mode=block" unless told not to.
+      - GF_SECURITY_X_XSS_PROTECTION=false
 
 volumes:
   postgres_data:
