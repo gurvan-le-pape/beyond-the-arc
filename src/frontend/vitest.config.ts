@@ -29,6 +29,13 @@ export default defineConfig({
   test: {
     coverage: {
       provider: "v8",
+      // lcov for the sonarcloud job, with paths from the repository root
+      // (`src/frontend/app/…`): Sonar resolves them from there, and a path
+      // relative to this directory matches no file. text-summary for a person.
+      reporter: [
+        ["lcov", { projectRoot: path.resolve(__dirname, "../..") }],
+        "text-summary",
+      ],
       include: ["app/**", "features/**", "lib/**", "shared/**"],
       exclude: ["**/*.spec.*", "**/index.ts", "**/types/**", "**/*.d.ts"],
     },

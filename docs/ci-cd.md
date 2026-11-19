@@ -144,9 +144,9 @@ Lint output no longer shows baselined violations. `eslint-suppressions.json` is 
 
 ### sonarcloud
 
-`sonar-scanner` (`sonarsource/sonar-scanner-cli:11`) with full git history (`GIT_DEPTH: 0`) and the backend coverage artifact. Configuration lives in `sonar-project.properties`. `allow_failure: true` and absent from `deploy`'s `needs:` — a failed quality gate reports without blocking a release.
+`sonar-scanner` (`sonarsource/sonar-scanner-cli:11`) with full git history (`GIT_DEPTH: 0`) and both coverage artifacts, from `backend-test` and `frontend-test`. Configuration lives in `sonar-project.properties`. `allow_failure: true` and absent from `deploy`'s `needs:` — a failed quality gate reports without blocking a release.
 
-**The frontend is excluded from coverage, deliberately.** Only the backend produces an lcov report, so without the exclusion every frontend line counts as uncovered and the gate's `new_coverage >= 80` condition fails on every merge request touching the frontend — a check that can never be green cannot report a regression in the conditions that do work. `sonar-project.properties` states the removal condition inline.
+**The frontend is measured.** `frontend-test` runs Vitest with `--coverage` and keeps `src/frontend/coverage/lcov.info`, whose paths start at the repository root (`src/frontend/app/…`) because that is where Sonar resolves them. Its harness renders components and hooks, so a merge request's new frontend lines can meet `new_coverage >= 80` like the backend's. Sonar's frontend coverage scope matches what Vitest measures — `app/`, `features/`, `lib/`, `shared/` — by excluding the root-level bootstrap and config files and the test support (`testing/`, `*Fixtures.ts`); `sonar-project.properties` gives the reasoning inline.
 
 ### deploy
 

@@ -167,7 +167,13 @@ frontend-test:
     APP_DIR: src/frontend
   script:
     - cd src/frontend
-    - npm run test
+    - npm run test -- --coverage
+  artifacts:
+    # Consumed by the sonarcloud job. vitest.config.ts writes the paths from
+    # the repository root, which is where Sonar resolves them.
+    paths:
+      - src/frontend/coverage/lcov.info
+    expire_in: 1 week
 
 frontend-build:
   stage: check
@@ -469,6 +475,8 @@ sonarcloud:
     entrypoint: [""]
   needs:
     - job: backend-test
+      artifacts: true
+    - job: frontend-test
       artifacts: true
   variables:
     GIT_DEPTH: 0
