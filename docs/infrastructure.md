@@ -280,7 +280,7 @@ Those two commands exactly, nothing else. It grants nothing `deploy` lacks — t
 | `beyondthearc.app/api/`     | `localhost:4000/api/` (backend) |
 | `grafana.beyondthearc.app/` | `localhost:3001` (Grafana)      |
 
-All HTTP traffic is redirected to HTTPS. Security headers are set on the main app server block, so they cover both the frontend and the API: `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Strict-Transport-Security`, `Referrer-Policy: strict-origin-when-cross-origin`, `X-XSS-Protection: 0` (the legacy filter is switched off, as current browsers recommend) and a `Content-Security-Policy`:
+All HTTP traffic is redirected to HTTPS. Security headers are set on the main app server block, so they cover both the frontend and the API, and every one carries `always`, so error responses (a 404 from the API, a 502 while a container restarts) get them too — without it Nginx adds a header to 2xx and 3xx responses only: `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Strict-Transport-Security`, `Referrer-Policy: strict-origin-when-cross-origin`, `X-XSS-Protection: 0` (the legacy filter is switched off, as current browsers recommend) and a `Content-Security-Policy`:
 
 ```
 default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';
