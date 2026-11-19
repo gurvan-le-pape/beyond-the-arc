@@ -4,13 +4,18 @@ import path from "node:path";
 import { defineConfig } from "vitest/config";
 
 /**
- * Unit-test setup for the frontend's pure-TS modules (zone predicates, data
- * transforms).
+ * Two kinds of test, told apart by extension so a spec never has to say which
+ * it is:
  *
- * The one thing this must do is make `@/` resolve the way the app's tsconfig
- * `paths` do, because the modules under test import each other through it.
- * Tests live next to the code as `*.spec.ts` and run in the `node`
- * environment — nothing here needs a DOM.
+ * - `*.spec.ts` — pure TypeScript (derivations, geometry, the contrast check),
+ *   in the `node` environment. Nothing there needs a DOM, and node starts in a
+ *   fraction of jsdom's time.
+ * - `*.spec.tsx` — components and hooks, in `jsdom`, with Testing Library's
+ *   matchers and an unmount after every test (`vitest.setup.ts`).
+ *
+ * Both need `@/` to resolve the way the app's tsconfig `paths` do. JSX is
+ * compiled with the automatic runtime: the app's tsconfig says `preserve`
+ * because Next compiles it, and a test has no Next.
  */
 export default defineConfig({
   resolve: {
@@ -18,7 +23,37 @@ export default defineConfig({
       "@": path.resolve(__dirname, "."),
     },
   },
+  oxc: {
+    jsx: { runtime: "automatic" },
+  },
   test: {
-    environment: "node",
+    coverage: {
+      provider: "v8",
+      include: ["app/**", "features/**", "lib/**", "shared/**"],
+      exclude: ["**/*.spec.*", "**/index.ts", "**/types/**", "**/*.d.ts"],
+    },
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: "node",
+          include: ["**/*.spec.ts"],
+          environment: "node",
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "dom",
+          include: ["**/*.spec.tsx"],
+          environment: "jsdom",
+          setupFiles: ["./vitest.setup.ts"],
+          // next-intl's ESM build imports `next/navigation` with no extension,
+          // which Node cannot resolve: `next` publishes no `exports` map.
+          // Inlined, it goes through Vite's resolver, which can.
+          server: { deps: { inline: ["next-intl"] } },
+        },
+      },
+    ],
   },
 });

@@ -136,7 +136,7 @@ Pages (`app/`) sit above every layer and compose sections from any feature. When
 | Utils files | camelCase `.ts` (`.tsx` allowed for JSX helpers) | `eventHelpers.ts` |
 | Shared view types / API alias files | PascalCase `.ts` in `types/` | `MatchFilters.ts` |
 | Component-private types | `types.ts` in the composite folder | `match-card/types.ts` |
-| Tests | colocated `x.spec.ts`, beside the module | `shared/utils/teamName.spec.ts` |
+| Tests | colocated `x.spec.ts` (pure TS) or `X.spec.tsx` (renders), beside the module | `shared/utils/teamName.spec.ts`, `ChampionshipMatrix.spec.tsx` |
 
 Hooks that return JSX (e.g. table column factories) are `.tsx` but still follow `useX` naming and the placement rules above.
 
@@ -287,7 +287,12 @@ And a constraint documented in `docs/` but not on the component is documented wh
 
 ## Tests
 
-Tests are **Vitest**, run by `npm run test` and by the `frontend-test` CI job. Each is a `*.spec.ts` colocated with the module it tests, mirroring the backend, and runs in the `node` environment (`vitest.config.ts`): there is no DOM and no JSX transform, so what gets tested is **pure TypeScript** — the data derivations, geometry and rules that components call (`matchWinner`, `shotSummary`, the shot-zone predicates). That is one more reason to split along [When to split](#when-to-split): logic moved out of a component into a `.ts` module becomes testable.
+Tests are **Vitest**, run by `npm run test` and by the `frontend-test` CI job, each colocated with the module it tests. The extension picks the environment (`vitest.config.ts` defines one project per kind), so a spec never declares it:
+
+- **`*.spec.ts` — pure TypeScript, in `node`.** The data derivations, geometry and rules that components call (`matchWinner`, `shotSummary`, the shot-zone predicates). Fastest to write and to run, which is one more reason to split along [When to split](#when-to-split): logic moved out of a component into a `.ts` module is testable without rendering anything.
+- **`*.spec.tsx` — components and hooks, in `jsdom`**, with Testing Library (`@testing-library/react`, `user-event`) and its `jest-dom` matchers, set up in `vitest.setup.ts`. Query the way a user finds things — by role and accessible name — rather than by class or test id, so a test survives a restyle and fails when the accessibility does.
+
+A component that reads copy renders through `renderWithIntl` (`testing/renderWithIntl.tsx`): the real `messages/<locale>` catalogue, the time zone pinned, and a missing message thrown rather than rendered as its key. Assert on the English copy unless the test is about the French one. `@/navigation`'s `Link` renders as-is — its `href` carries the locale prefix (`/en/championships/4`), which is worth asserting.
 
 `styles/contrast.spec.ts` is the one test over the stylesheet rather than code: it reads every colour token in the three themes and fails CI on any promised text/background pair below its WCAG floor. See the design system section of [`frontend.md`](./frontend.md#design-system).
 
