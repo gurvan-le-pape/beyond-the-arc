@@ -223,7 +223,7 @@ The pipeline's CI/CD variables — VPS access, the pinned host key, the registry
 
 Every deploy pushes each image with two tags: `latest` and the git commit SHA. `docker-compose.prod.yml` references `${IMAGE_TAG:-latest}`, and the deploy script persists `IMAGE_TAG=<git sha>` into the VPS `.env` — so production always runs a pinned, recorded image, and a later manual `compose up` cannot silently jump to a newer `latest`.
 
-**Rollback** — GitLab → **Operate → Environments → production**, then **Rollback** on the deployment to return to. That re-runs the deploy job of that commit's pipeline (`ci_forward_deployment_rollback_allowed`, on by default), and because the script resets the server's clone to the job's SHA, the commit's **images, Compose files and configs come back together**; the conditional restarts compare against the commit being left, so a config the rollback reverts is reloaded. Returning to the latest is the same button on the newest deployment.
+**Rollback** — GitLab → **Operate → Environments → production**, then **Rollback** on the deployment to return to. That re-runs the deploy job of that commit's pipeline (`ci_forward_deployment_rollback_allowed`, on by default), and because the script resets the server's clone to the job's SHA, the commit's **images, Compose files and configs — the Nginx site included — come back together**; the conditional restarts compare against the commit being left, so a config the rollback reverts is reloaded. Returning to the latest is the same button on the newest deployment.
 
 The job rebuilds that commit's four images before deploying them. The runner's long-lived layer cache usually makes that quick, but it is a pipeline job, not an instant switch. When minutes matter, the same rollback runs directly on the VPS — the images are still in the registry, and the stored login is reused:
 
@@ -231,10 +231,9 @@ The job rebuilds that commit's four images before deploying them. The runner's l
 bash /opt/beyondthearc/docker/deploy.sh <previous-sha> registry.gitlab.com <deploy-token-user>
 ```
 
-Two things a rollback does not undo:
+One thing a rollback does not undo:
 
 - **Database migrations.** `prisma migrate deploy` only moves forward. Rolling the images back past a migration runs the old code against the new schema; a migration that drops or renames something the old code reads needs its own revert migration, shipped forward.
-- **Nginx** — not in this repository at all, so there is no committed previous version to return to and `git checkout` cannot reach it. It runs on the host from `/etc/nginx/sites-available/beyondthearc`; reverting means editing that file directly, then `nginx -t && systemctl reload nginx` as root. See [*Nginx config is not version-controlled*](./infrastructure.md#known-limitations).
 
 ---
 
