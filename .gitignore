@@ -13,6 +13,8 @@ venv/
 # Build outputs
 .next/
 dist/
+# Test coverage reports (`--coverage`, Jest and Vitest alike)
+coverage/
 
 # OS files
 .DS_Store

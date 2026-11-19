@@ -2,6 +2,7 @@
 .next
 dist
 node_modules
+coverage
 
 # Generated types (from the OpenAPI snapshot via `npm run typegen`)
 shared/types/api.generated.ts
