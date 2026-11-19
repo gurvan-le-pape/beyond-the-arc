@@ -36,7 +36,7 @@ PasswordAuthentication no
 KbdInteractiveAuthentication no
 ```
 
-`PermitRootLogin` is `without-password`, so `root` accepts a key and never a password; `root` does hold a password, but only for the Hetzner console. On a rebuilt VPS, write that drop-in as part of provisioning. Neither setting can be left to the defaults: sshd ships with `PasswordAuthentication` **on**, and it was on here — not because anything enabled it, but because nothing had turned it off. That was safe only by accident, since no account with a usable password also accepted password auth; the day one is given a password it becomes a remote login on a publicly-resolvable address (see the Grafana subdomain below).
+`PermitRootLogin` is `without-password`, so `root` accepts a key and never a password; `root` does hold a password, but only for the Hetzner console. `docker/provision/provision.sh` writes that drop-in (see *Host setup* below). Neither setting can be left to the defaults: sshd ships with `PasswordAuthentication` **on**, and it was on here — not because anything enabled it, but because nothing had turned it off. That was safe only by accident, since no account with a usable password also accepted password auth; the day one is given a password it becomes a remote login on a publicly-resolvable address (see the Grafana subdomain below).
 
 Two mechanics make this easy to get wrong. `sshd_config` is **first-value-wins**, the opposite of most config systems, and `Include /etc/ssh/sshd_config.d/*.conf` sits at the top of the main file — so drop-ins beat it, and among drop-ins the lexically *first* one wins. A file named to sort after an existing one that sets the same keyword is silently inert. And `sshd_config` is not the effective config: read it with `sshd -T`, which resolves drop-ins and defaults. Validate with `sshd -t` and apply with `systemctl reload ssh` — never `restart` — so a rejected config leaves the running daemon serving the old one.
 
@@ -44,7 +44,16 @@ The root password is the way back in when SSH is unusable — a bad sshd drop-in
 
 ### Host setup
 
-Everything below lives on the VPS, outside the deploy clone, and nothing re-applies it: a rebuilt server needs each step by hand. All commands run as root.
+Everything below lives on the VPS, outside the containers and outside the deploy, and **`docker/provision/provision.sh` applies all of it**. Run it as root:
+
+```bash
+VOLUME_ID=<hetzner-volume-id> DEPLOY_PUBKEY='<public half of VPS_SSH_KEY>' bash docker/provision/provision.sh
+bash docker/provision/provision.sh --check   # report what differs, change nothing; exits 1 if anything would change
+```
+
+Each step looks at the host first and changes only what differs, so a second run reports `0 change(s)`, and running it on the live server is safe — run `--check` there first all the same. It never overwrites what it did not write — an `fstab` entry for the volume that points elsewhere, a file where the Nginx symlink belongs, a clone that is not sparse — it prints a `WARNING` and leaves it, and it never formats a disk. `VOLUME_ID` and `DEPLOY_PUBKEY` are optional: without them the volume step (with a warning) and the key step are skipped. What it cannot do from the host is in *Rebuilding the server from zero* below.
+
+What it sets, and why each one is there:
 
 **Data volume, mounted by its stable name.** The kernel's `sdX` names follow discovery order and are not guaranteed across boots; Hetzner's `by-id` name is. `nofail` keeps the server bootable and reachable over SSH when the volume is missing — without it a missing volume drops the boot into emergency mode, reachable from the console only.
 
@@ -53,53 +62,33 @@ Everything below lives on the VPS, outside the deploy clone, and nothing re-appl
 /dev/disk/by-id/scsi-0HC_Volume_<volume-id> /var/lib/docker/volumes ext4 defaults,nofail 0 2
 ```
 
-`nofail` alone would let Docker start on the empty `/var/lib/docker/volumes` directory of the root disk, and Postgres initialise a fresh database there. A drop-in makes Docker refuse to start until the volume is mounted:
+`nofail` alone would let Docker start on the empty `/var/lib/docker/volumes` directory of the root disk, and Postgres initialise a fresh database there. A drop-in, `/etc/systemd/system/docker.service.d/require-volumes.conf` (`RequiresMountsFor=/var/lib/docker/volumes` under `[Unit]`), makes Docker refuse to start until the volume is mounted. The script does this step first, so on a new server Docker is never installed, and never started, before the volume is in place. Check with `findmnt --verify` and `systemctl show docker -p RequiresMountsFor`; a reboot is the only end-to-end test.
 
-```bash
-mkdir -p /etc/systemd/system/docker.service.d
-printf '[Unit]\nRequiresMountsFor=/var/lib/docker/volumes\n' > /etc/systemd/system/docker.service.d/require-volumes.conf
-systemctl daemon-reload
-```
+**Swap.** A 2 GB `/swapfile` in `fstab`, so a memory spike slows the box down instead of sending the OOM killer after Postgres; `vm.swappiness=10` (`/etc/sysctl.d/99-swappiness.conf`) keeps the kernel from paging out while RAM is still free.
 
-Check with `findmnt --verify` and `systemctl show docker -p RequiresMountsFor`. A reboot is the only end-to-end test.
+**journald capped at 500 MB** (`/etc/systemd/journald.conf.d/size.conf`, `SystemMaxUse=500M`). The default ceiling is 10% of the filesystem, about 4 GB of the root disk; the journal held 1.4 GB when the cap went in. A few weeks of host logs still fit; the containers' logs are not in the journal (see the `x-logging` block above).
 
-**Swap.** 2 GB, so a memory spike slows the box down instead of sending the OOM killer after Postgres; `vm.swappiness=10` keeps the kernel from paging out while RAM is still free.
+**Packages.** Docker Engine and the compose plugin from Docker's own apt repository, Nginx, Certbot with its Nginx plugin, git and `unattended-upgrades` — only the missing ones are installed, so a re-run never upgrades anything. `snapd`, `open-vm-tools` (VMware's agent, on a KVM host), `lxd-agent-loader`, `lxd-installer` and `docker-model-plugin` are purged: nothing here uses them, and `snapd` ran permanently with no snap installed. `/etc/apt/preferences.d/no-snapd` pins `snapd` to priority -1, so a package's recommends cannot bring it back. `multipath-tools` and `open-iscsi` stay although nothing uses them either: they sit in the storage path, and a few megabytes are not worth a risk to the volume's mount.
 
-```bash
-fallocate -l 2G /swapfile && chmod 600 /swapfile && mkswap /swapfile && swapon /swapfile
-echo '/swapfile none swap sw 0 0' >> /etc/fstab
-echo 'vm.swappiness=10' > /etc/sysctl.d/99-swappiness.conf && sysctl --system
-```
+**Unattended security upgrades.** `APT::Periodic::Update-Package-Lists` and `APT::Periodic::Unattended-Upgrade` both `"1"` — Ubuntu's default, checked rather than assumed, since a fix like the Nginx one of 2026-11-18 lands through it.
 
-**The `deploy` user.** The CI deploys as `deploy`, never as root: an unprivileged account that owns the clone and is in the `docker` group. That group is root-equivalent, so the account bounds accidents and gives an audit trail, not containment. Its `authorized_keys` holds one key, commented `gitlab-ci-deploy`, whose private half is the `VPS_SSH_KEY` CI variable.
+**SSH, keys only.** The drop-in from *SSH* above, written only when `sshd -T` shows password or keyboard-interactive logins still on, validated with `sshd -t` and removed again if sshd rejects it, then applied with `systemctl reload ssh`.
 
-```bash
-adduser --disabled-password --gecos '' deploy
-usermod -aG docker deploy
-install -d -m 700 -o deploy -g deploy /home/deploy/.ssh
-# append the public key, comment gitlab-ci-deploy, to /home/deploy/.ssh/authorized_keys (mode 600, owned by deploy)
-```
+**The `deploy` user.** The CI deploys as `deploy`, never as root: an unprivileged account that owns the clone and is in the `docker` group. That group is root-equivalent, so the account bounds accidents and gives an audit trail, not containment. Its `authorized_keys` holds one key, commented `gitlab-ci-deploy`, whose private half is the `VPS_SSH_KEY` CI variable; the script adds `DEPLOY_PUBKEY` when it is missing and never removes a key. The sudoers rule the deploy reloads Nginx with (see *Nginx* below) is written alongside, checked with `visudo -c` before it lands.
 
 The deploy logs `deploy` into the GitLab registry on every run, so no registry login is set up by hand.
 
-**The deploy clone — `docker/` only.** The images come from the registry; the server needs the compose files and the configs they mount, and nothing else. A sparse checkout keeps the deploy's `git fetch`, `git reset` and `git diff` working while writing only `docker/` (plus the repository's root-level files, which cone mode always keeps) to disk:
+**The deploy clone — `docker/` only.** The images come from the registry; the server needs the compose files and the configs they mount, and nothing else. A sparse checkout (`git clone --sparse`, then `git sparse-checkout set --cone docker`) keeps the deploy's `git fetch`, `git reset` and `git diff` working while writing only `docker/` (plus the repository's root-level files, which cone mode always keeps) to `/opt/beyondthearc`, owned by `deploy`.
 
-```bash
-install -d -o deploy -g deploy /opt/beyondthearc
-su deploy -c 'git clone --sparse https://gitlab.com/gurvan-le-pape/beyond-the-arc.git /opt/beyondthearc && cd /opt/beyondthearc && git sparse-checkout set --cone docker'
-```
+`/opt/beyondthearc/.env` is not in git, and the script only reports it missing: start from `.env.example` and fill in each value. `SENTRY_AUTH_TOKEN` stays out of it — only the CI build uses that token, and no running container does.
 
-`/opt/beyondthearc/.env` is not in git: start from `.env.example` and fill in each value. `SENTRY_AUTH_TOKEN` stays out of it — only the CI build uses that token, and no running container does.
+**The database volume.** `postgres_data` is `external: true` in the prod overlay, so `docker compose down -v` cannot delete it — and so compose will not create it either. The script creates it when it is missing.
 
-**The database volume.** `postgres_data` is `external: true` in the prod overlay, so `docker compose down -v` cannot delete it — and so compose will not create it either. Create it once, before the first `up`:
+**Nginx version.** `server_tokens off;` in `/etc/nginx/nginx.conf` (Ubuntu ships the line commented out; the script uncomments it). Without it, every response that reaches Nginx directly — any request to the server's IP — announces the exact Nginx and distribution version.
 
-```bash
-docker volume create postgres_data
-```
+**The Nginx site.** `/etc/nginx/sites-enabled/beyondthearc`, a symlink into the clone (see *Nginx* below). The script links it only once the certificate the file names exists, since `nginx -t` rejects the file before that, and removes the link again if `nginx -t` fails.
 
-**Nginx version.** `server_tokens off;` in `/etc/nginx/nginx.conf` (Ubuntu ships the line commented out). Without it, every response that reaches Nginx directly — any request to the server's IP — announces the exact Nginx and distribution version. Apply with `nginx -t && systemctl reload nginx`.
-
-**SSH host key.** The deploy pins the server's ed25519 host key in the `VPS_HOST_KEY` CI variable (see the comment in `.gitlab-ci.yml`). A key copied from a first SSH connection is only as trustworthy as that connection, so compare it over a channel that is not SSH — the Hetzner console:
+**SSH host key.** Not the script's job — it is how the CI side checks the server. The deploy pins the server's ed25519 host key in the `VPS_HOST_KEY` CI variable (see the comment in `.gitlab-ci.yml`). A key copied from a first SSH connection is only as trustworthy as that connection, so compare it over a channel that is not SSH — the Hetzner console:
 
 ```bash
 ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub          # on the server, from the console
@@ -107,6 +96,30 @@ glab variable get VPS_HOST_KEY | ssh-keygen -lf -          # locally
 ```
 
 The two `SHA256:` fingerprints must match. A rebuilt server has a new host key, so `VPS_HOST_KEY` has to be replaced, and checked this way, before the first deploy.
+
+### Rebuilding the server from zero
+
+From an empty Hetzner project to a serving site, in order. No data is restored: the static data is a migration and the match data is regenerated by the scheduler (see [`data-pipeline.md`](./data-pipeline.md)). The order matters in two places — the volume before Docker, the certificate before the Nginx site — and the script enforces both.
+
+1. **Hetzner console.** Create a CX23 running Ubuntu 24.04 with your SSH key for `root`. Create a volume formatted ext4 with **manual** mounting — automatic mounting writes its own `fstab` line under `/mnt`, a second mount of the same disk — and attach it; its id is in `ls /dev/disk/by-id/` (`scsi-0HC_Volume_<id>`). Attach `firewall-1`, or recreate it from the rules in *VPS* above.
+2. **Root password.** Reset it from the console (Rescue → Reset root password), store it in the password manager, and log in once through the console to prove it works (see the keyboard-layout trap in *SSH*). It is the way back in when SSH breaks.
+3. **Provision.** As root over SSH:
+
+   ```bash
+   curl -fsSL https://gitlab.com/gurvan-le-pape/beyond-the-arc/-/raw/main/docker/provision/provision.sh -o /root/provision.sh
+   VOLUME_ID=<id> DEPLOY_PUBKEY='<public half of VPS_SSH_KEY>' bash /root/provision.sh
+   ```
+
+   Two warnings are expected on this first run: no `.env`, no certificate. A volume Hetzner did not format is reported, not formatted: on a new, empty volume run `mkfs.ext4 /dev/disk/by-id/scsi-0HC_Volume_<id>`, then the script again.
+
+4. **`.env`.** Create `/opt/beyondthearc/.env` (owner `deploy`, mode 600) from `.env.example`: `DATABASE_NAME`, `DATABASE_USER`, `DATABASE_PASSWORD`, `DATABASE_HOST`, `DATABASE_PORT`, `DATABASE_URL`, `FRONTEND_URL`, `NEXT_PUBLIC_API_URL`, `INTERNAL_API_URL`, `SENTRY_DSN`, `REGISTRY_IMAGE`, `GRAFANA_ROOT_URL`, `GRAFANA_PASSWORD`, `SMTP_HOST`, `GMAIL_ADDRESS`, `GMAIL_APP_PASSWORD`. The deploy writes `IMAGE_TAG` itself.
+5. **DNS.** In Cloudflare, point the `beyondthearc.app`, `www` and `grafana` records at the new address, still proxied. The zone's settings — SSL/TLS Full (strict), the two Access applications, the crawler blocks — belong to the zone, not the server, and carry over; if the zone itself were lost, *DNS and TLS* below lists them, and the `Grafana ACME` bypass has to exist before the next step.
+6. **Certificate.** `certbot certonly --nginx -d beyondthearc.app -d www.beyondthearc.app -d grafana.beyondthearc.app`. The `nginx` authenticator answers the HTTP-01 challenge on port 80, through Cloudflare, and renews the certificate the same way. Not yet exercised on a rebuild: if validation fails because the challenge cannot reach the origin, set the three records to DNS-only and open port 80 to all in `firewall-1` for the issuance, then put both back.
+7. **Provision again.** The same command: it now links the Nginx site and reloads Nginx. `bash /root/provision.sh --check` must then end with `0 change(s), 0 warning(s)`.
+8. **GitLab CI variables.** `VPS_HOST` (the new address) and `VPS_HOST_KEY` (the new host key, checked through the console as in *SSH host key* above). `VPS_USER`, `VPS_SSH_KEY`, `DEPLOY_REGISTRY_USER` and `DEPLOY_REGISTRY_TOKEN` stay as they are when the same key and token are reused.
+9. **Deploy.** Re-run the deploy of `main`'s latest pipeline (Operate → Environments → production). The `migrate` service creates the schema and seeds the static data; the scheduler starts generating matches. Check `https://beyondthearc.app/api/health`, Grafana through Access, and `certbot renew --dry-run`.
+
+Not covered: the `planetcurio` site on the same Nginx belongs to another project and is rebuilt from that one.
 
 ---
 
@@ -167,7 +180,7 @@ The backend depends on `database` and receives `DATABASE_URL`, `FRONTEND_URL`, a
 
 The official `postgres:18.4` image, unmodified. Schema and static reference data are applied by the `migrate` service (below), not by the database container — standing up the stack for the first time still produces a fully seeded database with no additional steps, but the mechanism is Prisma Migrate rather than init scripts, so it also works against an *existing* database.
 
-Data is persisted in a `postgres_data` named volume. In production this volume is declared `external: true`, which prevents `docker-compose down` or `docker-compose up --build` from recreating it. The volume must be created manually on the VPS before first deployment — this is a deliberate safeguard against accidental data loss.
+Data is persisted in a `postgres_data` named volume. In production this volume is declared `external: true`, which prevents `docker-compose down` or `docker-compose up --build` from recreating it. Compose therefore never creates it either — a deliberate safeguard against accidental data loss — so it must exist before the first deployment; `docker/provision/provision.sh` creates it (see *Host setup*).
 
 ### migrate
 
@@ -333,9 +346,7 @@ The Makefile exposes several utility targets beyond the core up/down/build cycle
 
 **No staging environment.** The dev environment is local and there is no hosted environment between it and production. Infrastructure changes (Compose config, Nginx, Prometheus rules) cannot be tested before going live on the VPS. See [`architecture.md`](./architecture.md) for more on this constraint.
 
-**External volume requires manual creation.** The `postgres_data` volume must exist on the VPS before first deployment. Its one-line creation is in *Host setup* above, but nothing automates it — a bootstrap script would reduce the risk of a failed first deployment.
-
-**Host setup is manual.** Every step in *Host setup* above is a command someone runs on the VPS; nothing in this repository applies them or detects drift from them, so a rebuilt server is only as complete as that section.
+**Host setup is applied by hand, not enforced.** `docker/provision/provision.sh` reproduces it and `--check` reports drift, but nothing runs either on a schedule or in CI, so a change made on the server and not in the script is found only by the next `--check`. The script was tested in a systemd Ubuntu 24.04 container, never on a fresh Hetzner VM: the real volume, the first certificate issuance through Cloudflare and a reboot remain untested.
 
 
 **No resource limits on application containers.** Only the observability services (Prometheus, Loki, Grafana, cAdvisor) have CPU and memory limits defined. The application services (frontend, backend, scheduler) do not, which means a runaway process could starve the observability stack on the constrained CX23.
