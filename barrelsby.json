@@ -106,6 +106,7 @@
   "exclude": [
     ".*\\.spec\\.tsx?$",
     ".*\\.test\\.tsx?$",
+    ".*Fixtures\\.ts$",
     ".*\\.d\\.ts$",
     ".*/shared/types/api\\.generated\\.ts$",
     ".*/matches-by-round/(?!index\\.tsx$).*",
