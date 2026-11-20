@@ -296,7 +296,7 @@ A component that reads copy renders through `renderWithIntl` (`testing/renderWit
 
 `styles/contrast.spec.ts` is the one test over the stylesheet rather than code: it reads every colour token in the three themes and fails CI on any promised text/background pair below its WCAG floor. See the design system section of [`frontend.md`](./frontend.md#design-system).
 
-Spec files are excluded from barrel generation and from Sonar coverage sources.
+Spec files are excluded from barrel generation and from Sonar coverage sources. So is test data shared between specs, which goes in a `*Fixtures.ts` beside them (`championshipFixtures.ts`, `matchEventsFixtures.ts`): barrelsby skips the suffix, and ESLint lifts `max-params` for its row builders.
 
 ---
 
