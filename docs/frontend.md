@@ -18,7 +18,7 @@ How feature code is organized on disk — component folder structure, hooks/type
 
 Two route groups under `app/[locale]/` split the app by the shell it needs. Groups add no URL segment, so the split is invisible in the URLs:
 
-- **`(chrome)/`** — everything with the standard shell. Its layout renders the header, footer and page background; a page contributes only its `<main>`, through `PageLayout`. Inside it, `(public)/` groups the basketball data pages (championships, matches, players, teams, organisations, search) and scopes the error boundary they share; the informational pages (`about`, `architecture`, `docs`, `features`) and the home page sit beside it, under the group's own `error.tsx`.
+- **`(chrome)/`** — everything with the standard shell. Its layout renders the header, footer and page background; a page contributes only its `<main>`, through `PageLayout`. Inside it, `(public)/` groups the basketball data pages (championships, matches, players, teams, organisations, search) and scopes the error boundary they share; the informational pages (`about`, `architecture`, `docs`, `product`) and the home page sit beside it, under the group's own `error.tsx`.
 - **`(fullscreen)/`** — the clubs map, and only the map. Header, no footer, pinned to the viewport height so the map fills what is left. It is a map application rather than a document, and a footer under it would either be unreachable or shrink the map.
 
 **The chrome is a layout, not part of `PageLayout`, because Next renders `error.tsx` and `not-found.tsx` _instead of_ the page.** While the header and footer lived inside `PageLayout`, an error boundary had to rebuild the entire shell to keep it, a 404 lost it completely — `notFound()` fell through to Next's built-in page — and a `loading.tsx` could not be added at all without blanking the chrome during navigation. The home page still uses `PageLayout`'s `edgeToEdge` variant for its bento sections.
@@ -40,7 +40,7 @@ export default async function ClubPage({ params }) {
 }
 ```
 
-Used by: club detail, committees list, leagues list, and other organisation pages where data changes rarely (hourly or 24-hour revalidation).
+Used by: the club, committee and league detail pages, where data changes rarely (`revalidate = 3600`).
 
 **`Promise.all` server fetch** — for pages that need multiple independent data sources fetched in parallel before rendering. All results are passed as props to child components, which are pure presentational server components.
 
@@ -102,7 +102,7 @@ That gives three cases, plus one that needs no directive:
 - **No directives** — the page fetches nothing server-side, so it prerenders as a static shell. Any data arrives client-side through TanStack Query. Used by: clubs list, product, architecture, docs.
 - **`dynamic = "force-dynamic"`** — the page fetches server-side, so it must stay out of the prerender pass. Rendering per request is cheap: the backend call underneath is served from the Data Cache (see [Cache timing policy](#cache-timing-policy)), so a render is a cache read rather than a query. Used by: home, about and organizations landing (platform counts), map, committees list, leagues list.
 - **No directive, rendered per request anyway** — championship detail reads `?pool=`, a request-time API that already keeps the route out of the prerender pass, so it carries no `force-dynamic`.
-- **`dynamicParams = true` + `revalidate`** — dynamic routes with far too many IDs to enumerate. Nothing is pre-built; each page is generated on first request and the rendered HTML is then cached for the window. Used by: the six detail pages — **club, committee and league at 1 hour; match, player and team at 60 seconds**, because every `fetch` on those three is `ServerRevalidate.LIVE` and **the lowest `revalidate` anywhere in a route sets the frequency for the whole route**. A segment `revalidate` is a default, not a ceiling: it "does not override the `revalidate` value set by individual `fetch` requests". Measured on a production build — at t+70s the three LIVE routes answer `x-nextjs-cache: STALE` while the other three still answer `HIT`.
+- **`dynamicParams = true` + `revalidate`** — dynamic routes with far too many IDs to enumerate. Nothing is pre-built; each page is generated on first request and the rendered HTML is then cached for the window. Used by: the six detail pages — **club, committee and league at 1 hour; match, player and team at 60 seconds**, because each of those three fetches at least one `ServerRevalidate.LIVE` endpoint and **the lowest `revalidate` anywhere in a route sets the frequency for the whole route**. A segment `revalidate` is a default, not a ceiling: it "does not override the `revalidate` value set by individual `fetch` requests". Measured on a production build — at t+70s the three LIVE routes answer `x-nextjs-cache: STALE` while the other three still answer `HIT`.
 
 **`revalidate` and `force-dynamic` are not complementary — never pair them.** `force-dynamic` opts the route out of the Full Route Cache entirely, which is what `revalidate` writes to, so a `revalidate` beside it is inert. Caching belongs on the fetch — `request`'s `revalidate` option — where it applies regardless of how the route renders.
 
@@ -201,22 +201,23 @@ changes. Every tier the client sets is listed here — a new query picks one of
 these rows rather than a fresh number, and adding a row is the way to introduce
 a genuinely new answer to "how often does this change?":
 
-| Data                                                               | `staleTime` | `gcTime` | Rationale                                                                                                                    |
-| ------------------------------------------------------------------ | ----------- | -------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| Anything that sets neither (`QueryClient` default)                 | 1 min       | 5 min    | A floor, not a policy — every tier below states its own                                                                      |
-| Team filter values                                                 | 30 s        | 10 min   | Pool numbers and letters shift as admins edit them                                                                           |
-| Name-search results (players, clubs; the header's quick search)    | 1 min       | 2 min    | A result set is consulted once and rarely returned to                                                                        |
-| Matches — list, detail, by pool, by championship                   | 2 min       | 5 min    | The scheduler writes results continuously                                                                                    |
-| Match history of one player or team                                | 2 min       | 10 min   | Same volatility; `gcTime` inherited from the feature base                                                                    |
-| Match events and player stats                                      | 5 min       | 5 min    | Immutable once the match has ended                                                                                           |
-| Entity metadata — championships, players, teams, clubs, committees | 5 min       | 10 min   | Changes rarely within a session                                                                                              |
-| Leagues                                                            | 5 min       | 15 min   | Reference data, loaded early and reused across features                                                                      |
-| Club aggregates (by region, by département) and the full club list | 24 h        | 10 min   | Only a static-data refresh moves them, and the server half caches all three for the same 24 h (`ServerRevalidate.REFERENCE`) |
-| GeoJSON boundaries                                                 | ∞           | ∞        | Static assets — French administrative boundaries do not change                                                               |
+| Data                                                               | `staleTime` | `gcTime` | Rationale                                                                                                           |
+| ------------------------------------------------------------------ | ----------- | -------- | ------------------------------------------------------------------------------------------------------------------- |
+| Anything that sets neither (`QueryClient` default)                 | 1 min       | 5 min    | A floor, not a policy — every tier below states its own                                                             |
+| Name-search results (players, clubs; the header's quick search)    | 1 min       | 2 min    | A result set is consulted once and rarely returned to                                                               |
+| Matches — list                                                     | 2 min       | 5 min    | The scheduler writes results continuously                                                                           |
+| Match history of one player                                        | 2 min       | 10 min   | Same volatility; `gcTime` inherited from the feature base                                                           |
+| Match events                                                       | 5 min       | 5 min    | Immutable once the match has ended                                                                                  |
+| Entity metadata — championships, players, teams, clubs, committees | 5 min       | 10 min   | Changes rarely within a session                                                                                     |
+| Leagues                                                            | 5 min       | 15 min   | Reference data, loaded early and reused across features                                                             |
+| The full club list (`/clubs/all`)                                  | 24 h        | 10 min   | Only a static-data refresh moves it, and the server half caches it for the same 24 h (`ServerRevalidate.REFERENCE`) |
+| GeoJSON boundaries                                                 | ∞           | ∞        | Static assets — French administrative boundaries do not change                                                      |
 
 Every one of these pairs is set in a `features/*/api/*Queries.ts` options
 factory; the hooks spread those options and never set a lifetime of their own,
-so the tier a query belongs to is readable in one file.
+so the tier a query belongs to is readable in one file. The one exception is the
+header's quick search, whose `useQuickSearch.ts`
+(`features/search/components/quick-search/`) sets the name-search pair itself.
 
 The `gcTime` column applies in the browser only. During a server render the
 `QueryProvider` builds a client that pins every query's `gcTime` to `Infinity`,
@@ -231,14 +232,14 @@ automatic refetch in the client half; nothing polls.
 
 On the server, the same question is answered by the Data Cache, with tiers
 declared as `ServerRevalidate` in `lib/services/api.ts` and passed through
-`request`'s `revalidate` option. Each service module picks one tier for its
-endpoints:
+`request`'s `revalidate` option. Each service module sets the tier per
+endpoint:
 
-| Tier        | Window | Endpoints                                                                     |
-| ----------- | ------ | ----------------------------------------------------------------------------- |
-| `REFERENCE` | 24 h   | `/clubs*`, `/committees*`, `/leagues*`                                        |
-| `DEFAULT`   | 1 h    | `/players`, `/teams`, `/championships`                                        |
-| `LIVE`      | 60 s   | `/matches*`, `/stats`, `/pools/:id/leaderboard`, `/pools/recent`, `*/matches` |
+| Tier        | Window | Endpoints                                                                                              |
+| ----------- | ------ | ------------------------------------------------------------------------------------------------------ |
+| `REFERENCE` | 24 h   | `/clubs*`, `/committees*`, `/leagues*`                                                                 |
+| `DEFAULT`   | 1 h    | `/players`, `/players/:id`, `/teams`, `/championships*`                                                |
+| `LIVE`      | 60 s   | `/matches*`, `/stats`, `/pools/:id/leaderboard`, `/pools/recent`, `*/matches`, `*/shots`, `/teams/:id` |
 
 `DEFAULT` applies to any call that does not ask for something else, so a new
 endpoint is cached whether or not its author thought about it.
@@ -298,7 +299,7 @@ These two mechanics are one rule applied to two kinds of string, not two competi
 
 So the question to ask about a string is never "which pattern does this component use" but "whose string is this" — and the answer is usually obvious.
 
-Feature components are usually the first kind — they are tied to one namespace by construction — so they resolve their own strings and take only domain props. `features/players/components/detail/PlayerHeader.tsx` and `features/teams/components/detail/TeamHeader.tsx` are the server-side pattern (`async` + `await getTranslations(...)`, domain props only); `features/organizations/components/TitleSection.tsx` is the client-side equivalent.
+Feature components are usually the first kind — they are tied to one namespace by construction — so they resolve their own strings and take only domain props. `features/players/components/detail/PlayerHeader.tsx` and `features/teams/components/detail/TeamHeader.tsx` are the server-side pattern (`async` + `await getTranslations(...)`, domain props only); `features/competitions/championships/components/detail/ChampionshipPoolSelect.tsx` is the client-side equivalent.
 
 Pages resolve translations for their own JSX and for anything they pass down as content — breadcrumb `items`, `PageHero` copy, config arrays mapped to string props. A page calling `setRequestLocale(locale)` is what lets its server children use the request-scoped short form `await getTranslations("namespace")` instead of the `{ locale, namespace }` object form.
 
@@ -362,11 +363,11 @@ So the rules for a component are short. **Pair the role with its partner**: `on-
 - `spacing.sidebar`, `spacing.panel`, `spacing.panel-lg`, `spacing.panel-xl` — named widths for layout panels
 - `zIndex` — named layers in order: `raised` (lifted inside its own component), `dropdown` (a menu anchored to a control), `header`, `backdrop` and `drawer` (a side panel and its scrim), `modal`, `skip` (the skip link). An element takes the layer of its job; a raw `z-50` has nothing saying what it outranks.
 
-**There are three themes, not two, and no component knows which one is active.** Every colour in `tailwind.config.js` is `rgb(var(--color-…) / <alpha-value>)`; the values live in custom-property blocks — `:root` (light), `.dark`, `.high-contrast` — in `globals.css` and `roles.css`. `next-themes` puts the class on `<html>` and the variables re-resolve, so `text-ink-primary` or `border-divide` is correct in all three with no theme variant at the call site. Exactly one `dark:` remains in the app — `dark:prose-invert` in the docs accordion, which styles the Tailwind typography plugin rather than a token of ours. **A `dark:` prefix on a themed token is a bug**: it pins the value and breaks high contrast. **A token is an `R G B` triplet, never a colour**: write `rgb(var(--color-divide))` wherever one is used outside a Tailwind colour utility (an arbitrary shadow, an inline style). A bare `var(--color-divide)` is an invalid colour and the declaration silently does nothing — that left the pinned table column with no edge and the level cards with no hover outline. And a value MapLibre or an SVG presentation attribute needs is resolved first: `useMapColours` reads the roles off the document, and the court sets SVG colours through `style`, since an attribute does not resolve `var()`.
+**There are three themes, not two, and no component knows which one is active.** Every colour in `tailwind.config.js` is `rgb(var(--color-…) / <alpha-value>)`; the values live in custom-property blocks — `:root` (light), `.dark`, `.high-contrast` — in `globals.css` and `roles.css`. `next-themes` puts the class on `<html>` and the variables re-resolve, so `text-ink-primary` or `border-divide` is correct in all three with no theme variant at the call site. Three `dark:` uses remain in the app, none on a token of ours: `dark:prose-invert` in the docs accordion, which styles the Tailwind typography plugin, and the `dark:hidden` / `dark:block` pairs in `Logo.tsx` and `ClubsMapPreview.tsx` that swap a light image for a dark one. **A `dark:` prefix on a themed token is a bug**: it pins the value and breaks high contrast. **A token is an `R G B` triplet, never a colour**: write `rgb(var(--color-divide))` wherever one is used outside a Tailwind colour utility (an arbitrary shadow, an inline style). A bare `var(--color-divide)` is an invalid colour and the declaration silently does nothing — that left the pinned table column with no edge and the level cards with no hover outline. And a value MapLibre or an SVG presentation attribute needs is resolved first: `useMapColours` reads the roles off the document, and the court sets SVG colours through `style`, since an attribute does not resolve `var()`.
 
 On top of the tokens sits a **surface context system**, which is runtime and does live partly in the Tailwind config. The structural classes `.surface-base` / `.surface-subtle` / `.surface-raised` each set their own background _and_ publish `--surface-bg`, `--surface-inset` and `--surface-ring-offset`. Utilities defined in `tailwind.config.js` read those — `.bg-surface-own`, `.bg-surface-inset`, `.ring-offset-surface`, `.scroll-shadow-x` — so a component can say "one step above whatever I am sitting on" without knowing where it was mounted. Elevation runs base → subtle → raised and must not be skipped or reversed. **`raised` is the ceiling**: it publishes `--surface-inset` as _itself_, so `bg-surface-inset` inside a `surface-raised` ancestor is a no-op — which is how the old table body made both its zebra striping and its row hover invisible at once.
 
-`ThemeProvider` (`lib/providers/theme-provider.tsx`) is mounted in `app/providers.tsx`, defaults to `light`, registers `["light", "dark", "high-contrast"]` and respects the OS preference (`enableSystem: true`). Adding a fourth theme means a new class block in `globals.css` overriding only what differs, plus its name in that array. `suppressHydrationWarning` is set on `<html>` to suppress the inevitable mismatch between the server-rendered class and the client-resolved theme. Components that depend on the resolved theme — such as `Logo`, which switches between light and dark image assets — use `useTheme()` with a `mounted` guard, rendering a neutral placeholder until after hydration to avoid visual flicker. The header's `ThemePicker` reads the theme only inside the settings popover and the phone menu sheet, which render after hydration.
+`ThemeProvider` (`lib/providers/theme-provider.tsx`) is mounted in `app/providers.tsx`, defaults to `light`, registers `["light", "dark", "high-contrast"]` and respects the OS preference (`enableSystem: true`). Adding a fourth theme means a new class block in `globals.css` overriding only what differs, plus its name in that array. `suppressHydrationWarning` is set on `<html>` to suppress the inevitable mismatch between the server-rendered class and the client-resolved theme. `Logo` does not read the theme: it renders both its light and dark images and CSS shows one, so the server HTML is already right. The header's `ThemePicker` reads the theme only inside the settings popover and the phone menu sheet, which render after hydration.
 
 ### CVA component variants
 
@@ -391,21 +392,19 @@ const buttonVariants = cva(BASE, {
       sm: "h-9 px-3 text-sm",
       md: "h-10 px-4 text-base",
       lg: "h-12 px-6 text-lg",
-      icon: "h-10 w-10",
     },
   },
   defaultVariants: { variant: "primary", size: "md" },
 });
 ```
 
-Components that share a base style but differ in layout context are split into separate exports in the same file rather than added as variants to a single component. `Button.tsx` exports two components:
+Components that share a base style but differ in layout context are split into separate components rather than added as variants to a single one. `Button.tsx` exports one component:
 
 - `Button` — universal action primitive (form submits, modal triggers, mutations). No layout knowledge.
-- `PillButton` — round-selector and carousel patterns. Non-standard sizes and visual treatments (`pillActive`, `pillInactive`, `carouselArrow`) that don't belong in a general-purpose button.
 
-The split is justified by layout context: `PillButton` variants know they have `rounded-full` treatment. A row of links between sibling pages is drawn like a `SegmentedControl`, from `segmentedStyles.ts`. Keeping them separate prevents `Button` from accumulating layout-specific knowledge it should not have.
+Square icon-only actions are `IconButton`, a separate primitive with its own variants. A row of links between sibling pages is drawn like a `SegmentedControl`, from `segmentedStyles.ts`. Keeping them separate prevents `Button` from accumulating layout-specific knowledge it should not have.
 
-**Navigation is a link, everywhere, and the primitives enforce it.** A `<button>` that calls `router.push` looks identical and behaves worse: no `href`, so no status-bar URL, no middle-click, no open-in-new-tab, no prefetch, and nothing for a crawler to follow. `Card` therefore takes `href` (renders a `Link`, gets the clickable styling for free) or `clickable` + `onClick` (renders a `<button>`), and its props type is a union so the two cannot be mixed. Where a primitive has no link mode, wrap the `Link` in the variant classes instead — `buttonVariants({ variant, size })` on a `Link` is the established form, used by the home page CTA and the club map popup. For links inside a table cell, see `TableCellLink` in the DataTable section.
+**Navigation is a link, everywhere, and the primitives enforce it.** A `<button>` that calls `router.push` looks identical and behaves worse: no `href`, so no status-bar URL, no middle-click, no open-in-new-tab, no prefetch, and nothing for a crawler to follow. `Card` therefore takes `href` (renders a `Link`, gets the clickable styling for free) or `clickable` + `onClick` (renders a `<button>`), and its props type is a union so the two cannot be mixed. Where a primitive has no link mode, wrap the `Link` in the variant classes instead — `buttonVariants({ variant, size })` on a `Link` is the established form, used by the home page's map teaser and `ErrorCard`. For links inside a table cell, see `TableCellLink` in the DataTable section.
 
 The `Text` typography primitive follows the same CVA pattern, additionally implementing a **`variantTagMap`** that maps each variant to its semantically correct HTML element. `h1`–`h4` variants render the matching heading tag by default, and `title` renders `<h3>`; `body` renders `<p>`; `caption`, `label`, and `overline` render `<span>`. The rendered element can be overridden with the `as` prop, but the default is always semantically appropriate. The `label` variant defaults to `<span>` rather than `<label>` specifically to avoid accidental form associations — consumers that need a real form label must pass `as="label" htmlFor="input-id"` explicitly.
 
@@ -462,7 +461,7 @@ The interactive France map is built with **react-map-gl** (v8), which wraps **Ma
 
 ### Data loading
 
-All map data — region stats, department stats, and the full club list — is fetched server-side in the map page's `Promise.all` call and passed as props to `ClubsMap`. There is no lazy loading by zoom level or viewport; the full dataset arrives with the initial server render. The map page uses a 24-hour ISR revalidation window, reflecting that club geography changes rarely.
+All map data — the leagues and committees, each carrying its club count, and the full club list — is fetched server-side in the map page's `Promise.all` call and passed as props to `ClubsMap`. There is no lazy loading by zoom level or viewport; the full dataset arrives with the initial server render. The map page is `force-dynamic`; its three fetches are held in the Data Cache for 24 hours (`ServerRevalidate.REFERENCE`), reflecting that club geography changes rarely.
 
 GeoJSON boundary data for regions and departments is served as static assets bundled with the frontend, keeping the backend and database free from geometry concerns.
 
@@ -488,7 +487,7 @@ The tiles are drawn light; the dark themes recolour them with MapLibre's raster 
 
 ### Search
 
-A `SidePanel` sits over the map and provides a search input. Results come from `useSearch`, text matching against the club list, and feed both the side-panel list and the club markers. Clicking a club in the side panel sets the view state to zoom to that club's coordinates and opens its popup: name, location, website when there is one, and a link to the club's page — no contact details, which the club page leaves to FFBB's own.
+A `SidePanel` sits over the map and provides a search input. Results come from `useSearch`, text matching against the club list, and feed both the side-panel list and the club markers. Clicking a club in the side panel sets the view state to zoom to that club's coordinates and opens its popup: name, town and postcode, département, and a link to the club's page — no contact details, which the club page leaves to FFBB's own.
 
 ---
 
@@ -504,7 +503,7 @@ All coordinates are defined in real-world metres and converted to SVG pixel spac
 
 The court follows the theme. Floor, markings and zone figures take the `court-floor` / `court-line` / `court-label` tokens (a dark parquet with cream lines in dark, white on black in high contrast), and the shot marks take the `event-made` / `event-miss` label colours. Static markings use the Tailwind classes (`stroke-court-line`); an element given a colour as a value — the zone outlines in `PolygonZone` and `RectZone` — sets it through `style` with `COURT_COLOURS`, because an SVG presentation attribute does not resolve `var()`. Zone figures carry a floor-coloured halo (`paint-order: stroke`) so they read over any heat colour.
 
-Court geometry constants (`BASKET_X`, `BASKET_Y`, `COURT_WIDTH`, `PAINT_HEIGHT`, `THREE_PT_RADIUS`, etc.) are defined in `shared/constants` and shared across both the court renderer and the zone system.
+Court geometry constants (`BASKET_X`, `BASKET_Y`, `COURT_WIDTH`, `PAINT_HEIGHT`, `THREE_PT_RADIUS`, etc.) are defined in `features/shot-chart/constants/courtConstants.ts` and shared across both the court renderer and the zone system.
 
 ### Display modes
 
@@ -587,7 +586,7 @@ Every failed request throws an `ApiError`, on the server and in the browser alik
 
 ## Known limitations
 
-**Design token inconsistency.** The `(public)` data pages use the semantic token system consistently. Some informational pages (`about`, `architecture`) use raw Tailwind colour values for decorative gradient elements. This is called out in comments as intentional for one-off decorative use, but it means those pages are not fully covered by the token system.
+**Design token inconsistency.** The `(public)` data pages use the semantic token system consistently. The docs page uses raw Tailwind colour values: `CodeBlock` is `bg-gray-900` / `text-gray-100` in every theme, and the accordion uses `prose-gray`. This is called out in a comment as intentional, but it means that page is not fully covered by the token system.
 
 **No client-side error boundary below the route level.** Errors in client components are caught at the nearest route boundary, which covers the entire route. There are no finer-grained error boundaries around individual sections of a page, so a rendering error in one widget takes down the whole page rather than degrading gracefully.
 
