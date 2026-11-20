@@ -42,7 +42,7 @@ HTTP request logging (method, path, status, duration) is handled automatically b
 
 In production, every log line is a JSON object on stdout. Docker captures this and Promtail ships it to Loki.
 
-**Loki indexes labels, not fields.** The only labels on these streams are `container`, `service` and `service_name` (set by Promtail's `relabel_configs`); every other field is read at query time by parsing the line, e.g. `{service="backend"} | json | res_statusCode=500` (`| json` flattens nested keys with `_`). That is a filter over the matched streams, not an index lookup, so narrow by label first.
+**Loki indexes labels, not fields.** The only labels on these streams are `container`, `service` and `service_name` — the first two set by Promtail's `relabel_configs`, `service_name` derived by Loki; every other field is read at query time by parsing the line, e.g. `{service="backend"} | json | res_statusCode=500` (`| json` flattens nested keys with `_`). That is a filter over the matched streams, not an index lookup, so narrow by label first.
 
 The one field Loki does interpret on its own is the level: it derives `detected_level` from a level *string*, which is why the logger emits `"level": "warn"` rather than pino's numeric `40`. With the numeric default every line arrived as `detected_level="unknown"` and the log panel rendered them uncoloured.
 
@@ -173,7 +173,7 @@ The route sits outside the `/api` global prefix and is not published by Nginx, s
 
 Every series carries the Compose service as `container_label_com_docker_compose_service` (`backend`, `database`, …); filter on it rather than on `name`, which changes when Compose recreates a container. Containers without that label — the cAdvisor root cgroup `id="/"`, anything started outside Compose — carry it empty, and every panel excludes them with `!=""`.
 
-Its defaults are trimmed for a two-core host: housekeeping every 15 s instead of every second, Docker containers only, one container label kept instead of all of them, and every metric group but CPU, memory and OOM events switched off (`--disable_metrics` in `docker-compose.yml`). Measured locally with exactly those flags: ~19 MB of memory and ~280 series in total. It runs unprivileged — `/dev/kmsg` is passed as a device for the OOM events — under a 128 MB / 0.25 CPU limit, and mounts the Docker socket through `/var/run` like Promtail: a read-only bind does not make a socket read-only. It logs `Failed to get system UUID: open /etc/machine-id` at startup; that only fills the `machine_id` label nothing here reads.
+Its defaults are trimmed for a two-core host: housekeeping every 15 s instead of every second, Docker containers only, one container label kept instead of all of them, and every metric group but CPU, memory and OOM events switched off (`--disable_metrics` in `docker-compose.yml`). Measured locally with exactly those flags: ~19 MB of memory and ~280 series in total. It runs unprivileged — `/dev/kmsg` is passed as a device for the OOM events — under a 128 MB / 0.25 CPU limit, and reaches the Docker socket through a read-only `/var/run` bind (Promtail binds the socket itself): a read-only bind does not make a socket read-only. It logs `Failed to get system UUID: open /etc/machine-id` at startup; that only fills the `machine_id` label nothing here reads.
 
 ### Prometheus config
 
@@ -192,7 +192,7 @@ Its defaults are trimmed for a two-core host: housekeeping every 15 s instead of
 
 ### Availability probing — blackbox-exporter
 
-The three scrape jobs above only cover services that instrument themselves. The frontend, the database and the scheduler expose no metrics at all, so `up` could never say anything about them: if the frontend container died the site was down and every backend metric stayed green.
+The `backend`, `node`, `cadvisor` and `prometheus` jobs above only cover services that instrument themselves. The frontend, the database and the scheduler expose no metrics at all, so `up` could never say anything about them: if the frontend container died the site was down and every backend metric stayed green.
 
 `blackbox-exporter` closes that by asking the only question available for an uninstrumented service — does a request to it succeed. Prometheus passes the target as a query parameter (`/probe?target=…&module=…`) and rewrites `__address__` to the exporter, which is what the `relabel_configs` in each blackbox job are doing; without them Prometheus would try to scrape the probed service directly.
 
@@ -263,7 +263,7 @@ Its legend shows *last* and *max* per service, so the peak a limit has to fit is
 
 ### Access
 
-Grafana runs on port 3001 inside the Docker network and is reverse-proxied by Nginx at `grafana.beyondthearc.app`. The Nginx block includes `Upgrade` and `Connection` headers to support Grafana's WebSocket connections for live dashboard updates. The subdomain uses a Let's Encrypt certificate managed by Certbot rather than Cloudflare proxying — see [`infrastructure.md`](./infrastructure.md) for the TLS split.
+Grafana runs on port 3001 inside the Docker network and is reverse-proxied by Nginx at `grafana.beyondthearc.app`. The Nginx block includes `Upgrade` and `Connection` headers to support Grafana's WebSocket connections for live dashboard updates. The subdomain is proxied through Cloudflare like the main site (SSL/TLS Full (strict)), and the origin presents the same Certbot-managed Let's Encrypt certificate — see [`infrastructure.md`](./infrastructure.md).
 
 ---
 
