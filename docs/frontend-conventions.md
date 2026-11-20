@@ -294,6 +294,8 @@ Tests are **Vitest**, run by `npm run test` and by the `frontend-test` CI job, e
 
 A component that reads copy renders through `renderWithIntl` (`testing/renderWithIntl.tsx`): the real `messages/<locale>` catalogue, the time zone pinned, and a missing message thrown rather than rendered as its key. Assert on the English copy unless the test is about the French one. `@/navigation`'s `Link` renders as-is — its `href` carries the locale prefix (`/en/championships/4`), which is worth asserting.
 
+**Coverage is measured.** Everything under `app/`, `features/`, `lib/` and `shared/` counts: `frontend-test` reports it to Sonar, whose gate asks for 80% on a merge request's new lines. `npx vitest run --coverage` prints the summary locally and writes the HTML report to `coverage/lcov-report/`.
+
 `styles/contrast.spec.ts` is the one test over the stylesheet rather than code: it reads every colour token in the three themes and fails CI on any promised text/background pair below its WCAG floor. See the design system section of [`frontend.md`](./frontend.md#design-system).
 
 Spec files are excluded from barrel generation and from Sonar coverage sources. So is test data shared between specs, which goes in a `*Fixtures.ts` beside them (`championshipFixtures.ts`, `matchEventsFixtures.ts`): barrelsby skips the suffix, and ESLint lifts `max-params` for its row builders.
