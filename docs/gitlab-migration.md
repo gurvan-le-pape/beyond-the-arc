@@ -21,10 +21,10 @@ Register with the **docker executor**, and mount the host Docker socket so the
 what replaces GitHub's `cache-from/cache-to: type=gha`, which has no counterpart
 here — without it every pipeline rebuilds four images from scratch.
 
-In `~/.gitlab-runner/config.toml`, under the runner's `[runners.docker]`:
+In `/etc/gitlab-runner/config.toml` (the system service's config, root-only), under the runner's `[runners.docker]`:
 
 ```toml
-volumes = ["/var/run/docker.sock:/var/run/docker.sock", "/cache"]
+volumes = ["/var/run/docker.sock:/var/run/docker.sock", "/srv/gitlab-runner/cache:/cache"]
 ```
 
 The socket makes the job root-equivalent on the host. That is acceptable here
@@ -44,9 +44,9 @@ compute minutes the self-hosted runner exists to avoid, and it breaks `deploy`
 outright, which needs the host Docker socket that only this runner mounts.
 
 **Concurrency.** `concurrent = 1` is the default, a global key at the top of
-`config.toml`, and it serializes all twelve jobs. `concurrent = 4` on an 8-core
-host runs a full pipeline in under two minutes and leaves the machine usable;
-raise it only if that proves slow.
+`config.toml`, and it serializes all twenty-one jobs. `wsl-local` runs
+`concurrent = 6` on an 8-core host, which leaves the machine usable; raise it
+only if that proves slow.
 
 WSL note: the runner only executes while WSL is up. `ci.yml`'s triggers are
 pushes and merge requests, which only happen while you are working, so this
@@ -83,15 +83,16 @@ would fail. The push side of the pipeline keeps using `CI_REGISTRY_USER` /
 
 1. Repoint the clone:
    `cd /opt/beyondthearc && git remote set-url origin <new repository URL>`
-   The deploy does `git pull`, so this must work non-interactively. A public
+   The deploy does `git fetch`, so this must work non-interactively. A public
    project pulls anonymously; a private one needs a deploy token in the URL.
 2. Add the registry path to `/opt/beyondthearc/.env`:
    `REGISTRY_IMAGE=registry.gitlab.com/<namespace>/beyond-the-arc`
    `docker/docker-compose.prod.yml` reads it, so the overlay is registry-agnostic
    and a future move is an `.env` edit.
 3. `IMAGE_TAG` in `.env` keeps its meaning — the deploy pins it to the commit
-   SHA, and rollback is still: set it to a previous SHA, then rerun the pull and
-   `up -d`.
+   SHA. Rollback is Operate → Environments → production → Rollback, or on the
+   VPS `bash /opt/beyondthearc/docker/deploy.sh <sha> registry.gitlab.com
+   <deploy-token-user>` (see `docs/ci-cd.md`).
 
 ## Registry storage
 
