@@ -6,7 +6,7 @@
 
 ## Overview
 
-Every feature follows the same top-level layout: `api/`, `components/`, and — only when they have content — `constants/`, `hooks/`, `types/`, `utils/`. This document defines the rules *inside* that layout. Most are mechanically enforced by custom ESLint rules in `src/frontend/eslint-rules/` (see [Enforcement](#enforcement)), so violations fail lint/CI rather than style review; [Comments](#comments) is the one section with no rule behind it.
+Every feature follows the same top-level layout: `components/`, and — only when they have content — `api/`, `constants/`, `hooks/`, `types/`, `utils/`. `competitions/`, `organizations/` and `site/` group sub-features, each with that layout. This document defines the rules *inside* that layout. Most are mechanically enforced by custom ESLint rules in `src/frontend/eslint-rules/` (see [Enforcement](#enforcement)), so violations fail lint/CI rather than style review; [Comments](#comments) is the one section with no rule behind it.
 
 `shared/components/` has its own settled category-folder layout (`primitives/`, `blocks/`, `table/`, …) and is not covered here — except by [Comments](#comments), which applies to all of `src/frontend`.
 
@@ -37,7 +37,7 @@ The rules above say **how** a component is split. Whether to split is decided by
 
 Split when the component:
 
-- **derives or fetches data and also renders non-trivial UI** — the derivation moves to a hook (`useMatchEventsView`), the component keeps the markup;
+- **derives or fetches data and also renders non-trivial UI** — the derivation moves to a hook (`useMatchEvents`), the component keeps the markup;
 - **contains a piece that is, or is about to be, used elsewhere** — and if that piece can be described without naming a feature, it is not a sub-part at all but a shared primitive (see [The basketball vocabulary](#the-basketball-vocabulary));
 - **nests conditional rendering more than two levels deep** — extract the branches;
 - **needs a comment to say where one section ends and the next begins** — that boundary is a component.
@@ -204,7 +204,7 @@ readonly tickYs: number[];
 
 **Never `@param` on the interface.** Those tags belong to functions; on a type declaration they document nothing, render nowhere, and drift from the members beside them. No rule catches this — `check-param-names` validates tags only against a *function's* parameters — so it is on review.
 
-**`React.FC` is not required and not preferred.** react.dev models plain function declarations throughout and never mentions it; the community position is that it is "not needed" since `@types/react` 18 dropped its implicit `children`. It remains in use here and is not worth a sweep of its own, but new components take the plain form.
+**`React.FC` is not required and not preferred.** react.dev models plain function declarations throughout and never mentions it; the community position is that it is "not needed" since `@types/react` 18 dropped its implicit `children`. Nothing here uses it, and new components take the plain form.
 
 ## Comments
 
@@ -234,7 +234,7 @@ A comment that documents the *child's* internals belongs in the child, not at th
 A comment stating a **constraint** rather than an identity, because a constraint is invisible in the code that satisfies it:
 
 - **an ordering that must hold** — SVG paints in document order, so overlays precede court lines or the lines are buried under them
-- **why a value is that value** — `revalidate = 60` because every fetch in the route is `ServerRevalidate.LIVE` and the lowest in a route wins
+- **why a value is that value** — `revalidate = 60` because the route's match fetches are `ServerRevalidate.LIVE` and the lowest in a route wins
 - **a trap** — a hook that still exists but has no call sites and must not be reintroduced
 - **a decision that looks like a mistake** — answering 200 with an error card rather than 500
 
@@ -244,7 +244,7 @@ Never write how the code got here; `git log` holds that, and a comment describin
 
 ```
 // 60s, not the hour this once declared — so 60 has always been what was in force   ← no
-// 60s because every fetch here is `ServerRevalidate.LIVE`, and the lowest wins      ← yes
+// 60s because the match fetches are `ServerRevalidate.LIVE`, and the lowest wins   ← yes
 ```
 
 The same applies to explanatory prose in `docs/`: state the rule, not the history of the rule.
@@ -265,7 +265,7 @@ The **prose** of a doc comment is held to everything above — it must say what 
 Rules specific to the form:
 
 - **Types belong to TypeScript.** Never `@param {string} name`. The signature already carries the shape, and a copy of it in prose drifts independently. Document meaning, units and constraints; leave the type to the compiler.
-- **The description is the free text at the top, never a tag.** TSDoc — which TypeScript's tooling follows — standardises 24 tags and `@description` is not among them: *"any content appearing prior to the first block tag is interpreted as the special summary section."* `@description`/`@desc` are JSDoc aliases for a case that does not arise here, and using one leaves the summary section empty while the prose renders as a trailing footnote. Note that `shared/types/api.generated.ts` contains 613 of them — that is `openapi-typescript` mapping the OpenAPI `description` field mechanically, not a convention to copy.
+- **The description is the free text at the top, never a tag.** TSDoc — which TypeScript's tooling follows — standardises 24 tags and `@description` is not among them: *"any content appearing prior to the first block tag is interpreted as the special summary section."* `@description`/`@desc` are JSDoc aliases for a case that does not arise here, and using one leaves the summary section empty while the prose renders as a trailing footnote. Note that `shared/types/api.generated.ts` contains 531 of them — that is `openapi-typescript` mapping the OpenAPI `description` field mechanically, not a convention to copy.
 - **`@example` must show what the signature does not.** `getByChampionshipId(5)` above `getByChampionshipId(championshipId: number): Promise<Pool[]>` restates it. An example earns its place for usage that is genuinely non-obvious — an options object with interacting fields, a factory whose result is passed somewhere particular, a required call order.
 - **Nothing verifies an example.** TypeScript does not typecheck code inside comments and no test runs one, so an example is prose shaped like code and rots in silence. Write real import paths, and prefer pointing at an existing call site over inventing a snippet.
 - **`@param` and `@returns` are mandatory on non-component declarations**, each with a description. `jsdoc/require-param`, `require-returns` and their `-description` variants enforce this over `.ts`/`.mts`; `.tsx` is exempt because a component's single destructured props object and its JSX return are both meaningless as tags. A `@returns` earns its place by naming what the value *means* at the edges — the sentinel, the empty case, the `null` — not by repeating the return type.
