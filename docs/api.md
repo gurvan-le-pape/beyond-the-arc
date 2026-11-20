@@ -124,8 +124,9 @@ Validation errors return an array of messages:
 {
   "statusCode": 400,
   "message": [
-    "level must be either \"regional\" or \"departmental\"",
-    "clubId must be a valid number"
+    "clubId must not be less than 1",
+    "clubId must be an integer number",
+    "level must be one of the following values: departmental, regional, national"
   ],
   "error": "Bad Request",
   "path": "/api/players?level=invalid&clubId=abc",
@@ -141,7 +142,7 @@ Response caching is applied at the route level using a custom `CacheInterceptor`
 
 | Tier            | TTL        | Applied to                                                             |
 | --------------- | ---------- | ---------------------------------------------------------------------- |
-| `STATIC_DATA`   | 10 minutes | Leagues, club stats by region — rarely changes                         |
+| `STATIC_DATA`   | 10 minutes | Leagues — rarely changes                                               |
 | `MODERATE_DATA` | 5 minutes  | List endpoints, pool matches, player shots                             |
 | `DYNAMIC_DATA`  | 60 seconds | Platform stats and recent pools — they move with every simulated round |
 
@@ -310,7 +311,7 @@ The shot endpoints (`/teams/:id/shots`, `/players/:id/shots`) return every shot 
 | ------ | -------- | --------------------------- | ------ |
 | GET    | `/stats` | Platform-wide entity counts | 60 sec |
 
-Returns aggregate counts for clubs, teams, players, matches, leagues, and committees. Used on the homepage, the about page and the organizations landing. Cached at 60 seconds rather than 5 minutes because match counts move with every simulated round.
+Returns aggregate counts for clubs, teams, players, matches, leagues, and committees, and the championship count per level (`championshipsByLevel`). Used on the homepage, the about page and the organizations landing. Cached at 60 seconds rather than 5 minutes because match counts move with every simulated round.
 
 ---
 
@@ -330,7 +331,7 @@ Exposed at `/metrics` (outside the `/api` prefix) for Prometheus scraping. Retur
 
 **No authentication.** The API is fully public. This is appropriate for a read-only competition data platform, but means there is no mechanism to restrict access to specific endpoints or rate-limit individual clients.
 
-**In-memory cache only.** The cache is in-process with a maximum of 100 entries. It does not survive restarts and is not shared across hypothetical multiple instances. A Redis-backed cache would be needed for any multi-instance deployment.
+**In-memory cache only.** The cache is in-process with a maximum of 500 entries. It does not survive restarts and is not shared across hypothetical multiple instances. A Redis-backed cache would be needed for any multi-instance deployment.
 
 **Inconsistent pagination envelope.** List endpoints return `meta.count` while paginated endpoints return `data.items`, `data.total`, `data.page`, etc. The two patterns are not unified, which means frontend consumers need to handle both shapes.
 
