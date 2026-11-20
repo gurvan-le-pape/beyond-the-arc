@@ -72,7 +72,6 @@ All services run as Docker Compose containers on a single VPS. There is no separ
 ├── docker/
 │   ├── backend/
 │   ├── frontend/
-│   ├── database/
 │   ├── python-script/
 │   ├── docker-compose.yml
 │   └── docker-compose.prod.yml
@@ -83,12 +82,11 @@ All services run as Docker Compose containers on a single VPS. There is no separ
 
 ## Frontend structure
 
-The frontend is a Next.js 15 app using the App Router with a `[locale]` dynamic segment for internationalisation. All public-facing pages live under `app/[locale]/(public)/`:
+The frontend is a Next.js 15 app using the App Router with a `[locale]` dynamic segment for internationalisation. The data pages live under `app/[locale]/(chrome)/(public)/`; the site pages (`about`, `architecture`, `docs`, `product`) sit beside that group in `(chrome)/`, and the club map is `app/[locale]/(fullscreen)/map`:
 
 ```
 (public)/
 ├── championships/[championshipId]   # Leaderboards, pools, results
-├── map/                             # Interactive club map
 ├── matches/[matchId]                # Match detail and stats
 ├── organizations/
 │   ├── clubs/[clubId]
@@ -140,7 +138,7 @@ No cross-language mechanism exists in this repo and none was invented for one st
 
 The cost this accepts is that a change means editing three files. It is written down here so the duplication is not mistaken for an oversight and "fixed" into a shared runtime input.
 
-One deliberate exception: `matches.service.spec.ts` keeps the literal `"Europe/Paris"` rather than importing the backend constant. The spec is the oracle for that constant — importing it would compare the value with itself, and the test would pass for any zone.
+One deliberate exception: `matches.service.spec.ts` imports neither the backend constant nor the zone name — it writes its expected instants out as literal UTC timestamps. The spec is the oracle for that constant: importing it, or recomputing the expected instants from the zone, would compare the implementation with itself.
 
 Every other assumption the scheduler, backend and frontend make about each other without a check behind it is listed in → [`boundary.md`](./boundary.md)
 
