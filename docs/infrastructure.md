@@ -224,7 +224,7 @@ Exposes host-level metrics (CPU, memory, disk, network) to Prometheus. Mounts `/
 
 ### cadvisor
 
-Exposes per-container CPU, memory and OOM-kill metrics to Prometheus, labelled by Compose service. Runs unprivileged with `/dev/kmsg` passed as a device, mounts `/`, `/sys`, `/var/lib/docker` and `/var/run` (the Docker socket) read-only, and is capped at 128 MB / 0.25 CPU. No exposed port. See `docs/observability.md` for what it measures and how it is trimmed.
+Exposes per-container CPU, memory and OOM-kill metrics to Prometheus, labelled by Compose service. Runs unprivileged with `/dev/kmsg` passed as a device, mounts only `/sys` and `/var/run` (the Docker socket) read-only — not the host root, which as root it could read `.env` through — and is capped at 128 MB / 0.25 CPU. No exposed port. See `docs/observability.md` for what it measures and how it is trimmed.
 
 ### blackbox-exporter
 

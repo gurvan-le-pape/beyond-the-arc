@@ -326,9 +326,13 @@ services:
   # containers only, the metric groups below switched off, and one label kept —
   # the Compose service name — instead of every container label.
   #
-  # Reads the Docker socket through /var/run, like promtail: a read-only bind
-  # does not make a socket read-only, so this container can drive the Docker
-  # API. No port published; Prometheus scrapes it over my_network.
+  # Mounts only what these metrics read: /sys for the cgroups, /var/run for the
+  # Docker socket (container names and labels). Not the host root or
+  # /var/lib/docker that cAdvisor's own examples mount: it runs as root, so
+  # those would let it read the mode-600 .env and the database files, and with
+  # the disk metrics off they add no series. The socket still lets it drive the
+  # Docker API (a read-only bind does not make a socket read-only), as for
+  # promtail. No port published; Prometheus scrapes it over my_network.
   cadvisor:
     logging: *logging
     image: ghcr.io/google/cadvisor:v0.60.6
@@ -339,10 +343,8 @@ services:
       - "--whitelisted_container_labels=com.docker.compose.service"
       - "--disable_metrics=advtcp,app,cpuLoad,cpu_topology,cpuset,disk,diskIO,hugetlb,memory_numa,network,percpu,perf_event,pressure,process,referenced_memory,resctrl,sched,tcp,udp"
     volumes:
-      - /:/rootfs:ro
       - /var/run:/var/run:ro
       - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
     devices:
       - /dev/kmsg
     restart: unless-stopped
