@@ -170,10 +170,10 @@ The entire persist step runs within a single transaction. The caller (`Scheduler
 
 Each state defines weighted probabilities to the next state. For example, from `possession`:
 
-- 85% → `shot_attempt`
-- 15% → `dead_ball` (turnover, foul, etc.)
+- 77% → `shot_attempt`
+- 23% → `dead_ball` (turnover, foul, etc.)
 
-Each transition also carries a list of possible events with their own odds (e.g. from `possession` → `dead_ball`: traveling 15%, bad pass 25%, steal 15%, blocking foul 6%, …).
+Each transition also carries a list of possible events with their own odds (e.g. from `possession` → `dead_ball`: traveling 6%, bad pass 12%, steal 33%, blocking foul 12%, …).
 
 Some event categories have sub-events with their own weighted selection — for instance, a 2-point shot attempt resolves into either interior (`int`) or exterior (`ext`), then into specific shot types (layup, dunk, fadeaway, pull-up jumper).
 
@@ -221,8 +221,8 @@ A match's events go in as a single batched `INSERT INTO ... VALUES (...), (...) 
 
 | Parameter          | Location                      | Value                            |
 | ------------------ | ----------------------------- | -------------------------------- |
-| Season year        | `config.py`                   | `2025-2026`                      |
-| Season start       | `config.py`                   | Week 39, 2024                    |
+| Season year        | `config.py`                   | `2026-2027`                      |
+| Season start       | `config.py`                   | Week 39, 2026                    |
 | Categories         | `config.py`                   | U11, U13, U15, U18, U21, Seniors |
 | Genders            | `config.py`                   | male, female                     |
 | Game state machine | `simulation/game_config.json` | Weights and event lists          |
