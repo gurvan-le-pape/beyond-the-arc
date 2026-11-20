@@ -38,7 +38,7 @@ Frontend (`src/frontend`):
 ```bash
 npm run lint
 npm run lint:fix                    # same three steps as the backend's
-npm run typecheck                   # tsc --noEmit
+npm run typecheck                   # tsc --noEmit && tsc -p tsconfig.scripts.json
 npm run build
 ```
 
@@ -52,7 +52,7 @@ Root-level `npm run quality` prints the knip and jscpd reports (`quality:knip`, 
 
 `no-unnecessary-condition`, `complexity`, `max-lines-per-function` and `max-params` are `error` in both ESLint configs, with the violations that predate them counted per file and rule in each project's `eslint-suppressions.json`. A new violation fails lint, in a file listed there or not. Fixing a listed one makes lint exit **2** until `npm run lint:prune` lowers the count and the file is committed; here that exit code is not a broken config. Never add to the baseline to get a change through. `noUncheckedIndexedAccess` is off, so `no-unnecessary-condition` calls a guard on a value read from an array unnecessary: keep a guard that is real and give it an inline disable saying why.
 
-Root-level `npm run barrels` (or `make barrels`) regenerates barrel `index.ts` files via barrelsby — needed after adding new files to directories listed in the barrel-enforcing eslint rule (see below). It chains `barrels:lint` (`eslint --fix` over the frontend barrels) because barrelsby writes its own `@file` banner and drops the `// src/frontend/...` path comment. Regeneration is one-shot: barrelsby 2.8.1 ships no watch mode.
+Root-level `npm run barrels` (or `make barrels`) regenerates barrel `index.ts` files via barrelsby — needed after adding new files to directories listed in the barrel-enforcing eslint rule (see below). It chains `barrels:lint` (`eslint --fix` over the frontend and backend barrels) because barrelsby writes its own `@file` banner and drops the `// src/frontend/...` or `// src/backend/...` path comment. Regeneration is one-shot: barrelsby 2.8.1 ships no watch mode.
 
 Composite component folders (an `index.tsx` root plus internal files) must be added to `exclude` in `barrelsby.json`, or barrelsby flattens them into the parent barrel and re-exports their internals — which is how a duplicate export can break the build.
 
@@ -87,7 +87,7 @@ These are enforced by custom ESLint rules in `src/backend/eslint-rules/` and `sr
 
 ## Frontend architecture
 
-- Pages live under `src/frontend/app/[locale]/(public)/`; feature logic (components, hooks, API calls) lives under `src/frontend/features/<feature>/`, shared UI under `src/frontend/shared/`.
+- Pages live under `src/frontend/app/[locale]/(chrome)/(public)/` (the site pages `about`, `architecture`, `docs`, `product` sit beside it in `(chrome)/`, the map in `(fullscreen)/map`); feature logic (components, hooks, API calls) lives under `src/frontend/features/<feature>/`, shared UI under `src/frontend/shared/`.
 - **Interactive shared primitives wrap react-aria-components** — `Button`, `IconButton`, `Select`, `ComboBox`, `MultiSelect`, `TextField`, `SearchField`, `Switch`, `SegmentedControl`, `ToggleChips`, `Tabs`, `LinkMenu`, the header's menus, the docs disclosures. React Aria owns behaviour, focus and ARIA; the wrapper owns the look and a narrow prop API, takes React Aria's names (its components imported as `Aria*`), and takes its copy as props, never through a translation hook. Where React Aria ships a primitive, wrap it rather than hand-rolling one; there is no Radix component left. This overrides `component-decomposition.md`'s "hand-rolled, not shadcn/ui". Two traps: a `"use client"` primitive turns every helper it exports into a client reference, so variant functions a server component calls live in a plain `*Styles.ts` (`buttonStyles.ts`, `dropdownStyles.ts`); and popovers portal to `<body>`, which sits under a native `<dialog>`'s top layer, so `BottomSheet` provides `UNSAFE_PortalProvider` for anything opened inside it.
 - **One service module per feature**: `x.service.ts` declares each backend endpoint once, over `request` in `lib/services/api.ts` — native `fetch`, callable from a server component and from a TanStack Query function alike. On the server it reaches the backend over the Docker network (`INTERNAL_API_URL`) and keeps the response in Next's Data Cache for the module's `ServerRevalidate` tier; in the browser it goes through `NEXT_PUBLIC_API_URL`. Either way it unwraps the `{ data }` envelope and throws an `ApiError` on a non-2xx response. Server components and query functions import the same `xService` from the `api/` barrel; a query function passes TanStack's `signal`, a server component calls the method bare.
 - **Query Options pattern** for client data fetching, four files per feature: a key factory (`xKeys.ts`), a query options factory (`xQueries.ts`, single source of truth for query key + fn + cache config), thin hooks (`useX.ts` — camelCase, enforced by `enforce-file-naming.js`) that components actually import, and prefetch helpers exported from the queries file for hover/focus-triggered prefetching.
