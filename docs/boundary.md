@@ -40,7 +40,7 @@ Event types, roles, positions, genders, categories and competition levels each e
 
 | place | file |
 | --- | --- |
-| database | CHECK constraints in `src/backend/prisma/migrations/0_init/migration.sql` — the source of truth |
+| database | CHECK constraints in `src/backend/prisma/migrations/` — the source of truth: event types, genders and levels in `0_init`, categories and positions in `20261016120000_check_category_and_position`; roles have none |
 | backend | `src/backend/common/constants/` |
 | frontend | `src/frontend/shared/constants/` (the kebab-case files) |
 | scheduler | `src/backend/db/python/event_rules.py` and `simulation/game_config.json` |
