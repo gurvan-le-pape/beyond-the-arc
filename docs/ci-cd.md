@@ -40,7 +40,7 @@ quality-report           (analyze, advisory)
 ruff-report              (analyze, advisory)
 ```
 
-Every `check` job runs in parallel. `sonarcloud` needs `backend-test` for its coverage report. `deploy` lists its fourteen gates explicitly in `needs:` rather than waiting on the whole stage, so the advisory jobs cannot hold a release.
+Every `check` job runs in parallel. `sonarcloud` needs `backend-test` and `frontend-test` for their coverage reports. `deploy` lists its fourteen gates explicitly in `needs:` rather than waiting on the whole stage, so the advisory jobs cannot hold a release.
 
 Workflow rules accept three sources — `merge_request_event`, a push to `main`, and `web` — and end in `when: never`, which stops a branch with an open merge request from producing two pipelines per commit. Every job is `interruptible` so a superseded pipeline can be cancelled, except `deploy`: cancelling a compose `up` mid-flight could leave the VPS half-deployed.
 
@@ -176,6 +176,7 @@ docker compose … up -d
 docker image prune -af   # after the pull, never before
 # restart prometheus + blackbox-exporter if their config changed in this pull,
 # then loki + promtail, then grafana if its alerting or datasource provisioning changed
+# nginx -t then reload nginx (sudo -n) if docker/nginx/ changed and sites-enabled links into this clone
 # poll backend /api/health/ready and frontend /en, 12 × 5 s each —
 # exit 1 (failing the pipeline) and print the last 50 log lines if either never answers
 docker system prune -f   # only after both health checks pass
@@ -191,13 +192,13 @@ The checkout updates the Compose files and config before the images, so the runn
 
 **Pull first, prune second.** Every deploy pins `:SHA` tags, which are never dangling, so old images accumulate until the disk fills (this tripped the 90% disk threshold in July 2026) and `docker image prune -af` has to run. Run before the pull, a refused login or a missing tag would land on a host whose previous images are already gone — production down with nothing local to roll back to. After a successful pull, the same failure is a red pipeline on an untouched host. Every tag stays in the registry, so rollback re-pulls by `IMAGE_TAG`.
 
-**Conditional restarts.** Prometheus, the blackbox exporter, Loki, Promtail and Grafana's alerting and datasource provisioning read bind-mounted files only at startup, and `up -d` does not hash a mounted file's contents, so a changed scrape job or alert rule would land on disk and never load. The script diffs those paths between `pre_pull_head` and the new `HEAD` and restarts only what changed — Prometheus first, because an alert whose series does not exist yet reads NoData and the availability rules treat NoData as alerting. Unconditional restarts would also reset the alert `for:` clocks on every unrelated deploy.
+**Conditional restarts.** Prometheus, the blackbox exporter, Loki, Promtail and Grafana's alerting and datasource provisioning read bind-mounted files only at startup, and `up -d` does not hash a mounted file's contents, so a changed scrape job or alert rule would land on disk and never load. The script diffs those paths between `pre_pull_head` and the new `HEAD` and restarts only what changed — Prometheus first, because an alert whose series does not exist yet reads NoData and the availability rules treat NoData as alerting. Unconditional restarts would also reset the alert `for:` clocks on every unrelated deploy. Nginx, which runs on the host, follows the same rule: when `docker/nginx/` changed and `/etc/nginx/sites-enabled/beyondthearc` links into this clone, the script runs `nginx -t` and then reloads Nginx, both through `sudo -n`.
 
 **Retried health checks.** The frontend check is a retry loop like the backend's, and has to be: `frontend` waits for the backend to be healthy, so it starts *after* the first loop succeeds, and a single curl against a socket not yet listening would kill the script under `set -e` before it could report anything.
 
 ### The deploy account
 
-The script above runs as **`deploy`**, an unprivileged account that owns `/opt/beyondthearc` and belongs to the `docker` group. That group membership is what lets it run every `docker` and `docker compose` command in the script; the `git pull` works because `origin` is an HTTPS remote on a public project, so no credential is involved.
+The script above runs as **`deploy`**, an unprivileged account that owns `/opt/beyondthearc` and belongs to the `docker` group. That group membership is what lets it run every `docker` and `docker compose` command in the script; the `git fetch` works because `origin` is an HTTPS remote on a public project, so no credential is involved.
 
 One property of this worth knowing before relying on it: **`docker` group membership is root-equivalent.** Anyone who can talk to the Docker socket can start a container that bind-mounts `/`. So `deploy` is an audit-trail and accident-blast-radius boundary — a stray `rm` in the script hits only files it owns — and **not** a containment boundary against a leaked `VPS_SSH_KEY`. Bounding what a stolen key can *do* needs an `authorized_keys` forced command restricting it to a fixed script.
 
