@@ -166,7 +166,7 @@ A Next.js 15 application served on port 3000.
 
 In development, the source directory is bind-mounted into the container and the dev server runs with hot reload. In production, the image is built in CI, pushed to the container registry, and pulled onto the VPS — no build happens on the server.
 
-Three environment variables are passed as both build args and runtime env vars: `NEXT_PUBLIC_API_URL`, `INTERNAL_API_URL`, and `FRONTEND_URL`. The `NEXT_PUBLIC_` prefix makes the API URL available in the browser bundle. `INTERNAL_API_URL` is used for server-side rendering inside the Docker network, where the frontend container reaches the backend directly by service name rather than going through Nginx. `SENTRY_AUTH_TOKEN` is passed as a BuildKit secret mount, exposed only to the `npm run build` step — it is needed at build time for Sentry source map upload and never enters the image config or its layers (a build arg would persist in the image metadata on GHCR).
+`NEXT_PUBLIC_API_URL` and `FRONTEND_URL` are passed as both build args and runtime env vars; `INTERNAL_API_URL` is a runtime env var only. The `NEXT_PUBLIC_` prefix makes the API URL available in the browser bundle. `INTERNAL_API_URL` is used for server-side rendering inside the Docker network, where the frontend container reaches the backend directly by service name rather than going through Nginx. `SENTRY_AUTH_TOKEN` is passed as a BuildKit secret mount, exposed only to the `npm run build` step — it is needed at build time for Sentry source map upload and never enters the image config or its layers (a build arg would persist in the image metadata in the registry).
 
 ### backend
 
@@ -196,7 +196,7 @@ The scheduler runs as a non-root user (`appuser`) created in the Dockerfile.
 
 ### prometheus
 
-Scrapes metrics from the backend and `node-exporter`, and drives the availability probes through `blackbox-exporter`. Retains data for 15 days (`--storage.tsdb.retention.time=15d`). Configuration is mounted from `docker/config/prometheus.yml`.
+Scrapes metrics from the backend, `node-exporter` and `cadvisor`, and drives the availability probes through `blackbox-exporter`. Retains data for 15 days (`--storage.tsdb.retention.time=15d`). Configuration is mounted from `docker/config/prometheus.yml`.
 
 Resource limits are set to 0.5 CPU and 512MB RAM to prevent the observability stack from crowding out the application services on the single VPS.
 
@@ -273,7 +273,7 @@ The scheduler Dockerfile creates a dedicated `appuser` group and user and sets `
 
 ## Networking
 
-All containers share a single Docker bridge network (`my_network`). Services communicate by container name. The frontend container uses `INTERNAL_API_URL` (resolving to `http://backend:4000` inside the network) for server-side API calls, while browser-side calls use `NEXT_PUBLIC_API_URL` (the public URL via Nginx).
+All containers share a single Docker bridge network (`my_network`). Services communicate by container name. The frontend container uses `INTERNAL_API_URL` (`http://backend:4000/api` inside the network) for server-side API calls, while browser-side calls use `NEXT_PUBLIC_API_URL` (the public URL via Nginx).
 
 ---
 
