@@ -1,4 +1,4 @@
-// src/frontend/features/site/docs/components/sections/BestPractices.tsx
+// src/frontend/features/site/docs/components/docs-chapters/BestPractices.tsx
 "use client";
 
 import { useTranslations } from "next-intl";

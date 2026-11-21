@@ -1,9 +1,9 @@
-// src/frontend/features/site/docs/components/DocsQuickLinks.tsx
+// src/frontend/features/site/docs/components/docs-quick-links/index.tsx
 import { useTranslations } from "next-intl";
 
 import { Grid } from "@/shared/components/primitives";
 
-import { QUICK_LINKS } from "../constants/quickLinks";
+import { QUICK_LINKS } from "../../constants/quickLinks";
 import { DocsQuickLinkCard } from "./DocsQuickLinkCard";
 
 /**

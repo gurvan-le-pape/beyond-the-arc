@@ -1,10 +1,10 @@
-// src/frontend/features/site/docs/components/sections/GettingStarted.tsx
+// src/frontend/features/site/docs/components/docs-chapters/GettingStarted.tsx
 import { useTranslations } from "next-intl";
 
 import { Text } from "@/shared/components/typography";
 import { GITLAB_CLONE_URL } from "@/shared/constants";
 
-import { CodeBlock } from "../CodeBlock";
+import { CodeBlock } from "./CodeBlock";
 
 const GETTING_STARTED_COMMANDS = `# Clone the repository
 git clone ${GITLAB_CLONE_URL}

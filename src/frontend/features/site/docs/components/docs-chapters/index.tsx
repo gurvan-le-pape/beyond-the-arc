@@ -1,16 +1,16 @@
-// src/frontend/features/site/docs/components/DocsChapters.tsx
+// src/frontend/features/site/docs/components/docs-chapters/index.tsx
 "use client";
 
 import { useTranslations } from "next-intl";
 import type { ComponentType } from "react";
 import { DisclosureGroup } from "react-aria-components";
 
-import { DOCS_SECTIONS } from "../constants/docsSections";
+import { DOCS_SECTIONS } from "../../constants/docsSections";
+import { BestPractices } from "./BestPractices";
+import { DataModel } from "./DataModel";
 import { DocsSectionAccordion } from "./DocsSectionAccordion";
-import { BestPractices } from "./sections/BestPractices";
-import { DataModel } from "./sections/DataModel";
-import { GettingStarted } from "./sections/GettingStarted";
-import { ProjectStructure } from "./sections/ProjectStructure";
+import { GettingStarted } from "./GettingStarted";
+import { ProjectStructure } from "./ProjectStructure";
 
 /**
  * Each chapter's body, by chapter id. Typed on the ids `DOCS_SECTIONS`

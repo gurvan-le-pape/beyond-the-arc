@@ -1,11 +1,11 @@
-// src/frontend/features/site/docs/components/sections/ProjectStructure.tsx
+// src/frontend/features/site/docs/components/docs-chapters/ProjectStructure.tsx
 "use client";
 
 import { useTranslations } from "next-intl";
 
 import { Text } from "@/shared/components/typography";
 
-import { CodeBlock } from "../CodeBlock";
+import { CodeBlock } from "./CodeBlock";
 
 const BACKEND_EXPLANATION_KEYS = [
   "docs.structure.backendModulesExplanation",

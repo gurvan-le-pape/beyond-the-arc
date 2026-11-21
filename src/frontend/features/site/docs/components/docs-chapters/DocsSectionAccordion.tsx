@@ -1,4 +1,4 @@
-// src/frontend/features/site/docs/components/DocsSectionAccordion.tsx
+// src/frontend/features/site/docs/components/docs-chapters/DocsSectionAccordion.tsx
 "use client";
 
 import type { LucideIcon } from "lucide-react";
