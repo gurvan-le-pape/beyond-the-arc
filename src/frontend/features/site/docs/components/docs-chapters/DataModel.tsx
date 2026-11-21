@@ -31,7 +31,7 @@ export function DataModel() {
     <div className="space-y-6">
       <Text variant="body">{t("docs.sections.database.content")}</Text>
 
-      <div className="rounded-button p-6 border border-divide">
+      <div className="rounded-card p-6 border border-divide">
         <div className="flex justify-between items-center mb-4">
           <Text variant="h3" as="h3">
             {t("docs.database.diagramTitle")}
@@ -125,7 +125,7 @@ export function DataModel() {
           {DATABASE_TABLES.map((table) => (
             <div
               key={table.name}
-              className="p-3 rounded-button border border-divide"
+              className="p-3 rounded-card border border-divide"
             >
               <code className="text-sm font-mono text-ink-primary block">
                 {table.name}
