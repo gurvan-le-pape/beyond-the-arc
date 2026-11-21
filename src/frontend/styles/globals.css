@@ -11,9 +11,16 @@ html {
 
 /* The page background also has to live on the document, not only on the page
    shell: overscroll (rubber-band on macOS/iOS) reveals the body, and the map
-   page has no shell at all. Uses the same token, so it follows the theme. */
+   page has no shell at all. Uses the same token, so it follows the theme.
+
+   The text colour is set here for the same reason: text that does not set its
+   own (a `plain` TextLink, which inherits) would otherwise fall back to the
+   browser's CanvasText, which follows `color-scheme`. next-themes sets
+   `color-scheme` only for "light" and "dark", so high contrast gets black
+   text on its black surface. */
 body {
   background-color: rgb(var(--color-surface-base));
+  color: rgb(var(--color-text-body));
 }
 
 /* Every element reached by the keyboard gets the same visible indicator, so a
