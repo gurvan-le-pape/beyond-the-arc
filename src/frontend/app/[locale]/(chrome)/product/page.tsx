@@ -4,16 +4,10 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import {
-  FeatureCard,
-  FeaturesHighlightsSection,
-  type HighlightItem,
+  ProductFeatures,
+  ProductHighlights,
 } from "@/features/site/product/components";
-import {
-  PRODUCT_FEATURES,
-  PRODUCT_HIGHLIGHTS,
-} from "@/features/site/product/constants";
 import { PageHero, PageLayout } from "@/shared/components/layout";
-import { Grid } from "@/shared/components/primitives";
 import type { LocalePageProps } from "@/shared/types";
 
 /**
@@ -44,18 +38,6 @@ export default async function ProductPage({ params }: LocalePageProps) {
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "landing" });
 
-  const features = PRODUCT_FEATURES.map((f) => ({
-    icon: f.icon,
-    title: t(`product.${f.featureKey}.title`),
-    description: t(`product.${f.featureKey}.description`),
-  }));
-
-  const highlights: HighlightItem[] = PRODUCT_HIGHLIGHTS.map((h) => ({
-    icon: h.icon,
-    title: t(`product.highlights.${h.highlightKey}.title`),
-    description: t(`product.highlights.${h.highlightKey}.description`),
-  }));
-
   return (
     <PageLayout>
       <PageHero
@@ -64,19 +46,8 @@ export default async function ProductPage({ params }: LocalePageProps) {
         icon={Sparkles}
       />
 
-      {/* Features Grid */}
-      <div className="mb-12">
-        <Grid columns={{ base: 1, md: 2, lg: 3 }} gap={6}>
-          {features.map((feature) => (
-            <FeatureCard key={feature.title} {...feature} />
-          ))}
-        </Grid>
-      </div>
-
-      <FeaturesHighlightsSection
-        title={t("product.highlightsTitle")}
-        highlights={highlights}
-      />
+      <ProductFeatures />
+      <ProductHighlights />
     </PageLayout>
   );
 }
