@@ -33,7 +33,7 @@ function MatrixCell({ championships, tone }: MatrixCellProps) {
           <Link
             href={`/championships/${championship.id}`}
             className={cn(
-              "flex flex-wrap items-baseline justify-between gap-x-3 rounded-md border border-divide surface-subtle px-3 py-2 transition-colors focus-ring",
+              "flex flex-wrap items-baseline justify-between gap-x-3 rounded-md border border-divide px-3 py-2 transition-colors focus-ring",
               TONE_HOVER[tone],
             )}
           >
