@@ -73,7 +73,7 @@ export function EntityHeader({
         {visual}
 
         <div className="flex-1 min-w-0">
-          <Text variant="h1" className="mb-3">
+          <Text variant="h1" className="mb-3 text-xl md:text-2xl">
             {title}
           </Text>
 
