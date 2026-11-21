@@ -7,6 +7,6 @@ export * from "./CountBar";
 export * from "./detail/OrganizationHeader";
 export * from "./detail/OrganizationInfo";
 export * from "./detail/SearchableLinkList";
-export * from "./OrganizationsGrid";
 export * from "./OrganizationsHeader";
 export * from "./OrganizationTypeCard";
+export * from "./OrganizationTypes";
