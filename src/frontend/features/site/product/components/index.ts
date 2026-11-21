@@ -4,6 +4,5 @@
  */
 
 export * from "./FeatureCard";
-export * from "./FeatureHighlightItem";
 export * from "./ProductFeatures";
 export * from "./ProductHighlights";
