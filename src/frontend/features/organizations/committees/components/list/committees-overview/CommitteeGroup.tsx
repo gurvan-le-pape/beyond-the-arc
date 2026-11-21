@@ -43,7 +43,7 @@ export function CommitteeGroup({
   const clubs = committees.reduce((sum, c) => sum + c.clubCount, 0);
 
   return (
-    <section className="break-inside-avoid mb-6 surface-subtle border border-divide rounded-card overflow-hidden">
+    <section className="break-inside-avoid mb-6 border border-divide rounded-card overflow-hidden">
       <header className="flex items-baseline justify-between gap-3 px-4 py-2.5 border-b border-divide">
         <h2 className="font-semibold text-text-heading">
           <Link

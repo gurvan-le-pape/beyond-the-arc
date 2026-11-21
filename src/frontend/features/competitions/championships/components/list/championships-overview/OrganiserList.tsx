@@ -75,7 +75,7 @@ export function OrganiserList({ organisers, ...link }: OrganiserListProps) {
   // Leagues have no groups: one list, laid out in a grid.
   if (sorted.length === 1 && sorted[0][0] === "") {
     return (
-      <ul className="grid sm:grid-cols-2 gap-x-6 surface-subtle border border-divide rounded-card p-3">
+      <ul className="grid sm:grid-cols-2 gap-x-6 border border-divide rounded-card p-3">
         {organisers.map((organiser) => (
           <li key={organiser.id}>
             <OrganiserLink organiser={organiser} {...link} />
@@ -86,7 +86,7 @@ export function OrganiserList({ organisers, ...link }: OrganiserListProps) {
   }
 
   return (
-    <div className="columns-1 sm:columns-2 gap-6 surface-subtle border border-divide rounded-card p-3">
+    <div className="columns-1 sm:columns-2 gap-6 border border-divide rounded-card p-3">
       {sorted.map(([group, members]) => (
         <section key={group} className="break-inside-avoid mb-3">
           {group && (
