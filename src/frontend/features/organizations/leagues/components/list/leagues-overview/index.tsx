@@ -74,7 +74,7 @@ export function LeaguesOverview({
         </>
       }
     >
-      <ol className="surface-subtle border border-divide rounded-card overflow-hidden divide-y divide-divide">
+      <ol className="border border-divide rounded-card overflow-hidden divide-y divide-divide">
         {rows.map(({ league, code }) => (
           <LeagueRow
             key={league.id}
