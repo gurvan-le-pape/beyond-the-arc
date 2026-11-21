@@ -68,7 +68,9 @@ export function PeriodSection({
 
   return (
     <section aria-labelledby={headingId}>
-      <div className="sticky top-16 z-raised surface-raised flex flex-wrap items-baseline gap-x-4 gap-y-0.5 px-3 sm:px-4 py-2 border-b border-divide tabular-nums">
+      {/* Filled because rows scroll under it; one step above the page, which
+          the timeline sits on. */}
+      <div className="sticky top-16 z-raised surface-subtle flex flex-wrap items-baseline gap-x-4 gap-y-0.5 px-3 sm:px-4 py-2 border-b border-divide tabular-nums">
         <Text variant="title" as="h3" id={headingId}>
           {name}
         </Text>
