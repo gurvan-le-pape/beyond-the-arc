@@ -31,8 +31,7 @@ export function DataModel() {
     <div className="space-y-6">
       <Text variant="body">{t("docs.sections.database.content")}</Text>
 
-      {/* Database Diagram — establishes surface-raised context */}
-      <div className="surface-raised rounded-button p-6 border border-divide">
+      <div className="rounded-button p-6 border border-divide">
         <div className="flex justify-between items-center mb-4">
           <Text variant="h3" as="h3">
             {t("docs.database.diagramTitle")}
@@ -57,7 +56,9 @@ export function DataModel() {
           </div>
         </div>
 
-        {/* Image wrapper — sits inside surface-raised, inset stays at raised (ceiling) */}
+        {/* The one fill in the chapter: the pan-and-zoom canvas is an
+            interactive surface, like the map, and the fill marks where
+            dragging and zooming apply. */}
         <div className="bg-surface-inset rounded-button overflow-hidden">
           <TransformWrapper
             initialScale={0.8}
@@ -116,7 +117,6 @@ export function DataModel() {
         </div>
       </div>
 
-      {/* Key Tables */}
       <div>
         <Text variant="h3" as="h3" className="mb-3">
           {t("docs.database.keyTables")}
@@ -125,7 +125,7 @@ export function DataModel() {
           {DATABASE_TABLES.map((table) => (
             <div
               key={table.name}
-              className="p-3 bg-surface-inset rounded-button border border-divide"
+              className="p-3 rounded-button border border-divide"
             >
               <code className="text-sm font-mono text-ink-primary block">
                 {table.name}
