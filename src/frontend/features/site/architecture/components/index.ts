@@ -7,5 +7,7 @@ export * from "./ArchitectureArrow";
 export * from "./ArchitectureDiagramNode";
 export * from "./DiagramLane";
 export * from "./FeatureBadge";
+export * from "./SystemArchitecture";
 export * from "./TechStackCard";
 export * from "./TechStackItem";
+export * from "./TechStacks";
