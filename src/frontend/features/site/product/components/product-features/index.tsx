@@ -1,9 +1,9 @@
-// src/frontend/features/site/product/components/ProductFeatures.tsx
+// src/frontend/features/site/product/components/product-features/index.tsx
 import { useTranslations } from "next-intl";
 
 import { Grid } from "@/shared/components/primitives";
 
-import { PRODUCT_FEATURES } from "../constants/productFeatures";
+import { PRODUCT_FEATURES } from "../../constants/productFeatures";
 import { FeatureCard } from "./FeatureCard";
 
 /**

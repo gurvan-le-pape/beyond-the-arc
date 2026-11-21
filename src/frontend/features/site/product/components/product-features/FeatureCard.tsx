@@ -1,4 +1,4 @@
-// src/frontend/features/site/product/components/FeatureCard.tsx
+// src/frontend/features/site/product/components/product-features/FeatureCard.tsx
 import type { LucideIcon } from "lucide-react";
 
 import { IconTile } from "@/shared/components/blocks";

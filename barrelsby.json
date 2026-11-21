@@ -129,6 +129,7 @@
     ".*/clubs-map-teaser/(?!index\\.tsx$).*",
     ".*/tech-stacks/(?!index\\.tsx$).*",
     ".*/system-architecture/(?!index\\.tsx$).*",
+    ".*/product-features/(?!index\\.tsx$).*",
     ".*/shared/components/table/(parts\\.tsx|SortButton\\.tsx|variants\\.ts)$"
   ]
 }
