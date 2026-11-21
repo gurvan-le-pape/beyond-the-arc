@@ -2,13 +2,11 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import {
-  OrganizationsHeader,
-  OrganizationTypes,
-} from "@/features/organizations/components";
+import { OrganizationTypes } from "@/features/organizations/components";
 import { statsService } from "@/features/stats/api";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
+import { Text } from "@/shared/components/typography";
 import type { LocalePageProps } from "@/shared/types";
 import { handleServerError } from "@/shared/utils";
 
@@ -35,12 +33,22 @@ async function OrganizationsPage({ params }: LocalePageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
 
+  const t = await getTranslations({ locale, namespace: "organizations" });
+
   const stats = await statsService.getStats().catch(handleServerError);
 
   return (
-    <PageLayout centered contentClassName="max-w-4xl">
-      <OrganizationsHeader />
-      <OrganizationTypes stats={stats} />
+    <PageLayout centered>
+      {/* The header's active section names the page, and the three cards
+          explain it; the heading exists so the document does not start at
+          level 2 for a screen reader. It shares a wrapper with the cards so it
+          takes no slot in the column's spacing. */}
+      <div>
+        <Text variant="pageTitle" className="sr-only">
+          {t("title")}
+        </Text>
+        <OrganizationTypes stats={stats} />
+      </div>
     </PageLayout>
   );
 }
