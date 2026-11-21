@@ -47,7 +47,12 @@ export default async function ClubsPage({ params }: LocalePageProps) {
           { label: t("clubs.label"), current: true },
         ]}
       />
-      <Text variant="pageTitle">{tCommon("sectionTitles.clubs")}</Text>
+      <div className="space-y-1">
+        <Text variant="pageTitle">{tCommon("sectionTitles.clubs")}</Text>
+        <Text variant="caption" as="p">
+          {t("clubs.description")}
+        </Text>
+      </div>
       <ClubDirectory />
     </PageLayout>
   );
