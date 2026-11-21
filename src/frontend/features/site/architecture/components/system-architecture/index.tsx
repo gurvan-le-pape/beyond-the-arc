@@ -11,12 +11,12 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 
+import { IconHighlight } from "@/shared/components/blocks";
 import { Card, Grid } from "@/shared/components/primitives";
 
 import { ArchitectureArrow } from "./ArchitectureArrow";
 import { ArchitectureDiagramNode } from "./ArchitectureDiagramNode";
 import { DiagramLane } from "./DiagramLane";
-import { FeatureBadge } from "./FeatureBadge";
 
 /**
  * How the system fits together: the path of a page request and of the match
@@ -87,17 +87,17 @@ export function SystemArchitecture() {
 
       <div className="mt-12">
         <Grid columns={{ base: 1, md: 3 }} gap={6}>
-          <FeatureBadge
+          <IconHighlight
             icon={FileCode2}
             title={t("features.contract.title")}
             description={t("features.contract.description")}
           />
-          <FeatureBadge
+          <IconHighlight
             icon={Eye}
             title={t("features.readOnly.title")}
             description={t("features.readOnly.description")}
           />
-          <FeatureBadge
+          <IconHighlight
             icon={Server}
             title={t("features.oneServer.title")}
             description={t("features.oneServer.description")}
