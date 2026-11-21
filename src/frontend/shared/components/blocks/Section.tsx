@@ -30,12 +30,12 @@ interface SectionProps {
 /**
  * Section — a titled block of a detail page, laid flat on the page.
  *
- * The page's header is its one framed card; sections below it take their
+ * The page's header is its one filled card; sections below it take their
  * structure from their title and the space between them, so their content
- * gets the full width of the page. Content inside sits on the page surface;
- * a panel that needs a fill (InfoBox, Input) takes `bg-surface-inset`, which
- * resolves one step above it. A table inside still draws its own frame: that
- * bounds the table, not the section.
+ * gets the full width of the page. Content inside sits on the page surface
+ * with a border at most — an InfoBox, a Card, a table draw their own frame,
+ * which bounds them, not the section. A fill belongs only to what floats over
+ * the page or takes input (an input, a dropdown, a modal).
  */
 export function Section({ title, action, children, className }: SectionProps) {
   return (

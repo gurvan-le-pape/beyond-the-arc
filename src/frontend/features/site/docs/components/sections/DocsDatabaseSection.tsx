@@ -120,7 +120,7 @@ export function DocsDatabaseSection({ content }: DocsDatabaseSectionProps) {
         </div>
       </div>
 
-      {/* Key Tables — sit inside surface-subtle, inset resolves to surface-raised */}
+      {/* Key Tables */}
       <div>
         <Text variant="h3" as="h3" className="mb-3">
           {t("docs.database.keyTables")}

@@ -48,7 +48,7 @@ export default function DocsPage() {
         icon={BookOpen}
       />
 
-      {/* Quick Links — sit on surface-base, establish surface-subtle context */}
+      {/* Quick Links */}
       <div className="mb-12">
         <Grid columns={{ base: 1, md: 2, lg: 4 }} gap={4}>
           {quickLinks.map((link) => (
