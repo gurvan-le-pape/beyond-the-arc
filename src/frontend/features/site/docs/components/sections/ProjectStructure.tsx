@@ -1,4 +1,4 @@
-// src/frontend/features/site/docs/components/sections/DocsStructureSection.tsx
+// src/frontend/features/site/docs/components/sections/ProjectStructure.tsx
 "use client";
 
 import { useTranslations } from "next-intl";
@@ -22,23 +22,19 @@ const FRONTEND_EXPLANATION_KEYS = [
   "docs.structure.publicExplanation",
 ] as const;
 
-interface DocsStructureSectionProps {
-  readonly content: string;
-}
-
 /**
  * The project-structure chapter: the prose plus the directory trees.
  *
- * `content` supplies only the prose. The trees are literals here — paths are
+ * The prose comes from the catalogue. The trees are literals here — paths are
  * not translatable, and a drifted tree is a documentation bug rather than a
  * missing key, so nothing in `check:messages` would catch it.
  */
-export function DocsStructureSection({ content }: DocsStructureSectionProps) {
+export function ProjectStructure() {
   const t = useTranslations("landing");
 
   return (
     <div className="space-y-6">
-      <Text variant="body">{content}</Text>
+      <Text variant="body">{t("docs.sections.structure.content")}</Text>
 
       <div>
         <Text variant="h3" as="h3" className="mb-3">

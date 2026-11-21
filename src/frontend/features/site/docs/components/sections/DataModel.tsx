@@ -1,4 +1,4 @@
-// src/frontend/features/site/docs/components/sections/DocsDatabaseSection.tsx
+// src/frontend/features/site/docs/components/sections/DataModel.tsx
 "use client";
 
 import { Download } from "lucide-react";
@@ -17,23 +17,19 @@ const DATABASE_TABLES = [
   { name: "MatchEvents", descKey: "docs.database.tables.matchEvents" },
 ] as const;
 
-interface DocsDatabaseSectionProps {
-  readonly content: string;
-}
-
 /**
- * The database chapter of the docs page: the ERD image and its explanation.
+ * The database chapter of the docs page: its intro, the zoomable ERD with
+ * its downloads, and the key tables.
  *
- * `content` is a single already-translated string; this adds no copy of its
- * own. The diagram is a static asset, so a schema change updates the image
+ * The diagram is a static asset, so a schema change updates the image
  * separately from this component and the two can drift.
  */
-export function DocsDatabaseSection({ content }: DocsDatabaseSectionProps) {
+export function DataModel() {
   const t = useTranslations("landing");
 
   return (
     <div className="space-y-6">
-      <Text variant="body">{content}</Text>
+      <Text variant="body">{t("docs.sections.database.content")}</Text>
 
       {/* Database Diagram — establishes surface-raised context */}
       <div className="surface-raised rounded-button p-6 border border-divide">
