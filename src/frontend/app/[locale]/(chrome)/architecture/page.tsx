@@ -73,7 +73,7 @@ export default async function ArchitecturePage({ params }: LocalePageProps) {
         icon={Layers}
       />
 
-      {/* Tech Stack Cards — sit on surface-base, establish surface-subtle context */}
+      {/* Tech Stack Cards */}
       <div className="mb-12">
         <Grid columns={{ base: 1, lg: 3 }} gap={8}>
           {techStacks.map((stack) => (
@@ -88,7 +88,7 @@ export default async function ArchitecturePage({ params }: LocalePageProps) {
         </Grid>
       </div>
 
-      {/* Architecture Diagram — sits on surface-base, establishes surface-subtle context */}
+      {/* Architecture Diagram */}
       <Card padding="lg" heading={t("architecture.systemArchitecture")}>
         <div className="space-y-8">
           <DiagramLane label={t("architecture.diagram.requestLane")}>

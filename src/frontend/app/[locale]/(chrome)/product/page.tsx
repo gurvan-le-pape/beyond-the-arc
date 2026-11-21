@@ -64,7 +64,7 @@ export default async function ProductPage({ params }: LocalePageProps) {
         icon={Sparkles}
       />
 
-      {/* Features Grid — cards sit on surface-base, establish surface-subtle context */}
+      {/* Features Grid */}
       <div className="mb-12">
         <Grid columns={{ base: 1, md: 2, lg: 3 }} gap={6}>
           {features.map((feature) => (
