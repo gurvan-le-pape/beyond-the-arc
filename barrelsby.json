@@ -129,6 +129,7 @@
     ".*/product-features/(?!index\\.tsx$).*",
     ".*/docs-quick-links/(?!index\\.tsx$).*",
     ".*/docs-chapters/(?!index\\.tsx$).*",
+    ".*/organization-types/(?!index\\.tsx$).*",
     ".*/shared/components/table/(parts\\.tsx|SortButton\\.tsx|variants\\.ts)$"
   ]
 }

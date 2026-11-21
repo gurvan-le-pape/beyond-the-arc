@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/components/OrganizationTypeCard.tsx
+// src/frontend/features/organizations/components/organization-types/OrganizationTypeCard.tsx
 import {
   ArrowRight,
   Building2,
