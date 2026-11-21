@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/components/OrganizationTypes.tsx
+// src/frontend/features/organizations/components/organization-types/index.tsx
 import type { Stats } from "@/features/stats/types";
 import { Grid } from "@/shared/components/primitives";
 import { OrganizationType } from "@/shared/constants";
