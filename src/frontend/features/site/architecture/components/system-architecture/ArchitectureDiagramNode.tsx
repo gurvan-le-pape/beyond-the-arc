@@ -1,9 +1,9 @@
-// src/frontend/features/site/architecture/components/ArchitectureDiagramNode.tsx
+// src/frontend/features/site/architecture/components/system-architecture/ArchitectureDiagramNode.tsx
 import type { LucideIcon } from "lucide-react";
 
 import { Text } from "@/shared/components/typography";
 
-import { STACK_TONE_CLASSES, type StackTone } from "../constants";
+import { STACK_TONE_CLASSES, type StackTone } from "../../constants";
 
 interface ArchitectureDiagramNodeProps {
   readonly icon: LucideIcon;

@@ -1,9 +1,9 @@
-// src/frontend/features/site/architecture/components/TechStacks.tsx
+// src/frontend/features/site/architecture/components/tech-stacks/index.tsx
 import { useTranslations } from "next-intl";
 
 import { Grid } from "@/shared/components/primitives";
 
-import { TECH_STACKS } from "../constants/techStacks";
+import { TECH_STACKS } from "../../constants/techStacks";
 import { TechStackCard } from "./TechStackCard";
 
 /**

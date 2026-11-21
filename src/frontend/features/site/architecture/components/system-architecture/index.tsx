@@ -1,4 +1,4 @@
-// src/frontend/features/site/architecture/components/SystemArchitecture.tsx
+// src/frontend/features/site/architecture/components/system-architecture/index.tsx
 import {
   CalendarClock,
   Database,

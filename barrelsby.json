@@ -127,6 +127,8 @@
     ".*/explore-shortcuts/(?!index\\.tsx$).*",
     ".*/competition-levels/(?!index\\.tsx$).*",
     ".*/clubs-map-teaser/(?!index\\.tsx$).*",
+    ".*/tech-stacks/(?!index\\.tsx$).*",
+    ".*/system-architecture/(?!index\\.tsx$).*",
     ".*/shared/components/table/(parts\\.tsx|SortButton\\.tsx|variants\\.ts)$"
   ]
 }

@@ -1,4 +1,4 @@
-// src/frontend/features/site/architecture/components/ArchitectureArrow.tsx
+// src/frontend/features/site/architecture/components/system-architecture/ArchitectureArrow.tsx
 import { ArrowRight } from "lucide-react";
 
 /**
