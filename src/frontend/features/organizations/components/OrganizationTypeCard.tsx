@@ -1,23 +1,29 @@
 // src/frontend/features/organizations/components/OrganizationTypeCard.tsx
-import { ArrowRight } from "lucide-react";
+import {
+  ArrowRight,
+  Building2,
+  type LucideIcon,
+  MapPin,
+  Users,
+} from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
-import React from "react";
 
 import { Badge, type BadgeProps, Card } from "@/shared/components/primitives";
 import { OrganizationType } from "@/shared/constants";
 
-export interface OrgType {
-  id: OrganizationType;
-  label: string;
-  description: string;
-  icon: React.ReactElement<React.SVGProps<SVGSVGElement>>;
-  href: string;
-  count?: number;
-}
-
-const STYLES: Record<
+/**
+ * Everything one organisation type's card shows besides its count: its icon,
+ * link, message keys and the classes of its level tone.
+ */
+const TYPES: Record<
   OrganizationType,
   {
+    icon: LucideIcon;
+    labelKey: "leagues.label" | "committees.label" | "clubs.label";
+    descriptionKey:
+      | "leagues.description"
+      | "committees.description"
+      | "clubs.description";
     border: string;
     iconRing: string;
     iconBg: string;
@@ -27,6 +33,9 @@ const STYLES: Record<
   }
 > = {
   [OrganizationType.LEAGUES]: {
+    icon: MapPin,
+    labelKey: "leagues.label",
+    descriptionKey: "leagues.description",
     border: "border-line-regional hover:border-solid-regional",
     iconRing: "ring-line-regional",
     iconBg: "bg-tint-regional",
@@ -34,6 +43,9 @@ const STYLES: Record<
     badge: "regional",
   },
   [OrganizationType.COMMITTEES]: {
+    icon: Building2,
+    labelKey: "committees.label",
+    descriptionKey: "committees.description",
     border: "border-line-departmental hover:border-solid-departmental",
     iconRing: "ring-line-departmental",
     iconBg: "bg-tint-departmental",
@@ -41,6 +53,9 @@ const STYLES: Record<
     badge: "departmental",
   },
   [OrganizationType.CLUBS]: {
+    icon: Users,
+    labelKey: "clubs.label",
+    descriptionKey: "clubs.description",
     border: "border-line-clubs hover:border-solid-clubs",
     iconRing: "ring-line-clubs",
     iconBg: "bg-tint-clubs",
@@ -50,7 +65,8 @@ const STYLES: Record<
 };
 
 interface OrganizationTypeCardProps {
-  readonly org: OrgType;
+  readonly type: OrganizationType;
+  readonly count: number;
 }
 
 /**
@@ -61,15 +77,18 @@ interface OrganizationTypeCardProps {
  * for the request's locale rather than passed pre-formatted, which is why the
  * formatter is needed here at all.
  */
-export async function OrganizationTypeCard({ org }: OrganizationTypeCardProps) {
+export async function OrganizationTypeCard({
+  type,
+  count,
+}: OrganizationTypeCardProps) {
   const t = await getTranslations("organizations");
   const format = await getFormatter();
-  const { label, description, icon, href, id, count } = org;
-  const s = STYLES[id];
+  const { icon: Icon, labelKey, descriptionKey, ...s } = TYPES[type];
+  const label = t(labelKey);
 
   return (
     <Card
-      href={href}
+      href={`/organizations/${type}`}
       aria-label={label}
       className={`group relative flex flex-col gap-5 ${s.border}`}
     >
@@ -80,22 +99,16 @@ export async function OrganizationTypeCard({ org }: OrganizationTypeCardProps) {
             ${s.iconBg} ring-4 ${s.iconRing}
           `}
         >
-          {React.cloneElement(icon, {
-            "aria-hidden": true,
-            focusable: false,
-            className: `w-6 h-6 ${s.ink}`,
-          })}
+          <Icon aria-hidden focusable={false} className={`w-6 h-6 ${s.ink}`} />
         </div>
 
-        {count !== undefined && (
-          <Badge variant={s.badge}>{format.number(count)}</Badge>
-        )}
+        <Badge variant={s.badge}>{format.number(count)}</Badge>
       </div>
 
       <div className="flex-1 space-y-1.5">
         <div className={`text-base font-semibold ${s.ink}`}>{label}</div>
         <div className="text-sm text-text-secondary leading-relaxed">
-          {description}
+          {t(descriptionKey)}
         </div>
       </div>
 
