@@ -1,4 +1,4 @@
-// src/frontend/features/site/docs/components/sections/DocsBestPracticesSection.tsx
+// src/frontend/features/site/docs/components/sections/BestPractices.tsx
 "use client";
 
 import { useTranslations } from "next-intl";
@@ -14,24 +14,16 @@ const BEST_PRACTICE_KEYS = [
   "docs.bestPractices.codeReview",
 ] as const;
 
-interface DocsBestPracticesSectionProps {
-  readonly content: string;
-}
-
 /**
- * The best-practices chapter of the docs page.
- *
- * `content` is a single already-translated string; this contributes the
- * heading and the frame, no copy of its own.
+ * The best-practices chapter of the docs page: its intro and the six
+ * practices, each with a tick.
  */
-export function DocsBestPracticesSection({
-  content,
-}: DocsBestPracticesSectionProps) {
+export function BestPractices() {
   const t = useTranslations("landing");
 
   return (
     <div className="space-y-4">
-      <Text variant="body">{content}</Text>
+      <Text variant="body">{t("docs.sections.bestPractices.content")}</Text>
       <ul className="space-y-3">
         {BEST_PRACTICE_KEYS.map((key) => (
           <li key={key} className="flex items-start gap-3">

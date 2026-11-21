@@ -6,12 +6,12 @@ import { useTranslations } from "next-intl";
 import { DisclosureGroup } from "react-aria-components";
 
 import {
-  DocsBestPracticesSection,
-  DocsDatabaseSection,
-  DocsGettingStartedSection,
+  BestPractices,
+  DataModel,
   DocsQuickLinkCard,
   DocsSectionAccordion,
-  DocsStructureSection,
+  GettingStarted,
+  ProjectStructure,
 } from "@/features/site/docs/components";
 import { DOCS_SECTIONS, QUICK_LINKS } from "@/features/site/docs/constants";
 import { PageHero, PageLayout } from "@/shared/components/layout";
@@ -37,7 +37,6 @@ export default function DocsPage() {
   const sections = DOCS_SECTIONS.map((section) => ({
     ...section,
     title: t(section.titleKey),
-    content: t(section.contentKey),
   }));
 
   return (
@@ -68,18 +67,10 @@ export default function DocsPage() {
             icon={section.icon}
             title={section.title}
           >
-            {section.id === "getting-started" && (
-              <DocsGettingStartedSection content={section.content} />
-            )}
-            {section.id === "database" && (
-              <DocsDatabaseSection content={section.content} />
-            )}
-            {section.id === "structure" && (
-              <DocsStructureSection content={section.content} />
-            )}
-            {section.id === "best-practices" && (
-              <DocsBestPracticesSection content={section.content} />
-            )}
+            {section.id === "getting-started" && <GettingStarted />}
+            {section.id === "database" && <DataModel />}
+            {section.id === "structure" && <ProjectStructure />}
+            {section.id === "best-practices" && <BestPractices />}
           </DocsSectionAccordion>
         ))}
       </DisclosureGroup>
