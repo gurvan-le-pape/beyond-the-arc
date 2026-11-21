@@ -62,7 +62,7 @@ export function EventTimeline({
         // `overflow-clip`, not `overflow-hidden`: it rounds the corners
         // without becoming a scroll container, which would pin the sticky
         // period headers to this box instead of the page.
-        <div className="rounded-card border border-divide surface-subtle shadow-card overflow-clip">
+        <div className="rounded-card border border-divide overflow-clip">
           {periods.map(({ period, plays }) => (
             <PeriodSection
               key={period}
