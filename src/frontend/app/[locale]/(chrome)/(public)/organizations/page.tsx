@@ -3,10 +3,9 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import {
-  OrganizationsGrid,
   OrganizationsHeader,
+  OrganizationTypes,
 } from "@/features/organizations/components";
-import type { OrganizationCounts } from "@/features/organizations/types";
 import { statsService } from "@/features/stats/api";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
@@ -37,16 +36,11 @@ async function OrganizationsPage({ params }: LocalePageProps) {
   setRequestLocale(locale);
 
   const stats = await statsService.getStats().catch(handleServerError);
-  const counts: OrganizationCounts = {
-    leagues: stats.leagues,
-    committees: stats.committees,
-    clubs: stats.clubs,
-  };
 
   return (
     <PageLayout centered contentClassName="max-w-4xl">
       <OrganizationsHeader />
-      <OrganizationsGrid counts={counts} />
+      <OrganizationTypes stats={stats} />
     </PageLayout>
   );
 }

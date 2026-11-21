@@ -1,8 +1,8 @@
-// src/frontend/features/organizations/components/OrganizationsGrid.tsx
+// src/frontend/features/organizations/components/OrganizationTypes.tsx
 import { Building2, MapPin, Users } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
-import type { OrganizationCounts } from "@/features/organizations/types";
+import type { Stats } from "@/features/stats/types";
 import { Grid } from "@/shared/components/primitives";
 import { OrganizationType } from "@/shared/constants";
 
@@ -36,8 +36,9 @@ const ORG_TYPE_CONFIG = [
   },
 ] as const;
 
-interface OrganizationsGridProps {
-  readonly counts: OrganizationCounts;
+interface OrganizationTypesProps {
+  /** The platform stats; only the three organisation counts are read. */
+  readonly stats: Pick<Stats, "leagues" | "committees" | "clubs">;
 }
 
 /**
@@ -45,7 +46,7 @@ interface OrganizationsGridProps {
  *
  * An **async server component**; the counts come from the page's one fetch.
  */
-export async function OrganizationsGrid({ counts }: OrganizationsGridProps) {
+export async function OrganizationTypes({ stats }: OrganizationTypesProps) {
   const t = await getTranslations("organizations");
 
   const types: OrgType[] = ORG_TYPE_CONFIG.map((org) => ({
@@ -54,7 +55,7 @@ export async function OrganizationsGrid({ counts }: OrganizationsGridProps) {
     href: org.href,
     label: t(org.labelKey),
     description: t(org.descriptionKey),
-    count: counts[org.countKey],
+    count: stats[org.countKey],
   }));
 
   return (
