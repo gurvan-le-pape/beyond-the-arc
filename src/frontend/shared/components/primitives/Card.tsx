@@ -189,7 +189,7 @@ export const Card = ({
       {...(props as HTMLAttributes<HTMLDivElement>)}
     >
       {heading && (
-        <Text variant="h2" className="mb-6 text-center">
+        <Text variant="h2" className="mb-6">
           {heading}
         </Text>
       )}
