@@ -2,11 +2,10 @@
 import { BookOpen, Database, FolderTree, Lightbulb } from "lucide-react";
 
 /**
- * The accordion sections, in display order.
+ * The documentation's chapters, in display order.
  *
- * `id` is not decoration: the page switches on it to choose which section
- * component renders the body, and opens `"database"` by default. Renaming
- * one means changing both.
+ * `id` keys each chapter's body in `DocsChapters`, which is typed on these ids,
+ * and `"database"` is the chapter that starts open.
  */
 export const DOCS_SECTIONS = [
   {

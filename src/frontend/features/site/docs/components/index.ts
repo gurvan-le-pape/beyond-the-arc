@@ -4,7 +4,9 @@
  */
 
 export * from "./CodeBlock";
+export * from "./DocsChapters";
 export * from "./DocsQuickLinkCard";
+export * from "./DocsQuickLinks";
 export * from "./DocsSectionAccordion";
 export * from "./sections/BestPractices";
 export * from "./sections/DataModel";
