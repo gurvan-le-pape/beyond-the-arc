@@ -1,4 +1,4 @@
-// src/frontend/features/site/docs/components/CodeBlock.tsx
+// src/frontend/features/site/docs/components/docs-chapters/CodeBlock.tsx
 
 interface CodeBlockProps {
   /** The code, with its own line breaks; shown verbatim. */

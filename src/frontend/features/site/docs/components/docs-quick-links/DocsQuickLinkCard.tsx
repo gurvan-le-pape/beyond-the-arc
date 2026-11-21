@@ -1,4 +1,4 @@
-// src/frontend/features/site/docs/components/DocsQuickLinkCard.tsx
+// src/frontend/features/site/docs/components/docs-quick-links/DocsQuickLinkCard.tsx
 import type { LucideIcon } from "lucide-react";
 
 import { Card } from "@/shared/components/primitives";

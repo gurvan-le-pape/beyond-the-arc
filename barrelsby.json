@@ -129,6 +129,8 @@
     ".*/tech-stacks/(?!index\\.tsx$).*",
     ".*/system-architecture/(?!index\\.tsx$).*",
     ".*/product-features/(?!index\\.tsx$).*",
+    ".*/docs-quick-links/(?!index\\.tsx$).*",
+    ".*/docs-chapters/(?!index\\.tsx$).*",
     ".*/shared/components/table/(parts\\.tsx|SortButton\\.tsx|variants\\.ts)$"
   ]
 }

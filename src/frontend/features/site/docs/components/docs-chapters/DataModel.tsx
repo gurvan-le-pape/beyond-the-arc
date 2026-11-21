@@ -1,4 +1,4 @@
-// src/frontend/features/site/docs/components/sections/DataModel.tsx
+// src/frontend/features/site/docs/components/docs-chapters/DataModel.tsx
 "use client";
 
 import { Download } from "lucide-react";

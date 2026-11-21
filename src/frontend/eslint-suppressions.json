@@ -211,7 +211,7 @@
       "count": 1
     }
   },
-  "features/site/docs/components/sections/DataModel.tsx": {
+  "features/site/docs/components/docs-chapters/DataModel.tsx": {
     "max-lines-per-function": {
       "count": 1
     }
