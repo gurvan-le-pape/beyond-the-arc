@@ -21,11 +21,10 @@ interface InfoBoxProps extends Omit<
 }
 
 /**
- * A labelled value in an inset panel — the unit the stat grids are built from.
+ * A labelled value in a bordered panel, such as an organisation's address.
  *
- * Its `surface-inset` fill resolves one step above whatever surface encloses
- * it, so it reads as an inset panel on the page itself — where a detail
- * page's flat sections place it — as well as inside a Card.
+ * It has a border and no fill: content on the page is not filled, only the
+ * page header card is (see `Card`).
  *
  * A `null` or `undefined` value renders as the translated "not available"
  * label rather than collapsing, so a grid keeps its shape when a stat is
@@ -51,13 +50,7 @@ export const InfoBox = ({
   return (
     <div
       ref={ref}
-      className={cn(
-        "bg-surface-inset",
-        "p-4 rounded-card",
-        "shadow-card",
-        "border border-divide",
-        className,
-      )}
+      className={cn("p-4 rounded-card", "border border-divide", className)}
       {...props}
     >
       <div className="flex items-center gap-2 mb-2">
