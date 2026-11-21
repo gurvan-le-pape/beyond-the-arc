@@ -58,7 +58,11 @@ const cardVariants = cva(
   {
     variants: {
       variant: {
-        default: "surface-subtle border-divide shadow-card",
+        // Content on the page: a border, no fill, no shadow.
+        default: "border-divide",
+        // The page's header card, and nothing else. The one filled card on a
+        // page is what marks it as the page's identity.
+        header: "surface-subtle border-divide shadow-card",
         ghost: "bg-transparent border-transparent",
         // Empty — allows full custom styling via className
         custom: "",
@@ -69,10 +73,11 @@ const cardVariants = cva(
         md: "p-6",
         lg: "p-8",
       },
-      // A card that goes or does something lifts on hover. `motion-safe`: no
-      // movement for a reader who asked the system for less.
+      // A card that goes or does something fills and lifts on hover: at rest
+      // it is as flat as the content around it. `motion-safe`: no movement
+      // for a reader who asked the system for less.
       clickable: {
-        true: "hover:shadow-card-hover motion-safe:hover:-translate-y-0.5 cursor-pointer",
+        true: "hover:bg-surface-inset hover:shadow-card-hover motion-safe:hover:-translate-y-0.5 cursor-pointer",
         false: "",
       },
     },
@@ -88,10 +93,14 @@ export type CardProps = CardBaseProps &
   (CardLinkProps | CardActionProps | CardStaticProps);
 
 /**
- * Card — the surface-subtle container layer.
+ * Card — a bordered block of content.
  *
- * Elevation convention (must be respected):
- *   page (surface-base) → Card (surface-subtle) → InfoBox/Input (surface-raised)
+ * Only the page header card is filled: `variant="header"`, used by the
+ * headers of the detail pages (`EntityHeader`, `OrganizationHeader`,
+ * `ChampionshipHeader`, `MatchHero`). Every other card sits flat on the page
+ * with a border, so the header is the one grey block that says whose page this
+ * is. Fills elsewhere belong to what floats over the page or takes input —
+ * dropdowns, modals, inputs — and to a clickable card on hover.
  *
  * A card that goes somewhere takes `href` and renders as a link. A card that
  * *does* something takes `clickable` and renders as a <button>. Never attach an

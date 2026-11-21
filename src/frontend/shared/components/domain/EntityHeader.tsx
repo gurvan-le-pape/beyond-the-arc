@@ -68,7 +68,7 @@ export function EntityHeader({
   const tCompetitions = useTranslations("competitions");
 
   return (
-    <Card padding="none" className="overflow-hidden">
+    <Card variant="header" padding="none" className="overflow-hidden">
       <div className="flex items-center gap-3 p-4 sm:gap-5 sm:p-6">
         {visual}
 

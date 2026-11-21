@@ -58,7 +58,7 @@ export function OrganizationHeader({
   const fallbackLogo = `/images/${imageFolder}/defaultLogo.30cc7520.svg`;
 
   return (
-    <Card padding="none" className="overflow-hidden">
+    <Card variant="header" padding="none" className="overflow-hidden">
       <div className="flex items-center gap-4 p-4 sm:gap-6 sm:p-6">
         {imageFolder === "clubs" ? (
           <ClubMark clubName={name} size="2xl" />
