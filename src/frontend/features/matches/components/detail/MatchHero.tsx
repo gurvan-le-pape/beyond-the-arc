@@ -61,7 +61,7 @@ export function MatchHero({
         })}
       </Text>
 
-      <Card padding="lg" className="space-y-4">
+      <Card variant="header" padding="lg" className="space-y-4">
         <Text variant="caption" as="p" className="text-center">
           {meta.join(" · ")}
         </Text>

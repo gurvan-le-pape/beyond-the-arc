@@ -72,14 +72,13 @@ export const TableHeader = ({
 // ---------------------------------------------------------------------------
 
 /**
- * The body sets no surface of its own — it inherits whatever container it sits
- * in, which for every table but one is a `Section`, i.e. a `Card` at
- * surface-subtle.
+ * The body sets no surface of its own — it inherits whatever it sits on, which
+ * for every table is the page itself: sections and cards are flat.
  *
  * Not `surface-raised`: globals.css reserves that elevation for "inputs,
  * modals, infoboxes, skeleton fills" and documents it as the ceiling. A table
- * body is none of those, and setting it puts a darker grey slab inside an
- * already-grey card. It also breaks row hover — under `surface-raised`,
+ * body is none of those, and setting it puts a grey slab on a page where only
+ * the header card is filled. It also breaks row hover — under `surface-raised`,
  * `--surface-inset` resolves back to surface-raised (the ceiling has nowhere
  * above it), so `hover:bg-surface-inset` on navigable rows paints the colour
  * the row already is.

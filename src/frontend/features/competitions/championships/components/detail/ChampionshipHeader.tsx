@@ -99,7 +99,7 @@ export function ChampionshipHeader({
       };
 
   return (
-    <Card padding="none">
+    <Card variant="header" padding="none">
       <div className="flex flex-col gap-4 p-4 sm:flex-row sm:items-start sm:justify-between sm:p-6">
         <div className="min-w-0">
           {/* Named outright: computed from its content, the name would take in

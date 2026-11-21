@@ -103,8 +103,8 @@ interface TextProps
  *
  * **Colour belongs to the variant, not to the caller.** Each variant carries
  * its own text token — `overline` is `text-text-body` because at 12px semibold
- * it needs the full 4.5:1 and `text-text-secondary` misses it on every Card in
- * the app. That token sits on this component's own element, so a colour set on
+ * it needs the full 4.5:1 and `text-text-secondary` misses it on surface-subtle,
+ * the header card's fill. That token sits on this component's own element, so a colour set on
  * a *parent* is merely inherited and loses to it. To recolour text, pass
  * `className` here; styling the wrapper will silently do nothing.
  */
