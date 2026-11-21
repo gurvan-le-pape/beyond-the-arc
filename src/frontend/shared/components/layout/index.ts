@@ -4,6 +4,7 @@
  */
 
 export * from "./footer/Footer";
+export * from "./header/CurrentSection";
 export * from "./header/HamburgerButton";
 export * from "./header/Header";
 export * from "./header/isActivePath";

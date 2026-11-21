@@ -1,6 +1,7 @@
 // src/frontend/shared/components/layout/header/Header.tsx
 import type { ReactNode } from "react";
 
+import { CurrentSection } from "./CurrentSection";
 import { Logo } from "./Logo";
 import { MobileMenu } from "./MobileMenu";
 import { NavLinks } from "./NavLinks";
@@ -14,7 +15,7 @@ interface HeaderProps {
 /**
  * The sticky site header: a frosted capsule floating just below the top edge,
  * holding the wordmark, the navigation and the settings — or, on a phone, the
- * wordmark and the ☰ that opens the menu sheet.
+ * mark, the current section and the ☰ that opens the menu sheet.
  *
  * **The header is still 4rem tall.** The capsule is 3rem with 0.5rem above and
  * below it, and content that sticks under the header (`top-16`, the match
@@ -39,7 +40,10 @@ export function Header({ search }: HeaderProps) {
           click-through so the transparent strip around the capsule does not
           swallow clicks meant for the page under it. */}
       <div className="pointer-events-auto mx-auto flex h-full max-w-7xl items-center justify-between gap-4 rounded-full border border-divide/70 bg-header pl-4 pr-1.5 shadow-card-hover backdrop-blur-md transition-colors [.high-contrast_&]:shadow-none">
-        <Logo />
+        <div className="flex min-w-0 items-center gap-2">
+          <Logo />
+          <CurrentSection />
+        </div>
 
         <div className="hidden md:block">
           <NavLinks />
