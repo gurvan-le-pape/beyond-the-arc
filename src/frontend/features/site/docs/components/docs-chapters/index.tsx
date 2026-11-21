@@ -1,11 +1,10 @@
 // src/frontend/features/site/docs/components/docs-chapters/index.tsx
 "use client";
 
+import { BookOpen, Database, FolderTree, Lightbulb } from "lucide-react";
 import { useTranslations } from "next-intl";
-import type { ComponentType } from "react";
 import { DisclosureGroup } from "react-aria-components";
 
-import { DOCS_SECTIONS } from "../../constants/docsSections";
 import { BestPractices } from "./BestPractices";
 import { DataModel } from "./DataModel";
 import { DocsSectionAccordion } from "./DocsSectionAccordion";
@@ -13,19 +12,36 @@ import { GettingStarted } from "./GettingStarted";
 import { ProjectStructure } from "./ProjectStructure";
 
 /**
- * Each chapter's body, by chapter id. Typed on the ids `DOCS_SECTIONS`
- * declares, so a renamed or added chapter without a body fails the type check
- * rather than rendering an empty panel.
+ * The documentation's chapters, in display order, each with the component
+ * that renders its body. `id` names the chapter for the `DisclosureGroup`, and
+ * `"database"` is the one that starts open.
  */
-const CHAPTER_BODIES: Record<
-  (typeof DOCS_SECTIONS)[number]["id"],
-  ComponentType
-> = {
-  "getting-started": GettingStarted,
-  database: DataModel,
-  structure: ProjectStructure,
-  "best-practices": BestPractices,
-};
+const DOCS_CHAPTERS = [
+  {
+    id: "getting-started",
+    icon: BookOpen,
+    titleKey: "docs.sections.gettingStarted.title",
+    Body: GettingStarted,
+  },
+  {
+    id: "database",
+    icon: Database,
+    titleKey: "docs.sections.database.title",
+    Body: DataModel,
+  },
+  {
+    id: "structure",
+    icon: FolderTree,
+    titleKey: "docs.sections.structure.title",
+    Body: ProjectStructure,
+  },
+  {
+    id: "best-practices",
+    icon: Lightbulb,
+    titleKey: "docs.sections.bestPractices.title",
+    Body: BestPractices,
+  },
+] as const;
 
 /**
  * The documentation's chapters, one open at a time; clicking the open one
@@ -39,19 +55,11 @@ export function DocsChapters() {
       defaultExpandedKeys={["database"]}
       className="space-y-4 mb-12"
     >
-      {DOCS_SECTIONS.map((section) => {
-        const Body = CHAPTER_BODIES[section.id];
-        return (
-          <DocsSectionAccordion
-            key={section.id}
-            id={section.id}
-            icon={section.icon}
-            title={t(section.titleKey)}
-          >
-            <Body />
-          </DocsSectionAccordion>
-        );
-      })}
+      {DOCS_CHAPTERS.map(({ id, icon, titleKey, Body }) => (
+        <DocsSectionAccordion key={id} id={id} icon={icon} title={t(titleKey)}>
+          <Body />
+        </DocsSectionAccordion>
+      ))}
     </DisclosureGroup>
   );
 }
