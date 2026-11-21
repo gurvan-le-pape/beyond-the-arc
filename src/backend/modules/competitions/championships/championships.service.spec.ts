@@ -41,8 +41,6 @@ describe("ChampionshipsService", () => {
         findUnique: jest.fn(),
         count: jest.fn(),
       },
-      // The grouped matchday count; empty unless a test schedules matches.
-      $queryRaw: jest.fn(),
     },
   };
 
@@ -59,7 +57,6 @@ describe("ChampionshipsService", () => {
     service = module.get<ChampionshipsService>(ChampionshipsService);
     // Clear mocks before each test
     jest.clearAllMocks();
-    mockPrismaService.client.$queryRaw.mockResolvedValue([]);
   });
 
   describe("findChampionshipById", () => {
@@ -112,6 +109,7 @@ describe("ChampionshipsService", () => {
           {
             id: 1,
             letter: "A",
+            _count: { teams: 2 },
             teams: [{ club: { committee: ILLE_ET_VILAINE } }],
           },
         ],
@@ -130,7 +128,7 @@ describe("ChampionshipsService", () => {
         seasonYear: "2024-2025",
         level: CompetitionLevel.REGIONAL,
         division: 1,
-        pools: [{ id: 1, letter: "A", teams: [] }],
+        pools: [{ id: 1, letter: "A", _count: { teams: 0 }, teams: [] }],
       });
 
       await expect(service.findChampionshipById(1)).resolves.toMatchObject({
@@ -152,6 +150,7 @@ describe("ChampionshipsService", () => {
           {
             id: 1,
             letter: "A",
+            _count: { teams: 2 },
             teams: [{ club: { committee: ILLE_ET_VILAINE } }],
           },
         ],
@@ -160,9 +159,6 @@ describe("ChampionshipsService", () => {
       mockPrismaService.client.championships.findUnique.mockResolvedValue(
         mockPrismaChampionship,
       );
-      mockPrismaService.client.$queryRaw.mockResolvedValue([
-        { poolId: 1, matchdays: 2 },
-      ]);
 
       // Act
       const result = await service.findChampionshipById(1);
