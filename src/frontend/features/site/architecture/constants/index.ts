@@ -4,4 +4,3 @@
  */
 
 export * from "./stackTones";
-export * from "./techStacks";
