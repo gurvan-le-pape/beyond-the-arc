@@ -65,7 +65,6 @@
     "src/frontend/features/site/docs/constants",
     "src/frontend/features/site/home/components",
     "src/frontend/features/site/product/components",
-    "src/frontend/features/site/product/constants",
 
     "src/frontend/features/teams/api",
     "src/frontend/features/teams/components",

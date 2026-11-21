@@ -1,10 +1,19 @@
 // src/frontend/features/site/product/components/ProductHighlights.tsx
+import { Globe2, MonitorSmartphone, SunMoon } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { IconHighlight } from "@/shared/components/blocks";
 import { Card, Grid } from "@/shared/components/primitives";
 
-import { PRODUCT_HIGHLIGHTS } from "../constants/productHighlights";
+/**
+ * The cross-cutting qualities shown below the capability grid, in display
+ * order. Copy is resolved from `landing.product.highlights.*`.
+ */
+const PRODUCT_HIGHLIGHTS = [
+  { icon: Globe2, highlightKey: "i18n" },
+  { icon: SunMoon, highlightKey: "themes" },
+  { icon: MonitorSmartphone, highlightKey: "responsive" },
+] as const;
 
 /**
  * “Also on the site”: the qualities that hold on every page rather than
