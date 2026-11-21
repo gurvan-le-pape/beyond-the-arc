@@ -18,7 +18,6 @@ export interface OrgType {
 const STYLES: Record<
   OrganizationType,
   {
-    gradient: string;
     border: string;
     iconRing: string;
     iconBg: string;
@@ -28,7 +27,6 @@ const STYLES: Record<
   }
 > = {
   [OrganizationType.LEAGUES]: {
-    gradient: "from-tint-regional/60 via-surface-subtle to-surface-subtle",
     border: "border-line-regional hover:border-solid-regional",
     iconRing: "ring-line-regional",
     iconBg: "bg-tint-regional",
@@ -36,7 +34,6 @@ const STYLES: Record<
     badge: "regional",
   },
   [OrganizationType.COMMITTEES]: {
-    gradient: "from-tint-departmental/60 via-surface-subtle to-surface-subtle",
     border: "border-line-departmental hover:border-solid-departmental",
     iconRing: "ring-line-departmental",
     iconBg: "bg-tint-departmental",
@@ -44,7 +41,6 @@ const STYLES: Record<
     badge: "departmental",
   },
   [OrganizationType.CLUBS]: {
-    gradient: "from-tint-clubs/60 via-surface-subtle to-surface-subtle",
     border: "border-line-clubs hover:border-solid-clubs",
     iconRing: "ring-line-clubs",
     iconBg: "bg-tint-clubs",
@@ -75,7 +71,7 @@ export async function OrganizationTypeCard({ org }: OrganizationTypeCardProps) {
     <Card
       href={href}
       aria-label={label}
-      className={`group relative flex flex-col gap-5 bg-gradient-to-br ${s.gradient} ${s.border}`}
+      className={`group relative flex flex-col gap-5 ${s.border}`}
     >
       <div className="flex items-start justify-between">
         <div
