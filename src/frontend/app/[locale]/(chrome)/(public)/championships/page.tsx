@@ -34,13 +34,17 @@ export default async function ChampionshipsPage({ params }: LocalePageProps) {
 
   return (
     <PageLayout>
-      {/* The tabs carry the page identity visually; the heading exists so the
-          document does not start at level 2 for a screen reader. */}
-      <Text variant="pageTitle" className="sr-only">
-        {t("title")}
-      </Text>
-
-      <ChampionshipLevelTabs />
+      {/* The header's active section names the page, and the tabs start it;
+          the heading exists so the document does not start at level 2 for a
+          screen reader. It shares a wrapper with the tabs so it takes no slot
+          in the column's spacing, and the tabs start where content starts on
+          every other page. */}
+      <div>
+        <Text variant="pageTitle" className="sr-only">
+          {t("title")}
+        </Text>
+        <ChampionshipLevelTabs />
+      </div>
     </PageLayout>
   );
 }
