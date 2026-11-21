@@ -12,7 +12,8 @@ interface ThemeProviderProps {
  * Theme provider — registers all supported themes.
  *
  * Adding a new theme:
- *  1. Define a CSS class block in globals.css (e.g. .sepia { ... })
+ *  1. Define a CSS class block in globals.css (e.g. .sepia { ... }),
+ *     including its `color-scheme`
  *  2. Add the name to the themes array below
  *  That's it — no component changes needed.
  */
@@ -23,6 +24,10 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       defaultTheme="light"
       themes={["light", "dark", "high-contrast"]}
       enableSystem={true}
+      // Off because next-themes only maps "light" and "dark" to a
+      // color-scheme and pins "light" on any other theme. Each theme's block
+      // in globals.css declares its own instead.
+      enableColorScheme={false}
       disableTransitionOnChange={false}
     >
       {children}
