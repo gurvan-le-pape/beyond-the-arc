@@ -1,6 +1,6 @@
 // src/backend/modules/competitions/pools/pools.service.ts
 import { Category, CompetitionLevel } from "@common/constants";
-import { countMatchdays, TEAM_MATCHDAYS_SELECT } from "@common/utils";
+import { countMatchdays } from "@common/utils";
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
 
@@ -47,7 +47,7 @@ const POOL_SELECT = {
   id: true,
   letter: true,
   championshipId: true,
-  teams: { select: TEAM_MATCHDAYS_SELECT },
+  _count: { select: { teams: true } },
 } as const;
 
 /**
@@ -160,7 +160,7 @@ export class PoolsService {
       id: pool.id,
       letter: pool.letter,
       championshipId: pool.championshipId,
-      nbMatchdays: countMatchdays(pool.teams),
+      nbMatchdays: countMatchdays(pool._count.teams),
     } satisfies PoolResponseDto; // TypeScript validates this matches
   }
 }

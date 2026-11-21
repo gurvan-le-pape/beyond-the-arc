@@ -66,7 +66,7 @@ describe("PoolsService", () => {
       id,
       letter: "A",
       championshipId: 1,
-      teams: [{ homeMatches: [{ matchday: 1 }, { matchday: 2 }] }],
+      _count: { teams: 2 },
     });
 
     /** Stubs the round, its candidates, and full rows for whichever ids are asked for. */

@@ -2,17 +2,18 @@
 import { countMatchdays } from "./matchdays.util";
 
 describe("countMatchdays", () => {
-  it("counts a matchday once when several teams play at home on it", () => {
-    expect(
-      countMatchdays([
-        { homeMatches: [{ matchday: 1 }, { matchday: 3 }] },
-        { homeMatches: [{ matchday: 1 }, { matchday: 2 }] },
-      ]),
-    ).toBe(3);
+  it.each([
+    [2, 2],
+    [3, 6],
+    [4, 6],
+    [12, 22],
+    [13, 26],
+  ])("plays %i teams over %i matchdays", (teamCount, matchdays) => {
+    expect(countMatchdays(teamCount)).toBe(matchdays);
   });
 
-  it("is 0 for a pool with no schedule", () => {
-    expect(countMatchdays([{ homeMatches: [] }])).toBe(0);
-    expect(countMatchdays([])).toBe(0);
+  it("is 0 for a pool with fewer than two teams", () => {
+    expect(countMatchdays(1)).toBe(0);
+    expect(countMatchdays(0)).toBe(0);
   });
 });

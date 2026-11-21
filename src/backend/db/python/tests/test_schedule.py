@@ -1,6 +1,7 @@
-"""Every match is played on a weekend, at one of the listed tip-off times."""
+"""Every match is played on a weekend, at one of the listed tip-off times, and a pool's
+matchday count follows from its team count."""
 
-from utils.schedule_utils import PARIS, SLOT_OPTIONS, compute_matchday_datetime
+from utils.schedule_utils import PARIS, SLOT_OPTIONS, build_round_robin_schedule, compute_matchday_datetime
 
 SLOT_TIMES = {(hour, minute) for _, hour, minute in SLOT_OPTIONS}
 
@@ -26,3 +27,19 @@ def test_each_matchday_falls_in_its_own_week():
     weeks = [compute_matchday_datetime(39, 2026, matchday, 7).isocalendar()[1] for matchday in range(1, 23)]
     assert weeks == sorted(set(weeks), key=weeks.index)
     assert len(set(weeks)) == 22
+
+
+def test_matchday_count_follows_from_the_team_count():
+    # The API reports a pool's matchdays from its team count alone
+    # (countMatchdays in src/backend/common/utils/matchdays.util.ts): 2 × (n − 1)
+    # for an even n, 2 × n for an odd one, 0 below two teams.
+    for team_count in range(0, 21):
+        rounds = build_round_robin_schedule(list(range(1, team_count + 1)))
+        played = sum(1 for pairs in rounds if pairs)
+        if team_count < 2:
+            expected = 0
+        elif team_count % 2 == 0:
+            expected = 2 * (team_count - 1)
+        else:
+            expected = 2 * team_count
+        assert played == expected, team_count
