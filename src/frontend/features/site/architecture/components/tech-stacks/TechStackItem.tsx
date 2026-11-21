@@ -1,4 +1,4 @@
-// src/frontend/features/site/architecture/components/TechStackItem.tsx
+// src/frontend/features/site/architecture/components/tech-stacks/TechStackItem.tsx
 import type { LucideIcon } from "lucide-react";
 
 import { Text } from "@/shared/components/typography";

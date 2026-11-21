@@ -1,10 +1,10 @@
-// src/frontend/features/site/architecture/components/TechStackCard.tsx
+// src/frontend/features/site/architecture/components/tech-stacks/TechStackCard.tsx
 import type { LucideIcon } from "lucide-react";
 
 import { Card } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 
-import { STACK_TONE_CLASSES, type StackTone } from "../constants";
+import { STACK_TONE_CLASSES, type StackTone } from "../../constants";
 import { TechStackItem } from "./TechStackItem";
 
 export interface TechStackItemConfig {

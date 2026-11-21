@@ -1,4 +1,4 @@
-// src/frontend/features/site/architecture/components/DiagramLane.tsx
+// src/frontend/features/site/architecture/components/system-architecture/DiagramLane.tsx
 import type { ReactNode } from "react";
 
 import { Text } from "@/shared/components/typography";

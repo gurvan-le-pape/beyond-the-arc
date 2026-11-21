@@ -1,4 +1,4 @@
-// src/frontend/features/site/architecture/components/FeatureBadge.tsx
+// src/frontend/features/site/architecture/components/system-architecture/FeatureBadge.tsx
 import type { LucideIcon } from "lucide-react";
 
 import { IconTile } from "@/shared/components/blocks";
