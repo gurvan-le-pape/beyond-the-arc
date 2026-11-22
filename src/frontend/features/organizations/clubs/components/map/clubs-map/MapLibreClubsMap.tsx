@@ -5,24 +5,18 @@ import "maplibre-gl/dist/maplibre-gl.css";
 
 import { useTranslations } from "next-intl";
 import { useCallback, useMemo, useState } from "react";
-import { Map as MapGL, Popup } from "react-map-gl/maplibre";
+import { Map as MapGL } from "react-map-gl/maplibre";
 
 import type { Committee } from "@/features/organizations/committees/types";
 import type { League } from "@/features/organizations/leagues/types";
 import { ErrorMessage } from "@/shared/components/feedback";
 
 import type { ClubBasic } from "../../../types/ClubBasic";
-import { ClubGroupPopupContent } from "./ClubGroupPopupContent";
-import { ClubPopupContent } from "./ClubPopupContent";
+import { ClubsPopup } from "./ClubsPopup";
 import { ClubsLayer } from "./layers/ClubsLayer";
 import { DepartmentsLayer } from "./layers/DepartmentsLayer";
 import { RegionsLayer } from "./layers/RegionsLayer";
-import {
-  BASEMAP_PAINT,
-  INITIAL_VIEW,
-  MAP_COLORS,
-  ZOOM_THRESHOLDS,
-} from "./mapConstants";
+import { BASEMAP_PAINT, INITIAL_VIEW, ZOOM_THRESHOLDS } from "./mapConstants";
 import { clubsToGeoJSON } from "./mapHelpers";
 import { SidePanel } from "./side-panel";
 import { useAreaLabels } from "./useAreaLabels";
@@ -129,13 +123,6 @@ export function MapLibreClubsMap({
     showDepartments,
   });
 
-  // A club's department, through the committee it belongs to: the popup's
-  // second line. Departments come already loaded for the department layer.
-  const departmentNameByCommittee = useMemo(
-    () => new Map(departments.map((d) => [d.id, d.department.name])),
-    [departments],
-  );
-
   // Generate club points for clustering
   const clubPoints = useMemo(() => {
     if (!showClubs) return null;
@@ -190,44 +177,11 @@ export function MapLibreClubsMap({
           <ClubsLayer geoJson={clubPoints} colours={colours} />
         )}
 
-        {selectedClubs.length > 0 && (
-          <Popup
-            longitude={selectedClubs[0].longitude!}
-            latitude={selectedClubs[0].latitude!}
-            onClose={clearSelection}
-            // The card brings its own close button and width; MapLibre's
-            // default caps every popup at 240px.
-            closeButton={false}
-            maxWidth="320px"
-            // Clear the marker underneath: a shared point is usually drawn as
-            // a cluster bubble, a single club as a dot.
-            offset={
-              selectedClubs.length > 1
-                ? MAP_COLORS.CLUBS.CLUSTER_SIZES[2] + 4
-                : MAP_COLORS.CLUBS.POINT_RADIUS + 4
-            }
-          >
-            {selectedClubs.length === 1 ? (
-              <ClubPopupContent
-                club={selectedClubs[0]}
-                departmentName={
-                  departmentNameByCommittee.get(selectedClubs[0].committeeId) ??
-                  null
-                }
-                onClose={clearSelection}
-              />
-            ) : (
-              <ClubGroupPopupContent
-                clubs={selectedClubs}
-                departmentName={
-                  departmentNameByCommittee.get(selectedClubs[0].committeeId) ??
-                  null
-                }
-                onClose={clearSelection}
-              />
-            )}
-          </Popup>
-        )}
+        <ClubsPopup
+          clubs={selectedClubs}
+          departments={departments}
+          onClose={clearSelection}
+        />
       </MapGL>
 
       <SidePanel
