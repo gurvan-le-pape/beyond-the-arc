@@ -14,7 +14,7 @@
     }
   },
   "architecture": {
-    "title": "Architecture & Tech Stack",
+    "title": "Architecture & tech stack",
     "subtitle": "How a page reaches you, where its data comes from, and what runs it all.",
     "frontendTitle": "Frontend",
     "backendTitle": "Backend & data",
@@ -137,24 +137,24 @@
     },
     "sections": {
       "gettingStarted": {
-        "title": "Getting Started",
+        "title": "Getting started",
         "content": "Learn how to set up and run the project locally for development."
       },
       "database": {
-        "title": "Database Schema",
+        "title": "Database schema",
         "content": "Explore the complete database schema with entity relationships, table structures, and data flow."
       },
       "structure": {
-        "title": "Project Structure",
+        "title": "Project structure",
         "content": "Understand the organization of the codebase with clear separation between frontend and backend modules."
       },
       "bestPractices": {
-        "title": "Best Practices",
+        "title": "Best practices",
         "content": "Key engineering principles and patterns implemented throughout this project."
       }
     },
     "database": {
-      "diagramTitle": "Entity Relationship Diagram",
+      "diagramTitle": "Entity relationship diagram",
       "diagramAlt": "Database schema diagram showing all entities and their relationships",
       "keyTables": "Key Database Tables",
       "zoomIn": "Zoom in",
