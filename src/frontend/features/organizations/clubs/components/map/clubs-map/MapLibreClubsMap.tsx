@@ -14,7 +14,6 @@ import {
 
 import type { Committee } from "@/features/organizations/committees/types";
 import type { League } from "@/features/organizations/leagues/types";
-import { normalizeDepartmentCode } from "@/features/organizations/utils";
 import { ErrorMessage } from "@/shared/components/feedback";
 import { logger } from "@/shared/utils";
 
@@ -26,13 +25,13 @@ import { DepartmentsLayer } from "./layers/DepartmentsLayer";
 import { RegionsLayer } from "./layers/RegionsLayer";
 import {
   BASEMAP_PAINT,
-  GEOJSON_TO_DB_REGION_CODE,
   INITIAL_VIEW,
   MAP_COLORS,
   ZOOM_THRESHOLDS,
 } from "./mapConstants";
-import { clubsToGeoJSON, generateLabelFeatures, pointKey } from "./mapHelpers";
+import { clubsToGeoJSON, pointKey } from "./mapHelpers";
 import { SidePanel } from "./side-panel";
+import { useAreaLabels } from "./useAreaLabels";
 import { useMapColours } from "./useMapColours";
 import { useMapData } from "./useMapData";
 import { useSearch } from "./useSearch";
@@ -133,35 +132,14 @@ export function MapLibreClubsMap({
     [basemapTheme],
   );
 
-  // Generate region labels with club counts
-  const regionLabels = useMemo(() => {
-    if (!showRegions || !regionsGeoJson) return null;
-
-    return generateLabelFeatures(regionsGeoJson.features, (properties) => {
-      const geoJsonCode = properties.code;
-      const dbRegionCode = GEOJSON_TO_DB_REGION_CODE[geoJsonCode];
-      const region = regions.find((r) => r.region.code === dbRegionCode);
-      return region?.clubCount ?? 0;
-    });
-  }, [regionsGeoJson, regions, showRegions]);
-
-  // Generate department labels with club counts
-  const departmentLabels = useMemo(() => {
-    if (!showDepartments || !departmentsGeoJson) return null;
-
-    return generateLabelFeatures(departmentsGeoJson.features, (properties) => {
-      const geoJsonCode = properties.code;
-      const normalizedGeoCode = normalizeDepartmentCode(geoJsonCode);
-
-      const dept = departments.find((d) => {
-        const dbCode = d.department?.code;
-        if (!dbCode) return false;
-        return normalizeDepartmentCode(dbCode) === normalizedGeoCode;
-      });
-
-      return dept?.clubCount ?? 0;
-    });
-  }, [departmentsGeoJson, departments, showDepartments]);
+  const { regionLabels, departmentLabels } = useAreaLabels({
+    regions,
+    departments,
+    regionsGeoJson,
+    departmentsGeoJson,
+    showRegions,
+    showDepartments,
+  });
 
   // A club's department, through the committee it belongs to: the popup's
   // second line. Departments come already loaded for the department layer.
