@@ -9,11 +9,9 @@ import { PerGameStatsPanel } from "@/features/stats/components";
 import { teamsService } from "@/features/teams/api";
 import {
   TeamHeader,
-  TeamMatchHistoryTable,
+  TeamMatches,
   TeamRoster,
-  TeamUpcomingMatchesTable,
 } from "@/features/teams/components";
-import { splitMatchHistory } from "@/features/teams/utils";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
@@ -81,8 +79,6 @@ async function TeamDetailPage({ params }: LocalePageProps<{ teamId: string }>) {
     matchesService.getShotsByTeamId(teamId),
   ]).catch(handleServerError);
 
-  const { past, upcoming } = splitMatchHistory(matchHistory.matches);
-
   return (
     <PageLayout>
       {/* A team belongs to its club, so its trail continues the club's. */}
@@ -109,9 +105,7 @@ async function TeamDetailPage({ params }: LocalePageProps<{ teamId: string }>) {
 
       <TeamRoster players={team.players} />
 
-      <TeamMatchHistoryTable team={team} matches={past} maxRows={5} />
-
-      <TeamUpcomingMatchesTable team={team} matches={upcoming} />
+      <TeamMatches team={team} matches={matchHistory.matches} />
 
       <TeamShotChart
         shots={transformToShotEvents(shots)}

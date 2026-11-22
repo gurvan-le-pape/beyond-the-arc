@@ -111,6 +111,7 @@
     ".*/components/shot-chart/(?!index\\.tsx$).*",
     ".*/matches-filters/(?!index\\.tsx$).*",
     ".*/team-roster/(?!index\\.tsx$).*",
+    ".*/team-matches/(?!index\\.tsx$).*",
     ".*/player-comparison/(?!index\\.tsx$).*",
     ".*/clubs-map/(?!index\\.tsx$).*",
     ".*/club-directory/(?!index\\.tsx$).*",
