@@ -4,12 +4,9 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { matchesService } from "@/features/matches/api";
 import {
-  ForfeitNotice,
+  MatchBody,
   MatchBreadcrumb,
   MatchHero,
-  MatchSummaryTabs,
-  ResultUnavailableNotice,
-  UpcomingMatchNotice,
 } from "@/features/matches/components";
 import {
   buildMatchTeam,
@@ -17,7 +14,6 @@ import {
 } from "@/features/matches/utils";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
-import { MatchStatus } from "@/shared/constants";
 import type { LocalePageProps } from "@/shared/types";
 import {
   handleServerError,
@@ -107,23 +103,12 @@ async function MatchSummaryPage({
         forfeit={match.forfeit}
       />
 
-      {match.forfeit && (
-        <ForfeitNotice homeTeam={homeTeam} awayTeam={awayTeam} />
-      )}
-      {match.status === MatchStatus.COMPLETED && !match.forfeit && (
-        <MatchSummaryTabs
-          homeTeam={homeTeam}
-          awayTeam={awayTeam}
-          matchEvents={match.matchEvents}
-          matchDate={match.startsAt}
-          playerShots={shotEventsByPlayer}
-        />
-      )}
-      {match.status === MatchStatus.FAILED && <ResultUnavailableNotice />}
-      {(match.status === MatchStatus.SCHEDULED ||
-        match.status === MatchStatus.GENERATING) && (
-        <UpcomingMatchNotice startsAt={match.startsAt} />
-      )}
+      <MatchBody
+        match={match}
+        homeTeam={homeTeam}
+        awayTeam={awayTeam}
+        playerShots={shotEventsByPlayer}
+      />
     </PageLayout>
   );
 }
