@@ -258,6 +258,7 @@ describe("ClubsService", () => {
       zipCode: "98000",
       address: "1 Avenue des Papalins",
       code: "SUD0013011",
+      committeeId: 13,
       teams: [
         {
           id: 1,
@@ -312,6 +313,7 @@ describe("ClubsService", () => {
       expect(result).toMatchObject({
         id: 1,
         name: "AS Monaco Basket",
+        committeeId: 13,
         ffbbUrl:
           "https://competitions.ffbb.com/ligues/sud/comites/0013/clubs/sud0013011",
       });

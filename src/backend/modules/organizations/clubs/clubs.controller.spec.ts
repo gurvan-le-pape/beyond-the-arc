@@ -149,6 +149,7 @@ describe("ClubsController", () => {
         city: "Monaco",
         zipCode: "98000",
         address: "1 Avenue des Papalins",
+        committeeId: 1,
         ffbbUrl: null,
         teams: [
           {
@@ -196,6 +197,7 @@ describe("ClubsController", () => {
         city: "Monaco",
         zipCode: "98000",
         address: null,
+        committeeId: 1,
         ffbbUrl: null,
         teams: [
           {
@@ -242,6 +244,7 @@ describe("ClubsController", () => {
         city: "Paris",
         zipCode: "75001",
         address: null,
+        committeeId: 1,
         ffbbUrl: null,
         teams: [],
       };

@@ -52,6 +52,7 @@ const CLUB_DETAILED_SELECT = {
   zipCode: true,
   address: true,
   code: true,
+  committeeId: true,
   teams: {
     select: {
       id: true,
@@ -265,6 +266,7 @@ export class ClubsService {
       city: club.city,
       zipCode: club.zipCode,
       address: club.address,
+      committeeId: club.committeeId,
       ffbbUrl: ffbbClubUrl(club.code),
       teams: club.teams.map((team) => ({
         id: team.id,

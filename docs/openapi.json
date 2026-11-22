@@ -2918,6 +2918,11 @@
             "description": "Street address",
             "example": "1 Avenue des Papalins"
           },
+          "committeeId": {
+            "type": "number",
+            "description": "The departmental committee the club belongs to",
+            "example": 1
+          },
           "ffbbUrl": {
             "type": "string",
             "nullable": true,
@@ -2938,6 +2943,7 @@
           "city",
           "zipCode",
           "address",
+          "committeeId",
           "ffbbUrl",
           "teams"
         ]

@@ -8,6 +8,7 @@ import {
   ClubHeader,
   ClubTeamsTable,
 } from "@/features/organizations/clubs/components";
+import { committeesService } from "@/features/organizations/committees/api";
 import { OrganizationInfo } from "@/features/organizations/components";
 import { EmptyState, withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
@@ -60,7 +61,12 @@ async function ClubPage({ params }: LocalePageProps<{ clubId: string }>) {
     namespace: "organizations",
   });
 
-  const club = await clubsService.getById(clubId).catch(handleServerError);
+  // Every committee rather than the club's one: it runs alongside the club
+  // instead of after it, and the list is the one the committees pages cache.
+  const [club, committees] = await Promise.all([
+    clubsService.getById(clubId),
+    committeesService.getAll(),
+  ]).catch(handleServerError);
 
   return (
     <PageLayout>
@@ -74,7 +80,12 @@ async function ClubPage({ params }: LocalePageProps<{ clubId: string }>) {
           { label: club.name, current: true },
         ]}
       />
-      <ClubHeader club={club} />
+      <ClubHeader
+        club={club}
+        committee={committees.find(
+          (committee) => committee.id === club.committeeId,
+        )}
+      />
       <OrganizationInfo address={club.address} ffbbUrl={club.ffbbUrl} />
       {club.teams.length > 0 ? (
         <ClubTeamsTable
