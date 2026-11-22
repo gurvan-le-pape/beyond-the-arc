@@ -1,9 +1,4 @@
 {
-  "app/[locale]/(chrome)/(public)/championships/[championshipId]/page.tsx": {
-    "max-lines-per-function": {
-      "count": 1
-    }
-  },
   "app/[locale]/(chrome)/page.tsx": {
     "@typescript-eslint/no-unnecessary-condition": {
       "count": 1

@@ -11,7 +11,6 @@ import {
   ChampionshipSections,
 } from "@/features/competitions/championships/components";
 import {
-  buildChampionshipHeading,
   buildChampionshipTitle,
   resolveOrganizationId,
   resolvePoolId,
@@ -77,11 +76,6 @@ async function ChampionshipsDetailPage({
   const { pool: poolParam } = await searchParams;
   setRequestLocale(locale);
 
-  const [tCommon, tCompetitions] = await Promise.all([
-    getTranslations({ locale, namespace: "common" }),
-    getTranslations({ locale, namespace: "competitions" }),
-  ]);
-
   const championship = await championshipsService
     .getById(championshipId)
     .catch(handleServerError);
@@ -134,14 +128,7 @@ async function ChampionshipsDetailPage({
       <ChampionshipSections
         header={
           <>
-            <ChampionshipBreadcrumb
-              name={buildChampionshipHeading(championship, {
-                gender: tCommon(`gender.${championship.gender}`),
-                division: tCompetitions("divisionWithValue", {
-                  value: championship.division,
-                }),
-              })}
-            />
+            <ChampionshipBreadcrumb championship={championship} />
 
             <ChampionshipHeader
               championship={championship}
