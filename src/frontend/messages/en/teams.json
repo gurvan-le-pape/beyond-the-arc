@@ -11,8 +11,8 @@
     "player": "Player",
     "position": "Position",
     "noPlayers": "No players in roster",
-    "matchHistoryTitle": "Match History",
-    "upcomingMatchesTitle": "Upcoming Matches",
+    "matchHistoryTitle": "Match history",
+    "upcomingMatchesTitle": "Upcoming matches",
     "shotchartTitle": "Shot chart",
     "shotchartDescription": "Where the team shot from this season, zone by zone, with its success rate."
   },
