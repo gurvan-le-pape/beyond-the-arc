@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/components/ChampionshipLevelTabs.tsx
+// src/frontend/features/competitions/championships/components/list/ChampionshipLevelTabs.tsx
 "use client";
 
 import { useTranslations } from "next-intl";
@@ -7,8 +7,8 @@ import { QueryTabs } from "@/shared/components/navigation";
 import { TabPanel } from "@/shared/components/primitives";
 import { CompetitionLevel } from "@/shared/constants";
 
-import { ChampionshipsOverview } from "./list/championships-overview";
-import { NationalChampionships } from "./list/NationalChampionships";
+import { ChampionshipsOverview } from "./championships-overview";
+import { NationalChampionships } from "./NationalChampionships";
 
 const TABS = {
   NATIONAL: CompetitionLevel.NATIONAL,
