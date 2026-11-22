@@ -14,7 +14,7 @@ import { ErrorMessage } from "@/shared/components/feedback";
 import type { ClubBasic } from "../../../types/ClubBasic";
 import { basemapStyle } from "./basemap";
 import { ClubsPopup } from "./clubs-popup";
-import { INITIAL_VIEW, ZOOM_THRESHOLDS } from "./mapConstants";
+import { ZOOM_THRESHOLDS } from "./mapConstants";
 import { SidePanel } from "./side-panel";
 import { useClubSelection } from "./useClubSelection";
 import { useMapColours } from "./useMapColours";
@@ -31,6 +31,15 @@ const MAPLIBRE_WORKER_URL = new URL(
   "maplibre-gl/dist/maplibre-gl-worker.mjs",
   import.meta.url,
 ).toString();
+
+// Initial map view centered on France
+const INITIAL_VIEW = {
+  longitude: 2.5,
+  latitude: 46.8,
+  zoom: 5.8,
+  pitch: 0,
+  bearing: 0,
+};
 
 interface MapLibreClubsMapProps {
   readonly initialRegions: League[];

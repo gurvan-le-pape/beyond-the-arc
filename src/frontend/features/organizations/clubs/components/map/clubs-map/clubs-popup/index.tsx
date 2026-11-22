@@ -4,7 +4,7 @@ import { Popup } from "react-map-gl/maplibre";
 import type { Committee } from "@/features/organizations/committees/types";
 
 import type { ClubBasic } from "../../../../types/ClubBasic";
-import { MAP_COLORS } from "../mapConstants";
+import { CLUB_MARKER } from "../mapConstants";
 import { ClubGroupPopupContent } from "./ClubGroupPopupContent";
 import { ClubPopupContent } from "./ClubPopupContent";
 
@@ -43,8 +43,8 @@ export function ClubsPopup({ clubs, departments, onClose }: ClubsPopupProps) {
       // cluster bubble, a single club as a dot.
       offset={
         clubs.length > 1
-          ? MAP_COLORS.CLUBS.CLUSTER_SIZES[2] + 4
-          : MAP_COLORS.CLUBS.POINT_RADIUS + 4
+          ? CLUB_MARKER.CLUSTER_SIZES[2] + 4
+          : CLUB_MARKER.POINT_RADIUS + 4
       }
     >
       {clubs.length === 1 ? (

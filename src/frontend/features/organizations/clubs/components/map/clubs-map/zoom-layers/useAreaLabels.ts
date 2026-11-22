@@ -6,7 +6,6 @@ import type { Committee } from "@/features/organizations/committees/types";
 import type { League } from "@/features/organizations/leagues/types";
 import { normalizeDepartmentCode } from "@/features/organizations/utils";
 
-import { GEOJSON_TO_DB_REGION_CODE } from "../mapConstants";
 import { generateLabelFeatures } from "./layerSources";
 
 interface AreaLabelsInput {
@@ -19,6 +18,23 @@ interface AreaLabelsInput {
   /** Whether the zoom shows the departments layer. */
   readonly showDepartments: boolean;
 }
+
+// Mapping from GeoJSON region codes to database region codes
+const GEOJSON_TO_DB_REGION_CODE: Record<string, string> = {
+  "11": "IDF",
+  "24": "CVL",
+  "27": "BFC",
+  "28": "NOR",
+  "32": "HDF",
+  "44": "GES",
+  "52": "PDL",
+  "53": "BRE",
+  "75": "NAQ",
+  "76": "OCC",
+  "84": "ARA",
+  "93": "PCA",
+  "94": "COR",
+};
 
 /**
  * The club-count labels of the regions and of the departments, one point per

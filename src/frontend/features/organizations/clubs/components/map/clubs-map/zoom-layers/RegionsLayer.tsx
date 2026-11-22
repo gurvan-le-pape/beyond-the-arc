@@ -4,8 +4,8 @@
 import type { FeatureCollection } from "geojson";
 import { Layer, Source } from "react-map-gl/maplibre";
 
-import { MAP_COLORS } from "../mapConstants";
 import type { MapColours } from "../useMapColours";
+import { AREA_STYLE } from "./layerStyle";
 
 interface RegionsLayerProps {
   readonly geoJson: FeatureCollection;
@@ -30,7 +30,7 @@ export function RegionsLayer({ geoJson, labels, colours }: RegionsLayerProps) {
           type="fill"
           paint={{
             "fill-color": area.fill,
-            "fill-opacity": MAP_COLORS.REGIONS.FILL_OPACITY,
+            "fill-opacity": AREA_STYLE.REGIONS.FILL_OPACITY,
           }}
         />
         <Layer
@@ -38,7 +38,7 @@ export function RegionsLayer({ geoJson, labels, colours }: RegionsLayerProps) {
           type="line"
           paint={{
             "line-color": area.border,
-            "line-width": MAP_COLORS.REGIONS.BORDER_WIDTH,
+            "line-width": AREA_STYLE.REGIONS.BORDER_WIDTH,
           }}
         />
       </Source>
@@ -49,7 +49,7 @@ export function RegionsLayer({ geoJson, labels, colours }: RegionsLayerProps) {
             id="region-labels-circle"
             type="circle"
             paint={{
-              "circle-radius": MAP_COLORS.REGIONS.LABEL_CIRCLE_RADIUS,
+              "circle-radius": AREA_STYLE.REGIONS.LABEL_CIRCLE_RADIUS,
               "circle-color": colours.labelBackground,
               "circle-stroke-width": 2,
               "circle-stroke-color": area.border,
@@ -61,7 +61,7 @@ export function RegionsLayer({ geoJson, labels, colours }: RegionsLayerProps) {
             type="symbol"
             layout={{
               "text-field": ["get", "clubCount"],
-              "text-size": MAP_COLORS.REGIONS.LABEL_TEXT_SIZE,
+              "text-size": AREA_STYLE.REGIONS.LABEL_TEXT_SIZE,
               "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
             }}
             paint={{
