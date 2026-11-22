@@ -9,6 +9,8 @@ import type {
 import { logger } from "@/shared/utils";
 
 import type { ClubBasic } from "../../../types/ClubBasic";
+import { BASEMAP_PAINT } from "./mapConstants";
+import type { MapColours } from "./useMapColours";
 
 /**
  * One point per boundary with clubs in it, at the boundary's centroid,
@@ -97,5 +99,34 @@ export function clubsToGeoJSON(
           name: c.name,
         },
       })),
+  };
+}
+
+/**
+ * The map's style: OpenStreetMap's raster tiles as the only basemap layer,
+ * repainted for the theme (dimmed and hue-inverted for dark, greyscale for
+ * high contrast).
+ *
+ * @param theme - the active theme
+ * @returns a MapLibre style with the one raster source and layer
+ */
+export function basemapStyle(theme: MapColours["theme"]) {
+  return {
+    version: 8 as const,
+    sources: {
+      osm: {
+        type: "raster" as const,
+        tiles: ["https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"],
+        tileSize: 256,
+      },
+    },
+    layers: [
+      {
+        id: "osm",
+        type: "raster" as const,
+        source: "osm",
+        paint: BASEMAP_PAINT[theme],
+      },
+    ],
   };
 }

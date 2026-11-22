@@ -13,17 +13,14 @@ import { ErrorMessage } from "@/shared/components/feedback";
 
 import type { ClubBasic } from "../../../types/ClubBasic";
 import { ClubsPopup } from "./ClubsPopup";
-import { ClubsLayer } from "./layers/ClubsLayer";
-import { DepartmentsLayer } from "./layers/DepartmentsLayer";
-import { RegionsLayer } from "./layers/RegionsLayer";
-import { BASEMAP_PAINT, INITIAL_VIEW, ZOOM_THRESHOLDS } from "./mapConstants";
-import { clubsToGeoJSON } from "./mapHelpers";
+import { INITIAL_VIEW, ZOOM_THRESHOLDS } from "./mapConstants";
+import { basemapStyle } from "./mapHelpers";
 import { SidePanel } from "./side-panel";
-import { useAreaLabels } from "./useAreaLabels";
 import { useClubSelection } from "./useClubSelection";
 import { useMapColours } from "./useMapColours";
 import { useMapData } from "./useMapData";
 import { useSearch } from "./useSearch";
+import { ZoomLayers } from "./ZoomLayers";
 
 // MapLibre 6 ships its worker as a separate module and no longer finds it on
 // its own: without this the basemap still draws, but every GeoJSON source —
@@ -57,22 +54,10 @@ export function MapLibreClubsMap({
   const t = useTranslations("clubs");
   const [viewState, setViewState] = useState(INITIAL_VIEW);
 
-  const {
-    regions,
-    departments,
-    clubs,
-    regionsGeoJson,
-    departmentsGeoJson,
-    error,
-    retry,
-  } = useMapData(initialRegions, initialDepartments, initialClubs);
+  const data = useMapData(initialRegions, initialDepartments, initialClubs);
+  const { departments, clubs, error, retry } = data;
 
-  // Determine which layers to show based on zoom level
-  const zoom = viewState.zoom;
-  const showRegions = zoom < ZOOM_THRESHOLDS.DEPARTMENTS;
-  const showDepartments =
-    zoom >= ZOOM_THRESHOLDS.DEPARTMENTS && zoom < ZOOM_THRESHOLDS.CLUBS;
-  const showClubs = zoom >= ZOOM_THRESHOLDS.CLUBS;
+  const showClubs = viewState.zoom >= ZOOM_THRESHOLDS.CLUBS;
 
   const {
     query,
@@ -89,47 +74,10 @@ export function MapLibreClubsMap({
   const { selectedClubs, clearSelection, selectFromList, onMapClick } =
     useClubSelection({ clubs, displayClubs, moveTo });
 
-  // Map style configuration
   const colours = useMapColours();
   const basemapTheme = colours?.theme ?? "light";
-  const mapStyle = useMemo(
-    () => ({
-      version: 8 as const,
-      sources: {
-        osm: {
-          type: "raster" as const,
-          tiles: ["https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"],
-          tileSize: 256,
-        },
-      },
-      layers: [
-        {
-          id: "osm",
-          type: "raster" as const,
-          source: "osm",
-          paint: BASEMAP_PAINT[basemapTheme],
-        },
-      ],
-    }),
-    [basemapTheme],
-  );
+  const mapStyle = useMemo(() => basemapStyle(basemapTheme), [basemapTheme]);
 
-  const { regionLabels, departmentLabels } = useAreaLabels({
-    regions,
-    departments,
-    regionsGeoJson,
-    departmentsGeoJson,
-    showRegions,
-    showDepartments,
-  });
-
-  // Generate club points for clustering
-  const clubPoints = useMemo(() => {
-    if (!showClubs) return null;
-    return clubsToGeoJSON(displayClubs);
-  }, [displayClubs, showClubs]);
-
-  // Error state
   if (error) {
     return (
       <div className="absolute inset-0 flex items-center justify-center surface-subtle">
@@ -157,25 +105,12 @@ export function MapLibreClubsMap({
         onClick={onMapClick}
         style={{ width: "100%", height: "100%" }}
       >
-        {colours && showRegions && regionsGeoJson && (
-          <RegionsLayer
-            geoJson={regionsGeoJson}
-            labels={regionLabels}
-            colours={colours}
-          />
-        )}
-
-        {colours && showDepartments && departmentsGeoJson && (
-          <DepartmentsLayer
-            geoJson={departmentsGeoJson}
-            labels={departmentLabels}
-            colours={colours}
-          />
-        )}
-
-        {colours && clubPoints && (
-          <ClubsLayer geoJson={clubPoints} colours={colours} />
-        )}
+        <ZoomLayers
+          zoom={viewState.zoom}
+          data={data}
+          displayClubs={displayClubs}
+          colours={colours}
+        />
 
         <ClubsPopup
           clubs={selectedClubs}
