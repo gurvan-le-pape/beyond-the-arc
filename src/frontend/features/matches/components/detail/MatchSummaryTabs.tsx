@@ -2,13 +2,10 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
-import type {
-  MatchEvent,
-  MatchTeamWithStats,
-  Shot,
-} from "@/features/matches/types";
+import type { MatchEvent, MatchTeamWithStats } from "@/features/matches/types";
+import { groupShotEventsByPlayer } from "@/features/matches/utils";
 import { Tab, TabList, TabPanel, Tabs } from "@/shared/components/primitives";
 
 import { MatchEvents } from "./match-events";
@@ -20,7 +17,6 @@ interface MatchSummaryTabsProps {
   readonly awayTeam: MatchTeamWithStats;
   readonly matchEvents: MatchEvent[];
   readonly matchDate: Date | string;
-  readonly playerShots: Record<number, Shot[]>;
 }
 
 /**
@@ -33,11 +29,16 @@ export function MatchSummaryTabs({
   awayTeam,
   matchEvents,
   matchDate,
-  playerShots,
 }: MatchSummaryTabsProps) {
   const tMatches = useTranslations("matches");
   const tCommon = useTranslations("common");
   const [tab, setTab] = useState("stats");
+  // Each player's shots for the shot charts, read off the events the
+  // play-by-play already receives rather than sent alongside them.
+  const playerShots = useMemo(
+    () => groupShotEventsByPlayer(matchEvents),
+    [matchEvents],
+  );
 
   const statCategories = [
     { key: "fieldGoals", label: tCommon("stats.fieldGoals") },
