@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/clubs/components/map/clubs-map/layers/ClubsLayer.tsx
+// src/frontend/features/organizations/clubs/components/map/clubs-map/zoom-layers/ClubsLayer.tsx
 "use client";
 
 import type { FeatureCollection } from "geojson";

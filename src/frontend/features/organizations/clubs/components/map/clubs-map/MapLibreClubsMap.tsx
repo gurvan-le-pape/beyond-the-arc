@@ -20,7 +20,7 @@ import { useClubSelection } from "./useClubSelection";
 import { useMapColours } from "./useMapColours";
 import { useMapData } from "./useMapData";
 import { useSearch } from "./useSearch";
-import { ZoomLayers } from "./ZoomLayers";
+import { ZoomLayers } from "./zoom-layers";
 
 // MapLibre 6 ships its worker as a separate module and no longer finds it on
 // its own: without this the basemap still draws, but every GeoJSON source —

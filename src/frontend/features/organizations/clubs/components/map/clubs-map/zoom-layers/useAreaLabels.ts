@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/clubs/components/map/clubs-map/useAreaLabels.ts
+// src/frontend/features/organizations/clubs/components/map/clubs-map/zoom-layers/useAreaLabels.ts
 import { useMemo } from "react";
 
 import type { GeoJsonData } from "@/features/geography/types";
@@ -6,8 +6,8 @@ import type { Committee } from "@/features/organizations/committees/types";
 import type { League } from "@/features/organizations/leagues/types";
 import { normalizeDepartmentCode } from "@/features/organizations/utils";
 
-import { GEOJSON_TO_DB_REGION_CODE } from "./mapConstants";
-import { generateLabelFeatures } from "./mapHelpers";
+import { GEOJSON_TO_DB_REGION_CODE } from "../mapConstants";
+import { generateLabelFeatures } from "./layerSources";
 
 interface AreaLabelsInput {
   readonly regions: League[];
