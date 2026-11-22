@@ -4,6 +4,7 @@
  */
 
 export * from "./departmentShapes";
+export * from "./distinctOfficialName";
 export * from "./namesMatch";
 export * from "./normalizeDepartmentCode";
 export * from "./regionShapeCode";

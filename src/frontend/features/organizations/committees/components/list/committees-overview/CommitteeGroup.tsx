@@ -3,7 +3,7 @@ import { useFormatter, useTranslations } from "next-intl";
 
 import { CountBar } from "@/features/organizations/components";
 import {
-  namesMatch,
+  distinctOfficialName,
   normalizeDepartmentCode,
 } from "@/features/organizations/utils";
 import { Link } from "@/navigation";
@@ -61,7 +61,10 @@ export function CommitteeGroup({
       <ul className="divide-y divide-divide">
         {committees.map((committee) => {
           const code = normalizeDepartmentCode(committee.department.code);
-          const officialName = formatCommitteeName(committee.name);
+          const officialName = distinctOfficialName(
+            formatCommitteeName(committee.name),
+            committee.department.name,
+          );
           return (
             <li key={committee.id}>
               <Link
@@ -80,10 +83,7 @@ export function CommitteeGroup({
                   <span className="block truncate font-medium text-text-heading">
                     {committee.department.name}
                   </span>
-                  {namesMatch(
-                    officialName,
-                    committee.department.name,
-                  ) ? null : (
+                  {officialName && (
                     <span className="block truncate text-xs text-text-secondary">
                       {officialName}
                     </span>

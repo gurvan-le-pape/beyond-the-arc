@@ -4,7 +4,7 @@ import { useFormatter, useTranslations } from "next-intl";
 import type { Committee } from "@/features/organizations/committees/types";
 import { OrganizationHeader } from "@/features/organizations/components";
 import {
-  namesMatch,
+  distinctOfficialName,
   normalizeDepartmentCode,
 } from "@/features/organizations/utils";
 import { formatCommitteeName } from "@/shared/utils";
@@ -29,7 +29,6 @@ export function CommitteeHeader({
   const format = useFormatter();
 
   const placeName = committee.department.name;
-  const officialName = formatCommitteeName(committee.name);
 
   return (
     <OrganizationHeader
@@ -39,7 +38,7 @@ export function CommitteeHeader({
       subtitle={[
         t("header.committeeKind"),
         normalizeDepartmentCode(committee.department.code),
-        namesMatch(officialName, placeName) ? null : officialName,
+        distinctOfficialName(formatCommitteeName(committee.name), placeName),
       ]
         .filter(Boolean)
         .join(" · ")}

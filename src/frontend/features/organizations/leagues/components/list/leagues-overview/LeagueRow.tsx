@@ -2,7 +2,7 @@
 import { useFormatter, useTranslations } from "next-intl";
 
 import { CountBar } from "@/features/organizations/components";
-import { namesMatch } from "@/features/organizations/utils";
+import { distinctOfficialName } from "@/features/organizations/utils";
 import { Link } from "@/navigation";
 import { ImageWithFallback } from "@/shared/components/primitives";
 import { cn, formatLeagueName, formatNameToFileName } from "@/shared/utils";
@@ -30,7 +30,10 @@ export function LeagueRow({
 }: LeagueRowProps) {
   const t = useTranslations("organizations");
   const format = useFormatter();
-  const officialName = formatLeagueName(league.name);
+  const officialName = distinctOfficialName(
+    formatLeagueName(league.name),
+    league.region.name,
+  );
 
   return (
     <li>
@@ -57,9 +60,9 @@ export function LeagueRow({
             {league.region.name}
           </p>
           <p className="text-sm text-text-secondary truncate">
-            {namesMatch(officialName, league.region.name)
-              ? league.region.code
-              : `${league.region.code} · ${officialName}`}
+            {officialName
+              ? `${league.region.code} · ${officialName}`
+              : league.region.code}
             {" · "}
             {format.number(league.committeeCount)}{" "}
             {t("header.committees", { count: league.committeeCount })}
