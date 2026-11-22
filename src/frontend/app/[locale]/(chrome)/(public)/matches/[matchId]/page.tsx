@@ -2,7 +2,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { buildChampionshipTitle } from "@/features/competitions/championships/utils";
 import { matchesService } from "@/features/matches/api";
 import {
   ForfeitNotice,
@@ -70,17 +69,11 @@ async function MatchSummaryPage({
   const { locale } = routeParams;
   const matchId = parseRouteId(routeParams.matchId);
   setRequestLocale(locale);
-  const [tCommon, tCompetitions] = await Promise.all([
-    getTranslations({ locale, namespace: "common" }),
-    getTranslations({ locale, namespace: "competitions" }),
-  ]);
 
   const [match, playerMatchStats] = await Promise.all([
     matchesService.getById(matchId),
     matchesService.getPlayerStatsByMatchId(matchId),
   ]).catch(handleServerError);
-
-  const { championship } = match.pool;
 
   const { stats, homeTeamStats, awayTeamStats } = playerMatchStats;
   const homeTeam = buildMatchTeam(
@@ -100,14 +93,7 @@ async function MatchSummaryPage({
   return (
     <PageLayout>
       <MatchBreadcrumb
-        championshipId={championship.id}
-        poolId={match.pool.id}
-        championshipName={buildChampionshipTitle(championship, {
-          gender: tCommon(`gender.${championship.gender}`),
-          division: tCompetitions("divisionWithValue", {
-            value: championship.division,
-          }),
-        })}
+        pool={match.pool}
         matchName={`${homeTeam.name} – ${awayTeam.name}`}
       />
 
