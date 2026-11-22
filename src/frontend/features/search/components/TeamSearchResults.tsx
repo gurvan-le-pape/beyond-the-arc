@@ -10,7 +10,7 @@ import { useTeamsFilterState } from "@/features/teams/hooks";
 import type { Team } from "@/features/teams/types";
 import { LIST_ENTITY_CARD_GRID } from "@/shared/components/domain";
 import { EmptyState } from "@/shared/components/feedback";
-import { SearchTabShell } from "@/shared/components/navigation";
+import { PaginatedResults } from "@/shared/components/navigation";
 import { hasCriteria } from "@/shared/utils";
 
 /**
@@ -18,7 +18,7 @@ import { hasCriteria } from "@/shared/utils";
  * results grid, and pagination.
  *
  * Takes no props and owns everything — filter state, the query, and the
- * loading, error, empty and paginated states via `SearchTabShell`.
+ * loading, error, empty and paginated states via `PaginatedResults`.
  *
  * The three tabs are deliberately independent — each holds its own filter state,
  * so switching tabs does not carry one tab's filters into another.
@@ -56,7 +56,7 @@ export function TeamSearchResults() {
     <div className="space-y-6">
       <TeamsFilters filters={filters} set={set} onReset={reset} />
 
-      <SearchTabShell
+      <PaginatedResults
         query={query}
         errorMessage={tCommon("errors.fetchTeams")}
         emptyState={
@@ -84,7 +84,7 @@ export function TeamSearchResults() {
             <TeamCard key={team.id} team={team} />
           ))}
         </div>
-      </SearchTabShell>
+      </PaginatedResults>
     </div>
   );
 }

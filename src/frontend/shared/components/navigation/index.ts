@@ -4,6 +4,6 @@
  */
 
 export * from "./Breadcrumb";
+export * from "./PaginatedResults";
 export * from "./Pagination";
 export * from "./QueryTabs";
-export * from "./SearchTabShell";

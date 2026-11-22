@@ -1,4 +1,4 @@
-// src/frontend/shared/components/navigation/SearchTabShell.spec.tsx
+// src/frontend/shared/components/navigation/PaginatedResults.spec.tsx
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
@@ -6,7 +6,7 @@ import { describe, expect, it, vi } from "vitest";
 import type { PaginatedResponse } from "@/shared/types";
 import { renderWithIntl } from "@/testing/renderWithIntl";
 
-import { SearchTabShell } from "./SearchTabShell";
+import { PaginatedResults } from "./PaginatedResults";
 
 function page(
   overrides: Partial<PaginatedResponse<string>> = {},
@@ -27,7 +27,7 @@ function renderShell(
   state: { isLoading?: boolean; error?: unknown } = {},
 ) {
   renderWithIntl(
-    <SearchTabShell
+    <PaginatedResults
       query={{
         data,
         isLoading: state.isLoading ?? false,
@@ -42,12 +42,12 @@ function renderShell(
       itemLabel="items"
     >
       <p>results</p>
-    </SearchTabShell>,
+    </PaginatedResults>,
   );
   return onPageChange;
 }
 
-describe("SearchTabShell", () => {
+describe("PaginatedResults", () => {
   it("shows the empty state before the query has run", () => {
     renderShell(undefined);
 
