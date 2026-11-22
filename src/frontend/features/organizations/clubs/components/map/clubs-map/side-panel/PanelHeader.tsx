@@ -27,11 +27,9 @@ export function PanelHeader({ clubCount, onClose }: PanelHeaderProps) {
           {t("map.clubCount", { count: clubCount })}
         </Text>
       </div>
-      <div className="flex items-center gap-1">
-        <IconButton onPress={onClose} label={t("map.closePanel")}>
-          <X />
-        </IconButton>
-      </div>
+      <IconButton onPress={onClose} label={t("map.closePanel")}>
+        <X />
+      </IconButton>
     </div>
   );
 }
