@@ -1,5 +1,4 @@
 // src/frontend/app/[locale]/(chrome)/(public)/organizations/clubs/[clubId]/page.tsx
-import { Users } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
@@ -10,7 +9,7 @@ import {
 } from "@/features/organizations/clubs/components";
 import { committeesService } from "@/features/organizations/committees/api";
 import { OrganizationInfo } from "@/features/organizations/components";
-import { EmptyState, withServerErrorState } from "@/shared/components/feedback";
+import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
 import type { LocalePageProps } from "@/shared/types";
@@ -87,19 +86,12 @@ async function ClubPage({ params }: LocalePageProps<{ clubId: string }>) {
         )}
       />
       <OrganizationInfo address={club.address} ffbbUrl={club.ffbbUrl} />
-      {club.teams.length > 0 ? (
-        <ClubTeamsTable
-          clubName={club.name}
-          teams={club.teams}
-          title={t("detail.teamsTitle")}
-          emptyMessage={t("noTeams")}
-        />
-      ) : (
-        <EmptyState
-          icon={<Users className="w-16 h-16" />}
-          title={t("noTeams")}
-        />
-      )}
+      <ClubTeamsTable
+        clubName={club.name}
+        teams={club.teams}
+        title={t("detail.teamsTitle")}
+        emptyMessage={t("noTeams")}
+      />
     </PageLayout>
   );
 }
