@@ -10,6 +10,7 @@ import {
   OrganizationInfo,
   SearchableLinkList,
 } from "@/features/organizations/components";
+import { leaguesService } from "@/features/organizations/leagues/api";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
@@ -75,13 +76,16 @@ async function CommitteePage({
     namespace: "organizations",
   });
 
-  const [committee, { items: championships }] = await Promise.all([
+  // All thirteen leagues rather than the one: it runs alongside the committee
+  // instead of after it, and the list is the one the leagues pages cache.
+  const [committee, { items: championships }, leagues] = await Promise.all([
     committeesService.getById(committeeId),
     championshipsService.getAll({
       level: CompetitionLevel.DEPARTMENTAL,
       committeeId,
       limit: 100,
     }),
+    leaguesService.getAll(),
   ]).catch(handleServerError);
 
   const placeName = committee.department.name;
@@ -100,6 +104,7 @@ async function CommitteePage({
       />
       <CommitteeHeader
         committee={committee}
+        league={leagues.find((league) => league.id === committee.leagueId)}
         championshipCount={championships.length}
       />
       <OrganizationInfo
