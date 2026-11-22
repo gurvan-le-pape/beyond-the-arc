@@ -9,7 +9,7 @@ import type { Championship } from "@/features/competitions/championships/types";
 import { ErrorMessage, Spinner } from "@/shared/components/feedback";
 import { Button } from "@/shared/components/primitives";
 
-import { ChampionshipMatrix } from "../ChampionshipMatrix";
+import { ChampionshipMatrix } from "../../ChampionshipMatrix";
 import { LEVEL_CONFIG } from "./levelConfig";
 import type { Organiser, OrganiserLevel } from "./useOrganisers";
 

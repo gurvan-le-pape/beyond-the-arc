@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/components/list/ChampionshipMatrix.tsx
+// src/frontend/features/competitions/championships/components/ChampionshipMatrix.tsx
 import { useTranslations } from "next-intl";
 
 import type { Championship } from "@/features/competitions/championships/types";

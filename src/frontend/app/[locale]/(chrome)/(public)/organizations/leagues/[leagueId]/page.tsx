@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { championshipsService } from "@/features/competitions/championships/api";
-import { ChampionshipGrid } from "@/features/competitions/championships/components";
+import { ChampionshipMatrixSection } from "@/features/competitions/championships/components";
 import { committeesService } from "@/features/organizations/committees/api";
 import {
   OrganizationInfo,
@@ -107,9 +107,11 @@ async function LeaguePage({ params }: LocalePageProps<{ leagueId: string }>) {
         basePath="/organizations/committees"
         showSearch={false}
       />
-      <ChampionshipGrid
+      <ChampionshipMatrixSection
         championships={championships}
         title={tCompetitions("championshipsSectionTitle")}
+        organiserName={placeName}
+        tone="regional"
         emptyMessage={tCompetitions("noChampionships")}
       />
     </PageLayout>

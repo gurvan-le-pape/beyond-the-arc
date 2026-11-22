@@ -1,4 +1,4 @@
-// src/frontend/features/competitions/championships/components/list/ChampionshipMatrix.spec.tsx
+// src/frontend/features/competitions/championships/components/ChampionshipMatrix.spec.tsx
 import { screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
