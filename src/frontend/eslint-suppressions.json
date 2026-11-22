@@ -1,8 +1,5 @@
 {
   "app/[locale]/(chrome)/(public)/championships/[championshipId]/page.tsx": {
-    "complexity": {
-      "count": 1
-    },
     "max-lines-per-function": {
       "count": 1
     }

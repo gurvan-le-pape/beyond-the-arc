@@ -11,13 +11,8 @@ import {
   ChampionshipSections,
 } from "@/features/competitions/championships/components";
 import {
-  buildCategoryNavigation,
   buildChampionshipHeading,
   buildChampionshipTitle,
-  buildDivisionNavigation,
-  buildGenderNavigation,
-  buildLevelBelowNavigation,
-  findLevelAbove,
   resolveOrganizationId,
   resolvePoolId,
 } from "@/features/competitions/championships/utils";
@@ -134,25 +129,6 @@ async function ChampionshipsDetailPage({
     matchesService.getByPoolId(poolId),
   ]).catch(handleServerError);
 
-  const categoryLinks = buildCategoryNavigation(championships, championship);
-
-  const genderLinks = buildGenderNavigation(
-    championships,
-    championship,
-    (gender) => tCommon(`gender.${gender}`),
-  );
-
-  const levelAbove = isDepartmental ? findLevelAbove(otherLevel) : undefined;
-  const levelBelowLinks = isDepartmental
-    ? []
-    : buildLevelBelowNavigation(otherLevel, locale);
-
-  const divisionLinks = buildDivisionNavigation(
-    championships,
-    championship,
-    (value) => tCompetitions("divisionWithValue", { value }),
-  );
-
   return (
     <PageLayout>
       <ChampionshipSections
@@ -169,11 +145,8 @@ async function ChampionshipsDetailPage({
 
             <ChampionshipHeader
               championship={championship}
-              categoryLinks={categoryLinks}
-              genderLinks={genderLinks}
-              divisionLinks={divisionLinks}
-              levelAboveHref={levelAbove && `/championships/${levelAbove.id}`}
-              levelBelowLinks={levelBelowLinks}
+              siblings={championships}
+              otherLevel={otherLevel}
               poolSelect={
                 pools.length > 1 && (
                   <ChampionshipPoolSelect

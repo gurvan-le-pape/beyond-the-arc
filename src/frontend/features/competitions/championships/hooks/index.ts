@@ -4,4 +4,5 @@
  */
 
 export * from "./useChampionshipCascadeOptions";
+export * from "./useChampionshipNavigation";
 export * from "./useChampionshipsFilterState";
