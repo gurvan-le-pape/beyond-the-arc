@@ -3,8 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 
 import type { ApiError } from "@/shared/types";
 
-import type { Committee } from "../types/Committees";
-import type { CommitteeFilters } from "../types/CommitteesFilters";
+import type { Committee } from "../types/Committee";
+import type { CommitteeFilters } from "../types/CommitteeFilters";
 import { committeesQueries } from "./committeesQueries";
 
 /**

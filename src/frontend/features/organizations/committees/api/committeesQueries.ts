@@ -1,7 +1,7 @@
 // src/frontend/features/organizations/committees/api/committeesQueries.ts
 import type { QueryFunctionContext } from "@tanstack/react-query";
 
-import type { CommitteeFilters } from "../types/CommitteesFilters";
+import type { CommitteeFilters } from "../types/CommitteeFilters";
 import { committeesService } from "./committees.service";
 import { committeesKeys } from "./committeesKeys";
 

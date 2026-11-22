@@ -160,7 +160,7 @@ The OpenAPI document is load-bearing, not just documentation:
   cd src/backend && npm run build && node dist/scripts/generate-openapi.js
   ```
 
-- The frontend generates `shared/types/api.generated.ts` from that snapshot via `openapi-typescript` (`npm run typegen` in `src/frontend`). Feature types alias the generated schemas — see `features/organizations/committees/types/Committees.ts` for the pattern:
+- The frontend generates `shared/types/api.generated.ts` from that snapshot via `openapi-typescript` (`npm run typegen` in `src/frontend`). Feature types alias the generated schemas — see `features/organizations/committees/types/Committee.ts` for the pattern:
 
   ```ts
   export type Committee = components["schemas"]["CommitteeResponseDto"];

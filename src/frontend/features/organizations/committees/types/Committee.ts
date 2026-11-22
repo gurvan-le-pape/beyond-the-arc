@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/committees/types/Committees.ts
+// src/frontend/features/organizations/committees/types/Committee.ts
 import type { components } from "@/shared/types/api.generated";
 
 /**
