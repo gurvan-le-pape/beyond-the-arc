@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/clubs/components/map/clubs-map/side-panel/SidePanelHeader.tsx
+// src/frontend/features/organizations/clubs/components/map/clubs-map/side-panel/PanelHeader.tsx
 "use client";
 
 import { X } from "lucide-react";
@@ -7,13 +7,13 @@ import { useTranslations } from "next-intl";
 import { IconButton } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
 
-interface SidePanelHeaderProps {
+interface PanelHeaderProps {
   readonly clubCount: number;
   readonly onClose: () => void;
 }
 
 /** Panel header: title, club count, and the close button. */
-export function SidePanelHeader({ clubCount, onClose }: SidePanelHeaderProps) {
+export function PanelHeader({ clubCount, onClose }: PanelHeaderProps) {
   const t = useTranslations("clubs");
 
   return (

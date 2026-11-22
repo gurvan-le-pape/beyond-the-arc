@@ -5,12 +5,12 @@ import { memo, useCallback, useState } from "react";
 
 import type { ClubBasic } from "../../../../types/ClubBasic";
 import { SearchBar } from "../SearchBar";
+import { Backdrop } from "./Backdrop";
 import { ClubList } from "./ClubList";
-import { MobileOverlay } from "./MobileOverlay";
-import { SidePanelHeader } from "./SidePanelHeader";
-import { SidePanelToggleButton } from "./SidePanelToggleButton";
+import { OpenButton } from "./OpenButton";
+import { PanelHeader } from "./PanelHeader";
 
-/** Matches Tailwind's `lg`, the breakpoint where the mobile backdrop stops. */
+/** Matches Tailwind's `lg`, the breakpoint where the backdrop stops. */
 const PANEL_OPEN_BY_DEFAULT_QUERY = "(min-width: 1024px)";
 
 interface SidePanelProps {
@@ -23,8 +23,8 @@ interface SidePanelProps {
 
 /**
  * Sliding side panel over the clubs map. Owns only its open/closed state; all
- * data arrives via props. Composes the toggle button, header, search bar, club
- * list, and the mobile backdrop.
+ * data arrives via props. Composes the open button, header, search bar, club
+ * list, and the backdrop.
  */
 export const SidePanel = memo(function SidePanel({
   clubs,
@@ -59,8 +59,7 @@ export const SidePanel = memo(function SidePanel({
 
   return (
     <>
-      {/* Toggle button when closed - separate from panel */}
-      {!isOpen && <SidePanelToggleButton onOpen={handleToggleOpen} />}
+      {!isOpen && <OpenButton onOpen={handleToggleOpen} />}
 
       <div
         className="fixed top-16 right-0 h-[calc(100vh-4rem)] surface-subtle shadow-2xl z-drawer w-full sm:w-96 transition-transform duration-300 ease-in-out"
@@ -69,10 +68,7 @@ export const SidePanel = memo(function SidePanel({
         }}
       >
         <div className="flex flex-col h-full">
-          <SidePanelHeader
-            clubCount={clubs.length}
-            onClose={handleToggleOpen}
-          />
+          <PanelHeader clubCount={clubs.length} onClose={handleToggleOpen} />
 
           <div className="flex-1 flex flex-col overflow-hidden">
             <div className="p-4 border-b border-divide flex-shrink-0">
@@ -92,8 +88,7 @@ export const SidePanel = memo(function SidePanel({
         </div>
       </div>
 
-      {/* Overlay (mobile only, when open) */}
-      {isOpen && <MobileOverlay onClose={handleToggleOpen} />}
+      {isOpen && <Backdrop onClose={handleToggleOpen} />}
     </>
   );
 });
