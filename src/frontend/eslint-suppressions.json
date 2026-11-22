@@ -130,9 +130,6 @@
     }
   },
   "features/organizations/clubs/components/map/clubs-map/MapLibreClubsMap.tsx": {
-    "@typescript-eslint/no-unnecessary-condition": {
-      "count": 1
-    },
     "complexity": {
       "count": 1
     },
