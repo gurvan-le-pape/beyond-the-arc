@@ -3,19 +3,13 @@
 
 import "maplibre-gl/dist/maplibre-gl.css";
 
-import type { GeoJSONSource } from "maplibre-gl";
 import { useTranslations } from "next-intl";
 import { useCallback, useMemo, useState } from "react";
-import {
-  Map as MapGL,
-  type MapLayerMouseEvent,
-  Popup,
-} from "react-map-gl/maplibre";
+import { Map as MapGL, Popup } from "react-map-gl/maplibre";
 
 import type { Committee } from "@/features/organizations/committees/types";
 import type { League } from "@/features/organizations/leagues/types";
 import { ErrorMessage } from "@/shared/components/feedback";
-import { logger } from "@/shared/utils";
 
 import type { ClubBasic } from "../../../types/ClubBasic";
 import { ClubGroupPopupContent } from "./ClubGroupPopupContent";
@@ -29,9 +23,10 @@ import {
   MAP_COLORS,
   ZOOM_THRESHOLDS,
 } from "./mapConstants";
-import { clubsToGeoJSON, pointKey } from "./mapHelpers";
+import { clubsToGeoJSON } from "./mapHelpers";
 import { SidePanel } from "./side-panel";
 import { useAreaLabels } from "./useAreaLabels";
+import { useClubSelection } from "./useClubSelection";
 import { useMapColours } from "./useMapColours";
 import { useMapData } from "./useMapData";
 import { useSearch } from "./useSearch";
@@ -66,8 +61,6 @@ export function MapLibreClubsMap({
   initialClubs,
 }: MapLibreClubsMapProps) {
   const t = useTranslations("clubs");
-  // The clubs whose popup is open: one, or several sharing exact coordinates.
-  const [selectedClubs, setSelectedClubs] = useState<ClubBasic[]>([]);
   const [viewState, setViewState] = useState(INITIAL_VIEW);
 
   const {
@@ -94,18 +87,13 @@ export function MapLibreClubsMap({
     clearSearch,
   } = useSearch(clubs);
 
-  // Handle club marker click - zoom and show popup
-  const handleClubClick = useCallback((club: ClubBasic) => {
-    if (club.latitude && club.longitude) {
-      setViewState((prev) => ({
-        ...prev,
-        longitude: club.longitude!,
-        latitude: club.latitude!,
-        zoom: 12,
-      }));
-      setSelectedClubs([club]);
-    }
-  }, []);
+  const moveTo = useCallback(
+    (target: { longitude: number; latitude: number; zoom: number }) =>
+      setViewState((prev) => ({ ...prev, ...target })),
+    [],
+  );
+  const { selectedClubs, clearSelection, selectFromList, onMapClick } =
+    useClubSelection({ clubs, displayClubs, moveTo });
 
   // Map style configuration
   const colours = useMapColours();
@@ -148,81 +136,11 @@ export function MapLibreClubsMap({
     [departments],
   );
 
-  // Clubs on the map grouped by exact coordinates. Many were geocoded to their
-  // town's centre and share one point no zoom level separates, so a click on
-  // that point has to offer all of them.
-  const clubsByPoint = useMemo(() => {
-    const groups = new Map<string, ClubBasic[]>();
-    for (const club of displayClubs) {
-      if (club.latitude === null || club.longitude === null) continue;
-      const key = pointKey(club);
-      groups.set(key, [...(groups.get(key) ?? []), club]);
-    }
-    return groups;
-  }, [displayClubs]);
-
   // Generate club points for clustering
   const clubPoints = useMemo(() => {
     if (!showClubs) return null;
     return clubsToGeoJSON(displayClubs);
   }, [displayClubs, showClubs]);
-
-  // A cluster whose clubs all share one point never splits, so it opens their
-  // list; any other cluster zooms in until it does. MapLibre 5 answers both
-  // queries with a Promise and takes no callback.
-  const openOrExpandCluster = useCallback(
-    async (
-      source: GeoJSONSource,
-      clusterId: number,
-      pointCount: number,
-      longitude: number,
-      latitude: number,
-    ) => {
-      const leaves = await source.getClusterLeaves(clusterId, pointCount, 0);
-      const leafIds = new Set(leaves.map((leaf) => leaf.properties?.id));
-      const leafClubs = clubs.filter((c) => leafIds.has(c.id));
-      const keys = new Set(leafClubs.map(pointKey));
-      if (keys.size === 1) {
-        setSelectedClubs(leafClubs);
-        return;
-      }
-      const zoom = await source.getClusterExpansionZoom(clusterId);
-      setViewState((prev) => ({
-        ...prev,
-        longitude,
-        latitude,
-        zoom: zoom + 0.5,
-      }));
-    },
-    [clubs],
-  );
-
-  // Handle map clicks (cluster expansion and club selection)
-  const onClick = useCallback(
-    (e: MapLayerMouseEvent) => {
-      const f = e.features?.[0];
-      if (f?.source !== "clubs" || f.geometry.type !== "Point") return;
-      const [longitude, latitude] = f.geometry.coordinates;
-
-      if (f.properties.cluster) {
-        const source = e.target.getSource<GeoJSONSource>("clubs");
-        if (!source) return;
-        openOrExpandCluster(
-          source,
-          f.properties.cluster_id,
-          f.properties.point_count,
-          longitude,
-          latitude,
-        ).catch((error: unknown) => logger.error(error, "cluster click"));
-      } else {
-        // Feature coordinates come back tile-quantised, so the group is
-        // looked up from the club's own coordinates rather than the click's.
-        const club = clubs.find((c) => c.id === f.properties.id);
-        if (club) setSelectedClubs(clubsByPoint.get(pointKey(club)) ?? [club]);
-      }
-    },
-    [clubs, clubsByPoint, openOrExpandCluster],
-  );
 
   // Error state
   if (error) {
@@ -249,7 +167,7 @@ export function MapLibreClubsMap({
         // what it shows and is named in the reader's language.
         locale={{ "Map.Title": t("map.mapAriaLabel") }}
         interactiveLayerIds={showClubs ? ["clubs-point", "clusters"] : []}
-        onClick={onClick}
+        onClick={onMapClick}
         style={{ width: "100%", height: "100%" }}
       >
         {colours && showRegions && regionsGeoJson && (
@@ -276,7 +194,7 @@ export function MapLibreClubsMap({
           <Popup
             longitude={selectedClubs[0].longitude!}
             latitude={selectedClubs[0].latitude!}
-            onClose={() => setSelectedClubs([])}
+            onClose={clearSelection}
             // The card brings its own close button and width; MapLibre's
             // default caps every popup at 240px.
             closeButton={false}
@@ -296,7 +214,7 @@ export function MapLibreClubsMap({
                   departmentNameByCommittee.get(selectedClubs[0].committeeId) ??
                   null
                 }
-                onClose={() => setSelectedClubs([])}
+                onClose={clearSelection}
               />
             ) : (
               <ClubGroupPopupContent
@@ -305,7 +223,7 @@ export function MapLibreClubsMap({
                   departmentNameByCommittee.get(selectedClubs[0].committeeId) ??
                   null
                 }
-                onClose={() => setSelectedClubs([])}
+                onClose={clearSelection}
               />
             )}
           </Popup>
@@ -314,7 +232,7 @@ export function MapLibreClubsMap({
 
       <SidePanel
         clubs={displayClubs}
-        onClubClick={handleClubClick}
+        onClubClick={selectFromList}
         query={query}
         onQueryChange={setQuery}
         onClearSearch={clearSearch}

@@ -135,9 +135,6 @@
     },
     "max-lines-per-function": {
       "count": 1
-    },
-    "max-params": {
-      "count": 1
     }
   },
   "features/players/components/detail/player-comparison/index.tsx": {
