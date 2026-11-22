@@ -1,8 +1,8 @@
 // src/frontend/features/organizations/committees/api/committees.service.ts
 import { request, ServerRevalidate } from "@/lib/services/api";
 
-import type { Committee, CommitteeDetail } from "../types/Committees";
-import type { CommitteeFilters } from "../types/CommitteesFilters";
+import type { Committee, CommitteeDetail } from "../types/Committee";
+import type { CommitteeFilters } from "../types/CommitteeFilters";
 
 /** Committees are static reference data. */
 const revalidate = ServerRevalidate.REFERENCE;
