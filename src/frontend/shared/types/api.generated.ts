@@ -985,6 +985,11 @@ export interface components {
              */
             clubCount: number;
             /**
+             * @description Number of departmental committees in this league
+             * @example 6
+             */
+            committeeCount: number;
+            /**
              * @description The league's page on the FFBB competitions site, where its contact details are kept up to date
              * @example https://competitions.ffbb.com/ligues/sud
              */

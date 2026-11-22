@@ -60,6 +60,13 @@ export class LeagueResponseDto {
   clubCount!: number;
 
   @ApiProperty({
+    description: "Number of departmental committees in this league",
+    example: 6,
+    type: Number,
+  })
+  committeeCount!: number;
+
+  @ApiProperty({
     description:
       "The league's page on the FFBB competitions site, where its contact details are kept up to date",
     example: "https://competitions.ffbb.com/ligues/sud",

@@ -99,6 +99,7 @@ export class LeaguesService {
       address: league.address,
       region: { code: league.regionCode, name: league.regionName },
       clubCount,
+      committeeCount: league.committees.length,
       ffbbUrl: ffbbLeagueUrl(
         league.committees.find((c) => c.clubs.length)?.clubs[0].code ?? null,
       ),

@@ -111,6 +111,7 @@ describe("LeaguesService", () => {
         "LIGUE REGIONALE AUVERGNE-RHONE-ALPES DE BASKET-BALL",
       );
       expect(result[0].clubCount).toBe(0);
+      expect(result[0].committeeCount).toBe(0);
       expect(result[0].region).toEqual({
         name: "Auvergne-Rhône-Alpes",
         code: "ARA",
@@ -170,6 +171,7 @@ describe("LeaguesService", () => {
       expect(result.id).toBe(1);
       expect(result.name).toBe("LIGUE REGIONALE BRETAGNE DE BASKET-BALL");
       expect(result.clubCount).toBe(15);
+      expect(result.committeeCount).toBe(3);
       expect(result.region).toEqual({ name: "Bretagne", code: "BRE" });
       expect(result.ffbbUrl).toBe("https://competitions.ffbb.com/ligues/bre");
 

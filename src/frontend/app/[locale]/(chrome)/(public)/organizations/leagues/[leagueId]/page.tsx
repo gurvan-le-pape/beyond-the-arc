@@ -99,11 +99,7 @@ async function LeaguePage({ params }: LocalePageProps<{ leagueId: string }>) {
           { label: placeName, current: true },
         ]}
       />
-      <LeagueHeader
-        league={league}
-        committeeCount={committees.length}
-        championshipCount={championships.length}
-      />
+      <LeagueHeader league={league} championshipCount={championships.length} />
       <OrganizationInfo address={league.address} ffbbUrl={league.ffbbUrl} />
       <SearchableLinkList
         items={committees}
