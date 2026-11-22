@@ -485,7 +485,7 @@ Region and department labels are generated via `generateLabelFeatures`, which co
 
 The map uses OpenStreetMap raster tiles, configured inline as a MapLibre style object. There is no external style provider or API key required.
 
-The tiles are drawn light; the dark themes recolour them with MapLibre's raster paint (`BASEMAP_PAINT` in `mapConstants.ts`): `raster-brightness-min` above `raster-brightness-max` inverts light and dark, and a 180° hue rotation turns the hues back so water stays blue. High contrast drops the colour entirely. The layers above — regions, departments, club clusters and markers — take their colours from the colour roles through `useMapColours`, which reads them off the document and reads them again when the theme class changes, since MapLibre paints with literal colours.
+The tiles are drawn light; the dark themes recolour them with MapLibre's raster paint (`BASEMAP_PAINT` in `basemap.ts`): `raster-brightness-min` above `raster-brightness-max` inverts light and dark, and a 180° hue rotation turns the hues back so water stays blue. High contrast drops the colour entirely. The layers above — regions, departments, club clusters and markers — take their colours from the colour roles through `useMapColours`, which reads them off the document and reads them again when the theme class changes, since MapLibre paints with literal colours.
 
 ### Search
 
