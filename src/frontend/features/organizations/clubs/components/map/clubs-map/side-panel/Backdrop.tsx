@@ -1,14 +1,14 @@
-// src/frontend/features/organizations/clubs/components/map/clubs-map/side-panel/MobileOverlay.tsx
+// src/frontend/features/organizations/clubs/components/map/clubs-map/side-panel/Backdrop.tsx
 "use client";
 
 import { useTranslations } from "next-intl";
 
-interface MobileOverlayProps {
+interface BackdropProps {
   readonly onClose: () => void;
 }
 
 /** Dimmed backdrop shown behind the open panel on small screens. */
-export function MobileOverlay({ onClose }: MobileOverlayProps) {
+export function Backdrop({ onClose }: BackdropProps) {
   const t = useTranslations("clubs");
 
   return (

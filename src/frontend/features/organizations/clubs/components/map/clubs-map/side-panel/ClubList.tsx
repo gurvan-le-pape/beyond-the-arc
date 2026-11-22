@@ -4,8 +4,8 @@
 import { List } from "@/shared/components/primitives";
 
 import type { ClubBasic } from "../../../../types/ClubBasic";
+import { ClubListEmptyState } from "./ClubListEmptyState";
 import { ClubListItem } from "./ClubListItem";
-import { PanelEmptyState } from "./PanelEmptyState";
 
 interface ClubListProps {
   readonly clubs: ClubBasic[];
@@ -24,7 +24,7 @@ export function ClubList({ clubs, query, onClubClick }: ClubListProps) {
       }}
     >
       {clubs.length === 0 ? (
-        <PanelEmptyState query={query} />
+        <ClubListEmptyState query={query} />
       ) : (
         <List>
           {clubs.map((club) => (

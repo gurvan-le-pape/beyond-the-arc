@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/clubs/components/map/clubs-map/side-panel/SidePanelToggleButton.tsx
+// src/frontend/features/organizations/clubs/components/map/clubs-map/side-panel/OpenButton.tsx
 "use client";
 
 import { List } from "lucide-react";
@@ -6,12 +6,12 @@ import { useTranslations } from "next-intl";
 
 import { Button } from "@/shared/components/primitives";
 
-interface SidePanelToggleButtonProps {
+interface OpenButtonProps {
   readonly onOpen: () => void;
 }
 
-/** The floating hamburger button shown when the side panel is closed. */
-export function SidePanelToggleButton({ onOpen }: SidePanelToggleButtonProps) {
+/** The floating button that opens the side panel, shown while it is closed. */
+export function OpenButton({ onOpen }: OpenButtonProps) {
   const t = useTranslations("clubs");
 
   // A labelled list icon, not a bare hamburger: on a phone the site menu's own
