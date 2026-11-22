@@ -11,7 +11,7 @@
     "weight": "{weightKg} kg",
     "weightLabel": "Poids",
     "shotchartTitle": "Tirs par zone",
-    "shotchartDescription": "Cette carte montre d'où le joueur a tiré cette saison, zone par zone, avec son taux de réussite.",
+    "shotchartDescription": "Où le joueur a tiré cette saison, zone par zone, avec son taux de réussite.",
     "matchHistoryTitle": "Historique des matchs",
     "compareTitle": "Comparer avec un autre joueur",
     "compareSearch": "Rechercher un joueur à comparer ...",

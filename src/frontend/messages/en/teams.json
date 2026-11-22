@@ -13,7 +13,7 @@
     "noPlayers": "No players in roster",
     "matchHistoryTitle": "Match history",
     "upcomingMatchesTitle": "Upcoming matches",
-    "shotchartTitle": "Shot chart",
+    "shotchartTitle": "Shots by zone",
     "shotchartDescription": "Where the team shot from this season, zone by zone, with its success rate."
   },
   "itemLabel": "{count, plural, one {team} other {teams}}"
