@@ -21,11 +21,6 @@ import { hasCriteria } from "@/shared/utils";
  * loading, error, empty and paginated states via `SearchTabShell`. Mounting it
  * is the whole integration.
  *
- * **Pagination indices are converted here.** The shell reports a zero-based page
- * index while the API counts from one, so `onPageChange` adds the offset. Wiring
- * a page control straight to the API param would be off by one, silently, and
- * only on page two onward.
- *
  * An empty search box is sent as `undefined` rather than an empty string, so the
  * parameter is omitted from the request instead of filtering on nothing.
  */
@@ -52,31 +47,20 @@ export function PlayerSearchResults() {
   // unfiltered page is an alphabetical slice that answers no question.
   const searching = hasCriteria(criteria);
 
-  const { data, error, isLoading, refetch } = usePlayers(
+  const query = usePlayers(
     { ...criteria, page, limit: pageSize },
     { enabled: searching },
   );
 
-  const players: Player[] = data?.items ?? [];
-  const pagination = data
-    ? {
-        total: data.total,
-        page: data.page,
-        limit: data.limit,
-        totalPages: data.totalPages,
-      }
-    : null;
+  const players: Player[] = query.data?.items ?? [];
 
   return (
     <div className="space-y-6">
       <PlayersFilters filters={filters} set={set} onReset={reset} />
 
       <SearchTabShell
-        isLoading={isLoading}
-        error={error}
+        query={query}
         errorMessage={tCommon("errors.fetchPlayers")}
-        onRetry={refetch}
-        isEmpty={players.length === 0}
         emptyState={
           searching ? (
             <EmptyState
@@ -92,11 +76,10 @@ export function PlayerSearchResults() {
             />
           )
         }
-        pagination={pagination}
         pageSize={pageSize}
         onPageSizeChange={setPageSize}
-        onPageChange={(index) => setPage(index + 1)}
-        itemLabel={tPlayers("itemLabel", { count: pagination?.total ?? 0 })}
+        onPageChange={setPage}
+        itemLabel={tPlayers("itemLabel", { count: query.data?.total ?? 0 })}
       >
         <div className={LIST_ENTITY_CARD_GRID}>
           {players.map((player) => (

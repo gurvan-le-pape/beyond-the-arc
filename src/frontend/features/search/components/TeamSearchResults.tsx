@@ -20,9 +20,6 @@ import { hasCriteria } from "@/shared/utils";
  * Takes no props and owns everything — filter state, the query, and the
  * loading, error, empty and paginated states via `SearchTabShell`.
  *
- * **Pagination indices are converted here**, as in the sibling tabs: the shell
- * is zero-based, the API is one-based, and `onPageChange` bridges them.
- *
  * The three tabs are deliberately independent — each holds its own filter state,
  * so switching tabs does not carry one tab's filters into another.
  */
@@ -48,31 +45,20 @@ export function TeamSearchResults() {
   // Nothing is listed until a filter narrows the 60k teams.
   const searching = hasCriteria(criteria);
 
-  const { data, error, isLoading, refetch } = useTeams(
+  const query = useTeams(
     { ...criteria, page, limit: pageSize },
     { enabled: searching },
   );
 
-  const teams: Team[] = data?.items ?? [];
-  const pagination = data
-    ? {
-        total: data.total,
-        page: data.page,
-        limit: data.limit,
-        totalPages: data.totalPages,
-      }
-    : null;
+  const teams: Team[] = query.data?.items ?? [];
 
   return (
     <div className="space-y-6">
       <TeamsFilters filters={filters} set={set} onReset={reset} />
 
       <SearchTabShell
-        isLoading={isLoading}
-        error={error}
+        query={query}
         errorMessage={tCommon("errors.fetchTeams")}
-        onRetry={refetch}
-        isEmpty={teams.length === 0}
         emptyState={
           searching ? (
             <EmptyState
@@ -88,11 +74,10 @@ export function TeamSearchResults() {
             />
           )
         }
-        pagination={pagination}
         pageSize={pageSize}
         onPageSizeChange={setPageSize}
-        onPageChange={(index) => setPage(index + 1)}
-        itemLabel={tTeams("itemLabel", { count: pagination?.total ?? 0 })}
+        onPageChange={setPage}
+        itemLabel={tTeams("itemLabel", { count: query.data?.total ?? 0 })}
       >
         <div className={LIST_ENTITY_CARD_GRID}>
           {teams.map((team) => (

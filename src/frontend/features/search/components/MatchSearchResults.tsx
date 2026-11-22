@@ -20,9 +20,6 @@ import { hasCriteria } from "@/shared/utils";
  * Takes no props and owns everything — filter state, the query, and the
  * loading, error, empty and paginated states via `SearchTabShell`.
  *
- * **Pagination indices are converted here**, as in the sibling tabs: the shell
- * is zero-based, the API is one-based, and `onPageChange` bridges them.
- *
  * Carries the deepest filter set of the three — division, pool and matchday on
  * top of the shared level and location cascade — so its query has the most
  * parameters that must stay in step with `useMatchesFilterState`.
@@ -50,31 +47,20 @@ export function MatchSearchResults() {
   // Nothing is listed until something narrows the 600k matches.
   const searching = hasCriteria(criteria);
 
-  const { data, error, isLoading, refetch } = useMatches(
+  const query = useMatches(
     { ...criteria, page, limit: pageSize },
     { enabled: searching },
   );
 
-  const matches: Match[] = data?.items ?? [];
-  const pagination = data
-    ? {
-        total: data.total,
-        page: data.page,
-        limit: data.limit,
-        totalPages: data.totalPages,
-      }
-    : null;
+  const matches: Match[] = query.data?.items ?? [];
 
   return (
     <div className="space-y-6">
       <MatchesFilters filters={filters} set={set} onReset={reset} />
 
       <SearchTabShell
-        isLoading={isLoading}
-        error={error}
+        query={query}
         errorMessage={tCommon("errors.fetchMatches")}
-        onRetry={refetch}
-        isEmpty={matches.length === 0}
         emptyState={
           searching ? (
             <EmptyState
@@ -90,11 +76,10 @@ export function MatchSearchResults() {
             />
           )
         }
-        pagination={pagination}
         pageSize={pageSize}
         onPageSizeChange={setPageSize}
-        onPageChange={(index) => setPage(index + 1)}
-        itemLabel={tMatches("itemLabel", { count: pagination?.total ?? 0 })}
+        onPageChange={setPage}
+        itemLabel={tMatches("itemLabel", { count: query.data?.total ?? 0 })}
       >
         <div className={LIST_ENTITY_CARD_GRID}>
           {matches.map((match) => (
