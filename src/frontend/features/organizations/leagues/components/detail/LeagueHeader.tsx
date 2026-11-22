@@ -3,7 +3,7 @@ import { useFormatter, useTranslations } from "next-intl";
 
 import { OrganizationHeader } from "@/features/organizations/components";
 import type { League } from "@/features/organizations/leagues/types";
-import { namesMatch } from "@/features/organizations/utils";
+import { distinctOfficialName } from "@/features/organizations/utils";
 import { formatLeagueName } from "@/shared/utils";
 
 interface LeagueHeaderProps {
@@ -23,7 +23,6 @@ export function LeagueHeader({ league, championshipCount }: LeagueHeaderProps) {
   const format = useFormatter();
 
   const placeName = league.region.name;
-  const officialName = formatLeagueName(league.name);
 
   return (
     <OrganizationHeader
@@ -33,7 +32,7 @@ export function LeagueHeader({ league, championshipCount }: LeagueHeaderProps) {
       subtitle={[
         t("header.leagueKind"),
         league.region.code,
-        namesMatch(officialName, placeName) ? null : officialName,
+        distinctOfficialName(formatLeagueName(league.name), placeName),
       ]
         .filter(Boolean)
         .join(" · ")}
