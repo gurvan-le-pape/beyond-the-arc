@@ -141,7 +141,6 @@
     "goToPlay": "Go to play"
   },
   "matchSummary": {
-    "title": "Match Summary",
     "tabs": {
       "teamStats": "Team Stats",
       "matchEvents": "Play-by-play",
