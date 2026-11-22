@@ -10,7 +10,7 @@ import { useMatchesFilterState } from "@/features/matches/hooks";
 import type { Match } from "@/features/matches/types";
 import { LIST_ENTITY_CARD_GRID } from "@/shared/components/domain";
 import { EmptyState } from "@/shared/components/feedback";
-import { SearchTabShell } from "@/shared/components/navigation";
+import { PaginatedResults } from "@/shared/components/navigation";
 import { hasCriteria } from "@/shared/utils";
 
 /**
@@ -18,7 +18,7 @@ import { hasCriteria } from "@/shared/utils";
  * results grid, and pagination.
  *
  * Takes no props and owns everything — filter state, the query, and the
- * loading, error, empty and paginated states via `SearchTabShell`.
+ * loading, error, empty and paginated states via `PaginatedResults`.
  *
  * Carries the deepest filter set of the three — division, pool and matchday on
  * top of the shared level and location cascade — so its query has the most
@@ -58,7 +58,7 @@ export function MatchSearchResults() {
     <div className="space-y-6">
       <MatchesFilters filters={filters} set={set} onReset={reset} />
 
-      <SearchTabShell
+      <PaginatedResults
         query={query}
         errorMessage={tCommon("errors.fetchMatches")}
         emptyState={
@@ -86,7 +86,7 @@ export function MatchSearchResults() {
             <MatchesCard key={match.id} match={match} />
           ))}
         </div>
-      </SearchTabShell>
+      </PaginatedResults>
     </div>
   );
 }

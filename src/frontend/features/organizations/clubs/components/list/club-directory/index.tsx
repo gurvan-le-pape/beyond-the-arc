@@ -9,7 +9,7 @@ import { useCommittees } from "@/features/organizations/committees/api";
 import { useLeagues } from "@/features/organizations/leagues/api";
 import { normalizeDepartmentCode } from "@/features/organizations/utils";
 import { EmptyState, Spinner } from "@/shared/components/feedback";
-import { SearchTabShell } from "@/shared/components/navigation";
+import { PaginatedResults } from "@/shared/components/navigation";
 
 import { useClubs } from "../../../api";
 import type { ClubBasic } from "../../../types/ClubBasic";
@@ -65,7 +65,7 @@ function ClubDirectoryContent() {
             tOrganizations("clubs.resultCount", { count: query.data.total })}
         </p>
 
-        <SearchTabShell
+        <PaginatedResults
           query={query}
           errorMessage={tCommon("errors.fetchClubs")}
           emptyState={
@@ -83,7 +83,7 @@ function ClubDirectoryContent() {
           })}
         >
           <ClubsTable clubs={clubs} places={places} />
-        </SearchTabShell>
+        </PaginatedResults>
       </div>
     </div>
   );

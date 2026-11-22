@@ -10,7 +10,7 @@ import { usePlayersFilterState } from "@/features/players/hooks";
 import type { Player } from "@/features/players/types";
 import { LIST_ENTITY_CARD_GRID } from "@/shared/components/domain";
 import { EmptyState } from "@/shared/components/feedback";
-import { SearchTabShell } from "@/shared/components/navigation";
+import { PaginatedResults } from "@/shared/components/navigation";
 import { hasCriteria } from "@/shared/utils";
 
 /**
@@ -18,7 +18,7 @@ import { hasCriteria } from "@/shared/utils";
  * results grid, and pagination.
  *
  * Takes no props and owns everything — filter state, the query, and the
- * loading, error, empty and paginated states via `SearchTabShell`. Mounting it
+ * loading, error, empty and paginated states via `PaginatedResults`. Mounting it
  * is the whole integration.
  *
  * An empty search box is sent as `undefined` rather than an empty string, so the
@@ -58,7 +58,7 @@ export function PlayerSearchResults() {
     <div className="space-y-6">
       <PlayersFilters filters={filters} set={set} onReset={reset} />
 
-      <SearchTabShell
+      <PaginatedResults
         query={query}
         errorMessage={tCommon("errors.fetchPlayers")}
         emptyState={
@@ -86,7 +86,7 @@ export function PlayerSearchResults() {
             <PlayerCard key={player.id} player={player} />
           ))}
         </div>
-      </SearchTabShell>
+      </PaginatedResults>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-// src/frontend/shared/components/navigation/SearchTabShell.tsx
+// src/frontend/shared/components/navigation/PaginatedResults.tsx
 "use client";
 
 import { useEffect } from "react";
@@ -18,7 +18,7 @@ interface PaginatedListQuery {
   readonly refetch: () => unknown;
 }
 
-interface SearchTabShellProps {
+interface PaginatedResultsProps {
   /** The list query, as its hook returns it. */
   readonly query: PaginatedListQuery;
   readonly errorMessage: string;
@@ -51,7 +51,7 @@ interface SearchTabShellProps {
  * items, and "nothing found" with no pagination is a dead end over a list that
  * is not empty.
  */
-export function SearchTabShell({
+export function PaginatedResults({
   query,
   errorMessage,
   emptyState,
@@ -60,7 +60,7 @@ export function SearchTabShell({
   onPageChange,
   itemLabel,
   children,
-}: SearchTabShellProps) {
+}: PaginatedResultsProps) {
   const { data, isLoading, error, refetch } = query;
   const isPastLastPage =
     data !== undefined && data.totalPages > 0 && data.page > data.totalPages;
