@@ -18,12 +18,15 @@ import {
  * the two translated labels as arguments so it works from both a client
  * component (`useTranslations`) and `generateMetadata` (`getTranslations`).
  *
- * @param championship - the championship to name
+ * @param championship - the championship to name, or the reference a match carries
  * @param labels - the two already-translated strings, passed in so this works from a server or client component
  * @returns the place, heading and season, joined by middle dots
  */
 export function buildChampionshipTitle(
-  championship: Championship,
+  championship: Pick<
+    Championship,
+    "level" | "category" | "regionName" | "departmentName" | "seasonYear"
+  >,
   labels: ChampionshipTitleLabels,
 ): string {
   const place =

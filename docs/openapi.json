@@ -3501,6 +3501,23 @@
             "type": "number",
             "description": "Division number",
             "example": 1
+          },
+          "seasonYear": {
+            "type": "string",
+            "description": "Season year (e.g., 2024-2025)",
+            "example": "2024-2025"
+          },
+          "regionName": {
+            "type": "string",
+            "nullable": true,
+            "description": "Name of the organising league's region, as written in the reference data; null for a national championship",
+            "example": "Auvergne-Rhône-Alpes"
+          },
+          "departmentName": {
+            "type": "string",
+            "nullable": true,
+            "description": "Name of the organising committee's department, as written in the reference data; null unless departmental",
+            "example": "Ain"
           }
         },
         "required": [
@@ -3508,7 +3525,10 @@
           "category",
           "gender",
           "level",
-          "division"
+          "division",
+          "seasonYear",
+          "regionName",
+          "departmentName"
         ]
       },
       "MatchPoolRefDto": {
