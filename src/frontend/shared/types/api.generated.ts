@@ -1205,6 +1205,21 @@ export interface components {
              * @example 1
              */
             division: number;
+            /**
+             * @description Season year (e.g., 2024-2025)
+             * @example 2024-2025
+             */
+            seasonYear: string;
+            /**
+             * @description Name of the organising league's region, as written in the reference data; null for a national championship
+             * @example Auvergne-Rhône-Alpes
+             */
+            regionName: string | null;
+            /**
+             * @description Name of the organising committee's department, as written in the reference data; null unless departmental
+             * @example Ain
+             */
+            departmentName: string | null;
         };
         MatchPoolRefDto: {
             /**

@@ -2,7 +2,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { championshipsService } from "@/features/competitions/championships/api";
 import { buildChampionshipTitle } from "@/features/competitions/championships/utils";
 import { matchesService } from "@/features/matches/api";
 import {
@@ -81,11 +80,7 @@ async function MatchSummaryPage({
     matchesService.getPlayerStatsByMatchId(matchId),
   ]).catch(handleServerError);
 
-  // The match names its championship by id only; the organisation and season
-  // that make up the championship's display name come from this second fetch.
-  const championship = await championshipsService
-    .getById(match.pool.championship.id)
-    .catch(handleServerError);
+  const { championship } = match.pool;
 
   const { stats, homeTeamStats, awayTeamStats } = playerMatchStats;
   const homeTeam = buildMatchTeam(

@@ -32,6 +32,31 @@ export class MatchChampionshipRefDto {
 
   @ApiProperty({ description: "Division number", example: 1, type: Number })
   division!: number;
+
+  @ApiProperty({
+    description: "Season year (e.g., 2024-2025)",
+    example: "2024-2025",
+    type: String,
+  })
+  seasonYear!: string;
+
+  @ApiProperty({
+    description:
+      "Name of the organising league's region, as written in the reference data; null for a national championship",
+    example: "Auvergne-Rhône-Alpes",
+    type: String,
+    nullable: true,
+  })
+  regionName!: string | null;
+
+  @ApiProperty({
+    description:
+      "Name of the organising committee's department, as written in the reference data; null unless departmental",
+    example: "Ain",
+    type: String,
+    nullable: true,
+  })
+  departmentName!: string | null;
 }
 
 /**

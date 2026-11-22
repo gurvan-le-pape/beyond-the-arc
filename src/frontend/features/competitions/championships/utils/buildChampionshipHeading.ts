@@ -21,7 +21,7 @@ export interface ChampionshipTitleLabels {
  * @returns the category, gender and division, joined by middle dots
  */
 export function buildChampionshipHeading(
-  championship: Championship,
+  championship: Pick<Championship, "category">,
   labels: ChampionshipTitleLabels,
 ): string {
   return [championship.category, labels.gender, labels.division]

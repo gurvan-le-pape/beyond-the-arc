@@ -100,13 +100,18 @@ describe("MatchesService", () => {
           gender: "M",
           level: "regional",
           division: "Régionale 1",
+          seasonYear: "2026-2027",
         },
       },
       club: {
         id: 1,
         name: "Club Home",
         committeeId: 1,
-        committee: { leagueId: 1 },
+        committee: {
+          leagueId: 1,
+          departmentName: "Ain",
+          league: { regionName: "Auvergne-Rhône-Alpes" },
+        },
       },
     },
     awayTeam: {
@@ -161,13 +166,18 @@ describe("MatchesService", () => {
           gender: "M",
           level: "regional",
           division: "Régionale 1",
+          seasonYear: "2026-2027",
         },
       },
       club: {
         id: 1,
         name: "Club Home",
         committeeId: 1,
-        committee: { leagueId: 1 },
+        committee: {
+          leagueId: 1,
+          departmentName: "Ain",
+          league: { regionName: "Auvergne-Rhône-Alpes" },
+        },
       },
     },
     awayTeam: {
@@ -238,6 +248,38 @@ describe("MatchesService", () => {
       expect(result.limit).toBe(1);
       expect(result.totalPages).toBe(1);
     });
+
+    it.each([
+      ["regional", "Auvergne-Rhône-Alpes", null],
+      ["departmental", "Auvergne-Rhône-Alpes", "Ain"],
+      ["national", null, null],
+    ])(
+      "names a %s championship's place and season from the home team's committee",
+      async (level, regionName, departmentName) => {
+        const homeTeam = mockMatchListResult.homeTeam;
+        mockPrismaService.client.matches.findMany.mockResolvedValue([
+          {
+            ...mockMatchListResult,
+            homeTeam: {
+              ...homeTeam,
+              pool: {
+                ...homeTeam.pool,
+                championship: { ...homeTeam.pool.championship, level },
+              },
+            },
+          },
+        ]);
+        mockPrismaService.client.matches.count.mockResolvedValue(1);
+
+        const result = await service.findAllMatches({ page: 1, limit: 1 });
+
+        expect(result.items[0].pool.championship).toMatchObject({
+          seasonYear: "2026-2027",
+          regionName,
+          departmentName,
+        });
+      },
+    );
 
     it("should handle pagination correctly", async () => {
       mockPrismaService.client.matches.findMany.mockResolvedValue([]);

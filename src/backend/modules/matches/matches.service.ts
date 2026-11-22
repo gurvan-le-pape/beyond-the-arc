@@ -27,6 +27,7 @@ import { Prisma } from "../../prisma/generated/prisma/client";
 import { aggregateTeamMatchStats } from "./aggregate-team-match-stats";
 import type { GetMatchesQueryDto } from "./dto/matches.query.dto";
 import type {
+  MatchChampionshipRefDto,
   MatchDetailResponseDto,
   MatchEventDto,
   MatchPlayerStatsResponseDto,
@@ -55,6 +56,7 @@ const MATCH_LIST_SELECT = {
               gender: true,
               level: true,
               division: true,
+              seasonYear: true,
             },
           },
         },
@@ -65,7 +67,13 @@ const MATCH_LIST_SELECT = {
           name: true,
           committeeId: true,
           committee: {
-            select: { leagueId: true },
+            // The home team's committee names the championship's place: a
+            // pool's teams share the organiser (see the championships service).
+            select: {
+              leagueId: true,
+              departmentName: true,
+              league: { select: { regionName: true } },
+            },
           },
         },
       },
@@ -189,6 +197,30 @@ type ShotResult = Prisma.MatchEventsGetPayload<{
 type BoxScorePlayerResult = Prisma.PlayersGetPayload<{
   select: typeof BOX_SCORE_PLAYER_SELECT;
 }>;
+
+/**
+ * Where a match's championship is played, named as the championship response
+ * names it: the region of a regional championship, the region and department
+ * of a departmental one, neither for a national one.
+ *
+ * @param level - the championship's level
+ * @param committee - the home team's committee, which organises a departmental
+ *   championship and sits in the league that organises a regional one
+ * @returns the championship's `regionName` and `departmentName`
+ */
+function championshipPlace(
+  level: string,
+  committee: { departmentName: string; league: { regionName: string } },
+): Pick<MatchChampionshipRefDto, "regionName" | "departmentName"> {
+  if (level === CompetitionLevel.NATIONAL) {
+    return { regionName: null, departmentName: null };
+  }
+  return {
+    regionName: committee.league.regionName,
+    departmentName:
+      level === CompetitionLevel.DEPARTMENTAL ? committee.departmentName : null,
+  };
+}
 
 @Injectable()
 export class MatchesService {
@@ -394,6 +426,11 @@ export class MatchesService {
           gender: pool.championship.gender as Gender,
           level: pool.championship.level as CompetitionLevel,
           division: pool.championship.division,
+          seasonYear: pool.championship.seasonYear,
+          ...championshipPlace(
+            pool.championship.level,
+            match.homeTeam.club.committee,
+          ),
         },
       },
       homeTeam: {
