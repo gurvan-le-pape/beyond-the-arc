@@ -1,15 +1,15 @@
-// src/frontend/features/organizations/clubs/components/map/clubs-map/ZoomLayers.tsx
+// src/frontend/features/organizations/clubs/components/map/clubs-map/zoom-layers/index.tsx
 import { useMemo } from "react";
 
-import type { ClubBasic } from "../../../types/ClubBasic";
-import { ClubsLayer } from "./layers/ClubsLayer";
-import { DepartmentsLayer } from "./layers/DepartmentsLayer";
-import { RegionsLayer } from "./layers/RegionsLayer";
-import { ZOOM_THRESHOLDS } from "./mapConstants";
-import { clubsToGeoJSON } from "./mapHelpers";
+import type { ClubBasic } from "../../../../types/ClubBasic";
+import { ZOOM_THRESHOLDS } from "../mapConstants";
+import type { MapColours } from "../useMapColours";
+import type { UseMapDataReturn } from "../useMapData";
+import { ClubsLayer } from "./ClubsLayer";
+import { DepartmentsLayer } from "./DepartmentsLayer";
+import { clubsToGeoJSON } from "./layerSources";
+import { RegionsLayer } from "./RegionsLayer";
 import { useAreaLabels } from "./useAreaLabels";
-import type { MapColours } from "./useMapColours";
-import type { UseMapDataReturn } from "./useMapData";
 
 interface ZoomLayersProps {
   /** The map's current zoom, which picks the layer. */

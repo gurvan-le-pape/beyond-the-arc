@@ -1,11 +1,11 @@
-// src/frontend/features/organizations/clubs/components/map/clubs-map/layers/DepartmentsLayer.tsx
+// src/frontend/features/organizations/clubs/components/map/clubs-map/zoom-layers/DepartmentsLayer.tsx
 "use client";
 
 import type { FeatureCollection } from "geojson";
 import { Layer, Source } from "react-map-gl/maplibre";
 
-import { MAP_COLORS } from "../mapConstants";
 import type { MapColours } from "../useMapColours";
+import { AREA_STYLE } from "./layerStyle";
 
 interface DepartmentsLayerProps {
   readonly geoJson: FeatureCollection;
@@ -34,7 +34,7 @@ export function DepartmentsLayer({
           type="fill"
           paint={{
             "fill-color": area.fill,
-            "fill-opacity": MAP_COLORS.DEPARTMENTS.FILL_OPACITY,
+            "fill-opacity": AREA_STYLE.DEPARTMENTS.FILL_OPACITY,
           }}
         />
         <Layer
@@ -42,7 +42,7 @@ export function DepartmentsLayer({
           type="line"
           paint={{
             "line-color": area.border,
-            "line-width": MAP_COLORS.DEPARTMENTS.BORDER_WIDTH,
+            "line-width": AREA_STYLE.DEPARTMENTS.BORDER_WIDTH,
           }}
         />
       </Source>
@@ -53,7 +53,7 @@ export function DepartmentsLayer({
             id="department-labels-circle"
             type="circle"
             paint={{
-              "circle-radius": MAP_COLORS.DEPARTMENTS.LABEL_CIRCLE_RADIUS,
+              "circle-radius": AREA_STYLE.DEPARTMENTS.LABEL_CIRCLE_RADIUS,
               "circle-color": colours.labelBackground,
               "circle-stroke-width": 2,
               "circle-stroke-color": area.border,
@@ -65,7 +65,7 @@ export function DepartmentsLayer({
             type="symbol"
             layout={{
               "text-field": ["get", "clubCount"],
-              "text-size": MAP_COLORS.DEPARTMENTS.LABEL_TEXT_SIZE,
+              "text-size": AREA_STYLE.DEPARTMENTS.LABEL_TEXT_SIZE,
               "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
             }}
             paint={{

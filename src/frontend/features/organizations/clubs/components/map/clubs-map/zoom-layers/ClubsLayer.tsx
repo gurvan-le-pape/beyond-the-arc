@@ -1,11 +1,12 @@
-// src/frontend/features/organizations/clubs/components/map/clubs-map/layers/ClubsLayer.tsx
+// src/frontend/features/organizations/clubs/components/map/clubs-map/zoom-layers/ClubsLayer.tsx
 "use client";
 
 import type { FeatureCollection } from "geojson";
 import { Layer, Source } from "react-map-gl/maplibre";
 
-import { CLUSTER_CONFIG, MAP_COLORS } from "../mapConstants";
+import { CLUB_MARKER } from "../mapConstants";
 import type { MapColours } from "../useMapColours";
+import { CLUSTER_CONFIG, CLUSTER_THRESHOLDS } from "./layerStyle";
 
 interface ClubsLayerProps {
   readonly geoJson: FeatureCollection;
@@ -41,11 +42,11 @@ export function ClubsLayer({ geoJson, colours }: ClubsLayerProps) {
           "circle-radius": [
             "step",
             ["get", "point_count"],
-            MAP_COLORS.CLUBS.CLUSTER_SIZES[0],
-            MAP_COLORS.CLUBS.CLUSTER_THRESHOLDS[0],
-            MAP_COLORS.CLUBS.CLUSTER_SIZES[1],
-            MAP_COLORS.CLUBS.CLUSTER_THRESHOLDS[1],
-            MAP_COLORS.CLUBS.CLUSTER_SIZES[2],
+            CLUB_MARKER.CLUSTER_SIZES[0],
+            CLUSTER_THRESHOLDS[0],
+            CLUB_MARKER.CLUSTER_SIZES[1],
+            CLUSTER_THRESHOLDS[1],
+            CLUB_MARKER.CLUSTER_SIZES[2],
           ],
           "circle-stroke-width": 2,
           "circle-stroke-color": colours.labelBackground,
@@ -71,7 +72,7 @@ export function ClubsLayer({ geoJson, colours }: ClubsLayerProps) {
         type="circle"
         filter={["!", ["has", "point_count"]]}
         paint={{
-          "circle-radius": MAP_COLORS.CLUBS.POINT_RADIUS,
+          "circle-radius": CLUB_MARKER.POINT_RADIUS,
           "circle-color": colours.clubs.fill,
           "circle-stroke-width": 2,
           "circle-stroke-color": colours.labelBackground,

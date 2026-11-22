@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/clubs/components/map/clubs-map/SearchBar.tsx
+// src/frontend/features/organizations/clubs/components/map/clubs-map/side-panel/SearchBar.tsx
 "use client";
 
 import { useTranslations } from "next-intl";

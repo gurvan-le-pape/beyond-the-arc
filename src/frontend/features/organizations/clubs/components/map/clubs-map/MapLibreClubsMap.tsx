@@ -12,15 +12,15 @@ import type { League } from "@/features/organizations/leagues/types";
 import { ErrorMessage } from "@/shared/components/feedback";
 
 import type { ClubBasic } from "../../../types/ClubBasic";
-import { ClubsPopup } from "./ClubsPopup";
-import { INITIAL_VIEW, ZOOM_THRESHOLDS } from "./mapConstants";
-import { basemapStyle } from "./mapHelpers";
+import { basemapStyle } from "./basemap";
+import { ClubsPopup } from "./clubs-popup";
+import { ZOOM_THRESHOLDS } from "./mapConstants";
 import { SidePanel } from "./side-panel";
 import { useClubSelection } from "./useClubSelection";
 import { useMapColours } from "./useMapColours";
 import { useMapData } from "./useMapData";
 import { useSearch } from "./useSearch";
-import { ZoomLayers } from "./ZoomLayers";
+import { ZoomLayers } from "./zoom-layers";
 
 // MapLibre 6 ships its worker as a separate module and no longer finds it on
 // its own: without this the basemap still draws, but every GeoJSON source —
@@ -31,6 +31,15 @@ const MAPLIBRE_WORKER_URL = new URL(
   "maplibre-gl/dist/maplibre-gl-worker.mjs",
   import.meta.url,
 ).toString();
+
+// Initial map view centered on France
+const INITIAL_VIEW = {
+  longitude: 2.5,
+  latitude: 46.8,
+  zoom: 5.8,
+  pitch: 0,
+  bearing: 0,
+};
 
 interface MapLibreClubsMapProps {
   readonly initialRegions: League[];

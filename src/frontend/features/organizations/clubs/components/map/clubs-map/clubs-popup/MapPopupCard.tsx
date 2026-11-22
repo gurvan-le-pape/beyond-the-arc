@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/clubs/components/map/clubs-map/MapPopupCard.tsx
+// src/frontend/features/organizations/clubs/components/map/clubs-map/clubs-popup/MapPopupCard.tsx
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";

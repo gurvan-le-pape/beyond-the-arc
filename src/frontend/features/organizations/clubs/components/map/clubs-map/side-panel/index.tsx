@@ -4,11 +4,11 @@
 import { memo, useCallback, useState } from "react";
 
 import type { ClubBasic } from "../../../../types/ClubBasic";
-import { SearchBar } from "../SearchBar";
 import { Backdrop } from "./Backdrop";
 import { ClubList } from "./ClubList";
 import { OpenButton } from "./OpenButton";
 import { PanelHeader } from "./PanelHeader";
+import { SearchBar } from "./SearchBar";
 
 /** Matches Tailwind's `lg`, the breakpoint where the backdrop stops. */
 const PANEL_OPEN_BY_DEFAULT_QUERY = "(min-width: 1024px)";

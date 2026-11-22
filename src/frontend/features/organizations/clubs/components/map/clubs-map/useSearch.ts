@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/clubs/components/map/clubs-map/useSearch.tsx
+// src/frontend/features/organizations/clubs/components/map/clubs-map/useSearch.ts
 import { useCallback, useMemo, useState } from "react";
 
 import { normalizeString } from "@/shared/utils";
@@ -20,6 +20,10 @@ interface UseSearchReturn {
  * Case- and accent-insensitive on both sides: most cities are stored without
  * accents ("EPINAL"), so "Épinal" has to match them, and "epinal" has to match
  * the few that keep theirs.
+ *
+ * @param clubs - every club, searched by name, city and zip code
+ * @returns the query and its setter, the matching clubs (all of them while the
+ *   query is blank), whether a query is typed, and a reset
  */
 export function useSearch(clubs: ClubBasic[]): UseSearchReturn {
   const [query, setQuery] = useState("");

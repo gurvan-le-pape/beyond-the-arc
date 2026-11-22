@@ -1,12 +1,12 @@
-// src/frontend/features/organizations/clubs/components/map/clubs-map/ClubsPopup.tsx
+// src/frontend/features/organizations/clubs/components/map/clubs-map/clubs-popup/index.tsx
 import { Popup } from "react-map-gl/maplibre";
 
 import type { Committee } from "@/features/organizations/committees/types";
 
-import type { ClubBasic } from "../../../types/ClubBasic";
+import type { ClubBasic } from "../../../../types/ClubBasic";
+import { CLUB_MARKER } from "../mapConstants";
 import { ClubGroupPopupContent } from "./ClubGroupPopupContent";
 import { ClubPopupContent } from "./ClubPopupContent";
-import { MAP_COLORS } from "./mapConstants";
 
 interface ClubsPopupProps {
   /** The selected clubs: none, one, or several on exactly the same point. */
@@ -43,8 +43,8 @@ export function ClubsPopup({ clubs, departments, onClose }: ClubsPopupProps) {
       // cluster bubble, a single club as a dot.
       offset={
         clubs.length > 1
-          ? MAP_COLORS.CLUBS.CLUSTER_SIZES[2] + 4
-          : MAP_COLORS.CLUBS.POINT_RADIUS + 4
+          ? CLUB_MARKER.CLUSTER_SIZES[2] + 4
+          : CLUB_MARKER.POINT_RADIUS + 4
       }
     >
       {clubs.length === 1 ? (
