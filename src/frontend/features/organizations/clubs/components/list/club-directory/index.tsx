@@ -24,7 +24,7 @@ function ClubDirectoryContent() {
 
   const { filters, set, page, pageSize, setPage, setPageSize } =
     useClubsFilterState();
-  const { data, error, isLoading, refetch } = useClubs({
+  const query = useClubs({
     leagueId: filters.league,
     committeeId: filters.committee,
     search: filters.q,
@@ -44,15 +44,7 @@ function ClubDirectoryContent() {
     leagues: Object.fromEntries(leagues.map((l) => [l.id, l.region.name])),
   };
 
-  const clubs: ClubBasic[] = data?.items ?? [];
-  const pagination = data
-    ? {
-        total: data.total,
-        page: data.page,
-        limit: data.limit,
-        totalPages: data.totalPages,
-      }
-    : null;
+  const clubs: ClubBasic[] = query.data?.items ?? [];
 
   return (
     <div className="grid gap-6 lg:gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] items-start">
@@ -69,16 +61,13 @@ function ClubDirectoryContent() {
           className="text-sm font-medium text-text-secondary min-h-5"
           aria-live="polite"
         >
-          {pagination &&
-            tOrganizations("clubs.resultCount", { count: pagination.total })}
+          {query.data &&
+            tOrganizations("clubs.resultCount", { count: query.data.total })}
         </p>
 
         <SearchTabShell
-          isLoading={isLoading}
-          error={error}
+          query={query}
           errorMessage={tCommon("errors.fetchClubs")}
-          onRetry={refetch}
-          isEmpty={clubs.length === 0}
           emptyState={
             <EmptyState
               icon={<Users className="w-16 h-16" />}
@@ -86,12 +75,11 @@ function ClubDirectoryContent() {
               description={tOrganizations("clubs.tryAdjustingFilters")}
             />
           }
-          pagination={pagination}
           pageSize={pageSize}
           onPageSizeChange={setPageSize}
-          onPageChange={(index) => setPage(index + 1)}
+          onPageChange={setPage}
           itemLabel={tOrganizations("clubs.itemLabel", {
-            count: pagination?.total ?? 0,
+            count: query.data?.total ?? 0,
           })}
         >
           <ClubsTable clubs={clubs} places={places} />
