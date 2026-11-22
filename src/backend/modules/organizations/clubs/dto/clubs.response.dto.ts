@@ -229,6 +229,13 @@ export class ClubDetailedResponseDto {
   address!: string | null;
 
   @ApiProperty({
+    description: "The departmental committee the club belongs to",
+    example: 1,
+    type: Number,
+  })
+  committeeId!: number;
+
+  @ApiProperty({
     description:
       "The club's page on the FFBB competitions site, where its contact details are kept up to date",
     example:

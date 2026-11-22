@@ -2,18 +2,22 @@
 import { useFormatter, useTranslations } from "next-intl";
 
 import type { ClubDetailed } from "@/features/organizations/clubs/types";
+import type { Committee } from "@/features/organizations/committees/types";
 import { OrganizationHeader } from "@/features/organizations/components";
+import { TextLink } from "@/shared/components/primitives";
 
 interface ClubHeaderProps {
   readonly club: ClubDetailed;
+  /** The committee the club belongs to, linked from the subtitle. */
+  readonly committee: Committee | undefined;
 }
 
 /**
  * Identity block at the top of a club page: the club's mark and name, its
- * town, and three figures across all its teams — how many there are, how many
+ * town and its committee, and three figures across all its teams — how many there are, how many
  * championships they enter, and their combined win–loss record.
  */
-export function ClubHeader({ club }: ClubHeaderProps) {
+export function ClubHeader({ club, committee }: ClubHeaderProps) {
   const t = useTranslations("organizations");
   const format = useFormatter();
 
@@ -37,7 +41,18 @@ export function ClubHeader({ club }: ClubHeaderProps) {
     <OrganizationHeader
       name={club.name}
       imageFolder="clubs"
-      subtitle={[club.city, club.zipCode]}
+      subtitle={[
+        club.city,
+        club.zipCode,
+        committee && (
+          // A department name breaks at its hyphens; it moves down whole.
+          <span className="whitespace-nowrap">
+            <TextLink href={`/organizations/committees/${committee.id}`}>
+              {committee.department.name}
+            </TextLink>
+          </span>
+        ),
+      ]}
       stats={[
         {
           value: format.number(club.teams.length),

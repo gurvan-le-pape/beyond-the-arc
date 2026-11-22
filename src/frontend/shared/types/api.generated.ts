@@ -848,6 +848,11 @@ export interface components {
              */
             address: string | null;
             /**
+             * @description The departmental committee the club belongs to
+             * @example 1
+             */
+            committeeId: number;
+            /**
              * @description The club's page on the FFBB competitions site, where its contact details are kept up to date
              * @example https://competitions.ffbb.com/ligues/sud/comites/0013/clubs/sud0013011
              */

@@ -45,9 +45,12 @@ export function CommitteeHeader({
         normalizeDepartmentCode(committee.department.code),
         distinctOfficialName(formatCommitteeName(committee.name), placeName),
         league && (
-          <TextLink href={`/organizations/leagues/${league.id}`}>
-            {league.region.name}
-          </TextLink>
+          // A region name breaks at its hyphens; it moves down whole.
+          <span className="whitespace-nowrap">
+            <TextLink href={`/organizations/leagues/${league.id}`}>
+              {league.region.name}
+            </TextLink>
+          </span>
         ),
       ]}
       stats={[
