@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/clubs/components/list/club-directory/ClubsMap.tsx
+// src/frontend/features/organizations/clubs/components/list/club-directory/DepartmentFilterMap.tsx
 "use client";
 
 import { useFormatter, useTranslations } from "next-intl";
@@ -19,7 +19,7 @@ import type { ClubsFilterValues } from "./useClubsFilterState";
 const codeOf = (committee: Committee) =>
   normalizeDepartmentCode(committee.department.code);
 
-interface ClubsMapProps extends FilterProps<ClubsFilterValues> {
+interface DepartmentFilterMapProps extends FilterProps<ClubsFilterValues> {
   readonly committees: readonly Committee[];
 }
 
@@ -34,7 +34,11 @@ interface ClubsMapProps extends FilterProps<ClubsFilterValues> {
  * left out below lg, where it would sit above the results instead of beside
  * them.
  */
-export function ClubsMap({ committees, filters, set }: ClubsMapProps) {
+export function DepartmentFilterMap({
+  committees,
+  filters,
+  set,
+}: DepartmentFilterMapProps) {
   const t = useTranslations("organizations");
   const format = useFormatter();
   const [hovered, setHovered] = useState<string | null>(null);
