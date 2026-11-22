@@ -14,8 +14,8 @@ import { PaginatedResults } from "@/shared/components/navigation";
 import { useClubs } from "../../../api";
 import type { ClubBasic } from "../../../types/ClubBasic";
 import { ClubsFilters } from "./ClubsFilters";
-import { ClubsMap } from "./ClubsMap";
 import { type ClubPlaces, ClubsTable } from "./ClubsTable";
+import { DepartmentFilterMap } from "./DepartmentFilterMap";
 import { useClubsFilterState } from "./useClubsFilterState";
 
 function ClubDirectoryContent() {
@@ -52,7 +52,11 @@ function ClubDirectoryContent() {
           drives them, kept in view while the results scroll. */}
       <div className="lg:sticky lg:top-24 space-y-6">
         <ClubsFilters filters={filters} set={set} />
-        <ClubsMap committees={committees} filters={filters} set={set} />
+        <DepartmentFilterMap
+          committees={committees}
+          filters={filters}
+          set={set}
+        />
       </div>
 
       <div className="space-y-4">
