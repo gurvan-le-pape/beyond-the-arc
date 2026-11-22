@@ -6,7 +6,16 @@ import type { MapLayerMouseEvent } from "react-map-gl/maplibre";
 import { logger } from "@/shared/utils";
 
 import type { ClubBasic } from "../../../types/ClubBasic";
-import { pointKey } from "./mapHelpers";
+
+/**
+ * A key equal for two clubs exactly when they sit on the same coordinates.
+ *
+ * @param club - a club with coordinates; one without gets the key `null,null`
+ * @returns the club's longitude and latitude, joined
+ */
+function pointKey(club: Pick<ClubBasic, "latitude" | "longitude">) {
+  return `${club.longitude},${club.latitude}`;
+}
 
 /** Where the map moves to: a centre and a zoom level. */
 interface MapTarget {
