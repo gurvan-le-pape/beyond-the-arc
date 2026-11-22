@@ -34,31 +34,22 @@ export function CommitteeHeader({
   const format = useFormatter();
 
   const placeName = committee.department.name;
-  const identity = [
-    t("header.committeeKind"),
-    normalizeDepartmentCode(committee.department.code),
-    distinctOfficialName(formatCommitteeName(committee.name), placeName),
-  ]
-    .filter(Boolean)
-    .join(" · ");
 
   return (
     <OrganizationHeader
       name={placeName}
       logoName={committee.name}
       imageFolder="committees"
-      subtitle={
-        league ? (
-          <>
-            {identity} ·{" "}
-            <TextLink href={`/organizations/leagues/${league.id}`}>
-              {league.region.name}
-            </TextLink>
-          </>
-        ) : (
-          identity
-        )
-      }
+      subtitle={[
+        t("header.committeeKind"),
+        normalizeDepartmentCode(committee.department.code),
+        distinctOfficialName(formatCommitteeName(committee.name), placeName),
+        league && (
+          <TextLink href={`/organizations/leagues/${league.id}`}>
+            {league.region.name}
+          </TextLink>
+        ),
+      ]}
       stats={[
         {
           value: format.number(committee.clubCount),
