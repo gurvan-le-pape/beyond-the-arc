@@ -3,10 +3,8 @@ import { ArrowDown, ArrowUp } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Fragment, type ReactNode } from "react";
 
-import type {
-  Championship,
-  ChampionshipNavLink,
-} from "@/features/competitions/championships/types";
+import { useChampionshipNavigation } from "@/features/competitions/championships/hooks";
+import type { Championship } from "@/features/competitions/championships/types";
 import { buildChampionshipHeading } from "@/features/competitions/championships/utils";
 import { Card, LinkMenu, TextLink } from "@/shared/components/primitives";
 import { Text } from "@/shared/components/typography";
@@ -14,14 +12,13 @@ import { CompetitionLevel } from "@/shared/constants";
 
 interface ChampionshipHeaderProps {
   readonly championship: Championship;
-  /** The sibling championships one facet away, from the `build*Navigation` utils. */
-  readonly categoryLinks: ChampionshipNavLink[];
-  readonly genderLinks: ChampionshipNavLink[];
-  readonly divisionLinks: ChampionshipNavLink[];
-  /** The championship this one's champion moves up into, when there is one. */
-  readonly levelAboveHref?: string;
-  /** The departments below a regional championship, each to its top division. */
-  readonly levelBelowLinks?: ChampionshipNavLink[];
+  /** Its organiser's championships at the same level, for the facet menus. */
+  readonly siblings: Championship[];
+  /**
+   * The same category and gender at the league's other level, for the link up
+   * or the menu of departments down. Empty for a national championship.
+   */
+  readonly otherLevel: Championship[];
   /**
    * The pool picker, beside the heading: the pool scopes the whole page, both
    * the standings and the matches. Left out when there is one pool.
@@ -49,16 +46,20 @@ interface ChampionshipHeaderProps {
  */
 export function ChampionshipHeader({
   championship,
-  categoryLinks,
-  genderLinks,
-  divisionLinks,
-  levelAboveHref,
-  levelBelowLinks = [],
+  siblings,
+  otherLevel,
   poolSelect,
 }: ChampionshipHeaderProps) {
   const tCommon = useTranslations("common");
   const tCompetitions = useTranslations("competitions");
   const tOrganizations = useTranslations("organizations");
+  const {
+    categoryLinks,
+    genderLinks,
+    divisionLinks,
+    levelAboveHref,
+    levelBelowLinks,
+  } = useChampionshipNavigation(championship, siblings, otherLevel);
 
   const genderLabel = tCommon(`gender.${championship.gender}`);
   const divisionLabel = tCompetitions("divisionWithValue", {
