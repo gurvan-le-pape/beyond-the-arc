@@ -1,10 +1,10 @@
-// src/frontend/features/organizations/clubs/components/map/clubs-map/ClubPopupContent.tsx
+// src/frontend/features/organizations/clubs/components/map/clubs-map/clubs-popup/ClubPopupContent.tsx
 import { ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { TextLink } from "@/shared/components/primitives";
 
-import type { ClubBasic } from "../../../types/ClubBasic";
+import type { ClubBasic } from "../../../../types/ClubBasic";
 import { MapPopupCard } from "./MapPopupCard";
 
 interface ClubPopupContentProps {

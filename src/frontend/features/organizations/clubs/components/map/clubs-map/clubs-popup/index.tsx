@@ -1,12 +1,12 @@
-// src/frontend/features/organizations/clubs/components/map/clubs-map/ClubsPopup.tsx
+// src/frontend/features/organizations/clubs/components/map/clubs-map/clubs-popup/index.tsx
 import { Popup } from "react-map-gl/maplibre";
 
 import type { Committee } from "@/features/organizations/committees/types";
 
-import type { ClubBasic } from "../../../types/ClubBasic";
+import type { ClubBasic } from "../../../../types/ClubBasic";
+import { MAP_COLORS } from "../mapConstants";
 import { ClubGroupPopupContent } from "./ClubGroupPopupContent";
 import { ClubPopupContent } from "./ClubPopupContent";
-import { MAP_COLORS } from "./mapConstants";
 
 interface ClubsPopupProps {
   /** The selected clubs: none, one, or several on exactly the same point. */

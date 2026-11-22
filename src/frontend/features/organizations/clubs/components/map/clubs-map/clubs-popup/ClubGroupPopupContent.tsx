@@ -1,9 +1,9 @@
-// src/frontend/features/organizations/clubs/components/map/clubs-map/ClubGroupPopupContent.tsx
+// src/frontend/features/organizations/clubs/components/map/clubs-map/clubs-popup/ClubGroupPopupContent.tsx
 import { useTranslations } from "next-intl";
 
 import { List, ListItem } from "@/shared/components/primitives";
 
-import type { ClubBasic } from "../../../types/ClubBasic";
+import type { ClubBasic } from "../../../../types/ClubBasic";
 import { MapPopupCard } from "./MapPopupCard";
 
 interface ClubGroupPopupContentProps {

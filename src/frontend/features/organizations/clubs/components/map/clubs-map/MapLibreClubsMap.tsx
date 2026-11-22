@@ -12,7 +12,7 @@ import type { League } from "@/features/organizations/leagues/types";
 import { ErrorMessage } from "@/shared/components/feedback";
 
 import type { ClubBasic } from "../../../types/ClubBasic";
-import { ClubsPopup } from "./ClubsPopup";
+import { ClubsPopup } from "./clubs-popup";
 import { INITIAL_VIEW, ZOOM_THRESHOLDS } from "./mapConstants";
 import { basemapStyle } from "./mapHelpers";
 import { SidePanel } from "./side-panel";
