@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/clubs/components/map/clubs-map/mapHelpers.tsx
+// src/frontend/features/organizations/clubs/components/map/clubs-map/mapHelpers.ts
 import type { ClubBasic } from "../../../types/ClubBasic";
 import { BASEMAP_PAINT } from "./mapConstants";
 import type { MapColours } from "./useMapColours";

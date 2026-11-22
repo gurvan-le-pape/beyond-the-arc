@@ -1,4 +1,4 @@
-// src/frontend/features/organizations/clubs/components/map/clubs-map/useMapData.tsx
+// src/frontend/features/organizations/clubs/components/map/clubs-map/useMapData.ts
 import { useMemo } from "react";
 
 import {
@@ -41,6 +41,15 @@ export interface UseMapDataReturn {
  * the departments, every club, and the GeoJSON boundaries. Each league and
  * committee carries its own `clubCount`, which the region and department
  * labels show.
+ *
+ * @param initialRegions - the server-fetched leagues, the leagues query's
+ *   initial data
+ * @param initialDepartments - the server-fetched committees, the committees
+ *   query's initial data
+ * @param initialClubs - the server-fetched clubs, the clubs query's initial data
+ * @returns the data, the boundaries (`null` until loaded), the message key of
+ *   a failed load (regions first, boundaries last), and a retry of the failed
+ *   loads
  */
 export function useMapData(
   initialRegions: League[],
