@@ -1,9 +1,5 @@
 // src/frontend/features/matches/components/detail/MatchBody.tsx
-import type {
-  MatchDetail,
-  MatchTeamWithStats,
-  Shot,
-} from "@/features/matches/types";
+import type { MatchDetail, MatchTeamWithStats } from "@/features/matches/types";
 import { MatchStatus } from "@/shared/constants";
 
 import { ForfeitNotice } from "./ForfeitNotice";
@@ -15,7 +11,6 @@ interface MatchBodyProps {
   readonly match: MatchDetail;
   readonly homeTeam: MatchTeamWithStats;
   readonly awayTeam: MatchTeamWithStats;
-  readonly playerShots: Record<number, Shot[]>;
 }
 
 /**
@@ -24,12 +19,7 @@ interface MatchBodyProps {
  * simulator failed to play says its result is unavailable; and a match not
  * yet played, or being played, says when it tips off.
  */
-export function MatchBody({
-  match,
-  homeTeam,
-  awayTeam,
-  playerShots,
-}: MatchBodyProps) {
+export function MatchBody({ match, homeTeam, awayTeam }: MatchBodyProps) {
   if (match.forfeit) {
     return <ForfeitNotice homeTeam={homeTeam} awayTeam={awayTeam} />;
   }
@@ -42,7 +32,6 @@ export function MatchBody({
           awayTeam={awayTeam}
           matchEvents={match.matchEvents}
           matchDate={match.startsAt}
-          playerShots={playerShots}
         />
       );
     case MatchStatus.FAILED:

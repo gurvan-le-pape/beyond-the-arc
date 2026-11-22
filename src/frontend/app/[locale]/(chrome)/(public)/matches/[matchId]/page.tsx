@@ -8,10 +8,7 @@ import {
   MatchBreadcrumb,
   MatchHero,
 } from "@/features/matches/components";
-import {
-  buildMatchTeam,
-  groupShotEventsByPlayer,
-} from "@/features/matches/utils";
+import { buildMatchTeam } from "@/features/matches/utils";
 import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import type { LocalePageProps } from "@/shared/types";
@@ -84,7 +81,6 @@ async function MatchSummaryPage({
     stats,
     awayTeamStats,
   );
-  const shotEventsByPlayer = groupShotEventsByPlayer(match.matchEvents);
 
   return (
     <PageLayout>
@@ -103,12 +99,7 @@ async function MatchSummaryPage({
         forfeit={match.forfeit}
       />
 
-      <MatchBody
-        match={match}
-        homeTeam={homeTeam}
-        awayTeam={awayTeam}
-        playerShots={shotEventsByPlayer}
-      />
+      <MatchBody match={match} homeTeam={homeTeam} awayTeam={awayTeam} />
     </PageLayout>
   );
 }
