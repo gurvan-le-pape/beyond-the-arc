@@ -141,7 +141,6 @@
     "goToPlay": "Voir l'action"
   },
   "matchSummary": {
-    "title": "Résumé du match",
     "tabs": {
       "teamStats": "Stats d'équipe",
       "matchEvents": "Déroulé",
