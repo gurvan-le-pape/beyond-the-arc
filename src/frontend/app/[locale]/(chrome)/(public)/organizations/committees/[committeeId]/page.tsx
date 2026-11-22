@@ -1,5 +1,4 @@
 // src/frontend/app/[locale]/(chrome)/(public)/organizations/committees/[committeeId]/page.tsx
-import { Trophy } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
@@ -11,7 +10,7 @@ import {
   OrganizationInfo,
   SearchableLinkList,
 } from "@/features/organizations/components";
-import { EmptyState, withServerErrorState } from "@/shared/components/feedback";
+import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
 import { CompetitionLevel } from "@/shared/constants";
@@ -113,18 +112,11 @@ async function CommitteePage({
         searchPlaceholder={tCommon("searchPlaceholder")}
         basePath="/organizations/clubs"
       />
-      {championships.length > 0 ? (
-        <ChampionshipGrid
-          championships={championships}
-          title={tCompetitions("championshipsSectionTitle")}
-          emptyMessage={tCompetitions("noChampionships")}
-        />
-      ) : (
-        <EmptyState
-          icon={<Trophy className="w-16 h-16" />}
-          title={tCompetitions("noChampionships")}
-        />
-      )}
+      <ChampionshipGrid
+        championships={championships}
+        title={tCompetitions("championshipsSectionTitle")}
+        emptyMessage={tCompetitions("noChampionships")}
+      />
     </PageLayout>
   );
 }
