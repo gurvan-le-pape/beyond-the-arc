@@ -12,7 +12,7 @@ import {
 } from "@/shared/components/feedback";
 import { CompetitionLevel } from "@/shared/constants";
 
-import { ChampionshipMatrix } from "./ChampionshipMatrix";
+import { ChampionshipMatrix } from "../ChampionshipMatrix";
 
 /**
  * The national championships, under their tab of the championships page, as
