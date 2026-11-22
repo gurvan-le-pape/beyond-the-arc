@@ -8,8 +8,6 @@ import { formatLeagueName } from "@/shared/utils";
 
 interface LeagueHeaderProps {
   readonly league: League;
-  /** The committees under the league, fetched by the page. */
-  readonly committeeCount: number;
   /** The regional championships the league runs, fetched by the page. */
   readonly championshipCount: number;
 }
@@ -20,11 +18,7 @@ interface LeagueHeaderProps {
  * code and, when it says something the place name does not, the federation's
  * official name.
  */
-export function LeagueHeader({
-  league,
-  committeeCount,
-  championshipCount,
-}: LeagueHeaderProps) {
+export function LeagueHeader({ league, championshipCount }: LeagueHeaderProps) {
   const t = useTranslations("organizations");
   const format = useFormatter();
 
@@ -45,8 +39,8 @@ export function LeagueHeader({
         .join(" · ")}
       stats={[
         {
-          value: format.number(committeeCount),
-          label: t("header.committees", { count: committeeCount }),
+          value: format.number(league.committeeCount),
+          label: t("header.committees", { count: league.committeeCount }),
         },
         {
           value: format.number(league.clubCount),

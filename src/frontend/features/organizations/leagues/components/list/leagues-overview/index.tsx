@@ -14,8 +14,6 @@ import { LeagueRow } from "./LeagueRow";
 
 interface LeaguesOverviewProps {
   readonly leagues: League[];
-  /** Each league's committee count by league id. */
-  readonly committeeCounts: Readonly<Record<number, number>>;
 }
 
 /**
@@ -26,10 +24,7 @@ interface LeaguesOverviewProps {
  * accessible half; the map is a pointer shortcut and a picture of where the
  * clubs are.
  */
-export function LeaguesOverview({
-  leagues,
-  committeeCounts,
-}: LeaguesOverviewProps) {
+export function LeaguesOverview({ leagues }: LeaguesOverviewProps) {
   const t = useTranslations("organizations");
   const format = useFormatter();
   const [highlighted, setHighlighted] = useState<string | null>(null);
@@ -79,7 +74,6 @@ export function LeaguesOverview({
           <LeagueRow
             key={league.id}
             league={league}
-            committeeCount={committeeCounts[league.id] ?? 0}
             maxClubs={maxClubs}
             active={code !== undefined && code === highlighted}
             onActivate={(active) =>

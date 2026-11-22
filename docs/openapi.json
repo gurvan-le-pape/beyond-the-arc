@@ -3147,6 +3147,11 @@
             "description": "Number of clubs in this league",
             "example": 42
           },
+          "committeeCount": {
+            "type": "number",
+            "description": "Number of departmental committees in this league",
+            "example": 6
+          },
           "ffbbUrl": {
             "type": "string",
             "nullable": true,
@@ -3160,6 +3165,7 @@
           "address",
           "region",
           "clubCount",
+          "committeeCount",
           "ffbbUrl"
         ]
       },

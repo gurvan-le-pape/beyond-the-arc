@@ -11,7 +11,6 @@ import type { League } from "../../../types";
 
 interface LeagueRowProps {
   readonly league: League;
-  readonly committeeCount: number;
   /** The largest club count in the list, which fills the bar. */
   readonly maxClubs: number;
   readonly active: boolean;
@@ -25,7 +24,6 @@ interface LeagueRowProps {
  */
 export function LeagueRow({
   league,
-  committeeCount,
   maxClubs,
   active,
   onActivate,
@@ -63,8 +61,8 @@ export function LeagueRow({
               ? league.region.code
               : `${league.region.code} · ${officialName}`}
             {" · "}
-            {format.number(committeeCount)}{" "}
-            {t("header.committees", { count: committeeCount })}
+            {format.number(league.committeeCount)}{" "}
+            {t("header.committees", { count: league.committeeCount })}
           </p>
         </div>
 

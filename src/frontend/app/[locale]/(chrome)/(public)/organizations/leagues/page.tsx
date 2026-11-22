@@ -2,7 +2,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { committeesService } from "@/features/organizations/committees/api";
 import { leaguesService } from "@/features/organizations/leagues/api";
 import { LeaguesOverview } from "@/features/organizations/leagues/components";
 import { withServerErrorState } from "@/shared/components/feedback";
@@ -43,15 +42,7 @@ async function LeaguesPage({ params }: LocalePageProps) {
     getTranslations({ locale, namespace: "common" }),
   ]);
 
-  const [leagues, committees] = await Promise.all([
-    leaguesService.getAll(),
-    committeesService.getAll(),
-  ]).catch(handleServerError);
-  const committeeCounts: Record<number, number> = {};
-  for (const committee of committees) {
-    committeeCounts[committee.leagueId] =
-      (committeeCounts[committee.leagueId] ?? 0) + 1;
-  }
+  const leagues = await leaguesService.getAll().catch(handleServerError);
   const clubCount = leagues.reduce((sum, league) => sum + league.clubCount, 0);
 
   return (
@@ -73,7 +64,7 @@ async function LeaguesPage({ params }: LocalePageProps) {
           })}
         </Text>
       </div>
-      <LeaguesOverview leagues={leagues} committeeCounts={committeeCounts} />
+      <LeaguesOverview leagues={leagues} />
     </PageLayout>
   );
 }
