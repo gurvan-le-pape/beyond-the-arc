@@ -5,6 +5,7 @@
 
 export * from "./detail/ForfeitNotice";
 export * from "./detail/match-events/index";
+export * from "./detail/MatchBody";
 export * from "./detail/MatchBreadcrumb";
 export * from "./detail/MatchHero";
 export * from "./detail/MatchSummaryTabs";
