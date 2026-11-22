@@ -33,9 +33,7 @@ export function LeagueHeader({ league, championshipCount }: LeagueHeaderProps) {
         t("header.leagueKind"),
         league.region.code,
         distinctOfficialName(formatLeagueName(league.name), placeName),
-      ]
-        .filter(Boolean)
-        .join(" · ")}
+      ]}
       stats={[
         {
           value: format.number(league.committeeCount),

@@ -1,5 +1,5 @@
 // src/frontend/features/organizations/components/detail/OrganizationHeader.tsx
-import type { ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
 
 import { StatGroup } from "@/shared/components/blocks";
 import { ClubMark } from "@/shared/components/domain";
@@ -25,8 +25,11 @@ interface OrganizationHeaderProps {
   readonly logoName?: string;
   /** Which `public/images/*` directory the logo is looked up in. */
   readonly imageFolder: OrganizationImageFolder;
-  /** Secondary line under the heading — what the organisation is, where it is. */
-  readonly subtitle?: ReactNode;
+  /**
+   * Secondary line under the heading — what the organisation is, where it
+   * is — as parts, joined here with a dot. Empty parts are skipped.
+   */
+  readonly subtitle?: readonly ReactNode[];
   /** A band of figures under the identity, such as its club count. */
   readonly stats?: readonly OrganizationHeaderStat[];
 }
@@ -51,11 +54,12 @@ export function OrganizationHeader({
   name,
   logoName,
   imageFolder,
-  subtitle,
+  subtitle = [],
   stats = [],
 }: OrganizationHeaderProps) {
   const logoSrc = `/images/${imageFolder}/${formatNameToFileName(logoName ?? name)}.webp`;
   const fallbackLogo = `/images/${imageFolder}/defaultLogo.30cc7520.svg`;
+  const subtitleParts = subtitle.filter(Boolean);
 
   return (
     <Card variant="header" padding="none" className="overflow-hidden">
@@ -77,9 +81,22 @@ export function OrganizationHeader({
           <Text variant="h1" className="text-xl md:text-2xl">
             {name}
           </Text>
-          {subtitle && (
+          {subtitleParts.length > 0 && (
             <Text variant="body" className="mt-1 text-text-secondary">
-              {subtitle}
+              {subtitleParts.map((part, index) => (
+                // A fixed list in a fixed order, so the index is a stable key.
+                <Fragment key={index}>
+                  {/* The dot is punctuation: hidden from screen readers, with
+                    the spaces outside it so the parts are not read as one word. */}
+                  {index > 0 && (
+                    <>
+                      {" "}
+                      <span aria-hidden="true">·</span>{" "}
+                    </>
+                  )}
+                  {part}
+                </Fragment>
+              ))}
             </Text>
           )}
         </div>

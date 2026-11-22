@@ -37,15 +37,7 @@ export function ClubHeader({ club }: ClubHeaderProps) {
     <OrganizationHeader
       name={club.name}
       imageFolder="clubs"
-      // The bullet is punctuation, not content — joining it into the string
-      // would have a screen reader read "Saint-Etienne, bullet, 42000".
-      subtitle={
-        <>
-          {club.city}
-          {club.city && club.zipCode && <span aria-hidden="true"> • </span>}
-          {club.zipCode}
-        </>
-      }
+      subtitle={[club.city, club.zipCode]}
       stats={[
         {
           value: format.number(club.teams.length),
