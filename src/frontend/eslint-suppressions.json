@@ -129,14 +129,6 @@
       "count": 1
     }
   },
-  "features/organizations/clubs/components/map/clubs-map/MapLibreClubsMap.tsx": {
-    "complexity": {
-      "count": 1
-    },
-    "max-lines-per-function": {
-      "count": 1
-    }
-  },
   "features/players/components/detail/player-comparison/index.tsx": {
     "@typescript-eslint/no-unnecessary-condition": {
       "count": 1

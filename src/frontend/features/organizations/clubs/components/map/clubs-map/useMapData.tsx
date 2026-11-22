@@ -14,7 +14,7 @@ import type { League } from "@/features/organizations/leagues/types";
 import { useAllClubs } from "../../../api";
 import type { ClubBasic } from "../../../types/ClubBasic";
 
-interface UseMapDataReturn {
+export interface UseMapDataReturn {
   /** The leagues, one per region, each with its club count. */
   regions: League[];
   /** The committees, one per department, each with its club count. */
