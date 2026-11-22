@@ -1,13 +1,13 @@
-// src/frontend/features/teams/components/detail/TeamUpcomingMatchesTable.tsx
+// src/frontend/features/teams/components/detail/team-matches/TeamUpcomingMatchesTable.tsx
 "use client";
 
 import { useTranslations } from "next-intl";
 
 import { MatchHistoryTable } from "@/features/matches/components";
 
-import { useTeamMatchHistoryColumns } from "../../hooks/useTeamMatchHistoryColumns";
-import type { Team } from "../../types/Team";
-import type { TeamMatchHistory } from "../../types/TeamMatchHistory";
+import { useTeamMatchHistoryColumns } from "../../../hooks/useTeamMatchHistoryColumns";
+import type { Team } from "../../../types/Team";
+import type { TeamMatchHistory } from "../../../types/TeamMatchHistory";
 
 interface TeamUpcomingMatchesTableProps {
   readonly team: Team;
