@@ -103,7 +103,7 @@ async function PlayerDetailPage({
 
       <PerGameStatsPanel stats={career} />
 
-      <PlayerMatchHistoryTable player={player} matches={matches} maxRows={5} />
+      <PlayerMatchHistoryTable player={player} matches={matches} />
 
       {/* career is passed down rather than refetched: the same
           /players/{id}/matches response is already on screen above. */}
