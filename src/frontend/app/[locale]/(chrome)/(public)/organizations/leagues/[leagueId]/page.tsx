@@ -1,5 +1,4 @@
 // src/frontend/app/[locale]/(chrome)/(public)/organizations/leagues/[leagueId]/page.tsx
-import { Trophy } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
@@ -12,7 +11,7 @@ import {
 } from "@/features/organizations/components";
 import { leaguesService } from "@/features/organizations/leagues/api";
 import { LeagueHeader } from "@/features/organizations/leagues/components";
-import { EmptyState, withServerErrorState } from "@/shared/components/feedback";
+import { withServerErrorState } from "@/shared/components/feedback";
 import { PageLayout } from "@/shared/components/layout";
 import { Breadcrumb } from "@/shared/components/navigation";
 import { CompetitionLevel } from "@/shared/constants";
@@ -108,18 +107,11 @@ async function LeaguePage({ params }: LocalePageProps<{ leagueId: string }>) {
         basePath="/organizations/committees"
         showSearch={false}
       />
-      {championships.length > 0 ? (
-        <ChampionshipGrid
-          championships={championships}
-          title={tCompetitions("championshipsSectionTitle")}
-          emptyMessage={tCompetitions("noChampionships")}
-        />
-      ) : (
-        <EmptyState
-          icon={<Trophy className="w-16 h-16" />}
-          title={tCompetitions("noChampionships")}
-        />
-      )}
+      <ChampionshipGrid
+        championships={championships}
+        title={tCompetitions("championshipsSectionTitle")}
+        emptyMessage={tCompetitions("noChampionships")}
+      />
     </PageLayout>
   );
 }
