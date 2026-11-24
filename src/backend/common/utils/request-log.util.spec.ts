@@ -163,6 +163,15 @@ describe("attachFailureLog / failureLogProps", () => {
     expect(res.err).toBeInstanceOf(Error);
     expect((res.err as Error).message).toBe("raw");
   });
+
+  it("keeps the contents of a thrown object, circular or not", () => {
+    const res: { locals?: Record<string, unknown>; err?: unknown } = {};
+    const thrown: Record<string, unknown> = { code: "E_QUOTA" };
+    thrown.self = thrown;
+    attachFailureLog(res, { message: "object" }, thrown);
+    expect(res.err).toBeInstanceOf(Error);
+    expect((res.err as Error).message).toContain("E_QUOTA");
+  });
 });
 
 describe("serializeResponseLog", () => {
