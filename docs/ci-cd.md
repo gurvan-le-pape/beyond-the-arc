@@ -257,7 +257,7 @@ bash /opt/beyondthearc/docker/deploy.sh <previous-sha> ghcr.io gurvan-le-pape
 `.github/workflows/ci.yml` carries the jobs above, except `npm-audit`, which is `audit.yml` (pull requests and a weekly schedule). Two repository variables keep it from acting on anything outside GitHub:
 
 - `DEPLOY_ENABLED`: the deploy job is skipped unless it is `true`.
-- `SONAR_ENABLED`: the same for `sonarcloud`, whose project is bound to GitLab.
+- `SONAR_ENABLED`: the same for `sonarcloud`, which analyses the SonarCloud project `gurvan-le-pape_beyond-the-arc`.
 
 **Runners.** Every job runs on four containers, `wsl-1` to `wsl-4`, of `ghcr.io/actions/actions-runner`, selected with `runs-on: [self-hosted, wsl]`. Their Compose project is `~/github-runner/` in WSL, outside the repository; `./start.sh` starts them and fetches the registration token. Each takes one job at a time, and a job queued while WSL is down waits up to 24 hours.
 

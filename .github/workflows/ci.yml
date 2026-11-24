@@ -491,8 +491,7 @@ jobs:
         working-directory: src/backend/db/python
         run: ruff check --exit-zero --no-cache --output-format concise .
 
-  # Off until the repository variable SONAR_ENABLED is `true`: the SonarCloud
-  # project is bound to GitLab, and must be rebound first.
+  # Runs only while the repository variable SONAR_ENABLED is `true`.
   sonarcloud:
     name: SonarCloud Analysis
     runs-on: [self-hosted, wsl]
