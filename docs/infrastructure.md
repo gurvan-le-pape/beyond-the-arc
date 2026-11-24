@@ -74,7 +74,7 @@ What it sets, and why each one is there:
 
 **SSH, keys only.** The drop-in from *SSH* above, written only when `sshd -T` shows password or keyboard-interactive logins still on, validated with `sshd -t` and removed again if sshd rejects it, then applied with `systemctl reload ssh`.
 
-**The `deploy` user.** The CI deploys as `deploy`, never as root: an unprivileged account that owns the clone and is in the `docker` group. That group is root-equivalent, so the account bounds accidents and gives an audit trail, not containment. Its `authorized_keys` holds one key, commented `gitlab-ci-deploy`, whose private half is the `VPS_SSH_KEY` CI variable; the script adds `DEPLOY_PUBKEY` when it is missing and never removes a key. The sudoers rule the deploy reloads Nginx with (see *Nginx* below) is written alongside, checked with `visudo -c` before it lands.
+**The `deploy` user.** The CI deploys as `deploy`, never as root: an unprivileged account that owns the clone and is in the `docker` group. That group is root-equivalent, so the account bounds accidents and gives an audit trail, not containment. Its `authorized_keys` holds two keys: `github-actions-deploy`, whose private half is the `VPS_SSH_KEY` secret on GitHub, and `gitlab-ci-deploy`, for the GitLab fallback; the script adds `DEPLOY_PUBKEY` when it is missing and never removes a key. The sudoers rule the deploy reloads Nginx with (see *Nginx* below) is written alongside, checked with `visudo -c` before it lands.
 
 The deploy logs `deploy` into GHCR on every run, so no registry login is set up by hand.
 
