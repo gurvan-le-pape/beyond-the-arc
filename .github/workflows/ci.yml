@@ -1,73 +1,70 @@
 name: CI
 
+# Every job runs on the self-hosted runners (docs/ci-cd.md, "GitHub Actions"),
+# containers with the host Docker socket mounted. Their home directory persists
+# between jobs: the npm and tool caches stay warm, and no secret may be written
+# there.
+
 on:
   push:
     branches: [main]
   pull_request:
-  # Manual trigger — lets a deploy be re-run from the Actions UI (or via
-  # `gh workflow run ci.yml --ref main`) when a push event fails to fire.
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  # Never cancel a run on main — the deploy job does a live `docker compose up`
-  # + SSH deploy, and cancelling it mid-flight could leave the VPS half-deployed.
+  # Never on main: cancelling a deploy could leave the VPS half-deployed.
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   # ============================================================================
   # BACKEND
   # ============================================================================
+
+  # The eslint config is type-aware and the Prisma client is gitignored: without
+  # `prisma generate` its whole surface types as `any` and rules like
+  # no-floating-promises stop firing on exactly the calls they matter most on.
   backend-lint:
     name: Backend – Lint
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: src/backend
-
+    runs-on: [self-hosted, wsl]
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Setup app
+      - name: Setup src/backend
         uses: ./.github/actions/setup-app
         with:
           working-directory: src/backend
 
-      # The eslint config is type-aware, and 11 source files import from
-      # prisma/generated — which is gitignored and, since Prisma 7 dropped its
-      # postinstall, is not created by `npm ci`. Without this the whole Prisma
-      # surface types as `any` here, and rules like no-floating-promises stop
-      # firing on exactly the call sites they matter most on. `npm test` and
-      # `npm run build` both generate first, so this job was the only gap.
       - name: Generate Prisma client
+        working-directory: src/backend
         run: npx prisma generate
 
       - name: Lint
+        working-directory: src/backend
         run: npm run lint
 
-      # Same gap the frontend had: Prettier is not part of the eslint config,
-      # so nothing checked it here and four files had drifted.
       - name: Format
+        working-directory: src/backend
         run: npm run format:check
 
   backend-test:
     name: Backend – Tests
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: src/backend
-
+    runs-on: [self-hosted, wsl]
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Setup app
+      - name: Setup src/backend
         uses: ./.github/actions/setup-app
         with:
           working-directory: src/backend
 
       - name: Run tests with coverage
+        working-directory: src/backend
         run: npm test -- --coverage --coverageReporters=lcov
 
       - name: Upload coverage report
@@ -75,152 +72,230 @@ jobs:
         with:
           name: backend-coverage
           path: src/backend/coverage/lcov.info
+          retention-days: 7
 
-  backend-build:
-    name: Backend – Build
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: src/backend
-
+  # Not `services:`. The runner is itself a container, and Actions publishes a
+  # service's port on the Docker host, which is not this job's localhost. Sharing
+  # the runner's network namespace makes it so, and keeps parallel jobs apart.
+  backend-integration:
+    name: Backend – Integration tests
+    runs-on: [self-hosted, wsl]
+    env:
+      PG: integration-pg-${{ github.run_id }}-${{ github.run_attempt }}
+      # The harness refuses any database whose name does not end in _test.
+      DATABASE_URL: postgres://postgres:test@127.0.0.1:5432/beyondthearc_test
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Setup app
+      - name: Setup src/backend
+        uses: ./.github/actions/setup-app
+        with:
+          working-directory: src/backend
+
+      - name: Start PostgreSQL
+        run: |
+          docker rm -fv "$PG" >/dev/null 2>&1 || true
+          docker run -d --name "$PG" --network "container:$(hostname)" \
+            -e POSTGRES_PASSWORD=test -e POSTGRES_DB=beyondthearc_test postgres:18.4
+          for _ in $(seq 1 60); do
+            # Over TCP: during initialisation the server listens on its Unix socket only.
+            if docker exec "$PG" pg_isready -q -h 127.0.0.1 -U postgres -d beyondthearc_test; then
+              exit 0
+            fi
+            sleep 1
+          done
+          docker logs --tail 50 "$PG"
+          exit 1
+
+      - name: Migrate
+        working-directory: src/backend
+        run: npx prisma migrate deploy
+
+      - name: Run integration tests
+        working-directory: src/backend
+        run: npm run test:integration
+
+      - name: Remove PostgreSQL
+        if: always()
+        run: docker rm -fv "$PG" || true
+
+  backend-build:
+    name: Backend – Build
+    runs-on: [self-hosted, wsl]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup src/backend
         uses: ./.github/actions/setup-app
         with:
           working-directory: src/backend
 
       - name: Build
+        working-directory: src/backend
         run: npm run build
 
-  # ============================================================================
-  # FRONTEND
-  # ============================================================================
-  frontend-lint:
-    name: Frontend – Lint
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: src/frontend
-
+  # Starts the production image for real, on the host Docker daemon. A cancelled
+  # job can skip the script's own cleanup, and the daemon is long-lived.
+  backend-boot:
+    name: Backend – Boot check
+    runs-on: [self-hosted, wsl]
+    env:
+      # Names the script's containers, network and images.
+      CI_JOB_ID: gh-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Setup app
+      - name: Start the production image
+        run: sh scripts/ci/backend-boot-check.sh
+
+      - name: Remove leftovers
+        if: cancelled()
+        run: |
+          docker rm -fv "backend-boot-app-$CI_JOB_ID" "backend-boot-db-$CI_JOB_ID" || true
+          docker network rm "backend-boot-$CI_JOB_ID" || true
+          docker image rm "backend-boot:$CI_JOB_ID" "backend-boot-migrate:$CI_JOB_ID" || true
+
+  # ============================================================================
+  # FRONTEND
+  # ============================================================================
+
+  frontend-lint:
+    name: Frontend – Lint
+    runs-on: [self-hosted, wsl]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup src/frontend
         uses: ./.github/actions/setup-app
         with:
           working-directory: src/frontend
 
       - name: Lint
+        working-directory: src/frontend
         run: npm run lint
 
-      # Prettier is not part of the eslint config, so nothing was checking it in
-      # CI and 21 files had drifted by the time this was added.
       - name: Format
+        working-directory: src/frontend
         run: npm run format:check
 
   frontend-typecheck:
     name: Frontend – Typecheck
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: src/frontend
-
+    runs-on: [self-hosted, wsl]
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Setup app
+      - name: Setup src/frontend
         uses: ./.github/actions/setup-app
         with:
           working-directory: src/frontend
 
       - name: Typecheck
+        working-directory: src/frontend
         run: npm run typecheck
 
   frontend-messages:
     name: Frontend – Message parity
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: src/frontend
-
+    runs-on: [self-hosted, wsl]
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Setup app
+      - name: Setup src/frontend
         uses: ./.github/actions/setup-app
         with:
           working-directory: src/frontend
 
       - name: Check message parity
+        working-directory: src/frontend
         run: npm run check:messages
 
-  # Unit tests for the pure-TS modules (zone predicates, data transforms).
-  # Runs vitest in the node environment; spec files live next to the code as
-  # *.spec.ts, which barrelsby already excludes.
   frontend-test:
     name: Frontend – Unit tests
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: src/frontend
-
+    runs-on: [self-hosted, wsl]
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Setup app
+      - name: Setup src/frontend
         uses: ./.github/actions/setup-app
         with:
           working-directory: src/frontend
 
-      - name: Run unit tests
-        run: npm run test
+      - name: Run tests with coverage
+        working-directory: src/frontend
+        run: npm run test -- --coverage
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: frontend-coverage
+          path: src/frontend/coverage/lcov.info
+          retention-days: 7
 
   frontend-build:
     name: Frontend – Build
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: src/frontend
-
+    runs-on: [self-hosted, wsl]
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Setup app
+      - name: Setup src/frontend
         uses: ./.github/actions/setup-app
         with:
           working-directory: src/frontend
 
       - name: Build
+        working-directory: src/frontend
         run: npm run build
 
   # ============================================================================
-  # API CONTRACT
+  # SCHEDULER
   # ============================================================================
-  # Regenerates docs/openapi.json from the backend and the frontend's
-  # api.generated.ts from that document, then fails if either differs from
-  # what is committed — backend DTO changes must ship with regenerated types.
-  openapi-drift:
-    name: OpenAPI – Drift check
-    runs-on: ubuntu-latest
 
+  python-test:
+    name: Scheduler – Tests
+    runs-on: [self-hosted, wsl]
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Setup backend
+      - name: Setup Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.14"
+
+      - name: Install dependencies
+        working-directory: src/backend/db/python
+        run: pip install -r requirements-dev.txt
+
+      - name: Run tests
+        working-directory: src/backend/db/python
+        run: python -m pytest
+
+  # ============================================================================
+  # API CONTRACT, BARRELS, DEPENDENCY RULES
+  # ============================================================================
+
+  # Regenerates the OpenAPI document and the frontend types from it, and fails if
+  # either differs from the commit.
+  openapi-drift:
+    name: OpenAPI – Drift check
+    runs-on: [self-hosted, wsl]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup src/backend
         uses: ./.github/actions/setup-app
         with:
           working-directory: src/backend
 
-      - name: Setup frontend
+      - name: Setup src/frontend
         uses: ./.github/actions/setup-app
         with:
           working-directory: src/frontend
@@ -240,43 +315,30 @@ jobs:
       - name: Fail on drift
         run: |
           git diff --exit-code docs/openapi.json src/frontend/shared/types/api.generated.ts || {
-            echo "::error::docs/openapi.json or api.generated.ts is stale — from src/backend run 'npm run build && node dist/scripts/generate-openapi.js', then from src/frontend run 'npm run typegen', and commit both files. Neither script takes a path: each derives it from its own location, so the snapshot this check diffs is always the one they write."
+            echo "::error::docs/openapi.json or api.generated.ts is stale — from src/backend run 'npm run build && node dist/scripts/generate-openapi.js', then from src/frontend run 'npm run typegen', and commit both files."
             exit 1
           }
 
-  # ============================================================================
-  # BARRELS
-  # ============================================================================
-  # The root project is installed by nothing else in CI — every `npm ci` goes
-  # through setup-app with src/backend or src/frontend — so barrelsby.json and
-  # the 88 barrels it generates were verified nowhere.
-  #
-  # Two halves, because they catch different things. Regenerating and diffing
-  # catches a barrel whose *content* has gone stale. It does NOT catch a defect
-  # in the config: an unrecognised key and a directory with no barrel both emit
-  # byte-identical output, which is exactly how three of them survived. The
-  # script covers that half.
+  # barrels:lint runs eslint over both applications' barrels, so all three projects
+  # are installed.
   barrels-drift:
-    name: Barrels – Config and drift check
-    runs-on: ubuntu-latest
-
+    name: Barrels – Drift check
+    runs-on: [self-hosted, wsl]
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Setup root
+      - name: Setup .
         uses: ./.github/actions/setup-app
         with:
           working-directory: .
 
-      # barrels:lint runs eslint --fix over the generated barrels of both
-      # applications, each of which needs its own config and plugins installed.
-      - name: Setup frontend
+      - name: Setup src/frontend
         uses: ./.github/actions/setup-app
         with:
           working-directory: src/frontend
 
-      - name: Setup backend
+      - name: Setup src/backend
         uses: ./.github/actions/setup-app
         with:
           working-directory: src/backend
@@ -284,38 +346,44 @@ jobs:
       - name: Regenerate barrels
         run: npm run barrels
 
-      # `git add -A` first: a directory newly added to barrelsby.json produces a
-      # barrel that does not exist in the commit yet, and `git diff` alone does
-      # not see untracked files — so the most likely drift of all (add a
-      # directory, forget to regenerate) would pass silently.
       - name: Fail on drift
         run: |
+          # `git add -A` first: `git diff` alone does not see an untracked barrel.
           git add -A
           git diff --cached --exit-code || {
             echo "::error::Generated barrels are stale. Run 'make barrels' (or 'npm run barrels') and commit the result."
             exit 1
           }
 
+  dependency-rules:
+    name: Dependency rules
+    runs-on: [self-hosted, wsl]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup .
+        uses: ./.github/actions/setup-app
+        with:
+          working-directory: .
+
+      - name: Check module boundaries
+        run: npm run quality:deps
+
   # ============================================================================
-  # MIGRATIONS
+  # MIGRATIONS (pull requests only)
   # ============================================================================
-  # `prisma migrate deploy` does not checksum migrations it has already applied
-  # — it branches on the pending count alone, so an edited migration file is
-  # silently ignored on every database that already ran it, while a fresh one
-  # gets the new content. Nothing reports the divergence. This job is the only
-  # mechanical enforcement of CLAUDE.md's "Never edit an applied migration".
-  #
-  # Pull requests only: on a push to main there is nothing left to gate.
+
+  # `prisma migrate deploy` does not checksum applied migrations, so an edit is
+  # silently ignored everywhere it already ran. Nothing else reports it.
   migration-immutability:
     name: Migrations – No edits to applied migrations
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, wsl]
     if: github.event_name == 'pull_request'
-
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          # The base commit must be present locally for the diff below.
           fetch-depth: 0
 
       - name: Fail on a changed migration
@@ -323,7 +391,7 @@ jobs:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
-          changed=$(git diff --name-status "$BASE_SHA" HEAD -- src/backend/prisma/migrations/ \
+          changed=$(git diff --name-status "$BASE_SHA...HEAD" -- src/backend/prisma/migrations/ \
             | grep -v '^A' || true)
 
           if [ -z "$changed" ]; then
@@ -331,36 +399,106 @@ jobs:
             exit 0
           fi
 
-          # `make refresh-static-data` legitimately rewrites 1_seed_static_data.
-          # It is allowed through, because the alternative is that the workflow
-          # cannot land at all — but it has to be deliberate, and the PR has to
-          # carry the SQL that applies the same change to already-seeded
-          # databases, production included.
+          # The sanctioned `make refresh-static-data` rewrite, see docs/data-pipeline.md.
           case "$PR_TITLE" in
             *"[refresh-static-data]"*)
-              echo "::warning::This PR edits an applied migration under a [refresh-static-data] marker."
+              echo "::warning::This PR edits an applied migration under a [refresh-static-data] marker. The deploy will NOT pick it up: the PR body must carry the catch-up SQL."
               echo "$changed"
-              echo "Production has already applied these files, so the deploy will NOT pick the change up."
-              echo "The PR body must carry the SQL that brings already-seeded databases in line."
               exit 0
               ;;
           esac
 
-          # No backticks in the message: this is a double-quoted shell string,
-          # where they would be command substitution rather than punctuation.
-          echo "::error::This PR changes a migration that has already been committed, and every database that already applied it will silently ignore the change (prisma migrate deploy does not checksum applied migrations). Add a new migration instead. If this is a deliberate 'make refresh-static-data' refresh, put [refresh-static-data] in the PR title and the catch-up SQL in the PR body."
+          echo "::error::This PR changes a migration that has already been committed; every database that applied it will silently ignore the change. Add a new migration instead."
           echo "$changed"
           exit 1
 
+  # Advisory: a finding can be the right trade on a small table.
+  squawk:
+    name: Migrations – Squawk
+    runs-on: [self-hosted, wsl]
+    if: github.event_name == 'pull_request'
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Setup .
+        uses: ./.github/actions/setup-app
+        with:
+          working-directory: .
+
+      - name: Lint added migrations
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          mapfile -t added < <(git diff --name-only --diff-filter=A "$BASE_SHA...HEAD" -- 'src/backend/prisma/migrations/*/migration.sql')
+          if [ "${#added[@]}" -eq 0 ]; then
+            echo "No migration added."
+            exit 0
+          fi
+          npx squawk "${added[@]}"
+
   # ============================================================================
-  # SONARCLOUD
+  # REPORTS (advisory, not deploy gates)
   # ============================================================================
+
+  quality-report:
+    name: Quality report
+    runs-on: [self-hosted, wsl]
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup .
+        uses: ./.github/actions/setup-app
+        with:
+          working-directory: .
+
+      - name: Setup src/frontend
+        uses: ./.github/actions/setup-app
+        with:
+          working-directory: src/frontend
+
+      - name: Setup src/backend
+        uses: ./.github/actions/setup-app
+        with:
+          working-directory: src/backend
+
+      - name: Report
+        run: npm run quality
+
+  ruff-report:
+    name: Ruff report
+    runs-on: [self-hosted, wsl]
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.14"
+
+      - name: Install dependencies
+        working-directory: src/backend/db/python
+        run: pip install -r requirements-dev.txt
+
+      - name: Report
+        working-directory: src/backend/db/python
+        run: ruff check --exit-zero --no-cache --output-format concise .
+
+  # Off until the repository variable SONAR_ENABLED is `true`: the SonarCloud
+  # project is bound to GitLab, and must be rebound first.
   sonarcloud:
     name: SonarCloud Analysis
-    runs-on: ubuntu-latest
-    needs:
-      - backend-test
-
+    runs-on: [self-hosted, wsl]
+    needs: [backend-test, frontend-test]
+    if: vars.SONAR_ENABLED == 'true'
+    continue-on-error: true
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -373,25 +511,35 @@ jobs:
           name: backend-coverage
           path: src/backend/coverage
 
+      - name: Download frontend coverage
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: frontend-coverage
+          path: src/frontend/coverage
+
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@22918119ff8e1ca75a623e15c8296b6ea4fbe28f # v8.2.1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   # ============================================================================
   # DEPLOY
   # ============================================================================
+
+  # Off until the repository variable DEPLOY_ENABLED is `true`, so GitHub and GitLab
+  # never both deploy. The explicit gates leave the advisory jobs out.
+  #
+  # Credentials go under $RUNNER_TEMP, which the runner empties after the job: its
+  # home directory is a volume that outlives it.
   deploy:
     name: Deploy to VPS
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
+    runs-on: [self-hosted, wsl]
     needs:
       - backend-lint
       - backend-test
+      - backend-integration
       - backend-build
+      - backend-boot
       - frontend-lint
       - frontend-typecheck
       - frontend-messages
@@ -399,245 +547,91 @@ jobs:
       - frontend-build
       - openapi-drift
       - barrels-drift
-    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
-
+      - dependency-rules
+      - python-test
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && vars.DEPLOY_ENABLED == 'true'
+    permissions:
+      contents: read
+      packages: write
+    environment:
+      name: production
+      url: https://beyondthearc.app
+    concurrency:
+      group: production
+      cancel-in-progress: false
+    env:
+      IMAGE: ghcr.io/${{ github.repository }}
+      SHA: ${{ github.sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Log in to GHCR
-        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GHCR_USER: ${{ github.actor }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "DOCKER_CONFIG=$RUNNER_TEMP/docker" >> "$GITHUB_ENV"
+          echo "$GHCR_TOKEN" | DOCKER_CONFIG="$RUNNER_TEMP/docker" docker login ghcr.io -u "$GHCR_USER" --password-stdin
 
-      # Required for cache-to/cache-from type=gha — the default docker driver
-      # cannot export cache.
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+      - name: Build images
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+          FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+        run: |
+          docker build -f docker/backend/Dockerfile --target prod \
+            -t "$IMAGE/backend:$SHA" -t "$IMAGE/backend:latest" .
+          docker build -f docker/backend/Dockerfile --target migrate \
+            -t "$IMAGE/backend-migrate:$SHA" -t "$IMAGE/backend-migrate:latest" .
+          docker build -f docker/python-script/Dockerfile \
+            -t "$IMAGE/scheduler:$SHA" -t "$IMAGE/scheduler:latest" .
+          # A BuildKit secret, never a build arg, which would persist in the pushed image.
+          umask 077
+          printf '%s' "$SENTRY_AUTH_TOKEN" > "$RUNNER_TEMP/sentry_auth_token"
+          docker build -f docker/frontend/Dockerfile --target prod \
+            --build-arg "NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL" \
+            --build-arg "FRONTEND_URL=$FRONTEND_URL" \
+            --secret id=sentry_auth_token,src="$RUNNER_TEMP/sentry_auth_token" \
+            -t "$IMAGE/frontend:$SHA" -t "$IMAGE/frontend:latest" .
 
-      - name: Build and push backend
-        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
-        with:
-          context: .
-          file: docker/backend/Dockerfile
-          target: prod
-          push: true
-          tags: |
-            ghcr.io/${{ github.repository }}/backend:latest
-            ghcr.io/${{ github.repository }}/backend:${{ github.sha }}
-          cache-from: type=gha,scope=backend
-          cache-to: type=gha,mode=max,scope=backend
+      - name: Push images
+        run: |
+          # By name, never --all-tags: the long-lived daemon would re-send every SHA.
+          for n in backend backend-migrate scheduler frontend; do
+            docker push "$IMAGE/$n:$SHA"
+            docker push "$IMAGE/$n:latest"
+            docker image rm "$IMAGE/$n:$SHA" || true
+          done
 
-      # Same Dockerfile, `migrate` target — shares the backend's cached base
-      # layers, so this adds seconds, not a build.
-      - name: Build and push migrate
-        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
-        with:
-          context: .
-          file: docker/backend/Dockerfile
-          target: migrate
-          push: true
-          tags: |
-            ghcr.io/${{ github.repository }}/backend-migrate:latest
-            ghcr.io/${{ github.repository }}/backend-migrate:${{ github.sha }}
-          cache-from: type=gha,scope=backend
-          cache-to: type=gha,mode=max,scope=backend
-
-      # The scheduler generates every match, stat and shot chart. It had no
-      # build step here at all, so the VPS ran whatever image it had built
-      # locally — measured 2026-08-15: an image from 2026-07-15, unchanged
-      # through 336 successful pipelines, still on the faker version that was
-      # newest the evening the box was provisioned. Publishing it means the
-      # deploy carries it like everything else, and that it has a :SHA tag to
-      # roll back to.
-      - name: Build and push scheduler
-        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
-        with:
-          context: .
-          file: docker/python-script/Dockerfile
-          push: true
-          tags: |
-            ghcr.io/${{ github.repository }}/scheduler:latest
-            ghcr.io/${{ github.repository }}/scheduler:${{ github.sha }}
-          cache-from: type=gha,scope=scheduler
-          cache-to: type=gha,mode=max,scope=scheduler
-
-      - name: Build and push frontend
-        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
-        with:
-          context: .
-          file: docker/frontend/Dockerfile
-          target: prod
-          push: true
-          tags: |
-            ghcr.io/${{ github.repository }}/frontend:latest
-            ghcr.io/${{ github.repository }}/frontend:${{ github.sha }}
-          cache-from: type=gha,scope=frontend
-          cache-to: type=gha,mode=max,scope=frontend
-          secrets: |
-            sentry_auth_token=${{ secrets.SENTRY_AUTH_TOKEN }}
-          build-args: |
-            NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
-            FRONTEND_URL=${{ secrets.FRONTEND_URL }}
-
-      # Plain ssh instead of a third-party action: the deploy is simple enough
-      # that no external action needs to handle the SSH key. Secrets are passed
-      # as env vars, never expanded into script text; the remote script can't
-      # see runner env, so non-secrets ride an env prefix on the ssh command
-      # and the GHCR token is the first line of stdin, read before the script.
-      - name: Deploy via SSH
+      - name: Deploy over SSH
         timeout-minutes: 10
         env:
           VPS_HOST: ${{ secrets.VPS_HOST }}
           VPS_USER: ${{ secrets.VPS_USER }}
           VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
           VPS_HOST_KEY: ${{ secrets.VPS_HOST_KEY }}
-          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GHCR_USER: ${{ github.actor }}
-          DEPLOY_TAG: ${{ github.sha }}
+          DEPLOY_REGISTRY_USER: ${{ secrets.DEPLOY_REGISTRY_USER }}
+          DEPLOY_REGISTRY_TOKEN: ${{ secrets.DEPLOY_REGISTRY_TOKEN }}
         run: |
-          mkdir -p ~/.ssh
-          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-          # The host key is pinned, not discovered. The runner is ephemeral, so
-          # ssh-keyscan would re-learn the key on every deploy and trust
-          # whatever answered — anyone able to intercept runner → VPS receives
-          # the GHCR token on stdin and runs this script as `deploy`, which is
-          # in the `docker` group and so root-equivalent in practice.
-          #
-          # VPS_HOST_KEY holds the key material only ("ssh-ed25519 AAAA…"), not
-          # a full known_hosts line, so the host label below always matches the
-          # address ssh is about to use. Refresh it after checking the
-          # fingerprint against the Hetzner console:
-          #   ssh-keyscan -t ed25519 <VPS_HOST> | grep -v '^#' | cut -d' ' -f2-
-          if [ -z "$VPS_HOST_KEY" ]; then
-            echo "::error::VPS_HOST_KEY is not set. Deploying would mean trusting an unverified SSH host key, so this step fails instead."
+          key="$RUNNER_TEMP/deploy_key"
+          known_hosts="$RUNNER_TEMP/known_hosts"
+          umask 077
+          # OpenSSH rejects CRLF and a missing final newline with the same unhelpful error.
+          printf '%s\n' "$VPS_SSH_KEY" | tr -d '\r' > "$key"
+          if ! ssh-keygen -y -f "$key" > /dev/null 2>&1; then
+            echo "::error::VPS_SSH_KEY is not a usable private key."
             exit 1
           fi
-          printf '%s %s\n' "$VPS_HOST" "$VPS_HOST_KEY" > ~/.ssh/known_hosts
-          chmod 600 ~/.ssh/known_hosts
-          {
-          printf '%s\n' "$GHCR_TOKEN"
-          cat <<'DEPLOY'
-          set -e
-          cd /opt/beyondthearc
-          # Remembered across the pull so the Grafana reload below can tell
-          # whether this deploy actually changed any alerting provisioning.
-          pre_pull_head=$(git rev-parse HEAD)
-          git pull
-          echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
-          # Pin the deployed images to this commit's tag. Persisted in .env so
-          # any later manual `compose up` keeps running the same images
-          # instead of silently jumping to whatever :latest points at.
-          # Rollback = set IMAGE_TAG to a previous SHA and rerun pull + up.
-          if grep -q '^IMAGE_TAG=' .env; then
-            sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=$DEPLOY_TAG/" .env
-          else
-            echo "IMAGE_TAG=$DEPLOY_TAG" >> .env
+          # Pinned, never learned with ssh-keyscan: whoever answers gets the registry token.
+          # VPS_HOST_KEY is the key material only ("ssh-ed25519 AAAA…").
+          if [ -z "$VPS_HOST_KEY" ] || [ -z "$DEPLOY_REGISTRY_TOKEN" ]; then
+            echo "::error::VPS_HOST_KEY or DEPLOY_REGISTRY_TOKEN is not set."
+            exit 1
           fi
-            # Remove images not referenced by any container before pulling new
-            # ones. The post-deploy `docker system prune -f` only drops
-            # *dangling* images, but every deploy pins :SHA tags, so old
-            # tagged images accumulated until the disk health indicator
-            # tripped (>90% of /). All tags remain in GHCR; rollback re-pulls
-            # by IMAGE_TAG, so local copies of old images are not needed.
-            echo "Disk before image prune:" && df -h / | tail -1
-            docker image prune -af
-            echo "Disk after image prune:" && df -h / | tail -1
-            docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml pull frontend backend migrate scheduler
-            docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml up -d
-            # Grafana reads provisioning/alerting/*.yml only at startup, and
-            # `up -d` recreates a container only when its *configuration*
-            # changes — bind-mounted file contents are not part of that hash.
-            # So an alerting change lands on disk and does nothing until
-            # something restarts Grafana. Measured on prod 2026-08-09: the
-            # rules API served the previous expressions while the files had
-            # been correct since the deploy, with the container 29 h old.
-            #
-            # Conditional rather than unconditional because a restart restarts
-            # the `for:` clocks, which run 2-10 minutes here — an unrelated
-            # deploy should not delay a pending Disk Full by ten minutes.
-            # Dashboards need no equivalent: their provider sets no
-            # updateIntervalSeconds, so Grafana's own poll picks them up.
-            # Same mechanism, one layer down: Prometheus reads its scrape
-            # config only at startup, and `up -d` recreates a container when its
-            # *configuration* changes — a bind-mounted file's contents are not
-            # part of that hash. So a new scrape job lands on disk and is never
-            # loaded. Verified locally: `compose restart prometheus` does re-read
-            # the file (a job removed from it disappeared from /status/config and
-            # came back when restored).
-            #
-            # This must run BEFORE the Grafana restart below. An alert whose
-            # series does not exist yet reads NoData, and the availability rules
-            # set `noDataState: Alerting` on purpose — so restarting Grafana
-            # first would fire a false alert for the two minutes it takes
-            # Prometheus to come back and scrape.
-            if ! git diff --quiet "$pre_pull_head" HEAD -- docker/config/prometheus.yml docker/config/blackbox.yml; then
-              echo "Prometheus or blackbox config changed in this deploy — restarting both to load it"
-              docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml restart blackbox-exporter prometheus
-            fi
-            if ! git diff --quiet "$pre_pull_head" HEAD -- docker/config/grafana/provisioning/alerting/; then
-              echo "Alerting provisioning changed in this deploy — restarting Grafana to load it"
-              docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml restart grafana
-            fi
-            # Fail the deploy if the new containers don't come up healthy —
-            # a crash-looping container should be a red pipeline, not a
-            # Grafana alert. Rollback: set IMAGE_TAG in .env to the previous
-            # SHA, then rerun the pull + up commands above.
-            backend_ok=""
-            for i in $(seq 1 12); do
-              if curl -fsS -m 5 http://localhost:4000/api/health/ready > /dev/null 2>&1; then
-                backend_ok=1
-                break
-              fi
-              sleep 5
-            done
-            if [ -z "$backend_ok" ]; then
-              echo "::error::Backend failed health check after 60s — deploy failed, prod may be degraded. Roll back via IMAGE_TAG in .env."
-              docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml logs --tail 50 backend
-              exit 1
-            fi
-            echo "Backend healthy."
-            # The same retry loop as the backend, and it has to be one. This
-            # was a single un-retried curl, which passed only because the
-            # frontend container used to start alongside the backend and had
-            # the whole 60s loop above as an accidental grace period. Making
-            # `frontend.depends_on` wait for `service_healthy` took that away:
-            # the frontend now starts *after* the loop succeeds, so the curl
-            # fired against a socket that was not listening yet, exited 56, and
-            # `set -e` killed the deploy before the `if` below could report a
-            # code. Prod was healthy the whole time — the gate was wrong, not
-            # the deploy.
-            #
-            # `frontend_code` is assigned inside the `if` condition on purpose:
-            # under `set -e` a bare `x=$(curl ...)` that cannot connect aborts
-            # the script, which is precisely the failure being fixed.
-            frontend_ok=""
-            frontend_code=""
-            for i in $(seq 1 12); do
-              if frontend_code=$(curl -s -o /dev/null -m 5 -w '%{http_code}' http://localhost:3000/en) \
-                 && [ "$frontend_code" = "200" ]; then
-                frontend_ok=1
-                break
-              fi
-              sleep 5
-            done
-            if [ -z "$frontend_ok" ]; then
-              echo "::error::Frontend failed health check after 60s (last HTTP '$frontend_code') — deploy failed, prod may be degraded. Roll back via IMAGE_TAG in .env."
-              docker compose --env-file .env -f docker/docker-compose.yml -f docker/docker-compose.prod.yml logs --tail 50 frontend
-              exit 1
-            fi
-            echo "Frontend healthy."
-            # Prune only after the new containers proved healthy.
-            docker system prune -f
-          DEPLOY
-          # VPS_USER is `deploy`, an unprivileged account that owns
-          # /opt/beyondthearc and belongs to the `docker` group. The group is
-          # what makes every command above work, and it is also root-equivalent
-          # (`docker run -v /:/host`), so this is an audit-trail and
-          # accident-blast-radius boundary, not a containment one. Bounding what
-          # a stolen VPS_SSH_KEY can do needs an authorized_keys forced command.
-          } | ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=yes "$VPS_USER@$VPS_HOST" \
-              "GHCR_USER='$GHCR_USER' DEPLOY_TAG='$DEPLOY_TAG' sh -c 'read -r GHCR_TOKEN && export GHCR_TOKEN && exec bash -s'"
+          printf '%s %s\n' "$VPS_HOST" "$VPS_HOST_KEY" > "$known_hosts"
+          # The token is the first line of stdin, never an argument: those show in `ps`.
+          printf '%s\n' "$DEPLOY_REGISTRY_TOKEN" |
+            ssh -i "$key" -o IdentitiesOnly=yes -o UserKnownHostsFile="$known_hosts" -o StrictHostKeyChecking=yes \
+              "$VPS_USER@$VPS_HOST" \
+              "bash /opt/beyondthearc/docker/deploy.sh '$SHA' ghcr.io '$DEPLOY_REGISTRY_USER'"

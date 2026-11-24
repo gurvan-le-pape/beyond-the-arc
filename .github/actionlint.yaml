@@ -1,0 +1,4 @@
+# Labels of the self-hosted runners (docs/ci-cd.md).
+self-hosted-runner:
+  labels:
+    - wsl

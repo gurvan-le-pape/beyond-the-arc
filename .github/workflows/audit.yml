@@ -14,6 +14,9 @@ on:
     - cron: "0 7 * * 1"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
@@ -21,7 +24,7 @@ concurrency:
 jobs:
   npm-audit:
     name: Dependencies – Advisory audit
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, wsl]
 
     steps:
       - name: Checkout
