@@ -55,7 +55,7 @@ All services run as Docker Compose containers on a single VPS. There is no separ
 | Database       | PostgreSQL                                                          |
 | Data pipeline  | Python (scheduling, simulation, generation)                         |
 | Infrastructure | Docker Compose, VPS, Nginx                                          |
-| CI/CD          | GitLab CI (self-hosted runner), GitLab container registry           |
+| CI/CD          | GitHub Actions (self-hosted runners), GitHub Container Registry     |
 | Observability  | Prometheus, Loki, Promtail, Grafana, Sentry                         |
 | Code quality   | ESLint, SonarCloud                                                  |
 
@@ -166,9 +166,9 @@ More detail in → [`data-pipeline.md`](./data-pipeline.md)
 
 ## Infrastructure and deployment
 
-The entire stack runs on a single VPS using Docker Compose. Images are built in CI, pushed to the GitLab container registry, and pulled on the VPS at deploy time.
+The entire stack runs on a single VPS using Docker Compose. Images are built in CI, pushed to the GitHub Container Registry, and pulled on the VPS at deploy time.
 
-Deployment is triggered automatically on push to `main`, via GitLab CI, after all CI checks pass.
+Deployment is triggered automatically on push to `main`, via GitHub Actions, after all CI checks pass.
 
 More detail in → [`infrastructure.md`](./infrastructure.md) and [`ci-cd.md`](./ci-cd.md)
 

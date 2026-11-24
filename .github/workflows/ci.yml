@@ -526,8 +526,8 @@ jobs:
   # DEPLOY
   # ============================================================================
 
-  # Off until the repository variable DEPLOY_ENABLED is `true`, so GitHub and GitLab
-  # never both deploy. The explicit gates leave the advisory jobs out.
+  # Runs only while the repository variable DEPLOY_ENABLED is `true`. GitLab's deploy
+  # is the fallback, behind GITLAB_DEPLOY: never both. The explicit gates leave the advisory jobs out.
   #
   # Credentials go under $RUNNER_TEMP, which the runner empties after the job: its
   # home directory is a volume that outlives it.

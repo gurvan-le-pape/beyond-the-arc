@@ -1,5 +1,5 @@
 # REGISTRY_IMAGE is the registry path without a tag, set in .env on the VPS
-# (registry.gitlab.com/<namespace>/beyond-the-arc). Kept out of this file so the
+# (ghcr.io/<owner>/beyond-the-arc). Kept out of this file so the
 # same overlay works for any registry, and so moving hosts is an .env change.
 services:
   frontend:
