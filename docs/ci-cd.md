@@ -10,7 +10,7 @@ CI/CD is GitHub Actions: `.github/workflows/ci.yml`, plus `audit.yml` for the de
 
 There is no separate staging environment. A push to `main` that passes CI goes straight to production.
 
-A ruleset on `main` refuses direct pushes, force-pushes and deletion: every change arrives through a pull request. It requires no status check, so a red check does not by itself prevent a merge; it prevents the deploy.
+A ruleset on `main` refuses direct pushes, force-pushes and deletion: every change arrives through a pull request. It also requires the fourteen checks `deploy` waits for to pass on the pull request's latest commit, which does not have to be up to date with `main`. The ruleset names them by job `name:`, so renaming one blocks every merge until the ruleset is updated.
 
 ---
 
