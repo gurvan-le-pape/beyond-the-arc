@@ -1,4 +1,5 @@
 // src/backend/common/utils/request-log.util.ts
+import { inspect } from "node:util";
 
 /**
  * The only request headers that reach the logs.
@@ -110,14 +111,19 @@ interface FailureCarrier {
   err?: unknown;
 }
 
+function toError(thrown: unknown): Error {
+  if (thrown instanceof Error) return thrown;
+  return new Error(typeof thrown === "string" ? thrown : inspect(thrown));
+}
+
 /**
  * Attaches a failure's fields — and, for a server error, the exception itself —
  * to the response, for {@link failureLogProps} and pino-http to log.
  *
  * `err` goes on `res.err`, which pino-http reads in place of the synthetic
  * error it otherwise builds for a 5xx, so the line carries the real type,
- * message and stack. A non-Error throw (a string) is wrapped, because pino's
- * `err` serializer expects an Error.
+ * message and stack. A non-Error throw is wrapped, because pino's `err`
+ * serializer expects an Error; an object is inspected, so its contents are kept.
  *
  * @param res - the response the failure is being written to
  * @param fields - the fields the completion line should gain
@@ -131,7 +137,7 @@ export function attachFailureLog(
   res.locals ??= {};
   res.locals[FAILURE_LOG_KEY] = fields;
   if (err !== undefined) {
-    res.err = err instanceof Error ? err : new Error(String(err));
+    res.err = toError(err);
   }
 }
 
