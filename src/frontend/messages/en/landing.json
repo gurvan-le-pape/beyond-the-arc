@@ -9,7 +9,7 @@
     },
     "stack": {
       "title": "How it's built",
-      "body": "A Next.js frontend, rendered on the server, reads a public, read-only REST API written with NestJS and Prisma over PostgreSQL. The scheduler is a Python service. It all runs in Docker Compose on a single server, deployed by GitLab CI on every merge, with errors reported to Sentry and logs and metrics in Grafana.",
+      "body": "A Next.js frontend, rendered on the server, reads a public, read-only REST API written with NestJS and Prisma over PostgreSQL. The scheduler is a Python service. It all runs in Docker Compose on a single server, deployed by GitHub Actions on every merge, with errors reported to Sentry and logs and metrics in Grafana.",
       "more": "The <link>architecture page</link> has the diagram and the full stack."
     }
   },
@@ -37,7 +37,7 @@
     "devops": {
       "composeDesc": "Every service, in development and in production",
       "edgeDesc": "TLS and bot challenges at the edge, Nginx as the proxy",
-      "cicdDesc": "Lint, types, Jest, Vitest and pytest on every merge request; main deploys",
+      "cicdDesc": "Lint, types, Jest, Vitest and pytest on every pull request; main deploys",
       "sentryDesc": "Errors from the browser and the server",
       "grafanaDesc": "Logs from Loki, metrics from Prometheus"
     },
@@ -126,7 +126,7 @@
     "intro": "Documentation covering setup, the data model, project structure, and the API reference.",
     "reset": "Reset",
     "quickLinks": {
-      "gitlab": "GitLab Repository",
+      "github": "GitHub Repository",
       "viewSource": "View source code",
       "dataModel": "Data Model",
       "apiDocs": "API Documentation",

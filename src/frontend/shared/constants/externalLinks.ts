@@ -9,9 +9,9 @@
 export const CONTACT_EMAIL = "gurvan.lepape@hotmail.fr";
 export const CONTACT_MAILTO = `mailto:${CONTACT_EMAIL}`;
 
-export const GITLAB_PROFILE_URL = "https://gitlab.com/gurvan-le-pape";
-export const GITLAB_REPO_URL = `${GITLAB_PROFILE_URL}/beyond-the-arc`;
-export const GITLAB_CLONE_URL = `${GITLAB_REPO_URL}.git`;
+export const GITHUB_PROFILE_URL = "https://github.com/gurvan-le-pape";
+export const GITHUB_REPO_URL = `${GITHUB_PROFILE_URL}/beyond-the-arc`;
+export const GITHUB_CLONE_URL = `${GITHUB_REPO_URL}.git`;
 
 export const LINKEDIN_URL = "https://linkedin.com/in/gurvan-le-pape";
 

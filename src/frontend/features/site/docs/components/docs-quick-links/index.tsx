@@ -1,12 +1,12 @@
 // src/frontend/features/site/docs/components/docs-quick-links/index.tsx
-import { BookOpen, Download, ExternalLink, Gitlab } from "lucide-react";
+import { BookOpen, Download, ExternalLink, Github } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Grid } from "@/shared/components/primitives";
 import {
   API_DOCS_URL,
   CONTACT_MAILTO,
-  GITLAB_REPO_URL,
+  GITHUB_REPO_URL,
 } from "@/shared/constants";
 
 import { DocsQuickLinkCard } from "./DocsQuickLinkCard";
@@ -17,9 +17,9 @@ import { DocsQuickLinkCard } from "./DocsQuickLinkCard";
  */
 const QUICK_LINKS = [
   {
-    href: GITLAB_REPO_URL,
-    icon: Gitlab,
-    labelKey: "docs.quickLinks.gitlab",
+    href: GITHUB_REPO_URL,
+    icon: Github,
+    labelKey: "docs.quickLinks.github",
     subKey: "docs.quickLinks.viewSource",
     external: true,
     trailIcon: ExternalLink,

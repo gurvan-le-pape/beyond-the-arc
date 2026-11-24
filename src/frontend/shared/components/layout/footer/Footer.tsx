@@ -1,14 +1,14 @@
 // src/frontend/shared/components/layout/footer/Footer.tsx
 "use client";
 
-import { ExternalLink, Gitlab, Linkedin, Mail } from "lucide-react";
+import { ExternalLink, Github, Linkedin, Mail } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Link } from "@/navigation";
 import {
   CONTACT_MAILTO,
-  GITLAB_PROFILE_URL,
-  GITLAB_REPO_URL,
+  GITHUB_PROFILE_URL,
+  GITHUB_REPO_URL,
   LINKEDIN_URL,
 } from "@/shared/constants";
 
@@ -40,7 +40,7 @@ export function Footer() {
     ],
     resources: [
       {
-        href: GITLAB_REPO_URL,
+        href: GITHUB_REPO_URL,
         label: t("footer.sourceCode"),
         external: true,
       },
@@ -83,14 +83,14 @@ export function Footer() {
                 with the text above. */}
             <div className="flex gap-2 -ml-2">
               <a
-                href={GITLAB_PROFILE_URL}
+                href={GITHUB_PROFILE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={iconLinkClass}
-                aria-label={t("footer.gitlab")}
-                title={t("footer.gitlab")}
+                aria-label={t("footer.github")}
+                title={t("footer.github")}
               >
-                <Gitlab className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" />
+                <Github className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" />
               </a>
               <a
                 href={LINKEDIN_URL}
