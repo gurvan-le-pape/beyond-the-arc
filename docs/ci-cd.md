@@ -10,7 +10,7 @@ CI/CD is one GitLab pipeline, `.gitlab-ci.yml`, executed on a self-hosted runner
 
 There is no separate staging environment. A push to `main` that passes CI goes straight to production.
 
-`.github/workflows/` is kept for an eventual return to GitHub and is **not executed**; nothing in it describes what runs today.
+The same checks also exist as GitHub Actions workflows, for the return to GitHub. GitLab remains the pipeline that deploys; see [GitHub Actions](#github-actions).
 
 ---
 
@@ -235,6 +235,21 @@ bash /opt/beyondthearc/docker/deploy.sh <previous-sha> registry.gitlab.com <depl
 One thing a rollback does not undo:
 
 - **Database migrations.** `prisma migrate deploy` only moves forward. Rolling the images back past a migration runs the old code against the new schema; a migration that drops or renames something the old code reads needs its own revert migration, shipped forward.
+
+---
+
+## GitHub Actions
+
+`.github/workflows/ci.yml` carries the jobs above, except `npm-audit`, which is `audit.yml` (pull requests and a weekly schedule). Two repository variables keep it from acting on anything outside GitHub:
+
+- `DEPLOY_ENABLED`: the deploy job is skipped unless it is `true`. GitLab's deploy has to be off first, or both would deploy.
+- `SONAR_ENABLED`: the same for `sonarcloud`, whose project is bound to GitLab.
+
+**Runners.** Every job runs on four containers, `wsl-1` to `wsl-4`, of `ghcr.io/actions/actions-runner`, selected with `runs-on: [self-hosted, wsl]`. Their Compose project is `~/github-runner/` in WSL, outside the repository; `./start.sh` starts them and fetches the registration token. Each takes one job at a time, and a job queued while WSL is down waits up to 24 hours.
+
+The runners persist between jobs, so the deploy writes its credentials under `$RUNNER_TEMP`, which is emptied after each job. They mount the host Docker socket, which is root-equivalent: workflows from outside contributors' forks need approval before they run. `backend-integration` starts PostgreSQL in the runner's own network namespace, because a `services:` container is published on the Docker host, not on the runner's localhost.
+
+**Secrets.** `VPS_HOST`, `VPS_USER`, `VPS_SSH_KEY`, `VPS_HOST_KEY`, `DEPLOY_REGISTRY_USER`, `DEPLOY_REGISTRY_TOKEN` (a classic token with `read:packages`), `NEXT_PUBLIC_API_URL`, `FRONTEND_URL`, `SENTRY_AUTH_TOKEN`, `SONAR_TOKEN`.
 
 ---
 
