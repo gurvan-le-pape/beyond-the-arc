@@ -6,11 +6,11 @@
 
 ## Overview
 
-CI/CD is GitHub Actions: `.github/workflows/ci.yml`, plus `audit.yml` for the dependency audit. Every job runs on self-hosted runners (see [Runners](#runners)). `ci.yml` runs on every pull request and every push to `main`, and can be started by hand (`workflow_dispatch`). On `main`, once the checks pass, it builds the production images, pushes them to the GitHub Container Registry (GHCR), and deploys them to the VPS over SSH.
+CI/CD is GitHub Actions: `.github/workflows/ci.yml`, plus `audit.yml` for the dependency audit and `ghcr-cleanup.yml` for old images. Every job runs on self-hosted runners (see [Runners](#runners)). `ci.yml` runs on every pull request and every push to `main`, and can be started by hand (`workflow_dispatch`). On `main`, once the checks pass, it builds the production images, pushes them to the GitHub Container Registry (GHCR), and deploys them to the VPS over SSH.
 
 There is no separate staging environment. A push to `main` that passes CI goes straight to production.
 
-A ruleset on `main` refuses direct pushes, force-pushes and deletion: every change arrives through a pull request. It also requires the fourteen checks `deploy` waits for to pass on the pull request's latest commit, which does not have to be up to date with `main`. The ruleset names them by job `name:`, so renaming one blocks every merge until the ruleset is updated.
+A ruleset on `main` refuses direct pushes, force-pushes and deletion: every change arrives through a pull request. It also requires fifteen checks, the fourteen `deploy` waits for and `migration-immutability`, to pass on the pull request's latest commit, which does not have to be up to date with `main`. The ruleset names them by job `name:`, so renaming one blocks every merge until the ruleset is updated.
 
 ---
 
@@ -235,6 +235,7 @@ Repository settings → Secrets and variables → Actions.
 | --- | --- |
 | `DEPLOY_ENABLED` | `deploy` is skipped unless it is `true` |
 | `SONAR_ENABLED` | `sonarcloud` is skipped unless it is `true` |
+| `GHCR_CLEANUP_ENABLED` | `ghcr-cleanup.yml` only reports unless it is `true` |
 
 ---
 
@@ -250,7 +251,7 @@ The job rebuilds that commit's four images before deploying them. When minutes m
 bash /opt/beyondthearc/docker/deploy.sh <previous-sha> ghcr.io gurvan-le-pape
 ```
 
-The images `docker/deploy.sh` needs are in GHCR only for commits deployed since 2026-11-24.
+The images `docker/deploy.sh` needs are in GHCR only for commits deployed since 2026-11-24, and only for the newest 30 commits of `main` that have images. `ghcr-cleanup.yml` deletes the rest on Sundays, at most 150 versions per package and run, while `GHCR_CLEANUP_ENABLED` is `true`. Re-running the deploy job needs no image in GHCR, since it rebuilds them.
 
 One thing a rollback does not undo:
 
@@ -288,7 +289,5 @@ To deploy from GitLab: set GitHub's `DEPLOY_ENABLED` to `false`, push `main` to 
 **Health check, not automatic rollback.** The deploy script fails the job if the new containers don't come up healthy (backend readiness endpoint polled for 60s, frontend page render checked) and says where to roll back from, but someone has to press the button. Rolling back automatically on a failed check would be the next step if that proves too slow in practice.
 
 **Frontend build in CI does not use production build args.** The `frontend-build` job builds without `NEXT_PUBLIC_API_URL` and related vars. If a build failure is caused by a missing env var rather than a code error, it would only surface in the `deploy` job rather than the earlier `frontend-build` check.
-
-**Images in GHCR are never removed.** Every deploy pushes four `:SHA` tags and nothing deletes the old ones.
 
 **A `high` advisory stops nothing.** `npm-audit` fails only on `critical`, and it cannot gate `deploy` at all. As of 2026-11-03 that leaves 26 high-severity advisories standing (root 0, backend 14, frontend 12), most of them in transitive devDependencies. They are printed in the log of every run and nothing forces them to be addressed — the accepted cost of not blocking unrelated deploys on them.

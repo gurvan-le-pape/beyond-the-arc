@@ -1,0 +1,45 @@
+name: GHCR cleanup
+
+# Outside ci.yml's `production` concurrency group: a group keeps one waiting run,
+# so a cleanup queued there could cancel a deploy. Pull requests only report, and
+# so does every other run until the variable GHCR_CLEANUP_ENABLED is `true`.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/ghcr-cleanup.yml
+      - scripts/ci/ghcr_cleanup.py
+  schedule:
+    - cron: "0 4 * * 0"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    name: Delete old images
+    runs-on: [self-hosted, wsl]
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.14"
+
+      - name: Clean up
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DELETE: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && vars.GHCR_CLEANUP_ENABLED == 'true' }}
+        run: python scripts/ci/ghcr_cleanup.py
