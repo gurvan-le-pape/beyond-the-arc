@@ -2,12 +2,12 @@
 import { useTranslations } from "next-intl";
 
 import { Text } from "@/shared/components/typography";
-import { GITLAB_CLONE_URL } from "@/shared/constants";
+import { GITHUB_CLONE_URL } from "@/shared/constants";
 
 import { CodeBlock } from "./CodeBlock";
 
 const GETTING_STARTED_COMMANDS = `# Clone the repository
-git clone ${GITLAB_CLONE_URL}
+git clone ${GITHUB_CLONE_URL}
 
 # Install dependencies
 cd beyond-the-arc

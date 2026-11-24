@@ -9,7 +9,7 @@
     },
     "stack": {
       "title": "Comment il est construit",
-      "body": "Un frontend Next.js, rendu côté serveur, lit une API REST publique en lecture seule écrite avec NestJS et Prisma sur PostgreSQL. Le planificateur est un service Python. L'ensemble tourne dans Docker Compose sur un seul serveur, déployé par la CI GitLab à chaque fusion, avec les erreurs remontées dans Sentry et les logs et métriques dans Grafana.",
+      "body": "Un frontend Next.js, rendu côté serveur, lit une API REST publique en lecture seule écrite avec NestJS et Prisma sur PostgreSQL. Le planificateur est un service Python. L'ensemble tourne dans Docker Compose sur un seul serveur, déployé par GitHub Actions à chaque fusion, avec les erreurs remontées dans Sentry et les logs et métriques dans Grafana.",
       "more": "La <link>page architecture</link> présente le schéma et la stack complète."
     }
   },
@@ -37,7 +37,7 @@
     "devops": {
       "composeDesc": "Tous les services, en développement comme en production",
       "edgeDesc": "TLS et filtrage des robots en bordure, Nginx en proxy",
-      "cicdDesc": "Lint, types, Jest, Vitest et pytest à chaque merge request ; main se déploie",
+      "cicdDesc": "Lint, types, Jest, Vitest et pytest à chaque pull request ; main se déploie",
       "sentryDesc": "Erreurs du navigateur et du serveur",
       "grafanaDesc": "Logs via Loki, métriques via Prometheus"
     },
@@ -126,7 +126,7 @@
     "intro": "Documentation couvrant l'installation, le modèle de données, la structure du projet et la référence de l'API.",
     "reset": "Réinitialiser",
     "quickLinks": {
-      "gitlab": "Dépôt GitLab",
+      "github": "Dépôt GitHub",
       "viewSource": "Voir le code source",
       "dataModel": "Modèle de données",
       "apiDocs": "Documentation API",
