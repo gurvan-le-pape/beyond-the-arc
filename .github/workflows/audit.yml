@@ -3,7 +3,7 @@ name: Dependency audit
 # Deliberately a separate workflow from ci.yml, for the schedule. A newly
 # published advisory needs no push to become true, so the check that matters
 # most runs on a timer — and putting a `schedule` trigger on ci.yml would run
-# all eleven of its jobs weekly to reach this one.
+# all of its jobs weekly to reach this one.
 on:
   pull_request:
   schedule:

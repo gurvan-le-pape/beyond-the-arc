@@ -1,5 +1,5 @@
 // Module-boundary rules, run once per application by the `dependency-rules` job
-// in .gitlab-ci.yml, which `deploy` waits on. Type-only imports count, so a cycle
+// in .github/workflows/ci.yml, which `deploy` waits on. Type-only imports count, so a cycle
 // that only exists at the type level fails too.
 module.exports = {
   forbidden: [
