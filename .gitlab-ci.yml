@@ -509,8 +509,11 @@ deploy:
   # since .gitlab-ci.yml cannot express it), so queued deploys also run in
   # pipeline order.
   resource_group: production
+  # GitHub Actions deploys (.github/workflows/ci.yml). Setting the CI/CD variable
+  # GITLAB_DEPLOY to `true` brings this job back as a fallback: unset GitHub's
+  # DEPLOY_ENABLED first, or both deploy (docs/ci-cd.md, "Who deploys").
   rules:
-    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "main" && $GITLAB_DEPLOY == "true"
   # Explicit, and deliberately not the whole `check` stage: sonarcloud is
   # advisory and migration-immutability does not run on main.
   needs:

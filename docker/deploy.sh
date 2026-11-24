@@ -16,8 +16,8 @@
 # bash parses whole before running a line of it, so the checkout rewriting the
 # file mid-run cannot change what this run does.
 #
-# Rollback is the same call with an older SHA (GitLab's Environments page
-# re-runs that commit's deploy job): its images, compose files and configs
+# Rollback is the same call with an older SHA (on GitHub, re-running
+# the deploy job of that commit's run): its images, compose files and configs
 # come back together.
 
 main() {
@@ -155,7 +155,7 @@ main() {
     sleep 5
   done
   if [ -z "$backend_ok" ]; then
-    echo "ERROR: Backend failed health check after 60s — deploy failed, prod may be degraded. Roll back from GitLab: Operate → Environments → production."
+    echo "ERROR: Backend failed health check after 60s — deploy failed, prod may be degraded. Roll back: re-run the deploy job of an earlier main run on GitHub Actions."
     compose logs --tail 50 backend
     exit 1
   fi
@@ -179,7 +179,7 @@ main() {
     sleep 5
   done
   if [ -z "$frontend_ok" ]; then
-    echo "ERROR: Frontend failed health check after 60s (last HTTP '$frontend_code') — deploy failed, prod may be degraded. Roll back from GitLab: Operate → Environments → production."
+    echo "ERROR: Frontend failed health check after 60s (last HTTP '$frontend_code') — deploy failed, prod may be degraded. Roll back: re-run the deploy job of an earlier main run on GitHub Actions."
     compose logs --tail 50 frontend
     exit 1
   fi

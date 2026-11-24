@@ -22,7 +22,7 @@
 #
 # Not covered, because it cannot be done from the host or needs a decision: the
 # Hetzner firewall, Cloudflare, the TLS certificate's first issuance, the .env
-# file, the GitLab CI variables. docs/infrastructure.md, "Rebuilding the server
+# file, the GitHub Actions secrets. docs/infrastructure.md, "Rebuilding the server
 # from zero", lists them in order.
 
 set -euo pipefail
@@ -39,7 +39,7 @@ esac
 
 # Fixed paths: the CI deploy, docker/deploy.sh and the Nginx config all name them.
 app_dir=/opt/beyondthearc
-repo_url=https://gitlab.com/gurvan-le-pape/beyond-the-arc.git
+repo_url=https://github.com/gurvan-le-pape/beyond-the-arc.git
 volume_mount=/var/lib/docker/volumes
 cert=/etc/letsencrypt/live/beyondthearc.app/fullchain.pem
 

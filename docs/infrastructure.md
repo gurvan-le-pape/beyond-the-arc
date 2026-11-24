@@ -76,7 +76,7 @@ What it sets, and why each one is there:
 
 **The `deploy` user.** The CI deploys as `deploy`, never as root: an unprivileged account that owns the clone and is in the `docker` group. That group is root-equivalent, so the account bounds accidents and gives an audit trail, not containment. Its `authorized_keys` holds one key, commented `gitlab-ci-deploy`, whose private half is the `VPS_SSH_KEY` CI variable; the script adds `DEPLOY_PUBKEY` when it is missing and never removes a key. The sudoers rule the deploy reloads Nginx with (see *Nginx* below) is written alongside, checked with `visudo -c` before it lands.
 
-The deploy logs `deploy` into the GitLab registry on every run, so no registry login is set up by hand.
+The deploy logs `deploy` into GHCR on every run, so no registry login is set up by hand.
 
 **The deploy clone — `docker/` only.** The images come from the registry; the server needs the compose files and the configs they mount, and nothing else. A sparse checkout (`git clone --sparse`, then `git sparse-checkout set --cone docker`) keeps the deploy's `git fetch`, `git reset` and `git diff` working while writing only `docker/` (plus the repository's root-level files, which cone mode always keeps) to `/opt/beyondthearc`, owned by `deploy`.
 
@@ -88,7 +88,7 @@ The deploy logs `deploy` into the GitLab registry on every run, so no registry l
 
 **The Nginx site.** `/etc/nginx/sites-enabled/beyondthearc`, a symlink into the clone (see *Nginx* below). The script links it only once the certificate the file names exists, since `nginx -t` rejects the file before that, and removes the link again if `nginx -t` fails.
 
-**SSH host key.** Not the script's job — it is how the CI side checks the server. The deploy pins the server's ed25519 host key in the `VPS_HOST_KEY` CI variable (see the comment in `.gitlab-ci.yml`). A key copied from a first SSH connection is only as trustworthy as that connection, so compare it over a channel that is not SSH — the Hetzner console:
+**SSH host key.** Not the script's job — it is how the CI side checks the server. The deploy pins the server's ed25519 host key in the `VPS_HOST_KEY` secret (see the comment in `.github/workflows/ci.yml`). A key copied from a first SSH connection is only as trustworthy as that connection, so compare it over a channel that is not SSH — the Hetzner console:
 
 ```bash
 ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub          # on the server, from the console
@@ -106,7 +106,7 @@ From an empty Hetzner project to a serving site, in order. No data is restored: 
 3. **Provision.** As root over SSH:
 
    ```bash
-   curl -fsSL https://gitlab.com/gurvan-le-pape/beyond-the-arc/-/raw/main/docker/provision/provision.sh -o /root/provision.sh
+   curl -fsSL https://raw.githubusercontent.com/gurvan-le-pape/beyond-the-arc/main/docker/provision/provision.sh -o /root/provision.sh
    VOLUME_ID=<id> DEPLOY_PUBKEY='<public half of VPS_SSH_KEY>' bash /root/provision.sh
    ```
 
@@ -116,7 +116,7 @@ From an empty Hetzner project to a serving site, in order. No data is restored: 
 5. **DNS.** In Cloudflare, point the `beyondthearc.app`, `www` and `grafana` records at the new address, still proxied. The zone's settings — SSL/TLS Full (strict), the two Access applications, the crawler blocks — belong to the zone, not the server, and carry over; if the zone itself were lost, *DNS and TLS* below lists them, and the `Grafana ACME` bypass has to exist before the next step.
 6. **Certificate.** `certbot certonly --nginx -d beyondthearc.app -d www.beyondthearc.app -d grafana.beyondthearc.app`. The `nginx` authenticator answers the HTTP-01 challenge on port 80, through Cloudflare, and renews the certificate the same way. Not yet exercised on a rebuild: if validation fails because the challenge cannot reach the origin, set the three records to DNS-only and open port 80 to all in `firewall-1` for the issuance, then put both back.
 7. **Provision again.** The same command: it now links the Nginx site and reloads Nginx. `bash /root/provision.sh --check` must then end with `0 change(s), 0 warning(s)`.
-8. **GitLab CI variables.** `VPS_HOST` (the new address) and `VPS_HOST_KEY` (the new host key, checked through the console as in *SSH host key* above). `VPS_USER`, `VPS_SSH_KEY`, `DEPLOY_REGISTRY_USER` and `DEPLOY_REGISTRY_TOKEN` stay as they are when the same key and token are reused.
+8. **GitHub Actions secrets.** `VPS_HOST` (the new address) and `VPS_HOST_KEY` (the new host key, checked through the console as in *SSH host key* above). `VPS_USER`, `VPS_SSH_KEY`, `DEPLOY_REGISTRY_USER` and `DEPLOY_REGISTRY_TOKEN` stay as they are when the same key and token are reused.
 9. **Deploy.** Re-run the deploy of `main`'s latest pipeline (Operate → Environments → production). The `migrate` service creates the schema and seeds the static data; the scheduler starts generating matches. Check `https://beyondthearc.app/api/health`, Grafana through Access, and `certbot renew --dry-run`.
 
 Not covered: the `planetcurio` site on the same Nginx belongs to another project and is rebuilt from that one.

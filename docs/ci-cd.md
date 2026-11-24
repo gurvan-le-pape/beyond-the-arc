@@ -10,7 +10,7 @@ CI/CD is one GitLab pipeline, `.gitlab-ci.yml`, executed on a self-hosted runner
 
 There is no separate staging environment. A push to `main` that passes CI goes straight to production.
 
-The same checks also exist as GitHub Actions workflows, for the return to GitHub. GitLab remains the pipeline that deploys; see [GitHub Actions](#github-actions).
+The same checks also exist as GitHub Actions workflows, for the return to GitHub. GitHub's is the one that deploys; see [Who deploys](#who-deploys) and [GitHub Actions](#github-actions).
 
 ---
 
@@ -238,11 +238,25 @@ One thing a rollback does not undo:
 
 ---
 
+## Who deploys
+
+GitHub Actions, from `main`, with images in `ghcr.io/gurvan-le-pape/beyond-the-arc`. The GitLab `deploy` job described above is the fallback and is skipped unless the CI/CD variable `GITLAB_DEPLOY` is `true`.
+
+To fall back to GitLab: set GitHub's `DEPLOY_ENABLED` to `false`, set `GITLAB_DEPLOY` to `true`, and on the VPS point `REGISTRY_IMAGE` in `.env` at `registry.gitlab.com/gurvan-le-pape/beyond-the-arc` and the clone's `origin` at GitLab. Never leave both variables on.
+
+Both deploy with the same `docker/deploy.sh`. **Rollback** on GitHub is re-running the `Deploy to VPS` job of an earlier `main` run, which GitHub allows for 30 days. It rebuilds that commit's images, so it also works for a commit that was never pushed to GHCR. On the VPS, for a commit whose images are there:
+
+```bash
+bash /opt/beyondthearc/docker/deploy.sh <previous-sha> ghcr.io gurvan-le-pape
+```
+
+---
+
 ## GitHub Actions
 
 `.github/workflows/ci.yml` carries the jobs above, except `npm-audit`, which is `audit.yml` (pull requests and a weekly schedule). Two repository variables keep it from acting on anything outside GitHub:
 
-- `DEPLOY_ENABLED`: the deploy job is skipped unless it is `true`. GitLab's deploy has to be off first, or both would deploy.
+- `DEPLOY_ENABLED`: the deploy job is skipped unless it is `true`.
 - `SONAR_ENABLED`: the same for `sonarcloud`, whose project is bound to GitLab.
 
 **Runners.** Every job runs on four containers, `wsl-1` to `wsl-4`, of `ghcr.io/actions/actions-runner`, selected with `runs-on: [self-hosted, wsl]`. Their Compose project is `~/github-runner/` in WSL, outside the repository; `./start.sh` starts them and fetches the registration token. Each takes one job at a time, and a job queued while WSL is down waits up to 24 hours.
