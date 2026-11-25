@@ -371,7 +371,7 @@ jobs:
         run: npm run quality:deps
 
   # ============================================================================
-  # MIGRATIONS (pull requests only)
+  # MIGRATIONS (checked on pull requests only)
   # ============================================================================
 
   # `prisma migrate deploy` does not checksum applied migrations, so an edit is
@@ -379,14 +379,15 @@ jobs:
   migration-immutability:
     name: Migrations – No edits to applied migrations
     runs-on: [self-hosted, wsl]
-    if: github.event_name == 'pull_request'
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
+      # The step, not the job: `gate` requires every job to have run and succeeded.
       - name: Fail on a changed migration
+        if: github.event_name == 'pull_request'
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           PR_TITLE: ${{ github.event.pull_request.title }}
@@ -522,17 +523,16 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   # ============================================================================
-  # DEPLOY
+  # GATE
   # ============================================================================
 
-  # Runs only while the repository variable DEPLOY_ENABLED is `true`. GitLab's deploy
-  # is the fallback, behind GITLAB_DEPLOY: never both. The explicit gates leave the advisory jobs out.
-  #
-  # Credentials go under $RUNNER_TEMP, which the runner empties after the job: its
-  # home directory is a volume that outlives it.
-  deploy:
-    name: Deploy to VPS
+  # Every job that may stop a merge or a deploy. `always()`: without it a failed job
+  # would leave this one skipped, and GitHub counts a skipped required check as passed.
+  # Anything but `success` fails, a skip and a cancellation included.
+  gate:
+    name: gate
     runs-on: [self-hosted, wsl]
+    if: always()
     needs:
       - backend-lint
       - backend-test
@@ -548,7 +548,36 @@ jobs:
       - barrels-drift
       - dependency-rules
       - python-test
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && vars.DEPLOY_ENABLED == 'true'
+      - migration-immutability
+    steps:
+      - name: Fail unless every job succeeded
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+        run: |
+          jq -r 'to_entries[] | "\(.value.result)\t\(.key)"' <<< "$NEEDS"
+          jq -e 'length > 0 and all(.[]; .result == "success")' <<< "$NEEDS" > /dev/null || {
+            echo "::error::A required job did not succeed."
+            exit 1
+          }
+
+  # ============================================================================
+  # DEPLOY
+  # ============================================================================
+
+  # Runs only while the repository variable DEPLOY_ENABLED is `true`. GitLab's deploy
+  # is the fallback, behind GITLAB_DEPLOY: never both.
+  #
+  # Credentials go under $RUNNER_TEMP, which the runner empties after the job: its
+  # home directory is a volume that outlives it.
+  deploy:
+    name: Deploy to VPS
+    runs-on: [self-hosted, wsl]
+    needs: [gate]
+    # `!cancelled()` replaces the implicit success(), which also looks at the jobs
+    # behind `gate`; the result of `gate` is what decides.
+    if: >-
+      !cancelled() && needs.gate.result == 'success' &&
+      github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && vars.DEPLOY_ENABLED == 'true'
     permissions:
       contents: read
       packages: write
