@@ -159,6 +159,7 @@ def start_crawl() -> None:
         path.unlink()
     # Geocoded from the clubs' addresses, which the new crawl may change.
     (OUT_DIR / "geocode_cache.json").unlink(missing_ok=True)
+    (OUT_DIR / "gym_geocode_cache.json").unlink(missing_ok=True)
     CRAWL_IN_PROGRESS.touch()
 
 
