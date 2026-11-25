@@ -10,36 +10,32 @@ CI/CD is GitHub Actions: `.github/workflows/ci.yml`, plus `audit.yml` for the de
 
 There is no separate staging environment. A push to `main` that passes CI goes straight to production.
 
-A ruleset on `main` refuses direct pushes, force-pushes and deletion: every change arrives through a pull request. It also requires fifteen checks, the jobs [`gate`](#gate) waits for, to pass on the pull request's latest commit, which does not have to be up to date with `main`. The ruleset names them by job `name:`, so renaming one blocks every merge until the ruleset is updated.
+A ruleset on `main` refuses direct pushes, force-pushes and deletion: every change arrives through a pull request. It also requires one check, [`gate`](#gate), from the GitHub Actions app, to pass on the pull request's latest commit, which does not have to be up to date with `main`. The ruleset names it by job `name:`: renaming `gate` blocks every merge until the ruleset is updated, and any other job can be renamed as long as `gate` still needs it.
 
 ---
 
 ## Pipeline structure
 
-`ci.yml` has twenty-one jobs:
+`ci.yml` has seventeen jobs:
 
 ```
-backend-lint ──────────┐
-backend-test ──────────┼── sonarcloud     (advisory)
-backend-integration ───┤
-backend-build ─────────┤
+backend ───────────────┬── sonarcloud     (advisory)
+frontend-test ─────────┤
 backend-boot ──────────┤
 frontend-lint ─────────┤
 frontend-typecheck ────┤
 frontend-messages ─────┼── gate ────── deploy (main only)
-frontend-test ─────────┤
 frontend-build ────────┤
-python-test ───────────┤
+scheduler ─────────────┤
 openapi-drift ─────────┤
 barrels-drift ─────────┤
 dependency-rules ──────┤
 migration-immutability ┘
 squawk                   (pull requests only, advisory)
 quality-report           (advisory)
-ruff-report              (advisory)
 ```
 
-Jobs run in parallel, as many at once as there are runners. `sonarcloud` needs `backend-test` and `frontend-test` for their coverage reports. `gate` lists in `needs:` every job that can stop a merge or a deploy, and `deploy` needs `gate` alone, so the advisory jobs, which are `continue-on-error`, cannot hold a release.
+Jobs run in parallel, as many at once as there are runners. `sonarcloud` needs `backend` and `frontend-test` for their coverage reports. `gate` lists in `needs:` every job that can stop a merge or a deploy, and `deploy` needs `gate` alone, so the advisory jobs, which are `continue-on-error`, cannot hold a release.
 
 Actions are pinned by commit SHA, with the version in a comment. Nothing updates them automatically: Dependabot runs on `ubuntu-latest`, which this repository does not use (see [Runners](#runners)), so it has no configuration here. Bump the SHA and the comment by hand. `npm-audit` still reports vulnerable npm packages.
 
@@ -51,17 +47,14 @@ The Node jobs use the composite action `.github/actions/setup-app`, which instal
 
 ## CI jobs
 
-### backend-lint
+### backend
 
-`prisma generate`, then `npm run lint` and `npm run format:check`. The generate step is not optional: the ESLint config is type-aware, the generated client is gitignored and Prisma 7 no longer creates it on install, so without it the whole Prisma surface types as `any` and rules like `no-floating-promises` go quiet on exactly the calls that matter.
+One `npm ci`, then every backend check. A step that fails does not stop the next ones, so one run shows every problem, and the job fails if any step did.
 
-### backend-test
-
-`npm test -- --coverage --coverageReporters=lcov`. The `lcov.info` it writes is kept as an artifact for a week and consumed by `sonarcloud`.
-
-### backend-build
-
-`npm run build` (`prisma generate && nest build`), independent of the test run.
+- **Lint**: `prisma generate`, then `npm run lint`, and `npm run format:check`. The generate step is not optional: the ESLint config is type-aware, the generated client is gitignored and Prisma 7 no longer creates it on install, so without it the whole Prisma surface types as `any` and rules like `no-floating-promises` go quiet on exactly the calls that matter. Lint runs before the steps that write `coverage/` and `dist/`.
+- **Unit tests**: `npm test -- --coverage --coverageReporters=lcov`. The `lcov.info` is kept as an artifact for a week and consumed by `sonarcloud`.
+- **Build**: `npm run build` (`prisma generate && nest build`).
+- **Integration tests**: see [below](#backend-integration-tests).
 
 ### frontend-lint, frontend-typecheck, frontend-messages, frontend-test, frontend-build
 
@@ -69,9 +62,9 @@ One script each: `npm run lint` + `npm run format:check`, `npm run typecheck`, `
 
 The build runs without `NEXT_PUBLIC_API_URL`, `FRONTEND_URL` and `SENTRY_AUTH_TOKEN` — those are only injected in `deploy`'s image build — and without a backend, which is why every page that fetches server-side is `force-dynamic` (see [`frontend.md`](./frontend.md)).
 
-### python-test
+### scheduler
 
-The scheduler's pytest suite, on Python 3.14 (the version of the scheduler image's base) with `requirements-dev.txt`.
+The scheduler's pytest suite, on Python 3.14 (the version of the scheduler image's base) with `requirements-dev.txt`. Its ruff step is a [measurement](#measurements).
 
 ### openapi-drift
 
@@ -97,9 +90,9 @@ It runs on pull requests and on Mondays at 07:00 UTC, because a newly published 
 
 Pull requests only. Lints the `migration.sql` files the pull request adds for statements that lock or break a running database (a constraint without `NOT VALID`, a dropped column), using `.squawk.toml`. Already-applied migrations are not linted: they cannot change. Advisory, because a finding can be the right trade on a small table.
 
-### backend-integration
+### Backend integration tests
 
-Runs the suites under `src/backend/test/integration` against a `postgres:18.4` container, the version production runs, started in the runner's network namespace (see [Runners](#runners)). `prisma migrate deploy` builds the schema from the migrations, so the CHECK constraints and indexes under test are the ones production runs. The unit run excludes these suites and needs no database.
+The last steps of `backend` run the suites under `src/backend/test/integration` against a `postgres:18.4` container, the version production runs, started in the runner's network namespace (see [Runners](#runners)). `prisma migrate deploy` builds the schema from the migrations, so the CHECK constraints and indexes under test are the ones production runs. The unit run excludes these suites and needs no database.
 
 `match-constraints` and `team-constraints` drive the CHECK constraints and keys with SQL, each test in a transaction it rolls back. `list-queries` runs the list services through real Prisma, and `box-score-reads` the services that read box scores, on fixtures they commit and remove. `it.failing` marks known bugs: such a test fails the suite once the behaviour is fixed, so it has to become a plain `it`.
 
@@ -127,9 +120,9 @@ It uses `/api/health/live` rather than `/api/health` because the full check incl
 
 Runs `npm run quality:deps` from the repo root: dependency-cruiser (`.dependency-cruiser.cjs`) over each application, failing on a cycle, on `shared/utils` importing `shared/components`, or on `common` importing `modules`. Type-only imports count. Needs only the root install.
 
-### quality-report, ruff-report
+### Measurements
 
-Measurements, read in the job log. `quality-report` runs `npm run quality` from the repo root: knip (unused files, exports, dependencies; `knip.json` in each application) and jscpd (`.jscpd.json`). `ruff-report` runs ruff's pyflakes and complexity checks over the scheduler (`src/backend/db/python/ruff.toml`). Findings do not fail either job. The one exception is duplication above jscpd's 3% threshold, which `continue-on-error` keeps from failing the run, as it does a tool that crashes. To make one of them blocking, remove `--no-exit-code` (knip) or `--exit-zero` (ruff), and add the job to `gate`'s `needs:`.
+Read in the job log. `quality-report` runs `npm run quality` from the repo root: knip (unused files, exports, dependencies; `knip.json` in each application) and jscpd (`.jscpd.json`). The ruff step of `scheduler` runs ruff's pyflakes and complexity checks over the scheduler (`src/backend/db/python/ruff.toml`). Findings fail neither. The one exception is duplication above jscpd's 3% threshold, which `continue-on-error` keeps from failing the run, as it does a tool that crashes. To make one of them blocking, remove `--no-exit-code` (knip) or `--exit-zero` (ruff) and the `continue-on-error`, and add `quality-report` to `gate`'s `needs:`.
 
 ### The lint baseline
 
@@ -145,7 +138,7 @@ Lint output no longer shows baselined violations. `eslint-suppressions.json` is 
 
 ### sonarcloud
 
-`SonarSource/sonarqube-scan-action` with full git history (`fetch-depth: 0`) and both coverage artifacts, from `backend-test` and `frontend-test`. Configuration lives in `sonar-project.properties`; the project is `gurvan-le-pape_beyond-the-arc`. It runs while the repository variable `SONAR_ENABLED` is `true`, is `continue-on-error`, and is absent from `gate`'s `needs:` — a failed quality gate reports without blocking a release.
+`SonarSource/sonarqube-scan-action` with full git history (`fetch-depth: 0`) and both coverage artifacts, from `backend` and `frontend-test`. Configuration lives in `sonar-project.properties`; the project is `gurvan-le-pape_beyond-the-arc`. It runs while the repository variable `SONAR_ENABLED` is `true`, is `continue-on-error`, and is absent from `gate`'s `needs:` — a failed quality gate reports without blocking a release.
 
 **The frontend is measured.** `frontend-test` runs Vitest with `--coverage` and keeps `src/frontend/coverage/lcov.info`, whose paths start at the repository root (`src/frontend/app/…`) because that is where Sonar resolves them. Its harness renders components and hooks, so a pull request's new frontend lines can meet `new_coverage >= 80` like the backend's. Sonar's frontend coverage scope matches what Vitest measures — `app/`, `features/`, `lib/`, `shared/` — by excluding the root-level bootstrap and config files and the test support (`testing/`, `*Fixtures.ts`); `sonar-project.properties` gives the reasoning inline.
 
@@ -281,7 +274,7 @@ Four containers, `wsl-1` to `wsl-4`, on the developer's machine, selected with `
 - **Each takes one job at a time.** A job queued while WSL is down waits up to 24 hours, `audit.yml`'s Monday run included.
 - **They persist between jobs.** The npm, Node and Python caches stay warm, and a secret written under the home directory would outlive its job, so the deploy writes its credentials under `$RUNNER_TEMP`, which is emptied after each job.
 - **They mount the host Docker socket,** which is root-equivalent on that machine. Workflows from outside contributors' forks need approval before they run, and the default `GITHUB_TOKEN` is read-only. Never approve a fork's run without reading its changes.
-- **`services:` does not work on them.** A service's port is published on the Docker host, which is not a containerised runner's localhost. `backend-integration` starts PostgreSQL in the runner's own network namespace instead.
+- **`services:` does not work on them.** A service's port is published on the Docker host, which is not a containerised runner's localhost. `backend` starts PostgreSQL in the runner's own network namespace instead.
 - **No job may use `ubuntu-latest`.** GitHub-hosted runners are not used. `.github/actionlint.yaml` declares the `wsl` label.
 
 ---

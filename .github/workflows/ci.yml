@@ -24,76 +24,65 @@ jobs:
   # BACKEND
   # ============================================================================
 
+  # One install for every check. Each step runs even if an earlier one failed, so one
+  # run shows every problem; lint comes before the steps that write coverage/ and dist/.
+  #
   # The eslint config is type-aware and the Prisma client is gitignored: without
   # `prisma generate` its whole surface types as `any` and rules like
   # no-floating-promises stop firing on exactly the calls they matter most on.
-  backend-lint:
-    name: Backend – Lint
+  backend:
+    name: Backend
     runs-on: [self-hosted, wsl]
+    env:
+      PG: integration-pg-${{ github.run_id }}-${{ github.run_attempt }}
+    defaults:
+      run:
+        working-directory: src/backend
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Setup src/backend
+        id: setup
         uses: ./.github/actions/setup-app
         with:
           working-directory: src/backend
 
       - name: Generate Prisma client
-        working-directory: src/backend
+        id: generate
         run: npx prisma generate
 
       - name: Lint
-        working-directory: src/backend
+        if: ${{ !cancelled() && steps.generate.outcome == 'success' }}
         run: npm run lint
 
       - name: Format
-        working-directory: src/backend
+        if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
         run: npm run format:check
 
-  backend-test:
-    name: Backend – Tests
-    runs-on: [self-hosted, wsl]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Setup src/backend
-        uses: ./.github/actions/setup-app
-        with:
-          working-directory: src/backend
-
-      - name: Run tests with coverage
-        working-directory: src/backend
+      - name: Unit tests with coverage
+        id: unit
+        if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
         run: npm test -- --coverage --coverageReporters=lcov
 
       - name: Upload coverage report
+        if: ${{ !cancelled() && steps.unit.outcome == 'success' }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: backend-coverage
           path: src/backend/coverage/lcov.info
           retention-days: 7
 
-  # Not `services:`. The runner is itself a container, and Actions publishes a
-  # service's port on the Docker host, which is not this job's localhost. Sharing
-  # the runner's network namespace makes it so, and keeps parallel jobs apart.
-  backend-integration:
-    name: Backend – Integration tests
-    runs-on: [self-hosted, wsl]
-    env:
-      PG: integration-pg-${{ github.run_id }}-${{ github.run_attempt }}
-      # The harness refuses any database whose name does not end in _test.
-      DATABASE_URL: postgres://postgres:test@127.0.0.1:5432/beyondthearc_test
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Build
+        if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
+        run: npm run build
 
-      - name: Setup src/backend
-        uses: ./.github/actions/setup-app
-        with:
-          working-directory: src/backend
-
+      # Not `services:`. The runner is itself a container, and Actions publishes a
+      # service's port on the Docker host, which is not this job's localhost. Sharing
+      # the runner's network namespace makes it so, and keeps parallel jobs apart.
       - name: Start PostgreSQL
+        id: postgres
+        if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
         run: |
           docker rm -fv "$PG" >/dev/null 2>&1 || true
           docker run -d --name "$PG" --network "container:$(hostname)" \
@@ -108,33 +97,19 @@ jobs:
           docker logs --tail 50 "$PG"
           exit 1
 
-      - name: Migrate
-        working-directory: src/backend
-        run: npx prisma migrate deploy
-
-      - name: Run integration tests
-        working-directory: src/backend
-        run: npm run test:integration
+      - name: Migrate and run integration tests
+        if: ${{ !cancelled() && steps.postgres.outcome == 'success' }}
+        env:
+          # The harness refuses any database whose name does not end in _test.
+          DATABASE_URL: postgres://postgres:test@127.0.0.1:5432/beyondthearc_test
+        run: |
+          npx prisma migrate deploy
+          npm run test:integration
 
       - name: Remove PostgreSQL
         if: always()
+        working-directory: .
         run: docker rm -fv "$PG" || true
-
-  backend-build:
-    name: Backend – Build
-    runs-on: [self-hosted, wsl]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Setup src/backend
-        uses: ./.github/actions/setup-app
-        with:
-          working-directory: src/backend
-
-      - name: Build
-        working-directory: src/backend
-        run: npm run build
 
   # Starts the production image for real, on the host Docker daemon. A cancelled
   # job can skip the script's own cleanup, and the daemon is long-lived.
@@ -257,9 +232,12 @@ jobs:
   # SCHEDULER
   # ============================================================================
 
-  python-test:
-    name: Scheduler – Tests
+  scheduler:
+    name: Scheduler
     runs-on: [self-hosted, wsl]
+    defaults:
+      run:
+        working-directory: src/backend/db/python
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -270,12 +248,17 @@ jobs:
           python-version: "3.14"
 
       - name: Install dependencies
-        working-directory: src/backend/db/python
+        id: setup
         run: pip install -r requirements-dev.txt
 
       - name: Run tests
-        working-directory: src/backend/db/python
         run: python -m pytest
+
+      # A measurement: its findings do not fail the job, and neither does a crash.
+      - name: Ruff report
+        if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
+        continue-on-error: true
+        run: ruff check --exit-zero --no-cache --output-format concise .
 
   # ============================================================================
   # API CONTRACT, BARRELS, DEPENDENCY RULES
@@ -471,32 +454,11 @@ jobs:
       - name: Report
         run: npm run quality
 
-  ruff-report:
-    name: Ruff report
-    runs-on: [self-hosted, wsl]
-    continue-on-error: true
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Setup Python
-        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
-        with:
-          python-version: "3.14"
-
-      - name: Install dependencies
-        working-directory: src/backend/db/python
-        run: pip install -r requirements-dev.txt
-
-      - name: Report
-        working-directory: src/backend/db/python
-        run: ruff check --exit-zero --no-cache --output-format concise .
-
   # Runs only while the repository variable SONAR_ENABLED is `true`.
   sonarcloud:
     name: SonarCloud Analysis
     runs-on: [self-hosted, wsl]
-    needs: [backend-test, frontend-test]
+    needs: [backend, frontend-test]
     if: vars.SONAR_ENABLED == 'true'
     continue-on-error: true
     steps:
@@ -534,10 +496,7 @@ jobs:
     runs-on: [self-hosted, wsl]
     if: always()
     needs:
-      - backend-lint
-      - backend-test
-      - backend-integration
-      - backend-build
+      - backend
       - backend-boot
       - frontend-lint
       - frontend-typecheck
@@ -547,7 +506,7 @@ jobs:
       - openapi-drift
       - barrels-drift
       - dependency-rules
-      - python-test
+      - scheduler
       - migration-immutability
     steps:
       - name: Fail unless every job succeeded
