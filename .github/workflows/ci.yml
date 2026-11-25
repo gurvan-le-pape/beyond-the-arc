@@ -88,7 +88,7 @@ jobs:
         run: |
           docker rm -fv "$PG" >/dev/null 2>&1 || true
           docker run -d --name "$PG" --network "container:$(hostname)" \
-            -e POSTGRES_PASSWORD=test -e POSTGRES_DB=beyondthearc_test postgres:18.4
+            -e POSTGRES_PASSWORD=test -e POSTGRES_DB=beyondthearc_test postgres:18.7
           for _ in $(seq 1 60); do
             # Over TCP: during initialisation the server listens on its Unix socket only.
             if docker exec "$PG" pg_isready -q -h 127.0.0.1 -U postgres -d beyondthearc_test; then

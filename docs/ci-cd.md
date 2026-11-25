@@ -95,14 +95,14 @@ It runs on pull requests and on Mondays at 07:00 UTC, because a newly published 
 
 ### Backend integration tests
 
-The last steps of `backend` run the suites under `src/backend/test/integration` against a `postgres:18.4` container, the version production runs, started in the runner's network namespace (see [Runners](#runners)). `prisma migrate deploy` builds the schema from the migrations, so the CHECK constraints and indexes under test are the ones production runs. The unit run excludes these suites and needs no database.
+The last steps of `backend` run the suites under `src/backend/test/integration` against a `postgres:18.7` container, the version production runs, started in the runner's network namespace (see [Runners](#runners)). `prisma migrate deploy` builds the schema from the migrations, so the CHECK constraints and indexes under test are the ones production runs. The unit run excludes these suites and needs no database.
 
 `match-constraints` and `team-constraints` drive the CHECK constraints and keys with SQL, each test in a transaction it rolls back. `list-queries` runs the list services through real Prisma, and `box-score-reads` the services that read box scores, on fixtures they commit and remove. `it.failing` marks known bugs: such a test fails the suite once the behaviour is fixed, so it has to become a plain `it`.
 
 To run them locally, against a throwaway database:
 
 ```bash
-docker run -d --rm --name integ-pg -e POSTGRES_PASSWORD=test -e POSTGRES_DB=beyondthearc_test -p 55434:5432 postgres:18.4
+docker run -d --rm --name integ-pg -e POSTGRES_PASSWORD=test -e POSTGRES_DB=beyondthearc_test -p 55434:5432 postgres:18.7
 cd src/backend
 export DATABASE_URL=postgres://postgres:test@localhost:55434/beyondthearc_test
 npx prisma migrate deploy && npm run test:integration
@@ -113,7 +113,7 @@ The harness refuses a database whose name does not end in `_test`, so a stray `D
 
 ### images-check, images
 
-Both use the composite action `.github/actions/build-images`: build the four production images on the host Docker daemon, whose layer cache outlives the job, scan them with `scripts/ci/trivy-scan.sh` (see [Image scan](#image-scan)), then start them with `scripts/ci/boot-check.sh`. That script migrates a throwaway `postgres:18.4`, imports the scheduler's entry point, starts the backend and requests `/api/health/live` and `/api/leagues`, then starts the frontend against it and requests two pages. A container that exits or doesn't answer within 60 s fails the job, which prints its logs. To run it locally, from the repo root: `scripts/ci/boot-check.sh`.
+Both use the composite action `.github/actions/build-images`: build the four production images on the host Docker daemon, whose layer cache outlives the job, scan them with `scripts/ci/trivy-scan.sh` (see [Image scan](#image-scan)), then start them with `scripts/ci/boot-check.sh`. That script migrates a throwaway `postgres:18.7`, imports the scheduler's entry point, starts the backend and requests `/api/health/live` and `/api/leagues`, then starts the frontend against it and requests two pages. A container that exits or doesn't answer within 60 s fails the job, which prints its logs. To run it locally, from the repo root: `scripts/ci/boot-check.sh`.
 
 They are the only jobs that run what ships. Every other job has dev dependencies installed and none starts an application, so they miss a crash at startup, a package missing from the production dependencies and a file the `prod` stage strips by hand.
 
