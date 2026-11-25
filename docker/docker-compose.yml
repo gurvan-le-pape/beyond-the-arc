@@ -368,7 +368,7 @@ services:
   # other exporter here, and it has no authentication.
   blackbox-exporter:
     logging: *logging
-    image: prom/blackbox-exporter:v0.28.0
+    image: prom/blackbox-exporter:v0.29.1
     volumes:
       - ./config/blackbox.yml:/etc/blackboxexporter/config.yml:ro
     command:
