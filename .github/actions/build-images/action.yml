@@ -1,0 +1,58 @@
+name: Build images
+description: Builds the four production images as <prefix>/<name>:<tag>, then starts them (scripts/ci/boot-check.sh). Caller must check out the repo first.
+
+inputs:
+  prefix:
+    description: Image name prefix, without a trailing slash
+    required: true
+  tag:
+    description: Image tag
+    required: true
+  next-public-api-url:
+    description: Frontend build arg
+    required: true
+  frontend-url:
+    description: Frontend build arg
+    required: true
+  sentry-auth-token:
+    description: Uploads the frontend's source maps when set
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Build
+      shell: bash
+      env:
+        PREFIX: ${{ inputs.prefix }}
+        TAG: ${{ inputs.tag }}
+        NEXT_PUBLIC_API_URL: ${{ inputs.next-public-api-url }}
+        FRONTEND_URL: ${{ inputs.frontend-url }}
+        SENTRY_AUTH_TOKEN: ${{ inputs.sentry-auth-token }}
+      run: |
+        # An unset variable is an empty string, which builds a frontend that calls localhost.
+        if [ -z "$NEXT_PUBLIC_API_URL" ] || [ -z "$FRONTEND_URL" ]; then
+          echo "::error::NEXT_PUBLIC_API_URL or FRONTEND_URL is not set."
+          exit 1
+        fi
+        docker build -f docker/backend/Dockerfile --target prod -t "$PREFIX/backend:$TAG" .
+        docker build -f docker/backend/Dockerfile --target migrate -t "$PREFIX/backend-migrate:$TAG" .
+        docker build -f docker/python-script/Dockerfile -t "$PREFIX/scheduler:$TAG" .
+        # A BuildKit secret, never a build arg, which would persist in the pushed image.
+        # Under $RUNNER_TEMP, which the runner empties after the job.
+        umask 077
+        printf '%s' "$SENTRY_AUTH_TOKEN" > "$RUNNER_TEMP/sentry_auth_token"
+        docker build -f docker/frontend/Dockerfile --target prod \
+          --build-arg "NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL" \
+          --build-arg "FRONTEND_URL=$FRONTEND_URL" \
+          --secret id=sentry_auth_token,src="$RUNNER_TEMP/sentry_auth_token" \
+          -t "$PREFIX/frontend:$TAG" .
+        rm -f "$RUNNER_TEMP/sentry_auth_token"
+
+    - name: Start the images
+      shell: bash
+      env:
+        PREFIX: ${{ inputs.prefix }}
+        TAG: ${{ inputs.tag }}
+        BOOT_CHECK_ID: gh-${{ github.run_id }}-${{ github.run_attempt }}
+      run: scripts/ci/boot-check.sh "$PREFIX" "$TAG"
