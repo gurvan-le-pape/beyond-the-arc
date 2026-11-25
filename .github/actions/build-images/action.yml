@@ -1,5 +1,5 @@
 name: Build images
-description: Builds the four production images as <prefix>/<name>:<tag>, then starts them (scripts/ci/boot-check.sh). Caller must check out the repo first.
+description: Builds the four production images as <prefix>/<name>:<tag>, then scans them (scripts/ci/trivy-scan.sh) and starts them (scripts/ci/boot-check.sh). Caller must check out the repo first.
 
 inputs:
   prefix:
@@ -48,6 +48,13 @@ runs:
           --secret id=sentry_auth_token,src="$RUNNER_TEMP/sentry_auth_token" \
           -t "$PREFIX/frontend:$TAG" .
         rm -f "$RUNNER_TEMP/sentry_auth_token"
+
+    - name: Scan the images
+      shell: bash
+      env:
+        PREFIX: ${{ inputs.prefix }}
+        TAG: ${{ inputs.tag }}
+      run: scripts/ci/trivy-scan.sh "$PREFIX"/{backend,backend-migrate,scheduler,frontend}:"$TAG"
 
     - name: Start the images
       shell: bash
