@@ -15,7 +15,7 @@ const nextConfig = {
   poweredByHeader: false,
   eslint: {
     // `next build` runs ESLint without reading eslint-suppressions.json, so it
-    // would report every baselined violation as an error. `frontend-lint` is
+    // would report every baselined violation as an error. The `frontend` job is
     // the lint gate, and `deploy` waits on it.
     ignoreDuringBuilds: true,
   },

@@ -16,16 +16,13 @@ A ruleset on `main` refuses direct pushes, force-pushes and deletion: every chan
 
 ## Pipeline structure
 
-`ci.yml` has seventeen jobs:
+`ci.yml` has fourteen jobs:
 
 ```
 backend ───────────────┬── sonarcloud     (advisory)
-frontend-test ─────────┤
+frontend ──────────────┤
 backend-boot ──────────┤
-frontend-lint ─────────┤
-frontend-typecheck ────┤
-frontend-messages ─────┼── gate ────── deploy (main only)
-frontend-build ────────┤
+frontend-build ────────┼── gate ────── deploy (main only)
 scheduler ─────────────┤
 openapi-drift ─────────┤
 barrels-drift ─────────┤
@@ -35,7 +32,7 @@ squawk                   (pull requests only, advisory)
 quality-report           (advisory)
 ```
 
-Jobs run in parallel, as many at once as there are runners. `sonarcloud` needs `backend` and `frontend-test` for their coverage reports. `gate` lists in `needs:` every job that can stop a merge or a deploy, and `deploy` needs `gate` alone, so the advisory jobs, which are `continue-on-error`, cannot hold a release.
+Jobs run in parallel, as many at once as there are runners. `sonarcloud` needs `backend` and `frontend` for their coverage reports. `gate` lists in `needs:` every job that can stop a merge or a deploy, and `deploy` needs `gate` alone, so the advisory jobs, which are `continue-on-error`, cannot hold a release.
 
 Actions are pinned by commit SHA, with the version in a comment. Nothing updates them automatically: Dependabot runs on `ubuntu-latest`, which this repository does not use (see [Runners](#runners)), so it has no configuration here. Bump the SHA and the comment by hand. `npm-audit` still reports vulnerable npm packages.
 
@@ -56,9 +53,13 @@ One `npm ci`, then every backend check. A step that fails does not stop the next
 - **Build**: `npm run build` (`prisma generate && nest build`).
 - **Integration tests**: see [below](#backend-integration-tests).
 
-### frontend-lint, frontend-typecheck, frontend-messages, frontend-test, frontend-build
+### frontend
 
-One script each: `npm run lint` + `npm run format:check`, `npm run typecheck`, `npm run check:messages` (the `en`/`fr` message catalogues agree), `npm run test` (Vitest), `npm run build`.
+Built like `backend`: one `npm ci`, then `npm run lint`, `npm run format:check`, `npm run typecheck`, `npm run check:messages` (the `en`/`fr` message catalogues agree) and `npm run test -- --coverage` (Vitest), each run even if an earlier one failed. The `lcov.info` is kept as an artifact for a week and consumed by `sonarcloud`.
+
+### frontend-build
+
+`npm run build`, in a job of its own so that the checks above do not wait for it.
 
 The build runs without `NEXT_PUBLIC_API_URL`, `FRONTEND_URL` and `SENTRY_AUTH_TOKEN` — those are only injected in `deploy`'s image build — and without a backend, which is why every page that fetches server-side is `force-dynamic` (see [`frontend.md`](./frontend.md)).
 
@@ -134,13 +135,13 @@ Read in the job log. `quality-report` runs `npm run quality` from the repo root:
 
 Lint output no longer shows baselined violations. `eslint-suppressions.json` is where to read them.
 
-`next build` does not read that file, so `next.config.js` turns its own ESLint pass off with `eslint.ignoreDuringBuilds`. It still type-checks. Linting belongs to `frontend-lint`, which `deploy` waits on.
+`next build` does not read that file, so `next.config.js` turns its own ESLint pass off with `eslint.ignoreDuringBuilds`. It still type-checks. Linting belongs to `frontend`, which `gate` waits on.
 
 ### sonarcloud
 
-`SonarSource/sonarqube-scan-action` with full git history (`fetch-depth: 0`) and both coverage artifacts, from `backend` and `frontend-test`. Configuration lives in `sonar-project.properties`; the project is `gurvan-le-pape_beyond-the-arc`. It runs while the repository variable `SONAR_ENABLED` is `true`, is `continue-on-error`, and is absent from `gate`'s `needs:` — a failed quality gate reports without blocking a release.
+`SonarSource/sonarqube-scan-action` with full git history (`fetch-depth: 0`) and both coverage artifacts, from `backend` and `frontend`. Configuration lives in `sonar-project.properties`; the project is `gurvan-le-pape_beyond-the-arc`. It runs while the repository variable `SONAR_ENABLED` is `true`, is `continue-on-error`, and is absent from `gate`'s `needs:` — a failed quality gate reports without blocking a release.
 
-**The frontend is measured.** `frontend-test` runs Vitest with `--coverage` and keeps `src/frontend/coverage/lcov.info`, whose paths start at the repository root (`src/frontend/app/…`) because that is where Sonar resolves them. Its harness renders components and hooks, so a pull request's new frontend lines can meet `new_coverage >= 80` like the backend's. Sonar's frontend coverage scope matches what Vitest measures — `app/`, `features/`, `lib/`, `shared/` — by excluding the root-level bootstrap and config files and the test support (`testing/`, `*Fixtures.ts`); `sonar-project.properties` gives the reasoning inline.
+**The frontend is measured.** `frontend` runs Vitest with `--coverage` and keeps `src/frontend/coverage/lcov.info`, whose paths start at the repository root (`src/frontend/app/…`) because that is where Sonar resolves them. Its harness renders components and hooks, so a pull request's new frontend lines can meet `new_coverage >= 80` like the backend's. Sonar's frontend coverage scope matches what Vitest measures — `app/`, `features/`, `lib/`, `shared/` — by excluding the root-level bootstrap and config files and the test support (`testing/`, `*Fixtures.ts`); `sonar-project.properties` gives the reasoning inline.
 
 ### gate
 
