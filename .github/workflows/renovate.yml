@@ -1,0 +1,36 @@
+name: Renovate report
+
+# Lists the dependency updates in the run summary. Nothing is written: no pull request,
+# no issue, and the token only reads. Pull requests run it to test these files.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/renovate.yml
+      - scripts/ci/renovate-report.sh
+      - renovate.json
+  schedule:
+    - cron: "0 8 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  report:
+    name: Dependency updates
+    runs-on: [self-hosted, wsl]
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: List the updates
+        env:
+          RENOVATE_GITHUB_COM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: scripts/ci/renovate-report.sh

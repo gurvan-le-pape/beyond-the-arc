@@ -6,7 +6,7 @@
 
 ## Overview
 
-CI/CD is GitHub Actions: `.github/workflows/ci.yml`, plus `audit.yml` for the dependency audit, `image-scan.yml` for the deployed images and `ghcr-cleanup.yml` for old ones. Every job runs on self-hosted runners (see [Runners](#runners)). `ci.yml` runs on every pull request and every push to `main`, and can be started by hand (`workflow_dispatch`). On `main` it builds the production images, starts them, pushes them to the GitHub Container Registry (GHCR), and deploys them to the VPS over SSH.
+CI/CD is GitHub Actions: `.github/workflows/ci.yml`, plus `audit.yml` for the dependency audit, `image-scan.yml` for the deployed images, `renovate.yml` for the [update report](#update-report) and `ghcr-cleanup.yml` for old ones. Every job runs on self-hosted runners (see [Runners](#runners)). `ci.yml` runs on every pull request and every push to `main`, and can be started by hand (`workflow_dispatch`). On `main` it builds the production images, starts them, pushes them to the GitHub Container Registry (GHCR), and deploys them to the VPS over SSH.
 
 There is no separate staging environment. A push to `main` that passes CI goes straight to production.
 
@@ -30,7 +30,7 @@ scheduler ───────┘
 
 Jobs run in parallel, as many at once as there are runners. `sonarcloud` needs `backend` and `frontend` for their coverage reports. `gate` lists in `needs:` every job that can stop a merge or a deploy, and `deploy` needs `gate` alone, so `sonarcloud`, which is advisory, cannot hold a release. Advisory steps inside a job (squawk, knip and jscpd, ruff) are `continue-on-error`.
 
-Actions are pinned by commit SHA, with the version in a comment. Nothing updates them automatically: Dependabot runs on `ubuntu-latest`, which this repository does not use (see [Runners](#runners)), so it has no configuration here. Bump the SHA and the comment by hand. `npm-audit` still reports vulnerable npm packages.
+Actions are pinned by commit SHA, with the version in a comment. Nothing updates them automatically: Dependabot runs on `ubuntu-latest`, which this repository does not use (see [Runners](#runners)), so it has no configuration here. The [update report](#update-report) lists the new versions. Bump the SHA and the comment by hand. `npm-audit` still reports vulnerable npm packages.
 
 A new commit on a pull request cancels the run in progress. Runs on `main` are never cancelled while running, since that could leave the VPS half-deployed. GitHub keeps one run waiting per group, so when several merges land during a run, the latest one replaces the others in the queue and carries their commits.
 
@@ -135,6 +135,14 @@ Read in the job log. The quality step of `contracts` runs `npm run quality` from
 `npm audit` reads the lockfiles, development dependencies included; this reads what ships, the base image included.
 
 A vulnerability published this morning can block an unrelated deploy. To accept one for a time, add it to `.trivyignore.yaml` with a reason and an `expired_at` date, after which it blocks again. If the vulnerability database cannot be updated, the scan uses the runner's last copy and says so; with no copy, it fails.
+
+### Update report
+
+On Mondays at 08:00 UTC, `renovate.yml` runs `scripts/ci/renovate-report.sh` and writes the available updates to the run summary. It opens no pull request and no issue. `renovate.json` holds the rules: what is grouped, a 7-day wait except for a vulnerability fix, major versions listed apart, and the PostgreSQL, Node and Python versions it does not go beyond. A custom rule covers the images pinned in `scripts/ci`, another the PostgreSQL version named outside Compose.
+
+Renovate, pinned by digest, gets a copy of the tracked files, no Docker socket, and the job's token, which can only read. It uses it to read the tags of public actions. A dependency that could not be looked up fails the job, so a missing line means up to date.
+
+It has no write token: the ruleset requires no approval, so a token that can write code and workflows could merge and deploy, and the runners are persistent and hold the Docker socket. The settings that only apply when it writes (schedule, concurrent limit, approval of majors) are ready in `renovate.json`.
 
 ### The lint baseline
 
