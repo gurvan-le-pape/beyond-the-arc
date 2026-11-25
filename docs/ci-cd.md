@@ -41,6 +41,8 @@ ruff-report              (advisory)
 
 Jobs run in parallel, as many at once as there are runners. `sonarcloud` needs `backend-test` and `frontend-test` for their coverage reports. `deploy` lists its fourteen gates in `needs:`, so the advisory jobs, which are `continue-on-error`, cannot hold a release.
 
+Actions are pinned by commit SHA, with the version in a comment. Nothing updates them automatically: Dependabot runs on `ubuntu-latest`, which this repository does not use (see [Runners](#runners)), so it has no configuration here. Bump the SHA and the comment by hand. `npm-audit` still reports vulnerable npm packages.
+
 A new commit on a pull request cancels the run in progress. Runs on `main` are never cancelled while running, since that could leave the VPS half-deployed. GitHub keeps one run waiting per group, so when several merges land during a run, the latest one replaces the others in the queue and carries their commits.
 
 The Node jobs use the composite action `.github/actions/setup-app`, which installs Node 24 and runs `npm ci --prefer-offline` in the given directory. It has no `cache:`, because each runner's own `~/.npm` persists between jobs.
