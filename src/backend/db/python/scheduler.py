@@ -11,6 +11,7 @@ Each worker process initializes its own DB connection pool on first use.
 import json
 import logging
 import os
+import signal
 import time
 from concurrent.futures import ProcessPoolExecutor
 
@@ -94,26 +95,53 @@ def _generate_worker(match: ScheduledMatch) -> None:
 # Scheduler
 # ---------------------------------------------------------------------------
 
+def _exit_during_startup(signum, frame) -> None:
+    # No worker runs yet, and PostgreSQL rolls back the open transaction when the
+    # connection drops. An exception raised here instead could land inside a
+    # psycopg pipeline, which cannot roll back while it is busy.
+    logger.info("SIGTERM received during startup, exiting.")
+    os._exit(0)
+
+
 class Scheduler:
     def __init__(self) -> None:
+        self._stopping = False
         self.executor = ProcessPoolExecutor(
             max_workers=MAX_WORKERS,
             initializer=_worker_init,
         )
 
     def run(self) -> None:
+        # The container runs this process as PID 1, which the kernel protects from
+        # SIGTERM unless it installs a handler.
+        signal.signal(signal.SIGTERM, _exit_during_startup)
         self._recover_stuck_matches()
         self._ensure_season_setup()
+        signal.signal(signal.SIGTERM, self._request_stop)
 
         logger.info(f"Scheduler polling every {POLL_INTERVAL_SECONDS}s.")
         try:
-            while True:
+            while not self._stopping:
                 self._poll()
-                time.sleep(POLL_INTERVAL_SECONDS)
+                self._wait_for_next_poll()
         finally:
             # Ensure worker processes are reaped cleanly on KeyboardInterrupt
             # or any other exit so they don't linger with open DB connections.
-            self.executor.shutdown(wait=True)
+            # Matches already handed to the workers finish; the rest stay
+            # `generating` and the next start resets them.
+            self.executor.shutdown(wait=True, cancel_futures=True)
+            logger.info("Workers stopped.")
+
+    def _request_stop(self, signum, frame) -> None:
+        self._stopping = True
+
+    def _wait_for_next_poll(self) -> None:
+        # In one-second steps: a signal does not cut a sleep short when its
+        # handler returns normally.
+        for _ in range(POLL_INTERVAL_SECONDS):
+            if self._stopping:
+                return
+            time.sleep(1)
 
     def _recover_stuck_matches(self) -> None:
         count = 0

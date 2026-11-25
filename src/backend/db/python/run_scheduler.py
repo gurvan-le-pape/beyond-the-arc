@@ -17,4 +17,7 @@ logging.basicConfig(
 
 if __name__ == "__main__":
     connection.initialize()
-    Scheduler().run()
+    try:
+        Scheduler().run()
+    finally:
+        connection.get_pool().close()

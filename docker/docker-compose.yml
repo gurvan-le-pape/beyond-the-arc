@@ -201,6 +201,9 @@ services:
       migrate:
         condition: service_completed_successfully
     restart: unless-stopped
+    # On SIGTERM the workers finish the matches they were handed: at most 17 (8
+    # running, 9 queued), about two seconds on two cores.
+    stop_grace_period: 30s
     networks:
       - my_network
 
