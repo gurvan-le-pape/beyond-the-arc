@@ -120,7 +120,7 @@ They are the only jobs that run what ships. Every other job has dev dependencies
 A run has exactly one of the two:
 
 - **`images-check`**, everywhere but `main`, has no secret and no write access, and removes its images. It builds the frontend with placeholder URLs. A BuildKit secret is not part of the cache key, so with the same build args `main` would reuse a frontend built by a pull request, whose source maps never reached Sentry.
-- **`images`**, on `main`, runs in the `build` environment, which accepts `main` only, and fails if `SENTRY_AUTH_TOKEN` is not set there. It pushes each image as `:<commit sha>`, once they all started. `deployment: false` keeps it out of the deployments list; the environment's branch restriction still applies.
+- **`images`**, on `main`, runs in the `build` environment, which accepts `main` only, and fails if `SENTRY_AUTH_TOKEN` is not set there. It pushes each image as `:<commit sha>`, once they all started, checks that the digest in the registry is the one that was started, and publishes the four digests as a job output. `deployment: false` keeps it out of the deployments list; the environment's branch restriction still applies.
 
 The images are `backend` (`prod` target of `docker/backend/Dockerfile`), `backend-migrate` (`migrate` target of the same file, sharing its cached layers), `scheduler` (`docker/python-script/Dockerfile`) and `frontend` (`prod` target, with `NEXT_PUBLIC_API_URL` and `FRONTEND_URL` as build args and `SENTRY_AUTH_TOKEN` as a BuildKit secret, never a build arg, which would persist in the pushed image config).
 
@@ -154,9 +154,9 @@ Succeeds only if every job in its `needs:` ended in `success`; a failure, a canc
 
 `main` only, after `gate` succeeds, and only while the repository variable `DEPLOY_ENABLED` is `true`. It deploys to the GitHub environment `production`, which accepts `main` only, so each run is recorded as a deployment, and it holds the `production` concurrency group: one deploy at a time.
 
-The images come from `images`: this job builds nothing.
+The images come from `images`, by digest: this job builds nothing, and fails if it has no digests. The digests belong to the run, so re-running the job redeploys the same images.
 
-1. **Deploy over SSH** — plain `ssh`, no third-party action. The job strips CRLF from `VPS_SSH_KEY` and restores a missing final newline, because OpenSSH rejects both with the same unhelpful `error in libcrypto`, and fails early if the key is still unusable. The host key is pinned from `VPS_HOST_KEY`, never learned with `ssh-keyscan`. The job then runs `docker/deploy.sh` in the server's clone, with the commit SHA, registry host and registry user as arguments and the registry token as the first line of stdin — never an argument, which would show in `ps` on the server.
+1. **Deploy over SSH** — plain `ssh`, no third-party action. The job strips CRLF from `VPS_SSH_KEY` and restores a missing final newline, because OpenSSH rejects both with the same unhelpful `error in libcrypto`, and fails early if the key is still unusable. The host key is pinned from `VPS_HOST_KEY`, never learned with `ssh-keyscan`. The job then runs `docker/deploy.sh` in the server's clone, with the commit SHA, registry host, registry user and digests as arguments and the registry token as the first line of stdin — never an argument, which would show in `ps` on the server.
 2. **Move `latest`** to this commit's images, on the registry, with the job's `GITHUB_TOKEN`. A deploy that failed leaves it where it was.
 
 The site answers 502 for under a minute while the containers are replaced: `frontend` waits for `backend` to be healthy before it starts.
@@ -168,14 +168,15 @@ The site answers 502 for under a minute while the containers are replaced: `fron
 `docker/deploy.sh`, run on the VPS as `deploy` from the clone at `/opt/beyondthearc`, under `set -e`:
 
 ```bash
-deploy.sh <commit-sha> <registry-host> <registry-user>   # token, if any, on stdin
+deploy.sh <commit-sha> <registry-host> <registry-user> [<digests>]   # token, if any, on stdin
+echo "$REGISTRY_TOKEN" | docker login "$REGISTRY_HOST" -u "$REGISTRY_USER" --password-stdin
+docker pull …   # the four images, before anything moves
 pre_pull_head=$(git rev-parse HEAD)
 git fetch origin && git reset --hard "$COMMIT_SHA"   # exactly this commit, never the branch tip
 exec bash docker/deploy.sh "$@"   # the rest runs from that commit's copy
-echo "$REGISTRY_TOKEN" | docker login "$REGISTRY_HOST" -u "$REGISTRY_USER" --password-stdin
-export IMAGE_TAG="$COMMIT_SHA"   # read by docker-compose.prod.yml; beats .env
+export IMAGE_TAG="$COMMIT_SHA" BACKEND_DIGEST=… …   # read by docker-compose.prod.yml; beats .env
 docker compose … pull frontend backend migrate scheduler
-sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=$COMMIT_SHA/" .env   # appended if absent; only after a good pull
+# IMAGE_TAG and the four digests written to .env, only after a good pull
 docker compose … up -d
 docker image prune -af   # after the pull, never before
 # restart prometheus + blackbox-exporter if their config changed in this pull,
@@ -190,7 +191,7 @@ docker system prune -f   # only after both health checks pass
 
 The script lives in the `docker/` directory because that is all the server's sparse clone holds. It moves the clone to the deployed commit, then re-runs that commit's copy of itself, so a deploy that changes the script is carried out by the new version; the whole body sits in one `main` function, which bash parses before running any of it, so the checkout rewriting the file mid-run cannot change what the old copy does.
 
-**A reset to the SHA, not a pull.** `git pull` follows the branch: a deploy started for one commit could pick up the configs of a later one, so the images and the files on disk came from different commits. It also refuses to run on a detached `HEAD` or over a local edit to a file the incoming commit touches — exactly the state a hand rollback leaves — which turned the next deploy into a second outage. `git fetch` then `git reset --hard <sha>` lands on the requested commit whatever the clone looked like, discards local edits to tracked files, and leaves `.env` alone (untracked and ignored). A SHA missing from `origin` fails before anything changes. The commit SHA must be 40 hex characters, or the script exits `2` before touching anything. Run by hand with nothing piped in, it skips the registry login and reuses the one the last deploy stored.
+**A reset to the SHA, not a pull.** `git pull` follows the branch: a deploy started for one commit could pick up the configs of a later one, so the images and the files on disk came from different commits. It also refuses to run on a detached `HEAD` or over a local edit to a file the incoming commit touches — exactly the state a hand rollback leaves — which turned the next deploy into a second outage. `git fetch` then `git reset --hard <sha>` lands on the requested commit whatever the clone looked like, discards local edits to tracked files, and leaves `.env` alone (untracked and ignored). A SHA missing from `origin`, or an image missing from the registry, fails before anything changes. The commit SHA must be 40 hex characters, or the script exits `2` before touching anything. Run by hand with nothing piped in, it skips the registry login and reuses the one the last deploy stored.
 
 The checkout updates the Compose files and config before the images, so the running configuration always matches the deployed commit. The registry login uses a token of its own (`DEPLOY_REGISTRY_TOKEN`, a classic token with `read:packages`) rather than the job's `GITHUB_TOKEN`, which dies with the job and would break a later manual `pull`. The `database` service runs the official `postgres` image and is untouched by the pull. `up -d` runs the one-shot `migrate` service (`prisma migrate deploy`) before `backend` and `scheduler` start, and recreates only containers whose image or configuration changed.
 
@@ -214,7 +215,7 @@ One property of this worth knowing before relying on it: **`docker` group member
 chmod 600 /opt/beyondthearc/.env
 ```
 
-The default `644` is not merely untidy here. `node-exporter` mounts `/:/rootfs:ro` (`docker/docker-compose.yml`) and runs as `nobody` (uid 65534), so at `644` a container whose job is host CPU and disk metrics can read every secret in that file; at `600` it cannot, and it never needed to. Nothing legitimate loses access — no service declares `env_file`, the file is not bind-mounted into any container, and the deploy script reaches it as `deploy`, which owns it. The script's `sed -i` rewrite of `IMAGE_TAG` preserves the mode (GNU sed replaces the file but copies its permissions across), so the setting survives every deploy rather than reverting at the next one.
+The default `644` is not merely untidy here. `node-exporter` mounts `/:/rootfs:ro` (`docker/docker-compose.yml`) and runs as `nobody` (uid 65534), so at `644` a container whose job is host CPU and disk metrics can read every secret in that file; at `600` it cannot, and it never needed to. Nothing legitimate loses access — no service declares `env_file`, the file is not bind-mounted into any container, and the deploy script reaches it as `deploy`, which owns it. The script's `sed -i` rewrites of `IMAGE_TAG` and the digests preserve the mode (GNU sed replaces the file but copies its permissions across), so the setting survives every deploy rather than reverting at the next one.
 
 ---
 
@@ -254,11 +255,11 @@ The rest are the repository's (Secrets and variables → Actions). `SONAR_TOKEN`
 
 ## Image versioning and rollback
 
-`images` pushes each image with the git commit SHA as its tag, and a successful deploy moves `latest` to it. `docker-compose.prod.yml` references `${IMAGE_TAG:-latest}`, and the deploy script persists `IMAGE_TAG=<git sha>` into the VPS `.env` — so production always runs a pinned, recorded image, and a later manual `compose up` cannot silently jump to a newer `latest`.
+`images` pushes each image with the git commit SHA as its tag, and a successful deploy moves `latest` to it. `docker-compose.prod.yml` references each image by tag and, when its `*_DIGEST` variable is set, by digest, which is then what Docker pulls. The deploy script persists `IMAGE_TAG=<git sha>` and the digests into the VPS `.env` — so production always runs a pinned, recorded image, and a later manual `compose up` cannot silently jump to a newer `latest`.
 
 **Rollback** — GitHub → **Actions → CI**, open an earlier `main` run that deployed and re-run its **Deploy to VPS** job, which GitHub allows for 30 days. Because the script resets the server's clone to the job's SHA, that commit's **images, Compose files and configs — the Nginx site included — come back together**; the conditional restarts compare against the commit being left, so a config the rollback reverts is reloaded. Returning to the latest is the same on the newest run. The next merge deploys `main` again.
 
-The job deploys that commit's images from GHCR and rebuilds nothing, except for a run from before the `images` job existed, which rebuilds them. The same rollback runs directly on the VPS; the stored login is reused:
+The job deploys that commit's images from GHCR and rebuilds nothing, except for a run from before the `images` job existed, which rebuilds them. The same rollback runs directly on the VPS, by tag since no digest is given; the stored login is reused:
 
 ```bash
 bash /opt/beyondthearc/docker/deploy.sh <previous-sha> ghcr.io gurvan-le-pape

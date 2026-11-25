@@ -368,6 +368,8 @@ jobs:
     environment:
       name: build
       deployment: false
+    outputs:
+      digests: ${{ steps.push.outputs.digests }}
     env:
       IMAGE: ghcr.io/${{ github.repository }}
       SHA: ${{ github.sha }}
@@ -403,11 +405,26 @@ jobs:
           echo "DOCKER_CONFIG=$RUNNER_TEMP/docker" >> "$GITHUB_ENV"
           echo "$GHCR_TOKEN" | DOCKER_CONFIG="$RUNNER_TEMP/docker" docker login ghcr.io -u "$GHCR_USER" --password-stdin
 
+      # The daemon's image store is containerd's, where an image's ID is the digest a
+      # push publishes: comparing them proves that what was started is what was pushed.
+      # Digests only in the output: GitHub drops one that contains a secret's value,
+      # and the registry path contains a user name.
       - name: Push images
+        id: push
         run: |
+          digests=""
           for n in backend backend-migrate scheduler frontend; do
-            docker push "$IMAGE/$n:$SHA"
+            docker push --quiet "$IMAGE/$n:$SHA"
+            started=$(docker image inspect -f '{{.Id}}' "$IMAGE/$n:$SHA")
+            pushed=$(docker buildx imagetools inspect --format '{{json .Manifest.Digest}}' "$IMAGE/$n:$SHA" | tr -d '"')
+            if [ "$started" != "$pushed" ]; then
+              echo "::error::$n: started $started but the registry has $pushed"
+              exit 1
+            fi
+            digests+="${digests:+,}$n=$pushed"
           done
+          echo "$digests"
+          echo "digests=$digests" >> "$GITHUB_OUTPUT"
 
       - name: Remove the images
         if: always()
@@ -509,7 +526,7 @@ jobs:
   deploy:
     name: Deploy to VPS
     runs-on: [self-hosted, wsl]
-    needs: [gate]
+    needs: [gate, images]
     # `!cancelled()` replaces the implicit success(), which also looks at the jobs
     # behind `gate`; the result of `gate` is what decides.
     if: >-
@@ -527,6 +544,8 @@ jobs:
     env:
       IMAGE: ghcr.io/${{ github.repository }}
       SHA: ${{ github.sha }}
+      # Kept with the run: re-running this job redeploys the same images.
+      DIGESTS: ${{ needs.images.outputs.digests }}
     steps:
       - name: Deploy over SSH
         timeout-minutes: 10
@@ -549,6 +568,10 @@ jobs:
           fi
           # Pinned, never learned with ssh-keyscan: whoever answers gets the registry token.
           # VPS_HOST_KEY is the key material only ("ssh-ed25519 AAAA…").
+          if [ -z "$DIGESTS" ]; then
+            echo "::error::The images job published no digests."
+            exit 1
+          fi
           if [ -z "$VPS_HOST_KEY" ] || [ -z "$DEPLOY_REGISTRY_TOKEN" ]; then
             echo "::error::VPS_HOST_KEY or DEPLOY_REGISTRY_TOKEN is not set."
             exit 1
@@ -558,7 +581,7 @@ jobs:
           printf '%s\n' "$DEPLOY_REGISTRY_TOKEN" |
             ssh -i "$key" -o IdentitiesOnly=yes -o UserKnownHostsFile="$known_hosts" -o StrictHostKeyChecking=yes \
               "$VPS_USER@$VPS_HOST" \
-              "bash /opt/beyondthearc/docker/deploy.sh '$SHA' ghcr.io '$DEPLOY_REGISTRY_USER'"
+              "bash /opt/beyondthearc/docker/deploy.sh '$SHA' ghcr.io '$DEPLOY_REGISTRY_USER' '$DIGESTS'"
 
       # Only now: `latest` always names images that were deployed. On the registry,
       # so nothing is pulled or rebuilt.
@@ -569,6 +592,6 @@ jobs:
         run: |
           export DOCKER_CONFIG="$RUNNER_TEMP/docker"
           echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
-          for n in backend backend-migrate scheduler frontend; do
-            docker buildx imagetools create --tag "$IMAGE/$n:latest" "$IMAGE/$n:$SHA"
+          for pair in ${DIGESTS//,/ }; do
+            docker buildx imagetools create --tag "$IMAGE/${pair%%=*}:latest" "$IMAGE/${pair%%=*}@${pair#*=}"
           done
