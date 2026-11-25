@@ -10,13 +10,13 @@ CI/CD is GitHub Actions: `.github/workflows/ci.yml`, plus `audit.yml` for the de
 
 There is no separate staging environment. A push to `main` that passes CI goes straight to production.
 
-A ruleset on `main` refuses direct pushes, force-pushes and deletion: every change arrives through a pull request. It also requires fifteen checks, the fourteen `deploy` waits for and `migration-immutability`, to pass on the pull request's latest commit, which does not have to be up to date with `main`. The ruleset names them by job `name:`, so renaming one blocks every merge until the ruleset is updated.
+A ruleset on `main` refuses direct pushes, force-pushes and deletion: every change arrives through a pull request. It also requires fifteen checks, the jobs [`gate`](#gate) waits for, to pass on the pull request's latest commit, which does not have to be up to date with `main`. The ruleset names them by job `name:`, so renaming one blocks every merge until the ruleset is updated.
 
 ---
 
 ## Pipeline structure
 
-`ci.yml` has twenty jobs:
+`ci.yml` has twenty-one jobs:
 
 ```
 backend-lint ──────────┐
@@ -26,20 +26,20 @@ backend-build ─────────┤
 backend-boot ──────────┤
 frontend-lint ─────────┤
 frontend-typecheck ────┤
-frontend-messages ─────┼────────────── deploy (main only)
+frontend-messages ─────┼── gate ────── deploy (main only)
 frontend-test ─────────┤
 frontend-build ────────┤
 python-test ───────────┤
 openapi-drift ─────────┤
 barrels-drift ─────────┤
-dependency-rules ──────┘
-migration-immutability   (pull requests only, not a deploy gate)
+dependency-rules ──────┤
+migration-immutability ┘
 squawk                   (pull requests only, advisory)
 quality-report           (advisory)
 ruff-report              (advisory)
 ```
 
-Jobs run in parallel, as many at once as there are runners. `sonarcloud` needs `backend-test` and `frontend-test` for their coverage reports. `deploy` lists its fourteen gates in `needs:`, so the advisory jobs, which are `continue-on-error`, cannot hold a release.
+Jobs run in parallel, as many at once as there are runners. `sonarcloud` needs `backend-test` and `frontend-test` for their coverage reports. `gate` lists in `needs:` every job that can stop a merge or a deploy, and `deploy` needs `gate` alone, so the advisory jobs, which are `continue-on-error`, cannot hold a release.
 
 Actions are pinned by commit SHA, with the version in a comment. Nothing updates them automatically: Dependabot runs on `ubuntu-latest`, which this repository does not use (see [Runners](#runners)), so it has no configuration here. Bump the SHA and the comment by hand. `npm-audit` still reports vulnerable npm packages.
 
@@ -83,7 +83,7 @@ Builds the backend, regenerates `docs/openapi.json`, regenerates the frontend's 
 
 ### migration-immutability
 
-Pull requests only. Fails when the pull request modifies or deletes a file under `src/backend/prisma/migrations/` (additions are unrestricted), because `prisma migrate deploy` does not checksum applied migrations and would silently ignore the edit everywhere it already ran. A title containing `[refresh-static-data]` lets the sanctioned `make refresh-static-data` rewrite through, with a warning that the description must carry the catch-up SQL — see [`data-pipeline.md`](./data-pipeline.md).
+On pull requests, fails when the pull request modifies or deletes a file under `src/backend/prisma/migrations/` (additions are unrestricted), because `prisma migrate deploy` does not checksum applied migrations and would silently ignore the edit everywhere it already ran. A title containing `[refresh-static-data]` lets the sanctioned `make refresh-static-data` rewrite through, with a warning that the description must carry the catch-up SQL — see [`data-pipeline.md`](./data-pipeline.md). On `main` its step is skipped and the job succeeds, because `gate` does not accept a skipped job.
 
 ### npm-audit
 
@@ -129,7 +129,7 @@ Runs `npm run quality:deps` from the repo root: dependency-cruiser (`.dependency
 
 ### quality-report, ruff-report
 
-Measurements, read in the job log. `quality-report` runs `npm run quality` from the repo root: knip (unused files, exports, dependencies; `knip.json` in each application) and jscpd (`.jscpd.json`). `ruff-report` runs ruff's pyflakes and complexity checks over the scheduler (`src/backend/db/python/ruff.toml`). Findings do not fail either job. The one exception is duplication above jscpd's 3% threshold, which `continue-on-error` keeps from failing the run, as it does a tool that crashes. To make one of them blocking, remove `--no-exit-code` (knip) or `--exit-zero` (ruff), and add the job to `deploy`'s `needs:`.
+Measurements, read in the job log. `quality-report` runs `npm run quality` from the repo root: knip (unused files, exports, dependencies; `knip.json` in each application) and jscpd (`.jscpd.json`). `ruff-report` runs ruff's pyflakes and complexity checks over the scheduler (`src/backend/db/python/ruff.toml`). Findings do not fail either job. The one exception is duplication above jscpd's 3% threshold, which `continue-on-error` keeps from failing the run, as it does a tool that crashes. To make one of them blocking, remove `--no-exit-code` (knip) or `--exit-zero` (ruff), and add the job to `gate`'s `needs:`.
 
 ### The lint baseline
 
@@ -145,13 +145,17 @@ Lint output no longer shows baselined violations. `eslint-suppressions.json` is 
 
 ### sonarcloud
 
-`SonarSource/sonarqube-scan-action` with full git history (`fetch-depth: 0`) and both coverage artifacts, from `backend-test` and `frontend-test`. Configuration lives in `sonar-project.properties`; the project is `gurvan-le-pape_beyond-the-arc`. It runs while the repository variable `SONAR_ENABLED` is `true`, is `continue-on-error`, and is absent from `deploy`'s `needs:` — a failed quality gate reports without blocking a release.
+`SonarSource/sonarqube-scan-action` with full git history (`fetch-depth: 0`) and both coverage artifacts, from `backend-test` and `frontend-test`. Configuration lives in `sonar-project.properties`; the project is `gurvan-le-pape_beyond-the-arc`. It runs while the repository variable `SONAR_ENABLED` is `true`, is `continue-on-error`, and is absent from `gate`'s `needs:` — a failed quality gate reports without blocking a release.
 
 **The frontend is measured.** `frontend-test` runs Vitest with `--coverage` and keeps `src/frontend/coverage/lcov.info`, whose paths start at the repository root (`src/frontend/app/…`) because that is where Sonar resolves them. Its harness renders components and hooks, so a pull request's new frontend lines can meet `new_coverage >= 80` like the backend's. Sonar's frontend coverage scope matches what Vitest measures — `app/`, `features/`, `lib/`, `shared/` — by excluding the root-level bootstrap and config files and the test support (`testing/`, `*Fixtures.ts`); `sonar-project.properties` gives the reasoning inline.
 
+### gate
+
+Succeeds only if every job in its `needs:` ended in `success`; a failure, a cancellation or a skip fails it. It runs with `if: always()`: without it, a failed job would leave `gate` skipped, and GitHub counts a skipped required check as passed. A job absent from its `needs:` blocks nothing.
+
 ### deploy
 
-`main` only, after its fourteen gates pass, and only while the repository variable `DEPLOY_ENABLED` is `true`. It deploys to the GitHub environment `production`, which accepts `main` only, so each run is recorded as a deployment, and it holds the `production` concurrency group: one deploy at a time. The host Docker socket means builds reuse a long-lived daemon's layer cache — no buildx builder, no cache export.
+`main` only, after `gate` succeeds, and only while the repository variable `DEPLOY_ENABLED` is `true`. It deploys to the GitHub environment `production`, which accepts `main` only, so each run is recorded as a deployment, and it holds the `production` concurrency group: one deploy at a time. The host Docker socket means builds reuse a long-lived daemon's layer cache — no buildx builder, no cache export.
 
 1. **Log in** to GHCR with the job's `GITHUB_TOKEN` (`packages: write`).
 2. **Build four images**, each tagged `:<commit sha>` and `:latest` under `ghcr.io/gurvan-le-pape/beyond-the-arc`: `backend` (`prod` target of `docker/backend/Dockerfile`), `backend-migrate` (`migrate` target of the same file, sharing its cached layers), `scheduler` (`docker/python-script/Dockerfile`) and `frontend` (`prod` target, with `NEXT_PUBLIC_API_URL` and `FRONTEND_URL` as build args and `SENTRY_AUTH_TOKEN` as a BuildKit secret — never a build arg, which would persist in the pushed image config).
