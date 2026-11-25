@@ -3,7 +3,11 @@
 # /opt/beyondthearc. CI calls it over SSH after pushing this commit's images:
 #
 #   printf '%s\n' "$TOKEN" | ssh deploy@vps \
-#     bash /opt/beyondthearc/docker/deploy.sh <commit-sha> <registry-host> <registry-user>
+#     bash /opt/beyondthearc/docker/deploy.sh <commit-sha> <registry-host> <registry-user> [<digests>]
+#
+# <digests> is `backend=sha256:…,backend-migrate=sha256:…,scheduler=sha256:…,frontend=sha256:…`.
+# With it the server runs exactly those images. Without it, as in a rollback by hand,
+# it runs the ones tagged <commit-sha>.
 #
 # The registry token is the first line of stdin, never an argument: arguments
 # show in `ps` and in the SSH log. Run by hand with nothing piped in, no token
@@ -20,14 +24,49 @@
 # the deploy job of that commit's run): its images, compose files and configs
 # come back together.
 
+IMAGES=(backend backend-migrate scheduler frontend)
+
+# backend-migrate -> BACKEND_MIGRATE_DIGEST, the name docker-compose.prod.yml reads.
+digest_variable() {
+  local name="${1^^}"
+  echo "${name//-/_}_DIGEST"
+}
+
+# persist <name> <value>: sets a line of .env.
+persist() {
+  if grep -q "^$1=" .env; then
+    sed -i "s/^$1=.*/$1=$2/" .env
+  else
+    echo "$1=$2" >> .env
+  fi
+}
+
+# With no token, the login the last deploy stored is reused.
+login() {
+  if [ -n "${REGISTRY_TOKEN:-}" ]; then
+    echo "$REGISTRY_TOKEN" | docker login "$1" -u "$2" --password-stdin
+  fi
+}
+
 main() {
   set -e
 
   local tag="$1" registry_host="$2" registry_user="$3"
   if [[ ! "$tag" =~ ^[0-9a-f]{40}$ ]] || [ -z "$registry_host" ] || [ -z "$registry_user" ]; then
-    echo "usage: deploy.sh <commit-sha> <registry-host> <registry-user>" >&2
+    echo "usage: deploy.sh <commit-sha> <registry-host> <registry-user> [<digests>]" >&2
     exit 2
   fi
+
+  # Exported even when empty: that beats a digest a previous deploy left in .env.
+  local name digest
+  for name in "${IMAGES[@]}"; do
+    digest=$(tr ',' '\n' <<< "${4:-}" | sed -n "s/^$name=//p")
+    if [ -n "${4:-}" ] && [[ ! "$digest" =~ ^sha256:[0-9a-f]{64}$ ]]; then
+      echo "ERROR: no valid digest for $name in '${4}' — nothing changed." >&2
+      exit 2
+    fi
+    export "$(digest_variable "$name")=$digest"
+  done
 
   cd "$(dirname "$0")/.."
 
@@ -38,6 +77,15 @@ main() {
       read -r REGISTRY_TOKEN || true
       export REGISTRY_TOKEN
     fi
+    login "$registry_host" "$registry_user"
+    # Before anything moves: an image that is gone from the registry must leave the
+    # clone, .env and the containers as they were.
+    local registry_image
+    registry_image=$(sed -n 's/^REGISTRY_IMAGE=//p' .env)
+    for name in "${IMAGES[@]}"; do
+      digest="$(digest_variable "$name")"
+      docker pull --quiet "$registry_image/$name:$tag${!digest:+@${!digest}}"
+    done
     # Remembered across the checkout so the conditional restarts below can
     # tell whether this deploy changed any config they load — in either
     # direction, so a rollback reloads what it reverts.
@@ -60,9 +108,8 @@ main() {
   fi
   local pre_pull_head="$DEPLOY_PRE_PULL_HEAD"
 
-  if [ -n "${REGISTRY_TOKEN:-}" ]; then
-    echo "$REGISTRY_TOKEN" | docker login "$registry_host" -u "$registry_user" --password-stdin
-  fi
+  # Again: the copy of this script that ran first may be older than this one.
+  login "$registry_host" "$registry_user"
 
   # Pin the deployed images to this commit's tag. The exported value beats
   # .env for the pull, so a failed pull leaves .env naming the images that are
@@ -73,11 +120,11 @@ main() {
   export IMAGE_TAG="$tag"
   echo "Disk before pull:" && df -h / | tail -1
   compose pull frontend backend migrate scheduler
-  if grep -q '^IMAGE_TAG=' .env; then
-    sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=$tag/" .env
-  else
-    echo "IMAGE_TAG=$tag" >> .env
-  fi
+  persist IMAGE_TAG "$tag"
+  for name in "${IMAGES[@]}"; do
+    digest="$(digest_variable "$name")"
+    persist "$digest" "${!digest}"
+  done
   compose up -d
 
   # Pull first, prune second. Every deploy pins :SHA tags, so old tagged
@@ -184,6 +231,9 @@ main() {
     exit 1
   fi
   echo "Frontend healthy."
+
+  echo "Running images:"
+  compose ps -q backend frontend scheduler | xargs docker inspect -f '{{.Name}} {{.Config.Image}}'
 
   # Prune only after the new containers proved healthy.
   docker system prune -f

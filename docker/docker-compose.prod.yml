@@ -1,9 +1,11 @@
 # REGISTRY_IMAGE is the registry path without a tag, set in .env on the VPS
-# (ghcr.io/<owner>/beyond-the-arc). Kept out of this file so the
+# (ghcr.io/<owner>/beyond-the-arc). Each *_DIGEST is the digest of the image CI
+# started and pushed; with one, Docker pulls that digest and the tag is only a label.
+# Without (a deploy by hand that names a commit only), the tag decides. Kept out of this file so the
 # same overlay works for any registry, and so moving hosts is an .env change.
 services:
   frontend:
-    image: ${REGISTRY_IMAGE}/frontend:${IMAGE_TAG:-latest}
+    image: ${REGISTRY_IMAGE}/frontend:${IMAGE_TAG:-latest}${FRONTEND_DIGEST:+@${FRONTEND_DIGEST}}
     build: !reset null
     environment:
       - NODE_ENV=production
@@ -16,7 +18,7 @@ services:
     restart: unless-stopped
 
   backend:
-    image: ${REGISTRY_IMAGE}/backend:${IMAGE_TAG:-latest}
+    image: ${REGISTRY_IMAGE}/backend:${IMAGE_TAG:-latest}${BACKEND_DIGEST:+@${BACKEND_DIGEST}}
     build: !reset null
     environment:
       - NODE_ENV=production
@@ -25,7 +27,7 @@ services:
     restart: unless-stopped
 
   migrate:
-    image: ${REGISTRY_IMAGE}/backend-migrate:${IMAGE_TAG:-latest}
+    image: ${REGISTRY_IMAGE}/backend-migrate:${IMAGE_TAG:-latest}${BACKEND_MIGRATE_DIGEST:+@${BACKEND_MIGRATE_DIGEST}}
     build: !reset null
 
   # Pinned to the deploy's tag like the other three. Before this the service
@@ -34,7 +36,7 @@ services:
   # one it happened to build once and no deploy replaced it. That also left it
   # the one service with no tag to roll back to.
   scheduler:
-    image: ${REGISTRY_IMAGE}/scheduler:${IMAGE_TAG:-latest}
+    image: ${REGISTRY_IMAGE}/scheduler:${IMAGE_TAG:-latest}${SCHEDULER_DIGEST:+@${SCHEDULER_DIGEST}}
     build: !reset null
 
   grafana:
