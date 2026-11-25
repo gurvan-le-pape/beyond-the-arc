@@ -149,7 +149,7 @@ Lint output no longer shows baselined violations. `eslint-suppressions.json` is 
 
 ### deploy
 
-`main` only, after its fourteen gates pass, and only while the repository variable `DEPLOY_ENABLED` is `true`. It deploys to the GitHub environment `production`, so each run is recorded as a deployment, and it holds the `production` concurrency group: one deploy at a time. The host Docker socket means builds reuse a long-lived daemon's layer cache — no buildx builder, no cache export.
+`main` only, after its fourteen gates pass, and only while the repository variable `DEPLOY_ENABLED` is `true`. It deploys to the GitHub environment `production`, which accepts `main` only, so each run is recorded as a deployment, and it holds the `production` concurrency group: one deploy at a time. The host Docker socket means builds reuse a long-lived daemon's layer cache — no buildx builder, no cache export.
 
 1. **Log in** to GHCR with the job's `GITHUB_TOKEN` (`packages: write`).
 2. **Build four images**, each tagged `:<commit sha>` and `:latest` under `ghcr.io/gurvan-le-pape/beyond-the-arc`: `backend` (`prod` target of `docker/backend/Dockerfile`), `backend-migrate` (`migrate` target of the same file, sharing its cached layers), `scheduler` (`docker/python-script/Dockerfile`) and `frontend` (`prod` target, with `NEXT_PUBLIC_API_URL` and `FRONTEND_URL` as build args and `SENTRY_AUTH_TOKEN` as a BuildKit secret — never a build arg, which would persist in the pushed image config).
@@ -217,9 +217,9 @@ The default `644` is not merely untidy here. `node-exporter` mounts `/:/rootfs:r
 
 ## Secrets and variables
 
-Repository settings → Secrets and variables → Actions.
+Those of the `production` environment (repository settings → Environments → Production) reach only the `deploy` job. The environment accepts jobs from `main` alone, with no administrator bypass, so a workflow changed on another branch cannot read them.
 
-| Secret | Purpose |
+| Environment secret | Purpose |
 | --- | --- |
 | `VPS_HOST` | VPS address |
 | `VPS_USER` | `deploy`, the unprivileged account described above |
@@ -227,11 +227,19 @@ Repository settings → Secrets and variables → Actions.
 | `VPS_HOST_KEY` | Pinned host key material only (`ssh-ed25519 AAAA…`), not a `known_hosts` line |
 | `DEPLOY_REGISTRY_USER` | GitHub username the VPS logs in to GHCR with |
 | `DEPLOY_REGISTRY_TOKEN` | Classic token, `read:packages` only |
-| `NEXT_PUBLIC_API_URL`, `FRONTEND_URL` | Frontend build args |
 | `SENTRY_AUTH_TOKEN` | Source map upload, passed as a BuildKit secret |
+
+| Environment variable | Purpose |
+| --- | --- |
+| `NEXT_PUBLIC_API_URL`, `FRONTEND_URL` | Frontend build args; public, since the site serves them. The job fails if either is empty |
+
+The rest are the repository's (Secrets and variables → Actions). `SONAR_TOKEN` is among them because pull requests use it. A secret of the same name on the repository is readable from any of its branches: the environment's take precedence in `deploy` but do not hide it.
+
+| Repository secret | Purpose |
+| --- | --- |
 | `SONAR_TOKEN` | SonarCloud |
 
-| Variable | Purpose |
+| Repository variable | Purpose |
 | --- | --- |
 | `DEPLOY_ENABLED` | `deploy` is skipped unless it is `true` |
 | `SONAR_ENABLED` | `sonarcloud` is skipped unless it is `true` |
