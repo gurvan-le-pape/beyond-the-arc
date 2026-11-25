@@ -35,8 +35,3 @@ src/frontend/next-env.d.ts
 # Python cache
 **/__pycache__/
 *.pyc
-# npm cache directory. CI sets `npm ci --cache .npm` so the downloaded tarballs
-# land inside the project, which is the only place GitLab's cache can collect
-# from — and where `git add -A` would otherwise stage them. Matches at any
-# depth, so the root, src/backend and src/frontend copies are all covered.
-.npm/

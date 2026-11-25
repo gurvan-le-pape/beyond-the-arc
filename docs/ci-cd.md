@@ -284,14 +284,6 @@ Four containers, `wsl-1` to `wsl-4`, on the developer's machine, selected with `
 
 ---
 
-## GitLab fallback
-
-`.gitlab-ci.yml` holds the same jobs for `gitlab.com/gurvan-le-pape/beyond-the-arc`, on its own runner (`wsl-local`). Nothing is mirrored there, and its `deploy` is skipped unless the CI/CD variable `GITLAB_DEPLOY` is `true`.
-
-To deploy from GitLab: set GitHub's `DEPLOY_ENABLED` to `false`, push `main` to GitLab, and on the VPS set `REGISTRY_IMAGE` in `.env` to `registry.gitlab.com/gurvan-le-pape/beyond-the-arc` and the clone's `origin` to GitLab. Then set `GITLAB_DEPLOY` to `true` and run a pipeline on `main`. Never leave both variables on: both would deploy.
-
----
-
 ## Known limitations
 
 **No staging deployment.** The deploy job targets production directly. There is no equivalent job that deploys to a staging environment first, because no hosted staging environment exists.
