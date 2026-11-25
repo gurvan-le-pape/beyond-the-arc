@@ -444,8 +444,7 @@ jobs:
   # DEPLOY
   # ============================================================================
 
-  # Runs only while the repository variable DEPLOY_ENABLED is `true`. GitLab's deploy
-  # is the fallback, behind GITLAB_DEPLOY: never both.
+  # Runs only while the repository variable DEPLOY_ENABLED is `true`.
   #
   # Credentials go under $RUNNER_TEMP, which the runner empties after the job: its
   # home directory is a volume that outlives it.
