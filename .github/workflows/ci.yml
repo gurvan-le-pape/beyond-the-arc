@@ -137,75 +137,46 @@ jobs:
   # FRONTEND
   # ============================================================================
 
-  frontend-lint:
-    name: Frontend – Lint
+  # Same shape as `backend`. Lint comes before the tests, which write coverage/.
+  frontend:
+    name: Frontend
     runs-on: [self-hosted, wsl]
+    defaults:
+      run:
+        working-directory: src/frontend
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Setup src/frontend
+        id: setup
         uses: ./.github/actions/setup-app
         with:
           working-directory: src/frontend
 
       - name: Lint
-        working-directory: src/frontend
+        if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
         run: npm run lint
 
       - name: Format
-        working-directory: src/frontend
+        if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
         run: npm run format:check
 
-  frontend-typecheck:
-    name: Frontend – Typecheck
-    runs-on: [self-hosted, wsl]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Setup src/frontend
-        uses: ./.github/actions/setup-app
-        with:
-          working-directory: src/frontend
-
       - name: Typecheck
-        working-directory: src/frontend
+        if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
         run: npm run typecheck
 
-  frontend-messages:
-    name: Frontend – Message parity
-    runs-on: [self-hosted, wsl]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Setup src/frontend
-        uses: ./.github/actions/setup-app
-        with:
-          working-directory: src/frontend
-
-      - name: Check message parity
-        working-directory: src/frontend
+      - name: Message parity
+        if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
         run: npm run check:messages
 
-  frontend-test:
-    name: Frontend – Unit tests
-    runs-on: [self-hosted, wsl]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Setup src/frontend
-        uses: ./.github/actions/setup-app
-        with:
-          working-directory: src/frontend
-
-      - name: Run tests with coverage
-        working-directory: src/frontend
+      - name: Unit tests with coverage
+        id: unit
+        if: ${{ !cancelled() && steps.setup.outcome == 'success' }}
         run: npm run test -- --coverage
 
       - name: Upload coverage report
+        if: ${{ !cancelled() && steps.unit.outcome == 'success' }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: frontend-coverage
@@ -458,7 +429,7 @@ jobs:
   sonarcloud:
     name: SonarCloud Analysis
     runs-on: [self-hosted, wsl]
-    needs: [backend, frontend-test]
+    needs: [backend, frontend]
     if: vars.SONAR_ENABLED == 'true'
     continue-on-error: true
     steps:
@@ -498,10 +469,7 @@ jobs:
     needs:
       - backend
       - backend-boot
-      - frontend-lint
-      - frontend-typecheck
-      - frontend-messages
-      - frontend-test
+      - frontend
       - frontend-build
       - openapi-drift
       - barrels-drift

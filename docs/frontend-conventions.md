@@ -287,14 +287,14 @@ And a constraint documented in `docs/` but not on the component is documented wh
 
 ## Tests
 
-Tests are **Vitest**, run by `npm run test` and by the `frontend-test` CI job, each colocated with the module it tests. The extension picks the environment (`vitest.config.ts` defines one project per kind), so a spec never declares it:
+Tests are **Vitest**, run by `npm run test` and by the `frontend` CI job, each colocated with the module it tests. The extension picks the environment (`vitest.config.ts` defines one project per kind), so a spec never declares it:
 
 - **`*.spec.ts` — pure TypeScript, in `node`.** The data derivations, geometry and rules that components call (`matchWinner`, `shotSummary`, the shot-zone predicates). Fastest to write and to run, which is one more reason to split along [When to split](#when-to-split): logic moved out of a component into a `.ts` module is testable without rendering anything.
 - **`*.spec.tsx` — components and hooks, in `jsdom`**, with Testing Library (`@testing-library/react`, `user-event`) and its `jest-dom` matchers, set up in `vitest.setup.ts`. Query the way a user finds things — by role and accessible name — rather than by class or test id, so a test survives a restyle and fails when the accessibility does.
 
 A component that reads copy renders through `renderWithIntl` (`testing/renderWithIntl.tsx`): the real `messages/<locale>` catalogue, the time zone pinned, and a missing message thrown rather than rendered as its key. Assert on the English copy unless the test is about the French one. `@/navigation`'s `Link` renders as-is — its `href` carries the locale prefix (`/en/championships/4`), which is worth asserting.
 
-**Coverage is measured.** Everything under `app/`, `features/`, `lib/` and `shared/` counts: `frontend-test` reports it to Sonar, whose gate asks for 80% on a pull request's new lines. `npx vitest run --coverage` prints the summary locally and writes the HTML report to `coverage/lcov-report/`.
+**Coverage is measured.** Everything under `app/`, `features/`, `lib/` and `shared/` counts: the `frontend` CI job reports it to Sonar, whose gate asks for 80% on a pull request's new lines. `npx vitest run --coverage` prints the summary locally and writes the HTML report to `coverage/lcov-report/`.
 
 `styles/contrast.spec.ts` is the one test over the stylesheet rather than code: it reads every colour token in the three themes and fails CI on any promised text/background pair below its WCAG floor. See the design system section of [`frontend.md`](./frontend.md#design-system).
 
