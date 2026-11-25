@@ -113,30 +113,6 @@ jobs:
         working-directory: .
         run: docker rm -fv "$PG" || true
 
-  # Starts the production image for real, on the host Docker daemon. A cancelled
-  # job can skip the script's own cleanup, and the daemon is long-lived.
-  backend-boot:
-    name: Backend – Boot check
-    runs-on: [self-hosted, wsl]
-    env:
-      # Names the script's containers, network and images.
-      CI_JOB_ID: gh-${{ github.run_id }}-${{ github.run_attempt }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: Start the production image
-        run: sh scripts/ci/backend-boot-check.sh
-
-      - name: Remove leftovers
-        if: cancelled()
-        run: |
-          docker rm -fv "backend-boot-app-$CI_JOB_ID" "backend-boot-db-$CI_JOB_ID" || true
-          docker network rm "backend-boot-$CI_JOB_ID" || true
-          docker image rm "backend-boot:$CI_JOB_ID" "backend-boot-migrate:$CI_JOB_ID" || true
-
   # ============================================================================
   # FRONTEND
   # ============================================================================
@@ -188,24 +164,6 @@ jobs:
           name: frontend-coverage
           path: src/frontend/coverage/lcov.info
           retention-days: 7
-
-  frontend-build:
-    name: Frontend – Build
-    runs-on: [self-hosted, wsl]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: Setup src/frontend
-        uses: ./.github/actions/setup-app
-        with:
-          working-directory: src/frontend
-
-      - name: Build
-        working-directory: src/frontend
-        run: npm run build
 
   # ============================================================================
   # SCHEDULER
@@ -360,6 +318,102 @@ jobs:
           }
 
   # ============================================================================
+  # IMAGES
+  # ============================================================================
+
+  # A run has exactly one of these two jobs: what ships is built and started by `images`
+  # on main, and `images-check` does the same elsewhere without any secret or write
+  # access. Both start the images they built.
+  #
+  # `images-check` uses other frontend URLs on purpose. The daemon's layer cache is
+  # shared and a BuildKit secret is not part of the cache key: with the same build args,
+  # main would reuse a frontend built here, whose source maps never reached Sentry.
+  images-check:
+    name: Images – Check
+    runs-on: [self-hosted, wsl]
+    if: ${{ github.ref != 'refs/heads/main' || github.event_name == 'pull_request' }}
+    env:
+      PREFIX: images-check
+      TAG: gh-${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Build and start the images
+        uses: ./.github/actions/build-images
+        with:
+          prefix: ${{ env.PREFIX }}
+          tag: ${{ env.TAG }}
+          next-public-api-url: https://images-check.invalid/api
+          frontend-url: https://images-check.invalid
+
+      - name: Remove the images
+        if: always()
+        run: docker image rm "$PREFIX"/{backend,backend-migrate,scheduler,frontend}:"$TAG" || true
+
+  # Pushes this commit's tag only, after the images started. `deploy` moves `latest`.
+  #
+  # The environment accepts main only and holds the Sentry token and nothing of the
+  # server's: this job runs the build scripts of every dependency. `deployment: false`
+  # keeps a build out of the deployments list.
+  images:
+    name: Images
+    runs-on: [self-hosted, wsl]
+    if: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' }}
+    permissions:
+      contents: read
+      packages: write
+    environment:
+      name: build
+      deployment: false
+    env:
+      IMAGE: ghcr.io/${{ github.repository }}
+      SHA: ${{ github.sha }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Require the Sentry token
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        run: |
+          if [ -z "$SENTRY_AUTH_TOKEN" ]; then
+            echo "::error::SENTRY_AUTH_TOKEN is not set in the build environment."
+            exit 1
+          fi
+
+      - name: Build and start the images
+        uses: ./.github/actions/build-images
+        with:
+          prefix: ${{ env.IMAGE }}
+          tag: ${{ env.SHA }}
+          next-public-api-url: ${{ vars.NEXT_PUBLIC_API_URL }}
+          frontend-url: ${{ vars.FRONTEND_URL }}
+          sentry-auth-token: ${{ secrets.SENTRY_AUTH_TOKEN }}
+
+      - name: Log in to GHCR
+        env:
+          GHCR_USER: ${{ github.actor }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "DOCKER_CONFIG=$RUNNER_TEMP/docker" >> "$GITHUB_ENV"
+          echo "$GHCR_TOKEN" | DOCKER_CONFIG="$RUNNER_TEMP/docker" docker login ghcr.io -u "$GHCR_USER" --password-stdin
+
+      - name: Push images
+        run: |
+          for n in backend backend-migrate scheduler frontend; do
+            docker push "$IMAGE/$n:$SHA"
+          done
+
+      - name: Remove the images
+        if: always()
+        run: docker image rm "$IMAGE"/{backend,backend-migrate,scheduler,frontend}:"$SHA" || true
+
+  # ============================================================================
   # WORKFLOWS AND SHELL SCRIPTS
   # ============================================================================
 
@@ -416,16 +470,17 @@ jobs:
 
   # Every job that may stop a merge or a deploy. `always()`: without it a failed job
   # would leave this one skipped, and GitHub counts a skipped required check as passed.
-  # Anything but `success` fails, a skip and a cancellation included.
+  # Anything but `success` fails, a skip and a cancellation included, except the skip of
+  # the one images job this event does not run, which must be skipped.
   gate:
     name: gate
     runs-on: [self-hosted, wsl]
     if: always()
     needs:
       - backend
-      - backend-boot
       - frontend
-      - frontend-build
+      - images-check
+      - images
       - contracts
       - infra
       - scheduler
@@ -433,9 +488,12 @@ jobs:
       - name: Fail unless every job succeeded
         env:
           NEEDS: ${{ toJSON(needs) }}
+          SKIPPED: ${{ (github.ref == 'refs/heads/main' && github.event_name != 'pull_request') && 'images-check' || 'images' }}
         run: |
           jq -r 'to_entries[] | "\(.value.result)\t\(.key)"' <<< "$NEEDS"
-          jq -e 'length > 0 and all(.[]; .result == "success")' <<< "$NEEDS" > /dev/null || {
+          jq -e --arg skipped "$SKIPPED" 'has($skipped) and
+            all(to_entries[]; .value.result == if .key == $skipped then "skipped" else "success" end)' \
+            <<< "$NEEDS" > /dev/null || {
             echo "::error::A required job did not succeed."
             exit 1
           }
@@ -470,54 +528,6 @@ jobs:
       IMAGE: ghcr.io/${{ github.repository }}
       SHA: ${{ github.sha }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: Log in to GHCR
-        env:
-          GHCR_USER: ${{ github.actor }}
-          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          echo "DOCKER_CONFIG=$RUNNER_TEMP/docker" >> "$GITHUB_ENV"
-          echo "$GHCR_TOKEN" | DOCKER_CONFIG="$RUNNER_TEMP/docker" docker login ghcr.io -u "$GHCR_USER" --password-stdin
-
-      - name: Build images
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL }}
-          FRONTEND_URL: ${{ vars.FRONTEND_URL }}
-        run: |
-          # An unset variable is an empty string, which builds a frontend that calls localhost.
-          if [ -z "$NEXT_PUBLIC_API_URL" ] || [ -z "$FRONTEND_URL" ]; then
-            echo "::error::NEXT_PUBLIC_API_URL or FRONTEND_URL is not set."
-            exit 1
-          fi
-          docker build -f docker/backend/Dockerfile --target prod \
-            -t "$IMAGE/backend:$SHA" -t "$IMAGE/backend:latest" .
-          docker build -f docker/backend/Dockerfile --target migrate \
-            -t "$IMAGE/backend-migrate:$SHA" -t "$IMAGE/backend-migrate:latest" .
-          docker build -f docker/python-script/Dockerfile \
-            -t "$IMAGE/scheduler:$SHA" -t "$IMAGE/scheduler:latest" .
-          # A BuildKit secret, never a build arg, which would persist in the pushed image.
-          umask 077
-          printf '%s' "$SENTRY_AUTH_TOKEN" > "$RUNNER_TEMP/sentry_auth_token"
-          docker build -f docker/frontend/Dockerfile --target prod \
-            --build-arg "NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL" \
-            --build-arg "FRONTEND_URL=$FRONTEND_URL" \
-            --secret id=sentry_auth_token,src="$RUNNER_TEMP/sentry_auth_token" \
-            -t "$IMAGE/frontend:$SHA" -t "$IMAGE/frontend:latest" .
-
-      - name: Push images
-        run: |
-          # By name, never --all-tags: the long-lived daemon would re-send every SHA.
-          for n in backend backend-migrate scheduler frontend; do
-            docker push "$IMAGE/$n:$SHA"
-            docker push "$IMAGE/$n:latest"
-            docker image rm "$IMAGE/$n:$SHA" || true
-          done
-
       - name: Deploy over SSH
         timeout-minutes: 10
         env:
@@ -549,3 +559,16 @@ jobs:
             ssh -i "$key" -o IdentitiesOnly=yes -o UserKnownHostsFile="$known_hosts" -o StrictHostKeyChecking=yes \
               "$VPS_USER@$VPS_HOST" \
               "bash /opt/beyondthearc/docker/deploy.sh '$SHA' ghcr.io '$DEPLOY_REGISTRY_USER'"
+
+      # Only now: `latest` always names images that were deployed. On the registry,
+      # so nothing is pulled or rebuilt.
+      - name: Move the latest tags
+        env:
+          GHCR_USER: ${{ github.actor }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          export DOCKER_CONFIG="$RUNNER_TEMP/docker"
+          echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+          for n in backend backend-migrate scheduler frontend; do
+            docker buildx imagetools create --tag "$IMAGE/$n:latest" "$IMAGE/$n:$SHA"
+          done

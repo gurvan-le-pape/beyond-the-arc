@@ -6,7 +6,7 @@
 
 ## Overview
 
-CI/CD is GitHub Actions: `.github/workflows/ci.yml`, plus `audit.yml` for the dependency audit and `ghcr-cleanup.yml` for old images. Every job runs on self-hosted runners (see [Runners](#runners)). `ci.yml` runs on every pull request and every push to `main`, and can be started by hand (`workflow_dispatch`). On `main`, once the checks pass, it builds the production images, pushes them to the GitHub Container Registry (GHCR), and deploys them to the VPS over SSH.
+CI/CD is GitHub Actions: `.github/workflows/ci.yml`, plus `audit.yml` for the dependency audit and `ghcr-cleanup.yml` for old images. Every job runs on self-hosted runners (see [Runners](#runners)). `ci.yml` runs on every pull request and every push to `main`, and can be started by hand (`workflow_dispatch`). On `main` it builds the production images, starts them, pushes them to the GitHub Container Registry (GHCR), and deploys them to the VPS over SSH.
 
 There is no separate staging environment. A push to `main` that passes CI goes straight to production.
 
@@ -21,8 +21,8 @@ A ruleset on `main` refuses direct pushes, force-pushes and deletion: every chan
 ```
 backend ─────────┬── sonarcloud   (advisory)
 frontend ────────┤
-backend-boot ────┼── gate ────── deploy (main only)
-frontend-build ──┤
+images-check ────┤                (everything but main)
+images ──────────┼── gate ────── deploy (main only)
 contracts ───────┤
 infra ───────────┤
 scheduler ───────┘
@@ -52,12 +52,6 @@ One `npm ci`, then every backend check. A step that fails does not stop the next
 ### frontend
 
 Built like `backend`: one `npm ci`, then `npm run lint`, `npm run format:check`, `npm run typecheck`, `npm run check:messages` (the `en`/`fr` message catalogues agree) and `npm run test -- --coverage` (Vitest), each run even if an earlier one failed. The `lcov.info` is kept as an artifact for a week and consumed by `sonarcloud`.
-
-### frontend-build
-
-`npm run build`, in a job of its own so that the checks above do not wait for it.
-
-The build runs without `NEXT_PUBLIC_API_URL`, `FRONTEND_URL` and `SENTRY_AUTH_TOKEN` — those are only injected in `deploy`'s image build — and without a backend, which is why every page that fetches server-side is `force-dynamic` (see [`frontend.md`](./frontend.md)).
 
 ### scheduler
 
@@ -117,13 +111,18 @@ npx prisma migrate deploy && npm run test:integration
 The harness refuses a database whose name does not end in `_test`, so a stray `DATABASE_URL` cannot reach the dev or production data.
 
 
-### backend-boot
+### images-check, images
 
-Builds the `prod` and `migrate` targets of `docker/backend/Dockerfile` on the host Docker daemon, migrates a throwaway `postgres:18.4`, starts the production image and requests `/api/health/live` and `/api/leagues` (`scripts/ci/backend-boot-check.sh`). A container that exits or doesn't answer within 60 s fails the job, which prints its logs.
+Both use the composite action `.github/actions/build-images`: build the four production images on the host Docker daemon, whose layer cache outlives the job, then start them with `scripts/ci/boot-check.sh`. The script migrates a throwaway `postgres:18.4`, imports the scheduler's entry point, starts the backend and requests `/api/health/live` and `/api/leagues`, then starts the frontend against it and requests two pages. A container that exits or doesn't answer within 60 s fails the job, which prints its logs. To run it locally, from the repo root: `scripts/ci/boot-check.sh`.
 
-This is the only check that runs what ships. Every other job has dev dependencies installed and none starts the app, so they miss a crash at startup, a package missing from the production dependencies and a file the `prod` stage strips by hand.
+They are the only jobs that run what ships. Every other job has dev dependencies installed and none starts an application, so they miss a crash at startup, a package missing from the production dependencies and a file the `prod` stage strips by hand.
 
-It uses `/api/health/live` rather than `/api/health` because the full check includes a disk threshold, which would make the job depend on free space on the runner. To run it locally, from the repo root: `sh scripts/ci/backend-boot-check.sh`.
+A run has exactly one of the two:
+
+- **`images-check`**, everywhere but `main`, has no secret and no write access, and removes its images. It builds the frontend with placeholder URLs. A BuildKit secret is not part of the cache key, so with the same build args `main` would reuse a frontend built by a pull request, whose source maps never reached Sentry.
+- **`images`**, on `main`, runs in the `build` environment, which accepts `main` only, and fails if `SENTRY_AUTH_TOKEN` is not set there. It pushes each image as `:<commit sha>`, once they all started. `deployment: false` keeps it out of the deployments list; the environment's branch restriction still applies.
+
+The images are `backend` (`prod` target of `docker/backend/Dockerfile`), `backend-migrate` (`migrate` target of the same file, sharing its cached layers), `scheduler` (`docker/python-script/Dockerfile`) and `frontend` (`prod` target, with `NEXT_PUBLIC_API_URL` and `FRONTEND_URL` as build args and `SENTRY_AUTH_TOKEN` as a BuildKit secret, never a build arg, which would persist in the pushed image config).
 
 ### Measurements
 
@@ -149,16 +148,16 @@ Lint output no longer shows baselined violations. `eslint-suppressions.json` is 
 
 ### gate
 
-Succeeds only if every job in its `needs:` ended in `success`; a failure, a cancellation or a skip fails it. It runs with `if: always()`: without it, a failed job would leave `gate` skipped, and GitHub counts a skipped required check as passed. A job absent from its `needs:` blocks nothing.
+Succeeds only if every job in its `needs:` ended in `success`; a failure, a cancellation or a skip fails it. The one exception is the images job the event does not run, which must be skipped: `images` outside `main`, `images-check` on it. It runs with `if: always()`: without it, a failed job would leave `gate` skipped, and GitHub counts a skipped required check as passed. A job absent from its `needs:` blocks nothing.
 
 ### deploy
 
-`main` only, after `gate` succeeds, and only while the repository variable `DEPLOY_ENABLED` is `true`. It deploys to the GitHub environment `production`, which accepts `main` only, so each run is recorded as a deployment, and it holds the `production` concurrency group: one deploy at a time. The host Docker socket means builds reuse a long-lived daemon's layer cache — no buildx builder, no cache export.
+`main` only, after `gate` succeeds, and only while the repository variable `DEPLOY_ENABLED` is `true`. It deploys to the GitHub environment `production`, which accepts `main` only, so each run is recorded as a deployment, and it holds the `production` concurrency group: one deploy at a time.
 
-1. **Log in** to GHCR with the job's `GITHUB_TOKEN` (`packages: write`).
-2. **Build four images**, each tagged `:<commit sha>` and `:latest` under `ghcr.io/gurvan-le-pape/beyond-the-arc`: `backend` (`prod` target of `docker/backend/Dockerfile`), `backend-migrate` (`migrate` target of the same file, sharing its cached layers), `scheduler` (`docker/python-script/Dockerfile`) and `frontend` (`prod` target, with `NEXT_PUBLIC_API_URL` and `FRONTEND_URL` as build args and `SENTRY_AUTH_TOKEN` as a BuildKit secret — never a build arg, which would persist in the pushed image config).
-3. **Push** this commit's two tags by name, never `--all-tags` (the long-lived daemon would re-send every SHA it has ever built), then drop the local SHA tag.
-4. **Deploy over SSH** — plain `ssh`, no third-party action. The job strips CRLF from `VPS_SSH_KEY` and restores a missing final newline, because OpenSSH rejects both with the same unhelpful `error in libcrypto`, and fails early if the key is still unusable. The host key is pinned from `VPS_HOST_KEY`, never learned with `ssh-keyscan`. The job then runs `docker/deploy.sh` in the server's clone, with the commit SHA, registry host and registry user as arguments and the registry token as the first line of stdin — never an argument, which would show in `ps` on the server.
+The images come from `images`: this job builds nothing.
+
+1. **Deploy over SSH** — plain `ssh`, no third-party action. The job strips CRLF from `VPS_SSH_KEY` and restores a missing final newline, because OpenSSH rejects both with the same unhelpful `error in libcrypto`, and fails early if the key is still unusable. The host key is pinned from `VPS_HOST_KEY`, never learned with `ssh-keyscan`. The job then runs `docker/deploy.sh` in the server's clone, with the commit SHA, registry host and registry user as arguments and the registry token as the first line of stdin — never an argument, which would show in `ps` on the server.
+2. **Move `latest`** to this commit's images, on the registry, with the job's `GITHUB_TOKEN`. A deploy that failed leaves it where it was.
 
 The site answers 502 for under a minute while the containers are replaced: `frontend` waits for `backend` to be healthy before it starts.
 
@@ -231,13 +230,15 @@ Those of the `production` environment (repository settings → Environments → 
 | `VPS_HOST_KEY` | Pinned host key material only (`ssh-ed25519 AAAA…`), not a `known_hosts` line |
 | `DEPLOY_REGISTRY_USER` | GitHub username the VPS logs in to GHCR with |
 | `DEPLOY_REGISTRY_TOKEN` | Classic token, `read:packages` only |
-| `SENTRY_AUTH_TOKEN` | Source map upload, passed as a BuildKit secret |
 
-| Environment variable | Purpose |
+Those of the `build` environment, with the same restrictions, reach only the `images` job, which holds no server credential.
+
+| `build` secret or variable | Purpose |
 | --- | --- |
-| `NEXT_PUBLIC_API_URL`, `FRONTEND_URL` | Frontend build args; public, since the site serves them. The job fails if either is empty |
+| `SENTRY_AUTH_TOKEN` (secret) | Source map upload, passed as a BuildKit secret |
+| `NEXT_PUBLIC_API_URL`, `FRONTEND_URL` (variables) | Frontend build args; public, since the site serves them. The job fails if either is empty |
 
-The rest are the repository's (Secrets and variables → Actions). `SONAR_TOKEN` is among them because pull requests use it. A secret of the same name on the repository is readable from any of its branches: the environment's take precedence in `deploy` but do not hide it.
+The rest are the repository's (Secrets and variables → Actions). `SONAR_TOKEN` is among them because pull requests use it. A secret of the same name on the repository is readable from any of its branches: the environment's take precedence in its job but do not hide it.
 
 | Repository secret | Purpose |
 | --- | --- |
@@ -253,17 +254,17 @@ The rest are the repository's (Secrets and variables → Actions). `SONAR_TOKEN`
 
 ## Image versioning and rollback
 
-Every deploy pushes each image with two tags: `latest` and the git commit SHA. `docker-compose.prod.yml` references `${IMAGE_TAG:-latest}`, and the deploy script persists `IMAGE_TAG=<git sha>` into the VPS `.env` — so production always runs a pinned, recorded image, and a later manual `compose up` cannot silently jump to a newer `latest`.
+`images` pushes each image with the git commit SHA as its tag, and a successful deploy moves `latest` to it. `docker-compose.prod.yml` references `${IMAGE_TAG:-latest}`, and the deploy script persists `IMAGE_TAG=<git sha>` into the VPS `.env` — so production always runs a pinned, recorded image, and a later manual `compose up` cannot silently jump to a newer `latest`.
 
 **Rollback** — GitHub → **Actions → CI**, open an earlier `main` run that deployed and re-run its **Deploy to VPS** job, which GitHub allows for 30 days. Because the script resets the server's clone to the job's SHA, that commit's **images, Compose files and configs — the Nginx site included — come back together**; the conditional restarts compare against the commit being left, so a config the rollback reverts is reloaded. Returning to the latest is the same on the newest run. The next merge deploys `main` again.
 
-The job rebuilds that commit's four images before deploying them. When minutes matter, the same rollback runs directly on the VPS, for a commit whose images are in GHCR; the stored login is reused:
+The job deploys that commit's images from GHCR and rebuilds nothing, except for a run from before the `images` job existed, which rebuilds them. The same rollback runs directly on the VPS; the stored login is reused:
 
 ```bash
 bash /opt/beyondthearc/docker/deploy.sh <previous-sha> ghcr.io gurvan-le-pape
 ```
 
-The images `docker/deploy.sh` needs are in GHCR only for commits deployed since 2026-11-24, and only for the newest 30 commits of `main` that have images. `ghcr-cleanup.yml` deletes the rest on Sundays, at most 150 versions per package and run, while `GHCR_CLEANUP_ENABLED` is `true`. Re-running the deploy job needs no image in GHCR, since it rebuilds them.
+Both limits apply to a rollback: **30 days**, for re-running the job, and **30 commits**, for the images. GHCR has them only for commits since 2026-11-24, and only for the newest 30 commits of `main` that have images. `ghcr-cleanup.yml` deletes the rest on Sundays, at most 150 versions per package and run, while `GHCR_CLEANUP_ENABLED` is `true`.
 
 One thing a rollback does not undo:
 
@@ -292,6 +293,6 @@ Four containers, `wsl-1` to `wsl-4`, on the developer's machine, selected with `
 
 **Health check, not automatic rollback.** The deploy script fails the job if the new containers don't come up healthy (backend readiness endpoint polled for 60s, frontend page render checked) and says where to roll back from, but someone has to press the button. Rolling back automatically on a failed check would be the next step if that proves too slow in practice.
 
-**Frontend build in CI does not use production build args.** The `frontend-build` job builds without `NEXT_PUBLIC_API_URL` and related vars. If a build failure is caused by a missing env var rather than a code error, it would only surface in the `deploy` job rather than the earlier `frontend-build` check.
+**A pull request does not build the frontend with production build args.** `images-check` uses placeholder URLs, so a failure caused by the real ones surfaces in `images`, on `main`, before anything is deployed.
 
 **A `high` advisory stops nothing.** `npm-audit` fails only on `critical`, and it cannot gate `deploy` at all. As of 2026-11-03 that leaves 26 high-severity advisories standing (root 0, backend 14, frontend 12), most of them in transitive devDependencies. They are printed in the log of every run and nothing forces them to be addressed — the accepted cost of not blocking unrelated deploys on them.

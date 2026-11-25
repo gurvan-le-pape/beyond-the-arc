@@ -33,9 +33,11 @@ COPY barrelsby.json /barrelsby.json
 # SENTRY_AUTH_TOKEN is exposed to the build command only, via a BuildKit secret
 # mount. It must never be an ARG/ENV: those persist in the image config pushed
 # to the registry, where anyone who can pull the image can read them.
-# An absent secret (local builds) just skips the Sentry source map upload.
+# An absent secret (local builds) just skips the Sentry source map upload. CI=true
+# makes the Sentry plugin log: it is silent otherwise, even when an upload fails,
+# and a failed upload does not fail the build.
 RUN --mount=type=secret,id=sentry_auth_token \
-    SENTRY_AUTH_TOKEN="$(cat /run/secrets/sentry_auth_token 2>/dev/null || true)" \
+    CI=true SENTRY_AUTH_TOKEN="$(cat /run/secrets/sentry_auth_token 2>/dev/null || true)" \
     npm run build
 
 # Runtime image: Next standalone output only — the traced subset of
