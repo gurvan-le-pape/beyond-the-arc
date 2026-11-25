@@ -16,7 +16,7 @@ A ruleset on `main` refuses direct pushes, force-pushes and deletion: every chan
 
 ## Pipeline structure
 
-`ci.yml` has nine jobs:
+`ci.yml` has ten jobs:
 
 ```
 backend ─────────┬── sonarcloud   (advisory)
@@ -24,6 +24,7 @@ frontend ────────┤
 backend-boot ────┼── gate ────── deploy (main only)
 frontend-build ──┤
 contracts ───────┤
+infra ───────────┤
 scheduler ───────┘
 ```
 
@@ -85,6 +86,10 @@ Pull requests only. Lints the `migration.sql` files the pull request adds for st
 #### Dependency rules
 
 Runs `npm run quality:deps` from the repo root: dependency-cruiser (`.dependency-cruiser.cjs`) over each application, failing on a cycle, on `shared/utils` importing `shared/components`, or on `common` importing `modules`. Type-only imports count. Needs only the root install.
+
+### infra
+
+`scripts/ci/lint-infra.sh`, which runs locally too, from the repo root: actionlint and zizmor over the workflows, shellcheck over every `.sh` file. The three images are pinned by digest and run without a network. zizmor blocks on medium and above; a finding accepted on purpose gets a `# zizmor: ignore[rule]` comment saying why. Every checkout sets `persist-credentials: false`, which zizmor requires, so the job's token is not left in `.git/config`.
 
 ### npm-audit
 
