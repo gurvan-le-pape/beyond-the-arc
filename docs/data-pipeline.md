@@ -94,6 +94,10 @@ The database schema and modelling decisions are covered in → [`data-model.md`]
 
 After startup, it polls the database every 60 seconds for matches whose `starts_at` has passed and dispatches them for generation via a `ProcessPoolExecutor` (8 workers by default) — separate processes, not threads, since match simulation is CPU-bound and would otherwise be serialised by the GIL.
 
+### Stopping
+
+On `SIGTERM` the scheduler finishes the poll in progress, lets the workers finish the matches already handed to them (at most 17: 8 running and 9 queued) and exits `0`. The other claimed matches stay `generating` until the next start resets them. During startup it exits at once: PostgreSQL rolls back the league being set up, and the next start sets it up again. Compose allows 30 s (`stop_grace_period`) before it kills the container; on two cores the stop takes about two seconds between polls, and 19 s during a poll that claims 97,000 matches.
+
 ### Match status lifecycle
 
 ```
