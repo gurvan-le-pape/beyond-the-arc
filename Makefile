@@ -95,7 +95,7 @@ barrels:
 # `prisma migrate deploy` does not checksum applied migrations — so the
 # refreshed data reaches a *fresh* database and nothing else. Landing a refresh
 # therefore takes two things: `[refresh-static-data]` in the PR title (the
-# migration-immutability CI job blocks the edit otherwise) and the catch-up SQL
+# contracts CI job blocks the edit otherwise) and the catch-up SQL
 # in the PR body, to apply the same change to production by hand.
 refresh-static-data: venv/.stamp
 	@echo "This will take ~1h20 (scraping ~4480 pages from FFBB at 1 req/s)."

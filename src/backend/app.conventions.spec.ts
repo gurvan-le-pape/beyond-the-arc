@@ -494,7 +494,7 @@ describe("API conventions", () => {
   // CLI plugin is configured in `nest-cli.json`, so it runs for `nest build`
   // and **not** under ts-jest — a document built here is missing whatever the
   // plugin infers. The committed file is the artefact that ships, the
-  // `openapi-drift` CI job already fails when it is stale, and checking it
+  // `contracts` CI job already fails when it is stale, and checking it
   // means these conventions are asserted against what consumers actually get.
   // ---------------------------------------------------------------------
 
@@ -536,7 +536,7 @@ describe("API conventions", () => {
 
     // Only one direction is this test's business. The reverse (declared here,
     // absent from the committed file) means the snapshot is stale, which is
-    // `openapi-drift`'s job and would be a confusing failure to raise here.
+    // the `contracts` CI job's and would be a confusing failure to raise here.
     const inferredOnly = [...shipped].filter((p) => !declared.has(p)).sort();
 
     expect(inferredOnly).toEqual([]);
@@ -545,7 +545,7 @@ describe("API conventions", () => {
   it("every documented path carries the global /api prefix, except /metrics", () => {
     // The guard `api-contract 1` did not have. That row shipped a one-line
     // fix — the generator was missing `setGlobalPrefix` — but nothing would
-    // notice it going missing again, because `openapi-drift` regenerates the
+    // notice it going missing again, because the `contracts` CI job regenerates the
     // document and diffs it against the committed one: both sides come from
     // the generator, so they agree with each other while disagreeing with the
     // deployed app. Production was the only witness.

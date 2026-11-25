@@ -12,7 +12,7 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
  *
  * **A second copy held together by a `// Keep in sync with main.ts` comment is
  * not enough here, because nothing can see the disagreement.**
- * `openapi-drift` regenerates the document and diffs it against the committed
+ * The `contracts` CI job regenerates the document and diffs it against the committed
  * one — both sides come from the script, so they agree with each other while
  * disagreeing with production. The only witness is the deployed app. A second
  * copy that no test compares is worse than no copy.

@@ -3,7 +3,7 @@
 # Prettier resolves --ignore-path relative to cwd and never searches upward, so
 # src/backend/.prettierignore and src/frontend/.prettierignore do not apply to a
 # run started here. Without this file, `prettier --write .` at the repo root
-# rewrites 59 files — including both artefacts the openapi-drift CI job diffs,
+# rewrites 59 files — including both artefacts the contracts CI job diffs,
 # which turns a formatting command into a red pipeline.
 #
 # The root has no `format` script and Prettier is not a root workflow; the
@@ -17,7 +17,7 @@ node_modules/
 dist/
 coverage/
 
-# Generated contract artefacts — reformatting either one fails openapi-drift,
+# Generated contract artefacts — reformatting either one fails the contracts CI job,
 # and both are overwritten by their generators on every regeneration.
 docs/openapi.json
 src/frontend/shared/types/api.generated.ts
