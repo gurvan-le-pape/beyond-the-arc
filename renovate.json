@@ -79,11 +79,11 @@
     },
     {
       "description": "Node and Python move by hand",
-      "matchPackageNames": ["node", "@types/node"],
+      "matchDepNames": ["node", "@types/node"],
       "allowedVersions": "<25"
     },
     {
-      "matchPackageNames": ["python"],
+      "matchDepNames": ["python"],
       "allowedVersions": "<3.15"
     }
   ]
