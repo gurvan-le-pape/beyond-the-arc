@@ -6,7 +6,7 @@
 
 ## Overview
 
-CI/CD is GitHub Actions: `.github/workflows/ci.yml`, plus `audit.yml` for the dependency audit and `ghcr-cleanup.yml` for old images. Every job runs on self-hosted runners (see [Runners](#runners)). `ci.yml` runs on every pull request and every push to `main`, and can be started by hand (`workflow_dispatch`). On `main` it builds the production images, starts them, pushes them to the GitHub Container Registry (GHCR), and deploys them to the VPS over SSH.
+CI/CD is GitHub Actions: `.github/workflows/ci.yml`, plus `audit.yml` for the dependency audit, `image-scan.yml` for the deployed images and `ghcr-cleanup.yml` for old ones. Every job runs on self-hosted runners (see [Runners](#runners)). `ci.yml` runs on every pull request and every push to `main`, and can be started by hand (`workflow_dispatch`). On `main` it builds the production images, starts them, pushes them to the GitHub Container Registry (GHCR), and deploys them to the VPS over SSH.
 
 There is no separate staging environment. A push to `main` that passes CI goes straight to production.
 
@@ -113,7 +113,7 @@ The harness refuses a database whose name does not end in `_test`, so a stray `D
 
 ### images-check, images
 
-Both use the composite action `.github/actions/build-images`: build the four production images on the host Docker daemon, whose layer cache outlives the job, then start them with `scripts/ci/boot-check.sh`. The script migrates a throwaway `postgres:18.4`, imports the scheduler's entry point, starts the backend and requests `/api/health/live` and `/api/leagues`, then starts the frontend against it and requests two pages. A container that exits or doesn't answer within 60 s fails the job, which prints its logs. To run it locally, from the repo root: `scripts/ci/boot-check.sh`.
+Both use the composite action `.github/actions/build-images`: build the four production images on the host Docker daemon, whose layer cache outlives the job, scan them with `scripts/ci/trivy-scan.sh` (see [Image scan](#image-scan)), then start them with `scripts/ci/boot-check.sh`. That script migrates a throwaway `postgres:18.4`, imports the scheduler's entry point, starts the backend and requests `/api/health/live` and `/api/leagues`, then starts the frontend against it and requests two pages. A container that exits or doesn't answer within 60 s fails the job, which prints its logs. To run it locally, from the repo root: `scripts/ci/boot-check.sh`.
 
 They are the only jobs that run what ships. Every other job has dev dependencies installed and none starts an application, so they miss a crash at startup, a package missing from the production dependencies and a file the `prod` stage strips by hand.
 
@@ -127,6 +127,14 @@ The images are `backend` (`prod` target of `docker/backend/Dockerfile`), `backen
 ### Measurements
 
 Read in the job log. The quality step of `contracts` runs `npm run quality` from the repo root: knip (unused files, exports, dependencies; `knip.json` in each application) and jscpd (`.jscpd.json`). The ruff step of `scheduler` runs ruff's pyflakes and complexity checks over the scheduler (`src/backend/db/python/ruff.toml`). Findings fail neither. The one exception is duplication above jscpd's 3% threshold, which `continue-on-error` keeps from failing the job, as it does a tool that crashes. To make one of them blocking, remove `--no-exit-code` (knip) or `--exit-zero` (ruff) and the step's `continue-on-error`.
+
+### Image scan
+
+`scripts/ci/trivy-scan.sh` scans an image's OS packages and its npm or Python ones with Trivy, pinned by digest, and fails on a **critical vulnerability that has a fix**. High ones, and critical ones without a fix, are counted in the log and the run summary. It runs in `images-check` and `images`, so a vulnerable image is never pushed, and on Mondays at 07:30 UTC in `image-scan.yml`, over the `latest` images, which are the deployed ones. That workflow also scans the third-party images of `docker/docker-compose.yml`, report only, since their fix is a version bump.
+
+`npm audit` reads the lockfiles, development dependencies included; this reads what ships, the base image included.
+
+A vulnerability published this morning can block an unrelated deploy. To accept one for a time, add it to `.trivyignore.yaml` with a reason and an `expired_at` date, after which it blocks again. If the vulnerability database cannot be updated, the scan uses the runner's last copy and says so; with no copy, it fails.
 
 ### The lint baseline
 

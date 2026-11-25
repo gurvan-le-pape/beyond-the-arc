@@ -1,0 +1,67 @@
+name: Image scan
+
+# A vulnerability published after a deploy needs no push to become true. `latest` is what
+# runs in production: the deploy moves it once it succeeded. Pull requests scan the same
+# images, to test this file.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/image-scan.yml
+      - scripts/ci/trivy-scan.sh
+      - .trivyignore.yaml
+  schedule:
+    - cron: "30 7 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  scan:
+    name: Deployed images
+    runs-on: [self-hosted, wsl]
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      packages: read
+    env:
+      IMAGE: ghcr.io/${{ github.repository }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Pull the images
+        id: pull
+        env:
+          GHCR_USER: ${{ github.actor }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          export DOCKER_CONFIG="$RUNNER_TEMP/docker"
+          echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+          for n in backend backend-migrate scheduler frontend; do
+            docker pull --quiet "$IMAGE/$n:latest"
+          done
+
+      - name: Scan this project's images
+        run: scripts/ci/trivy-scan.sh "$IMAGE"/{backend,backend-migrate,scheduler,frontend}:latest
+
+      # The others Compose runs, with the tags it names. Report only: their fix is a
+      # version bump, when one exists.
+      - name: Scan the third-party images
+        if: ${{ !cancelled() && steps.pull.outcome == 'success' }}
+        env:
+          REPORT_ONLY: "true"
+        run: |
+          mapfile -t images < <(sed -nE 's/^ +image: ([a-z][^ $]*)$/\1/p' docker/docker-compose.yml | sort -u)
+          if [ "${#images[@]}" -eq 0 ]; then
+            echo "::error::No image found in docker/docker-compose.yml."
+            exit 1
+          fi
+          for image in "${images[@]}"; do docker pull --quiet "$image"; done
+          scripts/ci/trivy-scan.sh "${images[@]}"

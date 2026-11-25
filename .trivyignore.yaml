@@ -1,0 +1,7 @@
+# Vulnerabilities accepted for a time, read by scripts/ci/trivy-scan.sh. Each entry says
+# why and expires, after which the scan fails again:
+#
+#   - id: CVE-2026-00000
+#     expired_at: 2026-12-31
+#     statement: Not reachable, the fix is not released for our base image.
+vulnerabilities: []
