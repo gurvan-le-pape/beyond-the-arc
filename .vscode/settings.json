@@ -14,7 +14,7 @@
   "editor.formatOnSave": true,
   "sonarlint.connectedMode.project": {
     "connectionId": "beyondthearc",
-    "projectKey": "gurvan-le-pape_beyond-the-arc2"
+    "projectKey": "gurvan-le-pape_beyond-the-arc"
   },
   "typescript.tsdk": "node_modules/typescript/lib"
 }
