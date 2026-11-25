@@ -24,6 +24,34 @@ MIN_SCORE = 0.75
 MAX_DISTANCE_KM = 15
 EARTH_RADIUS_KM = 6371
 
+# Clubs whose gym is far from the commune of their address, but is theirs: the
+# address is an officer's, or names another commune of the club's area.
+TRUSTED_GYMS = {
+    "ARA0063034",  # AL LA GLACIERE, Clermont-Ferrand
+    "ARA0069152",  # BASKET ATHLETIQUE CLUB SATOLAS
+    "ARA0073098",  # AIX MAURIENNE, Aix-les-Bains
+    "GES0054022",  # BASKET CLUB DIEUZE
+    "GES0067051",  # STRASBOURG ELECTRICITE A.S.
+    "GES0067103",  # SAINTE CROIX AUX MINES C.S.N.
+    "GES0067147",  # BITCHE (PAYS DE)
+    "HDF0059104",  # LINSELLES B
+    "HDF0080020",  # CA PERONNE BASKET BALL
+    "NAQ0033158",  # MARSAS BASKET CLUB (MBC)
+    "NOR0076066",  # GCO BIHOREL
+    "NOR0076073",  # QUINCAMPOIX BASKET
+    "PDL0049111",  # SAINT MATHURIN SAINT REMY, Brissac Loire Aubance
+    "SUD0006036",  # C.S.L GENDARMERIE ANTIBES
+}
+
+# BAN does not cover Monaco, and answers Nouméa for its postcode.
+STADE_LOUIS_II = ("43.727600", "7.415600")
+MONACO = ("43.738400", "7.424600")
+FIXED_POSITIONS = {
+    "SUD0006006": STADE_LOUIS_II,  # AS MONACO BASKET, Salle Gaston-Médecin
+    "SUD0006041": MONACO,  # ENTENTE MBA - ASM
+    "SUD0006054": MONACO,  # MONACO BASKET ASSOCIATION
+}
+
 POSTCODE_RE = re.compile(r"\b(\d{5})\b(?!.*\b\d{5}\b)")
 
 
@@ -77,6 +105,9 @@ def club_position(club, centre_row, gym_rows, dept_code):
     centre_row is BAN's row for the commune of the club's address, if any;
     dept_code the department of the club's committee.
     """
+    if club["code"] in FIXED_POSITIONS:
+        return FIXED_POSITIONS[club["code"]], "fixed by hand"
+
     centre = coordinates(centre_row)
     address = (club.get("gym_address") or "").strip()
     if not address:
@@ -92,6 +123,8 @@ def club_position(club, centre_row, gym_rows, dept_code):
     ):
         return centre, "gym not found precisely"
 
+    if club["code"] in TRUSTED_GYMS:
+        return gym, "trusted gym"
     if centre is None:
         if row["result_citycode"].startswith(dept_code):
             return gym, "gym, no commune known"
