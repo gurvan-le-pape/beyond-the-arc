@@ -1,4 +1,4 @@
-// Module-boundary rules, run once per application by the `dependency-rules` job
+// Module-boundary rules, run once per application by the `contracts` job
 // in .github/workflows/ci.yml, which `deploy` waits on. Type-only imports count, so a cycle
 // that only exists at the type level fails too.
 module.exports = {

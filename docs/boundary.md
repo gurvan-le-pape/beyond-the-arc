@@ -8,7 +8,7 @@
 
 The three parts of the system are separate programs. The backend and the scheduler never import each other, and the frontend talks to the backend only over HTTP. Most changes stay inside one of them and can be reviewed there.
 
-One coupling is mechanically checked: **the response shapes.** Backend DTOs produce `docs/openapi.json`, the frontend generates `shared/types/api.generated.ts` from it, and the `openapi-drift` CI job fails when either is stale. A renamed or retyped field breaks the frontend typecheck. See [`api.md`](./api.md).
+One coupling is mechanically checked: **the response shapes.** Backend DTOs produce `docs/openapi.json`, the frontend generates `shared/types/api.generated.ts` from it, and the `contracts` CI job fails when either is stale. A renamed or retyped field breaks the frontend typecheck. See [`api.md`](./api.md).
 
 Everything below is a coupling that **no type and no check carries**. A change on one side compiles, passes its own tests, and breaks the other side silently. When a change touches anything in this list, review the other side too.
 

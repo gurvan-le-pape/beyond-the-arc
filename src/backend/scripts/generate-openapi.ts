@@ -26,7 +26,7 @@ async function generate(): Promise<void> {
   // them. The prefix is part of the contract, not a deployment detail: without
   // it every `paths` key here is missing the `/api` the deployed API serves,
   // and the document describes 34 routes that do not exist. That was
-  // `api-contract 1`, and the reason it went unnoticed is that `openapi-drift`
+  // `api-contract 1`, and the reason it went unnoticed is that the `contracts` CI job
   // cannot see it — both sides of its diff come from this script, so they
   // agree with each other while disagreeing with production.
   applyApiPrefix(app);

@@ -16,23 +16,18 @@ A ruleset on `main` refuses direct pushes, force-pushes and deletion: every chan
 
 ## Pipeline structure
 
-`ci.yml` has fourteen jobs:
+`ci.yml` has nine jobs:
 
 ```
-backend ───────────────┬── sonarcloud     (advisory)
-frontend ──────────────┤
-backend-boot ──────────┤
-frontend-build ────────┼── gate ────── deploy (main only)
-scheduler ─────────────┤
-openapi-drift ─────────┤
-barrels-drift ─────────┤
-dependency-rules ──────┤
-migration-immutability ┘
-squawk                   (pull requests only, advisory)
-quality-report           (advisory)
+backend ─────────┬── sonarcloud   (advisory)
+frontend ────────┤
+backend-boot ────┼── gate ────── deploy (main only)
+frontend-build ──┤
+contracts ───────┤
+scheduler ───────┘
 ```
 
-Jobs run in parallel, as many at once as there are runners. `sonarcloud` needs `backend` and `frontend` for their coverage reports. `gate` lists in `needs:` every job that can stop a merge or a deploy, and `deploy` needs `gate` alone, so the advisory jobs, which are `continue-on-error`, cannot hold a release.
+Jobs run in parallel, as many at once as there are runners. `sonarcloud` needs `backend` and `frontend` for their coverage reports. `gate` lists in `needs:` every job that can stop a merge or a deploy, and `deploy` needs `gate` alone, so `sonarcloud`, which is advisory, cannot hold a release. Advisory steps inside a job (squawk, knip and jscpd, ruff) are `continue-on-error`.
 
 Actions are pinned by commit SHA, with the version in a comment. Nothing updates them automatically: Dependabot runs on `ubuntu-latest`, which this repository does not use (see [Runners](#runners)), so it has no configuration here. Bump the SHA and the comment by hand. `npm-audit` still reports vulnerable npm packages.
 
@@ -67,17 +62,29 @@ The build runs without `NEXT_PUBLIC_API_URL`, `FRONTEND_URL` and `SENTRY_AUTH_TO
 
 The scheduler's pytest suite, on Python 3.14 (the version of the scheduler image's base) with `requirements-dev.txt`. Its ruff step is a [measurement](#measurements).
 
-### openapi-drift
+### contracts
+
+The checks that span the applications, in one job with all three installs and the full git history. As in `backend`, a step that fails does not stop the next ones.
+
+#### OpenAPI drift
 
 Builds the backend, regenerates `docs/openapi.json`, regenerates the frontend's `shared/types/api.generated.ts` from it, and fails if either differs from the commit. A DTO change cannot reach production without its regenerated contract.
 
-### barrels-drift
+#### Barrels drift
 
 `npm run barrels` regenerates every barrel and the job fails on any difference, after a `git add -A` so a barrel that should exist but was never committed counts as drift.
 
-### migration-immutability
+#### Migration immutability
 
-On pull requests, fails when the pull request modifies or deletes a file under `src/backend/prisma/migrations/` (additions are unrestricted), because `prisma migrate deploy` does not checksum applied migrations and would silently ignore the edit everywhere it already ran. A title containing `[refresh-static-data]` lets the sanctioned `make refresh-static-data` rewrite through, with a warning that the description must carry the catch-up SQL — see [`data-pipeline.md`](./data-pipeline.md). On `main` its step is skipped and the job succeeds, because `gate` does not accept a skipped job.
+On pull requests, fails when the pull request modifies or deletes a file under `src/backend/prisma/migrations/` (additions are unrestricted), because `prisma migrate deploy` does not checksum applied migrations and would silently ignore the edit everywhere it already ran. A title containing `[refresh-static-data]` lets the sanctioned `make refresh-static-data` rewrite through, with a warning that the description must carry the catch-up SQL — see [`data-pipeline.md`](./data-pipeline.md). Elsewhere the step is skipped, not the job, because `gate` does not accept a skipped job.
+
+#### Squawk
+
+Pull requests only. Lints the `migration.sql` files the pull request adds for statements that lock or break a running database (a constraint without `NOT VALID`, a dropped column), using `.squawk.toml`. Already-applied migrations are not linted: they cannot change. Advisory, because a finding can be the right trade on a small table.
+
+#### Dependency rules
+
+Runs `npm run quality:deps` from the repo root: dependency-cruiser (`.dependency-cruiser.cjs`) over each application, failing on a cycle, on `shared/utils` importing `shared/components`, or on `common` importing `modules`. Type-only imports count. Needs only the root install.
 
 ### npm-audit
 
@@ -86,10 +93,6 @@ The one job of `audit.yml`. Runs `npm audit --json` against all three lockfiles 
 It cannot gate `deploy`, which is in the other workflow. A blocking audit would let a fresh advisory in a transitive devDependency stop unrelated work; a decorative one gets ignored (`sonarcloud`, also non-gating, once sat red for thirty days). Failing on `critical` only is the middle.
 
 It runs on pull requests and on Mondays at 07:00 UTC, because a newly published advisory needs no push to become true. It is a separate workflow so that the schedule does not start every job of `ci.yml`.
-
-### squawk
-
-Pull requests only. Lints the `migration.sql` files the pull request adds for statements that lock or break a running database (a constraint without `NOT VALID`, a dropped column), using `.squawk.toml`. Already-applied migrations are not linted: they cannot change. Advisory, because a finding can be the right trade on a small table.
 
 ### Backend integration tests
 
@@ -117,13 +120,9 @@ This is the only check that runs what ships. Every other job has dev dependencie
 
 It uses `/api/health/live` rather than `/api/health` because the full check includes a disk threshold, which would make the job depend on free space on the runner. To run it locally, from the repo root: `sh scripts/ci/backend-boot-check.sh`.
 
-### dependency-rules
-
-Runs `npm run quality:deps` from the repo root: dependency-cruiser (`.dependency-cruiser.cjs`) over each application, failing on a cycle, on `shared/utils` importing `shared/components`, or on `common` importing `modules`. Type-only imports count. Needs only the root install.
-
 ### Measurements
 
-Read in the job log. `quality-report` runs `npm run quality` from the repo root: knip (unused files, exports, dependencies; `knip.json` in each application) and jscpd (`.jscpd.json`). The ruff step of `scheduler` runs ruff's pyflakes and complexity checks over the scheduler (`src/backend/db/python/ruff.toml`). Findings fail neither. The one exception is duplication above jscpd's 3% threshold, which `continue-on-error` keeps from failing the run, as it does a tool that crashes. To make one of them blocking, remove `--no-exit-code` (knip) or `--exit-zero` (ruff) and the `continue-on-error`, and add `quality-report` to `gate`'s `needs:`.
+Read in the job log. The quality step of `contracts` runs `npm run quality` from the repo root: knip (unused files, exports, dependencies; `knip.json` in each application) and jscpd (`.jscpd.json`). The ruff step of `scheduler` runs ruff's pyflakes and complexity checks over the scheduler (`src/backend/db/python/ruff.toml`). Findings fail neither. The one exception is duplication above jscpd's 3% threshold, which `continue-on-error` keeps from failing the job, as it does a tool that crashes. To make one of them blocking, remove `--no-exit-code` (knip) or `--exit-zero` (ruff) and the step's `continue-on-error`.
 
 ### The lint baseline
 

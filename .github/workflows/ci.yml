@@ -232,118 +232,28 @@ jobs:
         run: ruff check --exit-zero --no-cache --output-format concise .
 
   # ============================================================================
-  # API CONTRACT, BARRELS, DEPENDENCY RULES
+  # CONTRACTS: MIGRATIONS, OPENAPI, BARRELS, DEPENDENCY RULES
   # ============================================================================
 
-  # Regenerates the OpenAPI document and the frontend types from it, and fails if
-  # either differs from the commit.
-  openapi-drift:
-    name: OpenAPI – Drift check
+  # Same shape as `backend`. The order matters: dependency-cruiser needs the root
+  # install alone, knip reads the tree before anything is built in it, and the barrels
+  # come last because their check looks at the whole tree.
+  contracts:
+    name: Contracts
     runs-on: [self-hosted, wsl]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Setup src/backend
-        uses: ./.github/actions/setup-app
-        with:
-          working-directory: src/backend
-
-      - name: Setup src/frontend
-        uses: ./.github/actions/setup-app
-        with:
-          working-directory: src/frontend
-
-      - name: Build backend
-        working-directory: src/backend
-        run: npm run build
-
-      - name: Regenerate OpenAPI document
-        working-directory: src/backend
-        run: node dist/scripts/generate-openapi.js
-
-      - name: Regenerate frontend API types
-        working-directory: src/frontend
-        run: npm run typegen
-
-      - name: Fail on drift
-        run: |
-          git diff --exit-code docs/openapi.json src/frontend/shared/types/api.generated.ts || {
-            echo "::error::docs/openapi.json or api.generated.ts is stale — from src/backend run 'npm run build && node dist/scripts/generate-openapi.js', then from src/frontend run 'npm run typegen', and commit both files."
-            exit 1
-          }
-
-  # barrels:lint runs eslint over both applications' barrels, so all three projects
-  # are installed.
-  barrels-drift:
-    name: Barrels – Drift check
-    runs-on: [self-hosted, wsl]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Setup .
-        uses: ./.github/actions/setup-app
-        with:
-          working-directory: .
-
-      - name: Setup src/frontend
-        uses: ./.github/actions/setup-app
-        with:
-          working-directory: src/frontend
-
-      - name: Setup src/backend
-        uses: ./.github/actions/setup-app
-        with:
-          working-directory: src/backend
-
-      - name: Regenerate barrels
-        run: npm run barrels
-
-      - name: Fail on drift
-        run: |
-          # `git add -A` first: `git diff` alone does not see an untracked barrel.
-          git add -A
-          git diff --cached --exit-code || {
-            echo "::error::Generated barrels are stale. Run 'make barrels' (or 'npm run barrels') and commit the result."
-            exit 1
-          }
-
-  dependency-rules:
-    name: Dependency rules
-    runs-on: [self-hosted, wsl]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Setup .
-        uses: ./.github/actions/setup-app
-        with:
-          working-directory: .
-
-      - name: Check module boundaries
-        run: npm run quality:deps
-
-  # ============================================================================
-  # MIGRATIONS (checked on pull requests only)
-  # ============================================================================
-
-  # `prisma migrate deploy` does not checksum applied migrations, so an edit is
-  # silently ignored everywhere it already ran. Nothing else reports it.
-  migration-immutability:
-    name: Migrations – No edits to applied migrations
-    runs-on: [self-hosted, wsl]
+    env:
+      BASE_SHA: ${{ github.event.pull_request.base.sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
-      # The step, not the job: `gate` requires every job to have run and succeeded.
+      # `prisma migrate deploy` does not checksum applied migrations, so an edit is
+      # silently ignored everywhere it already ran. Nothing else reports it.
       - name: Fail on a changed migration
         if: github.event_name == 'pull_request'
         env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
           PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
           changed=$(git diff --name-status "$BASE_SHA...HEAD" -- src/backend/prisma/migrations/ \
@@ -367,26 +277,17 @@ jobs:
           echo "$changed"
           exit 1
 
-  # Advisory: a finding can be the right trade on a small table.
-  squawk:
-    name: Migrations – Squawk
-    runs-on: [self-hosted, wsl]
-    if: github.event_name == 'pull_request'
-    continue-on-error: true
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          fetch-depth: 0
-
       - name: Setup .
+        id: root
+        if: ${{ !cancelled() }}
         uses: ./.github/actions/setup-app
         with:
           working-directory: .
 
-      - name: Lint added migrations
-        env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+      # Advisory: a finding can be the right trade on a small table.
+      - name: Squawk
+        if: ${{ !cancelled() && steps.root.outcome == 'success' && github.event_name == 'pull_request' }}
+        continue-on-error: true
         run: |
           mapfile -t added < <(git diff --name-only --diff-filter=A "$BASE_SHA...HEAD" -- 'src/backend/prisma/migrations/*/migration.sql')
           if [ "${#added[@]}" -eq 0 ]; then
@@ -395,35 +296,61 @@ jobs:
           fi
           npx squawk "${added[@]}"
 
-  # ============================================================================
-  # REPORTS (advisory, not deploy gates)
-  # ============================================================================
-
-  quality-report:
-    name: Quality report
-    runs-on: [self-hosted, wsl]
-    continue-on-error: true
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Setup .
-        uses: ./.github/actions/setup-app
-        with:
-          working-directory: .
-
-      - name: Setup src/frontend
-        uses: ./.github/actions/setup-app
-        with:
-          working-directory: src/frontend
+      - name: Dependency rules
+        if: ${{ !cancelled() && steps.root.outcome == 'success' }}
+        run: npm run quality:deps
 
       - name: Setup src/backend
+        id: backend
+        if: ${{ !cancelled() && steps.root.outcome == 'success' }}
         uses: ./.github/actions/setup-app
         with:
           working-directory: src/backend
 
-      - name: Report
+      - name: Setup src/frontend
+        id: frontend
+        if: ${{ !cancelled() && steps.root.outcome == 'success' }}
+        uses: ./.github/actions/setup-app
+        with:
+          working-directory: src/frontend
+
+      # A measurement: its findings do not fail the job, and neither does a crash.
+      - name: Quality report
+        if: ${{ !cancelled() && steps.backend.outcome == 'success' && steps.frontend.outcome == 'success' }}
+        continue-on-error: true
         run: npm run quality
+
+      # Regenerates the OpenAPI document and the frontend types from it, and fails if
+      # either differs from the commit. The checkout keeps that drift out of the
+      # barrels check below.
+      - name: OpenAPI drift
+        if: ${{ !cancelled() && steps.backend.outcome == 'success' && steps.frontend.outcome == 'success' }}
+        run: |
+          generated=(docs/openapi.json src/frontend/shared/types/api.generated.ts)
+          trap 'git checkout -- "${generated[@]}"' EXIT
+          (cd src/backend && npm run build && node dist/scripts/generate-openapi.js)
+          (cd src/frontend && npm run typegen)
+          git diff --exit-code "${generated[@]}" || {
+            echo "::error::docs/openapi.json or api.generated.ts is stale — from src/backend run 'npm run build && node dist/scripts/generate-openapi.js', then from src/frontend run 'npm run typegen', and commit both files."
+            exit 1
+          }
+
+      # barrels:lint runs eslint over both applications' barrels, so all three projects
+      # are installed.
+      - name: Barrels drift
+        if: ${{ !cancelled() && steps.backend.outcome == 'success' && steps.frontend.outcome == 'success' }}
+        run: |
+          npm run barrels
+          # `git add -A` first: `git diff` alone does not see an untracked barrel.
+          git add -A
+          git diff --cached --exit-code || {
+            echo "::error::Generated barrels are stale. Run 'make barrels' (or 'npm run barrels') and commit the result."
+            exit 1
+          }
+
+  # ============================================================================
+  # REPORT (advisory, not a deploy gate)
+  # ============================================================================
 
   # Runs only while the repository variable SONAR_ENABLED is `true`.
   sonarcloud:
@@ -471,11 +398,8 @@ jobs:
       - backend-boot
       - frontend
       - frontend-build
-      - openapi-drift
-      - barrels-drift
-      - dependency-rules
+      - contracts
       - scheduler
-      - migration-immutability
     steps:
       - name: Fail unless every job succeeded
         env:

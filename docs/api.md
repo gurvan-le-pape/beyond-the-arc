@@ -166,7 +166,7 @@ The OpenAPI document is load-bearing, not just documentation:
   export type Committee = components["schemas"]["CommitteeResponseDto"];
   ```
 
-- The `openapi-drift` CI job regenerates both files and fails when either differs from what is committed, and the deploy depends on it — a backend DTO change cannot reach production without its regenerated contract.
+- The `contracts` CI job regenerates both files and fails when either differs from what is committed, and the deploy depends on it — a backend DTO change cannot reach production without its regenerated contract.
 
 Response DTO rules that keep the generated types truthful:
 
