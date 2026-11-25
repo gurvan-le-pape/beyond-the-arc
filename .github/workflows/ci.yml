@@ -576,9 +576,14 @@ jobs:
       - name: Build images
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
-          FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+          NEXT_PUBLIC_API_URL: ${{ vars.NEXT_PUBLIC_API_URL }}
+          FRONTEND_URL: ${{ vars.FRONTEND_URL }}
         run: |
+          # An unset variable is an empty string, which builds a frontend that calls localhost.
+          if [ -z "$NEXT_PUBLIC_API_URL" ] || [ -z "$FRONTEND_URL" ]; then
+            echo "::error::NEXT_PUBLIC_API_URL or FRONTEND_URL is not set."
+            exit 1
+          fi
           docker build -f docker/backend/Dockerfile --target prod \
             -t "$IMAGE/backend:$SHA" -t "$IMAGE/backend:latest" .
           docker build -f docker/backend/Dockerfile --target migrate \
