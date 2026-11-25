@@ -1,0 +1,90 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", "helpers:pinGitHubActionDigests"],
+  "timezone": "UTC",
+  "schedule": ["* * * * 1"],
+  "prConcurrentLimit": 2,
+  "automerge": false,
+  "minimumReleaseAge": "7 days",
+  "osvVulnerabilityAlerts": true,
+  "vulnerabilityAlerts": {
+    "minimumReleaseAge": null,
+    "schedule": []
+  },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Images pinned in the shell scripts of scripts/ci",
+      "managerFilePatterns": ["/^scripts/ci/.+\\.sh$/"],
+      "matchStrings": [
+        "(?:^|\\n)[a-z]+=(?<depName>[a-z0-9./-]+):(?<currentValue>[a-z0-9.-]+)@(?<currentDigest>sha256:[a-f0-9]{64})"
+      ],
+      "datasourceTemplate": "docker"
+    },
+    {
+      "customType": "regex",
+      "description": "The PostgreSQL the CI starts and the docs name, which is the one production runs",
+      "managerFilePatterns": [
+        "/^\\.github/workflows/ci\\.yml$/",
+        "/^scripts/ci/boot-check\\.sh$/",
+        "/^docs/(ci-cd|infrastructure)\\.md$/"
+      ],
+      "matchStrings": ["(?<depName>postgres):(?<currentValue>\\d+\\.\\d+)"],
+      "datasourceTemplate": "docker"
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "One PR per project for what is not a major version",
+      "matchFileNames": ["src/backend/package.json"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "npm backend"
+    },
+    {
+      "matchFileNames": ["src/frontend/package.json"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "npm frontend"
+    },
+    {
+      "matchFileNames": ["package.json"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "npm root"
+    },
+    {
+      "matchManagers": ["pip_requirements"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "python"
+    },
+    {
+      "matchManagers": ["github-actions", "custom.regex"],
+      "matchUpdateTypes": ["minor", "patch", "digest", "pinDigest"],
+      "groupName": "actions and CI tools"
+    },
+    {
+      "matchManagers": ["docker-compose"],
+      "matchPackageNames": ["grafana/**", "prom/**", "ghcr.io/google/cadvisor"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "observability images"
+    },
+    {
+      "description": "A major version is a project of its own",
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true
+    },
+    {
+      "description": "A major PostgreSQL version needs its data migrated. allowedVersions, because a lookup lists what enabled: false would drop later",
+      "matchPackageNames": ["postgres"],
+      "allowedVersions": "<19",
+      "groupName": "postgres"
+    },
+    {
+      "description": "Node and Python move by hand",
+      "matchDepNames": ["node", "@types/node"],
+      "allowedVersions": "<25"
+    },
+    {
+      "matchDepNames": ["python"],
+      "allowedVersions": "<3.15"
+    }
+  ]
+}
