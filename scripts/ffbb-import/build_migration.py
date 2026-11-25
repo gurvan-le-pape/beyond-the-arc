@@ -177,6 +177,12 @@ def geocode_clubs(clubs):
     return result
 
 
+def load_excluded_codes():
+    """Codes of the FFBB entries that are not clubs, reviewed by hand."""
+    with (HERE / "excluded_clubs.csv").open(encoding="utf-8", newline="") as f:
+        return {row["code"] for row in csv.DictReader(f)}
+
+
 def url_parts(url):
     # /ligues/{lig}/comites/{com}/clubs/{club}  or /ligues/{lig}/comites/{com}  or /ligues/{lig}
     parts = url.strip("/").split("/")
@@ -446,12 +452,15 @@ def main():
     skipped_clubs = []
     moves = []
     position_reasons = Counter()
+    excluded_codes = load_excluded_codes()
     for cl in clubs:
         if "error" in cl:
             continue
         parts = url_parts(cl["_url"])
         committee_key = f"{parts['league'].upper()}{parts['committee']}"
         dept_code = club_dept.get(cl["_url"])
+        if cl["code"] in excluded_codes:
+            continue
         if committee_key in skipped_committees or dept_code is None or committee_key not in committee_name_by_key:
             skipped_clubs.append(cl["code"])
             continue
