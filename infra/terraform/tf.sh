@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 # Runs Terraform for one stack, in the image CI uses: infra/terraform/tf.sh <stack> <args...>
 #
-# Credentials are read from ~/.config/bta-terraform (r2.env, then <stack>.env if present)
-# and handed to the container by name, never on the command line. The container runs as
+# Credentials are read from ~/.config/bta-terraform (r2.env, then <stack>.env and
+# <stack>.vars.env if present) and handed to the container by name, never on the command
+# line. <stack>.vars.env holds TF_VAR_* values kept out of the repository (addresses,
+# e-mail addresses); every TF_VAR_* set is forwarded. The container runs as
 # the calling user so .terraform/ and the lock file are not left owned by root.
 # TF_CONTAINER_NAME names the container, for the lock proof in README.md.
 set -euo pipefail
@@ -19,6 +21,8 @@ set -a
 [ ! -f "$config/r2.env" ] || . "$config/r2.env"
 # shellcheck disable=SC1090
 [ ! -f "$config/$stack.env" ] || . "$config/$stack.env"
+# shellcheck disable=SC1090
+[ ! -f "$config/$stack.vars.env" ] || . "$config/$stack.vars.env"
 set +a
 if [ -z "${AWS_ENDPOINT_URL_S3:-}" ] && [ -n "${R2_ACCOUNT_ID:-}" ]; then
   export AWS_ENDPOINT_URL_S3="https://$R2_ACCOUNT_ID.r2.cloudflarestorage.com"
@@ -34,5 +38,8 @@ for var in AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_ENDPOINT_URL_S3 GITHUB_TO
   CLOUDFLARE_API_TOKEN HCLOUD_TOKEN; do
   flags+=(-e "$var")
 done
+while IFS= read -r var; do
+  flags+=(-e "$var")
+done < <(compgen -e | grep '^TF_VAR_' || true)
 
 exec docker run "${flags[@]}" "$image" "$@"
