@@ -7,7 +7,7 @@ needs only its own token:
 |---|---|---|
 | `github/` | repository, `main` ruleset, repository variables, `Production` and `build` environments and their variables | `github/terraform.tfstate` |
 | `cloudflare/` | `beyondthearc.app` zone and its DNS records, the Grafana Access application and its ACME bypass, with their policies | `cloudflare/terraform.tfstate` |
-| `hetzner/` | the two servers (`bta-prod-compose`, `bta-prod-k3s`), the database volume, the two firewalls | `hetzner/terraform.tfstate` |
+| `hetzner/` | the two servers (`bta-prod-compose`, `bta-prod-k3s`), their IPv4 primary IPs, the database volume, the two firewalls | `hetzner/terraform.tfstate` |
 
 Terraform only imports what exists. Nothing here creates a server, a volume or a
 repository, and every imported resource that holds data carries `prevent_destroy`.
