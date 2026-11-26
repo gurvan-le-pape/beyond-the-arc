@@ -5,7 +5,7 @@ needs only its own token:
 
 | Stack | Manages | State key |
 |---|---|---|
-| `github/` | repository, `main` ruleset, `Production` and `build` environments and their variables | `github/terraform.tfstate` |
+| `github/` | repository, `main` ruleset, repository variables, `Production` and `build` environments and their variables | `github/terraform.tfstate` |
 
 Terraform only imports what exists. Nothing here creates a server, a volume or a
 repository, and every imported resource that holds data carries `prevent_destroy`.
