@@ -29,6 +29,11 @@ resource "cloudflare_dns_record" "proxied" {
   content = var.origin_ipv4
   proxied = true
   ttl     = 1
+
+  # Deleting one takes its host offline: the site (apex, www) or Grafana.
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "cloudflare_dns_record" "google_site_verification" {
@@ -63,6 +68,11 @@ resource "cloudflare_zero_trust_access_application" "grafana" {
   http_only_cookie_attribute = false
   options_preflight_bypass   = false
   policies                   = [{ id = cloudflare_zero_trust_access_policy.grafana_users.id, precedence = 1 }]
+
+  # Deleting it leaves Grafana open to anyone who finds its address.
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 # ...except the ACME challenge path, which Let's Encrypt must reach to renew the
@@ -88,4 +98,10 @@ resource "cloudflare_zero_trust_access_application" "grafana_acme" {
   http_only_cookie_attribute = false
   options_preflight_bypass   = false
   policies                   = [{ id = cloudflare_zero_trust_access_policy.acme.id, precedence = 1 }]
+
+  # Deleting it puts Let's Encrypt behind the login: Grafana's certificate stops renewing
+  # and expires.
+  lifecycle {
+    prevent_destroy = true
+  }
 }
