@@ -65,6 +65,9 @@ resource "hcloud_server" "compose" {
       image, ssh_keys, user_data,
       # Provider-side settings, not Hetzner ones: an import leaves them unset.
       keep_disk, shutdown_before_deletion, ignore_remote_firewall_ids,
+      # The link to its IPv4 is described once, by hcloud_primary_ip.assignee_id below:
+      # the server side never claims it, so no plan can detach the address.
+      public_net,
     ]
   }
 }
@@ -96,6 +99,36 @@ resource "hcloud_server" "k3s" {
     ignore_changes = [
       image, ssh_keys, user_data,
       keep_disk, shutdown_before_deletion, ignore_remote_firewall_ids,
+      public_net, # see hcloud_server.compose
     ]
+  }
+}
+
+# The IPv4 of each server, which the DNS records point at. They outlive their server
+# (auto_delete off) and refuse deletion, so a rebuilt or replaced server can take the
+# same address back. The IPv6 addresses are in no DNS record and stay unmanaged.
+resource "hcloud_primary_ip" "compose_ipv4" {
+  name              = "primary_ip-125478068"
+  type              = "ipv4"
+  assignee_type     = "server"
+  assignee_id       = hcloud_server.compose.id
+  auto_delete       = false
+  delete_protection = true
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+resource "hcloud_primary_ip" "k3s_ipv4" {
+  name              = "primary_ip-165126206"
+  type              = "ipv4"
+  assignee_type     = "server"
+  assignee_id       = hcloud_server.k3s.id
+  auto_delete       = false
+  delete_protection = true
+
+  lifecycle {
+    prevent_destroy = true
   }
 }
