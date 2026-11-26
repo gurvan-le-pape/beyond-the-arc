@@ -7,6 +7,7 @@ needs only its own token:
 |---|---|---|
 | `github/` | repository, `main` ruleset, repository variables, `Production` and `build` environments and their variables | `github/terraform.tfstate` |
 | `cloudflare/` | `beyondthearc.app` zone and its DNS records, the Grafana Access application and its ACME bypass, with their policies | `cloudflare/terraform.tfstate` |
+| `hetzner/` | the two servers (`bta-prod-compose`, `bta-prod-k3s`), the database volume, the two firewalls | `hetzner/terraform.tfstate` |
 
 Terraform only imports what exists. Nothing here creates a server, a volume or a
 repository, and every imported resource that holds data carries `prevent_destroy`.
@@ -35,6 +36,7 @@ Credentials live in `~/.config/bta-terraform/` (mode 600, outside the repository
   is created for an apply that changes something, and only then. When a plan fails for
   lack of permission, add the read permission it names, nothing else.
   `cloudflare.env`: `CLOUDFLARE_API_TOKEN`, read-only on the zone's DNS and on Access.
+  `hetzner.env`: `HCLOUD_TOKEN`, a Read token of the one Hetzner project.
 - `<stack>.vars.env`: `TF_VAR_*` values that must not be in a public repository
   (`cloudflare.vars.env`: `TF_VAR_origin_ipv4`, `TF_VAR_grafana_allowed_emails` as a
   JSON list). Their variables are `sensitive`, so a plan prints `(sensitive value)`
