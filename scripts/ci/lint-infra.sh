@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Lints the workflows (actionlint, zizmor) and the shell scripts (shellcheck).
+# Lints the workflows (actionlint, zizmor), the shell scripts (shellcheck) and the
+# Terraform stacks (fmt, validate).
 # Every linter runs even if an earlier one failed. Run from the repo root.
 #
 # The files are copied into each container instead of mounted: a CI runner is itself
@@ -35,5 +36,22 @@ lint shellcheck "$shellcheck" "${scripts[@]}"
 # Offline: no token, and no failure when GitHub is down. Low findings are style hints,
 # left out.
 lint zizmor "$zizmor" --offline --no-progress --min-severity medium .github
+
+# Terraform runs in the image tf.sh uses locally. Unlike the linters above it gets a
+# network: init downloads the providers, checked against the committed lock files.
+# -backend=false: no state, no credentials.
+echo "== terraform"
+container=$(docker create --entrypoint sh -w /repo "$(< infra/terraform/.terraform-image)" -c '
+  terraform fmt -check -recursive -diff -no-color infra/terraform || exit 1
+  for stack in infra/terraform/*/; do
+    echo "-- $stack"
+    terraform -chdir="$stack" init -backend=false -lockfile=readonly -input=false -no-color > /dev/null &&
+      terraform -chdir="$stack" validate -no-color || exit 1
+  done')
+git ls-files -z -- infra/terraform | tar --null -T - --transform 's,^,repo/,' -cf - |
+  docker cp -q - "$container:/"
+docker start -a "$container" || failed=1
+docker rm -fv "$container" > /dev/null
+container=""
 
 exit "$failed"
