@@ -13,7 +13,7 @@ locals {
 }
 
 resource "hcloud_firewall" "compose" {
-  name = "firewall-1"
+  name = "firewall-compose"
 
   rule {
     direction  = "in"
@@ -71,7 +71,7 @@ resource "hcloud_server" "compose" {
 
 # Holds the production PostgreSQL data.
 resource "hcloud_volume" "database" {
-  name              = "fw-prod-compose"
+  name              = "vol-prod-postgres"
   size              = 90
   server_id         = hcloud_server.compose.id
   delete_protection = true
