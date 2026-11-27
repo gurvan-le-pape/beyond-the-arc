@@ -15,6 +15,16 @@ kubeScheduler:
   enabled: false
 kubeProxy:
   enabled: false
+# k3s runs the API server, the kubelet and the rest in one process, so the kubelet's
+# /metrics and the API server's both carry that process's internal histograms: 129,000 of
+# the 140,000 series with them on (2026-11-27), and 559 MiB of Prometheus, for metrics no
+# alert or dashboard here reads. The kubelet's cAdvisor (per-container CPU and memory)
+# and probe metrics stay.
+kubeApiServer:
+  enabled: false
+kubelet:
+  serviceMonitor:
+    kubelet: false
 prometheusOperator:
   # It validates PrometheusRules, which nothing here creates, and needs a certificate Job;
   # the operator's TLS listener exists only to serve that webhook.
