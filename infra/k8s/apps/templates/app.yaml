@@ -1,4 +1,5 @@
 # The application (../../app/lab): backend, frontend, scheduler and the migration Job.
+{{- if .Values.components.app }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -27,3 +28,4 @@ spec:
         duration: 10s
         factor: 2
         maxDuration: 3m
+{{- end }}

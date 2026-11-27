@@ -4,6 +4,7 @@
 # Alertmanager nor the chart's default rules are installed. k3s runs the control plane
 # in one process that exposes no etcd, scheduler, controller-manager or kube-proxy
 # endpoints, so those targets would only ever be down.
+{{- if .Values.components.kubePrometheusStack }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -30,3 +31,4 @@ spec:
       - CreateNamespace=true
       # The CRDs are larger than the annotation client-side apply records.
       - ServerSideApply=true
+{{- end }}

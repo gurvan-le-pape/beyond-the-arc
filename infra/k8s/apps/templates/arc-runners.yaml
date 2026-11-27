@@ -1,5 +1,6 @@
 # The bta-lab runner scale set, and the GitHub App credentials it registers with
 # (../../arc/, sealed): two sources, one Application.
+{{- if .Values.components.arc }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -37,3 +38,4 @@ spec:
         duration: 10s
         factor: 2
         maxDuration: 3m
+{{- end }}
