@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Lints the workflows (actionlint, zizmor), the shell scripts (shellcheck) and the
-# Terraform stacks (fmt, validate).
+# Lints the workflows (actionlint, zizmor), the shell scripts (shellcheck), the
+# Terraform stacks (fmt, validate) and the Ansible code (ansible-lint, syntax check).
 # Every linter runs even if an earlier one failed. Run from the repo root.
 #
 # The files are copied into each container instead of mounted: a CI runner is itself
@@ -53,5 +53,26 @@ git ls-files -z -- infra/terraform | tar --null -T - --transform 's,^,repo/,' -c
 docker start -a "$container" || failed=1
 docker rm -fv "$container" > /dev/null
 container=""
+
+# Ansible runs in the image ansible.sh builds locally. Building it needs a network (pip,
+# checked against the hashes in requirements.txt); the lint itself has none.
+echo "== ansible"
+ansible_image="bta-ansible-lint:$(cat infra/ansible/Dockerfile infra/ansible/requirements.txt |
+  sha256sum | cut -c1-12)"
+if docker build -q --build-arg UID=0 -t "$ansible_image" infra/ansible > /dev/null; then
+  container=$(docker create --network none -e ANSIBLE_CONFIG=/repo/infra/ansible/ansible.cfg \
+    -w /repo/infra/ansible "$ansible_image" sh -c '
+    ansible-lint --nocolor || exit 1
+    for playbook in playbooks/*.yml; do
+      ansible-playbook --syntax-check "$playbook" || exit 1
+    done')
+  git ls-files -z -- infra/ansible | tar --null -T - --transform 's,^,repo/,' -cf - |
+    docker cp -q - "$container:/"
+  docker start -a "$container" || failed=1
+  docker rm -fv "$container" > /dev/null
+  container=""
+else
+  failed=1
+fi
 
 exit "$failed"

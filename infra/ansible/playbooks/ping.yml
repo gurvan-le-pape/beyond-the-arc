@@ -1,0 +1,14 @@
+---
+# Reaches every host and checks it runs the system the roles are written for.
+# Changes nothing.
+- name: Check that every host is reachable and runs Ubuntu 24.04
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: Check the distribution
+      ansible.builtin.assert:
+        that:
+          - ansible_facts['distribution'] == 'Ubuntu'
+          - ansible_facts['distribution_version'] == '24.04'
+        fail_msg: "{{ inventory_hostname }} runs {{ ansible_facts['distribution'] }} {{ ansible_facts['distribution_version'] }}"
+        quiet: true
