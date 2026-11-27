@@ -1,4 +1,4 @@
-# cert-manager, with its CRDs. Its issuers live in ../../issuers/.
+# cert-manager, with its CRDs. Its issuers live in ../../issuers/<cluster>.
 {{- if .Values.components.certManager }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application

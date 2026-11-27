@@ -30,6 +30,7 @@ kubectl kustomize app/production > "$rendered/app-production.yaml"
 # (argocd/values.yaml, kustomize.buildOptions).
 for cluster in lab production; do
   kubectl kustomize --load-restrictor LoadRestrictionsNone "observability/$cluster" > "$rendered/observability-$cluster.yaml"
+  kubectl kustomize "issuers/$cluster" > "$rendered/issuers-$cluster.yaml"
 done
 
 # An upstream chart, at the version apps/values.yaml pins for its Application, with the
@@ -63,7 +64,7 @@ render arc bta-lab oci://ghcr.io/actions/actions-runner-controller-charts \
 # Plain manifests: every YAML file outside the charts, the values files, the Kustomize
 # tree and k3d's config.
 mapfile -t manifests < <(find . \( -path ./app -o -path ./apps -o -path ./argocd -o -path ./lab \
-  -o -path ./observability \) -prune -o \
+  -o -path ./observability -o -path ./issuers \) -prune -o \
   -type f \( -name '*.yaml' -o -name '*.yml' \) -print | sort)
 
 # CustomResourceDefinition is skipped: its schema is recursive (a CRD's schema describes

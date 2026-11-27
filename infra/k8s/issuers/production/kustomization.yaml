@@ -1,0 +1,6 @@
+# The issuers on bta-prod-k3s (the CX33): the base, and the Cloudflare token sealed to this cluster's key.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../base
+  - cloudflare-api-token.sealed.yaml

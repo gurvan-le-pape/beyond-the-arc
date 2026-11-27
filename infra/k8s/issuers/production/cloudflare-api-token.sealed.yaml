@@ -1,0 +1,18 @@
+# The Cloudflare API token cert-manager answers DNS-01 challenges with on production's
+# cluster: the lab's token (DNS edit on the beyondthearc.app zone only, expires
+# 2027-02-25), sealed to bta-prod-k3s's key, so only the controller there can decrypt it,
+# and only as the cloudflare-api-token Secret in cert-manager (strict scope). Sealed again
+# as the lab's is (README, Certificates), with BTA_CLUSTER=production.
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: cloudflare-api-token
+  namespace: cert-manager
+spec:
+  encryptedData:
+    api-token: AgAhdziSM1R4TER4p78kcGivasudcUXapkCn6R98yrwaHx95Hs9Z46RA0uYCKBQFkmYOmUWyIesUYkvj6/L5cyRu6R8LiogVq+SxqHRwTx6ldwlFBjIw5Z5Ekp4g8Yv6eS5lU7/XHFAkjV6WnyiMwVWmGaucGzEkRqhmqiXI3S++pzGE+4RlTeVK9pLIdHhSfyibTx8gEeZEqwR7zhLevinNYblFBsjVdeShCXqhbOgdy4C397+Tb3GzelTaZczoY+5ziyImoYON0HOb82W5hTQCmezjOtKXj3AjX4fZLD0wUOcpLb2Ad4kMeftUYegMgRk3szH0bH3wwofm7iO/8YzWsw4Jd0MM2IegUstfC4INT0H16rCKySMBhWaxg0cnVg43US1J8GzAkAvu05bL74O7c253VsBB2j788A0q7vPUEFMp1ErIikk8w9Eu4bREU1AZuLsUj1F/Vvb2EJZvzh6YZ1l1vOt1Cm9vdwLUSYLphX+yVYeBDDAO4gt18eBFv8EK3njyeFC1i7r9Bn2FpqkN6SEQmyL+CW8FFNrkYZlQXT0vE1/b/hJqWBmcyH/P3IkH7MGRKxceJ9qW94IebkXotI9unPBDL1QYXIxEh5b/VQbGJskyyCc+Hy8Rp/BOd44q9qcrcPCqY5z1Q/J69KdxXUJY6x1hFC02RNiVckDP3mVnB8nR1HwBmp/YNMKklaiIS00MPv+ikJ8s36zNkAhk+Cc1xicciWjNFiPNRCSmBJaUY5kN4Wm1vfG/H1ei0fPSHKNo+A==
+  template:
+    metadata:
+      name: cloudflare-api-token
+      namespace: cert-manager

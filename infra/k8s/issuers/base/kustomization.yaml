@@ -1,0 +1,8 @@
+# The certificate issuers every cluster has: Let's Encrypt's staging and production CAs,
+# both answering DNS-01 through the cloudflare-api-token Secret, which each cluster's
+# overlay supplies sealed to its own key (lab/, production/).
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - letsencrypt-staging.yaml
+  - letsencrypt-production.yaml
