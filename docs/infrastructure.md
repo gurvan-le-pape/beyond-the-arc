@@ -36,7 +36,7 @@ PasswordAuthentication no
 KbdInteractiveAuthentication no
 ```
 
-`PermitRootLogin` is `without-password`, so `root` accepts a key and never a password; `root` does hold a password, but only for the Hetzner console. `docker/provision/provision.sh` writes that drop-in (see *Host setup* below). Neither setting can be left to the defaults: sshd ships with `PasswordAuthentication` **on**, and it was on here — not because anything enabled it, but because nothing had turned it off. That was safe only by accident, since no account with a usable password also accepted password auth; the day one is given a password it becomes a remote login on a publicly-resolvable address (see the Grafana subdomain below).
+`PermitRootLogin` is `without-password`, so `root` accepts a key and never a password; `root` does hold a password, but only for the Hetzner console. The `ssh_hardening` Ansible role writes that drop-in (see *Host setup* below). Neither setting can be left to the defaults: sshd ships with `PasswordAuthentication` **on**, and it was on here — not because anything enabled it, but because nothing had turned it off. That was safe only by accident, since no account with a usable password also accepted password auth; the day one is given a password it becomes a remote login on a publicly-resolvable address (see the Grafana subdomain below).
 
 Two mechanics make this easy to get wrong. `sshd_config` is **first-value-wins**, the opposite of most config systems, and `Include /etc/ssh/sshd_config.d/*.conf` sits at the top of the main file — so drop-ins beat it, and among drop-ins the lexically *first* one wins. A file named to sort after an existing one that sets the same keyword is silently inert. And `sshd_config` is not the effective config: read it with `sshd -T`, which resolves drop-ins and defaults. Validate with `sshd -t` and apply with `systemctl reload ssh` — never `restart` — so a rejected config leaves the running daemon serving the old one.
 
@@ -44,14 +44,14 @@ The root password is the way back in when SSH is unusable — a bad sshd drop-in
 
 ### Host setup
 
-Everything below lives on the VPS, outside the containers and outside the deploy, and **`docker/provision/provision.sh` applies all of it**. Run it as root:
+Everything below lives on the VPS, outside the containers and outside the deploy, and **the Ansible playbook `infra/ansible/playbooks/compose.yml` applies all of it**, one role per step, from the maintainer's machine (`infra/ansible/README.md`):
 
 ```bash
-VOLUME_ID=<hetzner-volume-id> DEPLOY_PUBKEY='<public half of VPS_SSH_KEY>' bash docker/provision/provision.sh
-bash docker/provision/provision.sh --check   # report what differs, change nothing; exits 1 if anything would change
+infra/ansible/ansible.sh ansible-playbook playbooks/compose.yml --check --diff   # report what differs, change nothing
+infra/ansible/ansible.sh ansible-playbook playbooks/compose.yml --diff           # apply
 ```
 
-Each step looks at the host first and changes only what differs, so a second run reports `0 change(s)`, and running it on the live server is safe — run `--check` there first all the same. It never overwrites what it did not write — an `fstab` entry for the volume that points elsewhere, a file where the Nginx symlink belongs, a clone that is not sparse — it prints a `WARNING` and leaves it, and it never formats a disk. `VOLUME_ID` and `DEPLOY_PUBKEY` are optional: without them the volume step (with a warning) and the key step are skipped. What it cannot do from the host is in *Rebuilding the server from zero* below.
+Each task compares the host with the role and changes only what differs, so a second run reports `changed=0`; on the live server, run `--check --diff` first. It never overwrites what it did not write — an `fstab` entry for the volume that points elsewhere, a path where the Nginx symlink belongs that is not our link, a clone that is not sparse on `docker/` — the run stops on it and leaves it; and it never formats a disk. The volume's device and the deploy key are in `infra/ansible/inventory/group_vars/compose/main.yml`. What it cannot do from the host is in *Rebuilding the server from zero* below.
 
 What it sets, and why each one is there:
 
@@ -62,7 +62,7 @@ What it sets, and why each one is there:
 /dev/disk/by-id/scsi-0HC_Volume_<volume-id> /var/lib/docker/volumes ext4 defaults,nofail 0 2
 ```
 
-`nofail` alone would let Docker start on the empty `/var/lib/docker/volumes` directory of the root disk, and Postgres initialise a fresh database there. A drop-in, `/etc/systemd/system/docker.service.d/require-volumes.conf` (`RequiresMountsFor=/var/lib/docker/volumes` under `[Unit]`), makes Docker refuse to start until the volume is mounted. The script does this step first, so on a new server Docker is never installed, and never started, before the volume is in place. Check with `findmnt --verify` and `systemctl show docker -p RequiresMountsFor`; a reboot is the only end-to-end test.
+`nofail` alone would let Docker start on the empty `/var/lib/docker/volumes` directory of the root disk, and Postgres initialise a fresh database there. A drop-in, `/etc/systemd/system/docker.service.d/require-volumes.conf` (`RequiresMountsFor=/var/lib/docker/volumes` under `[Unit]`), makes Docker refuse to start until the volume is mounted. The `volume` role runs first, so on a new server Docker is never installed, and never started, before the volume is in place. Check with `findmnt --verify` and `systemctl show docker -p RequiresMountsFor`; a reboot is the only end-to-end test.
 
 **Swap.** A 2 GB `/swapfile` in `fstab`, so a memory spike slows the box down instead of sending the OOM killer after Postgres; `vm.swappiness=10` (`/etc/sysctl.d/99-swappiness.conf`) keeps the kernel from paging out while RAM is still free.
 
@@ -72,23 +72,23 @@ What it sets, and why each one is there:
 
 **Unattended security upgrades.** `APT::Periodic::Update-Package-Lists` and `APT::Periodic::Unattended-Upgrade` both `"1"` — Ubuntu's default, checked rather than assumed, since a fix like the Nginx one of 2026-11-18 lands through it.
 
-**SSH, keys only.** The drop-in from *SSH* above, written only when `sshd -T` shows password or keyboard-interactive logins still on, validated with `sshd -t` and removed again if sshd rejects it, then applied with `systemctl reload ssh`.
+**SSH, keys only.** The drop-in from *SSH* above, checked alone with `sshd -t -f` before it is written and with the whole configuration (`sshd -t`) before `systemctl reload ssh`; the run then asserts on `sshd -T` that the effective settings are the intended ones, since another drop-in sorting first would override it.
 
-**The `deploy` user.** The CI deploys as `deploy`, never as root: an unprivileged account that owns the clone and is in the `docker` group. That group is root-equivalent, so the account bounds accidents and gives an audit trail, not containment. Its `authorized_keys` holds one key, `github-actions-deploy`, whose private half is the `VPS_SSH_KEY` secret on GitHub; the script adds `DEPLOY_PUBKEY` when it is missing and never removes a key. The sudoers rule the deploy reloads Nginx with (see *Nginx* below) is written alongside, checked with `visudo -c` before it lands.
+**The `deploy` user.** The CI deploys as `deploy`, never as root: an unprivileged account that owns the clone and is in the `docker` group. That group is root-equivalent, so the account bounds accidents and gives an audit trail, not containment. Its `authorized_keys` holds one key, `github-actions-deploy`, whose private half is the `VPS_SSH_KEY` secret on GitHub; the `deploy_user` role adds that key when it is missing and never removes one. The sudoers rule the deploy reloads Nginx with (see *Nginx* below) is written alongside, checked with `visudo -c` before it lands.
 
 The deploy logs `deploy` into GHCR on every run, so no registry login is set up by hand.
 
 **The deploy clone — `docker/` only.** The images come from the registry; the server needs the compose files and the configs they mount, and nothing else. A sparse checkout (`git clone --sparse`, then `git sparse-checkout set --cone docker`) keeps the deploy's `git fetch`, `git reset` and `git diff` working while writing only `docker/` (plus the repository's root-level files, which cone mode always keeps) to `/opt/beyondthearc`, owned by `deploy`.
 
-`/opt/beyondthearc/.env` is not in git, and the script only reports it missing: start from `.env.example` and fill in each value. `SENTRY_AUTH_TOKEN` stays out of it — only the CI build uses that token, and no running container does.
+`/opt/beyondthearc/.env` is not in git, and the run only reports it missing: start from `.env.example` and fill in each value. `SENTRY_AUTH_TOKEN` stays out of it — only the CI build uses that token, and no running container does.
 
-**The database volume.** `postgres_data` is `external: true` in the prod overlay, so `docker compose down -v` cannot delete it — and so compose will not create it either. The script creates it when it is missing.
+**The database volume.** `postgres_data` is `external: true` in the prod overlay, so `docker compose down -v` cannot delete it — and so compose will not create it either. The `app` role creates it when it is missing.
 
-**Nginx version.** `server_tokens off;` in `/etc/nginx/nginx.conf` (Ubuntu ships the line commented out; the script uncomments it). Without it, every response that reaches Nginx directly — any request to the server's IP — announces the exact Nginx and distribution version.
+**Nginx version.** `server_tokens off;` in `/etc/nginx/nginx.conf` (Ubuntu ships the line commented out; the `nginx` role uncomments it). Without it, every response that reaches Nginx directly — any request to the server's IP — announces the exact Nginx and distribution version.
 
-**The Nginx site.** `/etc/nginx/sites-enabled/beyondthearc`, a symlink into the clone (see *Nginx* below). The script links it only once the certificate the file names exists, since `nginx -t` rejects the file before that, and removes the link again if `nginx -t` fails.
+**The Nginx site.** `/etc/nginx/sites-enabled/beyondthearc`, a symlink into the clone (see *Nginx* below). The `nginx` role links it only once the certificate the file names exists, since `nginx -t` rejects the file before that, and removes the link again if `nginx -t` fails.
 
-**SSH host key.** Not the script's job — it is how the CI side checks the server. The deploy pins the server's ed25519 host key in the `VPS_HOST_KEY` secret (see the comment in `.github/workflows/ci.yml`). A key copied from a first SSH connection is only as trustworthy as that connection, so compare it over a channel that is not SSH — the Hetzner console:
+**SSH host key.** Not Ansible's job — it is how the CI side checks the server. The deploy pins the server's ed25519 host key in the `VPS_HOST_KEY` secret (see the comment in `.github/workflows/ci.yml`). A key copied from a first SSH connection is only as trustworthy as that connection, so compare it over a channel that is not SSH — the Hetzner console:
 
 ```bash
 ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub          # on the server, from the console
@@ -99,23 +99,22 @@ The two `SHA256:` fingerprints must match. A rebuilt server has a new host key, 
 
 ### Rebuilding the server from zero
 
-From an empty Hetzner project to a serving site, in order. No data is restored: the static data is a migration and the match data is regenerated by the scheduler (see [`data-pipeline.md`](./data-pipeline.md)). The order matters in two places — the volume before Docker, the certificate before the Nginx site — and the script enforces both.
+From an empty Hetzner project to a serving site, in order. No data is restored: the static data is a migration and the match data is regenerated by the scheduler (see [`data-pipeline.md`](./data-pipeline.md)). The order matters in two places — the volume before Docker, the certificate before the Nginx site — and the playbook enforces both.
 
 1. **Hetzner console.** Create a CX23 running Ubuntu 24.04 with your SSH key for `root`. Create a volume formatted ext4 with **manual** mounting — automatic mounting writes its own `fstab` line under `/mnt`, a second mount of the same disk — and attach it; its id is in `ls /dev/disk/by-id/` (`scsi-0HC_Volume_<id>`). Attach `firewall-1`, or recreate it from the rules in *VPS* above.
 2. **Root password.** Reset it from the console (Rescue → Reset root password), store it in the password manager, and log in once through the console to prove it works (see the keyboard-layout trap in *SSH*). It is the way back in when SSH breaks.
-3. **Provision.** As root over SSH:
+3. **Provision.** From the maintainer's machine: give the new address to the `bta-prod-compose` entry in `~/.ssh/config` and connect once with plain `ssh` to record its host key; set the new volume's device in `infra/ansible/inventory/group_vars/compose/main.yml`; then
 
    ```bash
-   curl -fsSL https://raw.githubusercontent.com/gurvan-le-pape/beyond-the-arc/main/docker/provision/provision.sh -o /root/provision.sh
-   VOLUME_ID=<id> DEPLOY_PUBKEY='<public half of VPS_SSH_KEY>' bash /root/provision.sh
+   infra/ansible/ansible.sh ansible-playbook playbooks/compose.yml --diff
    ```
 
-   Two warnings are expected on this first run: no `.env`, no certificate. A volume Hetzner did not format is reported, not formatted: on a new, empty volume run `mkfs.ext4 /dev/disk/by-id/scsi-0HC_Volume_<id>`, then the script again.
+   Two `WARNING` lines are expected on this first run: no `.env`, no certificate. A volume Hetzner did not format stops the run instead of being formatted: on a new, empty volume run `mkfs.ext4 /dev/disk/by-id/scsi-0HC_Volume_<id>` on the server, then the playbook again. The `postgres_backup` role needs nothing more: its token is in the SOPS-encrypted group vars.
 
 4. **`.env`.** Create `/opt/beyondthearc/.env` (owner `deploy`, mode 600) from `.env.example`: `DATABASE_NAME`, `DATABASE_USER`, `DATABASE_PASSWORD`, `DATABASE_HOST`, `DATABASE_PORT`, `DATABASE_URL`, `FRONTEND_URL`, `NEXT_PUBLIC_API_URL`, `INTERNAL_API_URL`, `SENTRY_DSN`, `REGISTRY_IMAGE`, `GRAFANA_ROOT_URL`, `GRAFANA_PASSWORD`, `SMTP_HOST`, `GMAIL_ADDRESS`, `GMAIL_APP_PASSWORD`. The deploy writes `IMAGE_TAG` itself.
 5. **DNS.** In Cloudflare, point the `beyondthearc.app`, `www` and `grafana` records at the new address, still proxied. The zone's settings — SSL/TLS Full (strict), the two Access applications, the crawler blocks — belong to the zone, not the server, and carry over; if the zone itself were lost, *DNS and TLS* below lists them, and the `Grafana ACME` bypass has to exist before the next step.
 6. **Certificate.** `certbot certonly --nginx -d beyondthearc.app -d www.beyondthearc.app -d grafana.beyondthearc.app`. The `nginx` authenticator answers the HTTP-01 challenge on port 80, through Cloudflare, and renews the certificate the same way. Not yet exercised on a rebuild: if validation fails because the challenge cannot reach the origin, set the three records to DNS-only and open port 80 to all in `firewall-1` for the issuance, then put both back.
-7. **Provision again.** The same command: it now links the Nginx site and reloads Nginx. `bash /root/provision.sh --check` must then end with `0 change(s), 0 warning(s)`.
+7. **Provision again.** The same command: it now links the Nginx site and reloads Nginx. A run with `--check --diff` must then report `changed=0` and no `WARNING`.
 8. **GitHub Actions secrets.** `VPS_HOST` (the new address) and `VPS_HOST_KEY` (the new host key, checked through the console as in *SSH host key* above). `VPS_USER`, `VPS_SSH_KEY`, `DEPLOY_REGISTRY_USER` and `DEPLOY_REGISTRY_TOKEN` stay as they are when the same key and token are reused.
 9. **Deploy.** Re-run the deploy of `main`'s latest pipeline (Operate → Environments → production). The `migrate` service creates the schema and seeds the static data; the scheduler starts generating matches. Check `https://beyondthearc.app/api/health`, Grafana through Access, and `certbot renew --dry-run`.
 
@@ -180,7 +179,7 @@ The backend depends on `database` and receives `DATABASE_URL`, `FRONTEND_URL`, a
 
 The official `postgres:18.7` image, unmodified. Schema and static reference data are applied by the `migrate` service (below), not by the database container — standing up the stack for the first time still produces a fully seeded database with no additional steps, but the mechanism is Prisma Migrate rather than init scripts, so it also works against an *existing* database.
 
-Data is persisted in a `postgres_data` named volume. In production this volume is declared `external: true`, which prevents `docker-compose down` or `docker-compose up --build` from recreating it. Compose therefore never creates it either — a deliberate safeguard against accidental data loss — so it must exist before the first deployment; `docker/provision/provision.sh` creates it (see *Host setup*).
+Data is persisted in a `postgres_data` named volume. In production this volume is declared `external: true`, which prevents `docker-compose down` or `docker-compose up --build` from recreating it. Compose therefore never creates it either — a deliberate safeguard against accidental data loss — so it must exist before the first deployment; the `app` Ansible role creates it (see *Host setup*).
 
 It is backed up nightly at 04:00 Paris time to the Cloudflare R2 bucket `bta-db-backups` (EU jurisdiction): a full `pg_dump -Fc -Z zstd:3`, `match_events` included, encrypted on the host to the maintainer's age public key, so the host can write a backup and never read one. Measured on 2026-11-27: 270 s and 1.26 GB for a 9.7 GB database, with the 2 vCPU close to saturated meanwhile. Seven dailies (`daily/`) and four weeklies (`weekly/`, Monday's dump) are kept; the bucket's lock rules forbid deleting or overwriting a backup before the end of its retention, and its lifecycle rules delete it a day later. The host's token has object access to that bucket only and cannot change those rules. The job is the `postgres_backup` Ansible role (`infra/ansible/`); the bucket and its rules are in `infra/terraform/cloudflare/r2.tf`; the Grafana rule *Database Backup Missing* fires when no backup has succeeded for 26 hours; `infra/ansible/restore-test.sh` restores the latest one on the maintainer's machine and compares it with production.
 
@@ -348,7 +347,7 @@ The Makefile exposes several utility targets beyond the core up/down/build cycle
 
 **No staging environment.** The dev environment is local and there is no hosted environment between it and production. Infrastructure changes (Compose config, Nginx, Prometheus rules) cannot be tested before going live on the VPS. See [`architecture.md`](./architecture.md) for more on this constraint.
 
-**Host setup is applied by hand, not enforced.** `docker/provision/provision.sh` reproduces it and `--check` reports drift, but nothing runs either on a schedule or in CI, so a change made on the server and not in the script is found only by the next `--check`. The script was tested in a systemd Ubuntu 24.04 container, never on a fresh Hetzner VM: the real volume, the first certificate issuance through Cloudflare and a reboot remain untested.
+**Host setup is applied by hand, not enforced.** The Ansible playbook reproduces it and `--check --diff` reports drift, but nothing runs it on a schedule or in CI (the runners hold no server access), so a change made on the server and not in the roles is found only by the next check. The Compose roles have run for real only in `--check` on this host, which was configured before them; their fresh-host paths (first `fstab` entry, first clone, first site link), the first certificate issuance through Cloudflare and a reboot remain untested. The roles shared with the k3s host (journald, packages, unattended upgrades, SSH) did run on a fresh server, the CX33, on 2026-11-27.
 
 
 **No resource limits on application containers.** Only the observability services (Prometheus, Loki, Grafana, cAdvisor) have CPU and memory limits defined. The application services (frontend, backend, scheduler) do not, which means a runaway process could starve the observability stack on the constrained CX23.

@@ -1,8 +1,7 @@
 # Ansible
 
-Configures the servers Terraform imports (`../terraform/hetzner`). It is replacing
-`docker/provision/provision.sh`, one role per section of that script; until the last
-role lands, the script stays the reference and only the Ansible side changes.
+Configures the servers Terraform imports (`../terraform/hetzner`): everything on a
+host outside the containers and outside the deploy.
 
 | Group | Host | Role in the platform | Connects as |
 |---|---|---|---|
@@ -14,13 +13,11 @@ has said otherwise for that run.
 
 ## Playbooks
 
-`playbooks/compose.yml` configures `bta-prod-compose`. Its roles port
-`docker/provision/provision.sh` section by section, in the script's order, and keep its
-guards: the data volume comes first so that Docker never starts without it; nothing
-formats a disk; an fstab entry, a clone or a site path it did not write stops the run
-instead of being rewritten.
+`playbooks/compose.yml` configures `bta-prod-compose`. The data volume comes first so
+that Docker never starts without it; nothing formats a disk; an fstab entry, a clone or
+a site path the roles did not write stops the run instead of being rewritten.
 
-| Role | provision.sh section |
+| Role | What it sets |
 |---|---|
 | `volume` | Data volume (fstab, mount, Docker's `RequiresMountsFor`) |
 | `swap` | Swap and swappiness |
@@ -31,7 +28,7 @@ instead of being rewritten.
 | `deploy_user` | The deploy user, its key, its Nginx sudoers rule |
 | `app` | Deploy clone, `.env` check, `postgres_data` volume |
 | `nginx` | Nginx service, `server_tokens off`, site link |
-| `postgres_backup` | (not in the script) nightly backup to R2 |
+| `postgres_backup` | nightly backup to R2 |
 
 `playbooks/k3s.yml` configures `bta-prod-k3s` with the roles that apply to a host
 without Compose: `automation_user` (the `ansible` user, its key, passwordless sudo),
@@ -47,9 +44,7 @@ exist yet; every later run connects as `ansible`:
 infra/ansible/ansible.sh ansible-playbook playbooks/k3s.yml --diff -e ansible_user=root
 ```
 
-Until `provision.sh` is deleted, both describe the host; change the Ansible side only.
-Both report no change on `bta-prod-compose` (`provision.sh --check` and
-`compose.yml --check --diff`, 2026-11-27).
+What each setting is, and why it is there: `docs/infrastructure.md`, *Host setup*.
 
 ## Running it
 
