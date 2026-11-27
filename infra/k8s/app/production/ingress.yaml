@@ -1,0 +1,39 @@
+# rehearsal.beyondthearc.app through k3s's Traefik, routed as production's Nginx routes it:
+# /api to the backend, everything else to the frontend, with Nginx's security headers on
+# every response. The name is proxied by Cloudflare like production's (Terraform), whose
+# SSL mode is Full (strict): the certificate must be one Cloudflare trusts, so the issuer
+# is Let's Encrypt's production CA, by DNS-01. Kept in rehearsal-tls, renewed before it
+# expires. Port 80 redirects to 443 (../../traefik/).
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app
+  labels:
+    app.kubernetes.io/part-of: beyond-the-arc
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-staging
+    traefik.ingress.kubernetes.io/router.middlewares: bta-security-headers@kubernetescrd
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - rehearsal.beyondthearc.app
+      secretName: rehearsal-tls
+  rules:
+    - host: rehearsal.beyondthearc.app
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  name: http
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  name: http
