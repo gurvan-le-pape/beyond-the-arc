@@ -36,6 +36,18 @@ resource "cloudflare_dns_record" "proxied" {
   }
 }
 
+# The k3s server during phase 5's rehearsal: the same application, proxied the same way
+# as the apex, so that the latency gate measures both servers along the same path
+# (infra/k8s/ASSESSMENT.md). Removed after the cutover, when the apex itself points there.
+resource "cloudflare_dns_record" "rehearsal" {
+  zone_id = cloudflare_zone.this.id
+  name    = "rehearsal.beyondthearc.app"
+  type    = "A"
+  content = var.rehearsal_origin_ipv4
+  proxied = true
+  ttl     = 1
+}
+
 resource "cloudflare_dns_record" "google_site_verification" {
   zone_id = cloudflare_zone.this.id
   name    = "beyondthearc.app"
