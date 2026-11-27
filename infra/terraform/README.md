@@ -41,8 +41,8 @@ Credentials live in `~/.config/bta-terraform/` (mode 600, outside the repository
   on R2 (Workers R2 Storage Read).
   `hetzner.env`: `HCLOUD_TOKEN`, a Read token of the one Hetzner project.
 - `<stack>.vars.env`: `TF_VAR_*` values that must not be in a public repository
-  (`cloudflare.vars.env`: `TF_VAR_origin_ipv4`, `TF_VAR_grafana_allowed_emails` as a
-  JSON list). Their variables are `sensitive`, so a plan prints `(sensitive value)`
+  (`cloudflare.vars.env`: `TF_VAR_origin_ipv4`, `TF_VAR_rehearsal_origin_ipv4` (the k3s
+  server's, `ssh -G bta-prod-k3s`), `TF_VAR_grafana_allowed_emails` as a JSON list). Their variables are `sensitive`, so a plan prints `(sensitive value)`
   instead of them; the state still holds them in clear.
 
 Anything else a plan prints, mask before pasting it anywhere.

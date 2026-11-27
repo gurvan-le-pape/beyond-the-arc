@@ -46,6 +46,22 @@ resource "hcloud_firewall" "k3s" {
     port       = "22"
     source_ips = local.anywhere
   }
+
+  # Traefik, behind Cloudflare like the Compose server's Nginx: from Cloudflare's ranges
+  # only. 6443 (the Kubernetes API) stays closed; it is reached through SSH.
+  rule {
+    direction  = "in"
+    protocol   = "tcp"
+    port       = "80"
+    source_ips = local.cloudflare_ranges
+  }
+
+  rule {
+    direction  = "in"
+    protocol   = "tcp"
+    port       = "443"
+    source_ips = local.cloudflare_ranges
+  }
 }
 
 # The production server today, running the Compose stack.

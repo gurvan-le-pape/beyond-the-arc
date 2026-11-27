@@ -8,6 +8,12 @@ variable "origin_ipv4" {
   sensitive   = true
 }
 
+variable "rehearsal_origin_ipv4" {
+  description = "Public IPv4 of the k3s server (bta-prod-k3s), behind the rehearsal record."
+  type        = string
+  sensitive   = true
+}
+
 variable "grafana_allowed_emails" {
   description = "E-mail addresses allowed through Cloudflare Access to Grafana."
   type        = list(string)
