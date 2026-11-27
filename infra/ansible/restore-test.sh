@@ -26,11 +26,7 @@ set +a
 
 tools() { "$here/ansible.sh" "$@" < /dev/null; }
 
-counts='select (select count(*) from matches) as matches,
-  (select count(*) from matches where status = '\''completed'\'') as completed,
-  (select count(*) from match_events) as match_events,
-  (select count(*) from players) as players, (select count(*) from teams) as teams,
-  (select count(*) from clubs) as clubs, (select max(id) from match_events) as last_match_event_id;'
+counts=$(< "$here/backup-counts.sql")
 
 latest=$(tools rclone lsf --files-only "r2:$bucket/$prefix/" | sort | tail -1)
 [ -n "$latest" ] || { echo "restore-test.sh: no backup under $prefix/" >&2; exit 1; }

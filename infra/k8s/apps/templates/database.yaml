@@ -1,0 +1,30 @@
+# The application's PostgreSQL, as a CloudNativePG Cluster (../../database/).
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: database
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: {{ .Values.repoURL }}
+    targetRevision: {{ .Values.targetRevision }}
+    path: infra/k8s/database
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: bta
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      # On a new cluster this syncs alongside cnpg, before the Cluster CRD exists: the
+      # dry run would fail on the unknown kind, and the retry below waits for it.
+      - SkipDryRunOnMissingResource=true
+    retry:
+      limit: 10
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 3m

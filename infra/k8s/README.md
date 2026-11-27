@@ -20,6 +20,8 @@ Traefik, ServiceLB, local-path storage and metrics-server, and its SQLite datast
 | `root.yaml` | the root Application, which renders `apps/` |
 | `apps/` | the app of apps: a chart with one Application per component |
 | `argocd/values.yaml` | the argo-cd chart's values, for the install and for every sync after it |
+| `database/` | the application's PostgreSQL, a CloudNativePG `Cluster` |
+| `restore.sh` | restores the latest production backup into it |
 
 ## Running it
 
@@ -68,7 +70,9 @@ Argo CD deploys everything in the cluster from this repository, itself included.
 ```
 root (root.yaml, applied by bootstrap.sh)
 └── renders apps/, a chart of Applications
-    └── argocd: the argo-cd chart, with argocd/values.yaml
+    ├── argocd: the argo-cd chart, with argocd/values.yaml
+    ├── cnpg: the CloudNativePG operator chart (namespace cnpg-system)
+    └── database: database/, the PostgreSQL Cluster (namespace bta)
 ```
 
 `bootstrap.sh` installs the argo-cd chart once, at the version in `apps/values.yaml`,
@@ -104,14 +108,49 @@ infra/k8s/k.sh argocd admin initial-password -n argocd
 The lab leaves out what the app of apps does not use: Dex, notifications and the
 ApplicationSet controller (scaled to zero; its CRD stays, as the chart installs it).
 
+## Database
+
+PostgreSQL runs under the CloudNativePG operator, which turns the `Cluster` in
+`database/cluster.yaml` into a pod, its volume, its services (`database-rw` for
+read-write) and its Secrets. It is the release production runs, PostgreSQL 18.7, as one
+instance, like production's single container. CloudNativePG creates the `btadb`
+database, owned by the `bta` role, and writes that role's credentials and connection
+strings to the `database-app` Secret; the `postgres` superuser has no password and is
+reached only from inside the pod.
+
+The data is production's, from the latest backup in R2:
+
+```bash
+infra/k8s/restore.sh            # the latest daily backup
+infra/k8s/restore.sh weekly
+```
+
+The restore runs on the maintainer's machine, not as a Job in the cluster. The backup is
+encrypted to the maintainer's age key; a Job would need that key, and the R2 token, as
+Secrets in the cluster, and the key decrypts every backup ever made. Instead the dump is
+streamed from R2 through `age` in the `ansible.sh` image (the read token and key that
+`../ansible/restore-test.sh` uses) into `pg_restore` inside the database pod, through
+the API server. The decrypted dump never touches a disk.
+
+`restore.sh` restores as `bta`, so that the application's role owns every object, then
+runs `ANALYZE` and prints the figures of `../ansible/backup-counts.sql`. `restore-test.sh`
+prints the same figures for a throwaway restore of the same dump, and compares those with
+production. It refuses a database that already has tables; to restore again, delete the
+`Cluster`, and Argo CD recreates it empty:
+
+```bash
+infra/k8s/k.sh kubectl -n bta delete cluster database
+```
+
 ## Validation
 
 `validate.sh` checks what reaches the cluster with kubeconform in strict mode: an unknown
 or misspelt field is an error, not a field the API server would silently drop. That is
-the plain manifests (`root.yaml`), the `apps/` chart as `helm template` renders it, and the
-argo-cd chart rendered with `argocd/values.yaml`. Kubernetes' own kinds are checked
+the plain manifests (`root.yaml`, `database/`), the `apps/` chart as `helm template`
+renders it, and each upstream chart an Application installs (argo-cd with
+`argocd/values.yaml`, cloudnative-pg), at the version `apps/values.yaml` pins. Kubernetes' own kinds are checked
 against the schemas of the cluster's version, read from the k3s image tag in
-`lab/cluster.yaml`, from `yannh/kubernetes-json-schema`; custom resources (`Application`)
+`lab/cluster.yaml`, from `yannh/kubernetes-json-schema`; custom resources (`Application`, `Cluster`)
 against `datreeio/CRDs-catalog`; both at pinned commits. `CustomResourceDefinition` itself
 is skipped: its schema is recursive, so no standalone file exists for it, and the CRDs
 come unchanged from upstream charts.
@@ -146,7 +185,21 @@ With Argo CD (`bootstrap.sh`, ten minutes after it):
 | node cgroup, page cache included | 2.95 GiB (1.22 GiB anonymous) |
 | CPU at rest | about 85 millicores |
 
-Every later stage of the lab is measured against these figures, on the working set. The
+With the database restored (`restore.sh`, the 2026-11-27 dump: 8.8 GB on disk), at rest
+after autovacuum had finished with `match_events`:
+
+| Measure | Value |
+|---|---|
+| node working set | 6.89 GiB of 8 GiB (86 %); `database-1` alone 5.1 GiB |
+| anonymous memory (what cannot be reclaimed) | 1.45 GiB |
+| page cache | 6.25 GiB, 5.2 GiB of it active: the database's files |
+| during the restore | the node reached its 8 GiB limit and the kernel reclaimed page cache (109,000 times at the limit, no OOM kill) |
+
+The working set counts the active page cache, so with a database larger than the memory
+it settles near the limit whatever the load: it measures the cache, not what the platform
+needs. Anonymous memory is the figure that cannot be given back.
+
+Every later stage of the lab is measured against these figures. The
 phase's no-go threshold is an idle working set above 75 % of the 8 GiB, 6 GiB. The figures
 are k3s inside a Docker container on WSL 2; k3s directly on the CX33 shares neither, so
 they place the platform's cost, not production's to the megabyte.
@@ -160,6 +213,8 @@ they place the platform's cost, not production's to the megabyte.
 | kubectl | 1.37.2 | `Dockerfile`, within one minor version of k3s |
 | Helm | 4.3.2 | `Dockerfile` |
 | Argo CD | 3.6.3, chart 10.20.0 | `apps/values.yaml` (chart); `Dockerfile` (CLI, same release) |
+| CloudNativePG | 1.30.2, chart 0.29.2 | `apps/values.yaml` |
+| PostgreSQL | 18.7 (`minimal` image) | `database/cluster.yaml` (by digest) |
 | kubeconform | 0.8.0 | `Dockerfile`; schemas at the commit in `validate.sh` |
 
 A version changes by editing the file, with the sha256 its release publishes; a new k3s

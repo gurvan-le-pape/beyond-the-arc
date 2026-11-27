@@ -7,3 +7,7 @@ targetRevision: main
 # keeps. Its appVersion is the Argo CD release, which ../Dockerfile's CLI matches.
 argocd:
   chartVersion: 10.20.0
+
+# The CloudNativePG operator chart; its appVersion is the operator release.
+cnpg:
+  chartVersion: 0.29.2

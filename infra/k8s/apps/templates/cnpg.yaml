@@ -1,0 +1,26 @@
+# The CloudNativePG operator, which runs PostgreSQL clusters declared as Cluster resources
+# (../../database/). Its CRDs are installed with it.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cnpg
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://cloudnative-pg.github.io/charts
+    chart: cloudnative-pg
+    targetRevision: {{ .Values.cnpg.chartVersion | quote }}
+    helm:
+      releaseName: cnpg
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cnpg-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      # The CRDs are larger than the annotation client-side apply keeps.
+      - ServerSideApply=true

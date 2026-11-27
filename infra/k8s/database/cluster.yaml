@@ -1,0 +1,25 @@
+# The application's database: PostgreSQL 18.7, the release production runs, as one
+# instance like production's single container. CloudNativePG creates the btadb database,
+# owned by the bta role, and the bta role's credentials in the database-app Secret; the
+# superuser has no password and is reached only from inside the pod.
+#
+# The data arrives by restore.sh, from the latest production backup. The minimal image
+# carries PostgreSQL's contrib extensions, pg_trgm among them, which the schema uses.
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: database
+  namespace: bta
+spec:
+  instances: 1
+  imageName: ghcr.io/cloudnative-pg/postgresql:18.7-minimal-trixie@sha256:c8caac9817d2b5e5e66297a3ccf86d9fcbd68f097aa6cc00161d83f9635e88cc
+  bootstrap:
+    initdb:
+      database: btadb
+      owner: bta
+  # Production's database is 9.7 GB (2026-11-27) and about 20 GB at the end of the
+  # season. local-path does not enforce the size; it is the claim the CX33's disk
+  # (80 GB) has to hold.
+  storage:
+    size: 40Gi
+    storageClass: local-path
