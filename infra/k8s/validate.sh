@@ -4,23 +4,36 @@
 # Runs in the k.sh image, from infra/k8s: `infra/k8s/k.sh ./validate.sh` locally, and in
 # CI through scripts/ci/lint-infra.sh.
 #
-# The schemas are downloaded from yannh/kubernetes-json-schema at a pinned commit, so a
-# run needs a network but reads the same schemas every time. The version comes from the
-# k3s image tag in lab/cluster.yaml, which is k3d's configuration and not a manifest.
+# What is validated is what reaches the cluster: the plain manifests as they are, the apps
+# chart as helm template renders it, and the argo-cd chart rendered with argocd/values.yaml.
+# Kubernetes' own kinds are checked against yannh/kubernetes-json-schema, custom resources
+# against datreeio/CRDs-catalog, both at pinned commits, so a run needs a network but reads
+# the same schemas every time. The version comes from the k3s image tag in
+# lab/cluster.yaml, which is k3d's configuration and not a manifest.
 set -euo pipefail
 
 cd "$(dirname "$0")"
 version=$(sed -n 's/^image: rancher\/k3s:v\([0-9.]*\)-k3s.*/\1/p' lab/cluster.yaml)
 [ -n "$version" ] || { echo "validate.sh: no k3s version in lab/cluster.yaml" >&2; exit 1; }
-schemas=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/e62c03bd5a52fd34ff6ac28d083e2a300e0ae7c1
+chart_version=$(sed -n 's/^  chartVersion: *//p' apps/values.yaml)
+[ -n "$chart_version" ] || { echo "validate.sh: no chartVersion in apps/values.yaml" >&2; exit 1; }
+kubernetes=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/e62c03bd5a52fd34ff6ac28d083e2a300e0ae7c1
+crds=https://raw.githubusercontent.com/datreeio/CRDs-catalog/d330ce2bbe064d75a1ff289d09f0a4dadb8f3f8e
 
-mapfile -t manifests < <(find . -path ./lab/cluster.yaml -prune -o \
+rendered=$(mktemp -d)
+trap 'rm -rf "$rendered"' EXIT
+helm template apps apps > "$rendered/apps.yaml"
+helm template argocd argo-cd --repo https://argoproj.github.io/argo-helm \
+  --version "$chart_version" --namespace argocd -f argocd/values.yaml > "$rendered/argocd.yaml"
+
+# Plain manifests: every YAML file outside the charts, the values files and k3d's config.
+mapfile -t manifests < <(find . \( -path ./apps -o -path ./argocd -o -path ./lab \) -prune -o \
   -type f \( -name '*.yaml' -o -name '*.yml' \) -print | sort)
-if [ "${#manifests[@]}" -eq 0 ]; then
-  echo "validate.sh: no manifests yet"
-  exit 0
-fi
 
-exec kubeconform -strict -summary -kubernetes-version "$version" \
-  -schema-location "$schemas/{{.NormalizedKubernetesVersion}}-standalone{{.StrictSuffix}}/{{.ResourceKind}}{{.KindSuffix}}.json" \
-  "${manifests[@]}"
+# CustomResourceDefinition is skipped: its schema is recursive (a CRD's schema describes
+# schemas), so the schema repository has no standalone file for it. The CRDs here come
+# unchanged from upstream charts; the resources they define are validated.
+kubeconform -strict -summary -kubernetes-version "$version" -skip CustomResourceDefinition \
+  -schema-location "$kubernetes/{{.NormalizedKubernetesVersion}}-standalone{{.StrictSuffix}}/{{.ResourceKind}}{{.KindSuffix}}.json" \
+  -schema-location "$crds/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json" \
+  "${manifests[@]}" "$rendered/apps.yaml" "$rendered/argocd.yaml"

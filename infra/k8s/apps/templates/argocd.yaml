@@ -1,0 +1,30 @@
+# Argo CD itself: the argo-cd chart at the pinned version, with the values file from this
+# repository. No finalizer, so deleting this Application leaves Argo CD running.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://argoproj.github.io/argo-helm
+      chart: argo-cd
+      targetRevision: {{ .Values.argocd.chartVersion | quote }}
+      helm:
+        releaseName: argocd
+        valueFiles:
+          - $values/infra/k8s/argocd/values.yaml
+    - repoURL: {{ .Values.repoURL }}
+      targetRevision: {{ .Values.targetRevision }}
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      # The CRDs are larger than the annotation client-side apply keeps.
+      - ServerSideApply=true

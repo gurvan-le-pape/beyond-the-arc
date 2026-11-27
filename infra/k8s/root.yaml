@@ -1,0 +1,21 @@
+# The root Application: renders ../apps, the chart holding every other Application.
+# bootstrap.sh applies it once; it is the one Argo CD object not kept by Argo CD, so a
+# change here is applied by running bootstrap.sh again.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: root
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/gurvan-le-pape/beyond-the-arc.git
+    targetRevision: main
+    path: infra/k8s/apps
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

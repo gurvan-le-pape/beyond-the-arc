@@ -1,0 +1,9 @@
+# The repository and revision every Application reads from. root.yaml leaves them at
+# these defaults; bootstrap.sh overrides targetRevision to try a branch.
+repoURL: https://github.com/gurvan-le-pape/beyond-the-arc.git
+targetRevision: main
+
+# The argo-cd chart, the version bootstrap.sh installs first and the argocd Application
+# keeps. Its appVersion is the Argo CD release, which ../Dockerfile's CLI matches.
+argocd:
+  chartVersion: 10.20.0

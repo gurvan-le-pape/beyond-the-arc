@@ -1,0 +1,7 @@
+# The app of apps: one Argo CD Application per component of the platform, rendered by the
+# `root` Application (../root.yaml). Each Application follows the same Git revision as
+# root, so a branch can be tried in the lab whole (see ../README.md).
+apiVersion: v2
+name: apps
+version: 0.1.0
+type: application

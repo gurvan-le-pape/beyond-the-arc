@@ -1,0 +1,12 @@
+# Values for the argo-cd Helm chart, read by bootstrap.sh for the first install and by the
+# `argocd` Application (../apps/templates/argocd.yaml) for every sync after it: Argo CD
+# manages itself from this file.
+#
+# The lab runs one replica of each component and only what the app of apps uses: no Dex
+# (the admin account is the only login), no notifications, no ApplicationSet controller.
+dex:
+  enabled: false
+notifications:
+  enabled: false
+applicationSet:
+  replicas: 0
