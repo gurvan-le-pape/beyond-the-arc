@@ -4,9 +4,9 @@
 FROM python:3.14-slim@sha256:22eafb370920ad8b429e0aec3fff433e0669968519f5d60469d83729c138b28b
 
 # age and rclone also serve the restore test (restore-test.sh), which downloads and
-# decrypts a backup on the maintainer's machine.
+# decrypts a backup on the maintainer's machine; nano is the editor `sops edit` opens.
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends age ca-certificates curl openssh-client rclone \
+  && apt-get install -y --no-install-recommends age ca-certificates curl nano openssh-client rclone \
   && rm -rf /var/lib/apt/lists/*
 
 # sops decrypts the *.sops.yml files under inventory/ (community.sops vars plugin), with
@@ -33,3 +33,6 @@ ARG GID=1000
 RUN if [ "$UID" != 0 ]; then \
     groupadd -g "$GID" ansible && useradd -m -u "$UID" -g "$GID" -d /home/ansible ansible; \
   fi
+
+# The editor `sops edit` opens.
+ENV EDITOR=nano
