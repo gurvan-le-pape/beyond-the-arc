@@ -1,0 +1,53 @@
+# The kube-prometheus-stack chart's values, read by templates/kube-prometheus-stack.yaml
+# and by ../../validate.sh, so that what is validated is what is installed.
+fullnameOverride: kps
+defaultRules:
+  create: false
+alertmanager:
+  enabled: false
+grafana:
+  enabled: false
+kubeEtcd:
+  enabled: false
+kubeControllerManager:
+  enabled: false
+kubeScheduler:
+  enabled: false
+kubeProxy:
+  enabled: false
+# k3s runs the API server, the kubelet and the rest in one process, so the kubelet's
+# /metrics and the API server's both carry that process's internal histograms: 129,000 of
+# the 140,000 series with them on (2026-11-27), and 559 MiB of Prometheus, for metrics no
+# alert or dashboard here reads. The kubelet's cAdvisor (per-container CPU and memory)
+# and probe metrics stay.
+kubeApiServer:
+  enabled: false
+kubelet:
+  serviceMonitor:
+    kubelet: false
+prometheusOperator:
+  # It validates PrometheusRules, which nothing here creates, and needs a certificate Job;
+  # the operator's TLS listener exists only to serve that webhook.
+  admissionWebhooks:
+    enabled: false
+  tls:
+    enabled: false
+prometheus:
+  prometheusSpec:
+    # Production's scrape interval and retention.
+    scrapeInterval: 15s
+    retention: 15d
+    # Select every ServiceMonitor and Probe in the cluster, not only the chart's.
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    probeSelectorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false
+    scrapeConfigSelectorNilUsesHelmValues: false
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: local-path
+          accessModes: [ReadWriteOnce]
+          resources:
+            requests:
+              storage: 10Gi

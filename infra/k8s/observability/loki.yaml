@@ -1,0 +1,83 @@
+# Loki, production's release and configuration (docker/config/loki.yml): one process,
+# filesystem storage on its volume, 31 days of retention.
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: loki
+  labels:
+    app.kubernetes.io/name: loki
+spec:
+  replicas: 1
+  serviceName: loki
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: loki
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: loki
+    spec:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: loki
+          image: grafana/loki:3.7.1@sha256:73e905b51a7f917f7a1075e4be68759df30226e03dcb3cd2213b989cc0dc8eb4
+          args:
+            - -config.file=/etc/loki/config.yml
+          ports:
+            - name: http
+              containerPort: 3100
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: http
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: [ALL]
+          volumeMounts:
+            - name: data
+              mountPath: /loki
+            - name: config
+              mountPath: /etc/loki
+      volumes:
+        - name: config
+          configMap:
+            name: loki
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        storageClassName: local-path
+        accessModes: [ReadWriteOnce]
+        resources:
+          requests:
+            storage: 10Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: loki
+spec:
+  selector:
+    app.kubernetes.io/name: loki
+  ports:
+    - name: http
+      port: 3100
+      targetPort: http

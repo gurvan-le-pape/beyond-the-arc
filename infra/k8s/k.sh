@@ -6,7 +6,8 @@
 # The image is built from Dockerfile on first use and tagged by the hash of that file, so
 # a version change rebuilds it. The container runs as the calling user on the host
 # network, where the lab's API server listens (127.0.0.1:6550), with this directory as its
-# working directory.
+# working directory. The whole repository is mounted, at /repo: observability/ builds its
+# ConfigMaps from production's files under docker/config/.
 #
 # State lives in ~/.config/bta-k8s (the kubeconfig, k3d's files, Helm's configuration) and
 # ~/.cache/bta-k8s, mounted at the same paths inside: k3d bind-mounts files from its
@@ -28,7 +29,7 @@ cache="${XDG_CACHE_HOME:-$HOME/.cache}/bta-k8s"
 mkdir -p "$state" "$cache"
 flags=(--rm -i -u "$(id -u):$(id -g)" --network host -e HOME=/tmp
   -e XDG_CONFIG_HOME="$state" -e XDG_CACHE_HOME="$cache" -e KUBECONFIG="$state/kubeconfig"
-  -v "$state:$state" -v "$cache:$cache" -v "$here:/work" -w /work)
+  -v "$state:$state" -v "$cache:$cache" -v "$(dirname "$(dirname "$here")"):/repo" -w /repo/infra/k8s)
 [ ! -t 0 ] || flags+=(-t)
 
 if [ "$1" = k3d ]; then

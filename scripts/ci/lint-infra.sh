@@ -78,12 +78,13 @@ fi
 
 # The Kubernetes manifests run through kubeconform in the image k.sh builds locally. Both
 # the build and the validation need a network: the binaries, then the schemas at the
-# commit validate.sh pins.
+# commit validate.sh pins. docker/config goes in too: infra/k8s/observability builds its
+# ConfigMaps from production's files there.
 echo "== kubernetes"
 k8s_image="bta-k8s:$(sha256sum < infra/k8s/Dockerfile | cut -c1-12)"
 if docker build -q -t "$k8s_image" infra/k8s > /dev/null; then
   container=$(docker create -w /repo/infra/k8s "$k8s_image" ./validate.sh)
-  git ls-files -z -- infra/k8s | tar --null -T - --transform 's,^,repo/,' -cf - |
+  git ls-files -z -- infra/k8s docker/config | tar --null -T - --transform 's,^,repo/,' -cf - |
     docker cp -q - "$container:/"
   docker start -a "$container" || failed=1
   docker rm -fv "$container" > /dev/null

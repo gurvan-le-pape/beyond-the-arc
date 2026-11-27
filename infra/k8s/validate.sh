@@ -24,6 +24,9 @@ rendered=$(mktemp -d)
 trap 'rm -rf "$rendered"' EXIT
 helm template apps apps > "$rendered/apps.yaml"
 kubectl kustomize app/lab > "$rendered/app-lab.yaml"
+# observability/ reads production's files under docker/config/, as Argo CD lets it
+# (argocd/values.yaml, kustomize.buildOptions).
+kubectl kustomize --load-restrictor LoadRestrictionsNone observability > "$rendered/observability.yaml"
 
 # An upstream chart, at the version apps/values.yaml pins for its Application, with the
 # values that Application gives it:
@@ -43,10 +46,13 @@ render certManager cert-manager https://charts.jetstack.io cert-manager cert-man
   --set crds.enabled=true --set startupapicheck.enabled=false
 render sealedSecrets sealed-secrets https://bitnami.github.io/sealed-secrets sealed-secrets \
   kube-system --set fullnameOverride=sealed-secrets-controller
+render kubePrometheusStack kps https://prometheus-community.github.io/helm-charts \
+  kube-prometheus-stack monitoring -f apps/values/kube-prometheus-stack.yaml
 
 # Plain manifests: every YAML file outside the charts, the values files, the Kustomize
 # tree and k3d's config.
-mapfile -t manifests < <(find . \( -path ./app -o -path ./apps -o -path ./argocd -o -path ./lab \) -prune -o \
+mapfile -t manifests < <(find . \( -path ./app -o -path ./apps -o -path ./argocd -o -path ./lab \
+  -o -path ./observability \) -prune -o \
   -type f \( -name '*.yaml' -o -name '*.yml' \) -print | sort)
 
 # CustomResourceDefinition is skipped: its schema is recursive (a CRD's schema describes
