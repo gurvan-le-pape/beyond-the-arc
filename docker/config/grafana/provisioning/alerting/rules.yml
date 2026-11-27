@@ -430,3 +430,61 @@ groups:
         isPaused: false
         notification_settings:
           receiver: email-admin
+      - uid: dbbackupmissing26h
+        title: Database Backup Missing
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: PBFA97CFB590B2093
+            model:
+              editorMode: code
+              # Hours since the last backup reached R2, written by the backup job
+              # (infra/ansible/roles/postgres_backup) through node-exporter's
+              # textfile collector.
+              expr: (time() - max(bta_db_backup_last_success_timestamp_seconds)) / 3600
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: C
+            queryType: expression
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 26
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: C
+              type: threshold
+        # 26 hours: one nightly run missed, with two hours' slack for a slow one.
+        # No series means no backup has ever succeeded on this host, or the
+        # metric is no longer collected: either way there is no proof of a backup.
+        noDataState: Alerting
+        execErrState: Error
+        for: 5m
+        annotations:
+          summary: No database backup has reached R2 for more than 26 hours
+        isPaused: false
+        notification_settings:
+          receiver: email-admin

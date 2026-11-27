@@ -315,6 +315,9 @@ services:
       - "--path.sysfs=/host/sys"
       - "--path.rootfs=/rootfs"
       - "--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)"
+      # Metrics written by host jobs, read through the rootfs mount above: the database
+      # backup (infra/ansible/roles/postgres_backup) writes its last success there.
+      - "--collector.textfile.directory=/rootfs/var/lib/node_exporter/textfile_collector"
     restart: unless-stopped
     networks:
       - my_network

@@ -182,6 +182,8 @@ The official `postgres:18.7` image, unmodified. Schema and static reference data
 
 Data is persisted in a `postgres_data` named volume. In production this volume is declared `external: true`, which prevents `docker-compose down` or `docker-compose up --build` from recreating it. Compose therefore never creates it either — a deliberate safeguard against accidental data loss — so it must exist before the first deployment; `docker/provision/provision.sh` creates it (see *Host setup*).
 
+It is backed up nightly at 04:00 Paris time to the Cloudflare R2 bucket `bta-db-backups` (EU jurisdiction): a full `pg_dump -Fc -Z zstd:3`, `match_events` included, encrypted on the host to the maintainer's age public key, so the host can write a backup and never read one. Measured on 2026-11-27: 270 s and 1.26 GB for a 9.7 GB database, with the 2 vCPU close to saturated meanwhile. Seven dailies (`daily/`) and four weeklies (`weekly/`, Monday's dump) are kept; the bucket's lock rules forbid deleting or overwriting a backup before the end of its retention, and its lifecycle rules delete it a day later. The host's token has object access to that bucket only and cannot change those rules. The job is the `postgres_backup` Ansible role (`infra/ansible/`); the bucket and its rules are in `infra/terraform/cloudflare/r2.tf`; the Grafana rule *Database Backup Missing* fires when no backup has succeeded for 26 hours; `infra/ansible/restore-test.sh` restores the latest one on the maintainer's machine and compares it with production.
+
 ### migrate
 
 A one-shot service built from the backend Dockerfile's `migrate` target (the dependency stage plus `prisma migrate deploy` as the command). It waits for the database health check, applies any pending migrations, and exits; `backend` and `scheduler` declare `depends_on: service_completed_successfully` on it, so application code never runs against a schema that is behind it.
@@ -220,7 +222,7 @@ Resource limit: 0.5 CPU / 512MB RAM, with `GOMEMLIMIT=400MiB`. **The two belong 
 
 ### node-exporter
 
-Exposes host-level metrics (CPU, memory, disk, network) to Prometheus. Mounts `/proc`, `/sys`, and the root filesystem read-only. Has no exposed port — Prometheus scrapes it internally by service name.
+Exposes host-level metrics (CPU, memory, disk, network) to Prometheus. Mounts `/proc`, `/sys`, and the root filesystem read-only. Has no exposed port — Prometheus scrapes it internally by service name. Its textfile collector reads `/var/lib/node_exporter/textfile_collector/` on the host, where the database backup job writes its last success.
 
 ### cadvisor
 

@@ -1,0 +1,5 @@
+---
+# Installed into the image at build time (Dockerfile), at these exact versions.
+collections:
+  - name: community.sops
+    version: 2.5.1

@@ -1,0 +1,20 @@
+---
+# The Compose container that runs PostgreSQL, and the database it dumps.
+postgres_backup_container: docker-database-1
+# Nightly, off-peak: matches are played on weekends between 14:00 and 22:00 Paris time.
+postgres_backup_on_calendar: "*-*-* 04:00:00 Europe/Paris"
+# The day whose daily backup is also copied under weekly/ (ISO: 1 = Monday, the
+# first dump after a weekend's matches).
+postgres_backup_weekly_isoday: 1
+postgres_backup_bucket: bta-db-backups
+# Public key only: this host can encrypt a backup and never read one.
+postgres_backup_age_recipient: age10sluzjafwqa85a84uu70a6tye2an83z56wnkyfm4w5xfru4a0plqc7adk7
+# Read by node-exporter's textfile collector (docker/docker-compose.yml); the Grafana
+# rule "Database Backup Missing" alerts on the timestamp written there.
+postgres_backup_textfile_dir: /var/lib/node_exporter/textfile_collector
+
+# From the SOPS-encrypted group_vars: an R2 token with Object Read & Write on the
+# bucket only, which cannot change the bucket's lock or lifecycle rules.
+# postgres_backup_r2_access_key_id:
+# postgres_backup_r2_secret_access_key:
+# postgres_backup_r2_endpoint:

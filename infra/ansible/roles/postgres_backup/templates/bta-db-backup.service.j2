@@ -1,0 +1,15 @@
+# Managed by Ansible (infra/ansible/roles/postgres_backup).
+[Unit]
+Description=Encrypted pg_dump of the database to R2
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/bta-db-backup/backup.env
+ExecStart=/usr/local/sbin/bta-db-backup
+# Lower priority for age and rclone; pg_dump itself runs in the container under nice.
+Nice=10
+IOSchedulingClass=idle
+PrivateTmp=true
+TimeoutStartSec=2h

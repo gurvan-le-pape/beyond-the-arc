@@ -34,3 +34,9 @@ import {
   to = cloudflare_zero_trust_access_application.grafana_acme
   id = "accounts/e093b1328feb8fef8d914c5e5351bc41/60d86cb6-a6ba-4cb4-ad78-b93ab5c994ed"
 }
+
+# Created in the dashboard (EU jurisdiction) for the database backups.
+import {
+  to = cloudflare_r2_bucket.db_backups
+  id = "e093b1328feb8fef8d914c5e5351bc41/bta-db-backups/eu"
+}

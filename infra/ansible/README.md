@@ -15,8 +15,9 @@ has said otherwise for that run.
 ## Running it
 
 Ansible runs only on the maintainer's machine, through `ansible.sh`, in the image built
-from `Dockerfile`: Python and openssh from a base image pinned by digest, Ansible and
-ansible-lint pinned by hash in `requirements.txt`. CI builds the same image and runs
+from `Dockerfile`: Python, openssh, age and rclone from a base image pinned by digest,
+Ansible and ansible-lint pinned by hash in `requirements.txt`, the `community.sops`
+collection at the version in `requirements.yml`, and sops checked against its sha256. CI builds the same image and runs
 `ansible-lint` and `--syntax-check` with no network and no access to a server
 (`scripts/ci/lint-infra.sh`).
 
@@ -40,9 +41,74 @@ console, or `../terraform/tf.sh hetzner state show` on a primary IP). Host keys 
 checked against `~/.ssh/known_hosts`, which the container cannot write: a first
 connection to a host is made with plain `ssh` beforehand.
 
+## Secrets
+
+Secrets are in `inventory/group_vars/<group>/*.sops.yml`, encrypted with SOPS to the
+maintainer's age key (`.sops.yaml`). The `community.sops` vars plugin decrypts them when
+a playbook loads the inventory, with the private key `ansible.sh` mounts read-only from
+`~/.config/sops/age/keys.txt`. CI has no key: `ansible-lint` and `--syntax-check` never
+decrypt. Edit a file in place, which opens `$EDITOR` on the clear text and re-encrypts
+on save:
+
+```bash
+infra/ansible/ansible.sh sops edit inventory/group_vars/compose/backup.sops.yml
+```
+
+## Database backups
+
+`postgres_backup` (on `compose`) installs `/usr/local/sbin/bta-db-backup` and a systemd
+timer running it nightly at 04:00 Paris time: a full `pg_dump -Fc -Z zstd:3` streamed
+into age (public key only) into a file under `/var/tmp`, then uploaded with rclone to
+`r2:bta-db-backups/daily/`, and on Mondays copied to `weekly/`. Retention (7 dailies,
+4 weeklies) is the bucket's lock and lifecycle rules in `../terraform/cloudflare/r2.tf`,
+not the script's. On success it writes `bta_db_backup_last_success_timestamp_seconds`
+for node-exporter; the Grafana rule *Database Backup Missing* fires after 26 hours
+without one.
+
+`backup.sops.yml` holds the host's R2 token: Object Read & Write on `bta-db-backups`
+only (`postgres_backup_r2_access_key_id`, `postgres_backup_r2_secret_access_key`) and
+the bucket's jurisdiction endpoint (`postgres_backup_r2_endpoint`,
+`https://<account id>.eu.r2.cloudflarestorage.com`).
+
+```bash
+# On the host, as root: one run now, then its log.
+systemctl start bta-db-backup.service
+journalctl -u bta-db-backup.service -n 20
+```
+
+### Restore test
+
+A backup that has never been restored is not a backup. `restore-test.sh` restores the
+latest backup into a throwaway PostgreSQL, at the version Compose runs, on the
+maintainer's machine, and prints its row counts next to production's. Run it after any
+change to the backup job, and monthly:
+
+```bash
+infra/ansible/restore-test.sh          # latest under daily/
+infra/ansible/restore-test.sh weekly   # latest under weekly/
+```
+
+It reads `~/.config/bta-ansible/r2-backups-read.env` (mode 600), from an R2 token with
+Object Read only on `bta-db-backups`:
+
+```
+RCLONE_CONFIG_R2_TYPE=s3
+RCLONE_CONFIG_R2_PROVIDER=Cloudflare
+RCLONE_CONFIG_R2_ENDPOINT=https://<account id>.eu.r2.cloudflarestorage.com
+RCLONE_CONFIG_R2_ACCESS_KEY_ID=...
+RCLONE_CONFIG_R2_SECRET_ACCESS_KEY=...
+RCLONE_CONFIG_R2_NO_CHECK_BUCKET=true
+```
+
+The backup goes from R2 through `age -d` into `pg_restore` as a stream: the decrypted
+dump is never written to disk. Production keeps running after the dump, so its counts
+are equal or higher, never lower.
+
 ## Updating Ansible or ansible-lint
 
-Edit `requirements.in`, then regenerate the hashes in the base image:
+Edit `requirements.in`, then regenerate the hashes in the base image (collections:
+`requirements.yml`; sops: `SOPS_VERSION` and `SOPS_SHA256` in `Dockerfile`, from the
+release's `checksums.txt`):
 
 ```bash
 docker run --rm -u "$(id -u):$(id -g)" -e HOME=/tmp -v "$PWD/infra/ansible:/w" -w /w \

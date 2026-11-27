@@ -6,11 +6,13 @@ needs only its own token:
 | Stack | Manages | State key |
 |---|---|---|
 | `github/` | repository, `main` ruleset, repository variables, `Production` and `build` environments and their variables | `github/terraform.tfstate` |
-| `cloudflare/` | `beyondthearc.app` zone and its DNS records, the Grafana Access application and its ACME bypass, with their policies | `cloudflare/terraform.tfstate` |
+| `cloudflare/` | `beyondthearc.app` zone and its DNS records, the Grafana Access application and its ACME bypass, with their policies, the `bta-db-backups` R2 bucket with its lock and lifecycle rules | `cloudflare/terraform.tfstate` |
 | `hetzner/` | the two servers (`bta-prod-compose`, `bta-prod-k3s`), their IPv4 primary IPs, the database volume, the two firewalls | `hetzner/terraform.tfstate` |
 
-Terraform only imports what exists. Nothing here creates a server, a volume or a
-repository, and every imported resource that holds data carries `prevent_destroy`.
+Terraform imports what exists. Nothing here creates a server, a volume, a bucket or a
+repository, and every imported resource that holds data carries `prevent_destroy`. The
+only resources it creates are rules on an imported resource that the provider cannot
+import: the R2 bucket lock and lifecycle rules (`cloudflare/r2.tf`).
 Secrets stay out of Terraform: a managed secret's value would land in the state.
 
 ## Running it
@@ -35,7 +37,8 @@ Credentials live in `~/.config/bta-terraform/` (mode 600, outside the repository
   Environments, Variables and Metadata). Importing and planning only read; a write token
   is created for an apply that changes something, and only then. When a plan fails for
   lack of permission, add the read permission it names, nothing else.
-  `cloudflare.env`: `CLOUDFLARE_API_TOKEN`, read-only on the zone's DNS and on Access.
+  `cloudflare.env`: `CLOUDFLARE_API_TOKEN`, read-only on the zone's DNS, on Access and
+  on R2 (Workers R2 Storage Read).
   `hetzner.env`: `HCLOUD_TOKEN`, a Read token of the one Hetzner project.
 - `<stack>.vars.env`: `TF_VAR_*` values that must not be in a public repository
   (`cloudflare.vars.env`: `TF_VAR_origin_ipv4`, `TF_VAR_grafana_allowed_emails` as a

@@ -1,0 +1,18 @@
+postgres_backup_r2_access_key_id: ENC[AES256_GCM,data:l8j3RwCCIKBnybU=,iv:7tQWUFETFT+c5v3uP/Q7/QMzJKIEPol8+0npYLf6MKE=,tag:LlMAIIoIvmp2O17wkR+yJg==,type:str]
+postgres_backup_r2_secret_access_key: ENC[AES256_GCM,data:ftUw5V0WaFxyV1o=,iv:LZ57n7VZRIkk+8OjIP+vlbp91ueodYMQPYxnxv2Fkao=,tag:ppzp/Bw/4XD4VAIxgfmBgA==,type:str]
+postgres_backup_r2_endpoint: ENC[AES256_GCM,data:ndoj0+q/zvBYst8=,iv:VdQczxJUWfdIZpdNnbNtUIkGmJVft1IZqLOhoAM4Kxo=,tag:HoPPBmCZZ802g8I7KxOlgw==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBWMXh2R0Q4bzdBR0U2ME5M
+            UHMyNnBvWUNFMWN3aDVNRkpjWG9wWS9BVVU0Cjh0K3N3MGFFRHExV29YWlNNTFRN
+            eUlrSEZyWFpNYkxlVFRUVUoyZnR4eU0KLS0tIGtVTG5lM1BNV3VFQWRvRnNvL3ls
+            VkhWK1ZFd0JoZVVOeXNVck8yN0JYOGMKs1Jj9IBbIZk2R6vNgd5GxK66vM4YgPaO
+            X3aBdjdx1pqPEIwTFzeBKRxzhVKaIQcWOpxzIc4ykUKok35albrUOg==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age10sluzjafwqa85a84uu70a6tye2an83z56wnkyfm4w5xfru4a0plqc7adk7
+    lastmodified: "2026-11-27T08:54:43Z"
+    mac: ENC[AES256_GCM,data:N6DuchfubMfk0WiAVFtBYq40uqvrLvKmxpQf/J4PfwiDLeuJCb/cIv/+yE/m/+vpbgIQqy455v59U0tx0p1SyC6fy3tTQfSsfsfNTUM344qqbJfBEPsJiQ+7YO4LnuEl8wJfXZDYPvczPqOqDzM5KKBR6FthsK0+SxHQimRv8eI=,iv:AmR1KMDFYCrNjE6dkLbAWiywYF2n0npPRzrcUdaxHZU=,tag:1b/mY1sbU4WPJmHOoSn4/A==,type:str]
+    unencrypted_suffix: _unencrypted
+    version: 3.13.3
