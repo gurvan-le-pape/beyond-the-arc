@@ -1,4 +1,4 @@
-# The certificate issuers and the Cloudflare token they use (../../issuers/).
+# The certificate issuers and the Cloudflare token they use (../../issuers/<cluster>).
 {{- if .Values.components.issuers }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: {{ .Values.repoURL }}
     targetRevision: {{ .Values.targetRevision }}
-    path: infra/k8s/issuers
+    path: infra/k8s/issuers/{{ .Values.cluster }}
   destination:
     server: https://kubernetes.default.svc
     namespace: cert-manager

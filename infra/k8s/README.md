@@ -25,7 +25,7 @@ Traefik, ServiceLB, local-path storage and metrics-server, and its SQLite datast
 | `restore.sh` | restores the latest production backup into it |
 | `sealed-secrets-key.sh` | backs up the Sealed Secrets controller's keys, encrypted, here and on R2 |
 | `app/` | the application: a Kustomize base and the lab overlay |
-| `issuers/` | the certificate issuer and the Cloudflare token it uses, sealed |
+| `issuers/` | the certificate issuers, and per cluster the Cloudflare token they use, sealed |
 | `observability/` | Grafana, Loki, the blackbox exporter, Alloy and the scrape targets: a base and one overlay per cluster |
 | `apps/values/` | the values of a chart Application, read by it and by `validate.sh` |
 | `arc/` | the GitHub App credentials the runner scale set uses, sealed |
@@ -125,7 +125,7 @@ root (root.yaml, applied by bootstrap.sh)
     ├── app: app/lab/, backend, frontend, scheduler, the migration and the Ingress (namespace bta)
     ├── cert-manager: the cert-manager chart, with its CRDs (namespace cert-manager)
     ├── sealed-secrets: the Sealed Secrets controller chart (namespace kube-system)
-    ├── issuers: issuers/, the ClusterIssuer and the sealed Cloudflare token
+    ├── issuers: issuers/<cluster>/, the two ClusterIssuers and the sealed Cloudflare token
     ├── kube-prometheus-stack: the operator, Prometheus, node-exporter, kube-state-metrics (namespace monitoring)
     ├── observability: observability/<cluster>/, Grafana, Loki, blackbox, Alloy, scrape targets (namespace monitoring)
     ├── arc-controller: the Actions Runner Controller chart (namespace arc-systems)
@@ -254,7 +254,7 @@ rest) are not set.
 ## Certificates
 
 cert-manager issues `lab.beyondthearc.app`'s certificate from Let's Encrypt's staging
-CA (`issuers/letsencrypt-staging.yaml`): the real ACME flow, with rate limits far above
+CA (`issuers/base/letsencrypt-staging.yaml`): the real ACME flow, with rate limits far above
 production's, and a certificate no browser trusts. It proves the name by DNS-01: it
 writes an `_acme-challenge` TXT record through Cloudflare's API and removes it once the
 CA has checked it, so the lab needs no public address and no inbound port. Those records
@@ -266,7 +266,7 @@ infra/k8s/k.sh kubectl -n bta get certificate,order
 ```
 
 The Cloudflare token can edit DNS records on the `beyondthearc.app` zone and nothing
-else, and expires on 2027-02-25. It is in Git only sealed (`issuers/cloudflare-api-token.sealed.yaml`):
+else, and expires on 2027-02-25. It is in Git only sealed (`issuers/lab/cloudflare-api-token.sealed.yaml`):
 encrypted to the Sealed Secrets controller's public key, so only that controller, in
 this cluster, can decrypt it, and only into the `cloudflare-api-token` Secret in
 `cert-manager` (the name and namespace are part of the encryption). The plain token
@@ -281,12 +281,20 @@ again and commit the file:
 cd infra/k8s && ./k.sh sh -c ". $HOME/.config/bta-k8s/cloudflare-dns.env &&
   kubectl create secret generic cloudflare-api-token --namespace cert-manager \
     --from-literal=api-token=\"\$CLOUDFLARE_API_TOKEN\" --dry-run=client -o json |
-  kubeseal --format yaml" > issuers/cloudflare-api-token.sealed.yaml
+  kubeseal --format yaml" > issuers/lab/cloudflare-api-token.sealed.yaml
 ```
 
 The plain Secret exists only in that pipe; kubeseal fetches the public key from the
 controller through the API server. The header comment of the sealed file is written by
 hand.
+
+Production has the same two issuers and the same token, sealed to its own key in
+`issuers/production/` (the command above with `BTA_CLUSTER=production` and that path),
+plus a use for the second one: `letsencrypt-production` (`issuers/base/`), the CA
+browsers and Cloudflare's Full (strict) mode trust, for the rehearsal host and then the
+real names. Its rate limits are real, so a new name or setting is tried on staging first.
+The token's expiry, 2027-02-25, is then production's too: replace it and reseal both
+before that date.
 
 ## Observability
 
@@ -389,8 +397,9 @@ declared in `argocd/values.yaml` (public, no credentials).
 
 `validate.sh` checks what reaches the cluster with kubeconform in strict mode: an unknown
 or misspelt field is an error, not a field the API server would silently drop. That is
-the plain manifests (`root.yaml`, `database/`, `issuers/`, `arc/`), the `apps/` chart as `helm
-template` renders it, `app/lab` and `observability` as `kubectl kustomize` builds them,
+the plain manifests (`root.yaml`, `database/`, `arc/`), the `apps/` chart as `helm
+template` renders it for each cluster, `app/`, `observability/` and `issuers/` per cluster as
+`kubectl kustomize` builds them,
 and each upstream chart an Application installs (argo-cd with `argocd/values.yaml`,
 cloudnative-pg, cert-manager, sealed-secrets, kube-prometheus-stack with
 `apps/values/kube-prometheus-stack.yaml`, ARC's two charts with theirs), at the version `apps/values.yaml` pins.
