@@ -28,7 +28,9 @@ kubectl kustomize app/lab > "$rendered/app-lab.yaml"
 kubectl kustomize app/production > "$rendered/app-production.yaml"
 # observability/ reads production's files under docker/config/, as Argo CD lets it
 # (argocd/values.yaml, kustomize.buildOptions).
-kubectl kustomize --load-restrictor LoadRestrictionsNone observability > "$rendered/observability.yaml"
+for cluster in lab production; do
+  kubectl kustomize --load-restrictor LoadRestrictionsNone "observability/$cluster" > "$rendered/observability-$cluster.yaml"
+done
 
 # An upstream chart, at the version apps/values.yaml pins for its Application, with the
 # values that Application gives it:

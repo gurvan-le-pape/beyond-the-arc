@@ -1,4 +1,4 @@
-# Grafana, Loki, the blackbox exporter, Alloy and the scrape targets (../../observability/).
+# Grafana, Loki, the blackbox exporter, Alloy and the scrape targets (../../observability/<cluster>).
 {{- if .Values.components.observability }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: {{ .Values.repoURL }}
     targetRevision: {{ .Values.targetRevision }}
-    path: infra/k8s/observability
+    path: infra/k8s/observability/{{ .Values.cluster }}
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
