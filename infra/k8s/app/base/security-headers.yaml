@@ -1,0 +1,23 @@
+# The security headers production's Nginx adds to every response of the main site
+# (docker/nginx/beyondthearc.conf, its 443 block), the same names and the same values, as
+# a Traefik Middleware each overlay's Ingress names. Set as literal response headers
+# rather than through the Middleware's own options (frameDeny, browserXssFilter, …),
+# whose values differ from Nginx's (browserXssFilter sends "1; mode=block", Nginx "0").
+#
+# Two copies until the cutover retires Nginx: a change to one, the CSP above all
+# (docs/infrastructure.md, Nginx), is made to both.
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: security-headers
+  labels:
+    app.kubernetes.io/part-of: beyond-the-arc
+spec:
+  headers:
+    customResponseHeaders:
+      X-Frame-Options: DENY
+      X-Content-Type-Options: nosniff
+      X-XSS-Protection: "0"
+      Referrer-Policy: strict-origin-when-cross-origin
+      Content-Security-Policy: "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://a.tile.openstreetmap.org; connect-src 'self' https://a.tile.openstreetmap.org; worker-src 'self' blob:; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+      Strict-Transport-Security: max-age=31536000

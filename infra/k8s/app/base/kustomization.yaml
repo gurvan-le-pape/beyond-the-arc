@@ -8,3 +8,4 @@ resources:
   - backend.yaml
   - frontend.yaml
   - scheduler.yaml
+  - security-headers.yaml

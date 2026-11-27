@@ -4,8 +4,8 @@
 # another commit is changing these four digests, with the CX23 on the same commit while
 # the gate runs.
 #
-# FRONTEND_URL is the rehearsal hostname (the backend's only CORS origin); the Ingress for
-# it comes with the certificates. SENTRY_ENVIRONMENT files the servers' errors as
+# FRONTEND_URL is the rehearsal hostname (the backend's only CORS origin), which
+# ingress.yaml serves. SENTRY_ENVIRONMENT files the servers' errors as
 # rehearsal, away from production's; the browser takes its environment from the hostname.
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -13,6 +13,7 @@ namespace: bta
 resources:
   - ../base
   - backend-sentry.sealed.yaml
+  - ingress.yaml
 # A changed value renames the ConfigMap (a hash suffix), which rolls the pods that use it.
 configMapGenerator:
   - name: app
