@@ -12,7 +12,7 @@ Traefik, ServiceLB, local-path storage and metrics-server, and its SQLite datast
 
 | Path | What it is |
 |---|---|
-| `Dockerfile` | the tools image: k3d, kubectl, Helm, the Argo CD CLI, kubeconform, each pinned and checked by sha256 |
+| `Dockerfile` | the tools image: k3d, kubectl, Helm, the Argo CD CLI, kubeseal, kubeconform, each pinned and checked by sha256 |
 | `k.sh` | runs one of those tools in that image |
 | `validate.sh` | validates the manifests with kubeconform |
 | `lab/cluster.yaml` | the lab cluster, as k3d's configuration |
@@ -23,6 +23,7 @@ Traefik, ServiceLB, local-path storage and metrics-server, and its SQLite datast
 | `database/` | the application's PostgreSQL, a CloudNativePG `Cluster` |
 | `restore.sh` | restores the latest production backup into it |
 | `app/` | the application: a Kustomize base and the lab overlay |
+| `issuers/` | the certificate issuer and the Cloudflare token it uses, sealed |
 
 ## Running it
 
@@ -74,7 +75,10 @@ root (root.yaml, applied by bootstrap.sh)
     ├── argocd: the argo-cd chart, with argocd/values.yaml
     ├── cnpg: the CloudNativePG operator chart (namespace cnpg-system)
     ├── database: database/, the PostgreSQL Cluster (namespace bta)
-    └── app: app/lab/, backend, frontend, scheduler and the migration (namespace bta)
+    ├── app: app/lab/, backend, frontend, scheduler, the migration and the Ingress (namespace bta)
+    ├── cert-manager: the cert-manager chart, with its CRDs (namespace cert-manager)
+    ├── sealed-secrets: the Sealed Secrets controller chart (namespace kube-system)
+    └── issuers: issuers/, the ClusterIssuer and the sealed Cloudflare token
 ```
 
 `bootstrap.sh` installs the argo-cd chart once, at the version in `apps/values.yaml`,
@@ -179,30 +183,71 @@ for five seconds while it leaves the Service: two rolling restarts of both, unde
 request every 0.2 s, failed none of about 1,700 requests (2 of 475 without that delay).
 A deploy no longer has the seconds of 502 that recreating the compose containers gives.
 
-Nothing routes to it from outside the cluster yet (that is Traefik, with a certificate
-for `lab.beyondthearc.app`); a port-forward reaches it:
+The Ingress (`app/lab/ingress.yaml`) serves `lab.beyondthearc.app` through k3s's
+Traefik, routed as production's Nginx routes it: `/api`, the API and its Swagger UI, to
+the backend; everything else to the frontend. The frontend's bundle calls the relative
+`/api`, so the browser's requests go to the lab as well. No public DNS record points at
+the lab; a client resolves the name to it:
 
 ```bash
-infra/k8s/k.sh kubectl -n bta port-forward svc/frontend 3000:3000   # http://127.0.0.1:3000/en
+curl --resolve lab.beyondthearc.app:8443:127.0.0.1 -k https://lab.beyondthearc.app:8443/en
 infra/k8s/k.sh kubectl -n bta logs deploy/scheduler -f
 ```
 
-A server render goes to the backend's Service. The browser, though, calls the URL that
-`NEXT_PUBLIC_API_URL` inlined into the bundle at build time, which is production's API:
-the lab's pages render from the lab's database, and what the browser fetches after them
-comes from production, which only allows production's origin. The image is built once
-for every environment, so this is a build setting to change, not a value for the lab.
+For a browser, `127.0.0.1 lab.beyondthearc.app` in the hosts file (on WSL, Windows'
+`C:\Windows\System32\drivers\etc\hosts`), then `https://lab.beyondthearc.app:8443/en`,
+past the warning for the staging certificate. Not yet as in production: plain HTTP is
+served rather than redirected, and the security headers Nginx adds (CSP, HSTS and the
+rest) are not set.
+
+## Certificates
+
+cert-manager issues `lab.beyondthearc.app`'s certificate from Let's Encrypt's staging
+CA (`issuers/letsencrypt-staging.yaml`): the real ACME flow, with rate limits far above
+production's, and a certificate no browser trusts. It proves the name by DNS-01: it
+writes an `_acme-challenge` TXT record through Cloudflare's API and removes it once the
+CA has checked it, so the lab needs no public address and no inbound port. Those records
+are not in Terraform's state, and a Cloudflare plan stays empty. Issued 2026-11-27 in
+under two minutes; cert-manager renews it before it expires.
+
+```bash
+infra/k8s/k.sh kubectl -n bta get certificate,order
+```
+
+The Cloudflare token can edit DNS records on the `beyondthearc.app` zone and nothing
+else, and expires on 2027-02-25. It is in Git only sealed (`issuers/cloudflare-api-token.sealed.yaml`):
+encrypted to the Sealed Secrets controller's public key, so only that controller, in
+this cluster, can decrypt it, and only into the `cloudflare-api-token` Secret in
+`cert-manager` (the name and namespace are part of the encryption). The plain token
+stays on the maintainer's machine, in `~/.config/bta-k8s/cloudflare-dns.env`
+(`CLOUDFLARE_API_TOKEN=…`, mode 600).
+
+The controller generates its key in the cluster. A new cluster has a new key and cannot
+open what the old one sealed, so after `k3d cluster create`, or with a new token, seal it
+again and commit the file:
+
+```bash
+cd infra/k8s && ./k.sh sh -c ". $HOME/.config/bta-k8s/cloudflare-dns.env &&
+  kubectl create secret generic cloudflare-api-token --namespace cert-manager \
+    --from-literal=api-token=\"\$CLOUDFLARE_API_TOKEN\" --dry-run=client -o json |
+  kubeseal --format yaml" > issuers/cloudflare-api-token.sealed.yaml
+```
+
+The plain Secret exists only in that pipe; kubeseal fetches the public key from the
+controller through the API server. The header comment of the sealed file is written by
+hand.
 
 ## Validation
 
 `validate.sh` checks what reaches the cluster with kubeconform in strict mode: an unknown
 or misspelt field is an error, not a field the API server would silently drop. That is
-the plain manifests (`root.yaml`, `database/`), the `apps/` chart as `helm template`
-renders it, the application as `kubectl kustomize app/lab` builds it, and each upstream chart an Application installs (argo-cd with
-`argocd/values.yaml`, cloudnative-pg), at the version `apps/values.yaml` pins. Kubernetes' own kinds are checked
-against the schemas of the cluster's version, read from the k3s image tag in
-`lab/cluster.yaml`, from `yannh/kubernetes-json-schema`; custom resources (`Application`, `Cluster`)
-against `datreeio/CRDs-catalog`; both at pinned commits. `CustomResourceDefinition` itself
+the plain manifests (`root.yaml`, `database/`, `issuers/`), the `apps/` chart as `helm
+template` renders it, the application as `kubectl kustomize app/lab` builds it, and each
+upstream chart an Application installs (argo-cd with `argocd/values.yaml`,
+cloudnative-pg, cert-manager, sealed-secrets), at the version `apps/values.yaml` pins.
+Kubernetes' own kinds are checked against the schemas of the cluster's version, read from
+the k3s image tag in `lab/cluster.yaml`, from `yannh/kubernetes-json-schema`; custom
+resources (`Application`, `Cluster`, `ClusterIssuer`, `SealedSecret`) against `datreeio/CRDs-catalog`; both at pinned commits. `CustomResourceDefinition` itself
 is skipped: its schema is recursive, so no standalone file exists for it, and the CRDs
 come unchanged from upstream charts.
 
@@ -262,6 +307,17 @@ match due:
 The requests are those figures rounded up; the limits leave room for load, which a later
 stage measures.
 
+With cert-manager, Sealed Secrets and the Ingress, a minute after the certificate was
+issued:
+
+| Measure | Value |
+|---|---|
+| cert-manager (controller, cainjector, webhook) | 32, 33, 12 MiB |
+| Sealed Secrets controller | 11 MiB |
+| Traefik, now serving the Ingress | 113 MiB |
+| node working set | 3.66 GiB of 8 GiB |
+| anonymous memory | 2.03 GiB (25 %) |
+
 Every later stage of the lab is measured against these figures. The phase's no-go
 threshold is idle anonymous memory above 75 % of the 8 GiB, 6 GiB, on the node's cgroup
 (`anon` in `memory.stat`). Not the working set: with a database larger than the memory,
@@ -282,6 +338,9 @@ they place the platform's cost, not production's to the megabyte.
 | Argo CD | 3.6.3, chart 10.20.0 | `apps/values.yaml` (chart); `Dockerfile` (CLI, same release) |
 | CloudNativePG | 1.30.2, chart 0.29.2 | `apps/values.yaml` |
 | PostgreSQL | 18.7 (`minimal` image) | `database/cluster.yaml` (by digest) |
+| cert-manager | v1.21.3 (chart of the same version) | `apps/values.yaml` |
+| Sealed Secrets | 0.41.2, chart 2.22.0 | `apps/values.yaml` (chart); `Dockerfile` (kubeseal, same release) |
+| Traefik | k3s's bundled chart (41.6.1) | the k3s release |
 | kubeconform | 0.8.0 | `Dockerfile`; schemas at the commit in `validate.sh` |
 
 A version changes by editing the file, with the sha256 its release publishes; a new k3s
