@@ -16,8 +16,11 @@ Sentry.init({
 
   // @sentry/core defaults `environment` to the literal string "production", so
   // leaving it unset files local development errors into the production project
-  // indistinguishably from real ones. Set it explicitly. Matches the backend.
-  environment: process.env.NODE_ENV,
+  // indistinguishably from real ones. Set it explicitly. Matches the backend:
+  // SENTRY_ENVIRONMENT, read when the server starts, names a deployment that is
+  // not production although it runs a production build (the k3s lab, the
+  // rehearsal host); without it, NODE_ENV.
+  environment: process.env.SENTRY_ENVIRONMENT ?? process.env.NODE_ENV,
 
   // Enable logs to be sent to Sentry
   enableLogs: true,
