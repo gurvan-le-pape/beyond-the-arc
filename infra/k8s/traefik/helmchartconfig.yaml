@@ -1,0 +1,34 @@
+# k3s's bundled Traefik, set through the HelmChartConfig k3s reads for its own chart: the
+# chart stays k3s's (its version comes with the k3s release), these values are merged on
+# top, and k3s's helm controller upgrades the release when they change.
+#
+# - Port 80 answers with a permanent redirect to HTTPS, as production's Nginx does.
+# - An access log, one JSON object per request on stdout, where Alloy collects it into
+#   Loki with the other pods' logs (service="traefik"). Duration is the whole request as
+#   Traefik saw it, OriginDuration the part spent waiting on the pod: the latter is the
+#   server-side time the phase 5 latency gate compares with Nginx's upstream_response_time
+#   on the CX23 (docker/nginx/beyondthearc.conf). Request headers are dropped except the
+#   User-Agent, which tells the gate's k6 requests apart from visitors'.
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    ports:
+      web:
+        http:
+          redirections:
+            entryPoint:
+              to: websecure
+              scheme: https
+              permanent: true
+    accessLog:
+      enabled: true
+      format: json
+      fields:
+        headers:
+          defaultMode: drop
+          names:
+            User-Agent: keep
