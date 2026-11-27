@@ -16,6 +16,10 @@ Traefik, ServiceLB, local-path storage and metrics-server, and its SQLite datast
 | `k.sh` | runs one of those tools in that image |
 | `validate.sh` | validates the manifests with kubeconform |
 | `lab/cluster.yaml` | the lab cluster, as k3d's configuration |
+| `bootstrap.sh` | installs Argo CD and hands it the root Application |
+| `root.yaml` | the root Application, which renders `apps/` |
+| `apps/` | the app of apps: a chart with one Application per component |
+| `argocd/values.yaml` | the argo-cd chart's values, for the install and for every sync after it |
 
 ## Running it
 
@@ -48,21 +52,69 @@ machine:
 - `~/.config/bta-k8s/.k3d-*`: the files k3d mounts into the node (a `/proc/meminfo`
   reporting 8 GB, so that the kubelet sees the cap). The Docker daemon resolves those
   bind mounts on the machine, which is why the directory is mounted at its own path.
+- `~/.config/bta-k8s/argocd/config`: the Argo CD CLI's login, once `argocd login` has
+  run; it holds a session token.
 - `~/.cache/bta-k8s`: Helm's cache.
 
 Only `k3d` gets the Docker socket, which it needs to create the node containers; kubectl,
 Helm and the others reach the cluster through the API server alone. k3d's helper image
 (`k3d-tools`) is pinned by digest in `k.sh`, since k3d otherwise pulls it by tag.
 
+## Argo CD
+
+Argo CD deploys everything in the cluster from this repository, itself included. After
+`bootstrap.sh`, nothing is applied by hand except `root.yaml`:
+
+```
+root (root.yaml, applied by bootstrap.sh)
+└── renders apps/, a chart of Applications
+    └── argocd: the argo-cd chart, with argocd/values.yaml
+```
+
+`bootstrap.sh` installs the argo-cd chart once, at the version in `apps/values.yaml`,
+rendered by `helm template` and applied server-side, then applies `root.yaml`. From then
+on the `argocd` Application keeps Argo CD from the same chart version and values file, so
+a change to Argo CD is a commit. It is not a Helm release: `helm list` shows nothing, and
+nothing should be installed with `helm install`, since Argo CD would then share those
+objects with a release record that goes stale.
+
+Every Application syncs automatically, prunes what Git no longer declares, and reverts
+what was changed in the cluster by hand (`selfHeal`). The Applications carry no
+finalizer: deleting one stops Argo CD managing its objects and leaves them running.
+
+```bash
+infra/k8s/k.sh ./bootstrap.sh                 # install, root follows main
+infra/k8s/k.sh ./bootstrap.sh <branch>        # root and every Application follow a pushed branch
+infra/k8s/k.sh kubectl -n argocd get applications
+```
+
+A branch is tried whole: `bootstrap.sh <branch>` points root at it and passes it to the
+apps chart as `targetRevision`, which every Application reads. Argo CD reads the
+repository from GitHub, so the branch must be pushed; running `bootstrap.sh` again with no
+argument goes back to `main`.
+
+The web interface and the CLI go through a port-forward; the `admin` account is the only
+login (no Dex):
+
+```bash
+infra/k8s/k.sh kubectl -n argocd port-forward svc/argocd-server 8081:443   # https://127.0.0.1:8081
+infra/k8s/k.sh argocd admin initial-password -n argocd
+```
+
+The lab leaves out what the app of apps does not use: Dex, notifications and the
+ApplicationSet controller (scaled to zero; its CRD stays, as the chart installs it).
+
 ## Validation
 
-`validate.sh` checks every manifest under this directory, except k3d's configuration,
-with kubeconform in strict mode: an unknown or misspelt field is an error, not a field the
-API server would silently drop. The schemas are those of the cluster's Kubernetes version,
-read from the k3s image tag in `lab/cluster.yaml`, downloaded from
-`yannh/kubernetes-json-schema` at a pinned commit. A custom resource (an Argo CD
-`Application`, a CloudNativePG `Cluster`) needs its own schema location, added with the
-first one.
+`validate.sh` checks what reaches the cluster with kubeconform in strict mode: an unknown
+or misspelt field is an error, not a field the API server would silently drop. That is
+the plain manifests (`root.yaml`), the `apps/` chart as `helm template` renders it, and the
+argo-cd chart rendered with `argocd/values.yaml`. Kubernetes' own kinds are checked
+against the schemas of the cluster's version, read from the k3s image tag in
+`lab/cluster.yaml`, from `yannh/kubernetes-json-schema`; custom resources (`Application`)
+against `datreeio/CRDs-catalog`; both at pinned commits. `CustomResourceDefinition` itself
+is skipped: its schema is recursive, so no standalone file exists for it, and the CRDs
+come unchanged from upstream charts.
 
 ```bash
 infra/k8s/k.sh ./validate.sh
@@ -84,6 +136,16 @@ metrics-server):
 | node cgroup, page cache included | 1.54 GiB (673 MiB anonymous, 814 MiB file) |
 | CPU at rest | about 50 millicores |
 
+With Argo CD (`bootstrap.sh`, ten minutes after it):
+
+| Measure | Value |
+|---|---|
+| node working set | 1.73 GiB of 8 GiB (21 %), +0.97 GiB, steady over a minute |
+| of which Argo CD's pods | 246 MiB: application controller 138, repo server 74, server 27, Redis 6 |
+| the rest of the increase | the k3s process (1.05 GiB resident), whose API server now serves Argo CD's CRDs and its watches, and the file cache of the pulled images |
+| node cgroup, page cache included | 2.95 GiB (1.22 GiB anonymous) |
+| CPU at rest | about 85 millicores |
+
 Every later stage of the lab is measured against these figures, on the working set. The
 phase's no-go threshold is an idle working set above 75 % of the 8 GiB, 6 GiB. The figures
 are k3s inside a Docker container on WSL 2; k3s directly on the CX33 shares neither, so
@@ -97,7 +159,7 @@ they place the platform's cost, not production's to the megabyte.
 | k3d | 5.9.0 | `Dockerfile`, `k.sh` (its `k3d-tools` image) |
 | kubectl | 1.37.2 | `Dockerfile`, within one minor version of k3s |
 | Helm | 4.3.2 | `Dockerfile` |
-| Argo CD CLI | 3.6.3 | `Dockerfile` |
+| Argo CD | 3.6.3, chart 10.20.0 | `apps/values.yaml` (chart); `Dockerfile` (CLI, same release) |
 | kubeconform | 0.8.0 | `Dockerfile`; schemas at the commit in `validate.sh` |
 
 A version changes by editing the file, with the sha256 its release publishes; a new k3s
