@@ -11,3 +11,11 @@ argocd:
 # The CloudNativePG operator chart; its appVersion is the operator release.
 cnpg:
   chartVersion: 0.29.2
+
+# cert-manager, which issues the lab's certificates by DNS-01 against Cloudflare.
+certManager:
+  chartVersion: v1.21.3
+
+# The Sealed Secrets controller; ../Dockerfile's kubeseal is the same release.
+sealedSecrets:
+  chartVersion: 2.22.0

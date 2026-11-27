@@ -25,18 +25,24 @@ trap 'rm -rf "$rendered"' EXIT
 helm template apps apps > "$rendered/apps.yaml"
 kubectl kustomize app/lab > "$rendered/app-lab.yaml"
 
-# An upstream chart, at the version apps/values.yaml pins for its Application:
-# render <name> <repository> <chart> <namespace> [helm flags...]
+# An upstream chart, at the version apps/values.yaml pins for its Application, with the
+# values that Application gives it:
+# render <key in apps/values.yaml> <release> <repository> <chart> <namespace> [helm flags...]
 render() {
-  local name="$1" repo="$2" chart="$3" namespace="$4" version
-  shift 4
-  version=$(sed -n "/^$name:/,/^[^ ]/s/^  chartVersion: *//p" apps/values.yaml)
-  [ -n "$version" ] || { echo "validate.sh: no $name.chartVersion in apps/values.yaml" >&2; exit 1; }
-  helm template "$name" "$chart" --repo "$repo" --version "$version" --namespace "$namespace" \
-    "$@" > "$rendered/$name.yaml"
+  local key="$1" release="$2" repo="$3" chart="$4" namespace="$5" version
+  shift 5
+  version=$(sed -n "/^$key:/,/^[^ ]/s/^  chartVersion: *//p" apps/values.yaml)
+  [ -n "$version" ] || { echo "validate.sh: no $key.chartVersion in apps/values.yaml" >&2; exit 1; }
+  helm template "$release" "$chart" --repo "$repo" --version "$version" --namespace "$namespace" \
+    "$@" > "$rendered/$release.yaml"
 }
-render argocd https://argoproj.github.io/argo-helm argo-cd argocd -f argocd/values.yaml
-render cnpg https://cloudnative-pg.github.io/charts cloudnative-pg cnpg-system
+render argocd argocd https://argoproj.github.io/argo-helm argo-cd argocd -f argocd/values.yaml
+render cnpg cnpg https://cloudnative-pg.github.io/charts cloudnative-pg cnpg-system
+# The values of apps/templates/cert-manager.yaml and sealed-secrets.yaml.
+render certManager cert-manager https://charts.jetstack.io cert-manager cert-manager \
+  --set crds.enabled=true --set startupapicheck.enabled=false
+render sealedSecrets sealed-secrets https://bitnami.github.io/sealed-secrets sealed-secrets \
+  kube-system --set fullnameOverride=sealed-secrets-controller
 
 # Plain manifests: every YAML file outside the charts, the values files, the Kustomize
 # tree and k3d's config.

@@ -1,5 +1,5 @@
 # The image the Kubernetes tools run in, locally (k.sh) and in CI (scripts/ci/lint-infra.sh):
-# k3d, kubectl, Helm, the Argo CD CLI and kubeconform. Each binary is checked against the
+# k3d, kubectl, Helm, the Argo CD CLI, kubeseal and kubeconform. Each binary is checked against the
 # sha256 its release publishes; the versions move only by editing this file.
 FROM debian:trixie-slim@sha256:8aa5a7bf5a1955bddbe7d74fcdd0b91ab30e74362a8b73af672b0481b35b44a0 AS download
 
@@ -37,7 +37,15 @@ RUN curl -fsSLo kubeconform.tar.gz \
   && echo "${KUBECONFORM_SHA256}  kubeconform.tar.gz" | sha256sum -c - \
   && tar -xzf kubeconform.tar.gz kubeconform
 
-RUN chmod 755 kubectl k3d helm argocd kubeconform
+# kubeseal matches the Sealed Secrets controller (apps/values.yaml, sealedSecrets).
+ARG KUBESEAL_VERSION=0.41.2
+ARG KUBESEAL_SHA256=666b5db6788ad1dedb56e2d97064e1cc3779aa77bbd6f4b56b62beeb1941ed79
+RUN curl -fsSLo kubeseal.tar.gz \
+    "https://github.com/bitnami-labs/sealed-secrets/releases/download/v${KUBESEAL_VERSION}/kubeseal-${KUBESEAL_VERSION}-linux-amd64.tar.gz" \
+  && echo "${KUBESEAL_SHA256}  kubeseal.tar.gz" | sha256sum -c - \
+  && tar -xzf kubeseal.tar.gz kubeseal
+
+RUN chmod 755 kubectl k3d helm argocd kubeseal kubeconform
 
 FROM debian:trixie-slim@sha256:8aa5a7bf5a1955bddbe7d74fcdd0b91ab30e74362a8b73af672b0481b35b44a0
 
@@ -45,4 +53,4 @@ RUN apt-get update \
   && apt-get install -y --no-install-recommends ca-certificates \
   && rm -rf /var/lib/apt/lists/*
 COPY --from=download /download/kubectl /download/k3d /download/helm /download/argocd \
-  /download/kubeconform /usr/local/bin/
+  /download/kubeseal /download/kubeconform /usr/local/bin/
