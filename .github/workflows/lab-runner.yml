@@ -1,0 +1,23 @@
+# One job on the k3s lab's runner scale set (infra/k8s, Actions Runner Controller), by
+# hand only: proof that a job queued for bta-lab reaches an ephemeral runner pod in the
+# lab and finishes there. Nothing else runs on bta-lab, and the job needs the lab to be
+# up on the maintainer's machine; without it, the job waits in the queue.
+name: Lab runner check
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  check:
+    runs-on: bta-lab
+    timeout-minutes: 10
+    steps:
+      - name: Report the runner
+        run: |
+          echo "runner: $RUNNER_NAME"
+          echo "host: $(hostname)"
+          id
+          uname -r
+          head -2 /etc/os-release

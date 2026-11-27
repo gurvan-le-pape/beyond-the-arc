@@ -1,0 +1,39 @@
+# The bta-lab runner scale set, and the GitHub App credentials it registers with
+# (../../arc/, sealed): two sources, one Application.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: arc-runners
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: ghcr.io/actions/actions-runner-controller-charts
+      chart: gha-runner-scale-set
+      targetRevision: {{ .Values.arc.chartVersion }}
+      helm:
+        releaseName: bta-lab
+        valuesObject:
+          {{- .Files.Get "values/arc-runners.yaml" | nindent 10 }}
+    - repoURL: {{ .Values.repoURL }}
+      targetRevision: {{ .Values.targetRevision }}
+      path: infra/k8s/arc
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: arc-runners
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+      # On a new cluster this syncs alongside the controller and sealed-secrets, before
+      # their CRDs exist; the retry below waits for them.
+      - SkipDryRunOnMissingResource=true
+    retry:
+      limit: 10
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 3m

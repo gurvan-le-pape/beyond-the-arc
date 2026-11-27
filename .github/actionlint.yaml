@@ -2,3 +2,5 @@
 self-hosted-runner:
   labels:
     - wsl
+    # The k3s lab's runner scale set (infra/k8s/apps/values/arc-runners.yaml).
+    - bta-lab
