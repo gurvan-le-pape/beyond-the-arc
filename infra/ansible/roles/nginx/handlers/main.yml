@@ -1,11 +1,15 @@
 ---
-- name: Check and reload Nginx
+# Both listen to one topic and run in this order: a config nginx -t rejects stops the
+# play before the reload. (A handler that notifies another only does so when it
+# reports a change, so the check cannot chain to the reload by notify.)
+- name: Check Nginx's configuration
   ansible.builtin.command:
     argv: [nginx, -t, -q]
   changed_when: false
-  notify: Reload Nginx
+  listen: Check and reload Nginx
 
 - name: Reload Nginx
   ansible.builtin.systemd_service:
     name: nginx
     state: reloaded
+  listen: Check and reload Nginx

@@ -1,11 +1,15 @@
 ---
-- name: Check and reload sshd
+# Both listen to one topic and run in this order: a config sshd -t rejects stops the
+# play before the reload. (A handler that notifies another only does so when it
+# reports a change, so the check cannot chain to the reload by notify.)
+- name: Check sshd's configuration
   ansible.builtin.command:
     argv: [/usr/sbin/sshd, -t]
   changed_when: false
-  notify: Reload sshd
+  listen: Check and reload sshd
 
 - name: Reload sshd
   ansible.builtin.systemd_service:
     name: ssh
     state: reloaded
+  listen: Check and reload sshd

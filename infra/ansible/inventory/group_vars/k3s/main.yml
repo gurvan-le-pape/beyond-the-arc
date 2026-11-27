@@ -2,3 +2,7 @@
 # Same key as root's on this host for now (~/.ssh/hetzner_vps on the maintainer's
 # machine).
 automation_user_pubkey: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKn4TO/+KVT4O8sJ53ujcS62h/naac/pHdLZ3AirzuiK"
+
+# Ansible connects as `ansible` (automation_user); nothing logs in as root here. The
+# Hetzner console stays the way in if the key is lost.
+ssh_hardening_permit_root_login: "no"
