@@ -299,6 +299,7 @@ Four containers, `wsl-1` to `wsl-4`, on the developer's machine, selected with `
 - **They mount the host Docker socket,** which is root-equivalent on that machine. Workflows from outside contributors' forks need approval before they run, and the default `GITHUB_TOKEN` is read-only. Never approve a fork's run without reading its changes.
 - **`services:` does not work on them.** A service's port is published on the Docker host, which is not a containerised runner's localhost. `backend` starts PostgreSQL in the runner's own network namespace instead.
 - **No job may use `ubuntu-latest`.** GitHub-hosted runners are not used. `.github/actionlint.yaml` declares the `wsl` label.
+- **`bta-lab` is not one of them.** It is the k3s lab's runner scale set (Actions Runner Controller, `infra/k8s/README.md`): ephemeral pods, no Docker socket. Only `lab-runner.yml` targets it, run by hand; no CI job does.
 
 ---
 
