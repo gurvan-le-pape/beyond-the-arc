@@ -1,0 +1,5 @@
+# Every *.sops.yml here is encrypted to the maintainer's age key. Its private half is
+# on the maintainer's machine only (~/.config/sops/age/keys.txt), with offline copies.
+creation_rules:
+  - path_regex: \.sops\.yml$
+    age: age10sluzjafwqa85a84uu70a6tye2an83z56wnkyfm4w5xfru4a0plqc7adk7

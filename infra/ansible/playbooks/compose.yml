@@ -1,0 +1,8 @@
+---
+# The Compose host (CX23). Run with --check --diff unless the maintainer has said
+# otherwise for that run.
+- name: Configure the Compose host
+  hosts: compose
+  become: false
+  roles:
+    - postgres_backup

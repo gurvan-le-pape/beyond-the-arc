@@ -1,0 +1,11 @@
+# Managed by Ansible (infra/ansible/roles/postgres_backup).
+[Unit]
+Description=Nightly database backup to R2
+
+[Timer]
+OnCalendar={{ postgres_backup_on_calendar }}
+# A run missed while the host was down starts at the next boot.
+Persistent=true
+
+[Install]
+WantedBy=timers.target

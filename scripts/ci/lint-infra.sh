@@ -57,7 +57,7 @@ container=""
 # Ansible runs in the image ansible.sh builds locally. Building it needs a network (pip,
 # checked against the hashes in requirements.txt); the lint itself has none.
 echo "== ansible"
-ansible_image="bta-ansible-lint:$(cat infra/ansible/Dockerfile infra/ansible/requirements.txt |
+ansible_image="bta-ansible-lint:$(cat infra/ansible/Dockerfile infra/ansible/requirements.txt infra/ansible/requirements.yml |
   sha256sum | cut -c1-12)"
 if docker build -q --build-arg UID=0 -t "$ansible_image" infra/ansible > /dev/null; then
   container=$(docker create --network none -e ANSIBLE_CONFIG=/repo/infra/ansible/ansible.cfg \

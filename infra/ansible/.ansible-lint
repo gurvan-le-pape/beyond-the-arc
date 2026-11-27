@@ -3,3 +3,5 @@ profile: production
 offline: true
 exclude_paths:
   - .cache/
+  # Written by sops, not by hand: its lines are as long as the ciphertext.
+  - "**/*.sops.yml"
