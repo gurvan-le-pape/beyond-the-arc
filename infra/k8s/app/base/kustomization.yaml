@@ -1,0 +1,10 @@
+# The application as every environment runs it. An overlay supplies what differs: the
+# namespace, the image digests and the app ConfigMap (FRONTEND_URL). The database-app
+# Secret comes from the CloudNativePG Cluster in the same namespace.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - migrate.yaml
+  - backend.yaml
+  - frontend.yaml
+  - scheduler.yaml

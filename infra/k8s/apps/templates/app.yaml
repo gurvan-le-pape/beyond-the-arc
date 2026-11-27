@@ -1,0 +1,29 @@
+# The application (../../app/lab): backend, frontend, scheduler and the migration Job.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: {{ .Values.repoURL }}
+    targetRevision: {{ .Values.targetRevision }}
+    path: infra/k8s/app/lab
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: bta
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+    # On a new cluster the migration runs before the database is up and fails; the
+    # retries wait for it.
+    retry:
+      limit: 10
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 3m

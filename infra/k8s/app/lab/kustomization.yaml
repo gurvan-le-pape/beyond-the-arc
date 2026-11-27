@@ -1,0 +1,23 @@
+# The application in the lab. The images are the ones CI built, started and pushed for a
+# main commit, named by digest as the production deploy names them; moving the lab to
+# another commit is changing these four digests.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: bta
+resources:
+  - ../base
+# A changed value renames the ConfigMap (a hash suffix), which rolls the pods that use it.
+configMapGenerator:
+  - name: app
+    literals:
+      - FRONTEND_URL=https://lab.beyondthearc.app
+# main at 5e0f5547.
+images:
+  - name: ghcr.io/gurvan-le-pape/beyond-the-arc/backend
+    digest: sha256:596d50ac79ae85f9fe69ef49bfe5deceb50697b97a0aba9ab4b4f9e6728e2b8e
+  - name: ghcr.io/gurvan-le-pape/beyond-the-arc/backend-migrate
+    digest: sha256:86d7774762a434397d97f4b440b84b6630073e93a9e2f661762b161fe1cb1052
+  - name: ghcr.io/gurvan-le-pape/beyond-the-arc/frontend
+    digest: sha256:a8751dc0057a7d173a18665dc4ebf45814ba1ea3cb3ffe70d5986e5ed6f34bec
+  - name: ghcr.io/gurvan-le-pape/beyond-the-arc/scheduler
+    digest: sha256:d911798993d9d9d0c872cd551218a28d4a0a16cbe8b910c986c3351ee1e329ab

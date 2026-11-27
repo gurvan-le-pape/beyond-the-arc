@@ -22,6 +22,7 @@ Traefik, ServiceLB, local-path storage and metrics-server, and its SQLite datast
 | `argocd/values.yaml` | the argo-cd chart's values, for the install and for every sync after it |
 | `database/` | the application's PostgreSQL, a CloudNativePG `Cluster` |
 | `restore.sh` | restores the latest production backup into it |
+| `app/` | the application: a Kustomize base and the lab overlay |
 
 ## Running it
 
@@ -72,7 +73,8 @@ root (root.yaml, applied by bootstrap.sh)
 └── renders apps/, a chart of Applications
     ├── argocd: the argo-cd chart, with argocd/values.yaml
     ├── cnpg: the CloudNativePG operator chart (namespace cnpg-system)
-    └── database: database/, the PostgreSQL Cluster (namespace bta)
+    ├── database: database/, the PostgreSQL Cluster (namespace bta)
+    └── app: app/lab/, backend, frontend, scheduler and the migration (namespace bta)
 ```
 
 `bootstrap.sh` installs the argo-cd chart once, at the version in `apps/values.yaml`,
@@ -142,12 +144,61 @@ production. It refuses a database that already has tables; to restore again, del
 infra/k8s/k.sh kubectl -n bta delete cluster database
 ```
 
+## Application
+
+`app/base/` is the application as any environment runs it, `app/lab/` what the lab sets:
+
+| Object | What it is |
+|---|---|
+| `Job/migrate` | `prisma migrate deploy`, an Argo CD `PreSync` hook |
+| `Deployment/backend`, `Service/backend` | the API, port 4000 |
+| `Deployment/frontend`, `Service/frontend` | the Next.js server, port 3000 |
+| `Deployment/scheduler` | the match generator, one replica, `Recreate` |
+| `ConfigMap/app-<hash>` | `FRONTEND_URL`, from the overlay |
+
+Compose's ordering, kept: the migration runs to completion before Argo CD applies
+anything else in a sync, so the backend and the scheduler never run on an older schema,
+and a failed migration stops the sync with the running pods untouched. It runs on every
+sync and has nothing to do when the schema is current. The frontend's init container
+waits for the backend's `/api/health`, which is compose's wait on a healthy backend.
+
+The images are the ones CI built, started and pushed for a commit of `main`, by digest
+(`app/lab/kustomization.yaml`); moving the lab to another commit is a commit changing the
+four digests. They are public on GHCR, so the cluster pulls them with no credential.
+
+The application needs no Secret from outside the cluster. `DATABASE_URL` is the `uri`
+key of the `database-app` Secret that CloudNativePG writes for the `bta` role, so the
+password is never in Git or on the machine. The lab sets no `SENTRY_DSN`: the SDK then
+sends nothing, and the lab stays out of production's issues.
+
+Every pod runs as its image's non-root user, with a read-only root filesystem (an
+`emptyDir` for `/tmp`, and for the frontend's image cache), no capability, the default
+seccomp profile and no service account token. The backend and the frontend update one pod
+at a time, the new one ready before the old one stops, and a stopping pod keeps serving
+for five seconds while it leaves the Service: two rolling restarts of both, under a
+request every 0.2 s, failed none of about 1,700 requests (2 of 475 without that delay).
+A deploy no longer has the seconds of 502 that recreating the compose containers gives.
+
+Nothing routes to it from outside the cluster yet (that is Traefik, with a certificate
+for `lab.beyondthearc.app`); a port-forward reaches it:
+
+```bash
+infra/k8s/k.sh kubectl -n bta port-forward svc/frontend 3000:3000   # http://127.0.0.1:3000/en
+infra/k8s/k.sh kubectl -n bta logs deploy/scheduler -f
+```
+
+A server render goes to the backend's Service. The browser, though, calls the URL that
+`NEXT_PUBLIC_API_URL` inlined into the bundle at build time, which is production's API:
+the lab's pages render from the lab's database, and what the browser fetches after them
+comes from production, which only allows production's origin. The image is built once
+for every environment, so this is a build setting to change, not a value for the lab.
+
 ## Validation
 
 `validate.sh` checks what reaches the cluster with kubeconform in strict mode: an unknown
 or misspelt field is an error, not a field the API server would silently drop. That is
 the plain manifests (`root.yaml`, `database/`), the `apps/` chart as `helm template`
-renders it, and each upstream chart an Application installs (argo-cd with
+renders it, the application as `kubectl kustomize app/lab` builds it, and each upstream chart an Application installs (argo-cd with
 `argocd/values.yaml`, cloudnative-pg), at the version `apps/values.yaml` pins. Kubernetes' own kinds are checked
 against the schemas of the cluster's version, read from the k3s image tag in
 `lab/cluster.yaml`, from `yannh/kubernetes-json-schema`; custom resources (`Application`, `Cluster`)
@@ -198,6 +249,18 @@ after autovacuum had finished with `match_events`:
 The working set counts the active page cache, so with a database larger than the memory
 it settles near the limit whatever the load: it measures the cache, not what the platform
 needs. Anonymous memory is the figure that cannot be given back.
+
+With the application (`app/lab`), over three minutes at rest, the scheduler with no
+match due:
+
+| Measure | Value |
+|---|---|
+| backend, frontend, scheduler | 88 to 99 MiB, 127 to 130 MiB, 42 MiB |
+| node working set | 5.22 GiB of 8 GiB (65 %), the kernel having given back database cache since |
+| anonymous memory | 1.81 GiB, +0.36 GiB for the application |
+
+The requests are those figures rounded up; the limits leave room for load, which a later
+stage measures.
 
 Every later stage of the lab is measured against these figures. The
 phase's no-go threshold is an idle working set above 75 % of the 8 GiB, 6 GiB. The figures
