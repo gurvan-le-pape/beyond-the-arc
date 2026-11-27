@@ -1,0 +1,20 @@
+# The backend's Sentry DSN on production's cluster, the one the CX23's .env holds. Sealed
+# to this cluster's Sealed Secrets key, so only the controller in bta-prod-k3s can decrypt
+# it, and only as the backend-sentry Secret in bta (strict scope). Sealed again from the
+# CX23's .env, the value never on disk in clear:
+#   ssh root@bta-prod-compose "sed -n 's/^SENTRY_DSN=//p' /opt/beyondthearc/.env" | tr -d '\n' |
+#     BTA_CLUSTER=production ./k.sh sh -c 'kubectl create secret generic backend-sentry
+#       --namespace bta --from-file=dsn=/dev/stdin --dry-run=client -o json | kubeseal --format yaml'
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: backend-sentry
+  namespace: bta
+spec:
+  encryptedData:
+    dsn: AgAJ/tJTG1n0/4bua8uwVqm434TrqM2kq3cn6dRKEpWiuoobJ/iCK3vFBNYzEwcIv+7ipBfvPQ5lTcehUARj0uJ/F3IbBskRCkmizBDALDzlvzH9H7ZR43Z7xHT52ZZ7bDKqji3BwwaYis50KNHi6iN+GqVFqbK+exCEHRlaON73ga5ZBqrOg/ovSwdvLhtpIT9g7Q65caRwaJ5qoIQCNa5n6lR7Ilp5c2WVz5bYrxT+ORG7AU89rNCs6xfCl/hdgBGbQ/RhdzZ7GJRRgbhp82XHJKVdruqXMfxmKvxG5rI2OodY0AYdve0Wc9JsAz1ey+dbqKEiLCY8kmHjBepoIV83Uv37xIqS6CsOVvT3W3/x6F4A26d0YWq7Np2NwEqLMi+ZbLc79R6UIVMS7ZvwITAoqzxes018/B19BO24736nVobYWYKgmfzFj6MvbT0OVPdgR5wHvRAAt6/o98v0Zmisb3FDNUnAKTxgmxQVGiH1ez9nm4b9WfSN75NkA/FbFDdh31ITvg9blpCNDPJtdV9f6w4ib5EtWx1ZE8NMOnPBV9KEExgBo2iRYjWgB+hF0vDFWSNoQdHH37Q0fxEyiwqImB6p9dfTw0WkumJhkvwpnpzAu+DAwGCWpJLMuUCquSL42QHqDkNBNvtqFfbcYcd+PmNHB9RwOETaORb6YGrwMg3lROjSzIj1gwwqCK/u7oJFqd8i8YFzD6gGDqTX1js7N+CLUDaz2MWsDf6WwH4YjkQS09zleVqs5Hvh7k53wTdwchY86zmcY4juu5+d595EKwEgO8bp5SJ8DYLFOJj4LZKhiCUzvK3DOoZynHgQUQ==
+  template:
+    metadata:
+      name: backend-sentry
+      namespace: bta
