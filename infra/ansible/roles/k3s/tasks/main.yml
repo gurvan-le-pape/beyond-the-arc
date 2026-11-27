@@ -1,0 +1,89 @@
+---
+# The memory the lab measured, and the plan's no-go at 75 %, assume no swap: a node
+# that swaps hides how close it is to its limit.
+- name: List the active swap
+  ansible.builtin.command:
+    argv: [swapon, --show=NAME, --noheadings]
+  register: k3s_swap
+  changed_when: false
+  check_mode: false
+
+- name: Refuse a host with swap on
+  ansible.builtin.assert:
+    that: k3s_swap.stdout_lines | length == 0
+    fail_msg: "swap is on ({{ k3s_swap.stdout_lines | join(', ') }}): this host runs k3s without swap"
+    quiet: true
+
+- name: Create k3s's configuration directory
+  ansible.builtin.file:
+    path: /etc/rancher/k3s
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Write k3s's configuration
+  ansible.builtin.copy:
+    dest: /etc/rancher/k3s/config.yaml
+    content: "{{ k3s_config | to_nice_yaml(indent=2) }}"
+    owner: root
+    group: root
+    mode: "0600"
+  notify: Restart k3s
+
+# get_url checks an existing file against the checksum too, so a binary changed on the
+# host is replaced.
+- name: Install the k3s binary
+  ansible.builtin.get_url:
+    url: "https://github.com/k3s-io/k3s/releases/download/{{ k3s_version | urlencode }}/k3s"
+    dest: /usr/local/bin/k3s
+    checksum: "sha256:{{ k3s_sha256 }}"
+    owner: root
+    group: root
+    mode: "0755"
+  notify: Restart k3s
+
+- name: Link kubectl, crictl and ctr to the k3s binary
+  ansible.builtin.file:
+    src: /usr/local/bin/k3s
+    dest: "/usr/local/bin/{{ item }}"
+    state: link
+    force: true
+  loop: [kubectl, crictl, ctr]
+
+- name: Write the k3s unit
+  ansible.builtin.template:
+    src: k3s.service.j2
+    dest: /etc/systemd/system/k3s.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart k3s
+
+# Before the start below: on a first install the restart is what starts k3s, once.
+- name: Apply a changed configuration, binary or unit now
+  ansible.builtin.meta: flush_handlers
+
+- name: Enable and start k3s
+  ansible.builtin.systemd_service:
+    name: k3s
+    enabled: true
+    state: started
+    daemon_reload: true
+
+- name: Wait for the node to be Ready
+  ansible.builtin.command:
+    argv:
+      - k3s
+      - kubectl
+      - get
+      - node
+      - "{{ inventory_hostname }}"
+      - -o
+      - jsonpath={.status.conditions[?(@.type=="Ready")].status}
+  register: k3s_ready
+  until: k3s_ready.stdout == "True"
+  retries: 30
+  delay: 5
+  changed_when: false
+  when: not ansible_check_mode

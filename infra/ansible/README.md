@@ -34,8 +34,9 @@ a site path the roles did not write stops the run instead of being rewritten.
 without Compose: `automation_user` (the `ansible` user, its key, passwordless sudo),
 `journald`, `packages` (base packages only, no Docker), `unattended_upgrades` and
 `ssh_hardening` (`00-hardening.conf`, read before cloud-init's
-`50-cloud-init.conf`). k3s itself, and whether the host has swap, come with the
-phase 4 role. `playbooks/site.yml` runs both.
+`50-cloud-init.conf`), then `k3s`: the release binary checked by sha256, its systemd
+unit and `/etc/rancher/k3s/config.yaml`, on a host with no swap. `playbooks/site.yml`
+runs both.
 
 The first run on a new k3s host connects as root, since the `ansible` user does not
 exist yet; every later run connects as `ansible`:
@@ -45,6 +46,24 @@ infra/ansible/ansible.sh ansible-playbook playbooks/k3s.yml --diff -e ansible_us
 ```
 
 What each setting is, and why it is there: `docs/infrastructure.md`, *Host setup*.
+
+### The k3s API
+
+The API server listens on the host's port 6443, which the Hetzner firewall does not
+open. It is reached through SSH, and its admin kubeconfig is `/etc/rancher/k3s/k3s.yaml`
+on the host, readable by root only:
+
+```bash
+ssh -N -L 16443:127.0.0.1:6443 bta-prod-k3s     # leave it running
+ssh bta-prod-k3s sudo k3s kubectl get nodes     # or on the host itself
+```
+
+The kubeconfig's `server` is `https://127.0.0.1:6443`, which the certificate covers; a
+copy used through the tunnel points at port 16443 instead.
+
+An upgrade changes `k3s_version` and `k3s_sha256` (from the release's
+`sha256sum-amd64.txt`) in `roles/k3s/defaults/main.yml`, with the lab's node image in
+`../k8s/lab/cluster.yaml` moved to the same release.
 
 ## Running it
 

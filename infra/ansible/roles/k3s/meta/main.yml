@@ -1,0 +1,11 @@
+---
+galaxy_info:
+  author: beyond-the-arc
+  description: k3s single server from the release binary, checked by sha256
+  license: MIT
+  min_ansible_version: "2.22"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - noble
+dependencies: []
