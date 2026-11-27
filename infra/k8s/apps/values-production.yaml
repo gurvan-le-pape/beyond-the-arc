@@ -1,13 +1,11 @@
 # Production, bta-prod-k3s (the CX33): what it runs on top of values.yaml's defaults.
 # Phase 5 brings it up in steps, each one switching more on: first the database and what
 # it needs (Argo CD, Sealed Secrets, CloudNativePG), restored from the latest backup,
-# then the application (app/production).
+# then the application (app/production) and observability (observability/production).
 cluster: production
 
 components:
   certManager: false
   issuers: false
-  kubePrometheusStack: false
-  observability: false
   # CI stays on the persistent runners until images build without the Docker socket.
   arc: false

@@ -26,7 +26,7 @@ Traefik, ServiceLB, local-path storage and metrics-server, and its SQLite datast
 | `sealed-secrets-key.sh` | backs up the Sealed Secrets controller's keys, encrypted, here and on R2 |
 | `app/` | the application: a Kustomize base and the lab overlay |
 | `issuers/` | the certificate issuer and the Cloudflare token it uses, sealed |
-| `observability/` | Grafana, Loki, the blackbox exporter, Alloy and the scrape targets |
+| `observability/` | Grafana, Loki, the blackbox exporter, Alloy and the scrape targets: a base and one overlay per cluster |
 | `apps/values/` | the values of a chart Application, read by it and by `validate.sh` |
 | `arc/` | the GitHub App credentials the runner scale set uses, sealed |
 | `load/` | the k6 scenario latency is measured with |
@@ -127,7 +127,7 @@ root (root.yaml, applied by bootstrap.sh)
     ├── sealed-secrets: the Sealed Secrets controller chart (namespace kube-system)
     ├── issuers: issuers/, the ClusterIssuer and the sealed Cloudflare token
     ├── kube-prometheus-stack: the operator, Prometheus, node-exporter, kube-state-metrics (namespace monitoring)
-    ├── observability: observability/, Grafana, Loki, blackbox, Alloy, scrape targets (namespace monitoring)
+    ├── observability: observability/<cluster>/, Grafana, Loki, blackbox, Alloy, scrape targets (namespace monitoring)
     ├── arc-controller: the Actions Runner Controller chart (namespace arc-systems)
     └── arc-runners: the bta-lab runner scale set chart, and arc/ (namespace arc-runners)
 ```
@@ -301,7 +301,7 @@ Production's monitoring, on Kubernetes:
 | blackbox exporter, `docker/config/blackbox.yml` | the same, with the same file |
 | Promtail, through the Docker socket | Alloy, through the API server |
 
-The files are shared, not copied: `observability/kustomization.yaml` builds its
+The files are shared, not copied: `observability/base/kustomization.yaml` builds its
 ConfigMaps from `docker/config/`, so an alert rule or the dashboard changes once for both,
 and the eight rules evaluate here exactly as in production. That needs Kustomize to read
 outside its directory, which Argo CD allows (`argocd/values.yaml`,
@@ -334,7 +334,10 @@ infra/k8s/k.sh kubectl -n monitoring port-forward svc/prometheus 9090:9090
 
 The admin password is generated on the maintainer's machine
 (`~/.config/bta-k8s/grafana-admin.env`, `GRAFANA_ADMIN_PASSWORD=…`, mode 600) and sealed
-in `observability/grafana-admin.sealed.yaml`, resealed like the Cloudflare token.
+in `observability/lab/grafana-admin.sealed.yaml`, resealed like the Cloudflare token.
+Production's is its own, generated the same way into
+`~/.config/bta-k8s/grafana-admin-production.env` and sealed to production's key in
+`observability/production/grafana-admin.sealed.yaml` (`BTA_CLUSTER=production`).
 
 ## Runners
 
@@ -502,7 +505,7 @@ they place the platform's cost, not production's to the megabyte.
 | Traefik | k3s's bundled chart (41.6.1) | the k3s release |
 | kube-prometheus-stack | chart 94.2.0 (operator v0.95.2) | `apps/values.yaml` |
 | Grafana, Loki, blackbox exporter | 13.0.13, 3.7.1, 0.29.1, production's | `observability/` (by digest) |
-| Alloy | v1.22.0 | `observability/alloy.yaml` (by digest) |
+| Alloy | v1.22.0 | `observability/base/alloy.yaml` (by digest) |
 | Actions Runner Controller | 0.15.1, both charts | `apps/values.yaml` |
 | Actions runner | 2.338.2 | `apps/values/arc-runners.yaml` (by digest) |
 | kubeconform | 0.8.0 | `Dockerfile`; schemas at the commit in `validate.sh` |

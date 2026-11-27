@@ -1,5 +1,6 @@
 # Grafana, Loki, the blackbox exporter, Alloy, and what Prometheus scrapes, in the
-# monitoring namespace. Grafana's provisioning (datasources, dashboard, the alert rules and
+# monitoring namespace, as every cluster runs them. An overlay adds the grafana-admin
+# SealedSecret, sealed to its own cluster's key (lab/, production/). Grafana's provisioning (datasources, dashboard, the alert rules and
 # the contact point), Loki's configuration and the blackbox modules are production's own
 # files under docker/config/, so a rule or a dashboard changes once for both. Reading
 # outside this directory needs Kustomize's load restrictor off, which Argo CD sets
@@ -13,30 +14,29 @@ namespace: monitoring
 resources:
   - prometheus.yaml
   - grafana.yaml
-  - grafana-admin.sealed.yaml
   - loki.yaml
   - blackbox-exporter.yaml
   - alloy.yaml
 configMapGenerator:
   - name: grafana-datasources
     files:
-      - ../../../docker/config/grafana/provisioning/datasources/datasources.yml
+      - ../../../../docker/config/grafana/provisioning/datasources/datasources.yml
   - name: grafana-dashboard-providers
     files:
-      - ../../../docker/config/grafana/provisioning/dashboards/dashboards.yml
+      - ../../../../docker/config/grafana/provisioning/dashboards/dashboards.yml
   - name: grafana-dashboards
     files:
-      - ../../../docker/config/grafana/provisioning/dashboards/backend-overview.json
+      - ../../../../docker/config/grafana/provisioning/dashboards/backend-overview.json
   - name: grafana-alerting
     files:
-      - ../../../docker/config/grafana/provisioning/alerting/rules.yml
-      - ../../../docker/config/grafana/provisioning/alerting/contact-points.yml
+      - ../../../../docker/config/grafana/provisioning/alerting/rules.yml
+      - ../../../../docker/config/grafana/provisioning/alerting/contact-points.yml
   - name: loki
     files:
-      - config.yml=../../../docker/config/loki.yml
+      - config.yml=../../../../docker/config/loki.yml
   - name: blackbox-exporter
     files:
-      - config.yml=../../../docker/config/blackbox.yml
+      - config.yml=../../../../docker/config/blackbox.yml
   - name: alloy
     files:
       - config.alloy

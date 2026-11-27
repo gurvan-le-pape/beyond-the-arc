@@ -1,0 +1,7 @@
+# Observability on the lab: the base, and Grafana's admin password sealed to this
+# cluster's Sealed Secrets key.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../base
+  - grafana-admin.sealed.yaml
