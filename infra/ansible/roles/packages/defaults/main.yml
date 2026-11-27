@@ -1,0 +1,21 @@
+---
+packages_wanted:
+  - ca-certificates
+  - curl
+  - git
+  - nginx
+  - certbot
+  - python3-certbot-nginx
+  - unattended-upgrades
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-buildx-plugin
+  - docker-compose-plugin
+# Nothing here uses them; snapd ran permanently with no snap installed.
+packages_unwanted:
+  - snapd
+  - open-vm-tools
+  - lxd-agent-loader
+  - lxd-installer
+  - docker-model-plugin

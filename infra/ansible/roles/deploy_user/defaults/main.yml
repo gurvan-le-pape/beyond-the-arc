@@ -1,0 +1,4 @@
+---
+# Set per group (inventory/group_vars/compose/main.yml). Added to authorized_keys,
+# never replacing what is there.
+# deploy_user_pubkey:

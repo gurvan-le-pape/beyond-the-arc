@@ -1,0 +1,11 @@
+---
+galaxy_info:
+  author: beyond-the-arc
+  description: Docker's apt repository, the host's packages, and no snapd
+  license: MIT
+  min_ansible_version: "2.22"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - noble
+dependencies: []

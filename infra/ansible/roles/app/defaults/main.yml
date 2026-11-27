@@ -1,0 +1,4 @@
+---
+# Fixed paths: the CI deploy, docker/deploy.sh and the Nginx config name them.
+app_dir: /opt/beyondthearc
+app_repo_url: https://github.com/gurvan-le-pape/beyond-the-arc.git

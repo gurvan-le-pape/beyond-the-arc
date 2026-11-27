@@ -1,0 +1,11 @@
+---
+- name: Check and reload sshd
+  ansible.builtin.command:
+    argv: [/usr/sbin/sshd, -t]
+  changed_when: false
+  notify: Reload sshd
+
+- name: Reload sshd
+  ansible.builtin.systemd_service:
+    name: ssh
+    state: reloaded

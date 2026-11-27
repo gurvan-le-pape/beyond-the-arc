@@ -1,0 +1,72 @@
+---
+- name: Create the apt keyrings directory
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Look for Docker's apt signing key
+  ansible.builtin.stat:
+    path: /etc/apt/keyrings/docker.asc
+  register: packages_docker_key
+
+# Downloaded once: an existing key is left as is. The stat, not get_url's own check,
+# decides, since get_url reports a change in --check even when the file exists.
+- name: Install Docker's apt signing key
+  when: not packages_docker_key.stat.exists
+  ansible.builtin.get_url:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    dest: /etc/apt/keyrings/docker.asc
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Add Docker's apt repository
+  ansible.builtin.copy:
+    dest: /etc/apt/sources.list.d/docker.list
+    content: >
+      deb [arch={{ {'x86_64': 'amd64', 'aarch64': 'arm64'}[ansible_facts['architecture']] }}
+      signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu
+      {{ ansible_facts['distribution_release'] }} stable
+    owner: root
+    group: root
+    mode: "0644"
+  register: packages_docker_repo
+
+# Only what is missing: a run never upgrades what is installed; upgrades are
+# unattended-upgrades' job.
+- name: Install the host's packages
+  ansible.builtin.apt:
+    name: "{{ packages_wanted }}"
+    state: present
+    update_cache: "{{ packages_docker_repo is changed }}"
+    cache_valid_time: 3600
+
+- name: Purge the packages nothing uses
+  ansible.builtin.apt:
+    name: "{{ packages_unwanted }}"
+    state: absent
+    purge: true
+  notify:
+    - Remove the dependencies nothing needs any more
+    - Remove snapd's directories
+
+# Keeps a recommends chain from bringing snapd back.
+- name: Pin snapd out
+  ansible.builtin.copy:
+    dest: /etc/apt/preferences.d/no-snapd
+    content: |
+      Package: snapd
+      Pin: release *
+      Pin-Priority: -1
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Enable and start Docker
+  ansible.builtin.systemd_service:
+    name: docker
+    enabled: true
+    state: started

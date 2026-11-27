@@ -1,0 +1,4 @@
+---
+nginx_site: /etc/nginx/sites-enabled/beyondthearc
+nginx_site_target: /opt/beyondthearc/docker/nginx/beyondthearc.conf
+nginx_cert: /etc/letsencrypt/live/beyondthearc.app/fullchain.pem

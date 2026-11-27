@@ -1,0 +1,33 @@
+---
+# Validated with the rest of sshd's configuration before the reload: copy's validate
+# checks the drop-in alone, the handler checks the whole before reloading.
+- name: Turn off password and keyboard-interactive logins
+  ansible.builtin.copy:
+    src: 10-disable-password-auth.conf
+    dest: /etc/ssh/sshd_config.d/10-disable-password-auth.conf
+    owner: root
+    group: root
+    mode: "0644"
+    validate: /usr/sbin/sshd -t -f %s
+  notify: Check and reload sshd
+
+- name: Apply the change before checking it
+  ansible.builtin.meta: flush_handlers
+
+# Judged on the effective configuration: drop-ins are first-value-wins, so the file
+# can be in place and still be overridden by one that sorts before it.
+- name: Read sshd's effective configuration
+  ansible.builtin.command:
+    argv: [/usr/sbin/sshd, -T]
+  register: ssh_hardening_effective
+  changed_when: false
+  check_mode: false
+
+- name: Check that only keys log in
+  ansible.builtin.assert:
+    that:
+      - "'passwordauthentication no' in ssh_hardening_effective.stdout_lines"
+      - "'kbdinteractiveauthentication no' in ssh_hardening_effective.stdout_lines"
+    fail_msg: another sshd_config.d file sets a password or keyboard-interactive login
+    quiet: true
+  when: not ansible_check_mode

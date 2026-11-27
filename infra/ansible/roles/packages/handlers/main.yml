@@ -1,0 +1,10 @@
+---
+- name: Remove the dependencies nothing needs any more
+  ansible.builtin.apt:
+    autoremove: true
+
+- name: Remove snapd's directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop: [/snap, /var/snap, /var/lib/snapd, /var/cache/snapd]

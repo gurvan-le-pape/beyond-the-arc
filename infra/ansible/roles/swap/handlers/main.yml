@@ -1,0 +1,5 @@
+---
+- name: Apply swappiness
+  ansible.builtin.command:
+    argv: [sysctl, -q, -p, /etc/sysctl.d/99-swappiness.conf]
+  changed_when: true
