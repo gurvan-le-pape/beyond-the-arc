@@ -25,6 +25,7 @@ trap 'rm -rf "$rendered"' EXIT
 helm template apps apps > "$rendered/apps.yaml"
 helm template apps apps -f apps/values-production.yaml > "$rendered/apps-production.yaml"
 kubectl kustomize app/lab > "$rendered/app-lab.yaml"
+kubectl kustomize app/production > "$rendered/app-production.yaml"
 # observability/ reads production's files under docker/config/, as Argo CD lets it
 # (argocd/values.yaml, kustomize.buildOptions).
 kubectl kustomize --load-restrictor LoadRestrictionsNone observability > "$rendered/observability.yaml"

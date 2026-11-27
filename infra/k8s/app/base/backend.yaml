@@ -1,7 +1,7 @@
 # The NestJS API. DATABASE_URL is the uri key of the database-app Secret CloudNativePG
 # writes for the bta role, so the password never leaves the cluster. FRONTEND_URL, its
-# only CORS origin, comes from the overlay's app ConfigMap. No SENTRY_DSN: unset, the SDK
-# sends nothing, and an environment that is not production keeps out of its issues.
+# only CORS origin, comes from the overlay's app ConfigMap, with SENTRY_ENVIRONMENT. No
+# SENTRY_DSN here: unset, the SDK sends nothing; an overlay that reports adds it.
 apiVersion: apps/v1
 kind: Deployment
 metadata:

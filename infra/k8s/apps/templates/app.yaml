@@ -1,4 +1,4 @@
-# The application (../../app/lab): backend, frontend, scheduler and the migration Job.
+# The application (../../app/<cluster>): backend, frontend, scheduler and the migration Job.
 {{- if .Values.components.app }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: {{ .Values.repoURL }}
     targetRevision: {{ .Values.targetRevision }}
-    path: infra/k8s/app/lab
+    path: infra/k8s/app/{{ .Values.cluster }}
   destination:
     server: https://kubernetes.default.svc
     namespace: bta

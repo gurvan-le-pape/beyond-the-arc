@@ -1,3 +1,7 @@
+# The cluster this chart renders for, lab or production: it names the cluster's own
+# overlay where one component differs between them (app/<cluster>).
+cluster: lab
+
 # The components this cluster runs, one per Application (argocd always runs). These
 # defaults are the lab's, which runs everything; values-production.yaml switches off
 # what production does not run yet. root.yaml reads that file on production only

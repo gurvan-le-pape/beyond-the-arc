@@ -12,13 +12,16 @@ configMapGenerator:
   - name: app
     literals:
       - FRONTEND_URL=https://lab.beyondthearc.app
-# main at 5b891df7.
+      # The servers' Sentry environment; the frontend's errors otherwise file as
+      # production (its DSN falls back to the committed one).
+      - SENTRY_ENVIRONMENT=lab
+# main at 2fe89b18, the commit production's Compose stack runs.
 images:
   - name: ghcr.io/gurvan-le-pape/beyond-the-arc/backend
-    digest: sha256:4607421d084d36dc7f1180df13cf1b3df6a2b1568be227c18691f51c54d915eb
+    digest: sha256:05e3398bef85d8cecaf30fd430a7151424aeb50df0799e2bee597a7642f4b182
   - name: ghcr.io/gurvan-le-pape/beyond-the-arc/backend-migrate
-    digest: sha256:8d63a170413eb247d17aaff04c8dbdba9473ccd8475fa54c761ccbcd8109960f
+    digest: sha256:d93020cce2fbd1e12f467355c27956ba6419595eeb488f492573f3676609f9ce
   - name: ghcr.io/gurvan-le-pape/beyond-the-arc/frontend
-    digest: sha256:b17bb51d1064abc95590e0a3d429d281a059491fe8003a5ef4605c1397d4c72a
+    digest: sha256:79c0a618dadda829fdb1e43d3d2c869f8d40f1d698e9c92929e6ceacb9ebd6d1
   - name: ghcr.io/gurvan-le-pape/beyond-the-arc/scheduler
-    digest: sha256:2ae8f3ccbbaa6ddf7110e3e141c2e28b091ac2e0f5ae12a9772fec14e62f5261
+    digest: sha256:25f3c2e279d09a9dd36cbd259627c2a4c377363c5567c01ae0b84a3517507fab

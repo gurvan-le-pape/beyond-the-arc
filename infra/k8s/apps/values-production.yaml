@@ -1,8 +1,10 @@
 # Production, bta-prod-k3s (the CX33): what it runs on top of values.yaml's defaults.
 # Phase 5 brings it up in steps, each one switching more on: first the database and what
-# it needs (Argo CD, Sealed Secrets, CloudNativePG), restored from the latest backup.
+# it needs (Argo CD, Sealed Secrets, CloudNativePG), restored from the latest backup,
+# then the application (app/production).
+cluster: production
+
 components:
-  app: false
   certManager: false
   issuers: false
   kubePrometheusStack: false
