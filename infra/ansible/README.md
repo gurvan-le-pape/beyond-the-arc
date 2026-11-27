@@ -7,7 +7,7 @@ role lands, the script stays the reference and only the Ansible side changes.
 | Group | Host | Role in the platform | Connects as |
 |---|---|---|---|
 | `compose` | `bta-prod-compose` (CX23) | production today, Docker Compose | `root`, until the cutover |
-| `k3s` | `bta-prod-k3s` (CX33) | production after the cutover, k3s | `root`, until the `ansible` user exists |
+| `k3s` | `bta-prod-k3s` (CX33) | production after the cutover, k3s | `ansible`, with sudo |
 
 On `bta-prod-compose`, a playbook runs with `--check --diff` only, unless the maintainer
 has said otherwise for that run.
@@ -32,6 +32,20 @@ instead of being rewritten.
 | `app` | Deploy clone, `.env` check, `postgres_data` volume |
 | `nginx` | Nginx service, `server_tokens off`, site link |
 | `postgres_backup` | (not in the script) nightly backup to R2 |
+
+`playbooks/k3s.yml` configures `bta-prod-k3s` with the roles that apply to a host
+without Compose: `automation_user` (the `ansible` user, its key, passwordless sudo),
+`journald`, `packages` (base packages only, no Docker), `unattended_upgrades` and
+`ssh_hardening` (`00-hardening.conf`, read before cloud-init's
+`50-cloud-init.conf`). k3s itself, and whether the host has swap, come with the
+phase 4 role. `playbooks/site.yml` runs both.
+
+The first run on a new k3s host connects as root, since the `ansible` user does not
+exist yet; every later run connects as `ansible`:
+
+```bash
+infra/ansible/ansible.sh ansible-playbook playbooks/k3s.yml --diff -e ansible_user=root
+```
 
 Until `provision.sh` is deleted, both describe the host; change the Ansible side only.
 Both report no change on `bta-prod-compose` (`provision.sh --check` and

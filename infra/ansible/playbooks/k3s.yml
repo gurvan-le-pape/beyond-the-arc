@@ -1,0 +1,11 @@
+---
+# The k3s host (CX33). The base only: k3s itself comes with the phase 4 role, which
+# also decides on swap (none for now).
+- name: Configure the k3s host
+  hosts: k3s
+  roles:
+    - automation_user
+    - journald
+    - packages
+    - unattended_upgrades
+    - ssh_hardening

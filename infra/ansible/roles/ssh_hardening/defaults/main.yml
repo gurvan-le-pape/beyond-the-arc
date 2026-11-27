@@ -1,0 +1,8 @@
+---
+# The drop-in in /etc/ssh/sshd_config.d/ this role owns, from templates/<name>.j2.
+# 00-: sshd keeps the first value it reads, and cloud-init's 50-cloud-init.conf sets
+# PasswordAuthentication yes.
+ssh_hardening_dropin: 00-hardening.conf
+# prohibit-password: root logs in with a key only. "no" once Ansible connects as
+# its own user on that host.
+ssh_hardening_permit_root_login: prohibit-password

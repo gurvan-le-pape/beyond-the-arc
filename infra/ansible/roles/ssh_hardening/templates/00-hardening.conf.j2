@@ -1,0 +1,6 @@
+# Managed by Ansible (infra/ansible/roles/ssh_hardening). Named 00- so it is read
+# before cloud-init's 50-cloud-init.conf, which sets PasswordAuthentication yes:
+# sshd keeps the first value it reads for each keyword.
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+PermitRootLogin {{ ssh_hardening_permit_root_login }}

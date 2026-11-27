@@ -1,0 +1,4 @@
+---
+automation_user_name: ansible
+# Set per group: the public key the maintainer's machine connects with.
+# automation_user_pubkey:

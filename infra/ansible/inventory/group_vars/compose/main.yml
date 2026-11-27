@@ -5,3 +5,12 @@ volume_device: /dev/disk/by-id/scsi-0HC_Volume_105727762
 # Public key the CI deploys with (its private half is the Production environment's
 # VPS_SSH_KEY secret).
 deploy_user_pubkey: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINQ7AL7GU0gX+4/ugx6XYlKZ1WDSMLlTqs6gNjPTCTzT github-actions-deploy"
+
+packages_docker: true
+packages_extra:
+  - nginx
+  - certbot
+  - python3-certbot-nginx
+
+# The drop-in this host already had, kept under its name (roles/ssh_hardening/files).
+ssh_hardening_dropin: 10-disable-password-auth.conf
