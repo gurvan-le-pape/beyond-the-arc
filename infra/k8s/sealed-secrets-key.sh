@@ -72,7 +72,11 @@ r2() { ansible_image sops -d --extract "[\"$1\"]" "$sops_file" < /dev/null; }
 RCLONE_CONFIG_R2_ACCESS_KEY_ID=$(r2 postgres_backup_r2_access_key_id)
 RCLONE_CONFIG_R2_SECRET_ACCESS_KEY=$(r2 postgres_backup_r2_secret_access_key)
 RCLONE_CONFIG_R2_ENDPOINT=$(r2 postgres_backup_r2_endpoint)
+# As the backup job sets them (../ansible/roles/postgres_backup/templates/backup.env.j2):
+# rclone 1.60 re-reads an upload with HEAD ?versionId=, which R2 answers 501 although the
+# upload succeeded; the decryption check below is what proves the copy.
 export RCLONE_CONFIG_R2_TYPE=s3 RCLONE_CONFIG_R2_PROVIDER=Cloudflare RCLONE_CONFIG_R2_NO_CHECK_BUCKET=true \
+  RCLONE_CONFIG_R2_NO_HEAD=true \
   RCLONE_CONFIG_R2_ACCESS_KEY_ID RCLONE_CONFIG_R2_SECRET_ACCESS_KEY RCLONE_CONFIG_R2_ENDPOINT
 
 ansible_image rclone rcat "$remote" < "$state/$name"
